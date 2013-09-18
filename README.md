@@ -1,4 +1,4 @@
 Physika
 =======
 
-A physics engine that a couple of guys and me plan to develop.
+A physics engine that a couple of guys and I plan to develop.
