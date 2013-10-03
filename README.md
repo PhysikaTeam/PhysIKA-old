@@ -3,8 +3,8 @@
 A physics engine that a couple of guys and I plan to develop.
 
 @authors:
-Fei Zhu
-Sheng Yang
+Fei Zhu, 
+Sheng Yang, 
 Tianxiang Zhang
 
 @Last update of this file:
