@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_MATRICES_MATRIX_2X2_H_
 #define PHYSIKA_MATRICES_MATRIX_2X2_H_
 
+#include <iostream>
 #include "utilities/global_config.h"
 #include "matrices/matrix_base.h"
 
@@ -32,10 +33,13 @@ public:
   Scalar& operator() (const int i, const int j);
   Matrix2x2<Scalar> operator+ (const Matrix2x2<Scalar> &);
   Matrix2x2<Scalar> operator- (const Matrix2x2<Scalar> &);
+  Matrix2x2<Scalar>& operator= (const Matrix2x2<Scalar> &);
   Matrix2x2<Scalar> operator* (const Scalar);
   Matrix2x2<Scalar> operator/ (const Scalar);
   Matrix2x2<Scalar> transpose();
   Matrix2x2<Scalar> inverse();
+
+  friend std::ostream &operator<< (std::ostream &, const Matrix2x2<Scalar> &);
  
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX

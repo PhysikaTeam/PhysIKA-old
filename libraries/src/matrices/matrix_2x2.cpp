@@ -66,6 +66,15 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::operator- (const Matrix2x2<Scalar> &mat2)
 }
 
 template <typename Scalar>
+Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator= (const Matrix2x2<Scalar> &mat2)
+{
+  for(int i = 0; i < 2; ++i)
+    for(int j = 0; j < 2; ++j)
+      this->(i,j) = mat2(i,j);
+  return *this;
+}
+
+template <typename Scalar>
 Matrix2x2<Scalar> Matrix2x2<Scalar>::operator* (const Scalar scale)
 {
   Scalar result[4];
@@ -102,6 +111,13 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::inverse()
   Eigen::Matrix<Scalar,2,2> result_matrix = eigen_matrix_2x2_.inverse();
   return Matrix2x2<Scalar>(result_matrix(0,0), result_matrix(0,1), result_matrix(1,0), result_matrix(1,1));
 #endif PHYSIKA_USE_EIGEN_MATRIX
+}
+
+std::ostream &operator<< (std::ostream &s, const Matrix<Scalar> &mat)
+{
+  s<<mat(0,0)<<", "<<mat(0,1)<<std::endl;
+  s<<mat(1,0)<<", "<<mat(1,1)<<std::endl;
+  return s;
 }
 
 }  //end of namespace Physika
