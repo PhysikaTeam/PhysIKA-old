@@ -13,7 +13,7 @@
  */
 
 #include <iostream>
-#include "matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_2x2.h"
 using namespace std;
 
 int main()

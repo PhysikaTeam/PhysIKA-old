@@ -16,8 +16,8 @@
 #define PHYSIKA_MATRICES_MATRIX_2X2_H_
 
 #include <iostream>
-#include "utilities/global_config.h"
-#include "matrices/matrix_base.h"
+#include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
 
