@@ -1,7 +1,7 @@
 /*
- * @file math_constants.h 
- * @brief This file is used to define math constants frequently used in Physika.
- * @author FeiZhu
+ * @file vector_base.h 
+ * @brief Base class of vectors, all vectors inherite from this class.
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -11,14 +11,3 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
-
-#ifndef PHYSIKA_CORE_UTILITIES_MATH_CONSTANTS_H_
-#define PHYSIKA_CORE_UTILITIES_MATH_CONSTANTS_H_
-
-namespace Physika{
-
-  const double PI = 3.141592653589793;
-
-}
-
-#endif //PHYSIKA_CORE_UTILITIES_MATH_CONSTANTS_H_

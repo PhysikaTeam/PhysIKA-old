@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_UTILITIES_GLOBAL_CONFIG_H_
-#define PHYSIKA_UTILITIES_GLOBAL_CONFIG_H_
+#ifndef PHYSIKA_CORE_UTILITIES_GLOBAL_CONFIG_H_
+#define PHYSIKA_CORE_UTILITIES_GLOBAL_CONFIG_H_
 
 namespace Physika{
 
@@ -28,4 +28,4 @@ namespace Physika{
 #include "Physika_Core/Eigen/Eigen"
 #endif
 
-#endif //PHYSIKA_UTILITIES_GLOBAL_CONFIG_H_
+#endif //PHYSIKA_CORE_UTILITIES_GLOBAL_CONFIG_H_

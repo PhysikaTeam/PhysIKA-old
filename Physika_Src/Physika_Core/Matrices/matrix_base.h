@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_MATRICES_MATRIX_BASE_H_
-#define PHYSIKA_MATRICES_MATRIX_BASE_H_
+#ifndef PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
+#define PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
 
 namespace Physika{
 
@@ -30,4 +30,4 @@ class MatrixBase
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_MATRICES_MATRIX_BASE_H_
+#endif //PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_

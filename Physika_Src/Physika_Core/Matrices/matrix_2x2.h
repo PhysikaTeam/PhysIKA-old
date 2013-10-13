@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_MATRICES_MATRIX_2X2_H_
-#define PHYSIKA_MATRICES_MATRIX_2X2_H_
+#ifndef PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
+#define PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
 
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Matrices/matrix_base.h"
@@ -63,4 +63,4 @@ std::ostream& operator<< (std::ostream &s, const Matrix2x2<Scalar> &mat)
  
 }  //end of namespace Physika
 
-#endif //PHYSIKA_MATRICES_MATRIX_2X2_H_
+#endif //PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
