@@ -28,18 +28,17 @@ public:
   Matrix2x2();
   Matrix2x2(const Scalar x00, const Scalar x01, const Scalar x10, const Scalar x11);
   ~Matrix2x2();
-  inline int rows const(){return 2};
-  inline int cols const(){return 2};
-  Scalar& operator() (const int i, const int j);
-  Matrix2x2<Scalar> operator+ (const Matrix2x2<Scalar> &);
-  Matrix2x2<Scalar> operator- (const Matrix2x2<Scalar> &);
+  inline int rows() const{return 2;}
+  inline int cols() const{return 2;}
+  Scalar& operator() (int i, int j);
+  const Scalar& operator() (int i, int j) const;
+  Matrix2x2<Scalar> operator+ (const Matrix2x2<Scalar> &) const;
+  Matrix2x2<Scalar> operator- (const Matrix2x2<Scalar> &) const;
   Matrix2x2<Scalar>& operator= (const Matrix2x2<Scalar> &);
-  Matrix2x2<Scalar> operator* (const Scalar);
-  Matrix2x2<Scalar> operator/ (const Scalar);
-  Matrix2x2<Scalar> transpose();
-  Matrix2x2<Scalar> inverse();
-
-  friend std::ostream &operator<< (std::ostream &, const Matrix2x2<Scalar> &);
+  Matrix2x2<Scalar> operator* (Scalar) const;
+  Matrix2x2<Scalar> operator/ (Scalar) const;
+  Matrix2x2<Scalar> transpose() const;
+  Matrix2x2<Scalar> inverse() const;
  
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX

@@ -21,11 +21,11 @@ namespace Physika{
 #define PHYSIKA_USE_EIGEN_MATRIX
 #define PHYSIKA_USE_EIGEN_VECTOR
 
+}  //end of namespace Physika
+
 //include necessary header files with different configurations
 #if defined(PHYSIKA_USE_EIGEN_MATRIX)||defined(PHYSIKA_USE_EIGEN_VECTOR)
-#include "Eigen/Eigen"
+#include "Physika_Core/Eigen/Eigen"
 #endif
-
-}
 
 #endif //PHYSIKA_UTILITIES_GLOBAL_CONFIG_H_

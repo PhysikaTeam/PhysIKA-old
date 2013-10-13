@@ -1,0 +1,7 @@
+# Top-level Makefile header for Physika
+# global configuration
+# Author: Fei Zhu
+
+CXX=g++
+CXXFLAGS=-Wall -Wno-write-strings -O2
+RM=rm -f
