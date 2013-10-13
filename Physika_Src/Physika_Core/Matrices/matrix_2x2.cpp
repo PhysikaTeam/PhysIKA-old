@@ -131,6 +131,6 @@ std::ostream &operator<< (std::ostream &s, const Matrix2x2<Scalar> &mat)
 
 //explicit instantiation of template so that it could be compiled into a lib
 template class Matrix2x2<float>;
-  //template class Matrix2x2<double>;
+template class Matrix2x2<double>;
 
 }  //end of namespace Physika
