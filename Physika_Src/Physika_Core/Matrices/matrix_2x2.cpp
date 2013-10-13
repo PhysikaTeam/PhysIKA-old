@@ -12,6 +12,7 @@
  *
  */
 
+#include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 
 namespace Physika{
@@ -121,13 +122,6 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::inverse() const
 #endif PHYSIKA_USE_EIGEN_MATRIX
 }
 
-template <typename Scalar>
-std::ostream &operator<< (std::ostream &s, const Matrix2x2<Scalar> &mat)
-{
-  s<<mat(0,0)<<", "<<mat(0,1)<<std::endl;
-  s<<mat(1,0)<<", "<<mat(1,1)<<std::endl;
-  return s;
-}
 
 //explicit instantiation of template so that it could be compiled into a lib
 template class Matrix2x2<float>;

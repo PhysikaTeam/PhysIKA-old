@@ -15,7 +15,6 @@
 #ifndef PHYSIKA_MATRICES_MATRIX_2X2_H_
 #define PHYSIKA_MATRICES_MATRIX_2X2_H_
 
-#include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
@@ -46,6 +45,15 @@ protected:
 #endif
 
 };
+
+//overriding << for Matrix2x2
+template <typename Scalar>
+std::ostream& operator<< (std::ostream &s, const Matrix2x2<Scalar> &mat)
+{
+  s<<mat(0,0)<<", "<<mat(0,1)<<std::endl;
+  s<<mat(1,0)<<", "<<mat(1,1)<<std::endl;
+  return s;
+}
  
 }  //end of namespace Physika
 
