@@ -32,12 +32,18 @@ public:
   Scalar& operator() (int i, int j);
   const Scalar& operator() (int i, int j) const;
   Matrix2x2<Scalar> operator+ (const Matrix2x2<Scalar> &) const;
+  Matrix2x2<Scalar>& operator+= (const Matrix2x2<Scalar> &);
   Matrix2x2<Scalar> operator- (const Matrix2x2<Scalar> &) const;
+  Matrix2x2<Scalar>& operator-= (const Matrix2x2<Scalar> &);
   Matrix2x2<Scalar>& operator= (const Matrix2x2<Scalar> &);
+  bool operator== (const Matrix2x2<Scalar> &) const;
   Matrix2x2<Scalar> operator* (Scalar) const;
+  Matrix2x2<Scalar>& operator*= (Scalar);
   Matrix2x2<Scalar> operator/ (Scalar) const;
+  Matrix2x2<Scalar>& operator/= (Scalar);
   Matrix2x2<Scalar> transpose() const;
   Matrix2x2<Scalar> inverse() const;
+  Scalar determinant() const;
  
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
