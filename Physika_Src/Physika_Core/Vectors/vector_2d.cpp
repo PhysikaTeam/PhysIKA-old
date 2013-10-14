@@ -12,6 +12,7 @@
  *
  */
 
+#include <cmath>
 #include "Physika_Core/Vectors/vector_2d.h"
 
 namespace Physika{
@@ -142,6 +143,26 @@ Vector2D<Scalar>& Vector2D<Scalar>::operator/= (Scalar scale)
 {
   for(int i = 0; i < 2; ++i)
     (*this)[i] = (*this)[i] / scale;
+  return *this;
+}
+
+template <typename Scalar>
+Scalar Vector2D<Scalar>::norm() const
+{
+  Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1];
+  result = sqrt(result);
+  return result;
+}
+
+template <typename Scalar>
+Vector2D<Scalar>& Vector2D<Scalar>::normalize()
+{
+  Scalar norm = (*this).norm();
+  if(norm)
+  {
+    for(int i = 0; i < 2; ++i)
+      (*this)[i] = (*this)[i] / norm;
+  }
   return *this;
 }
 

@@ -41,6 +41,8 @@ class Vector2D: public VectorBase<Scalar,2>
   Vector2D<Scalar>& operator*= (Scalar);
   Vector2D<Scalar> operator/ (Scalar) const;
   Vector2D<Scalar>& operator/= (Scalar);
+  Scalar norm() const;
+  Vector2D<Scalar>& normalize();
 
  protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
