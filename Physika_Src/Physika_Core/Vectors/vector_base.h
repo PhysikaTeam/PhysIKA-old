@@ -11,3 +11,22 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
+
+#ifndef PHYSIKA_CORE_VECTORS_VECTOR_BASE_H_
+#define PHSYIKA_CORE_VECTORS_VECTOR_BASE_H_
+
+namespace Physika{
+
+template <typename Scalar, int Dims>
+class VectorBase
+{
+ public:
+  VectorBase(){};
+  ~VectorBase(){};
+  virtual int dims() const=0;
+ protected:
+};
+
+}  //end of namespace Physika
+
+#endif //PHSYIKA_CORE_VECTORS_VECTOR_BASE_H_

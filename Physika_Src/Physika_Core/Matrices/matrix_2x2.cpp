@@ -12,7 +12,6 @@
  *
  */
 
-#include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 
 namespace Physika{
@@ -23,7 +22,7 @@ Matrix2x2<Scalar>::Matrix2x2()
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>::Matrix2x2(const Scalar x00, const Scalar x01, const Scalar x10, const Scalar x11)
+Matrix2x2<Scalar>::Matrix2x2(Scalar x00, Scalar x01, Scalar x10, Scalar x11)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
   eigen_matrix_2x2_(0,0) = x00;
