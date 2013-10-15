@@ -11,12 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0DB4D691-82F5-406F-98CA-719646762AC6}</ProjectGuid>
-    <RootNamespace>Physika_Core</RootNamespace>
+    <ProjectGuid>{18977952-DA45-4C0A-AF84-DFB68009021B}</ProjectGuid>
+    <RootNamespace>APP_Physika</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -37,20 +37,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\..\Public_Library\lib\</OutDir>
+    <OutDir>..\bin\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\Physika_Src\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Public_Library\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Physika_Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\Public_Library\lib\</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>XCopy ..\..\..\Physika_Src\Physika_Core ..\..\..\Public_Library\include\Physika_Core /S/Y/D/I</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -66,19 +65,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cpp" />
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_2d.cpp" />
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_3x3.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_base.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\global_config.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\math_constants.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_2d.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_base.h" />
+    <ClCompile Include="vector3d_test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
