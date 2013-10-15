@@ -21,6 +21,9 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_2d.cpp">
       <Filter>Vectors</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.cpp">
+      <Filter>Vectors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h">
@@ -43,6 +46,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\math_constants.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.h">
+      <Filter>Vectors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
