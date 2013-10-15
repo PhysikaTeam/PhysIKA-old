@@ -59,7 +59,7 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::operator+ (const Matrix2x2<Scalar> &mat2) c
   Scalar result[4];
   for(int i = 0; i < 2; ++i)
     for(int j = 0; j < 2; ++j)
-      result[i+2*j] = (*this)(i,j) + mat2(i,j);
+      result[i*2+j] = (*this)(i,j) + mat2(i,j);
   return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
@@ -78,7 +78,7 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::operator- (const Matrix2x2<Scalar> &mat2) c
   Scalar result[4];
   for(int i = 0; i < 2; ++i)
     for(int j = 0; j < 2; ++j)
-      result[i+2*j] = (*this)(i,j) - mat2(i,j);
+      result[i*2+j] = (*this)(i,j) - mat2(i,j);
   return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
@@ -116,7 +116,7 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::operator* (Scalar scale) const
   Scalar result[4];
   for(int i = 0; i < 2; ++i)
     for(int j = 0; j < 2; ++j)
-      result[i+2*j] = (*this)(i,j) * scale;
+      result[i*2+j] = (*this)(i,j) * scale;
   return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
@@ -135,7 +135,7 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::operator/ (Scalar scale) const
   Scalar result[4];
   for(int i = 0; i < 2; ++i)
     for(int j = 0; j < 2; ++j)
-      result[i+2*j] = (*this)(i,j) / scale;
+      result[i*2+j] = (*this)(i,j) / scale;
   return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
@@ -154,7 +154,7 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::transpose() const
   Scalar result[4];
   for(int i = 0; i < 2; ++i)
     for(int j = 0; j< 2; ++j)
-      result[i+2*j] = (*this)(j,i);
+      result[i*2+j] = (*this)(j,i);
   return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
