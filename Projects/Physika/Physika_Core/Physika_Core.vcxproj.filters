@@ -24,6 +24,9 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.cpp">
       <Filter>Vectors</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h">

@@ -24,7 +24,7 @@ int main()
   cout<<"A 2x2 matrix of double numbers:"<<endl;
   cout<<mat_double;
   cout<<"Rows: "<<mat_double.rows()<<" Cols: "<<mat_double.cols()<<endl;
-  Matrix2x2<double> mat_double2(0.0,1.0,1.0,0.0);
+  Matrix2x2<double> mat_double2(0.0,1.0,3.0,0.0);
   cout<<"Another 2x2 matrix of double numbers:"<<endl;
   cout<<mat_double2;
   cout<<"matrix1 add matrix2: (+)"<<endl;
@@ -57,5 +57,8 @@ int main()
   cout<<mat_double.inverse()<<endl;
   cout<<"matrix1 determinant:"<<endl;
   cout<<mat_double.determinant()<<endl;
+
+  int a;
+  cin>>a;
   return 0;
 }

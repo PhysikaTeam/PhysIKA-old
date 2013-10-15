@@ -67,6 +67,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_2d.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.cpp" />
   </ItemGroup>
