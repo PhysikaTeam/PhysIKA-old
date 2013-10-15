@@ -1,6 +1,6 @@
 /*
- * @file particle.cpp 
- * @Basic particle class.
+ * @file glut_window.cpp 
+ * @Basic framework of the simulation, it can be used alone to create a simulation framework
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,18 +12,20 @@
  *
  */
 
-#include "Physika_Dynamics/Particle/particle.h"
+#include "Physika_GUI/Glut/glut_window.h"
 
 namespace Physika{
 
-Particle::Particle()
+Glut_Window::Glut_Window()
 {
 
 }
 
-Particle::~Particle()
+
+Glut_Window::~Glut_Window()
 {
 
 }
 
 } //end of namespace Physika
+

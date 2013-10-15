@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Image">
+      <UniqueIdentifier>{a27f3e5b-3f95-4c0d-869e-8081ff8e4f36}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_IO\Image\image_io.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_IO\Image\image_io.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

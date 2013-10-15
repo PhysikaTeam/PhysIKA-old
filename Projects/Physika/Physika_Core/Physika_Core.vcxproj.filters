@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Eigen">
+      <UniqueIdentifier>{95d78b44-c242-4475-a5c3-766850a3620e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Matrices">
+      <UniqueIdentifier>{b32484f7-7955-40d1-8708-fdcb5d0a0273}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{2e650e78-834a-446b-a4e3-7c07aba6adc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vectors">
+      <UniqueIdentifier>{af1c7459-b3ab-45b1-815f-d28f1eed859d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_2d.cpp">
+      <Filter>Vectors</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_3x3.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_base.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_2d.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_base.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\global_config.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\math_constants.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

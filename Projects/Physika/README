@@ -1,0 +1,7 @@
+1. This directory contains .sln files to build the projects in vs2010
+2. And later it would be replace by the CMakelists as soon as the CMake is practical.
+3. clean_tempfile.bat gives you a way to delete all the temp files when VS builds. 
+
+4. ******Remember to run the clean when you update the projects******.
+
+

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Point_Render">
+      <UniqueIdentifier>{b1a0937f-b29b-408c-bd3a-37eaf93e1c7a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Render\Point_Render\Point_Render.h">
+      <Filter>Point_Render</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Render\Point_Render\Point_Render.cpp">
+      <Filter>Point_Render</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

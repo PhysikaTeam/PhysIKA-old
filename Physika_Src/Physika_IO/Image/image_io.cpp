@@ -1,6 +1,6 @@
 /*
- * @file particle.cpp 
- * @Basic particle class.
+ * @file image_io.cpp 
+ * @Basic image_io class, it is used to import image files such as bmp etc.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,16 +12,16 @@
  *
  */
 
-#include "Physika_Dynamics/Particle/particle.h"
+#include "Physika_IO/Image/image_io.h"
 
 namespace Physika{
-
-Particle::Particle()
+	
+Image_IO::Image_IO()
 {
-
+	//int a;
 }
 
-Particle::~Particle()
+Image_IO::~Image_IO()
 {
 
 }

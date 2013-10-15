@@ -1,6 +1,6 @@
 /*
- * @file particle.cpp 
- * @Basic particle class.
+ * @file point_render.cpp 
+ * @Basic render of point, it is used to draw the simulate result.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,16 +12,16 @@
  *
  */
 
-#include "Physika_Dynamics/Particle/particle.h"
+#include "Physika_Render/Point_Render/Point_Render.h"
 
 namespace Physika{
-
-Particle::Particle()
+	
+Point_Render::Point_Render()
 {
-
+	//int a;
 }
 
-Particle::~Particle()
+Point_Render::~Point_Render()
 {
 
 }

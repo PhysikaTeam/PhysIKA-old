@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Particle">
+      <UniqueIdentifier>{c3f3a2cc-e1f6-4a6e-a996-a67b93508cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integrator">
+      <UniqueIdentifier>{b00e24cf-56ae-446e-8572-f0e45f6687eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rigid_Body">
+      <UniqueIdentifier>{fc87a2fa-4b0d-4ef2-b914-93f53b1e585e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Particle\particle.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Integrator\integrator_base.cpp">
+      <Filter>Integrator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.cpp">
+      <Filter>Rigid_Body</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Particle\particle.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Integrator\integrator_base.h">
+      <Filter>Integrator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.h">
+      <Filter>Rigid_Body</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

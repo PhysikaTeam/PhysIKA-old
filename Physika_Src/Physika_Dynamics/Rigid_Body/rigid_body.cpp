@@ -1,6 +1,6 @@
 /*
- * @file particle.cpp 
- * @Basic particle class.
+ * @file rigid_body.cpp 
+ * @Basic rigid_body class.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,16 +12,16 @@
  *
  */
 
-#include "Physika_Dynamics/Particle/particle.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body.h"
 
 namespace Physika{
 
-Particle::Particle()
+Rigid_Body::Rigid_Body()
 {
 
 }
 
-Particle::~Particle()
+Rigid_Body::~Rigid_Body()
 {
 
 }

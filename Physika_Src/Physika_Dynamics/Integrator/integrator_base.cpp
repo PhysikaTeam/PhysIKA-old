@@ -1,6 +1,6 @@
 /*
- * @file particle.cpp 
- * @Basic particle class.
+ * @file integrator_base.cpp 
+ * @Basic integrator class.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,16 +12,16 @@
  *
  */
 
-#include "Physika_Dynamics/Particle/particle.h"
+#include "Physika_Dynamics/Integrator/integrator_base.h"
 
 namespace Physika{
 
-Particle::Particle()
+Integrator_Base::Integrator_Base()
 {
 
 }
 
-Particle::~Particle()
+Integrator_Base::~Integrator_Base()
 {
 
 }

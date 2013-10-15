@@ -1,6 +1,6 @@
 /*
- * @file particle.cpp 
- * @Basic particle class.
+ * @file mesh.cpp 
+ * @Basic mesh class.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,16 +12,16 @@
  *
  */
 
-#include "Physika_Dynamics/Particle/particle.h"
+#include "Physika_Geometry/Mesh/mesh.h"
 
 namespace Physika{
-
-Particle::Particle()
+	
+Mesh::Mesh()
 {
-
+	//int a;
 }
 
-Particle::~Particle()
+Mesh::~Mesh()
 {
 
 }
