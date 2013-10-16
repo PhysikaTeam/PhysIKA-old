@@ -68,8 +68,8 @@
     <ClCompile Include="..\..\TESTS\matrix2x2_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="matrix3x3_test.cpp" />
-    <ClCompile Include="vector3d_test.cpp">
+    <ClCompile Include="..\..\TESTS\matrix3x3_test.cpp" />
+    <ClCompile Include="..\..\TESTS\vector3d_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>

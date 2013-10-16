@@ -17,13 +17,13 @@
 
 namespace Physika{
 
-	class Integrator_Base
-	{
-	public:
-		Integrator_Base();
-		~Integrator_Base();
-	protected:
-	};
+class Integrator_Base
+{
+public:
+	Integrator_Base();
+	~Integrator_Base();
+protected:
+};
 
 } //end of namespace Physika
 

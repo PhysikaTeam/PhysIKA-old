@@ -17,13 +17,13 @@
 
 namespace Physika{
 
-	class Rigid_Body
-	{
-	public:
-		Rigid_Body();
-		~Rigid_Body();
-	protected:
-	};
+class Rigid_Body
+{
+public:
+	Rigid_Body();
+	~Rigid_Body();
+protected:
+};
 
 } //end of namespace Physika
 

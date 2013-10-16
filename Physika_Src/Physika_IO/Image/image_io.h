@@ -16,13 +16,13 @@
 #define PHYSIKA_IO_IMAGE_IMAGE_IO_H_
 
 namespace Physika{
-	class Image_IO
-	{
-	public:
-		Image_IO();
-		~Image_IO();
-	protected:
-	};
+class Image_IO
+{
+public:
+	Image_IO();
+	~Image_IO();
+protected:
+};
 } //end of namespace Physika
 
 #endif //PHYSIKA_IO_IMAGE_IMAGE_IO_H_

@@ -20,44 +20,44 @@
 
 namespace Physika{
 
-	template <typename Scalar>
-	class Vector3D: public VectorBase<Scalar,3>
-	{
-	public:
-		Vector3D();
-		Vector3D(Scalar x, Scalar y, Scalar z);
-		Vector3D(Scalar);
-		~Vector3D();
-		inline int dims() const{return 3;}
-		Scalar& operator[] (int);
-		const Scalar& operator[] (int) const;
-		Vector3D<Scalar> operator+ (const Vector3D<Scalar> &) const;
-		Vector3D<Scalar>& operator+= (const Vector3D<Scalar> &);
-		Vector3D<Scalar> operator- (const Vector3D<Scalar> &) const;
-		Vector3D<Scalar>& operator-= (const Vector3D<Scalar> &);
-		Vector3D<Scalar>& operator= (const Vector3D<Scalar> &);
-		bool operator== (const Vector3D<Scalar> &) const;
-		Vector3D<Scalar> operator* (Scalar) const;
-		Vector3D<Scalar>& operator*= (Scalar);
-		Vector3D<Scalar> operator/ (Scalar) const;
-		Vector3D<Scalar>& operator/= (Scalar);
-		Scalar norm() const;
-		Vector3D<Scalar>& normalize();
+template <typename Scalar>
+class Vector3D: public VectorBase<Scalar,3>
+{
+public:
+	Vector3D();
+	Vector3D(Scalar x, Scalar y, Scalar z);
+	Vector3D(Scalar);
+	~Vector3D();
+	inline int dims() const{return 3;}
+	Scalar& operator[] (int);
+	const Scalar& operator[] (int) const;
+	Vector3D<Scalar> operator+ (const Vector3D<Scalar> &) const;
+	Vector3D<Scalar>& operator+= (const Vector3D<Scalar> &);
+	Vector3D<Scalar> operator- (const Vector3D<Scalar> &) const;
+	Vector3D<Scalar>& operator-= (const Vector3D<Scalar> &);
+	Vector3D<Scalar>& operator= (const Vector3D<Scalar> &);
+	bool operator== (const Vector3D<Scalar> &) const;
+	Vector3D<Scalar> operator* (Scalar) const;
+	Vector3D<Scalar>& operator*= (Scalar);
+	Vector3D<Scalar> operator/ (Scalar) const;
+	Vector3D<Scalar>& operator/= (Scalar);
+	Scalar norm() const;
+	Vector3D<Scalar>& normalize();
 
-	protected:
+protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-		Eigen::Matrix<Scalar,3,1> eigen_vector_3x_;
+	Eigen::Matrix<Scalar,3,1> eigen_vector_3x_;
 #endif
 
-	};
+};
 
-	//overriding << for vector3D
-	template <typename Scalar>
-	std::ostream& operator<< (std::ostream &s, const Vector3D<Scalar> &vec)
-	{
-		s<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<std::endl;
-		return s;
-	}
+//overriding << for vector3D
+template <typename Scalar>
+std::ostream& operator<< (std::ostream &s, const Vector3D<Scalar> &vec)
+{
+	s<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<std::endl;
+	return s;
+}
 
 } //end of namespace Physika
 
