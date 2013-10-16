@@ -9,7 +9,7 @@ PHYSIKA_PUBLIC_DIR=$(PHYSIKA_ROOT_DIR)/Public_Library
 include $(PHYSIKA_ROOT_DIR)/Makefile_header
 
 # headers in this library
-VECTORS_HEADERS=vector_base.h vector_2d.h vector_3d.h
+VECTORS_HEADERS=vector_base.h vector_2d.h vector_3d.h vector.h
 
 # additional headers that this library denpend on
 ADDITIONAL_HEADERS=../Utilities/global_config.h
