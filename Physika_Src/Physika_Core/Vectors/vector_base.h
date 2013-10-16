@@ -13,7 +13,7 @@
  */
 
 #ifndef PHYSIKA_CORE_VECTORS_VECTOR_BASE_H_
-#define PHSYIKA_CORE_VECTORS_VECTOR_BASE_H_
+#define PHYSIKA_CORE_VECTORS_VECTOR_BASE_H_
 
 namespace Physika{
 
@@ -29,4 +29,4 @@ class VectorBase
 
 }  //end of namespace Physika
 
-#endif //PHSYIKA_CORE_VECTORS_VECTOR_BASE_H_
+#endif //PHYSIKA_CORE_VECTORS_VECTOR_BASE_H_
