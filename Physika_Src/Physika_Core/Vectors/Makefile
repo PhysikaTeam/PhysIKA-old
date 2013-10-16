@@ -9,7 +9,7 @@ PHYSIKA_PUBLIC_DIR=$(PHYSIKA_ROOT_DIR)/Public_Library
 include $(PHYSIKA_ROOT_DIR)/Makefile_header
 
 # headers in this library
-VECTORS_HEADERS=vector_base.h vector_2d.h
+VECTORS_HEADERS=vector_base.h vector_2d.h vector_3d.h
 
 # additional headers that this library denpend on
 ADDITIONAL_HEADERS=../Utilities/global_config.h
@@ -24,7 +24,7 @@ cp $(VECTORS_HEADERS) $(TARGET_HEADERS_DIR)
 endef
 
 # object files to be compiled for this library
-VECTORS_OBJECTS=vector_2d.o
+VECTORS_OBJECTS=vector_2d.o vector_3d.o
 
 # target name of this library
 TARGET=libvectors.a

@@ -9,7 +9,7 @@ PHYSIKA_PUBLIC_DIR=$(PHYSIKA_ROOT_DIR)/Public_Library
 include $(PHYSIKA_ROOT_DIR)/Makefile_header
 
 # headers in this library
-MATRICES_HEADERS=matrix_base.h matrix_2x2.h
+MATRICES_HEADERS=matrix_base.h matrix_2x2.h matrix_3x3.h
 
 # additional headers that this library denpend on
 ADDITIONAL_HEADERS=../Utilities/global_config.h
@@ -24,7 +24,7 @@ cp $(MATRICES_HEADERS) $(TARGET_HEADERS_DIR)
 endef
 
 # object files to be compiled for this library
-MATRICES_OBJECTS=matrix_2x2.o
+MATRICES_OBJECTS=matrix_2x2.o matrix_3x3.o
 
 # target name of this library
 TARGET=libmatrices.a
