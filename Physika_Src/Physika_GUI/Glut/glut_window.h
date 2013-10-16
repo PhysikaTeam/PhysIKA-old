@@ -16,13 +16,13 @@
 #define PHYSIKA_GUI_GLUT_GLUT_WINDOW_H_
 
 namespace Physika{
-	class Glut_Window
-	{
-	public:
-		Glut_Window();
-		~Glut_Window();
-	protected:
-	};
+class Glut_Window
+{
+public:
+	Glut_Window();
+	~Glut_Window();
+protected:
+};
 } //end of namespace Physika
 
 #endif //PHYSIKA_GUI_GLUT_GLUT_WINDOW_H_

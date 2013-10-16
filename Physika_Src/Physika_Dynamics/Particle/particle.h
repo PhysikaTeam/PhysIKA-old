@@ -17,13 +17,13 @@
 
 namespace Physika{
 
-	class Particle
-	{
-	public:
-		Particle();
-		~Particle();
-	protected:
-	};
+class Particle
+{
+public:
+	Particle();
+	~Particle();
+protected:
+};
 
 } //end of namespace Physika
 
