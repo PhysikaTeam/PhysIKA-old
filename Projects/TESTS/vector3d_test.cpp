@@ -14,11 +14,19 @@
 
 #include <iostream>
 #include "Physika_Core/Vectors/vector_3d.h"
+//#include "Physika_Core/Vectors/vector.h"
 using namespace std;
 using Physika::Vector3D;
 
 int main()
 {
+
+  /*
+  Physika::Type::Vector2f dd;
+  Physika::Type::Vector3f dd1;
+  Physika::Type::Vector2d dd2;
+  Physika::Type::Vector3d dd3;
+  */
 
   cout<<"Vector3D Test"<<endl;
   Vector3D<double> vec_double(2.0,1.0,3.0);

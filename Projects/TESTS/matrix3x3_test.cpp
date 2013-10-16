@@ -14,23 +14,16 @@
 
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_3x3.h"
-#include "Physika_Core/Matrices/matrix.h"
-#include "Physika_core/Vectors/vector.h"
+//#include "Physika_Core/Matrices/matrix.h"
 using namespace std;
 using Physika::Matrix3x3;
 
 int main()
 {
-  /*
-  Physika::Type::Vector2f dd;
-  Physika::Type::Vector3f dd1;
-  Physika::Type::Vector2d dd2;
-  Physika::Type::Vector3d dd3;
-  Physika::Type::Matrix2d mm;
-  Physika::Type::Matrix3d mm1;
-  Physika::Type::Matrix2f mm2;
-  Physika::Type::Matrix3f mm3;
-  */
+  //Physika::Type::Matrix2d mm;
+  //Physika::Type::Matrix3d mm1;
+  //Physika::Type::Matrix2f mm2;
+  //Physika::Type::Matrix3f mm3;
 
   cout<<"Matrix3x3 Test"<<endl;
   Matrix3x3<double> mat_double(3.0, 1.0,1.0,3.0,3,0,1.0,3.0,3.0);

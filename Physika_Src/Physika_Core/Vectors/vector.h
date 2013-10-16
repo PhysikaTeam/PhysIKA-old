@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_MATRICES_VECTOR_H_
-#define PHYSIKA_CORE_MATRICES_VECTOR_H_
+#ifndef PHYSIKA_CORE_VECTORS_VECTOR_H_
+#define PHYSIKA_CORE_VECTORS_VECTOR_H_
 
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -31,4 +31,4 @@ namespace Type{
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_CORE_MATRICES_VECTOR_H_
+#endif //PHYSIKA_CORE_VECTORS_VECTOR_H_
