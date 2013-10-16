@@ -1,6 +1,6 @@
 /*
- * @file mesh.h 
- * @Basic mesh class.
+ * @file surface_mesh.h 
+ * @Basic surface mesh class.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,17 +12,17 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_MESH_MESH_H_
-#define PHYSIKA_GEOMETRY_MESH_MESH_H_
+#ifndef PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
+#define PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
 
 namespace Physika{
-class Mesh
+class SurfaceMesh
 {
 public:
-	Mesh();
-	~Mesh();
+	SurfaceMesh();
+	~SurfaceMesh();
 protected:
 };
 } //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_MESH_MESH_H_
+#endif //PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_

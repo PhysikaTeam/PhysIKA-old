@@ -1,6 +1,6 @@
 /*
- * @file mesh.cpp 
- * @Basic mesh class.
+ * @file surface_mesh.cpp 
+ * @Basic surface mesh class.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,16 +12,16 @@
  *
  */
 
-#include "Physika_Geometry/Mesh/mesh.h"
+#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 
 namespace Physika{
 	
-Mesh::Mesh()
+SurfaceMesh::SurfaceMesh()
 {
 	//int a;
 }
 
-Mesh::~Mesh()
+SurfaceMesh::~SurfaceMesh()
 {
 
 }
