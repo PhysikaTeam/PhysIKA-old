@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_3x3.h"
-//#include "Physika_Core/Matrices/matrix.h"
+#include "Physika_Core/Matrices/matrix.h"
 using namespace std;
 using Physika::Matrix3x3;
 

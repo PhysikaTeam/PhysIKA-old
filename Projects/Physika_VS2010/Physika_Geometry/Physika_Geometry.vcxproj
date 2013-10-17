@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Geometry\Mesh\mesh.h" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\surface_mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Geometry\Mesh\mesh.cpp" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\surface_mesh.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F72C7C8B-CBD2-42AA-973C-420B8A3A25EC}</ProjectGuid>
