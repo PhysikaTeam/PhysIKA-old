@@ -22,12 +22,12 @@ namespace Physika{
 
 namespace Type{
 
-	typedef Matrix2x2<float> Matrix2f;
-	typedef Matrix2x2<double> Matrix2d;
+typedef Matrix2x2<float> Matrix2f;
+typedef Matrix2x2<double> Matrix2d;
 
-	typedef Matrix3x3<float> Matrix3f;
-	typedef Matrix3x3<double> Matrix3d;
-}
+typedef Matrix3x3<float> Matrix3f;
+typedef Matrix3x3<double> Matrix3d;
+}  //end of namespace TYPE
 
 }  //end of namespace Physika
 
