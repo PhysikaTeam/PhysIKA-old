@@ -7,7 +7,7 @@ PHYSIKA_PUBLIC_DIR=$(PHYSIKA_ROOT_DIR)/Public_Library
 
 include $(PHYSIKA_ROOT_DIR)/Makefile_header
 
-physika_core: matrices_in_core vectors_in_core utilities_in_core eigen_in_core
+physika_core: matrices_in_core vectors_in_core utilities_in_core
 
 matrices_in_core: utilities_in_core
 	cd ./Matrices; make
@@ -15,13 +15,8 @@ matrices_in_core: utilities_in_core
 vectors_in_core: utilities_in_core
 	cd ./Vectors; make
 
-utilities_in_core: eigen_in_core
+utilities_in_core: 
 	cd ./Utilities; make
-
-.PHONY: eigen_in_core
-eigen_in_core:
-	mkdir -p $(PHYSIKA_PUBLIC_DIR)/include/Physika_Core 
-	cp -r ./Eigen $(PHYSIKA_PUBLIC_DIR)/include/Physika_Core
 
 .PHONY: cleanall
 cleanall:

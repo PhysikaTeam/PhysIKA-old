@@ -25,7 +25,7 @@ namespace Physika{
 
 //include necessary header files with different configurations
 #if defined(PHYSIKA_USE_EIGEN_MATRIX)||defined(PHYSIKA_USE_EIGEN_VECTOR)
-#include "Physika_Core/Eigen/Eigen"
+#include "Physika_Dependency/Eigen/Eigen"
 #endif
 
 #endif //PHYSIKA_CORE_UTILITIES_GLOBAL_CONFIG_H_
