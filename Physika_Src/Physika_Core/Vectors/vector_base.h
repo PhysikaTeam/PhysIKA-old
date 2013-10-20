@@ -17,7 +17,6 @@
 
 namespace Physika{
 
-template <typename Scalar, int Dims>
 class VectorBase
 {
  public:

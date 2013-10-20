@@ -16,6 +16,7 @@
 #include "Physika_Core/Matrices/matrix_2x2.h"
 using namespace std;
 using Physika::Matrix2x2;
+using Physika::MatrixBase;
 
 int main()
 {
@@ -24,6 +25,9 @@ int main()
   cout<<"A 2x2 matrix of double numbers:"<<endl;
   cout<<mat_double;
   cout<<"Rows: "<<mat_double.rows()<<" Cols: "<<mat_double.cols()<<endl;
+  MatrixBase *base_pointer = &mat_double;
+  cout<<"Test polymorphism, rows from MatrixBase pointer: "<<base_pointer->rows()<<endl;
+  cout<<"Test polymorphism, cols from MatrixBase pointer: "<<base_pointer->cols()<<endl;
   Matrix2x2<double> mat_double2(0.0,1.0,3.0,0.0);
   cout<<"Another 2x2 matrix of double numbers:"<<endl;
   cout<<mat_double2;
@@ -58,7 +62,5 @@ int main()
   cout<<"matrix1 determinant:"<<endl;
   cout<<mat_double.determinant()<<endl;
 
-  int a;
-  cin>>a;
   return 0;
 }

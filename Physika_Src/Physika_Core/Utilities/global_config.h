@@ -20,11 +20,12 @@ namespace Physika{
 //global maros to configurate Physika
 #define PHYSIKA_USE_EIGEN_MATRIX
 #define PHYSIKA_USE_EIGEN_VECTOR
+#define PHYSIKA_USE_EIGEN_SPARSE_MATRIX
 
 }  //end of namespace Physika
 
 //include necessary header files with different configurations
-#if defined(PHYSIKA_USE_EIGEN_MATRIX)||defined(PHYSIKA_USE_EIGEN_VECTOR)
+#if defined(PHYSIKA_USE_EIGEN_MATRIX)||defined(PHYSIKA_USE_EIGEN_VECTOR)||defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 #include "Physika_Dependency/Eigen/Eigen"
 #endif
 

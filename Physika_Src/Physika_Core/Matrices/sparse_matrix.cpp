@@ -1,6 +1,6 @@
 /*
- * @file matrix_base.h 
- * @brief Base class of matrices, all matrices inherite from this class.
+ * @file sparse_matrix.cpp 
+ * @brief Definition of sparse matrix, size of the matrix is dynamic.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,21 +12,7 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
-#define PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
+#include "Physika_Core/Matrices/sparse_matrix.h"
 
 namespace Physika{
-
-class MatrixBase
-{
- public:
-  MatrixBase(){};
-  ~MatrixBase(){};
-  virtual int rows() const=0;
-  virtual int cols() const=0;
- protected:
-};
-
 }  //end of namespace Physika
-
-#endif //PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_

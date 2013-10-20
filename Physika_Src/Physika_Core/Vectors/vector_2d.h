@@ -21,7 +21,7 @@
 namespace Physika{
 
 template <typename Scalar>
-class Vector2D: public VectorBase<Scalar,2>
+class Vector2D: public VectorBase
 {
  public:
   Vector2D();

@@ -21,7 +21,7 @@
 namespace Physika{
 
 template <typename Scalar>
-class Matrix2x2: public MatrixBase<Scalar,2,2>
+class Matrix2x2: public MatrixBase
 {
 public:
   Matrix2x2();
