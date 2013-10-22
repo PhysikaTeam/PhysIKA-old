@@ -49,10 +49,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>XCopy ..\..\..\Physika_Src\Physika_Core ..\..\..\Public_Library\include\Physika_Core /S/Y/D/I</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>XCopy ..\..\..\Physika_Src\Physika_Dependency\Eigen ..\..\..\Public_Library\include\Physika_Dependency\Eigen /S/Y/D/I</Command>
+      <Command>XCopy ..\..\..\Physika_Src\Physika_Dependency\Eigen ..\..\..\Public_Library\include\Physika_Dependency\Eigen /S/Y/D/I
+XCopy ..\..\..\Physika_Src\Physika_Core ..\..\..\Public_Library\include\Physika_Core /S/Y/D/I</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

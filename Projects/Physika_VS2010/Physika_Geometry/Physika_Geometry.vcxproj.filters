@@ -9,9 +9,27 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\surface_mesh.cpp">
       <Filter>Surface_Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\vertex.cpp">
+      <Filter>Surface_Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\edge.cpp">
+      <Filter>Surface_Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\triangle.cpp">
+      <Filter>Surface_Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\surface_mesh.h">
+      <Filter>Surface_Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\vertex.h">
+      <Filter>Surface_Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\edge.h">
+      <Filter>Surface_Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\triangle.h">
       <Filter>Surface_Mesh</Filter>
     </ClInclude>
   </ItemGroup>

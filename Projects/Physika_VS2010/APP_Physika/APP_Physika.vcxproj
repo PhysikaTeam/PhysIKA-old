@@ -47,7 +47,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Physika_Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Physika_Core.lib;Physika_Geometry.lib;Physika_Dynamics.lib;Physika_GUI.lib;Physika_IO.lib;Physika_Render.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\Public_Library\lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -68,7 +68,13 @@
     <ClCompile Include="..\..\TESTS\matrix2x2_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\TESTS\matrix3x3_test.cpp" />
+    <ClCompile Include="..\..\TESTS\matrix3x3_test.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\TESTS\surface_mesh_test.cpp" />
+    <ClCompile Include="..\..\TESTS\vector2d_test.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\TESTS\vector3d_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>

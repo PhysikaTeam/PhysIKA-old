@@ -49,8 +49,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>XCopy ..\..\..\Physika_Src\Physika_Render ..\..\..\Public_Library\include\Physika_Render /S/Y/D/I</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>XCopy ..\..\..\Physika_Src\Physika_Render ..\..\..\Public_Library\include\Physika_Render /S/Y/D/I</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
