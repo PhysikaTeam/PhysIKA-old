@@ -43,7 +43,11 @@ public:
 	Vector3D<Scalar>& operator/= (Scalar);
 	Scalar norm() const;
 	Vector3D<Scalar>& normalize();
-
+	Vector3D<Scalar> cross(const Vector3D<Scalar> &)const;
+	Vector3D<Scalar> operator - (void) const;
+	Scalar dot(const Vector3D<Scalar>&) const;
+	//friend Vector3D<Scalar> operator* (Scalar, const Vector3D<Scalar>&);
+	
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
 	Eigen::Matrix<Scalar,3,1> eigen_vector_3x_;
@@ -57,6 +61,12 @@ std::ostream& operator<< (std::ostream &s, const Vector3D<Scalar> &vec)
 {
 	s<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<std::endl;
 	return s;
+}
+
+template <typename Scalar>
+Vector3D<Scalar> operator *(Scalar scale, Vector3D<Scalar> vec3)
+{
+	return vec3 * scale;
 }
 
 } //end of namespace Physika

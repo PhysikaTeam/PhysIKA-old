@@ -15,12 +15,28 @@
 #ifndef PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
 #define PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
 
+#include <vector>
+using std::vector;
+
 namespace Physika{
+
+class Triangle;
+class Vertex;
+class Edge;
+
 class SurfaceMesh
 {
 public:
 	SurfaceMesh();
 	~SurfaceMesh();
+
+
+	vector<Triangle*> triangles;
+	vector<Vertex*> vertices;
+	vector<Edge*> edges;
+
+	void compute_normals();
+
 protected:
 };
 } //end of namespace Physika

@@ -13,12 +13,21 @@
  */
 
 #include "Physika_Geometry/Surface_Mesh/triangle.h"
+#include "Physika_Geometry/Surface_Mesh/vertex.h"
 
 namespace Physika{
 	
-Triangle::Triangle()
+Triangle::Triangle():normal(0)
 {
 
 }
+
+Vector3f Triangle::compute_normal()
+{
+	assert(vertices[0]!=NULL && vertices[1]!=NULL && vertices[2]!=NULL);
+	normal = -(*vertices[1] - *vertices[0]).cross(*vertices[2] - *vertices[1]);
+	return normal;
+}
+
 
 } //end of namespace Physika

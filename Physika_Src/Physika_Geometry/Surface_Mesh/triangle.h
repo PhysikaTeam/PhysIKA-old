@@ -18,6 +18,7 @@
 
 #include "Physika_Core/Vectors/vector.h"
 
+
 using Physika::Type::Vector3f;
 
 
@@ -30,7 +31,7 @@ class Triangle
 {
 public:
 	Triangle();
-
+	Vector3f compute_normal();
 
 	Vertex *vertices[3];
 	Edge *edges[3];

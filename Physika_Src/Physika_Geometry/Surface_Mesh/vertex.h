@@ -22,6 +22,7 @@ using Physika::Type::Vector3f;
 
 
 namespace Physika{
+
 class Vertex:public Vector3f
 {
 public:

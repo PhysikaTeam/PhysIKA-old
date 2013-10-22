@@ -16,7 +16,7 @@
 
 namespace Physika{
 
-Edge::Edge()
+Edge::Edge():normal(0)
 {
 
 }

@@ -168,6 +168,25 @@ Vector3D<Scalar>& Vector3D<Scalar>::normalize()
   return *this;
 }
 
+template <typename Scalar>
+Vector3D<Scalar> Vector3D<Scalar>::cross(const Vector3D<Scalar>& vec3) const
+{
+	return Vector3D<Scalar>((*this)[1]*vec3[2] - (*this)[2]*vec3[1], (*this)[2]*vec3[0] - (*this)[0]*vec3[2], (*this)[0]*vec3[1] - (*this)[1]*vec3[0]); 
+}
+
+template <typename Scalar>
+Vector3D<Scalar> Vector3D<Scalar>::operator-(void)const
+{
+	return Vector3D<Scalar>(-(*this)[0],-(*this)[1],-(*this)[2]);
+}
+
+template <typename Scalar>
+Scalar Vector3D<Scalar>::dot(const Vector3D<Scalar>& vec3) const
+{
+	return (*this)[0]*vec3[0] + (*this)[1]*vec3[1] + (*this)[2]*vec3[2];
+}
+
+
 //explicit instantiation of template so that it could be compiled into a lib
 //template class Vector3D<int>;
 template class Vector3D<float>;

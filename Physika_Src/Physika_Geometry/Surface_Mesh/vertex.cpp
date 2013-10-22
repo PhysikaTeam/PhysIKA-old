@@ -16,12 +16,12 @@
 
 namespace Physika{
 	
-Vertex::Vertex(float x, float y, float z):Vector3f(x,y,z)
+Vertex::Vertex(float x, float y, float z):Vector3f(x,y,z),normal(0)
 {
 
 }
 
-Vertex::Vertex(const Vector3f& pos):Vector3f(pos)
+Vertex::Vertex(const Vector3f& pos):Vector3f(pos),normal(0)
 {
 
 }
