@@ -78,6 +78,14 @@ int MatrixMxN<Scalar>::cols() const
 }
 
 template <typename Scalar>
+void MatrixMxN<Scalar>::resize(int new_rows, int new_cols)
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+  (*ptr_eigen_matrix_MxN_).resize(new_rows,new_cols);
+#endif
+}
+
+template <typename Scalar>
 Scalar& MatrixMxN<Scalar>::operator() (int i, int j)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX

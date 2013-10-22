@@ -30,7 +30,7 @@ typedef Matrix3x3<float> Matrix3f;
 typedef Matrix3x3<double> Matrix3d;
 
 typedef MatrixMxN<float> MatrixXf;
- typedef MatrixMxN<double> MatrixXd;
+typedef MatrixMxN<double> MatrixXd;
 }  //end of namespace TYPE
 
 }  //end of namespace Physika

@@ -31,6 +31,7 @@ public:
   ~MatrixMxN();
   int rows() const;
   int cols() const;
+  void resize(int new_rows, int new_cols);  //resize the matrix to new_rows*new_cols
   Scalar& operator() (int i, int j);
   const Scalar& operator() (int i, int j) const;
   MatrixMxN<Scalar> operator+ (const MatrixMxN<Scalar> &) const;

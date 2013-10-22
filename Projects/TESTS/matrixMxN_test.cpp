@@ -69,5 +69,17 @@ int main()
   cout<<mat_square.determinant()<<endl;
   cout<<"Copy constructor test: construct a new matrix from mat4"<<endl;
   cout<<MatrixMxN<double>(mat_square)<<endl;
+  cout<<"mat1 resized to 2x3 matrix:"<<endl;
+  mat_3x2.resize(2,3);
+  for(int i = 0; i < 2; ++i)
+    for(int j = 0; j <3; ++j)
+      mat_3x2(i,j) = i*3+j;
+  cout<<mat_3x2<<endl;
+  cout<<"mat1 resized to 3x3 matrix:"<<endl;
+  mat_3x2.resize(3,3);
+  for(int i = 0; i < 3; ++i)
+    for(int j = 0; j <3; ++j)
+      mat_3x2(i,j) = i*3+j;
+  cout<<mat_3x2<<endl;
   return 0;
 }
