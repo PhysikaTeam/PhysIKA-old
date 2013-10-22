@@ -68,6 +68,13 @@ std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
   return s;
 }
 
+//make * operator commuative
+template <typename Scalar>
+MatrixMxN<Scalar> operator* (Scalar scale, const MatrixMxN<Scalar> &mat)
+{
+  return mat*scale;
+}
+
 }
 
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_MXN_H_

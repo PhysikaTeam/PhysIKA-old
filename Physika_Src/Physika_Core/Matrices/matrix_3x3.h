@@ -63,6 +63,13 @@ std::ostream& operator<< (std::ostream &s, const Matrix3x3<Scalar> &mat)
   return s;
 }
  
+//make * operator commuative
+template <typename Scalar>
+Matrix3x3<Scalar> operator* (Scalar scale, const Matrix3x3<Scalar> &mat)
+{
+  return mat*scale;
+}
+
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_3X3_H_

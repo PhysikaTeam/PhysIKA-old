@@ -63,10 +63,11 @@ std::ostream& operator<< (std::ostream &s, const Vector3D<Scalar> &vec)
 	return s;
 }
 
+//make * operator commuative
 template <typename Scalar>
-Vector3D<Scalar> operator *(Scalar scale, Vector3D<Scalar> vec3)
+Vector3D<Scalar> operator *(Scalar scale, Vector3D<Scalar> vec)
 {
-	return vec3 * scale;
+	return vec * scale;
 }
 
 } //end of namespace Physika

@@ -59,6 +59,13 @@ std::ostream& operator<< (std::ostream &s, const Vector2D<Scalar> &vec)
   return s;
 }
 
+//make * operator commuative
+template <typename Scalar>
+Vector2D<Scalar> operator *(Scalar scale, Vector2D<Scalar> vec)
+{
+  return vec * scale;
+}
+
 } //end of namespace Physika
 
 #endif //PHYSIKA_CORE_VECTORS_VECTOR_2D_H_

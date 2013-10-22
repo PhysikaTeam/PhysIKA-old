@@ -61,6 +61,13 @@ std::ostream& operator<< (std::ostream &s, const Matrix2x2<Scalar> &mat)
   s<<mat(1,0)<<", "<<mat(1,1)<<std::endl;
   return s;
 }
+
+//make * operator commuative
+template <typename Scalar>
+Matrix2x2<Scalar> operator* (Scalar scale, const Matrix2x2<Scalar> &mat)
+{
+  return mat*scale;
+}
  
 }  //end of namespace Physika
 

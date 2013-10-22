@@ -188,7 +188,6 @@ Scalar Vector3D<Scalar>::dot(const Vector3D<Scalar>& vec3) const
 
 
 //explicit instantiation of template so that it could be compiled into a lib
-//template class Vector3D<int>;
 template class Vector3D<float>;
 template class Vector3D<double>;
 
