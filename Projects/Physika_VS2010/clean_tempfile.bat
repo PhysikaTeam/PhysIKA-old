@@ -12,4 +12,18 @@ echo ----------------------------------------------------
 del /F /S /Q *.aps *.idb *.ncp *.obj *.pch *.sbr *.tmp *.pdb *.bsc *.ilk *.res *.ncb *.opt *.suo *.manifest *.dep *.tlog *.log *.lastbuildstate *.rc *.exe
 rd bin
 rd Debug
+cd ..
+cd ..
+cd Public_Library
+del /F /S /Q *.lib
+cd include
+RD /S/Q Physika_Core
+RD /S/Q Physika_Dependency
+RD /S/Q Physika_Dynamics
+RD /S/Q Physika_Geometry
+RD /S/Q Physika_GUI
+RD /S/Q Physika_IO
+RD /S/Q Physika_Render
+RD /S/Q Physika_Core
+
 exit 
