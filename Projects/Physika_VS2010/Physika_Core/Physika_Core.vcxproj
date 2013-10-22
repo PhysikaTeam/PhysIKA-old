@@ -43,7 +43,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\Physika_Src\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Public_Library\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -51,6 +51,9 @@
     <PostBuildEvent>
       <Command>XCopy ..\..\..\Physika_Src\Physika_Core ..\..\..\Public_Library\include\Physika_Core /S/Y/D/I</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>XCopy ..\..\..\Physika_Src\Physika_Dependency\Eigen ..\..\..\Public_Library\include\Physika_Dependency\Eigen /S/Y/D/I</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
