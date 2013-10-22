@@ -1,7 +1,7 @@
 /*
  * @file matrix_3x3.h 
  * @brief 3x3 matrix.
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -26,6 +26,7 @@ class Matrix3x3: public MatrixBase
 public:
   Matrix3x3();
   Matrix3x3(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22);
+  Matrix3x3(const Matrix3x3<Scalar>&);
   ~Matrix3x3();
   inline int rows() const{return 3;}
   inline int cols() const{return 3;}

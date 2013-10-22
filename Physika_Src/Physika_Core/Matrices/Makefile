@@ -9,7 +9,7 @@ PHYSIKA_PUBLIC_DIR=$(PHYSIKA_ROOT_DIR)/Public_Library
 include $(PHYSIKA_ROOT_DIR)/Makefile_header
 
 # headers in this library
-MATRICES_HEADERS=matrix_base.h matrix_2x2.h matrix_3x3.h matrix.h
+MATRICES_HEADERS=matrix_base.h matrix_2x2.h matrix_3x3.h matrix_MxN.h matrix.h
 
 # additional headers that this library denpend on
 ADDITIONAL_HEADERS=../Utilities/global_config.h
@@ -24,7 +24,7 @@ cp $(MATRICES_HEADERS) $(TARGET_HEADERS_DIR)
 endef
 
 # object files to be compiled for this library
-MATRICES_OBJECTS=matrix_2x2.o matrix_3x3.o
+MATRICES_OBJECTS=matrix_2x2.o matrix_3x3.o matrix_MxN.o
 
 # target name of this library
 TARGET=libmatrices.a
@@ -35,8 +35,11 @@ matrices: $(TARGET)
 $(TARGET): $(MATRICES_OBJECTS)
 	ar rs $@ $^; cp $(TARGET) $(PHYSIKA_PUBLIC_DIR)/lib/
 
-$(MATRICES_OBJECTS): %.o: %.cpp $(MATRICES_HEADERS) $(ADDITIONAL_HEADERS)
-	$(COPY_HEADERS); $(CXX) $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -c $< -o $@
+$(MATRICES_OBJECTS): %.o: %.cpp $(MATRICES_HEADERS) $(ADDITIONAL_HEADERS) copy_headers
+	$(CXX) $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -c $< -o $@
+
+copy_headers: 
+	$(COPY_HEADERS)
 
 .PHONY: cleanmatrices
 cleanmatrices:

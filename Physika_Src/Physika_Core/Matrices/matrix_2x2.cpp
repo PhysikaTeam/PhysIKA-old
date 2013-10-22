@@ -33,6 +33,12 @@ Matrix2x2<Scalar>::Matrix2x2(Scalar x00, Scalar x01, Scalar x10, Scalar x11)
 }
 
 template <typename Scalar>
+Matrix2x2<Scalar>::Matrix2x2(const Matrix2x2<Scalar> &mat2)
+{
+  *this = mat2;
+}
+
+template <typename Scalar>
 Matrix2x2<Scalar>::~Matrix2x2()
 {
 }

@@ -1,7 +1,7 @@
 /*
  * @file matrix_3x3.cpp 
  * @brief 3x3 matrix.
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -35,6 +35,12 @@ Matrix3x3<Scalar>::Matrix3x3(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Sca
   eigen_matrix_3x3_(2,1) = x21;
   eigen_matrix_3x3_(2,2) = x22;
 #endif
+}
+
+template <typename Scalar>
+Matrix3x3<Scalar>::Matrix3x3(const Matrix3x3<Scalar> &mat2)
+{
+  *this = mat2;
 }
 
 template <typename Scalar>

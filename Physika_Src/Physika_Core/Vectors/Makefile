@@ -35,8 +35,11 @@ vectors: $(TARGET)
 $(TARGET): $(VECTORS_OBJECTS)
 	ar rs $@ $^; cp $(TARGET) $(PHYSIKA_PUBLIC_DIR)/lib/
 
-$(VECTORS_OBJECTS): %.o: %.cpp $(VECTORS_HEADERS) $(ADDITIONAL_HEADERS)
-	$(COPY_HEADERS); $(CXX) $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -c $< -o $@
+$(VECTORS_OBJECTS): %.o: %.cpp $(VECTORS_HEADERS) $(ADDITIONAL_HEADERS) copy_headers
+	$(CXX) $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -c $< -o $@
+
+copy_headers:
+	$(COPY_HEADERS);
 
 .PHONY: cleanvectors
 cleanvectors:
