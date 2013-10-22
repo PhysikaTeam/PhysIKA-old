@@ -6,5 +6,6 @@
     <ClCompile Include="..\..\TESTS\vector3d_test.cpp" />
     <ClCompile Include="..\..\TESTS\vector2d_test.cpp" />
     <ClCompile Include="..\..\TESTS\surface_mesh_test.cpp" />
+    <ClCompile Include="..\..\TESTS\matrixMxN_test.cpp" />
   </ItemGroup>
 </Project>

@@ -24,6 +24,12 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cpp">
       <Filter>Matrices</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_MxN.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h">
@@ -55,6 +61,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector.h">
       <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_MxN.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.h">
+      <Filter>Matrices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

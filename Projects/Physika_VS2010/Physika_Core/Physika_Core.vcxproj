@@ -73,6 +73,8 @@ XCopy ..\..\..\Physika_Src\Physika_Core ..\..\..\Public_Library\include\Physika_
   <ItemGroup>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_MxN.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_2d.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.cpp" />
   </ItemGroup>
@@ -81,6 +83,8 @@ XCopy ..\..\..\Physika_Src\Physika_Core ..\..\..\Public_Library\include\Physika_
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_3x3.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_base.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_MxN.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\global_config.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\math_constants.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector.h" />
