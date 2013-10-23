@@ -21,7 +21,7 @@
 
 namespace Physika{
 
-template <typename Scalar, int Rows, int Cols,int StoreMajor = 0>
+template <typename Scalar, int Rows, int Cols, int StoreMajor = 0>
 class SparseMatrix: public MatrixBase
 {
 public:
@@ -29,7 +29,8 @@ public:
     ~SparseMatrix();
     inline int rows()const;
     inline int cols()const;
-    protected:
+protected:
+
 };
 
 }  //end of namespace Physika

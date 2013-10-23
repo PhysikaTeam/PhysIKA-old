@@ -50,7 +50,7 @@ int main()
   cout<<"matrix1 mult scalar(2): (*)"<<endl;
   cout<<mat_double*2.0f<<endl;
   cout<<"scalar(2) mult matrix: (*)"<<endl;
-  cout<<2.0*mat_double<<endl;
+  cout<<2.0f*mat_double<<endl;
   cout<<"matrix1 mult scalar(2): (*=)"<<endl;
   cout<<(mat_double*=2.0f)<<endl;
   cout<<"matrix1 div scalar(4): (/)"<<endl;
