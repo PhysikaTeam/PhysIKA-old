@@ -60,8 +60,8 @@ std::ostream& operator<< (std::ostream &s, const Vector2D<Scalar> &vec)
 }
 
 //make * operator commuative
-template <typename Scalar>
-Vector2D<Scalar> operator *(Scalar scale, Vector2D<Scalar> vec)
+template <typename S, typename T>
+Vector2D<T> operator *(S scale, Vector2D<T> vec)
 {
     return vec * scale;
 }
