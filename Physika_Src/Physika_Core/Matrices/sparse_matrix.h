@@ -30,7 +30,6 @@ public:
     inline int rows()const;
     inline int cols()const;
 protected:
-
 };
 
 }  //end of namespace Physika

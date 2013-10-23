@@ -68,11 +68,7 @@ Matrix2x2<Scalar> operator* (Scalar scale, const Matrix2x2<Scalar> &mat)
 {
     return mat*scale;
 }
-template <typename Scalar>
-Matrix2x2<Scalar> operator* (float scale, const Matrix2x2<Scalar> &mat)
-{
-	return mat*(Scalar)scale;
-}
+
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
