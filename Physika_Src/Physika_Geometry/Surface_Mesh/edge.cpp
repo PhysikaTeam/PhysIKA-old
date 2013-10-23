@@ -16,10 +16,16 @@
 
 namespace Physika{
 
-Edge::Edge():normal(0)
+template <typename Scalar>
+Edge<Scalar>::Edge():normal(0,0,0)
 {
-
+	this->vertices[0] = NULL;
+	this->vertices[1] = NULL;
+	this->triangles[0] = NULL;
+	this->triangles[1] = NULL;
 }
 
+template class Edge<float>;
+template class Edge<double>;
 
 } //end of namespace Physika

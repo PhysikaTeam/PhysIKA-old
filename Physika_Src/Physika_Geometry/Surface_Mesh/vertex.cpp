@@ -15,15 +15,20 @@
 #include "Physika_Geometry/Surface_Mesh/vertex.h"
 
 namespace Physika{
+
+template <typename Scalar>
+Vertex<Scalar>::Vertex(Scalar x, Scalar y, Scalar z):position(x,y,z),normal(0,0,0)
+{
 	
-Vertex::Vertex(float x, float y, float z):Vector3f(x,y,z),normal(0)
+}
+
+template <typename Scalar>
+Vertex<Scalar>::Vertex(const Vector3D<Scalar>& pos):position(pos),normal(0,0,0)
 {
 
 }
+template class Vertex<float>;
+template class Vertex<double>;
 
-Vertex::Vertex(const Vector3f& pos):Vector3f(pos),normal(0)
-{
-
-}
 
 } //end of namespace Physika

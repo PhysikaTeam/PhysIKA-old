@@ -18,27 +18,23 @@
 
 #include "Physika_Core/Vectors/vector.h"
 
-using Physika::Type::Vector3f;
+using Physika::Vector3D;
                   
 
 namespace Physika{
 
-class Vertex;
-class Triangle;
+template <typename Scalar> class Vertex;
+template <typename Scalar> class Triangle;
 
+template <typename Scalar>
 class Edge
 {
 public:
     Edge();
-	
 
-    Vertex *vertices[2];
-    Triangle *triangles[2];
-
-    Vector3f normal;
-
-
-protected:
+    Vertex<Scalar> *vertices[2];
+	Triangle<Scalar> *triangles[2];
+    Vector3D<Scalar> normal;
 };
 
 } //end of namespace Physika

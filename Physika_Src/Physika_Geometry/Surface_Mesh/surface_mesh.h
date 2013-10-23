@@ -20,24 +20,25 @@ using std::vector;
 
 namespace Physika{
 
-class Triangle;
-class Vertex;
-class Edge;
+//These forward declaration can be useful if #include is too much.
+template <typename Scalar> class Triangle;
+template <typename Scalar> class Vertex;
+template <typename Scalar> class Edge;
 
+template <typename Scalar>
 class SurfaceMesh
 {
 public:
     SurfaceMesh();
     ~SurfaceMesh();
-
-
-    vector<Triangle*> triangles;
-    vector<Vertex*> vertices;
-    vector<Edge*> edges;
-
     void compute_normals();
+    unsigned int get_number_of_vertex();
+    unsigned int get_number_of_edge();
+    unsigned int get_number_of_triangle();
 
-protected:
+    vector<Triangle<Scalar>*> triangles;
+    vector<Vertex<Scalar>*> vertices;
+    vector<Edge<Scalar>*> edges;
 };
 
 } //end of namespace Physika

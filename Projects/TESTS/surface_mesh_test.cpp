@@ -27,17 +27,17 @@ using Physika::SurfaceMesh;
 
 int main()
 {
-	Vertex vertex(1,2,3);
-	Vertex vertex1(2,3,4);
-	cout<<vertex<<endl;
-	cout<<vertex1<<endl;
-	cout<<vertex+vertex1<<endl;
-	cout<<vertex-vertex1<<endl;
+	Vertex<float> vertex(1,2,3);
+	Vertex<float> vertex1(2,3,4);
+	//cout<<vertex<<endl;
+	//cout<<vertex1<<endl;
+	//cout<<vertex+vertex1<<endl;
+	//cout<<vertex-vertex1<<endl;
 
-	Edge edge;
-	Triangle trianges;
-	SurfaceMesh mesh;
-
+	Edge<float> edge;
+	Triangle<double> trianges;
+	SurfaceMesh<float> mesh;
+	mesh.compute_normals();
 	int a;
 	cin>>a;
 }

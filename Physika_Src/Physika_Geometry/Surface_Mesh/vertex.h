@@ -18,20 +18,21 @@
 
 #include "Physika_Core/Vectors/vector.h"
 
-using Physika::Type::Vector3f;
+using Physika::Vector3D;
 
 
 namespace Physika{
 
-class Vertex:public Vector3f
+template <typename Scalar>
+class Vertex
 {
 public:
 
-    Vertex(float x, float y, float z);
-    Vertex(const Vector3f& pos);
-    Vector3f normal;
+    Vertex(Scalar , Scalar , Scalar );
+    Vertex(const Vector3D<Scalar>& pos);
 
-protected:
+	Vector3D<Scalar> position;
+	Vector3D<Scalar> normal;
 };
 
 } //end of namespace Physika

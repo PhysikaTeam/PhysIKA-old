@@ -16,18 +16,28 @@
 #include "Physika_Geometry/Surface_Mesh/vertex.h"
 
 namespace Physika{
-	
-Triangle::Triangle():normal(0)
-{
 
+template <typename Scalar>
+Triangle<Scalar>::Triangle():normal(0,0,0),
+    area(0),
+    center(0,0,0)
+{
+	for(int i = 0;i < 3; ++i)
+	{
+		edges[i] = NULL;
+		vertices[i] = NULL;
+	}
 }
 
-Vector3f Triangle::compute_normal()
+template <typename Scalar>
+Vector3D<Scalar> Triangle<Scalar>::compute_normal()
 {
     assert(vertices[0]!=NULL && vertices[1]!=NULL && vertices[2]!=NULL);
-    normal = -(*vertices[1] - *vertices[0]).cross(*vertices[2] - *vertices[1]);
+    normal = -(vertices[1]->position - vertices[0]->position).cross(vertices[2]->position - vertices[1]->position);
     return normal;
 }
 
+template class Triangle<float>;
+template class Triangle<double>;
 
 } //end of namespace Physika
