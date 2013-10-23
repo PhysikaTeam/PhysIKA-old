@@ -24,34 +24,34 @@ template <typename Scalar>
 class MatrixMxN: public MatrixBase
 {
 public:
-  MatrixMxN(); //construct an empty matrix
-  MatrixMxN(int rows, int cols); //construct an uninitialized matrix of size rows*cols                  
-  MatrixMxN(int rows, int cols, Scalar *entries);  //construct a matrix with given size and data
-  MatrixMxN(const MatrixMxN<Scalar>&);  //copy constructor
-  ~MatrixMxN();
-  int rows() const;
-  int cols() const;
-  void resize(int new_rows, int new_cols);  //resize the matrix to new_rows*new_cols
-  Scalar& operator() (int i, int j);
-  const Scalar& operator() (int i, int j) const;
-  MatrixMxN<Scalar> operator+ (const MatrixMxN<Scalar> &) const;
-  MatrixMxN<Scalar>& operator+= (const MatrixMxN<Scalar> &);
-  MatrixMxN<Scalar> operator- (const MatrixMxN<Scalar> &) const;
-  MatrixMxN<Scalar>& operator-= (const MatrixMxN<Scalar> &);
-  MatrixMxN<Scalar>& operator= (const MatrixMxN<Scalar> &);
-  bool operator== (const MatrixMxN<Scalar> &)const;
-  MatrixMxN<Scalar> operator* (Scalar) const;
-  MatrixMxN<Scalar>& operator*= (Scalar);
-  MatrixMxN<Scalar> operator/ (Scalar) const;
-  MatrixMxN<Scalar>& operator/= (Scalar);
-  MatrixMxN<Scalar> transpose() const;
-  MatrixMxN<Scalar> inverse() const;
-  Scalar determinant() const;
+    MatrixMxN(); //construct an empty matrix
+    MatrixMxN(int rows, int cols); //construct an uninitialized matrix of size rows*cols                  
+    MatrixMxN(int rows, int cols, Scalar *entries);  //construct a matrix with given size and data
+    MatrixMxN(const MatrixMxN<Scalar>&);  //copy constructor
+    ~MatrixMxN();
+    int rows() const;
+    int cols() const;
+    void resize(int new_rows, int new_cols);  //resize the matrix to new_rows*new_cols
+    Scalar& operator() (int i, int j);
+    const Scalar& operator() (int i, int j) const;
+    MatrixMxN<Scalar> operator+ (const MatrixMxN<Scalar> &) const;
+    MatrixMxN<Scalar>& operator+= (const MatrixMxN<Scalar> &);
+    MatrixMxN<Scalar> operator- (const MatrixMxN<Scalar> &) const;
+    MatrixMxN<Scalar>& operator-= (const MatrixMxN<Scalar> &);
+    MatrixMxN<Scalar>& operator= (const MatrixMxN<Scalar> &);
+    bool operator== (const MatrixMxN<Scalar> &)const;
+    MatrixMxN<Scalar> operator* (Scalar) const;
+    MatrixMxN<Scalar>& operator*= (Scalar);
+    MatrixMxN<Scalar> operator/ (Scalar) const;
+    MatrixMxN<Scalar>& operator/= (Scalar);
+    MatrixMxN<Scalar> transpose() const;
+    MatrixMxN<Scalar> inverse() const;
+    Scalar determinant() const;
 protected:
-  void allocMemory(int rows, int cols);
+    void allocMemory(int rows, int cols);
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> *ptr_eigen_matrix_MxN_;
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> *ptr_eigen_matrix_MxN_;
 #endif
 };
 
@@ -59,20 +59,20 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
 {
-  for(int i = 0; i < mat.rows(); ++i)
-  {
-    for(int j = 0; j < mat.cols() - 1; ++j)
-	s<<mat(i,j)<<", ";
-    s<<mat(i,mat.cols() - 1)<<std::endl;
-  }
-  return s;
+    for(int i = 0; i < mat.rows(); ++i)
+    {
+        for(int j = 0; j < mat.cols() - 1; ++j)
+	    s<<mat(i,j)<<", ";
+        s<<mat(i,mat.cols() - 1)<<std::endl;
+    }
+    return s;
 }
 
 //make * operator commuative
 template <typename Scalar>
 MatrixMxN<Scalar> operator* (Scalar scale, const MatrixMxN<Scalar> &mat)
 {
-  return mat*scale;
+    return mat*scale;
 }
 
 }

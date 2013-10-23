@@ -19,12 +19,12 @@ namespace Physika{
 
 class MatrixBase
 {
- public:
-  MatrixBase(){};
-  ~MatrixBase(){};
-  virtual int rows() const=0;
-  virtual int cols() const=0;
- protected:
+public:
+    MatrixBase(){};
+    ~MatrixBase(){};
+    virtual int rows() const=0;
+    virtual int cols() const=0;
+protected:
 };
 
 }  //end of namespace Physika

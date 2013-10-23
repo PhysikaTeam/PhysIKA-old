@@ -29,17 +29,18 @@ class Triangle;
 class Edge
 {
 public:
-	Edge();
+    Edge();
 	
 
-	Vertex *vertices[2];
-	Triangle *triangles[2];
+    Vertex *vertices[2];
+    Triangle *triangles[2];
 
-	Vector3f normal;
+    Vector3f normal;
 
 
 protected:
 };
+
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_EDGE_H_

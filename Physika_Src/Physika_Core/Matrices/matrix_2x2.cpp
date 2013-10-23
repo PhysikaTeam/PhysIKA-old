@@ -25,17 +25,17 @@ template <typename Scalar>
 Matrix2x2<Scalar>::Matrix2x2(Scalar x00, Scalar x01, Scalar x10, Scalar x11)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  eigen_matrix_2x2_(0,0) = x00;
-  eigen_matrix_2x2_(0,1) = x01;
-  eigen_matrix_2x2_(1,0) = x10;
-  eigen_matrix_2x2_(1,1) = x11;
+    eigen_matrix_2x2_(0,0) = x00;
+    eigen_matrix_2x2_(0,1) = x01;
+    eigen_matrix_2x2_(1,0) = x10;
+    eigen_matrix_2x2_(1,1) = x11;
 #endif
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar>::Matrix2x2(const Matrix2x2<Scalar> &mat2)
 {
-  *this = mat2;
+    *this = mat2;
 }
 
 template <typename Scalar>
@@ -47,7 +47,7 @@ template <typename Scalar>
 Scalar& Matrix2x2<Scalar>::operator() (int i, int j)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  return eigen_matrix_2x2_(i,j);
+    return eigen_matrix_2x2_(i,j);
 #endif
 }
 
@@ -55,121 +55,121 @@ template <typename Scalar>
 const Scalar& Matrix2x2<Scalar>::operator() (int i, int j) const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  return eigen_matrix_2x2_(i,j);
+    return eigen_matrix_2x2_(i,j);
 #endif
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar> Matrix2x2<Scalar>::operator+ (const Matrix2x2<Scalar> &mat2) const
 {
-  Scalar result[4];
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      result[i*2+j] = (*this)(i,j) + mat2(i,j);
-  return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    Scalar result[4];
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+        result[i*2+j] = (*this)(i,j) + mat2(i,j);
+    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator+= (const Matrix2x2<Scalar> &mat2)
 {
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      (*this)(i,j) = (*this)(i,j) + mat2(i,j);
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            (*this)(i,j) = (*this)(i,j) + mat2(i,j);
+    return *this;
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar> Matrix2x2<Scalar>::operator- (const Matrix2x2<Scalar> &mat2) const
 {
-  Scalar result[4];
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      result[i*2+j] = (*this)(i,j) - mat2(i,j);
-  return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    Scalar result[4];
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            result[i*2+j] = (*this)(i,j) - mat2(i,j);
+    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator-= (const Matrix2x2<Scalar> &mat2)
 {
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      (*this)(i,j) = (*this)(i,j) - mat2(i,j);
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            (*this)(i,j) = (*this)(i,j) - mat2(i,j);
+    return *this;
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator= (const Matrix2x2<Scalar> &mat2)
 {
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      (*this)(i,j) = mat2(i,j);
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            (*this)(i,j) = mat2(i,j);
+    return *this;
 }
 
 template <typename Scalar>
 bool Matrix2x2<Scalar>::operator== (const Matrix2x2<Scalar> &mat2) const
 {
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      if((*this)(i,j) != mat2(i,j))
-	return false;
-  return true;
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            if((*this)(i,j) != mat2(i,j))
+	        return false;
+    return true;
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar> Matrix2x2<Scalar>::operator* (Scalar scale) const
 {
-  Scalar result[4];
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      result[i*2+j] = (*this)(i,j) * scale;
-  return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    Scalar result[4];
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            result[i*2+j] = (*this)(i,j) * scale;
+    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator*= (Scalar scale)
 {
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      (*this)(i,j) = (*this)(i,j) * scale;
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            (*this)(i,j) = (*this)(i,j) * scale;
+    return *this;
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar> Matrix2x2<Scalar>::operator/ (Scalar scale) const
 {
-  Scalar result[4];
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      result[i*2+j] = (*this)(i,j) / scale;
-  return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    Scalar result[4];
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            result[i*2+j] = (*this)(i,j) / scale;
+    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator/= (Scalar scale)
 {
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j < 2; ++j)
-      (*this)(i,j) = (*this)(i,j) / scale;
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            (*this)(i,j) = (*this)(i,j) / scale;
+    return *this;
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar> Matrix2x2<Scalar>::transpose() const
 {
-  Scalar result[4];
-  for(int i = 0; i < 2; ++i)
-    for(int j = 0; j< 2; ++j)
-      result[i*2+j] = (*this)(j,i);
-  return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    Scalar result[4];
+    for(int i = 0; i < 2; ++i)
+        for(int j = 0; j< 2; ++j)
+            result[i*2+j] = (*this)(j,i);
+    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
 Matrix2x2<Scalar> Matrix2x2<Scalar>::inverse() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  Eigen::Matrix<Scalar,2,2> result_matrix = eigen_matrix_2x2_.inverse();
-  return Matrix2x2<Scalar>(result_matrix(0,0), result_matrix(0,1), result_matrix(1,0), result_matrix(1,1));
+    Eigen::Matrix<Scalar,2,2> result_matrix = eigen_matrix_2x2_.inverse();
+    return Matrix2x2<Scalar>(result_matrix(0,0), result_matrix(0,1), result_matrix(1,0), result_matrix(1,1));
 #endif 
 }
 
@@ -177,7 +177,7 @@ template <typename Scalar>
 Scalar Matrix2x2<Scalar>::determinant() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  return eigen_matrix_2x2_.determinant();
+    return eigen_matrix_2x2_.determinant();
 #endif
 }
 

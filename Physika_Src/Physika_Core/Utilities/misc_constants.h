@@ -15,8 +15,10 @@
 #define PHYSIKA_CORE_UTILITIES_MISC_CONSTANTS_H_
 
 namespace Physika{
-  const int Dynamic = -1;  //This value means that a quantity is not known at compile-time
-  const unsigned int RowMajorBit = 0x1;  //For a matrix, this means that the storage order is row-major. If this bit is not set, the storage order is column-major.
+
+const int Dynamic = -1;  //This value means that a quantity is not known at compile-time
+const unsigned int RowMajorBit = 0x1;  //For a matrix, this means that the storage order is row-major. If this bit is not set, the storage order is column-major.
+
 }
 
 #endif //PHYSIKA_CORE_UTILITIES_MISC_CONSTANTS_H_

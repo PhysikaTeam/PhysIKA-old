@@ -30,18 +30,19 @@ class Vertex;
 class Triangle
 {
 public:
-	Triangle();
-	Vector3f compute_normal();
+    Triangle();
+    Vector3f compute_normal();
 
-	Vertex *vertices[3];
-	Edge *edges[3];
-	Vector3f normal;
-	Vector3f center;
-	float area;
+    Vertex *vertices[3];
+    Edge *edges[3];
+    Vector3f normal;
+    Vector3f center;
+    float area;
 
 
 protected:
 };
+
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_TRIANGLE_H_

@@ -16,13 +16,15 @@
 #define PHYSIKA_RENDER_POINT_RENDER_POINT_RENDER_H_
 
 namespace Physika{
+
 class Point_Render
 {
 public:
-	Point_Render();
-	~Point_Render();
+    Point_Render();
+    ~Point_Render();
 protected:
 };
+
 } //end of namespace Physika
 
 #endif //PHYSIKA_RENDER_POINT_RENDER_POINT_RENDER_H_

@@ -23,30 +23,30 @@ namespace Physika{
 template <typename Scalar>
 class Vector2D: public VectorBase
 {
- public:
-  Vector2D();
-  Vector2D(Scalar x, Scalar y);
-  Vector2D(Scalar);
-  ~Vector2D();
-  inline int dims() const{return 2;}
-  Scalar& operator[] (int);
-  const Scalar& operator[] (int) const;
-  Vector2D<Scalar> operator+ (const Vector2D<Scalar> &) const;
-  Vector2D<Scalar>& operator+= (const Vector2D<Scalar> &);
-  Vector2D<Scalar> operator- (const Vector2D<Scalar> &) const;
-  Vector2D<Scalar>& operator-= (const Vector2D<Scalar> &);
-  Vector2D<Scalar>& operator= (const Vector2D<Scalar> &);
-  bool operator== (const Vector2D<Scalar> &) const;
-  Vector2D<Scalar> operator* (Scalar) const;
-  Vector2D<Scalar>& operator*= (Scalar);
-  Vector2D<Scalar> operator/ (Scalar) const;
-  Vector2D<Scalar>& operator/= (Scalar);
-  Scalar norm() const;
-  Vector2D<Scalar>& normalize();
+public:
+    Vector2D();
+    Vector2D(Scalar x, Scalar y);
+    Vector2D(Scalar);
+    ~Vector2D();
+    inline int dims() const{return 2;}
+    Scalar& operator[] (int);
+    const Scalar& operator[] (int) const;
+    Vector2D<Scalar> operator+ (const Vector2D<Scalar> &) const;
+    Vector2D<Scalar>& operator+= (const Vector2D<Scalar> &);
+    Vector2D<Scalar> operator- (const Vector2D<Scalar> &) const;
+    Vector2D<Scalar>& operator-= (const Vector2D<Scalar> &);
+    Vector2D<Scalar>& operator= (const Vector2D<Scalar> &);
+    bool operator== (const Vector2D<Scalar> &) const;
+    Vector2D<Scalar> operator* (Scalar) const;
+    Vector2D<Scalar>& operator*= (Scalar);
+    Vector2D<Scalar> operator/ (Scalar) const;
+    Vector2D<Scalar>& operator/= (Scalar);
+    Scalar norm() const;
+    Vector2D<Scalar>& normalize();
 
- protected:
+protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-  Eigen::Matrix<Scalar,2,1> eigen_vector_2x_;
+    Eigen::Matrix<Scalar,2,1> eigen_vector_2x_;
 #endif
 
 };
@@ -55,15 +55,15 @@ class Vector2D: public VectorBase
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const Vector2D<Scalar> &vec)
 {
-  s<<vec[0]<<", "<<vec[1]<<std::endl;
-  return s;
+    s<<vec[0]<<", "<<vec[1]<<std::endl;
+    return s;
 }
 
 //make * operator commuative
 template <typename Scalar>
 Vector2D<Scalar> operator *(Scalar scale, Vector2D<Scalar> vec)
 {
-  return vec * scale;
+    return vec * scale;
 }
 
 } //end of namespace Physika

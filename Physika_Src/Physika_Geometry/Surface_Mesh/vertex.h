@@ -27,12 +27,13 @@ class Vertex:public Vector3f
 {
 public:
 
-	Vertex(float x, float y, float z);
-	Vertex(const Vector3f& pos);
-	Vector3f normal;
+    Vertex(float x, float y, float z);
+    Vertex(const Vector3f& pos);
+    Vector3f normal;
 
 protected:
 };
+
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_VERTEX_H_

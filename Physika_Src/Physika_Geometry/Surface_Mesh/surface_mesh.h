@@ -27,18 +27,19 @@ class Edge;
 class SurfaceMesh
 {
 public:
-	SurfaceMesh();
-	~SurfaceMesh();
+    SurfaceMesh();
+    ~SurfaceMesh();
 
 
-	vector<Triangle*> triangles;
-	vector<Vertex*> vertices;
-	vector<Edge*> edges;
+    vector<Triangle*> triangles;
+    vector<Vertex*> vertices;
+    vector<Edge*> edges;
 
-	void compute_normals();
+    void compute_normals();
 
 protected:
 };
+
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_

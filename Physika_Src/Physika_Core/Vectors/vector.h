@@ -27,6 +27,7 @@ typedef Vector2D<double> Vector2d;
 
 typedef Vector3D<float> Vector3f;
 typedef Vector3D<double> Vector3d;
+
 }  //end of namespace TYPE
 
 }  //end of namespace Physika

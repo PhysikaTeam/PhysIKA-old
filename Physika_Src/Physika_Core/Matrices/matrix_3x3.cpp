@@ -25,22 +25,22 @@ template <typename Scalar>
 Matrix3x3<Scalar>::Matrix3x3(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  eigen_matrix_3x3_(0,0) = x00;
-  eigen_matrix_3x3_(0,1) = x01;
-  eigen_matrix_3x3_(0,2) = x02;
-  eigen_matrix_3x3_(1,0) = x10;
-  eigen_matrix_3x3_(1,1) = x11;
-  eigen_matrix_3x3_(1,2) = x12;
-  eigen_matrix_3x3_(2,0) = x20;
-  eigen_matrix_3x3_(2,1) = x21;
-  eigen_matrix_3x3_(2,2) = x22;
+    eigen_matrix_3x3_(0,0) = x00;
+    eigen_matrix_3x3_(0,1) = x01;
+    eigen_matrix_3x3_(0,2) = x02;
+    eigen_matrix_3x3_(1,0) = x10;
+    eigen_matrix_3x3_(1,1) = x11;
+    eigen_matrix_3x3_(1,2) = x12;
+    eigen_matrix_3x3_(2,0) = x20;
+    eigen_matrix_3x3_(2,1) = x21;
+    eigen_matrix_3x3_(2,2) = x22;
 #endif
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar>::Matrix3x3(const Matrix3x3<Scalar> &mat2)
 {
-  *this = mat2;
+    *this = mat2;
 }
 
 template <typename Scalar>
@@ -52,7 +52,7 @@ template <typename Scalar>
 Scalar& Matrix3x3<Scalar>::operator() (int i, int j)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  return eigen_matrix_3x3_(i,j);
+    return eigen_matrix_3x3_(i,j);
 #endif
 }
 
@@ -60,121 +60,121 @@ template <typename Scalar>
 const Scalar& Matrix3x3<Scalar>::operator() (int i, int j) const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  return eigen_matrix_3x3_(i,j);
+    return eigen_matrix_3x3_(i,j);
 #endif
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar> Matrix3x3<Scalar>::operator+ (const Matrix3x3<Scalar> &mat3) const
 {
-  Scalar result[9];
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      result[i*3+j] = (*this)(i,j) + mat3(i,j);
-  return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    Scalar result[9];
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            result[i*3+j] = (*this)(i,j) + mat3(i,j);
+    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator+= (const Matrix3x3<Scalar> &mat3)
 {
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      (*this)(i,j) = (*this)(i,j) + mat3(i,j);
-  return *this;
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            (*this)(i,j) = (*this)(i,j) + mat3(i,j);
+    return *this;
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar> Matrix3x3<Scalar>::operator- (const Matrix3x3<Scalar> &mat3) const
 {
-  Scalar result[9];
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      result[i*3+j] = (*this)(i,j) - mat3(i,j);
-  return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    Scalar result[9];
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            result[i*3+j] = (*this)(i,j) - mat3(i,j);
+    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator-= (const Matrix3x3<Scalar> &mat3)
 {
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      (*this)(i,j) = (*this)(i,j) - mat3(i,j);
-  return *this;
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            (*this)(i,j) = (*this)(i,j) - mat3(i,j);
+    return *this;
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator= (const Matrix3x3<Scalar> &mat3)
 {
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      (*this)(i,j) = mat3(i,j);
-  return *this;
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            (*this)(i,j) = mat3(i,j);
+    return *this;
 }
 
 template <typename Scalar>
 bool Matrix3x3<Scalar>::operator== (const Matrix3x3<Scalar> &mat3) const
 {
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      if((*this)(i,j) != mat3(i,j))
-	return false;
-  return true;
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            if((*this)(i,j) != mat3(i,j))
+	        return false;
+    return true;
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar> Matrix3x3<Scalar>::operator* (Scalar scale) const
 {
-  Scalar result[9];
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      result[i*3+j] = (*this)(i,j) * scale;
-  return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    Scalar result[9];
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            result[i*3+j] = (*this)(i,j) * scale;
+    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator*= (Scalar scale)
 {
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      (*this)(i,j) = (*this)(i,j) * scale;
-  return *this;
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            (*this)(i,j) = (*this)(i,j) * scale;
+    return *this;
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar> Matrix3x3<Scalar>::operator/ (Scalar scale) const
 {
-  Scalar result[9];
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      result[i*3+j] = (*this)(i,j) / scale;
-  return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    Scalar result[9];
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            result[i*3+j] = (*this)(i,j) / scale;
+    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator/= (Scalar scale)
 {
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j < 3; ++j)
-      (*this)(i,j) = (*this)(i,j) / scale;
-  return *this;
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            (*this)(i,j) = (*this)(i,j) / scale;
+    return *this;
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar> Matrix3x3<Scalar>::transpose() const
 {
-  Scalar result[9];
-  for(int i = 0; i < 3; ++i)
-    for(int j = 0; j< 3; ++j)
-      result[i*3+j] = (*this)(j,i);
-  return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    Scalar result[9];
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j< 3; ++j)
+            result[i*3+j] = (*this)(j,i);
+    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
 Matrix3x3<Scalar> Matrix3x3<Scalar>::inverse() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  Eigen::Matrix<Scalar,3,3> result_matrix = eigen_matrix_3x3_.inverse();
-  return Matrix3x3<Scalar>(result_matrix(0,0), result_matrix(0,1), result_matrix(0,2), result_matrix(1,0), result_matrix(1,1),result_matrix(1,2), result_matrix(2,0),result_matrix(2,1), result_matrix(2,2));
+    Eigen::Matrix<Scalar,3,3> result_matrix = eigen_matrix_3x3_.inverse();
+    return Matrix3x3<Scalar>(result_matrix(0,0), result_matrix(0,1), result_matrix(0,2), result_matrix(1,0), result_matrix(1,1),result_matrix(1,2), result_matrix(2,0),result_matrix(2,1), result_matrix(2,2));
 #endif 
 }
 
@@ -182,7 +182,7 @@ template <typename Scalar>
 Scalar Matrix3x3<Scalar>::determinant() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-  return eigen_matrix_3x3_.determinant();
+    return eigen_matrix_3x3_.determinant();
 #endif
 }
 

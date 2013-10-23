@@ -26,8 +26,8 @@ template <typename Scalar>
 Vector2D<Scalar>::Vector2D(Scalar x, Scalar y)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-  eigen_vector_2x_(0)=x;
-  eigen_vector_2x_(1)=y;
+    eigen_vector_2x_(0)=x;
+    eigen_vector_2x_(1)=y;
 #endif
 }
 
@@ -35,8 +35,8 @@ template <typename Scalar>
 Vector2D<Scalar>::Vector2D(Scalar x)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-  eigen_vector_2x_(0)=x;
-  eigen_vector_2x_(1)=x;
+    eigen_vector_2x_(0)=x;
+    eigen_vector_2x_(1)=x;
 #endif
 }
 
@@ -49,7 +49,7 @@ template <typename Scalar>
 Scalar& Vector2D<Scalar>::operator[] (int idx)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-  return eigen_vector_2x_(idx);
+    return eigen_vector_2x_(idx);
 #endif
 }
 
@@ -57,113 +57,113 @@ template <typename Scalar>
 const Scalar& Vector2D<Scalar>::operator[] (int idx) const
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-  return eigen_vector_2x_(idx);
+    return eigen_vector_2x_(idx);
 #endif
 }
 
 template <typename Scalar>
 Vector2D<Scalar> Vector2D<Scalar>::operator+ (const Vector2D<Scalar> &vec2) const
 {
-  Scalar result[2];
-  for(int i = 0; i < 2; ++i)
-    result[i] = (*this)[i] + vec2[i];
-  return Vector2D<Scalar>(result[0],result[1]);
+    Scalar result[2];
+    for(int i = 0; i < 2; ++i)
+        result[i] = (*this)[i] + vec2[i];
+    return Vector2D<Scalar>(result[0],result[1]);
 }
 
 template <typename Scalar>
 Vector2D<Scalar>& Vector2D<Scalar>::operator+= (const Vector2D<Scalar> &vec2)
 {
-  for(int i = 0; i < 2; ++i)
-    (*this)[i] = (*this)[i] + vec2[i];
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        (*this)[i] = (*this)[i] + vec2[i];
+    return *this;
 }
 
 template <typename Scalar>
 Vector2D<Scalar> Vector2D<Scalar>::operator- (const Vector2D<Scalar> &vec2) const
 {
-Scalar result[2];
-  for(int i = 0; i < 2; ++i)
-    result[i] = (*this)[i] - vec2[i];
-  return Vector2D<Scalar>(result[0],result[1]);
+    Scalar result[2];
+    for(int i = 0; i < 2; ++i)
+        result[i] = (*this)[i] - vec2[i];
+    return Vector2D<Scalar>(result[0],result[1]);
 }
 
 template <typename Scalar>
 Vector2D<Scalar>& Vector2D<Scalar>::operator-= (const Vector2D<Scalar> &vec2)
 {
-for(int i = 0; i < 2; ++i)
-    (*this)[i] = (*this)[i] - vec2[i];
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        (*this)[i] = (*this)[i] - vec2[i];
+    return *this;
 }
 
 template <typename Scalar>
 Vector2D<Scalar>& Vector2D<Scalar>::operator= (const Vector2D<Scalar> &vec2)
 {
-  for(int i = 0; i < 2; ++i)
-    (*this)[i] = vec2[i];
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        (*this)[i] = vec2[i];
+    return *this;
 }
 
 template <typename Scalar>
 bool Vector2D<Scalar>::operator== (const Vector2D<Scalar> &vec2) const
 {
-  for(int i = 0; i < 2; ++i)
-    if((*this)[i] != vec2[i])
-      return false;
-  return true;
+    for(int i = 0; i < 2; ++i)
+        if((*this)[i] != vec2[i])
+            return false;
+    return true;
 }
 
 template <typename Scalar>
 Vector2D<Scalar> Vector2D<Scalar>::operator* (Scalar scale) const
 {
-  Scalar result[2];
-  for(int i = 0; i < 2; ++i)
-    result[i] = (*this)[i] * scale;
-  return Vector2D<Scalar>(result[0],result[1]);
+    Scalar result[2];
+    for(int i = 0; i < 2; ++i)
+        result[i] = (*this)[i] * scale;
+    return Vector2D<Scalar>(result[0],result[1]);
 }
 
 template <typename Scalar>
 Vector2D<Scalar>& Vector2D<Scalar>::operator*= (Scalar scale)
 {
-  for(int i = 0; i < 2; ++i)
-    (*this)[i] = (*this)[i] * scale;
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        (*this)[i] = (*this)[i] * scale;
+    return *this;
 }
 
 template <typename Scalar>
 Vector2D<Scalar> Vector2D<Scalar>::operator/ (Scalar scale) const
 {
-  Scalar result[2];
-  for(int i = 0; i < 2; ++i)
-    result[i] = (*this)[i] / scale;
-  return Vector2D<Scalar>(result[0],result[1]);
+    Scalar result[2];
+    for(int i = 0; i < 2; ++i)
+        result[i] = (*this)[i] / scale;
+    return Vector2D<Scalar>(result[0],result[1]);
 }
 
 template <typename Scalar>
 Vector2D<Scalar>& Vector2D<Scalar>::operator/= (Scalar scale)
 {
-  for(int i = 0; i < 2; ++i)
-    (*this)[i] = (*this)[i] / scale;
-  return *this;
+    for(int i = 0; i < 2; ++i)
+        (*this)[i] = (*this)[i] / scale;
+    return *this;
 }
 
 template <typename Scalar>
 Scalar Vector2D<Scalar>::norm() const
 {
-  Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1];
-  result = sqrt(result);
-  return result;
+    Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1];
+    result = sqrt(result);
+    return result;
 }
 
 template <typename Scalar>
 Vector2D<Scalar>& Vector2D<Scalar>::normalize()
 {
-  Scalar norm = (*this).norm();
-  if(norm)
-  {
-    for(int i = 0; i < 2; ++i)
-      (*this)[i] = (*this)[i] / norm;
-  }
-  return *this;
+    Scalar norm = (*this).norm();
+    if(norm)
+    {
+        for(int i = 0; i < 2; ++i)
+        (*this)[i] = (*this)[i] / norm;
+    }
+    return *this;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

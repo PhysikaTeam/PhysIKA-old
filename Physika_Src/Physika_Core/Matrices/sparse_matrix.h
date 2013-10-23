@@ -24,12 +24,12 @@ namespace Physika{
 template <typename Scalar, int Rows, int Cols,int StoreMajor = 0>
 class SparseMatrix: public MatrixBase
 {
- public:
- SparseMatrix();
- ~SparseMatrix();
- inline int rows()const;
- inline int cols()const;
- protected:
+public:
+    SparseMatrix();
+    ~SparseMatrix();
+    inline int rows()const;
+    inline int cols()const;
+    protected:
 };
 
 }  //end of namespace Physika

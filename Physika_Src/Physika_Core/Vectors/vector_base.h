@@ -19,11 +19,11 @@ namespace Physika{
 
 class VectorBase
 {
- public:
-  VectorBase(){};
-  ~VectorBase(){};
-  virtual int dims() const=0;
- protected:
+public:
+    VectorBase(){};
+    ~VectorBase(){};
+    virtual int dims() const=0;
+protected:
 };
 
 }  //end of namespace Physika
