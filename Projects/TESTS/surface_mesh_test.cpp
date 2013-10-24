@@ -18,7 +18,6 @@
 #include "Physika_Geometry/Surface_Mesh/edge.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 
-
 using namespace std;
 using Physika::Vertex;
 using Physika::Edge;

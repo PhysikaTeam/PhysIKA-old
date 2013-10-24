@@ -49,7 +49,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\Public_Library\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Physika_Src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -59,7 +59,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>XCopy ..\..\..\Physika_Src\Physika_GUI ..\..\..\Public_Library\include\Physika_GUI /S/Y/D/I</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

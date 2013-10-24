@@ -50,6 +50,15 @@
       <AdditionalDependencies>Physika_Core.lib;Physika_Geometry.lib;Physika_Dynamics.lib;Physika_GUI.lib;Physika_IO.lib;Physika_Render.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\Public_Library\lib\</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>XCopy ..\..\..\Physika_Src\Physika_Dependency\Eigen ..\..\..\Public_Library\include\Physika_Dependency\Eigen /S/Y/D/I
+XCopy ..\..\..\Physika_Src\Physika_Dynamics ..\..\..\Public_Library\include\Physika_Dynamics /S/Y/D/I
+XCopy ..\..\..\Physika_Src\Physika_Geometry ..\..\..\Public_Library\include\Physika_Geometry /S/Y/D/I
+XCopy ..\..\..\Physika_Src\Physika_GUI ..\..\..\Public_Library\include\Physika_GUI /S/Y/D/I
+XCopy ..\..\..\Physika_Src\Physika_IO ..\..\..\Public_Library\include\Physika_IO /S/Y/D/I
+XCopy ..\..\..\Physika_Src\Physika_Render ..\..\..\Public_Library\include\Physika_Render /S/Y/D/I
+XCopy ..\..\..\Physika_Src\Physika_Core ..\..\..\Public_Library\include\Physika_Core /S/Y/D/I</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -74,7 +83,10 @@
     <ClCompile Include="..\..\TESTS\matrixMxN_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\TESTS\surface_mesh_test.cpp" />
+    <ClCompile Include="..\..\TESTS\quaternion_test.cpp" />
+    <ClCompile Include="..\..\TESTS\surface_mesh_test.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\TESTS\vector2d_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>

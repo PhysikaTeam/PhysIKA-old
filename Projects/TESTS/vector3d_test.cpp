@@ -13,8 +13,8 @@
  */
 
 #include <iostream>
-#include "Physika_Core/Vectors/vector_3d.h"
-//#include "Physika_Core/Vectors/vector.h"
+//#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector.h"
 using namespace std;
 using Physika::Vector3D;
 

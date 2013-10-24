@@ -10,6 +10,9 @@
     <Filter Include="Vectors">
       <UniqueIdentifier>{af1c7459-b3ab-45b1-815f-d28f1eed859d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quaternion">
+      <UniqueIdentifier>{23dc03aa-0651-4d23-9f3a-287ad01abad2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cpp">
@@ -29,6 +32,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.cpp">
       <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp">
+      <Filter>Quaternion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +73,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.h">
       <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Quaternion\quaternion.h">
+      <Filter>Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\misc_constants.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -18,7 +18,8 @@
 namespace Physika{
 
 const double PI = 3.141592653589793;
-
+const float FLOAT_ZERO = 0.00001f;
+const double DOUBLE_ZERO = 0.0000000000000001;
 }
 
 #endif //PHYSIKA_CORE_UTILITIES_MATH_CONSTANTS_H_
