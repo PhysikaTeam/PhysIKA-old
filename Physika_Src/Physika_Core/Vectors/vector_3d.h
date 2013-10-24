@@ -62,7 +62,7 @@ std::ostream& operator<< (std::ostream &s, const Vector3D<Scalar> &vec)
     return s;
 }
 
-//make * operator commuative
+//make * operator commutative
 template <typename S, typename T>
 Vector3D<T> operator *(S scale, Vector3D<T> vec)
 {

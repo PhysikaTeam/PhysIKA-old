@@ -43,6 +43,9 @@ public:
     Vector2D<Scalar>& operator/= (Scalar);
     Scalar norm() const;
     Vector2D<Scalar>& normalize();
+    Scalar cross(const Vector2D<Scalar> &)const;
+    Vector2D<Scalar> operator - (void) const;
+    Scalar dot(const Vector2D<Scalar>&) const;
 
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
@@ -59,7 +62,7 @@ std::ostream& operator<< (std::ostream &s, const Vector2D<Scalar> &vec)
     return s;
 }
 
-//make * operator commuative
+//make * operator commutative
 template <typename S, typename T>
 Vector2D<T> operator *(S scale, Vector2D<T> vec)
 {

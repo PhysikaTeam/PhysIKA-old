@@ -68,7 +68,7 @@ std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
     return s;
 }
 
-//make * operator commuative
+//make * operator commutative
 template <typename S, typename T>
 MatrixMxN<T> operator* (S scale, const MatrixMxN<T> &mat)
 {

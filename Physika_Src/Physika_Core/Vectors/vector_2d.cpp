@@ -166,6 +166,24 @@ Vector2D<Scalar>& Vector2D<Scalar>::normalize()
     return *this;
 }
 
+template <typename Scalar>
+Scalar Vector2D<Scalar>::cross(const Vector2D<Scalar>& vec2) const
+{
+  return (*this)[0]*vec2[1] - (*this)[1]*vec2[0];
+}
+
+template <typename Scalar>
+Vector2D<Scalar> Vector2D<Scalar>::operator-(void) const
+{
+    return Vector2D<Scalar>(-(*this)[0],-(*this)[1]);
+}
+
+template <typename Scalar>
+Scalar Vector2D<Scalar>::dot(const Vector2D<Scalar>& vec2) const
+{
+    return (*this)[0]*vec2[0] + (*this)[1]*vec2[1];
+}
+
 //explicit instantiation of template so that it could be compiled into a lib
 template class Vector2D<float>;
 template class Vector2D<double>;

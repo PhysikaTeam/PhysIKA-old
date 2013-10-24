@@ -175,7 +175,7 @@ Vector3D<Scalar> Vector3D<Scalar>::cross(const Vector3D<Scalar>& vec3) const
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Vector3D<Scalar>::operator-(void)const
+Vector3D<Scalar> Vector3D<Scalar>::operator-(void) const
 {
     return Vector3D<Scalar>(-(*this)[0],-(*this)[1],-(*this)[2]);
 }
