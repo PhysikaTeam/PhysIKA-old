@@ -47,6 +47,7 @@ Quaternion<Scalar>::Quaternion(const Vector3D<Scalar> & vec3, float _w):
 {
     
 }
+
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(float _w, const Vector3D<Scalar> & vec3):
     w(_w),
@@ -212,7 +213,6 @@ Quaternion<Scalar>& Quaternion<Scalar>::normalize()
     return *this;
 }
 
-
 template <typename Scalar>
 void Quaternion<Scalar>::set(const Vector3D<Scalar>& vec3, Scalar scale)
 {
@@ -231,12 +231,8 @@ void Quaternion<Scalar>::set(Scalar scale, const Vector3D<Scalar>& vec3)
     z = vec3[2];
 }
 
-
-
-
-
+//explicit instantiation
 template class Quaternion<float>;
 template class Quaternion<double>;
-
 
 }
