@@ -18,8 +18,6 @@
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 
-using Physika::Vector3D;
-
 namespace Physika{
 
 template <typename Scalar>
@@ -68,8 +66,6 @@ std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
     s <<quat.x<<", "<<quat.y<<", "<<quat.z<<", "<<quat.w<<std::endl;
     return s; 
 }
-
-
 
 //make * operator commutative
 template <typename S, typename T>
