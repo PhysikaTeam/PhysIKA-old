@@ -48,6 +48,18 @@ Vector3D<Scalar>::~Vector3D()
 }
 
 template <typename Scalar>
+Vector3D<Scalar>& Vector3D<Scalar>::derived()
+{
+    return static_cast<Vector3D<Scalar>&>(*this);
+}
+
+template <typename Scalar>
+const Vector3D<Scalar>& Vector3D<Scalar>::derived() const
+{
+    return static_cast<const Vector3D<Scalar>&>(*this);
+}
+
+template <typename Scalar>
 Scalar& Vector3D<Scalar>::operator[] (int idx)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR

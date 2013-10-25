@@ -29,6 +29,8 @@ public:
     Vector2D(Scalar);
     ~Vector2D();
     inline int dims() const{return 2;}
+    Vector2D<Scalar>& derived();
+    const Vector2D<Scalar>& derived() const;
     Scalar& operator[] (int);
     const Scalar& operator[] (int) const;
     Vector2D<Scalar> operator+ (const Vector2D<Scalar> &) const;
