@@ -49,6 +49,18 @@ Matrix3x3<Scalar>::~Matrix3x3()
 }
 
 template <typename Scalar>
+Matrix3x3<Scalar>& Matrix3x3<Scalar>::derived()
+{
+    return static_cast<Matrix3x3<Scalar>&>(*this);
+}
+
+template <typename Scalar>
+const Matrix3x3<Scalar>& Matrix3x3<Scalar>::derived() const
+{
+    return static_cast<const Matrix3x3<Scalar>&>(*this);
+}
+
+template <typename Scalar>
 Scalar& Matrix3x3<Scalar>::operator() (int i, int j)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX

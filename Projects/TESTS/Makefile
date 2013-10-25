@@ -6,7 +6,7 @@ PHYSIKA_PUBLIC_DIR=$(PHYSIKA_ROOT_DIR)/Public_Library
 
 include $(PHYSIKA_ROOT_DIR)/Makefile_header
 
-TESTS=matrix2x2_test vector2d_test matrix3x3_test vector3d_test matrixMxN_test
+TESTS=matrix2x2_test vector2d_test matrix3x3_test vector3d_test matrixMxN_test constitutive_models_test
 
 tests: $(TESTS)
 
@@ -24,6 +24,9 @@ vector3d_test: vector3d_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libvectors.a
 
 matrixMxN_test: matrixMxN_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libmatrices.a
 	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices
+
+constitutive_models_test: constitutive_models_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libmatrices.a $(PHYSIKA_PUBLIC_DIR)/lib/libconstitutive_models.a
+	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices -l constitutive_models
 
 .PHONY: clean
 clean:

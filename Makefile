@@ -4,7 +4,10 @@
 
 include Makefile_header
 
-physika: physika_core physika_dependency
+physika: physika_dynamics physika_core physika_dependency
+
+physika_dynamics: physika_core
+	cd ./Physika_Src/Physika_Dynamics; make
 
 physika_core: physika_dependency
 	cd ./Physika_Src/Physika_Core; make

@@ -1,6 +1,6 @@
 /*
- * @file matrix_base.h 
- * @brief Base class of matrices, all matrices inherite from this class.
+ * @file  constitutive_model.h
+ * @brief Constitutive model of deformable solids, abstract class
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,23 +12,20 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
-#define PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
+#ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_CONSTITUTIVE_MODEL_H_
+#define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_CONSTITUTIVE_MODEL_H_
 
 namespace Physika{
 
-class MatrixBase
+class ConstitutiveModel
 {
 public:
-    MatrixBase(){};
-    ~MatrixBase(){};
-    virtual int rows() const=0;
-    virtual int cols() const=0;
-    virtual MatrixBase& derived()=0;
-    virtual const MatrixBase& derived() const=0;
+    ConstitutiveModel(){};
+    ~ConstitutiveModel(){};
+    virtual void info() const=0;
 protected:
 };
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
+#endif //PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_CONSTITUTIVE_MODEL_H_

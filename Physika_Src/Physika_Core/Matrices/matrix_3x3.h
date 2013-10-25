@@ -30,6 +30,8 @@ public:
     ~Matrix3x3();
     inline int rows() const{return 3;}
     inline int cols() const{return 3;}
+    Matrix3x3<Scalar>& derived();
+    const Matrix3x3<Scalar>& derived() const;
     Scalar& operator() (int i, int j );
     const Scalar& operator() (int i, int j) const;
     Matrix3x3<Scalar> operator+ (const Matrix3x3<Scalar> &) const;

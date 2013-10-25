@@ -29,6 +29,8 @@ public:
     ~SparseMatrix();
     inline int rows()const;
     inline int cols()const;
+    SparseMatrix<Scalar,Rows,Cols,StoreMajor>& derived();
+    const SparseMatrix<Scalar,Rows,Cols,StoreMajor>& derived() const;
 protected:
 };
 
