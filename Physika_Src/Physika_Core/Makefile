@@ -9,7 +9,7 @@ include $(PHYSIKA_ROOT_DIR)/Makefile_header
 
 physika_core: matrices_in_core vectors_in_core utilities_in_core
 
-matrices_in_core: utilities_in_core
+matrices_in_core: vectors_in_core utilities_in_core
 	cd ./Matrices; make
 
 vectors_in_core: utilities_in_core

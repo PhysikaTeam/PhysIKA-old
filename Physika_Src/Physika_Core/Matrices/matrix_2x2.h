@@ -16,6 +16,7 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
 
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
@@ -42,11 +43,14 @@ public:
     bool operator== (const Matrix2x2<Scalar> &) const;
     Matrix2x2<Scalar> operator* (Scalar) const;
     Matrix2x2<Scalar>& operator*= (Scalar);
+    Vector2D<Scalar> operator* (const Vector2D<Scalar> &) const;
+    Matrix2x2<Scalar> operator* (const Matrix2x2<Scalar> &) const;
     Matrix2x2<Scalar> operator/ (Scalar) const;
     Matrix2x2<Scalar>& operator/= (Scalar);
     Matrix2x2<Scalar> transpose() const;
     Matrix2x2<Scalar> inverse() const;
     Scalar determinant() const;
+    Scalar trace() const;
  
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX

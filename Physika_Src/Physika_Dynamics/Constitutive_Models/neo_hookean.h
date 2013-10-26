@@ -1,5 +1,5 @@
 /*
- * @file  neo_hooken.h
+ * @file  neo_hookean.h
  * @brief Neo-Hookean hyperelastic material model
  * @author Fei Zhu
  * 
@@ -11,8 +11,8 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
-#ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEN_H_
-#define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEN_H_
+#ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEAN_H_
+#define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEAN_H_
 
 #include "Physika_Core/Matrices/matrix_base.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
@@ -20,18 +20,20 @@
 namespace Physika{
 
 template <typename Scalar, int Dim>
-class NeoHooken: public ConstitutiveModel
+class NeoHookean: public ConstitutiveModel
 {
 public:
-    NeoHooken();
-    NeoHooken(Scalar lambda, Scalar mu);
-    ~NeoHooken();
+    NeoHookean();
+    NeoHookean(Scalar lambda, Scalar mu);
+    ~NeoHookean();
     void info() const;
     inline Scalar lambda() const{return lambda_;}
     inline void setLambda(Scalar lambda){lambda_=lambda;}
     inline Scalar mu() const{return mu_;}
     inline void setMu(Scalar mu){mu_=mu;}
-    Scalar energyDensity(const MatrixBase &F) const;//return potential energy density with given deformation gradient
+    Scalar energy(const MatrixBase &F) const;//compute potential energy density with given deformation gradient
+    void energyGradient(const MatrixBase &F, MatrixBase &energy_gradient) const;//compute gradient of energy density with respect to deformation gradient
+    void energyHessian(const MatrixBase &F, MatrixBase &energy_hessian) const;//compute hessian of energy density with respect to deformation gradient
 protected:
     Scalar lambda_;
     Scalar mu_;
@@ -39,4 +41,4 @@ protected:
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEN_H_
+#endif //PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEAN_H_

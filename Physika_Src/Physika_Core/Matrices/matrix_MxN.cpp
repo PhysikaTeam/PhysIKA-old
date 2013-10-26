@@ -88,13 +88,13 @@ void MatrixMxN<Scalar>::resize(int new_rows, int new_cols)
 template <typename Scalar>
 MatrixMxN<Scalar>& MatrixMxN<Scalar>::derived()
 {
-    return static_cast<MatrixMxN<Scalar>&>(*this);
+    return dynamic_cast<MatrixMxN<Scalar>&>(*this);
 }
 
 template <typename Scalar>
 const MatrixMxN<Scalar>& MatrixMxN<Scalar>::derived() const
 {
-    return static_cast<const MatrixMxN<Scalar>&>(*this);
+    return dynamic_cast<const MatrixMxN<Scalar>&>(*this);
 }
 
 template <typename Scalar>

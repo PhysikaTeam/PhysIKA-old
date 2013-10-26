@@ -11,13 +11,13 @@ TESTS=matrix2x2_test vector2d_test matrix3x3_test vector3d_test matrixMxN_test c
 tests: $(TESTS)
 
 matrix2x2_test: matrix2x2_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libmatrices.a
-	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices
+	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices -l vectors
 
 vector2d_test: vector2d_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libvectors.a
 	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l vectors 
 
 matrix3x3_test: matrix3x3_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libmatrices.a
-	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices 
+	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices -l vectors
 
 vector3d_test: vector3d_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libvectors.a
 	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l vectors 
@@ -26,7 +26,7 @@ matrixMxN_test: matrixMxN_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libmatrices.a
 	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices
 
 constitutive_models_test: constitutive_models_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libmatrices.a $(PHYSIKA_PUBLIC_DIR)/lib/libconstitutive_models.a
-	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices -l constitutive_models
+	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices -l constitutive_models -l vectors
 
 .PHONY: clean
 clean:

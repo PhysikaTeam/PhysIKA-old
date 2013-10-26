@@ -12,7 +12,10 @@ include $(PHYSIKA_ROOT_DIR)/Makefile_header
 MATRICES_HEADERS=matrix_base.h matrix_2x2.h matrix_3x3.h matrix_MxN.h matrix.h
 
 # additional headers that this library denpend on
-ADDITIONAL_HEADERS=../Utilities/global_config.h
+ADDITIONAL_HEADERS=../Utilities/global_config.h ../Vectors/vector_2d.h ../Vectors/vector_3d.h
+
+# additional libraries that this library depend on
+ADDITIONAL_LIBS=
 
 # target directory of the headers
 TARGET_HEADERS_DIR=$(PHYSIKA_PUBLIC_DIR)/include/Physika_Core/Matrices

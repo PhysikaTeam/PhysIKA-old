@@ -46,13 +46,13 @@ Matrix2x2<Scalar>::~Matrix2x2()
 template <typename Scalar>
 Matrix2x2<Scalar>& Matrix2x2<Scalar>::derived()
 {
-    return static_cast<Matrix2x2<Scalar>&>(*this);
+    return dynamic_cast<Matrix2x2<Scalar>&>(*this);
 }
 
 template <typename Scalar>
 const Matrix2x2<Scalar>& Matrix2x2<Scalar>::derived() const
 {
-    return static_cast<const Matrix2x2<Scalar>&>(*this);
+    return dynamic_cast<const Matrix2x2<Scalar>&>(*this);
 }
 
 template <typename Scalar>
@@ -148,6 +148,27 @@ Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator*= (Scalar scale)
 }
 
 template <typename Scalar>
+Vector2D<Scalar> Matrix2x2<Scalar>::operator* (const Vector2D<Scalar> &vec) const
+{
+    Vector2D<Scalar> result(0);
+    for(int i = 0; i < 2; ++i)
+	for(int j = 0; j <2; ++j)
+	    result[i] += (*this)(i,j) + vec[j];
+    return result;
+}
+
+template <typename Scalar>
+Matrix2x2<Scalar> Matrix2x2<Scalar>::operator* (const Matrix2x2<Scalar> &mat2) const
+{
+    Matrix2x2<Scalar> result(0,0,0,0);
+    for(int i = 0; i < 2; ++i)
+	for(int j = 0; j < 2; ++j)
+	    for(int k = 0; k < 2; ++k)
+		result(i,j) += (*this)(i,k) * mat2(k,j);
+    return result;
+}
+
+template <typename Scalar>
 Matrix2x2<Scalar> Matrix2x2<Scalar>::operator/ (Scalar scale) const
 {
     Scalar result[4];
@@ -191,6 +212,12 @@ Scalar Matrix2x2<Scalar>::determinant() const
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_.determinant();
 #endif
+}
+
+template <typename Scalar>
+Scalar Matrix2x2<Scalar>::trace() const
+{
+    return (*this)(0,0) + (*this)(1,1);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

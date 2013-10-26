@@ -27,6 +27,7 @@ public:
     Vector2D();
     Vector2D(Scalar x, Scalar y);
     Vector2D(Scalar);
+    Vector2D(const Vector2D<Scalar>&);
     ~Vector2D();
     inline int dims() const{return 2;}
     Vector2D<Scalar>& derived();

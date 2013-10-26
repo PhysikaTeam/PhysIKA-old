@@ -14,15 +14,19 @@
 
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
-#include "Physika_Dynamics/Constitutive_Models/neo_hooken.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Dynamics/Constitutive_Models/neo_hookean.h"
 using namespace std;
-using Physika::NeoHooken;
+using Physika::NeoHookean;
 using Physika::Matrix2x2;
+using Physika::Matrix3x3;
 
 int main()
 {
-    NeoHooken<float,2> neo_hooken_material;
-    Matrix2x2<float> F;
-    cout<<neo_hooken_material.energyDensity(F)<<endl;
+    NeoHookean<float,3> neo_hookean_material;
+    Matrix3x3<float> F;
+    F.derived();
+    neo_hookean_material.info();
+    cout<<neo_hookean_material.energy(F)<<endl;
     return 0;
 }

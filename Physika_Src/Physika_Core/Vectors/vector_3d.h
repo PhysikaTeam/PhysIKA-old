@@ -1,7 +1,7 @@
 /*
 * @file vector_3d.h 
 * @brief 3d vector.
-* @author Sheng Yang
+* @author Sheng Yang, Fei Zhu
 * 
 * This file is part of Physika, a versatile physics simulation library.
 * Copyright (C) 2013 Physika Group.
@@ -27,6 +27,7 @@ public:
     Vector3D();
     Vector3D(Scalar x, Scalar y, Scalar z);
     Vector3D(Scalar);
+    Vector3D(const Vector3D<Scalar>&);
     ~Vector3D();
     inline int dims() const{return 3;}
     Vector3D<Scalar>& derived();

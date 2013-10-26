@@ -1,7 +1,7 @@
 /*
  * @file vector_3d.cpp 
  * @brief 3d vector.
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -43,6 +43,12 @@ Vector3D<Scalar>::Vector3D(Scalar x)
 }
 
 template <typename Scalar>
+Vector3D<Scalar>::Vector3D(const Vector3D<Scalar> &vec3)
+{
+    *this = vec3;
+}
+
+template <typename Scalar>
 Vector3D<Scalar>::~Vector3D()
 {
 }
@@ -50,13 +56,13 @@ Vector3D<Scalar>::~Vector3D()
 template <typename Scalar>
 Vector3D<Scalar>& Vector3D<Scalar>::derived()
 {
-    return static_cast<Vector3D<Scalar>&>(*this);
+    return dynamic_cast<Vector3D<Scalar>&>(*this);
 }
 
 template <typename Scalar>
 const Vector3D<Scalar>& Vector3D<Scalar>::derived() const
 {
-    return static_cast<const Vector3D<Scalar>&>(*this);
+    return dynamic_cast<const Vector3D<Scalar>&>(*this);
 }
 
 template <typename Scalar>

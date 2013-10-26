@@ -41,6 +41,12 @@ Vector2D<Scalar>::Vector2D(Scalar x)
 }
 
 template <typename Scalar>
+Vector2D<Scalar>::Vector2D(const Vector2D<Scalar> &vec2)
+{
+    *this = vec2;
+}
+
+template <typename Scalar>
 Vector2D<Scalar>::~Vector2D()
 {
 }
@@ -48,13 +54,13 @@ Vector2D<Scalar>::~Vector2D()
 template <typename Scalar>
 Vector2D<Scalar>& Vector2D<Scalar>::derived()
 {
-    return static_cast<Vector2D<Scalar>&>(*this);
+    return dynamic_cast<Vector2D<Scalar>&>(*this);
 }
 
 template <typename Scalar>
 const Vector2D<Scalar>& Vector2D<Scalar>::derived() const
 {
-    return static_cast<const Vector2D<Scalar>&>(*this);
+    return dynamic_cast<const Vector2D<Scalar>&>(*this);
 }
 
 template <typename Scalar>
