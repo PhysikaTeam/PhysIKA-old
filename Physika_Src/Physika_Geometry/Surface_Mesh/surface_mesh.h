@@ -29,16 +29,26 @@ template <typename Scalar>
 class SurfaceMesh
 {
 public:
+    /* Constructions */
     SurfaceMesh();
     ~SurfaceMesh();
-    void compute_normals();
-    unsigned int get_number_of_vertex();
-    unsigned int get_number_of_edge();
-    unsigned int get_number_of_triangle();
+    
+    /* Get and Set */
+    inline vector<Edge<Scalar>*>& edges() { return edges_;}
+    inline vector<Vertex<Scalar>*> & vertices() { return vertices_;}
+    inline vector<Triangle<Scalar>*> & triangles() { return triangles_;}
+    inline unsigned int get_number_of_vertex() const { return vertices_.size(); }
+    inline unsigned int get_number_of_edge() const { return edges_.size(); }
+    inline unsigned int get_number_of_triangle() const {return triangles_.size(); }
 
-    vector<Triangle<Scalar>*> triangles;
-    vector<Vertex<Scalar>*> vertices;
-    vector<Edge<Scalar>*> edges;
+    /* Some functions */
+    void computeNormals();
+
+
+protected:
+    vector<Triangle<Scalar>*> triangles_;
+    vector<Vertex<Scalar>*> vertices_;
+    vector<Edge<Scalar>*> edges_;
 };
 
 } //end of namespace Physika

@@ -8,5 +8,6 @@
     <ClCompile Include="..\..\TESTS\surface_mesh_test.cpp" />
     <ClCompile Include="..\..\TESTS\matrixMxN_test.cpp" />
     <ClCompile Include="..\..\TESTS\quaternion_test.cpp" />
+    <ClCompile Include="..\..\TESTS\constitutive_models_test.cpp" />
   </ItemGroup>
 </Project>

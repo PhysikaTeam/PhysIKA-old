@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Dynamics/Integrator/integrator_base.h"
+#include "Physika_Dynamics/Integrators/integrator_base.h"
 
 namespace Physika{
 

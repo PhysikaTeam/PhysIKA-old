@@ -10,27 +10,39 @@
     <Filter Include="Rigid_Body">
       <UniqueIdentifier>{fc87a2fa-4b0d-4ef2-b914-93f53b1e585e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Constitutive_Models">
+      <UniqueIdentifier>{8983251c-9e7c-4b8d-8ada-7dbfe57da0f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Particle\particle.cpp">
       <Filter>Particle</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Integrator\integrator_base.cpp">
-      <Filter>Integrator</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.cpp">
       <Filter>Rigid_Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Integrators\integrator_base.cpp">
+      <Filter>Integrator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\neo_hooken.cpp">
+      <Filter>Constitutive_Models</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Particle\particle.h">
       <Filter>Particle</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Integrator\integrator_base.h">
-      <Filter>Integrator</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.h">
       <Filter>Rigid_Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Integrators\integrator_base.h">
+      <Filter>Integrator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\constitutive_model.h">
+      <Filter>Constitutive_Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\neo_hooken.h">
+      <Filter>Constitutive_Models</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

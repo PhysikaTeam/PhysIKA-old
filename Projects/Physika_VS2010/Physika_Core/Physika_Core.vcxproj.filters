@@ -13,6 +13,9 @@
     <Filter Include="Quaternion">
       <UniqueIdentifier>{23dc03aa-0651-4d23-9f3a-287ad01abad2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Transform">
+      <UniqueIdentifier>{a891d467-c36f-4fdd-b8f1-dfb0baa88b6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cpp">
@@ -35,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp">
       <Filter>Quaternion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Transform\transform.cpp">
+      <Filter>Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\misc_constants.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Transform\transform.h">
+      <Filter>Transform</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

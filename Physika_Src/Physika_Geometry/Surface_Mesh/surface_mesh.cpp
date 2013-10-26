@@ -32,73 +32,73 @@ SurfaceMesh<Scalar>::~SurfaceMesh()
 }
 
 template <typename Scalar>
-void SurfaceMesh<Scalar>::compute_normals()
+void SurfaceMesh<Scalar>::computeNormals()
 {
-    const int nbtriangles = triangles.size();
-    const int nbvertices = vertices.size();
-    const int nbedges = edges.size();
+    const int nbtriangles = triangles_.size();
+    const int nbvertices = vertices_.size();
+    const int nbedges = edges_.size();
 
     //for face normals;
     for(int i = 0; i < nbtriangles; ++i)
     {
-        Triangle<Scalar> *t = triangles[i];
-       	t->compute_normal();
-       	t->normal.normalize();
+        Triangle<Scalar> *t = triangles_[i];
+       	t->computeNormals();
+       	t->normal().normalize();
     }
 
     //for edges: angle weighted nomrmal;
     for (int i = 0; i < nbedges; ++i)
     {
-	Edge<Scalar> *e = edges[i];
-	assert(e != NULL);
-       	e->normal = 0.0f;
-       	assert(e->triangles[0] != NULL && e->triangles[1] != NULL);
-       	e->normal += e->triangles[0]->normal + e->triangles[1]->normal;
-       	Scalar length = e->normal.norm();
+	    Edge<Scalar> *e = edges_[i];
+	    assert(e != NULL);
+       	e->set_normal(0);
+       	assert(e->triangles(0) != NULL && e->triangles(1) != NULL);
+        e->set_normal(e->triangles(0)->normal() + e->triangles(0)->normal());
+       	Scalar length = e->normal().norm();
     }
 
     //for vertices;
     for(int i = 0; i < nbtriangles; i++)
     {
-       	Triangle<Scalar> *t = triangles[i];
+       	Triangle<Scalar> *t = triangles_[i];
        	assert(t != NULL);
        	for (int j=0; j<3; j++)
         {
-       	    Vector3D<Scalar> e1 = t->vertices[(j+1)%3]->position - t->vertices[j]->position;
-	        Vector3D<Scalar> e2 = t->vertices[(j+2)%3]->position - t->vertices[j]->position;
+       	    Vector3D<Scalar> e1 = t->vertices((j+1)%3)->position() - t->vertices(j)->position();
+	        Vector3D<Scalar> e2 = t->vertices((j+2)%3)->position() - t->vertices(j)->position();
 	        e1.normalize();
 	        e2.normalize();
 	        Scalar weight = acos(e1.dot(e2));
-            t->vertices[j]->normal += weight * t->normal;
+            t->vertices(j)->set_normal(weight * t->normal() + t->vertices(j)->normal());
 	 }
     }
     for (int i = 0; i < nbvertices; ++i)
     {
-       	Vertex<Scalar> *v = vertices[i];
+       	Vertex<Scalar> *v = vertices_[i];
        	assert(v != NULL);
-       	v->normal.normalize();
+       	v->normal().normalize();
     }
 
 
 }
 
-template <typename Scalar>
-unsigned int SurfaceMesh<Scalar>::get_number_of_vertex()
-{
-	return this->vertices.size()	;
-}
-
-template <typename Scalar>
-unsigned int SurfaceMesh<Scalar>::get_number_of_edge()
-{
-	return this->edges.size()	;
-}
-
-template <typename Scalar>
-unsigned int SurfaceMesh<Scalar>::get_number_of_triangle()
-{
-	return this->triangles.size()	;
-}
+//template <typename Scalar>
+//unsigned int SurfaceMesh<Scalar>::get_number_of_vertex()
+//{
+//	return this->vertices.size()	;
+//}
+//
+//template <typename Scalar>
+//unsigned int SurfaceMesh<Scalar>::get_number_of_edge()
+//{
+//	return this->edges.size()	;
+//}
+//
+//template <typename Scalar>
+//unsigned int SurfaceMesh<Scalar>::get_number_of_triangle()
+//{
+//	return this->triangles.size()	;
+//}
 
 
 template class SurfaceMesh<float>;

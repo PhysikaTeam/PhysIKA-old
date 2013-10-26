@@ -71,12 +71,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Integrator\integrator_base.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\neo_hooken.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Integrators\integrator_base.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Particle\particle.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Integrator\integrator_base.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\constitutive_model.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\neo_hooken.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Integrators\integrator_base.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Particle\particle.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.h" />
   </ItemGroup>

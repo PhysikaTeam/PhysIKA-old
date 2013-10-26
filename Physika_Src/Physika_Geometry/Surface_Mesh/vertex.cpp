@@ -17,13 +17,13 @@
 namespace Physika{
 
 template <typename Scalar>
-Vertex<Scalar>::Vertex(Scalar x, Scalar y, Scalar z):position(x,y,z),normal(0,0,0)
+Vertex<Scalar>::Vertex(Scalar x, Scalar y, Scalar z):position_(x,y,z),normal_(0,0,0)
 {
 	
 }
 
 template <typename Scalar>
-Vertex<Scalar>::Vertex(const Vector3D<Scalar>& pos):position(pos),normal(0,0,0)
+Vertex<Scalar>::Vertex(const Vector3D<Scalar>& pos):position_(pos),normal_(0,0,0)
 {
 
 }

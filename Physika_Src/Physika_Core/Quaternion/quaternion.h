@@ -23,14 +23,12 @@ namespace Physika{
 template <typename Scalar>
 class Quaternion
 {
-public:
-    Scalar x,y,z,w;
-    
+public:    
     /* Constructors */
     Quaternion();
     Quaternion(Scalar , Scalar , Scalar , Scalar );
-    Quaternion(const Vector3D<Scalar> &, float );
-    Quaternion(float, const Vector3D<Scalar> &);
+    Quaternion(const Vector3D<Scalar> &, Scalar );
+    Quaternion(Scalar , const Vector3D<Scalar> &);
     Quaternion(const Scalar *); 
     Quaternion(const Quaternion<Scalar> &);
     
@@ -39,12 +37,27 @@ public:
     Quaternion<Scalar> &operator += (const Quaternion<Scalar> &);
     Quaternion<Scalar> &operator -= (const Quaternion<Scalar> &);
     
+    /* Get and Set functions */
+    inline Scalar x() const { return x_;}
+    inline Scalar y() const { return y_;}
+    inline Scalar z() const { return z_;}
+    inline Scalar w() const { return w_;}
+
+    inline void set_x(Scalar x) { x_ = x;}
+    inline void set_y(Scalar y) { y_ = y;}
+    inline void set_z(Scalar z) { z_ = z;}
+    inline void set_w(Scalar w) { w_ = w;}
+
     /* Special functions */
     Scalar norm();
     Quaternion<Scalar>& normalize();
     void set(const Vector3D<Scalar>&, Scalar );
     void set(Scalar , const Vector3D<Scalar>& );
-  
+    Scalar getAngle() const;                                         // return the angle between this quat and the identity quaternion.
+    Scalar getAngle(const Quaternion<Scalar>&) const;                // return the angle between this and the argument
+    Scalar dot(const Quaternion<Scalar> &) const;
+    Quaternion<Scalar> getConjugate() const;                         // return the conjugate
+    const Vector3D<Scalar> rotate(const Vector3D<Scalar> ) const;    // rotates passed vec by this;
 
     /* Operator overloading */
     Quaternion<Scalar> operator - (const Quaternion<Scalar> &);
@@ -57,13 +70,18 @@ public:
     Scalar& operator[] (int);
     const Scalar& operator[] (int) const;
 
+
+    static inline Quaternion<Scalar> createIdentity() { return Quaternion<Scalar>(0,0,0,1); }
+
+protected:
+    Scalar x_,y_,z_,w_;
 };
 
 
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
 {
-    s <<quat.x<<", "<<quat.y<<", "<<quat.z<<", "<<quat.w<<std::endl;
+    s <<quat.x()<<", "<<quat.y()<<", "<<quat.z()<<", "<<quat.w()<<std::endl;
     return s; 
 }
 

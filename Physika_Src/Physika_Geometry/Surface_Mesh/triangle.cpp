@@ -18,23 +18,23 @@
 namespace Physika{
 
 template <typename Scalar>
-Triangle<Scalar>::Triangle():normal(0,0,0),
-    area(0),
-    center(0,0,0)
+Triangle<Scalar>::Triangle():normal_(0,0,0),
+    area_(0),
+    center_(0,0,0)
 {
 	for(int i = 0;i < 3; ++i)
 	{
-		edges[i] = NULL;
-		vertices[i] = NULL;
+		edges_[i] = NULL;
+		vertices_[i] = NULL;
 	}
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Triangle<Scalar>::compute_normal()
+Vector3D<Scalar> Triangle<Scalar>::computeNormals()
 {
-    assert(vertices[0]!=NULL && vertices[1]!=NULL && vertices[2]!=NULL);
-    normal = -(vertices[1]->position - vertices[0]->position).cross(vertices[2]->position - vertices[1]->position);
-    return normal;
+    assert(vertices_[0]!=NULL && vertices_[1]!=NULL && vertices_[2]!=NULL);
+    normal_ = -(vertices_[1]->position() - vertices_[0]->position()).cross(vertices_[2]->position() - vertices_[1]->position());
+    return normal_;
 }
 
 template class Triangle<float>;

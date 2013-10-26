@@ -76,6 +76,7 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_MxN.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Transform\transform.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_2d.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.cpp" />
   </ItemGroup>
@@ -87,6 +88,7 @@
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_MxN.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Quaternion\quaternion.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Transform\transform.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\global_config.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\math_constants.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\misc_constants.h" />

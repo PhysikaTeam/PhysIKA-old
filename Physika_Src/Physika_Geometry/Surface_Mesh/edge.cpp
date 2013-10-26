@@ -13,17 +13,22 @@
  */
 
 #include "Physika_Geometry/Surface_Mesh/edge.h"
+#include "Physika_Geometry/Surface_Mesh/triangle.h"
+#include "Physika_Geometry/Surface_Mesh/vertex.h"
+
 
 namespace Physika{
 
 template <typename Scalar>
-Edge<Scalar>::Edge():normal(0,0,0)
+Edge<Scalar>::Edge():normal_(0,0,0)
 {
-	this->vertices[0] = NULL;
-	this->vertices[1] = NULL;
-	this->triangles[0] = NULL;
-	this->triangles[1] = NULL;
+	vertices_[0] = NULL;
+	vertices_[1] = NULL;
+	triangles_[0] = NULL;
+	triangles_[1] = NULL;
 }
+
+
 
 template class Edge<float>;
 template class Edge<double>;

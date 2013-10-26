@@ -31,14 +31,28 @@ template <typename Scalar>
 class Triangle
 {
 public:
+    /* Constructions */
     Triangle();
-    Vector3D<Scalar> compute_normal();
 
-    Vertex<Scalar> *vertices[3];
-    Edge<Scalar> *edges[3];
-    Vector3D<Scalar> normal;
-    Vector3D<Scalar> center;
-    Scalar area;
+    /* Get and Set */
+    inline Scalar area() const { return area_; }
+    inline Vector3D<Scalar> center() const { return center_; }
+    inline Vector3D<Scalar> normal() const { return normal_; }
+    inline Vertex<Scalar> * vertices(int i ) { return vertices_[i]; }
+    inline Edge<Scalar> * edges(int i) { return edges_[i]; }
+
+    inline void set_area(Scalar area) { area_ = area; }
+    inline void set_normal(Scalar normal) { normal_ = normal; }
+    inline void set_center(Scalar center) { center_ = center; }
+
+    Vector3D<Scalar> computeNormals();
+
+protected:
+    Vertex<Scalar> *vertices_[3];
+    Edge<Scalar> *edges_[3];
+    Vector3D<Scalar> normal_;
+    Vector3D<Scalar> center_;
+    Scalar area_;
 };
 
 } //end of namespace Physika

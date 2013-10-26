@@ -27,12 +27,20 @@ template <typename Scalar>
 class Vertex
 {
 public:
-
+    /* Constructions*/
     Vertex(Scalar , Scalar , Scalar );
     Vertex(const Vector3D<Scalar>& pos);
 
-	Vector3D<Scalar> position;
-	Vector3D<Scalar> normal;
+    /* Get and Set */
+    inline Vector3D<Scalar>& position()  { return position_; }
+    inline Vector3D<Scalar>& normal()  { return normal_; }
+    inline void set_position(Vector3D<Scalar> position) { position_ = position; }
+    inline void set_normal(Vector3D<Scalar> normal) { normal_ = normal; }
+    
+    /* Protected Members */
+protected:
+	Vector3D<Scalar> position_;
+	Vector3D<Scalar> normal_;
 };
 
 } //end of namespace Physika

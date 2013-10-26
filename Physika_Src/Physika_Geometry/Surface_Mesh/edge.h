@@ -30,11 +30,21 @@ template <typename Scalar>
 class Edge
 {
 public:
+    /* Constructions */
     Edge();
 
-    Vertex<Scalar> *vertices[2];
-	Triangle<Scalar> *triangles[2];
-    Vector3D<Scalar> normal;
+    /* Get and Set */
+    inline Vector3D<Scalar>& normal() { return normal_; }
+    Vertex<Scalar> * vertices(unsigned int i) { return vertices_[i]; }
+    Triangle<Scalar> * triangles(unsigned int i){ return triangles_[i]; }
+
+    inline void set_normal(const Vector3D<Scalar>& normal) { normal_ = normal; }
+ 
+
+protected:
+    Vertex<Scalar>* vertices_[2];
+	Triangle<Scalar>* triangles_[2];
+    Vector3D<Scalar> normal_;
 };
 
 } //end of namespace Physika
