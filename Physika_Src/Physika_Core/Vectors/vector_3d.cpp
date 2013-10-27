@@ -54,18 +54,6 @@ Vector3D<Scalar>::~Vector3D()
 }
 
 template <typename Scalar>
-Vector3D<Scalar>& Vector3D<Scalar>::derived()
-{
-    return dynamic_cast<Vector3D<Scalar>&>(*this);
-}
-
-template <typename Scalar>
-const Vector3D<Scalar>& Vector3D<Scalar>::derived() const
-{
-    return dynamic_cast<const Vector3D<Scalar>&>(*this);
-}
-
-template <typename Scalar>
 Scalar& Vector3D<Scalar>::operator[] (int idx)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR

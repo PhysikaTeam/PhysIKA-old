@@ -12,6 +12,7 @@
  *
  */
 
+#include <cmath>
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
@@ -45,9 +46,13 @@ void NeoHookean<Scalar,Dim>::info() const
 
 template <typename Scalar, int Dim>
 Scalar NeoHookean<Scalar,Dim>::energy(const MatrixBase &F) const
-{	
-    Scalar result = 0;
-    return result;
+{
+    // Scalar trace_c = ((F.derived()).transpose()*F.derived()).trace();
+    // Scalar J = (F.derived()).determinant();
+    // Scalar lnJ = log(J);
+    // Scalar energy = mu_/2*(trace_c-3)-mu_*lnJ+lambda/2*lnJ*lnJ;
+    // return energy;
+    return 0;
 }
 
 template <typename Scalar, int Dim>

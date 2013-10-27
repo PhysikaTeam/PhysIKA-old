@@ -44,18 +44,6 @@ Matrix2x2<Scalar>::~Matrix2x2()
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>& Matrix2x2<Scalar>::derived()
-{
-    return dynamic_cast<Matrix2x2<Scalar>&>(*this);
-}
-
-template <typename Scalar>
-const Matrix2x2<Scalar>& Matrix2x2<Scalar>::derived() const
-{
-    return dynamic_cast<const Matrix2x2<Scalar>&>(*this);
-}
-
-template <typename Scalar>
 Scalar& Matrix2x2<Scalar>::operator() (int i, int j)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX

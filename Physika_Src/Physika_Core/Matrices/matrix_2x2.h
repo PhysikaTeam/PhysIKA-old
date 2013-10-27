@@ -31,8 +31,6 @@ public:
     ~Matrix2x2();
     inline int rows() const{return 2;}
     inline int cols() const{return 2;}
-    Matrix2x2<Scalar>& derived();
-    const Matrix2x2<Scalar>& derived() const;
     Scalar& operator() (int i, int j);
     const Scalar& operator() (int i, int j) const;
     Matrix2x2<Scalar> operator+ (const Matrix2x2<Scalar> &) const;

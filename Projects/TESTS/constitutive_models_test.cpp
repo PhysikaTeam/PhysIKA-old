@@ -20,13 +20,14 @@ using namespace std;
 using Physika::NeoHookean;
 using Physika::Matrix2x2;
 using Physika::Matrix3x3;
+using Physika::MatrixBase;
 
 int main()
 {
-    NeoHookean<float,3> neo_hookean_material;
-    Matrix3x3<float> F;
-    F.derived();
+    NeoHookean<float,2> neo_hookean_material;
+    Matrix2x2<float> F(1.0f,0.0f,0.0f,1.0f);
     neo_hookean_material.info();
-    cout<<neo_hookean_material.energy(F)<<endl;
+    MatrixBase &b = F;
+    cout<<neo_hookean_material.energy(b)<<endl;
     return 0;
 }

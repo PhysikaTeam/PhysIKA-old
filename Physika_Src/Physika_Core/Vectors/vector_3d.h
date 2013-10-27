@@ -30,8 +30,6 @@ public:
     Vector3D(const Vector3D<Scalar>&);
     ~Vector3D();
     inline int dims() const{return 3;}
-    Vector3D<Scalar>& derived();
-    const Vector3D<Scalar>& derived() const;
     Scalar& operator[] (int);
     const Scalar& operator[] (int) const;
     Vector3D<Scalar> operator+ (const Vector3D<Scalar> &) const;

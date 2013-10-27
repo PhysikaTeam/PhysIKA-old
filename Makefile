@@ -20,3 +20,4 @@ physika_dependency:
 cleanall:
 	cd ./Physika_Src/Physika_Core; make cleanall
 	cd ./Physika_Src/Physika_Dependency; make cleanall
+	cd ./Physika_Src/Physika_Dynamics; make cleanall

@@ -23,8 +23,6 @@ public:
     VectorBase(){};
     ~VectorBase(){};
     virtual int dims() const=0;
-    virtual VectorBase& derived()=0;
-    virtual const VectorBase& derived() const=0;
 protected:
 };
 

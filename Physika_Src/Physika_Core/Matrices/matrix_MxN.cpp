@@ -86,18 +86,6 @@ void MatrixMxN<Scalar>::resize(int new_rows, int new_cols)
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar>& MatrixMxN<Scalar>::derived()
-{
-    return dynamic_cast<MatrixMxN<Scalar>&>(*this);
-}
-
-template <typename Scalar>
-const MatrixMxN<Scalar>& MatrixMxN<Scalar>::derived() const
-{
-    return dynamic_cast<const MatrixMxN<Scalar>&>(*this);
-}
-
-template <typename Scalar>
 Scalar& MatrixMxN<Scalar>::operator() (int i, int j)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX

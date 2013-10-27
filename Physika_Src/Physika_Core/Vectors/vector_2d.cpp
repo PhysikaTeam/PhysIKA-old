@@ -52,18 +52,6 @@ Vector2D<Scalar>::~Vector2D()
 }
 
 template <typename Scalar>
-Vector2D<Scalar>& Vector2D<Scalar>::derived()
-{
-    return dynamic_cast<Vector2D<Scalar>&>(*this);
-}
-
-template <typename Scalar>
-const Vector2D<Scalar>& Vector2D<Scalar>::derived() const
-{
-    return dynamic_cast<const Vector2D<Scalar>&>(*this);
-}
-
-template <typename Scalar>
 Scalar& Vector2D<Scalar>::operator[] (int idx)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR

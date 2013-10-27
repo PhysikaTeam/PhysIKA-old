@@ -24,8 +24,6 @@ public:
     ~MatrixBase(){};
     virtual int rows() const=0;
     virtual int cols() const=0;
-    virtual MatrixBase& derived()=0;
-    virtual const MatrixBase& derived() const=0;
 protected:
 };
 
