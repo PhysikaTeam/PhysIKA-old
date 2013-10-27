@@ -16,10 +16,13 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_3X3_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
+
+//forward declaration of class template
+template <typename Scalar>
+class Vector3D;
 
 template <typename Scalar>
 class Matrix3x3: public MatrixBase

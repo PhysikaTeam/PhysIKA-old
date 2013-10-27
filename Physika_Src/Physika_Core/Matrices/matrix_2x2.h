@@ -16,10 +16,13 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
+
+//forward declaration of class template
+template <typename Scalar>
+class Vector2D;
 
 template <typename Scalar>
 class Matrix2x2: public MatrixBase

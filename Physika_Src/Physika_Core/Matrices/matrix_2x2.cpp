@@ -12,6 +12,8 @@
  *
  */
 
+
+#include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 
 namespace Physika{

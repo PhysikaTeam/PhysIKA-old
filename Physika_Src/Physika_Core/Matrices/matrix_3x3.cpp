@@ -12,6 +12,7 @@
  *
  */
 
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 
 namespace Physika{

@@ -14,10 +14,11 @@
 #ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEAN_H_
 #define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEAN_H_
 
-#include "Physika_Core/Matrices/matrix_base.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 
 namespace Physika{
+
+class MatrixBase;
 
 template <typename Scalar, int Dim>
 class NeoHookean: public ConstitutiveModel
