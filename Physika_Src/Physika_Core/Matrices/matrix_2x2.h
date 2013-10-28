@@ -16,7 +16,7 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Vectors/Vector_2d.h"
+#include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/square_matrix.h"
 
 namespace Physika{
