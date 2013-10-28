@@ -1,6 +1,7 @@
 /*
  * @file square_matrix.h 
- * @brief This abstract class is intended to provide a uniform interface for Matrix2x2 and Matrix3x3. Matrix2x2 and Matrix3x3 are implemented using template partial specialization of this class.
+ * @brief This abstract class is intended to provide a uniform interface for Matrix2x2 and Matrix3x3.
+ *        Matrix2x2 and Matrix3x3 are implemented using template partial specialization of this class.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.

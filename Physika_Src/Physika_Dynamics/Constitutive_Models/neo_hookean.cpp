@@ -27,7 +27,7 @@ NeoHookean<Scalar,Dim>::NeoHookean()
 
 template <typename Scalar, int Dim>
 NeoHookean<Scalar,Dim>::NeoHookean(Scalar lambda, Scalar mu)
-    :lambda_(lambda),mu_(mu)
+    :IsotropicHyperelasticMaterial<Scalar,Dim>(lambda,mu)
 {
 }
 
@@ -47,22 +47,40 @@ void NeoHookean<Scalar,Dim>::info() const
 template <typename Scalar, int Dim>
 Scalar NeoHookean<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
 {
-    // Scalar trace_c = ((F.derived()).transpose()*F.derived()).trace();
-    // Scalar J = (F.derived()).determinant();
-    // Scalar lnJ = log(J);
-    // Scalar energy = mu_/2*(trace_c-3)-mu_*lnJ+lambda/2*lnJ*lnJ;
-    // return energy;
-    return 0;
+    Scalar trace_c = (F.transpose()*F).trace();
+    Scalar J = F.determinant();
+    Scalar lnJ = log(J);
+    Scalar mu = this->mu_;
+    Scalar lambda = this->lambda_;
+    Scalar energy = mu/2*(trace_c-3)-mu*lnJ+lambda/2*lnJ*lnJ;
+    return energy;
 }
 
 template <typename Scalar, int Dim>
-void NeoHookean<Scalar,Dim>::energyGradient(const SquareMatrix<Scalar,Dim> &F, SquareMatrix<Scalar,Dim> &energy_gradient) const
+SquareMatrix<Scalar,Dim> NeoHookean<Scalar,Dim>::firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
 {
+    SquareMatrix<Scalar,Dim> P = F*secondPiolaKirchhoffStress(F);
+    return P;
 }
 
 template <typename Scalar, int Dim>
-void NeoHookean<Scalar,Dim>::energyHessian(const SquareMatrix<Scalar,Dim> &F, SquareMatrix<Scalar,Dim> &energy_hessian) const
+SquareMatrix<Scalar,Dim> NeoHookean<Scalar,Dim>::secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
 {
+    SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
+    SquareMatrix<Scalar,Dim> inverse_c = (F.transpose()*F).inverse();
+    Scalar lnJ = log(F.determinant());
+    Scalar mu = this->mu_;
+    Scalar lambda = this->lambda_;
+    SquareMatrix<Scalar,Dim> S = mu*(identity-inverse_c)+lambda*lnJ*inverse_c;
+    return S;
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> NeoHookean<Scalar,Dim>::cauchyStress(const SquareMatrix<Scalar,Dim> &F) const
+{
+    Scalar J = F.determinant();
+    SquareMatrix<Scalar,Dim> stress = 1/J*firstPiolaKirchhoffStress(F)*F.transpose();
+    return stress;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

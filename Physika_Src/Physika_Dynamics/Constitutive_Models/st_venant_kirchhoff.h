@@ -1,6 +1,6 @@
 /*
- * @file  neo_hookean.h
- * @brief Neo-Hookean hyperelastic material model
+ * @file  st_venant_kirchhoff.h
+ * @brief St.Venant-Kirchhoff hyperelastic material model
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,23 +12,23 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEAN_H_
-#define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEAN_H_
+#ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ST_VENANT_KIRCHHOFF_H_
+#define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ST_VENANT_KIRCHHOFF_H_
 
 #include "Physika_Dynamics/Constitutive_Models/isotropic_hyperelastic_material.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-class SquareMatrix;
+    class SquareMatrix;
 
 template <typename Scalar, int Dim>
-class NeoHookean: public IsotropicHyperelasticMaterial<Scalar,Dim>
+class StVK: public IsotropicHyperelasticMaterial<Scalar,Dim>
 {
 public:
-    NeoHookean();
-    NeoHookean(Scalar lambda, Scalar mu);
-    ~NeoHookean();
+    StVK();
+    StVK(Scalar lambda, Scalar mu);
+    ~StVK();
     void info() const;
     Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient
     SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;
@@ -38,6 +38,6 @@ public:
 protected:
 };
 
-}  //end of namespace Physika
+} //end of namespace Physika
 
-#endif //PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_NEO_HOOKEAN_H_
+#endif //PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ST_VENANT_KIRCHHOFF_H_

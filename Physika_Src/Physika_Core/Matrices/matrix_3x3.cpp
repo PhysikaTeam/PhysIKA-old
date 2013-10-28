@@ -213,6 +213,22 @@ Scalar SquareMatrix<Scalar,3>::trace() const
     return (*this)(0,0) + (*this)(1,1) + (*this)(2,2);
 }
 
+template <typename Scalar>
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::identityMatrix()
+{
+    return SquareMatrix<Scalar,3>(1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0);
+}
+
+template <typename Scalar>
+Scalar SquareMatrix<Scalar,3>::doubleContraction(const SquareMatrix<Scalar,3> &mat2) const
+{
+    Scalar result = 0;
+    for(int i = 0; i < 3; ++i)
+	for(int j = 0; j < 3; ++j)
+	    result += (*this)(i,j)*mat2(i,j);
+    return result;
+}
+
 //explicit instantiation of template so that it could be compiled into a lib
 template class SquareMatrix<float,3>;
 template class SquareMatrix<double,3>;

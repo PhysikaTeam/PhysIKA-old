@@ -49,6 +49,8 @@ public:
     SquareMatrix<Scalar,3> inverse() const;
     Scalar determinant() const;
     Scalar trace() const;
+    Scalar doubleContraction(const SquareMatrix<Scalar,3> &) const;//double contraction
+    static SquareMatrix<Scalar,3> identityMatrix();
  
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
