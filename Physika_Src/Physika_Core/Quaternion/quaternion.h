@@ -27,8 +27,8 @@ public:
     /* Constructors */
     Quaternion();
     Quaternion(Scalar , Scalar , Scalar , Scalar );
-    Quaternion(const Vector3D<Scalar> &, Scalar );
-    Quaternion(Scalar , const Vector3D<Scalar> &);
+    Quaternion(const Vector<Scalar,3> &, Scalar );
+    Quaternion(Scalar , const Vector<Scalar,3> &);
     Quaternion(const Scalar *); 
     Quaternion(const Quaternion<Scalar> &);
     
@@ -51,13 +51,13 @@ public:
     /* Special functions */
     Scalar norm();
     Quaternion<Scalar>& normalize();
-    void set(const Vector3D<Scalar>&, Scalar );
-    void set(Scalar , const Vector3D<Scalar>& );
+    void set(const Vector<Scalar,3>&, Scalar );
+    void set(Scalar , const Vector<Scalar,3>& );
     Scalar getAngle() const;                                         // return the angle between this quat and the identity quaternion.
     Scalar getAngle(const Quaternion<Scalar>&) const;                // return the angle between this and the argument
     Scalar dot(const Quaternion<Scalar> &) const;
     Quaternion<Scalar> getConjugate() const;                         // return the conjugate
-    const Vector3D<Scalar> rotate(const Vector3D<Scalar> ) const;    // rotates passed vec by this;
+    const Vector<Scalar,3> rotate(const Vector<Scalar,3> ) const;    // rotates passed vec by this;
 
     /* Operator overloading */
     Quaternion<Scalar> operator - (const Quaternion<Scalar> &);
@@ -87,15 +87,14 @@ std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
 
 //make * operator commutative
 template <typename S, typename T>
-Quaternion<T> operator *(S scale, Quaternion<T> quad)
+Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
 {
     return quad * scale;
 }
 
-namespace Type{
-    typedef Quaternion<float> Quaternionf;
-    typedef Quaternion<double> Quaterniond;
-}
+//convenient typedefs
+typedef Quaternion<float> Quaternionf;
+typedef Quaternion<double> Quaterniond;
 
 }//end of namespace Physika
 

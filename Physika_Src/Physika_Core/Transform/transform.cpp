@@ -16,7 +16,7 @@
 namespace Physika{
 
 template <typename Scalar>
-Transform<Scalar>::Transform(const Vector3D<Scalar> position):
+Transform<Scalar>::Transform(const Vector<Scalar,3> position):
     position_(position),
     orientation_(0,0,0,1)
 {
@@ -32,7 +32,7 @@ Transform<Scalar>::Transform(const Quaternion<Scalar> orientation):
 }
 
 template <typename Scalar>
-Transform<Scalar>::Transform(const Quaternion<Scalar>& orientation, const Vector3D<Scalar>& position):
+Transform<Scalar>::Transform(const Quaternion<Scalar>& orientation, const Vector<Scalar,3>& position):
     position_(position),
     orientation_(orientation)
 {
@@ -40,14 +40,15 @@ Transform<Scalar>::Transform(const Quaternion<Scalar>& orientation, const Vector
 }
 
 template <typename Scalar>
-Transform<Scalar>::Transform(const Vector3D<Scalar>& position, const Quaternion<Scalar>& orientation):
+Transform<Scalar>::Transform(const Vector<Scalar,3>& position, const Quaternion<Scalar>& orientation):
     position_(position),
     orientation_(orientation)
 {
 
 }
 
+//explicit instantiation
 template class Transform<float>;
 template class Transform<double>;
 
-}
+}  //end of namespace Physika

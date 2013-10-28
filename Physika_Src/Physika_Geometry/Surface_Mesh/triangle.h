@@ -16,11 +16,7 @@
 #define PHYSIKA_GEOMETRY_SURFACE_MESH_TRIANGLE_H_
 
 
-#include "Physika_Core/Vectors/vector.h"
-
-
-using Physika::Vector3D;
-
+#include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
 
@@ -36,8 +32,8 @@ public:
 
     /* Get and Set */
     inline Scalar area() const { return area_; }
-    inline Vector3D<Scalar> center() const { return center_; }
-    inline Vector3D<Scalar> normal() const { return normal_; }
+    inline Vector<Scalar,3> center() const { return center_; }
+    inline Vector<Scalar,3> normal() const { return normal_; }
     inline Vertex<Scalar> * vertices(int i ) { return vertices_[i]; }
     inline Edge<Scalar> * edges(int i) { return edges_[i]; }
 
@@ -45,13 +41,13 @@ public:
     inline void set_normal(Scalar normal) { normal_ = normal; }
     inline void set_center(Scalar center) { center_ = center; }
 
-    Vector3D<Scalar> computeNormals();
+    Vector<Scalar,3> computeNormals();
 
 protected:
     Vertex<Scalar> *vertices_[3];
     Edge<Scalar> *edges_[3];
-    Vector3D<Scalar> normal_;
-    Vector3D<Scalar> center_;
+    Vector<Scalar,3> normal_;
+    Vector<Scalar,3> center_;
     Scalar area_;
 };
 

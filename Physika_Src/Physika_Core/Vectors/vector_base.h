@@ -20,8 +20,8 @@ namespace Physika{
 class VectorBase
 {
 public:
-    VectorBase(){};
-    ~VectorBase(){};
+    VectorBase(){}
+    ~VectorBase(){}
     virtual int dims() const=0;
 protected:
 };

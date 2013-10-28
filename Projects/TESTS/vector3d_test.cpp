@@ -13,27 +13,18 @@
  */
 
 #include <iostream>
-//#include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Vectors/vector.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 using namespace std;
-using Physika::Vector3D;
 
 int main()
 {
 
-  /*
-  Physika::Type::Vector2f dd;
-  Physika::Type::Vector3f dd1;
-  Physika::Type::Vector2d dd2;
-  Physika::Type::Vector3d dd3;
-  */
-
   cout<<"Vector3D Test"<<endl;
-  Vector3D<double> vec_double(2.0,1.0,3.0);
+  Physika::Vector3D(double) vec_double(2.0,1.0,3.0);
   cout<<"A 3d vector of double numbers:"<<endl;
   cout<<vec_double;
   cout<<"Dims: "<<vec_double.dims()<<endl;
-  Vector3D<double> vec_double3(0.0,1.0,2.0);
+  Physika::Vector3D(double) vec_double3(0.0,1.0,2.0);
   cout<<"Another 3d vector of double numbers:"<<endl;
   cout<<vec_double3;
   cout<<"vector1 add vector2: (+)"<<endl;

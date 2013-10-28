@@ -75,6 +75,10 @@ MatrixMxN<T> operator* (S scale, const MatrixMxN<T> &mat)
     return mat*scale;
 }
 
+//convenient typedefs
+typedef MatrixMxN<float> MatrixXf;
+typedef MatrixMxN<double> MatrixXd;
+
 }
 
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_MXN_H_

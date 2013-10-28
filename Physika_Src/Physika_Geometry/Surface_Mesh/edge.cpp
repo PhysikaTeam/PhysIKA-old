@@ -29,7 +29,7 @@ Edge<Scalar>::Edge():normal_(0,0,0)
 }
 
 
-
+//explicit instantiation
 template class Edge<float>;
 template class Edge<double>;
 

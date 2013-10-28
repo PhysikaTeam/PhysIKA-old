@@ -16,10 +16,7 @@
 #define PHYSIKA_GEOMETRY_SURFACE_MESH_VERTEX_H_
 
 
-#include "Physika_Core/Vectors/vector.h"
-
-using Physika::Vector3D;
-
+#include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
 
@@ -29,18 +26,18 @@ class Vertex
 public:
     /* Constructions*/
     Vertex(Scalar , Scalar , Scalar );
-    Vertex(const Vector3D<Scalar>& pos);
+    Vertex(const Vector<Scalar,3>& pos);
 
     /* Get and Set */
-    inline Vector3D<Scalar>& position()  { return position_; }
-    inline Vector3D<Scalar>& normal()  { return normal_; }
-    inline void set_position(Vector3D<Scalar> position) { position_ = position; }
-    inline void set_normal(Vector3D<Scalar> normal) { normal_ = normal; }
+    inline Vector<Scalar,3>& position()  { return position_; }
+    inline Vector<Scalar,3>& normal()  { return normal_; }
+    inline void set_position(Vector<Scalar,3> position) { position_ = position; }
+    inline void set_normal(Vector<Scalar,3> normal) { normal_ = normal; }
     
     /* Protected Members */
 protected:
-	Vector3D<Scalar> position_;
-	Vector3D<Scalar> normal_;
+	Vector<Scalar,3> position_;
+	Vector<Scalar,3> normal_;
 };
 
 } //end of namespace Physika

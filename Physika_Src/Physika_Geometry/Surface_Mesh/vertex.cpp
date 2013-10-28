@@ -27,8 +27,9 @@ Vertex<Scalar>::Vertex(const Vector3D<Scalar>& pos):position_(pos),normal_(0,0,0
 {
 
 }
+
+//explicit instantiation
 template class Vertex<float>;
 template class Vertex<double>;
-
 
 } //end of namespace Physika

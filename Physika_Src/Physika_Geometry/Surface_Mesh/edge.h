@@ -14,12 +14,8 @@
 
 #ifndef PHYSIKA_GEOMETRY_SURFACE_MESH_EDGE_H_
 #define PHYSIKA_GEOMETRY_SURFACE_MESH_EDGE_H_
-
-
-#include "Physika_Core/Vectors/vector.h"
-
-using Physika::Vector3D;
                   
+#include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
 
@@ -34,17 +30,16 @@ public:
     Edge();
 
     /* Get and Set */
-    inline Vector3D<Scalar>& normal() { return normal_; }
+    inline Vector<Scalar,3>& normal() { return normal_; }
     Vertex<Scalar> * vertices(unsigned int i) { return vertices_[i]; }
     Triangle<Scalar> * triangles(unsigned int i){ return triangles_[i]; }
 
-    inline void set_normal(const Vector3D<Scalar>& normal) { normal_ = normal; }
+    inline void set_normal(const Vector<Scalar,3>& normal) { normal_ = normal; }
  
-
 protected:
     Vertex<Scalar>* vertices_[2];
 	Triangle<Scalar>* triangles_[2];
-    Vector3D<Scalar> normal_;
+    Vector<Scalar,3> normal_;
 };
 
 } //end of namespace Physika

@@ -16,37 +16,37 @@
 #define PHYSIKA_CORE_VECTORS_VECTOR_2D_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Vectors/vector_base.h"
+#include "Physika_Core/Vectors/vector.h"
 
 namespace Physika{
 
 template <typename Scalar>
-class Vector2D: public VectorBase
+class Vector<Scalar,2>: public VectorBase
 {
 public:
-    Vector2D();
-    Vector2D(Scalar x, Scalar y);
-    Vector2D(Scalar);
-    Vector2D(const Vector2D<Scalar>&);
-    ~Vector2D();
+    Vector();
+    Vector(Scalar x, Scalar y);
+    Vector(Scalar);
+    Vector(const Vector<Scalar,2>&);
+    ~Vector();
     inline int dims() const{return 2;}
     Scalar& operator[] (int);
     const Scalar& operator[] (int) const;
-    Vector2D<Scalar> operator+ (const Vector2D<Scalar> &) const;
-    Vector2D<Scalar>& operator+= (const Vector2D<Scalar> &);
-    Vector2D<Scalar> operator- (const Vector2D<Scalar> &) const;
-    Vector2D<Scalar>& operator-= (const Vector2D<Scalar> &);
-    Vector2D<Scalar>& operator= (const Vector2D<Scalar> &);
-    bool operator== (const Vector2D<Scalar> &) const;
-    Vector2D<Scalar> operator* (Scalar) const;
-    Vector2D<Scalar>& operator*= (Scalar);
-    Vector2D<Scalar> operator/ (Scalar) const;
-    Vector2D<Scalar>& operator/= (Scalar);
+    Vector<Scalar,2> operator+ (const Vector<Scalar,2> &) const;
+    Vector<Scalar,2>& operator+= (const Vector<Scalar,2> &);
+    Vector<Scalar,2> operator- (const Vector<Scalar,2> &) const;
+    Vector<Scalar,2>& operator-= (const Vector<Scalar,2> &);
+    Vector<Scalar,2>& operator= (const Vector<Scalar,2> &);
+    bool operator== (const Vector<Scalar,2> &) const;
+    Vector<Scalar,2> operator* (Scalar) const;
+    Vector<Scalar,2>& operator*= (Scalar);
+    Vector<Scalar,2> operator/ (Scalar) const;
+    Vector<Scalar,2>& operator/= (Scalar);
     Scalar norm() const;
-    Vector2D<Scalar>& normalize();
-    Scalar cross(const Vector2D<Scalar> &)const;
-    Vector2D<Scalar> operator - (void) const;
-    Scalar dot(const Vector2D<Scalar>&) const;
+    Vector<Scalar,2>& normalize();
+    Scalar cross(const Vector<Scalar,2> &)const;
+    Vector<Scalar,2> operator - (void) const;
+    Scalar dot(const Vector<Scalar,2>&) const;
 
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
@@ -57,7 +57,7 @@ protected:
 
 //overriding << for vector2D
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const Vector2D<Scalar> &vec)
+std::ostream& operator<< (std::ostream &s, const Vector<Scalar,2> &vec)
 {
     s<<vec[0]<<", "<<vec[1]<<std::endl;
     return s;
@@ -65,10 +65,15 @@ std::ostream& operator<< (std::ostream &s, const Vector2D<Scalar> &vec)
 
 //make * operator commutative
 template <typename S, typename T>
-Vector2D<T> operator *(S scale, Vector2D<T> vec)
+Vector<T,2> operator *(S scale, const Vector<T,2> &vec)
 {
     return vec * scale;
 }
+
+//convenient typedefs
+#define Vector2D(Scalar) Vector<Scalar,2>
+typedef Vector<float,2> Vector2f;
+typedef Vector<double,2> Vector2d;
 
 } //end of namespace Physika
 

@@ -18,7 +18,8 @@
 
 namespace Physika{
 
-class MatrixBase;
+template <typename Scalar, int Dim>
+class SquareMatrix;
 
 template <typename Scalar, int Dim>
 class NeoHookean: public ConstitutiveModel
@@ -32,9 +33,9 @@ public:
     inline void setLambda(Scalar lambda){lambda_=lambda;}
     inline Scalar mu() const{return mu_;}
     inline void setMu(Scalar mu){mu_=mu;}
-    Scalar energy(const MatrixBase &F) const;//compute potential energy density with given deformation gradient
-    void energyGradient(const MatrixBase &F, MatrixBase &energy_gradient) const;//compute gradient of energy density with respect to deformation gradient
-    void energyHessian(const MatrixBase &F, MatrixBase &energy_hessian) const;//compute hessian of energy density with respect to deformation gradient
+    Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density with given deformation gradient
+    void energyGradient(const SquareMatrix<Scalar,Dim> &F, SquareMatrix<Scalar,Dim> &energy_gradient) const;//compute gradient of energy density with respect to deformation gradient
+    void energyHessian(const SquareMatrix<Scalar,Dim> &F, SquareMatrix<Scalar,Dim> &energy_hessian) const;//compute hessian of energy density with respect to deformation gradient
 protected:
     Scalar lambda_;
     Scalar mu_;

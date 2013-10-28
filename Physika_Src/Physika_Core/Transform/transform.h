@@ -25,32 +25,27 @@ class Transform
 {
 public:
     /* Constructions */
-    explicit Transform(const Vector3D<Scalar> );
+    explicit Transform(const Vector<Scalar,3> );
     explicit Transform(const Quaternion<Scalar> );
-    Transform(const Vector3D<Scalar>&, const Quaternion<Scalar>& );
-    Transform(const Quaternion<Scalar>&, const Vector3D<Scalar>& );
+    Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>& );
+    Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>& );
 
     /* Get and Set */
     inline Quaternion<Scalar> orientation() const { return orientation_; }
-    inline Vector3D<Scalar> position() const { return position_; }
+    inline Vector<Scalar,3> position() const { return position_; }
     inline void set_orientation(Quaternion<Scalar> orientation) { orientation_ = orientation; }
-    inline void set_position(Vector3D<Scalar> position) { position_ = position; }
+    inline void set_position(Vector<Scalar,3> position) { position_ = position; }
 
 protected:
     Quaternion<Scalar> orientation_;
-    Vector3D<Scalar> position_;
+    Vector<Scalar,3> position_;
 
-};//end of namespace Physika
+};
 
-
-namespace Type{
-
+//convenient typedefs
 typedef Transform<float> Transformf;
 typedef Transform<double> Transformd;
 
-}
+}//end of namespace Physika
 
-
-
-}
 #endif //PHSYIKA_CORE_TRANSFORM_TRANSFORM_H_

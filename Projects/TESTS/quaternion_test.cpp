@@ -15,12 +15,12 @@
 #include <iostream>
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Utilities/global_config.h"
-//#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 
 using namespace std;
 using Physika::Quaternion;
-using Physika::Type::Quaternionf;
-using Physika::Type::Quaterniond;
+using Physika::Quaternionf;
+using Physika::Quaterniond;
 using Physika::Vector3D;
 
 //template <typename Scalar>

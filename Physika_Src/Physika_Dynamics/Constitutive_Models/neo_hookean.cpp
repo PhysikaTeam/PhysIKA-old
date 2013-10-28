@@ -45,7 +45,7 @@ void NeoHookean<Scalar,Dim>::info() const
 }
 
 template <typename Scalar, int Dim>
-Scalar NeoHookean<Scalar,Dim>::energy(const MatrixBase &F) const
+Scalar NeoHookean<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
 {
     // Scalar trace_c = ((F.derived()).transpose()*F.derived()).trace();
     // Scalar J = (F.derived()).determinant();
@@ -56,12 +56,12 @@ Scalar NeoHookean<Scalar,Dim>::energy(const MatrixBase &F) const
 }
 
 template <typename Scalar, int Dim>
-void NeoHookean<Scalar,Dim>::energyGradient(const MatrixBase &F, MatrixBase &energy_gradient) const
+void NeoHookean<Scalar,Dim>::energyGradient(const SquareMatrix<Scalar,Dim> &F, SquareMatrix<Scalar,Dim> &energy_gradient) const
 {
 }
 
 template <typename Scalar, int Dim>
-void NeoHookean<Scalar,Dim>::energyHessian(const MatrixBase &F, MatrixBase &energy_hessian) const
+void NeoHookean<Scalar,Dim>::energyHessian(const SquareMatrix<Scalar,Dim> &F, SquareMatrix<Scalar,Dim> &energy_hessian) const
 {
 }
 

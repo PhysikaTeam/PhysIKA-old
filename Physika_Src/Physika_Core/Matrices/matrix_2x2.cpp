@@ -12,19 +12,17 @@
  *
  */
 
-
-#include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 
 namespace Physika{
 
 template <typename Scalar>
-Matrix2x2<Scalar>::Matrix2x2()
+SquareMatrix<Scalar,2>::SquareMatrix()
 {
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>::Matrix2x2(Scalar x00, Scalar x01, Scalar x10, Scalar x11)
+SquareMatrix<Scalar,2>::SquareMatrix(Scalar x00, Scalar x01, Scalar x10, Scalar x11)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     eigen_matrix_2x2_(0,0) = x00;
@@ -35,26 +33,18 @@ Matrix2x2<Scalar>::Matrix2x2(Scalar x00, Scalar x01, Scalar x10, Scalar x11)
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>::Matrix2x2(const Matrix2x2<Scalar> &mat2)
+SquareMatrix<Scalar,2>::SquareMatrix(const SquareMatrix<Scalar,2> &mat2)
 {
     *this = mat2;
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>::~Matrix2x2()
+SquareMatrix<Scalar,2>::~SquareMatrix()
 {
 }
 
 template <typename Scalar>
-Scalar& Matrix2x2<Scalar>::operator() (int i, int j)
-{
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return eigen_matrix_2x2_(i,j);
-#endif
-}
-
-template <typename Scalar>
-const Scalar& Matrix2x2<Scalar>::operator() (int i, int j) const
+Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_(i,j);
@@ -62,17 +52,25 @@ const Scalar& Matrix2x2<Scalar>::operator() (int i, int j) const
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar> Matrix2x2<Scalar>::operator+ (const Matrix2x2<Scalar> &mat2) const
+const Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j) const
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    return eigen_matrix_2x2_(i,j);
+#endif
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator+ (const SquareMatrix<Scalar,2> &mat2) const
 {
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
         result[i*2+j] = (*this)(i,j) + mat2(i,j);
-    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator+= (const Matrix2x2<Scalar> &mat2)
+SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator+= (const SquareMatrix<Scalar,2> &mat2)
 {
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -81,17 +79,17 @@ Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator+= (const Matrix2x2<Scalar> &mat2)
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar> Matrix2x2<Scalar>::operator- (const Matrix2x2<Scalar> &mat2) const
+SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator- (const SquareMatrix<Scalar,2> &mat2) const
 {
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
             result[i*2+j] = (*this)(i,j) - mat2(i,j);
-    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator-= (const Matrix2x2<Scalar> &mat2)
+SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator-= (const SquareMatrix<Scalar,2> &mat2)
 {
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -100,7 +98,7 @@ Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator-= (const Matrix2x2<Scalar> &mat2)
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator= (const Matrix2x2<Scalar> &mat2)
+SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator= (const SquareMatrix<Scalar,2> &mat2)
 {
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -109,7 +107,7 @@ Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator= (const Matrix2x2<Scalar> &mat2)
 }
 
 template <typename Scalar>
-bool Matrix2x2<Scalar>::operator== (const Matrix2x2<Scalar> &mat2) const
+bool SquareMatrix<Scalar,2>::operator== (const SquareMatrix<Scalar,2> &mat2) const
 {
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -119,17 +117,17 @@ bool Matrix2x2<Scalar>::operator== (const Matrix2x2<Scalar> &mat2) const
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar> Matrix2x2<Scalar>::operator* (Scalar scale) const
+SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (Scalar scale) const
 {
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
             result[i*2+j] = (*this)(i,j) * scale;
-    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator*= (Scalar scale)
+SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator*= (Scalar scale)
 {
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -138,9 +136,9 @@ Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator*= (Scalar scale)
 }
 
 template <typename Scalar>
-Vector2D<Scalar> Matrix2x2<Scalar>::operator* (const Vector2D<Scalar> &vec) const
+Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec) const
 {
-    Vector2D<Scalar> result(0);
+    Vector<Scalar,2> result(0);
     for(int i = 0; i < 2; ++i)
 	for(int j = 0; j <2; ++j)
 	    result[i] += (*this)(i,j) + vec[j];
@@ -148,9 +146,9 @@ Vector2D<Scalar> Matrix2x2<Scalar>::operator* (const Vector2D<Scalar> &vec) cons
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar> Matrix2x2<Scalar>::operator* (const Matrix2x2<Scalar> &mat2) const
+SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (const SquareMatrix<Scalar,2> &mat2) const
 {
-    Matrix2x2<Scalar> result(0,0,0,0);
+    SquareMatrix<Scalar,2> result(0,0,0,0);
     for(int i = 0; i < 2; ++i)
 	for(int j = 0; j < 2; ++j)
 	    for(int k = 0; k < 2; ++k)
@@ -159,17 +157,17 @@ Matrix2x2<Scalar> Matrix2x2<Scalar>::operator* (const Matrix2x2<Scalar> &mat2) c
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar> Matrix2x2<Scalar>::operator/ (Scalar scale) const
+SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 {
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
             result[i*2+j] = (*this)(i,j) / scale;
-    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator/= (Scalar scale)
+SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator/= (Scalar scale)
 {
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -178,26 +176,26 @@ Matrix2x2<Scalar>& Matrix2x2<Scalar>::operator/= (Scalar scale)
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar> Matrix2x2<Scalar>::transpose() const
+SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::transpose() const
 {
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j< 2; ++j)
             result[i*2+j] = (*this)(j,i);
-    return Matrix2x2<Scalar>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
-Matrix2x2<Scalar> Matrix2x2<Scalar>::inverse() const
+SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,2,2> result_matrix = eigen_matrix_2x2_.inverse();
-    return Matrix2x2<Scalar>(result_matrix(0,0), result_matrix(0,1), result_matrix(1,0), result_matrix(1,1));
+    return SquareMatrix<Scalar,2>(result_matrix(0,0), result_matrix(0,1), result_matrix(1,0), result_matrix(1,1));
 #endif 
 }
 
 template <typename Scalar>
-Scalar Matrix2x2<Scalar>::determinant() const
+Scalar SquareMatrix<Scalar,2>::determinant() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_.determinant();
@@ -205,13 +203,13 @@ Scalar Matrix2x2<Scalar>::determinant() const
 }
 
 template <typename Scalar>
-Scalar Matrix2x2<Scalar>::trace() const
+Scalar SquareMatrix<Scalar,2>::trace() const
 {
     return (*this)(0,0) + (*this)(1,1);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class Matrix2x2<float>;
-template class Matrix2x2<double>;
+template class SquareMatrix<float,2>;
+template class SquareMatrix<double,2>;
 
 }  //end of namespace Physika

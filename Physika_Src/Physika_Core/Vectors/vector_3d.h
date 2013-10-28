@@ -16,37 +16,37 @@
 #define PHYSIKA_CORE_VECTORS_VECTOR_3D_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Vectors/vector_base.h"
+#include "Physika_Core/Vectors/vector.h"
 
 namespace Physika{
 
 template <typename Scalar>
-class Vector3D: public VectorBase
+class Vector<Scalar,3>: public VectorBase
 {
 public:
-    Vector3D();
-    Vector3D(Scalar x, Scalar y, Scalar z);
-    Vector3D(Scalar);
-    Vector3D(const Vector3D<Scalar>&);
-    ~Vector3D();
+    Vector();
+    Vector(Scalar x, Scalar y, Scalar z);
+    Vector(Scalar);
+    Vector(const Vector<Scalar,3>&);
+    ~Vector();
     inline int dims() const{return 3;}
     Scalar& operator[] (int);
     const Scalar& operator[] (int) const;
-    Vector3D<Scalar> operator+ (const Vector3D<Scalar> &) const;
-    Vector3D<Scalar>& operator+= (const Vector3D<Scalar> &);
-    Vector3D<Scalar> operator- (const Vector3D<Scalar> &) const;
-    Vector3D<Scalar>& operator-= (const Vector3D<Scalar> &);
-    Vector3D<Scalar>& operator= (const Vector3D<Scalar> &);
-    bool operator== (const Vector3D<Scalar> &) const;
-    Vector3D<Scalar> operator* (Scalar) const;
-    Vector3D<Scalar>& operator*= (Scalar);
-    Vector3D<Scalar> operator/ (Scalar) const;
-    Vector3D<Scalar>& operator/= (Scalar);
+    Vector<Scalar,3> operator+ (const Vector<Scalar,3> &) const;
+    Vector<Scalar,3>& operator+= (const Vector<Scalar,3> &);
+    Vector<Scalar,3> operator- (const Vector<Scalar,3> &) const;
+    Vector<Scalar,3>& operator-= (const Vector<Scalar,3> &);
+    Vector<Scalar,3>& operator= (const Vector<Scalar,3> &);
+    bool operator== (const Vector<Scalar,3> &) const;
+    Vector<Scalar,3> operator* (Scalar) const;
+    Vector<Scalar,3>& operator*= (Scalar);
+    Vector<Scalar,3> operator/ (Scalar) const;
+    Vector<Scalar,3>& operator/= (Scalar);
     Scalar norm() const;
-    Vector3D<Scalar>& normalize();
-    Vector3D<Scalar> cross(const Vector3D<Scalar> &)const;
-    Vector3D<Scalar> operator - (void) const;
-    Scalar dot(const Vector3D<Scalar>&) const;
+    Vector<Scalar,3>& normalize();
+    Vector<Scalar,3> cross(const Vector<Scalar,3> &)const;
+    Vector<Scalar,3> operator - (void) const;
+    Scalar dot(const Vector<Scalar,3>&) const;
 	
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
@@ -57,7 +57,7 @@ protected:
 
 //overriding << for vector3D
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const Vector3D<Scalar> &vec)
+std::ostream& operator<< (std::ostream &s, const Vector<Scalar,3> &vec)
 {
     s<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<std::endl;
     return s;
@@ -65,10 +65,16 @@ std::ostream& operator<< (std::ostream &s, const Vector3D<Scalar> &vec)
 
 //make * operator commutative
 template <typename S, typename T>
-Vector3D<T> operator *(S scale, Vector3D<T> vec)
+Vector<T,3> operator *(S scale, const Vector<T,3> &vec)
 {
     return vec * scale;
 }
+
+
+//convenient typedefs
+#define Vector3D(Scalar) Vector<Scalar,3> 
+typedef Vector<float,3> Vector3f;
+typedef Vector<double,3> Vector3d;
 
 } //end of namespace Physika
 

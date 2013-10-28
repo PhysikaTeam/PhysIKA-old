@@ -16,40 +16,37 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_3X3_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Matrices/matrix_base.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Matrices/square_matrix.h"
 
 namespace Physika{
 
-//forward declaration of class template
 template <typename Scalar>
-class Vector3D;
-
-template <typename Scalar>
-class Matrix3x3: public MatrixBase
+class SquareMatrix<Scalar,3>: public MatrixBase
 {
 public:
-    Matrix3x3();
-    Matrix3x3(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22);
-    Matrix3x3(const Matrix3x3<Scalar>&);
-    ~Matrix3x3();
+    SquareMatrix();
+    SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22);
+    SquareMatrix(const SquareMatrix<Scalar,3>&);
+    ~SquareMatrix();
     inline int rows() const{return 3;}
     inline int cols() const{return 3;}
     Scalar& operator() (int i, int j );
     const Scalar& operator() (int i, int j) const;
-    Matrix3x3<Scalar> operator+ (const Matrix3x3<Scalar> &) const;
-    Matrix3x3<Scalar>& operator+= (const Matrix3x3<Scalar> &);
-    Matrix3x3<Scalar> operator- (const Matrix3x3<Scalar> &) const;
-    Matrix3x3<Scalar>& operator-= (const Matrix3x3<Scalar> &);
-    Matrix3x3<Scalar>& operator= (const Matrix3x3<Scalar> &);
-    bool operator== (const Matrix3x3<Scalar> &) const;
-    Matrix3x3<Scalar> operator* (Scalar) const;
-    Matrix3x3<Scalar>& operator*= (Scalar);
-    Vector3D<Scalar> operator* (const Vector3D<Scalar> &) const;
-    Matrix3x3<Scalar> operator* (const Matrix3x3<Scalar> &) const;
-    Matrix3x3<Scalar> operator/ (Scalar) const;
-    Matrix3x3<Scalar>& operator/= (Scalar);
-    Matrix3x3<Scalar> transpose() const;
-    Matrix3x3<Scalar> inverse() const;
+    SquareMatrix<Scalar,3> operator+ (const SquareMatrix<Scalar,3> &) const;
+    SquareMatrix<Scalar,3>& operator+= (const SquareMatrix<Scalar,3> &);
+    SquareMatrix<Scalar,3> operator- (const SquareMatrix<Scalar,3> &) const;
+    SquareMatrix<Scalar,3>& operator-= (const SquareMatrix<Scalar,3> &);
+    SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &);
+    bool operator== (const SquareMatrix<Scalar,3> &) const;
+    SquareMatrix<Scalar,3> operator* (Scalar) const;
+    SquareMatrix<Scalar,3>& operator*= (Scalar);
+    Vector<Scalar,3> operator* (const Vector<Scalar,3> &) const;
+    SquareMatrix<Scalar,3> operator* (const SquareMatrix<Scalar,3> &) const;
+    SquareMatrix<Scalar,3> operator/ (Scalar) const;
+    SquareMatrix<Scalar,3>& operator/= (Scalar);
+    SquareMatrix<Scalar,3> transpose() const;
+    SquareMatrix<Scalar,3> inverse() const;
     Scalar determinant() const;
     Scalar trace() const;
  
@@ -60,9 +57,9 @@ protected:
 
 };
 
-//overriding << for Matrix3x3
+//overriding << for SquareMatrix<Scalar,3>
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const Matrix3x3<Scalar> &mat)
+std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,3> &mat)
 {
     s<<mat(0,0)<<", "<<mat(0,1)<<", "<<mat(0,2)<<std::endl;
     s<<mat(1,0)<<", "<<mat(1,1)<<", "<<mat(1,2)<<std::endl;
@@ -72,10 +69,15 @@ std::ostream& operator<< (std::ostream &s, const Matrix3x3<Scalar> &mat)
  
 //make * operator commutative
 template <typename S, typename T>
-Matrix3x3<T> operator* (S scale, const Matrix3x3<T> &mat)
+SquareMatrix<T,3> operator* (S scale, const SquareMatrix<T,3> &mat)
 {
     return mat*scale;
 }
+
+//convenient typedefs
+#define Matrix3x3(Scalar) SquareMatrix<Scalar,3>
+typedef SquareMatrix<float,3> Matrix3f;
+typedef SquareMatrix<double,3> Matrix3d;
 
 }  //end of namespace Physika
 

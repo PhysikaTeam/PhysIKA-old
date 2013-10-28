@@ -18,16 +18,11 @@
 #include "Physika_Dynamics/Constitutive_Models/neo_hookean.h"
 using namespace std;
 using Physika::NeoHookean;
-using Physika::Matrix2x2;
-using Physika::Matrix3x3;
-using Physika::MatrixBase;
 
 int main()
 {
     NeoHookean<float,2> neo_hookean_material;
-    Matrix2x2<float> F(1.0f,0.0f,0.0f,1.0f);
+    Physika::Matrix2x2(float) F(1.0f,0.0f,0.0f,1.0f);
     neo_hookean_material.info();
-    MatrixBase &b = F;
-    cout<<neo_hookean_material.energy(b)<<endl;
     return 0;
 }

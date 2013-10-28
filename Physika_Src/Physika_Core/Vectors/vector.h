@@ -1,7 +1,7 @@
 /*
  * @file vector.h 
- * @This file contains all vector-related header files and common used typedefs. 
- * @author Sheng Yang
+ * @brief This abstract class is intended to provide a uniform interface for Vector2D and Vector3D. Vector2D and Vector3D are implemented using template partial specialization of this class. 
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -15,20 +15,19 @@
 #ifndef PHYSIKA_CORE_VECTORS_VECTOR_H_
 #define PHYSIKA_CORE_VECTORS_VECTOR_H_
 
-#include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector_base.h"
 
 namespace Physika{
 
-namespace Type{
-
-typedef Vector2D<float> Vector2f;
-typedef Vector2D<double> Vector2d;
-
-typedef Vector3D<float> Vector3f;
-typedef Vector3D<double> Vector3d;
-
-}  //end of namespace TYPE
+template <typename Scalar, int Dim>
+class Vector: public VectorBase
+{
+public:
+    Vector(){}
+    ~Vector(){}
+    virtual int dims() const=0;
+protected:
+};
 
 }  //end of namespace Physika
 

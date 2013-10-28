@@ -39,7 +39,7 @@ Quaternion<Scalar>::Quaternion(Scalar x, Scalar y, Scalar z, Scalar w):
 }
 
 template <typename Scalar>
-Quaternion<Scalar>::Quaternion(const Vector3D<Scalar> & unitAxis, Scalar angleRadians)
+Quaternion<Scalar>::Quaternion(const Vector<Scalar,3> & unitAxis, Scalar angleRadians)
 {
     const Scalar a = angleRadians * (Scalar)0.5;
     const Scalar s = sin(a);
@@ -50,7 +50,7 @@ Quaternion<Scalar>::Quaternion(const Vector3D<Scalar> & unitAxis, Scalar angleRa
 }
 
 template <typename Scalar>
-Quaternion<Scalar>::Quaternion(Scalar angleRadians, const Vector3D<Scalar> & unitAxis)
+Quaternion<Scalar>::Quaternion(Scalar angleRadians, const Vector<Scalar,3> & unitAxis)
 {
     const Scalar a = angleRadians * (Scalar)0.5;
     const Scalar s = sin(a);
@@ -216,7 +216,7 @@ Quaternion<Scalar>& Quaternion<Scalar>::normalize()
 }
 
 template <typename Scalar>
-void Quaternion<Scalar>::set(const Vector3D<Scalar>& vec3, Scalar scale)
+void Quaternion<Scalar>::set(const Vector<Scalar,3>& vec3, Scalar scale)
 {
      w_ = scale;
     x_ = vec3[0];
@@ -225,7 +225,7 @@ void Quaternion<Scalar>::set(const Vector3D<Scalar>& vec3, Scalar scale)
 }
 
 template <typename Scalar>
-void Quaternion<Scalar>::set(Scalar scale, const Vector3D<Scalar>& vec3)
+void Quaternion<Scalar>::set(Scalar scale, const Vector<Scalar,3>& vec3)
 {
     w_ = scale;
     x_ = vec3[0];
@@ -258,14 +258,14 @@ Quaternion<Scalar> Quaternion<Scalar>::getConjugate() const
 }
 
 template <typename Scalar>
-const Vector3D<Scalar> Quaternion<Scalar>::rotate(const Vector3D<Scalar> v) const 
+const Vector<Scalar,3> Quaternion<Scalar>::rotate(const Vector<Scalar,3> v) const 
 {
     const Scalar vx = Scalar(2.0) * v[0];
     const Scalar vy = Scalar(2.0) * v[1];
     const Scalar vz = Scalar(2.0) * v[2];
     const Scalar w2 = w_*w_ - (Scalar)0.5;
     const Scalar dot2 = (x_ * vx + y_ * vy + z_ * vz);
-    return Vector3D<Scalar>
+    return Vector<Scalar,3>
     (
         (vx*w2 + (y_ * vz - z_ * vy)*w_ + x_*dot2), 
         (vy*w2 + (z_ * vx - x_ * vz)*w_ + y_*dot2), 

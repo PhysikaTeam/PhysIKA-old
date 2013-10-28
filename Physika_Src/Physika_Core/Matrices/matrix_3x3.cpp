@@ -12,18 +12,17 @@
  *
  */
 
-#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 
 namespace Physika{
 
 template <typename Scalar>
-Matrix3x3<Scalar>::Matrix3x3()
+SquareMatrix<Scalar,3>::SquareMatrix()
 {
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar>::Matrix3x3(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22)
+SquareMatrix<Scalar,3>::SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     eigen_matrix_3x3_(0,0) = x00;
@@ -39,26 +38,18 @@ Matrix3x3<Scalar>::Matrix3x3(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Sca
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar>::Matrix3x3(const Matrix3x3<Scalar> &mat2)
+SquareMatrix<Scalar,3>::SquareMatrix(const SquareMatrix<Scalar,3> &mat2)
 {
     *this = mat2;
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar>::~Matrix3x3()
+SquareMatrix<Scalar,3>::~SquareMatrix()
 {
 }
 
 template <typename Scalar>
-Scalar& Matrix3x3<Scalar>::operator() (int i, int j)
-{
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return eigen_matrix_3x3_(i,j);
-#endif
-}
-
-template <typename Scalar>
-const Scalar& Matrix3x3<Scalar>::operator() (int i, int j) const
+Scalar& SquareMatrix<Scalar,3>::operator() (int i, int j)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_(i,j);
@@ -66,17 +57,25 @@ const Scalar& Matrix3x3<Scalar>::operator() (int i, int j) const
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar> Matrix3x3<Scalar>::operator+ (const Matrix3x3<Scalar> &mat3) const
+const Scalar& SquareMatrix<Scalar,3>::operator() (int i, int j) const
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    return eigen_matrix_3x3_(i,j);
+#endif
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator+ (const SquareMatrix<Scalar,3> &mat3) const
 {
     Scalar result[9];
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
             result[i*3+j] = (*this)(i,j) + mat3(i,j);
-    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    return SquareMatrix<Scalar,3>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator+= (const Matrix3x3<Scalar> &mat3)
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator+= (const SquareMatrix<Scalar,3> &mat3)
 {
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
@@ -85,17 +84,17 @@ Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator+= (const Matrix3x3<Scalar> &mat3)
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar> Matrix3x3<Scalar>::operator- (const Matrix3x3<Scalar> &mat3) const
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator- (const SquareMatrix<Scalar,3> &mat3) const
 {
     Scalar result[9];
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
             result[i*3+j] = (*this)(i,j) - mat3(i,j);
-    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    return SquareMatrix<Scalar,3>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator-= (const Matrix3x3<Scalar> &mat3)
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator-= (const SquareMatrix<Scalar,3> &mat3)
 {
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
@@ -104,7 +103,7 @@ Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator-= (const Matrix3x3<Scalar> &mat3)
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator= (const Matrix3x3<Scalar> &mat3)
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator= (const SquareMatrix<Scalar,3> &mat3)
 {
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
@@ -113,7 +112,7 @@ Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator= (const Matrix3x3<Scalar> &mat3)
 }
 
 template <typename Scalar>
-bool Matrix3x3<Scalar>::operator== (const Matrix3x3<Scalar> &mat3) const
+bool SquareMatrix<Scalar,3>::operator== (const SquareMatrix<Scalar,3> &mat3) const
 {
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
@@ -123,17 +122,17 @@ bool Matrix3x3<Scalar>::operator== (const Matrix3x3<Scalar> &mat3) const
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar> Matrix3x3<Scalar>::operator* (Scalar scale) const
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator* (Scalar scale) const
 {
     Scalar result[9];
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
             result[i*3+j] = (*this)(i,j) * scale;
-    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    return SquareMatrix<Scalar,3>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator*= (Scalar scale)
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator*= (Scalar scale)
 {
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
@@ -142,9 +141,9 @@ Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator*= (Scalar scale)
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Matrix3x3<Scalar>::operator* (const Vector3D<Scalar> &vec) const
+Vector<Scalar,3> SquareMatrix<Scalar,3>::operator* (const Vector<Scalar,3> &vec) const
 {
-    Vector3D<Scalar> result(0);
+    Vector<Scalar,3> result(0);
     for(int i = 0; i < 3; ++i)
 	for(int j = 0; j < 3; ++j)
 	    result[i] += (*this)(i,j)*vec[j];
@@ -152,9 +151,9 @@ Vector3D<Scalar> Matrix3x3<Scalar>::operator* (const Vector3D<Scalar> &vec) cons
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar> Matrix3x3<Scalar>::operator* (const Matrix3x3<Scalar> &mat2) const
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator* (const SquareMatrix<Scalar,3> &mat2) const
 {
-    Matrix3x3<Scalar> result(0,0,0,0,0,0,0,0,0);
+    SquareMatrix<Scalar,3> result(0,0,0,0,0,0,0,0,0);
     for(int i = 0; i < 3; ++i)
 	for(int j = 0; j < 3; ++j)
 	    for(int k = 0; k < 3; ++k)
@@ -163,17 +162,17 @@ Matrix3x3<Scalar> Matrix3x3<Scalar>::operator* (const Matrix3x3<Scalar> &mat2) c
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar> Matrix3x3<Scalar>::operator/ (Scalar scale) const
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator/ (Scalar scale) const
 {
     Scalar result[9];
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
             result[i*3+j] = (*this)(i,j) / scale;
-    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    return SquareMatrix<Scalar,3>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator/= (Scalar scale)
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator/= (Scalar scale)
 {
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
@@ -182,26 +181,26 @@ Matrix3x3<Scalar>& Matrix3x3<Scalar>::operator/= (Scalar scale)
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar> Matrix3x3<Scalar>::transpose() const
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::transpose() const
 {
     Scalar result[9];
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j< 3; ++j)
             result[i*3+j] = (*this)(j,i);
-    return Matrix3x3<Scalar>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
+    return SquareMatrix<Scalar,3>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
-Matrix3x3<Scalar> Matrix3x3<Scalar>::inverse() const
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,3,3> result_matrix = eigen_matrix_3x3_.inverse();
-    return Matrix3x3<Scalar>(result_matrix(0,0), result_matrix(0,1), result_matrix(0,2), result_matrix(1,0), result_matrix(1,1),result_matrix(1,2), result_matrix(2,0),result_matrix(2,1), result_matrix(2,2));
+    return SquareMatrix<Scalar,3>(result_matrix(0,0), result_matrix(0,1), result_matrix(0,2), result_matrix(1,0), result_matrix(1,1),result_matrix(1,2), result_matrix(2,0),result_matrix(2,1), result_matrix(2,2));
 #endif 
 }
 
 template <typename Scalar>
-Scalar Matrix3x3<Scalar>::determinant() const
+Scalar SquareMatrix<Scalar,3>::determinant() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_.determinant();
@@ -209,13 +208,13 @@ Scalar Matrix3x3<Scalar>::determinant() const
 }
 
 template <typename Scalar>
-Scalar Matrix3x3<Scalar>::trace() const
+Scalar SquareMatrix<Scalar,3>::trace() const
 {
     return (*this)(0,0) + (*this)(1,1) + (*this)(2,2);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class Matrix3x3<float>;
-template class Matrix3x3<double>;
+template class SquareMatrix<float,3>;
+template class SquareMatrix<double,3>;
 
 }  //end of namespace Physika

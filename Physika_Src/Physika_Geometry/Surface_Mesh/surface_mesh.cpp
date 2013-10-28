@@ -49,8 +49,8 @@ void SurfaceMesh<Scalar>::computeNormals()
     //for edges: angle weighted nomrmal;
     for (int i = 0; i < nbedges; ++i)
     {
-	    Edge<Scalar> *e = edges_[i];
-	    assert(e != NULL);
+	      Edge<Scalar> *e = edges_[i];
+	      assert(e != NULL);
        	e->set_normal(0);
        	assert(e->triangles(0) != NULL && e->triangles(1) != NULL);
         e->set_normal(e->triangles(0)->normal() + e->triangles(0)->normal());
@@ -64,11 +64,11 @@ void SurfaceMesh<Scalar>::computeNormals()
        	assert(t != NULL);
        	for (int j=0; j<3; j++)
         {
-       	    Vector3D<Scalar> e1 = t->vertices((j+1)%3)->position() - t->vertices(j)->position();
-	        Vector3D<Scalar> e2 = t->vertices((j+2)%3)->position() - t->vertices(j)->position();
-	        e1.normalize();
-	        e2.normalize();
-	        Scalar weight = acos(e1.dot(e2));
+       	    Vector<Scalar,3> e1 = t->vertices((j+1)%3)->position() - t->vertices(j)->position();
+	          Vector<Scalar,3> e2 = t->vertices((j+2)%3)->position() - t->vertices(j)->position();
+	          e1.normalize();
+	          e2.normalize();
+	          Scalar weight = acos(e1.dot(e2));
             t->vertices(j)->set_normal(weight * t->normal() + t->vertices(j)->normal());
 	 }
     }
@@ -100,7 +100,7 @@ void SurfaceMesh<Scalar>::computeNormals()
 //	return this->triangles.size()	;
 //}
 
-
+//explicit instantiation
 template class SurfaceMesh<float>;
 template class SurfaceMesh<double>;
 

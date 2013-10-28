@@ -16,40 +16,37 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Matrices/matrix_base.h"
+#include "Physika_Core/Vectors/Vector_2d.h"
+#include "Physika_Core/Matrices/square_matrix.h"
 
 namespace Physika{
 
-//forward declaration of class template
 template <typename Scalar>
-class Vector2D;
-
-template <typename Scalar>
-class Matrix2x2: public MatrixBase
+class SquareMatrix<Scalar,2>: public MatrixBase
 {
 public:
-    Matrix2x2();
-    Matrix2x2(Scalar x00, Scalar x01, Scalar x10, Scalar x11);
-    Matrix2x2(const Matrix2x2<Scalar> &);
-    ~Matrix2x2();
+    SquareMatrix();
+    SquareMatrix(Scalar x00, Scalar x01, Scalar x10, Scalar x11);
+    SquareMatrix(const SquareMatrix<Scalar,2> &);
+    ~SquareMatrix();
     inline int rows() const{return 2;}
     inline int cols() const{return 2;}
     Scalar& operator() (int i, int j);
     const Scalar& operator() (int i, int j) const;
-    Matrix2x2<Scalar> operator+ (const Matrix2x2<Scalar> &) const;
-    Matrix2x2<Scalar>& operator+= (const Matrix2x2<Scalar> &);
-    Matrix2x2<Scalar> operator- (const Matrix2x2<Scalar> &) const;
-    Matrix2x2<Scalar>& operator-= (const Matrix2x2<Scalar> &);
-    Matrix2x2<Scalar>& operator= (const Matrix2x2<Scalar> &);
-    bool operator== (const Matrix2x2<Scalar> &) const;
-    Matrix2x2<Scalar> operator* (Scalar) const;
-    Matrix2x2<Scalar>& operator*= (Scalar);
-    Vector2D<Scalar> operator* (const Vector2D<Scalar> &) const;
-    Matrix2x2<Scalar> operator* (const Matrix2x2<Scalar> &) const;
-    Matrix2x2<Scalar> operator/ (Scalar) const;
-    Matrix2x2<Scalar>& operator/= (Scalar);
-    Matrix2x2<Scalar> transpose() const;
-    Matrix2x2<Scalar> inverse() const;
+    SquareMatrix<Scalar,2> operator+ (const SquareMatrix<Scalar,2> &) const;
+    SquareMatrix<Scalar,2>& operator+= (const SquareMatrix<Scalar,2> &);
+    SquareMatrix<Scalar,2> operator- (const SquareMatrix<Scalar,2> &) const;
+    SquareMatrix<Scalar,2>& operator-= (const SquareMatrix<Scalar,2> &);
+    SquareMatrix<Scalar,2>& operator= (const SquareMatrix<Scalar,2> &);
+    bool operator== (const SquareMatrix<Scalar,2> &) const;
+    SquareMatrix<Scalar,2> operator* (Scalar) const;
+    SquareMatrix<Scalar,2>& operator*= (Scalar);
+    Vector<Scalar,2> operator* (const Vector<Scalar,2> &) const;
+    SquareMatrix<Scalar,2> operator* (const SquareMatrix<Scalar,2> &) const;
+    SquareMatrix<Scalar,2> operator/ (Scalar) const;
+    SquareMatrix<Scalar,2>& operator/= (Scalar);
+    SquareMatrix<Scalar,2> transpose() const;
+    SquareMatrix<Scalar,2> inverse() const;
     Scalar determinant() const;
     Scalar trace() const;
  
@@ -60,9 +57,9 @@ protected:
 
 };
 
-//overriding << for Matrix2x2
+//overriding << for SquareMatrix<Scalar,2>
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const Matrix2x2<Scalar> &mat)
+std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,2> &mat)
 {
     s<<mat(0,0)<<", "<<mat(0,1)<<std::endl;
     s<<mat(1,0)<<", "<<mat(1,1)<<std::endl;
@@ -71,10 +68,15 @@ std::ostream& operator<< (std::ostream &s, const Matrix2x2<Scalar> &mat)
 
 //make * operator commutative
 template <typename S, typename T>
-Matrix2x2<T> operator* (S scale, const Matrix2x2<T> &mat)
+SquareMatrix<T,2> operator* (S scale, const SquareMatrix<T,2> &mat)
 {
     return mat*scale;
 }
+
+//convenient typedefs
+#define Matrix2x2(Scalar) SquareMatrix<Scalar,2>
+typedef SquareMatrix<float,2> Matrix2f;
+typedef SquareMatrix<double,2> Matrix2d;
 
 }  //end of namespace Physika
 

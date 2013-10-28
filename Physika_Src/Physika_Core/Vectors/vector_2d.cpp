@@ -18,12 +18,12 @@
 namespace Physika{
 
 template <typename Scalar>
-Vector2D<Scalar>::Vector2D()
+Vector<Scalar,2>::Vector()
 {
 }
 
 template <typename Scalar>
-Vector2D<Scalar>::Vector2D(Scalar x, Scalar y)
+Vector<Scalar,2>::Vector(Scalar x, Scalar y)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     eigen_vector_2x_(0)=x;
@@ -32,7 +32,7 @@ Vector2D<Scalar>::Vector2D(Scalar x, Scalar y)
 }
 
 template <typename Scalar>
-Vector2D<Scalar>::Vector2D(Scalar x)
+Vector<Scalar,2>::Vector(Scalar x)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     eigen_vector_2x_(0)=x;
@@ -41,26 +41,18 @@ Vector2D<Scalar>::Vector2D(Scalar x)
 }
 
 template <typename Scalar>
-Vector2D<Scalar>::Vector2D(const Vector2D<Scalar> &vec2)
+Vector<Scalar,2>::Vector(const Vector<Scalar,2> &vec2)
 {
     *this = vec2;
 }
 
 template <typename Scalar>
-Vector2D<Scalar>::~Vector2D()
+Vector<Scalar,2>::~Vector()
 {
 }
 
 template <typename Scalar>
-Scalar& Vector2D<Scalar>::operator[] (int idx)
-{
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    return eigen_vector_2x_(idx);
-#endif
-}
-
-template <typename Scalar>
-const Scalar& Vector2D<Scalar>::operator[] (int idx) const
+Scalar& Vector<Scalar,2>::operator[] (int idx)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_2x_(idx);
@@ -68,16 +60,24 @@ const Scalar& Vector2D<Scalar>::operator[] (int idx) const
 }
 
 template <typename Scalar>
-Vector2D<Scalar> Vector2D<Scalar>::operator+ (const Vector2D<Scalar> &vec2) const
+const Scalar& Vector<Scalar,2>::operator[] (int idx) const
+{
+#ifdef PHYSIKA_USE_EIGEN_VECTOR
+    return eigen_vector_2x_(idx);
+#endif
+}
+
+template <typename Scalar>
+Vector<Scalar,2> Vector<Scalar,2>::operator+ (const Vector<Scalar,2> &vec2) const
 {
     Scalar result[2];
     for(int i = 0; i < 2; ++i)
         result[i] = (*this)[i] + vec2[i];
-    return Vector2D<Scalar>(result[0],result[1]);
+    return Vector<Scalar,2>(result[0],result[1]);
 }
 
 template <typename Scalar>
-Vector2D<Scalar>& Vector2D<Scalar>::operator+= (const Vector2D<Scalar> &vec2)
+Vector<Scalar,2>& Vector<Scalar,2>::operator+= (const Vector<Scalar,2> &vec2)
 {
     for(int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] + vec2[i];
@@ -85,16 +85,16 @@ Vector2D<Scalar>& Vector2D<Scalar>::operator+= (const Vector2D<Scalar> &vec2)
 }
 
 template <typename Scalar>
-Vector2D<Scalar> Vector2D<Scalar>::operator- (const Vector2D<Scalar> &vec2) const
+Vector<Scalar,2> Vector<Scalar,2>::operator- (const Vector<Scalar,2> &vec2) const
 {
     Scalar result[2];
     for(int i = 0; i < 2; ++i)
         result[i] = (*this)[i] - vec2[i];
-    return Vector2D<Scalar>(result[0],result[1]);
+    return Vector<Scalar,2>(result[0],result[1]);
 }
 
 template <typename Scalar>
-Vector2D<Scalar>& Vector2D<Scalar>::operator-= (const Vector2D<Scalar> &vec2)
+Vector<Scalar,2>& Vector<Scalar,2>::operator-= (const Vector<Scalar,2> &vec2)
 {
     for(int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] - vec2[i];
@@ -102,7 +102,7 @@ Vector2D<Scalar>& Vector2D<Scalar>::operator-= (const Vector2D<Scalar> &vec2)
 }
 
 template <typename Scalar>
-Vector2D<Scalar>& Vector2D<Scalar>::operator= (const Vector2D<Scalar> &vec2)
+Vector<Scalar,2>& Vector<Scalar,2>::operator= (const Vector<Scalar,2> &vec2)
 {
     for(int i = 0; i < 2; ++i)
         (*this)[i] = vec2[i];
@@ -110,7 +110,7 @@ Vector2D<Scalar>& Vector2D<Scalar>::operator= (const Vector2D<Scalar> &vec2)
 }
 
 template <typename Scalar>
-bool Vector2D<Scalar>::operator== (const Vector2D<Scalar> &vec2) const
+bool Vector<Scalar,2>::operator== (const Vector<Scalar,2> &vec2) const
 {
     for(int i = 0; i < 2; ++i)
         if((*this)[i] != vec2[i])
@@ -119,16 +119,16 @@ bool Vector2D<Scalar>::operator== (const Vector2D<Scalar> &vec2) const
 }
 
 template <typename Scalar>
-Vector2D<Scalar> Vector2D<Scalar>::operator* (Scalar scale) const
+Vector<Scalar,2> Vector<Scalar,2>::operator* (Scalar scale) const
 {
     Scalar result[2];
     for(int i = 0; i < 2; ++i)
         result[i] = (*this)[i] * scale;
-    return Vector2D<Scalar>(result[0],result[1]);
+    return Vector<Scalar,2>(result[0],result[1]);
 }
 
 template <typename Scalar>
-Vector2D<Scalar>& Vector2D<Scalar>::operator*= (Scalar scale)
+Vector<Scalar,2>& Vector<Scalar,2>::operator*= (Scalar scale)
 {
     for(int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] * scale;
@@ -136,16 +136,16 @@ Vector2D<Scalar>& Vector2D<Scalar>::operator*= (Scalar scale)
 }
 
 template <typename Scalar>
-Vector2D<Scalar> Vector2D<Scalar>::operator/ (Scalar scale) const
+Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
 {
     Scalar result[2];
     for(int i = 0; i < 2; ++i)
         result[i] = (*this)[i] / scale;
-    return Vector2D<Scalar>(result[0],result[1]);
+    return Vector<Scalar,2>(result[0],result[1]);
 }
 
 template <typename Scalar>
-Vector2D<Scalar>& Vector2D<Scalar>::operator/= (Scalar scale)
+Vector<Scalar,2>& Vector<Scalar,2>::operator/= (Scalar scale)
 {
     for(int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] / scale;
@@ -153,7 +153,7 @@ Vector2D<Scalar>& Vector2D<Scalar>::operator/= (Scalar scale)
 }
 
 template <typename Scalar>
-Scalar Vector2D<Scalar>::norm() const
+Scalar Vector<Scalar,2>::norm() const
 {
     Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1];
     result = sqrt(result);
@@ -161,7 +161,7 @@ Scalar Vector2D<Scalar>::norm() const
 }
 
 template <typename Scalar>
-Vector2D<Scalar>& Vector2D<Scalar>::normalize()
+Vector<Scalar,2>& Vector<Scalar,2>::normalize()
 {
     Scalar norm = (*this).norm();
     if(norm)
@@ -173,25 +173,25 @@ Vector2D<Scalar>& Vector2D<Scalar>::normalize()
 }
 
 template <typename Scalar>
-Scalar Vector2D<Scalar>::cross(const Vector2D<Scalar>& vec2) const
+Scalar Vector<Scalar,2>::cross(const Vector<Scalar,2>& vec2) const
 {
   return (*this)[0]*vec2[1] - (*this)[1]*vec2[0];
 }
 
 template <typename Scalar>
-Vector2D<Scalar> Vector2D<Scalar>::operator-(void) const
+Vector<Scalar,2> Vector<Scalar,2>::operator-(void) const
 {
-    return Vector2D<Scalar>(-(*this)[0],-(*this)[1]);
+    return Vector<Scalar,2>(-(*this)[0],-(*this)[1]);
 }
 
 template <typename Scalar>
-Scalar Vector2D<Scalar>::dot(const Vector2D<Scalar>& vec2) const
+Scalar Vector<Scalar,2>::dot(const Vector<Scalar,2>& vec2) const
 {
     return (*this)[0]*vec2[0] + (*this)[1]*vec2[1];
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class Vector2D<float>;
-template class Vector2D<double>;
+template class Vector<float,2>;
+template class Vector<double,2>;
 
 } //end of namespace Physika

@@ -18,12 +18,12 @@
 namespace Physika{
 
 template <typename Scalar>
-Vector3D<Scalar>::Vector3D()
+Vector<Scalar,3>::Vector()
 {
 }
 
 template <typename Scalar>
-Vector3D<Scalar>::Vector3D(Scalar x, Scalar y, Scalar z)
+Vector<Scalar,3>::Vector(Scalar x, Scalar y, Scalar z)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     eigen_vector_3x_(0)=x;
@@ -33,7 +33,7 @@ Vector3D<Scalar>::Vector3D(Scalar x, Scalar y, Scalar z)
 }
 
 template <typename Scalar>
-Vector3D<Scalar>::Vector3D(Scalar x)
+Vector<Scalar,3>::Vector(Scalar x)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     eigen_vector_3x_(0)=x;
@@ -43,26 +43,18 @@ Vector3D<Scalar>::Vector3D(Scalar x)
 }
 
 template <typename Scalar>
-Vector3D<Scalar>::Vector3D(const Vector3D<Scalar> &vec3)
+Vector<Scalar,3>::Vector(const Vector<Scalar,3> &vec3)
 {
     *this = vec3;
 }
 
 template <typename Scalar>
-Vector3D<Scalar>::~Vector3D()
+Vector<Scalar,3>::~Vector()
 {
 }
 
 template <typename Scalar>
-Scalar& Vector3D<Scalar>::operator[] (int idx)
-{
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    return eigen_vector_3x_(idx);
-#endif
-}
-
-template <typename Scalar>
-const Scalar& Vector3D<Scalar>::operator[] (int idx) const
+Scalar& Vector<Scalar,3>::operator[] (int idx)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_3x_(idx);
@@ -70,16 +62,24 @@ const Scalar& Vector3D<Scalar>::operator[] (int idx) const
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Vector3D<Scalar>::operator+ (const Vector3D<Scalar> &vec3) const
+const Scalar& Vector<Scalar,3>::operator[] (int idx) const
+{
+#ifdef PHYSIKA_USE_EIGEN_VECTOR
+    return eigen_vector_3x_(idx);
+#endif
+}
+
+template <typename Scalar>
+Vector<Scalar,3> Vector<Scalar,3>::operator+ (const Vector<Scalar,3> &vec3) const
 {
     Scalar result[3];
     for(int i = 0; i < 3; ++i)
         result[i] = (*this)[i] + vec3[i];
-    return Vector3D<Scalar>(result[0],result[1],result[2]);
+    return Vector<Scalar,3>(result[0],result[1],result[2]);
 }
 
 template <typename Scalar>
-Vector3D<Scalar>& Vector3D<Scalar>::operator+= (const Vector3D<Scalar> &vec3)
+Vector<Scalar,3>& Vector<Scalar,3>::operator+= (const Vector<Scalar,3> &vec3)
 {
     for(int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] + vec3[i];
@@ -87,16 +87,16 @@ Vector3D<Scalar>& Vector3D<Scalar>::operator+= (const Vector3D<Scalar> &vec3)
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Vector3D<Scalar>::operator- (const Vector3D<Scalar> &vec3) const
+Vector<Scalar,3> Vector<Scalar,3>::operator- (const Vector<Scalar,3> &vec3) const
 {
     Scalar result[3];
     for(int i = 0; i < 3; ++i)
         result[i] = (*this)[i] - vec3[i];
-    return Vector3D<Scalar>(result[0],result[1],result[2]);
+    return Vector<Scalar,3>(result[0],result[1],result[2]);
 }
 
 template <typename Scalar>
-Vector3D<Scalar>& Vector3D<Scalar>::operator-= (const Vector3D<Scalar> &vec3)
+Vector<Scalar,3>& Vector<Scalar,3>::operator-= (const Vector<Scalar,3> &vec3)
 {
     for(int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] - vec3[i];
@@ -104,7 +104,7 @@ Vector3D<Scalar>& Vector3D<Scalar>::operator-= (const Vector3D<Scalar> &vec3)
 }
 
 template <typename Scalar>
-Vector3D<Scalar>& Vector3D<Scalar>::operator= (const Vector3D<Scalar> &vec3)
+Vector<Scalar,3>& Vector<Scalar,3>::operator= (const Vector<Scalar,3> &vec3)
 {
     for(int i = 0; i < 3; ++i)
         (*this)[i] = vec3[i];
@@ -112,7 +112,7 @@ Vector3D<Scalar>& Vector3D<Scalar>::operator= (const Vector3D<Scalar> &vec3)
 }
 
 template <typename Scalar>
-bool Vector3D<Scalar>::operator== (const Vector3D<Scalar> &vec3) const
+bool Vector<Scalar,3>::operator== (const Vector<Scalar,3> &vec3) const
 {
     for(int i = 0; i < 3; ++i)
         if((*this)[i] != vec3[i])
@@ -121,16 +121,16 @@ bool Vector3D<Scalar>::operator== (const Vector3D<Scalar> &vec3) const
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Vector3D<Scalar>::operator* (Scalar scale) const
+Vector<Scalar,3> Vector<Scalar,3>::operator* (Scalar scale) const
 {
     Scalar result[3];
     for(int i = 0; i < 3; ++i)
         result[i] = (*this)[i] * scale;
-    return Vector3D<Scalar>(result[0],result[1],result[2]);
+    return Vector<Scalar,3>(result[0],result[1],result[2]);
 }
 
 template <typename Scalar>
-Vector3D<Scalar>& Vector3D<Scalar>::operator*= (Scalar scale)
+Vector<Scalar,3>& Vector<Scalar,3>::operator*= (Scalar scale)
 {
     for(int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] * scale;
@@ -138,16 +138,16 @@ Vector3D<Scalar>& Vector3D<Scalar>::operator*= (Scalar scale)
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Vector3D<Scalar>::operator/ (Scalar scale) const
+Vector<Scalar,3> Vector<Scalar,3>::operator/ (Scalar scale) const
 {
     Scalar result[3];
     for(int i = 0; i < 3; ++i)
         result[i] = (*this)[i] / scale;
-    return Vector3D<Scalar>(result[0],result[1],result[2]);
+    return Vector<Scalar,3>(result[0],result[1],result[2]);
 }
 
 template <typename Scalar>
-Vector3D<Scalar>& Vector3D<Scalar>::operator/= (Scalar scale)
+Vector<Scalar,3>& Vector<Scalar,3>::operator/= (Scalar scale)
 {
     for(int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] / scale;
@@ -155,7 +155,7 @@ Vector3D<Scalar>& Vector3D<Scalar>::operator/= (Scalar scale)
 }
 
 template <typename Scalar>
-Scalar Vector3D<Scalar>::norm() const
+Scalar Vector<Scalar,3>::norm() const
 {
     Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1] + (*this)[2]*(*this)[2];
     result = sqrt(result);
@@ -163,7 +163,7 @@ Scalar Vector3D<Scalar>::norm() const
 }
 
 template <typename Scalar>
-Vector3D<Scalar>& Vector3D<Scalar>::normalize()
+Vector<Scalar,3>& Vector<Scalar,3>::normalize()
 {
     Scalar norm = (*this).norm();
     if(norm)
@@ -175,26 +175,26 @@ Vector3D<Scalar>& Vector3D<Scalar>::normalize()
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Vector3D<Scalar>::cross(const Vector3D<Scalar>& vec3) const
+Vector<Scalar,3> Vector<Scalar,3>::cross(const Vector<Scalar,3>& vec3) const
 {
-    return Vector3D<Scalar>((*this)[1]*vec3[2] - (*this)[2]*vec3[1], (*this)[2]*vec3[0] - (*this)[0]*vec3[2], (*this)[0]*vec3[1] - (*this)[1]*vec3[0]); 
+    return Vector<Scalar,3>((*this)[1]*vec3[2] - (*this)[2]*vec3[1], (*this)[2]*vec3[0] - (*this)[0]*vec3[2], (*this)[0]*vec3[1] - (*this)[1]*vec3[0]); 
 }
 
 template <typename Scalar>
-Vector3D<Scalar> Vector3D<Scalar>::operator-(void) const
+Vector<Scalar,3> Vector<Scalar,3>::operator-(void) const
 {
-    return Vector3D<Scalar>(-(*this)[0],-(*this)[1],-(*this)[2]);
+    return Vector<Scalar,3>(-(*this)[0],-(*this)[1],-(*this)[2]);
 }
 
 template <typename Scalar>
-Scalar Vector3D<Scalar>::dot(const Vector3D<Scalar>& vec3) const
+Scalar Vector<Scalar,3>::dot(const Vector<Scalar,3>& vec3) const
 {
     return (*this)[0]*vec3[0] + (*this)[1]*vec3[1] + (*this)[2]*vec3[2];
 }
 
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class Vector3D<float>;
-template class Vector3D<double>;
+template class Vector<float,3>;
+template class Vector<double,3>;
 
 } //end of namespace Physika

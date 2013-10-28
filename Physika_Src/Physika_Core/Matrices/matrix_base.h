@@ -20,8 +20,8 @@ namespace Physika{
 class MatrixBase
 {
 public:
-    MatrixBase(){};
-    ~MatrixBase(){};
+    MatrixBase(){}
+    ~MatrixBase(){}
     virtual int rows() const=0;
     virtual int cols() const=0;
 protected:
