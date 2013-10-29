@@ -33,8 +33,8 @@ public:
     /* Get and Set */
     inline Quaternion<Scalar> orientation() const { return orientation_; }
     inline Vector<Scalar,3> position() const { return position_; }
-    inline void set_orientation(Quaternion<Scalar> orientation) { orientation_ = orientation; }
-    inline void set_position(Vector<Scalar,3> position) { position_ = position; }
+    inline void setOrientation(Quaternion<Scalar> orientation) { orientation_ = orientation; }
+    inline void setPosition(Vector<Scalar,3> position) { position_ = position; }
 
 protected:
     Quaternion<Scalar> orientation_;

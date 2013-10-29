@@ -31,8 +31,8 @@ public:
     /* Get and Set */
     inline Vector<Scalar,3>& position()  { return position_; }
     inline Vector<Scalar,3>& normal()  { return normal_; }
-    inline void set_position(Vector<Scalar,3> position) { position_ = position; }
-    inline void set_normal(Vector<Scalar,3> normal) { normal_ = normal; }
+    inline void setPosition(Vector<Scalar,3> position) { position_ = position; }
+    inline void setNormal(Vector<Scalar,3> normal) { normal_ = normal; }
     
     /* Protected Members */
 protected:

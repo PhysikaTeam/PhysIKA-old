@@ -51,9 +51,9 @@ void SurfaceMesh<Scalar>::computeNormals()
     {
 	      Edge<Scalar> *e = edges_[i];
 	      assert(e != NULL);
-       	e->set_normal(0);
+       	e->setNormal(0);
        	assert(e->triangles(0) != NULL && e->triangles(1) != NULL);
-        e->set_normal(e->triangles(0)->normal() + e->triangles(0)->normal());
+        e->setNormal(e->triangles(0)->normal() + e->triangles(0)->normal());
        	Scalar length = e->normal().norm();
     }
 
@@ -69,7 +69,7 @@ void SurfaceMesh<Scalar>::computeNormals()
 	          e1.normalize();
 	          e2.normalize();
 	          Scalar weight = acos(e1.dot(e2));
-            t->vertices(j)->set_normal(weight * t->normal() + t->vertices(j)->normal());
+            t->vertices(j)->setNormal(weight * t->normal() + t->vertices(j)->normal());
 	 }
     }
     for (int i = 0; i < nbvertices; ++i)

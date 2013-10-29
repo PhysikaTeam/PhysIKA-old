@@ -43,10 +43,10 @@ public:
     inline Scalar z() const { return z_;}
     inline Scalar w() const { return w_;}
 
-    inline void set_x(Scalar x) { x_ = x;}
-    inline void set_y(Scalar y) { y_ = y;}
-    inline void set_z(Scalar z) { z_ = z;}
-    inline void set_w(Scalar w) { w_ = w;}
+    inline void setX(Scalar x) { x_ = x;}
+    inline void setY(Scalar y) { y_ = y;}
+    inline void setZ(Scalar z) { z_ = z;}
+    inline void setW(Scalar w) { w_ = w;}
 
     /* Special functions */
     Scalar norm();

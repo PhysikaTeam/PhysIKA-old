@@ -24,7 +24,10 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Integrators\integrator_base.cpp">
       <Filter>Integrator</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\neo_hooken.cpp">
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\neo_hookean.cpp">
+      <Filter>Constitutive_Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\st_venant_kirchhoff.cpp">
       <Filter>Constitutive_Models</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,7 +44,13 @@
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\constitutive_model.h">
       <Filter>Constitutive_Models</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\neo_hooken.h">
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\isotropic_hyperelastic_material.h">
+      <Filter>Constitutive_Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\neo_hookean.h">
+      <Filter>Constitutive_Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\st_venant_kirchhoff.h">
       <Filter>Constitutive_Models</Filter>
     </ClInclude>
   </ItemGroup>

@@ -37,9 +37,9 @@ public:
     inline Vertex<Scalar> * vertices(int i ) { return vertices_[i]; }
     inline Edge<Scalar> * edges(int i) { return edges_[i]; }
 
-    inline void set_area(Scalar area) { area_ = area; }
-    inline void set_normal(Scalar normal) { normal_ = normal; }
-    inline void set_center(Scalar center) { center_ = center; }
+    inline void setArea(Scalar area) { area_ = area; }
+    inline void setNormal(Scalar normal) { normal_ = normal; }
+    inline void setCenter(Scalar center) { center_ = center; }
 
     Vector<Scalar,3> computeNormals();
 

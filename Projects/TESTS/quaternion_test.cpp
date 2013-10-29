@@ -21,7 +21,7 @@ using namespace std;
 using Physika::Quaternion;
 using Physika::Quaternionf;
 using Physika::Quaterniond;
-using Physika::Vector3D;
+
 
 //template <typename Scalar>
 //std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)

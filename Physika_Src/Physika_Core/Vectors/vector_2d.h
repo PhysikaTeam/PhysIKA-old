@@ -12,7 +12,7 @@
  *
  */
 
-#ifndef PHSYIKA_CORE_VECTORS_VECTOR_2D_H_
+#ifndef PHYSIKA_CORE_VECTORS_VECTOR_2D_H_
 #define PHYSIKA_CORE_VECTORS_VECTOR_2D_H_
 
 #include "Physika_Core/Utilities/global_config.h"

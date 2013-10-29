@@ -37,9 +37,9 @@ public:
     inline vector<Edge<Scalar>*>& edges() { return edges_;}
     inline vector<Vertex<Scalar>*> & vertices() { return vertices_;}
     inline vector<Triangle<Scalar>*> & triangles() { return triangles_;}
-    inline unsigned int get_number_of_vertex() const { return vertices_.size(); }
-    inline unsigned int get_number_of_edge() const { return edges_.size(); }
-    inline unsigned int get_number_of_triangle() const {return triangles_.size(); }
+    inline unsigned int getNbVertex() const { return vertices_.size(); }
+    inline unsigned int getNbEdge() const { return edges_.size(); }
+    inline unsigned int getNbTriangle() const {return triangles_.size(); }
 
     /* Some functions */
     void computeNormals();
