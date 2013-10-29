@@ -23,6 +23,8 @@ SurfaceMeshRender::SurfaceMeshRender()
 
 SurfaceMeshRender::SurfaceMeshRender(SurfaceMesh<float>* mesh)
 {
+    if(mesh_ == NULL)
+        mesh = new SurfaceMesh<float>();
     mesh_ = mesh;
 }
 

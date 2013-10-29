@@ -32,7 +32,6 @@ public:
     inline Vector3f* points() { return points_; }
     inline int num_of_point() { return num_of_point_; }
     inline void setNbPoint(int num_of_point) { num_of_point_ = num_of_point; }
-    inline void setPoints(Vector3f* points) { points_ = points; }
 
     /* Render */
     virtual void render();

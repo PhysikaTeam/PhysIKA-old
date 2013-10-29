@@ -30,7 +30,6 @@ public:
 
     /* Get and Set */
     inline SurfaceMesh<float>* mesh() { return mesh_; }
-    inline void setMesh(SurfaceMesh<float> * mesh) { mesh_ = mesh; }
 
     /* Render */
     virtual void render();
