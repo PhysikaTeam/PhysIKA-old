@@ -23,9 +23,7 @@ PointRender::PointRender(): num_of_point_(0)
 
 PointRender::PointRender(Vector3f * points, int num_of_point):num_of_point_(num_of_point)
 {
-    if(points_ == NULL)
-        points_ = new Vector3f();
-    points_ = points;    
+   points_ = points;
 }
 
 PointRender::~PointRender(void)

@@ -1,5 +1,5 @@
 /*
- * @file particle.cpp 
+ * @file particle.h 
  * @Basic particle class.
  * @author Sheng Yang
  * 
@@ -12,18 +12,19 @@
  *
  */
 
-#include "Physika_Dynamics/Particle/particle.h"
+#ifndef PHYSIKA_DYNAMICS_SPH_PARTICLE_H_
+#define PHYSIKA_DYNAMICS_SPH_PARTICLE_H_
 
 namespace Physika{
 
-Particle::Particle()
+class Particle
 {
-
-}
-
-Particle::~Particle()
-{
-
-}
+public:
+	Particle();
+	~Particle();
+protected:
+};
 
 } //end of namespace Physika
+
+#endif //PHYSIKA_DYNAMICS_SPH_PARTICLE_H_

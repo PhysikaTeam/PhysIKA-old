@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Particle">
-      <UniqueIdentifier>{c3f3a2cc-e1f6-4a6e-a996-a67b93508cb6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Integrator">
       <UniqueIdentifier>{b00e24cf-56ae-446e-8572-f0e45f6687eb}</UniqueIdentifier>
     </Filter>
@@ -13,11 +10,11 @@
     <Filter Include="Constitutive_Models">
       <UniqueIdentifier>{8983251c-9e7c-4b8d-8ada-7dbfe57da0f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SPH">
+      <UniqueIdentifier>{e607e51c-2fe1-4f41-a8e8-5162ffed0504}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Particle\particle.cpp">
-      <Filter>Particle</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.cpp">
       <Filter>Rigid_Body</Filter>
     </ClCompile>
@@ -30,11 +27,14 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\st_venant_kirchhoff.cpp">
       <Filter>Constitutive_Models</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\particle.cpp">
+      <Filter>SPH</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_base.cpp">
+      <Filter>SPH</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Particle\particle.h">
-      <Filter>Particle</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.h">
       <Filter>Rigid_Body</Filter>
     </ClInclude>
@@ -52,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\st_venant_kirchhoff.h">
       <Filter>Constitutive_Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\particle.h">
+      <Filter>SPH</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_base.h">
+      <Filter>SPH</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
