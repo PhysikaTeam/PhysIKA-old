@@ -71,10 +71,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Render\Point_Render\Point_Render.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Render\Point_Render\point_render.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Render\Render_Base\render_base.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Render\Surface_Mesh_Render\surface_mesh_render.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Render\Point_Render\Point_Render.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Render\Point_Render\point_render.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Render\Surface_Mesh_Render\surface_mesh_render.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

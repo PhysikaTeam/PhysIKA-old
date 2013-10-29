@@ -1,6 +1,6 @@
 /*
  * @file point_render.cpp 
- * @Basic render of point, it is used to draw the simulate result.
+ * @Basic render of point, it is used to draw the simulate result of points.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -16,14 +16,27 @@
 
 namespace Physika{
 	
-Point_Render::Point_Render()
+PointRender::PointRender(): num_of_point_(0)
 {
-	//int a;
+	points_ = NULL;
 }
 
-Point_Render::~Point_Render()
+PointRender::PointRender(Vector3f * points, int num_of_point):num_of_point_(num_of_point)
+{
+    points_ = points;    
+}
+
+PointRender::~PointRender(void)
 {
 
 }
+
+void PointRender::render()
+{
+    //To render these points in a GLUI panel based screen.
+
+}
+
+
 
 } //end of namespace Physika

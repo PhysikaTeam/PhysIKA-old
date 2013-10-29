@@ -15,14 +15,34 @@
 #ifndef PHYSIKA_RENDER_POINT_RENDER_POINT_RENDER_H_
 #define PHYSIKA_RENDER_POINT_RENDER_POINT_RENDER_H_
 
+#include "Physika_Render/Render_Base/render_base.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+
 namespace Physika{
 
-class Point_Render
+class PointRender: public RenderBase
 {
 public:
-    Point_Render();
-    ~Point_Render();
+    /* Constructions */
+    PointRender();
+    PointRender(Vector3f * points, int num_of_point);
+    ~PointRender(void);
+
+    /* Get and Set */
+    inline Vector3f* points() { return points_; }
+    inline int num_of_point() { return num_of_point_; }
+    inline void setNbPoint(int num_of_point) { num_of_point_ = num_of_point; }
+    inline void setPoints(Vector3f* points) { points_ = points; }
+
+    /* Render */
+    virtual void render();
+
+
 protected:
+    /* Render data */
+    int num_of_point_;
+    Vector3f *points_;
+
 };
 
 } //end of namespace Physika
