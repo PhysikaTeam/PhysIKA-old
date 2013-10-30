@@ -38,6 +38,11 @@ int main()
     cout<<isotropic_hyperelastic_material->firstPiolaKirchhoffStress(F)<<endl;
     cout<<isotropic_hyperelastic_material->secondPiolaKirchhoffStress(F)<<endl;
     cout<<isotropic_hyperelastic_material->cauchyStress(F)<<endl;
+    cout<<"E: "<<isotropic_hyperelastic_material->youngsModulus()<<", Nu: "<<isotropic_hyperelastic_material->poissonRatio()<<endl;
+    cout<<"Setting Poisson Ratio to 0.4: "<<endl;
+    isotropic_hyperelastic_material->setPoissonRatio(0.4);
+    cout<<"E: "<<isotropic_hyperelastic_material->youngsModulus()<<", Nu: "<<isotropic_hyperelastic_material->poissonRatio()<<endl;
+    cout<<"Lambda: "<<isotropic_hyperelastic_material->lambda()<<", Mu: "<<isotropic_hyperelastic_material->mu()<<endl;
     isotropic_hyperelastic_material = &stvk_material;
     isotropic_hyperelastic_material->info();
     cout<<isotropic_hyperelastic_material->energy(F)<<endl;

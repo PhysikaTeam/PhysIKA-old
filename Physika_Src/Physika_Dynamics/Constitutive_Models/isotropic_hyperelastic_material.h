@@ -51,8 +51,8 @@ public:
     virtual SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
     virtual SquareMatrix<Scalar,Dim> cauchyStress(const SquareMatrix<Scalar,Dim> &F) const=0;
 protected:
-    void lameCoefsFromYoungAndPoisson(Scalar young_modulus, Scalar poisson_ratio, Array<Scalar> &lame_coefs);
-    void youngAndPoissonFromLameCoefs(Scalar lambda, Scalar mu, Array<Scalar> &young_and_poisson);
+    void lameCoefsFromYoungAndPoisson(Scalar young_modulus, Scalar poisson_ratio, Array<Scalar> &lame_coefs) const;
+    void youngAndPoissonFromLameCoefs(Scalar lambda, Scalar mu, Array<Scalar> &young_and_poisson) const;
 protected:
     //lame constants
     Scalar lambda_;
@@ -83,7 +83,7 @@ Scalar IsotropicHyperelasticMaterial<Scalar,Dim>::youngsModulus() const
 {
     Array<Scalar> young_and_poisson;
     young_and_poisson.setSpace(2);
-    YoungAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
+    youngAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
     return young_and_poisson[0];
 }
 
@@ -92,7 +92,7 @@ void IsotropicHyperelasticMaterial<Scalar,Dim>::setYoungsModulus(Scalar young_mo
 {
     Array<Scalar> young_and_poisson;
     young_and_poisson.setSpace(2);
-    YoungAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
+    youngAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
     young_and_poisson[0] = young_modulus;
     Array<Scalar> lame_coefs;
     lame_coefs.setSpace(2);
@@ -106,7 +106,7 @@ Scalar IsotropicHyperelasticMaterial<Scalar,Dim>::poissonRatio() const
 {
     Array<Scalar> young_and_poisson;
     young_and_poisson.setSpace(2);
-    YoungAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
+    youngAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
     return young_and_poisson[1];
 }
 
@@ -115,7 +115,7 @@ void IsotropicHyperelasticMaterial<Scalar,Dim>::setPoissonRatio(Scalar poisson_r
 {
     Array<Scalar> young_and_poisson;
     young_and_poisson.setSpace(2);
-    YoungAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
+    youngAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
     young_and_poisson[1] = poisson_ratio;
     Array<Scalar> lame_coefs;
     lame_coefs.setSpace(2);
@@ -125,14 +125,14 @@ void IsotropicHyperelasticMaterial<Scalar,Dim>::setPoissonRatio(Scalar poisson_r
 }
 
 template <typename Scalar, int Dim>
-void IsotropicHyperelasticMaterial<Scalar,Dim>::youngAndPoissonFromLameCoefs(Scalar lambda, Scalar mu, Array<Scalar> &young_and_poisson)
+void IsotropicHyperelasticMaterial<Scalar,Dim>::youngAndPoissonFromLameCoefs(Scalar lambda, Scalar mu, Array<Scalar> &young_and_poisson) const
 {
     young_and_poisson[0] = mu_*(3*lambda_+2*mu_)/(lambda_+mu_);
     young_and_poisson[1] = lambda_/(2*(lambda_+mu_));
 }
 
 template <typename Scalar, int Dim>
-void IsotropicHyperelasticMaterial<Scalar,Dim>::lameCoefsFromYoungAndPoisson(Scalar young_modulus, Scalar poisson_ratio, Array<Scalar> &lame_coefs)
+void IsotropicHyperelasticMaterial<Scalar,Dim>::lameCoefsFromYoungAndPoisson(Scalar young_modulus, Scalar poisson_ratio, Array<Scalar> &lame_coefs) const
 {
     lame_coefs[0] = (young_modulus*poisson_ratio)/((1+poisson_ratio)*(1-2*poisson_ratio));//lambda
     lame_coefs[1] = young_modulus/(2*(1+poisson_ratio));//mu_
