@@ -22,12 +22,14 @@ using namespace std;
 using Physika::NeoHookean;
 using Physika::StVK;
 using Physika::IsotropicHyperelasticMaterial;
+using Physika::ModulusType;
 
 int main()
 {
     float lambda = 1.0, mu =1.0;
-    NeoHookean<float,2> neo_hookean_material(lambda,mu);
-    StVK<float,2> stvk_material(lambda,mu);
+    ModulusType par_type = Physika::LAME_COEFFICIENTS;
+    NeoHookean<float,2> neo_hookean_material(lambda,mu,par_type);
+    StVK<float,2> stvk_material(lambda,mu,par_type);
     IsotropicHyperelasticMaterial<float,2> *isotropic_hyperelastic_material;
     Physika::Matrix2x2(float) F(2.0f,0.0f,0.0f,2.0f);
     isotropic_hyperelastic_material = &neo_hookean_material;

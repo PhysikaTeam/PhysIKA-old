@@ -27,7 +27,9 @@ class StVK: public IsotropicHyperelasticMaterial<Scalar,Dim>
 {
 public:
     StVK();
-    StVK(Scalar lambda, Scalar mu);
+    //if par_type = YOUNG_AND_POISSON, then: par1 = young's modulus, par2 = poisson_ratio
+    //if par_type = LAME_COEFFICIENTS, then: par1 = lambda, par2 = mu
+    StVK(Scalar par1, Scalar par2, ModulusType par_type);
     ~StVK();
     void info() const;
     Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient

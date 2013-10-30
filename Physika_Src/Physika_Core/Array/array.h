@@ -113,7 +113,7 @@ void Array<ElementType>::setSpace(const unsigned int count)
 template <typename ElementType>
 void Array<ElementType>::zero()
 {
-    memset((void*)data_, 0, element_cout_*sizeof(ElementType));
+    memset((void*)data_, 0, element_count_*sizeof(ElementType));
 }
 
 template <typename ElementType>

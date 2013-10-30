@@ -25,8 +25,8 @@ StVK<Scalar,Dim>::StVK()
 }
 
 template <typename Scalar, int Dim>
-StVK<Scalar,Dim>::StVK(Scalar lambda, Scalar mu)
-    :IsotropicHyperelasticMaterial<Scalar,Dim>(lambda,mu)
+StVK<Scalar,Dim>::StVK(Scalar par1, Scalar par2, ModulusType par_type)
+    :IsotropicHyperelasticMaterial<Scalar,Dim>(par1,par2,par_type)
 {
 }
 
