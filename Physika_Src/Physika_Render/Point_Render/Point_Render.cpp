@@ -15,23 +15,27 @@
 #include "Physika_Render/Point_Render/Point_Render.h"
 
 namespace Physika{
-	
-PointRender::PointRender(): num_of_point_(0)
+
+template <typename Scalar>
+PointRender<Scalar>::PointRender(): num_of_point_(0)
 {
 	points_ = NULL;
 }
 
-PointRender::PointRender(Vector3f * points, int num_of_point):num_of_point_(num_of_point)
+template <typename Scalar>
+PointRender<Scalar>::PointRender(Vector<Scalar,3> * points, int num_of_point):num_of_point_(num_of_point)
 {
    points_ = points;
 }
 
-PointRender::~PointRender(void)
+template <typename Scalar>
+PointRender<Scalar>::~PointRender(void)
 {
 
 }
 
-void PointRender::render()
+template <typename Scalar>
+void PointRender<Scalar>::render()
 {
     //To render these points in a GLUI panel based screen.
 

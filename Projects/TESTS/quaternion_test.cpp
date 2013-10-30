@@ -16,12 +16,12 @@
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-
+#include "Physika_Core/Array/array.h"
 using namespace std;
 using Physika::Quaternion;
 using Physika::Quaternionf;
 using Physika::Quaterniond;
-
+using Physika::Array;
 
 //template <typename Scalar>
 //std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)

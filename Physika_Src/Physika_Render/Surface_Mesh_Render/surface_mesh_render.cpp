@@ -16,24 +16,28 @@
 
 namespace Physika{
 	
-SurfaceMeshRender::SurfaceMeshRender()
+template<typename Scalar>
+SurfaceMeshRender<Scalar>::SurfaceMeshRender()
 {
     mesh_ = NULL;
 }
 
-SurfaceMeshRender::SurfaceMeshRender(SurfaceMesh<float>* mesh)
+template<typename Scalar>
+SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh)
 {
     if(mesh_ == NULL)
         mesh = new SurfaceMesh<float>();
     mesh_ = mesh;
 }
 
-SurfaceMeshRender::~SurfaceMeshRender(void)
+template<typename Scalar>
+SurfaceMeshRender<Scalar>::~SurfaceMeshRender(void)
 {
 
 }
 
-void SurfaceMeshRender::render()
+template<typename Scalar>
+void SurfaceMeshRender<Scalar>::render()
 {
     //To render the mesh in a screen based GLUI panel.
 }

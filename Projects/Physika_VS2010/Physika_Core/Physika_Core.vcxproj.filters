@@ -45,9 +45,6 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Transform\transform.cpp">
       <Filter>Transform</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Core\Array\array.cpp">
-      <Filter>Array</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h">

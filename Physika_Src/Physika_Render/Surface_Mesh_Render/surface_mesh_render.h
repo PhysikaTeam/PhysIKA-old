@@ -20,23 +20,24 @@
 
 namespace Physika{
 
+template<typename Scalar>
 class SurfaceMeshRender: public RenderBase
 {
 public:
     /* Constructions */
     SurfaceMeshRender();
-    SurfaceMeshRender(SurfaceMesh<float>* mesh);
+    SurfaceMeshRender(SurfaceMesh<Scalar>* mesh);
     ~SurfaceMeshRender(void);
 
     /* Get and Set */
-    inline SurfaceMesh<float>* mesh() { return mesh_; }
+    inline SurfaceMesh<Scalar>* mesh() { return mesh_; }
 
     /* Render */
     virtual void render();
 protected:
     
     /* Render data*/
-    SurfaceMesh<float> *mesh_;
+    SurfaceMesh<Scalar> *mesh_;
 };
 
 } //end of namespace Physika

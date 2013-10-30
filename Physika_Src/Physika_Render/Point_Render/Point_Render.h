@@ -20,16 +20,17 @@
 
 namespace Physika{
 
+template <typename Scalar>
 class PointRender: public RenderBase
 {
 public:
     /* Constructions */
     PointRender();
-    PointRender(Vector3f * points, int num_of_point);
+    PointRender(Vector<Scalar,3> * points, int num_of_point);
     ~PointRender(void);
 
     /* Get and Set */
-    inline Vector3f* points() { return points_; }
+    inline Vector<Scalar,3>* points() { return points_; }
     inline int num_of_point() { return num_of_point_; }
     inline void setNbPoint(int num_of_point) { num_of_point_ = num_of_point; }
 
@@ -40,7 +41,7 @@ public:
 protected:
     /* Render data */
     int num_of_point_;
-    Vector3f *points_;
+    Vector<Scalar,3> *points_;
 
 };
 
