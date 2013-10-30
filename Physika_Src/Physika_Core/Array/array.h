@@ -26,7 +26,7 @@ class Array
 public:    
     /* Constructors */
     Array();
-    Array(ElementType* data, unsigned int element_cout);
+    Array(ElementType* data, unsigned int element_count);
     Array(const Array<ElementType>& );
     ~Array();
     
@@ -34,7 +34,7 @@ public:
     Array<ElementType>& operator = (const Array<ElementType>& arr);
 
     /* Get and Set functions */
-    inline unsigned int element_cout() const { return element_cout_; }
+    inline unsigned int elementCount() const { return element_count_; }
     inline ElementType* data() const { return data_; }
 
     /* Special functions */
@@ -43,37 +43,37 @@ public:
     void zero();
 
     /* Operator overloading */
-    inline ElementType & operator[] (unsigned int id){ assert(id >= 0 && id <= element_cout_); return data_[id]; }
+    inline ElementType & operator[] (unsigned int id){ assert(id >= 0 && id <= element_count_); return data_[id]; }
 
 
 protected:
     void allocate();
     void release();
 
-    unsigned int element_cout_;
+    unsigned int element_count_;
     ElementType * data_;
 
 };
 
 
 template <typename ElementType>
-Array<ElementType>::Array():element_cout_(0)
+Array<ElementType>::Array():element_count_(0)
 {
     data_ = NULL;
 }
 
 template <typename ElementType>
-Array<ElementType>::Array(ElementType* data, unsigned int element_cout)
+Array<ElementType>::Array(ElementType* data, unsigned int element_count)
 {
-    setSpace(element_cout);
-    memcpy(data_,data,sizeof(ElementType)*element_cout_);
+    setSpace(element_count);
+    memcpy(data_,data,sizeof(ElementType)*element_count_);
 }
 
 template <typename ElementType>
 Array<ElementType>::Array(const Array<ElementType>& arr)
 {
-    setSpace(arr.element_cout());
-    memcpy(data_,arr.data(),sizeof(ElementType)*element_cout_);
+    setSpace(arr.elementCount());
+    memcpy(data_,arr.data(),sizeof(ElementType)*element_count_);
 }
 
 template <typename ElementType>
@@ -85,7 +85,7 @@ Array<ElementType>::~Array()
 template <typename ElementType>
 void Array<ElementType>::allocate()
 {
-    data_ = new ElementType[element_cout_];
+    data_ = new ElementType[element_count_];
 }
 
 template <typename ElementType>
@@ -106,7 +106,7 @@ void Array<ElementType>::reset(const unsigned int count)
 template <typename ElementType>
 void Array<ElementType>::setSpace(const unsigned int count)
 {
-    element_cout_ = count;
+    element_count_ = count;
     allocate();
 }
 
@@ -120,8 +120,8 @@ void Array<ElementType>::zero()
 template <typename ElementType>
 Array<ElementType>& Array<ElementType>::operator = (const Array<ElementType>& arr)
 {
-    reset(arr.element_cout());
-    memcpy(data_,arr.data(),sizeof(ElementType)*element_cout_);
+    reset(arr.elementCount());
+    memcpy(data_,arr.data(),sizeof(ElementType)*element_count_);
     return *this;
 }
 
@@ -130,7 +130,7 @@ Array<ElementType>& Array<ElementType>::operator = (const Array<ElementType>& ar
 template <typename ElementType>
 std::ostream& operator<< (std::ostream &s, const Array<ElementType> &arr)
 {
-    for(size_t i = 0; i < arr.element_cout(); i++)
+    for(size_t i = 0; i < arr.elementCount(); i++)
     {
         if(i == 0)
             s<<arr[i];
