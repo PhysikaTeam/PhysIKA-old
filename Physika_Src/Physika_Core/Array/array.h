@@ -43,7 +43,7 @@ public:
     void zero();
 
     /* Operator overloading */
-    inline ElementType & operator[] (unsigned int id){ assert(id >= 0 && id <= element_count_); return data_[id]; }
+    inline ElementType & operator[] (unsigned int id){ assert(id >= 0 && id < element_count_); return data_[id]; }
 
 
 protected:
