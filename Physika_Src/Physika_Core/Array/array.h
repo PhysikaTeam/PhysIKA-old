@@ -116,7 +116,6 @@ void Array<ElementType>::zero()
     memset((void*)data_, 0, element_cout_*sizeof(ElementType));
 }
 
-
 template <typename ElementType>
 Array<ElementType>& Array<ElementType>::operator = (const Array<ElementType>& arr)
 {
@@ -124,8 +123,6 @@ Array<ElementType>& Array<ElementType>::operator = (const Array<ElementType>& ar
     memcpy(data_,arr.data(),sizeof(ElementType)*element_count_);
     return *this;
 }
-
-
 
 template <typename ElementType>
 std::ostream& operator<< (std::ostream &s, const Array<ElementType> &arr)
