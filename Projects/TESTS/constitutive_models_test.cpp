@@ -17,12 +17,12 @@
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/Constitutive_Models/neo_hookean.h"
 #include "Physika_Dynamics/Constitutive_Models/st_venant_kirchhoff.h"
-#include "Physika_Dynamics/Constitutive_Models/linear_elasticity.h"
+#include "Physika_Dynamics/Constitutive_Models/isotropic_linear_elasticity.h"
 #include "Physika_Dynamics/Constitutive_Models/isotropic_hyperelastic_material.h"
 using namespace std;
 using Physika::NeoHookean;
 using Physika::StVK;
-using Physika::LinearElasticity;
+using Physika::IsotropicLinearElasticity;
 using Physika::IsotropicHyperelasticMaterial;
 using Physika::ModulusType;
 
@@ -32,7 +32,7 @@ int main()
     ModulusType par_type = Physika::LAME_COEFFICIENTS;
     NeoHookean<float,2> neo_hookean_material(lambda,mu,par_type);
     StVK<float,2> stvk_material(lambda,mu,par_type);
-    LinearElasticity<float,2> linear_material(lambda,mu,par_type);
+    IsotropicLinearElasticity<float,2> linear_material(lambda,mu,par_type);
     IsotropicHyperelasticMaterial<float,2> *isotropic_hyperelastic_material;
     Physika::Matrix2x2(float) F(2.0f,1.0f,0.0f,1.0f);
     cout<<"Deformation gradient: "<<endl;

@@ -1,6 +1,6 @@
 /*
  * @file linear_elasticity.cpp
- * @brief Linear elastic constitutive model with infinitesimal strain measure
+ * @brief Isotropic linear elastic constitutive model with infinitesimal strain measure
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -16,28 +16,28 @@
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
-#include "Physika_Dynamics/Constitutive_Models/linear_elasticity.h"
+#include "Physika_Dynamics/Constitutive_Models/isotropic_linear_elasticity.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-LinearElasticity<Scalar,Dim>::LinearElasticity()
+IsotropicLinearElasticity<Scalar,Dim>::IsotropicLinearElasticity()
 {
 }
 
 template <typename Scalar, int Dim>
-LinearElasticity<Scalar,Dim>::LinearElasticity(Scalar par1, Scalar par2, ModulusType par_type)
+IsotropicLinearElasticity<Scalar,Dim>::IsotropicLinearElasticity(Scalar par1, Scalar par2, ModulusType par_type)
     :IsotropicHyperelasticMaterial<Scalar,Dim>(par1,par2,par_type)
 {
 }
 
 template <typename Scalar, int Dim>
-LinearElasticity<Scalar,Dim>::~LinearElasticity()
+IsotropicLinearElasticity<Scalar,Dim>::~IsotropicLinearElasticity()
 {
 }
 
 template <typename Scalar, int Dim>
-void LinearElasticity<Scalar,Dim>::info() const
+void IsotropicLinearElasticity<Scalar,Dim>::info() const
 {
     std::cout<<"Isotropic linear elastic material with infinitesimal strain measure:"<<std::endl;
     std::cout<<"Energy density: Psi = 1/2*lambda*(trace(e)^2)+mu*e:e"<<std::endl;
@@ -45,7 +45,7 @@ void LinearElasticity<Scalar,Dim>::info() const
 }
 
 template <typename Scalar, int Dim>
-Scalar LinearElasticity<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
+Scalar IsotropicLinearElasticity<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
 {
     SquareMatrix<Scalar,Dim> e = 0.5*(F.transpose()+F)-SquareMatrix<Scalar,Dim>::identityMatrix();
     Scalar trace_e = e.trace();
@@ -56,21 +56,21 @@ Scalar LinearElasticity<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) c
 }
 
 template <typename Scalar, int Dim>
-SquareMatrix<Scalar,Dim> LinearElasticity<Scalar,Dim>::firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
 {
     //for linear elastic materials all stress measures are identical because F ~= I
     return cauchyStress(F);
 }
 
 template <typename Scalar, int Dim>
-SquareMatrix<Scalar,Dim> LinearElasticity<Scalar,Dim>::secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
 {
     //for linear elastic materials all stress measures are identical because F ~= I
     return cauchyStress(F);
 }
 
 template <typename Scalar, int Dim>
-SquareMatrix<Scalar,Dim> LinearElasticity<Scalar,Dim>::cauchyStress(const SquareMatrix<Scalar,Dim> &F) const
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::cauchyStress(const SquareMatrix<Scalar,Dim> &F) const
 {
     SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
     SquareMatrix<Scalar,Dim> e = 0.5*(F.transpose()+F)-identity;
@@ -82,9 +82,9 @@ SquareMatrix<Scalar,Dim> LinearElasticity<Scalar,Dim>::cauchyStress(const Square
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class LinearElasticity<float,2>;
-template class LinearElasticity<double,2>;
-template class LinearElasticity<float,3>;
-template class LinearElasticity<double,3>;
+template class IsotropicLinearElasticity<float,2>;
+template class IsotropicLinearElasticity<double,2>;
+template class IsotropicLinearElasticity<float,3>;
+template class IsotropicLinearElasticity<double,3>;
 
 } //end of namespace Physika

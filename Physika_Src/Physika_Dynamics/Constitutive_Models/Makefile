@@ -9,7 +9,7 @@ PHYSIKA_PUBLIC_DIR=$(PHYSIKA_ROOT_DIR)/Public_Library
 include $(PHYSIKA_ROOT_DIR)/Makefile_header
 
 # headers in this library
-CONSTITUTIVE_MODELS_HEADERS=constitutive_model.h isotropic_hyperelastic_material.h neo_hookean.h st_venant_kirchhoff.h linear_elasticity.h
+CONSTITUTIVE_MODELS_HEADERS=constitutive_model.h isotropic_hyperelastic_material.h neo_hookean.h st_venant_kirchhoff.h isotropic_linear_elasticity.h
 
 # additional headers that this library denpend on
 ADDITIONAL_HEADERS=
@@ -24,7 +24,7 @@ cp $(CONSTITUTIVE_MODELS_HEADERS) $(TARGET_HEADERS_DIR)
 endef
 
 # object files to be compiled for this library
-CONSTITUTIVE_MODELS_OBJECTS=neo_hookean.o st_venant_kirchhoff.o linear_elasticity.o
+CONSTITUTIVE_MODELS_OBJECTS=neo_hookean.o st_venant_kirchhoff.o isotropic_linear_elasticity.o
 
 # target name of this library
 TARGET=libconstitutive_models.a
