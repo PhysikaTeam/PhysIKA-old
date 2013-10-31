@@ -1,2 +1,0 @@
-**This file exists simply because empty directories could not be uploaded to github. It could be deleted when there's something in this directory.**
-Geometry related data structures: surface mesh, volumetric mesh, cartesian grids, etc.
