@@ -29,8 +29,8 @@ public:
     Vertex(const Vector<Scalar,3>& pos);
 
     /* Get and Set */
-    inline Vector<Scalar,3>& position()  { return position_; }
-    inline Vector<Scalar,3>& normal()  { return normal_; }
+    inline Vector<Scalar,3>& position() { return position_; }
+    inline Vector<Scalar,3>& normal() { return normal_; }
     inline void setPosition(Vector<Scalar,3> position) { position_ = position; }
     inline void setNormal(Vector<Scalar,3> normal) { normal_ = normal; }
     

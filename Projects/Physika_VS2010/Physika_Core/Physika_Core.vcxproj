@@ -21,7 +21,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -37,6 +37,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\..\Public_Library\lib\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\..\Public_Library\lib\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -63,6 +66,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\..\Physika_Src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -82,12 +86,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Array\array.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_3x3.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_base.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix_MxN.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\sparse_matrix.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\square_matrix.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Quaternion\quaternion.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Transform\transform.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Utilities\global_config.h" />

@@ -71,9 +71,6 @@
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector_3d.h">
       <Filter>Vectors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\matrix.h">
-      <Filter>Matrices</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Vectors\vector.h">
       <Filter>Vectors</Filter>
     </ClInclude>
@@ -94,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Array\array.h">
       <Filter>Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Core\Matrices\square_matrix.h">
+      <Filter>Matrices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

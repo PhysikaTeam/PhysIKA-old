@@ -31,8 +31,8 @@ public:
 
     /* Get and Set */
     inline Vector<Scalar,3>* points() { return points_; }
-    inline int num_of_point() { return num_of_point_; }
-    inline void setNbPoint(int num_of_point) { num_of_point_ = num_of_point; }
+    inline int numOfPoint() const { return num_of_point_; }
+    inline void setNumPoint(int num_of_point) { num_of_point_ = num_of_point; }
 
     /* Render */
     virtual void render();

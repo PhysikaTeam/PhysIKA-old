@@ -36,7 +36,7 @@ int main()
 	Edge<float> edge;
 	Triangle<double> trianges;
 	SurfaceMesh<float> mesh;
-	mesh.compute_normals();
+	mesh.computeNormals();
 	int a;
 	cin>>a;
 }
