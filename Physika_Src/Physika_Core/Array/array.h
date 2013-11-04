@@ -15,8 +15,7 @@
 #ifndef PHSYIKA_CORE_ARRAY_ARRAY_H_
 #define PHSYIKA_CORE_ARRAY_ARRAY_H_
 
-#include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Vectors/vector_3d.h"
+#include <cstring>
 
 namespace Physika{
 

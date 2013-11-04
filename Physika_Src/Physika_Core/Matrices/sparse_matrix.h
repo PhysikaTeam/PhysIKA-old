@@ -16,12 +16,16 @@
 #define PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Utilities/misc_constants.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
 
-template <typename Scalar, int Rows, int Cols, int StoreMajor = 0>
+enum StoreMajorType{
+    RowMajor,
+    ColMajor
+};
+
+template <typename Scalar, int StoreMajor=ColMajor>
 class SparseMatrix: public MatrixBase
 {
 public:
@@ -29,8 +33,6 @@ public:
     ~SparseMatrix();
     inline int rows()const;
     inline int cols()const;
-    SparseMatrix<Scalar,Rows,Cols,StoreMajor>& derived();
-    const SparseMatrix<Scalar,Rows,Cols,StoreMajor>& derived() const;
 protected:
 };
 
