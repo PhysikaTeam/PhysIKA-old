@@ -23,7 +23,7 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender()
 }
 
 template<typename Scalar>
-SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh)
+SurfaceMeshRender<Scalar>::SurfaceMeshRender(const SurfaceMesh<Scalar>* mesh)
 {
     if(mesh_ == NULL)
         mesh = new SurfaceMesh<float>();

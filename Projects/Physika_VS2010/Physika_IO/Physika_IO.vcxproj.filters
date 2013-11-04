@@ -4,15 +4,27 @@
     <Filter Include="Image">
       <UniqueIdentifier>{a27f3e5b-3f95-4c0d-869e-8081ff8e4f36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3DModel">
+      <UniqueIdentifier>{be8b1087-2236-449c-8897-71d2c04f53c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_IO\Image\image_io.h">
       <Filter>Image</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_IO\3DModel\mesh_io_base.h">
+      <Filter>3DModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_IO\3DModel\obj_io.h">
+      <Filter>3DModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Physika_Src\Physika_IO\Image\image_io.cpp">
       <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_IO\3DModel\obj_io.cpp">
+      <Filter>3DModel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

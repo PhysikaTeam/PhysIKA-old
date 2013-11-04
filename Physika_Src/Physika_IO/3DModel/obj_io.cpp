@@ -1,6 +1,6 @@
 /*
- * @file point_render.cpp 
- * @Basic render of point, it is used to draw the simulate result of points.
+ * @file obj_IO.cpp 
+ * @Basic obj_IO, load a mesh or write a mesh to a obj file. simply without texture.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,35 +12,32 @@
  *
  */
 
-#include "Physika_Render/Point_Render/Point_Render.h"
+#include "Physika_IO/3DModel/obj_io.h"
 
 namespace Physika{
 
 template <typename Scalar>
-PointRender<Scalar>::PointRender(): num_of_point_(0)
+ObjIO<Scalar>::ObjIO()
 {
-	points_ = NULL;
+	//int a;
 }
 
 template <typename Scalar>
-PointRender<Scalar>::PointRender(const Vector<Scalar,3> * points, int num_of_point):num_of_point_(num_of_point)
-{
-   points_ = points;
-}
-
-template <typename Scalar>
-PointRender<Scalar>::~PointRender(void)
+ObjIO<Scalar>::~ObjIO()
 {
 
 }
 
 template <typename Scalar>
-void PointRender<Scalar>::render()
+void ObjIO<Scalar>::read(const string& filename, SurfaceMesh<Scalar> *mesh)
 {
-    //To render these points in a GLUI panel based screen.
 
 }
 
+template <typename Scalar>
+void ObjIO<Scalar>::write(const string& filename, SurfaceMesh<Scalar> *mesh)
+{
 
+}
 
 } //end of namespace Physika

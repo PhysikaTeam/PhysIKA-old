@@ -4,6 +4,9 @@
     <Filter Include="Surface_Mesh">
       <UniqueIdentifier>{a840fa61-4447-4431-8e13-c819d0cd6f19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Volumetric_Mesh">
+      <UniqueIdentifier>{361ea6e8-1a3d-4594-8605-76e27ed7bb71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\surface_mesh.cpp">
@@ -31,6 +34,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Geometry\Surface_Mesh\triangle.h">
       <Filter>Surface_Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Geometry\Volumetric_Mesh\volumetric_mesh.h">
+      <Filter>Volumetric_Mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

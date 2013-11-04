@@ -26,18 +26,19 @@ class SurfaceMeshRender: public RenderBase
 public:
     /* Constructions */
     SurfaceMeshRender();
-    SurfaceMeshRender(SurfaceMesh<Scalar>* mesh);
+    SurfaceMeshRender(const SurfaceMesh<Scalar>* mesh);
     ~SurfaceMeshRender(void);
 
     /* Get and Set */
     inline SurfaceMesh<Scalar>* mesh() { return mesh_; }
+    inline void setSurfaceMesh(const SurfaceMesh<Scalar>* mesh) { mesh_ = mesh; }
 
     /* Render */
     virtual void render();
 protected:
     
     /* Render data*/
-    SurfaceMesh<Scalar> *mesh_;
+    const SurfaceMesh<Scalar> *mesh_;
 };
 
 } //end of namespace Physika

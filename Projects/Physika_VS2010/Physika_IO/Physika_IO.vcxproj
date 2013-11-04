@@ -75,9 +75,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_IO\3DModel\mesh_io_base.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_IO\3DModel\obj_io.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_IO\Image\image_io.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_IO\3DModel\obj_io.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_IO\Image\image_io.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -26,13 +26,15 @@ class PointRender: public RenderBase
 public:
     /* Constructions */
     PointRender();
-    PointRender(Vector<Scalar,3> * points, int num_of_point);
+    PointRender(const Vector<Scalar,3> * points, int num_of_point);
     ~PointRender(void);
 
     /* Get and Set */
     inline Vector<Scalar,3>* points() { return points_; }
     inline int numOfPoint() const { return num_of_point_; }
     inline void setNumPoint(int num_of_point) { num_of_point_ = num_of_point; }
+    inline void setPoints(const Vector<Scalar,3> * points) { points_ = points; }
+
 
     /* Render */
     virtual void render();
@@ -41,7 +43,7 @@ public:
 protected:
     /* Render data */
     int num_of_point_;
-    Vector<Scalar,3> *points_;
+    const Vector<Scalar,3> *points_; //It should be const because this class can't modify the data the points_ptr point to.
 
 };
 
