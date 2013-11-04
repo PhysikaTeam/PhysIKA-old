@@ -25,7 +25,7 @@ enum StoreMajorType{
     ColMajor
 };
 
-template <typename Scalar, int StoreMajor=ColMajor>
+template <typename Scalar, StoreMajorType StoreMajor=ColMajor>
 class SparseMatrix: public MatrixBase
 {
 public:
