@@ -40,7 +40,7 @@ template <typename Scalar, int Dim>
 void NeoHookean<Scalar,Dim>::info() const
 {
     std::cout<<"Compressible Neo-Hookean material:"<<std::endl;
-    std::cout<<"Energy density: Psi = mu/2*(trace(C)-3)-mu*lnJ+lambda/2*(lnJ)^2"<<std::endl;
+    std::cout<<"Energy density: Psi = mu/2*(trace(C)-Dim)-mu*lnJ+lambda/2*(lnJ)^2"<<std::endl;
     std::cout<<"Where: C = transpose(F)*F, J = det(F)."<<std::endl;
 }
 
@@ -52,7 +52,7 @@ Scalar NeoHookean<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
     Scalar lnJ = log(J);
     Scalar mu = this->mu_;
     Scalar lambda = this->lambda_;
-    Scalar energy = mu/2*(trace_c-3)-mu*lnJ+lambda/2*lnJ*lnJ;
+    Scalar energy = mu/2*(trace_c-Dim)-mu*lnJ+lambda/2*lnJ*lnJ;
     return energy;
 }
 

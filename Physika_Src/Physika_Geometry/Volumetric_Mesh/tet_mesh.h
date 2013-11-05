@@ -19,13 +19,15 @@
 
 namespace Physika{
 
-template <typename Scalar, int Dim>
-class TetMesh: public VolumetricMesh<Scalar,Dim>
+template <typename Scalar>
+class TetMesh: public VolumetricMesh<Scalar,3>
 {
 public:
     TetMesh();
     TetMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements);
     ~TetMesh();
+    void info() const;
+    int eleVolume(int ele_idx) const;
 protected:
 };
 
