@@ -27,7 +27,7 @@ class MeshIOBase
 {
 public:
     MeshIOBase();
-    ~MeshIOBase();
+    virtual ~MeshIOBase(){};
 
     virtual void read(const string& filename, SurfaceMesh<Scalar> *mesh);
 

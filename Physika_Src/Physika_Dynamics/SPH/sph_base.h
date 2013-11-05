@@ -22,7 +22,7 @@ class SPHBase
 {
 public:
 	SPHBase();
-	~SPHBase();
+    virtual ~SPHBase();
 
     virtual void initialize();
     virtual void initSceneBoundary();

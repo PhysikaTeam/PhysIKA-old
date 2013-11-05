@@ -20,6 +20,9 @@ namespace Physika{
 class RenderBase
 {
 public:
+    RenderBase();
+    virtual ~RenderBase() {};
+
 
     virtual void render() {};
 
