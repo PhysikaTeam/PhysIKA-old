@@ -1,6 +1,6 @@
 /*
- * @file SPH_Base.h 
- * @Basic SPH class,all SPH method inherit from it.
+ * @file sph_solid.h 
+ * @Basic SPH_solid class, basic deformation simulation uses sph.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,17 +12,19 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
-#define PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
+#ifndef PHYSIKA_DYNAMICS_SPH_SPH_SOLID_H_
+#define PHYSIKA_DYNAMICS_SPH_SPH_SOLID_H_
+
+#include "Physika_Dynamics/sph/sph_base.h"
 
 namespace Physika{
 
 template <typename Scalar>
-class SPHBase
+class SPHSolid:public SPHBase<Scalar>
 {
 public:
-	SPHBase();
-	~SPHBase();
+	SPHSolid();
+	~SPHSolid();
 
     virtual void initialize();
     virtual void initSceneBoundary();
@@ -39,4 +41,4 @@ protected:
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
+#endif //PHYSIKA_DYNAMICS_SPH_SPH_SOLID_H_

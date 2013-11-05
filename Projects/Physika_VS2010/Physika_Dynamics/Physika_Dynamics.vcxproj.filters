@@ -36,6 +36,12 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\isotropic_linear_elasticity.cpp">
       <Filter>Constitutive_Models</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_fluid.cpp">
+      <Filter>SPH</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_solid.cpp">
+      <Filter>SPH</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.h">
@@ -64,6 +70,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\isotropic_linear_elasticity.h">
       <Filter>Constitutive_Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_fluid.h">
+      <Filter>SPH</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_solid.h">
+      <Filter>SPH</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

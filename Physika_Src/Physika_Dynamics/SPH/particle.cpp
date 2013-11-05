@@ -18,7 +18,7 @@ namespace Physika{
 
 Particle::Particle()
 {
-
+    
 }
 
 Particle::~Particle()

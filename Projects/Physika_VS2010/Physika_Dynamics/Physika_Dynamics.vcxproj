@@ -82,6 +82,8 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\particle.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_base.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_fluid.cpp" />
+    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_solid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\constitutive_model.h" />
@@ -93,6 +95,8 @@
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\particle.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_base.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_fluid.h" />
+    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_solid.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

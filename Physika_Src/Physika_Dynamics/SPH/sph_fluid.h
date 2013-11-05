@@ -1,6 +1,6 @@
 /*
- * @file SPH_Base.h 
- * @Basic SPH class,all SPH method inherit from it.
+ * @file sph_fluid.h 
+ * @Basic SPH_fluid class, basic fluid simulation uses sph.
  * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,17 +12,19 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
-#define PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
+#ifndef PHYSIKA_DYNAMICS_SPH_SPH_FLUID_H_
+#define PHYSIKA_DYNAMICS_SPH_SPH_FLUID_H_
+
+#include "Physika_Dynamics/sph/sph_base.h"
 
 namespace Physika{
 
 template <typename Scalar>
-class SPHBase
+class SPHFluid:public SPHBase<Scalar>
 {
 public:
-	SPHBase();
-	~SPHBase();
+	SPHFluid();
+	~SPHFluid();
 
     virtual void initialize();
     virtual void initSceneBoundary();
@@ -39,4 +41,4 @@ protected:
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
+#endif //PHYSIKA_DYNAMICS_SPH_SPH_FLUID_H_
