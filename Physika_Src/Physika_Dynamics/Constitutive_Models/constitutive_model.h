@@ -21,7 +21,7 @@ class ConstitutiveModel
 {
 public:
     ConstitutiveModel(){};
-    ~ConstitutiveModel(){};
+    virtual ~ConstitutiveModel(){};
     virtual void info() const=0;
 protected:
 };

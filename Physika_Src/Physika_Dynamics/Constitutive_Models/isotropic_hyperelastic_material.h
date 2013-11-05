@@ -36,7 +36,7 @@ public:
     //if par_type = YOUNG_AND_POISSON, then: par1 = young's modulus, par2 = poisson_ratio
     //if par_type = LAME_COEFFICIENTS, then: par1 = lambda, par2 = mu
     IsotropicHyperelasticMaterial(Scalar par1, Scalar par2, ModulusType par_type);
-    ~IsotropicHyperelasticMaterial(){}
+    virtual ~IsotropicHyperelasticMaterial(){}
     inline Scalar lambda() const{return lambda_;}
     inline void setLambda(Scalar lambda){lambda_=lambda;}
     inline Scalar mu() const{return mu_;}

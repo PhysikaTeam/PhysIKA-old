@@ -27,14 +27,18 @@ class VolumetricMesh
 {
 public:
     VolumetricMesh();
-    //if elements have same number of vertices (default value), vert_per_ele is pointer to one integer representing the vertex number per element
+    //if all elements have same number of vertices (default value), vert_per_ele is pointer to one integer representing the vertex number per element
     //otherwise it's pointer to a list of vertex number per element
     VolumetricMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements, const int *vert_per_ele, bool uniform_ele_type=true);
-    ~VolumetricMesh();
+    virtual ~VolumetricMesh();
     inline int vertNum() const{return vert_num_;}
     inline int eleNum() const{return ele_num_;}
     inline bool isUniformElementType() const{return uniform_ele_type_;}
     inline int eleVertNum(int ele_idx) const{return uniform_ele_type_?(*vert_per_ele_):(vert_per_ele_[ele_idx]);}
+    Vector<Scalar,Dim> vertPos(int vert_idx) const;
+    Vector<Scalar,Dim> eleVertPos(int ele_idx, int vert_idx) const;
+    virtual void info() const=0;
+    virtual int eleVolume(int ele_idx) const=0;
 protected:
     int vert_num_;
     Scalar *vertices_;
@@ -84,6 +88,30 @@ VolumetricMesh<Scalar,Dim>::~VolumetricMesh()
 	delete elements_;
     if(vert_per_ele_)
 	delete vert_per_ele_;
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(int vert_idx) const
+{
+    Vector<Scalar,Dim> pos;
+    for(int i = 0; i < Dim; ++i)
+	pos[i] = vertices_[Dim*vert_idx+i];
+    return pos;
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::eleVertPos(int ele_idx, int vert_idx) const
+{
+    int ele_idx_start = 0;
+    if(uniform_ele_type_)
+	ele_idx_start = ele_idx*(*vert_per_ele_);
+    else
+    {
+        for(int i = 0; i < ele_idx; ++i)
+	    ele_idx_start += ver_per_ele_[i];
+    }
+    int global_vert_idx = elements_[ele_idx_start+vert_idx];
+    return vertPos(global_vert_idx);
 }
 
 }  //end of namespace Physika

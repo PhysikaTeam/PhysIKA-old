@@ -21,7 +21,7 @@ class VectorBase
 {
 public:
     VectorBase(){}
-    ~VectorBase(){}
+    virtual ~VectorBase(){}
     virtual int dims() const=0;
 protected:
 };
