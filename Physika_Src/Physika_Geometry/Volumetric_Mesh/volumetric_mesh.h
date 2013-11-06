@@ -18,7 +18,7 @@
 
 #include <cstring>
 #include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Core/Vectors/Vector_3d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
 
@@ -38,6 +38,8 @@ public:
     Vector<Scalar,Dim> eleVertPos(int ele_idx, int vert_idx) const;
     virtual void info() const=0;
     virtual int eleVolume(int ele_idx) const=0;
+    virtual bool containsVertex(int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
+    virtual void interpolationWeights(int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0;
 protected:
     //if all elements have same number of vertices, vert_per_ele is pointer to one integer representing the vertex number per element
     //otherwise it's pointer to a list of vertex number per element

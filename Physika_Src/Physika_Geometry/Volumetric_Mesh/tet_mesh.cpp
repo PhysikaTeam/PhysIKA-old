@@ -13,6 +13,7 @@
  */
 
 #include <iostream>
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Volumetric_Mesh/tet_mesh.h"
 
 namespace Physika{
@@ -43,6 +44,17 @@ template <typename Scalar>
 int TetMesh<Scalar>::eleVolume(int ele_idx) const
 {
     return 0;
+}
+
+template <typename Scalar>
+bool TetMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const
+{
+    return false;
+}
+
+template <typename Scalar>
+void TetMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const
+{
 }
 
 //explicit instantitation

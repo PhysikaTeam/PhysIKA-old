@@ -19,6 +19,8 @@
 
 namespace Physika{
 
+template <typename Scalar> class Vector<Scalar,3>;
+
 template <typename Scalar>
 class TetMesh: public VolumetricMesh<Scalar,3>
 {
@@ -28,6 +30,8 @@ public:
     ~TetMesh();
     void info() const;
     int eleVolume(int ele_idx) const;
+    bool containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const;
+    void interpolationWeights(int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const;
 protected:
 };
 
