@@ -33,6 +33,18 @@ SquareMatrix<Scalar,2>::SquareMatrix(Scalar x00, Scalar x01, Scalar x10, Scalar 
 }
 
 template <typename Scalar>
+SquareMatrix<Scalar,2>::SquareMatrix(const Vector<Scalar,2> &row1, const Vector<Scalar,2> &row2)
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    for(int col = 0; col < 2; ++col)
+    {
+	eigen_matrix_2x2_(0,col) = row1[col];
+	eigen_matrix_2x2_(1,col) = row2[col];
+    }
+#endif
+}
+
+template <typename Scalar>
 SquareMatrix<Scalar,2>::SquareMatrix(const SquareMatrix<Scalar,2> &mat2)
 {
     *this = mat2;

@@ -27,6 +27,7 @@ class SquareMatrix<Scalar,3>: public MatrixBase
 public:
     SquareMatrix();
     SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22);
+    SquareMatrix(const Vector<Scalar,3> &row1, const Vector<Scalar,3> &row2, const Vector<Scalar,3> &row3);
     SquareMatrix(const SquareMatrix<Scalar,3>&);
     ~SquareMatrix();
     inline int rows() const{return 3;}
