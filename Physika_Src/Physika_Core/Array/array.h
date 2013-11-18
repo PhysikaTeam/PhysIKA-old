@@ -16,6 +16,7 @@
 #define PHSYIKA_CORE_ARRAY_ARRAY_H_
 
 #include <cstring>
+#include "Physika_Core/Utilities/physika_assert.h"
 
 namespace Physika{
 
@@ -42,8 +43,7 @@ public:
     void zero();
 
     /* Operator overloading */
-    inline ElementType & operator[] (unsigned int id){ assert(id >= 0 && id < element_count_); return data_[id]; }
-
+    inline ElementType & operator[] (unsigned int id){ PHYSIKA_ASSERT(id >= 0 && id < element_count_); return data_[id]; }
 
 protected:
     void allocate();

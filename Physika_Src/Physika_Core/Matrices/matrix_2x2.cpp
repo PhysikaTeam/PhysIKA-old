@@ -12,6 +12,9 @@
  *
  */
 
+#include <cmath>
+#include <limits>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 
 namespace Physika{
@@ -58,6 +61,8 @@ SquareMatrix<Scalar,2>::~SquareMatrix()
 template <typename Scalar>
 Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j)
 {
+    PHYSIKA_ASSERT(i>=0&&i<2);
+    PHYSIKA_ASSERT(j>=0&&j<2);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_(i,j);
 #endif
@@ -66,6 +71,8 @@ Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j)
 template <typename Scalar>
 const Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j) const
 {
+    PHYSIKA_ASSERT(i>=0&&i<2);
+    PHYSIKA_ASSERT(j>=0&&j<2);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_(i,j);
 #endif
@@ -171,6 +178,7 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (const SquareMatrix<Sca
 template <typename Scalar>
 SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 {
+    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -181,6 +189,7 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 template <typename Scalar>
 SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator/= (Scalar scale)
 {
+    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
             (*this)(i,j) = (*this)(i,j) / scale;

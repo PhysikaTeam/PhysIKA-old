@@ -13,6 +13,8 @@
  */
 
 #include <cmath>
+#include <limits>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
@@ -56,6 +58,7 @@ Vector<Scalar,3>::~Vector()
 template <typename Scalar>
 Scalar& Vector<Scalar,3>::operator[] (int idx)
 {
+    PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_3x_(idx);
 #endif
@@ -64,6 +67,7 @@ Scalar& Vector<Scalar,3>::operator[] (int idx)
 template <typename Scalar>
 const Scalar& Vector<Scalar,3>::operator[] (int idx) const
 {
+    PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_3x_(idx);
 #endif
@@ -140,6 +144,7 @@ Vector<Scalar,3>& Vector<Scalar,3>::operator*= (Scalar scale)
 template <typename Scalar>
 Vector<Scalar,3> Vector<Scalar,3>::operator/ (Scalar scale) const
 {
+    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
     Scalar result[3];
     for(int i = 0; i < 3; ++i)
         result[i] = (*this)[i] / scale;
@@ -149,6 +154,7 @@ Vector<Scalar,3> Vector<Scalar,3>::operator/ (Scalar scale) const
 template <typename Scalar>
 Vector<Scalar,3>& Vector<Scalar,3>::operator/= (Scalar scale)
 {
+    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
     for(int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] / scale;
     return *this;
@@ -166,7 +172,8 @@ template <typename Scalar>
 Vector<Scalar,3>& Vector<Scalar,3>::normalize()
 {
     Scalar norm = (*this).norm();
-    if(norm)
+    bool nonzero_norm = norm > std::numeric_limits<Scalar>::epsilon();
+    if(nonzero_norm)
     {
         for(int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] / norm;

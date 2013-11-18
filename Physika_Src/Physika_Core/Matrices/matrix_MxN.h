@@ -16,6 +16,7 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_MXN_H_
 
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
@@ -42,11 +43,14 @@ public:
     bool operator== (const MatrixMxN<Scalar> &)const;
     MatrixMxN<Scalar> operator* (Scalar) const;
     MatrixMxN<Scalar>& operator*= (Scalar);
+    VectorND<Scalar> operator* (const VectorND<Scalar> &) const;
     MatrixMxN<Scalar> operator/ (Scalar) const;
     MatrixMxN<Scalar>& operator/= (Scalar);
     MatrixMxN<Scalar> transpose() const;
     MatrixMxN<Scalar> inverse() const;
     Scalar determinant() const;
+    Scalar trace() const;
+    Scalar doubleContraction(const MatrixMxN<Scalar> &) const;
 protected:
     void allocMemory(int rows, int cols);
 protected:

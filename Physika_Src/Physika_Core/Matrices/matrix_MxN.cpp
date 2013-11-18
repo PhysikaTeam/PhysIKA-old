@@ -12,7 +12,10 @@
  *
  */
 
+#include <cmath>
+#include <limits>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 
 namespace Physika{
@@ -48,6 +51,7 @@ MatrixMxN<Scalar>::MatrixMxN(const MatrixMxN<Scalar> &mat2)
 template<typename Scalar>
 void MatrixMxN<Scalar>::allocMemory(int rows, int cols)
 { 
+    PHYSIKA_ASSERT(rows>=0&&cols>=0);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     ptr_eigen_matrix_MxN_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>(rows,cols);
  #endif
@@ -80,6 +84,7 @@ int MatrixMxN<Scalar>::cols() const
 template <typename Scalar>
 void MatrixMxN<Scalar>::resize(int new_rows, int new_cols)
 {
+    PHYSIKA_ASSERT(new_rows>=0&&new_cols>=0);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     (*ptr_eigen_matrix_MxN_).resize(new_rows,new_cols);
 #endif
@@ -88,6 +93,8 @@ void MatrixMxN<Scalar>::resize(int new_rows, int new_cols)
 template <typename Scalar>
 Scalar& MatrixMxN<Scalar>::operator() (int i, int j)
 {
+    PHYSIKA_ASSERT(i>=0&&i<(*this).rows());
+    PHYSIKA_ASSERT(j>=0&&j<(*this).cols());
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_)(i,j);
 #endif
@@ -96,6 +103,8 @@ Scalar& MatrixMxN<Scalar>::operator() (int i, int j)
 template <typename Scalar>
 const Scalar& MatrixMxN<Scalar>::operator() (int i, int j) const
 {
+    PHYSIKA_ASSERT(i>=0&&i<(*this).rows());
+    PHYSIKA_ASSERT(j>=0&&j<(*this).cols());
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_)(i,j);
 #endif
@@ -108,11 +117,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator+ (const MatrixMxN<Scalar> &mat2) c
     int cols = (*this).cols();
     int rows2 = mat2.rows();
     int cols2 = mat2.cols();
-    if((rows != rows2)||(cols != cols2))
-    {
-        std::cout<<"Error: matrix size doesn't match! Returned an empty matrix."<<std::endl;
-        return MatrixMxN<Scalar>();
-    }
+    PHYSIKA_ASSERT((rows==rows2)&&(cols==cols2));
     Scalar *result = new Scalar[rows*cols];
     for(int i = 0; i < rows; ++i)
         for(int j = 0; j < cols; ++j)
@@ -129,16 +134,10 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator+= (const MatrixMxN<Scalar> &mat2)
     int cols = (*this).cols();
     int rows2 = mat2.rows();
     int cols2 = mat2.cols();
-    if((rows != rows2)||(cols != cols2))
-    {
-        std::cout<<"Error: matrix size doesn't match! No operation conducted."<<std::endl;
-    }
-    else
-    {
-        for(int i = 0; i < rows; ++i)
-            for(int j = 0; j <cols; ++j)
-                (*this)(i,j) = (*this)(i,j) + mat2(i,j);
-    }
+    PHYSIKA_ASSERT((rows==rows2)&&(cols==cols2));
+    for(int i = 0; i < rows; ++i)
+        for(int j = 0; j <cols; ++j)
+            (*this)(i,j) = (*this)(i,j) + mat2(i,j);
     return *this;
 }
 
@@ -149,11 +148,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator- (const MatrixMxN<Scalar> &mat2) c
     int cols = (*this).cols();
     int rows2 = mat2.rows();
     int cols2 = mat2.cols();
-    if((rows != rows2)||(cols != cols2))
-    {
-        std::cout<<"Error: matrix size doesn't match! Returned an empty matrix."<<std::endl;
-        return MatrixMxN<Scalar>();
-    }
+    PHYSIKA_ASSERT((rows==rows2)&&(cols==cols2));
     Scalar *result = new Scalar[rows*cols];
     for(int i = 0; i < rows; ++i)
         for(int j = 0; j < cols; ++j)
@@ -170,16 +165,10 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator-= (const MatrixMxN<Scalar> &mat2)
     int cols = (*this).cols();
     int rows2 = mat2.rows();
     int cols2 = mat2.cols();
-    if((rows != rows2)||(cols != cols2))
-    {
-        std::cout<<"Error: matrix size doesn't match! No operation conducted."<<std::endl;
-    }
-    else
-    {
-        for(int i = 0; i < rows; ++i)
-            for(int j = 0; j <cols; ++j)
-                (*this)(i,j) = (*this)(i,j) - mat2(i,j);
-    }
+    PHYSIKA_ASSERT((rows==rows2)&&(cols==cols2));
+    for(int i = 0; i < rows; ++i)
+        for(int j = 0; j <cols; ++j)
+            (*this)(i,j) = (*this)(i,j) - mat2(i,j);
     return *this;
 }
 
@@ -191,15 +180,10 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator= (const MatrixMxN<Scalar> &mat2)
     int rows2 = mat2.rows();
     int cols2 = mat2.cols();
     if((rows != rows2)||(cols != cols2))
-    {
-        std::cout<<"Error: matrix size doesn't match! No operation conducted."<<std::endl;
-    }
-    else
-    {
-        for(int i = 0; i < rows; ++i)
-            for(int j = 0; j < cols; ++j)
-                (*this)(i,j) = mat2(i,j);
-    }
+	(*this).resize(rows2,cols2);
+    for(int i = 0; i < rows2; ++i)
+        for(int j = 0; j < cols2; ++j)
+            (*this)(i,j) = mat2(i,j);
     return *this;
 }
 
@@ -234,6 +218,22 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (Scalar scale) const
 }
 
 template <typename Scalar>
+VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) const
+{
+    int mat_row = (*this).rows();
+    int mat_col = (*this).cols();
+    int vec_dim = vec.dims();
+    PHYSIKA_ASSERT(mat_col==vec_dim);
+    VectorND<Scalar> result(mat_row,0.0);
+    for(int i = 0; i < mat_row; ++i)
+    {
+	for(int j = 0; j < mat_col; ++j)
+	    result[i] += (*this)(i,j)*vec[j];
+    }
+    return result;
+}
+
+template <typename Scalar>
 MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (Scalar scale)
 {
     int rows = (*this).rows();
@@ -247,6 +247,7 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (Scalar scale)
 template <typename Scalar>
 MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 {
+    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
     int rows = (*this).rows();
     int cols = (*this).cols();
     Scalar *result = new Scalar[rows*cols];
@@ -261,6 +262,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 template <typename Scalar>
 MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator/= (Scalar scale)
 {
+    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
     int rows = (*this).rows();
     int cols = (*this).cols();
     for(int i = 0; i < rows; ++i)
@@ -290,7 +292,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
     int cols = (*this).cols();
     if(rows != cols)
     {
-        std::cout<<"Error: matrix is not square! Returned original matrix."<<std::endl;
+        std::cout<<"Error: matrix is not square("<<rows<<"x"<<cols<<")! Returned original matrix."<<std::endl;
         return *this;
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
@@ -312,12 +314,47 @@ Scalar MatrixMxN<Scalar>::determinant() const
     int cols = (*this).cols();
     if(rows != cols)
     {
-        std::cout<<"Error: matrix is not square! Returned 0."<<std::endl;
+        std::cout<<"Error: matrix is not square("<<rows<<"x"<<cols<<")! Returned 0."<<std::endl;
         return 0;
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_).determinant();
 #endif
+}
+
+template <typename Scalar>
+Scalar MatrixMxN<Scalar>::trace() const
+{
+    int rows = (*this).rows();
+    int cols = (*this).cols();
+    if(rows != cols)
+    {
+	std::cout<<"Error: matrix is not square("<<rows<<"x"<<cols<<")! Returned 0."<<std::endl;
+	return 0;
+    }
+    Scalar result = 0.0;
+    for(int i = 0; i < rows; ++i)
+	result += (*this)(i,i);
+    return result;
+}
+
+template <typename Scalar>
+Scalar MatrixMxN<Scalar>::doubleContraction(const MatrixMxN<Scalar> &mat2) const
+{
+    int row1 = (*this).rows();
+    int col1 = (*this).cols();
+    int row2 = mat2.rows();
+    int col2 = mat2.cols();
+    if((row1!=row2)||(col1!=col2))
+    {
+	std::cout<<"Error: matrix size does not match! Returned 0."<<std::endl;
+	return 0;
+    }
+    Scalar result = 0.0;
+    for(int i = 0; i < row1; ++i)
+	for(int j = 0; j < col1; ++j)
+	    result += (*this)(i,j)*mat2(i,j);
+    return result;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

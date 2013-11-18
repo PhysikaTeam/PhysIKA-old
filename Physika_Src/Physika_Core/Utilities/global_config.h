@@ -15,14 +15,25 @@
 #ifndef PHYSIKA_CORE_UTILITIES_GLOBAL_CONFIG_H_
 #define PHYSIKA_CORE_UTILITIES_GLOBAL_CONFIG_H_
 
-namespace Physika{
+//global macros to configurate Physika
 
-//global maros to configurate Physika
+/***********Debug/Release***********/
+
+//uncomment to disable debug codes, such as asserts
+//#define NDEBUG
+
+/***********Matrix&Vector***********/
+
 #define PHYSIKA_USE_EIGEN_MATRIX
-#define PHYSIKA_USE_EIGEN_VECTOR
-#define PHYSIKA_USE_EIGEN_SPARSE_MATRIX
+//#define PHYSIKA_USE_BUILT_IN_MATRIX
 
-}  //end of namespace Physika
+#define PHYSIKA_USE_EIGEN_VECTOR
+//#define PHYSIKA_USE_BUILT_IN_VECTOR
+
+//#define PHYSIKA_USE_EIGEN_SPARSE_MATRIX
+#define PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+
+////////////////////////////////////////////
 
 //include necessary header files with different configurations
 #if defined(PHYSIKA_USE_EIGEN_MATRIX)||defined(PHYSIKA_USE_EIGEN_VECTOR)||defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)

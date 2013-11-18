@@ -44,7 +44,7 @@ public:
     Vector<Scalar,3>& operator/= (Scalar);
     Scalar norm() const;
     Vector<Scalar,3>& normalize();
-    Vector<Scalar,3> cross(const Vector<Scalar,3> &)const;
+    Vector<Scalar,3> cross(const Vector<Scalar,3> &) const;
     Vector<Scalar,3> operator - (void) const;
     Scalar dot(const Vector<Scalar,3>&) const;
 	

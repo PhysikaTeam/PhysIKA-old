@@ -13,6 +13,7 @@
  */
 
 #include <cmath>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Utilities/math_constants.h"
 
@@ -137,7 +138,7 @@ Quaternion<Scalar>  Quaternion<Scalar>::operator * (Scalar scale)
 template <typename Scalar>
 Quaternion<Scalar>  Quaternion<Scalar>::operator / (Scalar scale)
 {
-    assert(scale != 0);
+    PHYSIKA_ASSERT(scale != 0);
     return Quaternion(x_/scale,y_/scale,z_/scale,w_/scale);
 }
 
@@ -160,7 +161,7 @@ bool  Quaternion<Scalar>::operator != (const Quaternion<Scalar> &quat)
 template <typename Scalar>
 Scalar&  Quaternion<Scalar>::operator[] (int idx)
 {
-    assert(idx >= 0 && idx <= 3);
+    PHYSIKA_ASSERT(idx >= 0 && idx <= 3);
     switch(idx){
     case 0:
         return x_;
@@ -178,7 +179,7 @@ Scalar&  Quaternion<Scalar>::operator[] (int idx)
 template <typename Scalar>
 const Scalar&  Quaternion<Scalar>::operator[] (int idx) const
 {
-    assert(idx >= 0 && idx <= 3);
+    PHYSIKA_ASSERT(idx >= 0 && idx <= 3);
     switch(idx){
     case 0:
         return x_;
