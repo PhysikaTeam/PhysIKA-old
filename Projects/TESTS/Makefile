@@ -23,13 +23,13 @@ vector3d_test: vector3d_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libvectors.a
 	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l vectors 
 
 matrixMxN_test: matrixMxN_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libmatrices.a
-	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices
+	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices -l vectors
 
 constitutive_models_test: constitutive_models_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libmatrices.a $(PHYSIKA_PUBLIC_DIR)/lib/libconstitutive_models.a
 	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l matrices -l constitutive_models -l vectors
 
 volumetric_mesh_test: volumetric_mesh_test.cpp $(PHYSIKA_PUBLIC_DIR)/lib/libvectors.a $(PHYSIKA_PUBLIC_DIR)/lib/libvolumetric_mesh.a
-	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l vectors -l volumetric_mesh
+	$(CXX) $< -o $@ $(CXXFLAGS) -I $(PHYSIKA_PUBLIC_DIR)/include -L $(PHYSIKA_PUBLIC_DIR)/lib -l vectors -l volumetric_mesh -l matrices
 
 .PHONY: clean
 clean:
