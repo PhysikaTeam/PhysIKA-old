@@ -46,8 +46,7 @@ void TetMesh<Scalar>::info() const
 template <typename Scalar>
 int TetMesh<Scalar>::eleVolume(int ele_idx) const
 {
-    Array< Vector<Scalar,3> > ele_vertices;
-    ele_vertices.setSpace(4);
+    Array< Vector<Scalar,3> > ele_vertices(4);
     for(int i = 0; i < 4; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
     //volume = 1/6*|<(a-d),(b-d)x(c-d)>|
@@ -97,8 +96,7 @@ void TetMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,3> &
 
   wi = Di / D0
 */
-    Array< Vector<Scalar,3> > ele_vertices;
-    ele_vertices.setSpace(4);
+    Array< Vector<Scalar,3> > ele_vertices(4);
     for(int i = 0; i < 4; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar D[5];

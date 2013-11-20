@@ -1,7 +1,7 @@
 /*
  * @file array.h 
  * @brief array class. Design for general using. 
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -25,8 +25,10 @@ class Array
 {
 public:    
     /* Constructors */
-    Array();
-    Array(ElementType* data, unsigned int element_count);
+    Array();//empty array
+    explicit Array(unsigned int element_count);//array with given size, uninitialized value
+    Array(unsigned int element_count,const ElementType &value);//array with given size, initialized with same value
+    Array(unsigned int element_count,const ElementType* data);//array with given size, initialized with given data
     Array(const Array<ElementType>& );
     ~Array();
     
@@ -38,8 +40,7 @@ public:
     inline ElementType* data() const { return data_; }
 
     /* Special functions */
-    void reset(unsigned int count);
-    void setSpace(unsigned int count);
+    void resize(unsigned int count);
     void zero();
 
     /* Operator overloading */
@@ -62,16 +63,30 @@ Array<ElementType>::Array():element_count_(0)
 }
 
 template <typename ElementType>
-Array<ElementType>::Array(ElementType* data, unsigned int element_count)
+Array<ElementType>::Array(unsigned int element_count)
 {
-    setSpace(element_count);
+    resize(element_count);
+}
+
+template <typename ElementType>
+Array<ElementType>::Array(unsigned int element_count,const ElementType &value)
+{
+    resize(element_count);
+    for(int i = 0; i < element_count_;++i)
+	data_[i] = value;
+}
+
+template <typename ElementType>
+Array<ElementType>::Array(unsigned int element_count,const ElementType* data)
+{
+    resize(element_count);
     memcpy(data_,data,sizeof(ElementType)*element_count_);
 }
 
 template <typename ElementType>
 Array<ElementType>::Array(const Array<ElementType>& arr)
 {
-    setSpace(arr.elementCount());
+    resize(arr.elementCount());
     memcpy(data_,arr.data(),sizeof(ElementType)*element_count_);
 }
 
@@ -96,15 +111,9 @@ void Array<ElementType>::release()
 }
 
 template <typename ElementType>
-void Array<ElementType>::reset(const unsigned int count)
+void Array<ElementType>::resize(unsigned int count)
 {
     release();
-    setSpace(count);
-}
-
-template <typename ElementType>
-void Array<ElementType>::setSpace(const unsigned int count)
-{
     element_count_ = count;
     allocate();
 }
@@ -118,7 +127,7 @@ void Array<ElementType>::zero()
 template <typename ElementType>
 Array<ElementType>& Array<ElementType>::operator = (const Array<ElementType>& arr)
 {
-    reset(arr.elementCount());
+    resize(arr.elementCount());
     memcpy(data_,arr.data(),sizeof(ElementType)*element_count_);
     return *this;
 }

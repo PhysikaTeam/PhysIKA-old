@@ -25,7 +25,7 @@ class VectorND: public VectorBase
 {
 public:
     VectorND();//empty vector, dim = 0
-    VectorND(int dim);//vector with given dimension
+    explicit VectorND(int dim);//vector with given dimension
     VectorND(int dim, Scalar value);//vector with given dimension initialized with one value
     VectorND(const VectorND<Scalar>&);
     ~VectorND();

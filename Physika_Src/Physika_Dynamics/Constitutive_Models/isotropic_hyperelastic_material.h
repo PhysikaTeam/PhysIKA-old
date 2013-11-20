@@ -65,8 +65,7 @@ IsotropicHyperelasticMaterial<Scalar,Dim>::IsotropicHyperelasticMaterial(Scalar 
 {
     if(par_type == YOUNG_AND_POISSON)
     {
-	Array<Scalar> lame_coefs;
-	lame_coefs.setSpace(2);
+	Array<Scalar> lame_coefs(2);
 	lameCoefsFromYoungAndPoisson(par1,par2,lame_coefs);
 	lambda_ = lame_coefs[0];
 	mu_ = lame_coefs[1];
@@ -81,8 +80,7 @@ IsotropicHyperelasticMaterial<Scalar,Dim>::IsotropicHyperelasticMaterial(Scalar 
 template <typename Scalar, int Dim>
 Scalar IsotropicHyperelasticMaterial<Scalar,Dim>::youngsModulus() const
 {
-    Array<Scalar> young_and_poisson;
-    young_and_poisson.setSpace(2);
+    Array<Scalar> young_and_poisson(2);
     youngAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
     return young_and_poisson[0];
 }
@@ -90,12 +88,10 @@ Scalar IsotropicHyperelasticMaterial<Scalar,Dim>::youngsModulus() const
 template <typename Scalar, int Dim>
 void IsotropicHyperelasticMaterial<Scalar,Dim>::setYoungsModulus(Scalar young_modulus)
 {
-    Array<Scalar> young_and_poisson;
-    young_and_poisson.setSpace(2);
+    Array<Scalar> young_and_poisson(2);
     youngAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
     young_and_poisson[0] = young_modulus;
-    Array<Scalar> lame_coefs;
-    lame_coefs.setSpace(2);
+    Array<Scalar> lame_coefs(2);
     lameCoefsFromYoungAndPoisson(young_and_poisson[0],young_and_poisson[1],lame_coefs);
     lambda_ = lame_coefs[0];
     mu_ = lame_coefs[1];
@@ -104,8 +100,7 @@ void IsotropicHyperelasticMaterial<Scalar,Dim>::setYoungsModulus(Scalar young_mo
 template <typename Scalar, int Dim>
 Scalar IsotropicHyperelasticMaterial<Scalar,Dim>::poissonRatio() const
 {
-    Array<Scalar> young_and_poisson;
-    young_and_poisson.setSpace(2);
+    Array<Scalar> young_and_poisson(2);
     youngAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
     return young_and_poisson[1];
 }
@@ -113,12 +108,10 @@ Scalar IsotropicHyperelasticMaterial<Scalar,Dim>::poissonRatio() const
 template <typename Scalar, int Dim>
 void IsotropicHyperelasticMaterial<Scalar,Dim>::setPoissonRatio(Scalar poisson_ratio)
 {
-    Array<Scalar> young_and_poisson;
-    young_and_poisson.setSpace(2);
+    Array<Scalar> young_and_poisson(2);
     youngAndPoissonFromLameCoefs(lambda_,mu_,young_and_poisson);
     young_and_poisson[1] = poisson_ratio;
-    Array<Scalar> lame_coefs;
-    lame_coefs.setSpace(2);
+    Array<Scalar> lame_coefs(2);
     lameCoefsFromYoungAndPoisson(young_and_poisson[0],young_and_poisson[1],lame_coefs);
     lambda_ = lame_coefs[0];
     mu_ = lame_coefs[1];

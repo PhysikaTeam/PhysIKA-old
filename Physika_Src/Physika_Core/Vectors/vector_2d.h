@@ -26,7 +26,7 @@ class Vector<Scalar,2>: public VectorBase
 public:
     Vector();
     Vector(Scalar x, Scalar y);
-    Vector(Scalar);
+    explicit Vector(Scalar);
     Vector(const Vector<Scalar,2>&);
     ~Vector();
     inline int dims() const{return 2;}

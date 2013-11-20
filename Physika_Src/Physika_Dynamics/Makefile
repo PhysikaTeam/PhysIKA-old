@@ -18,5 +18,5 @@ particles_in_dynamics:
 .PHONY: cleanall
 cleanall:
 	cd ./Constitutive_Models; make cleanconstitutivemodels
-	cd ./Particles; make cleanpartilces
+	cd ./Particles; make cleanparticles
 	-rm -r $(PHYSIKA_PUBLIC_DIR)/include/Physika_Dynamics
