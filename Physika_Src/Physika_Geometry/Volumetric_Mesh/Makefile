@@ -42,6 +42,6 @@ copy_headers:
 	$(COPY_HEADERS);
 
 .PHONY: cleanvolumetricmesh
-cleanconstitutivemodels:
+cleanvolumetricmesh:
 	$(RM) $(TARGET) $(VOLUMETRIC_MESH_OBJECTS) $(PHYSIKA_PUBLIC_DIR)/lib/$(TARGET)
 	-rm -r $(TARGET_HEADERS_DIR)

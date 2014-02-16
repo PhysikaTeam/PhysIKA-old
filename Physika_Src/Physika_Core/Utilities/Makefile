@@ -1,5 +1,4 @@
 # Makefile for Utilities
-# Simply copy the headerfiles to target include directory
 # Author: Fei Zhu
 
 PHYSIKA_ROOT_DIR=../../..
@@ -16,7 +15,9 @@ endef
 
 utilities: 
 	$(COPY_HEADERS)
+	cd ./Timer; make timer
 
 .PHONY: cleanutilities
 cleanutilities:
 	-rm -r $(TARGET_HEADERS_DIR)
+	cd ./Timer; make cleantimer

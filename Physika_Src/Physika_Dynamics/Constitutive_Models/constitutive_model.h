@@ -20,8 +20,8 @@ namespace Physika{
 class ConstitutiveModel
 {
 public:
-    ConstitutiveModel(){};
-    virtual ~ConstitutiveModel(){};
+    ConstitutiveModel(){}
+    virtual ~ConstitutiveModel(){}
     virtual void info() const=0;
 protected:
 };
