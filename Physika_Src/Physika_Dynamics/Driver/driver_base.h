@@ -136,14 +136,14 @@ void DriverBase<Scalar>::advanceFrame()
 	Scalar dt=computeTimeStep();
 	dt=(dt>max_dt_)?max_dt_:dt;
 	//update time and maybe time step
-        if(finish_time-time<=dt)
+        if(finish_time-time_<=dt)
 	{
-	    dt=finish_time-time;
+	    dt=finish_time-time_;
 	    time=finish_time;
 	    frame_done=true;
 	}
 	else
-	    time+=dt;
+	    time_+=dt;
         //advance step
 	advanceStep(dt);
         //end time step callbacks

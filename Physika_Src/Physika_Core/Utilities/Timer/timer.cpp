@@ -59,7 +59,7 @@ double Timer::getElapsedTime()
     double elapsed_time = 1.0 * (stop_sec_ - start_sec_) + 1.0e-6 * (stop_micro_sec_ - start_micro_sec_);
     return elapsed_time;
 #elif (defined _WIN32)
-    double elaspsed_time = static_cast<double>(stop_count_.QuadPart - start_count_.QuadPart) / static_cast<double>(timer_frequency_.QuadPart);
+    double elapsed_time = static_cast<double>(stop_count_.QuadPart - start_count_.QuadPart) / static_cast<double>(timer_frequency_.QuadPart);
     return elapsed_time;
 #endif
 }
