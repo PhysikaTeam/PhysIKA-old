@@ -34,7 +34,7 @@ public:
     Vertex<Scalar> * vertices(unsigned int i) { return vertices_[i]; }
     Triangle<Scalar> * triangles(unsigned int i){ return triangles_[i]; }
 
-    inline void setNormal(const Vector<Scalar,3>& normal) { normal_ = normal; }
+    inline void setNormal(const Vector<Scalar,3>& normal = Vector<Scalar,3>(0,0,0)) { normal_ = normal; }
  
 protected:
     Vertex<Scalar>* vertices_[2];

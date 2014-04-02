@@ -17,32 +17,32 @@ namespace Physika{
 
 template <typename Scalar>
 Transform<Scalar>::Transform(const Vector<Scalar,3> position):
-    position_(position),
-    orientation_(0,0,0,1)
+        position_(position),
+        orientation_(0,0,0,1)
 {
 
 }
 
 template <typename Scalar>
 Transform<Scalar>::Transform(const Quaternion<Scalar> orientation):
-    orientation_(orientation),
-    position_(0,0,0)
+        orientation_(orientation),
+        position_(0,0,0)
 {
 
 }
 
 template <typename Scalar>
 Transform<Scalar>::Transform(const Quaternion<Scalar>& orientation, const Vector<Scalar,3>& position):
-    position_(position),
-    orientation_(orientation)
+        position_(position),
+        orientation_(orientation)
 {
     
 }
 
 template <typename Scalar>
 Transform<Scalar>::Transform(const Vector<Scalar,3>& position, const Quaternion<Scalar>& orientation):
-    position_(position),
-    orientation_(orientation)
+        position_(position),
+        orientation_(orientation)
 {
 
 }

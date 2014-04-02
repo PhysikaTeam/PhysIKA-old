@@ -57,7 +57,7 @@ protected:
     ArrayInt row_length_;//number of nonzero entries in each row
     Array<ArrayInt> column_indices_;//indices of columns of non-zero entries in each row
     Array<ArrayScalar> column_entries_;//values of non-zero entries in each row
-    const int default_chunk_size_ = 10;//default chunk size allocated for each row
+//    const int default_chunk_size_ = 10;//default chunk size allocated for each row
 #endif
 };
 

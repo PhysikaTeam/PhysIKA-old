@@ -37,10 +37,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\..\Public_Library\lib\</OutDir>
+    <OutDir>..\..\..\Public_Library\lib\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\..\Public_Library\lib\</OutDir>
+    <OutDir>..\..\..\Public_Library\lib\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -80,7 +80,6 @@
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\st_venant_kirchhoff.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Integrators\integrator_base.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.cpp" />
-    <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\particle.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_base.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_fluid.cpp" />
     <ClCompile Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_solid.cpp" />
@@ -93,7 +92,6 @@
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Constitutive_Models\st_venant_kirchhoff.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Integrators\integrator_base.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\Rigid_Body\rigid_body.h" />
-    <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\particle.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_base.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_fluid.h" />
     <ClInclude Include="..\..\..\Physika_Src\Physika_Dynamics\SPH\sph_solid.h" />
