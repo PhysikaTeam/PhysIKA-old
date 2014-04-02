@@ -30,6 +30,9 @@ Vector<Scalar,2>::Vector(Scalar x, Scalar y)
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     eigen_vector_2x_(0)=x;
     eigen_vector_2x_(1)=y;
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    data_[0]=x;
+    data_[1]=y;
 #endif
 }
 
@@ -39,6 +42,8 @@ Vector<Scalar,2>::Vector(Scalar x)
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     eigen_vector_2x_(0)=x;
     eigen_vector_2x_(1)=x;
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    data_[0]=data_[1]=x;
 #endif
 }
 
@@ -59,6 +64,8 @@ Scalar& Vector<Scalar,2>::operator[] (int idx)
     PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_2x_(idx);
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    return data_[idx];
 #endif
 }
 
@@ -68,6 +75,8 @@ const Scalar& Vector<Scalar,2>::operator[] (int idx) const
     PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_2x_(idx);
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    return data_[idx];
 #endif
 }
 

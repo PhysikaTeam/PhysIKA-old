@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_CORE_VECTORS_VECTOR_ND_H_
 #define PHYSIKA_CORE_VECTORS_VECTOR_ND_H_
 
+#include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Vectors/vector_base.h"
 
@@ -52,6 +53,9 @@ protected:
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     Eigen::Matrix<Scalar,Eigen::Dynamic,1> *ptr_eigen_vector_Nx_;
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    Scalar *data_;
+    int dims_;
 #endif
 };
 

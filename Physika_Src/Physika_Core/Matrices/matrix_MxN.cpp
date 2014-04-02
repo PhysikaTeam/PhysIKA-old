@@ -54,6 +54,10 @@ void MatrixMxN<Scalar>::allocMemory(int rows, int cols)
     PHYSIKA_ASSERT(rows>=0&&cols>=0);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     ptr_eigen_matrix_MxN_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>(rows,cols);
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    data_ = new Scalar[rows*cols];
+    rows_ = rows;
+    cols_ = cols;
  #endif
 }
 
@@ -62,6 +66,8 @@ MatrixMxN<Scalar>::~MatrixMxN()
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     delete ptr_eigen_matrix_MxN_;
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    delete[] data_;
 #endif
 }
 
@@ -70,6 +76,8 @@ int MatrixMxN<Scalar>::rows() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_).rows();
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    return rows_;
 #endif
 }
 
@@ -78,6 +86,8 @@ int MatrixMxN<Scalar>::cols() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_).cols();
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    return cols_;
 #endif
 }
 
@@ -87,6 +97,9 @@ void MatrixMxN<Scalar>::resize(int new_rows, int new_cols)
     PHYSIKA_ASSERT(new_rows>=0&&new_cols>=0);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     (*ptr_eigen_matrix_MxN_).resize(new_rows,new_cols);
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    delete[] data_;
+    allocMemory(new_rows, new_cols);
 #endif
 }
 
@@ -97,6 +110,8 @@ Scalar& MatrixMxN<Scalar>::operator() (int i, int j)
     PHYSIKA_ASSERT(j>=0&&j<(*this).cols());
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_)(i,j);
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    return data_[i*cols_+j];
 #endif
 }
 
@@ -107,6 +122,8 @@ const Scalar& MatrixMxN<Scalar>::operator() (int i, int j) const
     PHYSIKA_ASSERT(j>=0&&j<(*this).cols());
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_)(i,j);
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    return data_[i*cols_+j];
 #endif
 }
 
@@ -290,11 +307,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
 {
     int rows = (*this).rows();
     int cols = (*this).cols();
-    if(rows != cols)
-    {
-        std::cout<<"Error: matrix is not square("<<rows<<"x"<<cols<<")! Returned original matrix."<<std::endl;
-        return *this;
-    }
+    PHYSIKA_ASSERT(rows==cols);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> result_eigen_matrix = (*ptr_eigen_matrix_MxN_).inverse();
     Scalar *result = new Scalar[rows*cols];
@@ -304,7 +317,39 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
     MatrixMxN<Scalar> result_matrix(rows,cols,result);
     delete result;
     return result_matrix;
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    Scalar det = determinant();
+    MatrixMxN<Scalar> result = cofactorMatrix();
+    result = result.transpose();
+    result /= det;
+    return result;
 #endif
+}
+
+template <typename Scalar>
+MatrixMxN<Scalar> MatrixMxN<Scalar>::cofactorMatrix() const
+{
+    int rows = (*this).rows();
+    int cols = (*this).cols();
+    PHYSIKA_ASSERT(rows==cols);
+    MatrixMxN<Scalar> mat(rows,cols);
+    for(int i = 0; i < rows; ++i)
+	for(int j = 0; j < cols; ++j)
+	{
+	    MatrixMxN<Scalar> sub_mat(rows-1,cols-1);
+	    for(int ii = 0; ii < rows; ++ii)
+		for(int jj =0; jj< cols; ++jj)
+		{
+		    if((ii==i)||(jj==j)) continue;
+		    int row_idx = ii>i?ii-1:ii;
+		    int col_idx = jj>j?jj-1:jj;
+		    sub_mat(row_idx,col_idx) = (*this)(ii,jj);
+		}
+	    mat(i,j)=sub_mat.determinant();
+	    if((i+j)%2)
+		mat(i,j)*=-1;
+	}
+    return mat;
 }
 
 template <typename Scalar>
@@ -312,13 +357,28 @@ Scalar MatrixMxN<Scalar>::determinant() const
 {
     int rows = (*this).rows();
     int cols = (*this).cols();
-    if(rows != cols)
-    {
-        std::cout<<"Error: matrix is not square("<<rows<<"x"<<cols<<")! Returned 0."<<std::endl;
-        return 0;
-    }
+    PHYSIKA_ASSERT(rows==cols);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_).determinant();
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    Scalar det = 0.0;
+    for(int j = 0; j < cols; ++j)
+    {
+	MatrixMxN<Scalar> sub_mat(rows-1,cols-1);
+	for(int ii = 1; ii < rows; ++ii)
+	    for(int jj =0; jj< cols; ++jj)
+	    {
+		if((jj==j)) continue;
+		int row_idx = ii;
+		int col_idx = jj>j?jj-1:jj;
+		sub_mat(row_idx,col_idx) = (*this)(ii,jj);
+	    }
+	if(j%2)
+	    det -= (*this)(0,j)*sub_mat.determinant();
+	else
+	    det += (*this)(0,j)*sub_mat.determinant();
+    }
+    return det;
 #endif
 }
 
@@ -327,11 +387,7 @@ Scalar MatrixMxN<Scalar>::trace() const
 {
     int rows = (*this).rows();
     int cols = (*this).cols();
-    if(rows != cols)
-    {
-	std::cout<<"Error: matrix is not square("<<rows<<"x"<<cols<<")! Returned 0."<<std::endl;
-	return 0;
-    }
+    PHYSIKA_ASSERT(rows==cols);
     Scalar result = 0.0;
     for(int i = 0; i < rows; ++i)
 	result += (*this)(i,i);
@@ -345,11 +401,8 @@ Scalar MatrixMxN<Scalar>::doubleContraction(const MatrixMxN<Scalar> &mat2) const
     int col1 = (*this).cols();
     int row2 = mat2.rows();
     int col2 = mat2.cols();
-    if((row1!=row2)||(col1!=col2))
-    {
-	std::cout<<"Error: matrix size does not match! Returned 0."<<std::endl;
-	return 0;
-    }
+    PHYSIKA_ASSERT(row1==row2);
+    PHYSIKA_ASSERT(col1==col2);
     Scalar result = 0.0;
     for(int i = 0; i < row1; ++i)
 	for(int j = 0; j < col1; ++j)

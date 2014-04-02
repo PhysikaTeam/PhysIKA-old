@@ -48,6 +48,7 @@ public:
     MatrixMxN<Scalar>& operator/= (Scalar);
     MatrixMxN<Scalar> transpose() const;
     MatrixMxN<Scalar> inverse() const;
+    MatrixMxN<Scalar> cofactorMatrix() const;
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const MatrixMxN<Scalar> &) const;
@@ -56,6 +57,9 @@ protected:
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> *ptr_eigen_matrix_MxN_;
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    Scalar *data_;
+    int rows_,cols_;
 #endif
 };
 

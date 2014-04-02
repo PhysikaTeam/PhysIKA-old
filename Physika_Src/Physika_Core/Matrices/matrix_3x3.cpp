@@ -37,6 +37,16 @@ SquareMatrix<Scalar,3>::SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar 
     eigen_matrix_3x3_(2,0) = x20;
     eigen_matrix_3x3_(2,1) = x21;
     eigen_matrix_3x3_(2,2) = x22;
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    data_[0][0] = x00;
+    data_[0][1] = x01;
+    data_[0][2] = x02;
+    data_[1][0] = x10;
+    data_[1][1] = x11;
+    data_[1][2] = x12;
+    data_[2][0] = x20;
+    data_[2][1] = x21;
+    data_[2][2] = x22;
 #endif
 }
 
@@ -49,6 +59,13 @@ SquareMatrix<Scalar,3>::SquareMatrix(const Vector<Scalar,3> &row1, const Vector<
 	eigen_matrix_3x3_(0,col) = row1[col];
 	eigen_matrix_3x3_(1,col) = row2[col];
 	eigen_matrix_3x3_(2,col) = row3[col];
+    }
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    for(int col = 0; col < 3; ++col)
+    {
+	data_[0][col] = row1[col];
+	data_[1][col] = row2[col];
+	data_[2][col] = row3[col];
     }
 #endif
 }
@@ -71,6 +88,8 @@ Scalar& SquareMatrix<Scalar,3>::operator() (int i, int j)
     PHYSIKA_ASSERT(j>=0&&j<3);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_(i,j);
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    return data_[i][j];
 #endif
 }
 
@@ -81,6 +100,8 @@ const Scalar& SquareMatrix<Scalar,3>::operator() (int i, int j) const
     PHYSIKA_ASSERT(j>=0&&j<3);
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_(i,j);
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    return data_[i][j];
 #endif
 }
 
@@ -218,6 +239,14 @@ SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse() const
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,3,3> result_matrix = eigen_matrix_3x3_.inverse();
     return SquareMatrix<Scalar,3>(result_matrix(0,0), result_matrix(0,1), result_matrix(0,2), result_matrix(1,0), result_matrix(1,1),result_matrix(1,2), result_matrix(2,0),result_matrix(2,1), result_matrix(2,2));
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    Scalar det = determinant();
+    PHYSIKA_ASSERT(det!=0);
+    return SquareMatrix<Scalar,3>((-data_[1][2] * data_[2][1] + data_[1][1] * data_[2][2])/det, (data_[0][2] * data_[2][1] - data_[0][1] * data_[2][2])/det, 
+                                  (-data_[0][2] * data_[1][1] + data_[0][1] * data_[1][2])/det, (data_[1][2] * data_[2][0] - data_[1][0] * data_[2][2])/det,
+                                  (-data_[0][2] * data_[2][0] + data_[0][0] * data_[2][2])/det, (data_[0][2] * data_[1][0] - data_[0][0] * data_[1][2])/det,
+                                  (-data_[1][1] * data_[2][0] + data_[1][0] * data_[2][1])/det, (data_[0][1] * data_[2][0] - data_[0][0] * data_[2][1])/det,
+                                  (-data_[0][1] * data_[1][0] + data_[0][0] * data_[1][1])/det);
 #endif 
 }
 
@@ -226,6 +255,9 @@ Scalar SquareMatrix<Scalar,3>::determinant() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_.determinant();
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    return (data_[0][0]*data_[1][1]*data_[2][2] + data_[0][1]*data_[1][2]*data_[2][0] + data_[0][2]*data_[1][0]*data_[2][1])
+	- (data_[0][2]*data_[1][1]*data_[2][0] + data_[0][1]*data_[1][0]*data_[2][0] + data_[0][0]*data_[1][2]*data_[2][1]); 
 #endif
 }
 

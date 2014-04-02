@@ -56,6 +56,8 @@ public:
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,3,3> eigen_matrix_3x3_;
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    Scalar data_[3][3];
 #endif
 
 };

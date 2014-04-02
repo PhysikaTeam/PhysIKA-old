@@ -52,6 +52,9 @@ void VectorND<Scalar>::allocMemory(int dims)
     PHYSIKA_ASSERT(dims>=0);
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     ptr_eigen_vector_Nx_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,1>(dims);
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    data_ = new Scalar[dims];
+    dims_ = dims;
 #endif
 }
 
@@ -60,6 +63,8 @@ VectorND<Scalar>::~VectorND()
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     delete ptr_eigen_vector_Nx_;
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    delete[] data_;
 #endif
 }
 
@@ -68,6 +73,8 @@ int VectorND<Scalar>::dims() const
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_).rows();
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    return dims_;
 #endif
 }
 
@@ -77,6 +84,10 @@ void VectorND<Scalar>::resize(int new_dim)
     PHYSIKA_ASSERT(new_dim>=0);
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     (*ptr_eigen_vector_Nx_).resize(new_dim);
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    if(data_)
+	delete[] data_;
+    allocMemory(new_dim);
 #endif
 }
 
@@ -86,6 +97,8 @@ Scalar& VectorND<Scalar>::operator[] (int idx)
     PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_)[idx];
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    return data_[idx];
 #endif
 }
 
@@ -95,6 +108,8 @@ const Scalar& VectorND<Scalar>::operator[] (int idx) const
     PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_)[idx];
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    return data_[idx];
 #endif
 }
 

@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_CORE_VECTORS_VECTOR_3D_H_
 #define PHYSIKA_CORE_VECTORS_VECTOR_3D_H_
 
+#include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Vectors/vector.h"
 
@@ -51,6 +52,8 @@ public:
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     Eigen::Matrix<Scalar,3,1> eigen_vector_3x_;
+#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+    Scalar data_[3];
 #endif
 
 };
