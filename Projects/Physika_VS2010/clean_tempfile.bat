@@ -12,6 +12,9 @@ echo ----------------------------------------------------
 del /F /S /Q *.aps *.idb *.ncp *.obj *.pch *.sbr *.tmp *.pdb *.bsc *.ilk *.res *.ncb *.opt *.suo *.manifest *.dep *.tlog *.log *.lastbuildstate *.rc *.exe
 rd bin
 rd Debug
+RD /S/Q ipch
+del /F /S /Q *.sdf
+rd 
 cd ..
 cd ..
 cd Public_Library

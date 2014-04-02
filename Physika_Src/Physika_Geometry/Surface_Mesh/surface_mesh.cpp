@@ -51,7 +51,7 @@ void SurfaceMesh<Scalar>::computeNormals()
     {
 	      Edge<Scalar> *e = edges_[i];
 	      assert(e != NULL);
-       	e->setNormal(0);
+       	e->setNormal();
        	assert(e->triangles(0) != NULL && e->triangles(1) != NULL);
         e->setNormal(e->triangles(0)->normal() + e->triangles(0)->normal());
        	Scalar length = e->normal().norm();

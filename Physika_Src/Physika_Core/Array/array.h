@@ -27,17 +27,17 @@ public:
     /* Constructors */
     Array();//empty array
     explicit Array(unsigned int element_count);//array with given size, uninitialized value
-    Array(unsigned int element_count,const ElementType &value);//array with given size, initialized with same value
-    Array(unsigned int element_count,const ElementType* data);//array with given size, initialized with given data
-    Array(const Array<ElementType>& );
+    Array(unsigned int element_count, const ElementType &value);//array with given size, initialized with same value
+    Array(unsigned int element_count, const ElementType *data);//array with given size, initialized with given data
+    Array(const Array<ElementType> &);
     ~Array();
     
     /* Assignment operators */
-    Array<ElementType>& operator = (const Array<ElementType>& arr);
+    Array<ElementType> & operator = (const Array<ElementType> &arr);
 
     /* Get and Set functions */
     inline unsigned int elementCount() const { return element_count_; }
-    inline ElementType* data() const { return data_; }
+    inline ElementType * data() const { return data_; }
 
     /* Special functions */
     void resize(unsigned int count);
@@ -51,7 +51,7 @@ protected:
     void release();
 
     unsigned int element_count_;
-    ElementType * data_;
+    ElementType *data_;
 
 };
 
@@ -69,25 +69,25 @@ Array<ElementType>::Array(unsigned int element_count)
 }
 
 template <typename ElementType>
-Array<ElementType>::Array(unsigned int element_count,const ElementType &value)
+Array<ElementType>::Array(unsigned int element_count, const ElementType &value)
 {
     resize(element_count);
-    for(int i = 0; i < element_count_;++i)
+    for (int i = 0; i < element_count_; ++i)
 	data_[i] = value;
 }
 
 template <typename ElementType>
-Array<ElementType>::Array(unsigned int element_count,const ElementType* data)
+Array<ElementType>::Array(unsigned int element_count, const ElementType *data)
 {
     resize(element_count);
-    memcpy(data_,data,sizeof(ElementType)*element_count_);
+    memcpy(data_, data, sizeof(ElementType) * element_count_);
 }
 
 template <typename ElementType>
-Array<ElementType>::Array(const Array<ElementType>& arr)
+Array<ElementType>::Array(const Array<ElementType> &arr)
 {
     resize(arr.elementCount());
-    memcpy(data_,arr.data(),sizeof(ElementType)*element_count_);
+    memcpy(data_, arr.data(), sizeof(ElementType) * element_count_);
 }
 
 template <typename ElementType>
@@ -121,23 +121,23 @@ void Array<ElementType>::resize(unsigned int count)
 template <typename ElementType>
 void Array<ElementType>::zero()
 {
-    memset((void*)data_, 0, element_count_*sizeof(ElementType));
+    memset((void*)data_, 0, element_count_ * sizeof(ElementType));
 }
 
 template <typename ElementType>
-Array<ElementType>& Array<ElementType>::operator = (const Array<ElementType>& arr)
+Array<ElementType> & Array<ElementType>::operator = (const Array<ElementType> &arr)
 {
     resize(arr.elementCount());
-    memcpy(data_,arr.data(),sizeof(ElementType)*element_count_);
+    memcpy(data_,arr.data(), sizeof(ElementType) * element_count_);
     return *this;
 }
 
 template <typename ElementType>
-std::ostream& operator<< (std::ostream &s, const Array<ElementType> &arr)
+std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
 {
-    for(size_t i = 0; i < arr.elementCount(); i++)
+    for (size_t i = 0; i < arr.elementCount(); i++)
     {
-        if(i == 0)
+        if (i == 0)
             s<<arr[i];
         s<<", "<<arr[i];
     }
