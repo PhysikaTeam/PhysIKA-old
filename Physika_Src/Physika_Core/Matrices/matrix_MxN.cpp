@@ -319,6 +319,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
     return result_matrix;
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = determinant();
+    PHYSIKA_ASSERT(det != 0);
     MatrixMxN<Scalar> result = cofactorMatrix();
     result = result.transpose();
     result /= det;
@@ -369,7 +370,7 @@ Scalar MatrixMxN<Scalar>::determinant() const
 	    for(int jj =0; jj< cols; ++jj)
 	    {
 		if((jj==j)) continue;
-		int row_idx = ii;
+		int row_idx = ii-1;
 		int col_idx = jj>j?jj-1:jj;
 		sub_mat(row_idx,col_idx) = (*this)(ii,jj);
 	    }

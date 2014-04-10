@@ -175,7 +175,7 @@ Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec)
     Vector<Scalar,2> result(0);
     for(int i = 0; i < 2; ++i)
 	for(int j = 0; j <2; ++j)
-	    result[i] += (*this)(i,j) + vec[j];
+	    result[i] += (*this)(i,j) * vec[j];
     return result;
 }
 

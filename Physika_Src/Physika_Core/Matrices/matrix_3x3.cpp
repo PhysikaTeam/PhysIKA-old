@@ -257,7 +257,7 @@ Scalar SquareMatrix<Scalar,3>::determinant() const
     return eigen_matrix_3x3_.determinant();
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     return (data_[0][0]*data_[1][1]*data_[2][2] + data_[0][1]*data_[1][2]*data_[2][0] + data_[0][2]*data_[1][0]*data_[2][1])
-	- (data_[0][2]*data_[1][1]*data_[2][0] + data_[0][1]*data_[1][0]*data_[2][0] + data_[0][0]*data_[1][2]*data_[2][1]); 
+	- (data_[0][2]*data_[1][1]*data_[2][0] + data_[0][1]*data_[1][0]*data_[2][2] + data_[0][0]*data_[1][2]*data_[2][1]); 
 #endif
 }
 
