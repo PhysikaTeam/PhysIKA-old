@@ -92,5 +92,33 @@ for header_file in header_files:
 for lib_file in lib_files:
     target_file=target_root_path+'lib/'+os.path.basename(lib_file)
     Command(target_file,lib_file,Move("$TARGET","$SOURCE"))
+
+#COPY DEPENDENCIES
+src_dependency_root_path=src_root_path+'Physika_Dependency/'
+pure_copy=['Eigen']
+dependencies=get_immediate_subdirectories(src_dependency_root_path)
+target_dependency_include_path=target_root_path+'include/Physika_Dependency/'
+for name in dependencies:
+    if name in pure_copy: #ONLY HEADERS
+       Command(target_dependency_include_path+name,src_dependency_root_path+name,Copy("$TARGET","$SOURCE"))
+    else:
+       #COPY HEADERS
+       Command(target_dependency_include_path+name+'/',src_dependency_root_path+name+'/include/',Copy("$TARGET","$SOURCE"))
+       #COPY LIBS
+       src_dependency_lib_path=src_dependency_root_path+name+'/lib/'
+       if os_name=='Linux':
+       	  src_dependency_lib_path=src_dependency_lib_path+'Linux/'
+       elif os_name=='Darwin':
+       	  src_dependency_lib_path=src_dependency_lib_path+'Apple/'
+       elif os_name=='Windows':
+       	  src_dependency_lib_path=src_dependency_lib_path+'Windows/'
+       if os_architecture=='32bit':
+       	  src_dependency_lib_path=src_dependency_lib_path+'X86/'
+       else:
+	  src_dependency_lib_path=src_dependency_lib_path+'X64/'
+       for lib_name in os.listdir(src_dependency_lib_path):
+       	  Command(target_root_path+'lib/'+lib_name,os.path.join(src_dependency_lib_path,lib_name),Copy("$TARGET","$SOURCE")) 
+
+
     
     	    
