@@ -104,7 +104,7 @@ for name in lib_names:
        env.ARCLIB(lib_file,lib_obj_files)
     else:
        lib=env.StaticLibrary(target=lib_file,source=lib_src_files)
-       env.MSVSProject(target=name+env['MSVSPROJECTSUFFIX'],srcs=lib_src_files,incs=lib_header_files,buildtarget=lib,variant=build_type)
+       env.MSVSProject(target=name+env['MSVSPROJECTSUFFIX'],srcs=lib_src_files,incs=lib_header_files,buildtarget=lib,variant=build_type,auto_build_solution=0)
        proj_files.append(name+env['MSVSPROJECTSUFFIX'])
     lib_files.append(lib_file)
 if compiler==['msvc']:
