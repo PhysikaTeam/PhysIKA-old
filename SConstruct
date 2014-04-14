@@ -5,6 +5,16 @@
 #        enter "scons"                
 #################################################################
 
+######################CONFIGURATIONS#############################
+#BUILD TYPE
+#build_type='Release'
+build_type='Debug'
+
+#BUILD MSVC PROJECTS FOR WINDOWS
+build_msvc=True
+#build_msvc=False
+#################################################################
+
 #IMPORTS
 import fnmatch
 import os
@@ -23,10 +33,6 @@ def get_immediate_subdirectories(dir):
 os_name=platform.system()
 os_architecture=platform.architecture()[0]
 
-#BUILD TYPE
-#build_type='release'
-build_type='debug'
-
 #SRC PATH
 src_root_path='Physika_Src/'
 
@@ -35,8 +41,15 @@ lib_names=get_immediate_subdirectories(src_root_path)
 if 'Physika_Dependency' in lib_names: 
    lib_names.remove('Physika_Dependency')
 
+#COMPILER
+compiler=[]
+if os_name in ('Linux','Darwin') or (os_name=='Windows' and build_msvc==False):
+   compiler=['g++']
+else:
+   compiler=['msvc']
+
 #BUILDERS
-if build_type=='release':
+if build_type=='Release':
    compile=Builder(action='g++ -o $TARGET $SOURCE -c -O3 -fno-strict-aliasing -std=gnu++0x -DNDEBUG -I '+src_root_path)
 else:
    compile=Builder(action='g++ -o $TARGET $SOURCE -c -g -fno-strict-aliasing -std=gnu++0x -I '+src_root_path)
@@ -45,9 +58,10 @@ arc_lib=Builder(action='ar rcs $TARGET $SOURCES')
 #ENVIRONMENT
 ENV={'PATH':os.environ['PATH']}
 env=Environment(ENV=ENV)
-env.Append(BUILDERS={'COMPILE':compile})
-env.Append(BUILDERS={'ARCLIB':arc_lib})
-env.Append(tools=['gcc','g++'])
+if compiler==['g++']:
+   env.Append(BUILDERS={'COMPILE':compile})
+   env.Append(BUILDERS={'ARCLIB':arc_lib})
+   env.Append(tools=['gcc','g++'])
 
 #LIB PREFIX AND SUFFIX 
 if os_name=='Windows':
@@ -62,26 +76,37 @@ elif os_name in ('Linux','Darwin'):
 #TO EXCLUDE FILES THAT ARE INCOMPLETE YET
 ignored_src_files=['Physika_Src/Physika_Core/Matrices/sparse_matrix.cpp']
 
-#COMPILE SRC FILES AND ARCHIVE INTO LIBS
+#COMPILE SRC FILES AND ARCHIVE INTO LIBS, GENERATE MSVC PROJECTS OPTIONALLY
 header_files=[]
 lib_files=[]
+proj_files=[]
 for name in lib_names:
-    obj_files=[]
-    src_files=[]
+    lib_obj_files=[]
+    lib_src_files=[]
+    lib_header_files=[]
     dir_path=os.path.join(src_root_path,name)
     for dir,_,_ in os.walk(dir_path):
-    	src_files.extend(glob(os.path.join(dir,'*.cpp')))
+    	lib_src_files.extend(glob(os.path.join(dir,'*.cpp')))
+	lib_header_files.extend(glob(os.path.join(dir,'*.h')))
     	header_files.extend(glob(os.path.join(dir,'*.h')))
-    for src_file in src_files:
-    	if src_file not in ignored_src_files:
-    	   obj_file=os.path.splitext(src_file)[0]+obj_suffix
-	   obj_files.append(obj_file)
-	   env.COMPILE(obj_file,src_file)
+    if compiler==['g++']:
+       for src_file in lib_src_files:
+    	   if src_file not in ignored_src_files:
+    	      obj_file=os.path.splitext(src_file)[0]+obj_suffix
+	      lib_obj_files.append(obj_file)
+	      env.COMPILE(obj_file,src_file)
     lib_file=name+lib_suffix
     if os_name in ('Linux','Darwin'):
        lib_file=lib_preffix+lib_file
-    env.ARCLIB(lib_file,obj_files)
+    if compiler==['g++']:
+       env.ARCLIB(lib_file,lib_obj_files)
+    else:
+       lib=env.StaticLibrary(target=lib_file,source=lib_src_files)
+       env.MSVSProject(target=name+env['MSVSPROJECTSUFFIX'],srcs=lib_src_files,incs=lib_header_files,buildtarget=lib,variant=build_type)
+       proj_files.append(name+env['MSVSPROJECTSUFFIX'])
     lib_files.append(lib_file)
+if compiler==['msvc']:
+   env.MSVSSolution(target='Physika'+env['MSVSSOLUTIONSUFFIX'],projects=proj_files,variant=build_type)
 
 #COPY HEADERS AND LIB FILES TO TARGET DIRECTORY
 target_root_path='Public_Library/'
