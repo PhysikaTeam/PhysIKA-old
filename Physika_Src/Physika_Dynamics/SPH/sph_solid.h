@@ -15,7 +15,7 @@
 #ifndef PHYSIKA_DYNAMICS_SPH_SPH_SOLID_H_
 #define PHYSIKA_DYNAMICS_SPH_SPH_SOLID_H_
 
-#include "Physika_Dynamics/sph/sph_base.h"
+#include "Physika_Dynamics/SPH/sph_base.h"
 
 namespace Physika{
 

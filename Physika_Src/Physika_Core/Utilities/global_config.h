@@ -17,11 +17,6 @@
 
 //global macros to configurate Physika
 
-/***********Debug/Release***********/
-
-//uncomment to disable debug codes, such as asserts
-//#define NDEBUG
-
 /***********Matrix&Vector***********/
 
 //#define PHYSIKA_USE_EIGEN_MATRIX

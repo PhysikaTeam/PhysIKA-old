@@ -12,6 +12,8 @@
  *
  */
 
+#include <cmath>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Geometry/Surface_Mesh/triangle.h"
 #include "Physika_Geometry/Surface_Mesh/edge.h"
@@ -61,7 +63,7 @@ void SurfaceMesh<Scalar>::computeNormals()
     for(int i = 0; i < nbtriangles; i++)
     {
        	Triangle<Scalar> *t = triangles_[i];
-       	assert(t != NULL);
+       	PHYSIKA_ASSERT(t != NULL);
        	for (int j=0; j<3; j++)
         {
        	    Vector<Scalar,3> e1 = t->vertices((j+1)%3)->position() - t->vertices(j)->position();

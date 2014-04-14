@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Dynamics/sph/sph_fluid.h"
+#include "Physika_Dynamics/SPH/sph_fluid.h"
 
 namespace Physika{
 

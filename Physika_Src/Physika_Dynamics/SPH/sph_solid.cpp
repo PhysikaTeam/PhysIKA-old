@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Dynamics/sph/sph_solid.h"
+#include "Physika_Dynamics/SPH/sph_solid.h"
 
 namespace Physika{
 

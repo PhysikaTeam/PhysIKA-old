@@ -12,6 +12,7 @@
  *
  */
 
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Surface_Mesh/triangle.h"
 #include "Physika_Geometry/Surface_Mesh/vertex.h"
 
@@ -32,7 +33,7 @@ Triangle<Scalar>::Triangle():normal_(0,0,0),
 template <typename Scalar>
 Vector<Scalar,3> Triangle<Scalar>::computeNormals()
 {
-    assert(vertices_[0]!=NULL && vertices_[1]!=NULL && vertices_[2]!=NULL);
+    PHYSIKA_ASSERT(vertices_[0]!=NULL && vertices_[1]!=NULL && vertices_[2]!=NULL);
     normal_ = -(vertices_[1]->position() - vertices_[0]->position()).cross(vertices_[2]->position() - vertices_[1]->position());
     return normal_;
 }

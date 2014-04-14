@@ -33,7 +33,7 @@ void Timer::startTimer()
 {
 #if (defined __unix__) || (defined __APPLE__)
     timeval tv;
-    gettimeofday(&tv,NULL);
+    gettimeofday(&tv,0);
     start_sec_ = tv.tv_sec;
     start_micro_sec_ = tv.tv_usec;
 #elif (defined _WIN32)
@@ -45,7 +45,7 @@ void Timer::stopTimer()
 {
 #if (defined __unix__) || (defined __APPLE__)
     timeval tv;
-    gettimeofday(&tv,NULL);
+    gettimeofday(&tv,0);
     stop_sec_ = tv.tv_sec;
     stop_micro_sec_ = tv.tv_usec;
 #elif (defined _WIN32)

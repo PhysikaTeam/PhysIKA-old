@@ -12,6 +12,7 @@
  *
  */
 
+#include <cstddef>
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 
 namespace Physika{

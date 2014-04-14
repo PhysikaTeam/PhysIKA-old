@@ -53,7 +53,7 @@ int TetMesh<Scalar>::eleVolume(int ele_idx) const
     Vector<Scalar,3> a_minus_d = ele_vertices[0] - ele_vertices[3];
     Vector<Scalar,3> b_minus_d = ele_vertices[1] - ele_vertices[3];
     Vector<Scalar,3> c_minus_d = ele_vertices[2] - ele_vertices[3]; 
-    return 1.0/6*abs(a_minus_d.dot(b_minus_d.cross(c_minus_d)));
+    return 1.0/6*fabs(a_minus_d.dot(b_minus_d.cross(c_minus_d)));
 }
 
 template <typename Scalar>
