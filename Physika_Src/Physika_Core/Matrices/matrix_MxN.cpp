@@ -363,6 +363,8 @@ Scalar MatrixMxN<Scalar>::determinant() const
     return (*ptr_eigen_matrix_MxN_).determinant();
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = 0.0;
+    if(rows==1)
+	return (*this)(0,0);
     for(int j = 0; j < cols; ++j)
     {
 	MatrixMxN<Scalar> sub_mat(rows-1,cols-1);
