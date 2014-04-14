@@ -62,6 +62,8 @@ if compiler==['g++']:
    env.Append(BUILDERS={'COMPILE':compile})
    env.Append(BUILDERS={'ARCLIB':arc_lib})
    env.Append(tools=['gcc','g++'])
+else:
+   env.Append(CPPPATH=src_root_path)
 
 #LIB PREFIX AND SUFFIX 
 if os_name=='Windows':
