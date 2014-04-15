@@ -107,15 +107,18 @@ for name in lib_names:
        proj=env.MSVSProject(target=name+env['MSVSPROJECTSUFFIX'],srcs=lib_src_files,incs=lib_header_files,buildtarget=lib,variant=build_type,auto_build_solution=0)
        proj_files.append(str(proj[0]))
     lib_files.append(lib_file)
+#GENERATE MSVC SOLUTION
+sln=[]
 if compiler==['msvc']:
-   env.MSVSSolution(target='Physika'+env['MSVSSOLUTIONSUFFIX'],projects=proj_files,variant=build_type)
+   sln=env.MSVSSolution(target='Physika'+env['MSVSSOLUTIONSUFFIX'],projects=proj_files,variant=build_type)
 
 #COPY HEADERS AND LIB FILES TO TARGET DIRECTORY
+header_target=[]
 target_root_path='Public_Library/'
 for header_file in header_files:
     if header_file.find(src_root_path)==0:
        target_file=header_file.replace(src_root_path,target_root_path+'include/')
-       Command(target_file,header_file,Copy("$TARGET","$SOURCE"))
+       header_target=Command(target_file,header_file,Copy("$TARGET","$SOURCE"))
 for lib_file in lib_files:
     target_file=target_root_path+'lib/'+os.path.basename(lib_file)
     Command(target_file,lib_file,Move("$TARGET","$SOURCE"))
@@ -145,6 +148,16 @@ for name in dependencies:
 	  src_dependency_lib_path=src_dependency_lib_path+'X64/'
        for lib_name in os.listdir(src_dependency_lib_path):
        	  Command(target_root_path+'lib/'+lib_name,os.path.join(src_dependency_lib_path,lib_name),Copy("$TARGET","$SOURCE")) 
+
+#CUSTOMIZE CLEAN OPTION
+sln_delete_files=[build_type+'/','obj/','Physika.suo','Physika.sdf']
+for name in os.listdir('./'):
+    if name.endswith('.user'):
+        sln_delete_files.append(name)
+header_delete_files= [os.path.join(target_root_path+'include/', name) for name in os.listdir(target_root_path+'include/')
+                      if os.path.isdir(os.path.join(target_root_path+'include/', name))]
+Clean(sln,sln_delete_files)
+Clean(header_target,header_delete_files)
 
 
     
