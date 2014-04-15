@@ -66,8 +66,10 @@ else:
    env.Append(CPPPATH=src_root_path)
    if os_architecture=='32bit':
    	env.Append(MSVS_ARCH='x86')
+	env.Append(TARGET_ARCH='x86')
    else:
 	env.Append(MSVS_ARCH='amd64')
+	env.Append(TARGET_ARCH='amd64')
    if build_type=='Relase':
       env.Append(CCFLAGS=['/Ox','/EHsc','/DNDEBUG'])
    else:
