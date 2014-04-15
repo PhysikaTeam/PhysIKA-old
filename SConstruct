@@ -57,23 +57,21 @@ arc_lib=Builder(action='ar rcs $TARGET $SOURCES')
 
 #ENVIRONMENT
 ENV={'PATH':os.environ['PATH']}
-env=Environment(ENV=ENV)
 if compiler==['g++']:
+   env=Environment(ENV=ENV)
    env.Append(BUILDERS={'COMPILE':compile})
    env.Append(BUILDERS={'ARCLIB':arc_lib})
    env.Append(tools=['gcc','g++'])
 else:
-   env.Append(CPPPATH=src_root_path)
    if os_architecture=='32bit':
-   	env.Append(MSVS_ARCH='x86')
-	env.Append(TARGET_ARCH='x86')
+	arc='x86'
    else:
-	env.Append(MSVS_ARCH='amd64')
-	env.Append(TARGET_ARCH='amd64')
+	arc='amd64'
    if build_type=='Relase':
-      env.Append(CCFLAGS=['/Ox','/EHsc','/DNDEBUG'])
+        CCFLAGS=['/Ox','/EHsc','/DNDEBUG']
    else:
-      env.Append(CCFLAGS=['/Zi','/EHsc'])
+        CCFLAGS=['/Zi','/EHsc']
+   env=Environment(ENV=ENV,CPPPATH=src_root_path,CCFLAGS=CCFLAGS,MSVS_ARCH=arc,TARGET_ARCH=arc)
 
 #LIB PREFIX AND SUFFIX 
 if os_name=='Windows':
