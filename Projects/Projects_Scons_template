@@ -100,6 +100,10 @@ else:
       CCFLAGS=['/Zi','/EHsc']
    ENV['TMP']=os.environ['TMP']
    env=Environment(CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
+   if os_architecture=='32bit':
+   	env.Append(MSVS_ARCH='x86')
+   else:
+	env.Append(MSVS_ARCH='amd64')
 
 #BUILD
 target=env.Program(target_name,src_files)

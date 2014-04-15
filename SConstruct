@@ -64,6 +64,14 @@ if compiler==['g++']:
    env.Append(tools=['gcc','g++'])
 else:
    env.Append(CPPPATH=src_root_path)
+   if os_architecture=='32bit':
+   	env.Append(MSVS_ARCH='x86')
+   else:
+	env.Append(MSVS_ARCH='amd64')
+   if build_type=='Relase':
+      env.Append(CCFLAGS=['/Ox','/EHsc','/DNDEBUG'])
+   else:
+      env.Append(CCFLAGS=['/Zi','/EHsc'])
 
 #LIB PREFIX AND SUFFIX 
 if os_name=='Windows':
@@ -152,7 +160,7 @@ for name in dependencies:
 #CUSTOMIZE CLEAN OPTION
 sln_delete_files=[build_type+'/','obj/','Physika.suo','Physika.sdf']
 for name in os.listdir('./'):
-    if name.endswith('.user'):
+    if name.endswith('.user') or name.endswith('.pdb'):
         sln_delete_files.append(name)
 header_delete_files= [os.path.join(target_root_path+'include/', name) for name in os.listdir(target_root_path+'include/')
                       if os.path.isdir(os.path.join(target_root_path+'include/', name))]
