@@ -19,8 +19,8 @@
 
 namespace Physika{
 
-template <typename Scalar>
-class SPHSolid:public SPHBase<Scalar>
+template <typename Scalar, int Dim>
+class SPHSolid:public SPHBase<Scalar, Dim>
 {
 public:
 	SPHSolid();

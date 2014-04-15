@@ -19,8 +19,8 @@
 
 namespace Physika{
 
-template <typename Scalar>
-class SPHFluid:public SPHBase<Scalar>
+template <typename Scalar, int Dim>
+class SPHFluid:public SPHBase<Scalar, Dim>
 {
 public:
 	SPHFluid();
@@ -28,15 +28,37 @@ public:
 
     virtual void initialize();
     virtual void initSceneBoundary();
-    
+
     virtual float getTimeStep();
     virtual void advance(Scalar dt);
     virtual void stepEuler(Scalar dt);
     virtual void computeNeighbors();
+    virtual void computeVolume();
+    virtual void computeDensity();
 
-    void savePositions();
+    virtual void computeSurfaceTension();
+    virtual void allocMemory(unsigned int particle_num);
+
+
+    void computePressure(Scalar dt);
+    void computePressureForce(Scalar dt);
+    void computeViscousForce(Scalar dt);
+
+    void advect(Scalar dt);
 
 protected:
+
+    Scalar max_mass_;
+    Scalar min_mass_;
+
+    Scalar max_length_;
+    Scalar min_length_;
+
+    Array<Scalar> phi;
+    Array<Scalar> energey;
+
+
+    
 };
 
 } //end of namespace Physika

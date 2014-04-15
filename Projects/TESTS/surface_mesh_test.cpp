@@ -13,19 +13,24 @@
  */
 
 #include <iostream>
+#include "Physika_Core/Array/array.h"
 #include "Physika_Geometry/Surface_Mesh/vertex.h"
 #include "Physika_Geometry/Surface_Mesh/triangle.h"
 #include "Physika_Geometry/Surface_Mesh/edge.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+
 
 using namespace std;
 using Physika::Vertex;
 using Physika::Edge;
 using Physika::Triangle;
 using Physika::SurfaceMesh;
-
+using Physika::Array;
 int main()
 {
+   /* Array<int> abc(10,1);
+    cout<<abc[1];
+    cout<<abc;*/
 	Vertex<float> vertex(1,2,3);
 	Vertex<float> vertex1(2,3,4);
 	//cout<<vertex<<endl;

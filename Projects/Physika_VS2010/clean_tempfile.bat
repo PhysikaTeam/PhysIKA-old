@@ -14,6 +14,8 @@ rd bin
 rd Debug
 RD /S/Q ipch
 del /F /S /Q *.sdf
+
+
 rd 
 cd ..
 cd ..

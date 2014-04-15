@@ -15,13 +15,27 @@
 #ifndef PHSYIKA_CORE_ARRAY_ARRAY_H_
 #define PHSYIKA_CORE_ARRAY_ARRAY_H_
 
-#include <cstring>
+#include <list>
+#include <map>
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <assert.h>
 #include "Physika_Core/Utilities/physika_assert.h"
 
 namespace Physika{
 
+class ReorderObject
+{
+public:
+    ReorderObject() {};
+    ~ReorderObject() {};
+    virtual void Reordering(unsigned int *ids, unsigned int size) = 0;
+};
+
+
 template <typename ElementType >
-class Array
+class Array: public ReorderObject
 {
 public:    
     /* Constructors */
@@ -44,7 +58,25 @@ public:
     void zero();
 
     /* Operator overloading */
-    inline ElementType & operator[] (unsigned int id){ PHYSIKA_ASSERT(id >= 0 && id < element_count_); return data_[id]; }
+    ElementType & operator[] (int id){ PHYSIKA_ASSERT(id >= 0 && id < element_count_); return data_[id]; }
+
+    virtual void Reordering(unsigned int *ids, unsigned int size)
+    {
+        if (size != element_count_)
+        {
+            std::cout << "array size do not match!" << std::endl;
+            exit(0);
+        }
+
+        ElementType * tmp = new ElementType[element_count_];
+        for (size_t i = 0; i < element_count_; i++)
+        {
+            tmp[i] = data_[ids[i]];
+        }
+        
+        memcpy(data_, tmp, element_count_ * sizeof(ElementType));
+
+    }
 
 protected:
     void allocate();
@@ -65,12 +97,14 @@ Array<ElementType>::Array():element_count_(0)
 template <typename ElementType>
 Array<ElementType>::Array(unsigned int element_count)
 {
+    data_ = NULL;
     resize(element_count);
 }
 
 template <typename ElementType>
 Array<ElementType>::Array(unsigned int element_count, const ElementType &value)
 {
+    data_ = NULL;
     resize(element_count);
     for (int i = 0; i < element_count_; ++i)
 	data_[i] = value;
@@ -79,6 +113,7 @@ Array<ElementType>::Array(unsigned int element_count, const ElementType &value)
 template <typename ElementType>
 Array<ElementType>::Array(unsigned int element_count, const ElementType *data)
 {
+    data_ = NULL;
     resize(element_count);
     memcpy(data_, data, sizeof(ElementType) * element_count_);
 }
@@ -86,6 +121,7 @@ Array<ElementType>::Array(unsigned int element_count, const ElementType *data)
 template <typename ElementType>
 Array<ElementType>::Array(const Array<ElementType> &arr)
 {
+    data_ = NULL;
     resize(arr.elementCount());
     memcpy(data_, arr.data(), sizeof(ElementType) * element_count_);
 }
@@ -132,6 +168,8 @@ Array<ElementType> & Array<ElementType>::operator = (const Array<ElementType> &a
     return *this;
 }
 
+
+//std::ostream& operator<< (std::ostream &s, const Vector<Scalar,2> &vec)
 template <typename ElementType>
 std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
 {
@@ -139,11 +177,46 @@ std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
     {
         if (i == 0)
             s<<arr[i];
-        s<<", "<<arr[i];
+        s<<", "<<1;
     }
     s<<std::endl;
     return s; 
 }
+
+template class Array<float>;
+template class Array<double>;
+template class Array<int>;
+
+class ArrayManager
+{
+public:
+    ArrayManager(){};
+    ~ArrayManager(){};
+
+    void addArray(std::string key, ReorderObject *arr)
+    {
+        arrs.insert(std::map<std::string, ReorderObject*>::value_type(key, arr));
+    }
+
+    ReorderObject* getArray(std::string key)
+    {
+        return arrs[key];
+    }
+
+    void reordering(unsigned int* ids, unsigned int size)
+    {
+        std::map<std::string, ReorderObject*>::iterator iter;
+
+        for (iter = arrs.begin(); iter != arrs.end(); iter++)
+        {
+            std::cout<<iter->first<<" ";
+            iter->second->Reordering(ids, size);
+        }
+    }
+
+private:
+    std::map<std::string, ReorderObject*> arrs;
+};
 
 }//end of namespace Physika
 

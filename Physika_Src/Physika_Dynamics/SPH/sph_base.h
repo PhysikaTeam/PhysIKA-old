@@ -15,9 +15,14 @@
 #ifndef PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
 #define PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
 
+#include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Array/array.h"
+#include "Physika_Core/Vectors/vector.h"
+
+
 namespace Physika{
 
-template <typename Scalar>
+template <typename Scalar, int Dim>
 class SPHBase
 {
 public:
@@ -31,10 +36,54 @@ public:
     virtual void advance(Scalar dt);
     virtual void stepEuler(Scalar dt);
     virtual void computeNeighbors();
+    virtual void computeVolume();
+    virtual void computeDensity();
 
-    void savePositions();
 
-protected:
+    void boundaryHandling();
+
+    void saveVelocities(std::string in_path, unsigned int in_iter);
+    void savePositions(std::string in_path, unsigned int in_iter);
+
+    Vector<Scalar, Dim> * getPositionPtr() { return position_.data();}
+    unsigned int particleNum () { return particle_num_; }
+
+
+public:
+    virtual void allocMemory(unsigned int particle_num);
+    
+    //Use different buffer instead of the Particle object is more efficient. . 
+    //particle attribute need to be rearranged each step;
+    Array<unsigned> particle_index_;
+    Array<Scalar> mass_;
+    Array<Vector<Scalar, Dim>> position_;
+    Array<Vector<Scalar, Dim>> velocity_;
+    Array<Vector<Scalar, Dim>> normal_;
+
+    Array<Vector<Scalar, Dim>> viscous_force_;
+    Array<Vector<Scalar, Dim>> pressure_force_;
+    Array<Vector<Scalar, Dim>> surface_force_;
+
+    Array<Scalar> volume_;
+    Array<Scalar> pressure_;
+    Array<Scalar> density_;
+
+    unsigned int sim_itor_;
+
+    Scalar time_step_;
+    Scalar viscosity_;
+    Scalar gravity_;
+    Scalar surface_tension_;
+
+    Scalar sampling_distance_;
+    Scalar smoothing_length_;
+
+    unsigned int particle_num_;
+
+    Scalar reference_density_;
+
+
+    ArrayManager dataManager;
 };
 
 } //end of namespace Physika

@@ -16,14 +16,14 @@
 
 namespace Physika{
 
-template <typename Scalar>
-SPHSolid<Scalar>::SPHSolid()
+template <typename Scalar, int Dim>
+SPHSolid<Scalar, Dim>::SPHSolid()
 {
 
 }
 
-template <typename Scalar>
-SPHSolid<Scalar>::~SPHSolid()
+template <typename Scalar, int Dim>
+SPHSolid<Scalar, Dim>::~SPHSolid()
 {
 
 }
