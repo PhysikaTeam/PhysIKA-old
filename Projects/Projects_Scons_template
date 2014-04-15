@@ -1,0 +1,116 @@
+#################################################################
+# Scons script template for Projects based on Physika
+# @author: Fei Zhu, 04/15/2014
+# Usage: 
+#       1. Copy the script to root directory of your project
+#          and rename it to "SConstruct"
+#       2. Edit the script and make necessary modifications
+#       3. Build the project by entering "scons" in terminal               
+#################################################################
+
+#IMPORTS
+import fnmatch
+import os
+import platform
+from os.path import basename
+from glob import glob
+
+######################## EDIT HERE! #############################
+#BUILD TYPE
+#build_type='Release'
+build_type='Debug'
+
+#BUILD MSVC PROJECTS FOR WINDOWS
+build_msvc=True
+#build_msvc=False
+
+#PROJECT NAME: SET NAME OF YOUR PROJECT
+project_name='ExampleProject'
+
+#SRC PATH: SET ROOT DIRECTORY OF YOUR CODE
+src_root_path=os.getcwd()
+
+#IGNORED SRC PATH: SET PATH TO DIRECTORIES OF SOURCE CODE WHICH YOU
+#                  DON'T WANT TO INCLUDE IN THE BUILD
+#EXAMPLE: ignored_src_path=['./code1/','./code2/']
+ignored_src_path=[]
+
+#PHYSIKA_PATH: SET PATH TO COMPILED
+physika_inc_path=['../../Public_Library/include/']
+physika_lib_path=['../../Public_Library/lib/']
+
+#ADDITIONAL PATH: SET ADDITIONAL INCLUDE AND LIB PATH
+#EXAMPLE: additional_inc_path=['./path1/','../path2/']
+additional_inc_path=[]
+additional_lib_path=[]
+
+#PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
+physika_libs=['Physika_Render','Physika_IO','Physika_GUI','Physika_Geometry',
+              'Physika_Dynamics','Physika_Core']
+
+#ADDITIONAL LIBS TO LINK
+#EXAMPLE: additional_libs=['lib1','lib2']
+additional_libs=[]
+##################################################################
+
+#########EDIT ONLY IF YOU'ARE AWARE WHAT YOU'RE DOING#############
+
+#OS TYPE
+os_name=platform.system()
+os_architecture=platform.architecture()[0]
+
+#COMPILER
+compiler=[]
+if os_name in ('Linux','Darwin') or (os_name=='Windows' and build_msvc==False):
+   compiler='g++'
+else:
+   compiler='msvc'
+
+#SRC FILES
+src_files=[]
+inc_files=[]
+for dir,_,_ in os.walk(src_root_path):
+    if dir not in ignored_src_path:
+       src_files.extend(glob(os.path.join(dir,'*.cpp')))
+       inc_files.extend(glob(os.path.join(dir,'*.h')))
+
+#INCLUDE PATH AND LIB PATH
+include_path=physika_inc_path+additional_inc_path
+lib_path=physika_lib_path+additional_lib_path
+libs=physika_libs+additional_libs
+
+#TARGET NAME
+target_name=project_name+build_type
+
+#ENVIRONMENT
+ENV={'PATH':os.environ['PATH']}
+if compiler=='g++':
+   CC='g++'
+   CXX='g++'
+   tools=['gcc','g++','gnulink']
+   if build_type=='Release':
+      CCFLAGS=['-O3','-fno-strict-aliasing','-std=gnu++0x','-DNDEBUG']
+   else:
+      CCFLAGS=['-std=gnu++0x','-fno-strict-aliasing','-g']
+   env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
+else:
+   if build_type=='Release':
+      CCFLAGS=['/Ox','/EHsc','/DNDEBUG']
+   else:
+      CCFLAGS=['/Zi','/EHsc']
+   ENV['TMP']=os.environ['TMP']
+   env=Environment(CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
+
+#BUILD
+target=env.Program(target_name,src_files)
+#GENERATE MSVC PROJECT OPTIONALLY
+if compiler=='msvc':
+   sln=env.MSVSProject(target=target_name+env['MSVSPROJECTSUFFIX'],srcs=src_files,incs=inc_files,buildtarget=target,variant=build_type)
+
+#CUSTOMIZE CLEAN OPTION
+if compiler=='msvc':
+   sln_delete_files=[build_type+'/','obj/']
+   for name in os.listdir('./'):
+       if name.endswith('.user') or name.endswith('.pdb') or name.endswith('.suo') or name.endswith('.sdf'):
+          sln_delete_files.append(name)
+   Clean(sln,sln_delete_files)
