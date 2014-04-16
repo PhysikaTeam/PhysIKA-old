@@ -43,13 +43,13 @@ void SPHFluid<Scalar, Dim>::allocMemory(unsigned int particle_num)
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::initialize()
 {
-    allocMemory(particle_num_);
+    allocMemory(this->particle_num_);
 
     // TO DO : need read from config file;
     this->reference_density_ = 0;
-    for (size_t i = 0; i < particle_num_; i++)
+    for (size_t i = 0; i < this->particle_num_; i++)
     {
-        this->density_[i] = reference_density_;
+        this->density_[i] = this->reference_density_;
     }
 
     this->time_step_ = 0;
