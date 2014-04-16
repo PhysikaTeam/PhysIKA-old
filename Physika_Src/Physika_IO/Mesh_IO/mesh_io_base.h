@@ -29,9 +29,9 @@ public:
     MeshIOBase();
     virtual ~MeshIOBase(){};
 
-    virtual void load(const string& filename, SurfaceMesh<Scalar> *mesh)=0;
+    static void load(const string& filename, SurfaceMesh<Scalar> *mesh){}
 
-    virtual void save(const string& filename, SurfaceMesh<Scalar> *mesh)=0;
+    static void save(const string& filename, SurfaceMesh<Scalar> *mesh){}
 
 protected:
 };

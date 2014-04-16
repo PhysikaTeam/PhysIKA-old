@@ -1,6 +1,6 @@
 /*
- * @file obj_mesh_io.h 
- * @brief load and save mesh to an obj file.
+ * @file stl_mesh_io.h 
+ * @brief load and save mesh to a stl file.
  * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_IO_MESH_IO_OBJ_MESH_IO_H_
-#define PHYSIKA_IO_MESH_IO_OBJ_MESH_IO_H_
+#ifndef PHYSIKA_IO_MESH_IO_STL_MESH_IO_H_
+#define PHYSIKA_IO_MESH_IO_STL_MESH_IO_H_
 
 #include "Physika_IO/Mesh_IO/mesh_io_base.h"
 
@@ -21,16 +21,16 @@
 namespace Physika{
 
 template <typename Scalar>
-class ObjMeshIO:public MeshIOBase<Scalar>
+class StlMeshIO:public MeshIOBase<Scalar>
 {
 public:
-    ObjMeshIO();
-    ~ObjMeshIO();
+    StlMeshIO();
+    ~StlMeshIO();
 
-    // load a mesh from a obj file.
+    // load a mesh from a stl file.
     static void load(const string& filename, SurfaceMesh<Scalar> *mesh);
 
-    // save a mesh to a obj file.
+    // save a mesh to a stl file.
     static void save(const string& filename, SurfaceMesh<Scalar> *mesh);
 
 protected:
@@ -38,4 +38,10 @@ protected:
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_IO_MESH_IO_OBJ_MESH_IO_H_
+#endif //PHYSIKA_IO_MESH_IO_STL_MESH_IO_H_
+
+
+
+
+
+
