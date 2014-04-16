@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_IO/Image/image_io.h"
+#include "Physika_IO/Image_IO/image_io.h"
 
 namespace Physika{
 	

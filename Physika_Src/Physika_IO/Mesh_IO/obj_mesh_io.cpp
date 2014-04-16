@@ -1,7 +1,7 @@
 /*
- * @file obj_IO.cpp 
+ * @file obj_mesh_io.cpp 
  * @Basic obj_IO, load a mesh or write a mesh to a obj file. simply without texture.
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -12,30 +12,30 @@
  *
  */
 
-#include "Physika_IO/3DModel/obj_io.h"
+#include "Physika_IO/Mesh_IO/obj_mesh_io.h"
 
 namespace Physika{
 
 template <typename Scalar>
-ObjIO<Scalar>::ObjIO()
+ObjMeshIO<Scalar>::ObjMeshIO()
 {
 	//int a;
 }
 
 template <typename Scalar>
-ObjIO<Scalar>::~ObjIO()
+ObjMeshIO<Scalar>::~ObjMeshIO()
 {
 
 }
 
 template <typename Scalar>
-void ObjIO<Scalar>::read(const string& filename, SurfaceMesh<Scalar> *mesh)
+void ObjMeshIO<Scalar>::load(const string& filename, SurfaceMesh<Scalar> *mesh)
 {
 
 }
 
 template <typename Scalar>
-void ObjIO<Scalar>::write(const string& filename, SurfaceMesh<Scalar> *mesh)
+void ObjMeshIO<Scalar>::save(const string& filename, SurfaceMesh<Scalar> *mesh)
 {
 
 }

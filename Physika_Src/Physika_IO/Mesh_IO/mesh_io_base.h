@@ -1,7 +1,7 @@
 /*
  * @file mesh_IO_base.h 
  * @Basic mesh loader, every 3d model IO of mesh will inherit from this.
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -29,9 +29,9 @@ public:
     MeshIOBase();
     virtual ~MeshIOBase(){};
 
-    virtual void read(const string& filename, SurfaceMesh<Scalar> *mesh);
+    virtual void load(const string& filename, SurfaceMesh<Scalar> *mesh)=0;
 
-    virtual void write(const string& filename, SurfaceMesh<Scalar> *mesh);
+    virtual void save(const string& filename, SurfaceMesh<Scalar> *mesh)=0;
 
 protected:
 };

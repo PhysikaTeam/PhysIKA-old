@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_IO_IMAGE_IMAGE_IO_H_
-#define PHYSIKA_IO_IMAGE_IMAGE_IO_H_
+#ifndef PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_
+#define PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_
 
 namespace Physika{
 
@@ -27,4 +27,4 @@ protected:
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_IO_IMAGE_IMAGE_IO_H_
+#endif //PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_

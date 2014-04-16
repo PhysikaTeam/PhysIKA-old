@@ -20,7 +20,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 SPHBase<Scalar, Dim>::SPHBase():
-        sim_itor(0),
+        sim_itor_(0),
         particle_num_(0),
         reference_density_(0)
                                 
@@ -74,7 +74,7 @@ void SPHBase<Scalar, Dim>::advance(Scalar dt)
     clock_t end_time = clock();
 
     //iteration sim_itor end and cost end_time - start_time ;
-    sim_itor++;
+    sim_itor_++;
 }
 
 template <typename Scalar, int Dim>
