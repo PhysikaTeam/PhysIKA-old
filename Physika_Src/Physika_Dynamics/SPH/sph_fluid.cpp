@@ -30,7 +30,7 @@ template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::allocMemory(unsigned int particle_num)
 {
     this->particle_num_ = particle_num;
-    SPHBase::allocMemory(particle_num);
+    SPHBase<Scalar,Dim>::allocMemory(particle_num);
     
     this->phi_.resize(particle_num);
     this->phi_.zero();

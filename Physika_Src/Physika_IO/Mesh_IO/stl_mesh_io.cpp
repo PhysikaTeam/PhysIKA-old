@@ -29,18 +29,23 @@ StlMeshIO<Scalar>::~StlMeshIO()
 }
 
 template <typename Scalar>
-static void StlMeshIO<Scalar>::load(const string& filename, SurfaceMesh<Scalar> *mesh)
+void StlMeshIO<Scalar>::load(const string& filename, SurfaceMesh<Scalar> *mesh)
 {
 
 }
 
 template <typename Scalar>
-static void StlMeshIO<Scalar>::save(const string& filename, SurfaceMesh<Scalar> *mesh)
+void StlMeshIO<Scalar>::save(const string& filename, SurfaceMesh<Scalar> *mesh)
 {
 
 }
 
 } //end of namespace Physika
+
+
+
+
+
 
 
 
