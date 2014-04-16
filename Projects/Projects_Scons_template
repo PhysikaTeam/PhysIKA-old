@@ -95,9 +95,9 @@ if compiler=='g++':
    env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
 else:
    if build_type=='Release':
-      CCFLAGS=['/Ox','/EHsc','/DNDEBUG']
+      CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']
    else:
-      CCFLAGS=['/Zi','/EHsc']
+      CCFLAGS=['/Zi','/EHsc','/W3']
    ENV['TMP']=os.environ['TMP']
    if os_architecture=='32bit':
    	arc='x86'

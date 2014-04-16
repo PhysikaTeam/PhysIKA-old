@@ -68,9 +68,9 @@ else:
    else:
 	arc='amd64'
    if build_type=='Relase':
-        CCFLAGS=['/Ox','/EHsc','/DNDEBUG']
+        CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']
    else:
-        CCFLAGS=['/Zi','/EHsc']
+        CCFLAGS=['/Zi','/EHsc','/W3']
    env=Environment(ENV=ENV,CPPPATH=src_root_path,CCFLAGS=CCFLAGS,MSVS_ARCH=arc,TARGET_ARCH=arc)
 
 #LIB PREFIX AND SUFFIX 
