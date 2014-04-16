@@ -105,6 +105,10 @@ for name in lib_names:
     	      obj_file=os.path.splitext(src_file)[0]+obj_suffix
 	      lib_obj_files.append(obj_file)
 	      env.COMPILE(obj_file,src_file)
+    else:
+       for src_file in lib_src_files:
+    	   if src_file in ignored_src_files:
+    	      lib_src_files.remove(src_file)
     lib_file=name+lib_suffix
     if os_name in ('Linux','Darwin'):
        lib_file=lib_preffix+lib_file
