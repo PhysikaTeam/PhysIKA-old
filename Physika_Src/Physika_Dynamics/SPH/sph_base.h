@@ -16,6 +16,7 @@
 #define PHYSIKA_DYNAMICS_SPH_SPH_BASE_H_
 
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Array/array_manager.h"
 #include "Physika_Core/Array/array.h"
 #include "Physika_Core/Vectors/vector.h"
 
@@ -83,7 +84,7 @@ public:
     Scalar reference_density_;
 
 
-    ArrayManager dataManager;
+    ArrayManager dataManager_;
 };
 
 } //end of namespace Physika

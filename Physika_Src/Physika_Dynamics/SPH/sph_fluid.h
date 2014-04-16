@@ -54,8 +54,8 @@ protected:
     Scalar max_length_;
     Scalar min_length_;
 
-    Array<Scalar> phi;
-    Array<Scalar> energey;
+    Array<Scalar> phi_;
+    Array<Scalar> energey_;
 
 
     

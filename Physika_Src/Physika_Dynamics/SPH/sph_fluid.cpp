@@ -29,14 +29,14 @@ SPHFluid<Scalar, Dim>::SPHFluid()
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::allocMemory(unsigned int particle_num)
 {
-    particle_num_ = particle_num;
+    this->particle_num_ = particle_num;
     SPHBase.allocMemory(particle_num);
     
-    phi.resize(particle_num);
-    phi.zero();
+    this->phi_.resize(particle_num);
+    this->phi_.zero();
 
-    energey.resize(particle_num);
-    energey.zero();
+    this->energey_.resize(particle_num);
+    this->energey_.zero();
 
 }
 
@@ -46,18 +46,18 @@ void SPHFluid<Scalar, Dim>::initialize()
     allocMemory(particle_num_);
 
     // TO DO : need read from config file;
-    reference_density_ = 0;
+    this->reference_density_ = 0;
     for (size_t i = 0; i < particle_num_; i++)
     {
-        density_[i] = reference_density_;
+        this->density_[i] = reference_density_;
     }
 
-    time_step_ = 0;
-    viscosity_ = 0;
-    gravity_ = 0;
-    surface_tension_ = 0;
-    sampling_distance_ = 0;
-    smoothing_length_ = 0;
+    this->time_step_ = 0;
+    this->viscosity_ = 0;
+    this->gravity_ = 0;
+    this->surface_tension_ = 0;
+    this->sampling_distance_ = 0;
+    this->smoothing_length_ = 0;
 
     //TO DO: set the particle position and velocity;
 
@@ -114,8 +114,8 @@ void SPHFluid<Scalar, Dim>::computeVolume()
 template <typename Scalar, int Dim>
 SPHFluid<Scalar, Dim>::~SPHFluid()
 {
-    phi.release();
-    energey.release();
+    this->phi_.release();
+    this->energy_.release();
 }
 
 } //end of namespace Physika
