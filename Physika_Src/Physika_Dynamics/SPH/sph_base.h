@@ -27,7 +27,7 @@ template <typename Scalar, int Dim>
 class SPHBase
 {
 public:
-	SPHBase();
+    SPHBase();
     virtual ~SPHBase();
 
     virtual void initialize();

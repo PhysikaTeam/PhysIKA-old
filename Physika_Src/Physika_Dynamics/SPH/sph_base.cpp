@@ -23,7 +23,6 @@ SPHBase<Scalar, Dim>::SPHBase():
         sim_itor_(0),
         particle_num_(0),
         reference_density_(0)
-                                
 {
     dataManager_.addArray("mass", &mass_);
     dataManager_.addArray("position", &position_);
@@ -35,7 +34,6 @@ template <typename Scalar, int Dim>
 void SPHBase<Scalar, Dim>::allocMemory(unsigned int particle_num)
 {
     particle_num_ = particle_num;
-
     mass_.resize(particle_num);
     position_.resize(particle_num);
     velocity_.resize(particle_num);
