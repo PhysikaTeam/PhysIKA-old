@@ -23,8 +23,8 @@ template <typename Scalar, int Dim>
 class SPHFluid:public SPHBase<Scalar, Dim>
 {
 public:
-	SPHFluid();
-	~SPHFluid();
+    SPHFluid();
+    ~SPHFluid();
 
     virtual void initialize();
     virtual void initSceneBoundary();

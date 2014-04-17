@@ -19,9 +19,11 @@
 
 namespace Physika{
 
-const double PI = 3.141592653589793;
+const double PI = 3.14159265358979323846;
+const double E = 2.71828182845904523536;
 const float FLOAT_EPSILON = std::numeric_limits<float>::epsilon();
 const double DOUBLE_EPSILON = std::numeric_limits<double>::epsilon();
+
 
 }
 

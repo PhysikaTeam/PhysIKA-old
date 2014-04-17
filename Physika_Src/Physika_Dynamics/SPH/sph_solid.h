@@ -23,8 +23,8 @@ template <typename Scalar, int Dim>
 class SPHSolid:public SPHBase<Scalar, Dim>
 {
 public:
-	SPHSolid();
-	~SPHSolid();
+    SPHSolid();
+    ~SPHSolid();
 
     virtual void initialize();
     virtual void initSceneBoundary();
