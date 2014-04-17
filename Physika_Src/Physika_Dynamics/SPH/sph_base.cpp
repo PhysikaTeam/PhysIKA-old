@@ -25,11 +25,10 @@ SPHBase<Scalar, Dim>::SPHBase():
         reference_density_(0)
                                 
 {
-    dataManager.addArray("mass", &mass_);
-    dataManager.addArray("position", &position_);
-    dataManager.addArray("velocity", &velocity_);
-    dataManager.addArray("normal", &normal_);
-
+    dataManager_.addArray("mass", &mass_);
+    dataManager_.addArray("position", &position_);
+    dataManager_.addArray("velocity", &velocity_);
+    dataManager_.addArray("normal", &normal_);
 }
 
 template <typename Scalar, int Dim>

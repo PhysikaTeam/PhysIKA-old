@@ -90,6 +90,7 @@ ignored_src_files=['Physika_Src/Physika_Core/Matrices/sparse_matrix.cpp']
 header_files=[]
 lib_files=[]
 proj_files=[]
+target_root_path='Public_Library/'
 for name in lib_names:
     lib_obj_files=[]
     lib_src_files=[]
@@ -112,6 +113,7 @@ for name in lib_names:
     lib_file=name+lib_suffix
     if os_name in ('Linux','Darwin'):
        lib_file=lib_preffix+lib_file
+    lib_file=target_root_path+'lib/'+os.path.basename(lib_file)
     if compiler==['g++']:
        env.ARCLIB(lib_file,lib_obj_files)
     else:
@@ -124,16 +126,12 @@ sln=[]
 if compiler==['msvc']:
    sln=env.MSVSSolution(target='Physika'+env['MSVSSOLUTIONSUFFIX'],projects=proj_files,variant=build_type)
 
-#COPY HEADERS AND LIB FILES TO TARGET DIRECTORY
+#COPY HEADERS TO TARGET DIRECTORY, LIBS ARE ALREADY THERE
 header_target=[]
-target_root_path='Public_Library/'
 for header_file in header_files:
     if header_file.find(src_root_path)==0:
        target_file=header_file.replace(src_root_path,target_root_path+'include/')
        header_target=Command(target_file,header_file,Copy("$TARGET","$SOURCE"))
-for lib_file in lib_files:
-    target_file=target_root_path+'lib/'+os.path.basename(lib_file)
-    Command(target_file,lib_file,Move("$TARGET","$SOURCE"))
 
 #COPY DEPENDENCIES
 src_dependency_root_path=src_root_path+'Physika_Dependency/'

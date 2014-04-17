@@ -25,13 +25,13 @@
 
 namespace Physika{
 
-    class ReorderObject
-    {
-    public:
-        ReorderObject() {};
-        ~ReorderObject() {};
-        virtual void Reordering(unsigned int *ids, unsigned int size) = 0;
-    };
+class ReorderObject
+{
+public:
+    ReorderObject() {};
+    ~ReorderObject() {};
+    virtual void Reordering(unsigned int *ids, unsigned int size) = 0;
+};
 
 
 template <typename ElementType >
