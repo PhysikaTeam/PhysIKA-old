@@ -5,9 +5,9 @@ A physics engine that a couple of guys and I plan to develop.
 @authors:
 Fei Zhu, 
 Sheng Yang, 
-Tianxiang Zhang
-Wei Chen
-Liyou Xu
+Tianxiang Zhang,
+Wei Chen,
+Liyou Xu,
 
 @Last update of this file:
 Fei Zhu, 10/03/2013
