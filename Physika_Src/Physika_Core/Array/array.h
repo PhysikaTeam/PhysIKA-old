@@ -30,7 +30,7 @@ class ReorderObject
 public:
     ReorderObject() {};
     ~ReorderObject() {};
-    virtual void Reordering(unsigned int *ids, unsigned int size) = 0;
+    virtual void reorder(unsigned int *ids, unsigned int size) = 0;
 };
 
 
@@ -60,7 +60,7 @@ public:
     /* Operator overloading */
     ElementType & operator[] (int id){ PHYSIKA_ASSERT(id >= 0 && id < element_count_); return data_[id]; }
 
-    virtual void Reordering(unsigned int *ids, unsigned int size);
+    virtual void reorder(unsigned int *ids, unsigned int size);
 protected:
     void allocate();
     void release();
@@ -70,10 +70,6 @@ protected:
 
 };
 
-
-
-
-//std::ostream& operator<< (std::ostream &s, const Vector<Scalar,2> &vec)
 template <typename ElementType>
 std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
 {
@@ -86,10 +82,6 @@ std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
     s<<std::endl;
     return s; 
 }
-
-
-
-
 
 }//end of namespace Physika
 

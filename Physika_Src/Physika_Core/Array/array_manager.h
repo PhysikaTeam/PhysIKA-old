@@ -34,14 +34,14 @@ public:
         return arrs[key];
     }
 
-    void reordering(unsigned int* ids, unsigned int size)
+    void reorder(unsigned int* ids, unsigned int size)
     {
         std::map<std::string, ReorderObject*>::iterator iter;
 
         for (iter = arrs.begin(); iter != arrs.end(); iter++)
         {
             std::cout<<iter->first<<" ";
-            iter->second->Reordering(ids, size);
+            iter->second->reorder(ids, size);
         }
     }
 

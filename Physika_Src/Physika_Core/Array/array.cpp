@@ -97,7 +97,7 @@ Array<ElementType> & Array<ElementType>::operator = (const Array<ElementType> &a
 }
 
 template <typename ElementType>
-void Array<ElementType>::Reordering(unsigned int *ids, unsigned int size)
+void Array<ElementType>::reorder(unsigned int *ids, unsigned int size)
 {
     if (size != element_count_)
     {

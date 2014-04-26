@@ -1,7 +1,8 @@
 /*
  * @file vertex.h 
- * @Basic vertex class.
- * @author Sheng Yang
+ * @brief vertex of 3d surface mesh
+ *        position does not uniquely determine vertex, 2 vertices could have identical positions
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -15,32 +16,58 @@
 #ifndef PHYSIKA_GEOMETRY_SURFACE_MESH_VERTEX_H_
 #define PHYSIKA_GEOMETRY_SURFACE_MESH_VERTEX_H_
 
-
-#include "Physika_Core/Vectors/vector_3d.h"
-
 namespace Physika{
+
+namespace SurfaceMeshInternal{
 
 template <typename Scalar>
 class Vertex
 {
 public:
-    /* Constructions*/
-    Vertex(Scalar , Scalar , Scalar );
-    Vertex(const Vector<Scalar,3>& pos);
+    Vertex();
+    ~Vertex();
+    explicit Vertex(unsigned int position_index);
+    Vertex(unsigned int position_index, unsigned int normal_index);
+    Vertex(unsigned int position_index, unsigned int normal_index, unsigned int texture_index);
 
-    /* Get and Set */
-    inline Vector<Scalar,3>& position() { return position_; }
-    inline Vector<Scalar,3>& normal() { return normal_; }
-    inline void setPosition(Vector<Scalar,3> position) { position_ = position; }
-    inline void setNormal(Vector<Scalar,3> normal) { normal_ = normal; }
-    
-    /* Protected Members */
+    unsigned int positionIndex() const;
+    void setPositionIndex(unsigned int);
+    unsigned int normalIndex()const;
+    void setNormalIndex(unsigned int);    
+    unsigned int textureCoordinateIndex() const;
+    void setTextureCoordinateIndex(unsigned int);
+    bool hasNormal() const;
+    bool hasTexture() const;
+
 protected:
-	Vector<Scalar,3> position_;
-	Vector<Scalar,3> normal_;
+    //indices in the mesh
+    unsigned int position_index_;
+    unsigned int normal_index_;
+    unsigned int texture_index_;
+    bool has_normal_;
+    bool has_texture_;
 };
+
+} //end of namespace SurfaceMeshInternal
 
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_VERTEX_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

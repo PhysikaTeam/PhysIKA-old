@@ -1,7 +1,7 @@
 /*
  * @file surface_mesh.h 
- * @Basic surface mesh class.
- * @author Sheng Yang
+ * @brief 3d surface mesh
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -16,41 +16,102 @@
 #define PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
 
 #include <vector>
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Geometry/Surface_Mesh/vertex.h"
+#include "Physika_Geometry/Surface_Mesh/face.h"
+#include "Physika_Geometry/Surface_Mesh/group.h"
+#include "Physika_Geometry/Surface_Mesh/material.h"
+
 using std::vector;
 
 namespace Physika{
 
-//These forward declaration can be useful if #include is too much.
-template <typename Scalar> class Triangle;
-template <typename Scalar> class Vertex;
-template <typename Scalar> class Edge;
+using SurfaceMeshInternal::Vertex;
+using SurfaceMeshInternal::Face;
+using SurfaceMeshInternal::Group;
+using SurfaceMeshInternal::Material;
 
 template <typename Scalar>
 class SurfaceMesh
 {
 public:
-    /* Constructions */
+    //constructors && deconstructors
     SurfaceMesh();
     ~SurfaceMesh();
+
+    //basic info
+    unsigned int numVertices() const;
+    unsigned int numFaces() const;
+    unsigned int numNormals() const;
+    unsigned int numTextureCoordinates() const;
+    unsigned int numGroups() const;
+    unsigned int numMaterials() const;
+    bool isTriangularMesh() const;
+    bool isQuadrilateralMesh() const;
     
-    /* Get and Set */
-    inline vector<Edge<Scalar>*>& edges() { return edges_;}
-    inline vector<Vertex<Scalar>*> & vertices() { return vertices_;}
-    inline vector<Triangle<Scalar>*> & triangles() { return triangles_;}
-    inline unsigned int getNumVertex() const { return vertices_.size(); }
-    inline unsigned int getNumEdge() const { return edges_.size(); }
-    inline unsigned int getNumTriangle() const {return triangles_.size(); }
+    //getters && setters
+    const Vector<Scalar,3>& vertexPosition(unsigned int vert_idx) const;
+    const Vector<Scalar,3>& vertexPosition(const Vertex<Scalar> &vertex) const;
+    void setVertexPosition(unsigned int vert_idx, const Vector<Scalar,3> &position);
+    void setVertexPosition(const Vertex<Scalar> &vertex, const Vector<Scalar,3> &position);
+    const Vector<Scalar,3>& vertexNormal(unsigned int normal_idx) const;
+    const Vector<Scalar,3>& vertexNormal(const Vertex<Scalar> &vertex) const;
+    void setVertexNormal(unsigned int normal_idx, const Vector<Scalar,3> &normal);
+    void setVertexNormal(const Vertex<Scalar> &vertex, const Vector<Scalar,3> &normal);
+    const Vector<Scalar,2>& vertexTextureCoordinate(unsigned int texture_idx) const;
+    const Vector<Scalar,2>& vertexTextureCoordinate(const Vertex<Scalar> &vertex) const;
+    void setVertexTextureCoordinate(unsigned int texture_idx, const Vector<Scalar,2> &texture_coordinate);
+    void setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
+    Group<Scalar>& group(unsigned int group_idx);
+    Group<Scalar>* groupPtr(unsigned int group_idx);
+    Material<Scalar>& material(unsigned int material_idx);
+    Material<Scalar>* materialPtr(unsigned int material_idx);
+    void setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
 
-    /* Some functions */
-    void computeNormals();
+    //adders
+    void addMaterial(const Material<Scalar> &material);
+    void addGroup(const Group<Scalar> &group);
+    void addVertexPosition(const Vector<Scalar,3> &position);
+    void addVertexNormal(const Vector<Scalar,3> &normal);
+    void addVertexTextureCoordinate(const Vector<Scalar,2> &texture_coordinate);
 
+    //utilities
+    enum VertexNormalType{
+	WEIGHTED_FACE_NORMAL = 0,
+	AVERAGE_FACE_NORMAL = 1,
+	FACE_NORMAL = 2};
+
+    void computeAllVertexNormals(VertexNormalType normal_type);
+    void computeAllFaceNormals();
+    void computeFaceNormal(const Face<Scalar> &face);
 
 protected:
-    vector<Triangle<Scalar>*> triangles_;
-    vector<Vertex<Scalar>*> vertices_;
-    vector<Edge<Scalar>*> edges_;
+    void setVertexNormalsToFaceNormals();
+    void setVertexNormalsToAverageFaceNormals();
+    void setVertexNormalsToWeightedFaceNormals();
+
+protected:
+    vector<Vector<Scalar,3> > vertex_positions_;
+    vector<Vector<Scalar,3> > vertex_normals_;
+    vector<Vector<Scalar,2> > vertex_textures_;
+    vector<Group<Scalar> > groups_;
+    vector<Material<Scalar> > materials_;
 };
 
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
