@@ -15,10 +15,53 @@
 #ifndef PHYSIKA_CORE_UTILITIES_PHYSIKA_ASSERT_H_
 #define PHYSIKA_CORE_UTILITIES_PHYSIKA_ASSERT_H_
 
+#include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
 #include <cassert>
 
-//for now, PHYSIKA_ASSERT() is just the assert from standard library
+//assert from standard library
 #define PHYSIKA_ASSERT(x) assert(x)
 
+//assert with message
+#ifndef NDEBUG
+#   define PHYSIKA_MESSAGE_ASSERT(condition,message) \
+    do \
+    {\
+        if(!(condition)) std::cerr<<message<<std::endl; \
+        assert((condition)); \
+    }while(false)
+#else
+#   define PHYSIKA_MESSAGE_ASSERT(condition,message) do{}while(false)
+#endif
+
+//only error message
+#ifndef NDEBUG
+#    define PHYSIKA_ERROR(message) \
+     do \
+     { \
+         std::cerr<<message<<std::endl; \
+	 std::cerr<<"Assertion failed in "<<__FILE__<<" line "<<__LINE__<<std::endl; \
+     }while(false)
+#else
+#    define PHYSIKA_ERROR(message) do{}while(false)
+#endif
+
+
 #endif//PHYSIKA_CORE_UTILITIES_PHYSIKA_ASSERT_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

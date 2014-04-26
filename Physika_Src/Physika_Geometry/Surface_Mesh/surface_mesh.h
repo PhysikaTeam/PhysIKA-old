@@ -65,6 +65,8 @@ public:
     void setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
     Group<Scalar>& group(unsigned int group_idx);
     Group<Scalar>* groupPtr(unsigned int group_idx);
+    Group<Scalar>& group(const string &name);
+    Group<Scalar>* groupPtr(const string &name);
     Material<Scalar>& material(unsigned int material_idx);
     Material<Scalar>* materialPtr(unsigned int material_idx);
     void setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
@@ -84,12 +86,12 @@ public:
 
     void computeAllVertexNormals(VertexNormalType normal_type);
     void computeAllFaceNormals();
-    void computeFaceNormal(const Face<Scalar> &face);
+    void computeFaceNormal(Face<Scalar> &face);
 
 protected:
     void setVertexNormalsToFaceNormals();
     void setVertexNormalsToAverageFaceNormals();
-    void setVertexNormalsToWeightedFaceNormals();
+    void setVertexNormalsToWeightedFaceNormals();//weight face normal with angle
 
 protected:
     vector<Vector<Scalar,3> > vertex_positions_;
