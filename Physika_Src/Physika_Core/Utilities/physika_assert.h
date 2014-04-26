@@ -40,7 +40,8 @@
      do \
      { \
          std::cerr<<message<<std::endl; \
-	 std::cerr<<"Assertion failed in "<<__FILE__<<" line "<<__LINE__<<std::endl; \
+	 std::cerr<<"Assertion failed: function "<<__FUNCTION__<<", file "<<__FILE__<<", line "<<__LINE__<<"."<<std::endl; \
+	 std::exit(EXIT_FAILURE); \
      }while(false)
 #else
 #    define PHYSIKA_ERROR(message) do{}while(false)
