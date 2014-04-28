@@ -47,6 +47,7 @@ public:
     unsigned int numTextureCoordinates() const;
     unsigned int numGroups() const;
     unsigned int numMaterials() const;
+    unsigned int numIsolatedVertices() const;
     bool isTriangularMesh() const;
     bool isQuadrilateralMesh() const;
     
@@ -65,8 +66,10 @@ public:
     void setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
     Group<Scalar>& group(unsigned int group_idx);
     Group<Scalar>* groupPtr(unsigned int group_idx);
+    Group<Scalar>* groupPtr(const string &name);
     Material<Scalar>& material(unsigned int material_idx);
     Material<Scalar>* materialPtr(unsigned int material_idx);
+    unsigned int materialIndex(const string &material_name) const; //if no material with given name, return -1
     void setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
 
     //adders
@@ -84,12 +87,12 @@ public:
 
     void computeAllVertexNormals(VertexNormalType normal_type);
     void computeAllFaceNormals();
-    void computeFaceNormal(const Face<Scalar> &face);
+    void computeFaceNormal(Face<Scalar> &face);
 
 protected:
     void setVertexNormalsToFaceNormals();
     void setVertexNormalsToAverageFaceNormals();
-    void setVertexNormalsToWeightedFaceNormals();
+    void setVertexNormalsToWeightedFaceNormals();//weight face normal with angle
 
 protected:
     vector<Vector<Scalar,3> > vertex_positions_;

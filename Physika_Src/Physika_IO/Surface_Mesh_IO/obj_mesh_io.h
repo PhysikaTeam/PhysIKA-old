@@ -36,6 +36,7 @@ public:
 
 protected:
     static void loadMaterials(const string &filename, SurfaceMesh<Scalar> *mesh); //load material of the mesh from material file
+    static void saveMaterials(const string &filename, SurfaceMesh<Scalar> *mesh);
 };
 
 } //end of namespace Physika
