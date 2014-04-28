@@ -47,6 +47,7 @@ public:
     unsigned int numTextureCoordinates() const;
     unsigned int numGroups() const;
     unsigned int numMaterials() const;
+    unsigned int numIsolatedVertices() const;
     bool isTriangularMesh() const;
     bool isQuadrilateralMesh() const;
     

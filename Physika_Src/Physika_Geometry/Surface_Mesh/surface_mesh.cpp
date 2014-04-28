@@ -12,6 +12,7 @@
  *
  */
 
+#include <cmath>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 
@@ -72,6 +73,31 @@ bool SurfaceMesh<Scalar>::isTriangularMesh() const
 	    if(groups_[i].face(j).numVertices() != 3)
 		return false;
     return true;
+}
+
+template <typename Scalar>
+unsigned int SurfaceMesh<Scalar>::numIsolatedVertices() const
+{
+    vector<unsigned int> neighor_face_count(numVertices(),0);
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+    {
+	const Group<Scalar> &group = groups_[group_idx];
+	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+	{
+	    const Face<Scalar> &face = group.face(face_idx);
+	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+	    {
+		const Vertex<Scalar> &vertex = face.vertex(vert_idx);
+		unsigned int pos_idx = vertex.positionIndex();
+		++neighor_face_count[pos_idx];
+	    }
+	}
+    }
+    unsigned int num_isolated_vertices = 0;
+    for(unsigned int i = 0; i < numVertices(); ++i)
+	if(neighor_face_count[i]>0)
+	    ++num_isolated_vertices;
+    return num_isolated_vertices;
 }
 
 template <typename Scalar>
@@ -384,13 +410,62 @@ void SurfaceMesh<Scalar>::setVertexNormalsToAverageFaceNormals()
 	    }
 	}
     }
-
 }
 
 template <typename Scalar>
 void SurfaceMesh<Scalar>::setVertexNormalsToWeightedFaceNormals()
 {
-//TO DO: implementation
+    vector<Vector<Scalar,3> > normal_buffer(numVertices(),Vector<Scalar,3>(0.0));
+    vector<unsigned int> normal_count(numVertices(),0);
+
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+    {
+	Group<Scalar> &group = groups_[group_idx];
+	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+	{
+	    Face<Scalar> &face = group.face(face_idx);
+	    if(!face.hasFaceNormal())
+	        computeFaceNormal(face);
+	    const Vector<Scalar,3> &face_normal = face.faceNormal();
+	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+	    {
+		Vertex<Scalar> &vertex = face.vertex(vert_idx);
+		Vertex<Scalar> &next_vertex = face.vertex((vert_idx+1)%face.numVertices());
+		Vertex<Scalar> &pre_vertex = face.vertex((vert_idx-1+face.numVertices())%face.numVertices());
+		Vector<Scalar,3> vec1 = vertex_positions_[next_vertex.positionIndex()]-vertex_positions_[vertex.positionIndex()];
+		Vector<Scalar,3> vec2 = vertex_positions_[pre_vertex.positionIndex()]-vertex_positions_[vertex.positionIndex()];
+		Scalar vec1_length = vec1.norm(), vec2_length = vec2.norm();
+		PHYSIKA_ASSERT(vec1_length>0);
+		PHYSIKA_ASSERT(vec2_length>0);
+		Scalar angle = acos(vec1.dot(vec2)/(vec1_length*vec2_length));
+		unsigned int pos_idx = vertex.positionIndex();
+		normal_buffer[pos_idx] += angle*face_normal;
+		++normal_count[pos_idx];
+	    }
+	}
+    }
+    //normalize the normals and apply the new normals
+    vertex_normals_.clear();
+    for(unsigned int i = 0; i < numVertices(); ++i)
+    {
+	if(normal_count[i] == 0)//isolated vertex, use some fake normal
+	    normal_buffer[i] = Vector<Scalar,3>(1.0,0,0);
+	normal_buffer[i].normalize();
+	addVertexNormal(normal_buffer[i]);
+    }
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+    {
+	Group<Scalar> &group = groups_[group_idx];
+	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+	{
+	    Face<Scalar> &face = group.face(face_idx);
+	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+	    {
+		Vertex<Scalar> &vertex = face.vertex(vert_idx);
+		vertex.setNormalIndex(vertex.positionIndex());
+	    }
+	}
+    }
 }
 
 //explicit instantitation
