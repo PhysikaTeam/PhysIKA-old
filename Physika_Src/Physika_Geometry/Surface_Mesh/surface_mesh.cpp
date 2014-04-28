@@ -254,6 +254,15 @@ Material<Scalar>* SurfaceMesh<Scalar>::materialPtr(unsigned int material_idx)
 }
 
 template <typename Scalar>
+unsigned int SurfaceMesh<Scalar>::materialIndex(const string &material_name) const
+{
+    for(unsigned int i = 0; i < materials_.size(); ++i)
+	if(materials_[i].name() == material_name)
+	    return i;
+    return -1;
+}
+
+template <typename Scalar>
 void SurfaceMesh<Scalar>::setSingleMaterial(const Material<Scalar> &material)
 {
     materials_.clear();

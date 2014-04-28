@@ -35,6 +35,12 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
 //TO DO: implementation
 }
 
+template <typename Scalar>
+void ObjMeshIO<Scalar>::saveMaterials(const string &filename, SurfaceMesh<Scalar> *mesh)
+{
+//TO DO: implementation
+}
+
 } //end of namespace Physika
 
 

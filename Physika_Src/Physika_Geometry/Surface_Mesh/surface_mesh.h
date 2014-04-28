@@ -69,6 +69,7 @@ public:
     Group<Scalar>* groupPtr(const string &name);
     Material<Scalar>& material(unsigned int material_idx);
     Material<Scalar>* materialPtr(unsigned int material_idx);
+    unsigned int materialIndex(const string &material_name) const; //if no material with given name, return -1
     void setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
 
     //adders
