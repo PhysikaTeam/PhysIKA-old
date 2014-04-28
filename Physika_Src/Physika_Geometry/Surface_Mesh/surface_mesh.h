@@ -66,7 +66,6 @@ public:
     void setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
     Group<Scalar>& group(unsigned int group_idx);
     Group<Scalar>* groupPtr(unsigned int group_idx);
-    Group<Scalar>& group(const string &name);
     Group<Scalar>* groupPtr(const string &name);
     Material<Scalar>& material(unsigned int material_idx);
     Material<Scalar>* materialPtr(unsigned int material_idx);
