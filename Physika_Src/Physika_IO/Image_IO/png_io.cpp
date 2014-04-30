@@ -1,7 +1,7 @@
 /*
- * @file render_base.h 
- * @Basic render, all other render class inerit from this class.
- * @author Sheng Yang, Fei Zhu
+ * @file png_io.cpp 
+ * @Brief load/save png file
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -12,22 +12,36 @@
  *
  */
 
-#ifndef PHYSIKA_RENDER_RENDER_BASE_RENDER_BASE_H_
-#define PHYSIKA_RENDER_RENDER_BASE_RENDER_BASE_H_
+#include "Physika_IO/Image_IO/png_io.h"
 
 namespace Physika{
 
-class RenderBase
+unsigned char* PngIO::load(const string &filename, int &width, int &height)
 {
-public:
-    RenderBase(){}
-    virtual ~RenderBase(){}
+//TO DO: implementation
+}
 
-    virtual void render()=0;
-
-protected:
-};
+void PngIO::save(const string &filename, int width, int height, const unsigned char *image_data)
+{
+//TO DO: implementation
+}
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_RENDER_RENDER_BASE_RENDER_BASE_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

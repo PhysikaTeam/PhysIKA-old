@@ -27,13 +27,26 @@ void SurfaceMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *me
     string::size_type suffix_idx = filename.find('.');
     PHYSIKA_ASSERT(suffix_idx<filename.size());
     string suffix = filename.substr(suffix_idx);
-    //TO DO: implementation
+    if(suffix==string(".obj"))
+	ObjMeshIO<Scalar>::load(filename,mesh);
+    else if(suffix==string(".stl"))
+	StlMeshIO<Scalar>::load(filename,mesh);
+    else
+	PHYSIKA_ERROR("Unknown mesh file format!");
 }
 
 template <typename Scalar>
 void SurfaceMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
-//TO DO: implementation
+    string::size_type suffix_idx = filename.find('.');
+    PHYSIKA_ASSERT(suffix_idx<filename.size());
+    string suffix = filename.substr(suffix_idx);
+    if(suffix==string(".obj"))
+	ObjMeshIO<Scalar>::save(filename,mesh);
+    else if(suffix==string(".stl"))
+	StlMeshIO<Scalar>::save(filename,mesh);
+    else
+	PHYSIKA_ERROR("Unknown mesh file format specified!");
 }
 
 } //end of namespace Physika

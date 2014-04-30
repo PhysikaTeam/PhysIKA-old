@@ -1,7 +1,7 @@
 /*
- * @file image_io.h 
- * @Brief image_io class, it is used to import/save image files such as bmp etc.
- * @author Sheng Yang, Fei Zhu
+ * @file png_io.h 
+ * @Brief load/save png file
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -12,32 +12,35 @@
  *
  */
 
-#ifndef PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_
-#define PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_
+#ifndef PHYSIKA_IO_IMAGE_IO_PNG_IO_H_
+#define PHYSIKA_IO_IMAGE_IO_PNG_IO_H_
 
 #include <string>
 using std::string;
 
 namespace Physika{
 
-class ImageIO
+class PngIO
 {
 public:
-    ImageIO(){}
-    ~ImageIO(){}
-    /* load image from given file, return the image data in row order 
-     * memory of the image data needs to be released by the caller
-     */
+    PngIO(){}
+    ~PngIO(){}
     static unsigned char* load(const string &filename, int &width, int &height);
-
-    /* save image data to file, the image data is in row order
-     */
     static void save(const string &filename, int width, int height, const unsigned char *image_data);
-
-
 protected:
+
 };
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_
+#endif //PHYSIKA_IO_IMAGE_IO_PNG_IO_H_
+
+
+
+
+
+
+
+
+
+

@@ -33,7 +33,6 @@ public:
     virtual void reorder(unsigned int *ids, unsigned int size) = 0;
 };
 
-
 template <typename ElementType >
 class Array: public ReorderObject
 {

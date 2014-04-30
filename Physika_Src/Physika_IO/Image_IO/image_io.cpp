@@ -1,7 +1,7 @@
 /*
  * @file image_io.cpp 
- * @Basic image_io class, it is used to import image files such as bmp etc.
- * @author Sheng Yang
+ * @Brief image_io class, it is used to import/save image files such as bmp etc.
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -12,18 +12,50 @@
  *
  */
 
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_IO/Image_IO/image_io.h"
+#include "Physika_IO/Image_IO/png_io.h"
 
 namespace Physika{
-	
-Image_IO::Image_IO()
+
+unsigned char* ImageIO::load(const string &filename, int &width, int &height)
 {
-	//int a;
+    string::size_type suffix_idx = filename.find('.');
+    PHYSIKA_ASSERT(suffix_idx<filename.size());
+    string suffix = filename.substr(suffix_idx);
+    if(suffix==string(".png"))
+	return PngIO::load(filename,width,height);
+    else
+	PHYSIKA_ERROR("Unknown image file format!");
 }
 
-Image_IO::~Image_IO()
+void ImageIO::save(const string &filename, int width, int height, const unsigned char *image_data)
 {
-
+    string::size_type suffix_idx = filename.find('.');
+    PHYSIKA_ASSERT(suffix_idx<filename.size());
+    string suffix = filename.substr(suffix_idx);
+    if(suffix==string(".png"))
+	PngIO::save(filename,width,height,image_data);
+    else
+	PHYSIKA_ERROR("Unknown image file format specified!");
 }
 
 } //end of namespace Physika
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
