@@ -139,9 +139,11 @@ pure_copy=['Eigen']
 dependencies=get_immediate_subdirectories(src_dependency_root_path)
 target_dependency_include_path=target_root_path+'include/Physika_Dependency/'
 for name in dependencies:
-    if name in pure_copy: #ONLY HEADERS
+    if name in pure_copy: #ONLY HEADERS, DIRECT COPY
        Command(target_dependency_include_path+name,src_dependency_root_path+name,Copy("$TARGET","$SOURCE"))
-    else:
+    elif os.path.isfile(src_dependency_root_path+name+'/SConscript'): #SCONS SCRIPT FOR THE DEPENDENCY EXISTS, CALL THE BUILD
+       SConscript(src_dependency_root_path+name+'/SConscript',exports='env os_name compiler')
+    else: #LIBS ARE PRECOMPILED, COPY HEADERS AND LIBS RESPECTIVELY
        #COPY HEADERS
        Command(target_dependency_include_path+name+'/',src_dependency_root_path+name+'/include/',Copy("$TARGET","$SOURCE"))
        #COPY LIBS
