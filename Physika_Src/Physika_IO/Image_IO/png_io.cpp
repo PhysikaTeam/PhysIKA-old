@@ -19,6 +19,7 @@ namespace Physika{
 unsigned char* PngIO::load(const string &filename, int &width, int &height)
 {
 //TO DO: implementation
+    return 0;
 }
 
 void PngIO::save(const string &filename, int width, int height, const unsigned char *image_data)
