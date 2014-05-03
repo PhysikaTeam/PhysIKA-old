@@ -18,11 +18,7 @@
 #define PHSYIKA_CORE_ARRAY_ARRAY_H_
 
 #include <cstring>
-#include <list>
-#include <map>
-#include <algorithm>
 #include <iostream>
-#include <string>
 #include "Physika_Core/Utilities/physika_assert.h"
 
 namespace Physika{
