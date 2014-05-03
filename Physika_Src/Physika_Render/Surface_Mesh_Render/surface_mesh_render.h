@@ -1,6 +1,6 @@
 /*
  * @file surface_mesh_render.h 
- * @Basic render of surface mesh.
+ * @Brief render of surface mesh.
  * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
