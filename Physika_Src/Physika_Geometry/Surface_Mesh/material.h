@@ -53,7 +53,7 @@ protected:
     Scalar shininess_;
     Scalar alpha_;
     string name_;
-    string texture_file_name_;
+    string texture_file_name_;  //full path of texture file name
 };
 
 } //end of namespace SurfaceMeshInternal
