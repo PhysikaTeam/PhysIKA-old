@@ -14,8 +14,10 @@
 #ifndef PHSYIKA_CORE_ARRAY_ARRAY_MANAGER_H_
 #define PHSYIKA_CORE_ARRAY_ARRAY_MANAGER_H_
 
-
+#include <map>
+#include <string>
 #include "Physika_Core/Array/array.h"
+
 namespace Physika{
 
 class ArrayManager

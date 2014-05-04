@@ -36,6 +36,10 @@ os_architecture=platform.architecture()[0]
 #SRC PATH
 src_root_path='Physika_Src/'
 
+#INCLUDE_PATH
+gl_include_path=src_root_path+'Physika_Dependency/OpenGL/'    #SPECIAL HANDLING FOR OPENGL HEADERS, TO KEEP THE "#include <GL/XXX.h>" STYLE
+include_path=[src_root_path,gl_include_path]
+
 #LIB NAMES
 lib_names=get_immediate_subdirectories(src_root_path)
 if 'Physika_Dependency' in lib_names: 
@@ -50,9 +54,11 @@ else:
 
 #BUILDERS
 if build_type=='Release':
-   compile=Builder(action='g++ -o $TARGET $SOURCE -c -O3 -fno-strict-aliasing -std=gnu++0x -DNDEBUG -I '+src_root_path)
+   compile_action='g++ -o $TARGET $SOURCE -c -O3 -fno-strict-aliasing -std=gnu++0x -DNDEBUG '
 else:
-   compile=Builder(action='g++ -o $TARGET $SOURCE -c -g -fno-strict-aliasing -std=gnu++0x -I '+src_root_path)
+   compile_action='g++ -o $TARGET $SOURCE -c -g -fno-strict-aliasing -std=gnu++0x '
+compile_action=compile_action+'-I '+' -I '.join(include_path)
+compile=Builder(action=compile_action)
 arc_lib=Builder(action='ar rcs $TARGET $SOURCES')
 
 #ENVIRONMENT
@@ -71,7 +77,7 @@ else:
         CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']
    else:
         CCFLAGS=['/Zi','/EHsc','/W3']
-   env=Environment(ENV=ENV,CPPPATH=src_root_path,CCFLAGS=CCFLAGS,MSVS_ARCH=arc,TARGET_ARCH=arc)
+   env=Environment(ENV=ENV,CPPPATH=include_path,CCFLAGS=CCFLAGS,MSVS_ARCH=arc,TARGET_ARCH=arc)
 
 #LIB PREFIX AND SUFFIX 
 if os_name=='Windows':
@@ -145,19 +151,23 @@ for name in dependencies:
        SConscript(src_dependency_root_path+name+'/SConscript',exports='env os_name compiler')
     else: #LIBS ARE PRECOMPILED, COPY HEADERS AND LIBS RESPECTIVELY
        #COPY HEADERS
-       Command(target_dependency_include_path+name+'/',src_dependency_root_path+name+'/include/',Copy("$TARGET","$SOURCE"))
+       if name=='OpenGL':  #SPECIAL HANDLING FOR OPENGL HEADERS, TO KEEP THE "#include <GL/XXX.h>" STYLE
+          Command(target_dependency_include_path+name+'/GL/',src_dependency_root_path+name+'/include/',Copy("$TARGET","$SOURCE"))
+       else:
+          Command(target_dependency_include_path+name+'/',src_dependency_root_path+name+'/include/',Copy("$TARGET","$SOURCE"))
        #COPY LIBS
        src_dependency_lib_path=src_dependency_root_path+name+'/lib/'
        if os_name=='Linux':
        	  src_dependency_lib_path=src_dependency_lib_path+'Linux/'
-       elif os_name=='Darwin':
-       	  src_dependency_lib_path=src_dependency_lib_path+'Apple/'
        elif os_name=='Windows':
        	  src_dependency_lib_path=src_dependency_lib_path+'Windows/'
-       if os_architecture=='32bit':
-       	  src_dependency_lib_path=src_dependency_lib_path+'X86/'
-       else:
-	  src_dependency_lib_path=src_dependency_lib_path+'X64/'
+       elif os_name=='Darwin':
+       	  src_dependency_lib_path=src_dependency_lib_path+'Apple/'
+       if name!='OpenGL':
+          if os_architecture=='32bit':
+       	     src_dependency_lib_path=src_dependency_lib_path+'X86/'
+          else:
+	     src_dependency_lib_path=src_dependency_lib_path+'X64/'
        for lib_name in os.listdir(src_dependency_lib_path):
        	  Command(target_root_path+'lib/'+lib_name,os.path.join(src_dependency_lib_path,lib_name),Copy("$TARGET","$SOURCE")) 
 
