@@ -18,7 +18,6 @@
 #include <utility>
 #include "Physika_Core/Array/array.h"
 #include "Physika_Render/Render_Base/render_base.h"
-using std::pair;
 
 namespace Physika{
 
@@ -66,7 +65,7 @@ protected:
     //texture data, each element is a pair for one material of the mesh
     //the first entry is a flag indicating if there's texture for the material
     //the second entry is the OpenGL texture id
-    Array<pair<bool,unsigned int> > textures_;
+    Array<std::pair<bool,unsigned int> > textures_;
 
     //predefined render modes
     static const unsigned int render_solid_;
