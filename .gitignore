@@ -1,5 +1,4 @@
 .DS_Store
-*.a
 *.o
 *~
 .sconsign.dblite
