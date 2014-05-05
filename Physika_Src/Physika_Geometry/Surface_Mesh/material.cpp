@@ -124,6 +124,10 @@ void Material<Scalar>::setTextureFileName(const string &texture_file_name)
     texture_file_name_ = texture_file_name;
 }
 
+//explicit instantitation
+template class Material<float>;
+template class Material<double>;
+
 } //end of namespace SurfaceMeshInternal
 
 } //end of namespace Physika
