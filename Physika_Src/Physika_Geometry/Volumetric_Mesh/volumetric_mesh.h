@@ -19,6 +19,7 @@
 #include <cstring>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Utilities/physika_assert.h"
 
 namespace Physika{
 
@@ -36,7 +37,7 @@ public:
     inline int eleVertNum(int ele_idx) const{return uniform_ele_type_?(*vert_per_ele_):(vert_per_ele_[ele_idx]);}
     Vector<Scalar,Dim> vertPos(int vert_idx) const;
     Vector<Scalar,Dim> eleVertPos(int ele_idx, int vert_idx) const;
-    virtual void info() const=0;
+    virtual void printInfo() const=0;
     virtual int eleVolume(int ele_idx) const=0;
     virtual bool containsVertex(int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
     virtual void interpolationWeights(int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0;
@@ -86,6 +87,7 @@ VolumetricMesh<Scalar,Dim>::~VolumetricMesh()
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(int vert_idx) const
 {
+    PHYSIKA_ASSERT(vert_idx<vert_num_);
     Vector<Scalar,Dim> pos;
     for(int i = 0; i < Dim; ++i)
 	pos[i] = vertices_[Dim*vert_idx+i];
@@ -95,11 +97,16 @@ Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(int vert_idx) const
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::eleVertPos(int ele_idx, int vert_idx) const
 {
+    PHYSIKA_ASSERT(ele_idx<ele_num_);
     int ele_idx_start = 0;
     if(uniform_ele_type_)
+    {
+	PHYSIKA_ASSERT(vert_idx<(*vert_per_ele_));
 	ele_idx_start = ele_idx*(*vert_per_ele_);
+    }
     else
     {
+	PHYSIKA_ASSERT(vert_idx<vert_per_ele_[ele_idx]);
         for(int i = 0; i < ele_idx; ++i)
 	    ele_idx_start += vert_per_ele_[i];
     }
