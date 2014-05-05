@@ -62,6 +62,6 @@ int main()
   cout<<mat_double.inverse()<<endl;
   cout<<"matrix1 determinant:"<<endl;
   cout<<mat_double.determinant()<<endl;
-
+  getchar();
   return 0;
 }

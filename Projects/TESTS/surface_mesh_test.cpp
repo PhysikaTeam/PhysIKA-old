@@ -28,15 +28,15 @@ using Physika::SurfaceMesh;
 using Physika::Array;
 int main()
 {
-   /* Array<int> abc(10,1);
+    Array<int> abc(10,1);
     cout<<abc[1];
-    cout<<abc;*/
+    cout<<abc;
 	Vertex<float> vertex(1,2,3);
 	Vertex<float> vertex1(2,3,4);
-	//cout<<vertex<<endl;
-	//cout<<vertex1<<endl;
-	//cout<<vertex+vertex1<<endl;
-	//cout<<vertex-vertex1<<endl;
+	cout<<vertex<<endl;
+	cout<<vertex1<<endl;
+	cout<<vertex+vertex1<<endl;
+	cout<<vertex-vertex1<<endl;
 
 	Edge<float> edge;
 	Triangle<double> trianges;
@@ -44,4 +44,5 @@ int main()
 	mesh.computeNormals();
 	int a;
 	cin>>a;
+	return 0;
 }

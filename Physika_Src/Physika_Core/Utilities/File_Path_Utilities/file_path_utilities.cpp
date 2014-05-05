@@ -1,0 +1,47 @@
+/*
+ * @file file_path_utilities.cpp
+ * @brief Some universal functions when processing files' path.
+ * @author LiYou Xu
+ * @acknowledge Jernej Barbic, author of VegaFEM
+ *
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013 Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * If a copy of the GPL was not distributed with this file, you can obtain one at:
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ */
+
+
+#include "Physika_Core/Utilities/File_Path_Utilities/file_path_utilities.h"
+
+namespace Physika{
+
+namespace FilePathUtilities{
+	using std::string;
+const string dirName(const std::string &path)
+{
+	string::size_type pos1 = path.rfind('/');
+	string::size_type pos2 = path.rfind('\\');
+	if(pos1 != string::npos && pos2 != string::npos && pos1 < pos2) pos1 = pos2;
+	else if(pos1 == string::npos && pos2 == string::npos) return string(".");
+	else if(pos1 == string::npos) pos1 = pos2;
+	if(path[pos1] == '\\') return path.substr(0,pos1-1);
+	return path.substr(0,pos1);
+}
+const string filenameInPath(const string &path)
+{
+	string::size_type pos1 = path.rfind('/');
+	string::size_type pos2 = path.rfind('\\');
+	if(pos1 != string::npos && pos2 != string::npos && pos1 < pos2) pos1 = pos2;
+	else if(pos1 == string::npos && pos2 == string::npos) return path;
+	else if(pos1 == string::npos) pos1 = pos2;
+	return path.substr(pos1+1);
+}
+
+
+} //end of namespace FilePathUtilities
+
+} //end of namespace Physika
+

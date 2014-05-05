@@ -1,4 +1,4 @@
-/*
+﻿/*
  * @file obj_mesh_io.h 
  * @brief load and save mesh to an obj file.
  * @author Fei Zhu
@@ -16,7 +16,6 @@
 #define PHYSIKA_IO_SURFACE_MESH_IO_OBJ_MESH_IO_H_
 
 #include <string>
-using std::string;
 
 namespace Physika{
 
@@ -30,13 +29,13 @@ public:
     ~ObjMeshIO(){}
 
     // load a mesh from a obj file.
-    static void load(const string &filename, SurfaceMesh<Scalar> *mesh);
+    static void load(const std::string &filename, SurfaceMesh<Scalar> *mesh);
     // save a mesh to a obj file.
-    static void save(const string &filename, SurfaceMesh<Scalar> *mesh);
+    static void save(const std::string &filename, SurfaceMesh<Scalar> *mesh);
 
 protected:
-    static void loadMaterials(const string &filename, SurfaceMesh<Scalar> *mesh); //load material of the mesh from material file
-    static void saveMaterials(const string &filename, SurfaceMesh<Scalar> *mesh);
+    static void loadMaterials(const std::string &filename, SurfaceMesh<Scalar> *mesh); //load material of the mesh from material file
+    static void saveMaterials(const std::string &filename, SurfaceMesh<Scalar> *mesh);
 };
 
 } //end of namespace Physika
