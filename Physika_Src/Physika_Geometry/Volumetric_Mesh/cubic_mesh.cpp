@@ -42,11 +42,13 @@ void CubicMesh<Scalar>::printInfo() const
 template <typename Scalar>
 int CubicMesh<Scalar>::eleVolume(int ele_idx) const
 {
+    return 0;
 }
 
 template <typename Scalar>
 bool CubicMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const
 {
+    return false;
 }
 
 template <typename Scalar>

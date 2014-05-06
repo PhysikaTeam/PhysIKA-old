@@ -37,7 +37,7 @@ IsotropicLinearElasticity<Scalar,Dim>::~IsotropicLinearElasticity()
 }
 
 template <typename Scalar, int Dim>
-void IsotropicLinearElasticity<Scalar,Dim>::info() const
+void IsotropicLinearElasticity<Scalar,Dim>::printInfo() const
 {
     std::cout<<"Isotropic linear elastic material with infinitesimal strain measure:"<<std::endl;
     std::cout<<"Energy density: Psi = 1/2*lambda*(trace(e)^2)+mu*e:e"<<std::endl;

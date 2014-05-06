@@ -31,7 +31,7 @@ public:
     //if par_type = LAME_COEFFICIENTS, then: par1 = lambda, par2 = mu
     StVK(Scalar par1, Scalar par2, ModulusType par_type);
     ~StVK();
-    void info() const;
+    void printInfo() const;
     Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient
     SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;
     SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;

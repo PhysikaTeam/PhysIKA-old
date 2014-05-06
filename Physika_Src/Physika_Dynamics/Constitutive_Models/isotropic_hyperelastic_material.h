@@ -45,7 +45,7 @@ public:
     void setYoungsModulus(Scalar);
     Scalar poissonRatio() const;
     void setPoissonRatio(Scalar);
-    virtual void info() const=0;
+    virtual void printInfo() const=0;
     virtual Scalar energy(const SquareMatrix<Scalar,Dim> &F) const=0;//compute potential energy density from given deformation gradient
     virtual SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
     virtual SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;

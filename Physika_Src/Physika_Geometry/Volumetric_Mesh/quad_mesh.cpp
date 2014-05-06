@@ -42,11 +42,13 @@ void QuadMesh<Scalar>::printInfo() const
 template <typename Scalar>
 int QuadMesh<Scalar>::eleVolume(int ele_idx) const
 {
+    return 0;
 }
 
 template <typename Scalar>
 bool QuadMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,2> &pos) const
 {
+    return false;
 }
 
 template <typename Scalar>

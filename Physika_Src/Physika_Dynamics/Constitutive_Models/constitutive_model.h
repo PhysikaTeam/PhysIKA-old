@@ -22,7 +22,7 @@ class ConstitutiveModel
 public:
     ConstitutiveModel(){}
     virtual ~ConstitutiveModel(){}
-    virtual void info() const=0;
+    virtual void printInfo() const=0;
 protected:
 };
 
