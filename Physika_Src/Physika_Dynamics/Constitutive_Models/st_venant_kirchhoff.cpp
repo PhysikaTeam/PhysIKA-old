@@ -36,7 +36,7 @@ StVK<Scalar,Dim>::~StVK()
 }
 
 template <typename Scalar, int Dim>
-void StVK<Scalar,Dim>::info() const
+void StVK<Scalar,Dim>::printInfo() const
 {
     std::cout<<"St.Venant-Kirchhoff material:"<<std::endl;
     std::cout<<"Energy density: Psi = 1/2*lambda*(trace(E)^2)+mu*E:E"<<std::endl;

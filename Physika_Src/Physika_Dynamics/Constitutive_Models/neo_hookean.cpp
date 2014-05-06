@@ -37,7 +37,7 @@ NeoHookean<Scalar,Dim>::~NeoHookean()
 }
 
 template <typename Scalar, int Dim>
-void NeoHookean<Scalar,Dim>::info() const
+void NeoHookean<Scalar,Dim>::printInfo() const
 {
     std::cout<<"Compressible Neo-Hookean material:"<<std::endl;
     std::cout<<"Energy density: Psi = mu/2*(trace(C)-Dim)-mu*lnJ+lambda/2*(lnJ)^2"<<std::endl;
