@@ -30,8 +30,8 @@ public:
     SurfaceMeshIO(){}
     ~SurfaceMeshIO(){}
     //memory of mesh is preallocated by caller
-    static void load(const string& filename, SurfaceMesh<Scalar> *mesh);
-    static void save(const string& filename, SurfaceMesh<Scalar> *mesh);
+    static void load(const string &filename, SurfaceMesh<Scalar> *mesh);
+    static void save(const string &filename, SurfaceMesh<Scalar> *mesh);
 
 protected:
 };
@@ -39,6 +39,16 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_IO_SURFACE_MESH_IO_SURFACE_MESH_IO_H_
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 /*
- * @file image_io_base.h 
- * @brief, base class to import image files such as bmp etc.
- * @author Sheng Yang, Fei Zhu
+ * @file png_io.cpp 
+ * @Brief load/save png file
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -12,19 +12,37 @@
  *
  */
 
-#ifndef PHYSIKA_IO_IMAGE_IO_IMAGE_IO_BASE_H_
-#define PHYSIKA_IO_IMAGE_IO_IMAGE_IO_BASE_H_
+#include "Physika_IO/Image_IO/png_io.h"
 
 namespace Physika{
 
-class ImageIOBase
+unsigned char* PngIO::load(const string &filename, int &width, int &height)
 {
-public:
-    ImageIOBase();
-    ~ImageIOBase();
-protected:
-};
+//TO DO: implementation
+    return 0;
+}
+
+void PngIO::save(const string &filename, int width, int height, const unsigned char *image_data)
+{
+//TO DO: implementation
+}
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_IO_IMAGE_IO_IMAGE_IO_BASE_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

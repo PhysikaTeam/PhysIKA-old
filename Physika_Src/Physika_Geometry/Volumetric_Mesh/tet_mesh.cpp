@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Array/array.h"
@@ -38,7 +39,7 @@ TetMesh<Scalar>::~TetMesh()
 }
 
 template <typename Scalar>
-void TetMesh<Scalar>::info() const
+void TetMesh<Scalar>::printInfo() const
 {
     std::cout<<"Tetrahedral Mesh."<<std::endl;
 }
@@ -46,6 +47,7 @@ void TetMesh<Scalar>::info() const
 template <typename Scalar>
 int TetMesh<Scalar>::eleVolume(int ele_idx) const
 {
+    PHYSIKA_ASSERT(ele_idx<(this->ele_num_));
     Array< Vector<Scalar,3> > ele_vertices(4);
     for(int i = 0; i < 4; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -59,6 +61,7 @@ int TetMesh<Scalar>::eleVolume(int ele_idx) const
 template <typename Scalar>
 bool TetMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const
 {
+    PHYSIKA_ASSERT(ele_idx<(this->ele_num_));
     Scalar weights[4];
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = (weights[0]>=0)&&(weights[1]>=0)&&(weights[2]>=0)&&(weights[3]>=0);
@@ -96,6 +99,7 @@ void TetMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,3> &
 
   wi = Di / D0
 */
+    PHYSIKA_ASSERT(ele_idx<(this->ele_num_));
     Array< Vector<Scalar,3> > ele_vertices(4);
     for(int i = 0; i < 4; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);

@@ -1,0 +1,64 @@
+#################################################################
+# Scons script for LodePNG
+# called by Scons script of Physika
+# @author: Fei Zhu, 05/02/2014        
+#################################################################
+
+######################CONFIGURATIONS#############################
+# IMPORT FROM PARENT SCONS SCRIPT
+Import('env os_name compiler')
+#################################################################
+
+#IMPORTS
+import os
+from os.path import basename
+from glob import glob
+
+#PHYSIKA ROOT PATH
+physika_root_path='../../../'
+
+#SRC PATH
+src_root_path='./'
+
+#LIB NAME
+lib_name='LodePNG'
+
+#LIB PREFIX AND SUFFIX 
+if os_name=='Windows':
+    obj_suffix='.obj'
+    lib_suffix='.lib'
+elif os_name in ('Linux','Darwin'):
+    lib_preffix='lib'
+    obj_suffix='.o'
+    lib_suffix='.a'
+
+#COMPILE SRC FILES AND ARCHIVE INTO LIB
+target_root_path=physika_root_path+'Public_Library/'
+lib_obj_files=[]
+lib_src_files=glob(os.path.join(src_root_path,'*.cpp'))
+lib_header_files=glob(os.path.join(src_root_path,'*.h'))
+if compiler==['g++']:
+    for src_file in lib_src_files:
+        obj_file=os.path.splitext(src_file)[0]+obj_suffix
+	lib_obj_files.append(obj_file)
+	env.COMPILE(obj_file,src_file)
+lib_file=lib_name+lib_suffix
+if os_name in ('Linux','Darwin'):
+   lib_file=lib_preffix+lib_file
+lib_file=target_root_path+'lib/'+os.path.basename(lib_file)
+if compiler==['g++']:
+   env.ARCLIB(lib_file,lib_obj_files)
+else:
+   env.StaticLibrary(target=lib_file,source=lib_src_files)
+
+#COPY HEADERS TO TARGET DIRECTORY, LIBS ARE ALREADY THERE
+header_target=[]
+for header_file in lib_header_files:
+    if header_file.find(src_root_path)==0:
+       target_file=header_file.replace(src_root_path,target_root_path+'include/Physika_Dependency/'+lib_name+'/')
+       header_target=Command(target_file,header_file,Copy("$TARGET","$SOURCE"))
+
+#CUSTOMIZE CLEAN OPTION
+header_delete_files= [os.path.join(target_root_path+'include/', name) for name in os.listdir(target_root_path+'include/')
+                      if os.path.isdir(os.path.join(target_root_path+'include/', name))]
+Clean(header_target,header_delete_files)

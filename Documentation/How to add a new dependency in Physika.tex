@@ -1,0 +1,82 @@
+\documentclass[11pt,fullpage]{article}
+%\usepackage{multicol,wrapfig,amsmath,subfigure}
+\usepackage{multicol,amsmath,amssymb,algorithmic}
+\usepackage{graphics,graphicx}
+\usepackage[right = 2.5cm, left=2.5cm, top = 2.5cm, bottom =2.5cm]{geometry}
+\pagestyle{plain}
+\def\urlfont{\DeclareFontFamily{OT1}{cmtt}{\hyphenchar\font='057}
+              \normalfont\ttfamily \hyphenpenalty=10000}
+
+%\input macros
+
+\newcommand{\subheading}[1]{\noindent \textbf{#1}}
+\newcommand{\grad}{\nabla}
+\newcommand{\jump}[1]{[#1]}
+\newcommand{\limit}[2]{\lim_{#1 \rightarrow #2}}
+\newcommand{\mb}[1]{\mathbf{#1}}
+\newcommand{\reals}[1]{\mathbb{R}^{#1}}
+
+
+\begin{document}
+\noindent
+\begin{center}
+{\bf\large  How to add a new dependency in Physika?}
+{\\ Fei Zhu \\ 05/05/2014}
+\end{center}
+
+\subheading{Step 1: Is it really necessary?}
+
+\noindent{}We're very cautious about adding a new dependency in
+Physika. So please ask yourself the following questions before you add one:
+\begin{itemize}
+\item{Is the functionality you need already in Physika? We avoid
+    adding dependencies that have redundant functionality. If the
+    functionality you need is already covered by either Physika itself or
+    any existing dependency, don't add a new one.}
+\item{Is the functionality you need easy to implement with short code? If so,
+    implement it yourself.}
+\item{Are you confident that the library to be imported will be used frequently by
+    all(most) Physika developers? Generally we don't recommend to import
+    3rd code(probably huge) merely for the need of a few.}
+\end{itemize}
+
+\subheading{Step 2: Add a new dependency.}
+
+\noindent{}The path of Physika dependency is
+``Physika\_{}Src/Physika\_{}Dependency/''. The dependency in Physika may be provided in \textbf{3}
+forms:
+\begin{enumerate}
+\item{\textbf{Only headers.} This is when the 3rd party code is
+    written in C++ template. In this case, place the code in
+    corresponding dependency path and update the ``pure\_{}copy''
+    variable in scons script of Physika. The headers will be copied to
+  target include directory while building Physika.}
+\item{\textbf{Source code.} In this case, you need to write a scons
+    script for the library, rename it as ``SConscript'' and place it
+    at root directory of this library. Take the ``LodePNG'' library as
+    an example, the script is put in
+    ``Physika\_{}Src/Physika\_{}Dependency/LodePNG/''. In this script you need to
+    compile the library into libs and copy the headers and libs to
+    target build directories of Physika. The build script will be called
+  by build script of Physika. I provide a template of this script at
+  root directory of dependency.}
+\item{\textbf{Headers and precompiled libraries.} In this case, you
+    need to put all headers in a subdirectory of the library with the
+    name ``include'' and put all libs in a subdirectory called
+    ``lib''. The libs are categorized according to the OS name and
+    architecture. In ``lib'' directory, there are 3 directories named
+    as ``Apple'',``Linux'', and ``Windows''. Each of the 3 directories
+  has 2 subdirectories called ``X86'' and ``X64''. The libs for
+  different platforms are put in corresponding directories
+  respectively. For example, the lib file for 64 bit Windows is put in
+``LibraryName/lib/Windows/X64/''. The build script of Physika will be
+able to find lib files for the target platform and copy them to public
+directories. \emph{Please provide lib files for all supported platforms
+while adding a new dependency!}}
+\end{enumerate}
+
+\subheading{Step 3: Inform other developers.}
+
+\noindent{}It's a big decision anyway, they deserve to be noted.
+
+\end{document}

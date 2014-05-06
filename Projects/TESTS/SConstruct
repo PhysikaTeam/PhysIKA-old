@@ -26,6 +26,10 @@ build_msvc=True
 #PROJECT NAME: SET NAME OF YOUR PROJECT
 project_name='PhysikaTest'
 
+#USE OPENGL(GL,GLU,GLUT,GLUI) OR NOT
+use_gl=True
+#use_gl=False
+
 #SRC PATH: SET ROOT DIRECTORY OF YOUR CODE
 src_root_path=os.getcwd()
 
@@ -45,7 +49,7 @@ additional_lib_path=[]
 
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
 physika_libs=['Physika_Render','Physika_IO','Physika_GUI','Physika_Geometry',
-              'Physika_Dynamics','Physika_Core']
+              'Physika_Dynamics','Physika_Core','LodePNG']
 
 #ADDITIONAL LIBS TO LINK
 #EXAMPLE: additional_libs=['lib1','lib2']
@@ -73,6 +77,25 @@ inc_files=[]
 #       src_files.extend(glob(os.path.join(dir,'*.cpp')))
 #       inc_files.extend(glob(os.path.join(dir,'*.h')))
 
+#USE OPENGL OR NOT
+if use_gl==True:
+    additional_inc_path.append('../../Public_Library/include/Physika_Dependency/OpenGL/')
+    if os_architecture=='32bit':
+        additional_libs.append('glui32')
+    else:
+        additional_libs.append('glui64')
+    if os_name=='Linux':
+        additional_libs.append('glut')
+        additional_libs.append('GLU')
+        if os_architecture=='32bit':
+            additional_libs.append('GL32')
+        else:
+            additional_libs.append('GL64')
+    elif os_name=='Windows':
+        additional_libs.append('glut32')
+        additional_libs.append('glu32')
+        additional_libs.append('opengl32')
+
 #INCLUDE PATH AND LIB PATH
 include_path=physika_inc_path+additional_inc_path
 lib_path=physika_lib_path+additional_lib_path
@@ -92,6 +115,10 @@ if compiler=='g++':
    else:
       CCFLAGS=['-std=gnu++0x','-fno-strict-aliasing','-g']
    env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
+   #MAC OS: USE OPENGL GLUT FRAMEWORKS SHIPPED WITH THE SYSTEM
+   if os_name=='Darwin':
+      env.Append(LINKFLAGS=['-framework','OpenGL'])
+      env.Append(LINKFLAGS=['-framework','GLUT'])
 else:
    if build_type=='Release':
       CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']
@@ -109,6 +136,13 @@ target=env.Program(target_name,src_files)
 #GENERATE MSVC PROJECT OPTIONALLY
 if compiler=='msvc':
    sln=env.MSVSProject(target=target_name+env['MSVSPROJECTSUFFIX'],srcs=src_files,incs=inc_files,buildtarget=target,variant=build_type)
+
+#WINDOWS WORKAROUND: COPY DLLS TO EXECUTIVE DIRECTORY
+if os_name=='Windows':
+    for rpath in lib_path:
+        for dll_name in os.listdir(rpath):
+            if dll_name.endswith('.dll'):
+                Command(dll_name, rpath+dll_name, Copy("$TARGET", "$SOURCE"))
 
 #CUSTOMIZE CLEAN OPTION
 if compiler=='msvc':

@@ -23,8 +23,6 @@
 #include "Physika_Geometry/Surface_Mesh/group.h"
 #include "Physika_Geometry/Surface_Mesh/material.h"
 
-using std::vector;
-
 namespace Physika{
 
 using SurfaceMeshInternal::Vertex;
@@ -95,16 +93,18 @@ protected:
     void setVertexNormalsToWeightedFaceNormals();//weight face normal with angle
 
 protected:
-    vector<Vector<Scalar,3> > vertex_positions_;
-    vector<Vector<Scalar,3> > vertex_normals_;
-    vector<Vector<Scalar,2> > vertex_textures_;
-    vector<Group<Scalar> > groups_;
-    vector<Material<Scalar> > materials_;
+    std::vector<Vector<Scalar,3> > vertex_positions_;
+    std::vector<Vector<Scalar,3> > vertex_normals_;
+    std::vector<Vector<Scalar,2> > vertex_textures_;
+    std::vector<Group<Scalar> > groups_;
+    std::vector<Material<Scalar> > materials_;
 };
 
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
+
+
 
 
 

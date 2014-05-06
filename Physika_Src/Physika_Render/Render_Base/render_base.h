@@ -1,7 +1,7 @@
 /*
  * @file render_base.h 
- * @Basic render, all other render calss inerit from this class.
- * @author Sheng Yang
+ * @Basic render, all other render class inerit from this class.
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -20,11 +20,10 @@ namespace Physika{
 class RenderBase
 {
 public:
-    RenderBase();
-    virtual ~RenderBase() {};
+    RenderBase(){}
+    virtual ~RenderBase(){}
 
-
-    virtual void render() {};
+    virtual void render()=0;
 
 protected:
 };
