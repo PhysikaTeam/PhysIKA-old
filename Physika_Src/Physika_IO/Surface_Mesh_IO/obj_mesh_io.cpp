@@ -1,7 +1,7 @@
 ﻿/*
 * @file obj_mesh_io.cpp 
 * @brief load and save mesh to an obj file.
-* @author Fei Zhu
+* @author Fei Zhu, Liyou Xu
 * 
 * This file is part of Physika, a versatile physics simulation library.
 * Copyright (C) 2013 Physika Group.
@@ -25,6 +25,7 @@ using Physika::SurfaceMeshInternal::Material;
 using Physika::SurfaceMeshInternal::Vertex;
 using std::endl;
 using std::cout;
+using std::string;
 
 namespace Physika{
     
@@ -39,12 +40,12 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
     {
         PHYSIKA_ERROR("this is not a obj file");
     }
-    Group<Scalar>* current_group =NULL;
-    unsigned int num_face=0;
-    unsigned int current_material_index=0;
-    unsigned int line_num =0;
+    Group<Scalar>* current_group = NULL;
+    unsigned int num_face = 0;
+    unsigned int current_material_index = 0;
+    unsigned int line_num = 0;
     unsigned int num_group_faces = 0;
-    std::string group_source_name;
+    string group_source_name;
     unsigned int group_clone_index = 0;
     std::fstream ifs( filename.c_str(),std::ios::in);
     if(!ifs)
@@ -79,7 +80,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             if(!(stream>>z))PHYSIKA_ERROR("z position of a normal read error");
             mesh->addVertexNormal(Vector<Scalar,3>(x,y,z));
         }
-        else if(strncmp(line, "vt ", 3)==0)
+        else if(strncmp(line, "vt ", 3) == 0)
         {   //vertex texture
             Scalar x,y;
             if(!(stream>>x))PHYSIKA_ERROR( "x position of a texture read error");
@@ -183,7 +184,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 clone_name<<group_source_name;
                 clone_name<<'.';
                 clone_name<<group_clone_index;
-                std::string new_name;
+                string new_name;
                 clone_name>>new_name;
                 mesh->addGroup(Group<Scalar>(new_name));
                 current_group=mesh->groupPtr(new_name);
