@@ -138,7 +138,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                     {
                         if(strstr(vertex_indice, "/") != NULL)
                         {    //  v/t
-                            if(sscanf_s(vertex_indice, "%u/%u", &pos, &tex) == 2)
+                            if(sscanf(vertex_indice, "%u/%u", &pos, &tex) == 2)
                             {
                                 Vertex<Scalar> vertex_temple(pos-1);
                                 vertex_temple.setTextureCoordinateIndex(tex-1);
