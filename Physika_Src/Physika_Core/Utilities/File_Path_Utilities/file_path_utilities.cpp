@@ -15,12 +15,13 @@
 
 
 #include "Physika_Core/Utilities/File_Path_Utilities/file_path_utilities.h"
+using std::string;
 
 namespace Physika{
 
 namespace FilePathUtilities{
-	using std::string;
-const string dirName(const std::string &path)
+
+string dirName(const string &path)
 {
 	string::size_type pos1 = path.rfind('/');
 	string::size_type pos2 = path.rfind('\\');
@@ -30,7 +31,7 @@ const string dirName(const std::string &path)
 	if(path[pos1] == '\\') return path.substr(0,pos1-1);
 	return path.substr(0,pos1);
 }
-const string filenameInPath(const string &path)
+string filenameInPath(const string &path)
 {
 	string::size_type pos1 = path.rfind('/');
 	string::size_type pos2 = path.rfind('\\');

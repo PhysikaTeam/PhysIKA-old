@@ -17,13 +17,13 @@
 #define PHYSIKA_CORE_UTILITIES_FILE_PATH_UTILITIES_FILE_PATH_UTILITIES_H_
 
 #include<string>
-using std::string;
+
 namespace Physika{
 
-namespace File_Path_Utilities{
+namespace FilePathUtilities{
 
-const string dirname(const string &path);   //abstract father_directory of a file path
-const string filenameInPath(const string &path);   //abstract filename in a path of a file
+std::string dirName(const std::string &path);   //abstract father_directory of a file path
+std::string filenameInPath(const std::string &path);   //abstract filename in a path of a file
 
 } //end of namespace File_Path_Utilities
 
