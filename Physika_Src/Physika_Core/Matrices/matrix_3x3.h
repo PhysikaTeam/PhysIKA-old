@@ -66,9 +66,9 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,3> &mat)
 {
-    s<<mat(0,0)<<", "<<mat(0,1)<<", "<<mat(0,2)<<std::endl;
-    s<<mat(1,0)<<", "<<mat(1,1)<<", "<<mat(1,2)<<std::endl;
-    s<<mat(2,0)<<", "<<mat(2,1)<<", "<<mat(2,2)<<std::endl;
+    s<<"["<<mat(0,0)<<", "<<mat(0,1)<<", "<<mat(0,2)<<"; ";
+    s<<mat(1,0)<<", "<<mat(1,1)<<", "<<mat(1,2)<<"; ";
+    s<<mat(2,0)<<", "<<mat(2,1)<<", "<<mat(2,2)<<"]";
     return s;
 }
  

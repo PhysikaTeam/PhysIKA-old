@@ -62,7 +62,7 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const Vector<Scalar,3> &vec)
 {
-    s<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<std::endl;
+    s<<"("<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<")";
     return s;
 }
 
@@ -82,3 +82,4 @@ typedef Vector<double,3> Vector3d;
 } //end of namespace Physika
 
 #endif //PHYSIKA_CORE_VECTORS_VECTOR_3D_H_
+

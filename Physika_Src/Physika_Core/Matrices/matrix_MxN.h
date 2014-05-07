@@ -67,12 +67,15 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
 {
+    s<<"[";
     for(int i = 0; i < mat.rows(); ++i)
     {
         for(int j = 0; j < mat.cols() - 1; ++j)
 	    s<<mat(i,j)<<", ";
-        s<<mat(i,mat.cols() - 1)<<std::endl;
+	if(i != mat.rows()-1)
+	    s<<mat(i,mat.cols() - 1)<<"; ";
     }
+    s<<"]";
     return s;
 }
 
@@ -90,3 +93,4 @@ typedef MatrixMxN<double> MatrixXd;
 }
 
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_MXN_H_
+
