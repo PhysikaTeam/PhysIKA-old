@@ -65,7 +65,7 @@ void SurfaceMeshRender<Scalar>::setSurfaceMesh(SurfaceMesh<Scalar> *mesh)
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::enableRenderSolid()
 {
-    render_mode_ &= render_solid_;
+    render_mode_ |= render_solid_;
 }
 
 template <typename Scalar>
@@ -77,7 +77,7 @@ void SurfaceMeshRender<Scalar>::disableRenderSolid()
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::enableRenderVertices()
 {
-    render_mode_ &= render_vertices_;
+    render_mode_ |= render_vertices_;
 }
 
 template <typename Scalar>
@@ -89,7 +89,7 @@ void SurfaceMeshRender<Scalar>::disableRenderVertices()
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::enableRenderWireframe()
 {
-    render_mode_ &= render_wireframe_;
+    render_mode_ |= render_wireframe_;
 }
 
 template <typename Scalar>
@@ -107,13 +107,13 @@ void SurfaceMeshRender<Scalar>::enableFlatShading()
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::enableSmoothShading()
 {
-    render_mode_ &= render_flat_or_smooth_;
+    render_mode_ |= render_flat_or_smooth_;
 }
 
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::enableTexture()
 {
-    render_mode_ &= render_texture_;
+    render_mode_ |= render_texture_;
 }
 
 template <typename Scalar>
@@ -139,9 +139,9 @@ void SurfaceMeshRender<Scalar>::initRenderMode()
 {
     //default render mode: solid, smooth shading, texture
     render_mode_ = 0;
-    render_mode_ &= render_solid_;
-    render_mode_ &= render_flat_or_smooth_;
-    render_mode_ &= render_texture_;
+    render_mode_ |= render_solid_;
+    render_mode_ |= render_flat_or_smooth_;
+    render_mode_ |= render_texture_;
 }
 
 template <typename Scalar>
