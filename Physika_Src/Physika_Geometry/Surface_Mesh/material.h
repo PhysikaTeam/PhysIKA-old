@@ -23,6 +23,9 @@ namespace Physika{
 
 namespace SurfaceMeshInternal{
 
+/*
+ * 'illum','map_Ka','map_Ks' in material file are ignored
+ */
 template <typename Scalar>
 class Material
 {

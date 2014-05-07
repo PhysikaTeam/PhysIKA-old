@@ -12,6 +12,7 @@
 *
 */
 
+#include <cstring>
 #include <sstream>
 #include <fstream>
 #include "Physika_Core/Utilities/physika_assert.h"
@@ -61,9 +62,9 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         stream.str("");
         stream.clear();
         stream<<line;
-        char type_of_line[50];
+		char type_of_line[maxline];
         stream>>type_of_line;
-        if(strncmp(line,"v ",2) == 0)
+		if(strcmp(type_of_line,"v") == 0)
         {
             //vertex
             Scalar x,y,z;
@@ -72,7 +73,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             if(!(stream>>z))PHYSIKA_ERROR("stream>>z");
             mesh->addVertexPosition(Vector<Scalar,3>(x,y,z));
         }
-        else if(strncmp(line, "vn ", 3) == 0)
+		else if(strcmp(type_of_line, "vn") == 0)
         {   //vertex normal
             Scalar x,y,z;
             if(!(stream>>x))PHYSIKA_ERROR("x position of a normal read error");
@@ -80,14 +81,14 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             if(!(stream>>z))PHYSIKA_ERROR("z position of a normal read error");
             mesh->addVertexNormal(Vector<Scalar,3>(x,y,z));
         }
-        else if(strncmp(line, "vt ", 3) == 0)
+		else if(strcmp(type_of_line, "vt") == 0)
         {   //vertex texture
             Scalar x,y;
             if(!(stream>>x))PHYSIKA_ERROR( "x position of a texture read error");
             if(!(stream>>y))PHYSIKA_ERROR( "y position of a texture read error");
             mesh->addVertexTextureCoordinate(Vector<Scalar,2>(x,y));
         }
-        else if(strncmp(line, "g ", 2) == 0)
+		else if(strcmp(type_of_line, "g") == 0)
         {
             string group_name;
             stream>>group_name;
@@ -106,7 +107,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
 
         }
-        else if(strncmp(line, "f ",2) == 0|| (strncmp(line, "fo ", 3) == 0))
+		else if(strcmp(type_of_line, "f") == 0|| (strcmp(type_of_line, "fo") == 0))
         {
             if(current_group==NULL)
             {
@@ -122,7 +123,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 unsigned int tex;
                 if(strstr(vertex_indice,"//") != NULL)
                 {   //    v//n
-                    if(sscanf_s(vertex_indice,"%u//%u", &pos, &nor) == 2 )
+                    if(sscanf_s(vertex_indice, "%u//%u", &pos, &nor) == 2 )
                     {
                         Vertex<Scalar> vertex_temple(pos-1);
                         vertex_temple.setNormalIndex(nor-1);
@@ -132,9 +133,9 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 }
                 else
                 {
-                    if(sscanf_s(vertex_indice,"%u/%u/%u", &pos,&tex,&nor) != 3)
+                    if(sscanf_s(vertex_indice, "%u/%u/%u", &pos, &tex, &nor) != 3)
                     {
-                        if(strstr(vertex_indice,"/") != NULL)
+                        if(strstr(vertex_indice, "/") != NULL)
                         {    //  v/t
                             if(sscanf_s(vertex_indice, "%u/%u", &pos, &tex) == 2)
                             {
@@ -149,7 +150,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                         }
                         else
                         {
-                            if(sscanf_s(vertex_indice,"%u", &pos) == 1)
+                            if(sscanf_s(vertex_indice, "%u", &pos) == 1)
                             {
                                 face_temple.addVertex(Vertex<Scalar>(pos-1));
                             }
@@ -172,8 +173,8 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             num_group_faces ++;
             current_group->addFace(face_temple);
         }
-        else if((strncmp(line, "#", 1) == 0) || (strncmp(line, "\0", 1) == 0)){}
-        else if(strncmp(line, "usemtl", 6) == 0)
+		else if((strcmp(type_of_line, "#") == 0) || (strcmp(type_of_line, "\0") == 0)){}
+		else if(strcmp(type_of_line, "usemtl") == 0)
         {
             if (num_group_faces > 0)
             {
@@ -197,14 +198,14 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             {
                 if(mesh->numGroups() == 0)
                 {
-                    mesh->addGroup(Group<Scalar>(string("default") ) );
+                    mesh->addGroup(Group<Scalar>(string("default")));
                     current_group = mesh->groupPtr(string("default"));
                 }
                 current_group->setMaterialIndex(current_material_index);
             }
             else {PHYSIKA_ASSERT("material found false");}
         }
-        else if(strncmp(line, "mtllib", 6) == 0)
+		else if(strcmp(type_of_line, "mtllib") == 0)
         {
             string mtl_name;
             stream>>mtl_name;
@@ -250,7 +251,6 @@ void ObjMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
         fileout<<"vn "<<example[0]<<' '<<example[1]<<' '<<example[2]<<endl;
     }
     unsigned int num_tex = mesh->numTextureCoordinates();
-    cout<<"num_tex:"<<num_tex<<endl;
     for(i=0;i<num_tex;++i)
     {
         Vector<Scalar,2> example = mesh->vertexTextureCoordinate(i);
@@ -264,22 +264,22 @@ void ObjMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
         fileout<<"g "<<group_ptr->name()<<endl;
         unsigned int num_face = group_ptr->numFaces(),j;
         Face<Scalar> *face_ptr;
-        for(j=0;j<num_face;++j)
+        for(j=0; j<num_face; ++j)
         {
             face_ptr = group_ptr->facePtr(j);
             fileout<<"f ";
             unsigned int num_vertices_inface = face_ptr->numVertices(),k;
             Vertex<Scalar> *vertex_ptr;
-            for(k=0;k<num_vertices_inface;++k)
+            for(k=0; k<num_vertices_inface; ++k)
             {
                 vertex_ptr = face_ptr->vertexPtr(k);
-                fileout<<(vertex_ptr->positionIndex()+1);
+                fileout<<(vertex_ptr->positionIndex() + 1);
                 if(vertex_ptr->hasTexture()||vertex_ptr->hasNormal())
                 {
                     fileout<<'/';
-                    if(vertex_ptr->hasTexture()) fileout<<vertex_ptr->textureCoordinateIndex()+1;
+                    if(vertex_ptr->hasTexture()) fileout<<vertex_ptr->textureCoordinateIndex() + 1;
                 }
-                if(vertex_ptr->hasNormal()) fileout<<'/'<<vertex_ptr->normalIndex()+1<<' ';
+                if(vertex_ptr->hasNormal()) fileout<<'/'<<vertex_ptr->normalIndex() + 1<<' ';
             }
             fileout<<endl;
         }
@@ -290,7 +290,7 @@ void ObjMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
 template <typename Scalar>
 void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
-    std::fstream ifs(filename.c_str(),std::ios::in);
+    std::fstream ifs(filename.c_str(), std::ios::in);
     PHYSIKA_MESSAGE_ASSERT(ifs, "can't open this mtl file");
     const unsigned int maxline = 1024;
     char line[maxline];
@@ -331,9 +331,7 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
             {
                 Scalar shininess;
                 if(!(stream>>shininess))PHYSIKA_ERROR( "error! no data to set shininess");
-				cout<<"read shininess:"<<shininess<<endl;
                 shininess *= 128.0 /1000.0;
-				cout<<"chulihou shininess:"<<shininess<<endl;
                 material_example.setShininess(shininess);
             }
             else {}
@@ -374,7 +372,6 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
             char tex_name[maxline];
             strcpy(tex_name,"");
             stream>>tex_name;
-            
             texture_file_complete.assign(tex_name);
             texture_file_complete=FilePathUtilities::dirName(filename)+string("/")+texture_file_complete;
             if(strlen(tex_name))material_example.setTextureFileName(texture_file_complete);
