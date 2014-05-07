@@ -124,7 +124,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 unsigned int tex;
                 if(strstr(vertex_indice,"//") != NULL)
                 {   //    v//n
-                    if(sscanf_s(vertex_indice, "%u//%u", &pos, &nor) == 2 )
+                    if(sscanf(vertex_indice, "%u//%u", &pos, &nor) == 2 )
                     {
                         Vertex<Scalar> vertex_temple(pos-1);
                         vertex_temple.setNormalIndex(nor-1);
@@ -134,7 +134,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 }
                 else
                 {
-                    if(sscanf_s(vertex_indice, "%u/%u/%u", &pos, &tex, &nor) != 3)
+                    if(sscanf(vertex_indice, "%u/%u/%u", &pos, &tex, &nor) != 3)
                     {
                         if(strstr(vertex_indice, "/") != NULL)
                         {    //  v/t
@@ -151,7 +151,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                         }
                         else
                         {
-                            if(sscanf_s(vertex_indice, "%u", &pos) == 1)
+                            if(sscanf(vertex_indice, "%u", &pos) == 1)
                             {
                                 face_temple.addVertex(Vertex<Scalar>(pos-1));
                             }
