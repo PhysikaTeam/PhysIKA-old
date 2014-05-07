@@ -302,8 +302,11 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
         ifs.getline(line, maxline);
         stream.str("");
         stream.clear();
+		char type_of_line[maxline];
+		stream<<line;
+		stream>>type_of_line;
         string texture_file_complete;
-        switch (line[0])
+		switch (type_of_line[0])
         {
         case '#':
             break;
@@ -317,32 +320,29 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
             material_example.setAlpha(1);
             material_example.setTextureFileName(string());
             char mtl_name[maxline];
-            stream<<line;
-            stream>>prefix>>mtl_name;
+            stream>>mtl_name;
             num_mtl++;
             material_example.setName(string(mtl_name));
             break;
 
         case 'N':
-            if (line[1] == 's')
+			if (type_of_line[1] == 's')
             {
                 Scalar shininess;
-                stream<<line;
-                stream>>prefix;
                 if(!(stream>>shininess))PHYSIKA_ERROR( "error! no data to set shininess");
+				cout<<"read shininess:"<<shininess<<endl;
                 shininess *= 128.0 /1000.0;
+				cout<<"chulihou shininess:"<<shininess<<endl;
                 material_example.setShininess(shininess);
             }
             else {}
             break;
 
         case 'K':
-            switch (line[1])
+			switch (type_of_line[1])
             {
             case 'd':
                 Scalar kd1,kd2,kd3;
-                stream<<line;
-                stream>>prefix;
                 if(!(stream>>kd1)) break;
                 stream>>kd2;
                 if(!(stream>>kd3))PHYSIKA_ERROR( "error less data when read Kd.\n");
@@ -351,8 +351,6 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
 
             case 's':
                 Scalar ks1,ks2,ks3;
-                stream<<line;
-                stream>>prefix;
                 if(!(stream>>ks1)) break;
                 stream>>ks2;
                 if(!(stream>>ks3))PHYSIKA_ERROR( "error less data when read Ks.\n");
@@ -361,8 +359,6 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
 
             case 'a':
                 Scalar ka1,ka2,ka3;
-                stream<<line;
-                stream>>prefix;
                 if(!(stream>>ka1)) break;
                 stream>>ka2;
                 if(!(stream>>ka3))PHYSIKA_ERROR( "error less data when read Ka.\n");
@@ -376,8 +372,6 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
         case 'm':
             char tex_name[maxline];
             strcpy(tex_name,"");
-            stream<<line;
-            stream>>prefix;
             stream>>tex_name;
             
             texture_file_complete.assign(tex_name);
@@ -387,8 +381,6 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
 
         case 'd':
             char next[maxline];
-            stream<<line;
-            stream>>prefix;
             Scalar alpha;
             stream>>next;
             if(next[0] == '-') stream>>alpha;

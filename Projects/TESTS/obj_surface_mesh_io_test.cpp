@@ -23,8 +23,8 @@ using std::endl;
 int main()
 {
 	SurfaceMesh<float> mesh;
-	ObjMeshIO<float>::load(string("C:/Users/acer/Documents/model/fish.obj"), &mesh);
-	ObjMeshIO<float>::save(string("C:/Users/acer/Documents/model/fish_fuben.obj"),&mesh);
+	ObjMeshIO<float>::load(string("C:/Users/acer/Documents/model/baolingqiu.obj"), &mesh);
+	ObjMeshIO<float>::save(string("C:/Users/acer/Documents/model/baolingqiu_fuben.obj"),&mesh);
 	//int vertex_num = mesh.numVertices(),normal_num = mesh.numNormals(), texture_num = mesh.numTextureCoordinates();
 	//cout<<"vertex_num:"<<vertex_num<<endl;
 	//for(int i = 0;i<vertex_num;++i)
@@ -35,17 +35,17 @@ int main()
 	//cout<<"texture_num:"<<texture_num<<endl;
 	//for(int i=0;i<texture_num;++i)
 	//	cout<<mesh.vertexTextureCoordinate(i)<<endl;
-	//int group_num=mesh.numGroups();
-	//cout<<"group_num:"<<group_num<<endl;
-	/*for(int i=0;i<group_num;++i)
+	int group_num=mesh.numGroups();
+	cout<<"group_num:"<<group_num<<endl;
+	for(int i=0;i<group_num;++i)
 	{
 		cout<<i<<' '<<mesh.group(i).name()<<' '<<mesh.group(i).materialIndex()<<endl;
 	}
 	int mtl_num=mesh.numMaterials();
 	for(int i=0;i<mtl_num;++i)
-		cout<<i<<"   "<<mesh.material(i).name()<<" "<<mesh.material(i).textureFileName() <<endl;
+		cout<<i<<"   "<<mesh.material(i).name()<<" "<<mesh.material(i).textureFileName() <<" Ns:"<<mesh.material(i).shininess()<<endl;
 	
 	getchar();
-	*/
+	
 	return 0;
 }
