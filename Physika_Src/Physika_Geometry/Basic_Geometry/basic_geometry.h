@@ -20,6 +20,9 @@ namespace Physika{
 class BasicGeometry
 {
 public:
+    BasicGeometry(){}
+    virtual ~BasicGeometry(){}
+    virtual void printInfo() const = 0;
 protected:
 };
 

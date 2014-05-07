@@ -64,9 +64,10 @@ template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const VectorND<Scalar> &vec)
 {
     int dim = vec.dims();
+    s<<"(";
     for(int i = 0; i < dim-1; ++i)
         s<<vec[i]<<", ";
-    s<<vec[dim-1]<<std::endl;
+    s<<vec[dim-1]<<")";
     return s;
 }
 
@@ -80,3 +81,7 @@ VectorND<T> operator *(S scale, const VectorND<T> &vec)
 }//end of namespace Physika
 
 #endif//PHYSIKA_CORE_VECTORS_VECTOR_ND_H_
+
+
+
+

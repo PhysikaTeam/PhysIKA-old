@@ -74,13 +74,14 @@ protected:
 template <typename ElementType>
 std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
 {
+    s<<"[";
     for (size_t i = 0; i < arr.elementCount(); i++)
     {
-        if (i == 0)
-            s<<arr[i];
-        s<<", "<<1;
+	s<<arr[i];
+	if(i != arr.elementCount()-1)
+	    s<<", "<<1;
     }
-    s<<std::endl;
+    s<<"]";
     return s; 
 }
 

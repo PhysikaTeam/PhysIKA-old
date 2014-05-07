@@ -66,8 +66,8 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,2> &mat)
 {
-    s<<mat(0,0)<<", "<<mat(0,1)<<std::endl;
-    s<<mat(1,0)<<", "<<mat(1,1)<<std::endl;
+    s<<"["<<mat(0,0)<<", "<<mat(0,1)<<"; ";
+    s<<mat(1,0)<<", "<<mat(1,1)<<"]";
     return s;
 }
 
@@ -86,3 +86,4 @@ typedef SquareMatrix<double,2> Matrix2d;
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
+
