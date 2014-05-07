@@ -1,0 +1,120 @@
+/*
+ * @file range.cpp
+ * @brief higher dimensional counterpart of interval class.
+ *        2D example: (1,1) to (3,3) 
+ * @author FeiZhu
+ * 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013 Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * If a copy of the GPL was not distributed with this file, you can obtain one at:
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ */
+
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Range/range.h"
+
+namespace Physika{
+
+template <typename Scalar,int Dim>
+Range<Scalar,Dim>::Range()
+    :min_corner_(Vector<Scalar,Dim>(0)),max_corner_(Vector<Scalar,Dim>(0))
+{
+}
+
+template <typename Scalar,int Dim>
+Range<Scalar,Dim>::Range(const Vector<Scalar,Dim> &point)
+    :min_corner_(point),max_corner_(point)
+{
+}
+
+template <typename Scalar,int Dim>
+Range<Scalar,Dim>::Range(const Vector<Scalar,Dim> &min_val, const Vector<Scalar,Dim> &max_val)
+{
+    for(int i = 0; i < Dim; ++i)
+	PHYSIKA_ASSERT(min_val[i]<=max_val[i]);
+    min_corner_ = min_val;
+    max_corner_ = max_val;
+}
+
+template <typename Scalar,int Dim>
+Range<Scalar,Dim>::~Range()
+{
+}
+
+template <typename Scalar,int Dim>
+Vector<Scalar,Dim> Range<Scalar,Dim>::center() const
+{
+    return (max_corner_+min_corner_)/2;
+}
+
+template <typename Scalar,int Dim>
+Vector<Scalar,Dim> Range<Scalar,Dim>::edgeLengths() const
+{
+    return max_corner_-min_corner_;
+}
+
+template <typename Scalar,int Dim>
+Scalar Range<Scalar,Dim>::size() const
+{
+    Vector<Scalar,Dim> edge_lengths = edgeLengths();
+    Scalar result = 1.0;
+    for(int i = 0; i < Dim; ++i)
+	result *= edge_lengths[i];
+    return result;
+}
+
+template <typename Scalar,int Dim>
+const Vector<Scalar,Dim>& Range<Scalar,Dim>::minCorner() const
+{
+    return min_corner_;
+}
+
+template <typename Scalar,int Dim>
+const Vector<Scalar,Dim>& Range<Scalar,Dim>::maxCorner() const
+{
+    return max_corner_;
+}
+
+template <typename Scalar,int Dim>
+bool Range<Scalar,Dim>::inside(const Vector<Scalar,Dim> &val) const
+{
+    for(int i = 0; i < Dim; ++i)
+	if(val[i]<min_corner_[i]||val[i]>max_corner_[i])
+	    return false;
+    return true;
+}
+
+template <typename Scalar,int Dim>
+bool Range<Scalar,Dim>::outside(const Vector<Scalar,Dim> &val) const
+{
+    return !inside(val);
+}
+
+//explicit instantiation
+template class Range<float,2>;
+template class Range<double,2>;
+template class Range<float,3>;
+template class Range<double,3>;
+
+}  //end of namespace Physika
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
