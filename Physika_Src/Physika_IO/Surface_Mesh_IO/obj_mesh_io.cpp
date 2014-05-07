@@ -63,9 +63,9 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         stream.str("");
         stream.clear();
         stream<<line;
-		char type_of_line[maxline];
+        char type_of_line[maxline];
         stream>>type_of_line;
-		if(strcmp(type_of_line,"v") == 0)
+        if(strcmp(type_of_line,"v") == 0)
         {
             //vertex
             Scalar x,y,z;
@@ -74,7 +74,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             if(!(stream>>z))PHYSIKA_ERROR("stream>>z");
             mesh->addVertexPosition(Vector<Scalar,3>(x,y,z));
         }
-		else if(strcmp(type_of_line, "vn") == 0)
+        else if(strcmp(type_of_line, "vn") == 0)
         {   //vertex normal
             Scalar x,y,z;
             if(!(stream>>x))PHYSIKA_ERROR("x position of a normal read error");
@@ -82,14 +82,14 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             if(!(stream>>z))PHYSIKA_ERROR("z position of a normal read error");
             mesh->addVertexNormal(Vector<Scalar,3>(x,y,z));
         }
-		else if(strcmp(type_of_line, "vt") == 0)
+        else if(strcmp(type_of_line, "vt") == 0)
         {   //vertex texture
             Scalar x,y;
             if(!(stream>>x))PHYSIKA_ERROR( "x position of a texture read error");
             if(!(stream>>y))PHYSIKA_ERROR( "y position of a texture read error");
             mesh->addVertexTextureCoordinate(Vector<Scalar,2>(x,y));
         }
-		else if(strcmp(type_of_line, "g") == 0)
+        else if(strcmp(type_of_line, "g") == 0)
         {
             string group_name;
             stream>>group_name;
@@ -108,7 +108,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
 
         }
-		else if(strcmp(type_of_line, "f") == 0|| (strcmp(type_of_line, "fo") == 0))
+        else if(strcmp(type_of_line, "f") == 0|| (strcmp(type_of_line, "fo") == 0))
         {
             if(current_group==NULL)
             {
@@ -174,8 +174,8 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             num_group_faces ++;
             current_group->addFace(face_temple);
         }
-		else if((strcmp(type_of_line, "#") == 0) || (strcmp(type_of_line, "\0") == 0)){}
-		else if(strcmp(type_of_line, "usemtl") == 0)
+        else if((strcmp(type_of_line, "#") == 0) || (strcmp(type_of_line, "\0") == 0)){}
+        else if(strcmp(type_of_line, "usemtl") == 0)
         {
             if (num_group_faces > 0)
             {
@@ -206,7 +206,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
             else {PHYSIKA_ASSERT("material found false");}
         }
-		else if(strcmp(type_of_line, "mtllib") == 0)
+        else if(strcmp(type_of_line, "mtllib") == 0)
         {
             string mtl_name;
             stream>>mtl_name;
@@ -304,11 +304,11 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
         ifs.getline(line, maxline);
         stream.str("");
         stream.clear();
-		char type_of_line[maxline];
-		stream<<line;
-		stream>>type_of_line;
+        char type_of_line[maxline];
+        stream<<line;
+        stream>>type_of_line;
         string texture_file_complete;
-		switch (type_of_line[0])
+        switch (type_of_line[0])
         {
         case '#':
             break;
@@ -328,7 +328,7 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
             break;
 
         case 'N':
-			if (type_of_line[1] == 's')
+            if (type_of_line[1] == 's')
             {
                 Scalar shininess;
                 if(!(stream>>shininess))PHYSIKA_ERROR( "error! no data to set shininess");
@@ -339,7 +339,7 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
             break;
 
         case 'K':
-			switch (type_of_line[1])
+            switch (type_of_line[1])
             {
             case 'd':
                 Scalar kd1,kd2,kd3;
