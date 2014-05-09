@@ -36,6 +36,25 @@ Interval<Scalar>::Interval(Scalar min_val, Scalar max_val)
 }
 
 template <typename Scalar>
+Interval<Scalar>::Interval(const Interval<Scalar> &interval)
+    :min_val_(interval.min_val_),max_val_(interval.max_val_)
+{
+}
+
+template <typename Scalar>
+Interval<Scalar>& Interval<Scalar>::operator= (const Interval<Scalar> &interval)
+{
+    min_val_ = interval.min_val_;
+    max_val_ = interval.max_val_;
+}
+
+template <typename Scalar>
+bool Interval<Scalar>::operator==(const Interval<Scalar> &interval)
+{
+    return (min_val_==interval.min_val_)&&(max_val_==interval.max_val_);
+}
+
+template <typename Scalar>
 Interval<Scalar>::~Interval()
 {
 }
@@ -77,6 +96,12 @@ template <typename Scalar>
 bool Interval<Scalar>::outside(Scalar val) const
 {
     return !inside(val);
+}
+
+template <typename Scalar>
+Interval<Scalar> Interval<Scalar>::unitInterval()
+{
+    return Interval<Scalar>(0,1);
 }
 
 //explicit instantiation

@@ -24,7 +24,6 @@ const double E = 2.71828182845904523536;
 const float FLOAT_EPSILON = std::numeric_limits<float>::epsilon();
 const double DOUBLE_EPSILON = std::numeric_limits<double>::epsilon();
 
-
 }
 
 #endif //PHYSIKA_CORE_UTILITIES_MATH_CONSTANTS_H_

@@ -1,6 +1,8 @@
 /*
  * @file physika_assert.h 
  * @brief Customized assert macro for Physika.
+ *        All these asserts are for debug purpose, they do nothing in Relase build
+ *        Exception: PHYSIKA_STATIC_ASSERT also works in Release build
  * @author FeiZhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -47,6 +49,9 @@
 #    define PHYSIKA_ERROR(message) do{}while(false)
 #endif
 
+//compile-time assert, only supported in C++0x or later
+//works in Release build as well
+#define PHYSIKA_STATIC_ASSERT(condition,message) static_assert(condition,message)
 
 #endif//PHYSIKA_CORE_UTILITIES_PHYSIKA_ASSERT_H_
 

@@ -209,5 +209,6 @@ Scalar Vector<Scalar,2>::dot(const Vector<Scalar,2>& vec2) const
 //explicit instantiation of template so that it could be compiled into a lib
 template class Vector<float,2>;
 template class Vector<double,2>;
+template class Vector<int,2>;
 
 } //end of namespace Physika

@@ -77,6 +77,7 @@ Vector<T,2> operator *(S scale, const Vector<T,2> &vec)
 #define Vector2D(Scalar) Vector<Scalar,2>
 typedef Vector<float,2> Vector2f;
 typedef Vector<double,2> Vector2d;
+typedef Vector<int,2> Vector2i;
 
 } //end of namespace Physika
 

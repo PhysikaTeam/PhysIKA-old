@@ -40,6 +40,26 @@ Range<Scalar,Dim>::Range(const Vector<Scalar,Dim> &min_val, const Vector<Scalar,
 }
 
 template <typename Scalar,int Dim>
+Range<Scalar,Dim>::Range(const Range<Scalar,Dim> &range)
+    :min_corner_(range.min_corner_),max_corner_(range.max_corner_)
+{
+}
+
+template <typename Scalar,int Dim>
+Range<Scalar,Dim>& Range<Scalar,Dim>::operator= (const Range<Scalar,Dim> &range)
+{
+    min_corner_ = range.min_corner_;
+    max_corner_ = range.max_corner_;
+    return *this;
+}
+
+template <typename Scalar,int Dim>
+bool Range<Scalar,Dim>::operator== (const Range<Scalar,Dim> &range) const
+{
+    return (min_corner_==range.min_corner_)&&(max_corner_==range.max_corner_);
+}
+
+template <typename Scalar,int Dim>
 Range<Scalar,Dim>::~Range()
 {
 }
@@ -91,6 +111,12 @@ template <typename Scalar,int Dim>
 bool Range<Scalar,Dim>::outside(const Vector<Scalar,Dim> &val) const
 {
     return !inside(val);
+}
+
+template <typename Scalar,int Dim>
+Range<Scalar,Dim> Range<Scalar,Dim>::unitRange()
+{
+    return Range(Vector<Scalar,Dim>(0),Vector<Scalar,Dim>(1.0));
 }
 
 //explicit instantiation

@@ -20,7 +20,8 @@ int main()
 {
     //PHYSIKA_ASSERT(0);
     //PHYSIKA_MESSAGE_ASSERT(0,"hi");
-    PHYSIKA_ERROR("hi");
+    //PHYSIKA_ERROR("hi");
+    PHYSIKA_STATIC_ASSERT(false,"hi");
     return 0;
 }
 

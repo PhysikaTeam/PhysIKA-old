@@ -273,5 +273,6 @@ Scalar VectorND<Scalar>::dot(const VectorND<Scalar> &vec2) const
 //explicit instantiation
 template class VectorND<float>;
 template class VectorND<double>;
+template class VectorND<int>;
 
 }//end of namespace Physika

@@ -28,6 +28,9 @@ public:
     Range();
     explicit Range(const Vector<Scalar,Dim> &point);
     Range(const Vector<Scalar,Dim> &min_val, const Vector<Scalar,Dim> &max_val);
+    Range(const Range<Scalar,Dim> &range);
+    Range<Scalar,Dim>& operator= (const Range<Scalar,Dim> &range);
+    bool operator== (const Range<Scalar,Dim> &range) const;
     ~Range();
     Vector<Scalar,Dim> center() const;
     Vector<Scalar,Dim> edgeLengths() const;
@@ -36,6 +39,8 @@ public:
     const Vector<Scalar,Dim>& maxCorner() const;
     bool inside(const Vector<Scalar,Dim> &val) const;
     bool outside(const Vector<Scalar,Dim> &val) const;
+
+    static Range<Scalar,Dim> unitRange();  //each dimension is in range [0,1]
 protected:
     Vector<Scalar,Dim> min_corner_, max_corner_;
 };

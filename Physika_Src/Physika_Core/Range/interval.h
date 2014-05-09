@@ -24,6 +24,9 @@ public:
     Interval();
     explicit Interval(Scalar val);
     Interval(Scalar min_val, Scalar max_val);
+    Interval(const Interval<Scalar> &interval);
+    Interval<Scalar>& operator= (const Interval<Scalar> &interval);
+    bool operator== (const Interval<Scalar> &interval);
     ~Interval();
     Scalar center() const;
     Scalar size() const;
@@ -31,6 +34,8 @@ public:
     Scalar maxVal() const;
     bool inside(Scalar val) const;
     bool outside(Scalar val) const;
+
+    static Interval<Scalar> unitInterval(); //[0,1]
 protected:
     Scalar min_val_, max_val_;
 };
@@ -38,6 +43,9 @@ protected:
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_CORE_RANGE_INTERVAL_H_
+
+
+
 
 
 

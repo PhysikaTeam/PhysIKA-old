@@ -1,0 +1,177 @@
+/*
+ * @file grid.h 
+ * @brief definition of uniform grid, 2D/3D
+ *        iterator of the grid is defined as well
+ * @author Fei Zhu
+ * 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013 Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * If a copy of the GPL was not distributed with this file, you can obtain one at:
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ */
+
+#ifndef PHYSIKA_GEOMETRY_CARTESIAN_GRID_GRID_H_
+#define PHYSIKA_GEOMETRY_CARTESIAN_GRID_GRID_H_
+
+#include "Physika_Core/Range/range.h"
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+
+namespace Physika{
+
+/*
+ * After initialization, the structure of grid(domain,cell size, etc.) is fixed.
+ * The NODE, CELL, FACE of the grid can be visited either through index or iterator.
+ */
+
+/*
+ * GridBase: abstract class, provide common interface for 2D/3D grid
+ */
+template <typename Scalar,int Dim>
+class GridBase
+{
+public:
+    GridBase();
+    virtual ~GridBase()=0;
+    GridBase(const Range<Scalar,Dim> &domain, int cell_num); //same cell size along each dimension
+    GridBase(const Range<Scalar,Dim> &domain, const Vector<int,Dim> &cell_num);
+    GridBase(const GridBase<Scalar,Dim> &grid);
+    const Range<Scalar,Dim>& domain() const;
+    const Vector<Scalar,Dim>& dX() const;
+    const Vector<Scalar,Dim>& minCorner() const;
+    const Vector<Scalar,Dim>& maxCorner() const;
+    Scalar minEdgeLength() const;
+    Scalar maxEdgeLength() const;
+    const Vector<int,Dim>& cellNum() const;
+    Vector<int,Dim> nodeNum() const;
+    Scalar cellSize() const; //2d: area; 3d: volume;
+    Vector<Scalar,Dim> node(const Vector<int,Dim> &index) const;
+    Vector<Scalar,Dim> center(const Vector<int,Dim> &index) const;
+protected:
+    GridBase<Scalar,Dim>& operator= (const GridBase<Scalar,Dim> &grid);
+    bool operator== (const GridBase<Scalar,Dim> &grid) const;
+protected:  //iterator related
+    class IteratorBase
+    {
+    protected:
+        IteratorBase():index_(-1){}
+	virtual ~IteratorBase()=0;
+        IteratorBase(const IteratorBase<Dim> &iterator):index_(iterator.index()){}
+	IteratorBase<Dim>& operator= (const IteratorBase<Dim> &iterator){index_=iterator.index();return *this;}
+	bool operator== (const IteratorBase<Dim> &iterator){return index_==iterator.index();}
+	bool operator!= (const IteratorBase<Dim> &iterator){return !(index_==iterator.index());}
+    protected:
+	const Vector<int,Dim>& index() const {return index_;}
+	Vector<int,Dim> index_;
+    };
+    class NodeIteratorBase: public IteratorBase<Dim>
+    {
+    public:
+        NodeIteratorBase():IteratorBase<Dim>(){}
+	virtual ~NodeIteratorBase()=0;
+        NodeIteratorBase(const NodeIteratorBase<Dim> &iterator):IteratorBase<Dim>(iterator){}
+	NodeIteratorBase<Dim>& operator= (const NodeIteratorBase<Dim> &iterator){IteratorBase<Dim>::operator=(iterator);return *this;}
+	bool operator== (const NodeIteratorBase<Dim> &iterator){return IteratorBase<Dim>::operator==(iterator);}
+	bool operator!= (const NodeIteratorBase<Dim> &iterator){return IteratorBase<Dim>::operator!=(iterator);}
+	NodeIteratorBase<Dim>& operator++ ();
+	NodeIteratorBase<Dim>& operator-- ();
+	NodeIteratorBase<Dim> operator++ (int);
+	NodeIteratorBase<Dim> operator-- (int);
+	NodeIteratorBase<Dim> operator+ (int stride) const;
+	NodeIteratorBase<Dim> operator- (int stride) const;
+    protected:
+	void clampIndex();
+    };
+    class CellIteratorBase: public IteratorBase<Dim>
+    {
+    public:
+	CellIteratorBase():IteratorBase<Dim>(){}
+	virtual ~CellIteratorBase()=0;
+	CellIteratorBase(const CellIteratorBase<Dim> &iterator):IteratorBase<Dim>(iterator){}
+	CellIteratorBase<Dim>& operator= (const CellIteratorBase<Dim> &iterator){IteratorBase<Dim>::operator=(iterator);return *this;}
+	bool operator== (const CellIteratorBase<Dim> &iterator){return IteratorBase<Dim>::operator==(iterator);}
+	bool operator!= (const CellIteratorBase<Dim> &iterator){return IteratorBase<Dim>::operator!=(iterator);}
+	CellIteratorBase<Dim>& operator++ ();
+	CellIteratorBase<Dim>& operator-- ();
+	CellIteratorBase<Dim> operator++ (int);
+	CellIteratorBase<Dim> operator-- (int);
+	CellIteratorBase<Dim> operator+ (int stride) const;
+	CellIteratorBase<Dim> operator- (int stride) const;
+    protected:
+	void clampIndex();
+    };
+    NodeIteratorBase<Dim> nodeBegin() const;
+    NodeIteratorBase<Dim> nodeEnd() const;
+    CellIteratorBase<Dim> cellBegin() const;
+    CellIteratorBase<Dim> cellEnd() const;
+protected:
+    Range<Scalar,Dim> domain_;
+    Vector<Scalar,Dim> dx_;
+    Vector<int,Dim> cell_num_;
+};
+
+/*
+ * Grid: inherit common interface from GridBase
+ *       use partial specialization of template to provide interface specific to 2D&&3D
+ */
+template <typename Scalar, int Dim>
+class Grid: public GridBase<Scalar,Dim>
+{
+};
+
+template <typename Scalar>
+class Grid<Scalar,2>: public GridBase<Scalar,2>
+{
+public:
+    Grid():GridBase<Scalar,2>(){}
+    ~Grid(){}
+    Grid(const Range<Scalar,2> &domain, int cell_num):GridBase<Scalar,2>(domain,cell_num){}
+    Grid(const Range<Scalar,2> &domain, const Vector<int,2> &cell_num):GridBase<Scalar,2>(domain,cell_num){}
+    Grid(const Grid<Scalar,2> &grid):GridBase<Scalar,2>(grid){}
+    Grid<Scalar,2>& operator= (const Grid<Scalar,2> &grid){GridBase<Scalar,2>::operator=(grid);return *this;}
+    bool operator== (const Grid<Scalar,2> &grid){return GridBase<Scalar,2>::operator==(grid);}
+    Vector<Scalar,2> node(int i, int j) const;
+    Vector<Scalar,2> center(int i, int j) const;
+public:  //iterator related
+protected:
+};
+
+template <typename Scalar>
+class Grid<Scalar,3>: public GridBase<Scalar,3>
+{
+public:
+    Grid():GridBase<Scalar,3>(){}
+    ~Grid(){}
+    Grid(const Range<Scalar,3> &domain, int cell_num):GridBase<Scalar,3>(domain,cell_num){}
+    Grid(const Range<Scalar,3> &domain, const Vector<int,3> &cell_num):GridBase<Scalar,3>(domain,cell_num){}
+    Grid(const Grid<Scalar,3> &grid):GridBase<Scalar,3>(grid){}
+    Grid<Scalar,3>& operator= (const Grid<Scalar,3> &grid){GridBase<Scalar,3>::operator=(grid);return *this;}
+    bool operator== (const Grid<Scalar,3> &grid){return GridBase<Scalar,3>::operator==(grid);}
+    Vector<Scalar,3> node(int i, int j, int k) const;
+    Vector<Scalar,3> center(int i, int j, int k) const;
+public:  //iterator related
+protected:
+};
+
+}  //end of namespace Physika
+
+#endif //PHYSIKA_GEOMETRY_CARTESIAN_GRID_GRID_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
