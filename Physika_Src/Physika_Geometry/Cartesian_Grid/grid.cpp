@@ -256,10 +256,3 @@ template class Grid<double,2>;
 template class Grid<double,3>;
 
 } //end of namespace Physika
-
-
-
-
-
-
-

@@ -116,18 +116,3 @@ public:
 }  //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_CARTESIAN_GRID_GRID_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

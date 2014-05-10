@@ -46,6 +46,7 @@ Interval<Scalar>& Interval<Scalar>::operator= (const Interval<Scalar> &interval)
 {
     min_val_ = interval.min_val_;
     max_val_ = interval.max_val_;
+    return *this;
 }
 
 template <typename Scalar>
