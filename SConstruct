@@ -46,11 +46,11 @@ if 'Physika_Dependency' in lib_names:
    lib_names.remove('Physika_Dependency')
 
 #COMPILER
-compiler=[]
+compiler=''
 if os_name in ('Linux','Darwin') or (os_name=='Windows' and build_msvc==False):
-   compiler=['g++']
+   compiler='g++'
 else:
-   compiler=['msvc']
+   compiler='msvc'
 
 #BUILDERS
 if build_type=='Release':
@@ -63,7 +63,7 @@ arc_lib=Builder(action='ar rcs $TARGET $SOURCES')
 
 #ENVIRONMENT
 ENV={'PATH':os.environ['PATH']}
-if compiler==['g++']:
+if compiler=='g++':
    env=Environment(ENV=ENV)
    env.Append(BUILDERS={'COMPILE':compile})
    env.Append(BUILDERS={'ARCLIB':arc_lib})
@@ -106,7 +106,7 @@ for name in lib_names:
     	lib_src_files.extend(glob(os.path.join(dir,'*.cpp')))
 	lib_header_files.extend(glob(os.path.join(dir,'*.h')))
     	header_files.extend(glob(os.path.join(dir,'*.h')))
-    if compiler==['g++']:
+    if compiler=='g++':
        for src_file in lib_src_files:
     	   if src_file not in ignored_src_files:
     	      obj_file=os.path.splitext(src_file)[0]+obj_suffix
@@ -120,7 +120,7 @@ for name in lib_names:
     if os_name in ('Linux','Darwin'):
        lib_file=lib_preffix+lib_file
     lib_file=target_root_path+'lib/'+os.path.basename(lib_file)
-    if compiler==['g++']:
+    if compiler=='g++':
        env.ARCLIB(lib_file,lib_obj_files)
     else:
        lib=env.StaticLibrary(target=lib_file,source=lib_src_files)
@@ -129,7 +129,7 @@ for name in lib_names:
     lib_files.append(lib_file)
 #GENERATE MSVC SOLUTION
 sln=[]
-if compiler==['msvc']:
+if compiler=='msvc':
    sln=env.MSVSSolution(target='Physika'+env['MSVSSOLUTIONSUFFIX'],projects=proj_files,variant=build_type)
 
 #COPY HEADERS TO TARGET DIRECTORY, LIBS ARE ALREADY THERE
@@ -166,9 +166,17 @@ for name in dependencies:
        if os_architecture=='32bit':
        	  src_dependency_lib_path=src_dependency_lib_path+'X86/'
        else:
-	  src_dependency_lib_path=src_dependency_lib_path+'X64/'
+	        src_dependency_lib_path=src_dependency_lib_path+'X64/'
+	     #ON WINDOWS, G++ AND MSVC ARE SUPPORTED. WE PLACE LIB FILES COMPATIBLE ON THE TWO COMPILERS IN src_dependency_lib_path,
+	     #AND LIB FILES NOT COMPATIBLE ARE PLACED IN TWO DIRECTORIES NAMED 'msvc' AND 'g++' RESPECTIVELY
        for lib_name in os.listdir(src_dependency_lib_path):
-       	  Command(target_root_path+'lib/'+lib_name,os.path.join(src_dependency_lib_path,lib_name),Copy("$TARGET","$SOURCE")) 
+          lib_full_path=os.path.join(src_dependency_lib_path,lib_name)
+          if os_name=='Windows' and os.path.isdir(lib_full_path):
+              if lib_name==compiler:
+                  for spec_lib_name in os.listdir(lib_full_path):
+                      Command(target_root_path+'lib/'+spec_lib_name,os.path.join(lib_full_path,spec_lib_name),Copy("$TARGET","$SOURCE"))
+          else:
+       	      Command(target_root_path+'lib/'+lib_name,os.path.join(src_dependency_lib_path,lib_name),Copy("$TARGET","$SOURCE")) 
 
 #CUSTOMIZE CLEAN OPTION
 sln_delete_files=[build_type+'/','obj/','Physika.suo','Physika.sdf']

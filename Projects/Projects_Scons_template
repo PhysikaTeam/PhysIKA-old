@@ -64,7 +64,7 @@ os_name=platform.system()
 os_architecture=platform.architecture()[0]
 
 #COMPILER
-compiler=[]
+compiler=''
 if os_name in ('Linux','Darwin') or (os_name=='Windows' and build_msvc==False):
    compiler='g++'
 else:
@@ -94,7 +94,6 @@ if use_gl==True:
             additional_libs.append('GL64')
     elif os_name=='Windows':
         additional_libs.append('freeglut')
-        additional_libs.append('glut32')
         additional_libs.append('glu32')
         additional_libs.append('opengl32')
 

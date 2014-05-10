@@ -37,7 +37,7 @@ target_root_path=physika_root_path+'Public_Library/'
 lib_obj_files=[]
 lib_src_files=glob(os.path.join(src_root_path,'*.cpp'))
 lib_header_files=glob(os.path.join(src_root_path,'*.h'))
-if compiler==['g++']:
+if compiler=='g++':
     for src_file in lib_src_files:
         obj_file=os.path.splitext(src_file)[0]+obj_suffix
 	lib_obj_files.append(obj_file)
@@ -46,7 +46,7 @@ lib_file=lib_name+lib_suffix
 if os_name in ('Linux','Darwin'):
    lib_file=lib_preffix+lib_file
 lib_file=target_root_path+'lib/'+os.path.basename(lib_file)
-if compiler==['g++']:
+if compiler=='g++':
    env.ARCLIB(lib_file,lib_obj_files)
 else:
    env.StaticLibrary(target=lib_file,source=lib_src_files)

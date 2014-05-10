@@ -12,6 +12,7 @@
  *
  */
 
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 using namespace std;
@@ -24,19 +25,3 @@ int main()
     //PHYSIKA_STATIC_ASSERT(false,"hi");
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
