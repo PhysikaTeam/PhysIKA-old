@@ -163,11 +163,10 @@ for name in dependencies:
        	  src_dependency_lib_path=src_dependency_lib_path+'Windows/'
        elif os_name=='Darwin':
        	  src_dependency_lib_path=src_dependency_lib_path+'Apple/'
-       if name!='OpenGL':
-          if os_architecture=='32bit':
-       	     src_dependency_lib_path=src_dependency_lib_path+'X86/'
-          else:
-	     src_dependency_lib_path=src_dependency_lib_path+'X64/'
+       if os_architecture=='32bit':
+       	  src_dependency_lib_path=src_dependency_lib_path+'X86/'
+       else:
+	  src_dependency_lib_path=src_dependency_lib_path+'X64/'
        for lib_name in os.listdir(src_dependency_lib_path):
        	  Command(target_root_path+'lib/'+lib_name,os.path.join(src_dependency_lib_path,lib_name),Copy("$TARGET","$SOURCE")) 
 

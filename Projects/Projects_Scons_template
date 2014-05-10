@@ -93,6 +93,7 @@ if use_gl==True:
         else:
             additional_libs.append('GL64')
     elif os_name=='Windows':
+        additional_libs.append('freeglut')
         additional_libs.append('glut32')
         additional_libs.append('glu32')
         additional_libs.append('opengl32')
