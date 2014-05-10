@@ -177,6 +177,7 @@ typename Grid<Scalar,2>::NodeIterator Grid<Scalar,2>::nodeBegin() const
     Grid<Scalar,2>::NodeIterator iterator;
     iterator.index_ = Vector<int,2>(0);
     iterator.grid_ = this;
+    return iterator;
 }
 
 template <typename Scalar>
@@ -185,6 +186,7 @@ typename Grid<Scalar,2>::NodeIterator Grid<Scalar,2>::nodeEnd() const
     Grid<Scalar,2>::NodeIterator iterator;
     iterator.index_ = Vector<int,2>(-1);
     iterator.grid_ = this;
+    return iterator;
 }
 
 template <typename Scalar>
@@ -193,6 +195,7 @@ typename Grid<Scalar,2>::CellIterator Grid<Scalar,2>::cellBegin() const
     Grid<Scalar,2>::CellIterator iterator;
     iterator.index_ = Vector<int,2>(0);
     iterator.grid_ = this;
+    return iterator;
 }
 
 template <typename Scalar>
@@ -201,6 +204,7 @@ typename Grid<Scalar,2>::CellIterator Grid<Scalar,2>::cellEnd() const
     Grid<Scalar,2>::CellIterator iterator;
     iterator.index_ = Vector<int,2>(-1);
     iterator.grid_ = this;
+    return iterator;
 }
 
 template <typename Scalar>
@@ -223,6 +227,7 @@ typename Grid<Scalar,3>::NodeIterator Grid<Scalar,3>::nodeBegin() const
     Grid<Scalar,3>::NodeIterator iterator;
     iterator.index_ = Vector<int,3>(0);
     iterator.grid_ = this;
+    return iterator;
 }
 
 template <typename Scalar>
@@ -231,6 +236,7 @@ typename Grid<Scalar,3>::NodeIterator Grid<Scalar,3>::nodeEnd() const
     Grid<Scalar,3>::NodeIterator iterator;
     iterator.index_ = Vector<int,3>(-1);
     iterator.grid_ = this;
+    return iterator;
 }
 
 template <typename Scalar>
@@ -239,6 +245,7 @@ typename Grid<Scalar,3>::CellIterator Grid<Scalar,3>::cellBegin() const
     Grid<Scalar,3>::CellIterator iterator;
     iterator.index_ = Vector<int,3>(0);
     iterator.grid_ = this;
+    return iterator;
 }
 
 template <typename Scalar>
@@ -247,6 +254,7 @@ typename Grid<Scalar,3>::CellIterator Grid<Scalar,3>::cellEnd() const
     Grid<Scalar,3>::CellIterator iterator;
     iterator.index_ = Vector<int,3>(-1);
     iterator.grid_ = this;
+    return iterator;
 }
 
 //explicit instantiation
