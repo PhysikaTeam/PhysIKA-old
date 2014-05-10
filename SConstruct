@@ -108,7 +108,9 @@ for name in lib_names:
     	header_files.extend(glob(os.path.join(dir,'*.h')))
     if compiler=='g++':
        for src_file in lib_src_files:
-    	   if src_file not in ignored_src_files:
+    	   if src_file in ignored_src_files:
+              continue
+           else:
     	      obj_file=os.path.splitext(src_file)[0]+obj_suffix
 	      lib_obj_files.append(obj_file)
 	      env.COMPILE(obj_file,src_file)
