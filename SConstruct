@@ -166,9 +166,9 @@ for name in dependencies:
        if os_architecture=='32bit':
        	  src_dependency_lib_path=src_dependency_lib_path+'X86/'
        else:
-	        src_dependency_lib_path=src_dependency_lib_path+'X64/'
-	     #ON WINDOWS, G++ AND MSVC ARE SUPPORTED. WE PLACE LIB FILES COMPATIBLE ON THE TWO COMPILERS IN src_dependency_lib_path,
-	     #AND LIB FILES NOT COMPATIBLE ARE PLACED IN TWO DIRECTORIES NAMED 'msvc' AND 'g++' RESPECTIVELY
+	  src_dependency_lib_path=src_dependency_lib_path+'X64/'
+       #ON WINDOWS, G++ AND MSVC ARE SUPPORTED. WE PLACE LIB FILES COMPATIBLE ON THE TWO COMPILERS IN src_dependency_lib_path,
+       #AND LIB FILES NOT COMPATIBLE ARE PLACED IN TWO DIRECTORIES NAMED 'msvc' AND 'g++' RESPECTIVELY
        for lib_name in os.listdir(src_dependency_lib_path):
           lib_full_path=os.path.join(src_dependency_lib_path,lib_name)
           if os_name=='Windows' and os.path.isdir(lib_full_path):
