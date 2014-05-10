@@ -13,7 +13,7 @@
  */
 
 #include <limits>
-#include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Utilities/Math_Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 

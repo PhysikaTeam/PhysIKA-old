@@ -12,11 +12,10 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_UTILITIES_MATH_UTILITIES_H_
-#define PHYSIKA_CORE_UTILITIES_MATH_UTILITIES_H_
+#ifndef PHYSIKA_CORE_UTILITIES_MATH_UTILITIES_MATH_UTILITIES_H_
+#define PHYSIKA_CORE_UTILITIES_MATH_UTILITIES_MATH_UTILITIES_H_
 
 #include <limits>
-#include <cmath>
 
 namespace Physika{
 
@@ -33,25 +32,16 @@ const double DOUBLE_EPSILON = std::numeric_limits<double>::epsilon();
  * support sqrt and abs of integer type
  */
 template <typename Scalar>
-Scalar abs(Scalar value)
-{
-    return value>=0?value:-value;
-}
+Scalar abs(Scalar value);
 
 template <typename Scalar>
-Scalar sqrt(Scalar value)
-{
-    return std::sqrt(value);
-}
+Scalar sqrt(Scalar value);
 
-double sqrt(int value)
-{
-    return std::sqrt(static_cast<double>(value));
-}
+double sqrt(int value);
 
-}
+}  //end of namespace Physika
 
-#endif //PHYSIKA_CORE_UTILITIES_MATH_UTILITIES_H_
+#endif //PHYSIKA_CORE_UTILITIES_MATH_UTILITIES_MATH_UTILITIES_H_
 
 
 

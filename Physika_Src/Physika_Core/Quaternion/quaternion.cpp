@@ -15,7 +15,7 @@
 #include <cmath>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Quaternion/quaternion.h"
-#include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Utilities/Math_Utilities/math_utilities.h"
 
 namespace Physika{
 

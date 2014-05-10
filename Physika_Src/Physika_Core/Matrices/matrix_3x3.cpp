@@ -13,7 +13,7 @@
  */
 
 #include <limits>
-#include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Utilities/Math_Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 
