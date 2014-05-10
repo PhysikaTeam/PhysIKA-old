@@ -12,8 +12,8 @@
 *
 */
 
-#include <cmath>
 #include <limits>
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 
@@ -205,7 +205,7 @@ VectorND<Scalar>& VectorND<Scalar>::operator*= (Scalar scale)
 template <typename Scalar>
 VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
 {
-    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
+    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
     int dim = (*this).dims();
     VectorND<Scalar> result(dim);
     for(int i = 0; i < dim; ++i)
@@ -216,7 +216,7 @@ VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
 template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::operator/= (Scalar scale)
 {
-    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
+    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
     int dim = (*this).dims();
     for(int i = 0; i < dim; ++i)
 	(*this)[i] = (*this)[i] / scale;

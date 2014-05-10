@@ -12,9 +12,9 @@
  *
  */
 
-#include <cmath>
 #include <limits>
 #include <iostream>
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 
@@ -264,7 +264,7 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (Scalar scale)
 template <typename Scalar>
 MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 {
-    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
+    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
     int rows = (*this).rows();
     int cols = (*this).cols();
     Scalar *result = new Scalar[rows*cols];
@@ -279,7 +279,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 template <typename Scalar>
 MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator/= (Scalar scale)
 {
-    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
+    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
     int rows = (*this).rows();
     int cols = (*this).cols();
     for(int i = 0; i < rows; ++i)

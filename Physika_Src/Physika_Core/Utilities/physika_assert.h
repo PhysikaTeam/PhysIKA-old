@@ -18,8 +18,8 @@
 #define PHYSIKA_CORE_UTILITIES_PHYSIKA_ASSERT_H_
 
 #include <iostream>
-#include "Physika_Core/Utilities/global_config.h"
 #include <cassert>
+#include "Physika_Core/Utilities/cxx11_support.h"
 
 //assert from standard library
 #define PHYSIKA_ASSERT(x) assert(x)
@@ -51,23 +51,10 @@
 
 //compile-time assert, only supported in C++0x or later
 //works in Release build as well
-#define PHYSIKA_STATIC_ASSERT(condition,message) static_assert(condition,message)
+#ifndef SUPPORT_STATIC_ASSERT
+#    define PHYSIKA_STATIC_ASSERT(condition,message) do{}while{false}
+#else
+#    define PHYSIKA_STATIC_ASSERT(condition,message) static_assert(condition,message)
+#endif
 
 #endif//PHYSIKA_CORE_UTILITIES_PHYSIKA_ASSERT_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

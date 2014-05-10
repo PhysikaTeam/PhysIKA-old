@@ -12,8 +12,8 @@
  *
  */
 
-#include <cmath>
 #include <limits>
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 
@@ -151,7 +151,7 @@ Vector<Scalar,2>& Vector<Scalar,2>::operator*= (Scalar scale)
 template <typename Scalar>
 Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
 {
-    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
+    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
     Scalar result[2];
     for(int i = 0; i < 2; ++i)
         result[i] = (*this)[i] / scale;
@@ -161,7 +161,7 @@ Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator/= (Scalar scale)
 {
-    PHYSIKA_ASSERT(fabs(scale)>std::numeric_limits<Scalar>::epsilon());
+    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
     for(int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] / scale;
     return *this;
