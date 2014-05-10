@@ -1,6 +1,6 @@
 **Physika**
 
-A physics engine that a couple of guys and I plan to develop.
+A physics simulation library that a couple of guys and I plan to develop.
 
 @authors:
 Fei Zhu, 
@@ -11,6 +11,16 @@ Liyou Xu,
 
 @Last update of this file:
 Fei Zhu, 05/10/2014
+
+=============================================================
+
+**Build Requirements:**
+
+*Build Tool*: Scons
+
+*Platforms*: Windows, Linux, MacOS
+
+*Compiler*: GNU G++, MSVC
 
 =============================================================
 
