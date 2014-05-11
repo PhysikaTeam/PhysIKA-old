@@ -25,3 +25,21 @@ int main()
     //PHYSIKA_STATIC_ASSERT(false,"hi");
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

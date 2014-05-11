@@ -168,7 +168,7 @@ void Array<ElementType>::reorder(unsigned int *ids, unsigned int size)
 {
     if (size != element_count_)
     {
-        std::cout << "array size do not match!" << std::endl;
+        std::cerr << "array size do not match!" << std::endl;
 	std::exit(EXIT_FAILURE);
     }
 

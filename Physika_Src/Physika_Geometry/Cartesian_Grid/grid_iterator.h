@@ -38,16 +38,13 @@ protected:
     bool operator!= (const GridIteratorBase<Scalar,Dim> &iterator) const;
 protected: //helper methods
     //given the high-dimensional index and resolution in each dimension, return the flat version of index
-    //if given index is invalid(overflow/underflow the resolution), return -1
     int flatIndex(const Vector<int,Dim> &index, const Vector<int,Dim> &dimension) const;
     //from flat version of index and resolution in each dimension, return the high-dimensional index
-    //if given flat index  is invalid(overflow/underflow the 1D resolution), return index of entries -1
     Vector<int,Dim> indexFromFlat(int flat_index, const Vector<int,Dim> &dimension) const;
-    //clamp index_ variable of the iterator with given resolution in each dimension
-    //if index overflow/underflow, set all its entry to -1 (invalid)
-    void clampIndex(const Vector<int,Dim> &dimension);
+    //check if index_ is in range of given dimension
+    bool indexCheck(const Vector<int,Dim> &dimension) const;
 protected:
-    Vector<int,Dim> index_;
+    Vector<int,Dim> index_; 
     const Grid<Scalar,Dim> *grid_;
 };
 
@@ -75,6 +72,10 @@ public:
     GridNodeIterator<Scalar,Dim> operator- (int stride) const;
     const Vector<int,Dim>& nodeIndex() const;
 protected:
+    //perform valid check of iterator, it's invalid if:
+    //iterator not binded to any grid, or index out of range
+    bool validCheck() const;
+protected:
     friend class Grid<Scalar,Dim>;
 };
 
@@ -101,6 +102,10 @@ public:
     GridCellIterator<Scalar,Dim> operator+ (int stride) const;
     GridCellIterator<Scalar,Dim> operator- (int stride) const;
     const Vector<int,Dim>& cellIndex() const;
+protected:
+    //perform valid check of iterator, it's invalid if:
+    //iterator not binded to any grid, or index out of range
+    bool validCheck() const;
 protected:
     friend class Grid<Scalar,Dim>;
 };

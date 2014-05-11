@@ -82,6 +82,9 @@ public:
     bool operator== (const Grid<Scalar,2> &grid){return GridBase<Scalar,2>::operator==(grid);}
     Vector<Scalar,2> node(int i, int j) const;
     Vector<Scalar,2> cellCenter(int i, int j) const;
+    //avoid hiding node() and cellCenter() methods in GridBase
+    using GridBase<Scalar,2>::node;
+    using GridBase<Scalar,2>::cellCenter;
 
     typedef GridNodeIterator<Scalar,2> NodeIterator;
     typedef GridCellIterator<Scalar,2> CellIterator;
@@ -104,6 +107,9 @@ public:
     bool operator== (const Grid<Scalar,3> &grid){return GridBase<Scalar,3>::operator==(grid);}
     Vector<Scalar,3> node(int i, int j, int k) const;
     Vector<Scalar,3> cellCenter(int i, int j, int k) const;
+    //avoid hiding node() and cellCenter() methods in GridBase
+    using GridBase<Scalar,3>::node;
+    using GridBase<Scalar,3>::cellCenter;
 
     typedef GridNodeIterator<Scalar,3> NodeIterator;
     typedef GridCellIterator<Scalar,3> CellIterator;

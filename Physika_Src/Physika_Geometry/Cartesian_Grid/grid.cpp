@@ -25,6 +25,11 @@ GridBase<Scalar,Dim>::GridBase()
 }
 
 template <typename Scalar,int Dim>
+GridBase<Scalar,Dim>::~GridBase()
+{
+}
+
+template <typename Scalar,int Dim>
 GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, int cell_num)
     :domain_(domain)
 {
@@ -184,7 +189,8 @@ template <typename Scalar>
 typename Grid<Scalar,2>::NodeIterator Grid<Scalar,2>::nodeEnd() const
 {
     Grid<Scalar,2>::NodeIterator iterator;
-    iterator.index_ = Vector<int,2>(-1);
+    Vector<int,2> node_num = GridBase<Scalar,2>::nodeNum();
+    iterator.index_ = Vector<int,2>(node_num[0],0);
     iterator.grid_ = this;
     return iterator;
 }
@@ -202,7 +208,8 @@ template <typename Scalar>
 typename Grid<Scalar,2>::CellIterator Grid<Scalar,2>::cellEnd() const
 {
     Grid<Scalar,2>::CellIterator iterator;
-    iterator.index_ = Vector<int,2>(-1);
+    const Vector<int,2> &cell_num = this->cell_num_;
+    iterator.index_ = Vector<int,2>(cell_num[0],0);
     iterator.grid_ = this;
     return iterator;
 }
@@ -234,7 +241,8 @@ template <typename Scalar>
 typename Grid<Scalar,3>::NodeIterator Grid<Scalar,3>::nodeEnd() const
 {
     Grid<Scalar,3>::NodeIterator iterator;
-    iterator.index_ = Vector<int,3>(-1);
+    Vector<int,3> node_num = GridBase<Scalar,3>::nodeNum();
+    iterator.index_ = Vector<int,3>(node_num[0],0,0);
     iterator.grid_ = this;
     return iterator;
 }
@@ -252,15 +260,24 @@ template <typename Scalar>
 typename Grid<Scalar,3>::CellIterator Grid<Scalar,3>::cellEnd() const
 {
     Grid<Scalar,3>::CellIterator iterator;
-    iterator.index_ = Vector<int,3>(-1);
+    const Vector<int,3> &cell_num = this->cell_num_;
+    iterator.index_ = Vector<int,3>(cell_num[0],0,0);
     iterator.grid_ = this;
     return iterator;
 }
 
 //explicit instantiation
+template class GridBase<float,2>;
+template class GridBase<float,3>;
+template class GridBase<double,2>;
+template class GridBase<double,3>;
 template class Grid<float,2>;
 template class Grid<float,3>;
 template class Grid<double,2>;
 template class Grid<double,3>;
 
 } //end of namespace Physika
+
+
+
+
