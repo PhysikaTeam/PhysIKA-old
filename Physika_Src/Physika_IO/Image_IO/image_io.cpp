@@ -20,7 +20,7 @@ namespace Physika{
 
 unsigned char* ImageIO::load(const string &filename, int &width, int &height)
 {
-    string::size_type suffix_idx = filename.find('.');
+    string::size_type suffix_idx = filename.rfind('.');
     PHYSIKA_ASSERT(suffix_idx<filename.size());
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
@@ -31,7 +31,7 @@ unsigned char* ImageIO::load(const string &filename, int &width, int &height)
 
 void ImageIO::save(const string &filename, int width, int height, const unsigned char *image_data)
 {
-    string::size_type suffix_idx = filename.find('.');
+    string::size_type suffix_idx = filename.rfind('.');
     PHYSIKA_ASSERT(suffix_idx<filename.size());
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))

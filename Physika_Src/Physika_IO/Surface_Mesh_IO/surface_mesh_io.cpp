@@ -24,7 +24,7 @@ namespace Physika{
 template <typename Scalar>
 void SurfaceMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
-    string::size_type suffix_idx = filename.find('.');
+    string::size_type suffix_idx = filename.rfind('.');
     PHYSIKA_ASSERT(suffix_idx<filename.size());
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".obj"))
@@ -38,7 +38,7 @@ void SurfaceMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *me
 template <typename Scalar>
 void SurfaceMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
-    string::size_type suffix_idx = filename.find('.');
+    string::size_type suffix_idx = filename.rfind('.');
     PHYSIKA_ASSERT(suffix_idx<filename.size());
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".obj"))
