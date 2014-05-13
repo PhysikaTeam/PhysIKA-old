@@ -16,7 +16,7 @@
 #define PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Array/array.h"
+#include "Physika_Core/Arrays/array.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{

@@ -33,6 +33,7 @@ elif os_name in ('Linux','Darwin'):
     lib_suffix='.a'
 
 #COMPILE SRC FILES AND ARCHIVE INTO LIB
+lib_target=[]
 target_root_path=physika_root_path+'Public_Library/'
 lib_obj_files=[]
 lib_src_files=glob(os.path.join(src_root_path,'*.cpp'))
@@ -49,7 +50,7 @@ lib_file=target_root_path+'lib/'+os.path.basename(lib_file)
 if compiler=='g++':
    env.ARCLIB(lib_file,lib_obj_files)
 else:
-   env.StaticLibrary(target=lib_file,source=lib_src_files)
+   lib_target=env.StaticLibrary(target=lib_file,source=lib_src_files)
 
 #COPY HEADERS TO TARGET DIRECTORY, LIBS ARE ALREADY THERE
 header_target=[]
@@ -59,6 +60,8 @@ for header_file in lib_header_files:
        header_target=Command(target_file,header_file,Copy("$TARGET","$SOURCE"))
 
 #CUSTOMIZE CLEAN OPTION
+lib_delete_files=glob(os.path.join(src_root_path,'*.pdb'))
 header_delete_files= [os.path.join(target_root_path+'include/', name) for name in os.listdir(target_root_path+'include/')
                       if os.path.isdir(os.path.join(target_root_path+'include/', name))]
+Clean(lib_target,lib_delete_files)
 Clean(header_target,header_delete_files)
