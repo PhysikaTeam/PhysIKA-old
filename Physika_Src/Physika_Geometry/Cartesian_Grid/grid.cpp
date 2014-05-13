@@ -162,6 +162,53 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::cellCenter(const Vector<int,Dim> &index
     return cor_node+0.5*dx_;
 }
 
+template <typename Scalar,int Dim>
+void GridBase<Scalar,Dim>::setCellNum(int cell_num)
+{
+    PHYSIKA_ASSERT(cell_num>=0);
+    cell_num_ = Vector<int,Dim>(cell_num);
+    dx_ = domain_.edgeLengths()/cell_num;
+}
+
+template <typename Scalar,int Dim>
+void GridBase<Scalar,Dim>::setCellNum(const Vector<int,Dim> &cell_num)
+{
+    for(int i = 0; i < Dim; ++i)
+	PHYSIKA_ASSERT(cell_num[i]>=0);
+    cell_num_ = cell_num;
+    Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
+    for(int i = 0; i < Dim; ++i)
+	dx_[i] = domain_size[i]/cell_num_[i];
+}
+
+template <typename Scalar,int Dim>
+void GridBase<Scalar,Dim>::setNodeNum(int node_num)
+{
+    PHYSIKA_ASSERT(node_num>0);
+    cell_num_ = Vector<int,Dim>(node_num-1);
+    dx_ = domain_.edgeLengths()/(node_num-1);
+}
+
+template <typename Scalar,int Dim>
+void GridBase<Scalar,Dim>::setNodeNum(const Vector<int,Dim> &node_num)
+{
+    for(int i = 0; i < Dim; ++i)
+	PHYSIKA_ASSERT(node_num[i]>0);
+    cell_num_ = node_num-Vector<int,Dim>(1);
+    Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
+    for(int i = 0; i < Dim; ++i)
+	dx_[i] = domain_size[i]/cell_num_[i];
+}
+
+template <typename Scalar,int Dim>
+void GridBase<Scalar,Dim>::setDomain(const Range<Scalar,Dim> &domain)
+{
+    domain_ = domain;
+    Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
+    for(int i = 0; i < Dim; ++i)
+	dx_[i] = domain_size[i]/cell_num_[i];
+}
+
 template <typename Scalar>
 Vector<Scalar,2> Grid<Scalar,2>::node(int i, int j) const
 {

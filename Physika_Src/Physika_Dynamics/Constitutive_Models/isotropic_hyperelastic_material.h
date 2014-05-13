@@ -15,7 +15,7 @@
 #ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ISOTROPIC_HYPERELASTIC_MATERIAL_H_
 #define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ISOTROPIC_HYPERELASTIC_MATERIAL_H_
 
-#include "Physika_Core/Array/array.h"
+#include "Physika_Core/Arrays/array.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 
 namespace Physika{

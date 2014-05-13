@@ -1,6 +1,6 @@
 /*
  * @file array.h 
- * @brief array class. Design for general use. 
+ * @brief 1D array class. Designed for general use. 
  * @author Sheng Yang, Fei Zhu
  * @Suggestion: Choose between Array and std::vector at your will.
  *              If frequent sort and find operation is needed, use std::vector.
@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef PHSYIKA_CORE_ARRAY_ARRAY_H_
-#define PHSYIKA_CORE_ARRAY_ARRAY_H_
+#ifndef PHSYIKA_CORE_ARRAYS_ARRAY_H_
+#define PHSYIKA_CORE_ARRAYS_ARRAY_H_
 
 #include <cstring>
 #include <iostream>
@@ -23,11 +23,17 @@
 
 namespace Physika{
 
+/*
+ * ReorderObject: base class of Array such that object of Array class can be pointed by
+ * template-free pointer ReorderObject*. For use in ArrayManager, which permutates elements
+ * of arrays concurrently, see array_manager.h.
+ */
+
 class ReorderObject
 {
 public:
-    ReorderObject() {};
-    ~ReorderObject() {};
+    ReorderObject() {}
+    ~ReorderObject() {}
     virtual void reorder(unsigned int *ids, unsigned int size) = 0;
 };
 
@@ -184,4 +190,4 @@ void Array<ElementType>::reorder(unsigned int *ids, unsigned int size)
 
 }//end of namespace Physika
 
-#endif //PHSYIKA_CORE_ARRAY_ARRAY_H_
+#endif //PHSYIKA_CORE_ARRAYS_ARRAY_H_

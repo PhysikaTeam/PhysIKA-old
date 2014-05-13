@@ -17,7 +17,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
-#include "Physika_Core/Array/array.h"
+#include "Physika_Core/Arrays/array.h"
 #include "Physika_Geometry/Volumetric_Mesh/tet_mesh.h"
 
 namespace Physika{

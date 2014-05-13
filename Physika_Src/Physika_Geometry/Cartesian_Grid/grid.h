@@ -24,8 +24,7 @@
 namespace Physika{
 
 /*
- * After initialization, the structure of grid(domain,cell size, etc.) is fixed.
- * The NODE, CELL, FACE of the grid can be visited either through index or iterator.
+ * The NODE, CELL of the grid can be visited either through index or iterator.
  */
 
 /*
@@ -51,6 +50,12 @@ public:
     Scalar cellSize() const; //2d: area; 3d: volume;
     Vector<Scalar,Dim> node(const Vector<int,Dim> &index) const;
     Vector<Scalar,Dim> cellCenter(const Vector<int,Dim> &index) const;
+    //modifiers
+    void setCellNum(int cell_num);  //same cell number along each dimension
+    void setCellNum(const Vector<int,Dim> &cell_num);
+    void setNodeNum(int node_num);
+    void setNodeNum(const Vector<int,Dim> &node_num);
+    void setDomain(const Range<Scalar,Dim> &domain);
 protected:
     GridBase<Scalar,Dim>& operator= (const GridBase<Scalar,Dim> &grid);
     bool operator== (const GridBase<Scalar,Dim> &grid) const;

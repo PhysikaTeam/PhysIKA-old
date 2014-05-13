@@ -16,7 +16,7 @@
 #define PHYSIKA_RENDER_SURFACE_MESH_RENDER_SURFACE_MESH_RENDER_H_
 
 #include <utility>
-#include "Physika_Core/Array/array.h"
+#include "Physika_Core/Arrays/array.h"
 #include "Physika_Render/Render_Base/render_base.h"
 
 namespace Physika{
