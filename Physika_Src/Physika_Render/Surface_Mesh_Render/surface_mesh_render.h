@@ -48,6 +48,8 @@ public:
     void enableTexture();
     void disableTexture();
 
+	void update();   
+
     //Render
     virtual void render();
 protected:
@@ -66,6 +68,12 @@ protected:
     //the first entry is a flag indicating if there's texture for the material
     //the second entry is the OpenGL texture id
     Array<std::pair<bool,unsigned int> > textures_;
+
+	unsigned int vertex_display_list_id_;   
+	unsigned int wire_display_list_id_;     
+	unsigned int solid_display_list_id_;    
+
+
 
     //predefined render modes
     static const unsigned int render_solid_;
