@@ -58,23 +58,24 @@ unsigned char* PngIO::load(const string &filename, int &width,int &height)
     return image_data;
 }
 
-void PngIO::save(const string &filename, int width, int height, const unsigned char *image_data)
+bool PngIO::save(const string &filename, int width, int height, const unsigned char *image_data)
 {
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
 	std::cerr<<"No file extension specified!\n";
-	std::exit(EXIT_FAILURE);
+	return false;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix!=string(".png"))                                     //if the filename is not ended with ".png"
     {
 	std::cerr<<"Wrong file extension specified for PNG file!\n";
-	std::exit(EXIT_FAILURE);
+	return false;
     }
     unsigned error = lodepng::encode(filename, image_data, width, height);   //encode the image_data to file
     string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);   //difine the error message 
     PHYSIKA_MESSAGE_ASSERT(error==0, error_message);                                       // if an error happends, output the error message
+    return true;
 }
 
 } //end of namespace Physika

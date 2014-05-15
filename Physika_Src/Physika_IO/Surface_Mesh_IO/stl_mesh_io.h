@@ -16,7 +16,6 @@
 #define PHYSIKA_IO_SURFACE_MESH_IO_STL_MESH_IO_H_
 
 #include <string>
-using std::string;
 
 namespace Physika{
 
@@ -30,9 +29,9 @@ public:
     ~StlMeshIO(){}
 
     // load a mesh from a stl file.
-    static void load(const string& filename, SurfaceMesh<Scalar> *mesh);
+    static bool load(const std::string& filename, SurfaceMesh<Scalar> *mesh);
     // save a mesh to a stl file.
-    static void save(const string& filename, SurfaceMesh<Scalar> *mesh);
+    static bool save(const std::string& filename, SurfaceMesh<Scalar> *mesh);
 
 protected:
 };

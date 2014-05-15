@@ -31,8 +31,9 @@ public:
     static unsigned char* load(const std::string &filename, int &width, int &height);
 
     /* save image data to file, the image data is in row order
+     * return true if succeed, otherwise return false
      */
-    static void save(const std::string &filename, int width, int height, const unsigned char *image_data);
+    static bool save(const std::string &filename, int width, int height, const unsigned char *image_data);
 protected:
 
 };

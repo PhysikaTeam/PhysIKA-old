@@ -14,19 +14,22 @@
 
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_IO/Surface_Mesh_IO/stl_mesh_io.h"
+using std::string;
 
 namespace Physika{
 
 template <typename Scalar>
-void StlMeshIO<Scalar>::load(const string& filename, SurfaceMesh<Scalar> *mesh)
+bool StlMeshIO<Scalar>::load(const string& filename, SurfaceMesh<Scalar> *mesh)
 {
 //TO DO: implementation
+    return false;
 }
 
 template <typename Scalar>
-void StlMeshIO<Scalar>::save(const string& filename, SurfaceMesh<Scalar> *mesh)
+bool StlMeshIO<Scalar>::save(const string& filename, SurfaceMesh<Scalar> *mesh)
 {
 //TO DO: implementation
+    return false;
 }
 
 } //end of namespace Physika

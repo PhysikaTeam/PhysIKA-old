@@ -82,4 +82,3 @@ typedef Vector<int,3> Vector3i;
 } //end of namespace Physika
 
 #endif //PHYSIKA_CORE_VECTORS_VECTOR_3D_H_
-

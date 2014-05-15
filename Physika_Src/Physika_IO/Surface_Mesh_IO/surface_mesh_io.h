@@ -17,7 +17,6 @@
 #define PHYSIKA_IO_SURFACE_MESH_IO_SURFACE_MESH_IO_H_
 
 #include <string>
-using std::string;
 
 namespace Physika{
 
@@ -30,8 +29,9 @@ public:
     SurfaceMeshIO(){}
     ~SurfaceMeshIO(){}
     //memory of mesh is preallocated by caller
-    static void load(const string &filename, SurfaceMesh<Scalar> *mesh);
-    static void save(const string &filename, SurfaceMesh<Scalar> *mesh);
+    //return true if succeed, otherwise return false
+    static bool load(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    static bool save(const std::string &filename, SurfaceMesh<Scalar> *mesh);
 
 protected:
 };

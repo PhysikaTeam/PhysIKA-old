@@ -81,5 +81,3 @@ typedef Vector<int,2> Vector2i;
 } //end of namespace Physika
 
 #endif //PHYSIKA_CORE_VECTORS_VECTOR_2D_H_
-
-

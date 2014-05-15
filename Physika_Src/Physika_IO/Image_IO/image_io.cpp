@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Core/Utilities/physika_assert.h"
+#include <iostream>
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/png_io.h"
 
@@ -36,21 +36,21 @@ unsigned char* ImageIO::load(const string &filename, int &width, int &height)
     }
 }
 
-void ImageIO::save(const string &filename, int width, int height, const unsigned char *image_data)
+bool ImageIO::save(const string &filename, int width, int height, const unsigned char *image_data)
 {
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
 	std::cerr<<"No file extension specified!\n";
-	std::exit(EXIT_FAILURE);
+	return false;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-	PngIO::save(filename,width,height,image_data);
+	return PngIO::save(filename,width,height,image_data);
     else
     {
 	std::cerr<<"Unknown image file format specified!\n";
-	std::exit(EXIT_FAILURE);
+	return false;
     }
 }
 
