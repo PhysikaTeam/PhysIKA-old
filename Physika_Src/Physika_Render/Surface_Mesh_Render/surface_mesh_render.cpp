@@ -345,15 +345,19 @@ void SurfaceMeshRender<Scalar>::loadTextures()
 	{
 		Material<Scalar> material_ref = this->mesh_->material(material_idx);    // get material reference
 
-		//std::cout<<"filename: "<<material_ref.textureFileName()<<std::endl;
+
 		if(material_ref.hasTexture())    // if have a texture
 		{
 			int width,height;
-			//std::cout<<"filename: "<<material_ref.textureFileName()<<std::endl;
 			unsigned char * image_data = ImageIO::load(material_ref.textureFileName(),width,height); // load image data from file
 			std::pair<bool,unsigned int> texture;
+			if(image_data==NULL)        // if image_data is NULL, then set this material having no texture.
+			{
+				texture.first = false;
+				this->textures_[material_idx] = texture;
+				continue;
+			}
 			texture.first = true;
-
 			glEnable(GL_TEXTURE_2D);
 			glGenTextures(1, &(texture.second));                              // generate texture object
 			glBindTexture(GL_TEXTURE_2D, texture.second);                     // bind the texture
@@ -377,7 +381,6 @@ void SurfaceMeshRender<Scalar>::loadTextures()
 			this->textures_[material_idx] = texture;
 		}
 	}
-	//std::cout<<"texture size: "<<num_material<<std::endl;
 }
 
 template <typename Scalar>
