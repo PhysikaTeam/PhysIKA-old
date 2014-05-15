@@ -13,7 +13,6 @@
  */
 
 #include <iostream>
-#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Basic_Geometry/sphere.h"
 
 namespace Physika{
@@ -28,7 +27,11 @@ template <typename Scalar>
 Sphere<Scalar>::Sphere(const Vector<Scalar,3> &center, Scalar radius)
     :center_(center)
 {
-    PHYSIKA_ASSERT(radius>=0);
+    if(radius<0)
+    {
+	std::cerr<<"Radius of a sphere must be equal or greater than zero!\n";
+	std::exit(EXIT_FAILURE);
+    }
     radius_ = radius;
 }
 

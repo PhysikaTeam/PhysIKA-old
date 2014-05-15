@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Core/Utilities/physika_assert.h"
+#include <iostream>
 #include "Physika_Core/Range/interval.h"
 
 namespace Physika{
@@ -30,7 +30,11 @@ Interval<Scalar>::Interval(Scalar val):min_val_(val),max_val_(val)
 template <typename Scalar>
 Interval<Scalar>::Interval(Scalar min_val, Scalar max_val)
 {
-    PHYSIKA_ASSERT(min_val<=max_val);
+    if(min_val>max_val)
+    {
+	std::cerr<<"Minimum value of interval must be equal or smaller than maximum value!\n";
+	std::exit(EXIT_FAILURE);
+    }
     min_val_ = min_val;
     max_val_ = max_val;
 }

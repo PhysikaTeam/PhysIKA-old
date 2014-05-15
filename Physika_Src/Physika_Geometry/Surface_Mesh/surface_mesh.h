@@ -16,6 +16,7 @@
 #define PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
 
 #include <vector>
+#include <string>
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Geometry/Surface_Mesh/vertex.h"
@@ -64,10 +65,10 @@ public:
     void setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
     Group<Scalar>& group(unsigned int group_idx);
     Group<Scalar>* groupPtr(unsigned int group_idx);
-    Group<Scalar>* groupPtr(const string &name);
+    Group<Scalar>* groupPtr(const std::string &name);
     Material<Scalar>& material(unsigned int material_idx);
     Material<Scalar>* materialPtr(unsigned int material_idx);
-    unsigned int materialIndex(const string &material_name) const; //if no material with given name, return -1
+    unsigned int materialIndex(const std::string &material_name) const; //if no material with given name, return -1
     void setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
 
     //adders

@@ -13,6 +13,7 @@
 */
 
 #include <limits>
+#include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
@@ -49,12 +50,18 @@ VectorND<Scalar>::VectorND(const VectorND<Scalar> &vec2)
 template <typename Scalar>
 void VectorND<Scalar>::allocMemory(int dims)
 {
-    PHYSIKA_ASSERT(dims>=0);
+    if(dims<0)
+    {
+	std::cerr<<"Vector dimension must be greater than zero!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     ptr_eigen_vector_Nx_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,1>(dims);
+    PHYSIKA_ASSERT(ptr_eigen_vector_Nx_);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
     data_ = new Scalar[dims];
     dims_ = dims;
+    PHYSIKA_ASSERT(data_);
 #endif
 }
 
@@ -81,7 +88,11 @@ int VectorND<Scalar>::dims() const
 template <typename Scalar>
 void VectorND<Scalar>::resize(int new_dim)
 {
-    PHYSIKA_ASSERT(new_dim>=0);
+    if(new_dim<0)
+    {
+	std::cerr<<"Vector dimension must be greater than zero!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     (*ptr_eigen_vector_Nx_).resize(new_dim);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -94,7 +105,11 @@ void VectorND<Scalar>::resize(int new_dim)
 template <typename Scalar>
 Scalar& VectorND<Scalar>::operator[] (int idx)
 {
-    PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
+    if(idx<0||idx>=(*this).dims())
+    {
+	std::cout<<"Vector index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_)[idx];
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -105,7 +120,11 @@ Scalar& VectorND<Scalar>::operator[] (int idx)
 template <typename Scalar>
 const Scalar& VectorND<Scalar>::operator[] (int idx) const
 {
-    PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
+    if(idx<0||idx>=(*this).dims())
+    {
+	std::cout<<"Vector index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_)[idx];
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -118,7 +137,11 @@ VectorND<Scalar> VectorND<Scalar>::operator+ (const VectorND<Scalar> &vec2) cons
 {
     int dim1 = (*this).dims();
     int dim2 = vec2.dims();
-    PHYSIKA_ASSERT(dim1==dim2);
+    if(dim1!=dim2)
+    {
+	std::cout<<"Cannot add two vectors of different dimensions!\n";
+	std::exit(EXIT_FAILURE);
+    }
     VectorND<Scalar> result(dim1);
     for(int i = 0; i < dim1; ++i)
 	result[i] = (*this)[i] + vec2[i];
@@ -130,7 +153,11 @@ VectorND<Scalar>& VectorND<Scalar>::operator+= (const VectorND<Scalar> &vec2)
 {
     int dim1 = (*this).dims();
     int dim2 = vec2.dims();
-    PHYSIKA_ASSERT(dim1==dim2);
+    if(dim1!=dim2)
+    {
+	std::cout<<"Cannot add two vectors of different dimensions!\n";
+	std::exit(EXIT_FAILURE);
+    }
     for(int i = 0; i < dim1; ++i)
 	(*this)[i] = (*this)[i] + vec2[i];
     return *this;
@@ -141,7 +168,11 @@ VectorND<Scalar> VectorND<Scalar>::operator- (const VectorND<Scalar> &vec2) cons
 {
     int dim1 = (*this).dims();
     int dim2 = vec2.dims();
-    PHYSIKA_ASSERT(dim1==dim2);
+    if(dim1!=dim2)
+    {
+	std::cout<<"Cannot subtract two vectors of different dimensions!\n";
+	std::exit(EXIT_FAILURE);
+    }
     VectorND<Scalar> result(dim1);
     for(int i = 0; i < dim1; ++i)
 	result[i] = (*this)[i] - vec2[i];
@@ -153,7 +184,11 @@ VectorND<Scalar>& VectorND<Scalar>::operator-= (const VectorND<Scalar> &vec2)
 {
     int dim1 = (*this).dims();
     int dim2 = vec2.dims();
-    PHYSIKA_ASSERT(dim1==dim2);
+    if(dim1!=dim2)
+    {
+	std::cout<<"Cannot subtract two vectors of different dimensions!\n";
+	std::exit(EXIT_FAILURE);
+    }
     for(int i = 0; i < dim1; ++i)
 	(*this)[i] = (*this)[i] - vec2[i];
     return *this;
@@ -205,7 +240,11 @@ VectorND<Scalar>& VectorND<Scalar>::operator*= (Scalar scale)
 template <typename Scalar>
 VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
 {
-    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Vector Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     int dim = (*this).dims();
     VectorND<Scalar> result(dim);
     for(int i = 0; i < dim; ++i)
@@ -216,7 +255,11 @@ VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
 template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::operator/= (Scalar scale)
 {
-    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Vector Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     int dim = (*this).dims();
     for(int i = 0; i < dim; ++i)
 	(*this)[i] = (*this)[i] / scale;

@@ -20,8 +20,6 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Surface_Mesh/material.h"
 #include "Physika_Geometry/Surface_Mesh/face.h"
-using std::string;
-using std::vector;
 
 namespace Physika{
 
@@ -33,13 +31,13 @@ class Group
 public:
     Group();
     ~Group();
-    explicit Group(const string &name);
-    Group(const string &name, const vector<Face<Scalar> > &faces);
-    Group(const string &name, unsigned int material_index);
-    Group(const string &name, unsigned int material_index, const vector<Face<Scalar> > &faces);
+    explicit Group(const std::string &name);
+    Group(const std::string &name, const std::vector<Face<Scalar> > &faces);
+    Group(const std::string &name, unsigned int material_index);
+    Group(const std::string &name, unsigned int material_index, const std::vector<Face<Scalar> > &faces);
     unsigned int numFaces() const;
-    const string& name() const;
-    void setName(const string &name);
+    const std::string& name() const;
+    void setName(const std::string &name);
     const Face<Scalar>& face(unsigned int face_idx) const; 
     Face<Scalar>& face(unsigned int face_idx);
     const Face<Scalar>* facePtr(unsigned int face_idx) const;
@@ -49,9 +47,9 @@ public:
     void addFace(const Face<Scalar> &face);
     void removeFace(unsigned int face_idx);
 protected:
-    string name_;
+    std::string name_;
     unsigned int material_index_; //materil index in the mesh
-    vector<Face<Scalar> > faces_;
+    std::vector<Face<Scalar> > faces_;
 };
 
 } //end of namespace SurfaceMeshInternal

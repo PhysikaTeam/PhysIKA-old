@@ -13,7 +13,7 @@
  */
 
 #include <cmath>
-#include "Physika_Core/Utilities/physika_assert.h"
+#include <iostream>
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 
@@ -138,7 +138,11 @@ Quaternion<Scalar>  Quaternion<Scalar>::operator * (Scalar scale)
 template <typename Scalar>
 Quaternion<Scalar>  Quaternion<Scalar>::operator / (Scalar scale)
 {
-    PHYSIKA_ASSERT(scale != 0);
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Quaternion Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     return Quaternion(x_ / scale, y_ / scale, z_ / scale, w_ / scale);
 }
 
@@ -161,7 +165,11 @@ bool  Quaternion<Scalar>::operator != (const Quaternion<Scalar> &quat)
 template <typename Scalar>
 Scalar&  Quaternion<Scalar>::operator[] (int idx)
 {
-    PHYSIKA_ASSERT(idx >= 0 && idx <= 3);
+    if(idx < 0 || idx > 3)
+    {
+	std::cerr<<"Quaternion index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
     switch(idx)
     {
     case 0:
@@ -180,7 +188,11 @@ Scalar&  Quaternion<Scalar>::operator[] (int idx)
 template <typename Scalar>
 const Scalar&  Quaternion<Scalar>::operator[] (int idx) const
 {
-    PHYSIKA_ASSERT(idx >= 0 && idx <= 3);
+    if(idx < 0 || idx > 3)
+    {
+	std::cerr<<"Quaternion index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
     switch(idx)
     {
     case 0:

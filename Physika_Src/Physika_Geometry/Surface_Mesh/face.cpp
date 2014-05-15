@@ -16,6 +16,7 @@
 #include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Surface_Mesh/face.h"
+using std::vector;
 
 namespace Physika{
 

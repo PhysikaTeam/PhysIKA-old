@@ -16,7 +16,6 @@
 #define PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_
 
 #include <string>
-using std::string;
 
 namespace Physika{
 
@@ -29,12 +28,12 @@ public:
      * if load fails, return NULL 
      * memory of the image data needs to be released by the caller
      */
-    static unsigned char* load(const string &filename, int &width, int &height);
+    static unsigned char* load(const std::string &filename, int &width, int &height);
 
     /* save image data to file, the image data is in row order
      * return true if succeed, otherwise return false
      */
-    static bool save(const string &filename, int width, int height, const unsigned char *image_data);
+    static bool save(const std::string &filename, int width, int height, const unsigned char *image_data);
 
 
 protected:

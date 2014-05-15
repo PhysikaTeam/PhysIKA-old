@@ -13,6 +13,7 @@
  */
 
 #include "Physika_Geometry/Surface_Mesh/material.h"
+using std::string;
 
 namespace Physika{
 

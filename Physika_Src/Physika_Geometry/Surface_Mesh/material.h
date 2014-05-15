@@ -17,7 +17,6 @@
 
 #include <string>
 #include "Physika_Core/Vectors/vector_3d.h"
-using std::string;
 
 namespace Physika{
 
@@ -32,9 +31,9 @@ class Material
 public:
     Material();
     ~Material();
-    Material(const string &name, const Vector<Scalar,3> &Ka, const Vector<Scalar,3> &Kd, const Vector<Scalar,3> &Ks, Scalar shininess, const string &texture_file_name=string());
-    const string& name() const;
-    void setName(const string &name);
+    Material(const std::string &name, const Vector<Scalar,3> &Ka, const Vector<Scalar,3> &Kd, const Vector<Scalar,3> &Ks, Scalar shininess, const std::string &texture_file_name=std::string());
+    const std::string& name() const;
+    void setName(const std::string &name);
     const Vector<Scalar,3>& Ka() const;
     void setKa(const Vector<Scalar,3> &Ka);
     const Vector<Scalar,3>& Kd() const;
@@ -46,8 +45,8 @@ public:
     Scalar alpha() const;
     void setAlpha(Scalar);
     bool hasTexture() const;
-    const string& textureFileName() const;
-    void setTextureFileName(const string &texture_file_name);
+    const std::string& textureFileName() const;
+    void setTextureFileName(const std::string &texture_file_name);
 
     //TO DO: Add some static member methods here, predefined materials: rubber, iron, etc.
 
@@ -55,8 +54,8 @@ protected:
     Vector<Scalar,3> Ka_, Kd_, Ks_;
     Scalar shininess_;
     Scalar alpha_;
-    string name_;
-    string texture_file_name_;  //full path of texture file name
+    std::string name_;
+    std::string texture_file_name_;  //full path of texture file name
 };
 
 } //end of namespace SurfaceMeshInternal

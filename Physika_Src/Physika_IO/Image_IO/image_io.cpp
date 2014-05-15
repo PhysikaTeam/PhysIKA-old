@@ -15,6 +15,7 @@
 #include <iostream>
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/png_io.h"
+using std::string;
 
 namespace Physika{
 

@@ -62,7 +62,7 @@ public:
     void zero();
 
     /* Operator overloading */
-    ElementType & operator[] (int id){ PHYSIKA_ASSERT(id >= 0 && id < element_count_); return data_[id]; }
+    ElementType & operator[] (int id);
 
     virtual void reorder(unsigned int *ids, unsigned int size);
 protected:
@@ -134,17 +134,11 @@ Array<ElementType>::~Array()
 }
 
 template <typename ElementType>
-void Array<ElementType>::allocate()
+Array<ElementType> & Array<ElementType>::operator = (const Array<ElementType> &arr)
 {
-    data_ = new ElementType[element_count_];
-}
-
-template <typename ElementType>
-void Array<ElementType>::release()
-{
-    if(data_ != NULL)
-        delete [] data_;
-    data_ = NULL;
+    resize(arr.elementCount());
+    memcpy(data_,arr.data(), sizeof(ElementType) * element_count_);
+    return *this;
 }
 
 template <typename ElementType>
@@ -158,31 +152,59 @@ void Array<ElementType>::resize(unsigned int count)
 template <typename ElementType>
 void Array<ElementType>::zero()
 {
-    memset((void*)data_, 0, element_count_ * sizeof(ElementType));
+    if(element_count_>0)
+    {
+	PHYSIKA_ASSERT(data_);
+	memset((void*)data_, 0, element_count_ * sizeof(ElementType));
+    }
 }
 
 template <typename ElementType>
-Array<ElementType> & Array<ElementType>::operator = (const Array<ElementType> &arr)
+ElementType& Array<ElementType>::operator[] (int id)
 {
-    resize(arr.elementCount());
-    memcpy(data_,arr.data(), sizeof(ElementType) * element_count_);
-    return *this;
+    if(id<0||id>=element_count_)
+    {
+	std::cerr<<"Array index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
+    return data_[id];
 }
 
 template <typename ElementType>
 void Array<ElementType>::reorder(unsigned int *ids, unsigned int size)
 {
-    if (size != element_count_)
+    if(size != element_count_)
     {
         std::cerr << "array size do not match!" << std::endl;
 	std::exit(EXIT_FAILURE);
     }
+    if(element_count_>0)
+    {
+	ElementType * tmp = new ElementType[element_count_];
+	PHYSIKA_ASSERT(tmp);
+	PHYSIKA_ASSERT(data_);
+	for (size_t i = 0; i < element_count_; i++)
+	    tmp[i] = data_[ids[i]];
+	memcpy(data_, tmp, element_count_ * sizeof(ElementType));
+	delete[] tmp;
+    }
+}
 
-    ElementType * tmp = new ElementType[element_count_];
-    for (size_t i = 0; i < element_count_; i++)
-        tmp[i] = data_[ids[i]];
-    memcpy(data_, tmp, element_count_ * sizeof(ElementType));
-    delete[] tmp;
+template <typename ElementType>
+void Array<ElementType>::allocate()
+{
+    if(data_ != NULL)
+        delete[] data_;
+    data_ = new ElementType[element_count_];
+    PHYSIKA_ASSERT(data_);
+}
+
+template <typename ElementType>
+void Array<ElementType>::release()
+{
+    if(data_ != NULL)
+        delete[] data_;
+    data_ = NULL;
 }
 
 }//end of namespace Physika

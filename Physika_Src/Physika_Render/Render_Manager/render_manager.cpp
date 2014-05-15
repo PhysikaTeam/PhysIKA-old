@@ -12,6 +12,7 @@
  *
  */
 
+#include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Render/Render_Base/render_base.h"
 #include "Physika_Render/Render_Manager/render_manager.h"
@@ -34,25 +35,46 @@ unsigned int RenderManager::numRenderTasks() const
 
 void RenderManager::insertBack(RenderBase *render_task)
 {
-    PHYSIKA_ASSERT(render_task);
-    render_list_.push_back(render_task);
+    if(render_task)
+	render_list_.push_back(render_task);
+    else
+    {
+	std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
+	std::exit(EXIT_FAILURE);
+    }
 }
 
 void RenderManager::insertFront(RenderBase *render_task)
 {
-    PHYSIKA_ASSERT(render_task);
-    render_list_.push_front(render_task);
+    if(render_task)
+	render_list_.push_front(render_task);
+    else
+    {
+	std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
+	std::exit(EXIT_FAILURE);
+    }
 }
 
 void RenderManager::insertAtIndex(unsigned int index, RenderBase *task)
 {
-    PHYSIKA_ASSERT(index>=0);
-    PHYSIKA_ASSERT(index<render_list_.size());
-    PHYSIKA_ASSERT(task);
-    list<RenderBase*>::iterator pos = render_list_.begin();
-    while(index-- >= 0)
-	++pos;
-    render_list_.insert(pos,task);
+    bool index_valid = (index>=0)&&(index<render_list_.size());
+    if(!index_valid)
+    {
+	std::cerr<<"Render task index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
+    if(task)
+    {
+	list<RenderBase*>::iterator pos = render_list_.begin();
+	while(index-- >= 0)
+	    ++pos;
+	render_list_.insert(pos,task);
+    }
+    else
+    {
+	std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
+	std::exit(EXIT_FAILURE);
+    }
 }
 
 void RenderManager::removeBack()
@@ -67,8 +89,12 @@ void RenderManager::removeFront()
 
 void RenderManager::removeAtIndex(unsigned int index)
 {
-    PHYSIKA_ASSERT(index>=0);
-    PHYSIKA_ASSERT(index<render_list_.size());
+    bool index_valid = (index>=0)&&(index<render_list_.size());
+    if(!index_valid)
+    {
+	std::cerr<<"Render task index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
     list<RenderBase*>::iterator pos = render_list_.begin();
     while(index-- >= 0)
 	++pos;
@@ -85,8 +111,8 @@ void RenderManager::renderAll()
     for(list<RenderBase*>::iterator iter = render_list_.begin(); iter != render_list_.end(); ++iter)
     {
 	RenderBase *cur_render = *iter;
-	if(cur_render)
-	    cur_render->render();
+	PHYSIKA_ASSERT(cur_render);
+	cur_render->render();
     }
 }
 
@@ -98,8 +124,8 @@ void RenderManager::renderAtIndex(unsigned int index)
     while(index-- >= 0)
 	++iter;
     RenderBase *cur_render = *iter;
-    if(cur_render)
-	cur_render->render();
+    PHYSIKA_ASSERT(cur_render);
+    cur_render->render();
 }
 
 }  //end of namespace Physika

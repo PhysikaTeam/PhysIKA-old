@@ -13,8 +13,8 @@
  */
 
 #include <limits>
+#include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 
 namespace Physika{
@@ -72,8 +72,12 @@ SquareMatrix<Scalar,2>::~SquareMatrix()
 template <typename Scalar>
 Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j)
 {
-    PHYSIKA_ASSERT(i>=0&&i<2);
-    PHYSIKA_ASSERT(j>=0&&j<2);
+    bool index_valid = (i>=0&&i<2)&&(j>=0&&j<2);
+    if(!index_valid)
+    {
+	std::cerr<<"Matrix index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -84,8 +88,12 @@ Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j)
 template <typename Scalar>
 const Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j) const
 {
-    PHYSIKA_ASSERT(i>=0&&i<2);
-    PHYSIKA_ASSERT(j>=0&&j<2);
+    bool index_valid = (i>=0&&i<2)&&(j>=0&&j<2);
+    if(!index_valid)
+    {
+	std::cerr<<"Matrix index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -193,7 +201,11 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (const SquareMatrix<Sca
 template <typename Scalar>
 SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 {
-    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Matrix Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -204,7 +216,11 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 template <typename Scalar>
 SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator/= (Scalar scale)
 {
-    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Matrix Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
             (*this)(i,j) = (*this)(i,j) / scale;
@@ -229,7 +245,11 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
     return SquareMatrix<Scalar,2>(result_matrix(0,0), result_matrix(0,1), result_matrix(1,0), result_matrix(1,1));
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = determinant();
-    PHYSIKA_ASSERT(det!=0);
+    if(det==0)
+    {
+	std::cerr<<"Matrix not invertible!\n";
+	std::exit(EXIT_FAILURE);
+    }
     return SquareMatrix<Scalar,2>(data_[1][1]/det, -data_[0][1]/det, -data_[1][0]/det, data_[0][0]/det);
 #endif 
 }

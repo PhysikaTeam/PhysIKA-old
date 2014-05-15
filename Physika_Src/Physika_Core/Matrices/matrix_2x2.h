@@ -79,7 +79,6 @@ SquareMatrix<T,2> operator* (S scale, const SquareMatrix<T,2> &mat)
 }
 
 //convenient typedefs
-#define Matrix2x2(Scalar) SquareMatrix<Scalar,2>
 typedef SquareMatrix<float,2> Matrix2f;
 typedef SquareMatrix<double,2> Matrix2d;
 

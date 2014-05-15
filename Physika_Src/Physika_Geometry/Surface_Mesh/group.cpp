@@ -16,6 +16,8 @@
 #include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Surface_Mesh/group.h"
+using std::string;
+using std::vector;
 
 namespace Physika{
 

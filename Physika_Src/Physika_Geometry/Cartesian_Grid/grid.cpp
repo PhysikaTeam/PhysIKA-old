@@ -14,7 +14,7 @@
  */
 
 #include <cfloat>
-#include "Physika_Core/Utilities/physika_assert.h"
+#include <iostream>
 #include "Physika_Geometry/Cartesian_Grid/grid.h"
 
 namespace Physika{
@@ -33,7 +33,11 @@ template <typename Scalar,int Dim>
 GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, int cell_num)
     :domain_(domain)
 {
-    PHYSIKA_ASSERT(cell_num>=0);
+    if(cell_num<=0)
+    {
+	std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
+	std::exit(EXIT_FAILURE);
+    }
     cell_num_ = Vector<int,Dim>(cell_num);
     dx_ = domain_.edgeLengths()/cell_num;
 }
@@ -43,7 +47,11 @@ GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, const Vector<int
     :domain_(domain)
 {
     for(int i = 0; i < Dim; ++i)
-	PHYSIKA_ASSERT(cell_num[i]>=0);
+	if(cell_num[i]<=0)
+	{
+	    std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
+	    std::exit(EXIT_FAILURE);
+	}
     cell_num_ = cell_num;
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(int i = 0; i < Dim; ++i)
@@ -59,16 +67,16 @@ GridBase<Scalar,Dim>::GridBase(const GridBase<Scalar,Dim> &grid)
 template <typename Scalar,int Dim>
 GridBase<Scalar,Dim>& GridBase<Scalar,Dim>::operator= (const GridBase<Scalar,Dim> &grid)
 {
-    domain_ = grid.domain();
-    dx_ = grid.dX();
-    cell_num_ = grid.cellNum();
+    domain_ = grid.domain_;
+    dx_ = grid.dx_;
+    cell_num_ = grid.cell_num_;
     return *this;
 }
 
 template <typename Scalar,int Dim>
 bool GridBase<Scalar,Dim>::operator== (const GridBase<Scalar,Dim> &grid) const
 {
-    return (domain_==grid.domain())&&(dx_==grid.dX())&&(cell_num_==grid.cellNum());
+    return (domain_==grid.domain_)&&(dx_==grid.dx_)&&(cell_num_==grid.cell_num_);
 }
 
 template <typename Scalar,int Dim>
@@ -141,8 +149,11 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::node(const Vector<int,Dim> &index) cons
 {
     for(int i = 0; i < Dim; ++i)
     {
-	PHYSIKA_ASSERT(index[i]>=0);
-	PHYSIKA_ASSERT(index[i]<=cell_num_[i]);
+	if(index[i]<0||index[i]>cell_num_[i])
+	{
+	    std::cerr<<"Grid node index out of range!\n";
+	    std::exit(EXIT_FAILURE);
+	}
     }
     Vector<Scalar,Dim> bias;
     for(int i = 0; i < Dim; ++i)
@@ -155,8 +166,11 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::cellCenter(const Vector<int,Dim> &index
 {
     for(int i = 0; i < Dim; ++i)
     {
-	PHYSIKA_ASSERT(index[i]>=0);
-	PHYSIKA_ASSERT(index[i]<cell_num_[i]);
+	if(index[i]<0||index[i]>=cell_num_[i])
+	{
+	    std::cerr<<"Grid cell index out of range!\n";
+	    std::exit(EXIT_FAILURE);
+	}
     }
     Vector<Scalar,Dim> cor_node = node(index);
     return cor_node+0.5*dx_;
@@ -165,7 +179,11 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::cellCenter(const Vector<int,Dim> &index
 template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setCellNum(int cell_num)
 {
-    PHYSIKA_ASSERT(cell_num>=0);
+    if(cell_num<=0)
+    {
+	std::cerr<<"Cell number of a grid must be greater than zero!\n";
+	std::exit(EXIT_FAILURE);
+    }
     cell_num_ = Vector<int,Dim>(cell_num);
     dx_ = domain_.edgeLengths()/cell_num;
 }
@@ -174,7 +192,13 @@ template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setCellNum(const Vector<int,Dim> &cell_num)
 {
     for(int i = 0; i < Dim; ++i)
-	PHYSIKA_ASSERT(cell_num[i]>=0);
+    {
+	if(cell_num[i]<=0)
+	{
+	    std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
+	    std::exit(EXIT_FAILURE);
+	}
+    }
     cell_num_ = cell_num;
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(int i = 0; i < Dim; ++i)
@@ -184,7 +208,11 @@ void GridBase<Scalar,Dim>::setCellNum(const Vector<int,Dim> &cell_num)
 template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setNodeNum(int node_num)
 {
-    PHYSIKA_ASSERT(node_num>0);
+    if(node_num<2)
+    {
+	std::cerr<<"Node number of a grid along each dimension must be greater than 1!\n";
+	std::exit(EXIT_FAILURE);
+    }
     cell_num_ = Vector<int,Dim>(node_num-1);
     dx_ = domain_.edgeLengths()/(node_num-1);
 }
@@ -193,7 +221,11 @@ template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setNodeNum(const Vector<int,Dim> &node_num)
 {
     for(int i = 0; i < Dim; ++i)
-	PHYSIKA_ASSERT(node_num[i]>0);
+	if(node_num[i]<2)
+	{
+	    std::cerr<<"Node number of a grid along each dimension must be greater than 1!\n";
+	    std::exit(EXIT_FAILURE);
+	}
     cell_num_ = node_num-Vector<int,Dim>(1);
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(int i = 0; i < Dim; ++i)

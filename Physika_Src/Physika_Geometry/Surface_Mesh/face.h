@@ -18,7 +18,6 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Surface_Mesh/vertex.h"
-using std::vector;
 
 namespace Physika{
 
@@ -30,8 +29,8 @@ class Face
 public:
     Face();
     ~Face();
-    explicit Face(const vector<Vertex<Scalar> > &vertices);
-    Face(const vector<Vertex<Scalar> > &vertices, const Vector<Scalar,3> &face_normal);
+    explicit Face(const std::vector<Vertex<Scalar> > &vertices);
+    Face(const std::vector<Vertex<Scalar> > &vertices, const Vector<Scalar,3> &face_normal);
     unsigned int numVertices() const;
     const Vertex<Scalar>& vertex(unsigned int vert_idx) const;
     Vertex<Scalar>& vertex(unsigned int vert_idx);
@@ -44,7 +43,7 @@ public:
     void reverseVertices(); //reverse the order of vertices
     void printVertices() const; //print indices of the vertices
 protected:
-    vector<Vertex<Scalar> > vertices_;
+    std::vector<Vertex<Scalar> > vertices_;
     Vector<Scalar,3> normal_;
     bool has_normal_;
 };

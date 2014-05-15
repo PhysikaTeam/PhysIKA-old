@@ -13,8 +13,8 @@
  */
 
 #include <limits>
+#include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 
 namespace Physika{
@@ -61,7 +61,11 @@ Vector<Scalar,2>::~Vector()
 template <typename Scalar>
 Scalar& Vector<Scalar,2>::operator[] (int idx)
 {
-    PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
+    if(idx<0||idx>=2)
+    {
+	std::cout<<"Vector index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_2x_(idx);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -72,7 +76,11 @@ Scalar& Vector<Scalar,2>::operator[] (int idx)
 template <typename Scalar>
 const Scalar& Vector<Scalar,2>::operator[] (int idx) const
 {
-    PHYSIKA_ASSERT(idx>=0&&idx<(*this).dims());
+    if(idx<0||idx>=2)
+    {
+	std::cout<<"Vector index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_2x_(idx);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -151,7 +159,11 @@ Vector<Scalar,2>& Vector<Scalar,2>::operator*= (Scalar scale)
 template <typename Scalar>
 Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
 {
-    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Vector Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     Scalar result[2];
     for(int i = 0; i < 2; ++i)
         result[i] = (*this)[i] / scale;
@@ -161,7 +173,11 @@ Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator/= (Scalar scale)
 {
-    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Vector Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     for(int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] / scale;
     return *this;

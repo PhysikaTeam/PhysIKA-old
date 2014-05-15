@@ -1,7 +1,7 @@
 /*
  * @file surface_mesh_render.h 
  * @Brief render of surface mesh.
- * @author Sheng Yang, Fei Zhu
+ * @author Fei Zhu, Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -48,7 +48,8 @@ public:
     void enableTexture();
     void disableTexture();
 
-	void update();   
+    //whenever the mesh is modified, synchronize() must be called to update the render
+    void synchronize();   
 
     //Render
     virtual void render();
@@ -59,6 +60,7 @@ protected:
     void renderSolid();
     void loadTextures();
     void releaseTextures();
+    void deleteDisplayLists();
 protected:
     //render mode
     unsigned int render_mode_;
@@ -69,11 +71,10 @@ protected:
     //the second entry is the OpenGL texture id
     Array<std::pair<bool,unsigned int> > textures_;
 
-	unsigned int vertex_display_list_id_;   
-	unsigned int wire_display_list_id_;     
-	unsigned int solid_display_list_id_;    
-
-
+    //displaylist ids
+    unsigned int vertex_display_list_id_;   
+    unsigned int wire_display_list_id_;     
+    unsigned int solid_display_list_id_;    
 
     //predefined render modes
     static const unsigned int render_solid_;

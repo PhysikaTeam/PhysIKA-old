@@ -13,7 +13,7 @@
  *
  */
 
-#include "Physika_Core/Utilities/physika_assert.h"
+#include <iostream>
 #include "Physika_Core/Range/range.h"
 
 namespace Physika{
@@ -34,7 +34,11 @@ template <typename Scalar,int Dim>
 Range<Scalar,Dim>::Range(const Vector<Scalar,Dim> &min_val, const Vector<Scalar,Dim> &max_val)
 {
     for(int i = 0; i < Dim; ++i)
-	PHYSIKA_ASSERT(min_val[i]<=max_val[i]);
+	if(min_val[i]>max_val[i])
+	{
+	    std::cerr<<"Minimum corner of a range must has entries equal or smaller than the maximum corner.\n";
+	    std::exit(EXIT_FAILURE);
+	}
     min_corner_ = min_val;
     max_corner_ = max_val;
 }

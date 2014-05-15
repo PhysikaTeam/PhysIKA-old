@@ -14,7 +14,6 @@
 
 #include <limits>
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 
 namespace Physika{
@@ -84,8 +83,12 @@ SquareMatrix<Scalar,3>::~SquareMatrix()
 template <typename Scalar>
 Scalar& SquareMatrix<Scalar,3>::operator() (int i, int j)
 {
-    PHYSIKA_ASSERT(i>=0&&i<3);
-    PHYSIKA_ASSERT(j>=0&&j<3);
+    bool index_valid = (i>=0&&i<3)&&(j>=0&&j<3);
+    if(!index_valid)
+    {
+	std::cerr<<"Matrix index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -96,8 +99,12 @@ Scalar& SquareMatrix<Scalar,3>::operator() (int i, int j)
 template <typename Scalar>
 const Scalar& SquareMatrix<Scalar,3>::operator() (int i, int j) const
 {
-    PHYSIKA_ASSERT(i>=0&&i<3);
-    PHYSIKA_ASSERT(j>=0&&j<3);
+    bool index_valid = (i>=0&&i<3)&&(j>=0&&j<3);
+    if(!index_valid)
+    {
+	std::cerr<<"Matrix index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -205,7 +212,11 @@ SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator* (const SquareMatrix<Sca
 template <typename Scalar>
 SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator/ (Scalar scale) const
 {
-    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Matrix Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     Scalar result[9];
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
@@ -216,7 +227,11 @@ SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator/ (Scalar scale) const
 template <typename Scalar>
 SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator/= (Scalar scale)
 {
-    PHYSIKA_ASSERT(abs(scale)>std::numeric_limits<Scalar>::epsilon());
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+	std::cerr<<"Matrix Divide by zero error!\n";
+	std::exit(EXIT_FAILURE);
+    }
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
             (*this)(i,j) = (*this)(i,j) / scale;
@@ -241,7 +256,11 @@ SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse() const
     return SquareMatrix<Scalar,3>(result_matrix(0,0), result_matrix(0,1), result_matrix(0,2), result_matrix(1,0), result_matrix(1,1),result_matrix(1,2), result_matrix(2,0),result_matrix(2,1), result_matrix(2,2));
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = determinant();
-    PHYSIKA_ASSERT(det!=0);
+    if(det==0)
+    {
+	std::cerr<<"Matrix not invertible!\n";
+	std::exit(EXIT_FAILURE);
+    }
     return SquareMatrix<Scalar,3>((-data_[1][2] * data_[2][1] + data_[1][1] * data_[2][2])/det, (data_[0][2] * data_[2][1] - data_[0][1] * data_[2][2])/det, 
                                   (-data_[0][2] * data_[1][1] + data_[0][1] * data_[1][2])/det, (data_[1][2] * data_[2][0] - data_[1][0] * data_[2][2])/det,
                                   (-data_[0][2] * data_[2][0] + data_[0][0] * data_[2][2])/det, (data_[0][2] * data_[1][0] - data_[0][0] * data_[1][2])/det,

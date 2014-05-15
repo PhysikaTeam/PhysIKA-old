@@ -80,7 +80,6 @@ SquareMatrix<T,3> operator* (S scale, const SquareMatrix<T,3> &mat)
 }
 
 //convenient typedefs
-#define Matrix3x3(Scalar) SquareMatrix<Scalar,3>
 typedef SquareMatrix<float,3> Matrix3f;
 typedef SquareMatrix<double,3> Matrix3d;
 
