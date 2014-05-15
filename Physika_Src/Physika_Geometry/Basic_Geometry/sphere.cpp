@@ -29,8 +29,8 @@ Sphere<Scalar>::Sphere(const Vector<Scalar,3> &center, Scalar radius)
 {
     if(radius<0)
     {
-	std::cerr<<"Radius of a sphere must be equal or greater than zero!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Radius of a sphere must be equal or greater than zero!\n";
+        std::exit(EXIT_FAILURE);
     }
     radius_ = radius;
 }
@@ -75,9 +75,9 @@ template <typename Scalar>
 bool Sphere<Scalar>::inside(const Vector<Scalar,3> &point) const
 {
     if(signedDistance(point)<=0)
-	return true;
+        return true;
     else
-	return false;
+        return false;
 }
 
 template <typename Scalar>

@@ -63,8 +63,8 @@ Scalar& Vector<Scalar,2>::operator[] (int idx)
 {
     if(idx<0||idx>=2)
     {
-	std::cout<<"Vector index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Vector index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_2x_(idx);
@@ -78,8 +78,8 @@ const Scalar& Vector<Scalar,2>::operator[] (int idx) const
 {
     if(idx<0||idx>=2)
     {
-	std::cout<<"Vector index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Vector index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_2x_(idx);
@@ -161,8 +161,8 @@ Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Vector Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Vector Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     Scalar result[2];
     for(int i = 0; i < 2; ++i)
@@ -175,8 +175,8 @@ Vector<Scalar,2>& Vector<Scalar,2>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Vector Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Vector Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     for(int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] / scale;
@@ -207,7 +207,7 @@ Vector<Scalar,2>& Vector<Scalar,2>::normalize()
 template <typename Scalar>
 Scalar Vector<Scalar,2>::cross(const Vector<Scalar,2>& vec2) const
 {
-  return (*this)[0]*vec2[1] - (*this)[1]*vec2[0];
+    return (*this)[0]*vec2[1] - (*this)[1]*vec2[0];
 }
 
 template <typename Scalar>

@@ -123,7 +123,7 @@ template <typename Scalar>
 void Face<Scalar>::printVertices() const
 {
     for(unsigned int i = 0; i < vertices_.size(); ++i)
-	std::cout<<vertices_[i].positionIndex()<<" ";
+        std::cout<<vertices_[i].positionIndex()<<" ";
     std::cout<<"\n";
 }
 

@@ -167,8 +167,8 @@ Scalar&  Quaternion<Scalar>::operator[] (int idx)
 {
     if(idx < 0 || idx > 3)
     {
-	std::cerr<<"Quaternion index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Quaternion index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     switch(idx)
     {
@@ -190,8 +190,8 @@ const Scalar&  Quaternion<Scalar>::operator[] (int idx) const
 {
     if(idx < 0 || idx > 3)
     {
-	std::cerr<<"Quaternion index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Quaternion index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     switch(idx)
     {
@@ -281,11 +281,11 @@ const Vector<Scalar,3> Quaternion<Scalar>::rotate(const Vector<Scalar,3> v) cons
     const Scalar w2 = w_ * w_ - (Scalar)0.5;
     const Scalar dot2 = (x_ * vx + y_ * vy + z_ * vz);
     return Vector<Scalar,3>
-    (
-        (vx * w2 + (y_ * vz - z_ * vy) * w_ + x_ * dot2), 
-        (vy * w2 + (z_ * vx - x_ * vz) * w_ + y_ * dot2), 
-        (vz * w2 + (x_ * vy - y_ * vx) * w_ + z_ * dot2)
-    );
+        (
+            (vx * w2 + (y_ * vz - z_ * vy) * w_ + x_ * dot2), 
+            (vy * w2 + (z_ * vx - x_ * vz) * w_ + y_ * dot2), 
+            (vz * w2 + (x_ * vy - y_ * vx) * w_ + z_ * dot2)
+            );
 }
 
 //explicit instantiation

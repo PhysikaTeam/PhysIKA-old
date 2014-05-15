@@ -36,22 +36,22 @@ unsigned int RenderManager::numRenderTasks() const
 void RenderManager::insertBack(RenderBase *render_task)
 {
     if(render_task)
-	render_list_.push_back(render_task);
+        render_list_.push_back(render_task);
     else
     {
-	std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
+        std::exit(EXIT_FAILURE);
     }
 }
 
 void RenderManager::insertFront(RenderBase *render_task)
 {
     if(render_task)
-	render_list_.push_front(render_task);
+        render_list_.push_front(render_task);
     else
     {
-	std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
+        std::exit(EXIT_FAILURE);
     }
 }
 
@@ -60,20 +60,20 @@ void RenderManager::insertAtIndex(unsigned int index, RenderBase *task)
     bool index_valid = (index>=0)&&(index<render_list_.size());
     if(!index_valid)
     {
-	std::cerr<<"Render task index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Render task index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     if(task)
     {
-	list<RenderBase*>::iterator pos = render_list_.begin();
-	while(index-- >= 0)
-	    ++pos;
-	render_list_.insert(pos,task);
+        list<RenderBase*>::iterator pos = render_list_.begin();
+        while(index-- >= 0)
+            ++pos;
+        render_list_.insert(pos,task);
     }
     else
     {
-	std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
+        std::exit(EXIT_FAILURE);
     }
 }
 
@@ -92,12 +92,12 @@ void RenderManager::removeAtIndex(unsigned int index)
     bool index_valid = (index>=0)&&(index<render_list_.size());
     if(!index_valid)
     {
-	std::cerr<<"Render task index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Render task index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     list<RenderBase*>::iterator pos = render_list_.begin();
     while(index-- >= 0)
-	++pos;
+        ++pos;
     render_list_.erase(pos);
 }
 
@@ -110,19 +110,23 @@ void RenderManager::renderAll()
 {
     for(list<RenderBase*>::iterator iter = render_list_.begin(); iter != render_list_.end(); ++iter)
     {
-	RenderBase *cur_render = *iter;
-	PHYSIKA_ASSERT(cur_render);
-	cur_render->render();
+        RenderBase *cur_render = *iter;
+        PHYSIKA_ASSERT(cur_render);
+        cur_render->render();
     }
 }
 
 void RenderManager::renderAtIndex(unsigned int index)
 {
-    PHYSIKA_ASSERT(index>=0);
-    PHYSIKA_ASSERT(index<render_list_.size());
+    bool index_valid = (index>=0)&&(index<render_list_.size());
+    if(!index_valid)
+    {
+        std::cerr<<"Render task index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
     list<RenderBase*>::iterator iter = render_list_.begin();
     while(index-- >= 0)
-	++iter;
+        ++iter;
     RenderBase *cur_render = *iter;
     PHYSIKA_ASSERT(cur_render);
     cur_render->render();

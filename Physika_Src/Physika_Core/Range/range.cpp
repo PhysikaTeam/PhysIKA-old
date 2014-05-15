@@ -34,11 +34,11 @@ template <typename Scalar,int Dim>
 Range<Scalar,Dim>::Range(const Vector<Scalar,Dim> &min_val, const Vector<Scalar,Dim> &max_val)
 {
     for(int i = 0; i < Dim; ++i)
-	if(min_val[i]>max_val[i])
-	{
-	    std::cerr<<"Minimum corner of a range must has entries equal or smaller than the maximum corner.\n";
-	    std::exit(EXIT_FAILURE);
-	}
+        if(min_val[i]>max_val[i])
+        {
+            std::cerr<<"Minimum corner of a range must has entries equal or smaller than the maximum corner.\n";
+            std::exit(EXIT_FAILURE);
+        }
     min_corner_ = min_val;
     max_corner_ = max_val;
 }
@@ -106,8 +106,8 @@ template <typename Scalar,int Dim>
 bool Range<Scalar,Dim>::inside(const Vector<Scalar,Dim> &val) const
 {
     for(int i = 0; i < Dim; ++i)
-	if(val[i]<min_corner_[i]||val[i]>max_corner_[i])
-	    return false;
+        if(val[i]<min_corner_[i]||val[i]>max_corner_[i])
+            return false;
     return true;
 }
 

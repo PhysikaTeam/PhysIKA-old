@@ -83,9 +83,9 @@ std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
     s<<"[";
     for (size_t i = 0; i < arr.elementCount(); i++)
     {
-	s<<arr[i];
-	if(i != arr.elementCount()-1)
-	    s<<", "<<1;
+        s<<arr[i];
+        if(i != arr.elementCount()-1)
+            s<<", "<<1;
     }
     s<<"]";
     return s; 
@@ -108,7 +108,7 @@ Array<ElementType>::Array(unsigned int element_count, const ElementType &value)
 {
     resize(element_count);
     for (int i = 0; i < element_count_; ++i)
-	data_[i] = value;
+        data_[i] = value;
 }
 
 template <typename ElementType>
@@ -154,8 +154,8 @@ void Array<ElementType>::zero()
 {
     if(element_count_>0)
     {
-	PHYSIKA_ASSERT(data_);
-	memset((void*)data_, 0, element_count_ * sizeof(ElementType));
+        PHYSIKA_ASSERT(data_);
+        memset((void*)data_, 0, element_count_ * sizeof(ElementType));
     }
 }
 
@@ -164,8 +164,8 @@ ElementType& Array<ElementType>::operator[] (int id)
 {
     if(id<0||id>=element_count_)
     {
-	std::cerr<<"Array index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Array index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     return data_[id];
 }
@@ -176,17 +176,17 @@ void Array<ElementType>::reorder(unsigned int *ids, unsigned int size)
     if(size != element_count_)
     {
         std::cerr << "array size do not match!" << std::endl;
-	std::exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
     if(element_count_>0)
     {
-	ElementType * tmp = new ElementType[element_count_];
-	PHYSIKA_ASSERT(tmp);
-	PHYSIKA_ASSERT(data_);
-	for (size_t i = 0; i < element_count_; i++)
-	    tmp[i] = data_[ids[i]];
-	memcpy(data_, tmp, element_count_ * sizeof(ElementType));
-	delete[] tmp;
+        ElementType * tmp = new ElementType[element_count_];
+        PHYSIKA_ASSERT(tmp);
+        PHYSIKA_ASSERT(data_);
+        for (size_t i = 0; i < element_count_; i++)
+            tmp[i] = data_[ids[i]];
+        memcpy(data_, tmp, element_count_ * sizeof(ElementType));
+        delete[] tmp;
     }
 }
 

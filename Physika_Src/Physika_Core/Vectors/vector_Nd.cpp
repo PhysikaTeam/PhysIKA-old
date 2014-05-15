@@ -37,7 +37,7 @@ VectorND<Scalar>::VectorND(int dim, Scalar value)
 {
     allocMemory(dim);
     for(int i = 0; i < dim; ++i)
-	(*this)[i] = value;
+        (*this)[i] = value;
 }
 
 template <typename Scalar>
@@ -52,8 +52,8 @@ void VectorND<Scalar>::allocMemory(int dims)
 {
     if(dims<0)
     {
-	std::cerr<<"Vector dimension must be greater than zero!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Vector dimension must be greater than zero!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     ptr_eigen_vector_Nx_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,1>(dims);
@@ -90,14 +90,14 @@ void VectorND<Scalar>::resize(int new_dim)
 {
     if(new_dim<0)
     {
-	std::cerr<<"Vector dimension must be greater than zero!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Vector dimension must be greater than zero!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     (*ptr_eigen_vector_Nx_).resize(new_dim);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
     if(data_)
-	delete[] data_;
+        delete[] data_;
     allocMemory(new_dim);
 #endif
 }
@@ -107,8 +107,8 @@ Scalar& VectorND<Scalar>::operator[] (int idx)
 {
     if(idx<0||idx>=(*this).dims())
     {
-	std::cout<<"Vector index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Vector index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_)[idx];
@@ -122,8 +122,8 @@ const Scalar& VectorND<Scalar>::operator[] (int idx) const
 {
     if(idx<0||idx>=(*this).dims())
     {
-	std::cout<<"Vector index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Vector index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_)[idx];
@@ -139,12 +139,12 @@ VectorND<Scalar> VectorND<Scalar>::operator+ (const VectorND<Scalar> &vec2) cons
     int dim2 = vec2.dims();
     if(dim1!=dim2)
     {
-	std::cout<<"Cannot add two vectors of different dimensions!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Cannot add two vectors of different dimensions!\n";
+        std::exit(EXIT_FAILURE);
     }
     VectorND<Scalar> result(dim1);
     for(int i = 0; i < dim1; ++i)
-	result[i] = (*this)[i] + vec2[i];
+        result[i] = (*this)[i] + vec2[i];
     return result;
 }
 
@@ -155,11 +155,11 @@ VectorND<Scalar>& VectorND<Scalar>::operator+= (const VectorND<Scalar> &vec2)
     int dim2 = vec2.dims();
     if(dim1!=dim2)
     {
-	std::cout<<"Cannot add two vectors of different dimensions!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Cannot add two vectors of different dimensions!\n";
+        std::exit(EXIT_FAILURE);
     }
     for(int i = 0; i < dim1; ++i)
-	(*this)[i] = (*this)[i] + vec2[i];
+        (*this)[i] = (*this)[i] + vec2[i];
     return *this;
 }
 
@@ -170,12 +170,12 @@ VectorND<Scalar> VectorND<Scalar>::operator- (const VectorND<Scalar> &vec2) cons
     int dim2 = vec2.dims();
     if(dim1!=dim2)
     {
-	std::cout<<"Cannot subtract two vectors of different dimensions!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Cannot subtract two vectors of different dimensions!\n";
+        std::exit(EXIT_FAILURE);
     }
     VectorND<Scalar> result(dim1);
     for(int i = 0; i < dim1; ++i)
-	result[i] = (*this)[i] - vec2[i];
+        result[i] = (*this)[i] - vec2[i];
     return result;
 }
 
@@ -186,11 +186,11 @@ VectorND<Scalar>& VectorND<Scalar>::operator-= (const VectorND<Scalar> &vec2)
     int dim2 = vec2.dims();
     if(dim1!=dim2)
     {
-	std::cout<<"Cannot subtract two vectors of different dimensions!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Cannot subtract two vectors of different dimensions!\n";
+        std::exit(EXIT_FAILURE);
     }
     for(int i = 0; i < dim1; ++i)
-	(*this)[i] = (*this)[i] - vec2[i];
+        (*this)[i] = (*this)[i] - vec2[i];
     return *this;
 } 
 
@@ -201,7 +201,7 @@ VectorND<Scalar>& VectorND<Scalar>::operator= (const VectorND<Scalar> &vec2)
     if((*this).dims() != new_dim)
         (*this).resize(new_dim);
     for(int i = 0; i < new_dim; ++i)
-	(*this)[i] = vec2[i];
+        (*this)[i] = vec2[i];
     return *this;
 }
 
@@ -211,10 +211,10 @@ bool VectorND<Scalar>::operator== (const VectorND<Scalar> &vec2) const
     int dim1 = (*this).dims();
     int dim2 = vec2.dims();
     if(dim1 != dim2)
-	return false;
+        return false;
     for(int i = 0; i <= dim1; ++i)
-	if((*this)[i] != vec2[i])
-	    return false;
+        if((*this)[i] != vec2[i])
+            return false;
     return true;
 }
 
@@ -224,7 +224,7 @@ VectorND<Scalar> VectorND<Scalar>::operator* (Scalar scale) const
     int dim = (*this).dims();
     VectorND<Scalar> result(dim);
     for(int i = 0; i < dim; ++i)
-	result[i] = (*this)[i] * scale;
+        result[i] = (*this)[i] * scale;
     return result;
 }
 
@@ -233,7 +233,7 @@ VectorND<Scalar>& VectorND<Scalar>::operator*= (Scalar scale)
 {
     int dim = (*this).dims();
     for(int i = 0; i < dim; ++i)
-	(*this)[i] = (*this)[i] * scale;
+        (*this)[i] = (*this)[i] * scale;
     return *this;
 }
 
@@ -242,13 +242,13 @@ VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Vector Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Vector Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     int dim = (*this).dims();
     VectorND<Scalar> result(dim);
     for(int i = 0; i < dim; ++i)
-	result[i] = (*this)[i] / scale;
+        result[i] = (*this)[i] / scale;
     return result;
 }
 
@@ -257,12 +257,12 @@ VectorND<Scalar>& VectorND<Scalar>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Vector Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Vector Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     int dim = (*this).dims();
     for(int i = 0; i < dim; ++i)
-	(*this)[i] = (*this)[i] / scale;
+        (*this)[i] = (*this)[i] / scale;
     return *this;
 }
 
@@ -272,7 +272,7 @@ Scalar VectorND<Scalar>::norm() const
     Scalar result = 0.0;
     int dim = (*this).dims();
     for(int i = 0; i < dim; ++i)
-	result += (*this)[i]*(*this)[i];
+        result += (*this)[i]*(*this)[i];
     result = sqrt(result);
     return result;
 }
@@ -284,9 +284,9 @@ VectorND<Scalar>& VectorND<Scalar>::normalize()
     bool nonzero_norm = norm > std::numeric_limits<Scalar>::epsilon();
     if(nonzero_norm)
     {
-	int dim = (*this).dims();
-	for(int i = 0; i < dim; ++i)
-	    (*this)[i] = (*this)[i] / norm;
+        int dim = (*this).dims();
+        for(int i = 0; i < dim; ++i)
+            (*this)[i] = (*this)[i] / norm;
     }
     return *this;
 }
@@ -297,7 +297,7 @@ VectorND<Scalar> VectorND<Scalar>::operator - (void ) const
     int dim = (*this).dims();
     VectorND<Scalar> result(dim);
     for(int i = 0; i < dim; ++i)
-	result[i] = - (*this)[i];
+        result[i] = - (*this)[i];
     return result;
 }
 
@@ -309,7 +309,7 @@ Scalar VectorND<Scalar>::dot(const VectorND<Scalar> &vec2) const
     PHYSIKA_ASSERT(dim1 == dim2);
     Scalar result = 0.0;
     for(int i = 0; i < dim1; ++i)
-	result += (*this)[i]*vec2[i];
+        result += (*this)[i]*vec2[i];
     return result;
 }
 

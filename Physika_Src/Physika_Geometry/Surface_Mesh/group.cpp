@@ -45,7 +45,7 @@ Group<Scalar>::Group(const string &name, const vector<Face<Scalar> > &faces)
     :name_(name),material_index_(0)
 {
     for(int i = 0; i < faces.size(); ++i)
-	addFace(faces[i]);
+        addFace(faces[i]);
 }
 
 template <typename Scalar>
@@ -59,7 +59,7 @@ Group<Scalar>::Group(const string &name, unsigned int material_index, const vect
     :name_(name),material_index_(material_index)
 {
     for(int i = 0; i < faces.size(); ++i)
-	addFace(faces[i]);
+        addFace(faces[i]);
 }
 
 template <typename Scalar>
@@ -135,7 +135,7 @@ void Group<Scalar>::removeFace(unsigned int face_idx)
 {
     typename vector<Face<Scalar> >::iterator iter = faces_.begin() + face_idx;
     if(iter != faces_.end())
-	faces_.erase(iter);
+        faces_.erase(iter);
 }
 
 //explicit instantitation

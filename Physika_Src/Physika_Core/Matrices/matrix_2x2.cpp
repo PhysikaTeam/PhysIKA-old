@@ -46,14 +46,14 @@ SquareMatrix<Scalar,2>::SquareMatrix(const Vector<Scalar,2> &row1, const Vector<
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     for(int col = 0; col < 2; ++col)
     {
-	eigen_matrix_2x2_(0,col) = row1[col];
-	eigen_matrix_2x2_(1,col) = row2[col];
+        eigen_matrix_2x2_(0,col) = row1[col];
+        eigen_matrix_2x2_(1,col) = row2[col];
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     for(int col = 0; col < 2; ++col)
     {
-	data_[0][col] = row1[col];
-	data_[1][col] = row2[col];
+        data_[0][col] = row1[col];
+        data_[1][col] = row2[col];
     }
 #endif
 }
@@ -75,8 +75,8 @@ Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j)
     bool index_valid = (i>=0&&i<2)&&(j>=0&&j<2);
     if(!index_valid)
     {
-	std::cerr<<"Matrix index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_(i,j);
@@ -91,8 +91,8 @@ const Scalar& SquareMatrix<Scalar,2>::operator() (int i, int j) const
     bool index_valid = (i>=0&&i<2)&&(j>=0&&j<2);
     if(!index_valid)
     {
-	std::cerr<<"Matrix index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_(i,j);
@@ -107,7 +107,7 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator+ (const SquareMatrix<Sca
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
-        result[i*2+j] = (*this)(i,j) + mat2(i,j);
+            result[i*2+j] = (*this)(i,j) + mat2(i,j);
     return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
 }
 
@@ -154,7 +154,7 @@ bool SquareMatrix<Scalar,2>::operator== (const SquareMatrix<Scalar,2> &mat2) con
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
             if((*this)(i,j) != mat2(i,j))
-	        return false;
+                return false;
     return true;
 }
 
@@ -182,8 +182,8 @@ Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec)
 {
     Vector<Scalar,2> result(0);
     for(int i = 0; i < 2; ++i)
-	for(int j = 0; j <2; ++j)
-	    result[i] += (*this)(i,j) * vec[j];
+        for(int j = 0; j <2; ++j)
+            result[i] += (*this)(i,j) * vec[j];
     return result;
 }
 
@@ -192,9 +192,9 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (const SquareMatrix<Sca
 {
     SquareMatrix<Scalar,2> result(0,0,0,0);
     for(int i = 0; i < 2; ++i)
-	for(int j = 0; j < 2; ++j)
-	    for(int k = 0; k < 2; ++k)
-		result(i,j) += (*this)(i,k) * mat2(k,j);
+        for(int j = 0; j < 2; ++j)
+            for(int k = 0; k < 2; ++k)
+                result(i,j) += (*this)(i,k) * mat2(k,j);
     return result;
 }
 
@@ -203,8 +203,8 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Matrix Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     Scalar result[4];
     for(int i = 0; i < 2; ++i)
@@ -218,8 +218,8 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Matrix Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     for(int i = 0; i < 2; ++i)
         for(int j = 0; j < 2; ++j)
@@ -247,8 +247,8 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
     Scalar det = determinant();
     if(det==0)
     {
-	std::cerr<<"Matrix not invertible!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix not invertible!\n";
+        std::exit(EXIT_FAILURE);
     }
     return SquareMatrix<Scalar,2>(data_[1][1]/det, -data_[0][1]/det, -data_[1][0]/det, data_[0][0]/det);
 #endif 
@@ -281,8 +281,8 @@ Scalar SquareMatrix<Scalar,2>::doubleContraction(const SquareMatrix<Scalar,2> &m
 {
     Scalar result = 0;
     for(int i = 0; i < 2; ++i)
-	for(int j = 0; j < 2; ++j)
-	    result += (*this)(i,j)*mat2(i,j);
+        for(int j = 0; j < 2; ++j)
+            result += (*this)(i,j)*mat2(i,j);
     return result;
 }
 

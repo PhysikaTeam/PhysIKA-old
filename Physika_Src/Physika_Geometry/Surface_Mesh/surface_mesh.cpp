@@ -73,9 +73,9 @@ template <typename Scalar>
 bool SurfaceMesh<Scalar>::isTriangularMesh() const
 {
     for(unsigned int i = 0; i < groups_.size(); ++i)
-	for(unsigned int j = 0; j < groups_[i].numFaces(); ++j)
-	    if(groups_[i].face(j).numVertices() != 3)
-		return false;
+        for(unsigned int j = 0; j < groups_[i].numFaces(); ++j)
+            if(groups_[i].face(j).numVertices() != 3)
+                return false;
     return true;
 }
 
@@ -85,22 +85,22 @@ unsigned int SurfaceMesh<Scalar>::numIsolatedVertices() const
     vector<unsigned int> neighor_face_count(numVertices(),0);
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-	const Group<Scalar> &group = groups_[group_idx];
-	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
-	{
-	    const Face<Scalar> &face = group.face(face_idx);
-	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
-	    {
-		const Vertex<Scalar> &vertex = face.vertex(vert_idx);
-		unsigned int pos_idx = vertex.positionIndex();
-		++neighor_face_count[pos_idx];
-	    }
-	}
+        const Group<Scalar> &group = groups_[group_idx];
+        for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+        {
+            const Face<Scalar> &face = group.face(face_idx);
+            for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+            {
+                const Vertex<Scalar> &vertex = face.vertex(vert_idx);
+                unsigned int pos_idx = vertex.positionIndex();
+                ++neighor_face_count[pos_idx];
+            }
+        }
     }
     unsigned int num_isolated_vertices = 0;
     for(unsigned int i = 0; i < numVertices(); ++i)
-	if(neighor_face_count[i]>0)
-	    ++num_isolated_vertices;
+        if(neighor_face_count[i]>0)
+            ++num_isolated_vertices;
     return num_isolated_vertices;
 }
 
@@ -108,9 +108,9 @@ template <typename Scalar>
 bool SurfaceMesh<Scalar>::isQuadrilateralMesh() const
 {
     for(unsigned int i = 0; i < groups_.size(); ++i)
-	for(unsigned int j = 0; j < groups_[i].numFaces(); ++j)
-	    if(groups_[i].face(j).numVertices() != 4)
-		return false;
+        for(unsigned int j = 0; j < groups_[i].numFaces(); ++j)
+            if(groups_[i].face(j).numVertices() != 4)
+                return false;
     return true;
 }
 
@@ -120,8 +120,8 @@ const Vector<Scalar,3>& SurfaceMesh<Scalar>::vertexPosition(unsigned int vert_id
     bool index_valid = (vert_idx>=0)&&(vert_idx<vertex_positions_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh vertex index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh vertex index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     return vertex_positions_[vert_idx];
 }
@@ -139,8 +139,8 @@ void SurfaceMesh<Scalar>::setVertexPosition(unsigned int vert_idx, const Vector<
     bool index_valid = (vert_idx>=0)&&(vert_idx<vertex_positions_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh vertex index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh vertex index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     vertex_positions_[vert_idx] = position;
 }
@@ -158,8 +158,8 @@ const Vector<Scalar,3>& SurfaceMesh<Scalar>::vertexNormal(unsigned int normal_id
     bool index_valid = (normal_idx>=0)&&(normal_idx<vertex_normals_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh vertex normal index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh vertex normal index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     return vertex_normals_[normal_idx];
 }
@@ -177,8 +177,8 @@ void SurfaceMesh<Scalar>::setVertexNormal(unsigned int normal_idx, const Vector<
     bool index_valid = (normal_idx>=0)&&(normal_idx<vertex_normals_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh vertex normal index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh vertex normal index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     vertex_normals_[normal_idx] = normal;
 }
@@ -196,8 +196,8 @@ const Vector<Scalar,2>& SurfaceMesh<Scalar>::vertexTextureCoordinate(unsigned in
     bool index_valid = (texture_idx>=0)&&(texture_idx<vertex_textures_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh vertex texture index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh vertex texture index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     return vertex_textures_[texture_idx];
 }
@@ -215,8 +215,8 @@ void SurfaceMesh<Scalar>::setVertexTextureCoordinate(unsigned int texture_idx, c
     bool index_valid = (texture_idx>=0)&&(texture_idx<vertex_textures_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh vertex texture index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh vertex texture index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     vertex_textures_[texture_idx] = texture_coordinate;
 }
@@ -234,8 +234,8 @@ Group<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx)
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh group index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh group index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     return groups_[group_idx];
 }
@@ -246,8 +246,8 @@ Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx)
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh group index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh group index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     return &(groups_[group_idx]);
 }
@@ -256,8 +256,8 @@ template <typename Scalar>
 Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name)
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
-	if(groups_[group_idx].name() == name)
-	    return &(groups_[group_idx]);
+        if(groups_[group_idx].name() == name)
+            return &(groups_[group_idx]);
     return NULL;
 }
 
@@ -267,8 +267,8 @@ Material<Scalar>& SurfaceMesh<Scalar>::material(unsigned int material_idx)
     bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh material index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh material index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     return materials_[material_idx];
 }
@@ -279,8 +279,8 @@ Material<Scalar>* SurfaceMesh<Scalar>::materialPtr(unsigned int material_idx)
     bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
     if(!index_valid)
     {
-	std::cerr<<"SurfaceMesh material index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"SurfaceMesh material index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     return &(materials_[material_idx]);
 }
@@ -289,8 +289,8 @@ template <typename Scalar>
 unsigned int SurfaceMesh<Scalar>::materialIndex(const string &material_name) const
 {
     for(unsigned int i = 0; i < materials_.size(); ++i)
-	if(materials_[i].name() == material_name)
-	    return i;
+        if(materials_[i].name() == material_name)
+            return i;
     return -1;
 }
 
@@ -300,7 +300,7 @@ void SurfaceMesh<Scalar>::setSingleMaterial(const Material<Scalar> &material)
     materials_.clear();
     materials_.push_back(material);
     for(int group_idx = 0; group_idx < groups_.size(); ++group_idx)
-	groups_[group_idx].setMaterialIndex(0);
+        groups_[group_idx].setMaterialIndex(0);
 }
 
 template <typename Scalar>
@@ -339,17 +339,17 @@ void SurfaceMesh<Scalar>::computeAllVertexNormals(VertexNormalType normal_type)
     switch(normal_type)
     {
     case WEIGHTED_FACE_NORMAL:
-	setVertexNormalsToWeightedFaceNormals();
-	break;
+        setVertexNormalsToWeightedFaceNormals();
+        break;
     case AVERAGE_FACE_NORMAL:
-	setVertexNormalsToAverageFaceNormals();
-	break;
+        setVertexNormalsToAverageFaceNormals();
+        break;
     case FACE_NORMAL:
-	setVertexNormalsToFaceNormals();
-	break;
+        setVertexNormalsToFaceNormals();
+        break;
     default:
-	std::cerr<<"Wrong normal type specified, use weighted face nromals!\n";
-	setVertexNormalsToWeightedFaceNormals();
+        std::cerr<<"Wrong normal type specified, use weighted face nromals!\n";
+        setVertexNormalsToWeightedFaceNormals();
     }
 }
 
@@ -358,12 +358,12 @@ void SurfaceMesh<Scalar>::computeAllFaceNormals()
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-	Group<Scalar> &group = groups_[group_idx];
-	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
-	{
-	    Face<Scalar> &face = group.face(face_idx);
-	    computeFaceNormal(face);
-	}
+        Group<Scalar> &group = groups_[group_idx];
+        for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+        {
+            Face<Scalar> &face = group.face(face_idx);
+            computeFaceNormal(face);
+        }
     }
 }
 
@@ -390,19 +390,19 @@ void SurfaceMesh<Scalar>::setVertexNormalsToFaceNormals()
     vertex_normals_.clear();
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-	Group<Scalar> &group = groups_[group_idx];
-	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
-	{
-	    Face<Scalar> &face = group.face(face_idx);
-	    if(!face.hasFaceNormal())
-	        computeFaceNormal(face);
-	    addVertexNormal(face.faceNormal());
-	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
-	    {
-		Vertex<Scalar> &vertex = face.vertex(vert_idx);
-		vertex.setNormalIndex(vertex_normals_.size()-1);
-	    }
-	}
+        Group<Scalar> &group = groups_[group_idx];
+        for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+        {
+            Face<Scalar> &face = group.face(face_idx);
+            if(!face.hasFaceNormal())
+                computeFaceNormal(face);
+            addVertexNormal(face.faceNormal());
+            for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+            {
+                Vertex<Scalar> &vertex = face.vertex(vert_idx);
+                vertex.setNormalIndex(vertex_normals_.size()-1);
+            }
+        }
     }
 }
 
@@ -414,43 +414,43 @@ void SurfaceMesh<Scalar>::setVertexNormalsToAverageFaceNormals()
 
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-	Group<Scalar> &group = groups_[group_idx];
-	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
-	{
-	    Face<Scalar> &face = group.face(face_idx);
-	    if(!face.hasFaceNormal())
-	        computeFaceNormal(face);
-	    const Vector<Scalar,3> &face_normal = face.faceNormal();
-	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
-	    {
-		Vertex<Scalar> &vertex = face.vertex(vert_idx);
-		unsigned int pos_idx = vertex.positionIndex();
-		normal_buffer[pos_idx] += face_normal;
-		++normal_count[pos_idx];
-	    }
-	}
+        Group<Scalar> &group = groups_[group_idx];
+        for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+        {
+            Face<Scalar> &face = group.face(face_idx);
+            if(!face.hasFaceNormal())
+                computeFaceNormal(face);
+            const Vector<Scalar,3> &face_normal = face.faceNormal();
+            for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+            {
+                Vertex<Scalar> &vertex = face.vertex(vert_idx);
+                unsigned int pos_idx = vertex.positionIndex();
+                normal_buffer[pos_idx] += face_normal;
+                ++normal_count[pos_idx];
+            }
+        }
     }
     //normalize the normals and apply the new normals
     vertex_normals_.clear();
     for(unsigned int i = 0; i < numVertices(); ++i)
     {
-	if(normal_count[i] == 0)//isolated vertex, use some fake normal
-	    normal_buffer[i] = Vector<Scalar,3>(1.0,0,0);
-	normal_buffer[i].normalize();
-	addVertexNormal(normal_buffer[i]);
+        if(normal_count[i] == 0)//isolated vertex, use some fake normal
+            normal_buffer[i] = Vector<Scalar,3>(1.0,0,0);
+        normal_buffer[i].normalize();
+        addVertexNormal(normal_buffer[i]);
     }
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-	Group<Scalar> &group = groups_[group_idx];
-	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
-	{
-	    Face<Scalar> &face = group.face(face_idx);
-	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
-	    {
-		Vertex<Scalar> &vertex = face.vertex(vert_idx);
-		vertex.setNormalIndex(vertex.positionIndex());
-	    }
-	}
+        Group<Scalar> &group = groups_[group_idx];
+        for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+        {
+            Face<Scalar> &face = group.face(face_idx);
+            for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+            {
+                Vertex<Scalar> &vertex = face.vertex(vert_idx);
+                vertex.setNormalIndex(vertex.positionIndex());
+            }
+        }
     }
 }
 
@@ -462,51 +462,51 @@ void SurfaceMesh<Scalar>::setVertexNormalsToWeightedFaceNormals()
 
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-	Group<Scalar> &group = groups_[group_idx];
-	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
-	{
-	    Face<Scalar> &face = group.face(face_idx);
-	    if(!face.hasFaceNormal())
-	        computeFaceNormal(face);
-	    const Vector<Scalar,3> &face_normal = face.faceNormal();
-	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
-	    {
-		Vertex<Scalar> &vertex = face.vertex(vert_idx);
-		Vertex<Scalar> &next_vertex = face.vertex((vert_idx+1)%face.numVertices());
-		Vertex<Scalar> &pre_vertex = face.vertex((vert_idx-1+face.numVertices())%face.numVertices());
-		Vector<Scalar,3> vec1 = vertex_positions_[next_vertex.positionIndex()]-vertex_positions_[vertex.positionIndex()];
-		Vector<Scalar,3> vec2 = vertex_positions_[pre_vertex.positionIndex()]-vertex_positions_[vertex.positionIndex()];
-		Scalar vec1_length = vec1.norm(), vec2_length = vec2.norm();
-		PHYSIKA_ASSERT(vec1_length>0);
-		PHYSIKA_ASSERT(vec2_length>0);
-		Scalar angle = acos(vec1.dot(vec2)/(vec1_length*vec2_length));
-		unsigned int pos_idx = vertex.positionIndex();
-		normal_buffer[pos_idx] += angle*face_normal;
-		++normal_count[pos_idx];
-	    }
-	}
+        Group<Scalar> &group = groups_[group_idx];
+        for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+        {
+            Face<Scalar> &face = group.face(face_idx);
+            if(!face.hasFaceNormal())
+                computeFaceNormal(face);
+            const Vector<Scalar,3> &face_normal = face.faceNormal();
+            for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+            {
+                Vertex<Scalar> &vertex = face.vertex(vert_idx);
+                Vertex<Scalar> &next_vertex = face.vertex((vert_idx+1)%face.numVertices());
+                Vertex<Scalar> &pre_vertex = face.vertex((vert_idx-1+face.numVertices())%face.numVertices());
+                Vector<Scalar,3> vec1 = vertex_positions_[next_vertex.positionIndex()]-vertex_positions_[vertex.positionIndex()];
+                Vector<Scalar,3> vec2 = vertex_positions_[pre_vertex.positionIndex()]-vertex_positions_[vertex.positionIndex()];
+                Scalar vec1_length = vec1.norm(), vec2_length = vec2.norm();
+                PHYSIKA_ASSERT(vec1_length>0);
+                PHYSIKA_ASSERT(vec2_length>0);
+                Scalar angle = acos(vec1.dot(vec2)/(vec1_length*vec2_length));
+                unsigned int pos_idx = vertex.positionIndex();
+                normal_buffer[pos_idx] += angle*face_normal;
+                ++normal_count[pos_idx];
+            }
+        }
     }
     //normalize the normals and apply the new normals
     vertex_normals_.clear();
     for(unsigned int i = 0; i < numVertices(); ++i)
     {
-	if(normal_count[i] == 0)//isolated vertex, use some fake normal
-	    normal_buffer[i] = Vector<Scalar,3>(1.0,0,0);
-	normal_buffer[i].normalize();
-	addVertexNormal(normal_buffer[i]);
+        if(normal_count[i] == 0)//isolated vertex, use some fake normal
+            normal_buffer[i] = Vector<Scalar,3>(1.0,0,0);
+        normal_buffer[i].normalize();
+        addVertexNormal(normal_buffer[i]);
     }
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-	Group<Scalar> &group = groups_[group_idx];
-	for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
-	{
-	    Face<Scalar> &face = group.face(face_idx);
-	    for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
-	    {
-		Vertex<Scalar> &vertex = face.vertex(vert_idx);
-		vertex.setNormalIndex(vertex.positionIndex());
-	    }
-	}
+        Group<Scalar> &group = groups_[group_idx];
+        for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
+        {
+            Face<Scalar> &face = group.face(face_idx);
+            for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
+            {
+                Vertex<Scalar> &vertex = face.vertex(vert_idx);
+                vertex.setNormalIndex(vertex.positionIndex());
+            }
+        }
     }
 }
 

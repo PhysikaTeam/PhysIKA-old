@@ -84,7 +84,7 @@ int SparseMatrix<Scalar>::nonZeros() const
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     int sum = 0;
     for(int i = 0 ; i < rows_; ++i)
-	sum += row_length_[i];
+        sum += row_length_[i];
     return sum;
 #endif
 }
@@ -106,8 +106,8 @@ Scalar SparseMatrix<Scalar>::operator() (int i, int j) const
     PHYSIKA_ASSERT(j>=0&&j<cols_);
     for(int idx = 0; idx < row_length_[i]; ++idx)
     {
-	if(column_indices_[i][idx] == j)
-	    return column_entries_[i][idx];
+        if(column_indices_[i][idx] == j)
+            return column_entries_[i][idx];
     }
     return 0;//if is not non-zero entry, return 0
 #endif
@@ -122,20 +122,20 @@ void SparseMatrix<Scalar>::setEntry(int i, int j, Scalar value)
     bool existing_entry = false;
     for(int idx = 0; idx < row_length_[i]; ++idx)
     {
-	if(column_indices_[i][idx] == j)
-	{
-	    column_entries_[i][idx] = value;
-	    existing_entry = true;
-	}
+        if(column_indices_[i][idx] == j)
+        {
+            column_entries_[i][idx] = value;
+            existing_entry = true;
+        }
     }
     if(!existing_entry)
     {
-	int cur_entry_in_row = row_length_[i];
-	int cur_alloc_size = column_indices_[i].elementCount();
-	if(cur_entry_in_row >= cur_alloc_size)
-	{
+        int cur_entry_in_row = row_length_[i];
+        int cur_alloc_size = column_indices_[i].elementCount();
+        if(cur_entry_in_row >= cur_alloc_size)
+        {
 
-	}
+        }
     }
 #endif
 }

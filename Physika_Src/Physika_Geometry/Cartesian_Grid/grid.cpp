@@ -35,8 +35,8 @@ GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, int cell_num)
 {
     if(cell_num<=0)
     {
-	std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
+        std::exit(EXIT_FAILURE);
     }
     cell_num_ = Vector<int,Dim>(cell_num);
     dx_ = domain_.edgeLengths()/cell_num;
@@ -47,15 +47,15 @@ GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, const Vector<int
     :domain_(domain)
 {
     for(int i = 0; i < Dim; ++i)
-	if(cell_num[i]<=0)
-	{
-	    std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
-	    std::exit(EXIT_FAILURE);
-	}
+        if(cell_num[i]<=0)
+        {
+            std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
+            std::exit(EXIT_FAILURE);
+        }
     cell_num_ = cell_num;
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(int i = 0; i < Dim; ++i)
-	dx_[i] = domain_size[i]/cell_num_[i];
+        dx_[i] = domain_size[i]/cell_num_[i];
 }
 
 template <typename Scalar,int Dim>
@@ -149,15 +149,15 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::node(const Vector<int,Dim> &index) cons
 {
     for(int i = 0; i < Dim; ++i)
     {
-	if(index[i]<0||index[i]>cell_num_[i])
-	{
-	    std::cerr<<"Grid node index out of range!\n";
-	    std::exit(EXIT_FAILURE);
-	}
+        if(index[i]<0||index[i]>cell_num_[i])
+        {
+            std::cerr<<"Grid node index out of range!\n";
+            std::exit(EXIT_FAILURE);
+        }
     }
     Vector<Scalar,Dim> bias;
     for(int i = 0; i < Dim; ++i)
-	bias[i] = index[i]*dx_[i];
+        bias[i] = index[i]*dx_[i];
     return domain_.minCorner()+bias;
 }
 
@@ -166,11 +166,11 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::cellCenter(const Vector<int,Dim> &index
 {
     for(int i = 0; i < Dim; ++i)
     {
-	if(index[i]<0||index[i]>=cell_num_[i])
-	{
-	    std::cerr<<"Grid cell index out of range!\n";
-	    std::exit(EXIT_FAILURE);
-	}
+        if(index[i]<0||index[i]>=cell_num_[i])
+        {
+            std::cerr<<"Grid cell index out of range!\n";
+            std::exit(EXIT_FAILURE);
+        }
     }
     Vector<Scalar,Dim> cor_node = node(index);
     return cor_node+0.5*dx_;
@@ -181,8 +181,8 @@ void GridBase<Scalar,Dim>::setCellNum(int cell_num)
 {
     if(cell_num<=0)
     {
-	std::cerr<<"Cell number of a grid must be greater than zero!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cell number of a grid must be greater than zero!\n";
+        std::exit(EXIT_FAILURE);
     }
     cell_num_ = Vector<int,Dim>(cell_num);
     dx_ = domain_.edgeLengths()/cell_num;
@@ -193,16 +193,16 @@ void GridBase<Scalar,Dim>::setCellNum(const Vector<int,Dim> &cell_num)
 {
     for(int i = 0; i < Dim; ++i)
     {
-	if(cell_num[i]<=0)
-	{
-	    std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
-	    std::exit(EXIT_FAILURE);
-	}
+        if(cell_num[i]<=0)
+        {
+            std::cerr<<"Cell number of a grid along each dimension must be greater than zero!\n";
+            std::exit(EXIT_FAILURE);
+        }
     }
     cell_num_ = cell_num;
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(int i = 0; i < Dim; ++i)
-	dx_[i] = domain_size[i]/cell_num_[i];
+        dx_[i] = domain_size[i]/cell_num_[i];
 }
 
 template <typename Scalar,int Dim>
@@ -210,8 +210,8 @@ void GridBase<Scalar,Dim>::setNodeNum(int node_num)
 {
     if(node_num<2)
     {
-	std::cerr<<"Node number of a grid along each dimension must be greater than 1!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Node number of a grid along each dimension must be greater than 1!\n";
+        std::exit(EXIT_FAILURE);
     }
     cell_num_ = Vector<int,Dim>(node_num-1);
     dx_ = domain_.edgeLengths()/(node_num-1);
@@ -221,15 +221,15 @@ template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setNodeNum(const Vector<int,Dim> &node_num)
 {
     for(int i = 0; i < Dim; ++i)
-	if(node_num[i]<2)
-	{
-	    std::cerr<<"Node number of a grid along each dimension must be greater than 1!\n";
-	    std::exit(EXIT_FAILURE);
-	}
+        if(node_num[i]<2)
+        {
+            std::cerr<<"Node number of a grid along each dimension must be greater than 1!\n";
+            std::exit(EXIT_FAILURE);
+        }
     cell_num_ = node_num-Vector<int,Dim>(1);
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(int i = 0; i < Dim; ++i)
-	dx_[i] = domain_size[i]/cell_num_[i];
+        dx_[i] = domain_size[i]/cell_num_[i];
 }
 
 template <typename Scalar,int Dim>
@@ -238,7 +238,7 @@ void GridBase<Scalar,Dim>::setDomain(const Range<Scalar,Dim> &domain)
     domain_ = domain;
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(int i = 0; i < Dim; ++i)
-	dx_[i] = domain_size[i]/cell_num_[i];
+        dx_[i] = domain_size[i]/cell_num_[i];
 }
 
 template <typename Scalar>

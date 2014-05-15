@@ -66,8 +66,8 @@ Scalar& Vector<Scalar,3>::operator[] (int idx)
 {
     if(idx<0||idx>=3)
     {
-	std::cout<<"Vector index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Vector index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_3x_(idx);
@@ -81,8 +81,8 @@ const Scalar& Vector<Scalar,3>::operator[] (int idx) const
 {
     if(idx<0||idx>=3)
     {
-	std::cout<<"Vector index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cout<<"Vector index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_3x_(idx);
@@ -178,8 +178,8 @@ Vector<Scalar,3>& Vector<Scalar,3>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Vector Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Vector Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     for(int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] / scale;

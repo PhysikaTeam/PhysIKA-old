@@ -32,8 +32,8 @@ Interval<Scalar>::Interval(Scalar min_val, Scalar max_val)
 {
     if(min_val>max_val)
     {
-	std::cerr<<"Minimum value of interval must be equal or smaller than maximum value!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Minimum value of interval must be equal or smaller than maximum value!\n";
+        std::exit(EXIT_FAILURE);
     }
     min_val_ = min_val;
     max_val_ = max_val;
@@ -92,9 +92,9 @@ template <typename Scalar>
 bool Interval<Scalar>::inside(Scalar val) const
 {
     if(val>=min_val_&&val<=max_val_)
-	return true;
+        return true;
     else
-	return false;   
+        return false;   
 }
 
 template <typename Scalar>

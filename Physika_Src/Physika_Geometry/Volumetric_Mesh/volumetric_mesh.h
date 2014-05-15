@@ -77,11 +77,11 @@ template <typename Scalar, int Dim>
 VolumetricMesh<Scalar,Dim>::~VolumetricMesh()
 {
     if(vertices_)
-	delete vertices_;
+        delete vertices_;
     if(elements_)
-	delete elements_;
+        delete elements_;
     if(vert_per_ele_)
-	delete vert_per_ele_;
+        delete vert_per_ele_;
 }
 
 template <typename Scalar, int Dim>
@@ -90,7 +90,7 @@ Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(int vert_idx) const
     PHYSIKA_ASSERT(vert_idx<vert_num_);
     Vector<Scalar,Dim> pos;
     for(int i = 0; i < Dim; ++i)
-	pos[i] = vertices_[Dim*vert_idx+i];
+        pos[i] = vertices_[Dim*vert_idx+i];
     return pos;
 }
 
@@ -101,14 +101,14 @@ Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::eleVertPos(int ele_idx, int vert_
     int ele_idx_start = 0;
     if(uniform_ele_type_)
     {
-	PHYSIKA_ASSERT(vert_idx<(*vert_per_ele_));
-	ele_idx_start = ele_idx*(*vert_per_ele_);
+        PHYSIKA_ASSERT(vert_idx<(*vert_per_ele_));
+        ele_idx_start = ele_idx*(*vert_per_ele_);
     }
     else
     {
-	PHYSIKA_ASSERT(vert_idx<vert_per_ele_[ele_idx]);
+        PHYSIKA_ASSERT(vert_idx<vert_per_ele_[ele_idx]);
         for(int i = 0; i < ele_idx; ++i)
-	    ele_idx_start += vert_per_ele_[i];
+            ele_idx_start += vert_per_ele_[i];
     }
     int global_vert_idx = elements_[ele_idx_start+vert_idx];
     return vertPos(global_vert_idx);
@@ -125,16 +125,16 @@ void VolumetricMesh<Scalar,Dim>::init(int vert_num, const Scalar *vertices, int 
     int elements_total_num = 0;
     if(uniform_ele_type_)
     {
-	vert_per_ele_ = new int[1];
-	*vert_per_ele_ = *vert_per_ele;
-	elements_total_num = ele_num_*(*vert_per_ele_);
+        vert_per_ele_ = new int[1];
+        *vert_per_ele_ = *vert_per_ele;
+        elements_total_num = ele_num_*(*vert_per_ele_);
     }
     else
     {
-	vert_per_ele_ = new int[ele_num_];
-	memcpy(vert_per_ele_,vert_per_ele,ele_num_*sizeof(int));
-	for(int i = 0; i < ele_num_; ++i)
-	    elements_total_num += vert_per_ele_[i];
+        vert_per_ele_ = new int[ele_num_];
+        memcpy(vert_per_ele_,vert_per_ele,ele_num_*sizeof(int));
+        for(int i = 0; i < ele_num_; ++i)
+            elements_total_num += vert_per_ele_[i];
     }
     elements_ = new int[elements_total_num];
     memcpy(elements_,elements,elements_total_num*sizeof(int));

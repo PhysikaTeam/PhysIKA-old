@@ -49,12 +49,12 @@ int TetMesh<Scalar>::eleVolume(int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
-	std::cerr<<"TetMesh element index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"TetMesh element index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,3> > ele_vertices(4);
     for(int i = 0; i < 4; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+        ele_vertices[i] = this->eleVertPos(ele_idx,i);
     //volume = 1/6*|<(a-d),(b-d)x(c-d)>|
     Vector<Scalar,3> a_minus_d = ele_vertices[0] - ele_vertices[3];
     Vector<Scalar,3> b_minus_d = ele_vertices[1] - ele_vertices[3];
@@ -67,8 +67,8 @@ bool TetMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos) c
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
-	std::cerr<<"TetMesh element index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"TetMesh element index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     Scalar weights[4];
     interpolationWeights(ele_idx,pos,weights);
@@ -109,32 +109,32 @@ void TetMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,3> &
 */
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
-	std::cerr<<"TetMesh element index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"TetMesh element index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,3> > ele_vertices(4);
     for(int i = 0; i < 4; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+        ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar D[5];
     D[0] = getTetDeterminant(ele_vertices[0],ele_vertices[1],ele_vertices[2],ele_vertices[3]);
     Array< Vector<Scalar,3> > buffer(ele_vertices);
     for(int i = 1; i <=4; ++i)
     {
-	buffer = ele_vertices;
-	buffer[i-1] = pos;
-	D[i] = getTetDeterminant(buffer[0],buffer[1],buffer[2],buffer[3]);
-	weights[i-1] = D[i]/D[0];
+        buffer = ele_vertices;
+        buffer[i-1] = pos;
+        D[i] = getTetDeterminant(buffer[0],buffer[1],buffer[2],buffer[3]);
+        weights[i-1] = D[i]/D[0];
     }
 }
 
 template<typename Scalar>
 Scalar TetMesh<Scalar>::getTetDeterminant(const Vector<Scalar,3> &a, const Vector<Scalar,3> &b, const Vector<Scalar,3> &c, const Vector<Scalar,3> &d) const
 {
-  // computes the determinant of the 4x4 matrix
-  // [ a 1 ]
-  // [ b 1 ]
-  // [ c 1 ]
-  // [ d 1 ]
+    // computes the determinant of the 4x4 matrix
+    // [ a 1 ]
+    // [ b 1 ]
+    // [ c 1 ]
+    // [ d 1 ]
     SquareMatrix<Scalar,3> m0(b,c,d);
     SquareMatrix<Scalar,3> m1(a,c,d);
     SquareMatrix<Scalar,3> m2(a,b,d);

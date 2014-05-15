@@ -53,8 +53,8 @@ void MatrixMxN<Scalar>::allocMemory(int rows, int cols)
 { 
     if(rows<0||cols<0)
     {
-	std::cerr<<"Matrix size must be greater than zero!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix size must be greater than zero!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     ptr_eigen_matrix_MxN_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>(rows,cols);
@@ -64,7 +64,7 @@ void MatrixMxN<Scalar>::allocMemory(int rows, int cols)
     PHYSIKA_ASSERT(data_);
     rows_ = rows;
     cols_ = cols;
- #endif
+#endif
 }
 
 template <typename Scalar>
@@ -102,8 +102,8 @@ void MatrixMxN<Scalar>::resize(int new_rows, int new_cols)
 {
     if(new_rows<0||new_cols<0)
     {
-	std::cerr<<"Matrix size must be greater than zero!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix size must be greater than zero!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     (*ptr_eigen_matrix_MxN_).resize(new_rows,new_cols);
@@ -119,8 +119,8 @@ Scalar& MatrixMxN<Scalar>::operator() (int i, int j)
     bool index_in_range = (i>=0&&i<(*this).rows())&&(j>=0&&j<(*this).cols());
     if(!index_in_range)
     {
-	std::cerr<<"Matrix index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_)(i,j);
@@ -135,8 +135,8 @@ const Scalar& MatrixMxN<Scalar>::operator() (int i, int j) const
     bool index_in_range = (i>=0&&i<(*this).rows())&&(j>=0&&j<(*this).cols());
     if(!index_in_range)
     {
-	std::cerr<<"Matrix index out of range!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix index out of range!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_)(i,j);
@@ -155,8 +155,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator+ (const MatrixMxN<Scalar> &mat2) c
     bool size_match = (rows==rows2)&&(cols==cols2);
     if(!size_match)
     {
-	std::cerr<<"Cannot add two matrix of different sizes!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot add two matrix of different sizes!\n";
+        std::exit(EXIT_FAILURE);
     }
     Scalar *result = new Scalar[rows*cols];
     for(int i = 0; i < rows; ++i)
@@ -177,8 +177,8 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator+= (const MatrixMxN<Scalar> &mat2)
     bool size_match = (rows==rows2)&&(cols==cols2);
     if(!size_match)
     {
-	std::cerr<<"Cannot add two matrix of different sizes!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot add two matrix of different sizes!\n";
+        std::exit(EXIT_FAILURE);
     }
     for(int i = 0; i < rows; ++i)
         for(int j = 0; j <cols; ++j)
@@ -196,8 +196,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator- (const MatrixMxN<Scalar> &mat2) c
     bool size_match = (rows==rows2)&&(cols==cols2);
     if(!size_match)
     {
-	std::cerr<<"Cannot subtract two matrix of different sizes!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot subtract two matrix of different sizes!\n";
+        std::exit(EXIT_FAILURE);
     }
     Scalar *result = new Scalar[rows*cols];
     for(int i = 0; i < rows; ++i)
@@ -218,8 +218,8 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator-= (const MatrixMxN<Scalar> &mat2)
     bool size_match = (rows==rows2)&&(cols==cols2);
     if(!size_match)
     {
-	std::cerr<<"Cannot subtract two matrix of different sizes!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot subtract two matrix of different sizes!\n";
+        std::exit(EXIT_FAILURE);
     }
     for(int i = 0; i < rows; ++i)
         for(int j = 0; j <cols; ++j)
@@ -235,7 +235,7 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator= (const MatrixMxN<Scalar> &mat2)
     int rows2 = mat2.rows();
     int cols2 = mat2.cols();
     if((rows != rows2)||(cols != cols2))
-	(*this).resize(rows2,cols2);
+        (*this).resize(rows2,cols2);
     for(int i = 0; i < rows2; ++i)
         for(int j = 0; j < cols2; ++j)
             (*this)(i,j) = mat2(i,j);
@@ -254,7 +254,7 @@ bool MatrixMxN<Scalar>::operator== (const MatrixMxN<Scalar> &mat2) const
     for(int i = 0; i < rows1; ++i)
         for(int j = 0; j < cols1; ++j)
             if((*this)(i,j) != mat2(i,j))
-	        return false;
+                return false;
     return true;
 }
 
@@ -280,14 +280,14 @@ VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) cons
     int vec_dim = vec.dims();
     if(mat_col!=vec_dim)
     {
-	std::cerr<<"Matrix*Vector: Matrix and vector sizes do not match!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix*Vector: Matrix and vector sizes do not match!\n";
+        std::exit(EXIT_FAILURE);
     }
     VectorND<Scalar> result(mat_row,0.0);
     for(int i = 0; i < mat_row; ++i)
     {
-	for(int j = 0; j < mat_col; ++j)
-	    result[i] += (*this)(i,j)*vec[j];
+        for(int j = 0; j < mat_col; ++j)
+            result[i] += (*this)(i,j)*vec[j];
     }
     return result;
 }
@@ -308,8 +308,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Matrix Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     int rows = (*this).rows();
     int cols = (*this).cols();
@@ -327,8 +327,8 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Matrix Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     int rows = (*this).rows();
     int cols = (*this).cols();
@@ -359,8 +359,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
     int cols = (*this).cols();
     if(rows!=cols)
     {
-	std::cerr<<"Matrix not square matrix, it's not invertible!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix not square matrix, it's not invertible!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> result_eigen_matrix = (*ptr_eigen_matrix_MxN_).inverse();
@@ -376,8 +376,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
     Scalar det = determinant();
     if(det==0)
     {
-	std::cerr<<"Matrix not invertible!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix not invertible!\n";
+        std::exit(EXIT_FAILURE);
     }
     MatrixMxN<Scalar> result = cofactorMatrix();
     result = result.transpose();
@@ -393,26 +393,26 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::cofactorMatrix() const
     int cols = (*this).cols();
     if(rows!=cols)
     {
-	std::cerr<<"Matrix not square matrix, cofactor matrix does not exit!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix not square matrix, cofactor matrix does not exit!\n";
+        std::exit(EXIT_FAILURE);
     }
     MatrixMxN<Scalar> mat(rows,cols);
     for(int i = 0; i < rows; ++i)
-	for(int j = 0; j < cols; ++j)
-	{
-	    MatrixMxN<Scalar> sub_mat(rows-1,cols-1);
-	    for(int ii = 0; ii < rows; ++ii)
-		for(int jj =0; jj< cols; ++jj)
-		{
-		    if((ii==i)||(jj==j)) continue;
-		    int row_idx = ii>i?ii-1:ii;
-		    int col_idx = jj>j?jj-1:jj;
-		    sub_mat(row_idx,col_idx) = (*this)(ii,jj);
-		}
-	    mat(i,j)=sub_mat.determinant();
-	    if((i+j)%2)
-		mat(i,j)*=-1;
-	}
+        for(int j = 0; j < cols; ++j)
+        {
+            MatrixMxN<Scalar> sub_mat(rows-1,cols-1);
+            for(int ii = 0; ii < rows; ++ii)
+                for(int jj =0; jj< cols; ++jj)
+                {
+                    if((ii==i)||(jj==j)) continue;
+                    int row_idx = ii>i?ii-1:ii;
+                    int col_idx = jj>j?jj-1:jj;
+                    sub_mat(row_idx,col_idx) = (*this)(ii,jj);
+                }
+            mat(i,j)=sub_mat.determinant();
+            if((i+j)%2)
+                mat(i,j)*=-1;
+        }
     return mat;
 }
 
@@ -423,30 +423,30 @@ Scalar MatrixMxN<Scalar>::determinant() const
     int cols = (*this).cols();
     if(rows!=cols)
     {
-	std::cerr<<"Matrix not square matrix, determinant does not exit!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix not square matrix, determinant does not exit!\n";
+        std::exit(EXIT_FAILURE);
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_).determinant();
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = 0.0;
     if(rows==1)
-	return (*this)(0,0);
+        return (*this)(0,0);
     for(int j = 0; j < cols; ++j)
     {
-	MatrixMxN<Scalar> sub_mat(rows-1,cols-1);
-	for(int ii = 1; ii < rows; ++ii)
-	    for(int jj =0; jj< cols; ++jj)
-	    {
-		if((jj==j)) continue;
-		int row_idx = ii-1;
-		int col_idx = jj>j?jj-1:jj;
-		sub_mat(row_idx,col_idx) = (*this)(ii,jj);
-	    }
-	if(j%2)
-	    det -= (*this)(0,j)*sub_mat.determinant();
-	else
-	    det += (*this)(0,j)*sub_mat.determinant();
+        MatrixMxN<Scalar> sub_mat(rows-1,cols-1);
+        for(int ii = 1; ii < rows; ++ii)
+            for(int jj =0; jj< cols; ++jj)
+            {
+                if((jj==j)) continue;
+                int row_idx = ii-1;
+                int col_idx = jj>j?jj-1:jj;
+                sub_mat(row_idx,col_idx) = (*this)(ii,jj);
+            }
+        if(j%2)
+            det -= (*this)(0,j)*sub_mat.determinant();
+        else
+            det += (*this)(0,j)*sub_mat.determinant();
     }
     return det;
 #endif
@@ -459,12 +459,12 @@ Scalar MatrixMxN<Scalar>::trace() const
     int cols = (*this).cols();
     if(rows!=cols)
     {
-	std::cerr<<"Matrix not square matrix, trace does not exit!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Matrix not square matrix, trace does not exit!\n";
+        std::exit(EXIT_FAILURE);
     }
     Scalar result = 0.0;
     for(int i = 0; i < rows; ++i)
-	result += (*this)(i,i);
+        result += (*this)(i,i);
     return result;
 }
 
@@ -478,13 +478,13 @@ Scalar MatrixMxN<Scalar>::doubleContraction(const MatrixMxN<Scalar> &mat2) const
     bool size_match = (row1==row2)&&(col1==col2);
     if(!size_match)
     {
-	std::cerr<<"Cannot compute double contraction of two matrix with different sizes!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot compute double contraction of two matrix with different sizes!\n";
+        std::exit(EXIT_FAILURE);
     }
     Scalar result = 0.0;
     for(int i = 0; i < row1; ++i)
-	for(int j = 0; j < col1; ++j)
-	    result += (*this)(i,j)*mat2(i,j);
+        for(int j = 0; j < col1; ++j)
+            result += (*this)(i,j)*mat2(i,j);
     return result;
 }
 

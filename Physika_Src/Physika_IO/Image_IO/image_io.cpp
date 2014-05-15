@@ -24,16 +24,16 @@ unsigned char* ImageIO::load(const string &filename, int &width, int &height)
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
-	std::cerr<<"No file extension found for the image file!\n";
-	return NULL;
+        std::cerr<<"No file extension found for the image file!\n";
+        return NULL;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-	return PngIO::load(filename,width,height);
+        return PngIO::load(filename,width,height);
     else
     {
-	std::cerr<<"Unknown image file format!\n";
-	return NULL;
+        std::cerr<<"Unknown image file format!\n";
+        return NULL;
     }
 }
 
@@ -42,16 +42,16 @@ bool ImageIO::save(const string &filename, int width, int height, const unsigned
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
-	std::cerr<<"No file extension specified!\n";
-	return false;
+        std::cerr<<"No file extension specified!\n";
+        return false;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-	return PngIO::save(filename,width,height,image_data);
+        return PngIO::save(filename,width,height,image_data);
     else
     {
-	std::cerr<<"Unknown image file format specified!\n";
-	return false;
+        std::cerr<<"Unknown image file format specified!\n";
+        return false;
     }
 }
 

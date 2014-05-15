@@ -32,8 +32,8 @@ void ArrayManager::reorder(unsigned int* ids, unsigned int size)
     std::map<std::string, ReorderObject*>::iterator iter;
     for (iter = arrays_.begin(); iter != arrays_.end(); ++iter)
     {
-	std::cout<<iter->first<<" ";
-	iter->second->reorder(ids, size);
+        std::cout<<iter->first<<" ";
+        iter->second->reorder(ids, size);
     }
 }
 
