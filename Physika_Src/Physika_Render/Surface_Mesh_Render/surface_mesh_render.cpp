@@ -140,7 +140,7 @@ void SurfaceMeshRender<Scalar>::synchronize()
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::render()
 {
-    if(mesh==NULL)
+    if(this->mesh_==NULL)
     {
 	std::cerr<<"No mesh is binded to the MeshRender!\n";
 	return;

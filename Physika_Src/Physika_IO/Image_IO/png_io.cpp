@@ -31,29 +31,29 @@ unsigned char* PngIO::load(const string &filename, int &width,int &height)
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
-	std::cerr<<"No file extension found for the image file!\n";
-	return NULL;
+    std::cerr<<"No file extension found for the image file!\n";
+    return NULL;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix!=string(".png"))                                     //if the filename is not ended with ".png"
     {
-	std::cerr<<"Unknown image file format!\n";
-	return NULL;
+    std::cerr<<"Unknown image file format!\n";
+    return NULL;
     }
 
     std::vector<unsigned char> image;
     unsigned int error = lodepng::decode(image, (unsigned int &)width,(unsigned int &) height, filename);   //decode png file to image
     string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);
     PHYSIKA_MESSAGE_ASSERT(error==0, error_message);
-	
+    
     unsigned char * image_data= new unsigned char[width*height*4];  //allocate memory
     PHYSIKA_ASSERT(image_data);
     for(long i=0; i<image.size(); i=i+4) //loop for perPixel
     {
-	image_data[i] = image[i];        // red   color
-	image_data[i+1] = image[i+1];    // green color
-	image_data[i+2] = image[i+2];    // blue  color
-	image_data[i+3] = image[i+3];    // alpha value
+    image_data[i] = image[i];        // red   color
+    image_data[i+1] = image[i+1];    // green color
+    image_data[i+2] = image[i+2];    // blue  color
+    image_data[i+3] = image[i+3];    // alpha value
     }
     return image_data;
 }
@@ -63,14 +63,14 @@ bool PngIO::save(const string &filename, int width, int height, const unsigned c
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
-	std::cerr<<"No file extension specified!\n";
-	return false;
+    std::cerr<<"No file extension specified!\n";
+    return false;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix!=string(".png"))                                     //if the filename is not ended with ".png"
     {
-	std::cerr<<"Wrong file extension specified for PNG file!\n";
-	return false;
+    std::cerr<<"Wrong file extension specified for PNG file!\n";
+    return false;
     }
     unsigned error = lodepng::encode(filename, image_data, width, height);   //encode the image_data to file
     string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);   //difine the error message 
