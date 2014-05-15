@@ -74,8 +74,7 @@ Vector<T,3> operator *(S scale, const Vector<T,3> &vec)
 }
 
 
-//convenient typedefs
-#define Vector3D(Scalar) Vector<Scalar,3> 
+//convenient typedefs 
 typedef Vector<float,3> Vector3f;
 typedef Vector<double,3> Vector3d;
 typedef Vector<int,3> Vector3i;

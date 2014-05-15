@@ -212,3 +212,14 @@ template class Vector<double,2>;
 template class Vector<int,2>;
 
 } //end of namespace Physika
+
+
+
+
+
+
+
+
+
+
+

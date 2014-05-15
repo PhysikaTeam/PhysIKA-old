@@ -1,7 +1,7 @@
 /*
  * @file png_io.cpp 
  * @Brief load/save png file
- * @author Wei Chen
+ * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -12,51 +12,69 @@
  *
  */
 
+#include <vector>
+#include <iostream>
 #include "Physika_IO/Image_IO/png_io.h"
 #include "Physika_Dependency/LodePNG/lodepng.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+using std::string;
 
 namespace Physika{
 
-/// warning: this function only extra color data(IDAT chunk) from png file
+/// warning: this function only read color data(IDAT chunk) from png file
 ///	(i.e. it ignores all other data chunks ,such as ancillary chunks)
 /// since only IDAT chunk makes sense for our texture.Thus if you load from a png file and
 ///  resave image data to another png file,the file size will be smaller than the origin one.
 unsigned char* PngIO::load(const string &filename, int &width,int &height)
 {
 
-	string::size_type suffix_idx = filename.rfind('.');   // modified by Chen Wei in 5.11
-    PHYSIKA_ASSERT(suffix_idx<filename.size());
+    string::size_type suffix_idx = filename.rfind('.');
+    if(suffix_idx>=filename.size())
+    {
+	std::cerr<<"No file extension found for the image file!\n";
+	return NULL;
+    }
     string suffix = filename.substr(suffix_idx);
     if(suffix!=string(".png"))                                     //if the filename is not ended with ".png"
-		PHYSIKA_ERROR("Unknown image file format!");
+    {
+	std::cerr<<"Unknown image file format!\n";
+	return NULL;
+    }
 
-	std::vector<unsigned char> image;
-	unsigned int error = lodepng::decode(image, (unsigned int &)width,(unsigned int &) height, filename);   //decode png file to image
-	string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);
-	PHYSIKA_MESSAGE_ASSERT(error==0, error_message);
+    std::vector<unsigned char> image;
+    unsigned int error = lodepng::decode(image, (unsigned int &)width,(unsigned int &) height, filename);   //decode png file to image
+    string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);
+    PHYSIKA_MESSAGE_ASSERT(error==0, error_message);
 	
-	unsigned char * image_data= new unsigned char[width*height*4];  //allocate memory
-	for(long i=0; i<image.size(); i=i+4) //loop for perPixel
-	{
-		image_data[i] = image[i];        // red   color
-		image_data[i+1] = image[i+1];    // green color
-		image_data[i+2] = image[i+2];    // blue  color
-		image_data[i+3] = image[i+3];    // alpha value
-	}
+    unsigned char * image_data= new unsigned char[width*height*4];  //allocate memory
+    PHYSIKA_ASSERT(image_data);
+    for(long i=0; i<image.size(); i=i+4) //loop for perPixel
+    {
+	image_data[i] = image[i];        // red   color
+	image_data[i+1] = image[i+1];    // green color
+	image_data[i+2] = image[i+2];    // blue  color
+	image_data[i+3] = image[i+3];    // alpha value
+    }
     return image_data;
 }
 
 void PngIO::save(const string &filename, int width, int height, const unsigned char *image_data)
 {
-	string::size_type suffix_idx = filename.rfind('.');
-    PHYSIKA_ASSERT(suffix_idx<filename.size());
+    string::size_type suffix_idx = filename.rfind('.');
+    if(suffix_idx>=filename.size())
+    {
+	std::cerr<<"No file extension specified!\n";
+	std::exit(EXIT_FAILURE);
+    }
     string suffix = filename.substr(suffix_idx);
-    if(suffix!=string(".png"))
-		PHYSIKA_ERROR("Unknown image file format!");                         //if the filename is not ended with ".png"
+    if(suffix!=string(".png"))                                     //if the filename is not ended with ".png"
+    {
+	std::cerr<<"Wrong file extension specified for PNG file!\n";
+	std::exit(EXIT_FAILURE);
+    }
     unsigned error = lodepng::encode(filename, image_data, width, height);   //encode the image_data to file
-	string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);   //difine the error message 
-	PHYSIKA_MESSAGE_ASSERT(error==0, error_message);                                       // if an error happends, output the error message
+    string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);   //difine the error message 
+    PHYSIKA_MESSAGE_ASSERT(error==0, error_message);                                       // if an error happends, output the error message
 }
 
 } //end of namespace Physika

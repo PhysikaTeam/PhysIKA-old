@@ -20,11 +20,11 @@ int main()
 {
 
   cout<<"Vector3D Test"<<endl;
-  Physika::Vector3D(double) vec_double(2.0,1.0,3.0);
+  Physika::Vector<double,3> vec_double(2.0,1.0,3.0);
   cout<<"A 3d vector of double numbers:"<<endl;
   cout<<vec_double;
   cout<<"Dims: "<<vec_double.dims()<<endl;
-  Physika::Vector3D(double) vec_double3(0.0,1.0,2.0);
+  Physika::Vector<double,3> vec_double3(0.0,1.0,2.0);
   cout<<"Another 3d vector of double numbers:"<<endl;
   cout<<vec_double3;
   cout<<"vector1 add vector2: (+)"<<endl;

@@ -1,9 +1,9 @@
 /*
  * @file array.h 
- * @brief 1D array class. Designed for general use. 
+ * @brief 1D array class. Designed for general use.
  * @author Sheng Yang, Fei Zhu
  * @Suggestion: Choose between Array and std::vector at your will.
- *              If frequent sort and find operation is needed, use std::vector.
+ *              If frequent sort and find operation is needed, use std::vector and its algorithm.
  *              Otherwise, you could give Array a try.
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -55,7 +55,7 @@ public:
     /* Get and Set functions */
     inline unsigned int elementCount() const { return element_count_; }
     inline unsigned int size() const { return element_count_; }
-    inline ElementType * data() const { return data_; }
+    inline ElementType* data() const { return data_; }
 
     /* Special functions */
     void resize(unsigned int count);
@@ -180,12 +180,9 @@ void Array<ElementType>::reorder(unsigned int *ids, unsigned int size)
 
     ElementType * tmp = new ElementType[element_count_];
     for (size_t i = 0; i < element_count_; i++)
-    {
         tmp[i] = data_[ids[i]];
-    }
-
     memcpy(data_, tmp, element_count_ * sizeof(ElementType));
-
+    delete[] tmp;
 }
 
 }//end of namespace Physika

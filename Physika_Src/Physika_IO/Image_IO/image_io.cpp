@@ -21,23 +21,37 @@ namespace Physika{
 unsigned char* ImageIO::load(const string &filename, int &width, int &height)
 {
     string::size_type suffix_idx = filename.rfind('.');
-    PHYSIKA_ASSERT(suffix_idx<filename.size());
+    if(suffix_idx>=filename.size())
+    {
+	std::cerr<<"No file extension found for the image file!\n";
+	return NULL;
+    }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
 	return PngIO::load(filename,width,height);
     else
-	PHYSIKA_ERROR("Unknown image file format!");
+    {
+	std::cerr<<"Unknown image file format!\n";
+	return NULL;
+    }
 }
 
 void ImageIO::save(const string &filename, int width, int height, const unsigned char *image_data)
 {
     string::size_type suffix_idx = filename.rfind('.');
-    PHYSIKA_ASSERT(suffix_idx<filename.size());
+    if(suffix_idx>=filename.size())
+    {
+	std::cerr<<"No file extension specified!\n";
+	std::exit(EXIT_FAILURE);
+    }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
 	PngIO::save(filename,width,height,image_data);
     else
-	PHYSIKA_ERROR("Unknown image file format specified!");
+    {
+	std::cerr<<"Unknown image file format specified!\n";
+	std::exit(EXIT_FAILURE);
+    }
 }
 
 } //end of namespace Physika

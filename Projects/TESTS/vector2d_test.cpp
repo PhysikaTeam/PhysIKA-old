@@ -14,17 +14,16 @@
 
 #include <iostream>
 #include "Physika_Core/Vectors/vector_2d.h"
-//#include "Physika_Core/Vectors/vector.h"
 using namespace std;
 
 int main()
 {
   cout<<"Vector2D Test"<<endl;
-  Physika::Vector2D(double) vec_double(2.0,1.0);
+  Physika::Vector<double,2> vec_double(2.0,1.0);
   cout<<"A 2d vector of double numbers:"<<endl;
   cout<<vec_double;
   cout<<"Dims: "<<vec_double.dims()<<endl;
-  Physika::Vector2D(double) vec_double2(0.0,1.0);
+  Physika::Vector<double,2> vec_double2(0.0,1.0);
   cout<<"Another 2d vector of double numbers:"<<endl;
   cout<<vec_double2;
   cout<<"vector1 add vector2: (+)"<<endl;

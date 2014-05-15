@@ -16,7 +16,6 @@
 #define PHYSIKA_IO_IMAGE_IO_PNG_IO_H_
 
 #include <string>
-using std::string;
 
 namespace Physika{
 
@@ -25,8 +24,15 @@ class PngIO
 public:
     PngIO(){}
     ~PngIO(){}
-    static unsigned char* load(const string &filename, int &width, int &height);
-    static void save(const string &filename, int width, int height, const unsigned char *image_data);
+    /* load PNG image from given file, return the image data in row order
+     * if load fails, return NULL 
+     * memory of the image data needs to be released by the caller
+     */
+    static unsigned char* load(const std::string &filename, int &width, int &height);
+
+    /* save image data to file, the image data is in row order
+     */
+    static void save(const std::string &filename, int width, int height, const unsigned char *image_data);
 protected:
 
 };

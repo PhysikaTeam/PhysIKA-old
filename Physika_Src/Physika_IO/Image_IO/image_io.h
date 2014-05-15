@@ -25,7 +25,8 @@ class ImageIO
 public:
     ImageIO(){}
     ~ImageIO(){}
-    /* load image from given file, return the image data in row order 
+    /* load image from given file, return the image data in row order
+     * if load fails, return NULL 
      * memory of the image data needs to be released by the caller
      */
     static unsigned char* load(const string &filename, int &width, int &height);

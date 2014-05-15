@@ -185,10 +185,6 @@ sln_delete_files=[build_type+'/','obj/','Physika.suo','Physika.sdf']
 for name in os.listdir('./'):
     if name.endswith('.user') or name.endswith('.pdb') or name.endswith('.ilk'):
         sln_delete_files.append(name)
-for name in lib_names:
-    dir_path=os.path.join(src_root_path,name)
-    for dir,_,_ in os.walk(dir_path):
-    	sln_delete_files.extend(glob(os.path.join(dir,'*.pdb')))
 
 header_delete_files= [os.path.join(target_root_path+'include/', name) for name in os.listdir(target_root_path+'include/')
                       if os.path.isdir(os.path.join(target_root_path+'include/', name))]
