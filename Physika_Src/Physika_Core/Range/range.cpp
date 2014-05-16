@@ -126,8 +126,10 @@ Range<Scalar,Dim> Range<Scalar,Dim>::unitRange()
 //explicit instantiation
 template class Range<float,2>;
 template class Range<double,2>;
+template class Range<int,2>;
 template class Range<float,3>;
 template class Range<double,3>;
+template class Range<int,3>;
 
 }  //end of namespace Physika
 

@@ -15,7 +15,9 @@
 #ifndef PHSYIKA_CORE_TRANSFORM_TRANSFORM_H_
 #define PHSYIKA_CORE_TRANSFORM_TRANSFORM_H_
 
-#include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Quaternion/quaternion.h"
 
 namespace Physika{
@@ -39,7 +41,9 @@ public:
 protected:
     Quaternion<Scalar> orientation_;
     Vector<Scalar,3> position_;
-
+protected:
+    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
+                           "Transform<Scalar> are only defined for Scalar type of float and double");
 };
 
 //convenient typedefs

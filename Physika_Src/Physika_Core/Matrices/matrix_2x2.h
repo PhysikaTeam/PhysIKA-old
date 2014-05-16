@@ -81,6 +81,7 @@ SquareMatrix<T,2> operator* (S scale, const SquareMatrix<T,2> &mat)
 //convenient typedefs
 typedef SquareMatrix<float,2> Matrix2f;
 typedef SquareMatrix<double,2> Matrix2d;
+typedef SquareMatrix<int,2> Matrix2i;
 
 }  //end of namespace Physika
 

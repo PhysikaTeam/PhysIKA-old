@@ -112,23 +112,6 @@ Interval<Scalar> Interval<Scalar>::unitInterval()
 //explicit instantiation
 template class Interval<float>;
 template class Interval<double>;
+template class Interval<int>;
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

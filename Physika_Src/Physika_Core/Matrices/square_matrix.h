@@ -16,6 +16,8 @@
 #ifndef PHYSIKA_CORE_MATRICES_SQUARE_MATRIX_H_
 #define PHYSIKA_CORE_MATRICES_SQUARE_MATRIX_H_
 
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
@@ -29,6 +31,11 @@ public:
     virtual int rows() const=0;
     virtual int cols() const=0;
 protected:
+    //SquareMatrix<Scalar,Dim> is only defined for 2D&&3D with element type of float,double and int
+    //compile time check
+    PHYSIKA_STATIC_ASSERT(Dim==3||Dim==2,"SquareMatrix<Scalar,Dim> are only defined for Dim==2 and Dim==3");
+    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
+                           "SquareMatrix<Scalar,Dim> are only defined for Scalar type of float, double and int");
 }; 
 
 }  //end of namespace Physika

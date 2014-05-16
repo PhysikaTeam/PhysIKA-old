@@ -41,8 +41,13 @@ unsigned int SurfaceMesh<Scalar>::numVertices() const
 template <typename Scalar>
 unsigned int SurfaceMesh<Scalar>::numFaces() const
 {
-//TO DO:
-    return 0;
+    unsigned int num_face = 0;
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+    {
+        const Group<Scalar> &group = groups_[group_idx];
+        num_face += group.numFaces();
+    }
+    return num_face;
 }
 
 template <typename Scalar>

@@ -142,15 +142,15 @@ void SurfaceMeshRender<Scalar>::render()
 {
     if(this->mesh_==NULL)
     {
-	std::cerr<<"No mesh is binded to the MeshRender!\n";
-	return;
+        std::cerr<<"No mesh is binded to the MeshRender!\n";
+        return;
     }
     if(render_mode_ & render_solid_)
-	renderSolid();
+        renderSolid();
     if(render_mode_ & render_wireframe_)
-	renderWireframe();
+        renderWireframe();
     if(render_mode_ & render_vertices_)
-	renderVertices();
+        renderVertices();
 }
 
 template <typename Scalar>

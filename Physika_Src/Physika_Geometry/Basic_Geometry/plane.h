@@ -41,15 +41,3 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_BASIC_GEOMETRY_PLANE_H_
-
-
-
-
-
-
-
-
-
-
-
-

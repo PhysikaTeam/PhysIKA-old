@@ -491,5 +491,6 @@ Scalar MatrixMxN<Scalar>::doubleContraction(const MatrixMxN<Scalar> &mat2) const
 //explicit instantiation of template so that it could be compiled into a lib
 template class MatrixMxN<float>;
 template class MatrixMxN<double>;
+template class MatrixMxN<int>;
 
 }  //end of namespace Physika

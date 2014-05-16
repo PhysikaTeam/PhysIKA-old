@@ -289,5 +289,6 @@ Scalar SquareMatrix<Scalar,2>::doubleContraction(const SquareMatrix<Scalar,2> &m
 //explicit instantiation of template so that it could be compiled into a lib
 template class SquareMatrix<float,2>;
 template class SquareMatrix<double,2>;
+template class SquareMatrix<int,2>;
 
 }  //end of namespace Physika

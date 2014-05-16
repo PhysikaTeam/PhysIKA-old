@@ -16,6 +16,8 @@
 #ifndef PHYSIKA_CORE_RANGE_RANGE_H_
 #define PHYSIKA_CORE_RANGE_RANGE_H_
 
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 
@@ -43,23 +45,14 @@ public:
     static Range<Scalar,Dim> unitRange();  //each dimension is in range [0,1]
 protected:
     Vector<Scalar,Dim> min_corner_, max_corner_;
+protected:
+    PHYSIKA_STATIC_ASSERT(Dim==3||Dim==2,"Range<Scalar,Dim> are only defined for Dim==2 and Dim==3");
+    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
+                           "Range<Scalar,Dim> are only defined for Scalar type of float, double and int");
 };
 
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_CORE_RANGE_RANGE_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

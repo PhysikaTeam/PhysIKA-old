@@ -17,6 +17,8 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_base.h"
 
 namespace Physika{
@@ -57,6 +59,9 @@ protected:
     Scalar *data_;
     int dims_;
 #endif
+protected:
+    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
+                           "VetorND<Scalar> are only defined for Scalar type of float, double and int");
 };
 
 //overriding << for vectorND
@@ -81,7 +86,3 @@ VectorND<T> operator *(S scale, const VectorND<T> &vec)
 }//end of namespace Physika
 
 #endif//PHYSIKA_CORE_VECTORS_VECTOR_ND_H_
-
-
-
-

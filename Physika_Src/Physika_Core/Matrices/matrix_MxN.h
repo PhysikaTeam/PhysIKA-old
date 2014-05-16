@@ -16,6 +16,8 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_MXN_H_
 
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
@@ -61,6 +63,9 @@ protected:
     Scalar *data_;
     int rows_,cols_;
 #endif
+protected:
+    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
+                           "MatrixMxN<Scalar> are only defined for Scalar type of float, double and int");
 };
 
 //overriding << for MatrixMxN
@@ -89,6 +94,7 @@ MatrixMxN<T> operator* (S scale, const MatrixMxN<T> &mat)
 //convenient typedefs
 typedef MatrixMxN<float> MatrixXf;
 typedef MatrixMxN<double> MatrixXd;
+typedef MatrixMxN<int> MatrixXi;
 
 }
 

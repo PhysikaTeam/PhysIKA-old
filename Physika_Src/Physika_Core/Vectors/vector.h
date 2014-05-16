@@ -16,6 +16,8 @@
 #ifndef PHYSIKA_CORE_VECTORS_VECTOR_H_
 #define PHYSIKA_CORE_VECTORS_VECTOR_H_
 
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_base.h"
 
 namespace Physika{
@@ -28,6 +30,11 @@ public:
     ~Vector(){}
     virtual int dims() const=0;
 protected:
+    //Vector<Scalar,Dim> is only defined for 2D&&3D with element type of float,double and int
+    //compile time check
+    PHYSIKA_STATIC_ASSERT(Dim==3||Dim==2,"Vector<Scalar,Dim> are only defined for Dim==2 and Dim==3");
+    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
+                           "Vector<Scalar,Dim> are only defined for Scalar type of float, double and int");
 };
 
 }  //end of namespace Physika
