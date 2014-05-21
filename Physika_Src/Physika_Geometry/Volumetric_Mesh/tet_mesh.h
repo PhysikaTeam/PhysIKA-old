@@ -29,7 +29,7 @@ public:
     TetMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements);
     ~TetMesh();
     void printInfo() const;
-    int eleVolume(int ele_idx) const;
+	Scalar eleVolume(int ele_idx) const;
     bool containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const;
     void interpolationWeights(int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const;
 protected:

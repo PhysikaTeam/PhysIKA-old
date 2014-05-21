@@ -38,7 +38,7 @@ public:
     Vector<Scalar,Dim> vertPos(int vert_idx) const;
     Vector<Scalar,Dim> eleVertPos(int ele_idx, int vert_idx) const;
     virtual void printInfo() const=0;
-    virtual int eleVolume(int ele_idx) const=0;
+	virtual Scalar eleVolume(int ele_idx) const=0;
     virtual bool containsVertex(int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
     virtual void interpolationWeights(int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0;
 protected:
@@ -51,7 +51,7 @@ protected:
     int ele_num_;
     int *elements_;
     int *vert_per_ele_;
-    bool uniform_ele_type_;
+    bool uniform_ele_type_;        
 };
 
 //implementations
@@ -77,17 +77,21 @@ template <typename Scalar, int Dim>
 VolumetricMesh<Scalar,Dim>::~VolumetricMesh()
 {
     if(vertices_)
-        delete vertices_;
+	    delete[] vertices_;
     if(elements_)
-        delete elements_;
+        delete[] elements_;
     if(vert_per_ele_)
-        delete vert_per_ele_;
+	    delete[] vert_per_ele_;
 }
 
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(int vert_idx) const
 {
-    PHYSIKA_ASSERT(vert_idx<vert_num_);
+    if((vert_idx<0) || (vert_idx>=this->vert_num_))
+    {
+        std::cerr<<"vertex index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
     Vector<Scalar,Dim> pos;
     for(int i = 0; i < Dim; ++i)
         pos[i] = vertices_[Dim*vert_idx+i];
@@ -97,20 +101,32 @@ Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(int vert_idx) const
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::eleVertPos(int ele_idx, int vert_idx) const
 {
-    PHYSIKA_ASSERT(ele_idx<ele_num_);
+    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    {
+        std::cerr<<"element index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
     int ele_idx_start = 0;
     if(uniform_ele_type_)
     {
-        PHYSIKA_ASSERT(vert_idx<(*vert_per_ele_));
+		if((vert_idx<0) || (vert_idx >= (*vert_per_ele_) ))
+		{
+			std::cerr<<"vert_idx out of range\n";
+			std::exit(EXIT_FAILURE);
+		}
         ele_idx_start = ele_idx*(*vert_per_ele_);
     }
     else
     {
-        PHYSIKA_ASSERT(vert_idx<vert_per_ele_[ele_idx]);
+		if((vert_idx<0) || (vert_idx >= vert_per_ele_[ele_idx]))
+		{
+			std::cerr<<"vert_idx out of range\n";
+			std::exit(EXIT_FAILURE);
+		}
         for(int i = 0; i < ele_idx; ++i)
             ele_idx_start += vert_per_ele_[i];
     }
-    int global_vert_idx = elements_[ele_idx_start+vert_idx];
+    int global_vert_idx = elements_[ ele_idx_start +vert_idx];
     return vertPos(global_vert_idx);
 }
 

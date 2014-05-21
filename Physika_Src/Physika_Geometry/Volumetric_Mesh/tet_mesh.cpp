@@ -45,7 +45,7 @@ void TetMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
-int TetMesh<Scalar>::eleVolume(int ele_idx) const
+Scalar TetMesh<Scalar>::eleVolume(int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {

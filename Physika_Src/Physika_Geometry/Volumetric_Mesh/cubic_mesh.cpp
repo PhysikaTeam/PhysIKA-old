@@ -14,17 +14,21 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Arrays/array.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Volumetric_Mesh/cubic_mesh.h"
 
 namespace Physika{
 
 template <typename Scalar>
 CubicMesh<Scalar>::CubicMesh()
+	:VolumetricMesh<Scalar, 3>()
 {
 }
 
 template <typename Scalar>
 CubicMesh<Scalar>::CubicMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements)
+	:VolumetricMesh<Scalar, 3>(vert_num, vertices, ele_num, elements, 8)
 {
 }
 
@@ -40,20 +44,73 @@ void CubicMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
-int CubicMesh<Scalar>::eleVolume(int ele_idx) const
+Scalar CubicMesh<Scalar>::eleVolume(int ele_idx) const
 {
-    return 0;
+    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    {
+        std::cerr<<"CubicMesh element index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    Array< Vector<Scalar,3> > ele_vertices(8);
+    for(int i = 0; i < 8; ++i)
+	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+    //volume = |01 x 03 x 04|
+    Vector<Scalar,3> fir_minus_0 = ele_vertices[1] - ele_vertices[0];
+    Vector<Scalar,3> thi_minus_0 = ele_vertices[3] - ele_vertices[0];
+    Vector<Scalar,3> fou_minus_0 = ele_vertices[4] - ele_vertices[0]; 
+	return 1.0 * (fir_minus_0.norm() * thi_minus_0.norm() * fou_minus_0.norm() ) ;   
 }
 
 template <typename Scalar>
 bool CubicMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const
 {
-    return false;
+    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    {
+        std::cerr<<"CubicMesh element index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+	Scalar weights[8];
+    interpolationWeights(ele_idx,pos,weights);
+    bool vert_in_ele = true;
+	for(int i=0; i<8; ++i)
+		if(weights[i] < 0)vert_in_ele = false;
+    return vert_in_ele;
 }
 
 template <typename Scalar>
 void CubicMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const
 {
+/*we use trilinear interpolation 
+ *Dx0 = (x-pos[0][0])/(pos[1][0]-pos[0][0]);
+ *Dx1 = (pos[1][0]-x)/(pos[1][0]-pos[0][0]);
+ *Dy0 = ......
+ *Dy1 = ......
+ *Dz0 =
+ *Dz1 =
+ */
+    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    {
+        std::cerr<<"CubicMesh element index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    Array< Vector<Scalar,3> > ele_vertices(8);
+    for(int i = 0; i < 8; ++i)
+	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+    Scalar Dx0,Dx1,Dy0,Dy1,Dz0,Dz1;
+	Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);
+	Dx1 = (ele_vertices[1][0] - pos[0])/(ele_vertices[1][0] - ele_vertices[0][0]);
+	Dy0 = (pos[1] - ele_vertices[1][1])/(ele_vertices[2][1] - ele_vertices[1][1]);
+	Dy1 = (ele_vertices[2][1] - pos[1])/(ele_vertices[2][1] - ele_vertices[1][1]);
+	Dz0 = (pos[2] - ele_vertices[0][2])/(ele_vertices[4][2] - ele_vertices[0][2]);
+	Dz1 = (ele_vertices[4][2] - pos[2])/(ele_vertices[4][2] - ele_vertices[0][2]);
+	weights[0] = Dx1 * Dy1 * Dz1;
+	weights[1] = Dx0 * Dy1 * Dz1;
+	weights[2] = Dx0 * Dy0 * Dz1;
+	weights[3] = Dx1 * Dy0 * Dz1;
+	weights[4] = Dx1 * Dy1 * Dz0;
+	weights[5] = Dx0 * Dy1 * Dz0;
+	weights[6] = Dx0 * Dy0 * Dz0;
+	weights[7] = Dx1 * Dy0 * Dz0;
 }
 
 //explicit instantitation

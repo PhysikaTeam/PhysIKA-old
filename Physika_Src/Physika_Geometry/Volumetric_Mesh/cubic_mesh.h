@@ -20,6 +20,11 @@
 
 namespace Physika{
 
+/* if vertices of a cube are input as v[0`7]
+ * we consider six planes of the cube are [0,1,2,3] [4,5,6,7] [0,1,4,5] [2,3,6,7] [1,2,5,6] [0,3,4,7]
+ *[a,b,c,d] represent a plane which is made of a,b,c,d vertex
+ */
+
 template <typename Scalar> class Vector<Scalar,3>;
 
 template <typename Scalar>
@@ -30,7 +35,7 @@ public:
     CubicMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements);
     ~CubicMesh();
     void printInfo() const;
-    int eleVolume(int ele_idx) const;
+	Scalar eleVolume(int ele_idx) const;
     bool containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const;
     void interpolationWeights(int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const;
 protected:
