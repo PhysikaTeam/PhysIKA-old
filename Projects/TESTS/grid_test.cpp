@@ -16,7 +16,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Range/range.h"
-#include "Physika_Geometry/Cartesian_Grid/grid.h"
+#include "Physika_Geometry/Cartesian_Grids/grid.h"
 using namespace std;
 using Physika::Grid;
 using Physika::Range;

@@ -18,7 +18,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Arrays/array.h"
-#include "Physika_Geometry/Volumetric_Mesh/tri_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/tri_mesh.h"
 
 namespace Physika{
 
@@ -52,12 +52,12 @@ Scalar TriMesh<Scalar>::eleVolume(int ele_idx) const
         std::cerr<<"TriMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-	Array< Vector<Scalar,2> > ele_vertices(3);
+    Array< Vector<Scalar,2> > ele_vertices(3);
     for(int i = 0; i < 3; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+        ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Vector<Scalar,2> b_minus_a = ele_vertices[1] - ele_vertices[0];
     Vector<Scalar,2> c_minus_a = ele_vertices[2] - ele_vertices[0]; 
-	return abs(b_minus_a.cross(c_minus_a))/2.0;
+    return abs(b_minus_a.cross(c_minus_a))/2.0;
 }
 
 template <typename Scalar>
@@ -91,16 +91,14 @@ void TriMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,2> &
     }
     Array< Vector<Scalar,2> > ele_vertices(3);
     for(int i = 0; i < 3; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
-	SquareMatrix<Scalar, 3> m0(Vector<Scalar, 3>(ele_vertices[0][0] , ele_vertices[1][0], ele_vertices[2][0]),
-		Vector<Scalar, 3>(ele_vertices[0][1], ele_vertices[1][1], ele_vertices[2][1]),
-		Vector<Scalar, 3>(1, 1, 1));
-	Vector<Scalar, 3> result;
-	result = (m0.inverse())*Vector<Scalar, 3>(pos[0], pos[1], 1);
+        ele_vertices[i] = this->eleVertPos(ele_idx,i);
+    SquareMatrix<Scalar, 3> m0(Vector<Scalar, 3>(ele_vertices[0][0] , ele_vertices[1][0], ele_vertices[2][0]),
+                               Vector<Scalar, 3>(ele_vertices[0][1], ele_vertices[1][1], ele_vertices[2][1]),
+                               Vector<Scalar, 3>(1, 1, 1));
+    Vector<Scalar, 3> result;
+    result = (m0.inverse())*Vector<Scalar, 3>(pos[0], pos[1], 1);
     for(int i = 0; i <3; ++i)
-    {
-		weights[i] = result[i];
-    }
+        weights[i] = result[i];
 }
 
 //explicit instantitation
@@ -108,3 +106,15 @@ template class TriMesh<float>;
 template class TriMesh<double>;
 
 }  //end of namespace Physika
+
+
+
+
+
+
+
+
+
+
+
+

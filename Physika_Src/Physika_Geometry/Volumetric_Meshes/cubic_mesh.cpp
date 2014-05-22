@@ -16,7 +16,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Arrays/array.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Geometry/Volumetric_Mesh/cubic_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
 
 namespace Physika{
 
@@ -53,12 +53,12 @@ Scalar CubicMesh<Scalar>::eleVolume(int ele_idx) const
     }
     Array< Vector<Scalar,3> > ele_vertices(8);
     for(int i = 0; i < 8; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+        ele_vertices[i] = this->eleVertPos(ele_idx,i);
     //volume = |01 x 03 x 04|
     Vector<Scalar,3> fir_minus_0 = ele_vertices[1] - ele_vertices[0];
     Vector<Scalar,3> thi_minus_0 = ele_vertices[3] - ele_vertices[0];
     Vector<Scalar,3> fou_minus_0 = ele_vertices[4] - ele_vertices[0]; 
-	return 1.0 * (fir_minus_0.norm() * thi_minus_0.norm() * fou_minus_0.norm() ) ;   
+    return 1.0 * (fir_minus_0.norm() * thi_minus_0.norm() * fou_minus_0.norm() ) ;   
 }
 
 template <typename Scalar>
@@ -73,7 +73,8 @@ bool CubicMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos)
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = true;
 	for(int i=0; i<8; ++i)
-		if(weights[i] < 0)vert_in_ele = false;
+        if(weights[i] < 0)
+            vert_in_ele = false;
     return vert_in_ele;
 }
 
@@ -97,20 +98,20 @@ void CubicMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,3>
     for(int i = 0; i < 8; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar Dx0,Dx1,Dy0,Dy1,Dz0,Dz1;
-	Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);
-	Dx1 = (ele_vertices[1][0] - pos[0])/(ele_vertices[1][0] - ele_vertices[0][0]);
-	Dy0 = (pos[1] - ele_vertices[1][1])/(ele_vertices[2][1] - ele_vertices[1][1]);
-	Dy1 = (ele_vertices[2][1] - pos[1])/(ele_vertices[2][1] - ele_vertices[1][1]);
-	Dz0 = (pos[2] - ele_vertices[0][2])/(ele_vertices[4][2] - ele_vertices[0][2]);
-	Dz1 = (ele_vertices[4][2] - pos[2])/(ele_vertices[4][2] - ele_vertices[0][2]);
-	weights[0] = Dx1 * Dy1 * Dz1;
-	weights[1] = Dx0 * Dy1 * Dz1;
-	weights[2] = Dx0 * Dy0 * Dz1;
-	weights[3] = Dx1 * Dy0 * Dz1;
-	weights[4] = Dx1 * Dy1 * Dz0;
-	weights[5] = Dx0 * Dy1 * Dz0;
-	weights[6] = Dx0 * Dy0 * Dz0;
-	weights[7] = Dx1 * Dy0 * Dz0;
+    Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);
+    Dx1 = (ele_vertices[1][0] - pos[0])/(ele_vertices[1][0] - ele_vertices[0][0]);
+    Dy0 = (pos[1] - ele_vertices[1][1])/(ele_vertices[2][1] - ele_vertices[1][1]);
+    Dy1 = (ele_vertices[2][1] - pos[1])/(ele_vertices[2][1] - ele_vertices[1][1]);
+    Dz0 = (pos[2] - ele_vertices[0][2])/(ele_vertices[4][2] - ele_vertices[0][2]);
+    Dz1 = (ele_vertices[4][2] - pos[2])/(ele_vertices[4][2] - ele_vertices[0][2]);
+    weights[0] = Dx1 * Dy1 * Dz1;
+    weights[1] = Dx0 * Dy1 * Dz1;
+    weights[2] = Dx0 * Dy0 * Dz1;
+    weights[3] = Dx1 * Dy0 * Dz1;
+    weights[4] = Dx1 * Dy1 * Dz0;
+    weights[5] = Dx0 * Dy1 * Dz0;
+    weights[6] = Dx0 * Dy0 * Dz0;
+    weights[7] = Dx1 * Dy0 * Dz0;
 }
 
 //explicit instantitation
