@@ -42,11 +42,3 @@ protected:
 #endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TET_MESH_H_
 
 
-
-
-
-
-
-
-
-

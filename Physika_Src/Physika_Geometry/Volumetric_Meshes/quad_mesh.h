@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_QUAD_MESH_H_
-#define PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_QUAD_MESH_H_
+#ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_QUAD_MESH_H_
+#define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_QUAD_MESH_H_
 
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 
@@ -37,16 +37,4 @@ protected:
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_QUAD_MESH_H_
-
-
-
-
-
-
-
-
-
-
-
-
+#endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_QUAD_MESH_H_

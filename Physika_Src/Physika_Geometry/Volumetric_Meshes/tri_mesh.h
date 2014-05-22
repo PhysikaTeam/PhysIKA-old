@@ -38,15 +38,3 @@ protected:
 }  //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TRI_MESH_H_
-
-
-
-
-
-
-
-
-
-
-
-

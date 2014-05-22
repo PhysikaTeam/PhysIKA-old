@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_VOLUMETRIC_MESH_H_
-#define PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_VOLUMETRIC_MESH_H_
+#ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
+#define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
 
 #include <cstring>
 #include "Physika_Core/Vectors/vector_2d.h"
@@ -158,4 +158,4 @@ void VolumetricMesh<Scalar,Dim>::init(int vert_num, const Scalar *vertices, int 
 
 }  //end of namespace Physika
 
-#endif//PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_VOLUMETRIC_MESH_H_
+#endif//PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
