@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Arrays/array.h"
@@ -22,7 +23,7 @@
 namespace Physika{
 
 template <typename Scalar>
-TriMesh<Scalar>::TriMesh():VolumetricMesh()
+TriMesh<Scalar>::TriMesh():VolumetricMesh<Scalar,2>()
 {
 }
 
@@ -56,7 +57,7 @@ Scalar TriMesh<Scalar>::eleVolume(int ele_idx) const
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Vector<Scalar,2> b_minus_a = ele_vertices[1] - ele_vertices[0];
     Vector<Scalar,2> c_minus_a = ele_vertices[2] - ele_vertices[0]; 
-	return fabs(b_minus_a.cross(c_minus_a))/2.0;
+	return abs(b_minus_a.cross(c_minus_a))/2.0;
 }
 
 template <typename Scalar>

@@ -23,15 +23,14 @@ namespace Physika{
 template <typename Scalar, int Dim>
 class SquareMatrix;
 
-enum ModulusType{
-    YOUNG_AND_POISSON,
-    LAME_COEFFICIENTS
-};
-
 template <typename Scalar, int Dim>
 class IsotropicHyperelasticMaterial: public ConstitutiveModel
 {
 public:
+    enum ModulusType{
+        YOUNG_AND_POISSON,
+        LAME_COEFFICIENTS
+    };
     IsotropicHyperelasticMaterial(){}
     //if par_type = YOUNG_AND_POISSON, then: par1 = young's modulus, par2 = poisson_ratio
     //if par_type = LAME_COEFFICIENTS, then: par1 = lambda, par2 = mu
@@ -65,15 +64,15 @@ IsotropicHyperelasticMaterial<Scalar,Dim>::IsotropicHyperelasticMaterial(Scalar 
 {
     if(par_type == YOUNG_AND_POISSON)
     {
-	Array<Scalar> lame_coefs(2);
-	lameCoefsFromYoungAndPoisson(par1,par2,lame_coefs);
-	lambda_ = lame_coefs[0];
-	mu_ = lame_coefs[1];
+        Array<Scalar> lame_coefs(2);
+        lameCoefsFromYoungAndPoisson(par1,par2,lame_coefs);
+        lambda_ = lame_coefs[0];
+        mu_ = lame_coefs[1];
     }
     else
     {
-	lambda_ = par1;
-	mu_ = par2;
+        lambda_ = par1;
+        mu_ = par2;
     }
 }
 
