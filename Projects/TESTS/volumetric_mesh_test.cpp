@@ -1,7 +1,7 @@
 /*
  * @file volumetric_mesh_test.cpp 
  * @brief Test the various types of volumetric meshes.
- * @author Fei Zhu
+ * @author Mike Xu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -10,6 +10,7 @@
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
+ * contact me at mikepkucs@gmail.com if any question
  */
 
 #include <iostream>
