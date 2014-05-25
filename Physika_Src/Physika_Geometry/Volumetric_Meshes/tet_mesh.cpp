@@ -18,7 +18,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Arrays/array.h"
-#include "Physika_Geometry/Volumetric_Mesh/tet_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/tet_mesh.h"
 
 namespace Physika{
 

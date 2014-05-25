@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_VOLUMETRIC_MESH_H_
-#define PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_VOLUMETRIC_MESH_H_
+#ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
+#define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
 
 #include <cstring>
 #include "Physika_Core/Vectors/vector_2d.h"
@@ -38,7 +38,7 @@ public:
     Vector<Scalar,Dim> vertPos(int vert_idx) const;
     Vector<Scalar,Dim> eleVertPos(int ele_idx, int vert_idx) const;
     virtual void printInfo() const=0;
-	virtual Scalar eleVolume(int ele_idx) const=0;
+    virtual Scalar eleVolume(int ele_idx) const=0;
     virtual bool containsVertex(int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
     virtual void interpolationWeights(int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0;
 protected:
@@ -158,4 +158,4 @@ void VolumetricMesh<Scalar,Dim>::init(int vert_num, const Scalar *vertices, int 
 
 }  //end of namespace Physika
 
-#endif//PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_VOLUMETRIC_MESH_H_
+#endif//PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_

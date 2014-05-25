@@ -24,7 +24,7 @@ using Physika::NeoHookean;
 using Physika::StVK;
 using Physika::IsotropicLinearElasticity;
 using Physika::IsotropicHyperelasticMaterial;
-using Physika::ModulusType;
+using Physika::IsotropicHyperelasticMaterial::ModulusType;
 
 int main()
 {

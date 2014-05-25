@@ -13,13 +13,13 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_CARTESIAN_GRID_GRID_H_
-#define PHYSIKA_GEOMETRY_CARTESIAN_GRID_GRID_H_
+#ifndef PHYSIKA_GEOMETRY_CARTESIAN_GRIDS_GRID_H_
+#define PHYSIKA_GEOMETRY_CARTESIAN_GRIDS_GRID_H_
 
 #include "Physika_Core/Range/range.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Geometry/Cartesian_Grid/grid_iterator.h"
+#include "Physika_Geometry/Cartesian_Grids/grid_iterator.h"
 
 namespace Physika{
 
@@ -126,4 +126,4 @@ public:
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_CARTESIAN_GRID_GRID_H_
+#endif //PHYSIKA_GEOMETRY_CARTESIAN_GRIDS_GRID_H_

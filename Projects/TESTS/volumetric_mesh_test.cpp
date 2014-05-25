@@ -14,11 +14,11 @@
  */
 
 #include <iostream>
-#include "Physika_Geometry/Volumetric_Mesh/volumetric_mesh.h"
-#include "Physika_Geometry/Volumetric_Mesh/tet_mesh.h"
-#include "Physika_Geometry/Volumetric_Mesh/tri_mesh.h"
-#include "Physika_Geometry/Volumetric_Mesh/quad_mesh.h"
-#include "Physika_Geometry/Volumetric_Mesh/cubic_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/tet_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/tri_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 using namespace std;
 using Physika::VolumetricMesh;

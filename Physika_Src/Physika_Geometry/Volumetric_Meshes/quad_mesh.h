@@ -12,10 +12,10 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_QUAD_MESH_H_
-#define PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_QUAD_MESH_H_
+#ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_QUAD_MESH_H_
+#define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_QUAD_MESH_H_
 
-#include "Physika_Geometry/Volumetric_Mesh/volumetric_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 
 namespace Physika{
 
@@ -29,7 +29,7 @@ public:
     QuadMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements);
     ~QuadMesh();
     void printInfo() const;
-	Scalar eleVolume(int ele_idx) const;
+    Scalar eleVolume(int ele_idx) const;
     bool containsVertex(int ele_idx, const Vector<Scalar,2> &pos) const;
     void interpolationWeights(int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;
 protected:
@@ -37,20 +37,4 @@ protected:
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESH_QUAD_MESH_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_QUAD_MESH_H_

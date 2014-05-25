@@ -15,8 +15,9 @@
 #include <iostream>
 #include "Physika_Core/Arrays/array.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Geometry/Volumetric_Mesh/quad_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 
 namespace Physika{
 
@@ -58,7 +59,7 @@ Scalar QuadMesh<Scalar>::eleVolume(int ele_idx) const
     Vector<Scalar,2> a_minus_d = ele_vertices[0] - ele_vertices[3];
     Vector<Scalar,2> b_minus_d = ele_vertices[1] - ele_vertices[3];
     Vector<Scalar,2> c_minus_d = ele_vertices[2] - ele_vertices[3]; 
-	return 1.0/2*fabs((b_minus_d.cross(a_minus_d)) + (b_minus_d.cross(c_minus_d)));
+    return 1.0/2*abs((b_minus_d.cross(a_minus_d)) + (b_minus_d.cross(c_minus_d)));
 }
 
 template <typename Scalar>
@@ -71,7 +72,7 @@ bool QuadMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,2> &pos) 
     }
     Scalar weights[4];
     interpolationWeights(ele_idx,pos,weights);
-	bool vert_in_ele = (weights[0]>=0) && (weights[1]>=0) && (weights[2]>=0 && (weights[3]>=0));
+    bool vert_in_ele = (weights[0]>=0) && (weights[1]>=0) && (weights[2]>=0 && (weights[3]>=0));
     return vert_in_ele;    
 }
 
@@ -92,17 +93,17 @@ void QuadMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,2> 
     }
     Array< Vector<Scalar,2> > ele_vertices(4);
     for(int i = 0; i < 4; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+        ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar Dx0,Dx1,Dy0,Dy1;
-	Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);
-	Dx1 = (ele_vertices[1][0] - pos[0])/(ele_vertices[1][0] - ele_vertices[0][0]);
-	Dy0 = (pos[1] - ele_vertices[1][1])/(ele_vertices[2][1] - ele_vertices[1][1]);
-	Dy1 = (ele_vertices[2][1] - pos[1])/(ele_vertices[2][1] - ele_vertices[1][1]);
+    Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);
+    Dx1 = (ele_vertices[1][0] - pos[0])/(ele_vertices[1][0] - ele_vertices[0][0]);
+    Dy0 = (pos[1] - ele_vertices[1][1])/(ele_vertices[2][1] - ele_vertices[1][1]);
+    Dy1 = (ele_vertices[2][1] - pos[1])/(ele_vertices[2][1] - ele_vertices[1][1]);
 	//std::cout<<"dx0:"<<Dx0<<' '<<Dx1<<' '<<Dy0<<' '<<Dy1<<std::endl;
-	weights[0] = Dx1 * Dy1;
-	weights[1] = Dx0 * Dy1;
-	weights[2] = Dx0 * Dy0;
-	weights[3] = Dx1 * Dy0;
+    weights[0] = Dx1 * Dy1;
+    weights[1] = Dx0 * Dy1;
+    weights[2] = Dx0 * Dy0;
+    weights[3] = Dx1 * Dy0;
 }
 
 //explicit instantitation
@@ -110,3 +111,16 @@ template class QuadMesh<float>;
 template class QuadMesh<double>;
 
 }  //end of namespace Physika
+
+
+
+
+
+
+
+
+
+
+
+
+

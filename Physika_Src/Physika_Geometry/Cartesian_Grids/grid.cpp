@@ -15,7 +15,7 @@
 
 #include <cfloat>
 #include <iostream>
-#include "Physika_Geometry/Cartesian_Grid/grid.h"
+#include "Physika_Geometry/Cartesian_Grids/grid.h"
 
 namespace Physika{
 

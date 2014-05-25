@@ -28,18 +28,18 @@ bool SurfaceMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *me
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
-	std::cerr<<"No file extension found for the mesh file!\n";
-	return false;
+        std::cerr<<"No file extension found for the mesh file!\n";
+        return false;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".obj"))
-	return ObjMeshIO<Scalar>::load(filename,mesh);
+        return ObjMeshIO<Scalar>::load(filename,mesh);
     else if(suffix==string(".stl"))
-	return StlMeshIO<Scalar>::load(filename,mesh);
+        return StlMeshIO<Scalar>::load(filename,mesh);
     else
     {
-	std::cerr<<"Unknown mesh file format!\n";
-	return false;
+        std::cerr<<"Unknown mesh file format!\n";
+        return false;
     }
 }
 
@@ -49,24 +49,24 @@ bool SurfaceMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *me
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
-	std::cerr<<"No file extension specified for the mesh file!\n";
-	return false;
+        std::cerr<<"No file extension specified for the mesh file!\n";
+        return false;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".obj"))
-	return ObjMeshIO<Scalar>::save(filename,mesh);
+        return ObjMeshIO<Scalar>::save(filename,mesh);
     else if(suffix==string(".stl"))
-	return StlMeshIO<Scalar>::save(filename,mesh);
+        return StlMeshIO<Scalar>::save(filename,mesh);
     else
     {
-	std::cerr<<"Unknown mesh file format specified!\n";
-	return false;
+        std::cerr<<"Unknown mesh file format specified!\n";
+        return false;
     }
 }
 
 // //explicit instantitation
-// template class SurfaceMeshIO<float>;
-// template class SurfaceMeshIO<double>;
+template class SurfaceMeshIO<float>;
+template class SurfaceMeshIO<double>;
 
 } //end of namespace Physika
 
