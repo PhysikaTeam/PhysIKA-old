@@ -13,6 +13,7 @@
 */
 
 #include <cstdio>
+#include <iostream>
 #include <cstring>
 #include <sstream>
 #include <fstream>
@@ -28,19 +29,24 @@ using Physika::SurfaceMeshInternal::Vertex;
 using std::endl;
 using std::cout;
 using std::string;
+using std::cerr;
 
 namespace Physika{
     
 template <typename Scalar>
-void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
+bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
-    PHYSIKA_MESSAGE_ASSERT(mesh,"invalid mesh point");
+    if(mesh == NULL)
+    {
+        std::cout<<"invalid mesh point when call function load()"<<std::endl;
+        return false;
+    }
     string::size_type suffix_idx = filename.find('.');
-    PHYSIKA_MESSAGE_ASSERT(suffix_idx < filename.size(), "this is not a obj file");
     string suffix = filename.substr(suffix_idx);
     if(suffix != string(".obj"))
     {
-        PHYSIKA_ERROR("this is not a obj file");
+        std::cout<<"this is not a obj file"<<std::endl;
+        return false;
     }
     Group<Scalar>* current_group = NULL;
     unsigned int num_face = 0;
@@ -52,7 +58,8 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
     std::fstream ifs( filename.c_str(),std::ios::in);
     if(!ifs)
     {
-        PHYSIKA_ERROR("couldn't open .obj file");
+        std::cerr<<"couldn't open .obj file"<<std::endl;
+        return false;
     }
     const int maxline = 1000;
     char line[maxline];
@@ -69,24 +76,56 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         {
             //vertex
             Scalar x,y,z;
-            if(!(stream>>x))PHYSIKA_ERROR("stream>>x");
-            if(!(stream>>y))PHYSIKA_ERROR("stream>>y");
-            if(!(stream>>z))PHYSIKA_ERROR("stream>>z");
+            if(!(stream>>x))
+            {
+                std::cerr<<"stream>>x"<<std::endl;
+                return false;
+            }
+            if(!(stream>>y))
+            {
+                cerr<<"stream>>y"<<endl;
+                return false;
+            }
+            if(!(stream>>z))
+            {
+                cerr<<"stream>>z"<<endl;
+                return false;
+            }
             mesh->addVertexPosition(Vector<Scalar,3>(x,y,z));
         }
         else if(strcmp(type_of_line, "vn") == 0)
         {   //vertex normal
             Scalar x,y,z;
-            if(!(stream>>x))PHYSIKA_ERROR("x position of a normal read error");
-            if(!(stream>>y))PHYSIKA_ERROR("y position of a normal read error");
-            if(!(stream>>z))PHYSIKA_ERROR("z position of a normal read error");
+            if(!(stream>>x))
+            {
+                cerr<<"x position of a normal read error"<<endl;
+                return false;
+            }
+            if(!(stream>>y))
+            {
+                cerr<<"y position of a normal read error"<<endl;
+                return false;
+            }
+            if(!(stream>>z))
+            {
+                cerr<<"z position of a normal read error"<<endl;
+                return false;
+            }
             mesh->addVertexNormal(Vector<Scalar,3>(x,y,z));
         }
         else if(strcmp(type_of_line, "vt") == 0)
         {   //vertex texture
             Scalar x,y;
-            if(!(stream>>x))PHYSIKA_ERROR( "x position of a texture read error");
-            if(!(stream>>y))PHYSIKA_ERROR( "y position of a texture read error");
+            if(!(stream>>x))
+            {
+                cerr<<"x position of a texture read error"<<endl;
+                return false;
+            }
+            if(!(stream>>y))
+            {
+                cerr<<"y position of a texture read error"<<endl;
+                return false;
+            }
             mesh->addVertexTextureCoordinate(Vector<Scalar,2>(x,y));
         }
         else if(strcmp(type_of_line, "g") == 0)
@@ -94,8 +133,21 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             string group_name;
             stream>>group_name;
             unsigned int length=group_name.size();
-            PHYSIKA_MESSAGE_ASSERT(length >= 1, "warning: empty group name come in"); 
-            if(current_group = mesh->groupPtr(group_name))
+            if(length < 1)
+            {
+                cout<<"warning: empty group name come in and we consider it as a default group"<<endl;
+                Group<Scalar> *p=mesh->groupPtr(string("default"));
+                if(p == NULL)
+                {
+                    mesh->addGroup(Group<Scalar>(string("default"),current_material_index));
+                    current_group = mesh->groupPtr(string("default"));
+                    group_source_name = string("");
+                    group_clone_index=0;
+                    num_group_faces=0;
+                }
+                else current_group = p;
+            }
+            else if(current_group = mesh->groupPtr(group_name))
             {
             }
             else
@@ -112,7 +164,7 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         {
             if(current_group==NULL)
             {
-                mesh->addGroup(Group<Scalar>(string("default")));
+                mesh->addGroup(Group<Scalar>(string("default"),current_material_index));
                 current_group=mesh->groupPtr(string("default"));
             }
             Face<Scalar> face_temple;
@@ -130,7 +182,11 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                         vertex_temple.setNormalIndex(nor-1);
                         face_temple.addVertex(vertex_temple);
                     }
-                    else PHYSIKA_ERROR("invalid vertx in this face\n");
+                    else
+                    {
+                        cerr<<"invalid vertx in this face"<<endl;
+                        return false;
+                    }
                 }
                 else
                 {
@@ -146,7 +202,8 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                             }
                             else
                             {
-                                PHYSIKA_ASSERT("%u/%u error");
+                                cerr<<"%u/%u error"<<endl;
+                                return false;
                             }
                         }
                         else
@@ -157,7 +214,8 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                             }
                             else 
                             {
-                                PHYSIKA_ASSERT("%u error");
+                                cerr<<"%u/%u error"<<endl;
+                                return false;
                             }
                         }
                     }
@@ -204,7 +262,11 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 }
                 current_group->setMaterialIndex(current_material_index);
             }
-            else {PHYSIKA_ASSERT("material found false");}
+            else 
+            {
+                cerr<<"material found false"<<endl;
+                return false;
+            }
         }
         else if(strcmp(type_of_line, "mtllib") == 0)
         {
@@ -221,21 +283,30 @@ void ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
     }//end while
     ifs.close();
     //cout some file message
+    return true;
 }
 
 template <typename Scalar>
-void ObjMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
+bool ObjMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
-    PHYSIKA_MESSAGE_ASSERT(mesh, "invalid mesh point");
+    if(mesh == NULL)
+    {
+        cerr<<"invalid mesh point"<<endl;
+        return false;
+    }
     string::size_type suffix_idx = filename.find('.');
-    PHYSIKA_MESSAGE_ASSERT(suffix_idx < filename.size(), "this is not a obj file");
     string suffix = filename.substr(suffix_idx), prefix = filename.substr(0, suffix_idx);
     if(suffix != string(".obj"))
     {
-        PHYSIKA_ERROR("this is not a obj file");
+        cerr<<"this is not a obj file"<<endl;
+        return false;
     }	
     std::fstream fileout(filename.c_str(),std::ios::out|std::ios::trunc);
-    PHYSIKA_MESSAGE_ASSERT(fileout, "fail to open file when save a mesh to a obj file");
+    if(!fileout)
+    {
+        cerr<<"fail to open file when save a mesh to a obj file"<<endl;
+        return false;
+    }
     string material_path = prefix + string(".mtl");
     saveMaterials(material_path, mesh);
     fileout<<"mtllib "<<FilePathUtilities::filenameInPath(prefix)<<".mtl"<<endl;
@@ -286,13 +357,18 @@ void ObjMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
         }
     }
     fileout.close();
+    return true;
 }
 
 template <typename Scalar>
-void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar> *mesh)
+bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
     std::fstream ifs(filename.c_str(), std::ios::in);
-    PHYSIKA_MESSAGE_ASSERT(ifs, "can't open this mtl file");
+    if(!ifs)
+    {
+        cerr<<"can't open this mtl file"<<endl;
+        return false;		
+    }
     const unsigned int maxline = 1024;
     char line[maxline];
     char prefix[maxline];
@@ -331,7 +407,11 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
             if (type_of_line[1] == 's')
             {
                 Scalar shininess;
-                if(!(stream>>shininess))PHYSIKA_ERROR( "error! no data to set shininess");
+                if(!(stream>>shininess))
+                {
+                    cerr<<"error! no data to set shininess"<<endl;
+                    return false;
+                }
                 shininess *= 128.0 /1000.0;
                 material_example.setShininess(shininess);
             }
@@ -345,7 +425,11 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
                 Scalar kd1,kd2,kd3;
                 if(!(stream>>kd1)) break;
                 stream>>kd2;
-                if(!(stream>>kd3))PHYSIKA_ERROR( "error less data when read Kd.\n");
+                if(!(stream>>kd3))
+                {
+                    cerr<<"error less data when read Kd."<<endl;
+                    return false;
+                }
                 material_example.setKd(Vector<Scalar,3> (kd1, kd2, kd3));
                 break;
 
@@ -353,7 +437,11 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
                 Scalar ks1,ks2,ks3;
                 if(!(stream>>ks1)) break;
                 stream>>ks2;
-                if(!(stream>>ks3))PHYSIKA_ERROR( "error less data when read Ks.\n");
+                if(!(stream>>ks3))
+                {
+                    cerr<<"error less data when read Ks."<<endl;
+                    return false;
+                }
                 material_example.setKs(Vector<Scalar,3> (ks1, ks2, ks3));
                 break;
 
@@ -361,7 +449,11 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
                 Scalar ka1,ka2,ka3;
                 if(!(stream>>ka1)) break;
                 stream>>ka2;
-                if(!(stream>>ka3))PHYSIKA_ERROR( "error less data when read Ka.\n");
+                if(!(stream>>ka3))
+                {
+                    cerr<<"error less data when read Ka."<<endl;
+                    return false;
+                }
                 material_example.setKa(Vector<Scalar,3> (ka1, ka2, ka3));
                 break;
 
@@ -399,14 +491,23 @@ void ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
     if(num_mtl >= 0)                            //attention at least one material must be in mesh
         mesh->addMaterial(material_example);
     ifs.close();
+    return true;
 }
 
 template <typename Scalar>
-void ObjMeshIO<Scalar>::saveMaterials(const string &filename, SurfaceMesh<Scalar> *mesh)
+bool ObjMeshIO<Scalar>::saveMaterials(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
     std::fstream fileout(filename.c_str(),std::ios::out|std::ios::trunc);
-    PHYSIKA_MESSAGE_ASSERT(fileout, "error:can't open file when save materials.");
-    PHYSIKA_MESSAGE_ASSERT(mesh, "error:invalid mesh point.");
+    if(!fileout)
+    {
+        cerr<<"error:can't open file when save materials."<<endl;
+        return false;
+    }
+    if(mesh == NULL)
+    {
+        cerr<<"error:invalid mesh point."<<endl;
+        return false;
+    }
     unsigned int num_mtl = mesh->numMaterials();
     unsigned int i;
     Material<Scalar> material_example;
@@ -422,6 +523,7 @@ void ObjMeshIO<Scalar>::saveMaterials(const string &filename, SurfaceMesh<Scalar
         if(material_example.hasTexture()) fileout<<"map_Kd "<<FilePathUtilities::filenameInPath(material_example.textureFileName())<<endl;
     }
     fileout.close();
+    return true;
 }
 
 //explicit instantitation

@@ -24,7 +24,14 @@ namespace Physika{
 template <typename Scalar>
 SurfaceMesh<Scalar>::SurfaceMesh()
 {
-//TO DO: Add default material
+    Material<Scalar> material_example;//default material. we will add more material if need
+    material_example.setAlpha(1);
+    material_example.setKa(Vector<Scalar,3>(0.2,0.2,0.2));
+    material_example.setKd(Vector<Scalar,3>(1,1,1));
+    material_example.setKs(Vector<Scalar,3>(0.2,0.2,0.2));
+    material_example.setName(string("default"));
+    material_example.setShininess(24.2515);
+    addMaterial(material_example);
 }
 
 template <typename Scalar>
