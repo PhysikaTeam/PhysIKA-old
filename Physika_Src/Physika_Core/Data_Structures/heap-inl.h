@@ -323,4 +323,4 @@ bool MaxHeap<T>::remove(int pos, T& node)
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_CORE_DATA_STRUCTURES_HEAP_H_
+#endif //PHYSIKA_CORE_DATA_STRUCTURES_HEAP_INL_H_
