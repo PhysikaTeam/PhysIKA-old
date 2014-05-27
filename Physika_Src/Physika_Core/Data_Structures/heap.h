@@ -67,6 +67,6 @@ private:
 
 }  //end of namespace Physika
 
-#include "Physika_Core\Data_Structures\heap-inl.h"
+#include "Physika_Core/Data_Structures/heap-inl.h"
 
 #endif //PHYSIKA_CORE_DATA_STRUCTURES_HEAP_INL_H_
