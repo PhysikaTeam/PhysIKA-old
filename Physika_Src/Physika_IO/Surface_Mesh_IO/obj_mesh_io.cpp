@@ -48,11 +48,16 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         std::cout<<"this is not a obj file"<<std::endl;
         return false;
     }
+    // a indicator points to current group 
     Group<Scalar>* current_group = NULL;
+    // num of total faces
     unsigned int num_face = 0;
+    // index of the current material in mesh's materials
     unsigned int current_material_index = 0;
+    // the line number in the obj file
     unsigned int line_num = 0;
     unsigned int num_group_faces = 0;
+    // group name
     string group_source_name;
     unsigned int group_clone_index = 0;
     std::fstream ifs( filename.c_str(),std::ios::in);
@@ -78,17 +83,17 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             Scalar x,y,z;
             if(!(stream>>x))
             {
-                std::cerr<<"stream>>x"<<std::endl;
+                cerr<<"error:stream>>x "<<"line:"<<line_num<<endl;
                 return false;
             }
             if(!(stream>>y))
             {
-                cerr<<"stream>>y"<<endl;
+                cerr<<"error:stream>>y "<<"line:"<<line_num<<endl;
                 return false;
             }
             if(!(stream>>z))
             {
-                cerr<<"stream>>z"<<endl;
+                cerr<<"error:stream>>z "<<"line:"<<line_num<<endl;
                 return false;
             }
             mesh->addVertexPosition(Vector<Scalar,3>(x,y,z));
@@ -98,17 +103,17 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             Scalar x,y,z;
             if(!(stream>>x))
             {
-                cerr<<"x position of a normal read error"<<endl;
+                cerr<<"x position of a normal read error "<<"line:"<<line_num<<endl;
                 return false;
             }
             if(!(stream>>y))
             {
-                cerr<<"y position of a normal read error"<<endl;
+                cerr<<"y position of a normal read error "<<"line:"<<line_num<<endl;
                 return false;
             }
             if(!(stream>>z))
             {
-                cerr<<"z position of a normal read error"<<endl;
+                cerr<<"z position of a normal read error "<<"line:"<<line_num<<endl;
                 return false;
             }
             mesh->addVertexNormal(Vector<Scalar,3>(x,y,z));
@@ -118,12 +123,12 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             Scalar x,y;
             if(!(stream>>x))
             {
-                cerr<<"x position of a texture read error"<<endl;
+                cerr<<"x position of a texture read error "<<"line:"<<line_num<<endl;
                 return false;
             }
             if(!(stream>>y))
             {
-                cerr<<"y position of a texture read error"<<endl;
+                cerr<<"y position of a texture read error "<<"line:"<<line_num<<endl;
                 return false;
             }
             mesh->addVertexTextureCoordinate(Vector<Scalar,2>(x,y));
@@ -135,7 +140,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             unsigned int length=group_name.size();
             if(length < 1)
             {
-                cout<<"warning: empty group name come in and we consider it as a default group"<<endl;
+                cout<<"warning: empty group name come in and we consider it as a default group "<<"line:"<<line_num<<endl;
                 Group<Scalar> *p=mesh->groupPtr(string("default"));
                 if(p == NULL)
                 {
@@ -147,7 +152,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 }
                 else current_group = p;
             }
-            else if(current_group = mesh->groupPtr(group_name))
+            else if( (current_group = mesh->groupPtr(group_name)) )
             {
             }
             else
@@ -184,7 +189,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                     }
                     else
                     {
-                        cerr<<"invalid vertx in this face"<<endl;
+                        cerr<<"invalid vertx in this face "<<"line:"<<line_num<<endl;
                         return false;
                     }
                 }
@@ -202,7 +207,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                             }
                             else
                             {
-                                cerr<<"%u/%u error"<<endl;
+                                cerr<<"%u/%u error "<<"line:"<<line_num<<endl;
                                 return false;
                             }
                         }
@@ -214,7 +219,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                             }
                             else 
                             {
-                                cerr<<"%u/%u error"<<endl;
+                                cerr<<"%u/%u error "<<"line:"<<line_num<<endl;
                                 return false;
                             }
                         }
@@ -264,7 +269,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
             else 
             {
-                cerr<<"material found false"<<endl;
+                cerr<<"material found false "<<"line:"<<line_num<<endl;
                 return false;
             }
         }
@@ -363,6 +368,7 @@ bool ObjMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
 template <typename Scalar>
 bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
+    unsigned int line_num = 0;
     std::fstream ifs(filename.c_str(), std::ios::in);
     if(!ifs)
     {
@@ -378,6 +384,7 @@ bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
     while(ifs)
     {		
         ifs.getline(line, maxline);
+        line_num++;
         stream.str("");
         stream.clear();
         char type_of_line[maxline];
@@ -409,7 +416,7 @@ bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
                 Scalar shininess;
                 if(!(stream>>shininess))
                 {
-                    cerr<<"error! no data to set shininess"<<endl;
+                    cerr<<"error! no data to set shininess "<<"line:"<<line_num<<endl;
                     return false;
                 }
                 shininess *= 128.0 /1000.0;
@@ -427,7 +434,7 @@ bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
                 stream>>kd2;
                 if(!(stream>>kd3))
                 {
-                    cerr<<"error less data when read Kd."<<endl;
+                    cerr<<"error less data when read Kd. "<<"line:"<<line_num<<endl;
                     return false;
                 }
                 material_example.setKd(Vector<Scalar,3> (kd1, kd2, kd3));
@@ -439,7 +446,7 @@ bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
                 stream>>ks2;
                 if(!(stream>>ks3))
                 {
-                    cerr<<"error less data when read Ks."<<endl;
+                    cerr<<"error less data when read Ks. "<<"line:"<<line_num<<endl;
                     return false;
                 }
                 material_example.setKs(Vector<Scalar,3> (ks1, ks2, ks3));
@@ -451,7 +458,7 @@ bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
                 stream>>ka2;
                 if(!(stream>>ka3))
                 {
-                    cerr<<"error less data when read Ka."<<endl;
+                    cerr<<"error less data when read Ka. "<<"line:"<<line_num<<endl;
                     return false;
                 }
                 material_example.setKa(Vector<Scalar,3> (ka1, ka2, ka3));

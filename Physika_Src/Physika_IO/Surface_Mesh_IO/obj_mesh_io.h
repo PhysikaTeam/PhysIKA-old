@@ -27,15 +27,24 @@ class ObjMeshIO
 public:
     ObjMeshIO(){}
     ~ObjMeshIO(){}
-
+    //memory of mesh is preallocated by caller
+    //return true if succeed, otherwise return false
     // load a mesh from a obj file.
-	static bool load(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    static bool load(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    //memory of mesh is preallocated by caller
+    //return true if succeed, otherwise return false
     // save a mesh to a obj file.
-	static bool save(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    static bool save(const std::string &filename, SurfaceMesh<Scalar> *mesh);
 
 protected:
-	static bool loadMaterials(const std::string &filename, SurfaceMesh<Scalar> *mesh); //load material of the mesh from material file
-	static bool saveMaterials(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    //memory of mesh is preallocated by caller
+    //return true if succeed, otherwise return false
+    //load material of the mesh from material file
+    static bool loadMaterials(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    //memory of mesh is preallocated by caller
+    //return true if succeed, otherwise return false
+    //save material of the mesh from material file
+    static bool saveMaterials(const std::string &filename, SurfaceMesh<Scalar> *mesh);
 };
 
 } //end of namespace Physika

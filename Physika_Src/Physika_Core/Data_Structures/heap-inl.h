@@ -113,8 +113,8 @@ bool MinHeap<T>::insert(const T& newNode)
         return false;
     heap_array_[current_size_] = newNode;
     current_size_++;
-	shiftUp(current_size_-1);
-	return true;
+    shiftUp(current_size_-1);
+    return true;
 }
 
 template <class T>
@@ -266,7 +266,7 @@ bool MaxHeap<T>::insert(const T& newNode)
     heap_array_[current_size_] = newNode;
     current_size_++;
     shiftUp(current_size_-1);
-	return true;
+    return true;
 }
 
 template <class T>

@@ -36,21 +36,21 @@ public:
     bool remove(int pos, T& node);  //delete elements according to position given
     bool insert(const T&newNode);
     T& removeMin();
-	
-	//shiftUp will compare the pos place node with its father node and change their place if need recursively until find a suitable place for the node you input  
+    
+    //shiftUp will compare the pos place node with its father node and change their place if need recursively until find a suitable place for the node you input  
     void shiftUp(int pos);
 
-	//shiftDown will compare the node you input with its sons' node and change their place if need recursively until find a suitable place for the node you input
+    //shiftDown will compare the node you input with its sons' node and change their place if need recursively until find a suitable place for the node you input
     void shiftDown(int pos);
 private:
-	//initialize the order of elements in heap
-	//only call once when you create a heap
+    //initialize the order of elements in heap
+    //only call once when you create a heap
     void buildHeap(); 
-	//array which store data
+    //array which store data
     T* heap_array_;
-	//num of elements in heap
+    //num of elements in heap
     int current_size_;
-	//max num of elements the heap can contain now
+    //max num of elements the heap can contain now
     int max_size_;     
 };
 
@@ -69,18 +69,18 @@ public:
     bool remove(int pos, T& node);  //delete elements according to position given
     bool insert(const T&newNode);
     T& removeMax();
-	//shiftDown will compare the node you input with its father's node and change their place if need recursively until find a suitable place for the node you input
+    //shiftDown will compare the node you input with its father's node and change their place if need recursively until find a suitable place for the node you input
     void shiftUp(int pos);
-	//shiftDown will compare the node you input with its sons' node and change their place if need recursively until find a suitable place for the node you input
+    //shiftDown will compare the node you input with its sons' node and change their place if need recursively until find a suitable place for the node you input
     void shiftDown(int pos);
 private:
-	//initialize the order of elements in heap
+    //initialize the order of elements in heap
     void buildHeap();
-	//array which store data
+    //array which store data
     T* heap_array_;
-	//num of elements in heap
+    //num of elements in heap
     int current_size_;
-	//max num of elements the heap can contain now
+    //max num of elements the heap can contain now
     int max_size_;     
 };
 
