@@ -24,11 +24,11 @@ namespace FilePathUtilities{
 string dirName(const string &path)
 {
 	string::size_type pos1 = path.rfind('/');
-	string::size_type pos2 = path.rfind('\\');
-	if(pos1 != string::npos && pos2 != string::npos && pos1 < pos2) pos1 = pos2;
+	string::size_type pos2 = path.rfind('\\');              //find the position of the last '/' or '\'
+	if(pos1 != string::npos && pos2 != string::npos && pos1 < pos2) pos1 = pos2; //and store it in variable pos1
 	else if(pos1 == string::npos && pos2 == string::npos) return string(".");
 	else if(pos1 == string::npos) pos1 = pos2;
-	if(path[pos1] == '\\') return path.substr(0,pos1-1);
+	if(path[pos1] == '\\') return path.substr(0,pos1-1);  //if pos1 stores char '\', we should return path.substr(0,pos1-1) because '\'always apear in pairs
 	return path.substr(0,pos1);
 }
 string filenameInPath(const string &path)

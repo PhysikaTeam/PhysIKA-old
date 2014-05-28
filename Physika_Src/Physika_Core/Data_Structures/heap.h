@@ -20,6 +20,9 @@
 
 namespace Physika{
 
+
+//class MinHeap is a template class. Every elements in any object of this class will be reordered as a min heap.
+//but if you use other class as the template T,you must asure you define operation <,>,= between two objects of class T;
 template <class T>
 class MinHeap
 {
@@ -33,15 +36,26 @@ public:
     bool remove(int pos, T& node);  //delete elements according to position given
     bool insert(const T&newNode);
     T& removeMin();
+	
+	//shiftUp will compare the pos place node with its father node and change their place if need recursively until find a suitable place for the node you input  
     void shiftUp(int pos);
+
+	//shiftDown will compare the node you input with its sons' node and change their place if need recursively until find a suitable place for the node you input
     void shiftDown(int pos);
 private:
-    void buildHeap();  //initialize the order of elements in heap
-    T* heap_array_;  //array which store data
-    int current_size_;  //num of elements in heap
-    int max_size_;     //max num of elements the heap can contain now
+	//initialize the order of elements in heap
+	//only call once when you create a heap
+    void buildHeap(); 
+	//array which store data
+    T* heap_array_;
+	//num of elements in heap
+    int current_size_;
+	//max num of elements the heap can contain now
+    int max_size_;     
 };
 
+//class MaxHeap is a template class. Every elements in any object of this class will be reordered as a max heap.
+//but if you use other class as the template T,you must asure you define operation <,>,= between two objects of class T;
 template <class T>
 class MaxHeap
 {
@@ -55,13 +69,19 @@ public:
     bool remove(int pos, T& node);  //delete elements according to position given
     bool insert(const T&newNode);
     T& removeMax();
+	//shiftDown will compare the node you input with its father's node and change their place if need recursively until find a suitable place for the node you input
     void shiftUp(int pos);
+	//shiftDown will compare the node you input with its sons' node and change their place if need recursively until find a suitable place for the node you input
     void shiftDown(int pos);
 private:
-    void buildHeap();  //initialize the order of elements in heap
-    T* heap_array_;  //array which store data
-    int current_size_;  //num of elements in heap
-    int max_size_;     //max num of elements the heap can contain now
+	//initialize the order of elements in heap
+    void buildHeap();
+	//array which store data
+    T* heap_array_;
+	//num of elements in heap
+    int current_size_;
+	//max num of elements the heap can contain now
+    int max_size_;     
 };
 
 

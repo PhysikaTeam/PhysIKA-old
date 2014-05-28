@@ -1,6 +1,6 @@
 /*
  * @file file_path_utilities.h 
- * @brief Some universal functions when processing files' path.
+ * @brief Some universal functions when processing files' name.
  * @author LiYou Xu
  * @acknowledge Jernej Barbic, author of VegaFEM
  *
@@ -22,8 +22,11 @@ namespace Physika{
 
 namespace FilePathUtilities{
 
-std::string dirName(const std::string &path);   //abstract father_directory of a file path
-std::string filenameInPath(const std::string &path);   //abstract filename in a path of a file
+//abstract the path of a file's directory out of its path
+std::string dirName(const std::string &path);
+
+//abstract filename in a path of a file
+std::string filenameInPath(const std::string &path);
 
 } //end of namespace File_Path_Utilities
 
