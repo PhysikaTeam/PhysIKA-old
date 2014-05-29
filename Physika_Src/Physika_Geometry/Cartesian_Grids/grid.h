@@ -69,7 +69,7 @@ protected:
  * Grid: inherit common interface from GridBase
  *       use partial specialization of template to provide interface specific to 2D&&3D
  */
-template <typename Scalar, int Dim>
+template <typename Scalar,int Dim>
 class Grid: public GridBase<Scalar,Dim>
 {
 };

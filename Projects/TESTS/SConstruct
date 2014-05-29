@@ -87,10 +87,7 @@ if use_gl==True:
     if os_name=='Linux':
         additional_libs.append('glut')
         additional_libs.append('GLU')
-        if os_architecture=='32bit':
-            additional_libs.append('GL32')
-        else:
-            additional_libs.append('GL64')
+        additional_libs.append('GL')
     elif os_name=='Windows':
         additional_libs.append('freeglut')
         additional_libs.append('glu32')
