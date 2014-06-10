@@ -31,8 +31,10 @@ public:
 
 	//get & set
 	inline ObjectType getObjectType() const;
+	inline const SurfaceMesh<Scalar>* const getMesh() const;
+	inline void setMesh(SurfaceMesh<Scalar>* mesh);
 protected:
-	SurfaceMesh* mesh_;
+	SurfaceMesh<Scalar>* mesh_;
 };
 
 }  //end of namespace Physika

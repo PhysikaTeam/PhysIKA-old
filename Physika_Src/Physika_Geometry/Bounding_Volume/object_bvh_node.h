@@ -18,39 +18,24 @@
 namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
-template <typename Scalar,int Dim> class BoundingVolume;
+template <typename Scalar,int Dim> class BVHNodeBase;
 
 template <typename Scalar,int Dim>
-class ObjectBVHNode
+class ObjectBVHNode : public BVHNodeBase<Scalar, Dim>
 {
 public:
 	//constructors && deconstructors
 	ObjectBVHNode();
 	~ObjectBVHNode();
 
-	//get & set
-	inline void setLeftChild(ObjectBVHNode* left_child);
-	inline ObjectBVHNode* getLeftChild();
-	inline void setRightChild(ObjectBVHNode* right_child);
-	inline ObjectBVHNode* getRightChild();
-	inline void setBoundingVolume(BoundingVolume* bounding_volume);
-	inline BoundingVolume* getBoundingVolume();
-
 	//structure maintain
+	void resize();
 	void buildFromShape();
-	void clean();
 
-	//collision detection
-	bool selfCollide();
-	bool collide(ObjectBVHNode* target);
-	bool leafCollide(ObjectBVHNode* target);
-	bool elemTest(ObjectBVHNode* target);
-
+	bool elemTest(ObjectBVHNode<Scalar, Dim>* target);
 	
 protected:
-	BoundingVolume* bounding_volume_;
-	ObjectBVHNode* left_child_;
-	ObjectBVHNode* right_child_;
+
 };
 
 }  //end of namespace Physika

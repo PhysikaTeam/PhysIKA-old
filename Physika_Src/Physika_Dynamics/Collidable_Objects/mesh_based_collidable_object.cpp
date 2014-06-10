@@ -32,4 +32,20 @@ inline typename CollidableObject<Scalar, Dim>::ObjectType MeshBasedCollidableObj
 	return MESH_BASED;
 }
 
+template <typename Scalar,int Dim>
+inline const SurfaceMesh<Scalar>* const MeshBasedCollidableObject<Scalar, Dim>::getMesh() const
+{
+	return mesh_;
+}
+
+template <typename Scalar,int Dim>
+inline void MeshBasedCollidableObject<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
+{
+	mesh_ = mesh;
+}
+
+//explicit instantitation
+template class MeshBasedCollidableObject<float, 3>;
+template class MeshBasedCollidableObject<double, 3>;
+
 }

@@ -10,22 +10,31 @@
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
- * contact me at mikepkucs@gmail.com if any question
  */
 
 #include <iostream>
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
+#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 
 using namespace std;
 using Physika::CollidableObject;
 using Physika::MeshBasedCollidableObject;
+using Physika::SurfaceMesh;
+using Physika::Vector;
 
 
 int main()
 {
 	cout<<"123"<<endl;
-	CollidableObject<double, 3>* pObject;
+	MeshBasedCollidableObject<double, 3>* pObject;
 	pObject = new MeshBasedCollidableObject<double, 3>();
+//	if(pObject->getObjectType()== CollidableObject<double, 3>::ObjectType::MESH_BASED)
+//		cout<<pObject->getObjectType()<<endl;
+
+	
+	//pObject->getMesh() = new SurfaceMesh<double>();
 
 	system("pause");
 

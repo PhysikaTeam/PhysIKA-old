@@ -28,7 +28,7 @@ public:
     virtual ~CollidableObject(){}
 
 	//get & set
-	enum ObjectType {MESH_BASED, IMPLICIT};
+	enum ObjectType {IMPLICIT = 0, MESH_BASED = 1};
 	virtual inline ObjectType getObjectType() const=0;
 	
     //given position and velocity of a ponit, resovle collision with the collidable object (detect&&resolve)

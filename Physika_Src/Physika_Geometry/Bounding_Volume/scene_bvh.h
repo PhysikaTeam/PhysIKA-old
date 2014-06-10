@@ -18,11 +18,10 @@
 namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
-template <typename Scalar,int Dim> class ObjectBVH;
-template <typename Scalar,int Dim> class CollidableObject;
+template <typename Scalar,int Dim> class BVHBase;
 
 template <typename Scalar,int Dim>
-class ObjectBVH
+class ObjectBVH : public BVHBase<Scalar, Dim>
 {
 public:
 	//constructors && deconstructors
@@ -30,19 +29,19 @@ public:
 	~ObjectBVH();
 
 	//get & set
-	inline void setRootNode(ObjectBVH* root_node);
-	inline ObjectBVH* getRootNode();
+	//inline void setRootNode(SceneBVHNode* root_node);
+	//inline SceneBVHNode* getRootNode();
 
 	//structure maintain
-	void refit();
+	//void refit();
 	void buildFromScene();
-	void clean();
+	//void clean();
 
 	//collision detection
-	bool selfCollide();
+	//bool selfCollide();
 	
 protected:
-	ObjectBVH* root_node_;
+	//SceneBVHNode* root_node_;
 };
 
 }  //end of namespace Physika
