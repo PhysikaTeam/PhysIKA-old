@@ -25,6 +25,18 @@ template <typename Scalar>
 class DriverBase
 {
 public:
+    //callbacks, allow customization during simulation
+    struct CALLBACKS
+    {
+        virtual void beginFrame(int frame)=0;
+        virtual void endFrame(int frame)=0;
+        virtual void beginTimeStep(Scalar time)=0;
+        virtual void endTimeStep(Scalar time,Scalar dt)=0;
+        virtual void writeOutput(int frame)=0;
+        virtual void restart(int frame)=0;
+    };
+
+public:
     DriverBase();
     DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file, CALLBACKS *call_backs=NULL);
     virtual ~DriverBase();
@@ -49,17 +61,7 @@ public:
     inline void disableWriteToFile(){write_to_file=false;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
-public:
-    //callbacks, allow customization during simulation
-    struct CALLBACKS
-    {
-	virtual void beginFrame(int frame)=0;
-	virtual void endFrame(int frame)=0;
-	virtual void beginTimeStep(Scalar time)=0;
-	virtual void endTimeStep(Scalar time,Scalar dt)=0;
-	virtual void writeOutput(int frame)=0;
-	virtual void restart(int frame)=0;
-    };
+
 protected:
     int start_frame_;
     int end_frame_;

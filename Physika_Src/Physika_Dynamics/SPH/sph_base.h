@@ -19,12 +19,14 @@
 #include "Physika_Core/Arrays/array_manager.h"
 #include "Physika_Core/Arrays/array.h"
 #include "Physika_Core/Vectors/vector.h"
+#include "Physika_Dynamics/Driver/driver_base.h"
+
 
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-class SPHBase
+class SPHBase:public DriverBase<Scalar>
 {
 public:
     SPHBase();
@@ -32,15 +34,14 @@ public:
 
     virtual void initialize();
     virtual void initSceneBoundary();
-    
-    virtual float getTimeStep();
+
+    virtual float getTimeStep(){ return time_step_; }
     virtual void advance(Scalar dt);
     virtual void stepEuler(Scalar dt);
     virtual void computeNeighbors();
     virtual void computeVolume();
     virtual void computeDensity();
-
-
+    
     void boundaryHandling();
 
     void saveVelocities(std::string in_path, unsigned int in_iter);
@@ -73,7 +74,7 @@ public:
 
     Scalar time_step_;
     Scalar viscosity_;
-    Scalar gravity_;
+    Vector<Scalar, Dim> gravity_;
     Scalar surface_tension_;
 
     Scalar sampling_distance_;
@@ -82,7 +83,6 @@ public:
     unsigned int particle_num_;
 
     Scalar reference_density_;
-
 
     ArrayManager dataManager_;
 };

@@ -44,7 +44,6 @@ void SPHBase<Scalar, Dim>::allocMemory(unsigned int particle_num)
     volume_.resize(particle_num);
     pressure_.resize(particle_num);
     density_.resize(particle_num);
-    
 }
 
 template <typename Scalar, int Dim>
@@ -88,6 +87,28 @@ void SPHBase<Scalar, Dim>::boundaryHandling()
 
 template <typename Scalar, int Dim>
 SPHBase<Scalar, Dim>::~SPHBase()
+{
+    mass_.release();
+    position_.release();
+    velocity_.release();
+    normal_.release();
+    viscous_force_.release();
+    pressure_.release();
+    surface_force_.release();
+    volume_.release();
+    pressure_.release();
+    density_.release();
+
+}
+
+template <typename Scalar, int Dim>
+void SPHBase<Scalar, Dim>::savePositions(std::string in_path, unsigned int in_iter)
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHBase<Scalar, Dim>::saveVelocities(std::string in_path, unsigned int in_iter)
 {
 
 }

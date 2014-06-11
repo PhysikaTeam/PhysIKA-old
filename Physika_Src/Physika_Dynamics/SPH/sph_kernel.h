@@ -18,7 +18,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
-#include "Physika_Core/Utilities/math_constants.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 
 namespace Physika{
 
@@ -273,7 +273,7 @@ class GaussKernel : public SPH_Kernel<typename Scalar>
 };
 
 template <typename Scalar>
-class KernelFactory<typename Scalar>
+class KernelFactory
 {
 public:
 
@@ -326,6 +326,7 @@ public:
         return *kern;
     }
 };
+
 }
 //end of namespace Physika
 
