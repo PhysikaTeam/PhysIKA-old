@@ -23,13 +23,20 @@ template <typename Scalar,int Dim>
 class CollidableObject
 {
 public:
+	//constructors && deconstructors
     CollidableObject(){}
     virtual ~CollidableObject(){}
+
+	//get & set
+	enum ObjectType {IMPLICIT = 0, MESH_BASED = 1};
+	virtual ObjectType getObjectType() const=0;
+	
     //given position and velocity of a ponit, resovle collision with the collidable object (detect&&resolve)
-    virtual bool collide(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;
+//    virtual bool collide(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;
     //given position and velocity of a point, detect collision with the collidable object
-    virtual bool detectCollision(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;
+//    virtual bool detectCollision(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;
 protected:
+	
 };
 
 }  //end of namespace Physika
