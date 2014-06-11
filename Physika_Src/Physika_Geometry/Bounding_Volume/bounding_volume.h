@@ -28,17 +28,22 @@ public:
 	virtual ~BoundingVolume();
 
 	//set
-	virtual inline void setBoundingVolume(const Vector<Scalar,Dim>& point) = 0;
-	virtual inline void setBoundingVolume(const Vector<Scalar,Dim>& point_a, const Vector<Scalar,Dim>& point_b) = 0;
+	virtual void setBoundingVolume(const BoundingVolume* const bounding_volume) = 0;
+	virtual void setBoundingVolume(const Vector<Scalar,Dim>& point) = 0;
+	virtual void setBoundingVolume(const Vector<Scalar,Dim>& point_a, const Vector<Scalar,Dim>& point_b) = 0;
+
+	enum BVType {KDOP18 = 0};
+	virtual BVType getBVType() const=0;
 
 	//basic check
-	virtual inline bool isOverlap(const BoundingVolume& bounding_volume) const = 0;
-	virtual inline bool isOverlap(const BoundingVolume& bounding_volume, BoundingVolume& return_volume) const = 0;
-	virtual inline bool isInside(const Vector<Scalar,Dim> &point) const = 0;
+	virtual bool isOverlap(const BoundingVolume* const bounding_volume) const = 0;
+	virtual bool isOverlap(const BoundingVolume* const bounding_volume, BoundingVolume* return_volume) const = 0;
+	virtual bool isInside(const Vector<Scalar,Dim> &point) const = 0;
 
 	//union operation
-	virtual inline void unionWith(const BoundingVolume& bounding_volume) = 0;
-	virtual inline void obtainUnion(const BoundingVolume& bounding_volume_lhs, const BoundingVolume& bounding_volume_rhs) = 0;
+	virtual void unionWith(const Vector<Scalar,Dim> &point) = 0;
+	virtual void unionWith(const BoundingVolume* const bounding_volume) = 0;
+	virtual void obtainUnion(const BoundingVolume* const bounding_volume_lhs, const BoundingVolume* const bounding_volume_rhs) = 0;
 
 protected:
 	

@@ -29,17 +29,18 @@ public:
 	virtual ~BVHBase();
 
 	//get & set
-	inline void setRootNode(BVHNodeBase<Scalar, Dim>* root_node);
-	inline BVHNodeBase<Scalar, Dim>* getRootNode();
+	void setRootNode(BVHNodeBase<Scalar, Dim>* root_node);
+	const BVHNodeBase<Scalar, Dim>* const getRootNode() const;
 
 	//structure maintain
 	void refit();
 	void build();
+	//Delete the whole tree, including the root itself
 	void clean();
 
 	//collision detection
 	bool selfCollide();
-	bool collide(BVHBase<Scalar, Dim>* target);
+	bool collide(const BVHBase<Scalar, Dim>* const target);
 	
 protected:
 	BVHNodeBase<Scalar, Dim>* root_node_;

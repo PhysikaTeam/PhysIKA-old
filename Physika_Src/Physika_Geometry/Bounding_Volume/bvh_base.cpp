@@ -13,57 +13,72 @@
  */
 
 #include "Physika_Geometry\Bounding_Volume\bvh_base.h"
+#include "Physika_Geometry\Bounding_Volume\bvh_node_base.h"
+#include <stdio.h>
 
 namespace Physika{
 
 template <typename Scalar,int Dim>
-BVHBase<Scalar, Dim>::BVHBase()
+BVHBase<Scalar, Dim>::BVHBase():
+	root_node_(NULL)
 {
 }
 
 template <typename Scalar,int Dim>
-inline void BVHBase<Scalar, Dim>::setRootNode(BVHNodeBase<Scalar, Dim>* root_node)
+BVHBase<Scalar, Dim>::~BVHBase()
+{
+	if(root_node_ != NULL)
+		delete root_node_;
+}
+
+template <typename Scalar,int Dim>
+void BVHBase<Scalar, Dim>::setRootNode(BVHNodeBase<Scalar, Dim>* root_node)
 {
 	if(root_node_ == root_node)
 		return;
-	if(root_node_ != null)
+	if(root_node_ != NULL)
 		delete root_node_;
 	root_node_ = root_node;
 }
 
 template <typename Scalar,int Dim>
-inline BVHNodeBase<Scalar, Dim>* BVHBase<Scalar, Dim>::getRootNode()
+const BVHNodeBase<Scalar, Dim>* const BVHBase<Scalar, Dim>::getRootNode() const
 {
 	return root_node_;
 }
 
 template <typename Scalar,int Dim>
-inline void BVHBase<Scalar, Dim>::refit()
+void BVHBase<Scalar, Dim>::refit()
 {
 	root_node_->refit();
 }
 
 template <typename Scalar,int Dim>
-inline void BVHBase<Scalar, Dim>::build()
+void BVHBase<Scalar, Dim>::build()
 {
 }
 
 template <typename Scalar,int Dim>
-inline void BVHBase<Scalar, Dim>::clean()
+void BVHBase<Scalar, Dim>::clean()
 {
 	root_node_->clean();
 	delete root_node_;
 }
 
 template <typename Scalar,int Dim>
-inline bool BVHBase<Scalar, Dim>::selfCollide()
+bool BVHBase<Scalar, Dim>::selfCollide()
 {
+	return root_node_->selfCollide();
 }
 
 template <typename Scalar,int Dim>
-inline bool BVHBase<Scalar, Dim>::collide(BVHBase<Scalar, Dim>* target)
+bool BVHBase<Scalar, Dim>::collide(const BVHBase<Scalar, Dim>* const target)
 {
+	return root_node_->collide(target->getRootNode());
 }
 
+//explicit instantitation
+template class BVHBase<float, 3>;
+template class BVHBase<double, 3>;
 
 }

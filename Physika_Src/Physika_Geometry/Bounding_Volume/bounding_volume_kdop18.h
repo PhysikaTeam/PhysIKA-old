@@ -15,10 +15,11 @@
 #ifndef PHYSIKA_GEOMETRY_BOUNDING_VOLUME_BOUNDING_VOLUME_KDOP18_H_
 #define PHYSIKA_GEOMETRY_BOUNDING_VOLUME_BOUNDING_VOLUME_KDOP18_H_
 
+#include "Physika_Geometry\Bounding_Volume\bounding_volume.h"
+
 namespace Physika{
 
 template <typename Scalar, int Dim> class Vector;
-template <typename Scalar, int Dim> class BoundingVolume;
 
 template <typename Scalar, int Dim>
 class BoundingVolumeKDOP18 : public BoundingVolume<Scalar, Dim>
@@ -29,20 +30,30 @@ public:
 	~BoundingVolumeKDOP18();
 
 	//set
-	inline void setBoundingVolume(const Vector<Scalar, Dim>& point);
-	inline void setBoundingVolume(const Vector<Scalar, Dim>& point_a, const Vector<Scalar, Dim>& point_b);
+	void setBoundingVolume(const BoundingVolume<Scalar, Dim>* const bounding_volume);
+	void setBoundingVolume(const Vector<Scalar, Dim>& point);
+	void setBoundingVolume(const Vector<Scalar, Dim>& point_a, const Vector<Scalar, Dim>& point_b);
+	BVType getBVType() const;
 
 	//basic check
-	inline bool isOverlap(const BoundingVolumeKDOP18<Scalar, Dim>& bounding_volume) const;
-	inline bool isOverlap(const BoundingVolumeKDOP18<Scalar, Dim>& bounding_volume, BoundingVolumeKDOP18<Scalar, Dim>& return_volume) const;
-	inline bool isInside(const Vector<Scalar,Dim> &point) const;
+	bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const;
+	bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume, BoundingVolume<Scalar, Dim>* return_volume) const;
+	bool isInside(const Vector<Scalar,Dim> &point) const;
 
 	//union operation
-	inline void unionWith(const BoundingVolumeKDOP18& bounding_volume);
-	inline void obtainUnion(const BoundingVolumeKDOP18& bounding_volume_lhs, const BoundingVolumeKDOP18& bounding_volume_rhs);
+	void unionWith(const Vector<Scalar,Dim> &point);
+	void unionWith(const BoundingVolume* const bounding_volume);
+	void obtainUnion(const BoundingVolume* const bounding_volume_lhs, const BoundingVolume* const bounding_volume_rhs);
 
 protected:
+	//faces of a 18-DOP
 	Scalar dist_[18];
+
+	//internal functions
+	void getDistances(const Vector<Scalar, Dim>& point, Scalar& d3, Scalar& d4, Scalar& d5, Scalar& d6, Scalar& d7, Scalar& d8) const;
+	void getDistances(const Vector<Scalar, Dim>& point, Scalar d[]) const;
+	inline Scalar MAX(Scalar lhs, Scalar rhs) const {return lhs > rhs ? lhs : rhs;};
+	inline Scalar MIN(Scalar lhs, Scalar rhs) const {return lhs < rhs ? lhs : rhs;};
 };
 
 }  //end of namespace Physika

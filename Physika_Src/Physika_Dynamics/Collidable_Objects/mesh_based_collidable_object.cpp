@@ -27,19 +27,19 @@ MeshBasedCollidableObject<Scalar, Dim>::~MeshBasedCollidableObject()
 }
 
 template <typename Scalar,int Dim>
-inline typename CollidableObject<Scalar, Dim>::ObjectType MeshBasedCollidableObject<Scalar, Dim>::getObjectType() const
+typename CollidableObject<Scalar, Dim>::ObjectType MeshBasedCollidableObject<Scalar, Dim>::getObjectType() const
 {
 	return MESH_BASED;
 }
 
 template <typename Scalar,int Dim>
-inline const SurfaceMesh<Scalar>* const MeshBasedCollidableObject<Scalar, Dim>::getMesh() const
+const SurfaceMesh<Scalar>* const MeshBasedCollidableObject<Scalar, Dim>::getMesh() const
 {
 	return mesh_;
 }
 
 template <typename Scalar,int Dim>
-inline void MeshBasedCollidableObject<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
+void MeshBasedCollidableObject<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
 {
 	mesh_ = mesh;
 }

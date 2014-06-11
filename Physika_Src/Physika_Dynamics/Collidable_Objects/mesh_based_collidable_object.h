@@ -30,9 +30,9 @@ public:
 	~MeshBasedCollidableObject();
 
 	//get & set
-	inline ObjectType getObjectType() const;
-	inline const SurfaceMesh<Scalar>* const getMesh() const;
-	inline void setMesh(SurfaceMesh<Scalar>* mesh);
+	ObjectType getObjectType() const;
+	const SurfaceMesh<Scalar>* const getMesh() const;
+	void setMesh(SurfaceMesh<Scalar>* mesh);
 protected:
 	SurfaceMesh<Scalar>* mesh_;
 };

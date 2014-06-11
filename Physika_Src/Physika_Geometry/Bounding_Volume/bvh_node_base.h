@@ -29,13 +29,13 @@ public:
 	virtual ~BVHNodeBase();
 
 	//get & set
-	inline void setLeftChild(BVHNodeBase<Scalar, Dim>* left_child);
-	inline BVHNodeBase<Scalar, Dim>* getLeftChild();
-	inline void setRightChild(BVHNodeBase<Scalar, Dim>* right_child);
-	inline BVHNodeBase<Scalar, Dim>* getRightChild();
-	inline void setBoundingVolume(BoundingVolume<Scalar, Dim>* bounding_volume);
-	inline BoundingVolume<Scalar, Dim>* getBoundingVolume() const;
-	inline bool isLeaf() const;
+	void setLeftChild(BVHNodeBase<Scalar, Dim>* left_child);
+	const BVHNodeBase<Scalar, Dim>* const getLeftChild() const;
+	void setRightChild(BVHNodeBase<Scalar, Dim>* right_child);
+	const BVHNodeBase<Scalar, Dim>* const getRightChild() const;
+	void setBoundingVolume(BoundingVolume<Scalar, Dim>* bounding_volume);
+	const BoundingVolume<Scalar, Dim>* const getBoundingVolume() const;
+	bool isLeaf() const;
 
 	//structure maintain
 	
@@ -48,7 +48,8 @@ public:
 
 	//Delete its sub-tree and content
 	//It doesn't delete the node itself
-	//Notice! Contents defined in the child class are not deleted by this function
+	//*****WARNING! Contents defined in the child class are not deleted by this function!*****
+	//*****If you want to delete contents defined in the child, add a new cleaning function in the child class!*****
 	void clean();
 
 	//collision detection
