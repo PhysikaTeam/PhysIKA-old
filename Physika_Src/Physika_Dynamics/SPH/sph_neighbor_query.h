@@ -19,26 +19,25 @@
 
 namespace Physika{
 
-#define NEIGHBOR_SIZE	150
-#define NEIGHBOR_SEGMENT 20
-
     template<typename Scalar>
     class NeighborList
     {
     public:
-        NeighborList() {size = 0; }
+        //const int NEIGHBOR_SIZE = 150;
+        //const int NEIGHBOR_SEGMENT = 20;
+        NeighborList() {size_ = 0; }
         ~NeighborList(){};
     public:
-        int size;
-        int ids[NEIGHBOR_SIZE];
-        Scalar distance[NEIGHBOR_SIZE];
+        int size_;
+        int ids_[150];
+        Scalar distance_[150];
     };
 
     template<typename Scalar, int dim>
     class INeighborQuery {
     public:
-        virtual void GetNeighbors(Vector<Scalar,dim>& in_pos, Scalar in_radius, NeighborList<Scalar>& out_neighborList) = 0;
-        virtual void GetSizedNeighbors(Vector<Scalar,dim>& in_pos, Scalar in_radius, NeighborList<Scalar>& out_neighborList, int in_maxN) = 0;
+        virtual void getNeighbors(Vector<Scalar,dim>& in_pos, Scalar in_radius, NeighborList<Scalar>& out_neighborList) = 0;
+        virtual void getSizedNeighbors(Vector<Scalar,dim>& in_pos, Scalar in_radius, NeighborList<Scalar>& out_neighborList, int in_maxN) = 0;
     };
 
 }//end of namespace Physika

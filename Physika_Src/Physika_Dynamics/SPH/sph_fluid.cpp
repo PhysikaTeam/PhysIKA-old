@@ -77,11 +77,11 @@ void SPHFluid<Scalar, Dim>::computeDensity()
     for (int i = 0; i < N; i++)
     {
         NeighborList & neighborlist_i = neighborLists[i];
-        int size_i = neighborlist_i.size;
+        int size_i = neighborlist_i.size_;
         Scalar tmp = 0.0;
         for (int j = 0; j < size_i; j++)
         {
-            Scalar r = neighborlist_i.distance[j];
+            Scalar r = neighborlist_i.distance_[j];
             r += kernel.weight(r, max_length_);
         }
         density_[i] = r;
@@ -119,12 +119,12 @@ void SPHFluid<Scalar, Dim>::computePressureForce(Scalar dt)
     for (int i = 0; i < N; i++)
     {
         NeighborList & neighborlist_i = neighborLists[i];
-        int size_i = neighborlist_i.size;
+        int size_i = neighborlist_i.size_;
         Scalar v_i = volume_[i];
         for (int ne = 0; ne < size_i; ne++)
         {
             Scalar d_kernel = 0.0;
-            Scalar r = neighborlist_i.distance[ne];
+            Scalar r = neighborlist_i.distance_[ne];
             int j = neighborlist_i.ids[ne];
             
             Scalar v_j = volume_[j];
@@ -149,13 +149,13 @@ void SPHFluid<Scalar, Dim>::computeViscousForce(Scalar dt)
     for (int i = 0; i < N; i++)
     {
         NeighborList& neighborlist_i = neighborLists[i];
-        int size_i = neighborlist_i.size;
+        int size_i = neighborlist_i.size_;
         Scalar v_i = volArr[i];
         for ( int ne = 0; ne < size_i; ne++ )
         {
             int j = neighborlist_i.ids[ne];
 
-            Scalar r = neighborlist_i.distance[ne];
+            Scalar r = neighborlist_i.distance_[ne];
             Scalar v_j = volArr[j];
             Vector<Scalar, Dim> f_t = 0.5f*v_i*v_j*kernel.Weight(r, max_length_)*(velocity_[j]-velocity_[i]);
             viscous_force_[i] += f_t;
