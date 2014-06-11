@@ -44,7 +44,7 @@ bool SurfaceMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *me
 }
 
 template <typename Scalar>
-bool SurfaceMeshIO<Scalar>::save(const string &filename, SurfaceMesh<Scalar> *mesh)
+bool SurfaceMeshIO<Scalar>::save(const string &filename, const SurfaceMesh<Scalar> *mesh)
 {
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())

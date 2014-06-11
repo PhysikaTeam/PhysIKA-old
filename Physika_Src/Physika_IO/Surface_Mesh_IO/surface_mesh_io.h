@@ -1,5 +1,5 @@
 /*
- * @file surface_mesh_IO.h 
+ * @file surface_mesh_io.h 
  * @brief surface mesh loader/saver, load/save surface mesh from/to file.
  *        dynamically choose different loader/saver with respect to file suffix.
  * @author Fei Zhu
@@ -31,7 +31,7 @@ public:
     //memory of mesh is preallocated by caller
     //return true if succeed, otherwise return false
     static bool load(const std::string &filename, SurfaceMesh<Scalar> *mesh);
-    static bool save(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    static bool save(const std::string &filename, const SurfaceMesh<Scalar> *mesh);
 
 protected:
 };

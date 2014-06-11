@@ -63,10 +63,15 @@ public:
     const Vector<Scalar,2>& vertexTextureCoordinate(const Vertex<Scalar> &vertex) const;
     void setVertexTextureCoordinate(unsigned int texture_idx, const Vector<Scalar,2> &texture_coordinate);
     void setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
+    const Group<Scalar>& group(unsigned int group_idx) const;
     Group<Scalar>& group(unsigned int group_idx);
+    const Group<Scalar>* groupPtr(unsigned int group_idx) const;
     Group<Scalar>* groupPtr(unsigned int group_idx);
+    const Group<Scalar>* groupPtr(const std::string &name) const;
     Group<Scalar>* groupPtr(const std::string &name);
+    const Material<Scalar>& material(unsigned int material_idx) const;
     Material<Scalar>& material(unsigned int material_idx);
+    const Material<Scalar>* materialPtr(unsigned int material_idx) const;
     Material<Scalar>* materialPtr(unsigned int material_idx);
     unsigned int materialIndex(const std::string &material_name) const; //if no material with given name, return -1
     void setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh

@@ -34,7 +34,8 @@ public:
     inline int vertNum() const{return vert_num_;}
     inline int eleNum() const{return ele_num_;}
     inline bool isUniformElementType() const{return uniform_ele_type_;}
-    inline int eleVertNum(int ele_idx) const{return uniform_ele_type_?(*vert_per_ele_):(vert_per_ele_[ele_idx]);}
+    int eleVertNum(int ele_idx) const;
+
     Vector<Scalar,Dim> vertPos(int vert_idx) const;
     Vector<Scalar,Dim> eleVertPos(int ele_idx, int vert_idx) const;
     virtual void printInfo() const=0;

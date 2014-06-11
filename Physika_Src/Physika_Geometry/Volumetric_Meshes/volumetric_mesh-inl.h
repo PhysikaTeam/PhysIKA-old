@@ -47,6 +47,17 @@ VolumetricMesh<Scalar,Dim>::~VolumetricMesh()
 }
 
 template <typename Scalar, int Dim>
+int VolumetricMesh<Scalar,Dim>::eleVertNum(int ele_idx) const
+{
+    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    {
+        std::cerr<<"element index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return uniform_ele_type_?*vert_per_ele_:vert_per_ele_[ele_idx];
+}
+
+template <typename Scalar, int Dim>
 Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(int vert_idx) const
 {
     if((vert_idx<0) || (vert_idx>=this->vert_num_))

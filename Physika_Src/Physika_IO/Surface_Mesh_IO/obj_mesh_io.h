@@ -34,7 +34,7 @@ public:
     //memory of mesh is preallocated by caller
     //return true if succeed, otherwise return false
     // save a mesh to a obj file.
-    static bool save(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    static bool save(const std::string &filename, const SurfaceMesh<Scalar> *mesh);
 
 protected:
     //memory of mesh is preallocated by caller
@@ -44,9 +44,24 @@ protected:
     //memory of mesh is preallocated by caller
     //return true if succeed, otherwise return false
     //save material of the mesh from material file
-    static bool saveMaterials(const std::string &filename, SurfaceMesh<Scalar> *mesh);
+    static bool saveMaterials(const std::string &filename, const SurfaceMesh<Scalar> *mesh);
 };
 
 } //end of namespace Physika
 
 #endif //PHYSIKA_IO_SURFACE_MESH_IO_OBJ_MESH_IO_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

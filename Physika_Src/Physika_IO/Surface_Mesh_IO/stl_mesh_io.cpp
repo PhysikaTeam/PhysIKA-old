@@ -26,7 +26,7 @@ bool StlMeshIO<Scalar>::load(const string& filename, SurfaceMesh<Scalar> *mesh)
 }
 
 template <typename Scalar>
-bool StlMeshIO<Scalar>::save(const string& filename, SurfaceMesh<Scalar> *mesh)
+bool StlMeshIO<Scalar>::save(const string& filename, const SurfaceMesh<Scalar> *mesh)
 {
 //TO DO: implementation
     return false;

@@ -31,7 +31,7 @@ public:
     // load a mesh from a stl file.
     static bool load(const std::string& filename, SurfaceMesh<Scalar> *mesh);
     // save a mesh to a stl file.
-    static bool save(const std::string& filename, SurfaceMesh<Scalar> *mesh);
+    static bool save(const std::string& filename, const SurfaceMesh<Scalar> *mesh);
 
 protected:
 };
@@ -39,6 +39,13 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_IO_SURFACE_MESH_IO_STL_MESH_IO_H_
+
+
+
+
+
+
+
 
 
 

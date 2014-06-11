@@ -241,6 +241,18 @@ void SurfaceMesh<Scalar>::setVertexTextureCoordinate(const Vertex<Scalar> &verte
 }
 
 template <typename Scalar>
+const Group<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx) const
+{
+    bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
+    if(!index_valid)
+    {
+        std::cerr<<"SurfaceMesh group index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return groups_[group_idx];
+}
+
+template <typename Scalar>
 Group<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx)
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
@@ -250,6 +262,18 @@ Group<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx)
         std::exit(EXIT_FAILURE);
     }
     return groups_[group_idx];
+}
+
+template <typename Scalar>
+const Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx) const
+{
+    bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
+    if(!index_valid)
+    {
+        std::cerr<<"SurfaceMesh group index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return &(groups_[group_idx]);
 }
 
 template <typename Scalar>
@@ -265,12 +289,33 @@ Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx)
 }
 
 template <typename Scalar>
+const Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name) const
+{
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+        if(groups_[group_idx].name() == name)
+            return &(groups_[group_idx]);
+    return NULL;
+}
+
+template <typename Scalar>
 Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name)
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
         if(groups_[group_idx].name() == name)
             return &(groups_[group_idx]);
     return NULL;
+}
+
+template <typename Scalar>
+const Material<Scalar>& SurfaceMesh<Scalar>::material(unsigned int material_idx) const
+{
+    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
+    if(!index_valid)
+    {
+        std::cerr<<"SurfaceMesh material index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return materials_[material_idx];
 }
 
 template <typename Scalar>
@@ -283,6 +328,18 @@ Material<Scalar>& SurfaceMesh<Scalar>::material(unsigned int material_idx)
         std::exit(EXIT_FAILURE);
     }
     return materials_[material_idx];
+}
+
+template <typename Scalar>
+const Material<Scalar>* SurfaceMesh<Scalar>::materialPtr(unsigned int material_idx) const
+{
+    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
+    if(!index_valid)
+    {
+        std::cerr<<"SurfaceMesh material index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return &(materials_[material_idx]);
 }
 
 template <typename Scalar>

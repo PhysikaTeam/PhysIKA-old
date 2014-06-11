@@ -23,8 +23,10 @@
 namespace Physika{
 
 template <typename Scalar>
-TriMesh<Scalar>::TriMesh():VolumetricMesh<Scalar,2>()
+TriMesh<Scalar>::TriMesh()
 {
+    int vert_per_ele = 3;
+    VolumetricMesh<Scalar,2>::init(0,NULL,0,NULL,&vert_per_ele,true);
 }
 
 template <typename Scalar>

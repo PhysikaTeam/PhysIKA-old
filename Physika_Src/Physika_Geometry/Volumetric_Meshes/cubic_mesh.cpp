@@ -22,8 +22,9 @@ namespace Physika{
 
 template <typename Scalar>
 CubicMesh<Scalar>::CubicMesh()
-	:VolumetricMesh<Scalar, 3>()
 {
+    int vert_per_ele = 8;
+    VolumetricMesh<Scalar,3>::init(0,NULL,0,NULL,&vert_per_ele,true);
 }
 
 template <typename Scalar>

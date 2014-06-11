@@ -23,8 +23,9 @@ namespace Physika{
 
 template <typename Scalar>
 QuadMesh<Scalar>::QuadMesh()
-	:VolumetricMesh<Scalar, 2>()
 {
+    int vert_per_ele = 4;
+    VolumetricMesh<Scalar,2>::init(0,NULL,0,NULL,&vert_per_ele,true);
 }
 
 template <typename Scalar>
