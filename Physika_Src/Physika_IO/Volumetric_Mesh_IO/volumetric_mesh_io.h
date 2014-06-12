@@ -37,11 +37,14 @@ public:
     //save volumetric mesh to file, return true if succeed, otherwise return false
     static bool save(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh, SaveOption option = SINGLE_FILE);
 protected:
+    static bool saveToSingleFile(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh);
+    static bool saveToSeparateFiles(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh);
 };
 
 }  //end of namespace Physika
 
 #endif //PHYSIKA_IO_VOLUMETRIC_MESH_IO_VOLUMETRIC_MESH_IO_H_
+
 
 
 

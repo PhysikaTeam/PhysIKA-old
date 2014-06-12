@@ -79,7 +79,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
             {
                 cur_session = ELEMENTS;
             }
-            else if(line_str.substr(0,9) == string("*SET")) //set
+            else if(line_str.substr(0,4) == string("*SET")) //set
             {
                 cur_session = SETS;
             }
@@ -112,6 +112,7 @@ bool VolumetricMeshIO<Scalar,Dim>::save(const string &filename, const Volumetric
         std::cerr<<"Unknown mesh file format specified!\n";
         return false;
     }
+
     return false;
 }
 

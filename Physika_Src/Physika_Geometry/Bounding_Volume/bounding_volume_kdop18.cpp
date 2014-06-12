@@ -59,7 +59,7 @@ void BoundingVolumeKDOP18<Scalar, Dim>::setBoundingVolume(const BoundingVolume<S
 		return;
 	for(int i = 0; i < 9; ++i)
 	{
-		dist_[i] = ((BoundingVolumeKDOP18*)bounding_volume)->dist_[i];
+		dist_[i] = ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[i];
 	}
 }
 
@@ -111,7 +111,7 @@ void BoundingVolumeKDOP18<Scalar, Dim>::setBoundingVolume(const Vector<Scalar, D
 template <typename Scalar, int Dim>
 typename BoundingVolume<Scalar, Dim>::BVType BoundingVolumeKDOP18<Scalar, Dim>::getBVType() const
 {
-	return KDOP18;
+	return BoundingVolume<Scalar,Dim>::KDOP18;
 }
 
 template <typename Scalar, int Dim>
@@ -121,9 +121,9 @@ bool BoundingVolumeKDOP18<Scalar, Dim>::isOverlap(const BoundingVolume<Scalar, D
 		return false;
 	for (int i = 0; i < 9; ++i)
 	{
-		if (dist_[i] > ((BoundingVolumeKDOP18*)bounding_volume)->dist_[i+9])
+		if (dist_[i] > ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[i+9])
 			return false;
-		if (dist_[i+9] < ((BoundingVolumeKDOP18*)bounding_volume)->dist_[i])
+		if (dist_[i+9] < ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[i])
 			return false;
 	}
 	return true;
@@ -140,8 +140,8 @@ bool BoundingVolumeKDOP18<Scalar, Dim>::isOverlap(const BoundingVolume<Scalar, D
 		return false;
 	for (int i = 0; i < 9; ++i)
 	{
-		((BoundingVolumeKDOP18*)return_volume)->dist_[i] = MAX(dist_[i],  ((BoundingVolumeKDOP18*)bounding_volume)->dist_[i]);
-		((BoundingVolumeKDOP18*)return_volume)->dist_[i+9] = MIN(dist_[i+9], ((BoundingVolumeKDOP18*)bounding_volume)->dist_[i+9]);
+		((BoundingVolumeKDOP18<Scalar,Dim>*)return_volume)->dist_[i] = MAX(dist_[i],  ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[i]);
+		((BoundingVolumeKDOP18<Scalar,Dim>*)return_volume)->dist_[i+9] = MIN(dist_[i+9], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[i+9]);
 	}
 	return true;
 }
@@ -191,16 +191,8 @@ Scalar BoundingVolumeKDOP18<Scalar, Dim>::depth() const
 	return dist_[11] - dist_[2];
 }
 
-void BoundingVolumeKDOP18<double, 3>::setEmpty()
-{
-	for (int i = 0; i < 9; ++i)
-	{
-		dist_[i] = FLT_MAX;
-		dist_[i+9] = -FLT_MAX;
-	}
-}
-
-void BoundingVolumeKDOP18<float, 3>::setEmpty()
+template <typename Scalar, int Dim>
+void BoundingVolumeKDOP18<Scalar, Dim>::setEmpty()
 {
 	for (int i = 0; i < 9; ++i)
 	{
@@ -236,57 +228,57 @@ void BoundingVolumeKDOP18<Scalar, Dim>::unionWith (const Vector<Scalar,Dim> &poi
 }
 
 template <typename Scalar, int Dim>
-void BoundingVolumeKDOP18<Scalar, Dim>::unionWith (const BoundingVolume* const bounding_volume)
+void BoundingVolumeKDOP18<Scalar, Dim>::unionWith (const BoundingVolume<Scalar,Dim>* const bounding_volume)
 {
 	if(bounding_volume->getBVType() != getBVType())
 		return;
 
-	dist_[0]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[0], dist_[0]);
-	dist_[9]  = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[9], dist_[9]);
-	dist_[1]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[1], dist_[1]);
-	dist_[10] = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[10], dist_[10]);
-	dist_[2]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[2], dist_[2]);
-	dist_[11] = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[11], dist_[11]);
-	dist_[3]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[3], dist_[3]);
-	dist_[12] = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[12], dist_[12]);
-	dist_[4]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[4], dist_[4]);
-	dist_[13] = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[13], dist_[13]);
-	dist_[5]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[5], dist_[5]);
-	dist_[14] = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[14], dist_[14]);
-	dist_[6]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[6], dist_[6]);
-	dist_[15] = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[15], dist_[15]);
-	dist_[7]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[7], dist_[7]);
-	dist_[16] = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[16], dist_[16]);
-	dist_[8]  = MIN(((BoundingVolumeKDOP18*)bounding_volume)->dist_[8], dist_[8]);
-	dist_[17] = MAX(((BoundingVolumeKDOP18*)bounding_volume)->dist_[17], dist_[17]);
+	dist_[0]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[0], dist_[0]);
+	dist_[9]  = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[9], dist_[9]);
+	dist_[1]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[1], dist_[1]);
+	dist_[10] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[10], dist_[10]);
+	dist_[2]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[2], dist_[2]);
+	dist_[11] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[11], dist_[11]);
+	dist_[3]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[3], dist_[3]);
+	dist_[12] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[12], dist_[12]);
+	dist_[4]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[4], dist_[4]);
+	dist_[13] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[13], dist_[13]);
+	dist_[5]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[5], dist_[5]);
+	dist_[14] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[14], dist_[14]);
+	dist_[6]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[6], dist_[6]);
+	dist_[15] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[15], dist_[15]);
+	dist_[7]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[7], dist_[7]);
+	dist_[16] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[16], dist_[16]);
+	dist_[8]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[8], dist_[8]);
+	dist_[17] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[17], dist_[17]);
 }
 
 template <typename Scalar, int Dim>
-void BoundingVolumeKDOP18<Scalar, Dim>::obtainUnion(const BoundingVolume* const bounding_volume_lhs, const BoundingVolume* const bounding_volume_rhs)
+void BoundingVolumeKDOP18<Scalar, Dim>::obtainUnion(const BoundingVolume<Scalar,Dim>* const bounding_volume_lhs, const BoundingVolume<Scalar,Dim>* const bounding_volume_rhs)
 {
 	if(bounding_volume_lhs->getBVType() != getBVType())
 		return;
 	if(bounding_volume_rhs->getBVType() != getBVType())
 		return;
 
-	dist_[0]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[0], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[0]);
-	dist_[9]  = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[9], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[9]);
-	dist_[1]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[1], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[1]);
-	dist_[10] = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[10], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[10]);
-	dist_[2]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[2], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[2]);
-	dist_[11] = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[11], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[11]);
-	dist_[3]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[3], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[3]);
-	dist_[12] = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[12], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[12]);
-	dist_[4]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[4], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[4]);
-	dist_[13] = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[13], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[13]);
-	dist_[5]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[5], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[5]);
-	dist_[14] = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[14], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[14]);
-	dist_[6]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[6], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[6]);
-	dist_[15] = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[15], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[15]);
-	dist_[7]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[7], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[7]);
-	dist_[16] = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[16], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[16]);
-	dist_[8]  = MIN(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[8], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[8]);
-	dist_[17] = MAX(((BoundingVolumeKDOP18*)bounding_volume_lhs)->dist_[17], ((BoundingVolumeKDOP18*)bounding_volume_rhs)->dist_[17]);
+	dist_[0]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[0], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[0]);
+	dist_[9]  = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[9], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[9]);
+	dist_[1]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[1], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[1]);
+	dist_[10] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[10], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[10]);
+	dist_[2]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[2], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[2]);
+	dist_[11] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[11], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[11]);
+	dist_[3]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[3], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[3]);
+	dist_[12] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[12], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[12]);
+	dist_[4]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[4], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[4]);
+	dist_[13] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[13], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[13]);
+	dist_[5]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[5], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[5]);
+	dist_[14] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[14], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[14]);
+	dist_[6]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[6], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[6]);
+	dist_[15] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[15], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[15]);
+	dist_[7]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[7], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[7]);
+	dist_[16] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[16], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[16]);
+	dist_[8]  = MIN(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[8], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[8]);
+	dist_[17] = MAX(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[17], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[17]);
 }
 
 //explicit instantitation

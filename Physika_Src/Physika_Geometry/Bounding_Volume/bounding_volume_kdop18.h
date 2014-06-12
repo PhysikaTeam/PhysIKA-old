@@ -33,7 +33,7 @@ public:
 	void setBoundingVolume(const BoundingVolume<Scalar, Dim>* const bounding_volume);
 	void setBoundingVolume(const Vector<Scalar, Dim>& point);
 	void setBoundingVolume(const Vector<Scalar, Dim>& point_a, const Vector<Scalar, Dim>& point_b);
-	BVType getBVType() const;
+	typename BoundingVolume<Scalar,Dim>::BVType getBVType() const;
 
 	//basic operation
 	bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const;
@@ -47,8 +47,8 @@ public:
 
 	//union operation
 	void unionWith(const Vector<Scalar,Dim> &point);
-	void unionWith(const BoundingVolume* const bounding_volume);
-	void obtainUnion(const BoundingVolume* const bounding_volume_lhs, const BoundingVolume* const bounding_volume_rhs);
+	void unionWith(const BoundingVolume<Scalar,Dim>* const bounding_volume);
+	void obtainUnion(const BoundingVolume<Scalar,Dim>* const bounding_volume_lhs, const BoundingVolume<Scalar,Dim>* const bounding_volume_rhs);
 
 protected:
 	//faces of a 18-DOP
