@@ -112,10 +112,20 @@ bool VolumetricMeshIO<Scalar,Dim>::save(const string &filename, const Volumetric
         std::cerr<<"Unknown mesh file format specified!\n";
         return false;
     }
-
     return false;
 }
 
+template <typename Scalar, int Dim>
+bool VolumetricMeshIO<Scalar,Dim>::saveToSingleFile(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh)
+{
+    return false;
+}
+
+template <typename Scalar, int Dim>
+bool VolumetricMeshIO<Scalar,Dim>::saveToSeparateFiles(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh)
+{
+    return false;
+}
 //explicit instantiations
 template class VolumetricMeshIO<float,2>;
 template class VolumetricMeshIO<float,3>;
@@ -123,21 +133,3 @@ template class VolumetricMeshIO<double,2>;
 template class VolumetricMeshIO<double,3>;
 
 }  //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
