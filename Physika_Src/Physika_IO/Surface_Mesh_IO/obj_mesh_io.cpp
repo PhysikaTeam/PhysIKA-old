@@ -69,7 +69,8 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
     const int maxline = 1000;
     char line[maxline];
     std::stringstream stream;
-    while(ifs){
+    while(ifs)
+    {
         ++line_num;
         ifs.getline(line,maxline);
         stream.str("");

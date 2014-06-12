@@ -16,7 +16,7 @@
 #define PHYSIKA_DYNAMICS_SPH_SPH_FLUID_H_
 
 #include "Physika_Dynamics/SPH/sph_base.h"
-#include "Physika_Dynamics/sph/sph_neighbor_query.h"
+#include "Physika_Dynamics/SPH/sph_neighbor_query.h"
 
 namespace Physika{
 

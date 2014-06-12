@@ -58,7 +58,7 @@ public:
     inline void setEndFrame(int end_frame){end_frame_ = end_frame;}
     inline int getEndFrame(){return end_frame_;}
     inline void enableWriteToFile(){write_to_file_=true;}
-    inline void disableWriteToFile(){write_to_file=false;}
+    inline void disableWriteToFile(){write_to_file_=false;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
 

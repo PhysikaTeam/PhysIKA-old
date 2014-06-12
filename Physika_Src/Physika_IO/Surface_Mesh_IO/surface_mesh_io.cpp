@@ -13,8 +13,7 @@
  *
  */
 
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include <iostream>
 #include "Physika_IO/Surface_Mesh_IO/surface_mesh_io.h"
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 #include "Physika_IO/Surface_Mesh_IO/stl_mesh_io.h"

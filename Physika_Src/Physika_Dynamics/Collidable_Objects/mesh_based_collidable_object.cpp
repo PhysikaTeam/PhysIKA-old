@@ -29,7 +29,7 @@ MeshBasedCollidableObject<Scalar, Dim>::~MeshBasedCollidableObject()
 template <typename Scalar,int Dim>
 typename CollidableObject<Scalar, Dim>::ObjectType MeshBasedCollidableObject<Scalar, Dim>::getObjectType() const
 {
-	return MESH_BASED;
+	return CollidableObject<Scalar, Dim>::MESH_BASED;
 }
 
 template <typename Scalar,int Dim>
