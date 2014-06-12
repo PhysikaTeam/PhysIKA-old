@@ -49,12 +49,16 @@ inline double sqrt(int value)
     return std::sqrt(static_cast<double>(value));
 }
 
+//undefine the max in WinDef.h
+#undef max
 template <typename Scalar>
 inline Scalar max(Scalar lhs, Scalar rhs)
 {
-	return lhs > rhs ? lhs : rhs;
+	return lhs > rhs ? lhs : rhs;	
 }
 
+//undefine the min in WinDef.h
+#undef min
 template <typename Scalar>
 inline Scalar min(Scalar lhs, Scalar rhs)
 {
