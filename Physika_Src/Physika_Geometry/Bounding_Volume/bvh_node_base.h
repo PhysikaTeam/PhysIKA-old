@@ -12,6 +12,8 @@
  *
  */
 
+#include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
+
 #ifndef PHYSIKA_GEOMETRY_BOUNDING_VOLUME_BVH_NODE_BASE_H_
 #define PHYSIKA_GEOMETRY_BOUNDING_VOLUME_BVH_NODE_BASE_H_
 
@@ -35,6 +37,9 @@ public:
 	const BVHNodeBase<Scalar, Dim>* const getRightChild() const;
 	void setBoundingVolume(BoundingVolume<Scalar, Dim>* bounding_volume);
 	const BoundingVolume<Scalar, Dim>* const getBoundingVolume() const;
+	void setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type);
+	typename BoundingVolume<Scalar, Dim>::BVType getBVType() const;
+	void setLeaf(const bool is_leaf);
 	bool isLeaf() const;
 
 	//structure maintain
@@ -52,6 +57,9 @@ public:
 	//*****If you want to delete contents defined in the child, add a new cleaning function in the child class!*****
 	void clean();
 
+	//Delete internal nodes.
+	void cleanInternalNodes();
+
 	//collision detection
 	bool selfCollide();
 	bool collide(const BVHNodeBase<Scalar, Dim>* const target);
@@ -60,6 +68,7 @@ public:
 	
 protected:
 	bool is_leaf_;
+	typename BoundingVolume<Scalar, Dim>::BVType bv_type_;
 	BoundingVolume<Scalar, Dim>* bounding_volume_;
 	BVHNodeBase<Scalar, Dim>* left_child_;
 	BVHNodeBase<Scalar, Dim>* right_child_;

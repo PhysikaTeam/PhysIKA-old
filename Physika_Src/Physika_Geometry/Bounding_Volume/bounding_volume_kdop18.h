@@ -15,7 +15,7 @@
 #ifndef PHYSIKA_GEOMETRY_BOUNDING_VOLUME_BOUNDING_VOLUME_KDOP18_H_
 #define PHYSIKA_GEOMETRY_BOUNDING_VOLUME_BOUNDING_VOLUME_KDOP18_H_
 
-#include "Physika_Geometry\Bounding_Volume\bounding_volume.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
 
 namespace Physika{
 
@@ -35,10 +35,15 @@ public:
 	void setBoundingVolume(const Vector<Scalar, Dim>& point_a, const Vector<Scalar, Dim>& point_b);
 	BVType getBVType() const;
 
-	//basic check
+	//basic operation
 	bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const;
 	bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume, BoundingVolume<Scalar, Dim>* return_volume) const;
 	bool isInside(const Vector<Scalar,Dim> &point) const;
+	Vector<Scalar,Dim> center() const;
+	Scalar width() const;
+	Scalar height() const;
+	Scalar depth() const;
+	void setEmpty();
 
 	//union operation
 	void unionWith(const Vector<Scalar,Dim> &point);

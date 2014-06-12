@@ -15,6 +15,9 @@
 #ifndef PHYSIKA_GEOMETRY_BOUNDING_VOLUME_OBJECT_BVH_NODE_H_
 #define PHYSIKA_GEOMETRY_BOUNDING_VOLUME_OBJECT_BVH_NODE_H_
 
+#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
+
 namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
@@ -28,14 +31,22 @@ public:
 	ObjectBVHNode();
 	~ObjectBVHNode();
 
+	//get & set
+	typename CollidableObject<Scalar, Dim>::ObjectType getObjectType() const;
+	void setFace(Face<Scalar>* face);
+	const Face<Scalar>* getFace() const;
+
 	//structure maintain
 	void resize();
-	void buildFromShape();
 
 	bool elemTest(ObjectBVHNode<Scalar, Dim>* target);
 	
 protected:
+	typename CollidableObject<Scalar, Dim>::ObjectType object_type_;
+	Face<Scalar>* face_;
 
+	//internal function
+	void buildFromMesh();
 };
 
 }  //end of namespace Physika

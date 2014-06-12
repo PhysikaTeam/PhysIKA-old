@@ -35,10 +35,21 @@ public:
 	enum BVType {KDOP18 = 0};
 	virtual BVType getBVType() const=0;
 
-	//basic check
+	//basic operation
 	virtual bool isOverlap(const BoundingVolume* const bounding_volume) const = 0;
 	virtual bool isOverlap(const BoundingVolume* const bounding_volume, BoundingVolume* return_volume) const = 0;
 	virtual bool isInside(const Vector<Scalar,Dim> &point) const = 0;
+	virtual Vector<Scalar,Dim> center() const = 0;
+	//x-axis 
+	virtual Scalar width() const = 0;
+	//y-axis
+	virtual Scalar height() const = 0;
+	//z-axis
+	virtual Scalar depth() const = 0;
+
+	//*****WARNING! This function is used for setting a BV empty. For now it only has implement for float and double.*****
+	//*****To support more types, add corresponding functions in the child class*****
+	virtual void setEmpty() = 0;
 
 	//union operation
 	virtual void unionWith(const Vector<Scalar,Dim> &point) = 0;

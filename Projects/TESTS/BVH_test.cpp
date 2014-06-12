@@ -58,7 +58,7 @@ int main()
 	Vector<double, 3> point6(-1, 1, -1);
 	Vector<double, 3> point7(-1, -1, 1);
 	Vector<double, 3> point8(-1, -1, -1);
-	KDOP.setBoundingVolume(point1);
+	KDOP.unionWith(point1);
 	KDOP.unionWith(point2);
 	KDOP.unionWith(point3);
 	KDOP.unionWith(point4);
@@ -66,9 +66,11 @@ int main()
 	KDOP.unionWith(point6);
 	KDOP.unionWith(point7);
 	KDOP.unionWith(point8);
+	cout<<KDOP.height()<<endl;
 	Vector<double, 3> point(-1, 1, 0.999);
 	if(KDOP.isInside(point))
 		cout<<"in"<<endl;
+
 
 
 

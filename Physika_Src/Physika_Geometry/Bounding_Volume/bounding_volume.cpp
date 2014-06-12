@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Geometry\Bounding_Volume\bounding_volume.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
 
 namespace Physika{
 

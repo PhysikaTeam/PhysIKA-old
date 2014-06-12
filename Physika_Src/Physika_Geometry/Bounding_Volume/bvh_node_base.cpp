@@ -12,8 +12,7 @@
  *
  */
 
-#include "Physika_Geometry\Bounding_Volume\bvh_node_base.h"
-#include "Physika_Geometry\Bounding_Volume\bounding_volume.h"
+#include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
 #include <stdio.h>
 
 namespace Physika{
@@ -21,6 +20,7 @@ namespace Physika{
 template <typename Scalar,int Dim>
 BVHNodeBase<Scalar, Dim>::BVHNodeBase():
 	is_leaf_(false),
+	bv_type_(BoundingVolume<Scalar, Dim>::KDOP18),
 	bounding_volume_(NULL),
 	left_child_(NULL),
 	right_child_(NULL)
@@ -82,21 +82,33 @@ const BoundingVolume<Scalar, Dim>* const BVHNodeBase<Scalar, Dim>::getBoundingVo
 }
 
 template <typename Scalar,int Dim>
+void BVHNodeBase<Scalar, Dim>::setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type)
+{
+	bv_type_ = bv_type;
+}
+
+template <typename Scalar,int Dim>
+typename BoundingVolume<Scalar, Dim>::BVType BVHNodeBase<Scalar, Dim>::getBVType() const
+{
+	return bv_type_;
+}
+
+template <typename Scalar,int Dim>
+void BVHNodeBase<Scalar, Dim>::setLeaf(const bool is_leaf)
+{
+	is_leaf_ = is_leaf;
+}
+
+template <typename Scalar,int Dim>
 bool BVHNodeBase<Scalar, Dim>::isLeaf() const
 {
 	return is_leaf_;
 }
 
-//template <typename Scalar,int Dim>
-//inline void BVHNodeBase<Scalar, Dim>::build()
-//{
-//}
-
 template <typename Scalar,int Dim>
 void BVHNodeBase<Scalar, Dim>::resize()
 {
 }
-
 
 template <typename Scalar,int Dim>
 void BVHNodeBase<Scalar, Dim>::refit()
@@ -123,14 +135,45 @@ void BVHNodeBase<Scalar, Dim>::clean()
 		{
 			left_child_->clean();
 			delete left_child_;
+			left_child_ = NULL;
 		}
 		if(right_child_ != NULL)
 		{
 			right_child_->clean();
 			delete right_child_;
+			right_child_ = NULL;
 		}
 	}
-	delete bounding_volume_;
+	if(bounding_volume_ != NULL)
+	{
+		delete bounding_volume_;
+		bounding_volume_ = NULL;
+	}
+}
+
+template <typename Scalar,int Dim>
+void BVHNodeBase<Scalar, Dim>::cleanInternalNodes()
+{
+	if(!is_leaf_)
+	{
+		if(left_child_ != NULL && !left_child_->is_leaf_)
+		{
+			left_child_->clean();
+			delete left_child_;
+			left_child_ = NULL;
+		}
+		if(right_child_ != NULL && !right_child_->is_leaf_)
+		{
+			right_child_->clean();
+			delete right_child_;
+			right_child_ = NULL;
+		}
+		if(bounding_volume_ != NULL)
+		{
+			delete bounding_volume_;
+			bounding_volume_ = NULL;
+		}
+	}
 }
 
 template <typename Scalar,int Dim>

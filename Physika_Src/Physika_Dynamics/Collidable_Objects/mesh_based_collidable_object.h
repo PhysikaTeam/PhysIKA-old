@@ -15,7 +15,7 @@
 #ifndef PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_MESH_BASED_COLLIDABLE_OBJECT_H_
 #define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_MESH_BASED_COLLIDABLE_OBJECT_H_
 
-#include "Physika_Dynamics\Collidable_Objects\collidable_object.h"
+#include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 
 namespace Physika{
 
@@ -31,7 +31,8 @@ public:
 
 	//get & set
 	ObjectType getObjectType() const;
-	const SurfaceMesh<Scalar>* const getMesh() const;
+	const SurfaceMesh<Scalar>* getMesh() const;
+	SurfaceMesh<Scalar>* getMesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);
 protected:
 	SurfaceMesh<Scalar>* mesh_;

@@ -13,7 +13,8 @@
  */
 
 
-#include "Physika_Geometry\Bounding_Volume\bounding_volume_kdop18.h"
+#include <float.h>
+#include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
@@ -21,6 +22,7 @@ namespace Physika{
 template <typename Scalar, int Dim>
 BoundingVolumeKDOP18<Scalar, Dim>::BoundingVolumeKDOP18()
 {
+	setEmpty();
 }
 
 template <typename Scalar, int Dim>
@@ -159,6 +161,52 @@ bool BoundingVolumeKDOP18<Scalar, Dim>::isInside(const Vector<Scalar,Dim>& point
 			return false;
 	}
 	return true;
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> BoundingVolumeKDOP18<Scalar, Dim>::center() const
+{
+	Vector<Scalar,Dim> center;
+	center[0] = (dist_[0]+dist_[9])/2;
+	center[1] = (dist_[1]+dist_[10])/2;
+	center[2] = (dist_[2]+dist_[11])/2;
+	return center;
+}
+
+template <typename Scalar, int Dim>
+Scalar BoundingVolumeKDOP18<Scalar, Dim>::width() const
+{
+	return dist_[9] - dist_[0];
+}
+
+template <typename Scalar, int Dim>
+Scalar BoundingVolumeKDOP18<Scalar, Dim>::height() const
+{
+	return dist_[10] - dist_[1];
+}
+
+template <typename Scalar, int Dim>
+Scalar BoundingVolumeKDOP18<Scalar, Dim>::depth() const
+{
+	return dist_[11] - dist_[2];
+}
+
+void BoundingVolumeKDOP18<double, 3>::setEmpty()
+{
+	for (int i = 0; i < 9; ++i)
+	{
+		dist_[i] = FLT_MAX;
+		dist_[i+9] = -FLT_MAX;
+	}
+}
+
+void BoundingVolumeKDOP18<float, 3>::setEmpty()
+{
+	for (int i = 0; i < 9; ++i)
+	{
+		dist_[i] = FLT_MAX;
+		dist_[i+9] = -FLT_MAX;
+	}
 }
 
 template <typename Scalar, int Dim>

@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Dynamics\Collidable_Objects\mesh_based_collidable_object.h"
+#include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 
 namespace Physika{
 
@@ -33,10 +33,17 @@ typename CollidableObject<Scalar, Dim>::ObjectType MeshBasedCollidableObject<Sca
 }
 
 template <typename Scalar,int Dim>
-const SurfaceMesh<Scalar>* const MeshBasedCollidableObject<Scalar, Dim>::getMesh() const
+const SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::getMesh() const
 {
 	return mesh_;
 }
+
+template <typename Scalar,int Dim>
+SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::getMesh()
+{
+	return mesh_;
+}
+
 
 template <typename Scalar,int Dim>
 void MeshBasedCollidableObject<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
