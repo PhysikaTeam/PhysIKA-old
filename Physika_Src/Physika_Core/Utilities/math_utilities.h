@@ -50,13 +50,13 @@ inline double sqrt(int value)
 }
 
 template <typename Scalar>
-inline Scalar MAX(Scalar lhs, Scalar rhs)
+inline Scalar max(Scalar lhs, Scalar rhs)
 {
 	return lhs > rhs ? lhs : rhs;
 }
 
 template <typename Scalar>
-inline Scalar MIN(Scalar lhs, Scalar rhs)
+inline Scalar min(Scalar lhs, Scalar rhs)
 {
 	return lhs < rhs ? lhs : rhs;
 }
