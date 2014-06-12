@@ -141,7 +141,7 @@ void DriverBase<Scalar>::advanceFrame()
         if(finish_time-time_<=dt)
 	{
 	    dt=finish_time-time_;
-	    time=finish_time;
+	    time_=finish_time;
 	    frame_done=true;
 	}
 	else

@@ -56,7 +56,7 @@ protected:
     Scalar min_length_;
 
     Array<Scalar> phi_;
-    Array<Scalar> energey_;
+    Array<Scalar> energy_;
 
     Array<NeighborList<Scalar>> neighborLists_;
     

@@ -24,26 +24,26 @@ SPHBase<Scalar, Dim>::SPHBase():
         particle_num_(0),
         reference_density_(0)
 {
-    dataManager_.addArray("mass", &mass_);
-    dataManager_.addArray("position", &position_);
-    dataManager_.addArray("velocity", &velocity_);
-    dataManager_.addArray("normal", &normal_);
+    dataManager_.addArray("mass", &this->mass_);
+    dataManager_.addArray("position", &this->position_);
+    dataManager_.addArray("velocity", &this->velocity_);
+    dataManager_.addArray("normal", &this->normal_);
 }
 
 template <typename Scalar, int Dim>
 void SPHBase<Scalar, Dim>::allocMemory(unsigned int particle_num)
 {
-    particle_num_ = particle_num;
-    mass_.resize(particle_num);
-    position_.resize(particle_num);
-    velocity_.resize(particle_num);
-    normal_.resize(particle_num);
-    viscous_force_.resize(particle_num);
-    pressure_force_.resize(particle_num);
-    surface_force_.resize(particle_num);
-    volume_.resize(particle_num);
-    pressure_.resize(particle_num);
-    density_.resize(particle_num);
+    this->particle_num_ = particle_num;
+    this->mass_.resize(particle_num);
+    this->position_.resize(particle_num);
+    this->velocity_.resize(particle_num);
+    this->normal_.resize(particle_num);
+    this->viscous_force_.resize(particle_num);
+    this->pressure_force_.resize(particle_num);
+    this->surface_force_.resize(particle_num);
+    this->volume_.resize(particle_num);
+    this->pressure_.resize(particle_num);
+    this->density_.resize(particle_num);
 }
 
 template <typename Scalar, int Dim>
@@ -63,14 +63,11 @@ template <typename Scalar, int Dim>
 void SPHBase<Scalar, Dim>::advance(Scalar dt)
 {
     //iteration sim_itor begin
-    clock_t start_time = clock();
 
     stepEuler(dt);
 
-    clock_t end_time = clock();
-
     //iteration sim_itor end and cost end_time - start_time ;
-    sim_itor_++;
+    this->sim_itor_++;
 }
 
 template <typename Scalar, int Dim>
@@ -88,16 +85,16 @@ void SPHBase<Scalar, Dim>::boundaryHandling()
 template <typename Scalar, int Dim>
 SPHBase<Scalar, Dim>::~SPHBase()
 {
-    mass_.release();
-    position_.release();
-    velocity_.release();
-    normal_.release();
-    viscous_force_.release();
-    pressure_.release();
-    surface_force_.release();
-    volume_.release();
-    pressure_.release();
-    density_.release();
+    this->mass_.release();
+    this->position_.release();
+    this->velocity_.release();
+    this->normal_.release();
+    this->viscous_force_.release();
+    this->pressure_.release();
+    this->surface_force_.release();
+    this->volume_.release();
+    this->pressure_.release();
+    this->density_.release();
 
 }
 
@@ -112,5 +109,8 @@ void SPHBase<Scalar, Dim>::saveVelocities(std::string in_path, unsigned int in_i
 {
 
 }
+
+
+template class SPHBase<float ,3>;
 
 } //end of namespace Physika

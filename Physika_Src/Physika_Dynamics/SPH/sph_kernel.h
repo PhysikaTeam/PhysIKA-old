@@ -85,7 +85,7 @@ class SpikyKernel : public SPH_Kernel<typename Scalar>
         else {
             const Scalar d = 1.0f-q;
             const Scalar hh = h*h;
-            return 15.0f/((Scalar)M_PI * hh * h) * d * d * d;
+            return 15.0f/((Scalar)PI * hh * h) * d * d * d;
         }
     }
 
@@ -97,7 +97,7 @@ class SpikyKernel : public SPH_Kernel<typename Scalar>
         else {
             const Scalar d = 1.0f-q;
             const Scalar hh = h*h;
-            return -45.0f / ((Scalar)M_PI * hh*h) *d*d;
+            return -45.0f / ((Scalar)PI * hh*h) *d*d;
         }
     }
 };
@@ -114,7 +114,7 @@ class LaplacianKernel : public SPH_Kernel<typename Scalar>
         else {
             const Scalar d = 1.0f-q;
             const Scalar RR = h*h;
-            return 45.0f/(13.0f * (Scalar)M_PI * RR *h) *d;
+            return 45.0f/(13.0f * (Scalar)PI * RR *h) *d;
         }
     }
 
@@ -130,7 +130,7 @@ class CubicKernel : public SPH_Kernel<typename Scalar>
         const Scalar hh = h*h;
         const Scalar q = r/h;
 
-        const Scalar alpha = 3.0f / (2.0f * (Scalar)M_PI * hh * h);
+        const Scalar alpha = 3.0f / (2.0f * (Scalar)PI * hh * h);
 
         if (q>2.0f) return 0.0f;
         else if (q >= 1.0f)
@@ -153,7 +153,7 @@ class CubicKernel : public SPH_Kernel<typename Scalar>
         const Scalar hh = h*h;
         const Scalar q = r/h;
 
-        const Scalar alpha = 3.0f / (2.0f * (Scalar)M_PI * hh * h);
+        const Scalar alpha = 3.0f / (2.0f * (Scalar)PI * hh * h);
 
         if (q>2.0f) return 0.0f;
         else if (q >= 1.0f)
@@ -180,7 +180,7 @@ class QuadraticKernel : public SPH_Kernel<typename Scalar>
         const Scalar q = r/h;
         if (q>1.0f) return 0.0f;
         else {
-            const Scalar alpha = 15.0f / (2.0f * (Scalar)M_PI);
+            const Scalar alpha = 15.0f / (2.0f * (Scalar)PI);
             return alpha*(1.0f-q)*(1.0f-q);
         }
     }
@@ -190,7 +190,7 @@ class QuadraticKernel : public SPH_Kernel<typename Scalar>
         const Scalar q = r/h;
         if (q>1.0f) return 0.0f;
         else {
-            const Scalar alpha = 15.0f / ((Scalar)M_PI);
+            const Scalar alpha = 15.0f / ((Scalar)PI);
             return -alpha*(1.0f-q);
         }
     }
@@ -262,13 +262,13 @@ class GaussKernel : public SPH_Kernel<typename Scalar>
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {
         const double q = r/h;
-        return (Scalar)pow(M_E, -q);
+        return (Scalar)pow(E, -q);
     }
 
     virtual Scalar gradient(const Scalar r, const Scalar h)
     {
         const double q = r/h;
-        return (Scalar)-pow(M_E, -q);
+        return (Scalar)-pow(E, -q);
     }
 };
 
@@ -289,34 +289,34 @@ public:
         Gauss,
     };
 
-    static SPH_Kernel& createKernel(KernelType type)
+    static SPH_Kernel<Scalar>& createKernel(KernelType type)
     {
-        SPH_Kernel* kern = NULL;
+        SPH_Kernel<Scalar>* kern = NULL;
         switch (type)
         {
         case Spiky:
-            kern = new SpikyKernel;
+            kern = new SpikyKernel<Scalar>();
             break;
         case CubicSpline:
-            kern = new CubicKernel;
+            kern = new CubicKernel<Scalar>();
             break;
         case QuarticSpline:
-            kern = new QuarticKernel;
+            kern = new QuarticKernel<Scalar>();
             break;
         case Smooth:
-            kern = new SmoothKernel;
+            kern = new SmoothKernel<Scalar>();
             break;
         case Standard:
-            kern = new StandardKernel;
+            kern = new StandardKernel<Scalar>();
             break;
         case Laplacian:
-            kern = new LaplacianKernel;
+            kern = new LaplacianKernel<Scalar>();
             break;
         case Quartic:
-            kern = new QuarticKernel;
+            kern = new QuarticKernel<Scalar>();
             break;
         case Gauss:
-            kern = new GaussKernel;
+            kern = new GaussKernel<Scalar>();
             break;
         default:
             kern = NULL;

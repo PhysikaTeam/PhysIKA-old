@@ -18,7 +18,8 @@
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Arrays/array_manager.h"
 #include "Physika_Core/Arrays/array.h"
-#include "Physika_Core/Vectors/vector.h"
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
 
 

@@ -65,9 +65,12 @@ public:
     ElementType & operator[] (int id);
 
     virtual void reorder(unsigned int *ids, unsigned int size);
+    
+    void release();
+
 protected:
     void allocate();
-    void release();
+    
 
     unsigned int element_count_;
     ElementType *data_;
