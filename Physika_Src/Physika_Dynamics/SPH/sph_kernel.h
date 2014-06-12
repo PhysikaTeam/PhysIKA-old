@@ -32,7 +32,7 @@ public:
 
 //spiky kernel
 template <typename Scalar>
-class StandardKernel : public SPH_Kernel<typename Scalar>
+class StandardKernel : public SPH_Kernel<Scalar>
 {
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {
@@ -50,7 +50,7 @@ class StandardKernel : public SPH_Kernel<typename Scalar>
 };
 
 template <typename Scalar>
-class SmoothKernel : public SPH_Kernel<typename Scalar>
+class SmoothKernel : public SPH_Kernel<Scalar>
 {
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {
@@ -76,7 +76,7 @@ class SmoothKernel : public SPH_Kernel<typename Scalar>
 
     //spiky kernel
 template <typename Scalar>
-class SpikyKernel : public SPH_Kernel<typename Scalar>
+class SpikyKernel : public SPH_Kernel<Scalar>
 {
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {
@@ -105,7 +105,7 @@ class SpikyKernel : public SPH_Kernel<typename Scalar>
 
     //viscosity kernel
 template <typename Scalar>
-class LaplacianKernel : public SPH_Kernel<typename Scalar>
+class LaplacianKernel : public SPH_Kernel<Scalar>
 {
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {
@@ -123,7 +123,7 @@ class LaplacianKernel : public SPH_Kernel<typename Scalar>
 
 //cubic kernel
 template <typename Scalar>
-class CubicKernel : public SPH_Kernel<typename Scalar>
+class CubicKernel : public SPH_Kernel<Scalar>
 {
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {
@@ -173,7 +173,7 @@ class CubicKernel : public SPH_Kernel<typename Scalar>
 
 //quadratic kernel
 template <typename Scalar>
-class QuadraticKernel : public SPH_Kernel<typename Scalar>
+class QuadraticKernel : public SPH_Kernel<Scalar>
 {
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {
@@ -196,7 +196,7 @@ class QuadraticKernel : public SPH_Kernel<typename Scalar>
     }
 };
 template <typename Scalar>
-class QuarticKernel : public SPH_Kernel<typename Scalar>
+class QuarticKernel : public SPH_Kernel<Scalar>
 {
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {
@@ -257,7 +257,7 @@ class QuarticKernel : public SPH_Kernel<typename Scalar>
 };
 
 template <typename Scalar>
-class GaussKernel : public SPH_Kernel<typename Scalar>
+class GaussKernel : public SPH_Kernel<Scalar>
 {
     virtual Scalar weight(const Scalar r, const Scalar h) 
     {

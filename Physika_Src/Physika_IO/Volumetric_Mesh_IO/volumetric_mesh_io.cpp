@@ -98,7 +98,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
 }
 
 template <typename Scalar, int Dim>
-bool VolumetricMeshIO<Scalar,Dim>::save(const string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh)
+bool VolumetricMeshIO<Scalar,Dim>::save(const string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh, SaveOption option)
 {
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())

@@ -25,13 +25,17 @@ template <typename Scalar, int Dim>
 class VolumetricMeshIO
 {
 public:
+    enum SaveOption{
+        SINGLE_FILE,  //save volumetric mesh to a single .smesh file
+        NODE_AND_ELE_FILES  //save nodes and elements to separate files, included by .smesh file
+    };
     VolumetricMeshIO(){}
     ~VolumetricMeshIO(){}
     //load volumetric mesh from given file, return NULL if fails
     //the memory of volumetric mesh needs to be released by the caller
     static VolumetricMesh<Scalar,Dim>* load(const std::string &filename);
     //save volumetric mesh to file, return true if succeed, otherwise return false
-    static bool save(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh);
+    static bool save(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh, SaveOption option = SINGLE_FILE);
 protected:
 };
 

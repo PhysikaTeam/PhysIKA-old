@@ -100,7 +100,7 @@ template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::computePressure(Scalar dt)
 {
     
-    pressure_.zero();
+    this->pressure_.zero();
     for (int i = 0; i < this->particle_num_; i++)
     {
         //TO DO: mod the compute formula
@@ -120,14 +120,14 @@ void SPHFluid<Scalar, Dim>::computePressureForce(Scalar dt)
     {
         NeighborList<Scalar> & neighborlist_i = this->neighborLists_[i];
         int size_i = neighborlist_i.size_;
-        Scalar v_i = volume_[i];
+        Scalar v_i = this->volume_[i];
         for (int ne = 0; ne < size_i; ne++)
         {
             Scalar d_kernel = 0.0;
             Scalar r = neighborlist_i.distance_[ne];
             int j = neighborlist_i.ids_[ne];
             
-            Scalar v_j = volume_[j];
+            Scalar v_j = this->volume_[j];
             Vector<Scalar, Dim> f_t =  0.5*v_i*v_j*kernel.gradient(r, max_length_)*(this->position_[j] - this->position_[i]) * (1.0f/r);
             this->pressure_force_[i] += f_t;
             this->pressure_force_[j] -= f_t;
@@ -181,7 +181,7 @@ void SPHFluid<Scalar, Dim>::advect(Scalar dt)
 {
     for (int i = 0; i < this->particle_num_; i++)
     {
-        this->velocity_[i] += dt/mass_[i]*(this->viscous_force_[i] + this->pressure_force_[i] + this->gravity_);
+        this->velocity_[i] += dt/(this->mass_[i])*(this->viscous_force_[i] + this->pressure_force_[i] + this->gravity_);
         this->position_[i] += dt * this->velocity_[i];
     }
 }
@@ -189,7 +189,7 @@ void SPHFluid<Scalar, Dim>::advect(Scalar dt)
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::stepEuler(Scalar dt)
 {
-    boundaryHandling();
+    //boundaryHandling();
 
     computeNeighbors();
 
