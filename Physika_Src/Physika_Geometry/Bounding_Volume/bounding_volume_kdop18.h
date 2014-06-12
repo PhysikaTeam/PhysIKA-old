@@ -57,8 +57,6 @@ protected:
 	//internal functions
 	void getDistances(const Vector<Scalar, Dim>& point, Scalar& d3, Scalar& d4, Scalar& d5, Scalar& d6, Scalar& d7, Scalar& d8) const;
 	void getDistances(const Vector<Scalar, Dim>& point, Scalar d[]) const;
-	inline Scalar MAX(Scalar lhs, Scalar rhs) const {return lhs > rhs ? lhs : rhs;};
-	inline Scalar MIN(Scalar lhs, Scalar rhs) const {return lhs < rhs ? lhs : rhs;};
 };
 
 }  //end of namespace Physika

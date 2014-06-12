@@ -16,6 +16,7 @@
 #include <float.h>
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 
 namespace Physika{
 

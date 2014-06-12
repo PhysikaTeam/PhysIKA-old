@@ -44,8 +44,8 @@ const CollidableObject<Scalar, Dim>* const ObjectBVH<Scalar, Dim>::getCollidable
 template <typename Scalar,int Dim>
 void ObjectBVH<Scalar, Dim>::setCollidableObject(CollidableObject<Scalar, Dim>* collidable_object)
 {
-	if(root_node_ != NULL)
-		clean();
+	if(this->root_node_ != NULL)
+		BVHBase<Scalar, Dim>::clean();
 	collidable_object_ = collidable_object;
 	if(collidable_object_->getObjectType() == CollidableObject<Scalar, Dim>::MESH_BASED)
 		buildFromMeshObject((MeshBasedCollidableObject<Scalar, Dim>*)collidable_object_);
@@ -68,12 +68,12 @@ void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scala
 		{
 			node = new ObjectBVHNode<Scalar, Dim>();
 			node->setLeaf(true);
-			node->setBVType(bv_type_);
+			node->setBVType(this->bv_type_);
 			node->setFace(group.facePtr(face_idx));
-			leaf_node_list_.push_back(node);
+			this->leaf_node_list_.push_back(node);
 		}
     }
-	root_node_ = buildFromLeafList(0, (int)leaf_node_list_.size());
+	this->root_node_ = BVHBase<Scalar, Dim>::buildFromLeafList(0, (int)leaf_node_list_.size());
 }
 
 template class ObjectBVH<float, 3>;

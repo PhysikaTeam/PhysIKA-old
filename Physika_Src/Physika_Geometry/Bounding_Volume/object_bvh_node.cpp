@@ -67,18 +67,18 @@ bool ObjectBVHNode<Scalar, Dim>::elemTest(ObjectBVHNode<Scalar, Dim>* target)
 template <typename Scalar,int Dim>
 void ObjectBVHNode<Scalar, Dim>::buildFromMesh()
 {
-	is_leaf_ = true;
+	this->is_leaf_ = true;
 	if(face_ == NULL)
 		return;
-	if(bounding_volume_ == NULL)
+	if(this->bounding_volume_ == NULL)
 	{
-		switch(bv_type_)
+		switch(this->bv_type_)
 		{
-			case BoundingVolume<Scalar, Dim>::KDOP18: bounding_volume_ = new BoundingVolumeKDOP18<Scalar, Dim>();
-			default: bounding_volume_ = new BoundingVolumeKDOP18<Scalar, Dim>();
+			case BoundingVolume<Scalar, Dim>::KDOP18: this->bounding_volume_ = new BoundingVolumeKDOP18<Scalar, Dim>();
+			default: this->bounding_volume_ = new BoundingVolumeKDOP18<Scalar, Dim>();
 		}
 	}
-	bounding_volume_->setEmpty();
+	this->bounding_volume_->setEmpty();
 }
 
 template class ObjectBVHNode<float, 3>;
