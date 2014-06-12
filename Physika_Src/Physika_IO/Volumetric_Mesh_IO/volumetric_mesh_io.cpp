@@ -112,6 +112,18 @@ bool VolumetricMeshIO<Scalar,Dim>::save(const string &filename, const Volumetric
         std::cerr<<"Unknown mesh file format specified!\n";
         return false;
     }
+    switch(option)
+    {
+    case SINGLE_FILE:
+        return saveToSingleFile(filename,volumetric_mesh);
+        break;
+    case NODE_AND_ELE_FILES:
+        return saveToSeparateFiles(filename,volumetric_mesh);
+        break;
+    default:
+        return false;
+        break;
+    }
     return false;
 }
 
@@ -126,6 +138,7 @@ bool VolumetricMeshIO<Scalar,Dim>::saveToSeparateFiles(const std::string &filena
 {
     return false;
 }
+
 //explicit instantiations
 template class VolumetricMeshIO<float,2>;
 template class VolumetricMeshIO<float,3>;

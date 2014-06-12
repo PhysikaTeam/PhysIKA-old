@@ -26,7 +26,7 @@ IsotropicLinearElasticity<Scalar,Dim>::IsotropicLinearElasticity()
 }
 
 template <typename Scalar, int Dim>
-IsotropicLinearElasticity<Scalar,Dim>::IsotropicLinearElasticity(Scalar par1, Scalar par2, ModulusType par_type)
+IsotropicLinearElasticity<Scalar,Dim>::IsotropicLinearElasticity(Scalar par1, Scalar par2, typename IsotropicHyperelasticMaterial<Scalar,Dim>::ModulusType par_type)
     :IsotropicHyperelasticMaterial<Scalar,Dim>(par1,par2,par_type)
 {
 }

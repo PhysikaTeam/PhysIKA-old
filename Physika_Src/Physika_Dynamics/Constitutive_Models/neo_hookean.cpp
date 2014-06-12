@@ -26,7 +26,7 @@ NeoHookean<Scalar,Dim>::NeoHookean()
 }
 
 template <typename Scalar, int Dim>
-NeoHookean<Scalar,Dim>::NeoHookean(Scalar par1, Scalar par2, ModulusType par_type)
+NeoHookean<Scalar,Dim>::NeoHookean(Scalar par1, Scalar par2, typename IsotropicHyperelasticMaterial<Scalar,Dim>::ModulusType par_type)
     :IsotropicHyperelasticMaterial<Scalar,Dim>(par1,par2,par_type)
 {
 }

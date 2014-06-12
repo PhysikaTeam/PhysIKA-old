@@ -29,7 +29,7 @@ public:
     IsotropicLinearElasticity();
     //if par_type = YOUNG_AND_POISSON, then: par1 = young's modulus, par2 = poisson_ratio
     //if par_type = LAME_COEFFICIENTS, then: par1 = lambda, par2 = mu
-    IsotropicLinearElasticity(Scalar par1, Scalar par2, ModulusType par_type);
+    IsotropicLinearElasticity(Scalar par1, Scalar par2, typename IsotropicHyperelasticMaterial<Scalar,Dim>::ModulusType par_type);
     ~IsotropicLinearElasticity();
     void printInfo() const;
     Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient
