@@ -38,6 +38,11 @@ public:
     inline void setOrientation(Quaternion<Scalar> orientation) { orientation_ = orientation; }
     inline void setPosition(Vector<Scalar,3> position) { position_ = position; }
 
+
+    /* Funtions*/
+    Vector<Scalar,3> transform(const Vector<Scalar, 3>& input) const;
+
+
 protected:
     Quaternion<Scalar> orientation_;
     Vector<Scalar,3> position_;
