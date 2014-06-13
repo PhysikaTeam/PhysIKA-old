@@ -41,6 +41,8 @@ public:
 	typename BoundingVolume<Scalar, Dim>::BVType getBVType() const;
 	void setLeaf(const bool is_leaf);
 	bool isLeaf() const;
+	virtual bool isSceneNode() const;
+	virtual bool isObjectNode() const;
 
 	//structure maintain
 	
@@ -64,7 +66,7 @@ public:
 	bool selfCollide();
 	bool collide(const BVHNodeBase<Scalar, Dim>* const target);
 	bool leafCollide(const BVHNodeBase<Scalar, Dim>* const target);
-
+	virtual bool elemTest(const BVHNodeBase<Scalar, Dim>* const target);
 	
 protected:
 	bool is_leaf_;

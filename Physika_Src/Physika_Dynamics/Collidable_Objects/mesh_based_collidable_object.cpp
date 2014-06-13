@@ -13,6 +13,8 @@
  */
 
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 
 namespace Physika{
 
@@ -49,6 +51,12 @@ template <typename Scalar,int Dim>
 void MeshBasedCollidableObject<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
 {
 	mesh_ = mesh;
+}
+
+template <typename Scalar,int Dim>
+Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::getPointPosition(unsigned int point_index)
+{
+	return mesh_->vertexPosition(point_index);
 }
 
 //explicit instantitation

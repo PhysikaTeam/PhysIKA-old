@@ -85,7 +85,7 @@ void BVHBase<Scalar, Dim>::clean()
 		delete root_node_;
 		root_node_ = NULL;
 	}
-	unsigned int list_size = leaf_node_list_.size();
+	unsigned int list_size = static_cast<unsigned int>(leaf_node_list_.size());
 	for(unsigned int i = 0; i < list_size; ++i)
 	{
 		delete leaf_node_list_[i];
@@ -113,6 +113,8 @@ bool BVHBase<Scalar, Dim>::selfCollide()
 template <typename Scalar,int Dim>
 bool BVHBase<Scalar, Dim>::collide(const BVHBase<Scalar, Dim>* const target)
 {
+	if(target == NULL)
+		return false;
 	return root_node_->collide(target->getRootNode());
 }
 
@@ -196,6 +198,8 @@ BVHNodeBase<Scalar, Dim>* BVHBase<Scalar, Dim>::buildFromLeafList(const int star
 template <typename Scalar,int Dim>
 BVAxisPartition<Scalar, Dim>::BVAxisPartition(BoundingVolume<Scalar, Dim>* bounding_volume)
 {
+	if(bounding_volume == NULL)
+		return;
 	Vector<Scalar, Dim> center = bounding_volume->center();
 	int longest_axis_index = 2;
 	if (bounding_volume->width() >= bounding_volume->height() && bounding_volume->width() >= bounding_volume->depth())

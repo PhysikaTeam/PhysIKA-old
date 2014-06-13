@@ -47,6 +47,8 @@ void ObjectBVH<Scalar, Dim>::setCollidableObject(CollidableObject<Scalar, Dim>* 
 	if(this->root_node_ != NULL)
 		BVHBase<Scalar, Dim>::clean();
 	collidable_object_ = collidable_object;
+	if(collidable_object == NULL)
+		return;
 	if(collidable_object_->getObjectType() == CollidableObject<Scalar, Dim>::MESH_BASED)
 		buildFromMeshObject((MeshBasedCollidableObject<Scalar, Dim>*)collidable_object_);
 }
@@ -54,6 +56,8 @@ void ObjectBVH<Scalar, Dim>::setCollidableObject(CollidableObject<Scalar, Dim>* 
 template <typename Scalar,int Dim>
 void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scalar, Dim>* collidable_object)
 {
+	if(collidable_object == NULL)
+		return;
 	SurfaceMesh<Scalar>* mesh = collidable_object->getMesh();
 	if(mesh == NULL)
 		return;
@@ -69,7 +73,8 @@ void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scala
 			node = new ObjectBVHNode<Scalar, Dim>();
 			node->setLeaf(true);
 			node->setBVType(this->bv_type_);
-			node->setFace(group.facePtr(face_idx));
+			node->setObject(collidable_object);
+			node->setFaceIndex(face_idx);
 			this->leaf_node_list_.push_back(node);
 		}
     }

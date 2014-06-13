@@ -19,6 +19,7 @@
 
 namespace Physika{
 
+template <typename Scalar,int Dim> class Vector;
 template <typename Scalar> class SurfaceMesh;
 
 template <typename Scalar,int Dim>
@@ -34,6 +35,8 @@ public:
 	const SurfaceMesh<Scalar>* getMesh() const;
 	SurfaceMesh<Scalar>* getMesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);
+	Vector<Scalar, 3> getPointPosition(unsigned int point_index);
+	
 protected:
 	SurfaceMesh<Scalar>* mesh_;
 };

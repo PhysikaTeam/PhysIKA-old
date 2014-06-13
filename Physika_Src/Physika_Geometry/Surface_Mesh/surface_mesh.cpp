@@ -373,6 +373,110 @@ void SurfaceMesh<Scalar>::setSingleMaterial(const Material<Scalar> &material)
 }
 
 template <typename Scalar>
+const Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) const //Added by Tianxiang Zhang.
+{
+    bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
+    if(!index_valid)
+    {
+        std::cerr<<"SurfaceMesh face index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+	unsigned int current_face_sum = 0;
+	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+	{
+		const Group<Scalar>& current_group = groups_[group_idx];
+		unsigned int group_face_num = current_group.numFaces();
+		if(current_face_sum + group_face_num > face_idx)//find the group containing this face
+		{
+			return current_group.face(face_idx - current_face_sum);
+		}
+		else
+			current_face_sum += group_face_num;
+	}
+	std::cerr<<"SurfaceMesh face index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    return groups_[0].face(0);
+}
+
+template <typename Scalar>
+Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) //Added by Tianxiang Zhang.
+{
+    bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
+    if(!index_valid)
+    {
+        std::cerr<<"SurfaceMesh face index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+	unsigned int current_face_sum = 0;
+	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+	{
+		Group<Scalar>& current_group = groups_[group_idx];
+		unsigned int group_face_num = current_group.numFaces();
+		if(current_face_sum + group_face_num > face_idx)//find the group containing this face
+		{
+			return current_group.face(face_idx - current_face_sum);
+		}
+		else
+			current_face_sum += group_face_num;
+	}
+	std::cerr<<"SurfaceMesh face index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    return groups_[0].face(0);
+}
+
+template <typename Scalar>
+const Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) const //Added by Tianxiang Zhang.
+{
+    bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
+    if(!index_valid)
+    {
+        std::cerr<<"SurfaceMesh face index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+	unsigned int current_face_sum = 0;
+	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+	{
+		const Group<Scalar>& current_group = groups_[group_idx];
+		unsigned int group_face_num = current_group.numFaces();
+		if(current_face_sum + group_face_num > face_idx)//find the group containing this face
+		{
+			return current_group.facePtr(face_idx - current_face_sum);
+		}
+		else
+			current_face_sum += group_face_num;
+	}
+	std::cerr<<"SurfaceMesh face index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    return groups_[0].facePtr(0);
+}
+
+template <typename Scalar>
+Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) //Added by Tianxiang Zhang.
+{
+    bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
+    if(!index_valid)
+    {
+        std::cerr<<"SurfaceMesh face index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+	unsigned int current_face_sum = 0;
+	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+	{
+		Group<Scalar>& current_group = groups_[group_idx];
+		unsigned int group_face_num = current_group.numFaces();
+		if(current_face_sum + group_face_num > face_idx)//find the group containing this face
+		{
+			return current_group.facePtr(face_idx - current_face_sum);
+		}
+		else
+			current_face_sum += group_face_num;
+	}
+	std::cerr<<"SurfaceMesh face index out of range!\n";
+	std::exit(EXIT_FAILURE);
+    return groups_[0].facePtr(0);
+}
+
+template <typename Scalar>
 void SurfaceMesh<Scalar>::addMaterial(const Material<Scalar> &material)
 {
     materials_.push_back(material);

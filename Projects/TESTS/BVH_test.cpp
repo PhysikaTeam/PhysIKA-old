@@ -15,39 +15,21 @@
 #include <iostream>
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
-#include "Physika_Geometry\Bounding_Volume\bvh_base.h"
-#include "Physika_Geometry\Bounding_Volume\bvh_node_base.h"
+#include "Physika_Geometry/Bounding_Volume/bvh_base.h"
+#include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
+#include "Physika_Geometry/Bounding_Volume/object_bvh.h"
+#include "Physika_Geometry/Bounding_Volume/object_bvh_node.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Geometry\Bounding_Volume\bounding_volume_kdop18.h"
-#include "Physika_Geometry\Bounding_Volume\bounding_volume.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
 
 using namespace std;
-using Physika::CollidableObject;
-using Physika::MeshBasedCollidableObject;
-using Physika::SurfaceMesh;
-using Physika::Vector;
-using Physika::BVHBase;
-using Physika::BVHNodeBase;
-using Physika::BoundingVolumeKDOP18;
-using Physika::BoundingVolume;
+using namespace Physika;
 
 
 int main()
 {
-	//MeshBasedCollidableObject<double, 3>* pObject;
-	//pObject = new MeshBasedCollidableObject<double, 3>();
-	//if(pObject->getObjectType()== CollidableObject<double, 3>::ObjectType::MESH_BASED)
-	//	cout<<pObject->getObjectType()<<endl;
-
-	
-	//pObject->getMesh() = new SurfaceMesh<double>();
-
-	//BVHBase<double, 3> * pBVH1 = new BVHBase<double, 3>();
-	//BVHBase<double, 3> * pBVH2 = new BVHBase<double, 3>();
-	//pBVH1->setRootNode(new BVHNodeBase<double, 3>());
-	//pBVH2->setRootNode(new BVHNodeBase<double, 3>());
-	//pBVH1->collide(pBVH2);
 
 	BoundingVolumeKDOP18<double, 3> KDOP;
 	Vector<double, 3> point1(1, 1, 1);
@@ -66,10 +48,31 @@ int main()
 	KDOP.unionWith(point6);
 	KDOP.unionWith(point7);
 	KDOP.unionWith(point8);
-	cout<<KDOP.height()<<endl;
+
 	Vector<double, 3> point(-1, 1, 0.999);
 	if(KDOP.isInside(point))
 		cout<<"in"<<endl;
+
+	MeshBasedCollidableObject<double, 3>* pObject;
+	pObject = new MeshBasedCollidableObject<double, 3>();
+
+	
+	pObject->setMesh(new SurfaceMesh<double>());
+
+	BVHBase<double, 3> * pBVH1 = new ObjectBVH<double, 3>();
+	BVHBase<double, 3> * pBVH2 = new ObjectBVH<double, 3>();
+	BVHNodeBase<double, 3>* pNode1 = new ObjectBVHNode<double, 3>();
+	BVHNodeBase<double, 3>* pNode2 = new ObjectBVHNode<double, 3>();
+	pNode1->setBoundingVolume(&KDOP);
+	pNode2->setBoundingVolume(&KDOP);
+	pNode1->setLeaf(true);
+	pNode2->setLeaf(true);
+	pBVH1->setRootNode(pNode1);
+	pBVH2->setRootNode(pNode2);
+	if(pBVH1->collide(pBVH2))
+		cout<<"collide"<<endl;
+
+
 
 
 

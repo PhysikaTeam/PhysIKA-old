@@ -106,6 +106,18 @@ bool BVHNodeBase<Scalar, Dim>::isLeaf() const
 }
 
 template <typename Scalar,int Dim>
+bool BVHNodeBase<Scalar, Dim>::isSceneNode() const
+{
+	return false;
+}
+
+template <typename Scalar,int Dim>
+bool BVHNodeBase<Scalar, Dim>::isObjectNode() const
+{
+	return false;
+}
+
+template <typename Scalar,int Dim>
 void BVHNodeBase<Scalar, Dim>::resize()
 {
 }
@@ -182,11 +194,11 @@ bool BVHNodeBase<Scalar, Dim>::selfCollide()
 	bool isCollide = false;
 	if(is_leaf_)
 		return false;
-	if(left_child_->collide(right_child_))
+	if(left_child_ != NULL && right_child_ != NULL && left_child_->collide(right_child_))
 		isCollide = true;
-	if(left_child_->selfCollide())
+	if(left_child_ != NULL && left_child_->selfCollide())
 		isCollide = true;
-	if(right_child_->selfCollide())
+	if(right_child_ != NULL && right_child_->selfCollide())
 		isCollide = true;
 	return isCollide;
 }
@@ -194,6 +206,8 @@ bool BVHNodeBase<Scalar, Dim>::selfCollide()
 template <typename Scalar,int Dim>
 bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const target)
 {
+	if(target == NULL)
+		return false;
 	bool isCollide = false;
 	if(!bounding_volume_->isOverlap(target->getBoundingVolume()))
 		return false;
@@ -204,9 +218,9 @@ bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const tar
 	}
 	else
 	{
-		if(left_child_->collide(target))
+		if(left_child_ != NULL && left_child_->collide(target))
 			isCollide = true;
-		if(right_child_->collide(target))
+		if(right_child_ != NULL && right_child_->collide(target))
 			isCollide = true;
 	}
 	return isCollide;
@@ -215,19 +229,27 @@ bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const tar
 template <typename Scalar,int Dim>
 bool BVHNodeBase<Scalar, Dim>::leafCollide(const BVHNodeBase<Scalar, Dim>* const target)
 {
+	if(target == NULL)
+		return false;
 	bool isCollide = false;
 	if(!target->isLeaf())
 	{
-		if(leafCollide(target->getLeftChild()))
+		if(target->getLeftChild() != NULL && leafCollide(target->getLeftChild()))
 			isCollide = true;
-		if(leafCollide(target->getRightChild()))
+		if(target->getRightChild() != NULL && leafCollide(target->getRightChild()))
 			isCollide = true;
 	}
 	else
 	{
-		//TO DO
+		return this->elemTest(target);
 	}
 	return isCollide;
+}
+
+template <typename Scalar,int Dim>
+bool BVHNodeBase<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target)
+{
+	return false;
 }
 
 //explicit instantitation

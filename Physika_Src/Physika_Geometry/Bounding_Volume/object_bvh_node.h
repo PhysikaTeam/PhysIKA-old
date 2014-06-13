@@ -32,21 +32,27 @@ public:
 	~ObjectBVHNode();
 
 	//get & set
+	bool isSceneNode() const;
+	bool isObjectNode() const;
 	typename CollidableObject<Scalar, Dim>::ObjectType getObjectType() const;
-	void setFace(Face<Scalar>* face);
-	const Face<Scalar>* getFace() const;
+	void setObject(CollidableObject<Scalar, Dim>* object);
+	const CollidableObject<Scalar, Dim>* getObject() const;
+	void setFaceIndex(unsigned int face_index);
+	unsigned int getFaceIndex() const;
 
 	//structure maintain
 	void resize();
 
-	bool elemTest(ObjectBVHNode<Scalar, Dim>* target);
+	bool elemTest(const BVHNodeBase<Scalar, Dim>* const target);
 	
 protected:
 	typename CollidableObject<Scalar, Dim>::ObjectType object_type_;
-	Face<Scalar>* face_;
+	CollidableObject<Scalar, Dim>* object_;
+	bool has_face_;
+	unsigned int face_index_;
 
 	//internal function
-	void buildFromMesh();
+	void buildFromFace();
 };
 
 }  //end of namespace Physika

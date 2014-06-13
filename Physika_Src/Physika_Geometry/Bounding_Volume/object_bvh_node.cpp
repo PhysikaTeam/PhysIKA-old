@@ -21,7 +21,10 @@ namespace Physika{
 
 template <typename Scalar,int Dim>
 ObjectBVHNode<Scalar, Dim>::ObjectBVHNode():
-	face_(NULL)
+	object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
+	object_(NULL),
+	face_index_(0),
+	has_face_(false)
 {
 }
 
@@ -31,44 +34,75 @@ ObjectBVHNode<Scalar, Dim>::~ObjectBVHNode()
 }
 
 template <typename Scalar,int Dim>
+bool ObjectBVHNode<Scalar, Dim>::isSceneNode() const
+{
+	return false;
+}
+
+template <typename Scalar,int Dim>
+bool ObjectBVHNode<Scalar, Dim>::isObjectNode() const
+{
+	return true;
+}
+
+template <typename Scalar,int Dim>
 typename CollidableObject<Scalar, Dim>::ObjectType ObjectBVHNode<Scalar, Dim>::getObjectType() const
 {
 	return object_type_;
 }
 
 template <typename Scalar,int Dim>
-void ObjectBVHNode<Scalar, Dim>::setFace(Face<Scalar>* face)
+void ObjectBVHNode<Scalar, Dim>::setObject(CollidableObject<Scalar, Dim>* object)
 {
-	face_ = face;
-	object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
-	buildFromMesh();
+	object_ = object;
+	object_type_ = getObjectType();
 }
 
 template <typename Scalar,int Dim>
-const Face<Scalar>* ObjectBVHNode<Scalar, Dim>::getFace() const
+const CollidableObject<Scalar, Dim>* ObjectBVHNode<Scalar, Dim>::getObject() const
 {
-	return face_;
+	return object_;
+}
+
+template <typename Scalar,int Dim>
+void ObjectBVHNode<Scalar, Dim>::setFaceIndex(unsigned int face_index)
+{
+	face_index_ = face_index;
+	has_face_ = true;
+	object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
+	buildFromFace();
+}
+
+template <typename Scalar,int Dim>
+unsigned int ObjectBVHNode<Scalar, Dim>::getFaceIndex() const
+{
+	return face_index_;
 }
 
 template <typename Scalar,int Dim>
 void ObjectBVHNode<Scalar, Dim>::resize()
 {
 	if(object_type_ == CollidableObject<Scalar, Dim>::MESH_BASED)
-		buildFromMesh();
+		buildFromFace();
 }
 
 template <typename Scalar,int Dim>
-bool ObjectBVHNode<Scalar, Dim>::elemTest(ObjectBVHNode<Scalar, Dim>* target)
+bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target)
 {
 	//TO DO
-	return false;
+	if(target == NULL || !target->isObjectNode())
+		return false;
+	if(target->getBVType() != this->bv_type_)
+		return false;
+	//if()
+	return true;
 }
 
 template <typename Scalar,int Dim>
-void ObjectBVHNode<Scalar, Dim>::buildFromMesh()
+void ObjectBVHNode<Scalar, Dim>::buildFromFace()
 {
 	this->is_leaf_ = true;
-	if(face_ == NULL)
+	if(!has_face_)
 		return;
 	if(this->bounding_volume_ == NULL)
 	{
@@ -79,6 +113,11 @@ void ObjectBVHNode<Scalar, Dim>::buildFromMesh()
 		}
 	}
 	this->bounding_volume_->setEmpty();
+	//unsigned int point_num = face_->numVertices();
+	//for(unsigned int i = 0; i < point_num; ++i)
+	//{
+	//	this->bounding_volume_->unionWith(face_->vertex(i).positionIndex());
+	//}
 }
 
 template class ObjectBVHNode<float, 3>;

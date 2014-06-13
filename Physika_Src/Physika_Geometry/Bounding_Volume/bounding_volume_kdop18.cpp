@@ -118,6 +118,8 @@ typename BoundingVolume<Scalar, Dim>::BVType BoundingVolumeKDOP18<Scalar, Dim>::
 template <typename Scalar, int Dim>
 bool BoundingVolumeKDOP18<Scalar, Dim>::isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const
 {
+	if(bounding_volume == NULL)
+		return false;
 	if(bounding_volume->getBVType() != getBVType())
 		return false;
 	for (int i = 0; i < 9; ++i)
@@ -133,6 +135,8 @@ bool BoundingVolumeKDOP18<Scalar, Dim>::isOverlap(const BoundingVolume<Scalar, D
 template <typename Scalar, int Dim>
 bool BoundingVolumeKDOP18<Scalar, Dim>::isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume, BoundingVolume<Scalar, Dim>* return_volume) const
 {
+	if(bounding_volume == NULL || return_volume == NULL)
+		return false;
 	if(bounding_volume->getBVType() != getBVType())
 		return false;
 	if(return_volume->getBVType() != getBVType())
@@ -231,6 +235,8 @@ void BoundingVolumeKDOP18<Scalar, Dim>::unionWith (const Vector<Scalar,Dim> &poi
 template <typename Scalar, int Dim>
 void BoundingVolumeKDOP18<Scalar, Dim>::unionWith (const BoundingVolume<Scalar,Dim>* const bounding_volume)
 {
+	if(bounding_volume == NULL)
+		return;
 	if(bounding_volume->getBVType() != getBVType())
 		return;
 
@@ -257,6 +263,8 @@ void BoundingVolumeKDOP18<Scalar, Dim>::unionWith (const BoundingVolume<Scalar,D
 template <typename Scalar, int Dim>
 void BoundingVolumeKDOP18<Scalar, Dim>::obtainUnion(const BoundingVolume<Scalar,Dim>* const bounding_volume_lhs, const BoundingVolume<Scalar,Dim>* const bounding_volume_rhs)
 {
+	if(bounding_volume_lhs == NULL && bounding_volume_rhs == NULL)
+		return;
 	if(bounding_volume_lhs->getBVType() != getBVType())
 		return;
 	if(bounding_volume_rhs->getBVType() != getBVType())

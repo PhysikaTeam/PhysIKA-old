@@ -75,6 +75,10 @@ public:
     Material<Scalar>* materialPtr(unsigned int material_idx);
     unsigned int materialIndex(const std::string &material_name) const; //if no material with given name, return -1
     void setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
+	const Face<Scalar>& face(unsigned int face_idx) const; //Added by Tianxiang Zhang.
+	Face<Scalar>& face(unsigned int face_idx); //Added by Tianxiang Zhang.
+	const Face<Scalar>* facePtr(unsigned int face_idx) const; //Added by Tianxiang Zhang.
+	Face<Scalar>* facePtr(unsigned int face_idx); //Added by Tianxiang Zhang.
 
     //adders
     void addMaterial(const Material<Scalar> &material);
