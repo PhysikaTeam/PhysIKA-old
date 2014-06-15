@@ -48,6 +48,11 @@ Transform<Scalar>::Transform(const Vector<Scalar,3>& position, const Quaternion<
 
 }
 
+template <typename Scalar>
+Vector<Scalar,3> Transform<Scalar>::transform(const Vector<Scalar, 3>& input) const
+{
+    return this->orientation_.rotate(input) + this->position_;
+}
 //explicit instantiation
 template class Transform<float>;
 template class Transform<double>;
