@@ -145,21 +145,3 @@ template class Group<double>;
 } //end of namespace SurfaceMeshInternal
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

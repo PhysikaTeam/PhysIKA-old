@@ -72,10 +72,3 @@ protected:
 #include "Physika_Core/Arrays/array_Nd-inl.h"
 
 #endif //PHYSIKA_CORE_ARRAYS_ARRAY_ND_H_
-
-
-
-
-
-
-

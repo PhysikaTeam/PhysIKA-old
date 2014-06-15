@@ -23,14 +23,14 @@
 namespace Physika{
 
 template <typename Scalar>
-TriMesh<Scalar>::TriMesh()
+TriMesh<Scalar>::TriMesh():VolumetricMesh<Scalar,2>()
 {
-    int vert_per_ele = 3;
-    VolumetricMesh<Scalar,2>::init(0,NULL,0,NULL,&vert_per_ele,true);
+    (this->vert_per_ele_).clear();
+    (this->vert_per_ele_).push_back(3);
 }
 
 template <typename Scalar>
-TriMesh<Scalar>::TriMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements)
+TriMesh<Scalar>::TriMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements)
 	:VolumetricMesh<Scalar,2>(vert_num, vertices, ele_num, elements, 3)
 {
 }
@@ -47,7 +47,7 @@ void TriMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
-Scalar TriMesh<Scalar>::eleVolume(int ele_idx) const
+Scalar TriMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -63,7 +63,7 @@ Scalar TriMesh<Scalar>::eleVolume(int ele_idx) const
 }
 
 template <typename Scalar>
-bool TriMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,2> &pos) const
+bool TriMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -77,7 +77,7 @@ bool TriMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,2> &pos) c
 }
 
 template <typename Scalar>
-void TriMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const
+void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const
 {
 /*
   w0    |x1 y1 z1|  -1       |pos1|
@@ -108,15 +108,3 @@ template class TriMesh<float>;
 template class TriMesh<double>;
 
 }  //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-

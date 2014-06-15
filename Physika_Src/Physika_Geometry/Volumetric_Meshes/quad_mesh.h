@@ -25,13 +25,13 @@ template <typename Scalar>
 class QuadMesh: public VolumetricMesh<Scalar,2>
 {
 public:
-    QuadMesh();
-    QuadMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements);
+    QuadMesh();  //construct an empty QuadMesh
+    QuadMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements);  //construct QuadMesh with given data
     ~QuadMesh();
     void printInfo() const;
-    Scalar eleVolume(int ele_idx) const;
-    bool containsVertex(int ele_idx, const Vector<Scalar,2> &pos) const;
-    void interpolationWeights(int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;
+    Scalar eleVolume(unsigned int ele_idx) const;
+    bool containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const;
+    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;
 protected:
 };
 

@@ -25,16 +25,30 @@ template <typename Scalar>
 class TriMesh: public VolumetricMesh<Scalar,2>
 {
 public:
-    TriMesh();
-    TriMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements);
+    TriMesh(); //construct an empty TriMesh
+    TriMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements); //construct TriMesh with given data
     ~TriMesh();
     void printInfo() const;
-    Scalar eleVolume(int ele_idx) const;
-    bool containsVertex(int ele_idx, const Vector<Scalar,2> &pos) const;
-    void interpolationWeights(int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;
+    Scalar eleVolume(unsigned int ele_idx) const;
+    bool containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const;
+    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;
 protected:
 };
 
 }  //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TRI_MESH_H_
+
+
+
+
+
+
+
+
+
+
+
+
+
+

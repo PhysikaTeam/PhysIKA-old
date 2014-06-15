@@ -539,22 +539,3 @@ template class ObjMeshIO<float>;
 template class ObjMeshIO<double>;
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

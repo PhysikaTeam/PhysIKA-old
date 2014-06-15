@@ -22,14 +22,14 @@
 namespace Physika{
 
 template <typename Scalar>
-QuadMesh<Scalar>::QuadMesh()
+QuadMesh<Scalar>::QuadMesh():VolumetricMesh<Scalar,2>()
 {
-    int vert_per_ele = 4;
-    VolumetricMesh<Scalar,2>::init(0,NULL,0,NULL,&vert_per_ele,true);
+    (this->vert_per_ele_).clear();
+    (this->vert_per_ele_).push_back(4);
 }
 
 template <typename Scalar>
-QuadMesh<Scalar>::QuadMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements)
+QuadMesh<Scalar>::QuadMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements)
 	:VolumetricMesh<Scalar, 2>(vert_num, vertices, ele_num, elements, 4)
 {
 }
@@ -46,7 +46,7 @@ void QuadMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
-Scalar QuadMesh<Scalar>::eleVolume(int ele_idx) const
+Scalar QuadMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -64,7 +64,7 @@ Scalar QuadMesh<Scalar>::eleVolume(int ele_idx) const
 }
 
 template <typename Scalar>
-bool QuadMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,2> &pos) const
+bool QuadMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -78,7 +78,7 @@ bool QuadMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,2> &pos) 
 }
 
 template <typename Scalar>
-void QuadMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const
+void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const
 {
 /*we use bilinear interpolation 
  *Dx0 = (x-pos[0][0])/(pos[1][0]-pos[0][0]);
@@ -112,16 +112,3 @@ template class QuadMesh<float>;
 template class QuadMesh<double>;
 
 }  //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-

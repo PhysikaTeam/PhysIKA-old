@@ -21,14 +21,14 @@
 namespace Physika{
 
 template <typename Scalar>
-CubicMesh<Scalar>::CubicMesh()
+CubicMesh<Scalar>::CubicMesh():VolumetricMesh<Scalar,3>()
 {
-    int vert_per_ele = 8;
-    VolumetricMesh<Scalar,3>::init(0,NULL,0,NULL,&vert_per_ele,true);
+    (this->vert_per_ele_).clear();
+    (this->vert_per_ele_).push_back(8);
 }
 
 template <typename Scalar>
-CubicMesh<Scalar>::CubicMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements)
+CubicMesh<Scalar>::CubicMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements)
 	:VolumetricMesh<Scalar, 3>(vert_num, vertices, ele_num, elements, 8)
 {
 }
@@ -45,7 +45,7 @@ void CubicMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
-Scalar CubicMesh<Scalar>::eleVolume(int ele_idx) const
+Scalar CubicMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -63,7 +63,7 @@ Scalar CubicMesh<Scalar>::eleVolume(int ele_idx) const
 }
 
 template <typename Scalar>
-bool CubicMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const
+bool CubicMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -80,7 +80,7 @@ bool CubicMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos)
 }
 
 template <typename Scalar>
-void CubicMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const
+void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const
 {
 /*we use trilinear interpolation 
  *Dx0 = (x-pos[0][0])/(pos[1][0]-pos[0][0]);
@@ -120,17 +120,3 @@ template class CubicMesh<float>;
 template class CubicMesh<double>;
 
 }  //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -87,16 +87,3 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_RENDER_SURFACE_MESH_RENDER_SURFACE_MESH_RENDER_H_
-
-
-
-
-
-
-
-
-
-
-
-
-

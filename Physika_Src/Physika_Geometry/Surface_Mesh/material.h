@@ -24,6 +24,7 @@ namespace SurfaceMeshInternal{
 
 /*
  * 'illum','map_Ka','map_Ks' in material file are ignored
+ * we assume materials can be identified by their names
  */
 template <typename Scalar>
 class Material
@@ -63,10 +64,3 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_MATERIAL_H_
-
-
-
-
-
-
-

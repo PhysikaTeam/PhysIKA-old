@@ -132,19 +132,3 @@ template class Material<double>;
 } //end of namespace SurfaceMeshInternal
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

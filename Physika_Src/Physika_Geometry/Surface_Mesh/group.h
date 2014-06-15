@@ -25,6 +25,10 @@ namespace Physika{
 
 namespace SurfaceMeshInternal{
 
+/*
+ * we assume groups can be identified by their names
+ */
+
 template <typename Scalar>
 class Group
 {
@@ -57,14 +61,3 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_GROUP_H_
-
-
-
-
-
-
-
-
-
-
-

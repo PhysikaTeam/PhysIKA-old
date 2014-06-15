@@ -1,7 +1,7 @@
 /*
  * @file  volumetric_mesh.h
  * @brief Abstract parent class of volumetric mesh, for FEM simulation.
- *        The mesh not necessarily 3D, although with name VolumetricMesh.
+ *        The mesh is not necessarily 3D, although with the name VolumetricMesh.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -16,48 +16,88 @@
 #ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
 #define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
 
-#include <cstring>
+#include <vector>
+#include <string>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Utilities/physika_assert.h"
 
 namespace Physika{
+
+namespace VolumetricMeshInternal{
+//internal class, used to represent the set of elements
+class Region
+{
+public:
+    Region();
+    Region(const std::string &region_name, const std::vector<unsigned int> &elements);
+    ~Region();
+    const std::string& name() const;
+    void setName(const std::string &new_name);
+    unsigned int elementNum() const;
+    const std::vector<unsigned int>& elements() const;
+protected:
+    std::string name_;
+    std::vector<unsigned int> elements_;
+};
+
+} //end of namespace VolumetricMeshInternal
+
+/*
+ * The elements of volumetric mesh can optionally belong to diffferent regions.
+ * We assume the regions have unique names.
+ */
+
+using VolumetricMeshInternal::Region;
 
 template <typename Scalar, int Dim>
 class VolumetricMesh
 {
 public:
-    VolumetricMesh();
-    VolumetricMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements, int vert_per_ele);
-    VolumetricMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements, const int *vert_per_ele_list);//for volumetric mesh with arbitrary element type
+    VolumetricMesh();  //construct an empty volumetric mesh
+    //construct one-region mesh with given data
+    VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, unsigned int vert_per_ele);
+    VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele_list);//for volumetric mesh with arbitrary element type
     virtual ~VolumetricMesh();
-    inline int vertNum() const{return vert_num_;}
-    inline int eleNum() const{return ele_num_;}
+    //basic query
+    inline unsigned int vertNum() const{return vertices_.size();}
+    inline unsigned int eleNum() const{return ele_num_;}
     inline bool isUniformElementType() const{return uniform_ele_type_;}
-    int eleVertNum(int ele_idx) const;
-
-    Vector<Scalar,Dim> vertPos(int vert_idx) const;
-    Vector<Scalar,Dim> eleVertPos(int ele_idx, int vert_idx) const;
+    unsigned int eleVertNum(unsigned int ele_idx) const;
+    unsigned int regionNum() const;
+    const Vector<Scalar,Dim>& vertPos(unsigned int vert_idx) const;
+    const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const;
+    std::string regionName(unsigned int region_idx) const;
+    void renameRegion(unsigned int region_idx, const std::string &name);
+    unsigned int regionEleNum(unsigned int region_idx) const;
+    unsigned int regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
+    //given the region index or name, return the elements of this region
+    void regionElements(unsigned int region_idx, std::vector<unsigned int> &elements) const;
+    void regionElements(const std::string &region_name, std::vector<unsigned int> &elements) const; //print error and return empty elements if no region with the given name
+    void addRegion(const std::string &name, const std::vector<unsigned int> &elements);
+    void removeRegion(unsigned int region_idx);
+    void removeRegion(const std::string &region_name);  //print error if no region with the given name
+    //virtual methods
     virtual void printInfo() const=0;
-    virtual Scalar eleVolume(int ele_idx) const=0;
-    virtual bool containsVertex(int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
-    virtual void interpolationWeights(int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0;
+    virtual Scalar eleVolume(unsigned int ele_idx) const=0;
+    virtual bool containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
+    virtual void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0; 
 protected:
     //if all elements have same number of vertices, vert_per_ele is pointer to one integer representing the vertex number per element
     //otherwise it's pointer to a list of vertex number per element
-    void init(int vert_num, const Scalar *vertices, int ele_num, const int *elements, const int *vert_per_ele, bool uniform_ele_type);
+    void init(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele, bool uniform_ele_type);
 protected:
-    int vert_num_;
-    Scalar *vertices_;
-    int ele_num_;
-    int *elements_;
-    int *vert_per_ele_;
-    bool uniform_ele_type_;        
+    std::vector<Vector<Scalar,Dim> > vertices_;
+    unsigned int ele_num_;
+    std::vector<unsigned int> elements_; //vertex index of each element in order
+    bool uniform_ele_type_; //whether Elements are of uniform type (same number of vertices)
+    //if uniform_ele_type_ = true, vert_per_ele_ contains only 1 integer, which is the number of vertices per element
+    //if uniform_ele_type_ = false, vert_per_ele_ is a list of integers, corresponding to each element
+    std::vector<unsigned int> vert_per_ele_;
+    //regions_ is empty if all elements belong to one region
+    //otherwise regions_ contains list of regions  
+    std::vector<Region*> regions_;
 };
 
 }  //end of namespace Physika
-
-//implementations
-#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh-inl.h"
 
 #endif//PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_

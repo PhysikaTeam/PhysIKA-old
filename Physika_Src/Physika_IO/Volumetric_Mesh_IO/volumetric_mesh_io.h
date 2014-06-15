@@ -25,20 +25,26 @@ template <typename Scalar, int Dim>
 class VolumetricMeshIO
 {
 public:
-    enum SaveOption{
-        SINGLE_FILE,  //save volumetric mesh to a single .smesh file
-        NODE_AND_ELE_FILES  //save nodes and elements to separate files, included by .smesh file
+    enum{//save options
+        SINGLE_FILE = 0x01,  //save to a single file
+        SEPARATE_FILES = 0x02, //save to separate files
+        ZERO_INDEX = 0x04, //0 based index
+        ONE_INDEX = 0x08 //1 based index
     };
+    typedef unsigned int SaveOption;
+public:
     VolumetricMeshIO(){}
     ~VolumetricMeshIO(){}
     //load volumetric mesh from given file, return NULL if fails
     //the memory of volumetric mesh needs to be released by the caller
     static VolumetricMesh<Scalar,Dim>* load(const std::string &filename);
     //save volumetric mesh to file, return true if succeed, otherwise return false
-    static bool save(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh, SaveOption option = SINGLE_FILE);
+    static bool save(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh);
+    static bool save(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh, SaveOption option);
 protected:
-    static bool saveToSingleFile(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh);
-    static bool saveToSeparateFiles(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh);
+    static bool saveToSingleFile(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh, unsigned int start_index);
+    static bool saveToSeparateFiles(const std::string &filename, const VolumetricMesh<Scalar,Dim> *volumetric_mesh, unsigned int start_index);
+    static void resolveInvalidOption(SaveOption &option);
 };
 
 }  //end of namespace Physika

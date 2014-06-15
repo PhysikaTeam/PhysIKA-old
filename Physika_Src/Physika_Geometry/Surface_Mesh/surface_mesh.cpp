@@ -373,7 +373,7 @@ void SurfaceMesh<Scalar>::setSingleMaterial(const Material<Scalar> &material)
 }
 
 template <typename Scalar>
-const Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) const //Added by Tianxiang Zhang.
+const Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) const 
 {
     bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
     if(!index_valid)
@@ -399,7 +399,7 @@ const Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) const //Add
 }
 
 template <typename Scalar>
-Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) //Added by Tianxiang Zhang.
+Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) 
 {
     bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
     if(!index_valid)
@@ -425,7 +425,7 @@ Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) //Added by Tianxi
 }
 
 template <typename Scalar>
-const Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) const //Added by Tianxiang Zhang.
+const Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) const 
 {
     bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
     if(!index_valid)
@@ -451,7 +451,7 @@ const Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) const //
 }
 
 template <typename Scalar>
-Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) //Added by Tianxiang Zhang.
+Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) 
 {
     bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
     if(!index_valid)
@@ -688,21 +688,3 @@ template class SurfaceMesh<float>;
 template class SurfaceMesh<double>;
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

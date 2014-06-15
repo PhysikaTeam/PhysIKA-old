@@ -68,19 +68,3 @@ inline Scalar min(Scalar lhs, Scalar rhs)
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_UTILITIES_MATH_UTILITIES_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

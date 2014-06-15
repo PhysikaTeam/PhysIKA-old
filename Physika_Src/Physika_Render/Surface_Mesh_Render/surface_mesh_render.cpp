@@ -260,9 +260,9 @@ void SurfaceMeshRender<Scalar>::renderSolid()
             Scalar    shininess = this->mesh_->material(material_ID).shininess();
             Scalar        alpha = this->mesh_->material(material_ID).alpha();
 
-            float ambient[4]  = { Ka[0], Ka[1], Ka[2], alpha };
-            float diffuse[4]  = { Kd[0], Kd[1], Kd[2], alpha };
-            float specular[4] = { Ks[0], Ks[1], Ks[2], alpha };
+            GLfloat ambient[4]  = { static_cast<GLfloat>(Ka[0]), static_cast<GLfloat>(Ka[1]), static_cast<GLfloat>(Ka[2]), static_cast<GLfloat>(alpha) };
+            GLfloat diffuse[4]  = { static_cast<GLfloat>(Kd[0]), static_cast<GLfloat>(Kd[1]), static_cast<GLfloat>(Kd[2]), static_cast<GLfloat>(alpha) };
+            GLfloat specular[4] = { static_cast<GLfloat>(Ks[0]), static_cast<GLfloat>(Ks[1]), static_cast<GLfloat>(Ks[2]), static_cast<GLfloat>(alpha) };
 
             // set material propety for group
             glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
@@ -412,18 +412,3 @@ template class SurfaceMeshRender<float>;
 template class SurfaceMeshRender<double>;
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

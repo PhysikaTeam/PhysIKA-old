@@ -24,21 +24,22 @@ using Physika::NeoHookean;
 using Physika::StVK;
 using Physika::IsotropicLinearElasticity;
 using Physika::IsotropicHyperelasticMaterial;
-using Physika::IsotropicHyperelasticMaterial::ModulusType;
+using Physika::IsotropicHyperelasticMaterialInternal::ModulusType;
+using Physika::IsotropicHyperelasticMaterialInternal::LAME_COEFFICIENTS;
 
 int main()
 {
     float lambda = 1.0, mu =1.0;
-    ModulusType par_type = Physika::LAME_COEFFICIENTS;
+    ModulusType par_type = LAME_COEFFICIENTS;
     NeoHookean<float,2> neo_hookean_material(lambda,mu,par_type);
     StVK<float,2> stvk_material(lambda,mu,par_type);
     IsotropicLinearElasticity<float,2> linear_material(lambda,mu,par_type);
     IsotropicHyperelasticMaterial<float,2> *isotropic_hyperelastic_material;
-    Physika::Matrix2x2(float) F(2.0f,1.0f,0.0f,1.0f);
+    Physika::SquareMatrix<float,2> F(2.0f,1.0f,0.0f,1.0f);
     cout<<"Deformation gradient: "<<endl;
     cout<<F<<endl;
     isotropic_hyperelastic_material = &neo_hookean_material;
-    isotropic_hyperelastic_material->info();
+    isotropic_hyperelastic_material->printInfo();
     cout<<"Internal energy: "<<isotropic_hyperelastic_material->energy(F)<<endl;
     cout<<"P: "<<isotropic_hyperelastic_material->firstPiolaKirchhoffStress(F)<<endl;
     cout<<"S: "<<isotropic_hyperelastic_material->secondPiolaKirchhoffStress(F)<<endl;
@@ -49,13 +50,13 @@ int main()
     cout<<"E: "<<isotropic_hyperelastic_material->youngsModulus()<<", Nu: "<<isotropic_hyperelastic_material->poissonRatio()<<endl;
     cout<<"Lambda: "<<isotropic_hyperelastic_material->lambda()<<", Mu: "<<isotropic_hyperelastic_material->mu()<<endl;
     isotropic_hyperelastic_material = &stvk_material;
-    isotropic_hyperelastic_material->info();
+    isotropic_hyperelastic_material->printInfo();
     cout<<"Internal energy: "<<isotropic_hyperelastic_material->energy(F)<<endl;
     cout<<"P: "<<isotropic_hyperelastic_material->firstPiolaKirchhoffStress(F)<<endl;
     cout<<"S: "<<isotropic_hyperelastic_material->secondPiolaKirchhoffStress(F)<<endl;
     cout<<"sigma: "<<isotropic_hyperelastic_material->cauchyStress(F)<<endl;
     isotropic_hyperelastic_material = &linear_material;
-    isotropic_hyperelastic_material->info();
+    isotropic_hyperelastic_material->printInfo();
     cout<<"Internal energy: "<<isotropic_hyperelastic_material->energy(F)<<endl;
     cout<<"P: "<<isotropic_hyperelastic_material->firstPiolaKirchhoffStress(F)<<endl;
     cout<<"S: "<<isotropic_hyperelastic_material->secondPiolaKirchhoffStress(F)<<endl;

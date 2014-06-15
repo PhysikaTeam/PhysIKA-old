@@ -25,13 +25,13 @@ template <typename Scalar>
 class TetMesh: public VolumetricMesh<Scalar,3>
 {
 public:
-    TetMesh();
-    TetMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements);
+    TetMesh();  //construct an empty TetMesh
+    TetMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements); //construct TetMesh with given data
     ~TetMesh();
     void printInfo() const;
-    Scalar eleVolume(int ele_idx) const;
-    bool containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const;
-    void interpolationWeights(int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const;
+    Scalar eleVolume(unsigned int ele_idx) const;
+    bool containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const;
+    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const;
 protected:
     //helper method for interpolationWeights()
     Scalar getTetDeterminant(const Vector<Scalar,3> &a, const Vector<Scalar,3> &b, const Vector<Scalar,3> &c, const Vector<Scalar,3> &d) const;
@@ -40,5 +40,13 @@ protected:
 }//end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TET_MESH_H_
+
+
+
+
+
+
+
+
 
 

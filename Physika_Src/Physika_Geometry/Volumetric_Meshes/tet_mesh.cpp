@@ -23,14 +23,14 @@
 namespace Physika{
 
 template <typename Scalar>
-TetMesh<Scalar>::TetMesh()
+TetMesh<Scalar>::TetMesh():VolumetricMesh<Scalar,3>()
 {
-    int vert_per_ele = 4;
-    VolumetricMesh<Scalar,3>::init(0,NULL,0,NULL,&vert_per_ele,true);
+    (this->vert_per_ele_).clear();
+    (this->vert_per_ele_).push_back(4);
 }
 
 template <typename Scalar>
-TetMesh<Scalar>::TetMesh(int vert_num, const Scalar *vertices, int ele_num, const int *elements)
+TetMesh<Scalar>::TetMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements)
     :VolumetricMesh<Scalar,3>(vert_num,vertices,ele_num,elements,4)
 {
 }
@@ -47,7 +47,7 @@ void TetMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
-Scalar TetMesh<Scalar>::eleVolume(int ele_idx) const
+Scalar TetMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -65,7 +65,7 @@ Scalar TetMesh<Scalar>::eleVolume(int ele_idx) const
 }
 
 template <typename Scalar>
-bool TetMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos) const
+bool TetMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -79,7 +79,7 @@ bool TetMesh<Scalar>::containsVertex(int ele_idx, const Vector<Scalar,3> &pos) c
 }
 
 template <typename Scalar>
-void TetMesh<Scalar>::interpolationWeights(int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const
+void TetMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const
 {
 /*
        |x1 y1 z1 1|
