@@ -100,16 +100,16 @@ TETS\\
 1. The ordering of vertices within the element matters. Incorrect
 order give wrong results.
 \\\\
-\noindent{}\textbf{Sets:} Sets store a set of integer indices. They
-are used to store indices of elements that share the same property,
-for example material property. Sets are specified using the *SET
-keyword, followed by the name of the set. The next lines are
+\noindent{}\textbf{Regions:} Regions are used to store indices of elements that share the same property,
+for example material property. Regions of .smesh files are equivalent to
+Sets of .veg files. They are specified using the *REGION
+keyword, followed by the name of the region. The next lines are
 comma-separated list of set elements. Elements should be stored and
 identified by the indices given in the *ELEMENTS section, i.e., either
 0-indexed or 1-indexed, depending on whether *ELEMENTS are given
 0-indexed or 1-indexed. Example:
 \\\\
-\noindent{}*SET set1\\
+\noindent{}*REGION region1\\
 \noindent{}11,17,21,37,113,310,555,\\
 \noindent{}556,557,570,601,991,1013,1210,1225
 \\\\
