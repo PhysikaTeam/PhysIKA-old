@@ -35,10 +35,21 @@ public:
 	const SurfaceMesh<Scalar>* getMesh() const;
 	SurfaceMesh<Scalar>* getMesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);
-	Vector<Scalar, 3> getPointPosition(unsigned int point_index);
+	Vector<Scalar, 3> getPointPosition(unsigned int point_index) const;
+	const Transform<Scalar>& transform() const;
+	Transform<Scalar>& transform();
+	void setTransform(const Transform<Scalar>& transform);
+	bool collideWithMesh(const MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs) const;
+
+	bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c) const;
+	bool overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d) const;
 	
 protected:
+	//mesh_ is used to define the shape of object, while transform_ is used to define the configuration
+	//For deformable object which only updates mesh_, transform_ can be set to identity
 	SurfaceMesh<Scalar>* mesh_;
+	Transform<Scalar> transform_;
+
 };
 
 }  //end of namespace Physika

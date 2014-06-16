@@ -12,7 +12,9 @@
  *
  */
 
-#include <iostream>
+#include<iostream>
+#include<string>
+#include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Geometry/Bounding_Volume/bvh_base.h"
@@ -53,28 +55,24 @@ int main()
 	if(KDOP.isInside(point))
 		cout<<"in"<<endl;
 
-	MeshBasedCollidableObject<double, 3>* pObject;
-	pObject = new MeshBasedCollidableObject<double, 3>();
 
+    SurfaceMesh<double> mesh_ball;
+    if(!ObjMeshIO<double>::load(string("E:/Physika/ball_high.obj"), &mesh_ball))
+		exit(1);
+
+	MeshBasedCollidableObject<double, 3>* pObject1 = new MeshBasedCollidableObject<double, 3>();
+	pObject1->setMesh(&mesh_ball);
+	pObject1->transform().setPosition(Vector<double, 3>(0, 63.5, 0));
+	ObjectBVH<double, 3> * pBVH1 = new ObjectBVH<double, 3>();
+	pBVH1->setCollidableObject(pObject1);
 	
-	pObject->setMesh(new SurfaceMesh<double>());
+	MeshBasedCollidableObject<double, 3>* pObject2 = new MeshBasedCollidableObject<double, 3>();
+	pObject2->setMesh(&mesh_ball);
+	ObjectBVH<double, 3> * pBVH2 = new ObjectBVH<double, 3>();
+	pBVH2->setCollidableObject(pObject2);
 
-	BVHBase<double, 3> * pBVH1 = new ObjectBVH<double, 3>();
-	BVHBase<double, 3> * pBVH2 = new ObjectBVH<double, 3>();
-	BVHNodeBase<double, 3>* pNode1 = new ObjectBVHNode<double, 3>();
-	BVHNodeBase<double, 3>* pNode2 = new ObjectBVHNode<double, 3>();
-	pNode1->setBoundingVolume(&KDOP);
-	pNode2->setBoundingVolume(&KDOP);
-	pNode1->setLeaf(true);
-	pNode2->setLeaf(true);
-	pBVH1->setRootNode(pNode1);
-	pBVH2->setRootNode(pNode2);
 	if(pBVH1->collide(pBVH2))
 		cout<<"collide"<<endl;
-
-
-
-
 
 
 	system("pause");
