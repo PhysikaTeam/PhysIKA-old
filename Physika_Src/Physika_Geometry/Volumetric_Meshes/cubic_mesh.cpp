@@ -45,6 +45,18 @@ void CubicMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
+VolumetricMeshInternal::ElementType CubicMesh<Scalar>::elementType() const
+{
+    return VolumetricMeshInternal::CUBIC;
+}
+
+template <typename Scalar>
+int CubicMesh<Scalar>::eleVertNum() const
+{
+    return 8;
+}
+
+template <typename Scalar>
 Scalar CubicMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))

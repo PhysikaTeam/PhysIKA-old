@@ -47,6 +47,18 @@ void TriMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
+VolumetricMeshInternal::ElementType TriMesh<Scalar>::elementType() const
+{
+    return VolumetricMeshInternal::TRI;
+}
+
+template <typename Scalar>
+int TriMesh<Scalar>::eleVertNum() const
+{
+    return 3;
+}
+
+template <typename Scalar>
 Scalar TriMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))

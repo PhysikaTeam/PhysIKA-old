@@ -47,6 +47,18 @@ void TetMesh<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
+VolumetricMeshInternal::ElementType TetMesh<Scalar>::elementType() const
+{
+    return VolumetricMeshInternal::TET;
+}
+
+template <typename Scalar>
+int TetMesh<Scalar>::eleVertNum() const
+{
+    return 4;
+}
+
+template <typename Scalar>
 Scalar TetMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))

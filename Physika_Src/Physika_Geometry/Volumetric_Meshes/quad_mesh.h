@@ -29,6 +29,8 @@ public:
     QuadMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements);  //construct QuadMesh with given data
     ~QuadMesh();
     void printInfo() const;
+    VolumetricMeshInternal::ElementType elementType() const;
+    int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
     bool containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const;
     void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;

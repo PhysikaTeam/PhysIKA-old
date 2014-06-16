@@ -29,6 +29,8 @@ public:
     TetMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements); //construct TetMesh with given data
     ~TetMesh();
     void printInfo() const;
+    VolumetricMeshInternal::ElementType elementType() const;
+    int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
     bool containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const;
     void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const;
@@ -40,13 +42,3 @@ protected:
 }//end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TET_MESH_H_
-
-
-
-
-
-
-
-
-
-

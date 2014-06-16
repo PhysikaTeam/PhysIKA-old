@@ -18,6 +18,8 @@ using std::string;
 
 namespace Physika{
 
+using VolumetricMeshInternal::Region;
+
 template <typename Scalar, int Dim>
 VolumetricMesh<Scalar,Dim>::VolumetricMesh()
     :ele_num_(0),uniform_ele_type_(true)
@@ -56,25 +58,8 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleVertNum(unsigned int ele_idx) const
 }
 
 template <typename Scalar, int Dim>
-unsigned int VolumetricMesh<Scalar,Dim>::regionNum() const
-{
-    return regions_.empty()?1:regions_.size();
-}
-
-template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_idx) const
-{
-    if((vert_idx<0) || (vert_idx>=this->vertNum()))
-    {
-        std::cerr<<"vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    return vertices_[vert_idx];
-}
-
-template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const
-{
+unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsigned int vert_idx) const
+{   
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
         std::cerr<<"element index out of range!\n";
@@ -100,7 +85,30 @@ const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int el
         for(int i = 0; i < ele_idx; ++i)
             ele_idx_start += vert_per_ele_[i];
     }
-    int global_vert_idx = elements_[ ele_idx_start +vert_idx];
+    return elements_[ele_idx_start +vert_idx];
+}
+
+template <typename Scalar, int Dim>
+unsigned int VolumetricMesh<Scalar,Dim>::regionNum() const
+{
+    return regions_.empty()?1:regions_.size();
+}
+
+template <typename Scalar, int Dim>
+const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_idx) const
+{
+    if((vert_idx<0) || (vert_idx>=this->vertNum()))
+    {
+        std::cerr<<"vertex index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return vertices_[vert_idx];
+}
+
+template <typename Scalar, int Dim>
+const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const
+{
+    int global_vert_idx = eleVertIndex(ele_idx,vert_idx);
     return vertPos(global_vert_idx);
 }
 
