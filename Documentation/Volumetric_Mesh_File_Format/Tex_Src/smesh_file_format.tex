@@ -31,7 +31,10 @@ We introduce the file format for simulation mesh in Physika,
 ``.smesh'' format used by TetGen \cite{si2006}. The .smesh format is
 heavily built on the .veg format developed by Jernej Barbi\v{c} in VegaFEM
 \cite{vega}. Unlike VegaFEM, we do not include material properties in simulation
-mesh files and .smesh files also support simulation mesh in 2D.
+mesh files and .smesh files also support simulation mesh in
+2D. Another feature of .smesh files is that non-uniform element types
+are supported, i.e., the mesh can be composed of elements with
+different number of vertices.
 
 \section{.smesh File Format}
 
@@ -76,18 +79,20 @@ every vertex. The unit for vertex positions is meters.
 \\\\
 \noindent{}\textbf{Elements:} Elements are specified using the
 *ELEMENTS keyword. The second line gives the element type, namely
-``TRI'', ``QUAD'', ``TET'' or ``CUBIC''. ``TET'' and ``CUBIC'' stand
+``TRI'', ``QUAD'', ``TET'', ``CUBIC'', or ``ARBITRARY''. ``TET'' and ``CUBIC'' stand
 for tetrahedral and cubic mesh for 3D simulation, ``TRI'' and ``QUAD''
-are their counterparts in 2D. The third line gives the
+are their counterparts in 2D, ``ARBITRARY'' means non-uniform elements. The third line gives the
 number of mesh elements, followed by the number of vertices in each
-element (3 for triangles, 4 for quads and tets, 8 for cubes), followed
+element (3 for triangles, 4 for quads and tets, 8 for cubes, -1 for arbitrary), followed
 by some optional integers that are ignored. Subsequent lines give one
 element per line, in the format:
 \\\\
 \noindent{}$<$element index$>$ $<$vertex 1$>$ $\cdots$ $<$vertex n$>$
 \\\\
 \noindent{}where the element index starts either at 0 or 1 and
-increments by 1 for every element. Example:
+increments by 1 for every element. 
+\\\\
+\noindent{}Tetrahedron example:
 \\\\
 \noindent{}*ELEMENTS\\
 TETS\\
@@ -99,6 +104,20 @@ TETS\\
 2, 3, 4, 1 (in that order), and the second tet has vertices 5, 3, 4,
 1. The ordering of vertices within the element matters. Incorrect
 order give wrong results.
+\\\\
+\noindent{}2D non-uniform elements example (assume the dimension has
+been specified by vertices):
+\\\\
+\noindent{}*ELEMENTS\\
+ARBITRARY\\
+3 -1 0\\
+1 1 2 3\\
+2 1 3 4 5\\
+3 1 5 6
+\\\\
+\noindent{} specifies a mesh with three elements. The first element is
+a triangle with vertices 1, 2, 3 (in that order), the second
+element is a quad, and the third element is again a triangle.
 \\\\
 \noindent{}\textbf{Regions:} Regions are used to store indices of elements that share the same property,
 for example material property. Regions of .smesh files are equivalent to
