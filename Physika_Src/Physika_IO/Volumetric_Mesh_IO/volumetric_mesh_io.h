@@ -54,18 +54,3 @@ protected:
 }  //end of namespace Physika
 
 #endif //PHYSIKA_IO_VOLUMETRIC_MESH_IO_VOLUMETRIC_MESH_IO_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

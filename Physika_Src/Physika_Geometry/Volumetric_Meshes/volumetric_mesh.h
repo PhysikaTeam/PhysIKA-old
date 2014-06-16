@@ -55,6 +55,7 @@ enum ElementType{
 /*
  * The elements of volumetric mesh can optionally belong to diffferent regions.
  * We assume the regions have unique names.
+ * By default, all elements of the mesh belong to one region called 'AllElements'
  */
 
 template <typename Scalar, int Dim>
@@ -67,6 +68,7 @@ public:
     VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele_list);//for volumetric mesh with arbitrary element type
     virtual ~VolumetricMesh();
     
+    //query
     inline unsigned int vertNum() const{return vertices_.size();}
     inline unsigned int eleNum() const{return ele_num_;}
     inline bool isUniformElementType() const{return uniform_ele_type_;}
@@ -76,15 +78,26 @@ public:
     const Vector<Scalar,Dim>& vertPos(unsigned int vert_idx) const;
     const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const;
     std::string regionName(unsigned int region_idx) const;
-    void renameRegion(unsigned int region_idx, const std::string &name);
     unsigned int regionEleNum(unsigned int region_idx) const;
     unsigned int regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
     //given the region index or name, return the elements of this region
     void regionElements(unsigned int region_idx, std::vector<unsigned int> &elements) const;
     void regionElements(const std::string &region_name, std::vector<unsigned int> &elements) const; //print error and return empty elements if no region with the given name
+
+    //modification
+    //NOTE: The mesh data may become invalid when the user perform a series of operations
+    //      for example: calling one addRegion() to the mesh that only has the default 'AllElements' region will lead to a mesh some of whose elements donot belong to any region
+    //                   we should call addRegion() at least two times to cover all the elements.
+    //      another example: remove one region from the mesh which previously has two regions will lead to the same result
+    //HENCE: The user is obligated to perform a valid series of operations.  
+    void renameRegion(unsigned int region_idx, const std::string &name);
     void addRegion(const std::string &name, const std::vector<unsigned int> &elements);
     void removeRegion(unsigned int region_idx);
     void removeRegion(const std::string &region_name);  //print error if no region with the given name
+    void addVertex(const Vector<Scalar,Dim> &vertex);
+    void removeVertex(unsigned int vert_idx);
+    void addElement(const std::vector<unsigned int> &element);
+    void removeElement(unsigned int ele_idx);
 
     //virtual methods
     virtual void printInfo() const=0;
@@ -97,6 +110,8 @@ protected:
     //if all elements have same number of vertices, vert_per_ele is pointer to one integer representing the vertex number per element
     //otherwise it's pointer to a list of vertex number per element
     void init(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele, bool uniform_ele_type);
+    //return the start index of given element in elements_
+    unsigned int eleStartIdx(unsigned int ele_idx) const; 
 protected:
     std::vector<Vector<Scalar,Dim> > vertices_;
     unsigned int ele_num_;
@@ -106,7 +121,7 @@ protected:
     //if uniform_ele_type_ = false, vert_per_ele_ is a list of integers, corresponding to each element
     std::vector<unsigned int> vert_per_ele_;
     //regions_ is empty if all elements belong to one region
-    //otherwise regions_ contains list of regions  
+    //otherwise regions_ contains list of regions (at least 2)
     std::vector<VolumetricMeshInternal::Region*> regions_;
 };
 
