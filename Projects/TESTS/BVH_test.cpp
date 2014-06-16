@@ -25,6 +25,9 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Utilities/Timer/timer.h"
 
 using namespace std;
 using namespace Physika;
@@ -55,14 +58,17 @@ int main()
 	if(KDOP.isInside(point))
 		cout<<"in"<<endl;
 
-
+	Timer timer;
+	
     SurfaceMesh<double> mesh_ball;
     if(!ObjMeshIO<double>::load(string("E:/Physika/ball_high.obj"), &mesh_ball))
 		exit(1);
-
+	
 	MeshBasedCollidableObject<double, 3>* pObject1 = new MeshBasedCollidableObject<double, 3>();
 	pObject1->setMesh(&mesh_ball);
-	pObject1->transform().setPosition(Vector<double, 3>(0, 63.5, 0));
+	pObject1->transform().setPosition(Vector<double, 3>(10.15, 10.15, 10.15));
+	//pObject1->transform().setPosition(Vector<double, 3>(1.05, 1.05, 1.05));
+	//pObject1->transform().setPosition(Vector<double, 3>(0, 0.5, 0));
 	ObjectBVH<double, 3> * pBVH1 = new ObjectBVH<double, 3>();
 	pBVH1->setCollidableObject(pObject1);
 	
@@ -71,9 +77,16 @@ int main()
 	ObjectBVH<double, 3> * pBVH2 = new ObjectBVH<double, 3>();
 	pBVH2->setCollidableObject(pObject2);
 
-	if(pBVH1->collide(pBVH2))
-		cout<<"collide"<<endl;
+	CollisionDetectionResult<double, 3> result;
+	result.resetCollisionResults();
 
+	timer.startTimer();
+	if(pBVH1->collide(pBVH2, result))
+		cout<<"collide"<<endl;
+	timer.stopTimer();
+	cout<<timer.getElapsedTime()<<endl;
+	cout<<result.numberPCS()<<endl;
+	cout<<result.numberCollision()<<endl;
 
 	system("pause");
 

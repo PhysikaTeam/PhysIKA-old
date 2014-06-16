@@ -13,6 +13,7 @@
  */
 
 #include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 #include <stdio.h>
 
 namespace Physika{
@@ -189,22 +190,22 @@ void BVHNodeBase<Scalar, Dim>::cleanInternalNodes()
 }
 
 template <typename Scalar,int Dim>
-bool BVHNodeBase<Scalar, Dim>::selfCollide()
+bool BVHNodeBase<Scalar, Dim>::selfCollide(CollisionDetectionResult<Scalar, Dim>& collision_result)
 {
 	bool isCollide = false;
 	if(is_leaf_)
 		return false;
-	if(left_child_ != NULL && right_child_ != NULL && left_child_->collide(right_child_))
+	if(left_child_ != NULL && right_child_ != NULL && left_child_->collide(right_child_, collision_result))
 		isCollide = true;
-	if(left_child_ != NULL && left_child_->selfCollide())
+	if(left_child_ != NULL && left_child_->selfCollide(collision_result))
 		isCollide = true;
-	if(right_child_ != NULL && right_child_->selfCollide())
+	if(right_child_ != NULL && right_child_->selfCollide(collision_result))
 		isCollide = true;
 	return isCollide;
 }
 
 template <typename Scalar,int Dim>
-bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const target)
+bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
 {
 	if(target == NULL)
 		return false;
@@ -213,41 +214,51 @@ bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const tar
 		return false;
 	if(is_leaf_)
 	{
-		if(leafCollide(target))
+		if(leafCollide(target, collision_result))
 			isCollide = true;
 	}
 	else
 	{
-		if(left_child_ != NULL && left_child_->collide(target))
+		if(left_child_ != NULL && left_child_->collide(target, collision_result))
 			isCollide = true;
-		if(right_child_ != NULL && right_child_->collide(target))
+		if(right_child_ != NULL && right_child_->collide(target, collision_result))
 			isCollide = true;
 	}
 	return isCollide;
 }
 
 template <typename Scalar,int Dim>
-bool BVHNodeBase<Scalar, Dim>::leafCollide(const BVHNodeBase<Scalar, Dim>* const target)
+bool BVHNodeBase<Scalar, Dim>::leafCollide(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
 {
 	if(target == NULL)
 		return false;
 	bool isCollide = false;
 	if(!target->isLeaf())
 	{
-		if(target->getLeftChild() != NULL && leafCollide(target->getLeftChild()))
-			isCollide = true;
-		if(target->getRightChild() != NULL && leafCollide(target->getRightChild()))
-			isCollide = true;
+		if(target->getLeftChild() != NULL && bounding_volume_->isOverlap(target->getLeftChild()->getBoundingVolume()))
+		{
+			if(leafCollide(target->getLeftChild(), collision_result))
+			{
+				isCollide = true;
+			}
+		}
+		if(target->getRightChild() != NULL && bounding_volume_->isOverlap(target->getRightChild()->getBoundingVolume()))
+		{
+			if(leafCollide(target->getRightChild(), collision_result))
+			{
+				isCollide = true;
+			}
+		}
 	}
 	else
 	{
-		return this->elemTest(target);
+		return this->elemTest(target, collision_result);
 	}
 	return isCollide;
 }
 
 template <typename Scalar,int Dim>
-bool BVHNodeBase<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target)
+bool BVHNodeBase<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
 {
 	return false;
 }

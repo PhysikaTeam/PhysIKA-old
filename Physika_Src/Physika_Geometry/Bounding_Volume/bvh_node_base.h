@@ -21,6 +21,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar,int Dim> class BoundingVolume;
+template <typename Scalar,int Dim> class CollisionDetectionResult;
 
 template <typename Scalar,int Dim>
 class BVHNodeBase
@@ -63,10 +64,10 @@ public:
 	void cleanInternalNodes();
 
 	//collision detection
-	bool selfCollide();
-	bool collide(const BVHNodeBase<Scalar, Dim>* const target);
-	bool leafCollide(const BVHNodeBase<Scalar, Dim>* const target);
-	virtual bool elemTest(const BVHNodeBase<Scalar, Dim>* const target);
+	bool selfCollide(CollisionDetectionResult<Scalar, Dim>& collision_result);
+	bool collide(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result);
+	bool leafCollide(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result);
+	virtual bool elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result);
 	
 protected:
 	bool is_leaf_;

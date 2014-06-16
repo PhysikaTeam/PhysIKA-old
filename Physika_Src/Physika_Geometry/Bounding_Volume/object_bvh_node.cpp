@@ -18,6 +18,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 
 namespace Physika{
 
@@ -89,7 +90,7 @@ void ObjectBVHNode<Scalar, Dim>::resize()
 }
 
 template <typename Scalar,int Dim>
-bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target)
+bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
 {
 	if(target == NULL || !target->isObjectNode())
 		return false;
@@ -106,7 +107,7 @@ bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const 
 			return false;
 		if(!has_face_ || !object_target->has_face_)
 			return false;
-		return mesh_object_this->collideWithMesh(mesh_object_target, face_index_, object_target->face_index_);
+		return mesh_object_this->collideWithMesh(mesh_object_target, face_index_, object_target->face_index_, collision_result);
 	}
 	return false;
 }

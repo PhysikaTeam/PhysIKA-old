@@ -42,73 +42,73 @@ CollisionPairMesh2Mesh<Scalar, Dim>::~CollisionPairMesh2Mesh()
 }
 
 template <typename Scalar,int Dim>
-const CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::ObjectLhs() const
+const CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::objectLhs() const
 {
 	return object_lhs_;
 }
 
 template <typename Scalar,int Dim>
-CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::ObjectLhs()
+CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::objectLhs()
 {
 	return object_lhs_;
 }
 
 template <typename Scalar,int Dim>
-const CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::ObjectRhs() const
+const CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::objectRhs() const
 {
 	return object_rhs_;
 }
 
 template <typename Scalar,int Dim>
-CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::ObjectRhs()
+CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::objectRhs()
 {
 	return object_rhs_;
 }
 
 template <typename Scalar,int Dim>
-const MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::MeshObjectLhs() const
+const MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::meshObjectLhs() const
 {
 	return object_lhs_;
 }
 
 template <typename Scalar,int Dim>
-MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::MeshObjectLhs()
+MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::meshObjectLhs()
 {
 	return object_lhs_;
 }
 
 template <typename Scalar,int Dim>
-const MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::MeshObjectRhs() const
+const MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::meshObjectRhs() const
 {
 	return object_rhs_;
 }
 
 template <typename Scalar,int Dim>
-MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::MeshObjectRhs()
+MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::meshObjectRhs()
 {
 	return object_rhs_;
 }
 
 template <typename Scalar,int Dim>
-const Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::FaceLhs() const
+const Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::faceLhs() const
 {
 	return face_lhs_;
 }
 
 template <typename Scalar,int Dim>
-Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::FaceLhs()
+Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::faceLhs()
 {
 	return face_lhs_;
 }
 
 template <typename Scalar,int Dim>
-const Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::FaceRhs() const
+const Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::faceRhs() const
 {
 	return face_rhs_;
 }
 
 template <typename Scalar,int Dim>
-Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::FaceRhs()
+Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::faceRhs()
 {
 	return face_rhs_;
 }

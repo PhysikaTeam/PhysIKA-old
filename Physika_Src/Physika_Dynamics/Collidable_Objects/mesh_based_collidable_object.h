@@ -21,6 +21,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar> class SurfaceMesh;
+template <typename Scalar,int Dim> class CollisionDetectionResult;
 
 template <typename Scalar,int Dim>
 class MeshBasedCollidableObject: public CollidableObject<Scalar,Dim>
@@ -39,7 +40,7 @@ public:
 	const Transform<Scalar>& transform() const;
 	Transform<Scalar>& transform();
 	void setTransform(const Transform<Scalar>& transform);
-	bool collideWithMesh(const MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs) const;
+	bool collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs, CollisionDetectionResult<Scalar, Dim>& collision_result);
 
 	bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c) const;
 	bool overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d) const;

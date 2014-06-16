@@ -16,12 +16,12 @@
 #define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_DETECTION_RESULT_H_
 
 #include <vector>
+#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 
 namespace Physika{
 
 template <typename Scalar,int Dim> class CollisionPairBase;
 template <typename Scalar,int Dim> class MeshBasedCollidableObject;
-template <typename Scalar> class Face;
 
 template <typename Scalar,int Dim>
 class CollisionDetectionResult
@@ -49,6 +49,9 @@ public:
 	void resetCollisionResults();
 
 protected:
+	//Potential Collide Set (PCS) contains pairs whose bounding volumes overlap.
+	//Generally PCS doesn't need to be recorded in detail, therefor a simple variable is defined here to count the number of it.
+	//PCS is only used in the statistics of a collision detection algorithm. For normal use of collision detection, PCS can be ignored.
 	unsigned int number_pcs_;
 	std::vector<CollisionPairBase<Scalar, Dim>*> collision_pairs_;
 };
