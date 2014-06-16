@@ -32,6 +32,12 @@ using std::vector;
 
 namespace Physika{
 
+using VolumetricMeshIOInternal::SaveOption;
+using VolumetricMeshIOInternal::SINGLE_FILE;
+using VolumetricMeshIOInternal::SEPARATE_FILES;
+using VolumetricMeshIOInternal::ZERO_INDEX;
+using VolumetricMeshIOInternal::ONE_INDEX;
+
 template <typename Scalar, int Dim>
 VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &filename)
 {
@@ -57,7 +63,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         NOT_SET,
         VERTICES,
         ELEMENTS,
-        SETS
+        REGIONS
     };
     ParseSession cur_session = NOT_SET; //current state of parse
     int index_start = 0; // 0 or 1
@@ -85,9 +91,9 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
             {
                 cur_session = ELEMENTS;
             }
-            else if(line_str.substr(0,4) == string("*SET")) //set
+            else if(line_str.substr(0,4) == string("*REGION")) //set
             {
-                cur_session = SETS;
+                cur_session = REGIONS;
             }
             else if(line_str.substr(0,8) == string("*INCLUDE")) //include
             {
@@ -311,7 +317,7 @@ bool VolumetricMeshIO<Scalar,Dim>::saveToSeparateFiles(const string &filename, c
     }
     node_fileout.close();
     ////////////////////////////////////////.ele file///////////////////////////////////////////
-    fstream ele_fileout(node_filename.c_str(),std::ios::out|std::ios::trunc);
+    fstream ele_fileout(ele_filename.c_str(),std::ios::out|std::ios::trunc);
     if(!ele_fileout)
     {
         std::cerr<<"Failed to create file "<<ele_filename<<"!\n";
@@ -346,12 +352,12 @@ void VolumetricMeshIO<Scalar,Dim>::resolveInvalidOption(SaveOption &option)
         std::cerr<<"Conflict options of ZERO_INDEX and ONE_INDEX, use ONE_INDEX.\n";
         option &= ~ZERO_INDEX;
     }
-    if((option & SINGLE_FILE) || (option & SEPARATE_FILES) == false)
+    if(((option & SINGLE_FILE) || (option & SEPARATE_FILES)) == false)
     {
         std::cerr<<"Neither SINGLE_FILE nor SEPARATE_FILES is set, use SINGLE_FILE.\n";
         option |= SINGLE_FILE;
     }
-    if((option & ZERO_INDEX) || (option & ONE_INDEX) == false)
+    if(((option & ZERO_INDEX) || (option & ONE_INDEX)) == false)
     {
         std::cerr<<"Neither ZERO_INDEX nor ONE_INDEX is set, use ONE_INDEX.\n";
         option |= ONE_INDEX;
