@@ -65,7 +65,7 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleVertNum(unsigned int ele_idx) const
 }
 
 template <typename Scalar, int Dim>
-unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsigned int vert_idx) const
+unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const
 {   
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
@@ -73,19 +73,19 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsi
         std::exit(EXIT_FAILURE);
     }
     unsigned int max_vert_num = uniform_ele_type_ ? vert_per_ele_[0] : vert_per_ele_[ele_idx];
-    if((vert_idx<0) || (vert_idx >= max_vert_num))
+    if((local_vert_idx<0) || (local_vert_idx >= max_vert_num))
     {
-        std::cerr<<"vert_idx out of range\n";
+        std::cerr<<"vert_idx out of range!\n";
         std::exit(EXIT_FAILURE);
     }
     unsigned int ele_idx_start = eleStartIdx(ele_idx);
-    return elements_[ele_idx_start +vert_idx];
+    return elements_[ele_idx_start + local_vert_idx];
 }
 
 template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::regionNum() const
 {
-    return regions_.empty()?1:regions_.size();
+    return regions_.size();
 }
 
 template <typename Scalar, int Dim>
@@ -111,16 +111,11 @@ string VolumetricMesh<Scalar,Dim>::regionName(unsigned int region_idx) const
 {
     if(region_idx<0||region_idx>=this->regionNum())
     {
-        std::cerr<<"region_idx out of range\n";
+        std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if(this->regionNum()==1) //only one region
-        return string("AllElements");
-    else  //multiple regions
-    {
-        PHYSIKA_ASSERT(regions_[region_idx]);
-        return regions_[region_idx]->name();
-    }
+    PHYSIKA_ASSERT(regions_[region_idx]);
+    return regions_[region_idx]->name();
 }
 
 template <typename Scalar, int Dim>
@@ -128,34 +123,24 @@ unsigned int VolumetricMesh<Scalar,Dim>::regionEleNum(unsigned int region_idx) c
 {
     if(region_idx<0||region_idx>=this->regionNum())
     {
-        std::cerr<<"region_idx out of range\n";
+        std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if(this->regionNum()==1) //only one region
-        return this->eleNum();
-    else
-    {
-        PHYSIKA_ASSERT(regions_[region_idx]);
-        return regions_[region_idx]->elementNum();
-    }
+    PHYSIKA_ASSERT(regions_[region_idx]);
+    return regions_[region_idx]->elementNum();
 }
 
 template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::regionEleNum(const string &region_name) const
 {
-    if(this->regionNum()==1&&region_name==string("AllElements"))
-        return this->eleNum();
-    else
+    for(unsigned int i = 0; i < regions_.size(); ++i)
     {
-        for(unsigned int i = 0; i < regions_.size(); ++i)
-        {
-            PHYSIKA_ASSERT(regions_[i]);
-            if(regions_[i]->name()==region_name)
-                return regionEleNum(i);
-        }
-        std::cerr<<"There's no region with the name: "<<region_name<<".\n";
-        return 0;
+        PHYSIKA_ASSERT(regions_[i]);
+        if(regions_[i]->name()==region_name)
+            return regionEleNum(i);
     }
+    std::cerr<<"There's no region with the name: "<<region_name<<".\n";
+    return 0;
 }
 
 template <typename Scalar, int Dim>
@@ -163,40 +148,26 @@ void VolumetricMesh<Scalar,Dim>::regionElements(unsigned int region_idx, vector<
 {
     if(region_idx<0||region_idx>=this->regionNum())
     {
-        std::cerr<<"region_idx out of range\n";
+        std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if(this->regionNum()==1)  //only one region
-    {
-        elements.resize(this->eleNum());
-        for(int i = 0; i < elements.size(); ++i)
-            elements[i] = i;
-    }
-    else
-    {
-        PHYSIKA_ASSERT(regions_[region_idx]);
-        elements = regions_[region_idx]->elements();
-    }
+    PHYSIKA_ASSERT(regions_[region_idx]);
+    elements = regions_[region_idx]->elements();
 }
 
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::regionElements(const string &region_name, vector<unsigned int> &elements) const
 {
-    if(this->regionNum()==1 && region_name==string("AllElements"))
-        regionElements(0,elements);
-    else
+    for(unsigned int i = 0; i < regions_.size(); ++i)
     {
-        for(unsigned int i = 0; i < regions_.size(); ++i)
+        PHYSIKA_ASSERT(regions_[i]);
+        if(regions_[i]->name()==region_name)
         {
-            PHYSIKA_ASSERT(regions_[i]);
-            if(regions_[i]->name()==region_name)
-            {
-                regionElements(i,elements);
-                return;
-            }
+            regionElements(i,elements);
+            return;
         }
-        std::cerr<<"There's no region with the name: "<<region_name<<".\n";
     }
+    std::cerr<<"There's no region with the name: "<<region_name<<".\n";
 }
 
 template <typename Scalar, int Dim>
@@ -204,16 +175,11 @@ void VolumetricMesh<Scalar,Dim>::renameRegion(unsigned int region_idx, const str
 {
     if(region_idx<0||region_idx>=this->regionNum())
     {
-        std::cerr<<"region_idx out of range\n";
+        std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if(this->regionNum()==1) //only one region
-        std::cout<<"Cannot rename the defualt AllElements regions.\n";
-    else
-    {
-        PHYSIKA_ASSERT(regions_[region_idx]);
-        regions_[region_idx]->setName(name);
-    }
+    PHYSIKA_ASSERT(regions_[region_idx]);
+    regions_[region_idx]->setName(name);
 }
 
 template <typename Scalar, int Dim>
@@ -229,40 +195,28 @@ void VolumetricMesh<Scalar,Dim>::removeRegion(unsigned int region_idx)
 {
     if(region_idx<0||region_idx>=this->regionNum())
     {
-        std::cerr<<"region_idx out of range\n";
+        std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if(this->regionNum()==1) //only one region
-    {
-        std::cerr<<"Cannot remove the default AllElements region.\n";
-    }
-    else
-    {
-        PHYSIKA_ASSERT(regions_[region_idx]);
-        delete regions_[region_idx];
-        vector<Region*>::iterator iter = regions_.begin()+region_idx;
-        regions_.erase(iter);
-    }
+    PHYSIKA_ASSERT(regions_[region_idx]);
+    delete regions_[region_idx];
+    vector<Region*>::iterator iter = regions_.begin()+region_idx;
+    regions_.erase(iter);
 }
 
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeRegion(const string &region_name)
 {
-    if(this->regionNum()==1 && region_name==string("AllElements")) //only one region
-        std::cerr<<"Cannot remove the default AllElements region.\n";
-    else
+    for(unsigned int i = 0; i < regions_.size(); ++i)
     {
-        for(unsigned int i = 0; i < regions_.size(); ++i)
+        PHYSIKA_ASSERT(regions_[i]);
+        if(regions_[i]->name()==region_name)
         {
-            PHYSIKA_ASSERT(regions_[i]);
-            if(regions_[i]->name()==region_name)
-            {
-                removeRegion(i);
-                return;
-            }
+            removeRegion(i);
+            return;
         }
-        std::cerr<<"There's no region with the name: "<<region_name<<".\n";
     }
+    std::cerr<<"There's no region with the name: "<<region_name<<".\n";
 }
 
 template <typename Scalar, int Dim>
@@ -281,7 +235,28 @@ void VolumetricMesh<Scalar,Dim>::removeVertex(unsigned int vert_idx)
     }
     typename vector<Vector<Scalar,Dim> >::iterator iter = vertices_.begin() + vert_idx;
     vertices_.erase(iter);
-    //TO DO: make the new mesh data valid
+    //make the new mesh data valid: remove its reference in elements and adjust the vertex indices of other elements
+    vector<unsigned int> new_elements;
+    for(unsigned int i = 0; i < ele_num_; ++i)
+    {
+        unsigned int ele_start_idx = this->eleStartIdx(i);
+        unsigned int reference_count = 0;
+        for(int j = 0; j < this->eleVertNum(i); ++j)
+        {
+            unsigned idx = ele_start_idx + j;
+            if(elements_[idx]==vert_idx)  //the element contains this vertex, reference is removed from the elements
+                ++reference_count;
+            else if(elements_[idx]>vert_idx) //reference to vertex with greater indices decreases by 1
+                new_elements.push_back(elements_[idx]-1);
+            else //reference to vertex with smaller indices, do nothing
+                new_elements.push_back(elements_[idx]);
+        }
+        //for nonuniform element type mesh, decrease the vertex number of this element
+        //do nothing if it's uniform element type, only that the mesh is not valid anymore
+        if(uniform_ele_type_==false)
+            vert_per_ele_[i] -= reference_count;
+    }
+    elements_ = new_elements; //update the elements
 }
 
 template <typename Scalar, int Dim>
@@ -336,7 +311,13 @@ void VolumetricMesh<Scalar,Dim>::removeElement(unsigned int ele_idx)
     //first remove this element from all regions
     if(this->regionNum()>1)
     {
-        //TO DO
+        for(int i = 0; i < regions_.size(); ++i)
+        {
+            PHYSIKA_ASSERT(regions_[i]);
+            int ele_local_idx = regions_[i]->elementLocalIndex(ele_idx);
+            if(ele_local_idx>=0)
+                regions_[i]->removeElementAtIndex(ele_local_idx);
+        }
     }
     //then remove this element
     unsigned int ele_start_idx = eleStartIdx(ele_idx);
@@ -344,6 +325,40 @@ void VolumetricMesh<Scalar,Dim>::removeElement(unsigned int ele_idx)
     typename vector<unsigned int>::iterator iter_begin = elements_.begin() + ele_start_idx;
     typename vector<unsigned int>::iterator iter_end = iter_begin + ele_vert_num;
     elements_.erase(iter_begin,iter_end);
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar,Dim>::addElementInRegion(unsigned int region_idx, unsigned int new_ele_idx)
+{
+    if(region_idx<0||region_idx>=this->regionNum())
+    {
+        std::cerr<<"region_idx out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if((new_ele_idx<0) || (new_ele_idx>=this->ele_num_))
+    {
+        std::cerr<<"element index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    PHYSIKA_ASSERT(regions_[region_idx]);
+    regions_[region_idx]->addElement(new_ele_idx);
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar,Dim>::removeElementInRegion(unsigned int region_idx, unsigned int ele_idx_in_region)
+{
+    if(region_idx<0||region_idx>=this->regionNum())
+    {
+        std::cerr<<"region_idx out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if((ele_idx_in_region<0) || (ele_idx_in_region>=this->regionEleNum(region_idx)))
+    {
+        std::cerr<<"ele_idx_in_region out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    PHYSIKA_ASSERT(regions_[region_idx]);
+    regions_[region_idx]->removeElement(ele_idx_in_region);
 }
 
 template <typename Scalar, int Dim>
@@ -380,6 +395,11 @@ void VolumetricMesh<Scalar,Dim>::init(unsigned int vert_num, const Scalar *verti
         for(unsigned int i = 0; i < total_ele_vert_num; ++i)
             elements_.push_back(elements[i]);
     }
+    //create the default region
+    vector<unsigned int> region_data(ele_num_);
+    for(unsigned int i = 0; i < ele_num_; ++i)
+        region_data[i] = i;
+    Region *all_elements = new Region(string("AllElements"),region_data);
 }
 
 template <typename Scalar, int Dim>
@@ -397,43 +417,6 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleStartIdx(unsigned int ele_idx) const
     }
     return ele_idx_start;
 }
-////////////////////////////////////////////////Implementation of Region/////////////////////////////////////////////////////
-namespace VolumetricMeshInternal{
-Region::Region()
-{
-}
-
-Region::Region(const string &region_name, const vector<unsigned int> &elements)
-{
-    name_ = region_name;
-    elements_ =elements;
-}
-
-Region::~Region()
-{
-}
-
-const string& Region::name() const
-{
-    return name_;
-}
-
-void Region::setName(const string &new_name)
-{
-    name_ = new_name;
-}
-
-unsigned int Region::elementNum() const
-{
-    return elements_.size();
-}
-
-const vector<unsigned int>& Region::elements() const
-{
-    return elements_;
-}
-
-}  //end of namespace VolumetricMeshInternal
 
 //explicit instantiations
 template class VolumetricMesh<float,2>;

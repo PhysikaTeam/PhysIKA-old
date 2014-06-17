@@ -20,37 +20,9 @@
 #include <string>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
 
 namespace Physika{
-
-namespace VolumetricMeshInternal{
-
-//internal class, used to represent the set of elements
-class Region
-{
-public:
-    Region();
-    Region(const std::string &region_name, const std::vector<unsigned int> &elements);
-    ~Region();
-    const std::string& name() const;
-    void setName(const std::string &new_name);
-    unsigned int elementNum() const;
-    const std::vector<unsigned int>& elements() const;
-protected:
-    std::string name_;
-    std::vector<unsigned int> elements_;
-};
-
-//element type of volumetric mesh
-enum ElementType{
-    TRI, //2D triangle
-    QUAD, //2D quad
-    TET, //3D tet
-    CUBIC, //3D cubic
-    NON_UNIFORM //non uniform 
-};
-
-} //end of namespace VolumetricMeshInternal
 
 /*
  * The elements of volumetric mesh can optionally belong to diffferent regions.
@@ -63,7 +35,7 @@ class VolumetricMesh
 {
 public:
     VolumetricMesh();  //construct an empty volumetric mesh
-    //construct one-region mesh with given data
+    //construct one-region mesh with given data, all elements belong to one default region
     VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, unsigned int vert_per_ele);
     VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele_list);//for volumetric mesh with arbitrary element type
     virtual ~VolumetricMesh();
@@ -73,7 +45,7 @@ public:
     inline unsigned int eleNum() const{return ele_num_;}
     inline bool isUniformElementType() const{return uniform_ele_type_;}
     unsigned int eleVertNum(unsigned int ele_idx) const;
-    unsigned int eleVertIndex(unsigned int ele_idx, unsigned int vert_idx) const; //return the global vertex index of a specific vertex of the element
+    unsigned int eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
     unsigned int regionNum() const;
     const Vector<Scalar,Dim>& vertPos(unsigned int vert_idx) const;
     const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const;
@@ -84,20 +56,25 @@ public:
     void regionElements(unsigned int region_idx, std::vector<unsigned int> &elements) const;
     void regionElements(const std::string &region_name, std::vector<unsigned int> &elements) const; //print error and return empty elements if no region with the given name
 
-    //modification
-    //NOTE: The mesh data may become invalid when the user perform a series of operations
-    //      for example: calling one addRegion() to the mesh that only has the default 'AllElements' region will lead to a mesh some of whose elements donot belong to any region
-    //                   we should call addRegion() at least two times to cover all the elements.
-    //      another example: remove one region from the mesh which previously has two regions will lead to the same result
-    //HENCE: The user is obligated to perform a valid series of operations.  
-    void renameRegion(unsigned int region_idx, const std::string &name);
-    void addRegion(const std::string &name, const std::vector<unsigned int> &elements);
-    void removeRegion(unsigned int region_idx);
-    void removeRegion(const std::string &region_name);  //print error if no region with the given name
-    void addVertex(const Vector<Scalar,Dim> &vertex);
-    void removeVertex(unsigned int vert_idx);
-    void addElement(const std::vector<unsigned int> &element);
-    void removeElement(unsigned int ele_idx);
+    /* modification
+     * Note: the user may be obligated to maintain the validity of mesh data after calling the modification methods
+     * e.g., Calling addVertex() will not automatically add the vertex to any region
+     * See the comments of each method
+     */
+    //add/remove region from the mesh
+    void renameRegion(unsigned int region_idx, const std::string &name); //We do not check if the new name conflicts with existing names
+    void addRegion(const std::string &name, const std::vector<unsigned int> &elements);  // 1. name is not checked; 2. element indices are not checked
+    void removeRegion(unsigned int region_idx); //only remove region, the elements are still there, they just do not belong to the region anymore
+    void removeRegion(const std::string &region_name);  //print error if no region with the given name; element status is the same as removeRegion(unsigned int)
+    //add/remove vertex from the mesh
+    void addVertex(const Vector<Scalar,Dim> &vertex); //the new vertex is not added to any region
+    void removeVertex(unsigned int vert_idx);  //its reference in elements is aslo removed, these elements are not valid; other elements are gurranteed to be valid
+    //add/remove element from the mesh
+    void addElement(const std::vector<unsigned int> &element);  //do not check the validity of element indices
+    void removeElement(unsigned int ele_idx);  //its reference in regions is also removed, the vertices are not removed
+    //only add/remove the element index from the region, the element itself is not removed from the mesh
+    void addElementInRegion(unsigned int region_idx, unsigned int new_ele_idx); //add an element with new_ele_idx index to the region_idx th region
+    void removeElementInRegion(unsigned int region_idx, unsigned int ele_idx_in_region); //remove the ele_idx_in_region th element in the region_idx th region
 
     //virtual methods
     virtual void printInfo() const=0;
@@ -107,8 +84,10 @@ public:
     virtual bool containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
     virtual void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0; 
 protected:
-    //if all elements have same number of vertices, vert_per_ele is pointer to one integer representing the vertex number per element
-    //otherwise it's pointer to a list of vertex number per element
+    /* init mesh given data, all elements belong to one default region 'AllElements'
+     * if all elements have same number of vertices, vert_per_ele is pointer to one integer representing the vertex number per element
+     * otherwise it's pointer to a list of vertex number per element
+     */
     void init(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele, bool uniform_ele_type);
     //return the start index of given element in elements_
     unsigned int eleStartIdx(unsigned int ele_idx) const; 
@@ -120,8 +99,6 @@ protected:
     //if uniform_ele_type_ = true, vert_per_ele_ contains only 1 integer, which is the number of vertices per element
     //if uniform_ele_type_ = false, vert_per_ele_ is a list of integers, corresponding to each element
     std::vector<unsigned int> vert_per_ele_;
-    //regions_ is empty if all elements belong to one region
-    //otherwise regions_ contains list of regions (at least 2)
     std::vector<VolumetricMeshInternal::Region*> regions_;
 };
 
