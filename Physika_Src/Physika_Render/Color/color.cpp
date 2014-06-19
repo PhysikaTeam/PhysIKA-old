@@ -118,6 +118,81 @@ void Color<Scalar>::setAlphaChannel(Scalar alpha)
     rgba_[3] = alpha;
 }
 
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::Red()
+{
+    Scalar red = std::numeric_limits<Scalar>::max();
+    Scalar green = 0, blue = 0;
+    return Color<Scalar>(red,green,blue);
+}
+
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::Green()
+{
+    Scalar green = std::numeric_limits<Scalar>::max();
+    Scalar red = 0, blue = 0;
+    return Color<Scalar>(red,green,blue);
+}
+
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::Blue()
+{
+    Scalar blue = std::numeric_limits<Scalar>::max();
+    Scalar red = 0, green = 0;
+    return Color<Scalar>(red,green,blue);
+}
+
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::White()
+{
+    Scalar red = std::numeric_limits<Scalar>::max();
+    Scalar green = std::numeric_limits<Scalar>::max();
+    Scalar blue = std::numeric_limits<Scalar>::max();
+    return Color<Scalar>(red,green,blue);
+}
+
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::Black()
+{
+    return Color<Scalar>(0,0,0);
+}
+
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::Gray()
+{
+    Scalar red = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    Scalar green = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    Scalar blue = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    return Color<Scalar>(red,green,blue);
+}
+
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::Yellow()
+{
+    Scalar red = std::numeric_limits<Scalar>::max();
+    Scalar green = std::numeric_limits<Scalar>::max();
+    Scalar blue = 0;
+    return Color<Scalar>(red,green,blue);
+}
+
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::Purple()
+{
+    Scalar red = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    Scalar blue = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    Scalar green = 0;
+    return Color<Scalar>(red,green,blue);
+}
+
+template <typename Scalar>
+Color<Scalar> Color<Scalar>::Cyan()
+{
+    Scalar red = 0;
+    Scalar green = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    Scalar blue = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    return Color<Scalar>(red,green,blue);
+}
+
 //explicit instantions
 template class Color<char>;
 template class Color<short>;

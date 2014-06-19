@@ -2,6 +2,8 @@
  * @file type_utilities.h 
  * @brief utilities(methods&&structs&&macros) related to data types
  *        e.g.: check if two types are the same at compile time
+ *        Latest c++ standards support type traits, we define our own
+ *        utilities here such that Physika runs correctly on older compilers.
  * @author FeiZhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -22,6 +24,13 @@ namespace Physika{
 //the name 'is_same' violates Physika naming rule in order to agree with std::is_same (C++11)
 template <typename T1, typename T2> struct is_same { static const bool value = false; };
 template <typename T> struct is_same<T,T> { static const bool value = true; };
+
+//is_folating_point: test if the type is a floating point type
+template <typename T> 
+struct is_floating_point
+{ 
+    static const bool value = (is_same<T,float>::value)||(is_same<T,double>::value)||(is_same<T,long double>::value);
+};
 
 }  //end of namespace Physika
 

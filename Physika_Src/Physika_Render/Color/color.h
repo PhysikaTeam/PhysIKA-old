@@ -46,6 +46,18 @@ public:
     void setGreenChannel(Scalar);
     void setBlueChannel(Scalar);
     void setAlphaChannel(Scalar);
+
+    //predefined colors
+    //naming of these methods break the coding style in order to highlight their specialness
+    static Color<Scalar> Red();
+    static Color<Scalar> Green();
+    static Color<Scalar> Blue();
+    static Color<Scalar> White();
+    static Color<Scalar> Black();
+    static Color<Scalar> Gray();
+    static Color<Scalar> Yellow();
+    static Color<Scalar> Purple();
+    static Color<Scalar> Cyan();
 protected:
     Scalar rgba_[4]; 
 };
