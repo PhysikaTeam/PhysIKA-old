@@ -91,7 +91,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
             {
                 cur_session = ELEMENTS;
             }
-            else if(line_str.substr(0,4) == string("*REGION")) //set
+            else if(line_str.substr(0,7) == string("*REGION")) //set
             {
                 cur_session = REGIONS;
             }
