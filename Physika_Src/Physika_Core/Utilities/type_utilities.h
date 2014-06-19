@@ -26,19 +26,3 @@ template <typename T> struct is_same<T,T> { static const bool value = true; };
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_UTILITIES_TYPE_UTILITIES_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
