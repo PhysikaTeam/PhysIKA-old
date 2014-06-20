@@ -73,6 +73,15 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
     {
         ++line_num;
         ifs.getline(line,maxline);
+        char line_next[maxline];
+        unsigned int line_length=strlen(line);
+        while (line[line_length-1] == '\\')     //if the last character in a line is '\',we will merge nextline into this one
+        {
+            ifs.getline(line_next,maxline);
+            line[line_length-1] = ' ';
+            strcat(line, line_next);
+            line_length = strlen(line);
+        }
         stream.str("");
         stream.clear();
         stream<<line;
@@ -369,6 +378,11 @@ bool ObjMeshIO<Scalar>::save(const string &filename, const SurfaceMesh<Scalar> *
 template <typename Scalar>
 bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar> *mesh)
 {
+    if(mesh == NULL)
+    {
+        cerr<<"error:invalid mesh point."<<endl;
+        return false;
+    }
     unsigned int line_num = 0;
     std::fstream ifs(filename.c_str(), std::ios::in);
     if(!ifs)
