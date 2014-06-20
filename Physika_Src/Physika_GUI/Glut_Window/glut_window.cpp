@@ -1,7 +1,7 @@
 /*
  * @file glut_window.cpp 
- * @Basic framework of the simulation, it can be used alone to create a simulation framework
- * @author Sheng Yang
+ * @Brief Glut-based window, provide default response functions and support custom response functions.
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -12,20 +12,7 @@
  *
  */
 
-#include "Physika_GUI/Glut/glut_window.h"
+#include "Physika_GUI/Glut_Window/glut_window.h"
 
 namespace Physika{
-
-Glut_Window::Glut_Window()
-{
-
-}
-
-
-Glut_Window::~Glut_Window()
-{
-
-}
-
 } //end of namespace Physika
-
