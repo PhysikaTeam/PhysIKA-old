@@ -62,7 +62,7 @@ public:
     inline void disableWriteToFile(){write_to_file_ = false;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
-
+ 
 protected:
     int start_frame_;
     int end_frame_;
