@@ -232,7 +232,7 @@ void GlutWindow::initFunction(void)
     glViewport(0, 0, width, height);        									// set the viewport
     glMatrixMode(GL_PROJECTION);												// set matrix mode
     glLoadIdentity();															// reset projection matrix
- 	gluPerspective(45.0,(GLdouble)width/height,1.0e-3,1.0e2);           		// set up a perspective projection matrix
+    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,1.0e2);           		// set up a perspective projection matrix
     glMatrixMode(GL_MODELVIEW);													// specify which matrix is the current matrix
     glShadeModel( GL_SMOOTH );
     glClearDepth( 1.0 );														// specify the clear value for the depth buffer
@@ -240,7 +240,7 @@ void GlutWindow::initFunction(void)
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
     Color<unsigned char> black = Color<unsigned char>::Black();
-	glClearColor(black.redChannel(), black.greenChannel(), black.blueChannel(), black.alphaChannel());	
+    glClearColor(black.redChannel(), black.greenChannel(), black.blueChannel(), black.alphaChannel());	
 }
 
 void GlutWindow::initCallbacks()
