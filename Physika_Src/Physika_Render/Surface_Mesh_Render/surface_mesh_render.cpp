@@ -14,11 +14,12 @@
 
 #include <cstddef>
 #include <iostream>
+#include <GL/gl.h>
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_IO/Image_IO/image_io.h"
-#include "Physika_Render\Color\color.h"
-#include <GL/gl.h>
+#include "Physika_Render/Color/color.h"
+
 
 namespace Physika{
 
