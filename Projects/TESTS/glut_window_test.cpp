@@ -13,13 +13,41 @@
  */
 
 #include <iostream>
+#include <GL/glut.h>
 #include "Physika_GUI/Glut_Window/glut_window.h"
 using namespace std;
 using Physika::GlutWindow;
 
 void displayFunction()
 {
-    cout<<"Custom display function\n";
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
+	glLoadIdentity();
+	//glTranslatef(0.0f,0.0f,-3.0f);			
+ 
+	/*
+	 * Triangle code starts here
+	 * 3 verteces, 3 colors.
+	 */
+	glBegin(GL_TRIANGLES);					
+		glColor3f(0.0f,0.0f,1.0f);			
+		glVertex3f( 0.0f, 1.0f, 0.0f);		
+		glColor3f(0.0f,1.0f,0.0f);			
+		glVertex3f(-1.0f,-1.0f, 0.0f);		
+		glColor3f(1.0f,0.0f,0.0f);			
+		glVertex3f( 1.0f,-1.0f, 0.0f);		
+	glEnd();	
+    glutSwapBuffers();
+}
+
+void idleFunction()
+{
+    cout<<"Custom idle function\n";
+}
+
+void initFunction()
+{
+    glClearColor(1.0, 0.0, 1.0, 1.0);
+	glClearDepth(1.0);
 }
 
 int main()
@@ -29,5 +57,18 @@ int main()
     cout<<"Window size: "<<window.width()<<"x"<<window.height()<<"\n";
     window.setDisplayFunction(displayFunction);
     window.createWindow();
+    //window.setIdleFunction(idleFunction);
+    //cout<<"Window size: "<<window.width()<<"x"<<window.height()<<"\n";
+    //window.createWindow();
     return 0;
 }
+
+
+
+
+
+
+
+
+
+

@@ -23,12 +23,14 @@ namespace Physika{
  * Glut-based window
  * Key features:
  *       1. provide default response functions, and support custom response functions
+ *          see the comments of default response functions to view their functionality
  *       2. close the window will not close the program
  *  
  * Usage:
  *       1. Define a GlutWindow object
  *       2. Set the custom callback functions (optional)
  *       3. call createWindow()
+ *       4. call closeWindow() to close the window
  */
 
 class GlutWindow
@@ -44,28 +46,31 @@ public:
     int width() const;
     int height() const;
     //set custom callback functions
-    void setDisplayFunction(void (*func)(void));
-    void setIdleFunction(void (*func)(void));
+    void setDisplayFunction(void (*func)(void));  
+    void setIdleFunction(void (*func)(void));  
     void setReshapeFunction(void (*func)(int width, int height));
     void setKeyboardFunction(void (*func)(unsigned char key, int x, int y));
     void setSpecialFunction(void (*func)(int key, int x, int y));
     void setMotionFunction(void (*func)(int x, int y));
     void setMouseFunction(void (*func)(int button, int state, int x, int y));
+    void setInitFunction(void (*func)(void)); //the init function before entering mainloop
 protected:
     //default callback functions
-    static void displayFunction(void);
-    static void idleFunction(void);
-    static void reshapeFunction(int width, int height);
-    static void keyboardFunction(unsigned char key, int x, int y);
-    static void specialFunction(int key, int x, int y);
-    static void motionFunction(int x, int y);
-    static void mouseFunction(int button, int state, int x, int y);
+    static void displayFunction(void);  //display background color
+    static void idleFunction(void);  //do nothing
+    static void reshapeFunction(int width, int height);  //adjust view port to reveal the change
+    static void keyboardFunction(unsigned char key, int x, int y);  //press 'ESC' to close window
+    static void specialFunction(int key, int x, int y);  //do nothing
+    static void motionFunction(int x, int y);  //do nothing
+    static void mouseFunction(int button, int state, int x, int y);  //do nothing
+    static void initFunction(void);  // init viewport and background color
     //init default callbacks
     void initCallbacks();
 protected:
     std::string window_name_;
-    unsigned int width_;
-    unsigned int height_;
+    //initial size of the window
+    unsigned int initial_width_;
+    unsigned int initial_height_;
     //pointers to default callback methods
     void (*display_function_)(void);
     void (*idle_function_)(void);
@@ -74,6 +79,7 @@ protected:
     void (*special_function_)(int key, int x, int y);
     void (*motion_function_)(int x, int y);
     void (*mouse_function_)(int button, int state, int x, int y);
+    void (*init_function_)(void);
 };
 
 }  //end of namespace Physika

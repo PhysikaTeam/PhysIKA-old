@@ -15,24 +15,25 @@
 #include <cstring>
 #include <iostream>
 #include <GL/freeglut.h>
+#include "Physika_Render/Color/color.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 
 namespace Physika{
 
 GlutWindow::GlutWindow()
-    :window_name_(std::string("Physika Glut Window")),width_(640),height_(480)
+    :window_name_(std::string("Physika Glut Window")),initial_width_(640),initial_height_(480)
 {
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
-    :window_name_(window_name),width_(640),height_(480)
+    :window_name_(window_name),initial_width_(640),initial_height_(480)
 {
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
-    :window_name_(window_name),width_(width),height_(height) 
+    :window_name_(window_name),initial_width_(width),initial_height_(height)
 {
     initCallbacks();
 }
@@ -52,7 +53,7 @@ void GlutWindow::createWindow()
     glutInit(&argc,argv);
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);  //this option allows leaving the glut loop without exit program
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_ALPHA);
-    glutInitWindowSize(width_,height_);
+    glutInitWindowSize(initial_width_,initial_height_);
     glutCreateWindow(name_str);
     glutDisplayFunc(display_function_);
     glutIdleFunc(idle_function_);
@@ -61,6 +62,7 @@ void GlutWindow::createWindow()
     glutSpecialFunc(special_function_);
     glutMotionFunc(motion_function_);
     glutMouseFunc(mouse_function_);
+    (*init_function_)(); //call the init function before entering main loop
     glutMainLoop();
 }
 
@@ -76,12 +78,18 @@ const std::string& GlutWindow::name() const
 
 int GlutWindow::width() const
 {
-    return width_;
+    if(glutGet(GLUT_INIT_STATE))  //window is created
+        return glutGet(GLUT_WINDOW_WIDTH);
+    else
+        return initial_width_;
 }
 
 int GlutWindow::height() const
 {
-    return height_;
+    if(glutGet(GLUT_INIT_STATE)) //window is created
+        return glutGet(GLUT_WINDOW_HEIGHT);
+    else
+        return initial_height_;
 }
 
 void GlutWindow::setDisplayFunction(void (*func)(void))
@@ -161,26 +169,47 @@ void GlutWindow::setMouseFunction(void (*func)(int button, int state, int x, int
         mouse_function_ = func;
 }
 
+void GlutWindow::setInitFunction(void (*func)(void))
+{
+    if(func==NULL)
+    {
+        std::cerr<<"NULL callback function provided, use default instead.\n";
+        init_function_ = GlutWindow::initFunction;
+    }
+    else
+        init_function_ = func;
+}
+
 void GlutWindow::displayFunction(void)
 {
-    //test
-    glBegin(GL_POLYGON);
-    glColor3f(1, 0, 0); glVertex3f(-0.6, -0.75, 0.5);
-    glColor3f(0, 1, 0); glVertex3f(0.6, -0.75, 0);
-    glColor3f(0, 0, 1); glVertex3f(0, 0.75, 0);
-    glEnd();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glutSwapBuffers();
 }
 
 void GlutWindow::idleFunction(void)
 {
+    glutPostRedisplay();
 }
 
 void GlutWindow::reshapeFunction(int width, int height)
 {
+    glViewport(0,0,width,height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,1.0e2);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 void GlutWindow::keyboardFunction(unsigned char key, int x, int y)
 {
+    switch(key)
+    {
+    case 27: //ESC: close window
+        glutLeaveMainLoop();
+        break;
+    default:
+        break;
+    }
 }
 
 void GlutWindow::specialFunction(int key, int x, int y)
@@ -195,6 +224,25 @@ void GlutWindow::mouseFunction(int button, int state, int x, int y)
 {
 }
 
+void GlutWindow::initFunction(void)
+{
+    int width = glutGet(GLUT_WINDOW_WIDTH);
+    int height = glutGet(GLUT_WINDOW_HEIGHT);
+    glMatrixMode(GL_PROJECTION);												// select projection matrix
+    glViewport(0, 0, width, height);        									// set the viewport
+    glMatrixMode(GL_PROJECTION);												// set matrix mode
+    glLoadIdentity();															// reset projection matrix
+ 	gluPerspective(45.0,(GLdouble)width/height,1.0e-3,1.0e2);           		// set up a perspective projection matrix
+    glMatrixMode(GL_MODELVIEW);													// specify which matrix is the current matrix
+    glShadeModel( GL_SMOOTH );
+    glClearDepth( 1.0 );														// specify the clear value for the depth buffer
+    glEnable( GL_DEPTH_TEST );
+    glDepthFunc( GL_LEQUAL );
+    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
+    Color<unsigned char> black = Color<unsigned char>::Black();
+	glClearColor(black.redChannel(), black.greenChannel(), black.blueChannel(), black.alphaChannel());	
+}
+
 void GlutWindow::initCallbacks()
 {
     //set callbacks to default callback functions
@@ -205,20 +253,10 @@ void GlutWindow::initCallbacks()
     special_function_ = GlutWindow::specialFunction;
     motion_function_ = GlutWindow::motionFunction;
     mouse_function_ = GlutWindow::mouseFunction;
+    init_function_ = GlutWindow::initFunction;
 }
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
 
 
 
