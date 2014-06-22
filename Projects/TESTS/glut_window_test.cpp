@@ -14,9 +14,12 @@
 
 #include <iostream>
 #include <GL/glut.h>
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 using namespace std;
 using Physika::GlutWindow;
+using Physika::Vector;
 
 void displayFunction()
 {
@@ -28,14 +31,25 @@ void displayFunction()
 	 * Triangle code starts here
 	 * 3 verteces, 3 colors.
 	 */
+	// glBegin(GL_TRIANGLES);					
+	// 	glColor3f(0.0f,0.0f,1.0f);			
+	// 	glVertex3f( 0.0f, 1.0f, 0.0f);		
+	// 	glColor3f(0.0f,1.0f,0.0f);			
+	// 	glVertex3f(-1.0f,-1.0f, 0.0f);		
+	// 	glColor3f(1.0f,0.0f,0.0f);			
+	// 	glVertex3f( 1.0f,-1.0f, 0.0f);		
+	// glEnd();	
+    /* 
+     * Test openGL primitive wrappers
+     */
 	glBegin(GL_TRIANGLES);					
-		glColor3f(0.0f,0.0f,1.0f);			
-		glVertex3f( 0.0f, 1.0f, 0.0f);		
-		glColor3f(0.0f,1.0f,0.0f);			
-		glVertex3f(-1.0f,-1.0f, 0.0f);		
-		glColor3f(1.0f,0.0f,0.0f);			
-		glVertex3f( 1.0f,-1.0f, 0.0f);		
-	glEnd();	
+        openGLColor3(Physika::Color<float>::Blue());			
+		openGLVertex(Vector<float,3>(0.0f, 1.0f, 0.0f));					
+        openGLColor3(Physika::Color<float>::Green());
+		openGLVertex(Vector<float,3>(-1.0f,-1.0f, 0.0f));					
+        openGLColor3(Physika::Color<float>::Red());
+		openGLVertex(Vector<float,3>(1.0f,-1.0f, 0.0f));
+	glEnd();
     glutSwapBuffers();
 }
 
@@ -62,13 +76,3 @@ int main()
     //window.createWindow();
     return 0;
 }
-
-
-
-
-
-
-
-
-
-

@@ -49,8 +49,8 @@ additional_inc_path=[]
 additional_lib_path=[]
 
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
-physika_libs=['Physika_Render','Physika_IO','Physika_GUI','Physika_Geometry',
-              'Physika_Dynamics','Physika_Core']
+#NOTE: THE ORDER MATTERS
+physika_libs=['Physika_GUI','Physika_Dynamics','Physika_Render','Physika_IO','Physika_Geometry','Physika_Core','LodePNG']
 
 #ADDITIONAL LIBS TO LINK
 #EXAMPLE: additional_libs=['lib1','lib2']
