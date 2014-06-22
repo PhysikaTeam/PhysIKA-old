@@ -1,1 +1,4 @@
-2014.5.10: libglui32.a is not avaible for now.
+32-bit OpenGL libs are not available for now.
+
+Note:
+The truth is I’m not sure if the libs compiled on 64 bit mac os are 32-bit compatible.

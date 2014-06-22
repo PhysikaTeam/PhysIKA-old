@@ -14,7 +14,7 @@
 
 #include <cstring>
 #include <iostream>
-#include "Physika_Core/Utilities/opengl_headers.h"
+#include <GL/freeglut.h>
 #include "Physika_GUI/Glut_Window/glut_window.h"
 
 namespace Physika{
@@ -22,23 +22,51 @@ namespace Physika{
 GlutWindow::GlutWindow()
     :window_name_(std::string("Physika Glut Window")),width_(640),height_(480)
 {
-    initWindow();
+    initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
     :window_name_(window_name),width_(640),height_(480)
 {
-    initWindow();
+    initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
     :window_name_(window_name),width_(width),height_(height) 
 {
-    initWindow();
+    initCallbacks();
 }
 
 GlutWindow::~GlutWindow()
 {
+}
+
+void GlutWindow::createWindow()
+{
+    int argc = 1;
+    const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
+    char *argv[1];
+    char name_str[max_length];
+    strcpy(name_str,window_name_.c_str());
+    argv[0] = name_str;
+    glutInit(&argc,argv);
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);  //this option allows leaving the glut loop without exit program
+    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_ALPHA);
+    glutInitWindowSize(width_,height_);
+    glutCreateWindow(name_str);
+    glutDisplayFunc(display_function_);
+    glutIdleFunc(idle_function_);
+    glutReshapeFunc(reshape_function_);
+    glutKeyboardFunc(keyboard_function_);
+    glutSpecialFunc(special_function_);
+    glutMotionFunc(motion_function_);
+    glutMouseFunc(mouse_function_);
+    glutMainLoop();
+}
+
+void GlutWindow::closeWindow()
+{
+    glutLeaveMainLoop();
 }
 
 const std::string& GlutWindow::name() const
@@ -135,6 +163,12 @@ void GlutWindow::setMouseFunction(void (*func)(int button, int state, int x, int
 
 void GlutWindow::displayFunction(void)
 {
+    //test
+    glBegin(GL_POLYGON);
+    glColor3f(1, 0, 0); glVertex3f(-0.6, -0.75, 0.5);
+    glColor3f(0, 1, 0); glVertex3f(0.6, -0.75, 0);
+    glColor3f(0, 0, 1); glVertex3f(0, 0.75, 0);
+    glEnd();
 }
 
 void GlutWindow::idleFunction(void)
@@ -161,26 +195,32 @@ void GlutWindow::mouseFunction(int button, int state, int x, int y)
 {
 }
 
-void GlutWindow::initWindow()
+void GlutWindow::initCallbacks()
 {
-    int argc = 1;
-    const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
-    char *argv[1];
-    char name_str[max_length];
-    strcpy(name_str,window_name_.c_str());
-    argv[0] = name_str;
-    glutInit(&argc,argv);
-    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_ALPHA);
-    glutInitWindowSize(width_,height_);
-    glutCreateWindow(name_str);
-    glutDisplayFunc(display_function_);
-    glutIdleFunc(idle_function_);
-    glutReshapeFunc(reshape_function_);
-    glutKeyboardFunc(keyboard_function_);
-    glutSpecialFunc(special_function_);
-    glutMotionFunc(motion_function_);
-    glutMouseFunc(mouse_function_);
-    glutMainLoop();
+    //set callbacks to default callback functions
+    display_function_ = GlutWindow::displayFunction;
+    idle_function_ = GlutWindow::idleFunction;
+    reshape_function_ = GlutWindow::reshapeFunction;
+    keyboard_function_ = GlutWindow::keyboardFunction;
+    special_function_ = GlutWindow::specialFunction;
+    motion_function_ = GlutWindow::motionFunction;
+    mouse_function_ = GlutWindow::mouseFunction;
 }
 
 } //end of namespace Physika
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

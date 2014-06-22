@@ -85,7 +85,7 @@ if use_gl==True:
         additional_libs.append('glui32')
     else:
         additional_libs.append('glui64')
-    if os_name=='Linux':
+    if os_name=='Linux' or os_name==‘Darwin’:
         additional_libs.append('glut')
         additional_libs.append('GLU')
         additional_libs.append('GL')
@@ -113,10 +113,6 @@ if compiler=='g++':
    else:
       CCFLAGS=['-std=gnu++0x','-fno-strict-aliasing','-g']
    env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
-   #MAC OS: USE OPENGL GLUT FRAMEWORKS SHIPPED WITH THE SYSTEM
-   if os_name=='Darwin':
-      env.Append(LINKFLAGS=['-framework','OpenGL'])
-      env.Append(LINKFLAGS=['-framework','GLUT'])
 else:
    if build_type=='Release':
       CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']

@@ -17,8 +17,17 @@
 using namespace std;
 using Physika::GlutWindow;
 
+void displayFunction()
+{
+    cout<<"Custom display function\n";
+}
+
 int main()
 {
     GlutWindow window;
+    cout<<"Window name: "<<window.name()<<"\n";
+    cout<<"Window size: "<<window.width()<<"x"<<window.height()<<"\n";
+    window.setDisplayFunction(displayFunction);
+    window.createWindow();
     return 0;
 }

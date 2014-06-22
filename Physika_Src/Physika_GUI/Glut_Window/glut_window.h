@@ -19,6 +19,18 @@
 
 namespace Physika{
 
+/*
+ * Glut-based window
+ * Key features:
+ *       1. provide default response functions, and support custom response functions
+ *       2. close the window will not close the program
+ *  
+ * Usage:
+ *       1. Define a GlutWindow object
+ *       2. Set the custom callback functions (optional)
+ *       3. call createWindow()
+ */
+
 class GlutWindow
 {
 public:
@@ -26,6 +38,8 @@ public:
     GlutWindow(const std::string &window_name); //initialize a window with given name and default size
     GlutWindow(const std::string &window_name, unsigned int width, unsigned int height); //initialize a window with given name and size
     ~GlutWindow();
+    void createWindow(); //create window with the parameters set
+    void closeWindow();  //close window
     const std::string& name() const;
     int width() const;
     int height() const;
@@ -46,8 +60,8 @@ protected:
     static void specialFunction(int key, int x, int y);
     static void motionFunction(int x, int y);
     static void mouseFunction(int button, int state, int x, int y);
-    //init window
-    void initWindow();
+    //init default callbacks
+    void initCallbacks();
 protected:
     std::string window_name_;
     unsigned int width_;
