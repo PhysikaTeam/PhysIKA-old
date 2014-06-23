@@ -28,4 +28,7 @@ SPHSolid<Scalar, Dim>::~SPHSolid()
 
 }
 
+
+template class SPHSolid<float, 3>;
+template class SPHSolid<double, 3>;
 } //end of namespace Physika

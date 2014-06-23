@@ -16,10 +16,10 @@
 #define PHYSIKA_RENDER_POINT_RENDER_POINT_RENDER_H_
 
 #include <utility>
-#include "Physika_Core/Arrays/array.h"
 #include "Physika_Render/Render_Base/render_base.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Render/Color/color.h"
 
 
 namespace Physika{
@@ -32,33 +32,20 @@ class PointRender: public RenderBase
 public:
     //Constructions
     PointRender(); //default mode
-    PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num); //provide points
-    PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const Scalar* map, const Scalar &ref_value = 0); //provide points maps and its ref value; and render provide color calculating
-    PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const Vector<Scalar, 3>* color); //provide color.
+    PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const float& point_size); //provide points
+    PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const Color<Scalar>* colors, const float& point_size); //provide color.
     ~PointRender();
 
     //Get and Set
     const Vector<Scalar, Dim>* points() const { return points_; }
     const unsigned int pointsNum() const { return points_num_; }
-    const Scalar* map() const { return map_; }
-    const Scalar ref_value() const { return ref_value_; }
-    const Vector<Scalar, 3>* color() const { return color_; }
+    const Color<Scalar>* colors() const {return colors_; }
     float pointSize() { return point_size_; }
-
+    
 
     void setPoints(const Vector<Scalar, Dim>* points) { points_ = points; }
-    void setMap(const Scalar* map) { map_ = map; /* ref_value_ = ref_value;*/ }
-    void setRefValue(const Scalar& ref_value) { ref_value_ = ref_value; }
-    void setColor(const Vector<Scalar, 3>* color) { color_ = color; }
     void setPointSize(float point_size) { point_size_ = point_size; }
-
-
-    //Calculate Colors;
-    void calculateColor();
-
-    //whenever the mesh is modified, synchronize() must be called to update the render
-    void synchronize();   
-
+    void setColors(const Color<Scalar>* colors) { colors_ = colors; }
     //Render
     virtual void render();
 
@@ -66,15 +53,11 @@ protected:
     //render mode
     unsigned int render_mode_;
     //data
-    const Vector<Scalar, Dim> *points_;
+    const Vector<Scalar, Dim>* points_;
     unsigned int points_num_;
-    //color map
-    const Scalar *map_;
-    //ref value;
-    Scalar ref_value_;
-    //colors
-    const Vector<Scalar, 3> *color_;
 
+    const Color<Scalar>* colors_;
+    
     //point size;
     float point_size_; 
  

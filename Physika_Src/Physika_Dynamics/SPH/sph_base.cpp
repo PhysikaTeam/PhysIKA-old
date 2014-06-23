@@ -111,6 +111,7 @@ void SPHBase<Scalar, Dim>::saveVelocities(std::string in_path, unsigned int in_i
 }
 
 
-template class SPHBase<float ,3>;
+template class SPHBase<float, 3>;
+template class SPHBase<double, 3>;
 
 } //end of namespace Physika

@@ -214,6 +214,7 @@ SPHFluid<Scalar, Dim>::~SPHFluid()
 }
 
 
+template class SPHFluid<float, 3>;
 template class SPHFluid<double ,3>;
 } //end of namespace Physika
 
