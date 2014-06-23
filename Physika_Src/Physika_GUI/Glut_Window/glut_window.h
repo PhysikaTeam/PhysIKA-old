@@ -29,7 +29,7 @@ namespace Physika{
  * Usage:
  *       1. Define a GlutWindow object
  *       2. Set the custom callback functions (optional)
- *       3. call createWindow()
+ *       3. call createWindow() 
  *       4. call closeWindow() to close the window
  */
 
@@ -68,6 +68,7 @@ protected:
     void initCallbacks();
 protected:
     std::string window_name_;
+    int window_id_;
     //initial size of the window
     unsigned int initial_width_;
     unsigned int initial_height_;

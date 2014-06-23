@@ -1,6 +1,6 @@
 /*
  * @file glut_window_test.cpp 
- * @brief Test GlutWindow of Physika.
+ * @brief Test GlutWindow and GluiWindow of Physika.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -14,11 +14,14 @@
 
 #include <iostream>
 #include <GL/glut.h>
+#include <GL/glui.h>
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
+#include "Physika_GUI/Glui_Window/glui_window.h"
 using namespace std;
 using Physika::GlutWindow;
+using Physika::GluiWindow;
 using Physika::Vector;
 
 void displayFunction()
@@ -66,13 +69,20 @@ void initFunction()
 
 int main()
 {
-    GlutWindow window;
-    cout<<"Window name: "<<window.name()<<"\n";
-    cout<<"Window size: "<<window.width()<<"x"<<window.height()<<"\n";
-    window.setDisplayFunction(displayFunction);
-    window.createWindow();
-    //window.setIdleFunction(idleFunction);
-    //cout<<"Window size: "<<window.width()<<"x"<<window.height()<<"\n";
-    window.createWindow();
+    GlutWindow glut_window;
+    cout<<"Window name: "<<glut_window.name()<<"\n";
+    cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
+    glut_window.setDisplayFunction(displayFunction);
+    cout<<"Test GlutWindow with custom display function:\n";
+    glut_window.createWindow();
+    //glut_window.setIdleFunction(idleFunction);
+    //cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
+    cout<<"Test window with GLUI controls:\n";
+    GluiWindow glui_window;
+    glui_window.setDisplayFunction(displayFunction);
+    GLUI *glui = GLUI_Master.create_glui("Controls");
+    glui->add_statictext("Simple Window with GLUI controls");
+    glui_window.createWindow(0);
+    glui_window.createWindow(glui);
     return 0;
 }

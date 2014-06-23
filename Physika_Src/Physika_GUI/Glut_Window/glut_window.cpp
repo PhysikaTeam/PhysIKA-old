@@ -15,25 +15,26 @@
 #include <cstring>
 #include <iostream>
 #include <GL/freeglut.h>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 
 namespace Physika{
 
 GlutWindow::GlutWindow()
-    :window_name_(std::string("Physika Glut Window")),initial_width_(640),initial_height_(480)
+    :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480)
 {
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
-    :window_name_(window_name),initial_width_(640),initial_height_(480)
+    :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480)
 {
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
-    :window_name_(window_name),initial_width_(width),initial_height_(height)
+    :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height)
 {
     initCallbacks();
 }
@@ -54,7 +55,8 @@ void GlutWindow::createWindow()
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);  //this option allows leaving the glut loop without exit program
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_ALPHA);
     glutInitWindowSize(initial_width_,initial_height_);
-    glutCreateWindow(name_str);
+    window_id_ = glutCreateWindow(name_str);
+    glutSetWindowData(this);  //bind 'this' pointer with the window
     glutDisplayFunc(display_function_);
     glutIdleFunc(idle_function_);
     glutReshapeFunc(reshape_function_);
@@ -257,8 +259,3 @@ void GlutWindow::initCallbacks()
 }
 
 } //end of namespace Physika
-
-
-
-
-
