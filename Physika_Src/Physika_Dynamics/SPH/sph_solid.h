@@ -28,13 +28,14 @@ public:
 
     virtual void initialize();
     virtual void initSceneBoundary();
-    
+
     virtual float getTimeStep();
     virtual void advance(Scalar dt);
     virtual void stepEuler(Scalar dt);
     virtual void computeNeighbors();
-
-    void savePositions();
+    virtual void computeVolume();
+    virtual void computeDensity();
+    //void savePositions();
 
 protected:
 };

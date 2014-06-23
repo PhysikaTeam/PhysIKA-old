@@ -22,6 +22,7 @@
 namespace Physika{
 
 template <typename Scalar> class SurfaceMesh;
+template <typename Scalar> class Color;
 
 template <typename Scalar>
 class SurfaceMeshRender: public RenderBase
@@ -53,11 +54,24 @@ public:
 
     //Render
     virtual void render();
+
+	//The following four functions is used for rendering specific faces/vertices with custom color.
+	/// warning one: when you employ " vector< Color<float> > color" to sepcify your cunstom color, the size of 
+	///              "color" must be equal to "face_id/vertex_id" size strictly, otherwise your rendering will be rejected.
+	/// warning two: when you render specific vertices, the GL_POINT_SIZE will be "1.5" times of the orignal one so that you can 
+	///              distinguish the new specific vertices from the old one.
+	void renderFaceWithColor(std::vector<unsigned int> face_id, Color<float> color);
+	void renderFaceWithColor(std::vector<unsigned int> face_id, std::vector< Color<float> > color);
+
+	void renderVertexWithColor(std::vector<unsigned int> vertex_id, Color<float> color);
+	void renderVertexWithColor(std::vector<unsigned int> vertex_id, std::vector< Color<float> >  color);
+
 protected:
     void initRenderMode();
     void renderVertices();
     void renderWireframe();
     void renderSolid();
+
     void loadTextures();
     void releaseTextures();
     void deleteDisplayLists();

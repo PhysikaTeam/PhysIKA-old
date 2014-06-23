@@ -53,8 +53,27 @@ void SPHBase<Scalar, Dim>::initialize()
     return ;
 }
 
+
+template <typename Scalar, int Dim>
+void SPHBase<Scalar, Dim>::initSceneBoundary()
+{
+
+}
+
 template <typename Scalar, int Dim>
 void SPHBase<Scalar, Dim>::computeNeighbors()
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHBase<Scalar, Dim>::computeVolume()
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHBase<Scalar, Dim>::computeDensity()
 {
 
 }
@@ -111,6 +130,7 @@ void SPHBase<Scalar, Dim>::saveVelocities(std::string in_path, unsigned int in_i
 }
 
 
-template class SPHBase<float ,3>;
+template class SPHBase<float, 3>;
+template class SPHBase<double, 3>;
 
 } //end of namespace Physika

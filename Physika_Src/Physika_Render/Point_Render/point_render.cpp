@@ -1,7 +1,7 @@
 /*
- * @file surface_mesh_render.cpp 
- * @Basic render of surface mesh.
- * @author Fei Zhu ,Wei Chen
+ * @file point_render.h 
+ * @Brief render of points.
+ * @author Sheng Yang.
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -15,44 +15,30 @@
 #include <cstddef>
 #include <iostream>
 #include "Physika_Render/Point_Render/point_render.h"
-#include "Physika_IO/Image_IO/image_io.h"
-#include "GL/gl.h"
-
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 
 namespace Physika{
 
 template<typename Scalar, int Dim>
 PointRender<Scalar, Dim>::PointRender()
     :points_(NULL), points_num_(0),
-    map_(NULL), ref_value_(0),
-    color_(NULL), point_size_(3)
+    colors_(NULL), point_size_(3)
 {
 
 }
 
 template<typename Scalar, int Dim>
-PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num)
+PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const float& point_size_)
     :points_(points), points_num_(points_num),
-    map_(NULL), ref_value_(0),
-    color_(NULL), point_size_(3)
+    colors_(NULL), point_size_(3)
 {
 
 }
 
 template<typename Scalar, int Dim>
-PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const Scalar* map, const Scalar &ref_value /* = 0 */)
+PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const Color<Scalar>* colors, const float& point_size_)
     :points_(points), points_num_(points_num),
-    map_(map), ref_value_(ref_value),
-    color_(NULL), point_size_(3)
-{
-
-}
-
-template<typename Scalar, int Dim>
-PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const Vector<Scalar, 3>* color)
-    :points_(points), points_num_(points_num),
-    map_(NULL), ref_value_(0),
-    color_(color), point_size_(3)
+    colors_(colors), point_size_(3)
 {
 
 }
@@ -64,42 +50,27 @@ void PointRender<Scalar, Dim>::render()
     {
         std::cerr<<"No Point is binded to the PointRender!\n";
         return;
-    }
 
-    //Draw axis;
-    glDisable(GL_LIGHTING);
-    glLineWidth(4);
-    glBegin(GL_LINES);
-    glColor3f(1,0,0);
-    glVertex3f(0,0,0);
-    glVertex3f(2,0,0);
-    glColor3f(0,1,0);
-    glVertex3f(0,0,0);
-    glVertex3f(0,2,0);
-    glColor3f(0,0,1);
-    glVertex3f(0,0,0);
-    glVertex3f(0,0,2);
-    glEnd();
+    }
 
     //Draw points;
     glDisable(GL_LIGHTING);
     glPointSize(point_size_);
     glBegin(GL_POINTS);
 
-
+    
     for (int i=0; i<this->points_num_; i++) {
-        
-        if(color_ != NULL)
-           glColor3f(color_[i][0], color_[i][1], color_[i][2]);
+        if(colors_ != NULL)
+            openGLColor3(colors_[i]);
         else
         {
-            //TO DO get color from map and ref_values;
-            glColor3f(1.f, 0.f, 0.f);
+            //TO DO get color from color_map and ref_values;
+            openGLColor3(Color<Scalar>::Blue());
         }
         if(Dim == 2)
-            glVertex3f(points_[i][0], points_[i][1], 0.f);
+            openGLVertex(Vector<Scalar, 3>(points_[i][0], points_[i][1], 0));
         else
-            glVertex3f(points_[i][0], points_[i][1], points_[i][2]);
+            openGLVertex(points_[i]);
     }
 
     glEnd();

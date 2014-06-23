@@ -48,8 +48,8 @@ additional_inc_path=[]
 additional_lib_path=[]
 
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
-physika_libs=['Physika_Render','Physika_IO','Physika_GUI','Physika_Geometry',
-              'Physika_Dynamics','Physika_Core','LodePNG']
+#NOTE: THE ORDER MATTERS
+physika_libs=['Physika_GUI','Physika_Dynamics','Physika_Render','Physika_IO','Physika_Geometry','Physika_Core','LodePNG']
 
 #ADDITIONAL LIBS TO LINK
 #EXAMPLE: additional_libs=['lib1','lib2']
@@ -70,7 +70,7 @@ else:
    compiler='msvc'
 
 #SRC FILES
-src_files=['color_test.cpp']
+src_files=['glut_window_test.cpp']
 inc_files=[]
 #for dir,_,_ in os.walk(src_root_path):
 #    if dir not in ignored_src_path:
@@ -84,7 +84,7 @@ if use_gl==True:
         additional_libs.append('glui32')
     else:
         additional_libs.append('glui64')
-    if os_name=='Linux':
+    if os_name=='Linux' or os_name=='Darwin':
         additional_libs.append('glut')
         additional_libs.append('GLU')
         additional_libs.append('GL')
@@ -112,10 +112,6 @@ if compiler=='g++':
    else:
       CCFLAGS=['-std=gnu++0x','-fno-strict-aliasing','-g']
    env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
-   #MAC OS: USE OPENGL GLUT FRAMEWORKS SHIPPED WITH THE SYSTEM
-   if os_name=='Darwin':
-      env.Append(LINKFLAGS=['-framework','OpenGL'])
-      env.Append(LINKFLAGS=['-framework','GLUT'])
 else:
    if build_type=='Release':
       CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']

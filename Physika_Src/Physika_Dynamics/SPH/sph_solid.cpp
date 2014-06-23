@@ -28,4 +28,59 @@ SPHSolid<Scalar, Dim>::~SPHSolid()
 
 }
 
+template <typename Scalar, int Dim>
+void SPHSolid<Scalar, Dim>::initialize()
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHSolid<Scalar, Dim>::initSceneBoundary()
+{
+
+}
+
+template <typename Scalar, int Dim>
+float SPHSolid<Scalar, Dim>::getTimeStep()
+{
+
+
+    return this->time_step_;
+}
+
+template <typename Scalar, int Dim>
+void SPHSolid<Scalar, Dim>::advance(Scalar dt)
+{
+
+
+
+}
+template <typename Scalar, int Dim>
+void SPHSolid<Scalar, Dim>::stepEuler(Scalar dt)
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHSolid<Scalar, Dim>::computeNeighbors()
+{
+
+}
+
+
+template <typename Scalar, int Dim>
+void SPHSolid<Scalar, Dim>::computeDensity()
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHSolid<Scalar, Dim>::computeVolume()
+{
+
+}
+
+
+template class SPHSolid<float, 3>;
+template class SPHSolid<double, 3>;
 } //end of namespace Physika
