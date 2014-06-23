@@ -22,11 +22,14 @@ namespace Physika{
 
 namespace FilePathUtilities{
 
-//abstract the path of a file's directory out of its path
+//abstract the path of a file's directory out of its path. if the path doesn't have a directory, it will return string('.').
 std::string dirName(const std::string &path);
 
 //abstract filename in a path of a file
 std::string filenameInPath(const std::string &path);
+
+//abstract the file extension out of its path. if the file doesn't have a file extension, it will return empty string.
+std::string fileExtension(const std::string &path);
 
 } //end of namespace File_Path_Utilities
 
