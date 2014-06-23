@@ -80,9 +80,8 @@ int main()
     cout<<"Test window with GLUI controls:\n";
     GluiWindow glui_window;
     glui_window.setDisplayFunction(displayFunction);
-    GLUI *glui = GLUI_Master.create_glui("Controls");
+    GLUI *glui = glui_window.gluiWindow();
     glui->add_statictext("Simple Window with GLUI controls");
-    glui_window.createWindow(0);
-    glui_window.createWindow(glui);
+    glui_window.createWindow();
     return 0;
 }
