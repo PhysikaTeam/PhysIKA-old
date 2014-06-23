@@ -14,7 +14,7 @@
 
 #include <cstddef>
 #include <iostream>
-#include <GL/gl.h>
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_IO/Image_IO/image_io.h"
@@ -29,7 +29,7 @@ template <typename Scalar> const unsigned int SurfaceMeshRender<Scalar>::render_
 template <typename Scalar> const unsigned int SurfaceMeshRender<Scalar>::render_vertices_ = 1<<2;
 template <typename Scalar> const unsigned int SurfaceMeshRender<Scalar>::render_flat_or_smooth_ = 1<<3;
 template <typename Scalar> const unsigned int SurfaceMeshRender<Scalar>::render_texture_ = 1<<5;
-	
+    
 template <typename Scalar>
 SurfaceMeshRender<Scalar>::SurfaceMeshRender()
     :mesh_(NULL),solid_display_list_id_(0),
@@ -180,7 +180,7 @@ void SurfaceMeshRender<Scalar>::renderVertices()
         for(unsigned int i=0; i<num_vertex; i++)
         {
             Vector<Scalar,3> position = this->mesh_->vertexPosition(i);
-            glVertex3f(position[0], position[1], position[2]);
+            openGLVertex(position);
         }
         glEnd();
         glEndList();
@@ -217,7 +217,7 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
                 {
                     unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
                     Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-                    glVertex3f(position[0], position[1], position[2]); 
+                    openGLVertex(position);
                 }
                 glEnd();
             }
@@ -235,14 +235,14 @@ template <typename Scalar>
 void SurfaceMeshRender<Scalar>::renderSolid()
 {
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT);
-	
+    
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // set polygon mode FILL for SOLID MODE
     glDisable(GL_COLOR_MATERIAL);              /// warning: we have to disable GL_COLOR_MATERIAL, otherwise the material propertity won't appear!!!
     glEnable(GL_LIGHTING);                     
     glEnable(GL_LIGHT0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //glClear()
-	
+    
     if (! glIsList(this->solid_display_list_id_))
     {   
         this->solid_display_list_id_=glGenLists(1);
@@ -262,15 +262,16 @@ void SurfaceMeshRender<Scalar>::renderSolid()
             Scalar    shininess = this->mesh_->material(material_ID).shininess();
             Scalar        alpha = this->mesh_->material(material_ID).alpha();
 
+            
             GLfloat ambient[4]  = { static_cast<GLfloat>(Ka[0]), static_cast<GLfloat>(Ka[1]), static_cast<GLfloat>(Ka[2]), static_cast<GLfloat>(alpha) };
             GLfloat diffuse[4]  = { static_cast<GLfloat>(Kd[0]), static_cast<GLfloat>(Kd[1]), static_cast<GLfloat>(Kd[2]), static_cast<GLfloat>(alpha) };
             GLfloat specular[4] = { static_cast<GLfloat>(Ks[0]), static_cast<GLfloat>(Ks[1]), static_cast<GLfloat>(Ks[2]), static_cast<GLfloat>(alpha) };
-
+            
             // set material propety for group
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
-            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-            glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+            openGLMaterialv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+            openGLMaterialv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+            openGLMaterialv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+            openGLMaterial (GL_FRONT_AND_BACK, GL_SHININESS, static_cast<GLfloat>(shininess));
 
             // if have a texture, then enable it
             if(this->textures_[material_ID].first==true && (this->render_mode_ & render_texture_) )
@@ -297,13 +298,13 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                         {
                             unsigned int vertex_normal_ID = face_ref.vertex(vertex_idx).normalIndex();
                             Vector<Scalar,3> vertex_normal = this->mesh_->vertexNormal(vertex_normal_ID);
-                            glNormal3f(vertex_normal[0], vertex_normal[1], vertex_normal[2]);
+                            openGLNormal(vertex_normal);
                         }
                     }
                     else if(face_ref.hasFaceNormal())
                     {
                         Vector<Scalar,3> face_normal = face_ref.faceNormal();
-                        glNormal3f(face_normal[0], face_normal[1], face_normal[2]);
+                        openGLNormal(face_normal);
 
                     }
 
@@ -312,11 +313,11 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                     {
                         unsigned int vertex_texture_ID = face_ref.vertex(vertex_idx).textureCoordinateIndex();
                         Vector<Scalar,2> vertex_textureCoord = this->mesh_->vertexTextureCoordinate(vertex_texture_ID);
-                        glTexCoord2f(vertex_textureCoord[0], vertex_textureCoord[1]);
+                        openGLTexCoord(vertex_textureCoord);
                     }
                     unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
                     Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-                    glVertex3f(position[0], position[1], position[2]); 
+                    openGLVertex(position);
                 }
                 glEnd();
             }
@@ -336,112 +337,112 @@ void SurfaceMeshRender<Scalar>::renderSolid()
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::renderFaceWithColor(std::vector<unsigned int> face_id, Color<float> color)
 {
-	glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
+    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);     // set polygon mode FILL for SOLID MODE
-	glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
-	glEnable(GL_POLYGON_OFFSET_FILL);              // enable polygon offset
-	glColor3f(color.redChannel(),color.greenChannel(),color.blueChannel());
-	glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
-	
-	unsigned int num_face = face_id.size();     
-	for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
-	{
-		const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
-		unsigned int num_vertex = face_ref.numVertices();
-		glBegin(GL_POLYGON);                                                      // draw specific face
+    glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
+    glEnable(GL_POLYGON_OFFSET_FILL);              // enable polygon offset
+    openGLColor3(color);
+    glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
+    
+    unsigned int num_face = face_id.size();     
+    for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
+    {
+        const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
+        unsigned int num_vertex = face_ref.numVertices();
+        glBegin(GL_POLYGON);                                                      // draw specific face
         for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
         {
-			unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
+            unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
             Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-            glVertex3f(position[0], position[1], position[2]); 
+            openGLVertex(position);
         }
         glEnd();
-	}
-	glPopAttrib();
+    }
+    glPopAttrib();
 }
 
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::renderFaceWithColor(std::vector<unsigned int> face_id, std::vector< Color<float> > color)
 {
-	if(face_id.size()!= color.size())
-	{
-		std::cout<<"error: the size of face_id don't equal to color's , and method rejects your rendering !"<<std::endl;
-		return;
-	}
-	glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
+    if(face_id.size()!= color.size())
+    {
+        std::cout<<"error: the size of face_id don't equal to color's , and method rejects your rendering !"<<std::endl;
+        return;
+    }
+    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);     // set polygon mode FILL for SOLID MODE
-	glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
-	glEnable(GL_POLYGON_OFFSET_FILL);              // enable polygon offset
-	glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
-	
-	unsigned int num_face = face_id.size();     
-	for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
-	{
-		const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
-		unsigned int num_vertex = face_ref.numVertices();
-		glColor3f(color[face_idx].redChannel(),color[face_idx].greenChannel(),color[face_idx].blueChannel());
-		glBegin(GL_POLYGON);                                                      // draw specific face
+    glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
+    glEnable(GL_POLYGON_OFFSET_FILL);              // enable polygon offset
+    glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
+    
+    unsigned int num_face = face_id.size();     
+    for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
+    {
+        const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
+        unsigned int num_vertex = face_ref.numVertices();
+        openGLColor3(color[face_idx]);
+        glBegin(GL_POLYGON);                                                      // draw specific face
         for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
         {
-			unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
+            unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
             Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-            glVertex3f(position[0], position[1], position[2]); 
+            openGLVertex(position);
         }
         glEnd();
-	}
-	glPopAttrib();
+    }
+    glPopAttrib();
 
 }
 
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::renderVertexWithColor(std::vector<unsigned int> vertex_id, Color<float> color)
 {
-	glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
-	glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
-	glEnable(GL_POLYGON_OFFSET_POINT);             // enable polygon offset
-	glPolygonOffset(-1.0,1.0); 
-	glColor3f(color.redChannel(),color.greenChannel(),color.blueChannel());
-	float point_size;
-	glGetFloatv(GL_POINT_SIZE,&point_size);
-	glPointSize(1.5*point_size);
+    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
+    glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
+    glEnable(GL_POLYGON_OFFSET_POINT);             // enable polygon offset
+    glPolygonOffset(-1.0,1.0); 
+    openGLColor3(color);
+    float point_size;
+    glGetFloatv(GL_POINT_SIZE,&point_size);
+    glPointSize(1.5*point_size);
 
-	unsigned int num_vertex = vertex_id.size();
-	glBegin(GL_POINTS);
-	for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-	{
-		Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]); // get the position of vertex which is stored in "surface mesh"
-		glVertex3f(position[0],position[1],position[2]);
-	}
-	glEnd();
-	glPopAttrib();
+    unsigned int num_vertex = vertex_id.size();
+    glBegin(GL_POINTS);
+    for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
+    {
+        Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]); // get the position of vertex which is stored in "surface mesh"
+        openGLVertex(position);
+    }
+    glEnd();
+    glPopAttrib();
 }
 
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::renderVertexWithColor(std::vector<unsigned int> vertex_id, std::vector< Color<float> > color)
 {
-	if(vertex_id.size()!= color.size())
-	{
-		std::cout<<"error: the size of vertex_id don't equal to color's , and method rejects your rendering !"<<std::endl;
-		return;
-	}
-	glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT||GL_POINT_BIT);
-	glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
-	glEnable(GL_POLYGON_OFFSET_POINT);             // enable polygon offset
-	glPolygonOffset(-1.0,1.0);
-	float point_size;
-	glGetFloatv(GL_POINT_SIZE,&point_size);
-	glPointSize(1.5*point_size);
-	
-	unsigned int num_vertex = vertex_id.size();
-	glBegin(GL_POINTS);
-	for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-	{
-		glColor3f(color[vertex_idx].redChannel(),color[vertex_idx].greenChannel(),color[vertex_idx].blueChannel());
-		Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]);
-		glVertex3f(position[0],position[1],position[2]);
-	}
-	glEnd();
-	glPopAttrib();
+    if(vertex_id.size()!= color.size())
+    {
+        std::cout<<"error: the size of vertex_id don't equal to color's , and method rejects your rendering !"<<std::endl;
+        return;
+    }
+    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT||GL_POINT_BIT);
+    glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
+    glEnable(GL_POLYGON_OFFSET_POINT);             // enable polygon offset
+    glPolygonOffset(-1.0,1.0);
+    float point_size;
+    glGetFloatv(GL_POINT_SIZE,&point_size);
+    glPointSize(1.5*point_size);
+    
+    unsigned int num_vertex = vertex_id.size();
+    glBegin(GL_POINTS);
+    for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
+    {
+        openGLColor3(color[vertex_idx]);
+        Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]);
+        openGLVertex(position);
+    }
+    glEnd();
+    glPopAttrib();
 }
 
 template <typename Scalar>
@@ -472,10 +473,10 @@ void SurfaceMeshRender<Scalar>::loadTextures()
             glGenTextures(1, &(texture.second));                              // generate texture object
             glBindTexture(GL_TEXTURE_2D, texture.second);                     // bind the texture
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);     // set paremeters GL_TEXTURE_WRAP_S
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);     // set paremeters GL_TEXTURE_WRAP_T
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /// warning: we have to set the FILTER, otherwise the TEXTURE will "not" appear
+            openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);     // set paremeters GL_TEXTURE_WRAP_S
+            openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);     // set paremeters GL_TEXTURE_WRAP_T
+            openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /// warning: we have to set the FILTER, otherwise the TEXTURE will "not" appear
 
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_MODULATE);       /// warning
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data); //generate texture 
