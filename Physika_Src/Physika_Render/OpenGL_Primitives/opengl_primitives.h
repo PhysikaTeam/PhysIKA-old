@@ -143,6 +143,19 @@ inline void openGLMaterial(GLenum face, GLenum pname, int param)
 }
 
 /*
+ * openGLMaterialv(GLenum face, GLenum pname, const Scalar *param):
+ * replacement for glMaterialfv, glMaterialiv
+ */
+inline void openGLMaterialv(GLenum face, GLenum pname, const float *param)
+{
+    glMaterialfv(face,pname,param);
+}
+inline void openGLMaterialv(GLenum face, GLenum pname, const int *param)
+{
+    glMaterialiv(face,pname,param);
+}
+
+/*
  * openGLTranslate(const Vector<Scalar,3> &):
  * replacement for glTranslatef, glTranslated
  */
@@ -192,6 +205,19 @@ inline void openGLLightModel(GLenum pname, float param)
 inline void openGLLightModel(GLenum pname, int param)
 {
     glLightModeli(pname,param);
+}
+
+/*
+ * openGLLightModelv(GLenum pname, const Scalar *param):
+ * replacement for glLightModelfv, glLightModeliv
+ */
+inline void openGLLightModelv(GLenum pname, const float *param)
+{
+    glLightModelfv(pname,param);
+}
+inline void openGLLightModelv(GLenum pname, const int *param)
+{
+    glLightModeliv(pname,param);
 }
 
 /*
