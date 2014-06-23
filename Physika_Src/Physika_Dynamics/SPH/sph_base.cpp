@@ -53,8 +53,27 @@ void SPHBase<Scalar, Dim>::initialize()
     return ;
 }
 
+
+template <typename Scalar, int Dim>
+void SPHBase<Scalar, Dim>::initSceneBoundary()
+{
+
+}
+
 template <typename Scalar, int Dim>
 void SPHBase<Scalar, Dim>::computeNeighbors()
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHBase<Scalar, Dim>::computeVolume()
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHBase<Scalar, Dim>::computeDensity()
 {
 
 }

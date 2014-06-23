@@ -25,7 +25,7 @@ void displayFunction()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
 	glLoadIdentity();
-	//glTranslatef(0.0f,0.0f,-3.0f);			
+	glTranslatef(0.0f,0.0f,-3.0f);			
  
 	/*
 	 * Triangle code starts here
@@ -73,6 +73,6 @@ int main()
     window.createWindow();
     //window.setIdleFunction(idleFunction);
     //cout<<"Window size: "<<window.width()<<"x"<<window.height()<<"\n";
-    //window.createWindow();
+    window.createWindow();
     return 0;
 }
