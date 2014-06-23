@@ -1,7 +1,7 @@
 /*
  * @file volumetric_mesh_io.cpp 
  * @brief volumetric mesh loader/saver, load/save volumetric mesh from/to file.
- * @author Fei Zhu
+ * @author Fei Zhu£¬ liyou Xu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_2d.h"
@@ -24,6 +25,8 @@
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
+#include "Physika_Core/Utilities/Text_Parse/parseline.h"
+#include "Physika_Core\Utilities\File_Path_Utilities\file_path_utilities.h"
 
 using std::string;
 using std::fstream;
@@ -41,23 +44,52 @@ using VolumetricMeshIOInternal::ONE_INDEX;
 template <typename Scalar, int Dim>
 VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &filename)
 {
-    string::size_type suffix_idx = filename.rfind('.');
-    if(suffix_idx >= filename.size())
+    VolumetricMesh<Scalar, Dim> *pointer = NULL;           //pointer we will return 
+    string dir = FilePathUtilities::dirName(filename);
+    string file_extension = FilePathUtilities::fileExtension(filename);
+    if(file_extension.size() == 0)
     {
         std::cerr<<"No file extension found for the mesh file!\n";
         return NULL;
     }
-    string suffix = filename.substr(suffix_idx);
-    if(suffix != string(".smesh"))
+    if(file_extension != string(".smesh"))
     {
         std::cerr<<"Unknown mesh file format!\n";
         return NULL;
     }
-    fstream ifs(filename.c_str(),std::ios::in);
-    if(!ifs)
+    vector<fstream *> file_stack;
+    fstream *fp = new fstream;
+    fp->open(filename.c_str(),std::ios::in);
+    if(!(*fp))
     {
         std::cerr<<"Couldn't opern .smesh file!\n";
         return NULL;
+    }
+    // first check the mesh type
+    string mesh_type;
+    while(*fp >>mesh_type)
+        if(mesh_type == string("*ELEMENTS"))break;
+    *fp >>mesh_type;
+    fp->seekg(std::ios::beg);
+    if(mesh_type == string("TET"))
+    {
+        pointer = dynamic_cast<VolumetricMesh<Scalar, Dim>*> (new TetMesh<Scalar>());
+    }
+    else if(mesh_type == string("CUBIC"))
+    {
+        pointer = dynamic_cast<VolumetricMesh<Scalar, Dim>*> (new CubicMesh<Scalar>());
+    }
+    else if(mesh_type == string("TRI"))
+    {
+        pointer = dynamic_cast<VolumetricMesh<Scalar, Dim>*> (new TriMesh<Scalar>());
+    }
+    else if(mesh_type == string("QUAD"))
+    {
+        pointer = dynamic_cast<VolumetricMesh<Scalar, Dim>*> (new QuadMesh<Scalar>());
+    }
+    else if(mesh_type == string("NONUNIFORM"))
+    {
+
     }
     enum ParseSession{
         NOT_SET,
@@ -66,17 +98,35 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         REGIONS
     };
     ParseSession cur_session = NOT_SET; //current state of parse
-    int index_start = 0; // 0 or 1
+    int index_start_vert = 0, index_start_ele = 0; // 0 or 1   .smesh file is 0_indexed or 1_indexed?
     string line_str;
-    int vert_num = 0;
-    Scalar *vertices = NULL;
-    int ele_num = 0;
-    int *elements = NULL;
-    while(getline(ifs,line_str))
+    unsigned int vert_num = 0;
+    int vert_dim = 0;
+    unsigned int ele_num = 0;
+    int ele_dim = 0;
+    std::vector<unsigned int> region;
+    bool firstline_aftercommand = false;
+    bool mesh_kind_decided = false;
+    bool start_index_decided = false;
+    string mesh_kind;
+    string region_name;
+    std::stringstream str_in;
+    while((!fp->eof())||(!file_stack.empty()))
     {
+        if(fp->eof())  //already reach the file end,we should return the last file.
+        {
+            fp->close();
+            delete fp;
+            fp = file_stack.back();
+            file_stack.pop_back();
+            continue;               //continue to read nextline
+        }
+        getline(*fp,line_str);
         //first remove preceding blanks from this line
-        string::size_type first_no_blank_idx = line_str.find(' ');
-        line_str = line_str.substr(first_no_blank_idx);
+        line_str = TextParse::removeWhitespaces(line_str);
+        str_in.clear();
+        str_in.str("");
+        str_in<<line_str;
         if(line_str.empty())  //empty line
             continue;
         if(line_str[0] == '#')  //comment
@@ -85,28 +135,154 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         {
             if(line_str.substr(0,9) == string("*VERTICES")) //vertices
             {
+                if(!region.empty())
+                {
+                    pointer->addRegion(region_name,region);
+                    region.clear();
+                }
                 cur_session = VERTICES;
+                firstline_aftercommand = true;
             }
             else if(line_str.substr(0,9) == string("*ELEMENTS")) //elements
             {
+                if(!region.empty())
+                {
+                    pointer->addRegion(region_name,region);
+                    region.clear();
+                }
                 cur_session = ELEMENTS;
+                mesh_kind_decided = true;
             }
             else if(line_str.substr(0,7) == string("*REGION")) //set
             {
+                if(!region.empty())
+                {
+                    pointer->addRegion(region_name,region);
+                    region.clear();
+                }
                 cur_session = REGIONS;
+                region_name = line_str.substr(8);
+                region.clear();
+                //first_region = false;
             }
             else if(line_str.substr(0,8) == string("*INCLUDE")) //include
             {
+                string complete_file_name = dir + string("/") + line_str.substr(9);
+
+                std::cout<<complete_file_name<<std::endl;           //check
+                file_stack.push_back(fp);
+                fp = new fstream;
+                fp->open(complete_file_name.c_str(),std::ios::in);
+                if(!*fp)
+                {
+                    std::cerr<<"fail to open file:"<<complete_file_name<<std::endl;
+                    return NULL;
+                }
+                continue;
             }
             else
             {
+                std::cerr<<"illeagal command:"<<line_str<<std::endl;
+                return NULL;
             }
         }
         else  //
         {
+            if(cur_session == VERTICES)
+            {
+                if(firstline_aftercommand)
+                {
+                    str_in>>vert_num;
+                    str_in>>vert_dim;
+                    if(vert_dim != Dim)
+                    {
+                        std::cerr<<"dimension unmatched!"<<std::endl;
+                        return NULL;
+                    }
+                    //vertices = new Scalar[vert_num*vert_dim];
+                    start_index_decided = true;
+                    firstline_aftercommand = false;
+                }
+                else
+                {
+                    int vert_index;
+                    Vector<Scalar, Dim> vertex_;
+                    if(start_index_decided)
+                    {
+                        str_in>>index_start_vert;
+                        for(int i=0; i<vert_dim; ++i) str_in>>vertex_[i];
+                        pointer->addVertex(vertex_);
+                        start_index_decided = false;
+                    }
+                    else
+                    {
+                        str_in>>vert_index;
+                        for(int i=0; i<vert_dim; ++i) str_in>>vertex_[i];
+                        pointer->addVertex(vertex_);
+                    }
+                }
+            }
+            else if(cur_session == ELEMENTS)
+            {
+                if(mesh_kind_decided)
+                {
+                    str_in>>mesh_kind;
+                    firstline_aftercommand = true;
+                    mesh_kind_decided = false;
+                }
+                else
+                {
+                    if(firstline_aftercommand)
+                    {
+                        str_in>>ele_num;
+                        str_in>>ele_dim;
+                        //elements = new unsigned int[ele_num * ele_dim];
+                        firstline_aftercommand = false;
+                        start_index_decided =true;
+                    }
+                    else
+                    {
+                        int ele_index;
+                        unsigned int ele;
+                        vector<unsigned int> elements;
+                        elements.clear();
+                        if(start_index_decided)
+                        {
+                            str_in>>index_start_ele;
+                            for(int i=0; i<ele_dim; i++)
+                            {
+                                str_in>> ele;
+                                elements.push_back(ele);
+                            }
+                            pointer->addElement(elements);
+                            start_index_decided = false;
+                        }
+                        else
+                        {
+                            str_in>>ele_index;
+                            for(int i=0; i<ele_dim; ++i)
+                            {
+                                str_in>>ele;
+                                elements.push_back(ele);
+                            }
+                            pointer->addElement(elements);
+                        }
+                    }
+                }
+            }
+            else if(cur_session == REGIONS)
+            {
+                unsigned int region_index;
+                char comma;
+                while(str_in>>region_index)
+                {
+                    region.push_back(region_index);
+                    str_in>>comma;
+                }
+            }
         }
     }
-    return NULL;
+    return pointer;
 }
 
 template <typename Scalar, int Dim>
@@ -168,7 +344,7 @@ bool VolumetricMeshIO<Scalar,Dim>::saveToSingleFile(const string &filename, cons
     //vertices
     fileout<<"*VERTICES\n";
     fileout<<volumetric_mesh->vertNum()<<" "<<Dim<<" 0 0\n";
-    for(int i = start_index; i < volumetric_mesh->vertNum()+start_index; ++i)
+    for(unsigned int i = start_index; i < volumetric_mesh->vertNum()+start_index; ++i)
     {
         Vector<Scalar,Dim> vert_pos = volumetric_mesh->vertPos(i-start_index);
         fileout<<i<<" ";
@@ -204,10 +380,10 @@ bool VolumetricMeshIO<Scalar,Dim>::saveToSingleFile(const string &filename, cons
         fileout<<volumetric_mesh->eleVertNum()<<" 0\n";
     else
         fileout<<"-1 0\n";
-    for(int i = start_index; i < volumetric_mesh->eleNum()+start_index; ++i)
+    for(unsigned int i = start_index; i < volumetric_mesh->eleNum()+start_index; ++i)
     {
         fileout<<i<<" ";
-        for(int j = 0; j < volumetric_mesh->eleVertNum(i-start_index); ++j)
+        for(unsigned int j = 0; j < volumetric_mesh->eleVertNum(i-start_index); ++j)
             fileout<<volumetric_mesh->eleVertIndex(i-start_index,j)+start_index<<" ";
         fileout<<"\n";
     }
@@ -215,12 +391,12 @@ bool VolumetricMeshIO<Scalar,Dim>::saveToSingleFile(const string &filename, cons
     unsigned int region_num = volumetric_mesh->regionNum();
     if(region_num>1)
     {
-        for(int i = 0; i < region_num; ++i)
+        for(unsigned int i = 0; i < region_num; ++i)
         {
             fileout<<"*REGION "<<volumetric_mesh->regionName(i)<<"\n";
             vector<unsigned int> region_elements;
             volumetric_mesh->regionElements(i,region_elements);
-            for(int j = 0; j < region_elements.size(); ++j)
+            for(unsigned int j = 0; j < region_elements.size(); ++j)
             {
                 fileout<<region_elements[j]+start_index;
                 if(j==region_elements.size()-1)
@@ -283,12 +459,12 @@ bool VolumetricMeshIO<Scalar,Dim>::saveToSeparateFiles(const string &filename, c
     unsigned int region_num = volumetric_mesh->regionNum();
     if(region_num>1)
     {
-        for(int i = 0; i < region_num; ++i)
+        for(unsigned int i = 0; i < region_num; ++i)
         {
             smesh_fileout<<"*REGION "<<volumetric_mesh->regionName(i)<<"\n";
             vector<unsigned int> region_elements;
             volumetric_mesh->regionElements(i,region_elements);
-            for(int j = 0; j < region_elements.size(); ++j)
+            for(unsigned int j = 0; j < region_elements.size(); ++j)
             {
                 smesh_fileout<<region_elements[j]+start_index;
                 if(j==region_elements.size()-1)
@@ -307,7 +483,7 @@ bool VolumetricMeshIO<Scalar,Dim>::saveToSeparateFiles(const string &filename, c
         return false;
     }
     node_fileout<<volumetric_mesh->vertNum()<<" "<<Dim<<" 0 0\n";
-    for(int i = start_index; i < volumetric_mesh->vertNum()+start_index; ++i)
+    for(unsigned int i = start_index; i < volumetric_mesh->vertNum()+start_index; ++i)
     {
         Vector<Scalar,Dim> vert_pos = volumetric_mesh->vertPos(i-start_index);
         node_fileout<<i<<" ";
@@ -328,10 +504,10 @@ bool VolumetricMeshIO<Scalar,Dim>::saveToSeparateFiles(const string &filename, c
         ele_fileout<<volumetric_mesh->eleVertNum()<<" 0\n";
     else
         ele_fileout<<"-1 0\n";
-    for(int i = start_index; i < volumetric_mesh->eleNum()+start_index; ++i)
+    for(unsigned int i = start_index; i < volumetric_mesh->eleNum()+start_index; ++i)
     {
         ele_fileout<<i<<" ";
-        for(int j = 0; j < volumetric_mesh->eleVertNum(i-start_index); ++j)
+        for(unsigned int j = 0; j < volumetric_mesh->eleVertNum(i-start_index); ++j)
             ele_fileout<<volumetric_mesh->eleVertIndex(i-start_index,j)+start_index<<" ";
         ele_fileout<<"\n";
     }

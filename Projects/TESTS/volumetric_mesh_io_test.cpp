@@ -13,8 +13,10 @@
  */
 
 #include <iostream>
+#include <vector>
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
 #include "Physika_Geometry/Volumetric_Meshes/tri_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 using namespace std;
 using Physika::VolumetricMeshIO;
 using Physika::TriMesh;
@@ -28,6 +30,18 @@ int main()
 	int b = 3;
 	TriMesh<float> obj(3,a,1,element);
     //VolumetricMeshIO<float,2>::save("tri_mesh.smesh",&obj);
-    VolumetricMeshIO<float,2>::save("tri_mesh.smesh",&obj,SEPARATE_FILES|ZERO_INDEX);
+    //VolumetricMeshIO<float,2>::save("tri_mesh.smesh",&obj,SEPARATE_FILES|ZERO_INDEX);
+
+	Physika::VolumetricMesh<float, 2> *p;
+	p = VolumetricMeshIO<float, 2>::load(string("tri_mesh.smesh"));
+	p->printInfo();
+	cout<<"vertNum:"<<p->vertNum()<<endl;
+	cout<<"eleNum:"<<p->eleNum()<<endl;
+	cout<<"regionNum:"<<p->regionNum()<<endl;
+	cout<<"region:"<<p->regionName(0)<<endl;
+	vector<unsigned int> v ;
+	p->regionElements(string("first"),v );
+	for(int i=0;i<v.size();++i)cout<<v[i]<<endl;
+	getchar();
     return 0;
 }
