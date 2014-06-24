@@ -29,9 +29,60 @@
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/Timer/timer.h"
 
+#include <GL/glut.h>
+#include <GL/glui.h>
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
+#include "Physika_GUI/Glut_Window/glut_window.h"
+#include "Physika_GUI/Glui_Window/glui_window.h"
+#include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
+
 using namespace std;
 using namespace Physika;
 
+
+MeshBasedCollidableObject<double, 3>* pObject1, *pObject2;
+
+void displayFunction()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
+	glLoadIdentity();
+	gluLookAt(10, 0, -110, 0, 0, 0, 0, 1, 0);
+
+	SurfaceMeshRender<double> meshRender1;
+	meshRender1.setSurfaceMesh(pObject1->getMesh());
+	//meshRender1.render();
+
+	Vector<double, 3> pos = pObject2->transform().position();
+	glTranslatef(pos[0], pos[1], pos[2]);	
+	cout<<pos<<endl;
+ 
+	SurfaceMeshRender<double> meshRender2;
+	meshRender2.setSurfaceMesh(pObject2->getMesh());
+	meshRender2.render();
+	glTranslatef(-1*pos[0], -1*pos[1], -1*pos[2]);	
+
+    glutSwapBuffers();
+}
+
+void initFunction()
+{
+	
+    int width = glutGet(GLUT_WINDOW_WIDTH);
+    int height = glutGet(GLUT_WINDOW_HEIGHT);
+    glMatrixMode(GL_PROJECTION);												// select projection matrix
+    glViewport(0, 0, width, height);        									// set the viewport
+    glMatrixMode(GL_PROJECTION);												// set matrix mode
+    glLoadIdentity();															// reset projection matrix
+    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,10000);           		// set up a perspective projection matrix
+    glMatrixMode(GL_MODELVIEW);													// specify which matrix is the current matrix
+    glShadeModel( GL_SMOOTH );
+    glClearDepth( 1.0 );														// specify the clear value for the depth buffer
+    glEnable( GL_DEPTH_TEST );
+    glDepthFunc( GL_LEQUAL );
+    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
+    Color<unsigned char> black = Color<unsigned char>::Black();
+    glClearColor(black.redChannel(), black.greenChannel(), black.blueChannel(), black.alphaChannel());	
+}
 
 int main()
 {
@@ -64,16 +115,14 @@ int main()
     if(!ObjMeshIO<double>::load(string("E:/Physika/ball_high.obj"), &mesh_ball))
 		exit(1);
 	
-	MeshBasedCollidableObject<double, 3>* pObject1 = new MeshBasedCollidableObject<double, 3>();
+	pObject1 = new MeshBasedCollidableObject<double, 3>();
 	pObject1->setMesh(&mesh_ball);
-	pObject1->transform().setPosition(Vector<double, 3>(10.15, 10.15, 10.15));
-	//pObject1->transform().setPosition(Vector<double, 3>(1.05, 1.05, 1.05));
-	//pObject1->transform().setPosition(Vector<double, 3>(0, 0.5, 0));
 	ObjectBVH<double, 3> * pBVH1 = new ObjectBVH<double, 3>();
 	pBVH1->setCollidableObject(pObject1);
 	
-	MeshBasedCollidableObject<double, 3>* pObject2 = new MeshBasedCollidableObject<double, 3>();
+	pObject2 = new MeshBasedCollidableObject<double, 3>();
 	pObject2->setMesh(&mesh_ball);
+	pObject2->transform().setPosition(Vector<double, 3>(10.15, 10.15, 10.15));
 	ObjectBVH<double, 3> * pBVH2 = new ObjectBVH<double, 3>();
 	pBVH2->setCollidableObject(pObject2);
 
@@ -87,6 +136,22 @@ int main()
 	cout<<timer.getElapsedTime()<<endl;
 	cout<<result.numberPCS()<<endl;
 	cout<<result.numberCollision()<<endl;
+
+
+    GlutWindow glut_window;
+    cout<<"Window name: "<<glut_window.name()<<"\n";
+    cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
+	glut_window.setInitFunction(initFunction);
+    glut_window.setDisplayFunction(displayFunction);
+	
+    cout<<"Test GlutWindow with custom display function:\n";
+    glut_window.createWindow();
+    //glut_window.setIdleFunction(idleFunction);
+    //cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
+    cout<<"Test window with GLUI controls:\n";
+
+
+
 
 	system("pause");
 
