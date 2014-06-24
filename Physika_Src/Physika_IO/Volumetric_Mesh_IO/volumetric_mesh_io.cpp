@@ -1,7 +1,7 @@
 /*
  * @file volumetric_mesh_io.cpp 
  * @brief volumetric mesh loader/saver, load/save volumetric mesh from/to file.
- * @author Fei Zhu£¬ liyou Xu
+ * @author Fei Zhu, liyou Xu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -26,7 +26,7 @@
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
 #include "Physika_Core/Utilities/Text_Parse/parseline.h"
-#include "Physika_Core\Utilities\File_Path_Utilities\file_path_utilities.h"
+#include "Physika_Core/Utilities/File_Path_Utilities/file_path_utilities.h"
 
 using std::string;
 using std::fstream;
