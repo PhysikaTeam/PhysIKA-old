@@ -46,12 +46,12 @@ void displayFunction()
      * Test openGL primitive wrappers
      */
 	glBegin(GL_TRIANGLES);					
-        openGLColor3(Physika::Color<float>::Blue());			
-		openGLVertex(Vector<float,3>(0.0f, 1.0f, 0.0f));					
-        openGLColor3(Physika::Color<float>::Green());
-		openGLVertex(Vector<float,3>(-1.0f,-1.0f, 0.0f));					
-        openGLColor3(Physika::Color<float>::Red());
-		openGLVertex(Vector<float,3>(1.0f,-1.0f, 0.0f));
+    openGLColor3(Physika::Color<float>::Blue());			
+	openGLVertex(Vector<float,3>(0.0f, 1.0f, 0.0f));					
+    openGLColor3(Physika::Color<float>::Green());
+	openGLVertex(Vector<float,3>(-1.0f,-1.0f, 0.0f));					
+    openGLColor3(Physika::Color<float>::Red());
+	openGLVertex(Vector<float,3>(1.0f,-1.0f, 0.0f));
 	glEnd();
     glutSwapBuffers();
 }
@@ -64,7 +64,7 @@ void idleFunction()
 void initFunction()
 {
     glClearColor(1.0, 0.0, 1.0, 1.0);
-	glClearDepth(1.0);
+    glClearDepth(1.0);
 }
 
 int main()
