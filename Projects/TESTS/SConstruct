@@ -80,18 +80,18 @@ inc_files=[]
 #USE OPENGL OR NOT
 if use_gl==True:
     additional_inc_path.append('../../Public_Library/include/Physika_Dependency/OpenGL/')
-    if os_architecture=='32bit':
-        additional_libs.append('glui32')
-    else:
-        additional_libs.append('glui64')
-    if os_name=='Linux' or os_name=='Darwin':
+    if os_name in ('Linux','Darwin'):
+        if os_architecture=='32bit':
+            additional_libs.append('glui32')
+        else:
+            additional_libs.append('glui64')
         additional_libs.append('glut')
         additional_libs.append('GLU')
         additional_libs.append('GL')
     elif os_name=='Windows':
+        additional_libs.append('glui32')
         additional_libs.append('freeglut')
         additional_libs.append('glu32')
-        additional_libs.append('opengl32')
 
 #INCLUDE PATH AND LIB PATH
 include_path=physika_inc_path+additional_inc_path
