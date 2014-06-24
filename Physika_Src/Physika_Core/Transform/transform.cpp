@@ -17,33 +17,33 @@
 namespace Physika{
 
 template <typename Scalar>
-Transform<Scalar>::Transform(const Vector<Scalar,3> position):
-        position_(position),
-        orientation_(0,0,0,1)
+Transform<Scalar>::Transform(const Vector<Scalar,3> translation):
+        translation_(translation),
+        rotation_(0,0,0,1)
 {
 
 }
 
 template <typename Scalar>
-Transform<Scalar>::Transform(const Quaternion<Scalar> orientation):
-        orientation_(orientation),
-        position_(0,0,0)
+Transform<Scalar>::Transform(const Quaternion<Scalar> rotation):
+        rotation_(rotation),
+        translation_(0,0,0)
 {
 
 }
 
 template <typename Scalar>
-Transform<Scalar>::Transform(const Quaternion<Scalar>& orientation, const Vector<Scalar,3>& position):
-        position_(position),
-        orientation_(orientation)
+Transform<Scalar>::Transform(const Quaternion<Scalar>& rotation, const Vector<Scalar,3>& translation):
+        translation_(translation),
+        rotation_(rotation)
 {
     
 }
 
 template <typename Scalar>
-Transform<Scalar>::Transform(const Vector<Scalar,3>& position, const Quaternion<Scalar>& orientation):
-        position_(position),
-        orientation_(orientation)
+Transform<Scalar>::Transform(const Vector<Scalar,3>& translation, const Quaternion<Scalar>& rotation):
+        translation_(translation),
+        rotation_(rotation)
 {
 
 }
@@ -51,7 +51,7 @@ Transform<Scalar>::Transform(const Vector<Scalar,3>& position, const Quaternion<
 template <typename Scalar>
 Vector<Scalar,3> Transform<Scalar>::transform(const Vector<Scalar, 3>& input) const
 {
-    return this->orientation_.rotate(input) + this->position_;
+    return this->rotation_.rotate(input) + this->translation_;
 }
 //explicit instantiation
 template class Transform<float>;
