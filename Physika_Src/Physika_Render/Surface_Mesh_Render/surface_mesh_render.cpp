@@ -241,8 +241,6 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     glEnable(GL_LIGHTING);                     
     glEnable(GL_LIGHT0);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //glClear()
-    
     if (! glIsList(this->solid_display_list_id_))
     {   
         this->solid_display_list_id_=glGenLists(1);
