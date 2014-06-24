@@ -76,7 +76,7 @@ void SPHFluid<Scalar, Dim>::computeDensity()
     SPH_Kernel<Scalar> &kernel = KernelFactory<Scalar>::createKernel(KernelFactory<Scalar>::Spiky);
     for (int i = 0; i < this->particle_num_; i++)
     {
-        NeighborList<Scalar> & neighborlist_i = this->neighborLists_[i];
+        NeighborList<Scalar> & neighborlist_i = this->neighbor_lists_[i];
         int size_i = neighborlist_i.size_;
         Scalar tmp = 0.0;
         for (int j = 0; j < size_i; j++)
@@ -118,7 +118,7 @@ void SPHFluid<Scalar, Dim>::computePressureForce(Scalar dt)
      SPH_Kernel<Scalar> &kernel = KernelFactory<Scalar>::createKernel(KernelFactory<Scalar>::Spiky);
     for (int i = 0; i < this->particle_num_; i++)
     {
-        NeighborList<Scalar> & neighborlist_i = this->neighborLists_[i];
+        NeighborList<Scalar> & neighborlist_i = this->neighbor_lists_[i];
         int size_i = neighborlist_i.size_;
         Scalar v_i = this->volume_[i];
         for (int ne = 0; ne < size_i; ne++)
@@ -148,7 +148,7 @@ void SPHFluid<Scalar, Dim>::computeViscousForce(Scalar dt)
     this->viscous_force_.zero();
     for (int i = 0; i < this->particle_num_; i++)
     {
-        NeighborList<Scalar>& neighborlist_i = this->neighborLists_[i];
+        NeighborList<Scalar>& neighborlist_i = this->neighbor_lists_[i];
         int size_i = neighborlist_i.size_;
         Scalar v_i = this->volume_[i];
         for ( int ne = 0; ne < size_i; ne++ )

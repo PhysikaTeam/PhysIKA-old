@@ -33,10 +33,10 @@ public:
     Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>& );
 
     /* Get and Set */
-    inline Quaternion<Scalar> orientation() const { return orientation_; }
-    inline Vector<Scalar,3> position() const { return position_; }
-    inline void setOrientation(Quaternion<Scalar> orientation) { orientation_ = orientation; }
-    inline void setPosition(Vector<Scalar,3> position) { position_ = position; }
+    inline Quaternion<Scalar> rotation() const { return rotation_; }
+    inline Vector<Scalar,3> translation() const { return translation_; }
+    inline void setOrientation(Quaternion<Scalar> rotation) { rotation_ = rotation; }
+    inline void setPosition(Vector<Scalar,3> translation) { translation_ = translation; }
 
 
     /* Funtions*/
@@ -44,8 +44,8 @@ public:
 
 
 protected:
-    Quaternion<Scalar> orientation_;
-    Vector<Scalar,3> position_;
+    Quaternion<Scalar> rotation_;
+    Vector<Scalar,3> translation_;
 protected:
     PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
                            "Transform<Scalar> are only defined for Scalar type of float and double");
