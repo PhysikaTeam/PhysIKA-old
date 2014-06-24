@@ -92,6 +92,7 @@ if use_gl==True:
         additional_libs.append('glui32')
         additional_libs.append('freeglut')
         additional_libs.append('glu32')
+        additional_libs.append('opengl32')
 
 #INCLUDE PATH AND LIB PATH
 include_path=physika_inc_path+additional_inc_path

@@ -13,6 +13,7 @@
  */
 
 #include <limits>
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"

@@ -13,6 +13,7 @@
  */
 
 #include <cstddef>
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Geometry/Cartesian_Grids/grid_iterator.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"

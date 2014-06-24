@@ -13,6 +13,7 @@
  *
  */
 
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Range/range.h"
 

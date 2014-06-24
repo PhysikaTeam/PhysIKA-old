@@ -12,6 +12,7 @@
  *
  */
 
+#include <cstdlib>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 using std::string;
