@@ -14,7 +14,7 @@ lib_name='LodePNG'
 
 ######################CONFIGURATIONS#############################
 # IMPORT FROM PARENT SCONS SCRIPT
-Import('env os_name compiler')
+Import('env os_name os_architecture compiler')
 #################################################################
 
 #IMPORTS
