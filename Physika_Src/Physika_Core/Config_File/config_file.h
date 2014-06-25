@@ -39,8 +39,7 @@
 #include <vector>
 #include <string>
 
-using std::vector;
-using std::string;
+
 
 namespace Physika{
 
@@ -62,34 +61,42 @@ public:
     ConfigFile();
     ~ConfigFile();
 
-    int addOption(string option_name, int* dest_location);
-    int addOption(string option_name, bool* dest_location);
-    int addOption(string option_name, float* dest_location);
-    int addOption(string option_name, double* dest_location);
-    int addOption(string option_name, string* dest_location);
+    //if add is success , return 0; or return a index that already exist
+    int addOption(std::string option_name, int* dest_location); 
+    int addOption(std::string option_name, bool* dest_location);
+    int addOption(std::string option_name, float* dest_location);
+    int addOption(std::string option_name, double* dest_location);
+    int addOption(std::string option_name, std::string* dest_location);
 
     template <class T>
-    int addOptionOptional(string option_name, T* dest_location, T default_value);
+    int addOptionOptional(std::string option_name, T* dest_location, T default_value); //if add is success , return 0; or return a index that already exist;
 
-    int parseFile(string file_name);
+    int parseFile(std::string file_name); //after addoptions, you can use this to parseFile to get options. if read success,return 0; else return 1;
 
     void printOptions(); //print all options alread read in memory.
     
 protected:
 
-    vector<string> option_names_;
-    vector<int> option_types_;
-    vector<void*> dest_locations_;
-    vector<bool> option_set_;
+    std::vector<std::string> option_names_;
+    std::vector<int> option_types_;
+    std::vector<void*> dest_locations_;
+    std::vector<bool> option_set_;
 
     template <class T>
-    int addOptionOperation(string option_name, T* dest_location);
+    int addOptionOperation(std::string option_name, T* dest_location);
 
 
-    int findOption(string option_name);// find a option in the option_names_, if not find return -1,else return the index;
+    int findOption(std::string option_name);// find a option in the option_names_, if not find return -1,else return the index;
 };
 
-
+template <class T>
+int ConfigFile::addOptionOptional(std::string option_name, T* dest_location, T default_value)
+{
+    int code = addOption(option_name, dest_location);
+    *dest_location = default_value;
+    option_set_[option_set_.size() - 1] = true;
+    return code;
+}
 
 }//end of namespace Physika
 

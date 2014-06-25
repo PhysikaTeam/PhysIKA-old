@@ -22,6 +22,8 @@ using std::fstream;
 using std::ifstream;
 using std::stringstream;
 using std::cerr;
+using std::string;
+using std::vector;
 
 namespace Physika{
 
@@ -136,15 +138,6 @@ int ConfigFile::addOption(string optionName, string* dest_location)
     option_types_.push_back(Option_String);
 
     return 0;
-}
-
-template <class T>
-int ConfigFile::addOptionOptional(string option_name, T* dest_location, T default_value)
-{
-    int code = addOption(option_name, dest_location);
-    *dest_location = default_value;
-    option_set[option_set.size() -1] = true;
-    return code;
 }
 
 int ConfigFile::parseFile(string file_name)
