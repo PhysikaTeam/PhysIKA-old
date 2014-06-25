@@ -12,7 +12,7 @@
 *
 */
 
-#include "Physika_Dynamics/sph/sph_neighbor_query.h"
+#include "Physika_Dynamics/SPH/sph_neighbor_query.h"
 
 namespace Physika{
 
