@@ -23,13 +23,13 @@ namespace TextParse{
 
 string removeWhitespaces(const string &line_, unsigned int numRetainedSpaces)
 {
-	string::size_type pos;
-	string line = line_;
-	string whitespace(" "), retained_whitespaces(" ");
-	for(unsigned int i=0; i<numRetainedSpaces; ++i)retained_whitespaces+= whitespace;
+    string::size_type pos;
+    string line = line_;
+    string whitespace(" "), retained_whitespaces(" ");
+    for(unsigned int i=0; i<numRetainedSpaces; ++i)retained_whitespaces+= whitespace;
     while(line[0] == ' ')line = line.substr(1);
-	while((pos=line.find(retained_whitespaces)) != string::npos)line.erase(pos,1);
-	return line;
+    while((pos=line.find(retained_whitespaces)) != string::npos)line.erase(pos,1);
+    return line;
 }
 
 } //end of namespace TextParse

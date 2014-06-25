@@ -28,7 +28,7 @@ std::string dirName(const std::string &path);
 //abstract filename in a path of a file
 std::string filenameInPath(const std::string &path);
 
-//abstract the file extension out of its path. if the file doesn't have a file extension, it will return empty string.
+//abstract the file extension out of its path. if the file doesn't have a file extension, it will return empty string.  ex. fileExtension(string("five.txt"))  will return string(".txt") .
 std::string fileExtension(const std::string &path);
 
 } //end of namespace File_Path_Utilities

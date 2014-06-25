@@ -42,10 +42,10 @@ string filenameInPath(const string &path)
 }
 string fileExtension(const string &path)
 {
-	string::size_type pos = path.rfind('.');
-	if(pos != string::npos)
-		return path.substr(pos);
-	else return string("");
+    string::size_type pos = path.rfind('.');
+    if(pos != string::npos)
+        return path.substr(pos);
+    else return string("");
 }
 
 } //end of namespace FilePathUtilities
