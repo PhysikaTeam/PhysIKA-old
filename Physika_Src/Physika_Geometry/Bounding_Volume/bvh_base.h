@@ -34,9 +34,9 @@ public:
 
 	//get & set
 	void setRootNode(BVHNodeBase<Scalar, Dim>* root_node);
-	const BVHNodeBase<Scalar, Dim>* const getRootNode() const;
+	const BVHNodeBase<Scalar, Dim>* const rootNode() const;
 	void setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type);
-	typename BoundingVolume<Scalar, Dim>::BVType getBVType() const;
+	typename BoundingVolume<Scalar, Dim>::BVType BVType() const;
 
 	//structure maintain
 

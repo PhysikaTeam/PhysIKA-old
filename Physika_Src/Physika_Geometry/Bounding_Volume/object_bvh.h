@@ -31,7 +31,7 @@ public:
 	~ObjectBVH();
 
 	//get & set
-	const CollidableObject<Scalar, Dim>* const getCollidableObject() const;
+	const CollidableObject<Scalar, Dim>* const collidableObject() const;
 	void setCollidableObject(CollidableObject<Scalar, Dim>* collidable_object);
 	
 protected:

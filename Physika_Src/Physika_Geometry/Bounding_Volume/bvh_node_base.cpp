@@ -45,7 +45,7 @@ void BVHNodeBase<Scalar, Dim>::setLeftChild(BVHNodeBase<Scalar, Dim>* left_child
 }
 
 template <typename Scalar,int Dim>
-const BVHNodeBase<Scalar, Dim>* const BVHNodeBase<Scalar, Dim>::getLeftChild() const
+const BVHNodeBase<Scalar, Dim>* const BVHNodeBase<Scalar, Dim>::leftChild() const
 {
 	return left_child_;
 }
@@ -61,7 +61,7 @@ void BVHNodeBase<Scalar, Dim>::setRightChild(BVHNodeBase<Scalar, Dim>* right_chi
 }
 
 template <typename Scalar,int Dim>
-const BVHNodeBase<Scalar, Dim>* const BVHNodeBase<Scalar, Dim>::getRightChild() const
+const BVHNodeBase<Scalar, Dim>* const BVHNodeBase<Scalar, Dim>::rightChild() const
 {
 	return right_child_;
 }
@@ -77,7 +77,7 @@ void BVHNodeBase<Scalar, Dim>::setBoundingVolume(BoundingVolume<Scalar, Dim>* bo
 }
 
 template <typename Scalar,int Dim>
-const BoundingVolume<Scalar, Dim>* const BVHNodeBase<Scalar, Dim>::getBoundingVolume() const
+const BoundingVolume<Scalar, Dim>* const BVHNodeBase<Scalar, Dim>::boundingVolume() const
 {
 	return bounding_volume_;
 }
@@ -89,7 +89,7 @@ void BVHNodeBase<Scalar, Dim>::setBVType(typename BoundingVolume<Scalar, Dim>::B
 }
 
 template <typename Scalar,int Dim>
-typename BoundingVolume<Scalar, Dim>::BVType BVHNodeBase<Scalar, Dim>::getBVType() const
+typename BoundingVolume<Scalar, Dim>::BVType BVHNodeBase<Scalar, Dim>::BVType() const
 {
 	return bv_type_;
 }
@@ -136,7 +136,7 @@ void BVHNodeBase<Scalar, Dim>::refit()
 	if(right_child_ != NULL)
 		right_child_->refit();
 	
-	bounding_volume_->obtainUnion(left_child_->getBoundingVolume(), right_child_->getBoundingVolume());
+	bounding_volume_->obtainUnion(left_child_->boundingVolume(), right_child_->boundingVolume());
 }
 
 template <typename Scalar,int Dim>
@@ -210,7 +210,7 @@ bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const tar
 	if(target == NULL)
 		return false;
 	bool isCollide = false;
-	if(!bounding_volume_->isOverlap(target->getBoundingVolume()))
+	if(!bounding_volume_->isOverlap(target->boundingVolume()))
 		return false;
 	if(is_leaf_)
 	{
@@ -235,16 +235,16 @@ bool BVHNodeBase<Scalar, Dim>::leafCollide(const BVHNodeBase<Scalar, Dim>* const
 	bool isCollide = false;
 	if(!target->isLeaf())
 	{
-		if(target->getLeftChild() != NULL && bounding_volume_->isOverlap(target->getLeftChild()->getBoundingVolume()))
+		if(target->leftChild() != NULL && bounding_volume_->isOverlap(target->leftChild()->boundingVolume()))
 		{
-			if(leafCollide(target->getLeftChild(), collision_result))
+			if(leafCollide(target->leftChild(), collision_result))
 			{
 				isCollide = true;
 			}
 		}
-		if(target->getRightChild() != NULL && bounding_volume_->isOverlap(target->getRightChild()->getBoundingVolume()))
+		if(target->rightChild() != NULL && bounding_volume_->isOverlap(target->rightChild()->boundingVolume()))
 		{
-			if(leafCollide(target->getRightChild(), collision_result))
+			if(leafCollide(target->rightChild(), collision_result))
 			{
 				isCollide = true;
 			}

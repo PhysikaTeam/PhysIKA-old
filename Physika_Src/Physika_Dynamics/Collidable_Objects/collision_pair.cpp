@@ -34,8 +34,8 @@ CollisionPairMeshToMesh<Scalar, Dim>::CollisionPairMeshToMesh(MeshBasedCollidabl
 	face_lhs_index_(face_lhs_index),
 	face_rhs_index_(face_rhs_index)
 {
-	face_lhs_ = object_lhs->getMesh()->facePtr(face_lhs_index);
-	face_rhs_ = object_rhs->getMesh()->facePtr(face_rhs_index);
+	face_lhs_ = object_lhs->mesh()->facePtr(face_lhs_index);
+	face_rhs_ = object_rhs->mesh()->facePtr(face_rhs_index);
 }
 
 template <typename Scalar,int Dim>

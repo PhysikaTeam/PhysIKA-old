@@ -33,7 +33,7 @@ public:
 	void setBoundingVolume(const BoundingVolume<Scalar, Dim>* const bounding_volume);
 	void setBoundingVolume(const Vector<Scalar, Dim>& point);
 	void setBoundingVolume(const Vector<Scalar, Dim>& point_a, const Vector<Scalar, Dim>& point_b);
-	typename BoundingVolume<Scalar,Dim>::BVType getBVType() const;
+	typename BoundingVolume<Scalar,Dim>::BVType bvType() const;
 
 	//basic operation
 	bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const;

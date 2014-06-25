@@ -36,7 +36,7 @@ ObjectBVH<Scalar, Dim>::~ObjectBVH()
 }
 
 template <typename Scalar,int Dim>
-const CollidableObject<Scalar, Dim>* const ObjectBVH<Scalar, Dim>::getCollidableObject() const
+const CollidableObject<Scalar, Dim>* const ObjectBVH<Scalar, Dim>::collidableObject() const
 {
 	return collidable_object_;
 }
@@ -49,7 +49,7 @@ void ObjectBVH<Scalar, Dim>::setCollidableObject(CollidableObject<Scalar, Dim>* 
 	collidable_object_ = collidable_object;
 	if(collidable_object == NULL)
 		return;
-	if(collidable_object_->getObjectType() == CollidableObject<Scalar, Dim>::MESH_BASED)
+	if(collidable_object_->objectType() == CollidableObject<Scalar, Dim>::MESH_BASED)
 		buildFromMeshObject((MeshBasedCollidableObject<Scalar, Dim>*)collidable_object_);
 }
 
@@ -58,7 +58,7 @@ void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scala
 {
 	if(collidable_object == NULL)
 		return;
-	SurfaceMesh<Scalar>* mesh = collidable_object->getMesh();
+	SurfaceMesh<Scalar>* mesh = collidable_object->mesh();
 	if(mesh == NULL)
 		return;
 	ObjectBVHNode<Scalar, Dim>* node = NULL;

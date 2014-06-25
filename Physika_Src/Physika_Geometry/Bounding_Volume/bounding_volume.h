@@ -33,7 +33,7 @@ public:
 	virtual void setBoundingVolume(const Vector<Scalar,Dim>& point_a, const Vector<Scalar,Dim>& point_b) = 0;
 
 	enum BVType {KDOP18 = 0};
-	virtual BVType getBVType() const=0;
+	virtual BVType bvType() const=0;
 
 	//basic operation
 	virtual bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const = 0;

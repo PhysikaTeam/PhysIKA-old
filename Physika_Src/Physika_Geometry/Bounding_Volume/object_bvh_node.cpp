@@ -49,7 +49,7 @@ bool ObjectBVHNode<Scalar, Dim>::isObjectNode() const
 }
 
 template <typename Scalar,int Dim>
-typename CollidableObject<Scalar, Dim>::ObjectType ObjectBVHNode<Scalar, Dim>::getObjectType() const
+typename CollidableObject<Scalar, Dim>::ObjectType ObjectBVHNode<Scalar, Dim>::objectType() const
 {
 	return object_type_;
 }
@@ -58,11 +58,11 @@ template <typename Scalar,int Dim>
 void ObjectBVHNode<Scalar, Dim>::setObject(CollidableObject<Scalar, Dim>* object)
 {
 	object_ = object;
-	object_type_ = object->getObjectType();
+	object_type_ = object->objectType();
 }
 
 template <typename Scalar,int Dim>
-const CollidableObject<Scalar, Dim>* ObjectBVHNode<Scalar, Dim>::getObject() const
+const CollidableObject<Scalar, Dim>* ObjectBVHNode<Scalar, Dim>::object() const
 {
 	return object_;
 }
@@ -94,12 +94,12 @@ bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const 
 {
 	if(target == NULL || !target->isObjectNode())
 		return false;
-	if(target->getBVType() != this->bv_type_)
+	if(target->BVType() != this->bv_type_)
 		return false;
 	const ObjectBVHNode<Scalar, Dim>* object_target = dynamic_cast<const ObjectBVHNode<Scalar, Dim>*>(target);
 	if(object_target == NULL)
 		return false;
-	if(object_type_ == CollidableObject<Scalar, Dim>::MESH_BASED && object_target->getObjectType() == CollidableObject<Scalar, Dim>::MESH_BASED)
+	if(object_type_ == CollidableObject<Scalar, Dim>::MESH_BASED && object_target->objectType() == CollidableObject<Scalar, Dim>::MESH_BASED)
 	{
 		MeshBasedCollidableObject<Scalar, Dim>* mesh_object_this = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_);
 		MeshBasedCollidableObject<Scalar, Dim>* mesh_object_target = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_target->object_);
@@ -118,7 +118,7 @@ void ObjectBVHNode<Scalar, Dim>::buildFromFace()
 	this->is_leaf_ = true;
 	if(!has_face_)
 		return;
-	if(object_->getObjectType() != CollidableObject<Scalar, Dim>::MESH_BASED)
+	if(object_->objectType() != CollidableObject<Scalar, Dim>::MESH_BASED)
 		return;
 	if(this->bounding_volume_ == NULL)
 	{
@@ -132,11 +132,11 @@ void ObjectBVHNode<Scalar, Dim>::buildFromFace()
 	const MeshBasedCollidableObject<Scalar, Dim>* const object = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_);
 	if(object == NULL)
 		return;
-	const Face<Scalar>& face = object->getMesh()->face(face_index_);
+	const Face<Scalar>& face = object->mesh()->face(face_index_);
 	unsigned int point_num = face.numVertices();
 	for(unsigned int i = 0; i < point_num; ++i)
 	{
-		this->bounding_volume_->unionWith(object->getPointPosition(face.vertex(i).positionIndex()));
+		this->bounding_volume_->unionWith(object->vertexPosition(face.vertex(i).positionIndex()));
 	}
 }
 

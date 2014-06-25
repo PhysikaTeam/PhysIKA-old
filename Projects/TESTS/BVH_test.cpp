@@ -90,10 +90,10 @@ void displayFunction()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
 	glLoadIdentity();
-	gluLookAt(-30, 0, 30, 0, 0, 0, 0, 1, 0);
+	gluLookAt(-60, 0, 60, 0, 0, 0, 0, 1, 0);
 
 	SurfaceMeshRender<double> meshRender1;
-	meshRender1.setSurfaceMesh(pObject1->getMesh());
+	meshRender1.setSurfaceMesh(pObject1->mesh());
 	meshRender1.enableRenderWireframe();
 	meshRender1.disableRenderSolid();
 	meshRender1.render();
@@ -104,7 +104,7 @@ void displayFunction()
 	//cout<<pos<<endl;
  
 	SurfaceMeshRender<double> meshRender2;
-	meshRender2.setSurfaceMesh(pObject2->getMesh());
+	meshRender2.setSurfaceMesh(pObject2->mesh());
 	
 	meshRender2.enableRenderWireframe();
 	meshRender2.disableRenderSolid();

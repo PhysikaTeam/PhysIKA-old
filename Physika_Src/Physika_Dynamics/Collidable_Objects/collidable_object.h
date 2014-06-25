@@ -31,9 +31,9 @@ public:
 
 	//get & set
 	enum ObjectType {MESH_BASED, IMPLICIT};
-	virtual ObjectType getObjectType() const=0;
+	virtual ObjectType objectType() const=0;
 	
-    //given position and velocity of a ponit, resovle collision with the collidable object (detect&&resolve)
+    //given position and velocity of a point, resolve collision with the collidable object (detect&&resolve)
 //    virtual bool collide(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;
     //given position and velocity of a point, detect collision with the collidable object
 //    virtual bool detectCollision(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;

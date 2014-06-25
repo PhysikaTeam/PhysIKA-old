@@ -33,13 +33,13 @@ public:
 
 	//get & set
 	void setLeftChild(BVHNodeBase<Scalar, Dim>* left_child);
-	const BVHNodeBase<Scalar, Dim>* const getLeftChild() const;
+	const BVHNodeBase<Scalar, Dim>* const leftChild() const;
 	void setRightChild(BVHNodeBase<Scalar, Dim>* right_child);
-	const BVHNodeBase<Scalar, Dim>* const getRightChild() const;
+	const BVHNodeBase<Scalar, Dim>* const rightChild() const;
 	void setBoundingVolume(BoundingVolume<Scalar, Dim>* bounding_volume);
-	const BoundingVolume<Scalar, Dim>* const getBoundingVolume() const;
+	const BoundingVolume<Scalar, Dim>* const boundingVolume() const;
 	void setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type);
-	typename BoundingVolume<Scalar, Dim>::BVType getBVType() const;
+	typename BoundingVolume<Scalar, Dim>::BVType BVType() const;
 	void setLeaf(const bool is_leaf);
 	bool isLeaf() const;
 	virtual bool isSceneNode() const;

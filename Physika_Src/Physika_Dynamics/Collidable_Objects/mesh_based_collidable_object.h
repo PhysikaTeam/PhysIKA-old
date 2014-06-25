@@ -32,11 +32,11 @@ public:
 	~MeshBasedCollidableObject();
 
 	//get & set
-	typename CollidableObject<Scalar,Dim>::ObjectType getObjectType() const;
-	const SurfaceMesh<Scalar>* getMesh() const;
-	SurfaceMesh<Scalar>* getMesh();
+	typename CollidableObject<Scalar,Dim>::ObjectType objectType() const;
+	const SurfaceMesh<Scalar>* mesh() const;
+	SurfaceMesh<Scalar>* mesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);
-	Vector<Scalar, 3> getPointPosition(unsigned int point_index) const;
+	Vector<Scalar, 3> vertexPosition(unsigned int vertex_index) const;
 	const Transform<Scalar>& transform() const;
 	Transform<Scalar>& transform();
 	void setTransform(const Transform<Scalar>& transform);
