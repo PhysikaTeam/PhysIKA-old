@@ -55,16 +55,20 @@ public:
     //Render
     virtual void render();
 
-	//The following four functions is used for rendering specific faces/vertices with custom color.
-	/// warning one: when you employ " vector< Color<float> > color" to sepcify your cunstom color, the size of 
-	///              "color" must be equal to "face_id/vertex_id" size strictly, otherwise your rendering will be rejected.
-	/// warning two: when you render specific vertices, the GL_POINT_SIZE will be "1.5" times of the orignal one so that you can 
-	///              distinguish the new specific vertices from the old one.
-	void renderFaceWithColor(std::vector<unsigned int> face_id, Color<float> color);
-	void renderFaceWithColor(std::vector<unsigned int> face_id, std::vector< Color<float> > color);
+    //The following four functions is used for rendering specific faces/vertices with custom color.
+    /// warning one: when you employ " vector< Color<float> > color" to sepcify your cunstom color, in the case of the color size smaller than
+    ///              face_id/vertex_id 's , the face/vertex lacking of color will be rendered in default(black) color.
+    /// warning two: when you render specific vertices, the GL_POINT_SIZE will be "1.5" times of the orignal one so that you can 
+    ///              distinguish the new specific vertices from the old one.
+    template<typename glScalar>
+    void renderFaceWithColor(std::vector<unsigned int> face_id, Color<glScalar> color);
+    template<typename glScalar>
+    void renderFaceWithColor(std::vector<unsigned int> face_id, std::vector< Color<glScalar> > color);
 
-	void renderVertexWithColor(std::vector<unsigned int> vertex_id, Color<float> color);
-	void renderVertexWithColor(std::vector<unsigned int> vertex_id, std::vector< Color<float> >  color);
+    template<typename glScalar>
+    void renderVertexWithColor(std::vector<unsigned int> vertex_id, Color<glScalar> color);
+    template<typename glScalar>
+    void renderVertexWithColor(std::vector<unsigned int> vertex_id, std::vector< Color<glScalar> >  color);
 
 protected:
     void initRenderMode();

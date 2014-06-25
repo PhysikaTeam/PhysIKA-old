@@ -14,6 +14,8 @@
 #ifndef PHYSIKA_CORE_ARRAYS_ARRAY_INL_H_
 #define PHYSIKA_CORE_ARRAYS_ARRAY_INL_H_
 
+#include <cstdlib>
+
 namespace Physika{
 
 template <typename ElementType>

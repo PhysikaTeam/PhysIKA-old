@@ -24,13 +24,13 @@ namespace Physika{
  * Key features:
  *       1. provide default response functions, and support custom response functions
  *          see the comments of default response functions to view their functionality
- *       2. close the window will not close the program
+ *       2. closing the window will not close the program
  *  
  * Usage:
  *       1. Define a GlutWindow object
  *       2. Set the custom callback functions (optional)
- *       3. call createWindow() 
- *       4. call closeWindow() to close the window
+ *       3. Call createWindow() 
+ *       4. Call closeWindow() or click the 'X' on window to close the window
  */
 
 class GlutWindow

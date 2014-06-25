@@ -75,7 +75,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         ifs.getline(line,maxline);
         char line_next[maxline];
         unsigned int line_length=strlen(line);
-        while (line[line_length-1] == '\\')     //if the last character in a line is '\',we will merge nextline into this one
+        while (line_length > 0 && line[line_length-1] == '\\')     //if the last character in a line is '\',we will merge nextline into this one
         {
             ifs.getline(line_next,maxline);
             line[line_length-1] = ' ';

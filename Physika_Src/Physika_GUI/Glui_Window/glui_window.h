@@ -1,7 +1,7 @@
 /*
- * @file glui_window.cpp
- * @Brief Glui-based window, subclass of GluiWindow, provides all features of GlutWindow,
- *        and supports GLUI controls.
+ * @file glui_window.h
+ * @Brief Glui-based window, subclass of GlutWindow, supports GLUI controls.
+ *        Provides all features of GlutWindow, except that closing the window will terminate the program.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -22,6 +22,19 @@ class GLUI;
 
 namespace Physika{
 
+/*
+ * Glui-based window
+ * Key features:
+ *       All features of GlutWindows except that closing the window will terminate the program
+ * Usage:
+ *       1. Define a GluiWindow object
+ *       2. Set the custom callback functions (optional)
+ *       3. Call gluiWindow() to get the pointer of the GLUI pannel
+ *       4. Add standard GLUI controls to the GLUI pannel
+ *       5. Call createWindow() 
+ *       6. Call closeWindow() or click the 'X' on window to close the window
+ */
+
 class GluiWindow: public GlutWindow
 {
 public:
@@ -29,10 +42,12 @@ public:
     GluiWindow(const std::string &window_name); //initialize a window with given name and default size
     GluiWindow(const std::string &window_name, unsigned int width, unsigned int height); //initialize a window with given name and size
     ~GluiWindow();
-    void createWindow(GLUI *glui);  //create window with GLUI control, create a GlutWindow if NULL pointer passed
-    void closeWindow();  //close window
+    void createWindow();  //create window with GLUI control
+    GLUI* gluiWindow(); //return pointer to the GLUI control window
 protected:
-    void initGLUT();  //init GLUT stuff
+    void initGLUT();  //init GLUT
+protected:
+    GLUI *glui_;
 };
 
 }  //end of namespace Physika

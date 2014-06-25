@@ -46,7 +46,7 @@ void BVHBase<Scalar, Dim>::setRootNode(BVHNodeBase<Scalar, Dim>* root_node)
 }
 
 template <typename Scalar,int Dim>
-const BVHNodeBase<Scalar, Dim>* const BVHBase<Scalar, Dim>::getRootNode() const
+const BVHNodeBase<Scalar, Dim>* const BVHBase<Scalar, Dim>::rootNode() const
 {
 	return root_node_;
 }
@@ -58,7 +58,7 @@ void BVHBase<Scalar, Dim>::setBVType(typename BoundingVolume<Scalar, Dim>::BVTyp
 }
 
 template <typename Scalar,int Dim>
-typename BoundingVolume<Scalar, Dim>::BVType BVHBase<Scalar, Dim>::getBVType() const
+typename BoundingVolume<Scalar, Dim>::BVType BVHBase<Scalar, Dim>::BVType() const
 {
 	return bv_type_;
 }
@@ -116,7 +116,7 @@ bool BVHBase<Scalar, Dim>::collide(const BVHBase<Scalar, Dim>* const target, Col
 {
 	if(target == NULL)
 		return false;
-	return root_node_->collide(target->getRootNode(), collision_result);
+	return root_node_->collide(target->rootNode(), collision_result);
 }
 
 template <typename Scalar,int Dim>
@@ -147,7 +147,7 @@ BVHNodeBase<Scalar, Dim>* BVHBase<Scalar, Dim>::buildFromLeafList(const int star
 	//get bounding volume
 	for (int i = start_position; i < end_position; ++i)
 	{
-		bounding_volume->unionWith(leaf_node_list_[i]->getBoundingVolume());
+		bounding_volume->unionWith(leaf_node_list_[i]->boundingVolume());
 	}
 
 	//partite the BV according to its longest axis
@@ -156,7 +156,7 @@ BVHNodeBase<Scalar, Dim>* BVHBase<Scalar, Dim>::buildFromLeafList(const int star
 	bool left_flag = false, right_flag = false, is_swaped = false;
 	while(left_buf < right_buf)
 	{
-		if(partition.isLeftHandSide(leaf_node_list_[left_buf]->getBoundingVolume()->center()))
+		if(partition.isLeftHandSide(leaf_node_list_[left_buf]->boundingVolume()->center()))
 		{
 			left_buf++;
 		}
@@ -164,7 +164,7 @@ BVHNodeBase<Scalar, Dim>* BVHBase<Scalar, Dim>::buildFromLeafList(const int star
 		{
 			left_flag = true;
 		}
-		if(!partition.isLeftHandSide(leaf_node_list_[right_buf]->getBoundingVolume()->center()))
+		if(!partition.isLeftHandSide(leaf_node_list_[right_buf]->boundingVolume()->center()))
 		{
 			right_buf--;
 		}

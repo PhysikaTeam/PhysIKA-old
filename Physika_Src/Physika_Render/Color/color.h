@@ -24,7 +24,10 @@ namespace Physika{
  * Scalar can be types accepted by glColor, namely: byte, short, int, float, double,
  * unsigned byte, unsigned short, and unsigned int
  * 
- * the value range of each channel is that of the type
+ * Note on the range of color channels (from opengl specification):
+ * The value range of each channel is that of the type. When color is passed to opengl,
+ * the float-point format color will be clamped to [0,1], unsigned integers will be linearly
+ * mapped to [0,1], and signed integers will be linearly mapped to [-1,1].
  */
 
 template <typename Scalar>

@@ -56,7 +56,7 @@ void BoundingVolumeKDOP18<Scalar, Dim>::getDistances(const Vector<Scalar, Dim>& 
 template <typename Scalar, int Dim>
 void BoundingVolumeKDOP18<Scalar, Dim>::setBoundingVolume(const BoundingVolume<Scalar, Dim>* const bounding_volume)
 {
-	if(bounding_volume->getBVType() != getBVType())
+	if(bounding_volume->bvType() != bvType())
 		return;
 	for(int i = 0; i < 9; ++i)
 	{
@@ -110,7 +110,7 @@ void BoundingVolumeKDOP18<Scalar, Dim>::setBoundingVolume(const Vector<Scalar, D
 }
 
 template <typename Scalar, int Dim>
-typename BoundingVolume<Scalar, Dim>::BVType BoundingVolumeKDOP18<Scalar, Dim>::getBVType() const
+typename BoundingVolume<Scalar, Dim>::BVType BoundingVolumeKDOP18<Scalar, Dim>::bvType() const
 {
 	return BoundingVolume<Scalar,Dim>::KDOP18;
 }
@@ -120,7 +120,7 @@ bool BoundingVolumeKDOP18<Scalar, Dim>::isOverlap(const BoundingVolume<Scalar, D
 {
 	if(bounding_volume == NULL)
 		return false;
-	if(bounding_volume->getBVType() != getBVType())
+	if(bounding_volume->bvType() != bvType())
 		return false;
 	for (int i = 0; i < 9; ++i)
 	{
@@ -137,9 +137,9 @@ bool BoundingVolumeKDOP18<Scalar, Dim>::isOverlap(const BoundingVolume<Scalar, D
 {
 	if(bounding_volume == NULL || return_volume == NULL)
 		return false;
-	if(bounding_volume->getBVType() != getBVType())
+	if(bounding_volume->bvType() != bvType())
 		return false;
-	if(return_volume->getBVType() != getBVType())
+	if(return_volume->bvType() != bvType())
 		return false;
 	if (!isOverlap(bounding_volume))
 		return false;
@@ -237,7 +237,7 @@ void BoundingVolumeKDOP18<Scalar, Dim>::unionWith (const BoundingVolume<Scalar,D
 {
 	if(bounding_volume == NULL)
 		return;
-	if(bounding_volume->getBVType() != getBVType())
+	if(bounding_volume->bvType() != bvType())
 		return;
 
 	dist_[0]  = min(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[0], dist_[0]);
@@ -265,9 +265,9 @@ void BoundingVolumeKDOP18<Scalar, Dim>::obtainUnion(const BoundingVolume<Scalar,
 {
 	if(bounding_volume_lhs == NULL && bounding_volume_rhs == NULL)
 		return;
-	if(bounding_volume_lhs->getBVType() != getBVType())
+	if(bounding_volume_lhs->bvType() != bvType())
 		return;
-	if(bounding_volume_rhs->getBVType() != getBVType())
+	if(bounding_volume_rhs->bvType() != bvType())
 		return;
 
 	dist_[0]  = min(((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_lhs)->dist_[0], ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume_rhs)->dist_[0]);

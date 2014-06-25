@@ -29,7 +29,7 @@ class CollisionPairBase
 public:
 	CollisionPairBase();
 	virtual ~CollisionPairBase();
-	//Functions for getting objects and faces of a mesh-to-mesh collision pair, corresponding to class CollisionPairMesh2Mesh
+	//Functions for getting objects and faces of a mesh-to-mesh collision pair, corresponding to class CollisionPairMeshToMesh
 	virtual const CollidableObject<Scalar, Dim>* objectLhs() const = 0;
 	virtual CollidableObject<Scalar, Dim>* objectLhs() = 0;
 	virtual const CollidableObject<Scalar, Dim>* objectRhs() const = 0;
@@ -38,21 +38,23 @@ public:
 	virtual MeshBasedCollidableObject<Scalar, Dim>* meshObjectLhs() = 0;
 	virtual const MeshBasedCollidableObject<Scalar, Dim>* meshObjectRhs() const = 0;
 	virtual MeshBasedCollidableObject<Scalar, Dim>* meshObjectRhs() = 0;
-	virtual const Face<Scalar>* faceLhs() const = 0;
-	virtual Face<Scalar>* faceLhs() = 0;
-	virtual const Face<Scalar>* faceRhs() const = 0;
-	virtual Face<Scalar>* faceRhs() = 0;
+	virtual const Face<Scalar>* faceLhsPtr() const = 0;
+	virtual Face<Scalar>* faceLhsPtr() = 0;
+	virtual const Face<Scalar>* faceRhsPtr() const = 0;
+	virtual Face<Scalar>* faceRhsPtr() = 0;
+	virtual unsigned int faceLhsIdx() = 0;
+	virtual unsigned int faceRhsIdx() = 0;
 
 	//If other kinds of collision pairs need to be defined, e.g. mesh-to-implicit pairs, add corresponding functions here
 };
 
 //Face pair of a mesh-to-mesh collision
 template <typename Scalar,int Dim>
-class CollisionPairMesh2Mesh : public CollisionPairBase<Scalar, Dim>
+class CollisionPairMeshToMesh : public CollisionPairBase<Scalar, Dim>
 {
 public:
-	CollisionPairMesh2Mesh(MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs, Face<Scalar>* face_lhs, Face<Scalar>* face_rhs);
-	~CollisionPairMesh2Mesh();
+	CollisionPairMeshToMesh(MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index);
+	~CollisionPairMeshToMesh();
 	const CollidableObject<Scalar, Dim>* objectLhs() const;
 	CollidableObject<Scalar, Dim>* objectLhs();
 	const CollidableObject<Scalar, Dim>* objectRhs() const;
@@ -61,14 +63,18 @@ public:
 	MeshBasedCollidableObject<Scalar, Dim>* meshObjectLhs();
 	const MeshBasedCollidableObject<Scalar, Dim>* meshObjectRhs() const;
 	MeshBasedCollidableObject<Scalar, Dim>* meshObjectRhs();
-	const Face<Scalar>* faceLhs() const;
-	Face<Scalar>* faceLhs();
-	const Face<Scalar>* faceRhs() const;
-	Face<Scalar>* faceRhs();
+	const Face<Scalar>* faceLhsPtr() const;
+	Face<Scalar>* faceLhsPtr();
+	const Face<Scalar>* faceRhsPtr() const;
+	Face<Scalar>* faceRhsPtr();
+	unsigned int faceLhsIdx();
+	unsigned int faceRhsIdx();
 
 protected:
 	MeshBasedCollidableObject<Scalar, Dim>* object_lhs_;
 	MeshBasedCollidableObject<Scalar, Dim>* object_rhs_;
+	unsigned int face_lhs_index_;
+	unsigned int face_rhs_index_;
 	Face<Scalar>* face_lhs_;
 	Face<Scalar>* face_rhs_;
 };

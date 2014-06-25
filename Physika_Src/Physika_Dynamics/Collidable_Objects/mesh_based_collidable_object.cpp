@@ -32,19 +32,19 @@ MeshBasedCollidableObject<Scalar, Dim>::~MeshBasedCollidableObject()
 }
 
 template <typename Scalar,int Dim>
-typename CollidableObject<Scalar, Dim>::ObjectType MeshBasedCollidableObject<Scalar, Dim>::getObjectType() const
+typename CollidableObject<Scalar, Dim>::ObjectType MeshBasedCollidableObject<Scalar, Dim>::objectType() const
 {
 	return CollidableObject<Scalar, Dim>::MESH_BASED;
 }
 
 template <typename Scalar,int Dim>
-const SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::getMesh() const
+const SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::mesh() const
 {
 	return mesh_;
 }
 
 template <typename Scalar,int Dim>
-SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::getMesh()
+SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::mesh()
 {
 	return mesh_;
 }
@@ -57,9 +57,9 @@ void MeshBasedCollidableObject<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
 }
 
 template <typename Scalar,int Dim>
-Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::getPointPosition(unsigned int point_index) const
+Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::vertexPosition(unsigned int vertex_index) const
 {
-	return transform_.transform(mesh_->vertexPosition(point_index));
+	return transform_.transform(mesh_->vertexPosition(vertex_index));
 }
 
 template <typename Scalar,int Dim>
@@ -83,11 +83,11 @@ void MeshBasedCollidableObject<Scalar, Dim>::setTransform(const Transform<Scalar
 template <typename Scalar,int Dim>
 bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs, CollisionDetectionResult<Scalar, Dim>& collision_result)
 {
-	if(object == NULL || object->getMesh() == NULL)
+	if(object == NULL || object->mesh() == NULL)
 		return false;
 
 	Face<Scalar>& face_lhs = mesh_->face(face_index_lhs);
-	Face<Scalar>& face_rhs = object->getMesh()->face(face_index_rhs);
+	Face<Scalar>& face_rhs = object->mesh()->face(face_index_rhs);
 	unsigned int num_vertex_lhs = face_lhs.numVertices();
 	unsigned int num_vertex_rhs = face_rhs.numVertices();
 	Vector<Scalar, 3>* vertex_lhs = new Vector<Scalar, 3>[num_vertex_lhs];
@@ -95,11 +95,11 @@ bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidable
 
 	for(unsigned int i = 0; i < num_vertex_lhs; i++)
 	{
-		vertex_lhs[i] = getPointPosition(face_lhs.vertex(i).positionIndex());
+		vertex_lhs[i] = vertexPosition(face_lhs.vertex(i).positionIndex());
 	}
 	for(unsigned int i = 0; i < num_vertex_rhs; i++)
 	{
-		vertex_rhs[i] = object->getPointPosition(face_rhs.vertex(i).positionIndex());
+		vertex_rhs[i] = object->vertexPosition(face_rhs.vertex(i).positionIndex());
 	}
 
 	bool is_overlap = false;
@@ -140,7 +140,7 @@ bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidable
 	collision_result.addPCS();
 	if(is_overlap)
 	{
-		collision_result.addCollisionPair(this, object, &face_lhs, &face_rhs);
+		collision_result.addCollisionPair(this, object, face_index_lhs, face_index_rhs);
 	}
 
 	delete[] vertex_lhs;

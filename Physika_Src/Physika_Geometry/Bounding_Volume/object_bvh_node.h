@@ -35,9 +35,9 @@ public:
 	//get & set
 	bool isSceneNode() const;
 	bool isObjectNode() const;
-	typename CollidableObject<Scalar, Dim>::ObjectType getObjectType() const;
+	typename CollidableObject<Scalar, Dim>::ObjectType objectType() const;
 	void setObject(CollidableObject<Scalar, Dim>* object);
-	const CollidableObject<Scalar, Dim>* getObject() const;
+	const CollidableObject<Scalar, Dim>* object() const;
 	void setFaceIndex(unsigned int face_index);
 	unsigned int getFaceIndex() const;
 
