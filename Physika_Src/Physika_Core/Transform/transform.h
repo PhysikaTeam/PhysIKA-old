@@ -35,8 +35,8 @@ public:
     /* Get and Set */
     inline Quaternion<Scalar> rotation() const { return rotation_; }
     inline Vector<Scalar,3> translation() const { return translation_; }
-    inline void setOrientation(Quaternion<Scalar> rotation) { rotation_ = rotation; }
-    inline void setPosition(Vector<Scalar,3> translation) { translation_ = translation; }
+    inline void setRotation(Quaternion<Scalar> rotation) { rotation_ = rotation; }
+    inline void setTranslation(Vector<Scalar,3> translation) { translation_ = translation; }
 
 
     /* Funtions*/

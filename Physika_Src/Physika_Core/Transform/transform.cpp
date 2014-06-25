@@ -46,6 +46,7 @@ Transform<Scalar>::Transform(const Vector<Scalar,3>& translation, const Quaterni
         rotation_(rotation)
 {
 
+
 }
 
 template <typename Scalar>
