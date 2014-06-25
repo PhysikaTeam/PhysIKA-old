@@ -165,7 +165,7 @@ int main()
 	
 	
     SurfaceMesh<double> mesh_ball;
-    if(!ObjMeshIO<double>::load(string("E:/Physika/ball_high.obj"), &mesh_ball))
+    if(!ObjMeshIO<double>::load(string("ball_high.obj"), &mesh_ball))
 		exit(1);
 	
 	pObject1 = new MeshBasedCollidableObject<double, 3>();
