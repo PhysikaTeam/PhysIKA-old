@@ -11,7 +11,6 @@
  *
  */
 
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include "Physika_Core/Config_File/config_file.h"
@@ -22,6 +21,8 @@ using std::fstream;
 using std::ifstream;
 using std::stringstream;
 using std::cerr;
+using std::string;
+using std::vector;
 
 namespace Physika{
 
@@ -67,21 +68,6 @@ void ConfigFile::printOptions()
 
 }
 
-template <class T>
-int ConfigFile::addOptionOperation(string option_name, T* dest_location)
-{
-    if(findOption(option_name) != -1)
-    {
-        cout<<"Warning: option "<<option_name<<" already exists. Ignoring request tp re-add it."<<endl;
-        return 1;
-    }
-
-    option_names_.push_back(option_name);
-    dest_locations_.push_back((void*)dest_location);
-    option_set_.push_back(false);
-
-    return 0;
-}
 
 int ConfigFile::addOption(string optionName, int* dest_location)
 {
@@ -136,15 +122,6 @@ int ConfigFile::addOption(string optionName, string* dest_location)
     option_types_.push_back(Option_String);
 
     return 0;
-}
-
-template <class T>
-int ConfigFile::addOptionOptional(string option_name, T* dest_location, T default_value)
-{
-    int code = addOption(option_name, dest_location);
-    *dest_location = default_value;
-    option_set[option_set.size() -1] = true;
-    return code;
 }
 
 int ConfigFile::parseFile(string file_name)

@@ -12,7 +12,7 @@
 *
 */
 
-#include "Physika_Dynamics/sph/sph_neighbor_query.h"
+#include "Physika_Dynamics/SPH/sph_neighbor_query.h"
 
 namespace Physika{
 
@@ -25,7 +25,7 @@ GridQuery<Scalar, Dim>::GridQuery()
 template<typename Scalar, int Dim>
 void GridQuery<Scalar, Dim>::computeBoundingBox()
 {
-    Range range;
+    //Range range;
     Vector<Scalar, Dim> lo = ref_positions_[0], hi = ref_positions_[0];
     for (unsigned int i = 0; i < particles_num_; i++)
     {
@@ -37,7 +37,7 @@ void GridQuery<Scalar, Dim>::computeBoundingBox()
     }
 
     lo = max(lo, range_limit_.minCorner());
-    up = min(up, range_limit_.maxCorner());
+    hi = min(hi, range_limit_.maxCorner());
 
     expandBoundingBox(0.25*space_);
 
@@ -77,7 +77,7 @@ void GridQuery<Scalar, Dim>::construct(Array<Vector<Scalar, Dim>>& in_positions,
     particles_num_ = in_positions.elementCount();
     ref_positions_ = in_positions.data();
 
-    Array<int> ref_ids_, ref_reordered_ids;
+    Array<unsigned int> ref_ids_, ref_reordered_ids;
     ref_ids_.resize(particles_num_);
     ref_reordered_ids.resize(particles_num_);
 
@@ -97,7 +97,7 @@ void GridQuery<Scalar, Dim>::construct(Array<Vector<Scalar, Dim>>& in_positions,
     //radixsort to get new id reodered by positions;
     //To do reorder.
 
-    sim_data.reorder(ref_reordered_ids, particles_num_);
+    sim_data.reorder(ref_reordered_ids.data(), particles_num_);
 
 }
 
