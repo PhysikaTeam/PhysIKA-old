@@ -8,6 +8,9 @@
 #SRC PATH
 src_root_path='./'
 
+#EXTERNAL INCLUDE PATH
+external_include_path='./'
+
 #LIB NAME
 lib_name='LodePNG'
 #################################################################
@@ -33,6 +36,9 @@ elif os_name in ('Linux','Darwin'):
     lib_preffix='lib'
     obj_suffix='.o'
     lib_suffix='.a'
+
+#ADD ADDITIONAL INCLUDE PATH
+env.Append(CPPPATH=external_include_path)
 
 #COMPILE SRC FILES AND ARCHIVE INTO LIB
 lib_target=[]
