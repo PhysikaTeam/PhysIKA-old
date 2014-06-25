@@ -28,94 +28,108 @@ CollisionPairBase<Scalar, Dim>::~CollisionPairBase()
 }
 
 template <typename Scalar,int Dim>
-CollisionPairMesh2Mesh<Scalar, Dim>::CollisionPairMesh2Mesh(MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs, Face<Scalar>* face_lhs, Face<Scalar>* face_rhs):
+CollisionPairMeshToMesh<Scalar, Dim>::CollisionPairMeshToMesh(MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index):
 	object_lhs_(object_lhs),
 	object_rhs_(object_rhs),
-	face_lhs_(face_lhs),
-	face_rhs_(face_rhs)
+	face_lhs_index_(face_lhs_index),
+	face_rhs_index_(face_rhs_index)
+{
+	face_lhs_ = object_lhs->getMesh()->facePtr(face_lhs_index);
+	face_rhs_ = object_rhs->getMesh()->facePtr(face_rhs_index);
+}
+
+template <typename Scalar,int Dim>
+CollisionPairMeshToMesh<Scalar, Dim>::~CollisionPairMeshToMesh()
 {
 }
 
 template <typename Scalar,int Dim>
-CollisionPairMesh2Mesh<Scalar, Dim>::~CollisionPairMesh2Mesh()
-{
-}
-
-template <typename Scalar,int Dim>
-const CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::objectLhs() const
-{
-	return object_lhs_;
-}
-
-template <typename Scalar,int Dim>
-CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::objectLhs()
+const CollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::objectLhs() const
 {
 	return object_lhs_;
 }
 
 template <typename Scalar,int Dim>
-const CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::objectRhs() const
-{
-	return object_rhs_;
-}
-
-template <typename Scalar,int Dim>
-CollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::objectRhs()
-{
-	return object_rhs_;
-}
-
-template <typename Scalar,int Dim>
-const MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::meshObjectLhs() const
+CollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::objectLhs()
 {
 	return object_lhs_;
 }
 
 template <typename Scalar,int Dim>
-MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::meshObjectLhs()
+const CollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::objectRhs() const
+{
+	return object_rhs_;
+}
+
+template <typename Scalar,int Dim>
+CollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::objectRhs()
+{
+	return object_rhs_;
+}
+
+template <typename Scalar,int Dim>
+const MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::meshObjectLhs() const
 {
 	return object_lhs_;
 }
 
 template <typename Scalar,int Dim>
-const MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::meshObjectRhs() const
+MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::meshObjectLhs()
+{
+	return object_lhs_;
+}
+
+template <typename Scalar,int Dim>
+const MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::meshObjectRhs() const
 {
 	return object_rhs_;
 }
 
 template <typename Scalar,int Dim>
-MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMesh2Mesh<Scalar, Dim>::meshObjectRhs()
+MeshBasedCollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::meshObjectRhs()
 {
 	return object_rhs_;
 }
 
 template <typename Scalar,int Dim>
-const Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::faceLhs() const
+const Face<Scalar>* CollisionPairMeshToMesh<Scalar, Dim>::faceLhsPtr() const
 {
 	return face_lhs_;
 }
 
 template <typename Scalar,int Dim>
-Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::faceLhs()
+Face<Scalar>* CollisionPairMeshToMesh<Scalar, Dim>::faceLhsPtr()
 {
 	return face_lhs_;
 }
 
 template <typename Scalar,int Dim>
-const Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::faceRhs() const
+const Face<Scalar>* CollisionPairMeshToMesh<Scalar, Dim>::faceRhsPtr() const
 {
 	return face_rhs_;
 }
 
 template <typename Scalar,int Dim>
-Face<Scalar>* CollisionPairMesh2Mesh<Scalar, Dim>::faceRhs()
+Face<Scalar>* CollisionPairMeshToMesh<Scalar, Dim>::faceRhsPtr()
 {
 	return face_rhs_;
+}
+
+template <typename Scalar,int Dim>
+unsigned int CollisionPairMeshToMesh<Scalar, Dim>::faceLhsIdx()
+{
+	return face_lhs_index_;
+}
+
+template <typename Scalar,int Dim>
+unsigned int CollisionPairMeshToMesh<Scalar, Dim>::faceRhsIdx()
+{
+	return face_rhs_index_;
 }
 
 template class CollisionPairBase<float, 3>;
 template class CollisionPairBase<double, 3>;
-template class CollisionPairMesh2Mesh<float, 3>;
-template class CollisionPairMesh2Mesh<double, 3>;
+template class CollisionPairMeshToMesh<float, 3>;
+template class CollisionPairMeshToMesh<double, 3>;
 
 }

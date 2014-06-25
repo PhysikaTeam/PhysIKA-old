@@ -28,6 +28,7 @@
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/Timer/timer.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
 
 #include <GL/glut.h>
 #include <GL/glui.h>
@@ -41,25 +42,77 @@ using namespace Physika;
 
 
 MeshBasedCollidableObject<double, 3>* pObject1, *pObject2;
+ObjectBVH<double, 3> * pBVH1, *pBVH2;
+
 
 void displayFunction()
 {
+    int width = glutGet(GLUT_WINDOW_WIDTH);
+    int height = glutGet(GLUT_WINDOW_HEIGHT);
+    //glMatrixMode(GL_PROJECTION);												// select projection matrix
+    //glViewport(0, 0, width, height);        									// set the viewport
+    glMatrixMode(GL_PROJECTION);												// set matrix mode
+    glLoadIdentity();															// reset projection matrix
+    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,10000);           		// set up a perspective projection matrix
+    glMatrixMode(GL_MODELVIEW);													// specify which matrix is the current matrix
+    glShadeModel( GL_SMOOTH );
+    glClearDepth( 1.0 );														// specify the clear value for the depth buffer
+    glEnable( GL_DEPTH_TEST );
+    glDepthFunc( GL_LEQUAL );
+    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
+    Color<unsigned char> black = Color<unsigned char>::Black();
+    glClearColor(black.redChannel(), black.greenChannel(), black.blueChannel(), black.alphaChannel());	
+
+
+
+	CollisionDetectionResult<double, 3> result;
+	result.resetCollisionResults();
+
+	pBVH1->refit();
+	pBVH2->refit();
+
+	Timer timer;
+	timer.startTimer();
+	if(pBVH1->collide(pBVH2, result))
+		cout<<"collide"<<endl;
+	timer.stopTimer();
+	cout<<"Time: "<<timer.getElapsedTime()<<endl;
+	cout<<"PCS: "<<result.numberPCS()<<endl;
+	cout<<"Collision: "<<result.numberCollision()<<endl;
+
+	std::vector<unsigned int> face_ids_1, face_ids_2;
+	std::vector<CollisionPairBase<double, 3>*> pairs = result.collisionPairs();
+	for(int i = 0; i < result.numberCollision(); i++)
+	{
+		face_ids_1.push_back(pairs[i]->faceLhsIdx());
+		face_ids_2.push_back(pairs[i]->faceRhsIdx());
+	}
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
 	glLoadIdentity();
-	gluLookAt(10, 0, -110, 0, 0, 0, 0, 1, 0);
+	gluLookAt(-30, 0, 30, 0, 0, 0, 0, 1, 0);
 
 	SurfaceMeshRender<double> meshRender1;
 	meshRender1.setSurfaceMesh(pObject1->getMesh());
-	//meshRender1.render();
+	meshRender1.enableRenderWireframe();
+	meshRender1.disableRenderSolid();
+	meshRender1.render();
+	meshRender1.renderFaceWithColor(face_ids_1, Color<float>::Blue());
 
-	Vector<double, 3> pos = pObject2->transform().position();
+	Vector<double, 3> pos = pObject2->transform().translation();
 	glTranslatef(pos[0], pos[1], pos[2]);	
-	cout<<pos<<endl;
+	//cout<<pos<<endl;
  
 	SurfaceMeshRender<double> meshRender2;
 	meshRender2.setSurfaceMesh(pObject2->getMesh());
+	
+	meshRender2.enableRenderWireframe();
+	meshRender2.disableRenderSolid();
 	meshRender2.render();
-	glTranslatef(-1*pos[0], -1*pos[1], -1*pos[2]);	
+	meshRender2.renderFaceWithColor(face_ids_2, Color<float>::Blue());
+	
+	pos[1] -= 0.2;
+	pObject2->transform().setPosition(pos);
 
     glutSwapBuffers();
 }
@@ -109,7 +162,7 @@ int main()
 	if(KDOP.isInside(point))
 		cout<<"in"<<endl;
 
-	Timer timer;
+	
 	
     SurfaceMesh<double> mesh_ball;
     if(!ObjMeshIO<double>::load(string("E:/Physika/ball_high.obj"), &mesh_ball))
@@ -117,25 +170,16 @@ int main()
 	
 	pObject1 = new MeshBasedCollidableObject<double, 3>();
 	pObject1->setMesh(&mesh_ball);
-	ObjectBVH<double, 3> * pBVH1 = new ObjectBVH<double, 3>();
+	pBVH1 = new ObjectBVH<double, 3>();
 	pBVH1->setCollidableObject(pObject1);
 	
 	pObject2 = new MeshBasedCollidableObject<double, 3>();
 	pObject2->setMesh(&mesh_ball);
-	pObject2->transform().setPosition(Vector<double, 3>(10.15, 10.15, 10.15));
-	ObjectBVH<double, 3> * pBVH2 = new ObjectBVH<double, 3>();
+	pObject2->transform().setPosition(Vector<double, 3>(0, 60, 0));
+	pBVH2 = new ObjectBVH<double, 3>();
 	pBVH2->setCollidableObject(pObject2);
 
-	CollisionDetectionResult<double, 3> result;
-	result.resetCollisionResults();
 
-	timer.startTimer();
-	if(pBVH1->collide(pBVH2, result))
-		cout<<"collide"<<endl;
-	timer.stopTimer();
-	cout<<timer.getElapsedTime()<<endl;
-	cout<<result.numberPCS()<<endl;
-	cout<<result.numberCollision()<<endl;
 
 
     GlutWindow glut_window;

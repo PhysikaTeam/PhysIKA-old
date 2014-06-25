@@ -140,7 +140,7 @@ bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidable
 	collision_result.addPCS();
 	if(is_overlap)
 	{
-		collision_result.addCollisionPair(this, object, &face_lhs, &face_rhs);
+		collision_result.addCollisionPair(this, object, face_index_lhs, face_index_rhs);
 	}
 
 	delete[] vertex_lhs;

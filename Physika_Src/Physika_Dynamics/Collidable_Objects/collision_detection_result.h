@@ -43,7 +43,7 @@ public:
 	void addCollisionPair(CollisionPairBase<Scalar, Dim>* collision_pair);
 	void cleanCollisionPairs();
 
-	void addCollisionPair(MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs, Face<Scalar>* face_lhs, Face<Scalar>* face_rhs);
+	void addCollisionPair(MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index);
 
 	//clean PCS and collision pairs
 	void resetCollisionResults();

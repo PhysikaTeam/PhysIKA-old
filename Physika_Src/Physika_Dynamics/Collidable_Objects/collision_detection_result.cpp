@@ -89,9 +89,9 @@ void CollisionDetectionResult<Scalar, Dim>::cleanCollisionPairs()
 }
 
 template <typename Scalar,int Dim>
-void CollisionDetectionResult<Scalar, Dim>::addCollisionPair(MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs, Face<Scalar>* face_lhs, Face<Scalar>* face_rhs)
+void CollisionDetectionResult<Scalar, Dim>::addCollisionPair(MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index)
 {
-	CollisionPairMesh2Mesh<Scalar, Dim>* collision_pair = new CollisionPairMesh2Mesh<Scalar, Dim>(object_lhs, object_rhs, face_lhs, face_rhs);
+	CollisionPairMeshToMesh<Scalar, Dim>* collision_pair = new CollisionPairMeshToMesh<Scalar, Dim>(object_lhs, object_rhs, face_lhs_index, face_rhs_index);
 	collision_pairs_.push_back(collision_pair);
 }
 
