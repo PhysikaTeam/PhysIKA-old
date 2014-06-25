@@ -69,7 +69,7 @@ private:
 protected:
    
     Grid<Scalar, Dim> grid_;
-    unsigned int gird_num_;
+    unsigned int grid_num_;
     unsigned int x_num_, y_num_, z_num_;
     Array<int> begin_lists_;
     Array<int> end_lists_;
