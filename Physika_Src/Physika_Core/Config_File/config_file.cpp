@@ -11,7 +11,6 @@
  *
  */
 
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include "Physika_Core/Config_File/config_file.h"
@@ -69,21 +68,6 @@ void ConfigFile::printOptions()
 
 }
 
-template <class T>
-int ConfigFile::addOptionOperation(string option_name, T* dest_location)
-{
-    if(findOption(option_name) != -1)
-    {
-        cout<<"Warning: option "<<option_name<<" already exists. Ignoring request tp re-add it."<<endl;
-        return 1;
-    }
-
-    option_names_.push_back(option_name);
-    dest_locations_.push_back((void*)dest_location);
-    option_set_.push_back(false);
-
-    return 0;
-}
 
 int ConfigFile::addOption(string optionName, int* dest_location)
 {

@@ -36,6 +36,7 @@
 #ifndef PHSYIKA_CORE_CONFIG_FILE_CONFIG_FILE_H_
 #define PHSYIKA_CORE_CONFIG_FILE_CONFIG_FILE_H_
 
+#include <iostream>
 #include <vector>
 #include <string>
 
@@ -96,6 +97,22 @@ int ConfigFile::addOptionOptional(std::string option_name, T* dest_location, T d
     *dest_location = default_value;
     option_set_[option_set_.size() - 1] = true;
     return code;
+}
+
+template <class T>
+int ConfigFile::addOptionOperation(std::string option_name, T* dest_location)
+{
+    if(findOption(option_name) != -1)
+    {
+        std::cout<<"Warning: option "<<option_name<<" already exists. Ignoring request tp re-add it."<<std::endl;
+        return 1;
+    }
+
+    option_names_.push_back(option_name);
+    dest_locations_.push_back((void*)dest_location);
+    option_set_.push_back(false);
+
+    return 0;
 }
 
 }//end of namespace Physika
