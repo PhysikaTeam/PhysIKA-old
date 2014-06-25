@@ -241,8 +241,6 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     glEnable(GL_LIGHTING);                     
     glEnable(GL_LIGHT0);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //glClear()
-    
     if (! glIsList(this->solid_display_list_id_))
     {   
         this->solid_display_list_id_=glGenLists(1);
@@ -407,7 +405,6 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(std::vector<unsigned int> 
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
     glPointSize(1.5*point_size);
-    std::cout<<"point_size:"<<point_size<<std::endl;
     unsigned int num_vertex = vertex_id.size();
     glBegin(GL_POINTS);
     for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)

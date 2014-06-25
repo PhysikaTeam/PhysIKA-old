@@ -12,6 +12,7 @@
  *
  */
 
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Render/Render_Base/render_base.h"

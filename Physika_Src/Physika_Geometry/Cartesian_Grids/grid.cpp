@@ -14,6 +14,7 @@
  */
 
 #include <cfloat>
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 

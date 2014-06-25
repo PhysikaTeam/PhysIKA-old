@@ -58,7 +58,7 @@ protected:
     Array<Scalar> phi_;
     Array<Scalar> energy_;
 
-    Array<NeighborList<Scalar>> neighborLists_;
+    Array<NeighborList<Scalar>> neighbor_lists_;
     
 };
 

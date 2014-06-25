@@ -13,6 +13,7 @@
  */
 
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Utilities/math_utilities.h"

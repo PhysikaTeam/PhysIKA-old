@@ -13,6 +13,7 @@
  */
 
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
