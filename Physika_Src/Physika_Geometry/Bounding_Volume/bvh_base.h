@@ -37,6 +37,7 @@ public:
 	const BVHNodeBase<Scalar, Dim>* const rootNode() const;
 	void setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type);
 	typename BoundingVolume<Scalar, Dim>::BVType BVType() const;
+	const BoundingVolume<Scalar, Dim>* boundingVolume() const;
 
 	//structure maintain
 

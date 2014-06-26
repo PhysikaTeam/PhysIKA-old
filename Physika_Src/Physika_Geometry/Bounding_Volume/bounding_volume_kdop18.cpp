@@ -58,7 +58,7 @@ void BoundingVolumeKDOP18<Scalar, Dim>::setBoundingVolume(const BoundingVolume<S
 {
 	if(bounding_volume->bvType() != bvType())
 		return;
-	for(int i = 0; i < 9; ++i)
+	for(int i = 0; i < 18; ++i)
 	{
 		dist_[i] = ((BoundingVolumeKDOP18<Scalar,Dim>*)bounding_volume)->dist_[i];
 	}
