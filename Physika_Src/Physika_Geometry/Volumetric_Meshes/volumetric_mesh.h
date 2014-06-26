@@ -41,17 +41,17 @@ public:
     virtual ~VolumetricMesh();
     
     //query
-    inline unsigned int vertNum() const{return vertices_.size();}
-    inline unsigned int eleNum() const{return ele_num_;}
-    inline bool isUniformElementType() const{return uniform_ele_type_;}
-    unsigned int eleVertNum(unsigned int ele_idx) const;
-    unsigned int eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
-    unsigned int regionNum() const;
+    inline unsigned int       vertNum() const{return vertices_.size();}
+    inline unsigned int       eleNum() const{return ele_num_;}
+    inline bool               isUniformElementType() const{return uniform_ele_type_;}
+    unsigned int              eleVertNum(unsigned int ele_idx) const;
+    unsigned int              eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
+    unsigned int              regionNum() const;
     const Vector<Scalar,Dim>& vertPos(unsigned int vert_idx) const;
     const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const;
-    std::string regionName(unsigned int region_idx) const;
-    unsigned int regionEleNum(unsigned int region_idx) const;
-    unsigned int regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
+    std::string               regionName(unsigned int region_idx) const;
+    unsigned int              regionEleNum(unsigned int region_idx) const;
+    unsigned int              regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
     //given the region index or name, return the elements of this region
     void regionElements(unsigned int region_idx, std::vector<unsigned int> &elements) const;
     void regionElements(const std::string &region_name, std::vector<unsigned int> &elements) const; //print error and return empty elements if no region with the given name
