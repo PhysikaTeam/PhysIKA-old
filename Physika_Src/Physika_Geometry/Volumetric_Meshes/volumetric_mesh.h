@@ -77,12 +77,12 @@ public:
     void removeElementInRegion(unsigned int region_idx, unsigned int ele_idx_in_region); //remove the ele_idx_in_region th element in the region_idx th region
 
     //virtual methods
-    virtual void printInfo() const=0;
+    virtual void   printInfo() const=0;
     virtual VolumetricMeshInternal::ElementType elementType() const=0;
-    virtual int eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element, otherwise return -1
+    virtual int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element, otherwise return -1
     virtual Scalar eleVolume(unsigned int ele_idx) const=0;
-    virtual bool containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
-    virtual void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0; 
+    virtual bool   containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
+    virtual void   interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0; 
 protected:
     /* init mesh given data, all elements belong to one default region 'AllElements'
      * if all elements have same number of vertices, vert_per_ele is pointer to one integer representing the vertex number per element
