@@ -52,23 +52,26 @@ public:
     //whenever the mesh is modified, synchronize() must be called to update the render
     void synchronize();   
 
-    //Render
+    //Render with choosen render mode
     virtual void render();
 
     //The following four functions is used for rendering specific faces/vertices with custom color.
-    /// warning one: when you employ " vector< Color<float> > color" to sepcify your cunstom color, in the case of the color size smaller than
-    ///              face_id/vertex_id 's , the face/vertex lacking of color will be rendered in default(black) color.
-    /// warning two: when you render specific vertices, the GL_POINT_SIZE will be "1.5" times of the orignal one so that you can 
-    ///              distinguish the new specific vertices from the old one.
-    template<typename glScalar>
-    void renderFaceWithColor(std::vector<unsigned int> face_id, Color<glScalar> color);
-    template<typename glScalar>
-    void renderFaceWithColor(std::vector<unsigned int> face_id, std::vector< Color<glScalar> > color);
+    // 1: when you employ " vector< Color<float> > color" to sepcify your cunstom color, in the case of the color size smaller than
+    //    face_id/vertex_id 's , the face/vertex lacking of color will be rendered in default(white) color.
+    // 2: when you render specific vertices, the GL_POINT_SIZE will be "1.5" times of the orignal one so that you can 
+    //    distinguish the new specific vertices from the old one.
+    template<typename ColorType>
+    void renderFaceWithColor(const std::vector<unsigned int> &face_id, const Color<ColorType> &color);
+    template<typename ColorType>
+    void renderFaceWithColor(const std::vector<unsigned int> &face_id, const std::vector< Color<ColorType> > &color);
 
-    template<typename glScalar>
-    void renderVertexWithColor(std::vector<unsigned int> vertex_id, Color<glScalar> color);
-    template<typename glScalar>
-    void renderVertexWithColor(std::vector<unsigned int> vertex_id, std::vector< Color<glScalar> >  color);
+    template<typename ColorType>
+    void renderVertexWithColor(const std::vector<unsigned int> &vertex_id, const Color<ColorType> &color);
+    template<typename ColorType>
+    void renderVertexWithColor(const std::vector<unsigned int> &vertex_id, const std::vector< Color<ColorType> > &color);
+
+	template<typename ColorType>
+	void renderSolidWithCustomColor(const std::vector< Color<ColorType> > & color);
 
 protected:
     void initRenderMode();
@@ -92,7 +95,12 @@ protected:
     //displaylist ids
     unsigned int vertex_display_list_id_;   
     unsigned int wire_display_list_id_;     
-    unsigned int solid_display_list_id_;    
+    unsigned int solid_display_list_id_;
+	unsigned int face_with_color_display_list_id_;
+	unsigned int face_with_color_vector_display_list_id_;
+	unsigned int vertex_with_color_display_list_id_;
+	unsigned int vertex_with_color_vector_display_list_id_;
+	unsigned int solid_with_custom_color_vector_display_list_id_;
 
     //predefined render modes
     static const unsigned int render_solid_;

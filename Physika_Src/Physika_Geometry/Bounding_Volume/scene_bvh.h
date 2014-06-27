@@ -19,29 +19,27 @@ namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar,int Dim> class BVHBase;
+template <typename Scalar,int Dim> class SceneBVHNode;
+template <typename Scalar,int Dim> class ObjectBVH;
 
 template <typename Scalar,int Dim>
-class ObjectBVH : public BVHBase<Scalar, Dim>
+class SceneBVH : public BVHBase<Scalar, Dim>
 {
 public:
 	//constructors && deconstructors
-	ObjectBVH();
-	~ObjectBVH();
+	SceneBVH();
+	~SceneBVH();
 
 	//get & set
-	//inline void setRootNode(SceneBVHNode* root_node);
-	//inline SceneBVHNode* getRootNode();
 
 	//structure maintain
-	//void refit();
-	void buildFromScene();
-	//void clean();
-
-	//collision detection
-	//bool selfCollide();
+	void addObjectBVH(ObjectBVH<Scalar, Dim>* object_bvh, bool isRebuild = true);
+	void refitLeafNodes();
+	//Update the scene BVH. First refit leaf nodes, then rebuild the scene BVH
+	void updateSceneBVH();
 	
 protected:
-	//SceneBVHNode* root_node_;
+
 };
 
 }  //end of namespace Physika

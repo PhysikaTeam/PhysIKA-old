@@ -131,12 +131,18 @@ void BVHNodeBase<Scalar, Dim>::refit()
 		this->resize();
 		return;
 	}
+	bounding_volume_->setEmpty();
 	if(left_child_ != NULL)
+	{
 		left_child_->refit();
+		bounding_volume_->unionWith(left_child_->boundingVolume());
+	}
 	if(right_child_ != NULL)
+	{
 		right_child_->refit();
-	
-	bounding_volume_->obtainUnion(left_child_->boundingVolume(), right_child_->boundingVolume());
+		bounding_volume_->unionWith(right_child_->boundingVolume());
+	}
+	//bounding_volume_->obtainUnion(left_child_->boundingVolume(), right_child_->boundingVolume());
 }
 
 template <typename Scalar,int Dim>
@@ -169,16 +175,22 @@ void BVHNodeBase<Scalar, Dim>::cleanInternalNodes()
 {
 	if(!is_leaf_)
 	{
-		if(left_child_ != NULL && !left_child_->is_leaf_)
+		if(left_child_ != NULL)
 		{
-			left_child_->clean();
-			delete left_child_;
+			if(!left_child_->is_leaf_)
+			{
+				left_child_->cleanInternalNodes();
+				delete left_child_;
+			}
 			left_child_ = NULL;
 		}
-		if(right_child_ != NULL && !right_child_->is_leaf_)
+		if(right_child_ != NULL)
 		{
-			right_child_->clean();
-			delete right_child_;
+			if(!right_child_->is_leaf_)
+			{
+				right_child_->cleanInternalNodes();
+				delete right_child_;
+			}
 			right_child_ = NULL;
 		}
 		if(bounding_volume_ != NULL)

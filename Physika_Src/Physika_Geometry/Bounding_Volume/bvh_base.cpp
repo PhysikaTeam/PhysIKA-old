@@ -63,6 +63,11 @@ typename BoundingVolume<Scalar, Dim>::BVType BVHBase<Scalar, Dim>::BVType() cons
 	return bv_type_;
 }
 
+template <typename Scalar,int Dim>
+const BoundingVolume<Scalar, Dim>* BVHBase<Scalar, Dim>::boundingVolume() const
+{
+	return root_node_->boundingVolume();
+}
 
 template <typename Scalar,int Dim>
 void BVHBase<Scalar, Dim>::refit()

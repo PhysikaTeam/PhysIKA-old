@@ -32,16 +32,30 @@ template <typename Scalar> const unsigned int SurfaceMeshRender<Scalar>::render_
     
 template <typename Scalar>
 SurfaceMeshRender<Scalar>::SurfaceMeshRender()
-    :mesh_(NULL),solid_display_list_id_(0),
-     wire_display_list_id_(0),vertex_display_list_id_(0)
+    :mesh_(NULL),
+	solid_display_list_id_(0),
+    wire_display_list_id_(0),
+	vertex_display_list_id_(0),
+	face_with_color_display_list_id_(0),
+	face_with_color_vector_display_list_id_(0),
+	vertex_with_color_display_list_id_(0),
+	vertex_with_color_vector_display_list_id_(0),
+	solid_with_custom_color_vector_display_list_id_(0)
 {
     initRenderMode();
 }
 
 template <typename Scalar>
 SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh)
-    :mesh_(mesh),solid_display_list_id_(0),
-     wire_display_list_id_(0),vertex_display_list_id_(0)
+    :mesh_(mesh),
+	solid_display_list_id_(0),
+    wire_display_list_id_(0),
+	vertex_display_list_id_(0),
+	face_with_color_display_list_id_(0),
+	face_with_color_vector_display_list_id_(0),
+	vertex_with_color_display_list_id_(0),
+	vertex_with_color_vector_display_list_id_(0),
+	solid_with_custom_color_vector_display_list_id_(0)
 {
     initRenderMode();
     loadTextures();
@@ -332,8 +346,60 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     glPopAttrib();
 }
 
-template <typename Scalar> template<typename glScalar>
-void SurfaceMeshRender<Scalar>::renderFaceWithColor(std::vector<unsigned int> face_id, Color<glScalar> color)
+template <typename Scalar> template<typename ColorType>
+void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Color<ColorType> > & color)
+{
+	if(this->mesh_->numVertices()!= color.size())
+    {
+        std::cerr<<"warning: the size of color don't equal to vertex number in SurfaceMesh, the vertex lacking of cunstom color will be rendered in white color !"<<std::endl;
+    }
+
+	glPushAttrib(GL_POLYGON_BIT|GL_ENABLE_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // set polygon mode FILL for SOLID MODE
+	glShadeModel(GL_SMOOTH);                   // set shade model to GL_SMOOTH
+    if (! glIsList(this->solid_with_custom_color_vector_display_list_id_))
+    {   
+        this->solid_with_custom_color_vector_display_list_id_=glGenLists(1);
+        glNewList(this->solid_with_custom_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
+
+        unsigned int num_group = this->mesh_->numGroups();                 // get group number
+        for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
+        {
+            Group<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            unsigned int num_face = group_ref.numFaces();                  // get face number
+    
+            for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
+            {
+                Face<Scalar> face_ref = group_ref.face(face_idx);          // get face reference
+                unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
+                glBegin(GL_POLYGON);                                       // draw polygon with SOLID MODE
+                for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++) // loop for every vertex
+                {
+                    unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
+					if(position_ID < color.size())
+						openGLColor3(color[position_ID]);
+					else
+						openGLColor3(Color<ColorType>::White());
+                    Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
+                    openGLVertex(position);
+                }
+                glEnd();
+            }
+
+            glDisable(GL_TEXTURE_2D);
+        }
+        glEndList();
+    }
+    else
+    {
+        glCallList(this->solid_with_custom_color_vector_display_list_id_);
+    }
+
+    glPopAttrib();
+}
+
+template <typename Scalar> template<typename ColorType>
+void SurfaceMeshRender<Scalar>::renderFaceWithColor(const std::vector<unsigned int> &face_id, const Color<ColorType> &color)
 {
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);     // set polygon mode FILL for SOLID MODE
@@ -342,29 +408,40 @@ void SurfaceMeshRender<Scalar>::renderFaceWithColor(std::vector<unsigned int> fa
     openGLColor3(color);
     glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
     
-    unsigned int num_face = face_id.size();     
-    for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
-    {
-        const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
-        unsigned int num_vertex = face_ref.numVertices();
-        glBegin(GL_POLYGON);                                                      // draw specific face
-        for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-        {
-            unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
-            Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-            openGLVertex(position);
-        }
-        glEnd();
-    }
+	if(! glIsList(this->face_with_color_display_list_id_))
+	{
+		this->face_with_color_display_list_id_ = glGenLists(1);
+		glNewList(this->face_with_color_display_list_id_, GL_COMPILE_AND_EXECUTE);
+
+		unsigned int num_face = face_id.size();     
+		for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
+		{
+			const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
+			unsigned int num_vertex = face_ref.numVertices();
+			glBegin(GL_POLYGON);                                                      // draw specific face
+			for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
+			{
+				unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
+				Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
+				openGLVertex(position);
+			}
+		    glEnd();
+		}
+		glEndList();
+	}
+	else
+	{
+		glCallList(this->face_with_color_display_list_id_);
+	}
     glPopAttrib();
 }
 
-template <typename Scalar> template<typename glScalar>
-void SurfaceMeshRender<Scalar>::renderFaceWithColor(std::vector<unsigned int> face_id, std::vector< Color<glScalar> > color)
+template <typename Scalar> template<typename ColorType>
+void SurfaceMeshRender<Scalar>::renderFaceWithColor(const std::vector<unsigned int> &face_id, const std::vector< Color<ColorType> > &color)
 {
     if(face_id.size()!= color.size())
     {
-        std::cout<<"warning: the size of face_id don't equal to color's, the face lacking of cunstom color will be rendered in black color !"<<std::endl;
+        std::cerr<<"warning: the size of face_id don't equal to color's, the face lacking of cunstom color will be rendered in black color !"<<std::endl;
     }
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);     // set polygon mode FILL for SOLID MODE
@@ -372,30 +449,41 @@ void SurfaceMeshRender<Scalar>::renderFaceWithColor(std::vector<unsigned int> fa
     glEnable(GL_POLYGON_OFFSET_FILL);              // enable polygon offset
     glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
     
-    unsigned int num_face = face_id.size();     
-    for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
-    {
-        const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
-        unsigned int num_vertex = face_ref.numVertices();
-        if(face_idx<color.size())
-            openGLColor3(color[face_idx]);
-        else
-            openGLColor3(Color<glScalar>());
-        glBegin(GL_POLYGON);                                                      // draw specific face
-        for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-        {
-            unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
-            Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-            openGLVertex(position);
-        }
-        glEnd();
-    }
-    glPopAttrib();
+	if(! glIsList(this->face_with_color_vector_display_list_id_))
+	{
+		this->face_with_color_vector_display_list_id_ = glGenLists(1);
+		glNewList(this->face_with_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
+
+		unsigned int num_face = face_id.size();     
+		for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
+		{
+			const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
+			unsigned int num_vertex = face_ref.numVertices();
+			if(face_idx<color.size())
+				openGLColor3(color[face_idx]);
+			else
+				openGLColor3(Color<ColorType>::White());
+			glBegin(GL_POLYGON);                                                      // draw specific face
+			for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
+			{
+				unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
+				Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
+				openGLVertex(position);
+			}
+			glEnd();
+		}
+		glEndList();
+	}
+	else
+	{
+		glCallList(this->face_with_color_vector_display_list_id_);
+	}
+	glPopAttrib();
 
 }
 
-template <typename Scalar> template<typename glScalar>
-void SurfaceMeshRender<Scalar>::renderVertexWithColor(std::vector<unsigned int> vertex_id, Color<glScalar> color)
+template <typename Scalar> template<typename ColorType>
+void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned int> &vertex_id, const Color<ColorType> &color)
 {
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
     glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
@@ -405,23 +493,36 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(std::vector<unsigned int> 
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
     glPointSize(1.5*point_size);
-    unsigned int num_vertex = vertex_id.size();
-    glBegin(GL_POINTS);
-    for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-    {
-        Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]); // get the position of vertex which is stored in "surface mesh"
-        openGLVertex(position);
-    }
-    glEnd();
+
+	if(! glIsList(this->vertex_with_color_display_list_id_))
+	{
+		this->vertex_with_color_display_list_id_ = glGenLists(1);
+		glNewList(this->vertex_with_color_display_list_id_, GL_COMPILE_AND_EXECUTE);
+
+		unsigned int num_vertex = vertex_id.size();
+		glBegin(GL_POINTS);
+		for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
+		{
+			Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]); // get the position of vertex which is stored in "surface mesh"
+			openGLVertex(position);
+		}
+		glEnd();
+		glEndList();
+	}
+	else
+	{
+		glCallList(this->vertex_with_color_display_list_id_);
+	}
+
     glPopAttrib();
 }
 
-template <typename Scalar> template<typename glScalar>
-void SurfaceMeshRender<Scalar>::renderVertexWithColor(std::vector<unsigned int> vertex_id, std::vector< Color<glScalar> > color)
+template <typename Scalar> template<typename ColorType>
+void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned int> &vertex_id, const std::vector< Color<ColorType> > &color)
 {
     if(vertex_id.size()!= color.size())
     {
-        std::cout<<"warning: the size of vertex_id don't equal to color's, the vertex lacking of cunstom color will be rendered in black color !!"<<std::endl;
+        std::cerr<<"warning: the size of vertex_id don't equal to color's, the vertex lacking of cunstom color will be rendered in black color !!"<<std::endl;
     }
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
     glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
@@ -431,18 +532,29 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(std::vector<unsigned int> 
     glGetFloatv(GL_POINT_SIZE,&point_size);
     glPointSize(1.5*point_size);
     
-    unsigned int num_vertex = vertex_id.size();
-    glBegin(GL_POINTS);
-    for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-    {
-        if(vertex_idx<color.size())
-            openGLColor3(color[vertex_idx]);
-        else
-            openGLColor3(Color<glScalar>());
-        Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]);
-        openGLVertex(position);
-    }
-    glEnd();
+	if(! glIsList(this->vertex_with_color_vector_display_list_id_))
+	{
+		this->vertex_with_color_vector_display_list_id_ = glGenLists(1);
+		glNewList(this->vertex_with_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
+
+		unsigned int num_vertex = vertex_id.size();
+		glBegin(GL_POINTS);
+		for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
+		{
+			if(vertex_idx<color.size())
+				openGLColor3(color[vertex_idx]);
+			else
+				openGLColor3(Color<ColorType>::White());
+			Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]);
+			openGLVertex(position);
+		}
+		glEnd();
+		glEndList();
+	}
+	else
+	{
+		glCallList(this->vertex_with_color_vector_display_list_id_);
+	}
     glPopAttrib();
 }
 
@@ -516,52 +628,111 @@ void SurfaceMeshRender<Scalar>::deleteDisplayLists()
     glDeleteLists(this->solid_display_list_id_, 1);
     glDeleteLists(this->wire_display_list_id_, 1);
     glDeleteLists(this->vertex_display_list_id_, 1);
+	glDeleteLists(this->face_with_color_display_list_id_, 1);
+	glDeleteLists(this->face_with_color_vector_display_list_id_, 1);
+	glDeleteLists(this->vertex_with_color_display_list_id_, 1);
+	glDeleteLists(this->vertex_with_color_vector_display_list_id_, 1);
+	glDeleteLists(this->solid_with_custom_color_vector_display_list_id_, 1);
 
     this->solid_display_list_id_ = 0;
     this->wire_display_list_id_ = 0;
-    this->vertex_display_list_id_ = 0;	
+    this->vertex_display_list_id_ = 0;
+	this->face_with_color_display_list_id_ = 0;
+	this->face_with_color_vector_display_list_id_ = 0;
+	this->vertex_with_color_display_list_id_ = 0;
+	this->vertex_with_color_vector_display_list_id_ = 0;
+	this->solid_with_custom_color_vector_display_list_id_ = 0;
 }
 
 //explicit instantitation
 template class SurfaceMeshRender<float>;
 template class SurfaceMeshRender<double>;
 
+//for each color type: char,short,int,float,double,unsigned char,unsigned short,unsigned int
+//explicit instantiate the render**WithColor Method
+template void SurfaceMeshRender<float>::renderFaceWithColor<char>(const std::vector<unsigned int>&,const Color<char>&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<short>(const std::vector<unsigned int>&,const Color<short>&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<int>(const std::vector<unsigned int>&,const Color<int>&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<float>(const std::vector<unsigned int>&,const Color<float>&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<double>(const std::vector<unsigned int>&,const Color<double>&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned char>(const std::vector<unsigned int>&,const Color<unsigned char>&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned short>(const std::vector<unsigned int>&,const Color<unsigned short>&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned int>(const std::vector<unsigned int>&,const Color<unsigned int>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<char>(const std::vector<unsigned int>&,const Color<char>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<short>(const std::vector<unsigned int>&,const Color<short>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<int>(const std::vector<unsigned int>&,const Color<int>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<float>(const std::vector<unsigned int>&,const Color<float>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<double>(const std::vector<unsigned int>&,const Color<double>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned char>(const std::vector<unsigned int>&,const Color<unsigned char>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned short>(const std::vector<unsigned int>&,const Color<unsigned short>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned int>(const std::vector<unsigned int>&,const Color<unsigned int>&);
 
-template void SurfaceMeshRender<float>::
-    renderFaceWithColor<float>(std::vector<unsigned int> face_id,  Color<float> color);
-template void SurfaceMeshRender<float>::
-    renderFaceWithColor<double>(std::vector<unsigned int> face_id, Color<double> color);
-template void SurfaceMeshRender<double>::
-    renderFaceWithColor<float>(std::vector<unsigned int> face_id, Color<float> color);
-template void SurfaceMeshRender<double>::
-    renderFaceWithColor<double>(std::vector<unsigned int> face_id, Color<double> color);
+template void SurfaceMeshRender<float>::renderVertexWithColor<char>(const std::vector<unsigned int>&,const Color<char>&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<short>(const std::vector<unsigned int>&,const Color<short>&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<int>(const std::vector<unsigned int>&,const Color<int>&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<float>(const std::vector<unsigned int>&,const Color<float>&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<double>(const std::vector<unsigned int>&,const Color<double>&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned char>(const std::vector<unsigned int>&,const Color<unsigned char>&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned short>(const std::vector<unsigned int>&,const Color<unsigned short>&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const Color<unsigned int>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<char>(const std::vector<unsigned int>&,const Color<char>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<short>(const std::vector<unsigned int>&,const Color<short>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<int>(const std::vector<unsigned int>&,const Color<int>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<float>(const std::vector<unsigned int>&,const Color<float>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<double>(const std::vector<unsigned int>&,const Color<double>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned char>(const std::vector<unsigned int>&,const Color<unsigned char>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned short>(const std::vector<unsigned int>&,const Color<unsigned short>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const Color<unsigned int>&);
 
-template void SurfaceMeshRender<float>::
-    renderVertexWithColor<float>(std::vector<unsigned int> vertex_id, Color<float> color);
-template void SurfaceMeshRender<float>::
-    renderVertexWithColor<double>(std::vector<unsigned int> vertex_id, Color<double> color);
-template void SurfaceMeshRender<double>::
-    renderVertexWithColor<float>(std::vector<unsigned int> vertex_id, Color<float> color);
-template void SurfaceMeshRender<double>::
-    renderVertexWithColor<double>(std::vector<unsigned int> vertex_id, Color<double> color);
+template void SurfaceMeshRender<float>::renderFaceWithColor<char>(const std::vector<unsigned int>&,const std::vector<Color<char> >&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<short>(const std::vector<unsigned int>&,const std::vector<Color<short> >&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<int>(const std::vector<unsigned int>&,const std::vector<Color<int> >&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<float>(const std::vector<unsigned int>&,const std::vector<Color<float> >&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<double>(const std::vector<unsigned int>&,const std::vector<Color<double> >&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned char>(const std::vector<unsigned int>&,const std::vector<Color<unsigned char> >&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned short>(const std::vector<unsigned int>&,const std::vector<Color<unsigned short> >&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<char>(const std::vector<unsigned int>&,const std::vector<Color<char> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<short>(const std::vector<unsigned int>&,const std::vector<Color<short> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<int>(const std::vector<unsigned int>&,const std::vector<Color<int> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<float>(const std::vector<unsigned int>&,const std::vector<Color<float> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<double>(const std::vector<unsigned int>&,const std::vector<Color<double> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned char>(const std::vector<unsigned int>&,const std::vector<Color<unsigned char> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned short>(const std::vector<unsigned int>&,const std::vector<Color<unsigned short> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
 
+template void SurfaceMeshRender<float>::renderVertexWithColor<char>(const std::vector<unsigned int>&,const std::vector<Color<char> >&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<short>(const std::vector<unsigned int>&,const std::vector<Color<short> >&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<int>(const std::vector<unsigned int>&,const std::vector<Color<int> >&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<float>(const std::vector<unsigned int>&,const std::vector<Color<float> >&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<double>(const std::vector<unsigned int>&,const std::vector<Color<double> >&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned char>(const std::vector<unsigned int>&,const std::vector<Color<unsigned char> >&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned short>(const std::vector<unsigned int>&,const std::vector<Color<unsigned short> >&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<char>(const std::vector<unsigned int>&,const std::vector<Color<char> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<short>(const std::vector<unsigned int>&,const std::vector<Color<short> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<int>(const std::vector<unsigned int>&,const std::vector<Color<int> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<float>(const std::vector<unsigned int>&,const std::vector<Color<float> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<double>(const std::vector<unsigned int>&,const std::vector<Color<double> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned char>(const std::vector<unsigned int>&,const std::vector<Color<unsigned char> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned short>(const std::vector<unsigned int>&,const std::vector<Color<unsigned short> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
 
-template void SurfaceMeshRender<float>::
-    renderFaceWithColor<float>(std::vector<unsigned int> face_id, std::vector< Color<float> > color);
-template void SurfaceMeshRender<float>::
-    renderFaceWithColor<double>(std::vector<unsigned int> face_id, std::vector< Color<double> > color);
-template void SurfaceMeshRender<double>::
-    renderFaceWithColor<float>(std::vector<unsigned int> face_id, std::vector< Color<float> > color);
-template void SurfaceMeshRender<double>::
-    renderFaceWithColor<double>(std::vector<unsigned int> face_id, std::vector< Color<double> > color);
-
-template void SurfaceMeshRender<float>::
-    renderVertexWithColor<float>(std::vector<unsigned int> vertex_id, std::vector< Color<float> > color);
-template void SurfaceMeshRender<float>::
-    renderVertexWithColor<double>(std::vector<unsigned int> vertex_id, std::vector< Color<double> > color);
-template void SurfaceMeshRender<double>::
-    renderVertexWithColor<float>(std::vector<unsigned int> vertex_id, std::vector< Color<float> > color);
-template void SurfaceMeshRender<double>::
-    renderVertexWithColor<double>(std::vector<unsigned int> vertex_id, std::vector< Color<double> > color);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<char>(const std::vector<Color<char> >&);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<short>(const std::vector<Color<short> >&);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<int>(const std::vector<Color<int> >&);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<float>(const std::vector<Color<float> >&);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<double>(const std::vector<Color<double> >&);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<unsigned char>(const std::vector<Color<unsigned char> >&);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<unsigned short>(const std::vector<Color<unsigned short> >&);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<unsigned int>(const std::vector<Color<unsigned int> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<char>(const std::vector<Color<char> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<short>(const std::vector<Color<short> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<int>(const std::vector<Color<int> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<float>(const std::vector<Color<float> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<double>(const std::vector<Color<double> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<unsigned char>(const std::vector<Color<unsigned char> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<unsigned short>(const std::vector<Color<unsigned short> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<unsigned int>(const std::vector<Color<unsigned int> >&);
 
 } //end of namespace Physika
