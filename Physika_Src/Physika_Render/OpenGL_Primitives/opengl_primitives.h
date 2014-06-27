@@ -22,6 +22,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Render/Color/color.h"
+#include "Physika_Core/Matrices/matrix_MxN.h"
 
 namespace Physika{
 
@@ -252,6 +253,28 @@ inline void openGLTexCoord(const Vector<float,3> &vec)
 inline void openGLTexCoord(const Vector<double,3> &vec)
 {
     glTexCoord3d(vec[0],vec[1],vec[2]);
+}
+
+/*
+ * openGLMultMatrix(const Vector<Scalar,Dim> &):
+ * replacement for glMultiMatrixf, glMultiMatrixd
+ */
+inline void openGLMultMatrix(const MatrixMxN<float> & matrix)
+{
+	float matrix_[16];
+	for(unsigned int i=0; i<4; i++)
+		for(unsigned int j=0; j<4; j++)
+			matrix_[i*4+j] = matrix(j,i);
+	glMultMatrixf(matrix_);
+}
+
+inline void openGLMultMatrix(const MatrixMxN<double> & matrix)
+{
+	double matrix_[16];
+	for(unsigned int i=0; i<4; i++)
+		for(unsigned int j=0; j<4; j++)
+			matrix_[i*4+j] = matrix(j,i);
+	glMultMatrixd(matrix_);
 }
 
 } //end of namespace Physika
