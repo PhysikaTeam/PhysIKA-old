@@ -289,6 +289,122 @@ const Vector<Scalar,3> Quaternion<Scalar>::rotate(const Vector<Scalar,3> v) cons
             );
 }
 
+
+template <typename Scalar>
+SquareMatrix<Scalar, 3> Quaternion<Scalar>::get3x3Matrix() const
+{
+    Scalar x = x_, y = y_, z = z_, w = w_;
+    Scalar x2 = x + x, y2 = y + y, z2 = z + z;
+    Scalar xx = x2 * x, yy = y2 * y, zz = z2 * z;
+    Scalar xy = x2 * y, xz = x2 * z, xw = x2 * w;
+    Scalar yz = y2 * z, yw = y2 * w, zw = z2 * w;
+    return SquareMatrix<Scalar, 3>(Scalar(1) - yy - zz, xy - zw, xz + yw,
+                                    xy + zw, Scalar(1) - xx - zz, yz - xw,
+                                   xz - yw, yz + xw, Scalar(1) - xx - yy);
+}
+
+template <typename Scalar>
+MatrixMxN<Scalar> Quaternion<Scalar>::get4x4Matrix() const
+{
+    Scalar x = x_, y = y_, z = z_, w = w_;
+    Scalar x2 = x + x, y2 = y + y, z2 = z + z;
+    Scalar xx = x2 * x, yy = y2 * y, zz = z2 * z;
+    Scalar xy = x2 * y, xz = x2 * z, xw = x2 * w;
+    Scalar yz = y2 * z, yw = y2 * w, zw = z2 * w;
+    Scalar* entries = new Scalar[17];
+    entries[0] = Scalar(1) - yy - zz;
+    entries[1] = xy - zw;
+    entries[2] = xz + yw,
+    entries[3] = 0;
+    entries[4] = xy + zw;
+    entries[5] = Scalar(1) - xx - zz;
+    entries[6] = yz - xw;
+    entries[7] = 0;
+    entries[8] = xz - yw;
+    entries[9] = yz + xw;
+    entries[10] = Scalar(1) - xx - yy;
+    entries[11] = 0;
+    entries[12] = 0;
+    entries[13] = 0;
+    entries[14] = 0;
+    entries[15] = 1;
+    return MatrixMxN<Scalar>(4, 4, entries);
+
+}
+
+template <typename Scalar>
+Quaternion<Scalar>::Quaternion(const SquareMatrix<Scalar, 3>& matrix )
+{
+    Scalar tr = matrix(0,0) + matrix(1,1) + matrix(2,2);
+    if(tr > 0.0)
+    {
+        Scalar s = sqrt(tr + 1.0);
+        w_ = s * 0.5;
+        if(s != 0.0)
+            s = 0.5 / s;
+        x_ = s * (matrix(1,2) - matrix(2,1));
+        y_ = s * (matrix(2,0) - matrix(0,2));
+        z_ = s * (matrix(0,1) - matrix(1,0));
+    }
+    else
+    {
+        int i = 0, j, k;
+        int next[3] = { 1, 2, 0 }; 
+        int q[4];
+        if(matrix(1,1) > matrix(0,0)) i = 1;
+        if(matrix(2,2) > matrix(i,i)) i = 2;
+        j = next[i];
+        k = next[j];
+        Scalar s = sqrt(matrix(i,i) - matrix(j,j) - matrix(k,k) + 1.0);
+        q[i] = s * 0.5;
+        if(s != 0.0) 
+            s = 0.5/s;
+        q[3] = s * (matrix(j,k) - matrix(k,j));
+        q[j] = s * (matrix(i,j) - matrix(j,i));
+        q[k] = s * (matrix(i,k) - matrix(k,i));
+        x_ = q[0];
+        y_ = q[1];
+        z_ = q[2];
+        w_ = q[3];
+    }
+}
+
+template <typename Scalar>
+Quaternion<Scalar>::Quaternion(const MatrixMxN<Scalar>& matrix)
+{
+    Scalar tr = matrix(0,0) + matrix(1,1) + matrix(2,2);
+    if(tr > 0.0)
+    {
+        Scalar s = sqrt(tr + 1.0);
+        w_ = s * 0.5;
+        if(s != 0.0)
+            s = 0.5 / s;
+        x_ = s * (matrix(1,2) - matrix(2,1));
+        y_ = s * (matrix(2,0) - matrix(0,2));
+        z_ = s * (matrix(0,1) - matrix(1,0));
+    }
+    else
+    {
+        int i = 0, j, k;
+        int next[3] = { 1, 2, 0 }; 
+        int q[4];
+        if(matrix(1,1) > matrix(0,0)) i = 1;
+        if(matrix(2,2) > matrix(i,i)) i = 2;
+        j = next[i];
+        k = next[j];
+        Scalar s = sqrt(matrix(i,i) - matrix(j,j) - matrix(k,k) + 1.0);
+        q[i] = s * 0.5;
+        if(s != 0.0) 
+            s = 0.5/s;
+        q[3] = s * (matrix(j,k) - matrix(k,j));
+        q[j] = s * (matrix(i,j) - matrix(j,i));
+        q[k] = s * (matrix(i,k) - matrix(k,i));
+        x_ = q[0];
+        y_ = q[1];
+        z_ = q[2];
+        w_ = q[3];
+    }
+}
 //explicit instantiation
 template class Quaternion<float>;
 template class Quaternion<double>;

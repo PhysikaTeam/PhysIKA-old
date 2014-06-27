@@ -19,6 +19,8 @@
 #include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Quaternion/quaternion.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Core/Matrices/matrix_MxN.h"
 
 namespace Physika{
 
@@ -27,21 +29,35 @@ class Transform
 {
 public:
     /* Constructions */
+    Transform();
     explicit Transform(const Vector<Scalar,3> );
     explicit Transform(const Quaternion<Scalar> );
     Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>& );
     Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>& );
+    Transform(const MatrixMxN<Scalar>& );
+    Transform(const SquareMatrix<Scalar,3>&);
 
     /* Get and Set */
     inline Quaternion<Scalar> rotation() const { return rotation_; }
+    inline SquareMatrix<Scalar, 3> rotation3x3Matrix() const { return rotation_.get3x3Matrix(); }
+    inline MatrixMxN<Scalar> rotation4x4Matrix() const { return rotation_.get4x4Matrix(); }
+    inline MatrixMxN<Scalar> transformMatrix() const
+    {
+        MatrixMxN<Scalar> matrix = rotation_.get4x4Matrix();
+        matrix(0, 3) = translation_[0];
+        matrix(1, 3) = translation_[1];
+        matrix(2, 3) = translation_[2];
+        return matrix;
+    }
     inline Vector<Scalar,3> translation() const { return translation_; }
     inline void setRotation(Quaternion<Scalar> rotation) { rotation_ = rotation; }
     inline void setTranslation(Vector<Scalar,3> translation) { translation_ = translation; }
-
+    inline void setIdentity() { rotation_ = Quaternion<Scalar>(0,0,0,1); translation_ = Vector<Scalar, 3>(0,0,0);}
 
     /* Funtions*/
     Vector<Scalar,3> transform(const Vector<Scalar, 3>& input) const;
 
+    static inline Transform<Scalar> identityTransform() { return Transform<Scalar>(); }
 
 protected:
     Quaternion<Scalar> rotation_;
