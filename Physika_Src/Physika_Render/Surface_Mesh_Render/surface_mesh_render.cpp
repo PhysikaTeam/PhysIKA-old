@@ -787,7 +787,7 @@ template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned char>(co
 template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned short>(const std::vector<unsigned int>&,const std::vector<Color<unsigned short> >&);
 template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
 
-template void SurfaceMeshRender<float>::renderSolidWithCustomColor<char>(const std::vector<Color<char> >&);
+template void SurfaceMeshRender<float>::renderSolidWithCustomColor<signed char>(const std::vector<Color<signed char> >&);
 template void SurfaceMeshRender<float>::renderSolidWithCustomColor<short>(const std::vector<Color<short> >&);
 template void SurfaceMeshRender<float>::renderSolidWithCustomColor<int>(const std::vector<Color<int> >&);
 template void SurfaceMeshRender<float>::renderSolidWithCustomColor<float>(const std::vector<Color<float> >&);
@@ -795,7 +795,7 @@ template void SurfaceMeshRender<float>::renderSolidWithCustomColor<double>(const
 template void SurfaceMeshRender<float>::renderSolidWithCustomColor<unsigned char>(const std::vector<Color<unsigned char> >&);
 template void SurfaceMeshRender<float>::renderSolidWithCustomColor<unsigned short>(const std::vector<Color<unsigned short> >&);
 template void SurfaceMeshRender<float>::renderSolidWithCustomColor<unsigned int>(const std::vector<Color<unsigned int> >&);
-template void SurfaceMeshRender<double>::renderSolidWithCustomColor<char>(const std::vector<Color<char> >&);
+template void SurfaceMeshRender<double>::renderSolidWithCustomColor<signed char>(const std::vector<Color<signed char> >&);
 template void SurfaceMeshRender<double>::renderSolidWithCustomColor<short>(const std::vector<Color<short> >&);
 template void SurfaceMeshRender<double>::renderSolidWithCustomColor<int>(const std::vector<Color<int> >&);
 template void SurfaceMeshRender<double>::renderSolidWithCustomColor<float>(const std::vector<Color<float> >&);
@@ -805,14 +805,3 @@ template void SurfaceMeshRender<double>::renderSolidWithCustomColor<unsigned sho
 template void SurfaceMeshRender<double>::renderSolidWithCustomColor<unsigned int>(const std::vector<Color<unsigned int> >&);
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-

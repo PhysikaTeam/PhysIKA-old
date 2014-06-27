@@ -27,7 +27,7 @@ namespace Physika{
  * unsigned byte, unsigned short, and unsigned int
  * 
  * Note on the range of color channels (from opengl specification):
- * The value range of each channel is that of the type. When color is passed to opengl,
+ * The value range of each channel is the range of the type. When color is passed to opengl,
  * the float-point format color will be clamped to [0,1], unsigned integers will be linearly
  * mapped to [0,1], and signed integers will be linearly mapped to [-1,1].
  */
@@ -65,6 +65,8 @@ public:
     static Color<Scalar> Cyan();
 
     //method to convert between different color types
+    //usage:
+    //Color<TargetType> color = Color<Scalar>::convertColor<TargetType>(src_color);
     template <typename TargetType>
     static Color<TargetType> convertColor(const Color<Scalar> &color);
 
@@ -78,10 +80,8 @@ std::ostream& operator<< (std::ostream &s, const Color<Scalar> &color)
 {
     Scalar r = color.redChannel(), g = color.greenChannel(), b = color.blueChannel(), alpha = color.alphaChannel();
     //char types are casted to integers before output
-    if(is_same<Scalar,signed char>::value) //byte
+    if((is_same<Scalar,signed char>::value)||(is_same<Scalar,unsigned char>::value)) //byte or unsigned byte
         s<<"("<<static_cast<int>(r)<<","<<static_cast<int>(g)<<","<<static_cast<int>(b)<<","<<static_cast<int>(alpha)<<")";
-    else if(is_same<Scalar,unsigned char>::value) //unsigned byte
-        s<<"("<<static_cast<unsigned int>(r)<<","<<static_cast<unsigned int>(g)<<","<<static_cast<unsigned int>(b)<<","<<static_cast<unsigned int>(alpha)<<")";
     else
         s<<"("<<r<<","<<g<<","<<b<<","<<alpha<<")";
     return s;
@@ -94,7 +94,38 @@ Color<TargetType> Color<Scalar>::convertColor(const Color<Scalar> &color)
 {
     Interval<TargetType> target_type_range(std::numeric_limits<TargetType>::min(),std::numeric_limits<TargetType>::max());
     Interval<Scalar> src_type_range(std::numeric_limits<Scalar>::min(),std::numeric_limits<Scalar>::max());
-    //TO DO
+    Scalar src_red = color.redChannel(), src_green = color.greenChannel(), src_blue = color.blueChannel(), src_alpha = color.alphaChannel();
+    if(is_same<TargetType,Scalar>::value)  //target type and source type are the same
+        return Color<TargetType>(static_cast<TargetType>(src_red),static_cast<TargetType>(src_green),static_cast<TargetType>(src_blue),
+                                 static_cast<TargetType>(src_alpha));
+    else if(is_floating_point<Scalar>::value)  //source type is floating point, first clamp it into [0,1] before conversion
+    {
+        src_red = src_red > 1 ? 1 : src_red;
+        src_red = src_red < 0 ? 0 : src_red;
+        src_green = src_green > 1 ? 1 : src_green;
+        src_green = src_green < 0 ? 0 : src_green;
+        src_blue = src_blue > 1 ? 1 : src_blue;
+        src_blue = src_blue < 0 ? 0 : src_blue;
+        src_alpha = src_alpha > 1 ? 1 : src_alpha;
+        src_alpha = src_alpha < 0 ? 0 : src_alpha;
+        TargetType target_red = static_cast<TargetType>(src_red*target_type_range.size()+target_type_range.minVal());
+        TargetType target_green = static_cast<TargetType>(src_green*target_type_range.size()+target_type_range.minVal());
+        TargetType target_blue = static_cast<TargetType>(src_blue*target_type_range.size()+target_type_range.minVal());
+        TargetType target_alpha = static_cast<TargetType>(src_alpha*target_type_range.size()+target_type_range.minVal());
+        return Color<TargetType>(target_red,target_green,target_blue,target_alpha);
+    }
+    else
+    {
+        TargetType target_red = static_cast<TargetType>((src_red - src_type_range.minVal())*1.0/src_type_range.size()*target_type_range.size()
+                                +target_type_range.minVal());
+        TargetType target_green = static_cast<TargetType>((src_green - src_type_range.minVal())*1.0/src_type_range.size()*target_type_range.size()
+                                +target_type_range.minVal());
+        TargetType target_blue = static_cast<TargetType>((src_blue - src_type_range.minVal())*1.0/src_type_range.size()*target_type_range.size()
+                                +target_type_range.minVal());
+        TargetType target_alpha = static_cast<TargetType>((src_alpha - src_type_range.minVal())*1.0/src_type_range.size()*target_type_range.size()
+                                +target_type_range.minVal());
+        return Color<TargetType>(target_red,target_green,target_blue,target_alpha);
+    }
 }
 
 }  //end of namespace Physika
