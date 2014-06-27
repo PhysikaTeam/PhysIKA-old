@@ -23,6 +23,10 @@
 
 namespace Physika{
 
+/*
+ * MatrixMxN<Scalar> are defined for C++ fundamental integer types and floating-point types
+ */
+
 template <typename Scalar> 
 class MatrixMxN: public MatrixBase
 {
@@ -64,8 +68,8 @@ protected:
     int rows_,cols_;
 #endif
 protected:
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
-                           "MatrixMxN<Scalar> are only defined for Scalar type of float, double and int");
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "MatrixMxN<Scalar> are only defined for integer types and floating-point types.");
 };
 
 //overriding << for MatrixMxN

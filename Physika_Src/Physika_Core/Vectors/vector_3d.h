@@ -17,9 +17,14 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector.h"
 
 namespace Physika{
+
+/*
+ * Vector<Scalar,3> are defined for C++ fundamental integer types and floating-point types
+ */
 
 template <typename Scalar>
 class Vector<Scalar,3>: public VectorBase
@@ -62,7 +67,10 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const Vector<Scalar,3> &vec)
 {
-    s<<"("<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<")";
+    if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
+        s<<"("<<static_cast<int>(vec[0])<<", "<<static_cast<int>(vec[1])<<", "<<static_cast<int>(vec[2])<<")";
+    else
+        s<<"("<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<")";
     return s;
 }
 

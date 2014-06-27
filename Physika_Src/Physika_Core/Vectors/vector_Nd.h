@@ -60,8 +60,8 @@ protected:
     int dims_;
 #endif
 protected:
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
-                           "VetorND<Scalar> are only defined for Scalar type of float, double and int");
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "VectorND<Scalar,Dim> are only defined for integer types and floating-point types.");
 };
 
 //overriding << for vectorND
@@ -71,8 +71,16 @@ std::ostream& operator<< (std::ostream &s, const VectorND<Scalar> &vec)
     int dim = vec.dims();
     s<<"(";
     for(int i = 0; i < dim-1; ++i)
-        s<<vec[i]<<", ";
-    s<<vec[dim-1]<<")";
+    {
+        if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
+            s<<static_cast<int>(vec[i])<<", ";
+        else
+            s<<vec[i]<<", ";
+    }
+    if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
+        s<<static_cast<int>(vec[dim-1])<<")";
+    else
+        s<<vec[dim-1]<<")";
     return s;
 }
 

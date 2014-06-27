@@ -21,6 +21,10 @@
 
 namespace Physika{
 
+/*
+ * SquareMatrix<Scalar,2> are defined for C++ fundamental integer types and floating-point types
+ */
+
 template <typename Scalar>
 class SquareMatrix<Scalar,2>: public MatrixBase
 {
@@ -66,8 +70,16 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,2> &mat)
 {
-    s<<"["<<mat(0,0)<<", "<<mat(0,1)<<"; ";
-    s<<mat(1,0)<<", "<<mat(1,1)<<"]";
+    if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
+    {
+        s<<"["<<static_cast<int>(mat(0,0))<<", "<<static_cast<int>(mat(0,1))<<"; ";
+        s<<static_cast<int>(mat(1,0))<<", "<<static_cast<int>(mat(1,1))<<"]";
+    }
+    else
+    {
+        s<<"["<<mat(0,0)<<", "<<mat(0,1)<<"; ";
+        s<<mat(1,0)<<", "<<mat(1,1)<<"]";
+    }
     return s;
 }
 

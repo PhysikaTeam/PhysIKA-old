@@ -111,8 +111,18 @@ Interval<Scalar> Interval<Scalar>::unitInterval()
 }
 
 //explicit instantiation
+template class Interval<unsigned char>;
+template class Interval<unsigned short>;
+template class Interval<unsigned int>;
+template class Interval<unsigned long>;
+template class Interval<unsigned long long>;
+template class Interval<signed char>;
+template class Interval<short>;
+template class Interval<int>;
+template class Interval<long>;
+template class Interval<long long>;
 template class Interval<float>;
 template class Interval<double>;
-template class Interval<int>;
+template class Interval<long double>;
 
 } //end of namespace Physika

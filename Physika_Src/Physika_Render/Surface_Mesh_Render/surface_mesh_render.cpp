@@ -528,7 +528,7 @@ template class SurfaceMeshRender<double>;
 
 //for each color type: char,short,int,float,double,unsigned char,unsigned short,unsigned int
 //explicit instantiate the render**WithColor Method
-template void SurfaceMeshRender<float>::renderFaceWithColor<char>(const std::vector<unsigned int>&,const Color<char>&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<signed char>(const std::vector<unsigned int>&,const Color<signed char>&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<short>(const std::vector<unsigned int>&,const Color<short>&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<int>(const std::vector<unsigned int>&,const Color<int>&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<float>(const std::vector<unsigned int>&,const Color<float>&);
@@ -536,7 +536,7 @@ template void SurfaceMeshRender<float>::renderFaceWithColor<double>(const std::v
 template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned char>(const std::vector<unsigned int>&,const Color<unsigned char>&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned short>(const std::vector<unsigned int>&,const Color<unsigned short>&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned int>(const std::vector<unsigned int>&,const Color<unsigned int>&);
-template void SurfaceMeshRender<double>::renderFaceWithColor<char>(const std::vector<unsigned int>&,const Color<char>&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<signed char>(const std::vector<unsigned int>&,const Color<signed char>&);
 template void SurfaceMeshRender<double>::renderFaceWithColor<short>(const std::vector<unsigned int>&,const Color<short>&);
 template void SurfaceMeshRender<double>::renderFaceWithColor<int>(const std::vector<unsigned int>&,const Color<int>&);
 template void SurfaceMeshRender<double>::renderFaceWithColor<float>(const std::vector<unsigned int>&,const Color<float>&);
@@ -545,7 +545,7 @@ template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned char>(cons
 template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned short>(const std::vector<unsigned int>&,const Color<unsigned short>&);
 template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned int>(const std::vector<unsigned int>&,const Color<unsigned int>&);
 
-template void SurfaceMeshRender<float>::renderVertexWithColor<char>(const std::vector<unsigned int>&,const Color<char>&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<signed char>(const std::vector<unsigned int>&,const Color<signed char>&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<short>(const std::vector<unsigned int>&,const Color<short>&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<int>(const std::vector<unsigned int>&,const Color<int>&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<float>(const std::vector<unsigned int>&,const Color<float>&);
@@ -553,7 +553,7 @@ template void SurfaceMeshRender<float>::renderVertexWithColor<double>(const std:
 template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned char>(const std::vector<unsigned int>&,const Color<unsigned char>&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned short>(const std::vector<unsigned int>&,const Color<unsigned short>&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const Color<unsigned int>&);
-template void SurfaceMeshRender<double>::renderVertexWithColor<char>(const std::vector<unsigned int>&,const Color<char>&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<signed char>(const std::vector<unsigned int>&,const Color<signed char>&);
 template void SurfaceMeshRender<double>::renderVertexWithColor<short>(const std::vector<unsigned int>&,const Color<short>&);
 template void SurfaceMeshRender<double>::renderVertexWithColor<int>(const std::vector<unsigned int>&,const Color<int>&);
 template void SurfaceMeshRender<double>::renderVertexWithColor<float>(const std::vector<unsigned int>&,const Color<float>&);
@@ -562,7 +562,7 @@ template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned char>(co
 template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned short>(const std::vector<unsigned int>&,const Color<unsigned short>&);
 template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const Color<unsigned int>&);
 
-template void SurfaceMeshRender<float>::renderFaceWithColor<char>(const std::vector<unsigned int>&,const std::vector<Color<char> >&);
+template void SurfaceMeshRender<float>::renderFaceWithColor<signed char>(const std::vector<unsigned int>&,const std::vector<Color<signed char> >&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<short>(const std::vector<unsigned int>&,const std::vector<Color<short> >&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<int>(const std::vector<unsigned int>&,const std::vector<Color<int> >&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<float>(const std::vector<unsigned int>&,const std::vector<Color<float> >&);
@@ -570,7 +570,7 @@ template void SurfaceMeshRender<float>::renderFaceWithColor<double>(const std::v
 template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned char>(const std::vector<unsigned int>&,const std::vector<Color<unsigned char> >&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned short>(const std::vector<unsigned int>&,const std::vector<Color<unsigned short> >&);
 template void SurfaceMeshRender<float>::renderFaceWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
-template void SurfaceMeshRender<double>::renderFaceWithColor<char>(const std::vector<unsigned int>&,const std::vector<Color<char> >&);
+template void SurfaceMeshRender<double>::renderFaceWithColor<signed char>(const std::vector<unsigned int>&,const std::vector<Color<signed char> >&);
 template void SurfaceMeshRender<double>::renderFaceWithColor<short>(const std::vector<unsigned int>&,const std::vector<Color<short> >&);
 template void SurfaceMeshRender<double>::renderFaceWithColor<int>(const std::vector<unsigned int>&,const std::vector<Color<int> >&);
 template void SurfaceMeshRender<double>::renderFaceWithColor<float>(const std::vector<unsigned int>&,const std::vector<Color<float> >&);
@@ -579,7 +579,7 @@ template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned char>(cons
 template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned short>(const std::vector<unsigned int>&,const std::vector<Color<unsigned short> >&);
 template void SurfaceMeshRender<double>::renderFaceWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
 
-template void SurfaceMeshRender<float>::renderVertexWithColor<char>(const std::vector<unsigned int>&,const std::vector<Color<char> >&);
+template void SurfaceMeshRender<float>::renderVertexWithColor<signed char>(const std::vector<unsigned int>&,const std::vector<Color<signed char> >&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<short>(const std::vector<unsigned int>&,const std::vector<Color<short> >&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<int>(const std::vector<unsigned int>&,const std::vector<Color<int> >&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<float>(const std::vector<unsigned int>&,const std::vector<Color<float> >&);
@@ -587,7 +587,7 @@ template void SurfaceMeshRender<float>::renderVertexWithColor<double>(const std:
 template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned char>(const std::vector<unsigned int>&,const std::vector<Color<unsigned char> >&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned short>(const std::vector<unsigned int>&,const std::vector<Color<unsigned short> >&);
 template void SurfaceMeshRender<float>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
-template void SurfaceMeshRender<double>::renderVertexWithColor<char>(const std::vector<unsigned int>&,const std::vector<Color<char> >&);
+template void SurfaceMeshRender<double>::renderVertexWithColor<signed char>(const std::vector<unsigned int>&,const std::vector<Color<signed char> >&);
 template void SurfaceMeshRender<double>::renderVertexWithColor<short>(const std::vector<unsigned int>&,const std::vector<Color<short> >&);
 template void SurfaceMeshRender<double>::renderVertexWithColor<int>(const std::vector<unsigned int>&,const std::vector<Color<int> >&);
 template void SurfaceMeshRender<double>::renderVertexWithColor<float>(const std::vector<unsigned int>&,const std::vector<Color<float> >&);
@@ -597,3 +597,14 @@ template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned short>(c
 template void SurfaceMeshRender<double>::renderVertexWithColor<unsigned int>(const std::vector<unsigned int>&,const std::vector<Color<unsigned int> >&);
 
 } //end of namespace Physika
+
+
+
+
+
+
+
+
+
+
+
