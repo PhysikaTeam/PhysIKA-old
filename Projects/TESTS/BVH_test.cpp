@@ -21,6 +21,8 @@
 #include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
 #include "Physika_Geometry/Bounding_Volume/object_bvh.h"
 #include "Physika_Geometry/Bounding_Volume/object_bvh_node.h"
+#include "Physika_Geometry/Bounding_Volume/scene_bvh.h"
+#include "Physika_Geometry/Bounding_Volume/scene_bvh_node.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
@@ -43,6 +45,7 @@ using namespace Physika;
 
 MeshBasedCollidableObject<double, 3>* pObject1, *pObject2;
 ObjectBVH<double, 3> * pBVH1, *pBVH2;
+SceneBVH<double, 3>* pScene;
 
 
 void displayFunction()
@@ -68,13 +71,16 @@ void displayFunction()
 	CollisionDetectionResult<double, 3> result;
 	result.resetCollisionResults();
 
-	pBVH1->refit();
-	pBVH2->refit();
+	//pBVH1->refit();
+	//pBVH2->refit();
+	pScene->updateSceneBVH();
 
 	Timer timer;
 	timer.startTimer();
-	if(pBVH1->collide(pBVH2, result))
-		cout<<"collide"<<endl;
+	//if(pBVH1->collide(pBVH2, result))
+	//	cout<<"collide"<<endl;
+	//pScene->rootNode()->leftChild()->collide(pScene->rootNode()->rightChild(), result);
+	pScene->selfCollide(result);
 	timer.stopTimer();
 	cout<<"Time: "<<timer.getElapsedTime()<<endl;
 	cout<<"PCS: "<<result.numberPCS()<<endl;
@@ -101,7 +107,7 @@ void displayFunction()
 
 	Vector<double, 3> pos = pObject2->transform().translation();
 	glTranslatef(pos[0], pos[1], pos[2]);	
-	//cout<<pos<<endl;
+	
  
 	SurfaceMeshRender<double> meshRender2;
 	meshRender2.setSurfaceMesh(pObject2->mesh());
@@ -112,7 +118,7 @@ void displayFunction()
 	meshRender2.renderFaceWithColor(face_ids_2, Color<float>::Blue());
 	
 	pos[1] -= 0.2;
-	pObject2->transform().setPosition(pos);
+	pObject2->transform().setTranslation(pos);
 
     glutSwapBuffers();
 }
@@ -165,7 +171,7 @@ int main()
 	
 	
     SurfaceMesh<double> mesh_ball;
-    if(!ObjMeshIO<double>::load(string("E:/Physika/ball_high.obj"), &mesh_ball))
+    if(!ObjMeshIO<double>::load(string("ball_high.obj"), &mesh_ball))
 		exit(1);
 	
 	pObject1 = new MeshBasedCollidableObject<double, 3>();
@@ -175,11 +181,15 @@ int main()
 	
 	pObject2 = new MeshBasedCollidableObject<double, 3>();
 	pObject2->setMesh(&mesh_ball);
-	pObject2->transform().setPosition(Vector<double, 3>(0, 60, 0));
+	pObject2->transform().setTranslation(Vector<double, 3>(0, 30, 0));
 	pBVH2 = new ObjectBVH<double, 3>();
 	pBVH2->setCollidableObject(pObject2);
 
 
+	pScene = new SceneBVH<double, 3>();
+	pScene->addObjectBVH(pBVH1, false);
+	pScene->addObjectBVH(pBVH2, false);
+	pScene->rebuild();
 
 
     GlutWindow glut_window;
