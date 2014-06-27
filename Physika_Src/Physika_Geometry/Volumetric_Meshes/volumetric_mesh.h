@@ -41,17 +41,17 @@ public:
     virtual ~VolumetricMesh();
     
     //query
-    inline unsigned int vertNum() const{return vertices_.size();}
-    inline unsigned int eleNum() const{return ele_num_;}
-    inline bool isUniformElementType() const{return uniform_ele_type_;}
-    unsigned int eleVertNum(unsigned int ele_idx) const;
-    unsigned int eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
-    unsigned int regionNum() const;
+    inline unsigned int       vertNum() const{return vertices_.size();}
+    inline unsigned int       eleNum() const{return ele_num_;}
+    inline bool               isUniformElementType() const{return uniform_ele_type_;}
+    unsigned int              eleVertNum(unsigned int ele_idx) const;
+    unsigned int              eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
+    unsigned int              regionNum() const;
     const Vector<Scalar,Dim>& vertPos(unsigned int vert_idx) const;
     const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const;
-    std::string regionName(unsigned int region_idx) const;
-    unsigned int regionEleNum(unsigned int region_idx) const;
-    unsigned int regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
+    std::string               regionName(unsigned int region_idx) const;
+    unsigned int              regionEleNum(unsigned int region_idx) const;
+    unsigned int              regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
     //given the region index or name, return the elements of this region
     void regionElements(unsigned int region_idx, std::vector<unsigned int> &elements) const;
     void regionElements(const std::string &region_name, std::vector<unsigned int> &elements) const; //print error and return empty elements if no region with the given name
@@ -77,12 +77,12 @@ public:
     void removeElementInRegion(unsigned int region_idx, unsigned int ele_idx_in_region); //remove the ele_idx_in_region th element in the region_idx th region
 
     //virtual methods
-    virtual void printInfo() const=0;
+    virtual void   printInfo() const=0;
     virtual VolumetricMeshInternal::ElementType elementType() const=0;
-    virtual int eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element, otherwise return -1
+    virtual int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element, otherwise return -1
     virtual Scalar eleVolume(unsigned int ele_idx) const=0;
-    virtual bool containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
-    virtual void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0; 
+    virtual bool   containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
+    virtual void   interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0; 
 protected:
     /* init mesh given data, all elements belong to one default region 'AllElements'
      * if all elements have same number of vertices, vert_per_ele is pointer to one integer representing the vertex number per element

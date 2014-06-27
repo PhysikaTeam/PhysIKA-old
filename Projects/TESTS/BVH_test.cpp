@@ -106,12 +106,14 @@ void displayFunction()
 	meshRender1.renderFaceWithColor(face_ids_1, Color<float>::Blue());
 
 	Vector<double, 3> pos = pObject2->transform().translation();
-	glTranslatef(pos[0], pos[1], pos[2]);	
-	
+	//glTranslatef(pos[0], pos[1], pos[2]);	
+
  
 	SurfaceMeshRender<double> meshRender2;
 	meshRender2.setSurfaceMesh(pObject2->mesh());
-	
+	//
+	meshRender2.setTransform(& pObject2->transform());
+
 	meshRender2.enableRenderWireframe();
 	meshRender2.disableRenderSolid();
 	meshRender2.render();

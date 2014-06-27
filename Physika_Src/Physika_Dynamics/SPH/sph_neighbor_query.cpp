@@ -96,6 +96,8 @@ void GridQuery<Scalar, Dim>::construct(Array<Vector<Scalar, Dim>>& in_positions,
     
     //radixsort to get new id reodered by positions;
     //To do reorder.
+    
+    
 
     sim_data.reorder(ref_reordered_ids.data(), particles_num_);
 
