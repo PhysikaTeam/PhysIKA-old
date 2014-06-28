@@ -26,6 +26,11 @@ template <typename Scalar> class SurfaceMesh;
 template <typename Scalar> class Color;
 template <typename Scalar> class Transform;
 
+/*
+ * Scalar can be float and double
+ *
+ */
+
 template <typename Scalar>
 class SurfaceMeshRender: public RenderBase
 {
@@ -34,16 +39,16 @@ public:
     SurfaceMeshRender();
     //the parameter is not const because renderer may call method of mesh to modify its normals
     SurfaceMeshRender(SurfaceMesh<Scalar>* mesh);
-	SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar>* transform);
+    SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar>* transform);
     ~SurfaceMeshRender();
 
     //Get and Set
     const SurfaceMesh<Scalar>* mesh() const;
     void setSurfaceMesh(SurfaceMesh<Scalar>* mesh);
-	void setSurfaceMesh(SurfaceMesh<Scalar>* mesh, Transform<Scalar>* transform);
+    void setSurfaceMesh(SurfaceMesh<Scalar>* mesh, Transform<Scalar>* transform);
 
-	const Transform<Scalar>* transform()const;
-	void setTransform(Transform<Scalar>* transform);
+    const Transform<Scalar>* transform()const;
+    void setTransform(Transform<Scalar>* transform);
 
     //set render mode
     void enableRenderSolid();
@@ -78,8 +83,8 @@ public:
     template<typename ColorType>
     void renderVertexWithColor(const std::vector<unsigned int> &vertex_id, const std::vector< Color<ColorType> > &color);
 
-	template<typename ColorType>
-	void renderSolidWithCustomColor(const std::vector< Color<ColorType> > & color);
+    template<typename ColorType>
+    void renderSolidWithCustomColor(const std::vector< Color<ColorType> > & color);
 
 protected:
     void initRenderMode();
@@ -99,17 +104,17 @@ protected:
     //the first entry is a flag indicating if there's texture for the material
     //the second entry is the OpenGL texture id
     Array<std::pair<bool,unsigned int> > textures_;
-	Transform<Scalar> *transform_;
+    Transform<Scalar> *transform_;
 
     //displaylist ids
     unsigned int vertex_display_list_id_;   
     unsigned int wire_display_list_id_;     
     unsigned int solid_display_list_id_;
-	unsigned int face_with_color_display_list_id_;
-	unsigned int face_with_color_vector_display_list_id_;
-	unsigned int vertex_with_color_display_list_id_;
-	unsigned int vertex_with_color_vector_display_list_id_;
-	unsigned int solid_with_custom_color_vector_display_list_id_;
+    unsigned int face_with_color_display_list_id_;
+    unsigned int face_with_color_vector_display_list_id_;
+    unsigned int vertex_with_color_display_list_id_;
+    unsigned int vertex_with_color_vector_display_list_id_;
+    unsigned int solid_with_custom_color_vector_display_list_id_;
 
     //predefined render modes
     static const unsigned int render_solid_;
