@@ -228,8 +228,18 @@ Scalar Vector<Scalar,3>::dot(const Vector<Scalar,3>& vec3) const
 
 
 //explicit instantiation of template so that it could be compiled into a lib
+template class Vector<unsigned char,3>;
+template class Vector<unsigned short,3>;
+template class Vector<unsigned int,3>;
+template class Vector<unsigned long,3>;
+template class Vector<unsigned long long,3>;
+template class Vector<signed char,3>;
+template class Vector<short,3>;
+template class Vector<int,3>;
+template class Vector<long,3>;
+template class Vector<long long,3>;
 template class Vector<float,3>;
 template class Vector<double,3>;
-template class Vector<int,3>;
+template class Vector<long double,3>;
 
 } //end of namespace Physika

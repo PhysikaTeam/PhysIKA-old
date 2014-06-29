@@ -111,7 +111,7 @@ ElementType& Array<ElementType>::operator[] (int id)
 }
 
 template <typename ElementType>
-void Array<ElementType>::reorder(unsigned int *ids, unsigned int size)
+void Array<ElementType>::permutate(unsigned int *ids, unsigned int size)
 {
     if(size != element_count_)
     {

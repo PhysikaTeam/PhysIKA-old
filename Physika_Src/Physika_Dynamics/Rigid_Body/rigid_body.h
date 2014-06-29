@@ -1,7 +1,7 @@
 /*
  * @file rigid_body.h 
  * @Basic rigid_body class.
- * @author Sheng Yang
+ * @author Tianxiang Zhang
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -17,12 +17,21 @@
 
 namespace Physika{
 
-class Rigid_Body
+template <typename Scalar,int Dim> class CollidableObject;
+
+template <typename Scalar,int Dim>
+class RigidBody
 {
 public:
-	Rigid_Body();
-	~Rigid_Body();
+	//constructors && deconstructors
+	RigidBody();
+	~RigidBody();
 protected:
+	//basic properties of a rigid body
+	CollidableObject<Scalar, Dim>* object_;
+	Scalar mass_;
+	bool is_fixed_;
+	
 };
 
 } //end of namespace Physika

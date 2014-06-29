@@ -14,6 +14,9 @@
 #SRC PATH
 src_root_path='./'
 
+#EXTERNAL INCLUDE PATH
+external_include_path='./'
+
 #LIB NAME
 lib_name='glui'
 #################################################################
@@ -43,6 +46,9 @@ elif os_name in ('Linux','Darwin'):
     else:
         obj_suffix='64.o'
         lib_suffix='64.a'
+
+#ADD ADDITIONAL INCLUDE PATH
+env.Append(CPPPATH=external_include_path)
 
 #COMPILE SRC FILES AND ARCHIVE INTO LIB
 lib_target=[]

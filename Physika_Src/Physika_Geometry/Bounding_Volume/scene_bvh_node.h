@@ -20,6 +20,7 @@ namespace Physika{
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar,int Dim> class BVHNodeBase;
 template <typename Scalar,int Dim> class ObjectBVH;
+template <typename Scalar,int Dim> class CollisionDetectionResult;
 
 template <typename Scalar,int Dim>
 class SceneBVHNode : public BVHNodeBase<Scalar, Dim>
@@ -30,13 +31,20 @@ public:
 	~SceneBVHNode();
 
 	//get & set
+	bool isSceneNode() const;
+	bool isObjectNode() const;
+	const ObjectBVH<Scalar, Dim>* objectBVH() const;
+	ObjectBVH<Scalar, Dim>* objectBVH();
+	void setObjectBVH(ObjectBVH<Scalar, Dim>* object_bvh);
 
 	//structure maintain
 	void resize();
-	void buildFromObjectBVH();
+	bool elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result);
 	
 protected:
 	ObjectBVH<Scalar, Dim>* object_bvh_;
+
+	void buildFromObjectBVH();
 };
 
 }  //end of namespace Physika

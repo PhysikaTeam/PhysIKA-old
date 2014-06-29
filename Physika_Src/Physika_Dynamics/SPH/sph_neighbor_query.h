@@ -19,6 +19,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Arrays/array.h"
+#include "Physika_Core/Arrays/array_manager.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 #include "Physika_Geometry/Cartesian_Grids/grid_iterator.h"
 #include "Physika_Core/Range/range.h"
@@ -49,15 +50,15 @@ public:
     GridQuery();
     ~GridQuery();
 
-    void getNeighbors(Vector<Scalar, Dim>& in_pos, Scalar in_radius, NeighborList<Scalar>& out_neighborList);
-    void getSizedNeighbors(Vector<Scalar, Dim>& in_pos, Scalar in_radius, NeighborList<Scalar>& out_neighborList, int in_maxN);
+    void getNeighbors(Vector<Scalar, Dim>& in_position, Scalar in_radius, NeighborList<Scalar>& out_neighborList);
+    void getSizedNeighbors(Vector<Scalar, Dim>& in_position, Scalar in_radius, NeighborList<Scalar>& out_neighborList, int in_max_num);
 
-    void construct(Array<Vector<Scalar, Dim>>& pos, ArrayManager& simData);
-    void construct();
+    void construct(Array<Vector<Scalar, Dim>>& in_positions, ArrayManager& sim_data);
+   // void construct();
 
 private:
     void computeBoundingBox();
-    int  computeGridSize();
+    void computeGridSize();
     void expandBoundingBox(Scalar in_padding);
     void allocMemory();
 
@@ -68,10 +69,17 @@ private:
 protected:
    
     Grid<Scalar, Dim> grid_;
-    unsigned int gird_num_;
+    unsigned int grid_num_;
     unsigned int x_num_, y_num_, z_num_;
     Array<int> begin_lists_;
     Array<int> end_lists_;
+
+    Range<Scalar, Dim> range_;
+    Range<Scalar, Dim> range_limit_;
+
+    unsigned int particles_num_;
+    Array<Vector<Scalar, Dim>> ref_positions_;
+    Scalar space_;
 
 };
 

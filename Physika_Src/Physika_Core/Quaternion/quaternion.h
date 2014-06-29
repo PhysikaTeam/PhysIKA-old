@@ -19,6 +19,9 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Core/Matrices/matrix_MxN.h"
+
 
 namespace Physika{
 
@@ -33,6 +36,8 @@ public:
     Quaternion(Scalar , const Vector<Scalar,3> &);
     Quaternion(const Scalar *); 
     Quaternion(const Quaternion<Scalar> &);
+    Quaternion(const SquareMatrix<Scalar, 3> &);   //init from a 3x3matrix
+    Quaternion(const MatrixMxN<Scalar> &);         //init from a 4x4matrix
     
     /* Assignment operators */
     Quaternion<Scalar> &operator = (const Quaternion<Scalar> &);
@@ -60,6 +65,10 @@ public:
     Scalar dot(const Quaternion<Scalar> &) const;
     Quaternion<Scalar> getConjugate() const;                         // return the conjugate
     const Vector<Scalar,3> rotate(const Vector<Scalar,3> ) const;    // rotates passed vec by this;
+    SquareMatrix<Scalar, 3> get3x3Matrix() const;  //return 3x3matrix format
+    MatrixMxN<Scalar> get4x4Matrix() const;        //return 4x4matrix with a identity transform.
+
+
 
     /* Operator overloading */
     Quaternion<Scalar> operator - (const Quaternion<Scalar> &);
@@ -72,7 +81,7 @@ public:
     Scalar& operator[] (int);
     const Scalar& operator[] (int) const;
 
-    static inline Quaternion<Scalar> createIdentity() { return Quaternion<Scalar>(0,0,0,1); }
+    static inline Quaternion<Scalar> identityQuaternion() { return Quaternion<Scalar>(0,0,0,1); }
 
 protected:
     Scalar x_,y_,z_,w_;

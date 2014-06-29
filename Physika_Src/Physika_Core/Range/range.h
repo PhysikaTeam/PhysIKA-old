@@ -23,6 +23,10 @@
 
 namespace Physika{
 
+/*
+ * Range class is defined for C++ fundamental integer types and floating-point types
+ */
+
 template <typename Scalar,int Dim>
 class Range
 {
@@ -47,12 +51,10 @@ protected:
     Vector<Scalar,Dim> min_corner_, max_corner_;
 protected:
     PHYSIKA_STATIC_ASSERT(Dim==3||Dim==2,"Range<Scalar,Dim> are only defined for Dim==2 and Dim==3");
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
-                           "Range<Scalar,Dim> are only defined for Scalar type of float, double and int");
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "Range<Scalar,Dim> are only defined for integer types and floating-point types.");
 };
 
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_CORE_RANGE_RANGE_H_
-
-

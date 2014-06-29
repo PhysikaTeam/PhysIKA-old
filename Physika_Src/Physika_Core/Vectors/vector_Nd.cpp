@@ -315,8 +315,18 @@ Scalar VectorND<Scalar>::dot(const VectorND<Scalar> &vec2) const
 }
 
 //explicit instantiation
+template class VectorND<unsigned char>;
+template class VectorND<unsigned short>;
+template class VectorND<unsigned int>;
+template class VectorND<unsigned long>;
+template class VectorND<unsigned long long>;
+template class VectorND<signed char>;
+template class VectorND<short>;
+template class VectorND<int>;
+template class VectorND<long>;
+template class VectorND<long long>;
 template class VectorND<float>;
 template class VectorND<double>;
-template class VectorND<int>;
+template class VectorND<long double>;
 
 }//end of namespace Physika

@@ -32,6 +32,31 @@ struct is_floating_point
     static const bool value = (is_same<T,float>::value)||(is_same<T,double>::value)||(is_same<T,long double>::value);
 };
 
+//is_signed_integer: test if the type is a signed integer type
+//signed char, signed short, signed int, signed long, signed long long
+template <typename T>
+struct is_signed_integer
+{
+    static const bool value = (is_same<T,signed char>::value)||(is_same<T,signed short>::value)||(is_same<T,signed int>::value)
+        ||(is_same<T,signed long>::value)||(is_same<T,signed long long>::value);
+};
+
+//is_unsigned_integer: test if the type is a unsigned integer type
+//unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long
+template <typename T>
+struct is_unsigned_integer
+{
+    static const bool value = (is_same<T,unsigned char>::value)||(is_same<T,unsigned short>::value)||(is_same<T,unsigned int>::value)
+        ||(is_same<T,unsigned long>::value)||(is_same<T,unsigned long long>::value);
+};
+
+//is_integer: test if the type is an integer type, signed or unsigned
+template <typename T>
+struct is_integer
+{
+    static const bool value = (is_unsigned_integer<T>::value)||(is_signed_integer<T>::value);
+};
+
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_UTILITIES_TYPE_UTILITIES_H_

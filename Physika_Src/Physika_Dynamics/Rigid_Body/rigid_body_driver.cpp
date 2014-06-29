@@ -1,6 +1,6 @@
 /*
- * @file rigid_body.cpp 
- * @Basic rigid_body class.
+ * @file rigid_body_driver.cpp
+ * @Basic rigid body driver class.
  * @author Tianxiang Zhang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -13,23 +13,25 @@
  */
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 
 namespace Physika{
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::RigidBody()
+RigidBodyDriver<Scalar, Dim>::RigidBodyDriver()
 {
 
 }
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::~RigidBody()
+RigidBodyDriver<Scalar, Dim>::~RigidBodyDriver()
 {
 
 }
 
 //explicit instantiation
-template class RigidBody<float, 3>;
-template class RigidBody<double, 3>;
+template class RigidBodyDriver<float, 3>;
+template class RigidBodyDriver<double, 3>;
 
-} //end of namespace Physika
+
+}
