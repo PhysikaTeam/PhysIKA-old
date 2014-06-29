@@ -160,6 +160,12 @@ bool SquareMatrix<Scalar,2>::operator== (const SquareMatrix<Scalar,2> &mat2) con
 }
 
 template <typename Scalar>
+bool SquareMatrix<Scalar,2>::operator!= (const SquareMatrix<Scalar,2> &mat2) const
+{
+    return !((*this)==mat2);
+}
+
+template <typename Scalar>
 SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (Scalar scale) const
 {
     Scalar result[4];

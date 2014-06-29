@@ -34,6 +34,7 @@ public:
     Interval(const Interval<Scalar> &interval);
     Interval<Scalar>& operator= (const Interval<Scalar> &interval);
     bool operator== (const Interval<Scalar> &interval);
+    bool operator!= (const Interval<Scalar> &interval);
     ~Interval();
     Scalar center() const;
     Scalar size() const;

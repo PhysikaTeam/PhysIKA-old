@@ -65,6 +65,12 @@ bool Range<Scalar,Dim>::operator== (const Range<Scalar,Dim> &range) const
 }
 
 template <typename Scalar,int Dim>
+bool Range<Scalar,Dim>::operator!= (const Range<Scalar,Dim> &range) const
+{
+    return !((*this)==range);
+}
+
+template <typename Scalar,int Dim>
 Range<Scalar,Dim>::~Range()
 {
 }

@@ -260,6 +260,12 @@ bool MatrixMxN<Scalar>::operator== (const MatrixMxN<Scalar> &mat2) const
 }
 
 template <typename Scalar>
+bool MatrixMxN<Scalar>::operator!= (const MatrixMxN<Scalar> &mat2) const
+{
+    return !((*this)==mat2);
+}
+
+template <typename Scalar>
 MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (Scalar scale) const
 {
     int rows = (*this).rows();

@@ -47,6 +47,7 @@ public:
     MatrixMxN<Scalar>& operator-= (const MatrixMxN<Scalar> &);
     MatrixMxN<Scalar>& operator= (const MatrixMxN<Scalar> &);
     bool operator== (const MatrixMxN<Scalar> &)const;
+    bool operator!= (const MatrixMxN<Scalar> &)const;
     MatrixMxN<Scalar> operator* (Scalar) const;
     MatrixMxN<Scalar>& operator*= (Scalar);
     VectorND<Scalar> operator* (const VectorND<Scalar> &) const;
