@@ -382,9 +382,18 @@ void GlutWindow::idleFunction(void)
 void GlutWindow::reshapeFunction(int width, int height)
 {
     GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    GLdouble aspect = static_cast<GLdouble>(width)/height;
+    window->setCameraAspect(aspect); //update the  view aspect of camera
+    double fov = window->cameraFOV();
+    double near_clip = window->cameraNearClip();
+    double far_clip = window->cameraFarClip();
+    //update view port and projection
     glViewport(0,0,width,height);
-    window->setCameraAspect((GLdouble)width/height); //update the  view aspect of camera
-    (window->camera_).look(); //apply the new camera
+    glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(fov, aspect,near_clip,far_clip);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void GlutWindow::keyboardFunction(unsigned char key, int x, int y)
@@ -415,12 +424,11 @@ void GlutWindow::initFunction(void)
 {
     int width = glutGet(GLUT_WINDOW_WIDTH);
     int height = glutGet(GLUT_WINDOW_HEIGHT);
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
     glMatrixMode(GL_PROJECTION);												// select projection matrix
     glViewport(0, 0, width, height);        									// set the viewport
-    glMatrixMode(GL_PROJECTION);												// set matrix mode
-    glLoadIdentity();															// reset projection matrix
-    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,1.0e2);           		// set up a perspective projection matrix
-    glMatrixMode(GL_MODELVIEW);													// specify which matrix is the current matrix
+    (window->camera_).look();                                                   // set projection and model view transformation through camera
     glShadeModel( GL_SMOOTH );
     glClearDepth( 1.0 );														// specify the clear value for the depth buffer
     glEnable( GL_DEPTH_TEST );

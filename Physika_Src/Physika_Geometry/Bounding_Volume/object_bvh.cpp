@@ -80,7 +80,7 @@ void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scala
 			this->addNode(node);
 		}
     }
-	this->root_node_ = BVHBase<Scalar, Dim>::buildFromLeafList(0, numLeaf());
+	this->root_node_ = BVHBase<Scalar, Dim>::buildFromLeafList(0, this->numLeaf());
 }
 
 template class ObjectBVH<float, 3>;

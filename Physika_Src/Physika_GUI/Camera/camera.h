@@ -29,6 +29,13 @@ namespace Physika{
  * 5. near_clip_: distance from the camera position to the near clip plane
  * 6. far_clip_: distance from the camera position to the far clip plane
  * 7. view_aspect_: aspect of the camera's view (width/height)
+ * Usage in OpenGL envrionment:
+ * 1. Set view port via glVieport()
+ * 2. Call look() method of camera to set the projection and model view transformation
+ * Example code:
+ *    glMatrixMode(GL_PROJECTION);
+ *    glViewport(0,0,width,height);
+ *    camera.look();
  */
 
 template <typename Scalar>
