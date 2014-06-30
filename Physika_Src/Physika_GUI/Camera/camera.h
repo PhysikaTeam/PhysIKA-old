@@ -70,7 +70,10 @@ public:
     void roll(Scalar rad);
 
     //translate the camera along with the focus
-    void translate(const Vector<Scalar,3> &vec);
+    void translateUp(Scalar dist);
+    void translateDown(Scalar dist);
+    void translateRight(Scalar dist);
+    void translateLeft(Scalar dist);
 
     //getters && setters
     const Vector<Scalar,3>& cameraPosition() const;

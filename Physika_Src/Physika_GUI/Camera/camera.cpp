@@ -14,6 +14,7 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <iostream>
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_GUI/Camera/camera.h"
 
@@ -154,10 +155,32 @@ void Camera<Scalar>::roll(Scalar rad)
 }
 
 template <typename Scalar>
-void Camera<Scalar>::translate(const Vector<Scalar,3> &vec)
+void Camera<Scalar>::translateUp(Scalar dist)
 {
-    camera_position_ += vec;
-    focus_position_ += vec;
+    camera_position_ += dist*camera_up_;
+    focus_position_ += dist*camera_up_;
+}
+
+template <typename Scalar>
+void Camera<Scalar>::translateDown(Scalar dist)
+{
+    translateUp(-dist);
+}
+
+template <typename Scalar>
+void Camera<Scalar>::translateRight(Scalar dist)
+{
+    Vector<Scalar,3> camera_direction = focus_position_ - camera_position_;
+    Vector<Scalar,3> axis = camera_direction.cross(camera_up_);
+    axis.normalize();
+    camera_position_ += dist*axis;
+    focus_position_ += dist*axis;
+}
+
+template <typename Scalar>
+void Camera<Scalar>::translateLeft(Scalar dist)
+{
+    translateRight(-dist);
 }
 
 template <typename Scalar>
@@ -181,7 +204,16 @@ const Vector<Scalar,3>& Camera<Scalar>::cameraUpDirection() const
 template <typename Scalar>
 void Camera<Scalar>::setCameraUpDirection(const Vector<Scalar,3> &up)
 {
-    camera_up_ = up;
+    if(up==Vector<Scalar,3>(0))
+    {
+        std::cerr<<"Cannot use zero vector as camera up direction, (0,1,0) is used instead.\n";
+        camera_up_ = Vector<Scalar,3>(0,1,0);
+    }
+    else
+    {
+        camera_up_ = up;
+        camera_up_.normalize();
+    }
 }
 
 template <typename Scalar>

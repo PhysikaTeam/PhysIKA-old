@@ -24,6 +24,7 @@ namespace Physika{
 GlutWindow::GlutWindow()
     :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480)
 {
+    resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
@@ -31,6 +32,7 @@ GlutWindow::GlutWindow()
 GlutWindow::GlutWindow(const std::string &window_name)
     :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480)
 {
+    resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
@@ -38,6 +40,7 @@ GlutWindow::GlutWindow(const std::string &window_name)
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
     :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height)
 {
+    resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
@@ -48,6 +51,7 @@ GlutWindow::~GlutWindow()
 
 void GlutWindow::createWindow()
 {
+    resetMouseState();
     int argc = 1;
     const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
     char *argv[1];
@@ -214,9 +218,24 @@ void GlutWindow::rollCamera(double rad)
     camera_.roll(rad);
 }
 
-void GlutWindow::translateCamera(const Vector<double,3> &vec)
+void GlutWindow::translateCameraUp(double dist)
 {
-    camera_.translate(vec);
+    camera_.translateUp(dist);
+}
+
+void GlutWindow::translateCameraDown(double dist)
+{
+    camera_.translateDown(dist);
+}
+
+void GlutWindow::translateCameraLeft(double dist)
+{
+    camera_.translateLeft(dist);
+}
+
+void GlutWindow::translateCameraRight(double dist)
+{
+    camera_.translateRight(dist);
 }
 
 ////////////////////////////////////////////////// manages render tasks////////////////////////////////////////////////////////////////////
@@ -414,10 +433,51 @@ void GlutWindow::specialFunction(int key, int x, int y)
 
 void GlutWindow::motionFunction(int x, int y)
 {
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    int mouse_delta_x = x - window->mouse_position_[0];
+    int mouse_delta_y = y - window->mouse_position_[1];
+    window->mouse_position_[0] = x;
+    window->mouse_position_[1] = y;
+    double scale = 0.05;  //sensativity of the mouse
+    if(window->left_button_down_)  //left button handles camera rotation
+    {
+        window->orbitCameraLeft(mouse_delta_x*scale);
+        window->orbitCameraUp(mouse_delta_y*scale);
+    }
+    if(window->middle_button_down_)  //middle button handles camera zoom in/out
+    {
+        window->zoomCameraIn(mouse_delta_y*scale);
+    }
+    if(window->right_button_down_)  //right button handles camera translation
+    {
+        scale *= 0.5;
+        window->translateCameraLeft(mouse_delta_x*scale);
+        window->translateCameraUp(mouse_delta_y*scale);
+    }
 }
 
 void GlutWindow::mouseFunction(int button, int state, int x, int y)
 {
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    switch(button)
+    {
+    case GLUT_LEFT_BUTTON:
+        window->left_button_down_ = (state==GLUT_DOWN);
+        break;
+    case GLUT_MIDDLE_BUTTON:
+        window->middle_button_down_ = (state==GLUT_DOWN);
+        break;
+    case GLUT_RIGHT_BUTTON:
+        window->right_button_down_ = (state==GLUT_DOWN);
+        break;
+    default:
+        //PHYSIKA_ERROR("Invalid mouse state.");
+        break;
+    }
+    window->mouse_position_[0] = x;
+    window->mouse_position_[1] = y;
 }
 
 void GlutWindow::initFunction(void)
@@ -449,6 +509,14 @@ void GlutWindow::initCallbacks()
     motion_function_ = GlutWindow::motionFunction;
     mouse_function_ = GlutWindow::mouseFunction;
     init_function_ = GlutWindow::initFunction;
+}
+
+void GlutWindow::resetMouseState()
+{
+    left_button_down_ = false;
+    middle_button_down_ = false;
+    right_button_down_ = false;
+    mouse_position_[0] = mouse_position_[1] = 0;
 }
 
 } //end of namespace Physika

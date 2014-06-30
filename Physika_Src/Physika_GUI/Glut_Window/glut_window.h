@@ -72,7 +72,10 @@ public:
     void yawCamera(double rad);
     void pitchCamera(double rad);
     void rollCamera(double rad);
-    void translateCamera(const Vector<double,3> &vec);
+    void translateCameraUp(double dist);
+    void translateCameraDown(double dist);
+    void translateCameraLeft(double dist);
+    void translateCameraRight(double dist);
 
     //manages render tasks
     unsigned int numRenderTasks() const;  //length of the render queue
@@ -114,6 +117,8 @@ protected:
     static void initFunction(void);  // init viewport and background color
     //init default callbacks
     void initCallbacks();
+    //rest mouse state
+    void resetMouseState();
 protected:
     //basic information of window
     std::string window_name_;
@@ -124,6 +129,9 @@ protected:
     Camera<double> camera_;
     //render managner, manages the scene for render
     RenderManager render_manager_;
+    //state of the mouse
+    bool left_button_down_, middle_button_down_, right_button_down_;
+    int mouse_position_[2];
     //pointers to callback methods
     void (*display_function_)(void);
     void (*idle_function_)(void);
