@@ -46,25 +46,26 @@ using namespace Physika;
 MeshBasedCollidableObject<double, 3>* pObject1, *pObject2, *pObject3, *pObject4;
 ObjectBVH<double, 3> * pBVH1, *pBVH2, *pBVH3, *pBVH4;
 SceneBVH<double, 3>* pScene;
-
+int count = 0;
 
 void displayFunction()
 {
-    int width = glutGet(GLUT_WINDOW_WIDTH);
-    int height = glutGet(GLUT_WINDOW_HEIGHT);
-    //glMatrixMode(GL_PROJECTION);												// select projection matrix
-    //glViewport(0, 0, width, height);        									// set the viewport
-    glMatrixMode(GL_PROJECTION);												// set matrix mode
-    glLoadIdentity();															// reset projection matrix
-    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,10000);           		// set up a perspective projection matrix
-    glMatrixMode(GL_MODELVIEW);													// specify which matrix is the current matrix
-    glShadeModel( GL_SMOOTH );
-    glClearDepth( 1.0 );														// specify the clear value for the depth buffer
-    glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LEQUAL );
-    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
-    Color<unsigned char> black = Color<unsigned char>::Black();
-    glClearColor(black.redChannel(), black.greenChannel(), black.blueChannel(), black.alphaChannel());	
+	count++;
+	//int width = glutGet(GLUT_WINDOW_WIDTH);
+	//int height = glutGet(GLUT_WINDOW_HEIGHT);
+	////glMatrixMode(GL_PROJECTION);												// select projection matrix
+	////glViewport(0, 0, width, height);        									// set the viewport
+	//glMatrixMode(GL_PROJECTION);												// set matrix mode
+	//glLoadIdentity();															// reset projection matrix
+	//gluPerspective(45.0,(GLdouble)width/height,1.0e-3,10000);           		// set up a perspective projection matrix
+	//glMatrixMode(GL_MODELVIEW);													// specify which matrix is the current matrix
+	//glShadeModel( GL_SMOOTH );
+	//glClearDepth( 1.0 );														// specify the clear value for the depth buffer
+	//glEnable( GL_DEPTH_TEST );
+	//glDepthFunc( GL_LEQUAL );
+	//glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
+	//Color<unsigned char> black = Color<unsigned char>::Black();
+	//glClearColor(black.redChannel(), black.greenChannel(), black.blueChannel(), black.alphaChannel());	
 
 
 
@@ -139,6 +140,12 @@ void displayFunction()
 	pos[0] += 0.2;
 	pos[1] -= 0.1;
 	pObject4->transform()->setTranslation(pos);
+
+
+	if(count == 20)
+		pScene->deleteNode(2);
+	if(count == 40)
+		pScene->deleteNode(2);
 
     glutSwapBuffers();
 }
@@ -234,6 +241,9 @@ int main()
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
 	glut_window.setInitFunction(initFunction);
     glut_window.setDisplayFunction(displayFunction);
+	glut_window.setCameraFarClip(10000);
+	glut_window.setCameraNearClip(1.0e-3);
+	glut_window.setCameraFOV(45);
 	
     cout<<"Test GlutWindow with custom display function:\n";
     glut_window.createWindow();

@@ -13,11 +13,17 @@
  */
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 
 namespace Physika{
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::RigidBody()
+RigidBody<Scalar, Dim>::RigidBody():
+	object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
+	mesh_(NULL),
+	transform_(),
+	mass_(1),
+	is_fixed_(false)
 {
 
 }
@@ -26,6 +32,54 @@ template <typename Scalar,int Dim>
 RigidBody<Scalar, Dim>::~RigidBody()
 {
 
+}
+template <typename Scalar,int Dim>
+typename CollidableObject<Scalar, Dim>::ObjectType RigidBody<Scalar, Dim>::objectType() const
+{
+	return object_type_;
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
+{
+	mesh_ = mesh;
+	object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
+}
+
+template <typename Scalar,int Dim>
+SurfaceMesh<Scalar>* RigidBody<Scalar, Dim>::mesh()
+{
+	return mesh_;
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::setTransform(Transform<Scalar>& transform)
+{
+	transform_ = transform;
+}
+
+template <typename Scalar,int Dim>
+Transform<Scalar> RigidBody<Scalar, Dim>::transform() const
+{
+	return transform_;
+}
+
+template <typename Scalar,int Dim>
+Transform<Scalar> RigidBody<Scalar, Dim>::transform()
+{
+	return transform_;
+}
+
+template <typename Scalar,int Dim>
+const Transform<Scalar>* RigidBody<Scalar, Dim>::transformPtr() const
+{
+	return &transform_;
+}
+
+template <typename Scalar,int Dim>
+Transform<Scalar>* RigidBody<Scalar, Dim>::transformPtr()
+{
+	return &transform_;
 }
 
 //explicit instantiation

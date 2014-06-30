@@ -30,9 +30,22 @@ public:
 	//constructors && deconstructors
 	RigidBody();
 	virtual ~RigidBody();
+
+	//get & set
+	typename CollidableObject<Scalar, Dim>::ObjectType objectType() const;
+	void setMesh(SurfaceMesh<Scalar>* mesh);
+	SurfaceMesh<Scalar>* mesh();
+	void setTransform(Transform<Scalar>& transform);
+	Transform<Scalar> transform() const;
+	Transform<Scalar> transform();
+	const Transform<Scalar>* transformPtr() const;
+	Transform<Scalar>* transformPtr();
+
 protected:
 	//basic properties of a rigid body
-	Transform<double>* transform_;
+	typename CollidableObject<Scalar, Dim>::ObjectType object_type_;
+	SurfaceMesh<Scalar>* mesh_;
+	Transform<Scalar> transform_;
 	Scalar mass_;
 	bool is_fixed_;
 	
