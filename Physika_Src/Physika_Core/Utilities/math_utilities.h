@@ -38,17 +38,17 @@ inline Scalar abs(Scalar value)
     return value>=0?value:-value;
 }
 
-inline Scalar sqrt(float value)
+inline float sqrt(float value)
 {
     return std::sqrt(value);
 }
 
-inline Scalar sqrt(double value)
+inline double sqrt(double value)
 {
     return std::sqrt(value);
 }
 
-inline Scalar sqrt(long double value)
+inline long double sqrt(long double value)
 {
     return std::sqrt(value);
 }
