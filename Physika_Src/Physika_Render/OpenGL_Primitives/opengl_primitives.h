@@ -52,11 +52,11 @@ inline void openGLVertex(const Vector<double,3> &vec)
  * replacement for glColor{34}b, glColor{34}s, glColor{34}i, glColor{34}f, glColor{34}d, 
  * glColor{34}ub, glColor{34}us, glColor{34}ui
  */
-inline void openGLColor3(const Color<char> &color)
+inline void openGLColor3(const Color<signed char> &color)
 {
     glColor3b(color.redChannel(),color.greenChannel(),color.blueChannel());
 }
-inline void openGLColor4(const Color<char> &color)
+inline void openGLColor4(const Color<signed char> &color)
 {
     glColor4b(color.redChannel(),color.greenChannel(),color.blueChannel(),color.alphaChannel());
 }

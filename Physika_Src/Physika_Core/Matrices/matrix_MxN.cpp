@@ -260,6 +260,12 @@ bool MatrixMxN<Scalar>::operator== (const MatrixMxN<Scalar> &mat2) const
 }
 
 template <typename Scalar>
+bool MatrixMxN<Scalar>::operator!= (const MatrixMxN<Scalar> &mat2) const
+{
+    return !((*this)==mat2);
+}
+
+template <typename Scalar>
 MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (Scalar scale) const
 {
     int rows = (*this).rows();
@@ -490,8 +496,18 @@ Scalar MatrixMxN<Scalar>::doubleContraction(const MatrixMxN<Scalar> &mat2) const
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
+template class MatrixMxN<unsigned char>;
+template class MatrixMxN<unsigned short>;
+template class MatrixMxN<unsigned int>;
+template class MatrixMxN<unsigned long>;
+template class MatrixMxN<unsigned long long>;
+template class MatrixMxN<signed char>;
+template class MatrixMxN<short>;
+template class MatrixMxN<int>;
+template class MatrixMxN<long>;
+template class MatrixMxN<long long>;
 template class MatrixMxN<float>;
 template class MatrixMxN<double>;
-template class MatrixMxN<int>;
+template class MatrixMxN<long double>;
 
 }  //end of namespace Physika

@@ -1,29 +1,30 @@
 /*
  * @file config_file.h 
- * @A tool to parse predefined parameters. eg. Read some of simulation fix parameters: gravity, timestep, etc..;
+ * @brief A tool to parse predefined parameters. eg. Read some of simulation fix parameters: gravity, timestep, etc..;
  * @author Sheng Yang
  * @Suggestion: The name of a config file should be "***.config"
  * @The rule and format of the config file as follows: 
- --------------------------------------
+ * --------------------------------------
  * @Rule:
  * 1. a '*' stands for a parameter's name 
  * 2. '#' stands for a note or you can use it as a hidden value for the nearest upper parameter. 
  * 3. no special character stands for a value of the nearest upper parameter .
- --------------------------------------
+ * --------------------------------------
  * @Format:
-    *parameter_0_name
-    parameter_0_value
-    *parameter_1_name
-    #parameter_1_note
-    #parameter_1_note
-    #parameter_1_note
-    parameter_1_value
-    #parameter_1_note
-    *................
-    #................
-    *................
-    #................
- --------------------------------------
+ *   *parameter_0_name
+ *   parameter_0_value
+ *   *parameter_1_name
+ *   #parameter_1_note
+ *   #parameter_1_note
+ *   #parameter_1_note
+ *   parameter_1_value
+ *   #parameter_1_note
+ *   *................
+ *   #................
+ *   *................
+ *   #................
+ * --------------------------------------
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
@@ -40,8 +41,6 @@
 #include <vector>
 #include <string>
 
-
-
 namespace Physika{
 
 class ConfigFile
@@ -55,7 +54,6 @@ class ConfigFile
         Option_Double,
         Option_String,
     };
-
 
 public:
 

@@ -65,6 +65,12 @@ bool Range<Scalar,Dim>::operator== (const Range<Scalar,Dim> &range) const
 }
 
 template <typename Scalar,int Dim>
+bool Range<Scalar,Dim>::operator!= (const Range<Scalar,Dim> &range) const
+{
+    return !((*this)==range);
+}
+
+template <typename Scalar,int Dim>
 Range<Scalar,Dim>::~Range()
 {
 }
@@ -125,29 +131,31 @@ Range<Scalar,Dim> Range<Scalar,Dim>::unitRange()
 }
 
 //explicit instantiation
+template class Range<unsigned char,2>;
+template class Range<unsigned short,2>;
+template class Range<unsigned int,2>;
+template class Range<unsigned long,2>;
+template class Range<unsigned long long,2>;
+template class Range<signed char,2>;
+template class Range<short,2>;
+template class Range<int,2>;
+template class Range<long,2>;
+template class Range<long long,2>;
 template class Range<float,2>;
 template class Range<double,2>;
-template class Range<int,2>;
+template class Range<long double,2>;
+template class Range<unsigned char,3>;
+template class Range<unsigned short,3>;
+template class Range<unsigned int,3>;
+template class Range<unsigned long,3>;
+template class Range<unsigned long long,3>;
+template class Range<signed char,3>;
+template class Range<short,3>;
+template class Range<int,3>;
+template class Range<long,3>;
+template class Range<long long,3>;
 template class Range<float,3>;
 template class Range<double,3>;
-template class Range<int,3>;
+template class Range<long double,3>;
 
 }  //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

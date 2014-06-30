@@ -20,6 +20,10 @@
 
 namespace Physika{
 
+/*
+ * Interval class is defined for C++ fundamental integer types and floating-point types.
+ */
+
 template <typename Scalar>
 class Interval
 {
@@ -30,6 +34,7 @@ public:
     Interval(const Interval<Scalar> &interval);
     Interval<Scalar>& operator= (const Interval<Scalar> &interval);
     bool operator== (const Interval<Scalar> &interval);
+    bool operator!= (const Interval<Scalar> &interval);
     ~Interval();
     Scalar center() const;
     Scalar size() const;
@@ -42,23 +47,10 @@ public:
 protected:
     Scalar min_val_, max_val_;
 protected:
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value||is_same<Scalar,int>::value),
-                           "Interval<Scalar> are only defined for Scalar type of float, double and int");
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "Interval<Scalar> are only defined for integer types and floating-point types.");
 };
 
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_CORE_RANGE_INTERVAL_H_
-
-
-
-
-
-
-
-
-
-
-
-
-

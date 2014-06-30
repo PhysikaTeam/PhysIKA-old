@@ -26,9 +26,6 @@ using std::vector;
 
 namespace Physika{
 
-
-
-
 int ConfigFile::findOption(string option_name)
 {
     for (unsigned int i = 0; i < option_names_.size(); i++)

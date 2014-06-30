@@ -21,6 +21,10 @@
 
 namespace Physika{
 
+/*
+ * SquareMatrix<Scalar,3> are defined for C++ fundamental integer types and floating-point types
+ */
+
 template <typename Scalar>
 class SquareMatrix<Scalar,3>: public MatrixBase
 {
@@ -40,6 +44,7 @@ public:
     SquareMatrix<Scalar,3>& operator-= (const SquareMatrix<Scalar,3> &);
     SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &);
     bool operator== (const SquareMatrix<Scalar,3> &) const;
+    bool operator!= (const SquareMatrix<Scalar,3> &) const;
     SquareMatrix<Scalar,3> operator* (Scalar) const;
     SquareMatrix<Scalar,3>& operator*= (Scalar);
     Vector<Scalar,3> operator* (const Vector<Scalar,3> &) const;
@@ -66,9 +71,18 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,3> &mat)
 {
-    s<<"["<<mat(0,0)<<", "<<mat(0,1)<<", "<<mat(0,2)<<"; ";
-    s<<mat(1,0)<<", "<<mat(1,1)<<", "<<mat(1,2)<<"; ";
-    s<<mat(2,0)<<", "<<mat(2,1)<<", "<<mat(2,2)<<"]";
+    if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
+    {
+        s<<"["<<static_cast<int>(mat(0,0))<<", "<<static_cast<int>(mat(0,1))<<", "<<static_cast<int>(mat(0,2))<<"; ";
+        s<<static_cast<int>(mat(1,0))<<", "<<static_cast<int>(mat(1,1))<<", "<<static_cast<int>(mat(1,2))<<"; ";
+        s<<static_cast<int>(mat(2,0))<<", "<<static_cast<int>(mat(2,1))<<", "<<static_cast<int>(mat(2,2))<<"]";
+    }
+    else
+    {
+        s<<"["<<mat(0,0)<<", "<<mat(0,1)<<", "<<mat(0,2)<<"; ";
+        s<<mat(1,0)<<", "<<mat(1,1)<<", "<<mat(1,2)<<"; ";
+        s<<mat(2,0)<<", "<<mat(2,1)<<", "<<mat(2,2)<<"]";
+    }
     return s;
 }
  

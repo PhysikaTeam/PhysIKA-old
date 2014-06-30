@@ -28,7 +28,7 @@ void displayFunction()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
 	glLoadIdentity();
-	glTranslatef(0.0f,0.0f,-3.0f);			
+	//glTranslatef(0.0f,0.0f,-3.0f);			
  
 	/*
 	 * Triangle code starts here
@@ -45,8 +45,10 @@ void displayFunction()
     /* 
      * Test openGL primitive wrappers
      */
+    //Physika::Color<unsigned char> color = Physika::Color<int>::convertColor<unsigned char>(Physika::Color<int>::Blue());
 	glBegin(GL_TRIANGLES);					
     openGLColor3(Physika::Color<float>::Blue());
+    //openGLColor3(color);
 	openGLVertex(Vector<float,3>(0.0f, 1.0f, 0.0f));					
     openGLColor3(Physika::Color<float>::Green());
 	openGLVertex(Vector<float,3>(-1.0f,-1.0f, 0.0f));					
