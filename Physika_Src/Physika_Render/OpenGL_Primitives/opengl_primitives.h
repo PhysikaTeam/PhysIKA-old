@@ -22,7 +22,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Render/Color/color.h"
-#include "Physika_Core/Matrices/matrix_MxN.h"
+#include "Physika_Core/Matrices/matrix_4x4.h"
 
 namespace Physika{
 
@@ -256,10 +256,10 @@ inline void openGLTexCoord(const Vector<double,3> &vec)
 }
 
 /*
- * openGLMultMatrix(const Vector<Scalar,Dim> &):
+ * openGLMultMatrix(const SquareMatrix<Scalar,4> &):
  * replacement for glMultiMatrixf, glMultiMatrixd
  */
-inline void openGLMultMatrix(const MatrixMxN<float> & matrix)
+inline void openGLMultMatrix(const SquareMatrix<float,4> & matrix)
 {
 	float matrix_[16];
 	for(unsigned int i=0; i<4; i++)
@@ -268,7 +268,7 @@ inline void openGLMultMatrix(const MatrixMxN<float> & matrix)
 	glMultMatrixf(matrix_);
 }
 
-inline void openGLMultMatrix(const MatrixMxN<double> & matrix)
+inline void openGLMultMatrix(const SquareMatrix<double,4> & matrix)
 {
 	double matrix_[16];
 	for(unsigned int i=0; i<4; i++)

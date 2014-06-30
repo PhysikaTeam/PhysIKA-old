@@ -1,7 +1,7 @@
 /*
  * @file transform.h 
  * @brief transform class, brief class representing a rigid euclidean transform as a quaternion and a vector
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -20,9 +20,13 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
-#include "Physika_Core/Matrices/matrix_MxN.h"
+#include "Physika_Core/Matrices/matrix_4x4.h"
 
 namespace Physika{
+
+/*
+ * Transform is defined for float and double
+ */
 
 template <typename Scalar>
 class Transform
@@ -34,16 +38,16 @@ public:
     explicit Transform(const Quaternion<Scalar> );
     Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>& );
     Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>& );
-    Transform(const MatrixMxN<Scalar>& );
+    Transform(const SquareMatrix<Scalar,4>& );
     Transform(const SquareMatrix<Scalar,3>&);
 
     /* Get and Set */
     inline Quaternion<Scalar> rotation() const { return rotation_; }
     inline SquareMatrix<Scalar, 3> rotation3x3Matrix() const { return rotation_.get3x3Matrix(); }
-    inline MatrixMxN<Scalar> rotation4x4Matrix() const { return rotation_.get4x4Matrix(); }
-    inline MatrixMxN<Scalar> transformMatrix() const
+    inline SquareMatrix<Scalar,4> rotation4x4Matrix() const { return rotation_.get4x4Matrix(); }
+    inline SquareMatrix<Scalar,4> transformMatrix() const
     {
-        MatrixMxN<Scalar> matrix = rotation_.get4x4Matrix();
+        SquareMatrix<Scalar,4> matrix = rotation_.get4x4Matrix();
         matrix(0, 3) = translation_[0];
         matrix(1, 3) = translation_[1];
         matrix(2, 3) = translation_[2];

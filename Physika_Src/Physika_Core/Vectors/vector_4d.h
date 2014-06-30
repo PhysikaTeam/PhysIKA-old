@@ -81,9 +81,9 @@ Vector<T,4> operator *(S scale, const Vector<T,4> &vec)
 }
 
 //convenient typedefs
-typedef Vector<float,4> Vector2f;
-typedef Vector<double,4> Vector2d;
-typedef Vector<int,4> Vector2i;
+typedef Vector<float,4> Vector4f;
+typedef Vector<double,4> Vector4d;
+typedef Vector<int,4> Vector4i;
 
 } //end of namespace Physika
 

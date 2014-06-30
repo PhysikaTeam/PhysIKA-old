@@ -1,7 +1,7 @@
 /*
  * @file quaternion.h 
  * @brief quaternion class, it is used for rotation operations.
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -20,10 +20,14 @@
 #include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
-#include "Physika_Core/Matrices/matrix_MxN.h"
+#include "Physika_Core/Matrices/matrix_4x4.h"
 
 
 namespace Physika{
+
+/*
+ * Quaternion is defined for float and double.
+ */
 
 template <typename Scalar>
 class Quaternion
@@ -31,13 +35,13 @@ class Quaternion
 public:    
     /* Constructors */
     Quaternion();
-    Quaternion(Scalar , Scalar , Scalar , Scalar );
-    Quaternion(const Vector<Scalar,3> &, Scalar );
-    Quaternion(Scalar , const Vector<Scalar,3> &);
+    Quaternion(Scalar x, Scalar y, Scalar z, Scalar w);
+    Quaternion(const Vector<Scalar,3> &unit_axis, Scalar angle_rad);  //init from the rotation axis and angle(in radian)
+    Quaternion(Scalar angle_rad, const Vector<Scalar,3> &unit_axis);
     Quaternion(const Scalar *); 
     Quaternion(const Quaternion<Scalar> &);
     Quaternion(const SquareMatrix<Scalar, 3> &);   //init from a 3x3matrix
-    Quaternion(const MatrixMxN<Scalar> &);         //init from a 4x4matrix
+    Quaternion(const SquareMatrix<Scalar,4> &);         //init from a 4x4matrix
     
     /* Assignment operators */
     Quaternion<Scalar> &operator = (const Quaternion<Scalar> &);
@@ -66,7 +70,7 @@ public:
     Quaternion<Scalar> getConjugate() const;                         // return the conjugate
     const Vector<Scalar,3> rotate(const Vector<Scalar,3> ) const;    // rotates passed vec by this;
     SquareMatrix<Scalar, 3> get3x3Matrix() const;  //return 3x3matrix format
-    MatrixMxN<Scalar> get4x4Matrix() const;        //return 4x4matrix with a identity transform.
+    SquareMatrix<Scalar, 4> get4x4Matrix() const;        //return 4x4matrix with a identity transform.
 
 
 
