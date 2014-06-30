@@ -225,7 +225,7 @@ void SurfaceMeshRender<Scalar>::renderVertices()
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT);
     if(this->transform_ != NULL)
     {
-        openGLMultMatrix(this->transform_->transformMatrix());  
+        openGLMultMatrix(this->transform_->transformMatrix());	
     }
     if(! glIsList(this->vertex_display_list_id_))
     {
@@ -257,7 +257,7 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
     glDisable(GL_LIGHTING);
     if(this->transform_ != NULL)
     {
-        openGLMultMatrix(this->transform_->transformMatrix());  
+        openGLMultMatrix(this->transform_->transformMatrix());	
     }
 
     if(! glIsList(this->wire_display_list_id_))
@@ -303,7 +303,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     glEnable(GL_LIGHT0);
     if(this->transform_ != NULL)
     {
-        openGLMultMatrix(this->transform_->transformMatrix());  
+        openGLMultMatrix(this->transform_->transformMatrix());	
     }
     if (! glIsList(this->solid_display_list_id_))
     {   
@@ -405,11 +405,13 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
     }
     if(this->transform_ != NULL)
     {
-        openGLMultMatrix(this->transform_->transformMatrix());  
+        openGLMultMatrix(this->transform_->transformMatrix());	
     }
-    glPushAttrib(GL_POLYGON_BIT|GL_ENABLE_BIT);
+    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // set polygon mode FILL for SOLID MODE
     glShadeModel(GL_SMOOTH);                   // set shade model to GL_SMOOTH
+    glDisable(GL_LIGHTING);                    // disable lighting
+
     if (! glIsList(this->solid_with_custom_color_vector_display_list_id_))
     {   
         this->solid_with_custom_color_vector_display_list_id_=glGenLists(1);
@@ -438,8 +440,6 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
                 }
                 glEnd();
             }
-
-            glDisable(GL_TEXTURE_2D);
         }
         glEndList();
     }
@@ -462,7 +462,7 @@ void SurfaceMeshRender<Scalar>::renderFaceWithColor(const std::vector<unsigned i
     glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
     if(this->transform_ != NULL)
     {
-        openGLMultMatrix(this->transform_->transformMatrix());  
+        openGLMultMatrix(this->transform_->transformMatrix());	
     }
     if(! glIsList(this->face_with_color_display_list_id_))
     {
@@ -502,7 +502,7 @@ void SurfaceMeshRender<Scalar>::renderFaceWithColor(const std::vector<unsigned i
 
     if(this->transform_ != NULL)
     {
-        openGLMultMatrix(this->transform_->transformMatrix());  
+        openGLMultMatrix(this->transform_->transformMatrix());	
     }
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);     // set polygon mode FILL for SOLID MODE
@@ -587,7 +587,7 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
 {
     if(vertex_id.size()!= color.size())
     {
-        std::cerr<<"warning: the size of vertex_id don't equal to color's, the vertex lacking of cunstom color will be rendered in black color !!"<<std::endl;
+        std::cerr<<"warning: the size of vertex_id don't equal to color's, the vertex lacking of cunstom color will be rendered in white color !!"<<std::endl;
     }
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
     glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
@@ -599,7 +599,7 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
 
     if(this->transform_ != NULL)
     {
-        openGLMultMatrix(this->transform_->transformMatrix());  
+        openGLMultMatrix(this->transform_->transformMatrix());	
     }
     if(! glIsList(this->vertex_with_color_vector_display_list_id_))
     {
