@@ -15,9 +15,13 @@
 #ifndef PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_H_
 #define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_H_
 
+#include "Physika_Core/Transform/transform.h"
+
 namespace Physika{
 
 template <typename Scalar,int Dim> class CollidableObject;
+template <typename Scalar,int Dim> class Vector;
+template <typename Scalar> class SurfaceMesh;
 
 template <typename Scalar,int Dim>
 class RigidBody
@@ -25,10 +29,10 @@ class RigidBody
 public:
 	//constructors && deconstructors
 	RigidBody();
-	~RigidBody();
+	virtual ~RigidBody();
 protected:
 	//basic properties of a rigid body
-	CollidableObject<Scalar, Dim>* object_;
+	Transform<double>* transform_;
 	Scalar mass_;
 	bool is_fixed_;
 	

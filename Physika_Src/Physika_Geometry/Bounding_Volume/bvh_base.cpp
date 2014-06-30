@@ -70,6 +70,71 @@ const BoundingVolume<Scalar, Dim>* BVHBase<Scalar, Dim>::boundingVolume() const
 }
 
 template <typename Scalar,int Dim>
+unsigned int BVHBase<Scalar, Dim>::numLeaf() const
+{
+	return static_cast<unsigned int>(leaf_node_list_.size());
+}
+
+template <typename Scalar,int Dim>
+bool BVHBase<Scalar, Dim>::isEmpty() const
+{
+	if(root_node_ != NULL || numLeaf() != 0)
+		return true;
+	else
+		return false;
+}
+
+template <typename Scalar,int Dim>
+void BVHBase<Scalar, Dim>::addNode(BVHNodeBase<Scalar, Dim>* node)
+{
+	if(node == NULL)
+	{
+		std::cerr<<"Can't add a null node!"<<std::endl;
+		return;
+	}
+	node->setLeafNodeIndex(numLeaf());
+	leaf_node_list_.push_back(node);
+	ordered_leaf_node_list_.push_back(node);
+}
+
+template <typename Scalar,int Dim>
+void BVHBase<Scalar, Dim>::deleteNode(unsigned int node_index)
+{
+	if(node_index >= numLeaf())
+	{
+		std::cerr<<"Node index out of range!"<<std::endl;
+		return;
+	}
+	std::vector<BVHNodeBase<Scalar, Dim>*>::iterator iter = ordered_leaf_node_list_.begin() + node_index;
+	leaf_node_list_.erase(iter);
+
+	iter = ordered_leaf_node_list_.begin() + node_index;
+	ordered_leaf_node_list_.erase(iter);
+}
+
+template <typename Scalar,int Dim>
+void BVHBase<Scalar, Dim>::deleteNode(BVHNodeBase<Scalar, Dim>* node)
+{
+	if(node == NULL)
+	{
+		std::cerr<<"This is a null node!"<<std::endl;
+		return;
+	}
+	deleteNode(node->leafNodeIndex());
+}
+
+template <typename Scalar,int Dim>
+BVHNodeBase<Scalar, Dim>* BVHBase<Scalar, Dim>::findNode(unsigned int node_index)
+{
+	if(node_index >= numLeaf())
+	{
+		std::cerr<<"Node index out of range!"<<std::endl;
+		return NULL;
+	}
+	return ordered_leaf_node_list_[node_index];
+}
+
+template <typename Scalar,int Dim>
 void BVHBase<Scalar, Dim>::refit()
 {
 	root_node_->refit();
@@ -97,6 +162,7 @@ void BVHBase<Scalar, Dim>::clean()
 		delete leaf_node_list_[i];
 	}
 	leaf_node_list_.clear();
+	ordered_leaf_node_list_.clear();
 }
 
 template <typename Scalar,int Dim>

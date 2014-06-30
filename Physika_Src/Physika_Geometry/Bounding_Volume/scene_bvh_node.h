@@ -42,6 +42,7 @@ public:
 	bool elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result);
 	
 protected:
+	
 	ObjectBVH<Scalar, Dim>* object_bvh_;
 
 	void buildFromObjectBVH();

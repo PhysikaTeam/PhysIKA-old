@@ -107,7 +107,10 @@ bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const 
 			return false;
 		if(!has_face_ || !object_target->has_face_)
 			return false;
-		return mesh_object_this->collideWithMesh(mesh_object_target, face_index_, object_target->face_index_, collision_result);
+		bool is_collide = mesh_object_this->collideWithMesh(mesh_object_target, face_index_, object_target->face_index_);
+		collision_result.addPCS();
+		if(is_collide)
+			collision_result.addCollisionPair(mesh_object_this, mesh_object_target, face_index_, object_target->face_index_);
 	}
 	return false;
 }

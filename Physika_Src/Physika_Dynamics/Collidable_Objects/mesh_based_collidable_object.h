@@ -37,10 +37,10 @@ public:
 	SurfaceMesh<Scalar>* mesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);
 	Vector<Scalar, 3> vertexPosition(unsigned int vertex_index) const;
-	const Transform<Scalar>& transform() const;
-	Transform<Scalar>& transform();
-	void setTransform(const Transform<Scalar>& transform);
-	bool collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs, CollisionDetectionResult<Scalar, Dim>& collision_result);
+	const Transform<Scalar>* transform() const;
+	Transform<Scalar>* transform();
+	void setTransform(Transform<Scalar>* transform);
+	bool collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs);
 
 	bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c) const;
 	bool overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d) const;
@@ -49,7 +49,7 @@ protected:
 	//mesh_ is used to define the shape of object, while transform_ is used to define the configuration
 	//For deformable object which only updates mesh_, transform_ can be set to identity
 	SurfaceMesh<Scalar>* mesh_;
-	Transform<Scalar> transform_;
+	Transform<Scalar>* transform_;
 
 };
 

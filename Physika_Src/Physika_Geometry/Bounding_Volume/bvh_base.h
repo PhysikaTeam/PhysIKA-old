@@ -38,6 +38,14 @@ public:
 	void setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type);
 	typename BoundingVolume<Scalar, Dim>::BVType BVType() const;
 	const BoundingVolume<Scalar, Dim>* boundingVolume() const;
+	unsigned int numLeaf() const;
+	bool isEmpty() const;
+
+	//add & delete
+	void addNode(BVHNodeBase<Scalar, Dim>* node);
+	void deleteNode(unsigned int node_index);
+	void deleteNode(BVHNodeBase<Scalar, Dim>* node);
+	BVHNodeBase<Scalar, Dim>* findNode(unsigned int node_index);
 
 	//structure maintain
 
@@ -66,14 +74,23 @@ protected:
 	BVHNodeBase<Scalar, Dim>* root_node_;
 	typename BoundingVolume<Scalar, Dim>::BVType bv_type_;
 
-	//Leaf nodes of BVH. Notice that this list is disordered
-	std::vector<BVHNodeBase<Scalar, Dim>*> leaf_node_list_;
-
 	//internal function
 
 	//Build BVH from the nodes in leaf_node_list_ with indexes in [StartPosition, EndPosition)
 	//Return the root of this sub-tree
 	BVHNodeBase<Scalar, Dim>* buildFromLeafList(const int start_position, const int end_position);
+
+private:
+	//This two list is private because they need to be synchronized
+	//Add and delete should only be done through function addNode and deleteNode
+
+	//Leaf nodes of BVH. Notice that this list is disordered
+	std::vector<BVHNodeBase<Scalar, Dim>*> leaf_node_list_;
+
+	//Ordered leaf nodes of BVH. Notice that this list is ordered
+	//This list is only used when searching a node by its index
+	std::vector<BVHNodeBase<Scalar, Dim>*> ordered_leaf_node_list_;
+
 };
 
 //class to partite a BV according to its longest axis
