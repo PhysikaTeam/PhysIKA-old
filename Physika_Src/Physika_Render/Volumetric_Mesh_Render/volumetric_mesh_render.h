@@ -59,7 +59,7 @@ public:
     // note: renderSolidWithAlpha is a function to render volumetricMesh in solid mode, with a alpha value to represent the transparency.
     //       a value of 0.0 denotes that the mesh is completely transparent.
     //       naturally ,a increasing alpha value means the mesh has a higher opacity. 
-	//       while an alpha value of 1.0 is not meaning an absolute opacity strictly, which also depends on other states such as background color you are specifying.
+    //       while an alpha value of 1.0 is not meaning an absolute opacity strictly, which also depends on other states such as background color you are specifying.
     //       default is 0.5 as shown in the follows
     void renderSolidWithAlpha(float alpha=0.5);
 
