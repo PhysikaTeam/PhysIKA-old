@@ -16,9 +16,10 @@
 #define PHYSIKA_RENDER_RENDER_MANAGER_RENDER_MANAGER_H_
 
 #include <list>
-class RenderBase;
 
 namespace Physika{
+
+class RenderBase;
 
 class RenderManager
 {

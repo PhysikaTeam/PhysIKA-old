@@ -105,11 +105,20 @@ void BVHBase<Scalar, Dim>::deleteNode(unsigned int node_index)
 		std::cerr<<"Node index out of range!"<<std::endl;
 		return;
 	}
-	std::vector<BVHNodeBase<Scalar, Dim>*>::iterator iter = ordered_leaf_node_list_.begin() + node_index;
-	leaf_node_list_.erase(iter);
+	std::vector<BVHNodeBase<Scalar, Dim>*>::iterator order_iter = ordered_leaf_node_list_.begin() + node_index;
+	
 
-	iter = ordered_leaf_node_list_.begin() + node_index;
-	ordered_leaf_node_list_.erase(iter);
+	unsigned int leaf_num = numLeaf();
+	for(unsigned int i = 0; i < leaf_num; ++i)
+	{
+		if(leaf_node_list_[i]->leafNodeIndex() == node_index)
+		{
+			std::vector<BVHNodeBase<Scalar, Dim>*>::iterator iter = leaf_node_list_.begin() + i;
+			delete leaf_node_list_[i];
+			leaf_node_list_.erase(iter);
+		}
+	}
+	ordered_leaf_node_list_.erase(order_iter);
 }
 
 template <typename Scalar,int Dim>
