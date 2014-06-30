@@ -26,8 +26,8 @@
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
-#include "Physika_Core/Utilities/Text_Parse/parseline.h"
-#include "Physika_Core/Utilities/File_Path_Utilities/file_path_utilities.h"
+#include "Physika_Core/Utilities/File_Utilities/parse_line.h"
+#include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 
 using std::string;
 using std::fstream;
@@ -46,8 +46,8 @@ template <typename Scalar, int Dim>
 VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &filename)
 {
     VolumetricMesh<Scalar, Dim> *pointer = NULL;           //pointer we will return 
-    string dir = FilePathUtilities::dirName(filename);
-    string file_extension = FilePathUtilities::fileExtension(filename);
+    string dir = FileUtilities::dirName(filename);
+    string file_extension = FileUtilities::fileExtension(filename);
     if(file_extension.size() == 0)
     {
         std::cerr<<"No file extension found for the mesh file!\n";
@@ -124,7 +124,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         }
         getline(*fp,line_str);
         //first remove preceding blanks from this line
-        line_str = TextParse::removeWhitespaces(line_str);
+        line_str = FileUtilities::removeWhitespaces(line_str);
         str_in.clear();
         str_in.str("");
         str_in<<line_str;

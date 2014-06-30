@@ -14,12 +14,12 @@
  */
 
 
-#include "Physika_Core/Utilities/Text_Parse/parseline.h"
+#include "Physika_Core/Utilities/File_Utilities/parse_line.h"
 using std::string;
 
 namespace Physika{
 
-namespace TextParse{
+namespace FileUtilities{
 
 string removeWhitespaces(const string &line_, unsigned int numRetainedSpaces)
 {
@@ -32,7 +32,7 @@ string removeWhitespaces(const string &line_, unsigned int numRetainedSpaces)
     return line;
 }
 
-} //end of namespace TextParse
+} //end of namespace FileUtilities
 
 } //end of namespace Physika
 

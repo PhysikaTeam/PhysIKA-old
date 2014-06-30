@@ -13,20 +13,20 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_UTILITIES_TEXT_PARSE_PARSELINE_H_
-#define PHYSIKA_CORE_UTILITIES_TEXT_PARSE_PARSELINE_H_
+#ifndef PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_PARSELINE_H_
+#define PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_PARSELINE_H_
 
 #include<string>
 
 namespace Physika{
 
-namespace TextParse{
+namespace FileUtilities{
 
 //remove abundant whitespaces
 std::string removeWhitespaces(const std::string &line_, unsigned int numRetainedSpaces = 1);
 
-} //end of namespace TextParse
+} //end of namespace FileUtilities
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_CORE_UTILITIES_TEXT_PARSE_PARSELINE_H_
+#endif //PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_PARSELINE_H_

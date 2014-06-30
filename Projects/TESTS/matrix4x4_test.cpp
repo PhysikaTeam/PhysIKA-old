@@ -1,7 +1,7 @@
 /*
- * @file matrix3x3_test.cpp 
- * @brief Test the Matrix3x3 class.
- * @author Sheng Yang
+ * @file matrix4x4_test.cpp 
+ * @brief Test the Matrix4x4 class.
+ * @author Sheng Yang, Liyou Xu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -13,18 +13,18 @@
  */
 
 #include <iostream>
-#include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Core/Matrices/matrix_4x4.h"
 using namespace std;
 
 int main()
 {
-  cout<<"Matrix3x3 Test"<<endl;
-  Physika::SquareMatrix<double,3> mat_double(3.0, 1.0,1.0,3.0,3,0,1.0,3.0,3.0);
-  cout<<"A 3x3 matrix of double numbers:"<<endl;
+  cout<<"Matrix4x4 Test"<<endl;
+  Physika::SquareMatrix<double,4> mat_double(3.0,1.0,1.0,1.0, 3.0,3.0,1.0,1.0, 3.0,3.0,3.0,1.0, 3.0,3.0,3.0,3.0);
+  cout<<"A 4x4 matrix of double numbers:"<<endl;
   cout<<mat_double;
   cout<<"Rows: "<<mat_double.rows()<<" Cols: "<<mat_double.cols()<<endl;
-  Physika::SquareMatrix<double,3> mat_double3(0.0,1.0,1.0,0.0,3.0,3.0,3.0,2.0,3.0);
-  cout<<"Another 3x3 matrix of double numbers:"<<endl;
+  Physika::SquareMatrix<double,4> mat_double3(1.0,1.0,1.0,1.0, 0.0,3.0,3.0,0.0, 3.0,2.0,3.0,1.0, 1.0,1.0,0.0,0.0);
+  cout<<"Another 4x4 matrix of double numbers:"<<endl;
   cout<<mat_double3<<endl;
   cout<<"matrix2[1][1]:"<<mat_double3(1,1)<<endl;
   cout<<"matrix2's trace:"<<mat_double3.trace()<<endl;

@@ -13,14 +13,14 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_UTILITIES_FILE_PATH_UTILITIES_FILE_PATH_UTILITIES_H_
-#define PHYSIKA_CORE_UTILITIES_FILE_PATH_UTILITIES_FILE_PATH_UTILITIES_H_
+#ifndef PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_PATH_UTILITIES_H_
+#define PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_PATH_UTILITIES_H_
 
 #include<string>
 
 namespace Physika{
 
-namespace FilePathUtilities{
+namespace FileUtilities{
 
 //abstract the path of a file's directory out of its path. if the path doesn't have a directory, it will return string('.').
 std::string dirName(const std::string &path);
@@ -31,8 +31,8 @@ std::string filenameInPath(const std::string &path);
 //abstract the file extension out of its path. if the file doesn't have a file extension, it will return empty string.  ex. fileExtension(string("five.txt"))  will return string(".txt") .
 std::string fileExtension(const std::string &path);
 
-} //end of namespace File_Path_Utilities
+} //end of namespace File_Utilities
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_CORE_UTILITIES_FILE_PATH_UTILITIES_FILE_PATH_UTILITIES_H_
+#endif //PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_PATH_UTILITIES_H_

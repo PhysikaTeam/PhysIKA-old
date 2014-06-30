@@ -14,12 +14,12 @@
  */
 
 
-#include "Physika_Core/Utilities/File_Path_Utilities/file_path_utilities.h"
+#include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 using std::string;
 
 namespace Physika{
 
-namespace FilePathUtilities{
+namespace FileUtilities{
 
 string dirName(const string &path)
 {

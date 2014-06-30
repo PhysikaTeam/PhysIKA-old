@@ -20,7 +20,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
-#include "Physika_Core/Utilities/File_Path_Utilities/file_path_utilities.h"
+#include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 
 using Physika::SurfaceMeshInternal::Face;
 using Physika::SurfaceMeshInternal::Group;
@@ -287,7 +287,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         {
             string mtl_name;
             stream>>mtl_name;
-            string pre_path = FilePathUtilities::dirName(filename);
+            string pre_path = FileUtilities::dirName(filename);
             mtl_name=pre_path+ string("/") +mtl_name;
             loadMaterials(mtl_name,mesh);
         }
@@ -324,7 +324,7 @@ bool ObjMeshIO<Scalar>::save(const string &filename, const SurfaceMesh<Scalar> *
     }
     string material_path = prefix + string(".mtl");
     saveMaterials(material_path, mesh);
-    fileout<<"mtllib "<<FilePathUtilities::filenameInPath(prefix)<<".mtl"<<endl;
+    fileout<<"mtllib "<<FileUtilities::filenameInPath(prefix)<<".mtl"<<endl;
     unsigned int num_vertices=mesh->numVertices(),i;
     for(i=0;i<num_vertices;++i)
     {
@@ -488,7 +488,7 @@ bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
             strcpy(tex_name,"");
             stream>>tex_name;
             texture_file_complete.assign(tex_name);
-            texture_file_complete=FilePathUtilities::dirName(filename)+string("/")+texture_file_complete;
+            texture_file_complete=FileUtilities::dirName(filename)+string("/")+texture_file_complete;
             if(strlen(tex_name))material_example.setTextureFileName(texture_file_complete);
             break;
 
@@ -542,7 +542,7 @@ bool ObjMeshIO<Scalar>::saveMaterials(const string &filename, const SurfaceMesh<
         fileout<<"Ks "<<material_example.Ks()[0]<<' '<<material_example.Ks()[1]<<' '<<material_example.Ks()[2]<<endl;
         fileout<<"Ns "<<material_example.shininess()*1000.0/128.0<<endl;
         fileout<<"d "<<material_example.alpha()<<endl;
-        if(material_example.hasTexture()) fileout<<"map_Kd "<<FilePathUtilities::filenameInPath(material_example.textureFileName())<<endl;
+        if(material_example.hasTexture()) fileout<<"map_Kd "<<FileUtilities::filenameInPath(material_example.textureFileName())<<endl;
     }
     fileout.close();
     return true;
