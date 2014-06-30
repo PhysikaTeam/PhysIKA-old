@@ -371,7 +371,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderWireframe()
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshRender<Scalar,Dim>::renderSolidWithAlpha(float alpha=0.5)
+void VolumetricMeshRender<Scalar,Dim>::renderSolidWithAlpha(float alpha)
 {
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_DEPTH_BUFFER_BIT);
 
