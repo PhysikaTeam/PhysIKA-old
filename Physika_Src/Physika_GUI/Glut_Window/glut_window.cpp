@@ -261,6 +261,21 @@ void GlutWindow::removeAllRenderTasks()
     render_manager_.removeAll();
 }
 
+const RenderBase* GlutWindow::renderTaskAtIndex(unsigned int index) const
+{
+    return render_manager_.taskAtIndex(index);
+}
+
+RenderBase* GlutWindow::renderTaskAtIndex(unsigned int index)
+{
+    return render_manager_.taskAtIndex(index);
+}
+
+int GlutWindow::renderTaskIndex(RenderBase *task) const
+{
+    return render_manager_.taskIndex(task);
+}
+
 ////////////////////////////////////////////////// set custom callback functions ////////////////////////////////////////////////////////////////////
 
 void GlutWindow::setDisplayFunction(void (*func)(void))

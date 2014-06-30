@@ -107,6 +107,52 @@ void RenderManager::removeAll()
     render_list_.clear();
 }
 
+const RenderBase* RenderManager::taskAtIndex(unsigned int index) const
+{
+    bool index_valid = (index>=0)&&(index<render_list_.size());
+    if(!index_valid)
+    {
+        std::cerr<<"Render task index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    list<RenderBase*>::const_iterator iter = render_list_.begin();
+    while(index-- >= 0)
+        ++iter;
+    RenderBase *cur_render = *iter;
+    return cur_render;
+}
+
+RenderBase* RenderManager::taskAtIndex(unsigned int index)
+{
+    bool index_valid = (index>=0)&&(index<render_list_.size());
+    if(!index_valid)
+    {
+        std::cerr<<"Render task index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    list<RenderBase*>::iterator iter = render_list_.begin();
+    while(index-- >= 0)
+        ++iter;
+    RenderBase *cur_render = *iter;
+    return cur_render;
+}
+
+int RenderManager::taskIndex(RenderBase *task) const
+{
+    if(task==NULL)
+        return -1;
+    list<RenderBase*>::const_iterator iter = render_list_.begin();
+    int index = 0;
+    while(iter != render_list_.end())
+    {
+        if(*iter == task)
+            return index;
+        ++iter;
+        ++index;
+    }
+    return -1;
+}
+
 void RenderManager::renderAll()
 {
     for(list<RenderBase*>::iterator iter = render_list_.begin(); iter != render_list_.end(); ++iter)

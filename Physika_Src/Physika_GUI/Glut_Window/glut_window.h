@@ -82,7 +82,10 @@ public:
     void popBackRenderTask(); //remove task at back of render queue
     void popFrontRenderTask();  //remove task at front of render queue
     void removeRenderTaskAtIndex(unsigned int index);  //remove the index-th task in queue
-    void removeAllRenderTasks();  //remove all render tasks  
+    void removeAllRenderTasks();  //remove all render tasks
+    const RenderBase* renderTaskAtIndex(unsigned int index) const; //return pointer to the render task at given index
+    RenderBase* renderTaskAtIndex(unsigned int index);
+    int renderTaskIndex(RenderBase *task) const; //return index of task in queue, if task not in queue, return -1
 
     //advanced: 
     //set custom callback functions

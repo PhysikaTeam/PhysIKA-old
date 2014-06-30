@@ -16,9 +16,10 @@
 #define PHYSIKA_RENDER_RENDER_MANAGER_RENDER_MANAGER_H_
 
 #include <list>
-class RenderBase;
 
 namespace Physika{
+
+class RenderBase;
 
 class RenderManager
 {
@@ -32,7 +33,10 @@ public:
     void removeBack(); //remove task at back of render queue
     void removeFront();  //remove task at front of render queue
     void removeAtIndex(unsigned int index);  //remove the index-th task in queue
-    void removeAll();  //remove all render tasks  
+    void removeAll();  //remove all render tasks
+    const RenderBase* taskAtIndex(unsigned int index) const; //return pointer to the render task at given index
+    RenderBase* taskAtIndex(unsigned int index);
+    int taskIndex(RenderBase *task) const; //return index of task in queue, if task not in queue, return -1
 
     void renderAll();
     void renderAtIndex(unsigned int index); //render the index-th task in queue
