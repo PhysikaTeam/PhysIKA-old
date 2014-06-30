@@ -43,7 +43,7 @@ void SceneBVH<Scalar, Dim>::addObjectBVH(ObjectBVH<Scalar, Dim>* object_bvh, boo
 	scene_node->setObjectBVH(object_bvh);
 	scene_node->setLeaf(true);
 	scene_node->setBVType(object_bvh->BVType());
-	this->leaf_node_list_.push_back(scene_node);
+	this->addNode(scene_node);
 	if(isRebuild)
 		this->rebuild();
 }
@@ -51,10 +51,10 @@ void SceneBVH<Scalar, Dim>::addObjectBVH(ObjectBVH<Scalar, Dim>* object_bvh, boo
 template <typename Scalar,int Dim>
 void SceneBVH<Scalar, Dim>::refitLeafNodes()
 {
-	unsigned int leaf_num = static_cast<unsigned int>(this->leaf_node_list_.size());
+	unsigned int leaf_num = this->numLeaf();
 	for(unsigned int i = 0; i < leaf_num; i++)
 	{
-		this->leaf_node_list_[i]->resize();
+		this->findNode(i)->resize();
 	}
 }
 

@@ -44,6 +44,7 @@ public:
     Vector<Scalar,3>& operator-= (const Vector<Scalar,3> &);
     Vector<Scalar,3>& operator= (const Vector<Scalar,3> &);
     bool operator== (const Vector<Scalar,3> &) const;
+    bool operator!= (const Vector<Scalar,3> &) const;
     Vector<Scalar,3> operator* (Scalar) const;
     Vector<Scalar,3>& operator*= (Scalar);
     Vector<Scalar,3> operator/ (Scalar) const;

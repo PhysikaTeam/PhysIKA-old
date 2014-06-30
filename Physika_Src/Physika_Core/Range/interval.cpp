@@ -61,6 +61,12 @@ bool Interval<Scalar>::operator==(const Interval<Scalar> &interval)
 }
 
 template <typename Scalar>
+bool Interval<Scalar>::operator!=(const Interval<Scalar> &interval)
+{
+    return !((*this)==interval);
+}
+
+template <typename Scalar>
 Interval<Scalar>::~Interval()
 {
 }

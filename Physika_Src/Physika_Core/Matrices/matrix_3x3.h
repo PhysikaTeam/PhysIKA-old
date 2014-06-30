@@ -44,6 +44,7 @@ public:
     SquareMatrix<Scalar,3>& operator-= (const SquareMatrix<Scalar,3> &);
     SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &);
     bool operator== (const SquareMatrix<Scalar,3> &) const;
+    bool operator!= (const SquareMatrix<Scalar,3> &) const;
     SquareMatrix<Scalar,3> operator* (Scalar) const;
     SquareMatrix<Scalar,3>& operator*= (Scalar);
     Vector<Scalar,3> operator* (const Vector<Scalar,3> &) const;

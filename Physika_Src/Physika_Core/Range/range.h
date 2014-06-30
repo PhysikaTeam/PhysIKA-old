@@ -37,6 +37,7 @@ public:
     Range(const Range<Scalar,Dim> &range);
     Range<Scalar,Dim>& operator= (const Range<Scalar,Dim> &range);
     bool operator== (const Range<Scalar,Dim> &range) const;
+    bool operator!= (const Range<Scalar,Dim> &range) const;
     ~Range();
     Vector<Scalar,Dim> center() const;
     Vector<Scalar,Dim> edgeLengths() const;

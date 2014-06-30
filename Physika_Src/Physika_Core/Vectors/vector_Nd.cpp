@@ -220,6 +220,12 @@ bool VectorND<Scalar>::operator== (const VectorND<Scalar> &vec2) const
 }
 
 template <typename Scalar>
+bool VectorND<Scalar>::operator!= (const VectorND<Scalar> &vec2) const
+{
+    return !((*this)==vec2);
+}
+
+template <typename Scalar>
 VectorND<Scalar> VectorND<Scalar>::operator* (Scalar scale) const
 {
     int dim = (*this).dims();

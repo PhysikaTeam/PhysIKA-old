@@ -24,18 +24,24 @@ namespace Physika{
 GlutWindow::GlutWindow()
     :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480)
 {
+    resetMouseState();
+    camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
     :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480)
 {
+    resetMouseState();
+    camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
     :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height)
 {
+    resetMouseState();
+    camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
 
@@ -45,6 +51,7 @@ GlutWindow::~GlutWindow()
 
 void GlutWindow::createWindow()
 {
+    resetMouseState();
     int argc = 1;
     const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
     char *argv[1];
@@ -93,6 +100,202 @@ int GlutWindow::height() const
     else
         return initial_height_;
 }
+
+////////////////////////////////////////////////// camera operations////////////////////////////////////////////////////////////////////////
+
+const Vector<double,3>& GlutWindow::cameraPosition() const
+{
+    return camera_.cameraPosition();
+}
+
+void GlutWindow::setCameraPosition(const Vector<double,3> &position)
+{
+    camera_.setCameraPosition(position);
+}
+
+const Vector<double,3>& GlutWindow::cameraUpDirection() const
+{
+    return camera_.cameraUpDirection();
+}
+
+void GlutWindow::setCameraUpDirection(const Vector<double,3> &up)
+{
+    camera_.setCameraUpDirection(up);
+}
+
+const Vector<double,3>& GlutWindow::cameraFocusPosition() const
+{
+    return camera_.cameraFocusPosition();
+}
+
+void GlutWindow::setCameraFocusPosition(const Vector<double,3> &focus)
+{
+    camera_.setCameraFocusPosition(focus);
+}
+
+double GlutWindow::cameraFOV() const
+{
+    return camera_.cameraFOV();
+}
+
+void GlutWindow::setCameraFOV(double fov)
+{
+    camera_.setCameraFOV(fov);
+}
+
+double GlutWindow::cameraAspect() const
+{
+    return camera_.cameraAspect();
+}
+
+void GlutWindow::setCameraAspect(double aspect)
+{
+    camera_.setCameraAspect(aspect);
+}
+
+double GlutWindow::cameraNearClip() const
+{
+    return camera_.cameraNearClip();
+}
+
+void GlutWindow::setCameraNearClip(double near_clip)
+{
+    camera_.setCameraNearClip(near_clip);
+}
+
+double GlutWindow::cameraFarClip() const
+{
+    return camera_.cameraFarClip();
+}
+
+void GlutWindow::setCameraFarClip(double far_clip)
+{
+    camera_.setCameraFarClip(far_clip);
+}
+
+void GlutWindow::orbitCameraUp(double rad)
+{
+    camera_.orbitUp(rad);
+}
+
+void GlutWindow::orbitCameraDown(double rad)
+{
+    camera_.orbitDown(rad);
+}
+
+void GlutWindow::orbitCameraLeft(double rad)
+{
+    camera_.orbitLeft(rad);
+}
+
+void GlutWindow::orbitCameraRight(double rad)
+{
+    camera_.orbitRight(rad);
+}
+
+void GlutWindow::zoomCameraIn(double dist)
+{
+    camera_.zoomIn(dist);
+}
+
+void GlutWindow::zoomCameraOut(double dist)
+{
+    camera_.zoomOut(dist);
+}
+
+void GlutWindow::yawCamera(double rad)
+{
+    camera_.yaw(rad);
+}
+
+void GlutWindow::pitchCamera(double rad)
+{
+    camera_.pitch(rad);
+}
+
+void GlutWindow::rollCamera(double rad)
+{
+    camera_.roll(rad);
+}
+
+void GlutWindow::translateCameraUp(double dist)
+{
+    camera_.translateUp(dist);
+}
+
+void GlutWindow::translateCameraDown(double dist)
+{
+    camera_.translateDown(dist);
+}
+
+void GlutWindow::translateCameraLeft(double dist)
+{
+    camera_.translateLeft(dist);
+}
+
+void GlutWindow::translateCameraRight(double dist)
+{
+    camera_.translateRight(dist);
+}
+
+////////////////////////////////////////////////// manages render tasks////////////////////////////////////////////////////////////////////
+
+unsigned int GlutWindow::numRenderTasks() const
+{
+    return render_manager_.numRenderTasks();
+}
+
+void GlutWindow::pushBackRenderTask(RenderBase *task)
+{
+    render_manager_.insertBack(task);
+}
+
+void GlutWindow::pushFrontRenderTask(RenderBase *task)
+{
+    render_manager_.insertFront(task);
+}
+
+void GlutWindow::insertRenderTaskAtIndex(unsigned int index, RenderBase *task)
+{
+    render_manager_.insertAtIndex(index,task);
+}
+
+void GlutWindow::popBackRenderTask()
+{
+    render_manager_.removeBack();
+}
+
+void GlutWindow::popFrontRenderTask()
+{
+    render_manager_.removeFront();
+}
+
+void GlutWindow::removeRenderTaskAtIndex(unsigned int index)
+{
+    render_manager_.removeAtIndex(index);
+}
+
+void GlutWindow::removeAllRenderTasks()
+{
+    render_manager_.removeAll();
+}
+
+const RenderBase* GlutWindow::renderTaskAtIndex(unsigned int index) const
+{
+    return render_manager_.taskAtIndex(index);
+}
+
+RenderBase* GlutWindow::renderTaskAtIndex(unsigned int index)
+{
+    return render_manager_.taskAtIndex(index);
+}
+
+int GlutWindow::renderTaskIndex(RenderBase *task) const
+{
+    return render_manager_.taskIndex(task);
+}
+
+////////////////////////////////////////////////// set custom callback functions ////////////////////////////////////////////////////////////////////
 
 void GlutWindow::setDisplayFunction(void (*func)(void))
 {
@@ -182,6 +385,8 @@ void GlutWindow::setInitFunction(void (*func)(void))
         init_function_ = func;
 }
 
+////////////////////////////////////////////////// default callback functions ////////////////////////////////////////////////////////////////////
+
 void GlutWindow::displayFunction(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -195,11 +400,19 @@ void GlutWindow::idleFunction(void)
 
 void GlutWindow::reshapeFunction(int width, int height)
 {
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    GLdouble aspect = static_cast<GLdouble>(width)/height;
+    window->setCameraAspect(aspect); //update the  view aspect of camera
+    double fov = window->cameraFOV();
+    double near_clip = window->cameraNearClip();
+    double far_clip = window->cameraFarClip();
+    //update view port and projection
     glViewport(0,0,width,height);
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,1.0e2);
-    glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluPerspective(fov, aspect,near_clip,far_clip);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void GlutWindow::keyboardFunction(unsigned char key, int x, int y)
@@ -220,22 +433,62 @@ void GlutWindow::specialFunction(int key, int x, int y)
 
 void GlutWindow::motionFunction(int x, int y)
 {
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    int mouse_delta_x = x - window->mouse_position_[0];
+    int mouse_delta_y = y - window->mouse_position_[1];
+    window->mouse_position_[0] = x;
+    window->mouse_position_[1] = y;
+    double scale = 0.05;  //sensativity of the mouse
+    if(window->left_button_down_)  //left button handles camera rotation
+    {
+        window->orbitCameraLeft(mouse_delta_x*scale);
+        window->orbitCameraUp(mouse_delta_y*scale);
+    }
+    if(window->middle_button_down_)  //middle button handles camera zoom in/out
+    {
+        window->zoomCameraIn(mouse_delta_y*scale);
+    }
+    if(window->right_button_down_)  //right button handles camera translation
+    {
+        scale *= 0.5;
+        window->translateCameraLeft(mouse_delta_x*scale);
+        window->translateCameraUp(mouse_delta_y*scale);
+    }
 }
 
 void GlutWindow::mouseFunction(int button, int state, int x, int y)
 {
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    switch(button)
+    {
+    case GLUT_LEFT_BUTTON:
+        window->left_button_down_ = (state==GLUT_DOWN);
+        break;
+    case GLUT_MIDDLE_BUTTON:
+        window->middle_button_down_ = (state==GLUT_DOWN);
+        break;
+    case GLUT_RIGHT_BUTTON:
+        window->right_button_down_ = (state==GLUT_DOWN);
+        break;
+    default:
+        //PHYSIKA_ERROR("Invalid mouse state.");
+        break;
+    }
+    window->mouse_position_[0] = x;
+    window->mouse_position_[1] = y;
 }
 
 void GlutWindow::initFunction(void)
 {
     int width = glutGet(GLUT_WINDOW_WIDTH);
     int height = glutGet(GLUT_WINDOW_HEIGHT);
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
     glMatrixMode(GL_PROJECTION);												// select projection matrix
     glViewport(0, 0, width, height);        									// set the viewport
-    glMatrixMode(GL_PROJECTION);												// set matrix mode
-    glLoadIdentity();															// reset projection matrix
-    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,1.0e2);           		// set up a perspective projection matrix
-    glMatrixMode(GL_MODELVIEW);													// specify which matrix is the current matrix
+    (window->camera_).look();                                                   // set projection and model view transformation through camera
     glShadeModel( GL_SMOOTH );
     glClearDepth( 1.0 );														// specify the clear value for the depth buffer
     glEnable( GL_DEPTH_TEST );
@@ -256,6 +509,14 @@ void GlutWindow::initCallbacks()
     motion_function_ = GlutWindow::motionFunction;
     mouse_function_ = GlutWindow::mouseFunction;
     init_function_ = GlutWindow::initFunction;
+}
+
+void GlutWindow::resetMouseState()
+{
+    left_button_down_ = false;
+    middle_button_down_ = false;
+    right_button_down_ = false;
+    mouse_position_[0] = mouse_position_[1] = 0;
 }
 
 } //end of namespace Physika

@@ -42,6 +42,7 @@ public:
     VectorND<Scalar>& operator-= (const VectorND<Scalar> &);
     VectorND<Scalar>& operator= (const VectorND<Scalar> &);
     bool operator== (const VectorND<Scalar> &) const;
+    bool operator!= (const VectorND<Scalar> &) const;
     VectorND<Scalar> operator* (Scalar) const;
     VectorND<Scalar>& operator*= (Scalar);
     VectorND<Scalar> operator/ (Scalar) const;

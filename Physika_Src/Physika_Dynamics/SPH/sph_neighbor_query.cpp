@@ -99,7 +99,7 @@ void GridQuery<Scalar, Dim>::construct(Array<Vector<Scalar, Dim>>& in_positions,
     
     
 
-    sim_data.reorder(ref_reordered_ids.data(), particles_num_);
+    sim_data.permutate(ref_reordered_ids.data(), particles_num_);
 
 }
 

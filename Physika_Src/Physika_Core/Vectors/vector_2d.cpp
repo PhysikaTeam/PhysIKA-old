@@ -141,6 +141,12 @@ bool Vector<Scalar,2>::operator== (const Vector<Scalar,2> &vec2) const
 }
 
 template <typename Scalar>
+bool Vector<Scalar,2>::operator!= (const Vector<Scalar,2> &vec2) const
+{
+    return !((*this)==vec2);
+}
+
+template <typename Scalar>
 Vector<Scalar,2> Vector<Scalar,2>::operator* (Scalar scale) const
 {
     Scalar result[2];

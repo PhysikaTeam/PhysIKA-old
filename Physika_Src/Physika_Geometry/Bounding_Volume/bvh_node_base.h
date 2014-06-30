@@ -42,6 +42,8 @@ public:
 	typename BoundingVolume<Scalar, Dim>::BVType BVType() const;
 	void setLeaf(const bool is_leaf);
 	bool isLeaf() const;
+	unsigned int leafNodeIndex() const;
+	void setLeafNodeIndex(unsigned int leaf_node_index);
 	virtual bool isSceneNode() const;
 	virtual bool isObjectNode() const;
 
@@ -71,6 +73,7 @@ public:
 	
 protected:
 	bool is_leaf_;
+	unsigned int leaf_node_index_;
 	typename BoundingVolume<Scalar, Dim>::BVType bv_type_;
 	BoundingVolume<Scalar, Dim>* bounding_volume_;
 	BVHNodeBase<Scalar, Dim>* left_child_;

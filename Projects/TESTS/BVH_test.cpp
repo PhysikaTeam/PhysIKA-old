@@ -43,8 +43,8 @@ using namespace std;
 using namespace Physika;
 
 
-MeshBasedCollidableObject<double, 3>* pObject1, *pObject2;
-ObjectBVH<double, 3> * pBVH1, *pBVH2;
+MeshBasedCollidableObject<double, 3>* pObject1, *pObject2, *pObject3, *pObject4;
+ObjectBVH<double, 3> * pBVH1, *pBVH2, *pBVH3, *pBVH4;
 SceneBVH<double, 3>* pScene;
 
 
@@ -90,8 +90,15 @@ void displayFunction()
 	std::vector<CollisionPairBase<double, 3>*> pairs = result.collisionPairs();
 	for(int i = 0; i < result.numberCollision(); i++)
 	{
-		face_ids_1.push_back(pairs[i]->faceLhsIdx());
-		face_ids_2.push_back(pairs[i]->faceRhsIdx());
+		if(pairs[i]->objectLhsIdx() == 0)
+			face_ids_1.push_back(pairs[i]->faceLhsIdx());
+		if(pairs[i]->objectRhsIdx() == 0)
+			face_ids_1.push_back(pairs[i]->faceRhsIdx());
+
+		if(pairs[i]->objectLhsIdx() == 1)
+			face_ids_2.push_back(pairs[i]->faceLhsIdx());
+		if(pairs[i]->objectRhsIdx() == 1)
+			face_ids_2.push_back(pairs[i]->faceRhsIdx());
 	}
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
@@ -105,14 +112,15 @@ void displayFunction()
 	meshRender1.render();
 	meshRender1.renderFaceWithColor(face_ids_1, Color<float>::Blue());
 
-	Vector<double, 3> pos = pObject2->transform().translation();
-	//glTranslatef(pos[0], pos[1], pos[2]);	
 
+	Vector<double, 3> pos = pObject2->transform()->translation();
+	glTranslatef(pos[0], pos[1], pos[2]);	
+	
  
 	SurfaceMeshRender<double> meshRender2;
 	meshRender2.setSurfaceMesh(pObject2->mesh());
 	//
-	meshRender2.setTransform(& pObject2->transform());
+	//meshRender2.setTransform(& pObject2->transform());
 
 	meshRender2.enableRenderWireframe();
 	meshRender2.disableRenderSolid();
@@ -120,7 +128,17 @@ void displayFunction()
 	meshRender2.renderFaceWithColor(face_ids_2, Color<float>::Blue());
 	
 	pos[1] -= 0.2;
-	pObject2->transform().setTranslation(pos);
+	pObject2->transform()->setTranslation(pos);
+
+	pos = pObject3->transform()->translation();
+	pos[0] -= 0.2;
+	pos[1] += 0.1;
+	pObject3->transform()->setTranslation(pos);
+
+	pos = pObject4->transform()->translation();
+	pos[0] += 0.2;
+	pos[1] -= 0.1;
+	pObject4->transform()->setTranslation(pos);
 
     glutSwapBuffers();
 }
@@ -183,14 +201,31 @@ int main()
 	
 	pObject2 = new MeshBasedCollidableObject<double, 3>();
 	pObject2->setMesh(&mesh_ball);
-	pObject2->transform().setTranslation(Vector<double, 3>(0, 30, 0));
+	pObject2->setTransform(new Transform<double>(Vector<double, 3>(0, 0, 0)));
+	pObject2->transform()->setTranslation(Vector<double, 3>(0, 55, 0));
 	pBVH2 = new ObjectBVH<double, 3>();
 	pBVH2->setCollidableObject(pObject2);
+
+	pObject3 = new MeshBasedCollidableObject<double, 3>();
+	pObject3->setMesh(&mesh_ball);
+	pObject3->setTransform(new Transform<double>(Vector<double, 3>(0, 0, 0)));
+	pObject3->transform()->setTranslation(Vector<double, 3>(55, 0, 0));
+	pBVH3 = new ObjectBVH<double, 3>();
+	pBVH3->setCollidableObject(pObject3);
+
+	pObject4 = new MeshBasedCollidableObject<double, 3>();
+	pObject4->setMesh(&mesh_ball);
+	pObject4->setTransform(new Transform<double>(Vector<double, 3>(0, 0, 0)));
+	pObject4->transform()->setTranslation(Vector<double, 3>(-55, 0, 0));
+	pBVH4 = new ObjectBVH<double, 3>();
+	pBVH4->setCollidableObject(pObject4);
 
 
 	pScene = new SceneBVH<double, 3>();
 	pScene->addObjectBVH(pBVH1, false);
 	pScene->addObjectBVH(pBVH2, false);
+	pScene->addObjectBVH(pBVH3, false);
+	pScene->addObjectBVH(pBVH4, false);
 	pScene->rebuild();
 
 

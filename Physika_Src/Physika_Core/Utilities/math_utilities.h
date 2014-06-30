@@ -38,13 +38,23 @@ inline Scalar abs(Scalar value)
     return value>=0?value:-value;
 }
 
-template <typename Scalar>
-inline Scalar sqrt(Scalar value)
+inline float sqrt(float value)
 {
     return std::sqrt(value);
 }
 
-inline double sqrt(int value)
+inline double sqrt(double value)
+{
+    return std::sqrt(value);
+}
+
+inline long double sqrt(long double value)
+{
+    return std::sqrt(value);
+}
+
+template <typename Scalar>
+inline double sqrt(Scalar value)
 {
     return std::sqrt(static_cast<double>(value));
 }

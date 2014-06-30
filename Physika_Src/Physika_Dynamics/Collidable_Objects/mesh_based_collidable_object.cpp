@@ -22,7 +22,8 @@ namespace Physika{
 
 template <typename Scalar,int Dim>
 MeshBasedCollidableObject<Scalar, Dim>::MeshBasedCollidableObject():
-	transform_(Vector<Scalar,3>(0, 0, 0))
+	mesh_(NULL),
+	transform_(NULL)
 {
 }
 
@@ -59,29 +60,32 @@ void MeshBasedCollidableObject<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
 template <typename Scalar,int Dim>
 Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::vertexPosition(unsigned int vertex_index) const
 {
-	return transform_.transform(mesh_->vertexPosition(vertex_index));
+	if(transform_ != NULL)
+		return transform_->transform(mesh_->vertexPosition(vertex_index));
+	else
+		return mesh_->vertexPosition(vertex_index);
 }
 
 template <typename Scalar,int Dim>
-const Transform<Scalar>& MeshBasedCollidableObject<Scalar, Dim>::transform() const
+const Transform<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::transform() const
 {
 	return transform_;
 }
 
 template <typename Scalar,int Dim>
-Transform<Scalar>& MeshBasedCollidableObject<Scalar, Dim>::transform()
+Transform<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::transform()
 {
 	return transform_;
 }
 
 template <typename Scalar,int Dim>
-void MeshBasedCollidableObject<Scalar, Dim>::setTransform(const Transform<Scalar>& transform)
+void MeshBasedCollidableObject<Scalar, Dim>::setTransform(Transform<Scalar>* transform)
 {
 	transform_ = transform;
 }
 
 template <typename Scalar,int Dim>
-bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs, CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs)
 {
 	if(object == NULL || object->mesh() == NULL)
 		return false;
@@ -135,12 +139,6 @@ bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidable
 			if(overlapEdgeQuad(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], vertex_lhs[3]))
 				is_overlap = true;
 		}
-	}
-
-	collision_result.addPCS();
-	if(is_overlap)
-	{
-		collision_result.addCollisionPair(this, object, face_index_lhs, face_index_rhs);
 	}
 
 	delete[] vertex_lhs;
