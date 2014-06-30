@@ -17,9 +17,14 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector.h"
 
 namespace Physika{
+
+/*
+ * Vector<Scalar,2> are defined for C++ fundamental integer types and floating-point types
+ */
 
 template <typename Scalar>
 class Vector<Scalar,2>: public VectorBase
@@ -39,6 +44,7 @@ public:
     Vector<Scalar,2>& operator-= (const Vector<Scalar,2> &);
     Vector<Scalar,2>& operator= (const Vector<Scalar,2> &);
     bool operator== (const Vector<Scalar,2> &) const;
+    bool operator!= (const Vector<Scalar,2> &) const;
     Vector<Scalar,2> operator* (Scalar) const;
     Vector<Scalar,2>& operator*= (Scalar);
     Vector<Scalar,2> operator/ (Scalar) const;
@@ -62,7 +68,10 @@ protected:
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const Vector<Scalar,2> &vec)
 {
-    s<<"("<<vec[0]<<", "<<vec[1]<<")";
+    if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
+        s<<"("<<static_cast<int>(vec[0])<<", "<<static_cast<int>(vec[1])<<")";
+    else
+        s<<"("<<vec[0]<<", "<<vec[1]<<")";
     return s;
 }
 

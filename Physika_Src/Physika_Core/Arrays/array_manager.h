@@ -1,6 +1,6 @@
 /*
  * @file array_manager.h 
- * @brief array class. To reorder the elements of 1D arrays concurrently.
+ * @brief array manager class, perform operations on the elements of several 1D arrays concurrently.
  * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -27,16 +27,26 @@ public:
     ArrayManager(){}
     ~ArrayManager(){}
 
-    void addArray(std::string key, ReorderObject *arr);
+    void addArray(std::string key, ArrayBase *arr);
 
-    ReorderObject* getArray(std::string key);
+    ArrayBase* getArray(std::string key);
 
-    void reorder(unsigned int* ids, unsigned int size);
+    void permutate(unsigned int* ids, unsigned int size);
 
 private:
-    std::map<std::string, ReorderObject*> arrays_;
+    std::map<std::string, ArrayBase*> arrays_;
 };
 
 }  //end of namespace Physika
 
 #endif //PHSYIKA_CORE_ARRAYS_ARRAY_MANAGER_H_
+
+
+
+
+
+
+
+
+
+

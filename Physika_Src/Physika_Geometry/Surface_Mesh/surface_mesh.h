@@ -53,32 +53,32 @@ public:
     //getters && setters
     const Vector<Scalar,3>& vertexPosition(unsigned int vert_idx) const;
     const Vector<Scalar,3>& vertexPosition(const Vertex<Scalar> &vertex) const;
-    void setVertexPosition(unsigned int vert_idx, const Vector<Scalar,3> &position);
-    void setVertexPosition(const Vertex<Scalar> &vertex, const Vector<Scalar,3> &position);
+    void                    setVertexPosition(unsigned int vert_idx, const Vector<Scalar,3> &position);
+    void                    setVertexPosition(const Vertex<Scalar> &vertex, const Vector<Scalar,3> &position);
     const Vector<Scalar,3>& vertexNormal(unsigned int normal_idx) const;
     const Vector<Scalar,3>& vertexNormal(const Vertex<Scalar> &vertex) const;
-    void setVertexNormal(unsigned int normal_idx, const Vector<Scalar,3> &normal);
-    void setVertexNormal(const Vertex<Scalar> &vertex, const Vector<Scalar,3> &normal);
+    void                    setVertexNormal(unsigned int normal_idx, const Vector<Scalar,3> &normal);
+    void                    setVertexNormal(const Vertex<Scalar> &vertex, const Vector<Scalar,3> &normal);
     const Vector<Scalar,2>& vertexTextureCoordinate(unsigned int texture_idx) const;
     const Vector<Scalar,2>& vertexTextureCoordinate(const Vertex<Scalar> &vertex) const;
-    void setVertexTextureCoordinate(unsigned int texture_idx, const Vector<Scalar,2> &texture_coordinate);
-    void setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
-    const Group<Scalar>& group(unsigned int group_idx) const;
-    Group<Scalar>& group(unsigned int group_idx);
-    const Group<Scalar>* groupPtr(unsigned int group_idx) const;
-    Group<Scalar>* groupPtr(unsigned int group_idx);
-    const Group<Scalar>* groupPtr(const std::string &name) const;
-    Group<Scalar>* groupPtr(const std::string &name);
+    void                    setVertexTextureCoordinate(unsigned int texture_idx, const Vector<Scalar,2> &texture_coordinate);
+    void                    setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
+    const Group<Scalar>&    group(unsigned int group_idx) const;
+    Group<Scalar>&          group(unsigned int group_idx);
+    const Group<Scalar>*    groupPtr(unsigned int group_idx) const;
+    Group<Scalar>*          groupPtr(unsigned int group_idx);
+    const Group<Scalar>*    groupPtr(const std::string &name) const;
+    Group<Scalar>*          groupPtr(const std::string &name);
     const Material<Scalar>& material(unsigned int material_idx) const;
-    Material<Scalar>& material(unsigned int material_idx);
+    Material<Scalar>&       material(unsigned int material_idx);
     const Material<Scalar>* materialPtr(unsigned int material_idx) const;
-    Material<Scalar>* materialPtr(unsigned int material_idx);
-    unsigned int materialIndex(const std::string &material_name) const; //if no material with given name, return -1
-    void setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
-	const Face<Scalar>& face(unsigned int face_idx) const; 
-	Face<Scalar>& face(unsigned int face_idx); 
-	const Face<Scalar>* facePtr(unsigned int face_idx) const; 
-	Face<Scalar>* facePtr(unsigned int face_idx); 
+    Material<Scalar>*       materialPtr(unsigned int material_idx);
+    unsigned int            materialIndex(const std::string &material_name) const; //if no material with given name, return -1
+    void                    setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
+	const                   Face<Scalar>& face(unsigned int face_idx) const; 
+	Face<Scalar>&           face(unsigned int face_idx); 
+	const Face<Scalar>*     facePtr(unsigned int face_idx) const; 
+	Face<Scalar>*           facePtr(unsigned int face_idx); 
 
     //adders
     void addMaterial(const Material<Scalar> &material);

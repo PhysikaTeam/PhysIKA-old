@@ -16,12 +16,37 @@
 
 namespace Physika{
 
+
+template <typename Scalar>
+Transform<Scalar>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
+    rotation_(0,0,0,1)
+{
+
+}
+
 template <typename Scalar>
 Transform<Scalar>::Transform(const Vector<Scalar,3> translation):
         translation_(translation),
         rotation_(0,0,0,1)
 {
 
+}
+template <typename Scalar>
+Transform<Scalar>::Transform(const MatrixMxN<Scalar>& matrix)
+{
+    rotation_ = Quaternion<Scalar>(matrix);
+    translation_[0] = matrix(0,3);
+    translation_[1] = matrix(1,3);
+    translation_[2] = matrix(2,3);
+}
+
+template <typename Scalar>
+Transform<Scalar>::Transform(const SquareMatrix<Scalar, 3>& matrix)
+{
+    rotation_ = Quaternion<Scalar>(matrix);
+    translation_[0] = matrix(0,3);
+    translation_[1] = matrix(1,3);
+    translation_[2] = matrix(2,3);
 }
 
 template <typename Scalar>

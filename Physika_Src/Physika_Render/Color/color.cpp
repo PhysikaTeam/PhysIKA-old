@@ -12,7 +12,6 @@
  *
  */
 
-#include <limits>
 #include "Physika_Render/Color/color.h"
 
 namespace Physika{
@@ -43,14 +42,14 @@ Color<Scalar>::Color(Scalar red, Scalar green, Scalar blue, Scalar alpha)
 }
 
 template <typename Scalar>
-Color<Scalar>::Color(const Color &color)
+Color<Scalar>::Color(const Color<Scalar> &color)
 {
     for(unsigned int i = 0; i < 4; ++i)
         rgba_[i] = color.rgba_[i];
 }
 
 template <typename Scalar>
-Color<Scalar>& Color<Scalar>::operator= (const Color &color)
+Color<Scalar>& Color<Scalar>::operator= (const Color<Scalar> &color)
 {
     for(unsigned int i = 0; i < 4; ++i)
         rgba_[i] = color.rgba_[i];
@@ -58,14 +57,14 @@ Color<Scalar>& Color<Scalar>::operator= (const Color &color)
 }
 
 template <typename Scalar>
-bool Color<Scalar>::operator== (const Color &color)
+bool Color<Scalar>::operator== (const Color<Scalar> &color)
 {
     return (rgba_[0]==color.rgba_[0]) && (rgba_[1]==color.rgba_[1])
         && (rgba_[2]==color.rgba_[2]) && (rgba_[3]==color.rgba_[3]);
 }
 
 template <typename Scalar>
-bool Color<Scalar>::operator!= (const Color &color)
+bool Color<Scalar>::operator!= (const Color<Scalar> &color)
 {
     return !((*this)==color);
 }
@@ -194,7 +193,7 @@ Color<Scalar> Color<Scalar>::Cyan()
 }
 
 //explicit instantions
-template class Color<char>;
+template class Color<signed char>;
 template class Color<short>;
 template class Color<int>;
 template class Color<float>;

@@ -24,21 +24,23 @@
 namespace Physika{
 
 /*
- * ReorderObject: base class of Array such that object of Array class can be pointed by
- * template-free pointer ReorderObject*. For use in ArrayManager, which permutates elements
- * of arrays concurrently, see array_manager.h.
+ * ArrayBase: base class of Array, provides virtual methods implemented by Array class.
+ * In this way object of Array class can be pointed by template-free pointer ArrayBase*.
+ * For use in ArrayManager, which performs operations  on elements of several arrays 
+ * concurrently, see array_manager.h.
  */
 
-class ReorderObject
+class ArrayBase
 {
 public:
-    ReorderObject() {}
-    ~ReorderObject() {}
-    virtual void reorder(unsigned int *ids, unsigned int size) = 0;
+    ArrayBase() {}
+    ~ArrayBase() {}
+    //perform permutation of the array's elements
+    virtual void permutate(unsigned int *ids, unsigned int size) = 0;
 };
 
 template <typename ElementType >
-class Array: public ReorderObject
+class Array: public ArrayBase
 {
 public:    
     /* Constructors */
@@ -64,7 +66,7 @@ public:
     /* Operator overloading */
     ElementType & operator[] (int id);
 
-    virtual void reorder(unsigned int *ids, unsigned int size);
+    virtual void permutate(unsigned int *ids, unsigned int size);
     
     void release();
 
