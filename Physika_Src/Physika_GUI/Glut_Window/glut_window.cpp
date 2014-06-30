@@ -24,18 +24,21 @@ namespace Physika{
 GlutWindow::GlutWindow()
     :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480)
 {
+    camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
     :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480)
 {
+    camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
     :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height)
 {
+    camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
 
@@ -93,6 +96,172 @@ int GlutWindow::height() const
     else
         return initial_height_;
 }
+
+////////////////////////////////////////////////// camera operations////////////////////////////////////////////////////////////////////////
+
+const Vector<double,3>& GlutWindow::cameraPosition() const
+{
+    return camera_.cameraPosition();
+}
+
+void GlutWindow::setCameraPosition(const Vector<double,3> &position)
+{
+    camera_.setCameraPosition(position);
+}
+
+const Vector<double,3>& GlutWindow::cameraUpDirection() const
+{
+    return camera_.cameraUpDirection();
+}
+
+void GlutWindow::setCameraUpDirection(const Vector<double,3> &up)
+{
+    camera_.setCameraUpDirection(up);
+}
+
+const Vector<double,3>& GlutWindow::cameraFocusPosition() const
+{
+    return camera_.cameraFocusPosition();
+}
+
+void GlutWindow::setCameraFocusPosition(const Vector<double,3> &focus)
+{
+    camera_.setCameraFocusPosition(focus);
+}
+
+double GlutWindow::cameraFOV() const
+{
+    return camera_.cameraFOV();
+}
+
+void GlutWindow::setCameraFOV(double fov)
+{
+    camera_.setCameraFOV(fov);
+}
+
+double GlutWindow::cameraAspect() const
+{
+    return camera_.cameraAspect();
+}
+
+void GlutWindow::setCameraAspect(double aspect)
+{
+    camera_.setCameraAspect(aspect);
+}
+
+double GlutWindow::cameraNearClip() const
+{
+    return camera_.cameraNearClip();
+}
+
+void GlutWindow::setCameraNearClip(double near_clip)
+{
+    camera_.setCameraNearClip(near_clip);
+}
+
+double GlutWindow::cameraFarClip() const
+{
+    return camera_.cameraFarClip();
+}
+
+void GlutWindow::setCameraFarClip(double far_clip)
+{
+    camera_.setCameraFarClip(far_clip);
+}
+
+void GlutWindow::orbitCameraUp(double rad)
+{
+    camera_.orbitUp(rad);
+}
+
+void GlutWindow::orbitCameraDown(double rad)
+{
+    camera_.orbitDown(rad);
+}
+
+void GlutWindow::orbitCameraLeft(double rad)
+{
+    camera_.orbitLeft(rad);
+}
+
+void GlutWindow::orbitCameraRight(double rad)
+{
+    camera_.orbitRight(rad);
+}
+
+void GlutWindow::zoomCameraIn(double dist)
+{
+    camera_.zoomIn(dist);
+}
+
+void GlutWindow::zoomCameraOut(double dist)
+{
+    camera_.zoomOut(dist);
+}
+
+void GlutWindow::yawCamera(double rad)
+{
+    camera_.yaw(rad);
+}
+
+void GlutWindow::pitchCamera(double rad)
+{
+    camera_.pitch(rad);
+}
+
+void GlutWindow::rollCamera(double rad)
+{
+    camera_.roll(rad);
+}
+
+void GlutWindow::translateCamera(const Vector<double,3> &vec)
+{
+    camera_.translate(vec);
+}
+
+////////////////////////////////////////////////// manages render tasks////////////////////////////////////////////////////////////////////
+
+unsigned int GlutWindow::numRenderTasks() const
+{
+    return render_manager_.numRenderTasks();
+}
+
+void GlutWindow::pushBackRenderTask(RenderBase *task)
+{
+    render_manager_.insertBack(task);
+}
+
+void GlutWindow::pushFrontRenderTask(RenderBase *task)
+{
+    render_manager_.insertFront(task);
+}
+
+void GlutWindow::insertRenderTaskAtIndex(unsigned int index, RenderBase *task)
+{
+    render_manager_.insertAtIndex(index,task);
+}
+
+void GlutWindow::popBackRenderTask()
+{
+    render_manager_.removeBack();
+}
+
+void GlutWindow::popFrontRenderTask()
+{
+    render_manager_.removeFront();
+}
+
+void GlutWindow::removeRenderTaskAtIndex(unsigned int index)
+{
+    render_manager_.removeAtIndex(index);
+}
+
+void GlutWindow::removeAllRenderTasks()
+{
+    render_manager_.removeAll();
+}
+
+////////////////////////////////////////////////// set custom callback functions ////////////////////////////////////////////////////////////////////
 
 void GlutWindow::setDisplayFunction(void (*func)(void))
 {
@@ -182,6 +351,8 @@ void GlutWindow::setInitFunction(void (*func)(void))
         init_function_ = func;
 }
 
+////////////////////////////////////////////////// default callback functions ////////////////////////////////////////////////////////////////////
+
 void GlutWindow::displayFunction(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -195,11 +366,10 @@ void GlutWindow::idleFunction(void)
 
 void GlutWindow::reshapeFunction(int width, int height)
 {
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
     glViewport(0,0,width,height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(45.0,(GLdouble)width/height,1.0e-3,1.0e2);
-    glMatrixMode(GL_MODELVIEW);
+    window->setCameraAspect((GLdouble)width/height); //update the  view aspect of camera
+    (window->camera_).look(); //apply the new camera
 }
 
 void GlutWindow::keyboardFunction(unsigned char key, int x, int y)

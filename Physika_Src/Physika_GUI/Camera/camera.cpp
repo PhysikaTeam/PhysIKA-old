@@ -21,14 +21,41 @@ namespace Physika{
 
 template <typename Scalar>
 Camera<Scalar>::Camera()
-    :camera_position_(0),camera_up_(0,1,0),focus_position_(0,0,-1)
+    :camera_position_(0),camera_up_(0,1,0),focus_position_(0,0,-1),fov_(45),view_aspect_(640.0/480.0),near_clip_(1.0),far_clip_(100.0)
 {
 }
 
 template <typename Scalar>
-Camera<Scalar>::Camera(const Vector<Scalar,3> &camera_position, const Vector<Scalar,3> &camera_up, const Vector<Scalar,3> &focus_position)
-    :camera_position_(camera_position),camera_up_(camera_up),focus_position_(focus_position)
+Camera<Scalar>::Camera(const Vector<Scalar,3> &camera_position, const Vector<Scalar,3> &camera_up, const Vector<Scalar,3> &focus_position,
+                       Scalar field_of_view, Scalar view_aspect, Scalar near_clip, Scalar far_clip)
+    :camera_position_(camera_position),camera_up_(camera_up),focus_position_(focus_position),
+     fov_(field_of_view),view_aspect_(view_aspect),near_clip_(near_clip),far_clip_(far_clip)
 {
+}
+
+template <typename Scalar>
+Camera<Scalar>::Camera(const Camera<Scalar> &camera)
+{
+    camera_position_ = camera.camera_position_;
+    camera_up_ = camera.camera_up_;
+    focus_position_ = camera.focus_position_;
+    fov_ = camera.fov_;
+    view_aspect_ = camera.view_aspect_;
+    near_clip_ = camera.near_clip_;
+    far_clip_ = camera.far_clip_;
+}
+
+template <typename Scalar>
+Camera<Scalar>& Camera<Scalar>::operator= (const Camera<Scalar> &camera)
+{
+    camera_position_ = camera.camera_position_;
+    camera_up_ = camera.camera_up_;
+    focus_position_ = camera.focus_position_;
+    fov_ = camera.fov_;
+    view_aspect_ = camera.view_aspect_;
+    near_clip_ = camera.near_clip_;
+    far_clip_ = camera.far_clip_;
+    return *this;
 }
 
 template <typename Scalar>
@@ -37,8 +64,13 @@ Camera<Scalar>::~Camera()
 }
 
 template <typename Scalar>
-void Camera<Scalar>::update()
+void Camera<Scalar>::look()
 {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(fov_,view_aspect_,near_clip_,far_clip_);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
     gluLookAt(camera_position_[0],camera_position_[1],camera_position_[2],
                focus_position_[0],focus_position_[1],focus_position_[2],
                camera_up_[0],camera_up_[1],camera_up_[2]);
@@ -163,6 +195,55 @@ void Camera<Scalar>::setCameraFocusPosition(const Vector<Scalar,3> &focus)
 {
     focus_position_ = focus;
 }
+
+template <typename Scalar>
+Scalar Camera<Scalar>::cameraFOV() const
+{
+    return fov_;
+}
+
+template <typename Scalar>
+void Camera<Scalar>::setCameraFOV(Scalar fov)
+{
+    fov_ = fov;
+}
+
+template <typename Scalar>
+Scalar Camera<Scalar>::cameraAspect() const
+{
+    return view_aspect_;
+}
+
+template <typename Scalar>
+void Camera<Scalar>::setCameraAspect(Scalar aspect)
+{
+    view_aspect_ = aspect;
+}
+
+template <typename Scalar>
+Scalar Camera<Scalar>::cameraNearClip() const
+{
+    return near_clip_;
+}
+
+template <typename Scalar>
+void Camera<Scalar>::setCameraNearClip(Scalar near_clip)
+{
+    near_clip_ = near_clip;
+}
+
+template <typename Scalar>
+Scalar Camera<Scalar>::cameraFarClip() const
+{
+    return far_clip_;
+}
+
+template <typename Scalar>
+void Camera<Scalar>::setCameraFarClip(Scalar far_clip)
+{
+    far_clip_ = far_clip;
+}
+
 //explicit instantiation
 template class Camera<float>;
 template class Camera<double>;

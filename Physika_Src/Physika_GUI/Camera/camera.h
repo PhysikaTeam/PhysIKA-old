@@ -21,6 +21,14 @@ namespace Physika{
 
 /*
  * Camera is defined for float and double type. Generally float is sufficient.
+ * Camera properties:
+ * 1. camera_position_: where the camera is located
+ * 2. focus_position_: where the camera is looking at
+ * 3. camera_up_: up direction of the camera
+ * 4. fov_: field of view of the camera within [0,180]
+ * 5. near_clip_: distance from the camera position to the near clip plane
+ * 6. far_clip_: distance from the camera position to the far clip plane
+ * 7. view_aspect_: aspect of the camera's view (width/height)
  */
 
 template <typename Scalar>
@@ -28,11 +36,15 @@ class Camera
 {
 public:
     Camera();   //default camera: positioned at origin, up direction y axis, look into negative z axis (0,0,-1)
-    Camera(const Vector<Scalar,3> &camera_position, const Vector<Scalar,3> &camera_up, const Vector<Scalar,3> &focus_position);
+                //field of view 45 degrees, view aspect 640/480, near clip 1.0, far clip 100.0
+    Camera(const Vector<Scalar,3> &camera_position, const Vector<Scalar,3> &camera_up, const Vector<Scalar,3> &focus_position,
+           Scalar field_of_view, Scalar view_aspect, Scalar near_clip, Scalar far_clip);
+    Camera(const Camera<Scalar> &camera);
+    Camera<Scalar>& operator= (const Camera<Scalar> &camera);
     ~Camera();
 
-    //update the camera with new position, up direction, and focus position
-    void update();
+    //apply the camera
+    void look();
 
     //rotate the camera around the focus (spherical camera)
     void orbitUp(Scalar rad);
@@ -60,10 +72,22 @@ public:
     void setCameraUpDirection(const Vector<Scalar,3> &up);
     const Vector<Scalar,3>& cameraFocusPosition() const;
     void setCameraFocusPosition(const Vector<Scalar,3> &focus);
+    Scalar cameraFOV() const;
+    void setCameraFOV(Scalar fov);
+    Scalar cameraAspect() const;
+    void setCameraAspect(Scalar aspect);
+    Scalar cameraNearClip() const;
+    void setCameraNearClip(Scalar near_clip);
+    Scalar cameraFarClip() const;
+    void setCameraFarClip(Scalar far_clip);
 protected:
     Vector<Scalar,3> camera_position_;
     Vector<Scalar,3> camera_up_;
     Vector<Scalar,3> focus_position_;
+    Scalar fov_;
+    Scalar view_aspect_;
+    Scalar near_clip_;
+    Scalar far_clip_;
 };
 
 }  //end of namespace Physika

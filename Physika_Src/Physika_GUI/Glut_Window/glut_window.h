@@ -16,6 +16,8 @@
 #define PHYSIKA_GUI_GLUT_WINDOW_GLUT_WINDOW_H_
 
 #include <string>
+#include "Physika_GUI/Camera/camera.h"
+#include "Physika_Render/Render_Manager/render_manager.h"
 
 namespace Physika{
 
@@ -45,6 +47,44 @@ public:
     const std::string& name() const;
     int width() const;
     int height() const;
+
+    //camera operations
+    const Vector<double,3>& cameraPosition() const;
+    void setCameraPosition(const Vector<double,3> &position);
+    const Vector<double,3>& cameraUpDirection() const;
+    void setCameraUpDirection(const Vector<double,3> &up);
+    const Vector<double,3>& cameraFocusPosition() const;
+    void setCameraFocusPosition(const Vector<double,3> &focus);
+    double cameraFOV() const;
+    void setCameraFOV(double fov);
+    double cameraAspect() const;
+    void setCameraAspect(double aspect);
+    double cameraNearClip() const;
+    void setCameraNearClip(double near_clip);
+    double cameraFarClip() const;
+    void setCameraFarClip(double far_clip);
+    void orbitCameraUp(double rad);
+    void orbitCameraDown(double rad);
+    void orbitCameraLeft(double rad);
+    void orbitCameraRight(double rad);
+    void zoomCameraIn(double dist);
+    void zoomCameraOut(double dist);
+    void yawCamera(double rad);
+    void pitchCamera(double rad);
+    void rollCamera(double rad);
+    void translateCamera(const Vector<double,3> &vec);
+
+    //manages render tasks
+    unsigned int numRenderTasks() const;  //length of the render queue
+    void pushBackRenderTask(RenderBase*);  //insert new task at back of render queue
+    void pushFrontRenderTask(RenderBase*); //insert new task at front of render queue
+    void insertRenderTaskAtIndex(unsigned int index,RenderBase *task);  //insert new task before the index-th task
+    void popBackRenderTask(); //remove task at back of render queue
+    void popFrontRenderTask();  //remove task at front of render queue
+    void removeRenderTaskAtIndex(unsigned int index);  //remove the index-th task in queue
+    void removeAllRenderTasks();  //remove all render tasks  
+
+    //advanced: 
     //set custom callback functions
     void setDisplayFunction(void (*func)(void));  
     void setIdleFunction(void (*func)(void));  
@@ -54,6 +94,11 @@ public:
     void setMotionFunction(void (*func)(int x, int y));
     void setMouseFunction(void (*func)(int button, int state, int x, int y));
     void setInitFunction(void (*func)(void)); //the init function before entering mainloop
+    //direct operation on camera and render manager
+    const Camera<double>& camera() const{ return camera_;}
+    Camera<double>& camera() { return camera_;}
+    const RenderManager& renderManager() const{ return render_manager_;}
+    RenderManager& renderManager() { return render_manager_;}
 protected:
     //default callback functions
     static void displayFunction(void);  //display background color
@@ -67,12 +112,16 @@ protected:
     //init default callbacks
     void initCallbacks();
 protected:
+    //basic information of window
     std::string window_name_;
     int window_id_;
-    //initial size of the window
     unsigned int initial_width_;
     unsigned int initial_height_;
-    //pointers to default callback methods
+    //camera (use double type in order not to make GlutWindow template)
+    Camera<double> camera_;
+    //render managner, manages the scene for render
+    RenderManager render_manager_;
+    //pointers to callback methods
     void (*display_function_)(void);
     void (*idle_function_)(void);
     void (*reshape_function_)(int width, int height);

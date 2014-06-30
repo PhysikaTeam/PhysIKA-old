@@ -134,21 +134,3 @@ void RenderManager::renderAtIndex(unsigned int index)
 }
 
 }  //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
