@@ -87,6 +87,7 @@ bool SceneBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const t
 	const SceneBVHNode<Scalar, Dim>* object_target = dynamic_cast<const SceneBVHNode<Scalar, Dim>*>(target);
 	if(object_target == NULL)
 		return false;
+	collision_result.setCurrentObjectIndex(this->leafNodeIndex(), object_target->leafNodeIndex());
 	return object_bvh_->collide(object_target->objectBVH(), collision_result);
 }
 

@@ -38,6 +38,7 @@ public:
 	std::vector<CollisionPairBase<Scalar, Dim>*>& collisionPairs();
 
 	//structure maintain
+	void setCurrentObjectIndex(unsigned int current_object_lhs_idx, unsigned int current_object_rhs_idx);
 	void addPCS();
 	void cleanPCS();
 	void addCollisionPair(CollisionPairBase<Scalar, Dim>* collision_pair);
@@ -53,6 +54,10 @@ protected:
 	//Generally PCS doesn't need to be recorded in detail, therefor a simple variable is defined here to count the number of it.
 	//PCS is only used in the statistics of a collision detection algorithm. For normal use of collision detection, PCS can be ignored.
 	unsigned int number_pcs_;
+
+	//Index of current objects. They can be set by function setCurrentObjectIndex before collision detection.
+	//When adding collision pairs, they will be added into the pairs.
+	unsigned int current_object_lhs_idx_, current_object_rhs_idx_;
 	std::vector<CollisionPairBase<Scalar, Dim>*> collision_pairs_;
 };
 

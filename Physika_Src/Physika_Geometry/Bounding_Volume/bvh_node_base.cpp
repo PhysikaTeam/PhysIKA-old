@@ -21,6 +21,7 @@ namespace Physika{
 template <typename Scalar,int Dim>
 BVHNodeBase<Scalar, Dim>::BVHNodeBase():
 	is_leaf_(false),
+	leaf_node_index_(0),
 	bv_type_(BoundingVolume<Scalar, Dim>::KDOP18),
 	bounding_volume_(NULL),
 	left_child_(NULL),
@@ -104,6 +105,27 @@ template <typename Scalar,int Dim>
 bool BVHNodeBase<Scalar, Dim>::isLeaf() const
 {
 	return is_leaf_;
+}
+
+template <typename Scalar,int Dim>
+void BVHNodeBase<Scalar, Dim>::setLeafNodeIndex(unsigned int leaf_node_index)
+{
+	if(is_leaf_)
+		leaf_node_index_ = leaf_node_index;
+	else
+		std::cerr<<"Warning! This is node a leaf node."<<std::endl;
+}
+
+template <typename Scalar,int Dim>
+unsigned int BVHNodeBase<Scalar, Dim>::leafNodeIndex() const
+{
+	if(is_leaf_)
+		return leaf_node_index_;
+	else
+	{
+		std::cerr<<"Warning! This is node a leaf node."<<std::endl;
+		return 0;
+	}
 }
 
 template <typename Scalar,int Dim>
