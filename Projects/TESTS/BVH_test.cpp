@@ -39,6 +39,9 @@
 #include "Physika_GUI/Glui_Window/glui_window.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 
+#include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
+
 using namespace std;
 using namespace Physika;
 
@@ -110,7 +113,7 @@ void displayFunction()
 	meshRender1.setSurfaceMesh(pObject1->mesh());
 	meshRender1.enableRenderWireframe();
 	meshRender1.disableRenderSolid();
-	meshRender1.render();
+	//meshRender1.render();
 	meshRender1.renderFaceWithColor(face_ids_1, Color<float>::Blue());
 
 
@@ -125,7 +128,7 @@ void displayFunction()
 
 	meshRender2.enableRenderWireframe();
 	meshRender2.disableRenderSolid();
-	meshRender2.render();
+	//meshRender2.render();
 	meshRender2.renderFaceWithColor(face_ids_2, Color<float>::Blue());
 	
 	pos[1] -= 0.2;
@@ -200,6 +203,8 @@ int main()
     SurfaceMesh<double> mesh_ball;
     if(!ObjMeshIO<double>::load(string("ball_high.obj"), &mesh_ball))
 		exit(1);
+
+
 	
 	pObject1 = new MeshBasedCollidableObject<double, 3>();
 	pObject1->setMesh(&mesh_ball);
@@ -235,16 +240,28 @@ int main()
 	pScene->addObjectBVH(pBVH4, false);
 	pScene->rebuild();
 
+	RigidBodyDriver<double, 3> driver;
+
+	RigidBody<double,3> body1;
+	body1.setMesh(&mesh_ball);
+
+	RigidBody<double,3> body2;
+	body2.setMesh(&mesh_ball);
+
+	driver.addRigidBody(&body1);
+	driver.addRigidBody(&body2);
 
     GlutWindow glut_window;
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
 	glut_window.setInitFunction(initFunction);
-    glut_window.setDisplayFunction(displayFunction);
+	//glut_window.setDisplayFunction(displayFunction);
 	glut_window.setCameraFarClip(10000);
 	glut_window.setCameraNearClip(1.0e-3);
 	glut_window.setCameraFOV(45);
 	
+	driver.setWindow(&glut_window);
+
     cout<<"Test GlutWindow with custom display function:\n";
     glut_window.createWindow();
     //glut_window.setIdleFunction(idleFunction);

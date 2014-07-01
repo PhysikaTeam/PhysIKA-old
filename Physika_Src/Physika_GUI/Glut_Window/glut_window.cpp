@@ -302,6 +302,7 @@ int GlutWindow::getRenderTaskIndex(RenderBase *task) const
 bool GlutWindow::saveScreen(const std::string &file_name) const
 {
 //TO DO
+	return false;
 }
 
 void GlutWindow::displayFrameRate() const

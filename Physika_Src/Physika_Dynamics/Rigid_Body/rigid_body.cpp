@@ -82,6 +82,11 @@ Transform<Scalar>* RigidBody<Scalar, Dim>::transformPtr()
 	return &transform_;
 }
 
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::update()
+{
+}
+
 //explicit instantiation
 template class RigidBody<float, 3>;
 template class RigidBody<double, 3>;

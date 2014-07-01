@@ -24,6 +24,7 @@
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 #include "Physika_Render/Render_Base/render_base.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
+#include "Physika_GUI/Glut_Window/glut_window.h"
 
 namespace Physika{
 
@@ -129,7 +130,12 @@ RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
 template <typename Scalar,int Dim>
 RigidBodyDriver<Scalar, Dim>::~RigidBodyDriver()
 {
-
+	unsigned int num_rigid_body = numRigidBody();
+	for(unsigned int i = 0; i < num_rigid_body; ++i)
+	{
+		delete rigid_body_archives_[i];
+	}
+	rigid_body_archives_.clear();
 }
 
 template <typename Scalar,int Dim>
@@ -153,7 +159,7 @@ void RigidBodyDriver<Scalar, Dim>::initialize()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
 {
-
+	collisionDetection();
 }
 
 template <typename Scalar,int Dim>
@@ -182,12 +188,21 @@ void RigidBodyDriver<Scalar, Dim>::addRigidBody(RigidBody<Scalar, Dim>* rigid_bo
 	archive->setIndex(numRigidBody());
 	scene_bvh_.addObjectBVH(archive->objectBVH(), is_rebuild);
 	rigid_body_archives_.push_back(archive);
+	if(window_ != NULL)
+		window_->pushBackRenderTask(archive->render());
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::setWindow(GlutWindow* window)
 {
+	if(window == NULL)
+		return;
 	window_ = window;
+	unsigned int num_rigid_body = numRigidBody();
+	for(unsigned int i = 0; i < num_rigid_body; ++i)
+	{
+		window_->pushBackRenderTask(rigid_body_archives_[i]->render());
+	}
 }
 
 template <typename Scalar,int Dim>
@@ -195,6 +210,14 @@ unsigned int RigidBodyDriver<Scalar, Dim>::numRigidBody() const
 {
 	return static_cast<unsigned int>(rigid_body_archives_.size());
 }
+
+template <typename Scalar,int Dim>
+bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
+{
+	scene_bvh_.updateSceneBVH();
+	return scene_bvh_.selfCollide(collision_result_);
+}
+
 
 //explicit instantiation
 template class RigidBodyArchive<float, 3>;

@@ -41,6 +41,9 @@ public:
 	const Transform<Scalar>* transformPtr() const;
 	Transform<Scalar>* transformPtr();
 
+	//dynamics
+	void update();//update its configuration and velocity
+
 protected:
 	//basic properties of a rigid body
 	typename CollidableObject<Scalar, Dim>::ObjectType object_type_;

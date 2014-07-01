@@ -16,6 +16,7 @@
 #define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_DRIVER_H_
 
 #include<vector>
+#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 
 namespace Physika{
 
@@ -77,8 +78,17 @@ public:
 	void setWindow(GlutWindow* window);
 	unsigned int numRigidBody() const;
 
+	//dynamics
+	bool collisionDetection();
+
+	//display
+	//This is a 
+	static RigidBodyDriver<Scalar, Dim> activeDriver;
+	static void Idle(void);
+
 protected:
 	GlutWindow* window_;
+	CollisionDetectionResult<Scalar, Dim> collision_result_;
 	SceneBVH<Scalar, Dim> scene_bvh_;
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
 };
