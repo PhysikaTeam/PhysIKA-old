@@ -119,6 +119,7 @@ void BVHBase<Scalar, Dim>::deleteNode(unsigned int node_index)
 		}
 	}
 	ordered_leaf_node_list_.erase(order_iter);
+	resetIndex();
 }
 
 template <typename Scalar,int Dim>
@@ -275,6 +276,22 @@ BVHNodeBase<Scalar, Dim>* BVHBase<Scalar, Dim>::buildFromLeafList(const int star
 
 	return thisNode;
 }
+
+template <typename Scalar,int Dim>
+void BVHBase<Scalar, Dim>::resetIndex()
+{
+	unsigned int num_leaf = numLeaf();
+	leaf_node_list_.clear();
+	for(unsigned int i = 0; i < num_leaf; ++i)
+	{
+		ordered_leaf_node_list_[i]->setLeafNodeIndex(i);
+		leaf_node_list_.push_back(ordered_leaf_node_list_[i]);
+	}
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename Scalar,int Dim>
 BVAxisPartition<Scalar, Dim>::BVAxisPartition(BoundingVolume<Scalar, Dim>* bounding_volume)

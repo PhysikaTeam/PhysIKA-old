@@ -31,9 +31,9 @@ public:
     virtual int rows() const=0;
     virtual int cols() const=0;
 protected:
-    //SquareMatrix<Scalar,Dim> is only defined for 2D&&3D with element type of integers and floating-point types
+    //SquareMatrix<Scalar,Dim> is only defined for 2D&&3D&&4D with element type of integers and floating-point types
     //compile time check
-    PHYSIKA_STATIC_ASSERT(Dim==3||Dim==2,"SquareMatrix<Scalar,Dim> are only defined for Dim==2 and Dim==3");
+    PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3||Dim==4,"SquareMatrix<Scalar,Dim> are only defined for Dim==2,3,4");
     PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
                       "SquareMatrix<Scalar,Dim> are only defined for integer types and floating-point types.");
 }; 

@@ -33,7 +33,7 @@ public:
 	//get & set
 
 	//structure maintain
-	void addObjectBVH(ObjectBVH<Scalar, Dim>* object_bvh, bool isRebuild = true);
+	void addObjectBVH(ObjectBVH<Scalar, Dim>* object_bvh, bool is_rebuild = true);
 	void refitLeafNodes();
 	//Update the scene BVH. First refit leaf nodes, then rebuild the scene BVH
 	void updateSceneBVH();

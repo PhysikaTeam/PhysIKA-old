@@ -80,6 +80,9 @@ protected:
 	//Return the root of this sub-tree
 	BVHNodeBase<Scalar, Dim>* buildFromLeafList(const int start_position, const int end_position);
 
+	//Called after deleting a leaf node. Reset the indexes of all leaf nodes according to their index in the ordered leaf list.
+	void resetIndex();
+
 private:
 	//This two list is private because they need to be synchronized
 	//Add and delete should only be done through function addNode and deleteNode

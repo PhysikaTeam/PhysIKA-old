@@ -37,14 +37,14 @@ SceneBVH<Scalar, Dim>::~SceneBVH()
 }
 
 template <typename Scalar,int Dim>
-void SceneBVH<Scalar, Dim>::addObjectBVH(ObjectBVH<Scalar, Dim>* object_bvh, bool isRebuild)
+void SceneBVH<Scalar, Dim>::addObjectBVH(ObjectBVH<Scalar, Dim>* object_bvh, bool is_rebuild)
 {
 	SceneBVHNode<Scalar, Dim>* scene_node = new SceneBVHNode<Scalar, Dim>();
 	scene_node->setObjectBVH(object_bvh);
 	scene_node->setLeaf(true);
 	scene_node->setBVType(object_bvh->BVType());
 	this->addNode(scene_node);
-	if(isRebuild)
+	if(is_rebuild)
 		this->rebuild();
 }
 

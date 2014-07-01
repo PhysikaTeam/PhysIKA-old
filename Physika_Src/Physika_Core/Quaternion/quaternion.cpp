@@ -1,7 +1,7 @@
 /*
  * @file quaternion.cpp 
  * @brief quaternion.
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -41,25 +41,25 @@ Quaternion<Scalar>::Quaternion(Scalar x, Scalar y, Scalar z, Scalar w):
 }
 
 template <typename Scalar>
-Quaternion<Scalar>::Quaternion(const Vector<Scalar,3> & unitAxis, Scalar angleRadians)
+Quaternion<Scalar>::Quaternion(const Vector<Scalar,3> & unit_axis, Scalar angle_rad)
 {
-    const Scalar a = angleRadians * (Scalar)0.5;
+    const Scalar a = angle_rad * (Scalar)0.5;
     const Scalar s = sin(a);
     w_ = cos(a);
-    x_ = unitAxis[0] * s;
-    y_ = unitAxis[1] * s;
-    z_ = unitAxis[2] * s;
+    x_ = unit_axis[0] * s;
+    y_ = unit_axis[1] * s;
+    z_ = unit_axis[2] * s;
 }
 
 template <typename Scalar>
-Quaternion<Scalar>::Quaternion(Scalar angleRadians, const Vector<Scalar,3> & unitAxis)
+Quaternion<Scalar>::Quaternion(Scalar angle_rad, const Vector<Scalar,3> & unit_axis)
 {
-    const Scalar a = angleRadians * (Scalar)0.5;
+    const Scalar a = angle_rad * (Scalar)0.5;
     const Scalar s = sin(a);
     w_ = cos(a);
-    x_ = unitAxis[0] * s;
-    y_ = unitAxis[1] * s;
-    z_ = unitAxis[2] * s;
+    x_ = unit_axis[0] * s;
+    y_ = unit_axis[1] * s;
+    z_ = unit_axis[2] * s;
 }
 
 template <typename Scalar>
@@ -304,14 +304,14 @@ SquareMatrix<Scalar, 3> Quaternion<Scalar>::get3x3Matrix() const
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> Quaternion<Scalar>::get4x4Matrix() const
+SquareMatrix<Scalar,4> Quaternion<Scalar>::get4x4Matrix() const
 {
     Scalar x = x_, y = y_, z = z_, w = w_;
     Scalar x2 = x + x, y2 = y + y, z2 = z + z;
     Scalar xx = x2 * x, yy = y2 * y, zz = z2 * z;
     Scalar xy = x2 * y, xz = x2 * z, xw = x2 * w;
     Scalar yz = y2 * z, yw = y2 * w, zw = z2 * w;
-    Scalar* entries = new Scalar[17];
+    Scalar entries[16];
     entries[0] = Scalar(1) - yy - zz;
     entries[1] = xy - zw;
     entries[2] = xz + yw,
@@ -328,7 +328,10 @@ MatrixMxN<Scalar> Quaternion<Scalar>::get4x4Matrix() const
     entries[13] = 0;
     entries[14] = 0;
     entries[15] = 1;
-    return MatrixMxN<Scalar>(4, 4, entries);
+    return SquareMatrix<Scalar,4>(entries[0],entries[1],entries[2],entries[3],
+                                  entries[4],entries[5],entries[6],entries[7],
+                                  entries[8],entries[9],entries[10],entries[11],
+                                  entries[12],entries[13],entries[14],entries[15]);
 
 }
 
@@ -370,7 +373,7 @@ Quaternion<Scalar>::Quaternion(const SquareMatrix<Scalar, 3>& matrix )
 }
 
 template <typename Scalar>
-Quaternion<Scalar>::Quaternion(const MatrixMxN<Scalar>& matrix)
+Quaternion<Scalar>::Quaternion(const SquareMatrix<Scalar,4>& matrix)
 {
     Scalar tr = matrix(0,0) + matrix(1,1) + matrix(2,2);
     if(tr > 0.0)

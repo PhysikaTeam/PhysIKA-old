@@ -1,7 +1,7 @@
 /*
  * @file transform.cpp 
  * @brief transform class, brief class representing a rigid euclidean transform as a quaternion and a vector
- * @author Sheng Yang
+ * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -31,8 +31,9 @@ Transform<Scalar>::Transform(const Vector<Scalar,3> translation):
 {
 
 }
+
 template <typename Scalar>
-Transform<Scalar>::Transform(const MatrixMxN<Scalar>& matrix)
+Transform<Scalar>::Transform(const SquareMatrix<Scalar,4>& matrix)
 {
     rotation_ = Quaternion<Scalar>(matrix);
     translation_[0] = matrix(0,3);
@@ -79,6 +80,7 @@ Vector<Scalar,3> Transform<Scalar>::transform(const Vector<Scalar, 3>& input) co
 {
     return this->rotation_.rotate(input) + this->translation_;
 }
+
 //explicit instantiation
 template class Transform<float>;
 template class Transform<double>;
