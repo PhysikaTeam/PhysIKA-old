@@ -408,6 +408,25 @@ Quaternion<Scalar>::Quaternion(const SquareMatrix<Scalar,4>& matrix)
         w_ = q[3];
     }
 }
+
+template <typename Scalar>
+void Quaternion<Scalar>::toRadiansAndUnitAxis(Scalar& angle, Vector<Scalar, 3>& axis) const
+{
+    const Scalar epsilon = std::numeric_limits<Scalar>::epsilon();
+    const Scalar s2 = x_*x_ + y_*y_ + z_*z_;
+    if(s2 < epsilon*epsilon)
+    {
+        angle = 0;
+        axis = Vector<Scalar, 3>(0,0,0);
+    }
+    else
+    {
+        const Scalar s =  1/(sqrt(s2));
+        axis = Vector<Scalar,3>(x_, y_, z_) * s;
+        angle = w_ < epsilon ? PI:atan2(s2*s, w_) * 2;
+    }
+}
+
 //explicit instantiation
 template class Quaternion<float>;
 template class Quaternion<double>;
