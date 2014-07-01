@@ -49,9 +49,9 @@ void displayFunction()
      * Test openGL primitive wrappers
      */
     openGLColor3(Physika::Color<float>::Blue());
-    glutWireCube(1.0);
+    glutWireCube(100.0);
     openGLColor3(Physika::Color<float>::Red());
-    glutSolidSphere(0.2, 30, 30);
+    glutSolidSphere(2, 30, 30);
     glutSwapBuffers();
 }
 
@@ -71,7 +71,7 @@ int main()
     GlutWindow glut_window;
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
-    glut_window.setCameraPosition(Vector<double,3>(0,0,3));
+    glut_window.setCameraPosition(Vector<double,3>(0,0,200));
     glut_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
     glut_window.setCameraNearClip(0.001);
     glut_window.setCameraFarClip(1.0e4);
@@ -82,11 +82,15 @@ int main()
     glut_window.createWindow();
     //glut_window.setIdleFunction(idleFunction);
     //cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
-    // cout<<"Test window with GLUI controls:\n";
-    // GluiWindow glui_window;
-    // glui_window.setDisplayFunction(displayFunction);
-    // GLUI *glui = glui_window.gluiWindow();
-    // glui->add_statictext("Simple Window with GLUI controls");
-    // glui_window.createWindow();
+    cout<<"Test window with GLUI controls:\n";
+    GluiWindow glui_window;
+    glui_window.setDisplayFunction(displayFunction);
+    glui_window.setCameraPosition(Vector<double,3>(0,0,200));
+    glui_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
+    glui_window.setCameraNearClip(0.001);
+    glui_window.setCameraFarClip(1.0e4);
+    GLUI *glui = glui_window.gluiWindow();
+    glui->add_statictext("Simple Window with GLUI controls");
+    glui_window.createWindow();
     return 0;
 }

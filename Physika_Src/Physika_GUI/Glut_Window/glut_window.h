@@ -1,6 +1,6 @@
 /*
  * @file glut_window.h 
- * @Brief Glut-based window, provide default response functions and support custom response functions.
+ * @Brief Glut-based window.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -17,22 +17,33 @@
 
 #include <string>
 #include "Physika_GUI/Camera/camera.h"
+#include "Physika_Render/Color/color.h"
 #include "Physika_Render/Render_Manager/render_manager.h"
 
 namespace Physika{
 
 /*
  * Glut-based window
- * Key features:
- *       1. provide default response functions, and support custom response functions
- *          see the comments of default response functions to view their functionality
- *       2. closing the window will not close the program
- *  
+ * Basic features:
+ *     1. closing the window will not terminate the program
+ *     2. provide default callback functions (see the comments of default functions to view their functionality)
+ *     3. provide camera set up
+ *     4. allow user to add render tasks in scene
+ *     5. enable/disable display frame-rate
+ *     6. save screen capture to file
+ * Advanced features:
+ *     1. support user defined  custom callback functions
+ *     2. support direct operations on the camera and render manager
  * Usage:
- *       1. Define a GlutWindow object
- *       2. Set the custom callback functions (optional)
- *       3. Call createWindow() 
- *       4. Call closeWindow() or click the 'X' on window to close the window
+ *     1. Define a GlutWindow object
+ *     2. Set the camera parameters
+ *     3. Add render tasks
+ *     4. Call createWindow() to create a window
+ *     5. Call closewWindow() or click the 'X' on window to close the window
+ * Note on defining custom callback functions:
+ *     It is quite often that we need to access the GlutWindow object in our custom callback functions, it could be
+ *     achieved with one line of code because the GlutWindow object has been binded to glut window in createWindow().
+ *     GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
  */
 
 class GlutWindow
@@ -47,6 +58,8 @@ public:
     const std::string& name() const;
     int width() const;
     int height() const;
+    template <typename ColorType>
+    void setBackgroundColor(const Color<ColorType> &color);
 
     //camera operations
     const Vector<double,3>& cameraPosition() const;
@@ -86,9 +99,16 @@ public:
     void popFrontRenderTask();  //remove task at front of render queue
     void removeRenderTaskAtIndex(unsigned int index);  //remove the index-th task in queue
     void removeAllRenderTasks();  //remove all render tasks
-    const RenderBase* renderTaskAtIndex(unsigned int index) const; //return pointer to the render task at given index
-    RenderBase* renderTaskAtIndex(unsigned int index);
-    int renderTaskIndex(RenderBase *task) const; //return index of task in queue, if task not in queue, return -1
+    const RenderBase* getRenderTaskAtIndex(unsigned int index) const; //return pointer to the render task at given index
+    RenderBase* getRenderTaskAtIndex(unsigned int index);
+    int getRenderTaskIndex(RenderBase *task) const; //return index of task in queue, if task not in queue, return -1
+
+    //save screen shots
+    bool saveScreen(const std::string &file_name) const;
+    //display frame-rate
+    void displayFrameRate() const;
+    void enableDisplayFrameRate();
+    void disableDisplayFrameRate();
 
     //advanced: 
     //set custom callback functions
@@ -107,13 +127,13 @@ public:
     RenderManager& renderManager() { return render_manager_;}
 protected:
     //default callback functions
-    static void displayFunction(void);  //display background color
+    static void displayFunction(void);  //display all render tasks provided by user
     static void idleFunction(void);  //do nothing
     static void reshapeFunction(int width, int height);  //adjust view port to reveal the change
-    static void keyboardFunction(unsigned char key, int x, int y);  //press 'ESC' to close window
+    static void keyboardFunction(unsigned char key, int x, int y);  //press 'ESC' to close window, ect.
     static void specialFunction(int key, int x, int y);  //do nothing
-    static void motionFunction(int x, int y);  //do nothing
-    static void mouseFunction(int button, int state, int x, int y);  //do nothing
+    static void motionFunction(int x, int y);  //left button: rotate, middle button: zoom, right button: translate
+    static void mouseFunction(int button, int state, int x, int y);  //keep track of mouse state
     static void initFunction(void);  // init viewport and background color
     //init default callbacks
     void initCallbacks();
@@ -125,6 +145,7 @@ protected:
     int window_id_;
     unsigned int initial_width_;
     unsigned int initial_height_;
+    Color<double> background_color_; //use double type in order not to make GlutWindow template
     //camera (use double type in order not to make GlutWindow template)
     Camera<double> camera_;
     //render managner, manages the scene for render
@@ -132,6 +153,8 @@ protected:
     //state of the mouse
     bool left_button_down_, middle_button_down_, right_button_down_;
     int mouse_position_[2];
+    //switch of fps display
+    bool display_fps_;
     //pointers to callback methods
     void (*display_function_)(void);
     void (*idle_function_)(void);
@@ -143,6 +166,22 @@ protected:
     void (*init_function_)(void);
 };
 
+template <typename ColorType>
+void GlutWindow::setBackgroundColor(const Color<ColorType> &color)
+{
+    background_color_ = Color<ColorType>::template convertColor<double>(color);
+}
+
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_GUI_GLUT_WINDOW_GLUT_WINDOW_H_
+
+
+
+
+
+
+
+
+
+

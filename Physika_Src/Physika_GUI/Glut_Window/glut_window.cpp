@@ -1,6 +1,6 @@
 /*
  * @file glut_window.cpp 
- * @Brief Glut-based window, provide default response functions and support custom response functions.
+ * @Brief Glut-based window.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -16,30 +16,32 @@
 #include <iostream>
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Render/Color/color.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 
 namespace Physika{
 
 GlutWindow::GlutWindow()
-    :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480)
+    :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480),display_fps_(true)
 {
+    background_color_ = Color<double>::Black();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
-    :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480)
+    :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480),display_fps_(true)
 {
+    background_color_ = Color<double>::Black();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
-    :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height)
+    :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height),display_fps_(true)
 {
+    background_color_ = Color<double>::Black();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
@@ -51,7 +53,7 @@ GlutWindow::~GlutWindow()
 
 void GlutWindow::createWindow()
 {
-    resetMouseState();
+    resetMouseState(); //reset the state of mouse every time the window is created
     int argc = 1;
     const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
     char *argv[1];
@@ -280,19 +282,41 @@ void GlutWindow::removeAllRenderTasks()
     render_manager_.removeAll();
 }
 
-const RenderBase* GlutWindow::renderTaskAtIndex(unsigned int index) const
+const RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index) const
 {
     return render_manager_.taskAtIndex(index);
 }
 
-RenderBase* GlutWindow::renderTaskAtIndex(unsigned int index)
+RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index)
 {
     return render_manager_.taskAtIndex(index);
 }
 
-int GlutWindow::renderTaskIndex(RenderBase *task) const
+int GlutWindow::getRenderTaskIndex(RenderBase *task) const
 {
     return render_manager_.taskIndex(task);
+}
+
+////////////////////////////////////////////////// screen shot and display frame-rate////////////////////////////////////////////////////////////////
+
+bool GlutWindow::saveScreen(const std::string &file_name) const
+{
+//TO DO
+}
+
+void GlutWindow::displayFrameRate() const
+{
+//TO DO
+}
+
+void GlutWindow::enableDisplayFrameRate()
+{
+    display_fps_ = true;
+}
+
+void GlutWindow::disableDisplayFrameRate()
+{
+    display_fps_ = false;
 }
 
 ////////////////////////////////////////////////// set custom callback functions ////////////////////////////////////////////////////////////////////
@@ -389,7 +413,15 @@ void GlutWindow::setInitFunction(void (*func)(void))
 
 void GlutWindow::displayFunction(void)
 {
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    Color<double> background_color = window->background_color_;
+    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    (window->camera_).look();  //set camera
+    (window->render_manager_).renderAll(); //render all tasks of render manager
+    if(window->display_fps_)
+        window->displayFrameRate();
     glutSwapBuffers();
 }
 
@@ -417,10 +449,17 @@ void GlutWindow::reshapeFunction(int width, int height)
 
 void GlutWindow::keyboardFunction(unsigned char key, int x, int y)
 {
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
     switch(key)
     {
     case 27: //ESC: close window
         glutLeaveMainLoop();
+        break;
+    case 's': //s: save screen shot
+        break;
+    case 'f': //f: enable/disable FPS display
+        (window->display_fps_) = !(window->display_fps_);
         break;
     default:
         break;
@@ -440,6 +479,7 @@ void GlutWindow::motionFunction(int x, int y)
     window->mouse_position_[0] = x;
     window->mouse_position_[1] = y;
     double scale = 0.05;  //sensativity of the mouse
+    double camera_radius = (window->cameraFocusPosition()-window->cameraPosition()).norm();
     if(window->left_button_down_)  //left button handles camera rotation
     {
         window->orbitCameraLeft(mouse_delta_x*scale);
@@ -447,13 +487,13 @@ void GlutWindow::motionFunction(int x, int y)
     }
     if(window->middle_button_down_)  //middle button handles camera zoom in/out
     {
-        window->zoomCameraIn(mouse_delta_y*scale);
+        window->zoomCameraIn(camera_radius*mouse_delta_y*scale);
     }
     if(window->right_button_down_)  //right button handles camera translation
     {
         scale *= 0.5;
-        window->translateCameraLeft(mouse_delta_x*scale);
-        window->translateCameraUp(mouse_delta_y*scale);
+        window->translateCameraLeft(camera_radius*mouse_delta_x*scale);
+        window->translateCameraUp(camera_radius*mouse_delta_y*scale);
     }
 }
 
@@ -494,8 +534,8 @@ void GlutWindow::initFunction(void)
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
-    Color<unsigned char> black = Color<unsigned char>::Black();
-    glClearColor(black.redChannel(), black.greenChannel(), black.blueChannel(), black.alphaChannel());	
+    Color<double> background_color = window->background_color_;
+    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());	
 }
 
 void GlutWindow::initCallbacks()
