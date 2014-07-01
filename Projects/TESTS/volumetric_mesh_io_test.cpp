@@ -32,16 +32,13 @@ int main()
     //VolumetricMeshIO<float,2>::save("tri_mesh.smesh",&obj);
     //VolumetricMeshIO<float,2>::save("tri_mesh.smesh",&obj,SEPARATE_FILES|ZERO_INDEX);
 
-	Physika::VolumetricMesh<float, 2> *p;
-	p = VolumetricMeshIO<float, 2>::load(string("tri_mesh.smesh"));
-	p->printInfo();
-	cout<<"vertNum:"<<p->vertNum()<<endl;
-	cout<<"eleNum:"<<p->eleNum()<<endl;
-	cout<<"regionNum:"<<p->regionNum()<<endl;
-	cout<<"region:"<<p->regionName(0)<<endl;
-	vector<unsigned int> v ;
-	p->regionElements(string("first"),v );
-	for(int i=0;i<v.size();++i)cout<<v[i]<<endl;
-	getchar();
+	Physika::VolumetricMesh<float, 3> *p;
+	p = VolumetricMeshIO<float, 3>::load(string("C:/Users/acer/Documents/Tencent Files/731595774/FileRecv/bar.smesh"));
+		p->printInfo();
+		cout<<"vertNum:"<<p->vertNum()<<endl;
+		cout<<"eleNum:"<<p->eleNum()<<endl;
+		cout<<"regionNum:"<<p->regionNum()<<endl;
+		//cout<<"region:"<<p->regionName(0)<<endl;
+	cin>>a[0];
     return 0;
 }
