@@ -258,7 +258,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
                             for(int i=0; i<ele_dim; i++)
                             {
                                 str_in>> ele;
-                                elements.push_back(ele);
+								elements.push_back(ele - index_start_vert);
                             }
                             pointer->addElement(elements);
                             start_index_decided = false;
@@ -269,7 +269,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
                             for(int i=0; i<ele_dim; ++i)
                             {
                                 str_in>>ele;
-                                elements.push_back(ele);
+								elements.push_back(ele - index_start_ele);
                             }
                             pointer->addElement(elements);
                         }
@@ -280,13 +280,19 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
             {
                 unsigned int region_index;
                 char comma;
+				if(line_str[0]==',')str_in>>comma;
                 while(str_in>>region_index)
                 {
-                    region.push_back(region_index);
+					region.push_back(region_index - index_start_ele);
                     str_in>>comma;
                 }
             }
         }
+    }
+    if(!region.empty())
+    {
+        pointer->addRegion(region_name,region);
+        region.clear();
     }
     return pointer;
 }

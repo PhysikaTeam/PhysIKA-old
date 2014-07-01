@@ -28,17 +28,22 @@ int main()
 	float a[6]={0,0,0,1,1,0};
 	unsigned int element[3]={0,1,2};
 	int b = 3;
+	vector<unsigned int> regionEleIdx;
 	TriMesh<float> obj(3,a,1,element);
     //VolumetricMeshIO<float,2>::save("tri_mesh.smesh",&obj);
     //VolumetricMeshIO<float,2>::save("tri_mesh.smesh",&obj,SEPARATE_FILES|ZERO_INDEX);
 
 	Physika::VolumetricMesh<float, 3> *p;
 	p = VolumetricMeshIO<float, 3>::load(string("C:/Users/acer/Documents/Tencent Files/731595774/FileRecv/bar.smesh"));
-		p->printInfo();
-		cout<<"vertNum:"<<p->vertNum()<<endl;
-		cout<<"eleNum:"<<p->eleNum()<<endl;
-		cout<<"regionNum:"<<p->regionNum()<<endl;
-		//cout<<"region:"<<p->regionName(0)<<endl;
-	cin>>a[0];
+	p->printInfo();
+	cout<<"vertNum:"<<p->vertNum()<<endl;
+	cout<<"eleNum:"<<p->eleNum()<<endl;
+	cout<<"regionNum:"<<p->regionNum()<<endl;
+	cout<<p->eleVertIndex(0,0)<<endl;
+	cout<<p->regionName(0)<<endl;
+	p->regionElements(p->regionName(0),regionEleIdx);
+	for(int i=0;i<regionEleIdx.size();++i)cout<<regionEleIdx[i]<<" ";
+	cout<<endl;
+	getchar();
     return 0;
 }

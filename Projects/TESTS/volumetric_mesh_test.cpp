@@ -86,6 +86,15 @@ int main()
 	cout<<"interplation(2,2,1):"<<endl;
 	for(int i=0;i<8;++i)cout<<cubicweights[i]<<' ';
 	cout<<endl;
+	cout<<"regionNum:"<<cubicobj.regionNum()<<endl;
+	vector<unsigned int>re1;
+	re1.push_back(16);re1.push_back(17);re1.push_back(5);
+	cubicobj.addRegion(string("head"),re1);
+	for(int i=0;i<cubicobj.regionNum();++i)
+	{
+		cout<<cubicobj.regionName(i)<<" ";
+	}
+	cout<<endl;
 
 	getchar();
 
