@@ -16,7 +16,10 @@
 #define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_DRIVER_H_
 
 #include<vector>
+#include "Physika_Geometry/Bounding_Volume/bvh_base.h"
+#include "Physika_Geometry/Bounding_Volume/scene_bvh.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+
 
 namespace Physika{
 
@@ -24,8 +27,6 @@ template <typename Scalar,int Dim> class RigidBody;
 template <typename Scalar,int Dim> class CollidableObject;
 template <typename Scalar,int Dim> class BVHBase;
 template <typename Scalar,int Dim> class ObjectBVH;
-template <typename Scalar,int Dim> class SceneBVH;
-class RenderBase;
 
 //Rigid body archive, which contains relative informations about a rigid body during simulation, e.g. the collidable object constructed from this rigid body and its BVH.
 //This should be used as a internal class of RigidBodyDriver. It should be transparent to the outside.
@@ -44,17 +45,15 @@ public:
 	RigidBody<Scalar, Dim>* rigidBody();
 	CollidableObject<Scalar, Dim>* collideObject();
 	ObjectBVH<Scalar, Dim>* objectBVH();
-	RenderBase* render();
 
 protected:
 	unsigned int index_;
 	RigidBody<Scalar, Dim>* rigid_body_;
 	CollidableObject<Scalar, Dim>* collide_object_;
 	ObjectBVH<Scalar, Dim>* object_bvh_;
-	RenderBase* render_;
 };
 
-class GlutWindow;
+template <typename Scalar,int Dim> class RigidDriverPlugin;
 
 template <typename Scalar,int Dim>
 class RigidBodyDriver
@@ -75,22 +74,20 @@ public:
 
 	//get & set, add & delete
 	void addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild = true);//is_rebuild means whether rebuild the scene BVH after adding this body.
-	void setWindow(GlutWindow* window);
 	unsigned int numRigidBody() const;
+	RigidBody<Scalar, Dim>* rigidBody(unsigned int index);
 
 	//dynamics
 	bool collisionDetection();
 
-	//display
-	//This is a 
-	static RigidBodyDriver<Scalar, Dim> activeDriver;
-	static void Idle(void);
+	//plugin
+	void addPlugin(RigidDriverPlugin<Scalar, Dim>* plugin);
 
 protected:
-	GlutWindow* window_;
 	CollisionDetectionResult<Scalar, Dim> collision_result_;
 	SceneBVH<Scalar, Dim> scene_bvh_;
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
+	std::vector<RigidDriverPlugin<Scalar, Dim>* > plugins_;
 };
 
 } //end of namespace Physika
