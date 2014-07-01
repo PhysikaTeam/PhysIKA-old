@@ -50,12 +50,12 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     string file_extension = FileUtilities::fileExtension(filename);
     if(file_extension.size() == 0)
     {
-        std::cerr<<"No file extension found for the mesh file!\n";
+		std::cerr<<"No file extension found for the mesh file:"<<filename<<std::endl;
         return NULL;
     }
     if(file_extension != string(".smesh"))
     {
-        std::cerr<<"Unknown mesh file format!\n";
+		std::cerr<<"Unknown mesh file format:"<<file_extension<<std::endl;
         return NULL;
     }
     vector<fstream *> file_stack;
@@ -63,7 +63,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     fp->open(filename.c_str(),std::ios::in);
     if(!(*fp))
     {
-        std::cerr<<"Couldn't opern .smesh file!\n";
+		std::cerr<<"Couldn't opern .smesh file:"<<filename<<std::endl;
         return NULL;
     }
     // first check the mesh type
@@ -92,6 +92,11 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     {
 
     }
+	else 
+	{
+		std::cerr<<"unknow elements type:"<<mesh_type<<std::endl;
+		return NULL;
+	}
     enum ParseSession{
         NOT_SET,
         VERTICES,
