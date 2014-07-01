@@ -96,6 +96,28 @@ Scalar Interval<Scalar>::maxVal() const
 }
 
 template <typename Scalar>
+void Interval<Scalar>::setMinVal(Scalar val)
+{
+    if(val>max_val_)
+    {
+        std::cerr<<"Minimum value of interval must be equal or smaller than maximum value!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    min_val_ = val;
+}
+
+template <typename Scalar>
+void Interval<Scalar>::setMaxVal(Scalar val)
+{
+    if(val<min_val_)
+    {
+        std::cerr<<"Minimum value of interval must be equal or smaller than maximum value!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    max_val_ = val;
+}
+
+template <typename Scalar>
 bool Interval<Scalar>::inside(Scalar val) const
 {
     if(val>=min_val_&&val<=max_val_)

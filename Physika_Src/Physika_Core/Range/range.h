@@ -44,6 +44,8 @@ public:
     Scalar size() const;  //2D: area; 3D: volume
     const Vector<Scalar,Dim>& minCorner() const;
     const Vector<Scalar,Dim>& maxCorner() const;
+    void setMinCorner(const Vector<Scalar,Dim> &corner);
+    void setMaxCorner(const Vector<Scalar,Dim> &corner);
     bool inside(const Vector<Scalar,Dim> &val) const;
     bool outside(const Vector<Scalar,Dim> &val) const;
 
@@ -59,3 +61,8 @@ protected:
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_CORE_RANGE_RANGE_H_
+
+
+
+
+
