@@ -41,13 +41,3 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_IO_IMAGE_IO_PNG_IO_H_
-
-
-
-
-
-
-
-
-
-
