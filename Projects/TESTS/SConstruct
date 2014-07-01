@@ -70,7 +70,11 @@ else:
    compiler='msvc'
 
 #SRC FILES
+<<<<<<< HEAD
 src_files=['config_file_test.cpp']
+=======
+src_files=['BVH_test.cpp']
+>>>>>>> 027b71e1fe724097951ce8114397cc8282fe19ff
 inc_files=[]
 #for dir,_,_ in os.walk(src_root_path):
 #    if dir not in ignored_src_path:
