@@ -12,10 +12,14 @@
  *
  */
 
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <sstream>
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
+#include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 
 namespace Physika{
@@ -24,6 +28,7 @@ GlutWindow::GlutWindow()
     :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480),display_fps_(true)
 {
     background_color_ = Color<double>::Black();
+    text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
@@ -33,6 +38,7 @@ GlutWindow::GlutWindow(const std::string &window_name)
     :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480),display_fps_(true)
 {
     background_color_ = Color<double>::Black();
+    text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
@@ -42,6 +48,7 @@ GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsig
     :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height),display_fps_(true)
 {
     background_color_ = Color<double>::Black();
+    text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
@@ -301,13 +308,86 @@ int GlutWindow::getRenderTaskIndex(RenderBase *task) const
 
 bool GlutWindow::saveScreen(const std::string &file_name) const
 {
-//TO DO
-	return false;
+    int width = this->width(), height = this->height();
+    unsigned char *data = new unsigned char[width*height*4];  //RGBA
+    PHYSIKA_ASSERT(data);
+    glReadPixels(0,0,width,height,GL_RGBA,GL_UNSIGNED_BYTE,(void*)data);
+    //upside down the data
+    for(unsigned int j = 0; j < height/2; ++j)
+        for(unsigned int i = 0; i < 4*width; ++i)
+        {
+            unsigned char temp = data[i+j*width*4];
+            data[i+j*width*4] = data[i+ (height-1-j)*width*4];
+            data[i+ (height-1-j)*width*4] = temp;
+        } 
+    bool status = ImageIO::save(file_name,width,height,data);
+    delete[] data;
+	return status;
+}
+
+bool GlutWindow::saveScreen() const
+{
+    static int file_index = 0;
+    std::stringstream adaptor;
+    adaptor<<file_index;
+    std::string index_str;
+    adaptor>>index_str;
+    std::string file_name = std::string("screen_capture_") + index_str + std::string(".png"); 
+    return saveScreen(file_name);
 }
 
 void GlutWindow::displayFrameRate() const
 {
-//TO DO
+    if(!glutGet(GLUT_INIT_STATE))  //window is not created
+    {
+        std::cerr<<"Cannot display frame rate before a window is created.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if(display_fps_)
+    {
+        static unsigned int frame = 0, time = 0, time_base = 0;
+        double fps = 60.0;
+        ++frame;
+        time = glutGet(GLUT_ELAPSED_TIME); //millisecond
+        if(time - time_base > 10) // compute every 10 milliseconds
+        {
+            fps = frame*1000.0/(time-time_base);
+            time_base = time;
+            frame = 0;
+        }
+        std::stringstream adaptor;
+        adaptor.precision(2);
+        std::string str;
+        if(fps>1.0)  //show fps
+        {
+            adaptor<<fps;
+            str = std::string("FPS: ") + adaptor.str();
+        }
+        else  //show spf
+        {
+            PHYSIKA_ASSERT(fps>0);
+            adaptor<< 1.0/fps;
+            str = std::string("SPF: ") + adaptor.str();
+        }
+        //now draw the string
+        int width = this->width(), height = this->height();
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0,width,0,height);
+        openGLColor3(text_color_);
+        glRasterPos2i(5,height-19);
+
+        for (unsigned int i = 0; i < str.length(); i++) 
+            glutBitmapCharacter (GLUT_BITMAP_HELVETICA_18, str[i]);
+
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+    }
 }
 
 void GlutWindow::enableDisplayFrameRate()
@@ -421,8 +501,7 @@ void GlutWindow::displayFunction(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     (window->camera_).look();  //set camera
     (window->render_manager_).renderAll(); //render all tasks of render manager
-    if(window->display_fps_)
-        window->displayFrameRate();
+    window->displayFrameRate();
     glutSwapBuffers();
 }
 
@@ -458,6 +537,7 @@ void GlutWindow::keyboardFunction(unsigned char key, int x, int y)
         glutLeaveMainLoop();
         break;
     case 's': //s: save screen shot
+        window->saveScreen();
         break;
     case 'f': //f: enable/disable FPS display
         (window->display_fps_) = !(window->display_fps_);
@@ -479,7 +559,7 @@ void GlutWindow::motionFunction(int x, int y)
     int mouse_delta_y = y - window->mouse_position_[1];
     window->mouse_position_[0] = x;
     window->mouse_position_[1] = y;
-    double scale = 0.05;  //sensativity of the mouse
+    double scale = 0.02;  //sensativity of the mouse
     double camera_radius = (window->cameraFocusPosition()-window->cameraPosition()).norm();
     if(window->left_button_down_)  //left button handles camera rotation
     {
@@ -492,7 +572,7 @@ void GlutWindow::motionFunction(int x, int y)
     }
     if(window->right_button_down_)  //right button handles camera translation
     {
-        scale *= 0.5;
+        scale *= 0.1;
         window->translateCameraLeft(camera_radius*mouse_delta_x*scale);
         window->translateCameraUp(camera_radius*mouse_delta_y*scale);
     }

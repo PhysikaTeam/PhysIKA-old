@@ -22,6 +22,11 @@ namespace Physika{
 class ImageIO
 {
 public:
+    enum DataFormat{
+        RGBA,
+        RGB
+    };
+public:
     ImageIO(){}
     ~ImageIO(){}
     /* load image from given file, return the image data in row order

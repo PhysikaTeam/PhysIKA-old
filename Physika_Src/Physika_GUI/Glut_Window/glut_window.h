@@ -44,6 +44,15 @@ namespace Physika{
  *     It is quite often that we need to access the GlutWindow object in our custom callback functions, it could be
  *     achieved with one line of code because the GlutWindow object has been binded to glut window in createWindow().
  *     GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+ * Default mouse && keyboard behavior:
+ *     Mouse:
+ *           1. Left button: rotate camera
+ *           2. Middle button: zoom in/out
+ *           3. Right button: translate camera
+ *     Keyboard:
+ *           1. ESC: close window
+ *           2. f: enable/disable display frame-rate
+ *           3. s: capture screen
  */
 
 class GlutWindow
@@ -58,8 +67,15 @@ public:
     const std::string& name() const;
     int width() const;
     int height() const;
-    template <typename ColorType>
+    //getter&&setter of background color and text color
+    template <typename ColorType> 
+    Color<ColorType> backgroundColor() const;
+    template <typename ColorType> 
+    Color<ColorType> textColor() const;
+    template <typename ColorType> 
     void setBackgroundColor(const Color<ColorType> &color);
+    template <typename ColorType>
+    void setTextColor(const Color<ColorType> &color);
 
     //camera operations
     const Vector<double,3>& cameraPosition() const;
@@ -103,10 +119,11 @@ public:
     RenderBase* getRenderTaskAtIndex(unsigned int index);
     int getRenderTaskIndex(RenderBase *task) const; //return index of task in queue, if task not in queue, return -1
 
-    //save screen shots
-    bool saveScreen(const std::string &file_name) const;
+    //save screenshot to file
+    bool saveScreen(const std::string &file_name) const;  //save to file with given name
+    bool saveScreen() const; //save to file with default name "screen_capture_XXX.png"
     //display frame-rate
-    void displayFrameRate() const;
+    void displayFrameRate() const;  //display framerate if enabled
     void enableDisplayFrameRate();
     void disableDisplayFrameRate();
 
@@ -135,10 +152,9 @@ protected:
     static void motionFunction(int x, int y);  //left button: rotate, middle button: zoom, right button: translate
     static void mouseFunction(int button, int state, int x, int y);  //keep track of mouse state
     static void initFunction(void);  // init viewport and background color
-    //init default callbacks
-    void initCallbacks();
-    //rest mouse state
-    void resetMouseState();
+
+    void initCallbacks();  //init default callbacks
+    void resetMouseState();  //rest mouse
 protected:
     //basic information of window
     std::string window_name_;
@@ -153,8 +169,9 @@ protected:
     //state of the mouse
     bool left_button_down_, middle_button_down_, right_button_down_;
     int mouse_position_[2];
-    //switch of fps display
+    //fps display
     bool display_fps_;
+    Color<double> text_color_; //the color to display text, e.g. fps
     //pointers to callback methods
     void (*display_function_)(void);
     void (*idle_function_)(void);
@@ -166,22 +183,31 @@ protected:
     void (*init_function_)(void);
 };
 
+
+template <typename ColorType>
+Color<ColorType> GlutWindow::backgroundColor() const
+{
+    return Color<double>::template convertColor<ColorType>(background_color_);
+}
+
+template <typename ColorType>
+Color<ColorType> GlutWindow::textColor() const
+{
+    return Color<double>::template convertColor<ColorType>(text_color_);
+}
+
 template <typename ColorType>
 void GlutWindow::setBackgroundColor(const Color<ColorType> &color)
 {
     background_color_ = Color<ColorType>::template convertColor<double>(color);
 }
 
+template <typename ColorType>
+void GlutWindow::setTextColor(const Color<ColorType> &color)
+{
+    text_color_ = Color<ColorType>::template convertColor<double>(color);
+}
+
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_GUI_GLUT_WINDOW_GLUT_WINDOW_H_
-
-
-
-
-
-
-
-
-
-

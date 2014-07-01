@@ -40,6 +40,8 @@ public:
     Scalar size() const;
     Scalar minVal() const;
     Scalar maxVal() const;
+    void setMinVal(Scalar val);
+    void setMaxVal(Scalar val);
     bool inside(Scalar val) const;
     bool outside(Scalar val) const;
 

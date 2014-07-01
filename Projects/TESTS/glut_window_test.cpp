@@ -16,6 +16,7 @@
 #include <GL/freeglut.h>
 #include <GL/glui.h>
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_GUI/Glui_Window/glui_window.h"
@@ -23,6 +24,7 @@ using namespace std;
 using Physika::GlutWindow;
 using Physika::GluiWindow;
 using Physika::Vector;
+using Physika::Color;
 
 void displayFunction()
 {
@@ -48,10 +50,11 @@ void displayFunction()
     /* 
      * Test openGL primitive wrappers
      */
-    openGLColor3(Physika::Color<float>::Blue());
+    openGLColor3(Color<float>::Blue());
     glutWireCube(100.0);
-    openGLColor3(Physika::Color<float>::Red());
+    openGLColor3(Color<float>::Red());
     glutSolidSphere(2, 30, 30);
+    cur_window->displayFrameRate();
     glutSwapBuffers();
 }
 
@@ -80,8 +83,8 @@ int main()
     glut_window.setDisplayFunction(displayFunction);
     cout<<"Test GlutWindow with custom display function:\n";
     glut_window.createWindow();
-    //glut_window.setIdleFunction(idleFunction);
-    //cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
+    glut_window.setIdleFunction(idleFunction);
+    cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
     cout<<"Test window with GLUI controls:\n";
     GluiWindow glui_window;
     glui_window.setDisplayFunction(displayFunction);
@@ -89,7 +92,10 @@ int main()
     glui_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
     glui_window.setCameraNearClip(0.001);
     glui_window.setCameraFarClip(1.0e4);
+    glui_window.setBackgroundColor(Color<double>::White());
+    glui_window.setTextColor(Color<double>::Black());
     GLUI *glui = glui_window.gluiWindow();
+    PHYSIKA_ASSERT(glui);
     glui->add_statictext("Simple Window with GLUI controls");
     glui_window.createWindow();
     return 0;

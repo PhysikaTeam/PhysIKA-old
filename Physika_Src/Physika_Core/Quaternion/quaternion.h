@@ -71,8 +71,8 @@ public:
     const Vector<Scalar,3> rotate(const Vector<Scalar,3> ) const;    // rotates passed vec by this;
     SquareMatrix<Scalar, 3> get3x3Matrix() const;  //return 3x3matrix format
     SquareMatrix<Scalar, 4> get4x4Matrix() const;        //return 4x4matrix with a identity transform.
-
-
+    void toRadiansAndUnitAxis(Scalar& angle, Vector<Scalar, 3>& axis) const;
+  
 
     /* Operator overloading */
     Quaternion<Scalar> operator - (const Quaternion<Scalar> &);

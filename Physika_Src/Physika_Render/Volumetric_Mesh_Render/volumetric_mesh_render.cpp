@@ -190,6 +190,7 @@ void VolumetricMeshRender<Scalar,Dim>::drawTriOrQuad(unsigned int ele_idx)
 template <typename Scalar, int Dim>
 void VolumetricMeshRender<Scalar,Dim>::drawTet(unsigned int ele_idx)
 {
+
     Vector<Scalar,Dim> position_0 = this->mesh_->eleVertPos(ele_idx,0);
     Vector<Scalar,Dim> position_1 = this->mesh_->eleVertPos(ele_idx,1);
     Vector<Scalar,Dim> position_2 = this->mesh_->eleVertPos(ele_idx,2);
@@ -294,6 +295,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertices()
         {
             Vector<Scalar,Dim> position = this->mesh_->vertPos(vertex_idx);
             openGLVertex(position);
+			
         }
         glEnd();
         glEndList();

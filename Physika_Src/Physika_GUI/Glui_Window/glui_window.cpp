@@ -62,6 +62,7 @@ void GluiWindow::createWindow()
     PHYSIKA_ASSERT(glui_);
     glui_->set_main_gfx_window(window_id_);
     GLUI_Master.set_glutIdleFunc(idle_function_);
+    PHYSIKA_ASSERT(init_function_);
     (*init_function_)(); //call the init function before entering main loop
     glutMainLoop();
 }
