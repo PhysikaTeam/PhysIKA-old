@@ -47,7 +47,7 @@ public:
     void flipVertically();
     Image mirrorImage() const;
     Image upsideDownImage() const;
-    Image subImage(const Range<unsigned int,2> &range) const;
+    Image subImage(const Range<unsigned int,2> &range) const;  //origin is left top corner
 protected:
     void allocMemory();
     unsigned int pixelSize() const;
