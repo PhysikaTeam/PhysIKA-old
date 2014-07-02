@@ -26,7 +26,7 @@ public:
     ~ImageIO(){}
  
     static bool load(const std::string &filename, Image * image);
-	static bool load(const std::string &filename, Image * image, Image::DataFormat data_format);
+    static bool load(const std::string &filename, Image * image, Image::DataFormat data_format);
 
     /* save image data to file, the image data is in row order
      * return true if succeed, otherwise return false

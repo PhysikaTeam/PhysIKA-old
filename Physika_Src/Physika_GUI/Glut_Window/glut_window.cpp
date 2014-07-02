@@ -19,6 +19,7 @@
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
+#include "Physika_Core/Image/image.h"
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 
@@ -312,15 +313,9 @@ bool GlutWindow::saveScreen(const std::string &file_name) const
     unsigned char *data = new unsigned char[width*height*4];  //RGBA
     PHYSIKA_ASSERT(data);
     glReadPixels(0,0,width,height,GL_RGBA,GL_UNSIGNED_BYTE,(void*)data);
-    //upside down the data
-    for(unsigned int j = 0; j < height/2; ++j)
-        for(unsigned int i = 0; i < 4*width; ++i)
-        {
-            unsigned char temp = data[i+j*width*4];
-            data[i+j*width*4] = data[i+ (height-1-j)*width*4];
-            data[i+ (height-1-j)*width*4] = temp;
-        } 
-    bool status = ImageIO::save(file_name,width,height,data);
+    Image image(width,height,Image::RGBA,data);
+    image.flipVertically();
+    bool status = ImageIO::save(file_name,&image);
     delete[] data;
 	return status;
 }
