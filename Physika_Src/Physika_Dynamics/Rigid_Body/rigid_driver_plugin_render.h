@@ -39,21 +39,53 @@ public:
 	void onRead();
 
 	void onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body);
+	void onCollisionDetection();
 
 	//basic function
 	void setDriver(DriverBase<Scalar>* driver);
 	void setWindow(GlutWindow* window);
 
-	//singleton function
-	void active();//active this instance
+	//get
+	unsigned int numRender() const;
+
+	//control function of render
+	void enableRenderSolidAll();
+	void disableRenderSolidAll();
+	void enableRenderVerticesAll();
+	void disableRenderVerticesAll();
+	void enableRenderWireframeAll();
+	void disableRenderWireframeAll();
+	void enableFlatShadingAll();
+	void enableSmoothShadingAll();
+	void enableTextureAll();
+	void disableTextureAll();
+
+	void enableRenderSolidAt(unsigned int index);
+	void disableRenderSolidAt(unsigned int index);
+	void enableRenderVerticesAt(unsigned int index);
+	void disableRenderVerticesAt(unsigned int index);
+	void enableRenderWireframeAt(unsigned int index);
+	void disableRenderWireframeAt(unsigned int index);
+	void enableFlatShadingAt(unsigned int index);
+	void enableSmoothShadingAt(unsigned int index);
+	void enableTextureAt(unsigned int index);
+	void disableTextureAt(unsigned int index);
+
+	void enableRenderContactFaceAll();
 
 protected:
 	GlutWindow* window_;
 	std::vector<RenderBase*> render_queue_;
+	bool is_render_contact_face_;
+    std::vector<unsigned int> *contact_face_ids;//used to render contact faces.
 
 	//singleton
 	static RigidDriverPluginRender<Scalar, Dim>* active_render_;//current active instance
 	static void idle();//idle function which is set to window_. Called each frame by window and call simulation functions in driver
+    static void display();//display function which is set to window_. Called each frame by window and call simulation functions in driver
+
+	//singleton function
+	void active();//active this instance
 };
 
 

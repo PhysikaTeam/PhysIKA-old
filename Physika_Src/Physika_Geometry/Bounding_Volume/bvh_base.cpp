@@ -40,7 +40,7 @@ void BVHBase<Scalar, Dim>::setRootNode(BVHNodeBase<Scalar, Dim>* root_node)
 {
 	if(root_node_ == root_node)
 		return;
-	if(root_node_ != NULL)
+	if(root_node_ != NULL && !root_node_->isLeaf())
 		delete root_node_;
 	root_node_ = root_node;
 }
@@ -163,7 +163,8 @@ void BVHBase<Scalar, Dim>::clean()
 	if(root_node_ != NULL)
 	{
 		root_node_->clean();
-		delete root_node_;
+        if(!root_node_->isLeaf())
+		    delete root_node_;
 		root_node_ = NULL;
 	}
 	unsigned int list_size = static_cast<unsigned int>(leaf_node_list_.size());
@@ -181,7 +182,8 @@ void BVHBase<Scalar, Dim>::cleanInternalNodes()
 	if(root_node_ != NULL)
 	{
 		root_node_->cleanInternalNodes();
-		delete root_node_;
+        if(!root_node_->isLeaf())
+	    	delete root_node_;
 		root_node_ = NULL;	
 	}
 }

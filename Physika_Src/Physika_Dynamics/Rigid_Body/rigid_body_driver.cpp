@@ -246,12 +246,45 @@ RigidBody<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::rigidBody(unsigned int ind
 }
 
 template <typename Scalar,int Dim>
-bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
+CollisionDetectionResult<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::collisionResult()
 {
-	scene_bvh_.updateSceneBVH();
-	return scene_bvh_.selfCollide(collision_result_);
+	return &collision_result_;
 }
 
+template <typename Scalar,int Dim>
+bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
+{
+	collision_result_.resetCollisionResults();
+	scene_bvh_.updateSceneBVH();
+	bool is_collide = scene_bvh_.selfCollide(collision_result_);
+
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	RigidDriverPlugin<Scalar, Dim>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		if(plugin != NULL)
+			plugin->onCollisionDetection();
+	}
+	return is_collide;
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
+{
+	if(plugin == NULL)
+	{
+		std::cerr<<"Null plugin!"<<std::endl;
+		return;
+	}
+	if(dynamic_cast<RigidDriverPlugin<Scalar, Dim>* >(plugin) == NULL)
+	{
+		std::cerr<<"Wrong plugin type!"<<std::endl;
+		return;
+	}
+	plugin->setDriver(this);
+	this->plugins_.push_back(plugin);
+}
 
 //explicit instantiation
 template class RigidBodyArchive<float, 3>;

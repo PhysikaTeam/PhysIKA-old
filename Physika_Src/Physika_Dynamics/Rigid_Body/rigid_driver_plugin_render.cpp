@@ -19,15 +19,20 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_render.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Render_Base/render_base.h"
+#include "Physika_Render/Color/color.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
 #include <GL/freeglut.h>
 
 namespace Physika{
 
 template <typename Scalar,int Dim>
 RigidDriverPluginRender<Scalar, Dim>::RigidDriverPluginRender():
-	window_(NULL)
+	window_(NULL),
+	is_render_contact_face_(false),
+    contact_face_ids(NULL)
 {
 	active();
 }
@@ -41,6 +46,8 @@ RigidDriverPluginRender<Scalar, Dim>::~RigidDriverPluginRender()
 		delete render_queue_[i];
 	}
 	render_queue_.clear();
+    if(contact_face_ids != NULL)
+        delete [] contact_face_ids;
 }
 
 template <typename Scalar,int Dim>
@@ -99,6 +106,12 @@ void RigidDriverPluginRender<Scalar, Dim>::onAddRigidBody(RigidBody<Scalar, Dim>
 }
 
 template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::onCollisionDetection()
+{
+	
+}
+
+template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::setDriver(DriverBase<Scalar>* driver)
 {
 	this->rigid_driver_ = dynamic_cast<RigidBodyDriver<Scalar, Dim>*>(driver);
@@ -122,6 +135,7 @@ void RigidDriverPluginRender<Scalar, Dim>::setWindow(GlutWindow* window)
 		return;
 	window_ = window;
 	window_->setIdleFunction(&RigidDriverPluginRender<Scalar, Dim>::idle);
+    window_->setDisplayFunction(&RigidDriverPluginRender<Scalar, Dim>::display);
 	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
 	for(unsigned int i = 0; i < num_render; ++i)
 	{
@@ -138,7 +152,337 @@ void RigidDriverPluginRender<Scalar, Dim>::active()
 template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::idle()
 {
-	glutPostRedisplay();
+	active_render_->rigid_driver_->advanceStep(0.1);
+	if(active_render_->is_render_contact_face_)
+	{
+        unsigned int num_body = active_render_->rigid_driver_->numRigidBody();
+        if(active_render_->contact_face_ids != NULL)
+        {
+            delete [] active_render_->contact_face_ids;
+            active_render_->contact_face_ids = NULL;
+        }
+        active_render_->contact_face_ids = new std::vector<unsigned int>[num_body];
+
+		CollisionDetectionResult<Scalar, Dim>* collision_result = active_render_->rigid_driver_->collisionResult();
+		unsigned int num_collision = collision_result->numberCollision();
+		for(unsigned int i = 0; i < num_collision; ++i)
+        {
+            CollisionPairBase<Scalar, Dim>* pair = collision_result->collisionPairs()[i];
+            (active_render_->contact_face_ids)[pair->objectLhsIdx()].push_back(pair->faceLhsIdx());
+            (active_render_->contact_face_ids)[pair->objectRhsIdx()].push_back(pair->faceRhsIdx());
+        }
+	}
+    glutPostRedisplay();
+
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::display()
+{
+    GlutWindow *window = active_render_->window_;
+    PHYSIKA_ASSERT(window);
+    Color<double> background_color = window->backgroundColor<double>();//Color<double>::Black();//template 
+    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    (window->camera()).look();  //set camera
+    
+    if(active_render_->is_render_contact_face_ && active_render_->contact_face_ids != NULL)
+    {
+        SurfaceMeshRender<Scalar>* render;
+        unsigned int num_body = active_render_->rigid_driver_->numRigidBody();
+        for(unsigned int i = 0; i < num_body; ++i)
+        {
+            render = dynamic_cast<SurfaceMeshRender<Scalar>*>(active_render_->render_queue_[i]);
+            if(render == NULL)
+                continue;
+            render->renderFaceWithColor((active_render_->contact_face_ids)[i], Color<float>::Blue());
+        }
+    }
+    (window->renderManager()).renderAll(); //render all tasks of render manager
+    window->displayFrameRate();
+    glutSwapBuffers();
+}
+
+template <typename Scalar,int Dim>
+unsigned int RigidDriverPluginRender<Scalar, Dim>::numRender() const
+{
+	return static_cast<unsigned int>(render_queue_.size());
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableRenderSolidAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->enableRenderSolid();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableRenderSolidAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->disableRenderSolid();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableRenderVerticesAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->enableRenderVertices();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableRenderVerticesAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->disableRenderVertices();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableRenderWireframeAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->enableRenderWireframe();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableRenderWireframeAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->disableRenderWireframe();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableFlatShadingAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->enableFlatShading();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableSmoothShadingAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->enableSmoothShading();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableTextureAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->enableTexture();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableTextureAll()
+{
+	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
+	SurfaceMeshRender<Scalar>* render;
+	for(unsigned int i = 0; i < num_render; ++i)
+	{
+		render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[i]);
+		if(render == NULL)
+			continue;
+		render->disableTexture();
+	}
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableRenderSolidAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->enableRenderSolid();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableRenderSolidAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->disableRenderSolid();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableRenderVerticesAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->enableRenderVertices();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableRenderVerticesAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->disableRenderVertices();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableRenderWireframeAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->enableRenderWireframe();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableRenderWireframeAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->disableRenderWireframe();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableFlatShadingAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->enableFlatShading();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableSmoothShadingAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->enableSmoothShading();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableTextureAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->enableTexture();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableTextureAt(unsigned int index)
+{
+	if(index >= numRender())
+	{
+		std::cerr<<"Render index out of range!"<<std::endl;
+		return;
+	}
+	SurfaceMeshRender<Scalar>* render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render_queue_[index]);
+	if(render != NULL)
+		render->disableTexture();
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableRenderContactFaceAll()
+{
+	is_render_contact_face_ = true;
 }
 
 template <typename Scalar,int Dim>

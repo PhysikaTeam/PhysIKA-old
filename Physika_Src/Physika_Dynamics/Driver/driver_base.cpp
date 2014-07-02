@@ -127,7 +127,10 @@ template <typename Scalar>
 void DriverBase<Scalar>::addPlugin(DriverPluginBase<Scalar>* plugin)
 {
 	if(plugin == NULL)
+	{
+		std::cerr<<"Null plugin!"<<std::endl;
 		return;
+	}
 	plugin->setDriver(this);
 	plugins_.push_back(plugin);
 }

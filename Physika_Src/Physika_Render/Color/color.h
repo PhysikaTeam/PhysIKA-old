@@ -94,8 +94,8 @@ template <typename Scalar>
 template <typename TargetType>
 Color<TargetType> Color<Scalar>::convertColor(const Color<Scalar> &color)
 {
-    Interval<TargetType> target_type_range(std::numeric_limits<TargetType>::min(),std::numeric_limits<TargetType>::max());
-    Interval<Scalar> src_type_range(std::numeric_limits<Scalar>::min(),std::numeric_limits<Scalar>::max());
+    Interval<TargetType> target_type_range((std::numeric_limits<TargetType>::min)(),(std::numeric_limits<TargetType>::max)());
+    Interval<Scalar> src_type_range((std::numeric_limits<Scalar>::min)(),(std::numeric_limits<Scalar>::max)());
     Scalar src_red = color.redChannel(), src_green = color.greenChannel(), src_blue = color.blueChannel(), src_alpha = color.alphaChannel();
     if(is_same<TargetType,Scalar>::value)  //target type and source type are the same
         return Color<TargetType>(static_cast<TargetType>(src_red),static_cast<TargetType>(src_green),static_cast<TargetType>(src_blue),

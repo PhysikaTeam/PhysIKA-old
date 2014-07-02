@@ -74,12 +74,16 @@ public:
 	void read(const char *file_name);//read simulation data from file
 
 	//get & set, add & delete
-	void addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild = true);//is_rebuild means whether rebuild the scene BVH after adding this body.
+	virtual void addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild = true);//is_rebuild means whether rebuild the scene BVH after adding this body.
 	unsigned int numRigidBody() const;
 	RigidBody<Scalar, Dim>* rigidBody(unsigned int index);
+	CollisionDetectionResult<Scalar, Dim>* collisionResult();
 
 	//dynamics
-	bool collisionDetection();
+	virtual bool collisionDetection();
+
+	//plugin
+	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
 protected:
 	CollisionDetectionResult<Scalar, Dim> collision_result_;

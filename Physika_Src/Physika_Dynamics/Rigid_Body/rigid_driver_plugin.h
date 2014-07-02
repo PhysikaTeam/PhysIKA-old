@@ -32,6 +32,7 @@ public:
 
 	//functions called in driver
 	virtual void onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body) = 0;
+	virtual void onCollisionDetection() = 0;
 
 	//basic function
 	virtual RigidBodyDriver<Scalar, Dim>* rigidDriver();

@@ -67,8 +67,11 @@ void RenderManager::insertAtIndex(unsigned int index, RenderBase *task)
     if(task)
     {
         list<RenderBase*>::iterator pos = render_list_.begin();
-        while(index-- >= 0)
+        while(index != 0)
+        {
+            --index;
             ++pos;
+        }
         render_list_.insert(pos,task);
     }
     else
@@ -97,8 +100,11 @@ void RenderManager::removeAtIndex(unsigned int index)
         std::exit(EXIT_FAILURE);
     }
     list<RenderBase*>::iterator pos = render_list_.begin();
-    while(index-- >= 0)
+    while(index != 0)
+    {
+        --index;
         ++pos;
+    }
     render_list_.erase(pos);
 }
 
@@ -116,8 +122,11 @@ const RenderBase* RenderManager::taskAtIndex(unsigned int index) const
         std::exit(EXIT_FAILURE);
     }
     list<RenderBase*>::const_iterator iter = render_list_.begin();
-    while(index-- >= 0)
+    while(index != 0)
+    {
+        --index;
         ++iter;
+    }
     RenderBase *cur_render = *iter;
     return cur_render;
 }
@@ -131,8 +140,11 @@ RenderBase* RenderManager::taskAtIndex(unsigned int index)
         std::exit(EXIT_FAILURE);
     }
     list<RenderBase*>::iterator iter = render_list_.begin();
-    while(index-- >= 0)
+    while(index != 0)
+    {
+        --index;
         ++iter;
+    }
     RenderBase *cur_render = *iter;
     return cur_render;
 }
@@ -172,8 +184,11 @@ void RenderManager::renderAtIndex(unsigned int index)
         std::exit(EXIT_FAILURE);
     }
     list<RenderBase*>::iterator iter = render_list_.begin();
-    while(index-- >= 0)
+    while(index != 0)
+    {
+        --index;
         ++iter;
+    }
     RenderBase *cur_render = *iter;
     PHYSIKA_ASSERT(cur_render);
     cur_render->render();
