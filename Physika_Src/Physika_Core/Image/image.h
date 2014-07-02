@@ -30,6 +30,8 @@ public:
     Image(); //construct an empty image
     //construct image with given data, data are copied internally
     Image(unsigned int width, unsigned int height, DataFormat data_format, const unsigned char *raw_data);
+    Image(const Image &image);  //copy constructor, data is copied 
+    Image& operator= (const Image &image);
     ~Image();
 
     //basic getters&&setters
@@ -48,6 +50,7 @@ public:
     Image subImage(const Range<unsigned int,2> &range) const;
 protected:
     void allocMemory();
+    unsigned int pixelSize() const;
 protected:
     unsigned int width_;
     unsigned int height_;

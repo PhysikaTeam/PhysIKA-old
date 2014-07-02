@@ -19,25 +19,25 @@ using std::string;
 
 namespace Physika{
 
-unsigned char* ImageIO::load(const string &filename, int &width, int &height)
+bool ImageIO::load(const string &filename, Image * image)
 {
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
         std::cerr<<"No file extension found for the image file!\n";
-        return NULL;
+        return false;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-        return PngIO::load(filename,width,height);
+        return PngIO::load(filename, image);
     else
     {
         std::cerr<<"Unknown image file format!\n";
-        return NULL;
+        return false;
     }
 }
 
-bool ImageIO::save(const string &filename, int width, int height, const unsigned char *image_data)
+bool ImageIO::save(const string &filename, const Image * image)
 {
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
@@ -47,7 +47,7 @@ bool ImageIO::save(const string &filename, int width, int height, const unsigned
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-        return PngIO::save(filename,width,height,image_data);
+        return PngIO::save(filename, image);
     else
     {
         std::cerr<<"Unknown image file format specified!\n";
@@ -56,21 +56,3 @@ bool ImageIO::save(const string &filename, int width, int height, const unsigned
 }
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
