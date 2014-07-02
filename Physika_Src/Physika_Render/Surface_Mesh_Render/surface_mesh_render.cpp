@@ -224,6 +224,7 @@ template <typename Scalar>
 void SurfaceMeshRender<Scalar>::renderVertices()
 {
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT);
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
@@ -258,12 +259,12 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);        // set openGL polygon mode for wire mode
     glDisable(GL_LIGHTING);
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
-
     if(! glIsList(this->wire_display_list_id_))
     {
         this->wire_display_list_id_=glGenLists(1);
@@ -306,6 +307,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     glDisable(GL_COLOR_MATERIAL);              /// warning: we have to disable GL_COLOR_MATERIAL, otherwise the material propertity won't appear!!!
     glEnable(GL_LIGHTING);                     
     glEnable(GL_LIGHT0);
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
@@ -409,11 +411,11 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
     {
         std::cerr<<"warning: the size of color don't equal to vertex number in SurfaceMesh, the vertex lacking of cunstom color will be rendered in white color !"<<std::endl;
     }
-
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // set polygon mode FILL for SOLID MODE
     glShadeModel(GL_SMOOTH);                   // set shade model to GL_SMOOTH
     glDisable(GL_LIGHTING);                    // disable lighting
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
@@ -466,7 +468,8 @@ void SurfaceMeshRender<Scalar>::renderFaceWithColor(const std::vector<unsigned i
     glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
     glEnable(GL_POLYGON_OFFSET_FILL);              // enable polygon offset
     openGLColor3(color);
-    glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
+    glPolygonOffset(-1.0,1.0);                     // set polygon offset (factor, unit)
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
@@ -513,6 +516,7 @@ void SurfaceMeshRender<Scalar>::renderFaceWithColor(const std::vector<unsigned i
     glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
     glEnable(GL_POLYGON_OFFSET_FILL);              // enable polygon offset
     glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
@@ -563,6 +567,7 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
     glPointSize(1.5*point_size);
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
@@ -605,6 +610,7 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
     glPointSize(1.5*point_size);
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
@@ -652,13 +658,14 @@ void SurfaceMeshRender<Scalar>::loadTextures()
         if(material_ref.hasTexture())    // if have a texture
         {
             Image image;
-            if(ImageIO::load(material_ref.textureFileName(),& image)== false) // load image data from file
+			bool is_success = true;
+            if(ImageIO::load(material_ref.textureFileName(), &image)== false) // load image data from file
             {
                 std::cerr<<"error in loading image"<<std::endl;
-                return;
+				is_success = false;
             }
             std::pair<bool,unsigned int> texture;
-            if(image.rawData()==NULL)        // if image_data is NULL, then set this material having no texture.
+            if( !is_success )        // if image_data is NULL, then set this material having no texture.
             {
                 texture.first = false;
                 this->textures_[material_idx] = texture;
@@ -674,7 +681,7 @@ void SurfaceMeshRender<Scalar>::loadTextures()
             openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /// warning: we have to set the FILTER, otherwise the TEXTURE will "not" appear
 
-            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_MODULATE);       /// warning
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_MODULATE);        /// warning
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.rawData()); //generate texture 
             glDisable(GL_TEXTURE_2D);         
 

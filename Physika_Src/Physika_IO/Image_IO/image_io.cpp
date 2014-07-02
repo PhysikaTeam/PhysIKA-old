@@ -15,11 +15,12 @@
 #include <iostream>
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/png_io.h"
+#include "ppm_io.h"
 using std::string;
 
 namespace Physika{
 
-bool ImageIO::load(const string &filename, Image * image)
+bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data_format)
 {
     string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
@@ -29,8 +30,20 @@ bool ImageIO::load(const string &filename, Image * image)
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-        return PngIO::load(filename, image);
-    else
+	{   
+		if(data_format == Image::DataFormat::RGBA)
+			return PngIO::load(filename, image);
+		else
+			return PngIO::load(filename, image, Image::DataFormat::RGB);
+	}
+    else  if(suffix==string(".ppm"))
+	{   
+		if(data_format == Image::DataFormat::RGBA)
+			return PPMIO::load(filename, image);
+		else
+			return PPMIO::load(filename, image, Image::DataFormat::RGB);
+	}
+	else
     {
         std::cerr<<"Unknown image file format!\n";
         return false;
@@ -40,15 +53,21 @@ bool ImageIO::load(const string &filename, Image * image)
 bool ImageIO::save(const string &filename, const Image * image)
 {
     string::size_type suffix_idx = filename.rfind('.');
-    if(suffix_idx>=filename.size())
+    if(suffix_idx >= filename.size())
     {
         std::cerr<<"No file extension specified!\n";
         return false;
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-        return PngIO::save(filename, image);
-    else
+	{
+			return PngIO::save(filename, image);
+	}
+    else if(suffix==string(".ppm"))
+	{
+			return PPMIO::save(filename, image);
+	}
+	else
     {
         std::cerr<<"Unknown image file format specified!\n";
         return false;
