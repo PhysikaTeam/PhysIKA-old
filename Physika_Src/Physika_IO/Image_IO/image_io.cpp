@@ -20,6 +20,11 @@ using std::string;
 
 namespace Physika{
 
+bool ImageIO::load(const string &filename, Image *image)
+{
+    return load(filename,image,Image::RGBA);
+}
+
 bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data_format)
 {
     string::size_type suffix_idx = filename.rfind('.');
@@ -30,19 +35,9 @@ bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-    {   
-        if(data_format == Image::DataFormat::RGBA)
-            return PngIO::load(filename, image);
-        else
-            return PngIO::load(filename, image, Image::DataFormat::RGB);
-    }
+        return PngIO::load(filename, image, data_format);
     else  if(suffix==string(".ppm"))
-    {   
-        if(data_format == Image::DataFormat::RGBA)
-            return PPMIO::load(filename, image);
-        else
-            return PPMIO::load(filename, image, Image::DataFormat::RGB);
-    }
+        return PPMIO::load(filename, image, data_format);
     else
     {
         std::cerr<<"Unknown image file format!\n";

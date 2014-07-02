@@ -26,7 +26,7 @@ public:
     PPMIO(){}
     ~PPMIO(){}
 
-    static bool load(const std::string &filename, Image * image);
+    static bool load(const std::string &filename, Image * image);  //data_format = RGBA
     static bool load(const std::string &filename, Image * image, Image::DataFormat data_format);
 
     /* save image data to file, the image data is in row order
