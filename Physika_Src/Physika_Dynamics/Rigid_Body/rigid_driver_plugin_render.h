@@ -77,6 +77,7 @@ protected:
 	GlutWindow* window_;
 	std::vector<RenderBase*> render_queue_;
 	bool is_render_contact_face_;
+    std::vector<unsigned int> *contact_face_ids;//used to render contact faces.
 
 	//singleton
 	static RigidDriverPluginRender<Scalar, Dim>* active_render_;//current active instance

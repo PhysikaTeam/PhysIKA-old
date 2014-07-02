@@ -32,7 +32,7 @@
 #include "Physika_Core/Utilities/Timer/timer.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
 
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <GL/glui.h>
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
@@ -47,6 +47,26 @@
 using namespace std;
 using namespace Physika;
 
+void display()
+{
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    Color<double> background_color = Color<double>::Black();//template window->backgroundColor<double>();
+    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    (window->camera()).look();  //set camera
+
+    std::vector<unsigned int> temp;
+    temp.push_back(10);
+
+    //dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(0))->renderFaceWithColor(temp, Color<float>::Blue());
+    //dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(1))->renderFaceWithColor(temp, Color<float>::Blue());
+
+    (window->renderManager()).renderAll(); //render all tasks of render manager
+    window->displayFrameRate();
+    glutSwapBuffers();
+}
+
 int main()
 {
     SurfaceMesh<double> mesh_ball;
@@ -56,6 +76,7 @@ int main()
 	RigidBodyDriver<double, 3> driver;
 
 	RigidBody<double,3> body1;
+    body1.transformPtr()->setTranslation(Vector<double, 3>(0, 0, 0));
 	body1.setMesh(&mesh_ball);
 
 	RigidBody<double,3> body2;
@@ -65,11 +86,13 @@ int main()
 	driver.addRigidBody(&body1);
 	driver.addRigidBody(&body2);
 
+
     GlutWindow glut_window;
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
 	glut_window.setCameraPosition(Vector<double, 3>(-60, 0, 60));
 	glut_window.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
+    //glut_window.setDisplayFunction(display);
 	glut_window.setCameraFarClip(10000);
 	glut_window.setCameraNearClip(1.0e-3);
 	glut_window.setCameraFOV(45);
@@ -77,9 +100,25 @@ int main()
 	RigidDriverPluginRender<double, 3>* plugin = new RigidDriverPluginRender<double, 3>();
 	plugin->setWindow(&glut_window);
 	driver.addPlugin(plugin);
-	plugin->disableRenderSolidAt(0);
-	plugin->enableRenderWireframeAt(0);
+	plugin->disableRenderSolidAll();
+	plugin->enableRenderWireframeAll();
     plugin->enableRenderContactFaceAll();
+
+    SurfaceMeshRender<double>* render1 = new SurfaceMeshRender<double>();
+    render1->setSurfaceMesh(&mesh_ball);
+
+    SurfaceMeshRender<double>* render2 = new SurfaceMeshRender<double>();
+    render2->setSurfaceMesh(&mesh_ball);
+    Transform<double> *trans = new Transform<double>();
+    trans->setTranslation(Vector<double, 3>(0, 35, 0));
+    render2->setTransform(trans);
+
+
+
+
+
+    //glut_window.pushBackRenderTask(render1);
+    //glut_window.pushBackRenderTask(render2);
     
 
     cout<<"Test GlutWindow with custom display function:\n";

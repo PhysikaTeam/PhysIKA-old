@@ -31,7 +31,8 @@ namespace Physika{
 template <typename Scalar,int Dim>
 RigidDriverPluginRender<Scalar, Dim>::RigidDriverPluginRender():
 	window_(NULL),
-	is_render_contact_face_(false)
+	is_render_contact_face_(false),
+    contact_face_ids(NULL)
 {
 	active();
 }
@@ -45,6 +46,8 @@ RigidDriverPluginRender<Scalar, Dim>::~RigidDriverPluginRender()
 		delete render_queue_[i];
 	}
 	render_queue_.clear();
+    if(contact_face_ids != NULL)
+        delete [] contact_face_ids;
 }
 
 template <typename Scalar,int Dim>
@@ -132,6 +135,7 @@ void RigidDriverPluginRender<Scalar, Dim>::setWindow(GlutWindow* window)
 		return;
 	window_ = window;
 	window_->setIdleFunction(&RigidDriverPluginRender<Scalar, Dim>::idle);
+    window_->setDisplayFunction(&RigidDriverPluginRender<Scalar, Dim>::display);
 	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
 	for(unsigned int i = 0; i < num_render; ++i)
 	{
@@ -152,29 +156,51 @@ void RigidDriverPluginRender<Scalar, Dim>::idle()
 	if(active_render_->is_render_contact_face_)
 	{
         unsigned int num_body = active_render_->rigid_driver_->numRigidBody();
-        std::vector<unsigned int> *contact_face_ids = new std::vector<unsigned int>[num_body];
+        if(active_render_->contact_face_ids != NULL)
+        {
+            delete [] active_render_->contact_face_ids;
+            active_render_->contact_face_ids = NULL;
+        }
+        active_render_->contact_face_ids = new std::vector<unsigned int>[num_body];
 
 		CollisionDetectionResult<Scalar, Dim>* collision_result = active_render_->rigid_driver_->collisionResult();
 		unsigned int num_collision = collision_result->numberCollision();
 		for(unsigned int i = 0; i < num_collision; ++i)
         {
             CollisionPairBase<Scalar, Dim>* pair = collision_result->collisionPairs()[i];
-            contact_face_ids[pair->objectLhsIdx()].push_back(pair->faceLhsIdx());
-            contact_face_ids[pair->objectRhsIdx()].push_back(pair->faceRhsIdx());
+            (active_render_->contact_face_ids)[pair->objectLhsIdx()].push_back(pair->faceLhsIdx());
+            (active_render_->contact_face_ids)[pair->objectRhsIdx()].push_back(pair->faceRhsIdx());
         }
-        
-	    glutPostRedisplay();
+	}
+    glutPostRedisplay();
+
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::display()
+{
+    GlutWindow *window = active_render_->window_;
+    PHYSIKA_ASSERT(window);
+    Color<double> background_color = window->backgroundColor<double>();//Color<double>::Black();//template 
+    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    (window->camera()).look();  //set camera
+    
+    if(active_render_->is_render_contact_face_ && active_render_->contact_face_ids != NULL)
+    {
         SurfaceMeshRender<Scalar>* render;
+        unsigned int num_body = active_render_->rigid_driver_->numRigidBody();
         for(unsigned int i = 0; i < num_body; ++i)
         {
             render = dynamic_cast<SurfaceMeshRender<Scalar>*>(active_render_->render_queue_[i]);
             if(render == NULL)
                 continue;
-            render->renderFaceWithColor(contact_face_ids[i], Color<float>::Blue());
+            render->renderFaceWithColor((active_render_->contact_face_ids)[i], Color<float>::Blue());
         }
-		delete []contact_face_ids;	
-	}
-
+    }
+    (window->renderManager()).renderAll(); //render all tasks of render manager
+    window->displayFrameRate();
+    glutSwapBuffers();
 }
 
 template <typename Scalar,int Dim>
