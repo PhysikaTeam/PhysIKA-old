@@ -490,6 +490,11 @@ void GlutWindow::setInitFunction(void (*func)(void))
         init_function_ = func;
 }
 
+void GlutWindow::bindDefaultKeys(unsigned char key, int x, int y)
+{
+    GlutWindow::keyboardFunction(key,x,y);
+}
+
 ////////////////////////////////////////////////// default callback functions ////////////////////////////////////////////////////////////////////
 
 void GlutWindow::displayFunction(void)

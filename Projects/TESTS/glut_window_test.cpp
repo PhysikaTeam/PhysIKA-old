@@ -69,6 +69,19 @@ void initFunction()
     glClearDepth(1.0);
 }
 
+void keyboardFunction(unsigned char key, int x, int y )
+{
+    GlutWindow::bindDefaultKeys(key,x,y);
+    switch(key)
+    {
+    case 't':
+        cout<<"test\n";
+        break;
+    default:
+        break;
+    }
+}
+
 int main()
 {
     GlutWindow glut_window;
@@ -78,8 +91,6 @@ int main()
     glut_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
     glut_window.setCameraNearClip(0.001);
     glut_window.setCameraFarClip(1.0e4);
-    //glut_window.translateCamera(Vector<double,3>(0,-1,0));
-    //glut_window.orbitCameraRight(1.68);
     glut_window.setDisplayFunction(displayFunction);
     cout<<"Test GlutWindow with custom display function:\n";
     glut_window.createWindow();
@@ -94,6 +105,7 @@ int main()
     glui_window.setCameraFarClip(1.0e4);
     glui_window.setBackgroundColor(Color<double>::White());
     glui_window.setTextColor(Color<double>::Black());
+    glui_window.setKeyboardFunction(keyboardFunction);
     GLUI *glui = glui_window.gluiWindow();
     PHYSIKA_ASSERT(glui);
     glui->add_statictext("Simple Window with GLUI controls");
