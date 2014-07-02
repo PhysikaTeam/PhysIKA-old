@@ -26,8 +26,8 @@ using Physika::Vector;
 
 int main()
 {
-    //string file_name("image_test_input.png");
-    string file_name("screen_capture_0.png");
+    string file_name("image_test_input.png");
+    //string file_name("screen_capture_0.png");
     Image image;
     bool status = ImageIO::load(file_name,&image);
     if(status)
@@ -37,15 +37,22 @@ int main()
         Image flip_horizon = image.mirrorImage();
         ImageIO::save(string("flip_horizon.png"),&flip_horizon);
         cout<<"Done.\n";
-        cout<<"Save vertically flipped image to flip_vertical.png:\n";
-        Image flip_vertical = image.upsideDownImage();
-        ImageIO::save(string("flip_vertical.png"),&flip_vertical);
-        cout<<"Done.\n";
-        cout<<"Save left lower quarter to left_lower_quarter.png:\n";
-        Range<unsigned int,2> range(Vector<unsigned int,2>(0,image.height()/2),Vector<unsigned int,2>(image.width()/2,image.height()));
-        Image sub_image = image.subImage(range);
-        ImageIO::save(string("left_lower_quarter.png"),&sub_image);
-        cout<<"Done.\n";
+        // cout<<"Save vertically flipped image to flip_vertical.png:\n";
+        // Image flip_vertical = image.upsideDownImage();
+        // ImageIO::save(string("flip_vertical.png"),&flip_vertical);
+        // cout<<"Done.\n";
+        // cout<<"Save left lower quarter to left_lower_quarter.png:\n";
+        // Range<unsigned int,2> range(Vector<unsigned int,2>(0,image.height()/2),Vector<unsigned int,2>(image.width()/2,image.height()));
+        // Image sub_image = image.subImage(range);
+        // ImageIO::save(string("left_lower_quarter.png"),&sub_image);
+        // cout<<"Done.\n";
     }
     return 0;
 }
+
+
+
+
+
+
+

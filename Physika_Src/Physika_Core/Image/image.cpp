@@ -104,9 +104,9 @@ void Image::flipHorizontally()
         for(unsigned int j = 0; j < height_; ++j)
             for(unsigned int k = 0; k < pixel_size; ++k)
             {
-                unsigned char temp = raw_data_[i+j*width_*pixel_size+k];
-                raw_data_[i+j*width_*pixel_size+k] = raw_data_[(width_-1-i)+j*width_*pixel_size+k];
-                raw_data_[(width_-1-i)+j*width_*pixel_size+k] = temp;
+                unsigned char temp = raw_data_[(i+j*width_)*pixel_size+k];
+                raw_data_[(i+j*width_)*pixel_size+k] = raw_data_[((width_-1-i)+j*width_)*pixel_size+k];
+                raw_data_[((width_-1-i)+j*width_)*pixel_size+k] = temp;
             }
 }
 
@@ -146,6 +146,7 @@ Image Image::upsideDownImage() const
     return image;
 }
 
+//return sub image within given range (left up corner is the origin)
 Image Image::subImage(const Range<unsigned int,2> &range) const
 {
     Vector<unsigned int,2> size = range.edgeLengths();
@@ -158,7 +159,7 @@ Image Image::subImage(const Range<unsigned int,2> &range) const
         {
             unsigned int target_index = i+j*size[0]*pixel_size;
             unsigned int source_index = start[0]+i+(j+start[1])*width_*pixel_size;
-            data[target_index] = data[source_index];
+            data[target_index] = raw_data_[source_index];
         }
     Image image(size[0],size[1],data_format_,data);
     delete[] data;
