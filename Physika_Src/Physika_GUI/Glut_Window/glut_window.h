@@ -53,6 +53,9 @@ namespace Physika{
  *           1. ESC: close window
  *           2. f: enable/disable display frame-rate
  *           3. s: capture screen
+ *     The default keyboard behaviors can be retained in your custom keyboard callback if bindDefaultKeys(key,x,y)
+ *     is called AT THE BEGINING OF your custom callback with the same arguments as your callback.
+ *     We strongly suggest not to override the default key behaviors.
  */
 
 class GlutWindow
@@ -137,6 +140,7 @@ public:
     void setMotionFunction(void (*func)(int x, int y));
     void setMouseFunction(void (*func)(int button, int state, int x, int y));
     void setInitFunction(void (*func)(void)); //the init function before entering mainloop
+    static void bindDefaultKeys(unsigned char key, int x, int y);  //bind the default keyboard behaviors
     //direct operation on camera and render manager
     const Camera<double>& camera() const{ return camera_;}
     Camera<double>& camera() { return camera_;}
