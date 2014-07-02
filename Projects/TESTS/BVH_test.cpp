@@ -77,7 +77,10 @@ int main()
 	RigidDriverPluginRender<double, 3>* plugin = new RigidDriverPluginRender<double, 3>();
 	plugin->setWindow(&glut_window);
 	driver.addPlugin(plugin);
-
+	plugin->disableRenderSolidAt(0);
+	plugin->enableRenderWireframeAt(0);
+    plugin->enableRenderContactFaceAll();
+    
 
     cout<<"Test GlutWindow with custom display function:\n";
     glut_window.createWindow();

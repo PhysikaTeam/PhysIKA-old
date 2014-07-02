@@ -31,8 +31,7 @@ ObjectBVH<Scalar, Dim>::ObjectBVH():
 template <typename Scalar,int Dim>
 ObjectBVH<Scalar, Dim>::~ObjectBVH()
 {
-	if(collidable_object_ != NULL)
-		delete collidable_object_;
+
 }
 
 template <typename Scalar,int Dim>

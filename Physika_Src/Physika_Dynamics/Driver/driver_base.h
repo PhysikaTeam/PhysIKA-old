@@ -51,6 +51,7 @@ public:
     virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions
     virtual void write(const char *file_name)=0;//write simulation data to file
     virtual void read(const char *file_name)=0;//read simulation data from file
+	virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
 
     inline void setCallBacks(CallBacks *call_backs){call_backs_ = call_backs;}
     inline void setMaxDt(Scalar max_dt){max_dt_ = max_dt;}
@@ -65,8 +66,6 @@ public:
     inline void disableWriteToFile(){write_to_file_ = false;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
-
-	virtual void addPlugin(DriverPluginBase<Scalar>* plugin);//add a plugin in this driver.
  
 protected:
     int start_frame_;
