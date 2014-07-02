@@ -19,7 +19,7 @@ namespace Physika{
 
 template <typename Scalar>
 DriverPluginBase<Scalar>::DriverPluginBase():
-	driver_(NULL)
+    driver_(NULL)
 {
 
 }
@@ -33,13 +33,13 @@ DriverPluginBase<Scalar>::~DriverPluginBase()
 template <typename Scalar>
 DriverBase<Scalar>* DriverPluginBase<Scalar>::driver()
 {
-	return driver_;
+    return driver_;
 }
 
 template <typename Scalar>
 void DriverPluginBase<Scalar>::setDriver(DriverBase<Scalar>* driver)
 {
-	driver_ = driver;
+    driver_ = driver;
 }
 
 //explicit instantiation
