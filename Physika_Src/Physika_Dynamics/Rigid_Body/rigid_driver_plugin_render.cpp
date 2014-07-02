@@ -21,6 +21,7 @@
 #include "Physika_Render/Render_Base/render_base.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
+#include <GL/freeglut.h>
 
 namespace Physika{
 
@@ -69,6 +70,8 @@ void RigidDriverPluginRender<Scalar, Dim>::onAdvanceStep(Scalar dt)
 template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body)
 {
+	if(rigid_body == NULL)
+		return;
 	RenderBase* render;
 	switch(rigid_body->objectType())
 	{
@@ -99,8 +102,10 @@ void RigidDriverPluginRender<Scalar, Dim>::setDriver(RigidBodyDriver<Scalar, Dim
 template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::setWindow(GlutWindow* window)
 {
+	if(window == NULL)
+		return;
 	window_ = window;
-	//window_->setIdleFunction(&RigidDriverPluginRender<Scalar, Dim>::idle);
+	window_->setIdleFunction(&RigidDriverPluginRender<Scalar, Dim>::idle);
 	unsigned int num_render = static_cast<unsigned int>(render_queue_.size());
 	for(unsigned int i = 0; i < num_render; ++i)
 	{
@@ -117,7 +122,7 @@ void RigidDriverPluginRender<Scalar, Dim>::active()
 template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::idle()
 {
-
+	glutPostRedisplay();
 }
 
 template <typename Scalar,int Dim>

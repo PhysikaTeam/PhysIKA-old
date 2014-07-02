@@ -16,6 +16,7 @@
 #define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_DRIVER_H_
 
 #include<vector>
+#include "Physika_Dynamics/Driver/driver_base.h"
 #include "Physika_Geometry/Bounding_Volume/bvh_base.h"
 #include "Physika_Geometry/Bounding_Volume/scene_bvh.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
@@ -56,7 +57,7 @@ protected:
 template <typename Scalar,int Dim> class RigidDriverPlugin;
 
 template <typename Scalar,int Dim>
-class RigidBodyDriver
+class RigidBodyDriver: public DriverBase<Scalar>
 {
 public:
 	//constructors && deconstructors

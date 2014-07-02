@@ -167,6 +167,8 @@ void RigidBodyDriver<Scalar, Dim>::read(const char *file_name)
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild)
 {
+	if(rigid_body == NULL)
+		return;
 	RigidBodyArchive<Scalar, Dim>* archive = new RigidBodyArchive<Scalar, Dim>(rigid_body);
 	archive->setIndex(numRigidBody());
 	scene_bvh_.addObjectBVH(archive->objectBVH(), is_rebuild);
@@ -206,6 +208,8 @@ bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::addPlugin(RigidDriverPlugin<Scalar, Dim>* plugin)
 {
+	if(plugin == NULL)
+		return;
 	plugins_.push_back(plugin);
 	plugin->setDriver(this);
 }
