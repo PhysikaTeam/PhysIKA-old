@@ -258,11 +258,11 @@ bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
 	scene_bvh_.updateSceneBVH();
 	bool is_collide = scene_bvh_.selfCollide(collision_result_);
 
-	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
 	RigidDriverPlugin<Scalar, Dim>* plugin;
 	for(unsigned int i = 0; i < plugin_num; ++i)
 	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
 		if(plugin != NULL)
 			plugin->onCollisionDetection();
 	}
