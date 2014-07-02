@@ -124,25 +124,55 @@ RigidBodyDriver<Scalar, Dim>::~RigidBodyDriver()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::run()
 {
-
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	RigidDriverPlugin<Scalar, Dim>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		if(plugin != NULL)
+			plugin->onRun();
+	}
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::advanceFrame()
 {
-
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	RigidDriverPlugin<Scalar, Dim>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		if(plugin != NULL)
+			plugin->onAdvanceFrame();
+	}
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::initialize()
 {
-
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	RigidDriverPlugin<Scalar, Dim>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		if(plugin != NULL)
+			plugin->onInitialize();
+	}
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
 {
 	collisionDetection();
+
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	RigidDriverPlugin<Scalar, Dim>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		if(plugin != NULL)
+			plugin->onAdvanceStep(dt);
+	}
 }
 
 template <typename Scalar,int Dim>
@@ -155,13 +185,27 @@ Scalar RigidBodyDriver<Scalar, Dim>::computeTimeStep()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::write(const char *file_name)
 {
-
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	RigidDriverPlugin<Scalar, Dim>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		if(plugin != NULL)
+			plugin->onWrite();
+	}
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::read(const char *file_name)
 {
-
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	RigidDriverPlugin<Scalar, Dim>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		if(plugin != NULL)
+			plugin->onRead();
+	}
 }
 
 template <typename Scalar,int Dim>
@@ -175,9 +219,12 @@ void RigidBodyDriver<Scalar, Dim>::addRigidBody(RigidBody<Scalar, Dim>* rigid_bo
 	rigid_body_archives_.push_back(archive);
 
 	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	RigidDriverPlugin<Scalar, Dim>* plugin;
 	for(unsigned int i = 0; i < plugin_num; ++i)
 	{
-		plugins_[i]->onAddRigidBody(rigid_body);
+		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>(plugins_[i]);
+		if(plugin != NULL)
+			plugin->onAddRigidBody(rigid_body);
 	}
 }
 
@@ -205,14 +252,6 @@ bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
 	return scene_bvh_.selfCollide(collision_result_);
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::addPlugin(RigidDriverPlugin<Scalar, Dim>* plugin)
-{
-	if(plugin == NULL)
-		return;
-	plugins_.push_back(plugin);
-	plugin->setDriver(this);
-}
 
 //explicit instantiation
 template class RigidBodyArchive<float, 3>;

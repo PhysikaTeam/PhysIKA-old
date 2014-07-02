@@ -35,10 +35,13 @@ public:
 	void onAdvanceFrame();
 	void onInitialize();
 	void onAdvanceStep(Scalar dt);
+	void onWrite();
+	void onRead();
+
 	void onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body);
 
 	//basic function
-	void setDriver(RigidBodyDriver<Scalar, Dim>* driver);
+	void setDriver(DriverBase<Scalar>* driver);
 	void setWindow(GlutWindow* window);
 
 	//singleton function

@@ -19,7 +19,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim>
 RigidDriverPlugin<Scalar, Dim>::RigidDriverPlugin():
-	driver_(NULL)
+	rigid_driver_(NULL)
 {
 
 }
@@ -31,15 +31,17 @@ RigidDriverPlugin<Scalar, Dim>::~RigidDriverPlugin()
 }
 
 template <typename Scalar,int Dim>
-RigidBodyDriver<Scalar, Dim>* RigidDriverPlugin<Scalar, Dim>::driver()
+RigidBodyDriver<Scalar, Dim>* RigidDriverPlugin<Scalar, Dim>::rigidDriver()
 {
-	return driver_;
+	return rigid_driver_;
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPlugin<Scalar, Dim>::setDriver(RigidBodyDriver<Scalar, Dim>* driver)
+void RigidDriverPlugin<Scalar, Dim>::setDriver(DriverBase<Scalar>* driver)
 {
-	driver_ = driver;
+	rigid_driver_ = dynamic_cast<RigidBodyDriver<Scalar, Dim>*>(driver);
+	if(rigid_driver_ != NULL)
+		this->driver_ = driver;
 }
 
 //explicit instantiation

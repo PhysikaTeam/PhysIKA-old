@@ -12,12 +12,14 @@
  *
  */
 
+#include "Physika_Dynamics/Driver/driver_base.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
 
 namespace Physika{
 
 template <typename Scalar>
-DriverPluginBase<Scalar>::DriverPluginBase()
+DriverPluginBase<Scalar>::DriverPluginBase():
+	driver_(NULL)
 {
 
 }
@@ -26,6 +28,18 @@ template <typename Scalar>
 DriverPluginBase<Scalar>::~DriverPluginBase()
 {
 
+}
+
+template <typename Scalar>
+DriverBase<Scalar>* DriverPluginBase<Scalar>::driver()
+{
+	return driver_;
+}
+
+template <typename Scalar>
+void DriverPluginBase<Scalar>::setDriver(DriverBase<Scalar>* driver)
+{
+	driver_ = driver;
 }
 
 //explicit instantiation

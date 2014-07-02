@@ -15,13 +15,15 @@
 #ifndef PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_DRIVER_PLUGIN_H_
 #define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_DRIVER_PLUGIN_H_
 
+#include "Physika_Dynamics/Driver/driver_plugin_base.h"
+
 namespace Physika{
 
 template <typename Scalar,int Dim> class RigidBody;
 template <typename Scalar,int Dim> class RigidBodyDriver;
 
 template <typename Scalar,int Dim>
-class RigidDriverPlugin
+class RigidDriverPlugin: public DriverPluginBase<Scalar>
 {
 public:
 	//constructors && deconstructors
@@ -29,18 +31,14 @@ public:
 	virtual ~RigidDriverPlugin();
 
 	//functions called in driver
-	virtual void onRun() = 0;
-	virtual void onAdvanceFrame() = 0;
-	virtual void onInitialize() = 0;
-	virtual void onAdvanceStep(Scalar dt) = 0;
 	virtual void onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body) = 0;
 
 	//basic function
-	virtual RigidBodyDriver<Scalar, Dim>* driver();
-	virtual void setDriver(RigidBodyDriver<Scalar, Dim>* driver);
+	virtual RigidBodyDriver<Scalar, Dim>* rigidDriver();
+	virtual void setDriver(DriverBase<Scalar>* driver);
 
 protected:
-	RigidBodyDriver<Scalar, Dim>* driver_;
+	RigidBodyDriver<Scalar, Dim>* rigid_driver_;
 };
 
 } //end of namespace Physika

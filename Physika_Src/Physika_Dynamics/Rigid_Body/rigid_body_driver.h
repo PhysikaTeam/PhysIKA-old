@@ -81,14 +81,10 @@ public:
 	//dynamics
 	bool collisionDetection();
 
-	//plugin
-	void addPlugin(RigidDriverPlugin<Scalar, Dim>* plugin);
-
 protected:
 	CollisionDetectionResult<Scalar, Dim> collision_result_;
 	SceneBVH<Scalar, Dim> scene_bvh_;
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
-	std::vector<RigidDriverPlugin<Scalar, Dim>* > plugins_;
 };
 
 } //end of namespace Physika

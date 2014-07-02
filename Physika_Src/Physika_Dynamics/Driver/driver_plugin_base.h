@@ -17,14 +17,30 @@
 
 namespace Physika{
 
+template <typename Scalar> class DriverBase;
+
 template <typename Scalar>
 class DriverPluginBase
 {
 public:
+	//constructors && deconstructors
 	DriverPluginBase();
 	virtual ~DriverPluginBase();
 
+	//functions called in driver
+	virtual void onRun() = 0;
+	virtual void onAdvanceFrame() = 0;
+	virtual void onInitialize() = 0;
+	virtual void onAdvanceStep(Scalar dt) = 0;
+	virtual void onWrite() = 0;
+	virtual void onRead() = 0;
+
+	//basic function
+	virtual DriverBase<Scalar>* driver();
+	virtual void setDriver(DriverBase<Scalar>* driver) = 0;//should be redefined in child class because type-check of driver should be done before assignment.
+
 protected:
+	DriverBase<Scalar>* driver_;
 };
 
 }  //end of namespace Physika

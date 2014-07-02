@@ -16,9 +16,12 @@
 #define PHYSIKA_DYNAMICS_DRIVER_DRIVER_BASE_H_
 
 #include <string>
+#include <vector>
 #include "Physika_Core/Utilities/Timer/timer.h"
 
 namespace Physika{
+
+template <typename Scalar> class DriverPluginBase;
 
 template <typename Scalar>
 class DriverBase
@@ -62,6 +65,8 @@ public:
     inline void disableWriteToFile(){write_to_file_ = false;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
+
+	virtual void addPlugin(DriverPluginBase<Scalar>* plugin);//add a plugin in this driver.
  
 protected:
     int start_frame_;
@@ -74,6 +79,8 @@ protected:
     bool enable_timer_;
     Timer timer_;
     Scalar time_;//current time point of simulation
+
+	std::vector<DriverPluginBase<Scalar>* > plugins_;//Plugin vector. All plugins should be added here and called in corresponding functions
 };
 
 }  //end of namespace Physika

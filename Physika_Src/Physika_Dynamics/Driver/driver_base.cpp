@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include "Physika_Dynamics/Driver/driver_base.h"
+#include "Physika_Dynamics/Driver/driver_plugin_base.h"
 
 namespace Physika{
 
@@ -50,6 +51,16 @@ template <typename Scalar>
 void DriverBase<Scalar>::run()
 {
     initialize();
+
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	DriverPluginBase<Scalar>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = plugins_[i];
+		if(plugin != NULL)
+			plugin->onRun();
+	}
+
     for(int frame=start_frame_;frame<=end_frame_;++frame)
     {
 	std::cout<<"Begin Frame "<<frame<<"\n";
@@ -100,6 +111,25 @@ void DriverBase<Scalar>::advanceFrame()
         //end time step callbacks
 	if(call_backs_) call_backs_->endTimeStep(time_,dt);
     }
+
+	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+	DriverPluginBase<Scalar>* plugin;
+	for(unsigned int i = 0; i < plugin_num; ++i)
+	{
+		plugin = plugins_[i];
+		if(plugin != NULL)
+			plugin->onAdvanceFrame();
+	}
+
+}
+
+template <typename Scalar>
+void DriverBase<Scalar>::addPlugin(DriverPluginBase<Scalar>* plugin)
+{
+	if(plugin == NULL)
+		return;
+	plugin->setDriver(this);
+	plugins_.push_back(plugin);
 }
 
 //explicit instantiation

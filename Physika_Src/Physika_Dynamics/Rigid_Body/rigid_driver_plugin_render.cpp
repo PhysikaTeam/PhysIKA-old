@@ -68,6 +68,18 @@ void RigidDriverPluginRender<Scalar, Dim>::onAdvanceStep(Scalar dt)
 }
 
 template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::onWrite()
+{
+
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::onRead()
+{
+
+}
+
+template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body)
 {
 	if(rigid_body == NULL)
@@ -87,15 +99,19 @@ void RigidDriverPluginRender<Scalar, Dim>::onAddRigidBody(RigidBody<Scalar, Dim>
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::setDriver(RigidBodyDriver<Scalar, Dim>* driver)
+void RigidDriverPluginRender<Scalar, Dim>::setDriver(DriverBase<Scalar>* driver)
 {
-	this->driver_ = driver;
-	if(driver == NULL || window_ == NULL)
+	this->rigid_driver_ = dynamic_cast<RigidBodyDriver<Scalar, Dim>*>(driver);
+	if(this->rigid_driver_ != NULL)
+		this->driver_ = driver;
+	else
 		return;
-	unsigned int num_rigid_body = this->driver_->numRigidBody();
+	if(this->driver_ == NULL || window_ == NULL)
+		return;
+	unsigned int num_rigid_body = this->rigid_driver_->numRigidBody();
 	for(unsigned int i = 0; i < num_rigid_body; ++i)
 	{
-		onAddRigidBody(this->driver_->rigidBody(i));
+		onAddRigidBody(this->rigid_driver_->rigidBody(i));
 	}
 }
 
