@@ -30,20 +30,20 @@ bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-	{   
-		if(data_format == Image::DataFormat::RGBA)
-			return PngIO::load(filename, image);
-		else
-			return PngIO::load(filename, image, Image::DataFormat::RGB);
-	}
+    {   
+        if(data_format == Image::DataFormat::RGBA)
+            return PngIO::load(filename, image);
+        else
+            return PngIO::load(filename, image, Image::DataFormat::RGB);
+    }
     else  if(suffix==string(".ppm"))
-	{   
-		if(data_format == Image::DataFormat::RGBA)
-			return PPMIO::load(filename, image);
-		else
-			return PPMIO::load(filename, image, Image::DataFormat::RGB);
-	}
-	else
+    {   
+        if(data_format == Image::DataFormat::RGBA)
+            return PPMIO::load(filename, image);
+        else
+            return PPMIO::load(filename, image, Image::DataFormat::RGB);
+    }
+    else
     {
         std::cerr<<"Unknown image file format!\n";
         return false;
@@ -60,14 +60,14 @@ bool ImageIO::save(const string &filename, const Image * image)
     }
     string suffix = filename.substr(suffix_idx);
     if(suffix==string(".png"))
-	{
-			return PngIO::save(filename, image);
-	}
+    {
+            return PngIO::save(filename, image);
+    }
     else if(suffix==string(".ppm"))
-	{
-			return PPMIO::save(filename, image);
-	}
-	else
+    {
+            return PPMIO::save(filename, image);
+    }
+    else
     {
         std::cerr<<"Unknown image file format specified!\n";
         return false;

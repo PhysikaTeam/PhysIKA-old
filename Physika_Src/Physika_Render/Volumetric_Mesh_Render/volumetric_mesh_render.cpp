@@ -281,7 +281,7 @@ template <typename Scalar, int Dim>
 void VolumetricMeshRender<Scalar,Dim>::renderVertices()
 {
     glPushAttrib(GL_LIGHTING_BIT|GL_ENABLE_BIT);
-	glPushMatrix();
+    glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
@@ -297,7 +297,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertices()
         {
             Vector<Scalar,Dim> position = this->mesh_->vertPos(vertex_idx);
             openGLVertex(position);
-			
+            
         }
         glEnd();
         glEndList();
@@ -306,7 +306,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertices()
     {
         glCallList(this->vertex_display_list_id_);
     }
-	glPopMatrix();
+    glPopMatrix();
     glPopAttrib();
 }
 
@@ -317,7 +317,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderWireframe()
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);        // set openGL polygon mode for wire mode
     glDisable(GL_LIGHTING);                           // disable lighting
 
-	glPushMatrix();
+    glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
@@ -374,7 +374,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderWireframe()
     {
         glCallList(this->wire_display_list_id_);
     }
-	glPopMatrix();
+    glPopMatrix();
     glPopAttrib();
 }
 
@@ -395,7 +395,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderSolidWithAlpha(float alpha)
 
     Color<float> RGBA(current_rgba[0], current_rgba[1], current_rgba[2], current_rgba[3]);
     openGLColor4(RGBA);
-	glPushMatrix();
+    glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	// add transform
@@ -454,7 +454,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderSolidWithAlpha(float alpha)
         glCallList(this->solid_display_list_id_);
     }
 
-	glPopMatrix();
+    glPopMatrix();
     glPopAttrib();
 }
 
@@ -471,7 +471,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertexWithColor(const std::vector<u
     glGetFloatv(GL_POINT_SIZE,&point_size);
     glPointSize(1.5*point_size);
 
-	glPushMatrix();
+    glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
@@ -495,7 +495,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertexWithColor(const std::vector<u
     {
         glCallList(this->vertex_with_color_display_list_id_);
     }
-	glPopMatrix();
+    glPopMatrix();
     glPopAttrib();
 
 }
@@ -515,7 +515,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertexWithColor(const std::vector<u
     glGetFloatv(GL_POINT_SIZE,&point_size);
     glPointSize(1.5*point_size);
 
-	glPushMatrix();
+    glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
@@ -543,7 +543,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertexWithColor(const std::vector<u
     {
         glCallList(this->vertex_with_color_vector_display_list_id_);
     }
-	glPopMatrix();
+    glPopMatrix();
     glPopAttrib();
 }
 
@@ -558,7 +558,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderElementWithColor(const std::vector<
     openGLColor3(color);
     glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
 
-	glPushMatrix();
+    glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
@@ -609,7 +609,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderElementWithColor(const std::vector<
     {
         glCallList(this->element_with_color_display_list_id_);
     }
-	glPopMatrix();
+    glPopMatrix();
     glPopAttrib();
 }
 
@@ -627,7 +627,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderElementWithColor(const std::vector<
     glEnable(GL_POLYGON_OFFSET_FILL);              // enable polygon offset
     glPolygonOffset(-1.0,1.0);                      // set polygon offset (factor, unit)
 
-	glPushMatrix();
+    glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
@@ -683,7 +683,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderElementWithColor(const std::vector<
     {
         glCallList(this->element_with_color_vector_display_list_id_);
     }
-	glPopMatrix();
+    glPopMatrix();
     glPopAttrib();
 }
 
@@ -698,7 +698,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderSolidWithCustomColor(const std::vec
     {
         std::cerr<<"warning: the size of color don't equal to vertex number in VolumetricMesh, the vertex lacking of cunstom color will be rendered in white color !"<<std::endl;
     }
-	glPushMatrix();
+    glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
@@ -757,7 +757,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderSolidWithCustomColor(const std::vec
     {
         glCallList(this->solid_with_custom_color_vector_display_list_id_);
     }
-	glPopMatrix();
+    glPopMatrix();
     glPopAttrib();
     */
 

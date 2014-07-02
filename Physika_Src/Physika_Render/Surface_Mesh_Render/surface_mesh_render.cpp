@@ -658,11 +658,11 @@ void SurfaceMeshRender<Scalar>::loadTextures()
         if(material_ref.hasTexture())    // if have a texture
         {
             Image image;
-			bool is_success = true;
+            bool is_success = true;
             if(ImageIO::load(material_ref.textureFileName(), &image)== false) // load image data from file
             {
                 std::cerr<<"error in loading image"<<std::endl;
-				is_success = false;
+                is_success = false;
             }
             std::pair<bool,unsigned int> texture;
             if( !is_success )        // if image_data is NULL, then set this material having no texture.
