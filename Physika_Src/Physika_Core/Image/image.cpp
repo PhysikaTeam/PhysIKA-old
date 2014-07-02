@@ -28,7 +28,7 @@ Image::Image()
 }
 
 Image::Image(unsigned int width, unsigned int height, Image::DataFormat data_format, const unsigned char *raw_data)
-    :width_(width),height_(height),data_format_(data_format)
+    :width_(width),height_(height),data_format_(data_format),raw_data_(NULL)
 {
     if(raw_data==NULL)
     {

@@ -20,6 +20,7 @@
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_Core/Transform/transform.h"
+#include "Physika_Core/Image/image.h"
 
 
 namespace Physika{
@@ -641,10 +642,14 @@ void SurfaceMeshRender<Scalar>::loadTextures()
 
         if(material_ref.hasTexture())    // if have a texture
         {
-            int width,height;
-            unsigned char * image_data = ImageIO::load(material_ref.textureFileName(),width,height); // load image data from file
+			Image image;
+            if(ImageIO::load(material_ref.textureFileName(),& image)== false) // load image data from file
+			{
+				std::cerr<<"error in loading image"<<std::endl;
+				return;
+			}
             std::pair<bool,unsigned int> texture;
-            if(image_data==NULL)        // if image_data is NULL, then set this material having no texture.
+            if(image.rawData()==NULL)        // if image_data is NULL, then set this material having no texture.
             {
                 texture.first = false;
                 this->textures_[material_idx] = texture;
@@ -661,11 +666,10 @@ void SurfaceMeshRender<Scalar>::loadTextures()
             openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /// warning: we have to set the FILTER, otherwise the TEXTURE will "not" appear
 
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_MODULATE);       /// warning
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data); //generate texture 
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.rawData()); //generate texture 
             glDisable(GL_TEXTURE_2D);         
 
             this->textures_[material_idx] = texture; // add texture to Array textures_
-            delete(image_data);                      //free image data
         }
         else
         {
