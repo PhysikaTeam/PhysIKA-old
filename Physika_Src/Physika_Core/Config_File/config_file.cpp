@@ -26,6 +26,16 @@ using std::vector;
 
 namespace Physika{
 
+ConfigFile::ConfigFile()
+{
+
+}
+
+ConfigFile::~ConfigFile()
+{
+
+}
+
 int ConfigFile::findOption(string option_name)
 {
     for (unsigned int i = 0; i < option_names_.size(); i++)
@@ -43,19 +53,19 @@ void ConfigFile::printOptions()
         switch (option_types_[i])
         {
             case Option_Int:
-                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(int*)(dest_locations_[i]);
+                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(int*)(dest_locations_[i])<<endl;
                 break;
             case Option_Bool:
-                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(bool*)(dest_locations_[i]);
+                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(bool*)(dest_locations_[i])<<endl;
                 break;
             case Option_Float:
-                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(float*)(dest_locations_[i]);
+                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(float*)(dest_locations_[i])<<endl;
                 break;
             case Option_Double:
-                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(double*)(dest_locations_[i]);
+                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(double*)(dest_locations_[i])<<endl;
                 break;
             case Option_String:
-                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(string*)(dest_locations_[i]);
+                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(string*)(dest_locations_[i])<<endl;
                 break;
             default:
                 cerr<<"Error: invalid type requested !"<<endl;
@@ -124,6 +134,7 @@ int ConfigFile::addOption(string optionName, string* dest_location)
 int ConfigFile::parseFile(string file_name)
 {
     ifstream inputstream(file_name.c_str());
+
     if(!inputstream)
     {
         cout<<"Couldn't open config file :"<<file_name<<endl;
@@ -163,7 +174,8 @@ int ConfigFile::parseFile(string file_name)
         if(!inputstream)
         {
             cerr<<"Error: EOF reached without specifying option value."<<endl;
-            std::exit(EXIT_FAILURE);
+            return 1;
+           // std::exit(EXIT_FAILURE);
         }
 
         //find a invalid option_name, now set a value;
@@ -176,12 +188,14 @@ int ConfigFile::parseFile(string file_name)
             if(data[0] == '#' || data[0] == '\0')
                 continue;
             data_entry = data;
+            break;
         }
-
         if(data_entry == "")
         {
             cerr<<"Error: EOF reached without specifying option value."<<endl;
-            std::exit(EXIT_FAILURE);
+            cerr<<"Error: Not specifying for: "<<option_names_[index]<<endl;
+            return 1;
+           // std::exit(EXIT_FAILURE);
         }
 
         if(option_types_[index] == Option_String)
@@ -201,7 +215,8 @@ int ConfigFile::parseFile(string file_name)
             {
                 cerr<<"Error: invalid boolean specification: line "<<count<<" "<<data_entry<<endl;
                 inputstream.close();
-                std::exit(EXIT_FAILURE);
+                return 1;
+            //    std::exit(EXIT_FAILURE);
             }
         }
         else if(option_types_[index] == Option_Int)
@@ -213,6 +228,7 @@ int ConfigFile::parseFile(string file_name)
                     cout<<"Error: invalid int specification: line "<<count<<" "<<data_entry<<endl;
                     inputstream.close();
                     return 1;
+                 //   return 1;
                 }
             }
             stringstream stream;
@@ -224,18 +240,22 @@ int ConfigFile::parseFile(string file_name)
 
         else
         {
-            string data_tmp;
+            string data_tmp = "";
             if(data_entry[data_entry.length()-1] == 'f' || data_entry[data_entry.length()-1] == 'd')
                data_tmp.assign(data_entry.begin(), data_entry.end()-1);
+            else
+               data_tmp = data_entry;
+            if(data_tmp != "")
             for (int i = 0; i < data_tmp.length()-1; i++)
             {
                 if(data_tmp[i] < '0' || data_tmp[i] > '9')
                 {
                     if(data_tmp[i] == '.')
                         continue;
-                    cerr<<"Error: invalid int specification: line "<<count<<" "<<data_entry<<endl;
+                    cerr<<"Error: invalid float/double specification: line "<<count<<" "<<data_entry<<endl;
                     inputstream.close();
-                    std::exit(EXIT_FAILURE);
+                    return 1;
+                  //  std::exit(EXIT_FAILURE);
                 }
             }
 
@@ -265,7 +285,8 @@ int ConfigFile::parseFile(string file_name)
         if(!option_set_[i])
         {
             cerr<<"Error: option "<<option_names_[i]<<" didn't have an entry in the config file!"<<endl;
-            std::exit(EXIT_FAILURE);
+            return 1;
+           // std::exit(EXIT_FAILURE);
         }
     }
 
