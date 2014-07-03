@@ -196,6 +196,95 @@ inline void openGLScale(const Vector<double,3> &vec)
 }
 
 /*
+ * openGLLight(GLenum light, GLenum pname, Scalar param):
+ * replacement for glLighti, glLightf
+ */
+inline void openGLLight(GLenum light, GLenum pname,int param)
+{
+    glLighti(light, pname, param);
+}
+inline void openGLLight(GLenum light, GLenum pname,float param)
+{
+    glLightf(light, pname, param);
+}
+
+/*
+ * openGLLightv(GLenum light, GLenum pname, Color/Vector<Scalar> param):
+ * replacement for glLightiv, glLightfv
+ */
+inline void openGLLightv(GLenum light, GLenum pname, const Color<int> color)
+{
+    int param[4];
+    param[0] = color.redChannel();
+    param[1] = color.greenChannel();
+    param[2] = color.blueChannel();
+    param[3] = color.alphaChannel();
+    glLightiv(light, pname, param);
+}
+inline void openGLLightv(GLenum light, GLenum pname,const Color<float> color)
+{
+    float param[4];
+    param[0] = color.redChannel();
+    param[1] = color.greenChannel();
+    param[2] = color.blueChannel();
+    param[3] = color.alphaChannel();
+    glLightfv(light, pname, param);
+}
+/// warning: this function is defined particularly to specify GL_SPOT_DIRECTION
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 3> direction)
+{
+    if(pname != GL_SPOT_DIRECTION)
+    {
+        std::cerr<<"error: this function is defined particularly to specify GL_SPOT_DIRECTION !"<<std::endl;
+    }
+    int param[3];
+    param[0] = direction[0];
+    param[1] = direction[1];
+    param[2] = direction[2];
+    glLightiv(light, pname, param);
+}
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, 3> direction)
+{
+    if(pname != GL_SPOT_DIRECTION)
+    {
+        std::cerr<<"error: this function is defined particularly to specify GL_SPOT_DIRECTION !"<<std::endl;
+    }
+    float param[3];
+    param[0] = direction[0];
+    param[1] = direction[1];
+    param[2] = direction[2];
+    glLightfv(light, pname, param);
+}
+
+/// warning: this function is defined particularly to specify GL_POSITION
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 4> position)
+{
+    if(pname != GL_POSITION)
+    {
+        std::cerr<<"error: this function is defined particularly to specify GL_POSITION !"<<std::endl;
+    }
+    int param[4];
+    param[0] = position[0];
+    param[1] = position[1];
+    param[2] = position[2];
+    param[3] = position[3];
+    glLightiv(light, pname, param);
+}
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 4> position)
+{
+    if(pname != GL_POSITION)
+    {
+        std::cerr<<"error: this function is defined particularly to specify GL_POSITION !"<<std::endl;
+    }
+    float param[4];
+    param[0] = position[0];
+    param[1] = position[1];
+    param[2] = position[2];
+    param[3] = position[3];
+    glLightfv(light, pname, param);
+}
+
+/*
  * openGLLightModel(GLenum pname, Scalar param):
  * replacement for glLightModelf, glLightModeli
  */
