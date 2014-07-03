@@ -37,7 +37,7 @@ public:
     virtual void             setDiffuse(const Color<Scalar> & color);
     virtual Color<Scalar>    diffuse();
     virtual void             setSpecular(const Color<Scalar> & color);
-    virtual Color<Scalar>    Specular();
+    virtual Color<Scalar>    specular();
 
     virtual void             setPosition(const Vector<Scalar,3>& pos_or_dir);
     virtual Vector<Scalar,3> position();
@@ -60,7 +60,7 @@ public:
 
     virtual void             setLightModelAmbient(const Color<Scalar> color);
     virtual Color<Scalar>    lightModelAmbient();
-    virtual  void             setLigntModelLocalViewer(bool viewer);
+    virtual  void            setLightModelLocalViewer(bool viewer);
     virtual bool             LightModelLocalViewer();
     virtual void             setLightModelTwoSide(bool two_size);
     virtual bool             lightModelTwoSize();
