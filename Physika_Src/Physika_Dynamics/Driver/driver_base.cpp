@@ -21,7 +21,7 @@ namespace Physika{
 template <typename Scalar>
 DriverBase<Scalar>::DriverBase()
     :start_frame_(0),end_frame_(0),restart_frame_(-1),frame_rate_(0),
-    max_dt_(0),write_to_file_(false),call_backs_(NULL),enable_timer_(true),
+    max_dt_(0),write_to_file_(false),enable_timer_(true),
     time_(0)
 {
 }
@@ -29,18 +29,11 @@ DriverBase<Scalar>::DriverBase()
 template <typename Scalar>
 DriverBase<Scalar>::DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :start_frame_(start_frame),end_frame_(end_frame),restart_frame_(-1),frame_rate_(frame_rate),
-    max_dt_(max_dt),write_to_file_(write_to_file),call_backs_(NULL),enable_timer_(true),
+    max_dt_(max_dt),write_to_file_(write_to_file),enable_timer_(true),
     time_(0)
 {
 }
 
-template <typename Scalar>
-DriverBase<Scalar>::DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file, CallBacks *call_backs)
-    :start_frame_(start_frame),end_frame_(end_frame),restart_frame_(-1),frame_rate_(frame_rate),
-    max_dt_(max_dt),write_to_file_(write_to_file),call_backs_(call_backs),enable_timer_(true),
-    time_(0)
-{
-}
 
 template <typename Scalar>
 DriverBase<Scalar>::~DriverBase()
@@ -52,19 +45,19 @@ void DriverBase<Scalar>::run()
 {
     initialize();
 
-    unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
-    DriverPluginBase<Scalar>* plugin;
-    for(unsigned int i = 0; i < plugin_num; ++i)
-    {
-        plugin = plugins_[i];
-        if(plugin != NULL)
-            plugin->onRun();
-    }
-
     for(int frame=start_frame_;frame<=end_frame_;++frame)
     {
         std::cout<<"Begin Frame "<<frame<<"\n";
-        if(call_backs_) call_backs_->beginFrame(frame);
+
+        unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+        DriverPluginBase<Scalar>* plugin;
+        for(unsigned int i = 0; i < plugin_num; ++i)
+        {
+            plugin = plugins_[i];
+            if(plugin != NULL)
+                plugin->onBeginFrame(frame);
+        }
+
         if(enable_timer_) timer_.startTimer();
         advanceFrame();
         std::cout<<"End Frame "<<frame<<" ";
@@ -74,7 +67,14 @@ void DriverBase<Scalar>::run()
             std::cout<<timer_.getElapsedTime()<<" s";
         }
         std::cout<<"\n";
-        if(call_backs_) call_backs_->endFrame(frame);
+
+        for(unsigned int i = 0; i < plugin_num; ++i)
+        {
+            plugin = plugins_[i];
+            if(plugin != NULL)
+                plugin->onEndFrame(frame);
+        }
+
         if(write_to_file_)
         {
             std::string file_name="Frame "+frame;
@@ -93,7 +93,15 @@ void DriverBase<Scalar>::advanceFrame()
     while(!frame_done)
     {
         //begin time step callbacks
-        if(call_backs_) call_backs_->beginTimeStep(time_);
+        unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+        DriverPluginBase<Scalar>* plugin;
+        for(unsigned int i = 0; i < plugin_num; ++i)
+        {
+            plugin = plugins_[i];
+            if(plugin != NULL)
+                plugin->onBeginTimeStep(time_);
+        }
+
         //compute time step
         Scalar dt=computeTimeStep();
         dt=(dt>max_dt_)?max_dt_:dt;
@@ -108,17 +116,14 @@ void DriverBase<Scalar>::advanceFrame()
             time_+=dt;
         //advance step
         advanceStep(dt);
-        //end time step callbacks
-        if(call_backs_) call_backs_->endTimeStep(time_,dt);
-    }
 
-    unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
-    DriverPluginBase<Scalar>* plugin;
-    for(unsigned int i = 0; i < plugin_num; ++i)
-    {
-        plugin = plugins_[i];
-        if(plugin != NULL)
-            plugin->onAdvanceFrame();
+        //end time step callbacks
+        for(unsigned int i = 0; i < plugin_num; ++i)
+        {
+            plugin = plugins_[i];
+            if(plugin != NULL)
+                plugin->onEndTimeStep(time_, dt);
+        }
     }
 
 }

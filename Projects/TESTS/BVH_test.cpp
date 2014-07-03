@@ -81,7 +81,7 @@ int main()
 
 	RigidBody<double,3> body2;
 	body2.setMesh(&mesh_ball);
-	body2.transformPtr()->setTranslation(Vector<double, 3>(0, 55, 0));
+	body2.transformPtr()->setTranslation(Vector<double, 3>(0, 45, 0));
 
 	driver.addRigidBody(&body1);
 	driver.addRigidBody(&body2);

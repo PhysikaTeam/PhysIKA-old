@@ -89,6 +89,8 @@ protected:
 	CollisionDetectionResult<Scalar, Dim> collision_result_;
 	SceneBVH<Scalar, Dim> scene_bvh_;
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
+    int frame_;
+    int step_;
 };
 
 } //end of namespace Physika
