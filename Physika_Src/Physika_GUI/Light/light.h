@@ -31,7 +31,8 @@ public:
     virtual ~Light();
 
     // public interface: setter and getter
- 
+    virtual void             setLightId(GLenum light_id);
+    virtual GLenum           lightId();
     virtual void             setAmbient(const Color<Scalar> & color);
     virtual Color<Scalar>    ambient();
     virtual void             setDiffuse(const Color<Scalar> & color);
