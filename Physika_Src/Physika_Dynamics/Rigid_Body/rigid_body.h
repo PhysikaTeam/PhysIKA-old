@@ -61,7 +61,7 @@ protected:
 private:
 
     /* maximum number of verts per polygonal face */
-    const static int MAX_POLYGON_SZ = 3;
+    const static int MAX_POLYGN_SZ = 3;
     const static int X = 0;
     const static int Y = 1;
     const static int Z = 2;
@@ -75,7 +75,7 @@ private:
         Scalar norm[3];
         Scalar w;
         unsigned int verts[MAX_POLYGON_SZ];
-        struct InertiaTensorPolyhedron *poly;
+        struct InertiaTensor<Scalar>::InertiaTensorPolyhedron *poly;
     };
 
     struct InertiaTensorPolyhedron
@@ -83,7 +83,7 @@ private:
         unsigned int numVerts;
         unsigned int numFaces;
         Scalar** verts;//numVerts x 3 dimension
-        InertiaTensorFace* faces;//numFaces dimension
+        InertiaTensor<Scalar>::InertiaTensorFace* faces;//numFaces dimension
     };
 
     int A;   /* alpha */

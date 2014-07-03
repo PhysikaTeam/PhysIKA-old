@@ -69,8 +69,8 @@ template <typename Scalar>
 void InertiaTensor<Scalar>::setBody(SurfaceMesh<Scalar>* mesh, Vector<Scalar, 3> scale, Scalar density, Vector<Scalar, 3>& mass_center, Scalar& mass)
 {
     Scalar dx1, dy1, dz1, dx2, dy2, dz2, nx, ny, nz, len;
-    InertiaTensorFace *f;
-    InertiaTensorPolyhedron* p = new InertiaTensorPolyhedron;
+    InertiaTensor<Scalar>::InertiaTensorFace *f;
+    InertiaTensor<Scalar>::InertiaTensorPolyhedron* p = new InertiaTensor<Scalar>::InertiaTensorPolyhedron;
 
     unsigned int _vtxNum = mesh->numVertices();
     unsigned int _triNum = mesh->numFaces();
