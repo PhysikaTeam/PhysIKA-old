@@ -72,18 +72,18 @@ void displayFunction()
     (cur_window->camera()).look();
 
     meshRender.disableRenderSolid();
-	//meshRender.disableRenderWireframe();
-	//meshRender.disableRenderVertices();
-	//meshRender.enableRenderVertices();
-	meshRender.enableRenderWireframe();
-	glColor4f(1,0,0,1.0);
-	meshRender.renderSolidWithAlpha(0.05);
-	glColor4f(0,1,0,1.0);
-	meshRender.render();
-	//meshRender.renderVertexWithColor(vertex_id,color);
-	//meshRender.renderElementWithColor(element_id,color);
-	//glTranslatef(3,0,0);
-	//meshRender2.renderSolidWithAlpha(0.4);
+    //meshRender.disableRenderWireframe();
+    //meshRender.disableRenderVertices();
+    //meshRender.enableRenderVertices();
+    meshRender.enableRenderWireframe();
+    glColor4f(1,0,0,1.0);
+    meshRender.renderSolidWithAlpha(0.05);
+    glColor4f(0,1,0,1.0);
+    meshRender.render();
+    //meshRender.renderVertexWithColor(vertex_id,color);
+    //meshRender.renderElementWithColor(element_id,color);
+    //glTranslatef(3,0,0);
+    //meshRender2.renderSolidWithAlpha(0.4);
 
     cur_window->displayFrameRate();
     glutSwapBuffers();
@@ -100,30 +100,30 @@ void initFunction()
     glClearDepth(1.0);
 
     for(unsigned int i=0; i<50; i++)
-		for(unsigned int j=0; j<40; j++)
-	{
-		color_vector.push_back(Color<float>(0.2*i,0.25*j,0.1*(i+j)));
-	}
-	
-	//color_vector.push_back(Color<float>(1,0,0));
-	//color_vector.push_back(Color<float>(0,1,0));
-	vol_mesh = VolumetricMeshIO<double,3>::load("e.smesh");
+        for(unsigned int j=0; j<40; j++)
+    {
+        color_vector.push_back(Color<float>(0.2*i,0.25*j,0.1*(i+j)));
+    }
+    
+    //color_vector.push_back(Color<float>(1,0,0));
+    //color_vector.push_back(Color<float>(0,1,0));
+    vol_mesh = VolumetricMeshIO<double,3>::load("e.smesh");
 
-	meshRender.setVolumetricMesh(vol_mesh);
-	vol_mesh->printInfo();
-	cout<<"vertNum:"<<vol_mesh->vertNum()<<endl;
-	cout<<"eleNum:"<<vol_mesh->eleNum()<<endl;
-	cout<<"regionNum:"<<vol_mesh->regionNum()<<endl;
+    meshRender.setVolumetricMesh(vol_mesh);
+    vol_mesh->printInfo();
+    cout<<"vertNum:"<<vol_mesh->vertNum()<<endl;
+    cout<<"eleNum:"<<vol_mesh->eleNum()<<endl;
+    cout<<"regionNum:"<<vol_mesh->regionNum()<<endl;
 
-	meshRender2.setVolumetricMesh(&cubic_mesh);
-	glColor4f(1,0,0,1.0);
-	glPointSize(2.0);
+    meshRender2.setVolumetricMesh(&cubic_mesh);
+    glColor4f(1,0,0,1.0);
+    glPointSize(2.0);
 
-	for(unsigned i=0; i<200;i++)
-	{
-		element_id.push_back(i);
-		vertex_id.push_back(i);
-	}
+    for(unsigned i=0; i<200;i++)
+    {
+        element_id.push_back(i);
+        vertex_id.push_back(i);
+    }
 }
 
 void keyboardFunction(unsigned char key, int x, int y )

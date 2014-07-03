@@ -74,7 +74,8 @@ public:
 
     void             setLightModelColorControl(GLenum penum);
     GLenum           LightModelColorControl();
-
+protected:
+    GLenum light_id_;
 };
 
 }      //end of namespace Physika
