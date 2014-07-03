@@ -24,56 +24,49 @@ namespace Physika
 template<typename Scalar>
 class Light
 {
-public:
-    enum LightType
-    {
-        POSITION_BASE,
-        DIRECTION_BASE;
-    };
+
 public:
     // construction and destruction
     Light();
-    ~Light();
+    virtual ~Light();
 
     // public interface: setter and getter
-    void setToPositionBase();
-    void setToDirectionBase();
+ 
+    virtual void             setAmbient(const Color<Scalar> & color);
+    virtual Color<Scalar>    ambient();
+    virtual void             setDiffuse(const Color<Scalar> & color);
+    virtual Color<Scalar>    diffuse();
+    virtual void             setSpecular(const Color<Scalar> & color);
+    virtual Color<Scalar>    Specular();
 
-    void             setAmbient(const Color & color);
-    Color<Scalar>    ambient();
-    void             setDiffuse(const Color & color);
-    Color<Scalar>    Diffuse();
-    void             setSpecular(const Color & color);
-    Color<Scalar>    Specular();
+    virtual void             setPosition(const Vector<Scalar,3>& pos_or_dir);
+    virtual Vector<Scalar,3> position();
 
-    void             setPosOrDir(const Vector<Scalar,3>& pos_or_dir);
-    Vector<Scalar,3> PosOrDir();
+    virtual void             setSpotDirection(const Vector<Scalar,3>& direction);
+    virtual Vector<Scalar,3> spotDirection();
 
-    void             setSpotDirection(const Vector<Scalar,3>& direction);
-    Vector<Scalar,3> spotDirection();
+    virtual void             setSpotExponent(Scalar exponent);
+    virtual Scalar           spotExpoent();
 
-    void             setSpotExponent(Scalar exponent);
-    Scalar           spotExpoent();
+    virtual void             setSpotCutoff(Sclar cutoff);
+    virtual Scalar           spotCutoff();
 
-    void             setSpotCutoff(Sclar cutoff);
-    Scalar           spotCutoff();
+    virtual void             setConstantAttenation(Scalar constant_atten)
+    virtual Scalar           constantAttenation();
+    virtual void             setLinearAttenation(Scalar linear_atten);
+    virtual Scalar           linearAttenation();
+    virtual void             setQuadraticAttenation(Scalar quad_atten);
+    virtual Scalar           quadraticAttenation();
 
-    void             setConstantAttenation(Scalar constant_atten)
-    Scalar           ConstantAttenation();
-    void             setLinearAttenation(Scalar linear_atten);
-    Scalar           LinearAttenation();
-    void             setQuadraticAttenation(Scalar quad_atten);
-    Scalar           QuadraticAttenation();
+    virtual void             setLightModelAmbient(const Color<Scalar> color);
+    virtual Color<Scalar>    lightModelAmbient();
+    virtual  void             setLigntModelLocalViewer(bool viewer);
+    virtual bool             LightModelLocalViewer();
+    virtual void             setLightModelTwoSide(bool two_size);
+    virtual bool             lightModelTwoSize();
 
-    void             setLightModelAmbient(const Color<Scalar> color);
-    Color<Scalar>    LightModelAmbient();
-    void             setLigntModelLocalViewer(bool viewer);
-    bool             LightModelLocalViewer();
-    void             setLightModelTwoSide(bool two_size);
-    bool             LightModelTwoSize();
-
-    void             setLightModelColorControl(GLenum penum);
-    GLenum           LightModelColorControl();
+    virtual void             setLightModelColorControl(GLenum penum);
+    virtual GLenum           lightModelColorControl();
 protected:
     GLenum light_id_;
 };
