@@ -15,10 +15,15 @@
 #include <iostream>
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/png_io.h"
-#include "ppm_io.h"
+#include "Physika_IO/Image_IO/ppm_io.h"
 using std::string;
 
 namespace Physika{
+
+bool ImageIO::load(const string & filename, Image* image)
+{
+    return ImageIO::load(filename, image, Image::DataFormat::RGBA);
+}
 
 bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data_format)
 {
