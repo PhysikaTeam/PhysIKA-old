@@ -61,7 +61,7 @@ public:
 
     virtual void             setLightModelAmbient(const Color<Scalar> color);
     virtual Color<Scalar>    lightModelAmbient();
-    virtual  void            setLightModelLocalViewer(bool viewer);
+    virtual void             setLightModelLocalViewer(bool viewer);
     virtual bool             LightModelLocalViewer();
     virtual void             setLightModelTwoSide(bool two_size);
     virtual bool             lightModelTwoSize();
