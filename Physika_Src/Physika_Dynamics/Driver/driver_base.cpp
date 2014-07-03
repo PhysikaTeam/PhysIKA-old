@@ -52,34 +52,34 @@ void DriverBase<Scalar>::run()
 {
     initialize();
 
-	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
-	DriverPluginBase<Scalar>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = plugins_[i];
-		if(plugin != NULL)
-			plugin->onRun();
-	}
+    unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+    DriverPluginBase<Scalar>* plugin;
+    for(unsigned int i = 0; i < plugin_num; ++i)
+    {
+        plugin = plugins_[i];
+        if(plugin != NULL)
+            plugin->onRun();
+    }
 
     for(int frame=start_frame_;frame<=end_frame_;++frame)
     {
-	std::cout<<"Begin Frame "<<frame<<"\n";
-	if(call_backs_) call_backs_->beginFrame(frame);
-	if(enable_timer_) timer_.startTimer();
-	advanceFrame();
-	std::cout<<"End Frame "<<frame<<" ";
-	if(enable_timer_)
-	{
-	    timer_.stopTimer();
-	    std::cout<<timer_.getElapsedTime()<<" s";
-	}
-	std::cout<<"\n";
-	if(call_backs_) call_backs_->endFrame(frame);
-	if(write_to_file_)
-	{
-	    std::string file_name="Frame "+frame;
-	    write(file_name.c_str());
-	}
+        std::cout<<"Begin Frame "<<frame<<"\n";
+        if(call_backs_) call_backs_->beginFrame(frame);
+        if(enable_timer_) timer_.startTimer();
+        advanceFrame();
+        std::cout<<"End Frame "<<frame<<" ";
+        if(enable_timer_)
+        {
+            timer_.stopTimer();
+            std::cout<<timer_.getElapsedTime()<<" s";
+        }
+        std::cout<<"\n";
+        if(call_backs_) call_backs_->endFrame(frame);
+        if(write_to_file_)
+        {
+            std::string file_name="Frame "+frame;
+            write(file_name.c_str());
+        }
     }
 }
 
@@ -93,46 +93,46 @@ void DriverBase<Scalar>::advanceFrame()
     while(!frame_done)
     {
         //begin time step callbacks
-	if(call_backs_) call_backs_->beginTimeStep(time_);
+        if(call_backs_) call_backs_->beginTimeStep(time_);
         //compute time step
-	Scalar dt=computeTimeStep();
-	dt=(dt>max_dt_)?max_dt_:dt;
-	//update time and maybe time step
+        Scalar dt=computeTimeStep();
+        dt=(dt>max_dt_)?max_dt_:dt;
+        //update time and maybe time step
         if(finish_time-time_<=dt)
-	{
-	    dt=finish_time-time_;
-	    time_=finish_time;
-	    frame_done=true;
-	}
-	else
-	    time_+=dt;
+        {
+            dt=finish_time-time_;
+            time_=finish_time;
+            frame_done=true;
+        }
+        else
+            time_+=dt;
         //advance step
-	advanceStep(dt);
+        advanceStep(dt);
         //end time step callbacks
-	if(call_backs_) call_backs_->endTimeStep(time_,dt);
+        if(call_backs_) call_backs_->endTimeStep(time_,dt);
     }
 
-	unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
-	DriverPluginBase<Scalar>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = plugins_[i];
-		if(plugin != NULL)
-			plugin->onAdvanceFrame();
-	}
+    unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+    DriverPluginBase<Scalar>* plugin;
+    for(unsigned int i = 0; i < plugin_num; ++i)
+    {
+        plugin = plugins_[i];
+        if(plugin != NULL)
+            plugin->onAdvanceFrame();
+    }
 
 }
 
 template <typename Scalar>
 void DriverBase<Scalar>::addPlugin(DriverPluginBase<Scalar>* plugin)
 {
-	if(plugin == NULL)
-	{
-		std::cerr<<"Null plugin!"<<std::endl;
-		return;
-	}
-	plugin->setDriver(this);
-	plugins_.push_back(plugin);
+    if(plugin == NULL)
+    {
+        std::cerr<<"Null plugin!"<<std::endl;
+        return;
+    }
+    plugin->setDriver(this);
+    plugins_.push_back(plugin);
 }
 
 //explicit instantiation

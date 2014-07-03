@@ -21,6 +21,19 @@
 
 namespace Physika{
 
+/*
+ * Driver class uses plugin mechanism  to support customization during simulation
+ * The user can inherit a subclass of DriverPluginBase and define the customized 
+ * methods therein. These methods can be called in methods of driver class.
+ * The default virtual methods of driver plugin are called in specific timing during
+ * simulation in DriverBase, e.g., onBeginFrame() is called at the begining of each
+ * frame. The user could define more methods for their plugin subclasses and call them
+ * wherever they want in their driver subclasses.
+ * Example usage:
+ * Define a plugin subclass which implements the onBeginFrame() method by popping out a 
+ * window at the begining of each frame for rendering purpose.
+ */
+
 template <typename Scalar> class DriverPluginBase;
 
 template <typename Scalar>
@@ -51,7 +64,7 @@ public:
     virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions
     virtual void write(const char *file_name)=0;//write simulation data to file
     virtual void read(const char *file_name)=0;//read simulation data from file
-	virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
+    virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
 
     inline void setCallBacks(CallBacks *call_backs){call_backs_ = call_backs;}
     inline void setMaxDt(Scalar max_dt){max_dt_ = max_dt;}
@@ -79,7 +92,7 @@ protected:
     Timer timer_;
     Scalar time_;//current time point of simulation
 
-	std::vector<DriverPluginBase<Scalar>* > plugins_;//Plugin vector. All plugins should be added here and called in corresponding functions
+    std::vector<DriverPluginBase<Scalar>* > plugins_;//Plugin vector. All plugins should be added here and called in corresponding functions
 };
 
 }  //end of namespace Physika
