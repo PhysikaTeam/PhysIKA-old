@@ -72,7 +72,7 @@ int main()
     SurfaceMesh<double> mesh_ball;
     if(!ObjMeshIO<double>::load(string("ball_high.obj"), &mesh_ball))
 		exit(1);
-
+    
 	RigidBodyDriver<double, 3> driver;
 
 	RigidBody<double,3> body1;
@@ -81,10 +81,19 @@ int main()
 
 	RigidBody<double,3> body2;
 	body2.setMesh(&mesh_ball);
-	body2.transformPtr()->setTranslation(Vector<double, 3>(0, 45, 0));
+	body2.transformPtr()->setTranslation(Vector<double, 3>(0, 44, 0));
 
 	driver.addRigidBody(&body1);
 	driver.addRigidBody(&body2);
+
+    Vector<double, 3> center;
+    double mass;
+    InertiaTensor<double> tensor;
+
+    tensor.setBody(&mesh_ball, Vector<double, 3>(0.1789, 0.1789, 0.1789), 1.0, center, mass);
+    cout<<center<<endl;
+    cout<<mass<<endl;
+    cout<<tensor.bodyInertiaTensor()<<endl;
 
 
     GlutWindow glut_window;
