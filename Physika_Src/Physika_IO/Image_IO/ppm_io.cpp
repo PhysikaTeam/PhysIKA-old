@@ -18,7 +18,6 @@
 #include <sstream>
 #include "Physika_IO/Image_IO/ppm_io.h"
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Image/image.h"
 #include "Physika_Core/Utilities/File_Utilities/parse_line.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 using std::string;
@@ -29,7 +28,6 @@ using std::ifstream;
 using std::ofstream;
 
 namespace Physika{
-
 
 bool PPMIO::load(const string &filename,Image *image )
 {
@@ -50,15 +48,15 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
         std::cerr<<"Unknown image file format:"<<file_extension<<std::endl;
         return NULL;
     }
-    fstream *fp = new fstream;
-    fp->open(filename.c_str(),std::ios::in|std::ios::binary);
-    if(!(*fp))
+    fstream fp;
+    fp.open(filename.c_str(),std::ios::in|std::ios::binary);
+    if(!fp.is_open())
     {
         std::cerr<<"Couldn't opern .ppm file:"<<filename<<std::endl;
         return NULL;
     }
     string file_head;
-    while(getline(*fp, file_head))
+    while(getline(fp, file_head))
     {
         file_head = FileUtilities::removeWhitespaces(file_head);
         if(file_head.at(0) == '#')
@@ -74,7 +72,7 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
     }
     int file_para[3];
     int para_num = 0;
-    while(para_num<3 && getline(*fp, file_head)  )
+    while(para_num<3 && getline(fp, file_head)  )
     {
         file_head = FileUtilities::removeWhitespaces(file_head);
         if(file_head.at(0) == '#')
@@ -98,7 +96,7 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
         return false;
     }
     // read image RGB data
-    int data_size = fp->read( (char *)image_data,sizeof(unsigned char)*3*file_para[0]*file_para[1]).gcount();
+    int data_size = fp.read( (char *)image_data,sizeof(unsigned char)*3*file_para[0]*file_para[1]).gcount();
     if( data_size < 3*file_para[0]*file_para[1])
     {
         std::cerr<<"error in reading image RGB data";
@@ -127,7 +125,8 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
         delete [] image_data_with_alpha;
     }
     delete [] image_data;
-    fp->close();
+    fp.close();
+    return true;
 }
 
 bool PPMIO::save(const string &filename, const Image *image)
@@ -144,18 +143,18 @@ bool PPMIO::save(const string &filename, const Image *image)
         std::cerr<<"Wrong file extension specified for PPM file!\n";
         return false;
     }
-    fstream * fp = new fstream;
-    fp->open(filename.c_str(),std::ios::out|std::ios::binary);
-    if(!fp->is_open())
+    fstream fp;
+    fp.open(filename.c_str(),std::ios::out|std::ios::binary);
+    if(!fp.is_open())
     {
         std::cerr<<"error in opening file!"<<std::endl;
         return false;
     }
     char char_0A=11;
-    (*fp)<<"P6"<<char_0A;
-    (*fp)<<image->width()<<char_0A;
-    (*fp)<<image->height()<<char_0A;
-    (*fp)<<"255"<<char_0A;
+    fp<<"P6"<<char_0A;
+    fp<<image->width()<<char_0A;
+    fp<<image->height()<<char_0A;
+    fp<<"255"<<char_0A;
     
     unsigned int            num_pixel = image->width()*image->height();
     const unsigned  char *  row_data  = image->rawData();
@@ -163,22 +162,22 @@ bool PPMIO::save(const string &filename, const Image *image)
     {
         for(unsigned int i=0; i<num_pixel; i++ )
         {
-            (*fp)<<row_data[3*i];
-            (*fp)<<row_data[3*i+1];
-            (*fp)<<row_data[3*i+2];
+            fp<<row_data[3*i];
+            fp<<row_data[3*i+1];
+            fp<<row_data[3*i+2];
         }
     }
     else
     {
         for(unsigned int i=0; i<num_pixel; i++ )
         {
-            (*fp)<<row_data[4*i];
-            (*fp)<<row_data[4*i+1];
-            (*fp)<<row_data[4*i+2];
+            fp<<row_data[4*i];
+            fp<<row_data[4*i+1];
+            fp<<row_data[4*i+2];
         }
     }
     
-    fp->close();
+    fp.close();
     return true;
 }
 

@@ -17,6 +17,7 @@
 #include "Physika_IO/Image_IO/png_io.h"
 #include "Physika_Dependency/LodePNG/lodepng.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+
 using std::string;
 
 namespace Physika{
@@ -29,7 +30,7 @@ bool PngIO::load(const string &filename,Image *image )
 
 bool PngIO::load(const std::string &filename, Image * image, Image::DataFormat data_format)
 {
-     string::size_type suffix_idx = filename.rfind('.');
+    string::size_type suffix_idx = filename.rfind('.');
     if(suffix_idx>=filename.size())
     {
         std::cerr<<"No file extension found for the image file!\n";

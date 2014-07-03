@@ -20,7 +20,7 @@
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_Core/Transform/transform.h"
-#include "Physika_Core/Image/image.h"
+//#include "Physika_Core/Image/image.h"
 
 
 namespace Physika{
