@@ -270,7 +270,7 @@ inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 4> positio
     param[3] = position[3];
     glLightiv(light, pname, param);
 }
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 4> position)
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, 4> position)
 {
     if(pname != GL_POSITION)
     {
