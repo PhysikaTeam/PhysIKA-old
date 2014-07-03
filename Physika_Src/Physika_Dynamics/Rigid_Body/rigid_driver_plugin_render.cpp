@@ -51,37 +51,61 @@ RigidDriverPluginRender<Scalar, Dim>::~RigidDriverPluginRender()
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onRun()
+void RigidDriverPluginRender<Scalar, Dim>::onInitialize(int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onAdvanceFrame()
+void RigidDriverPluginRender<Scalar, Dim>::onBeginFrame(int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onInitialize()
+void RigidDriverPluginRender<Scalar, Dim>::onEndFrame(int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onAdvanceStep(Scalar dt)
+void RigidDriverPluginRender<Scalar, Dim>::onBeginTimeStep(Scalar dt)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onWrite()
+void RigidDriverPluginRender<Scalar, Dim>::onEndTimeStep(Scalar time, Scalar dt)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onRead()
+void RigidDriverPluginRender<Scalar, Dim>::onWrite(int frame)
+{
+
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::onRead(int frame)
+{
+
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::onRestart(int frame)
+{
+
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::onBeginRigidStep(int step, Scalar dt)
+{
+
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::onEndRigidStep(int step, Scalar dt)
 {
 
 }
@@ -153,7 +177,8 @@ template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::idle()
 {
 	active_render_->rigid_driver_->advanceStep(0.1);
-	if(active_render_->is_render_contact_face_)
+
+	if(active_render_->is_render_contact_face_)//get contact faces' ids
 	{
         unsigned int num_body = active_render_->rigid_driver_->numRigidBody();
         if(active_render_->contact_face_ids != NULL)
@@ -181,12 +206,12 @@ void RigidDriverPluginRender<Scalar, Dim>::display()
 {
     GlutWindow *window = active_render_->window_;
     PHYSIKA_ASSERT(window);
-    Color<double> background_color = window->backgroundColor<double>();//Color<double>::Black();//template 
+    Color<double> background_color = window->backgroundColor<double>();
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     (window->camera()).look();  //set camera
     
-    if(active_render_->is_render_contact_face_ && active_render_->contact_face_ids != NULL)
+    if(active_render_->is_render_contact_face_ && active_render_->contact_face_ids != NULL)//render contact faces
     {
         SurfaceMeshRender<Scalar>* render;
         unsigned int num_body = active_render_->rigid_driver_->numRigidBody();
@@ -483,6 +508,12 @@ template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::enableRenderContactFaceAll()
 {
 	is_render_contact_face_ = true;
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableRenderContactFaceAll()
+{
+    is_render_contact_face_ = false;
 }
 
 template <typename Scalar,int Dim>

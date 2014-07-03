@@ -28,12 +28,14 @@ public:
     virtual ~DriverPluginBase();
 
     //functions called in driver
-    virtual void onRun() = 0;
-    virtual void onAdvanceFrame() = 0;
-    virtual void onInitialize() = 0;
-    virtual void onAdvanceStep(Scalar dt) = 0;
-    virtual void onWrite() = 0;
-    virtual void onRead() = 0;
+    virtual void onInitialize(int frame) = 0;
+    virtual void onBeginFrame(int frame) = 0;
+    virtual void onEndFrame(int frame) = 0;
+    virtual void onBeginTimeStep(Scalar dt) = 0;//replaced by onBeginRigidStep in rigid body simulation
+    virtual void onEndTimeStep(Scalar time, Scalar dt) = 0;//replaced by onEndRigidStep in rigid body simulation
+    virtual void onWrite(int frame) = 0;
+    virtual void onRead(int frame) = 0;
+    virtual void onRestart(int frame)=0;
 
     //basic function
     virtual DriverBase<Scalar>* driver();

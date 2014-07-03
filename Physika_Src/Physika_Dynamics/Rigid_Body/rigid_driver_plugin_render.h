@@ -31,12 +31,17 @@ public:
 	~RigidDriverPluginRender();
 
 	//functions called in driver
-	void onRun();
-	void onAdvanceFrame();
-	void onInitialize();
-	void onAdvanceStep(Scalar dt);
-	void onWrite();
-	void onRead();
+    void onInitialize(int frame);
+    void onBeginFrame(int frame);
+    void onEndFrame(int frame);
+    void onBeginTimeStep(Scalar dt);
+    void onEndTimeStep(Scalar time, Scalar dt);
+    void onWrite(int frame);
+    void onRead(int frame);
+    void onRestart(int frame);
+
+    void onBeginRigidStep(int step, Scalar dt);//replace the original onBeginTimeStep in rigid body simulation
+    void onEndRigidStep(int step, Scalar dt);//replace the original onEndTimeStep in rigid body simulation
 
 	void onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body);
 	void onCollisionDetection();
@@ -72,6 +77,7 @@ public:
 	void disableTextureAt(unsigned int index);
 
 	void enableRenderContactFaceAll();
+    void disableRenderContactFaceAll();
 
 protected:
 	GlutWindow* window_;

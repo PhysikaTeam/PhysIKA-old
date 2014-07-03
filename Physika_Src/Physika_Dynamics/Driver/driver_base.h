@@ -40,22 +40,11 @@ template <typename Scalar>
 class DriverBase
 {
 public:
-    //callbacks, allow customization during simulation
-    //derive a subclass and implement the callback methods
-    struct CallBacks
-    {
-        virtual void beginFrame(int frame)=0;
-        virtual void endFrame(int frame)=0;
-        virtual void beginTimeStep(Scalar time)=0;
-        virtual void endTimeStep(Scalar time,Scalar dt)=0;
-        virtual void writeOutput(int frame)=0;
-        virtual void restart(int frame)=0;
-    };
+
 
 public:
     DriverBase();
     DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
-    DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file, CallBacks *call_backs);
     virtual ~DriverBase();
     virtual void run();//run the simulation from start frame to end frame
     virtual void advanceFrame();//advance one frame
@@ -66,7 +55,6 @@ public:
     virtual void read(const char *file_name)=0;//read simulation data from file
     virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
 
-    inline void setCallBacks(CallBacks *call_backs){call_backs_ = call_backs;}
     inline void setMaxDt(Scalar max_dt){max_dt_ = max_dt;}
     inline Scalar maxDt(){return max_dt_;}
     inline void setFrameRate(Scalar frame_rate){frame_rate_ = frame_rate;}
@@ -87,7 +75,6 @@ protected:
     Scalar frame_rate_;
     Scalar max_dt_;
     bool write_to_file_;
-    CallBacks *call_backs_;
     bool enable_timer_;
     Timer timer_;
     Scalar time_;//current time point of simulation
