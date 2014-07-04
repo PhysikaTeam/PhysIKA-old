@@ -11,14 +11,13 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
-#ifndef PHYSIKA_GUI_LIGHT_SPOT_LIGHT_H_
-#define PHYSIKA_GUI_LIGHT_SPOT_LIGHT_H_
+#ifndef PHYSIKA_GUI_LIGHTS_SPOT_LIGHT_H_
+#define PHYSIKA_GUI_LIGHTS_SPOT_LIGHT_H_
 
-#include "light.h"
+#include "Physika_GUI/Lights/light.h"
 
 namespace Physika{
 
-class Light;
 class SpotLight: public Light
 {
 public:
@@ -36,6 +35,6 @@ public:
 
 } //end of namespace Physika
 
-#include "spot_light-inl.h"
+#include "Physika_GUI/Lights/spot_light-inl.h"
 
-#endif //PHYSIKA_GUI_LIGHT_SPOT_LIGHT_H_
+#endif //PHYSIKA_GUI_LIGHTS_SPOT_LIGHT_H_

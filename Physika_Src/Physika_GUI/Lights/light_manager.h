@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_GUI_LIGHT_LIGHT_MANAGER_H_
-#define PHYSIKA_GUI_LIGHT_LIGHT_MANAGER_H_
+#ifndef PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_
+#define PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_
 
 #include <list>
 #include <GL/gl.h>
@@ -47,7 +47,7 @@ public:
 
     const Light* lightAtIndex(unsigned int index) const;       //return pointer to the light at given index
     Light* lightAtIndex(unsigned int index);
-    int lightIndex(Light *task) const;                        //return index of light in list, if light not in queue, return -1
+    int lightIndex(Light *light) const;                        //return index of light in list, if light not in queue, return -1
 
     void turnAllOn();                                         //turn all lights on
     void turnAllOff();                                        //turn all lights off
@@ -98,4 +98,4 @@ std::ostream& operator << (std::ostream& out, const LightManager & light_manager
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_GUI_LIGHT_LIGHT_MANAGER_H_
+#endif //PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_

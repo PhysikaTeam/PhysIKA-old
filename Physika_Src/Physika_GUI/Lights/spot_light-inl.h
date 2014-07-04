@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_GUI_LIGHT_SPOT_LIGHT_INL_H_
-#define PHYSIKA_GUI_LIGHT_SPOT_LIGHT_INL_H_
+#ifndef PHYSIKA_GUI_LIGHTS_SPOT_LIGHT_INL_H_
+#define PHYSIKA_GUI_LIGHTS_SPOT_LIGHT_INL_H_
 
 #include <GL/gl.h>
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"

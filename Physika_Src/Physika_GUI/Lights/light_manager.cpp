@@ -14,8 +14,8 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_GUI/Light/light_manager.h"
-#include "Physika_GUI/Light/light.h"
+#include "Physika_GUI/Lights/light_manager.h"
+#include "Physika_GUI/Lights/light.h"
 
 using std::list;
 
@@ -63,7 +63,7 @@ void LightManager::insertFront(Light * light_p)
     }
 }
 
-void LightManager::insertAtIndex(unsigned int index, Light *task)
+void LightManager::insertAtIndex(unsigned int index, Light *light)
 {
     bool index_valid = (index>=0)&&(index<light_list_.size());
     if(!index_valid)
@@ -71,7 +71,7 @@ void LightManager::insertAtIndex(unsigned int index, Light *task)
         std::cerr<<"Light index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if(task)
+    if(light)
     {
         if(this->numLights()<8)
         {
@@ -81,7 +81,7 @@ void LightManager::insertAtIndex(unsigned int index, Light *task)
                 --index;
                 ++pos;
             }
-            light_list_.insert(pos,task);
+            light_list_.insert(pos,light);
         }
         else
         {
@@ -91,7 +91,7 @@ void LightManager::insertAtIndex(unsigned int index, Light *task)
     }
     else
     {
-        std::cerr<<"Cannot insert NULL render task to LightManager!\n";
+        std::cerr<<"Cannot insert NULL light to LightManager!\n";
         std::exit(EXIT_FAILURE);
     }
 }

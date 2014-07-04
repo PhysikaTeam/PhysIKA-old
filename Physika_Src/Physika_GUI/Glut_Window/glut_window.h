@@ -17,6 +17,7 @@
 
 #include <string>
 #include "Physika_GUI/Camera/camera.h"
+#include "Physika_GUI/Lights/light.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_Render/Render_Manager/render_manager.h"
 
