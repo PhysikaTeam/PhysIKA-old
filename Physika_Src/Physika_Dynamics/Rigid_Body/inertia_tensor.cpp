@@ -81,7 +81,8 @@ SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::spatialInertiaTensorInverse()
 template <typename Scalar>
 SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::rotate(Quaternion<Scalar>& quad)
 {
-    //to do: wait for quad *
+    SquareMatrix<Scalar,3> rotation = quad.get3x3Matrix();
+    spatial_inertia_tensor_ = rotation * spatial_inertia_tensor_ * rotation.transpose();
     spatial_inertia_tensor_inverse_ = spatial_inertia_tensor_.inverse();
     return spatial_inertia_tensor_;
 }

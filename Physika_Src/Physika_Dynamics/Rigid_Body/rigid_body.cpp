@@ -41,6 +41,7 @@ template <typename Scalar,int Dim>
 RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density = 1)
 {
     setProperty(mesh, transform, density);
+    
 }
 
 template <typename Scalar,int Dim>
@@ -61,39 +62,47 @@ void RigidBody<Scalar, Dim>::copy(RigidBody<Scalar, Dim>& rigid_body)
     object_type_ = rigid_body.object_type_;
     mesh_ = rigid_body.mesh_;
     transform_ = rigid_body.transform_;
-    inertia_tensor_ = rigid_body.inertia_tensor_;
     density_ = rigid_body.density_;
     is_fixed_ = rigid_body.is_fixed_;
+
+    inertia_tensor_ = rigid_body.inertia_tensor_;
+    mass_ = rigid_body.mass_;
+    local_mass_center_ = rigid_body.local_mass_center_;
 }
 
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::setTranslation(Vector<Scalar, 3>& translation)//Only defined to 3-Dimension
 {
     transform_.setTranslation(translation);
+    recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::setRotation(Vector<Scalar, 3>& rotation)//Only defined to 3-Dimension
 {
-    //transform_.setRotation(rotation);
+    transform_.setRotation(rotation);
+    recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::setRotation(Quaternion<Scalar>& rotation)//Only defined to 3-Dimension
 {
     transform_.setRotation(rotation);
+    recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::setRotation(SquareMatrix<Scalar, 3>& rotation)//Only defined to 3-Dimension
 {
-    //transform_.setRotation(rotation);
+    transform_.setRotation(rotation);
+    recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::setScale(Vector<Scalar, 3>& scale)//Only defined to 3-Dimension. Inertia tensor will be recalculated
 {
-    //transform_.setScale(scale);
+    transform_.setScale(scale);
+    recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
@@ -102,8 +111,8 @@ void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, Scalar densi
     mesh_ = mesh;
     density_ = density;
     object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
-    inertia_tensor_.setBody(mesh_, Vector<Scalar, 3>(1, 1, 1), density_, local_mass_center_, mass_);//wait for scale in transform
-    
+    inertia_tensor_.setBody(mesh_, transform_.scale(), density_, local_mass_center_, mass_);
+    recalculatePosition();   
 }
 
 template <typename Scalar,int Dim>
@@ -113,7 +122,8 @@ void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, Transform<Sc
     transform_ = transform;
     density_ = density;
     object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
-    //inertia_tensor_.setBody(mesh_, transform_.scalar, density_, local_mass_center_, mass_);//wait for scale in transform
+    inertia_tensor_.setBody(mesh_, transform_.scale(), density_, local_mass_center_, mass_);
+    recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
@@ -123,6 +133,7 @@ void RigidBody<Scalar, Dim>::update(Scalar dt)
     velocityIntegral(dt);
     configurationIntegral(dt);
     updateInertiaTensor();
+    recalculateTransform();
 }
 
 template <typename Scalar,int Dim>
@@ -172,13 +183,33 @@ template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::configurationIntegral(Scalar dt)
 {
     global_translation_ += global_translation_velocity_ * dt;
-    //to do: rotation
+    Quaternion<Scalar> quad;
+    quad.setX(global_angular_velocity_[0]);
+    quad.setY(global_angular_velocity_[1]);
+    quad.setZ(global_angular_velocity_[2]);
+    quad.setW(0);
+    quad = quad * global_rotation_ / 2;
+    global_rotation_ += quad * dt;
 }
 
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::updateInertiaTensor()
 {
     inertia_tensor_.rotate(global_rotation_);
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::recalculateTransform()
+{
+    transform_.setRotation(global_rotation_);
+    transform_.setTranslation(global_translation_ - global_rotation_.rotate(local_mass_center_));
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::recalculatePosition()
+{
+    global_rotation_ = transform_.rotation();
+    global_translation_ = transform_.translation() + global_rotation_.rotate(local_mass_center_);
 }
 
 template <typename Scalar,int Dim>

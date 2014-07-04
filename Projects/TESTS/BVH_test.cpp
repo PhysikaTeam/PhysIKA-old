@@ -47,6 +47,9 @@
 using namespace std;
 using namespace Physika;
 
+Transform<double> *trans;
+unsigned int render_i = 0;
+
 void display()
 {
     GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
@@ -57,10 +60,14 @@ void display()
     (window->camera()).look();  //set camera
 
     std::vector<unsigned int> temp;
-    temp.push_back(10);
+    temp.push_back(render_i);
+    render_i += 10;
 
-    //dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(0))->renderFaceWithColor(temp, Color<float>::Blue());
-    //dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(1))->renderFaceWithColor(temp, Color<float>::Blue());
+    dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(0))->synchronize();
+    dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(1))->synchronize();
+
+    dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(0))->renderFaceWithColor(temp, Color<float>::Blue());
+    dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(1))->renderFaceWithColor(temp, Color<float>::Blue());
 
     (window->renderManager()).renderAll(); //render all tasks of render manager
     window->displayFrameRate();
@@ -72,16 +79,31 @@ int main()
     SurfaceMesh<double> mesh_ball;
     if(!ObjMeshIO<double>::load(string("ball_high.obj"), &mesh_ball))
 		exit(1);
+
+    SurfaceMesh<double> mesh_box;
+    if(!ObjMeshIO<double>::load(string("box_tri.obj"), &mesh_box))
+        exit(1);
     
 	RigidBodyDriver<double, 3> driver;
 
 	RigidBody<double,3> body1(&mesh_ball);
 
 	RigidBody<double,3> body2(body1);
-    body2.setTranslation(Vector<double, 3>(0, 55, 0));
+    body2.setTranslation(Vector<double, 3>(0, -85, 0));
+
+    RigidBody<double,3> body3(body1);
+    body3.setTranslation(Vector<double, 3>(0, -185, 0));
+
+    RigidBody<double,3> body4(body1);
+    body4.setTranslation(Vector<double, 3>(0, -285, 0));
+
+    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
+    body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
 
 	driver.addRigidBody(&body1);
 	driver.addRigidBody(&body2);
+    driver.addRigidBody(&body3);
+    driver.addRigidBody(&body4);
 
     Vector<double, 3> center;
     double mass;
@@ -96,6 +118,7 @@ int main()
     GlutWindow glut_window;
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
+    //glut_window.setCameraPosition(Vector<double, 3>(20, 0, 0));
 	glut_window.setCameraPosition(Vector<double, 3>(-60, 0, 60));
 	glut_window.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
     //glut_window.setDisplayFunction(display);
@@ -110,18 +133,18 @@ int main()
 	plugin->enableRenderWireframeAll();
     plugin->enableRenderContactFaceAll();
 
-    SurfaceMeshRender<double>* render1 = new SurfaceMeshRender<double>();
-    render1->setSurfaceMesh(&mesh_ball);
+    //SurfaceMeshRender<double>* render1 = new SurfaceMeshRender<double>();
+    //render1->setSurfaceMesh(&mesh_ball);
+    //render1->enableRenderWireframe();
+    //render1->disableRenderSolid();
 
-    SurfaceMeshRender<double>* render2 = new SurfaceMeshRender<double>();
-    render2->setSurfaceMesh(&mesh_ball);
-    Transform<double> *trans = new Transform<double>();
-    trans->setTranslation(Vector<double, 3>(0, 35, 0));
-    render2->setTransform(trans);
-
-
-
-
+    //SurfaceMeshRender<double>* render2 = new SurfaceMeshRender<double>();
+    //render2->setSurfaceMesh(&mesh_ball);
+    //trans = new Transform<double>();
+    //trans->setTranslation(Vector<double, 3>(0, 35, 0));
+    //render2->setTransform(trans);
+    //render2->enableRenderWireframe();
+    //render2->disableRenderSolid();
 
     //glut_window.pushBackRenderTask(render1);
     //glut_window.pushBackRenderTask(render2);
