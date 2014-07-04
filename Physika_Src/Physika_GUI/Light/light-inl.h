@@ -20,7 +20,7 @@ namespace Physika{
 template<typename ColorType>
 void Light::setAmbient(const Color<ColorType>& color)
 {
-    openGLLightv(this->light_id_, GL_AMBIENT, color.convertColor<float>(color));
+    openGLLightv(this->light_id_, GL_AMBIENT, Color<ColorType>::template convertColor<float>(color));
 }
 
 template<typename ColorType>
@@ -35,7 +35,7 @@ Color<ColorType> Light::ambient() const
 template<typename ColorType>
 void Light::setDiffuse(const Color<ColorType>& color)
 {
-    openGLLightv(this->light_id_, GL_DIFFUSE, color.convertColor<float>(color));
+    openGLLightv(this->light_id_, GL_DIFFUSE, Color<ColorType>::template convertColor<float>(color));
 }
 
 template<typename ColorType>
@@ -50,7 +50,7 @@ Color<ColorType> Light::diffuse() const
 template<typename ColorType>
 void Light::setSpecular(const Color<ColorType>& color)
 {
-    openGLLightv(this->light_id_, GL_SPECULAR, color.convertColor<float>(color));
+    openGLLightv(this->light_id_, GL_SPECULAR, Color<ColorType>::template convertColor<float>(color));
 }
 
 template<typename ColorType>

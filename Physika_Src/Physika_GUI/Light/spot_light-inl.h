@@ -15,6 +15,9 @@
 #ifndef PHYSIKA_GUI_LIGHT_SPOT_LIGHT_INL_H_
 #define PHYSIKA_GUI_LIGHT_SPOT_LIGHT_INL_H_
 
+#include <GL/gl.h>
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
+
 namespace Physika{
 
 template<typename Scalar>
@@ -27,8 +30,8 @@ template<typename Scalar>
 Scalar SpotLight::spotExponent()const
 {
     float exponent;
-    glGetlightfv(this->light_id_, GL_SPOT_EXPONENT, &exponent );
-    return (Scalar) exponent;
+    glGetLightfv(this->light_id_, GL_SPOT_EXPONENT, &exponent);
+    return static_cast<Scalar>(exponent);
 }
 
 template<typename Scalar>
@@ -41,20 +44,20 @@ template<typename Scalar>
 Scalar SpotLight::spotCutoff()const
 {
     float cutoff;
-    glGetlightfv(this->light_id_, GL_SPOT_CUTOFF, &cutoff );
-    return (Scalar) cutoff;
+    glGetLightfv(this->light_id_, GL_SPOT_CUTOFF, &cutoff );
+    return static_cast<Scalar>(cutoff);
 }
 
 template<typename Scalar>
 void SpotLight::setSpotDirection(const Vector<Scalar,3>& direction)
 {
-    openGLLight(this->light_id_, GL_SPOT_DIRECTION, direction)
+    openGLLight(this->light_id_, GL_SPOT_DIRECTION, direction);
 }
 
 template<typename Scalar>
-Vector<Scalar,3> SpotLight::spotDirection()const
+Vector<Scalar,3> SpotLight::spotDirection() const
 {
-    float[3] direction;
+    float direction[3];
     glGetLightfv(this->light_id_, GL_SPOT_DIRECTION, direction);
     return Vector<Scalar,3>(direction[0], direction[1], direction[2]);
 }
@@ -62,3 +65,4 @@ Vector<Scalar,3> SpotLight::spotDirection()const
 } //end of namespace Physika
 
 #endif //PHYSIKA_GUI_LIGHT_SPOT_LIGHT_INL_H_
+

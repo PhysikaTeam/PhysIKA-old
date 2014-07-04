@@ -64,7 +64,7 @@ unsigned int GridQuery<Scalar, Dim>::computeGridSize()
     if(Dim == 2)
         return x_num_*y_num_;
     else
-        return = x_num_*y_num_*z_num_;
+        return x_num_*y_num_*z_num_;
 }
 
 
@@ -79,7 +79,7 @@ unsigned int GridQuery<Scalar, Dim>::getId(Vector<Scalar, Dim> pos)
 template<typename Scalar, int Dim>
 unsigned int GridQuery<Scalar, Dim>::getId(int x, int y)
 {
-    return x + y*x_num;
+    return x + y*x_num_;
 }
 template<typename Scalar, int Dim>
 unsigned int GridQuery<Scalar, Dim>::getId(int x, int y, int z)
