@@ -32,13 +32,13 @@ RigidBody<Scalar, Dim>::RigidBody():
 }
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density = 1)
+RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density)
 {
     setProperty(mesh, density);
 }
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density = 1)
+RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density)
 {
     setProperty(mesh, transform, density);
     

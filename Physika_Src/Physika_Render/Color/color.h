@@ -66,8 +66,6 @@ public:
 
     //method to convert between different color types
     //usage:
-    //Color<TargetType> color = Color<Scalar>::convertColor<TargetType>(src_color);
-    //                                    or
     //Color<TargetType> color = Color<Scalar>::template convertColor<TargetType>(src_color);
     template <typename TargetType>
     static Color<TargetType> convertColor(const Color<Scalar> &color);
