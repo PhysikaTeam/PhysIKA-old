@@ -67,42 +67,6 @@ void RigidBody<Scalar, Dim>::copy(RigidBody<Scalar, Dim>& rigid_body)
 }
 
 template <typename Scalar,int Dim>
-typename CollidableObject<Scalar, Dim>::ObjectType RigidBody<Scalar, Dim>::objectType() const
-{
-	return object_type_;
-}
-
-template <typename Scalar,int Dim>
-SurfaceMesh<Scalar>* RigidBody<Scalar, Dim>::mesh()
-{
-	return mesh_;
-}
-
-template <typename Scalar,int Dim>
-Transform<Scalar> RigidBody<Scalar, Dim>::transform() const
-{
-	return transform_;
-}
-
-template <typename Scalar,int Dim>
-Transform<Scalar> RigidBody<Scalar, Dim>::transform()
-{
-	return transform_;
-}
-
-template <typename Scalar,int Dim>
-const Transform<Scalar>* RigidBody<Scalar, Dim>::transformPtr() const
-{
-	return &transform_;
-}
-
-template <typename Scalar,int Dim>
-Transform<Scalar>* RigidBody<Scalar, Dim>::transformPtr()
-{
-	return &transform_;
-}
-
-template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::setTranslation(Vector<Scalar, 3>& translation)//Only defined to 3-Dimension
 {
     transform_.setTranslation(translation);
@@ -153,50 +117,68 @@ void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, Transform<Sc
 }
 
 template <typename Scalar,int Dim>
-void RigidBody<Scalar, Dim>::setFixed(bool is_fixed)
-{
-    is_fixed_ = is_fixed;
-}
-
-template <typename Scalar,int Dim>
-bool RigidBody<Scalar, Dim>::isFixed() const
-{
-    return is_fixed_;
-}
-
-template <typename Scalar,int Dim>
-const SquareMatrix<Scalar, 3> RigidBody<Scalar, Dim>::spatialInertiaTensor() const
-{
-    return inertia_tensor_.spatialInertiaTensor();
-}
-
-template <typename Scalar,int Dim>
-const SquareMatrix<Scalar, 3> RigidBody<Scalar, Dim>::bodyInertiaTensor() const
-{
-    return inertia_tensor_.bodyInertiaTensor();
-}
-
-template <typename Scalar,int Dim>
-Scalar RigidBody<Scalar, Dim>::density() const
-{
-    return density_;
-}
-
-template <typename Scalar,int Dim>
-Scalar RigidBody<Scalar, Dim>::mass() const
-{
-    return mass_;
-}
-
-template <typename Scalar,int Dim>
-Vector<Scalar, Dim> RigidBody<Scalar, Dim>::localMassCenter() const
-{
-    return local_mass_center_;
-}
-
-template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::update(Scalar dt)
 {
+    resetTemporaryVariables();
+    velocityIntegral(dt);
+    configurationIntegral(dt);
+    updateInertiaTensor();
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::addImpulse(Scalar magnitude, const Vector<Scalar, Dim>& direction, const Vector<Scalar, Dim>& global_position)
+{
+    Vector<Scalar, Dim> impulse = direction * magnitude;
+    global_translation_impulse_ += impulse;
+    global_angular_velocity_ += (global_position - globalMassCenter()).cross(impulse);
+}
+
+template <typename Scalar,int Dim>
+Vector<Scalar, Dim> RigidBody<Scalar, Dim>::globalVertexPosition(unsigned int vertex_idnex) const
+{
+    Vector<Scalar, Dim> local_position = mesh_->vertexPosition(vertex_idnex);
+    return transform_.transform(local_position);
+}
+
+template <typename Scalar,int Dim>
+Vector<Scalar, Dim> RigidBody<Scalar, Dim>::globalVertexVelocity(unsigned int vertex_index) const
+{
+     return globalPointVelocity(globalVertexPosition(vertex_index));
+}
+
+template <typename Scalar,int Dim>
+Vector<Scalar, Dim> RigidBody<Scalar, Dim>::globalPointVelocity(const Vector<Scalar, Dim>& global_point_position) const
+{
+     Vector<Scalar, Dim> velocity = global_translation_velocity_;
+     velocity += global_angular_velocity_.cross(global_point_position - globalMassCenter());
+     return velocity;
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::resetTemporaryVariables()
+{
+    global_translation_impulse_ *= 0;
+    global_angular_impulse_ *= 0;
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::velocityIntegral(Scalar dt)
+{
+    global_translation_velocity_ += global_translation_impulse_ / mass_;
+    global_angular_velocity_ += spatialInertiaTensorInverse() * global_angular_impulse_;
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::configurationIntegral(Scalar dt)
+{
+    global_translation_ += global_translation_velocity_ * dt;
+    //to do: rotation
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::updateInertiaTensor()
+{
+    inertia_tensor_.rotate(global_rotation_);
 }
 
 template <typename Scalar,int Dim>

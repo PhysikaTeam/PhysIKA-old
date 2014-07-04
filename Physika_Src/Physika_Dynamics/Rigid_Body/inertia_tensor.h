@@ -37,6 +37,10 @@ public:
     SquareMatrix<Scalar, 3> bodyInertiaTensor();
     const SquareMatrix<Scalar, 3> spatialInertiaTensor() const;
     SquareMatrix<Scalar, 3> spatialInertiaTensor();
+    const SquareMatrix<Scalar, 3> bodyInertiaTensorInverse() const;
+    SquareMatrix<Scalar, 3> bodyInertiaTensorInverse();
+    const SquareMatrix<Scalar, 3> spatialInertiaTensorInverse() const;
+    SquareMatrix<Scalar, 3> spatialInertiaTensorInverse();
 
     //set a body to this inertia tensor. Mesh, scale and density should be provided.
     //mass_center and mass will be modified after calling this function in order to get the center of mass and the value of mass.
@@ -53,10 +57,12 @@ protected:
     //the inertia tensor of a body referring to its mass center
     //it remains unchanged after setBody()
     SquareMatrix<Scalar, 3> body_inertia_tensor_;
+    SquareMatrix<Scalar, 3> body_inertia_tensor_inverse_;
 
     //the inertia tensor of a body in spatial frame. This is a common used inertia tensor in rigid body simulation
     //it will be modified after calling rotate(Quaternion<Scalar>& quad)
     SquareMatrix<Scalar, 3> spatial_inertia_tensor_;
+    SquareMatrix<Scalar, 3> spatial_inertia_tensor_inverse_;
 
 private:
 

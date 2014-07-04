@@ -39,12 +39,12 @@ public:
 
 	//get & set
     void copy(RigidBody<Scalar, Dim>& rigid_body);//Using this function for construction is strongly recommended because inertia tensor will not be recalculated for the same mesh.
-	typename CollidableObject<Scalar, Dim>::ObjectType objectType() const;
-	SurfaceMesh<Scalar>* mesh();
-	Transform<Scalar> transform() const;
-	Transform<Scalar> transform();
-	const Transform<Scalar>* transformPtr() const;
-	Transform<Scalar>* transformPtr();//WARNING! Don't use this to modify the transform of this rigid body. Use setTranslate(), setRotate() and setScale() instead.
+    inline typename CollidableObject<Scalar, Dim>::ObjectType objectType() const {return object_type_;};
+    inline SurfaceMesh<Scalar>* mesh() {return mesh_;};
+    inline Transform<Scalar> transform() const {return transform_;};
+    inline Transform<Scalar> transform() {return transform_;};
+	inline const Transform<Scalar>* transformPtr() const {return &transform_;};
+	inline Transform<Scalar>* transformPtr() {return &transform_;};//WARNING! Don't use this to modify the transform of this rigid body. Use setTranslate(), setRotate() and setScale() instead.
     void setTranslation(Vector<Scalar, 3>& translation);//Only defined to 3-Dimension
     void setRotation(Vector<Scalar, 3>& rotation);//Only defined to 3-Dimension
     void setRotation(Quaternion<Scalar>& rotation);//Only defined to 3-Dimension
@@ -52,20 +52,30 @@ public:
     void setScale(Vector<Scalar, 3>& scale);//Only defined to 3-Dimension. Inertia tensor will be recalculated
     void setProperty(SurfaceMesh<Scalar>* mesh, Scalar density = 1);//Inertia tensor will be recalculated
     void setProperty(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density = 1);//Inertia tensor will be recalculated
-    void setFixed(bool is_fixed);
-    bool isFixed() const;
-    const SquareMatrix<Scalar, 3> spatialInertiaTensor() const;
-    const SquareMatrix<Scalar, 3> bodyInertiaTensor() const;
-    Scalar density() const;
-    Scalar mass() const;
-    Vector<Scalar, Dim> localMassCenter() const;
+    inline void setFixed(bool is_fixed) {is_fixed_ = is_fixed;};
+    inline bool isFixed() const {return is_fixed_;};
+    inline const SquareMatrix<Scalar, 3> spatialInertiaTensor() const {return inertia_tensor_.spatialInertiaTensor();};
+    inline const SquareMatrix<Scalar, 3> bodyInertiaTensor() const {return inertia_tensor_.bodyInertiaTensor();};
+    inline const SquareMatrix<Scalar, 3> spatialInertiaTensorInverse() const {return inertia_tensor_.spatialInertiaTensorInverse();};
+    inline const SquareMatrix<Scalar, 3> bodyInertiaTensorInverse() const {return inertia_tensor_.bodyInertiaTensorInverse();};
+    inline Scalar density() const {return density_;};
+    inline Scalar mass() const {return mass_;};
+    inline Vector<Scalar, Dim> localMassCenter() const {return local_mass_center_;};
+    inline Vector<Scalar, Dim> globalMassCenter() const {return transform_.rotation().rotate(local_mass_center_) + transform_.translation();};//Can't use transform_.transform() here because its scales local_mass_center_ unexpectedly
+    inline Vector<Scalar, Dim> globalTranslation() const {return global_translation_;};
+    inline Quaternion<Scalar> globalRotation() const {return global_rotation_;};
+    inline Vector<Scalar, Dim> globalTranslationVelocity() const {return global_translation_velocity_;};
+    inline Vector<Scalar, Dim> globalAngularVelocity() const {return global_angular_velocity_;};
+    inline void setGlobalTranslationVelocity(const Vector<Scalar, Dim>& velocity) {global_translation_velocity_ = velocity;};
+    inline void setGlobalAngularVelocity(const Vector<Scalar, Dim>& velocity) {global_angular_velocity_ = velocity;};
 
 	//dynamics
 	void update(Scalar dt);//update its configuration and velocity
+    void addImpulse(Scalar magnitude, const Vector<Scalar, Dim>& direction, const Vector<Scalar, Dim>& global_position);//accumulate collision impulse to the rigid body. This will not change its velocity until velocityIntegral has been called
 
     Vector<Scalar, Dim> globalVertexPosition(unsigned int vertex_idnex) const;//get the position of a vertex in global frame
     Vector<Scalar, Dim> globalVertexVelocity(unsigned int vertex_index) const;//get the velocity of a vertex in global frame
-    Vector<Scalar, Dim> globalPointVelocity(Vector<Scalar, Dim> point_position) const;//get the velocity of an arbitrary point on/inside the rigid body in global frame
+    Vector<Scalar, Dim> globalPointVelocity(const Vector<Scalar, Dim>& global_point_position) const;//get the velocity of an arbitrary point on/inside the rigid body in global frame
 
 protected:
 	//basic properties of a rigid body
@@ -86,19 +96,23 @@ protected:
     Vector<Scalar, Dim> global_translation_;//translation of mass center in global frame (inertia frame). Different from translation in transform_ (which is the translation of local frame in global frame) 
     Quaternion<Scalar> global_rotation_;//rotation of rigid body in global frame (inertia frame). Same with rotation in transform_
     //velocity
-    Vector<Scalar, Dim> global_translation_velocity;//velocity of mass center in global frame (inertia frame)
-    Vector<Scalar, Dim> global_angular_velocity;//angular velocity of rigid body in global frame (inertia frame)
+    Vector<Scalar, Dim> global_translation_velocity_;//velocity of mass center in global frame (inertia frame)
+    Vector<Scalar, Dim> global_angular_velocity_;//angular velocity of rigid body in global frame (inertia frame)
+    //impulse
+    Vector<Scalar, Dim> global_translation_impulse_;//translation impulse accumulated during the collision. This will be used to update global_translation_velocity_
+    Vector<Scalar, Dim> global_angular_impulse_;///rotation impulse accumulated during the collision. This will be used to update global_angular_velocity_
 
     //Internal functions
+
+    //dynamics
+    void resetTemporaryVariables();//prepare for the new time step
+    void velocityIntegral(Scalar dt);
+    void configurationIntegral(Scalar dt);
+    void updateInertiaTensor();
 
     //set
     void setMesh(SurfaceMesh<Scalar>* mesh);
     void setTransform(Transform<Scalar>& transform);
-
-    //dynamics
-    void velocityIntegral(Scalar dt);
-    void configurationIntegral(Scalar dt);
-    void updateInertiaTensor();
 	
 };
 
