@@ -90,7 +90,7 @@ Color<ColorType> LightManager::lightModelAmbient() const
     float color[4];
     glGetFloatv(GL_LIGHT_MODEL_AMBIENT,color);
     Color<float> temp_color(color[0], color[1], color[2], color[3]);
-    return temp_color.convertColor<ColorType>(temp_color);
+    return temp_color.convertColor<ColorType>();
 }
 
 //declaration of << operator

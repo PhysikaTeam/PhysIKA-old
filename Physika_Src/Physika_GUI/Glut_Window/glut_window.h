@@ -70,7 +70,12 @@ public:
     const std::string& name() const;
     int width() const;
     int height() const;
+
     //getter&&setter of background color and text color
+    //Note on getters:
+    //1. "window.template xxxColor<ColorType>()" if template paramter of window is unknown
+    //2. "window.xxxColor<ColorType>()" is OK as well if template paramter of window is known
+    //3. The first use (with template keyword) is always right
     template <typename ColorType> 
     Color<ColorType> backgroundColor() const;
     template <typename ColorType> 
@@ -191,7 +196,7 @@ protected:
 template <typename ColorType>
 Color<ColorType> GlutWindow::backgroundColor() const
 {
-    return Color<double>::template convertColor<ColorType>(background_color_);
+    return background_color_.convertColor<ColorType>();
 }
 
 template <typename ColorType>
