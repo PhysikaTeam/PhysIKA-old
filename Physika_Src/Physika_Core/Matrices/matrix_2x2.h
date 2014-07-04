@@ -69,7 +69,7 @@ protected:
 
 //overriding << for SquareMatrix<Scalar,2>
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,2> &mat)
+inline std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,2> &mat)
 {
     if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
     {
@@ -86,7 +86,7 @@ std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,2> &mat)
 
 //make * operator commutative
 template <typename S, typename T>
-SquareMatrix<T,2> operator* (S scale, const SquareMatrix<T,2> &mat)
+inline SquareMatrix<T,2> operator* (S scale, const SquareMatrix<T,2> &mat)
 {
     return mat*scale;
 }
@@ -99,4 +99,3 @@ typedef SquareMatrix<int,2> Matrix2i;
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
-
