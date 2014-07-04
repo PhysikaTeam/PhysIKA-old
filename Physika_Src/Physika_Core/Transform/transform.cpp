@@ -99,11 +99,11 @@ Transform<Scalar>::Transform(const Vector<Scalar,3>& translation, const Quaterni
 template <typename Scalar>
 Vector<Scalar,3> Transform<Scalar>::transform(const Vector<Scalar, 3>& input) const
 {
-    Vector<Scalar, 3> tmp = this->rotation_.rotate(input);
+    Vector<Scalar, 3> tmp = input;
     tmp[0] *= scale_[0];
     tmp[1] *= scale_[1];
     tmp[2] *= scale_[2];
-    tmp += this->translation_;
+    tmp = this->rotation_.rotate(tmp) + this->translation_;
     return tmp;
 }
 

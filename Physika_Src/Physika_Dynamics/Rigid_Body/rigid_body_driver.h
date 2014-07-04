@@ -81,6 +81,7 @@ public:
 
 	//dynamics
 	virtual bool collisionDetection();
+    virtual void collisionResponse();
 
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
