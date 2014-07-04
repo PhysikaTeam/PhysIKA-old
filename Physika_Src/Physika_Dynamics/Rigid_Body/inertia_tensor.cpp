@@ -61,6 +61,14 @@ SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::rotate(Quaternion<Scalar>& quad)
 }
 
 template <typename Scalar>
+InertiaTensor<Scalar>& InertiaTensor<Scalar>::operator = (const InertiaTensor<Scalar>& inertia_tensor)
+{
+    body_inertia_tensor_ = inertia_tensor.body_inertia_tensor_;
+    spatial_inertia_tensor_ = inertia_tensor.spatial_inertia_tensor_;
+    return *this;
+}
+
+template <typename Scalar>
 void InertiaTensor<Scalar>::setBody(SurfaceMesh<Scalar>* mesh, Vector<Scalar, 3> scale, Scalar density, Vector<Scalar, 3>& mass_center, Scalar& mass)
 {
     if(!mesh->isTriangularMesh())

@@ -46,6 +46,8 @@ public:
     //spatial_inertia_tensor_ is modified in this function while body_inertia_tensor_ remains unchanged.
     SquareMatrix<Scalar, 3> rotate(Quaternion<Scalar>& quad);
 
+    InertiaTensor<Scalar>& operator = (const InertiaTensor<Scalar>& inertia_tensor);
+
 protected:
 
     //the inertia tensor of a body referring to its mass center
