@@ -17,60 +17,72 @@
 #include <GL/gl.h>
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Render/Color/color.h"
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 
-namespace Physika
-{
+namespace Physika{
+//Note: Light is designed for float and integer type, since openGL functions about light was imlementated for these two.
+//      Generally, type float is sufficient, and is strongly recommended.
+//      In Light class, as you can see in head file, we store NO data member, EXCEPT the light_id (corresponding to GL_LIGHT0,
+//      GL_LIGHT1, ......)to specify which light you are using from openGL.
+//      Thus, every setter and getter is operated by directly call openGL set-function and get-function(such as glLight and 
+//      glGetFloatv).
+//      As a consequence, The Light class maintains exactly the feature of "state machine" of openGL, i.e. You can change 
+//      the light object by call openGL functions directly outside, only if you have the right light_id.
 
-template<typename Scalar>
 class Light
 {
-
 public:
     // construction and destruction
     Light();
+    explicit Light(GLenum light_id);
     virtual ~Light();
 
     // public interface: setter and getter
-    virtual void             setLightId(GLenum light_id);
-    virtual GLenum           lightId();
-    virtual void             setAmbient(const Color<Scalar> & color);
-    virtual Color<Scalar>    ambient();
-    virtual void             setDiffuse(const Color<Scalar> & color);
-    virtual Color<Scalar>    diffuse();
-    virtual void             setSpecular(const Color<Scalar> & color);
-    virtual Color<Scalar>    specular();
+    void    setLightId(GLenum light_id);
+    GLenum  lightId() const;
 
-    virtual void             setPosition(const Vector<Scalar,3>& pos_or_dir);
-    virtual Vector<Scalar,3> position();
+    template <typename ColorType>
+    void             setAmbient(const Color<ColorType> & color);
+    template <typename ColorType>
+    Color<ColorType> ambient() const;
+    template <typename ColorType>
+    void             setDiffuse(const Color<ColorType> & color);
+    template <typename ColorType>
+    Color<ColorType> diffuse() const;
+    template <typename ColorType>
+    void             setSpecular(const Color<ColorType> & color);
+    template <typename ColorType>
+    Color<ColorType> specular() const;
 
-    virtual void             setSpotDirection(const Vector<Scalar,3>& direction);
-    virtual Vector<Scalar,3> spotDirection();
+    template <typename Scalar>
+    void             setPosition(const Vector<Scalar,3>& pos);
+    template <typename Scalar>
+    Vector<Scalar,3> position() const;
+    template <typename Scalar>
+    void             setConstantAttenuation(Scalar constant_atten);
+    template <typename Scalar>
+    Scalar           constantAttenuation() const;
+    template <typename Scalar>
+    void             setLinearAttenuation(Scalar linear_atten);
+    template <typename Scalar>
+    Scalar           linearAttenuation() const;
+    template <typename Scalar>
+    void             setQuadraticAttenuation(Scalar quad_atten);
+    template <typename Scalar>
+    Scalar           quadraticAttenuation() const;
 
-    virtual void             setSpotExponent(Scalar exponent);
-    virtual Scalar           spotExpoent();
-
-    virtual void             setSpotCutoff(Sclar cutoff);
-    virtual Scalar           spotCutoff();
-
-    virtual void             setConstantAttenation(Scalar constant_atten)
-    virtual Scalar           constantAttenation();
-    virtual void             setLinearAttenation(Scalar linear_atten);
-    virtual Scalar           linearAttenation();
-    virtual void             setQuadraticAttenation(Scalar quad_atten);
-    virtual Scalar           quadraticAttenation();
-
-    virtual void             setLightModelAmbient(const Color<Scalar> color);
-    virtual Color<Scalar>    lightModelAmbient();
-    virtual void             setLightModelLocalViewer(bool viewer);
-    virtual bool             LightModelLocalViewer();
-    virtual void             setLightModelTwoSide(bool two_size);
-    virtual bool             lightModelTwoSize();
-
-    virtual void             setLightModelColorControl(GLenum penum);
-    virtual GLenum           lightModelColorControl();
+    //Note: turnOn will Call glEnable(GL_LIGHTING), while turnOff will NOT call glDisable(GL_LIGHTING).
+    void turnOn() const;
+    void turnOff() const;
+    bool isLightOn() const;
+    void printInfo() const;
 protected:
     GLenum light_id_;
 };
 
+std::ostream &  operator<< (std::ostream& out, const Light& light);
+
 }      //end of namespace Physika
+
+#include "light-inl.h"
 #endif //PHYSIKA_GUI_LIGHT_LIGHT_H_
