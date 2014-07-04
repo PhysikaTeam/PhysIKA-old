@@ -25,7 +25,6 @@ GridQuery<Scalar, Dim>::GridQuery()
 template<typename Scalar, int Dim>
 void GridQuery<Scalar, Dim>::computeBoundingBox()
 {
-    //Range range;
     Vector<Scalar, Dim> lo = ref_positions_[0], hi = ref_positions_[0];
     for (unsigned int i = 0; i < particles_num_; i++)
     {
@@ -39,12 +38,23 @@ void GridQuery<Scalar, Dim>::computeBoundingBox()
     lo = max(lo, range_limit_.minCorner());
     hi = min(hi, range_limit_.maxCorner());
 
+    range_.setMinCorner(lo);
+    range_.setMaxCorner(hi);
+
     expandBoundingBox(0.25*space_);
 
 }
 
+
 template<typename Scalar, int Dim>
-void GridQuery<Scalar, Dim>::computeGridSize()
+void GridQuery<Scalar, Dim>::expandBoundingBox(const Scalar& in_padding)
+{
+    range_.setMinCorner(range_.minCorner() - in_padding);
+    range_.setMaxCorner(range_.maxCorner() + in_padding);
+}
+
+template<typename Scalar, int Dim>
+unsigned int GridQuery<Scalar, Dim>::computeGridSize()
 {
     computeBoundingBox();
     x_num_ = (range_.maxCorner()[0] - range_.minCorner()[0]) /space_ + 1;
@@ -53,7 +63,8 @@ void GridQuery<Scalar, Dim>::computeGridSize()
         z_num_ = (range_.maxCorner()[2] - range_.minCorner()[2]) /space_ + 1;
     if(Dim == 2)
         return x_num_*y_num_;
-    return x_num_*y_num_*z_num_;
+    else
+        return = x_num_*y_num_*z_num_;
 }
 
 
@@ -66,13 +77,18 @@ unsigned int GridQuery<Scalar, Dim>::getId(Vector<Scalar, Dim> pos)
 }
 
 template<typename Scalar, int Dim>
+unsigned int GridQuery<Scalar, Dim>::getId(int x, int y)
+{
+    return x + y*x_num;
+}
+template<typename Scalar, int Dim>
 unsigned int GridQuery<Scalar, Dim>::getId(int x, int y, int z)
 {
     return x + y*x_num_ + z*x_num_*z_num_;
 }
 
 template<typename Scalar, int Dim>
-void GridQuery<Scalar, Dim>::construct(Array<Vector<Scalar, Dim>>& in_positions, ArrayManager& sim_data)
+void GridQuery<Scalar, Dim>::construct(const Array<Vector<Scalar, Dim>>& in_positions, ArrayManager& sim_data)
 {
     particles_num_ = in_positions.elementCount();
     ref_positions_ = in_positions.data();

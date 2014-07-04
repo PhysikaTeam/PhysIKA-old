@@ -59,7 +59,7 @@ void PointRender<Scalar, Dim>::render()
     glBegin(GL_POINTS);
 
     
-    for (int i=0; i<this->points_num_; i++) {
+    for (unsigned int i=0; i<this->points_num_; i++) {
         if(colors_ != NULL)
             openGLColor3(colors_[i]);
         else
@@ -76,6 +76,11 @@ void PointRender<Scalar, Dim>::render()
     glEnd();
 }
 
+template<typename Scalar, int Dim>
+PointRender<Scalar, Dim>::~PointRender()
+{
+
+}
 
 template class PointRender<float ,3>;
 template class PointRender<float ,2>;

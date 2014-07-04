@@ -37,7 +37,9 @@ public:
     explicit Transform(const Vector<Scalar,3> );
     explicit Transform(const Quaternion<Scalar> );
     Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>& );
+    Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>&, const Vector<Scalar, 3>& );
     Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>& );
+    Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>&, const Vector<Scalar, 3>& );
     Transform(const SquareMatrix<Scalar,4>& );
     Transform(const SquareMatrix<Scalar,3>&);
 
@@ -53,9 +55,13 @@ public:
         matrix(2, 3) = translation_[2];
         return matrix;
     }
-    inline Vector<Scalar,3> translation() const { return translation_; }
-    inline void setRotation(Quaternion<Scalar> rotation) { rotation_ = rotation; }
-    inline void setTranslation(Vector<Scalar,3> translation) { translation_ = translation; }
+    inline Vector<Scalar, 3> translation() const { return translation_; }
+    inline Vector<Scalar, 3> scale() const { return scale_; }
+    inline void setRotation(const Quaternion<Scalar>& rotation) { rotation_ = rotation; }
+    inline void setRotation(const SquareMatrix<Scalar, 3>& rotation) { rotation_ = Quaternion<Scalar>(rotation); }
+    inline void setRotation(const Vector<Scalar, 3>& rotation ) { rotation_ = Quaternion<Scalar>(rotation); }
+    inline void setScale(const Vector<Scalar, 3> scale ) { scale_ = scale; }
+    inline void setTranslation(const Vector<Scalar,3>& translation) { translation_ = translation; }
     inline void setIdentity() { rotation_ = Quaternion<Scalar>(0,0,0,1); translation_ = Vector<Scalar, 3>(0,0,0);}
 
     /* Funtions*/
@@ -66,6 +72,7 @@ public:
 protected:
     Quaternion<Scalar> rotation_;
     Vector<Scalar,3> translation_;
+    Vector<Scalar,3> scale_;
 protected:
     PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
                            "Transform<Scalar> are only defined for Scalar type of float and double");

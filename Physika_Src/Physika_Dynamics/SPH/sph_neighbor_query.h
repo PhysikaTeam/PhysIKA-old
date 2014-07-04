@@ -50,16 +50,16 @@ public:
     GridQuery();
     ~GridQuery();
 
-    void getNeighbors(Vector<Scalar, Dim>& in_position, Scalar in_radius, NeighborList<Scalar>& out_neighborList);
-    void getSizedNeighbors(Vector<Scalar, Dim>& in_position, Scalar in_radius, NeighborList<Scalar>& out_neighborList, int in_max_num);
+    void getNeighbors(const Vector<Scalar, Dim>& in_position,const Scalar& in_radius, NeighborList<Scalar>& out_neighborList);
+    void getSizedNeighbors(const Vector<Scalar, Dim>& in_position,const Scalar& in_radius, NeighborList<Scalar>& out_neighborList, int in_max_num);
 
-    void construct(Array<Vector<Scalar, Dim>>& in_positions, ArrayManager& sim_data);
+    void construct(const Array<Vector<Scalar, Dim>>& in_positions, ArrayManager& sim_data);
    // void construct();
 
 private:
     void computeBoundingBox();
-    void computeGridSize();
-    void expandBoundingBox(Scalar in_padding);
+    unsigned int computeGridSize();
+    void expandBoundingBox(const Scalar& in_padding);
     void allocMemory();
 
     inline unsigned int getId(Vector<Scalar, Dim> pos); 

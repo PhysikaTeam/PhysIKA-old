@@ -74,7 +74,7 @@ template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::computeDensity()
 {
     SPH_Kernel<Scalar> &kernel = KernelFactory<Scalar>::createKernel(KernelFactory<Scalar>::Spiky);
-    for (int i = 0; i < this->particle_num_; i++)
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         NeighborList<Scalar> & neighborlist_i = this->neighbor_lists_[i];
         int size_i = neighborlist_i.size_;
@@ -101,7 +101,7 @@ void SPHFluid<Scalar, Dim>::computePressure(Scalar dt)
 {
     
     this->pressure_.zero();
-    for (int i = 0; i < this->particle_num_; i++)
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         //TO DO: mod the compute formula
         this->pressure_[i] = (this->density_[i] - this->reference_density_);
@@ -116,7 +116,7 @@ template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::computePressureForce(Scalar dt)
 {
      SPH_Kernel<Scalar> &kernel = KernelFactory<Scalar>::createKernel(KernelFactory<Scalar>::Spiky);
-    for (int i = 0; i < this->particle_num_; i++)
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         NeighborList<Scalar> & neighborlist_i = this->neighbor_lists_[i];
         int size_i = neighborlist_i.size_;
@@ -146,7 +146,7 @@ void SPHFluid<Scalar, Dim>::computeViscousForce(Scalar dt)
 {
     SPH_Kernel<Scalar>& kernel = KernelFactory<Scalar>::createKernel(KernelFactory<Scalar>::Laplacian);
     this->viscous_force_.zero();
-    for (int i = 0; i < this->particle_num_; i++)
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         NeighborList<Scalar>& neighborlist_i = this->neighbor_lists_[i];
         int size_i = neighborlist_i.size_;
@@ -169,7 +169,7 @@ void SPHFluid<Scalar, Dim>::computeViscousForce(Scalar dt)
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::computeVolume()
 {
-    for (int i = 0; i < this->particle_num_; i++)
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         this->volume_[i] = this->mass_[i] / this->density_[i];
     }
@@ -179,7 +179,7 @@ void SPHFluid<Scalar, Dim>::computeVolume()
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::advect(Scalar dt)
 {
-    for (int i = 0; i < this->particle_num_; i++)
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         this->velocity_[i] += dt/(this->mass_[i])*(this->viscous_force_[i] + this->pressure_force_[i] + this->gravity_);
         this->position_[i] += dt * this->velocity_[i];
@@ -213,6 +213,24 @@ SPHFluid<Scalar, Dim>::~SPHFluid()
     this->energy_.release();
 }
 
+
+template <typename Scalar, int Dim>
+void SPHFluid<Scalar, Dim>::initSceneBoundary()
+{
+
+}
+
+template <typename Scalar, int Dim>
+void SPHFluid<Scalar, Dim>::advance(Scalar dt)
+{
+
+}
+
+template <typename Scalar, int Dim>
+Scalar SPHFluid<Scalar, Dim>::getTimeStep()
+{
+    return this->time_step_;
+}
 
 template class SPHFluid<float, 3>;
 template class SPHFluid<double ,3>;

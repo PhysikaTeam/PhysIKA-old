@@ -41,7 +41,7 @@ void SPHSolid<Scalar, Dim>::initSceneBoundary()
 }
 
 template <typename Scalar, int Dim>
-float SPHSolid<Scalar, Dim>::getTimeStep()
+Scalar SPHSolid<Scalar, Dim>::getTimeStep()
 {
 
 

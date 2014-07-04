@@ -83,6 +83,23 @@ Quaternion<Scalar>::Quaternion(const Quaternion<Scalar> & quat):
 }
 
 template <typename Scalar>
+Quaternion<Scalar>:: Quaternion(const Vector<Scalar, 3>& euler_angle)
+{
+    Scalar cos_roll = cos(euler_angle[0] * Scalar(0.5));
+    Scalar sin_roll = sin(euler_angle[0] * Scalar(0.5));
+    Scalar cos_pitch = cos(euler_angle[1] * Scalar(0.5));
+    Scalar sin_pitch = sin(euler_angle[1] * Scalar(0.5));
+    Scalar cos_yaw = cos(euler_angle[2] * Scalar(0.5));
+    Scalar sin_yaw = sin(euler_angle[2] * Scalar(0.5));
+
+    w_ = cos_roll * cos_pitch * cos_yaw + sin_roll * sin_pitch * sin_yaw;
+    x_ = cos_roll * sin_pitch * cos_yaw + sin_roll * cos_pitch * sin_yaw;
+    y_ = cos_roll * cos_pitch * sin_yaw - sin_roll * sin_pitch * cos_yaw;
+    z_ = sin_roll * cos_pitch * cos_yaw - cos_roll * sin_pitch * sin_yaw;
+}
+
+
+template <typename Scalar>
 Quaternion<Scalar> & Quaternion<Scalar>::operator = (const Quaternion<Scalar> &quat)
 {
     w_ = quat.w();
@@ -131,13 +148,23 @@ Quaternion<Scalar>  Quaternion<Scalar>::operator + (const Quaternion<Scalar> &qu
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator * (Scalar scale)
+Quaternion<Scalar>  Quaternion<Scalar>::operator * (const Scalar& scale)
 {
     return Quaternion(x_ * scale, y_ * scale, z_ * scale, w_ * scale);
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator / (Scalar scale)
+Quaternion<Scalar> Quaternion<Scalar>::operator * (const Quaternion<Scalar>& q)
+{
+    return Quaternion(  w_ * q.x() + x_ * q.w() + y_ * q.z() - z_ * q.y(),
+                        w_ * q.y() + y_ * q.w() + z_ * q.x() - x_ * q.z(),
+                        w_ * q.z() + z_ * q.w() + x_ * q.y() - y_ * q.x(),
+                        w_ * q.w() - x_ * q.x() - y_ * q.y() - z_ * q.z());
+}
+
+
+template <typename Scalar>
+Quaternion<Scalar>  Quaternion<Scalar>::operator / (const Scalar& scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
@@ -164,7 +191,7 @@ bool  Quaternion<Scalar>::operator != (const Quaternion<Scalar> &quat)
 }
 
 template <typename Scalar>
-Scalar&  Quaternion<Scalar>::operator[] (int idx)
+Scalar&  Quaternion<Scalar>::operator[] (unsigned int idx)
 {
     if(idx < 0 || idx > 3)
     {
@@ -187,7 +214,7 @@ Scalar&  Quaternion<Scalar>::operator[] (int idx)
 }
 
 template <typename Scalar>
-const Scalar&  Quaternion<Scalar>::operator[] (int idx) const
+const Scalar&  Quaternion<Scalar>::operator[] (unsigned int idx) const
 {
     if(idx < 0 || idx > 3)
     {
@@ -247,6 +274,37 @@ void Quaternion<Scalar>::set(Scalar scale, const Vector<Scalar,3>& vec3)
     x_ = vec3[0];
     y_ = vec3[1];
     z_ = vec3[2];
+}
+
+template <typename Scalar>
+void Quaternion<Scalar>::set(const Vector<Scalar,3>& euler_angle)
+{
+    Scalar cos_roll = cos(euler_angle[0] * Scalar(0.5));
+    Scalar sin_roll = sin(euler_angle[0] * Scalar(0.5));
+    Scalar cos_pitch = cos(euler_angle[1] * Scalar(0.5));
+    Scalar sin_pitch = sin(euler_angle[1] * Scalar(0.5));
+    Scalar cos_yaw = cos(euler_angle[2] * Scalar(0.5));
+    Scalar sin_yaw = sin(euler_angle[2] * Scalar(0.5));
+
+    w_ = cos_roll * cos_pitch * cos_yaw + sin_roll * sin_pitch * sin_yaw;
+    x_ = cos_roll * sin_pitch * cos_yaw + sin_roll * cos_pitch * sin_yaw;
+    y_ = cos_roll * cos_pitch * sin_yaw - sin_roll * sin_pitch * cos_yaw;
+    z_ = sin_roll * cos_pitch * cos_yaw - cos_roll * sin_pitch * sin_yaw;
+}
+
+template <typename Scalar>
+Vector<Scalar, 3> Quaternion<Scalar>::getEulerAngle() const
+{
+    Vector<Scalar, 3> euler_angle;
+    euler_angle[0] = atan2(Scalar(2.0) * (w_ * z_ + x_ * y_), Scalar(1.0) - Scalar(2.0) * (z_ * z_ + x_ * x_));
+    Scalar tmp = (Scalar(2.0) * (w_ * x_ - y_ * z_));
+    if(tmp > 1.0)
+        tmp = 1.0;
+    if(tmp < -1.0)
+        tmp = -1.0;
+    euler_angle[1] = asin(tmp);
+    euler_angle[2] = atan2(Scalar(2.0) * (w_ * y_ + z_ * x_), Scalar(1.0) - Scalar(2.0) * (x_ * x_ + y_ * y_));
+    return euler_angle;
 }
 
 template <typename Scalar>
@@ -341,10 +399,10 @@ Quaternion<Scalar>::Quaternion(const SquareMatrix<Scalar, 3>& matrix )
     Scalar tr = matrix(0,0) + matrix(1,1) + matrix(2,2);
     if(tr > 0.0)
     {
-        Scalar s = sqrt(tr + 1.0);
-        w_ = s * 0.5;
+        Scalar s = sqrt(tr + Scalar(1.0));
+        w_ = s * Scalar(0.5);
         if(s != 0.0)
-            s = 0.5 / s;
+            s = Scalar(0.5) / s;
         x_ = s * (matrix(1,2) - matrix(2,1));
         y_ = s * (matrix(2,0) - matrix(0,2));
         z_ = s * (matrix(0,1) - matrix(1,0));
@@ -353,15 +411,15 @@ Quaternion<Scalar>::Quaternion(const SquareMatrix<Scalar, 3>& matrix )
     {
         int i = 0, j, k;
         int next[3] = { 1, 2, 0 }; 
-        int q[4];
+        Scalar q[4];
         if(matrix(1,1) > matrix(0,0)) i = 1;
         if(matrix(2,2) > matrix(i,i)) i = 2;
         j = next[i];
         k = next[j];
-        Scalar s = sqrt(matrix(i,i) - matrix(j,j) - matrix(k,k) + 1.0);
-        q[i] = s * 0.5;
+        Scalar s = sqrt(matrix(i,i) - matrix(j,j) - matrix(k,k) + Scalar(1.0));
+        q[i] = s * Scalar(0.5);
         if(s != 0.0) 
-            s = 0.5/s;
+            s = Scalar(0.5)/s;
         q[3] = s * (matrix(j,k) - matrix(k,j));
         q[j] = s * (matrix(i,j) - matrix(j,i));
         q[k] = s * (matrix(i,k) - matrix(k,i));
@@ -378,10 +436,10 @@ Quaternion<Scalar>::Quaternion(const SquareMatrix<Scalar,4>& matrix)
     Scalar tr = matrix(0,0) + matrix(1,1) + matrix(2,2);
     if(tr > 0.0)
     {
-        Scalar s = sqrt(tr + 1.0);
-        w_ = s * 0.5;
+        Scalar s = sqrt(tr + Scalar(1.0));
+        w_ = s * Scalar(0.5);
         if(s != 0.0)
-            s = 0.5 / s;
+            s = Scalar(0.5) / s;
         x_ = s * (matrix(1,2) - matrix(2,1));
         y_ = s * (matrix(2,0) - matrix(0,2));
         z_ = s * (matrix(0,1) - matrix(1,0));
@@ -390,15 +448,15 @@ Quaternion<Scalar>::Quaternion(const SquareMatrix<Scalar,4>& matrix)
     {
         int i = 0, j, k;
         int next[3] = { 1, 2, 0 }; 
-        int q[4];
+        Scalar q[4];
         if(matrix(1,1) > matrix(0,0)) i = 1;
         if(matrix(2,2) > matrix(i,i)) i = 2;
         j = next[i];
         k = next[j];
-        Scalar s = sqrt(matrix(i,i) - matrix(j,j) - matrix(k,k) + 1.0);
-        q[i] = s * 0.5;
+        Scalar s = sqrt(matrix(i,i) - matrix(j,j) - matrix(k,k) + Scalar(1.0));
+        q[i] = s * Scalar(0.5);
         if(s != 0.0) 
-            s = 0.5/s;
+            s = Scalar(0.5)/s;
         q[3] = s * (matrix(j,k) - matrix(k,j));
         q[j] = s * (matrix(i,j) - matrix(j,i));
         q[k] = s * (matrix(i,k) - matrix(k,i));
@@ -423,7 +481,7 @@ void Quaternion<Scalar>::toRadiansAndUnitAxis(Scalar& angle, Vector<Scalar, 3>& 
     {
         const Scalar s =  1/(sqrt(s2));
         axis = Vector<Scalar,3>(x_, y_, z_) * s;
-        angle = w_ < epsilon ? PI:atan2(s2*s, w_) * 2;
+        angle = w_ < epsilon ? Scalar(PI):atan2(s2*s, w_) * 2;
     }
 }
 

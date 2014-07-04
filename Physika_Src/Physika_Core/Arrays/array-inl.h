@@ -100,7 +100,7 @@ void Array<ElementType>::zero()
 }
 
 template <typename ElementType>
-ElementType& Array<ElementType>::operator[] (int id)
+ElementType& Array<ElementType>::operator[] (unsigned int id)
 {
     if(id<0||id>=element_count_)
     {
