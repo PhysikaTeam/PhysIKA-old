@@ -64,7 +64,7 @@ public:
     void zero();
 
     /* Operator overloading */
-    ElementType & operator[] (int id);
+    ElementType & operator[] (unsigned int id);
 
     virtual void permutate(unsigned int *ids, unsigned int size);
     
