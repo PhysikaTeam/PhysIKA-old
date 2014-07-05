@@ -42,7 +42,7 @@ void LightManager::insertBack(Light * light_p)
         this->light_list_.push_back(light_p);
     else
     {
-        std::cerr<<"error: the lenght of light list will be greater than '8', we only perserve 8 light id at most!! "<<std::endl;
+        std::cerr<<"error: the length of light list will be greater than '8', we only preserve 8 light id at most!! "<<std::endl;
         std::exit(EXIT_FAILURE);
     }
 }
@@ -85,7 +85,7 @@ void LightManager::insertAtIndex(unsigned int index, Light *task)
         }
         else
         {
-            std::cerr<<"error: the lenght of light list will be greater than '8', we only perserve 8 light id at most!! "<<std::endl;
+            std::cerr<<"error: the length of light list will be greater than '8', we only perserve 8 light id at most!! "<<std::endl;
             std::exit(EXIT_FAILURE);
         }
     }
