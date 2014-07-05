@@ -259,15 +259,7 @@ inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, Dim>& pos_
 	}
 	glLightiv(light, pname, param);
 }
-// explicit declaration
-/*
-template void openGLLightv<3>(GLenum, GLenum, const Vector<float ,3>&);
-template void openGLLightv<4>(GLenum, GLenum, const Vector<float ,4>&);
-template void openGLLightv<3>(GLenum, GLenum, const Vector<double ,3>&);
-template void openGLLightv<4>(GLenum, GLenum, const Vector<double ,4>&);
-template void openGLLightv<3>(GLenum, GLenum, const Vector<double ,3>&);
-template void openGLLightv<4>(GLenum, GLenum, const Vector<double ,4>&);
-*/
+
 /*
  * openGLLightModel(GLenum pname, Scalar param):
  * replacement for glLightModelf, glLightModeli
