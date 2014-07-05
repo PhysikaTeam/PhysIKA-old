@@ -12,15 +12,15 @@
  *
  */
 
-#ifndef PHYSIKA_GUI_LIGHT_LIGHT_INL_H_
-#define PHYSIKA_GUI_LIGHT_LIGHT_INL_H_
+#ifndef PHYSIKA_GUI_LIGHTS_LIGHT_INL_H_
+#define PHYSIKA_GUI_LIGHTS_LIGHT_INL_H_
 
 namespace Physika{
 
 template<typename ColorType>
 void Light::setAmbient(const Color<ColorType>& color)
 {
-    openGLLightv(this->light_id_, GL_AMBIENT, color.convertColor<float>(color));
+    openGLLightv(this->light_id_, GL_AMBIENT, color.template convertColor<float>());
 }
 
 template<typename ColorType>
@@ -29,13 +29,13 @@ Color<ColorType> Light::ambient() const
     float color[4];
     glGetLightfv(this->light_id_, GL_AMBIENT, color);
     Color<float> temp_color(color[0], color[1], color[2], color[3]);
-    return temp_color.convertColor<ColorType>(temp_color);
+    return temp_color.convertColor<ColorType>();
 }
 
 template<typename ColorType>
 void Light::setDiffuse(const Color<ColorType>& color)
 {
-    openGLLightv(this->light_id_, GL_DIFFUSE, color.convertColor<float>(color));
+    openGLLightv(this->light_id_, GL_DIFFUSE, color.template convertColor<float>());
 }
 
 template<typename ColorType>
@@ -44,13 +44,13 @@ Color<ColorType> Light::diffuse() const
     float color[4];
     glGetLightfv(this->light_id_, GL_DIFFUSE, color);
     Color<float> temp_color(color[0], color[1], color[2], color[3]);
-    return temp_color.convertColor<ColorType>(temp_color);
+    return temp_color.convertColor<ColorType>();
 }
 
 template<typename ColorType>
 void Light::setSpecular(const Color<ColorType>& color)
 {
-    openGLLightv(this->light_id_, GL_SPECULAR, color.convertColor<float>(color));
+    openGLLightv(this->light_id_, GL_SPECULAR, color.template convertColor<float>());
 }
 
 template<typename ColorType>
@@ -59,7 +59,7 @@ Color<ColorType> Light::specular() const
     float color[4];
     glGetLightfv(this->light_id_, GL_SPECULAR, color);
     Color<float> temp_color(color[0], color[1], color[2], color[3]);
-    return temp_color.convertColor<ColorType>(temp_color);
+    return temp_color.convertColor<ColorType>();
 }
 
 
@@ -67,7 +67,7 @@ Color<ColorType> Light::specular() const
 template<typename Scalar>
 void Light::setPosition(const Vector<Scalar,3>& pos)
 {
-    Vector<Scalar,4> position(pos[0], pos[1], pos[2], (Scalar)1.0); // the last one is 1.0 to specify this light is position based.
+    Vector<Scalar,4> position(pos[0], pos[1], pos[2], static_cast<Scalar>(1.0)); // the last one is 1.0 to specify this light is position based.
     openGLLightv(this->light_id_, GL_POSITION, position);
 }
 
@@ -123,4 +123,4 @@ Scalar Light::quadraticAttenuation() const
 
 }// end of namespace Physika
 
-#endif //PHYSIKA_GUI_LIGHT_LIGHT_INL_H_
+#endif //PHYSIKA_GUI_LIGHTS_LIGHT_INL_H_

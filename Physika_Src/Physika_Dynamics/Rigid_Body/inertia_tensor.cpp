@@ -55,9 +55,44 @@ SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::spatialInertiaTensor()
 }
 
 template <typename Scalar>
+const SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::bodyInertiaTensorInverse() const
+{
+    return body_inertia_tensor_inverse_;
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::bodyInertiaTensorInverse()
+{
+    return body_inertia_tensor_inverse_;
+}
+
+template <typename Scalar>
+const SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::spatialInertiaTensorInverse() const
+{
+    return spatial_inertia_tensor_inverse_;
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::spatialInertiaTensorInverse()
+{
+    return spatial_inertia_tensor_inverse_;
+}
+
+template <typename Scalar>
 SquareMatrix<Scalar, 3> InertiaTensor<Scalar>::rotate(Quaternion<Scalar>& quad)
 {
+    SquareMatrix<Scalar,3> rotation = quad.get3x3Matrix();
+    spatial_inertia_tensor_ = rotation * spatial_inertia_tensor_ * rotation.transpose();
+    spatial_inertia_tensor_inverse_ = spatial_inertia_tensor_.inverse();
     return spatial_inertia_tensor_;
+}
+
+template <typename Scalar>
+InertiaTensor<Scalar>& InertiaTensor<Scalar>::operator = (const InertiaTensor<Scalar>& inertia_tensor)
+{
+    body_inertia_tensor_ = inertia_tensor.body_inertia_tensor_;
+    spatial_inertia_tensor_ = inertia_tensor.spatial_inertia_tensor_;
+    return *this;
 }
 
 template <typename Scalar>
@@ -142,6 +177,10 @@ void InertiaTensor<Scalar>::setBody(SurfaceMesh<Scalar>* mesh, Vector<Scalar, 3>
     body_inertia_tensor_(X, Y) = body_inertia_tensor_(Y, X) += mass * mass_center[X] * mass_center[Y]; 
     body_inertia_tensor_(Y, Z) = body_inertia_tensor_(Z, Y) += mass * mass_center[Y] * mass_center[Z]; 
     body_inertia_tensor_(Z, X) = body_inertia_tensor_(X, Z) += mass * mass_center[Z] * mass_center[X]; 
+
+    body_inertia_tensor_inverse_ = body_inertia_tensor_.inverse();
+    spatial_inertia_tensor_ = body_inertia_tensor_;
+    spatial_inertia_tensor_inverse_ = body_inertia_tensor_inverse_;
 
     for(unsigned int i = 0; i < _vtxNum; ++i)
         delete [] p->verts_[i];

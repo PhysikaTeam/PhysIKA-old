@@ -42,6 +42,7 @@ public:
     Quaternion(const Quaternion<Scalar> &);
     Quaternion(const SquareMatrix<Scalar, 3> &);   //init from a 3x3matrix
     Quaternion(const SquareMatrix<Scalar,4> &);         //init from a 4x4matrix
+    Quaternion(const Vector<Scalar, 3>& );         //init form roll pitch yaw/ Euler angle;
     
     /* Assignment operators */
     Quaternion<Scalar> &operator = (const Quaternion<Scalar> &);
@@ -54,16 +55,17 @@ public:
     inline Scalar z() const { return z_;}
     inline Scalar w() const { return w_;}
 
-    inline void setX(Scalar x) { x_ = x;}
-    inline void setY(Scalar y) { y_ = y;}
-    inline void setZ(Scalar z) { z_ = z;}
-    inline void setW(Scalar w) { w_ = w;}
+    inline void setX(const Scalar& x) { x_ = x;}
+    inline void setY(const Scalar& y) { y_ = y;}
+    inline void setZ(const Scalar& z) { z_ = z;}
+    inline void setW(const Scalar& w) { w_ = w;}
 
     /* Special functions */
     Scalar norm();
     Quaternion<Scalar>& normalize();
     void set(const Vector<Scalar,3>&, Scalar );
     void set(Scalar , const Vector<Scalar,3>& );
+    void set(const Vector<Scalar,3>& );                              //set from a euler angle.
     Scalar getAngle() const;                                         // return the angle between this quat and the identity quaternion.
     Scalar getAngle(const Quaternion<Scalar>&) const;                // return the angle between this and the argument
     Scalar dot(const Quaternion<Scalar> &) const;
@@ -71,19 +73,21 @@ public:
     const Vector<Scalar,3> rotate(const Vector<Scalar,3> ) const;    // rotates passed vec by this;
     SquareMatrix<Scalar, 3> get3x3Matrix() const;  //return 3x3matrix format
     SquareMatrix<Scalar, 4> get4x4Matrix() const;        //return 4x4matrix with a identity transform.
+    Vector<Scalar, 3> getEulerAngle() const;
     void toRadiansAndUnitAxis(Scalar& angle, Vector<Scalar, 3>& axis) const;
   
 
     /* Operator overloading */
-    Quaternion<Scalar> operator - (const Quaternion<Scalar> &);
+    Quaternion<Scalar> operator - (const Quaternion<Scalar>& );
     Quaternion<Scalar> operator - (void);
-    Quaternion<Scalar> operator + (const Quaternion<Scalar> &);
-    Quaternion<Scalar> operator * (Scalar );
-    Quaternion<Scalar> operator / (Scalar );
-    bool operator == (const Quaternion<Scalar> &);
-    bool operator != (const Quaternion<Scalar> &);
-    Scalar& operator[] (int);
-    const Scalar& operator[] (int) const;
+    Quaternion<Scalar> operator + (const Quaternion<Scalar>& );
+    Quaternion<Scalar> operator * (const Quaternion<Scalar>& );
+    Quaternion<Scalar> operator * (const Scalar& );
+    Quaternion<Scalar> operator / (const Scalar& );
+    bool operator == (const Quaternion<Scalar>& );
+    bool operator != (const Quaternion<Scalar>& );
+    Scalar& operator[] (unsigned int);
+    const Scalar& operator[] (unsigned int) const;
 
     static inline Quaternion<Scalar> identityQuaternion() { return Quaternion<Scalar>(0,0,0,1); }
 
@@ -96,7 +100,7 @@ protected:
 
 
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
+inline std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
 {
     s <<quat.x()<<", "<<quat.y()<<", "<<quat.z()<<", "<<quat.w()<<std::endl;
     return s; 
@@ -104,7 +108,7 @@ std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
 
 //make * operator commutative
 template <typename S, typename T>
-Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
+inline Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
 {
     return quad * scale;
 }

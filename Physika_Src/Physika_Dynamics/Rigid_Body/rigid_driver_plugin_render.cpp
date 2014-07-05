@@ -220,6 +220,7 @@ void RigidDriverPluginRender<Scalar, Dim>::display()
             render = dynamic_cast<SurfaceMeshRender<Scalar>*>(active_render_->render_queue_[i]);
             if(render == NULL)
                 continue;
+            render->synchronize();
             render->renderFaceWithColor((active_render_->contact_face_ids)[i], Color<float>::Blue());
         }
     }

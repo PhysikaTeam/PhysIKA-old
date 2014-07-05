@@ -18,15 +18,16 @@
 
 namespace Physika{
 
+
 template <typename ElementType>
 std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
 {
     s<<"[";
-    for (size_t i = 0; i < arr.elementCount(); i++)
+    for (unsigned int i = 0; i < arr.elementCount(); i++)
     {
         s<<arr[i];
         if(i != arr.elementCount()-1)
-            s<<", "<<1;
+            s<<", ";
     }
     s<<"]";
     return s; 
@@ -101,6 +102,17 @@ void Array<ElementType>::zero()
 
 template <typename ElementType>
 ElementType& Array<ElementType>::operator[] (unsigned int id)
+{
+    if(id<0||id>=element_count_)
+    {
+        std::cerr<<"Array index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return data_[id];
+}
+
+template <typename ElementType>
+ElementType& Array<ElementType>::operator[] (unsigned int id) const
 {
     if(id<0||id>=element_count_)
     {

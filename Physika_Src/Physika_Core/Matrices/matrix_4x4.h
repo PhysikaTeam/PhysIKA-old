@@ -72,7 +72,7 @@ protected:
 
 //overriding << for SquareMatrix<Scalar,4>
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,4> &mat)
+inline std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,4> &mat)
 {
     if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
     {
@@ -95,7 +95,7 @@ std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,4> &mat)
  
 //make * operator commutative
 template <typename S, typename T>
-SquareMatrix<T,4> operator* (S scale, const SquareMatrix<T,4> &mat)
+inline SquareMatrix<T,4> operator* (S scale, const SquareMatrix<T,4> &mat)
 {
     return mat*scale;
 }

@@ -37,28 +37,54 @@ public:
     explicit Transform(const Vector<Scalar,3> );
     explicit Transform(const Quaternion<Scalar> );
     Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>& );
+    Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>&, const Vector<Scalar, 3>& );
     Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>& );
+    Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>&, const Vector<Scalar, 3>& );
     Transform(const SquareMatrix<Scalar,4>& );
     Transform(const SquareMatrix<Scalar,3>&);
 
     /* Get and Set */
     inline Quaternion<Scalar> rotation() const { return rotation_; }
     inline SquareMatrix<Scalar, 3> rotation3x3Matrix() const { return rotation_.get3x3Matrix(); }
-    inline SquareMatrix<Scalar,4> rotation4x4Matrix() const { return rotation_.get4x4Matrix(); }
-    inline SquareMatrix<Scalar,4> transformMatrix() const
+    inline SquareMatrix<Scalar, 4> rotation4x4Matrix() const { return rotation_.get4x4Matrix(); }
+    inline SquareMatrix<Scalar, 4> translation4x4Matrix() const
     {
-        SquareMatrix<Scalar,4> matrix = rotation_.get4x4Matrix();
+        return SquareMatrix<Scalar, 4>(  1,0,0,translation_[0],
+                                         0,1,0,translation_[1],
+                                         0,0,1,translation_[2],
+                                         0,0,0,1);
+    }
+    inline SquareMatrix<Scalar, 4> scale4x4Matrix() const 
+    { 
+        return SquareMatrix<Scalar, 4>( scale_[0],0,0,0,
+                                        0,scale_[1],0,0,
+                                        0,0,scale_[2],0,
+                                        0,0,0,1);
+    }
+    inline SquareMatrix<Scalar, 4> transformMatrix() const
+    {
+        SquareMatrix<Scalar, 4> matrix = rotation_.get4x4Matrix();
         matrix(0, 3) = translation_[0];
         matrix(1, 3) = translation_[1];
         matrix(2, 3) = translation_[2];
-        return matrix;
+        SquareMatrix<Scalar, 4> scale_matrix(   scale_[0], 0,0,0,
+                                                0,scale_[1],0,0,
+                                                0,0,scale_[2],0,
+                                                0,0,0,1);
+
+        return matrix*scale_matrix;
     }
-    inline Vector<Scalar,3> translation() const { return translation_; }
-    inline void setRotation(Quaternion<Scalar> rotation) { rotation_ = rotation; }
-    inline void setTranslation(Vector<Scalar,3> translation) { translation_ = translation; }
+    inline Vector<Scalar, 3> translation() const { return translation_; }
+    inline Vector<Scalar, 3> scale() const { return scale_; }
+    inline void setRotation(const Quaternion<Scalar>& rotation) { rotation_ = rotation; }
+    inline void setRotation(const SquareMatrix<Scalar, 3>& rotation) { rotation_ = Quaternion<Scalar>(rotation); }
+    inline void setRotation(const Vector<Scalar, 3>& rotation ) { rotation_ = Quaternion<Scalar>(rotation); }
+    inline void setScale(const Vector<Scalar, 3> scale ) { scale_ = scale; }
+    inline void setTranslation(const Vector<Scalar,3>& translation) { translation_ = translation; }
     inline void setIdentity() { rotation_ = Quaternion<Scalar>(0,0,0,1); translation_ = Vector<Scalar, 3>(0,0,0);}
 
     /* Funtions*/
+    //Order is scale > rotate > translate. If you want another order, you can get scale/rotation/translation component and do it yourself.
     Vector<Scalar,3> transform(const Vector<Scalar, 3>& input) const;
 
     static inline Transform<Scalar> identityTransform() { return Transform<Scalar>(); }
@@ -66,6 +92,7 @@ public:
 protected:
     Quaternion<Scalar> rotation_;
     Vector<Scalar,3> translation_;
+    Vector<Scalar,3> scale_;
 protected:
     PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
                            "Transform<Scalar> are only defined for Scalar type of float and double");

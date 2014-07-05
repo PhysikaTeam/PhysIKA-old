@@ -19,7 +19,8 @@ namespace Physika{
 
 template <typename Scalar>
 Transform<Scalar>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
-    rotation_(0,0,0,1)
+    rotation_(0,0,0,1),
+    scale_(Vector<Scalar, 3>(1,1,1))
 {
 
 }
@@ -27,7 +28,8 @@ Transform<Scalar>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
 template <typename Scalar>
 Transform<Scalar>::Transform(const Vector<Scalar,3> translation):
         translation_(translation),
-        rotation_(0,0,0,1)
+        rotation_(0,0,0,1),
+        scale_(Vector<Scalar, 3>(1,1,1))
 {
 
 }
@@ -45,15 +47,15 @@ template <typename Scalar>
 Transform<Scalar>::Transform(const SquareMatrix<Scalar, 3>& matrix)
 {
     rotation_ = Quaternion<Scalar>(matrix);
-    translation_[0] = matrix(0,3);
-    translation_[1] = matrix(1,3);
-    translation_[2] = matrix(2,3);
+    translation_ = Vector<Scalar, 3>(0,0,0);
+    scale_ = Vector<Scalar, 3>(1,1,1);
 }
 
 template <typename Scalar>
 Transform<Scalar>::Transform(const Quaternion<Scalar> rotation):
         rotation_(rotation),
-        translation_(0,0,0)
+        translation_(0,0,0),
+        scale_(Vector<Scalar, 3>(1,1,1))
 {
 
 }
@@ -61,24 +63,48 @@ Transform<Scalar>::Transform(const Quaternion<Scalar> rotation):
 template <typename Scalar>
 Transform<Scalar>::Transform(const Quaternion<Scalar>& rotation, const Vector<Scalar,3>& translation):
         translation_(translation),
-        rotation_(rotation)
+        rotation_(rotation),
+        scale_(Vector<Scalar, 3>(1,1,1))
 {
     
 }
 
 template <typename Scalar>
+Transform<Scalar>::Transform(const Quaternion<Scalar>& rotation, const Vector<Scalar,3>& translation, const Vector<Scalar, 3>& scale):
+        translation_(translation),
+        rotation_(rotation),
+        scale_(scale)
+{
+    
+}
+template <typename Scalar>
 Transform<Scalar>::Transform(const Vector<Scalar,3>& translation, const Quaternion<Scalar>& rotation):
         translation_(translation),
-        rotation_(rotation)
+        rotation_(rotation),
+       scale_(Vector<Scalar, 3>(1,1,1))
 {
 
 
 }
 
 template <typename Scalar>
+Transform<Scalar>::Transform(const Vector<Scalar,3>& translation, const Quaternion<Scalar>& rotation, const Vector<Scalar, 3>& scale):
+        translation_(translation),
+        rotation_(rotation),
+        scale_(scale)
+{
+    
+}
+
+template <typename Scalar>
 Vector<Scalar,3> Transform<Scalar>::transform(const Vector<Scalar, 3>& input) const
 {
-    return this->rotation_.rotate(input) + this->translation_;
+    Vector<Scalar, 3> tmp = input;
+    tmp[0] *= scale_[0];
+    tmp[1] *= scale_[1];
+    tmp[2] *= scale_[2];
+    tmp = this->rotation_.rotate(tmp) + this->translation_;
+    return tmp;
 }
 
 //explicit instantiation

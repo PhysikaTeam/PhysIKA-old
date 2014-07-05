@@ -75,7 +75,7 @@ protected:
 
 //overriding << for MatrixMxN
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
+inline std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
 {
     s<<"[";
     for(int i = 0; i < mat.rows(); ++i)
@@ -91,7 +91,7 @@ std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
 
 //make * operator commutative
 template <typename S, typename T>
-MatrixMxN<T> operator* (S scale, const MatrixMxN<T> &mat)
+inline MatrixMxN<T> operator* (S scale, const MatrixMxN<T> &mat)
 {
     return mat*scale;
 }
@@ -104,4 +104,3 @@ typedef MatrixMxN<int> MatrixXi;
 }
 
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_MXN_H_
-

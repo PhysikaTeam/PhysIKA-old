@@ -180,6 +180,7 @@ void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
             plugin->onBeginRigidStep(step_, dt);
     }
 
+    updateRigidBody(dt);
 	collisionDetection();
 
     for(unsigned int i = 0; i < plugin_num; ++i)
@@ -267,6 +268,14 @@ CollisionDetectionResult<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::collisionRe
 }
 
 template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::updateRigidBody(Scalar dt)
+{
+    unsigned int num_rigid_body = numRigidBody();
+    for(unsigned int i = 0; i < num_rigid_body; i++)
+        rigid_body_archives_[i]->rigidBody()->update(dt);
+}
+
+template <typename Scalar,int Dim>
 bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
 {
 	collision_result_.resetCollisionResults();
@@ -282,6 +291,12 @@ bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
 			plugin->onCollisionDetection();
 	}
 	return is_collide;
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::collisionResponse()
+{
+
 }
 
 template <typename Scalar,int Dim>

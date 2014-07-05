@@ -80,7 +80,9 @@ public:
 	CollisionDetectionResult<Scalar, Dim>* collisionResult();
 
 	//dynamics
+    virtual void updateRigidBody(Scalar dt);
 	virtual bool collisionDetection();
+    virtual void collisionResponse();
 
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
