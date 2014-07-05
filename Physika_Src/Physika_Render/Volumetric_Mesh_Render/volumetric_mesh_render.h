@@ -101,10 +101,6 @@ protected:
     unsigned int vertex_display_list_id_;   
     unsigned int wire_display_list_id_;     
     unsigned int solid_display_list_id_;
-    unsigned int element_with_color_display_list_id_;
-    unsigned int element_with_color_vector_display_list_id_;
-    unsigned int vertex_with_color_display_list_id_;
-    unsigned int vertex_with_color_vector_display_list_id_;
     unsigned int solid_with_custom_color_vector_display_list_id_;
 
     //predefined render modes

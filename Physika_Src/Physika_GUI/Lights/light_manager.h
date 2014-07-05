@@ -75,13 +75,7 @@ protected:
 template<typename ColorType>
 void LightManager::setLightModelAmbient(const Color<ColorType> &color)
 {
-    Color<float> float_color = Color<ColorType>::template convertColor<float>(color);
-    float temp_color[4];
-    temp_color[0] = float_color.redChannel();
-    temp_color[1] = float_color.greenChannel();
-    temp_color[2] = float_color.blueChannel();
-    temp_color[3] = float_color.alphaChannel();
-    openGLLightModelv(GL_LIGHT_MODEL_AMBIENT, temp_color);
+    openGLLightModelv(GL_LIGHT_MODEL_AMBIENT, color);
 }
 
 template<typename ColorType>

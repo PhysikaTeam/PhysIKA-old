@@ -39,10 +39,6 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender()
     solid_display_list_id_(0),
     wire_display_list_id_(0),
     vertex_display_list_id_(0),
-    face_with_color_display_list_id_(0),
-    face_with_color_vector_display_list_id_(0),
-    vertex_with_color_display_list_id_(0),
-    vertex_with_color_vector_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     initRenderMode();
@@ -55,10 +51,6 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh)
     solid_display_list_id_(0),
     wire_display_list_id_(0),
     vertex_display_list_id_(0),
-    face_with_color_display_list_id_(0),
-    face_with_color_vector_display_list_id_(0),
-    vertex_with_color_display_list_id_(0),
-    vertex_with_color_vector_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     initRenderMode();
@@ -72,10 +64,6 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transfor
     solid_display_list_id_(0),
     wire_display_list_id_(0),
     vertex_display_list_id_(0),
-    face_with_color_display_list_id_(0),
-    face_with_color_vector_display_list_id_(0),
-    vertex_with_color_display_list_id_(0),
-    vertex_with_color_vector_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     initRenderMode();
@@ -475,31 +463,22 @@ void SurfaceMeshRender<Scalar>::renderFaceWithColor(const std::vector<unsigned i
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
-    if(! glIsList(this->face_with_color_display_list_id_))
+  
+    unsigned int num_face = face_id.size();     
+    for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
     {
-        this->face_with_color_display_list_id_ = glGenLists(1);
-        glNewList(this->face_with_color_display_list_id_, GL_COMPILE_AND_EXECUTE);
-
-        unsigned int num_face = face_id.size();     
-        for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
+        const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
+        unsigned int num_vertex = face_ref.numVertices();
+        glBegin(GL_POLYGON);                                                      // draw specific face
+        for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
         {
-            const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
-            unsigned int num_vertex = face_ref.numVertices();
-            glBegin(GL_POLYGON);                                                      // draw specific face
-            for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-            {
-                unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
-                Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-                openGLVertex(position);
-            }
-            glEnd();
+            unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
+            Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
+            openGLVertex(position);
         }
-        glEndList();
+        glEnd();
     }
-    else
-    {
-        glCallList(this->face_with_color_display_list_id_);
-    }
+  
     glPopAttrib();
     glPopMatrix();
 }
@@ -522,35 +501,26 @@ void SurfaceMeshRender<Scalar>::renderFaceWithColor(const std::vector<unsigned i
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
-    if(! glIsList(this->face_with_color_vector_display_list_id_))
+   
+    unsigned int num_face = face_id.size();     
+    for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
     {
-        this->face_with_color_vector_display_list_id_ = glGenLists(1);
-        glNewList(this->face_with_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
-
-        unsigned int num_face = face_id.size();     
-        for(unsigned int face_idx=0; face_idx<num_face; face_idx++)
+        const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
+        unsigned int num_vertex = face_ref.numVertices();
+        if(face_idx<color.size())
+            openGLColor3(color[face_idx]);
+        else
+            openGLColor3(Color<ColorType>::White());
+        glBegin(GL_POLYGON);                                                      // draw specific face
+        for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
         {
-            const Face<Scalar>& face_ref = this->mesh_->face(face_id[face_idx]);      //get the reference of face with face_id: face_idx
-            unsigned int num_vertex = face_ref.numVertices();
-            if(face_idx<color.size())
-                openGLColor3(color[face_idx]);
-            else
-                openGLColor3(Color<ColorType>::White());
-            glBegin(GL_POLYGON);                                                      // draw specific face
-            for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-            {
-                unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
-                Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-                openGLVertex(position);
-            }
-            glEnd();
+            unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
+            Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
+            openGLVertex(position);
         }
-        glEndList();
+        glEnd();
     }
-    else
-    {
-        glCallList(this->face_with_color_vector_display_list_id_);
-    }
+    
     glPopMatrix();
     glPopAttrib();
 
@@ -573,25 +543,16 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
     {
         openGLMultMatrix(this->transform_->transformMatrix());  
     }
-    if(! glIsList(this->vertex_with_color_display_list_id_))
+   
+    unsigned int num_vertex = vertex_id.size();
+    glBegin(GL_POINTS);
+    for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
     {
-        this->vertex_with_color_display_list_id_ = glGenLists(1);
-        glNewList(this->vertex_with_color_display_list_id_, GL_COMPILE_AND_EXECUTE);
-
-        unsigned int num_vertex = vertex_id.size();
-        glBegin(GL_POINTS);
-        for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-        {
-            Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]); // get the position of vertex which is stored in "surface mesh"
-            openGLVertex(position);
-        }
-        glEnd();
-        glEndList();
+        Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]); // get the position of vertex which is stored in "surface mesh"
+        openGLVertex(position);
     }
-    else
-    {
-        glCallList(this->vertex_with_color_display_list_id_);
-    }
+    glEnd();
+   
     glPopMatrix();
     glPopAttrib();
 }
@@ -616,29 +577,20 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
-    if(! glIsList(this->vertex_with_color_vector_display_list_id_))
+ 
+    unsigned int num_vertex = vertex_id.size();
+    glBegin(GL_POINTS);
+    for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
     {
-        this->vertex_with_color_vector_display_list_id_ = glGenLists(1);
-        glNewList(this->vertex_with_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        if(vertex_idx<color.size())
+            openGLColor3(color[vertex_idx]);
+        else
+            openGLColor3(Color<ColorType>::White());
+        Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]);
+        openGLVertex(position);
+    }
+    glEnd();
 
-        unsigned int num_vertex = vertex_id.size();
-        glBegin(GL_POINTS);
-        for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-        {
-            if(vertex_idx<color.size())
-                openGLColor3(color[vertex_idx]);
-            else
-                openGLColor3(Color<ColorType>::White());
-            Vector<Scalar,3> position = this->mesh_->vertexPosition(vertex_id[vertex_idx]);
-            openGLVertex(position);
-        }
-        glEnd();
-        glEndList();
-    }
-    else
-    {
-        glCallList(this->vertex_with_color_vector_display_list_id_);
-    }
     glPopMatrix();
     glPopAttrib();
 }
@@ -717,19 +669,11 @@ void SurfaceMeshRender<Scalar>::deleteDisplayLists()
     glDeleteLists(this->solid_display_list_id_, 1);
     glDeleteLists(this->wire_display_list_id_, 1);
     glDeleteLists(this->vertex_display_list_id_, 1);
-    glDeleteLists(this->face_with_color_display_list_id_, 1);
-    glDeleteLists(this->face_with_color_vector_display_list_id_, 1);
-    glDeleteLists(this->vertex_with_color_display_list_id_, 1);
-    glDeleteLists(this->vertex_with_color_vector_display_list_id_, 1);
     glDeleteLists(this->solid_with_custom_color_vector_display_list_id_, 1);
 
     this->solid_display_list_id_ = 0;
     this->wire_display_list_id_ = 0;
     this->vertex_display_list_id_ = 0;
-    this->face_with_color_display_list_id_ = 0;
-    this->face_with_color_vector_display_list_id_ = 0;
-    this->vertex_with_color_display_list_id_ = 0;
-    this->vertex_with_color_vector_display_list_id_ = 0;
     this->solid_with_custom_color_vector_display_list_id_ = 0;
 }
 

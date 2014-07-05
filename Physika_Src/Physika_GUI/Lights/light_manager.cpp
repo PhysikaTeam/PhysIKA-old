@@ -35,15 +35,15 @@ void LightManager::insertBack(Light * light_p)
 {
     if(light_p == NULL)
     {
-        std::cerr<<"error: Cannot insert NULL light to LightManager ! "<<std::endl;
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
+        return ;
     }
     if(this->numLights()<8)
         this->light_list_.push_back(light_p);
     else
     {
-        std::cerr<<"error: the length of light list will be greater than '8', we only preserve 8 light id at most!! "<<std::endl;
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"error: the length of light list will be greater than '8', we only preserve 8 light id at most, operation will be ignored!"<<std::endl;
+        return ;
     }
 }
 
@@ -51,15 +51,15 @@ void LightManager::insertFront(Light * light_p)
 {
     if(light_p == NULL)
     {
-        std::cerr<<"error: Cannot insert NULL light to LightManager ! "<<std::endl;
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
+        return ;
     }
     if(this->numLights()<8)
         this->light_list_.push_front(light_p);
     else
     {
-        std::cerr<<"error: the lenght of light list will be greater than '8', we only perserve 8 light id at most!! "<<std::endl;
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"error: the length of light list will be greater than '8', we only preserve 8 light id at most, operation will be ignored! "<<std::endl;
+        return ;
     }
 }
 
@@ -68,8 +68,8 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
     bool index_valid = (index>=0)&&(index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"Light index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"Light index out of range, operation will be ignored!\n";
+        return ;
     }
     if(light)
     {
@@ -85,8 +85,8 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
         }
         else
         {
-            std::cerr<<"error: the length of light list will be greater than '8', we only perserve 8 light id at most!! "<<std::endl;
-            std::exit(EXIT_FAILURE);
+            std::cerr<<"error: the length of light list will be greater than '8', we only perserve 8 light id at most, operation will be ignored! "<<std::endl;
+            return ;
         }
     }
     else
@@ -111,8 +111,8 @@ void LightManager::removeAtIndex(unsigned int index)
     bool index_valid = (index>=0)&&(index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"light index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"light index out of range, operation will be ignored!!\n";
+        return ;
     }
     list<Light*>::iterator pos = light_list_.begin();
     while(index != 0)
@@ -133,8 +133,8 @@ const Light* LightManager::lightAtIndex(unsigned int index) const
     bool index_valid = (index>=0)&&(index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"light index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"error: light index out of range, NULL is returned! \n";
+        return NULL;
     }
     list<Light*>::const_iterator iter = light_list_.begin();
     while(index != 0)
@@ -151,8 +151,8 @@ Light* LightManager::lightAtIndex(unsigned int index)
     bool index_valid = (index>=0)&&(index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"Light index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"error: Light index out of range, NULL is returned!!\n";
+        return NULL;
     }
     list<Light*>::iterator iter = light_list_.begin();
     while(index != 0)
@@ -207,8 +207,8 @@ void LightManager::turnLightOnAtIndex(unsigned int index)
     bool index_valid = (index>=0)&&(index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"Light index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"Light index out of range, operation will be ignored!!\n";
+        return ;
     }
     list<Light *>::iterator iter = light_list_.begin();
     while(index != 0)
@@ -225,8 +225,8 @@ void LightManager::turnLightOffAtIndex(unsigned int index)
     bool index_valid = (index>=0)&&(index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"Light index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"Light index out of range, operation will be ignored!!\n";
+        return ;
     }
     list<Light *>::iterator iter = light_list_.begin();
     while(index != 0)
