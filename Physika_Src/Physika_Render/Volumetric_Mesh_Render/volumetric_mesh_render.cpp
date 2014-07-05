@@ -323,23 +323,23 @@ void VolumetricMeshRender<Scalar,Dim>::renderWireframe()
             if(is_uniform)
             {
                 // we will deal with type ElementType::TRI/QUAD in some way
-                if(	  this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TRI
-                    ||this->mesh_->elementType() == VolumetricMeshInternal::ElementType::QUAD)
+                if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
+                    ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
                 {
                     this->drawTriOrQuad(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TET)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
                 {
                     this->drawTet(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::CUBIC)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
                 {
                     this->drawCubic(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::NON_UNIFORM)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
                 {
                     // waiting for implementation
                     //
@@ -402,23 +402,23 @@ void VolumetricMeshRender<Scalar,Dim>::renderSolidWithAlpha(float alpha)
             if(is_uniform)
             {
                 // we will deal with type ElementType::TRI/QUAD in some way
-                if(	  this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TRI
-                    ||this->mesh_->elementType() == VolumetricMeshInternal::ElementType::QUAD)
+                if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
+                    ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
                 {
                     this->drawTriOrQuad(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TET)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
                 {
                     this->drawTet(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::CUBIC)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
                 {
                     this->drawCubic(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::NON_UNIFORM)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
                 {
                     // waiting for implementation
                     //
@@ -457,7 +457,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertexWithColor(const std::vector<u
     openGLColor3(color);
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(1.5*point_size);
+    glPointSize(static_cast<float>(1.5*point_size));
 
     glPushMatrix();
     if(this->transform_ != NULL)
@@ -492,7 +492,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertexWithColor(const std::vector<u
     glPolygonOffset(-1.0,1.0);
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(1.5*point_size);
+    glPointSize(static_cast<float>(1.5*point_size));
 
     glPushMatrix();
     if(this->transform_ != NULL)
@@ -541,23 +541,23 @@ void VolumetricMeshRender<Scalar,Dim>::renderElementWithColor(const std::vector<
         if(is_uniform)
         {
             // we will deal with type ElementType::TRI/QUAD in some way
-            if(	  this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TRI
-                ||this->mesh_->elementType() == VolumetricMeshInternal::ElementType::QUAD)
+            if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
+                ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
             {
                 this->drawTriOrQuad(element_id[ele_idx]);
             }
 
-            if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TET)
+            if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
             {
                 this->drawTet(element_id[ele_idx]);
             }
 
-            if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::CUBIC)
+            if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
             {
                 this->drawCubic(element_id[ele_idx]);
             }
 
-            if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::NON_UNIFORM)
+            if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
             {
                 // waiting for implementation
                 //
@@ -606,23 +606,23 @@ void VolumetricMeshRender<Scalar,Dim>::renderElementWithColor(const std::vector<
         if(is_uniform)
         {
             // we will deal with type ElementType::TRI/QUAD in some way
-            if(	  this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TRI
-                ||this->mesh_->elementType() == VolumetricMeshInternal::ElementType::QUAD)
+            if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
+                ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
             {
                 this->drawTriOrQuad(element_id[ele_idx]);
             }
 
-            if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TET)
+            if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
             {
                 this->drawTet(element_id[ele_idx]);
             }
 
-            if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::CUBIC)
+            if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
             {
                 this->drawCubic(element_id[ele_idx]);
             }
 
-            if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::NON_UNIFORM)
+            if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
             {
                 // waiting for implementation
                 //

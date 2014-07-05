@@ -210,7 +210,7 @@ inline void openGLLight(GLenum light, GLenum pname,float param)
 }
 inline void openGLLight(GLenum light, GLenum pname,double param)
 {
-    glLightf(light, pname, param);
+    glLightf(light, pname, static_cast<float>(param));
 }
 /*
  * openGLLightv(GLenum light, GLenum pname, Color/Vector<Scalar> param):
@@ -219,7 +219,7 @@ inline void openGLLight(GLenum light, GLenum pname,double param)
 template <typename ColorType>
 inline void openGLLightv(GLenum light, GLenum pname, const Color<ColorType>& color)
 {
-    Color<float> temp_color = color.template convertColor<float>(color);
+    Color<float> temp_color = color.template convertColor<float>();
     float param[4];
     param[0] = color.redChannel();
     param[1] = color.greenChannel();
@@ -228,95 +228,58 @@ inline void openGLLightv(GLenum light, GLenum pname, const Color<ColorType>& col
     glLightfv(light, pname, param);
 }
 
-/// warning: this function is defined particularly to specify GL_SPOT_DIRECTION
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 3>& direction)
+/// warning: this function is defined particularly to specify GL_SPOT_DIRECTION and GL_POSITION
+template <int Dim>
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, Dim>& pos_dir)
 {
-    if(pname != GL_SPOT_DIRECTION)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_SPOT_DIRECTION !"<<std::endl;
-    }
-    int param[3];
-    param[0] = direction[0];
-    param[1] = direction[1];
-    param[2] = direction[2];
-    glLightiv(light, pname, param);
+	float param[Dim];
+	for(unsigned int i=0; i<Dim; i++)
+	{
+		param[i] = pos_dir[i];
+	}
+	glLightfv(light, pname, param);
 }
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, 3>& direction)
+template <int Dim>
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<double, Dim>& pos_dir)
 {
-    if(pname != GL_SPOT_DIRECTION)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_SPOT_DIRECTION !"<<std::endl;
-    }
-    float param[3];
-    param[0] = direction[0];
-    param[1] = direction[1];
-    param[2] = direction[2];
-    glLightfv(light, pname, param);
+	float param[Dim];
+	for(unsigned int i=0; i<Dim; i++)
+	{
+		param[i] = static_cast<float>(pos_dir[i]);
+	}
+	glLightfv(light, pname, param);
 }
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<double, 3>& direction)
+template <int Dim>
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, Dim>& pos_dir)
 {
-    if(pname != GL_SPOT_DIRECTION)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_SPOT_DIRECTION !"<<std::endl;
-    }
-    float param[3];
-    param[0] = direction[0];
-    param[1] = direction[1];
-    param[2] = direction[2];
-    glLightfv(light, pname, param);
+	int param[Dim];
+	for(unsigned int i=0; i<Dim; i++)
+	{
+		param[i] = pos_dir[i];
+	}
+	glLightiv(light, pname, param);
 }
-
-/// warning: this function is defined particularly to specify GL_POSITION
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 4>& position)
-{
-    if(pname != GL_POSITION)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_POSITION !"<<std::endl;
-    }
-    int param[4];
-    param[0] = position[0];
-    param[1] = position[1];
-    param[2] = position[2];
-    param[3] = position[3];
-    glLightiv(light, pname, param);
-}
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, 4>& position)
-{
-    if(pname != GL_POSITION)
-    {
-        std::cerr<<"warning: this function is defined particularly to specify GL_POSITION, though it can be used for other usage!"<<std::endl;
-    }
-    float param[4];
-    param[0] = position[0];
-    param[1] = position[1];
-    param[2] = position[2];
-    param[3] = position[3];
-    glLightfv(light, pname, param);
-}
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<double, 4>& position)
-{
-    if(pname != GL_POSITION)
-    {
-        std::cerr<<"warning: this function is defined particularly to specify GL_POSITION, though it can be used for other usage!"<<std::endl;
-    }
-    float param[4];
-    param[0] = position[0];
-    param[1] = position[1];
-    param[2] = position[2];
-    param[3] = position[3];
-    glLightfv(light, pname, param);
-}
+// explicit declaration
+/*
+template void openGLLightv<3>(GLenum, GLenum, const Vector<float ,3>&);
+template void openGLLightv<4>(GLenum, GLenum, const Vector<float ,4>&);
+template void openGLLightv<3>(GLenum, GLenum, const Vector<double ,3>&);
+template void openGLLightv<4>(GLenum, GLenum, const Vector<double ,4>&);
+template void openGLLightv<3>(GLenum, GLenum, const Vector<double ,3>&);
+template void openGLLightv<4>(GLenum, GLenum, const Vector<double ,4>&);
+*/
 /*
  * openGLLightModel(GLenum pname, Scalar param):
  * replacement for glLightModelf, glLightModeli
  */
+
 inline void openGLLightModel(GLenum pname, float param)
 {
     glLightModelf(pname,param);
 }
 inline void openGLLightModel(GLenum pname, double param)
 {
-    glLightModelf(pname,param);
+    glLightModelf(pname, static_cast<float>(param));
 }
 inline void openGLLightModel(GLenum pname, int param)
 {
@@ -331,22 +294,17 @@ inline void openGLLightModel(GLenum pname, unsigned int param)
  * openGLLightModelv(GLenum pname, const Scalar *param):
  * replacement for glLightModelfv, glLightModeliv
  */
-/// warning: this function is designed particularly to speicify GL_LIGHT_MODEL_AMBIENT
+/// warning: this function is designed particularly to specify GL_LIGHT_MODEL_AMBIENT
 template <typename ColorType>
-inline void openGLLightModelv(GLenum pname, const Color<ColorType>& color)
+inline void openGLLightModelAMBient(const Color<ColorType>& color)
 {
-    if(pname != GL_LIGHT_MODEL_AMBIENT)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_LIGHT_MODEL_AMBIENT, operation will be ignored!"<<std::endl;
-        return ;
-    }
-    Color<float> temp_color = color.template convertColor<float>(color);
+    Color<float> temp_color = color.template convertColor<float>();
     float param[4];
     param[0] = temp_color.redChannel();
     param[1] = temp_color.greenChannel();
     param[2] = temp_color.blueChannel();
     param[3] = temp_color.alphaChannel();
-    glLightModelfv(pname,param);
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, param);
 }
 
 /*
@@ -359,7 +317,7 @@ inline void openGLTexParameter(GLenum target, GLenum pname, float param)
 }
 inline void openGLTexParameter(GLenum target, GLenum pname, double param)
 {
-    glTexParameterf(target,pname,param);
+    glTexParameterf(target,pname,static_cast<float>(param));
 }
 inline void openGLTexParameter(GLenum target, GLenum pname, int param)
 {

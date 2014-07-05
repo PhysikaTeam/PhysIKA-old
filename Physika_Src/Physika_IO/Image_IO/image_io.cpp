@@ -23,7 +23,7 @@ namespace Physika{
 
 bool ImageIO::load(const string & filename, Image* image)
 {
-    return ImageIO::load(filename, image, Image::DataFormat::RGBA);
+    return ImageIO::load(filename, image, Image::RGBA);
 }
 
 bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data_format)

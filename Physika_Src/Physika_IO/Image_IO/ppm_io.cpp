@@ -101,9 +101,9 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
     {
         std::cerr<<"error in reading image RGB data";
     }
-    if(data_format == Image::DataFormat::RGB)
+    if(data_format == Image::RGB)
     {
-        image->setRawData(file_para[0], file_para[1], Image::DataFormat::RGB, image_data);
+        image->setRawData(file_para[0], file_para[1], Image::RGB, image_data);
     }
     else
     {
@@ -121,7 +121,7 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
             image_data_with_alpha[4*i+2] = image_data[3*i+2];
             image_data_with_alpha[4*i+3] = 255;
         }
-        image->setRawData(file_para[0], file_para[1], Image::DataFormat::RGBA, image_data_with_alpha);
+        image->setRawData(file_para[0], file_para[1], Image::RGBA, image_data_with_alpha);
         delete [] image_data_with_alpha;
     }
     delete [] image_data;
@@ -158,7 +158,7 @@ bool PPMIO::save(const string &filename, const Image *image)
     
     unsigned int            num_pixel = image->width()*image->height();
     const unsigned  char *  row_data  = image->rawData();
-    if(image->dataFormat() == Image::DataFormat::RGB)
+    if(image->dataFormat() == Image::RGB)
     {
         for(unsigned int i=0; i<num_pixel; i++ )
         {

@@ -536,7 +536,7 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
     openGLColor3(color);
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(1.5*point_size);
+    glPointSize(static_cast<float>(.5*point_size));
 
     glPushMatrix();
     if(this->transform_ != NULL)
@@ -570,7 +570,7 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
     glPolygonOffset(-1.0,1.0);
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(1.5*point_size);
+    glPointSize(static_cast<float>(1.5*point_size));
 
     glPushMatrix();
     if(this->transform_ != NULL)

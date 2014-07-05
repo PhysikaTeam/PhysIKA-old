@@ -75,7 +75,7 @@ protected:
 template<typename ColorType>
 void LightManager::setLightModelAmbient(const Color<ColorType> &color)
 {
-    openGLLightModelv(GL_LIGHT_MODEL_AMBIENT, color);
+    openGLLightModelAMBient(color);
 }
 
 template<typename ColorType>
