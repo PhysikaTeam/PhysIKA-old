@@ -81,7 +81,7 @@ public:
     Quaternion<Scalar> operator - (const Quaternion<Scalar>& );
     Quaternion<Scalar> operator - (void);
     Quaternion<Scalar> operator + (const Quaternion<Scalar>& );
-    Quaternion<Scalar> operator * (const Quaternion<Scalar>& );
+    Quaternion<Scalar> operator * (const Quaternion<Scalar>& ) const;
     Quaternion<Scalar> operator * (const Scalar& );
     Quaternion<Scalar> operator / (const Scalar& );
     bool operator == (const Quaternion<Scalar>& );

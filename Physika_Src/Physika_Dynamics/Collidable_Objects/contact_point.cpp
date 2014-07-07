@@ -257,7 +257,8 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     if(num_overlap > 0)
     {
         overlap_point /= static_cast<Scalar>(num_overlap);
-        contact_normal_lhs = static_cast<Scalar>(0.5) * (face_lhs->faceNormal() - face_rhs->faceNormal());
+        contact_normal_lhs = static_cast<Scalar>(0.5) * (collision_pair->meshObjectLhs()->faceNormal(collision_pair->faceLhsIdx()) - 
+                                                        collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx()));
         if(contact_normal_lhs.norm() > std::numeric_limits<Scalar>::epsilon())
         {
             contact_normal_lhs.normalize();

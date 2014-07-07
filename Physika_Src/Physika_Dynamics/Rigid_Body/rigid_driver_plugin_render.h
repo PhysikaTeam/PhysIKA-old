@@ -79,12 +79,20 @@ public:
 
 	void enableRenderContactFaceAll();
     void disableRenderContactFaceAll();
+    void enableRenderContactNormalAll();
+    void disableRenderContactNormalAll();
+
+    void setNormalLength(Scalar normal_lenth);
 
 protected:
 	GlutWindow* window_;
 	std::vector<RenderBase*> render_queue_;
 	bool is_render_contact_face_;
-    std::vector<unsigned int> *contact_face_ids;//used to render contact faces.
+    bool is_render_contact_normal_;
+    std::vector<unsigned int> *contact_face_ids_;//used to render contact faces.
+    std::vector<Vector<Scalar, Dim>> contact_normal_positions_;//used to render contact nromals.
+    std::vector<Vector<Scalar, Dim>> contact_normal_orientation_;//used to render contact normals.
+    Scalar normal_length_;//used to render contact normals.
 
 	//singleton
 	static RigidDriverPluginRender<Scalar, Dim>* active_render_;//current active instance

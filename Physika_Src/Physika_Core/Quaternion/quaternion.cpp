@@ -154,7 +154,7 @@ Quaternion<Scalar>  Quaternion<Scalar>::operator * (const Scalar& scale)
 }
 
 template <typename Scalar>
-Quaternion<Scalar> Quaternion<Scalar>::operator * (const Quaternion<Scalar>& q)
+Quaternion<Scalar> Quaternion<Scalar>::operator * (const Quaternion<Scalar>& q) const
 {
     return Quaternion(  w_ * q.x() + x_ * q.w() + y_ * q.z() - z_ * q.y(),
                         w_ * q.y() + y_ * q.w() + z_ * q.x() - x_ * q.z(),
@@ -341,10 +341,10 @@ const Vector<Scalar,3> Quaternion<Scalar>::rotate(const Vector<Scalar,3> v) cons
     const Scalar dot2 = (x_ * vx + y_ * vy + z_ * vz);
     return Vector<Scalar,3>
         (
-            (vx * w2 + (y_ * vz - z_ * vy) * w_ + x_ * dot2), 
-            (vy * w2 + (z_ * vx - x_ * vz) * w_ + y_ * dot2), 
-            (vz * w2 + (x_ * vy - y_ * vx) * w_ + z_ * dot2)
-            );
+        (vx * w2 + (y_ * vz - z_ * vy) * w_ + x_ * dot2), 
+        (vy * w2 + (z_ * vx - x_ * vz) * w_ + y_ * dot2), 
+        (vz * w2 + (x_ * vy - y_ * vx) * w_ + z_ * dot2)
+        );
 }
 
 

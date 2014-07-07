@@ -67,6 +67,23 @@ Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::vertexPosition(unsigne
 }
 
 template <typename Scalar,int Dim>
+Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::faceNormal(unsigned int face_index) const
+{
+    Face<Scalar>& face = mesh_->face(face_index);
+    PHYSIKA_ASSERT(face.numVertices()>=3);
+    unsigned int vert_idx1 = face.vertex(0).positionIndex();
+    unsigned int vert_idx2 = face.vertex(1).positionIndex();
+    unsigned int vert_idx3 =  face.vertex(2).positionIndex();
+    const Vector<Scalar,3> &vert_pos1 = vertexPosition(vert_idx1);
+    const Vector<Scalar,3> &vert_pos2 = vertexPosition(vert_idx2);
+    const Vector<Scalar,3> &vert_pos3 = vertexPosition(vert_idx3);
+    Vector<Scalar,3> vec1 = vert_pos2 - vert_pos1;
+    Vector<Scalar,3> vec2 = vert_pos3 - vert_pos1;
+    Vector<Scalar,3> normal = (vec1.cross(vec2)).normalize();
+    return normal;
+}
+
+template <typename Scalar,int Dim>
 const Transform<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::transform() const
 {
 	return transform_;

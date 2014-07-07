@@ -17,10 +17,10 @@
 
 #include "Physika_Core/Transform/transform.h"
 #include "Physika_Dynamics/Rigid_Body/inertia_tensor.h"
+#include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 
 namespace Physika{
 
-template <typename Scalar,int Dim> class CollidableObject;
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar> class SurfaceMesh;
 

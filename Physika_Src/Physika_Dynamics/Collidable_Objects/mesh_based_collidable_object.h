@@ -36,10 +36,14 @@ public:
 	const SurfaceMesh<Scalar>* mesh() const;
 	SurfaceMesh<Scalar>* mesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);
-	Vector<Scalar, 3> vertexPosition(unsigned int vertex_index) const;
 	const Transform<Scalar>* transform() const;
 	Transform<Scalar>* transform();
 	void setTransform(Transform<Scalar>* transform);
+
+    //return vertex and normals after transform
+    Vector<Scalar, 3> vertexPosition(unsigned int vertex_index) const;
+    Vector<Scalar, 3> faceNormal(unsigned int face_index) const;
+
 	bool collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs);
 
     //overlapPoint is the position of overlap. It will be changed after test if overlap is true.

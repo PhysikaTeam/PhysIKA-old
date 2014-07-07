@@ -133,6 +133,7 @@ template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::setScale(Vector<Scalar, 3>& scale)//Only defined to 3-Dimension. Inertia tensor will be recalculated
 {
     transform_.setScale(scale);
+    inertia_tensor_.setBody(mesh_, transform_.scale(), density_, local_mass_center_, mass_);
     recalculatePosition();
 }
 
@@ -221,6 +222,7 @@ void RigidBody<Scalar, Dim>::configurationIntegral(Scalar dt)
     quad.setW(0);
     quad = quad * global_rotation_ / 2;
     global_rotation_ += quad * dt;
+    global_rotation_.normalize();
 }
 
 template <typename Scalar,int Dim>

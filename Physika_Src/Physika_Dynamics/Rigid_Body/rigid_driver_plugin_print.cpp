@@ -83,6 +83,13 @@ template <typename Scalar,int Dim>
 void RigidDriverPluginPrint<Scalar, Dim>::onBeginRigidStep(int step, Scalar dt)
 {
     std::cout<<"Frame begin: "<<step<<std::endl;
+    //std::cout<<this->rigid_driver_->rigidBody(0)->globalMassCenter()<<std::endl;
+    //std::cout<<this->rigid_driver_->rigidBody(0)->globalTranslation()<<std::endl;
+    //std::cout<<this->rigid_driver_->rigidBody(0)->transform().scale()<<std::endl;
+    //std::cout<<this->rigid_driver_->rigidBody(0)->transform().translation()<<std::endl;
+    //std::cout<<this->rigid_driver_->rigidBody(0)->transform().rotation().getEulerAngle()<<std::endl;
+
+
 }
 
 template <typename Scalar,int Dim>

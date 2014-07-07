@@ -172,6 +172,7 @@ void RigidBodyDriver<Scalar, Dim>::initialize()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
 {
+    step_++;
     unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
     RigidDriverPlugin<Scalar, Dim>* plugin;
     for(unsigned int i = 0; i < plugin_num; ++i)

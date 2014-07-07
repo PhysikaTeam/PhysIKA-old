@@ -71,6 +71,7 @@ int main()
 
 	RigidBody<double,3> body2(body1);
     body2.setTranslation(Vector<double, 3>(0, 55, 0));
+    body2.setScale(Vector<double, 3>(0.3, 0.4, 0.5));
 
     RigidBody<double,3> body3(body1);
     body3.setTranslation(Vector<double, 3>(0, -185, 0));
@@ -82,8 +83,8 @@ int main()
 
     //body2.setRotation(Vector<double, 3>(0, 0.785, 0));
 
-    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
-    //body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
+    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, -0.2));
+    body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.2));
 
     //body3.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
     //body3.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
@@ -91,8 +92,10 @@ int main()
     //body4.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
     //body4.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
 
-	driver.addRigidBody(&body1);
-	driver.addRigidBody(&body2);
+    driver.addRigidBody(&body1);
+    driver.addRigidBody(&body2);
+	
+	
     //driver.addRigidBody(&body3);
     //driver.addRigidBody(&body4);
 
@@ -100,7 +103,7 @@ int main()
     double mass;
     InertiaTensor<double> tensor;
 
-    tensor.setBody(&mesh_ball, Vector<double, 3>(0.1789, 0.1789, 0.1789), 1.0, center, mass);
+    tensor.setBody(&mesh_ball, Vector<double, 3>(0.2, 0.8, 0.3), 1.0, center, mass);
     cout<<center<<endl;
     cout<<mass<<endl;
     cout<<tensor.bodyInertiaTensor()<<endl;
@@ -122,10 +125,11 @@ int main()
 	driver.addPlugin(plugin);
 	plugin->disableRenderSolidAll();
 	plugin->enableRenderWireframeAll();
-    plugin->enableRenderContactFaceAll();
+    //plugin->enableRenderContactFaceAll();
+    plugin->enableRenderContactNormalAll();
 
-    RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
-    driver.addPlugin(print_plugin);
+    //RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
+    //driver.addPlugin(print_plugin);
 
 
     glut_window.createWindow();

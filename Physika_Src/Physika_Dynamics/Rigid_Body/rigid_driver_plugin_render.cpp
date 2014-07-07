@@ -24,6 +24,8 @@
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
+#include "Physika_Dynamics/Collidable_Objects/contact_point.h"
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include <GL/freeglut.h>
 
 namespace Physika{
@@ -32,7 +34,9 @@ template <typename Scalar,int Dim>
 RigidDriverPluginRender<Scalar, Dim>::RigidDriverPluginRender():
 	window_(NULL),
 	is_render_contact_face_(false),
-    contact_face_ids(NULL)
+    is_render_contact_normal_(false),
+    contact_face_ids_(NULL),
+    normal_length_(2)
 {
 	active();
 }
@@ -46,8 +50,8 @@ RigidDriverPluginRender<Scalar, Dim>::~RigidDriverPluginRender()
 		delete render_queue_[i];
 	}
 	render_queue_.clear();
-    if(contact_face_ids != NULL)
-        delete [] contact_face_ids;
+    if(contact_face_ids_ != NULL)
+        delete [] contact_face_ids_;
 }
 
 template <typename Scalar,int Dim>
@@ -187,22 +191,38 @@ void RigidDriverPluginRender<Scalar, Dim>::idle()
 	if(active_render_->is_render_contact_face_)//get contact faces' ids
 	{
         unsigned int num_body = active_render_->rigid_driver_->numRigidBody();
-        if(active_render_->contact_face_ids != NULL)
+        if(active_render_->contact_face_ids_ != NULL)
         {
-            delete [] active_render_->contact_face_ids;
-            active_render_->contact_face_ids = NULL;
+            delete [] active_render_->contact_face_ids_;
+            active_render_->contact_face_ids_ = NULL;
         }
-        active_render_->contact_face_ids = new std::vector<unsigned int>[num_body];
+        active_render_->contact_face_ids_ = new std::vector<unsigned int>[num_body];
 
 		CollisionDetectionResult<Scalar, Dim>* collision_result = &(active_render_->rigid_driver_->collisionResult());
 		unsigned int num_collision = collision_result->numberCollision();
 		for(unsigned int i = 0; i < num_collision; ++i)
         {
             CollisionPairBase<Scalar, Dim>* pair = collision_result->collisionPairs()[i];
-            (active_render_->contact_face_ids)[pair->objectLhsIdx()].push_back(pair->faceLhsIdx());
-            (active_render_->contact_face_ids)[pair->objectRhsIdx()].push_back(pair->faceRhsIdx());
+            (active_render_->contact_face_ids_)[pair->objectLhsIdx()].push_back(pair->faceLhsIdx());
+            (active_render_->contact_face_ids_)[pair->objectRhsIdx()].push_back(pair->faceRhsIdx());
         }
 	}
+
+    if(active_render_->is_render_contact_normal_)//get contact faces' normals
+    {
+        active_render_->contact_normal_positions_.clear();
+        active_render_->contact_normal_orientation_.clear();
+        ContactPointManager<Scalar, Dim>* contact_points = &(active_render_->rigid_driver_->contactPoints());
+        unsigned int num_contact = contact_points->numContactPoint();
+        for(unsigned int i = 0; i < num_contact; ++i)
+        {
+            active_render_->contact_normal_positions_.push_back(contact_points->contactPoint(i)->globalContactPosition());
+            active_render_->contact_normal_orientation_.push_back(contact_points->contactPoint(i)->globalContactNormalLhs());
+            active_render_->contact_normal_positions_.push_back(contact_points->contactPoint(i)->globalContactPosition());
+            active_render_->contact_normal_orientation_.push_back(contact_points->contactPoint(i)->globalContactNormalRhs());
+        }
+    }
+
     glutPostRedisplay();
 
 }
@@ -217,7 +237,7 @@ void RigidDriverPluginRender<Scalar, Dim>::display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     (window->camera()).look();  //set camera
     
-    if(active_render_->is_render_contact_face_ && active_render_->contact_face_ids != NULL)//render contact faces
+    if(active_render_->is_render_contact_face_ && active_render_->contact_face_ids_ != NULL)//render contact faces
     {
         SurfaceMeshRender<Scalar>* render;
         unsigned int num_body = active_render_->rigid_driver_->numRigidBody();
@@ -226,10 +246,28 @@ void RigidDriverPluginRender<Scalar, Dim>::display()
             render = dynamic_cast<SurfaceMeshRender<Scalar>*>(active_render_->render_queue_[i]);
             if(render == NULL)
                 continue;
-            render->synchronize();
-            render->renderFaceWithColor((active_render_->contact_face_ids)[i], Color<float>::Blue());
+            //render->synchronize();
+            render->renderFaceWithColor((active_render_->contact_face_ids_)[i], Color<float>::Blue());
         }
     }
+
+    if(active_render_->is_render_contact_normal_)//render contact normals
+    {
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        glPushMatrix();
+        openGLColor3(Color<double>::Red());
+        glBegin(GL_LINES);
+        unsigned int num_normal = static_cast<unsigned int>(active_render_->contact_normal_positions_.size());
+        for(unsigned int i = 0; i < num_normal; ++i)
+        {
+            openGLVertex(active_render_->contact_normal_positions_[i]);
+            openGLVertex(active_render_->contact_normal_positions_[i] + active_render_->contact_normal_orientation_[i] * active_render_->normal_length_);
+        }
+        glEnd();
+        glPopMatrix();
+        glPopAttrib();
+    }
+
     (window->renderManager()).renderAll(); //render all tasks of render manager
     window->displayFrameRate();
     glutSwapBuffers();
@@ -521,6 +559,24 @@ template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::disableRenderContactFaceAll()
 {
     is_render_contact_face_ = false;
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::enableRenderContactNormalAll()
+{
+    is_render_contact_normal_ = true;
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::disableRenderContactNormalAll()
+{
+    is_render_contact_normal_ = false;
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::setNormalLength(Scalar normal_lenth)
+{
+    normal_length_ = normal_lenth;
 }
 
 template <typename Scalar,int Dim>
