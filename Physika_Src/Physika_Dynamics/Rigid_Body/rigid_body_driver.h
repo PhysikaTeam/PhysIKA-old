@@ -20,6 +20,7 @@
 #include "Physika_Geometry/Bounding_Volume/bvh_base.h"
 #include "Physika_Geometry/Bounding_Volume/scene_bvh.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/contact_point.h"
 
 
 namespace Physika{
@@ -77,7 +78,8 @@ public:
 	virtual void addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild = true);//is_rebuild means whether rebuild the scene BVH after adding this body.
 	unsigned int numRigidBody() const;
 	RigidBody<Scalar, Dim>* rigidBody(unsigned int index);
-	CollisionDetectionResult<Scalar, Dim>* collisionResult();
+	CollisionDetectionResult<Scalar, Dim>& collisionResult();
+    ContactPointManager<Scalar, Dim>& contactPoints();
 
 	//dynamics
     virtual void updateRigidBody(Scalar dt);
@@ -88,9 +90,10 @@ public:
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
 protected:
-	CollisionDetectionResult<Scalar, Dim> collision_result_;
 	SceneBVH<Scalar, Dim> scene_bvh_;
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
+    CollisionDetectionResult<Scalar, Dim> collision_result_;
+    ContactPointManager<Scalar, Dim> contact_points_;
     int frame_;
     int step_;
 };

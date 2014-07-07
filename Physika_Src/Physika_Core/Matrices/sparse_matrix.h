@@ -1,7 +1,7 @@
 /*
  * @file sparse_matrix.h 
  * @brief Definition of sparse matrix, size of the matrix is dynamic.
- * @author Fei Zhu
+ * @author Fei Zhu, Liyou Xu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -14,12 +14,50 @@
 
 #ifndef PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_H_
 #define PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_H_
-
+#include <vector>
+#include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Arrays/array.h"
 #include "Physika_Core/Matrices/matrix_base.h"
+#include "Physika_Core/Vectors/vector_Nd.h"
 
 namespace Physika{
+
+template <typename Scalar>
+class trituple
+{
+public:
+    trituple()
+    {
+        row_ = col_ = value_ = 0;
+        row_next_ = NULL;
+        col_next_ = NULL;
+    }
+    trituple(int row, int col, Scalar value)
+    {
+        row_ = row;
+        col_ = col;
+        value_ = value;
+        row_next_ = col_next_ = NULL;
+    }
+    bool operator==(const trituple<Scalar> &tri2)
+    {
+        if(tri2.row_ != row_)return false;
+        if(tri2.col_ != col_)return false;
+        if(tri2.value_ != value_)return false;
+        return true;
+    }
+    bool operator!=(const trituple<Scalar> &tri2)
+    {
+        if(tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_)return true;
+        return false;		
+    }
+public:
+    int row_;
+    int col_;
+    Scalar value_;
+    trituple<Scalar> *row_next_;
+    trituple<Scalar> *col_next_;
+};
 
 template <typename Scalar>
 class SparseMatrix: public MatrixBase
@@ -32,7 +70,10 @@ public:
     int rows() const;
     int cols() const;
     int nonZeros() const;
+    bool remove(int i,int j);  //remove a entry in (i,j)
     void resize(int new_rows, int new_cols);
+    std::vector<trituple<Scalar>> getRowElements(int ) const;
+    std::vector<trituple<Scalar>> getColElements(int ) const;
     Scalar operator() (int i, int j) const;//return value of matrix entry at index (i,j). Note: cannot be used as l-value!
     void setEntry(int i, int j, Scalar value);//insert matrix entry at index (i,j), if it already exits, replace it
     SparseMatrix<Scalar> operator+ (const SparseMatrix<Scalar> &) const;
@@ -41,37 +82,46 @@ public:
     SparseMatrix<Scalar>& operator-= (const SparseMatrix<Scalar> &);
     SparseMatrix<Scalar>& operator= (const SparseMatrix<Scalar> &);
     bool operator== (const SparseMatrix<Scalar> &) const;
+    bool operator!= (const SparseMatrix<Scalar> &) const;
     SparseMatrix<Scalar> operator* (Scalar) const;
+    SparseMatrix<Scalar> operator* (const SparseMatrix<Scalar> &) const;
+    VectorND<Scalar> operator* (const VectorND<Scalar> &) const;
     SparseMatrix<Scalar>& operator*= (Scalar);
     SparseMatrix<Scalar> operator/ (Scalar) const;
     SparseMatrix<Scalar>& operator/= (Scalar);
 protected:
     void allocMemory(int rows, int cols);
+    void deleteRowList(trituple<Scalar> *);
+    void deleteColList(trituple<Scalar> *);
 protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-//compressed row storage
-    typedef Array<int> ArrayInt;
-    typedef Array<Scalar> ArrayScalar;
+//compressed orthogonal list based on trituple
     int rows_;
     int cols_;
-    ArrayInt row_length_;//number of nonzero entries in each row
-    Array<ArrayInt> column_indices_;//indices of columns of non-zero entries in each row
-    Array<ArrayScalar> column_entries_;//values of non-zero entries in each row
-//    const int default_chunk_size_ = 10;//default chunk size allocated for each row
+    trituple<Scalar> ** row_head_;
+    trituple<Scalar> ** col_head_;
 #endif
 };
+
+template <typename Scalar>
+std::ostream& operator<<(std::ostream &s, const trituple<Scalar> &tri)
+{
+    s<<" ("<<tri.row_<<", "<<tri.col_<<", "<<tri.value_<<") ";
+    return s;
+}
 
 //overridding << for SparseMatrix<Scalar>
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const SparseMatrix<Scalar> &mat)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    for(int i = 0; i < rows_; ++i)
-	for(int j = 0; j < row_length_[i]; ++j)
-	{
-	    int col_idx = column_indices_[i][j];
-	    s<<"("<<i<<","<<col_idx<<"): "<<column_entries_[i][j]<<"\n";
-        }
+    std::vector<trituple<Scalar>> v;
+    for(int i = 0; i < mat.rows(); ++i)
+    {
+        v = mat.getRowElements(i);
+        for(int j=0;j< v.size();++j) s<<" ("<< v[j].row_<<", "<<v[j].col_<<", "<<v[j].value_<<") ";
+        s<<std::endl;
+    }
 #endif
     return s;
 }

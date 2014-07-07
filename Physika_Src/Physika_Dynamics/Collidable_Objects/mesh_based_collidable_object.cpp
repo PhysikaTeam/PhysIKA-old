@@ -111,33 +111,54 @@ bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidable
 	bool is_rhs_tri = (num_vertex_rhs == 3);
 	bool is_lhs_quad = (num_vertex_lhs == 4);
 	bool is_rhs_quad = (num_vertex_rhs == 4);
+    Vector<Scalar, 3> overlap_point;
 
 	//test each edge of lhs with the face of rhs
 	for(unsigned int i = 0; i < num_vertex_lhs; i++)
 	{
 		if(is_rhs_tri)//triangle
 		{
-			if(overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2]))
+			if(overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], overlap_point))
+            {
 				is_overlap = true;
+                break;
+            }
 		}
 		if(is_rhs_quad)//quad
 		{
-			if(overlapEdgeQuad(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], vertex_rhs[3]))
+			if(overlapEdgeQuad(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], vertex_rhs[3], overlap_point))
+            {
 				is_overlap = true;
+                break;
+            }
 		}
 	}
+
+    if(is_overlap)
+    {
+        delete[] vertex_lhs;
+        delete[] vertex_rhs;
+        return is_overlap;
+    }
+
 	//test each edge of rhs with the face of lhs
 	for(unsigned int i = 0; i < num_vertex_rhs; i++)
 	{
 		if(is_lhs_tri)//triangle
 		{
-			if(overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2]))
+			if(overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], overlap_point))
+            {
 				is_overlap = true;
+                break;
+            }
 		}
 		if(is_lhs_quad)//quad
 		{
-			if(overlapEdgeQuad(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], vertex_lhs[3]))
+			if(overlapEdgeQuad(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], vertex_lhs[3], overlap_point))
+            {
 				is_overlap = true;
+                break;
+            }
 		}
 	}
 
@@ -147,7 +168,7 @@ bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidable
 }
 
 template <typename Scalar,int Dim>
-bool MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c) const
+bool MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, Vector<Scalar, 3>& overlap_point)
 {
 	Vector<Scalar, 3> face_normal = (vertex_face_b - vertex_face_a).cross(vertex_face_c - vertex_face_a);
 	face_normal.normalize();
@@ -162,12 +183,15 @@ bool MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(const Vector<Sc
 	bool inTriTestCB = (((vertex_face_c - vertex_face_b).cross(projection - vertex_face_b)).dot(face_normal) >= 0);
 	bool inTriTestAC = (((vertex_face_a - vertex_face_c).cross(projection - vertex_face_c)).dot(face_normal) >= 0);
 	if(inTriTestBA && inTriTestCB && inTriTestAC)
+    {
+        overlap_point = projection;
 		return true;
+    }
 	return false;
 }
 
 template <typename Scalar,int Dim>
-bool MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d) const
+bool MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d, Vector<Scalar, 3>& overlap_point)
 {
 	return false;
 }
