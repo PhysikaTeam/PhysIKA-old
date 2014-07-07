@@ -90,7 +90,7 @@ elif os_name in ('Linux','Darwin'):
 
 #IGNORED SRC FILES
 #TO EXCLUDE FILES THAT ARE INCOMPLETE YET
-ignored_src_files=['Physika_Src/Physika_Core/Matrices/sparse_matrix.cpp']
+ignored_src_files=[]
 
 #COMPILE SRC FILES AND ARCHIVE INTO LIBS, GENERATE MSVC PROJECTS OPTIONALLY
 header_files=[]
