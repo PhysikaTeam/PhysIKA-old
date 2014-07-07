@@ -12,6 +12,7 @@
  *
  */
 
+#include <limits.h>
 #include "Physika_Dynamics/Collidable_Objects/contact_point.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
