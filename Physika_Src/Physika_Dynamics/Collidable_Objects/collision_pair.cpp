@@ -48,6 +48,18 @@ CollisionPairMeshToMesh<Scalar, Dim>::~CollisionPairMeshToMesh()
 }
 
 template <typename Scalar,int Dim>
+typename CollidableObject<Scalar, Dim>::ObjectType CollisionPairMeshToMesh<Scalar, Dim>::objectTypeLhs() const
+{
+    return CollidableObject<Scalar, Dim>::MESH_BASED;
+}
+
+template <typename Scalar,int Dim>
+typename CollidableObject<Scalar, Dim>::ObjectType CollisionPairMeshToMesh<Scalar, Dim>::objectTypeRhs() const
+{
+    return CollidableObject<Scalar, Dim>::MESH_BASED;
+}
+
+template <typename Scalar,int Dim>
 const CollidableObject<Scalar, Dim>* CollisionPairMeshToMesh<Scalar, Dim>::objectLhs() const
 {
 	return object_lhs_;

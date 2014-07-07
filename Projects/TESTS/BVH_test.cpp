@@ -86,10 +86,11 @@ int main()
     
 	RigidBodyDriver<double, 3> driver;
 
-	RigidBody<double,3> body1(&mesh_ball);
+	RigidBody<double,3> body1(&mesh_box);
+    
 
 	RigidBody<double,3> body2(body1);
-    body2.setTranslation(Vector<double, 3>(0, -85, 0));
+    body2.setTranslation(Vector<double, 3>(0, 0, 3));
 
     RigidBody<double,3> body3(body1);
     body3.setTranslation(Vector<double, 3>(0, -185, 0));
@@ -97,13 +98,23 @@ int main()
     RigidBody<double,3> body4(body1);
     body4.setTranslation(Vector<double, 3>(0, -285, 0));
 
-    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
-    body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
+    //body1.setTranslation(Vector<double, 3>(0, 20, 0));
+
+    //body2.setRotation(Vector<double, 3>(0, 0.785, 0));
+
+    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, 0, -0.11));
+    //body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
+
+    //body3.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
+    //body3.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
+
+    //body4.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
+    //body4.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
 
 	driver.addRigidBody(&body1);
 	driver.addRigidBody(&body2);
-    driver.addRigidBody(&body3);
-    driver.addRigidBody(&body4);
+    //driver.addRigidBody(&body3);
+    //driver.addRigidBody(&body4);
 
     Vector<double, 3> center;
     double mass;
@@ -118,8 +129,8 @@ int main()
     GlutWindow glut_window;
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
-    //glut_window.setCameraPosition(Vector<double, 3>(20, 0, 0));
-	glut_window.setCameraPosition(Vector<double, 3>(-60, 0, 60));
+    glut_window.setCameraPosition(Vector<double, 3>(20, 0, 0));
+	//glut_window.setCameraPosition(Vector<double, 3>(-60, 0, 60));
 	glut_window.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
     //glut_window.setDisplayFunction(display);
 	glut_window.setCameraFarClip(10000);

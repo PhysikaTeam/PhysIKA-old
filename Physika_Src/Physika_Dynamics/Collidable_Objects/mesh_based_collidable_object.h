@@ -42,8 +42,9 @@ public:
 	void setTransform(Transform<Scalar>* transform);
 	bool collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs);
 
-	bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c) const;
-	bool overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d) const;
+    //overlapPoint is the position of overlap. It will be changed after test if overlap is true.
+	static bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, Vector<Scalar, 3>& overlap_point);
+	static bool overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d, Vector<Scalar, 3>& overlap_point);
 	
 protected:
 	//mesh_ is used to define the shape of object, while transform_ is used to define the configuration

@@ -16,6 +16,7 @@
 #define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_PAIR_H_
 
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 
 namespace Physika{
 
@@ -23,12 +24,21 @@ template <typename Scalar,int Dim> class CollisionPairBase;
 template <typename Scalar,int Dim> class CollidableObject;
 template <typename Scalar,int Dim> class MeshBasedCollidableObject;
 
+
+//CollisionPair contains colliding elements (e.g. faces of meshes) and objects.
+//It's different from ContactPoint, which contains position and normal of contact points.
+//ContactPoint should be generated from CollisionPair. This process is called "contact sampling".
+//Notice that contact sampling is not a bijection.
 template <typename Scalar,int Dim>
 class CollisionPairBase
 {
 public:
 	CollisionPairBase();
 	virtual ~CollisionPairBase();
+
+    virtual typename CollidableObject<Scalar, Dim>::ObjectType objectTypeLhs() const = 0;
+    virtual typename CollidableObject<Scalar, Dim>::ObjectType objectTypeRhs() const = 0;
+
 	//Functions for getting objects and faces of a mesh-to-mesh collision pair, corresponding to class CollisionPairMeshToMesh
 	virtual const CollidableObject<Scalar, Dim>* objectLhs() const = 0;
 	virtual CollidableObject<Scalar, Dim>* objectLhs() = 0;
@@ -59,6 +69,10 @@ public:
 							MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs,
 							unsigned int face_lhs_index, unsigned int face_rhs_index);
 	~CollisionPairMeshToMesh();
+
+    typename CollidableObject<Scalar, Dim>::ObjectType objectTypeLhs() const;
+    typename CollidableObject<Scalar, Dim>::ObjectType objectTypeRhs() const;
+
 	const CollidableObject<Scalar, Dim>* objectLhs() const;
 	CollidableObject<Scalar, Dim>* objectLhs();
 	const CollidableObject<Scalar, Dim>* objectRhs() const;

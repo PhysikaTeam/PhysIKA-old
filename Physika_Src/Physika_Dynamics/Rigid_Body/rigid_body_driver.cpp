@@ -12,6 +12,7 @@
  *
  */
 
+
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Geometry/Bounding_Volume/object_bvh.h"
@@ -278,9 +279,11 @@ void RigidBodyDriver<Scalar, Dim>::updateRigidBody(Scalar dt)
 template <typename Scalar,int Dim>
 bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
 {
+    Timer timer;
 	collision_result_.resetCollisionResults();
 	scene_bvh_.updateSceneBVH();
 	bool is_collide = scene_bvh_.selfCollide(collision_result_);
+
 
 	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
 	RigidDriverPlugin<Scalar, Dim>* plugin;

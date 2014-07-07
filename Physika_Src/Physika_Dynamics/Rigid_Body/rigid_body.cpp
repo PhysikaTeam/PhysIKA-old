@@ -26,22 +26,46 @@ RigidBody<Scalar, Dim>::RigidBody():
 	transform_(),
     inertia_tensor_(),
     density_(1),
-	is_fixed_(false)
+	is_fixed_(false),
+    global_translation_(0),
+    global_rotation_(),
+    global_translation_velocity_(0),
+    global_angular_velocity_(0),
+    global_translation_impulse_(0),
+    global_angular_impulse_(0)
 {
 
 }
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density)
+RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density):
+    object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
+    transform_(),
+    inertia_tensor_(),
+    is_fixed_(false),
+    global_translation_(0),
+    global_rotation_(),
+    global_translation_velocity_(0),
+    global_angular_velocity_(0),
+    global_translation_impulse_(0),
+    global_angular_impulse_(0)
 {
     setProperty(mesh, density);
 }
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density)
+RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density):
+    object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
+    inertia_tensor_(),
+    is_fixed_(false),
+    global_translation_(0),
+    global_rotation_(),
+    global_translation_velocity_(0),
+    global_angular_velocity_(0),
+    global_translation_impulse_(0),
+    global_angular_impulse_(0)
 {
     setProperty(mesh, transform, density);
-    
 }
 
 template <typename Scalar,int Dim>
@@ -68,6 +92,13 @@ void RigidBody<Scalar, Dim>::copy(RigidBody<Scalar, Dim>& rigid_body)
     inertia_tensor_ = rigid_body.inertia_tensor_;
     mass_ = rigid_body.mass_;
     local_mass_center_ = rigid_body.local_mass_center_;
+
+    global_translation_ = rigid_body.global_translation_;
+    global_rotation_ = rigid_body.global_rotation_;
+    global_translation_velocity_ = rigid_body.global_translation_velocity_;
+    global_angular_velocity_ = rigid_body.global_angular_velocity_;
+    global_translation_impulse_ = rigid_body.global_translation_impulse_;
+    global_angular_impulse_ = rigid_body.global_angular_impulse_;
 }
 
 template <typename Scalar,int Dim>
