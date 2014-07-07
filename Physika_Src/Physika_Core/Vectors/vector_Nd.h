@@ -67,7 +67,7 @@ protected:
 
 //overriding << for vectorND
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const VectorND<Scalar> &vec)
+inline std::ostream& operator<< (std::ostream &s, const VectorND<Scalar> &vec)
 {
     int dim = vec.dims();
     s<<"(";
@@ -87,7 +87,7 @@ std::ostream& operator<< (std::ostream &s, const VectorND<Scalar> &vec)
 
 //make * operator commutative
 template <typename S, typename T>
-VectorND<T> operator *(S scale, const VectorND<T> &vec)
+inline VectorND<T> operator *(S scale, const VectorND<T> &vec)
 {
     return vec * scale;
 }

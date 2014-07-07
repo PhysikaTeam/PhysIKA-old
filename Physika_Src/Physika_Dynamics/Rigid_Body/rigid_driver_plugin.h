@@ -35,7 +35,8 @@ public:
     virtual void onEndRigidStep(int step, Scalar dt) = 0;//replace the original onEndTimeStep in rigid body simulation
 
 	virtual void onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body) = 0;
-	virtual void onCollisionDetection() = 0;
+	virtual void onBeginCollisionDetection() = 0;
+    virtual void onEndCollisionDetection() = 0;
 
 	//basic function
 	virtual RigidBodyDriver<Scalar, Dim>* rigidDriver();

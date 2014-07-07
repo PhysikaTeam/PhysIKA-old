@@ -20,9 +20,9 @@
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_GUI/Glui_Window/glui_window.h"
-#include "Physika_GUI/Light/light.h"
-#include "Physika_GUI/Light/spot_light.h"
-#include "Physika_GUI/Light_Manager/light_manager.h"
+#include "Physika_GUI/Lights/light.h"
+#include "Physika_GUI/Lights/spot_light.h"
+#include "Physika_GUI/Lights/light_manager.h"
 using namespace std;
 using namespace Physika;
 
@@ -80,13 +80,13 @@ void initFunction()
     light0.setConstantAttenuation(1.1);
     light0.setLinearAttenuation(1.2);
     light0.setQuadraticAttenuation(1.3);
-    light0.setPosition(Vector<float,3>(2.0,2.0,2.0));
+    light0.setPosition(Vector<int,3>(2, 2, 2));
     light0.turnOn();
     light0.turnOff();
     cout<<light0;
 
     LightManager light_manager;
-    light_manager.setLightModelAmbient(Color<float>(1.0,1.0,1.0,1.0));
+    light_manager.setLightModelAmbient(Color<double>(1.0,1.0,1.0,1.0));
     light_manager.setLightModelLocalViewer(true);
     light_manager.setLightModelTwoSide(false);
     //light_manager.setLightModelColorControl(GL_SEPARATE_SPECULAR_COLOR);

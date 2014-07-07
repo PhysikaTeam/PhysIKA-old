@@ -13,7 +13,7 @@
  */
 
 #include <iostream>
-#include "Physika_Core/Utilities/opengl_headers.h"
+#include <GL/gl.h>
 #include "Physika_Render/Color/color.h"
 using namespace std;
 using Physika::Color;
@@ -30,5 +30,26 @@ int main()
     cout<<static_cast<unsigned int>(color_byte.blueChannel())<<" "<<static_cast<unsigned int>(color_byte.alphaChannel())<<"\n";
     cout<<"Test << operator:\n";
     cout<<color_byte<<"\n";
+    cout<<"Test color converter:\n";
+    Color<GLdouble> color_double = color_byte.convertColor<GLdouble>();
+    cout<<color_double<<"\n";
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

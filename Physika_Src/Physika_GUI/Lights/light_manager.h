@@ -12,13 +12,14 @@
  *
  */
 
-#ifndef PHYSIKA_GUI_LIGHT_LIGHT_MANAGER_H_
-#define PHYSIKA_GUI_LIGHT_LIGHT_MANAGER_H_
+#ifndef PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_
+#define PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_
 
 #include <list>
 #include <GL/gl.h>
 #include "Physika_Render/Color/color.h"
-//#include "Physika_GUI/Light/light.h"
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
+
 // Note1: Since OpegnGL demands that each graphic card has to implement at least 8 lights, to avoid undefined situation where lights number are greater than 8,
 //        LightManager only perserve 8 Light Object(actually pointer) in list at most.
 // Note2: LightManager is also responsible for configuring LIGHT MODEL, since Light Model actually belongs to entire secnaro but not only 
@@ -46,7 +47,7 @@ public:
 
     const Light* lightAtIndex(unsigned int index) const;       //return pointer to the light at given index
     Light* lightAtIndex(unsigned int index);
-    int lightIndex(Light *task) const;                        //return index of light in list, if light not in queue, return -1
+    int lightIndex(Light *light) const;                        //return index of light in list, if light not in queue, return -1
 
     void turnAllOn();                                         //turn all lights on
     void turnAllOff();                                        //turn all lights off
@@ -54,7 +55,7 @@ public:
     void turnLightOffAtIndex(unsigned int index);             // turn light at given index in list Off
 
     template <typename ColorType>
-    void             setLightModelAmbient(const Color<ColorType> color);
+    void             setLightModelAmbient(const Color<ColorType> &color);
     template <typename ColorType>
     Color<ColorType> lightModelAmbient() const;
 
@@ -72,14 +73,9 @@ protected:
 };
 
 template<typename ColorType>
-void LightManager::setLightModelAmbient(Color<ColorType> color)
+void LightManager::setLightModelAmbient(const Color<ColorType> &color)
 {
-    float temp_color[4];
-    temp_color[0] = color.redChannel();
-    temp_color[1] = color.greenChannel();
-    temp_color[2] = color.blueChannel();
-    temp_color[3] = color.alphaChannel();
-    openGLLightModelv(GL_LIGHT_MODEL_AMBIENT, temp_color);
+    openGLLightModelAMBient(color);
 }
 
 template<typename ColorType>
@@ -88,11 +84,12 @@ Color<ColorType> LightManager::lightModelAmbient() const
     float color[4];
     glGetFloatv(GL_LIGHT_MODEL_AMBIENT,color);
     Color<float> temp_color(color[0], color[1], color[2], color[3]);
-    return temp_color.convertColor<ColorType>(temp_color);
+    return temp_color.convertColor<ColorType>();
 }
 
+//declaration of << operator
 std::ostream& operator << (std::ostream& out, const LightManager & light_manager);
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_GUI_LIGHT_LIGHT_MANAGER_H_
+#endif //PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_

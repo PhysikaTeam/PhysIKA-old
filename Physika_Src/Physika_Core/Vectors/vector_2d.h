@@ -66,7 +66,7 @@ protected:
 
 //overriding << for vector2D
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const Vector<Scalar,2> &vec)
+inline std::ostream& operator<< (std::ostream &s, const Vector<Scalar,2> &vec)
 {
     if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
         s<<"("<<static_cast<int>(vec[0])<<", "<<static_cast<int>(vec[1])<<")";
@@ -77,7 +77,7 @@ std::ostream& operator<< (std::ostream &s, const Vector<Scalar,2> &vec)
 
 //make * operator commutative
 template <typename S, typename T>
-Vector<T,2> operator *(S scale, const Vector<T,2> &vec)
+inline Vector<T,2> operator *(S scale, const Vector<T,2> &vec)
 {
     return vec * scale;
 }

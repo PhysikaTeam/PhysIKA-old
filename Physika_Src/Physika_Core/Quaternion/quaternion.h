@@ -100,7 +100,7 @@ protected:
 
 
 template <typename Scalar>
-std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
+inline std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
 {
     s <<quat.x()<<", "<<quat.y()<<", "<<quat.z()<<", "<<quat.w()<<std::endl;
     return s; 
@@ -108,7 +108,7 @@ std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
 
 //make * operator commutative
 template <typename S, typename T>
-Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
+inline Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
 {
     return quad * scale;
 }

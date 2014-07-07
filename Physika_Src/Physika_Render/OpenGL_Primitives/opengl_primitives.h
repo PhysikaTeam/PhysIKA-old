@@ -19,6 +19,7 @@
 #define PHYSIKA_RENDER_OPENGL_PRIMITIVES_OPENGL_PRIMITIVES_H_
 
 #include <GL/gl.h>
+#include <iostream>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Render/Color/color.h"
@@ -207,92 +208,76 @@ inline void openGLLight(GLenum light, GLenum pname,float param)
 {
     glLightf(light, pname, param);
 }
-
+inline void openGLLight(GLenum light, GLenum pname,double param)
+{
+    glLightf(light, pname, static_cast<float>(param));
+}
 /*
  * openGLLightv(GLenum light, GLenum pname, Color/Vector<Scalar> param):
  * replacement for glLightiv, glLightfv
  */
-inline void openGLLightv(GLenum light, GLenum pname, const Color<int> color)
+template <typename ColorType>
+inline void openGLLightv(GLenum light, GLenum pname, const Color<ColorType>& color)
 {
-    int param[4];
-    param[0] = color.redChannel();
-    param[1] = color.greenChannel();
-    param[2] = color.blueChannel();
-    param[3] = color.alphaChannel();
-    glLightiv(light, pname, param);
-}
-inline void openGLLightv(GLenum light, GLenum pname,const Color<float> color)
-{
+    Color<float> temp_color = color.template convertColor<float>();
     float param[4];
     param[0] = color.redChannel();
     param[1] = color.greenChannel();
     param[2] = color.blueChannel();
     param[3] = color.alphaChannel();
-    glLightfv(light, pname, param);
-}
-/// warning: this function is defined particularly to specify GL_SPOT_DIRECTION
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 3> direction)
-{
-    if(pname != GL_SPOT_DIRECTION)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_SPOT_DIRECTION !"<<std::endl;
-    }
-    int param[3];
-    param[0] = direction[0];
-    param[1] = direction[1];
-    param[2] = direction[2];
-    glLightiv(light, pname, param);
-}
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, 3> direction)
-{
-    if(pname != GL_SPOT_DIRECTION)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_SPOT_DIRECTION !"<<std::endl;
-    }
-    float param[3];
-    param[0] = direction[0];
-    param[1] = direction[1];
-    param[2] = direction[2];
     glLightfv(light, pname, param);
 }
 
-/// warning: this function is defined particularly to specify GL_POSITION
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, 4> position)
+/// warning: this function is defined particularly to specify GL_SPOT_DIRECTION and GL_POSITION
+template <int Dim>
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, Dim>& pos_dir)
 {
-    if(pname != GL_POSITION)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_POSITION !"<<std::endl;
-    }
-    int param[4];
-    param[0] = position[0];
-    param[1] = position[1];
-    param[2] = position[2];
-    param[3] = position[3];
-    glLightiv(light, pname, param);
+	float param[Dim];
+	for(unsigned int i=0; i<Dim; i++)
+	{
+		param[i] = pos_dir[i];
+	}
+	glLightfv(light, pname, param);
 }
-inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, 4> position)
+template <int Dim>
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<double, Dim>& pos_dir)
 {
-    if(pname != GL_POSITION)
-    {
-        std::cerr<<"error: this function is defined particularly to specify GL_POSITION !"<<std::endl;
-    }
-    float param[4];
-    param[0] = position[0];
-    param[1] = position[1];
-    param[2] = position[2];
-    param[3] = position[3];
-    glLightfv(light, pname, param);
+	float param[Dim];
+	for(unsigned int i=0; i<Dim; i++)
+	{
+		param[i] = static_cast<float>(pos_dir[i]);
+	}
+	glLightfv(light, pname, param);
+}
+template <int Dim>
+inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, Dim>& pos_dir)
+{
+	int param[Dim];
+	for(unsigned int i=0; i<Dim; i++)
+	{
+		param[i] = pos_dir[i];
+	}
+	glLightiv(light, pname, param);
 }
 
 /*
  * openGLLightModel(GLenum pname, Scalar param):
  * replacement for glLightModelf, glLightModeli
  */
+
 inline void openGLLightModel(GLenum pname, float param)
 {
     glLightModelf(pname,param);
 }
+inline void openGLLightModel(GLenum pname, double param)
+{
+    glLightModelf(pname, static_cast<float>(param));
+}
 inline void openGLLightModel(GLenum pname, int param)
+{
+    glLightModeli(pname,param);
+}
+inline void openGLLightModel(GLenum pname, unsigned int param)
 {
     glLightModeli(pname,param);
 }
@@ -301,13 +286,17 @@ inline void openGLLightModel(GLenum pname, int param)
  * openGLLightModelv(GLenum pname, const Scalar *param):
  * replacement for glLightModelfv, glLightModeliv
  */
-inline void openGLLightModelv(GLenum pname, const float *param)
+/// warning: this function is designed particularly to specify GL_LIGHT_MODEL_AMBIENT
+template <typename ColorType>
+inline void openGLLightModelAMBient(const Color<ColorType>& color)
 {
-    glLightModelfv(pname,param);
-}
-inline void openGLLightModelv(GLenum pname, const int *param)
-{
-    glLightModeliv(pname,param);
+    Color<float> temp_color = color.template convertColor<float>();
+    float param[4];
+    param[0] = temp_color.redChannel();
+    param[1] = temp_color.greenChannel();
+    param[2] = temp_color.blueChannel();
+    param[3] = temp_color.alphaChannel();
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, param);
 }
 
 /*
@@ -317,6 +306,10 @@ inline void openGLLightModelv(GLenum pname, const int *param)
 inline void openGLTexParameter(GLenum target, GLenum pname, float param)
 {
     glTexParameterf(target,pname,param);
+}
+inline void openGLTexParameter(GLenum target, GLenum pname, double param)
+{
+    glTexParameterf(target,pname,static_cast<float>(param));
 }
 inline void openGLTexParameter(GLenum target, GLenum pname, int param)
 {
@@ -350,20 +343,19 @@ inline void openGLTexCoord(const Vector<double,3> &vec)
  */
 inline void openGLMultMatrix(const SquareMatrix<float,4> & matrix)
 {
-	float matrix_[16];
-	for(unsigned int i=0; i<4; i++)
-		for(unsigned int j=0; j<4; j++)
-			matrix_[i*4+j] = matrix(j,i);
-	glMultMatrixf(matrix_);
+    float matrix_[16];
+    for(unsigned int i=0; i<4; i++)
+        for(unsigned int j=0; j<4; j++)
+            matrix_[i*4+j] = matrix(j,i);
+    glMultMatrixf(matrix_);
 }
-
 inline void openGLMultMatrix(const SquareMatrix<double,4> & matrix)
 {
-	double matrix_[16];
-	for(unsigned int i=0; i<4; i++)
-		for(unsigned int j=0; j<4; j++)
-			matrix_[i*4+j] = matrix(j,i);
-	glMultMatrixd(matrix_);
+    double matrix_[16];
+    for(unsigned int i=0; i<4; i++)
+        for(unsigned int j=0; j<4; j++)
+            matrix_[i*4+j] = matrix(j,i);
+    glMultMatrixd(matrix_);
 }
 
 } //end of namespace Physika

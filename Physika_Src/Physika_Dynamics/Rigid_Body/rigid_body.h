@@ -106,9 +106,11 @@ protected:
 
     //dynamics
     void resetTemporaryVariables();//prepare for the new time step
-    void velocityIntegral(Scalar dt);
+    void velocityIntegral(Scalar dt);//Only defined to 3-Dimension
     void configurationIntegral(Scalar dt);
     void updateInertiaTensor();
+    void recalculateTransform();//recalculate transform_ from global_translation_ and global_rotation_
+    void recalculatePosition();//recalculate global_translation_ and global_rotation_ from transform_
 
     //set
     void setMesh(SurfaceMesh<Scalar>* mesh);

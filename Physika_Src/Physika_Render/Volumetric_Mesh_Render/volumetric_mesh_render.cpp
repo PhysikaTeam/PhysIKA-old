@@ -33,10 +33,6 @@ VolumetricMeshRender<Scalar, Dim>::VolumetricMeshRender()
     solid_display_list_id_(0),
     wire_display_list_id_(0),
     vertex_display_list_id_(0),
-    element_with_color_display_list_id_(0),
-    element_with_color_vector_display_list_id_(0),
-    vertex_with_color_display_list_id_(0),
-    vertex_with_color_vector_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     this->initRenderMode();
@@ -49,10 +45,6 @@ VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim
     solid_display_list_id_(0),
     wire_display_list_id_(0),
     vertex_display_list_id_(0),
-    element_with_color_display_list_id_(0),
-    element_with_color_vector_display_list_id_(0),
-    vertex_with_color_display_list_id_(0),
-    vertex_with_color_vector_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     this->initRenderMode();
@@ -65,10 +57,6 @@ VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim
     solid_display_list_id_(0),
     wire_display_list_id_(0),
     vertex_display_list_id_(0),
-    element_with_color_display_list_id_(0),
-    element_with_color_vector_display_list_id_(0),
-    vertex_with_color_display_list_id_(0),
-    vertex_with_color_vector_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     this->initRenderMode();
@@ -335,23 +323,23 @@ void VolumetricMeshRender<Scalar,Dim>::renderWireframe()
             if(is_uniform)
             {
                 // we will deal with type ElementType::TRI/QUAD in some way
-                if(	  this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TRI
-                    ||this->mesh_->elementType() == VolumetricMeshInternal::ElementType::QUAD)
+                if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
+                    ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
                 {
                     this->drawTriOrQuad(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TET)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
                 {
                     this->drawTet(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::CUBIC)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
                 {
                     this->drawCubic(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::NON_UNIFORM)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
                 {
                     // waiting for implementation
                     //
@@ -414,23 +402,23 @@ void VolumetricMeshRender<Scalar,Dim>::renderSolidWithAlpha(float alpha)
             if(is_uniform)
             {
                 // we will deal with type ElementType::TRI/QUAD in some way
-                if(	  this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TRI
-                    ||this->mesh_->elementType() == VolumetricMeshInternal::ElementType::QUAD)
+                if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
+                    ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
                 {
                     this->drawTriOrQuad(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TET)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
                 {
                     this->drawTet(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::CUBIC)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
                 {
                     this->drawCubic(ele_idx);
                 }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::NON_UNIFORM)
+                if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
                 {
                     // waiting for implementation
                     //
@@ -469,32 +457,23 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertexWithColor(const std::vector<u
     openGLColor3(color);
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(1.5*point_size);
+    glPointSize(static_cast<float>(1.5*point_size));
 
     glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
-    if(! glIsList(this->vertex_with_color_display_list_id_))
+  
+    unsigned int num_vertex = vertex_id.size();
+    glBegin(GL_POINTS);
+    for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
     {
-        this->vertex_with_color_display_list_id_ = glGenLists(1);
-        glNewList(this->vertex_with_color_display_list_id_, GL_COMPILE_AND_EXECUTE);
-
-        unsigned int num_vertex = vertex_id.size();
-        glBegin(GL_POINTS);
-        for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-        {
-            Vector<Scalar,Dim> position = this->mesh_->vertPos(vertex_id[vertex_idx]); // get the position of vertex which is stored in "surface mesh"
-            openGLVertex(position);
-        }
-        glEnd();
-        glEndList();
+        Vector<Scalar,Dim> position = this->mesh_->vertPos(vertex_id[vertex_idx]); // get the position of vertex which is stored in "surface mesh"
+        openGLVertex(position);
     }
-    else
-    {
-        glCallList(this->vertex_with_color_display_list_id_);
-    }
+    glEnd();
+   
     glPopMatrix();
     glPopAttrib();
 
@@ -513,36 +492,27 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertexWithColor(const std::vector<u
     glPolygonOffset(-1.0,1.0);
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(1.5*point_size);
+    glPointSize(static_cast<float>(1.5*point_size));
 
     glPushMatrix();
     if(this->transform_ != NULL)
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
-    if(! glIsList(this->vertex_with_color_vector_display_list_id_))
+   
+    unsigned int num_vertex = vertex_id.size();
+    glBegin(GL_POINTS);
+    for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
     {
-        this->vertex_with_color_vector_display_list_id_ = glGenLists(1);
-        glNewList(this->vertex_with_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
-
-        unsigned int num_vertex = vertex_id.size();
-        glBegin(GL_POINTS);
-        for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
-        {
-            if(vertex_idx<color.size())
-                openGLColor3(color[vertex_idx]);
-            else
-                openGLColor3(Color<ColorType>::White());
-            Vector<Scalar,Dim> position = this->mesh_->vertPos(vertex_id[vertex_idx]);
-            openGLVertex(position);
-        }
-        glEnd();
-        glEndList();
+        if(vertex_idx<color.size())
+            openGLColor3(color[vertex_idx]);
+        else
+            openGLColor3(Color<ColorType>::White());
+        Vector<Scalar,Dim> position = this->mesh_->vertPos(vertex_id[vertex_idx]);
+        openGLVertex(position);
     }
-    else
-    {
-        glCallList(this->vertex_with_color_vector_display_list_id_);
-    }
+    glEnd();
+    
     glPopMatrix();
     glPopAttrib();
 }
@@ -564,51 +534,42 @@ void VolumetricMeshRender<Scalar,Dim>::renderElementWithColor(const std::vector<
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
     bool is_uniform = this->mesh_->isUniformElementType();
-    if(! glIsList(this->element_with_color_display_list_id_))
+
+    unsigned int num_face = element_id.size();     
+    for(unsigned int ele_idx=0; ele_idx<num_face; ele_idx++)
     {
-        this->element_with_color_display_list_id_ = glGenLists(1);
-        glNewList(this->element_with_color_display_list_id_, GL_COMPILE_AND_EXECUTE);
-
-        unsigned int num_face = element_id.size();     
-        for(unsigned int ele_idx=0; ele_idx<num_face; ele_idx++)
+        if(is_uniform)
         {
-            if(is_uniform)
+            // we will deal with type ElementType::TRI/QUAD in some way
+            if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
+                ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
             {
-                // we will deal with type ElementType::TRI/QUAD in some way
-                if(	  this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TRI
-                    ||this->mesh_->elementType() == VolumetricMeshInternal::ElementType::QUAD)
-                {
-                    this->drawTriOrQuad(element_id[ele_idx]);
-                }
-
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TET)
-                {
-                    this->drawTet(element_id[ele_idx]);
-                }
-
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::CUBIC)
-                {
-                    this->drawCubic(element_id[ele_idx]);
-                }
-
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::NON_UNIFORM)
-                {
-                    // waiting for implementation
-                    //
-                    //
-                }
+                this->drawTriOrQuad(element_id[ele_idx]);
             }
-            else
+
+            if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
+            {
+                this->drawTet(element_id[ele_idx]);
+            }
+
+            if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
+            {
+                this->drawCubic(element_id[ele_idx]);
+            }
+
+            if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
             {
                 // waiting for implementation
+                //
+                //
             }
         }
-        glEndList();
+        else
+        {
+            // waiting for implementation
+        }
     }
-    else
-    {
-        glCallList(this->element_with_color_display_list_id_);
-    }
+   
     glPopMatrix();
     glPopAttrib();
 }
@@ -633,56 +594,47 @@ void VolumetricMeshRender<Scalar,Dim>::renderElementWithColor(const std::vector<
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
     bool is_uniform = this->mesh_->isUniformElementType();
-    if(! glIsList(this->element_with_color_vector_display_list_id_))
+   
+    unsigned int num_face = element_id.size();     
+    for(unsigned int ele_idx=0; ele_idx<num_face; ele_idx++)
     {
-        this->element_with_color_vector_display_list_id_ = glGenLists(1);
-        glNewList(this->element_with_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        if(ele_idx<color.size())
+            openGLColor3(color[ele_idx]);
+        else
+            openGLColor3(Color<ColorType>::White());
 
-        unsigned int num_face = element_id.size();     
-        for(unsigned int ele_idx=0; ele_idx<num_face; ele_idx++)
+        if(is_uniform)
         {
-            if(ele_idx<color.size())
-                openGLColor3(color[ele_idx]);
-            else
-                openGLColor3(Color<ColorType>::White());
-
-            if(is_uniform)
+            // we will deal with type ElementType::TRI/QUAD in some way
+            if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
+                ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
             {
-                // we will deal with type ElementType::TRI/QUAD in some way
-                if(	  this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TRI
-                    ||this->mesh_->elementType() == VolumetricMeshInternal::ElementType::QUAD)
-                {
-                    this->drawTriOrQuad(element_id[ele_idx]);
-                }
-
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::TET)
-                {
-                    this->drawTet(element_id[ele_idx]);
-                }
-
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::CUBIC)
-                {
-                    this->drawCubic(element_id[ele_idx]);
-                }
-
-                if(this->mesh_->elementType() == VolumetricMeshInternal::ElementType::NON_UNIFORM)
-                {
-                    // waiting for implementation
-                    //
-                    //
-                }
+                this->drawTriOrQuad(element_id[ele_idx]);
             }
-            else
+
+            if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
+            {
+                this->drawTet(element_id[ele_idx]);
+            }
+
+            if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
+            {
+                this->drawCubic(element_id[ele_idx]);
+            }
+
+            if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
             {
                 // waiting for implementation
+                //
+                //
             }
         }
-        glEndList();
+        else
+        {
+            // waiting for implementation
+        }
     }
-    else
-    {
-        glCallList(this->element_with_color_vector_display_list_id_);
-    }
+    
     glPopMatrix();
     glPopAttrib();
 }
@@ -778,19 +730,11 @@ void VolumetricMeshRender<Scalar,Dim>::deleteDisplayLists()
     glDeleteLists(this->solid_display_list_id_, 1);
     glDeleteLists(this->wire_display_list_id_, 1);
     glDeleteLists(this->vertex_display_list_id_, 1);
-    glDeleteLists(this->element_with_color_display_list_id_, 1);
-    glDeleteLists(this->element_with_color_vector_display_list_id_, 1);
-    glDeleteLists(this->vertex_with_color_display_list_id_, 1);
-    glDeleteLists(this->vertex_with_color_vector_display_list_id_, 1);
     glDeleteLists(this->solid_with_custom_color_vector_display_list_id_, 1);
 
     this->solid_display_list_id_ = 0;
     this->wire_display_list_id_ = 0;
     this->vertex_display_list_id_ = 0;
-    this->element_with_color_display_list_id_ = 0;
-    this->element_with_color_vector_display_list_id_ = 0;
-    this->vertex_with_color_display_list_id_ = 0;
-    this->vertex_with_color_vector_display_list_id_ = 0;
     this->solid_with_custom_color_vector_display_list_id_ = 0;
 }
 

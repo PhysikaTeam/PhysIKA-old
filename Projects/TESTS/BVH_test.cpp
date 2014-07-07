@@ -43,45 +43,58 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_render.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_print.h"
 
 using namespace std;
 using namespace Physika;
 
-void display()
-{
-    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
-    PHYSIKA_ASSERT(window);
-    Color<double> background_color = Color<double>::Black();//template window->backgroundColor<double>();
-    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    (window->camera()).look();  //set camera
-
-    std::vector<unsigned int> temp;
-    temp.push_back(10);
-
-    //dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(0))->renderFaceWithColor(temp, Color<float>::Blue());
-    //dynamic_cast<SurfaceMeshRender<double>*>((window->renderManager()).taskAtIndex(1))->renderFaceWithColor(temp, Color<float>::Blue());
-
-    (window->renderManager()).renderAll(); //render all tasks of render manager
-    window->displayFrameRate();
-    glutSwapBuffers();
-}
+Transform<double> *trans;
+unsigned int render_i = 0;
 
 int main()
 {
     SurfaceMesh<double> mesh_ball;
     if(!ObjMeshIO<double>::load(string("ball_high.obj"), &mesh_ball))
 		exit(1);
+
+    SurfaceMesh<double> mesh_box;
+    if(!ObjMeshIO<double>::load(string("box_tri.obj"), &mesh_box))
+        exit(1);
+
+    mesh_ball.computeAllFaceNormals();
+    mesh_box.computeAllFaceNormals();
     
 	RigidBodyDriver<double, 3> driver;
 
 	RigidBody<double,3> body1(&mesh_ball);
+    
 
 	RigidBody<double,3> body2(body1);
     body2.setTranslation(Vector<double, 3>(0, 55, 0));
 
+    RigidBody<double,3> body3(body1);
+    body3.setTranslation(Vector<double, 3>(0, -185, 0));
+
+    RigidBody<double,3> body4(body1);
+    body4.setTranslation(Vector<double, 3>(0, -285, 0));
+
+    //body1.setTranslation(Vector<double, 3>(0, 20, 0));
+
+    //body2.setRotation(Vector<double, 3>(0, 0.785, 0));
+
+    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
+    //body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
+
+    //body3.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
+    //body3.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
+
+    //body4.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
+    //body4.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
+
 	driver.addRigidBody(&body1);
 	driver.addRigidBody(&body2);
+    //driver.addRigidBody(&body3);
+    //driver.addRigidBody(&body4);
 
     Vector<double, 3> center;
     double mass;
@@ -96,6 +109,7 @@ int main()
     GlutWindow glut_window;
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
+    //glut_window.setCameraPosition(Vector<double, 3>(20, 0, 0));
 	glut_window.setCameraPosition(Vector<double, 3>(-60, 0, 60));
 	glut_window.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
     //glut_window.setDisplayFunction(display);
@@ -110,28 +124,12 @@ int main()
 	plugin->enableRenderWireframeAll();
     plugin->enableRenderContactFaceAll();
 
-    SurfaceMeshRender<double>* render1 = new SurfaceMeshRender<double>();
-    render1->setSurfaceMesh(&mesh_ball);
-
-    SurfaceMeshRender<double>* render2 = new SurfaceMeshRender<double>();
-    render2->setSurfaceMesh(&mesh_ball);
-    Transform<double> *trans = new Transform<double>();
-    trans->setTranslation(Vector<double, 3>(0, 35, 0));
-    render2->setTransform(trans);
+    RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
+    driver.addPlugin(print_plugin);
 
 
-
-
-
-    //glut_window.pushBackRenderTask(render1);
-    //glut_window.pushBackRenderTask(render2);
-    
-
-    cout<<"Test GlutWindow with custom display function:\n";
     glut_window.createWindow();
-    //glut_window.setIdleFunction(idleFunction);
-    //cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
-    cout<<"Test window with GLUI controls:\n";
+
 
 
 
