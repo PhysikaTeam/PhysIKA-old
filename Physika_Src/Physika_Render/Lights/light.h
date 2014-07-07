@@ -11,8 +11,9 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
-#ifndef PHYSIKA_GUI_LIGHTS_LIGHT_H_
-#define PHYSIKA_GUI_LIGHTS_LIGHT_H_
+
+#ifndef PHYSIKA_RENDER_LIGHTS_LIGHT_H_
+#define PHYSIKA_RENDER_LIGHTS_LIGHT_H_
 
 #include <GL/gl.h>
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -20,14 +21,17 @@
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 
 namespace Physika{
-//Note: Light is designed for float and integer type, since openGL functions about light was imlementated for these two.
-//      Generally, type float is sufficient, and is strongly recommended.
-//      In Light class, as you can see in header file, we store NO data member, EXCEPT the light_id (corresponding to GL_LIGHT0,
-//      GL_LIGHT1, ......)to specify which light you are using from openGL.
-//      Thus, every setter and getter is operated by directly call openGL set-function and get-function(such as glLight and 
-//      glGetFloatv).
-//      As a consequence, The Light class maintains exactly the feature of "state machine" of openGL, i.e. You can change 
-//      the light object by call openGL functions directly outside, only if you have the right light_id.
+
+/*
+ * Note: Light is designed for float and integer type, since openGL functions about light was imlementated for these two.
+ *       Generally, type float is sufficient, and is strongly recommended.
+ *       In Light class, as you can see in header file, we store NO data member, EXCEPT the light_id (corresponding to GL_LIGHT0,
+ *       GL_LIGHT1, ......)to specify which light you are using from openGL.
+ *       Thus, every setter and getter is operated by directly call openGL set-function and get-function(such as glLight and 
+ *       glGetFloatv).
+ *       As a consequence, The Light class maintains exactly the feature of "state machine" of openGL, i.e. You can change 
+ *       the light object by call openGL functions directly outside, only if you have the right light_id.
+ */
 
 class Light
 {
@@ -84,5 +88,6 @@ std::ostream &  operator<< (std::ostream& out, const Light& light);
 
 }      //end of namespace Physika
 
-#include "Physika_GUI/Lights/light-inl.h"
-#endif //PHYSIKA_GUI_LIGHTS_LIGHT_H_
+#include "Physika_Render/Lights/light-inl.h"
+
+#endif //PHYSIKA_RENDER_LIGHTS_LIGHT_H_

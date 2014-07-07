@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_GUI_LIGHTS_LIGHT_INL_H_
-#define PHYSIKA_GUI_LIGHTS_LIGHT_INL_H_
+#ifndef PHYSIKA_RENDER_LIGHTS_LIGHT_INL_H_
+#define PHYSIKA_RENDER_LIGHTS_LIGHT_INL_H_
 
 namespace Physika{
 
@@ -123,4 +123,4 @@ Scalar Light::quadraticAttenuation() const
 
 }// end of namespace Physika
 
-#endif //PHYSIKA_GUI_LIGHTS_LIGHT_INL_H_
+#endif //PHYSIKA_RENDER_LIGHTS_LIGHT_INL_H_

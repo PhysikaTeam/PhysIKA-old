@@ -14,8 +14,8 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_GUI/Lights/light_manager.h"
-#include "Physika_GUI/Lights/light.h"
+#include "Physika_Render/Lights/light_manager.h"
+#include "Physika_Render/Lights/light.h"
 
 using std::list;
 

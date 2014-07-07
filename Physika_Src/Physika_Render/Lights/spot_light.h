@@ -14,7 +14,7 @@
 #ifndef PHYSIKA_GUI_LIGHTS_SPOT_LIGHT_H_
 #define PHYSIKA_GUI_LIGHTS_SPOT_LIGHT_H_
 
-#include "Physika_GUI/Lights/light.h"
+#include "Physika_Render/Lights/light.h"
 
 namespace Physika{
 
@@ -35,6 +35,6 @@ public:
 
 } //end of namespace Physika
 
-#include "Physika_GUI/Lights/spot_light-inl.h"
+#include "Physika_Render/Lights/spot_light-inl.h"
 
-#endif //PHYSIKA_GUI_LIGHTS_SPOT_LIGHT_H_
+#endif //PHYSIKA_RENDER_LIGHTS_SPOT_LIGHT_H_

@@ -12,22 +12,25 @@
  *
  */
 
-#ifndef PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_
-#define PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_
+#ifndef PHYSIKA_RENDER_LIGHTS_LIGHT_MANAGER_H_
+#define PHYSIKA_RENDER_LIGHTS_LIGHT_MANAGER_H_
 
 #include <list>
 #include <GL/gl.h>
 #include "Physika_Render/Color/color.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 
-// Note1: Since OpegnGL demands that each graphic card has to implement at least 8 lights, to avoid undefined situation where lights number are greater than 8,
-//        LightManager only perserve 8 Light Object(actually pointer) in list at most.
-// Note2: LightManager is also responsible for configuring LIGHT MODEL, since Light Model actually belongs to entire secnaro but not only 
-//        one particular Light. The configuring consists of two parameters:
-//        1.GL_LIGHT_MODEL_LOCAL_VIEWER
-//        2.GL_LIGHT_MODEL_TWO_SIDE
-//        3.GL_LIGHT_MODEL_COLOR_CONTROL: but this parameter is not supported in widows, so we ingnore it.
-//        We have corresponing setter and getter for these parameters.
+/*
+ * Note1: Since OpegnGL demands that each graphic card has to implement at least 8 lights, to avoid undefined situation where lights number are greater than 8,
+ *        LightManager only perserve 8 Light Object(actually pointer) in list at most.
+ * Note2: LightManager is also responsible for configuring LIGHT MODEL, since Light Model actually belongs to entire secnaro but not only 
+ *        one particular Light. The configuring consists of two parameters:
+ *        1.GL_LIGHT_MODEL_LOCAL_VIEWER
+ *        2.GL_LIGHT_MODEL_TWO_SIDE 
+ *        3.GL_LIGHT_MODEL_COLOR_CONTROL: but this parameter is not supported in widows, so we ingnore it.
+ *        We have corresponing setter and getter for these parameters.
+ */
+
 namespace Physika{
 
 class Light;
@@ -92,4 +95,4 @@ std::ostream& operator << (std::ostream& out, const LightManager & light_manager
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_GUI_LIGHTS_LIGHT_MANAGER_H_
+#endif //PHYSIKA_RENDER_LIGHTS_LIGHT_MANAGER_H_

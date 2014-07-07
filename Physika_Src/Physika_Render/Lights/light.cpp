@@ -12,7 +12,7 @@
  *
  */
 #include <iostream>
-#include "Physika_GUI/Lights/light.h"
+#include "Physika_Render/Lights/light.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 
 namespace Physika

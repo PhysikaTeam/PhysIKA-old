@@ -12,7 +12,7 @@
  *
  */
 #include <iostream>
-#include "Physika_GUI/Lights/spot_light.h"
+#include "Physika_Render/Lights/spot_light.h"
 
 namespace Physika
 {

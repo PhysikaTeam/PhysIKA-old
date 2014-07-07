@@ -16,7 +16,7 @@
 #include <GL/glu.h>
 #include <iostream>
 #include "Physika_Core/Quaternion/quaternion.h"
-#include "Physika_GUI/Camera/camera.h"
+#include "Physika_Render/Camera/camera.h"
 
 namespace Physika{
 

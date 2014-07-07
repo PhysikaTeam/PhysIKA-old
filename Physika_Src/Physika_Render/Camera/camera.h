@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_GUI_CAMERA_CAMERA_H_
-#define PHYSIKA_GUI_CAMERA_CAMERA_H_
+#ifndef PHYSIKA_RENDER_CAMERA_CAMERA_H_
+#define PHYSIKA_RENDER_CAMERA_CAMERA_H_
 
 #include "Physika_Core/Vectors/vector_3d.h"
 
@@ -102,4 +102,4 @@ protected:
 
 }  //end of namespace Physika
 
-#endif  //PHYSIKA_GUI_CAMERA_CAMERA_H_
+#endif  //PHYSIKA_RENDER_CAMERA_CAMERA_H_
