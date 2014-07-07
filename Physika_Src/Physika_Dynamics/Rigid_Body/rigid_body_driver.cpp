@@ -263,9 +263,15 @@ RigidBody<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::rigidBody(unsigned int ind
 }
 
 template <typename Scalar,int Dim>
-CollisionDetectionResult<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::collisionResult()
+CollisionDetectionResult<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::collisionResult()
 {
-	return &collision_result_;
+	return collision_result_;
+}
+
+template <typename Scalar,int Dim>
+ContactPointManager<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::contactPoints()
+{
+    return contact_points_;
 }
 
 template <typename Scalar,int Dim>
@@ -279,19 +285,32 @@ void RigidBodyDriver<Scalar, Dim>::updateRigidBody(Scalar dt)
 template <typename Scalar,int Dim>
 bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
 {
-    Timer timer;
+    //plugin
+    unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
+    RigidDriverPlugin<Scalar, Dim>* plugin;
+    for(unsigned int i = 0; i < plugin_num; ++i)
+    {
+        plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
+        if(plugin != NULL)
+            plugin->onBeginCollisionDetection();
+    }
+
+    //clean
 	collision_result_.resetCollisionResults();
+    contact_points_.cleanContactPoints();
+
+    //update and collide
 	scene_bvh_.updateSceneBVH();
 	bool is_collide = scene_bvh_.selfCollide(collision_result_);
+    contact_points_.setCollisionResult(collision_result_);
 
-
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
+    //plugin
+	plugin_num = static_cast<unsigned int>((this->plugins_).size());
 	for(unsigned int i = 0; i < plugin_num; ++i)
 	{
 		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
 		if(plugin != NULL)
-			plugin->onCollisionDetection();
+			plugin->onEndCollisionDetection();
 	}
 	return is_collide;
 }

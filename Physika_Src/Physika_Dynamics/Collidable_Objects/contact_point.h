@@ -69,6 +69,7 @@ public:
     ContactPoint<Scalar, Dim>* contactPoint(unsigned int contact_index);
     const std::vector<ContactPoint<Scalar, Dim>* >& contactPoints() const;
     std::vector<ContactPoint<Scalar, Dim>* >& contactPoints();
+    ContactPoint<Scalar, Dim>* operator[] (unsigned int contact_index);
 
     //clean contact points
     void cleanContactPoints();

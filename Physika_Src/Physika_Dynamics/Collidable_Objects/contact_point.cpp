@@ -157,6 +157,17 @@ std::vector<ContactPoint<Scalar, Dim>* >& ContactPointManager<Scalar, Dim>::cont
 }
 
 template <typename Scalar,int Dim>
+ContactPoint<Scalar, Dim>* ContactPointManager<Scalar, Dim>::operator[] (unsigned int contact_index)
+{
+    if(contact_index >= numContactPoint())
+    {
+        std::cerr<<"Contact index our of range!"<<std::endl;
+        return NULL;
+    }
+    return contact_points_[contact_index];
+}
+
+template <typename Scalar,int Dim>
 void ContactPointManager<Scalar, Dim>::cleanContactPoints()
 {
     unsigned int num_contact = numContactPoint();
@@ -175,7 +186,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         std::cerr<<"Null collision pair!"<<std::endl;
         return;
     }
-
+    
     Face<Scalar>* face_lhs = collision_pair->faceLhsPtr();
     Face<Scalar>* face_rhs = collision_pair->faceRhsPtr();
     unsigned int num_vertex_lhs = face_lhs->numVertices();
@@ -189,7 +200,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     }
     for(unsigned int i = 0; i < num_vertex_rhs; i++)
     {
-        vertex_rhs[i] = collision_pair->meshObjectLhs()->vertexPosition(face_rhs->vertex(i).positionIndex());
+        vertex_rhs[i] = collision_pair->meshObjectRhs()->vertexPosition(face_rhs->vertex(i).positionIndex());
     }
 
     unsigned int num_overlap = 0;

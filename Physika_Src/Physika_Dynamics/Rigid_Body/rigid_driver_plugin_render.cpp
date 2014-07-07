@@ -130,9 +130,15 @@ void RigidDriverPluginRender<Scalar, Dim>::onAddRigidBody(RigidBody<Scalar, Dim>
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onCollisionDetection()
+void RigidDriverPluginRender<Scalar, Dim>::onBeginCollisionDetection()
 {
 	
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::onEndCollisionDetection()
+{
+
 }
 
 template <typename Scalar,int Dim>
@@ -188,7 +194,7 @@ void RigidDriverPluginRender<Scalar, Dim>::idle()
         }
         active_render_->contact_face_ids = new std::vector<unsigned int>[num_body];
 
-		CollisionDetectionResult<Scalar, Dim>* collision_result = active_render_->rigid_driver_->collisionResult();
+		CollisionDetectionResult<Scalar, Dim>* collision_result = &(active_render_->rigid_driver_->collisionResult());
 		unsigned int num_collision = collision_result->numberCollision();
 		for(unsigned int i = 0; i < num_collision; ++i)
         {
