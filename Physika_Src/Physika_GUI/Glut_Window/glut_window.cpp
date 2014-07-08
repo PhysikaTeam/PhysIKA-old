@@ -33,7 +33,7 @@ GlutWindow::GlutWindow()
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    initDefaultLight();
+    //initDefaultLight();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
@@ -44,7 +44,7 @@ GlutWindow::GlutWindow(const std::string &window_name)
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    initDefaultLight();
+    //initDefaultLight();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
@@ -55,7 +55,7 @@ GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsig
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    initDefaultLight();
+    //initDefaultLight();
 }
 
 GlutWindow::~GlutWindow()
@@ -677,6 +677,7 @@ void GlutWindow::initFunction(void)
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
     Color<double> background_color = window->background_color_;
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
+    window->initDefaultLight();
 }
 
 void GlutWindow::initCallbacks()
@@ -703,15 +704,10 @@ void GlutWindow::resetMouseState()
 void GlutWindow::initDefaultLight()
 {
     default_light_.setLightId(GL_LIGHT0);
-    default_light_.setAmbient(Color<double>(0.4,0.4,0.4,1.0));
-    default_light_.setDiffuse(Color<double>(0.6,0.6,0.6,1.0));
-    default_light_.setSpecular(Color<double>(1.0,1.0,1.0,1.0));
-    default_light_.setConstantAttenuation(1.1);
-    default_light_.setLinearAttenuation(1.2);
-    default_light_.setQuadraticAttenuation(1.3);
     default_light_.setPosition(Vector<int,3>(0, 0, 0));
     default_light_.turnOn();
     light_manager_.insertBack(&default_light_);
+    default_light_.printInfo();
 }
 
 } //end of namespace Physika
