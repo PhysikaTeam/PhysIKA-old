@@ -21,6 +21,7 @@
 #include "Physika_Geometry/Bounding_Volume/scene_bvh.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 #include "Physika_Dynamics/Collidable_Objects/contact_point.h"
+#include "Physika_Core/Matrices/sparse_matrix.h"
 
 
 namespace Physika{
@@ -57,6 +58,7 @@ protected:
 
 template <typename Scalar,int Dim> class RigidDriverPlugin;
 
+//Dynamics of rigid body is only designed for 3-dimension for now
 template <typename Scalar,int Dim>
 class RigidBodyDriver: public DriverBase<Scalar>
 {
@@ -81,11 +83,6 @@ public:
 	CollisionDetectionResult<Scalar, Dim>& collisionResult();
     ContactPointManager<Scalar, Dim>& contactPoints();
 
-	//dynamics
-    virtual void updateRigidBody(Scalar dt);
-	virtual bool collisionDetection();
-    virtual void collisionResponse();
-
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
@@ -96,6 +93,16 @@ protected:
     ContactPointManager<Scalar, Dim> contact_points_;
     int frame_;
     int step_;
+
+    //dynamics, only designed for 3-dimension for now
+    virtual void updateRigidBody(Scalar dt);
+    virtual bool collisionDetection();
+    virtual void collisionResponse();
+    virtual void updateDynamicsMatrix(SparseMatrix<Scalar>& J, SparseMatrix<Scalar>& M_inv, SparseMatrix<Scalar>& D, VectorND<Scalar>& v);//update the inertia matrix and Jacobian matrix to form BLCP. Refer to [Tonge et al. 2012]
+    virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+                                  VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+                                  VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count = 5);//solve the BLCP equation with PGS. Refer to [Tonge et al. 2012]
+    virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T);//apply impulse to rigid bodies. This step will not cause velocity and configuration integral
 };
 
 } //end of namespace Physika
