@@ -110,6 +110,9 @@ void initFunction()
     vol_mesh = VolumetricMeshIO<double,3>::load("e.smesh");
 
     meshRender.setVolumetricMesh(vol_mesh);
+	meshRender.printInfo();
+	cout<<meshRender<<endl;
+	getchar();
     vol_mesh->printInfo();
     cout<<"vertNum:"<<vol_mesh->vertNum()<<endl;
     cout<<"eleNum:"<<vol_mesh->eleNum()<<endl;
