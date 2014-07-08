@@ -83,7 +83,7 @@ public:
 	static void printOccupyInfo();
 protected:
     GLenum light_id_;
-	static bool is_occupied_[11];
+	static bool is_occupied_[8];
 };
 
 std::ostream &  operator<< (std::ostream& out, const Light& light);

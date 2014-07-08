@@ -18,7 +18,7 @@
 namespace Physika
 {
 
-bool Light::is_occupied_[11] = { false,false,false,false,false,false,false,false,false,false,false};
+bool Light::is_occupied_[8] = { false,false,false,false,false,false,false,false};
 
 Light::Light()
 {
