@@ -707,7 +707,6 @@ void GlutWindow::initDefaultLight()
     default_light_.setPosition(Vector<int,3>(0, 0, 0));
     default_light_.turnOn();
     light_manager_.insertBack(&default_light_);
-    default_light_.printInfo();
 }
 
 } //end of namespace Physika
