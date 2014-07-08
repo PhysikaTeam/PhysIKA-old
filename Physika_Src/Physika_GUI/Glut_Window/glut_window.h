@@ -226,19 +226,19 @@ Color<ColorType> GlutWindow::backgroundColor() const
 template <typename ColorType>
 Color<ColorType> GlutWindow::textColor() const
 {
-    return Color<double>::template convertColor<ColorType>(text_color_);
+    return text_color_.template convertColor<ColorType>();
 }
 
 template <typename ColorType>
 void GlutWindow::setBackgroundColor(const Color<ColorType> &color)
 {
-    background_color_ = Color<ColorType>::template convertColor<double>(color);
+    background_color_ = color.template convertColor<double>();
 }
 
 template <typename ColorType>
 void GlutWindow::setTextColor(const Color<ColorType> &color)
 {
-    text_color_ = Color<ColorType>::template convertColor<double>(color);
+    text_color_ = color.template convertColor<double>();
 }
 
 }  //end of namespace Physika

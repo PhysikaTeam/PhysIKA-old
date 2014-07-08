@@ -112,7 +112,7 @@ void initFunction()
     light_manager.printInfo();
     cout<<"num: "<<light_manager.numLights()<<endl;
     cout<<light_manager;
-    system("pause");
+    getchar();
 }
 
 void keyboardFunction(unsigned char key, int x, int y )

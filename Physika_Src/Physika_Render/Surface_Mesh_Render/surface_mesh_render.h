@@ -67,6 +67,8 @@ public:
 
     //Render with choosen render mode
     virtual void render();
+	virtual void printInfo() const;
+
 
     //The following four functions is used for rendering specific faces/vertices with custom color.
     // 1: when you employ " vector< Color<float> > color" to sepcify your cunstom color, in the case of the color size smaller than

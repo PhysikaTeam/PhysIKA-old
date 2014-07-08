@@ -73,13 +73,16 @@ void idleFunction()
 
 void initFunction()
 {
-    ObjMeshIO<double>::load("zhanshen.obj",&mesh);
+    ObjMeshIO<double>::load("fish.obj",&mesh);
 	for(unsigned int i=0; i<50; i++)
 	for(unsigned int j=0; j<40; j++)
 	{
 		color_vector.push_back(Color<float>(0.02*i,0.025*j,0.01*(i+j)));
 	}
 	meshRender.setSurfaceMesh(&mesh);
+	meshRender.printInfo();
+	cout<<meshRender<<endl;
+	getchar();
     	for(unsigned i=0; i<20000;i++)
 	{
 		face_id.push_back(i);
@@ -95,7 +98,7 @@ void initFunction()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     //cout<<"³õÊ¼»¯"<<endl;
-    //system("pause");
+    //getchar();
 }
 
 void keyboardFunction(unsigned char key, int x, int y )

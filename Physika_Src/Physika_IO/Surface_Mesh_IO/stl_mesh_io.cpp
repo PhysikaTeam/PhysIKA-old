@@ -32,6 +32,10 @@ bool StlMeshIO<Scalar>::save(const string& filename, const SurfaceMesh<Scalar> *
     return false;
 }
 
+//explicit instantitation
+template class StlMeshIO<float>;
+template class StlMeshIO<double>;
+
 } //end of namespace Physika
 
 

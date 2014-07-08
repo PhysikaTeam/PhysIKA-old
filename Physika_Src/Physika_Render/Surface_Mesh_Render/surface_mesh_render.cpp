@@ -198,6 +198,41 @@ void SurfaceMeshRender<Scalar>::render()
         renderVertices();
 }
 
+template<typename Scalar>
+void SurfaceMeshRender<Scalar>::printInfo()const
+{
+	std::cout<<"mesh_address: "<<this->mesh_<<std::endl;
+	std::cout<<"transform_address: "<<this->transform_<<std::endl;
+	unsigned int render_mode = this->render_mode_;
+	std::cout<<"render_mode: ";
+	if(render_mode & this->render_solid_)
+		std::cout<<"solid ";
+	if(render_mode & this->render_wireframe_)
+		std::cout<<"wireFrame ";
+	if(render_mode & this->render_vertices_)
+		std::cout<<"vertex ";
+	if(render_mode & this->render_texture_)
+		std::cout<<"texture ";
+	if(render_mode & this->render_flat_or_smooth_)
+		std::cout<<"smooth ";
+	else
+		std::cout<<"flat ";
+	std::cout<<std::endl;
+	std::cout<<"texture: "<<this->textures_.size()<<" in all, ";
+	unsigned int texture_num_available = 0;
+	for(unsigned int i=0; i<this->textures_.size(); i++)
+	{
+		if(this->textures_[i].first == true)
+			texture_num_available++;
+	}
+	std::cout<<texture_num_available<<" available."<<std::endl;
+	std::cout<<"vertex_display_list_id_: "<<this->vertex_display_list_id_<<std::endl;
+	std::cout<<"wire_display_list_id_: "<<this->wire_display_list_id_<<std::endl;
+	std::cout<<"solid_display_list_id_: "<<this->solid_display_list_id_<<std::endl;
+	std::cout<<"solid_with_custom_color_vector_display_list_id_: "<<this->solid_with_custom_color_vector_display_list_id_<<std::endl;
+
+}
+
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::initRenderMode()
 {
@@ -294,8 +329,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // set polygon mode FILL for SOLID MODE
     glDisable(GL_COLOR_MATERIAL);              /// warning: we have to disable GL_COLOR_MATERIAL, otherwise the material propertity won't appear!!!
     glEnable(GL_LIGHTING);                     
-    glEnable(GL_LIGHT0);
-
+   
     glPushMatrix();
     if(this->transform_ != NULL)
     {
