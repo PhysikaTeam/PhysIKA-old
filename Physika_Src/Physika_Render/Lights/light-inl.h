@@ -66,11 +66,7 @@ template<typename Scalar>
 void Light::setPosition(const Vector<Scalar,3>& pos)
 {
     Vector<Scalar,4> position(pos[0], pos[1], pos[2], static_cast<Scalar>(1.0)); // the last one is 1.0 to specify this light is position based.
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
     openGLLightv(this->light_id_, GL_POSITION, position);
-    glPopMatrix();
 }
 
 template<typename Scalar>
