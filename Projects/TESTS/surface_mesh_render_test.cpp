@@ -81,7 +81,6 @@ void initFunction()
 	}
 	meshRender.setSurfaceMesh(&mesh);
 	meshRender.printInfo();
-	cout<<meshRender<<endl;
 	getchar();
     	for(unsigned i=0; i<20000;i++)
 	{

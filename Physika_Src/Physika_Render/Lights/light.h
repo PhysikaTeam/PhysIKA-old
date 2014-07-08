@@ -80,8 +80,10 @@ public:
     void turnOff() const;
     bool isLightOn() const;
     void printInfo() const;
+	static void printOccupyInfo();
 protected:
     GLenum light_id_;
+	static bool is_occupied_[11];
 };
 
 std::ostream &  operator<< (std::ostream& out, const Light& light);

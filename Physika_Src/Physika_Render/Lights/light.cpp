@@ -18,22 +18,61 @@
 namespace Physika
 {
 
+bool Light::is_occupied_[11] = { false,false,false,false,false,false,false,false,false,false,false};
+
 Light::Light()
 {
-    this->light_id_ = 0;
-    std::cerr<<"warning: light_id are not specfied, light_id will be set to 0 !"<<std::endl;
+	unsigned int idx = 0;
+	while(this->is_occupied_[idx] == true && idx<8 )
+		idx++;
+	if(idx == 8)
+	{
+		std::cerr<<"fatal error: all lights have been occupied, the program will exit!!!"<<std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+	else
+	{
+		this->light_id_ = GL_LIGHT0+idx;
+		std::cout<<this->light_id_<<" is allocated for your light object!!"<<std::endl;
+		this->is_occupied_[this->light_id_ - GL_LIGHT0] = true;
+	}
 }
 
 Light::Light(GLenum light_id)
 {
-    this->light_id_ = light_id;
+    unsigned int idx = light_id-GL_LIGHT0;
+	if(this->is_occupied_[idx] == true)
+	{
+		std::cerr<<"error: this id has been occupied, system will try to allocate another light id for you!"<<std::endl;
+		new(this)Light();
+	}
+	else
+	{
+		this->light_id_ = light_id;
+		this->is_occupied_[this->light_id_-GL_LIGHT0] = true;
+	}
 }
 
-Light::~Light(){}
+Light::~Light()
+{
+	this->is_occupied_[this->light_id_ - GL_LIGHT0] = false;
+}
 
 void Light::setLightId(GLenum light_id)
 {
-    this->light_id_ = light_id;
+    unsigned int idx = light_id-GL_LIGHT0;
+	if(light_id == this->light_id_)
+		return;
+	if(this->is_occupied_[idx] == true)
+	{
+		std::cerr<<"error: this id has been occupied, operation is ignored!"<<std::endl;
+	}
+	else
+	{
+		this->is_occupied_[this->light_id_-GL_LIGHT0] = false;
+		this->light_id_ = light_id;
+		this->is_occupied_[this->light_id_-GL_LIGHT0] = true;
+	}
 }
 
 GLenum Light::lightId() const
@@ -75,6 +114,13 @@ bool Light::isLightOn() const
         return false;
 }
 
+void Light::printOccupyInfo()
+{
+	std::cout<<"lights occupy information: ";
+	for(int i=0; i<8; i++)
+		std::cout<<Light::is_occupied_[i];
+	std::cout<<std::endl;
+}
 std::ostream &  operator<< (std::ostream& out, const Light& light)
 {
     out<<"light_id: "<<light.lightId()<<std::endl;
@@ -88,5 +134,6 @@ std::ostream &  operator<< (std::ostream& out, const Light& light)
     out<<"isLightOn: "<<light.isLightOn()<<std::endl;
     return out;
 }
+
 
 }// end of namespace Physika
