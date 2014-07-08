@@ -711,44 +711,6 @@ void SurfaceMeshRender<Scalar>::deleteDisplayLists()
     this->solid_with_custom_color_vector_display_list_id_ = 0;
 }
 
-template<typename Scalar>
-std::ostream & operator <<(std::ostream & out, const SurfaceMeshRender<Scalar> & surface_mesh_render)
-{
-	out<<"mesh_address: "<<surface_mesh_render.mesh_<<std::endl;
-	out<<"transform_address: "<<surface_mesh_render.transform_<<std::endl;
-	unsigned int render_mode = surface_mesh_render.render_mode_;
-	out<<"render_mode: ";
-	if(render_mode & surface_mesh_render.render_solid_)
-		out<<"solid ";
-	if(render_mode & surface_mesh_render.render_wireframe_)
-		out<<"wireFrame ";
-	if(render_mode & surface_mesh_render.render_vertices_)
-		out<<"vertex ";
-	if(render_mode & surface_mesh_render.render_texture_)
-		out<<"texture ";
-	if(render_mode & surface_mesh_render.render_flat_or_smooth_)
-		out<<"smooth ";
-	else
-		out<<"flat ";
-	out<<std::endl;
-	out<<"texture: "<<surface_mesh_render.textures_.size()<<" in all, ";
-	unsigned int texture_num_available = 0;
-	for(unsigned int i=0; i<surface_mesh_render.textures_.size(); i++)
-	{
-		if(surface_mesh_render.textures_[i].first == true)
-			texture_num_available++;
-	}
-	out<<texture_num_available<<" available."<<std::endl;
-	out<<"vertex_display_list_id_: "<<surface_mesh_render.vertex_display_list_id_<<std::endl;
-	out<<"wire_display_list_id_: "<<surface_mesh_render.wire_display_list_id_<<std::endl;
-	out<<"solid_display_list_id_: "<<surface_mesh_render.solid_display_list_id_<<std::endl;
-	out<<"solid_with_custom_color_vector_display_list_id_: "<<surface_mesh_render.solid_with_custom_color_vector_display_list_id_<<std::endl;
-	return out;
-}
-//explicit instantitation for friend function
-template std::ostream & operator<< <double>(std::ostream &, const SurfaceMeshRender<double> &); 
-template std::ostream & operator<< <float>(std::ostream &, const SurfaceMeshRender<double> &); 
-
 //explicit instantitation
 template class SurfaceMeshRender<float>;
 template class SurfaceMeshRender<double>;
