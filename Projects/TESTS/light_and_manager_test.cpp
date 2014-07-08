@@ -20,9 +20,9 @@
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_GUI/Glui_Window/glui_window.h"
-#include "Physika_GUI/Lights/light.h"
-#include "Physika_GUI/Lights/spot_light.h"
-#include "Physika_GUI/Lights/light_manager.h"
+#include "Physika_Render/Lights/light.h"
+#include "Physika_Render/Lights/spot_light.h"
+#include "Physika_Render/Lights/light_manager.h"
 using namespace std;
 using namespace Physika;
 
