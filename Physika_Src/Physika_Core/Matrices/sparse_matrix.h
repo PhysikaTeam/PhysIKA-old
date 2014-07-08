@@ -22,31 +22,34 @@
 
 namespace Physika{
 
+/* class Trituple is used to store a node's message in the orthogonal list
+ * every member in class Trituple is public.
+ */
 template <typename Scalar>
-class trituple
+class Trituple
 {
 public:
-    trituple()
+    Trituple()
     {
         row_ = col_ = value_ = 0;
         row_next_ = NULL;
         col_next_ = NULL;
     }
-    trituple(int row, int col, Scalar value)
+    Trituple(int row, int col, Scalar value)
     {
         row_ = row;
         col_ = col;
         value_ = value;
         row_next_ = col_next_ = NULL;
     }
-    bool operator==(const trituple<Scalar> &tri2)
+    bool operator==(const Trituple<Scalar> &tri2)
     {
         if(tri2.row_ != row_)return false;
         if(tri2.col_ != col_)return false;
         if(tri2.value_ != value_)return false;
         return true;
     }
-    bool operator!=(const trituple<Scalar> &tri2)
+    bool operator!=(const Trituple<Scalar> &tri2)
     {
         if(tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_)return true;
         return false;		
@@ -55,10 +58,13 @@ public:
     int row_;
     int col_;
     Scalar value_;
-    trituple<Scalar> *row_next_;
-    trituple<Scalar> *col_next_;
+    Trituple<Scalar> *row_next_;
+    Trituple<Scalar> *col_next_;
 };
 
+/*class SparseMatrix is a data structure used to store SparseMatrix
+ *it uses the Trituple as its node and connect them with a orthhogonal list
+ */
 template <typename Scalar>
 class SparseMatrix: public MatrixBase
 {
@@ -69,13 +75,19 @@ public:
     ~SparseMatrix();
     int rows() const;
     int cols() const;
+    //return the number of nonZero node
     int nonZeros() const;
-    bool remove(int i,int j);  //remove a entry in (i,j)
+    // remove a node(i,j) and adjust the orthogonal list
+    bool remove(int i,int j);
+    //resize the SparseMatrix and data in it will be deleted
     void resize(int new_rows, int new_cols);
-    std::vector<trituple<Scalar>> getRowElements(int ) const;
-    std::vector<trituple<Scalar>> getColElements(int ) const;
-    Scalar operator() (int i, int j) const;//return value of matrix entry at index (i,j). Note: cannot be used as l-value!
-    void setEntry(int i, int j, Scalar value);//insert matrix entry at index (i,j), if it already exits, replace it
+    void transpose();
+    std::vector<Trituple<Scalar>> getRowElements(int ) const;
+    std::vector<Trituple<Scalar>> getColElements(int ) const;
+    //return value of matrix entry at index (i,j). Note: cannot be used as l-value!
+    Scalar operator() (int i, int j) const;
+    //insert matrix entry at index (i,j), if it already exits, replace it
+    void setEntry(int i, int j, Scalar value);
     SparseMatrix<Scalar> operator+ (const SparseMatrix<Scalar> &) const;
     SparseMatrix<Scalar>& operator+= (const SparseMatrix<Scalar> &);
     SparseMatrix<Scalar> operator- (const SparseMatrix<Scalar> &) const;
@@ -91,20 +103,21 @@ public:
     SparseMatrix<Scalar>& operator/= (Scalar);
 protected:
     void allocMemory(int rows, int cols);
-    void deleteRowList(trituple<Scalar> *);
-    void deleteColList(trituple<Scalar> *);
+    void deleteRowList(Trituple<Scalar> *);
+    void deleteColList(Trituple<Scalar> *);
 protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-//compressed orthogonal list based on trituple
+//compressed orthogonal list based on Trituple
     int rows_;
     int cols_;
-    trituple<Scalar> ** row_head_;
-    trituple<Scalar> ** col_head_;
+    Trituple<Scalar> ** row_head_;
+    Trituple<Scalar> ** col_head_;
 #endif
 };
 
+//overridding << for Trituple<Scalar>
 template <typename Scalar>
-std::ostream& operator<<(std::ostream &s, const trituple<Scalar> &tri)
+std::ostream& operator<<(std::ostream &s, const Trituple<Scalar> &tri)
 {
     s<<" ("<<tri.row_<<", "<<tri.col_<<", "<<tri.value_<<") ";
     return s;
@@ -115,7 +128,7 @@ template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const SparseMatrix<Scalar> &mat)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    std::vector<trituple<Scalar>> v;
+    std::vector<Trituple<Scalar>> v;
     for(int i = 0; i < mat.rows(); ++i)
     {
         v = mat.getRowElements(i);
@@ -133,6 +146,26 @@ SparseMatrix<T> operator* (S scale, const SparseMatrix<T> &mat)
     return mat*scale;
 }
 
+template <typename Scalar>
+VectorND<Scalar> operator*(const VectorND<Scalar> &vec, const SparseMatrix<Scalar> &mat)
+{
+    VectorND<Scalar> result(mat.cols(),0);
+    Scalar sum =0;
+    for(int i=0;i<mat.cols();++i)
+    {
+        sum = 0;
+        std::vector<Trituple<Scalar>> a_col = mat.getColElements(i);
+        for(int j=0;j<a_col.size();++j)
+        {
+            int row = a_col[j].row_;
+            sum += a_col[j].value_* vec[row];
+        }
+        result[i] = sum;
+    }
+    return result;
+}
+
 }  //end of namespace Physika
+
 
 #endif //PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_H_
