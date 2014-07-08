@@ -33,7 +33,6 @@ GlutWindow::GlutWindow()
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    //initDefaultLight();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
@@ -44,7 +43,6 @@ GlutWindow::GlutWindow(const std::string &window_name)
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    //initDefaultLight();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
@@ -55,7 +53,6 @@ GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsig
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    //initDefaultLight();
 }
 
 GlutWindow::~GlutWindow()
@@ -251,63 +248,6 @@ void GlutWindow::translateCameraRight(double dist)
     camera_.translateRight(dist);
 }
 
-////////////////////////////////////////////////// manages render tasks////////////////////////////////////////////////////////////////////
-
-unsigned int GlutWindow::numRenderTasks() const
-{
-    return render_manager_.numRenderTasks();
-}
-
-void GlutWindow::pushBackRenderTask(RenderBase *task)
-{
-    render_manager_.insertBack(task);
-}
-
-void GlutWindow::pushFrontRenderTask(RenderBase *task)
-{
-    render_manager_.insertFront(task);
-}
-
-void GlutWindow::insertRenderTaskAtIndex(unsigned int index, RenderBase *task)
-{
-    render_manager_.insertAtIndex(index,task);
-}
-
-void GlutWindow::popBackRenderTask()
-{
-    render_manager_.removeBack();
-}
-
-void GlutWindow::popFrontRenderTask()
-{
-    render_manager_.removeFront();
-}
-
-void GlutWindow::removeRenderTaskAtIndex(unsigned int index)
-{
-    render_manager_.removeAtIndex(index);
-}
-
-void GlutWindow::removeAllRenderTasks()
-{
-    render_manager_.removeAll();
-}
-
-const RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index) const
-{
-    return render_manager_.taskAtIndex(index);
-}
-
-RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index)
-{
-    return render_manager_.taskAtIndex(index);
-}
-
-int GlutWindow::getRenderTaskIndex(RenderBase *task) const
-{
-    return render_manager_.taskIndex(task);
-}
-
 ////////////////////////////////////////////////// manages lights in scene///////////////////////////////////////////////////////////////////////////
 
 unsigned int GlutWindow::numLights() const
@@ -363,6 +303,63 @@ Light* GlutWindow::lightAtIndex(unsigned int index)
 int GlutWindow::lightIndex(Light *light) const
 {
     return light_manager_.lightIndex(light);
+}
+
+////////////////////////////////////////////////// manages render tasks////////////////////////////////////////////////////////////////////
+
+unsigned int GlutWindow::numRenderTasks() const
+{
+    return render_manager_.numRenderTasks();
+}
+
+void GlutWindow::pushBackRenderTask(RenderBase *task)
+{
+    render_manager_.insertBack(task);
+}
+
+void GlutWindow::pushFrontRenderTask(RenderBase *task)
+{
+    render_manager_.insertFront(task);
+}
+
+void GlutWindow::insertRenderTaskAtIndex(unsigned int index, RenderBase *task)
+{
+    render_manager_.insertAtIndex(index,task);
+}
+
+void GlutWindow::popBackRenderTask()
+{
+    render_manager_.removeBack();
+}
+
+void GlutWindow::popFrontRenderTask()
+{
+    render_manager_.removeFront();
+}
+
+void GlutWindow::removeRenderTaskAtIndex(unsigned int index)
+{
+    render_manager_.removeAtIndex(index);
+}
+
+void GlutWindow::removeAllRenderTasks()
+{
+    render_manager_.removeAll();
+}
+
+const RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index) const
+{
+    return render_manager_.taskAtIndex(index);
+}
+
+RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index)
+{
+    return render_manager_.taskAtIndex(index);
+}
+
+int GlutWindow::getRenderTaskIndex(RenderBase *task) const
+{
+    return render_manager_.taskIndex(task);
 }
 
 ////////////////////////////////////////////////// screen shot and display frame-rate////////////////////////////////////////////////////////////////
@@ -453,6 +450,20 @@ void GlutWindow::enableDisplayFrameRate()
 void GlutWindow::disableDisplayFrameRate()
 {
     display_fps_ = false;
+}
+
+void GlutWindow::applyCameraAndLights()
+{
+    camera_.look();
+    //set the position of lights after the modelview setup of camera
+    //such that the camera is fixed at the set position
+    unsigned int light_num = this->numLights();
+    for(unsigned int i = 0; i < light_num; ++i)
+    {
+        Light *light = this->lightAtIndex(i);
+        Vector<double,3> light_pos(0,100,0); //= light->position<double>();
+        light->setPosition(light_pos);
+    }
 }
 
 ////////////////////////////////////////////////// set custom callback functions ////////////////////////////////////////////////////////////////////
@@ -559,7 +570,7 @@ void GlutWindow::displayFunction(void)
     Color<double> background_color = window->background_color_;
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    (window->camera_).look();  //set camera
+    window->applyCameraAndLights();
     (window->render_manager_).renderAll(); //render all tasks of render manager
     window->displayFrameRate();
     glutSwapBuffers();
@@ -585,6 +596,7 @@ void GlutWindow::reshapeFunction(int width, int height)
 	glLoadIdentity();
 	gluPerspective(fov, aspect,near_clip,far_clip);
 	glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void GlutWindow::keyboardFunction(unsigned char key, int x, int y)
@@ -669,7 +681,10 @@ void GlutWindow::initFunction(void)
     PHYSIKA_ASSERT(window);
     glMatrixMode(GL_PROJECTION);												// select projection matrix
     glViewport(0, 0, width, height);        									// set the viewport
-    (window->camera_).look();                                                   // set projection and model view transformation through camera
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    window->initDefaultLight();                                                 //init the default light
+    window->applyCameraAndLights();                                             // apply the camera and lights
     glShadeModel( GL_SMOOTH );
     glClearDepth( 1.0 );														// specify the clear value for the depth buffer
     glEnable( GL_DEPTH_TEST );
@@ -677,7 +692,6 @@ void GlutWindow::initFunction(void)
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
     Color<double> background_color = window->background_color_;
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
-    window->initDefaultLight();
 }
 
 void GlutWindow::initCallbacks()
@@ -704,7 +718,7 @@ void GlutWindow::resetMouseState()
 void GlutWindow::initDefaultLight()
 {
     default_light_.setLightId(GL_LIGHT0);
-    default_light_.setPosition(Vector<int,3>(0, 0, 0));
+    default_light_.setPosition(Vector<double,3>(0, 100, 0));
     default_light_.turnOn();
     light_manager_.insertBack(&default_light_);
 }

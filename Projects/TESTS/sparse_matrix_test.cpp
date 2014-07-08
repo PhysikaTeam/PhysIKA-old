@@ -96,6 +96,15 @@ int main()
     Physika::VectorND<float> vec(5,2.0);
     cout<<vec<<endl;
     cout<<(m1*vec)<<endl;
+
+	m1.setEntry(1,2,5);
+	cout<<"new m1"<<endl;
+	cout<<m1<<endl;
+	cout<<"m1.transpose():"<<endl;
+	m1.transpose();
+	cout<<m1<<endl;
+
+	cout<<(vec * m1)<<endl;
     //getchar();
     return 0;
 }

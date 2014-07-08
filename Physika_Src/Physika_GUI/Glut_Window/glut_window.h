@@ -32,7 +32,7 @@ namespace Physika{
  *     2. provide default callback functions (see the comments of default functions to view their functionality)
  *     3. provide camera set up
  *     4. allow user to add render tasks in scene
- *     5. allow user to add lights in scene, one default point light positioned at origion is provided
+ *     5. allow user to add lights in scene, a point light positioned at origion is provided in default 
  *     6. enable/disable display frame-rate
  *     7. save screen capture to file
  * Advanced features:
@@ -118,19 +118,6 @@ public:
     void translateCameraLeft(double dist);
     void translateCameraRight(double dist);
 
-    //manages render tasks
-    unsigned int numRenderTasks() const;  //length of the render queue
-    void pushBackRenderTask(RenderBase*);  //insert new task at back of render queue
-    void pushFrontRenderTask(RenderBase*); //insert new task at front of render queue
-    void insertRenderTaskAtIndex(unsigned int index,RenderBase *task);  //insert new task before the index-th task
-    void popBackRenderTask(); //remove task at back of render queue
-    void popFrontRenderTask();  //remove task at front of render queue
-    void removeRenderTaskAtIndex(unsigned int index);  //remove the index-th task in queue
-    void removeAllRenderTasks();  //remove all render tasks
-    const RenderBase* getRenderTaskAtIndex(unsigned int index) const; //return pointer to the render task at given index
-    RenderBase* getRenderTaskAtIndex(unsigned int index);
-    int getRenderTaskIndex(RenderBase *task) const; //return index of task in queue, if task not in queue, return -1
-
     //manages lights
     unsigned int numLights() const;
     void pushBackLight(Light*);
@@ -143,6 +130,19 @@ public:
     const Light* lightAtIndex(unsigned int index) const;
     Light* lightAtIndex(unsigned int index);
     int lightIndex(Light *light) const;   //return index of light in list, if light not in list ,return -1
+
+    //manages render tasks
+    unsigned int numRenderTasks() const;  //length of the render queue
+    void pushBackRenderTask(RenderBase*);  //insert new task at back of render queue
+    void pushFrontRenderTask(RenderBase*); //insert new task at front of render queue
+    void insertRenderTaskAtIndex(unsigned int index,RenderBase *task);  //insert new task before the index-th task
+    void popBackRenderTask(); //remove task at back of render queue
+    void popFrontRenderTask();  //remove task at front of render queue
+    void removeRenderTaskAtIndex(unsigned int index);  //remove the index-th task in queue
+    void removeAllRenderTasks();  //remove all render tasks
+    const RenderBase* getRenderTaskAtIndex(unsigned int index) const; //return pointer to the render task at given index
+    RenderBase* getRenderTaskAtIndex(unsigned int index);
+    int getRenderTaskIndex(RenderBase *task) const; //return index of task in queue, if task not in queue, return -1
 
     //save screenshot to file
     bool saveScreen(const std::string &file_name) const;  //save to file with given name
@@ -170,6 +170,9 @@ public:
     RenderManager& renderManager() { return render_manager_;}
     const LightManager& lightManager() const{ return light_manager_;}
     LightManager& lightManager() { return light_manager_;}
+    //apply camera and lights: call this method in your custom display method before the rendering code 
+    //such that the camera and lights are work as you set
+    void applyCameraAndLights();
 protected:
     //default callback functions
     static void displayFunction(void);  //display all render tasks provided by user
