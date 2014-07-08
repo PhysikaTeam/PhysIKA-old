@@ -38,8 +38,20 @@ namespace Physika{
  *    camera.look();
  */
 
+//base class of Camera, provide a template-free interface for camera
+//used in CameraManager, see "camera_manager.h"
+class CameraBase
+{
+public:
+    CameraBase(){}
+    virtual ~CameraBase(){}
+
+    virtual void look()=0;
+protected:
+};
+
 template <typename Scalar>
-class Camera
+class Camera: public CameraBase
 {
 public:
     Camera();   //default camera: positioned at origin, up direction y axis, look into negative z axis (0,0,-1)
