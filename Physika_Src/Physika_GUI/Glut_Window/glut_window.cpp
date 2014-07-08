@@ -33,6 +33,7 @@ GlutWindow::GlutWindow()
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
+    initDefaultLight();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
@@ -43,6 +44,7 @@ GlutWindow::GlutWindow(const std::string &window_name)
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
+    initDefaultLight();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
@@ -53,6 +55,7 @@ GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsig
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
+    initDefaultLight();
 }
 
 GlutWindow::~GlutWindow()
@@ -303,6 +306,63 @@ RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index)
 int GlutWindow::getRenderTaskIndex(RenderBase *task) const
 {
     return render_manager_.taskIndex(task);
+}
+
+////////////////////////////////////////////////// manages lights in scene///////////////////////////////////////////////////////////////////////////
+
+unsigned int GlutWindow::numLights() const
+{
+    return light_manager_.numLights();
+}
+
+void GlutWindow::pushBackLight(Light *light)
+{
+    light_manager_.insertBack(light);
+}
+
+void GlutWindow::pushFrontLight(Light *light)
+{
+    light_manager_.insertFront(light);
+}
+
+void GlutWindow::insertLightAtIndex(unsigned int index, Light *light)
+{
+    light_manager_.insertAtIndex(index,light);
+}
+
+void GlutWindow::popBackLight()
+{
+    light_manager_.removeBack();
+}
+
+void GlutWindow::popFrontLight()
+{
+    light_manager_.removeFront();
+}
+
+void GlutWindow::removeLightAtIndex(unsigned int index)
+{
+    light_manager_.removeAtIndex(index);
+}
+
+void GlutWindow::removeAllLights()
+{
+    light_manager_.removeAll();
+}
+
+const Light* GlutWindow::lightAtIndex(unsigned int index) const
+{
+    return light_manager_.lightAtIndex(index);
+}
+
+Light* GlutWindow::lightAtIndex(unsigned int index)
+{
+    return light_manager_.lightAtIndex(index);
+}
+
+int GlutWindow::lightIndex(Light *light) const
+{
+    return light_manager_.lightIndex(light);
 }
 
 ////////////////////////////////////////////////// screen shot and display frame-rate////////////////////////////////////////////////////////////////
@@ -616,7 +676,7 @@ void GlutWindow::initFunction(void)
     glDepthFunc( GL_LEQUAL );
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
     Color<double> background_color = window->background_color_;
-    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());	
+    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
 }
 
 void GlutWindow::initCallbacks()
@@ -638,6 +698,20 @@ void GlutWindow::resetMouseState()
     middle_button_down_ = false;
     right_button_down_ = false;
     mouse_position_[0] = mouse_position_[1] = 0;
+}
+
+void GlutWindow::initDefaultLight()
+{
+    default_light_.setLightId(GL_LIGHT0);
+    default_light_.setAmbient(Color<double>(0.4,0.4,0.4,1.0));
+    default_light_.setDiffuse(Color<double>(0.6,0.6,0.6,1.0));
+    default_light_.setSpecular(Color<double>(1.0,1.0,1.0,1.0));
+    default_light_.setConstantAttenuation(1.1);
+    default_light_.setLinearAttenuation(1.2);
+    default_light_.setQuadraticAttenuation(1.3);
+    default_light_.setPosition(Vector<int,3>(0, 0, 0));
+    default_light_.turnOn();
+    light_manager_.insertBack(&default_light_);
 }
 
 } //end of namespace Physika

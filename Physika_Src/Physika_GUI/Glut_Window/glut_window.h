@@ -16,9 +16,12 @@
 #define PHYSIKA_GUI_GLUT_WINDOW_GLUT_WINDOW_H_
 
 #include <string>
-#include "Physika_Render/Camera/camera.h"
+#include <GL/gl.h>
 #include "Physika_Render/Color/color.h"
+#include "Physika_Render/Camera/camera.h"
 #include "Physika_Render/Render_Manager/render_manager.h"
+#include "Physika_Render/Lights/light_manager.h"
+#include "Physika_Render/Lights/light.h"
 
 namespace Physika{
 
@@ -29,11 +32,12 @@ namespace Physika{
  *     2. provide default callback functions (see the comments of default functions to view their functionality)
  *     3. provide camera set up
  *     4. allow user to add render tasks in scene
- *     5. enable/disable display frame-rate
- *     6. save screen capture to file
+ *     5. allow user to add lights in scene, one default point light positioned at origion is provided
+ *     6. enable/disable display frame-rate
+ *     7. save screen capture to file
  * Advanced features:
  *     1. support user defined  custom callback functions
- *     2. support direct operations on the camera and render manager
+ *     2. support direct operations on the camera, render manager, and light manager
  * Usage:
  *     1. Define a GlutWindow object
  *     2. Set the camera parameters
@@ -127,6 +131,19 @@ public:
     RenderBase* getRenderTaskAtIndex(unsigned int index);
     int getRenderTaskIndex(RenderBase *task) const; //return index of task in queue, if task not in queue, return -1
 
+    //manages lights
+    unsigned int numLights() const;
+    void pushBackLight(Light*);
+    void pushFrontLight(Light*);
+    void insertLightAtIndex(unsigned int index,Light *light);
+    void popBackLight();
+    void popFrontLight();
+    void removeLightAtIndex(unsigned int index);
+    void removeAllLights();
+    const Light* lightAtIndex(unsigned int index) const;
+    Light* lightAtIndex(unsigned int index);
+    int lightIndex(Light *light) const;   //return index of light in list, if light not in list ,return -1
+
     //save screenshot to file
     bool saveScreen(const std::string &file_name) const;  //save to file with given name
     bool saveScreen() const; //save to file with default name "screen_capture_XXX.png"
@@ -146,11 +163,13 @@ public:
     void setMouseFunction(void (*func)(int button, int state, int x, int y));
     void setInitFunction(void (*func)(void)); //the init function before entering mainloop
     static void bindDefaultKeys(unsigned char key, int x, int y);  //bind the default keyboard behaviors
-    //direct operation on camera and render manager
+    //direct operation on camera, render manager, and light manager
     const Camera<double>& camera() const{ return camera_;}
     Camera<double>& camera() { return camera_;}
     const RenderManager& renderManager() const{ return render_manager_;}
     RenderManager& renderManager() { return render_manager_;}
+    const LightManager& lightManager() const{ return light_manager_;}
+    LightManager& lightManager() { return light_manager_;}
 protected:
     //default callback functions
     static void displayFunction(void);  //display all render tasks provided by user
@@ -164,6 +183,7 @@ protected:
 
     void initCallbacks();  //init default callbacks
     void resetMouseState();  //rest mouse
+    void initDefaultLight(); //init a default light
 protected:
     //basic information of window
     std::string window_name_;
@@ -171,10 +191,14 @@ protected:
     unsigned int initial_width_;
     unsigned int initial_height_;
     Color<double> background_color_; //use double type in order not to make GlutWindow template
+
     //camera (use double type in order not to make GlutWindow template)
     Camera<double> camera_;
     //render managner, manages the scene for render
     RenderManager render_manager_;
+    //light manager, manages the lights in scene
+    LightManager light_manager_;
+    Light default_light_;  //the default light
     //state of the mouse
     bool left_button_down_, middle_button_down_, right_button_down_;
     int mouse_position_[2];
