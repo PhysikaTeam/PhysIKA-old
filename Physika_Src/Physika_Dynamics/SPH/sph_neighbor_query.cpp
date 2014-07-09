@@ -12,10 +12,10 @@
 *
 */
 
+#include <cstring>
 #include "Physika_Dynamics/SPH/sph_neighbor_query.h"
 
 namespace Physika{
-
 
 
 template<typename Scalar, int Dim>
@@ -178,7 +178,7 @@ void kMinimum(Scalar *in_arr, unsigned int in_size, unsigned int* out_arr_index,
     {
         Scalar min_value = 10000000000;
         int index = -1;
-        for (unsigned int = 0; j < in_size; j++)
+        for (unsigned int j = 0; j < in_size; j++)
         {
             if(!checked[j])
             {

@@ -92,10 +92,10 @@ void SPHFluid<Scalar, Dim>::initScene()
                 if(Dim == 3)
                 {
                     unsigned id = i + j*x_num_ + k*x_num_*y_num_;
-                    Vector<Scalar, Dim> position(i*sampling_distance_, j*sampling_distance_, k*sampling_distance_);
-                    position_[id] = position;
-                    velocity_[id] = Vector<Scalar, Dim>(0);
-                    mass_[id] = 1;
+                    Vector<Scalar, Dim> position(i*(this->sampling_distance_), j*(this->sampling_distance_), k*(this->sampling_distance_));
+                    (this->position_)[id] = position;
+                    (this->velocity_)[id] = Vector<Scalar, Dim>(0);
+                    (this->mass_)[id] = 1;
                 }
             }
         } 
@@ -129,16 +129,16 @@ template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::computeMass()
 {
     Scalar max_large_density = 0;
-    for (unsigned int i = 0; i < particle_num_; i++)
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
-        if(density_[i] > max_large_density) max_large_density = density_[i];
+        if((this->density_)[i] > max_large_density) max_large_density = (this->density_)[i];
     }
-    Scalar ratio_large = reference_density_ / max_large_density;
+    Scalar ratio_large = (this->reference_density_) / max_large_density;
     max_mass_ *= ratio_large;
 
-    for (unsigned int i = 0; i < particle_num_; i++)
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
-        mass_[i] = max_mass_;
+        (this->mass_)[i] = max_mass_;
     }
 }
 
