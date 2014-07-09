@@ -26,33 +26,39 @@
 namespace Physika{
 
 GlutWindow::GlutWindow()
-    :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480),display_fps_(true)
+    :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480),
+     display_fps_(true),screen_capture_file_index_(0)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
+    light_manager_.insertBack(&default_light_);
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
-    :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480),display_fps_(true)
+    :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480),
+     display_fps_(true),screen_capture_file_index_(0)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
+    light_manager_.insertBack(&default_light_);
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
-    :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height),display_fps_(true)
+    :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height),
+     display_fps_(true),screen_capture_file_index_(0)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
+    light_manager_.insertBack(&default_light_);
 }
 
 GlutWindow::~GlutWindow()
@@ -377,11 +383,10 @@ bool GlutWindow::saveScreen(const std::string &file_name) const
 	return status;
 }
 
-bool GlutWindow::saveScreen() const
+bool GlutWindow::saveScreen()
 {
-    static int file_index = 0;
     std::stringstream adaptor;
-    adaptor<<file_index;
+    adaptor<<screen_capture_file_index_++;
     std::string index_str;
     adaptor>>index_str;
     std::string file_name = std::string("screen_capture_") + index_str + std::string(".png"); 
@@ -429,6 +434,8 @@ void GlutWindow::displayFrameRate() const
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadIdentity();
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
         gluOrtho2D(0,width,0,height);
         openGLColor3(text_color_);
         glRasterPos2i(5,height-19);
@@ -439,6 +446,7 @@ void GlutWindow::displayFrameRate() const
         glPopMatrix();
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
+        glEnable(GL_LIGHTING);
     }
 }
 
@@ -455,15 +463,9 @@ void GlutWindow::disableDisplayFrameRate()
 void GlutWindow::applyCameraAndLights()
 {
     camera_.look();
-    //set the position of lights after the modelview setup of camera
-    //such that the camera is fixed at the set position
-    unsigned int light_num = this->numLights();
-    for(unsigned int i = 0; i < light_num; ++i)
-    {
-        Light *light = this->lightAtIndex(i);
-        Vector<double,3> light_pos(0,100,0); //= light->position<double>();
-        light->setPosition(light_pos);
-    }
+    //light the scene with the lights after calling camera look()
+    //such that model view matrix are correctly set
+    light_manager_.lightScene();
 }
 
 ////////////////////////////////////////////////// set custom callback functions ////////////////////////////////////////////////////////////////////
@@ -683,7 +685,7 @@ void GlutWindow::initFunction(void)
     glViewport(0, 0, width, height);        									// set the viewport
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    window->initDefaultLight();                                                 //init the default light
+    window->initDefaultLight();
     window->applyCameraAndLights();                                             // apply the camera and lights
     glShadeModel( GL_SMOOTH );
     glClearDepth( 1.0 );														// specify the clear value for the depth buffer
@@ -717,10 +719,11 @@ void GlutWindow::resetMouseState()
 
 void GlutWindow::initDefaultLight()
 {
-    default_light_.setLightId(GL_LIGHT0);
-    default_light_.setPosition(Vector<double,3>(0, 100, 0));
+    default_light_.setPosition(Vector<float,3>(500, 500, 500));
+    default_light_.setAmbient(Color<float>(0,0,0,1));
+    default_light_.setDiffuse(Color<float>(1,1,1,1));
+    default_light_.setSpecular(Color<float>(1,1,1,1));
     default_light_.turnOn();
-    light_manager_.insertBack(&default_light_);
 }
 
 } //end of namespace Physika
