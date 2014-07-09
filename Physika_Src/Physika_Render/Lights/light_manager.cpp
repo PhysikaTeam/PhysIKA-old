@@ -38,6 +38,11 @@ void LightManager::insertBack(Light * light_p)
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
+	if(this->lightIndex(light_p) != -1)
+	{
+		std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
+        return ;
+	}
     if(this->numLights()<8)
         this->light_list_.push_back(light_p);
     else
@@ -54,6 +59,11 @@ void LightManager::insertFront(Light * light_p)
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
+	if(this->lightIndex(light_p) != -1)
+	{
+		std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
+        return ;
+	}
     if(this->numLights()<8)
         this->light_list_.push_front(light_p);
     else
@@ -71,8 +81,14 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
         std::cerr<<"Light index out of range, operation will be ignored!\n";
         return ;
     }
+	
     if(light)
     {
+		if(this->lightIndex(light) != -1)
+		{
+			std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light)<<", operation will be ignored!"<<std::endl;
+			return ;
+		}
         if(this->numLights()<8)
         {
             list<Light*>::iterator pos = light_list_.begin();
@@ -286,7 +302,7 @@ void LightManager::printInfo()
     std::cout<<"light number: "<<this->numLights()<<std::endl;
     for(unsigned int i=0; i<this->numLights();i++)
     {
-        std::cout<<this->lightAtIndex(i)->lightId()<<"  state: "<< this->lightAtIndex(i)->isLightOn()<<std::endl;
+        std::cout<<"light id: "<<this->lightAtIndex(i)->lightId()<<"  state: "<< this->lightAtIndex(i)->isLightOn()<<std::endl;
     }
     std::cout<<"light model ambient: "<<this->lightModelAmbient<float>()<<std::endl;
     std::cout<<"light model local viewer: "<<this->LightModelLocalViewer()<<std::endl;
@@ -299,7 +315,7 @@ std::ostream& operator << (std::ostream& out, const LightManager & light_manager
     out<<"light number: "<<light_manager.numLights()<<std::endl;
     for(unsigned int i=0; i<light_manager.numLights();i++)
     {
-        out<<(light_manager.lightAtIndex(i))->lightId()<<"  state: "<< (light_manager.lightAtIndex(i))->isLightOn()<<std::endl;
+        out<<"light id: "<<(light_manager.lightAtIndex(i))->lightId()<<"  state: "<< (light_manager.lightAtIndex(i))->isLightOn()<<std::endl;
     }
     out<<"light model ambient: "<<light_manager.lightModelAmbient<float>()<<std::endl;
     out<<"light model local viewer: "<<light_manager.LightModelLocalViewer()<<std::endl;

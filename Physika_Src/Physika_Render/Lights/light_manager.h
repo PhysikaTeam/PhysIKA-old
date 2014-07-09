@@ -27,7 +27,7 @@
  *        one particular Light. The configuring consists of two parameters:
  *        1.GL_LIGHT_MODEL_LOCAL_VIEWER
  *        2.GL_LIGHT_MODEL_TWO_SIDE 
- *        3.GL_LIGHT_MODEL_COLOR_CONTROL: but this parameter is not supported in widows, so we ingnore it.
+ *        3.GL_LIGHT_MODEL_COLOR_CONTROL: but this parameter is not supported in windows, so we ingnore it.
  *        We have corresponing setter and getter for these parameters.
  */
 
