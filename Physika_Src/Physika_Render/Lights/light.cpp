@@ -124,7 +124,7 @@ void Light::printInfo() const
     std::cout<<"position: "<<this->position()<<std::endl;
     std::cout<<"constantAttenation: " <<this->constantAttenuation<float>()<<std::endl;
     std::cout<<"linearAttenation: "<<this->linearAttenuation<float>()<<std::endl;
-    std::cout<<": "<<this->quadraticAttenuation<float>()<<std::endl;
+    std::cout<<"quadraticAttenuation: "<<this->quadraticAttenuation<float>()<<std::endl;
     std::cout<<"isLightOn: "<<this->isLightOn()<<std::endl;
 }
 

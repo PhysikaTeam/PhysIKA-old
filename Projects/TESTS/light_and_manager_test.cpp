@@ -110,8 +110,8 @@ void initFunction()
     light1.setQuadraticAttenuation(1.3);
     light1.setPosition(Vector<float,3>(2, 2, 2));
     light1.turnOn();
-    //cout<<light1;
-	/*
+    cout<<light1;
+	
 	cout<<"**************************************************************************"<<endl;
     LightManager light_manager;
     light_manager.setLightModelAmbient(Color<double>(1.0,1.0,1.0,1.0));
@@ -122,25 +122,22 @@ void initFunction()
     light_manager.insertBack(&light2);
     light_manager.turnAllOn();
     light_manager.turnAllOff();
-    light_manager.insertFront(&light2);
-    light_manager.removeFront();
-    light_manager.insertBack(&light1);
-    light_manager.removeBack();
-    cout<<light_manager.lightAtIndex(0)->lightId()<<endl;
-    cout<<light_manager.lightIndex(&light2)<<endl;
-    light_manager.turnLightOnAtIndex(1);
-    light_manager.turnLightOffAtIndex(1);
-    light_manager.insertBack(&light1);
-    light_manager.insertBack(&light1);
-    light_manager.insertBack(&light1);
-    light_manager.insertBack(&light1);
+    //light_manager.insertFront(&light2);
+    //light_manager.removeFront();
+    //light_manager.insertBack(&light1);
+    //light_manager.removeBack();
+    //cout<<light_manager.lightAtIndex(0)->lightId()<<endl;
+    //cout<<light_manager.lightIndex(&light2)<<endl;
+    //light_manager.turnLightOnAtIndex(1);
+    //light_manager.turnLightOffAtIndex(1);
+    //light_manager.insertBack(&light1);
+    //light_manager.insertBack(&light1);
+    //light_manager.insertBack(&light1);
+    //light_manager.insertBack(&light1);
     light_manager.insertAtIndex(0,&light1);
-   // light_manager.insertBack(&light0);
+    //light_manager.insertBack(&light0);
     //light_manager.insertBack(&light0);
     light_manager.printInfo();
-    cout<<"num: "<<light_manager.numLights()<<endl;
-    cout<<light_manager;
-	*/
     getchar();
 }
 
