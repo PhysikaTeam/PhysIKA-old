@@ -93,7 +93,7 @@ template <typename Scalar>
 Vector<Scalar,2> Vector<Scalar,2>::operator+ (const Vector<Scalar,2> &vec2) const
 {
     Scalar result[2];
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         result[i] = (*this)[i] + vec2[i];
     return Vector<Scalar,2>(result[0],result[1]);
 }
@@ -101,7 +101,7 @@ Vector<Scalar,2> Vector<Scalar,2>::operator+ (const Vector<Scalar,2> &vec2) cons
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator+= (const Vector<Scalar,2> &vec2)
 {
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] + vec2[i];
     return *this;
 }
@@ -110,7 +110,7 @@ template <typename Scalar>
 Vector<Scalar,2> Vector<Scalar,2>::operator- (const Vector<Scalar,2> &vec2) const
 {
     Scalar result[2];
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         result[i] = (*this)[i] - vec2[i];
     return Vector<Scalar,2>(result[0],result[1]);
 }
@@ -118,7 +118,7 @@ Vector<Scalar,2> Vector<Scalar,2>::operator- (const Vector<Scalar,2> &vec2) cons
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator-= (const Vector<Scalar,2> &vec2)
 {
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] - vec2[i];
     return *this;
 }
@@ -126,7 +126,7 @@ Vector<Scalar,2>& Vector<Scalar,2>::operator-= (const Vector<Scalar,2> &vec2)
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator= (const Vector<Scalar,2> &vec2)
 {
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         (*this)[i] = vec2[i];
     return *this;
 }
@@ -134,7 +134,7 @@ Vector<Scalar,2>& Vector<Scalar,2>::operator= (const Vector<Scalar,2> &vec2)
 template <typename Scalar>
 bool Vector<Scalar,2>::operator== (const Vector<Scalar,2> &vec2) const
 {
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         if((*this)[i] != vec2[i])
             return false;
     return true;
@@ -150,15 +150,52 @@ template <typename Scalar>
 Vector<Scalar,2> Vector<Scalar,2>::operator* (Scalar scale) const
 {
     Scalar result[2];
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         result[i] = (*this)[i] * scale;
-    return Vector<Scalar,2>(result[0],result[1]);
+    return Vector<Scalar,2>(result[0]);
+}
+
+
+
+template <typename Scalar>
+Vector<Scalar, 2> Vector<Scalar, 2>::operator-(Scalar value) const
+{
+    Scalar result[2];
+    for(unsigned int i = 0; i < 2; ++i)
+        result[i] = (*this)[i] - value;
+    return  Vector<Scalar,2>(result[0],result[1]);
+}
+
+template <typename Scalar>
+Vector<Scalar, 2> Vector<Scalar, 2>::operator+(Scalar value) const
+{
+    Scalar result[2];
+    for(unsigned int i = 0; i < 2; ++i)
+        result[i] = (*this)[i] + value;
+    return  Vector<Scalar,2>(result[0],result[1]);
+}
+
+
+template <typename Scalar>
+Vector<Scalar,2>& Vector<Scalar,2>::operator+= (Scalar value)
+{
+    for(unsigned int i = 0; i < 2; ++i)
+        (*this)[i] = (*this)[i] + value;
+    return *this;
+}
+
+template <typename Scalar>
+Vector<Scalar,2>& Vector<Scalar,2>::operator-= (Scalar value)
+{
+    for(unsigned int i = 0; i < 2; ++i)
+        (*this)[i] = (*this)[i] - value;
+    return *this;
 }
 
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator*= (Scalar scale)
 {
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] * scale;
     return *this;
 }
@@ -172,7 +209,7 @@ Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
         std::exit(EXIT_FAILURE);
     }
     Scalar result[2];
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         result[i] = (*this)[i] / scale;
     return Vector<Scalar,2>(result[0],result[1]);
 }
@@ -185,7 +222,7 @@ Vector<Scalar,2>& Vector<Scalar,2>::operator/= (Scalar scale)
         std::cerr<<"Vector Divide by zero error!\n";
         std::exit(EXIT_FAILURE);
     }
-    for(int i = 0; i < 2; ++i)
+    for(unsigned int i = 0; i < 2; ++i)
         (*this)[i] = (*this)[i] / scale;
     return *this;
 }
@@ -194,7 +231,7 @@ template <typename Scalar>
 Scalar Vector<Scalar,2>::norm() const
 {
     Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1];
-    result = sqrt(result);
+    result = static_cast<Scalar>(sqrt(result));
     return result;
 }
 

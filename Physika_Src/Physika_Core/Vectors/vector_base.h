@@ -22,7 +22,7 @@ class VectorBase
 public:
     VectorBase(){}
     virtual ~VectorBase(){}
-    virtual int dims() const=0;
+    virtual unsigned int dims() const=0;
 protected:
 };
 

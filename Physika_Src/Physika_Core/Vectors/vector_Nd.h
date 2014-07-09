@@ -28,14 +28,14 @@ class VectorND: public VectorBase
 {
 public:
     VectorND();//empty vector, dim = 0
-    explicit VectorND(int dim);//vector with given dimension
-    VectorND(int dim, Scalar value);//vector with given dimension initialized with one value
+    explicit VectorND(unsigned int dim);//vector with given dimension
+    VectorND(unsigned int dim, Scalar value);//vector with given dimension initialized with one value
     VectorND(const VectorND<Scalar>&);
     ~VectorND();
-    int dims() const;
-    void resize(int new_dim);
-    Scalar& operator[] (int);
-    const Scalar& operator[] (int) const;
+    unsigned int dims() const;
+    void resize(unsigned int new_dim);
+    Scalar& operator[] (unsigned int);
+    const Scalar& operator[] (unsigned int) const;
     VectorND<Scalar> operator+ (const VectorND<Scalar> &) const;
     VectorND<Scalar>& operator+= (const VectorND<Scalar> &);
     VectorND<Scalar> operator- (const VectorND<Scalar> &) const;
@@ -43,22 +43,29 @@ public:
     VectorND<Scalar>& operator= (const VectorND<Scalar> &);
     bool operator== (const VectorND<Scalar> &) const;
     bool operator!= (const VectorND<Scalar> &) const;
+
     VectorND<Scalar> operator* (Scalar) const;
-    VectorND<Scalar>& operator*= (Scalar);
+    VectorND<Scalar> operator- (Scalar) const;
+    VectorND<Scalar> operator+ (Scalar) const;
     VectorND<Scalar> operator/ (Scalar) const;
+
+    VectorND<Scalar>& operator+= (Scalar);
+    VectorND<Scalar>& operator-= (Scalar);
+    VectorND<Scalar>& operator*= (Scalar);
     VectorND<Scalar>& operator/= (Scalar);
+
     Scalar norm() const;
     VectorND<Scalar>& normalize();
     VectorND<Scalar> operator - (void) const;
     Scalar dot(const VectorND<Scalar>&) const;
 protected:
-    void allocMemory(int dims);
+    void allocMemory(unsigned int dims);
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     Eigen::Matrix<Scalar,Eigen::Dynamic,1> *ptr_eigen_vector_Nx_;
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
     Scalar *data_;
-    int dims_;
+    unsigned int dims_;
 #endif
 protected:
     PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
@@ -69,17 +76,17 @@ protected:
 template <typename Scalar>
 inline std::ostream& operator<< (std::ostream &s, const VectorND<Scalar> &vec)
 {
-    int dim = vec.dims();
+    unsigned int dim = vec.dims();
     s<<"(";
-    for(int i = 0; i < dim-1; ++i)
+    for(unsigned int i = 0; i < dim-1; ++i)
     {
         if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
-            s<<static_cast<int>(vec[i])<<", ";
+            s<<static_cast<unsigned int>(vec[i])<<", ";
         else
             s<<vec[i]<<", ";
     }
     if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
-        s<<static_cast<int>(vec[dim-1])<<")";
+        s<<static_cast<unsigned int>(vec[dim-1])<<")";
     else
         s<<vec[dim-1]<<")";
     return s;

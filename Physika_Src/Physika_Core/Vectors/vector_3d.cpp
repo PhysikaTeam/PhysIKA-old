@@ -96,7 +96,7 @@ template <typename Scalar>
 Vector<Scalar,3> Vector<Scalar,3>::operator+ (const Vector<Scalar,3> &vec3) const
 {
     Scalar result[3];
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         result[i] = (*this)[i] + vec3[i];
     return Vector<Scalar,3>(result[0],result[1],result[2]);
 }
@@ -104,7 +104,7 @@ Vector<Scalar,3> Vector<Scalar,3>::operator+ (const Vector<Scalar,3> &vec3) cons
 template <typename Scalar>
 Vector<Scalar,3>& Vector<Scalar,3>::operator+= (const Vector<Scalar,3> &vec3)
 {
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] + vec3[i];
     return *this;
 }
@@ -113,7 +113,7 @@ template <typename Scalar>
 Vector<Scalar,3> Vector<Scalar,3>::operator- (const Vector<Scalar,3> &vec3) const
 {
     Scalar result[3];
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         result[i] = (*this)[i] - vec3[i];
     return Vector<Scalar,3>(result[0],result[1],result[2]);
 }
@@ -121,7 +121,7 @@ Vector<Scalar,3> Vector<Scalar,3>::operator- (const Vector<Scalar,3> &vec3) cons
 template <typename Scalar>
 Vector<Scalar,3>& Vector<Scalar,3>::operator-= (const Vector<Scalar,3> &vec3)
 {
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] - vec3[i];
     return *this;
 }
@@ -129,7 +129,7 @@ Vector<Scalar,3>& Vector<Scalar,3>::operator-= (const Vector<Scalar,3> &vec3)
 template <typename Scalar>
 Vector<Scalar,3>& Vector<Scalar,3>::operator= (const Vector<Scalar,3> &vec3)
 {
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         (*this)[i] = vec3[i];
     return *this;
 }
@@ -137,7 +137,7 @@ Vector<Scalar,3>& Vector<Scalar,3>::operator= (const Vector<Scalar,3> &vec3)
 template <typename Scalar>
 bool Vector<Scalar,3>::operator== (const Vector<Scalar,3> &vec3) const
 {
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         if((*this)[i] != vec3[i])
             return false;
     return true;
@@ -153,18 +153,54 @@ template <typename Scalar>
 Vector<Scalar,3> Vector<Scalar,3>::operator* (Scalar scale) const
 {
     Scalar result[3];
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         result[i] = (*this)[i] * scale;
     return Vector<Scalar,3>(result[0],result[1],result[2]);
 }
 
 template <typename Scalar>
+Vector<Scalar, 3> Vector<Scalar, 3>::operator-(Scalar value) const
+{
+    Scalar result[3];
+    for(unsigned int i = 0; i < 3; ++i)
+        result[i] = (*this)[i] - value;
+    return  Vector<Scalar,3>(result[0],result[1],result[2]);
+}
+
+template <typename Scalar>
+Vector<Scalar, 3> Vector<Scalar, 3>::operator+(Scalar value) const
+{
+    Scalar result[3];
+    for(unsigned int i = 0; i < 3; ++i)
+        result[i] = (*this)[i] + value;
+    return  Vector<Scalar,3>(result[0],result[1],result[2]);
+}
+
+
+template <typename Scalar>
 Vector<Scalar,3>& Vector<Scalar,3>::operator*= (Scalar scale)
 {
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] * scale;
     return *this;
 }
+
+template <typename Scalar>
+Vector<Scalar,3>& Vector<Scalar,3>::operator+= (Scalar value)
+{
+    for(unsigned int i = 0; i < 3; ++i)
+        (*this)[i] = (*this)[i] + value;
+    return *this;
+}
+
+template <typename Scalar>
+Vector<Scalar,3>& Vector<Scalar,3>::operator-= (Scalar value)
+{
+    for(unsigned int i = 0; i < 3; ++i)
+        (*this)[i] = (*this)[i] - value;
+    return *this;
+}
+
 
 template <typename Scalar>
 Vector<Scalar,3> Vector<Scalar,3>::operator/ (Scalar scale) const
@@ -175,7 +211,7 @@ Vector<Scalar,3> Vector<Scalar,3>::operator/ (Scalar scale) const
 	std::exit(EXIT_FAILURE);
     }
     Scalar result[3];
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         result[i] = (*this)[i] / scale;
     return Vector<Scalar,3>(result[0],result[1],result[2]);
 }
@@ -188,7 +224,7 @@ Vector<Scalar,3>& Vector<Scalar,3>::operator/= (Scalar scale)
         std::cerr<<"Vector Divide by zero error!\n";
         std::exit(EXIT_FAILURE);
     }
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         (*this)[i] = (*this)[i] / scale;
     return *this;
 }
@@ -197,7 +233,7 @@ template <typename Scalar>
 Scalar Vector<Scalar,3>::norm() const
 {
     Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1] + (*this)[2]*(*this)[2];
-    result = sqrt(result);
+    result = static_cast<Scalar>(sqrt(result));
     return result;
 }
 
