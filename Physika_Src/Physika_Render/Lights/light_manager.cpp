@@ -1,7 +1,7 @@
 /*
  * @file light_manager.cpp 
  * @Brief maintains a list of lights.
- * @author Wei Chen
+ * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -238,12 +238,23 @@ void LightManager::turnLightOffAtIndex(unsigned int index)
     (*iter)->turnOff();
 }
 
+void LightManager::lightScene()
+{
+    list<Light *>::iterator iter = light_list_.begin();
+    while(iter != light_list_.end())
+    {
+        PHYSIKA_ASSERT(*iter);
+        (*iter)->lightScene();
+        iter++;
+    }
+}
+
 void LightManager::setLightModelLocalViewer(bool viewer)
 {
     openGLLightModel(GL_LIGHT_MODEL_LOCAL_VIEWER, viewer);
 }
 
-bool LightManager::LightModelLocalViewer()const
+bool LightManager::lightModelLocalViewer()const
 {
     unsigned char viewer;
     glGetBooleanv(GL_LIGHT_MODEL_LOCAL_VIEWER, &viewer);
@@ -289,7 +300,7 @@ void LightManager::printInfo()
         std::cout<<this->lightAtIndex(i)->lightId()<<"  state: "<< this->lightAtIndex(i)->isLightOn()<<std::endl;
     }
     std::cout<<"light model ambient: "<<this->lightModelAmbient<float>()<<std::endl;
-    std::cout<<"light model local viewer: "<<this->LightModelLocalViewer()<<std::endl;
+    std::cout<<"light model local viewer: "<<this->lightModelLocalViewer()<<std::endl;
     std::cout<<"light model two side: "<<this->lightModelTwoSize()<<std::endl;
     //std::cout<<"light model color control: "<<this->lightModelColorControl()<<std::endl;
 }
@@ -302,9 +313,11 @@ std::ostream& operator << (std::ostream& out, const LightManager & light_manager
         out<<(light_manager.lightAtIndex(i))->lightId()<<"  state: "<< (light_manager.lightAtIndex(i))->isLightOn()<<std::endl;
     }
     out<<"light model ambient: "<<light_manager.lightModelAmbient<float>()<<std::endl;
-    out<<"light model local viewer: "<<light_manager.LightModelLocalViewer()<<std::endl;
+    out<<"light model local viewer: "<<light_manager.lightModelLocalViewer()<<std::endl;
     out<<"light model two side: "<<light_manager.lightModelTwoSize()<<std::endl;
     return out;
 }
 
 }//end of namespace Physika
+
+

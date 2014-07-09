@@ -32,7 +32,8 @@ namespace Physika{
  *     2. provide default callback functions (see the comments of default functions to view their functionality)
  *     3. provide camera set up
  *     4. allow user to add render tasks in scene
- *     5. allow user to add lights in scene, a point light positioned at origion is provided in default 
+ *     5. allow user to add lights in scene, a point light positioned at (500,500,500) is provided in default
+ *        the properties of the lights can be editted 
  *     6. enable/disable display frame-rate
  *     7. save screen capture to file
  * Advanced features:
@@ -146,7 +147,7 @@ public:
 
     //save screenshot to file
     bool saveScreen(const std::string &file_name) const;  //save to file with given name
-    bool saveScreen() const; //save to file with default name "screen_capture_XXX.png"
+    bool saveScreen(); //save to file with default name "screen_capture_XXX.png"
     //display frame-rate
     void displayFrameRate() const;  //display framerate if enabled
     void enableDisplayFrameRate();
@@ -208,6 +209,8 @@ protected:
     //fps display
     bool display_fps_;
     Color<double> text_color_; //the color to display text, e.g. fps
+    //current screen capture file index
+    unsigned int screen_capture_file_index_;
     //pointers to callback methods
     void (*display_function_)(void);
     void (*idle_function_)(void);

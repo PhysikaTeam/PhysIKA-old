@@ -108,7 +108,7 @@ void initFunction()
     light1.setConstantAttenuation(1.1);
     light1.setLinearAttenuation(1.2);
     light1.setQuadraticAttenuation(1.3);
-    light1.setPosition(Vector<int,3>(2, 2, 2));
+    light1.setPosition(Vector<float,3>(2, 2, 2));
     light1.turnOn();
     //cout<<light1;
 	/*

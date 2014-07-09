@@ -33,6 +33,15 @@ namespace Physika{
  *       4. Add standard GLUI controls to the GLUI pannel
  *       5. Call createWindow() 
  *       6. Call closeWindow() or click the 'X' on window to close the window
+ * Note: 
+ *      GLUI requires specially handling in idleFunction, so be sure to add following code at the
+ *      begining of your custom idle function so that the glut window is the main part instead of
+ *      the control panel:
+ *      
+ *      glutSetWindow(GluiWindow::mainWindowId());
+ *
+ *      GluiWindow::mainWindowId() returns the id of the main window of currently created GluiWindow
+ *      At one time only one GluiWindow  window can be created
  */
 
 class GluiWindow: public GlutWindow
@@ -44,10 +53,13 @@ public:
     ~GluiWindow();
     void createWindow();  //create window with GLUI control
     GLUI* gluiWindow(); //return pointer to the GLUI control window
+    static int mainWindowId(); //get the GLUT window id of currently opened GluiWindow
 protected:
     void initGLUT();  //init GLUT
+    static void idleFunction(void); //overwritten the default GlutWindow idle function
 protected:
     GLUI *glui_;
+    static int main_window_id_;
 };
 
 }  //end of namespace Physika

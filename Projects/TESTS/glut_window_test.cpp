@@ -24,11 +24,13 @@
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_IO/Surface_Mesh_IO/surface_mesh_io.h"
+#include "Physika_Render/Lights/light.h"
 using namespace std;
 using Physika::GlutWindow;
 using Physika::GluiWindow;
 using Physika::Vector;
 using Physika::Color;
+using Physika::Light;
 using Physika::SurfaceMesh;
 using Physika::SurfaceMeshIO;
 using Physika::SurfaceMeshRender;
@@ -38,7 +40,7 @@ void displayFunction()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
     GlutWindow *cur_window = (GlutWindow*)glutGetWindowData();
     //cur_window->orbitCameraRight(0.1);
-    (cur_window->camera()).look();
+    cur_window->applyCameraAndLights();
 	//glLoadIdentity();
 	//glTranslatef(0.0f,0.0f,-3.0f);			
  
@@ -67,7 +69,14 @@ void displayFunction()
 
 void idleFunction()
 {
-    cout<<"Custom idle function\n";
+    glutSetWindow(GluiWindow::mainWindowId());
+    GlutWindow *cur_window = static_cast<GlutWindow*>(glutGetWindowData());
+    Light *default_light = cur_window->lightAtIndex(0);
+    PHYSIKA_ASSERT(default_light);
+    Vector<float,3> light_pos = default_light->position();
+    light_pos[1] -= 5;
+    default_light->setPosition(light_pos);
+    glutPostRedisplay();
 }
 
 void initFunction()
@@ -78,11 +87,20 @@ void initFunction()
 
 void keyboardFunction(unsigned char key, int x, int y )
 {
+    GlutWindow *cur_window = static_cast<GlutWindow*>(glutGetWindowData());
+    Light *default_light = cur_window->lightAtIndex(0);
+    PHYSIKA_ASSERT(default_light);
     GlutWindow::bindDefaultKeys(key,x,y);
     switch(key)
     {
     case 't':
         cout<<"test\n";
+        break;
+    case 'l':
+        default_light->turnOff();
+        break;
+    case 'o':
+        default_light->turnOn();
         break;
     default:
         break;
@@ -101,11 +119,8 @@ int main()
     // glut_window.setDisplayFunction(displayFunction);
     // cout<<"Test GlutWindow with custom display function:\n";
     // glut_window.createWindow();
-    // glut_window.setIdleFunction(idleFunction);
-    // cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
     cout<<"Test window with GLUI controls:\n";
     GluiWindow glui_window;
-    //glui_window.setDisplayFunction(displayFunction);
     glui_window.setCameraPosition(Vector<double,3>(0,0,200));
     glui_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
     glui_window.setCameraNearClip(0.001);
@@ -113,9 +128,10 @@ int main()
     //glui_window.setBackgroundColor(Color<double>::White());
     //glui_window.setTextColor(Color<double>::Black());
     glui_window.setKeyboardFunction(keyboardFunction);
+    glui_window.setIdleFunction(idleFunction);
     SurfaceMesh<double> mesh;
     string mesh_file_name("ball_high.obj");
-    SurfaceMeshIO<double>::load(mesh_file_name,&mesh);
+    bool status = SurfaceMeshIO<double>::load(mesh_file_name,&mesh);
     SurfaceMeshRender<double> mesh_render(&mesh);
     glui_window.pushBackRenderTask(&mesh_render);
     GLUI *glui = glui_window.gluiWindow();

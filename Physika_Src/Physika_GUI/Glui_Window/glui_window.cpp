@@ -21,10 +21,13 @@
 
 namespace Physika{
 
+int GluiWindow::main_window_id_ = -1;
+
 GluiWindow::GluiWindow()
     :GlutWindow()
 {
     initGLUT();
+    idle_function_ = GluiWindow::idleFunction;
     glui_ =GLUI_Master.create_glui("Control Panel");
 }
 
@@ -32,6 +35,7 @@ GluiWindow::GluiWindow(const std::string &window_name)
     :GlutWindow(window_name)
 {
     initGLUT();
+    idle_function_ = GluiWindow::idleFunction;
     glui_ =GLUI_Master.create_glui("Control Panel");
 }
 
@@ -39,6 +43,7 @@ GluiWindow::GluiWindow(const std::string &window_name, unsigned int width, unsig
         :GlutWindow(window_name,width,height)
 {
     initGLUT();
+    idle_function_ = GluiWindow::idleFunction;
     glui_ =GLUI_Master.create_glui("Control Panel");
 }
 
@@ -52,6 +57,7 @@ void GluiWindow::createWindow()
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_ALPHA);
     glutInitWindowSize(initial_width_,initial_height_);
     window_id_ = glutCreateWindow(window_name_.c_str());
+    GluiWindow::main_window_id_ = window_id_;  //update current main window id, for use in idleFunction
     glutSetWindowData(this);  //bind 'this' pointer with the window
     glutDisplayFunc(display_function_);
     glutReshapeFunc(reshape_function_);
@@ -72,6 +78,11 @@ GLUI* GluiWindow::gluiWindow()
     return glui_;
 }
 
+int GluiWindow::mainWindowId()
+{
+    return main_window_id_;
+}
+
 void GluiWindow::initGLUT()
 {
     //init GLUT
@@ -82,6 +93,12 @@ void GluiWindow::initGLUT()
     strcpy(name_str,window_name_.c_str());
     argv[0] = name_str;
     glutInit(&argc,argv);
+}
+
+void GluiWindow::idleFunction(void)
+{
+    glutSetWindow(GluiWindow::main_window_id_); //set the current GLUT window
+    glutPostRedisplay();
 }
 
 }  //end of namespace Physika

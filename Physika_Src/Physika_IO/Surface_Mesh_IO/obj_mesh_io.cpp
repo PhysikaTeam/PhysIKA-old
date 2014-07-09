@@ -63,7 +63,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
     std::fstream ifs( filename.c_str(),std::ios::in);
     if(!ifs)
     {
-        std::cerr<<"couldn't open .obj file"<<std::endl;
+        std::cerr<<"couldn't open "<<filename<<"\n";
         return false;
     }
     const int maxline = 1000;

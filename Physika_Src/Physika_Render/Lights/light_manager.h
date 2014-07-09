@@ -1,7 +1,7 @@
 /*
  * @file render_manager.h 
  * @Brief maintains a list of lights.
- * @author Wei Chen
+ * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -56,6 +56,9 @@ public:
     void turnAllOff();                                        //turn all lights off
     void turnLightOnAtIndex(unsigned int index);              // turn light at given index in list ON
     void turnLightOffAtIndex(unsigned int index);             // turn light at given index in list Off
+    
+    //Put all the lights that are turned on into use, called after the model view matrix are setup
+    void lightScene();                                        
 
     template <typename ColorType>
     void             setLightModelAmbient(const Color<ColorType> &color);
@@ -63,7 +66,7 @@ public:
     Color<ColorType> lightModelAmbient() const;
 
     void    setLightModelLocalViewer(bool viewer);
-    bool    LightModelLocalViewer() const;
+    bool    lightModelLocalViewer() const;
     void    setLightModelTwoSide(bool two_size);
     bool    lightModelTwoSize() const;
     //void    setLightModelColorControl(GLenum penum);
