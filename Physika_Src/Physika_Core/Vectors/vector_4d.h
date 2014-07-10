@@ -36,8 +36,8 @@ public:
     Vector(const Vector<Scalar,4>&);
     ~Vector();
     inline unsigned int dims() const{return 4;}
-    Scalar& operator[] (int);
-    const Scalar& operator[] (int) const;
+    Scalar& operator[] (unsigned int);
+    const Scalar& operator[] (unsigned int) const;
     Vector<Scalar,4> operator+ (const Vector<Scalar,4> &) const;
     Vector<Scalar,4>& operator+= (const Vector<Scalar,4> &);
     Vector<Scalar,4> operator- (const Vector<Scalar,4> &) const;
@@ -46,9 +46,9 @@ public:
     bool operator== (const Vector<Scalar,4> &) const;
     bool operator!= (const Vector<Scalar,4> &) const;
 
-    Vector<Scalar,4> operator* (Scalar) const;
-    Vector<Scalar,4> operator- (Scalar) const;
     Vector<Scalar,4> operator+ (Scalar) const;
+    Vector<Scalar,4> operator- (Scalar) const;
+    Vector<Scalar,4> operator* (Scalar) const;
     Vector<Scalar,4> operator/ (Scalar) const;
 
     Vector<Scalar,4>& operator+= (Scalar);

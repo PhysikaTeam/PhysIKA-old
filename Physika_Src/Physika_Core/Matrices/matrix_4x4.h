@@ -37,10 +37,10 @@ public:
     SquareMatrix(const Vector<Scalar,4> &row1, const Vector<Scalar,4> &row2, const Vector<Scalar,4> &row3, const Vector<Scalar,4> &row4);
     SquareMatrix(const SquareMatrix<Scalar,4>&);
     ~SquareMatrix();
-    inline int rows() const{return 4;}
-    inline int cols() const{return 4;}
-    Scalar& operator() (int i, int j );
-    const Scalar& operator() (int i, int j) const;
+    inline unsigned int rows() const{return 4;}
+    inline unsigned int cols() const{return 4;}
+    Scalar& operator() (unsigned int i, unsigned int j );
+    const Scalar& operator() (unsigned int i, unsigned int j) const;
     SquareMatrix<Scalar,4> operator+ (const SquareMatrix<Scalar,4> &) const;
     SquareMatrix<Scalar,4>& operator+= (const SquareMatrix<Scalar,4> &);
     SquareMatrix<Scalar,4> operator- (const SquareMatrix<Scalar,4> &) const;
