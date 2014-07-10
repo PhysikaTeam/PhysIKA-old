@@ -226,15 +226,14 @@ bool VectorND<Scalar>::operator!= (const VectorND<Scalar> &vec2) const
 }
 
 template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator* (Scalar scale) const
+VectorND<Scalar> VectorND<Scalar>::operator+(Scalar value) const
 {
     unsigned int dim = (*this).dims();
     VectorND<Scalar> result(dim);
     for(unsigned int i = 0; i < dim; ++i)
-        result[i] = (*this)[i] * scale;
+        result[i] = (*this)[i] + value;
     return result;
 }
-
 
 template <typename Scalar>
 VectorND<Scalar> VectorND<Scalar>::operator-(Scalar value) const
@@ -247,15 +246,29 @@ VectorND<Scalar> VectorND<Scalar>::operator-(Scalar value) const
 }
 
 template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator+(Scalar value) const
+VectorND<Scalar> VectorND<Scalar>::operator* (Scalar scale) const
 {
     unsigned int dim = (*this).dims();
     VectorND<Scalar> result(dim);
     for(unsigned int i = 0; i < dim; ++i)
-        result[i] = (*this)[i] + value;
+        result[i] = (*this)[i] * scale;
     return result;
 }
 
+template <typename Scalar>
+VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
+{
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    {
+        std::cerr<<"Vector Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    unsigned int dim = (*this).dims();
+    VectorND<Scalar> result(dim);
+    for(unsigned int i = 0; i < dim; ++i)
+        result[i] = (*this)[i] / scale;
+    return result;
+}
 
 template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::operator+= (Scalar value)
@@ -275,7 +288,6 @@ VectorND<Scalar>& VectorND<Scalar>::operator-= (Scalar value)
     return *this;
 }
 
-
 template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::operator*= (Scalar scale)
 {
@@ -283,21 +295,6 @@ VectorND<Scalar>& VectorND<Scalar>::operator*= (Scalar scale)
     for(unsigned int i = 0; i < dim; ++i)
         (*this)[i] = (*this)[i] * scale;
     return *this;
-}
-
-template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
-{
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Vector Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    unsigned int dim = (*this).dims();
-    VectorND<Scalar> result(dim);
-    for(unsigned int i = 0; i < dim; ++i)
-        result[i] = (*this)[i] / scale;
-    return result;
 }
 
 template <typename Scalar>
@@ -364,12 +361,12 @@ Scalar VectorND<Scalar>::dot(const VectorND<Scalar> &vec2) const
 //explicit instantiation
 template class VectorND<unsigned char>;
 template class VectorND<unsigned short>;
-template class VectorND<unsigned unsigned int>;
+template class VectorND<unsigned int>;
 template class VectorND<unsigned long>;
 template class VectorND<unsigned long long>;
 template class VectorND<signed char>;
 template class VectorND<short>;
-template class VectorND<unsigned int>;
+template class VectorND<int>;
 template class VectorND<long>;
 template class VectorND<long long>;
 template class VectorND<float>;

@@ -40,13 +40,3 @@ protected:
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_VECTORS_VECTOR_H_
-
-
-
-
-
-
-
-
-
-

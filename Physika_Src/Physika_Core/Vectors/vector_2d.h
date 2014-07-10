@@ -36,8 +36,8 @@ public:
     Vector(const Vector<Scalar,2>&);
     ~Vector();
     inline unsigned int dims() const{return 2;}
-    Scalar& operator[] (int);
-    const Scalar& operator[] (int) const;
+    Scalar& operator[] (unsigned int);
+    const Scalar& operator[] (unsigned int) const;
     Vector<Scalar,2> operator+ (const Vector<Scalar,2> &) const;
     Vector<Scalar,2>& operator+= (const Vector<Scalar,2> &);
     Vector<Scalar,2> operator- (const Vector<Scalar,2> &) const;

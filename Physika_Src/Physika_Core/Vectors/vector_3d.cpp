@@ -63,7 +63,7 @@ Vector<Scalar,3>::~Vector()
 }
 
 template <typename Scalar>
-Scalar& Vector<Scalar,3>::operator[] (int idx)
+Scalar& Vector<Scalar,3>::operator[] (unsigned int idx)
 {
     if(idx<0||idx>=3)
     {
@@ -78,7 +78,7 @@ Scalar& Vector<Scalar,3>::operator[] (int idx)
 }
 
 template <typename Scalar>
-const Scalar& Vector<Scalar,3>::operator[] (int idx) const
+const Scalar& Vector<Scalar,3>::operator[] (unsigned int idx) const
 {
     if(idx<0||idx>=3)
     {
