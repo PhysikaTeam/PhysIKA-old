@@ -131,14 +131,14 @@ int ConfigFile::addOption(string optionName, string* dest_location)
     return 0;
 }
 
-int ConfigFile::parseFile(string file_name)
+bool ConfigFile::parseFile(string file_name)
 {
     ifstream inputstream(file_name.c_str());
 
     if(!inputstream)
     {
         cout<<"Couldn't open config file :"<<file_name<<endl;
-        return 1;
+        return false;
     }
 
     const int maxlen = 1000;
@@ -159,7 +159,7 @@ int ConfigFile::parseFile(string file_name)
         {
             cout<<"Error: invalid line "<<count<<", "<<str<<endl;
             inputstream.close();
-            return 1;
+            return false;
         }
 
         string option_name(str.begin()+1, str.end());
@@ -174,7 +174,7 @@ int ConfigFile::parseFile(string file_name)
         if(!inputstream)
         {
             cerr<<"Error: EOF reached without specifying option value."<<endl;
-            return 1;
+            return false;
            // std::exit(EXIT_FAILURE);
         }
 
@@ -194,7 +194,7 @@ int ConfigFile::parseFile(string file_name)
         {
             cerr<<"Error: EOF reached without specifying option value."<<endl;
             cerr<<"Error: Not specifying for: "<<option_names_[index]<<endl;
-            return 1;
+            return false;
            // std::exit(EXIT_FAILURE);
         }
 
@@ -215,7 +215,7 @@ int ConfigFile::parseFile(string file_name)
             {
                 cerr<<"Error: invalid boolean specification: line "<<count<<" "<<data_entry<<endl;
                 inputstream.close();
-                return 1;
+                return false;
             //    std::exit(EXIT_FAILURE);
             }
         }
@@ -227,7 +227,7 @@ int ConfigFile::parseFile(string file_name)
                 {
                     cout<<"Error: invalid int specification: line "<<count<<" "<<data_entry<<endl;
                     inputstream.close();
-                    return 1;
+                    return false;
                  //   return 1;
                 }
             }
@@ -254,7 +254,7 @@ int ConfigFile::parseFile(string file_name)
                         continue;
                     cerr<<"Error: invalid float/double specification: line "<<count<<" "<<data_entry<<endl;
                     inputstream.close();
-                    return 1;
+                    return false;
                   //  std::exit(EXIT_FAILURE);
                 }
             }
@@ -285,7 +285,7 @@ int ConfigFile::parseFile(string file_name)
         if(!option_set_[i])
         {
             cerr<<"Error: option "<<option_names_[i]<<" didn't have an entry in the config file!"<<endl;
-            return 1;
+            return false;
            // std::exit(EXIT_FAILURE);
         }
     }
@@ -293,7 +293,29 @@ int ConfigFile::parseFile(string file_name)
     return 0;
 }
 
+template <class T>
+int ConfigFile::addOptionOptional(std::string option_name, T* dest_location, T default_value)
+{
+    int code = addOption(option_name, dest_location);
+    *dest_location = default_value;
+    option_set_[option_set_.size() - 1] = true;
+    return code;
+}
 
+template <class T>
+int ConfigFile::addOptionOperation(std::string option_name, T* dest_location)
+{
+    if(findOption(option_name) != -1)
+    {
+        std::cout<<"Warning: option "<<option_name<<" already exists. Ignoring request tp re-add it."<<std::endl;
+        return false;
+    }
+
+    option_names_.push_back(option_name);
+    dest_locations_.push_back((void*)dest_location);
+    option_set_.push_back(false);
+    return true;
+}
 
 }//end of namespace Physika
 
