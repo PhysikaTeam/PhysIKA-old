@@ -532,7 +532,7 @@ VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) c
         Trituple<Scalar> *pointer = row_head_[i];
         while(pointer)
         {
-            sum += pointer->value_ * vec[pointer->row_];
+            sum += pointer->value_ * vec[pointer->col_];
             pointer = pointer->row_next_;
         }
         result[i] = sum;
