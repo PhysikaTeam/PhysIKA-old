@@ -1,7 +1,7 @@
 /*
  * @file light_manager.cpp 
  * @Brief maintains a list of lights.
- * @author Wei Chen
+ * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -38,6 +38,11 @@ void LightManager::insertBack(Light * light_p)
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
+	if(this->lightIndex(light_p) != -1)
+	{
+		std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
+        return ;
+	}
     if(this->numLights()<8)
         this->light_list_.push_back(light_p);
     else
@@ -54,6 +59,11 @@ void LightManager::insertFront(Light * light_p)
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
+	if(this->lightIndex(light_p) != -1)
+	{
+		std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
+        return ;
+	}
     if(this->numLights()<8)
         this->light_list_.push_front(light_p);
     else
@@ -71,8 +81,14 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
         std::cerr<<"Light index out of range, operation will be ignored!\n";
         return ;
     }
+	
     if(light)
     {
+		if(this->lightIndex(light) != -1)
+		{
+			std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light)<<", operation will be ignored!"<<std::endl;
+			return ;
+		}
         if(this->numLights()<8)
         {
             list<Light*>::iterator pos = light_list_.begin();
@@ -238,12 +254,23 @@ void LightManager::turnLightOffAtIndex(unsigned int index)
     (*iter)->turnOff();
 }
 
+void LightManager::lightScene()
+{
+    list<Light *>::iterator iter = light_list_.begin();
+    while(iter != light_list_.end())
+    {
+        PHYSIKA_ASSERT(*iter);
+        (*iter)->lightScene();
+        iter++;
+    }
+}
+
 void LightManager::setLightModelLocalViewer(bool viewer)
 {
     openGLLightModel(GL_LIGHT_MODEL_LOCAL_VIEWER, viewer);
 }
 
-bool LightManager::LightModelLocalViewer()const
+bool LightManager::lightModelLocalViewer()const
 {
     unsigned char viewer;
     glGetBooleanv(GL_LIGHT_MODEL_LOCAL_VIEWER, &viewer);
@@ -286,10 +313,10 @@ void LightManager::printInfo()
     std::cout<<"light number: "<<this->numLights()<<std::endl;
     for(unsigned int i=0; i<this->numLights();i++)
     {
-        std::cout<<this->lightAtIndex(i)->lightId()<<"  state: "<< this->lightAtIndex(i)->isLightOn()<<std::endl;
+        std::cout<<"light id: "<<this->lightAtIndex(i)->lightId()<<"  state: "<< this->lightAtIndex(i)->isLightOn()<<std::endl;
     }
     std::cout<<"light model ambient: "<<this->lightModelAmbient<float>()<<std::endl;
-    std::cout<<"light model local viewer: "<<this->LightModelLocalViewer()<<std::endl;
+    std::cout<<"light model local viewer: "<<this->lightModelLocalViewer()<<std::endl;
     std::cout<<"light model two side: "<<this->lightModelTwoSize()<<std::endl;
     //std::cout<<"light model color control: "<<this->lightModelColorControl()<<std::endl;
 }
@@ -299,12 +326,14 @@ std::ostream& operator << (std::ostream& out, const LightManager & light_manager
     out<<"light number: "<<light_manager.numLights()<<std::endl;
     for(unsigned int i=0; i<light_manager.numLights();i++)
     {
-        out<<(light_manager.lightAtIndex(i))->lightId()<<"  state: "<< (light_manager.lightAtIndex(i))->isLightOn()<<std::endl;
+        out<<"light id: "<<(light_manager.lightAtIndex(i))->lightId()<<"  state: "<< (light_manager.lightAtIndex(i))->isLightOn()<<std::endl;
     }
     out<<"light model ambient: "<<light_manager.lightModelAmbient<float>()<<std::endl;
-    out<<"light model local viewer: "<<light_manager.LightModelLocalViewer()<<std::endl;
+    out<<"light model local viewer: "<<light_manager.lightModelLocalViewer()<<std::endl;
     out<<"light model two side: "<<light_manager.lightModelTwoSize()<<std::endl;
     return out;
 }
 
 }//end of namespace Physika
+
+

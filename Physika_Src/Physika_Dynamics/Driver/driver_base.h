@@ -40,38 +40,35 @@ template <typename Scalar>
 class DriverBase
 {
 public:
-
-
-public:
     DriverBase();
-    DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
+    DriverBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
     virtual ~DriverBase();
     virtual void run();//run the simulation from start frame to end frame
     virtual void advanceFrame();//advance one frame
     virtual void initialize()=0;//initialize before the simulation
     virtual void advanceStep(Scalar dt)=0;//advance one time step
     virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions
-    virtual void write(const char *file_name)=0;//write simulation data to file
-    virtual void read(const char *file_name)=0;//read simulation data from file
+    virtual void write(const std::string &file_name)=0;//write simulation data to file
+    virtual void read(const std::string &file_name)=0;//read simulation data from file
     virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
 
     inline void setMaxDt(Scalar max_dt){max_dt_ = max_dt;}
     inline Scalar maxDt(){return max_dt_;}
     inline void setFrameRate(Scalar frame_rate){frame_rate_ = frame_rate;}
     inline Scalar frameRate(){return frame_rate_;}
-    inline void setStartFrame(int start_frame){start_frame_ = start_frame;}
-    inline int getStartFrame(){return start_frame_;}
-    inline void setEndFrame(int end_frame){end_frame_ = end_frame;}
-    inline int getEndFrame(){return end_frame_;}
+    inline void setStartFrame(unsigned int start_frame){start_frame_ = start_frame;}
+    inline unsigned int getStartFrame(){return start_frame_;}
+    inline void setEndFrame(unsigned int end_frame){end_frame_ = end_frame;}
+    inline unsigned int getEndFrame(){return end_frame_;}
     inline void enableWriteToFile(){write_to_file_ = true;}
     inline void disableWriteToFile(){write_to_file_ = false;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
  
 protected:
-    int start_frame_;
-    int end_frame_;
-    int restart_frame_;
+    unsigned int start_frame_;
+    unsigned int end_frame_;
+    unsigned int restart_frame_;
     Scalar frame_rate_;
     Scalar max_dt_;
     bool write_to_file_;
@@ -85,4 +82,3 @@ protected:
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_DYNAMICS_DRIVER_DRIVER_BASE_H_
-

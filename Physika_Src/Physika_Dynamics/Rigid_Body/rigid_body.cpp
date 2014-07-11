@@ -173,7 +173,19 @@ void RigidBody<Scalar, Dim>::addImpulse(Scalar magnitude, const Vector<Scalar, D
 {
     Vector<Scalar, Dim> impulse = direction * magnitude;
     global_translation_impulse_ += impulse;
-    global_angular_velocity_ += (global_position - globalMassCenter()).cross(impulse);
+    global_angular_impulse_ += (global_position - globalMassCenter()).cross(impulse);
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::addTranslationImpulse(const Vector<Scalar, Dim>& impulse)
+{
+    global_translation_impulse_ += impulse;
+}
+
+template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::addAngularImpulse(const Vector<Scalar, Dim>& impulse)
+{
+    global_angular_impulse_ += impulse;
 }
 
 template <typename Scalar,int Dim>

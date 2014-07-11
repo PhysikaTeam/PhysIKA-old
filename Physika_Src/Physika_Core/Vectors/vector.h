@@ -28,7 +28,7 @@ class Vector: public VectorBase
 public:
     Vector(){}
     ~Vector(){}
-    virtual int dims() const=0;
+    virtual unsigned int dims() const=0;
 protected:
     //Vector<Scalar,Dim> is only defined for 2D&&3D&&4D with element type of integers and floating-point types
     //compile time check
@@ -40,13 +40,3 @@ protected:
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_VECTORS_VECTOR_H_
-
-
-
-
-
-
-
-
-
-

@@ -63,25 +63,6 @@ Color<ColorType> Light::specular() const
 }
 
 template<typename Scalar>
-void Light::setPosition(const Vector<Scalar,3>& pos)
-{
-    Vector<Scalar,4> position(pos[0], pos[1], pos[2], static_cast<Scalar>(1.0)); // the last one is 1.0 to specify this light is position based.
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    openGLLightv(this->light_id_, GL_POSITION, position);
-    glPopMatrix();
-}
-
-template<typename Scalar>
-Vector<Scalar,3> Light::position() const
-{
-    float position[4];
-    glGetLightfv(this->light_id_, GL_POSITION, position);
-    return Vector<Scalar,3>(position[0], position[1], position[2]);
-}
-
-template<typename Scalar>
 void Light::setConstantAttenuation(Scalar const_atten)
 {
     openGLLight(this->light_id_, GL_CONSTANT_ATTENUATION, const_atten);
@@ -92,7 +73,7 @@ Scalar Light::constantAttenuation() const
 {
     float const_atten;
     glGetLightfv(this->light_id_, GL_CONSTANT_ATTENUATION, &const_atten );
-    return (Scalar) const_atten;
+    return static_cast<Scalar>(const_atten);
 }
 
 template<typename Scalar>
@@ -106,7 +87,7 @@ Scalar Light::linearAttenuation() const
 {
     float linear_atten;
     glGetLightfv(this->light_id_, GL_LINEAR_ATTENUATION, &linear_atten );
-    return (Scalar) linear_atten;
+    return static_cast<Scalar>(linear_atten);
 }
 
 template<typename Scalar>
@@ -120,7 +101,7 @@ Scalar Light::quadraticAttenuation() const
 {
     float quad_atten;
     glGetLightfv(this->light_id_, GL_QUADRATIC_ATTENUATION, &quad_atten );
-    return (Scalar) quad_atten;
+    return static_cast<Scalar>(quad_atten);
 }
 
 }// end of namespace Physika

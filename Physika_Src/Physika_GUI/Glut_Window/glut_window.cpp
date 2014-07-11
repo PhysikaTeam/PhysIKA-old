@@ -26,36 +26,39 @@
 namespace Physika{
 
 GlutWindow::GlutWindow()
-    :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480),display_fps_(true)
+    :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480),
+     display_fps_(true),screen_capture_file_index_(0)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    //initDefaultLight();
+    light_manager_.insertBack(&default_light_);
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
-    :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480),display_fps_(true)
+    :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480),
+     display_fps_(true),screen_capture_file_index_(0)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    //initDefaultLight();
+    light_manager_.insertBack(&default_light_);
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
-    :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height),display_fps_(true)
+    :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height),
+     display_fps_(true),screen_capture_file_index_(0)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    //initDefaultLight();
+    light_manager_.insertBack(&default_light_);
 }
 
 GlutWindow::~GlutWindow()
@@ -251,63 +254,6 @@ void GlutWindow::translateCameraRight(double dist)
     camera_.translateRight(dist);
 }
 
-////////////////////////////////////////////////// manages render tasks////////////////////////////////////////////////////////////////////
-
-unsigned int GlutWindow::numRenderTasks() const
-{
-    return render_manager_.numRenderTasks();
-}
-
-void GlutWindow::pushBackRenderTask(RenderBase *task)
-{
-    render_manager_.insertBack(task);
-}
-
-void GlutWindow::pushFrontRenderTask(RenderBase *task)
-{
-    render_manager_.insertFront(task);
-}
-
-void GlutWindow::insertRenderTaskAtIndex(unsigned int index, RenderBase *task)
-{
-    render_manager_.insertAtIndex(index,task);
-}
-
-void GlutWindow::popBackRenderTask()
-{
-    render_manager_.removeBack();
-}
-
-void GlutWindow::popFrontRenderTask()
-{
-    render_manager_.removeFront();
-}
-
-void GlutWindow::removeRenderTaskAtIndex(unsigned int index)
-{
-    render_manager_.removeAtIndex(index);
-}
-
-void GlutWindow::removeAllRenderTasks()
-{
-    render_manager_.removeAll();
-}
-
-const RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index) const
-{
-    return render_manager_.taskAtIndex(index);
-}
-
-RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index)
-{
-    return render_manager_.taskAtIndex(index);
-}
-
-int GlutWindow::getRenderTaskIndex(RenderBase *task) const
-{
-    return render_manager_.taskIndex(task);
-}
-
 ////////////////////////////////////////////////// manages lights in scene///////////////////////////////////////////////////////////////////////////
 
 unsigned int GlutWindow::numLights() const
@@ -365,6 +311,63 @@ int GlutWindow::lightIndex(Light *light) const
     return light_manager_.lightIndex(light);
 }
 
+////////////////////////////////////////////////// manages render tasks////////////////////////////////////////////////////////////////////
+
+unsigned int GlutWindow::numRenderTasks() const
+{
+    return render_manager_.numRenderTasks();
+}
+
+void GlutWindow::pushBackRenderTask(RenderBase *task)
+{
+    render_manager_.insertBack(task);
+}
+
+void GlutWindow::pushFrontRenderTask(RenderBase *task)
+{
+    render_manager_.insertFront(task);
+}
+
+void GlutWindow::insertRenderTaskAtIndex(unsigned int index, RenderBase *task)
+{
+    render_manager_.insertAtIndex(index,task);
+}
+
+void GlutWindow::popBackRenderTask()
+{
+    render_manager_.removeBack();
+}
+
+void GlutWindow::popFrontRenderTask()
+{
+    render_manager_.removeFront();
+}
+
+void GlutWindow::removeRenderTaskAtIndex(unsigned int index)
+{
+    render_manager_.removeAtIndex(index);
+}
+
+void GlutWindow::removeAllRenderTasks()
+{
+    render_manager_.removeAll();
+}
+
+const RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index) const
+{
+    return render_manager_.taskAtIndex(index);
+}
+
+RenderBase* GlutWindow::getRenderTaskAtIndex(unsigned int index)
+{
+    return render_manager_.taskAtIndex(index);
+}
+
+int GlutWindow::getRenderTaskIndex(RenderBase *task) const
+{
+    return render_manager_.taskIndex(task);
+}
+
 ////////////////////////////////////////////////// screen shot and display frame-rate////////////////////////////////////////////////////////////////
 
 bool GlutWindow::saveScreen(const std::string &file_name) const
@@ -380,11 +383,10 @@ bool GlutWindow::saveScreen(const std::string &file_name) const
 	return status;
 }
 
-bool GlutWindow::saveScreen() const
+bool GlutWindow::saveScreen()
 {
-    static int file_index = 0;
     std::stringstream adaptor;
-    adaptor<<file_index;
+    adaptor<<screen_capture_file_index_++;
     std::string index_str;
     adaptor>>index_str;
     std::string file_name = std::string("screen_capture_") + index_str + std::string(".png"); 
@@ -432,6 +434,8 @@ void GlutWindow::displayFrameRate() const
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadIdentity();
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
         gluOrtho2D(0,width,0,height);
         openGLColor3(text_color_);
         glRasterPos2i(5,height-19);
@@ -442,6 +446,7 @@ void GlutWindow::displayFrameRate() const
         glPopMatrix();
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
+        glEnable(GL_LIGHTING);
     }
 }
 
@@ -453,6 +458,14 @@ void GlutWindow::enableDisplayFrameRate()
 void GlutWindow::disableDisplayFrameRate()
 {
     display_fps_ = false;
+}
+
+void GlutWindow::applyCameraAndLights()
+{
+    camera_.look();
+    //light the scene with the lights after calling camera look()
+    //such that model view matrix are correctly set
+    light_manager_.lightScene();
 }
 
 ////////////////////////////////////////////////// set custom callback functions ////////////////////////////////////////////////////////////////////
@@ -559,7 +572,7 @@ void GlutWindow::displayFunction(void)
     Color<double> background_color = window->background_color_;
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    (window->camera_).look();  //set camera
+    window->applyCameraAndLights();
     (window->render_manager_).renderAll(); //render all tasks of render manager
     window->displayFrameRate();
     glutSwapBuffers();
@@ -585,6 +598,7 @@ void GlutWindow::reshapeFunction(int width, int height)
 	glLoadIdentity();
 	gluPerspective(fov, aspect,near_clip,far_clip);
 	glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void GlutWindow::keyboardFunction(unsigned char key, int x, int y)
@@ -669,7 +683,10 @@ void GlutWindow::initFunction(void)
     PHYSIKA_ASSERT(window);
     glMatrixMode(GL_PROJECTION);												// select projection matrix
     glViewport(0, 0, width, height);        									// set the viewport
-    (window->camera_).look();                                                   // set projection and model view transformation through camera
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    window->initDefaultLight();
+    window->applyCameraAndLights();                                             // apply the camera and lights
     glShadeModel( GL_SMOOTH );
     glClearDepth( 1.0 );														// specify the clear value for the depth buffer
     glEnable( GL_DEPTH_TEST );
@@ -677,7 +694,6 @@ void GlutWindow::initFunction(void)
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
     Color<double> background_color = window->background_color_;
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
-    window->initDefaultLight();
 }
 
 void GlutWindow::initCallbacks()
@@ -703,10 +719,11 @@ void GlutWindow::resetMouseState()
 
 void GlutWindow::initDefaultLight()
 {
-    default_light_.setLightId(GL_LIGHT0);
-    default_light_.setPosition(Vector<int,3>(0, 0, 0));
+    default_light_.setPosition(Vector<float,3>(500, 500, 500));
+    default_light_.setAmbient(Color<float>(0,0,0,1));
+    default_light_.setDiffuse(Color<float>(1,1,1,1));
+    default_light_.setSpecular(Color<float>(1,1,1,1));
     default_light_.turnOn();
-    light_manager_.insertBack(&default_light_);
 }
 
 } //end of namespace Physika

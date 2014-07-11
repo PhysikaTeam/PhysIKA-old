@@ -66,7 +66,7 @@ Vector<Scalar,4>::~Vector()
 }
 
 template <typename Scalar>
-Scalar& Vector<Scalar,4>::operator[] (int idx)
+Scalar& Vector<Scalar,4>::operator[] (unsigned int idx)
 {
     if(idx<0||idx>=4)
     {
@@ -81,7 +81,7 @@ Scalar& Vector<Scalar,4>::operator[] (int idx)
 }
 
 template <typename Scalar>
-const Scalar& Vector<Scalar,4>::operator[] (int idx) const
+const Scalar& Vector<Scalar,4>::operator[] (unsigned int idx) const
 {
     if(idx<0||idx>=4)
     {
@@ -161,6 +161,42 @@ Vector<Scalar,4> Vector<Scalar,4>::operator* (Scalar scale) const
     return Vector<Scalar,4>(result[0],result[1],result[2],result[3]);
 }
 
+
+template <typename Scalar>
+Vector<Scalar, 4> Vector<Scalar, 4>::operator-(Scalar value) const
+{
+    Scalar result[4];
+    for(unsigned int i = 0; i < 4; ++i)
+        result[i] = (*this)[i] - value;
+    return  Vector<Scalar,4>(result[0],result[1],result[2], result[3]);
+}
+
+template <typename Scalar>
+Vector<Scalar, 4> Vector<Scalar, 4>::operator+(Scalar value) const
+{
+    Scalar result[4];
+    for(unsigned int i = 0; i < 4; ++i)
+        result[i] = (*this)[i] + value;
+    return  Vector<Scalar,4>(result[0],result[1],result[2],result[3]);
+}
+
+
+template <typename Scalar>
+Vector<Scalar,4>& Vector<Scalar,4>::operator+= (Scalar value)
+{
+    for(unsigned int i = 0; i < 4; ++i)
+        (*this)[i] = (*this)[i] + value;
+    return *this;
+}
+
+template <typename Scalar>
+Vector<Scalar,4>& Vector<Scalar,4>::operator-= (Scalar value)
+{
+    for(unsigned int i = 0; i < 4; ++i)
+        (*this)[i] = (*this)[i] - value;
+    return *this;
+}
+
 template <typename Scalar>
 Vector<Scalar,4>& Vector<Scalar,4>::operator*= (Scalar scale)
 {
@@ -200,7 +236,7 @@ template <typename Scalar>
 Scalar Vector<Scalar,4>::norm() const
 {
     Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1]+(*this)[2]*(*this)[2] + (*this)[3]*(*this)[3];
-    result = sqrt(result);
+    result = static_cast<Scalar>(sqrt(result));
     return result;
 }
 

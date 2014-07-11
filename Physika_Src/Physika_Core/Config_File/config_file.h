@@ -109,7 +109,6 @@ int ConfigFile::addOptionOperation(std::string option_name, T* dest_location)
     option_names_.push_back(option_name);
     dest_locations_.push_back((void*)dest_location);
     option_set_.push_back(false);
-
     return 0;
 }
 

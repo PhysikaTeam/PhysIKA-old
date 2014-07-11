@@ -21,7 +21,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
-
+#include "Physika_Core/Config_File/config_file.h"
 
 
 namespace Physika{
@@ -33,7 +33,16 @@ public:
     SPHBase();
     virtual ~SPHBase();
 
+    virtual void advanceStep(Scalar dt)=0;//advance one time step
+    virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions
+    virtual void write(const char *file_name)=0;//write simulation data to file
+    virtual void read(const char *file_name)=0;//read simulation data from file
+    virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
+
+
+
     virtual void initialize();
+    virtual void initConfiguration() = 0;
     virtual void initSceneBoundary();
 
     virtual Scalar getTimeStep(){ return time_step_; }
@@ -75,7 +84,7 @@ public:
 
     Scalar time_step_;
     Scalar viscosity_;
-    Vector<Scalar, Dim> gravity_;
+    Scalar gravity_;
     Scalar surface_tension_;
 
     Scalar sampling_distance_;
@@ -86,6 +95,8 @@ public:
     Scalar reference_density_;
 
     ArrayManager dataManager_;
+
+    ConfigFile config_file_;
 };
 
 } //end of namespace Physika

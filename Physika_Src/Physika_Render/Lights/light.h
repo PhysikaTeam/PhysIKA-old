@@ -1,7 +1,7 @@
 /*
  * @file light.h 
  * @Brief a light class for OpenGL.
- * @author Wei Chen
+ * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -23,14 +23,18 @@
 namespace Physika{
 
 /*
- * Note: Light is designed for float and integer type, since openGL functions about light was imlementated for these two.
- *       Generally, type float is sufficient, and is strongly recommended.
- *       In Light class, as you can see in header file, we store NO data member, EXCEPT the light_id (corresponding to GL_LIGHT0,
- *       GL_LIGHT1, ......)to specify which light you are using from openGL.
- *       Thus, every setter and getter is operated by directly call openGL set-function and get-function(such as glLight and 
- *       glGetFloatv).
- *       As a consequence, The Light class maintains exactly the feature of "state machine" of openGL, i.e. You can change 
- *       the light object by call openGL functions directly outside, only if you have the right light_id.
+ * Light class only stores its id and position, other properties of lights
+ * are directly updated to OpenGL via corresponding methods
+ * Note: Light is turned on doesn't mean it's put into use, lightScene() must be
+ *       called after the model view matrix set up in OpenGL code
+ * 
+ * Usage: 
+ *       1. Define Light object
+ *       2. Set its properties
+ *       3. Call lightScene() in your OpenGL code, after you'v set up the model view matrix
+ *          of your camera
+ *
+ * 8 lights are supported at most.
  */
 
 class Light
@@ -39,11 +43,18 @@ public:
     // construction and destruction
     Light();
     explicit Light(GLenum light_id);
-    virtual ~Light();
+    Light(GLenum light_id, const Vector<float,3> &light_position);
+    ~Light();
+
+    //call this method in your OpenGL code after the model view matrix is set up
+    void lightScene();
 
     // public interface: setter and getter
     void    setLightId(GLenum light_id);
     GLenum  lightId() const;
+    void    setPosition(const Vector<float,3> &pos);
+    const Vector<float,3>& position() const;
+    Vector<float,3>& position();
 
     template <typename ColorType>
     void             setAmbient(const Color<ColorType> & color);
@@ -58,10 +69,6 @@ public:
     template <typename ColorType>
     Color<ColorType> specular() const;
 
-    template <typename Scalar>
-    void             setPosition(const Vector<Scalar,3>& pos);
-    template <typename Scalar>
-    Vector<Scalar,3> position() const;
     template <typename Scalar>
     void             setConstantAttenuation(Scalar constant_atten);
     template <typename Scalar>
@@ -80,8 +87,16 @@ public:
     void turnOff() const;
     bool isLightOn() const;
     void printInfo() const;
+	static void printOccupyInfo();
+protected:
+    void createOneLight();  //create one light with a random avaible id
+    //disable copy
+    Light(const Light &light);
+    Light& operator= (const Light &light);
 protected:
     GLenum light_id_;
+    Vector<float,3> light_position_;
+	static bool is_occupied_[8];
 };
 
 std::ostream &  operator<< (std::ostream& out, const Light& light);
