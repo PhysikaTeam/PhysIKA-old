@@ -27,7 +27,7 @@ DriverBase<Scalar>::DriverBase()
 }
 
 template <typename Scalar>
-DriverBase<Scalar>::DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
+DriverBase<Scalar>::DriverBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :start_frame_(start_frame),end_frame_(end_frame),restart_frame_(-1),frame_rate_(frame_rate),
     max_dt_(max_dt),write_to_file_(write_to_file),enable_timer_(true),
     time_(0)
@@ -45,7 +45,7 @@ void DriverBase<Scalar>::run()
 {
     initialize();
 
-    for(int frame=start_frame_;frame<=end_frame_;++frame)
+    for(unsigned int frame=start_frame_;frame<=end_frame_;++frame)
     {
         std::cout<<"Begin Frame "<<frame<<"\n";
 
