@@ -33,7 +33,9 @@ class CubicMesh: public VolumetricMesh<Scalar,3>
 public:
     CubicMesh(); //construct an empty CubicMesh
     CubicMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements); //construct CubicMesh with given data
+    CubicMesh(const CubicMesh<Scalar> &cubic_mesh);
     ~CubicMesh();
+    CubicMesh<Scalar>& operator= (const CubicMesh<Scalar> &cubic_mesh);
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
     int eleVertNum() const;

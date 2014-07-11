@@ -36,8 +36,21 @@ TetMesh<Scalar>::TetMesh(unsigned int vert_num, const Scalar *vertices, unsigned
 }
 
 template <typename Scalar>
+TetMesh<Scalar>::TetMesh(const TetMesh<Scalar> &tet_mesh)
+    :VolumetricMesh<Scalar,3>(tet_mesh)
+{
+}
+
+template <typename Scalar>
 TetMesh<Scalar>::~TetMesh()
 {
+}
+
+template <typename Scalar>
+TetMesh<Scalar>& TetMesh<Scalar>::operator= (const TetMesh<Scalar> &tet_mesh)
+{
+    VolumetricMesh<Scalar,3>::operator= (tet_mesh);
+    return *this;
 }
 
 template <typename Scalar>

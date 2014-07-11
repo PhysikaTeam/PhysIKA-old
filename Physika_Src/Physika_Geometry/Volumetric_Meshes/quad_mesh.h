@@ -27,7 +27,9 @@ class QuadMesh: public VolumetricMesh<Scalar,2>
 public:
     QuadMesh();  //construct an empty QuadMesh
     QuadMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements);  //construct QuadMesh with given data
+    QuadMesh(const QuadMesh<Scalar> &quad_mesh);
     ~QuadMesh();
+    QuadMesh<Scalar>& operator= (const QuadMesh<Scalar> &quad_mesh);
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
     int eleVertNum() const;

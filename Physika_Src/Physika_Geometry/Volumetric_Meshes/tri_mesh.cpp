@@ -36,8 +36,21 @@ TriMesh<Scalar>::TriMesh(unsigned int vert_num, const Scalar *vertices, unsigned
 }
 
 template <typename Scalar>
+TriMesh<Scalar>::TriMesh(const TriMesh<Scalar> &tri_mesh)
+    :VolumetricMesh<Scalar,2>(tri_mesh)
+{
+}
+
+template <typename Scalar>
 TriMesh<Scalar>::~TriMesh()
 {
+}
+
+template <typename Scalar>
+TriMesh<Scalar>& TriMesh<Scalar>::operator= (const TriMesh<Scalar> &tri_mesh)
+{
+    VolumetricMesh<Scalar,2>::operator= (tri_mesh);
+    return *this;
 }
 
 template <typename Scalar>

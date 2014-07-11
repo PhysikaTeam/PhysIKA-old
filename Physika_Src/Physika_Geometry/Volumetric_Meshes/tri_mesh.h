@@ -27,7 +27,9 @@ class TriMesh: public VolumetricMesh<Scalar,2>
 public:
     TriMesh(); //construct an empty TriMesh
     TriMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements); //construct TriMesh with given data
+    TriMesh(const TriMesh<Scalar> &tri_mesh);
     ~TriMesh();
+    TriMesh<Scalar>& operator=(const TriMesh<Scalar> &tri_mesh);
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
     int eleVertNum() const;

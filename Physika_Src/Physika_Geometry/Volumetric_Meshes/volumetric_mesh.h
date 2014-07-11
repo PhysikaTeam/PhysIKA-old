@@ -38,7 +38,9 @@ public:
     //construct one-region mesh with given data, all elements belong to one default region
     VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, unsigned int vert_per_ele);
     VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele_list);//for volumetric mesh with arbitrary element type
+    VolumetricMesh(const VolumetricMesh<Scalar,Dim> &volumetric_mesh);
     virtual ~VolumetricMesh();
+    VolumetricMesh<Scalar,Dim>& operator= (const VolumetricMesh<Scalar,Dim> &volumetric_mesh);
     
     //query
     inline unsigned int       vertNum() const{return vertices_.size();}

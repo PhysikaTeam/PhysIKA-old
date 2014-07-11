@@ -35,8 +35,21 @@ QuadMesh<Scalar>::QuadMesh(unsigned int vert_num, const Scalar *vertices, unsign
 }
 
 template <typename Scalar>
+QuadMesh<Scalar>::QuadMesh(const QuadMesh<Scalar> &quad_mesh)
+    :VolumetricMesh<Scalar,2>(quad_mesh)
+{
+}
+
+template <typename Scalar>
 QuadMesh<Scalar>::~QuadMesh()
 {
+}
+
+template <typename Scalar>
+QuadMesh<Scalar>& QuadMesh<Scalar>::operator= (const QuadMesh<Scalar> &quad_mesh)
+{
+    VolumetricMesh<Scalar,2>::operator= (quad_mesh);
+    return *this;
 }
 
 template <typename Scalar>
