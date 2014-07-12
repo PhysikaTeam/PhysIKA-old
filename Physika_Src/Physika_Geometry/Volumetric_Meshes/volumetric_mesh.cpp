@@ -47,11 +47,46 @@ VolumetricMesh<Scalar,Dim>::VolumetricMesh(unsigned int vert_num, const Scalar *
 }
 
 template <typename Scalar, int Dim>
+VolumetricMesh<Scalar,Dim>::VolumetricMesh(const VolumetricMesh<Scalar,Dim> &volumetric_mesh)
+{
+    this->vertices_ = volumetric_mesh.vertices_;
+    this->ele_num_ = volumetric_mesh.ele_num_;
+    this->elements_ = volumetric_mesh.elements_;
+    this->uniform_ele_type_ = volumetric_mesh.uniform_ele_type_;
+    this->vert_per_ele_ = volumetric_mesh.vert_per_ele_;
+    (this->regions_).clear();
+    for(unsigned int i = 0; i < volumetric_mesh.regions_.size(); ++i)
+    {
+        Region *src_region = volumetric_mesh.regions_[i];
+        Region *region = new Region(*src_region);
+        (this->regions_).push_back(region);
+    }
+}
+
+template <typename Scalar, int Dim>
 VolumetricMesh<Scalar,Dim>::~VolumetricMesh()
 {
     for(unsigned int i = 0; i < regions_.size(); ++i)
         if(regions_[i])
             delete regions_[i];
+}
+
+template <typename Scalar, int Dim>
+VolumetricMesh<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::operator= (const VolumetricMesh<Scalar,Dim> &volumetric_mesh)
+{
+    this->vertices_ = volumetric_mesh.vertices_;
+    this->ele_num_ = volumetric_mesh.ele_num_;
+    this->elements_ = volumetric_mesh.elements_;
+    this->uniform_ele_type_ = volumetric_mesh.uniform_ele_type_;
+    this->vert_per_ele_ = volumetric_mesh.vert_per_ele_;
+    (this->regions_).clear();
+    for(unsigned int i = 0; i < volumetric_mesh.regions_.size(); ++i)
+    {
+        Region *src_region = volumetric_mesh.regions_[i];
+        Region *region = new Region(*src_region);
+        (this->regions_).push_back(region);
+    }
+    return *this;
 }
 
 template <typename Scalar, int Dim>

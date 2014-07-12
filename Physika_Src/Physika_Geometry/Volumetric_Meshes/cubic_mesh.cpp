@@ -34,8 +34,21 @@ CubicMesh<Scalar>::CubicMesh(unsigned int vert_num, const Scalar *vertices, unsi
 }
 
 template <typename Scalar>
+CubicMesh<Scalar>::CubicMesh(const CubicMesh<Scalar> &cubic_mesh)
+    :VolumetricMesh<Scalar,3>(cubic_mesh)
+{
+}
+
+template <typename Scalar>
 CubicMesh<Scalar>::~CubicMesh()
 {
+}
+
+template <typename Scalar>
+CubicMesh<Scalar>& CubicMesh<Scalar>::operator= (const CubicMesh<Scalar> &cubic_mesh)
+{
+    VolumetricMesh<Scalar,3>::operator= (cubic_mesh);
+    return *this;
 }
 
 template <typename Scalar>

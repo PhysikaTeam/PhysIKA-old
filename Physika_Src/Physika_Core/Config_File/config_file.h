@@ -49,6 +49,7 @@ class ConfigFile
     enum OptionType
     {
         Option_Int,
+		Option_Unsigned_Int,
         Option_Bool,
         Option_Float,
         Option_Double,
@@ -62,6 +63,7 @@ public:
 
     //if add is success , return 0; or return a index that already exist
     int addOption(std::string option_name, int* dest_location); 
+	int addOption(std::string option_name, unsigned int* dest_location);
     int addOption(std::string option_name, bool* dest_location);
     int addOption(std::string option_name, float* dest_location);
     int addOption(std::string option_name, double* dest_location);
@@ -70,7 +72,7 @@ public:
     template <class T>
     int addOptionOptional(std::string option_name, T* dest_location, T default_value); //if add is success , return 0; or return a index that already exist;
 
-    int parseFile(std::string file_name); //after addoptions, you can use this to parseFile to get options. if read success,return 0; else return 1;
+    bool parseFile(std::string file_name); //after addoptions, you can use this to parseFile to get options. if read success,return true; else return false;
 
     void printOptions(); //print all options alread read in memory.
     
@@ -88,29 +90,7 @@ protected:
     int findOption(std::string option_name);// find a option in the option_names_, if not find return -1,else return the index;
 };
 
-template <class T>
-int ConfigFile::addOptionOptional(std::string option_name, T* dest_location, T default_value)
-{
-    int code = addOption(option_name, dest_location);
-    *dest_location = default_value;
-    option_set_[option_set_.size() - 1] = true;
-    return code;
-}
 
-template <class T>
-int ConfigFile::addOptionOperation(std::string option_name, T* dest_location)
-{
-    if(findOption(option_name) != -1)
-    {
-        std::cout<<"Warning: option "<<option_name<<" already exists. Ignoring request tp re-add it."<<std::endl;
-        return 1;
-    }
-
-    option_names_.push_back(option_name);
-    dest_locations_.push_back((void*)dest_location);
-    option_set_.push_back(false);
-    return 0;
-}
 
 }//end of namespace Physika
 

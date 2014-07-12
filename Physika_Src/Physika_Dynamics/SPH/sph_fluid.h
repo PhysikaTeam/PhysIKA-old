@@ -92,7 +92,7 @@ protected:
     Array<Scalar> small_density_;
 
     Array<NeighborList<Scalar>> neighbor_lists_;
-    GridQuery<Scalar, Dim>* grid;
+    GridQuery<Scalar, Dim>* grid_;
     
 };
 

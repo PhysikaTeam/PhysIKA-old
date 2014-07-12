@@ -17,9 +17,10 @@ int main()
  configfile.addOptionOptional("a", &a, 3);
  configfile.addOption("b", &b);
  configfile.addOption("str_c", &str_c);
- configfile.addOption("bool_d", &bool_d);
+// configfile.addOption("bool_d", &bool_d);
  configfile.addOption("float_e", &float_e);
  configfile.addOption("double_f", &double_f);
+ configfile.addOptionOptional("bool_d", &bool_d, false);
  string file_name = "config_test.txt";
 
  if(configfile.parseFile(file_name) == 0)

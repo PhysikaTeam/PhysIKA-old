@@ -32,8 +32,21 @@ Region::Region(const string &region_name, const vector<unsigned int> &elements)
 {
 }
 
+Region::Region(const Region &region)
+{
+    this->name_ = region.name_;
+    this->elements_ = region.elements_;
+}
+
 Region::~Region()
 {
+}
+
+Region& Region::operator= (const Region &region)
+{
+    this->name_ = region.name_;
+    this->elements_ = region.elements_;
+    return *this;
 }
 
 const string& Region::name() const

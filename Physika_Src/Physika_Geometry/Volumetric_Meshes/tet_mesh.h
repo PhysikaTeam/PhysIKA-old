@@ -27,7 +27,9 @@ class TetMesh: public VolumetricMesh<Scalar,3>
 public:
     TetMesh();  //construct an empty TetMesh
     TetMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements); //construct TetMesh with given data
+    TetMesh(const TetMesh<Scalar> &tet_mesh);
     ~TetMesh();
+    TetMesh<Scalar>& operator= (const TetMesh<Scalar> &tet_mesh);
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
     int eleVertNum() const;

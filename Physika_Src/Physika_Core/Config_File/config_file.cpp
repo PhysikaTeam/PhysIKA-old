@@ -55,6 +55,9 @@ void ConfigFile::printOptions()
             case Option_Int:
                 cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(int*)(dest_locations_[i])<<endl;
                 break;
+			case Option_Unsigned_Int:
+                cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(int*)(dest_locations_[i])<<endl;
+                break;
             case Option_Bool:
                 cout<<"Option name: "<<option_names_[i].c_str()<<", it's value: "<<*(bool*)(dest_locations_[i])<<endl;
                 break;
@@ -87,10 +90,22 @@ int ConfigFile::addOption(string optionName, int* dest_location)
     return 0;
 }
 
-int ConfigFile::addOption(string optionName, bool* dest_location)
+int ConfigFile::addOption(std::string option_name, unsigned int* dest_location)
+{
+	int code = -1;
+    if((code == addOptionOperation(option_name, dest_location)) != 0)
+        return code;
+
+    option_types_.push_back(Option_Unsigned_Int);
+
+    return 0;
+}
+
+
+int ConfigFile::addOption(string option_name, bool* dest_location)
 {
     int code = -1;
-    if((code == addOptionOperation(optionName, dest_location)) != 0)
+    if((code == addOptionOperation(option_name, dest_location)) != 0)
         return code;
 
     option_types_.push_back(Option_Bool);
@@ -98,10 +113,10 @@ int ConfigFile::addOption(string optionName, bool* dest_location)
     return 0;
 }
 
-int ConfigFile::addOption(string optionName, float* dest_location)
+int ConfigFile::addOption(string option_name, float* dest_location)
 {
     int code = -1;
-    if((code == addOptionOperation(optionName, dest_location)) != 0)
+    if((code == addOptionOperation(option_name, dest_location)) != 0)
         return code;
 
     option_types_.push_back(Option_Float);
@@ -109,10 +124,10 @@ int ConfigFile::addOption(string optionName, float* dest_location)
     return 0;
 }
 
-int ConfigFile::addOption(string optionName, double* dest_location)
+int ConfigFile::addOption(string option_name, double* dest_location)
 {
     int code = -1;
-    if((code == addOptionOperation(optionName, dest_location)) != 0)
+    if((code == addOptionOperation(option_name, dest_location)) != 0)
         return code;
 
     option_types_.push_back(Option_Double);
@@ -120,10 +135,10 @@ int ConfigFile::addOption(string optionName, double* dest_location)
     return 0;
 }
 
-int ConfigFile::addOption(string optionName, string* dest_location)
+int ConfigFile::addOption(string option_name, string* dest_location)
 {
     int code = -1;
-    if((code == addOptionOperation(optionName, dest_location)) != 0)
+    if((code == addOptionOperation(option_name, dest_location)) != 0)
         return code;
 
     option_types_.push_back(Option_String);
@@ -131,14 +146,14 @@ int ConfigFile::addOption(string optionName, string* dest_location)
     return 0;
 }
 
-int ConfigFile::parseFile(string file_name)
+bool ConfigFile::parseFile(string file_name)
 {
     ifstream inputstream(file_name.c_str());
 
     if(!inputstream)
     {
         cout<<"Couldn't open config file :"<<file_name<<endl;
-        return 1;
+        return false;
     }
 
     const int maxlen = 1000;
@@ -159,7 +174,7 @@ int ConfigFile::parseFile(string file_name)
         {
             cout<<"Error: invalid line "<<count<<", "<<str<<endl;
             inputstream.close();
-            return 1;
+            return false;
         }
 
         string option_name(str.begin()+1, str.end());
@@ -174,7 +189,7 @@ int ConfigFile::parseFile(string file_name)
         if(!inputstream)
         {
             cerr<<"Error: EOF reached without specifying option value."<<endl;
-            return 1;
+            return false;
            // std::exit(EXIT_FAILURE);
         }
 
@@ -194,7 +209,7 @@ int ConfigFile::parseFile(string file_name)
         {
             cerr<<"Error: EOF reached without specifying option value."<<endl;
             cerr<<"Error: Not specifying for: "<<option_names_[index]<<endl;
-            return 1;
+            return false;
            // std::exit(EXIT_FAILURE);
         }
 
@@ -215,19 +230,39 @@ int ConfigFile::parseFile(string file_name)
             {
                 cerr<<"Error: invalid boolean specification: line "<<count<<" "<<data_entry<<endl;
                 inputstream.close();
-                return 1;
+                return false;
             //    std::exit(EXIT_FAILURE);
             }
         }
-        else if(option_types_[index] == Option_Int)
+        else if(option_types_[index] == Option_Unsigned_Int)
         {
-            for (int i = 0; i < data_entry.length(); i++)
+            for (int i = 1; i < data_entry.length(); i++)
             {
                 if(data_entry[i] < '0' || data_entry[i] > '9')
                 {
                     cout<<"Error: invalid int specification: line "<<count<<" "<<data_entry<<endl;
                     inputstream.close();
-                    return 1;
+                    return false;
+                 //   return 1;
+                }
+            }
+            stringstream stream;
+            stream << data_entry;
+            int data;
+            stream >> data;
+            *(unsigned int*) dest_locations_[index] = data;
+        }
+		else if(option_types_[index] == Option_Int)
+        {
+            for (int i = 0; i < data_entry.length(); i++)
+            {
+                if(data_entry[i] < '0' || data_entry[i] > '9')
+                {
+					if(i == 0 && (data_entry[i] == '+' || data_entry[i] == '-'))
+						continue;
+                    cout<<"Error: invalid int specification: line "<<count<<" "<<data_entry<<endl;
+                    inputstream.close();
+                    return false;
                  //   return 1;
                 }
             }
@@ -237,7 +272,6 @@ int ConfigFile::parseFile(string file_name)
             stream >> data;
             *(int*) dest_locations_[index] = data;
         }
-
         else
         {
             string data_tmp = "";
@@ -245,16 +279,24 @@ int ConfigFile::parseFile(string file_name)
                data_tmp.assign(data_entry.begin(), data_entry.end()-1);
             else
                data_tmp = data_entry;
+			
+			bool dot_flag = false;
             if(data_tmp != "")
             for (int i = 0; i < data_tmp.length()-1; i++)
             {
                 if(data_tmp[i] < '0' || data_tmp[i] > '9')
                 {
-                    if(data_tmp[i] == '.')
-                        continue;
+                    if(data_tmp[i] == '.' && dot_flag == false)
+                    {
+							dot_flag = true;
+							continue;
+					}
+					if(i == 0 && (data_tmp[i] == '+' || data_tmp[i] == '-'))
+						continue;
+
                     cerr<<"Error: invalid float/double specification: line "<<count<<" "<<data_entry<<endl;
                     inputstream.close();
-                    return 1;
+                    return false;
                   //  std::exit(EXIT_FAILURE);
                 }
             }
@@ -285,7 +327,7 @@ int ConfigFile::parseFile(string file_name)
         if(!option_set_[i])
         {
             cerr<<"Error: option "<<option_names_[i]<<" didn't have an entry in the config file!"<<endl;
-            return 1;
+            return false;
            // std::exit(EXIT_FAILURE);
         }
     }
@@ -294,6 +336,37 @@ int ConfigFile::parseFile(string file_name)
 }
 
 
+
+template <class T>
+int ConfigFile::addOptionOptional(std::string option_name, T* dest_location, T default_value)
+{
+    int code = addOption(option_name, dest_location);
+    *dest_location = default_value;
+    option_set_[option_set_.size() - 1] = true;
+    return code;
+}
+
+template <class T>
+int ConfigFile::addOptionOperation(std::string option_name, T* dest_location)
+{
+    if(findOption(option_name) != -1)
+    {
+        std::cout<<"Warning: option "<<option_name<<" already exists. Ignoring request tp re-add it."<<std::endl;
+        return false;
+    }
+
+    option_names_.push_back(option_name);
+    dest_locations_.push_back((void*)dest_location);
+    option_set_.push_back(false);
+    return true;
+}
+
+template int ConfigFile::addOptionOptional<int> (std::string option_name, int* dest_location, int default_value);
+template int ConfigFile::addOptionOptional<unsigned int> (std::string option_name, unsigned int* dest_location, unsigned int default_value);
+template int ConfigFile::addOptionOptional<float> (std::string option_name, float* dest_location, float default_value);
+template int ConfigFile::addOptionOptional<double> (std::string option_name, double* dest_location, double default_value);
+template int ConfigFile::addOptionOptional<bool> (std::string option_name, bool* dest_location, bool default_value);
+template int ConfigFile::addOptionOptional<std::string> (std::string option_name, std::string* dest_location, std::string default_value);
 
 }//end of namespace Physika
 

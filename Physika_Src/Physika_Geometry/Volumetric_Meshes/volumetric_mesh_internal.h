@@ -28,7 +28,9 @@ class Region
 public:
     Region();
     Region(const std::string &region_name, const std::vector<unsigned int> &elements);
+    Region(const Region &region);
     ~Region();
+    Region& operator= (const Region &region);
     const std::string& name() const;
     void setName(const std::string &new_name);
     unsigned int elementNum() const;
