@@ -49,6 +49,7 @@ class ConfigFile
     enum OptionType
     {
         Option_Int,
+		Option_Unsigned_Int,
         Option_Bool,
         Option_Float,
         Option_Double,
@@ -62,6 +63,7 @@ public:
 
     //if add is success , return 0; or return a index that already exist
     int addOption(std::string option_name, int* dest_location); 
+	int addOption(std::string option_name, unsigned int* dest_location);
     int addOption(std::string option_name, bool* dest_location);
     int addOption(std::string option_name, float* dest_location);
     int addOption(std::string option_name, double* dest_location);
