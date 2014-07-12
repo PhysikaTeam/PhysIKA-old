@@ -81,7 +81,7 @@ public:
     bool remove(unsigned int i,unsigned int j);
     //resize the SparseMatrix and data in it will be deleted
     void resize(unsigned int new_rows, unsigned int new_cols);
-    void transpose();
+	SparseMatrix<Scalar> transpose();
     std::vector<Trituple<Scalar>> getRowElements(unsigned int ) const;
     std::vector<Trituple<Scalar>> getColElements(unsigned int ) const;
     //return value of matrix entry at index (i,j). Note: cannot be used as l-value!
@@ -112,6 +112,8 @@ protected:
     int cols_;
     Trituple<Scalar> ** row_head_;
     Trituple<Scalar> ** col_head_;
+#elif defined(PHYSIKA_USE_EIGEN_MATRIX)
+	Eigen::SparseMatrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> ptr_eigen_sparse_matrix_;
 #endif
 };
 
@@ -127,7 +129,6 @@ std::ostream& operator<<(std::ostream &s, const Trituple<Scalar> &tri)
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const SparseMatrix<Scalar> &mat)
 {
-#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     std::vector<Trituple<Scalar>> v;
     for(unsigned int i = 0; i < mat.rows(); ++i)
     {
@@ -135,7 +136,6 @@ std::ostream& operator<< (std::ostream &s, const SparseMatrix<Scalar> &mat)
         for(unsigned int j=0;j< v.size();++j) s<<" ("<< v[j].row_<<", "<<v[j].col_<<", "<<v[j].value_<<") ";
         s<<std::endl;
     }
-#endif
     return s;
 }
 
