@@ -211,7 +211,7 @@ Scalar RigidBodyDriver<Scalar, Dim>::computeTimeStep()
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::write(const char *file_name)
+void RigidBodyDriver<Scalar, Dim>::write(const std::string &file_name)
 {
     //plugin
 	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
@@ -225,7 +225,7 @@ void RigidBodyDriver<Scalar, Dim>::write(const char *file_name)
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::read(const char *file_name)
+void RigidBodyDriver<Scalar, Dim>::read(const std::string &file_name)
 {
     //plugin
 	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
@@ -338,6 +338,8 @@ void RigidBodyDriver<Scalar, Dim>::collisionResponse()
     //initialize
     unsigned int m = contact_points_.numContactPoint();//m: number of contact points
     unsigned int n = numRigidBody();//n: number of rigid bodies
+    if(m == 0 || n == 0)//no collision or no rigid body
+        return;
     unsigned int six_n = n * 6;//six_n: designed only for 3-dimension rigid bodies. The DoF(Degree of Freedom) of a rigid-body system
     unsigned int fric_sample_count = 2;//count of friction sample directions
     unsigned int s = m * fric_sample_count;//s: number of friction sample. Here a square sample is adopted
@@ -361,9 +363,9 @@ void RigidBodyDriver<Scalar, Dim>::collisionResponse()
 
     //calculate other matrix in need
     SparseMatrix<Scalar> J_T = J;
-    J_T.transpose();
+    J_T = J.transpose();
     SparseMatrix<Scalar> D_T = D;
-    D_T.transpose();
+    D_T = D.transpose();
     SparseMatrix<Scalar> MJ = M_inv * J_T;
     SparseMatrix<Scalar> MD = M_inv * D_T;
     JMJ = J * MJ;
@@ -372,7 +374,9 @@ void RigidBodyDriver<Scalar, Dim>::collisionResponse()
     DMJ = D * MJ;
     Jv = J * v;
     Dv = D * v;
-    //CoR and CoF remain to be calculated
+
+    // update CoR and CoF
+    updateCoefficient(CoR, CoF);
 
     //solve BLCP with PGS. z_norm and z_fric are the unknown variables
     solveBLCPWithPGS(JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF);
@@ -538,6 +542,52 @@ void RigidBodyDriver<Scalar, Dim>::updateDynamicsMatrix(SparseMatrix<Scalar>& J,
 }
 
 template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::updateCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF)
+{
+    //initialize
+    unsigned int m = contact_points_.numContactPoint();
+    unsigned int s = CoF.dims();
+    unsigned int fric_sample_count = s / m;
+
+    //dimension check
+    if(CoR.dims() != m || m * fric_sample_count != s)
+    {
+        std::cerr<<"Wrong dimension in updating coefficient!"<<std::endl;
+        return;
+    }
+
+    //update CoR and CoF
+    ContactPoint<Scalar, Dim>* contact_point = NULL;
+    RigidBody<Scalar, Dim>* rigid_body_lhs, * rigid_body_rhs;
+    Scalar cor_lhs, cor_rhs, cof_lhs, cof_rhs;
+    for(unsigned int i = 0; i < m; ++i)
+    {
+        contact_point = contact_points_[i];
+        if(contact_point == NULL)
+        {
+            std::cerr<<"Null contact point in updating coefficient!"<<std::endl;
+            continue;
+        }
+        rigid_body_lhs = rigidBody(contact_point->objectLhsIndex());
+        rigid_body_rhs = rigidBody(contact_point->objectRhsIndex());
+        if(rigid_body_lhs == NULL || rigid_body_rhs == NULL)
+        {
+            std::cerr<<"Null rigid body in updating coefficient!"<<std::endl;
+            continue;
+        }
+        cor_lhs = rigid_body_lhs->coeffRestitution();
+        cor_rhs = rigid_body_rhs->coeffRestitution();
+        cof_lhs = rigid_body_lhs->coeffFriction();
+        cof_rhs = rigid_body_rhs->coeffFriction();
+        CoR[i] = min(cor_lhs, cor_rhs);
+        for(unsigned int j = 0; j< fric_sample_count; ++j)
+        {
+            CoF[i * fric_sample_count + j] = max(cof_lhs, cof_rhs);
+        }
+    }
+}
+
+template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
                                                     VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
                                                     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count)
@@ -644,8 +694,8 @@ void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, Vector
     }
 
     //calculate impulses from their magnitudes (z_norm, z_fric) and directions (J_T, D_T)
-    VectorND<Scalar> impulse_translation = J_T * z_norm;
-    VectorND<Scalar> impulse_angular = D_T * z_fric;
+    VectorND<Scalar> impulse_translation = J_T * z_norm * (-1);
+    VectorND<Scalar> impulse_angular = D_T * z_fric * (-1);
 
     //apply impulses to rigid bodies. This step will not cause velocity and configuration integral 
     RigidBody<Scalar, Dim>* rigid_body = NULL;
@@ -662,8 +712,9 @@ void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, Vector
         {
             impulse[j] = impulse_translation[6 * i + j] + impulse_angular[6 * i + j];
         }
-        rigid_body->addTranslationImpulse(Vector<Scalar, 3>(impulse[6 * i], impulse[6 * i + 1], impulse[6 * i + 2]));
-        rigid_body->addAngularImpulse(Vector<Scalar, 3>(impulse[6 * i + 3], impulse[6 * i + 4], impulse[6 * i + 5]));
+        rigid_body->addTranslationImpulse(Vector<Scalar, 3>(impulse[0], impulse[1], impulse[2]));
+        rigid_body->addAngularImpulse(Vector<Scalar, 3>(impulse[3], impulse[4], impulse[5]));
+        std::cerr<<impulse<<std::endl;
     }
 }
 

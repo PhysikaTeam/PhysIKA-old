@@ -27,6 +27,8 @@ RigidBody<Scalar, Dim>::RigidBody():
     inertia_tensor_(),
     density_(1),
 	is_fixed_(false),
+    coeff_restitution_(1),
+    coeff_friction_(0),
     global_translation_(0),
     global_rotation_(),
     global_translation_velocity_(0),
@@ -43,6 +45,8 @@ RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density):
     transform_(),
     inertia_tensor_(),
     is_fixed_(false),
+    coeff_restitution_(1),
+    coeff_friction_(0),
     global_translation_(0),
     global_rotation_(),
     global_translation_velocity_(0),
@@ -58,6 +62,8 @@ RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& 
     object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
     inertia_tensor_(),
     is_fixed_(false),
+    coeff_restitution_(1),
+    coeff_friction_(0),
     global_translation_(0),
     global_rotation_(),
     global_translation_velocity_(0),
@@ -88,6 +94,8 @@ void RigidBody<Scalar, Dim>::copy(RigidBody<Scalar, Dim>& rigid_body)
     transform_ = rigid_body.transform_;
     density_ = rigid_body.density_;
     is_fixed_ = rigid_body.is_fixed_;
+    coeff_restitution_ = rigid_body.coeff_restitution_;
+    coeff_friction_ = rigid_body.coeff_friction_;
 
     inertia_tensor_ = rigid_body.inertia_tensor_;
     mass_ = rigid_body.mass_;
@@ -161,11 +169,11 @@ void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, Transform<Sc
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::update(Scalar dt)
 {
-    resetTemporaryVariables();
     velocityIntegral(dt);
     configurationIntegral(dt);
     updateInertiaTensor();
     recalculateTransform();
+    resetTemporaryVariables();
 }
 
 template <typename Scalar,int Dim>

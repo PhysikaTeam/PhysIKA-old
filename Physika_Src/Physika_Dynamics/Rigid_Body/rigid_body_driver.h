@@ -73,8 +73,8 @@ public:
 	void initialize();//initialize before the simulation
 	void advanceStep(Scalar dt);//advance one time step
 	Scalar computeTimeStep();//compute time step with respect to simulation specific conditions
-	void write(const char *file_name);//write simulation data to file
-	void read(const char *file_name);//read simulation data from file
+	void write(const std::string &file_name);//write simulation data to file
+	void read(const std::string &file_name);//read simulation data from file
 
 	//get & set, add & delete
 	virtual void addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild = true);//is_rebuild means whether rebuild the scene BVH after adding this body.
@@ -99,6 +99,7 @@ protected:
     virtual bool collisionDetection();
     virtual void collisionResponse();
     virtual void updateDynamicsMatrix(SparseMatrix<Scalar>& J, SparseMatrix<Scalar>& M_inv, SparseMatrix<Scalar>& D, VectorND<Scalar>& v);//update the inertia matrix and Jacobian matrix to form BLCP. Refer to [Tonge et al. 2012]
+    virtual void updateCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF);//update coefficient of restitution and friction
     virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
                                   VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
                                   VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count = 5);//solve the BLCP equation with PGS. Refer to [Tonge et al. 2012]

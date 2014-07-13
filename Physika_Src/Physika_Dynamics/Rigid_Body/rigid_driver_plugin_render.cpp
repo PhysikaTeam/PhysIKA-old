@@ -55,19 +55,19 @@ RigidDriverPluginRender<Scalar, Dim>::~RigidDriverPluginRender()
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onInitialize(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onInitialize(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onBeginFrame(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onBeginFrame(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onEndFrame(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onEndFrame(unsigned int frame)
 {
 
 }
@@ -85,31 +85,31 @@ void RigidDriverPluginRender<Scalar, Dim>::onEndTimeStep(Scalar time, Scalar dt)
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onWrite(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onWrite(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onRead(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onRead(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onRestart(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onRestart(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onBeginRigidStep(int step, Scalar dt)
+void RigidDriverPluginRender<Scalar, Dim>::onBeginRigidStep(unsigned int step, Scalar dt)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onEndRigidStep(int step, Scalar dt)
+void RigidDriverPluginRender<Scalar, Dim>::onEndRigidStep(unsigned int step, Scalar dt)
 {
 
 }

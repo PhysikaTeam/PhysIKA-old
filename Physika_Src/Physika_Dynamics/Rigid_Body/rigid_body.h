@@ -54,6 +54,10 @@ public:
     void setProperty(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density = 1);//Inertia tensor will be recalculated
     inline void setFixed(bool is_fixed) {is_fixed_ = is_fixed;};
     inline bool isFixed() const {return is_fixed_;};
+    inline void setCoeffRestitution(Scalar coeff_restitution) {coeff_restitution_ = coeff_restitution;};
+    inline Scalar coeffRestitution() {return coeff_restitution_;};
+    inline void setCoeffFriction(Scalar coeff_friction) {coeff_friction_ = coeff_friction;};
+    inline Scalar coeffFriction() {return coeff_friction_;};
     inline const SquareMatrix<Scalar, 3> spatialInertiaTensor() const {return inertia_tensor_.spatialInertiaTensor();};
     inline const SquareMatrix<Scalar, 3> bodyInertiaTensor() const {return inertia_tensor_.bodyInertiaTensor();};
     inline const SquareMatrix<Scalar, 3> spatialInertiaTensorInverse() const {return inertia_tensor_.spatialInertiaTensorInverse();};
@@ -88,6 +92,8 @@ protected:
 	Transform<Scalar> transform_;
 	Scalar density_;
 	bool is_fixed_;
+    Scalar coeff_restitution_;
+    Scalar coeff_friction_;
 
     //obtained by internal computation
     InertiaTensor<Scalar> inertia_tensor_;

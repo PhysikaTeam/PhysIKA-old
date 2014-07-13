@@ -67,14 +67,17 @@ int main()
 	RigidBodyDriver<double, 3> driver;
 
 	RigidBody<double,3> body1(&mesh_ball);
+    body1.setCoeffFriction(1);
     
 
 	RigidBody<double,3> body2(body1);
-    body2.setTranslation(Vector<double, 3>(0, 55, 0));
-    body2.setScale(Vector<double, 3>(0.3, 0.4, 0.5));
+    body2.setTranslation(Vector<double, 3>(26, 55, 0));
+    body2.setScale(Vector<double, 3>(0.5, 0.5, 0.5));
+    
 
-    RigidBody<double,3> body3(body1);
-    body3.setTranslation(Vector<double, 3>(0, -185, 0));
+    RigidBody<double,3> body3(&mesh_box);
+    body3.setTranslation(Vector<double, 3>(0, 0, 0));
+    body3.setScale(Vector<double, 3>(40, 40, 40));
 
     RigidBody<double,3> body4(body1);
     body4.setTranslation(Vector<double, 3>(0, -285, 0));
@@ -83,8 +86,8 @@ int main()
 
     //body2.setRotation(Vector<double, 3>(0, 0.785, 0));
 
-    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, -0.2));
-    body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.2));
+    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, -2, 0));
+    //body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.2));
 
     //body3.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
     //body3.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
@@ -92,7 +95,7 @@ int main()
     //body4.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
     //body4.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
 
-    driver.addRigidBody(&body1);
+    driver.addRigidBody(&body3);
     driver.addRigidBody(&body2);
 	
 	
@@ -113,7 +116,7 @@ int main()
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
     //glut_window.setCameraPosition(Vector<double, 3>(20, 0, 0));
-	glut_window.setCameraPosition(Vector<double, 3>(-60, 0, 60));
+	glut_window.setCameraPosition(Vector<double, 3>(0, 0, 100));
 	glut_window.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
     //glut_window.setDisplayFunction(display);
 	glut_window.setCameraFarClip(10000);
@@ -123,10 +126,10 @@ int main()
 	RigidDriverPluginRender<double, 3>* plugin = new RigidDriverPluginRender<double, 3>();
 	plugin->setWindow(&glut_window);
 	driver.addPlugin(plugin);
-	plugin->disableRenderSolidAll();
+	//plugin->disableRenderSolidAll();
 	plugin->enableRenderWireframeAll();
     //plugin->enableRenderContactFaceAll();
-    plugin->enableRenderContactNormalAll();
+    //plugin->enableRenderContactNormalAll();
 
     //RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
     //driver.addPlugin(print_plugin);

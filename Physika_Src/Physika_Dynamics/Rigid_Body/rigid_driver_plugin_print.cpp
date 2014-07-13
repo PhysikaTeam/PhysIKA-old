@@ -32,19 +32,19 @@ RigidDriverPluginPrint<Scalar, Dim>::~RigidDriverPluginPrint()
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onInitialize(int frame)
+void RigidDriverPluginPrint<Scalar, Dim>::onInitialize(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onBeginFrame(int frame)
+void RigidDriverPluginPrint<Scalar, Dim>::onBeginFrame(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onEndFrame(int frame)
+void RigidDriverPluginPrint<Scalar, Dim>::onEndFrame(unsigned int frame)
 {
 
 }
@@ -62,25 +62,25 @@ void RigidDriverPluginPrint<Scalar, Dim>::onEndTimeStep(Scalar time, Scalar dt)
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onWrite(int frame)
+void RigidDriverPluginPrint<Scalar, Dim>::onWrite(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onRead(int frame)
+void RigidDriverPluginPrint<Scalar, Dim>::onRead(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onRestart(int frame)
+void RigidDriverPluginPrint<Scalar, Dim>::onRestart(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onBeginRigidStep(int step, Scalar dt)
+void RigidDriverPluginPrint<Scalar, Dim>::onBeginRigidStep(unsigned int step, Scalar dt)
 {
     std::cout<<"Frame begin: "<<step<<std::endl;
     //std::cout<<this->rigid_driver_->rigidBody(0)->globalMassCenter()<<std::endl;
@@ -93,7 +93,7 @@ void RigidDriverPluginPrint<Scalar, Dim>::onBeginRigidStep(int step, Scalar dt)
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onEndRigidStep(int step, Scalar dt)
+void RigidDriverPluginPrint<Scalar, Dim>::onEndRigidStep(unsigned int step, Scalar dt)
 {
 
 }
