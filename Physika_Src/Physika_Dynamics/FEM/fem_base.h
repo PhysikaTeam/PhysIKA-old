@@ -16,6 +16,9 @@
 #define PHYSIKA_DYNAMICS_FEM_FEM_BASE_H_
 
 #include <string>
+#include <vector>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Config_File/config_file.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
 
@@ -38,19 +41,26 @@ public:
     FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
     virtual ~FEMBase();
 
+    //virtual methods for subclass to implement
     virtual void initialize()=0;    
     virtual void advanceStep(Scalar dt)=0;
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin)=0;
     virtual void initConfiguration(const std::string &file_name)=0; //init configurations for simulation via configration file
-
+    
+    //getters && setters
     Scalar gravity() const;
     void setGravity(Scalar gravity);
     void loadSimulationMesh(const std::string &file_name); //load the simulation mesh from file
     void setSimulationMesh(const VolumetricMesh<Scalar,Dim> &mesh);  //set the simulation mesh via an external mesh
+
+    //basic queries
+    unsigned int numSimVertices() const; //number of simulation mesh vertices
+    const Vector<Scalar,Dim>& vertexDisplacement(unsigned int vert_idx) const;
 protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
+    std::vector<Vector<Scalar,Dim> > vertex_displacements_;  //displacement of simulation mesh vertices
     Scalar gravity_;
     ConfigFile config_parser_;
 };

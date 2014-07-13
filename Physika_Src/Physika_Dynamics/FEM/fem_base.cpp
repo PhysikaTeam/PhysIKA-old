@@ -108,6 +108,20 @@ void FEMBase<Scalar,Dim>::setSimulationMesh(const VolumetricMesh<Scalar,Dim> &me
     }
 }
 
+template <typename Scalar, int Dim>
+unsigned int FEMBase<Scalar,Dim>::numSimVertices() const
+{
+    //TO DO: what if mesh not set yet
+    return simulation_mesh_->vertNum();
+}
+
+template <typename Scalar, int Dim>
+const Vector<Scalar,Dim>& FEMBase<Scalar,Dim>::vertexDisplacement(unsigned int vert_idx) const
+{
+    //TO DO: check
+    return simulation_mesh_->vertPos(vert_idx);
+}
+
 //explicit instantiations
 template class FEMBase<float,2>;
 template class FEMBase<float,3>;
@@ -115,6 +129,3 @@ template class FEMBase<double,2>;
 template class FEMBase<double,3>;
 
 }  //end of namespace Physika
-
-
-
