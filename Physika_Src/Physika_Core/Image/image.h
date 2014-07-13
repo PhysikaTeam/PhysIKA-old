@@ -61,4 +61,3 @@ protected:
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_IMAGE_IMAGE_H_
-
