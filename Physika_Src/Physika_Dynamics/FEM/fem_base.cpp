@@ -70,106 +70,34 @@ void FEMBase<Scalar,Dim>::loadSimulationMesh(const std::string &file_name)
     }
 }
 
-//use explicit specialization of member functions for setSimulationMesh()
-template <> 
-void FEMBase<float,2>::setSimulationMesh(const VolumetricMesh<float,2> &mesh)
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setSimulationMesh(const VolumetricMesh<Scalar,Dim> &mesh)
 {
     if(simulation_mesh_)
         delete simulation_mesh_;
-    const VolumetricMesh<float,2> *temp_ptr = &mesh;
+    const VolumetricMesh<Scalar,Dim> *temp_ptr = &mesh;
     VolumetricMeshInternal::ElementType ele_type = mesh.elementType();
     switch(ele_type)
     {
     case VolumetricMeshInternal::TRI:
-        simulation_mesh_ = new TriMesh<float>(*(dynamic_cast<const TriMesh<float>*>(temp_ptr)));
+        simulation_mesh_ = dynamic_cast<VolumetricMesh<Scalar,Dim>*>(
+            new TriMesh<Scalar>(*(dynamic_cast<const TriMesh<Scalar>*>(temp_ptr)))
+            );
         break;
     case VolumetricMeshInternal::QUAD:
-        simulation_mesh_ = new QuadMesh<float>(*(dynamic_cast<const QuadMesh<float>*>(temp_ptr)));
+        simulation_mesh_ = dynamic_cast<VolumetricMesh<Scalar,Dim>*>(
+            new QuadMesh<Scalar>(*(dynamic_cast<const QuadMesh<Scalar>*>(temp_ptr)))
+            );
         break;
     case VolumetricMeshInternal::TET:
-    case VolumetricMeshInternal::CUBIC:
-        PHYSIKA_ERROR("ERROR LOGIC.");
-        break;
-    case VolumetricMeshInternal::NON_UNIFORM:
-        PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
-        break;
-    default:
-        PHYSIKA_ERROR("Unknown element type.");
-        break;
-    }
-}
-template <>
-void FEMBase<double,2>::setSimulationMesh(const VolumetricMesh<double,2> &mesh)
-{
-    if(simulation_mesh_)
-        delete simulation_mesh_;
-    const VolumetricMesh<double,2> *temp_ptr = &mesh;
-    VolumetricMeshInternal::ElementType ele_type = mesh.elementType();
-    switch(ele_type)
-    {
-    case VolumetricMeshInternal::TRI:
-        simulation_mesh_ = new TriMesh<double>(*(dynamic_cast<const TriMesh<double>*>(temp_ptr)));
-        break;
-    case VolumetricMeshInternal::QUAD:
-        simulation_mesh_ = new QuadMesh<double>(*(dynamic_cast<const QuadMesh<double>*>(temp_ptr)));
-        break;
-    case VolumetricMeshInternal::TET:
-    case VolumetricMeshInternal::CUBIC:
-        PHYSIKA_ERROR("ERROR LOGIC.");
-        break;
-    case VolumetricMeshInternal::NON_UNIFORM:
-        PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
-        break;
-    default:
-        PHYSIKA_ERROR("Unknown element type.");
-        break;
-    }
-}
-template <>
-void FEMBase<float,3>::setSimulationMesh(const VolumetricMesh<float,3> &mesh)
-{
-    if(simulation_mesh_)
-        delete simulation_mesh_;
-    const VolumetricMesh<float,3> *temp_ptr = &mesh;
-    VolumetricMeshInternal::ElementType ele_type = mesh.elementType();
-    switch(ele_type)
-    {
-    case VolumetricMeshInternal::TRI:
-    case VolumetricMeshInternal::QUAD:
-        PHYSIKA_ERROR("ERROR LOGIC.");
-        break;
-    case VolumetricMeshInternal::TET:
-        simulation_mesh_ = new TetMesh<float>(*(dynamic_cast<const TetMesh<float>*>(temp_ptr)));
+        simulation_mesh_ = dynamic_cast<VolumetricMesh<Scalar,Dim>*>(
+            new TetMesh<Scalar>(*(dynamic_cast<const TetMesh<Scalar>*>(temp_ptr)))
+            );
         break;
     case VolumetricMeshInternal::CUBIC:
-        simulation_mesh_ = new CubicMesh<float>(*(dynamic_cast<const CubicMesh<float>*>(temp_ptr)));
-        break;
-    case VolumetricMeshInternal::NON_UNIFORM:
-        PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
-        break;
-    default:
-        PHYSIKA_ERROR("Unknown element type.");
-        break;
-    }
-}
-template <>
-void FEMBase<double,3>::setSimulationMesh(const VolumetricMesh<double,3> &mesh)
-{
-    if(simulation_mesh_)
-        delete simulation_mesh_;
-    const VolumetricMesh<double,3> *temp_ptr = &mesh;
-    VolumetricMeshInternal::ElementType ele_type = mesh.elementType();
-    switch(ele_type)
-    {
-    case VolumetricMeshInternal::TRI:
-    case VolumetricMeshInternal::QUAD:
-        PHYSIKA_ERROR("ERROR LOGIC.");
-        break;
-    case VolumetricMeshInternal::TET:
-        simulation_mesh_ = new TetMesh<double>(*(dynamic_cast<const TetMesh<double>*>(temp_ptr)));
-        break;
-    case VolumetricMeshInternal::CUBIC:
-        simulation_mesh_ = new CubicMesh<double>(*(dynamic_cast<const CubicMesh<double>*>(temp_ptr)));
+        simulation_mesh_ = dynamic_cast<VolumetricMesh<Scalar,Dim>*>(
+            new CubicMesh<Scalar>(*(dynamic_cast<const CubicMesh<Scalar>*>(temp_ptr)))
+            );
         break;
     case VolumetricMeshInternal::NON_UNIFORM:
         PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
@@ -187,3 +115,6 @@ template class FEMBase<double,2>;
 template class FEMBase<double,3>;
 
 }  //end of namespace Physika
+
+
+

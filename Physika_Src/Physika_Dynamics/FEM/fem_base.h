@@ -49,7 +49,6 @@ public:
     void setGravity(Scalar gravity);
     void loadSimulationMesh(const std::string &file_name); //load the simulation mesh from file
     void setSimulationMesh(const VolumetricMesh<Scalar,Dim> &mesh);  //set the simulation mesh via an external mesh
-
 protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
     Scalar gravity_;

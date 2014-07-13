@@ -208,7 +208,7 @@ void SparseMatrix<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
 }
 
 template <typename Scalar>
-SparseMatrix<Scalar> SparseMatrix<Scalar>::transpose()
+SparseMatrix<Scalar> SparseMatrix<Scalar>::transpose() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
 	SparseMatrix<Scalar> result(cols_, rows_);

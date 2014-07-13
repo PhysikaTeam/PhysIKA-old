@@ -81,7 +81,7 @@ public:
     bool remove(unsigned int i,unsigned int j);
     //resize the SparseMatrix and data in it will be deleted
     void resize(unsigned int new_rows, unsigned int new_cols);
-	SparseMatrix<Scalar> transpose();
+	SparseMatrix<Scalar> transpose() const;
     std::vector<Trituple<Scalar>> getRowElements(unsigned int ) const;
     std::vector<Trituple<Scalar>> getColElements(unsigned int ) const;
     //return value of matrix entry at index (i,j). Note: cannot be used as l-value!
@@ -146,6 +146,7 @@ SparseMatrix<T> operator* (S scale, const SparseMatrix<T> &mat)
     return mat*scale;
 }
 
+//multiply a row vector with a sparse matrix
 template <typename Scalar>
 VectorND<Scalar> operator*(const VectorND<Scalar> &vec, const SparseMatrix<Scalar> &mat)
 {
