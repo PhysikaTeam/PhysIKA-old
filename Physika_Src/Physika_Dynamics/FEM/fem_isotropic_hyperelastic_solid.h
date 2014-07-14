@@ -50,6 +50,7 @@ public:
     void initConfiguration(const std::string &file_name);
 
     //set&&get constitutive model
+    unsigned int materialNum() const;
     void setHomogeneousMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material);
     void setRegionWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);
     void setElementWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);

@@ -60,7 +60,7 @@ public:
     unsigned int numSimVertices() const; //number of simulation mesh vertices
     const Vector<Scalar,Dim>& vertexDisplacement(unsigned int vert_idx) const;
     void setVertexDisplacement(unsigned int vert_idx, const Vector<Scalar,Dim> &u);
-    void resetVertexDisplacement();
+    void resetVertexDisplacement(); //reset displacement of vertices to zero
     const Vector<Scalar,Dim>& vertexRestPosition(unsigned int vert_idx) const;
     Vector<Scalar,Dim> vertexCurrentPosition(unsigned int vert_idx) const;
 protected:

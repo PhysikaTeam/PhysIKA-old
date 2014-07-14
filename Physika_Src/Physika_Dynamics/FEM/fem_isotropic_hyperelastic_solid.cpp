@@ -70,8 +70,15 @@ void FEMIsotropicHyperelasticSolid<Scalar,Dim>::initConfiguration(const std::str
 }
 
 template <typename Scalar, int Dim>
+unsigned int FEMIsotropicHyperelasticSolid<Scalar,Dim>::materialNum() const
+{
+    return constitutive_model_.size();
+}
+
+template <typename Scalar, int Dim>
 void FEMIsotropicHyperelasticSolid<Scalar,Dim>::setHomogeneousMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material)
 {
+    constitutive_model_.clear();
 //TO DO
 }
 

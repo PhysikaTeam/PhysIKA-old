@@ -68,6 +68,7 @@ void FEMBase<Scalar,Dim>::loadSimulationMesh(const std::string &file_name)
         std::cerr<<"Failed to load simulation mesh from "<<file_name<<"\n";
         std::exit(EXIT_FAILURE);
     }
+    vertex_displacements_.resize(simulation_mesh_->vertNum());
 }
 
 template <typename Scalar, int Dim>
@@ -106,6 +107,7 @@ void FEMBase<Scalar,Dim>::setSimulationMesh(const VolumetricMesh<Scalar,Dim> &me
         PHYSIKA_ERROR("Unknown element type.");
         break;
     }
+    vertex_displacements_.resize(simulation_mesh_->vertNum());
 }
 
 template <typename Scalar, int Dim>

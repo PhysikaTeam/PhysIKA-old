@@ -32,8 +32,22 @@ IsotropicLinearElasticity<Scalar,Dim>::IsotropicLinearElasticity(Scalar par1, Sc
 }
 
 template <typename Scalar, int Dim>
+IsotropicLinearElasticity<Scalar,Dim>::IsotropicLinearElasticity(const IsotropicLinearElasticity<Scalar,Dim> &material)
+    :IsotropicHyperelasticMaterial<Scalar,Dim>(material)
+{
+}
+
+template <typename Scalar, int Dim>
 IsotropicLinearElasticity<Scalar,Dim>::~IsotropicLinearElasticity()
 {
+}
+
+template <typename Scalar, int Dim>
+IsotropicLinearElasticity<Scalar,Dim>& IsotropicLinearElasticity<Scalar,Dim>::operator= (const IsotropicLinearElasticity<Scalar,Dim> &material)
+{
+    this->mu_ = material.mu_;
+    this->lambda_ = material.lambda_;
+    return *this;
 }
 
 template <typename Scalar, int Dim>

@@ -41,6 +41,21 @@ IsotropicHyperelasticMaterial<Scalar,Dim>::IsotropicHyperelasticMaterial(Scalar 
 }
 
 template <typename Scalar, int Dim>
+IsotropicHyperelasticMaterial<Scalar,Dim>::IsotropicHyperelasticMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material)
+{
+    lambda_ = material.lambda_;
+    mu_ = material.mu_;
+}
+
+template <typename Scalar, int Dim>
+IsotropicHyperelasticMaterial<Scalar,Dim>& IsotropicHyperelasticMaterial<Scalar,Dim>::operator= (const IsotropicHyperelasticMaterial<Scalar,Dim> &material)
+{
+    lambda_ = material.lambda_;
+    mu_ = material.mu_;
+    return *this;
+}
+
+template <typename Scalar, int Dim>
 Scalar IsotropicHyperelasticMaterial<Scalar,Dim>::youngsModulus() const
 {
     Array<Scalar> young_and_poisson(2);
