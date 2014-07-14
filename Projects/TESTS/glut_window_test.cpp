@@ -41,7 +41,7 @@ void displayFunction()
     GlutWindow *cur_window = (GlutWindow*)glutGetWindowData();
     //cur_window->orbitCameraRight(0.1);
     cur_window->applyCameraAndLights();
-     
+    
 	//glLoadIdentity();
 	//glTranslatef(0.0f,0.0f,-3.0f);			
 	/*

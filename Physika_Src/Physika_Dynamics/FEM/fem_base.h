@@ -54,10 +54,15 @@ public:
     void setGravity(Scalar gravity);
     void loadSimulationMesh(const std::string &file_name); //load the simulation mesh from file
     void setSimulationMesh(const VolumetricMesh<Scalar,Dim> &mesh);  //set the simulation mesh via an external mesh
+    const VolumetricMesh<Scalar,Dim>* simulationMesh() const;
+    VolumetricMesh<Scalar,Dim>* simulationMesh();
 
-    //basic queries
     unsigned int numSimVertices() const; //number of simulation mesh vertices
     const Vector<Scalar,Dim>& vertexDisplacement(unsigned int vert_idx) const;
+    void setVertexDisplacement(unsigned int vert_idx, const Vector<Scalar,Dim> &u);
+    void resetVertexDisplacement();
+    const Vector<Scalar,Dim>& vertexRestPosition(unsigned int vert_idx) const;
+    Vector<Scalar,Dim> vertexCurrentPosition(unsigned int vert_idx) const;
 protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
     std::vector<Vector<Scalar,Dim> > vertex_displacements_;  //displacement of simulation mesh vertices

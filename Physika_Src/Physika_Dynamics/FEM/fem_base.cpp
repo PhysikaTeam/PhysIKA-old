@@ -109,17 +109,87 @@ void FEMBase<Scalar,Dim>::setSimulationMesh(const VolumetricMesh<Scalar,Dim> &me
 }
 
 template <typename Scalar, int Dim>
+const VolumetricMesh<Scalar,Dim>* FEMBase<Scalar,Dim>::simulationMesh() const
+{
+    return simulation_mesh_;
+}
+
+template <typename Scalar, int Dim>
+VolumetricMesh<Scalar,Dim>* FEMBase<Scalar,Dim>::simulationMesh()
+{
+    return simulation_mesh_;
+}
+
+template <typename Scalar, int Dim>
 unsigned int FEMBase<Scalar,Dim>::numSimVertices() const
 {
-    //TO DO: what if mesh not set yet
+    if(simulation_mesh_==NULL)
+    {
+        std::cerr<<"Simulation mesh not set.\n";
+        std::exit(EXIT_FAILURE);
+    }
     return simulation_mesh_->vertNum();
 }
 
 template <typename Scalar, int Dim>
 const Vector<Scalar,Dim>& FEMBase<Scalar,Dim>::vertexDisplacement(unsigned int vert_idx) const
 {
-    //TO DO: check
+    if(vert_idx >= vertex_displacements_.size())
+    {
+        std::cerr<<"Vertex index out of range.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return vertex_displacements_[vert_idx];
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setVertexDisplacement(unsigned int vert_idx, const Vector<Scalar,Dim> &u)
+{
+    if(vert_idx >= vertex_displacements_.size())
+    {
+        std::cerr<<"Vertex index out of range.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    vertex_displacements_[vert_idx] = u;
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::resetVertexDisplacement()
+{
+    for(unsigned int i = 0; i < vertex_displacements_.size(); ++i)
+        vertex_displacements_[i] = Vector<Scalar,Dim>(0);
+}
+
+template <typename Scalar, int Dim>
+const Vector<Scalar,Dim>& FEMBase<Scalar,Dim>::vertexRestPosition(unsigned int vert_idx) const
+{
+    if(simulation_mesh_==NULL)
+    {
+        std::cerr<<"Simulation mesh not set.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if(vert_idx >= vertex_displacements_.size())
+    {
+        std::cerr<<"Vertex index out of range.\n";
+        std::exit(EXIT_FAILURE);
+    }
     return simulation_mesh_->vertPos(vert_idx);
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexCurrentPosition(unsigned int vert_idx) const
+{
+    if(simulation_mesh_==NULL)
+    {
+        std::cerr<<"Simulation mesh not set.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if(vert_idx >= vertex_displacements_.size())
+    {
+        std::cerr<<"Vertex index out of range.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return simulation_mesh_->vertPos(vert_idx) + vertex_displacements_[vert_idx];  
 }
 
 //explicit instantiations
