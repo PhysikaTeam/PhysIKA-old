@@ -16,6 +16,7 @@
 #define PHYSIKA_DYNAMICS_FEM_FEM_ISOTROPIC_HYPERELASTIC_SOLID_H_
 
 #include <vector>
+#include <string>
 #include "Physika_Dynamics/FEM/fem_base.h"
 
 namespace Physika{
@@ -47,6 +48,11 @@ public:
     void read(const std::string &file_name);
     void addPlugin(DriverPluginBase<Scalar> *plugin);
     void initConfiguration(const std::string &file_name);
+
+    //set&&get constitutive model
+    void setHomogeneousMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material);
+    void setRegionWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);
+    void setElementWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);
 
 protected:
     std::vector<IsotropicHyperelasticMaterial<Scalar,Dim> *> constitutive_model_;

@@ -69,6 +69,24 @@ void FEMIsotropicHyperelasticSolid<Scalar,Dim>::initConfiguration(const std::str
 {//TO DO
 }
 
+template <typename Scalar, int Dim>
+void FEMIsotropicHyperelasticSolid<Scalar,Dim>::setHomogeneousMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void FEMIsotropicHyperelasticSolid<Scalar,Dim>::setRegionWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void FEMIsotropicHyperelasticSolid<Scalar,Dim>::setElementWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials)
+{
+//TO DO
+}
+
 //explicit instantiations
 template class FEMIsotropicHyperelasticSolid<float,2>;
 template class FEMIsotropicHyperelasticSolid<double,2>;
