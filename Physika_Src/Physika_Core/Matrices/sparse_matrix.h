@@ -112,7 +112,7 @@ protected:
     int cols_;
     Trituple<Scalar> ** row_head_;
     Trituple<Scalar> ** col_head_;
-#elif defined(PHYSIKA_USE_EIGEN_MATRIX)
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	Eigen::SparseMatrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> ptr_eigen_sparse_matrix_;
 #endif
 };
