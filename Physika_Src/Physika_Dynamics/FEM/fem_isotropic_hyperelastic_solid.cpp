@@ -12,6 +12,10 @@
  *
  */
 
+#include <cstdlib>
+#include <iostream>
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Dynamics/Constitutive_Models/isotropic_hyperelastic_material.h"
 #include "Physika_Dynamics/Constitutive_Models/isotropic_linear_elasticity.h"
 #include "Physika_Dynamics/Constitutive_Models/neo_hookean.h"
@@ -79,19 +83,111 @@ template <typename Scalar, int Dim>
 void FEMIsotropicHyperelasticSolid<Scalar,Dim>::setHomogeneousMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material)
 {
     constitutive_model_.clear();
-//TO DO
+    addMaterial(material);
 }
 
 template <typename Scalar, int Dim>
 void FEMIsotropicHyperelasticSolid<Scalar,Dim>::setRegionWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials)
 {
-//TO DO
+    unsigned int region_num = this->simulation_mesh_->regionNum();
+    if(materials.size() < region_num)
+    {
+        std::cerr<<"Size of materials must be no less than the number of simulation mesh regions.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    constitutive_model_.clear();
+    for(unsigned int i = 0; i < region_num; ++i)
+        addMaterial(*materials[i]);
 }
 
 template <typename Scalar, int Dim>
 void FEMIsotropicHyperelasticSolid<Scalar,Dim>::setElementWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials)
 {
-//TO DO
+    unsigned int ele_num = this->simulation_mesh_->eleNum();
+    if(materials.size() < ele_num)
+    {
+        std::cerr<<"Size of materials must be no less than the number of simulation mesh elements.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    constitutive_model_.clear();
+    for(unsigned int i = 0; i < ele_num; ++i)
+        addMaterial(*materials[i]);
+}
+
+template <typename Scalar, int Dim>
+const IsotropicHyperelasticMaterial<Scalar,Dim>* FEMIsotropicHyperelasticSolid<Scalar,Dim>::elementMaterial(unsigned int ele_idx) const
+{
+    unsigned int ele_num = this->simulation_mesh_->eleNum();
+    unsigned int region_num = this->simulation_mesh_->regionNum();
+    if(ele_idx >= ele_num)
+    {
+        std::cerr<<"Element index out of range.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    unsigned int material_num = constitutive_model_.size();
+    if(material_num == 0) //constitutive model not set
+        return NULL;
+    else if(material_num == 1)//homogeneous material
+        return constitutive_model_[0];
+    else if(material_num == region_num)//region-wise material
+    {
+        int region_idx = this->simulation_mesh_->eleRegionIndex(ele_idx);
+        return (region_idx == -1)? NULL : constitutive_model_[region_idx];
+    }
+    else if(material_num == ele_num) //element-wise material
+        return constitutive_model_[ele_idx];
+    else
+        PHYSIKA_ERROR("Invalid material number.");
+}
+
+template <typename Scalar, int Dim>
+IsotropicHyperelasticMaterial<Scalar,Dim>* FEMIsotropicHyperelasticSolid<Scalar,Dim>::elementMaterial(unsigned int ele_idx)
+{
+    unsigned int ele_num = this->simulation_mesh_->eleNum();
+    unsigned int region_num = this->simulation_mesh_->regionNum();
+    if(ele_idx >= ele_num)
+    {
+        std::cerr<<"Element index out of range.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    unsigned int material_num = constitutive_model_.size();
+    if(material_num == 0) //constitutive model not set
+        return NULL;
+    else if(material_num == 1)//homogeneous material
+        return constitutive_model_[0];
+    else if(material_num == region_num)//region-wise material
+    {
+        int region_idx = this->simulation_mesh_->eleRegionIndex(ele_idx);
+        return (region_idx == -1)? NULL : constitutive_model_[region_idx];
+    }
+    else if(material_num == ele_num) //element-wise material
+        return constitutive_model_[ele_idx];
+    else
+        PHYSIKA_ERROR("Invalid material number.");
+}
+
+template <typename Scalar, int Dim>
+void FEMIsotropicHyperelasticSolid<Scalar,Dim>::addMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material)
+{
+    IsotropicHyperelasticMaterial<Scalar,Dim> *single_material = NULL;
+    if(const IsotropicLinearElasticity<Scalar,Dim> *material_ptr = dynamic_cast<const IsotropicLinearElasticity<Scalar,Dim>*>(&material))
+    {
+        single_material = new IsotropicLinearElasticity<Scalar,Dim>(*material_ptr);
+    }
+    else if(const NeoHookean<Scalar,Dim> *material_ptr = dynamic_cast<const NeoHookean<Scalar,Dim>*>(&material))
+    {
+        single_material = new NeoHookean<Scalar,Dim>(*material_ptr);
+    }
+    else if(const StVK<Scalar,Dim> *material_ptr = dynamic_cast<const StVK<Scalar,Dim>*>(&material))
+    {
+        single_material = new StVK<Scalar,Dim>(*material_ptr);
+    }
+    else
+    {
+        PHYSIKA_ERROR("Unknown isotropic hyperelastic material.");
+    }
+    PHYSIKA_ASSERT(single_material);
+    constitutive_model_.push_back(single_material);
 }
 
 //explicit instantiations

@@ -51,10 +51,13 @@ public:
 
     //set&&get constitutive model
     unsigned int materialNum() const;
-    void setHomogeneousMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material);
-    void setRegionWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);
-    void setElementWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);
-
+    void setHomogeneousMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material);  
+    void setRegionWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);  //the number of materials must be no less than the number of regions on simulation mesh
+    void setElementWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);  //the number of materials must be no less than the number of simulation elements
+    const IsotropicHyperelasticMaterial<Scalar,Dim>* elementMaterial(unsigned int ele_idx) const;  //return the material of specific simulation element, return NULL if not set
+    IsotropicHyperelasticMaterial<Scalar,Dim>* elementMaterial(unsigned int ele_idx);
+protected:
+    void addMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material);
 protected:
     std::vector<IsotropicHyperelasticMaterial<Scalar,Dim> *> constitutive_model_;
 };
