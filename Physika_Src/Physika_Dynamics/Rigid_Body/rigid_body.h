@@ -76,8 +76,9 @@ public:
 	//dynamics
 	void update(Scalar dt);//update its configuration and velocity
     void addImpulse(Scalar magnitude, const Vector<Scalar, Dim>& direction, const Vector<Scalar, Dim>& global_position);//accumulate collision impulse to the rigid body. This will not change its velocity until velocityIntegral has been called
-    void addTranslationImpulse(const Vector<Scalar, Dim>& impulse);
-    void addAngularImpulse(const Vector<Scalar, Dim>& impulse);
+    void addTranslationImpulse(const Vector<Scalar, Dim>& impulse);//This will not change its velocity until velocityIntegral has been called
+    void addAngularImpulse(const Vector<Scalar, Dim>& impulse);//This will not change its velocity until velocityIntegral has been called
+    void performGravity(Scalar gravity, Scalar dt);//Attention! This will change its velocity
 
     Vector<Scalar, Dim> globalVertexPosition(unsigned int vertex_idnex) const;//get the position of a vertex in global frame
     Vector<Scalar, Dim> globalVertexVelocity(unsigned int vertex_index) const;//get the velocity of a vertex in global frame

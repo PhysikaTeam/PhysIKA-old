@@ -197,6 +197,14 @@ void RigidBody<Scalar, Dim>::addAngularImpulse(const Vector<Scalar, Dim>& impuls
 }
 
 template <typename Scalar,int Dim>
+void RigidBody<Scalar, Dim>::performGravity(Scalar gravity, Scalar dt)
+{
+    if(is_fixed_)
+        return;
+    global_translation_velocity_[1] -= gravity * dt;
+}
+
+template <typename Scalar,int Dim>
 Vector<Scalar, Dim> RigidBody<Scalar, Dim>::globalVertexPosition(unsigned int vertex_idnex) const
 {
     Vector<Scalar, Dim> local_position = mesh_->vertexPosition(vertex_idnex);
@@ -227,6 +235,8 @@ void RigidBody<Scalar, Dim>::resetTemporaryVariables()
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::velocityIntegral(Scalar dt)
 {
+    if(is_fixed_)
+        return;
     global_translation_velocity_ += global_translation_impulse_ / mass_;
     global_angular_velocity_ += spatialInertiaTensorInverse() * global_angular_impulse_;
 }
@@ -234,6 +244,8 @@ void RigidBody<Scalar, Dim>::velocityIntegral(Scalar dt)
 template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::configurationIntegral(Scalar dt)
 {
+    if(is_fixed_)
+        return;
     global_translation_ += global_translation_velocity_ * dt;
     Quaternion<Scalar> quad;
     quad.setX(global_angular_velocity_[0]);

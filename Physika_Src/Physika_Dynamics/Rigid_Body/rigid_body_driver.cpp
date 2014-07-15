@@ -112,7 +112,11 @@ ObjectBVH<Scalar, Dim>* RigidBodyArchive<Scalar, Dim>::objectBVH()
 
 template <typename Scalar,int Dim>
 RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
-	scene_bvh_()
+	scene_bvh_(),
+    gravity_(9.81),
+    time_step_(0.01),
+    frame_(0),
+    step_(0)
 {
 
 }
@@ -190,9 +194,10 @@ void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
     }
 
     //simulation step
-    updateRigidBody(dt);
+    performGravity(dt);
 	collisionDetection();
     collisionResponse();
+    updateRigidBody(dt);
 
     //plugin
     for(unsigned int i = 0; i < plugin_num; ++i)
@@ -206,8 +211,7 @@ void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
 template <typename Scalar,int Dim>
 Scalar RigidBodyDriver<Scalar, Dim>::computeTimeStep()
 {
-	Scalar time_step = static_cast<Scalar>(0);
-	return time_step;
+	return time_step_;
 }
 
 template <typename Scalar,int Dim>
@@ -262,6 +266,12 @@ void RigidBodyDriver<Scalar, Dim>::addRigidBody(RigidBody<Scalar, Dim>* rigid_bo
 }
 
 template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::setGravity(Scalar gravity)
+{
+    gravity_ = gravity;
+}
+
+template <typename Scalar,int Dim>
 unsigned int RigidBodyDriver<Scalar, Dim>::numRigidBody() const
 {
 	return static_cast<unsigned int>(rigid_body_archives_.size());
@@ -291,12 +301,35 @@ ContactPointManager<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::contactPoints()
 }
 
 template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::performGravity(Scalar dt)
+{
+    unsigned int num_rigid_body = numRigidBody();
+    RigidBody<Scalar, Dim>* rigid_body;
+    for(unsigned int i = 0; i < num_rigid_body; i++)
+    {
+        rigid_body = rigid_body_archives_[i]->rigidBody();
+        if(!rigid_body->isFixed())
+        {
+            rigid_body->performGravity(gravity_, dt);
+        }
+    }
+}
+
+template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::updateRigidBody(Scalar dt)
 {
     //update
     unsigned int num_rigid_body = numRigidBody();
+    RigidBody<Scalar, Dim>* rigid_body;
     for(unsigned int i = 0; i < num_rigid_body; i++)
-        rigid_body_archives_[i]->rigidBody()->update(dt);
+    {
+        rigid_body = rigid_body_archives_[i]->rigidBody();
+        if(!rigid_body->isFixed())
+        {
+            //rigid_body->addTranslationImpulse(gravity * rigid_body->mass());//We don't update the velocity and position of a fixed body.
+            rigid_body->update(dt);
+        }
+    }
 }
 
 template <typename Scalar,int Dim>
@@ -622,19 +655,22 @@ void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, S
             for(unsigned int j = 0; j < size_non_zeros; ++j)
             {
                 if(non_zeros[j].col_ != i)//not diag
-                    delta += non_zeros[j].value_ * z_norm[j];
+                {
+                    delta += non_zeros[j].value_ * z_norm[non_zeros[j].col_];
+                }
             }
             m_value = JMJ(i, i);
+
             if(m_value != 0)
                 delta = (Jv[i] - JMDz_fric[i] - delta) / m_value;
             else
                 delta = 0;
+            
             if(delta < 0)
                 z_norm[i] = 0;
             else
                 z_norm[i] = delta;
         }
-
         //friction step
         DMJz_norm = DMJ * z_norm;
         for(unsigned int i = 0; i < s; ++i)
@@ -646,7 +682,7 @@ void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, S
             for(unsigned int j = 0; j < size_non_zeros; ++j)
             {
                 if(non_zeros[j].col_ != i)//not diag
-                    delta += non_zeros[j].value_ * z_fric[j];
+                    delta += non_zeros[j].value_ * z_fric[non_zeros[j].col_];
             }
             m_value = DMD(i, i);
             if(m_value != 0)
@@ -714,7 +750,6 @@ void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, Vector
         }
         rigid_body->addTranslationImpulse(Vector<Scalar, 3>(impulse[0], impulse[1], impulse[2]));
         rigid_body->addAngularImpulse(Vector<Scalar, 3>(impulse[3], impulse[4], impulse[5]));
-        std::cerr<<impulse<<std::endl;
     }
 }
 

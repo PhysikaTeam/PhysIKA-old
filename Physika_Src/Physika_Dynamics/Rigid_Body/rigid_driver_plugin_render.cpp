@@ -186,7 +186,7 @@ void RigidDriverPluginRender<Scalar, Dim>::active()
 template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::idle()
 {
-	active_render_->rigid_driver_->advanceStep(0.1);
+	active_render_->rigid_driver_->advanceStep(active_render_->rigid_driver_->computeTimeStep());
 
 	if(active_render_->is_render_contact_face_)//get contact faces' ids
 	{
