@@ -551,11 +551,11 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar>
     }
     SparseMatrix<Scalar> result(rows_,mat2.cols_);
     for(unsigned int i=0;i<rows_;++i)
-        for(unsigned int j=0;j<cols_;++j)
+		for(unsigned int j=0;j<mat2.cols_;++j)
         {
             Scalar sum = 0;
             Trituple<Scalar> *pointer_x = row_head_[i], *pointer_y = mat2.col_head_[j];
-            while(pointer_x && pointer_y)
+            while(pointer_x!=NULL && pointer_y!=NULL)
             {
                 if(pointer_x->col_ == pointer_y->row_)
                 {
