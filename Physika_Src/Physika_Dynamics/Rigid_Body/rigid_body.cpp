@@ -58,7 +58,7 @@ RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density):
 }
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density):
+RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density):
     object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
     inertia_tensor_(),
     is_fixed_(false),
@@ -75,7 +75,7 @@ RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& 
 }
 
 template <typename Scalar,int Dim>
-RigidBody<Scalar, Dim>::RigidBody(RigidBody<Scalar, Dim>& rigid_body)
+RigidBody<Scalar, Dim>::RigidBody(const RigidBody<Scalar, Dim>& rigid_body)
 {
     copy(rigid_body);
 }
@@ -87,7 +87,7 @@ RigidBody<Scalar, Dim>::~RigidBody()
 }
 
 template <typename Scalar,int Dim>
-void RigidBody<Scalar, Dim>::copy(RigidBody<Scalar, Dim>& rigid_body)
+void RigidBody<Scalar, Dim>::copy(const RigidBody<Scalar, Dim>& rigid_body)
 {
     object_type_ = rigid_body.object_type_;
     mesh_ = rigid_body.mesh_;
@@ -110,35 +110,35 @@ void RigidBody<Scalar, Dim>::copy(RigidBody<Scalar, Dim>& rigid_body)
 }
 
 template <typename Scalar,int Dim>
-void RigidBody<Scalar, Dim>::setTranslation(Vector<Scalar, 3>& translation)//Only defined to 3-Dimension
+void RigidBody<Scalar, Dim>::setTranslation(const Vector<Scalar, 3>& translation)//Only defined to 3-Dimension
 {
     transform_.setTranslation(translation);
     recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
-void RigidBody<Scalar, Dim>::setRotation(Vector<Scalar, 3>& rotation)//Only defined to 3-Dimension
+void RigidBody<Scalar, Dim>::setRotation(const Vector<Scalar, 3>& rotation)//Only defined to 3-Dimension
 {
     transform_.setRotation(rotation);
     recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
-void RigidBody<Scalar, Dim>::setRotation(Quaternion<Scalar>& rotation)//Only defined to 3-Dimension
+void RigidBody<Scalar, Dim>::setRotation(const Quaternion<Scalar>& rotation)//Only defined to 3-Dimension
 {
     transform_.setRotation(rotation);
     recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
-void RigidBody<Scalar, Dim>::setRotation(SquareMatrix<Scalar, 3>& rotation)//Only defined to 3-Dimension
+void RigidBody<Scalar, Dim>::setRotation(const SquareMatrix<Scalar, 3>& rotation)//Only defined to 3-Dimension
 {
     transform_.setRotation(rotation);
     recalculatePosition();
 }
 
 template <typename Scalar,int Dim>
-void RigidBody<Scalar, Dim>::setScale(Vector<Scalar, 3>& scale)//Only defined to 3-Dimension. Inertia tensor will be recalculated
+void RigidBody<Scalar, Dim>::setScale(const Vector<Scalar, 3>& scale)//Only defined to 3-Dimension. Inertia tensor will be recalculated
 {
     transform_.setScale(scale);
     inertia_tensor_.setBody(mesh_, transform_.scale(), density_, local_mass_center_, mass_);
@@ -156,7 +156,7 @@ void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, Scalar densi
 }
 
 template <typename Scalar,int Dim>
-void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density)
+void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density)
 {
     mesh_ = mesh;
     transform_ = transform;
