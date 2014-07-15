@@ -46,6 +46,7 @@ StVK<Scalar,Dim>& StVK<Scalar,Dim>::operator= (const StVK<Scalar,Dim> &material)
 {
     this->mu_ = material.mu_;
     this->lambda_ = material.lambda_;
+    return *this;
 }
 
 template <typename Scalar, int Dim>

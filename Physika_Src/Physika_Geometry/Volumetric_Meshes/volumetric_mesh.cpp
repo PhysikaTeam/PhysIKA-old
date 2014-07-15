@@ -13,6 +13,7 @@
  */
 
 #include <cstdlib>
+#include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 using std::string;
@@ -119,6 +120,19 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsi
 }
 
 template <typename Scalar, int Dim>
+int VolumetricMesh<Scalar,Dim>::eleRegionIndex(unsigned int ele_idx) const
+{
+    for(unsigned int i = 0; i < regions_.size(); ++i)
+    {
+        const vector<unsigned int> &region_elements = regions_[i]->elements();
+        vector<unsigned int>::const_iterator iter = find(region_elements.begin(),region_elements.end(),ele_idx);
+        if(iter != region_elements.end())
+            return static_cast<int>(iter - region_elements.begin());
+    }
+    return -1;
+}
+
+template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::regionNum() const
 {
     return regions_.size();
@@ -136,9 +150,9 @@ const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const
+const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const
 {
-    int global_vert_idx = eleVertIndex(ele_idx,vert_idx);
+    unsigned int global_vert_idx = eleVertIndex(ele_idx,local_vert_idx);
     return vertPos(global_vert_idx);
 }
 
