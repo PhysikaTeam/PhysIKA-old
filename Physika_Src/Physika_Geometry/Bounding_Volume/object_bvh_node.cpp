@@ -142,7 +142,8 @@ void ObjectBVHNode<Scalar, Dim>::buildFromFace()
 	unsigned int point_num = face.numVertices();
 	for(unsigned int i = 0; i < point_num; ++i)
 	{
-		this->bounding_volume_->unionWith(*dynamic_cast<Vector<Scalar, Dim>* >(&(object->vertexPosition(face.vertex(i).positionIndex()))));
+        Vector<Scalar,3> vertex_pos = object->vertexPosition(face.vertex(i).positionIndex());
+		this->bounding_volume_->unionWith(*dynamic_cast<Vector<Scalar, Dim>* >(&vertex_pos));
 	}
 }
 
