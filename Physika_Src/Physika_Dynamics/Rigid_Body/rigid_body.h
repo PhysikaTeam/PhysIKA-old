@@ -33,25 +33,25 @@ public:
 	//constructors && deconstructors
 	RigidBody();
     RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density = 1);
-    RigidBody(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density = 1);
-    RigidBody(RigidBody<Scalar, Dim>& rigid_body);
+    RigidBody(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density = 1);
+    RigidBody(const RigidBody<Scalar, Dim>& rigid_body);
 	virtual ~RigidBody();
 
 	//get & set
-    void copy(RigidBody<Scalar, Dim>& rigid_body);//Using this function for construction is strongly recommended because inertia tensor will not be recalculated for the same mesh.
+    void copy(const RigidBody<Scalar, Dim>& rigid_body);//Using this function for construction is strongly recommended because inertia tensor will not be recalculated for the same mesh.
     inline typename CollidableObject<Scalar, Dim>::ObjectType objectType() const {return object_type_;};
     inline SurfaceMesh<Scalar>* mesh() {return mesh_;};
-    inline Transform<Scalar> transform() const {return transform_;};
-    inline Transform<Scalar> transform() {return transform_;};
+    inline const Transform<Scalar>& transform() const {return transform_;};
+    inline Transform<Scalar>& transform() {return transform_;};
 	inline const Transform<Scalar>* transformPtr() const {return &transform_;};
 	inline Transform<Scalar>* transformPtr() {return &transform_;};//WARNING! Don't use this to modify the transform of this rigid body. Use setTranslate(), setRotate() and setScale() instead.
-    void setTranslation(Vector<Scalar, 3>& translation);//Only defined to 3-Dimension
-    void setRotation(Vector<Scalar, 3>& rotation);//Only defined to 3-Dimension
-    void setRotation(Quaternion<Scalar>& rotation);//Only defined to 3-Dimension
-    void setRotation(SquareMatrix<Scalar, 3>& rotation);//Only defined to 3-Dimension
-    void setScale(Vector<Scalar, 3>& scale);//Only defined to 3-Dimension. Inertia tensor will be recalculated
+    void setTranslation(const Vector<Scalar, 3>& translation);//Only defined to 3-Dimension
+    void setRotation(const Vector<Scalar, 3>& rotation);//Only defined to 3-Dimension
+    void setRotation(const Quaternion<Scalar>& rotation);//Only defined to 3-Dimension
+    void setRotation(const SquareMatrix<Scalar, 3>& rotation);//Only defined to 3-Dimension
+    void setScale(const Vector<Scalar, 3>& scale);//Only defined to 3-Dimension. Inertia tensor will be recalculated
     void setProperty(SurfaceMesh<Scalar>* mesh, Scalar density = 1);//Inertia tensor will be recalculated
-    void setProperty(SurfaceMesh<Scalar>* mesh, Transform<Scalar>& transform, Scalar density = 1);//Inertia tensor will be recalculated
+    void setProperty(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density = 1);//Inertia tensor will be recalculated
     inline void setFixed(bool is_fixed) {is_fixed_ = is_fixed;};
     inline bool isFixed() const {return is_fixed_;};
     inline void setCoeffRestitution(Scalar coeff_restitution) {coeff_restitution_ = coeff_restitution;};
@@ -76,8 +76,9 @@ public:
 	//dynamics
 	void update(Scalar dt);//update its configuration and velocity
     void addImpulse(Scalar magnitude, const Vector<Scalar, Dim>& direction, const Vector<Scalar, Dim>& global_position);//accumulate collision impulse to the rigid body. This will not change its velocity until velocityIntegral has been called
-    void addTranslationImpulse(const Vector<Scalar, Dim>& impulse);
-    void addAngularImpulse(const Vector<Scalar, Dim>& impulse);
+    void addTranslationImpulse(const Vector<Scalar, Dim>& impulse);//This will not change its velocity until velocityIntegral has been called
+    void addAngularImpulse(const Vector<Scalar, Dim>& impulse);//This will not change its velocity until velocityIntegral has been called
+    void performGravity(Scalar gravity, Scalar dt);//Attention! This will change its velocity
 
     Vector<Scalar, Dim> globalVertexPosition(unsigned int vertex_idnex) const;//get the position of a vertex in global frame
     Vector<Scalar, Dim> globalVertexVelocity(unsigned int vertex_index) const;//get the velocity of a vertex in global frame

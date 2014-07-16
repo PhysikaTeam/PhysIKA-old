@@ -78,6 +78,7 @@ public:
 
 	//get & set, add & delete
 	virtual void addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild = true);//is_rebuild means whether rebuild the scene BVH after adding this body.
+    void setGravity(Scalar gravity);
 	unsigned int numRigidBody() const;
 	RigidBody<Scalar, Dim>* rigidBody(unsigned int index);
 	CollisionDetectionResult<Scalar, Dim>& collisionResult();
@@ -91,10 +92,13 @@ protected:
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
     CollisionDetectionResult<Scalar, Dim> collision_result_;
     ContactPointManager<Scalar, Dim> contact_points_;
+    Scalar gravity_;
+    Scalar time_step_;
     int frame_;
     int step_;
 
     //dynamics, only designed for 3-dimension for now
+    virtual void performGravity(Scalar dt);
     virtual void updateRigidBody(Scalar dt);
     virtual bool collisionDetection();
     virtual void collisionResponse();
@@ -102,7 +106,7 @@ protected:
     virtual void updateCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF);//update coefficient of restitution and friction
     virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
                                   VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
-                                  VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count = 5);//solve the BLCP equation with PGS. Refer to [Tonge et al. 2012]
+                                  VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count = 50);//solve the BLCP equation with PGS. Refer to [Tonge et al. 2012]
     virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T);//apply impulse to rigid bodies. This step will not cause velocity and configuration integral
 };
 
