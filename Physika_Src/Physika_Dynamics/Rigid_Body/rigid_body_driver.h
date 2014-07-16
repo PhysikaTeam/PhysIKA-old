@@ -15,7 +15,8 @@
 #ifndef PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_DRIVER_H_
 #define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_DRIVER_H_
 
-#include<vector>
+#include <string>
+#include <vector>
 #include "Physika_Dynamics/Driver/driver_base.h"
 #include "Physika_Geometry/Bounding_Volume/bvh_base.h"
 #include "Physika_Geometry/Bounding_Volume/scene_bvh.h"
@@ -68,9 +69,9 @@ public:
 	virtual ~RigidBodyDriver();
 
 	//inherit functions
+    void initConfiguration(const std::string &file_name);
 	void run();//run the simulation from start frame to end frame
 	void advanceFrame();//advance one frame
-	void initialize();//initialize before the simulation
 	void advanceStep(Scalar dt);//advance one time step
 	Scalar computeTimeStep();//compute time step with respect to simulation specific conditions
 	void write(const std::string &file_name);//write simulation data to file
@@ -97,6 +98,8 @@ protected:
     int frame_;
     int step_;
 
+    //inherit function
+    void initialize();//initialize before the simulation
     //dynamics, only designed for 3-dimension for now
     virtual void performGravity(Scalar dt);
     virtual void updateRigidBody(Scalar dt);

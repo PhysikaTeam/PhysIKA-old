@@ -133,6 +133,12 @@ RigidBodyDriver<Scalar, Dim>::~RigidBodyDriver()
 }
 
 template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::initConfiguration(const std::string &file_name)
+{
+
+}
+
+template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::run()
 {
 
@@ -166,15 +172,6 @@ void RigidBodyDriver<Scalar, Dim>::advanceFrame()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::initialize()
 {
-    //plugin
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onInitialize(frame_);
-	}
 }
 
 template <typename Scalar,int Dim>
