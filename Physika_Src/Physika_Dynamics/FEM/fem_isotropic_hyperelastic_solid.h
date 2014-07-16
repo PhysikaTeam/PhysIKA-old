@@ -1,6 +1,6 @@
 /*
  * @file fem_isotropic_hyperelastic_solid.h 
- * @Brief FEM driver for isotropic hyperelastic solids, not necessarilly homogeneous.
+ * @Brief FEM driver for isotropic hyperelastic solids, not necessarily homogeneous.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -24,7 +24,7 @@ namespace Physika{
 template <typename Scalar, int Dim> class IsotropicHyperelasticMaterial;
 
 /*
- * FEM driver for isotropic hyperelastic solids, not necessarilly homogeneous:
+ * FEM driver for isotropic hyperelastic solids, not necessarily homogeneous:
  * 1. All elements share one constitutive model if only one is provided. The solid
  *    is homogeneous in this case.
  * 2. Elements in the same region of simulation mesh share one constitutive model. In this
@@ -42,12 +42,11 @@ public:
     ~FEMIsotropicHyperelasticSolid();
 
     //virtual methods
-    void initialize();
+    void initConfiguration(const std::string &file_name);
     void advanceStep(Scalar dt);
     void write(const std::string &file_name);
     void read(const std::string &file_name);
     void addPlugin(DriverPluginBase<Scalar> *plugin);
-    void initConfiguration(const std::string &file_name);
 
     //set&&get constitutive model
     unsigned int materialNum() const;
@@ -57,6 +56,7 @@ public:
     const IsotropicHyperelasticMaterial<Scalar,Dim>* elementMaterial(unsigned int ele_idx) const;  //return the material of specific simulation element, return NULL if not set
     IsotropicHyperelasticMaterial<Scalar,Dim>* elementMaterial(unsigned int ele_idx);
 protected:
+    void initialize();
     void addMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material);
 protected:
     std::vector<IsotropicHyperelasticMaterial<Scalar,Dim> *> constitutive_model_;

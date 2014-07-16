@@ -53,14 +53,3 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_SURFACE_MESH_FACE_H_
-
-
-
-
-
-
-
-
-
-
-

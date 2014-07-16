@@ -133,7 +133,7 @@ void DriverBase<Scalar>::addPlugin(DriverPluginBase<Scalar>* plugin)
 {
     if(plugin == NULL)
     {
-        std::cerr<<"Null plugin!"<<std::endl;
+        std::cerr<<"Cannot add NULL plugin, operation ignored!"<<std::endl;
         return;
     }
     plugin->setDriver(this);

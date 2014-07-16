@@ -1,6 +1,6 @@
 /*
  * @file fem_isotropic_hyperelastic_solid.cpp 
- * @Brief FEM driver for isotropic hyperelastic solids, not necessarilly homogeneous.
+ * @Brief FEM driver for isotropic hyperelastic solids, not necessarily homogeneous.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -44,7 +44,7 @@ FEMIsotropicHyperelasticSolid<Scalar,Dim>::~FEMIsotropicHyperelasticSolid()
 }
 
 template <typename Scalar, int Dim>
-void FEMIsotropicHyperelasticSolid<Scalar,Dim>::initialize()
+void FEMIsotropicHyperelasticSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
 {//TO DO
 }
 
@@ -65,11 +65,6 @@ void FEMIsotropicHyperelasticSolid<Scalar,Dim>::read(const std::string &file_nam
 
 template <typename Scalar, int Dim>
 void FEMIsotropicHyperelasticSolid<Scalar,Dim>::addPlugin(DriverPluginBase<Scalar> *plugin)
-{//TO DO
-}
-
-template <typename Scalar, int Dim>
-void FEMIsotropicHyperelasticSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
 {//TO DO
 }
 
@@ -164,6 +159,11 @@ IsotropicHyperelasticMaterial<Scalar,Dim>* FEMIsotropicHyperelasticSolid<Scalar,
         return constitutive_model_[ele_idx];
     else
         PHYSIKA_ERROR("Invalid material number.");
+}
+
+template <typename Scalar, int Dim>
+void FEMIsotropicHyperelasticSolid<Scalar,Dim>::initialize()
+{//TO DO
 }
 
 template <typename Scalar, int Dim>

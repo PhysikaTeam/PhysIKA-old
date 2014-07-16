@@ -19,7 +19,6 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Config_File/config_file.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
 
 namespace Physika{
@@ -42,12 +41,11 @@ public:
     virtual ~FEMBase();
 
     //virtual methods for subclass to implement
-    virtual void initialize()=0;    
+    virtual void initConfiguration(const std::string &file_name)=0;
     virtual void advanceStep(Scalar dt)=0;
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin)=0;
-    virtual void initConfiguration(const std::string &file_name)=0; //init configurations for simulation via configration file
     
     //getters && setters
     Scalar gravity() const;
@@ -64,10 +62,11 @@ public:
     const Vector<Scalar,Dim>& vertexRestPosition(unsigned int vert_idx) const;
     Vector<Scalar,Dim> vertexCurrentPosition(unsigned int vert_idx) const;
 protected:
+    virtual void initialize()=0;    
+protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
     std::vector<Vector<Scalar,Dim> > vertex_displacements_;  //displacement of simulation mesh vertices
     Scalar gravity_;
-    ConfigFile config_parser_;
 };
 
 }  //end of namespace Physika
