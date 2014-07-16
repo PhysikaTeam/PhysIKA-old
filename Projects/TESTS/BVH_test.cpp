@@ -40,6 +40,8 @@
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_2d.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_3d.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_render.h"

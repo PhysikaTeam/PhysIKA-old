@@ -100,8 +100,13 @@ void CollisionDetectionResult<Scalar, Dim>::cleanCollisionPairs()
 template <typename Scalar,int Dim>
 void CollisionDetectionResult<Scalar, Dim>::addCollisionPair(MeshBasedCollidableObject<Scalar>* object_lhs, MeshBasedCollidableObject<Scalar>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index)
 {
-	CollisionPairMeshToMesh<Scalar, Dim>* collision_pair = new CollisionPairMeshToMesh<Scalar, Dim>(current_object_lhs_idx_, current_object_rhs_idx_, object_lhs, object_rhs, face_lhs_index, face_rhs_index);
-	collision_pairs_.push_back(collision_pair);
+    if(Dim == 2)
+    {
+        std::cerr<<"Can't add a 3D collision pair to 2D results!"<<std::endl;
+        return;
+    }
+	CollisionPairMeshToMesh<Scalar>* collision_pair = new CollisionPairMeshToMesh<Scalar>(current_object_lhs_idx_, current_object_rhs_idx_, object_lhs, object_rhs, face_lhs_index, face_rhs_index);
+	collision_pairs_.push_back(dynamic_cast<CollisionPairBase<Scalar, Dim>*>(collision_pair));
 }
 
 template <typename Scalar,int Dim>
@@ -111,6 +116,8 @@ void CollisionDetectionResult<Scalar, Dim>::resetCollisionResults()
 	cleanCollisionPairs();
 }
 
+template class CollisionDetectionResult<float, 2>;
+template class CollisionDetectionResult<double, 2>;
 template class CollisionDetectionResult<float, 3>;
 template class CollisionDetectionResult<double, 3>;
 

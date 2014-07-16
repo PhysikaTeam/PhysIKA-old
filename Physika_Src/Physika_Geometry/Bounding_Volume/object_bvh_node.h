@@ -52,8 +52,7 @@ protected:
 	bool has_face_;
 	unsigned int face_index_;
 
-	//internal function
-	void buildFromFace();
+    void buildFromFace();
 };
 
 }  //end of namespace Physika

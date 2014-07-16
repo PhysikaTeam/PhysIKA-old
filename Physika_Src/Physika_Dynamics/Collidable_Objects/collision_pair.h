@@ -61,8 +61,8 @@ public:
 };
 
 //Face pair of a mesh-to-mesh collision
-template <typename Scalar,int Dim>
-class CollisionPairMeshToMesh : public CollisionPairBase<Scalar, Dim>
+template <typename Scalar>
+class CollisionPairMeshToMesh : public CollisionPairBase<Scalar, 3>
 {
 public:
 	CollisionPairMeshToMesh(unsigned int object_lhs_index, unsigned int object_rhs_index,
@@ -73,10 +73,10 @@ public:
     typename CollidableObjectInternal::ObjectType objectTypeLhs() const;
     typename CollidableObjectInternal::ObjectType objectTypeRhs() const;
 
-	const CollidableObject<Scalar, Dim>* objectLhs() const;
-	CollidableObject<Scalar, Dim>* objectLhs();
-	const CollidableObject<Scalar, Dim>* objectRhs() const;
-	CollidableObject<Scalar, Dim>* objectRhs();
+	const CollidableObject<Scalar, 3>* objectLhs() const;
+	CollidableObject<Scalar, 3>* objectLhs();
+	const CollidableObject<Scalar, 3>* objectRhs() const;
+	CollidableObject<Scalar, 3>* objectRhs();
 	const MeshBasedCollidableObject<Scalar>* meshObjectLhs() const;
 	MeshBasedCollidableObject<Scalar>* meshObjectLhs();
 	const MeshBasedCollidableObject<Scalar>* meshObjectRhs() const;

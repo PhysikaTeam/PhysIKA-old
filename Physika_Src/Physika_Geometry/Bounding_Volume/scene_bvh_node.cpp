@@ -105,6 +105,8 @@ void SceneBVHNode<Scalar, Dim>::buildFromObjectBVH()
 	this->bounding_volume_->setBoundingVolume(object_bvh_->boundingVolume());
 }
 
+template class SceneBVHNode<float, 2>;
+template class SceneBVHNode<double, 2>;
 template class SceneBVHNode<float, 3>;
 template class SceneBVHNode<double, 3>;
 

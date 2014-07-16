@@ -298,6 +298,8 @@ bool BVHNodeBase<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const ta
 }
 
 //explicit instantitation
+template class BVHNodeBase<float, 2>;
+template class BVHNodeBase<double, 2>;
 template class BVHNodeBase<float, 3>;
 template class BVHNodeBase<double, 3>;
 

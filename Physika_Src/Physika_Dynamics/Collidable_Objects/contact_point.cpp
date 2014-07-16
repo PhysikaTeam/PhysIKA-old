@@ -118,7 +118,7 @@ void ContactPointManager<Scalar, Dim>::setCollisionResult(CollisionDetectionResu
         collision_pair = collision_result.collisionPairs()[i];
         if(collision_pair->objectTypeLhs() == CollidableObjectInternal::MESH_BASED && collision_pair->objectTypeRhs() == CollidableObjectInternal::MESH_BASED)
         {
-            getMeshContactPoint(dynamic_cast<CollisionPairMeshToMesh<Scalar, Dim>*>(collision_pair));
+            getMeshContactPoint(dynamic_cast<CollisionPairMeshToMesh<Scalar>*>(collision_pair));
         }
         else
         {
@@ -180,8 +180,14 @@ void ContactPointManager<Scalar, Dim>::cleanContactPoints()
 }
 
 template <typename Scalar,int Dim>
-void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMesh<Scalar, Dim>* collision_pair)
+void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMesh<Scalar>* collision_pair)
 {
+    if(Dim == 2)
+    {
+        std::cerr<<"Can't convert 2D collision!"<<std::endl;
+        return;
+    }
+
     if(collision_pair == NULL)
     {
         std::cerr<<"Null collision pair!"<<std::endl;
@@ -265,7 +271,8 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         {
             contact_normal_lhs.normalize();
             ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectLhsIdx(), collision_pair->objectRhsIdx(),
-                                                                                    overlap_point, contact_normal_lhs);
+                                                                                    *dynamic_cast<Vector<Scalar, Dim>*>(&overlap_point), 
+                                                                                    *dynamic_cast<Vector<Scalar, Dim>*>(&contact_normal_lhs));
             contact_points_.push_back(contact_point);
         }
     }
@@ -274,8 +281,12 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     delete[] vertex_rhs;
 }
 
+template class ContactPoint<float, 2>;
+template class ContactPoint<double, 2>;
 template class ContactPoint<float, 3>;
 template class ContactPoint<double, 3>;
+template class ContactPointManager<float, 2>;
+template class ContactPointManager<double, 2>;
 template class ContactPointManager<float, 3>;
 template class ContactPointManager<double, 3>;
 

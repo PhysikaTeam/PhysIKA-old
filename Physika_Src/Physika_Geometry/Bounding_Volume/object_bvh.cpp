@@ -52,16 +52,27 @@ void ObjectBVH<Scalar, Dim>::setCollidableObject(CollidableObject<Scalar, Dim>* 
 		buildFromMeshObject((MeshBasedCollidableObject<Scalar>*)collidable_object_);
 }
 
-template <typename Scalar,int Dim>
+template <typename Scalar, int Dim>
 void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scalar>* collidable_object)
 {
+    if(Dim == 2)
+    {
+        std::cerr<<"Can't build a 2D BVH from a 3D mesh!"<<std::endl;
+        return;
+    }
 	if(!this->isEmpty())
 		BVHBase<Scalar, Dim>::clean();
 	if(collidable_object == NULL)
+    {
+        std::cerr<<"Null object when building a BVH from mesh!"<<std::endl;
 		return;
+    }
 	SurfaceMesh<Scalar>* mesh = collidable_object->mesh();
 	if(mesh == NULL)
+    {
+        std::cerr<<"Null mesh when building a BVH from mesh!"<<std::endl;
 		return;
+    }
 	ObjectBVHNode<Scalar, Dim>* node = NULL;
 
 	unsigned int group_num = mesh->numGroups();
@@ -74,7 +85,7 @@ void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scala
 			node = new ObjectBVHNode<Scalar, Dim>();
 			node->setLeaf(true);
 			node->setBVType(this->bv_type_);
-			node->setObject(collidable_object);
+			node->setObject(dynamic_cast<CollidableObject<Scalar, Dim>* >(collidable_object));
 			node->setFaceIndex(face_idx);
 			this->addNode(node);
 		}
@@ -82,6 +93,8 @@ void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scala
 	this->root_node_ = BVHBase<Scalar, Dim>::buildFromLeafList(0, this->numLeaf());
 }
 
+template class ObjectBVH<float, 2>;
+template class ObjectBVH<double, 2>;
 template class ObjectBVH<float, 3>;
 template class ObjectBVH<double, 3>;
 

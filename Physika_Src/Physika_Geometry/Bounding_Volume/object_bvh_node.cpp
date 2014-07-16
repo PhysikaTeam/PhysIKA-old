@@ -15,7 +15,9 @@
 #include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
 #include "Physika_Geometry/Bounding_Volume/object_bvh_node.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume_octagon.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
@@ -115,9 +117,14 @@ bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const 
 	return false;
 }
 
-template <typename Scalar,int Dim>
+template <typename Scalar, int Dim>
 void ObjectBVHNode<Scalar, Dim>::buildFromFace()
 {
+    if(Dim == 2)
+    {
+        std::cerr<<"Can't build a 2D BVH from a 3D mesh!"<<std::endl;
+        return;
+    }
 	this->is_leaf_ = true;
 	if(!has_face_)
 		return;
@@ -135,10 +142,12 @@ void ObjectBVHNode<Scalar, Dim>::buildFromFace()
 	unsigned int point_num = face.numVertices();
 	for(unsigned int i = 0; i < point_num; ++i)
 	{
-		this->bounding_volume_->unionWith(object->vertexPosition(face.vertex(i).positionIndex()));
+		this->bounding_volume_->unionWith(*dynamic_cast<Vector<Scalar, Dim>* >(&(object->vertexPosition(face.vertex(i).positionIndex()))));
 	}
 }
 
+template class ObjectBVHNode<float, 2>;
+template class ObjectBVHNode<double, 2>;
 template class ObjectBVHNode<float, 3>;
 template class ObjectBVHNode<double, 3>;
 

@@ -20,7 +20,7 @@
 namespace Physika{
 
 template <typename Scalar,int Dim> class CollisionDetectionResult;
-template <typename Scalar,int Dim> class CollisionPairMeshToMesh;
+template <typename Scalar> class CollisionPairMeshToMesh;
 template <typename Scalar,int Dim> class CollisionPairBase;
 template <typename Scalar,int Dim> class Vector;
 
@@ -78,7 +78,7 @@ protected:
     std::vector<ContactPoint<Scalar, Dim>* > contact_points_;
 
     //contact sampling
-    void getMeshContactPoint(CollisionPairMeshToMesh<Scalar, Dim>* collision_pair);
+    void getMeshContactPoint(CollisionPairMeshToMesh<Scalar>* collision_pair);
 };
 
 } //end of namespace Physikas

@@ -14,6 +14,8 @@
 
 #include <limits>
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_2d.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_3d.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Geometry/Bounding_Volume/object_bvh.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
