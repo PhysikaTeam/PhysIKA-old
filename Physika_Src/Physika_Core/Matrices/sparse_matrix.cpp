@@ -12,6 +12,7 @@
  *
  */
 
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"

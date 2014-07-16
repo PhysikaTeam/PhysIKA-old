@@ -11,6 +11,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Render/Lights/light.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"

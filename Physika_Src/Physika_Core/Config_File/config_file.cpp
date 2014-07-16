@@ -11,6 +11,7 @@
  *
  */
 
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include "Physika_Core/Config_File/config_file.h"
