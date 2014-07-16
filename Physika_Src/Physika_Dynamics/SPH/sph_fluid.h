@@ -30,6 +30,7 @@ public:
 
     virtual void initialize();
     virtual void initConfiguration();
+    virtual void initConfiguration(const std::string &file_name);
     virtual void initSceneBoundary();
     void initScene();
 
@@ -41,11 +42,11 @@ public:
     {
         return this->getTimeStep();
     }
-    virtual void write(const char *file_name)//write simulation data to file
+    virtual void write(const std::string &file_name)//write simulation data to file
     {
 
     }
-    virtual void read(const char *file_name)//read simulation data from file
+    virtual void read(const std::string &file_name)//read simulation data from file
     {
 
     }
