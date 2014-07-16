@@ -24,7 +24,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim>
 ObjectBVHNode<Scalar, Dim>::ObjectBVHNode():
-	object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
+	object_type_(CollidableObjectInternal::MESH_BASED),
 	object_(NULL),
 	face_index_(0),
 	has_face_(false)
@@ -49,7 +49,7 @@ bool ObjectBVHNode<Scalar, Dim>::isObjectNode() const
 }
 
 template <typename Scalar,int Dim>
-typename CollidableObject<Scalar, Dim>::ObjectType ObjectBVHNode<Scalar, Dim>::objectType() const
+typename CollidableObjectInternal::ObjectType ObjectBVHNode<Scalar, Dim>::objectType() const
 {
 	return object_type_;
 }
@@ -72,7 +72,7 @@ void ObjectBVHNode<Scalar, Dim>::setFaceIndex(unsigned int face_index)
 {
 	face_index_ = face_index;
 	has_face_ = true;
-	object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
+	object_type_ = CollidableObjectInternal::MESH_BASED;
 	buildFromFace();
 }
 
@@ -85,7 +85,7 @@ unsigned int ObjectBVHNode<Scalar, Dim>::getFaceIndex() const
 template <typename Scalar,int Dim>
 void ObjectBVHNode<Scalar, Dim>::resize()
 {
-	if(object_type_ == CollidableObject<Scalar, Dim>::MESH_BASED)
+	if(object_type_ == CollidableObjectInternal::MESH_BASED)
 		buildFromFace();
 }
 
@@ -99,7 +99,7 @@ bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const 
 	const ObjectBVHNode<Scalar, Dim>* object_target = dynamic_cast<const ObjectBVHNode<Scalar, Dim>*>(target);
 	if(object_target == NULL)
 		return false;
-	if(object_type_ == CollidableObject<Scalar, Dim>::MESH_BASED && object_target->objectType() == CollidableObject<Scalar, Dim>::MESH_BASED)
+	if(object_type_ == CollidableObjectInternal::MESH_BASED && object_target->objectType() == CollidableObjectInternal::MESH_BASED)
 	{
 		MeshBasedCollidableObject<Scalar, Dim>* mesh_object_this = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_);
 		MeshBasedCollidableObject<Scalar, Dim>* mesh_object_target = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_target->object_);
@@ -121,15 +121,11 @@ void ObjectBVHNode<Scalar, Dim>::buildFromFace()
 	this->is_leaf_ = true;
 	if(!has_face_)
 		return;
-	if(object_->objectType() != CollidableObject<Scalar, Dim>::MESH_BASED)
+	if(object_->objectType() != CollidableObjectInternal::MESH_BASED)
 		return;
 	if(this->bounding_volume_ == NULL)
 	{
-		switch(this->bv_type_)
-		{
-			case BoundingVolume<Scalar, Dim>::KDOP18: this->bounding_volume_ = new BoundingVolumeKDOP18<Scalar, Dim>();
-			default: this->bounding_volume_ = new BoundingVolumeKDOP18<Scalar, Dim>();
-		}
+        this->bounding_volume_ = BoundingVolumeInternal::createBoundingVolume<Scalar, Dim>(this->bv_type_);
 	}
 	this->bounding_volume_->setEmpty();
 	const MeshBasedCollidableObject<Scalar, Dim>* const object = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_);

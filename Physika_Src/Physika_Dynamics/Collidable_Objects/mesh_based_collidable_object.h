@@ -32,7 +32,7 @@ public:
 	~MeshBasedCollidableObject();
 
 	//get & set
-	typename CollidableObject<Scalar,Dim>::ObjectType objectType() const;
+	typename CollidableObjectInternal::ObjectType objectType() const;
 	const SurfaceMesh<Scalar>* mesh() const;
 	SurfaceMesh<Scalar>* mesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);

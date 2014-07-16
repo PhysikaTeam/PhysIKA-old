@@ -39,7 +39,7 @@ public:
 
 	//get & set
     void copy(const RigidBody<Scalar, Dim>& rigid_body);//Using this function for construction is strongly recommended because inertia tensor will not be recalculated for the same mesh.
-    inline typename CollidableObject<Scalar, Dim>::ObjectType objectType() const {return object_type_;};
+    inline typename CollidableObjectInternal::ObjectType objectType() const {return object_type_;};
     inline SurfaceMesh<Scalar>* mesh() {return mesh_;};
     inline const Transform<Scalar>& transform() const {return transform_;};
     inline Transform<Scalar>& transform() {return transform_;};
@@ -88,7 +88,7 @@ protected:
 	//basic properties of a rigid body
     
     //can be set by public functions
-	typename CollidableObject<Scalar, Dim>::ObjectType object_type_;
+	typename CollidableObjectInternal::ObjectType object_type_;
 	SurfaceMesh<Scalar>* mesh_;
 	Transform<Scalar> transform_;
 	Scalar density_;

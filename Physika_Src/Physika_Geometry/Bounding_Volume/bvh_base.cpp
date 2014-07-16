@@ -15,6 +15,7 @@
 #include "Physika_Geometry/Bounding_Volume/bvh_base.h"
 #include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume_octagon.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include <stdio.h>
@@ -23,9 +24,12 @@ namespace Physika{
 
 template <typename Scalar,int Dim>
 BVHBase<Scalar, Dim>::BVHBase():
-	root_node_(NULL),
-	bv_type_(BoundingVolume<Scalar, Dim>::KDOP18)
+	root_node_(NULL)
 {
+    if(Dim == 3)
+        bv_type_ = BoundingVolumeInternal::KDOP18;
+    else
+        bv_type_ = BoundingVolumeInternal::OCTAGON;
 }
 
 template <typename Scalar,int Dim>
@@ -52,13 +56,13 @@ const BVHNodeBase<Scalar, Dim>* const BVHBase<Scalar, Dim>::rootNode() const
 }
 
 template <typename Scalar,int Dim>
-void BVHBase<Scalar, Dim>::setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type)
+void BVHBase<Scalar, Dim>::setBVType(typename BoundingVolumeInternal::BVType bv_type)
 {
 	bv_type_ = bv_type;
 }
 
 template <typename Scalar,int Dim>
-typename BoundingVolume<Scalar, Dim>::BVType BVHBase<Scalar, Dim>::BVType() const
+typename BoundingVolumeInternal::BVType BVHBase<Scalar, Dim>::BVType() const
 {
 	return bv_type_;
 }
@@ -220,11 +224,7 @@ BVHNodeBase<Scalar, Dim>* BVHBase<Scalar, Dim>::buildFromLeafList(const int star
 	thisNode->setLeaf(false);
 	thisNode->setBVType(bv_type_);
 	BoundingVolume<Scalar, Dim>* bounding_volume = NULL;
-	switch(bv_type_)
-	{
-		case BoundingVolume<Scalar, Dim>::KDOP18: bounding_volume = new BoundingVolumeKDOP18<Scalar, Dim>();
-		default: bounding_volume = new BoundingVolumeKDOP18<Scalar, Dim>();
-	}
+    bounding_volume = BoundingVolumeInternal::createBoundingVolume<Scalar, Dim>(bv_type_);
 	thisNode->setBoundingVolume(bounding_volume);
 
 	//get bounding volume
@@ -301,7 +301,11 @@ BVAxisPartition<Scalar, Dim>::BVAxisPartition(BoundingVolume<Scalar, Dim>* bound
 	if(bounding_volume == NULL)
 		return;
 	Vector<Scalar, Dim> center = bounding_volume->center();
-	int longest_axis_index = 2;
+	int longest_axis_index;
+    if(Dim == 3)
+        longest_axis_index = 2;
+    else
+        longest_axis_index = 1;
 	if (bounding_volume->width() >= bounding_volume->height() && bounding_volume->width() >= bounding_volume->depth())
 	{
 		longest_axis_index = 0;
@@ -323,6 +327,8 @@ bool BVAxisPartition<Scalar, Dim>::isLeftHandSide(const Vector<Scalar, Dim>& poi
 }
 
 //explicit instantitation
+template class BVHBase<float, 2>;
+template class BVHBase<double, 2>;
 template class BVHBase<float, 3>;
 template class BVHBase<double, 3>;
 

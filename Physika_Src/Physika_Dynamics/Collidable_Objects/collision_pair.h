@@ -36,8 +36,8 @@ public:
 	CollisionPairBase();
 	virtual ~CollisionPairBase();
 
-    virtual typename CollidableObject<Scalar, Dim>::ObjectType objectTypeLhs() const = 0;
-    virtual typename CollidableObject<Scalar, Dim>::ObjectType objectTypeRhs() const = 0;
+    virtual typename CollidableObjectInternal::ObjectType objectTypeLhs() const = 0;
+    virtual typename CollidableObjectInternal::ObjectType objectTypeRhs() const = 0;
 
 	//Functions for getting objects and faces of a mesh-to-mesh collision pair, corresponding to class CollisionPairMeshToMesh
 	virtual const CollidableObject<Scalar, Dim>* objectLhs() const = 0;
@@ -70,8 +70,8 @@ public:
 							unsigned int face_lhs_index, unsigned int face_rhs_index);
 	~CollisionPairMeshToMesh();
 
-    typename CollidableObject<Scalar, Dim>::ObjectType objectTypeLhs() const;
-    typename CollidableObject<Scalar, Dim>::ObjectType objectTypeRhs() const;
+    typename CollidableObjectInternal::ObjectType objectTypeLhs() const;
+    typename CollidableObjectInternal::ObjectType objectTypeRhs() const;
 
 	const CollidableObject<Scalar, Dim>* objectLhs() const;
 	CollidableObject<Scalar, Dim>* objectLhs();

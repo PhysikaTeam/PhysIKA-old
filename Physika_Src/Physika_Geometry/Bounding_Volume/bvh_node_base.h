@@ -38,8 +38,8 @@ public:
 	const BVHNodeBase<Scalar, Dim>* const rightChild() const;
 	void setBoundingVolume(BoundingVolume<Scalar, Dim>* bounding_volume);
 	const BoundingVolume<Scalar, Dim>* const boundingVolume() const;
-	void setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type);
-	typename BoundingVolume<Scalar, Dim>::BVType BVType() const;
+	void setBVType(typename BoundingVolumeInternal::BVType bv_type);
+	typename BoundingVolumeInternal::BVType BVType() const;
 	void setLeaf(const bool is_leaf);
 	bool isLeaf() const;
 	unsigned int leafNodeIndex() const;
@@ -74,7 +74,7 @@ public:
 protected:
 	bool is_leaf_;
 	unsigned int leaf_node_index_;
-	typename BoundingVolume<Scalar, Dim>::BVType bv_type_;
+	typename BoundingVolumeInternal::BVType bv_type_;
 	BoundingVolume<Scalar, Dim>* bounding_volume_;
 	BVHNodeBase<Scalar, Dim>* left_child_;
 	BVHNodeBase<Scalar, Dim>* right_child_;

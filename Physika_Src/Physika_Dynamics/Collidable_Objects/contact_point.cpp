@@ -116,7 +116,7 @@ void ContactPointManager<Scalar, Dim>::setCollisionResult(CollisionDetectionResu
     for(unsigned int i = 0; i < num_collision; ++i)
     {
         collision_pair = collision_result.collisionPairs()[i];
-        if(collision_pair->objectTypeLhs() == CollidableObject<Scalar, Dim>::MESH_BASED && collision_pair->objectTypeRhs() == CollidableObject<Scalar, Dim>::MESH_BASED)
+        if(collision_pair->objectTypeLhs() == CollidableObjectInternal::MESH_BASED && collision_pair->objectTypeRhs() == CollidableObjectInternal::MESH_BASED)
         {
             getMeshContactPoint(dynamic_cast<CollisionPairMeshToMesh<Scalar, Dim>*>(collision_pair));
         }

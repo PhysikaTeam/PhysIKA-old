@@ -48,7 +48,7 @@ void ObjectBVH<Scalar, Dim>::setCollidableObject(CollidableObject<Scalar, Dim>* 
 	collidable_object_ = collidable_object;
 	if(collidable_object == NULL)
 		return;
-	if(collidable_object_->objectType() == CollidableObject<Scalar, Dim>::MESH_BASED)
+	if(collidable_object_->objectType() == CollidableObjectInternal::MESH_BASED)
 		buildFromMeshObject((MeshBasedCollidableObject<Scalar, Dim>*)collidable_object_);
 }
 

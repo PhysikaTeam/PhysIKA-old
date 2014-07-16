@@ -62,7 +62,7 @@ void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_b
 
 	switch(rigid_body->objectType())
 	{
-		case CollidableObject<Scalar, Dim>::MESH_BASED: collide_object_ = new MeshBasedCollidableObject<Scalar, Dim>();break;
+		case CollidableObjectInternal::MESH_BASED: collide_object_ = new MeshBasedCollidableObject<Scalar, Dim>();break;
 		default: std::cerr<<"Object type error!"<<std::endl; return;
 	}
 	MeshBasedCollidableObject<Scalar, Dim>* mesh_object = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(collide_object_);

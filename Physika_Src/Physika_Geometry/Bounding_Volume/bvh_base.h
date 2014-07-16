@@ -35,8 +35,8 @@ public:
 	//get & set
 	void setRootNode(BVHNodeBase<Scalar, Dim>* root_node);
 	const BVHNodeBase<Scalar, Dim>* const rootNode() const;
-	void setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type);
-	typename BoundingVolume<Scalar, Dim>::BVType BVType() const;
+	void setBVType(typename BoundingVolumeInternal::BVType bv_type);
+	typename BoundingVolumeInternal::BVType BVType() const;
 	const BoundingVolume<Scalar, Dim>* boundingVolume() const;
 	unsigned int numLeaf() const;
 	bool isEmpty() const;
@@ -72,7 +72,7 @@ public:
 	
 protected:
 	BVHNodeBase<Scalar, Dim>* root_node_;
-	typename BoundingVolume<Scalar, Dim>::BVType bv_type_;
+	typename BoundingVolumeInternal::BVType bv_type_;
 
 	//internal function
 
@@ -97,7 +97,6 @@ private:
 };
 
 //class to partite a BV according to its longest axis
-// For now it only has implement for float and double in 3-Dimension
 template <typename Scalar,int Dim>
 class BVAxisPartition
 {

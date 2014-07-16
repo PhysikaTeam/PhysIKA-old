@@ -122,7 +122,7 @@ void RigidDriverPluginRender<Scalar, Dim>::onAddRigidBody(RigidBody<Scalar, Dim>
 	RenderBase* render;
 	switch(rigid_body->objectType())
 	{
-	case CollidableObject<Scalar, Dim>::MESH_BASED: render = new SurfaceMeshRender<Scalar>();;break;
+	case CollidableObjectInternal::MESH_BASED: render = new SurfaceMeshRender<Scalar>();;break;
 	default: std::cerr<<"Object type error!"<<std::endl; return;
 	}
 	SurfaceMeshRender<Scalar>* mesh_render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render);

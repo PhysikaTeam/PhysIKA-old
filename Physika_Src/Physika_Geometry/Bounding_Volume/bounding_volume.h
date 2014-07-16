@@ -17,6 +17,15 @@
 
 namespace Physika{
 
+template <typename Scalar,int Dim> class BoundingVolume;
+
+namespace BoundingVolumeInternal{
+    enum BVType {KDOP18, OCTAGON};
+
+    template<typename Scalar, int Dim>
+    BoundingVolume<Scalar, Dim>* createBoundingVolume(BVType bv_type);
+}
+
 template <typename Scalar,int Dim> class Vector;
 
 template <typename Scalar,int Dim>
@@ -32,8 +41,7 @@ public:
 	virtual void setBoundingVolume(const Vector<Scalar,Dim>& point) = 0;
 	virtual void setBoundingVolume(const Vector<Scalar,Dim>& point_a, const Vector<Scalar,Dim>& point_b) = 0;
 
-	enum BVType {KDOP18 = 0};
-	virtual BVType bvType() const=0;
+	virtual BoundingVolumeInternal::BVType bvType() const=0;
 
 	//basic operation
 	virtual bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const = 0;

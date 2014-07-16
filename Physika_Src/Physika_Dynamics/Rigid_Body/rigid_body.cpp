@@ -21,7 +21,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim>
 RigidBody<Scalar, Dim>::RigidBody():
-	object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
+	object_type_(CollidableObjectInternal::MESH_BASED),
 	mesh_(NULL),
 	transform_(),
     inertia_tensor_(),
@@ -41,7 +41,7 @@ RigidBody<Scalar, Dim>::RigidBody():
 
 template <typename Scalar,int Dim>
 RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density):
-    object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
+    object_type_(CollidableObjectInternal::MESH_BASED),
     transform_(),
     inertia_tensor_(),
     is_fixed_(false),
@@ -59,7 +59,7 @@ RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density):
 
 template <typename Scalar,int Dim>
 RigidBody<Scalar, Dim>::RigidBody(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density):
-    object_type_(CollidableObject<Scalar, Dim>::MESH_BASED),
+    object_type_(CollidableObjectInternal::MESH_BASED),
     inertia_tensor_(),
     is_fixed_(false),
     coeff_restitution_(1),
@@ -150,7 +150,7 @@ void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, Scalar densi
 {
     mesh_ = mesh;
     density_ = density;
-    object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
+    object_type_ = CollidableObjectInternal::MESH_BASED;
     inertia_tensor_.setBody(mesh_, transform_.scale(), density_, local_mass_center_, mass_);
     recalculatePosition();   
 }
@@ -161,7 +161,7 @@ void RigidBody<Scalar, Dim>::setProperty(SurfaceMesh<Scalar>* mesh, const Transf
     mesh_ = mesh;
     transform_ = transform;
     density_ = density;
-    object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
+    object_type_ = CollidableObjectInternal::MESH_BASED;
     inertia_tensor_.setBody(mesh_, transform_.scale(), density_, local_mass_center_, mass_);
     recalculatePosition();
 }
@@ -281,7 +281,7 @@ template <typename Scalar,int Dim>
 void RigidBody<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
 {
     mesh_ = mesh;
-    object_type_ = CollidableObject<Scalar, Dim>::MESH_BASED;
+    object_type_ = CollidableObjectInternal::MESH_BASED;
 }
 
 template <typename Scalar,int Dim>
