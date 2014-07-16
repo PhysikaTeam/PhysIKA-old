@@ -31,7 +31,6 @@ public:
 	~RigidDriverPluginRender();
 
 	//functions called in driver
-    void onInitialize(unsigned int frame);
     void onBeginFrame(unsigned int frame);
     void onEndFrame(unsigned int frame);
     void onBeginTimeStep(Scalar dt);

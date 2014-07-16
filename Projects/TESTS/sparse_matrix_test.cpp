@@ -20,7 +20,7 @@
 #include "Physika_Core/Vectors/vector_Nd.h"
 #define Max1 10000
 #define Max2 10000
-#define Max  10000
+#define Max  100000
 
 using namespace std;
 
@@ -122,7 +122,7 @@ int main()
 	cout<<(vec * m1)<<endl;
     //getchar();
 	*/
-
+	clock_t start,end;
 
 	srand(time(NULL));
 	cout<<"特定功能 高级测试"<<endl;
@@ -130,20 +130,31 @@ int main()
 	cout<<"insert "<<endl;
 	Physika::SparseMatrix<float> psm(Max1,Max2);
 	Eigen::SparseMatrix<float> esm(Max1, Max2);
-	clock_t start = clock();
+	start = clock();
 	for(unsigned int i=0;i<Max;++i)
 	{
 		unsigned int row = rand()%Max1;
 		unsigned int col = rand()%Max2;
 		float v = rand()%Max+1;
 		psm.setEntry(row,col,v);
+		//esm.coeffRef(row,col) = v;
+	}
+	end = clock();
+	cout<<"psm "<<end - start<<endl;
+	//cout<<esm<<endl;
+	start = clock();
+	for(unsigned int i=0;i<Max;++i)
+	{
+		unsigned int row = rand()%Max1;
+		unsigned int col = rand()%Max2;
+		float v = rand()%Max+1;
+		//psm.setEntry(row,col,v);
 		esm.coeffRef(row,col) = v;
 	}
-	clock_t end = clock();
-
-	//cout<<esm<<endl;
-		
-	cout<<"测量矩阵转置正确性及时间效率"<<endl;
+	end = clock();
+	cout<<"esm "<<end - start<<endl;
+	
+	/*cout<<"测量矩阵转置正确性及时间效率"<<endl;
 	start = clock();
 	Eigen::SparseMatrix<float> esm4 = esm.transpose();
 	end = clock();
@@ -155,7 +166,7 @@ int main()
 	cout<<"correctness transpose"<<endl;
 	compare(psm4,esm4);
 	cout<<"psm.transpose"<<endl;
-	//cout<<psm4<<endl;
+	//cout<<psm4<<endl;*/
 
 
 	cout<<"multiply effectiveness"<<endl;
@@ -190,7 +201,7 @@ int main()
 
 	cout<<"correctness multiply"<<endl;
 	
-	compare(psm5,esm5);
+	//compare(psm5,esm5);
 
 
 

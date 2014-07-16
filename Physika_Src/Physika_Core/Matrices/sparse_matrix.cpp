@@ -12,6 +12,7 @@
  *
  */
 
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
@@ -300,6 +301,24 @@ Scalar SparseMatrix<Scalar>::operator() (unsigned int i, unsigned int j) const
 }
 
 template <typename Scalar>
+Trituple<Scalar>* SparseMatrix<Scalar>::ptr(unsigned int i, unsigned int j) 
+{
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+    PHYSIKA_ASSERT(i>=0&&i<rows_);
+    PHYSIKA_ASSERT(j>=0&&j<cols_);
+    Trituple<Scalar>* pointer = row_head_[i];
+    while(pointer)
+    {
+        if(pointer->col_ == j)return pointer;
+        pointer = pointer->row_next_;
+    }
+    return NULL;//if is not non-zero entry, return 0
+#elif defined(PHYSIKA_USE_EIGEN_MATRIX)
+	return (*ptr_eigen_sparse_matrix_)(i,j);
+#endif
+}
+
+template <typename Scalar>
 void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
@@ -551,26 +570,21 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar>
     }
     SparseMatrix<Scalar> result(rows_,mat2.cols_);
     for(unsigned int i=0;i<rows_;++i)
-		for(unsigned int j=0;j<mat2.cols_;++j)
-        {
-            Scalar sum = 0;
-            Trituple<Scalar> *pointer_x = row_head_[i], *pointer_y = mat2.col_head_[j];
-            while(pointer_x!=NULL && pointer_y!=NULL)
-            {
-                if(pointer_x->col_ == pointer_y->row_)
-                {
-                    sum += pointer_x->value_ * pointer_y->value_;
-                    pointer_x = pointer_x->row_next_;
-                    pointer_y = pointer_y->col_next_;
-                }
-                else if(pointer_x->col_ < pointer_y->row_)
-                {
-                    pointer_x = pointer_x->row_next_;
-                }
-                else pointer_y = pointer_y->col_next_;
-            }
-            if(sum) result.setEntry(i,j,sum);
-        }
+	{
+		Trituple<Scalar> *pointer_x = row_head_[i];
+		while(pointer_x)
+		{
+			Trituple<Scalar> *pointer_y = mat2.row_head_[pointer_x->col_];
+			while(pointer_y)
+			{
+				Trituple<Scalar> *temp = result.ptr(i, pointer_y->col_);
+				if(temp) temp->value_ += pointer_x->value_*pointer_y->value_;
+				else result.setEntry(i,pointer_y->col_,pointer_x->value_ * pointer_y->value_);
+				pointer_y = pointer_y->row_next_;
+			}
+			pointer_x = pointer_x->row_next_;
+		}
+	}
     return result;
 #endif
 }

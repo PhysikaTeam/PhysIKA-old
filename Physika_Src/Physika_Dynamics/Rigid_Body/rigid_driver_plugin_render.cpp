@@ -57,12 +57,6 @@ RigidDriverPluginRender<Scalar, Dim>::~RigidDriverPluginRender()
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onInitialize(unsigned int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::onBeginFrame(unsigned int frame)
 {
 

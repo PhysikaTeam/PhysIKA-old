@@ -32,12 +32,6 @@ RigidDriverPluginPrint<Scalar, Dim>::~RigidDriverPluginPrint()
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onInitialize(unsigned int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
 void RigidDriverPluginPrint<Scalar, Dim>::onBeginFrame(unsigned int frame)
 {
 
