@@ -49,11 +49,11 @@ void ObjectBVH<Scalar, Dim>::setCollidableObject(CollidableObject<Scalar, Dim>* 
 	if(collidable_object == NULL)
 		return;
 	if(collidable_object_->objectType() == CollidableObjectInternal::MESH_BASED)
-		buildFromMeshObject((MeshBasedCollidableObject<Scalar, Dim>*)collidable_object_);
+		buildFromMeshObject((MeshBasedCollidableObject<Scalar>*)collidable_object_);
 }
 
 template <typename Scalar,int Dim>
-void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scalar, Dim>* collidable_object)
+void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scalar>* collidable_object)
 {
 	if(!this->isEmpty())
 		BVHBase<Scalar, Dim>::clean();

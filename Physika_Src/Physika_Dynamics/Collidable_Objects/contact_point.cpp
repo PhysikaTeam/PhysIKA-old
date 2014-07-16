@@ -218,7 +218,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     {
         if(is_rhs_tri)//triangle
         {
-            if(MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], temp_overlap_point))
             {
                 num_overlap++;
                 overlap_point += temp_overlap_point;
@@ -226,7 +226,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         }
         if(is_rhs_quad)//quad
         {
-            if(MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeQuad(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], vertex_rhs[3], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeQuad(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], vertex_rhs[3], temp_overlap_point))
             {
                 num_overlap++;
                 overlap_point += temp_overlap_point;
@@ -239,7 +239,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     {
         if(is_lhs_tri)//triangle
         {
-            if(MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], temp_overlap_point))
             {
                 num_overlap++;
                 overlap_point += temp_overlap_point;
@@ -247,7 +247,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         }
         if(is_lhs_quad)//quad
         {
-            if(MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeQuad(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], vertex_lhs[3], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeQuad(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], vertex_lhs[3], temp_overlap_point))
             {
                 num_overlap++;
                 overlap_point += temp_overlap_point;

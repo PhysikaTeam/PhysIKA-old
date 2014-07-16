@@ -23,8 +23,8 @@ template <typename Scalar,int Dim> class Vector;
 template <typename Scalar> class SurfaceMesh;
 template <typename Scalar,int Dim> class CollisionDetectionResult;
 
-template <typename Scalar,int Dim>
-class MeshBasedCollidableObject: public CollidableObject<Scalar,Dim>
+template <typename Scalar>
+class MeshBasedCollidableObject: public CollidableObject<Scalar, 3>
 {
 public:
 	//constructors && deconstructors
@@ -44,7 +44,7 @@ public:
     Vector<Scalar, 3> vertexPosition(unsigned int vertex_index) const;
     Vector<Scalar, 3> faceNormal(unsigned int face_index) const;
 
-	bool collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs);
+	bool collideWithMesh(MeshBasedCollidableObject<Scalar>* object, unsigned int face_index_lhs, unsigned int face_index_rhs);
 
     //overlapPoint is the position of overlap. It will be changed after test if overlap is true.
 	static bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, Vector<Scalar, 3>& overlap_point);

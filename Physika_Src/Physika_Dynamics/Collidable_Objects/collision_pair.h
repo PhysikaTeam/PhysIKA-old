@@ -22,7 +22,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim> class CollisionPairBase;
 template <typename Scalar,int Dim> class CollidableObject;
-template <typename Scalar,int Dim> class MeshBasedCollidableObject;
+template <typename Scalar> class MeshBasedCollidableObject;
 
 
 //CollisionPair contains colliding elements (e.g. faces of meshes) and objects.
@@ -44,10 +44,10 @@ public:
 	virtual CollidableObject<Scalar, Dim>* objectLhs() = 0;
 	virtual const CollidableObject<Scalar, Dim>* objectRhs() const = 0;
 	virtual CollidableObject<Scalar, Dim>* objectRhs() = 0;
-	virtual const MeshBasedCollidableObject<Scalar, Dim>* meshObjectLhs() const = 0;
-	virtual MeshBasedCollidableObject<Scalar, Dim>* meshObjectLhs() = 0;
-	virtual const MeshBasedCollidableObject<Scalar, Dim>* meshObjectRhs() const = 0;
-	virtual MeshBasedCollidableObject<Scalar, Dim>* meshObjectRhs() = 0;
+	virtual const MeshBasedCollidableObject<Scalar>* meshObjectLhs() const = 0;
+	virtual MeshBasedCollidableObject<Scalar>* meshObjectLhs() = 0;
+	virtual const MeshBasedCollidableObject<Scalar>* meshObjectRhs() const = 0;
+	virtual MeshBasedCollidableObject<Scalar>* meshObjectRhs() = 0;
 	virtual const Face<Scalar>* faceLhsPtr() const = 0;
 	virtual Face<Scalar>* faceLhsPtr() = 0;
 	virtual const Face<Scalar>* faceRhsPtr() const = 0;
@@ -66,7 +66,7 @@ class CollisionPairMeshToMesh : public CollisionPairBase<Scalar, Dim>
 {
 public:
 	CollisionPairMeshToMesh(unsigned int object_lhs_index, unsigned int object_rhs_index,
-							MeshBasedCollidableObject<Scalar, Dim>* object_lhs, MeshBasedCollidableObject<Scalar, Dim>* object_rhs,
+							MeshBasedCollidableObject<Scalar>* object_lhs, MeshBasedCollidableObject<Scalar>* object_rhs,
 							unsigned int face_lhs_index, unsigned int face_rhs_index);
 	~CollisionPairMeshToMesh();
 
@@ -77,10 +77,10 @@ public:
 	CollidableObject<Scalar, Dim>* objectLhs();
 	const CollidableObject<Scalar, Dim>* objectRhs() const;
 	CollidableObject<Scalar, Dim>* objectRhs();
-	const MeshBasedCollidableObject<Scalar, Dim>* meshObjectLhs() const;
-	MeshBasedCollidableObject<Scalar, Dim>* meshObjectLhs();
-	const MeshBasedCollidableObject<Scalar, Dim>* meshObjectRhs() const;
-	MeshBasedCollidableObject<Scalar, Dim>* meshObjectRhs();
+	const MeshBasedCollidableObject<Scalar>* meshObjectLhs() const;
+	MeshBasedCollidableObject<Scalar>* meshObjectLhs();
+	const MeshBasedCollidableObject<Scalar>* meshObjectRhs() const;
+	MeshBasedCollidableObject<Scalar>* meshObjectRhs();
 	const Face<Scalar>* faceLhsPtr() const;
 	Face<Scalar>* faceLhsPtr();
 	const Face<Scalar>* faceRhsPtr() const;
@@ -93,8 +93,8 @@ public:
 protected:
 	unsigned int object_lhs_index_;
 	unsigned int object_rhs_index_;
-	MeshBasedCollidableObject<Scalar, Dim>* object_lhs_;
-	MeshBasedCollidableObject<Scalar, Dim>* object_rhs_;
+	MeshBasedCollidableObject<Scalar>* object_lhs_;
+	MeshBasedCollidableObject<Scalar>* object_rhs_;
 	unsigned int face_lhs_index_;
 	unsigned int face_rhs_index_;
 	Face<Scalar>* face_lhs_;

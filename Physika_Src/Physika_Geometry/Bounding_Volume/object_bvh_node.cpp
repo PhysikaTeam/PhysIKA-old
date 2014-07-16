@@ -101,8 +101,8 @@ bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const 
 		return false;
 	if(object_type_ == CollidableObjectInternal::MESH_BASED && object_target->objectType() == CollidableObjectInternal::MESH_BASED)
 	{
-		MeshBasedCollidableObject<Scalar, Dim>* mesh_object_this = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_);
-		MeshBasedCollidableObject<Scalar, Dim>* mesh_object_target = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_target->object_);
+		MeshBasedCollidableObject<Scalar>* mesh_object_this = dynamic_cast<MeshBasedCollidableObject<Scalar>*>(object_);
+		MeshBasedCollidableObject<Scalar>* mesh_object_target = dynamic_cast<MeshBasedCollidableObject<Scalar>*>(object_target->object_);
 		if(mesh_object_this == NULL || mesh_object_target == NULL)
 			return false;
 		if(!has_face_ || !object_target->has_face_)
@@ -128,7 +128,7 @@ void ObjectBVHNode<Scalar, Dim>::buildFromFace()
         this->bounding_volume_ = BoundingVolumeInternal::createBoundingVolume<Scalar, Dim>(this->bv_type_);
 	}
 	this->bounding_volume_->setEmpty();
-	const MeshBasedCollidableObject<Scalar, Dim>* const object = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(object_);
+	const MeshBasedCollidableObject<Scalar>* const object = dynamic_cast<MeshBasedCollidableObject<Scalar>*>(object_);
 	if(object == NULL)
 		return;
 	const Face<Scalar>& face = object->mesh()->face(face_index_);
