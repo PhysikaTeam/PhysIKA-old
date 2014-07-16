@@ -28,7 +28,6 @@ public:
     virtual ~DriverPluginBase();
 
     //functions called in driver
-    virtual void onInitialize(unsigned int frame) = 0;
     virtual void onBeginFrame(unsigned int frame) = 0;
     virtual void onEndFrame(unsigned int frame) = 0;
     virtual void onBeginTimeStep(Scalar dt) = 0;//replaced by onBeginRigidStep in rigid body simulation

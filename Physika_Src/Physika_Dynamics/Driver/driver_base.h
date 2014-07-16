@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include "Physika_Core/Utilities/Timer/timer.h"
+#include "Physika_Core/Config_File/config_file.h"
 
 namespace Physika{
 
@@ -43,13 +44,13 @@ public:
     DriverBase();
     DriverBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
     virtual ~DriverBase();
+    virtual void initConfiguration(const std::string &file_name)=0; //init the configuration (simulation parameters) from file
     virtual void run();//run the simulation from start frame to end frame
     virtual void advanceFrame();//advance one frame
-    virtual void initialize()=0;//initialize before the simulation
     virtual void advanceStep(Scalar dt)=0;//advance one time step
     virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions
-    virtual void write(const std::string &file_name)=0;//write simulation data to file
-    virtual void read(const std::string &file_name)=0;//read simulation data from file
+    virtual void write(const std::string &file_name)=0;//write simulation data of current status to file
+    virtual void read(const std::string &file_name)=0;//read simulation data of current status from file
     virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
 
     inline void setMaxDt(Scalar max_dt){max_dt_ = max_dt;}
@@ -64,7 +65,9 @@ public:
     inline void disableWriteToFile(){write_to_file_ = false;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
- 
+
+protected:
+    virtual void initialize()=0;//initialize before the simulation, called once at the beginning of run()
 protected:
     unsigned int start_frame_;
     unsigned int end_frame_;
@@ -75,6 +78,7 @@ protected:
     bool enable_timer_;
     Timer timer_;
     Scalar time_;//current time point of simulation
+    ConfigFile config_parser_; //parser of configuration file
 
     std::vector<DriverPluginBase<Scalar>* > plugins_;//Plugin vector. All plugins should be added here and called in corresponding functions
 };

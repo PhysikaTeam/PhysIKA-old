@@ -58,8 +58,18 @@ int main()
 		exit(1);
 
     SurfaceMesh<double> mesh_box;
+
     if(!ObjMeshIO<double>::load(string("box_tri.obj"), &mesh_box))
         exit(1);
+
+    cout<<mesh_box.numFaces();
+    for(unsigned int i = 0; i <mesh_box.numFaces(); ++i)
+    {
+        Face<double> *face = mesh_box.facePtr(i);
+        face->printVertices();
+        if(i == 12)
+            cout<<face->numVertices()<<"\n";
+    }
 
     mesh_ball.computeAllFaceNormals();
     mesh_box.computeAllFaceNormals();
