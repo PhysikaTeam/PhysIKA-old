@@ -102,6 +102,7 @@ public:
     SparseMatrix<Scalar> operator/ (Scalar) const;
     SparseMatrix<Scalar>& operator/= (Scalar);
 protected:
+	Trituple<Scalar> * ptr(unsigned int i, unsigned int j) ;
     void allocMemory(unsigned int rows, unsigned int cols);
     void deleteRowList(Trituple<Scalar> *);
     void deleteColList(Trituple<Scalar> *);
