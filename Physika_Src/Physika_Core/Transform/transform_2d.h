@@ -31,15 +31,15 @@ namespace Physika{
  */
 
 template <typename Scalar>
-class Transform<Scalar, 2>: public TransformBase
+class Transform<Scalar, 2>
 {
 public:
     /* Constructions */
 
     Transform();
-	Transform(const Vector<Scalar, 2> &translation);
-	Transform(const Scalar &rotate_angle);
-	Transform(const SquareMatrix<Scalar, 2> &rotation);	   //rotation is represented by a matrix;
+	explicit Transform(const Vector<Scalar, 2> &translation);
+	explicit Transform(const Scalar &rotate_angle);
+	explicit Transform(const SquareMatrix<Scalar, 2> &rotation);	   //rotation is represented by a matrix;
 	Transform(const Vector<Scalar, 2> &translation, const SquareMatrix<Scalar, 2> &rotation);
 	Transform(const SquareMatrix<Scalar, 2> &rotation, const Vector<Scalar, 2> &translation);
 	Transform(const Vector<Scalar, 2> &translation, const Scalar &rotate_angle);
@@ -56,8 +56,8 @@ public:
 
 	/* Operators */
 	Transform<Scalar, 2> & operator = (const Transform<Scalar, 2> &);
-	bool operator == (const Transform<Scalar, 2> &);
-	bool operator != (const Transform<Scalar, 2> &);
+	bool operator == (const Transform<Scalar, 2> &) const;
+	bool operator != (const Transform<Scalar, 2> &) const;
 
     /* Get and Set */
 

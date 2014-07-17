@@ -38,11 +38,11 @@ public:
     Quaternion(Scalar x, Scalar y, Scalar z, Scalar w);
     Quaternion(const Vector<Scalar,3> &unit_axis, Scalar angle_rad);  //init from the rotation axis and angle(in radian)
     Quaternion(Scalar angle_rad, const Vector<Scalar,3> &unit_axis);
-    Quaternion(const Scalar *); 
+    explicit Quaternion(const Scalar *); 
     Quaternion(const Quaternion<Scalar> &);
-    Quaternion(const SquareMatrix<Scalar, 3> &);   //init from a 3x3matrix
-    Quaternion(const SquareMatrix<Scalar,4> &);         //init from a 4x4matrix
-    Quaternion(const Vector<Scalar, 3>& );         //init form roll pitch yaw/ Euler angle;
+    explicit Quaternion(const SquareMatrix<Scalar, 3> &);   //init from a 3x3matrix
+    explicit Quaternion(const SquareMatrix<Scalar,4> &);         //init from a 4x4matrix
+    explicit Quaternion(const Vector<Scalar, 3>& );         //init form roll pitch yaw/ Euler angle;
     
     /* Assignment operators */
     Quaternion<Scalar> &operator = (const Quaternion<Scalar> &);
@@ -78,14 +78,14 @@ public:
   
 
     /* Operator overloading */
-    Quaternion<Scalar> operator - (const Quaternion<Scalar>& );
-    Quaternion<Scalar> operator - (void);
-    Quaternion<Scalar> operator + (const Quaternion<Scalar>& );
+    Quaternion<Scalar> operator - (const Quaternion<Scalar>& ) const;
+    Quaternion<Scalar> operator - (void) const;
+    Quaternion<Scalar> operator + (const Quaternion<Scalar>& ) const;
     Quaternion<Scalar> operator * (const Quaternion<Scalar>& ) const;
-    Quaternion<Scalar> operator * (const Scalar& );
-    Quaternion<Scalar> operator / (const Scalar& );
-    bool operator == (const Quaternion<Scalar>& );
-    bool operator != (const Quaternion<Scalar>& );
+    Quaternion<Scalar> operator * (const Scalar& ) const;
+    Quaternion<Scalar> operator / (const Scalar& ) const;
+    bool operator == (const Quaternion<Scalar>& ) const;
+    bool operator != (const Quaternion<Scalar>& ) const;
     Scalar& operator[] (unsigned int);
     const Scalar& operator[] (unsigned int) const;
 
