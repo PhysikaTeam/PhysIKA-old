@@ -69,6 +69,7 @@ void FEMBase<Scalar,Dim>::loadSimulationMesh(const std::string &file_name)
         std::exit(EXIT_FAILURE);
     }
     vertex_displacements_.resize(simulation_mesh_->vertNum());
+    vertex_velocities_.resize(simulation_mesh_->vertNum());
 }
 
 template <typename Scalar, int Dim>
@@ -108,6 +109,7 @@ void FEMBase<Scalar,Dim>::setSimulationMesh(const VolumetricMesh<Scalar,Dim> &me
         break;
     }
     vertex_displacements_.resize(simulation_mesh_->vertNum());
+    vertex_velocities_.resize(simulation_mesh_->vertNum());
 }
 
 template <typename Scalar, int Dim>
@@ -131,6 +133,17 @@ unsigned int FEMBase<Scalar,Dim>::numSimVertices() const
         std::exit(EXIT_FAILURE);
     }
     return simulation_mesh_->vertNum();
+}
+
+template <typename Scalar, int Dim>
+unsigned int FEMBase<Scalar,Dim>::numSimElements() const
+{
+    if(simulation_mesh_==NULL)
+    {
+        std::cerr<<"Simulation mesh not set.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return simulation_mesh_->eleNum();
 }
 
 template <typename Scalar, int Dim>
@@ -192,6 +205,40 @@ Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexCurrentPosition(unsigned int vert_
         std::exit(EXIT_FAILURE);
     }
     return simulation_mesh_->vertPos(vert_idx) + vertex_displacements_[vert_idx];  
+}
+
+template <typename Scalar, int Dim>
+const Vector<Scalar,Dim>& FEMBase<Scalar,Dim>::vertexVelocity(unsigned int vert_idx) const
+{
+    if(vert_idx >= vertex_displacements_.size())
+    {
+        std::cerr<<"Vertex index out of range.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return vertex_velocities_[vert_idx];
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setVertexVelocity(unsigned int vert_idx, const Vector<Scalar,Dim> &v)
+{
+    if(simulation_mesh_==NULL)
+    {
+        std::cerr<<"Simulation mesh not set.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if(vert_idx >= vertex_displacements_.size())
+    {
+        std::cerr<<"Vertex index out of range.\n";
+        std::exit(EXIT_FAILURE);
+    }
+    vertex_velocities_[vert_idx] = v;
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::resetVertexVelocity()
+{
+    for(unsigned int i = 0; i < vertex_velocities_.size(); ++i)
+        vertex_velocities_[i] = Vector<Scalar,Dim>(0);
 }
 
 //explicit instantiations

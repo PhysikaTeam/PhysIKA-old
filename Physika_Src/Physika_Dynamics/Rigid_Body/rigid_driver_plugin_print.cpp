@@ -56,24 +56,6 @@ void RigidDriverPluginPrint<Scalar, Dim>::onEndTimeStep(Scalar time, Scalar dt)
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onWrite(unsigned int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onRead(unsigned int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onRestart(unsigned int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
 void RigidDriverPluginPrint<Scalar, Dim>::onBeginRigidStep(unsigned int step, Scalar dt)
 {
     std::cout<<"Frame begin: "<<step<<std::endl;

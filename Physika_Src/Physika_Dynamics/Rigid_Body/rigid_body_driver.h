@@ -74,6 +74,7 @@ public:
 	void advanceFrame();//advance one frame
 	void advanceStep(Scalar dt);//advance one time step
 	Scalar computeTimeStep();//compute time step with respect to simulation specific conditions
+    bool withRestartSupport() const; //indicate wheter restart is supported in implementation
 	void write(const std::string &file_name);//write simulation data to file
 	void read(const std::string &file_name);//read simulation data from file
 

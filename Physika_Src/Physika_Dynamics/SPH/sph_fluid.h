@@ -42,6 +42,10 @@ public:
     {
         return this->getTimeStep();
     }
+    virtual bool withRestartSupport() const
+    {
+        return false;
+    }
     virtual void write(const std::string &file_name)//write simulation data to file
     {
 

@@ -44,6 +44,7 @@ public:
     //virtual methods
     void initConfiguration(const std::string &file_name);
     void advanceStep(Scalar dt);
+    bool withRestartSupport() const;
     void write(const std::string &file_name);
     void read(const std::string &file_name);
     void addPlugin(DriverPluginBase<Scalar> *plugin);

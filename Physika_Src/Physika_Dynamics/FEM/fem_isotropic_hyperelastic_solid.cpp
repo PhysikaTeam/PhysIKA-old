@@ -54,6 +54,12 @@ void FEMIsotropicHyperelasticSolid<Scalar,Dim>::advanceStep(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
+bool FEMIsotropicHyperelasticSolid<Scalar,Dim>::withRestartSupport() const
+{
+    return false;
+}
+
+template <typename Scalar, int Dim>
 void FEMIsotropicHyperelasticSolid<Scalar,Dim>::write(const std::string &file_name)
 {//TO DO
 }
