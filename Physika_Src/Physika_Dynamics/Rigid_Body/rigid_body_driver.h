@@ -44,7 +44,7 @@ public:
 	virtual ~RigidBodyArchive();
 
 	//get & set
-	void setRigidBody(RigidBody<Scalar, Dim>* rigid_body);
+	void setRigidBody(RigidBody<Scalar, Dim>* rigid_body);//This function will do nothing but call the overload version depending on the dimension
 	unsigned int index() const;
 	void setIndex(unsigned int index);
 	RigidBody<Scalar, Dim>* rigidBody();
@@ -56,6 +56,10 @@ protected:
 	RigidBody<Scalar, Dim>* rigid_body_;
 	CollidableObject<Scalar, Dim>* collide_object_;
 	ObjectBVH<Scalar, Dim>* object_bvh_;
+
+    //Overload versions of utilities for 2D and 3D situations
+    void setRigidBody(RigidBody<Scalar, Dim>* rigid_body, DimensionTrait<2> trait);
+    void setRigidBody(RigidBody<Scalar, Dim>* rigid_body, DimensionTrait<3> trait);
 };
 
 template <typename Scalar,int Dim> class RigidDriverPlugin;

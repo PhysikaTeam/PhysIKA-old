@@ -36,10 +36,10 @@ public:
     ContactPoint();
     ContactPoint(unsigned int contact_index, unsigned int object_lhs_index, unsigned int object_rhs_index,
                 const Vector<Scalar, Dim>& global_contact_position, const Vector<Scalar, Dim>& global_contact_normal_lhs);
-    ~ContactPoint();
+    virtual ~ContactPoint();
 
     //get & set
-    void setProperty(unsigned int contact_index, unsigned int object_lhs_index, unsigned int object_rhs_index,
+    virtual void setProperty(unsigned int contact_index, unsigned int object_lhs_index, unsigned int object_rhs_index,
         const Vector<Scalar, Dim>& global_contact_position, const Vector<Scalar, Dim>& global_contact_normal_lhs);
     unsigned int contactIndex() const;
     unsigned int objectLhsIndex() const;

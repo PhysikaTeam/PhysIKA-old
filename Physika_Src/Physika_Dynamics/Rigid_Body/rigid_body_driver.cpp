@@ -57,23 +57,7 @@ RigidBodyArchive<Scalar, Dim>::~RigidBodyArchive()
 template <typename Scalar,int Dim>
 void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_body)
 {
-	if(rigid_body == NULL)
-		return;
-
-	rigid_body_ = rigid_body;
-
-	switch(rigid_body->objectType())
-	{
-		case CollidableObjectInternal::MESH_BASED: collide_object_ = new MeshBasedCollidableObject<Scalar>();break;
-		default: std::cerr<<"Object type error!"<<std::endl; return;
-	}
-	MeshBasedCollidableObject<Scalar>* mesh_object = dynamic_cast<MeshBasedCollidableObject<Scalar>*>(collide_object_);
-	mesh_object->setMesh(rigid_body->mesh());
-	mesh_object->setTransform(rigid_body->transformPtr());
-
-	object_bvh_ = new ObjectBVH<Scalar, Dim>();
-	object_bvh_->setCollidableObject(collide_object_);
-
+    setRigidBody(rigid_body, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
@@ -104,6 +88,34 @@ template <typename Scalar,int Dim>
 ObjectBVH<Scalar, Dim>* RigidBodyArchive<Scalar, Dim>::objectBVH()
 {
 	return object_bvh_;
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_body, DimensionTrait<2> trait)
+{
+    //to do
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_body, DimensionTrait<3> trait)
+{
+    if(rigid_body == NULL)
+        return;
+
+    rigid_body_ = rigid_body;
+    RigidBody<Scalar, 3>* rigid_body_3d = dynamic_cast<RigidBody<Scalar, 3>* >(rigid_body);
+
+    switch(rigid_body->objectType())
+    {
+    case CollidableObjectInternal::MESH_BASED: collide_object_ = dynamic_cast<CollidableObject<Scalar, Dim>* >(new MeshBasedCollidableObject<Scalar>());break;
+    default: std::cerr<<"Object type error!"<<std::endl; return;
+    }
+    MeshBasedCollidableObject<Scalar>* mesh_object = dynamic_cast<MeshBasedCollidableObject<Scalar>*>(collide_object_);
+    mesh_object->setMesh(rigid_body_3d->mesh());
+    mesh_object->setTransform(rigid_body_3d->transformPtr());
+
+    object_bvh_ = new ObjectBVH<Scalar, Dim>();
+    object_bvh_->setCollidableObject(collide_object_);
 }
 
 
@@ -485,10 +497,10 @@ void RigidBodyDriver<Scalar, Dim>::computeInvMassMatrix(SparseMatrix<Scalar>& M_
     }
 
     //update M_inv
-    RigidBody<Scalar, Dim>* rigid_body = NULL;
+    RigidBody<Scalar, 3>* rigid_body = NULL;
     for(unsigned int i = 0; i < n; ++i)
     {
-        rigid_body = rigidBody(i);
+        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(i));
         if(rigid_body == NULL)
         {
             std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
@@ -538,12 +550,13 @@ void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J
     }
 
     //update J
-    ContactPoint<Scalar, Dim>* contact_point = NULL;
+    RigidBody<Scalar, 3>* rigid_body = NULL;
+    ContactPoint<Scalar, 3>* contact_point = NULL;
     unsigned int object_lhs, object_rhs;
     Vector<Scalar, 3> angular_normal_lhs, angular_normal_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = contact_points_[i];
+        contact_point = dynamic_cast<ContactPoint<Scalar, 3>*>(contact_points_[i]);
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating matrix!"<<std::endl;
@@ -551,8 +564,12 @@ void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J
         }
         object_lhs = contact_point->objectLhsIndex();
         object_rhs = contact_point->objectRhsIndex();
-        angular_normal_lhs = (contact_point->globalContactPosition() - rigidBody(object_lhs)->globalTranslation()).cross(contact_point->globalContactNormalLhs());
-        angular_normal_rhs = (contact_point->globalContactPosition() - rigidBody(object_rhs)->globalTranslation()).cross(contact_point->globalContactNormalRhs());
+        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(object_lhs));
+        angular_normal_lhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(contact_point->globalContactNormalLhs());
+        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(object_rhs));
+        angular_normal_rhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(contact_point->globalContactNormalRhs());
+        //angular_normal_lhs = (contact_point->globalContactPosition() - rigidBody(object_lhs)->globalTranslation()).cross(contact_point->globalContactNormalLhs());
+        //angular_normal_rhs = (contact_point->globalContactPosition() - rigidBody(object_rhs)->globalTranslation()).cross(contact_point->globalContactNormalRhs());
         for(unsigned int j = 0; j < 3; ++j)
         {
             J.setEntry(i, object_lhs * 6 + j, contact_point->globalContactNormalLhs()[j]);
@@ -590,12 +607,13 @@ void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar
     }
 
     //update D
-    ContactPoint<Scalar, Dim>* contact_point = NULL;
+    RigidBody<Scalar, 3>* rigid_body = NULL;
+    ContactPoint<Scalar, 3>* contact_point = NULL;
     unsigned int object_lhs, object_rhs;
     Vector<Scalar, 3> angular_normal_lhs, angular_normal_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = contact_points_[i];
+        contact_point = dynamic_cast<ContactPoint<Scalar, 3>*>(contact_points_[i]);
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating matrix!"<<std::endl;
@@ -623,8 +641,12 @@ void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar
         for(unsigned int k = 0; k< fric_sample_count; ++k)
         {
             sample_normal.normalize();
-            angular_normal_lhs = (contact_point->globalContactPosition() - rigidBody(object_lhs)->globalTranslation()).cross(sample_normal);
-            angular_normal_rhs = (contact_point->globalContactPosition() - rigidBody(object_rhs)->globalTranslation()).cross(sample_normal);
+            rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(object_lhs));
+            angular_normal_lhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(sample_normal);
+            rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(object_rhs));
+            angular_normal_rhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(sample_normal);
+            //angular_normal_lhs = (contact_point->globalContactPosition() - rigidBody(object_lhs)->globalTranslation()).cross(sample_normal);
+            //angular_normal_rhs = (contact_point->globalContactPosition() - rigidBody(object_rhs)->globalTranslation()).cross(sample_normal);
             for(unsigned int j = 0; j < 3; ++j)
             {
                 D.setEntry(i * fric_sample_count + k, object_lhs * 6 + j, sample_normal[j]);
@@ -661,10 +683,10 @@ void RigidBodyDriver<Scalar, Dim>::computeGeneralizedVelocity(VectorND<Scalar>& 
     }
 
     //update v
-    RigidBody<Scalar, Dim>* rigid_body = NULL;
+    RigidBody<Scalar, 3>* rigid_body = NULL;
     for(unsigned int i = 0; i < n; ++i)
     {
-        rigid_body = rigidBody(i);
+        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(i));
         if(rigid_body == NULL)
         {
             std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
@@ -700,19 +722,19 @@ void RigidBodyDriver<Scalar, Dim>::computeCoefficient(VectorND<Scalar>& CoR, Vec
     }
 
     //update CoR and CoF
-    ContactPoint<Scalar, Dim>* contact_point = NULL;
-    RigidBody<Scalar, Dim>* rigid_body_lhs, * rigid_body_rhs;
+    ContactPoint<Scalar, 3>* contact_point = NULL;
+    RigidBody<Scalar, 3>* rigid_body_lhs, * rigid_body_rhs;
     Scalar cor_lhs, cor_rhs, cof_lhs, cof_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = contact_points_[i];
+        contact_point = dynamic_cast<ContactPoint<Scalar, 3>*>(contact_points_[i]);
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating coefficient!"<<std::endl;
             continue;
         }
-        rigid_body_lhs = rigidBody(contact_point->objectLhsIndex());
-        rigid_body_rhs = rigidBody(contact_point->objectRhsIndex());
+        rigid_body_lhs = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(contact_point->objectLhsIndex()));
+        rigid_body_rhs = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(contact_point->objectRhsIndex()));
         if(rigid_body_lhs == NULL || rigid_body_rhs == NULL)
         {
             std::cerr<<"Null rigid body in updating coefficient!"<<std::endl;
@@ -860,10 +882,10 @@ void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, Vector
     VectorND<Scalar> impulse_angular = D_T * z_fric * (-1);
 
     //apply impulses to rigid bodies. This step will not cause velocity and configuration integral 
-    RigidBody<Scalar, Dim>* rigid_body = NULL;
+    RigidBody<Scalar, 3>* rigid_body = NULL;
     for(unsigned int i = 0; i < n; ++i)
     {
-        rigid_body = rigidBody(i);
+        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(i));
         if(rigid_body == NULL)
         {
             std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
@@ -897,12 +919,12 @@ void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
 }
 
 //explicit instantiation
-//template class RigidBodyArchive<float, 2>;
-//template class RigidBodyArchive<double, 2>;
+template class RigidBodyArchive<float, 2>;
+template class RigidBodyArchive<double, 2>;
 template class RigidBodyArchive<float, 3>;
 template class RigidBodyArchive<double, 3>;
-//template class RigidBodyDriver<float, 2>;
-//template class RigidBodyDriver<double, 2>;
+template class RigidBodyDriver<float, 2>;
+template class RigidBodyDriver<double, 2>;
 template class RigidBodyDriver<float, 3>;
 template class RigidBodyDriver<double, 3>;
 

@@ -30,6 +30,18 @@ RigidBody<Scalar, 2>::~RigidBody()
 
 }
 
+template <typename Scalar>
+void RigidBody<Scalar, 2>::update(Scalar dt)
+{
+    //to do
+}
+
+template <typename Scalar>
+void RigidBody<Scalar, 2>::performGravity(Scalar gravity, Scalar dt)
+{
+    //to do
+}
+
 //explicit instantiation
 template class RigidBody<float, 2>;
 template class RigidBody<double, 2>;
