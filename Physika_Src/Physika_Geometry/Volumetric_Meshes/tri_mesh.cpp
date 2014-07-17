@@ -66,7 +66,7 @@ VolumetricMeshInternal::ElementType TriMesh<Scalar>::elementType() const
 }
 
 template <typename Scalar>
-int TriMesh<Scalar>::eleVertNum() const
+unsigned int TriMesh<Scalar>::eleVertNum() const
 {
     return 3;
 }
@@ -80,7 +80,7 @@ Scalar TriMesh<Scalar>::eleVolume(unsigned int ele_idx) const
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,2> > ele_vertices(3);
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Vector<Scalar,2> b_minus_a = ele_vertices[1] - ele_vertices[0];
     Vector<Scalar,2> c_minus_a = ele_vertices[2] - ele_vertices[0]; 
@@ -117,14 +117,14 @@ void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,2> > ele_vertices(3);
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
     SquareMatrix<Scalar, 3> m0(Vector<Scalar, 3>(ele_vertices[0][0] , ele_vertices[1][0], ele_vertices[2][0]),
                                Vector<Scalar, 3>(ele_vertices[0][1], ele_vertices[1][1], ele_vertices[2][1]),
                                Vector<Scalar, 3>(1, 1, 1));
     Vector<Scalar, 3> result;
     result = (m0.inverse())*Vector<Scalar, 3>(pos[0], pos[1], 1);
-    for(int i = 0; i <3; ++i)
+    for(unsigned int i = 0; i <3; ++i)
         weights[i] = result[i];
 }
 

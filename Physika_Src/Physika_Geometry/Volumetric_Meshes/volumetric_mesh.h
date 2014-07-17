@@ -52,6 +52,7 @@ public:
     unsigned int              regionNum() const;
     const Vector<Scalar,Dim>& vertPos(unsigned int vert_idx) const;
     const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const;
+    void eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const; //return positions of one element's vertices
     std::string               regionName(unsigned int region_idx) const;
     unsigned int              regionEleNum(unsigned int region_idx) const;
     unsigned int              regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
@@ -82,7 +83,7 @@ public:
     //virtual methods
     virtual void   printInfo() const=0;
     virtual VolumetricMeshInternal::ElementType elementType() const=0;
-    virtual int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element, otherwise return -1
+    virtual unsigned int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element
     virtual Scalar eleVolume(unsigned int ele_idx) const=0;
     virtual bool   containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
     virtual void   interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0; 

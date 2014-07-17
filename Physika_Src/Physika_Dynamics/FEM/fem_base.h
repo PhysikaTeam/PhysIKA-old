@@ -19,6 +19,8 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
 
 namespace Physika{
@@ -67,11 +69,16 @@ public:
     void setVertexVelocity(unsigned int vert_idx, const Vector<Scalar,Dim> &v);
     void resetVertexVelocity();
 protected:
-    virtual void initialize()=0;    
+    virtual void initialize()=0;
+    void synchronizeDataWithSimulationMesh();  //synchronize related data when simulation mesh is changed (dimension of displacement vector, etc.)
+    SquareMatrix<Scalar,Dim> deformationGradient(unsigned int ele_idx) const;  //compute the deformation gradient of given element, constant strain element
+    void computeReferenceShapeMatrixInverse();  //compute the inverse of the reference shape matrix for each element, precomputation for deformation gradient
+                                                //called only once when simulation mesh is set
 protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
     std::vector<Vector<Scalar,Dim> > vertex_displacements_;  //displacement of simulation mesh vertices
     std::vector<Vector<Scalar,Dim> > vertex_velocities_;  //velocities of simulation mesh vertices
+    std::vector<SquareMatrix<Scalar,Dim> > reference_shape_matrix_inv_; //store precomputed data (Dm) for deformation gradient computation: F = Ds*inv(Dm)
     Scalar gravity_;
 };
 

@@ -38,7 +38,7 @@ public:
     CubicMesh<Scalar>& operator= (const CubicMesh<Scalar> &cubic_mesh);
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
-    int eleVertNum() const;
+    unsigned int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
     bool containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const;
     void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const;

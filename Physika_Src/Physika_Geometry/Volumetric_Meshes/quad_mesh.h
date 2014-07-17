@@ -32,7 +32,7 @@ public:
     QuadMesh<Scalar>& operator= (const QuadMesh<Scalar> &quad_mesh);
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
-    int eleVertNum() const;
+    unsigned int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
     bool containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const;
     void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;

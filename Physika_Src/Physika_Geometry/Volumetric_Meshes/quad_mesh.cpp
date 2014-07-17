@@ -65,7 +65,7 @@ VolumetricMeshInternal::ElementType QuadMesh<Scalar>::elementType() const
 }
 
 template <typename Scalar>
-int QuadMesh<Scalar>::eleVertNum() const
+unsigned int QuadMesh<Scalar>::eleVertNum() const
 {
     return 4;
 }
@@ -79,7 +79,7 @@ Scalar QuadMesh<Scalar>::eleVolume(unsigned int ele_idx) const
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,2> > ele_vertices(4);
-    for(int i = 0; i < 4; ++i)
+    for(unsigned int i = 0; i < 4; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
     //volume = 1/2*|ab x ac + ac x ad|
     Vector<Scalar,2> a_minus_d = ele_vertices[0] - ele_vertices[3];
@@ -118,7 +118,7 @@ void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<S
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,2> > ele_vertices(4);
-    for(int i = 0; i < 4; ++i)
+    for(unsigned int i = 0; i < 4; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar Dx0,Dx1,Dy0,Dy1;
     Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);

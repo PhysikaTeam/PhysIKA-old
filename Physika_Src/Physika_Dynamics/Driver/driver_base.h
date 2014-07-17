@@ -39,7 +39,7 @@ namespace Physika{
  * To implement restart support in subclass of DriverBase, you need to:
  * 1. Implement the write() method where the image of driver class in memory is written to file
  * 2. Implement the read() method where the status of driver class is loadded from file
- * 3. Implement the Initializae() method, in which the read() method is called to load driver status
+ * 3. Implement the Initialize() method, in which the read() method is called to load driver status
  *    of restart frame into memory
  * Note:
  * 1. If you override the default run() in your subclass, be sure to call initialize() at the begining of
