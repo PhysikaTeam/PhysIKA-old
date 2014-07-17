@@ -64,7 +64,7 @@ VolumetricMeshInternal::ElementType CubicMesh<Scalar>::elementType() const
 }
 
 template <typename Scalar>
-int CubicMesh<Scalar>::eleVertNum() const
+unsigned int CubicMesh<Scalar>::eleVertNum() const
 {
     return 8;
 }
@@ -78,7 +78,7 @@ Scalar CubicMesh<Scalar>::eleVolume(unsigned int ele_idx) const
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,3> > ele_vertices(8);
-    for(int i = 0; i < 8; ++i)
+    for(unsigned int i = 0; i < 8; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
     //volume = |01 x 03 x 04|
     Vector<Scalar,3> fir_minus_0 = ele_vertices[1] - ele_vertices[0];
@@ -95,17 +95,17 @@ bool CubicMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar
         std::cerr<<"CubicMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-	Scalar weights[8];
+    std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = true;
-	for(int i=0; i<8; ++i)
+	for(unsigned int i=0; i<8; ++i)
         if(weights[i] < 0)
             vert_in_ele = false;
     return vert_in_ele;
 }
 
 template <typename Scalar>
-void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const
+void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, std::vector<Scalar> &weights) const
 {
 /*we use trilinear interpolation 
  *Dx0 = (x-pos[0][0])/(pos[1][0]-pos[0][0]);
@@ -121,7 +121,7 @@ void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,3> > ele_vertices(8);
-    for(int i = 0; i < 8; ++i)
+    for(unsigned int i = 0; i < 8; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar Dx0,Dx1,Dy0,Dy1,Dz0,Dz1;
     Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);
@@ -130,6 +130,7 @@ void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<
     Dy1 = (ele_vertices[2][1] - pos[1])/(ele_vertices[2][1] - ele_vertices[1][1]);
     Dz0 = (pos[2] - ele_vertices[0][2])/(ele_vertices[4][2] - ele_vertices[0][2]);
     Dz1 = (ele_vertices[4][2] - pos[2])/(ele_vertices[4][2] - ele_vertices[0][2]);
+    weights.resize(8);
     weights[0] = Dx1 * Dy1 * Dz1;
     weights[1] = Dx0 * Dy1 * Dz1;
     weights[2] = Dx0 * Dy0 * Dz1;

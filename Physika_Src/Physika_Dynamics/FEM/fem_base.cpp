@@ -68,8 +68,7 @@ void FEMBase<Scalar,Dim>::loadSimulationMesh(const std::string &file_name)
         std::cerr<<"Failed to load simulation mesh from "<<file_name<<"\n";
         std::exit(EXIT_FAILURE);
     }
-    vertex_displacements_.resize(simulation_mesh_->vertNum());
-    vertex_velocities_.resize(simulation_mesh_->vertNum());
+    synchronizeDataWithSimulationMesh();
 }
 
 template <typename Scalar, int Dim>
@@ -108,8 +107,7 @@ void FEMBase<Scalar,Dim>::setSimulationMesh(const VolumetricMesh<Scalar,Dim> &me
         PHYSIKA_ERROR("Unknown element type.");
         break;
     }
-    vertex_displacements_.resize(simulation_mesh_->vertNum());
-    vertex_velocities_.resize(simulation_mesh_->vertNum());
+    synchronizeDataWithSimulationMesh();
 }
 
 template <typename Scalar, int Dim>
@@ -239,6 +237,108 @@ void FEMBase<Scalar,Dim>::resetVertexVelocity()
 {
     for(unsigned int i = 0; i < vertex_velocities_.size(); ++i)
         vertex_velocities_[i] = Vector<Scalar,Dim>(0);
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::synchronizeDataWithSimulationMesh()
+{
+    vertex_displacements_.resize(simulation_mesh_->vertNum());
+    vertex_velocities_.resize(simulation_mesh_->vertNum());
+    computeReferenceShapeMatrixInverse();
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> FEMBase<Scalar,Dim>::deformationGradient(unsigned int ele_idx) const
+{
+//TO DO
+    unsigned int ele_num = simulation_mesh_->eleNum();
+    PHYSIKA_ASSERT(ele_idx<ele_num);
+    VolumetricMeshInternal::ElementType ele_type = simulation_mesh_->elementType();
+    switch(ele_type)
+    {
+    case VolumetricMeshInternal::TRI:
+        break;
+    case VolumetricMeshInternal::QUAD:
+        break;
+    case VolumetricMeshInternal::TET:
+        break;
+    case VolumetricMeshInternal::CUBIC:
+        break;
+    case VolumetricMeshInternal::NON_UNIFORM:
+        PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
+        break;
+    default:
+        PHYSIKA_ERROR("Unknown element type.");
+        break;
+    }
+    return SquareMatrix<Scalar,Dim>();
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::computeReferenceShapeMatrixInverse()
+{
+    reference_shape_matrix_inv_.clear();
+    VolumetricMeshInternal::ElementType ele_type = simulation_mesh_->elementType();
+    unsigned int ele_num = simulation_mesh_->eleNum();
+    switch(ele_type)
+    {
+    case VolumetricMeshInternal::TRI:
+    {
+        std::vector<Vector<Scalar,2> > ele_vert_pos;
+        for(unsigned int i = 0; i < ele_num; ++i)
+        {
+            ele_vert_pos.clear();
+            TriMesh<Scalar> *tri_mesh = dynamic_cast<TriMesh<Scalar>*>(simulation_mesh_);
+            PHYSIKA_ASSERT(tri_mesh);
+            tri_mesh->eleVertPos(i,ele_vert_pos);
+            PHYSIKA_ASSERT(ele_vert_pos.size()==3);
+            Vector<Scalar,2> v1_minus_v3 = ele_vert_pos[0] - ele_vert_pos[2];
+            Vector<Scalar,2> v2_minus_v3 = ele_vert_pos[1] - ele_vert_pos[2];
+            SquareMatrix<Scalar,2> reference_shape_matrix(v1_minus_v3,v2_minus_v3);
+            SquareMatrix<Scalar,2> inv = reference_shape_matrix.inverse();
+            SquareMatrix<Scalar,Dim> *mat_ptr = dynamic_cast<SquareMatrix<Scalar,Dim>*>(&inv);
+            PHYSIKA_ASSERT(mat_ptr);
+            reference_shape_matrix_inv_.push_back(*mat_ptr);
+        }
+        break;
+    }
+    case VolumetricMeshInternal::QUAD:
+    {
+        break;
+    }
+    case VolumetricMeshInternal::TET:
+    {
+        std::vector<Vector<Scalar,3> > ele_vert_pos;
+        for(unsigned int i = 0; i < ele_num; ++i)
+        {
+            ele_vert_pos.clear();
+            TetMesh<Scalar> *tet_mesh = dynamic_cast<TetMesh<Scalar>*>(simulation_mesh_);
+            PHYSIKA_ASSERT(tet_mesh);
+            tet_mesh->eleVertPos(i,ele_vert_pos);
+            PHYSIKA_ASSERT(ele_vert_pos.size()==4);
+            Vector<Scalar,3> v1_minus_v4 = ele_vert_pos[0] - ele_vert_pos[3];
+            Vector<Scalar,3> v2_minus_v4 = ele_vert_pos[1] - ele_vert_pos[3];
+            Vector<Scalar,3> v3_minus_v4 = ele_vert_pos[2] - ele_vert_pos[3];
+            SquareMatrix<Scalar,3> reference_shape_matrix(v1_minus_v4,v2_minus_v4,v3_minus_v4);
+            SquareMatrix<Scalar,3> inv = reference_shape_matrix.inverse();
+            SquareMatrix<Scalar,Dim> *mat_ptr = dynamic_cast<SquareMatrix<Scalar,Dim>*>(&inv);
+            PHYSIKA_ASSERT(mat_ptr);
+            reference_shape_matrix_inv_.push_back(*mat_ptr);
+        }
+        break;
+    }
+    case VolumetricMeshInternal::CUBIC:
+    {
+        break;
+    }
+    case VolumetricMeshInternal::NON_UNIFORM:
+        PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
+        break;
+    default:
+        PHYSIKA_ERROR("Unknown element type.");
+        break;
+    }
+//TO DO
 }
 
 //explicit instantiations

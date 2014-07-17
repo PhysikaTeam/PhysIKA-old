@@ -66,7 +66,7 @@ VolumetricMeshInternal::ElementType TetMesh<Scalar>::elementType() const
 }
 
 template <typename Scalar>
-int TetMesh<Scalar>::eleVertNum() const
+unsigned int TetMesh<Scalar>::eleVertNum() const
 {
     return 4;
 }
@@ -80,7 +80,7 @@ Scalar TetMesh<Scalar>::eleVolume(unsigned int ele_idx) const
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,3> > ele_vertices(4);
-    for(int i = 0; i < 4; ++i)
+    for(unsigned int i = 0; i < 4; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
     //volume = 1/6*|<(a-d),(b-d)x(c-d)>|
     Vector<Scalar,3> a_minus_d = ele_vertices[0] - ele_vertices[3];
@@ -97,14 +97,14 @@ bool TetMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,3
         std::cerr<<"TetMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    Scalar weights[4];
+    std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = (weights[0]>=0)&&(weights[1]>=0)&&(weights[2]>=0)&&(weights[3]>=0);
     return vert_in_ele;
 }
 
 template <typename Scalar>
-void TetMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const
+void TetMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, std::vector<Scalar> &weights) const
 {
 /*
        |x1 y1 z1 1|
@@ -140,12 +140,13 @@ void TetMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,3> > ele_vertices(4);
-    for(int i = 0; i < 4; ++i)
+    for(unsigned int i = 0; i < 4; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar D[5];
     D[0] = getTetDeterminant(ele_vertices[0],ele_vertices[1],ele_vertices[2],ele_vertices[3]);
     Array< Vector<Scalar,3> > buffer(ele_vertices);
-    for(int i = 1; i <=4; ++i)
+    weights.resize(4);
+    for(unsigned int i = 1; i <=4; ++i)
     {
         buffer = ele_vertices;
         buffer[i-1] = pos;

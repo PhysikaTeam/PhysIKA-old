@@ -13,6 +13,7 @@
  * contact me at mikepkucs@gmail.com if any question
  */
 
+#include <vector>
 #include <iostream>
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/tet_mesh.h"
@@ -42,7 +43,7 @@ int main()
 	
 	cout<<"volume: "<<obj.eleVolume(0) <<endl;
 	cout<<"contain point(0.5,0.5): "<<obj.containsVertex(0,Physika::Vector<float, 2>(0.5,0.5) )<<endl;
-	float weights[3];
+	vector<float> weights;
 	obj.interpolationWeights( 0,Physika::Vector<float,2>(0.1,0.9),weights);
 	cout<<"interplation(0.1,0.9):"<<weights[0]<<' '<<weights[1]<<' '<<weights[2]<<endl;
 	cout<<endl;
@@ -55,7 +56,7 @@ int main()
 	cout<<"ele_num: "<<tetobj.eleNum()<<endl;
 	tetobj.printInfo();
 	cout<<"volume: "<<tetobj.eleVolume(0)<<' '<<tetobj.eleVolume(1)<<endl;
-	double tetweights[4];tetobj.interpolationWeights(1,Physika::Vector<double ,3>(0.5,0.5,0.5),tetweights);
+	vector<double> tetweights;tetobj.interpolationWeights(1,Physika::Vector<double ,3>(0.5,0.5,0.5),tetweights);
 	cout<<"interplation(0.5,0.5,0.5):"<<endl;
 	cout<<tetweights[0]<<' '<<tetweights[1]<<' '<<tetweights[2]<<' '<<tetweights[3]<<endl;
 	cout<<endl;
@@ -68,7 +69,7 @@ int main()
 	cout<<"ele_num: "<<quadobj.eleNum()<<endl;
 	quadobj.printInfo();
 	cout<<"volume: "<<quadobj.eleVolume(0)<<endl;
-	double quadweights[4];quadobj.interpolationWeights(0,Physika::Vector<double ,2>(0.5,0.3),quadweights);
+	vector<double> quadweights;quadobj.interpolationWeights(0,Physika::Vector<double ,2>(0.5,0.3),quadweights);
 	cout<<"interplation(0.5,0.3):"<<endl;
 	cout<<quadweights[0]<<' '<<quadweights[1]<<' '<<quadweights[2]<<' '<<quadweights[3]<<endl;
 	cout<<endl;
@@ -81,7 +82,7 @@ int main()
 	cout<<"contain point(2,2,2): "<<cubicobj.containsVertex(0,Physika::Vector<double, 3>(2,2,2))<<endl;
 	cout<<"vert_num: "<<cubicobj.vertNum()<<endl;
 	cout<<"volume: "<<cubicobj.eleVolume(0)<<endl;
-	double cubicweights[8];
+	vector<double> cubicweights;
 	cubicobj.interpolationWeights(0,Physika::Vector<double,3>(2,2,1),cubicweights);
 	cout<<"interplation(2,2,1):"<<endl;
 	for(int i=0;i<8;++i)cout<<cubicweights[i]<<' ';
