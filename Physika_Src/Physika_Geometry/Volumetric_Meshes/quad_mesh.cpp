@@ -96,14 +96,14 @@ bool QuadMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,
         std::cerr<<"QuadMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    Scalar weights[4];
+    std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = (weights[0]>=0) && (weights[1]>=0) && (weights[2]>=0 && (weights[3]>=0));
     return vert_in_ele;    
 }
 
 template <typename Scalar>
-void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const
+void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, std::vector<Scalar> &weights) const
 {
 /*we use bilinear interpolation 
  *Dx0 = (x-pos[0][0])/(pos[1][0]-pos[0][0]);
@@ -126,6 +126,7 @@ void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<S
     Dy0 = (pos[1] - ele_vertices[1][1])/(ele_vertices[2][1] - ele_vertices[1][1]);
     Dy1 = (ele_vertices[2][1] - pos[1])/(ele_vertices[2][1] - ele_vertices[1][1]);
 	//std::cout<<"dx0:"<<Dx0<<' '<<Dx1<<' '<<Dy0<<' '<<Dy1<<std::endl;
+    weights.resize(4);
     weights[0] = Dx1 * Dy1;
     weights[1] = Dx0 * Dy1;
     weights[2] = Dx0 * Dy0;

@@ -95,14 +95,14 @@ bool TriMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,2
         std::cerr<<"TriMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    Scalar weights[3];
+    std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = (weights[0]>=0)&&(weights[1]>=0)&&(weights[2]>=0);
     return vert_in_ele;
 }
 
 template <typename Scalar>
-void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const
+void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, std::vector<Scalar> &weights) const
 {
 /*
   w0    |x1 y1 z1|  -1       |pos1|
@@ -124,8 +124,9 @@ void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
                                Vector<Scalar, 3>(1, 1, 1));
     Vector<Scalar, 3> result;
     result = (m0.inverse())*Vector<Scalar, 3>(pos[0], pos[1], 1);
+    weights.clear();
     for(unsigned int i = 0; i <3; ++i)
-        weights[i] = result[i];
+        weights.push_back(result[i]);
 }
 
 //explicit instantitation

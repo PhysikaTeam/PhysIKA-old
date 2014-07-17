@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TRI_MESH_H_
 #define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TRI_MESH_H_
 
+#include <vector>
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 
 namespace Physika{
@@ -35,7 +36,7 @@ public:
     unsigned int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
     bool containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const;
-    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;
+    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, std::vector<Scalar> &weights) const;
 protected:
 };
 
