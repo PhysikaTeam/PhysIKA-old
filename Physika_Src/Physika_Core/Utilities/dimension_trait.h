@@ -22,7 +22,6 @@ namespace Physika{
 template <int Dim>
 struct DimensionTrait
 {
-    inline int getDimension() {return Dim};
 };
 
 }

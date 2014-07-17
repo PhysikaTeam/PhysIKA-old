@@ -23,6 +23,7 @@
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
 #include "Physika_Dynamics/Collidable_Objects/contact_point.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
+#include "Physika_Core/Utilities/dimension_trait.h"
 
 
 namespace Physika{
@@ -99,17 +100,53 @@ protected:
 
     //inherit function
     void initialize();//initialize before the simulation
-    //dynamics, only designed for 3-dimension for now
+
+    //dynamics
     virtual void performGravity(Scalar dt);
-    virtual void updateRigidBody(Scalar dt);
     virtual bool collisionDetection();
     virtual void collisionResponse();
-    virtual void updateDynamicsMatrix(SparseMatrix<Scalar>& J, SparseMatrix<Scalar>& M_inv, SparseMatrix<Scalar>& D, VectorND<Scalar>& v);//update the inertia matrix and Jacobian matrix to form BLCP. Refer to [Tonge et al. 2012]
-    virtual void updateCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF);//update coefficient of restitution and friction
+    virtual void updateRigidBody(Scalar dt);
+
+    //utilities. These functions will do nothing but call the overload versions depending on the dimension
+    virtual void computeInvMassMatrix(SparseMatrix<Scalar>& M_inv);//compute inverse mass matrix
+    virtual void computeJacobianMatrix(SparseMatrix<Scalar>& J);//compute Jacobian matrix
+    virtual void computeFricJacobianMatrix(SparseMatrix<Scalar>& D);//compute Jacobian matrix of the discretized friction pyramid. Refer to [Tonge et al. 2012]
+    virtual void computeGeneralizedVelocity(VectorND<Scalar>& v);//compute generalized velocity
+    virtual void computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF);//compute coefficient of restitution and friction
     virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
                                   VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
                                   VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count = 50);//solve the BLCP equation with PGS. Refer to [Tonge et al. 2012]
     virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T);//apply impulse to rigid bodies. This step will not cause velocity and configuration integral
+
+    //overload versions of utilities for 2D and 3D situations
+    virtual void computeInvMassMatrix(SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait);
+    virtual void computeInvMassMatrix(SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait);
+
+    virtual void computeJacobianMatrix(SparseMatrix<Scalar>& J, DimensionTrait<2> trait);
+    virtual void computeJacobianMatrix(SparseMatrix<Scalar>& J, DimensionTrait<3> trait);
+
+    virtual void computeFricJacobianMatrix(SparseMatrix<Scalar>& D, DimensionTrait<2> trait);
+    virtual void computeFricJacobianMatrix(SparseMatrix<Scalar>& D, DimensionTrait<3> trait);
+
+    virtual void computeGeneralizedVelocity(VectorND<Scalar>& v, DimensionTrait<2> trait);
+    virtual void computeGeneralizedVelocity(VectorND<Scalar>& v, DimensionTrait<3> trait);
+
+    virtual void computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<2> trait);
+    virtual void computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<3> trait);
+
+    virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+                                  VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+                                  VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
+                                  DimensionTrait<2> trait);
+    virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+                                  VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+                                  VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
+                                  DimensionTrait<3> trait);
+
+    virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<2> trait);
+    virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<3> trait);
+
+
 };
 
 } //end of namespace Physika
