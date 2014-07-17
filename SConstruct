@@ -73,7 +73,7 @@ else:
 	arc='x86'
    else:
 	arc='amd64'
-   if build_type=='Relase':
+   if build_type=='Release':
         CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']
    else:
         CCFLAGS=['/Od','/Zi','/EHsc','/W3']
