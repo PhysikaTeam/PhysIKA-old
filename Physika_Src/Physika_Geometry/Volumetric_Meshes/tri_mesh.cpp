@@ -66,7 +66,7 @@ VolumetricMeshInternal::ElementType TriMesh<Scalar>::elementType() const
 }
 
 template <typename Scalar>
-int TriMesh<Scalar>::eleVertNum() const
+unsigned int TriMesh<Scalar>::eleVertNum() const
 {
     return 3;
 }
@@ -80,7 +80,7 @@ Scalar TriMesh<Scalar>::eleVolume(unsigned int ele_idx) const
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,2> > ele_vertices(3);
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Vector<Scalar,2> b_minus_a = ele_vertices[1] - ele_vertices[0];
     Vector<Scalar,2> c_minus_a = ele_vertices[2] - ele_vertices[0]; 
@@ -95,14 +95,14 @@ bool TriMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,2
         std::cerr<<"TriMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    Scalar weights[3];
+    std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = (weights[0]>=0)&&(weights[1]>=0)&&(weights[2]>=0);
     return vert_in_ele;
 }
 
 template <typename Scalar>
-void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const
+void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, std::vector<Scalar> &weights) const
 {
 /*
   w0    |x1 y1 z1|  -1       |pos1|
@@ -117,15 +117,16 @@ void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
         std::exit(EXIT_FAILURE);
     }
     Array< Vector<Scalar,2> > ele_vertices(3);
-    for(int i = 0; i < 3; ++i)
+    for(unsigned int i = 0; i < 3; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
     SquareMatrix<Scalar, 3> m0(Vector<Scalar, 3>(ele_vertices[0][0] , ele_vertices[1][0], ele_vertices[2][0]),
                                Vector<Scalar, 3>(ele_vertices[0][1], ele_vertices[1][1], ele_vertices[2][1]),
                                Vector<Scalar, 3>(1, 1, 1));
     Vector<Scalar, 3> result;
     result = (m0.inverse())*Vector<Scalar, 3>(pos[0], pos[1], 1);
-    for(int i = 0; i <3; ++i)
-        weights[i] = result[i];
+    weights.clear();
+    for(unsigned int i = 0; i <3; ++i)
+        weights.push_back(result[i]);
 }
 
 //explicit instantitation

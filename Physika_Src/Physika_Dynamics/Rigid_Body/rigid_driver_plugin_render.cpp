@@ -81,24 +81,6 @@ void RigidDriverPluginRender<Scalar, Dim>::onEndTimeStep(Scalar time, Scalar dt)
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onWrite(unsigned int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onRead(unsigned int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onRestart(unsigned int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::onBeginRigidStep(unsigned int step, Scalar dt)
 {
 

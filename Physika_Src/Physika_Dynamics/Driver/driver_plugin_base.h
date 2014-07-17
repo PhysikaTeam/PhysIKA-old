@@ -30,11 +30,8 @@ public:
     //functions called in driver
     virtual void onBeginFrame(unsigned int frame) = 0;
     virtual void onEndFrame(unsigned int frame) = 0;
-    virtual void onBeginTimeStep(Scalar dt) = 0;//replaced by onBeginRigidStep in rigid body simulation
-    virtual void onEndTimeStep(Scalar time, Scalar dt) = 0;//replaced by onEndRigidStep in rigid body simulation
-    virtual void onWrite(unsigned int frame) = 0;
-    virtual void onRead(unsigned int frame) = 0;
-    virtual void onRestart(unsigned int frame)=0;
+    virtual void onBeginTimeStep(Scalar dt) = 0;
+    virtual void onEndTimeStep(Scalar time, Scalar dt) = 0;
 
     //basic function
     virtual DriverBase<Scalar>* driver();

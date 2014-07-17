@@ -157,6 +157,19 @@ const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int el
 }
 
 template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const
+{
+    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    {
+        std::cerr<<"element index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    positions.clear();
+    for(unsigned int i = 0; i < this->eleVertNum(ele_idx); ++i)
+        positions.push_back(this->eleVertPos(ele_idx,i));
+}
+
+template <typename Scalar, int Dim>
 string VolumetricMesh<Scalar,Dim>::regionName(unsigned int region_idx) const
 {
     if(region_idx<0||region_idx>=this->regionNum())

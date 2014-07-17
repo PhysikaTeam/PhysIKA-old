@@ -35,6 +35,7 @@ public:
 
     virtual void advanceStep(Scalar dt)=0;//advance one time step
     virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions
+    virtual bool withRestartSupport() const=0; //indicate whether restart is supported
     virtual void write(const std::string &file_name)=0;//write simulation data to file
     virtual void read(const std::string &file_name)=0;//read simulation data from file
     virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.

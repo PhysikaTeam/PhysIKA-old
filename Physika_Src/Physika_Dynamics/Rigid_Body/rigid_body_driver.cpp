@@ -221,31 +221,19 @@ Scalar RigidBodyDriver<Scalar, Dim>::computeTimeStep()
 }
 
 template <typename Scalar,int Dim>
+bool RigidBodyDriver<Scalar,Dim>::withRestartSupport() const
+{
+    return false;
+}
+
+template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::write(const std::string &file_name)
 {
-    //plugin
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onWrite(frame_);
-	}
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::read(const std::string &file_name)
 {
-    //plugin
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onRead(frame_);
-	}
 }
 
 template <typename Scalar,int Dim>

@@ -29,9 +29,6 @@ public:
     void onEndFrame(unsigned int frame);
     void onBeginTimeStep(Scalar dt);
     void onEndTimeStep(Scalar time, Scalar dt);
-    void onWrite(unsigned int frame);
-    void onRead(unsigned int frame);
-    void onRestart(unsigned int frame);
 
     void onBeginRigidStep(unsigned int step, Scalar dt);//replace the original onBeginTimeStep in rigid body simulation
     void onEndRigidStep(unsigned int step, Scalar dt);//replace the original onEndTimeStep in rigid body simulation
