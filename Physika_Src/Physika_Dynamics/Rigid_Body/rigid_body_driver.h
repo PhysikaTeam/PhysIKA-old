@@ -59,7 +59,6 @@ protected:
 
 template <typename Scalar,int Dim> class RigidDriverPlugin;
 
-//Dynamics of rigid body is only designed for 3-dimension for now
 template <typename Scalar,int Dim>
 class RigidBodyDriver: public DriverBase<Scalar>
 {
@@ -79,7 +78,7 @@ public:
 
 	//get & set, add & delete
 	virtual void addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild = true);//is_rebuild means whether rebuild the scene BVH after adding this body.
-    void setGravity(Scalar gravity);
+    void setGravity(Scalar gravity);//gravity is along the y-axis and positive value means -y direction. Gravity is usually set to 9.81
 	unsigned int numRigidBody() const;
 	RigidBody<Scalar, Dim>* rigidBody(unsigned int index);
 	CollisionDetectionResult<Scalar, Dim>& collisionResult();

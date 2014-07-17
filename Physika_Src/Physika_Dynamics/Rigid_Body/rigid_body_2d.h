@@ -12,3 +12,27 @@
  *
  */
 
+#ifndef PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_2D_H_
+#define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_2D_H_
+
+#include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Collidable_Objects/polygon_based_collidable_object.h"
+
+namespace Physika{
+
+template <typename Scalar,int Dim> class Vector;
+template <typename Scalar> class Polygon;
+
+template <typename Scalar>
+class RigidBody<Scalar, 2>
+{
+public:
+    //constructors && deconstructors
+    RigidBody();
+    virtual ~RigidBody();
+protected:
+    Polygon<Scalar>* polygon_;
+};
+}
+
+#endif //PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_2D_H_

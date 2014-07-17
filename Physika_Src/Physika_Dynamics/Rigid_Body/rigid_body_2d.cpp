@@ -11,3 +11,27 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
+
+#include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_2d.h"
+#include "Physika_Geometry/Polygon/polygon.h"
+
+namespace Physika{
+
+template <typename Scalar>
+RigidBody<Scalar, 2>::RigidBody()
+{
+
+}
+
+template <typename Scalar>
+RigidBody<Scalar, 2>::~RigidBody()
+{
+
+}
+
+//explicit instantiation
+template class RigidBody<float, 2>;
+template class RigidBody<double, 2>;
+
+}

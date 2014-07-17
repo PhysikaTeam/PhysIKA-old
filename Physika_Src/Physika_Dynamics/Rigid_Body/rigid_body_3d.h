@@ -45,11 +45,11 @@ public:
     inline Transform<Scalar>& transform() {return transform_;};
     inline const Transform<Scalar>* transformPtr() const {return &transform_;};
     inline Transform<Scalar>* transformPtr() {return &transform_;};//WARNING! Don't use this to modify the transform of this rigid body. Use setTranslate(), setRotate() and setScale() instead.
-    void setTranslation(const Vector<Scalar, 3>& translation);//Only defined to 3-Dimension
-    void setRotation(const Vector<Scalar, 3>& rotation);//Only defined to 3-Dimension
-    void setRotation(const Quaternion<Scalar>& rotation);//Only defined to 3-Dimension
-    void setRotation(const SquareMatrix<Scalar, 3>& rotation);//Only defined to 3-Dimension
-    void setScale(const Vector<Scalar, 3>& scale);//Only defined to 3-Dimension. Inertia tensor will be recalculated
+    void setTranslation(const Vector<Scalar, 3>& translation);
+    void setRotation(const Vector<Scalar, 3>& rotation);
+    void setRotation(const Quaternion<Scalar>& rotation);
+    void setRotation(const SquareMatrix<Scalar, 3>& rotation);
+    void setScale(const Vector<Scalar, 3>& scale);
     void setProperty(SurfaceMesh<Scalar>* mesh, Scalar density = 1);//Inertia tensor will be recalculated
     void setProperty(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density = 1);//Inertia tensor will be recalculated
     inline void setFixed(bool is_fixed) {is_fixed_ = is_fixed;};
@@ -115,7 +115,7 @@ protected:
 
     //dynamics
     void resetTemporaryVariables();//prepare for the new time step
-    void velocityIntegral(Scalar dt);//Only defined to 3-Dimension
+    void velocityIntegral(Scalar dt);
     void configurationIntegral(Scalar dt);
     void updateInertiaTensor();
     void recalculateTransform();//recalculate transform_ from global_translation_ and global_rotation_

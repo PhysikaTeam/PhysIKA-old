@@ -427,6 +427,11 @@ void RigidBodyDriver<Scalar, Dim>::updateDynamicsMatrix(SparseMatrix<Scalar>& J,
     unsigned int s = D.rows();
     unsigned int fric_sample_count = s / m;
 
+#if Dim == 3
+    //int a = "const";
+    std::cerr<<"123"<<std::endl;
+#endif
+
     //basic check of matrix's dimensions
     if(J.rows() != m || J.cols() != six_n)
     {
