@@ -50,8 +50,6 @@
 using namespace std;
 using namespace Physika;
 
-Transform<double> *trans;
-unsigned int render_i = 0;
 
 int main()
 {
