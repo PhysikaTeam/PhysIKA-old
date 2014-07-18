@@ -17,7 +17,13 @@
 
 namespace Physika{
 
-template<typename Scalar>
+template <typename Scalar>
+Transform<Scalar, 2>::~Transform()
+{
+
+}
+
+template <typename Scalar>
 Transform<Scalar, 2>::Transform():
 		translation_(Vector<Scalar, 2>(0)),
 		rotate_angle_(0),
@@ -201,19 +207,20 @@ SquareMatrix<Scalar, 3> Transform<Scalar, 2>::scale3x3Matrix() const
 template<typename Scalar>
 SquareMatrix<Scalar, 3> Transform<Scalar, 2>::transformMatrix() const
 {
-	return SquareMatrix<Scalar, 3>(	1, 0, this->translation_[0],
-									0,1, this->translation_[1],
-									0, 0, 1);
+    SquareMatrix<Scalar, 3> matrix = this->rotation3x3Matrix();
+    matrix(0, 1) = this->translation_[0];
+    matrix(0, 2) = this->translation_[1];
+    SquareMatrix<Scalar, 3> scale_matrix = this->scale3x3Matrix();
+    return matrix*scale_matrix;
 }
 
 template<typename Scalar>
-SquareMatrix<Scalar, 3> Transform<Scalar, 2>::transform3x3Matrix() const
+SquareMatrix<Scalar, 3> Transform<Scalar, 2>::translation3x3Matrix() const
 {
-	SquareMatrix<Scalar, 3> matrix = this->rotation3x3Matrix();
-	matrix(0, 1) = this->translation_[0];
-	matrix(0, 2) = this->translation_[1];
-	SquareMatrix<Scalar, 3> scale_matrix = this->scale3x3Matrix();
-	return matrix*scale_matrix;
+    return SquareMatrix<Scalar, 3>(	1, 0, this->translation_[0],
+        0,1, this->translation_[1],
+        0, 0, 1);
+
 }
 
 template<typename Scalar>

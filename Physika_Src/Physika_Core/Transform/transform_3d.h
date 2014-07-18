@@ -35,6 +35,7 @@ class Transform<Scalar, 3>
 public:
     /* Constructions */
     Transform();
+    ~Transform();
     explicit Transform(const Vector<Scalar, 3> );
     explicit Transform(const Quaternion<Scalar> );
     Transform(const Vector<Scalar, 3> &translation, const Quaternion<Scalar> &rotation);
@@ -42,7 +43,7 @@ public:
     Transform(const Vector<Scalar, 3> &translation, const Quaternion<Scalar> &rotation, const Vector<Scalar, 3> &scale);
     Transform(const Quaternion<Scalar> &rotation, const Vector<Scalar, 3> &translation, const Vector<Scalar, 3> &scale);
 	Transform(const Vector<Scalar, 3> &translation, const Vector<Scalar, 3> &scale, const Quaternion<Scalar> &rotation);
-    Transform(const SquareMatrix<Scalar, 4> &);		//now it's now all right.Suggest not use this construction.
+    Transform(const SquareMatrix<Scalar, 4> &);		//now it's not all right.Suggest not use this construction.
     Transform(const SquareMatrix<Scalar, 3> &);
 	Transform(const Transform<Scalar, 3> &);
 

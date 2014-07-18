@@ -16,6 +16,11 @@
 
 namespace Physika{
 
+template <typename Scalar>
+Transform<Scalar, 3>::~Transform()
+{
+    
+}
 
 template <typename Scalar>
 Transform<Scalar, 3>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
