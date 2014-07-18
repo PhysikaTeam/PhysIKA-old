@@ -92,11 +92,11 @@ public:
     static inline Transform<Scalar, 2> identityTransform() { return Transform<Scalar, 2>(); }
 
 protected:
+    Vector<Scalar,2> translation_;
 	//A rotate_angle can represent the rotation in 2D simplely
 	//anticlockwise is + or it is -;
 	//Use radian
     Scalar rotate_angle_;
-    Vector<Scalar,2> translation_;
     Vector<Scalar,2> scale_;
 
 protected:

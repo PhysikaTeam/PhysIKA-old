@@ -54,8 +54,8 @@ protected:
 protected:
     unsigned int width_;
     unsigned int height_;
-    unsigned char *raw_data_;
     DataFormat data_format_;
+    unsigned char *raw_data_;
 };
 
 }  //end of namespace Physika

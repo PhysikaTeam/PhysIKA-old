@@ -87,8 +87,8 @@ public:
     static inline Transform<Scalar, 3> identityTransform() { return Transform<Scalar, 3>(); }
 
 protected:
-    Quaternion<Scalar> rotation_;
     Vector<Scalar,3> translation_;
+    Quaternion<Scalar> rotation_;
     Vector<Scalar,3> scale_;
 protected:
     PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),

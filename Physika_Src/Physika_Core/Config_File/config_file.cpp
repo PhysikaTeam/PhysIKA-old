@@ -237,7 +237,7 @@ bool ConfigFile::parseFile(string file_name)
         }
         else if(option_types_[index] == Option_Unsigned_Int)
         {
-            for (int i = 1; i < data_entry.length(); i++)
+            for (unsigned int i = 1; i < data_entry.length(); i++)
             {
                 if(data_entry[i] < '0' || data_entry[i] > '9')
                 {
@@ -255,7 +255,7 @@ bool ConfigFile::parseFile(string file_name)
         }
 		else if(option_types_[index] == Option_Int)
         {
-            for (int i = 0; i < data_entry.length(); i++)
+            for (unsigned int i = 0; i < data_entry.length(); i++)
             {
                 if(data_entry[i] < '0' || data_entry[i] > '9')
                 {
@@ -283,22 +283,24 @@ bool ConfigFile::parseFile(string file_name)
 			
 			bool dot_flag = false;
             if(data_tmp != "")
-            for (int i = 0; i < data_tmp.length()-1; i++)
             {
-                if(data_tmp[i] < '0' || data_tmp[i] > '9')
+                for (unsigned int i = 0; i < data_tmp.length()-1; i++)
                 {
-                    if(data_tmp[i] == '.' && dot_flag == false)
+                    if(data_tmp[i] < '0' || data_tmp[i] > '9')
                     {
+                        if(data_tmp[i] == '.' && dot_flag == false)
+                        {
 							dot_flag = true;
 							continue;
-					}
-					if(i == 0 && (data_tmp[i] == '+' || data_tmp[i] == '-'))
-						continue;
+                        }
+                        if(i == 0 && (data_tmp[i] == '+' || data_tmp[i] == '-'))
+                            continue;
 
-                    cerr<<"Error: invalid float/double specification: line "<<count<<" "<<data_entry<<endl;
-                    inputstream.close();
-                    return false;
-                  //  std::exit(EXIT_FAILURE);
+                        cerr<<"Error: invalid float/double specification: line "<<count<<" "<<data_entry<<endl;
+                        inputstream.close();
+                        return false;
+                        //  std::exit(EXIT_FAILURE);
+                    }
                 }
             }
 

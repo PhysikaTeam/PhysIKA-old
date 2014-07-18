@@ -22,20 +22,20 @@ namespace Physika{
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion():
-        w_(1),
         x_(0),
         y_(0),
-        z_(0)
+        z_(0),
+        w_(1)
 {
 
 }
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(Scalar x, Scalar y, Scalar z, Scalar w):
-        w_(w),
         x_(x),
         y_(y),
-        z_(z)
+        z_(z),
+        w_(w)
 {
 
 }
@@ -64,20 +64,20 @@ Quaternion<Scalar>::Quaternion(Scalar angle_rad, const Vector<Scalar,3> & unit_a
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(const Scalar *ptrq):
-    w_(ptrq[4]),
     x_(ptrq[0]),
     y_(ptrq[1]),
-    z_(ptrq[2])
+    z_(ptrq[2]),
+    w_(ptrq[4])
 {
 
 }
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(const Quaternion<Scalar> & quat):
-    w_(quat.w()),
     x_(quat.x()),
     y_(quat.y()),
-    z_(quat.z())
+    z_(quat.z()),
+    w_(quat.w())
 {
 
 }

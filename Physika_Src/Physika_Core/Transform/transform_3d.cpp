@@ -58,8 +58,8 @@ Transform<Scalar, 3>::Transform(const SquareMatrix<Scalar, 3>& matrix)
 
 template <typename Scalar>
 Transform<Scalar, 3>::Transform(const Quaternion<Scalar> rotation):
-        rotation_(rotation),
         translation_(0,0,0),
+        rotation_(rotation),
         scale_(Vector<Scalar, 3>(1,1,1))
 {
 

@@ -23,7 +23,7 @@
 namespace Physika{
 
 Image::Image()
-    :width_(0),height_(0),raw_data_(NULL),data_format_(RGBA)
+    :width_(0),height_(0),data_format_(RGBA),raw_data_(NULL)
 {
 }
 
