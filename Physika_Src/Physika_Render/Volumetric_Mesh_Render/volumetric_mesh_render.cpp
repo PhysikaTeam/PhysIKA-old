@@ -31,9 +31,9 @@ template <typename Scalar, int Dim>
 VolumetricMeshRender<Scalar, Dim>::VolumetricMeshRender()
     :mesh_(NULL),
     transform_(NULL),
-    solid_display_list_id_(0),
-    wire_display_list_id_(0),
     vertex_display_list_id_(0),
+    wire_display_list_id_(0),
+    solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     this->initRenderMode();
@@ -43,9 +43,9 @@ template <typename Scalar, int Dim>
 VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim>* mesh)
     :mesh_(mesh),
     transform_(NULL),
-    solid_display_list_id_(0),
-    wire_display_list_id_(0),
     vertex_display_list_id_(0),
+    wire_display_list_id_(0),
+    solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     this->initRenderMode();
@@ -55,9 +55,9 @@ template <typename Scalar, int Dim>
 VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim>* mesh, Transform<Scalar, Dim>* transform)
     :mesh_(mesh),
     transform_(transform),
-    solid_display_list_id_(0),
-    wire_display_list_id_(0),
     vertex_display_list_id_(0),
+    wire_display_list_id_(0),
+    solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     this->initRenderMode();
@@ -349,7 +349,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderWireframe()
             }
             else
             {
-                unsigned int num_vert_per_ele = this->mesh_->eleVertNum();
+                //unsigned int num_vert_per_ele = this->mesh_->eleVertNum();
                 // waiting for implementation
                 //
                 //
@@ -428,7 +428,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderSolidWithAlpha(float alpha)
             }
             else
             {
-                unsigned int num_vert_per_ele = this->mesh_->eleVertNum();
+                //unsigned int num_vert_per_ele = this->mesh_->eleVertNum();
                 // waiting for implementation
                 //
                 //

@@ -36,9 +36,9 @@ template <typename Scalar>
 SurfaceMeshRender<Scalar>::SurfaceMeshRender()
     :mesh_(NULL),
     transform_(NULL),
-    solid_display_list_id_(0),
-    wire_display_list_id_(0),
     vertex_display_list_id_(0),
+    wire_display_list_id_(0),
+    solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     initRenderMode();
@@ -48,9 +48,9 @@ template <typename Scalar>
 SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh)
     :mesh_(mesh),
     transform_(NULL),
-    solid_display_list_id_(0),
-    wire_display_list_id_(0),
     vertex_display_list_id_(0),
+    wire_display_list_id_(0),
+    solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     initRenderMode();
@@ -61,9 +61,9 @@ template <typename Scalar>
 SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar, 3>* transform)
     :mesh_(mesh),
     transform_(transform),
-    solid_display_list_id_(0),
-    wire_display_list_id_(0),
     vertex_display_list_id_(0),
+    wire_display_list_id_(0),
+    solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0)
 {
     initRenderMode();

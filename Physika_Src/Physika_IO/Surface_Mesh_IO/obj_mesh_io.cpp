@@ -67,7 +67,6 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         std::cerr<<"couldn't open "<<filename<<"\n";
         return false;
     }
-    const int maxline = 1000;
     string  line;
     std::stringstream stream;
     while(!ifs.eof())
@@ -436,7 +435,6 @@ bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
     }
     const unsigned int maxline = 1024;
     char line[maxline];
-    char prefix[maxline];
     std::stringstream stream;
     unsigned int num_mtl=0;
     Material<Scalar> material_example;

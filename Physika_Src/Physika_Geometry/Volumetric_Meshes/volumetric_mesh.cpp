@@ -463,6 +463,8 @@ void VolumetricMesh<Scalar,Dim>::init(unsigned int vert_num, const Scalar *verti
     for(unsigned int i = 0; i < ele_num_; ++i)
         region_data[i] = i;
     Region *all_elements = new Region(string("AllElements"),region_data);
+    regions_.clear();
+    regions_.push_back(all_elements);
 }
 
 template <typename Scalar, int Dim>
