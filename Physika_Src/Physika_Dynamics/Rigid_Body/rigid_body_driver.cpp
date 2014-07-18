@@ -295,6 +295,23 @@ ContactPointManager<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::contactPoints()
 }
 
 template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
+{
+    if(plugin == NULL)
+    {
+        std::cerr<<"Null plugin!"<<std::endl;
+        return;
+    }
+    if(dynamic_cast<RigidDriverPlugin<Scalar, Dim>* >(plugin) == NULL)
+    {
+        std::cerr<<"Wrong plugin type!"<<std::endl;
+        return;
+    }
+    plugin->setDriver(this);
+    this->plugins_.push_back(plugin);
+}
+
+template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::initialize()
 {
 }
@@ -423,31 +440,31 @@ void RigidBodyDriver<Scalar, Dim>::updateRigidBody(Scalar dt)
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::computeInvMassMatrix(SparseMatrix<Scalar>& M_inv)
 {
-    computeInvMassMatrix(M_inv, DimensionTrait<Dim>());
+    RigidBodyDriverUtility<Scalar>::computeInvMassMatrix(this, M_inv, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J)
 {
-    computeJacobianMatrix(J, DimensionTrait<Dim>());
+    RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(this, J, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar>& D)
 {
-    computeFricJacobianMatrix(D, DimensionTrait<Dim>());
+    RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(this, D, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::computeGeneralizedVelocity(VectorND<Scalar>& v)
 {
-    computeGeneralizedVelocity(v, DimensionTrait<Dim>());
+    RigidBodyDriverUtility<Scalar>::computeGeneralizedVelocity(this, v, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF)
 {
-    computeCoefficient(CoR, CoF, DimensionTrait<Dim>());
+    RigidBodyDriverUtility<Scalar>::computeCoefficient(this, CoR, CoF, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
@@ -455,26 +472,38 @@ void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, S
     VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count)
 {
-    solveBLCPWithPGS(JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF, iteration_count, DimensionTrait<Dim>());
+    RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(this, JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF, iteration_count, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T)
 {
-    applyImpulse(z_norm, z_fric, J_T, D_T, DimensionTrait<Dim>());
+    RigidBodyDriverUtility<Scalar>::applyImpulse(this, z_norm, z_fric, J_T, D_T, DimensionTrait<Dim>());
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeInvMassMatrix(SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait)
+
+///////////////////////////////////////////////////////////////////////////////////////
+//RigidBodyDriverUtility
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait)
 {
     //to do
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeInvMassMatrix(SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait)
 {
+    if(driver == NULL)
+    {
+        std::cerr<<"Null driver!"<<std::endl;
+        return;
+    }
+
     //initialize
-    unsigned int n = numRigidBody();
+    unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
 
     //basic check of matrix's dimensions
@@ -488,7 +517,7 @@ void RigidBodyDriver<Scalar, Dim>::computeInvMassMatrix(SparseMatrix<Scalar>& M_
     RigidBody<Scalar, 3>* rigid_body = NULL;
     for(unsigned int i = 0; i < n; ++i)
     {
-        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(i));
+        rigid_body = driver->rigidBody(i);
         if(rigid_body == NULL)
         {
             std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
@@ -516,18 +545,24 @@ void RigidBodyDriver<Scalar, Dim>::computeInvMassMatrix(SparseMatrix<Scalar>& M_
     }
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J, DimensionTrait<2> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& J, DimensionTrait<2> trait)
 {
     //to do
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J, DimensionTrait<3> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& J, DimensionTrait<3> trait)
 {
+    if(driver == NULL)
+    {
+        std::cerr<<"Null driver!"<<std::endl;
+        return;
+    }
+
     //initialize
-    unsigned int m = contact_points_.numContactPoint();
-    unsigned int n = numRigidBody();
+    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
 
     //basic check of matrix's dimensions
@@ -544,7 +579,7 @@ void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J
     Vector<Scalar, 3> angular_normal_lhs, angular_normal_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = dynamic_cast<ContactPoint<Scalar, 3>*>(contact_points_[i]);
+        contact_point = driver->contact_points_[i];
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating matrix!"<<std::endl;
@@ -552,12 +587,10 @@ void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J
         }
         object_lhs = contact_point->objectLhsIndex();
         object_rhs = contact_point->objectRhsIndex();
-        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(object_lhs));
+        rigid_body = driver->rigidBody(object_lhs);
         angular_normal_lhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(contact_point->globalContactNormalLhs());
-        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(object_rhs));
+        rigid_body = driver->rigidBody(object_rhs);
         angular_normal_rhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(contact_point->globalContactNormalRhs());
-        //angular_normal_lhs = (contact_point->globalContactPosition() - rigidBody(object_lhs)->globalTranslation()).cross(contact_point->globalContactNormalLhs());
-        //angular_normal_rhs = (contact_point->globalContactPosition() - rigidBody(object_rhs)->globalTranslation()).cross(contact_point->globalContactNormalRhs());
         for(unsigned int j = 0; j < 3; ++j)
         {
             J.setEntry(i, object_lhs * 6 + j, contact_point->globalContactNormalLhs()[j]);
@@ -571,18 +604,24 @@ void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J
     }
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar>& D, DimensionTrait<2> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& D, DimensionTrait<2> trait)
 {
     //to do
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar>& D, DimensionTrait<3> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& D, DimensionTrait<3> trait)
 {
+    if(driver == NULL)
+    {
+        std::cerr<<"Null driver!"<<std::endl;
+        return;
+    }
+
     //initialize
-    unsigned int m = contact_points_.numContactPoint();
-    unsigned int n = numRigidBody();
+    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
     unsigned int s = D.rows();
     unsigned int fric_sample_count = s / m;
@@ -601,7 +640,7 @@ void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar
     Vector<Scalar, 3> angular_normal_lhs, angular_normal_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = dynamic_cast<ContactPoint<Scalar, 3>*>(contact_points_[i]);
+        contact_point = driver->contact_points_[i];
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating matrix!"<<std::endl;
@@ -629,12 +668,10 @@ void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar
         for(unsigned int k = 0; k< fric_sample_count; ++k)
         {
             sample_normal.normalize();
-            rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(object_lhs));
+            rigid_body = driver->rigidBody(object_lhs);
             angular_normal_lhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(sample_normal);
-            rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(object_rhs));
+            rigid_body = driver->rigidBody(object_rhs);
             angular_normal_rhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(sample_normal);
-            //angular_normal_lhs = (contact_point->globalContactPosition() - rigidBody(object_lhs)->globalTranslation()).cross(sample_normal);
-            //angular_normal_rhs = (contact_point->globalContactPosition() - rigidBody(object_rhs)->globalTranslation()).cross(sample_normal);
             for(unsigned int j = 0; j < 3; ++j)
             {
                 D.setEntry(i * fric_sample_count + k, object_lhs * 6 + j, sample_normal[j]);
@@ -650,17 +687,23 @@ void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar
     }
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeGeneralizedVelocity(VectorND<Scalar>& v, DimensionTrait<2> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeGeneralizedVelocity(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& v, DimensionTrait<2> trait)
 {
     //to do
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeGeneralizedVelocity(VectorND<Scalar>& v, DimensionTrait<3> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeGeneralizedVelocity(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& v, DimensionTrait<3> trait)
 {
+    if(driver == NULL)
+    {
+        std::cerr<<"Null driver!"<<std::endl;
+        return;
+    }
+
     //initialize
-    unsigned int n = numRigidBody();
+    unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
 
     //basic check of matrix's dimensions
@@ -674,7 +717,7 @@ void RigidBodyDriver<Scalar, Dim>::computeGeneralizedVelocity(VectorND<Scalar>& 
     RigidBody<Scalar, 3>* rigid_body = NULL;
     for(unsigned int i = 0; i < n; ++i)
     {
-        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(i));
+        rigid_body = driver->rigidBody(i);
         if(rigid_body == NULL)
         {
             std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
@@ -688,17 +731,23 @@ void RigidBodyDriver<Scalar, Dim>::computeGeneralizedVelocity(VectorND<Scalar>& 
     }
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<2> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<2> trait)
 {
     //to do
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<3> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<3> trait)
 {
+    if(driver == NULL)
+    {
+        std::cerr<<"Null driver!"<<std::endl;
+        return;
+    }
+
     //initialize
-    unsigned int m = contact_points_.numContactPoint();
+    unsigned int m = (driver->contact_points_).numContactPoint();
     unsigned int s = CoF.dims();
     unsigned int fric_sample_count = s / m;
 
@@ -715,14 +764,14 @@ void RigidBodyDriver<Scalar, Dim>::computeCoefficient(VectorND<Scalar>& CoR, Vec
     Scalar cor_lhs, cor_rhs, cof_lhs, cof_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = dynamic_cast<ContactPoint<Scalar, 3>*>(contact_points_[i]);
+        contact_point = driver->contact_points_[i];
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating coefficient!"<<std::endl;
             continue;
         }
-        rigid_body_lhs = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(contact_point->objectLhsIndex()));
-        rigid_body_rhs = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(contact_point->objectRhsIndex()));
+        rigid_body_lhs = driver->rigidBody(contact_point->objectLhsIndex());
+        rigid_body_rhs = driver->rigidBody(contact_point->objectRhsIndex());
         if(rigid_body_lhs == NULL || rigid_body_rhs == NULL)
         {
             std::cerr<<"Null rigid body in updating coefficient!"<<std::endl;
@@ -740,8 +789,8 @@ void RigidBodyDriver<Scalar, Dim>::computeCoefficient(VectorND<Scalar>& CoR, Vec
     }
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
                                                     VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
                                                     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
                                                     DimensionTrait<2> trait)
@@ -749,8 +798,8 @@ void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, S
     //to do
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
                                                     VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
                                                     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
                                                     DimensionTrait<3> trait)
@@ -758,9 +807,15 @@ void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, S
     //dimension check is temporary ignored because its too long to write here
     //a function to perform such check will be introduced 
 
+    if(driver == NULL)
+    {
+        std::cerr<<"Null driver!"<<std::endl;
+        return;
+    }
+
     //initialize
-    unsigned int m = contact_points_.numContactPoint();
-    unsigned int n = numRigidBody();
+    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
     unsigned int s = DMD.cols();
     unsigned int fric_sample_count = s / m;
@@ -827,18 +882,26 @@ void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, S
     }
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<2> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, 
+                                                  SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<2> trait)
 {
     //to do
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<3> trait)
+template <typename Scalar>
+void RigidBodyDriverUtility<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+                                                  SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<3> trait)
 {
+    if(driver == NULL)
+    {
+        std::cerr<<"Null driver!"<<std::endl;
+        return;
+    }
+
     //initialize
-    unsigned int m = contact_points_.numContactPoint();
-    unsigned int n = numRigidBody();
+    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
     unsigned int s = D_T.cols();
     unsigned int fric_sample_count = s / m;
@@ -873,7 +936,7 @@ void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, Vector
     RigidBody<Scalar, 3>* rigid_body = NULL;
     for(unsigned int i = 0; i < n; ++i)
     {
-        rigid_body = dynamic_cast<RigidBody<Scalar, 3>* >(rigidBody(i));
+        rigid_body = driver->rigidBody(i);
         if(rigid_body == NULL)
         {
             std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
@@ -889,32 +952,18 @@ void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, Vector
     }
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
-{
-	if(plugin == NULL)
-	{
-		std::cerr<<"Null plugin!"<<std::endl;
-		return;
-	}
-	if(dynamic_cast<RigidDriverPlugin<Scalar, Dim>* >(plugin) == NULL)
-	{
-		std::cerr<<"Wrong plugin type!"<<std::endl;
-		return;
-	}
-	plugin->setDriver(this);
-	this->plugins_.push_back(plugin);
-}
-
 //explicit instantiation
 template class RigidBodyArchive<float, 2>;
 template class RigidBodyArchive<double, 2>;
 template class RigidBodyArchive<float, 3>;
 template class RigidBodyArchive<double, 3>;
+
 template class RigidBodyDriver<float, 2>;
 template class RigidBodyDriver<double, 2>;
 template class RigidBodyDriver<float, 3>;
 template class RigidBodyDriver<double, 3>;
 
+template class RigidBodyDriverUtility<float>;
+template class RigidBodyDriverUtility<double>;
 
 }
