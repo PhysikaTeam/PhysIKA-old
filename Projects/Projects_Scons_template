@@ -110,9 +110,9 @@ if compiler=='g++':
    CXX='g++'
    tools=['gcc','g++','gnulink']
    if build_type=='Release':
-      CCFLAGS=['-O3','-fno-strict-aliasing','-std=gnu++0x','-DNDEBUG']
+      CCFLAGS=['-O3','-Wall','-fno-strict-aliasing','-std=gnu++0x','-DNDEBUG']
    else:
-      CCFLAGS=['-std=gnu++0x','-fno-strict-aliasing','-g']
+      CCFLAGS=['-Wall','-std=gnu++0x','-fno-strict-aliasing','-g']
    env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
 else:
    if build_type=='Release':

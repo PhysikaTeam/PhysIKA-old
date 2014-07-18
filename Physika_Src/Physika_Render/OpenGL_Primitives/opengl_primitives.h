@@ -339,8 +339,7 @@ inline void openGLTexCoord(const Vector<double,3> &vec)
 }
 
 /*
- * openGLMultMatrix(const SquareMatrix<Scalar,3> &):
- * to do
+ * openGLMultMatrix(const SquareMatrix<Scalar,3> &)
  * openGLMultMatrix(const SquareMatrix<Scalar,4> &):
  * replacement for glMultiMatrixf, glMultiMatrixd
  */
