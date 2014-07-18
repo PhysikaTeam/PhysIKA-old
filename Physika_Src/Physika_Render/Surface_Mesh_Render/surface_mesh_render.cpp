@@ -19,7 +19,7 @@
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_Render/Color/color.h"
-#include "Physika_Core/Transform/transform.h"
+#include "Physika_Core/Transform/transform_3d.h"
 //#include "Physika_Core/Image/image.h"
 
 
@@ -58,7 +58,7 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh)
 }
 
 template <typename Scalar>
-SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar>* transform)
+SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar, 3>* transform)
     :mesh_(mesh),
     transform_(transform),
     solid_display_list_id_(0),
@@ -95,20 +95,20 @@ void SurfaceMeshRender<Scalar>::setSurfaceMesh(SurfaceMesh<Scalar> *mesh)
 }
 
 template <typename Scalar>
-void SurfaceMeshRender<Scalar>::setSurfaceMesh(SurfaceMesh<Scalar> *mesh, Transform<Scalar> *transform)
+void SurfaceMeshRender<Scalar>::setSurfaceMesh(SurfaceMesh<Scalar> *mesh, Transform<Scalar, 3> *transform)
 {
     this->setSurfaceMesh(mesh);
     transform_ = transform;
 }
 
 template <typename Scalar>
-const Transform<Scalar>* SurfaceMeshRender<Scalar>::transform()const
+const Transform<Scalar, 3>* SurfaceMeshRender<Scalar>::transform()const
 {
     return this->transform_;
 }
 
 template <typename Scalar>
-void SurfaceMeshRender<Scalar>::setTransform(Transform<Scalar>* transform)
+void SurfaceMeshRender<Scalar>::setTransform(Transform<Scalar, 3>* transform)
 {
     this->transform_ = transform;
 }

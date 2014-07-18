@@ -21,7 +21,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim> class VolumetricMesh;
 template <typename Scalar> class Color;
-template <typename Scalar> class Transform;
+template <typename Scalar, int Dim> class Transform;
 
 template <typename Scalar, int Dim>
 class VolumetricMeshRender: public RenderBase
@@ -30,17 +30,17 @@ public:
     //constructions
     VolumetricMeshRender();
     VolumetricMeshRender(VolumetricMesh<Scalar, Dim> *mesh);
-    VolumetricMeshRender(VolumetricMesh<Scalar, Dim> *mesh, Transform<Scalar> *transform);
+    VolumetricMeshRender(VolumetricMesh<Scalar, Dim> *mesh, Transform<Scalar, Dim> *transform);
     //destruction
     ~VolumetricMeshRender();
 
     //Get and Set
     const VolumetricMesh<Scalar, Dim>* mesh()const;
     void setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh);
-    void setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh, Transform<Scalar>* transform);
+    void setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh, Transform<Scalar, Dim>* transform);
 
-    const Transform<Scalar>* transform()const;
-    void setTransform(Transform<Scalar>* transform);
+    const Transform<Scalar, Dim>* transform()const;
+    void setTransform(Transform<Scalar, Dim>* transform);
 
     //set render mode
     void enableRenderSolid();
@@ -94,7 +94,7 @@ protected:
 protected:
     unsigned int render_mode_;
     VolumetricMesh<Scalar,Dim> *mesh_;
-    Transform<Scalar> *transform_;
+    Transform<Scalar, Dim> *transform_;
 
 
     //displaylist ids

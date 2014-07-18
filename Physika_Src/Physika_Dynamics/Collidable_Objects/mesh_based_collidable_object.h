@@ -22,6 +22,7 @@ namespace Physika{
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar> class SurfaceMesh;
 template <typename Scalar,int Dim> class CollisionDetectionResult;
+template <typename Scalar,int Dim> class Transform;
 
 template <typename Scalar>
 class MeshBasedCollidableObject: public CollidableObject<Scalar, 3>
@@ -36,9 +37,9 @@ public:
 	const SurfaceMesh<Scalar>* mesh() const;
 	SurfaceMesh<Scalar>* mesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);
-	const Transform<Scalar>* transform() const;
-	Transform<Scalar>* transform();
-	void setTransform(Transform<Scalar>* transform);
+	const Transform<Scalar, 3>* transform() const;
+	Transform<Scalar, 3>* transform();
+	void setTransform(Transform<Scalar, 3>* transform);
 
     //return vertex and normals after transform
     Vector<Scalar, 3> vertexPosition(unsigned int vertex_index) const;
@@ -54,7 +55,7 @@ protected:
 	//mesh_ is used to define the shape of object, while transform_ is used to define the configuration
 	//For deformable object which only updates mesh_, transform_ can be set to identity
 	SurfaceMesh<Scalar>* mesh_;
-	Transform<Scalar>* transform_;
+	Transform<Scalar, 3>* transform_;
 
 };
 

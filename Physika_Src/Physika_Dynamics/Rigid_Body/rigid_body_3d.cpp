@@ -59,7 +59,7 @@ object_type_(CollidableObjectInternal::MESH_BASED),
 }
 
 template <typename Scalar>
-RigidBody<Scalar, 3>::RigidBody(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density):
+RigidBody<Scalar, 3>::RigidBody(SurfaceMesh<Scalar>* mesh, const Transform<Scalar, 3>& transform, Scalar density):
 object_type_(CollidableObjectInternal::MESH_BASED),
     inertia_tensor_(),
     is_fixed_(false),
@@ -157,7 +157,7 @@ void RigidBody<Scalar, 3>::setProperty(SurfaceMesh<Scalar>* mesh, Scalar density
 }
 
 template <typename Scalar>
-void RigidBody<Scalar, 3>::setProperty(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density)
+void RigidBody<Scalar, 3>::setProperty(SurfaceMesh<Scalar>* mesh, const Transform<Scalar, 3>& transform, Scalar density)
 {
     mesh_ = mesh;
     transform_ = transform;
@@ -286,7 +286,7 @@ void RigidBody<Scalar, 3>::setMesh(SurfaceMesh<Scalar>* mesh)
 }
 
 template <typename Scalar>
-void RigidBody<Scalar, 3>::setTransform(Transform<Scalar>& transform)
+void RigidBody<Scalar, 3>::setTransform(Transform<Scalar, 3>& transform)
 {
     transform_ = transform;
 }

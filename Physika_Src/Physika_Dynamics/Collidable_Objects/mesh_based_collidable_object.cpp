@@ -12,6 +12,7 @@
  *
  */
 
+#include "Physika_Core/Transform/transform_3d.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
@@ -84,19 +85,19 @@ Vector<Scalar, 3> MeshBasedCollidableObject<Scalar>::faceNormal(unsigned int fac
 }
 
 template <typename Scalar>
-const Transform<Scalar>* MeshBasedCollidableObject<Scalar>::transform() const
+const Transform<Scalar, 3>* MeshBasedCollidableObject<Scalar>::transform() const
 {
 	return transform_;
 }
 
 template <typename Scalar>
-Transform<Scalar>* MeshBasedCollidableObject<Scalar>::transform()
+Transform<Scalar, 3>* MeshBasedCollidableObject<Scalar>::transform()
 {
 	return transform_;
 }
 
 template <typename Scalar>
-void MeshBasedCollidableObject<Scalar>::setTransform(Transform<Scalar>* transform)
+void MeshBasedCollidableObject<Scalar>::setTransform(Transform<Scalar, 3>* transform)
 {
 	transform_ = transform;
 }

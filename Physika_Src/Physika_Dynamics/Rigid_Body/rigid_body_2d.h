@@ -16,6 +16,7 @@
 #define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_2D_H_
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Core/Transform/transform_2d.h"
 #include "Physika_Dynamics/Collidable_Objects/polygon_based_collidable_object.h"
 
 namespace Physika{
@@ -33,8 +34,8 @@ public:
 
     //get & set
     inline typename CollidableObjectInternal::ObjectType objectType() const {return object_type_;};
-    inline const Transform<Scalar>& transform() const {return transform_;};
-    inline Transform<Scalar>& transform() {return transform_;};
+    inline const Transform<Scalar, 2>& transform() const {return transform_;};
+    inline Transform<Scalar, 2>& transform() {return transform_;};
     inline void setFixed(bool is_fixed) {is_fixed_ = is_fixed;};
     inline bool isFixed() const {return is_fixed_;};
     inline Scalar density() const {return density_;};
@@ -50,7 +51,7 @@ protected:
     //can be set by public functions
     typename CollidableObjectInternal::ObjectType object_type_;
     Polygon<Scalar>* polygon_;
-    Transform<Scalar> transform_;
+    Transform<Scalar, 2> transform_;
     Scalar density_;
     bool is_fixed_;
 

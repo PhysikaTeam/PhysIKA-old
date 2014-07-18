@@ -12,6 +12,7 @@
  *
  */
 
+#include "Physika_Core/Transform/transform_2d.h"
 #include "Physika_Dynamics/Collidable_Objects/polygon_based_collidable_object.h"
 
 namespace Physika{

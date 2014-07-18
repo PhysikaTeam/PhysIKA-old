@@ -338,9 +338,20 @@ inline void openGLTexCoord(const Vector<double,3> &vec)
 }
 
 /*
+ * openGLMultMatrix(const SquareMatrix<Scalar,3> &):
+ * to do
  * openGLMultMatrix(const SquareMatrix<Scalar,4> &):
  * replacement for glMultiMatrixf, glMultiMatrixd
  */
+
+inline void openGLMultMatrix(const SquareMatrix<float,3> & matrix)
+{
+    //to do
+}
+inline void openGLMultMatrix(const SquareMatrix<double,3> & matrix)
+{
+    //to do
+}
 inline void openGLMultMatrix(const SquareMatrix<float,4> & matrix)
 {
     float matrix_[16];

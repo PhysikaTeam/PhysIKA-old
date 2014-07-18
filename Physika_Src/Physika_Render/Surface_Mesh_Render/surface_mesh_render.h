@@ -24,7 +24,7 @@ namespace Physika{
 
 template <typename Scalar> class SurfaceMesh;
 template <typename Scalar> class Color;
-template <typename Scalar> class Transform;
+template <typename Scalar, int Dim> class Transform;
 
 /*
  * Scalar can be float and double
@@ -39,16 +39,16 @@ public:
     SurfaceMeshRender();
     //the parameter is not const because renderer may call method of mesh to modify its normals
     SurfaceMeshRender(SurfaceMesh<Scalar>* mesh);
-    SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar>* transform);
+    SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar, 3>* transform);
     ~SurfaceMeshRender();
 
     //Get and Set
     const SurfaceMesh<Scalar>* mesh() const;
     void setSurfaceMesh(SurfaceMesh<Scalar>* mesh);
-    void setSurfaceMesh(SurfaceMesh<Scalar>* mesh, Transform<Scalar>* transform);
+    void setSurfaceMesh(SurfaceMesh<Scalar>* mesh, Transform<Scalar, 3>* transform);
 
-    const Transform<Scalar>* transform()const;
-    void setTransform(Transform<Scalar>* transform);
+    const Transform<Scalar, 3>* transform()const;
+    void setTransform(Transform<Scalar, 3>* transform);
 
     //set render mode
     void enableRenderSolid();
@@ -106,7 +106,7 @@ protected:
     //the first entry is a flag indicating if there's texture for the material
     //the second entry is the OpenGL texture id
     Array<std::pair<bool,unsigned int> > textures_;
-    Transform<Scalar> *transform_;
+    Transform<Scalar, 3> *transform_;
 
     //displaylist ids
     unsigned int vertex_display_list_id_;   

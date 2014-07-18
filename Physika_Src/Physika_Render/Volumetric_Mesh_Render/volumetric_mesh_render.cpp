@@ -15,7 +15,8 @@
 #include <iostream>
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_Render/Color/color.h"
-#include "Physika_Core/Transform/transform.h"
+#include "Physika_Core/Transform/transform_2d.h"
+#include "Physika_Core/Transform/transform_3d.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Render/Volumetric_Mesh_Render/volumetric_mesh_render.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
@@ -51,7 +52,7 @@ VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim
 }
 
 template <typename Scalar, int Dim>
-VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim>* mesh, Transform<Scalar>* transform)
+VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim>* mesh, Transform<Scalar, Dim>* transform)
     :mesh_(mesh),
     transform_(transform),
     solid_display_list_id_(0),
@@ -83,7 +84,7 @@ void VolumetricMeshRender<Scalar,Dim>::setVolumetricMesh(VolumetricMesh<Scalar, 
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshRender<Scalar,Dim>::setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh, Transform<Scalar>*transform)
+void VolumetricMeshRender<Scalar,Dim>::setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh, Transform<Scalar, Dim>*transform)
 {
     this->mesh_ = mesh;
     this->transform_ = transform;
@@ -91,13 +92,13 @@ void VolumetricMeshRender<Scalar,Dim>::setVolumetricMesh(VolumetricMesh<Scalar, 
 }
 
 template <typename Scalar, int Dim>
-const Transform<Scalar>* VolumetricMeshRender<Scalar,Dim>::transform()const
+const Transform<Scalar, Dim>* VolumetricMeshRender<Scalar,Dim>::transform()const
 {
     return this->transform_;
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshRender<Scalar,Dim>::setTransform(Transform<Scalar>* transform)
+void VolumetricMeshRender<Scalar,Dim>::setTransform(Transform<Scalar, Dim>* transform)
 {
     this->transform_ = transform;
 }

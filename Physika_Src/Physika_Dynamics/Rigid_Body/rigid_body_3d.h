@@ -16,7 +16,7 @@
 #define PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_3D_H_
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
-#include "Physika_Core/Transform/transform.h"
+#include "Physika_Core/Transform/transform_3d.h"
 #include "Physika_Dynamics/Rigid_Body/inertia_tensor.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 
@@ -33,7 +33,7 @@ public:
     //constructors && deconstructors
     RigidBody();
     RigidBody(SurfaceMesh<Scalar>* mesh, Scalar density = 1);
-    RigidBody(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density = 1);
+    RigidBody(SurfaceMesh<Scalar>* mesh, const Transform<Scalar, 3>& transform, Scalar density = 1);
     RigidBody(const RigidBody<Scalar, 3>& rigid_body);
     virtual ~RigidBody();
 
@@ -41,17 +41,17 @@ public:
     void copy(const RigidBody<Scalar, 3>& rigid_body);//Using this function for construction is strongly recommended because inertia tensor will not be recalculated for the same mesh.
     inline typename CollidableObjectInternal::ObjectType objectType() const {return object_type_;};
     inline SurfaceMesh<Scalar>* mesh() {return mesh_;};
-    inline const Transform<Scalar>& transform() const {return transform_;};
-    inline Transform<Scalar>& transform() {return transform_;};
-    inline const Transform<Scalar>* transformPtr() const {return &transform_;};
-    inline Transform<Scalar>* transformPtr() {return &transform_;};//WARNING! Don't use this to modify the transform of this rigid body. Use setTranslate(), setRotate() and setScale() instead.
+    inline const Transform<Scalar, 3>& transform() const {return transform_;};
+    inline Transform<Scalar, 3>& transform() {return transform_;};
+    inline const Transform<Scalar, 3>* transformPtr() const {return &transform_;};
+    inline Transform<Scalar, 3>* transformPtr() {return &transform_;};//WARNING! Don't use this to modify the transform of this rigid body. Use setTranslate(), setRotate() and setScale() instead.
     void setTranslation(const Vector<Scalar, 3>& translation);
     void setRotation(const Vector<Scalar, 3>& rotation);
     void setRotation(const Quaternion<Scalar>& rotation);
     void setRotation(const SquareMatrix<Scalar, 3>& rotation);
     void setScale(const Vector<Scalar, 3>& scale);
     void setProperty(SurfaceMesh<Scalar>* mesh, Scalar density = 1);//Inertia tensor will be recalculated
-    void setProperty(SurfaceMesh<Scalar>* mesh, const Transform<Scalar>& transform, Scalar density = 1);//Inertia tensor will be recalculated
+    void setProperty(SurfaceMesh<Scalar>* mesh, const Transform<Scalar, 3>& transform, Scalar density = 1);//Inertia tensor will be recalculated
     inline void setFixed(bool is_fixed) {is_fixed_ = is_fixed;};
     inline bool isFixed() const {return is_fixed_;};
     inline void setCoeffRestitution(Scalar coeff_restitution) {coeff_restitution_ = coeff_restitution;};
@@ -90,7 +90,7 @@ protected:
     //can be set by public functions
     typename CollidableObjectInternal::ObjectType object_type_;
     SurfaceMesh<Scalar>* mesh_;
-    Transform<Scalar> transform_;
+    Transform<Scalar, 3> transform_;
     Scalar density_;
     bool is_fixed_;
     Scalar coeff_restitution_;
@@ -123,7 +123,7 @@ protected:
 
     //set
     void setMesh(SurfaceMesh<Scalar>* mesh);
-    void setTransform(Transform<Scalar>& transform);
+    void setTransform(Transform<Scalar, 3>& transform);
 
 };
 

@@ -20,6 +20,7 @@
 namespace Physika{
 
 template <typename Scalar> class Polygon;
+template <typename Scalar,int Dim> class Transform;
 
 template <typename Scalar>
 class PolygonBasedCollidableObject : public CollidableObject<Scalar, 2>
@@ -30,7 +31,7 @@ public:
     typename CollidableObjectInternal::ObjectType objectType() const;
 protected:
     Polygon<Scalar>* polygon_;
-    Transform<Scalar>* transform_;
+    Transform<Scalar, 2>* transform_;
 };
 
 }
