@@ -63,6 +63,7 @@ protected:
 };
 
 template <typename Scalar,int Dim> class RigidDriverPlugin;
+template <typename Scalar> class RigidBodyDriverUtility;
 
 template <typename Scalar,int Dim>
 class RigidBodyDriver: public DriverBase<Scalar>
@@ -93,6 +94,9 @@ public:
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
+    //friend class 
+    friend class RigidBodyDriverUtility<Scalar>;
+
 protected:
 	SceneBVH<Scalar, Dim> scene_bvh_;
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
@@ -112,7 +116,7 @@ protected:
     virtual void collisionResponse();
     virtual void updateRigidBody(Scalar dt);
 
-    //utilities. These functions will do nothing but call the overload versions depending on the dimension
+    //utilities. These functions will do nothing but call the overload versions in RigidBodyDriverUtility depending on the dimension
     virtual void computeInvMassMatrix(SparseMatrix<Scalar>& M_inv);//compute inverse mass matrix
     virtual void computeJacobianMatrix(SparseMatrix<Scalar>& J);//compute Jacobian matrix
     virtual void computeFricJacobianMatrix(SparseMatrix<Scalar>& D);//compute Jacobian matrix of the discretized friction pyramid. Refer to [Tonge et al. 2012]
@@ -123,34 +127,42 @@ protected:
                                   VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count = 50);//solve the BLCP equation with PGS. Refer to [Tonge et al. 2012]
     virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T);//apply impulse to rigid bodies. This step will not cause velocity and configuration integral
 
+};
+
+//The utility class of RigidBodyDriver, providing overload versions of functions for 2D and 3D situations
+template <typename Scalar>
+class RigidBodyDriverUtility
+{
+public:
     //overload versions of utilities for 2D and 3D situations
-    virtual void computeInvMassMatrix(SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait);
-    virtual void computeInvMassMatrix(SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait);
+    static void computeInvMassMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait);
+    static void computeInvMassMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait);
 
-    virtual void computeJacobianMatrix(SparseMatrix<Scalar>& J, DimensionTrait<2> trait);
-    virtual void computeJacobianMatrix(SparseMatrix<Scalar>& J, DimensionTrait<3> trait);
+    static void computeJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& J, DimensionTrait<2> trait);
+    static void computeJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& J, DimensionTrait<3> trait);
 
-    virtual void computeFricJacobianMatrix(SparseMatrix<Scalar>& D, DimensionTrait<2> trait);
-    virtual void computeFricJacobianMatrix(SparseMatrix<Scalar>& D, DimensionTrait<3> trait);
+    static void computeFricJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& D, DimensionTrait<2> trait);
+    static void computeFricJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& D, DimensionTrait<3> trait);
 
-    virtual void computeGeneralizedVelocity(VectorND<Scalar>& v, DimensionTrait<2> trait);
-    virtual void computeGeneralizedVelocity(VectorND<Scalar>& v, DimensionTrait<3> trait);
+    static void computeGeneralizedVelocity(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& v, DimensionTrait<2> trait);
+    static void computeGeneralizedVelocity(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& v, DimensionTrait<3> trait);
 
-    virtual void computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<2> trait);
-    virtual void computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<3> trait);
+    static void computeCoefficient(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<2> trait);
+    static void computeCoefficient(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<3> trait);
 
-    virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+    static void solveBLCPWithPGS(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
                                   VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
                                   VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
                                   DimensionTrait<2> trait);
-    virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+    static void solveBLCPWithPGS(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
                                   VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
                                   VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
                                   DimensionTrait<3> trait);
 
-    virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<2> trait);
-    virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<3> trait);
-
+    static void applyImpulse(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, 
+                             SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<2> trait);
+    static void applyImpulse(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, 
+                             SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<3> trait);
 
 };
 
