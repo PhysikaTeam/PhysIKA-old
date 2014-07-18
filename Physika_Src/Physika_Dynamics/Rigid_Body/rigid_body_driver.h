@@ -129,43 +129,6 @@ protected:
 
 };
 
-//The utility class of RigidBodyDriver, providing overload versions of functions for 2D and 3D situations
-template <typename Scalar>
-class RigidBodyDriverUtility
-{
-public:
-    //overload versions of utilities for 2D and 3D situations
-    static void computeInvMassMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait);
-    static void computeInvMassMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait);
-
-    static void computeJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& J, DimensionTrait<2> trait);
-    static void computeJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& J, DimensionTrait<3> trait);
-
-    static void computeFricJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& D, DimensionTrait<2> trait);
-    static void computeFricJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& D, DimensionTrait<3> trait);
-
-    static void computeGeneralizedVelocity(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& v, DimensionTrait<2> trait);
-    static void computeGeneralizedVelocity(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& v, DimensionTrait<3> trait);
-
-    static void computeCoefficient(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<2> trait);
-    static void computeCoefficient(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<3> trait);
-
-    static void solveBLCPWithPGS(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
-                                  VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
-                                  VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
-                                  DimensionTrait<2> trait);
-    static void solveBLCPWithPGS(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
-                                  VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
-                                  VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
-                                  DimensionTrait<3> trait);
-
-    static void applyImpulse(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, 
-                             SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<2> trait);
-    static void applyImpulse(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, 
-                             SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<3> trait);
-
-};
-
 } //end of namespace Physika
 
 #endif //PHYSIKA_DYNAMICS_RIGID_BODY_RIGID_BODY_DRIVER_H_
