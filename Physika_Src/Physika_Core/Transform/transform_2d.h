@@ -37,6 +37,7 @@ public:
     /* Constructions */
 
     Transform();
+    ~Transform();
 	explicit Transform(const Vector<Scalar, 2> &translation);
 	explicit Transform(const Scalar &rotate_angle);
 	explicit Transform(const SquareMatrix<Scalar, 2> &rotation);	   //rotation is represented by a matrix;
@@ -51,7 +52,7 @@ public:
 	Transform(const Vector<Scalar, 2> &translation, const Scalar &rotate_angle, const Vector<Scalar, 2> &scale);
 	Transform(const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale,  const Scalar &rotate_angle);
 
-	Transform(const SquareMatrix<Scalar, 3> &matrix);   //Init transform from a matrix.now it's now all right.Suggest not use this construction.
+	Transform(const SquareMatrix<Scalar, 3> &matrix);   //Init transform from a matrix.now it's not all right.Suggest not use this construction.
 	Transform(const Transform<Scalar, 2> &);
 
 	/* Operators */
@@ -64,7 +65,7 @@ public:
 	//Get Matrix
 	SquareMatrix<Scalar, 2> rotation2x2Matrix() const;
 	SquareMatrix<Scalar, 3> rotation3x3Matrix() const;
-	SquareMatrix<Scalar, 3> transform3x3Matrix() const;
+	SquareMatrix<Scalar, 3> translation3x3Matrix() const;
 	SquareMatrix<Scalar, 3> scale3x3Matrix() const;
 	SquareMatrix<Scalar, 3> transformMatrix() const;
 
