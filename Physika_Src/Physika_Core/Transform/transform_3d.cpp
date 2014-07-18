@@ -114,13 +114,13 @@ Transform<Scalar, 3> & Transform<Scalar,3>::operator= (const Transform<Scalar, 3
 }
 
 template <typename Scalar>
-bool Transform<Scalar,3>::operator== (const Transform<Scalar, 3> &trans)
+bool Transform<Scalar,3>::operator== (const Transform<Scalar, 3> &trans) const
 {
 	return this->rotation_ == trans.rotation() && this->translation_ == trans.translation() && this->scale_ == trans.scale();
 }
 
 template <typename Scalar>
-bool Transform<Scalar,3>::operator!= (const Transform<Scalar, 3> &trans)
+bool Transform<Scalar,3>::operator!= (const Transform<Scalar, 3> &trans) const
 {
 	return !(this->rotation_ == trans.rotation() && this->translation_ == trans.translation() && this->scale_ == trans.scale());
 }

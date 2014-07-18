@@ -11,6 +11,8 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
+
+#include <cmath>
 #include "Physika_Core/Transform/transform_2d.h"
 
 namespace Physika{
@@ -161,13 +163,13 @@ Transform<Scalar, 2> & Transform<Scalar, 2>::operator = (const Transform<Scalar,
 }
 
 template<typename Scalar>
-bool Transform<Scalar, 2>::operator == (const Transform<Scalar, 2> &trans)
+bool Transform<Scalar, 2>::operator == (const Transform<Scalar, 2> &trans) const
 {
 	return this->rotate_angle_ == trans.rotateAngle() && this->translation_ == trans.translation() && this->scale_ == trans.scale();
 }
 
 template<typename Scalar>
-bool Transform<Scalar, 2>::operator != (const Transform<Scalar, 2> &trans)
+bool Transform<Scalar, 2>::operator != (const Transform<Scalar, 2> &trans) const
 {
 	return !(this->rotate_angle_ == trans.rotateAngle() && this->translation_ == trans.translation() && this->scale_ == trans.scale());
 }

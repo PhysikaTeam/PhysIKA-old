@@ -30,13 +30,13 @@ namespace Physika{
  */
 
 template <typename Scalar>
-class Transform<Scalar, 3>: public TransformBase
+class Transform<Scalar, 3>
 {
 public:
     /* Constructions */
     Transform();
-    Transform(const Vector<Scalar, 3> );
-    Transform(const Quaternion<Scalar> );
+    explicit Transform(const Vector<Scalar, 3> );
+    explicit Transform(const Quaternion<Scalar> );
     Transform(const Vector<Scalar, 3> &translation, const Quaternion<Scalar> &rotation);
 	Transform(const Quaternion<Scalar> &rotation, const Vector<Scalar, 3> &translation);
     Transform(const Vector<Scalar, 3> &translation, const Quaternion<Scalar> &rotation, const Vector<Scalar, 3> &scale);
@@ -48,8 +48,8 @@ public:
 
 	/*operator*/
 	Transform<Scalar, 3> & operator = (const Transform<Scalar, 3> &);
-	bool operator == (const Transform<Scalar, 3> &);
-	bool operator != (const Transform<Scalar, 3> &);
+	bool operator == (const Transform<Scalar, 3> &) const;
+	bool operator != (const Transform<Scalar, 3> &) const;
 
 
     /* Get and Set */

@@ -130,25 +130,25 @@ Quaternion<Scalar> & Quaternion<Scalar>::operator -= (const Quaternion<Scalar> &
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator - (const Quaternion<Scalar> &quat)
+Quaternion<Scalar>  Quaternion<Scalar>::operator - (const Quaternion<Scalar> &quat) const
 {
     return Quaternion(x_ - quat.x(), y_ - quat.y(), z_ - quat.z(), w_ - quat.w());
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator - (void)
+Quaternion<Scalar>  Quaternion<Scalar>::operator - (void) const
 {
     return Quaternion(-x_, -y_, -z_, -w_);
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator + (const Quaternion<Scalar> &quat)
+Quaternion<Scalar>  Quaternion<Scalar>::operator + (const Quaternion<Scalar> &quat) const
 {
     return Quaternion(x_ + quat.x(), y_ + quat.y(), z_ + quat.z(), w_ + quat.w());
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator * (const Scalar& scale)
+Quaternion<Scalar>  Quaternion<Scalar>::operator * (const Scalar& scale) const
 {
     return Quaternion(x_ * scale, y_ * scale, z_ * scale, w_ * scale);
 }
@@ -164,7 +164,7 @@ Quaternion<Scalar> Quaternion<Scalar>::operator * (const Quaternion<Scalar>& q) 
 
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator / (const Scalar& scale)
+Quaternion<Scalar>  Quaternion<Scalar>::operator / (const Scalar& scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
@@ -175,7 +175,7 @@ Quaternion<Scalar>  Quaternion<Scalar>::operator / (const Scalar& scale)
 }
 
 template <typename Scalar>
-bool  Quaternion<Scalar>::operator == (const Quaternion<Scalar> &quat)
+bool  Quaternion<Scalar>::operator == (const Quaternion<Scalar> &quat) const
 {
     if (w_ == quat.w() && x_ == quat.x() && y_ == quat.y() && z_ == quat.z())
         return true;
@@ -183,7 +183,7 @@ bool  Quaternion<Scalar>::operator == (const Quaternion<Scalar> &quat)
 }
 
 template <typename Scalar>
-bool  Quaternion<Scalar>::operator != (const Quaternion<Scalar> &quat)
+bool  Quaternion<Scalar>::operator != (const Quaternion<Scalar> &quat) const
 {
     if (*this == quat)
         return false;
