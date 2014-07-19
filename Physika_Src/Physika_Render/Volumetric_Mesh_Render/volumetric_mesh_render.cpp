@@ -147,6 +147,28 @@ void VolumetricMeshRender<Scalar,Dim>::synchronize()
     deleteDisplayLists();
 }
 
+template<typename Scalar, int Dim>
+void VolumetricMeshRender<Scalar,Dim>::printInfo()const
+{
+	std::cout<<"mesh_address: "<<this->mesh_<<std::endl;
+	std::cout<<"transform_address: "<<this->transform_<<std::endl;
+
+	unsigned int render_mode = this->render_mode_;
+	std::cout<<"render_mode: ";
+	if(render_mode & this->render_solid_)
+		std::cout<<"solid ";
+	if(render_mode & this->render_wireframe_)
+		std::cout<<"wireFrame ";
+	if(render_mode & this->render_vertices_)
+		std::cout<<"vertex ";
+	std::cout<<std::endl;
+
+	std::cout<<"vertex_display_list_id_: "<<this->vertex_display_list_id_<<std::endl;
+	std::cout<<"wire_display_list_id_: "<<this->wire_display_list_id_<<std::endl;
+	std::cout<<"solid_display_list_id_: "<<this->solid_display_list_id_<<std::endl;
+	std::cout<<"solid_with_custom_color_vector_display_list_id_: "<<this->solid_with_custom_color_vector_display_list_id_<<std::endl;
+}
+
 template <typename Scalar, int Dim>
 void VolumetricMeshRender<Scalar,Dim>::render()
 {

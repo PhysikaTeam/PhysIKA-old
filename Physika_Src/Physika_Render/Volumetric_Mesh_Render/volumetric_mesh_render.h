@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_RENDER_VOLUMETRIC_MESH_RENDER_VOLUMETRIC_MESH_RENDER_H_
 #define PHYSIKA_RENDER_VOLUMETRIC_MESH_RENDER_VOLUMETRIC_MESH_RENDER_H_
 
+#include <iostream>
 #include "Physika_Render/Render_Base/render_base.h"
 
 namespace Physika{
@@ -22,6 +23,12 @@ namespace Physika{
 template <typename Scalar, int Dim> class VolumetricMesh;
 template <typename Scalar> class Color;
 template <typename Scalar> class Transform;
+
+/*
+template <typename Scalar, int Dim> class VolumetericMeshRender;
+template <typename Scalar, int Dim> 
+std::ostream & operator<<(std::ostream& , const VolumetricMeshRender<Scalar,Dim>&);
+*/
 
 template <typename Scalar, int Dim>
 class VolumetricMeshRender: public RenderBase
@@ -56,6 +63,8 @@ public:
     //Render with choosen render mode
     virtual void render();
 
+	virtual void printInfo()const;
+	
     // note: renderSolidWithAlpha is a function to render volumetricMesh in solid mode, with a alpha value to represent the transparency.
     //       a value of 0.0 denotes that the mesh is completely transparent.
     //       naturally ,a increasing alpha value means the mesh has a higher opacity. 
