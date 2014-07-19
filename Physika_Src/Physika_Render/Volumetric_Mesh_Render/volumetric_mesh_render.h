@@ -63,7 +63,7 @@ public:
     //Render with choosen render mode
     virtual void render();
 
-	virtual void printInfo()const;
+	  virtual void printInfo()const;
 	
     // note: renderSolidWithAlpha is a function to render volumetricMesh in solid mode, with a alpha value to represent the transparency.
     //       a value of 0.0 denotes that the mesh is completely transparent.
