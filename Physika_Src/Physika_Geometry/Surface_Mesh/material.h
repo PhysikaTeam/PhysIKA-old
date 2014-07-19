@@ -52,10 +52,10 @@ public:
     //TO DO: Add some static member methods here, predefined materials: rubber, iron, etc.
 
 protected:
+    std::string name_;
     Vector<Scalar,3> Ka_, Kd_, Ks_;
     Scalar shininess_;
     Scalar alpha_;
-    std::string name_;
     std::string texture_file_name_;  //full path of texture file name
 };
 

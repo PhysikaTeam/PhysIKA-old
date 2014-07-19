@@ -65,6 +65,8 @@ void SceneBVH<Scalar, Dim>::updateSceneBVH()
 	this->rebuild();
 }
 
+template class SceneBVH<float, 2>;
+template class SceneBVH<double, 2>;
 template class SceneBVH<float, 3>;
 template class SceneBVH<double, 3>;
 

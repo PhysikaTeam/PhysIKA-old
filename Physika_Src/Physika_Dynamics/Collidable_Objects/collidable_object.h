@@ -15,11 +15,13 @@
 #ifndef PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLIDABLE_OBJECT_H_
 #define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLIDABLE_OBJECT_H_
 
-#include "Physika_Core/Transform/transform.h"
-
 namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
+
+namespace CollidableObjectInternal{
+    enum ObjectType {MESH_BASED, IMPLICIT, POLYGON};
+}
 
 template <typename Scalar,int Dim>
 class CollidableObject
@@ -30,8 +32,7 @@ public:
     virtual ~CollidableObject(){}
 
 	//get & set
-	enum ObjectType {MESH_BASED, IMPLICIT};
-	virtual ObjectType objectType() const=0;
+	virtual CollidableObjectInternal::ObjectType objectType() const=0;
 	
     //given position and velocity of a point, resolve collision with the collidable object (detect&&resolve)
 //    virtual bool collide(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;

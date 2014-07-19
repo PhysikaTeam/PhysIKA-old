@@ -35,21 +35,3 @@ int main()
     cout<<color_double<<"\n";
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

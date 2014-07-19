@@ -21,8 +21,8 @@ namespace Physika{
 
 template <typename Scalar, int Dim> class Vector;
 
-template <typename Scalar, int Dim>
-class BoundingVolumeKDOP18 : public BoundingVolume<Scalar, Dim>
+template <typename Scalar>
+class BoundingVolumeKDOP18 : public BoundingVolume<Scalar, 3>
 {
 public:
 	//constructors && deconstructors
@@ -30,33 +30,33 @@ public:
 	~BoundingVolumeKDOP18();
 
 	//set
-	void setBoundingVolume(const BoundingVolume<Scalar, Dim>* const bounding_volume);
-	void setBoundingVolume(const Vector<Scalar, Dim>& point);
-	void setBoundingVolume(const Vector<Scalar, Dim>& point_a, const Vector<Scalar, Dim>& point_b);
-	typename BoundingVolume<Scalar,Dim>::BVType bvType() const;
+	void setBoundingVolume(const BoundingVolume<Scalar, 3>* const bounding_volume);
+	void setBoundingVolume(const Vector<Scalar, 3>& point);
+	void setBoundingVolume(const Vector<Scalar, 3>& point_a, const Vector<Scalar, 3>& point_b);
+	typename BoundingVolumeInternal::BVType bvType() const;
 
 	//basic operation
-	bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const;
-	bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume, BoundingVolume<Scalar, Dim>* return_volume) const;
-	bool isInside(const Vector<Scalar,Dim> &point) const;
-	Vector<Scalar,Dim> center() const;
+	bool isOverlap(const BoundingVolume<Scalar, 3>* const bounding_volume) const;
+	bool isOverlap(const BoundingVolume<Scalar, 3>* const bounding_volume, BoundingVolume<Scalar, 3>* return_volume) const;
+	bool isInside(const Vector<Scalar, 3> &point) const;
+	Vector<Scalar, 3> center() const;
 	Scalar width() const;
 	Scalar height() const;
 	Scalar depth() const;
 	void setEmpty();
 
 	//union operation
-	void unionWith(const Vector<Scalar,Dim> &point);
-	void unionWith(const BoundingVolume<Scalar,Dim>* const bounding_volume);
-	void obtainUnion(const BoundingVolume<Scalar,Dim>* const bounding_volume_lhs, const BoundingVolume<Scalar,Dim>* const bounding_volume_rhs);
+	void unionWith(const Vector<Scalar, 3> &point);
+	void unionWith(const BoundingVolume<Scalar, 3>* const bounding_volume);
+	void obtainUnion(const BoundingVolume<Scalar, 3>* const bounding_volume_lhs, const BoundingVolume<Scalar, 3>* const bounding_volume_rhs);
 
 protected:
 	//faces of a 18-DOP
 	Scalar dist_[18];
 
 	//internal functions
-	void getDistances(const Vector<Scalar, Dim>& point, Scalar& d3, Scalar& d4, Scalar& d5, Scalar& d6, Scalar& d7, Scalar& d8) const;
-	void getDistances(const Vector<Scalar, Dim>& point, Scalar d[]) const;
+	void getDistances(const Vector<Scalar, 3>& point, Scalar& d3, Scalar& d4, Scalar& d5, Scalar& d6, Scalar& d7, Scalar& d8) const;
+	void getDistances(const Vector<Scalar, 3>& point, Scalar d[]) const;
 };
 
 }  //end of namespace Physika

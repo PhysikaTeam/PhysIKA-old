@@ -32,15 +32,15 @@ class MatrixMxN: public MatrixBase
 {
 public:
     MatrixMxN(); //construct an empty matrix
-    MatrixMxN(int rows, int cols); //construct an uninitialized matrix of size rows*cols                  
-    MatrixMxN(int rows, int cols, Scalar *entries);  //construct a matrix with given size and data
+    MatrixMxN(unsigned int rows, unsigned int cols); //construct an uninitialized matrix of size rows*cols                  
+    MatrixMxN(unsigned int rows, unsigned int cols, Scalar *entries);  //construct a matrix with given size and data
     MatrixMxN(const MatrixMxN<Scalar>&);  //copy constructor
     ~MatrixMxN();
-    int rows() const;
-    int cols() const;
-    void resize(int new_rows, int new_cols);  //resize the matrix to new_rows*new_cols
-    Scalar& operator() (int i, int j);
-    const Scalar& operator() (int i, int j) const;
+    unsigned int rows() const;
+    unsigned int cols() const;
+    void resize(unsigned int new_rows, unsigned int new_cols);  //resize the matrix to new_rows*new_cols
+    Scalar& operator() (unsigned int i, unsigned int j);
+    const Scalar& operator() (unsigned int i, unsigned int j) const;
     MatrixMxN<Scalar> operator+ (const MatrixMxN<Scalar> &) const;
     MatrixMxN<Scalar>& operator+= (const MatrixMxN<Scalar> &);
     MatrixMxN<Scalar> operator- (const MatrixMxN<Scalar> &) const;
@@ -60,7 +60,7 @@ public:
     Scalar trace() const;
     Scalar doubleContraction(const MatrixMxN<Scalar> &) const;
 protected:
-    void allocMemory(int rows, int cols);
+    void allocMemory(unsigned int rows, unsigned int cols);
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> *ptr_eigen_matrix_MxN_;

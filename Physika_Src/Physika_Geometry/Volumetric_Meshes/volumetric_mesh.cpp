@@ -13,6 +13,7 @@
  */
 
 #include <cstdlib>
+#include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 using std::string;
@@ -47,11 +48,46 @@ VolumetricMesh<Scalar,Dim>::VolumetricMesh(unsigned int vert_num, const Scalar *
 }
 
 template <typename Scalar, int Dim>
+VolumetricMesh<Scalar,Dim>::VolumetricMesh(const VolumetricMesh<Scalar,Dim> &volumetric_mesh)
+{
+    this->vertices_ = volumetric_mesh.vertices_;
+    this->ele_num_ = volumetric_mesh.ele_num_;
+    this->elements_ = volumetric_mesh.elements_;
+    this->uniform_ele_type_ = volumetric_mesh.uniform_ele_type_;
+    this->vert_per_ele_ = volumetric_mesh.vert_per_ele_;
+    (this->regions_).clear();
+    for(unsigned int i = 0; i < volumetric_mesh.regions_.size(); ++i)
+    {
+        Region *src_region = volumetric_mesh.regions_[i];
+        Region *region = new Region(*src_region);
+        (this->regions_).push_back(region);
+    }
+}
+
+template <typename Scalar, int Dim>
 VolumetricMesh<Scalar,Dim>::~VolumetricMesh()
 {
     for(unsigned int i = 0; i < regions_.size(); ++i)
         if(regions_[i])
             delete regions_[i];
+}
+
+template <typename Scalar, int Dim>
+VolumetricMesh<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::operator= (const VolumetricMesh<Scalar,Dim> &volumetric_mesh)
+{
+    this->vertices_ = volumetric_mesh.vertices_;
+    this->ele_num_ = volumetric_mesh.ele_num_;
+    this->elements_ = volumetric_mesh.elements_;
+    this->uniform_ele_type_ = volumetric_mesh.uniform_ele_type_;
+    this->vert_per_ele_ = volumetric_mesh.vert_per_ele_;
+    (this->regions_).clear();
+    for(unsigned int i = 0; i < volumetric_mesh.regions_.size(); ++i)
+    {
+        Region *src_region = volumetric_mesh.regions_[i];
+        Region *region = new Region(*src_region);
+        (this->regions_).push_back(region);
+    }
+    return *this;
 }
 
 template <typename Scalar, int Dim>
@@ -84,6 +120,19 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsi
 }
 
 template <typename Scalar, int Dim>
+int VolumetricMesh<Scalar,Dim>::eleRegionIndex(unsigned int ele_idx) const
+{
+    for(unsigned int i = 0; i < regions_.size(); ++i)
+    {
+        const vector<unsigned int> &region_elements = regions_[i]->elements();
+        vector<unsigned int>::const_iterator iter = find(region_elements.begin(),region_elements.end(),ele_idx);
+        if(iter != region_elements.end())
+            return static_cast<int>(iter - region_elements.begin());
+    }
+    return -1;
+}
+
+template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::regionNum() const
 {
     return regions_.size();
@@ -101,10 +150,23 @@ const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const
+const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const
 {
-    int global_vert_idx = eleVertIndex(ele_idx,vert_idx);
+    unsigned int global_vert_idx = eleVertIndex(ele_idx,local_vert_idx);
     return vertPos(global_vert_idx);
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const
+{
+    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    {
+        std::cerr<<"element index out of range!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    positions.clear();
+    for(unsigned int i = 0; i < this->eleVertNum(ele_idx); ++i)
+        positions.push_back(this->eleVertPos(ele_idx,i));
 }
 
 template <typename Scalar, int Dim>
@@ -401,6 +463,8 @@ void VolumetricMesh<Scalar,Dim>::init(unsigned int vert_num, const Scalar *verti
     for(unsigned int i = 0; i < ele_num_; ++i)
         region_data[i] = i;
     Region *all_elements = new Region(string("AllElements"),region_data);
+    regions_.clear();
+    regions_.push_back(all_elements);
 }
 
 template <typename Scalar, int Dim>

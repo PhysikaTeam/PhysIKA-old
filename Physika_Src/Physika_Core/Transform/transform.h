@@ -1,7 +1,8 @@
 /*
- * @file transform.h 
- * @brief transform class, brief class representing a rigid euclidean transform as a quaternion and a vector
- * @author Sheng Yang, Fei Zhu
+ * @file vector.h 
+ * @brief This abstract class is intended to provide a uniform interface for transfrom2D and transform3D.
+ *        transfrom2D and transform3D are implemented using template partial specialization of this class. 
+ * @author Sheng Yang
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -12,96 +13,28 @@
  *
  */
 
-#ifndef PHSYIKA_CORE_TRANSFORM_TRANSFORM_H_
-#define PHSYIKA_CORE_TRANSFORM_TRANSFORM_H_
+#ifndef PHYSIKA_CORE_TRANSFORM_TRANSFORM_H_
+#define PHYSIKA_CORE_TRANSFORM_TRANSFORM_H_
 
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/type_utilities.h"
-#include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Quaternion/quaternion.h"
-#include "Physika_Core/Matrices/matrix_3x3.h"
-#include "Physika_Core/Matrices/matrix_4x4.h"
 
 namespace Physika{
 
-/*
- * Transform is defined for float and double
- */
-
-template <typename Scalar>
+template <typename Scalar, int Dim>
 class Transform
 {
 public:
-    /* Constructions */
-    Transform();
-    explicit Transform(const Vector<Scalar,3> );
-    explicit Transform(const Quaternion<Scalar> );
-    Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>& );
-    Transform(const Vector<Scalar,3>&, const Quaternion<Scalar>&, const Vector<Scalar, 3>& );
-    Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>& );
-    Transform(const Quaternion<Scalar>&, const Vector<Scalar,3>&, const Vector<Scalar, 3>& );
-    Transform(const SquareMatrix<Scalar,4>& );
-    Transform(const SquareMatrix<Scalar,3>&);
-
-    /* Get and Set */
-    inline Quaternion<Scalar> rotation() const { return rotation_; }
-    inline SquareMatrix<Scalar, 3> rotation3x3Matrix() const { return rotation_.get3x3Matrix(); }
-    inline SquareMatrix<Scalar, 4> rotation4x4Matrix() const { return rotation_.get4x4Matrix(); }
-    inline SquareMatrix<Scalar, 4> translation4x4Matrix() const
-    {
-        return SquareMatrix<Scalar, 4>(  1,0,0,translation_[0],
-                                         0,1,0,translation_[1],
-                                         0,0,1,translation_[2],
-                                         0,0,0,1);
-    }
-    inline SquareMatrix<Scalar, 4> scale4x4Matrix() const 
-    { 
-        return SquareMatrix<Scalar, 4>( scale_[0],0,0,0,
-                                        0,scale_[1],0,0,
-                                        0,0,scale_[2],0,
-                                        0,0,0,1);
-    }
-    inline SquareMatrix<Scalar, 4> transformMatrix() const
-    {
-        SquareMatrix<Scalar, 4> matrix = rotation_.get4x4Matrix();
-        matrix(0, 3) = translation_[0];
-        matrix(1, 3) = translation_[1];
-        matrix(2, 3) = translation_[2];
-        SquareMatrix<Scalar, 4> scale_matrix(   scale_[0], 0,0,0,
-                                                0,scale_[1],0,0,
-                                                0,0,scale_[2],0,
-                                                0,0,0,1);
-
-        return matrix*scale_matrix;
-    }
-    inline Vector<Scalar, 3> translation() const { return translation_; }
-    inline Vector<Scalar, 3> scale() const { return scale_; }
-    inline void setRotation(const Quaternion<Scalar>& rotation) { rotation_ = rotation; }
-    inline void setRotation(const SquareMatrix<Scalar, 3>& rotation) { rotation_ = Quaternion<Scalar>(rotation); }
-    inline void setRotation(const Vector<Scalar, 3>& rotation ) { rotation_ = Quaternion<Scalar>(rotation); }
-    inline void setScale(const Vector<Scalar, 3> scale ) { scale_ = scale; }
-    inline void setTranslation(const Vector<Scalar,3>& translation) { translation_ = translation; }
-    inline void setIdentity() { rotation_ = Quaternion<Scalar>(0,0,0,1); translation_ = Vector<Scalar, 3>(0,0,0);}
-
-    /* Funtions*/
-    //Order is scale > rotate > translate. If you want another order, you can get scale/rotation/translation component and do it yourself.
-    Vector<Scalar,3> transform(const Vector<Scalar, 3>& input) const;
-
-    static inline Transform<Scalar> identityTransform() { return Transform<Scalar>(); }
-
+    Transform(){}
+    ~Transform(){}
 protected:
-    Quaternion<Scalar> rotation_;
-    Vector<Scalar,3> translation_;
-    Vector<Scalar,3> scale_;
-protected:
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
+    //Transform<Scalar,Dim> is only defined for 2D&&3D with element type of floating-point types
+    //compile time check
+    PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Transform<Scalar,Dim> are only defined for Dim==2,3");
+    PHYSIKA_STATIC_ASSERT(is_floating_point<Scalar>::value,
+                      "Transform<Scalar,Dim> are only defined for floating-point types.");
 };
 
-//convenient typedefs
-typedef Transform<float> Transformf;
-typedef Transform<double> Transformd;
+}  //end of namespace Physika
 
-}//end of namespace Physika
-
-#endif //PHSYIKA_CORE_TRANSFORM_TRANSFORM_H_
+#endif //PHYSIKA_CORE_TRANSFORM_TRANSFORM_H_

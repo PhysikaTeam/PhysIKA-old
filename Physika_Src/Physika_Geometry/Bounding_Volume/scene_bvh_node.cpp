@@ -99,16 +99,14 @@ void SceneBVHNode<Scalar, Dim>::buildFromObjectBVH()
 	this->is_leaf_ = true;
 	if(this->bounding_volume_ == NULL)
 	{
-		switch(this->bv_type_)
-		{
-		case BoundingVolume<Scalar, Dim>::KDOP18: this->bounding_volume_ = new BoundingVolumeKDOP18<Scalar, Dim>();
-		default: this->bounding_volume_ = new BoundingVolumeKDOP18<Scalar, Dim>();
-		}
+        this->bounding_volume_ = BoundingVolumeInternal::createBoundingVolume<Scalar, Dim>(this->bv_type_);
 	}
 	this->bounding_volume_->setEmpty();
 	this->bounding_volume_->setBoundingVolume(object_bvh_->boundingVolume());
 }
 
+template class SceneBVHNode<float, 2>;
+template class SceneBVHNode<double, 2>;
 template class SceneBVHNode<float, 3>;
 template class SceneBVHNode<double, 3>;
 

@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TRI_MESH_H_
 #define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TRI_MESH_H_
 
+#include <vector>
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 
 namespace Physika{
@@ -27,13 +28,15 @@ class TriMesh: public VolumetricMesh<Scalar,2>
 public:
     TriMesh(); //construct an empty TriMesh
     TriMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements); //construct TriMesh with given data
+    TriMesh(const TriMesh<Scalar> &tri_mesh);
     ~TriMesh();
+    TriMesh<Scalar>& operator=(const TriMesh<Scalar> &tri_mesh);
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
-    int eleVertNum() const;
+    unsigned int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
     bool containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const;
-    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, Scalar *weights) const;
+    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, std::vector<Scalar> &weights) const;
 protected:
 };
 

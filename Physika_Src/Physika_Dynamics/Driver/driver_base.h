@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include "Physika_Core/Utilities/Timer/timer.h"
+#include "Physika_Core/Config_File/config_file.h"
 
 namespace Physika{
 
@@ -32,6 +33,22 @@ namespace Physika{
  * Example usage:
  * Define a plugin subclass which implements the onBeginFrame() method by popping out a 
  * window at the begining of each frame for rendering purpose.
+ *
+ * Physika drivers allow for restarting the simulation from any frame, provided that the
+ * simulation data of that frame has been written to file in previous simulation.
+ * To implement restart support in subclass of DriverBase, you need to:
+ * 1. Implement the write() method where the image of driver class in memory is written to file
+ * 2. Implement the read() method where the status of driver class is loadded from file
+ * 3. Implement the Initialize() method, in which the read() method is called to load driver status
+ *    of restart frame into memory
+ * Note:
+ * 1. If you override the default run() in your subclass, be sure to call initialize() at the begining of
+ *    your run() method such that restart works properly
+ * 2. In default restart only works if you run the simulation by calling run()
+ * 3. Be sure to return correct value in your withRestartSupport() method to inform the user whether restart
+ *    is supported in your driver
+ * 
+ * For users of drivers: call setRestartFrame() before calling run()
  */
 
 template <typename Scalar> class DriverPluginBase;
@@ -40,44 +57,53 @@ template <typename Scalar>
 class DriverBase
 {
 public:
-
-
-public:
     DriverBase();
-    DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
+    DriverBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
     virtual ~DriverBase();
+
+    //virtual methods
+    virtual void initConfiguration(const std::string &file_name)=0; //init the configuration (simulation parameters) from file
     virtual void run();//run the simulation from start frame to end frame
     virtual void advanceFrame();//advance one frame
-    virtual void initialize()=0;//initialize before the simulation
     virtual void advanceStep(Scalar dt)=0;//advance one time step
-    virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions
-    virtual void write(const char *file_name)=0;//write simulation data to file
-    virtual void read(const char *file_name)=0;//read simulation data from file
-    virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
+    virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions, return time step
+    virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver, type-check of driver should be done before assignment.
 
+    //restart support
+    virtual bool withRestartSupport() const=0;//indicate whether restart is suported in current implementation
+    virtual void write(const std::string &file_name)=0;//write simulation data of current status to file
+    virtual void read(const std::string &file_name)=0;//read simulation data of current status from file
+    inline void setRestartFrame(unsigned int restart_frame){restart_frame_ = restart_frame;} //set the frame to restart from
+
+    //setters && getters
     inline void setMaxDt(Scalar max_dt){max_dt_ = max_dt;}
     inline Scalar maxDt(){return max_dt_;}
     inline void setFrameRate(Scalar frame_rate){frame_rate_ = frame_rate;}
     inline Scalar frameRate(){return frame_rate_;}
-    inline void setStartFrame(int start_frame){start_frame_ = start_frame;}
-    inline int getStartFrame(){return start_frame_;}
-    inline void setEndFrame(int end_frame){end_frame_ = end_frame;}
-    inline int getEndFrame(){return end_frame_;}
+    inline void setStartFrame(unsigned int start_frame){start_frame_ = start_frame;}
+    inline unsigned int getStartFrame(){return start_frame_;}
+    inline void setEndFrame(unsigned int end_frame){end_frame_ = end_frame;}
+    inline unsigned int getEndFrame(){return end_frame_;}
     inline void enableWriteToFile(){write_to_file_ = true;}
     inline void disableWriteToFile(){write_to_file_ = false;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
- 
+
 protected:
-    int start_frame_;
-    int end_frame_;
-    int restart_frame_;
+    //initialize before the simulation, e.g., load restart data from file
+    //called once in run()
+    virtual void initialize()=0;
+protected:
+    unsigned int start_frame_;
+    unsigned int end_frame_;
+    unsigned int restart_frame_;
     Scalar frame_rate_;
     Scalar max_dt_;
     bool write_to_file_;
     bool enable_timer_;
     Timer timer_;
     Scalar time_;//current time point of simulation
+    ConfigFile config_parser_; //parser of configuration file
 
     std::vector<DriverPluginBase<Scalar>* > plugins_;//Plugin vector. All plugins should be added here and called in corresponding functions
 };
@@ -85,4 +111,3 @@ protected:
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_DYNAMICS_DRIVER_DRIVER_BASE_H_
-

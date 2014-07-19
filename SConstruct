@@ -54,9 +54,9 @@ else:
 
 #BUILDERS
 if build_type=='Release':
-   compile_action='g++ -o $TARGET $SOURCE -c -O3 -fno-strict-aliasing -std=gnu++0x -DNDEBUG '
+   compile_action='g++ -o $TARGET $SOURCE -c -O3 -Wall -fno-strict-aliasing -std=gnu++0x -DNDEBUG '
 else:
-   compile_action='g++ -o $TARGET $SOURCE -c -g -fno-strict-aliasing -std=gnu++0x '
+   compile_action='g++ -o $TARGET $SOURCE -c -g -Wall -fno-strict-aliasing -std=gnu++0x '
 compile_action=compile_action+'-I '+' -I '.join(include_path)
 compile=Builder(action=compile_action)
 arc_lib=Builder(action='ar rcs $TARGET $SOURCES')
@@ -73,7 +73,7 @@ else:
 	arc='x86'
    else:
 	arc='amd64'
-   if build_type=='Relase':
+   if build_type=='Release':
         CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']
    else:
         CCFLAGS=['/Od','/Zi','/EHsc','/W3']

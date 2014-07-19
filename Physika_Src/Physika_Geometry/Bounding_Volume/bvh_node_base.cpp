@@ -22,7 +22,7 @@ template <typename Scalar,int Dim>
 BVHNodeBase<Scalar, Dim>::BVHNodeBase():
 	is_leaf_(false),
 	leaf_node_index_(0),
-	bv_type_(BoundingVolume<Scalar, Dim>::KDOP18),
+	bv_type_(BoundingVolumeInternal::KDOP18),
 	bounding_volume_(NULL),
 	left_child_(NULL),
 	right_child_(NULL)
@@ -84,13 +84,13 @@ const BoundingVolume<Scalar, Dim>* const BVHNodeBase<Scalar, Dim>::boundingVolum
 }
 
 template <typename Scalar,int Dim>
-void BVHNodeBase<Scalar, Dim>::setBVType(typename BoundingVolume<Scalar, Dim>::BVType bv_type)
+void BVHNodeBase<Scalar, Dim>::setBVType(typename BoundingVolumeInternal::BVType bv_type)
 {
 	bv_type_ = bv_type;
 }
 
 template <typename Scalar,int Dim>
-typename BoundingVolume<Scalar, Dim>::BVType BVHNodeBase<Scalar, Dim>::BVType() const
+typename BoundingVolumeInternal::BVType BVHNodeBase<Scalar, Dim>::BVType() const
 {
 	return bv_type_;
 }
@@ -298,6 +298,8 @@ bool BVHNodeBase<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const ta
 }
 
 //explicit instantitation
+template class BVHNodeBase<float, 2>;
+template class BVHNodeBase<double, 2>;
 template class BVHNodeBase<float, 3>;
 template class BVHNodeBase<double, 3>;
 

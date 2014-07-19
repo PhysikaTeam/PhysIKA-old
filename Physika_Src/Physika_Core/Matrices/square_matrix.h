@@ -28,8 +28,8 @@ class SquareMatrix: public MatrixBase
 public:
     SquareMatrix(){}
     ~SquareMatrix(){}
-    virtual int rows() const=0;
-    virtual int cols() const=0;
+    virtual unsigned int rows() const=0;
+    virtual unsigned int cols() const=0;
 protected:
     //SquareMatrix<Scalar,Dim> is only defined for 2D&&3D&&4D with element type of integers and floating-point types
     //compile time check

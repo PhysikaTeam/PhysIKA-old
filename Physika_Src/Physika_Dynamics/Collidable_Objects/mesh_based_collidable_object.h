@@ -22,9 +22,10 @@ namespace Physika{
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar> class SurfaceMesh;
 template <typename Scalar,int Dim> class CollisionDetectionResult;
+template <typename Scalar,int Dim> class Transform;
 
-template <typename Scalar,int Dim>
-class MeshBasedCollidableObject: public CollidableObject<Scalar,Dim>
+template <typename Scalar>
+class MeshBasedCollidableObject: public CollidableObject<Scalar, 3>
 {
 public:
 	//constructors && deconstructors
@@ -32,19 +33,19 @@ public:
 	~MeshBasedCollidableObject();
 
 	//get & set
-	typename CollidableObject<Scalar,Dim>::ObjectType objectType() const;
+	typename CollidableObjectInternal::ObjectType objectType() const;
 	const SurfaceMesh<Scalar>* mesh() const;
 	SurfaceMesh<Scalar>* mesh();
 	void setMesh(SurfaceMesh<Scalar>* mesh);
-	const Transform<Scalar>* transform() const;
-	Transform<Scalar>* transform();
-	void setTransform(Transform<Scalar>* transform);
+	const Transform<Scalar, 3>* transform() const;
+	Transform<Scalar, 3>* transform();
+	void setTransform(Transform<Scalar, 3>* transform);
 
     //return vertex and normals after transform
     Vector<Scalar, 3> vertexPosition(unsigned int vertex_index) const;
     Vector<Scalar, 3> faceNormal(unsigned int face_index) const;
 
-	bool collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs);
+	bool collideWithMesh(MeshBasedCollidableObject<Scalar>* object, unsigned int face_index_lhs, unsigned int face_index_rhs);
 
     //overlapPoint is the position of overlap. It will be changed after test if overlap is true.
 	static bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, Vector<Scalar, 3>& overlap_point);
@@ -54,7 +55,7 @@ protected:
 	//mesh_ is used to define the shape of object, while transform_ is used to define the configuration
 	//For deformable object which only updates mesh_, transform_ can be set to identity
 	SurfaceMesh<Scalar>* mesh_;
-	Transform<Scalar>* transform_;
+	Transform<Scalar, 3>* transform_;
 
 };
 

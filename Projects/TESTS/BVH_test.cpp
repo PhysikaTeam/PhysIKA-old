@@ -40,6 +40,8 @@
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_2d.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_3d.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_render.h"
@@ -48,8 +50,6 @@
 using namespace std;
 using namespace Physika;
 
-Transform<double> *trans;
-unsigned int render_i = 0;
 
 int main()
 {
@@ -58,6 +58,7 @@ int main()
 		exit(1);
 
     SurfaceMesh<double> mesh_box;
+
     if(!ObjMeshIO<double>::load(string("box_tri.obj"), &mesh_box))
         exit(1);
 
@@ -65,55 +66,47 @@ int main()
     mesh_box.computeAllFaceNormals();
     
 	RigidBodyDriver<double, 3> driver;
+    driver.setGravity(0.981);
 
-	RigidBody<double,3> body1(&mesh_ball);
-    
+	RigidBody<double,3> ball(&mesh_ball);
+    ball.setCoeffFriction(0.5);
 
-	RigidBody<double,3> body2(body1);
-    body2.setTranslation(Vector<double, 3>(0, 55, 0));
-    body2.setScale(Vector<double, 3>(0.3, 0.4, 0.5));
+    RigidBody<double,3> box(&mesh_box);
+    //box.setCoeffFriction(0.5);
+    //box.setCoeffRestitution(1);
 
-    RigidBody<double,3> body3(body1);
-    body3.setTranslation(Vector<double, 3>(0, -185, 0));
+    RigidBody<double,3> floor(&mesh_box);
+    floor.setTranslation(Vector<double, 3>(0, -5, 0));
+    floor.setScale(Vector<double, 3>(100, 1, 100));
+    //floor.setCoeffFriction(0.5);
+    floor.setFixed(true);
 
-    RigidBody<double,3> body4(body1);
-    body4.setTranslation(Vector<double, 3>(0, -285, 0));
+    RigidBody<double,3>* object;
 
-    //body1.setTranslation(Vector<double, 3>(0, 20, 0));
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 1; j <= 3; j++)
+        {
+            for(int k = 0; k < 3; k++)
+            {
+                object = new RigidBody<double,3>(box);
+                object->setTranslation(Vector<double, 3>(i*2-2, j*2, k*2));
+                object->setRotation(Vector<double, 3>(0.5, 0.5, 0.5));
+                driver.addRigidBody(object);
+            }
+        }
+    }
 
-    //body2.setRotation(Vector<double, 3>(0, 0.785, 0));
+    driver.addRigidBody(&floor);
 
-    body2.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, -0.2));
-    body2.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.2));
 
-    //body3.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
-    //body3.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
-
-    //body4.setGlobalTranslationVelocity(Vector<double, 3>(0, -1, 0));
-    //body4.setGlobalAngularVelocity(Vector<double, 3>(0, 0, 0.1));
-
-    driver.addRigidBody(&body1);
-    driver.addRigidBody(&body2);
-	
-	
-    //driver.addRigidBody(&body3);
-    //driver.addRigidBody(&body4);
-
-    Vector<double, 3> center;
-    double mass;
-    InertiaTensor<double> tensor;
-
-    tensor.setBody(&mesh_ball, Vector<double, 3>(0.2, 0.8, 0.3), 1.0, center, mass);
-    cout<<center<<endl;
-    cout<<mass<<endl;
-    cout<<tensor.bodyInertiaTensor()<<endl;
 
 
     GlutWindow glut_window;
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
     //glut_window.setCameraPosition(Vector<double, 3>(20, 0, 0));
-	glut_window.setCameraPosition(Vector<double, 3>(-60, 0, 60));
+	glut_window.setCameraPosition(Vector<double, 3>(0, 0, 20));
 	glut_window.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
     //glut_window.setDisplayFunction(display);
 	glut_window.setCameraFarClip(10000);
@@ -123,22 +116,17 @@ int main()
 	RigidDriverPluginRender<double, 3>* plugin = new RigidDriverPluginRender<double, 3>();
 	plugin->setWindow(&glut_window);
 	driver.addPlugin(plugin);
-	plugin->disableRenderSolidAll();
+	//plugin->disableRenderSolidAll();
 	plugin->enableRenderWireframeAll();
     //plugin->enableRenderContactFaceAll();
-    plugin->enableRenderContactNormalAll();
+    //plugin->enableRenderContactNormalAll();
 
-    //RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
-    //driver.addPlugin(print_plugin);
+    RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
+    driver.addPlugin(print_plugin);
 
 
     glut_window.createWindow();
 
-
-
-
-
-	system("pause");
 
     return 0;
 }

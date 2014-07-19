@@ -13,8 +13,33 @@
  */
 
 #include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume_octagon.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
+
+namespace BoundingVolumeInternal{
+
+template<typename Scalar, int Dim>
+BoundingVolume<Scalar, Dim>* createBoundingVolume(BVType bv_type)
+{
+    BoundingVolume<Scalar, Dim>* bounding_volume = NULL;
+    switch(bv_type)
+    {
+    case KDOP18: bounding_volume = dynamic_cast<BoundingVolume<Scalar, Dim>* >(new BoundingVolumeKDOP18<Scalar>());break;
+    case OCTAGON: bounding_volume = dynamic_cast<BoundingVolume<Scalar, Dim>* >(new BoundingVolumeOctagon<Scalar>());break;
+    default: std::cerr<<"Wrong bounding volume type!"<<std::endl;bounding_volume = NULL;break;
+    }
+    return bounding_volume;
+}
+
+template BoundingVolume<float, 2>* createBoundingVolume(BVType bv_type);
+template BoundingVolume<float, 3>* createBoundingVolume(BVType bv_type);
+template BoundingVolume<double, 2>* createBoundingVolume(BVType bv_type);
+template BoundingVolume<double, 3>* createBoundingVolume(BVType bv_type);
+
+}
 
 template <typename Scalar, int Dim>
 BoundingVolume<Scalar, Dim>::BoundingVolume()
@@ -27,6 +52,8 @@ BoundingVolume<Scalar, Dim>::~BoundingVolume()
 }
 
 //explicit instantitation
+template class BoundingVolume<float, 2>;
+template class BoundingVolume<double, 2>;
 template class BoundingVolume<float, 3>;
 template class BoundingVolume<double, 3>;
 

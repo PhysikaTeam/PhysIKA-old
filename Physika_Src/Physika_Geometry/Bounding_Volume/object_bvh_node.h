@@ -35,7 +35,7 @@ public:
 	//get & set
 	bool isSceneNode() const;
 	bool isObjectNode() const;
-	typename CollidableObject<Scalar, Dim>::ObjectType objectType() const;
+	typename CollidableObjectInternal::ObjectType objectType() const;
 	void setObject(CollidableObject<Scalar, Dim>* object);
 	const CollidableObject<Scalar, Dim>* object() const;
 	void setFaceIndex(unsigned int face_index);
@@ -47,13 +47,12 @@ public:
 	bool elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result);
 	
 protected:
-	typename CollidableObject<Scalar, Dim>::ObjectType object_type_;
+	typename CollidableObjectInternal::ObjectType object_type_;
 	CollidableObject<Scalar, Dim>* object_;
 	bool has_face_;
 	unsigned int face_index_;
 
-	//internal function
-	void buildFromFace();
+    void buildFromFace();
 };
 
 }  //end of namespace Physika

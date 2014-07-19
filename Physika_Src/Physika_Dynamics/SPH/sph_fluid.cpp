@@ -40,34 +40,131 @@ void SPHFluid<Scalar, Dim>::allocMemory(unsigned int particle_num)
     this->energy_.resize(particle_num);
     this->energy_.zero();
 
-   // this->neighborLists_.resize(particle_num);
-    //this->neighborLists_.zero();
+    this->neighbor_lists_.resize(particle_num);
+    this->neighbor_lists_.zero();
+
+    this->small_density_.resize(particle_num);
+    this->small_density_.zero();
+
+    this->small_scale_.resize(particle_num);
+    this->small_scale_.zero();
 }
 
 template <typename Scalar, int Dim>
-void SPHFluid<Scalar, Dim>::initialize()
+void SPHFluid<Scalar, Dim>::initConfiguration(const std::string &file_name)
 {
-    allocMemory(this->particle_num_);
+    this->config_file_.addOptionOptional("timestep", &(this->time_step_), static_cast<Scalar>(0.001));
+    this->config_file_.addOptionOptional("viscosity", &(this->viscosity_), static_cast<Scalar>(280000));
+    this->config_file_.addOptionOptional("surfacetension",&(this->surface_tension_),static_cast<Scalar>(54000));
+    this->config_file_.addOptionOptional("density", &(this->reference_density_), static_cast<Scalar>(1000));
+    this->config_file_.addOptionOptional("gravity", &(this->gravity_), static_cast<Scalar>(-9.8));
+    this->config_file_.addOptionOptional("sampling_distance", &(this->sampling_distance_), static_cast<Scalar>(0.005));
+    this->config_file_.addOptionOptional("smoothing_length", &(this->smoothing_length_), static_cast<Scalar>(2.5));
+    this->config_file_.addOptionOptional("init_from_file", &(this->init_from_file_), false);
+    this->config_file_.addOptionOptional("init_file_name", &(this->init_file_name_), static_cast<std::string>(""));
+    this->config_file_.addOptionOptional("x_num", &(this->x_num_), (100));
+    this->config_file_.addOptionOptional("y_num", &(this->y_num_), (100));
+    this->config_file_.addOptionOptional("z_num", &(this->z_num_), (1));
 
-    // TO DO : need read from config file;
-    this->reference_density_ = 0;
-    for (size_t i = 0; i < this->particle_num_; i++)
+    if(!this->init_from_file_)
+        this->particle_num_ = x_num_ * y_num_ *z_num_;
+    else
+    {
+        this->particle_num_ = 0;
+    }
+
+}
+
+template <typename Scalar, int Dim>
+void SPHFluid<Scalar, Dim>::initConfiguration()
+{
+    this->config_file_.addOptionOptional("timestep", &(this->time_step_), static_cast<Scalar>(0.001));
+    this->config_file_.addOptionOptional("viscosity", &(this->viscosity_), static_cast<Scalar>(280000));
+    this->config_file_.addOptionOptional("surfacetension",&(this->surface_tension_),static_cast<Scalar>(54000));
+    this->config_file_.addOptionOptional("density", &(this->reference_density_), static_cast<Scalar>(1000));
+    this->config_file_.addOptionOptional("gravity", &(this->gravity_), static_cast<Scalar>(-9.8));
+    this->config_file_.addOptionOptional("sampling_distance", &(this->sampling_distance_), static_cast<Scalar>(0.005));
+    this->config_file_.addOptionOptional("smoothing_length", &(this->smoothing_length_), static_cast<Scalar>(2.5));
+    this->config_file_.addOptionOptional("init_from_file", &(this->init_from_file_), false);
+    this->config_file_.addOptionOptional("init_file_name", &(this->init_file_name_), static_cast<std::string>(""));
+    this->config_file_.addOptionOptional("x_num", &(this->x_num_), (100));
+    this->config_file_.addOptionOptional("y_num", &(this->y_num_), (100));
+    this->config_file_.addOptionOptional("z_num", &(this->z_num_), (1));
+
+    if(!this->init_from_file_)
+        this->particle_num_ = x_num_ * y_num_ *z_num_;
+    else
+    {
+        this->particle_num_ = 0;
+    }
+
+}
+
+template <typename Scalar, int Dim>
+void SPHFluid<Scalar, Dim>::initScene()
+{
+    for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         this->density_[i] = this->reference_density_;
     }
 
-    this->time_step_ = 0;
-    this->viscosity_ = 0;
-    //this->gravity_ = 0;
-    this->surface_tension_ = 0;
-    this->sampling_distance_ = 0;
-    this->smoothing_length_ = 0;
+    for ( int i = 0; i < x_num_; i++)
+    {
+        for ( int j = 0; j < y_num_; j++)
+        {
+            for( int k = 0; k < z_num_; k++)
+            {
+                if(Dim == 3)
+                {
+                    unsigned id = i + j*x_num_ + k*x_num_*y_num_;
+                    Vector<Scalar, Dim> position(i*(this->sampling_distance_), j*(this->sampling_distance_), k*(this->sampling_distance_));
+                    (this->position_)[id] = position;
+                    (this->velocity_)[id] = Vector<Scalar, Dim>(0);
+                    (this->mass_)[id] = 1;
+                }
+            }
+        } 
+    }
+}
 
-    //TO DO: set the particle position and velocity;
 
-    computeNeighbors();
-    computeDensity();
+template <typename Scalar, int Dim>
+void SPHFluid<Scalar, Dim>::initialize()
+{
+    initConfiguration();
 
+    initSceneBoundary();
+
+    allocMemory(this->particle_num_);
+
+    initScene();
+
+    //computeNeighbors();
+
+    //computeDensity();
+
+    //computeMass();
+
+    //computeNeighbors();
+
+    //computeDensity();
+}
+
+template <typename Scalar, int Dim>
+void SPHFluid<Scalar, Dim>::computeMass()
+{
+    Scalar max_large_density = 0;
+    for (unsigned int i = 0; i < this->particle_num_; i++)
+    {
+        if((this->density_)[i] > max_large_density) max_large_density = (this->density_)[i];
+    }
+    Scalar ratio_large = (this->reference_density_) / max_large_density;
+    max_mass_ *= ratio_large;
+
+    for (unsigned int i = 0; i < this->particle_num_; i++)
+    {
+        (this->mass_)[i] = max_mass_;
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -181,7 +278,7 @@ void SPHFluid<Scalar, Dim>::advect(Scalar dt)
 {
     for (unsigned int i = 0; i < this->particle_num_; i++)
     {
-        this->velocity_[i] += dt/(this->mass_[i])*(this->viscous_force_[i] + this->pressure_force_[i] + this->gravity_);
+        this->velocity_[i] += dt * (this->mass_[i])*(this->viscous_force_[i] + this->pressure_force_[i] + Vector<Scalar, Dim>(0,this->gravity_,0));
         this->position_[i] += dt * this->velocity_[i];
     }
 }
@@ -189,8 +286,6 @@ void SPHFluid<Scalar, Dim>::advect(Scalar dt)
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::stepEuler(Scalar dt)
 {
-    //boundaryHandling();
-
     computeNeighbors();
 
     computeDensity();
@@ -209,8 +304,6 @@ void SPHFluid<Scalar, Dim>::stepEuler(Scalar dt)
 template <typename Scalar, int Dim>
 SPHFluid<Scalar, Dim>::~SPHFluid()
 {
-    this->phi_.release();
-    this->energy_.release();
 }
 
 
@@ -223,7 +316,12 @@ void SPHFluid<Scalar, Dim>::initSceneBoundary()
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::advance(Scalar dt)
 {
+    //iteration sim_itor begin
 
+    stepEuler(dt);
+
+    //iteration sim_itor end and cost end_time - start_time ;
+    this->sim_itor_++;
 }
 
 template <typename Scalar, int Dim>

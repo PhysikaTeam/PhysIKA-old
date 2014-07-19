@@ -21,6 +21,7 @@
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
+#include "Physika_Core/Utilities/File_Utilities/parse_line.h"
 
 using Physika::SurfaceMeshInternal::Face;
 using Physika::SurfaceMeshInternal::Group;
@@ -66,28 +67,29 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         std::cerr<<"couldn't open "<<filename<<"\n";
         return false;
     }
-    const int maxline = 1000;
-    char line[maxline];
+    string  line;
     std::stringstream stream;
-    while(ifs)
+    while(!ifs.eof())
     {
         ++line_num;
-        ifs.getline(line,maxline);
-        char line_next[maxline];
-        unsigned int line_length=strlen(line);
+        std::getline(ifs,line);
+        line = FileUtilities::removeWhitespaces(line);
+        string line_next;
+        unsigned int line_length=line.size();
         while (line_length > 0 && line[line_length-1] == '\\')     //if the last character in a line is '\',we will merge nextline into this one
         {
-            ifs.getline(line_next,maxline);
+            std::getline(ifs,line_next);
+            line_next = FileUtilities::removeWhitespaces(line_next);
             line[line_length-1] = ' ';
-            strcat(line, line_next);
-            line_length = strlen(line);
+            line = line + line_next;
+            line_length = line.size();
         }
         stream.str("");
         stream.clear();
         stream<<line;
-        char type_of_line[maxline];
+        string type_of_line;
         stream>>type_of_line;
-        if(strcmp(type_of_line,"v") == 0)
+        if(type_of_line[0] == 'v'&& type_of_line.size() == 1)
         {
             //vertex
             Scalar x,y,z;
@@ -108,7 +110,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
             mesh->addVertexPosition(Vector<Scalar,3>(x,y,z));
         }
-        else if(strcmp(type_of_line, "vn") == 0)
+        else if(type_of_line == string("vn"))
         {   //vertex normal
             Scalar x,y,z;
             if(!(stream>>x))
@@ -128,7 +130,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
             mesh->addVertexNormal(Vector<Scalar,3>(x,y,z));
         }
-        else if(strcmp(type_of_line, "vt") == 0)
+        else if(type_of_line == string("vt"))
         {   //vertex texture
             Scalar x,y;
             if(!(stream>>x))
@@ -143,7 +145,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
             mesh->addVertexTextureCoordinate(Vector<Scalar,2>(x,y));
         }
-        else if(strcmp(type_of_line, "g") == 0)
+        else if(type_of_line == string("g"))
         {
             string group_name;
             stream>>group_name;
@@ -175,71 +177,112 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
 
         }
-        else if(strcmp(type_of_line, "f") == 0|| (strcmp(type_of_line, "fo") == 0))
+        else if(type_of_line == string("f") || type_of_line == string("fo"))
         {
+            //cout<<line<<endl;
             if(current_group==NULL)
             {
                 mesh->addGroup(Group<Scalar>(string("default"),current_material_index));
                 current_group=mesh->groupPtr(string("default"));
             }
             Face<Scalar> face_temple;
-            char vertex_indice[20]={};
+            string vertex_indice;
             while(stream>>vertex_indice)
             {
                 unsigned int pos;
                 unsigned int nor;
                 unsigned int tex;
-                if(strstr(vertex_indice,"//") != NULL)
+                if(vertex_indice.find(string("//")) != string::npos)
                 {   //    v//n
-                    if(sscanf(vertex_indice, "%u//%u", &pos, &nor) == 2 )
+                    unsigned int loc = vertex_indice.find(string("//"));
+                    std::stringstream transform;
+                    transform.str("");
+                    transform.clear();
+                    transform<<vertex_indice.substr(0,loc);
+                    if(!(transform>>pos))
                     {
-                        Vertex<Scalar> vertex_temple(pos-1);
-                        vertex_temple.setNormalIndex(nor-1);
-                        face_temple.addVertex(vertex_temple);
-                    }
-                    else
-                    {
-                        cerr<<"invalid vertx in this face "<<"line:"<<line_num<<endl;
+                        cerr<<"invalid vertx pos in this face "<<"line:"<<line_num<<endl;
                         return false;
                     }
+                    transform<<vertex_indice.substr(loc+2);
+                    if(!(transform>>nor))
+                    {
+                        cerr<<"invalid vertx nor in this face "<<"line:"<<line_num<<endl;
+                        return false;
+                    }
+                    Vertex<Scalar> vertex_temple(pos-1);
+                    vertex_temple.setNormalIndex(nor-1);
+                    face_temple.addVertex(vertex_temple);
                 }
                 else
                 {
-                    if(sscanf(vertex_indice, "%u/%u/%u", &pos, &tex, &nor) != 3)
+                    if(vertex_indice.find(string("/")) == string::npos)
                     {
-                        if(strstr(vertex_indice, "/") != NULL)
-                        {    //  v/t
-                            if(sscanf(vertex_indice, "%u/%u", &pos, &tex) == 2)
+                        std::stringstream transform;
+                        transform.str("");
+                        transform.clear();
+                        transform<<vertex_indice;
+                        if(!(transform>>pos))
+                        {
+                            cerr<<"invalid vertx pos in this face "<<"line:"<<line_num<<endl;
+                            return false;
+                        }
+                        Vertex<Scalar> vertex_temple(pos-1);
+                        face_temple.addVertex(vertex_temple);
+                    }
+                    else 
+                    {    //  v/t
+                        unsigned int loc = vertex_indice.find(string("/"));
+                        std::stringstream transform;
+                        transform.str("");
+                        transform.clear();
+                        transform<<vertex_indice.substr(0,loc);
+                        if(!(transform>>pos))
+                        {
+                            cerr<<"invalid vertx pos in this face "<<"line:"<<line_num<<endl;
+                            return false;
+                        }
+                        unsigned int loc2 = vertex_indice.find(string("/"), loc + 1);
+                        if(loc2 == string::npos)
+                        {
+                            transform.str("");
+                            transform.clear();
+                            transform<<vertex_indice.substr(loc+1);
+                            if(!(transform>>tex))
                             {
-                                Vertex<Scalar> vertex_temple(pos-1);
-                                vertex_temple.setTextureCoordinateIndex(tex-1);
-                                face_temple.addVertex(vertex_temple);
-                            }
-                            else
-                            {
-                                cerr<<"%u/%u error "<<"line:"<<line_num<<endl;
+                                cerr<<"invalid vertx tex in this face "<<"line:"<<line_num<<endl;
+                                cerr<<vertex_indice<<endl;
+                                cerr<<"haha"<<endl;
                                 return false;
                             }
+                            Vertex<Scalar> vertex_temple(pos-1);
+                            vertex_temple.setTextureCoordinateIndex(tex-1);
+                            face_temple.addVertex(vertex_temple);
                         }
                         else
                         {
-                            if(sscanf(vertex_indice, "%u", &pos) == 1)
+                            transform.str("");
+                            transform.clear();
+                            transform<<vertex_indice.substr(loc+1,loc2-loc-1);
+                            if(!(transform>>tex))
                             {
-                                face_temple.addVertex(Vertex<Scalar>(pos-1));
-                            }
-                            else 
-                            {
-                                cerr<<"%u/%u error "<<"line:"<<line_num<<endl;
+                                cerr<<"invalid vertx tex in this face "<<"line:"<<line_num<<endl;
+                                cerr<<vertex_indice<<endl;
                                 return false;
                             }
+                            transform.str("");
+                            transform.clear();
+                            transform<<vertex_indice.substr(loc2+1);
+                            if(!(transform>>nor))
+                            {
+                                cerr<<"invalid vertx nor in this face "<<"line:"<<line_num<<endl;
+                                return false;
+                            }
+                            Vertex<Scalar> vertex_temple(pos-1);
+                            vertex_temple.setNormalIndex(nor-1);
+                            vertex_temple.setTextureCoordinateIndex(tex-1);
+                            face_temple.addVertex(vertex_temple);
                         }
-                    }
-                    else 
-                    {
-                        Vertex<Scalar> vertex_temple(pos-1);
-                        vertex_temple.setNormalIndex(nor-1);
-                        vertex_temple.setTextureCoordinateIndex(tex-1);
-                        face_temple.addVertex(vertex_temple);
                     }
                 }
             }// end while vertex_indices
@@ -247,8 +290,8 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             num_group_faces ++;
             current_group->addFace(face_temple);
         }
-        else if((strcmp(type_of_line, "#") == 0) || (strcmp(type_of_line, "\0") == 0)){}
-        else if(strcmp(type_of_line, "usemtl") == 0)
+        else if(type_of_line == string("#") || type_of_line == string("") ){}
+        else if(type_of_line == string("usemtl"))
         {
             if (num_group_faces > 0)
             {
@@ -283,7 +326,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 return false;
             }
         }
-        else if(strcmp(type_of_line, "mtllib") == 0)
+        else if(type_of_line == string("mtllib"))
         {
             string mtl_name;
             stream>>mtl_name;
@@ -392,11 +435,10 @@ bool ObjMeshIO<Scalar>::loadMaterials(const string &filename, SurfaceMesh<Scalar
     }
     const unsigned int maxline = 1024;
     char line[maxline];
-    char prefix[maxline];
     std::stringstream stream;
     unsigned int num_mtl=0;
     Material<Scalar> material_example;
-    while(ifs)
+    while(!ifs.eof())
     {		
         ifs.getline(line, maxline);
         line_num++;

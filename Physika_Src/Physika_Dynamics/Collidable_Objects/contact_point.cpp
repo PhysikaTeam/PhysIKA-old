@@ -116,9 +116,9 @@ void ContactPointManager<Scalar, Dim>::setCollisionResult(CollisionDetectionResu
     for(unsigned int i = 0; i < num_collision; ++i)
     {
         collision_pair = collision_result.collisionPairs()[i];
-        if(collision_pair->objectTypeLhs() == CollidableObject<Scalar, Dim>::MESH_BASED && collision_pair->objectTypeRhs() == CollidableObject<Scalar, Dim>::MESH_BASED)
+        if(collision_pair->objectTypeLhs() == CollidableObjectInternal::MESH_BASED && collision_pair->objectTypeRhs() == CollidableObjectInternal::MESH_BASED)
         {
-            getMeshContactPoint(dynamic_cast<CollisionPairMeshToMesh<Scalar, Dim>*>(collision_pair));
+            getMeshContactPoint(dynamic_cast<CollisionPairMeshToMesh<Scalar>*>(collision_pair));
         }
         else
         {
@@ -180,8 +180,14 @@ void ContactPointManager<Scalar, Dim>::cleanContactPoints()
 }
 
 template <typename Scalar,int Dim>
-void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMesh<Scalar, Dim>* collision_pair)
+void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMesh<Scalar>* collision_pair)
 {
+    if(Dim == 2)
+    {
+        std::cerr<<"Can't convert 2D collision!"<<std::endl;
+        return;
+    }
+
     if(collision_pair == NULL)
     {
         std::cerr<<"Null collision pair!"<<std::endl;
@@ -218,7 +224,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     {
         if(is_rhs_tri)//triangle
         {
-            if(MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], temp_overlap_point))
             {
                 num_overlap++;
                 overlap_point += temp_overlap_point;
@@ -226,7 +232,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         }
         if(is_rhs_quad)//quad
         {
-            if(MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeQuad(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], vertex_rhs[3], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeQuad(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], vertex_rhs[3], temp_overlap_point))
             {
                 num_overlap++;
                 overlap_point += temp_overlap_point;
@@ -239,7 +245,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     {
         if(is_lhs_tri)//triangle
         {
-            if(MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], temp_overlap_point))
             {
                 num_overlap++;
                 overlap_point += temp_overlap_point;
@@ -247,7 +253,7 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         }
         if(is_lhs_quad)//quad
         {
-            if(MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeQuad(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], vertex_lhs[3], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeQuad(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], vertex_lhs[3], temp_overlap_point))
             {
                 num_overlap++;
                 overlap_point += temp_overlap_point;
@@ -265,7 +271,8 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         {
             contact_normal_lhs.normalize();
             ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectLhsIdx(), collision_pair->objectRhsIdx(),
-                                                                                    overlap_point, contact_normal_lhs);
+                                                                                    *dynamic_cast<Vector<Scalar, Dim>*>(&overlap_point), 
+                                                                                    *dynamic_cast<Vector<Scalar, Dim>*>(&contact_normal_lhs));
             contact_points_.push_back(contact_point);
         }
     }
@@ -274,8 +281,12 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     delete[] vertex_rhs;
 }
 
+template class ContactPoint<float, 2>;
+template class ContactPoint<double, 2>;
 template class ContactPoint<float, 3>;
 template class ContactPoint<double, 3>;
+template class ContactPointManager<float, 2>;
+template class ContactPointManager<double, 2>;
 template class ContactPointManager<float, 3>;
 template class ContactPointManager<double, 3>;
 

@@ -12,6 +12,7 @@
  *
  */
 
+#include "Physika_Core/Transform/transform_3d.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
@@ -20,45 +21,45 @@
 
 namespace Physika{
 
-template <typename Scalar,int Dim>
-MeshBasedCollidableObject<Scalar, Dim>::MeshBasedCollidableObject():
+template <typename Scalar>
+MeshBasedCollidableObject<Scalar>::MeshBasedCollidableObject():
 	mesh_(NULL),
 	transform_(NULL)
 {
 }
 
-template <typename Scalar,int Dim>
-MeshBasedCollidableObject<Scalar, Dim>::~MeshBasedCollidableObject()
+template <typename Scalar>
+MeshBasedCollidableObject<Scalar>::~MeshBasedCollidableObject()
 {
 }
 
-template <typename Scalar,int Dim>
-typename CollidableObject<Scalar, Dim>::ObjectType MeshBasedCollidableObject<Scalar, Dim>::objectType() const
+template <typename Scalar>
+typename CollidableObjectInternal::ObjectType MeshBasedCollidableObject<Scalar>::objectType() const
 {
-	return CollidableObject<Scalar, Dim>::MESH_BASED;
+	return CollidableObjectInternal::MESH_BASED;
 }
 
-template <typename Scalar,int Dim>
-const SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::mesh() const
-{
-	return mesh_;
-}
-
-template <typename Scalar,int Dim>
-SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::mesh()
+template <typename Scalar>
+const SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar>::mesh() const
 {
 	return mesh_;
 }
 
+template <typename Scalar>
+SurfaceMesh<Scalar>* MeshBasedCollidableObject<Scalar>::mesh()
+{
+	return mesh_;
+}
 
-template <typename Scalar,int Dim>
-void MeshBasedCollidableObject<Scalar, Dim>::setMesh(SurfaceMesh<Scalar>* mesh)
+
+template <typename Scalar>
+void MeshBasedCollidableObject<Scalar>::setMesh(SurfaceMesh<Scalar>* mesh)
 {
 	mesh_ = mesh;
 }
 
-template <typename Scalar,int Dim>
-Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::vertexPosition(unsigned int vertex_index) const
+template <typename Scalar>
+Vector<Scalar, 3> MeshBasedCollidableObject<Scalar>::vertexPosition(unsigned int vertex_index) const
 {
 	if(transform_ != NULL)
 		return transform_->transform(mesh_->vertexPosition(vertex_index));
@@ -66,8 +67,8 @@ Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::vertexPosition(unsigne
 		return mesh_->vertexPosition(vertex_index);
 }
 
-template <typename Scalar,int Dim>
-Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::faceNormal(unsigned int face_index) const
+template <typename Scalar>
+Vector<Scalar, 3> MeshBasedCollidableObject<Scalar>::faceNormal(unsigned int face_index) const
 {
     Face<Scalar>& face = mesh_->face(face_index);
     PHYSIKA_ASSERT(face.numVertices()>=3);
@@ -83,26 +84,26 @@ Vector<Scalar, 3> MeshBasedCollidableObject<Scalar, Dim>::faceNormal(unsigned in
     return normal;
 }
 
-template <typename Scalar,int Dim>
-const Transform<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::transform() const
+template <typename Scalar>
+const Transform<Scalar, 3>* MeshBasedCollidableObject<Scalar>::transform() const
 {
 	return transform_;
 }
 
-template <typename Scalar,int Dim>
-Transform<Scalar>* MeshBasedCollidableObject<Scalar, Dim>::transform()
+template <typename Scalar>
+Transform<Scalar, 3>* MeshBasedCollidableObject<Scalar>::transform()
 {
 	return transform_;
 }
 
-template <typename Scalar,int Dim>
-void MeshBasedCollidableObject<Scalar, Dim>::setTransform(Transform<Scalar>* transform)
+template <typename Scalar>
+void MeshBasedCollidableObject<Scalar>::setTransform(Transform<Scalar, 3>* transform)
 {
 	transform_ = transform;
 }
 
-template <typename Scalar,int Dim>
-bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidableObject<Scalar, Dim>* object, unsigned int face_index_lhs, unsigned int face_index_rhs)
+template <typename Scalar>
+bool MeshBasedCollidableObject<Scalar>::collideWithMesh(MeshBasedCollidableObject<Scalar>* object, unsigned int face_index_lhs, unsigned int face_index_rhs)
 {
 	if(object == NULL || object->mesh() == NULL)
 		return false;
@@ -184,8 +185,8 @@ bool MeshBasedCollidableObject<Scalar, Dim>::collideWithMesh(MeshBasedCollidable
 	return is_overlap;
 }
 
-template <typename Scalar,int Dim>
-bool MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, Vector<Scalar, 3>& overlap_point)
+template <typename Scalar>
+bool MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, Vector<Scalar, 3>& overlap_point)
 {
 	Vector<Scalar, 3> face_normal = (vertex_face_b - vertex_face_a).cross(vertex_face_c - vertex_face_a);
 	face_normal.normalize();
@@ -207,14 +208,15 @@ bool MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeTriangle(const Vector<Sc
 	return false;
 }
 
-template <typename Scalar,int Dim>
-bool MeshBasedCollidableObject<Scalar, Dim>::overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d, Vector<Scalar, 3>& overlap_point)
+template <typename Scalar>
+bool MeshBasedCollidableObject<Scalar>::overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d, Vector<Scalar, 3>& overlap_point)
 {
+    //to do
 	return false;
 }
 
 //explicit instantitation
-template class MeshBasedCollidableObject<float, 3>;
-template class MeshBasedCollidableObject<double, 3>;
+template class MeshBasedCollidableObject<float>;
+template class MeshBasedCollidableObject<double>;
 
 }

@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TET_MESH_H_
 #define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_TET_MESH_H_
 
+#include <vector>
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 
 namespace Physika{
@@ -27,13 +28,15 @@ class TetMesh: public VolumetricMesh<Scalar,3>
 public:
     TetMesh();  //construct an empty TetMesh
     TetMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements); //construct TetMesh with given data
+    TetMesh(const TetMesh<Scalar> &tet_mesh);
     ~TetMesh();
+    TetMesh<Scalar>& operator= (const TetMesh<Scalar> &tet_mesh);
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
-    int eleVertNum() const;
+    unsigned int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
     bool containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const;
-    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, Scalar *weights) const;
+    void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, std::vector<Scalar> &weights) const;
 protected:
     //helper method for interpolationWeights()
     Scalar getTetDeterminant(const Vector<Scalar,3> &a, const Vector<Scalar,3> &b, const Vector<Scalar,3> &c, const Vector<Scalar,3> &d) const;

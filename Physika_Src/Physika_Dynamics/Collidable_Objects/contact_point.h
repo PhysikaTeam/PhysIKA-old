@@ -20,7 +20,7 @@
 namespace Physika{
 
 template <typename Scalar,int Dim> class CollisionDetectionResult;
-template <typename Scalar,int Dim> class CollisionPairMeshToMesh;
+template <typename Scalar> class CollisionPairMeshToMesh;
 template <typename Scalar,int Dim> class CollisionPairBase;
 template <typename Scalar,int Dim> class Vector;
 
@@ -36,10 +36,10 @@ public:
     ContactPoint();
     ContactPoint(unsigned int contact_index, unsigned int object_lhs_index, unsigned int object_rhs_index,
                 const Vector<Scalar, Dim>& global_contact_position, const Vector<Scalar, Dim>& global_contact_normal_lhs);
-    ~ContactPoint();
+    virtual ~ContactPoint();
 
     //get & set
-    void setProperty(unsigned int contact_index, unsigned int object_lhs_index, unsigned int object_rhs_index,
+    virtual void setProperty(unsigned int contact_index, unsigned int object_lhs_index, unsigned int object_rhs_index,
         const Vector<Scalar, Dim>& global_contact_position, const Vector<Scalar, Dim>& global_contact_normal_lhs);
     unsigned int contactIndex() const;
     unsigned int objectLhsIndex() const;
@@ -78,7 +78,7 @@ protected:
     std::vector<ContactPoint<Scalar, Dim>* > contact_points_;
 
     //contact sampling
-    void getMeshContactPoint(CollisionPairMeshToMesh<Scalar, Dim>* collision_pair);
+    void getMeshContactPoint(CollisionPairMeshToMesh<Scalar>* collision_pair);
 };
 
 } //end of namespace Physikas

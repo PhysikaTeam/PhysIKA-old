@@ -32,8 +32,22 @@ NeoHookean<Scalar,Dim>::NeoHookean(Scalar par1, Scalar par2, typename IsotropicH
 }
 
 template <typename Scalar, int Dim>
+NeoHookean<Scalar,Dim>::NeoHookean(const NeoHookean<Scalar,Dim> &material)
+    :IsotropicHyperelasticMaterial<Scalar,Dim>(material)
+{
+}
+
+template <typename Scalar, int Dim>
 NeoHookean<Scalar,Dim>::~NeoHookean()
 {
+}
+
+template <typename Scalar, int Dim>
+NeoHookean<Scalar,Dim>& NeoHookean<Scalar,Dim>::operator= (const NeoHookean<Scalar,Dim> &material)
+{
+    this->mu_ = material.mu_;
+    this->lambda_ = material.lambda_;
+    return *this;
 }
 
 template <typename Scalar, int Dim>

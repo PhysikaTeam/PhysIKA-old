@@ -20,15 +20,15 @@ namespace Physika{
 
 template <typename Scalar>
 DriverBase<Scalar>::DriverBase()
-    :start_frame_(0),end_frame_(0),restart_frame_(-1),frame_rate_(0),
+    :start_frame_(0),end_frame_(0),restart_frame_(0),frame_rate_(0),
     max_dt_(0),write_to_file_(false),enable_timer_(true),
     time_(0)
 {
 }
 
 template <typename Scalar>
-DriverBase<Scalar>::DriverBase(int start_frame, int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :start_frame_(start_frame),end_frame_(end_frame),restart_frame_(-1),frame_rate_(frame_rate),
+DriverBase<Scalar>::DriverBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
+    :start_frame_(start_frame),end_frame_(end_frame),restart_frame_(0),frame_rate_(frame_rate),
     max_dt_(max_dt),write_to_file_(write_to_file),enable_timer_(true),
     time_(0)
 {
@@ -45,7 +45,7 @@ void DriverBase<Scalar>::run()
 {
     initialize();
 
-    for(int frame=start_frame_;frame<=end_frame_;++frame)
+    for(unsigned int frame=start_frame_;frame<=end_frame_;++frame)
     {
         std::cout<<"Begin Frame "<<frame<<"\n";
 
@@ -133,7 +133,7 @@ void DriverBase<Scalar>::addPlugin(DriverPluginBase<Scalar>* plugin)
 {
     if(plugin == NULL)
     {
-        std::cerr<<"Null plugin!"<<std::endl;
+        std::cerr<<"Cannot add NULL plugin, operation ignored!"<<std::endl;
         return;
     }
     plugin->setDriver(this);

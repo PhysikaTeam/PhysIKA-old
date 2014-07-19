@@ -14,6 +14,8 @@
 
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_2d.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_3d.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_render.h"
@@ -55,19 +57,13 @@ RigidDriverPluginRender<Scalar, Dim>::~RigidDriverPluginRender()
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onInitialize(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onBeginFrame(unsigned int frame)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onBeginFrame(int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onEndFrame(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onEndFrame(unsigned int frame)
 {
 
 }
@@ -85,31 +81,13 @@ void RigidDriverPluginRender<Scalar, Dim>::onEndTimeStep(Scalar time, Scalar dt)
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onWrite(int frame)
+void RigidDriverPluginRender<Scalar, Dim>::onBeginRigidStep(unsigned int step, Scalar dt)
 {
 
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onRead(int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onRestart(int frame)
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onBeginRigidStep(int step, Scalar dt)
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onEndRigidStep(int step, Scalar dt)
+void RigidDriverPluginRender<Scalar, Dim>::onEndRigidStep(unsigned int step, Scalar dt)
 {
 
 }
@@ -122,7 +100,7 @@ void RigidDriverPluginRender<Scalar, Dim>::onAddRigidBody(RigidBody<Scalar, Dim>
 	RenderBase* render;
 	switch(rigid_body->objectType())
 	{
-	case CollidableObject<Scalar, Dim>::MESH_BASED: render = new SurfaceMeshRender<Scalar>();;break;
+	case CollidableObjectInternal::MESH_BASED: render = new SurfaceMeshRender<Scalar>();;break;
 	default: std::cerr<<"Object type error!"<<std::endl; return;
 	}
 	SurfaceMeshRender<Scalar>* mesh_render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render);
@@ -186,7 +164,7 @@ void RigidDriverPluginRender<Scalar, Dim>::active()
 template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::idle()
 {
-	active_render_->rigid_driver_->advanceStep(0.1);
+	active_render_->rigid_driver_->advanceStep(active_render_->rigid_driver_->computeTimeStep());
 
 	if(active_render_->is_render_contact_face_)//get contact faces' ids
 	{

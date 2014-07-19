@@ -27,8 +27,8 @@
 
 namespace Physika{
 
-const int NEIGHBOR_SIZE = 150;
-const int NEIGHBOR_SEGMENT = 20;
+const int SPH_NEIGHBOR_SIZE = 150;
+const int SPH_NEIGHBOR_SEGMENT = 20;
 
 template<typename Scalar>
 class NeighborList
@@ -38,9 +38,9 @@ public:
     NeighborList() {size_ = 0; }
     ~NeighborList(){};
 public:
-    int size_;
-    int ids_[NEIGHBOR_SIZE];
-    Scalar distance_[NEIGHBOR_SEGMENT];
+    unsigned int size_;
+    unsigned int ids_[SPH_NEIGHBOR_SIZE];
+    Scalar distance_[SPH_NEIGHBOR_SEGMENT];
 };
 
 template<typename Scalar, int Dim>
@@ -48,31 +48,31 @@ class GridQuery
 {
 public:
     GridQuery();
+    GridQuery(const Scalar& in_spacing, const Range<Scalar, Dim>& range_limit );
     ~GridQuery();
 
-    void getNeighbors(const Vector<Scalar, Dim>& in_position,const Scalar& in_radius, NeighborList<Scalar>& out_neighborList);
-    void getSizedNeighbors(const Vector<Scalar, Dim>& in_position,const Scalar& in_radius, NeighborList<Scalar>& out_neighborList, int in_max_num);
+    void getNeighbors(const Vector<Scalar, Dim>& in_position,const Scalar& in_radius, NeighborList<Scalar>& out_neighbor_list);
+    void getSizedNeighbors(const Vector<Scalar, Dim>& in_position,const Scalar& in_radius, NeighborList<Scalar>& out_neighbor_list, unsigned int in_max_num);
 
-    void construct(const Array<Vector<Scalar, Dim>>& in_positions, ArrayManager& sim_data);
+    void construct(Array<Vector<Scalar, Dim>>& in_positions, ArrayManager& sim_data);
    // void construct();
 
 private:
     void computeBoundingBox();
     unsigned int computeGridSize();
     void expandBoundingBox(const Scalar& in_padding);
-    void allocMemory();
+    //void allocMemory();
 
     inline unsigned int getId(Vector<Scalar, Dim> pos); 
-    inline unsigned int getId(int x, int y);
-    inline unsigned int getId(int x, int y, int z);
+    inline unsigned int getId(unsigned int x, unsigned int y);
+    inline unsigned int getId(unsigned int x, unsigned int y, unsigned int z);
 
 protected:
    
-    Grid<Scalar, Dim> grid_;
     unsigned int grid_num_;
     unsigned int x_num_, y_num_, z_num_;
-    Array<int> begin_lists_;
-    Array<int> end_lists_;
+    Array<unsigned int> begin_lists_;
+    Array<unsigned int> end_lists_;
 
     Range<Scalar, Dim> range_;
     Range<Scalar, Dim> range_limit_;

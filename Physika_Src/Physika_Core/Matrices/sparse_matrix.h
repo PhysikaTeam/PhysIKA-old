@@ -70,24 +70,24 @@ class SparseMatrix: public MatrixBase
 {
 public:
     SparseMatrix();
-    SparseMatrix(int rows, int cols);
+    SparseMatrix(unsigned int rows, unsigned int cols);
     SparseMatrix(const SparseMatrix<Scalar> &);
     ~SparseMatrix();
-    int rows() const;
-    int cols() const;
+    unsigned int rows() const;
+    unsigned int cols() const;
     //return the number of nonZero node
-    int nonZeros() const;
+    unsigned int nonZeros() const;
     // remove a node(i,j) and adjust the orthogonal list
-    bool remove(int i,int j);
+    bool remove(unsigned int i,unsigned int j);
     //resize the SparseMatrix and data in it will be deleted
-    void resize(int new_rows, int new_cols);
-    void transpose();
-    std::vector<Trituple<Scalar>> getRowElements(int ) const;
-    std::vector<Trituple<Scalar>> getColElements(int ) const;
+    void resize(unsigned int new_rows, unsigned int new_cols);
+	SparseMatrix<Scalar> transpose() const;
+    std::vector<Trituple<Scalar>> getRowElements(unsigned int ) const;
+    std::vector<Trituple<Scalar>> getColElements(unsigned int ) const;
     //return value of matrix entry at index (i,j). Note: cannot be used as l-value!
-    Scalar operator() (int i, int j) const;
+    Scalar operator() (unsigned int i, unsigned int j) const;
     //insert matrix entry at index (i,j), if it already exits, replace it
-    void setEntry(int i, int j, Scalar value);
+    void setEntry(unsigned int i, unsigned int j, Scalar value);
     SparseMatrix<Scalar> operator+ (const SparseMatrix<Scalar> &) const;
     SparseMatrix<Scalar>& operator+= (const SparseMatrix<Scalar> &);
     SparseMatrix<Scalar> operator- (const SparseMatrix<Scalar> &) const;
@@ -102,7 +102,8 @@ public:
     SparseMatrix<Scalar> operator/ (Scalar) const;
     SparseMatrix<Scalar>& operator/= (Scalar);
 protected:
-    void allocMemory(int rows, int cols);
+	Trituple<Scalar> * ptr(unsigned int i, unsigned int j) ;
+    void allocMemory(unsigned int rows, unsigned int cols);
     void deleteRowList(Trituple<Scalar> *);
     void deleteColList(Trituple<Scalar> *);
 protected:
@@ -112,6 +113,8 @@ protected:
     int cols_;
     Trituple<Scalar> ** row_head_;
     Trituple<Scalar> ** col_head_;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	Eigen::SparseMatrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> ptr_eigen_sparse_matrix_;
 #endif
 };
 
@@ -127,15 +130,13 @@ std::ostream& operator<<(std::ostream &s, const Trituple<Scalar> &tri)
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const SparseMatrix<Scalar> &mat)
 {
-#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     std::vector<Trituple<Scalar>> v;
-    for(int i = 0; i < mat.rows(); ++i)
+    for(unsigned int i = 0; i < mat.rows(); ++i)
     {
         v = mat.getRowElements(i);
-        for(int j=0;j< v.size();++j) s<<" ("<< v[j].row_<<", "<<v[j].col_<<", "<<v[j].value_<<") ";
+        for(unsigned int j=0;j< v.size();++j) s<<" ("<< v[j].row_<<", "<<v[j].col_<<", "<<v[j].value_<<") ";
         s<<std::endl;
     }
-#endif
     return s;
 }
 
@@ -146,18 +147,19 @@ SparseMatrix<T> operator* (S scale, const SparseMatrix<T> &mat)
     return mat*scale;
 }
 
+//multiply a row vector with a sparse matrix
 template <typename Scalar>
 VectorND<Scalar> operator*(const VectorND<Scalar> &vec, const SparseMatrix<Scalar> &mat)
 {
     VectorND<Scalar> result(mat.cols(),0);
     Scalar sum =0;
-    for(int i=0;i<mat.cols();++i)
+    for(unsigned int i=0;i<mat.cols();++i)
     {
         sum = 0;
         std::vector<Trituple<Scalar>> a_col = mat.getColElements(i);
-        for(int j=0;j<a_col.size();++j)
+        for(unsigned int j=0;j<a_col.size();++j)
         {
-            int row = a_col[j].row_;
+            unsigned int row = a_col[j].row_;
             sum += a_col[j].value_* vec[row];
         }
         result[i] = sum;

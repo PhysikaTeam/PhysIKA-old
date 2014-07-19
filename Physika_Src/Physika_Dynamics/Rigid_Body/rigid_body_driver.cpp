@@ -14,7 +14,10 @@
 
 #include <limits>
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_2d.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_3d.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_body_driver_utility.h"
 #include "Physika_Geometry/Bounding_Volume/object_bvh.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -55,23 +58,7 @@ RigidBodyArchive<Scalar, Dim>::~RigidBodyArchive()
 template <typename Scalar,int Dim>
 void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_body)
 {
-	if(rigid_body == NULL)
-		return;
-
-	rigid_body_ = rigid_body;
-
-	switch(rigid_body->objectType())
-	{
-		case CollidableObject<Scalar, Dim>::MESH_BASED: collide_object_ = new MeshBasedCollidableObject<Scalar, Dim>();break;
-		default: std::cerr<<"Object type error!"<<std::endl; return;
-	}
-	MeshBasedCollidableObject<Scalar, Dim>* mesh_object = dynamic_cast<MeshBasedCollidableObject<Scalar, Dim>*>(collide_object_);
-	mesh_object->setMesh(rigid_body->mesh());
-	mesh_object->setTransform(rigid_body->transformPtr());
-
-	object_bvh_ = new ObjectBVH<Scalar, Dim>();
-	object_bvh_->setCollidableObject(collide_object_);
-
+    setRigidBody(rigid_body, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
@@ -104,6 +91,34 @@ ObjectBVH<Scalar, Dim>* RigidBodyArchive<Scalar, Dim>::objectBVH()
 	return object_bvh_;
 }
 
+template <typename Scalar,int Dim>
+void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_body, DimensionTrait<2> trait)
+{
+    //to do
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_body, DimensionTrait<3> trait)
+{
+    if(rigid_body == NULL)
+        return;
+
+    rigid_body_ = rigid_body;
+    RigidBody<Scalar, 3>* rigid_body_3d = dynamic_cast<RigidBody<Scalar, 3>* >(rigid_body);
+
+    switch(rigid_body->objectType())
+    {
+    case CollidableObjectInternal::MESH_BASED: collide_object_ = dynamic_cast<CollidableObject<Scalar, Dim>* >(new MeshBasedCollidableObject<Scalar>());break;
+    default: std::cerr<<"Object type error!"<<std::endl; return;
+    }
+    MeshBasedCollidableObject<Scalar>* mesh_object = dynamic_cast<MeshBasedCollidableObject<Scalar>*>(collide_object_);
+    mesh_object->setMesh(rigid_body_3d->mesh());
+    mesh_object->setTransform(rigid_body_3d->transformPtr());
+
+    object_bvh_ = new ObjectBVH<Scalar, Dim>();
+    object_bvh_->setCollidableObject(collide_object_);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //RigidBodyDriver
@@ -112,7 +127,11 @@ ObjectBVH<Scalar, Dim>* RigidBodyArchive<Scalar, Dim>::objectBVH()
 
 template <typename Scalar,int Dim>
 RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
-	scene_bvh_()
+	scene_bvh_(),
+    gravity_(9.81),
+    time_step_(0.01),
+    frame_(0),
+    step_(0)
 {
 
 }
@@ -126,6 +145,12 @@ RigidBodyDriver<Scalar, Dim>::~RigidBodyDriver()
 		delete rigid_body_archives_[i];
 	}
 	rigid_body_archives_.clear();
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::initConfiguration(const std::string &file_name)
+{
+
 }
 
 template <typename Scalar,int Dim>
@@ -160,20 +185,6 @@ void RigidBodyDriver<Scalar, Dim>::advanceFrame()
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::initialize()
-{
-    //plugin
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onInitialize(frame_);
-	}
-}
-
-template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
 {
     //update step
@@ -190,9 +201,10 @@ void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
     }
 
     //simulation step
-    updateRigidBody(dt);
+    performGravity(dt);
 	collisionDetection();
     collisionResponse();
+    updateRigidBody(dt);
 
     //plugin
     for(unsigned int i = 0; i < plugin_num; ++i)
@@ -206,36 +218,23 @@ void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
 template <typename Scalar,int Dim>
 Scalar RigidBodyDriver<Scalar, Dim>::computeTimeStep()
 {
-	Scalar time_step = static_cast<Scalar>(0);
-	return time_step;
+	return time_step_;
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::write(const char *file_name)
+bool RigidBodyDriver<Scalar,Dim>::withRestartSupport() const
 {
-    //plugin
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onWrite(frame_);
-	}
+    return false;
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::read(const char *file_name)
+void RigidBodyDriver<Scalar, Dim>::write(const std::string &file_name)
 {
-    //plugin
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onRead(frame_);
-	}
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::read(const std::string &file_name)
+{
 }
 
 template <typename Scalar,int Dim>
@@ -259,6 +258,12 @@ void RigidBodyDriver<Scalar, Dim>::addRigidBody(RigidBody<Scalar, Dim>* rigid_bo
 		if(plugin != NULL)
 			plugin->onAddRigidBody(rigid_body);
 	}
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::setGravity(Scalar gravity)
+{
+    gravity_ = gravity;
 }
 
 template <typename Scalar,int Dim>
@@ -291,12 +296,40 @@ ContactPointManager<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::contactPoints()
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::updateRigidBody(Scalar dt)
+void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
 {
-    //update
+    if(plugin == NULL)
+    {
+        std::cerr<<"Null plugin!"<<std::endl;
+        return;
+    }
+    if(dynamic_cast<RigidDriverPlugin<Scalar, Dim>* >(plugin) == NULL)
+    {
+        std::cerr<<"Wrong plugin type!"<<std::endl;
+        return;
+    }
+    plugin->setDriver(this);
+    this->plugins_.push_back(plugin);
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::initialize()
+{
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::performGravity(Scalar dt)
+{
     unsigned int num_rigid_body = numRigidBody();
+    RigidBody<Scalar, Dim>* rigid_body;
     for(unsigned int i = 0; i < num_rigid_body; i++)
-        rigid_body_archives_[i]->rigidBody()->update(dt);
+    {
+        rigid_body = rigid_body_archives_[i]->rigidBody();
+        if(!rigid_body->isFixed())
+        {
+            rigid_body->performGravity(gravity_, dt);
+        }
+    }
 }
 
 template <typename Scalar,int Dim>
@@ -313,23 +346,23 @@ bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
     }
 
     //clean
-	collision_result_.resetCollisionResults();
+    collision_result_.resetCollisionResults();
     contact_points_.cleanContactPoints();
 
     //update and collide
-	scene_bvh_.updateSceneBVH();
-	bool is_collide = scene_bvh_.selfCollide(collision_result_);
+    scene_bvh_.updateSceneBVH();
+    bool is_collide = scene_bvh_.selfCollide(collision_result_);
     contact_points_.setCollisionResult(collision_result_);
 
     //plugin
-	plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onEndCollisionDetection();
-	}
-	return is_collide;
+    plugin_num = static_cast<unsigned int>((this->plugins_).size());
+    for(unsigned int i = 0; i < plugin_num; ++i)
+    {
+        plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
+        if(plugin != NULL)
+            plugin->onEndCollisionDetection();
+    }
+    return is_collide;
 }
 
 template <typename Scalar,int Dim>
@@ -338,6 +371,8 @@ void RigidBodyDriver<Scalar, Dim>::collisionResponse()
     //initialize
     unsigned int m = contact_points_.numContactPoint();//m: number of contact points
     unsigned int n = numRigidBody();//n: number of rigid bodies
+    if(m == 0 || n == 0)//no collision or no rigid body
+        return;
     unsigned int six_n = n * 6;//six_n: designed only for 3-dimension rigid bodies. The DoF(Degree of Freedom) of a rigid-body system
     unsigned int fric_sample_count = 2;//count of friction sample directions
     unsigned int s = m * fric_sample_count;//s: number of friction sample. Here a square sample is adopted
@@ -356,14 +391,17 @@ void RigidBodyDriver<Scalar, Dim>::collisionResponse()
     VectorND<Scalar> z_norm(m, 0);//normal contact impulse. The key of collision response
     VectorND<Scalar> z_fric(s, 0);//frictional contact impulse. The key of collision response
 
-    //update the matrix of dynamics
-    updateDynamicsMatrix(J, M_inv, D, v);
+    //compute the matrix of dynamics
+    computeInvMassMatrix(M_inv);
+    computeJacobianMatrix(J);
+    computeFricJacobianMatrix(D);
+    computeGeneralizedVelocity(v);
 
-    //calculate other matrix in need
+    //compute other matrix in need
     SparseMatrix<Scalar> J_T = J;
-    J_T.transpose();
+    J_T = J.transpose();
     SparseMatrix<Scalar> D_T = D;
-    D_T.transpose();
+    D_T = D.transpose();
     SparseMatrix<Scalar> MJ = M_inv * J_T;
     SparseMatrix<Scalar> MD = M_inv * D_T;
     JMJ = J * MJ;
@@ -372,7 +410,9 @@ void RigidBodyDriver<Scalar, Dim>::collisionResponse()
     DMJ = D * MJ;
     Jv = J * v;
     Dv = D * v;
-    //CoR and CoF remain to be calculated
+
+    //update CoR and CoF
+    computeCoefficient(CoR, CoF);
 
     //solve BLCP with PGS. z_norm and z_fric are the unknown variables
     solveBLCPWithPGS(JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF);
@@ -382,313 +422,75 @@ void RigidBodyDriver<Scalar, Dim>::collisionResponse()
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::updateDynamicsMatrix(SparseMatrix<Scalar>& J, SparseMatrix<Scalar>& M_inv, SparseMatrix<Scalar>& D, VectorND<Scalar>& v)
+void RigidBodyDriver<Scalar, Dim>::updateRigidBody(Scalar dt)
 {
-    //initialize
-    unsigned int m = contact_points_.numContactPoint();
-    unsigned int n = numRigidBody();
-    unsigned int six_n = n * 6;
-    unsigned int s = D.rows();
-    unsigned int fric_sample_count = s / m;
-
-    //basic check of matrix's dimensions
-    if(J.rows() != m || J.cols() != six_n)
+    //update
+    unsigned int num_rigid_body = numRigidBody();
+    RigidBody<Scalar, Dim>* rigid_body;
+    for(unsigned int i = 0; i < num_rigid_body; i++)
     {
-        std::cerr<<"Dimension of matrix J is wrong!"<<std::endl;
-        return;
-    }
-    if(M_inv.rows() != six_n || M_inv.cols() != six_n)
-    {
-        std::cerr<<"Dimension of matrix M_inv is wrong!"<<std::endl;
-        return;
-    }
-    if(D.rows() != s || D.cols() != six_n || s != m * fric_sample_count)
-    {
-        std::cerr<<"Dimension of matrix D is wrong!"<<std::endl;
-        return;
-    }
-    if(v.dims() != six_n)
-    {
-        std::cerr<<"Dimension of vector v is wrong!"<<std::endl;
-        return;
-    }
-
-    //update M_inv
-    RigidBody<Scalar, Dim>* rigid_body = NULL;
-    for(unsigned int i = 0; i < n; ++i)
-    {
-        rigid_body = rigidBody(i);
-        if(rigid_body == NULL)
+        rigid_body = rigid_body_archives_[i]->rigidBody();
+        if(!rigid_body->isFixed())
         {
-            std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
-            continue;
-        }
-        if(!rigid_body->isFixed())//not fixed
-        {
-            //inversed mass
-            M_inv.setEntry(6 * i, 6 * i, (Scalar)1 / rigid_body->mass());
-            M_inv.setEntry(6 * i + 1, 6 * i + 1, (Scalar)1 / rigid_body->mass());
-            M_inv.setEntry(6 * i + 2, 6 * i + 2, (Scalar)1 / rigid_body->mass());
-            //inversed inertia tensor
-            for(unsigned int j = 0; j < 3; ++j)
-            {
-                for(unsigned int k = 0; k < 3; ++k)
-                {
-                    M_inv.setEntry(6 * i + 3 + j, 6 * i + 3 + k, rigid_body->spatialInertiaTensorInverse()(j, k));
-                }
-            }
-        }
-        else//fixed
-        {
-            //do nothing because all entries are zero
+            //rigid_body->addTranslationImpulse(gravity * rigid_body->mass());//We don't update the velocity and position of a fixed body.
+            rigid_body->update(dt);
         }
     }
+}
 
-    //update J
-    ContactPoint<Scalar, Dim>* contact_point = NULL;
-    unsigned int object_lhs, object_rhs;
-    Vector<Scalar, 3> angular_normal_lhs, angular_normal_rhs;
-    for(unsigned int i = 0; i < m; ++i)
-    {
-        contact_point = contact_points_[i];
-        if(contact_point == NULL)
-        {
-            std::cerr<<"Null contact point in updating matrix!"<<std::endl;
-            continue;
-        }
-        object_lhs = contact_point->objectLhsIndex();
-        object_rhs = contact_point->objectRhsIndex();
-        angular_normal_lhs = (contact_point->globalContactPosition() - rigidBody(object_lhs)->globalTranslation()).cross(contact_point->globalContactNormalLhs());
-        angular_normal_rhs = (contact_point->globalContactPosition() - rigidBody(object_rhs)->globalTranslation()).cross(contact_point->globalContactNormalRhs());
-        for(unsigned int j = 0; j < 3; ++j)
-        {
-            J.setEntry(i, object_lhs * 6 + j, contact_point->globalContactNormalLhs()[j]);
-            J.setEntry(i, object_rhs * 6 + j, contact_point->globalContactNormalRhs()[j]);
-        }
-        for(unsigned int j = 0; j < 3; ++j)
-        {
-            J.setEntry(i, object_lhs * 6 + 3 + j, angular_normal_lhs[j]);
-            J.setEntry(i, object_rhs * 6 + 3 + j, angular_normal_rhs[j]);
-        }
-    }
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::computeInvMassMatrix(SparseMatrix<Scalar>& M_inv)
+{
+    RigidBodyDriverUtility<Scalar>::computeInvMassMatrix(this, M_inv, DimensionTrait<Dim>());
+}
 
-    //update D
-    for(unsigned int i = 0; i < m; ++i)
-    {
-        contact_point = contact_points_[i];
-        if(contact_point == NULL)
-        {
-            std::cerr<<"Null contact point in updating matrix!"<<std::endl;
-            continue;
-        }
-        object_lhs = contact_point->objectLhsIndex();
-        object_rhs = contact_point->objectRhsIndex();
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J)
+{
+    RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(this, J, DimensionTrait<Dim>());
+}
 
-        //friction direction sampling: rotate around the normal for fric_sample_count times
-        Vector<Scalar, 3> contact_normal_lhs = contact_point->globalContactNormalLhs();
-        Quaternion<Scalar> rotation(contact_normal_lhs, PI / fric_sample_count);
-        Vector<Scalar, 3> sample_normal;
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar>& D)
+{
+    RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(this, D, DimensionTrait<Dim>());
+}
 
-        //step one, find an arbitrary unit vector orthogonal to contact normal
-        if(contact_normal_lhs[0] <= std::numeric_limits<Scalar>::epsilon() && contact_normal_lhs[1] <= std::numeric_limits<Scalar>::epsilon())//(0, 0, 1)
-        {
-            sample_normal = Vector<Scalar, 3>(1, 0, 0);
-        }
-        else
-        {
-            sample_normal = contact_normal_lhs.cross(Vector<Scalar, 3>(0, 0, 1));
-        }
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::computeGeneralizedVelocity(VectorND<Scalar>& v)
+{
+    RigidBodyDriverUtility<Scalar>::computeGeneralizedVelocity(this, v, DimensionTrait<Dim>());
+}
 
-        //step two, rotate around the normal for fric_sample_count times to get fric_sample_count normal samples
-        for(unsigned int k = 0; k< fric_sample_count; ++k)
-        {
-            sample_normal.normalize();
-            angular_normal_lhs = (contact_point->globalContactPosition() - rigidBody(object_lhs)->globalTranslation()).cross(sample_normal);
-            angular_normal_rhs = (contact_point->globalContactPosition() - rigidBody(object_rhs)->globalTranslation()).cross(sample_normal);
-            for(unsigned int j = 0; j < 3; ++j)
-            {
-                D.setEntry(i * fric_sample_count + k, object_lhs * 6 + j, sample_normal[j]);
-                D.setEntry(i * fric_sample_count + k, object_rhs * 6 + j, sample_normal[j]);
-            }
-            for(unsigned int j = 0; j < 3; ++j)
-            {
-                D.setEntry(i * fric_sample_count + k, object_lhs * 6 + 3 + j, angular_normal_lhs[j]);
-                D.setEntry(i * fric_sample_count + k, object_rhs * 6 + 3 + j, angular_normal_rhs[j]);
-            }
-            sample_normal = rotation.rotate(sample_normal);
-        }
-    }
-
-    //update v
-    for(unsigned int i = 0; i < n; ++i)
-    {
-        rigid_body = rigidBody(i);
-        if(rigid_body == NULL)
-        {
-            std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
-            continue;
-        }
-        for(unsigned int j = 0; j < 3; ++j)
-        {
-            v[6 * i + j] = rigid_body->globalTranslationVelocity()[j];
-            v[6 * i + 3 + j] = rigid_body->globalAngularVelocity()[j];
-        }
-    }
-
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF)
+{
+    RigidBodyDriverUtility<Scalar>::computeCoefficient(this, CoR, CoF, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
-                                                    VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
-                                                    VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count)
+    VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+    VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count)
 {
-    //dimension check is temporary ignored because its too long to write here
-    //a function to perform such check will be introduced 
-    
-    //initialize
-    unsigned int m = contact_points_.numContactPoint();
-    unsigned int n = numRigidBody();
-    unsigned int six_n = n * 6;
-    unsigned int s = DMD.cols();
-    unsigned int fric_sample_count = s / m;
-    z_norm = Jv;
-    z_fric *= 0;
-    VectorND<Scalar> JMDz_fric;
-    VectorND<Scalar> DMJz_norm;
-    std::vector<Trituple<Scalar>> non_zeros;
-    Scalar delta, m_value;
-
-    //iteration
-    for(unsigned int itr = 0; itr < iteration_count; ++itr)
-    {
-        //normal contact step
-        JMDz_fric = JMD * z_fric;
-        for(unsigned int i = 0; i < m; ++i)
-        {
-            delta = 0;
-            non_zeros.clear();
-            non_zeros = JMJ.getRowElements(i);
-            unsigned int size_non_zeros = static_cast<unsigned int>(non_zeros.size());
-            for(unsigned int j = 0; j < size_non_zeros; ++j)
-            {
-                if(non_zeros[j].col_ != i)//not diag
-                    delta += non_zeros[j].value_ * z_norm[j];
-            }
-            m_value = JMJ(i, i);
-            if(m_value != 0)
-                delta = (Jv[i] - JMDz_fric[i] - delta) / m_value;
-            else
-                delta = 0;
-            if(delta < 0)
-                z_norm[i] = 0;
-            else
-                z_norm[i] = delta;
-        }
-
-        //friction step
-        DMJz_norm = DMJ * z_norm;
-        for(unsigned int i = 0; i < s; ++i)
-        {
-            delta = 0;
-            non_zeros.clear();
-            non_zeros = DMD.getRowElements(i);
-            unsigned int size_non_zeros = static_cast<unsigned int>(non_zeros.size());
-            for(unsigned int j = 0; j < size_non_zeros; ++j)
-            {
-                if(non_zeros[j].col_ != i)//not diag
-                    delta += non_zeros[j].value_ * z_fric[j];
-            }
-            m_value = DMD(i, i);
-            if(m_value != 0)
-                delta = (Dv[i] - DMJz_norm[i] - delta) / m_value;
-            else
-                delta = 0;
-            if(delta < - CoF[i / fric_sample_count] * z_norm[i / fric_sample_count])
-                z_fric[i] = - CoF[i / fric_sample_count] * z_norm[i / fric_sample_count];
-            if(delta > CoF[i / fric_sample_count] * z_norm[i / fric_sample_count])
-                z_fric[i] = CoF[i / fric_sample_count] * z_norm[i / fric_sample_count];
-        }
-    }
+    RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(this, JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF, iteration_count, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T)
 {
-    //initialize
-    unsigned int m = contact_points_.numContactPoint();
-    unsigned int n = numRigidBody();
-    unsigned int six_n = n * 6;
-    unsigned int s = D_T.cols();
-    unsigned int fric_sample_count = s / m;
-
-    //basic check of matrix's dimensions
-    if(J_T.rows() != six_n || J_T.cols() != m)
-    {
-        std::cerr<<"Dimension of matrix J_T is wrong!"<<std::endl;
-        return;
-    }
-    if(D_T.rows() != six_n || D_T.cols() != s)
-    {
-        std::cerr<<"Dimension of matrix D_T is wrong!"<<std::endl;
-        return;
-    }
-    if(z_norm.dims() != m)
-    {
-        std::cerr<<"Dimension of matrix z_norm is wrong!"<<std::endl;
-        return;
-    }
-    if(z_fric.dims() != s)
-    {
-        std::cerr<<"Dimension of matrix z_fric is wrong!"<<std::endl;
-        return;
-    }
-
-    //calculate impulses from their magnitudes (z_norm, z_fric) and directions (J_T, D_T)
-    VectorND<Scalar> impulse_translation = J_T * z_norm;
-    VectorND<Scalar> impulse_angular = D_T * z_fric;
-
-    //apply impulses to rigid bodies. This step will not cause velocity and configuration integral 
-    RigidBody<Scalar, Dim>* rigid_body = NULL;
-    for(unsigned int i = 0; i < n; ++i)
-    {
-        rigid_body = rigidBody(i);
-        if(rigid_body == NULL)
-        {
-            std::cerr<<"Null rigid body in updating matrix!"<<std::endl;
-            continue;
-        }
-        VectorND<Scalar> impulse(6, 0);
-        for(unsigned int j = 0; j < 6; ++j)
-        {
-            impulse[j] = impulse_translation[6 * i + j] + impulse_angular[6 * i + j];
-        }
-        rigid_body->addTranslationImpulse(Vector<Scalar, 3>(impulse[6 * i], impulse[6 * i + 1], impulse[6 * i + 2]));
-        rigid_body->addAngularImpulse(Vector<Scalar, 3>(impulse[6 * i + 3], impulse[6 * i + 4], impulse[6 * i + 5]));
-    }
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
-{
-	if(plugin == NULL)
-	{
-		std::cerr<<"Null plugin!"<<std::endl;
-		return;
-	}
-	if(dynamic_cast<RigidDriverPlugin<Scalar, Dim>* >(plugin) == NULL)
-	{
-		std::cerr<<"Wrong plugin type!"<<std::endl;
-		return;
-	}
-	plugin->setDriver(this);
-	this->plugins_.push_back(plugin);
+    RigidBodyDriverUtility<Scalar>::applyImpulse(this, z_norm, z_fric, J_T, D_T, DimensionTrait<Dim>());
 }
 
 //explicit instantiation
+template class RigidBodyArchive<float, 2>;
+template class RigidBodyArchive<double, 2>;
 template class RigidBodyArchive<float, 3>;
 template class RigidBodyArchive<double, 3>;
+
+template class RigidBodyDriver<float, 2>;
+template class RigidBodyDriver<double, 2>;
 template class RigidBodyDriver<float, 3>;
 template class RigidBodyDriver<double, 3>;
-
 
 }

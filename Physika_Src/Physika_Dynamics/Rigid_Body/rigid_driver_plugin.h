@@ -31,8 +31,8 @@ public:
 	virtual ~RigidDriverPlugin();
 
 	//functions called in driver
-    virtual void onBeginRigidStep(int step, Scalar dt) = 0;//replace the original onBeginTimeStep in rigid body simulation
-    virtual void onEndRigidStep(int step, Scalar dt) = 0;//replace the original onEndTimeStep in rigid body simulation
+    virtual void onBeginRigidStep(unsigned int step, Scalar dt) = 0;//replace the original onBeginTimeStep in rigid body simulation
+    virtual void onEndRigidStep(unsigned int step, Scalar dt) = 0;//replace the original onEndTimeStep in rigid body simulation
 
 	virtual void onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body) = 0;
 	virtual void onBeginCollisionDetection() = 0;

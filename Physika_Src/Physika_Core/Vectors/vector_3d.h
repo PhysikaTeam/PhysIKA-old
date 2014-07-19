@@ -35,9 +35,9 @@ public:
     explicit Vector(Scalar);
     Vector(const Vector<Scalar,3>&);
     ~Vector();
-    inline int dims() const{return 3;}
-    Scalar& operator[] (int);
-    const Scalar& operator[] (int) const;
+    inline unsigned int dims() const{return 3;}
+    Scalar& operator[] (unsigned int);
+    const Scalar& operator[] (unsigned int) const;
     Vector<Scalar,3> operator+ (const Vector<Scalar,3> &) const;
     Vector<Scalar,3>& operator+= (const Vector<Scalar,3> &);
     Vector<Scalar,3> operator- (const Vector<Scalar,3> &) const;
@@ -45,10 +45,17 @@ public:
     Vector<Scalar,3>& operator= (const Vector<Scalar,3> &);
     bool operator== (const Vector<Scalar,3> &) const;
     bool operator!= (const Vector<Scalar,3> &) const;
+
     Vector<Scalar,3> operator* (Scalar) const;
-    Vector<Scalar,3>& operator*= (Scalar);
+    Vector<Scalar,3> operator- (Scalar) const;
+    Vector<Scalar,3> operator+ (Scalar) const;
     Vector<Scalar,3> operator/ (Scalar) const;
+
+    Vector<Scalar,3>& operator+= (Scalar);
+    Vector<Scalar,3>& operator-= (Scalar);
+    Vector<Scalar,3>& operator*= (Scalar);
     Vector<Scalar,3>& operator/= (Scalar);
+
     Scalar norm() const;
     Vector<Scalar,3>& normalize();
     Vector<Scalar,3> cross(const Vector<Scalar,3> &) const;

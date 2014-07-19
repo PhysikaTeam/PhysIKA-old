@@ -90,11 +90,13 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     }
     else if(mesh_type == string("NONUNIFORM"))
     {
-
+        //TO DO: LOAD NONUNIFORM VOLUMETRIC MESHES
+        std::cerr<<"Non-uniform element type not implemented yet.\n";
+        return NULL;
     }
 	else 
 	{
-		std::cerr<<"unknow elements type:"<<mesh_type<<std::endl;
+		std::cerr<<"Unknow elements type:"<<mesh_type<<std::endl;
 		return NULL;
 	}
     enum ParseSession{

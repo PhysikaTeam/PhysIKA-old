@@ -31,17 +31,13 @@ public:
 	~RigidDriverPluginRender();
 
 	//functions called in driver
-    void onInitialize(int frame);
-    void onBeginFrame(int frame);
-    void onEndFrame(int frame);
+    void onBeginFrame(unsigned int frame);
+    void onEndFrame(unsigned int frame);
     void onBeginTimeStep(Scalar dt);
     void onEndTimeStep(Scalar time, Scalar dt);
-    void onWrite(int frame);
-    void onRead(int frame);
-    void onRestart(int frame);
 
-    void onBeginRigidStep(int step, Scalar dt);//replace the original onBeginTimeStep in rigid body simulation
-    void onEndRigidStep(int step, Scalar dt);//replace the original onEndTimeStep in rigid body simulation
+    void onBeginRigidStep(unsigned int step, Scalar dt);//replace the original onBeginTimeStep in rigid body simulation
+    void onEndRigidStep(unsigned int step, Scalar dt);//replace the original onEndTimeStep in rigid body simulation
 
 	void onAddRigidBody(RigidBody<Scalar, Dim>* rigid_body);
 	void onBeginCollisionDetection();

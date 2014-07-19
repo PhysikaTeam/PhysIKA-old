@@ -31,8 +31,22 @@ StVK<Scalar,Dim>::StVK(Scalar par1, Scalar par2, typename IsotropicHyperelasticM
 }
 
 template <typename Scalar, int Dim>
+StVK<Scalar,Dim>::StVK(const StVK<Scalar,Dim> &material)
+    :IsotropicHyperelasticMaterial<Scalar,Dim>(material)
+{
+}
+
+template <typename Scalar, int Dim>
 StVK<Scalar,Dim>::~StVK()
 {
+}
+
+template <typename Scalar, int Dim>
+StVK<Scalar,Dim>& StVK<Scalar,Dim>::operator= (const StVK<Scalar,Dim> &material)
+{
+    this->mu_ = material.mu_;
+    this->lambda_ = material.lambda_;
+    return *this;
 }
 
 template <typename Scalar, int Dim>

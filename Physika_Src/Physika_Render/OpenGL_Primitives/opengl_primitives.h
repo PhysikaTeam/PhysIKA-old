@@ -24,6 +24,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_Core/Matrices/matrix_4x4.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
 
 namespace Physika{
 
@@ -338,9 +339,52 @@ inline void openGLTexCoord(const Vector<double,3> &vec)
 }
 
 /*
+ * openGLMultMatrix(const SquareMatrix<Scalar,3> &)
  * openGLMultMatrix(const SquareMatrix<Scalar,4> &):
  * replacement for glMultiMatrixf, glMultiMatrixd
  */
+
+inline void openGLMultMatrix(const SquareMatrix<float,3> & matrix)
+{
+    float matrix_[16];
+
+    for(unsigned int i=0; i<2; i++)
+    {
+        for(unsigned int j=0; j<3; j++)
+        {
+            matrix_[i*4+j] = matrix(j,i);
+        }
+        matrix_[i*4+3] = 0;
+    }
+    matrix_[8] = matrix_[9] = matrix_[10] = matrix_[11] = matrix_[14] = 0;
+    matrix_[12] = matrix(0,2);
+    matrix_[13] = matrix(1,2);
+    matrix_[15] = matrix(2,2);
+
+    glMultMatrixf(matrix_);
+
+}
+inline void openGLMultMatrix(const SquareMatrix<double,3> & matrix)
+{
+    double matrix_[16];
+
+    for(unsigned int i=0; i<2; i++)
+    {
+        for(unsigned int j=0; j<3; j++)
+        {
+            matrix_[i*4+j] = matrix(j,i);
+        }
+        matrix_[i*4+3] = 0;
+    }
+    matrix_[8] = matrix_[9] = matrix_[10] = matrix_[11] = matrix_[14] = 0;
+    matrix_[12] = matrix(0,2);
+    matrix_[13] = matrix(1,2);
+    matrix_[15] = matrix(2,2);
+
+    glMultMatrixd(matrix_);
+
+
+}
 inline void openGLMultMatrix(const SquareMatrix<float,4> & matrix)
 {
     float matrix_[16];

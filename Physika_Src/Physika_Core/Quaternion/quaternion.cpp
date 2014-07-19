@@ -22,20 +22,20 @@ namespace Physika{
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion():
-        w_(1),
         x_(0),
         y_(0),
-        z_(0)
+        z_(0),
+        w_(1)
 {
 
 }
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(Scalar x, Scalar y, Scalar z, Scalar w):
-        w_(w),
         x_(x),
         y_(y),
-        z_(z)
+        z_(z),
+        w_(w)
 {
 
 }
@@ -64,20 +64,20 @@ Quaternion<Scalar>::Quaternion(Scalar angle_rad, const Vector<Scalar,3> & unit_a
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(const Scalar *ptrq):
-    w_(ptrq[4]),
     x_(ptrq[0]),
     y_(ptrq[1]),
-    z_(ptrq[2])
+    z_(ptrq[2]),
+    w_(ptrq[4])
 {
 
 }
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(const Quaternion<Scalar> & quat):
-    w_(quat.w()),
     x_(quat.x()),
     y_(quat.y()),
-    z_(quat.z())
+    z_(quat.z()),
+    w_(quat.w())
 {
 
 }
@@ -130,25 +130,25 @@ Quaternion<Scalar> & Quaternion<Scalar>::operator -= (const Quaternion<Scalar> &
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator - (const Quaternion<Scalar> &quat)
+Quaternion<Scalar>  Quaternion<Scalar>::operator - (const Quaternion<Scalar> &quat) const
 {
     return Quaternion(x_ - quat.x(), y_ - quat.y(), z_ - quat.z(), w_ - quat.w());
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator - (void)
+Quaternion<Scalar>  Quaternion<Scalar>::operator - (void) const
 {
     return Quaternion(-x_, -y_, -z_, -w_);
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator + (const Quaternion<Scalar> &quat)
+Quaternion<Scalar>  Quaternion<Scalar>::operator + (const Quaternion<Scalar> &quat) const
 {
     return Quaternion(x_ + quat.x(), y_ + quat.y(), z_ + quat.z(), w_ + quat.w());
 }
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator * (const Scalar& scale)
+Quaternion<Scalar>  Quaternion<Scalar>::operator * (const Scalar& scale) const
 {
     return Quaternion(x_ * scale, y_ * scale, z_ * scale, w_ * scale);
 }
@@ -164,7 +164,7 @@ Quaternion<Scalar> Quaternion<Scalar>::operator * (const Quaternion<Scalar>& q) 
 
 
 template <typename Scalar>
-Quaternion<Scalar>  Quaternion<Scalar>::operator / (const Scalar& scale)
+Quaternion<Scalar>  Quaternion<Scalar>::operator / (const Scalar& scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
@@ -175,7 +175,7 @@ Quaternion<Scalar>  Quaternion<Scalar>::operator / (const Scalar& scale)
 }
 
 template <typename Scalar>
-bool  Quaternion<Scalar>::operator == (const Quaternion<Scalar> &quat)
+bool  Quaternion<Scalar>::operator == (const Quaternion<Scalar> &quat) const
 {
     if (w_ == quat.w() && x_ == quat.x() && y_ == quat.y() && z_ == quat.z())
         return true;
@@ -183,7 +183,7 @@ bool  Quaternion<Scalar>::operator == (const Quaternion<Scalar> &quat)
 }
 
 template <typename Scalar>
-bool  Quaternion<Scalar>::operator != (const Quaternion<Scalar> &quat)
+bool  Quaternion<Scalar>::operator != (const Quaternion<Scalar> &quat) const
 {
     if (*this == quat)
         return false;

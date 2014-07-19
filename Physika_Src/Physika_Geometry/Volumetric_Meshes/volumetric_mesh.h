@@ -38,7 +38,9 @@ public:
     //construct one-region mesh with given data, all elements belong to one default region
     VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, unsigned int vert_per_ele);
     VolumetricMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele_list);//for volumetric mesh with arbitrary element type
+    VolumetricMesh(const VolumetricMesh<Scalar,Dim> &volumetric_mesh);
     virtual ~VolumetricMesh();
+    VolumetricMesh<Scalar,Dim>& operator= (const VolumetricMesh<Scalar,Dim> &volumetric_mesh);
     
     //query
     inline unsigned int       vertNum() const{return vertices_.size();}
@@ -46,9 +48,11 @@ public:
     inline bool               isUniformElementType() const{return uniform_ele_type_;}
     unsigned int              eleVertNum(unsigned int ele_idx) const;
     unsigned int              eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
+    int eleRegionIndex(unsigned int ele_idx) const;  //return the index of the region that the element belongs to, return -1 if it does not belong to any region
     unsigned int              regionNum() const;
     const Vector<Scalar,Dim>& vertPos(unsigned int vert_idx) const;
-    const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int vert_idx) const;
+    const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const;
+    void eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const; //return positions of one element's vertices
     std::string               regionName(unsigned int region_idx) const;
     unsigned int              regionEleNum(unsigned int region_idx) const;
     unsigned int              regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
@@ -79,10 +83,10 @@ public:
     //virtual methods
     virtual void   printInfo() const=0;
     virtual VolumetricMeshInternal::ElementType elementType() const=0;
-    virtual int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element, otherwise return -1
+    virtual unsigned int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element
     virtual Scalar eleVolume(unsigned int ele_idx) const=0;
     virtual bool   containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
-    virtual void   interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, Scalar *weights) const=0; 
+    virtual void   interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, std::vector<Scalar> &weights) const=0; 
 protected:
     /* init mesh given data, all elements belong to one default region 'AllElements'
      * if all elements have same number of vertices, vert_per_ele is pointer to one integer representing the vertex number per element

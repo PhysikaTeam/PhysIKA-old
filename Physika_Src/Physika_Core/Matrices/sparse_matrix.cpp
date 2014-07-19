@@ -12,6 +12,7 @@
  *
  */
 
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
@@ -25,21 +26,20 @@ SparseMatrix<Scalar>::SparseMatrix()
 }
 
 template <typename Scalar>
-SparseMatrix<Scalar>::SparseMatrix(int rows, int cols)
+SparseMatrix<Scalar>::SparseMatrix(unsigned int rows, unsigned int cols)
 {
-    PHYSIKA_ASSERT(rows>=0&&cols>=0);
     allocMemory(rows,cols);
 }
 
 template <typename Scalar>
 SparseMatrix<Scalar>::SparseMatrix(const SparseMatrix<Scalar> &mat2)
 {
-    allocMemory(0,0);
+	allocMemory(mat2.rows(),mat2.cols());
     *this = mat2;
 }
 
 template <typename Scalar>
-void SparseMatrix<Scalar>::allocMemory(int rows, int cols)
+void SparseMatrix<Scalar>::allocMemory(unsigned int rows, unsigned int cols)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     rows_ = rows;
@@ -48,8 +48,11 @@ void SparseMatrix<Scalar>::allocMemory(int rows, int cols)
     else row_head_ = new Trituple<Scalar>* [rows];
     if(cols == 0) col_head_ = NULL;
     else col_head_ = new Trituple<Scalar>* [cols];
-    for(int i=0;i<rows_;++i)row_head_[i] = NULL;
-    for(int i=0;i<cols_;++i)col_head_[i] = NULL;
+    for(unsigned int i=0;i<rows_;++i)row_head_[i] = NULL;
+    for(unsigned int i=0;i<cols_;++i)col_head_[i] = NULL;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	ptr_eigen_sparse_matrix_ = new Eigen::SparseMatrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>(rows, cols);
+	PHYSIKA_ASSERT(ptr_eigen_sparse_matrix_);
 #endif
 }
 
@@ -67,6 +70,8 @@ void SparseMatrix<Scalar>::deleteRowList(Trituple<Scalar> * head_)
             if(last_pointer) delete last_pointer;
         }
     }
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+
 #endif
 }
 
@@ -84,46 +89,56 @@ void SparseMatrix<Scalar>::deleteColList(Trituple<Scalar> * head_)
             if(last_pointer) delete last_pointer;
         }
     }
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+
 #endif
 }
 
 template <typename Scalar>
 SparseMatrix<Scalar>::~SparseMatrix()
 {
-    for(int i=0;i<rows_;++i)
+#ifdef PHYSIKA_USE_BUILT_IN_MATRIX
+    for(unsigned int i=0;i<rows_;++i)
     {
         deleteRowList(row_head_[i]);
         row_head_[i] = NULL;
     }
-    for(int i=0;i<cols_;++i)col_head_[i] = NULL;
+    for(unsigned int i=0;i<cols_;++i)col_head_[i] = NULL;
     if(row_head_)delete[] row_head_;
     row_head_ = NULL;
     if(col_head_)delete[] col_head_;
     col_head_ = NULL;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	delete ptr_eigen_sparse_matrix_;
+#endif
 }
 
 template <typename Scalar>
-int SparseMatrix<Scalar>::rows() const
+unsigned int SparseMatrix<Scalar>::rows() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     return rows_;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	return (*ptr_eigen_sparse_matrix_).rows();
 #endif
 }
 
 template <typename Scalar>
-int SparseMatrix<Scalar>::cols() const
+unsigned int SparseMatrix<Scalar>::cols() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     return cols_;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	return (*ptr_eigen_sparse_matrix_).cols();
 #endif
 }
 
 template <typename Scalar>
-int SparseMatrix<Scalar>::nonZeros() const
+unsigned int SparseMatrix<Scalar>::nonZeros() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    int sum = 0;
-    for(int i = 0 ; i < rows_; ++i)
+    unsigned int sum = 0;
+    for(unsigned int i = 0 ; i < rows_; ++i)
     {
         Trituple<Scalar> * pointer = row_head_[i];
         while(pointer)
@@ -133,11 +148,13 @@ int SparseMatrix<Scalar>::nonZeros() const
         }
     }
     return sum;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	return (*ptr_sparse_matrix_).nonZeros();
 #endif
 }
 
 template <typename Scalar>
-bool SparseMatrix<Scalar>::remove(int i,int j)
+bool SparseMatrix<Scalar>::remove(unsigned int i,unsigned int j)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     Trituple<Scalar> *pointer = row_head_[i],*last_pointer = NULL;
@@ -165,66 +182,54 @@ bool SparseMatrix<Scalar>::remove(int i,int j)
     else col_head_[j] = pointer->col_next_;
     delete pointer;
     return true;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	(*ptr_eigen_sparse_matrix_).insert(i,j) = 0;
 #endif
 }
 
 template <typename Scalar>
-void SparseMatrix<Scalar>::resize(int new_rows, int new_cols)
+void SparseMatrix<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
 {
     PHYSIKA_ASSERT(new_rows>=0&&new_cols>=0);
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    for(int i=0;i<rows_;++i)
+    for(unsigned int i=0;i<rows_;++i)
     {
         deleteRowList(row_head_[i]);
         row_head_[i] = NULL;
     }
-    for(int i=0;i<cols_;++i)col_head_[i] = NULL;
+    for(unsigned int i=0;i<cols_;++i)col_head_[i] = NULL;
     if(row_head_)delete[] row_head_;
     row_head_ = NULL;
     if(col_head_)delete[] col_head_;
     col_head_ = NULL;
     allocMemory(new_rows,new_cols);
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	(*ptr_eigen_sparse_matrix_).resize(new_rows, new_cols);
 #endif
 }
 
 template <typename Scalar>
-void SparseMatrix<Scalar>::transpose()
+SparseMatrix<Scalar> SparseMatrix<Scalar>::transpose() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    std::vector<Trituple<Scalar>*> r,c;
-    for(int i=0;i<rows_;++i)r.push_back(row_head_[i]);
-    for(int i=0;i<cols_;++i)c.push_back(col_head_[i]);
-    if(row_head_)delete[] row_head_;
-    row_head_ = new Trituple<Scalar>* [cols_];
-    if(col_head_)delete[] col_head_;
-    col_head_ = new Trituple<Scalar>* [rows_];
-    for(int i=0;i<cols_;++i)row_head_[i] = c[i];
-    for(int i=0;i<rows_;++i)col_head_[i] = r[i];
-    //swap rows_ and cols_
-    int temp = cols_;
-    cols_ = rows_;
-    rows_ = temp;
-    for(int i=0;i<cols_;++i)
-    {
-        Trituple<Scalar> *pointer = col_head_[i], *last_pointer = NULL;
-        while(pointer)
-        {
-            //swap x row_ and col_ in every node
-            int temp = pointer->col_;
-            pointer->col_ = pointer->row_;
-            pointer->row_ = temp;
-            //swap row_next_ and col_next_ in every node
-            Trituple<Scalar> *next = pointer->row_next_;
-            pointer->row_next_ = pointer->col_next_;
-            pointer->col_next_ = next;
-            pointer = pointer->col_next_;
-        }
-    }
+	SparseMatrix<Scalar> result(cols_, rows_);
+	for(unsigned int i=0;i<rows_;++i)
+	{
+		Trituple<Scalar> *ptr = row_head_[i];
+		while(ptr)
+		{
+			result.setEntry(ptr->col_, ptr->row_,ptr->value_);
+			ptr = ptr->row_next_;
+		}
+	}
+	return result;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	return (*ptr_sparse_matrix_).transpose();
 #endif
 }
 
 template <typename Scalar>
-std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getRowElements(int i) const
+std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getRowElements(unsigned int i) const
 {
     PHYSIKA_ASSERT(i>=0);
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
@@ -236,11 +241,22 @@ std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getRowElements(int i) const
         pointer = pointer->row_next_;
     }
     return v;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	std::vector<Trituple<Scalar>> v;
+	for(int j = 0;j<cols_;++j)
+	{
+		Scalar value_temp = (*ptr_eigen_sparse_matrix_).coeffRef(i,j);
+		if(value_temp != 0)
+		{
+			v.push_back(Trituple<Scalar>(i,j,value_temp));
+		}
+	}
+	return v;
 #endif
 }
 
 template <typename Scalar>
-std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getColElements(int i) const
+std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getColElements(unsigned int i) const
 {
     PHYSIKA_ASSERT(i>=0);
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
@@ -252,11 +268,22 @@ std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getColElements(int i) const
         pointer = pointer->col_next_;
     }
     return v;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	std::vector<Trituple<Scalar>> v;
+	for(int j = 0;j<rows_;++j)
+	{
+		Scalar value_temp = (*ptr_eigen_sparse_matrix_).coeffRef(j,i);
+		if(value_temp != 0)
+		{
+			v.push_back(Trituple<Scalar>(j,i,value_temp));
+		}
+	}
+	return v;
 #endif
 }
 
 template <typename Scalar>
-Scalar SparseMatrix<Scalar>::operator() (int i, int j) const
+Scalar SparseMatrix<Scalar>::operator() (unsigned int i, unsigned int j) const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     PHYSIKA_ASSERT(i>=0&&i<rows_);
@@ -268,11 +295,31 @@ Scalar SparseMatrix<Scalar>::operator() (int i, int j) const
         pointer = pointer->row_next_;
     }
     return 0;//if is not non-zero entry, return 0
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	return (*ptr_eigen_sparse_matrix_)(i,j);
 #endif
 }
 
 template <typename Scalar>
-void SparseMatrix<Scalar>::setEntry(int i,int j, Scalar value)
+Trituple<Scalar>* SparseMatrix<Scalar>::ptr(unsigned int i, unsigned int j) 
+{
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+    PHYSIKA_ASSERT(i>=0&&i<rows_);
+    PHYSIKA_ASSERT(j>=0&&j<cols_);
+    Trituple<Scalar>* pointer = row_head_[i];
+    while(pointer)
+    {
+        if(pointer->col_ == j)return pointer;
+        pointer = pointer->row_next_;
+    }
+    return NULL;//if is not non-zero entry, return 0
+#elif defined(PHYSIKA_USE_EIGEN_MATRIX)
+	return (*ptr_eigen_sparse_matrix_)(i,j);
+#endif
+}
+
+template <typename Scalar>
+void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     PHYSIKA_ASSERT(i>=0&&i<rows_);
@@ -293,7 +340,7 @@ void SparseMatrix<Scalar>::setEntry(int i,int j, Scalar value)
             else
             {
                 std::cout<<"begin remove (i,j)"<<std::endl;
-                if(!remove(i,j))std::cerr<<"delete point (i,j) fail"<<std::endl;
+                if(!remove(i,j))std::cerr<<"delete pounsigned int (i,j) fail"<<std::endl;
                 std::cout<<"remove over"<<std::endl;
                 existing_entry = true;
                 break;
@@ -334,6 +381,8 @@ void SparseMatrix<Scalar>::setEntry(int i,int j, Scalar value)
             new_node->col_next_ = pointer;
         }
     }
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	(*ptr_eigen_sparse_matrix_).coeffRef(i,j) = value;
 #endif
 }
 
@@ -343,17 +392,22 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator+ (const SparseMatrix<Scalar>
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
     SparseMatrix<Scalar> result(mat2);
-    for(int i=0; i<rows_; ++i)
+    for(unsigned int i=0; i<rows_; ++i)
     {
         Trituple<Scalar> *pointer = row_head_[i];
         while(pointer)
         {
-            int row = pointer->row_, col = pointer->col_;
+            unsigned int row = pointer->row_, col = pointer->col_;
             result.setEntry(row, col, pointer->value_+result(row, col));
             pointer = pointer->row_next_;
         }
     }
     return result;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+    PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
+	SparseMatrix<Scalar> result(rows_, cols_);
+	(*result.ptr_eigen_sparse_matrix_) =  (*ptr_eigen_sparse_matrix_) + (*(mat2.ptr_eigen_sparse_matrix_));
+	return result;
 #endif
 }
 
@@ -362,17 +416,21 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator+= (const SparseMatrix<Scala
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
-    for(int i=0; i<mat2.rows_; ++i)
+    for(unsigned int i=0; i<mat2.rows_; ++i)
     {
         Trituple<Scalar> *pointer = mat2.row_head_[i];
         while(pointer)
         {
-            int row = pointer->row_, col = pointer->col_;
+            unsigned int row = pointer->row_, col = pointer->col_;
             this->setEntry(row, col, pointer->value_+(*this)(row, col));
             pointer = pointer->row_next_;
         }        
     }
     return *this;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
+	(*ptr_eigen_sparse_matrix_) += (*(mat2.ptr_eigen_sparse_matrix_));
+	return *this;
 #endif
 }
 
@@ -382,17 +440,22 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator- (const SparseMatrix<Scalar>
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
     SparseMatrix<Scalar> result(mat2);
-    for(int i=0; i<rows_; ++i)
+    for(unsigned int i=0; i<rows_; ++i)
     {
         Trituple<Scalar> *pointer = row_head_[i];
         while(pointer)
         {
-            int row = pointer->row_, col = pointer->col_;
+            unsigned int row = pointer->row_, col = pointer->col_;
             result.setEntry(row, col, pointer->value_ - result(row, col));
             pointer = pointer->row_next_;
         }
     }
     return result;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
+	SparseMatrix<Scalar> result(rows_, cols_);
+	*(result.ptr_eigen_matrix_) = *(ptr_eigen_sparse_matrix_) - *(mat2.ptr_eigen_sparse_matrix_);
+	return result;
 #endif
 }
 
@@ -401,17 +464,21 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator-= (const SparseMatrix<Scala
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
-    for(int i=0; i<mat2.rows_; ++i)
+    for(unsigned int i=0; i<mat2.rows_; ++i)
     {
         Trituple<Scalar> *pointer = mat2.row_head_[i];
         while(pointer)
         {
-            int row = pointer->row_, col = pointer->col_;
+            unsigned int row = pointer->row_, col = pointer->col_;
             this->setEntry(row, col, (*this)(row, col) - pointer->value_);
             pointer = pointer->row_next_;
         }        
     }
     return *this;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
+	(*ptr_eigen_sparse_matrix_) -= (*(mat2.ptr_eigen_sparse_matrix_));
+	return *this;
 #endif
 }
 
@@ -420,17 +487,21 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator= (const SparseMatrix<Scalar
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     this->resize(mat2.rows(),mat2.cols());
-    for(int i=0; i<mat2.rows_; ++i)
+    for(unsigned int i=0; i<mat2.rows_; ++i)
     {
         Trituple<Scalar> *pointer = mat2.row_head_[i];
         while(pointer)
         {
-            int row = pointer->row_, col = pointer->col_;
+            unsigned int row = pointer->row_, col = pointer->col_;
             this->setEntry(row, col,pointer->value_);
             pointer = pointer->row_next_;
         }        
     }
     return *this;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
+	(*ptr_eigen_sparse_matrix_) = (*(mat2.ptr_eigen_sparse_matrix_));
+	return *this;
 #endif
 }
 
@@ -439,7 +510,7 @@ bool SparseMatrix<Scalar>::operator== (const SparseMatrix<Scalar> &mat2) const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     if(rows_ != mat2.rows() || cols_ != mat2.cols())return false;
-    for(int i=0; i<rows_; ++i)
+    for(unsigned int i=0; i<rows_; ++i)
     {
         Trituple<Scalar> *pointer1 = row_head_[i], *pointer2 = mat2.row_head_[i];
         while(pointer1)
@@ -451,6 +522,8 @@ bool SparseMatrix<Scalar>::operator== (const SparseMatrix<Scalar> &mat2) const
         if(pointer2)return false;
     }
     return true;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	return (*ptr_eigen_sparse_matrix_) == *(mat2.ptr_eigen_sparse_matrix_);
 #endif
 }
 
@@ -468,7 +541,7 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (Scalar scale) const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     SparseMatrix<Scalar> result(*this);
-    for(int i=0;i<rows_;++i)
+    for(unsigned int i=0;i<rows_;++i)
     {
         Trituple<Scalar> *pointer = result.row_head_[i];
         while(pointer)
@@ -478,6 +551,11 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (Scalar scale) const
         }
     }
     return result;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+	PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
+	SparseMatrix<Scalar> result(rows_, cols_);
+	*(result.ptr_eigen_matrix_) = *(ptr_eigen_sparse_matrix_) * (*(mat2.ptr_eigen_sparse_matrix_));
+	return result;
 #endif
 }
 
@@ -491,27 +569,22 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar>
         std::exit(EXIT_FAILURE);
     }
     SparseMatrix<Scalar> result(rows_,mat2.cols_);
-    for(int i=0;i<rows_;++i)
-        for(int j=0;j<cols_;++j)
-        {
-            Scalar sum = 0;
-            Trituple<Scalar> *pointer_x = row_head_[i], *pointer_y = mat2.col_head_[j];
-            while(pointer_x && pointer_y)
-            {
-                if(pointer_x->col_ == pointer_y->row_)
-                {
-                    sum += pointer_x->value_ * pointer_y->value_;
-                    pointer_x = pointer_x->row_next_;
-                    pointer_y = pointer_y->col_next_;
-                }
-                else if(pointer_x->col_ < pointer_y->row_)
-                {
-                    pointer_x = pointer_x->row_next_;
-                }
-                else pointer_y = pointer_y->col_next_;
-            }
-            if(sum) result.setEntry(i,j,sum);
-        }
+    for(unsigned int i=0;i<rows_;++i)
+	{
+		Trituple<Scalar> *pointer_x = row_head_[i];
+		while(pointer_x)
+		{
+			Trituple<Scalar> *pointer_y = mat2.row_head_[pointer_x->col_];
+			while(pointer_y)
+			{
+				Trituple<Scalar> *temp = result.ptr(i, pointer_y->col_);
+				if(temp) temp->value_ += pointer_x->value_*pointer_y->value_;
+				else result.setEntry(i,pointer_y->col_,pointer_x->value_ * pointer_y->value_);
+				pointer_y = pointer_y->row_next_;
+			}
+			pointer_x = pointer_x->row_next_;
+		}
+	}
     return result;
 #endif
 }
@@ -526,13 +599,13 @@ VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) c
         std::exit(EXIT_FAILURE);
     }
     VectorND<Scalar> result(rows_, 0);
-    for(int i=0;i<rows_;++i)
+    for(unsigned int i=0;i<rows_;++i)
     {
         Scalar sum = 0;
         Trituple<Scalar> *pointer = row_head_[i];
         while(pointer)
         {
-            sum += pointer->value_ * vec[pointer->row_];
+            sum += pointer->value_ * vec[pointer->col_];
             pointer = pointer->row_next_;
         }
         result[i] = sum;
@@ -545,7 +618,7 @@ template <typename Scalar>
 SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator*=(Scalar scale)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    for(int i=0;i<rows_;++i)
+    for(unsigned int i=0;i<rows_;++i)
     {
         Trituple<Scalar> *pointer = row_head_[i];
         while(pointer)
@@ -555,6 +628,7 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator*=(Scalar scale)
         }
     }
     return *this;
+
 #endif
 }
 
@@ -563,7 +637,7 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator/ (Scalar scale) const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     SparseMatrix<Scalar> result(*this);
-    for(int i=0;i<rows_;++i)
+    for(unsigned int i=0;i<rows_;++i)
     {
         Trituple<Scalar> *pointer = result.row_head_[i];
         while(pointer)
@@ -580,7 +654,7 @@ template <typename Scalar>
 SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator/=(Scalar scale)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    for(int i=0;i<rows_;++i)
+    for(unsigned int i=0;i<rows_;++i)
     {
         Trituple<Scalar> *pointer = row_head_[i];
         while(pointer)
