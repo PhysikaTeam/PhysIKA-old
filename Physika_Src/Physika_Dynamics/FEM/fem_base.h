@@ -78,7 +78,7 @@ protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
     std::vector<Vector<Scalar,Dim> > vertex_displacements_;  //displacement of simulation mesh vertices
     std::vector<Vector<Scalar,Dim> > vertex_velocities_;  //velocities of simulation mesh vertices
-    std::vector<SquareMatrix<Scalar,Dim> > reference_shape_matrix_inv_; //store precomputed data (Dm) for deformation gradient computation: F = Ds*inv(Dm)
+    std::vector<SquareMatrix<Scalar,Dim> > reference_shape_matrix_inv_; //store precomputed data (inverse of Dm) for deformation gradient computation: F = Ds*inv(Dm)
     Scalar gravity_;
 };
 

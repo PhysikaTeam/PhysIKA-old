@@ -19,19 +19,21 @@
 
 namespace Physika{
 
+/*
+ * Particle is defined for float/double, 2D/3D
+ */
+
 template <typename Scalar, int Dim>
 class Particle
 {
 public:
     Particle();
-    Particle(const Scalar *pos, const Scalar *vel, Scalar mass, Scalar vol);
     Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol);
     Particle(const Particle<Scalar,Dim> &);
     ~Particle();
-    void setPosition(const Scalar*);//set with a c/c++ array, assume array of proper size
+    Particle<Scalar,Dim>& operator= (const Particle<Scalar,Dim> &);
     void setPosition(const Vector<Scalar,Dim> &);
     Vector<Scalar,Dim> position() const;
-    void setVelocity(const Scalar*);
     void setVelocity(const Vector<Scalar,Dim> &);
     Vector<Scalar,Dim> velocity() const;
     void setMass(Scalar);

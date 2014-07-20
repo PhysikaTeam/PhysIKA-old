@@ -222,10 +222,10 @@ inline void openGLLightv(GLenum light, GLenum pname, const Color<ColorType>& col
 {
     Color<float> temp_color = color.template convertColor<float>();
     float param[4];
-    param[0] = color.redChannel();
-    param[1] = color.greenChannel();
-    param[2] = color.blueChannel();
-    param[3] = color.alphaChannel();
+    param[0] = temp_color.redChannel();
+    param[1] = temp_color.greenChannel();
+    param[2] = temp_color.blueChannel();
+    param[3] = temp_color.alphaChannel();
     glLightfv(light, pname, param);
 }
 

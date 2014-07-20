@@ -1,7 +1,7 @@
 /*
- * @file integrator_base.cpp 
- * @Basic integrator class.
- * @author Sheng Yang
+ * @file mpm_base.h 
+ * @Brief Base class of MPM drivers, all MPM methods inherit from it.
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -11,19 +11,3 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
-
-#include "Physika_Dynamics/Integrators/integrator_base.h"
-
-namespace Physika{
-
-Integrator_Base::Integrator_Base()
-{
-
-}
-
-Integrator_Base::~Integrator_Base()
-{
-
-}
-
-} //end of namespace Physika

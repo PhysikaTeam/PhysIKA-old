@@ -12,6 +12,7 @@
  *
  */
 
+#include <iostream>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Particles/particle.h"
@@ -23,20 +24,11 @@ Particle<Scalar,Dim>::Particle()
 {
     for(int i = 0; i < Dim; ++i)
     {
-	x_[i] = 0;
-	v_[i] = 0;
+        x_[i] = 0;
+        v_[i] = 0;
     }
     m_ = 0;
     vol_ = 0;
-}
-
-template <typename Scalar, int Dim>
-Particle<Scalar,Dim>::Particle(const Scalar *pos, const Scalar *vel, Scalar mass, Scalar vol)
-{
-    setPosition(pos);
-    setVelocity(vel);
-    m_ = mass;
-    vol_ = vol;
 }
 
 template <typename Scalar, int Dim>
@@ -63,17 +55,20 @@ Particle<Scalar,Dim>::~Particle()
 }
 
 template <typename Scalar, int Dim>
-void Particle<Scalar,Dim>::setPosition(const Scalar *pos)
+Particle<Scalar,Dim>& Particle<Scalar,Dim>::operator= (const Particle<Scalar,Dim> &particle2)
 {
-    for(int i = 0; i < Dim; ++i)
-	x_[i] = pos[i];
+    setPosition(particle2.position());
+    setVelocity(particle2.velocity());
+    setMass(particle2.mass());
+    setVolume(particle2.volume());
+    return *this;
 }
 
 template <typename Scalar, int Dim>
 void Particle<Scalar,Dim>::setPosition(const Vector<Scalar,Dim> &pos)
 {
     for(int i = 0; i < Dim; ++i)
-	x_[i] = pos[i];
+        x_[i] = pos[i];
 }
 
 template <typename Scalar, int Dim>
@@ -81,15 +76,8 @@ Vector<Scalar,Dim> Particle<Scalar,Dim>::position() const
 {
     Vector<Scalar,Dim> pos;
     for(int i = 0; i < Dim; ++i)
-	pos[i] = x_[i];
+        pos[i] = x_[i];
     return pos;
-}
-
-template <typename Scalar, int Dim>
-void Particle<Scalar,Dim>::setVelocity(const Scalar *vel)
-{
-    for(int i = 0; i < Dim; ++i)
-	v_[i] = vel[i];
 }
 
 template <typename Scalar, int Dim>
@@ -104,7 +92,7 @@ Vector<Scalar,Dim> Particle<Scalar,Dim>::velocity() const
 {
     Vector<Scalar,Dim> vel;
     for(int i = 0; i < Dim; ++i)
-	vel[i] = v_[i];
+        vel[i] = v_[i];
     return vel;
 }
 
