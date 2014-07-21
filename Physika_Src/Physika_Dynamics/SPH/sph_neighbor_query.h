@@ -34,9 +34,8 @@ template<typename Scalar>
 class NeighborList
 {
 public:
-
     NeighborList() {size_ = 0; }
-    ~NeighborList(){};
+    ~NeighborList(){}
 public:
     unsigned int size_;
     unsigned int ids_[SPH_NEIGHBOR_SIZE];
@@ -82,9 +81,6 @@ protected:
     Scalar space_;
 
 };
-
-
-
 
 }//end of namespace Physika
 

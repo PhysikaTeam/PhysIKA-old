@@ -23,6 +23,13 @@ MPMParticle<Scalar,Dim>::MPMParticle()
 }
 
 template <typename Scalar, int Dim>
+MPMParticle<Scalar,Dim>::MPMParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol)
+    :Particle<Scalar,Dim>(pos,vel,mass,vol)
+{
+    F_ = SquareMatrix<Scalar,Dim>::identityMatrix();
+}
+
+template <typename Scalar, int Dim>
 MPMParticle<Scalar,Dim>::MPMParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad, Scalar weight, const Vector<Scalar,Dim> &weight_grad)
     :Particle<Scalar,Dim>(pos,vel,mass,vol),F_(deform_grad),weight_(weight),weight_grad_(weight_grad)
 {
