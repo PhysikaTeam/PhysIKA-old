@@ -49,7 +49,7 @@ public:
     void read(const std::string &file_name);
     void addPlugin(DriverPluginBase<Scalar> *plugin);
 
-    //set&&get constitutive model
+    //set&&get constitutive model (data are copied)
     unsigned int materialNum() const;
     void setHomogeneousMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material);  
     void setRegionWiseMaterial(const std::vector<IsotropicHyperelasticMaterial<Scalar,Dim>*> &materials);  //the number of materials must be no less than the number of regions on simulation mesh

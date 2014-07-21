@@ -23,14 +23,21 @@
 
 namespace Physika{
 
+/*
+ * MPMParticle: particle used in MPM, contains basic information needed by MPM
+ * It could be inherited to contain more information, e.g., fracture tendency, melting temporature, etc.
+ * MPM drivers are designed to make use of the polymorphism of MPM particles hirerachy
+ */
+
 template <typename Scalar, int Dim>
 class MPMParticle: public Particle<Scalar,Dim>
 {
 public:
     MPMParticle();
+    MPMParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol); //F set to identity, weight and weight gradient unset
     MPMParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad, Scalar weight, const Vector<Scalar,Dim> &weight_grad);
     MPMParticle(const MPMParticle<Scalar,Dim> &particle);
-    virtual ~MPMParticle();  //made virtual such that polymorphism is made use of in MPM drivers
+    virtual ~MPMParticle(); //made virtual such that polymorphism is made use of in MPM drivers 
     MPMParticle<Scalar,Dim>& operator= (const MPMParticle<Scalar,Dim> &particle);
     const SquareMatrix<Scalar,Dim>& deformationGradient() const;
     void setDeformationGradient(const SquareMatrix<Scalar,Dim> &F);
