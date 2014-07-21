@@ -23,6 +23,7 @@
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_method_DTBVH.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_response_method_BLCP.h"
 
 namespace Physika{
 
@@ -115,12 +116,13 @@ void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_b
 template <typename Scalar,int Dim>
 RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
     collision_detection_method_(new CollisionDetectionMethodDTBVH<Scalar, Dim>()),
+    collision_response_method_(new RigidResponseMethodBLCP<Scalar, Dim>()),
     gravity_(9.81),
     time_step_(0.01),
     frame_(0),
     step_(0)
 {
-
+    collision_response_method_->setRigidDriver(this);
 }
 
 template <typename Scalar,int Dim>
@@ -366,57 +368,7 @@ bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::collisionResponse()
 {
-    //initialize
-    unsigned int m = numContactPoint();//m: number of contact points
-    unsigned int n = numRigidBody();//n: number of rigid bodies
-    if(m == 0 || n == 0)//no collision or no rigid body
-        return;
-    unsigned int six_n = n * 6;//six_n: designed only for 3-dimension rigid bodies. The DoF(Degree of Freedom) of a rigid-body system
-    unsigned int fric_sample_count = 2;//count of friction sample directions
-    unsigned int s = m * fric_sample_count;//s: number of friction sample. Here a square sample is adopted
-    SparseMatrix<Scalar> J(m, six_n);//Jacobian matrix
-    SparseMatrix<Scalar> M_inv(six_n, six_n);//inversed inertia matrix
-    SparseMatrix<Scalar> D(s, six_n);//Jacobian matrix of friction
-    SparseMatrix<Scalar> JMJ(m, m);
-    SparseMatrix<Scalar> JMD(m, s);
-    SparseMatrix<Scalar> DMJ(s, m);
-    SparseMatrix<Scalar> DMD(s, s);
-    VectorND<Scalar> v(six_n, 0);//generalized velocity of the system
-    VectorND<Scalar> Jv(m, 0);//normal relative velocity of each contact point (for normal contact impulse calculation)
-    VectorND<Scalar> Dv(s, 0);//tangent relative velocity of each contact point (for frictional contact impulse calculation)
-    VectorND<Scalar> CoR(m, 0);//coefficient of restitution (for normal contact impulse calculation)
-    VectorND<Scalar> CoF(s, 0);//coefficient of friction (for frictional contact impulse calculation)
-    VectorND<Scalar> z_norm(m, 0);//normal contact impulse. The key of collision response
-    VectorND<Scalar> z_fric(s, 0);//frictional contact impulse. The key of collision response
-
-    //compute the matrix of dynamics
-    computeInvMassMatrix(M_inv);
-    computeJacobianMatrix(J);
-    computeFricJacobianMatrix(D);
-    computeGeneralizedVelocity(v);
-
-    //compute other matrix in need
-    SparseMatrix<Scalar> J_T = J;
-    J_T = J.transpose();
-    SparseMatrix<Scalar> D_T = D;
-    D_T = D.transpose();
-    SparseMatrix<Scalar> MJ = M_inv * J_T;
-    SparseMatrix<Scalar> MD = M_inv * D_T;
-    JMJ = J * MJ;
-    DMD = D * MD;
-    JMD = J * MD;
-    DMJ = D * MJ;
-    Jv = J * v;
-    Dv = D * v;
-
-    //update CoR and CoF
-    computeCoefficient(CoR, CoF);
-
-    //solve BLCP with PGS. z_norm and z_fric are the unknown variables
-    solveBLCPWithPGS(JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF);
-
-    //apply impulse
-    applyImpulse(z_norm, z_fric, J_T, D_T);
+    collision_response_method_->collisionResponse();
 }
 
 template <typename Scalar,int Dim>
@@ -430,55 +382,12 @@ void RigidBodyDriver<Scalar, Dim>::updateRigidBody(Scalar dt)
         rigid_body = rigid_body_archives_[i]->rigidBody();
         if(!rigid_body->isFixed())
         {
-            //rigid_body->addTranslationImpulse(gravity * rigid_body->mass());//We don't update the velocity and position of a fixed body.
             rigid_body->update(dt);
         }
     }
 }
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeInvMassMatrix(SparseMatrix<Scalar>& M_inv)
-{
-    RigidBodyDriverUtility<Scalar>::computeInvMassMatrix(this, M_inv, DimensionTrait<Dim>());
-}
 
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeJacobianMatrix(SparseMatrix<Scalar>& J)
-{
-    RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(this, J, DimensionTrait<Dim>());
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeFricJacobianMatrix(SparseMatrix<Scalar>& D)
-{
-    RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(this, D, DimensionTrait<Dim>());
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeGeneralizedVelocity(VectorND<Scalar>& v)
-{
-    RigidBodyDriverUtility<Scalar>::computeGeneralizedVelocity(this, v, DimensionTrait<Dim>());
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF)
-{
-    RigidBodyDriverUtility<Scalar>::computeCoefficient(this, CoR, CoF, DimensionTrait<Dim>());
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
-    VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
-    VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count)
-{
-    RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(this, JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF, iteration_count, DimensionTrait<Dim>());
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T)
-{
-    RigidBodyDriverUtility<Scalar>::applyImpulse(this, z_norm, z_fric, J_T, D_T, DimensionTrait<Dim>());
-}
 
 //explicit instantiation
 template class RigidBodyArchive<float, 2>;

@@ -19,6 +19,7 @@
 #include <vector>
 #include "Physika_Dynamics/Driver/driver_base.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_method.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_response_method.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Core/Utilities/dimension_trait.h"
 
@@ -56,7 +57,6 @@ protected:
 };
 
 template <typename Scalar,int Dim> class RigidDriverPlugin;
-template <typename Scalar> class RigidBodyDriverUtility;
 
 template <typename Scalar,int Dim>
 class RigidBodyDriver: public DriverBase<Scalar>
@@ -92,6 +92,7 @@ public:
 protected:
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
     CollisionDetectionMethod<Scalar, Dim>* collision_detection_method_;
+    RigidResponseMethod<Scalar, Dim>* collision_response_method_;
     Scalar gravity_;
     Scalar time_step_;
     int frame_;
@@ -105,17 +106,6 @@ protected:
     virtual bool collisionDetection();
     virtual void collisionResponse();
     virtual void updateRigidBody(Scalar dt);
-
-    //utilities. These functions will do nothing but call the overload versions in RigidBodyDriverUtility depending on the dimension
-    virtual void computeInvMassMatrix(SparseMatrix<Scalar>& M_inv);//compute inverse mass matrix
-    virtual void computeJacobianMatrix(SparseMatrix<Scalar>& J);//compute Jacobian matrix
-    virtual void computeFricJacobianMatrix(SparseMatrix<Scalar>& D);//compute Jacobian matrix of the discretized friction pyramid. Refer to [Tonge et al. 2012]
-    virtual void computeGeneralizedVelocity(VectorND<Scalar>& v);//compute generalized velocity
-    virtual void computeCoefficient(VectorND<Scalar>& CoR, VectorND<Scalar>& CoF);//compute coefficient of restitution and friction
-    virtual void solveBLCPWithPGS(SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
-                                  VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
-                                  VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count = 50);//solve the BLCP equation with PGS. Refer to [Tonge et al. 2012]
-    virtual void applyImpulse(VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T);//apply impulse to rigid bodies. This step will not cause velocity and configuration integral
 
 };
 

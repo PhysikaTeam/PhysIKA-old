@@ -28,19 +28,20 @@ template <typename Scalar,int Dim>
 class CollisionDetectionMethod
 {
 public:
-
+    //constructor
     CollisionDetectionMethod();
     virtual ~CollisionDetectionMethod();
 
+    //dynamic function used in a driver
     virtual void update() = 0;
     virtual void addCollidableObject(CollidableObject<Scalar, Dim>* object) = 0;
     virtual bool collisionDetection() = 0;
     virtual void cleanResults();
 
+    //getter
     unsigned int numPCS() const;
     unsigned int numCollisionPair() const;
     CollisionPairBase<Scalar, Dim>* collisionPair(unsigned int index);
-
     unsigned int numContactPoint() const;
     ContactPoint<Scalar, Dim>* contactPoint(unsigned int index);
 

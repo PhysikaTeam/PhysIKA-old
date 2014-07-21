@@ -20,14 +20,69 @@
 
 namespace Physika{
 
+///////////////////////////////////////////////////////////////////////////////////////
+//RigidBodyDriverUtility
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+template <typename Scalar,int Dim>
+void RigidBodyDriverUtility<Scalar, Dim>::computeInvMassMatrix(RigidBodyDriver<Scalar, Dim>* driver, SparseMatrix<Scalar>& M_inv)
+{
+    RigidBodyDriverUtilityTrait<Scalar>::computeInvMassMatrix(driver, M_inv, DimensionTrait<Dim>());
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriverUtility<Scalar, Dim>::computeJacobianMatrix(RigidBodyDriver<Scalar, Dim>* driver, SparseMatrix<Scalar>& J)
+{
+    RigidBodyDriverUtilityTrait<Scalar>::computeJacobianMatrix(driver, J, DimensionTrait<Dim>());
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriverUtility<Scalar, Dim>::computeFricJacobianMatrix(RigidBodyDriver<Scalar, Dim>* driver, SparseMatrix<Scalar>& D)
+{
+    RigidBodyDriverUtilityTrait<Scalar>::computeFricJacobianMatrix(driver, D, DimensionTrait<Dim>());
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriverUtility<Scalar, Dim>::computeGeneralizedVelocity(RigidBodyDriver<Scalar, Dim>* driver, VectorND<Scalar>& v)
+{
+    RigidBodyDriverUtilityTrait<Scalar>::computeGeneralizedVelocity(driver, v, DimensionTrait<Dim>());
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriverUtility<Scalar, Dim>::computeCoefficient(RigidBodyDriver<Scalar, Dim>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF)
+{
+    RigidBodyDriverUtilityTrait<Scalar>::computeCoefficient(driver, CoR, CoF, DimensionTrait<Dim>());
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriverUtility<Scalar, Dim>::solveBLCPWithPGS(RigidBodyDriver<Scalar, Dim>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+    VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+    VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count)
+{
+    RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(driver, JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF, iteration_count, DimensionTrait<Dim>());
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriverUtility<Scalar, Dim>::applyImpulse(RigidBodyDriver<Scalar, Dim>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T)
+{
+    RigidBodyDriverUtilityTrait<Scalar>::applyImpulse(driver, z_norm, z_fric, J_T, D_T, DimensionTrait<Dim>());
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+//RigidBodyDriverUtilityTrait
+///////////////////////////////////////////////////////////////////////////////////////
+
+
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait)
 {
     //to do
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait)
 {
     if(driver == NULL)
     {
@@ -79,13 +134,13 @@ void RigidBodyDriverUtility<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& J, DimensionTrait<2> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& J, DimensionTrait<2> trait)
 {
     //to do
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& J, DimensionTrait<3> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& J, DimensionTrait<3> trait)
 {
     if(driver == NULL)
     {
@@ -138,13 +193,13 @@ void RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scala
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& D, DimensionTrait<2> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& D, DimensionTrait<2> trait)
 {
     //to do
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& D, DimensionTrait<3> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& D, DimensionTrait<3> trait)
 {
     if(driver == NULL)
     {
@@ -221,13 +276,13 @@ void RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<S
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeGeneralizedVelocity(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& v, DimensionTrait<2> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeGeneralizedVelocity(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& v, DimensionTrait<2> trait)
 {
     //to do
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeGeneralizedVelocity(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& v, DimensionTrait<3> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeGeneralizedVelocity(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& v, DimensionTrait<3> trait)
 {
     if(driver == NULL)
     {
@@ -265,13 +320,13 @@ void RigidBodyDriverUtility<Scalar>::computeGeneralizedVelocity(RigidBodyDriver<
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<2> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<2> trait)
 {
     //to do
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<3> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, DimensionTrait<3> trait)
 {
     if(driver == NULL)
     {
@@ -323,7 +378,7 @@ void RigidBodyDriverUtility<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
     VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
     DimensionTrait<2> trait)
@@ -332,7 +387,7 @@ void RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 2>
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
+void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
     VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
     DimensionTrait<3> trait)
@@ -416,14 +471,14 @@ void RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 3>
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, 
+void RigidBodyDriverUtilityTrait<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 2>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric, 
     SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<2> trait)
 {
     //to do
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtility<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+void RigidBodyDriverUtilityTrait<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 3>* driver, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
     SparseMatrix<Scalar>& J_T, SparseMatrix<Scalar>& D_T, DimensionTrait<3> trait)
 {
     if(driver == NULL)
@@ -485,7 +540,12 @@ void RigidBodyDriverUtility<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 3>* dr
     }
 }
 
-template class RigidBodyDriverUtility<float>;
-template class RigidBodyDriverUtility<double>;
+template class RigidBodyDriverUtility<float, 2>;
+template class RigidBodyDriverUtility<double, 2>;
+template class RigidBodyDriverUtility<float, 3>;
+template class RigidBodyDriverUtility<double, 3>;
+
+template class RigidBodyDriverUtilityTrait<float>;
+template class RigidBodyDriverUtilityTrait<double>;
 
 }
