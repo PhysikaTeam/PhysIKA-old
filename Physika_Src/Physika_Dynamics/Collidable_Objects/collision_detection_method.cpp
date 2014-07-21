@@ -66,4 +66,9 @@ ContactPoint<Scalar, Dim>* CollisionDetectionMethod<Scalar, Dim>::contactPoint(u
     return contact_points_.contactPoint(index);
 }
 
+template class CollisionDetectionMethod<float, 2>;
+template class CollisionDetectionMethod<double, 2>;
+template class CollisionDetectionMethod<float, 3>;
+template class CollisionDetectionMethod<double, 3>;
+
 }

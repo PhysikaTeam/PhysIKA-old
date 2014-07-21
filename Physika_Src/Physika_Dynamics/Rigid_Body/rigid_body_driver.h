@@ -89,9 +89,6 @@ public:
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
-    //friend class 
-    friend class RigidBodyDriverUtility<Scalar>;
-
 protected:
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
     CollisionDetectionMethod<Scalar, Dim>* collision_detection_method_;
