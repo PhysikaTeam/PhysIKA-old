@@ -21,7 +21,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar> class SurfaceMesh;
-template <typename Scalar,int Dim> class CollisionDetectionResult;
+template <typename Scalar,int Dim> class CollisionPairManager;
 template <typename Scalar,int Dim> class Transform;
 
 template <typename Scalar>

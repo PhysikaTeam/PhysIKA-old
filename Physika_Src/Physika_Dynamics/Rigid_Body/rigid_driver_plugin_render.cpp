@@ -24,7 +24,7 @@
 #include "Physika_Render/Color/color.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
 #include "Physika_Dynamics/Collidable_Objects/contact_point.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
@@ -176,7 +176,7 @@ void RigidDriverPluginRender<Scalar, Dim>::idle()
         }
         active_render_->contact_face_ids_ = new std::vector<unsigned int>[num_body];
 
-		CollisionDetectionResult<Scalar, Dim>* collision_result = &(active_render_->rigid_driver_->collisionResult());
+		CollisionPairManager<Scalar, Dim>* collision_result = &(active_render_->rigid_driver_->collisionResult());
 		unsigned int num_collision = collision_result->numberCollision();
 		for(unsigned int i = 0; i < num_collision; ++i)
         {

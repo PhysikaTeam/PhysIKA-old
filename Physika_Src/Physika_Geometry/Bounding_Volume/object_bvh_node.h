@@ -22,7 +22,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
 template <typename Scalar,int Dim> class BVHNodeBase;
-template <typename Scalar,int Dim> class CollisionDetectionResult;
+template <typename Scalar,int Dim> class CollisionPairManager;
 
 template <typename Scalar,int Dim>
 class ObjectBVHNode : public BVHNodeBase<Scalar, Dim>
@@ -44,7 +44,7 @@ public:
 	//structure maintain
 	void resize();
 
-	bool elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result);
+	bool elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionPairManager<Scalar, Dim>& collision_result);
 	
 protected:
 	typename CollidableObjectInternal::ObjectType object_type_;

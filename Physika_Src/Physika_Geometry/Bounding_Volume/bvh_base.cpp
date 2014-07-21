@@ -16,7 +16,7 @@
 #include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_octagon.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include <stdio.h>
 
@@ -193,13 +193,13 @@ void BVHBase<Scalar, Dim>::cleanInternalNodes()
 }
 
 template <typename Scalar,int Dim>
-bool BVHBase<Scalar, Dim>::selfCollide(CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool BVHBase<Scalar, Dim>::selfCollide(CollisionPairManager<Scalar, Dim>& collision_result)
 {
 	return root_node_->selfCollide(collision_result);
 }
 
 template <typename Scalar,int Dim>
-bool BVHBase<Scalar, Dim>::collide(const BVHBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool BVHBase<Scalar, Dim>::collide(const BVHBase<Scalar, Dim>* const target, CollisionPairManager<Scalar, Dim>& collision_result)
 {
 	if(target == NULL)
 		return false;

@@ -1,5 +1,5 @@
 /*
- * @file  collision_detection_result.h
+ * @file  collision_pair_manager.h
  * @results of collision detection
  * @author Tianxiang Zhang
  * 
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_DETECTION_RESULT_H_
-#define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_DETECTION_RESULT_H_
+#ifndef PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_PAIR_MANAGER_H_
+#define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_PAIR_MANAGER_H_
 
 #include <vector>
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
@@ -24,12 +24,12 @@ template <typename Scalar,int Dim> class CollisionPairBase;
 template <typename Scalar> class MeshBasedCollidableObject;
 
 template <typename Scalar,int Dim>
-class CollisionDetectionResult
+class CollisionPairManager
 {
 public:
 	//constructors && deconstructors
-	CollisionDetectionResult();
-	~CollisionDetectionResult();
+	CollisionPairManager();
+	~CollisionPairManager();
 
 	//get
 	unsigned int numberPCS() const;
@@ -63,4 +63,4 @@ protected:
 
 }  //end of namespace Physikas
 
-#endif  //PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_DETECTION_RESULT_H_
+#endif  //PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_PAIR_MANAGER_H_

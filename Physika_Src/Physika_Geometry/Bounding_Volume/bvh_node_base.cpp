@@ -13,7 +13,7 @@
  */
 
 #include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include <stdio.h>
 
 namespace Physika{
@@ -224,7 +224,7 @@ void BVHNodeBase<Scalar, Dim>::cleanInternalNodes()
 }
 
 template <typename Scalar,int Dim>
-bool BVHNodeBase<Scalar, Dim>::selfCollide(CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool BVHNodeBase<Scalar, Dim>::selfCollide(CollisionPairManager<Scalar, Dim>& collision_result)
 {
 	bool isCollide = false;
 	if(is_leaf_)
@@ -239,7 +239,7 @@ bool BVHNodeBase<Scalar, Dim>::selfCollide(CollisionDetectionResult<Scalar, Dim>
 }
 
 template <typename Scalar,int Dim>
-bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const target, CollisionPairManager<Scalar, Dim>& collision_result)
 {
 	if(target == NULL)
 		return false;
@@ -262,7 +262,7 @@ bool BVHNodeBase<Scalar, Dim>::collide(const BVHNodeBase<Scalar, Dim>* const tar
 }
 
 template <typename Scalar,int Dim>
-bool BVHNodeBase<Scalar, Dim>::leafCollide(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool BVHNodeBase<Scalar, Dim>::leafCollide(const BVHNodeBase<Scalar, Dim>* const target, CollisionPairManager<Scalar, Dim>& collision_result)
 {
 	if(target == NULL)
 		return false;
@@ -292,7 +292,7 @@ bool BVHNodeBase<Scalar, Dim>::leafCollide(const BVHNodeBase<Scalar, Dim>* const
 }
 
 template <typename Scalar,int Dim>
-bool BVHNodeBase<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool BVHNodeBase<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionPairManager<Scalar, Dim>& collision_result)
 {
 	return false;
 }

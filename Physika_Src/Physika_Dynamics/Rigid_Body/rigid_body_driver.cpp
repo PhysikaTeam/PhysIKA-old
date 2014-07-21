@@ -23,7 +23,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 
 namespace Physika{
@@ -284,7 +284,7 @@ RigidBody<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::rigidBody(unsigned int ind
 }
 
 template <typename Scalar,int Dim>
-CollisionDetectionResult<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::collisionResult()
+CollisionPairManager<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::collisionResult()
 {
 	return collision_result_;
 }

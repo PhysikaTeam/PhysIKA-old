@@ -1,5 +1,5 @@
 /*
- * @file  collision_detection_result.cpp
+ * @file  collision_pair_manager.cpp
  * @results of collision detection
  * @author Tianxiang Zhang
  * 
@@ -13,13 +13,13 @@
  */
 
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 
 namespace Physika{
 
 template <typename Scalar,int Dim>
-CollisionDetectionResult<Scalar, Dim>::CollisionDetectionResult():
+CollisionPairManager<Scalar, Dim>::CollisionPairManager():
 	number_pcs_(0),
 	current_object_lhs_idx_(0),
 	current_object_rhs_idx_(0)
@@ -27,63 +27,63 @@ CollisionDetectionResult<Scalar, Dim>::CollisionDetectionResult():
 }
 
 template <typename Scalar,int Dim>
-CollisionDetectionResult<Scalar, Dim>::~CollisionDetectionResult()
+CollisionPairManager<Scalar, Dim>::~CollisionPairManager()
 {
 	cleanCollisionPairs();
 }
 
 template <typename Scalar,int Dim>
-unsigned int CollisionDetectionResult<Scalar, Dim>::numberPCS() const
+unsigned int CollisionPairManager<Scalar, Dim>::numberPCS() const
 {
 	return number_pcs_;
 }
 
 template <typename Scalar,int Dim>
-unsigned int CollisionDetectionResult<Scalar, Dim>::numberCollision() const
+unsigned int CollisionPairManager<Scalar, Dim>::numberCollision() const
 {
 	unsigned int number_collision = static_cast<unsigned int>(collision_pairs_.size());
 	return number_collision;
 }
 
 template <typename Scalar,int Dim>
-const std::vector<CollisionPairBase<Scalar, Dim>*>& CollisionDetectionResult<Scalar, Dim>::collisionPairs() const
+const std::vector<CollisionPairBase<Scalar, Dim>*>& CollisionPairManager<Scalar, Dim>::collisionPairs() const
 {
 	return collision_pairs_;
 }
 
 template <typename Scalar,int Dim>
-std::vector<CollisionPairBase<Scalar, Dim>*>& CollisionDetectionResult<Scalar, Dim>::collisionPairs()
+std::vector<CollisionPairBase<Scalar, Dim>*>& CollisionPairManager<Scalar, Dim>::collisionPairs()
 {
 	return collision_pairs_;
 }
 
 template <typename Scalar,int Dim>
-void CollisionDetectionResult<Scalar, Dim>::setCurrentObjectIndex(unsigned int current_object_lhs_idx, unsigned int current_object_rhs_idx)
+void CollisionPairManager<Scalar, Dim>::setCurrentObjectIndex(unsigned int current_object_lhs_idx, unsigned int current_object_rhs_idx)
 {
 	current_object_lhs_idx_ = current_object_lhs_idx;
 	current_object_rhs_idx_ = current_object_rhs_idx;
 }
 
 template <typename Scalar,int Dim>
-void CollisionDetectionResult<Scalar, Dim>::addPCS()
+void CollisionPairManager<Scalar, Dim>::addPCS()
 {
 	number_pcs_++;
 }
 
 template <typename Scalar,int Dim>
-void CollisionDetectionResult<Scalar, Dim>::cleanPCS()
+void CollisionPairManager<Scalar, Dim>::cleanPCS()
 {
 	number_pcs_ = 0;
 }
 
 template <typename Scalar,int Dim>
-void CollisionDetectionResult<Scalar, Dim>::addCollisionPair(CollisionPairBase<Scalar, Dim>* collision_pair)
+void CollisionPairManager<Scalar, Dim>::addCollisionPair(CollisionPairBase<Scalar, Dim>* collision_pair)
 {
 	collision_pairs_.push_back(collision_pair);
 }
 
 template <typename Scalar,int Dim>
-void CollisionDetectionResult<Scalar, Dim>::cleanCollisionPairs()
+void CollisionPairManager<Scalar, Dim>::cleanCollisionPairs()
 {
 	unsigned int number_collision = static_cast<unsigned int>(collision_pairs_.size());
 	for(unsigned int i = 0 ; i < number_collision; ++i)
@@ -98,7 +98,7 @@ void CollisionDetectionResult<Scalar, Dim>::cleanCollisionPairs()
 }
 
 template <typename Scalar,int Dim>
-void CollisionDetectionResult<Scalar, Dim>::addCollisionPair(MeshBasedCollidableObject<Scalar>* object_lhs, MeshBasedCollidableObject<Scalar>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index)
+void CollisionPairManager<Scalar, Dim>::addCollisionPair(MeshBasedCollidableObject<Scalar>* object_lhs, MeshBasedCollidableObject<Scalar>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index)
 {
     if(Dim == 2)
     {
@@ -110,15 +110,15 @@ void CollisionDetectionResult<Scalar, Dim>::addCollisionPair(MeshBasedCollidable
 }
 
 template <typename Scalar,int Dim>
-void CollisionDetectionResult<Scalar, Dim>::resetCollisionResults()
+void CollisionPairManager<Scalar, Dim>::resetCollisionResults()
 {
 	cleanPCS();
 	cleanCollisionPairs();
 }
 
-template class CollisionDetectionResult<float, 2>;
-template class CollisionDetectionResult<double, 2>;
-template class CollisionDetectionResult<float, 3>;
-template class CollisionDetectionResult<double, 3>;
+template class CollisionPairManager<float, 2>;
+template class CollisionPairManager<double, 2>;
+template class CollisionPairManager<float, 3>;
+template class CollisionPairManager<double, 3>;
 
 }

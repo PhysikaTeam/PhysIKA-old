@@ -20,8 +20,9 @@
 #include "Physika_Dynamics/Driver/driver_base.h"
 #include "Physika_Geometry/Bounding_Volume/bvh_base.h"
 #include "Physika_Geometry/Bounding_Volume/scene_bvh.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Dynamics/Collidable_Objects/contact_point.h"
+#include "Physika_Dynamics/Collidable_Objects/contact_point_manager.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Core/Utilities/dimension_trait.h"
 
@@ -88,7 +89,7 @@ public:
     void setGravity(Scalar gravity);//gravity is along the y-axis and positive value means -y direction. Gravity is usually set to 9.81
 	unsigned int numRigidBody() const;
 	RigidBody<Scalar, Dim>* rigidBody(unsigned int index);
-	CollisionDetectionResult<Scalar, Dim>& collisionResult();
+	CollisionPairManager<Scalar, Dim>& collisionResult();
     ContactPointManager<Scalar, Dim>& contactPoints();
 
 	//plugin
@@ -100,7 +101,7 @@ public:
 protected:
 	SceneBVH<Scalar, Dim> scene_bvh_;
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
-    CollisionDetectionResult<Scalar, Dim> collision_result_;
+    CollisionPairManager<Scalar, Dim> collision_result_;
     ContactPointManager<Scalar, Dim> contact_points_;
     Scalar gravity_;
     Scalar time_step_;

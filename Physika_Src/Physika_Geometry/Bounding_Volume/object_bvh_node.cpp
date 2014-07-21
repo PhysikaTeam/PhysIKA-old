@@ -20,7 +20,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 
 namespace Physika{
 
@@ -92,7 +92,7 @@ void ObjectBVHNode<Scalar, Dim>::resize()
 }
 
 template <typename Scalar,int Dim>
-bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool ObjectBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionPairManager<Scalar, Dim>& collision_result)
 {
 	if(target == NULL || !target->isObjectNode())
 		return false;

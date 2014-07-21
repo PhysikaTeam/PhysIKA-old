@@ -27,7 +27,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/Timer/timer.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"

@@ -15,15 +15,10 @@
 #ifndef PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_CONTACT_POINT_H_
 #define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_CONTACT_POINT_H_
 
-#include <vector>
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector_2d.h"
 
 namespace Physika{
-
-template <typename Scalar,int Dim> class CollisionDetectionResult;
-template <typename Scalar> class CollisionPairMeshToMesh;
-template <typename Scalar,int Dim> class CollisionPairBase;
-template <typename Scalar,int Dim> class Vector;
-
 
 //ContactPoint contains position and normal of contact points.
 //It's different from CollisionPair, which contains colliding elements (e.g. faces of meshes) and objects.
@@ -56,32 +51,7 @@ protected:
     Vector<Scalar, Dim> global_contact_normal_lhs_;//global contact normal of lhs object. global_contact_normal_rhs = -global_contact_normal_lhs
 };
 
-template <typename Scalar,int Dim>
-class ContactPointManager
-{
-public:
-    ContactPointManager();
-    ~ContactPointManager();
-
-    //get & set
-    void setCollisionResult(CollisionDetectionResult<Scalar, Dim>& collision_result);
-    unsigned int numContactPoint() const;
-    ContactPoint<Scalar, Dim>* contactPoint(unsigned int contact_index);
-    const std::vector<ContactPoint<Scalar, Dim>* >& contactPoints() const;
-    std::vector<ContactPoint<Scalar, Dim>* >& contactPoints();
-    ContactPoint<Scalar, Dim>* operator[] (unsigned int contact_index);
-
-    //clean contact points
-    void cleanContactPoints();
-
-protected:
-    std::vector<ContactPoint<Scalar, Dim>* > contact_points_;
-
-    //contact sampling
-    void getMeshContactPoint(CollisionPairMeshToMesh<Scalar>* collision_pair);
-};
-
-} //end of namespace Physikas
+} //end of namespace Physika
 
 
 #endif //PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_CONTACT_POINT_H_

@@ -21,7 +21,7 @@
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_result.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 
 namespace Physika{
 
@@ -80,7 +80,7 @@ void SceneBVHNode<Scalar, Dim>::resize()
 }
 
 template <typename Scalar,int Dim>
-bool SceneBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionDetectionResult<Scalar, Dim>& collision_result)
+bool SceneBVHNode<Scalar, Dim>::elemTest(const BVHNodeBase<Scalar, Dim>* const target, CollisionPairManager<Scalar, Dim>& collision_result)
 {
 	if(target == NULL || !target->isSceneNode())
 		return false;
