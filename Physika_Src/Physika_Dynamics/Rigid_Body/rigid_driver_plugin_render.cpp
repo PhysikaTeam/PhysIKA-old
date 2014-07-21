@@ -176,11 +176,10 @@ void RigidDriverPluginRender<Scalar, Dim>::idle()
         }
         active_render_->contact_face_ids_ = new std::vector<unsigned int>[num_body];
 
-		CollisionPairManager<Scalar, Dim>* collision_result = &(active_render_->rigid_driver_->collisionResult());
-		unsigned int num_collision = collision_result->numberCollision();
+		unsigned int num_collision = active_render_->rigid_driver_->numCollisionPair();
 		for(unsigned int i = 0; i < num_collision; ++i)
         {
-            CollisionPairBase<Scalar, Dim>* pair = collision_result->collisionPairs()[i];
+            CollisionPairBase<Scalar, Dim>* pair = active_render_->rigid_driver_->collisionPair(i);
             (active_render_->contact_face_ids_)[pair->objectLhsIdx()].push_back(pair->faceLhsIdx());
             (active_render_->contact_face_ids_)[pair->objectRhsIdx()].push_back(pair->faceRhsIdx());
         }
@@ -190,14 +189,13 @@ void RigidDriverPluginRender<Scalar, Dim>::idle()
     {
         active_render_->contact_normal_positions_.clear();
         active_render_->contact_normal_orientation_.clear();
-        ContactPointManager<Scalar, Dim>* contact_points = &(active_render_->rigid_driver_->contactPoints());
-        unsigned int num_contact = contact_points->numContactPoint();
+        unsigned int num_contact = active_render_->rigid_driver_->numContactPoint();
         for(unsigned int i = 0; i < num_contact; ++i)
         {
-            active_render_->contact_normal_positions_.push_back(contact_points->contactPoint(i)->globalContactPosition());
-            active_render_->contact_normal_orientation_.push_back(contact_points->contactPoint(i)->globalContactNormalLhs());
-            active_render_->contact_normal_positions_.push_back(contact_points->contactPoint(i)->globalContactPosition());
-            active_render_->contact_normal_orientation_.push_back(contact_points->contactPoint(i)->globalContactNormalRhs());
+            active_render_->contact_normal_positions_.push_back(active_render_->rigid_driver_->contactPoint(i)->globalContactPosition());
+            active_render_->contact_normal_orientation_.push_back(active_render_->rigid_driver_->contactPoint(i)->globalContactNormalLhs());
+            active_render_->contact_normal_positions_.push_back(active_render_->rigid_driver_->contactPoint(i)->globalContactPosition());
+            active_render_->contact_normal_orientation_.push_back(active_render_->rigid_driver_->contactPoint(i)->globalContactNormalRhs());
         }
     }
 

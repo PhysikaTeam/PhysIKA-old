@@ -36,18 +36,15 @@ public:
 	unsigned int numberCollision() const;
 	const std::vector<CollisionPairBase<Scalar, Dim>*>& collisionPairs() const;
 	std::vector<CollisionPairBase<Scalar, Dim>*>& collisionPairs();
+    CollisionPairBase<Scalar, Dim>* collisionPair(unsigned int index);
 
 	//structure maintain
 	void setCurrentObjectIndex(unsigned int current_object_lhs_idx, unsigned int current_object_rhs_idx);
 	void addPCS();
-	void cleanPCS();
 	void addCollisionPair(CollisionPairBase<Scalar, Dim>* collision_pair);
-	void cleanCollisionPairs();
+	void cleanCollisionPairs();//clean PCS and collision pairs
 
 	void addCollisionPair(MeshBasedCollidableObject<Scalar>* object_lhs, MeshBasedCollidableObject<Scalar>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index);
-
-	//clean PCS and collision pairs
-	void resetCollisionResults();
 
 protected:
 	//Potential Collide Set (PCS) contains pairs whose bounding volumes overlap.

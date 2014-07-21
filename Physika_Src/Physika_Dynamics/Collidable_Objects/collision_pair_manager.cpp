@@ -58,6 +58,17 @@ std::vector<CollisionPairBase<Scalar, Dim>*>& CollisionPairManager<Scalar, Dim>:
 }
 
 template <typename Scalar,int Dim>
+CollisionPairBase<Scalar, Dim>* CollisionPairManager<Scalar, Dim>::collisionPair(unsigned int index)
+{
+    if(index > numberCollision())
+    {
+        std::cerr<<"Collision index our of range!"<<std::endl;
+        return NULL;
+    }
+    return collision_pairs_[index];
+}
+
+template <typename Scalar,int Dim>
 void CollisionPairManager<Scalar, Dim>::setCurrentObjectIndex(unsigned int current_object_lhs_idx, unsigned int current_object_rhs_idx)
 {
 	current_object_lhs_idx_ = current_object_lhs_idx;
@@ -71,12 +82,6 @@ void CollisionPairManager<Scalar, Dim>::addPCS()
 }
 
 template <typename Scalar,int Dim>
-void CollisionPairManager<Scalar, Dim>::cleanPCS()
-{
-	number_pcs_ = 0;
-}
-
-template <typename Scalar,int Dim>
 void CollisionPairManager<Scalar, Dim>::addCollisionPair(CollisionPairBase<Scalar, Dim>* collision_pair)
 {
 	collision_pairs_.push_back(collision_pair);
@@ -85,6 +90,7 @@ void CollisionPairManager<Scalar, Dim>::addCollisionPair(CollisionPairBase<Scala
 template <typename Scalar,int Dim>
 void CollisionPairManager<Scalar, Dim>::cleanCollisionPairs()
 {
+    number_pcs_ = 0;
 	unsigned int number_collision = static_cast<unsigned int>(collision_pairs_.size());
 	for(unsigned int i = 0 ; i < number_collision; ++i)
 	{
@@ -107,13 +113,6 @@ void CollisionPairManager<Scalar, Dim>::addCollisionPair(MeshBasedCollidableObje
     }
 	CollisionPairMeshToMesh<Scalar>* collision_pair = new CollisionPairMeshToMesh<Scalar>(current_object_lhs_idx_, current_object_rhs_idx_, object_lhs, object_rhs, face_lhs_index, face_rhs_index);
 	collision_pairs_.push_back(dynamic_cast<CollisionPairBase<Scalar, Dim>*>(collision_pair));
-}
-
-template <typename Scalar,int Dim>
-void CollisionPairManager<Scalar, Dim>::resetCollisionResults()
-{
-	cleanPCS();
-	cleanCollisionPairs();
 }
 
 template class CollisionPairManager<float, 2>;

@@ -94,7 +94,7 @@ void RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scala
     }
 
     //initialize
-    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int m = driver->numContactPoint();
     unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
 
@@ -112,7 +112,7 @@ void RigidBodyDriverUtility<Scalar>::computeJacobianMatrix(RigidBodyDriver<Scala
     Vector<Scalar, 3> angular_normal_lhs, angular_normal_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = driver->contact_points_[i];
+        contact_point = driver->contactPoint(i);
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating matrix!"<<std::endl;
@@ -153,7 +153,7 @@ void RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<S
     }
 
     //initialize
-    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int m = driver->numContactPoint();
     unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
     unsigned int s = D.rows();
@@ -173,7 +173,7 @@ void RigidBodyDriverUtility<Scalar>::computeFricJacobianMatrix(RigidBodyDriver<S
     Vector<Scalar, 3> angular_normal_lhs, angular_normal_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = driver->contact_points_[i];
+        contact_point = driver->contactPoint(i);
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating matrix!"<<std::endl;
@@ -280,7 +280,7 @@ void RigidBodyDriverUtility<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 
     }
 
     //initialize
-    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int m = driver->numContactPoint();
     unsigned int s = CoF.dims();
     unsigned int fric_sample_count = s / m;
 
@@ -297,7 +297,7 @@ void RigidBodyDriverUtility<Scalar>::computeCoefficient(RigidBodyDriver<Scalar, 
     Scalar cor_lhs, cor_rhs, cof_lhs, cof_rhs;
     for(unsigned int i = 0; i < m; ++i)
     {
-        contact_point = driver->contact_points_[i];
+        contact_point = driver->contactPoint(i);
         if(contact_point == NULL)
         {
             std::cerr<<"Null contact point in updating coefficient!"<<std::endl;
@@ -347,7 +347,7 @@ void RigidBodyDriverUtility<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 3>
     }
 
     //initialize
-    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int m = driver->numContactPoint();
     unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
     unsigned int s = DMD.cols();
@@ -433,7 +433,7 @@ void RigidBodyDriverUtility<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 3>* dr
     }
 
     //initialize
-    unsigned int m = (driver->contact_points_).numContactPoint();
+    unsigned int m = driver->numContactPoint();
     unsigned int n = driver->numRigidBody();
     unsigned int six_n = n * 6;
     unsigned int s = D_T.cols();

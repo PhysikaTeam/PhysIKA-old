@@ -18,11 +18,7 @@
 #include <string>
 #include <vector>
 #include "Physika_Dynamics/Driver/driver_base.h"
-#include "Physika_Geometry/Bounding_Volume/bvh_base.h"
-#include "Physika_Geometry/Bounding_Volume/scene_bvh.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
-#include "Physika_Dynamics/Collidable_Objects/contact_point.h"
-#include "Physika_Dynamics/Collidable_Objects/contact_point_manager.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_detection_method.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Core/Utilities/dimension_trait.h"
 
@@ -31,8 +27,6 @@ namespace Physika{
 
 template <typename Scalar,int Dim> class RigidBody;
 template <typename Scalar,int Dim> class CollidableObject;
-template <typename Scalar,int Dim> class BVHBase;
-template <typename Scalar,int Dim> class ObjectBVH;
 
 //Rigid body archive, which contains relative informations about a rigid body during simulation, e.g. the collidable object constructed from this rigid body and its BVH.
 //This should be used as a internal class of RigidBodyDriver. It should be transparent to the outside.
@@ -50,13 +44,11 @@ public:
 	void setIndex(unsigned int index);
 	RigidBody<Scalar, Dim>* rigidBody();
 	CollidableObject<Scalar, Dim>* collideObject();
-	ObjectBVH<Scalar, Dim>* objectBVH();
 
 protected:
 	unsigned int index_;
 	RigidBody<Scalar, Dim>* rigid_body_;
 	CollidableObject<Scalar, Dim>* collide_object_;
-	ObjectBVH<Scalar, Dim>* object_bvh_;
 
     //Overload versions of utilities for 2D and 3D situations
     void setRigidBody(RigidBody<Scalar, Dim>* rigid_body, DimensionTrait<2> trait);
@@ -85,12 +77,14 @@ public:
 	void read(const std::string &file_name);//read simulation data from file
 
 	//get & set, add & delete
-	virtual void addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild = true);//is_rebuild means whether rebuild the scene BVH after adding this body.
+	virtual void addRigidBody(RigidBody<Scalar, Dim>* rigid_body);
     void setGravity(Scalar gravity);//gravity is along the y-axis and positive value means -y direction. Gravity is usually set to 9.81
 	unsigned int numRigidBody() const;
 	RigidBody<Scalar, Dim>* rigidBody(unsigned int index);
-	CollisionPairManager<Scalar, Dim>& collisionResult();
-    ContactPointManager<Scalar, Dim>& contactPoints();
+    unsigned int numCollisionPair() const;
+    CollisionPairBase<Scalar, Dim>* collisionPair(unsigned int index);
+    unsigned int numContactPoint() const;
+    ContactPoint<Scalar, Dim>* contactPoint(unsigned int index);
 
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
@@ -99,10 +93,8 @@ public:
     friend class RigidBodyDriverUtility<Scalar>;
 
 protected:
-	SceneBVH<Scalar, Dim> scene_bvh_;
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
-    CollisionPairManager<Scalar, Dim> collision_result_;
-    ContactPointManager<Scalar, Dim> contact_points_;
+    CollisionDetectionMethod<Scalar, Dim>* collision_detection_method_;
     Scalar gravity_;
     Scalar time_step_;
     int frame_;

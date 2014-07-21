@@ -18,13 +18,11 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_body_3d.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver_utility.h"
-#include "Physika_Geometry/Bounding_Volume/object_bvh.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
-#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
+#include "Physika_Dynamics/Collidable_Objects/collision_detection_method_DTBVH.h"
 
 namespace Physika{
 
@@ -36,8 +34,7 @@ template <typename Scalar,int Dim>
 RigidBodyArchive<Scalar, Dim>::RigidBodyArchive():
 	index_(0),
 	rigid_body_(NULL),
-	collide_object_(NULL),
-	object_bvh_(NULL)
+	collide_object_(NULL)
 {
 
 }
@@ -52,7 +49,6 @@ template <typename Scalar,int Dim>
 RigidBodyArchive<Scalar, Dim>::~RigidBodyArchive()
 {
 	delete collide_object_;
-	delete object_bvh_;
 }
 
 template <typename Scalar,int Dim>
@@ -86,12 +82,6 @@ CollidableObject<Scalar, Dim>* RigidBodyArchive<Scalar, Dim>::collideObject()
 }
 
 template <typename Scalar,int Dim>
-ObjectBVH<Scalar, Dim>* RigidBodyArchive<Scalar, Dim>::objectBVH()
-{
-	return object_bvh_;
-}
-
-template <typename Scalar,int Dim>
 void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_body, DimensionTrait<2> trait)
 {
     //to do
@@ -114,9 +104,6 @@ void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_b
     MeshBasedCollidableObject<Scalar>* mesh_object = dynamic_cast<MeshBasedCollidableObject<Scalar>*>(collide_object_);
     mesh_object->setMesh(rigid_body_3d->mesh());
     mesh_object->setTransform(rigid_body_3d->transformPtr());
-
-    object_bvh_ = new ObjectBVH<Scalar, Dim>();
-    object_bvh_->setCollidableObject(collide_object_);
 }
 
 
@@ -127,7 +114,7 @@ void RigidBodyArchive<Scalar, Dim>::setRigidBody(RigidBody<Scalar, Dim>* rigid_b
 
 template <typename Scalar,int Dim>
 RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
-	scene_bvh_(),
+    collision_detection_method_(new CollisionDetectionMethodDTBVH<Scalar, Dim>()),
     gravity_(9.81),
     time_step_(0.01),
     frame_(0),
@@ -238,7 +225,7 @@ void RigidBodyDriver<Scalar, Dim>::read(const std::string &file_name)
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::addRigidBody(RigidBody<Scalar, Dim>* rigid_body, bool is_rebuild)
+void RigidBodyDriver<Scalar, Dim>::addRigidBody(RigidBody<Scalar, Dim>* rigid_body)
 {
 	if(rigid_body == NULL)
 		return;
@@ -246,8 +233,8 @@ void RigidBodyDriver<Scalar, Dim>::addRigidBody(RigidBody<Scalar, Dim>* rigid_bo
     //add this rigid body
 	RigidBodyArchive<Scalar, Dim>* archive = new RigidBodyArchive<Scalar, Dim>(rigid_body);
 	archive->setIndex(numRigidBody());
-	scene_bvh_.addObjectBVH(archive->objectBVH(), is_rebuild);
-	rigid_body_archives_.push_back(archive);
+    rigid_body_archives_.push_back(archive);
+    collision_detection_method_->addCollidableObject(archive->collideObject());
 
     //plugin
 	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
@@ -284,15 +271,28 @@ RigidBody<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::rigidBody(unsigned int ind
 }
 
 template <typename Scalar,int Dim>
-CollisionPairManager<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::collisionResult()
+unsigned int RigidBodyDriver<Scalar, Dim>::numCollisionPair() const
 {
-	return collision_result_;
+    return collision_detection_method_->numCollisionPair();
 }
 
 template <typename Scalar,int Dim>
-ContactPointManager<Scalar, Dim>& RigidBodyDriver<Scalar, Dim>::contactPoints()
+CollisionPairBase<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::collisionPair(unsigned int index)
 {
-    return contact_points_;
+    return collision_detection_method_->collisionPair(index);
+}
+
+template <typename Scalar,int Dim>
+unsigned int RigidBodyDriver<Scalar, Dim>::numContactPoint() const
+{
+    return collision_detection_method_->numContactPoint();
+}
+
+
+template <typename Scalar,int Dim>
+ContactPoint<Scalar, Dim>* RigidBodyDriver<Scalar, Dim>::contactPoint(unsigned int index)
+{
+    return collision_detection_method_->contactPoint(index);
 }
 
 template <typename Scalar,int Dim>
@@ -346,13 +346,11 @@ bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
     }
 
     //clean
-    collision_result_.resetCollisionResults();
-    contact_points_.cleanContactPoints();
+    collision_detection_method_->cleanResults();
 
     //update and collide
-    scene_bvh_.updateSceneBVH();
-    bool is_collide = scene_bvh_.selfCollide(collision_result_);
-    contact_points_.setCollisionResult(collision_result_);
+    collision_detection_method_->update();
+    bool is_collide = collision_detection_method_->collisionDetection();
 
     //plugin
     plugin_num = static_cast<unsigned int>((this->plugins_).size());
@@ -369,7 +367,7 @@ template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::collisionResponse()
 {
     //initialize
-    unsigned int m = contact_points_.numContactPoint();//m: number of contact points
+    unsigned int m = numContactPoint();//m: number of contact points
     unsigned int n = numRigidBody();//n: number of rigid bodies
     if(m == 0 || n == 0)//no collision or no rigid body
         return;

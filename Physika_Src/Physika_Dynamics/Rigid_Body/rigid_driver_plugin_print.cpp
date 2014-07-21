@@ -89,9 +89,7 @@ void RigidDriverPluginPrint<Scalar, Dim>::onBeginCollisionDetection()
 template <typename Scalar,int Dim>
 void RigidDriverPluginPrint<Scalar, Dim>::onEndCollisionDetection()
 {
-    std::cout<<"PCS: "<<this->rigid_driver_->collisionResult().numberPCS()<<std::endl;
-    std::cout<<"Collision: "<<this->rigid_driver_->collisionResult().numberCollision()<<std::endl;
-    std::cout<<"Contact: "<<this->rigid_driver_->contactPoints().numContactPoint()<<std::endl;
+    std::cout<<"Contact: "<<this->rigid_driver_->numContactPoint()<<std::endl;
 }
 
 
