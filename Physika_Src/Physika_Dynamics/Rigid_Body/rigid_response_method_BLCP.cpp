@@ -39,8 +39,8 @@ template <typename Scalar, int Dim>
 void RigidResponseMethodBLCP<Scalar, Dim>::collisionResponse()
 {
     //initialize
-    unsigned int m = rigid_driver_->numContactPoint();//m: number of contact points
-    unsigned int n = rigid_driver_->numRigidBody();//n: number of rigid bodies
+    unsigned int m = this->rigid_driver_->numContactPoint();//m: number of contact points
+    unsigned int n = this->rigid_driver_->numRigidBody();//n: number of rigid bodies
     if(m == 0 || n == 0)//no collision or no rigid body
         return;
     unsigned int six_n = n * 6;//six_n: designed only for 3-dimension rigid bodies. The DoF(Degree of Freedom) of a rigid-body system
@@ -62,10 +62,10 @@ void RigidResponseMethodBLCP<Scalar, Dim>::collisionResponse()
     VectorND<Scalar> z_fric(s, 0);//frictional contact impulse. The key of collision response
 
     //compute the matrix of dynamics
-    RigidBodyDriverUtility<Scalar, Dim>::computeInvMassMatrix(rigid_driver_, M_inv);
-    RigidBodyDriverUtility<Scalar, Dim>::computeJacobianMatrix(rigid_driver_, J);
-    RigidBodyDriverUtility<Scalar, Dim>::computeFricJacobianMatrix(rigid_driver_, D);
-    RigidBodyDriverUtility<Scalar, Dim>::computeGeneralizedVelocity(rigid_driver_, v);
+    RigidBodyDriverUtility<Scalar, Dim>::computeInvMassMatrix(this->rigid_driver_, M_inv);
+    RigidBodyDriverUtility<Scalar, Dim>::computeJacobianMatrix(this->rigid_driver_, J);
+    RigidBodyDriverUtility<Scalar, Dim>::computeFricJacobianMatrix(this->rigid_driver_, D);
+    RigidBodyDriverUtility<Scalar, Dim>::computeGeneralizedVelocity(this->rigid_driver_, v);
 
     //compute other matrix in need
     SparseMatrix<Scalar> J_T = J;
@@ -82,13 +82,13 @@ void RigidResponseMethodBLCP<Scalar, Dim>::collisionResponse()
     Dv = D * v;
 
     //update CoR and CoF
-    RigidBodyDriverUtility<Scalar, Dim>::computeCoefficient(rigid_driver_, CoR, CoF);
+    RigidBodyDriverUtility<Scalar, Dim>::computeCoefficient(this->rigid_driver_, CoR, CoF);
 
     //solve BLCP with PGS. z_norm and z_fric are the unknown variables
-    RigidBodyDriverUtility<Scalar, Dim>::solveBLCPWithPGS(rigid_driver_, JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF);
+    RigidBodyDriverUtility<Scalar, Dim>::solveBLCPWithPGS(this->rigid_driver_, JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF);
 
     //apply impulse
-    RigidBodyDriverUtility<Scalar, Dim>::applyImpulse(rigid_driver_, z_norm, z_fric, J_T, D_T);
+    RigidBodyDriverUtility<Scalar, Dim>::applyImpulse(this->rigid_driver_, z_norm, z_fric, J_T, D_T);
 }
 
 template class RigidResponseMethodBLCP<float, 2>;

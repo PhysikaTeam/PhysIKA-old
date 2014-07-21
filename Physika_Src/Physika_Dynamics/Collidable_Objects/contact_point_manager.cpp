@@ -12,12 +12,12 @@
  *
  */
 
+#include <limits>
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Dynamics/Collidable_Objects/contact_point.h"
 #include "Physika_Dynamics/Collidable_Objects/contact_point_manager.h"
-
 
 namespace Physika{
 
