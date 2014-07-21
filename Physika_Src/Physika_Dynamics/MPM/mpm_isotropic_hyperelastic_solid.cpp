@@ -1,6 +1,6 @@
 /*
- * @file mpm_base.cpp 
- * @Brief Base class of MPM drivers, all MPM methods inherit from it.
+ * @file mpm_isotropic_hyperelastic_solid.cpp
+ * @Brief MPM driver used to simulate hyperelastic solid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -15,25 +15,25 @@
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
-#include "Physika_Dynamics/MPM/mpm_particle.h"
-#include "Physika_Dynamics/MPM/mpm_base.h"
+#include "Physika_Dynamics/Particles/isotropic_hyperelastic_particle.h"
+#include "Physika_Dynamics/MPM/mpm_isotropic_hyperelastic_solid.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-MPMBase<Scalar,Dim>::MPMBase()
+MPMIsotropicHyperelasticSolid<Scalar,Dim>::MPMIsotropicHyperelasticSolid()
     :DriverBase<Scalar>()
 {
 }
 
 template <typename Scalar, int Dim>
-MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
+MPMIsotropicHyperelasticSolid<Scalar,Dim>::MPMIsotropicHyperelasticSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
 {
 }
 
 template <typename Scalar, int Dim>
-MPMBase<Scalar,Dim>::~MPMBase()
+MPMIsotropicHyperelasticSolid<Scalar,Dim>::~MPMIsotropicHyperelasticSolid()
 {
     for(unsigned int i = 0; i < particles_.size(); ++i)
         if(particles_[i])
@@ -41,32 +41,33 @@ MPMBase<Scalar,Dim>::~MPMBase()
 }
 
 template <typename Scalar, int Dim>
-unsigned int MPMBase<Scalar,Dim>::particleNum() const
+unsigned int MPMIsotropicHyperelasticSolid<Scalar,Dim>::particleNum() const
 {
     return particles_.size();
 }
 
 template <typename Scalar, int Dim>
-void MPMBase<Scalar,Dim>::addParticle(const MPMParticle<Scalar,Dim> &particle)
+void MPMIsotropicHyperelasticSolid<Scalar,Dim>::addParticle(const IsotropicHyperelasticParticle<Scalar,Dim> &particle)
 {
-    MPMParticle<Scalar,Dim> *new_particle = new MPMParticle<Scalar,Dim>(particle);
+    IsotropicHyperelasticParticle<Scalar,Dim> *new_particle = new IsotropicHyperelasticParticle<Scalar,Dim>(particle);
     particles_.push_back(new_particle);
 }
 
 template <typename Scalar, int Dim>
-void MPMBase<Scalar,Dim>::removeParticle(unsigned int particle_idx)
+void MPMIsotropicHyperelasticSolid<Scalar,Dim>::removeParticle(unsigned int particle_idx)
 {
     if(particle_idx>=particles_.size())
     {
         std::cerr<<"Error: MPM particle index out of range, abort program!\n";
         std::exit(EXIT_FAILURE);
     }
-    typename std::vector<MPMParticle<Scalar,Dim>*>::iterator iter = particles_.begin() + particle_idx;
+    typename std::vector<IsotropicHyperelasticParticle<Scalar,Dim>*>::iterator iter = particles_.begin() + particle_idx;
+    delete *iter; //release memory
     particles_.erase(iter);
 }
 
 template <typename Scalar, int Dim>
-void MPMBase<Scalar,Dim>::setParticles(const std::vector<MPMParticle<Scalar,Dim>*> &particles)
+void MPMIsotropicHyperelasticSolid<Scalar,Dim>::setParticles(const std::vector<IsotropicHyperelasticParticle<Scalar,Dim>*> &particles)
 {
     particles_.clear();
     for(unsigned int i = 0; i < particles.size(); ++i)
@@ -76,13 +77,14 @@ void MPMBase<Scalar,Dim>::setParticles(const std::vector<MPMParticle<Scalar,Dim>
             std::cerr<<"Warning: pointer to particle "<<i<<" is NULL, ignored!\n";
             continue;
         }
-        MPMParticle<Scalar,Dim> *mpm_particle = new MPMParticle<Scalar,Dim>(*particles[i]);
+        IsotropicHyperelasticParticle<Scalar,Dim> *mpm_particle = new IsotropicHyperelasticParticle<Scalar,Dim>(*particles[i]);
+        //TO DO: DYNAMIC CAST
         particles_.push_back(mpm_particle);
     }
 }
 
 template <typename Scalar, int Dim>
-const MPMParticle<Scalar,Dim>& MPMBase<Scalar,Dim>::particle(unsigned int particle_idx) const
+const IsotropicHyperelasticParticle<Scalar,Dim>& MPMIsotropicHyperelasticSolid<Scalar,Dim>::particle(unsigned int particle_idx) const
 {
     if(particle_idx>=particles_.size())
     {
@@ -93,7 +95,7 @@ const MPMParticle<Scalar,Dim>& MPMBase<Scalar,Dim>::particle(unsigned int partic
 }
 
 template <typename Scalar, int Dim>
-MPMParticle<Scalar,Dim>& MPMBase<Scalar,Dim>::particle(unsigned int particle_idx)
+IsotropicHyperelasticParticle<Scalar,Dim>& MPMIsotropicHyperelasticSolid<Scalar,Dim>::particle(unsigned int particle_idx)
 {
     if(particle_idx>=particles_.size())
     {
@@ -104,9 +106,9 @@ MPMParticle<Scalar,Dim>& MPMBase<Scalar,Dim>::particle(unsigned int particle_idx
 }
 
 //explicit instantiations
-template class MPMBase<float,2>;
-template class MPMBase<float,3>;
-template class MPMBase<double,2>;
-template class MPMBase<double,3>;
+template class MPMIsotropicHyperelasticSolid<float,2>;
+template class MPMIsotropicHyperelasticSolid<float,3>;
+template class MPMIsotropicHyperelasticSolid<double,2>;
+template class MPMIsotropicHyperelasticSolid<double,3>;
 
 }  //end of namespace Physika

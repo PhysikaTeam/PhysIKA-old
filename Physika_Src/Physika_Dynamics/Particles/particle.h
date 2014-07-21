@@ -1,6 +1,6 @@
 /*
  * @file particle.h 
- * @Basic particle class. Particles for fluid && solid simulation inherit from this class.
+ * @Basic particle class. Particles used in solid&&fluid simulations inherit from this class.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -15,12 +15,16 @@
 #ifndef PHYSIKA_DYNAMICS_PARTICLES_PARTICLE_H_
 #define PHYSIKA_DYNAMICS_PARTICLES_PARTICLE_H_
 
-#include "Physika_Core/Vectors/vector.h"
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
 
 /*
- * Particle is defined for float/double, 2D/3D
+ * Particle class for various simulations. As particles are frequently used along with 
+ * grid structure (Particle in Cell methods), particles also carry information of 
+ * weight function and gradient of the weight function.
+ *
  */
 
 template <typename Scalar, int Dim>
@@ -28,25 +32,35 @@ class Particle
 {
 public:
     Particle();
-    Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol);
-    Particle(const Particle<Scalar,Dim> &);
-    ~Particle();
-    Particle<Scalar,Dim>& operator= (const Particle<Scalar,Dim> &);
+    Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol);  //weight and weight gradient unset
+    Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, Scalar weight, const Vector<Scalar,Dim> &weight_grad);
+    Particle(const Particle<Scalar,Dim> &particle);
+    virtual ~Particle();
+    Particle<Scalar,Dim>& operator= (const Particle<Scalar,Dim> &particle);
     void setPosition(const Vector<Scalar,Dim> &);
-    Vector<Scalar,Dim> position() const;
+    const Vector<Scalar,Dim>& position() const;
     void setVelocity(const Vector<Scalar,Dim> &);
-    Vector<Scalar,Dim> velocity() const;
+    const Vector<Scalar,Dim>& velocity() const;
     void setMass(Scalar);
     Scalar mass() const;
     void setVolume(Scalar);
     Scalar volume() const;
+
+    //PIC specific operations
+    void setWeight(Scalar weight);
+    Scalar weight() const;
+    void setWeightGradient(const Vector<Scalar,Dim> &weight_grad);
+    const Vector<Scalar,Dim>& weightGradient() const;
 protected:
-    Scalar x_[Dim];
-    Scalar v_[Dim];
+    Vector<Scalar,Dim> x_;
+    Vector<Scalar,Dim> v_;
     Scalar m_;
     Scalar vol_;
+    //PIC specific properties
+    Scalar weight_;
+    Vector<Scalar,Dim> weight_grad_;
 };
 
-} //end of namespace Physika
+}  //end of namespace Physika
 
 #endif //PHYSIKA_DYNAMICS_PARTICLES_PARTICLE_H_

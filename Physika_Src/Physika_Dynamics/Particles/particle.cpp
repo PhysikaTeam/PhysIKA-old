@@ -1,6 +1,6 @@
 /*
  * @file particle.cpp 
- * @Basic particle class. Particles for fluid && solid simulation inherit from this class.
+ * @Basic particle class. Particles used in solid&&fluid simulations inherit from this class.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,41 +12,37 @@
  *
  */
 
-#include <iostream>
-#include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Particles/particle.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 Particle<Scalar,Dim>::Particle()
+    :x_(0),v_(0),m_(0),vol_(0),weight_(0),weight_grad_(0)
 {
-    for(int i = 0; i < Dim; ++i)
-    {
-        x_[i] = 0;
-        v_[i] = 0;
-    }
-    m_ = 0;
-    vol_ = 0;
 }
 
 template <typename Scalar, int Dim>
 Particle<Scalar,Dim>::Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol)
+    :x_(pos),v_(vel),m_(mass),vol_(vol),weight_(0),weight_grad_(0)
 {
-    setPosition(pos);
-    setVelocity(vel);
-    m_ = mass;
-    vol_ = vol;
+}
+
+template <typename Scalar, int Dim>
+Particle<Scalar,Dim>::Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, Scalar weight, const Vector<Scalar,Dim> &weight_grad)
+    :x_(pos),v_(vel),m_(mass),vol_(vol),weight_(weight),weight_grad_(weight_grad)
+{
 }
 
 template <typename Scalar, int Dim>
 Particle<Scalar,Dim>::Particle(const Particle<Scalar, Dim> &particle2)
 {
-    setPosition(particle2.position());
-    setVelocity(particle2.velocity());
-    setMass(particle2.mass());
-    setVolume(particle2.volume());
+    x_ = particle2.x_;
+    v_ = particle2.v_;
+    m_ = particle2.m_;
+    vol_ = particle2.vol_;
+    weight_ = particle2.weight_;
+    weight_grad_ = particle2.weight_grad_;
 }
 
 template <typename Scalar, int Dim>
@@ -57,43 +53,37 @@ Particle<Scalar,Dim>::~Particle()
 template <typename Scalar, int Dim>
 Particle<Scalar,Dim>& Particle<Scalar,Dim>::operator= (const Particle<Scalar,Dim> &particle2)
 {
-    setPosition(particle2.position());
-    setVelocity(particle2.velocity());
-    setMass(particle2.mass());
-    setVolume(particle2.volume());
+    x_ = particle2.x_;
+    v_ = particle2.v_;
+    m_ = particle2.m_;
+    vol_ = particle2.vol_;
+    weight_ = particle2.weight_;
+    weight_grad_ = particle2.weight_grad_;
     return *this;
 }
 
 template <typename Scalar, int Dim>
 void Particle<Scalar,Dim>::setPosition(const Vector<Scalar,Dim> &pos)
 {
-    for(int i = 0; i < Dim; ++i)
-        x_[i] = pos[i];
+    x_ = pos;
 }
 
 template <typename Scalar, int Dim>
-Vector<Scalar,Dim> Particle<Scalar,Dim>::position() const
+const Vector<Scalar,Dim>& Particle<Scalar,Dim>::position() const
 {
-    Vector<Scalar,Dim> pos;
-    for(int i = 0; i < Dim; ++i)
-        pos[i] = x_[i];
-    return pos;
+    return x_;
 }
 
 template <typename Scalar, int Dim>
 void Particle<Scalar,Dim>::setVelocity(const Vector<Scalar,Dim> &vel)
 {
-    for(int i = 0; i < Dim; ++i)
-	v_[i] = vel[i];
+    v_ = vel;
 }
 
 template <typename Scalar, int Dim>
-Vector<Scalar,Dim> Particle<Scalar,Dim>::velocity() const
+const Vector<Scalar,Dim>& Particle<Scalar,Dim>::velocity() const
 {
-    Vector<Scalar,Dim> vel;
-    for(int i = 0; i < Dim; ++i)
-        vel[i] = v_[i];
-    return vel;
+    return v_;
 }
 
 template <typename Scalar, int Dim>
@@ -118,6 +108,30 @@ template <typename Scalar, int Dim>
 Scalar Particle<Scalar,Dim>::volume() const
 {
     return vol_;
+}
+
+template <typename Scalar, int Dim>
+void Particle<Scalar,Dim>::setWeight(Scalar weight)
+{
+    weight_ = weight;
+}
+
+template <typename Scalar, int Dim>
+Scalar Particle<Scalar,Dim>::weight() const
+{
+    return weight_;
+}
+
+template <typename Scalar, int Dim>
+void Particle<Scalar,Dim>::setWeightGradient(const Vector<Scalar,Dim> &weight_grad)
+{
+    weight_grad_ = weight_grad;
+}
+
+template <typename Scalar, int Dim>
+const Vector<Scalar,Dim>& Particle<Scalar,Dim>::weightGradient() const
+{
+    return weight_grad_;
 }
 
 //explicit instantiation
