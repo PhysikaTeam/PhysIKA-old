@@ -33,6 +33,7 @@ public:
     IsotropicLinearElasticity(const IsotropicLinearElasticity<Scalar,Dim> &material);
     ~IsotropicLinearElasticity();
     IsotropicLinearElasticity<Scalar,Dim>& operator= (const IsotropicLinearElasticity<Scalar,Dim> &material);
+    IsotropicLinearElasticity<Scalar,Dim>* clone() const;
     void printInfo() const;
     Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient
     SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;

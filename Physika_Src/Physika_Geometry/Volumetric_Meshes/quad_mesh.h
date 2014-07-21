@@ -31,6 +31,7 @@ public:
     QuadMesh(const QuadMesh<Scalar> &quad_mesh);
     ~QuadMesh();
     QuadMesh<Scalar>& operator= (const QuadMesh<Scalar> &quad_mesh);
+    QuadMesh<Scalar>* clone() const;
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
     unsigned int eleVertNum() const;

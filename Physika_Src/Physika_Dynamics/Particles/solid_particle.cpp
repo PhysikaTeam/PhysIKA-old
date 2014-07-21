@@ -48,6 +48,12 @@ SolidParticle<Scalar,Dim>::~SolidParticle()
 }
 
 template <typename Scalar, int Dim>
+SolidParticle<Scalar,Dim>* SolidParticle<Scalar,Dim>::clone() const
+{
+    return new SolidParticle<Scalar,Dim>(*this);
+}
+
+template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>& SolidParticle<Scalar,Dim>::operator= (const SolidParticle<Scalar,Dim> &particle)
 {
     Particle<Scalar,Dim>::operator= (particle);

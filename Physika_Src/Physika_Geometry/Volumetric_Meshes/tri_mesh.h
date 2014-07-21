@@ -31,6 +31,7 @@ public:
     TriMesh(const TriMesh<Scalar> &tri_mesh);
     ~TriMesh();
     TriMesh<Scalar>& operator=(const TriMesh<Scalar> &tri_mesh);
+    TriMesh<Scalar>* clone() const;
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
     unsigned int eleVertNum() const;

@@ -33,6 +33,7 @@ public:
     StVK(const StVK<Scalar,Dim> &material);
     ~StVK();
     StVK<Scalar,Dim>& operator= (const StVK<Scalar,Dim> &material);
+    StVK<Scalar,Dim>* clone() const;
     void printInfo() const;
     Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient
     SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;

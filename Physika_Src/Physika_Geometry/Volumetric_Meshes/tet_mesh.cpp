@@ -54,6 +54,12 @@ TetMesh<Scalar>& TetMesh<Scalar>::operator= (const TetMesh<Scalar> &tet_mesh)
 }
 
 template <typename Scalar>
+TetMesh<Scalar>* TetMesh<Scalar>::clone() const
+{
+    return new TetMesh<Scalar>(*this);
+}
+
+template <typename Scalar>
 void TetMesh<Scalar>::printInfo() const
 {
     std::cout<<"Tetrahedral Mesh."<<std::endl;

@@ -36,6 +36,7 @@ public:
     Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, Scalar weight, const Vector<Scalar,Dim> &weight_grad);
     Particle(const Particle<Scalar,Dim> &particle);
     virtual ~Particle();
+    virtual Particle<Scalar,Dim>* clone() const;
     Particle<Scalar,Dim>& operator= (const Particle<Scalar,Dim> &particle);
     void setPosition(const Vector<Scalar,Dim> &);
     const Vector<Scalar,Dim>& position() const;

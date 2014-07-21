@@ -22,6 +22,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 IsotropicLinearElasticity<Scalar,Dim>::IsotropicLinearElasticity()
+    :IsotropicHyperelasticMaterial<Scalar,Dim>()
 {
 }
 
@@ -48,6 +49,12 @@ IsotropicLinearElasticity<Scalar,Dim>& IsotropicLinearElasticity<Scalar,Dim>::op
     this->mu_ = material.mu_;
     this->lambda_ = material.lambda_;
     return *this;
+}
+
+template <typename Scalar, int Dim>
+IsotropicLinearElasticity<Scalar,Dim>* IsotropicLinearElasticity<Scalar,Dim>::clone() const
+{
+    return new IsotropicLinearElasticity<Scalar,Dim>(*this);
 }
 
 template <typename Scalar, int Dim>

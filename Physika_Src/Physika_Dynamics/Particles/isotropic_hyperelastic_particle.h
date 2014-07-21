@@ -30,6 +30,7 @@ public:
     IsotropicHyperelasticParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad, const IsotropicHyperelasticMaterial<Scalar,Dim> &material);
     IsotropicHyperelasticParticle(const IsotropicHyperelasticParticle<Scalar,Dim> &particle);
     virtual ~IsotropicHyperelasticParticle();
+    virtual IsotropicHyperelasticParticle<Scalar,Dim>* clone() const;
     IsotropicHyperelasticParticle<Scalar,Dim>& operator= (const IsotropicHyperelasticParticle<Scalar,Dim> &particle);
     //return pointer to the constitutive model, return NULL if not set
     const IsotropicHyperelasticMaterial<Scalar,Dim>* constitutiveModel() const;

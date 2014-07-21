@@ -21,6 +21,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 StVK<Scalar,Dim>::StVK()
+    :IsotropicHyperelasticMaterial<Scalar,Dim>()
 {
 }
 
@@ -47,6 +48,12 @@ StVK<Scalar,Dim>& StVK<Scalar,Dim>::operator= (const StVK<Scalar,Dim> &material)
     this->mu_ = material.mu_;
     this->lambda_ = material.lambda_;
     return *this;
+}
+
+template <typename Scalar, int Dim>
+StVK<Scalar,Dim>* StVK<Scalar,Dim>::clone() const
+{
+    return new StVK<Scalar,Dim>(*this);
 }
 
 template <typename Scalar, int Dim>

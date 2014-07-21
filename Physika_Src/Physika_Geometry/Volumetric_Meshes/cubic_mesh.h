@@ -37,6 +37,7 @@ public:
     CubicMesh(const CubicMesh<Scalar> &cubic_mesh);
     ~CubicMesh();
     CubicMesh<Scalar>& operator= (const CubicMesh<Scalar> &cubic_mesh);
+    CubicMesh<Scalar>* clone() const;
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
     unsigned int eleVertNum() const;

@@ -52,6 +52,12 @@ CubicMesh<Scalar>& CubicMesh<Scalar>::operator= (const CubicMesh<Scalar> &cubic_
 }
 
 template <typename Scalar>
+CubicMesh<Scalar>* CubicMesh<Scalar>::clone() const
+{
+    return new CubicMesh<Scalar>(*this);
+}
+
+template <typename Scalar>
 void CubicMesh<Scalar>::printInfo() const
 {
     std::cout<<"Cubic Mesh."<<std::endl;

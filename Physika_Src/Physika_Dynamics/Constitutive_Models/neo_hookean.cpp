@@ -22,6 +22,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 NeoHookean<Scalar,Dim>::NeoHookean()
+    :IsotropicHyperelasticMaterial<Scalar,Dim>()
 {
 }
 
@@ -48,6 +49,12 @@ NeoHookean<Scalar,Dim>& NeoHookean<Scalar,Dim>::operator= (const NeoHookean<Scal
     this->mu_ = material.mu_;
     this->lambda_ = material.lambda_;
     return *this;
+}
+
+template <typename Scalar, int Dim>
+NeoHookean<Scalar,Dim>* NeoHookean<Scalar,Dim>::clone() const
+{
+    return new NeoHookean<Scalar,Dim>(*this);
 }
 
 template <typename Scalar, int Dim>

@@ -51,6 +51,12 @@ IsotropicHyperelasticParticle<Scalar,Dim>::~IsotropicHyperelasticParticle()
 }
 
 template <typename Scalar, int Dim>
+IsotropicHyperelasticParticle<Scalar,Dim>* IsotropicHyperelasticParticle<Scalar,Dim>::clone() const
+{
+    return new IsotropicHyperelasticParticle<Scalar,Dim>(*this);
+}
+
+template <typename Scalar, int Dim>
 IsotropicHyperelasticParticle<Scalar,Dim>& IsotropicHyperelasticParticle<Scalar,Dim>::operator= (const IsotropicHyperelasticParticle<Scalar,Dim> &particle)
 {
     SolidParticle<Scalar,Dim>::operator= (particle);
@@ -73,7 +79,9 @@ IsotropicHyperelasticMaterial<Scalar,Dim>* IsotropicHyperelasticParticle<Scalar,
 template <typename Scalar, int Dim>
 void IsotropicHyperelasticParticle<Scalar,Dim>::setConstitutiveModel(const IsotropicHyperelasticMaterial<Scalar,Dim> &material)
 {
-//TO DO
+    if(constitutive_model_)
+        delete constitutive_model_;
+    constitutive_model_ = material.clone();
 }
 
 }  //end of namespace Physika

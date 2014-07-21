@@ -81,6 +81,7 @@ public:
     void removeElementInRegion(unsigned int region_idx, unsigned int ele_idx_in_region); //remove the ele_idx_in_region th element in the region_idx th region
 
     //virtual methods
+    virtual VolumetricMesh<Scalar,Dim>* clone() const=0;
     virtual void   printInfo() const=0;
     virtual VolumetricMeshInternal::ElementType elementType() const=0;
     virtual unsigned int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element

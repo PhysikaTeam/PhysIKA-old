@@ -49,7 +49,7 @@ unsigned int MPMIsotropicHyperelasticSolid<Scalar,Dim>::particleNum() const
 template <typename Scalar, int Dim>
 void MPMIsotropicHyperelasticSolid<Scalar,Dim>::addParticle(const IsotropicHyperelasticParticle<Scalar,Dim> &particle)
 {
-    IsotropicHyperelasticParticle<Scalar,Dim> *new_particle = new IsotropicHyperelasticParticle<Scalar,Dim>(particle);
+    IsotropicHyperelasticParticle<Scalar,Dim> *new_particle = particle.clone();
     particles_.push_back(new_particle);
 }
 
@@ -77,8 +77,7 @@ void MPMIsotropicHyperelasticSolid<Scalar,Dim>::setParticles(const std::vector<I
             std::cerr<<"Warning: pointer to particle "<<i<<" is NULL, ignored!\n";
             continue;
         }
-        IsotropicHyperelasticParticle<Scalar,Dim> *mpm_particle = new IsotropicHyperelasticParticle<Scalar,Dim>(*particles[i]);
-        //TO DO: DYNAMIC CAST
+        IsotropicHyperelasticParticle<Scalar,Dim> *mpm_particle = particles[i]->clone();
         particles_.push_back(mpm_particle);
     }
 }

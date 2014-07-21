@@ -30,6 +30,7 @@ public:
     SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad);
     SolidParticle(const SolidParticle<Scalar,Dim> &particle);
     virtual ~SolidParticle(); 
+    virtual SolidParticle<Scalar,Dim>* clone() const;
     SolidParticle<Scalar,Dim>& operator= (const SolidParticle<Scalar,Dim> &particle);
     const SquareMatrix<Scalar,Dim>& deformationGradient() const;
     void setDeformationGradient(const SquareMatrix<Scalar,Dim> &F);

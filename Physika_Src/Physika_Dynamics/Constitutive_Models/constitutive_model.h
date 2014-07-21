@@ -22,6 +22,7 @@ class ConstitutiveModel
 public:
     ConstitutiveModel(){}
     virtual ~ConstitutiveModel(){}
+    virtual ConstitutiveModel* clone() const=0;  //clone the constitutive model
     virtual void printInfo() const=0;
 protected:
 };

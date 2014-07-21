@@ -175,23 +175,7 @@ void FEMIsotropicHyperelasticSolid<Scalar,Dim>::initialize()
 template <typename Scalar, int Dim>
 void FEMIsotropicHyperelasticSolid<Scalar,Dim>::addMaterial(const IsotropicHyperelasticMaterial<Scalar,Dim> &material)
 {
-    IsotropicHyperelasticMaterial<Scalar,Dim> *single_material = NULL;
-    if(const IsotropicLinearElasticity<Scalar,Dim> *material_ptr = dynamic_cast<const IsotropicLinearElasticity<Scalar,Dim>*>(&material))
-    {
-        single_material = new IsotropicLinearElasticity<Scalar,Dim>(*material_ptr);
-    }
-    else if(const NeoHookean<Scalar,Dim> *material_ptr = dynamic_cast<const NeoHookean<Scalar,Dim>*>(&material))
-    {
-        single_material = new NeoHookean<Scalar,Dim>(*material_ptr);
-    }
-    else if(const StVK<Scalar,Dim> *material_ptr = dynamic_cast<const StVK<Scalar,Dim>*>(&material))
-    {
-        single_material = new StVK<Scalar,Dim>(*material_ptr);
-    }
-    else
-    {
-        PHYSIKA_ERROR("Unknown isotropic hyperelastic material.");
-    }
+    IsotropicHyperelasticMaterial<Scalar,Dim> *single_material = material.clone();
     PHYSIKA_ASSERT(single_material);
     constitutive_model_.push_back(single_material);
 }

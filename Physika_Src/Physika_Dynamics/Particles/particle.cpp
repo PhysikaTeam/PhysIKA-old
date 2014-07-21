@@ -51,6 +51,12 @@ Particle<Scalar,Dim>::~Particle()
 }
 
 template <typename Scalar, int Dim>
+Particle<Scalar,Dim>* Particle<Scalar,Dim>::clone() const
+{
+    return new Particle<Scalar,Dim>(*this);
+}
+
+template <typename Scalar, int Dim>
 Particle<Scalar,Dim>& Particle<Scalar,Dim>::operator= (const Particle<Scalar,Dim> &particle2)
 {
     x_ = particle2.x_;

@@ -54,6 +54,12 @@ TriMesh<Scalar>& TriMesh<Scalar>::operator= (const TriMesh<Scalar> &tri_mesh)
 }
 
 template <typename Scalar>
+TriMesh<Scalar>* TriMesh<Scalar>::clone() const
+{
+    return new TriMesh<Scalar>(*this);
+}
+
+template <typename Scalar>
 void TriMesh<Scalar>::printInfo() const
 {
     std::cout<<"2D Triangle Mesh."<<std::endl;

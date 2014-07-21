@@ -53,6 +53,12 @@ QuadMesh<Scalar>& QuadMesh<Scalar>::operator= (const QuadMesh<Scalar> &quad_mesh
 }
 
 template <typename Scalar>
+QuadMesh<Scalar>* QuadMesh<Scalar>::clone() const
+{
+    return new QuadMesh<Scalar>(*this);
+}
+
+template <typename Scalar>
 void QuadMesh<Scalar>::printInfo() const
 {
     std::cout<<"2D Quad Mesh."<<std::endl;

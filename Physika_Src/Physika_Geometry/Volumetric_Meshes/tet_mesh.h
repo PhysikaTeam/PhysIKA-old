@@ -31,6 +31,7 @@ public:
     TetMesh(const TetMesh<Scalar> &tet_mesh);
     ~TetMesh();
     TetMesh<Scalar>& operator= (const TetMesh<Scalar> &tet_mesh);
+    TetMesh<Scalar>* clone() const;
     void printInfo() const;
     VolumetricMeshInternal::ElementType elementType() const;
     unsigned int eleVertNum() const;
