@@ -25,7 +25,7 @@ using Physika::Vector;
 int main()
 {
     Range<float,2> domain = Range<float,2>::unitRange();
-    int cell_num = 2;
+    unsigned int cell_num = 2;
     Grid<float,2> grid(domain,cell_num);
     cout<<"Node Number: "<<grid.nodeNum()<<"\n";
     cout<<"Cell Number: "<<grid.cellNum()<<"\n";
@@ -37,38 +37,38 @@ int main()
     cout<<"Cell size: "<<grid.cellSize()<<"\n";
     //visit node with index
     cout<<"Visit node with index:\n";
-    for(int i = 0; i < grid.nodeNum()[0]; ++i)
-	for(int j = 0; j < grid.nodeNum()[1]; ++j)
-	    cout<<"Node ("<<i<<","<<j<<"): "<<grid.node(i,j)<<endl;
+    for(unsigned int i = 0; i < grid.nodeNum()[0]; ++i)
+        for(unsigned int j = 0; j < grid.nodeNum()[1]; ++j)
+            cout<<"Node ("<<i<<","<<j<<"): "<<grid.node(i,j)<<endl;
     //visit node with iterator
     cout<<"Visit node with iterator:\n";
     Grid<float,2>::NodeIterator node_iterator = grid.nodeBegin();
     while(node_iterator != grid.nodeEnd())
     {
-	Vector<int,2> index = node_iterator.nodeIndex();
-	cout<<"Node "<<index<<": "<<grid.node(index)<<endl;
-	++node_iterator;
+        Vector<unsigned int,2> index = node_iterator.nodeIndex();
+        cout<<"Node "<<index<<": "<<grid.node(index)<<endl;
+        ++node_iterator;
     }
     //visit cell with index
     cout<<"Visit cell with index:\n";
-    for(int i = 0; i < grid.cellNum()[0]; ++i)
-	for(int j = 0; j < grid.cellNum()[1]; ++j)
-	    cout<<"Cell ("<<i<<","<<j<<"): "<<grid.cellCenter(i,j)<<endl;
+    for(unsigned int i = 0; i < grid.cellNum()[0]; ++i)
+        for(unsigned int j = 0; j < grid.cellNum()[1]; ++j)
+            cout<<"Cell ("<<i<<","<<j<<"): "<<grid.cellCenter(i,j)<<endl;
     //visit node with iterator
     cout<<"Visit cell with iterator:\n";
     Grid<float,2>::CellIterator cell_iterator = grid.cellBegin();
     while(cell_iterator != grid.cellEnd())
     {
-	Vector<int,2> index = cell_iterator.cellIndex();
-	cout<<"Cell "<<index<<": "<<grid.cellCenter(index)<<endl;
-	++cell_iterator;
+        Vector<unsigned int,2> index = cell_iterator.cellIndex();
+        cout<<"Cell "<<index<<": "<<grid.cellCenter(index)<<endl;
+        ++cell_iterator;
     }
     //test == operator
     Grid<float,2> grid2(domain,cell_num);
     if(grid==grid2)
-	cout<<"Yes\n";
+        cout<<"Yes\n";
     else
-	cout<<"No\n";
+        cout<<"No\n";
     //test iterator operations
     node_iterator = grid.nodeBegin();
     cout<<"NodeBegin: "<<node_iterator.nodeIndex()<<"\n";

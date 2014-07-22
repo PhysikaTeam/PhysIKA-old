@@ -39,11 +39,14 @@ class FEMSolid: public FEMBase<Scalar,Dim>
 public:
     FEMSolid();
     FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
+    FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
+             const VolumetricMesh<Scalar,Dim> &mesh);
     ~FEMSolid();
 
     //virtual methods
     void initConfiguration(const std::string &file_name);
     void advanceStep(Scalar dt);
+    Scalar computeTimeStep();
     bool withRestartSupport() const;
     void write(const std::string &file_name);
     void read(const std::string &file_name);
@@ -58,6 +61,7 @@ public:
     ConstitutiveModel<Scalar,Dim>* elementMaterial(unsigned int ele_idx);
 protected:
     void initialize();
+    void clearMaterial(); //clear current material
     void addMaterial(const ConstitutiveModel<Scalar,Dim> &material);
 protected:
     std::vector<ConstitutiveModel<Scalar,Dim> *> constitutive_model_;

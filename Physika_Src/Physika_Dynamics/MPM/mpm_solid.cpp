@@ -33,11 +33,63 @@ MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame,
 }
 
 template <typename Scalar, int Dim>
+MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
+                               const std::vector<SolidParticle<Scalar,Dim>*> &particles, const Grid<Scalar,Dim> &grid)
+    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file),grid_(grid)
+{
+    setParticles(particles);
+    synchronizeGridData();
+}
+
+template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::~MPMSolid()
 {
     for(unsigned int i = 0; i < particles_.size(); ++i)
         if(particles_[i])
             delete particles_[i];
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::advanceStep(Scalar dt)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolid<Scalar,Dim>::computeTimeStep()
+{
+//TO DO
+    return 0;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::addPlugin(DriverPluginBase<Scalar> *plugin)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+bool MPMSolid<Scalar,Dim>::withRestartSupport() const
+{
+    return false;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::write(const std::string &file_name)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::read(const std::string &file_name)
+{
+//TO DO
 }
 
 template <typename Scalar, int Dim>
@@ -69,7 +121,12 @@ void MPMSolid<Scalar,Dim>::removeParticle(unsigned int particle_idx)
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles)
 {
+    //release data first
+    for(unsigned int i = 0; i < particles_.size(); ++i)
+        if(particles_[i])
+            delete particles_[i];
     particles_.clear();
+    //add new particle data
     for(unsigned int i = 0; i < particles.size(); ++i)
     {
         if(particles[i]==NULL)
@@ -102,6 +159,36 @@ SolidParticle<Scalar,Dim>& MPMSolid<Scalar,Dim>::particle(unsigned int particle_
         std::exit(EXIT_FAILURE);
     }
     return *particles_[particle_idx];
+}
+
+template <typename Scalar, int Dim>
+const Grid<Scalar,Dim>& MPMSolid<Scalar,Dim>::grid() const
+{
+    return grid_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::setGrid(const Grid<Scalar,Dim> &grid)
+{
+    grid_ = grid;
+    synchronizeGridData();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::initialize()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::synchronizeGridData()
+{
+    Vector<unsigned int,Dim> node_num = grid_.nodeNum();
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        grid_mass_.resize(node_num[i],i);
+        grid_velocity_.resize(node_num[i],i);
+    }
 }
 
 //explicit instantiations

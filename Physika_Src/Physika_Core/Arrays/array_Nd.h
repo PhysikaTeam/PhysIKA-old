@@ -60,7 +60,7 @@ protected:
     unsigned int totalElementCount() const;  //return the total number of elements
     unsigned int index1D(const std::vector<unsigned int> &idx) const; //given high dimension index, return 1d version
 protected:
-    unsigned int elment_count_[Dim];  //number of element in each dimension
+    unsigned int element_count_[Dim];  //number of element in each dimension
     ElementType *data_;  //data stored in 1D
 protected:
     PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");

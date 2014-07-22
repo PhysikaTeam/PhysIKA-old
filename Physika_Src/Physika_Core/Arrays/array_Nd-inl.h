@@ -63,7 +63,7 @@ ArrayND<ElementType,Dim>::~ArrayND()
 }
 
 template <typename ElementType,int Dim>
-ArrayND<ElementType,Dim>& ArrayND<ElementType,Dim>::operator= (const ArrayND<ElementType,Dim> &arrray)
+ArrayND<ElementType,Dim>& ArrayND<ElementType,Dim>::operator= (const ArrayND<ElementType,Dim> &array)
 {
     std::vector<unsigned int> element_counts = array.size();
     resize(element_counts);
@@ -75,7 +75,7 @@ ArrayND<ElementType,Dim>& ArrayND<ElementType,Dim>::operator= (const ArrayND<Ele
 template <typename ElementType,int Dim>
 unsigned int ArrayND<ElementType,Dim>::elementCount(unsigned int dim) const
 {
-    if(dim<0||dim>=Dim)
+    if(dim>=Dim)
     {
         std::cerr<<"Dimension out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -95,7 +95,7 @@ std::vector<unsigned int> ArrayND<ElementType,Dim>::elementCount() const
     std::vector<unsigned int> count(Dim);
     for(unsigned int i = 0; i < count.size(); ++i)
         count[i] = element_count_[i];
-    return count[i];
+    return count;
 }
 
 template <typename ElementType,int Dim>
@@ -107,17 +107,12 @@ std::vector<unsigned int> ArrayND<ElementType,Dim>::size() const
 template <typename ElementType,int Dim>
 void ArrayND<ElementType,Dim>::resize(unsigned int count, unsigned int dim)
 {
-    if(dim<0||dim>=Dim)
+    if(dim>=Dim)
     {
         std::cerr<<"Dimension out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if(count<0)
-    {
-        std::cerr<<"Number of elements must be equal or greater than zero!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    element_count_[i] = count;
+    element_count_[dim] = count;
     allocate();
 }
 
@@ -128,14 +123,6 @@ void ArrayND<ElementType,Dim>::resize(const std::vector<unsigned int> &count)
     {
         std::cerr<<"Dimension of element counts mismatches the dimension of array!\n";
         std::exit(EXIT_FAILURE);
-    }
-    for(unsigned int i = 0; i < count.size(); ++i)
-    {
-        if(count[i]<0)
-        {
-            std::cerr<<"Number of elements must be equal or greater than zero!\n";
-            std::exit(EXIT_FAILURE);
-        }
     }
     for(unsigned int i = 0; i < count.size(); ++i)
         element_count_[i] = count[i];
@@ -158,7 +145,7 @@ ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const std::vector<unsigned
     }
     for(unsigned int i = 0; i < idx.size(); ++i)
     {
-        if(idx[i]<0||idx[i]>=element_count_[i])
+        if(idx[i]>=element_count_[i])
         {
             std::cerr<<"Array index out of range!\n";
             std::exit(EXIT_FAILURE);
@@ -190,7 +177,7 @@ template <typename ElementType,int Dim>
 unsigned int ArrayND<ElementType,Dim>::totalElementCount() const
 {
     unsigned int total_count = 1;
-    for(int i = 0; i < Dim; ++i)
+    for(unsigned int i = 0; i < Dim; ++i)
         total_count *= element_count_[i];
     return total_count;
 }
@@ -199,13 +186,13 @@ template <typename ElementType,int Dim>
 unsigned int ArrayND<ElementType,Dim>::index1D(const std::vector<unsigned int> &idx) const
 {
     PHYSIKA_ASSERT(idx.size()==Dim);
-    for(int i = 0; i < Dim; ++i)
+    for(unsigned int i = 0; i < Dim; ++i)
         PHYSIKA_ASSERT(idx[i]>=0&&idx[i]<element_count_[i]);
     unsigned int index = 0;
-    for(int i = 0; i < Dim; ++i)
+    for(unsigned int i = 0; i < Dim; ++i)
     {
         unsigned int temp = idx[i];
-        for(int j = i+1; j < Dim; ++j)
+        for(unsigned int j = i+1; j < Dim; ++j)
             temp *= element_count_[j];
         index += temp;
     }

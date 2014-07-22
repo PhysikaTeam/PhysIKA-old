@@ -34,6 +34,13 @@ FEMSolid<Scalar,Dim>::FEMSolid(unsigned int start_frame, unsigned int end_frame,
 }
 
 template <typename Scalar, int Dim>
+FEMSolid<Scalar,Dim>::FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
+                               const VolumetricMesh<Scalar,Dim> &mesh)
+    :FEMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,mesh)
+{
+}
+
+template <typename Scalar, int Dim>
 FEMSolid<Scalar,Dim>::~FEMSolid()
 {
     for(unsigned int i = 0; i < constitutive_model_.size(); ++i)
@@ -48,6 +55,13 @@ void FEMSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::advanceStep(Scalar dt)
 {//TO DO
+}
+
+template <typename Scalar, int Dim>
+Scalar FEMSolid<Scalar,Dim>::computeTimeStep()
+{
+//TO DO
+    return 0;
 }
 
 template <typename Scalar, int Dim>
@@ -80,7 +94,7 @@ unsigned int FEMSolid<Scalar,Dim>::materialNum() const
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::setHomogeneousMaterial(const ConstitutiveModel<Scalar,Dim> &material)
 {
-    constitutive_model_.clear();
+    clearMaterial();
     addMaterial(material);
 }
 
@@ -93,7 +107,7 @@ void FEMSolid<Scalar,Dim>::setRegionWiseMaterial(const std::vector<ConstitutiveM
         std::cerr<<"Size of materials must be no less than the number of simulation mesh regions.\n";
         std::exit(EXIT_FAILURE);
     }
-    constitutive_model_.clear();
+    clearMaterial();
     for(unsigned int i = 0; i < region_num; ++i)
         addMaterial(*materials[i]);
 }
@@ -107,7 +121,7 @@ void FEMSolid<Scalar,Dim>::setElementWiseMaterial(const std::vector<Constitutive
         std::cerr<<"Size of materials must be no less than the number of simulation mesh elements.\n";
         std::exit(EXIT_FAILURE);
     }
-    constitutive_model_.clear();
+    clearMaterial();
     for(unsigned int i = 0; i < ele_num; ++i)
         addMaterial(*materials[i]);
 }
@@ -167,6 +181,15 @@ ConstitutiveModel<Scalar,Dim>* FEMSolid<Scalar,Dim>::elementMaterial(unsigned in
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::initialize()
 {//TO DO
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::clearMaterial()
+{
+    for(unsigned int i = 0 ; i < constitutive_model_.size(); ++i)
+        if(constitutive_model_[i])
+            delete constitutive_model_[i];
+    constitutive_model_.clear();
 }
 
 template <typename Scalar, int Dim>

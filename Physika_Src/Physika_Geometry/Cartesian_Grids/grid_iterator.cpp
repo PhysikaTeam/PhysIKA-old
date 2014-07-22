@@ -22,7 +22,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim>
 GridIteratorBase<Scalar,Dim>::GridIteratorBase()
-    :index_(-1),grid_(NULL)
+    :index_(0),grid_(NULL)
 {
 }
 
@@ -68,13 +68,13 @@ bool GridIteratorBase<Scalar,Dim>::operator!= (const GridIteratorBase<Scalar,Dim
 }
 
 template <typename Scalar,int Dim>
-int GridIteratorBase<Scalar,Dim>::flatIndex(const Vector<int,Dim> &index, const Vector<int,Dim> &dimension) const
+unsigned int GridIteratorBase<Scalar,Dim>::flatIndex(const Vector<unsigned int,Dim> &index, const Vector<unsigned int,Dim> &dimension) const
 {
-    int flat_index = 0;
-    Vector<int,Dim> vec = index;
-    for(int i = 0; i < Dim; ++i)
+    unsigned int flat_index = 0;
+    Vector<unsigned int,Dim> vec = index;
+    for(unsigned int i = 0; i < Dim; ++i)
     {
-        for(int j = i+1; j < Dim; ++j)
+        for(unsigned int j = i+1; j < Dim; ++j)
             vec[i] *= dimension[j];
         flat_index += vec[i];
     }
@@ -82,14 +82,14 @@ int GridIteratorBase<Scalar,Dim>::flatIndex(const Vector<int,Dim> &index, const 
 }
 
 template <typename Scalar,int Dim>
-Vector<int,Dim> GridIteratorBase<Scalar,Dim>::indexFromFlat(int flat_index, const Vector<int,Dim> &dimension) const
+Vector<unsigned int,Dim> GridIteratorBase<Scalar,Dim>::indexFromFlat(unsigned int flat_index, const Vector<unsigned int,Dim> &dimension) const
 {
-    Vector<int,Dim> index(1);
-    for(int i = 0; i < Dim; ++i)
+    Vector<unsigned int,Dim> index(1);
+    for(unsigned int i = 0; i < Dim; ++i)
     {
-        for(int j = i+1; j < Dim; ++j)
+        for(unsigned int j = i+1; j < Dim; ++j)
             index[i] *= dimension[j];
-        int temp = flat_index / index[i];
+        unsigned int temp = flat_index / index[i];
         flat_index = flat_index % index[i];
         index[i] = temp;
     }
@@ -97,15 +97,11 @@ Vector<int,Dim> GridIteratorBase<Scalar,Dim>::indexFromFlat(int flat_index, cons
 }
 
 template <typename Scalar,int Dim>
-bool GridIteratorBase<Scalar,Dim>::indexCheck(const Vector<int,Dim> &dimension) const
+bool GridIteratorBase<Scalar,Dim>::indexCheck(const Vector<unsigned int,Dim> &dimension) const
 {
-    for(int i = Dim-1; i >= 0; --i)
-    {
-        if((index_[i]<0) || (index_[i]>=dimension[i]))
-        {
+    for(unsigned int i = 0; i < Dim; ++i)
+        if(index_[i]>=dimension[i])
             return false;
-        }
-    }
     return true;
 }
 
@@ -153,9 +149,9 @@ GridNodeIterator<Scalar,Dim>& GridNodeIterator<Scalar,Dim>::operator++ ()
         std::cerr<<"Undefined operator ++ for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    Vector<int,Dim> node_num = (this->grid_)->nodeNum();
-    Vector<int,Dim> &index = this->index_; //for ease of coding
-    for(int i = Dim-1; i >= 0; --i)
+    Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
+    Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
+    for(unsigned int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==node_num[i]-1) && (i!=0))
             index[i] = 0;
@@ -176,9 +172,9 @@ GridNodeIterator<Scalar,Dim>& GridNodeIterator<Scalar,Dim>::operator-- ()
         std::cerr<<"Undefined operator -- for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    Vector<int,Dim> node_num = (this->grid_)->nodeNum();
-    Vector<int,Dim> &index = this->index_; //for ease of coding
-    for(int i = Dim-1; i >= 0; --i)
+    Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
+    Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
+    for(unsigned int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==0) && (i!=0))
             index[i] = node_num[i]-1;
@@ -200,9 +196,9 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator++ (int)
         std::exit(EXIT_FAILURE);
     }
     GridNodeIterator<Scalar,Dim> iterator(*this);
-    Vector<int,Dim> node_num = (this->grid_)->nodeNum();
-    Vector<int,Dim> &index = this->index_; //for ease of coding
-    for(int i = Dim-1; i >= 0; --i)
+    Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
+    Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
+    for(unsigned int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==node_num[i]-1) && (i!=0))
             index[i] = 0;
@@ -224,9 +220,9 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator-- (int)
         std::exit(EXIT_FAILURE);
     }
     GridNodeIterator<Scalar,Dim> iterator(*this);
-    Vector<int,Dim> node_num = (this->grid_)->nodeNum();
-    Vector<int,Dim> &index = this->index_; //for ease of coding
-    for(int i = Dim-1; i >= 0; --i)
+    Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
+    Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
+    for(unsigned int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==0) && (i!=0))
             index[i] = node_num[i]-1;
@@ -248,9 +244,9 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator+ (int stride
         std::exit(EXIT_FAILURE);
     }
     GridNodeIterator<Scalar,Dim> iterator(*this);
-    Vector<int,Dim> node_num = (iterator.grid_)->nodeNum();
-    Vector<int,Dim> &index = iterator.index_;
-    int flat_index = GridIteratorBase<Scalar,Dim>::flatIndex(index,node_num);
+    Vector<unsigned int,Dim> node_num = (iterator.grid_)->nodeNum();
+    Vector<unsigned int,Dim> &index = iterator.index_;
+    unsigned int flat_index = GridIteratorBase<Scalar,Dim>::flatIndex(index,node_num);
     flat_index += stride;
     index = GridIteratorBase<Scalar,Dim>::indexFromFlat(flat_index,node_num);
     return iterator;
@@ -265,16 +261,16 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator- (int stride
         std::exit(EXIT_FAILURE);
     }
     GridNodeIterator<Scalar,Dim> iterator(*this);
-    Vector<int,Dim> node_num = (iterator.grid_)->nodeNum();
-    Vector<int,Dim> &index = iterator.index_;
-    int flat_index = GridIteratorBase<Scalar,Dim>::flatIndex(index,node_num);
+    Vector<unsigned int,Dim> node_num = (iterator.grid_)->nodeNum();
+    Vector<unsigned int,Dim> &index = iterator.index_;
+    unsigned int flat_index = GridIteratorBase<Scalar,Dim>::flatIndex(index,node_num);
     flat_index -= stride;
     index = GridIteratorBase<Scalar,Dim>::indexFromFlat(flat_index,node_num);
     return iterator;
 }
 
 template <typename Scalar,int Dim>
-const Vector<int,Dim>& GridNodeIterator<Scalar,Dim>::nodeIndex() const
+const Vector<unsigned int,Dim>& GridNodeIterator<Scalar,Dim>::nodeIndex() const
 {
     if(this->validCheck()==false)
     {
@@ -289,7 +285,7 @@ bool GridNodeIterator<Scalar,Dim>::validCheck() const
 {
     if(this->grid_==NULL)
         return false;
-    Vector<int,Dim> node_num = (this->grid_)->nodeNum();
+    Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     if(GridIteratorBase<Scalar,Dim>::indexCheck(node_num)==false)
         return false;
     return true;
@@ -339,9 +335,9 @@ GridCellIterator<Scalar,Dim>& GridCellIterator<Scalar,Dim>::operator++ ()
         std::cerr<<"Undefined operator ++ for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    Vector<int,Dim> cell_num = (this->grid_)->cellNum();
-    Vector<int,Dim> &index = this->index_; //for ease of coding
-    for(int i = Dim-1; i >= 0; --i)
+    Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
+    Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
+    for(unsigned int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==cell_num[i]-1) && (i!=0))
             index[i] = 0;
@@ -362,9 +358,9 @@ GridCellIterator<Scalar,Dim>& GridCellIterator<Scalar,Dim>::operator-- ()
         std::cerr<<"Undefined operator -- for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    Vector<int,Dim> cell_num = (this->grid_)->cellNum();
-    Vector<int,Dim> &index = this->index_; //for ease of coding
-    for(int i = Dim-1; i >= 0; --i)
+    Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
+    Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
+    for(unsigned int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==0) && (i!=0))
             index[i] = cell_num[i]-1;
@@ -386,9 +382,9 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator++ (int)
         std::exit(EXIT_FAILURE);
     }
     GridCellIterator<Scalar,Dim> iterator(*this);
-    Vector<int,Dim> cell_num = (this->grid_)->cellNum();
-    Vector<int,Dim> &index = this->index_; //for ease of coding
-    for(int i = Dim-1; i >= 0; --i)
+    Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
+    Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
+    for(unsigned int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==cell_num[i]-1) && (i!=0))
             index[i] = 0;
@@ -410,9 +406,9 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator-- (int)
         std::exit(EXIT_FAILURE);
     }
     GridCellIterator<Scalar,Dim> iterator(*this);
-    Vector<int,Dim> cell_num = (this->grid_)->cellNum();
-    Vector<int,Dim> &index = this->index_; //for ease of coding
-    for(int i = Dim-1; i >= 0; --i)
+    Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
+    Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
+    for(unsigned int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==0) && (i!=0))
             index[i] = cell_num[i]-1;
@@ -434,9 +430,9 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator+ (int stride
         std::exit(EXIT_FAILURE);
     }
     GridCellIterator<Scalar,Dim> iterator(*this);
-    Vector<int,Dim> cell_num = (iterator.grid_)->cellNum();
-    Vector<int,Dim> &index = iterator.index_;
-    int flat_index = GridIteratorBase<Scalar,Dim>::flatIndex(index,cell_num);
+    Vector<unsigned int,Dim> cell_num = (iterator.grid_)->cellNum();
+    Vector<unsigned int,Dim> &index = iterator.index_;
+    unsigned int flat_index = GridIteratorBase<Scalar,Dim>::flatIndex(index,cell_num);
     flat_index += stride;
     index = GridIteratorBase<Scalar,Dim>::indexFromFlat(flat_index,cell_num);
     return iterator;
@@ -451,16 +447,16 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator- (int stride
         std::exit(EXIT_FAILURE);
     }
     GridCellIterator<Scalar,Dim> iterator(*this);
-    Vector<int,Dim> cell_num = (iterator.grid_)->cellNum();
-    Vector<int,Dim> &index = iterator.index_;
-    int flat_index = GridIteratorBase<Scalar,Dim>::flatIndex(index,cell_num);
+    Vector<unsigned int,Dim> cell_num = (iterator.grid_)->cellNum();
+    Vector<unsigned int,Dim> &index = iterator.index_;
+    unsigned int flat_index = GridIteratorBase<Scalar,Dim>::flatIndex(index,cell_num);
     flat_index += stride;
     index = GridIteratorBase<Scalar,Dim>::indexFromFlat(flat_index,cell_num);
     return iterator;
 }
 
 template <typename Scalar,int Dim>
-const Vector<int,Dim>& GridCellIterator<Scalar,Dim>::cellIndex() const
+const Vector<unsigned int,Dim>& GridCellIterator<Scalar,Dim>::cellIndex() const
 {
     if(this->validCheck()==false)
     {
@@ -475,7 +471,7 @@ bool GridCellIterator<Scalar,Dim>::validCheck() const
 {
     if(this->grid_==NULL)
         return false;
-    Vector<int,Dim> cell_num = (this->grid_)->cellNum();
+    Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     if(GridIteratorBase<Scalar,Dim>::indexCheck(cell_num)==false)
         return false;
     return true;

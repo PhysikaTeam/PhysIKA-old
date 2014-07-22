@@ -36,8 +36,8 @@ class GridBase
 public:
     GridBase();
     virtual ~GridBase()=0;
-    GridBase(const Range<Scalar,Dim> &domain, int cell_num); //same cell size along each dimension
-    GridBase(const Range<Scalar,Dim> &domain, const Vector<int,Dim> &cell_num);
+    GridBase(const Range<Scalar,Dim> &domain, unsigned int cell_num); //same cell size along each dimension
+    GridBase(const Range<Scalar,Dim> &domain, const Vector<unsigned int,Dim> &cell_num);
     GridBase(const GridBase<Scalar,Dim> &grid);
     const Range<Scalar,Dim>& domain() const;
     const Vector<Scalar,Dim>& dX() const;
@@ -45,16 +45,16 @@ public:
     const Vector<Scalar,Dim>& maxCorner() const;
     Scalar minEdgeLength() const;
     Scalar maxEdgeLength() const;
-    const Vector<int,Dim>& cellNum() const;
-    Vector<int,Dim> nodeNum() const;
+    const Vector<unsigned int,Dim>& cellNum() const;
+    Vector<unsigned int,Dim> nodeNum() const;
     Scalar cellSize() const; //2d: area; 3d: volume;
-    Vector<Scalar,Dim> node(const Vector<int,Dim> &index) const;
-    Vector<Scalar,Dim> cellCenter(const Vector<int,Dim> &index) const;
+    Vector<Scalar,Dim> node(const Vector<unsigned int,Dim> &index) const;
+    Vector<Scalar,Dim> cellCenter(const Vector<unsigned int,Dim> &index) const;
     //modifiers
-    void setCellNum(int cell_num);  //same cell number along each dimension
-    void setCellNum(const Vector<int,Dim> &cell_num);
-    void setNodeNum(int node_num);
-    void setNodeNum(const Vector<int,Dim> &node_num);
+    void setCellNum(unsigned int cell_num);  //same cell number along each dimension
+    void setCellNum(const Vector<unsigned int,Dim> &cell_num);
+    void setNodeNum(unsigned int node_num);
+    void setNodeNum(const Vector<unsigned int,Dim> &node_num);
     void setDomain(const Range<Scalar,Dim> &domain);
 protected:
     GridBase<Scalar,Dim>& operator= (const GridBase<Scalar,Dim> &grid);
@@ -62,7 +62,7 @@ protected:
 protected:
     Range<Scalar,Dim> domain_;
     Vector<Scalar,Dim> dx_;
-    Vector<int,Dim> cell_num_;
+    Vector<unsigned int,Dim> cell_num_;
 };
 
 /*
@@ -80,13 +80,13 @@ class Grid<Scalar,2>: public GridBase<Scalar,2>
 public:
     Grid():GridBase<Scalar,2>(){}
     ~Grid(){}
-    Grid(const Range<Scalar,2> &domain, int cell_num):GridBase<Scalar,2>(domain,cell_num){}
-    Grid(const Range<Scalar,2> &domain, const Vector<int,2> &cell_num):GridBase<Scalar,2>(domain,cell_num){}
+    Grid(const Range<Scalar,2> &domain, unsigned int cell_num):GridBase<Scalar,2>(domain,cell_num){}
+    Grid(const Range<Scalar,2> &domain, const Vector<unsigned int,2> &cell_num):GridBase<Scalar,2>(domain,cell_num){}
     Grid(const Grid<Scalar,2> &grid):GridBase<Scalar,2>(grid){}
     Grid<Scalar,2>& operator= (const Grid<Scalar,2> &grid){GridBase<Scalar,2>::operator=(grid);return *this;}
     bool operator== (const Grid<Scalar,2> &grid){return GridBase<Scalar,2>::operator==(grid);}
-    Vector<Scalar,2> node(int i, int j) const;
-    Vector<Scalar,2> cellCenter(int i, int j) const;
+    Vector<Scalar,2> node(unsigned int i, unsigned int j) const;
+    Vector<Scalar,2> cellCenter(unsigned int i, unsigned int j) const;
     //avoid hiding node() and cellCenter() methods in GridBase
     using GridBase<Scalar,2>::node;
     using GridBase<Scalar,2>::cellCenter;
@@ -105,13 +105,13 @@ class Grid<Scalar,3>: public GridBase<Scalar,3>
 public:
     Grid():GridBase<Scalar,3>(){}
     ~Grid(){}
-    Grid(const Range<Scalar,3> &domain, int cell_num):GridBase<Scalar,3>(domain,cell_num){}
-    Grid(const Range<Scalar,3> &domain, const Vector<int,3> &cell_num):GridBase<Scalar,3>(domain,cell_num){}
+    Grid(const Range<Scalar,3> &domain, unsigned int cell_num):GridBase<Scalar,3>(domain,cell_num){}
+    Grid(const Range<Scalar,3> &domain, const Vector<unsigned int,3> &cell_num):GridBase<Scalar,3>(domain,cell_num){}
     Grid(const Grid<Scalar,3> &grid):GridBase<Scalar,3>(grid){}
     Grid<Scalar,3>& operator= (const Grid<Scalar,3> &grid){GridBase<Scalar,3>::operator=(grid);return *this;}
     bool operator== (const Grid<Scalar,3> &grid){return GridBase<Scalar,3>::operator==(grid);}
-    Vector<Scalar,3> node(int i, int j, int k) const;
-    Vector<Scalar,3> cellCenter(int i, int j, int k) const;
+    Vector<Scalar,3> node(unsigned int i, unsigned int j, unsigned int k) const;
+    Vector<Scalar,3> cellCenter(unsigned int i, unsigned int j, unsigned int k) const;
     //avoid hiding node() and cellCenter() methods in GridBase
     using GridBase<Scalar,3>::node;
     using GridBase<Scalar,3>::cellCenter;

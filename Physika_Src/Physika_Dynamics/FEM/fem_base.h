@@ -40,11 +40,14 @@ class FEMBase: public DriverBase<Scalar>
 public:
     FEMBase();
     FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
+    FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
+        const VolumetricMesh<Scalar,Dim> &mesh);
     virtual ~FEMBase();
 
     //virtual methods for subclass to implement
     virtual void initConfiguration(const std::string &file_name)=0;
     virtual void advanceStep(Scalar dt)=0;
+    virtual Scalar computeTimeStep()=0;
     virtual bool withRestartSupport() const=0;
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
