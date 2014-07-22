@@ -1,6 +1,7 @@
 /*
  * @file solid_particle.cpp 
  * @Brief the particle used to represent solid, carry deformation gradient information
+ *        and constitutive model
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -13,38 +14,50 @@
  */
 
 #include "Physika_Dynamics/Particles/solid_particle.h"
+#include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>::SolidParticle()
-    :Particle<Scalar,Dim>()
+    :Particle<Scalar,Dim>(),constitutive_model_(NULL)
 {
     F_ = SquareMatrix<Scalar,Dim>::identityMatrix();
 }
 
 template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>::SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol)
-    :Particle<Scalar,Dim>(pos,vel,mass,vol)
+    :Particle<Scalar,Dim>(pos,vel,mass,vol),constitutive_model_(NULL)
 {
     F_ = SquareMatrix<Scalar,Dim>::identityMatrix();
 }
 
 template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>::SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad)
-    :Particle<Scalar,Dim>(pos,vel,mass,vol),F_(deform_grad)
+    :Particle<Scalar,Dim>(pos,vel,mass,vol),F_(deform_grad),constitutive_model_(NULL)
 {
+}
+
+template <typename Scalar, int Dim>
+SolidParticle<Scalar,Dim>::SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad,
+                                         const ConstitutiveModel<Scalar,Dim> &material)
+    :Particle<Scalar,Dim>(pos,vel,mass,vol),F_(deform_grad),constitutive_model_(NULL)
+{
+    setConstitutiveModel(material);
 }
 
 template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>::SolidParticle(const SolidParticle<Scalar,Dim> &particle)
     :Particle<Scalar,Dim>(particle), F_(particle.F_)
 {
+    setConstitutiveModel(*(particle.constitutive_model_));
 }
 
 template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>::~SolidParticle()
 {
+    if(constitutive_model_)
+        delete constitutive_model_;
 }
 
 template <typename Scalar, int Dim>
@@ -58,6 +71,7 @@ SolidParticle<Scalar,Dim>& SolidParticle<Scalar,Dim>::operator= (const SolidPart
 {
     Particle<Scalar,Dim>::operator= (particle);
     F_ = particle.F_;
+    setConstitutiveModel(*(particle.constitutive_model_));
     return *this;
 }
 
@@ -71,6 +85,26 @@ template <typename Scalar, int Dim>
 void SolidParticle<Scalar,Dim>::setDeformationGradient(const SquareMatrix<Scalar,Dim> &F)
 {
     F_ = F;
+}
+
+template <typename Scalar, int Dim>
+const ConstitutiveModel<Scalar,Dim>* SolidParticle<Scalar,Dim>::constitutiveModel() const
+{
+    return constitutive_model_;
+}
+
+template <typename Scalar, int Dim>
+ConstitutiveModel<Scalar,Dim>* SolidParticle<Scalar,Dim>::constitutiveModel()
+{
+    return constitutive_model_;
+}
+
+template <typename Scalar, int Dim>
+void SolidParticle<Scalar,Dim>::setConstitutiveModel(const ConstitutiveModel<Scalar,Dim> &material)
+{
+    if(constitutive_model_)
+        delete constitutive_model_;
+    constitutive_model_ = material.clone();
 }
 
 //explicit instantiations

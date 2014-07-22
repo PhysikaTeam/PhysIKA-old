@@ -33,7 +33,7 @@ enum ModulusType{
 } //end of namespace IsotropicHyperelasticMaterialInternal
 
 template <typename Scalar, int Dim>
-class IsotropicHyperelasticMaterial: public ConstitutiveModel
+class IsotropicHyperelasticMaterial: public ConstitutiveModel<Scalar,Dim>
 {
 public:
     IsotropicHyperelasticMaterial(){}

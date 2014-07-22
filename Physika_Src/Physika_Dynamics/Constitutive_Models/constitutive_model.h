@@ -15,8 +15,12 @@
 #ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_CONSTITUTIVE_MODEL_H_
 #define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_CONSTITUTIVE_MODEL_H_
 
+#include "Physika_Core/Matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
+
 namespace Physika{
 
+template <typename Scalar, int Dim>
 class ConstitutiveModel
 {
 public:
@@ -24,6 +28,10 @@ public:
     virtual ~ConstitutiveModel(){}
     virtual ConstitutiveModel* clone() const=0;  //clone the constitutive model
     virtual void printInfo() const=0;
+    virtual Scalar energy(const SquareMatrix<Scalar,Dim> &F) const=0;//compute potential energy density from given deformation gradient
+    virtual SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
+    virtual SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
+    virtual SquareMatrix<Scalar,Dim> cauchyStress(const SquareMatrix<Scalar,Dim> &F) const=0;
 protected:
 };
 

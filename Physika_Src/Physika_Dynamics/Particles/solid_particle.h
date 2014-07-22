@@ -1,6 +1,7 @@
 /*
  * @file solid_particle.h 
  * @Brief the particle used to represent solid, carry deformation gradient information
+ *        and constitutive model
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -21,21 +22,29 @@
 
 namespace Physika{
 
+template <typename Scalar, int Dim> class ConstitutiveModel;
+template <typename Scalar, int Dim> class Vector;
+
 template <typename Scalar, int Dim>
 class SolidParticle: public Particle<Scalar,Dim>
 {
 public:
     SolidParticle();
-    SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol); //F set to identity
-    SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad);
+    SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol); //F set to identity, constitutive model unset
+    SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad);  //constitutive model unset
+    SolidParticle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, const SquareMatrix<Scalar,Dim> &deform_grad, const ConstitutiveModel<Scalar,Dim> &material);
     SolidParticle(const SolidParticle<Scalar,Dim> &particle);
     virtual ~SolidParticle(); 
     virtual SolidParticle<Scalar,Dim>* clone() const;
     SolidParticle<Scalar,Dim>& operator= (const SolidParticle<Scalar,Dim> &particle);
     const SquareMatrix<Scalar,Dim>& deformationGradient() const;
     void setDeformationGradient(const SquareMatrix<Scalar,Dim> &F);
+    const ConstitutiveModel<Scalar,Dim>* constitutiveModel() const;
+    ConstitutiveModel<Scalar,Dim>* constitutiveModel();
+    void setConstitutiveModel(const ConstitutiveModel<Scalar,Dim> &material);
 protected:
     SquareMatrix<Scalar,Dim> F_;
+    ConstitutiveModel<Scalar,Dim> *constitutive_model_;
 };
 
 }  //end of namespace Physika
