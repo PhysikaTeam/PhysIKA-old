@@ -191,6 +191,36 @@ void MPMSolid<Scalar,Dim>::synchronizeGridData()
     }
 }
 
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::rasterize()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::updateGridVelocities()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::performGridCollisions()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::performParticleCollisions()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::updateParticleStates()
+{
+//TO DO
+}
+
 //explicit instantiations
 template class MPMSolid<float,2>;
 template class MPMSolid<float,3>;
