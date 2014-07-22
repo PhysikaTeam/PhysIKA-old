@@ -23,7 +23,7 @@ namespace Physika{
 namespace FileUtilities{
 
 //remove abundant whitespaces
-std::string removeWhitespaces(const std::string &line_, unsigned int numRetainedSpaces = 1);
+std::string removeWhitespaces(const std::string &line, unsigned int num_retained_spaces = 1);
 
 } //end of namespace FileUtilities
 

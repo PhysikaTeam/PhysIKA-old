@@ -1,6 +1,7 @@
 /*
  * @file rigid_body.h 
- * @Basic rigid_body class.
+ * @Brief rigid body class, it's an empty class, implemented in 2D/3D with
+ *        template partial specialization.
  * @author Tianxiang Zhang
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -24,8 +25,8 @@ class RigidBody
 {
 public:
 	//constructors && deconstructors
-	RigidBody();
-	virtual ~RigidBody();
+	RigidBody(){}
+	virtual ~RigidBody(){}
     typename CollidableObjectInternal::ObjectType objectType() const;
 
 protected:

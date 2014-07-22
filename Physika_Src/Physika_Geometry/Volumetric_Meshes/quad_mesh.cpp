@@ -79,7 +79,7 @@ unsigned int QuadMesh<Scalar>::eleVertNum() const
 template <typename Scalar>
 Scalar QuadMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"QuadMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -97,7 +97,7 @@ Scalar QuadMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 template <typename Scalar>
 bool QuadMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"QuadMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -118,7 +118,7 @@ void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<S
  *Dy1 = ......
  *
  */
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"QuadMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);

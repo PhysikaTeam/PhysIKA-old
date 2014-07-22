@@ -78,7 +78,7 @@ unsigned int CubicMesh<Scalar>::eleVertNum() const
 template <typename Scalar>
 Scalar CubicMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"CubicMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -96,7 +96,7 @@ Scalar CubicMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 template <typename Scalar>
 bool CubicMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"CubicMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -121,7 +121,7 @@ void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<
  *Dz0 =
  *Dz1 =
  */
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"CubicMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);

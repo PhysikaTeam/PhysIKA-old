@@ -80,7 +80,7 @@ unsigned int TetMesh<Scalar>::eleVertNum() const
 template <typename Scalar>
 Scalar TetMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"TetMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -140,7 +140,7 @@ void TetMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
 
   wi = Di / D0
 */
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"TetMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);

@@ -17,7 +17,7 @@
 
 #include <string>
 #include <vector>
-#include "Physika_Core/Utilities/Timer/timer.h"
+#include "Physika_Core/Timer/timer.h"
 #include "Physika_Core/Config_File/config_file.h"
 
 namespace Physika{

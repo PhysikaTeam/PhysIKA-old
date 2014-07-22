@@ -67,10 +67,12 @@ protected:
     void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
     //substeps in one time step
     void rasterize();
-    void updateGridVelocities();
-    void performGridCollisions();
-    void performParticleCollisions();
-    void updateParticleStates();
+    void updateGridVelocity();
+    void performGridCollision();
+    void performParticleCollision();
+    void updateParticleInterpolationWeight();
+    void updateParticleConstitutiveModelState();
+    void updateParticlePositionAndVelocity();
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
     Grid<Scalar,Dim> grid_;

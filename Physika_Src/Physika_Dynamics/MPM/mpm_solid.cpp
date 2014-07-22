@@ -198,25 +198,31 @@ void MPMSolid<Scalar,Dim>::rasterize()
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::updateGridVelocities()
+void MPMSolid<Scalar,Dim>::updateGridVelocity()
 {
 //TO DO
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::performGridCollisions()
+void MPMSolid<Scalar,Dim>::performGridCollision()
 {
 //TO DO
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::performParticleCollisions()
+void MPMSolid<Scalar,Dim>::performParticleCollision()
 {
 //TO DO
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::updateParticleStates()
+void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::updateParticlePositionAndVelocity()
 {
 //TO DO
 }

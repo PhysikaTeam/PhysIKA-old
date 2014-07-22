@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_UTILITIES_TIMER_TIMER_H_
-#define PHYSIKA_CORE_UTILITIES_TIMER_TIMER_H_
+#ifndef PHYSIKA_CORE_TIMER_TIMER_H_
+#define PHYSIKA_CORE_TIMER_TIMER_H_
 
 #if (defined __unix__) || (defined __APPLE__)
 #include <sys/time.h>
@@ -43,4 +43,4 @@ protected:
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_CORE_UTILITIES_TIMER_TIMER_H_
+#endif //PHYSIKA_CORE_TIMER_TIMER_H_

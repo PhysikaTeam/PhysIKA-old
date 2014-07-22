@@ -21,15 +21,18 @@ namespace Physika{
 
 namespace FileUtilities{
 
-string removeWhitespaces(const string &line_, unsigned int numRetainedSpaces)
+string removeWhitespaces(const string &line, unsigned int num_retained_spaces)
 {
     string::size_type pos;
-    string line = line_;
+    string new_line = line;
     string whitespace(" "), retained_whitespaces(" ");
-    for(unsigned int i=0; i<numRetainedSpaces; ++i)retained_whitespaces+= whitespace;
-    while(line[0] == ' ')line = line.substr(1);
-    while((pos=line.find(retained_whitespaces)) != string::npos)line.erase(pos,1);
-    return line;
+    for(unsigned int i = 0; i < num_retained_spaces; ++i)
+        retained_whitespaces += whitespace;
+    while(new_line[0] == ' ')
+        new_line = new_line.substr(1);
+    while((pos=new_line.find(retained_whitespaces)) != string::npos)
+        new_line.erase(pos,1);
+    return new_line;
 }
 
 } //end of namespace FileUtilities

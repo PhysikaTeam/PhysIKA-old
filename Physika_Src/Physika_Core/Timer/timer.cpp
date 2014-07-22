@@ -13,7 +13,7 @@
  *
  */
 
-#include "Physika_Core/Utilities/Timer/timer.h"
+#include "Physika_Core/Timer/timer.h"
 
 namespace Physika{
 

@@ -80,7 +80,7 @@ unsigned int TriMesh<Scalar>::eleVertNum() const
 template <typename Scalar>
 Scalar TriMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"TriMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -117,7 +117,7 @@ void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
 
 
 */
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"TriMesh element index out of range!\n";
         std::exit(EXIT_FAILURE);
