@@ -20,7 +20,7 @@
 namespace Physika{
 
 /*
- * JohnsonQudraticWeightFunction: 
+ * JohnsonQuadraticWeightFunction: 
  * reference: "SPH for high velocity impact computations"
  * let h = 0.5*R,
  * f(r) = a*(3/16*(r/h)^2-3/4*(r/h)+3/4) (0 <= r <= 2*h)
