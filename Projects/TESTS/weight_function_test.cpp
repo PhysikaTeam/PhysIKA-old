@@ -13,20 +13,32 @@
  */
 
 #include "Physika_Core/Weight_Functions/weight_function.h"
-#include "Physika_Core/Weight_Functions/linear_weight_function.h"
-#include "Physika_Core/Weight_Functions/quadratic_weight_function.h"
+#include "Physika_Core/Weight_Functions/linear_weight_functions.h"
+#include "Physika_Core/Weight_Functions/quadratic_weight_functions.h"
 using namespace std;
 using Physika::LinearWeightFunction;
-using Physika::QuadraticWeightFunction;
+using Physika::JohnsonQuadraticWeightFunction;
 using Physika::WeightFunction;
 
 int main()
 {
-    WeightFunction<float> *weight_function = new LinearWeightFunction<float>();
-    weight_function->printInfo();
-    delete weight_function;
-    weight_function = new QuadraticWeightFunction<float>();
-    weight_function->printInfo();
-    delete weight_function;
+    WeightFunction<float,1> *weight_function_1d = new LinearWeightFunction<float,1>();
+    WeightFunction<float,2> *weight_function_2d = new LinearWeightFunction<float,2>();
+    WeightFunction<float,3> *weight_function_3d = new LinearWeightFunction<float,3>();
+    weight_function_1d->printInfo();
+    weight_function_2d->printInfo();
+    weight_function_3d->printInfo();
+    delete weight_function_1d;
+    delete weight_function_2d;
+    delete weight_function_3d;
+    weight_function_1d = new JohnsonQuadraticWeightFunction<float,1>();
+    weight_function_2d = new JohnsonQuadraticWeightFunction<float,2>();
+    weight_function_3d = new JohnsonQuadraticWeightFunction<float,3>();
+    weight_function_1d->printInfo();
+    weight_function_2d->printInfo();
+    weight_function_3d->printInfo();
+    delete weight_function_1d;
+    delete weight_function_2d;
+    delete weight_function_3d;
     return 0;
 }

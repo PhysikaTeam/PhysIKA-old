@@ -19,20 +19,32 @@ namespace Physika{
 
 /*
  * WeightFunction: Base class of all weight functions.
- * The weight functions are 1D, higer dimension versions
- * could be constructed  with dyadic product of 1D ones.
- * These weight functions are used extensively in numerical
- * methods like SPH.
+ * The weight functions are functions of the distance
+ * to the center of the functions' support domain.
+ * The support domain of a weight function is:
+ * 1. an interval in 1D with length 2*R
+ * 2. a circle in 2D with radius R
+ * 3. a sphere in 3D with radius R
+ * R is the radius of the support domain.
+ *
+ * Generally a weight function satisfies following properties:
+ * 1. partition of unity in support domain
+ * 2. compactly supported: f(r,R)=0, for r>R
+ * 3. Postive in support domain
+ * 4. sufficiently smooth
+ * 5. monotonically decreasing with larger distance
+ * 6. etc
+ *
  */
 
-template <typename Scalar>
+template <typename Scalar, int Dim>
 class WeightFunction
 {
 public:
     WeightFunction(){}
     virtual ~WeightFunction(){}
-    virtual Scalar weight(Scalar r, Scalar h) const=0; //return the weight at r, given the influence horizon h
-    virtual Scalar gradient(Scalar r, Scalar h) const=0;
+    virtual Scalar weight(Scalar r, Scalar R) const=0; 
+    virtual Scalar gradient(Scalar r, Scalar R) const=0;
     virtual void printInfo() const=0;  //print the formula of this weight function
 };
 
