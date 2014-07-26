@@ -38,6 +38,24 @@ public:
     void printInfo() const;
 };
 
+/*
+ * DomeShapedQuadraticWeightFunction:
+ * reference: "Lanczo's generalized derivative: insights and applications"
+ * f(r) = a*(1-(r/R)^2) (0 <= r <= R)
+ * where 'a' depends on the dimension and radius of support domain
+ */
+
+template <typename Scalar, int Dim>
+class DomeShapedQuadraticWeightFunction: public WeightFunction<Scalar,Dim>
+{
+public:
+    DomeShapedQuadraticWeightFunction(){}
+    ~DomeShapedQuadraticWeightFunction(){}
+    Scalar weight(Scalar r, Scalar R) const;
+    Scalar gradient(Scalar r, Scalar R) const;
+    void printInfo() const;
+};
+
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_WEIGHT_FUNCTIONS_QUADRATIC_WEIGHT_FUNCTIONS_H_

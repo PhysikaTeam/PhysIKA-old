@@ -41,7 +41,7 @@ public:
 };
 
 /*
- * JohnsonQuadraticWeightFunction: 
+ * JohnsonQuadraticKernel: 
  * reference: "SPH for high velocity impact computations"
  * f(r) = a*(3/16*(r/h)^2-3/4*(r/h)+3/4) (0 <= r <= 2*h)
  * where 'a' depends on the dimension and radius of support domain

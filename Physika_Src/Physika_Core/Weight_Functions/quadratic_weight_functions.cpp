@@ -41,7 +41,7 @@ Scalar JohnsonQuadraticWeightFunction<Scalar,Dim>::weight(Scalar r, Scalar R) co
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar s = r/h;
-    return a*(3/16*s*s-3/4*s+3/4);
+    return (s>2) ? 0 : a*(3.0/16.0*s*s-3.0/4.0*s+3.0/4.0);
 }
 
 template <typename Scalar, int Dim>
@@ -60,13 +60,13 @@ Scalar JohnsonQuadraticWeightFunction<Scalar,Dim>::gradient(Scalar r, Scalar R) 
         a = 2.0/(PI*h*h);
         break;
     case 3:
-        a = 5.0/(4*PI*h*h*h);
+        a = 5.0/(4.0*PI*h*h*h);
         break;
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar s = r/h;
-    return a*(3/8*s*(1.0/h)-3/4*(1.0/h));
+    return (s>2) ? 0 : a*(3.0/8.0*s*(1.0/h)-3.0/4.0*(1.0/h));
 }
 
 template <typename Scalar, int Dim>
@@ -96,5 +96,80 @@ template class JohnsonQuadraticWeightFunction<float,2>;
 template class JohnsonQuadraticWeightFunction<double,2>;
 template class JohnsonQuadraticWeightFunction<float,3>;
 template class JohnsonQuadraticWeightFunction<double,3>;
+
+
+template <typename Scalar, int Dim>
+Scalar DomeShapedQuadraticWeightFunction<Scalar,Dim>::weight(Scalar r, Scalar R) const
+{
+    PHYSIKA_ASSERT(r >= 0);
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 1:
+        a = 3.0/(4.0*R);
+        break;
+    case 2:
+        a = 2.0/(PI*R*R);
+        break;
+    case 3:
+        a = 15.0/(8.0*PI*R*R*R);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    return (r>R) ? 0 : a*(1-(r/R)*(r/R));
+}
+
+template <typename Scalar, int Dim>
+Scalar DomeShapedQuadraticWeightFunction<Scalar,Dim>::gradient(Scalar r, Scalar R) const
+{
+    PHYSIKA_ASSERT(r >= 0);
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 1:
+        a = 3.0/(4.0*R);
+        break;
+    case 2:
+        a = 2.0/(PI*R*R);
+        break;
+    case 3:
+        a = 15.0/(8.0*PI*R*R*R);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    return (r>R) ? 0 : a*(-2)*r/(R*R);
+}
+
+template <typename Scalar, int Dim>
+void DomeShapedQuadraticWeightFunction<Scalar,Dim>::printInfo() const
+{
+    std::cout<<"DomeShapedQuadratic weight function with support radius R:\n";
+    switch(Dim)
+    {
+    case 1:
+        std::cout<<"f(r) =3/(4*R)*(1-(r/R)^2) (0<=r<=R)\n";
+        break;
+    case 2:
+        std::cout<<"f(r) = 2/(PI*R^2)*(1-(r/R)^2) (0<=r<=R)\n";
+        break;
+    case 3:
+        std::cout<<"f(r) = 15/(8*PI*h^3)*(1-(r/R)^2) (0<=r<=R)\n";
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+}
+
+//explicit instantiations
+template class DomeShapedQuadraticWeightFunction<float,1>;
+template class DomeShapedQuadraticWeightFunction<double,1>;
+template class DomeShapedQuadraticWeightFunction<float,2>;
+template class DomeShapedQuadraticWeightFunction<double,2>;
+template class DomeShapedQuadraticWeightFunction<float,3>;
+template class DomeShapedQuadraticWeightFunction<double,3>;
 
 }  //end of namespace Physika

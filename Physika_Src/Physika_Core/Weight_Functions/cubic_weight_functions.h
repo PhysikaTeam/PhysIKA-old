@@ -18,6 +18,26 @@
 #include "Physika_Core/Weight_Functions/weight_function.h"
 
 namespace Physika{
+
+/*
+ * PiecewiseCubicSpline:
+ * let h = 0.5*R,
+ * f(r) = a*(2/3-(r/h)^2+1/2*(r/h)^3,  0 <= r <= h
+ * f(r) = a*(1/6)*(2-r/h)^3,  h <= r <= 2h
+ * where 'a' depends on the dimension and radius of support domain
+ */
+
+template <typename Scalar, int Dim>
+class PiecewiseCubicSpline: public WeightFunction<Scalar,Dim>
+{
+public:
+    PiecewiseCubicSpline(){}
+    ~PiecewiseCubicSpline(){}
+    Scalar weight(Scalar r, Scalar R) const;
+    Scalar gradient(Scalar r, Scalar R) const;
+    void printInfo() const;
+};
+
 }  //end of namespace Physika
 
 #endif //PHYSIKA_CORE_WEIGHT_FUNCTIONS_CUBIC_WEIGHT_FUNCTIONS_H_

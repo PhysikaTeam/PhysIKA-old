@@ -28,18 +28,18 @@ Scalar LinearWeightFunction<Scalar,Dim>::weight(Scalar r, Scalar R) const
     switch(Dim)
     {
     case 1:
-        a = 1.0/(R*R);
+        a = 1.0/R;
         break;
     case 2:
-        a = 3.0/(PI*R*R*R);
+        a = 3.0/(PI*R*R);
         break;
     case 3:
-        a = 3.0/(PI*R*R*R*R);
+        a = 3.0/(PI*R*R*R);
         break;
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
-    return (r>R) ? 0 : a*(R-r);
+    return (r>R) ? 0 : a*(1-r/R);
 }
 
 template <typename Scalar, int Dim>
@@ -51,18 +51,18 @@ Scalar LinearWeightFunction<Scalar,Dim>::gradient(Scalar r, Scalar R) const
     switch(Dim)
     {
     case 1:
-        a = 1.0/(R*R);
+        a = 1.0/R;
         break;
     case 2:
-        a = 3.0/(PI*R*R*R);
+        a = 3.0/(PI*R*R);
         break;
     case 3:
-        a = 3.0/(PI*R*R*R*R);
+        a = 3.0/(PI*R*R*R);
         break;
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
-    return (r>R) ? 0 : a*(-1);
+    return (r>R) ? 0 : a*(-1.0/R);
 }
 
 template <typename Scalar, int Dim>
@@ -72,13 +72,13 @@ void LinearWeightFunction<Scalar,Dim>::printInfo() const
     switch(Dim)
     {
     case 1:
-        std::cout<<"f(r) = (1/R^2)*(R-r) (0<=r<=R)\n";
+        std::cout<<"f(r) = (1/R)*(1-r/R) (0<=r<=R)\n";
         break;
     case 2:
-        std::cout<<"f(r) = (3/PI*R^3)*(R-r) (0<=r<=R)\n";
+        std::cout<<"f(r) = (3/PI*R^2)*(1-r/R) (0<=r<=R)\n";
         break;
     case 3:
-        std::cout<<"f(r) = (3/PI*R^4)*(R-r) (0<=r<=R)\n";
+        std::cout<<"f(r) = (3/PI*R^3)*(1-r/R) (0<=r<=R)\n";
         break;
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");

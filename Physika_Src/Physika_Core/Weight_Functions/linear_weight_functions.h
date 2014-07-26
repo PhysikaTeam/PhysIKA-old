@@ -21,12 +21,12 @@ namespace Physika{
 
 /*
  * LinearWeightFunction: the most common linar weight function
- * f(r) = a(R - r) (0<=r<=R), where the value of 'a' depends on
+ * f(r) = a(1 - r/R) (0<=r<=R), where the value of 'a' depends on
  * the dimension and radius of support domain such that partition
  * of unity is satisfied:
- *   a = 1/(R^2), in 1D
- *   a = 3/(PI*R^3), in 2D
- *   a = 3/(PI*R^4), in 3D 
+ *   a = 1/R, in 1D
+ *   a = 3/(PI*R^2), in 2D
+ *   a = 3/(PI*R^3), in 3D 
  */
 
 template <typename Scalar, int Dim>
