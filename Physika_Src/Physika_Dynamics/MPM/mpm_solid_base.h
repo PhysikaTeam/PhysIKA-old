@@ -15,8 +15,9 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_MPM_SOLID_BASE_H_
 #define PHYSIKA_DYNAMICS_MPM_MPM_SOLID_BASE_H_
 
+#include <string>
 #include <vector>
-#include "Physika_Dynamics/Driver/driver_base.h"
+#include "Physika_Dynamics/MPM/mpm_base.h"
 
 namespace Physika{
 
@@ -24,7 +25,7 @@ template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
 
 template <typename Scalar, int Dim>
-class MPMSolidBase: public DriverBase<Scalar>
+class MPMSolidBase: public MPMBase<Scalar,Dim>
 {
 public:
     MPMSolidBase();
