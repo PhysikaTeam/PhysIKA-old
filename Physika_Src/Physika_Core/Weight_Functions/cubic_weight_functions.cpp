@@ -19,27 +19,13 @@
 
 namespace Physika{
 
-template <typename Scalar, int Dim>
-Scalar PiecewiseCubicSpline<Scalar,Dim>::weight(Scalar r, Scalar R) const
+template <typename Scalar>
+Scalar PiecewiseCubicSpline<Scalar,1>::weight(Scalar center_to_x, Scalar R) const
 {
-    PHYSIKA_ASSERT(r >= 0);
     PHYSIKA_ASSERT(R > 0);
-    Scalar a = 1.0;
     Scalar h = 0.5*R;
-    switch(Dim)
-    {
-    case 1:
-        a = 1.0/h;
-        break;
-    case 2:
-        a = 15.0/(7*PI*h*h);
-        break;
-    case 3:
-        a = 3.0/(2*PI*h*h*h);
-        break;
-    default:
-        PHYSIKA_ERROR("Wrong dimension specified.");
-    }
+    Scalar a = 1.0/h;
+    Scalar r = abs(center_to_x);
     Scalar s = r/h;
     if(s>2)
         return 0;
@@ -52,17 +38,13 @@ Scalar PiecewiseCubicSpline<Scalar,Dim>::weight(Scalar r, Scalar R) const
 }
 
 template <typename Scalar, int Dim>
-Scalar PiecewiseCubicSpline<Scalar,Dim>::gradient(Scalar r, Scalar R) const
+Scalar PiecewiseCubicSpline<Scalar,Dim>::weight(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
 {
-    PHYSIKA_ASSERT(r >= 0);
     PHYSIKA_ASSERT(R > 0);
     Scalar a = 1.0;
     Scalar h = 0.5*R;
     switch(Dim)
     {
-    case 1:
-        a = 1.0/h;
-        break;
     case 2:
         a = 15.0/(7*PI*h*h);
         break;
@@ -72,15 +54,87 @@ Scalar PiecewiseCubicSpline<Scalar,Dim>::gradient(Scalar r, Scalar R) const
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
+    Scalar r = center_to_x.norm();
     Scalar s = r/h;
     if(s>2)
         return 0;
     else if(s>=1)
-        return a*(2-s)*(2-s)*(-1)/(2.0*h);
+        return a*(2.0-s)*(2.0-s)*(2.0-s)/6.0;
     else if(s>=0)
-        return a*(-2.0*s/h+3.0/2*s*s/h);
+        return a*(2.0/3.0-s*s+1.0/2.0*s*s*s);
     else
         PHYSIKA_ERROR("r/R must be greater than zero.");
+}
+
+template <typename Scalar>
+Scalar PiecewiseCubicSpline<Scalar,1>::gradient(Scalar center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar h = 0.5*R;
+    Scalar a = 1.0/h;
+    Scalar r = abs(center_to_x);
+    Scalar sign = center_to_x>=0 ? 1 : -1;
+    Scalar s = r/h;
+    if(s>2)
+        return 0;
+    else if(s>=1)
+        return a*(2-s)*(2-s)*(-1)/(2.0*h)*sign;
+    else if(s>=0)
+        return a*(-2.0*s/h+3.0/2*s*s/h)*sign;
+    else
+        PHYSIKA_ERROR("r/R must be greater than zero.");
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> PiecewiseCubicSpline<Scalar,Dim>::gradient(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 1.0;
+    Scalar h = 0.5*R;
+    switch(Dim)
+    {
+    case 2:
+        a = 15.0/(7*PI*h*h);
+        break;
+    case 3:
+        a = 3.0/(2*PI*h*h*h);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    Vector<Scalar,Dim> direction = center_to_x / r;
+    Scalar s = r/h;
+    if(s>2)
+        return 0*direction;
+    else if(s>=1)
+        return a*(2-s)*(2-s)*(-1)/(2.0*h)*direction;
+    else if(s>=0)
+        return a*(-2.0*s/h+3.0/2*s*s/h)*direction;
+    else
+        PHYSIKA_ERROR("r/R must be greater than zero.");
+}
+
+template <typename Scalar>
+Scalar PiecewiseCubicSpline<Scalar,1>::laplacian(Scalar center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    return 0;//TO DO
+}
+
+template <typename Scalar, int Dim>
+Scalar PiecewiseCubicSpline<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    return 0;//TO DO
+}
+
+template <typename Scalar>
+void PiecewiseCubicSpline<Scalar,1>::printInfo() const
+{
+    std::cout<<"Piecewise cubic spline with support radius R = 2h: \n";
+    std::cout<<"f(x,R) = 1/h*(2/3-(|x|/h)^2+1/2*(|x|/h)^3) (0<=|x|<=h)\n";
+    std::cout<<"f(x,R) = 1/h*(2-(|x|/h))^3/6 (h<=|x|<=2h)\n";
 }
 
 template <typename Scalar, int Dim>
@@ -89,17 +143,13 @@ void PiecewiseCubicSpline<Scalar,Dim>::printInfo() const
     std::cout<<"Piecewise cubic spline with support radius R = 2h: \n";
     switch(Dim)
     {
-    case 1:
-        std::cout<<"f(r) = 1/h*(2/3-(r/h)^2+1/2*(r/h)^3) (0<=r<=h)\n";
-        std::cout<<"f(r) = 1/h*(2-(r/h))^3/6 (h<=r<=2h)\n";
-        break;
     case 2:
-        std::cout<<"f(r) = 15/(7*PI*h^2)*(2/3-(r/h)^2+1/2*(r/h)^3) (0<=r<=h)\n";
-        std::cout<<"f(r) = 15/(7*PI*h^2)*(2-(r/h))^3/6 (h<=r<=2h)\n";
+        std::cout<<"f(x,R) = 15/(7*PI*h^2)*(2/3-(|x|/h)^2+1/2*(|x|/h)^3) (0<=|x|<=h)\n";
+        std::cout<<"f(x,R) = 15/(7*PI*h^2)*(2-(|x|/h))^3/6 (h<=|x|<=2h)\n";
         break;
     case 3:
-        std::cout<<"f(r) = 3/(2*PI*h^3)*(2/3-(r/h)^2+1/2*(r/h)^3) (0<=r<=h)\n";
-        std::cout<<"f(r) = 3/(2*PI*h^3)*(2-(r/h))^3/6 (h<=r<=2h)\n";
+        std::cout<<"f(x,R) = 3/(2*PI*h^3)*(2/3-(|x|/h)^2+1/2*(|x|/h)^3) (0<=|x|<=h)\n";
+        std::cout<<"f(x,R) = 3/(2*PI*h^3)*(2-(|x|/h))^3/6 (h<=|x|<=2h)\n";
         break;
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");

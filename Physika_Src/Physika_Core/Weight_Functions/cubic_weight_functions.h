@@ -15,6 +15,8 @@
 #ifndef PHYSIKA_CORE_WEIGHT_FUNCTIONS_CUBIC_WEIGHT_FUNCTIONS_H_
 #define PHYSIKA_CORE_WEIGHT_FUNCTIONS_CUBIC_WEIGHT_FUNCTIONS_H_
 
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Weight_Functions/weight_function.h"
 
 namespace Physika{
@@ -22,8 +24,8 @@ namespace Physika{
 /*
  * PiecewiseCubicSpline:
  * let h = 0.5*R,
- * f(r) = a*(2/3-(r/h)^2+1/2*(r/h)^3,  0 <= r <= h
- * f(r) = a*(1/6)*(2-r/h)^3,  h <= r <= 2h
+ * f(x,R) = a*(2/3-(|x|/h)^2+1/2*(|x|/h)^3,  0 <= |x| <= h
+ * f(x,R) = a*(1/6)*(2-|x|/h)^3,  h <= |x| <= 2h
  * where 'a' depends on the dimension and radius of support domain
  */
 
@@ -33,8 +35,21 @@ class PiecewiseCubicSpline: public WeightFunction<Scalar,Dim>
 public:
     PiecewiseCubicSpline(){}
     ~PiecewiseCubicSpline(){}
-    Scalar weight(Scalar r, Scalar R) const;
-    Scalar gradient(Scalar r, Scalar R) const;
+    Scalar weight(const Vector<Scalar,Dim> &center_to_x, Scalar R) const;
+    Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, Scalar R) const;
+    Scalar laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const;
+    void printInfo() const;
+};
+
+template <typename Scalar>
+class PiecewiseCubicSpline<Scalar,1>: public WeightFunction<Scalar,1>
+{
+public:
+    PiecewiseCubicSpline(){}
+    ~PiecewiseCubicSpline(){}
+    Scalar weight(Scalar center_to_x, Scalar R) const;
+    Scalar gradient(Scalar center_to_x, Scalar R) const;
+    Scalar laplacian(Scalar center_to_x, Scalar R) const;
     void printInfo() const;
 };
 

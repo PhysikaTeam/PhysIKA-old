@@ -18,41 +18,22 @@
 #include "Physika_Core/Weight_Functions/linear_weight_functions.h"
 
 namespace Physika{
-
-template <typename Scalar, int Dim>
-Scalar LinearWeightFunction<Scalar,Dim>::weight(Scalar r, Scalar R) const
+template <typename Scalar>
+Scalar LinearWeightFunction<Scalar,1>::weight(Scalar center_to_x, Scalar R) const
 {
-    PHYSIKA_ASSERT(r >= 0);
     PHYSIKA_ASSERT(R > 0);
-    Scalar a = 1.0;
-    switch(Dim)
-    {
-    case 1:
-        a = 1.0/R;
-        break;
-    case 2:
-        a = 3.0/(PI*R*R);
-        break;
-    case 3:
-        a = 3.0/(PI*R*R*R);
-        break;
-    default:
-        PHYSIKA_ERROR("Wrong dimension specified.");
-    }
+    Scalar a = 1.0/R;
+    Scalar r = abs(center_to_x);
     return (r>R) ? 0 : a*(1-r/R);
 }
 
 template <typename Scalar, int Dim>
-Scalar LinearWeightFunction<Scalar,Dim>::gradient(Scalar r, Scalar R) const
+Scalar LinearWeightFunction<Scalar,Dim>::weight(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
 {
-    PHYSIKA_ASSERT(r >= 0);
     PHYSIKA_ASSERT(R > 0);
     Scalar a = 1.0;
     switch(Dim)
     {
-    case 1:
-        a = 1.0/R;
-        break;
     case 2:
         a = 3.0/(PI*R*R);
         break;
@@ -62,7 +43,60 @@ Scalar LinearWeightFunction<Scalar,Dim>::gradient(Scalar r, Scalar R) const
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
-    return (r>R) ? 0 : a*(-1.0/R);
+    Scalar r = center_to_x.norm();
+    return (r>R) ? 0 : a*(1-r/R);
+}
+
+template <typename Scalar>
+Scalar LinearWeightFunction<Scalar,1>::gradient(Scalar center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 1.0/R;
+    Scalar r = abs(center_to_x);
+    Scalar sign = center_to_x>=0 ? 1 : -1;
+    return (r>R) ? 0 : a*(-1.0/R)*sign;
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> LinearWeightFunction<Scalar,Dim>::gradient(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 2:
+        a = 3.0/(PI*R*R);
+        break;
+    case 3:
+        a = 3.0/(PI*R*R*R);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    Vector<Scalar,Dim> direction = center_to_x/r; 
+    return (r>R) ? 0*direction : a*(-1.0/R)*direction;
+}
+
+template <typename Scalar>
+Scalar LinearWeightFunction<Scalar,1>::laplacian(Scalar center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    return 0;
+}
+
+template <typename Scalar, int Dim>
+Scalar LinearWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    return 0;
+}
+
+template <typename Scalar>
+void LinearWeightFunction<Scalar,1>::printInfo() const
+{
+    std::cout<<"Linear weight function with support radius R: \n";
+    std::cout<<"f(x,R) = (1/R)*(1-|x|/R) (0<=|x|<=R)\n";
 }
 
 template <typename Scalar, int Dim>
@@ -71,14 +105,11 @@ void LinearWeightFunction<Scalar,Dim>::printInfo() const
     std::cout<<"Linear weight function with support radius R: \n";
     switch(Dim)
     {
-    case 1:
-        std::cout<<"f(r) = (1/R)*(1-r/R) (0<=r<=R)\n";
-        break;
     case 2:
-        std::cout<<"f(r) = (3/PI*R^2)*(1-r/R) (0<=r<=R)\n";
+        std::cout<<"f(x,R) = (3/PI*R^2)*(1-|x|/R) (0<=|x|<=R)\n";
         break;
     case 3:
-        std::cout<<"f(r) = (3/PI*R^3)*(1-r/R) (0<=r<=R)\n";
+        std::cout<<"f(x,R) = (3/PI*R^3)*(1-|x|/R) (0<=|x|<=R)\n";
         break;
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");
