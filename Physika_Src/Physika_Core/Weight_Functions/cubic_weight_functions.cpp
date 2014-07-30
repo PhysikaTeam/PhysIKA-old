@@ -103,7 +103,11 @@ Vector<Scalar,Dim> PiecewiseCubicSpline<Scalar,Dim>::gradient(const Vector<Scala
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-    Vector<Scalar,Dim> direction = center_to_x / r;
+    Vector<Scalar,Dim> direction(0);
+    if(r>0)
+        direction = center_to_x / r;
+    else
+        direction[0] = 1.0;//set direction to x axis when x is at center
     Scalar s = r/h;
     if(s>2)
         return 0*direction;
@@ -126,9 +130,9 @@ Scalar PiecewiseCubicSpline<Scalar,1>::laplacian(Scalar center_to_x, Scalar R) c
     if(s>2)
         return 0;
     else if(s>=1)
-        return a/(-2*h)*(4*(r-center_to_x*center_to_x/r)/(r*r)-4/h+(r+center_to_x*center_to_x/r)/(h*h));
+        return a/(-2*h)*(-4/h+2*r/(h*h));
     else if(s>=0)
-        return a*(-2/(h*h)+3/(2*h*h*h)*center_to_x*center_to_x/r+3/(2*h*h*h)*r);
+        return a*(-2/(h*h)+3/(2*h*h*h)*r+3/(2*h*h*h)*r);
     else
         PHYSIKA_ERROR("r/R must be greater than zero.");
 }
@@ -156,16 +160,12 @@ Scalar PiecewiseCubicSpline<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &cen
         return 0;
     else if(s>=1)
     {
-        Scalar result = 0;
-        for(unsigned int i = 0; i < Dim; ++i)
-            result += a/(-2*h)*(4*(r-center_to_x[i]*center_to_x[i]/r)/(r*r)-4/h+(r+center_to_x[i]*center_to_x[i]/r)/(h*h));
+        Scalar result = a/(-2*h)*(Dim*(4.0/r-4.0/h+r/(h*h))-4.0/r+r/(h*h));
         return result;
     }
     else if(s>=0)
     {
-        Scalar result = 0;
-        for(unsigned int i = 0; i < Dim; ++i)
-            result += a*(-2/(h*h)+3/(2*h*h*h)*center_to_x[i]*center_to_x[i]/r+3/(2*h*h*h)*r);
+        Scalar result = a*(Dim*(-2.0/(h*h)+3.0/(2.0*h*h*h)*r)+3.0/(2.0*h*h*h)*r);
         return result;
     }
     else
@@ -262,7 +262,11 @@ Vector<Scalar,Dim> DesbrunSpikyWeightFunction<Scalar,Dim>::gradient(const Vector
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-    Vector<Scalar,Dim> direction = center_to_x/r; 
+    Vector<Scalar,Dim> direction(0);
+    if(r>0)
+        direction = center_to_x/r; 
+    else
+        direction[0] = 1.0;//set direction to x axis when x is at center
     return (r>R) ? 0*direction : a*(-3.0)*pow((R - r),2)*direction;
 }
 
@@ -294,9 +298,7 @@ Scalar DesbrunSpikyWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim
     Scalar r = center_to_x.norm();  
     if(r > R)
         return 0;
-    Scalar result = 0;
-    for(unsigned int i = 0; i < Dim; ++i)
-        result += 3.0*a*(center_to_x[i]*center_to_x[i]*(R*R/pow(r,3) - 1.0/r) - (R*R/pow(r,3) -2.0*R + r));
+    Scalar result =  3.0*a*(r*r*(R*R/pow(r,3) - 1.0/r) - Dim*(R*R/pow(r,3) -2.0*R + r));
     return result;
     
 }
@@ -332,7 +334,5 @@ template class DesbrunSpikyWeightFunction<float,2>;
 template class DesbrunSpikyWeightFunction<double,2>;
 template class DesbrunSpikyWeightFunction<float,3>;
 template class DesbrunSpikyWeightFunction<double,3>;
-
-
 
 }  //end of namespace Physika

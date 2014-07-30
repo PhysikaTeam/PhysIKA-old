@@ -74,7 +74,11 @@ Vector<Scalar,Dim> LinearWeightFunction<Scalar,Dim>::gradient(const Vector<Scala
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-    Vector<Scalar,Dim> direction = center_to_x/r; 
+    Vector<Scalar,Dim> direction(0);
+    if(r>0)
+        direction = center_to_x/r;
+    else
+        direction[0] = 1.0;  //set direction to x axis when x is at center 
     return (r>R) ? 0*direction : a*(-1.0/R)*direction;
 }
 
@@ -89,7 +93,27 @@ template <typename Scalar, int Dim>
 Scalar LinearWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 2:
+        a = 3.0/(PI*R*R);
+        break;
+    case 3:
+        a = 3.0/(PI*R*R*R);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    Scalar result = 0;
+    if(r>R)
+        result = 0;
+    else if(r>0)
+        result = (-a/R)*(Dim-1.0)/r;
+    else
+        result = 0;  //does not exist
+    return result;
 }
 
 template <typename Scalar>

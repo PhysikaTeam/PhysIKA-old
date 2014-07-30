@@ -75,7 +75,11 @@ Vector<Scalar,Dim> LucyQuarticWeightFunction<Scalar,Dim>::gradient(const Vector<
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-    Vector<Scalar,Dim> direction = center_to_x/r;
+    Vector<Scalar,Dim> direction(0);
+    if(r>0)
+        direction = center_to_x/r;
+    else
+        direction[0] = 1.0;//set direction to x axis when x is at center
     return (r>R) ? 0*direction : a*((3.0/R)*(1-r/R)*(1-r/R)*(1-r/R)+(1+3*r/R)*3*(1-r/R)*(1-r/R)*(-1.0/R))*direction;
 }
 
@@ -113,11 +117,8 @@ Scalar LucyQuarticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim>
     else
     {
         Scalar result = 0;
-        for(unsigned int i = 0; i < Dim; ++i)
-        {
-            result += 3*a/(R*R)*(6*(1-r/R)*(1-r/R)+2*(1+3*r/R)*(1-r/R))*center_to_x[i]*center_to_x[i]/(r*r);
-            result += 3*a/R*((1-r/R)*(1-r/R)*(1-r/R)+(1+3*r/R)*(1-r/R)*(1-r/R))*(r-center_to_x[i]*center_to_x[i]/r)/(r*r);
-        }
+        result += 3.0*a/(R*R)*(6.0*(1.0-r/R)*(1.0-r/R)+2*(1+3.0*r/R)*(1.0-r/R));
+        result += 3.0*a/R*((1-r/R)*(1-r/R)*(1-r/R)+(1+3.0*r/R)*(1-r/R)*(1-r/R))*(Dim-1.0)/r;
         return result;
     }
 }
@@ -217,7 +218,11 @@ Vector<Scalar,Dim> NewQuarticWeightFunction<Scalar,Dim>::gradient(const Vector<S
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-    Vector<Scalar,Dim> direction = center_to_x/r;
+    Vector<Scalar,Dim> direction(0);
+    if(r>0)
+        direction = center_to_x/r;
+    else
+        direction[0] = 1.0;//set direction to x axis when x is at center
     Scalar s = r/h, ss = s*s;
     return (s>2) ? 0*direction : a*(-9.0/4.0*s/h+19.0/8.0*ss/h-5.0/8.0*ss*s/h)*direction;
 }
@@ -234,9 +239,7 @@ Scalar NewQuarticWeightFunction<Scalar,1>::laplacian(Scalar center_to_x, Scalar 
         return 0;
     else
     {
-        Scalar result = 0;
-        result += a*(19.0/(8.0*h*h*h*r)-5.0/(4.0*h*h*h*h))*center_to_x*center_to_x;
-        result += a*(-9.0/(4.0*h*h)+19.0*r/(8.0*h*h*h)-5.0/(8.0*h*h*h*h));
+        Scalar result = a/(4.0*h*h)*(19.0*r/h-15.0*r*r/(2.0*h*h)-9.0);
         return result;
     }
 }
@@ -264,12 +267,7 @@ Scalar NewQuarticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> 
         return 0;
     else
     {
-        Scalar result = 0;
-        for(unsigned int i = 0; i < Dim; ++i)
-        {
-            result += a*(19.0/(8.0*h*h*h*r)-5.0/(4.0*h*h*h*h))*center_to_x[i]*center_to_x[i];
-            result += a*(-9.0/(4.0*h*h)+19.0*r/(8.0*h*h*h)-5.0/(8.0*h*h*h*h));
-        }
+        Scalar result = a/(4.0*h*h)*(19.0*r/(2.0*h)-5.0/(h*h)*r*r-9.0*Dim+19.0*r/(2.0*h)*Dim-5.0*r*r/(2.0*h*h)*Dim);
         return result;
     }
 }

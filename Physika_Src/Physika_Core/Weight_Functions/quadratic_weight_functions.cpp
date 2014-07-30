@@ -82,7 +82,11 @@ Vector<Scalar,Dim> JohnsonQuadraticWeightFunction<Scalar,Dim>::gradient(const Ve
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-    Vector<Scalar,Dim> direction = center_to_x/r;
+    Vector<Scalar,Dim> direction(0);
+    if(r>0)
+        direction = center_to_x/r;
+    else
+        direction[0] = 1.0;  //set direction to x axis when x is at center 
     Scalar s = r/h;
     return (s>2) ? 0*direction : a*(3.0/8.0*s*(1.0/h)-3.0/4.0*(1.0/h))*direction;
 }
@@ -118,9 +122,13 @@ Scalar JohnsonQuadraticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar
     Scalar r = center_to_x.norm();
     Scalar s = r/h;
     Scalar result = 0;
-    for(unsigned int i = 0; i < Dim; ++i)
-        result += a*(3.0/(8*h*h)-3.0/(4.0*h*r)+3.0*center_to_x[i]*center_to_x[i]/(4.0*h*r*r*r));
-    return (s>2) ? 0 : result;
+    if(s>2)
+        result = 0;
+    else if(s>0)
+        result = a*(3.0/(4.0*h*r)+Dim*(3.0/(8.0*h*h)-3.0/(4.0*h*r)));
+    else
+        result = 0;  //does not exist
+    return result;
 }
 
 template <typename Scalar>
@@ -212,7 +220,11 @@ Vector<Scalar,Dim> DomeShapedQuadraticWeightFunction<Scalar,Dim>::gradient(const
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-    Vector<Scalar,Dim> direction = center_to_x/r;
+    Vector<Scalar,Dim> direction(0);
+    if(r>0)
+        direction = center_to_x/r;
+    else
+        direction[0] = 1.0; //set direction to x axis when x is at center
     return (r>R) ? 0*direction : a*(-2)*r/(R*R)*direction;
 }
 
