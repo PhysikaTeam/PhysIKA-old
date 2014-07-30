@@ -22,7 +22,7 @@
 namespace Physika{
 
 /*
- * LinearWeightFunction: the most common linar weight function
+ * LinearWeightFunction: the most common linear weight function
  * f(x,R) = a(1 - |x|/R) (0<=|x|<=R), where the value of 'a' depends on
  * the dimension and radius of support domain such that partition
  * of unity is satisfied:
