@@ -83,14 +83,43 @@ template <typename Scalar>
 Scalar LucyQuarticWeightFunction<Scalar,1>::laplacian(Scalar center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;//TO DO
+    Scalar a = 5.0/(4.0*R);
+    Scalar r = abs(center_to_x);
+    if(r>R)
+        return 0;
+    else
+        return 3*a/(R*R)*(6*(1-r/R)*(1-r/R)+2*(1+3*r/R)*(1-r/R));
 }
 
 template <typename Scalar, int Dim>
 Scalar LucyQuarticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;//TO DO
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 2:
+        a = 5.0/(PI*R*R);
+        break;
+    case 3:
+        a = 105.0/(16.0*PI*R*R*R);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    if(r>R)
+        return 0;
+    else
+    {
+        Scalar result = 0;
+        for(unsigned int i = 0; i < Dim; ++i)
+        {
+            result += 3*a/(R*R)*(6*(1-r/R)*(1-r/R)+2*(1+3*r/R)*(1-r/R))*center_to_x[i]*center_to_x[i]/(r*r);
+            result += 3*a/R*((1-r/R)*(1-r/R)*(1-r/R)+(1+3*r/R)*(1-r/R)*(1-r/R))*(r-center_to_x[i]*center_to_x[i]/r)/(r*r);
+        }
+        return result;
+    }
 }
 
 template <typename Scalar>
@@ -197,14 +226,52 @@ template <typename Scalar>
 Scalar NewQuarticWeightFunction<Scalar,1>::laplacian(Scalar center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;//TO DO
+    Scalar h = 0.5*R;
+    Scalar a = 1.0/h;
+    Scalar r = abs(center_to_x);
+    Scalar s = r/h;
+    if(s>2)
+        return 0;
+    else
+    {
+        Scalar result = 0;
+        result += a*(19.0/(8.0*h*h*h*r)-5.0/(4.0*h*h*h*h))*center_to_x*center_to_x;
+        result += a*(-9.0/(4.0*h*h)+19.0*r/(8.0*h*h*h)-5.0/(8.0*h*h*h*h));
+        return result;
+    }
 }
 
 template <typename Scalar, int Dim>
 Scalar NewQuarticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;//TO DO
+    Scalar a = 1.0;
+    Scalar h = 0.5*R;
+    switch(Dim)
+    {
+    case 2:
+        a = 15.0/(7.0*PI*h*h);
+        break;
+    case 3:
+        a = 315.0/(208.0*PI*h*h*h);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    Scalar s = r/h;
+    if(s>2)
+        return 0;
+    else
+    {
+        Scalar result = 0;
+        for(unsigned int i = 0; i < Dim; ++i)
+        {
+            result += a*(19.0/(8.0*h*h*h*r)-5.0/(4.0*h*h*h*h))*center_to_x[i]*center_to_x[i];
+            result += a*(-9.0/(4.0*h*h)+19.0*r/(8.0*h*h*h)-5.0/(8.0*h*h*h*h));
+        }
+        return result;
+    }
 }
 
 template <typename Scalar>

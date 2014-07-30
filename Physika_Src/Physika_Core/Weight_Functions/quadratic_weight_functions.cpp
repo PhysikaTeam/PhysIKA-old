@@ -116,7 +116,11 @@ Scalar JohnsonQuadraticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-    return 0;//TO DO
+    Scalar s = r/h;
+    Scalar result = 0;
+    for(unsigned int i = 0; i < Dim; ++i)
+        result += a*(3.0/(8*h*h)-3.0/(4.0*h*r)+3.0*center_to_x[i]*center_to_x[i]/(4.0*h*r*r*r));
+    return (s>2) ? 0 : result;
 }
 
 template <typename Scalar>
@@ -216,14 +220,29 @@ template <typename Scalar>
 Scalar DomeShapedQuadraticWeightFunction<Scalar,1>::laplacian(Scalar center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;//TO DO
+    Scalar a = 3.0/(4.0*R);
+    Scalar r = abs(center_to_x);
+    return (r>R) ? 0 : (-6)*a/(R*R);
 }
 
 template <typename Scalar, int Dim>
 Scalar DomeShapedQuadraticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;//TO DO
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 2:
+        a = 2.0/(PI*R*R);
+        break;
+    case 3:
+        a = 15.0/(8.0*PI*R*R*R);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    return (r>R) ? 0 : (-6)*a/(R*R);;
 }
 
 template <typename Scalar>

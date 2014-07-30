@@ -119,14 +119,57 @@ template <typename Scalar>
 Scalar PiecewiseCubicSpline<Scalar,1>::laplacian(Scalar center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;//TO DO
+    Scalar h = 0.5*R;
+    Scalar a = 1.0/h;
+    Scalar r = abs(center_to_x);
+    Scalar s = r/h;
+    if(s>2)
+        return 0;
+    else if(s>=1)
+        return a/(-2*h)*(4*(r-center_to_x*center_to_x/r)/(r*r)-4/h+(r+center_to_x*center_to_x/r)/(h*h));
+    else if(s>=0)
+        return a*(-2/(h*h)+3/(2*h*h*h)*center_to_x*center_to_x/r+3/(2*h*h*h)*r);
+    else
+        PHYSIKA_ERROR("r/R must be greater than zero.");
 }
 
 template <typename Scalar, int Dim>
 Scalar PiecewiseCubicSpline<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
 {
     PHYSIKA_ASSERT(R > 0);
-    return 0;//TO DO
+    Scalar a = 1.0;
+    Scalar h = 0.5*R;
+    switch(Dim)
+    {
+    case 2:
+        a = 15.0/(7*PI*h*h);
+        break;
+    case 3:
+        a = 3.0/(2*PI*h*h*h);
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    Scalar s = r/h;
+    if(s>2)
+        return 0;
+    else if(s>=1)
+    {
+        Scalar result = 0;
+        for(unsigned int i = 0; i < Dim; ++i)
+            result += a/(-2*h)*(4*(r-center_to_x[i]*center_to_x[i]/r)/(r*r)-4/h+(r+center_to_x[i]*center_to_x[i]/r)/(h*h));
+        return result;
+    }
+    else if(s>=0)
+    {
+        Scalar result = 0;
+        for(unsigned int i = 0; i < Dim; ++i)
+            result += a*(-2/(h*h)+3/(2*h*h*h)*center_to_x[i]*center_to_x[i]/r+3/(2*h*h*h)*r);
+        return result;
+    }
+    else
+        PHYSIKA_ERROR("r/R must be greater than zero.");
 }
 
 template <typename Scalar>
