@@ -40,7 +40,7 @@ public:
     Scalar weight(const Vector<Scalar,Dim> &center_to_x, Scalar R) const; 
     Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, Scalar R) const;
     Scalar laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const;
-    void printInfo() const=0;  
+    void printInfo() const;  
 };
 
 template <typename Scalar>
@@ -52,7 +52,7 @@ public:
     Scalar weight(Scalar center_to_x, Scalar R) const; 
     Scalar gradient(Scalar center_to_x, Scalar R) const;
     Scalar laplacian(Scalar center_to_x, Scalar R) const;
-    void printInfo() const=0;  
+    void printInfo() const;  
 };
 
 }  //end of namespace Physika
