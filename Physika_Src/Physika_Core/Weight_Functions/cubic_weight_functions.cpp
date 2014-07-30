@@ -291,9 +291,14 @@ Scalar DesbrunSpikyWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
-    Scalar r = center_to_x.norm();
-    Vector<Scalar,Dim> direction = center_to_x/r; 
-    return (r>R) ? 0 : a*(6.0)*(R - r);
+    Scalar r = center_to_x.norm();  
+    if(r > R)
+        return 0;
+    Scalar result = 0;
+    for(unsigned int i = 0; i < Dim; ++i)
+        result += 3.0*a*(center_to_x[i]*center_to_x[i]*(R*R/pow(r,3) - 1.0/r) - (R*R/pow(r,3) -2.0*R + r));
+    return result;
+    
 }
 
 template <typename Scalar>
