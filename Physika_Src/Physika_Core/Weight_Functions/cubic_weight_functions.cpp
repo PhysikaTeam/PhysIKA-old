@@ -207,4 +207,127 @@ template class PiecewiseCubicSpline<double,2>;
 template class PiecewiseCubicSpline<float,3>;
 template class PiecewiseCubicSpline<double,3>;
 
+template <typename Scalar>
+Scalar DesbrunSpikyWeightFunction<Scalar,1>::weight(Scalar center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 2.0/(pow(R,4));
+    Scalar r = abs(center_to_x);
+    return a*pow(R-r, 3);
+}
+
+template <typename Scalar, int Dim>
+Scalar DesbrunSpikyWeightFunction<Scalar,Dim>::weight(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 2:
+        a = 10.0/(PI*pow(R,5));
+        break;
+    case 3:
+        a = 15.0/(PI*pow(R,6));
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    return (r>R) ? 0 : a*pow((R - r),3);
+}
+
+template <typename Scalar>
+Scalar DesbrunSpikyWeightFunction<Scalar,1>::gradient(Scalar center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 2.0/(pow(R,4));
+    Scalar r = abs(center_to_x);
+    return (r>R) ? 0 : a*(-3.0)*pow((R - r),2);
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> DesbrunSpikyWeightFunction<Scalar,Dim>::gradient(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 2:
+        a = 10.0/(PI*pow(R,5));
+        break;
+    case 3:
+        a = 15.0/(PI*pow(R,6));
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    Vector<Scalar,Dim> direction = center_to_x/r; 
+    return (r>R) ? 0*direction : a*(-3.0)*pow((R - r),2)*direction;
+}
+
+template <typename Scalar>
+Scalar DesbrunSpikyWeightFunction<Scalar,1>::laplacian(Scalar center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 2.0/(pow(R,4));
+    Scalar r = abs(center_to_x);
+    return (r>R) ? 0 : a*(6.0)*(R - r);
+}
+
+template <typename Scalar, int Dim>
+Scalar DesbrunSpikyWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const
+{
+    PHYSIKA_ASSERT(R > 0);
+    Scalar a = 1.0;
+    switch(Dim)
+    {
+    case 2:
+        a = 10.0/(PI*pow(R,5));
+        break;
+    case 3:
+        a = 15.0/(PI*pow(R,6));
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+    Scalar r = center_to_x.norm();
+    Vector<Scalar,Dim> direction = center_to_x/r; 
+    return (r>R) ? 0 : a*(6.0)*(R - r);
+}
+
+template <typename Scalar>
+void DesbrunSpikyWeightFunction<Scalar,1>::printInfo() const
+{
+    std::cout<<"Desbrun Spiky Weight Function with support radius R = h: \n";
+    std::cout<<"f(x,R) = 2/h^4*(h - r)^3 (0<=|x|<=h)\n";
+}
+
+template <typename Scalar, int Dim>
+void DesbrunSpikyWeightFunction<Scalar,Dim>::printInfo() const
+{
+    std::cout<<"Desbrun Spiky Weight Function with support radius R = h: \n";
+    switch(Dim)
+    {
+    case 2:
+         std::cout<<"f(x,R) = 10/h^5*(h - r)^3 (0<=|x|<=h)\n";
+        break;
+    case 3:
+         std::cout<<"f(x,R) = 15/h^6*(h - r)^3 (0<=|x|<=h)\n";
+        break;
+    default:
+        PHYSIKA_ERROR("Wrong dimension specified.");
+    }
+}
+
+//explicit instantiations
+template class DesbrunSpikyWeightFunction<float,1>;
+template class DesbrunSpikyWeightFunction<double,1>;
+template class DesbrunSpikyWeightFunction<float,2>;
+template class DesbrunSpikyWeightFunction<double,2>;
+template class DesbrunSpikyWeightFunction<float,3>;
+template class DesbrunSpikyWeightFunction<double,3>;
+
+
+
 }  //end of namespace Physika
