@@ -54,7 +54,7 @@ Scalar MullerPoly6WeightFunction<Scalar, 1>::gradient(Scalar center_to_x, Scalar
     PHYSIKA_ASSERT(R > 0);
     Scalar a = 35.0/(32.0*pow(R,7));
     Scalar r = abs(center_to_x);
-    return (r>R) ? 0 : a*(-6.0)*(R*R-r*r)*(R*R-r*r);
+    return (r>R) ? 0 : a*(-6.0*r)*(R*R-r*r)*(R*R-r*r);
 }
 
 template <typename Scalar, int Dim>
@@ -85,7 +85,7 @@ Scalar MullerPoly6WeightFunction<Scalar,1>::laplacian(Scalar center_to_x, Scalar
     PHYSIKA_ASSERT(R > 0);
     Scalar a = 35.0/(32.0*pow(R,7));
     Scalar r = abs(center_to_x);
-    return (r>R) ? 0 : a*(-6.0)*(R*R-r*r)*(R*R-3*r*r);;
+    return (r>R) ? 0 : a*(-6.0)*(R*R-r*r)*(R*R-5*r*r);;
 }
 
 template <typename Scalar, int Dim>
@@ -97,16 +97,21 @@ Scalar MullerPoly6WeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim>
     switch(Dim)
     {
     case 2:
-        a = 2.0/(PI*pow(R,8));
+        a = 4.0/(PI*pow(R,8));
         break;
     case 3:
-        a = 105.0/(64.0*PI*pow(R,9));
+        a = 315.0/(64.0*PI*pow(R,9));
         break;
     default:
         PHYSIKA_ERROR("Wrong dimension specified.");
     }
     Scalar r = center_to_x.norm();
-     return (r>R) ? 0 : a*(-6.0)*(R*R-r*r)*(R*R-3*r*r);
+    if(r > R) return 0;
+    Scalar result = 0;
+    for(unsigned int i = 0; i < Dim; ++i)
+        result += a*(24.0*center_to_x[i]*center_to_x[i]*(R*R - r*r) - 6.0*(R*R - r*r)*(R*R - r*r));
+
+    return result;
 }
 
 

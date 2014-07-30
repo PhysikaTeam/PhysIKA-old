@@ -23,7 +23,7 @@ namespace Physika{
  * MullerPoly6Function:
  * Reference: "Particle-Based Fluid Simulation for Interactive Applications"
  * let h = R
- * f(x,R) = a*(h^2 - x^2)^3      (0<=|r|<=h)
+ * f(x,R) = a*(h^2 - |x|^2)^3      (0<=|x|<=h)
  * where 'a' depends on the dimension and radius of support domain
  *   a = 35/(32*R^7), in 1D
  *   a = 4/(PI*R^8), in 2D
@@ -39,7 +39,7 @@ public:
     Scalar weight(const Vector<Scalar, Dim> &center_to_x, Scalar R) const;
     Vector<Scalar, Dim> gradient(const Vector<Scalar, Dim> &center_to_x, Scalar R) const;
     Scalar laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const; 
-    void printInfo() const = 0;
+    void printInfo() const;
 };
 
 template <typename Scalar>
@@ -51,7 +51,7 @@ public:
     Scalar weight(Scalar center_to_x, Scalar R) const; 
     Scalar gradient(Scalar center_to_x, Scalar R) const;
     Scalar laplacian(Scalar center_to_x, Scalar R) const;
-    void printInfo() const = 0;
+    void printInfo() const;
 };
 
 
