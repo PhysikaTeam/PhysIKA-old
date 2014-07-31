@@ -51,6 +51,9 @@ public:
     virtual Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, Scalar R) const=0;
     virtual Scalar laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const=0;
     virtual void printInfo() const=0;  //print the formula of this weight function
+
+    typedef Scalar ScalarType;
+    static const int DimSize = Dim;
 };
 
 /*
@@ -67,6 +70,9 @@ public:
     virtual Scalar gradient(Scalar center_to_x, Scalar R) const=0;
     virtual Scalar laplacian(Scalar center_to_x, Scalar R) const=0;
     virtual void printInfo() const=0;  //print the formula of this weight function
+
+    typedef Scalar ScalarType;
+    static const int DimSize = 1;
 };
 
 } //end of namespace Physika

@@ -12,25 +12,30 @@
  *
  */
 
+#include "Physika_Core/Grid_Weight_Functions/grid_cubic_weight_functions.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase()
-    :DriverBase<Scalar>()
+    :DriverBase<Scalar>(), weight_function_(NULL)
 {
+    setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(); //default weight function is piece-wise cubic b spline
 }
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
+    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL)
 {
+    setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(); //default weight function is piece-wise cubic b spline
 }
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::~MPMBase()
 {
+    if(weight_function_)
+        delete weight_function_;
 }
 
 //explicit instantiations

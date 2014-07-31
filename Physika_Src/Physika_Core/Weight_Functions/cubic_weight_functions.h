@@ -68,6 +68,7 @@ public:
 template <typename Scalar, int Dim>
 class  DesbrunSpikyWeightFunction: public WeightFunction<Scalar, Dim>
 {
+public:
     DesbrunSpikyWeightFunction(){}
     ~DesbrunSpikyWeightFunction(){}
     Scalar weight(const Vector<Scalar,Dim> &center_to_x, Scalar R) const;

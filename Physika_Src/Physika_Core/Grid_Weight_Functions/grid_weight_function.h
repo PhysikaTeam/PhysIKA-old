@@ -39,6 +39,9 @@ public:
     virtual Scalar weight(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const=0;
     virtual Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const=0;
     virtual void printInfo() const=0;
+
+    typedef Scalar ScalarType;
+    static const int DimSize = Dim;
 };
 }  //end of namespace Physika
 

@@ -16,6 +16,8 @@
 #define PHYSIKA_DYNAMICS_MPM_MPM_BASE_H_
 
 #include <string>
+#include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
+#include "Physika_Core/Grid_Weight_Functions/grid_weight_function_creator.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
 
 namespace Physika{
@@ -39,9 +41,22 @@ public:
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
 
+    //set the type of weight function
+    template <typename GridWeightFunctionType>
+    void setWeightFunction();
 protected:
     virtual void initialize()=0;
+    GridWeightFunction<Scalar,Dim> *weight_function_;
 };
+
+template <typename Scalar, int Dim>
+template <typename GridWeightFunctionType>
+void MPMBase<Scalar,Dim>::setWeightFunction()
+{
+    if(weight_function_)
+        delete weight_function_;
+    weight_function_ = GridWeightFunctionCreator<GridWeightFunctionType>::createGridWeightFunction();
+}
 
 }  //end of namespace Physika
 

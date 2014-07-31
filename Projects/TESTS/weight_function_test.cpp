@@ -12,6 +12,7 @@
  *
  */
 
+#include "Physika_Core/Weight_Functions/weight_function_creator.h"
 #include "Physika_Core/Weight_Functions/weight_function.h"
 #include "Physika_Core/Weight_Functions/linear_weight_functions.h"
 #include "Physika_Core/Weight_Functions/quadratic_weight_functions.h"
@@ -25,6 +26,8 @@ using Physika::PiecewiseCubicSpline;
 using Physika::LucyQuarticWeightFunction;
 using Physika::NewQuarticWeightFunction;
 using Physika::WeightFunction;
+using Physika::WeightFunctionCreator;
+using Physika::DesbrunSpikyWeightFunction;
 
 int main()
 {
@@ -82,6 +85,16 @@ int main()
     weight_function_1d = new NewQuarticWeightFunction<float,1>();
     weight_function_2d = new NewQuarticWeightFunction<float,2>();
     weight_function_3d = new NewQuarticWeightFunction<float,3>();
+    weight_function_1d->printInfo();
+    weight_function_2d->printInfo();
+    weight_function_3d->printInfo();
+    delete weight_function_1d;
+    delete weight_function_2d;
+    delete weight_function_3d;
+    //weight function creator
+    weight_function_1d = WeightFunctionCreator<DesbrunSpikyWeightFunction<float,1>>::createWeightFunction();
+    weight_function_2d = WeightFunctionCreator<DesbrunSpikyWeightFunction<float,2>>::createWeightFunction();
+    weight_function_3d = WeightFunctionCreator<DesbrunSpikyWeightFunction<float,3>>::createWeightFunction();
     weight_function_1d->printInfo();
     weight_function_2d->printInfo();
     weight_function_3d->printInfo();
