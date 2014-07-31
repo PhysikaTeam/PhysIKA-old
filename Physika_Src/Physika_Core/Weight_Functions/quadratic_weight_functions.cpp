@@ -84,7 +84,7 @@ Vector<Scalar,Dim> JohnsonQuadraticWeightFunction<Scalar,Dim>::gradient(const Ve
     }
     Scalar r = center_to_x.norm();
     Vector<Scalar,Dim> direction(0);
-    if(r>0)
+    if(r>std::numeric_limits<Scalar>::epsilon())
         direction = center_to_x/r;
     else
         direction[0] = 1.0;  //set direction to x axis when x is at center 
@@ -222,7 +222,7 @@ Vector<Scalar,Dim> DomeShapedQuadraticWeightFunction<Scalar,Dim>::gradient(const
     }
     Scalar r = center_to_x.norm();
     Vector<Scalar,Dim> direction(0);
-    if(r>0)
+    if(r>std::numeric_limits<Scalar>::epsilon())
         direction = center_to_x/r;
     else
         direction[0] = 1.0; //set direction to x axis when x is at center

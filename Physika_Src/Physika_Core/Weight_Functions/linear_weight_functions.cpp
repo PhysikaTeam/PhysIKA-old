@@ -76,7 +76,7 @@ Vector<Scalar,Dim> LinearWeightFunction<Scalar,Dim>::gradient(const Vector<Scala
     }
     Scalar r = center_to_x.norm();
     Vector<Scalar,Dim> direction(0);
-    if(r>0)
+    if(r>std::numeric_limits<Scalar>::epsilon())
         direction = center_to_x/r;
     else
         direction[0] = 1.0;  //set direction to x axis when x is at center 
@@ -110,7 +110,7 @@ Scalar LinearWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &cen
     Scalar result = 0;
     if(r>R)
         result = 0;
-    else if(r>0)
+    else if(r>std::numeric_limits<Scalar>::epsilon())
         result = (-a/R)*(Dim-1.0)/r;
     else
         result = std::numeric_limits<Scalar>::max();  //infinite

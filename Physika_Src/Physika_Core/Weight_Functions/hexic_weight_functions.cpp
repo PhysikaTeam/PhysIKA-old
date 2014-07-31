@@ -12,6 +12,7 @@
  *
  */
 
+#include <limits>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
@@ -75,7 +76,7 @@ Vector<Scalar,Dim> MullerPoly6WeightFunction<Scalar,Dim>::gradient(const Vector<
     }
     Scalar r = center_to_x.norm();
     Vector<Scalar,Dim> direction(0);
-    if(r>0)
+    if(r>std::numeric_limits<Scalar>::epsilon())
         direction = center_to_x/r; 
     else
         direction[0] = 1.0;//set direction to x axis when x is at center
