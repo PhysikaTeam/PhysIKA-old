@@ -12,6 +12,7 @@
  *
  */
 
+#include <limits>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/math_utilities.h"
@@ -127,7 +128,7 @@ Scalar JohnsonQuadraticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar
     else if(s>0)
         result = a*(3.0/(4.0*h*r)+Dim*(3.0/(8.0*h*h)-3.0/(4.0*h*r)));
     else
-        result = 0;  //does not exist
+        result = std::numeric_limits<Scalar>::max();  //infinite
     return result;
 }
 

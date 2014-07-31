@@ -12,6 +12,7 @@
  *
  */
 
+#include <limits>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
@@ -112,7 +113,7 @@ Scalar LinearWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &cen
     else if(r>0)
         result = (-a/R)*(Dim-1.0)/r;
     else
-        result = 0;  //does not exist
+        result = std::numeric_limits<Scalar>::max();  //infinite
     return result;
 }
 
