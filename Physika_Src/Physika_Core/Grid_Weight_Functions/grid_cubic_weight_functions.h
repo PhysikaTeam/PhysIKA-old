@@ -20,6 +20,22 @@
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
 
 namespace Physika{
+
+/*
+ * GridPiecewiseCubicSpline: dyadic product of 1D piece-wise cubic spline
+ */
+
+template <typename Scalar, int Dim>
+class GridPiecewiseCubicSpline: public GridWeightFunction<Scalar,Dim>
+{
+public:
+    GridPiecewiseCubicSpline(){}
+    ~GridPiecewiseCubicSpline(){}
+    Scalar weight(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const;
+    Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const;
+    void printInfo() const;
+};
+
 } //end of namespace Physika
 
 #endif  //PHYSIKA_CORE_GRID_WEIGHT_FUNCTIONS_GRID_CUBIC_WEIGHT_FUNCTIONS_H_

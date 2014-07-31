@@ -110,10 +110,11 @@ Scalar LinearWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar,Dim> &cen
     Scalar result = 0;
     if(r>R)
         result = 0;
+
     else if(r>std::numeric_limits<Scalar>::epsilon())
         result = (-a/R)*(Dim-1.0)/r;
     else
-        result = std::numeric_limits<Scalar>::max();  //infinite
+        result = std::numeric_limits<Scalar>::min();  //infinite
     return result;
 }
 

@@ -128,7 +128,7 @@ Scalar JohnsonQuadraticWeightFunction<Scalar,Dim>::laplacian(const Vector<Scalar
     else if(s>0)
         result = a*(3.0/(4.0*h*r)+Dim*(3.0/(8.0*h*h)-3.0/(4.0*h*r)));
     else
-        result = std::numeric_limits<Scalar>::max();  //infinite
+        result = std::numeric_limits<Scalar>::min();  //infinite
     return result;
 }
 

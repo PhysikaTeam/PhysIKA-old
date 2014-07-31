@@ -55,7 +55,8 @@ Scalar MullerPoly6WeightFunction<Scalar, 1>::gradient(Scalar center_to_x, Scalar
     PHYSIKA_ASSERT(R > 0);
     Scalar a = 35.0/(32.0*pow(R,7));
     Scalar r = abs(center_to_x);
-    return (r>R) ? 0 : a*(-6.0*r)*(R*R-r*r)*(R*R-r*r);
+    Scalar sign = center_to_x>=0 ? 1 : -1;
+    return (r>R) ? 0 : a*(-6.0*r)*(R*R-r*r)*(R*R-r*r)*sign;
 }
 
 template <typename Scalar, int Dim>

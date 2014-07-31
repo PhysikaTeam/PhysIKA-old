@@ -243,7 +243,8 @@ Scalar DesbrunSpikyWeightFunction<Scalar,1>::gradient(Scalar center_to_x, Scalar
     PHYSIKA_ASSERT(R > 0);
     Scalar a = 2.0/(pow(R,4));
     Scalar r = abs(center_to_x);
-    return (r>R) ? 0 : a*(-3.0)*pow((R - r),2);
+    Scalar sign = center_to_x>=0 ? 1 : -1;
+    return (r>R) ? 0 : a*(-3.0)*pow((R - r),2)*sign;
 }
 
 template <typename Scalar, int Dim>
