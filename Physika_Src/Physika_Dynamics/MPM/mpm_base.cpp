@@ -13,6 +13,7 @@
  */
 
 #include <iostream>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_cubic_weight_functions.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 
@@ -40,6 +41,23 @@ MPMBase<Scalar,Dim>::~MPMBase()
         delete weight_function_;
     if(step_method_)
         delete step_method_;
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMBase<Scalar,Dim>::computeTimeStep()
+{
+    Scalar min_cell_size = minCellEdgeLength();
+    Scalar max_particle_vel = maxParticleVelocityNorm();
+    this->dt_ = (this->cfl_num_ * min_cell_size)/(this->sound_speed_+max_particle_vel);
+    this->dt_ = this->dt_ > this->max_dt_ ? this->max_dt_ : this->dt_;
+    return this->dt_;
+}
+
+template <typename Scalar, int Dim>
+void MPMBase<Scalar,Dim>::advanceStep(Scalar dt)
+{
+    PHYSIKA_ASSERT(this->step_method_);
+    this->step_method_->advanceStep(dt);
 }
 
 template <typename Scalar, int Dim>

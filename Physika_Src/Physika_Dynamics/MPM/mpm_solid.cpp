@@ -12,7 +12,6 @@
  *
  */
 
-#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
 #include "Physika_Dynamics/MPM/mpm_step_method.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
@@ -48,13 +47,6 @@ template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
 {
 //TO DO
-}
-
-template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::advanceStep(Scalar dt)
-{
-//TO DO
-    PHYSIKA_ASSERT(this->step_method_);
 }
 
 template <typename Scalar, int Dim>

@@ -54,16 +54,6 @@ MPMSolidBase<Scalar,Dim>::~MPMSolidBase()
 }
 
 template <typename Scalar, int Dim>
-Scalar MPMSolidBase<Scalar,Dim>::computeTimeStep()
-{
-    Scalar min_cell_size = minCellEdgeLength();
-    Scalar max_particle_vel = maxParticleVelocityNorm();
-    this->dt_ = (this->cfl_num_ * min_cell_size)/(this->sound_speed_+max_particle_vel);
-    this->dt_ = this->dt_ > this->max_dt_ ? this->max_dt_ : this->dt_;
-    return this->dt_;
-}
-
-template <typename Scalar, int Dim>
 unsigned int MPMSolidBase<Scalar,Dim>::particleNum() const
 {
     return particles_.size();

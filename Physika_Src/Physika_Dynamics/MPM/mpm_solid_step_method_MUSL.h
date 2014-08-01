@@ -26,7 +26,7 @@ class MPMSolidStepMethodMUSL: public MPMStepMethod<Scalar,Dim>
 public:
     MPMSolidStepMethodMUSL();
     ~MPMSolidStepMethodMUSL();
-    void advanceStep();
+    void advanceStep(Scalar dt);
 protected:
 };
 

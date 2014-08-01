@@ -29,7 +29,7 @@ class MPMStepMethod
 public:
     MPMStepMethod();
     virtual ~MPMStepMethod();
-    virtual void advanceStep() = 0;
+    virtual void advanceStep(Scalar dt) = 0;
     void setMPMDriver(MPMBase<Scalar,Dim> *mpm_driver);
 protected:
     MPMBase<Scalar,Dim> *mpm_driver_;

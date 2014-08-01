@@ -35,12 +35,13 @@ public:
 
     //virtual methods
     virtual void initConfiguration(const std::string &file_name)=0;
-    virtual void advanceStep(Scalar dt)=0;
-    virtual Scalar computeTimeStep()=0;
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin)=0;
     virtual bool withRestartSupport() const=0;
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
+
+    virtual Scalar computeTimeStep();
+    virtual void advanceStep(Scalar dt); //compute time step with CFL condition
 
     //getters&&setters
     Scalar cflConstant() const;
@@ -56,6 +57,9 @@ public:
     void setStepMethod();
 protected:
     virtual void initialize()=0;
+    virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
+    virtual Scalar maxParticleVelocityNorm() const=0;
+protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
     MPMStepMethod<Scalar,Dim> *step_method_;
     //time step computation with CFL condition

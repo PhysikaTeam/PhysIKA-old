@@ -32,7 +32,7 @@ MPMSolidStepMethodUSL<Scalar,Dim>::~MPMSolidStepMethodUSL()
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidStepMethodUSL<Scalar,Dim>::advanceStep()
+void MPMSolidStepMethodUSL<Scalar,Dim>::advanceStep(Scalar dt)
 {
     MPMSolidBase<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolidBase<Scalar,Dim>*>(this->mpm_driver_);
     if(mpm_solid_driver==NULL)
