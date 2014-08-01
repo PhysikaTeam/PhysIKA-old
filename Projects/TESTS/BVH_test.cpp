@@ -29,7 +29,7 @@
 #include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/Timer/timer.h"
+#include "Physika_Core/Timer/timer.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
 
 #include <GL/freeglut.h>

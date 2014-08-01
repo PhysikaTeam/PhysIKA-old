@@ -118,10 +118,10 @@ RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
     collision_detection_method_(new CollisionDetectionMethodDTBVH<Scalar, Dim>()),
     collision_response_method_(new RigidResponseMethodBLCP<Scalar, Dim>()),
     gravity_(9.81),
-    time_step_(0.01),
     frame_(0),
     step_(0)
 {
+    this->dt_ = 0.01;
     collision_response_method_->setRigidDriver(this);
 }
 
@@ -207,7 +207,7 @@ void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
 template <typename Scalar,int Dim>
 Scalar RigidBodyDriver<Scalar, Dim>::computeTimeStep()
 {
-	return time_step_;
+	return this->dt_;
 }
 
 template <typename Scalar,int Dim>

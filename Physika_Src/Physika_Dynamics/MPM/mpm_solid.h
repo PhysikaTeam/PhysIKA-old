@@ -46,7 +46,6 @@ public:
     //virtual methods
     virtual void initConfiguration(const std::string &file_name);
     virtual void advanceStep(Scalar dt);
-    virtual Scalar computeTimeStep();
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin);
     virtual bool withRestartSupport() const;
     virtual void write(const std::string &file_name);
@@ -68,7 +67,9 @@ public:
 
 protected:
     virtual void initialize();
-    void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
+    virtual void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
+    virtual void resetGridData();  //reset grid data to zero, needed before rasterize operation
+    virtual Scalar minCellEdgeLength() const;
 protected:
     Grid<Scalar,Dim> grid_;
     //grid data stored on grid nodes

@@ -53,7 +53,7 @@ void SPHFluid<Scalar, Dim>::allocMemory(unsigned int particle_num)
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::initConfiguration(const std::string &file_name)
 {
-    this->config_file_.addOptionOptional("timestep", &(this->time_step_), static_cast<Scalar>(0.001));
+    this->config_file_.addOptionOptional("timestep", &(this->dt_), static_cast<Scalar>(0.001));
     this->config_file_.addOptionOptional("viscosity", &(this->viscosity_), static_cast<Scalar>(280000));
     this->config_file_.addOptionOptional("surfacetension",&(this->surface_tension_),static_cast<Scalar>(54000));
     this->config_file_.addOptionOptional("density", &(this->reference_density_), static_cast<Scalar>(1000));
@@ -78,7 +78,7 @@ void SPHFluid<Scalar, Dim>::initConfiguration(const std::string &file_name)
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::initConfiguration()
 {
-    this->config_file_.addOptionOptional("timestep", &(this->time_step_), static_cast<Scalar>(0.001));
+    this->config_file_.addOptionOptional("timestep", &(this->dt_), static_cast<Scalar>(0.001));
     this->config_file_.addOptionOptional("viscosity", &(this->viscosity_), static_cast<Scalar>(280000));
     this->config_file_.addOptionOptional("surfacetension",&(this->surface_tension_),static_cast<Scalar>(54000));
     this->config_file_.addOptionOptional("density", &(this->reference_density_), static_cast<Scalar>(1000));
@@ -325,9 +325,9 @@ void SPHFluid<Scalar, Dim>::advance(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-Scalar SPHFluid<Scalar, Dim>::getTimeStep()
+Scalar SPHFluid<Scalar, Dim>::computeTimeStep()
 {
-    return this->time_step_;
+    return this->dt_;
 }
 
 template class SPHFluid<float, 3>;

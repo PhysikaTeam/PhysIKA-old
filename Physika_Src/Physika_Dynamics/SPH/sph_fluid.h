@@ -38,10 +38,7 @@ public:
     {
 
     }
-    virtual Scalar computeTimeStep()//compute time step with respect to simulation specific conditions
-    {
-        return this->getTimeStep();
-    }
+    virtual Scalar computeTimeStep();//compute time step with respect to simulation specific conditions
     virtual bool withRestartSupport() const
     {
         return false;
@@ -59,8 +56,6 @@ public:
 
     }
 
-
-    virtual Scalar getTimeStep();
     virtual void advance(Scalar dt);
     virtual void stepEuler(Scalar dt);
     virtual void computeNeighbors();

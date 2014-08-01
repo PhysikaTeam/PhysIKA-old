@@ -23,6 +23,7 @@ namespace Physika{
 
 template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
+template<typename Scalar,int Dim> class Vector;
 
 template <typename Scalar, int Dim>
 class MPMSolidBase: public MPMBase<Scalar,Dim>
@@ -37,11 +38,11 @@ public:
     //virtual methods
     virtual void initConfiguration(const std::string &file_name)=0;
     virtual void advanceStep(Scalar dt)=0;
-    virtual Scalar computeTimeStep()=0;
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin)=0;
     virtual bool withRestartSupport() const=0;
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
+    virtual Scalar computeTimeStep();  //compute time step with CFL condition
 
     //get && set
     unsigned int particleNum() const;
@@ -62,6 +63,8 @@ public:
     virtual void updateParticlePosition()=0;
 protected:
     virtual void initialize()=0;
+    virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
+    Scalar maxParticleVelocityNorm() const;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
 };

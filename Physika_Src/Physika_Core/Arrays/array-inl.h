@@ -102,7 +102,7 @@ ElementType& Array<ElementType>::operator[] (unsigned int id)
 }
 
 template <typename ElementType>
-ElementType& Array<ElementType>::operator[] (unsigned int id) const
+const ElementType& Array<ElementType>::operator[] (unsigned int id) const
 {
     if(id<0||id>=element_count_)
     {

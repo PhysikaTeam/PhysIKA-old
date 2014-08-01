@@ -64,7 +64,7 @@ public:
 
     /* Operator overloading */
     ElementType & operator[] (unsigned int id);
-    ElementType & operator[] (unsigned int id) const;
+    const ElementType & operator[] (unsigned int id) const;
 
     virtual void permutate(unsigned int *ids, unsigned int size);
     

@@ -42,6 +42,12 @@ public:
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
 
+    //getters&&setters
+    Scalar cflConstant() const;
+    void setCFLConstant(Scalar cfl);
+    Scalar soundSpeed() const;
+    void setSoundSpeed(Scalar sound_speed);
+
     //set the type of weight function with weight function type as template
     template <typename GridWeightFunctionType>
     void setWeightFunction();
@@ -52,6 +58,9 @@ protected:
     virtual void initialize()=0;
     GridWeightFunction<Scalar,Dim> *weight_function_;
     MPMStepMethod<Scalar,Dim> *step_method_;
+    //time step computation with CFL condition
+    Scalar cfl_num_;
+    Scalar sound_speed_;
 };
 
 template <typename Scalar, int Dim>

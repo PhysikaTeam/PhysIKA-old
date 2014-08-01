@@ -44,7 +44,7 @@ void RigidDriverPluginPrint<Scalar, Dim>::onEndFrame(unsigned int frame)
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginPrint<Scalar, Dim>::onBeginTimeStep(Scalar dt)
+void RigidDriverPluginPrint<Scalar, Dim>::onBeginTimeStep(Scalar time, Scalar dt)
 {
 
 }

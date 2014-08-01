@@ -46,7 +46,6 @@ public:
     virtual void initConfiguration() = 0;
     virtual void initSceneBoundary();
 
-    virtual Scalar getTimeStep(){ return time_step_; }
     virtual void advance(Scalar dt);
     virtual void stepEuler(Scalar dt);
     virtual void computeNeighbors();
@@ -83,7 +82,6 @@ public:
 
     unsigned int sim_itor_;
 
-    Scalar time_step_;
     Scalar viscosity_;
     Scalar gravity_;
     Scalar surface_tension_;

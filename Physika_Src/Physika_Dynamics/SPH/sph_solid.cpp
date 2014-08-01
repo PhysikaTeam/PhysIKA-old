@@ -41,14 +41,6 @@ void SPHSolid<Scalar, Dim>::initSceneBoundary()
 }
 
 template <typename Scalar, int Dim>
-Scalar SPHSolid<Scalar, Dim>::getTimeStep()
-{
-
-
-    return this->time_step_;
-}
-
-template <typename Scalar, int Dim>
 void SPHSolid<Scalar, Dim>::advance(Scalar dt)
 {
 
@@ -81,6 +73,6 @@ void SPHSolid<Scalar, Dim>::computeVolume()
 }
 
 
-template class SPHSolid<float, 3>;
-template class SPHSolid<double, 3>;
+//template class SPHSolid<float, 3>;
+//template class SPHSolid<double, 3>;
 } //end of namespace Physika

@@ -29,7 +29,6 @@ public:
     virtual void initialize();
     virtual void initSceneBoundary();
 
-    virtual Scalar getTimeStep();
     virtual void advance(Scalar dt);
     virtual void stepEuler(Scalar dt);
     virtual void computeNeighbors();

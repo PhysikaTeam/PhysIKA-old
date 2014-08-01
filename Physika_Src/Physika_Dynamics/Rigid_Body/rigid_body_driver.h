@@ -94,7 +94,6 @@ protected:
     CollisionDetectionMethod<Scalar, Dim>* collision_detection_method_;
     RigidResponseMethod<Scalar, Dim>* collision_response_method_;
     Scalar gravity_;
-    Scalar time_step_;
     int frame_;
     int step_;
 

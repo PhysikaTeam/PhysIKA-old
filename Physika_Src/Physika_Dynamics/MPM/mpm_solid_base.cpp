@@ -14,6 +14,9 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
 #include "Physika_Dynamics/MPM/mpm_solid_step_method_USL.h"
@@ -48,6 +51,16 @@ MPMSolidBase<Scalar,Dim>::~MPMSolidBase()
     for(unsigned int i = 0; i < particles_.size(); ++i)
         if(particles_[i])
             delete particles_[i];
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolidBase<Scalar,Dim>::computeTimeStep()
+{
+    Scalar min_cell_size = minCellEdgeLength();
+    Scalar max_particle_vel = maxParticleVelocityNorm();
+    this->dt_ = (this->cfl_num_ * min_cell_size)/(this->sound_speed_+max_particle_vel);
+    this->dt_ = this->dt_ > this->max_dt_ ? this->max_dt_ : this->dt_;
+    return this->dt_;
 }
 
 template <typename Scalar, int Dim>
@@ -117,6 +130,18 @@ SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int parti
         std::exit(EXIT_FAILURE);
     }
     return *particles_[particle_idx];
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolidBase<Scalar,Dim>::maxParticleVelocityNorm() const
+{
+    Scalar min_vel = std::numeric_limits<Scalar>::max();
+    for(unsigned int i = 0; i < particles_.size(); ++i)
+    {
+        Scalar norm_sqr = (particles_[i]->velocity()).normSquared();
+        min_vel = norm_sqr < min_vel ? norm_sqr : min_vel;
+    }
+    return sqrt(min_vel);
 }
 
 //explicit instantiations
