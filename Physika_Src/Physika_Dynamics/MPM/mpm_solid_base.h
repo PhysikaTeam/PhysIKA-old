@@ -51,8 +51,6 @@ public:
     const SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx);
 
-protected:
-    virtual void initialize()=0;
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
     virtual void solveOnGrid()=0; //solve the dynamics system on grid
@@ -62,6 +60,8 @@ protected:
     virtual void updateParticleConstitutiveModelState()=0;
     virtual void updateParticleVelocity()=0;
     virtual void updateParticlePosition()=0;
+protected:
+    virtual void initialize()=0;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
 };

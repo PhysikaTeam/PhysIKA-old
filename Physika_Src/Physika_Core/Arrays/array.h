@@ -61,7 +61,6 @@ public:
 
     /* Special functions */
     void resize(unsigned int count);    //resize array, data will be lost
-    void zero();
 
     /* Operator overloading */
     ElementType & operator[] (unsigned int id);

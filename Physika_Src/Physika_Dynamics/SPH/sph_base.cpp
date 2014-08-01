@@ -32,23 +32,23 @@ SPHBase<Scalar, Dim>::SPHBase():
 
 template <typename Scalar, int Dim>
 void SPHBase<Scalar, Dim>::allocMemory(unsigned int particle_num)
-{
+{//ALERT!!!
     this->particle_num_ = particle_num;
     this->mass_.resize(particle_num);
-    this->mass_.zero();
+    //this->mass_.zero(); 
     this->position_.resize(particle_num);
     this->velocity_.resize(particle_num);
     this->normal_.resize(particle_num);
-    this->normal_.zero();
+    //this->normal_.zero();
     this->viscous_force_.resize(particle_num);
     this->pressure_force_.resize(particle_num);
     this->surface_force_.resize(particle_num);
     this->volume_.resize(particle_num);
-    this->volume_.zero();
+    //this->volume_.zero();
     this->pressure_.resize(particle_num);
-    this->pressure_.zero();
+    //this->pressure_.zero();
     this->density_.resize(particle_num);
-    this->density_.zero();
+    //this->density_.zero();
 }
 
 template <typename Scalar, int Dim>

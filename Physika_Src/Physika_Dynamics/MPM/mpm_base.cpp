@@ -19,14 +19,14 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase()
-    :DriverBase<Scalar>(), weight_function_(NULL)
+    :DriverBase<Scalar>(), weight_function_(NULL), step_method_(NULL)
 {
     setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(); //default weight function is piece-wise cubic b spline
 }
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL)
+    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL), step_method_(NULL)
 {
     setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(); //default weight function is piece-wise cubic b spline
 }
@@ -36,6 +36,8 @@ MPMBase<Scalar,Dim>::~MPMBase()
 {
     if(weight_function_)
         delete weight_function_;
+    if(step_method_)
+        delete step_method_;
 }
 
 //explicit instantiations

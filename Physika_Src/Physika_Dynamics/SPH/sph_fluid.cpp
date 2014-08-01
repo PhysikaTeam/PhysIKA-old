@@ -30,24 +30,24 @@ SPHFluid<Scalar, Dim>::SPHFluid()
 
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::allocMemory(unsigned int particle_num)
-{
+{//ALERT!!!!!
     this->particle_num_ = particle_num;
     SPHBase<Scalar,Dim>::allocMemory(particle_num);
     
     this->phi_.resize(particle_num);
-    this->phi_.zero();
+    //this->phi_.zero();
 
     this->energy_.resize(particle_num);
-    this->energy_.zero();
+    //this->energy_.zero();
 
     this->neighbor_lists_.resize(particle_num);
-    this->neighbor_lists_.zero();
+    //this->neighbor_lists_.zero();
 
     this->small_density_.resize(particle_num);
-    this->small_density_.zero();
+    //this->small_density_.zero();
 
     this->small_scale_.resize(particle_num);
-    this->small_scale_.zero();
+    //this->small_scale_.zero();
 }
 
 template <typename Scalar, int Dim>
@@ -196,8 +196,8 @@ void SPHFluid<Scalar, Dim>::computeNeighbors()
 template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::computePressure(Scalar dt)
 {
-    
-    this->pressure_.zero();
+    //ALERT!!!!
+    //this->pressure_.zero();
     for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         //TO DO: mod the compute formula
@@ -242,7 +242,7 @@ template <typename Scalar, int Dim>
 void SPHFluid<Scalar, Dim>::computeViscousForce(Scalar dt)
 {
     SPH_Kernel<Scalar>& kernel = KernelFactory<Scalar>::createKernel(KernelFactory<Scalar>::Laplacian);
-    this->viscous_force_.zero();
+    //this->viscous_force_.zero(); ALERT!!!!
     for (unsigned int i = 0; i < this->particle_num_; i++)
     {
         NeighborList<Scalar>& neighborlist_i = this->neighbor_lists_[i];

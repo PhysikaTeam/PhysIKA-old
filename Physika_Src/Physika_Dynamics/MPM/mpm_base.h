@@ -19,6 +19,7 @@
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function_creator.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
+#include "Physika_Dynamics/MPM/mpm_step_method.h"
 
 namespace Physika{
 
@@ -41,12 +42,16 @@ public:
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
 
-    //set the type of weight function
+    //set the type of weight function with weight function type as template
     template <typename GridWeightFunctionType>
     void setWeightFunction();
+    //set the step method with the step method type as template
+    template <typename MPMStepMethodType>
+    void setStepMethod();
 protected:
     virtual void initialize()=0;
     GridWeightFunction<Scalar,Dim> *weight_function_;
+    MPMStepMethod<Scalar,Dim> *step_method_;
 };
 
 template <typename Scalar, int Dim>
@@ -56,6 +61,16 @@ void MPMBase<Scalar,Dim>::setWeightFunction()
     if(weight_function_)
         delete weight_function_;
     weight_function_ = GridWeightFunctionCreator<GridWeightFunctionType>::createGridWeightFunction();
+}
+
+template <typename Scalar, int Dim>
+template <typename MPMStepMethodType>
+void MPMBase<Scalar,Dim>::setStepMethod()
+{
+    if(step_method_)
+        delete step_method_;
+    step_method_ = new MPMStepMethodType();
+    step_method_->setMPMDriver(this);
 }
 
 }  //end of namespace Physika

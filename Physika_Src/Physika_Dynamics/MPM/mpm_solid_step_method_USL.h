@@ -16,7 +16,20 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USL_H_
 #define PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USL_H_
 
+#include "Physika_Dynamics/MPM/mpm_step_method.h"
+
 namespace Physika{
+
+template <typename Scalar, int Dim>
+class MPMSolidStepMethodUSL: public MPMStepMethod<Scalar,Dim>
+{
+public:
+    MPMSolidStepMethodUSL();
+    ~MPMSolidStepMethodUSL();
+    void advanceStep();
+protected:
+};
+
 }  //end of namespace Physika
 
 #endif //PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USL_H_

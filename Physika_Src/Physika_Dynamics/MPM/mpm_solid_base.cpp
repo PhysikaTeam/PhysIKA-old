@@ -16,6 +16,7 @@
 #include <iostream>
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
+#include "Physika_Dynamics/MPM/mpm_solid_step_method_USL.h"
 
 namespace Physika{
 
@@ -23,12 +24,14 @@ template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase()
     :MPMBase<Scalar,Dim>()
 {
+    this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
 }
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
 {
+    this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
 }
 
 template <typename Scalar, int Dim>

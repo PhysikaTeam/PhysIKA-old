@@ -18,6 +18,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Dynamics/MPM/mpm_base.h"
 #include "Physika_Dynamics/MPM/mpm_step_method.h"
 
 namespace Physika{
@@ -38,10 +39,10 @@ void MPMStepMethod<Scalar,Dim>::setMPMDriver(MPMBase<Scalar,Dim> *mpm_driver)
 {
     if(mpm_driver==NULL)
     {
-        std::cerr<<"Error: cannot set NULL driver pointer to MPMStepMethod.\n";
+        std::cerr<<"Error: Cannot set NULL MPM driver to MPMStepMethod, program abort!\n";
         std::exit(EXIT_FAILURE);
     }
-    mpm_driver_ = mpm_driver;
+    this->mpm_driver_ = mpm_driver;
 }
 
 //explicit instantiations
