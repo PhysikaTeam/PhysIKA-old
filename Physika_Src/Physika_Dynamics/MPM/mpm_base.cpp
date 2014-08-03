@@ -21,7 +21,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase()
-    :DriverBase<Scalar>(), weight_function_(NULL), weight_domain_cell_scale_(1.0), step_method_(NULL),
+    :DriverBase<Scalar>(), weight_function_(NULL), weight_radius_cell_scale_(1.0), step_method_(NULL),
      cfl_num_(0.5),sound_speed_(340.0)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
@@ -30,7 +30,7 @@ MPMBase<Scalar,Dim>::MPMBase()
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL), weight_domain_cell_scale_(1.0),
+    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL), weight_radius_cell_scale_(1.0),
      step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell

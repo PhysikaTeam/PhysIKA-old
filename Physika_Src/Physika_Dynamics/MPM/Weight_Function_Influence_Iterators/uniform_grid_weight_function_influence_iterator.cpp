@@ -12,7 +12,10 @@
  *
  */
 
-#include "Physika_Geometry/Cartesian_Grids/grid.h"
+#include <limits>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Range/range.h"
 #include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 
 namespace Physika{
@@ -20,17 +23,17 @@ namespace Physika{
 template <typename Scalar, int Dim>
 UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::
 UniformGridWeightFunctionInfluenceIterator(const Grid<Scalar,Dim> &grid, const Vector<Scalar,Dim> &influence_center,
-                                           const Vector<Scalar,Dim> &influence_domain_scale)
- :grid_(&grid),influence_center_(influence_center),influence_domain_scale_(influence_domain_scale)
+                                           const Vector<Scalar,Dim> &influence_radius_scale)
+ :grid_(&grid)
 {
-//TO DO
+    initNodeIdxGrid(influence_center,influence_radius_scale);
+    node_iter_ = node_idx_grid_.nodeBegin();
 }
 
 template <typename Scalar, int Dim>
 UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::
 UniformGridWeightFunctionInfluenceIterator(const UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> &iterator)
-    :grid_(iterator.grid_),influence_center_(iterator.influence_center_),
-     influence_domain_scale_(iterator.influence_domain_scale_),node_idx_(iterator.node_idx_)
+    :grid_(iterator.grid_),node_idx_grid_(iterator.node_idx_grid_),node_iter_(iterator.node_iter_)
 {
 }
 
@@ -45,31 +48,76 @@ UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>& UniformGridWeightFunctio
 operator= (const UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> &iterator)
 {
     grid_ = iterator.grid_;
-    influence_center_ = iterator.influence_center_;
-    influence_domain_scale_ = iterator.influence_domain_scale_;
-    node_idx_ = iterator.node_idx_;
+    node_idx_grid_ = iterator.node_idx_grid_;
+    node_iter_ = iterator.node_iter_;
     return *this;
 }
 
 template <typename Scalar, int Dim>
 bool UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::valid() const
 {
-//TO DO
-    return false;
+    bool status = (node_iter_ != node_idx_grid_.nodeEnd());
+    return status;
 }
 
 template <typename Scalar, int Dim>
 UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::next() const
 {
-//TO DO
+    UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> result(*this);
+    ++(result.node_iter_);
+    return result;
+}
+
+template <typename Scalar, int Dim>
+UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>& UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::
+operator++ ()
+{
+    ++node_iter_;
     return *this;
+}
+
+template <typename Scalar, int Dim>
+UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::
+operator++ (int) const
+{
+    return this->next();
 }
 
 template <typename Scalar, int Dim>
 Vector<unsigned int,Dim> UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::nodeIndex() const
 {
-//TO DO
-    return this->node_idx_;
+    if(this->valid()==false)
+    {
+        std::cerr<<"Error: invalid UniformGridWeightFunctionInfluenceIterator, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return node_idx_grid_.node(node_iter_.nodeIndex());
+}
+
+template <typename Scalar, int Dim>
+void UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::initNodeIdxGrid(const Vector<Scalar,Dim> &influence_center,
+                                                                                 const Vector<Scalar,Dim> &influence_radius_scale)
+{
+    Vector<Scalar,Dim> influence_radius, cell_dx = grid_->dX();
+    for(unsigned int i = 0; i < Dim; ++i)
+        influence_radius[i] = cell_dx[i]*influence_radius_scale[i];
+    Vector<Scalar,Dim> influence_domain_min_corner = influence_center - influence_radius;
+    Vector<Scalar,Dim> influence_domain_max_corner = influence_center + influence_radius;
+    Vector<unsigned int,Dim> cell_idx;
+    Vector<Scalar,Dim> weight;
+    Range<unsigned int,Dim> node_idx_range;
+    grid_->cellIndexAndInterpolationWeight(influence_domain_min_corner,cell_idx,weight);
+    for(unsigned int i = 0; i < Dim; ++i)
+        if(weight[i] > std::numeric_limits<Scalar>::epsilon())
+            ++cell_idx[i];
+    node_idx_range.setMinCorner(cell_idx);
+    grid_->cellIndexAndInterpolationWeight(influence_domain_max_corner,cell_idx,weight);
+    for(unsigned int i = 0; i < Dim; ++i)
+        if(weight[i] > 1.0 - std::numeric_limits<Scalar>::epsilon())
+            ++cell_idx[i];
+    node_idx_range.setMaxCorner(cell_idx);
+    node_idx_grid_.setDomain(node_idx_range);
+    node_idx_grid_.setCellNum(node_idx_range.edgeLengths());
 }
 
 //explicit instantiations

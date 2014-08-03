@@ -52,7 +52,11 @@ public:
     Vector<Scalar,Dim> cellCenter(const Vector<unsigned int,Dim> &cell_idx) const;
     Vector<Scalar,Dim> cellMinCornerNode(const Vector<unsigned int,Dim> &cell_idx) const;
     Vector<Scalar,Dim> cellMaxCornerNode(const Vector<unsigned int,Dim> &cell_idx) const;
-    Vector<unsigned int,Dim> cellIndex(const Vector<Scalar,Dim> &position) const;  //return the cell index that the given point is in, (left close right open interval for a cell)
+    //return the cell index that the given point is in, (left close right open interval for a cell)
+    Vector<unsigned int,Dim> cellIndex(const Vector<Scalar,Dim> &position) const;
+    //return the cell index that the given point is in and the interpolation weight in the cell
+    void cellIndexAndInterpolationWeight(const Vector<Scalar,Dim> &position,
+                                         Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &weight) const;  
     //modifiers
     void setCellNum(unsigned int cell_num);  //same cell number along each dimension
     void setCellNum(const Vector<unsigned int,Dim> &cell_num);

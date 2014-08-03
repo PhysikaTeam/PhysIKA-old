@@ -228,6 +228,32 @@ Vector<unsigned int,Dim> GridBase<Scalar,Dim>::cellIndex(const Vector<Scalar,Dim
 }
 
 template <typename Scalar,int Dim>
+void GridBase<Scalar,Dim>::cellIndexAndInterpolationWeight(const Vector<Scalar,Dim> &position,
+                                                           Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &weight) const
+{
+    bool out_range = false;
+    Vector<Scalar,Dim> bias = position - domain_.minCorner();
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        PHYSIKA_ASSERT(dx_[i]>0);
+        if(bias[i] < 0)
+        {
+            out_range = true;
+            bias[i] = 0;
+        }
+        cell_idx[i] = static_cast<unsigned int>(bias[i]/dx_[i]);
+        if(cell_idx[i] >= cell_num_[i])
+        {
+            out_range = true;
+            cell_idx[i] = cell_num_[i] -1;
+        }
+        weight[i] = bias[i]/dx_[i] - cell_idx[i];
+    }
+    if(out_range)
+        std::cerr<<"Warning: Point out of grid range, clamped to closest cell!\n";
+}
+
+template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setCellNum(unsigned int cell_num)
 {
     cell_num_ = Vector<unsigned int,Dim>(cell_num);

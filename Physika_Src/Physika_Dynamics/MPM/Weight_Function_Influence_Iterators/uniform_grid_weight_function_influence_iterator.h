@@ -15,12 +15,12 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_WEIGHT_FUNCTION_INFLUENCE_ITERATORS_UNIFORM_GRID_WEIGHT_FUNCTION_INFLUENCE_ITERATOR_H_
 #define PHYSIKA_DYNAMICS_MPM_WEIGHT_FUNCTION_INFLUENCE_ITERATORS_UNIFORM_GRID_WEIGHT_FUNCTION_INFLUENCE_ITERATOR_H_
 
-#include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Geometry/Cartesian_Grids/grid.h"
 
 namespace Physika{
 
-template <typename Scalar, int Dim> class Grid;
+template <typename Scalar, int Dim> class Vector;
+template <typename Scalar, int Dim> class Range;
 
 /*
  * UniformGridWeightFunctionInfluenceIterator: iterator the uniform grid nodes that is within the influence range of a weight function
@@ -42,6 +42,9 @@ template <typename Scalar, int Dim> class Grid;
  *    {
  *         Vector<unsigned int, Dim> node_idx = iter.nodeIndex();
  *    }   
+ *
+ * Note: 
+ *      next() method could be replaced with ++ operator
  */
 
 template <typename Scalar, int Dim>
@@ -49,19 +52,22 @@ class UniformGridWeightFunctionInfluenceIterator
 {
 public:
     UniformGridWeightFunctionInfluenceIterator(const Grid<Scalar,Dim> &grid, const Vector<Scalar,Dim> &influence_center,
-                                               const Vector<Scalar,Dim> &influence_domain_scale);
+                                               const Vector<Scalar,Dim> &influence_radius_scale);
     UniformGridWeightFunctionInfluenceIterator(const UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> &iterator);
     ~UniformGridWeightFunctionInfluenceIterator();
     UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>& operator= (const UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> &iterator);
 
     bool valid() const;
     UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> next() const;
+    UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>& operator++ ();
+    UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> operator++ (int) const;
     Vector<unsigned int,Dim> nodeIndex() const;
 protected:
+    void initNodeIdxGrid(const Vector<Scalar,Dim> &influence_center, const Vector<Scalar,Dim> &influence_radius_scale);
+protected:
     const Grid<Scalar,Dim> *grid_;  //reference to grid
-    Vector<Scalar,Dim> influence_center_; //center of the influence domain
-    Vector<Scalar,Dim> influence_domain_scale_; //the scale between weight function influence domain and grid cell size
-    Vector<unsigned int,Dim> node_idx_; //node index that current iterator points to
+    Grid<unsigned int,Dim> node_idx_grid_; //grid whose node is position is the valid grid node index
+    typename Grid<unsigned int,Dim>::NodeIterator node_iter_; //current node iterator in the node index grid
     //prohibit default constructor
     UniformGridWeightFunctionInfluenceIterator();
 };

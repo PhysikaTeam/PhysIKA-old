@@ -270,7 +270,7 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator- (int stride
 }
 
 template <typename Scalar,int Dim>
-const Vector<unsigned int,Dim>& GridNodeIterator<Scalar,Dim>::nodeIndex() const
+Vector<unsigned int,Dim> GridNodeIterator<Scalar,Dim>::nodeIndex() const
 {
     if(this->validCheck()==false)
     {
@@ -456,7 +456,7 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator- (int stride
 }
 
 template <typename Scalar,int Dim>
-const Vector<unsigned int,Dim>& GridCellIterator<Scalar,Dim>::cellIndex() const
+Vector<unsigned int,Dim> GridCellIterator<Scalar,Dim>::cellIndex() const
 {
     if(this->validCheck()==false)
     {

@@ -54,7 +54,7 @@ int main()
     for(unsigned int i = 0; i < grid.cellNum()[0]; ++i)
         for(unsigned int j = 0; j < grid.cellNum()[1]; ++j)
             cout<<"Cell ("<<i<<","<<j<<"): "<<grid.cellCenter(i,j)<<endl;
-    //visit node with iterator
+    //visit cell with iterator
     cout<<"Visit cell with iterator:\n";
     Grid<float,2>::CellIterator cell_iterator = grid.cellBegin();
     while(cell_iterator != grid.cellEnd())
@@ -74,6 +74,11 @@ int main()
     cout<<"NodeBegin: "<<node_iterator.nodeIndex()<<"\n";
     cout<<"NodeBegin+6: "<<(node_iterator+6).nodeIndex()<<"\n";
     cout<<"NodeEnd-5: "<<(grid.nodeEnd()-5).nodeIndex()<<"\n";
-    cout<<"NodeEnd index: "<<(grid.nodeEnd()).nodeIndex()<<"\n";
+    //cout<<"NodeEnd index: "<<(grid.nodeEnd()).nodeIndex()<<"\n";
+    //test cell query with point
+    cout<<"Point (0.6,0.6) is in cell ";
+    cout<<grid.cellIndex(Vector<float,2>(0.6))<<"\n";
+    cout<<"Point (0.2,1.5) is in cell ";
+    cout<<grid.cellIndex(Vector<float,2>(0.2,1.5))<<"\n"; 
     return 0;
 }

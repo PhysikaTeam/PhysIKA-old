@@ -70,7 +70,7 @@ public:
     GridNodeIterator<Scalar,Dim> operator-- (int);
     GridNodeIterator<Scalar,Dim> operator+ (int stride) const;
     GridNodeIterator<Scalar,Dim> operator- (int stride) const;
-    const Vector<unsigned int,Dim>& nodeIndex() const;
+    Vector<unsigned int,Dim> nodeIndex() const;
 protected:
     //perform valid check of iterator, it's invalid if:
     //iterator not binded to any grid, or index out of range
@@ -101,7 +101,7 @@ public:
     GridCellIterator<Scalar,Dim> operator-- (int);
     GridCellIterator<Scalar,Dim> operator+ (int stride) const;
     GridCellIterator<Scalar,Dim> operator- (int stride) const;
-    const Vector<unsigned int,Dim>& cellIndex() const;
+    Vector<unsigned int,Dim> cellIndex() const;
 protected:
     //perform valid check of iterator, it's invalid if:
     //iterator not binded to any grid, or index out of range
