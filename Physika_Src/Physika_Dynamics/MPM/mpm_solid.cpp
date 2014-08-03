@@ -13,7 +13,7 @@
  */
 
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
-#include "Physika_Dynamics/MPM/mpm_step_method.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 
 namespace Physika{

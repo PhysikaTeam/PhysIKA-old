@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Dynamics/MPM/mpm_base.h"
-#include "Physika_Dynamics/MPM/mpm_step_method.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 
 namespace Physika{
 

@@ -62,19 +62,3 @@ protected:
 }  //end of namespace Physika
 
 #endif  //PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_MESH_BASED_COLLIDABLE_OBJECT_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

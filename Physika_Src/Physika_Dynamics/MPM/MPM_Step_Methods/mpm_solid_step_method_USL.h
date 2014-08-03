@@ -13,10 +13,10 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USL_H_
-#define PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USL_H_
+#ifndef PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_SOLID_STEP_METHOD_USL_H_
+#define PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_SOLID_STEP_METHOD_USL_H_
 
-#include "Physika_Dynamics/MPM/mpm_step_method.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 
 namespace Physika{
 
@@ -32,4 +32,4 @@ protected:
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USL_H_
+#endif //PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_SOLID_STEP_METHOD_USL_H_

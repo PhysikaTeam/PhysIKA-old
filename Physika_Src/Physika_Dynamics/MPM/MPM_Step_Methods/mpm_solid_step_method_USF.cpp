@@ -1,7 +1,7 @@
 /*
- * @file mpm_solid_step_method_MUSL.cpp 
- * @Brief the MUSL (modified update stress last) method
- * @reference: Application of Particle-in-Cell method to Solid Mechanics
+ * @file mpm_solid_step_method_USF.cpp 
+ * @Brief the USF (update stress first) method, the stress state of the particles are
+ *        updated at the beginning of each time step.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -13,26 +13,27 @@
  *
  */
 
+
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
-#include "Physika_Dynamics/MPM/mpm_solid_step_method_MUSL.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USF.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-MPMSolidStepMethodMUSL<Scalar,Dim>::MPMSolidStepMethodMUSL()
+MPMSolidStepMethodUSF<Scalar,Dim>::MPMSolidStepMethodUSF()
     :MPMStepMethod<Scalar,Dim>()
 {
 }
 
 template <typename Scalar, int Dim>
-MPMSolidStepMethodMUSL<Scalar,Dim>::~MPMSolidStepMethodMUSL()
+MPMSolidStepMethodUSF<Scalar,Dim>::~MPMSolidStepMethodUSF()
 {
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidStepMethodMUSL<Scalar,Dim>::advanceStep(Scalar dt)
+void MPMSolidStepMethodUSF<Scalar,Dim>::advanceStep(Scalar dt)
 {
     MPMSolidBase<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolidBase<Scalar,Dim>*>(this->mpm_driver_);
     if(mpm_solid_driver==NULL)
@@ -41,22 +42,21 @@ void MPMSolidStepMethodMUSL<Scalar,Dim>::advanceStep(Scalar dt)
         std::exit(EXIT_FAILURE);
     }
     //now advance step, the constitutive model state 
-    //of the particles are updated at the end of time step with the newly rasterized grid data
+    //of the particles are updated at beginning of time step
     mpm_solid_driver->rasterize();
+    mpm_solid_driver->updateParticleConstitutiveModelState();
     mpm_solid_driver->solveOnGrid();
     mpm_solid_driver->performGridCollision();
     mpm_solid_driver->updateParticleVelocity();
     mpm_solid_driver->performParticleCollision();
     mpm_solid_driver->updateParticlePosition();
     mpm_solid_driver->updateParticleInterpolationWeight();
-    mpm_solid_driver->rasterize();
-    mpm_solid_driver->updateParticleConstitutiveModelState();
 }
 
 //explicit instantiations
-template class MPMSolidStepMethodMUSL<float,2>;
-template class MPMSolidStepMethodMUSL<double,2>;
-template class MPMSolidStepMethodMUSL<float,3>;
-template class MPMSolidStepMethodMUSL<double,3>;
+template class MPMSolidStepMethodUSF<float,2>;
+template class MPMSolidStepMethodUSF<double,2>;
+template class MPMSolidStepMethodUSF<float,3>;
+template class MPMSolidStepMethodUSF<double,3>;
 
 }  //end of namespace Physika

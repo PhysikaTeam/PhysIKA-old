@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
-#include "Physika_Dynamics/MPM/mpm_solid_step_method_USL.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USL.h"
 
 namespace Physika{
 

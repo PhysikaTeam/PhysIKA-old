@@ -23,7 +23,6 @@ namespace Physika{
 
 template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
-template<typename Scalar,int Dim> class Vector;
 
 template <typename Scalar, int Dim>
 class MPMSolidBase: public MPMBase<Scalar,Dim>

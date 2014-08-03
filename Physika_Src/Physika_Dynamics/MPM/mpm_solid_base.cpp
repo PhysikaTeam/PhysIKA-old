@@ -19,7 +19,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
-#include "Physika_Dynamics/MPM/mpm_solid_step_method_USL.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USL.h"
 
 namespace Physika{
 

@@ -16,10 +16,12 @@
 #define PHYSIKA_DYNAMICS_MPM_MPM_BASE_H_
 
 #include <string>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function_creator.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
-#include "Physika_Dynamics/MPM/mpm_step_method.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 
 namespace Physika{
 
@@ -49,9 +51,10 @@ public:
     Scalar soundSpeed() const;
     void setSoundSpeed(Scalar sound_speed);
 
-    //set the type of weight function with weight function type as template
+    //set the type of weight function with weight function type as template,
+    //the scale between support domain and cell size is the method parameter
     template <typename GridWeightFunctionType>
-    void setWeightFunction();
+    void setWeightFunction(const Vector<Scalar,Dim> &domain_scale);
     //set the step method with the step method type as template
     template <typename MPMStepMethodType>
     void setStepMethod();
@@ -61,6 +64,7 @@ protected:
     virtual Scalar maxParticleVelocityNorm() const=0;
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
+    Vector<Scalar,Dim> weight_domain_cell_scale_; //influence domain of the weight function is multiple times cell size
     MPMStepMethod<Scalar,Dim> *step_method_;
     //time step computation with CFL condition
     Scalar cfl_num_;
@@ -69,11 +73,12 @@ protected:
 
 template <typename Scalar, int Dim>
 template <typename GridWeightFunctionType>
-void MPMBase<Scalar,Dim>::setWeightFunction()
+void MPMBase<Scalar,Dim>::setWeightFunction(const Vector<Scalar,Dim> &domain_scale)
 {
     if(weight_function_)
         delete weight_function_;
     weight_function_ = GridWeightFunctionCreator<GridWeightFunctionType>::createGridWeightFunction();
+    weight_domain_cell_scale_ = domain_scale;
 }
 
 template <typename Scalar, int Dim>
