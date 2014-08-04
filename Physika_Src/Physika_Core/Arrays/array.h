@@ -20,6 +20,7 @@
 #include <cstring>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Arrays/array_iterator.h"
 
 namespace Physika{
 
@@ -66,14 +67,17 @@ public:
     ElementType & operator[] (unsigned int id);
     const ElementType & operator[] (unsigned int id) const;
 
+    /* iterator */
+    typedef ArrayIterator<ElementType> Iterator;
+    Iterator begin();
+    Iterator end();
+
     virtual void permutate(unsigned int *ids, unsigned int size);
-    
-    void release();
 
 protected:
-    void allocate();
-    
-
+    void allocate();    
+    void release();
+protected:    
     unsigned int element_count_;
     ElementType *data_;
 };

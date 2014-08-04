@@ -43,7 +43,8 @@ ArrayND<ElementType,Dim>::ArrayND(const std::vector<unsigned int> &element_count
     }
     resize(element_counts);
     unsigned int total_count = totalElementCount();
-    memset(data_,value,sizeof(ElementType)*total_count);
+    for(unsigned int i = 0; i < total_count; ++i)
+        data_[i] = value;
 }
 
 template <typename ElementType,int Dim>
@@ -189,6 +190,24 @@ void ArrayND<ElementType,Dim>::allocate()
     unsigned int total_count = totalElementCount();
     data_ = new ElementType[total_count];
     PHYSIKA_ASSERT(data_);
+}
+
+template <typename ElementType,int Dim>
+typename ArrayND<ElementType,Dim>::Iterator ArrayND<ElementType,Dim>::begin()
+{
+    ArrayND<ElementType,Dim>::Iterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = 0;
+    return iter;
+}
+
+template <typename ElementType,int Dim>
+typename ArrayND<ElementType,Dim>::Iterator ArrayND<ElementType,Dim>::end()
+{
+    ArrayND<ElementType,Dim>::Iterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = this->totalElementCount();
+    return iter;
 }
 
 template <typename ElementType,int Dim>

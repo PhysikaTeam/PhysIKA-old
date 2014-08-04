@@ -21,6 +21,7 @@
 #include <vector>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Arrays/array_Nd_iterator.h"
 
 namespace Physika{
 
@@ -56,6 +57,11 @@ public:
     const ElementType& operator() (const std::vector<unsigned int> &idx) const; //get element at given index
     ElementType& elementAtIndex(const std::vector<unsigned int> &idx);
     const ElementType& elementAtIndex(const std::vector<unsigned int> &idx) const;
+
+    typedef ArrayNDIterator<ElementType,Dim> Iterator;
+    Iterator begin();
+    Iterator end();
+
 protected:
     void allocate();
     void release();
@@ -66,6 +72,7 @@ protected:
     ElementType *data_;  //data stored in 1D
 protected:
     PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
+    friend class ArrayNDIterator<ElementType,Dim>;
 };
 
 }  //end of namespace Physika

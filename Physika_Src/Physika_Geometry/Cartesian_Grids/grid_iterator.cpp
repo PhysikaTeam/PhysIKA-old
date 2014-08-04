@@ -48,7 +48,7 @@ GridIteratorBase<Scalar,Dim>& GridIteratorBase<Scalar,Dim>::operator= (const Gri
 template <typename Scalar,int Dim>
 bool GridIteratorBase<Scalar,Dim>::operator== (const GridIteratorBase<Scalar,Dim> &iterator) const
 {
-    if(this->grid_==NULL)
+    if((this->grid_==NULL)||(iterator.grid_==NULL))
     {
         std::cerr<<"Undefined operator == for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
@@ -59,7 +59,7 @@ bool GridIteratorBase<Scalar,Dim>::operator== (const GridIteratorBase<Scalar,Dim
 template <typename Scalar,int Dim>
 bool GridIteratorBase<Scalar,Dim>::operator!= (const GridIteratorBase<Scalar,Dim> &iterator) const
 {
-    if(this->grid_==NULL)
+    if((this->grid_==NULL)||(iterator.grid_==NULL))
     {
         std::cerr<<"Undefined operator != for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);

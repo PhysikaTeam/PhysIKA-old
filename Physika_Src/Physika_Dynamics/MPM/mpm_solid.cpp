@@ -13,7 +13,9 @@
  */
 
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
+#include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
+#include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 
 namespace Physika{
@@ -89,8 +91,33 @@ void MPMSolid<Scalar,Dim>::setGrid(const Grid<Scalar,Dim> &grid)
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
-//TO DO
     resetGridData();
+    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
+    Vector<Scalar,Dim> weight_support_radius, grid_dx = (this->grid_).dX();
+    for(unsigned int i = 0; i < Dim; ++i)
+        weight_support_radius[i] = grid_dx[i]*(this->weight_radius_cell_scale_[i]);
+    //rasterize mass and momentum to grid
+    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    {
+        SolidParticle<Scalar,Dim> *particle = this->particles_[i];
+        Vector<Scalar,Dim> particle_pos = particle->position();
+        for(InfluenceIterator iter(this->grid_,particle_pos,this->weight_radius_cell_scale_); iter.valid(); ++iter)
+        {
+            Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+            std::vector<unsigned int> node_idx_vec;
+            for(unsigned int j = 0; j < Dim; ++j)
+                node_idx_vec.push_back(node_idx[j]);
+            Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
+            Scalar weight = this->weight_function_->weight(particle_to_node,weight_support_radius); 
+            grid_mass_(node_idx_vec) += weight*particle->mass();
+            grid_velocity_(node_idx_vec) += weight*(particle->mass()*particle->velocity());
+        }
+    }
+    //determine active grid nodes according to the grid mass
+    //TO DO
+    //compute grid's velocity, divide momentum by mass
+    //TO DO
+    
 }
 
 template <typename Scalar, int Dim>

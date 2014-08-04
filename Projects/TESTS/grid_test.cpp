@@ -75,6 +75,19 @@ int main()
     cout<<"NodeBegin+6: "<<(node_iterator+6).nodeIndex()<<"\n";
     cout<<"NodeEnd-5: "<<(grid.nodeEnd()-5).nodeIndex()<<"\n";
     //cout<<"NodeEnd index: "<<(grid.nodeEnd()).nodeIndex()<<"\n";
+    //test iterator == operator
+    cout<<"Test iterator == operator: grid.nodeBegin() - 1 == grid.nodeEnd() ?\n";
+    node_iterator = grid.nodeBegin() - 1;
+    if(node_iterator == grid.nodeEnd())
+        cout<<"Yes\n";
+    else
+        cout<<"No\n";
+    cout<<"Test iterator == operator: grid.nodeBegin() + 9 == grid.nodeEnd() ?\n";
+    node_iterator = grid.nodeBegin() + 9;
+    if(node_iterator == grid.nodeEnd())
+        cout<<"Yes\n";
+    else
+        cout<<"No\n";
     //test cell query with point
     cout<<"Point (0.6,0.6) is in cell ";
     cout<<grid.cellIndex(Vector<float,2>(0.6))<<"\n";
