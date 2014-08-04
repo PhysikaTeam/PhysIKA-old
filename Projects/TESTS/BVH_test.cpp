@@ -29,7 +29,7 @@
 #include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/Timer/timer.h"
+#include "Physika_Core/Timer/timer.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
 
 #include <GL/freeglut.h>
@@ -83,19 +83,24 @@ int main()
 
     RigidBody<double,3>* object;
 
-    for(int i = 0; i < 3; i++)
-    {
-        for(int j = 1; j <= 3; j++)
-        {
-            for(int k = 0; k < 3; k++)
-            {
-                object = new RigidBody<double,3>(box);
-                object->setTranslation(Vector<double, 3>(i*2-2, j*2, k*2));
-                object->setRotation(Vector<double, 3>(0.5, 0.5, 0.5));
-                driver.addRigidBody(object);
-            }
-        }
-    }
+    //for(int i = 0; i < 3; i++)
+    //{
+    //    for(int j = 1; j <= 3; j++)
+    //    {
+    //        for(int k = 0; k < 3; k++)
+    //        {
+    //            object = new RigidBody<double,3>(box);
+    //            object->setTranslation(Vector<double, 3>(i*2-2, j*2, k*2));
+    //            object->setRotation(Vector<double, 3>(0.5, 0.5, 0.5));
+    //            driver.addRigidBody(object);
+    //        }
+    //    }
+    //}
+    object = new RigidBody<double,3>(box);
+    object->setTranslation(Vector<double, 3>(-2, 0, 0));
+    //object->setRotation(Vector<double, 3>(0.5, 0.5, 0.5));
+    object->setGlobalTranslationVelocity(Vector<double, 3>(0.5, 0, 0));
+    driver.addRigidBody(object);
 
     driver.addRigidBody(&floor);
 
@@ -119,7 +124,7 @@ int main()
 	//plugin->disableRenderSolidAll();
 	plugin->enableRenderWireframeAll();
     //plugin->enableRenderContactFaceAll();
-    //plugin->enableRenderContactNormalAll();
+    plugin->enableRenderContactNormalAll();
 
     RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
     driver.addPlugin(print_plugin);
