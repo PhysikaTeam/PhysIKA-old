@@ -90,12 +90,6 @@ public:
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
 protected:
-	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
-    CollisionDetectionMethod<Scalar, Dim>* collision_detection_method_;
-    RigidResponseMethod<Scalar, Dim>* collision_response_method_;
-    Scalar gravity_;
-    int frame_;
-    int step_;
 
     //inherit function
     void initialize();//initialize before the simulation
