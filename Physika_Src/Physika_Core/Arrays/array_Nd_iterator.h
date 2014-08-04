@@ -15,6 +15,8 @@
 #ifndef PHYSIKA_CORE_ARRAYS_ARRAY_ND_ITERATOR_H_
 #define PHYSIKA_CORE_ARRAYS_ARRAY_ND_ITERATOR_H_
 
+#include <vector>
+
 namespace Physika{
 
 template <typename ElementType, int Dim> class ArrayND;
@@ -36,7 +38,10 @@ public:
     ArrayNDIterator<ElementType,Dim> operator+ (int stride) const;
     ArrayNDIterator<ElementType,Dim> operator- (int stride) const;
     const ElementType& operator *() const;
-    ElementType& operator *(); 
+    ElementType& operator *();
+    //return the index of the elment pointed to
+    void elementIndex(std::vector<unsigned int> &element_idx) const; 
+    Vector<unsigned int,Dim> elementIndex() const; //specific to Dim = 2,3,4
 protected:
     ArrayND<ElementType,Dim> *array_;
     unsigned int element_idx_;

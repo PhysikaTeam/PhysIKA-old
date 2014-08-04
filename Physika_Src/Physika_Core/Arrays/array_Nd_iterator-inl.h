@@ -17,6 +17,10 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector_4d.h"
+#include "Physika_Core/Utilities/physika_assert.h"
 
 namespace Physika{
 
@@ -99,7 +103,7 @@ ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator++ (i
         std::cerr<<"Error: undefined operator ++ for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    ArrayIterator<ElementType> iterator(*this);
+    ArrayNDIterator<ElementType,Dim> iterator(*this);
     ++element_idx_;
     return iterator;
 }
@@ -112,7 +116,7 @@ ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator-- (i
         std::cerr<<"Error: undefined operator -- for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    ArrayIterator<ElementType> iterator(*this);
+    ArrayNDIterator<ElementType,Dim> iterator(*this);
     --element_idx_;
     return iterator;
 }
@@ -173,6 +177,34 @@ ElementType& ArrayNDIterator<ElementType,Dim>::operator *()
         std::exit(EXIT_FAILURE);
     }
     return array_->data_[element_idx_];
+}
+
+template <typename ElementType, int Dim>
+void ArrayNDIterator<ElementType,Dim>::elementIndex(std::vector<unsigned int> &element_idx) const
+{
+    element_idx.resize(Dim);
+    unsigned int flat_index = this->element_idx_;
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        element_idx[i] = 1;
+        for(unsigned int j = i+1; j < Dim; ++j)
+            element_idx[i] *= array_->element_count_[j];
+        unsigned int temp = flat_index / element_idx[i];
+        flat_index = flat_index % element_idx[i];
+        element_idx[i] = temp;
+    }
+}
+
+template <typename ElementType, int Dim>
+Vector<unsigned int,Dim> ArrayNDIterator<ElementType,Dim>::elementIndex() const
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    std::vector<unsigned int> element_idx;
+    this->elementIndex(element_idx);
+    Vector<unsigned int,Dim> result;
+    for(unsigned int i = 0; i < Dim; ++i)
+        result[i] = element_idx[i];
+    return result;
 }
 
 }  //end of namespace Physika

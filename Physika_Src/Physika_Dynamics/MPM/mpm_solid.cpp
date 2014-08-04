@@ -104,20 +104,22 @@ void MPMSolid<Scalar,Dim>::rasterize()
         for(InfluenceIterator iter(this->grid_,particle_pos,this->weight_radius_cell_scale_); iter.valid(); ++iter)
         {
             Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
-            std::vector<unsigned int> node_idx_vec;
-            for(unsigned int j = 0; j < Dim; ++j)
-                node_idx_vec.push_back(node_idx[j]);
             Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
             Scalar weight = this->weight_function_->weight(particle_to_node,weight_support_radius); 
-            grid_mass_(node_idx_vec) += weight*particle->mass();
-            grid_velocity_(node_idx_vec) += weight*(particle->mass()*particle->velocity());
+            grid_mass_(node_idx) += weight*particle->mass();
+            grid_velocity_(node_idx) += weight*(particle->mass()*particle->velocity());
         }
     }
     //determine active grid nodes according to the grid mass
-    //TO DO
+    for(typename ArrayND<Scalar,Dim>::Iterator iter = grid_mass_.begin(); iter != grid_mass_.begin(); ++iter)
+    {
+        //TO DO
+    }
     //compute grid's velocity, divide momentum by mass
-    //TO DO
-    
+    for(unsigned int i = 0; i < active_grid_node_.size(); ++i)
+    {
+        //TO DO
+    }
 }
 
 template <typename Scalar, int Dim>
