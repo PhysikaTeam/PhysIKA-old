@@ -23,41 +23,41 @@
 
 namespace Physika{
 
-/*
- * SPHKernel: base class of all SPH kernels
- * r: distance between the two particles
- * h: smooth length of the neighbor particle
- */
-template <typename Scalar, int Dim>
-class SPHKernel
-{
-public:
-    SPHKernel(){}
-    virtual ~SPHKernel(){}
-    virtual Scalar weight(Scalar r, Scalar h) const = 0;
-    virtual Scalar gradient(Scalar r, Scalar h) const = 0;
-    //scale between the kernel's support radius and the partcile's smooth length
-    virtual Scalar lengthScale() const = 0; 
-};
+/* /\* */
+/*  * SPHKernel: base class of all SPH kernels */
+/*  * r: distance between the two particles */
+/*  * h: smooth length of the neighbor particle */
+/*  *\/ */
+/* template <typename Scalar, int Dim> */
+/* class SPHKernel */
+/* { */
+/* public: */
+/*     SPHKernel(){} */
+/*     virtual ~SPHKernel(){} */
+/*     virtual Scalar weight(Scalar r, Scalar h) const = 0; */
+/*     virtual Scalar gradient(Scalar r, Scalar h) const = 0; */
+/*     //scale between the kernel's support radius and the partcile's smooth length */
+/*     virtual Scalar lengthScale() const = 0;  */
+/* }; */
 
-/*
- * JohnsonQuadraticKernel: 
- * reference: "SPH for high velocity impact computations"
- * f(r) = a*(3/16*(r/h)^2-3/4*(r/h)+3/4) (0 <= r <= 2*h)
- * where 'a' depends on the dimension and radius of support domain
- */
-template <typename Scalar, int Dim>
-class JohnsonQuadraticKernel: public SPHKernel<Scalar,Dim>
-{
-public:
-    JohnsonQuadraticKernel(){}
-    ~JohnsonQuadraticKernel(){}
-    inline Scalar weight(Scalar r, Scalar h) const { return kernel_.weight(r,h*lengthScale()); }
-    inline Scalar gradient(Scalar r, Scalar h) const { return kernel_.gradient(r,h*lengthScale()); }
-    inline Scalar lengthScale() const { return 2; }
-protected:
-    JohnsonQuadraticWeightFunction<Scalar,Dim> kernel_;
-};
+/* /\* */
+/*  * JohnsonQuadraticKernel:  */
+/*  * reference: "SPH for high velocity impact computations" */
+/*  * f(r) = a*(3/16*(r/h)^2-3/4*(r/h)+3/4) (0 <= r <= 2*h) */
+/*  * where 'a' depends on the dimension and radius of support domain */
+/*  *\/ */
+/* template <typename Scalar, int Dim> */
+/* class JohnsonQuadraticKernel: public SPHKernel<Scalar,Dim> */
+/* { */
+/* public: */
+/*     JohnsonQuadraticKernel(){} */
+/*     ~JohnsonQuadraticKernel(){} */
+/*     inline Scalar weight(Scalar r, Scalar h) const { return kernel_.weight(r,h*lengthScale()); } */
+/*     inline Scalar gradient(Scalar r, Scalar h) const { return kernel_.gradient(r,h*lengthScale()); } */
+/*     inline Scalar lengthScale() const { return 2; } */
+/* protected: */
+/*     JohnsonQuadraticWeightFunction<Scalar,Dim> kernel_; */
+/* }; */
 
 
 

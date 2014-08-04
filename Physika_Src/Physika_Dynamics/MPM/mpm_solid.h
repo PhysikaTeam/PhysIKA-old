@@ -1,6 +1,6 @@
 /*
  * @file mpm_solid.h 
- * @Brief MPM driver used to simulate solid.
+ * @Brief MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -16,6 +16,7 @@
 #define PHYSIKA_DYNAMICS_MPM_MPM_SOLID_H_
 
 #include <string>
+#include <vector>
 #include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -44,19 +45,15 @@ public:
 
     //virtual methods
     virtual void initConfiguration(const std::string &file_name);
-    virtual void advanceStep(Scalar dt);
-    virtual Scalar computeTimeStep();
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin);
     virtual bool withRestartSupport() const;
     virtual void write(const std::string &file_name);
     virtual void read(const std::string &file_name);
-
+    
+    //setters&&getters
     const Grid<Scalar,Dim>& grid() const;
     void setGrid(const Grid<Scalar,Dim> &grid);
 
-protected:
-    virtual void initialize();
-    void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
     //substeps in one time step
     virtual void rasterize();
     virtual void solveOnGrid();
@@ -66,9 +63,16 @@ protected:
     virtual void updateParticleConstitutiveModelState();
     virtual void updateParticleVelocity();
     virtual void updateParticlePosition();
+
+protected:
+    virtual void initialize();
+    virtual void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
+    virtual void resetGridData();  //reset grid data to zero, needed before rasterize operation
+    virtual Scalar minCellEdgeLength() const;
 protected:
     Grid<Scalar,Dim> grid_;
     //grid data stored on grid nodes
+    std::vector<Vector<unsigned int,Dim> > active_grid_node_; //index of the grid nodes that is active
     ArrayND<Scalar,Dim> grid_mass_;
     ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_;
 };

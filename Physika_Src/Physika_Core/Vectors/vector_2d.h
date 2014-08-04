@@ -57,6 +57,7 @@ public:
     Vector<Scalar,2>& operator/= (Scalar);
 
     Scalar norm() const;
+    Scalar normSquared() const;
     Vector<Scalar,2>& normalize();
     Scalar cross(const Vector<Scalar,2> &)const;
     Vector<Scalar,2> operator - (void) const;

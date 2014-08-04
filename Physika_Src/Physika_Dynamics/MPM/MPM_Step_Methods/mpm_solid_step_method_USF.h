@@ -13,10 +13,23 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USF_H_
-#define PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USF_H_
+#ifndef PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_SOLID_STEP_METHOD_USF_H_
+#define PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_SOLID_STEP_METHOD_USF_H_
+
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 
 namespace Physika{
+
+template <typename Scalar, int Dim>
+class MPMSolidStepMethodUSF: public MPMStepMethod<Scalar,Dim>
+{
+public:
+    MPMSolidStepMethodUSF();
+    ~MPMSolidStepMethodUSF();
+    void advanceStep(Scalar dt);
+protected:
+};
+
 }  //end of namespace Physika
 
-#endif //PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_USF_H_
+#endif //PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_SOLID_STEP_METHOD_USF_H_

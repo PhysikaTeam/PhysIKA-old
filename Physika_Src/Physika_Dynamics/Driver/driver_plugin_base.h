@@ -30,12 +30,12 @@ public:
     //functions called in driver
     virtual void onBeginFrame(unsigned int frame) = 0;
     virtual void onEndFrame(unsigned int frame) = 0;
-    virtual void onBeginTimeStep(Scalar dt) = 0;
-    virtual void onEndTimeStep(Scalar time, Scalar dt) = 0;
+    virtual void onBeginTimeStep(Scalar time, Scalar dt) = 0;//time is current time point, dt is the time step about to begin
+    virtual void onEndTimeStep(Scalar time, Scalar dt) = 0; //time is current time point, dt is the time step of ended step
 
     //basic function
     virtual DriverBase<Scalar>* driver();
-    virtual void setDriver(DriverBase<Scalar>* driver) = 0;//should be redefined in child class because type-check of driver should be done before assignment.
+    virtual void setDriver(DriverBase<Scalar>* driver) = 0;//be sure to type-check driver in implementation.
 
 protected:
     DriverBase<Scalar>* driver_;

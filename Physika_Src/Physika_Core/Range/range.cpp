@@ -98,13 +98,13 @@ Scalar Range<Scalar,Dim>::size() const
 }
 
 template <typename Scalar,int Dim>
-const Vector<Scalar,Dim>& Range<Scalar,Dim>::minCorner() const
+Vector<Scalar,Dim> Range<Scalar,Dim>::minCorner() const
 {
     return min_corner_;
 }
 
 template <typename Scalar,int Dim>
-const Vector<Scalar,Dim>& Range<Scalar,Dim>::maxCorner() const
+Vector<Scalar,Dim> Range<Scalar,Dim>::maxCorner() const
 {
     return max_corner_;
 }

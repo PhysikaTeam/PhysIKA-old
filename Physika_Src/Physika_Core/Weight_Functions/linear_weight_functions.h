@@ -15,13 +15,15 @@
 #ifndef PHYSIKA_CORE_WEIGHT_FUNCTIONS_LINEAR_WEIGHT_FUNCTIONS_H_
 #define PHYSIKA_CORE_WEIGHT_FUNCTIONS_LINEAR_WEIGHT_FUNCTIONS_H_
 
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Weight_Functions/weight_function.h"
 
 namespace Physika{
 
 /*
- * LinearWeightFunction: the most common linar weight function
- * f(r) = a(1 - r/R) (0<=r<=R), where the value of 'a' depends on
+ * LinearWeightFunction: the most common linear weight function
+ * f(x,R) = a(1 - |x|/R) (0<=|x|<=R), where the value of 'a' depends on
  * the dimension and radius of support domain such that partition
  * of unity is satisfied:
  *   a = 1/R, in 1D
@@ -35,9 +37,22 @@ class LinearWeightFunction: public WeightFunction<Scalar,Dim>
 public:
     LinearWeightFunction(){}
     ~LinearWeightFunction(){}
-    Scalar weight(Scalar r, Scalar R) const;
-    Scalar gradient(Scalar r, Scalar R) const;
-    void printInfo() const;
+    Scalar weight(const Vector<Scalar,Dim> &center_to_x, Scalar R) const; 
+    Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, Scalar R) const;
+    Scalar laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const;
+    void printInfo() const;  
+};
+
+template <typename Scalar>
+class LinearWeightFunction<Scalar,1>: public WeightFunction<Scalar,1>
+{
+public:
+    LinearWeightFunction(){}
+    ~LinearWeightFunction(){}
+    Scalar weight(Scalar center_to_x, Scalar R) const; 
+    Scalar gradient(Scalar center_to_x, Scalar R) const;
+    Scalar laplacian(Scalar center_to_x, Scalar R) const;
+    void printInfo() const;  
 };
 
 }  //end of namespace Physika

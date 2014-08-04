@@ -33,7 +33,7 @@ public:
 	//functions called in driver
     void onBeginFrame(unsigned int frame);
     void onEndFrame(unsigned int frame);
-    void onBeginTimeStep(Scalar dt);
+    void onBeginTimeStep(Scalar time, Scalar dt);
     void onEndTimeStep(Scalar time, Scalar dt);
 
     void onBeginRigidStep(unsigned int step, Scalar dt);//replace the original onBeginTimeStep in rigid body simulation

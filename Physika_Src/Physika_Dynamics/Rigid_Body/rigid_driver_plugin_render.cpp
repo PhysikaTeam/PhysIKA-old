@@ -69,7 +69,7 @@ void RigidDriverPluginRender<Scalar, Dim>::onEndFrame(unsigned int frame)
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::onBeginTimeStep(Scalar dt)
+void RigidDriverPluginRender<Scalar, Dim>::onBeginTimeStep(Scalar time, Scalar dt)
 {
 
 }

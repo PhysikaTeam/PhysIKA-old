@@ -15,8 +15,9 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_MPM_SOLID_BASE_H_
 #define PHYSIKA_DYNAMICS_MPM_MPM_SOLID_BASE_H_
 
+#include <string>
 #include <vector>
-#include "Physika_Dynamics/Driver/driver_base.h"
+#include "Physika_Dynamics/MPM/mpm_base.h"
 
 namespace Physika{
 
@@ -24,7 +25,7 @@ template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
 
 template <typename Scalar, int Dim>
-class MPMSolidBase: public DriverBase<Scalar>
+class MPMSolidBase: public MPMBase<Scalar,Dim>
 {
 public:
     MPMSolidBase();
@@ -35,8 +36,6 @@ public:
 
     //virtual methods
     virtual void initConfiguration(const std::string &file_name)=0;
-    virtual void advanceStep(Scalar dt)=0;
-    virtual Scalar computeTimeStep()=0;
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin)=0;
     virtual bool withRestartSupport() const=0;
     virtual void write(const std::string &file_name)=0;
@@ -50,8 +49,6 @@ public:
     const SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx);
 
-protected:
-    virtual void initialize()=0;
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
     virtual void solveOnGrid()=0; //solve the dynamics system on grid
@@ -61,6 +58,10 @@ protected:
     virtual void updateParticleConstitutiveModelState()=0;
     virtual void updateParticleVelocity()=0;
     virtual void updateParticlePosition()=0;
+protected:
+    virtual void initialize()=0;
+    virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
+    virtual Scalar maxParticleVelocityNorm() const;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
 };

@@ -15,6 +15,9 @@
 #ifndef PHYSIKA_CORE_WEIGHT_FUNCTIONS_WEIGHT_FUNCTION_H_
 #define PHYSIKA_CORE_WEIGHT_FUNCTIONS_WEIGHT_FUNCTION_H_
 
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+
 namespace Physika{
 
 /*
@@ -29,7 +32,7 @@ namespace Physika{
  *
  * Generally a weight function satisfies following properties:
  * 1. partition of unity in support domain
- * 2. compactly supported: f(r,R)=0, for r>R
+ * 2. compactly supported: f(x,R)=0, for |x|>R
  * 3. Postive in support domain
  * 4. sufficiently smooth
  * 5. monotonically decreasing with larger distance
@@ -37,17 +40,40 @@ namespace Physika{
  *
  */
 
+
 template <typename Scalar, int Dim>
 class WeightFunction
 {
 public:
     WeightFunction(){}
     virtual ~WeightFunction(){}
-    virtual Scalar weight(Scalar r, Scalar R) const=0; 
-    virtual Scalar gradient(Scalar r, Scalar R) const=0;
+    virtual Scalar weight(const Vector<Scalar,Dim> &center_to_x, Scalar R) const=0; 
+    virtual Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, Scalar R) const=0;
+    virtual Scalar laplacian(const Vector<Scalar,Dim> &center_to_x, Scalar R) const=0;
     virtual void printInfo() const=0;  //print the formula of this weight function
+
+    typedef Scalar ScalarType;
+    static const int DimSize = Dim;
 };
 
+/*
+ * partial sepcialization for 1D as the arguments ar Scalar
+ */
+
+template <typename Scalar>
+class WeightFunction<Scalar,1>
+{
+public:
+    WeightFunction(){}
+    virtual ~WeightFunction(){}
+    virtual Scalar weight(Scalar center_to_x, Scalar R) const=0; 
+    virtual Scalar gradient(Scalar center_to_x, Scalar R) const=0;
+    virtual Scalar laplacian(Scalar center_to_x, Scalar R) const=0;
+    virtual void printInfo() const=0;  //print the formula of this weight function
+
+    typedef Scalar ScalarType;
+    static const int DimSize = 1;
+};
 
 } //end of namespace Physika
 

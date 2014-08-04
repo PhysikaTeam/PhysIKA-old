@@ -1,7 +1,6 @@
 /*
- * @file mpm_solid_step_method_MUSL.h 
- * @Brief the MUSL (modified update stress last) method
- * @reference: Application of Particle-in-Cell method to Solid Mechanics
+ * @file grid_quadratic_weight_functions.cpp 
+ * @brief collection of quadratic grid-based weight functions. 
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -13,10 +12,7 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_MUSL_H_
-#define PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_MUSL_H_
+#include "Physika_Core/Grid_Weight_Functions/grid_quadratic_weight_functions.h"
 
 namespace Physika{
 }  //end of namespace Physika
-
-#endif //PHYSIKA_DYNAMICS_MPM_MPM_SOLID_STEP_METHOD_MUSL_H_

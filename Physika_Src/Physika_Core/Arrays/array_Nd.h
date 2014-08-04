@@ -53,7 +53,9 @@ public:
     void resize(unsigned int count, unsigned int dim);  //resize given dimension
     void resize(const std::vector<unsigned int> &count);  //resize all dimensions
     ElementType& operator() (const std::vector<unsigned int> &idx); //get element at given index
+    const ElementType& operator() (const std::vector<unsigned int> &idx) const; //get element at given index
     ElementType& elementAtIndex(const std::vector<unsigned int> &idx);
+    const ElementType& elementAtIndex(const std::vector<unsigned int> &idx) const;
 protected:
     void allocate();
     void release();

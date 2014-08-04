@@ -1,6 +1,6 @@
 /*
  * @file mpm_solid.cpp
- * @Brief MPM driver used to simulate solid.
+ * @Brief MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -13,6 +13,7 @@
  */
 
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 
 namespace Physika{
@@ -46,19 +47,6 @@ template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
 {
 //TO DO
-}
-
-template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::advanceStep(Scalar dt)
-{
-//TO DO
-}
-
-template <typename Scalar, int Dim>
-Scalar MPMSolid<Scalar,Dim>::computeTimeStep()
-{
-//TO DO
-    return 0;
 }
 
 template <typename Scalar, int Dim>
@@ -99,26 +87,10 @@ void MPMSolid<Scalar,Dim>::setGrid(const Grid<Scalar,Dim> &grid)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::initialize()
-{
-//TO DO
-}
-
-template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::synchronizeGridData()
-{
-    Vector<unsigned int,Dim> node_num = grid_.nodeNum();
-    for(unsigned int i = 0; i < Dim; ++i)
-    {
-        grid_mass_.resize(node_num[i],i);
-        grid_velocity_.resize(node_num[i],i);
-    }
-}
-
-template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
 //TO DO
+    resetGridData();
 }
 
 template <typename Scalar, int Dim>
@@ -155,6 +127,44 @@ template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::updateParticlePosition()
 {
 //TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::initialize()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::synchronizeGridData()
+{
+    Vector<unsigned int,Dim> node_num = grid_.nodeNum();
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        grid_mass_.resize(node_num[i],i);
+        grid_velocity_.resize(node_num[i],i);
+    }
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::resetGridData()
+{
+    active_grid_node_.clear();
+    for(typename Grid<Scalar,Dim>::NodeIterator iter = grid_.nodeBegin(); iter != grid_.nodeEnd(); ++iter)
+    {
+        Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+        std::vector<unsigned int> node_idx_vec;
+        for(unsigned int i = 0; i < Dim; ++i)
+            node_idx_vec.push_back(node_idx[i]);
+        grid_mass_(node_idx_vec) = 0;
+        grid_velocity_(node_idx_vec) = Vector<Scalar,Dim>(0);
+    }
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolid<Scalar,Dim>::minCellEdgeLength() const
+{
+    return grid_.minEdgeLength();
 }
 
 //explicit instantiations

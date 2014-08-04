@@ -14,27 +14,33 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USL.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase()
-    :DriverBase<Scalar>()
+    :MPMBase<Scalar,Dim>()
 {
+    this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
 }
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
+    :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
 {
+    this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
 }
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                const std::vector<SolidParticle<Scalar,Dim>*> &particles)
-    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
+    :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
 {
     setParticles(particles);
 }
@@ -114,6 +120,18 @@ SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int parti
         std::exit(EXIT_FAILURE);
     }
     return *particles_[particle_idx];
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolidBase<Scalar,Dim>::maxParticleVelocityNorm() const
+{
+    Scalar min_vel = std::numeric_limits<Scalar>::max();
+    for(unsigned int i = 0; i < particles_.size(); ++i)
+    {
+        Scalar norm_sqr = (particles_[i]->velocity()).normSquared();
+        min_vel = norm_sqr < min_vel ? norm_sqr : min_vel;
+    }
+    return sqrt(min_vel);
 }
 
 //explicit instantiations

@@ -99,6 +99,7 @@ protected:
     unsigned int restart_frame_;
     Scalar frame_rate_;
     Scalar max_dt_;
+    Scalar dt_; //current dt
     bool write_to_file_;
     bool enable_timer_;
     Timer timer_;

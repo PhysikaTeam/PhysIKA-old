@@ -323,6 +323,16 @@ Scalar VectorND<Scalar>::norm() const
 }
 
 template <typename Scalar>
+Scalar VectorND<Scalar>::normSquared() const
+{
+    Scalar result = static_cast<Scalar>(0);
+    unsigned int dim = (*this).dims();
+    for(unsigned int i = 0; i < dim; ++i)
+        result += (*this)[i]*(*this)[i];
+    return result;
+}
+
+template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::normalize()
 {
     Scalar norm = (*this).norm();

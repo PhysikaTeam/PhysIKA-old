@@ -241,6 +241,13 @@ Scalar Vector<Scalar,4>::norm() const
 }
 
 template <typename Scalar>
+Scalar Vector<Scalar,4>::normSquared() const
+{
+    Scalar result = (*this)[0]*(*this)[0] + (*this)[1]*(*this)[1]+(*this)[2]*(*this)[2] + (*this)[3]*(*this)[3];
+    return result;
+}
+
+template <typename Scalar>
 Vector<Scalar,4>& Vector<Scalar,4>::normalize()
 {
     Scalar norm = (*this).norm();

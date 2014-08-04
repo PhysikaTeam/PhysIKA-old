@@ -39,17 +39,24 @@ public:
     GridBase(const Range<Scalar,Dim> &domain, unsigned int cell_num); //same cell size along each dimension
     GridBase(const Range<Scalar,Dim> &domain, const Vector<unsigned int,Dim> &cell_num);
     GridBase(const GridBase<Scalar,Dim> &grid);
-    const Range<Scalar,Dim>& domain() const;
-    const Vector<Scalar,Dim>& dX() const;
-    const Vector<Scalar,Dim>& minCorner() const;
-    const Vector<Scalar,Dim>& maxCorner() const;
+    Range<Scalar,Dim> domain() const;
+    Vector<Scalar,Dim> dX() const;
+    Vector<Scalar,Dim> minCorner() const;
+    Vector<Scalar,Dim> maxCorner() const;
     Scalar minEdgeLength() const;
     Scalar maxEdgeLength() const;
-    const Vector<unsigned int,Dim>& cellNum() const;
+    Vector<unsigned int,Dim> cellNum() const;
     Vector<unsigned int,Dim> nodeNum() const;
     Scalar cellSize() const; //2d: area; 3d: volume;
-    Vector<Scalar,Dim> node(const Vector<unsigned int,Dim> &index) const;
-    Vector<Scalar,Dim> cellCenter(const Vector<unsigned int,Dim> &index) const;
+    Vector<Scalar,Dim> node(const Vector<unsigned int,Dim> &node_idx) const;
+    Vector<Scalar,Dim> cellCenter(const Vector<unsigned int,Dim> &cell_idx) const;
+    Vector<Scalar,Dim> cellMinCornerNode(const Vector<unsigned int,Dim> &cell_idx) const;
+    Vector<Scalar,Dim> cellMaxCornerNode(const Vector<unsigned int,Dim> &cell_idx) const;
+    //return the cell index that the given point is in, (left close right open interval for a cell)
+    Vector<unsigned int,Dim> cellIndex(const Vector<Scalar,Dim> &position) const;
+    //return the cell index that the given point is in and the interpolation weight in the cell
+    void cellIndexAndInterpolationWeight(const Vector<Scalar,Dim> &position,
+                                         Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &weight) const;  
     //modifiers
     void setCellNum(unsigned int cell_num);  //same cell number along each dimension
     void setCellNum(const Vector<unsigned int,Dim> &cell_num);
@@ -80,16 +87,20 @@ class Grid<Scalar,2>: public GridBase<Scalar,2>
 public:
     Grid():GridBase<Scalar,2>(){}
     ~Grid(){}
-    Grid(const Range<Scalar,2> &domain, unsigned int cell_num):GridBase<Scalar,2>(domain,cell_num){}
-    Grid(const Range<Scalar,2> &domain, const Vector<unsigned int,2> &cell_num):GridBase<Scalar,2>(domain,cell_num){}
-    Grid(const Grid<Scalar,2> &grid):GridBase<Scalar,2>(grid){}
-    Grid<Scalar,2>& operator= (const Grid<Scalar,2> &grid){GridBase<Scalar,2>::operator=(grid);return *this;}
-    bool operator== (const Grid<Scalar,2> &grid){return GridBase<Scalar,2>::operator==(grid);}
+    Grid(const Range<Scalar,2> &domain, unsigned int cell_num);
+    Grid(const Range<Scalar,2> &domain, const Vector<unsigned int,2> &cell_num);
+    Grid(const Grid<Scalar,2> &grid);
+    Grid<Scalar,2>& operator= (const Grid<Scalar,2> &grid);
+    bool operator== (const Grid<Scalar,2> &grid) const;
     Vector<Scalar,2> node(unsigned int i, unsigned int j) const;
     Vector<Scalar,2> cellCenter(unsigned int i, unsigned int j) const;
-    //avoid hiding node() and cellCenter() methods in GridBase
+    Vector<Scalar,2> cellMinCornerNode(unsigned int i, unsigned int j) const;
+    Vector<Scalar,2> cellMaxCornerNode(unsigned int i, unsigned int j) const;
+    //avoid hiding methods in GridBase
     using GridBase<Scalar,2>::node;
     using GridBase<Scalar,2>::cellCenter;
+    using GridBase<Scalar,2>::cellMinCornerNode;
+    using GridBase<Scalar,2>::cellMaxCornerNode;
 
     typedef GridNodeIterator<Scalar,2> NodeIterator;
     typedef GridCellIterator<Scalar,2> CellIterator;
@@ -105,16 +116,20 @@ class Grid<Scalar,3>: public GridBase<Scalar,3>
 public:
     Grid():GridBase<Scalar,3>(){}
     ~Grid(){}
-    Grid(const Range<Scalar,3> &domain, unsigned int cell_num):GridBase<Scalar,3>(domain,cell_num){}
-    Grid(const Range<Scalar,3> &domain, const Vector<unsigned int,3> &cell_num):GridBase<Scalar,3>(domain,cell_num){}
-    Grid(const Grid<Scalar,3> &grid):GridBase<Scalar,3>(grid){}
-    Grid<Scalar,3>& operator= (const Grid<Scalar,3> &grid){GridBase<Scalar,3>::operator=(grid);return *this;}
-    bool operator== (const Grid<Scalar,3> &grid){return GridBase<Scalar,3>::operator==(grid);}
+    Grid(const Range<Scalar,3> &domain, unsigned int cell_num);
+    Grid(const Range<Scalar,3> &domain, const Vector<unsigned int,3> &cell_num);
+    Grid(const Grid<Scalar,3> &grid);
+    Grid<Scalar,3>& operator= (const Grid<Scalar,3> &grid);
+    bool operator== (const Grid<Scalar,3> &grid) const;
     Vector<Scalar,3> node(unsigned int i, unsigned int j, unsigned int k) const;
     Vector<Scalar,3> cellCenter(unsigned int i, unsigned int j, unsigned int k) const;
-    //avoid hiding node() and cellCenter() methods in GridBase
+    Vector<Scalar,3> cellMinCornerNode(unsigned int i, unsigned int j, unsigned int k) const;
+    Vector<Scalar,3> cellMaxCornerNode(unsigned int i, unsigned int j, unsigned int k) const;
+    //avoid hiding methods in GridBase
     using GridBase<Scalar,3>::node;
     using GridBase<Scalar,3>::cellCenter;
+    using GridBase<Scalar,3>::cellMinCornerNode;
+    using GridBase<Scalar,3>::cellMaxCornerNode;
 
     typedef GridNodeIterator<Scalar,3> NodeIterator;
     typedef GridCellIterator<Scalar,3> CellIterator;

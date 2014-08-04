@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHOD_H_
-#define PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHOD_H_
+#ifndef PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_STEP_METHOD_H_
+#define PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_STEP_METHOD_H_
 
 namespace Physika{
 
@@ -29,7 +29,7 @@ class MPMStepMethod
 public:
     MPMStepMethod();
     virtual ~MPMStepMethod();
-    virtual void advanceStep() = 0;
+    virtual void advanceStep(Scalar dt) = 0;
     void setMPMDriver(MPMBase<Scalar,Dim> *mpm_driver);
 protected:
     MPMBase<Scalar,Dim> *mpm_driver_;
@@ -37,4 +37,4 @@ protected:
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHOD_H_
+#endif //PHYSIKA_DYNAMICS_MPM_MPM_STEP_METHODS_MPM_STEP_METHOD_H_

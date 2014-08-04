@@ -91,16 +91,6 @@ void Array<ElementType>::resize(unsigned int count)
 }
 
 template <typename ElementType>
-void Array<ElementType>::zero()
-{
-    if(element_count_>0)
-    {
-        PHYSIKA_ASSERT(data_);
-        memset((void*)data_, 0, element_count_ * sizeof(ElementType));
-    }
-}
-
-template <typename ElementType>
 ElementType& Array<ElementType>::operator[] (unsigned int id)
 {
     if(id<0||id>=element_count_)
@@ -112,7 +102,7 @@ ElementType& Array<ElementType>::operator[] (unsigned int id)
 }
 
 template <typename ElementType>
-ElementType& Array<ElementType>::operator[] (unsigned int id) const
+const ElementType& Array<ElementType>::operator[] (unsigned int id) const
 {
     if(id<0||id>=element_count_)
     {

@@ -136,7 +136,33 @@ ElementType& ArrayND<ElementType,Dim>::operator() (const std::vector<unsigned in
 }
 
 template <typename ElementType,int Dim>
+const ElementType& ArrayND<ElementType,Dim>::operator() (const std::vector<unsigned int> &idx) const
+{
+    return elementAtIndex(idx);
+}
+
+template <typename ElementType,int Dim>
 ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const std::vector<unsigned int> &idx)
+{
+    if(idx.size()!=Dim)
+    {
+        std::cerr<<"Dimension of index mismatches the dimension of array!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    for(unsigned int i = 0; i < idx.size(); ++i)
+    {
+        if(idx[i]>=element_count_[i])
+        {
+            std::cerr<<"Array index out of range!\n";
+            std::exit(EXIT_FAILURE);
+        }
+    }
+    unsigned int index_1d = index1D(idx);
+    return data_[index_1d];
+}
+
+template <typename ElementType,int Dim>
+const ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const std::vector<unsigned int> &idx) const
 {
     if(idx.size()!=Dim)
     {
