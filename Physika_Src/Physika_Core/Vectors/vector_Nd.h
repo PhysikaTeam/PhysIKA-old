@@ -23,6 +23,12 @@
 
 namespace Physika{
 
+template <typename Scalar> class MatrixMxN;
+
+/*
+ * VectorND<Scalar> are defined for C++ fundamental integer types and floating-point types
+ */
+
 template <typename Scalar>
 class VectorND: public VectorBase
 {
@@ -59,6 +65,8 @@ public:
     VectorND<Scalar>& normalize();
     VectorND<Scalar> operator - (void) const;
     Scalar dot(const VectorND<Scalar>&) const;
+    MatrixMxN<Scalar> outerProduct(const VectorND<Scalar>&) const;
+
 protected:
     void allocMemory(unsigned int dims);
 protected:

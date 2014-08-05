@@ -1,7 +1,7 @@
 /*
  * @file vector_4d.h 
  * @brief 4d vector.
- * @author Liyou Xu
+ * @author Liyou Xu, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -21,6 +21,8 @@
 #include "Physika_Core/Vectors/vector.h"
 
 namespace Physika{
+
+template <typename Scalar, int Dim> class SquareMatrix;
 
 /*
  * Vector<Scalar,4> are defined for C++ fundamental integer types and floating-point types
@@ -61,6 +63,7 @@ public:
     Vector<Scalar,4>& normalize();
     Vector<Scalar,4> operator - (void) const;
     Scalar dot(const Vector<Scalar,4>&) const;
+    SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
 
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR

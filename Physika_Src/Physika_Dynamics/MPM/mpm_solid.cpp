@@ -135,7 +135,7 @@ void MPMSolid<Scalar,Dim>::solveOnGrid()
     Vector<Scalar,Dim> weight_support_radius, grid_dx = (this->grid_).dX();
     for(unsigned int i = 0; i < Dim; ++i)
         weight_support_radius[i] = grid_dx[i]*(this->weight_radius_cell_scale_[i]);
-    for(unsigned int i = 0; i <this->particles_.size(); ++i)
+    for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> particle_pos = particle->position();
@@ -172,7 +172,25 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState()
 {
-//TO DO
+    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
+    Vector<Scalar,Dim> weight_support_radius, grid_dx = (this->grid_).dX();
+    for(unsigned int i = 0; i < Dim; ++i)
+        weight_support_radius[i] = grid_dx[i]*(this->weight_radius_cell_scale_[i]);
+    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    {
+        SolidParticle<Scalar,Dim> *particle = this->particles_[i];
+        Vector<Scalar,Dim> particle_pos = particle->position();
+        SquareMatrix<Scalar,Dim> particle_vel_grad(0);
+        for(InfluenceIterator iter(this->grid_,particle_pos,this->weight_radius_cell_scale_); iter.valid(); ++iter)
+        {
+            Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+            Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
+            Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node,weight_support_radius);
+            particle_vel_grad += grid_velocity_(node_idx).outerProduct(weight_gradient);
+        }
+        SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
+        particle_deform_grad += (this->dt_)*particle_vel_grad*particle_deform_grad;
+    }
 }
 
 template <typename Scalar, int Dim>

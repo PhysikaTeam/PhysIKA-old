@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 
 namespace Physika{
@@ -23,6 +24,22 @@ namespace Physika{
 template <typename Scalar>
 SquareMatrix<Scalar,2>::SquareMatrix()
 {
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,2>::SquareMatrix(Scalar value)
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    eigen_matrix_2x2_(0,0) = value;
+    eigen_matrix_2x2_(0,1) = value;
+    eigen_matrix_2x2_(1,0) = value;
+    eigen_matrix_2x2_(1,1) = value;
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    data_[0][0]=value;
+    data_[0][1]=value;
+    data_[1][0]=value;
+    data_[1][1]=value;
+#endif
 }
 
 template <typename Scalar>

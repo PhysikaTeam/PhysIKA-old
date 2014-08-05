@@ -17,6 +17,7 @@
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Matrices/matrix_MxN.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 
 namespace Physika{
@@ -365,6 +366,16 @@ Scalar VectorND<Scalar>::dot(const VectorND<Scalar> &vec2) const
     Scalar result = static_cast<Scalar>(0.0);
     for(unsigned int i = 0; i < dim1; ++i)
         result += (*this)[i]*vec2[i];
+    return result;
+}
+
+template <typename Scalar>
+MatrixMxN<Scalar> VectorND<Scalar>::outerProduct(const VectorND<Scalar> &vec2) const
+{
+    MatrixMxN<Scalar> result(this->dims(),vec2.dims());
+    for(unsigned int i = 0; i < result.rows(); ++i)
+        for(unsigned int j = 0; j < result.cols(); ++j)
+            result(i,j) = (*this)[i]*vec2[j];
     return result;
 }
 

@@ -22,6 +22,8 @@
 
 namespace Physika{
 
+template <typename Scalar, int Dim> class SquareMatrix;
+
 /*
  * Vector<Scalar,3> are defined for C++ fundamental integer types and floating-point types
  */
@@ -62,6 +64,7 @@ public:
     Vector<Scalar,3> cross(const Vector<Scalar,3> &) const;
     Vector<Scalar,3> operator - (void) const;
     Scalar dot(const Vector<Scalar,3>&) const;
+    SquareMatrix<Scalar,3> outerProduct(const Vector<Scalar,3>&) const;
 	
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
