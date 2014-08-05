@@ -55,7 +55,7 @@ public:
     virtual void performGridCollision()=0;
     virtual void performParticleCollision()=0;
     virtual void updateParticleInterpolationWeight()=0;
-    virtual void updateParticleConstitutiveModelState()=0;
+    virtual void updateParticleConstitutiveModelState()=0; //update the constitutive model state of particle, e.g., deformation gradient
     virtual void updateParticleVelocity()=0;
     virtual void updateParticlePosition()=0;
 protected:

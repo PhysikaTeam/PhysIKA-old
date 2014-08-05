@@ -13,6 +13,8 @@
  *
  */
 
+#include <cstdlib>
+#include <iostream>
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 
@@ -76,27 +78,59 @@ SolidParticle<Scalar,Dim>& SolidParticle<Scalar,Dim>::operator= (const SolidPart
 }
 
 template <typename Scalar, int Dim>
-const SquareMatrix<Scalar,Dim>& SolidParticle<Scalar,Dim>::deformationGradient() const
+SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::deformationGradient() const
 {
     return F_;
+}
+
+template <typename Scalar, int Dim>
+Scalar SolidParticle<Scalar,Dim>::energy() const
+{
+    if(constitutive_model_==NULL)
+    {
+        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return constitutive_model_->energy(F_);
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::firstPiolaKirchhoffStress() const
+{
+    if(constitutive_model_==NULL)
+    {
+        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return constitutive_model_->firstPiolaKirchhoffStress(F_);
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::secondPiolaKirchhoffStress() const
+{
+    if(constitutive_model_==NULL)
+    {
+        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return constitutive_model_->secondPiolaKirchhoffStress(F_);
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::cauchyStress() const
+{
+    if(constitutive_model_==NULL)
+    {
+        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return constitutive_model_->cauchyStress(F_);
 }
 
 template <typename Scalar, int Dim>
 void SolidParticle<Scalar,Dim>::setDeformationGradient(const SquareMatrix<Scalar,Dim> &F)
 {
     F_ = F;
-}
-
-template <typename Scalar, int Dim>
-const ConstitutiveModel<Scalar,Dim>* SolidParticle<Scalar,Dim>::constitutiveModel() const
-{
-    return constitutive_model_;
-}
-
-template <typename Scalar, int Dim>
-ConstitutiveModel<Scalar,Dim>* SolidParticle<Scalar,Dim>::constitutiveModel()
-{
-    return constitutive_model_;
 }
 
 template <typename Scalar, int Dim>

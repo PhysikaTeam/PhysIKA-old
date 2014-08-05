@@ -125,6 +125,8 @@ SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int parti
 template <typename Scalar, int Dim>
 Scalar MPMSolidBase<Scalar,Dim>::maxParticleVelocityNorm() const
 {
+    if(particles_.empty())
+        return 0;
     Scalar min_vel = (std::numeric_limits<Scalar>::max)();
     for(unsigned int i = 0; i < particles_.size(); ++i)
     {

@@ -40,8 +40,8 @@ public:
     Scalar size() const;
     Scalar minVal() const;
     Scalar maxVal() const;
-    void setMinVal(Scalar val);
-    void setMaxVal(Scalar val);
+    void setMinVal(Scalar val); //user is obligated to maintain validity of the interval
+    void setMaxVal(Scalar val); //user is obligated to maintain validity of the interval
     bool inside(Scalar val) const;
     bool outside(Scalar val) const;
 

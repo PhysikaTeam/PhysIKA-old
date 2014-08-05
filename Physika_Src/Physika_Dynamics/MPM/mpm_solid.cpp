@@ -12,6 +12,8 @@
  *
  */
 
+#include "Physika_Core/Matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
@@ -111,21 +113,42 @@ void MPMSolid<Scalar,Dim>::rasterize()
         }
     }
     //determine active grid nodes according to the grid mass
-    for(typename ArrayND<Scalar,Dim>::Iterator iter = grid_mass_.begin(); iter != grid_mass_.begin(); ++iter)
+    for(typename ArrayND<Scalar,Dim>::Iterator iter = grid_mass_.begin(); iter != grid_mass_.end(); ++iter)
     {
-        //TO DO
+        Vector<unsigned int,Dim> ele_idx = iter.elementIndex();
+        if(grid_mass_(ele_idx)>0)
+            active_grid_node_.push_back(ele_idx);
     }
     //compute grid's velocity, divide momentum by mass
     for(unsigned int i = 0; i < active_grid_node_.size(); ++i)
     {
-        //TO DO
+        Vector<unsigned int,Dim> node_idx = active_grid_node_[i];
+        grid_velocity_(node_idx) /= grid_mass_(node_idx);
     }
 }
 
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::solveOnGrid()
 {
-//TO DO
+    //only explicit integration is implemented yet
+    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
+    Vector<Scalar,Dim> weight_support_radius, grid_dx = (this->grid_).dX();
+    for(unsigned int i = 0; i < Dim; ++i)
+        weight_support_radius[i] = grid_dx[i]*(this->weight_radius_cell_scale_[i]);
+    for(unsigned int i = 0; i <this->particles_.size(); ++i)
+    {
+        SolidParticle<Scalar,Dim> *particle = this->particles_[i];
+        Vector<Scalar,Dim> particle_pos = particle->position();
+        for(InfluenceIterator iter(this->grid_,particle_pos,this->weight_radius_cell_scale_); iter.valid(); ++iter)
+        {
+            Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+            Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
+            Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node,weight_support_radius);
+            SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
+            grid_velocity_(node_idx) += (-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(node_idx);
+        }
+    }
+    //TO DO (implicit)
 }
 
 template <typename Scalar, int Dim>
@@ -147,15 +170,44 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::updateParticleVelocity()
+void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState()
 {
 //TO DO
 }
 
 template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::updateParticleVelocity()
+{
+    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
+    Vector<Scalar,Dim> weight_support_radius, grid_dx = (this->grid_).dX();
+    for(unsigned int i = 0; i < Dim; ++i)
+        weight_support_radius[i] = grid_dx[i]*(this->weight_radius_cell_scale_[i]);
+    //first transfer the momentum from the grid to particle, then divide by particle mass
+    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    {
+        SolidParticle<Scalar,Dim> *particle = this->particles_[i];
+        Vector<Scalar,Dim> particle_pos = particle->position();
+        Vector<Scalar,Dim> new_vel(0);
+        for(InfluenceIterator iter(this->grid_,particle_pos,this->weight_radius_cell_scale_); iter.valid(); ++iter)
+        {
+            Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+            Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
+            Scalar weight = this->weight_function_->weight(particle_to_node,weight_support_radius); 
+            new_vel += weight*grid_velocity_(node_idx)*grid_mass_(node_idx)/(particle->mass());
+        }
+    }
+}
+
+template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::updateParticlePosition()
 {
-//TO DO
+    //update particle's position with the new velocity
+    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    {
+        SolidParticle<Scalar,Dim> *particle = this->particles_[i];
+        Vector<Scalar,Dim> new_pos = particle->position() + particle->velocity()*(this->dt_);
+        particle->setPosition(new_pos);
+    }
 }
 
 template <typename Scalar, int Dim>
