@@ -128,7 +128,7 @@ void MPMSolid<Scalar,Dim>::rasterize()
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::solveOnGrid()
+void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
 {
     //only explicit integration is implemented yet
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
@@ -145,20 +145,20 @@ void MPMSolid<Scalar,Dim>::solveOnGrid()
             Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
             Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node,weight_support_radius);
             SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
-            grid_velocity_(node_idx) += (-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(node_idx);
+            grid_velocity_(node_idx) += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(node_idx);
         }
     }
     //TO DO (implicit)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::performGridCollision()
+void MPMSolid<Scalar,Dim>::performGridCollision(Scalar dt)
 {
 //TO DO
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::performParticleCollision()
+void MPMSolid<Scalar,Dim>::performParticleCollision(Scalar dt)
 {
 //TO DO
 }
@@ -170,7 +170,7 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState()
+void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 {
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     Vector<Scalar,Dim> weight_support_radius, grid_dx = (this->grid_).dX();
@@ -189,7 +189,7 @@ void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState()
             particle_vel_grad += grid_velocity_(node_idx).outerProduct(weight_gradient);
         }
         SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
-        particle_deform_grad += (this->dt_)*particle_vel_grad*particle_deform_grad;
+        particle_deform_grad += dt*particle_vel_grad*particle_deform_grad;
     }
 }
 
@@ -217,13 +217,13 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::updateParticlePosition()
+void MPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
 {
     //update particle's position with the new velocity
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
-        Vector<Scalar,Dim> new_pos = particle->position() + particle->velocity()*(this->dt_);
+        Vector<Scalar,Dim> new_pos = particle->position() + particle->velocity()*dt;
         particle->setPosition(new_pos);
     }
 }

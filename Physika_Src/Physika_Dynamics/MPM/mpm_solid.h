@@ -56,13 +56,13 @@ public:
 
     //substeps in one time step
     virtual void rasterize();
-    virtual void solveOnGrid();
-    virtual void performGridCollision();
-    virtual void performParticleCollision();
+    virtual void solveOnGrid(Scalar dt);
+    virtual void performGridCollision(Scalar dt);
+    virtual void performParticleCollision(Scalar dt);
     virtual void updateParticleInterpolationWeight();
-    virtual void updateParticleConstitutiveModelState();
+    virtual void updateParticleConstitutiveModelState(Scalar dt);
     virtual void updateParticleVelocity();
-    virtual void updateParticlePosition();
+    virtual void updateParticlePosition(Scalar dt);
 
 protected:
     virtual void initialize();
