@@ -346,7 +346,7 @@ bool RigidBodyDriver<Scalar, Dim>::collisionDetection()
         if(plugin != NULL)
             plugin->onBeginCollisionDetection();
     }
-
+    
     //clean
     collision_detection_method_->cleanResults();
 

@@ -151,16 +151,20 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         {
             if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], temp_overlap_point))
             {
-                num_overlap++;
-                overlap_point += temp_overlap_point;
+                ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectLhsIdx(), collision_pair->objectRhsIdx(),
+                    *dynamic_cast<Vector<Scalar, Dim>*>(&temp_overlap_point), 
+                    *dynamic_cast<Vector<Scalar, Dim>*>(&collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx())) * (-1));
+                contact_points_.push_back(contact_point);
+                //num_overlap++;
+                //overlap_point += temp_overlap_point;
             }
         }
         if(is_rhs_quad)//quad
         {
             if(MeshBasedCollidableObject<Scalar>::overlapEdgeQuad(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], vertex_rhs[3], temp_overlap_point))
             {
-                num_overlap++;
-                overlap_point += temp_overlap_point;
+                //num_overlap++;
+                //overlap_point += temp_overlap_point;
             }
         }
     }
@@ -172,36 +176,40 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         {
             if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], temp_overlap_point))
             {
-                num_overlap++;
-                overlap_point += temp_overlap_point;
+                ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectRhsIdx(), collision_pair->objectLhsIdx(),
+                    *dynamic_cast<Vector<Scalar, Dim>*>(&temp_overlap_point), 
+                    *dynamic_cast<Vector<Scalar, Dim>*>(&collision_pair->meshObjectLhs()->faceNormal(collision_pair->faceLhsIdx())) * (-1));
+                contact_points_.push_back(contact_point);
+                //num_overlap++;
+                //overlap_point += temp_overlap_point;
             }
         }
         if(is_lhs_quad)//quad
         {
             if(MeshBasedCollidableObject<Scalar>::overlapEdgeQuad(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], vertex_lhs[3], temp_overlap_point))
             {
-                num_overlap++;
-                overlap_point += temp_overlap_point;
+                //num_overlap++;
+                //overlap_point += temp_overlap_point;
             }
         }
     }
 
     //generate position and normal
-    if(num_overlap > 0)
-    {
-        overlap_point /= static_cast<Scalar>(num_overlap);
-        //contact_normal_lhs = (collision_pair->meshObjectLhs()->faceNormal(collision_pair->faceLhsIdx()) - 
-        //    collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx())).normalize();
-        contact_normal_lhs = -collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx());
-        if(contact_normal_lhs.norm() > std::numeric_limits<Scalar>::epsilon())
-        {
-            contact_normal_lhs.normalize();
-            ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectLhsIdx(), collision_pair->objectRhsIdx(),
-                *dynamic_cast<Vector<Scalar, Dim>*>(&overlap_point), 
-                *dynamic_cast<Vector<Scalar, Dim>*>(&contact_normal_lhs));
-            contact_points_.push_back(contact_point);
-        }
-    }
+    //if(num_overlap > 0)
+    //{
+    //    overlap_point /= static_cast<Scalar>(num_overlap);
+    //    //contact_normal_lhs = (collision_pair->meshObjectLhs()->faceNormal(collision_pair->faceLhsIdx()) - 
+    //    //    collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx())).normalize();
+    //    contact_normal_lhs = -collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx());
+    //    if(contact_normal_lhs.norm() > std::numeric_limits<Scalar>::epsilon())
+    //    {
+    //        contact_normal_lhs.normalize();
+    //        ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectLhsIdx(), collision_pair->objectRhsIdx(),
+    //            *dynamic_cast<Vector<Scalar, Dim>*>(&overlap_point), 
+    //            *dynamic_cast<Vector<Scalar, Dim>*>(&contact_normal_lhs));
+    //        contact_points_.push_back(contact_point);
+    //    }
+    //}
 
     delete[] vertex_lhs;
     delete[] vertex_rhs;

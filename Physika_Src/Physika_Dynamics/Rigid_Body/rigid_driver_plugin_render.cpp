@@ -29,6 +29,7 @@
 #include "Physika_Dynamics/Collidable_Objects/contact_point.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include <GL/freeglut.h>
+#include <sstream>
 
 namespace Physika{
 
@@ -38,7 +39,10 @@ RigidDriverPluginRender<Scalar, Dim>::RigidDriverPluginRender():
 	is_render_contact_face_(false),
     is_render_contact_normal_(false),
     contact_face_ids_(NULL),
-    normal_length_(2)
+    normal_length_(2),
+    is_save_screen(false),
+    screen_save_name_(),
+    screen_save_interval_(0)
 {
 	active();
 }
@@ -247,6 +251,15 @@ void RigidDriverPluginRender<Scalar, Dim>::display()
     (window->renderManager()).renderAll(); //render all tasks of render manager
     window->displayFrameRate();
     glutSwapBuffers();
+
+    if(active_render_->rigid_driver_->step() % active_render_->screen_save_interval_ == 0)
+    {
+        std::stringstream adaptor;
+        adaptor << active_render_->rigid_driver_->step() / active_render_->screen_save_interval_;
+        std::string index_str;
+        adaptor >> index_str;
+        window->saveScreen(active_render_->screen_save_name_ + index_str + ".png");
+    }
 }
 
 template <typename Scalar,int Dim>
@@ -553,6 +566,16 @@ template <typename Scalar,int Dim>
 void RigidDriverPluginRender<Scalar, Dim>::setNormalLength(Scalar normal_lenth)
 {
     normal_length_ = normal_lenth;
+}
+
+template <typename Scalar,int Dim>
+void RigidDriverPluginRender<Scalar, Dim>::saveScreen(std::string& base_file_name, unsigned int interval)
+{
+    screen_save_name_ = base_file_name;
+    if(interval == 0)
+        interval = 1;
+    screen_save_interval_ = interval;
+    is_save_screen = true;
 }
 
 template <typename Scalar,int Dim>

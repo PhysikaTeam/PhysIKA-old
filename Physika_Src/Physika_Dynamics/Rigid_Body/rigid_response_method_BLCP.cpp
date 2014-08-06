@@ -80,6 +80,7 @@ void RigidResponseMethodBLCP<Scalar, Dim>::collisionResponse()
     DMJ = D * MJ;
     Jv = J * v;
     Dv = D * v;
+    
 
     //update CoR and CoF
     RigidBodyDriverUtility<Scalar, Dim>::computeCoefficient(this->rigid_driver_, CoR, CoF);
