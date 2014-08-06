@@ -51,13 +51,13 @@ public:
 
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
-    virtual void solveOnGrid()=0; //solve the dynamics system on grid
-    virtual void performGridCollision()=0;
-    virtual void performParticleCollision()=0;
+    virtual void solveOnGrid(Scalar dt)=0; //solve the dynamics system on grid
+    virtual void performGridCollision(Scalar dt)=0;
+    virtual void performParticleCollision(Scalar dt)=0;
     virtual void updateParticleInterpolationWeight()=0;
-    virtual void updateParticleConstitutiveModelState()=0;
+    virtual void updateParticleConstitutiveModelState(Scalar dt)=0; //update the constitutive model state of particle, e.g., deformation gradient
     virtual void updateParticleVelocity()=0;
-    virtual void updateParticlePosition()=0;
+    virtual void updateParticlePosition(Scalar dt)=0;
 protected:
     virtual void initialize()=0;
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation

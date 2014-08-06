@@ -93,7 +93,7 @@ void Array<ElementType>::resize(unsigned int count)
 template <typename ElementType>
 ElementType& Array<ElementType>::operator[] (unsigned int id)
 {
-    if(id<0||id>=element_count_)
+    if(id>=element_count_)
     {
         std::cerr<<"Array index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -104,12 +104,30 @@ ElementType& Array<ElementType>::operator[] (unsigned int id)
 template <typename ElementType>
 const ElementType& Array<ElementType>::operator[] (unsigned int id) const
 {
-    if(id<0||id>=element_count_)
+    if(id>=element_count_)
     {
         std::cerr<<"Array index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
     return data_[id];
+}
+
+template <typename ElementType>
+typename Array<ElementType>::Iterator Array<ElementType>::begin()
+{
+    Array<ElementType>::Iterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = 0;
+    return iter;
+}
+
+template <typename ElementType>
+typename Array<ElementType>::Iterator Array<ElementType>::end()
+{
+    Array<ElementType>::Iterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = this->size();
+    return iter;
 }
 
 template <typename ElementType>

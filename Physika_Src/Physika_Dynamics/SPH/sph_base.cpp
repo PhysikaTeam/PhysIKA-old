@@ -107,16 +107,17 @@ void SPHBase<Scalar, Dim>::boundaryHandling()
 template <typename Scalar, int Dim>
 SPHBase<Scalar, Dim>::~SPHBase()
 {
-    this->mass_.release();
-    this->position_.release();
-    this->velocity_.release();
-    this->normal_.release();
-    this->viscous_force_.release();
-    this->pressure_.release();
-    this->surface_force_.release();
-    this->volume_.release();
-    this->pressure_.release();
-    this->density_.release();
+    //ALERT!!!
+    // this->mass_.release();
+    // this->position_.release();
+    // this->velocity_.release();
+    // this->normal_.release();
+    // this->viscous_force_.release();
+    // this->pressure_.release();
+    // this->surface_force_.release();
+    // this->volume_.release();
+    // this->pressure_.release();
+    // this->density_.release();
 
 }
 

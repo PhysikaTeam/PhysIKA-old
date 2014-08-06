@@ -13,6 +13,7 @@
  */
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Vectors/vector_4d.h"
 #include "Physika_Render/Lights/light.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 

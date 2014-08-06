@@ -15,6 +15,7 @@
 #include <limits>
 #include <cstdlib>
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Vectors/vector_4d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Matrices/matrix_4x4.h"
 
@@ -23,6 +24,46 @@ namespace Physika{
 template <typename Scalar>
 SquareMatrix<Scalar,4>::SquareMatrix()
 {
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,4>::SquareMatrix(Scalar value)
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    eigen_matrix_4x4_(0,0) = value;
+    eigen_matrix_4x4_(0,1) = value;
+    eigen_matrix_4x4_(0,2) = value;
+    eigen_matrix_4x4_(0,3) = value;
+    eigen_matrix_4x4_(1,0) = value;
+    eigen_matrix_4x4_(1,1) = value;
+    eigen_matrix_4x4_(1,2) = value;
+    eigen_matrix_4x4_(1,3) = value;
+    eigen_matrix_4x4_(2,0) = value;
+    eigen_matrix_4x4_(2,1) = value;
+    eigen_matrix_4x4_(2,2) = value;
+    eigen_matrix_4x4_(2,3) = value;
+    eigen_matrix_4x4_(3,0) = value;
+    eigen_matrix_4x4_(3,1) = value;
+    eigen_matrix_4x4_(3,2) = value;
+    eigen_matrix_4x4_(3,3) = value;
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    data_[0][0] = value;
+    data_[0][1] = value;
+    data_[0][2] = value;
+    data_[0][3] = value;
+    data_[1][0] = value;
+    data_[1][1] = value;
+    data_[1][2] = value;
+    data_[1][3] = value;
+    data_[2][0] = value;
+    data_[2][1] = value;
+    data_[2][2] = value;
+    data_[2][3] = value;
+    data_[3][0] = value;
+    data_[3][1] = value;
+    data_[3][2] = value;
+    data_[3][3] = value;
+#endif
 }
 
 template <typename Scalar>

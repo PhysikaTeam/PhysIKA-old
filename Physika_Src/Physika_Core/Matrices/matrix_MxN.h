@@ -18,10 +18,11 @@
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/type_utilities.h"
-#include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
+
+template <typename Scalar> class VectorND;
 
 /*
  * MatrixMxN<Scalar> are defined for C++ fundamental integer types and floating-point types
@@ -32,7 +33,8 @@ class MatrixMxN: public MatrixBase
 {
 public:
     MatrixMxN(); //construct an empty matrix
-    MatrixMxN(unsigned int rows, unsigned int cols); //construct an uninitialized matrix of size rows*cols                  
+    MatrixMxN(unsigned int rows, unsigned int cols); //construct an uninitialized matrix of size rows*cols
+    MatrixMxN(unsigned int rows, unsigned int cols, Scalar value); //construct an matrix of size rows*cols with the entry value                  
     MatrixMxN(unsigned int rows, unsigned int cols, Scalar *entries);  //construct a matrix with given size and data
     MatrixMxN(const MatrixMxN<Scalar>&);  //copy constructor
     ~MatrixMxN();

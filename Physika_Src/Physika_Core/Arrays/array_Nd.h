@@ -20,7 +20,11 @@
 #include <cstring>
 #include <vector>
 #include <iostream>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector_4d.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Arrays/array_Nd_iterator.h"
 
 namespace Physika{
 
@@ -32,6 +36,10 @@ namespace Physika{
  * Hence:
  *       Use Array<ElementType> for 1D array and ArrayND<ElmentType,Dim> for higer dimension
  *       ArrayND<ElementType,1> will result in compiler error due to the static assert
+ * 
+ * Dim is arbitrary, but most probably it's 2 and 3.
+ * Elements of ArrayND can be accessed via index or iterator, the index is represented as 
+ * a std::vector. Physika::Vector can also be used as index if and only if Dim = 2,3,4.
  */
 
 template <typename ElementType,int Dim>
@@ -41,6 +49,8 @@ public:
     ArrayND();  //empty array
     explicit ArrayND(const std::vector<unsigned int> &element_counts);  //array with given size in each dimension, uninitialized value
     ArrayND(const std::vector<unsigned int> &element_counts, const ElementType &value); //array with given size in each dimension, initialized with same value
+    explicit ArrayND(const Vector<unsigned int,Dim> &element_counts);   //specific to Dim = 2,3,4
+    ArrayND(const Vector<unsigned int,Dim> &element_counts, const ElementType &value); //specific to Dim = 2,3,4
     ArrayND(const ArrayND<ElementType,Dim> &);
     ~ArrayND();
 
@@ -56,6 +66,19 @@ public:
     const ElementType& operator() (const std::vector<unsigned int> &idx) const; //get element at given index
     ElementType& elementAtIndex(const std::vector<unsigned int> &idx);
     const ElementType& elementAtIndex(const std::vector<unsigned int> &idx) const;
+
+    //methods specific to Dim = 2,3,4
+    void resize(const Vector<unsigned int,Dim> &count);  //resize all dimensions
+    ElementType& operator() (const Vector<unsigned int,Dim> &idx); //get element at given index
+    const ElementType& operator() (const Vector<unsigned int,Dim> &idx) const; //get element at given index
+    ElementType& elementAtIndex(const Vector<unsigned int,Dim> &idx);
+    const ElementType& elementAtIndex(const Vector<unsigned int,Dim> &idx) const;
+    
+    //iterator
+    typedef ArrayNDIterator<ElementType,Dim> Iterator;
+    Iterator begin();
+    Iterator end();
+
 protected:
     void allocate();
     void release();
@@ -66,6 +89,7 @@ protected:
     ElementType *data_;  //data stored in 1D
 protected:
     PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
+    friend class ArrayNDIterator<ElementType,Dim>;
 };
 
 }  //end of namespace Physika

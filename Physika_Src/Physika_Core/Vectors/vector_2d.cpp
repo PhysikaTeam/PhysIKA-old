@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 
 namespace Physika{
@@ -271,6 +272,16 @@ template <typename Scalar>
 Scalar Vector<Scalar,2>::dot(const Vector<Scalar,2>& vec2) const
 {
     return (*this)[0]*vec2[0] + (*this)[1]*vec2[1];
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,2> Vector<Scalar,2>::outerProduct(const Vector<Scalar,2> &vec2) const
+{
+    SquareMatrix<Scalar,2> result;
+    for(unsigned int i = 0; i < 2; ++i)
+        for(unsigned int j = 0; j < 2; ++j)
+            result(i,j) = (*this)[i]*vec2[j];
+    return result;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

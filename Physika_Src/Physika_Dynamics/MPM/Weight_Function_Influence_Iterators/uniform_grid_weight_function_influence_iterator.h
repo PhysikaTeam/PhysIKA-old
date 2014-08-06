@@ -60,7 +60,7 @@ public:
     bool valid() const;
     UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> next() const;
     UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>& operator++ ();
-    UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> operator++ (int) const;
+    UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> operator++ (int);
     Vector<unsigned int,Dim> nodeIndex() const;
 protected:
     void initNodeIdxGrid(const Vector<Scalar,Dim> &influence_center, const Vector<Scalar,Dim> &influence_radius_scale);

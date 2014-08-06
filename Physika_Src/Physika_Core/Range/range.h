@@ -44,8 +44,8 @@ public:
     Scalar size() const;  //2D: area; 3D: volume
     Vector<Scalar,Dim> minCorner() const;
     Vector<Scalar,Dim> maxCorner() const;
-    void setMinCorner(const Vector<Scalar,Dim> &corner);
-    void setMaxCorner(const Vector<Scalar,Dim> &corner);
+    void setMinCorner(const Vector<Scalar,Dim> &corner);  //user is obligated to maintain validity of the range
+    void setMaxCorner(const Vector<Scalar,Dim> &corner);  //user is obligated to maintain validity of the range
     bool inside(const Vector<Scalar,Dim> &val) const;
     bool outside(const Vector<Scalar,Dim> &val) const;
 

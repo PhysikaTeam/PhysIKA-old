@@ -16,10 +16,11 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/square_matrix.h"
 
 namespace Physika{
+
+template <typename Scalar, int Dim> class Vector;
 
 /*
  * SquareMatrix<Scalar,2> are defined for C++ fundamental integer types and floating-point types
@@ -30,6 +31,7 @@ class SquareMatrix<Scalar,2>: public MatrixBase
 {
 public:
     SquareMatrix();
+    explicit SquareMatrix(Scalar);
     SquareMatrix(Scalar x00, Scalar x01, Scalar x10, Scalar x11);
     SquareMatrix(const Vector<Scalar,2> &row1, const Vector<Scalar,2> &row2);
     SquareMatrix(const SquareMatrix<Scalar,2> &);

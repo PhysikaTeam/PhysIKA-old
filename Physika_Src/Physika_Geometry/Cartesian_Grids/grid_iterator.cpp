@@ -48,7 +48,7 @@ GridIteratorBase<Scalar,Dim>& GridIteratorBase<Scalar,Dim>::operator= (const Gri
 template <typename Scalar,int Dim>
 bool GridIteratorBase<Scalar,Dim>::operator== (const GridIteratorBase<Scalar,Dim> &iterator) const
 {
-    if(this->grid_==NULL)
+    if((this->grid_==NULL)||(iterator.grid_==NULL))
     {
         std::cerr<<"Undefined operator == for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
@@ -59,7 +59,7 @@ bool GridIteratorBase<Scalar,Dim>::operator== (const GridIteratorBase<Scalar,Dim
 template <typename Scalar,int Dim>
 bool GridIteratorBase<Scalar,Dim>::operator!= (const GridIteratorBase<Scalar,Dim> &iterator) const
 {
-    if(this->grid_==NULL)
+    if((this->grid_==NULL)||(iterator.grid_==NULL))
     {
         std::cerr<<"Undefined operator != for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
@@ -478,17 +478,86 @@ bool GridCellIterator<Scalar,Dim>::validCheck() const
 }
 
 //explicit instantiation
+
+template class GridIteratorBase<unsigned char,2>;
+template class GridIteratorBase<unsigned short,2>;
+template class GridIteratorBase<unsigned int,2>;
+template class GridIteratorBase<unsigned long,2>;
+template class GridIteratorBase<unsigned long long,2>;
+template class GridIteratorBase<signed char,2>;
+template class GridIteratorBase<short,2>;
+template class GridIteratorBase<int,2>;
+template class GridIteratorBase<long,2>;
+template class GridIteratorBase<long long,2>;
 template class GridIteratorBase<float,2>;
-template class GridIteratorBase<float,3>;
 template class GridIteratorBase<double,2>;
+template class GridIteratorBase<long double,2>;
+template class GridIteratorBase<unsigned char,3>;
+template class GridIteratorBase<unsigned short,3>;
+template class GridIteratorBase<unsigned int,3>;
+template class GridIteratorBase<unsigned long,3>;
+template class GridIteratorBase<unsigned long long,3>;
+template class GridIteratorBase<signed char,3>;
+template class GridIteratorBase<short,3>;
+template class GridIteratorBase<int,3>;
+template class GridIteratorBase<long,3>;
+template class GridIteratorBase<long long,3>;
+template class GridIteratorBase<float,3>;
 template class GridIteratorBase<double,3>;
+template class GridIteratorBase<long double,3>;
+
+template class GridNodeIterator<unsigned char,2>;
+template class GridNodeIterator<unsigned short,2>;
+template class GridNodeIterator<unsigned int,2>;
+template class GridNodeIterator<unsigned long,2>;
+template class GridNodeIterator<unsigned long long,2>;
+template class GridNodeIterator<signed char,2>;
+template class GridNodeIterator<short,2>;
+template class GridNodeIterator<int,2>;
+template class GridNodeIterator<long,2>;
+template class GridNodeIterator<long long,2>;
 template class GridNodeIterator<float,2>;
-template class GridNodeIterator<float,3>;
 template class GridNodeIterator<double,2>;
+template class GridNodeIterator<long double,2>;
+template class GridNodeIterator<unsigned char,3>;
+template class GridNodeIterator<unsigned short,3>;
+template class GridNodeIterator<unsigned int,3>;
+template class GridNodeIterator<unsigned long,3>;
+template class GridNodeIterator<unsigned long long,3>;
+template class GridNodeIterator<signed char,3>;
+template class GridNodeIterator<short,3>;
+template class GridNodeIterator<int,3>;
+template class GridNodeIterator<long,3>;
+template class GridNodeIterator<long long,3>;
+template class GridNodeIterator<float,3>;
 template class GridNodeIterator<double,3>;
+template class GridNodeIterator<long double,3>;
+
+template class GridCellIterator<unsigned char,2>;
+template class GridCellIterator<unsigned short,2>;
+template class GridCellIterator<unsigned int,2>;
+template class GridCellIterator<unsigned long,2>;
+template class GridCellIterator<unsigned long long,2>;
+template class GridCellIterator<signed char,2>;
+template class GridCellIterator<short,2>;
+template class GridCellIterator<int,2>;
+template class GridCellIterator<long,2>;
+template class GridCellIterator<long long,2>;
 template class GridCellIterator<float,2>;
-template class GridCellIterator<float,3>;
 template class GridCellIterator<double,2>;
+template class GridCellIterator<long double,2>;
+template class GridCellIterator<unsigned char,3>;
+template class GridCellIterator<unsigned short,3>;
+template class GridCellIterator<unsigned int,3>;
+template class GridCellIterator<unsigned long,3>;
+template class GridCellIterator<unsigned long long,3>;
+template class GridCellIterator<signed char,3>;
+template class GridCellIterator<short,3>;
+template class GridCellIterator<int,3>;
+template class GridCellIterator<long,3>;
+template class GridCellIterator<long long,3>;
+template class GridCellIterator<float,3>;
 template class GridCellIterator<double,3>;
+template class GridCellIterator<long double,3>;
 
 }  //end of namespace Physika

@@ -1,7 +1,7 @@
 /*
  * @file vector_4d.cpp 
  * @brief 4d vector.
- * @author Liyou Xu
+ * @author Liyou Xu, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Matrices/matrix_4x4.h"
 #include "Physika_Core/Vectors/vector_4d.h"
 
 namespace Physika{
@@ -270,6 +271,16 @@ template <typename Scalar>
 Scalar Vector<Scalar,4>::dot(const Vector<Scalar,4>& vec4) const
 {
     return (*this)[0]*vec4[0] + (*this)[1]*vec4[1] + (*this)[2]*vec4[2] + (*this)[3]*vec4[3];
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,4> Vector<Scalar,4>::outerProduct(const Vector<Scalar,4> &vec4) const
+{
+    SquareMatrix<Scalar,4> result;
+    for(unsigned int i = 0; i < 4; ++i)
+        for(unsigned int j = 0; j < 4; ++j)
+            result(i,j) = (*this)[i]*vec4[j];
+    return result;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

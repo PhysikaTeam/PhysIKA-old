@@ -18,19 +18,13 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 Particle<Scalar,Dim>::Particle()
-    :x_(0),v_(0),m_(0),vol_(0),weight_(0),weight_grad_(0)
+    :x_(0),v_(0),m_(0),vol_(0)
 {
 }
 
 template <typename Scalar, int Dim>
 Particle<Scalar,Dim>::Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol)
-    :x_(pos),v_(vel),m_(mass),vol_(vol),weight_(0),weight_grad_(0)
-{
-}
-
-template <typename Scalar, int Dim>
-Particle<Scalar,Dim>::Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol, Scalar weight, const Vector<Scalar,Dim> &weight_grad)
-    :x_(pos),v_(vel),m_(mass),vol_(vol),weight_(weight),weight_grad_(weight_grad)
+    :x_(pos),v_(vel),m_(mass),vol_(vol)
 {
 }
 
@@ -41,8 +35,6 @@ Particle<Scalar,Dim>::Particle(const Particle<Scalar, Dim> &particle2)
     v_ = particle2.v_;
     m_ = particle2.m_;
     vol_ = particle2.vol_;
-    weight_ = particle2.weight_;
-    weight_grad_ = particle2.weight_grad_;
 }
 
 template <typename Scalar, int Dim>
@@ -63,8 +55,6 @@ Particle<Scalar,Dim>& Particle<Scalar,Dim>::operator= (const Particle<Scalar,Dim
     v_ = particle2.v_;
     m_ = particle2.m_;
     vol_ = particle2.vol_;
-    weight_ = particle2.weight_;
-    weight_grad_ = particle2.weight_grad_;
     return *this;
 }
 
@@ -75,7 +65,7 @@ void Particle<Scalar,Dim>::setPosition(const Vector<Scalar,Dim> &pos)
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& Particle<Scalar,Dim>::position() const
+Vector<Scalar,Dim> Particle<Scalar,Dim>::position() const
 {
     return x_;
 }
@@ -87,7 +77,7 @@ void Particle<Scalar,Dim>::setVelocity(const Vector<Scalar,Dim> &vel)
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& Particle<Scalar,Dim>::velocity() const
+Vector<Scalar,Dim> Particle<Scalar,Dim>::velocity() const
 {
     return v_;
 }
@@ -114,30 +104,6 @@ template <typename Scalar, int Dim>
 Scalar Particle<Scalar,Dim>::volume() const
 {
     return vol_;
-}
-
-template <typename Scalar, int Dim>
-void Particle<Scalar,Dim>::setWeight(Scalar weight)
-{
-    weight_ = weight;
-}
-
-template <typename Scalar, int Dim>
-Scalar Particle<Scalar,Dim>::weight() const
-{
-    return weight_;
-}
-
-template <typename Scalar, int Dim>
-void Particle<Scalar,Dim>::setWeightGradient(const Vector<Scalar,Dim> &weight_grad)
-{
-    weight_grad_ = weight_grad;
-}
-
-template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& Particle<Scalar,Dim>::weightGradient() const
-{
-    return weight_grad_;
 }
 
 //explicit instantiation

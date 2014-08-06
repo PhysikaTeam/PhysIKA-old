@@ -78,9 +78,11 @@ operator++ ()
 
 template <typename Scalar, int Dim>
 UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::
-operator++ (int) const
+operator++ (int)
 {
-    return this->next();
+    UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> result(*this);
+    ++node_iter_;
+    return result;
 }
 
 template <typename Scalar, int Dim>

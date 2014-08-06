@@ -17,6 +17,7 @@
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 
 namespace Physika{
@@ -31,6 +32,15 @@ template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols)
 {
     allocMemory(rows,cols);
+}
+
+template <typename Scalar>
+MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols, Scalar value)
+{
+    allocMemory(rows,cols);
+    for(unsigned int i = 0; i < rows; ++i)
+        for(unsigned int j = 0; j < cols; ++j)
+            (*this)(i,j) = value;
 }
 
 template <typename Scalar>

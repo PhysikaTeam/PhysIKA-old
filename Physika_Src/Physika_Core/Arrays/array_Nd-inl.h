@@ -43,7 +43,32 @@ ArrayND<ElementType,Dim>::ArrayND(const std::vector<unsigned int> &element_count
     }
     resize(element_counts);
     unsigned int total_count = totalElementCount();
-    memset(data_,value,sizeof(ElementType)*total_count);
+    for(unsigned int i = 0; i < total_count; ++i)
+        data_[i] = value;
+}
+
+template <typename ElementType,int Dim>
+    ArrayND<ElementType,Dim>::ArrayND(const Vector<unsigned int,Dim> &element_counts):data_(NULL)
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    std::vector<unsigned int> counts;
+    for(unsigned int i = 0; i < Dim; ++i)
+        counts.push_back(element_counts[i]);
+    resize(counts);
+}
+
+template <typename ElementType,int Dim>
+ArrayND<ElementType,Dim>::ArrayND(const Vector<unsigned int,Dim> &element_counts, const ElementType &value)
+    :data_(NULL)
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    std::vector<unsigned int> counts;
+    for(unsigned int i = 0; i < Dim; ++i)
+        counts.push_back(element_counts[i]);
+    resize(counts);
+    unsigned int total_count = totalElementCount();
+    for(unsigned int i = 0; i < total_count; ++i)
+        data_[i] = value;
 }
 
 template <typename ElementType,int Dim>
@@ -182,6 +207,65 @@ const ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const std::vector<un
 }
 
 template <typename ElementType,int Dim>
+void ArrayND<ElementType,Dim>::resize(const Vector<unsigned int,Dim> &count)
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    for(unsigned int i = 0; i < Dim; ++i)
+        element_count_[i] = count[i];
+    allocate();
+}
+
+template <typename ElementType,int Dim>
+ElementType& ArrayND<ElementType,Dim>::operator() (const Vector<unsigned int,Dim> &idx)
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    return elementAtIndex(idx);
+}
+
+template <typename ElementType,int Dim>
+const ElementType& ArrayND<ElementType,Dim>::operator() (const Vector<unsigned int,Dim> &idx) const
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    return elementAtIndex(idx);
+}
+
+template <typename ElementType,int Dim>
+ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const Vector<unsigned int,Dim> &idx)
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    std::vector<unsigned int> idx_vec;
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        if(idx[i]>=element_count_[i])
+        {
+            std::cerr<<"Array index out of range!\n";
+            std::exit(EXIT_FAILURE);
+        }
+        idx_vec.push_back(idx[i]);
+    }
+    unsigned int index_1d = index1D(idx_vec);
+    return data_[index_1d];
+}
+
+template <typename ElementType,int Dim>
+const ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const Vector<unsigned int,Dim> &idx) const
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    std::vector<unsigned int> idx_vec;
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        if(idx[i]>=element_count_[i])
+        {
+            std::cerr<<"Array index out of range!\n";
+            std::exit(EXIT_FAILURE);
+        }
+        idx_vec.push_back(idx[i]);
+    }
+    unsigned int index_1d = index1D(idx_vec);
+    return data_[index_1d];
+}
+
+template <typename ElementType,int Dim>
 void ArrayND<ElementType,Dim>::allocate()
 {
     if(data_)
@@ -189,6 +273,24 @@ void ArrayND<ElementType,Dim>::allocate()
     unsigned int total_count = totalElementCount();
     data_ = new ElementType[total_count];
     PHYSIKA_ASSERT(data_);
+}
+
+template <typename ElementType,int Dim>
+typename ArrayND<ElementType,Dim>::Iterator ArrayND<ElementType,Dim>::begin()
+{
+    ArrayND<ElementType,Dim>::Iterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = 0;
+    return iter;
+}
+
+template <typename ElementType,int Dim>
+typename ArrayND<ElementType,Dim>::Iterator ArrayND<ElementType,Dim>::end()
+{
+    ArrayND<ElementType,Dim>::Iterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = this->totalElementCount();
+    return iter;
 }
 
 template <typename ElementType,int Dim>

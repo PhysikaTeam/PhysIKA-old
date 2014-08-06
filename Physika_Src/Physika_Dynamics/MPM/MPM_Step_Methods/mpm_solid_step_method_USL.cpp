@@ -43,13 +43,13 @@ void MPMSolidStepMethodUSL<Scalar,Dim>::advanceStep(Scalar dt)
     //now advance step, the constitutive model state 
     //of the particles are updated at the end of time step
     mpm_solid_driver->rasterize();
-    mpm_solid_driver->solveOnGrid();
-    mpm_solid_driver->performGridCollision();
+    mpm_solid_driver->solveOnGrid(dt);
+    mpm_solid_driver->performGridCollision(dt);
     mpm_solid_driver->updateParticleVelocity();
-    mpm_solid_driver->performParticleCollision();
-    mpm_solid_driver->updateParticlePosition();
+    mpm_solid_driver->performParticleCollision(dt);
+    mpm_solid_driver->updateParticlePosition(dt);
     mpm_solid_driver->updateParticleInterpolationWeight();
-    mpm_solid_driver->updateParticleConstitutiveModelState();
+    mpm_solid_driver->updateParticleConstitutiveModelState(dt);
 }
 
 //explicit instantiations

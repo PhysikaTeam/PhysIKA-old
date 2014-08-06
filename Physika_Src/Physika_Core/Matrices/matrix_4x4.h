@@ -16,10 +16,11 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_4X4_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Vectors/vector_4d.h"
 #include "Physika_Core/Matrices/square_matrix.h"
 
 namespace Physika{
+
+template <typename Scalar, int Dim> class Vector;
 
 /*
  * SquareMatrix<Scalar,4> are defined for C++ fundamental integer types and floating-point types
@@ -30,6 +31,7 @@ class SquareMatrix<Scalar,4>: public MatrixBase
 {
 public:
     SquareMatrix();
+    explicit SquareMatrix(Scalar);
     SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar x03,
                  Scalar x10, Scalar x11, Scalar x12, Scalar x13,
                  Scalar x20, Scalar x21, Scalar x22, Scalar x23,

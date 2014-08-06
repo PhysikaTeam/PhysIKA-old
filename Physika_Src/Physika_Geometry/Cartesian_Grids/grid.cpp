@@ -509,13 +509,58 @@ typename Grid<Scalar,3>::CellIterator Grid<Scalar,3>::cellEnd() const
 }
 
 //explicit instantiation
+template class GridBase<unsigned char,2>;
+template class GridBase<unsigned short,2>;
+template class GridBase<unsigned int,2>;
+template class GridBase<unsigned long,2>;
+template class GridBase<unsigned long long,2>;
+template class GridBase<signed char,2>;
+template class GridBase<short,2>;
+template class GridBase<int,2>;
+template class GridBase<long,2>;
+template class GridBase<long long,2>;
 template class GridBase<float,2>;
-template class GridBase<float,3>;
 template class GridBase<double,2>;
+template class GridBase<long double,2>;
+template class GridBase<unsigned char,3>;
+template class GridBase<unsigned short,3>;
+template class GridBase<unsigned int,3>;
+template class GridBase<unsigned long,3>;
+template class GridBase<unsigned long long,3>;
+template class GridBase<signed char,3>;
+template class GridBase<short,3>;
+template class GridBase<int,3>;
+template class GridBase<long,3>;
+template class GridBase<long long,3>;
+template class GridBase<float,3>;
 template class GridBase<double,3>;
+template class GridBase<long double,3>;
+
+template class Grid<unsigned char,2>;
+template class Grid<unsigned short,2>;
+template class Grid<unsigned int,2>;
+template class Grid<unsigned long,2>;
+template class Grid<unsigned long long,2>;
+template class Grid<signed char,2>;
+template class Grid<short,2>;
+template class Grid<int,2>;
+template class Grid<long,2>;
+template class Grid<long long,2>;
 template class Grid<float,2>;
-template class Grid<float,3>;
 template class Grid<double,2>;
+template class Grid<long double,2>;
+template class Grid<unsigned char,3>;
+template class Grid<unsigned short,3>;
+template class Grid<unsigned int,3>;
+template class Grid<unsigned long,3>;
+template class Grid<unsigned long long,3>;
+template class Grid<signed char,3>;
+template class Grid<short,3>;
+template class Grid<int,3>;
+template class Grid<long,3>;
+template class Grid<long long,3>;
+template class Grid<float,3>;
 template class Grid<double,3>;
+template class Grid<long double,3>;
 
 } //end of namespace Physika

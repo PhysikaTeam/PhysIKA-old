@@ -72,5 +72,4 @@ template class GridPiecewiseCubicSpline<double,2>;
 template class GridPiecewiseCubicSpline<float,3>;
 template class GridPiecewiseCubicSpline<double,3>;
 
-
 }  //end of namespace Physika
