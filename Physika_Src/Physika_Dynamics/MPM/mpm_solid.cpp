@@ -190,6 +190,9 @@ void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
         }
         SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
         particle_deform_grad += dt*particle_vel_grad*particle_deform_grad;
+        particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient
+        Scalar particle_vol = (particle_deform_grad.determinant())*(particle->volume());
+        particle->setVolume(particle_vol);  //update particle volume
     }
 }
 
@@ -200,7 +203,7 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
     Vector<Scalar,Dim> weight_support_radius, grid_dx = (this->grid_).dX();
     for(unsigned int i = 0; i < Dim; ++i)
         weight_support_radius[i] = grid_dx[i]*(this->weight_radius_cell_scale_[i]);
-    //first transfer the momentum from the grid to particle, then divide by particle mass
+    //direct interpolate grid velocity to particle
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
@@ -211,8 +214,9 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
             Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
             Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
             Scalar weight = this->weight_function_->weight(particle_to_node,weight_support_radius); 
-            new_vel += weight*grid_velocity_(node_idx)*grid_mass_(node_idx)/(particle->mass());
+            new_vel += weight*grid_velocity_(node_idx);
         }
+        particle->setVelocity(new_vel);
     }
 }
 

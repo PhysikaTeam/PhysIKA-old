@@ -1,7 +1,7 @@
 /*
  * @file driver_plugin_base.h 
  * @Basic class for plugins of a simulation driver.
- * @author Tianxiang Zhang
+ * @author Tianxiang Zhang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
