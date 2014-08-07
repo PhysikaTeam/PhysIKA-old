@@ -68,21 +68,3 @@ template class SurfaceMeshIO<float>;
 template class SurfaceMeshIO<double>;
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

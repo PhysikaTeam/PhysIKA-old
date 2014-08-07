@@ -15,7 +15,7 @@
 #include <cstddef> 
 #include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Geometry/Surface_Mesh/group.h"
+#include "Physika_Geometry/Boundary_Meshes/face_group.h"
 using std::string;
 using std::vector;
 
@@ -24,24 +24,24 @@ namespace Physika{
 namespace SurfaceMeshInternal{
 
 template <typename Scalar>
-Group<Scalar>::Group()
+FaceGroup<Scalar>::FaceGroup()
     :name_("NONAME"),material_index_(0)
 {
 }
 
 template <typename Scalar>
-Group<Scalar>::~Group()
+FaceGroup<Scalar>::~FaceGroup()
 {
 }
 
 template <typename Scalar>
-Group<Scalar>::Group(const string &name)
+FaceGroup<Scalar>::FaceGroup(const string &name)
     :name_(name),material_index_(0)
 {
 }
 
 template <typename Scalar>
-Group<Scalar>::Group(const string &name, const vector<Face<Scalar> > &faces)
+FaceGroup<Scalar>::FaceGroup(const string &name, const vector<Face<Scalar> > &faces)
     :name_(name),material_index_(0)
 {
     for(int i = 0; i < faces.size(); ++i)
@@ -49,13 +49,13 @@ Group<Scalar>::Group(const string &name, const vector<Face<Scalar> > &faces)
 }
 
 template <typename Scalar>
-Group<Scalar>::Group(const string &name, unsigned int material_index)
+FaceGroup<Scalar>::FaceGroup(const string &name, unsigned int material_index)
     :name_(name),material_index_(material_index)
 {
 }
 
 template <typename Scalar>
-Group<Scalar>::Group(const string &name, unsigned int material_index, const vector<Face<Scalar> > &faces)
+FaceGroup<Scalar>::FaceGroup(const string &name, unsigned int material_index, const vector<Face<Scalar> > &faces)
     :name_(name),material_index_(material_index)
 {
     for(int i = 0; i < faces.size(); ++i)
@@ -63,25 +63,25 @@ Group<Scalar>::Group(const string &name, unsigned int material_index, const vect
 }
 
 template <typename Scalar>
-unsigned int Group<Scalar>::numFaces() const
+unsigned int FaceGroup<Scalar>::numFaces() const
 {
     return faces_.size();
 }
 
 template <typename Scalar>
-const string& Group<Scalar>::name() const
+const string& FaceGroup<Scalar>::name() const
 {
     return name_;
 }
 
 template <typename Scalar>
-void Group<Scalar>::setName(const string &name)
+void FaceGroup<Scalar>::setName(const string &name)
 {
     name_ = name;
 }
 
 template <typename Scalar>
-const Face<Scalar>& Group<Scalar>::face(unsigned int face_idx) const
+const Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx) const
 {
     PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
@@ -89,7 +89,7 @@ const Face<Scalar>& Group<Scalar>::face(unsigned int face_idx) const
 }
 
 template <typename Scalar>
-Face<Scalar>& Group<Scalar>::face(unsigned int face_idx)
+Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx)
 {
     PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
@@ -97,7 +97,7 @@ Face<Scalar>& Group<Scalar>::face(unsigned int face_idx)
 }
 
 template <typename Scalar>
-const Face<Scalar>* Group<Scalar>::facePtr(unsigned int face_idx) const
+const Face<Scalar>* FaceGroup<Scalar>::facePtr(unsigned int face_idx) const
 {
     PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
@@ -105,7 +105,7 @@ const Face<Scalar>* Group<Scalar>::facePtr(unsigned int face_idx) const
 }
 
 template <typename Scalar>
-Face<Scalar>* Group<Scalar>::facePtr(unsigned int face_idx)
+Face<Scalar>* FaceGroup<Scalar>::facePtr(unsigned int face_idx)
 {
     PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
@@ -113,25 +113,25 @@ Face<Scalar>* Group<Scalar>::facePtr(unsigned int face_idx)
 }
 
 template <typename Scalar>
-unsigned int Group<Scalar>::materialIndex() const
+unsigned int FaceGroup<Scalar>::materialIndex() const
 {
     return material_index_;
 }
 
 template <typename Scalar>
-void Group<Scalar>::setMaterialIndex(unsigned int material_index)
+void FaceGroup<Scalar>::setMaterialIndex(unsigned int material_index)
 {
     material_index_ = material_index;
 }
 
 template <typename Scalar>
-void Group<Scalar>::addFace(const Face<Scalar> &face)
+void FaceGroup<Scalar>::addFace(const Face<Scalar> &face)
 {
     faces_.push_back(face);
 }
 
 template <typename Scalar>
-void Group<Scalar>::removeFace(unsigned int face_idx)
+void FaceGroup<Scalar>::removeFace(unsigned int face_idx)
 {
     typename vector<Face<Scalar> >::iterator iter = faces_.begin() + face_idx;
     if(iter != faces_.end())
@@ -139,8 +139,8 @@ void Group<Scalar>::removeFace(unsigned int face_idx)
 }
 
 //explicit instantitation
-template class Group<float>;
-template class Group<double>;
+template class FaceGroup<float>;
+template class FaceGroup<double>;
 
 } //end of namespace SurfaceMeshInternal
 

@@ -12,24 +12,24 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
-#define PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
+#ifndef PHYSIKA_GEOMETRY_BOUNDARY_MESHES_SURFACE_MESH_H_
+#define PHYSIKA_GEOMETRY_BOUNDARY_MESHES_SURFACE_MESH_H_
 
 #include <vector>
 #include <string>
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Geometry/Surface_Mesh/vertex.h"
-#include "Physika_Geometry/Surface_Mesh/face.h"
-#include "Physika_Geometry/Surface_Mesh/group.h"
-#include "Physika_Geometry/Surface_Mesh/material.h"
+#include "Physika_Geometry/Boundary_Meshes/vertex.h"
+#include "Physika_Geometry/Boundary_Meshes/face.h"
+#include "Physika_Geometry/Boundary_Meshes/face_group.h"
+#include "Physika_Geometry/Boundary_Meshes/material.h"
 
 namespace Physika{
 
-using SurfaceMeshInternal::Vertex;
+using BoundaryMeshInternal::Vertex;
 using SurfaceMeshInternal::Face;
-using SurfaceMeshInternal::Group;
-using SurfaceMeshInternal::Material;
+using SurfaceMeshInternal::FaceGroup;
+using BoundaryMeshInternal::Material;
 
 template <typename Scalar>
 class SurfaceMesh
@@ -51,24 +51,24 @@ public:
     bool isQuadrilateralMesh() const;
     
     //getters && setters
-    const Vector<Scalar,3>& vertexPosition(unsigned int vert_idx) const;
-    const Vector<Scalar,3>& vertexPosition(const Vertex<Scalar> &vertex) const;
+    Vector<Scalar,3> vertexPosition(unsigned int vert_idx) const;
+    Vector<Scalar,3> vertexPosition(const Vertex<Scalar> &vertex) const;
     void                    setVertexPosition(unsigned int vert_idx, const Vector<Scalar,3> &position);
     void                    setVertexPosition(const Vertex<Scalar> &vertex, const Vector<Scalar,3> &position);
-    const Vector<Scalar,3>& vertexNormal(unsigned int normal_idx) const;
-    const Vector<Scalar,3>& vertexNormal(const Vertex<Scalar> &vertex) const;
+    Vector<Scalar,3> vertexNormal(unsigned int normal_idx) const;
+    Vector<Scalar,3> vertexNormal(const Vertex<Scalar> &vertex) const;
     void                    setVertexNormal(unsigned int normal_idx, const Vector<Scalar,3> &normal);
     void                    setVertexNormal(const Vertex<Scalar> &vertex, const Vector<Scalar,3> &normal);
-    const Vector<Scalar,2>& vertexTextureCoordinate(unsigned int texture_idx) const;
-    const Vector<Scalar,2>& vertexTextureCoordinate(const Vertex<Scalar> &vertex) const;
+    Vector<Scalar,2> vertexTextureCoordinate(unsigned int texture_idx) const;
+    Vector<Scalar,2> vertexTextureCoordinate(const Vertex<Scalar> &vertex) const;
     void                    setVertexTextureCoordinate(unsigned int texture_idx, const Vector<Scalar,2> &texture_coordinate);
     void                    setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
-    const Group<Scalar>&    group(unsigned int group_idx) const;
-    Group<Scalar>&          group(unsigned int group_idx);
-    const Group<Scalar>*    groupPtr(unsigned int group_idx) const;
-    Group<Scalar>*          groupPtr(unsigned int group_idx);
-    const Group<Scalar>*    groupPtr(const std::string &name) const;
-    Group<Scalar>*          groupPtr(const std::string &name);
+    const FaceGroup<Scalar>&    group(unsigned int group_idx) const;
+    FaceGroup<Scalar>&          group(unsigned int group_idx);
+    const FaceGroup<Scalar>*    groupPtr(unsigned int group_idx) const;
+    FaceGroup<Scalar>*          groupPtr(unsigned int group_idx);
+    const FaceGroup<Scalar>*    groupPtr(const std::string &name) const;
+    FaceGroup<Scalar>*          groupPtr(const std::string &name);
     const Material<Scalar>& material(unsigned int material_idx) const;
     Material<Scalar>&       material(unsigned int material_idx);
     const Material<Scalar>* materialPtr(unsigned int material_idx) const;
@@ -82,7 +82,7 @@ public:
 
     //adders
     void addMaterial(const Material<Scalar> &material);
-    void addGroup(const Group<Scalar> &group);
+    void addGroup(const FaceGroup<Scalar> &group);
     void addVertexPosition(const Vector<Scalar,3> &position);
     void addVertexNormal(const Vector<Scalar,3> &normal);
     void addVertexTextureCoordinate(const Vector<Scalar,2> &texture_coordinate);
@@ -106,10 +106,10 @@ protected:
     std::vector<Vector<Scalar,3> > vertex_positions_;
     std::vector<Vector<Scalar,3> > vertex_normals_;
     std::vector<Vector<Scalar,2> > vertex_textures_;
-    std::vector<Group<Scalar> > groups_;
+    std::vector<FaceGroup<Scalar> > groups_;
     std::vector<Material<Scalar> > materials_;
 };
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_SURFACE_MESH_SURFACE_MESH_H_
+#endif //PHYSIKA_GEOMETRY_BOUNDARY_MESHES_SURFACE_MESH_H_

@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 using std::vector;
 using std::string;
 
@@ -58,7 +58,7 @@ unsigned int SurfaceMesh<Scalar>::numFaces() const
     unsigned int num_face = 0;
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        const Group<Scalar> &group = groups_[group_idx];
+        const FaceGroup<Scalar> &group = groups_[group_idx];
         num_face += group.numFaces();
     }
     return num_face;
@@ -104,7 +104,7 @@ unsigned int SurfaceMesh<Scalar>::numIsolatedVertices() const
     vector<unsigned int> neighor_face_count(numVertices(),0);
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        const Group<Scalar> &group = groups_[group_idx];
+        const FaceGroup<Scalar> &group = groups_[group_idx];
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             const Face<Scalar> &face = group.face(face_idx);
@@ -134,7 +134,7 @@ bool SurfaceMesh<Scalar>::isQuadrilateralMesh() const
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& SurfaceMesh<Scalar>::vertexPosition(unsigned int vert_idx) const
+Vector<Scalar,3> SurfaceMesh<Scalar>::vertexPosition(unsigned int vert_idx) const
 {
     bool index_valid = (vert_idx>=0)&&(vert_idx<vertex_positions_.size());
     if(!index_valid)
@@ -146,7 +146,7 @@ const Vector<Scalar,3>& SurfaceMesh<Scalar>::vertexPosition(unsigned int vert_id
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& SurfaceMesh<Scalar>::vertexPosition(const Vertex<Scalar> &vertex) const
+Vector<Scalar,3> SurfaceMesh<Scalar>::vertexPosition(const Vertex<Scalar> &vertex) const
 {
     unsigned int vert_idx = vertex.positionIndex();
     return vertexPosition(vert_idx);
@@ -172,7 +172,7 @@ void SurfaceMesh<Scalar>::setVertexPosition(const Vertex<Scalar> &vertex, const 
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& SurfaceMesh<Scalar>::vertexNormal(unsigned int normal_idx) const
+Vector<Scalar,3> SurfaceMesh<Scalar>::vertexNormal(unsigned int normal_idx) const
 {
     bool index_valid = (normal_idx>=0)&&(normal_idx<vertex_normals_.size());
     if(!index_valid)
@@ -184,7 +184,7 @@ const Vector<Scalar,3>& SurfaceMesh<Scalar>::vertexNormal(unsigned int normal_id
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& SurfaceMesh<Scalar>::vertexNormal(const Vertex<Scalar> &vertex) const
+Vector<Scalar,3> SurfaceMesh<Scalar>::vertexNormal(const Vertex<Scalar> &vertex) const
 {
     unsigned int normal_idx = vertex.normalIndex();
     return vertexNormal(normal_idx);
@@ -210,7 +210,7 @@ void SurfaceMesh<Scalar>::setVertexNormal(const Vertex<Scalar> &vertex, const Ve
 }
 
 template <typename Scalar>
-const Vector<Scalar,2>& SurfaceMesh<Scalar>::vertexTextureCoordinate(unsigned int texture_idx) const
+Vector<Scalar,2> SurfaceMesh<Scalar>::vertexTextureCoordinate(unsigned int texture_idx) const
 {
     bool index_valid = (texture_idx>=0)&&(texture_idx<vertex_textures_.size());
     if(!index_valid)
@@ -222,7 +222,7 @@ const Vector<Scalar,2>& SurfaceMesh<Scalar>::vertexTextureCoordinate(unsigned in
 }
 
 template <typename Scalar>
-const Vector<Scalar,2>& SurfaceMesh<Scalar>::vertexTextureCoordinate(const Vertex<Scalar> &vertex) const
+Vector<Scalar,2> SurfaceMesh<Scalar>::vertexTextureCoordinate(const Vertex<Scalar> &vertex) const
 {
     unsigned int texture_idx = vertex.textureCoordinateIndex();
     return vertexTextureCoordinate(texture_idx);
@@ -248,7 +248,7 @@ void SurfaceMesh<Scalar>::setVertexTextureCoordinate(const Vertex<Scalar> &verte
 }
 
 template <typename Scalar>
-const Group<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx) const
+const FaceGroup<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx) const
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
@@ -260,7 +260,7 @@ const Group<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx) const
 }
 
 template <typename Scalar>
-Group<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx)
+FaceGroup<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx)
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
@@ -272,7 +272,7 @@ Group<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx)
 }
 
 template <typename Scalar>
-const Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx) const
+const FaceGroup<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx) const
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
@@ -284,7 +284,7 @@ const Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx) const
 }
 
 template <typename Scalar>
-Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx)
+FaceGroup<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx)
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
@@ -296,7 +296,7 @@ Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx)
 }
 
 template <typename Scalar>
-const Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name) const
+const FaceGroup<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name) const
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
         if(groups_[group_idx].name() == name)
@@ -305,7 +305,7 @@ const Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name) const
 }
 
 template <typename Scalar>
-Group<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name)
+FaceGroup<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name)
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
         if(groups_[group_idx].name() == name)
@@ -391,7 +391,7 @@ const Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) const
 	unsigned int current_face_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
-		const Group<Scalar>& current_group = groups_[group_idx];
+		const FaceGroup<Scalar>& current_group = groups_[group_idx];
 		unsigned int group_face_num = current_group.numFaces();
 		if(current_face_sum + group_face_num > face_idx)//find the group containing this face
 		{
@@ -417,7 +417,7 @@ Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx)
 	unsigned int current_face_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
-		Group<Scalar>& current_group = groups_[group_idx];
+		FaceGroup<Scalar>& current_group = groups_[group_idx];
 		unsigned int group_face_num = current_group.numFaces();
 		if(current_face_sum + group_face_num > face_idx)//find the group containing this face
 		{
@@ -443,7 +443,7 @@ const Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) const
 	unsigned int current_face_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
-		const Group<Scalar>& current_group = groups_[group_idx];
+		const FaceGroup<Scalar>& current_group = groups_[group_idx];
 		unsigned int group_face_num = current_group.numFaces();
 		if(current_face_sum + group_face_num > face_idx)//find the group containing this face
 		{
@@ -469,7 +469,7 @@ Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx)
 	unsigned int current_face_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
-		Group<Scalar>& current_group = groups_[group_idx];
+		FaceGroup<Scalar>& current_group = groups_[group_idx];
 		unsigned int group_face_num = current_group.numFaces();
 		if(current_face_sum + group_face_num > face_idx)//find the group containing this face
 		{
@@ -490,7 +490,7 @@ void SurfaceMesh<Scalar>::addMaterial(const Material<Scalar> &material)
 }
 
 template <typename Scalar>
-void SurfaceMesh<Scalar>::addGroup(const Group<Scalar> &group)
+void SurfaceMesh<Scalar>::addGroup(const FaceGroup<Scalar> &group)
 {
     groups_.push_back(group);
 }
@@ -538,7 +538,7 @@ void SurfaceMesh<Scalar>::computeAllFaceNormals()
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        Group<Scalar> &group = groups_[group_idx];
+        FaceGroup<Scalar> &group = groups_[group_idx];
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);
@@ -570,7 +570,7 @@ void SurfaceMesh<Scalar>::setVertexNormalsToFaceNormals()
     vertex_normals_.clear();
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        Group<Scalar> &group = groups_[group_idx];
+        FaceGroup<Scalar> &group = groups_[group_idx];
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);
@@ -594,7 +594,7 @@ void SurfaceMesh<Scalar>::setVertexNormalsToAverageFaceNormals()
 
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        Group<Scalar> &group = groups_[group_idx];
+        FaceGroup<Scalar> &group = groups_[group_idx];
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);
@@ -621,7 +621,7 @@ void SurfaceMesh<Scalar>::setVertexNormalsToAverageFaceNormals()
     }
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        Group<Scalar> &group = groups_[group_idx];
+        FaceGroup<Scalar> &group = groups_[group_idx];
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);
@@ -642,7 +642,7 @@ void SurfaceMesh<Scalar>::setVertexNormalsToWeightedFaceNormals()
 
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        Group<Scalar> &group = groups_[group_idx];
+        FaceGroup<Scalar> &group = groups_[group_idx];
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);
@@ -677,7 +677,7 @@ void SurfaceMesh<Scalar>::setVertexNormalsToWeightedFaceNormals()
     }
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        Group<Scalar> &group = groups_[group_idx];
+        FaceGroup<Scalar> &group = groups_[group_idx];
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);

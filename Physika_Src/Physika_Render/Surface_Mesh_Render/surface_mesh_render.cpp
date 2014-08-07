@@ -15,15 +15,18 @@
 #include <cstddef>
 #include <iostream>
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/face_group.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_Core/Transform/transform_3d.h"
-//#include "Physika_Core/Image/image.h"
+#include "Physika_Core/Image/image.h"
 
 
 namespace Physika{
+
+using SurfaceMeshInternal::FaceGroup;
 
 //init render mode flags
 template <typename Scalar> const unsigned int SurfaceMeshRender<Scalar>::render_solid_ = 1<<0;
@@ -295,7 +298,7 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            Group<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
             {
@@ -343,7 +346,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            Group<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
             unsigned int material_ID = group_ref.materialIndex();
 
@@ -451,7 +454,7 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            Group<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
     
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face

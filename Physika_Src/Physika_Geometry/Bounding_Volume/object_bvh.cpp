@@ -78,7 +78,7 @@ void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scala
 	unsigned int group_num = mesh->numGroups();
     for(unsigned int group_idx = 0; group_idx < group_num; ++group_idx)
     {
-		Group<Scalar>& group = mesh->group(group_idx);
+		FaceGroup<Scalar>& group = mesh->group(group_idx);
 		unsigned int face_num = group.numFaces();
         for(unsigned int face_idx = 0; face_idx < face_num; ++face_idx)
 		{

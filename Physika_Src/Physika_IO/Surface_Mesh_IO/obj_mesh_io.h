@@ -50,18 +50,3 @@ protected:
 } //end of namespace Physika
 
 #endif //PHYSIKA_IO_SURFACE_MESH_IO_OBJ_MESH_IO_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

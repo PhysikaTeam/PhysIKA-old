@@ -14,7 +14,7 @@
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_2d.h"
-#include "Physika_Geometry/Polygon/polygon.h"
+#include "Physika_Geometry/Boundary_Meshes/polygon.h"
 
 namespace Physika{
 

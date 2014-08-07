@@ -13,7 +13,7 @@
  */
 
 #include "Physika_Dynamics/Rigid_Body/inertia_tensor.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 
 namespace Physika{

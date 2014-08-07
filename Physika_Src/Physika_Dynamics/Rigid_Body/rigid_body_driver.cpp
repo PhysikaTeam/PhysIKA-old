@@ -19,7 +19,7 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver_utility.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_method_DTBVH.h"
