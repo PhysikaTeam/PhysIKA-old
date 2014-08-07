@@ -29,7 +29,7 @@ SPHSolid<Scalar, Dim>::~SPHSolid()
 }
 
 template <typename Scalar, int Dim>
-void SPHSolid<Scalar, Dim>::initialize()
+void SPHSolid<Scalar, Dim>::initSimulationData()
 {
 
 }

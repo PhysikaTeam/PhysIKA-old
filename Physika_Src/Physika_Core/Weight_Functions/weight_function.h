@@ -31,7 +31,7 @@ namespace Physika{
  * R is the radius of the support domain.
  *
  * Generally a weight function satisfies following properties:
- * 1. partition of unity in support domain
+ * 1. normalized over support domain
  * 2. compactly supported: f(x,R)=0, for |x|>R
  * 3. Postive in support domain
  * 4. sufficiently smooth

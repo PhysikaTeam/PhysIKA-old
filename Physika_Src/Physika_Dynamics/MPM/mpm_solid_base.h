@@ -36,6 +36,8 @@ public:
 
     //virtual methods
     virtual void initConfiguration(const std::string &file_name)=0;
+    virtual void printConfigFileFormat()=0;
+    virtual void initSimulationData()=0;
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin)=0;
     virtual bool withRestartSupport() const=0;
     virtual void write(const std::string &file_name)=0;
@@ -59,11 +61,13 @@ public:
     virtual void updateParticleVelocity()=0;
     virtual void updateParticlePosition(Scalar dt)=0;
 protected:
-    virtual void initialize()=0;
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
+    //precomputed weights and gradients of grid nodes that is within range of each particle
+    std::vector<std::vector<Scalar> > particle_grid_weight_;
+    std::vector<std::vector<Vector<Scalar,Dim> > > particle_grid_weight_gradient_;
 };
 
 }//namespace Physika

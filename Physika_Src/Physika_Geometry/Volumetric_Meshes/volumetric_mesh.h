@@ -50,8 +50,8 @@ public:
     unsigned int              eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
     int eleRegionIndex(unsigned int ele_idx) const;  //return the index of the region that the element belongs to, return -1 if it does not belong to any region
     unsigned int              regionNum() const;
-    const Vector<Scalar,Dim>& vertPos(unsigned int vert_idx) const;
-    const Vector<Scalar,Dim>& eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const;
+    Vector<Scalar,Dim> vertPos(unsigned int vert_idx) const;
+    Vector<Scalar,Dim> eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const;
     void eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const; //return positions of one element's vertices
     std::string               regionName(unsigned int region_idx) const;
     unsigned int              regionEleNum(unsigned int region_idx) const;

@@ -28,7 +28,7 @@ public:
     Sphere(const Vector<Scalar,3> &center, Scalar radius);
     ~Sphere();
     void printInfo() const;
-    const Vector<Scalar,3>& center() const;
+    Vector<Scalar,3> center() const;
     Scalar radius() const;
     Scalar distance(const Vector<Scalar,3> &point) const;  //distance of a point to sphere surface
     Scalar signedDistance(const Vector<Scalar,3> &point) const;  //signed distance of a point to a sphere surface
@@ -42,15 +42,3 @@ protected:
 }  //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_BASIC_GEOMETRY_SPHERE_H_
-
-
-
-
-
-
-
-
-
-
-
-

@@ -143,6 +143,18 @@ void RigidBodyDriver<Scalar, Dim>::initConfiguration(const std::string &file_nam
 }
 
 template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::printConfigFileFormat()
+{
+
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::initSimulationData()
+{
+
+}
+
+template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::run()
 {
 
@@ -312,11 +324,6 @@ void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
     }
     plugin->setDriver(this);
     this->plugins_.push_back(plugin);
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::initialize()
-{
 }
 
 template <typename Scalar,int Dim>

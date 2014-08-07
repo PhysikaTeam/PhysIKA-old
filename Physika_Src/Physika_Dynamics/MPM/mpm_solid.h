@@ -45,6 +45,8 @@ public:
 
     //virtual methods
     virtual void initConfiguration(const std::string &file_name);
+    virtual void printConfigFileFormat();
+    virtual void initSimulationData();
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin);
     virtual bool withRestartSupport() const;
     virtual void write(const std::string &file_name);
@@ -65,7 +67,6 @@ public:
     virtual void updateParticlePosition(Scalar dt);
 
 protected:
-    virtual void initialize();
     virtual void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
     virtual void resetGridData();  //reset grid data to zero, needed before rasterize operation
     virtual Scalar minCellEdgeLength() const;

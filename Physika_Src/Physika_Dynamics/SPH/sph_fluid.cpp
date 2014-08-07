@@ -24,7 +24,7 @@ SPHFluid<Scalar, Dim>::SPHFluid()
     this->max_mass_ = 1.0;
     this->min_mass_ = 1.0;
 
-    initialize();
+    initSimulationData();
 
 }
 
@@ -98,6 +98,34 @@ void SPHFluid<Scalar, Dim>::initConfiguration()
         this->particle_num_ = 0;
     }
 
+
+}
+
+template <typename Scalar, int Dim>
+void SPHFluid<Scalar, Dim>::printConfigFileFormat()
+{
+}
+
+template <typename Scalar, int Dim>
+void SPHFluid<Scalar, Dim>::initSimulationData()
+{
+    initConfiguration();
+
+    initSceneBoundary();
+
+    allocMemory(this->particle_num_);
+
+    initScene();
+
+    //computeNeighbors();
+
+    //computeDensity();
+
+    //computeMass();
+
+    //computeNeighbors();
+
+    //computeDensity();
 }
 
 template <typename Scalar, int Dim>
@@ -125,29 +153,6 @@ void SPHFluid<Scalar, Dim>::initScene()
             }
         } 
     }
-}
-
-
-template <typename Scalar, int Dim>
-void SPHFluid<Scalar, Dim>::initialize()
-{
-    initConfiguration();
-
-    initSceneBoundary();
-
-    allocMemory(this->particle_num_);
-
-    initScene();
-
-    //computeNeighbors();
-
-    //computeDensity();
-
-    //computeMass();
-
-    //computeNeighbors();
-
-    //computeDensity();
 }
 
 template <typename Scalar, int Dim>

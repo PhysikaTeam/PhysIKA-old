@@ -39,12 +39,13 @@ namespace Physika{
  * To implement restart support in subclass of DriverBase, you need to:
  * 1. Implement the write() method where the image of driver class in memory is written to file
  * 2. Implement the read() method where the status of driver class is loadded from file
- * 3. Implement the Initialize() method, in which the read() method is called to load driver status
+ * 3. Implement the initSimulationData() method, in which the read() method is called to load driver status
  *    of restart frame into memory
  * Note:
- * 1. If you override the default run() in your subclass, be sure to call initialize() at the begining of
+ * 1. If you override the default run() in your subclass, be sure to call initSimulationData() at the begining of
  *    your run() method such that restart works properly
- * 2. In default restart only works if you run the simulation by calling run()
+ * 2. In default restart only works if you run the simulation by calling run(), if you run simulation through
+ *    advanceFrame() or advanceStep(), you need to call initSimulationData() before entering simulation loop
  * 3. Be sure to return correct value in your withRestartSupport() method to inform the user whether restart
  *    is supported in your driver
  * 
@@ -63,6 +64,8 @@ public:
 
     //virtual methods
     virtual void initConfiguration(const std::string &file_name)=0; //init the configuration (simulation parameters) from file
+    virtual void printConfigFileFormat()=0; //print the format of the configuration file needed for this driver
+    virtual void initSimulationData()=0; //prepare data for simulation, in default it's called at the begining of run()
     virtual void run();//run the simulation from start frame to end frame
     virtual void advanceFrame();//advance one frame
     virtual void advanceStep(Scalar dt)=0;//advance one time step
@@ -89,10 +92,6 @@ public:
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
 
-protected:
-    //initialize before the simulation, e.g., load restart data from file
-    //called once in run()
-    virtual void initialize()=0;
 protected:
     unsigned int start_frame_;
     unsigned int end_frame_;

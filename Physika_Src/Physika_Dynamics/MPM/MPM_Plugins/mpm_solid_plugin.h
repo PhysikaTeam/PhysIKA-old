@@ -1,5 +1,5 @@
 /*
- * @file driver_plugin_base.h 
+ * @file mpm_solid_plugin.h 
  * @brief base class of plugins for drivers derived from MPMSolidBase.
  * @author Tianxiang Zhang, Fei Zhu
  * 

@@ -50,7 +50,7 @@ void Plane<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& Plane<Scalar>::normal() const
+Vector<Scalar,3> Plane<Scalar>::normal() const
 {
     return normal_;
 }
@@ -76,17 +76,3 @@ template class Plane<float>;
 template class Plane<double>;
 
 }  //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-

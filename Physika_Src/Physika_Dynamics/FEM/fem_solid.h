@@ -45,6 +45,8 @@ public:
 
     //virtual methods
     void initConfiguration(const std::string &file_name);
+    void printConfigFileFormat();
+    void initSimulationData();
     void advanceStep(Scalar dt);
     Scalar computeTimeStep();
     bool withRestartSupport() const;
@@ -60,7 +62,6 @@ public:
     const ConstitutiveModel<Scalar,Dim>* elementMaterial(unsigned int ele_idx) const;  //return the material of specific simulation element, return NULL if not set
     ConstitutiveModel<Scalar,Dim>* elementMaterial(unsigned int ele_idx);
 protected:
-    void initialize();
     void clearMaterial(); //clear current material
     void addMaterial(const ConstitutiveModel<Scalar,Dim> &material);
 protected:

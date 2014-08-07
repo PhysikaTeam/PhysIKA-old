@@ -53,6 +53,16 @@ void FEMSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
 }
 
 template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::printConfigFileFormat()
+{//TO DO
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::initSimulationData()
+{//TO DO
+}
+
+template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::advanceStep(Scalar dt)
 {//TO DO
 }
@@ -176,11 +186,6 @@ ConstitutiveModel<Scalar,Dim>* FEMSolid<Scalar,Dim>::elementMaterial(unsigned in
         return constitutive_model_[ele_idx];
     else
         PHYSIKA_ERROR("Invalid material number.");
-}
-
-template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::initialize()
-{//TO DO
 }
 
 template <typename Scalar, int Dim>

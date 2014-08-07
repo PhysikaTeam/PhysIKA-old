@@ -1,5 +1,5 @@
 /*
- * @file driver_plugin_base.cpp 
+ * @file mpm_solid_plugin.cpp 
  * @brief base class of plugins for drivers derived from MPMSolidBase.
  * @author Tianxiang Zhang, Fei Zhu
  * 

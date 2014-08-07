@@ -52,7 +52,7 @@ void SPHBase<Scalar, Dim>::allocMemory(unsigned int particle_num)
 }
 
 template <typename Scalar, int Dim>
-void SPHBase<Scalar, Dim>::initialize()
+void SPHBase<Scalar, Dim>::initSimulationData()
 {
     initSceneBoundary();
     return ;

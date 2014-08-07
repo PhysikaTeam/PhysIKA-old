@@ -68,6 +68,8 @@ public:
 
 	//inherit functions
     void initConfiguration(const std::string &file_name);
+    void printConfigFileFormat();
+    void initSimulationData();
 	void run();//run the simulation from start frame to end frame
 	void advanceFrame();//advance one frame
 	void advanceStep(Scalar dt);//advance one time step
@@ -90,10 +92,6 @@ public:
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
 protected:
-
-    //inherit function
-    void initialize();//initialize before the simulation
-
     //dynamics
     virtual void performGravity(Scalar dt);
     virtual bool collisionDetection();

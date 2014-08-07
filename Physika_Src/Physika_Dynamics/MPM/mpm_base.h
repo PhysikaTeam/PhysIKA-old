@@ -37,6 +37,8 @@ public:
 
     //virtual methods
     virtual void initConfiguration(const std::string &file_name)=0;
+    virtual void printConfigFileFormat()=0;
+    virtual void initSimulationData()=0;
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin)=0;
     virtual bool withRestartSupport() const=0;
     virtual void write(const std::string &file_name)=0;
@@ -59,7 +61,6 @@ public:
     template <typename MPMStepMethodType>
     void setStepMethod();
 protected:
-    virtual void initialize()=0;
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const=0;
 protected:

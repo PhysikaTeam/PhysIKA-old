@@ -40,10 +40,9 @@ public:
     virtual void read(const std::string &file_name)=0;//read simulation data from file
     virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver. Should be redefined in child class because type-check of driver should be done before assignment.
 
-
-
-    virtual void initialize();
     virtual void initConfiguration() = 0;
+    virtual void printConfigFileFormat()=0;
+    virtual void initSimulationData();
     virtual void initSceneBoundary();
 
     virtual void advance(Scalar dt);

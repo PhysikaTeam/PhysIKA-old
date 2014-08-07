@@ -43,7 +43,7 @@ DriverBase<Scalar>::~DriverBase()
 template <typename Scalar>
 void DriverBase<Scalar>::run()
 {
-    initialize();
+    initSimulationData();
 
     for(unsigned int frame=start_frame_;frame<=end_frame_;++frame)
     {
