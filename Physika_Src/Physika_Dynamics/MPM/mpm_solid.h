@@ -55,6 +55,8 @@ public:
     //setters&&getters
     const Grid<Scalar,Dim>& grid() const;
     void setGrid(const Grid<Scalar,Dim> &grid);
+    Scalar gridMass(const Vector<unsigned int,Dim> &node_idx) const;
+    Vector<Scalar,Dim> gridVelocity(const Vector<unsigned int,Dim> &node_idx) const;
 
     //substeps in one time step
     virtual void rasterize();
@@ -70,6 +72,8 @@ protected:
     virtual void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
     virtual void resetGridData();  //reset grid data to zero, needed before rasterize operation
     virtual Scalar minCellEdgeLength() const;
+    virtual void applyGravityOnGrid(Scalar dt);
+    bool isValidGridNodeIndex(const Vector<unsigned int,Dim> &node_idx) const;  //helper method, determine if input grid node index is valid
 protected:
     Grid<Scalar,Dim> grid_;
     //grid data stored on grid nodes

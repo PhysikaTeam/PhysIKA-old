@@ -32,8 +32,8 @@ class PointRender: public RenderBase
 public:
     //Constructions
     PointRender(); //default mode
-    PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const float& point_size); //provide points
-    PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const Color<Scalar>* colors, const float& point_size); //provide color.
+    PointRender(const Vector<Scalar, Dim>* points, unsigned int points_num, float point_size); //provide points
+    PointRender(const Vector<Scalar, Dim>* points, unsigned int points_num, const Color<Scalar>* colors, float point_size); //provide color.
     ~PointRender();
 
     //Get and Set
@@ -42,7 +42,6 @@ public:
     const Color<Scalar>* colors() const {return colors_; }
     float pointSize() { return point_size_; }
     
-
     void setPoints(const Vector<Scalar, Dim>* points) { points_ = points; }
     void setPointSize(float point_size) { point_size_ = point_size; }
     void setColors(const Color<Scalar>* colors) { colors_ = colors; }

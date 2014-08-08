@@ -12,6 +12,7 @@
  *
  */
 
+#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
@@ -117,6 +118,30 @@ void MPMSolid<Scalar,Dim>::setGrid(const Grid<Scalar,Dim> &grid)
 }
 
 template <typename Scalar, int Dim>
+Scalar MPMSolid<Scalar,Dim>::gridMass(const Vector<unsigned int,Dim> &node_idx) const
+{
+    bool valid_idx = isValidGridNodeIndex(node_idx);
+    if(!valid_idx)
+    {
+        std::cerr<<"Error: invalid node index, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return grid_mass_(node_idx);
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> MPMSolid<Scalar,Dim>::gridVelocity(const Vector<unsigned int,Dim> &node_idx) const
+{
+    bool valid_idx = isValidGridNodeIndex(node_idx);
+    if(!valid_idx)
+    {
+        std::cerr<<"Error: invalid node index, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return grid_velocity_(node_idx);
+}
+
+template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
     //plugin operation
@@ -186,6 +211,8 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
             grid_velocity_(node_idx) += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(node_idx);
         }
     }
+    //apply gravity
+    applyGravityOnGrid(dt);
     //TO DO (implicit)
 }
 
@@ -369,6 +396,29 @@ template <typename Scalar, int Dim>
 Scalar MPMSolid<Scalar,Dim>::minCellEdgeLength() const
 {
     return grid_.minEdgeLength();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::applyGravityOnGrid(Scalar dt)
+{
+    //apply gravity on active grid node
+    for(unsigned int i = 0; i < active_grid_node_.size(); ++i)
+    {
+        Vector<unsigned int,Dim> node_idx = active_grid_node_[i];
+        Vector<Scalar,Dim> gravity_vec(0);
+        gravity_vec[1] = (-1)*(this->gravity_);
+        grid_velocity_(node_idx) += gravity_vec*dt;
+    }
+}
+
+template <typename Scalar, int Dim>
+bool MPMSolid<Scalar,Dim>::isValidGridNodeIndex(const Vector<unsigned int,Dim> &node_idx) const
+{
+    Vector<unsigned int,Dim> node_num = grid_.nodeNum();
+    for(unsigned int i = 0; i < Dim; ++i)
+        if(node_idx[i] >= node_num[i])
+            return false;
+    return true;
 }
 
 //explicit instantiations

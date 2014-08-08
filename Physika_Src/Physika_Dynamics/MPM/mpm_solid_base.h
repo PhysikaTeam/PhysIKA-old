@@ -31,7 +31,7 @@ public:
     MPMSolidBase();
     MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
     MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
-             const std::vector<SolidParticle<Scalar,Dim>*> &particles);
+                 const std::vector<SolidParticle<Scalar,Dim>*> &particles);
     virtual ~MPMSolidBase();
 
     //virtual methods
@@ -61,8 +61,9 @@ public:
     virtual void updateParticleVelocity()=0;
     virtual void updateParticlePosition(Scalar dt)=0;
 protected:
-    virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
+    virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
+    virtual void applyGravityOnGrid(Scalar dt) = 0;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
     //precomputed weights and gradients of grid nodes that is within range of each particle

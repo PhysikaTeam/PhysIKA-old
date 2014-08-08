@@ -52,6 +52,8 @@ public:
     void setCFLConstant(Scalar cfl);
     Scalar soundSpeed() const;
     void setSoundSpeed(Scalar sound_speed);
+    Scalar gravity() const;
+    void setGravity(Scalar gravity);
 
     //set the type of weight function with weight function type as template,
     //the scale between support domain and cell size is the method parameter
@@ -63,6 +65,7 @@ public:
 protected:
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const=0;
+    virtual void applyGravityOnGrid(Scalar dt) = 0;
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
     Vector<Scalar,Dim> weight_radius_cell_scale_; // radius of the weight function's influence domain is multiple times cell size
@@ -70,6 +73,8 @@ protected:
     //time step computation with CFL condition
     Scalar cfl_num_;
     Scalar sound_speed_;
+    //gravity: along negative y direction
+    Scalar gravity_;
 };
 
 template <typename Scalar, int Dim>

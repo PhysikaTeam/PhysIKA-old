@@ -28,7 +28,7 @@ PointRender<Scalar, Dim>::PointRender()
 }
 
 template<typename Scalar, int Dim>
-PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const float& point_size_)
+PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, unsigned int points_num, float point_size_)
     :points_(points), points_num_(points_num),
     colors_(NULL), point_size_(3)
 {
@@ -36,9 +36,15 @@ PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, const u
 }
 
 template<typename Scalar, int Dim>
-PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, const unsigned int& points_num, const Color<Scalar>* colors, const float& point_size_)
+PointRender<Scalar, Dim>::PointRender(const Vector<Scalar, Dim>* points, unsigned int points_num, const Color<Scalar>* colors, float point_size_)
     :points_(points), points_num_(points_num),
     colors_(colors), point_size_(3)
+{
+
+}
+
+template<typename Scalar, int Dim>
+PointRender<Scalar, Dim>::~PointRender()
 {
 
 }
@@ -57,9 +63,9 @@ void PointRender<Scalar, Dim>::render()
     glDisable(GL_LIGHTING);
     glPointSize(point_size_);
     glBegin(GL_POINTS);
-
     
-    for (unsigned int i=0; i<this->points_num_; i++) {
+    for (unsigned int i=0; i<this->points_num_; i++) 
+    {
         if(colors_ != NULL)
             openGLColor3(colors_[i]);
         else
@@ -67,19 +73,9 @@ void PointRender<Scalar, Dim>::render()
             //TO DO get color from color_map and ref_values;
             openGLColor3(Color<Scalar>::Blue());
         }
-        if(Dim == 2)
-            openGLVertex(Vector<Scalar, 3>(points_[i][0], points_[i][1], 0));
-        else
-            openGLVertex(points_[i]);
+        openGLVertex(points_[i]);
     }
-
     glEnd();
-}
-
-template<typename Scalar, int Dim>
-PointRender<Scalar, Dim>::~PointRender()
-{
-
 }
 
 template class PointRender<float ,3>;

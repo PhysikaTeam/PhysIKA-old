@@ -23,7 +23,7 @@ namespace Physika{
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase()
     :DriverBase<Scalar>(), weight_function_(NULL), weight_radius_cell_scale_(1.0), step_method_(NULL),
-     cfl_num_(0.5),sound_speed_(340.0)
+     cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
     setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(Vector<Scalar,Dim>(2.0)); 
@@ -32,7 +32,7 @@ MPMBase<Scalar,Dim>::MPMBase()
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL), weight_radius_cell_scale_(1.0),
-     step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0)
+     step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
     setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(Vector<Scalar,Dim>(2.0)); 
@@ -110,11 +110,29 @@ void MPMBase<Scalar,Dim>::setSoundSpeed(Scalar sound_speed)
 {
     if(sound_speed<0)
     {
-        std::cerr<<"Warning: Invalid sound speed specified, use default value (340m/s) instead!\n";
-        sound_speed_ = 340.0;
+        std::cerr<<"Warning: Negative sound speed specified, use its absolute value instead!\n";
+        sound_speed_ = -sound_speed;
     }
     else
         sound_speed_ = sound_speed;
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMBase<Scalar,Dim>::gravity() const
+{
+    return gravity_;
+}
+
+template <typename Scalar, int Dim>
+void MPMBase<Scalar,Dim>::setGravity(Scalar gravity)
+{
+    if(gravity<0)
+    {
+        std::cerr<<"Warning: Negative gravity specified, use its absolute value instead!\n";
+        gravity_ = -gravity;
+    }
+    else
+        gravity_ = gravity;
 }
 
 //explicit instantiations
