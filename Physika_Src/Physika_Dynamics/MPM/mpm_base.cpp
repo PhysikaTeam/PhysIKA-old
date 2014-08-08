@@ -15,6 +15,7 @@
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_cubic_weight_functions.h"
+#include "Physika_Dynamics/MPM/MPM_Plugins/mpm_plugin_base.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 
 namespace Physika{
@@ -59,8 +60,25 @@ Scalar MPMBase<Scalar,Dim>::computeTimeStep()
 template <typename Scalar, int Dim>
 void MPMBase<Scalar,Dim>::advanceStep(Scalar dt)
 {
+    //plugin operation, begin time step
+    MPMPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onBeginTimeStep(this->time_,dt);
+    }
+
     PHYSIKA_ASSERT(this->step_method_);
     this->step_method_->advanceStep(dt);
+
+    //plugin operation, end time step
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onEndTimeStep(this->time_,dt);
+    }
 }
 
 template <typename Scalar, int Dim>

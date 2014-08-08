@@ -118,7 +118,6 @@ RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
     collision_detection_method_(new CollisionDetectionMethodDTBVH<Scalar, Dim>()),
     collision_response_method_(new RigidResponseMethodBLCP<Scalar, Dim>()),
     gravity_(9.81),
-    frame_(0),
     step_(0)
 {
     this->dt_ = 0.01;
@@ -139,50 +138,19 @@ RigidBodyDriver<Scalar, Dim>::~RigidBodyDriver()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::initConfiguration(const std::string &file_name)
 {
-
+//TO DO
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::printConfigFileFormat()
 {
-
+//TO DO
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::initSimulationData()
 {
-
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::run()
-{
-
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::advanceFrame()
-{
-    //update frame
-    frame_++;
-
-    //plugin
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onBeginFrame(frame_);
-	}
-
-    //plugin
-    for(unsigned int i = 0; i < plugin_num; ++i)
-    {
-        plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-        if(plugin != NULL)
-            plugin->onEndFrame(frame_);
-    }
+//TO DO
 }
 
 template <typename Scalar,int Dim>
@@ -231,11 +199,13 @@ bool RigidBodyDriver<Scalar,Dim>::withRestartSupport() const
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::write(const std::string &file_name)
 {
+//TO DO
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::read(const std::string &file_name)
 {
+//TO DO
 }
 
 template <typename Scalar,int Dim>

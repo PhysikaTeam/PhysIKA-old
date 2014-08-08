@@ -70,8 +70,6 @@ public:
     void initConfiguration(const std::string &file_name);
     void printConfigFileFormat();
     void initSimulationData();
-	void run();//run the simulation from start frame to end frame
-	void advanceFrame();//advance one frame
 	void advanceStep(Scalar dt);//advance one time step
 	Scalar computeTimeStep();//compute time step with respect to simulation specific conditions
     bool withRestartSupport() const; //indicate wheter restart is supported in implementation
@@ -102,8 +100,7 @@ protected:
     CollisionDetectionMethod<Scalar, Dim>* collision_detection_method_;
     RigidResponseMethod<Scalar, Dim>* collision_response_method_;
     Scalar gravity_;
-    int frame_;
-    int step_;
+    unsigned int step_;
 
 };
 

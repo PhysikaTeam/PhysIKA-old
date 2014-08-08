@@ -44,48 +44,25 @@ template <typename Scalar>
 void DriverBase<Scalar>::run()
 {
     initSimulationData();
-
     for(unsigned int frame=start_frame_;frame<=end_frame_;++frame)
-    {
-        std::cout<<"Begin Frame "<<frame<<"\n";
-
-        unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
-        DriverPluginBase<Scalar>* plugin;
-        for(unsigned int i = 0; i < plugin_num; ++i)
-        {
-            plugin = plugins_[i];
-            if(plugin != NULL)
-                plugin->onBeginFrame(frame);
-        }
-
-        if(enable_timer_) timer_.startTimer();
-        advanceFrame();
-        std::cout<<"End Frame "<<frame<<" ";
-        if(enable_timer_)
-        {
-            timer_.stopTimer();
-            std::cout<<timer_.getElapsedTime()<<" s";
-        }
-        std::cout<<"\n";
-
-        for(unsigned int i = 0; i < plugin_num; ++i)
-        {
-            plugin = plugins_[i];
-            if(plugin != NULL)
-                plugin->onEndFrame(frame);
-        }
-
-        if(write_to_file_)
-        {
-            std::string file_name="Frame "+frame;
-            write(file_name.c_str());
-        }
-    }
+        advanceFrame(frame);
 }
 
 template <typename Scalar>
-void DriverBase<Scalar>::advanceFrame()
+void DriverBase<Scalar>::advanceFrame(unsigned int frame)
 {
+    std::cout<<"Begin Frame "<<frame<<"\n";
+    //plugin onBeginFrame() and timer
+    unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
+    DriverPluginBase<Scalar>* plugin;
+    for(unsigned int i = 0; i < plugin_num; ++i)
+    {
+        plugin = plugins_[i];
+        if(plugin != NULL)
+            plugin->onBeginFrame(frame);
+    }    
+    if(enable_timer_) timer_.startTimer();
+    //frame content
     Scalar frame_dt=1.0/frame_rate_;
     Scalar finish_time=time_+frame_dt;
     bool frame_done=false;
@@ -100,42 +77,30 @@ void DriverBase<Scalar>::advanceFrame()
             dt_=finish_time-time_;
             frame_done=true;
         }
-
-        //begin time step callbacks
-        unsigned int plugin_num = static_cast<unsigned int>(plugins_.size());
-        DriverPluginBase<Scalar>* plugin;
-        for(unsigned int i = 0; i < plugin_num; ++i)
-        {
-            plugin = plugins_[i];
-            if(plugin != NULL)
-                plugin->onBeginTimeStep(time_,dt_);
-        }
-
         //advance step
         advanceStep(dt_);
         time_+=dt_;
-
-        //end time step callbacks
-        for(unsigned int i = 0; i < plugin_num; ++i)
-        {
-            plugin = plugins_[i];
-            if(plugin != NULL)
-                plugin->onEndTimeStep(time_, dt_);
-        }
     }
-
-}
-
-template <typename Scalar>
-void DriverBase<Scalar>::addPlugin(DriverPluginBase<Scalar>* plugin)
-{
-    if(plugin == NULL)
+    std::cout<<"End Frame "<<frame<<" ";
+    //timer and plugin endFrame()
+    if(enable_timer_)
     {
-        std::cerr<<"Cannot add NULL plugin, operation ignored!"<<std::endl;
-        return;
+        timer_.stopTimer();
+        std::cout<<timer_.getElapsedTime()<<" s";
     }
-    plugin->setDriver(this);
-    plugins_.push_back(plugin);
+    std::cout<<"\n";
+    for(unsigned int i = 0; i < plugin_num; ++i)
+    {
+        plugin = plugins_[i];
+        if(plugin != NULL)
+            plugin->onEndFrame(frame);
+    }
+    //write to file
+    if(write_to_file_)
+    {
+        std::string file_name="Frame "+frame;
+        write(file_name.c_str());
+    }
 }
 
 //explicit instantiation

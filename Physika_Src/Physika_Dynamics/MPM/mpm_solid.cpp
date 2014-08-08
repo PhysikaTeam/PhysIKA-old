@@ -12,12 +12,14 @@
  *
  */
 
+#include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 #include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
+#include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 
 namespace Physika{
@@ -68,7 +70,19 @@ void MPMSolid<Scalar,Dim>::initSimulationData()
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::addPlugin(DriverPluginBase<Scalar> *plugin)
 {
-//TO DO
+    if(plugin==NULL)
+    {
+        std::cerr<<"Warning: NULL plugin provided, operation ignored!\n";
+        return;
+    }
+
+    if(dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(plugin)==NULL)
+    {
+        std::cerr<<"Warning: Wrong type of plugin provided, operation ignored!\n";
+        return;
+    }
+    plugin->setDriver(this);
+    this->plugins_.push_back(plugin);
 }
 
 template <typename Scalar, int Dim>
@@ -105,8 +119,17 @@ void MPMSolid<Scalar,Dim>::setGrid(const Grid<Scalar,Dim> &grid)
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
-    resetGridData();
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onRasterize();
+    }
+
     //rasterize mass and momentum to grid
+    resetGridData();
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
@@ -139,6 +162,15 @@ void MPMSolid<Scalar,Dim>::rasterize()
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
 {
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onSolveOnGrid(dt);
+    }
+
     //only explicit integration is implemented yet
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
@@ -160,18 +192,43 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::performGridCollision(Scalar dt)
 {
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onPerformGridCollision(dt);
+    }
 //TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::performParticleCollision(Scalar dt)
 {
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onPerformParticleCollision(dt);
+    }
 //TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 {
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onUpdateParticleInterpolationWeight();
+    }
+
     //first resize the vectors
     (this->particle_grid_weight_).resize(this->particles_.size());
     (this->particle_grid_weight_gradient_).resize(this->particles_.size());
@@ -201,6 +258,15 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 {
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onUpdateParticleConstitutiveModelState(dt);
+    }
+
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
@@ -225,6 +291,15 @@ void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::updateParticleVelocity()
 {
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onUpdateParticleVelocity();
+    }
+
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     //direct interpolate grid velocity to particle
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
@@ -246,6 +321,15 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
 {
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onUpdateParticlePosition(dt);
+    }
+
     //update particle's position with the new velocity
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {

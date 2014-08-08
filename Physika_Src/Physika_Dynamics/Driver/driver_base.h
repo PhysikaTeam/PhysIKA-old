@@ -67,7 +67,7 @@ public:
     virtual void printConfigFileFormat()=0; //print the format of the configuration file needed for this driver
     virtual void initSimulationData()=0; //prepare data for simulation, in default it's called at the begining of run()
     virtual void run();//run the simulation from start frame to end frame
-    virtual void advanceFrame();//advance one frame
+    virtual void advanceFrame(unsigned int frame);//advance one frame
     virtual void advanceStep(Scalar dt)=0;//advance one time step
     virtual Scalar computeTimeStep()=0;//compute time step with respect to simulation specific conditions, return time step
     virtual void addPlugin(DriverPluginBase<Scalar>* plugin) = 0;//add a plugin in this driver, type-check of driver should be done before assignment.

@@ -54,8 +54,8 @@ public:
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
     virtual void solveOnGrid(Scalar dt)=0; //solve the dynamics system on grid
-    virtual void performGridCollision(Scalar dt)=0;
-    virtual void performParticleCollision(Scalar dt)=0;
+    virtual void performGridCollision(Scalar dt)=0; //perform grid based collision with collidable object in scene
+    virtual void performParticleCollision(Scalar dt)=0;  //perform particle based collision with collidable object in scene
     virtual void updateParticleInterpolationWeight()=0;
     virtual void updateParticleConstitutiveModelState(Scalar dt)=0; //update the constitutive model state of particle, e.g., deformation gradient
     virtual void updateParticleVelocity()=0;
