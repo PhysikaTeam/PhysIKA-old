@@ -50,6 +50,7 @@ public:
     void setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles); //set all simulation particles, data are copied
     const SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx);
+    void allParticles(std::vector<SolidParticle<Scalar,Dim>*> &particles);  //get all the simulation particles, the usr is obligated to release particle memory
 
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid

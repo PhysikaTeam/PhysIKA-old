@@ -78,7 +78,7 @@ public:
     void enableRenderContactNormalAll();
     void disableRenderContactNormalAll();
 
-    void setNormalLength(Scalar normal_lenth);
+    void setNormalLength(Scalar normal_length);
 
 protected:
 	GlutWindow* window_;

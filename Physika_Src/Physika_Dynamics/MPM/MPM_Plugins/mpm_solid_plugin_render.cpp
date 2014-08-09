@@ -14,15 +14,25 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <vector>
+#include <GL/freeglut.h>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
+#include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_render.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
+MPMSolidPluginRender<Scalar,Dim>* MPMSolidPluginRender<Scalar,Dim>::active_instance_ = NULL;
+
+template <typename Scalar, int Dim>
 MPMSolidPluginRender<Scalar,Dim>::MPMSolidPluginRender()
-    :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL)
+    :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),
+     render_particle_(true),render_grid_(true),
+     render_particle_velocity_(false),render_grid_velocity_(false)
 {
+    activateCurrentInstance();
 }
 
 template <typename Scalar, int Dim>
@@ -81,47 +91,150 @@ void MPMSolidPluginRender<Scalar,Dim>::setDriver(DriverBase<Scalar> *driver)
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onRasterize()
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onSolveOnGrid(Scalar dt)
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onPerformGridCollision(Scalar dt)
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onPerformParticleCollision(Scalar dt)
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onUpdateParticleInterpolationWeight()
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onUpdateParticleConstitutiveModelState(Scalar dt)
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onUpdateParticleVelocity()
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onUpdateParticlePosition(Scalar dt)
+{
+}
+
+template <typename Scalar, int Dim>
+GlutWindow* MPMSolidPluginRender<Scalar,Dim>::window()
+{
+    return window_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::setWindow(GlutWindow *window)
+{
+    if(window==NULL)
+    {
+        std::cerr<<"Error: NULL window pointer provided to render plugin, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    window_ = window;
+    window_->setIdleFunction(MPMSolidPluginRender<Scalar,Dim>::idleFunction);
+    window_->setDisplayFunction(MPMSolidPluginRender<Scalar,Dim>::displayFunction);
+    window_->setKeyboardFunction(MPMSolidPluginRender<Scalar,Dim>::keyboardFunction);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::idleFunction(void)
+{
+//TO DO
+    glutPostRedisplay();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::displayFunction(void)
+{
+    PHYSIKA_ASSERT(active_instance_);
+    GlutWindow *window = active_instance_->window_;
+    PHYSIKA_ASSERT(window);
+    Color<double> background_color = window->backgroundColor<double>();
+    glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    window->applyCameraAndLights();
+
+    if(active_instance_->render_particle_)
+        active_instance_->renderParticles();
+    if(active_instance_->render_grid_)
+        active_instance_->renderGrid();
+    if(active_instance_->render_particle_velocity_)
+        active_instance_->renderParticleVelocity();
+    if(active_instance_->render_grid_velocity_)
+        active_instance_->renderGridVelocity();
+    window->disableDisplayFrameRate();
+    glutSwapBuffers();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::keyboardFunction(unsigned char key, int x, int y)
+{
+    PHYSIKA_ASSERT(active_instance_);
+    GlutWindow *window = active_instance_->window_;
+    PHYSIKA_ASSERT(window);
+    window->bindDefaultKeys(key,x,y);  //default key is preserved
+    switch(key)
+    {
+    case 'p':
+        active_instance_->render_particle_ = !(active_instance_->render_particle_);
+        break;
+    case 'g':
+        active_instance_->render_grid_ = !(active_instance_->render_grid_);
+        break;
+    case 'P':
+        active_instance_->render_particle_velocity_ = !(active_instance_->render_particle_velocity_);
+        break;
+    case 'G':
+        active_instance_->render_grid_velocity_ = !(active_instance_->render_grid_velocity_);
+        break;
+    default:
+        break;
+    }
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::activateCurrentInstance()
+{
+    active_instance_ = this;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
+{
+    PHYSIKA_ASSERT(active_instance_);
+    MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
+    PHYSIKA_ASSERT(driver);
+    std::vector<SolidParticle<Scalar,Dim>*> particles;
+    driver->allParticles(particles);
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::renderGrid()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::renderParticleVelocity()
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::renderGridVelocity()
 {
 //TO DO
 }

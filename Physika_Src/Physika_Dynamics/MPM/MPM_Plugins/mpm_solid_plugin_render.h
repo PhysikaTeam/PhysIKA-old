@@ -22,6 +22,10 @@ namespace Physika{
 
 class GlutWindow;
 
+/*
+ *
+ */
+
 template <typename Scalar, int Dim>
 class MPMSolidPluginRender: public MPMSolidPluginBase<Scalar,Dim>
 {
@@ -47,8 +51,29 @@ public:
     virtual void onUpdateParticleVelocity();
     virtual void onUpdateParticlePosition(Scalar dt);
 
+    //setters&&getters
+    GlutWindow* window();
+    void setWindow(GlutWindow *window);
+
+protected:
+    static void idleFunction(void); 
+    static void displayFunction(void);
+    static void keyboardFunction(unsigned char key, int x, int y);
+    void activateCurrentInstance();  //activate this instance, called in constructor
+    
+    void renderParticles();
+    void renderGrid();
+    void renderParticleVelocity();
+    void renderGridVelocity();
+
 protected:
     GlutWindow *window_;
+    static MPMSolidPluginRender<Scalar,Dim> *active_instance_;  //current active instance
+    //render switch
+    bool render_particle_;
+    bool render_grid_;
+    bool render_particle_velocity_;
+    bool render_grid_velocity_;
 };
 
 }  //end of namespace Physika
