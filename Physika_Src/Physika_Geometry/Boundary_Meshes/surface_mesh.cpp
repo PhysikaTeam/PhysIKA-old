@@ -22,6 +22,11 @@ using std::string;
 
 namespace Physika{
 
+using BoundaryMeshInternal::Vertex;
+using SurfaceMeshInternal::Face;
+using SurfaceMeshInternal::FaceGroup;
+using BoundaryMeshInternal::Material;
+
 template <typename Scalar>
 SurfaceMesh<Scalar>::SurfaceMesh()
 {

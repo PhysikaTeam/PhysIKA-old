@@ -46,6 +46,7 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_render.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_print.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_motion.h"
 
 using namespace std;
 using namespace Physika;
@@ -53,12 +54,15 @@ using namespace Physika;
 
 int main()
 {
+    SurfaceMesh<double> mesh_plane;
+    if(!ObjMeshIO<double>::load(string("plane.obj"), &mesh_plane))
+        exit(1);
+
     SurfaceMesh<double> mesh_ball;
     if(!ObjMeshIO<double>::load(string("ball_high.obj"), &mesh_ball))
 		exit(1);
 
     SurfaceMesh<double> mesh_box;
-
     if(!ObjMeshIO<double>::load(string("box_tri.obj"), &mesh_box))
         exit(1);
 
@@ -68,17 +72,22 @@ int main()
 	RigidBodyDriver<double, 3> driver;
     driver.setGravity(0.981);
 
+    RigidBody<double,3> plane(&mesh_plane);
+    plane.setCoeffRestitution(0.3);
+    plane.setCoeffFriction(0.3);
+
 	RigidBody<double,3> ball(&mesh_ball);
     ball.setCoeffFriction(0.5);
 
     RigidBody<double,3> box(&mesh_box);
     //box.setCoeffFriction(0.5);
-    //box.setCoeffRestitution(1);
+    box.setCoeffRestitution(1);
 
     RigidBody<double,3> floor(&mesh_box);
     floor.setTranslation(Vector<double, 3>(0, -5, 0));
-    floor.setScale(Vector<double, 3>(100, 1, 100));
+    floor.setScale(Vector<double, 3>(500, 1, 500));
     //floor.setCoeffFriction(0.5);
+    floor.setCoeffRestitution(1);
     floor.setFixed(true);
 
     RigidBody<double,3>* object;
@@ -96,10 +105,22 @@ int main()
     //        }
     //    }
     //}
-    object = new RigidBody<double,3>(box);
-    object->setTranslation(Vector<double, 3>(-2, 0, 0));
+    //object = new RigidBody<double,3>(box);
+    //object->setTranslation(Vector<double, 3>(-12, 0, 0));
+    ////object->setRotation(Vector<double, 3>(0.5, 0.5, 0.5));
+    ////object->setGlobalTranslationVelocity(Vector<double, 3>(0.5, 0, 0));
+    //driver.addRigidBody(object);
+
+    //object = new RigidBody<double,3>(cylinder);
+    //object->setTranslation(Vector<double, 3>(0, 0, -50));
+    ////object->setRotation(Vector<double, 3>(0.5, 0.5, 0.5));
+    ////object->setGlobalTranslationVelocity(Vector<double, 3>(0.5, 0, 0));
+    //driver.addRigidBody(object);
+    
+    object = new RigidBody<double,3>(plane);
+    object->setTranslation(Vector<double, 3>(-20, 4, 0));
     //object->setRotation(Vector<double, 3>(0.5, 0.5, 0.5));
-    object->setGlobalTranslationVelocity(Vector<double, 3>(0.5, 0, 0));
+    object->setGlobalTranslationVelocity(Vector<double, 3>(5, 0, 0));
     driver.addRigidBody(object);
 
     driver.addRigidBody(&floor);
@@ -122,13 +143,20 @@ int main()
 	plugin->setWindow(&glut_window);
 	driver.addPlugin(plugin);
 	//plugin->disableRenderSolidAll();
-	plugin->enableRenderWireframeAll();
+	//plugin->enableRenderWireframeAll();
     //plugin->enableRenderContactFaceAll();
     plugin->enableRenderContactNormalAll();
+    //plugin->saveScreen(string("img/test"), 10);
 
     RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
     driver.addPlugin(print_plugin);
 
+    RigidDriverPluginMotion<double>* motion_plugin = new RigidDriverPluginMotion<double>();
+    driver.addPlugin(motion_plugin);
+    motion_plugin->setConstantTranslation(object, Vector<double, 3>(2, 0, 0));
+    motion_plugin->setConstantRotation(object, Vector<double, 3>(0, 0.4, 0));
+    motion_plugin->setPeriodTranslation(object, Vector<double, 3>(15, 0, 0), 2);
+    motion_plugin->setPeriodRotation(object, Vector<double, 3>(1, 0, 0), 1);
 
     glut_window.createWindow();
 

@@ -26,7 +26,10 @@
 
 namespace Physika{
 
+using BoundaryMeshInternal::Vertex;
+using SurfaceMeshInternal::Face;
 using SurfaceMeshInternal::FaceGroup;
+using BoundaryMeshInternal::Material;
 
 //init render mode flags
 template <typename Scalar> const unsigned int SurfaceMeshRender<Scalar>::render_solid_ = 1<<0;

@@ -85,6 +85,7 @@ public:
     CollisionPairBase<Scalar, Dim>* collisionPair(unsigned int index);
     unsigned int numContactPoint() const;
     ContactPoint<Scalar, Dim>* contactPoint(unsigned int index);
+    inline unsigned int step() const {return step_;};
 
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);

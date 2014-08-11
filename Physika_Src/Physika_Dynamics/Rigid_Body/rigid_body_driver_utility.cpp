@@ -435,7 +435,7 @@ void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scala
             m_value = JMJ(i, i);
 
             if(m_value != 0)
-                delta = (Jv[i] - JMDz_fric[i] - delta) / m_value;
+                delta = ((1 + CoR[i]) * Jv[i] - JMDz_fric[i] - delta) / m_value;
             else
                 delta = 0;
 

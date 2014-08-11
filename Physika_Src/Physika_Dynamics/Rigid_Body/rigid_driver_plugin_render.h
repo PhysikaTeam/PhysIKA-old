@@ -80,6 +80,8 @@ public:
 
     void setNormalLength(Scalar normal_length);
 
+    void saveScreen(std::string& base_file_name, unsigned int interval);//save the screen with file "name base_file_name + step" per interval steps
+
 protected:
 	GlutWindow* window_;
 	std::vector<RenderBase*> render_queue_;
@@ -89,6 +91,9 @@ protected:
     std::vector<Vector<Scalar, Dim>> contact_normal_positions_;//used to render contact nromals.
     std::vector<Vector<Scalar, Dim>> contact_normal_orientation_;//used to render contact normals.
     Scalar normal_length_;//used to render contact normals.
+    bool is_save_screen;
+    std::string screen_save_name_;
+    unsigned int screen_save_interval_;
 
 	//singleton
 	static RigidDriverPluginRender<Scalar, Dim>* active_render_;//current active instance
