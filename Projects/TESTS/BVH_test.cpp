@@ -145,7 +145,7 @@ int main()
 	//plugin->enableRenderWireframeAll();
     //plugin->enableRenderContactFaceAll();
     plugin->enableRenderContactNormalAll();
-    plugin->saveScreen(string("img/test"), 10);
+    //plugin->saveScreen(string("img/test"), 10);
 
     RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
     driver.addPlugin(print_plugin);
