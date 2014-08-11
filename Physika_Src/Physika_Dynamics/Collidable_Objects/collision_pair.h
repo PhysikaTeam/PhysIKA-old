@@ -48,10 +48,10 @@ public:
 	virtual MeshBasedCollidableObject<Scalar>* meshObjectLhs() = 0;
 	virtual const MeshBasedCollidableObject<Scalar>* meshObjectRhs() const = 0;
 	virtual MeshBasedCollidableObject<Scalar>* meshObjectRhs() = 0;
-	virtual const Face<Scalar>* faceLhsPtr() const = 0;
-	virtual Face<Scalar>* faceLhsPtr() = 0;
-	virtual const Face<Scalar>* faceRhsPtr() const = 0;
-	virtual Face<Scalar>* faceRhsPtr() = 0;
+	virtual const SurfaceMeshInternal::Face<Scalar>* faceLhsPtr() const = 0;
+	virtual SurfaceMeshInternal::Face<Scalar>* faceLhsPtr() = 0;
+	virtual const SurfaceMeshInternal::Face<Scalar>* faceRhsPtr() const = 0;
+	virtual SurfaceMeshInternal::Face<Scalar>* faceRhsPtr() = 0;
 	virtual unsigned int faceLhsIdx() const = 0;
 	virtual unsigned int faceRhsIdx() const = 0;
 	virtual unsigned int objectLhsIdx() const = 0;
@@ -81,10 +81,10 @@ public:
 	MeshBasedCollidableObject<Scalar>* meshObjectLhs();
 	const MeshBasedCollidableObject<Scalar>* meshObjectRhs() const;
 	MeshBasedCollidableObject<Scalar>* meshObjectRhs();
-	const Face<Scalar>* faceLhsPtr() const;
-	Face<Scalar>* faceLhsPtr();
-	const Face<Scalar>* faceRhsPtr() const;
-	Face<Scalar>* faceRhsPtr();
+	const SurfaceMeshInternal::Face<Scalar>* faceLhsPtr() const;
+	SurfaceMeshInternal::Face<Scalar>* faceLhsPtr();
+	const SurfaceMeshInternal::Face<Scalar>* faceRhsPtr() const;
+	SurfaceMeshInternal::Face<Scalar>* faceRhsPtr();
 	unsigned int faceLhsIdx() const;
 	unsigned int faceRhsIdx() const;
 	unsigned int objectLhsIdx() const;
@@ -97,8 +97,8 @@ protected:
 	MeshBasedCollidableObject<Scalar>* object_rhs_;
 	unsigned int face_lhs_index_;
 	unsigned int face_rhs_index_;
-	Face<Scalar>* face_lhs_;
-	Face<Scalar>* face_rhs_;
+	SurfaceMeshInternal::Face<Scalar>* face_lhs_;
+	SurfaceMeshInternal::Face<Scalar>* face_rhs_;
 };
 
 }  //end of namespace Physikas

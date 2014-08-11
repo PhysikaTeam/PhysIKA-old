@@ -17,6 +17,10 @@
 
 namespace Physika{
 
+using BoundaryMeshInternal::Vertex;
+using SurfaceMeshInternal::Face;
+using SurfaceMeshInternal::FaceGroup;
+
 template <typename Scalar, int Dim>
 CollisionPairBase<Scalar, Dim>::CollisionPairBase()
 {

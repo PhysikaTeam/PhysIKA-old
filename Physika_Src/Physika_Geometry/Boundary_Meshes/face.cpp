@@ -20,6 +20,8 @@ using std::vector;
 
 namespace Physika{
 
+using BoundaryMeshInternal::Vertex;
+
 namespace SurfaceMeshInternal{
 
 template <typename Scalar>

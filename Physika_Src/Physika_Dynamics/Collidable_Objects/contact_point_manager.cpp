@@ -21,6 +21,10 @@
 
 namespace Physika{
 
+using BoundaryMeshInternal::Vertex;
+using SurfaceMeshInternal::Face;
+using SurfaceMeshInternal::FaceGroup;
+
 template <typename Scalar,int Dim>
 ContactPointManager<Scalar, Dim>::ContactPointManager()
 {

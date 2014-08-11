@@ -24,6 +24,10 @@
 
 namespace Physika{
 
+using BoundaryMeshInternal::Vertex;
+using SurfaceMeshInternal::Face;
+using SurfaceMeshInternal::FaceGroup;
+
 template <typename Scalar,int Dim>
 ObjectBVHNode<Scalar, Dim>::ObjectBVHNode():
 	object_type_(CollidableObjectInternal::MESH_BASED),
