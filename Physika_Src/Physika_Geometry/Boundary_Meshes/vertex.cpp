@@ -1,6 +1,6 @@
 /*
  * @file vertex.cpp 
- * @brief vertex of 3d surface mesh
+ * @brief vertex of 3d surface mesh and 2d polygon
  *        position does not uniquely determine vertex, 2 vertices could have identical positions
  * @author Fei Zhu
  * 
@@ -14,11 +14,11 @@
  */
 
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Geometry/Surface_Mesh/vertex.h"
+#include "Physika_Geometry/Boundary_Meshes/vertex.h"
 
 namespace Physika{
 
-namespace SurfaceMeshInternal{
+namespace BoundaryMeshInternal{
 
 template <typename Scalar>
 Vertex<Scalar>::Vertex()
@@ -105,24 +105,6 @@ bool Vertex<Scalar>::hasTexture() const
 template class Vertex<float>;
 template class Vertex<double>;
 
-} //end of namespace SurfaceMeshInternal
+} //end of namespace BoundaryMeshInternal
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

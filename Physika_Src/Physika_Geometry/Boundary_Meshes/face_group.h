@@ -12,14 +12,14 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_SURFACE_MESH_GROUP_H_
-#define PHYSIKA_GEOMETRY_SURFACE_MESH_GROUP_H_
+#ifndef PHYSIKA_GEOMETRY_BOUNDARY_MESHES_GROUP_H_
+#define PHYSIKA_GEOMETRY_BOUNDARY_MESHES_GROUP_H_
 
 #include <string>
 #include <vector>
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Geometry/Surface_Mesh/material.h"
-#include "Physika_Geometry/Surface_Mesh/face.h"
+#include "Physika_Geometry/Boundary_Meshes/material.h"
+#include "Physika_Geometry/Boundary_Meshes/face.h"
 
 namespace Physika{
 
@@ -30,15 +30,15 @@ namespace SurfaceMeshInternal{
  */
 
 template <typename Scalar>
-class Group
+class FaceGroup
 {
 public:
-    Group();
-    ~Group();
-    explicit Group(const std::string &name);
-    Group(const std::string &name, const std::vector<Face<Scalar> > &faces);
-    Group(const std::string &name, unsigned int material_index);
-    Group(const std::string &name, unsigned int material_index, const std::vector<Face<Scalar> > &faces);
+    FaceGroup();
+    ~FaceGroup();
+    explicit FaceGroup(const std::string &name);
+    FaceGroup(const std::string &name, const std::vector<Face<Scalar> > &faces);
+    FaceGroup(const std::string &name, unsigned int material_index);
+    FaceGroup(const std::string &name, unsigned int material_index, const std::vector<Face<Scalar> > &faces);
     unsigned int numFaces() const;
     const std::string& name() const;
     void setName(const std::string &name);
@@ -60,4 +60,4 @@ protected:
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_SURFACE_MESH_GROUP_H_
+#endif //PHYSIKA_GEOMETRY_BOUNDARY_MESHES_GROUP_H_

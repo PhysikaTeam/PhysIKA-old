@@ -18,15 +18,15 @@
 #include <sstream>
 #include <fstream>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 #include "Physika_Core/Utilities/File_Utilities/parse_line.h"
 
 using Physika::SurfaceMeshInternal::Face;
-using Physika::SurfaceMeshInternal::Group;
-using Physika::SurfaceMeshInternal::Material;
-using Physika::SurfaceMeshInternal::Vertex;
+using Physika::SurfaceMeshInternal::FaceGroup;
+using Physika::BoundaryMeshInternal::Material;
+using Physika::BoundaryMeshInternal::Vertex;
 using std::endl;
 using std::cout;
 using std::string;
@@ -50,7 +50,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
         return false;
     }
     // a indicator points to current group 
-    Group<Scalar>* current_group = NULL;
+    FaceGroup<Scalar>* current_group = NULL;
     // num of total faces
     unsigned int num_face = 0;
     // index of the current material in mesh's materials
@@ -153,10 +153,10 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             if(length < 1)
             {
                 cout<<"warning: empty group name come in and we consider it as a default group "<<"line:"<<line_num<<endl;
-                Group<Scalar> *p=mesh->groupPtr(string("default"));
+                FaceGroup<Scalar> *p=mesh->groupPtr(string("default"));
                 if(p == NULL)
                 {
-                    mesh->addGroup(Group<Scalar>(string("default"),current_material_index));
+                    mesh->addGroup(FaceGroup<Scalar>(string("default"),current_material_index));
                     current_group = mesh->groupPtr(string("default"));
                     group_source_name = string("");
                     group_clone_index=0;
@@ -169,7 +169,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             }
             else
             {
-                mesh->addGroup(Group<Scalar>(group_name,current_material_index));
+                mesh->addGroup(FaceGroup<Scalar>(group_name,current_material_index));
                 current_group=mesh->groupPtr(group_name);
                 group_source_name=group_name;
                 group_clone_index=0;
@@ -182,7 +182,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             //cout<<line<<endl;
             if(current_group==NULL)
             {
-                mesh->addGroup(Group<Scalar>(string("default"),current_material_index));
+                mesh->addGroup(FaceGroup<Scalar>(string("default"),current_material_index));
                 current_group=mesh->groupPtr(string("default"));
             }
             Face<Scalar> face_temple;
@@ -304,7 +304,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                 clone_name<<group_clone_index;
                 string new_name;
                 clone_name>>new_name;
-                mesh->addGroup(Group<Scalar>(new_name));
+                mesh->addGroup(FaceGroup<Scalar>(new_name));
                 current_group=mesh->groupPtr(new_name);
                 num_group_faces = 0;
                 group_clone_index++;	
@@ -315,7 +315,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
             {
                 if(mesh->numGroups() == 0)
                 {
-                    mesh->addGroup(Group<Scalar>(string("default")));
+                    mesh->addGroup(FaceGroup<Scalar>(string("default")));
                     current_group = mesh->groupPtr(string("default"));
                 }
                 current_group->setMaterialIndex(current_material_index);
@@ -389,7 +389,7 @@ bool ObjMeshIO<Scalar>::save(const string &filename, const SurfaceMesh<Scalar> *
     unsigned int num_group = mesh->numGroups();
     for(i=0;i<num_group;++i)
     {
-        const Group<Scalar> *group_ptr = mesh->groupPtr(i);
+        const FaceGroup<Scalar> *group_ptr = mesh->groupPtr(i);
         fileout<<"usemtl "<<mesh->materialPtr(group_ptr->materialIndex())->name()<<endl;
         fileout<<"g "<<group_ptr->name()<<endl;
         unsigned int num_face = group_ptr->numFaces(),j;

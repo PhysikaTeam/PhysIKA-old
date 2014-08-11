@@ -48,7 +48,7 @@ void Sphere<Scalar>::printInfo() const
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& Sphere<Scalar>::center() const
+Vector<Scalar,3> Sphere<Scalar>::center() const
 {
     return center_;
 }
@@ -88,21 +88,3 @@ bool Sphere<Scalar>::outside(const Vector<Scalar,3> &point) const
 }
 
 }  //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

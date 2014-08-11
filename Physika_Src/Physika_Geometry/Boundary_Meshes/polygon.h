@@ -19,17 +19,17 @@
 #include <string>
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Geometry/Surface_Mesh/vertex.h"
-#include "Physika_Geometry/Polygon/edge.h"
-#include "Physika_Geometry/Polygon/group.h"
-#include "Physika_Geometry/Surface_Mesh/material.h"
+#include "Physika_Geometry/Boundary_Meshes/vertex.h"
+#include "Physika_Geometry/Boundary_Meshes/edge.h"
+#include "Physika_Geometry/Boundary_Meshes/edge_group.h"
+#include "Physika_Geometry/Boundary_Meshes/material.h"
 
 namespace Physika{
 
-using SurfaceMeshInternal::Vertex;
-using PolygonInternal::Edge;
-using PolygonInternal::Group;
-using SurfaceMeshInternal::Material;
+using BoundaryMeshInternal::Vertex;
+using BoundaryMeshInternal::Edge;
+using BoundaryMeshInternal::EdgeGroup;
+using BoundaryMeshInternal::Material;
 
 template <typename Scalar>
 class Polygon
@@ -45,7 +45,6 @@ public:
     unsigned int numNormals() const;
     unsigned int numTextureCoordinates() const;
     unsigned int numGroups() const;
-    unsigned int numMaterials() const;
     unsigned int numIsolatedVertices() const;
     bool isTriangularPolygon() const;
     bool isQuadrilateralPolygon() const;
@@ -63,26 +62,24 @@ public:
     const Vector<Scalar,2>& vertexTextureCoordinate(const Vertex<Scalar> &vertex) const;
     void                    setVertexTextureCoordinate(unsigned int texture_idx, const Vector<Scalar,2> &texture_coordinate);
     void                    setVertexTextureCoordinate(const Vertex<Scalar> &vertex, const Vector<Scalar,2> &texture_coordinate);
-    const Group<Scalar>&    group(unsigned int group_idx) const;
-    Group<Scalar>&          group(unsigned int group_idx);
-    const Group<Scalar>*    groupPtr(unsigned int group_idx) const;
-    Group<Scalar>*          groupPtr(unsigned int group_idx);
-    const Group<Scalar>*    groupPtr(const std::string &name) const;
-    Group<Scalar>*          groupPtr(const std::string &name);
-    const Material<Scalar>& material(unsigned int material_idx) const;
-    Material<Scalar>&       material(unsigned int material_idx);
-    const Material<Scalar>* materialPtr(unsigned int material_idx) const;
-    Material<Scalar>*       materialPtr(unsigned int material_idx);
-    unsigned int            materialIndex(const std::string &material_name) const; //if no material with given name, return -1
-    void                    setSingleMaterial(const Material<Scalar> &material); //set single material for entire mesh
-	const Edge<Scalar>&     edge(unsigned int edge_idx) const; 
-	Edge<Scalar>&           edge(unsigned int edge_idx); 
-	const Edge<Scalar>*     edgePtr(unsigned int edge_idx) const; 
-	Edge<Scalar>*           edgePtr(unsigned int edge_idx); 
+    const EdgeGroup<Scalar,2>&    group(unsigned int group_idx) const;
+    EdgeGroup<Scalar,2>&          group(unsigned int group_idx);
+    const EdgeGroup<Scalar,2>*    groupPtr(unsigned int group_idx) const;
+    EdgeGroup<Scalar,2>*          groupPtr(unsigned int group_idx);
+    const EdgeGroup<Scalar,2>*    groupPtr(const std::string &name) const;
+    EdgeGroup<Scalar,2>*          groupPtr(const std::string &name);
+    const Material<Scalar>& material() const;
+    Material<Scalar>&       material();
+    const Material<Scalar>* materialPtr() const;
+    Material<Scalar>*       materialPtr();
+    void                    setMaterial(const Material<Scalar> &material);
+	const Edge<Scalar,2>&     edge(unsigned int edge_idx) const; 
+	Edge<Scalar,2>&           edge(unsigned int edge_idx); 
+	const Edge<Scalar,2>*     edgePtr(unsigned int edge_idx) const; 
+	Edge<Scalar,2>*           edgePtr(unsigned int edge_idx); 
 
     //adders
-    void addMaterial(const Material<Scalar> &material);
-    void addGroup(const Group<Scalar> &group);
+    void addGroup(const EdgeGroup<Scalar,2> &group);
     void addVertexPosition(const Vector<Scalar,2> &position);
     void addVertexNormal(const Vector<Scalar,2> &normal);
     void addVertexTextureCoordinate(const Vector<Scalar,2> &texture_coordinate);
@@ -95,7 +92,7 @@ public:
 
     void computeAllVertexNormals(VertexNormalType normal_type);
     void computeAllEdgeNormals();
-    void computeEdgeNormal(Edge<Scalar> &edge);
+    void computeEdgeNormal(Edge<Scalar,2> &edge);
 
 protected:
     void setVertexNormalsToEdgeNormals();
@@ -106,10 +103,10 @@ protected:
     std::vector<Vector<Scalar,2> > vertex_positions_;
     std::vector<Vector<Scalar,2> > vertex_normals_;
     std::vector<Vector<Scalar,2> > vertex_textures_;
-    std::vector<Group<Scalar> > groups_;
-    std::vector<Material<Scalar> > materials_;
+    std::vector<EdgeGroup<Scalar,2> > groups_;
+    Material<Scalar> material_;
 };
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_POLYGON_POLYGON_H_
+#endif //PHYSIKA_GEOMETRY_BOUNDARY_MESHES_POLYGON_H_

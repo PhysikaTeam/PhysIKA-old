@@ -16,7 +16,7 @@
 #define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_PAIR_MANAGER_H_
 
 #include <vector>
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 
 namespace Physika{
 

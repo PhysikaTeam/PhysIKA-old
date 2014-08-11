@@ -45,6 +45,8 @@ public:
 
     //virtual methods
     virtual void initConfiguration(const std::string &file_name);
+    virtual void printConfigFileFormat();
+    virtual void initSimulationData();
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin);
     virtual bool withRestartSupport() const;
     virtual void write(const std::string &file_name);
@@ -53,6 +55,8 @@ public:
     //setters&&getters
     const Grid<Scalar,Dim>& grid() const;
     void setGrid(const Grid<Scalar,Dim> &grid);
+    Scalar gridMass(const Vector<unsigned int,Dim> &node_idx) const;
+    Vector<Scalar,Dim> gridVelocity(const Vector<unsigned int,Dim> &node_idx) const;
 
     //substeps in one time step
     virtual void rasterize();
@@ -65,10 +69,11 @@ public:
     virtual void updateParticlePosition(Scalar dt);
 
 protected:
-    virtual void initialize();
     virtual void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
     virtual void resetGridData();  //reset grid data to zero, needed before rasterize operation
     virtual Scalar minCellEdgeLength() const;
+    virtual void applyGravityOnGrid(Scalar dt);
+    bool isValidGridNodeIndex(const Vector<unsigned int,Dim> &node_idx) const;  //helper method, determine if input grid node index is valid
 protected:
     Grid<Scalar,Dim> grid_;
     //grid data stored on grid nodes

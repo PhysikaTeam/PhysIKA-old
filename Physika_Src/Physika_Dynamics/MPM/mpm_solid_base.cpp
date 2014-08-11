@@ -123,6 +123,12 @@ SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int parti
 }
 
 template <typename Scalar, int Dim>
+const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allParticles() const
+{
+    return particles_;
+}
+
+template <typename Scalar, int Dim>
 Scalar MPMSolidBase<Scalar,Dim>::maxParticleVelocityNorm() const
 {
     if(particles_.empty())

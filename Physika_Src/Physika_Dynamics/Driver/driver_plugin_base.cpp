@@ -36,12 +36,6 @@ DriverBase<Scalar>* DriverPluginBase<Scalar>::driver()
     return driver_;
 }
 
-template <typename Scalar>
-void DriverPluginBase<Scalar>::setDriver(DriverBase<Scalar>* driver)
-{
-    driver_ = driver;
-}
-
 //explicit instantiation
 template class DriverPluginBase<float>;
 template class DriverPluginBase<double>;

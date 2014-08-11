@@ -23,6 +23,7 @@ namespace Physika{
 
 /*
  * GridLinearWeightFunction: dyadic product of the most common 1D linear weight function.
+ * Support radius: 1 grid cell.
  */
 
 template <typename Scalar, int Dim>
@@ -31,9 +32,10 @@ class GridLinearWeightFunction: public GridWeightFunction<Scalar,Dim>
 public:
     GridLinearWeightFunction(){}
     ~GridLinearWeightFunction(){}
-    Scalar weight(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const;
-    Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const;
+    Scalar weight(const Vector<Scalar,Dim> &center_to_x) const;
+    Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x) const;
     void printInfo() const;
+    Scalar supportRadius() const;
 };
 
 }  //end of namespace Physika

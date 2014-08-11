@@ -21,14 +21,15 @@ namespace Physika{
 
 template <typename Scalar, int Dim> class Vector;
 template <typename Scalar, int Dim> class Range;
+template <typename Scalar, int Dim> class GridWeightFunction;
 
 /*
- * UniformGridWeightFunctionInfluenceIterator: iterator the uniform grid nodes that is within the influence range of a weight function
+ * UniformGridWeightFunctionInfluenceIterator: iterator of the uniform grid nodes that is within the influence range of a weight function
  * Usage:
  * 1. define an iterator with: 
  *    (1) the grid
  *    (2) center of the influence domain
- *    (3) size scale of the influence domain relative to the grid cell size
+ *    (3) grid-based weight function
  * 2. iterate the iterator while the iterator is valid:
  *    while(iter.valid())
  *    {
@@ -52,7 +53,7 @@ class UniformGridWeightFunctionInfluenceIterator
 {
 public:
     UniformGridWeightFunctionInfluenceIterator(const Grid<Scalar,Dim> &grid, const Vector<Scalar,Dim> &influence_center,
-                                               const Vector<Scalar,Dim> &influence_radius_scale);
+                                               const GridWeightFunction<Scalar,Dim> &weight_function);
     UniformGridWeightFunctionInfluenceIterator(const UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> &iterator);
     ~UniformGridWeightFunctionInfluenceIterator();
     UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>& operator= (const UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> &iterator);
@@ -63,7 +64,7 @@ public:
     UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> operator++ (int);
     Vector<unsigned int,Dim> nodeIndex() const;
 protected:
-    void initNodeIdxGrid(const Vector<Scalar,Dim> &influence_center, const Vector<Scalar,Dim> &influence_radius_scale);
+    void initNodeIdxGrid(const Vector<Scalar,Dim> &influence_center, Scalar influence_radius_scale);
 protected:
     const Grid<Scalar,Dim> *grid_;  //reference to grid
     Grid<unsigned int,Dim> node_idx_grid_; //grid whose node is position is the valid grid node index

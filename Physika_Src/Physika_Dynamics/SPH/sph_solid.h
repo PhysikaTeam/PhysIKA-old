@@ -26,7 +26,7 @@ public:
     SPHSolid();
     ~SPHSolid();
 
-    virtual void initialize();
+    virtual void initSimulationData();
     virtual void initSceneBoundary();
 
     virtual void advance(Scalar dt);

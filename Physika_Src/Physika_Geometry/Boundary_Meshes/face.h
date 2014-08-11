@@ -12,14 +12,16 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_SURFACE_MESH_FACE_H_
-#define PHYSIKA_GEOMETRY_SURFACE_MESH_FACE_H_
+#ifndef PHYSIKA_GEOMETRY_BOUNDARY_MESHES_FACE_H_
+#define PHYSIKA_GEOMETRY_BOUNDARY_MESHES_FACE_H_
 
 #include <vector>
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Geometry/Surface_Mesh/vertex.h"
+#include "Physika_Geometry/Boundary_Meshes/vertex.h"
 
 namespace Physika{
+
+using BoundaryMeshInternal::Vertex;
 
 namespace SurfaceMeshInternal{
 
@@ -37,7 +39,7 @@ public:
     const Vertex<Scalar>* vertexPtr(unsigned int vert_idx) const;
     Vertex<Scalar>* vertexPtr(unsigned int vert_idx);
     void setFaceNormal(const Vector<Scalar,3> &face_normal);
-    const Vector<Scalar,3>& faceNormal() const;
+    Vector<Scalar,3> faceNormal() const;
     bool hasFaceNormal() const;
     void addVertex(const Vertex<Scalar> &vertex);
     void reverseVertices(); //reverse the order of vertices
@@ -52,4 +54,4 @@ protected:
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_SURFACE_MESH_FACE_H_
+#endif //PHYSIKA_GEOMETRY_BOUNDARY_MESHES_FACE_H_

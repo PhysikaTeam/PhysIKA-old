@@ -1,7 +1,7 @@
 /*
- * @file edge.cpp 
- * @brief edge of 2d polygon
- * @author Fei Zhu, Wei Chen
+ * @file face.cpp 
+ * @brief face of 3d surface mesh
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -15,43 +15,48 @@
 #include <iostream>
 #include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Geometry/Polygon/edge.h"
+#include "Physika_Geometry/Boundary_Meshes/face.h"
 using std::vector;
 
 namespace Physika{
 
-namespace PolygonInternal{
-
-template<typename Scalar>
-Edge<Scalar>::Edge():has_normal_(false){}
-
-template<typename Scalar>
-Edge<Scalar>::~Edge(){}
+namespace SurfaceMeshInternal{
 
 template <typename Scalar>
-Edge<Scalar>::Edge(const vector<Vertex<Scalar> > &vertices)
+Face<Scalar>::Face()
+    :has_normal_(false)
+{
+}
+
+template <typename Scalar>
+Face<Scalar>::~Face()
+{
+}
+
+template <typename Scalar>
+Face<Scalar>::Face(const vector<Vertex<Scalar> > &vertices)
     :has_normal_(false)
 {
     for(int i = 0; i < vertices.size(); ++i)
-	addVertex(vertices[i]);
+        addVertex(vertices[i]);
 }
 
 template <typename Scalar>
-Edge<Scalar>::Edge(const vector<Vertex<Scalar> > &vertices, const Vector<Scalar,2> &edge_normal)
-    :normal_(edge_normal),has_normal_(true)
+Face<Scalar>::Face(const vector<Vertex<Scalar> > &vertices, const Vector<Scalar,3> &face_normal)
+    :normal_(face_normal),has_normal_(true)
 {
     for(int i = 0; i < vertices.size(); ++i)
-	addVertex(vertices[i]);
+        addVertex(vertices[i]);
 }
 
 template <typename Scalar>
-unsigned int Edge<Scalar>::numVertices() const
+unsigned int Face<Scalar>::numVertices() const
 {
     return vertices_.size();
 }
 
 template <typename Scalar>
-const Vertex<Scalar>& Edge<Scalar>::vertex(unsigned int vert_idx) const
+const Vertex<Scalar>& Face<Scalar>::vertex(unsigned int vert_idx) const
 {
     PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
@@ -59,7 +64,7 @@ const Vertex<Scalar>& Edge<Scalar>::vertex(unsigned int vert_idx) const
 }
 
 template <typename Scalar>
-Vertex<Scalar>& Edge<Scalar>::vertex(unsigned int vert_idx)
+Vertex<Scalar>& Face<Scalar>::vertex(unsigned int vert_idx)
 {
     PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
@@ -67,7 +72,7 @@ Vertex<Scalar>& Edge<Scalar>::vertex(unsigned int vert_idx)
 }
 
 template <typename Scalar>
-const Vertex<Scalar>* Edge<Scalar>::vertexPtr(unsigned int vert_idx) const
+const Vertex<Scalar>* Face<Scalar>::vertexPtr(unsigned int vert_idx) const
 {
     PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
@@ -75,7 +80,7 @@ const Vertex<Scalar>* Edge<Scalar>::vertexPtr(unsigned int vert_idx) const
 }
 
 template <typename Scalar>
-Vertex<Scalar>* Edge<Scalar>::vertexPtr(unsigned int vert_idx)
+Vertex<Scalar>* Face<Scalar>::vertexPtr(unsigned int vert_idx)
 {
     PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
@@ -83,39 +88,39 @@ Vertex<Scalar>* Edge<Scalar>::vertexPtr(unsigned int vert_idx)
 }
 
 template <typename Scalar>
-void Edge<Scalar>::setEdgeNormal(const Vector<Scalar,2> &edge_normal)
+void Face<Scalar>::setFaceNormal(const Vector<Scalar,3> &face_normal)
 {
-    normal_ = edge_normal;
+    normal_ = face_normal;
     has_normal_ = true;
 }
 
 template <typename Scalar>
-const Vector<Scalar,2>& Edge<Scalar>::edgeNormal() const
+Vector<Scalar,3> Face<Scalar>::faceNormal() const
 {
     PHYSIKA_ASSERT(has_normal_);
     return normal_;
 }
 
 template <typename Scalar>
-bool Edge<Scalar>::hasEdgeNormal() const
+bool Face<Scalar>::hasFaceNormal() const
 {
     return has_normal_;
 }
 
 template <typename Scalar>
-void Edge<Scalar>::addVertex(const Vertex<Scalar> &vertex)
+void Face<Scalar>::addVertex(const Vertex<Scalar> &vertex)
 {
     vertices_.push_back(vertex);
 }
 
 template <typename Scalar>
-void Edge<Scalar>::reverseVertices()
+void Face<Scalar>::reverseVertices()
 {
     reverse(vertices_.begin(),vertices_.end());
 }
 
 template <typename Scalar>
-void Edge<Scalar>::printVertices() const
+void Face<Scalar>::printVertices() const
 {
     for(unsigned int i = 0; i < vertices_.size(); ++i)
         std::cout<<vertices_[i].positionIndex()<<" ";
@@ -123,9 +128,9 @@ void Edge<Scalar>::printVertices() const
 }
 
 //explicit instantitation
-template class Edge<float>;
-template class Edge<double>;
+template class Face<float>;
+template class Face<double>;
 
-} // end of namespace SurfaceMeshInternal
+} //end of namespace SurfaceMeshInternal
 
-} // end of namespace Physika
+} //end of namespace Physika

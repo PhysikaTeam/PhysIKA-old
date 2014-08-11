@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_IO/Surface_Mesh_IO/stl_mesh_io.h"
 using std::string;
 
@@ -37,18 +37,3 @@ template class StlMeshIO<float>;
 template class StlMeshIO<double>;
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

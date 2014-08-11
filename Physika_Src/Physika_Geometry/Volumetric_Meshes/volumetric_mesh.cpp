@@ -139,7 +139,7 @@ unsigned int VolumetricMesh<Scalar,Dim>::regionNum() const
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_idx) const
+Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_idx) const
 {
     if((vert_idx<0) || (vert_idx>=this->vertNum()))
     {
@@ -150,7 +150,7 @@ const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const
+Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const
 {
     unsigned int global_vert_idx = eleVertIndex(ele_idx,local_vert_idx);
     return vertPos(global_vert_idx);

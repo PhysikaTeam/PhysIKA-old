@@ -28,9 +28,10 @@ public:
     SPHFluid();
     ~SPHFluid();
 
-    virtual void initialize();
     virtual void initConfiguration();
     virtual void initConfiguration(const std::string &file_name);
+    virtual void printConfigFileFormat(); 
+    virtual void initSimulationData();
     virtual void initSceneBoundary();
     void initScene();
 

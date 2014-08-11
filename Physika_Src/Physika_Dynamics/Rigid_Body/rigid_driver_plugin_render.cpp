@@ -104,8 +104,12 @@ void RigidDriverPluginRender<Scalar, Dim>::onAddRigidBody(RigidBody<Scalar, Dim>
 	RenderBase* render;
 	switch(rigid_body->objectType())
 	{
-	case CollidableObjectInternal::MESH_BASED: render = new SurfaceMeshRender<Scalar>();;break;
-	default: std::cerr<<"Object type error!"<<std::endl; return;
+	case CollidableObjectInternal::MESH_BASED:
+        render = new SurfaceMeshRender<Scalar>();
+        break;
+	default: 
+        std::cerr<<"Object type error!"<<std::endl; 
+        return;
 	}
 	SurfaceMeshRender<Scalar>* mesh_render = dynamic_cast<SurfaceMeshRender<Scalar>*>(render);
 	mesh_render->setSurfaceMesh(rigid_body->mesh());
@@ -215,7 +219,7 @@ void RigidDriverPluginRender<Scalar, Dim>::display()
     Color<double> background_color = window->backgroundColor<double>();
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    (window->camera()).look();  //set camera
+    window->applyCameraAndLights();
     
     if(active_render_->is_render_contact_face_ && active_render_->contact_face_ids_ != NULL)//render contact faces
     {
@@ -563,9 +567,9 @@ void RigidDriverPluginRender<Scalar, Dim>::disableRenderContactNormalAll()
 }
 
 template <typename Scalar,int Dim>
-void RigidDriverPluginRender<Scalar, Dim>::setNormalLength(Scalar normal_lenth)
+void RigidDriverPluginRender<Scalar, Dim>::setNormalLength(Scalar normal_length)
 {
-    normal_length_ = normal_lenth;
+    normal_length_ = normal_length;
 }
 
 template <typename Scalar,int Dim>

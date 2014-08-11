@@ -16,28 +16,22 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Geometry/Polygon/polygon.h"
+#include "Physika_Geometry/Boundary_Meshes/polygon.h"
 using std::vector;
 using std::string;
+
 namespace Physika{
 
 template<typename Scalar>
 Polygon<Scalar>::Polygon()
 {
-	Material<Scalar> material_example;//default material. we will add more material if need
-    material_example.setAlpha(1);
-    material_example.setKa(Vector<Scalar,3>(0.2,0.2,0.2));
-    material_example.setKd(Vector<Scalar,3>(1,1,1));
-    material_example.setKs(Vector<Scalar,3>(0.2,0.2,0.2));
-    material_example.setName(string("default"));
-    material_example.setShininess(24.2515);
-    addMaterial(material_example);
-    material_example.setKa(Vector<Scalar, 3>(0.8941, 0.8392, 0.6000));
-    material_example.setKd(Vector<Scalar, 3>(0.8941, 0.8392, 0.6000));
-    material_example.setKs(Vector<Scalar, 3>(0.3500, 0.3500, 0.3500));
-    material_example.setName(string("default_iron"));
-    material_example.setShininess(32);
-    addMaterial(material_example);
+    //default material. we will add more material if need
+    material_.setAlpha(1);
+    material_.setKa(Vector<Scalar,3>(0.2,0.2,0.2));
+    material_.setKd(Vector<Scalar,3>(1,1,1));
+    material_.setKs(Vector<Scalar,3>(0.2,0.2,0.2));
+    material_.setName(string("default"));
+    material_.setShininess(24.2515);
 }
 
 template<typename Scalar>
@@ -55,7 +49,7 @@ unsigned int Polygon<Scalar>::numEdges() const
     unsigned int num_edge = 0;
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        const Group<Scalar> &group = groups_[group_idx];
+        const EdgeGroup<Scalar,2> &group = groups_[group_idx];
         num_edge += group.numEdges();
     }
     return num_edge;
@@ -80,22 +74,15 @@ unsigned int Polygon<Scalar>::numGroups() const
 }
 
 template <typename Scalar>
-unsigned int Polygon<Scalar>::numMaterials() const
-{
-    return materials_.size();
-}
-
-
-template <typename Scalar>
 unsigned int Polygon<Scalar>::numIsolatedVertices() const
 {
     vector<unsigned int> neighor_edge_count(numVertices(),0);
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        const Group<Scalar> &group = groups_[group_idx];
+        const EdgeGroup<Scalar,2> &group = groups_[group_idx];
         for(unsigned int edge_idx = 0; edge_idx < group.numEdges(); ++edge_idx)
         {
-            const Edge<Scalar> &edge = group.edge(edge_idx);
+            const Edge<Scalar,2> &edge = group.edge(edge_idx);
             for(unsigned int vert_idx = 0; vert_idx < edge.numVertices(); ++vert_idx)
             {
                 const Vertex<Scalar> &vertex = edge.vertex(vert_idx);
@@ -240,7 +227,7 @@ void Polygon<Scalar>::setVertexTextureCoordinate(const Vertex<Scalar> &vertex, c
 }
 
 template <typename Scalar>
-const Group<Scalar>& Polygon<Scalar>::group(unsigned int group_idx) const
+const EdgeGroup<Scalar,2>& Polygon<Scalar>::group(unsigned int group_idx) const
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
@@ -252,7 +239,7 @@ const Group<Scalar>& Polygon<Scalar>::group(unsigned int group_idx) const
 }
 
 template <typename Scalar>
-Group<Scalar>& Polygon<Scalar>::group(unsigned int group_idx)
+EdgeGroup<Scalar,2>& Polygon<Scalar>::group(unsigned int group_idx)
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
@@ -264,7 +251,7 @@ Group<Scalar>& Polygon<Scalar>::group(unsigned int group_idx)
 }
 
 template <typename Scalar>
-const Group<Scalar>* Polygon<Scalar>::groupPtr(unsigned int group_idx) const
+const EdgeGroup<Scalar,2>* Polygon<Scalar>::groupPtr(unsigned int group_idx) const
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
@@ -276,7 +263,7 @@ const Group<Scalar>* Polygon<Scalar>::groupPtr(unsigned int group_idx) const
 }
 
 template <typename Scalar>
-Group<Scalar>* Polygon<Scalar>::groupPtr(unsigned int group_idx)
+EdgeGroup<Scalar,2>* Polygon<Scalar>::groupPtr(unsigned int group_idx)
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
@@ -288,7 +275,7 @@ Group<Scalar>* Polygon<Scalar>::groupPtr(unsigned int group_idx)
 }
 
 template <typename Scalar>
-const Group<Scalar>* Polygon<Scalar>::groupPtr(const string &name) const
+const EdgeGroup<Scalar,2>* Polygon<Scalar>::groupPtr(const string &name) const
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
         if(groups_[group_idx].name() == name)
@@ -297,7 +284,7 @@ const Group<Scalar>* Polygon<Scalar>::groupPtr(const string &name) const
 }
 
 template <typename Scalar>
-Group<Scalar>* Polygon<Scalar>::groupPtr(const string &name)
+EdgeGroup<Scalar,2>* Polygon<Scalar>::groupPtr(const string &name)
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
         if(groups_[group_idx].name() == name)
@@ -306,73 +293,37 @@ Group<Scalar>* Polygon<Scalar>::groupPtr(const string &name)
 }
 
 template <typename Scalar>
-const Material<Scalar>& Polygon<Scalar>::material(unsigned int material_idx) const
+const Material<Scalar>& Polygon<Scalar>::material() const
 {
-    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon material index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    return materials_[material_idx];
+    return material_;
 }
 
 template <typename Scalar>
-Material<Scalar>& Polygon<Scalar>::material(unsigned int material_idx)
+Material<Scalar>& Polygon<Scalar>::material()
 {
-    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon material index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    return materials_[material_idx];
+    return material_;
 } 
 
 template <typename Scalar>
-const Material<Scalar>* Polygon<Scalar>::materialPtr(unsigned int material_idx) const
+const Material<Scalar>* Polygon<Scalar>::materialPtr() const
 {
-    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon material index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    return &(materials_[material_idx]);
+    return &(material_);
 }
 
 template <typename Scalar>
-Material<Scalar>* Polygon<Scalar>::materialPtr(unsigned int material_idx)
+Material<Scalar>* Polygon<Scalar>::materialPtr()
 {
-    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"POlygon material index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    return &(materials_[material_idx]);
+    return &(material_);
 }
 
 template <typename Scalar>
-unsigned int Polygon<Scalar>::materialIndex(const string &material_name) const
+void Polygon<Scalar>::setMaterial(const Material<Scalar> &material)
 {
-    for(unsigned int i = 0; i < materials_.size(); ++i)
-        if(materials_[i].name() == material_name)
-            return i;
-    return -1;
+    material_ = material;
 }
 
 template <typename Scalar>
-void Polygon<Scalar>::setSingleMaterial(const Material<Scalar> &material)
-{
-    materials_.clear();
-    materials_.push_back(material);
-    for(int group_idx = 0; group_idx < groups_.size(); ++group_idx)
-        groups_[group_idx].setMaterialIndex(0);
-}
-
-template <typename Scalar>
-const Edge<Scalar>& Polygon<Scalar>::edge(unsigned int edge_idx) const 
+const Edge<Scalar,2>& Polygon<Scalar>::edge(unsigned int edge_idx) const 
 {
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
     if(!index_valid)
@@ -383,7 +334,7 @@ const Edge<Scalar>& Polygon<Scalar>::edge(unsigned int edge_idx) const
 	unsigned int current_edge_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
-		const Group<Scalar>& current_group = groups_[group_idx];
+		const EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
 		unsigned int group_edge_num = current_group.numEdges();
 		if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
 		{
@@ -398,7 +349,7 @@ const Edge<Scalar>& Polygon<Scalar>::edge(unsigned int edge_idx) const
 }
 
 template <typename Scalar>
-Edge<Scalar>& Polygon<Scalar>::edge(unsigned int edge_idx) 
+Edge<Scalar,2>& Polygon<Scalar>::edge(unsigned int edge_idx) 
 {
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
     if(!index_valid)
@@ -409,7 +360,7 @@ Edge<Scalar>& Polygon<Scalar>::edge(unsigned int edge_idx)
 	unsigned int current_edge_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
-		Group<Scalar>& current_group = groups_[group_idx];
+		EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
 		unsigned int group_edge_num = current_group.numEdges();
 		if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
 		{
@@ -424,7 +375,7 @@ Edge<Scalar>& Polygon<Scalar>::edge(unsigned int edge_idx)
 }
 
 template <typename Scalar>
-const Edge<Scalar>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) const 
+const Edge<Scalar,2>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) const 
 {
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
     if(!index_valid)
@@ -435,7 +386,7 @@ const Edge<Scalar>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) const
 	unsigned int current_edge_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
-		const Group<Scalar>& current_group = groups_[group_idx];
+		const EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
 		unsigned int group_edge_num = current_group.numEdges();
 		if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
 		{
@@ -450,7 +401,7 @@ const Edge<Scalar>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) const
 }
 
 template <typename Scalar>
-Edge<Scalar>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) 
+Edge<Scalar,2>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) 
 {
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
     if(!index_valid)
@@ -461,7 +412,7 @@ Edge<Scalar>* Polygon<Scalar>::edgePtr(unsigned int edge_idx)
 	unsigned int current_edge_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
-		Group<Scalar>& current_group = groups_[group_idx];
+		EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
 		unsigned int group_edge_num = current_group.numEdges();
 		if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
 		{
@@ -476,13 +427,7 @@ Edge<Scalar>* Polygon<Scalar>::edgePtr(unsigned int edge_idx)
 }
 
 template <typename Scalar>
-void Polygon<Scalar>::addMaterial(const Material<Scalar> &material)
-{
-    materials_.push_back(material);
-}
-
-template <typename Scalar>
-void Polygon<Scalar>::addGroup(const Group<Scalar> &group)
+void Polygon<Scalar>::addGroup(const EdgeGroup<Scalar,2> &group)
 {
     groups_.push_back(group);
 }
@@ -530,17 +475,17 @@ void Polygon<Scalar>::computeAllEdgeNormals()
 {
     for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
     {
-        Group<Scalar> &group = groups_[group_idx];
+        EdgeGroup<Scalar,2> &group = groups_[group_idx];
         for(unsigned int edge_idx = 0; edge_idx < group.numEdges(); ++edge_idx)
         {
-            Edge<Scalar> &edge = group.edge(edge_idx);
+            Edge<Scalar,2> &edge = group.edge(edge_idx);
             computeEdgeNormal(edge);
         }
     }
 }
 
 template <typename Scalar>
-void Polygon<Scalar>::computeEdgeNormal(Edge<Scalar> &edge)
+void Polygon<Scalar>::computeEdgeNormal(Edge<Scalar,2> &edge)
 {
     // to do
 }

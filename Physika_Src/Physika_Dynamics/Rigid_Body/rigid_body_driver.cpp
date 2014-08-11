@@ -19,7 +19,7 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver_utility.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_detection_method_DTBVH.h"
@@ -118,7 +118,6 @@ RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
     collision_detection_method_(new CollisionDetectionMethodDTBVH<Scalar, Dim>()),
     collision_response_method_(new RigidResponseMethodBLCP<Scalar, Dim>()),
     gravity_(9.81),
-    frame_(0),
     step_(0)
 {
     this->dt_ = 0.01;
@@ -139,38 +138,19 @@ RigidBodyDriver<Scalar, Dim>::~RigidBodyDriver()
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::initConfiguration(const std::string &file_name)
 {
-
+//TO DO
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::run()
+void RigidBodyDriver<Scalar, Dim>::printConfigFileFormat()
 {
-
+//TO DO
 }
 
 template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::advanceFrame()
+void RigidBodyDriver<Scalar, Dim>::initSimulationData()
 {
-    //update frame
-    frame_++;
-
-    //plugin
-	unsigned int plugin_num = static_cast<unsigned int>((this->plugins_).size());
-	RigidDriverPlugin<Scalar, Dim>* plugin;
-	for(unsigned int i = 0; i < plugin_num; ++i)
-	{
-		plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-		if(plugin != NULL)
-			plugin->onBeginFrame(frame_);
-	}
-
-    //plugin
-    for(unsigned int i = 0; i < plugin_num; ++i)
-    {
-        plugin = dynamic_cast<RigidDriverPlugin<Scalar, Dim>*>((this->plugins_)[i]);
-        if(plugin != NULL)
-            plugin->onEndFrame(frame_);
-    }
+//TO DO
 }
 
 template <typename Scalar,int Dim>
@@ -219,11 +199,13 @@ bool RigidBodyDriver<Scalar,Dim>::withRestartSupport() const
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::write(const std::string &file_name)
 {
+//TO DO
 }
 
 template <typename Scalar,int Dim>
 void RigidBodyDriver<Scalar, Dim>::read(const std::string &file_name)
 {
+//TO DO
 }
 
 template <typename Scalar,int Dim>
@@ -312,11 +294,6 @@ void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
     }
     plugin->setDriver(this);
     this->plugins_.push_back(plugin);
-}
-
-template <typename Scalar,int Dim>
-void RigidBodyDriver<Scalar, Dim>::initialize()
-{
 }
 
 template <typename Scalar,int Dim>

@@ -23,6 +23,7 @@ namespace Physika{
 
 template <typename Scalar,int Dim>
 GridBase<Scalar,Dim>::GridBase()
+    :domain_(),dx_(0),cell_num_(0)
 {
 }
 
@@ -37,7 +38,7 @@ GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, unsigned int cel
 {
     if(cell_num == 0)
     {
-        std::cerr<<"Error: grid cell number must be greator than 1, program abort!\n";
+        std::cerr<<"Error: grid cell number must be greator than zero, program abort!\n";
         std::exit(EXIT_FAILURE);
     }
     cell_num_ = Vector<unsigned int,Dim>(cell_num);
@@ -52,7 +53,7 @@ GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, const Vector<uns
     {
         if(cell_num[i] == 0)
         {
-            std::cerr<<"Error: grid cell number must be greator than 1, program abort!\n";
+            std::cerr<<"Error: grid cell number must be greator than zero, program abort!\n";
             std::exit(EXIT_FAILURE);
         }
     }
@@ -207,20 +208,21 @@ Vector<unsigned int,Dim> GridBase<Scalar,Dim>::cellIndex(const Vector<Scalar,Dim
     Vector<unsigned int,Dim> cell_idx;
     bool out_range = false;
     Vector<Scalar,Dim> bias = position - domain_.minCorner();
+    Vector<Scalar,Dim> grid_bias = domain_.maxCorner() - domain_.minCorner();
     for(unsigned int i = 0; i < Dim; ++i)
     {
-        PHYSIKA_ASSERT(dx_[i]>0);
         if(bias[i] < 0)
         {
-            out_range = true;
             bias[i] = 0;
-        }
-        cell_idx[i] = static_cast<unsigned int>(bias[i]/dx_[i]);
-        if(cell_idx[i] >= cell_num_[i])
-        {
             out_range = true;
-            cell_idx[i] = cell_num_[i] -1;
         }
+        else if(bias[i]>grid_bias[i])
+        {
+            bias[i] = grid_bias[i];
+            out_range = true;
+        }
+        PHYSIKA_ASSERT(dx_[i]>0);
+        cell_idx[i] = static_cast<unsigned int>(bias[i]/dx_[i]);
     }
     if(out_range)
         std::cerr<<"Warning: Point out of grid range, clamped to closest cell!\n";
@@ -231,22 +233,23 @@ template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::cellIndexAndInterpolationWeight(const Vector<Scalar,Dim> &position,
                                                            Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &weight) const
 {
-    bool out_range = false;
+    bool out_range = false;  //point out of grid range is clamped to grid
     Vector<Scalar,Dim> bias = position - domain_.minCorner();
+    Vector<Scalar,Dim> grid_bias = domain_.maxCorner() - domain_.minCorner();
     for(unsigned int i = 0; i < Dim; ++i)
     {
-        PHYSIKA_ASSERT(dx_[i]>0);
-        if(bias[i] < 0)
+        if(bias[i]<0)
         {
-            out_range = true;
             bias[i] = 0;
-        }
-        cell_idx[i] = static_cast<unsigned int>(bias[i]/dx_[i]);
-        if(cell_idx[i] >= cell_num_[i])
-        {
             out_range = true;
-            cell_idx[i] = cell_num_[i] -1;
         }
+        else if(bias[i]>grid_bias[i])
+        {
+            bias[i] = grid_bias[i];
+            out_range = true;
+        }
+        PHYSIKA_ASSERT(dx_[i]>0);
+        cell_idx[i] = static_cast<unsigned int>(bias[i]/dx_[i]);
         weight[i] = bias[i]/dx_[i] - cell_idx[i];
     }
     if(out_range)
@@ -256,6 +259,11 @@ void GridBase<Scalar,Dim>::cellIndexAndInterpolationWeight(const Vector<Scalar,D
 template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setCellNum(unsigned int cell_num)
 {
+    if(cell_num == 0)
+    {
+        std::cerr<<"Error: grid cell number must be greator than zero, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
     cell_num_ = Vector<unsigned int,Dim>(cell_num);
     dx_ = domain_.edgeLengths()/cell_num;
 }
@@ -265,7 +273,7 @@ void GridBase<Scalar,Dim>::setCellNum(const Vector<unsigned int,Dim> &cell_num)
 {
     for(unsigned int i = 0; i < Dim; ++i)
     {
-        if(cell_num[i]<=0)
+        if(cell_num[i]==0)
         {
             std::cerr<<"Error: Cell number of a grid must be greater than zero, program abort!\n";
             std::exit(EXIT_FAILURE);
@@ -310,7 +318,15 @@ void GridBase<Scalar,Dim>::setDomain(const Range<Scalar,Dim> &domain)
     domain_ = domain;
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(unsigned int i = 0; i < Dim; ++i)
-        dx_[i] = domain_size[i]/cell_num_[i];
+    {
+        if(cell_num_[i]>0)
+            dx_[i] = domain_size[i]/cell_num_[i];
+        else
+        {
+            cell_num_[i] = 1;
+            dx_[i] = domain_size[i];
+        }
+    }
 }
 
 template <typename Scalar>

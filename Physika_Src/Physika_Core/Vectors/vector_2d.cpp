@@ -153,7 +153,7 @@ Vector<Scalar,2> Vector<Scalar,2>::operator* (Scalar scale) const
     Scalar result[2];
     for(unsigned int i = 0; i < 2; ++i)
         result[i] = (*this)[i] * scale;
-    return Vector<Scalar,2>(result[0]);
+    return Vector<Scalar,2>(result[0],result[1]);
 }
 
 

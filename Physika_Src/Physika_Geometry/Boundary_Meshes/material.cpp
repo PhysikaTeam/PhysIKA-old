@@ -1,6 +1,6 @@
 /*
  * @file material.cpp 
- * @brief material of 3d surface mesh
+ * @brief material of 3d surface mesh and 2d polygon
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,12 +12,12 @@
  *
  */
 
-#include "Physika_Geometry/Surface_Mesh/material.h"
+#include "Physika_Geometry/Boundary_Meshes/material.h"
 using std::string;
 
 namespace Physika{
 
-namespace SurfaceMeshInternal{
+namespace BoundaryMeshInternal{
 
 template <typename Scalar>
 Material<Scalar>::Material()
@@ -30,9 +30,29 @@ Material<Scalar>::~Material()
 }
 
 template <typename Scalar>
-Material<Scalar>::Material(const string &name, const Vector<Scalar,3> &Ka, const Vector<Scalar,3> &Kd, const Vector<Scalar,3> &Ks, Scalar shininess, const string &texture_file_name)
+Material<Scalar>::Material(const string &name, const Vector<Scalar,3> &Ka, const Vector<Scalar,3> &Kd,
+                           const Vector<Scalar,3> &Ks, Scalar shininess, const string &texture_file_name)
     :name_(name),Ka_(Ka),Kd_(Kd),Ks_(Ks),shininess_(shininess),texture_file_name_(texture_file_name)
 {
+}
+
+template <typename Scalar>
+Material<Scalar>::Material(const Material<Scalar> &material)
+    :name_(material.name_),Ka_(material.Ka_),Kd_(material.Kd_),Ks_(material.Ks_),
+     shininess_(material.shininess_),texture_file_name_(material.texture_file_name_)
+{
+}
+
+template <typename Scalar>
+Material<Scalar>& Material<Scalar>::operator= (const Material<Scalar> &material)
+{
+    name_ = material.name_;
+    Ka_ = material.Ka_;
+    Kd_ = material.Kd_;
+    Ks_ = material.Ks_;
+    shininess_ = material.shininess_;
+    texture_file_name_ = material.texture_file_name_;
+    return *this;
 }
 
 template <typename Scalar>
@@ -48,7 +68,7 @@ void Material<Scalar>::setName(const string &name)
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& Material<Scalar>::Ka() const
+Vector<Scalar,3> Material<Scalar>::Ka() const
 {
     return Ka_;
 }
@@ -60,7 +80,7 @@ void Material<Scalar>::setKa(const Vector<Scalar,3> &Ka)
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& Material<Scalar>::Kd() const
+Vector<Scalar,3> Material<Scalar>::Kd() const
 {
     return Kd_;
 }
@@ -72,7 +92,7 @@ void Material<Scalar>::setKd(const Vector<Scalar,3> &Kd)
 }
 
 template <typename Scalar>
-const Vector<Scalar,3>& Material<Scalar>::Ks() const
+Vector<Scalar,3> Material<Scalar>::Ks() const
 {
     return Ks_;
 }
@@ -129,6 +149,6 @@ void Material<Scalar>::setTextureFileName(const string &texture_file_name)
 template class Material<float>;
 template class Material<double>;
 
-} //end of namespace SurfaceMeshInternal
+} //end of namespace BoundaryMeshInternal
 
 } //end of namespace Physika

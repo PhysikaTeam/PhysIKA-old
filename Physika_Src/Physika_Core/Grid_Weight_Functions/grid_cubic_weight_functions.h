@@ -23,6 +23,7 @@ namespace Physika{
 
 /*
  * GridPiecewiseCubicSpline: dyadic product of 1D piece-wise cubic spline
+ * Support radius: 2 grid cell
  */
 
 template <typename Scalar, int Dim>
@@ -31,9 +32,10 @@ class GridPiecewiseCubicSpline: public GridWeightFunction<Scalar,Dim>
 public:
     GridPiecewiseCubicSpline(){}
     ~GridPiecewiseCubicSpline(){}
-    Scalar weight(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const;
-    Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const;
+    Scalar weight(const Vector<Scalar,Dim> &center_to_x) const;
+    Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x) const;
     void printInfo() const;
+    Scalar supportRadius() const;
 };
 
 } //end of namespace Physika

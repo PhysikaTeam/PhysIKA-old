@@ -30,7 +30,7 @@ public:
     Plane(const Vector<Scalar,3> &x1, const Vector<Scalar,3> &x2, const Vector<Scalar,3> &x3);
     ~Plane();
     void printInfo() const;
-    const Vector<Scalar,3>& normal() const;
+    Vector<Scalar,3> normal() const;
     Scalar distance(const Vector<Scalar,3> &point) const;  //distance of given point to the plane
     Scalar signedDistance(const Vector<Scalar,3> &point) const; //signed distance of given point to the plane (consider plane direction)
 protected:

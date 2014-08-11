@@ -16,6 +16,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Range/range.h"
+#include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
 #include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 
 namespace Physika{
@@ -23,10 +24,10 @@ namespace Physika{
 template <typename Scalar, int Dim>
 UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::
 UniformGridWeightFunctionInfluenceIterator(const Grid<Scalar,Dim> &grid, const Vector<Scalar,Dim> &influence_center,
-                                           const Vector<Scalar,Dim> &influence_radius_scale)
+                                           const GridWeightFunction<Scalar,Dim> &weight_function)
  :grid_(&grid)
 {
-    initNodeIdxGrid(influence_center,influence_radius_scale);
+    initNodeIdxGrid(influence_center,weight_function.supportRadius());
     node_iter_ = node_idx_grid_.nodeBegin();
 }
 
@@ -97,14 +98,23 @@ Vector<unsigned int,Dim> UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>:
 }
 
 template <typename Scalar, int Dim>
-void UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::initNodeIdxGrid(const Vector<Scalar,Dim> &influence_center,
-                                                                                 const Vector<Scalar,Dim> &influence_radius_scale)
+void UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::initNodeIdxGrid(const Vector<Scalar,Dim> &influence_center, Scalar influence_radius_scale)
 {
     Vector<Scalar,Dim> influence_radius, cell_dx = grid_->dX();
     for(unsigned int i = 0; i < Dim; ++i)
-        influence_radius[i] = cell_dx[i]*influence_radius_scale[i];
+        influence_radius[i] = cell_dx[i]*influence_radius_scale;
     Vector<Scalar,Dim> influence_domain_min_corner = influence_center - influence_radius;
     Vector<Scalar,Dim> influence_domain_max_corner = influence_center + influence_radius;
+    Vector<Scalar,Dim> grid_min_corner = grid_->minCorner();
+    Vector<Scalar,Dim> grid_max_corner = grid_->maxCorner();
+    //clamp to grid boundary if out of range
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        if(influence_domain_min_corner[i]<grid_min_corner[i])
+            influence_domain_min_corner[i] = grid_min_corner[i];
+        if(influence_domain_max_corner[i]>grid_max_corner[i])
+            influence_domain_max_corner[i] = grid_max_corner[i];
+    }
     Vector<unsigned int,Dim> cell_idx;
     Vector<Scalar,Dim> weight;
     Range<unsigned int,Dim> node_idx_range;

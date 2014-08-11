@@ -1,6 +1,6 @@
 /*
  * @file vertex.h 
- * @brief vertex of 3d surface mesh
+ * @brief vertex of 3d surface mesh and 2d polygon
  *        position does not uniquely determine vertex, 2 vertices could have identical positions
  * @author Fei Zhu
  * 
@@ -13,12 +13,12 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_SURFACE_MESH_VERTEX_H_
-#define PHYSIKA_GEOMETRY_SURFACE_MESH_VERTEX_H_
+#ifndef PHYSIKA_GEOMETRY_BOUNDARY_MESHES_VERTEX_H_
+#define PHYSIKA_GEOMETRY_BOUNDARY_MESHES_VERTEX_H_
 
 namespace Physika{
 
-namespace SurfaceMeshInternal{
+namespace BoundaryMeshInternal{
 
 template <typename Scalar>
 class Vertex
@@ -48,26 +48,8 @@ protected:
     bool has_texture_;
 };
 
-} //end of namespace SurfaceMeshInternal
+} //end of namespace BoundaryMeshInternal
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_GEOMETRY_SURFACE_MESH_VERTEX_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif //PHYSIKA_GEOMETRY_BOUNDARY_MESHES_VERTEX_H_

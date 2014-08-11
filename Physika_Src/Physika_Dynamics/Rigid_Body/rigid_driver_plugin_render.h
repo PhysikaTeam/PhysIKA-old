@@ -78,7 +78,7 @@ public:
     void enableRenderContactNormalAll();
     void disableRenderContactNormalAll();
 
-    void setNormalLength(Scalar normal_lenth);
+    void setNormalLength(Scalar normal_length);
 
     void saveScreen(std::string& base_file_name, unsigned int interval);//save the screen with file "name base_file_name + step" per interval steps
 

@@ -68,8 +68,8 @@ public:
 
 	//inherit functions
     void initConfiguration(const std::string &file_name);
-	void run();//run the simulation from start frame to end frame
-	void advanceFrame();//advance one frame
+    void printConfigFileFormat();
+    void initSimulationData();
 	void advanceStep(Scalar dt);//advance one time step
 	Scalar computeTimeStep();//compute time step with respect to simulation specific conditions
     bool withRestartSupport() const; //indicate wheter restart is supported in implementation
@@ -91,10 +91,6 @@ public:
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
 protected:
-
-    //inherit function
-    void initialize();//initialize before the simulation
-
     //dynamics
     virtual void performGravity(Scalar dt);
     virtual bool collisionDetection();
@@ -105,7 +101,6 @@ protected:
     CollisionDetectionMethod<Scalar, Dim>* collision_detection_method_;
     RigidResponseMethod<Scalar, Dim>* collision_response_method_;
     Scalar gravity_;
-    unsigned int frame_;
     unsigned int step_;
 
 };

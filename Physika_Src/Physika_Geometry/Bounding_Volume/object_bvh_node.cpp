@@ -18,7 +18,7 @@
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_octagon.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
 

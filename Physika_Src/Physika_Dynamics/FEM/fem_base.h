@@ -46,6 +46,8 @@ public:
 
     //virtual methods for subclass to implement
     virtual void initConfiguration(const std::string &file_name)=0;
+    virtual void printConfigFileFormat()=0;
+    virtual void initSimulationData()=0;
     virtual void advanceStep(Scalar dt)=0;
     virtual Scalar computeTimeStep()=0;
     virtual bool withRestartSupport() const=0;
@@ -72,7 +74,6 @@ public:
     void setVertexVelocity(unsigned int vert_idx, const Vector<Scalar,Dim> &v);
     void resetVertexVelocity();
 protected:
-    virtual void initialize()=0;
     void synchronizeDataWithSimulationMesh();  //synchronize related data when simulation mesh is changed (dimension of displacement vector, etc.)
     SquareMatrix<Scalar,Dim> deformationGradient(unsigned int ele_idx) const;  //compute the deformation gradient of given element, constant strain element
     void computeReferenceShapeMatrixInverse();  //compute the inverse of the reference shape matrix for each element, precomputation for deformation gradient

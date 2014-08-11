@@ -15,26 +15,27 @@
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_cubic_weight_functions.h"
+#include "Physika_Dynamics/MPM/MPM_Plugins/mpm_plugin_base.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase()
-    :DriverBase<Scalar>(), weight_function_(NULL), weight_radius_cell_scale_(1.0), step_method_(NULL),
-     cfl_num_(0.5),sound_speed_(340.0)
+    :DriverBase<Scalar>(), weight_function_(NULL), step_method_(NULL),
+     cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
-    setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(Vector<Scalar,Dim>(2.0)); 
+    setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(); 
 }
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL), weight_radius_cell_scale_(1.0),
-     step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0)
+    :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL),
+     step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
-    setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(Vector<Scalar,Dim>(2.0)); 
+    setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(); 
 }
 
 template <typename Scalar, int Dim>
@@ -59,8 +60,26 @@ Scalar MPMBase<Scalar,Dim>::computeTimeStep()
 template <typename Scalar, int Dim>
 void MPMBase<Scalar,Dim>::advanceStep(Scalar dt)
 {
+    //plugin operation, begin time step
+    MPMPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onBeginTimeStep(this->time_,dt);
+    }
+
     PHYSIKA_ASSERT(this->step_method_);
     this->step_method_->advanceStep(dt);
+    this->time_ += dt;
+
+    //plugin operation, end time step
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onEndTimeStep(this->time_,dt);
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -92,11 +111,29 @@ void MPMBase<Scalar,Dim>::setSoundSpeed(Scalar sound_speed)
 {
     if(sound_speed<0)
     {
-        std::cerr<<"Warning: Invalid sound speed specified, use default value (340m/s) instead!\n";
-        sound_speed_ = 340.0;
+        std::cerr<<"Warning: Negative sound speed specified, use its absolute value instead!\n";
+        sound_speed_ = -sound_speed;
     }
     else
         sound_speed_ = sound_speed;
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMBase<Scalar,Dim>::gravity() const
+{
+    return gravity_;
+}
+
+template <typename Scalar, int Dim>
+void MPMBase<Scalar,Dim>::setGravity(Scalar gravity)
+{
+    if(gravity<0)
+    {
+        std::cerr<<"Warning: Negative gravity specified, use its absolute value instead!\n";
+        gravity_ = -gravity;
+    }
+    else
+        gravity_ = gravity;
 }
 
 //explicit instantiations

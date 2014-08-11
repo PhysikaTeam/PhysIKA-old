@@ -14,7 +14,7 @@
 
 #include "Physika_Dynamics/Rigid_Body/rigid_body.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_3d.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 
