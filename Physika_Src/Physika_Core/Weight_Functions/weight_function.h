@@ -38,6 +38,7 @@ namespace Physika{
  * 5. monotonically decreasing with larger distance
  * 6. etc
  *
+ * WeightFunction is frequently used in particle-based approximation methods, e.g., SPH
  */
 
 

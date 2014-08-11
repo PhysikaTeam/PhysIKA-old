@@ -12,12 +12,18 @@
  *
  */
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <GL/gl.h>
 #include <GL/freeglut.h>
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
+#include "Physika_Render/Point_Render/point_render.h"
+#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
+#include "Physika_Render/Color/color.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_render.h"
 
@@ -30,7 +36,8 @@ template <typename Scalar, int Dim>
 MPMSolidPluginRender<Scalar,Dim>::MPMSolidPluginRender()
     :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),
      render_particle_(true),render_grid_(true),
-     render_particle_velocity_(false),render_grid_velocity_(false)
+     render_particle_velocity_(false),render_grid_velocity_(false),
+     particle_render_mode_(0),velocity_scale_(1.0)
 {
     activateCurrentInstance();
 }
@@ -152,6 +159,11 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::idleFunction(void)
 {
 //TO DO
+    PHYSIKA_ASSERT(active_instance_);
+    MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
+    PHYSIKA_ASSERT(driver);
+    Scalar dt = driver->computeTimeStep();
+    driver->advanceStep(dt);
     glutPostRedisplay();
 }
 
@@ -174,7 +186,7 @@ void MPMSolidPluginRender<Scalar,Dim>::displayFunction(void)
         active_instance_->renderParticleVelocity();
     if(active_instance_->render_grid_velocity_)
         active_instance_->renderGridVelocity();
-    window->disableDisplayFrameRate();
+    window->displayFrameRate();
     glutSwapBuffers();
 }
 
@@ -199,6 +211,15 @@ void MPMSolidPluginRender<Scalar,Dim>::keyboardFunction(unsigned char key, int x
     case 'G':
         active_instance_->render_grid_velocity_ = !(active_instance_->render_grid_velocity_);
         break;
+    case 'i':
+        active_instance_->velocity_scale_ *= 2.0;
+        break;
+    case 'd':
+        active_instance_->velocity_scale_ /= 2.0;
+        break;
+    case 'm':
+        active_instance_->particle_render_mode_ = 1 - active_instance_->particle_render_mode_;
+        break;
     default:
         break;
     }
@@ -216,9 +237,22 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
     PHYSIKA_ASSERT(active_instance_);
     MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
     PHYSIKA_ASSERT(driver);
-    std::vector<SolidParticle<Scalar,Dim>*> particles;
-    driver->allParticles(particles);
-//TO DO
+    const std::vector<SolidParticle<Scalar,Dim>*> &all_particles = driver->allParticles();
+    Vector<Scalar,Dim> *particle_pos = new Vector<Scalar,Dim>[all_particles.size()];
+    for(unsigned int i = 0; i < all_particles.size(); ++i)
+        particle_pos[i] = all_particles[i]->position();
+    PointRender<Scalar,Dim> point_render(particle_pos,all_particles.size());
+    std::vector<Scalar> point_size(all_particles.size());
+    if(active_instance_->particle_render_mode_ == 0)
+        point_render.setRenderAsPoint();
+    else
+    {
+        point_render.setRenderAsSphere();
+        for(unsigned int i = 0; i < point_size.size(); ++i)
+            point_size[i] = (Dim==2) ? sqrt(all_particles[i]->volume()/(4.0*PI)) : pow(all_particles[i]->volume()*3/(4*PI),1.0/3.0);
+    }
+    point_render.render();
+    delete[] particle_pos;
 }
 
 template <typename Scalar, int Dim>
@@ -230,7 +264,20 @@ void MPMSolidPluginRender<Scalar,Dim>::renderGrid()
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::renderParticleVelocity()
 {
-//TO DO
+    PHYSIKA_ASSERT(active_instance_);
+    MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
+    PHYSIKA_ASSERT(driver);
+    for(unsigned int i = 0; i < driver->particleNum(); ++i)
+    {
+        const SolidParticle<Scalar,Dim>& particle = driver->particle(i);
+        Vector<Scalar,Dim> start = particle.position();
+        Vector<Scalar,Dim> end = start + (active_instance_->velocity_scale_)*particle.velocity();
+        glBegin(GL_LINES);
+        openGLColor3(Color<Scalar>::Red());
+        openGLVertex(start);
+        openGLVertex(end);
+        glEnd();
+    }
 }
 
 template <typename Scalar, int Dim>

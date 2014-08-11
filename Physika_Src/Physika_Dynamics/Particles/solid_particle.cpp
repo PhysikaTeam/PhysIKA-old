@@ -50,9 +50,12 @@ SolidParticle<Scalar,Dim>::SolidParticle(const Vector<Scalar,Dim> &pos, const Ve
 
 template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>::SolidParticle(const SolidParticle<Scalar,Dim> &particle)
-    :Particle<Scalar,Dim>(particle), F_(particle.F_)
+    :Particle<Scalar,Dim>(particle), F_(particle.F_),constitutive_model_(NULL)
 {
-    setConstitutiveModel(*(particle.constitutive_model_));
+    if(particle.constitutive_model_)
+        setConstitutiveModel(*(particle.constitutive_model_));
+    else
+        constitutive_model_ = NULL;
 }
 
 template <typename Scalar, int Dim>
@@ -73,7 +76,10 @@ SolidParticle<Scalar,Dim>& SolidParticle<Scalar,Dim>::operator= (const SolidPart
 {
     Particle<Scalar,Dim>::operator= (particle);
     F_ = particle.F_;
-    setConstitutiveModel(*(particle.constitutive_model_));
+    if(particle.constitutive_model_)
+        setConstitutiveModel(*(particle.constitutive_model_));
+    else
+        constitutive_model_ = NULL;
     return *this;
 }
 

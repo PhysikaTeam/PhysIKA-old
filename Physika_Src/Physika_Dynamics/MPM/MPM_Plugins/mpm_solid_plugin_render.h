@@ -74,6 +74,9 @@ protected:
     bool render_grid_;
     bool render_particle_velocity_;
     bool render_grid_velocity_;
+    unsigned int particle_render_mode_;  // 0: particle rendered as point; otherwise: particle rendered as sphere
+    //for render velocities
+    Scalar velocity_scale_;
 };
 
 }  //end of namespace Physika

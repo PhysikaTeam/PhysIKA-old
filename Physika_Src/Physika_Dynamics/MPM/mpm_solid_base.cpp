@@ -123,14 +123,9 @@ SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int parti
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidBase<Scalar,Dim>::allParticles(std::vector<SolidParticle<Scalar,Dim>*> &particles)
+const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allParticles() const
 {
-    particles.resize(particles_.size());
-    for(unsigned i = 0; i < particles_.size(); ++i)
-    {
-        SolidParticle<Scalar,Dim> *particle_copy = particles_[i]->clone();
-        particles[i] = particle_copy;
-    }
+    return particles_;
 }
 
 template <typename Scalar, int Dim>

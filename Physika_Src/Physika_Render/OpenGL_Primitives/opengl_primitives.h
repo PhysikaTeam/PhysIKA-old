@@ -159,9 +159,18 @@ inline void openGLMaterialv(GLenum face, GLenum pname, const int *param)
 }
 
 /*
+ * openGLTranslate(const Vector<Scalar,2> &):
  * openGLTranslate(const Vector<Scalar,3> &):
  * replacement for glTranslatef, glTranslated
  */
+inline void openGLTranslate(const Vector<float,2> &vec)
+{
+    glTranslatef(vec[0],vec[1],0);
+}
+inline void openGLTranslate(const Vector<double,2> &vec)
+{
+    glTranslated(vec[0],vec[1],0);
+}
 inline void openGLTranslate(const Vector<float,3> &vec)
 {
     glTranslatef(vec[0],vec[1],vec[2]);

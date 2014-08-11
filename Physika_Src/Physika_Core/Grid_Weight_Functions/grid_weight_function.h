@@ -24,9 +24,14 @@ namespace Physika{
  * GridWeightFunction: Base class of grid-based weight functions,
  * i.e., weight functions whose support domain is a rectangle in 2D
  * and a cuboid in 3D. It is constructed via dyadic product of weight functions
- * in 1D.
+ * in 1D, with some scaling to satisfy partition of unity.
  *
  * These weight functions are used in methods that involve cartesian grids.
+ *
+ * GridWeightFunction satisfies partion of unity, i.e., sum_i f_i(x) = 1
+ * where i is the grid nodes that has influence on position x.
+ *
+ * Note: center_to_x is represented as multiples of cell edge lengths.
  *
  */
 
@@ -36,9 +41,10 @@ class GridWeightFunction
 public:
     GridWeightFunction(){}
     virtual ~GridWeightFunction(){}
-    virtual Scalar weight(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const=0;
-    virtual Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x, const Vector<Scalar,Dim> &support_radius) const=0;
+    virtual Scalar weight(const Vector<Scalar,Dim> &center_to_x) const=0;
+    virtual Vector<Scalar,Dim> gradient(const Vector<Scalar,Dim> &center_to_x) const=0;
     virtual void printInfo() const=0;
+    virtual Scalar supportRadius() const=0; //return the support radius, the unit is the cell size
 
     typedef Scalar ScalarType;
     static const int DimSize = Dim;

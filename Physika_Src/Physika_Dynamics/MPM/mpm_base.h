@@ -58,7 +58,7 @@ public:
     //set the type of weight function with weight function type as template,
     //the scale between support domain and cell size is the method parameter
     template <typename GridWeightFunctionType>
-    void setWeightFunction(const Vector<Scalar,Dim> &radius_cell_scale);
+    void setWeightFunction();
     //set the step method with the step method type as template
     template <typename MPMStepMethodType>
     void setStepMethod();
@@ -68,7 +68,6 @@ protected:
     virtual void applyGravityOnGrid(Scalar dt) = 0;
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
-    Vector<Scalar,Dim> weight_radius_cell_scale_; // radius of the weight function's influence domain is multiple times cell size
     MPMStepMethod<Scalar,Dim> *step_method_;
     //time step computation with CFL condition
     Scalar cfl_num_;
@@ -79,12 +78,11 @@ protected:
 
 template <typename Scalar, int Dim>
 template <typename GridWeightFunctionType>
-void MPMBase<Scalar,Dim>::setWeightFunction(const Vector<Scalar,Dim> &radius_cell_scale)
+void MPMBase<Scalar,Dim>::setWeightFunction()
 {
     if(weight_function_)
         delete weight_function_;
     weight_function_ = GridWeightFunctionCreator<GridWeightFunctionType>::createGridWeightFunction();
-    weight_radius_cell_scale_ = radius_cell_scale;
 }
 
 template <typename Scalar, int Dim>

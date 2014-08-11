@@ -79,7 +79,6 @@ void DriverBase<Scalar>::advanceFrame(unsigned int frame)
         }
         //advance step
         advanceStep(dt_);
-        time_+=dt_;
     }
     std::cout<<"End Frame "<<frame<<" ";
     //timer and plugin endFrame()
