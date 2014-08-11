@@ -36,31 +36,26 @@ template <typename Scalar,int Dim>
 GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, unsigned int cell_num)
     :domain_(domain)
 {
-    if(cell_num == 0)
-    {
-        std::cerr<<"Error: grid cell number must be greator than zero, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
     cell_num_ = Vector<unsigned int,Dim>(cell_num);
-    dx_ = domain_.edgeLengths()/cell_num;
+    if(cell_num>0)
+        dx_ = domain_.edgeLengths()/cell_num;
+    else
+        dx_ = Vector<Scalar,Dim>(0);
 }
 
 template <typename Scalar,int Dim>
 GridBase<Scalar,Dim>::GridBase(const Range<Scalar,Dim> &domain, const Vector<unsigned int,Dim> &cell_num)
     :domain_(domain)
 {
-    for(unsigned int i = 0; i < Dim; ++i)
-    {
-        if(cell_num[i] == 0)
-        {
-            std::cerr<<"Error: grid cell number must be greator than zero, program abort!\n";
-            std::exit(EXIT_FAILURE);
-        }
-    }
     cell_num_ = cell_num;
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(unsigned int i = 0; i < Dim; ++i)
-        dx_[i] = domain_size[i]/cell_num_[i];
+    {
+        if(cell_num_[i]>0)
+            dx_[i] = domain_size[i]/cell_num_[i];
+        else
+            dx_[i] = 0;
+    }
 }
 
 template <typename Scalar,int Dim>
@@ -259,57 +254,49 @@ void GridBase<Scalar,Dim>::cellIndexAndInterpolationWeight(const Vector<Scalar,D
 template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setCellNum(unsigned int cell_num)
 {
-    if(cell_num == 0)
-    {
-        std::cerr<<"Error: grid cell number must be greator than zero, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
     cell_num_ = Vector<unsigned int,Dim>(cell_num);
-    dx_ = domain_.edgeLengths()/cell_num;
+    if(cell_num>0)
+        dx_ = domain_.edgeLengths()/cell_num;
+    else
+        dx_ = Vector<Scalar,Dim>(0);
 }
 
 template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setCellNum(const Vector<unsigned int,Dim> &cell_num)
 {
-    for(unsigned int i = 0; i < Dim; ++i)
-    {
-        if(cell_num[i]==0)
-        {
-            std::cerr<<"Error: Cell number of a grid must be greater than zero, program abort!\n";
-            std::exit(EXIT_FAILURE);
-        }
-    }
     cell_num_ = cell_num;
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(unsigned int i = 0; i < Dim; ++i)
-        dx_[i] = domain_size[i]/cell_num_[i];
+    {
+        if(cell_num_[i]>0)
+            dx_[i] = domain_size[i]/cell_num_[i];
+        else
+            dx_[i] = 0;
+    }
 }
 
 template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setNodeNum(unsigned int node_num)
 {
-    if(node_num<2)
-    {
-        std::cerr<<"Error: Node number of a grid must be greater than 1, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
     cell_num_ = Vector<unsigned int,Dim>(node_num-1);
-    dx_ = domain_.edgeLengths()/(node_num-1);
+    if(node_num-1>0)
+        dx_ = domain_.edgeLengths()/(node_num-1);
+    else
+        dx_ = Vector<Scalar,Dim>(0);
 }
 
 template <typename Scalar,int Dim>
 void GridBase<Scalar,Dim>::setNodeNum(const Vector<unsigned int,Dim> &node_num)
 {
-    for(unsigned int i = 0; i < Dim; ++i)
-        if(node_num[i]<2)
-        {
-            std::cerr<<"Error: Node number of a grid must be greater than 1, program abort!\n";
-            std::exit(EXIT_FAILURE);
-        }
     cell_num_ = node_num-Vector<unsigned int,Dim>(1);
     Vector<Scalar,Dim> domain_size = domain_.edgeLengths();
     for(unsigned int i = 0; i < Dim; ++i)
-        dx_[i] = domain_size[i]/cell_num_[i];
+    {
+        if(cell_num_[i]>0)
+            dx_[i] = domain_size[i]/cell_num_[i];
+        else
+            dx_[i] = 0;
+    }
 }
 
 template <typename Scalar,int Dim>
@@ -322,10 +309,7 @@ void GridBase<Scalar,Dim>::setDomain(const Range<Scalar,Dim> &domain)
         if(cell_num_[i]>0)
             dx_[i] = domain_size[i]/cell_num_[i];
         else
-        {
-            cell_num_[i] = 1;
-            dx_[i] = domain_size[i];
-        }
+            dx_[i] = 0;
     }
 }
 

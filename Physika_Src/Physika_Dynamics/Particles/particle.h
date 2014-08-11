@@ -43,12 +43,14 @@ public:
     Scalar mass() const;
     void setVolume(Scalar);
     Scalar volume() const;
+    Scalar initialVolume() const;
 
 protected:
     Vector<Scalar,Dim> x_;
     Vector<Scalar,Dim> v_;
     Scalar m_;
     Scalar vol_;
+    Scalar ref_vol_; //initial volume
 };
 
 }  //end of namespace Physika
