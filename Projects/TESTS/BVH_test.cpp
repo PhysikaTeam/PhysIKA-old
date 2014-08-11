@@ -46,6 +46,7 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_render.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_print.h"
+#include "Physika_Dynamics/Rigid_Body/rigid_driver_plugin_motion.h"
 
 using namespace std;
 using namespace Physika;
@@ -150,6 +151,12 @@ int main()
     RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
     driver.addPlugin(print_plugin);
 
+    RigidDriverPluginMotion<double>* motion_plugin = new RigidDriverPluginMotion<double>();
+    driver.addPlugin(motion_plugin);
+    motion_plugin->setConstantTranslation(object, Vector<double, 3>(2, 0, 0));
+    motion_plugin->setConstantRotation(object, Vector<double, 3>(0, 0.4, 0));
+    motion_plugin->setPeriodTranslation(object, Vector<double, 3>(15, 0, 0), 2);
+    motion_plugin->setPeriodRotation(object, Vector<double, 3>(1, 0, 0), 1);
 
     glut_window.createWindow();
 

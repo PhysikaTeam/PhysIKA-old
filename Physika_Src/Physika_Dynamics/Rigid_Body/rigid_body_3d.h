@@ -74,7 +74,7 @@ public:
     inline void setGlobalAngularVelocity(const Vector<Scalar, 3>& velocity) {global_angular_velocity_ = velocity;};
 
     //dynamics
-    void update(Scalar dt);//update its configuration and velocity
+    void update(Scalar dt, bool is_force_update = false);//update its configuration and velocity. If is_force_update is true, velocity and configuration will be changed whether this body is fixed or not
     void addImpulse(Scalar magnitude, const Vector<Scalar, 3>& direction, const Vector<Scalar, 3>& global_position);//accumulate collision impulse to the rigid body. This will not change its velocity until velocityIntegral has been called
     void addTranslationImpulse(const Vector<Scalar, 3>& impulse);//This will not change its velocity until velocityIntegral has been called
     void addAngularImpulse(const Vector<Scalar, 3>& impulse);//This will not change its velocity until velocityIntegral has been called
@@ -92,7 +92,7 @@ protected:
     SurfaceMesh<Scalar>* mesh_;
     Transform<Scalar, 3> transform_;
     Scalar density_;
-    bool is_fixed_;
+    bool is_fixed_;//if fixed is true, this body will be treated as having infinite mass and will not affected by gravity. Generally speaking, fixed body doesn't move. But by calling update with is_force_update = true you can still change its motion status
     Scalar coeff_restitution_;
     Scalar coeff_friction_;
 
@@ -115,8 +115,8 @@ protected:
 
     //dynamics
     void resetTemporaryVariables();//prepare for the new time step
-    void velocityIntegral(Scalar dt);
-    void configurationIntegral(Scalar dt);
+    void velocityIntegral(Scalar dt, bool is_force_update);//if is_force_update is true, velocity will be changed whether this body is fixed or not
+    void configurationIntegral(Scalar dt, bool is_force_update);//if is_force_update is true, configuration will be changed whether this body is fixed or not
     void updateInertiaTensor();
     void recalculateTransform();//recalculate transform_ from global_translation_ and global_rotation_
     void recalculatePosition();//recalculate global_translation_ and global_rotation_ from transform_

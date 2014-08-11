@@ -168,10 +168,10 @@ void RigidBody<Scalar, 3>::setProperty(SurfaceMesh<Scalar>* mesh, const Transfor
 }
 
 template <typename Scalar>
-void RigidBody<Scalar, 3>::update(Scalar dt)
+void RigidBody<Scalar, 3>::update(Scalar dt, bool is_force_update)
 {
-    velocityIntegral(dt);
-    configurationIntegral(dt);
+    velocityIntegral(dt, is_force_update);
+    configurationIntegral(dt, is_force_update);
     updateInertiaTensor();
     recalculateTransform();
     resetTemporaryVariables();
@@ -234,18 +234,18 @@ void RigidBody<Scalar, 3>::resetTemporaryVariables()
 }
 
 template <typename Scalar>
-void RigidBody<Scalar, 3>::velocityIntegral(Scalar dt)
+void RigidBody<Scalar, 3>::velocityIntegral(Scalar dt, bool is_force_update)
 {
-    if(is_fixed_)
+    if(is_fixed_ && !is_force_update)
         return;
     global_translation_velocity_ += global_translation_impulse_ / mass_;
     global_angular_velocity_ += spatialInertiaTensorInverse() * global_angular_impulse_;
 }
 
 template <typename Scalar>
-void RigidBody<Scalar, 3>::configurationIntegral(Scalar dt)
+void RigidBody<Scalar, 3>::configurationIntegral(Scalar dt, bool is_force_update)
 {
-    if(is_fixed_)
+    if(is_fixed_ && !is_force_update)
         return;
     global_translation_ += global_translation_velocity_ * dt;
     Quaternion<Scalar> quad;
