@@ -184,6 +184,7 @@ void MPMSolid<Scalar,Dim>::rasterize()
     {
         Vector<unsigned int,Dim> node_idx = active_grid_node_[i];
         grid_velocity_(node_idx) /= grid_mass_(node_idx);
+        grid_velocity_before_(node_idx) = grid_velocity_(node_idx); //buffer the grid velocity before any update
     }
 }
 
@@ -314,7 +315,7 @@ void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
         SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
         particle_deform_grad += dt*particle_vel_grad*particle_deform_grad;
         particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient
-        Scalar particle_vol = (particle_deform_grad.determinant())*(particle->volume());
+        Scalar particle_vol = (particle_deform_grad.determinant())*(particle->initialVolume());
         particle->setVolume(particle_vol);  //update particle volume
     }
 }
@@ -332,18 +333,18 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
     }
 
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
-    //direct interpolate grid velocity to particle
+    //interpolate delata of grid velocity to particle
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> particle_pos = particle->position();
-        Vector<Scalar,Dim> new_vel(0);
+        Vector<Scalar,Dim> new_vel = particle->velocity();
         unsigned int j = 0;
         for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
-        {
+        {            
             Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
             Scalar weight = this->particle_grid_weight_[i][j]; 
-            new_vel += weight*grid_velocity_(node_idx);
+            new_vel += weight*(grid_velocity_(node_idx)-grid_velocity_before_(node_idx));
         }
         particle->setVelocity(new_vel);
     }
@@ -378,6 +379,7 @@ void MPMSolid<Scalar,Dim>::synchronizeGridData()
     {
         grid_mass_.resize(node_num[i],i);
         grid_velocity_.resize(node_num[i],i);
+        grid_velocity_before_.resize(node_num[i],i);
     }
 }
 
@@ -388,11 +390,9 @@ void MPMSolid<Scalar,Dim>::resetGridData()
     for(typename Grid<Scalar,Dim>::NodeIterator iter = grid_.nodeBegin(); iter != grid_.nodeEnd(); ++iter)
     {
         Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
-        std::vector<unsigned int> node_idx_vec;
-        for(unsigned int i = 0; i < Dim; ++i)
-            node_idx_vec.push_back(node_idx[i]);
-        grid_mass_(node_idx_vec) = 0;
-        grid_velocity_(node_idx_vec) = Vector<Scalar,Dim>(0);
+        grid_mass_(node_idx) = 0;
+        grid_velocity_(node_idx) = Vector<Scalar,Dim>(0);
+        grid_velocity_before_(node_idx) = Vector<Scalar,Dim>(0);
     }
 }
 

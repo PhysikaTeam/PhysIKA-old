@@ -69,6 +69,8 @@ protected:
 protected:
     GlutWindow *window_;
     static MPMSolidPluginRender<Scalar,Dim> *active_instance_;  //current active instance
+    //pause
+    bool pause_simulation_;
     //render switch
     bool render_particle_;
     bool render_grid_;

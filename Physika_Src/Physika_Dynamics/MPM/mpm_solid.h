@@ -79,7 +79,8 @@ protected:
     //grid data stored on grid nodes
     std::vector<Vector<unsigned int,Dim> > active_grid_node_; //index of the grid nodes that is active
     ArrayND<Scalar,Dim> grid_mass_;
-    ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_;
+    ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_; //current grid velocity
+    ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_before_; //grid velocity before any solve update
 };
 
 }  //end of namespace Physika
