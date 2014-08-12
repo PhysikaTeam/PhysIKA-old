@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_MPM_PLUGINS_MPM_SOLID_PLUGIN_RENDER_H_
 #define PHYSIKA_DYNAMICS_MPM_MPM_PLUGINS_MPM_SOLID_PLUGIN_RENDER_H_
 
+#include "Physika_Core/Timer/timer.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 
@@ -23,7 +24,8 @@ namespace Physika{
 class GlutWindow;
 
 /*
- *
+ * MPMSolidPluginRender: plugin that provides a real-time window
+ * for MPMSolid
  */
 
 template <typename Scalar, int Dim>
@@ -69,6 +71,10 @@ protected:
 protected:
     GlutWindow *window_;
     static MPMSolidPluginRender<Scalar,Dim> *active_instance_;  //current active instance
+    //pause
+    bool pause_simulation_;
+    //determine if simulation is finished (e.g., max frame is reached)
+    bool simulation_finished_;
     //render switch
     bool render_particle_;
     bool render_grid_;
@@ -77,6 +83,10 @@ protected:
     unsigned int particle_render_mode_;  // 0: particle rendered as point; otherwise: particle rendered as sphere
     //for render velocities
     Scalar velocity_scale_;
+    //screen capture switch
+    bool auto_capture_frame_; //screen capture each frame's screen
+    //timer to compute timing information of simulation
+    Timer timer_;  
 };
 
 }  //end of namespace Physika

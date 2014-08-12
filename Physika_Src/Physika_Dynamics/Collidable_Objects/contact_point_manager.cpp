@@ -155,9 +155,10 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         {
             if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], temp_overlap_point))
             {
+                Vector<Scalar,3> mesh_rhs_face_normal = collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx());
                 ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectLhsIdx(), collision_pair->objectRhsIdx(),
                     *dynamic_cast<Vector<Scalar, Dim>*>(&temp_overlap_point), 
-                    *dynamic_cast<Vector<Scalar, Dim>*>(&collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx())) * (-1));
+                    *dynamic_cast<Vector<Scalar, Dim>*>(&mesh_rhs_face_normal) * (-1));
                 contact_points_.push_back(contact_point);
                 //num_overlap++;
                 //overlap_point += temp_overlap_point;
@@ -180,9 +181,10 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
         {
             if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], temp_overlap_point))
             {
+                Vector<Scalar,3> mesh_lhs_face_normal = collision_pair->meshObjectLhs()->faceNormal(collision_pair->faceLhsIdx());
                 ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectRhsIdx(), collision_pair->objectLhsIdx(),
                     *dynamic_cast<Vector<Scalar, Dim>*>(&temp_overlap_point), 
-                    *dynamic_cast<Vector<Scalar, Dim>*>(&collision_pair->meshObjectLhs()->faceNormal(collision_pair->faceLhsIdx())) * (-1));
+                    *dynamic_cast<Vector<Scalar, Dim>*>(&mesh_lhs_face_normal) * (-1));
                 contact_points_.push_back(contact_point);
                 //num_overlap++;
                 //overlap_point += temp_overlap_point;

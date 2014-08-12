@@ -183,7 +183,7 @@ void RigidDriverPluginMotion<Scalar>::onBeginRigidStep(unsigned int step, Scalar
 template <typename Scalar>
 void RigidDriverPluginMotion<Scalar>::onEndRigidStep(unsigned int step, Scalar dt)
 {
-    std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
+    typename std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
     for(map_itr = customized_motions_.begin(); map_itr != customized_motions_.end(); map_itr++)
     {
         (map_itr->second).update(dt, time_);
@@ -212,7 +212,7 @@ void RigidDriverPluginMotion<Scalar>::onEndCollisionDetection()
 template <typename Scalar>
 void RigidDriverPluginMotion<Scalar>::setConstantTranslation(RigidBody<Scalar, 3>* rigid_body, const Vector<Scalar, 3>& velocity)
 {
-    std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
+    typename std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
     map_itr = customized_motions_.find(rigid_body);
     if(map_itr == customized_motions_.end())
     {
@@ -231,7 +231,7 @@ void RigidDriverPluginMotion<Scalar>::setConstantTranslation(RigidBody<Scalar, 3
 template <typename Scalar>
 void RigidDriverPluginMotion<Scalar>::setConstantRotation(RigidBody<Scalar, 3>* rigid_body, const Vector<Scalar, 3>& velocity)
 {
-    std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
+    typename std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
     map_itr = customized_motions_.find(rigid_body);
     if(map_itr == customized_motions_.end())
     {
@@ -250,7 +250,7 @@ void RigidDriverPluginMotion<Scalar>::setConstantRotation(RigidBody<Scalar, 3>* 
 template <typename Scalar>
 void RigidDriverPluginMotion<Scalar>::setPeriodTranslation(RigidBody<Scalar, 3>* rigid_body, const Vector<Scalar, 3>& velocity, Scalar period)
 {
-    std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
+    typename std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
     map_itr = customized_motions_.find(rigid_body);
     if(map_itr == customized_motions_.end())
     {
@@ -269,7 +269,7 @@ void RigidDriverPluginMotion<Scalar>::setPeriodTranslation(RigidBody<Scalar, 3>*
 template <typename Scalar>
 void RigidDriverPluginMotion<Scalar>::setPeriodRotation(RigidBody<Scalar, 3>* rigid_body, const Vector<Scalar, 3>& velocity, Scalar period)
 {
-    std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
+    typename std::map<RigidBody<Scalar, 3>*, RigidPluginMotionCustomization<Scalar> >::iterator map_itr;
     map_itr = customized_motions_.find(rigid_body);
     if(map_itr == customized_motions_.end())
     {

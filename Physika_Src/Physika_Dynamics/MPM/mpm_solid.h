@@ -57,6 +57,11 @@ public:
     void setGrid(const Grid<Scalar,Dim> &grid);
     Scalar gridMass(const Vector<unsigned int,Dim> &node_idx) const;
     Vector<Scalar,Dim> gridVelocity(const Vector<unsigned int,Dim> &node_idx) const;
+    void setGridVelocity(const Vector<unsigned int,Dim> &node_idx, const Vector<Scalar,Dim> &node_velocity);
+    //grid nodes used as boundary condition, i.e., grid velocity are not updated internally, it's updated via preset condition
+    //velocity boundary condition is supported
+    void addBCGridNode(const Vector<unsigned int,Dim> &node_idx);  
+    void addBCGridNodes(const std::vector<Vector<unsigned int,Dim> > &node_idx);
 
     //substeps in one time step
     virtual void rasterize();
@@ -69,17 +74,19 @@ public:
     virtual void updateParticlePosition(Scalar dt);
 
 protected:
-    virtual void synchronizeGridData(); //synchronize grid data as data changes, e.g., size of grid_mass_
+    virtual void synchronizeGridData(); //synchronize grid data as grid changes, e.g., size of grid_mass_
     virtual void resetGridData();  //reset grid data to zero, needed before rasterize operation
     virtual Scalar minCellEdgeLength() const;
     virtual void applyGravityOnGrid(Scalar dt);
     bool isValidGridNodeIndex(const Vector<unsigned int,Dim> &node_idx) const;  //helper method, determine if input grid node index is valid
 protected:
     Grid<Scalar,Dim> grid_;
+    ArrayND<unsigned char,Dim> is_bc_grid_node_;  //for each grid node, use one byte to indicate whether it's set as boundary condition
     //grid data stored on grid nodes
     std::vector<Vector<unsigned int,Dim> > active_grid_node_; //index of the grid nodes that is active
     ArrayND<Scalar,Dim> grid_mass_;
-    ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_;
+    ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_; //current grid velocity
+    ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_before_; //grid velocity before any solve update
 };
 
 }  //end of namespace Physika

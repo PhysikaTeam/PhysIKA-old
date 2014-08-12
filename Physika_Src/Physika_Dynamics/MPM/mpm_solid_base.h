@@ -51,22 +51,27 @@ public:
     const SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx);
     const std::vector<SolidParticle<Scalar,Dim>*>& allParticles() const;  //get all the simulation particles
+    //particles used as boundary condition, i.e., particle velocity are not updated internally, it's updated via preset condition
+    //velocity boundary condition is supported
+    void addBCParticle(unsigned int particle_idx);  //the particle is set as boundary condition
+    void addBCParticles(const std::vector<unsigned int> &particle_idx); //the particles are set as boundary condition
 
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
     virtual void solveOnGrid(Scalar dt)=0; //solve the dynamics system on grid
     virtual void performGridCollision(Scalar dt)=0; //perform grid based collision with collidable object in scene
     virtual void performParticleCollision(Scalar dt)=0;  //perform particle based collision with collidable object in scene
-    virtual void updateParticleInterpolationWeight()=0;
+    virtual void updateParticleInterpolationWeight()=0;  //compute the interpolation weight between particles and grid nodes
     virtual void updateParticleConstitutiveModelState(Scalar dt)=0; //update the constitutive model state of particle, e.g., deformation gradient
-    virtual void updateParticleVelocity()=0;
-    virtual void updateParticlePosition(Scalar dt)=0;
+    virtual void updateParticleVelocity()=0;  //update particle velocity using grid data
+    virtual void updateParticlePosition(Scalar dt)=0;  //update particle position with new particle velocity
 protected:
     virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
     virtual void applyGravityOnGrid(Scalar dt) = 0;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
+    std::vector<unsigned char> is_bc_particle_;  //for each particle in particles_, use one byte to indicate whether it's set as boundary condition
     //precomputed weights and gradients of grid nodes that is within range of each particle
     std::vector<std::vector<Scalar> > particle_grid_weight_;
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_grid_weight_gradient_;
