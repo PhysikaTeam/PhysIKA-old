@@ -14,6 +14,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -77,6 +78,10 @@ void MPMSolidBase<Scalar,Dim>::removeParticle(unsigned int particle_idx)
     typename std::vector<SolidParticle<Scalar,Dim>*>::iterator iter = particles_.begin() + particle_idx;
     delete *iter; //release memory
     particles_.erase(iter);
+    //remove the record in boundary particle
+    typename std::vector<unsigned int>::iterator iter2 = std::find(boundary_particles_.begin(),boundary_particles_.end(),particle_idx);
+    if(iter2 != boundary_particles_.end())
+        boundary_particles_.erase(iter2);
 }
 
 template <typename Scalar, int Dim>
@@ -87,6 +92,7 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
         if(particles_[i])
             delete particles_[i];
     particles_.clear();
+    boundary_particles_.clear();
     //add new particle data
     for(unsigned int i = 0; i < particles.size(); ++i)
     {
@@ -126,6 +132,18 @@ template <typename Scalar, int Dim>
 const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allParticles() const
 {
     return particles_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::addBoundaryParticle(unsigned int particle_idx)
+{
+    boundary_particles_.push_back(particle_idx);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::addBoundaryParticles(const std::vector<unsigned int> &particle_idx)
+{
+    boundary_particles_.insert(boundary_particles_.end(),particle_idx.begin(),particle_idx.end());
 }
 
 template <typename Scalar, int Dim>

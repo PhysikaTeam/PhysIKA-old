@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <limits>
 #include <iostream>
+#include <algorithm>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
@@ -336,6 +337,9 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
     //interpolate delata of grid velocity to particle
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
+        std::vector<unsigned int>::iterator iter = std::find(this->boundary_particles_.begin(),this->boundary_particles_.end(),i);
+        if(iter!=this->boundary_particles_.end())
+            continue;  //skip boundary particles
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> particle_pos = particle->position();
         Vector<Scalar,Dim> new_vel = particle->velocity();
