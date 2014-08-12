@@ -28,7 +28,7 @@ template <typename Scalar> class Color;
 
 /*
  * Scalar can be float and double
- *
+ * Dim can be 2 and 3
  */
 
 template <typename Scalar, int Dim>
@@ -47,12 +47,16 @@ public:
     //whenever the mesh is modified, synchronize() must be called to update the render
     void synchronize();
 
+	// render in default mode
     virtual void render();
+
+	// note: the size of node will be 3 times of the origin size, making it distinguish from the old node. 
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const Color<ColorType> &color);
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const std::vector< Color<ColorType> > &color);
 
+	// note: the lineWidth of cell will be 2 times of the origin size.
     template <typename ColorType>
     void renderCellWithColor(const std::vector< Vector<unsigned int,Dim> > & cell_vec, const Color<ColorType> &color);
     template <typename ColorType>
