@@ -19,6 +19,8 @@ namespace Physika{
 template <typename ElementType,int Dim>
 ArrayND<ElementType,Dim>::ArrayND():data_(NULL)
 {
+	for(unsigned int i = 0; i < Dim; ++i)
+		element_count_[i] = 0;
 }
 
 template <typename ElementType,int Dim>
