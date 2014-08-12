@@ -67,7 +67,7 @@ public:
 
     //Render with choosen render mode
     virtual void render();
-	virtual void printInfo() const;
+    virtual void printInfo() const;
 
 
     //The following four functions is used for rendering specific faces/vertices with custom color.

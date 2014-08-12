@@ -25,6 +25,7 @@ bool Light::is_occupied_[8] = { false,false,false,false,false,false,false,false}
 Light::Light()
 {
     this->createOneLight();
+	this->light_position_ = Vector<float,3>(0,0,0);
 }
 
 Light::Light(GLenum light_id)

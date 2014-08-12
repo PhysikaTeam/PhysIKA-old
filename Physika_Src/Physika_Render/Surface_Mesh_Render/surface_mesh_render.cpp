@@ -335,7 +335,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // set polygon mode FILL for SOLID MODE
     glDisable(GL_COLOR_MATERIAL);              /// warning: we have to disable GL_COLOR_MATERIAL, otherwise the material propertity won't appear!!!
     glEnable(GL_LIGHTING);                     
-   
+
     glPushMatrix();
     if(this->transform_ != NULL)
     {
@@ -576,7 +576,7 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
     openGLColor3(color);
     float point_size;
     glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(static_cast<float>(.5*point_size));
+    glPointSize(static_cast<float>(1.5*point_size));
 
     glPushMatrix();
     if(this->transform_ != NULL)

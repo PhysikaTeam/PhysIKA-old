@@ -73,10 +73,10 @@ public:
     const Material<Scalar>* materialPtr() const;
     Material<Scalar>*       materialPtr();
     void                    setMaterial(const Material<Scalar> &material);
-	const Edge<Scalar,2>&     edge(unsigned int edge_idx) const; 
-	Edge<Scalar,2>&           edge(unsigned int edge_idx); 
-	const Edge<Scalar,2>*     edgePtr(unsigned int edge_idx) const; 
-	Edge<Scalar,2>*           edgePtr(unsigned int edge_idx); 
+    const Edge<Scalar,2>&     edge(unsigned int edge_idx) const; 
+    Edge<Scalar,2>&           edge(unsigned int edge_idx); 
+    const Edge<Scalar,2>*     edgePtr(unsigned int edge_idx) const; 
+    Edge<Scalar,2>*           edgePtr(unsigned int edge_idx); 
 
     //adders
     void addGroup(const EdgeGroup<Scalar,2> &group);
@@ -86,9 +86,9 @@ public:
 
     //utilities
     enum VertexNormalType{
-	WEIGHTED_EDGE_NORMAL = 0,
-	AVERAGE_EDGE_NORMAL = 1,
-	EDGE_NORMAL = 2};
+    WEIGHTED_EDGE_NORMAL = 0,
+    AVERAGE_EDGE_NORMAL = 1,
+    EDGE_NORMAL = 2};
 
     void computeAllVertexNormals(VertexNormalType normal_type);
     void computeAllEdgeNormals();

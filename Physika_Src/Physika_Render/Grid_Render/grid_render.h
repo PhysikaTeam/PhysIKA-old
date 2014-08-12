@@ -35,34 +35,35 @@ template <typename Scalar, int Dim>
 class GridRender: public RenderBase
 {
 public:
-	// constrctor and destructor
-	GridRender();
-	explicit GridRender(Grid<Scalar,Dim> * grid);
-	~GridRender();
+    // constrctor and destructor
+    GridRender();
+    explicit GridRender(Grid<Scalar,Dim> * grid);
+    ~GridRender();
 
-	// getter and setter
-	const Grid<Scalar,Dim> * grid() const;
-	void setGrid(Grid<Scalar,Dim> * grid);
+    // getter and setter
+    const Grid<Scalar,Dim> * grid() const;
+    void setGrid(Grid<Scalar,Dim> * grid);
 
-	//whenever the mesh is modified, synchronize() must be called to update the render
+    //whenever the mesh is modified, synchronize() must be called to update the render
     void synchronize();
 
-	virtual void render();
-	template <typename ColorType>
-	void renderNodeWithColor(const std::vector< Vector<Scalar,Dim> > & node_vec, const Color<ColorType> &color);
-	template <typename ColorType>
-	void renderNodeWithColor(const std::vector< Vector<Scalar,Dim> > & node_vec, const std::vector< Color<ColorType> > &color);
+    virtual void render();
+    template <typename ColorType>
+    void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const Color<ColorType> &color);
+    template <typename ColorType>
+    void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const std::vector< Color<ColorType> > &color);
 
-	template <typename ColorType>
-	void renderCellWithColor(const std::vector< Vector<Scalar,Dim> > & cell_vec, const Color<ColorType> &color);
-	template <typename ColorType>
-	void renderCellWithColor(const std::vector< Vector<Scalar,Dim> > & cell_vec, const std::vector< Color<ColorType> > &color);
+    template <typename ColorType>
+    void renderCellWithColor(const std::vector< Vector<unsigned int,Dim> > & cell_vec, const Color<ColorType> &color);
+    template <typename ColorType>
+    void renderCellWithColor(const std::vector< Vector<unsigned int,Dim> > & cell_vec, const std::vector< Color<ColorType> > &color);
 
-	virtual void printInfo() const;
+    virtual void printInfo() const;
 
 protected:
-	Grid<Scalar,Dim> * grid_;
-	unsigned int display_list_id_;
+    void renderCell(const Vector<unsigned int, Dim> & cell_idx);
+    Grid<Scalar,Dim> * grid_;
+    unsigned int display_list_id_;
 };
 
 } // end of namespace Physika
