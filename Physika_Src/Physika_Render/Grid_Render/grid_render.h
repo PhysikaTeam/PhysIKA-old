@@ -1,7 +1,7 @@
 /*
  * @file grid_render.h 
  * @Brief render of grid.
- * @author Wei Chen
+ * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -15,7 +15,6 @@
 #ifndef PHYSIKA_RENDER_GRID_RENDER_GRID_RENDER_H_
 #define PHYSIKA_RENDER_GRID_RENDER_GRID_RENDER_H_
 
-#include <utility>
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -37,26 +36,26 @@ class GridRender: public RenderBase
 public:
     // constrctor and destructor
     GridRender();
-    explicit GridRender(Grid<Scalar,Dim> * grid);
+    explicit GridRender(const Grid<Scalar,Dim> *grid);
     ~GridRender();
 
     // getter and setter
-    const Grid<Scalar,Dim> * grid() const;
-    void setGrid(Grid<Scalar,Dim> * grid);
+    const Grid<Scalar,Dim>* grid() const;
+    void setGrid(const Grid<Scalar,Dim> *grid);
 
-    //whenever the mesh is modified, synchronize() must be called to update the render
+    //whenever the grid is modified, synchronize() must be called to update the render
     void synchronize();
 
 	// render in default mode
     virtual void render();
 
-	// note: the size of node will be 3 times of the origin size, making it distinguish from the old node. 
+	// note: the highlighted node will be rendered 3 times larger. 
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const Color<ColorType> &color);
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const std::vector< Color<ColorType> > &color);
 
-	// note: the lineWidth of cell will be 2 times of the origin size.
+	// note: the edges of cell will be rendered 2 times wider.
     template <typename ColorType>
     void renderCellWithColor(const std::vector< Vector<unsigned int,Dim> > & cell_vec, const Color<ColorType> &color);
     template <typename ColorType>
@@ -66,7 +65,7 @@ public:
 
 protected:
     void renderCell(const Vector<unsigned int, Dim> & cell_idx);
-    Grid<Scalar,Dim> * grid_;
+    const Grid<Scalar,Dim> * grid_;
     unsigned int display_list_id_;
 };
 

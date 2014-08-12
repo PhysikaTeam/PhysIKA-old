@@ -25,6 +25,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Point_Render/point_render.h"
+#include "Physika_Render/Grid_Render/grid_render.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
@@ -329,25 +330,8 @@ void MPMSolidPluginRender<Scalar,Dim>::renderGrid()
     MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
     PHYSIKA_ASSERT(driver);
     const Grid<Scalar,Dim> &grid = driver->grid();
-    openGLColor3(Color<Scalar>::White());
-    glDisable(GL_LIGHTING);
-    for(typename Grid<Scalar,Dim>::CellIterator iter = grid.cellBegin(); iter != grid.cellEnd(); ++iter)
-    {  //TEST CODE, ONLY FOR 2D
-        Vector<unsigned int, Dim> cell_idx = iter.cellIndex();
-        Vector<Scalar,Dim> cell_min = grid.cellMinCornerNode(cell_idx);
-        Vector<Scalar,Dim> cell_max = grid.cellMaxCornerNode(cell_idx);
-        Vector<Scalar,Dim> node2(cell_min);
-        node2[0] = cell_max[0];
-        Vector<Scalar,Dim> node4(cell_min);
-        node4[1] = cell_max[1];
-        glBegin(GL_LINE_LOOP);
-        openGLVertex(cell_min);
-        openGLVertex(node2);
-        openGLVertex(cell_max);
-        openGLVertex(node4);
-        glEnd();
-    }
-//TO DO: replaced with grid render
+    GridRender<Scalar,Dim> grid_render(&grid);
+    grid_render.render();
 }
 
 template <typename Scalar, int Dim>

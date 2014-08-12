@@ -28,7 +28,7 @@ GridRender<Scalar,Dim>::GridRender()
     display_list_id_(0){}
 
 template <typename Scalar, int Dim>
-GridRender<Scalar,Dim>::GridRender(Grid<Scalar,Dim> * grid)
+GridRender<Scalar,Dim>::GridRender(const Grid<Scalar,Dim> * grid)
     :grid_(grid),
     display_list_id_(0){}
 
@@ -46,7 +46,7 @@ const Grid<Scalar,Dim> * GridRender<Scalar, Dim>::grid() const
 }
 
 template <typename Scalar, int Dim>
-void GridRender<Scalar,Dim>::setGrid(Grid<Scalar, Dim> * grid)
+void GridRender<Scalar,Dim>::setGrid(const Grid<Scalar, Dim> * grid)
 {
     this->grid_ = grid;
 }
@@ -72,6 +72,7 @@ void GridRender<Scalar,Dim>::renderCell(const Vector<unsigned int, Dim> & cell_i
     {
         Vector<Scalar, Dim> min_corner_node = this->grid_->cellMinCornerNode(cell_idx);
         Vector<Scalar, Dim> max_corner_node = this->grid_->cellMaxCornerNode(cell_idx);
+        openGLColor3(Color<Scalar>::White());
         glBegin(GL_LINE_LOOP);
         openGLVertex(min_corner_node);
         openGLVertex(Vector<Scalar,2>(max_corner_node[0], min_corner_node[1]));
@@ -89,6 +90,7 @@ void GridRender<Scalar,Dim>::renderCell(const Vector<unsigned int, Dim> & cell_i
         Vector<Scalar, 3> node_4(min_corner_node[0], min_corner_node[1], max_corner_node[2]);
         Vector<Scalar, 3> node_5(max_corner_node[0], min_corner_node[1], max_corner_node[2]);
         Vector<Scalar, 3> node_7(min_corner_node[0], max_corner_node[1], max_corner_node[2]);
+        openGLColor3(Color<Scalar>::White());
         // face one
         glBegin(GL_LINE_LOOP);
         openGLVertex(min_corner_node);
@@ -192,7 +194,7 @@ void GridRender<Scalar,Dim>::renderNodeWithColor(const std::vector< Vector<unsig
 {
     if(node_vec.size()!= color.size())
     {
-        std::cerr<<"warning: the size of node_vec don't equal to color's, the node lacking of cunstom color will be rendered in white color !!"<<std::endl;
+        std::cerr<<"Warning: the size of node_vec don't equal to color's, the node lacking of cunstom color will be rendered in white color !\n";
     }
 
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
@@ -242,7 +244,7 @@ void GridRender<Scalar,Dim>::renderCellWithColor(const std::vector< Vector<unsig
 {
     if(cell_vec.size()!= color.size())
     {
-        std::cerr<<"warning: the size of cell_vec don't equal to color's, the cell lacking of cunstom color will be rendered in white color !!"<<std::endl;
+        std::cerr<<"Warning: the size of cell_vec don't equal to color's, the cell lacking of cunstom color will be rendered in white color !\n";
     }
 
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT|GL_LINE_BIT);
