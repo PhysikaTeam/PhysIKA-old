@@ -58,6 +58,7 @@ GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsig
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
+    default_light_.turnOn();
     light_manager_.insertBack(&default_light_);
 }
 

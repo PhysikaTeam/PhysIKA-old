@@ -51,8 +51,10 @@ public:
     const SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx);
     const std::vector<SolidParticle<Scalar,Dim>*>& allParticles() const;  //get all the simulation particles
-    void addBoundaryParticle(unsigned int particle_idx);  //the particle is set as boundary condition
-    void addBoundaryParticles(const std::vector<unsigned int> &particle_idx); //the particles are set as boundary condition
+    //particles used as boundary condition, i.e., particle velocity are not updated internally, it's updated via preset condition
+    //velocity boundary condition is supported
+    void addBCParticle(unsigned int particle_idx);  //the particle is set as boundary condition
+    void addBCParticles(const std::vector<unsigned int> &particle_idx); //the particles are set as boundary condition
 
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
@@ -69,7 +71,7 @@ protected:
     virtual void applyGravityOnGrid(Scalar dt) = 0;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
-    std::vector<unsigned int> boundary_particles_;  //index of particles that are used as boundary condition
+    std::vector<unsigned char> is_bc_particle_;  //for each particle in particles_, use one byte to indicate whether it's set as boundary condition
     //precomputed weights and gradients of grid nodes that is within range of each particle
     std::vector<std::vector<Scalar> > particle_grid_weight_;
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_grid_weight_gradient_;
