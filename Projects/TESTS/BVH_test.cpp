@@ -16,7 +16,7 @@
 #include<string>
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 #include "Physika_Dynamics/Collidable_Objects/mesh_based_collidable_object.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_Geometry/Bounding_Volume/bvh_base.h"
 #include "Physika_Geometry/Bounding_Volume/bvh_node_base.h"
 #include "Physika_Geometry/Bounding_Volume/object_bvh.h"
