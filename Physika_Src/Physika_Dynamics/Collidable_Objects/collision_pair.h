@@ -24,11 +24,13 @@ template <typename Scalar,int Dim> class CollisionPairBase;
 template <typename Scalar,int Dim> class CollidableObject;
 template <typename Scalar> class MeshBasedCollidableObject;
 
+/*
+ * CollisionPair contains colliding elements (e.g. faces of meshes) and objects.
+ * It's different from ContactPoint, which contains position and normal of contact points.
+ * ContactPoint should be generated from CollisionPair. This process is called "contact sampling".
+ * Notice that contact sampling is not a bijection.
+ */
 
-//CollisionPair contains colliding elements (e.g. faces of meshes) and objects.
-//It's different from ContactPoint, which contains position and normal of contact points.
-//ContactPoint should be generated from CollisionPair. This process is called "contact sampling".
-//Notice that contact sampling is not a bijection.
 template <typename Scalar,int Dim>
 class CollisionPairBase
 {

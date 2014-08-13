@@ -22,7 +22,8 @@ namespace Physika{
 
 /*
  * Particle class for various simulations. 
- *
+ * Scalar = float/double
+ * Dim = 2/3
  */
 
 template <typename Scalar, int Dim>
