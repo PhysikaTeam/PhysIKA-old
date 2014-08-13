@@ -105,7 +105,7 @@ protected:
     bool write_to_file_;
     bool enable_timer_;
     Timer timer_;
-    Scalar time_;//current time point of simulation
+    Scalar time_;//current time point since simulation starts (from start frame)
     ConfigFile config_parser_; //parser of configuration file
 
     std::vector<DriverPluginBase<Scalar>* > plugins_;//Plugin vector. All plugins should be added here and called in corresponding functions

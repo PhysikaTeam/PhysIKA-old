@@ -40,8 +40,8 @@ template <typename Scalar>
 class RigidBodyDriverUtilityTrait
 {
 public:
-    friend RigidBodyDriverUtility<Scalar, 2>;
-    friend RigidBodyDriverUtility<Scalar, 3>;
+    friend class RigidBodyDriverUtility<Scalar, 2>;
+    friend class RigidBodyDriverUtility<Scalar, 3>;
 private:
     //overload versions of utilities for 2D and 3D situations
     static void computeInvMassMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait);
