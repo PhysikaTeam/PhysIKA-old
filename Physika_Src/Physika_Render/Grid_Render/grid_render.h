@@ -18,6 +18,7 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Render/Color/color.h"
 #include "Physika_Render/Render_Base/render_base.h"
 
 namespace Physika{
@@ -26,7 +27,10 @@ template <typename Scalar, int Dim> class Grid;
 template <typename Scalar> class Color;
 
 /*
- * Scalar can be float and double
+ * Scalar can be those scalar types which grid are defind for, i.e.,
+ * unsigned short, unsigned int, unsigned long, unsigned long long,
+ * signed char, short, int, long, long long, float, double, long double
+ *
  * Dim can be 2 and 3
  */
 
@@ -49,6 +53,10 @@ public:
 	// render in default mode
     virtual void render();
 
+    // set the color used to rendered grid
+    template <typename ColorType>
+    void setGridColor(const Color<ColorType> &color);
+
 	// note: the highlighted node will be rendered 3 times larger. 
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const Color<ColorType> &color);
@@ -67,7 +75,11 @@ protected:
     void renderCell(const Vector<unsigned int, Dim> & cell_idx);
     const Grid<Scalar,Dim> * grid_;
     unsigned int display_list_id_;
+    Color<double> grid_color_;  //grid render color, stored as double type
 };
 
 } // end of namespace Physika
+
+#include "Physika_Render/Grid_Render/grid_render-inl.h"
+
 #endif // PHYSIKA_RENDER_GRID_RENDER_GRID_RENDER_H_

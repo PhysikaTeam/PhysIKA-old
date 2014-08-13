@@ -1,7 +1,7 @@
 /*
  * @file grid_render.cpp 
  * @Basic render of grid.
- * @author Wei Chen
+ * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -14,10 +14,10 @@
 
 #include <cstddef>
 #include <iostream>
+#include <GL/gl.h>
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 #include "Physika_Render/Grid_Render/grid_render.h"
-#include "Physika_Render/Color/color.h"
 
 namespace Physika
 {
@@ -25,12 +25,18 @@ namespace Physika
 template <typename Scalar, int Dim>
 GridRender<Scalar,Dim>::GridRender()
     :grid_(NULL),
-    display_list_id_(0){}
+    display_list_id_(0)
+{
+    grid_color_ = Color<double>::White();
+}
 
 template <typename Scalar, int Dim>
 GridRender<Scalar,Dim>::GridRender(const Grid<Scalar,Dim> * grid)
     :grid_(grid),
-    display_list_id_(0){}
+    display_list_id_(0)
+{
+    grid_color_ = Color<double>::White();
+}
 
 template <typename Scalar, int Dim>
 GridRender<Scalar,Dim>::~GridRender()
@@ -72,7 +78,7 @@ void GridRender<Scalar,Dim>::renderCell(const Vector<unsigned int, Dim> & cell_i
     {
         Vector<Scalar, Dim> min_corner_node = this->grid_->cellMinCornerNode(cell_idx);
         Vector<Scalar, Dim> max_corner_node = this->grid_->cellMaxCornerNode(cell_idx);
-        openGLColor3(Color<Scalar>::White());
+        openGLColor3(grid_color_);
         glBegin(GL_LINE_LOOP);
         openGLVertex(min_corner_node);
         openGLVertex(Vector<Scalar,2>(max_corner_node[0], min_corner_node[1]));
@@ -90,7 +96,7 @@ void GridRender<Scalar,Dim>::renderCell(const Vector<unsigned int, Dim> & cell_i
         Vector<Scalar, 3> node_4(min_corner_node[0], min_corner_node[1], max_corner_node[2]);
         Vector<Scalar, 3> node_5(max_corner_node[0], min_corner_node[1], max_corner_node[2]);
         Vector<Scalar, 3> node_7(min_corner_node[0], max_corner_node[1], max_corner_node[2]);
-        openGLColor3(Color<Scalar>::White());
+        openGLColor3(grid_color_);
         // face one
         glBegin(GL_LINE_LOOP);
         openGLVertex(min_corner_node);
@@ -167,185 +173,31 @@ void GridRender<Scalar,Dim>::render()
     glPopAttrib();
 }
 
-template <typename Scalar, int Dim> template <typename ColorType>
-void GridRender<Scalar,Dim>::renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const Color<ColorType> &color)
-{
-    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
-    glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
-    openGLColor3(color);
-    float point_size;
-    glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(static_cast<float>(3*point_size));
-
-    glPushMatrix();
-    glBegin(GL_POINTS);
-    for(unsigned node_idx = 0; node_idx<node_vec.size(); node_idx ++)
-    {
-        Vector<Scalar, Dim> pos = this->grid_->node(node_vec[node_idx]);
-        openGLVertex(pos);
-    }
-    glEnd();
-    glPopMatrix();
-    glPopAttrib();
-}
-
-template <typename Scalar, int Dim> template <typename ColorType>
-void GridRender<Scalar,Dim>::renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const std::vector< Color<ColorType> > &color)
-{
-    if(node_vec.size()!= color.size())
-    {
-        std::cerr<<"Warning: the size of node_vec don't equal to color's, the node lacking of cunstom color will be rendered in white color !\n";
-    }
-
-    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
-    glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
-    float point_size;
-    glGetFloatv(GL_POINT_SIZE,&point_size);
-    glPointSize(static_cast<float>(3*point_size));
-
-    glPushMatrix();
-    glBegin(GL_POINTS);
-    for(unsigned node_idx = 0; node_idx<node_vec.size(); node_idx ++)
-    {
-        if(node_idx < color.size())
-            openGLColor3(color[node_idx]);
-        else
-            openGLColor3(Color<ColorType>::White());
-        Vector<Scalar, Dim> pos = this->grid_->node(node_vec[node_idx]);
-        openGLVertex(pos);
-    }
-    glEnd();
-    glPopMatrix();
-    glPopAttrib();
-}
-
-template <typename Scalar, int Dim> template <typename ColorType>
-void GridRender<Scalar,Dim>::renderCellWithColor(const std::vector< Vector<unsigned int,Dim> > & cell_vec, const Color<ColorType> &color)
-{
-    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT|GL_LINE_BIT);
-    glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
-
-    float line_width;
-    glGetFloatv(GL_LINE_WIDTH,&line_width);
-    glLineWidth(static_cast<float>(2*line_width));
-
-    openGLColor3(color);
-    glPushMatrix();
-    for(unsigned int cell_idx = 0; cell_idx<cell_vec.size(); cell_idx++)
-    {
-        this->renderCell(cell_vec[cell_idx]);
-    }
-    glPopMatrix();
-    glPopAttrib();
-}
-
-template <typename Scalar, int Dim> template <typename ColorType>
-void GridRender<Scalar,Dim>::renderCellWithColor(const std::vector< Vector<unsigned int,Dim> > & cell_vec, const std::vector< Color<ColorType> > &color)
-{
-    if(cell_vec.size()!= color.size())
-    {
-        std::cerr<<"Warning: the size of cell_vec don't equal to color's, the cell lacking of cunstom color will be rendered in white color !\n";
-    }
-
-    glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT|GL_LINE_BIT);
-    glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
-
-    float line_width;
-    glGetFloatv(GL_LINE_WIDTH,&line_width);
-    glLineWidth(static_cast<float>(2*line_width));
-
-    glPushMatrix();
-    for(unsigned int cell_idx = 0; cell_idx<cell_vec.size(); cell_idx++)
-    {
-        if(cell_idx < color.size())
-            openGLColor3(color[cell_idx]);
-        else
-            openGLColor3(Color<ColorType>::White());
-        this->renderCell(cell_vec[cell_idx]);
-    }
-    glPopMatrix();
-    glPopAttrib();
-}
-
-//explicit instantitation
-template class GridRender<float,3>;
-template class GridRender<double,3>;
+//explicit instantitationtemplate class Grid<unsigned char,2>;
+template class GridRender<unsigned short,2>;
+template class GridRender<unsigned int,2>;
+template class GridRender<unsigned long,2>;
+template class GridRender<unsigned long long,2>;
+template class GridRender<signed char,2>;
+template class GridRender<short,2>;
+template class GridRender<int,2>;
+template class GridRender<long,2>;
+template class GridRender<long long,2>;
 template class GridRender<float,2>;
 template class GridRender<double,2>;
-
-// renderCellWithColor
-template void GridRender<float,3>::renderCellWithColor<signed char>(const std::vector< Vector<unsigned int,3> > &, const Color<signed char> &);
-template void GridRender<float,3>::renderCellWithColor<short>(const std::vector< Vector<unsigned int,3> > &, const Color<short> &);
-template void GridRender<float,3>::renderCellWithColor<int>(const std::vector< Vector<unsigned int,3> > &, const Color<int> &);
-template void GridRender<float,3>::renderCellWithColor<float>(const std::vector< Vector<unsigned int,3> > &, const Color<float> &);
-template void GridRender<float,3>::renderCellWithColor<double>(const std::vector< Vector<unsigned int,3> > &, const Color<double> &);
-template void GridRender<float,3>::renderCellWithColor<unsigned short>(const std::vector< Vector<unsigned int,3> > &, const Color<unsigned short> &);
-template void GridRender<float,3>::renderCellWithColor<unsigned int>(const std::vector< Vector<unsigned int,3> > &, const Color<unsigned int> &);
-template void GridRender<float,3>::renderCellWithColor<unsigned char>(const std::vector< Vector<unsigned int,3> > &, const Color<unsigned char> &);
-
-template void GridRender<float,2>::renderCellWithColor<signed char>(const std::vector< Vector<unsigned int,2> > &, const Color<signed char> &);
-template void GridRender<float,2>::renderCellWithColor<short>(const std::vector< Vector<unsigned int,2> > &, const Color<short> &);
-template void GridRender<float,2>::renderCellWithColor<int>(const std::vector< Vector<unsigned int,2> > &, const Color<int> &);
-template void GridRender<float,2>::renderCellWithColor<float>(const std::vector< Vector<unsigned int,2> > &, const Color<float> &);
-template void GridRender<float,2>::renderCellWithColor<double>(const std::vector< Vector<unsigned int,2> > &, const Color<double> &);
-template void GridRender<float,2>::renderCellWithColor<unsigned short>(const std::vector< Vector<unsigned int,2> > &, const Color<unsigned short> &);
-template void GridRender<float,2>::renderCellWithColor<unsigned int>(const std::vector< Vector<unsigned int,2> > &, const Color<unsigned int> &);
-template void GridRender<float,2>::renderCellWithColor<unsigned char>(const std::vector< Vector<unsigned int,2> > &, const Color<unsigned char> &);
-
-template void GridRender<float,3>::renderCellWithColor<signed char>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<signed char> > &);
-template void GridRender<float,3>::renderCellWithColor<short>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<short> > &);
-template void GridRender<float,3>::renderCellWithColor<int>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<int> > &);
-template void GridRender<float,3>::renderCellWithColor<float>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<float> > &);
-template void GridRender<float,3>::renderCellWithColor<double>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<double> > &);
-template void GridRender<float,3>::renderCellWithColor<unsigned short>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<unsigned short> > &);
-template void GridRender<float,3>::renderCellWithColor<unsigned int>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<unsigned int> > &);
-template void GridRender<float,3>::renderCellWithColor<unsigned char>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<unsigned char> > &);
-
-template void GridRender<float,2>::renderCellWithColor<signed char>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<signed char> > &);
-template void GridRender<float,2>::renderCellWithColor<short>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<short> > &);
-template void GridRender<float,2>::renderCellWithColor<int>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<int> > &);
-template void GridRender<float,2>::renderCellWithColor<float>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<float> > &);
-template void GridRender<float,2>::renderCellWithColor<double>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<double> > &);
-template void GridRender<float,2>::renderCellWithColor<unsigned short>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<unsigned short> > &);
-template void GridRender<float,2>::renderCellWithColor<unsigned int>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<unsigned int> >&);
-template void GridRender<float,2>::renderCellWithColor<unsigned char>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<unsigned char> > &);
-
-// renderNodeWithColor
-template void GridRender<float,3>::renderNodeWithColor<signed char>(const std::vector< Vector<unsigned int,3> > &, const Color<signed char> &);
-template void GridRender<float,3>::renderNodeWithColor<short>(const std::vector< Vector<unsigned int,3> > &, const Color<short> &);
-template void GridRender<float,3>::renderNodeWithColor<int>(const std::vector< Vector<unsigned int,3> > &, const Color<int> &);
-template void GridRender<float,3>::renderNodeWithColor<float>(const std::vector< Vector<unsigned int,3> > &, const Color<float> &);
-template void GridRender<float,3>::renderNodeWithColor<double>(const std::vector< Vector<unsigned int,3> > &, const Color<double> &);
-template void GridRender<float,3>::renderNodeWithColor<unsigned short>(const std::vector< Vector<unsigned int,3> > &, const Color<unsigned short> &);
-template void GridRender<float,3>::renderNodeWithColor<unsigned int>(const std::vector< Vector<unsigned int,3> > &, const Color<unsigned int> &);
-template void GridRender<float,3>::renderNodeWithColor<unsigned char>(const std::vector< Vector<unsigned int,3> > &, const Color<unsigned char> &);
-
-template void GridRender<float,2>::renderNodeWithColor<signed char>(const std::vector< Vector<unsigned int,2> > &, const Color<signed char> &);
-template void GridRender<float,2>::renderNodeWithColor<short>(const std::vector< Vector<unsigned int,2> > &, const Color<short> &);
-template void GridRender<float,2>::renderNodeWithColor<int>(const std::vector< Vector<unsigned int,2> > &, const Color<int> &);
-template void GridRender<float,2>::renderNodeWithColor<float>(const std::vector< Vector<unsigned int,2> > &, const Color<float> &);
-template void GridRender<float,2>::renderNodeWithColor<double>(const std::vector< Vector<unsigned int,2> > &, const Color<double> &);
-template void GridRender<float,2>::renderNodeWithColor<unsigned short>(const std::vector< Vector<unsigned int,2> > &, const Color<unsigned short> &);
-template void GridRender<float,2>::renderNodeWithColor<unsigned int>(const std::vector< Vector<unsigned int,2> > &, const Color<unsigned int> &);
-template void GridRender<float,2>::renderNodeWithColor<unsigned char>(const std::vector< Vector<unsigned int,2> > &, const Color<unsigned char> &);
-
-template void GridRender<float,3>::renderNodeWithColor<signed char>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<signed char> > &);
-template void GridRender<float,3>::renderNodeWithColor<short>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<short> > &);
-template void GridRender<float,3>::renderNodeWithColor<int>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<int> > &);
-template void GridRender<float,3>::renderNodeWithColor<float>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<float> > &);
-template void GridRender<float,3>::renderNodeWithColor<double>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<double> > &);
-template void GridRender<float,3>::renderNodeWithColor<unsigned short>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<unsigned short> > &);
-template void GridRender<float,3>::renderNodeWithColor<unsigned int>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<unsigned int> > &);
-template void GridRender<float,3>::renderNodeWithColor<unsigned char>(const std::vector< Vector<unsigned int,3> > &, const std::vector< Color<unsigned char> > &);
-
-template void GridRender<float,2>::renderNodeWithColor<signed char>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<signed char> > &);
-template void GridRender<float,2>::renderNodeWithColor<short>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<short> > &);
-template void GridRender<float,2>::renderNodeWithColor<int>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<int> > &);
-template void GridRender<float,2>::renderNodeWithColor<float>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<float> > &);
-template void GridRender<float,2>::renderNodeWithColor<double>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<double> > &);
-template void GridRender<float,2>::renderNodeWithColor<unsigned short>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<unsigned short> > &);
-template void GridRender<float,2>::renderNodeWithColor<unsigned int>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<unsigned int> >&);
-template void GridRender<float,2>::renderNodeWithColor<unsigned char>(const std::vector< Vector<unsigned int,2> > &, const std::vector< Color<unsigned char> > &);
-
+template class GridRender<long double,2>;
+template class GridRender<unsigned char,3>;
+template class GridRender<unsigned short,3>;
+template class GridRender<unsigned int,3>;
+template class GridRender<unsigned long,3>;
+template class GridRender<unsigned long long,3>;
+template class GridRender<signed char,3>;
+template class GridRender<short,3>;
+template class GridRender<int,3>;
+template class GridRender<long,3>;
+template class GridRender<long long,3>;
+template class GridRender<float,3>;
+template class GridRender<double,3>;
+template class GridRender<long double,3>;
 
 } // end of namespace Physika

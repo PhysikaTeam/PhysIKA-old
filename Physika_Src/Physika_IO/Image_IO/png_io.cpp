@@ -133,21 +133,3 @@ bool PngIO::save(const string &filename, const Image *image)
 }
 
 } //end of namespace Physika
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
