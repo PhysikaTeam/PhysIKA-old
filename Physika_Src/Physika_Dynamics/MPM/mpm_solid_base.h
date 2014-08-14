@@ -45,9 +45,9 @@ public:
 
     //get && set
     unsigned int particleNum() const;
-    void addParticle(const SolidParticle<Scalar,Dim> &particle);
-    void removeParticle(unsigned int particle_idx);
-    void setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles); //set all simulation particles, data are copied
+    virtual void addParticle(const SolidParticle<Scalar,Dim> &particle);
+    virtual void removeParticle(unsigned int particle_idx);
+    virtual void setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles); //set all simulation particles, data are copied
     const SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx);
     const std::vector<SolidParticle<Scalar,Dim>*>& allParticles() const;  //get all the simulation particles

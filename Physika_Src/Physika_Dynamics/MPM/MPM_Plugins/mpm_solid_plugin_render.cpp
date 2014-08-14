@@ -1,6 +1,6 @@
 /*
  * @file mpm_solid_plugin_render.cpp 
- * @brief plugin for real-time render of MPMSolid driver.
+ * @brief plugin for real-time render of drivers derived from MPMSolid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -30,6 +30,7 @@
 #include "Physika_Render/Color/color.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
+#include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_render.h"
 
 namespace Physika{
@@ -39,9 +40,9 @@ MPMSolidPluginRender<Scalar,Dim>* MPMSolidPluginRender<Scalar,Dim>::active_insta
 
 template <typename Scalar, int Dim>
 MPMSolidPluginRender<Scalar,Dim>::MPMSolidPluginRender()
-    :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),pause_simulation_(true),
+    :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),pause_simulation_(false),
      simulation_finished_(false),render_particle_(true),render_grid_(true),
-     render_particle_velocity_(false),render_grid_velocity_(false),
+     render_particle_velocity_(false),render_grid_velocity_(false),render_particle_domain_(false),
      particle_render_mode_(0),velocity_scale_(1.0),auto_capture_frame_(false)
 {
     activateCurrentInstance();
@@ -214,7 +215,6 @@ void MPMSolidPluginRender<Scalar,Dim>::setWindow(GlutWindow *window)
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::idleFunction(void)
 {
-//TO DO
     PHYSIKA_ASSERT(active_instance_);
     MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
     PHYSIKA_ASSERT(driver);
@@ -223,7 +223,6 @@ void MPMSolidPluginRender<Scalar,Dim>::idleFunction(void)
        active_instance_->simulation_finished_ == false)
     {
         driver->advanceStep(dt);
-        //active_instance_->pause_simulation_ = true;
     }
     glutPostRedisplay();
 }
@@ -247,6 +246,8 @@ void MPMSolidPluginRender<Scalar,Dim>::displayFunction(void)
         active_instance_->renderParticleVelocity();
     if(active_instance_->render_grid_velocity_)
         active_instance_->renderGridVelocity();
+    if(active_instance_->render_particle_domain_)
+        active_instance_->renderParticleDomain();
     window->displayFrameRate();
     glutSwapBuffers();
 }
@@ -287,6 +288,8 @@ void MPMSolidPluginRender<Scalar,Dim>::keyboardFunction(unsigned char key, int x
     case 'S':
         active_instance_->auto_capture_frame_ = !(active_instance_->auto_capture_frame_);
         break;
+    case 'c':
+        active_instance_->render_particle_domain_ = !(active_instance_->render_particle_domain_);
     default:
         break;
     }
@@ -301,23 +304,22 @@ void MPMSolidPluginRender<Scalar,Dim>::activateCurrentInstance()
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
 {
-//TO DO: speed up
-    PHYSIKA_ASSERT(active_instance_);
-    MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
+    MPMSolid<Scalar,Dim> *driver = this->driver();
     PHYSIKA_ASSERT(driver);
     const std::vector<SolidParticle<Scalar,Dim>*> &all_particles = driver->allParticles();
     Vector<Scalar,Dim> *particle_pos = new Vector<Scalar,Dim>[all_particles.size()];
     for(unsigned int i = 0; i < all_particles.size(); ++i)
         particle_pos[i] = all_particles[i]->position();
     PointRender<Scalar,Dim> point_render(particle_pos,all_particles.size());
-    std::vector<Scalar> point_size(all_particles.size());
-    if(active_instance_->particle_render_mode_ == 0)
+    if(this->particle_render_mode_ == 0)
         point_render.setRenderAsPoint();
     else
     {
-        point_render.setRenderAsSphere();
+        std::vector<Scalar> point_size(all_particles.size());
         for(unsigned int i = 0; i < point_size.size(); ++i)
             point_size[i] = (Dim==2) ? sqrt(all_particles[i]->volume()/(4.0*PI)) : pow(all_particles[i]->volume()*3/(4*PI),1.0/3.0);
+        point_render.setPointSize(point_size);
+        point_render.setRenderAsSphere();
     }
     point_render.render();
     delete[] particle_pos;
@@ -326,8 +328,7 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::renderGrid()
 {
-    PHYSIKA_ASSERT(active_instance_);
-    MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
+    MPMSolid<Scalar,Dim> *driver = this->driver();
     PHYSIKA_ASSERT(driver);
     const Grid<Scalar,Dim> &grid = driver->grid();
     GridRender<Scalar,Dim> grid_render(&grid);
@@ -337,8 +338,7 @@ void MPMSolidPluginRender<Scalar,Dim>::renderGrid()
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::renderParticleVelocity()
 {
-    PHYSIKA_ASSERT(active_instance_);
-    MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
+    MPMSolid<Scalar,Dim> *driver = this->driver();
     PHYSIKA_ASSERT(driver);
     openGLColor3(Color<Scalar>::Red());
     glDisable(GL_LIGHTING);
@@ -346,7 +346,7 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticleVelocity()
     {
         const SolidParticle<Scalar,Dim>& particle = driver->particle(i);
         Vector<Scalar,Dim> start = particle.position();
-        Vector<Scalar,Dim> end = start + (active_instance_->velocity_scale_)*particle.velocity();
+        Vector<Scalar,Dim> end = start + (this->velocity_scale_)*particle.velocity();
         glBegin(GL_LINES);
         openGLVertex(start);
         openGLVertex(end);
@@ -357,9 +357,7 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticleVelocity()
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::renderGridVelocity()
 {
-//TO DO
-    PHYSIKA_ASSERT(active_instance_);
-    MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
+    MPMSolid<Scalar,Dim> *driver = this->driver();
     PHYSIKA_ASSERT(driver);
     const Grid<Scalar,Dim> &grid = driver->grid();
     openGLColor3(Color<Scalar>::Red());
@@ -368,11 +366,42 @@ void MPMSolidPluginRender<Scalar,Dim>::renderGridVelocity()
     {  
         Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
         Vector<Scalar,Dim> start = grid.node(node_idx);
-        Vector<Scalar,Dim> end = start + (active_instance_->velocity_scale_)*(driver->gridVelocity(node_idx));
+        Vector<Scalar,Dim> end = start + (this->velocity_scale_)*(driver->gridVelocity(node_idx));
         glBegin(GL_LINES);
         openGLVertex(start);
         openGLVertex(end);
         glEnd();
+    }
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::renderParticleDomain()
+{
+    CPDIMPMSolid<Scalar,Dim> *driver = dynamic_cast<CPDIMPMSolid<Scalar,Dim>*>(this->driver_);
+    if(driver==NULL)
+        return;
+    openGLColor3(Color<Scalar>::Cyan());
+    glDisable(GL_LIGHTING);
+    for(unsigned int i = 0; i < driver->particleNum(); ++i)
+    {
+        std::vector<Vector<Scalar,Dim> > particle_domain;
+        driver->currentParticleDomain(i,particle_domain);
+        PHYSIKA_ASSERT(particle_domain.size());
+        if(Dim==2)
+        {
+            glBegin(GL_LINE_LOOP);
+            openGLVertex(particle_domain[0]);
+            openGLVertex(particle_domain[1]);
+            openGLVertex(particle_domain[2]);
+            openGLVertex(particle_domain[3]);
+            glEnd();
+        }
+        else if(Dim==3)
+        {
+            //TO DO
+        }
+        else
+            PHYSIKA_ERROR("Invalid dimension specified!");
     }
 }
 

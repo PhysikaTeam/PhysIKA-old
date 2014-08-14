@@ -16,6 +16,7 @@
 #include <limits>
 #include <iostream>
 #include <algorithm>
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
@@ -299,10 +300,8 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
         if(plugin)
             plugin->onUpdateParticleInterpolationWeight();
     }
-
-    //first resize the vectors
-    (this->particle_grid_weight_).resize(this->particles_.size());
-    (this->particle_grid_weight_gradient_).resize(this->particles_.size());
+    PHYSIKA_ASSERT(this->particle_grid_weight_.size() == this->particles_.size());
+    PHYSIKA_ASSERT(this->particle_grid_weight_gradient_.size() == this->particles_.size());
     //precompute the interpolation weights and gradients
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     Vector<Scalar,Dim> grid_dx = (this->grid_).dX();
@@ -310,9 +309,8 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> particle_pos = particle->position();
-        (this->particle_grid_weight_)[i].clear();
-        (this->particle_grid_weight_gradient_)[i].clear();
-        for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++iter)
+        unsigned int j = 0;
+        for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
         {
             Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
             Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
@@ -320,8 +318,10 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
                 particle_to_node[dim] /= grid_dx[dim];
             Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node);
             Scalar weight = this->weight_function_->weight(particle_to_node);
-            (this->particle_grid_weight_)[i].push_back(weight);
-            (this->particle_grid_weight_gradient_)[i].push_back(weight_gradient);
+            PHYSIKA_ASSERT(this->particle_grid_weight_[i].size()>j);
+            PHYSIKA_ASSERT(this->particle_grid_weight_gradient_[i].size()>j);
+            (this->particle_grid_weight_)[i][j] = weight;
+            (this->particle_grid_weight_gradient_)[i][j] = weight_gradient;
         }
     }
 }

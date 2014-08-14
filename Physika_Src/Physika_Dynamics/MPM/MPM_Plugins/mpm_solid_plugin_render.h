@@ -1,6 +1,6 @@
 /*
  * @file mpm_solid_plugin_render.h 
- * @brief plugin for real-time render of MPMSolid driver.
+ * @brief plugin for real-time render of drivers derived from MPMSolid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -25,7 +25,21 @@ class GlutWindow;
 
 /*
  * MPMSolidPluginRender: plugin that provides a real-time window
- * for MPMSolid
+ * for drivers derived from MPMSolid
+ * 
+ * Keyboard bindings:
+ * 1. ESC: quit
+ * 2. s: save current screen
+ * 3. S: save screen every simulation frame
+ * 4. p: display particle
+ * 5. P: display particle velocity
+ * 6. g: display grid
+ * 7. G: display grid velocity
+ * 8. m: render particle as point or sphere
+ * 9. SPACE: pause/continue simulation
+ * 10. c: display particle domain (if it's CPDI MPM)
+ * 11. i: increase velocity display scale
+ * 12. d: decrease velocity display scale
  */
 
 template <typename Scalar, int Dim>
@@ -67,6 +81,7 @@ protected:
     void renderGrid();
     void renderParticleVelocity();
     void renderGridVelocity();
+    void renderParticleDomain();
 
 protected:
     GlutWindow *window_;
@@ -80,6 +95,7 @@ protected:
     bool render_grid_;
     bool render_particle_velocity_;
     bool render_grid_velocity_;
+    bool render_particle_domain_;
     unsigned int particle_render_mode_;  // 0: particle rendered as point; otherwise: particle rendered as sphere
     //for render velocities
     Scalar velocity_scale_;
