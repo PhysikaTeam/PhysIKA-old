@@ -1,7 +1,7 @@
 /*
  * @file  collidable_object.h
  * @brief abstract base class of all collidable objects, provide common interface
- * @author Fei Zhu
+ * @author Tianxiang Zhang
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -18,6 +18,7 @@
 namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
+template <typename Scalar,int Dim> class CollisionDetectionMethod;
 
 namespace CollidableObjectInternal{
     enum ObjectType {MESH_BASED, IMPLICIT, POLYGON};
@@ -28,16 +29,17 @@ class CollidableObject
 {
 public:
 	//constructors && deconstructors
-    CollidableObject(){}
-    virtual ~CollidableObject(){}
+    CollidableObject();
+    virtual ~CollidableObject();
 
 	//get & set
 	virtual CollidableObjectInternal::ObjectType objectType() const=0;
-	
-    //given position and velocity of a point, resolve collision with the collidable object (detect&&resolve)
-//    virtual bool collide(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;
-    //given position and velocity of a point, detect collision with the collidable object
-//    virtual bool detectCollision(const Vector<Scalar,Dim> &position, const Vector<Scalar,Dim> &velocity) const=0;
+
+    //given position of a point, detect collision with the collidable object. contact_normal will be modified after calling this function
+    virtual bool collideWithPoint(Vector<Scalar,Dim> *point, Vector<Scalar,Dim> &contact_normal) = 0;
+
+    //given another collidable, detect collision with this collidable object. contact_point and contact_normal will be modified after calling this function
+    virtual bool collideWithObject(CollidableObject<Scalar, Dim> *object, Vector<Scalar,Dim> &contact_point, Vector<Scalar,Dim> &contact_normal, CollisionDetectionMethod<Scalar, Dim>* method = NULL);
 protected:
 	
 };

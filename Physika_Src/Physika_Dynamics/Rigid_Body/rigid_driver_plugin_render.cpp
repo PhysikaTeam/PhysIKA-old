@@ -187,7 +187,9 @@ void RigidDriverPluginRender<Scalar, Dim>::idle()
 		unsigned int num_collision = active_render_->rigid_driver_->numCollisionPair();
 		for(unsigned int i = 0; i < num_collision; ++i)
         {
-            CollisionPairBase<Scalar, Dim>* pair = active_render_->rigid_driver_->collisionPair(i);
+            CollisionPairMeshToMesh<Scalar>* pair = dynamic_cast<CollisionPairMeshToMesh<Scalar>*>(active_render_->rigid_driver_->collisionPair(i));
+            if(pair == NULL)
+                continue;
             (active_render_->contact_face_ids_)[pair->objectLhsIdx()].push_back(pair->faceLhsIdx());
             (active_render_->contact_face_ids_)[pair->objectRhsIdx()].push_back(pair->faceRhsIdx());
         }
