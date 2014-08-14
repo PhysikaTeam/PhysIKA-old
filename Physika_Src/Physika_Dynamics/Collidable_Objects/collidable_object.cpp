@@ -35,7 +35,7 @@ CollidableObject<Scalar, Dim>::~CollidableObject()
 }
 
 template <typename Scalar,int Dim>
-bool CollidableObject<Scalar, Dim>::collideWithObject(CollidableObject<Scalar, Dim> *object, Vector<Scalar,Dim> &contact_point, Vector<Scalar,Dim> &contact_normal, CollisionDetectionMethod<Scalar, Dim>* method = NULL)
+bool CollidableObject<Scalar, Dim>::collideWithObject(CollidableObject<Scalar, Dim> *object, Vector<Scalar,Dim> &contact_point, Vector<Scalar,Dim> &contact_normal, CollisionDetectionMethod<Scalar, Dim>* method)
 {
     bool need_delete = false;
     if(method == NULL)

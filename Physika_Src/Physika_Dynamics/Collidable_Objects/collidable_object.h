@@ -15,6 +15,8 @@
 #ifndef PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLIDABLE_OBJECT_H_
 #define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLIDABLE_OBJECT_H_
 
+#include <cstddef>
+
 namespace Physika{
 
 template <typename Scalar,int Dim> class Vector;
