@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <limits>
 #include <iostream>
+#include <algorithm>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
@@ -145,6 +146,38 @@ Vector<Scalar,Dim> MPMSolid<Scalar,Dim>::gridVelocity(const Vector<unsigned int,
 }
 
 template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::setGridVelocity(const Vector<unsigned int, Dim> &node_idx, const Vector<Scalar,Dim> &node_velocity)
+{
+    bool valid_idx = isValidGridNodeIndex(node_idx);
+    if(!valid_idx)
+    {
+        std::cerr<<"Warning: invalid node index, operation ignored!\n";
+        return;
+    }
+    grid_velocity_(node_idx) = node_velocity;
+    grid_velocity_before_(node_idx) = node_velocity;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::addBCGridNode(const Vector<unsigned int,Dim> &node_idx)
+{
+    bool valid_idx = isValidGridNodeIndex(node_idx);
+    if(!valid_idx)
+    {
+        std::cerr<<"Warning: invalid node index, operation ignored!\n";
+        return;
+    }
+    is_bc_grid_node_(node_idx) = 1;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::addBCGridNodes(const std::vector<Vector<unsigned int,Dim> > &node_idx)
+{
+    for(unsigned int i = 0; i < node_idx.size(); ++i)
+        addBCGridNode(node_idx[i]);
+}
+
+template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
     //plugin operation
@@ -167,6 +200,8 @@ void MPMSolid<Scalar,Dim>::rasterize()
         for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
         {
             Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+            if(is_bc_grid_node_(node_idx))
+                continue; //skip grid nodes that are boundary condition
             Scalar weight = this->particle_grid_weight_[i][j]; 
             grid_mass_(node_idx) += weight*particle->mass();
             grid_velocity_(node_idx) += weight*(particle->mass()*particle->velocity());
@@ -183,6 +218,8 @@ void MPMSolid<Scalar,Dim>::rasterize()
     for(unsigned int i = 0; i < active_grid_node_.size(); ++i)
     {
         Vector<unsigned int,Dim> node_idx = active_grid_node_[i];
+        if(is_bc_grid_node_(node_idx))
+            continue; //skip grid nodes that are boundary condition
         grid_velocity_(node_idx) /= grid_mass_(node_idx);
         grid_velocity_before_(node_idx) = grid_velocity_(node_idx); //buffer the grid velocity before any update
     }
@@ -210,6 +247,8 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
         for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
         {
             Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+            if(is_bc_grid_node_(node_idx))
+                continue; //skip grid nodes that are boundary condition
             Vector<Scalar,Dim> weight_gradient = this->particle_grid_weight_gradient_[i][j];
             SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
             if(grid_mass_(node_idx)>std::numeric_limits<Scalar>::epsilon())
@@ -336,6 +375,8 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
     //interpolate delata of grid velocity to particle
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
+        if(this->is_bc_particle_[i])
+            continue;//skip boundary particles
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> particle_pos = particle->position();
         Vector<Scalar,Dim> new_vel = particle->velocity();
@@ -377,10 +418,14 @@ void MPMSolid<Scalar,Dim>::synchronizeGridData()
     Vector<unsigned int,Dim> node_num = grid_.nodeNum();
     for(unsigned int i = 0; i < Dim; ++i)
     {
+        is_bc_grid_node_.resize(node_num[i],i);
         grid_mass_.resize(node_num[i],i);
         grid_velocity_.resize(node_num[i],i);
         grid_velocity_before_.resize(node_num[i],i);
     }
+    //initialize boundary condition grid node indicator
+    for(typename ArrayND<unsigned char,Dim>::Iterator iter = is_bc_grid_node_.begin(); iter != is_bc_grid_node_.end(); ++iter)
+        *iter = 0;
 }
 
 template <typename Scalar, int Dim>
@@ -390,6 +435,8 @@ void MPMSolid<Scalar,Dim>::resetGridData()
     for(typename Grid<Scalar,Dim>::NodeIterator iter = grid_.nodeBegin(); iter != grid_.nodeEnd(); ++iter)
     {
         Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+        if(is_bc_grid_node_(node_idx))
+            continue; //skip grid nodes that are boundary condition
         grid_mass_(node_idx) = 0;
         grid_velocity_(node_idx) = Vector<Scalar,Dim>(0);
         grid_velocity_before_(node_idx) = Vector<Scalar,Dim>(0);
@@ -409,6 +456,8 @@ void MPMSolid<Scalar,Dim>::applyGravityOnGrid(Scalar dt)
     for(unsigned int i = 0; i < active_grid_node_.size(); ++i)
     {
         Vector<unsigned int,Dim> node_idx = active_grid_node_[i];
+        if(is_bc_grid_node_(node_idx))
+            continue; //skip grid nodes that are boundary condition
         Vector<Scalar,Dim> gravity_vec(0);
         gravity_vec[1] = (-1)*(this->gravity_);
         grid_velocity_(node_idx) += gravity_vec*dt;

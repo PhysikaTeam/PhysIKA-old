@@ -14,6 +14,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -64,6 +65,8 @@ void MPMSolidBase<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &part
 {
     SolidParticle<Scalar,Dim> *new_particle = particle.clone();
     particles_.push_back(new_particle);
+    unsigned char not_boundary = 0;
+    is_bc_particle_.push_back(not_boundary);
 }
 
 template <typename Scalar, int Dim>
@@ -71,12 +74,15 @@ void MPMSolidBase<Scalar,Dim>::removeParticle(unsigned int particle_idx)
 {
     if(particle_idx>=particles_.size())
     {
-        std::cerr<<"Error: MPM particle index out of range, abort program!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"Warning: MPM particle index out of range, operation ignored!\n";
+        return;
     }
     typename std::vector<SolidParticle<Scalar,Dim>*>::iterator iter = particles_.begin() + particle_idx;
     delete *iter; //release memory
     particles_.erase(iter);
+    //remove the record in boundary particle
+    typename std::vector<unsigned char>::iterator iter2 = is_bc_particle_.begin() + particle_idx;
+    is_bc_particle_.erase(iter2);
 }
 
 template <typename Scalar, int Dim>
@@ -86,7 +92,8 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
     for(unsigned int i = 0; i < particles_.size(); ++i)
         if(particles_[i])
             delete particles_[i];
-    particles_.clear();
+    particles_.resize(particles.size());
+    is_bc_particle_.resize(particles.size());
     //add new particle data
     for(unsigned int i = 0; i < particles.size(); ++i)
     {
@@ -94,9 +101,9 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
         {
             std::cerr<<"Warning: pointer to particle "<<i<<" is NULL, ignored!\n";
             continue;
-        }
-        SolidParticle<Scalar,Dim> *mpm_particle = particles[i]->clone();
-        particles_.push_back(mpm_particle);
+        } 
+        particles_[i] = particles[i]->clone();
+        is_bc_particle_[i] = 0;
     }
 }
 
@@ -126,6 +133,24 @@ template <typename Scalar, int Dim>
 const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allParticles() const
 {
     return particles_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::addBCParticle(unsigned int particle_idx)
+{
+    if(particle_idx>=particles_.size())
+    {
+        std::cerr<<"Warning: MPM particle index out of range, operation ignored!\n";
+        return;
+    }
+    is_bc_particle_[particle_idx] = 1;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::addBCParticles(const std::vector<unsigned int> &particle_idx)
+{
+    for(unsigned int i = 0; i < particle_idx.size(); ++i)
+        addBCParticle(particle_idx[i]);
 }
 
 template <typename Scalar, int Dim>

@@ -58,6 +58,7 @@ GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsig
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
+    default_light_.turnOn();
     light_manager_.insertBack(&default_light_);
 }
 
@@ -375,6 +376,7 @@ bool GlutWindow::saveScreen(const std::string &file_name) const
     int width = this->width(), height = this->height();
     unsigned char *data = new unsigned char[width*height*3];  //RGB
     PHYSIKA_ASSERT(data);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadPixels(0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,(void*)data);
     Image image(width,height,Image::RGB,data);
     image.flipVertically();

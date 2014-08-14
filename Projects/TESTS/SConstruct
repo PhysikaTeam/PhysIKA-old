@@ -79,7 +79,8 @@ inc_files=[]
 
 #USE OPENGL OR NOT
 if use_gl==True:
-    additional_inc_path.append('../../Public_Library/include/Physika_Dependency/OpenGL/')
+    physika_inc_path_str=''.join(physika_inc_path)
+    additional_inc_path.append(physika_inc_path_str+'Physika_Dependency/OpenGL/')
     if os_name in ('Linux','Darwin'):
         if os_architecture=='32bit':
             additional_libs.append('glui32')

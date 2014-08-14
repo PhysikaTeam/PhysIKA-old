@@ -20,10 +20,12 @@
 
 namespace Physika{
 
-//ContactPoint contains position and normal of contact points.
-//It's different from CollisionPair, which contains colliding elements (e.g. faces of meshes) and objects.
-//ContactPoint should be generated from CollisionPair. This process is called "contact sampling".
-//Notice that contact sampling is not a bijection.
+/*
+ * ContactPoint contains position and normal of contact points.
+ * It's different from CollisionPair, which contains colliding elements (e.g. faces of meshes) and objects.
+ * ContactPoint should be generated from CollisionPair. This process is called "contact sampling".
+ * Notice that contact sampling is not a bijection.
+ */
 template <typename Scalar,int Dim>
 class ContactPoint
 {
@@ -35,7 +37,7 @@ public:
 
     //get & set
     virtual void setProperty(unsigned int contact_index, unsigned int object_lhs_index, unsigned int object_rhs_index,
-        const Vector<Scalar, Dim>& global_contact_position, const Vector<Scalar, Dim>& global_contact_normal_lhs);
+                             const Vector<Scalar, Dim>& global_contact_position, const Vector<Scalar, Dim>& global_contact_normal_lhs);
     unsigned int contactIndex() const;
     unsigned int objectLhsIndex() const;
     unsigned int objectRhsIndex() const;

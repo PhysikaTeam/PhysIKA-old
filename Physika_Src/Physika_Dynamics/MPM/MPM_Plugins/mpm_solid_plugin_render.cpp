@@ -15,13 +15,17 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
+#include <limits>
 #include <GL/gl.h>
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Point_Render/point_render.h"
+#include "Physika_Render/Grid_Render/grid_render.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
@@ -36,9 +40,9 @@ MPMSolidPluginRender<Scalar,Dim>* MPMSolidPluginRender<Scalar,Dim>::active_insta
 template <typename Scalar, int Dim>
 MPMSolidPluginRender<Scalar,Dim>::MPMSolidPluginRender()
     :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),pause_simulation_(true),
-     render_particle_(true),render_grid_(true),
+     simulation_finished_(false),render_particle_(true),render_grid_(true),
      render_particle_velocity_(false),render_grid_velocity_(false),
-     particle_render_mode_(0),velocity_scale_(1.0)
+     particle_render_mode_(0),velocity_scale_(1.0),auto_capture_frame_(false)
 {
     activateCurrentInstance();
 }
@@ -52,25 +56,76 @@ MPMSolidPluginRender<Scalar,Dim>::~MPMSolidPluginRender()
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onBeginFrame(unsigned int frame)
 {
-//TO DO
+//do nothing, because advanceFrame() is never called
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onEndFrame(unsigned int frame)
 {
-//TO DO
+//do nothing, because advanceFrame() is never called
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onBeginTimeStep(Scalar time, Scalar dt)
 {
-//TO DO
+   //start timer when the first frame begins
+    MPMSolid<Scalar,Dim> *driver = this->driver();
+    PHYSIKA_ASSERT(driver);
+    Scalar frame_rate = driver->frameRate();
+    Scalar cur_frame_scalar = time*frame_rate;
+    unsigned int cur_frame = static_cast<unsigned int>(cur_frame_scalar);
+    unsigned int start_frame = driver->getStartFrame();
+    if(cur_frame_scalar-start_frame<std::numeric_limits<Scalar>::epsilon()) //begins the first frame
+    {
+        if(driver->isTimerEnabled())
+            timer_.startTimer();
+        std::cout<<"Begin Frame "<<cur_frame<<"\n";
+    }
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
 {
-//TO DO
+    //stop timer when a frame ends
+    //stop simulation when maximum frame reached
+    MPMSolid<Scalar,Dim> *driver = this->driver();
+    PHYSIKA_ASSERT(driver);
+    unsigned int max_frame = driver->getEndFrame();
+    Scalar frame_rate = driver->frameRate();
+    unsigned int cur_frame = static_cast<unsigned int>(time*frame_rate);
+    unsigned int frame_last_step = static_cast<unsigned int>((time-dt)*frame_rate);
+    if(cur_frame-frame_last_step==1) //ended a frame
+    {
+        std::cout<<"End Frame "<<cur_frame<<" ";
+        if(driver->isTimerEnabled())
+        {
+            timer_.stopTimer();
+            std::cout<<timer_.getElapsedTime()<<" s";
+        }
+        std::cout<<"\n";
+        if(this->auto_capture_frame_)  //write screen to file
+        {
+            std::string file_name("./screen_shots/frame_");
+            std::stringstream adaptor;
+            adaptor<<cur_frame;
+            std::string cur_frame_str;
+            adaptor>>cur_frame_str;
+            file_name += cur_frame_str+std::string(".png");
+            this->window_->saveScreen(file_name);
+        }
+        if(driver->isTimerEnabled())
+        {
+            //start timer for next frame
+            //not accurate if something happens between time steps
+            if(cur_frame < max_frame)
+                timer_.startTimer();
+        }
+    }
+    if(cur_frame >= max_frame)
+    {
+        this->simulation_finished_ = true;
+        std::cout<<"Simulation Ended.\n";
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -164,7 +219,8 @@ void MPMSolidPluginRender<Scalar,Dim>::idleFunction(void)
     MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
     PHYSIKA_ASSERT(driver);
     Scalar dt = driver->computeTimeStep();
-    if(active_instance_->pause_simulation_ == false)
+    if(active_instance_->pause_simulation_ == false &&
+       active_instance_->simulation_finished_ == false)
     {
         driver->advanceStep(dt);
         //active_instance_->pause_simulation_ = true;
@@ -228,6 +284,9 @@ void MPMSolidPluginRender<Scalar,Dim>::keyboardFunction(unsigned char key, int x
     case 32: //space
         active_instance_->pause_simulation_ = !(active_instance_->pause_simulation_);
         break;
+    case 'S':
+        active_instance_->auto_capture_frame_ = !(active_instance_->auto_capture_frame_);
+        break;
     default:
         break;
     }
@@ -271,25 +330,8 @@ void MPMSolidPluginRender<Scalar,Dim>::renderGrid()
     MPMSolid<Scalar,Dim> *driver = active_instance_->driver();
     PHYSIKA_ASSERT(driver);
     const Grid<Scalar,Dim> &grid = driver->grid();
-    openGLColor3(Color<Scalar>::White());
-    glDisable(GL_LIGHTING);
-    for(typename Grid<Scalar,Dim>::CellIterator iter = grid.cellBegin(); iter != grid.cellEnd(); ++iter)
-    {  //TEST CODE, ONLY FOR 2D
-        Vector<unsigned int, Dim> cell_idx = iter.cellIndex();
-        Vector<Scalar,Dim> cell_min = grid.cellMinCornerNode(cell_idx);
-        Vector<Scalar,Dim> cell_max = grid.cellMaxCornerNode(cell_idx);
-        Vector<Scalar,Dim> node2(cell_min);
-        node2[0] = cell_max[0];
-        Vector<Scalar,Dim> node4(cell_min);
-        node4[1] = cell_max[1];
-        glBegin(GL_LINE_LOOP);
-        openGLVertex(cell_min);
-        openGLVertex(node2);
-        openGLVertex(cell_max);
-        openGLVertex(node4);
-        glEnd();
-    }
-//TO DO: replaced with grid render
+    GridRender<Scalar,Dim> grid_render(&grid);
+    grid_render.render();
 }
 
 template <typename Scalar, int Dim>

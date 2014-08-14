@@ -49,6 +49,15 @@ inline void openGLVertex(const Vector<double,3> &vec)
     glVertex3d(vec[0],vec[1],vec[2]);
 }
 
+template <typename Scalar, int Dim>
+inline void openGLVertex(const Vector<Scalar,Dim> &vec)
+{
+    Vector<double,Dim> vec_cast;
+    for(unsigned int i = 0; i < Dim; ++i)
+        vec_cast[i] = static_cast<double>(vec[i]);
+    openGLVertex(vec_cast);
+}
+
 /*
  * openGLColor{34}(const Color<Scalar> &):
  * replacement for glColor{34}b, glColor{34}s, glColor{34}i, glColor{34}f, glColor{34}d, 

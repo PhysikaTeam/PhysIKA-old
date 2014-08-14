@@ -80,17 +80,20 @@ public:
 
     //setters && getters
     inline void setMaxDt(Scalar max_dt){max_dt_ = max_dt;}
-    inline Scalar maxDt(){return max_dt_;}
+    inline Scalar maxDt() const{return max_dt_;}
     inline void setFrameRate(Scalar frame_rate){frame_rate_ = frame_rate;}
-    inline Scalar frameRate(){return frame_rate_;}
+    inline Scalar frameRate() const{return frame_rate_;}
     inline void setStartFrame(unsigned int start_frame){start_frame_ = start_frame;}
-    inline unsigned int getStartFrame(){return start_frame_;}
+    inline unsigned int getStartFrame() const{return start_frame_;}
     inline void setEndFrame(unsigned int end_frame){end_frame_ = end_frame;}
-    inline unsigned int getEndFrame(){return end_frame_;}
+    inline unsigned int getEndFrame() const{return end_frame_;}
     inline void enableWriteToFile(){write_to_file_ = true;}
     inline void disableWriteToFile(){write_to_file_ = false;}
+    inline bool isWriteToFileEnabled() const {return write_to_file_;}
     inline void enableTimer(){enable_timer_=true;}
     inline void disableTimer(){enable_timer_=false;}
+    inline bool isTimerEnabled() const {return enable_timer_;}
+    inline Scalar currentTime() const {return time_;} //return current time point
 
 protected:
     unsigned int start_frame_;
@@ -102,7 +105,7 @@ protected:
     bool write_to_file_;
     bool enable_timer_;
     Timer timer_;
-    Scalar time_;//current time point of simulation
+    Scalar time_;//current time point since simulation starts (from start frame)
     ConfigFile config_parser_; //parser of configuration file
 
     std::vector<DriverPluginBase<Scalar>* > plugins_;//Plugin vector. All plugins should be added here and called in corresponding functions

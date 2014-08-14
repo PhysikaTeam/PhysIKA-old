@@ -101,15 +101,13 @@ unsigned int Polygon<Scalar>::numIsolatedVertices() const
 template <typename Scalar>
 bool Polygon<Scalar>::isTriangularPolygon() const
 {
-    // to do
-    return true;
+	return this->numVertices() == 3;
 }
 
 template <typename Scalar>
 bool Polygon<Scalar>::isQuadrilateralPolygon() const
 {
-    // to do
-    return true;
+	return this->numVertices() == 4;
 }
 
 template <typename Scalar>
