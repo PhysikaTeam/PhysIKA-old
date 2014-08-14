@@ -73,8 +73,8 @@ int main()
     driver.setGravity(0.981);
 
     RigidBody<double,3> plane(&mesh_plane);
-    plane.setCoeffRestitution(0.3);
-    plane.setCoeffFriction(0.3);
+    plane.setCoeffRestitution(0.1);
+    plane.setCoeffFriction(0.1);
 
 	RigidBody<double,3> ball(&mesh_ball);
     ball.setCoeffFriction(0.5);
@@ -85,7 +85,7 @@ int main()
 
     RigidBody<double,3> floor(&mesh_box);
     floor.setTranslation(Vector<double, 3>(0, -5, 0));
-    floor.setScale(Vector<double, 3>(500, 1, 500));
+    floor.setScale(Vector<double, 3>(200, 1, 100));
     //floor.setCoeffFriction(0.5);
     floor.setCoeffRestitution(1);
     floor.setFixed(true);
@@ -138,7 +138,6 @@ int main()
 	glut_window.setCameraFarClip(10000);
 	glut_window.setCameraNearClip(1.0e-3);
 	glut_window.setCameraFOV(45);
-	glut_window.lightManager().turnAllOff();
 
 	RigidDriverPluginRender<double, 3>* plugin = new RigidDriverPluginRender<double, 3>();
 	plugin->setWindow(&glut_window);
@@ -146,18 +145,18 @@ int main()
 	//plugin->disableRenderSolidAll();
 	//plugin->enableRenderWireframeAll();
     //plugin->enableRenderContactFaceAll();
-    plugin->enableRenderContactNormalAll();
-    //plugin->saveScreen(string("img/test"), 10);
+    //plugin->enableRenderContactNormalAll();
+    plugin->saveScreen(string("img/test"), 10);
 
     RigidDriverPluginPrint<double, 3>* print_plugin = new RigidDriverPluginPrint<double, 3>();
     driver.addPlugin(print_plugin);
 
     RigidDriverPluginMotion<double>* motion_plugin = new RigidDriverPluginMotion<double>();
     driver.addPlugin(motion_plugin);
-    motion_plugin->setConstantTranslation(object, Vector<double, 3>(2, 0, 0));
-    motion_plugin->setConstantRotation(object, Vector<double, 3>(0, 0.4, 0));
-    motion_plugin->setPeriodTranslation(object, Vector<double, 3>(15, 0, 0), 2);
-    motion_plugin->setPeriodRotation(object, Vector<double, 3>(1, 0, 0), 1);
+    //motion_plugin->setConstantTranslation(&floor, Vector<double, 3>(2, 0, 0));
+    //motion_plugin->setConstantRotation(&floor, Vector<double, 3>(0, 0.4, 0));
+    motion_plugin->setPeriodTranslation(&floor, Vector<double, 3>(0, 0.2, 0), 15);
+    motion_plugin->setPeriodRotation(&floor, Vector<double, 3>(0.1, 0, 0), 10);
 
     glut_window.createWindow();
 

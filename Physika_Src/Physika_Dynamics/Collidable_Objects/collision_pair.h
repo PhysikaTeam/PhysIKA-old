@@ -39,25 +39,13 @@ public:
     virtual typename CollidableObjectInternal::ObjectType objectTypeLhs() const = 0;
     virtual typename CollidableObjectInternal::ObjectType objectTypeRhs() const = 0;
 
-	//Functions for getting objects and faces of a mesh-to-mesh collision pair, corresponding to class CollisionPairMeshToMesh
-	virtual const CollidableObject<Scalar, Dim>* objectLhs() const = 0;
+    virtual const CollidableObject<Scalar, Dim>* objectLhs() const = 0;
 	virtual CollidableObject<Scalar, Dim>* objectLhs() = 0;
 	virtual const CollidableObject<Scalar, Dim>* objectRhs() const = 0;
 	virtual CollidableObject<Scalar, Dim>* objectRhs() = 0;
-	virtual const MeshBasedCollidableObject<Scalar>* meshObjectLhs() const = 0;
-	virtual MeshBasedCollidableObject<Scalar>* meshObjectLhs() = 0;
-	virtual const MeshBasedCollidableObject<Scalar>* meshObjectRhs() const = 0;
-	virtual MeshBasedCollidableObject<Scalar>* meshObjectRhs() = 0;
-	virtual const SurfaceMeshInternal::Face<Scalar>* faceLhsPtr() const = 0;
-	virtual SurfaceMeshInternal::Face<Scalar>* faceLhsPtr() = 0;
-	virtual const SurfaceMeshInternal::Face<Scalar>* faceRhsPtr() const = 0;
-	virtual SurfaceMeshInternal::Face<Scalar>* faceRhsPtr() = 0;
-	virtual unsigned int faceLhsIdx() const = 0;
-	virtual unsigned int faceRhsIdx() const = 0;
 	virtual unsigned int objectLhsIdx() const = 0;
 	virtual unsigned int objectRhsIdx() const = 0;
 
-	//If other kinds of collision pairs need to be defined, e.g. mesh-to-implicit pairs, add corresponding functions here
 };
 
 //Face pair of a mesh-to-mesh collision

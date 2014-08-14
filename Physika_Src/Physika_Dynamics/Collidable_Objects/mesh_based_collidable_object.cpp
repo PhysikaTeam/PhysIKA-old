@@ -107,6 +107,13 @@ void MeshBasedCollidableObject<Scalar>::setTransform(Transform<Scalar, 3>* trans
 }
 
 template <typename Scalar>
+bool MeshBasedCollidableObject<Scalar>::collideWithPoint(Vector<Scalar, 3> *point, Vector<Scalar, 3> &contact_normal)
+{
+    //to do
+    return false;
+}
+
+template <typename Scalar>
 bool MeshBasedCollidableObject<Scalar>::collideWithMesh(MeshBasedCollidableObject<Scalar>* object, unsigned int face_index_lhs, unsigned int face_index_rhs)
 {
 	if(object == NULL || object->mesh() == NULL)

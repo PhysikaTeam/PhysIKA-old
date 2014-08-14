@@ -6,20 +6,11 @@
 # 
 
 newmtl Color_1
-Ka 0.90 0.00 0.10
-Kd 0.90 0.00 0.10
-Ks 0.90 0.00 0.10
-#Ka 0.117647 0.117647 0.117647
-#Kd 1 0 0
-#Ks 0.752941 0.752941 0.752941
-illum 2
-Ns 90
-#map_Kd 
-#map_bump 
-#bump 
-#map_opacity 
-#map_d 
-#refl 
-#map_kS 
-#map_kA 
-#map_Ns 
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.8 0.8 0.8
+	Kd 0.8 0.8 0.8
+	Ks 0.8 0.8 0.8

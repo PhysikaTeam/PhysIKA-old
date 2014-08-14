@@ -373,10 +373,10 @@ int GlutWindow::getRenderTaskIndex(RenderBase *task) const
 bool GlutWindow::saveScreen(const std::string &file_name) const
 {
     int width = this->width(), height = this->height();
-    unsigned char *data = new unsigned char[width*height*4];  //RGBA
+    unsigned char *data = new unsigned char[width*height*3];  //RGB
     PHYSIKA_ASSERT(data);
-    glReadPixels(0,0,width,height,GL_RGBA,GL_UNSIGNED_BYTE,(void*)data);
-    Image image(width,height,Image::RGBA,data);
+    glReadPixels(0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,(void*)data);
+    Image image(width,height,Image::RGB,data);
     image.flipVertically();
     bool status = ImageIO::save(file_name,&image);
     delete[] data;
