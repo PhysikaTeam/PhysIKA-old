@@ -104,7 +104,7 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::currentParticleDomain(unsigned int particle_idx, std::vector<Vector<Scalar,Dim> > &particle_domain_corner)
+void CPDIMPMSolid<Scalar,Dim>::currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
 {
     if(particle_idx >= this->particles_.size())
     {
@@ -112,27 +112,57 @@ void CPDIMPMSolid<Scalar,Dim>::currentParticleDomain(unsigned int particle_idx, 
         particle_domain_corner.clear();
     }
     else
-        particle_domain_corner = particle_domain_corners_[particle_idx];
+    {
+        Vector<unsigned int,Dim> corner_num(2); //2 corners in each dimension
+        particle_domain_corner.resize(corner_num);
+        for(typename ArrayND<Vector<Scalar,Dim>,Dim>::Iterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++iter)
+        {
+            Vector<unsigned int,Dim> ele_idx = iter.elementIndex();
+            unsigned int idx_1d = 0;
+            for(unsigned int i = 0; i < Dim; ++i)
+            {
+                for(unsigned int j = i+1; j < Dim; ++j)
+                    ele_idx[i] *= corner_num[j];
+                idx_1d += ele_idx[i];
+            }
+            *iter = particle_domain_corners_[particle_idx][idx_1d];
+        }
+    }
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::setCurrentParticleDomain(unsigned int particle_idx, const std::vector<Vector<Scalar,Dim> > &particle_domain_corner)
+void CPDIMPMSolid<Scalar,Dim>::setCurrentParticleDomain(unsigned int particle_idx, // const
+                                                        ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
 {
     if(particle_idx >= this->particles_.size())
         std::cout<<"Warning: particle index out of range, operation ignored!\n";
     else
     {
-        PHYSIKA_ASSERT(Dim==2||Dim==3);
+        PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Invalid dimension specified!");
         unsigned int corner_num = Dim==2 ? 4 : 8;
-        if(particle_domain_corner.size()==corner_num)
-            particle_domain_corners_[particle_idx] = particle_domain_corner;
+        unsigned int corner_num_per_dim = 2;
+        if(particle_domain_corner.totalElementCount()==corner_num)
+        {
+            for(typename ArrayND<Vector<Scalar,Dim>,Dim>::Iterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++iter)
+            {
+                Vector<unsigned int,Dim> ele_idx = iter.elementIndex();
+                unsigned int idx_1d = 0;
+                for(unsigned int i = 0; i < Dim; ++i)
+                {
+                    for(unsigned int j = i+1; j < Dim; ++j)
+                        ele_idx[i] *= corner_num_per_dim;
+                    idx_1d += ele_idx[i];
+                }
+                particle_domain_corners_[particle_idx][idx_1d] = *iter;
+            }
+        }
         else
             std::cout<<"Warning: invalid number of domain corners provided, operation ignored!\n";
     }
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::initialParticleDomain(unsigned int particle_idx, std::vector<Vector<Scalar,Dim> > &particle_domain_corner)
+void CPDIMPMSolid<Scalar,Dim>::initialParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
 {
     if(particle_idx >= this->particles_.size())
     {
@@ -140,22 +170,50 @@ void CPDIMPMSolid<Scalar,Dim>::initialParticleDomain(unsigned int particle_idx, 
         particle_domain_corner.clear();
     }
     else
-        particle_domain_corner = initial_particle_domain_corners_[particle_idx];
+    {
+        Vector<unsigned int,Dim> corner_num(2); //2 corners in each dimension
+        particle_domain_corner.resize(corner_num);
+        for(typename ArrayND<Vector<Scalar,Dim>,Dim>::Iterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++iter)
+        {
+            Vector<unsigned int,Dim> ele_idx = iter.elementIndex();
+            unsigned int idx_1d = 0;
+            for(unsigned int i = 0; i < Dim; ++i)
+            {
+                for(unsigned int j = i+1; j < Dim; ++j)
+                    ele_idx[i] *= corner_num[j];
+                idx_1d += ele_idx[i];
+            }
+            *iter = initial_particle_domain_corners_[particle_idx][idx_1d];
+        }
+    }
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::initializeParticleDomain(unsigned int particle_idx, const std::vector<Vector<Scalar,Dim> > &particle_domain_corner)
+void CPDIMPMSolid<Scalar,Dim>::initializeParticleDomain(unsigned int particle_idx, // const
+                                                        ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
 {
     if(particle_idx >= this->particles_.size())
         std::cout<<"Warning: particle index out of range, operation ignored!\n";
     else
     {
-        PHYSIKA_ASSERT(Dim==2||Dim==3);
+        PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Invalid dimension specified!");
         unsigned int corner_num = Dim==2 ? 4 : 8;
-        if(particle_domain_corner.size()==corner_num)
+        unsigned int corner_num_per_dim = 2;
+        if(particle_domain_corner.totalElementCount()==corner_num)
         {
-            particle_domain_corners_[particle_idx] = particle_domain_corner;
-            initial_particle_domain_corners_[particle_idx] = particle_domain_corner;
+            for(typename ArrayND<Vector<Scalar,Dim>,Dim>::Iterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++iter)
+            {
+                Vector<unsigned int,Dim> ele_idx = iter.elementIndex();
+                unsigned int idx_1d = 0;
+                for(unsigned int i = 0; i < Dim; ++i)
+                {
+                    for(unsigned int j = i+1; j < Dim; ++j)
+                        ele_idx[i] *= corner_num_per_dim;
+                    idx_1d += ele_idx[i];
+                }
+                particle_domain_corners_[particle_idx][idx_1d] = *iter;
+                initial_particle_domain_corners_[particle_idx][idx_1d] = *iter;
+            }
         }
         else
             std::cout<<"Warning: invalid number of domain corners provided, operation ignored!\n";
@@ -174,11 +232,12 @@ void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,2> 
     Vector<Scalar,2> min_corner = particle.position() - Vector<Scalar,2>(particle_radius);
     Vector<Scalar,2> bias(0);
     domain_corner[0] = min_corner;
-    bias[0] = 2*particle_radius;
-    domain_corner[1] = min_corner + bias;
     bias[1] = 2*particle_radius;
+    domain_corner[1] = min_corner + bias;
+    bias[0] = 2*particle_radius;
+    bias[1] = 0;
     domain_corner[2] = min_corner + bias;
-    bias[0] = 0;
+    bias[1] = 2*particle_radius;
     domain_corner[3] = min_corner + bias;
 }
 

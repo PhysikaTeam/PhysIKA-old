@@ -21,6 +21,7 @@
 #include <limits>
 #include <GL/gl.h>
 #include <GL/freeglut.h>
+#include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
@@ -384,16 +385,21 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticleDomain()
     glDisable(GL_LIGHTING);
     for(unsigned int i = 0; i < driver->particleNum(); ++i)
     {
-        std::vector<Vector<Scalar,Dim> > particle_domain;
+        ArrayND<Vector<Scalar,Dim>,Dim> particle_domain;
         driver->currentParticleDomain(i,particle_domain);
-        PHYSIKA_ASSERT(particle_domain.size());
+        PHYSIKA_ASSERT(particle_domain.totalElementCount());
         if(Dim==2)
         {
+            std::vector<unsigned int> corner_idx(2);
             glBegin(GL_LINE_LOOP);
-            openGLVertex(particle_domain[0]);
-            openGLVertex(particle_domain[1]);
-            openGLVertex(particle_domain[2]);
-            openGLVertex(particle_domain[3]);
+            corner_idx[0] = 0; corner_idx[1] =0;
+            openGLVertex(particle_domain(corner_idx));
+            corner_idx[0] = 1; corner_idx[1] =0;
+            openGLVertex(particle_domain(corner_idx));
+            corner_idx[0] = 1; corner_idx[1] =1;
+            openGLVertex(particle_domain(corner_idx));
+            corner_idx[0] = 0; corner_idx[1] =1;
+            openGLVertex(particle_domain(corner_idx));
             glEnd();
         }
         else if(Dim==3)

@@ -72,6 +72,7 @@ protected:
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
     std::vector<unsigned char> is_bc_particle_;  //for each particle in particles_, use one byte to indicate whether it's set as boundary condition
+    std::vector<Scalar> particle_initial_volume_; 
     //precomputed weights and gradients of grid nodes that is within range of each particle
     std::vector<std::vector<Scalar> > particle_grid_weight_;
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_grid_weight_gradient_;

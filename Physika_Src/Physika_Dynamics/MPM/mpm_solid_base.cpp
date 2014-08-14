@@ -68,6 +68,7 @@ void MPMSolidBase<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &part
     //add space for particle related data
     unsigned char not_boundary = 0;
     is_bc_particle_.push_back(not_boundary);
+    particle_initial_volume_.push_back(new_particle->volume()); //store particle initial volume
     //for each particle, preallocate space that can store weight/gradient of maximum
     //number of nodes in range
     unsigned int max_num = 1;
@@ -91,12 +92,14 @@ void MPMSolidBase<Scalar,Dim>::removeParticle(unsigned int particle_idx)
     delete *iter; //release memory
     particles_.erase(iter);
     //remove the record in particle related data
-    typename std::vector<unsigned char>::iterator iter2 = is_bc_particle_.begin() + particle_idx;
-    is_bc_particle_.erase(iter2);
-    typename std::vector<std::vector<Scalar> >::iterator iter3 = particle_grid_weight_.begin() + particle_idx;
-    particle_grid_weight_.erase(iter3);
-    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter4 = particle_grid_weight_gradient_.begin() + particle_idx;
-    particle_grid_weight_gradient_.erase(iter4);
+    typename std::vector<Scalar>::iterator iter2 = particle_initial_volume_.begin() + particle_idx;
+    particle_initial_volume_.erase(iter2);
+    typename std::vector<unsigned char>::iterator iter3 = is_bc_particle_.begin() + particle_idx;
+    is_bc_particle_.erase(iter3);
+    typename std::vector<std::vector<Scalar> >::iterator iter4 = particle_grid_weight_.begin() + particle_idx;
+    particle_grid_weight_.erase(iter4);
+    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter5 = particle_grid_weight_gradient_.begin() + particle_idx;
+    particle_grid_weight_gradient_.erase(iter5);
 }
 
 template <typename Scalar, int Dim>
@@ -108,6 +111,7 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
             delete particles_[i];
     particles_.resize(particles.size());
     is_bc_particle_.resize(particles.size());
+    particle_initial_volume_.resize(particles.size());
     //for each particle, preallocate space that can store weight/gradient of maximum
     //number of nodes in range
     unsigned int max_num = 1;
@@ -127,6 +131,7 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
         } 
         particles_[i] = particles[i]->clone();
         is_bc_particle_[i] = 0;
+        particle_initial_volume_[i] = particles_[i]->volume();
     }
 }
 

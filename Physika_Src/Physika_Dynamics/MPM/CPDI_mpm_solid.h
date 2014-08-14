@@ -18,6 +18,7 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Utilities/dimension_trait.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI_update_method.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
@@ -43,15 +44,14 @@ public:
     virtual void updateParticleInterpolationWeight();  //compute the interpolation weight between particles and grid nodes
     virtual void updateParticleConstitutiveModelState(Scalar dt); //update the constitutive model state of particle, e.g., deformation gradient
 
-    //getter && setter
-    //return current corners of given particle, empty vector is returned is particle index is invalid
-    void currentParticleDomain(unsigned int particle_idx, std::vector<Vector<Scalar,Dim> > &particle_domain_corner);
+    //return current corners of given particle, empty array is returned if particle index is invalid
+    void currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
     //explicitly set current particle domain
-    void setCurrentParticleDomain(unsigned int particle_idx, const std::vector<Vector<Scalar,Dim> > &particle_domain_corner);
-    //return initial corners of given particle, empty vector is returned is particle index is invalid
-    void initialParticleDomain(unsigned int particle_idx, std::vector<Vector<Scalar,Dim> > &particle_domain_corner);
+    void setCurrentParticleDomain(unsigned int particle_idx, /* const */ ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    //return initial corners of given particle, empty array is returned if particle index is invalid
+    void initialParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
     //explicitly initialize particle domain
-    void initializeParticleDomain(unsigned int particle_idx, const std::vector<Vector<Scalar,Dim> > &particle_domain_corner);
+    void initializeParticleDomain(unsigned int particle_idx, /* const */ ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
 
     //set the particle domain update method using method update type as template
     template <typename CPDIUpdateMethodType>
@@ -65,7 +65,6 @@ protected:
                                   DimensionTrait<3> trait);
     void updateParticleDomain();  //update the particle domain in CPDI, called in updateParticleConstitutiveModelState()
 protected:
-    //domain corners are stored in order such that consecutive 4 corners is a quad
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_domain_corners_;  //current particle domain corners
     std::vector<std::vector<Vector<Scalar,Dim> > > initial_particle_domain_corners_; //initial particle domain corners
     CPDIUpdateMethod<Scalar,Dim> *cpdi_update_method_; //the cpdi method used to update particle domain

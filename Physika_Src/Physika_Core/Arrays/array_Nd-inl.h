@@ -117,18 +117,25 @@ unsigned int ArrayND<ElementType,Dim>::size(unsigned int dim) const
 }
 
 template <typename ElementType,int Dim>
-std::vector<unsigned int> ArrayND<ElementType,Dim>::elementCount() const
+void ArrayND<ElementType,Dim>::elementCount(std::vector<unsigned int> &count) const
 {
-    std::vector<unsigned int> count(Dim);
+    count.resize(Dim);
     for(unsigned int i = 0; i < count.size(); ++i)
         count[i] = element_count_[i];
-    return count;
 }
 
 template <typename ElementType,int Dim>
-std::vector<unsigned int> ArrayND<ElementType,Dim>::size() const
+void ArrayND<ElementType,Dim>::size(std::vector<unsigned int> &count) const
 {
-    return elementCount();
+    elementCount(count);
+}
+
+template <typename ElementType,int Dim>
+void ArrayND<ElementType,Dim>::clear()
+{
+    release();
+	for(unsigned int i = 0; i < Dim; ++i)
+		element_count_[i] = 0;
 }
 
 template <typename ElementType,int Dim>
@@ -206,6 +213,22 @@ const ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const std::vector<un
     }
     unsigned int index_1d = index1D(idx);
     return data_[index_1d];
+}
+
+template <typename ElementType,int Dim>
+Vector<unsigned int,Dim> ArrayND<ElementType,Dim>::elementCount() const
+{
+    PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
+    Vector<unsigned int,Dim> element_count;
+    for(unsigned int i = 0; i < Dim; ++i)
+        element_count[i] = element_count_[i];
+    return element_count;
+}
+
+template <typename ElementType,int Dim>
+Vector<unsigned int,Dim> ArrayND<ElementType,Dim>::size() const
+{
+    return elementCount();
 }
 
 template <typename ElementType,int Dim>

@@ -91,6 +91,13 @@ void Array<ElementType>::resize(unsigned int count)
 }
 
 template <typename ElementType>
+void Array<ElementType>::clear()
+{
+    release();
+    element_count_ = 0;
+}
+
+template <typename ElementType>
 ElementType& Array<ElementType>::operator[] (unsigned int id)
 {
     if(id>=element_count_)

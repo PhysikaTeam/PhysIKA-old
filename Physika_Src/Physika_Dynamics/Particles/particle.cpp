@@ -18,13 +18,13 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 Particle<Scalar,Dim>::Particle()
-    :x_(0),v_(0),m_(0),vol_(0),ref_vol_(0)
+    :x_(0),v_(0),m_(0),vol_(0)
 {
 }
 
 template <typename Scalar, int Dim>
 Particle<Scalar,Dim>::Particle(const Vector<Scalar,Dim> &pos, const Vector<Scalar,Dim> &vel, Scalar mass, Scalar vol)
-    :x_(pos),v_(vel),m_(mass),vol_(vol),ref_vol_(vol)
+    :x_(pos),v_(vel),m_(mass),vol_(vol)
 {
 }
 
@@ -35,7 +35,6 @@ Particle<Scalar,Dim>::Particle(const Particle<Scalar, Dim> &particle2)
     v_ = particle2.v_;
     m_ = particle2.m_;
     vol_ = particle2.vol_;
-    ref_vol_ = particle2.ref_vol_;
 }
 
 template <typename Scalar, int Dim>
@@ -56,7 +55,6 @@ Particle<Scalar,Dim>& Particle<Scalar,Dim>::operator= (const Particle<Scalar,Dim
     v_ = particle2.v_;
     m_ = particle2.m_;
     vol_ = particle2.vol_;
-    ref_vol_ = particle2.ref_vol_;
     return *this;
 }
 
@@ -99,25 +97,13 @@ Scalar Particle<Scalar,Dim>::mass() const
 template <typename Scalar, int Dim>
 void Particle<Scalar,Dim>::setVolume(Scalar vol)
 {
-    if(vol_ == 0)  //volume previously unset, set initial volume as well
-    {
-        vol_ = vol;
-        ref_vol_ = vol_;
-    }
-    else  //merely set current volume
-        vol_ = vol;
+    vol_ = vol;
 }
 
 template <typename Scalar, int Dim>
 Scalar Particle<Scalar,Dim>::volume() const
 {
     return vol_;
-}
-
-template <typename Scalar, int Dim>
-Scalar Particle<Scalar,Dim>::initialVolume() const
-{
-    return ref_vol_;
 }
 
 //explicit instantiation

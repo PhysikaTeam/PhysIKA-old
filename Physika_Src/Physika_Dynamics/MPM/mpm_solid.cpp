@@ -354,7 +354,7 @@ void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
         SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
         particle_deform_grad += dt*particle_vel_grad*particle_deform_grad;
         particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient
-        Scalar particle_vol = (particle_deform_grad.determinant())*(particle->initialVolume());
+        Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[i]);
         particle->setVolume(particle_vol);  //update particle volume
     }
 }

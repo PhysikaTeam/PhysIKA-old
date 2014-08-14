@@ -16,9 +16,8 @@
  */
 
 #include <cstdlib>
-#include <limits>
 #include <iostream>
-#include <vector>
+#include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Utilities/physika_assert.h"
@@ -42,22 +41,12 @@ template <typename Scalar, int Dim>
 void CPDIUpdateMethod<Scalar,Dim>::updateParticleDomain()
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
-    std::vector<Vector<Scalar,Dim> > domain_corner;
+    ArrayND<Vector<Scalar,Dim>,Dim> domain_corner;
     unsigned int corner_num = Dim==2 ? 4 : 8;
     for(unsigned int i = 0; i < cpdi_driver_->particleNum(); ++i)
     {
-        Vector<Scalar,Dim> min_corner((std::numeric_limits<Scalar>::max)());
-        Vector<Scalar,Dim> max_corner((std::numeric_limits<Scalar>::min)());
         cpdi_driver_->initialParticleDomain(i,domain_corner);
-        PHYSIKA_ASSERT(domain_corner.size()==corner_num);
-        for(unsigned int j = 0; j < domain_corner.size(); ++j)
-            for(unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if(domain_corner[j][dim]<min_corner[dim])
-                    min_corner[dim] = domain_corner[j][dim];
-                if(domain_corner[j][dim]>max_corner[dim])
-                    max_corner[dim] = domain_corner[j][dim];
-            }
+        PHYSIKA_ASSERT(domain_corner.totalElementCount()==corner_num);
 //TO DO
 
     }

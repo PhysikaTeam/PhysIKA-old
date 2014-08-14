@@ -57,8 +57,10 @@ public:
     ArrayND<ElementType,Dim>& operator= (const ArrayND<ElementType,Dim> &);
     unsigned int elementCount(unsigned int dim) const;  //element count of given dimension
     unsigned int size(unsigned int dim) const;
-    std::vector<unsigned int> elementCount() const;  //element count of all dimensions
-    std::vector<unsigned int> size() const;
+    void elementCount(std::vector<unsigned int> &count) const;  //element count of all dimensions
+    void size(std::vector<unsigned int> &count) const;
+    unsigned int totalElementCount() const;  //return the total number of elements
+    void clear(); //clear the array
     //resize array, data will be lost
     void resize(unsigned int count, unsigned int dim);  //resize given dimension
     void resize(const std::vector<unsigned int> &count);  //resize all dimensions
@@ -68,6 +70,8 @@ public:
     const ElementType& elementAtIndex(const std::vector<unsigned int> &idx) const;
 
     //methods specific to Dim = 2,3,4
+    Vector<unsigned int,Dim> elementCount() const;
+    Vector<unsigned int,Dim> size() const;
     void resize(const Vector<unsigned int,Dim> &count);  //resize all dimensions
     ElementType& operator() (const Vector<unsigned int,Dim> &idx); //get element at given index
     const ElementType& operator() (const Vector<unsigned int,Dim> &idx) const; //get element at given index
@@ -82,7 +86,6 @@ public:
 protected:
     void allocate();
     void release();
-    unsigned int totalElementCount() const;  //return the total number of elements
     unsigned int index1D(const std::vector<unsigned int> &idx) const; //given high dimension index, return 1d version
 protected:
     unsigned int element_count_[Dim];  //number of element in each dimension
