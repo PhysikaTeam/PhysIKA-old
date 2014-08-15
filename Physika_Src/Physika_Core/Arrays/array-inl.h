@@ -138,6 +138,24 @@ typename Array<ElementType>::Iterator Array<ElementType>::end()
 }
 
 template <typename ElementType>
+typename Array<ElementType>::ConstIterator Array<ElementType>::begin() const
+{
+    Array<ElementType>::ConstIterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = 0;
+    return iter;
+}
+
+template <typename ElementType>
+typename Array<ElementType>::ConstIterator Array<ElementType>::end() const
+{
+    Array<ElementType>::Iterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = this->size();
+    return iter;
+}
+
+template <typename ElementType>
 void Array<ElementType>::permutate(unsigned int *ids, unsigned int size)
 {
     if(size != element_count_)

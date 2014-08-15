@@ -26,7 +26,7 @@ MPMBase<Scalar,Dim>::MPMBase()
      cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
-    setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(); 
+    weight_function_ = GridWeightFunctionCreator<GridPiecewiseCubicSpline<Scalar,Dim> >::createGridWeightFunction();
 }
 
 template <typename Scalar, int Dim>
@@ -35,7 +35,7 @@ MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, S
      step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
-    setWeightFunction<GridPiecewiseCubicSpline<Scalar,Dim>>(); 
+    weight_function_ = GridWeightFunctionCreator<GridPiecewiseCubicSpline<Scalar,Dim> >::createGridWeightFunction();
 }
 
 template <typename Scalar, int Dim>

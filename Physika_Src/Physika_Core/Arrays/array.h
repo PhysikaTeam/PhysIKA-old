@@ -21,6 +21,7 @@
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Arrays/array_iterator.h"
+#include "Physika_Core/Arrays/array_const_iterator.h"
 
 namespace Physika{
 
@@ -70,8 +71,11 @@ public:
 
     /* iterator */
     typedef ArrayIterator<ElementType> Iterator;
+    typedef ArrayConstIterator<ElementType> ConstIterator;
     Iterator begin();
     Iterator end();
+    ConstIterator begin() const;
+    ConstIterator end() const;
 
     virtual void permutate(unsigned int *ids, unsigned int size);
 

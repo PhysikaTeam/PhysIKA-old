@@ -317,8 +317,9 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
     else
     {
         std::vector<Scalar> point_size(all_particles.size());
+        //determine sphere size according to particle volume, assumes particle occupies rectangluar space
         for(unsigned int i = 0; i < point_size.size(); ++i)
-            point_size[i] = (Dim==2) ? sqrt(all_particles[i]->volume()/(4.0*PI)) : pow(all_particles[i]->volume()*3/(4*PI),1.0/3.0);
+            point_size[i] = (Dim==2) ? sqrt(all_particles[i]->volume())/2.0 : pow(all_particles[i]->volume(),1.0/3.0)/2.0;
         point_render.setPointSize(point_size);
         point_render.setRenderAsSphere();
     }

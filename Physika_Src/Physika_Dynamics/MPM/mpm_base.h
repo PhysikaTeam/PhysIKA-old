@@ -64,8 +64,11 @@ public:
     void setStepMethod();
 protected:
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
-    virtual Scalar maxParticleVelocityNorm() const=0;
+    virtual Scalar maxParticleVelocityNorm() const=0; //return maximum norm the particles' velocity
     virtual void applyGravityOnGrid(Scalar dt) = 0;
+    //allocate space for particle_grid_weight_ and particle_grid_weight_gradient_
+    //according to particle number and weight function
+    virtual void allocateSpaceForWeightAndGradient() = 0;  
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
     MPMStepMethod<Scalar,Dim> *step_method_;
@@ -74,6 +77,9 @@ protected:
     Scalar sound_speed_;
     //gravity: along negative y direction
     Scalar gravity_;
+    //precomputed weights and gradients of grid nodes that is within range of each particle
+    std::vector<std::vector<Scalar> > particle_grid_weight_;
+    std::vector<std::vector<Vector<Scalar,Dim> > > particle_grid_weight_gradient_;
 };
 
 template <typename Scalar, int Dim>
@@ -83,6 +89,9 @@ void MPMBase<Scalar,Dim>::setWeightFunction()
     if(weight_function_)
         delete weight_function_;
     weight_function_ = GridWeightFunctionCreator<GridWeightFunctionType>::createGridWeightFunction();
+    //reallocate space for particle_grid_weight_ and particle_grid_weight_gradient_
+    //for each particle, preallocate space that can store weight/gradient of maximum number of nodes in range
+    allocateSpaceForWeightAndGradient();
 }
 
 template <typename Scalar, int Dim>

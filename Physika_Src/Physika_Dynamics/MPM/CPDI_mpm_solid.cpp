@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <vector>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
@@ -93,7 +94,17 @@ void CPDIMPMSolid<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 {
-//TO DO
+    PHYSIKA_ASSERT(this->particle_grid_weight_.size() == this->particles_.size());
+    PHYSIKA_ASSERT(this->particle_grid_weight_gradient_.size() == this->particles_.size());
+    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    {
+        const SolidParticle<Scalar,Dim> &particle = *(this->particles_[i]);
+        const std::vector<Vector<Scalar,Dim> > &domain_corner = particle_domain_corners_[i];
+        const GridWeightFunction<Scalar,Dim> &weight_function = *(this->weight_function_);
+        std::vector<Scalar> &weight = this->particle_grid_weight_[i];
+        std::vector<Vector<Scalar,Dim> > &gradient = this->particle_grid_weight_gradient_[i];
+        updateParticleInterpolationWeight(particle,domain_corner,weight_function,weight,gradient);
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -104,7 +115,7 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
+void CPDIMPMSolid<Scalar,Dim>::currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const
 {
     if(particle_idx >= this->particles_.size())
     {
@@ -131,8 +142,7 @@ void CPDIMPMSolid<Scalar,Dim>::currentParticleDomain(unsigned int particle_idx, 
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::setCurrentParticleDomain(unsigned int particle_idx, // const
-                                                        ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
+void CPDIMPMSolid<Scalar,Dim>::setCurrentParticleDomain(unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
 {
     if(particle_idx >= this->particles_.size())
         std::cout<<"Warning: particle index out of range, operation ignored!\n";
@@ -143,7 +153,7 @@ void CPDIMPMSolid<Scalar,Dim>::setCurrentParticleDomain(unsigned int particle_id
         unsigned int corner_num_per_dim = 2;
         if(particle_domain_corner.totalElementCount()==corner_num)
         {
-            for(typename ArrayND<Vector<Scalar,Dim>,Dim>::Iterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++iter)
+            for(typename ArrayND<Vector<Scalar,Dim>,Dim>::ConstIterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++iter)
             {
                 Vector<unsigned int,Dim> ele_idx = iter.elementIndex();
                 unsigned int idx_1d = 0;
@@ -162,7 +172,7 @@ void CPDIMPMSolid<Scalar,Dim>::setCurrentParticleDomain(unsigned int particle_id
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::initialParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
+void CPDIMPMSolid<Scalar,Dim>::initialParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const
 {
     if(particle_idx >= this->particles_.size())
     {
@@ -189,8 +199,7 @@ void CPDIMPMSolid<Scalar,Dim>::initialParticleDomain(unsigned int particle_idx, 
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::initializeParticleDomain(unsigned int particle_idx, // const
-                                                        ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
+void CPDIMPMSolid<Scalar,Dim>::initializeParticleDomain(unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
 {
     if(particle_idx >= this->particles_.size())
         std::cout<<"Warning: particle index out of range, operation ignored!\n";
@@ -201,7 +210,7 @@ void CPDIMPMSolid<Scalar,Dim>::initializeParticleDomain(unsigned int particle_id
         unsigned int corner_num_per_dim = 2;
         if(particle_domain_corner.totalElementCount()==corner_num)
         {
-            for(typename ArrayND<Vector<Scalar,Dim>,Dim>::Iterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++iter)
+            for(typename ArrayND<Vector<Scalar,Dim>,Dim>::ConstIterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++iter)
             {
                 Vector<unsigned int,Dim> ele_idx = iter.elementIndex();
                 unsigned int idx_1d = 0;
@@ -221,13 +230,85 @@ void CPDIMPMSolid<Scalar,Dim>::initializeParticleDomain(unsigned int particle_id
 }
 
 template <typename Scalar, int Dim>
+Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::currentParticleDomainCorner(unsigned int particle_idx, const Vector<unsigned int,Dim> &corner_idx) const
+{
+    if(particle_idx >= this->particles_.size())
+    {
+        std::cout<<"Error: particle index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    unsigned int corner_num = Dim==2 ? 4 : 8;
+    unsigned int corner_num_per_dim = 2;
+    Vector<unsigned int,Dim> idx = corner_idx;
+    unsigned int idx_1d = 0;
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        for(unsigned int j = i+1; j < Dim; ++j)
+            idx[i] *= corner_num_per_dim;
+        idx_1d += idx[i];
+    }
+    if(idx_1d >= corner_num)
+    {
+        std::cout<<"Error: corner index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return particle_domain_corners_[particle_idx][idx_1d];
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigned int particle_idx, const Vector<unsigned int,Dim> &corner_idx) const
+{
+    if(particle_idx >= this->particles_.size())
+    {
+        std::cout<<"Error: particle index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    unsigned int corner_num = Dim==2 ? 4 : 8;
+    unsigned int corner_num_per_dim = 2;
+    Vector<unsigned int,Dim> idx = corner_idx;
+    unsigned int idx_1d = 0;
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        for(unsigned int j = i+1; j < Dim; ++j)
+            idx[i] *= corner_num_per_dim;
+        idx_1d += idx[i];
+    }
+    if(idx_1d >= corner_num)
+    {
+        std::cout<<"Error: corner index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return initial_particle_domain_corners_[particle_idx][idx_1d];
+}
+
+template <typename Scalar, int Dim>
+void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight(const SolidParticle<Scalar,2> &particle, 
+                                           const std::vector<Vector<Scalar,2> > &domain_corner,
+                                           const GridWeightFunction<Scalar,2> &weight_function, 
+                                           std::vector<Scalar> &particle_grid_weight,
+                                           std::vector<Vector<Scalar,2> > &particle_grid_weight_gradient)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight(const SolidParticle<Scalar,3> &particle, 
+                                           const std::vector<Vector<Scalar,3> > &domain_corner,
+                                           const GridWeightFunction<Scalar,3> &weight_function, 
+                                           std::vector<Scalar> &particle_grid_weight,
+                                           std::vector<Vector<Scalar,3> > &particle_grid_weight_gradient)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,2> &particle,
                                                 std::vector<Vector<Scalar,2> > &domain_corner, DimensionTrait<2> trait)
 {
     //determine the position of the corners via particle volume and position
     unsigned int corner_num = 4;
     domain_corner.resize(corner_num);
-    Scalar particle_radius = sqrt(particle.volume()/(4.0*PI));
+    Scalar particle_radius = sqrt(particle.volume())/2.0;//assume the particle occupies rectangle space
     PHYSIKA_ASSERT(Dim==2);
     Vector<Scalar,2> min_corner = particle.position() - Vector<Scalar,2>(particle_radius);
     Vector<Scalar,2> bias(0);
@@ -248,7 +329,7 @@ void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,3> 
     //determine the position of the corners via particle volume and position
     unsigned int corner_num = 8;
     domain_corner.resize(corner_num);
-    Scalar particle_radius = pow(particle.volume()*3/(4*PI),1.0/3.0);
+    Scalar particle_radius = pow(particle.volume(),1.0/3.0)/2.0;//assume the particle occupies cubic space
     PHYSIKA_ASSERT(Dim==3);
     Vector<Scalar,3> min_corner = particle.position() - Vector<Scalar,3>(particle_radius);
     Vector<Scalar,3> bias(0);
@@ -266,7 +347,7 @@ void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,3> 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::updateParticleDomain()
 {
-//TO DO
+    cpdi_update_method_->updateParticleDomain();
 }
 
 //explicit instantiations

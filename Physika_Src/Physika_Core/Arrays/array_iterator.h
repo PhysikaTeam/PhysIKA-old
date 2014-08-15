@@ -36,7 +36,7 @@ public:
     ArrayIterator<ElementType> operator+ (int stride) const;
     ArrayIterator<ElementType> operator- (int stride) const;
     const ElementType& operator *() const;
-    ElementType& operator *(); 
+    ElementType& operator *();   
 protected:
     Array<ElementType> *array_;
     unsigned int element_idx_;

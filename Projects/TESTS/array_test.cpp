@@ -67,6 +67,10 @@ int main()
         cout<<"Yes\n";
     else
         cout<<"No\n";
+    // //test * operator of const iterator as left operator
+    // const ArrayND<int,2>& array_nd_ref = array_nd;
+    // ArrayND<int,2>::ConstIterator const_iter = array_nd_ref.begin();
+    // *const_iter = 1;
     getchar();
     return 0;
 }

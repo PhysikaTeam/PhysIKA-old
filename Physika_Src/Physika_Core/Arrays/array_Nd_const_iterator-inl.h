@@ -1,6 +1,6 @@
 /*
- * @file array_Nd_iterator-inl.h 
- * @brief  iterator of multi-dimensional array class.
+ * @file array_Nd_const_iterator-inl.h 
+ * @brief const iterator of multi-dimensional array class.
  * @author Fei Zhu
  *
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_ARRAYS_ARRAY_ND_ITERATOR_INL_H_
-#define PHYSIKA_CORE_ARRAYS_ARRAY_ND_ITERATOR_INL_H_
+#ifndef PHYSIKA_CORE_ARRAYS_ARRAY_ND_CONST_ITERATOR_INL_H_
+#define PHYSIKA_CORE_ARRAYS_ARRAY_ND_CONST_ITERATOR_INL_H_
 
 #include <cstdlib>
 #include <iostream>
@@ -25,24 +25,24 @@
 namespace Physika{
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim>::ArrayNDIterator()
+ArrayNDConstIterator<ElementType,Dim>::ArrayNDConstIterator()
     :array_(NULL),element_idx_(0)
 {
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim>::~ArrayNDIterator()
+ArrayNDConstIterator<ElementType,Dim>::~ArrayNDConstIterator()
 {
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim>::ArrayNDIterator(const ArrayNDIterator<ElementType,Dim> &iterator)
+ArrayNDConstIterator<ElementType,Dim>::ArrayNDConstIterator(const ArrayNDConstIterator<ElementType,Dim> &iterator)
     :array_(iterator.array_),element_idx_(iterator.element_idx_)
 {
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim>& ArrayNDIterator<ElementType,Dim>::operator= (const ArrayNDIterator<ElementType,Dim> &iterator)
+ArrayNDConstIterator<ElementType,Dim>& ArrayNDConstIterator<ElementType,Dim>::operator= (const ArrayNDConstIterator<ElementType,Dim> &iterator)
 {
     array_ = iterator.array_;
     element_idx_ = iterator.element_idx_;
@@ -50,7 +50,7 @@ ArrayNDIterator<ElementType,Dim>& ArrayNDIterator<ElementType,Dim>::operator= (c
 }
 
 template <typename ElementType, int Dim>
-bool ArrayNDIterator<ElementType,Dim>::operator== (const ArrayNDIterator<ElementType,Dim> &iterator) const
+bool ArrayNDConstIterator<ElementType,Dim>::operator== (const ArrayNDConstIterator<ElementType,Dim> &iterator) const
 {
     if((array_==NULL)||(iterator.array_==NULL))
     {
@@ -61,7 +61,7 @@ bool ArrayNDIterator<ElementType,Dim>::operator== (const ArrayNDIterator<Element
 }
 
 template <typename ElementType, int Dim>
-bool ArrayNDIterator<ElementType,Dim>::operator!= (const ArrayNDIterator<ElementType,Dim> &iterator) const
+bool ArrayNDConstIterator<ElementType,Dim>::operator!= (const ArrayNDConstIterator<ElementType,Dim> &iterator) const
 {
     if((array_==NULL)||(iterator.array_==NULL))
     {
@@ -72,7 +72,7 @@ bool ArrayNDIterator<ElementType,Dim>::operator!= (const ArrayNDIterator<Element
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim>& ArrayNDIterator<ElementType,Dim>::operator++ ()
+ArrayNDConstIterator<ElementType,Dim>& ArrayNDConstIterator<ElementType,Dim>::operator++ ()
 {
     if(array_==NULL)
     {
@@ -84,7 +84,7 @@ ArrayNDIterator<ElementType,Dim>& ArrayNDIterator<ElementType,Dim>::operator++ (
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim>& ArrayNDIterator<ElementType,Dim>::operator-- ()
+ArrayNDConstIterator<ElementType,Dim>& ArrayNDConstIterator<ElementType,Dim>::operator-- ()
 {
     if(array_==NULL)
     {
@@ -96,59 +96,59 @@ ArrayNDIterator<ElementType,Dim>& ArrayNDIterator<ElementType,Dim>::operator-- (
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator++ (int)
+ArrayNDConstIterator<ElementType,Dim> ArrayNDConstIterator<ElementType,Dim>::operator++ (int)
 {
     if(array_==NULL)
     {
         std::cerr<<"Error: undefined operator ++ for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    ArrayNDIterator<ElementType,Dim> iterator(*this);
+    ArrayNDConstIterator<ElementType,Dim> iterator(*this);
     ++element_idx_;
     return iterator;
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator-- (int)
+ArrayNDConstIterator<ElementType,Dim> ArrayNDConstIterator<ElementType,Dim>::operator-- (int)
 {
     if(array_==NULL)
     {
         std::cerr<<"Error: undefined operator -- for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    ArrayNDIterator<ElementType,Dim> iterator(*this);
+    ArrayNDConstIterator<ElementType,Dim> iterator(*this);
     --element_idx_;
     return iterator;
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator+ (int stride) const
+ArrayNDConstIterator<ElementType,Dim> ArrayNDConstIterator<ElementType,Dim>::operator+ (int stride) const
 {
     if(array_==NULL)
     {
         std::cerr<<"Error: undefined operator + for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    ArrayNDIterator<ElementType,Dim> iterator(*this);
+    ArrayNDConstIterator<ElementType,Dim> iterator(*this);
     iterator.element_idx_ += stride;
     return iterator;
 }
 
 template <typename ElementType, int Dim>
-ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator- (int stride) const
+ArrayNDConstIterator<ElementType,Dim> ArrayNDConstIterator<ElementType,Dim>::operator- (int stride) const
 {
     if(array_==NULL)
     {
         std::cerr<<"Error: undefined operator - for uninitialized iterator!\n";
         std::exit(EXIT_FAILURE);
     }
-    ArrayNDIterator<ElementType,Dim> iterator(*this);
+    ArrayNDConstIterator<ElementType,Dim> iterator(*this);
     iterator.element_idx_ -= stride;
     return iterator;
 }
 
 template <typename ElementType, int Dim>
-const ElementType& ArrayNDIterator<ElementType,Dim>::operator *() const
+const ElementType& ArrayNDConstIterator<ElementType,Dim>::operator *() const
 {
     if(array_==NULL)
     {
@@ -164,7 +164,7 @@ const ElementType& ArrayNDIterator<ElementType,Dim>::operator *() const
 }
 
 template <typename ElementType, int Dim>
-ElementType& ArrayNDIterator<ElementType,Dim>::operator *()
+const ElementType& ArrayNDConstIterator<ElementType,Dim>::operator *()
 {
     if(array_==NULL)
     {
@@ -180,7 +180,7 @@ ElementType& ArrayNDIterator<ElementType,Dim>::operator *()
 }
 
 template <typename ElementType, int Dim>
-void ArrayNDIterator<ElementType,Dim>::elementIndex(std::vector<unsigned int> &element_idx) const
+void ArrayNDConstIterator<ElementType,Dim>::elementIndex(std::vector<unsigned int> &element_idx) const
 {
     if(array_==NULL)
     {
@@ -201,7 +201,7 @@ void ArrayNDIterator<ElementType,Dim>::elementIndex(std::vector<unsigned int> &e
 }
 
 template <typename ElementType, int Dim>
-Vector<unsigned int,Dim> ArrayNDIterator<ElementType,Dim>::elementIndex() const
+Vector<unsigned int,Dim> ArrayNDConstIterator<ElementType,Dim>::elementIndex() const
 {
     PHYSIKA_STATIC_ASSERT((Dim==2||Dim==3||Dim==4),"Error: method specific to Dim == 2,3,4!");
     std::vector<unsigned int> element_idx;
@@ -214,4 +214,4 @@ Vector<unsigned int,Dim> ArrayNDIterator<ElementType,Dim>::elementIndex() const
 
 }  //end of namespace Physika
 
-#endif  //PHYSIKA_CORE_ARRAYS_ARRAY_ND_ITERATOR_INL_H_
+#endif  //PHYSIKA_CORE_ARRAYS_ARRAY_ND_CONST_ITERATOR_INL_H_

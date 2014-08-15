@@ -45,20 +45,34 @@ public:
     virtual void updateParticleConstitutiveModelState(Scalar dt); //update the constitutive model state of particle, e.g., deformation gradient
 
     //return current corners of given particle, empty array is returned if particle index is invalid
-    void currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    void currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
     //explicitly set current particle domain
-    void setCurrentParticleDomain(unsigned int particle_idx, /* const */ ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    void setCurrentParticleDomain(unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
     //return initial corners of given particle, empty array is returned if particle index is invalid
-    void initialParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    void initialParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
     //explicitly initialize particle domain
-    void initializeParticleDomain(unsigned int particle_idx, /* const */ ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    void initializeParticleDomain(unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    //get specific domain corner
+    Vector<Scalar,Dim> currentParticleDomainCorner(unsigned int particle_idx, const Vector<unsigned int,Dim> &corner_idx) const;
+    Vector<Scalar,Dim> initialParticleDomainCorner(unsigned int particle_idx, const Vector<unsigned int,Dim> &corner_idx) const;
 
     //set the particle domain update method using method update type as template
     template <typename CPDIUpdateMethodType>
     void setCPDIUpdateMethod();
 
 protected:
-    //init particle domain
+    //trait method to update particle interpolation weight
+    void updateParticleInterpolationWeight(const SolidParticle<Scalar,2> &particle, 
+                                           const std::vector<Vector<Scalar,2> > &domain_corner,
+                                           const GridWeightFunction<Scalar,2> &weight_function, 
+                                           std::vector<Scalar> &particle_grid_weight,
+                                           std::vector<Vector<Scalar,2> > &particle_grid_weight_gradient);
+    void updateParticleInterpolationWeight(const SolidParticle<Scalar,3> &particle, 
+                                           const std::vector<Vector<Scalar,3> > &domain_corner,
+                                           const GridWeightFunction<Scalar,3> &weight_function, 
+                                           std::vector<Scalar> &particle_grid_weight,
+                                           std::vector<Vector<Scalar,3> > &particle_grid_weight_gradient);
+    //trait method to init particle domain
     void initParticleDomain(const SolidParticle<Scalar,2> &particle, std::vector<Vector<Scalar,2> > &domain_corner,
                                   DimensionTrait<2> trait);
     void initParticleDomain(const SolidParticle<Scalar,3> &particle, std::vector<Vector<Scalar,3> > &domain_corner,

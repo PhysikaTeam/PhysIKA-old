@@ -319,6 +319,24 @@ typename ArrayND<ElementType,Dim>::Iterator ArrayND<ElementType,Dim>::end()
 }
 
 template <typename ElementType,int Dim>
+typename ArrayND<ElementType,Dim>::ConstIterator ArrayND<ElementType,Dim>::begin() const
+{
+    ArrayND<ElementType,Dim>::ConstIterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = 0;
+    return iter;
+}
+
+template <typename ElementType,int Dim>
+typename ArrayND<ElementType,Dim>::ConstIterator ArrayND<ElementType,Dim>::end() const
+{
+    ArrayND<ElementType,Dim>::ConstIterator iter;
+    iter.array_ = this;
+    iter.element_idx_ = this->totalElementCount();
+    return iter;
+}
+
+template <typename ElementType,int Dim>
 void ArrayND<ElementType,Dim>::release()
 {
     if(data_)

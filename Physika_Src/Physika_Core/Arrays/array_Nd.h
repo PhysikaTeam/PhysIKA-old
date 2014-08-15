@@ -25,6 +25,7 @@
 #include "Physika_Core/Vectors/vector_4d.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Arrays/array_Nd_iterator.h"
+#include "Physika_Core/Arrays/array_Nd_const_iterator.h"
 
 namespace Physika{
 
@@ -80,8 +81,11 @@ public:
     
     //iterator
     typedef ArrayNDIterator<ElementType,Dim> Iterator;
+    typedef ArrayNDConstIterator<ElementType,Dim> ConstIterator;
     Iterator begin();
     Iterator end();
+    ConstIterator begin() const;
+    ConstIterator end() const;
 
 protected:
     void allocate();
@@ -93,6 +97,7 @@ protected:
 protected:
     PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
     friend class ArrayNDIterator<ElementType,Dim>;
+    friend class ArrayNDConstIterator<ElementType,Dim>;
 };
 
 }  //end of namespace Physika
