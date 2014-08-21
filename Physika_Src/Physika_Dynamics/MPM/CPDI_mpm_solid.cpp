@@ -12,12 +12,16 @@
  *
  */
 
+#include <limits>
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <map>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
+#include "Physika_Dynamics/MPM/mpm_internal.h"
+#include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 
 namespace Physika{
@@ -58,8 +62,7 @@ void CPDIMPMSolid<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &part
     //add space for particle domain corners
     std::vector<Vector<Scalar,Dim> > domain_corner;
     //determine the position of the corners via particle volume and position
-    DimensionTrait<Dim> trait;
-    initParticleDomain(particle,domain_corner,trait);
+    initParticleDomain(particle,domain_corner);
     particle_domain_corners_.push_back(domain_corner); 
     initial_particle_domain_corners_.push_back(domain_corner);
 }
@@ -84,8 +87,7 @@ void CPDIMPMSolid<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
     {
         std::vector<Vector<Scalar,Dim> > domain_corner;
         //determine the position of the corners via particle volume and position
-        DimensionTrait<Dim> trait;
-        initParticleDomain(*particles[i],domain_corner,trait);
+        initParticleDomain(*particles[i],domain_corner);
         particle_domain_corners_[i] = domain_corner;
         initial_particle_domain_corners_[i] = domain_corner;
     }
@@ -94,17 +96,22 @@ void CPDIMPMSolid<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 {
-    PHYSIKA_ASSERT(this->particle_grid_weight_.size() == this->particles_.size());
-    PHYSIKA_ASSERT(this->particle_grid_weight_gradient_.size() == this->particles_.size());
-    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
     {
-        const SolidParticle<Scalar,Dim> &particle = *(this->particles_[i]);
-        const std::vector<Vector<Scalar,Dim> > &domain_corner = particle_domain_corners_[i];
-        const GridWeightFunction<Scalar,Dim> &weight_function = *(this->weight_function_);
-        std::vector<Scalar> &weight = this->particle_grid_weight_[i];
-        std::vector<Vector<Scalar,Dim> > &gradient = this->particle_grid_weight_gradient_[i];
-        updateParticleInterpolationWeight(particle,domain_corner,weight_function,weight,gradient);
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onUpdateParticleInterpolationWeight();
     }
+
+    PHYSIKA_ASSERT(this->particle_grid_weight_and_gradient_.size() == this->particles_.size());
+    PHYSIKA_ASSERT(cpdi_update_method_);
+    PHYSIKA_ASSERT(this->weight_function_);
+    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > &particle_grid_weight_and_gradient = this->particle_grid_weight_and_gradient_;
+    std::vector<unsigned int> &particle_grid_pair_num = this->particle_grid_pair_num_;
+    const GridWeightFunction<Scalar,Dim> &weight_function = *(this->weight_function_);
+    cpdi_update_method_->updateParticleInterpolationWeight(weight_function,particle_grid_weight_and_gradient,particle_grid_pair_num);
 }
 
 template <typename Scalar, int Dim>
@@ -282,28 +289,40 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigne
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight(const SolidParticle<Scalar,2> &particle, 
-                                           const std::vector<Vector<Scalar,2> > &domain_corner,
-                                           const GridWeightFunction<Scalar,2> &weight_function, 
-                                           std::vector<Scalar> &particle_grid_weight,
-                                           std::vector<Vector<Scalar,2> > &particle_grid_weight_gradient)
+void CPDIMPMSolid<Scalar,Dim>::allocateSpaceForWeightAndGradient()
 {
-//TO DO
+    PHYSIKA_ASSERT(this->weight_function_);
+    PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Wrong dimension specified!");
+    //for each particle, allocate space that can store weight/gradient of maximum
+    //number of nodes in range of the domain corners
+    unsigned int max_num = 1;
+    for(unsigned int i = 0; i < Dim; ++i)
+        max_num *= (this->weight_function_->supportRadius())*2+1;
+    unsigned int corner_num = Dim==2 ? 4 : 8;
+    max_num *= corner_num;
+    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
+    this->particle_grid_weight_and_gradient_.resize(this->particles_.size(),max_num_weight_and_gradient_vec);
+    this->particle_grid_pair_num_.resize(this->particles_.size(),0);
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight(const SolidParticle<Scalar,3> &particle, 
-                                           const std::vector<Vector<Scalar,3> > &domain_corner,
-                                           const GridWeightFunction<Scalar,3> &weight_function, 
-                                           std::vector<Scalar> &particle_grid_weight,
-                                           std::vector<Vector<Scalar,3> > &particle_grid_weight_gradient)
+void CPDIMPMSolid<Scalar,Dim>::appendSpaceForWeightAndGradient()
 {
-//TO DO
+    PHYSIKA_ASSERT(this->weight_function_);
+    PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Wrong dimension specified!");
+    unsigned int max_num = 1;
+    for(unsigned int i = 0; i < Dim; ++i)
+        max_num *= (this->weight_function_->supportRadius())*2+1;
+    unsigned int corner_num = Dim==2 ? 4 : 8;
+    max_num *= corner_num;
+    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
+    this->particle_grid_weight_and_gradient_.push_back(max_num_weight_and_gradient_vec);
+    this->particle_grid_pair_num_.push_back(0);
 }
 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,2> &particle,
-                                                std::vector<Vector<Scalar,2> > &domain_corner, DimensionTrait<2> trait)
+                                                std::vector<Vector<Scalar,2> > &domain_corner)
 {
     //determine the position of the corners via particle volume and position
     unsigned int corner_num = 4;
@@ -324,7 +343,7 @@ void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,2> 
 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,3> &particle,
-                                                std::vector<Vector<Scalar,3> > &domain_corner, DimensionTrait<3> trait)
+                                                std::vector<Vector<Scalar,3> > &domain_corner)
 {
     //determine the position of the corners via particle volume and position
     unsigned int corner_num = 8;
@@ -347,6 +366,7 @@ void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,3> 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::updateParticleDomain()
 {
+    PHYSIKA_ASSERT(cpdi_update_method_);
     cpdi_update_method_->updateParticleDomain();
 }
 

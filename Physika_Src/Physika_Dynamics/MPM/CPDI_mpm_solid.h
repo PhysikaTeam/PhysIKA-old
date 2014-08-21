@@ -19,7 +19,6 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Arrays/array_Nd.h"
-#include "Physika_Core/Utilities/dimension_trait.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI_update_method.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 
@@ -42,7 +41,7 @@ public:
     virtual void removeParticle(unsigned int particle_idx);
     virtual void setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles); //set all simulation particles, data are copied
     virtual void updateParticleInterpolationWeight();  //compute the interpolation weight between particles and grid nodes
-    virtual void updateParticleConstitutiveModelState(Scalar dt); //update the constitutive model state of particle, e.g., deformation gradient
+    virtual void updateParticleConstitutiveModelState(Scalar dt); //update particle domain after updating the constitutive model state
 
     //return current corners of given particle, empty array is returned if particle index is invalid
     void currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
@@ -61,22 +60,15 @@ public:
     void setCPDIUpdateMethod();
 
 protected:
-    //trait method to update particle interpolation weight
-    void updateParticleInterpolationWeight(const SolidParticle<Scalar,2> &particle, 
-                                           const std::vector<Vector<Scalar,2> > &domain_corner,
-                                           const GridWeightFunction<Scalar,2> &weight_function, 
-                                           std::vector<Scalar> &particle_grid_weight,
-                                           std::vector<Vector<Scalar,2> > &particle_grid_weight_gradient);
-    void updateParticleInterpolationWeight(const SolidParticle<Scalar,3> &particle, 
-                                           const std::vector<Vector<Scalar,3> > &domain_corner,
-                                           const GridWeightFunction<Scalar,3> &weight_function, 
-                                           std::vector<Scalar> &particle_grid_weight,
-                                           std::vector<Vector<Scalar,3> > &particle_grid_weight_gradient);
+    //allocate space for particle_grid_weight_and_gradient_
+    //In CPDI, the grid nodes that influence particles are the ones that are 
+    //within influence range of the particle domain corners
+    virtual void allocateSpaceForWeightAndGradient();
+    //append space for particle_grid_weight_and_gradient_ for one particle
+    virtual void appendSpaceForWeightAndGradient();
     //trait method to init particle domain
-    void initParticleDomain(const SolidParticle<Scalar,2> &particle, std::vector<Vector<Scalar,2> > &domain_corner,
-                                  DimensionTrait<2> trait);
-    void initParticleDomain(const SolidParticle<Scalar,3> &particle, std::vector<Vector<Scalar,3> > &domain_corner,
-                                  DimensionTrait<3> trait);
+    void initParticleDomain(const SolidParticle<Scalar,2> &particle, std::vector<Vector<Scalar,2> > &domain_corner);
+    void initParticleDomain(const SolidParticle<Scalar,3> &particle, std::vector<Vector<Scalar,3> > &domain_corner);
     void updateParticleDomain();  //update the particle domain in CPDI, called in updateParticleConstitutiveModelState()
 protected:
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_domain_corners_;  //current particle domain corners

@@ -70,6 +70,7 @@ protected:
     virtual Scalar maxParticleVelocityNorm() const;
     virtual void applyGravityOnGrid(Scalar dt) = 0;
     virtual void allocateSpaceForWeightAndGradient();
+    virtual void appendSpaceForWeightAndGradient();
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
     std::vector<unsigned char> is_bc_particle_;  //for each particle in particles_, use one byte to indicate whether it's set as boundary condition

@@ -15,12 +15,14 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_MPM_BASE_H_
 #define PHYSIKA_DYNAMICS_MPM_MPM_BASE_H_
 
+#include <vector>
 #include <string>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function_creator.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
+#include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 
 namespace Physika{
@@ -68,7 +70,10 @@ protected:
     virtual void applyGravityOnGrid(Scalar dt) = 0;
     //allocate space for particle_grid_weight_ and particle_grid_weight_gradient_
     //according to particle number and weight function
-    virtual void allocateSpaceForWeightAndGradient() = 0;  
+    virtual void allocateSpaceForWeightAndGradient() = 0;
+    //append space for particle_grid_weight_ and particle_grid_weight_gradient_
+    //for one particle 
+    virtual void appendSpaceForWeightAndGradient() = 0; 
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
     MPMStepMethod<Scalar,Dim> *step_method_;
@@ -78,8 +83,9 @@ protected:
     //gravity: along negative y direction
     Scalar gravity_;
     //precomputed weights and gradients of grid nodes that is within range of each particle
-    std::vector<std::vector<Scalar> > particle_grid_weight_;
-    std::vector<std::vector<Vector<Scalar,Dim> > > particle_grid_weight_gradient_;
+    //for each particle, store the node-value pair
+    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > particle_grid_weight_and_gradient_;
+    std::vector<unsigned int> particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_ 
 };
 
 template <typename Scalar, int Dim>
@@ -89,7 +95,7 @@ void MPMBase<Scalar,Dim>::setWeightFunction()
     if(weight_function_)
         delete weight_function_;
     weight_function_ = GridWeightFunctionCreator<GridWeightFunctionType>::createGridWeightFunction();
-    //reallocate space for particle_grid_weight_ and particle_grid_weight_gradient_
+    //reallocate space for particle_grid_weight_and_gradient_
     //for each particle, preallocate space that can store weight/gradient of maximum number of nodes in range
     allocateSpaceForWeightAndGradient();
 }

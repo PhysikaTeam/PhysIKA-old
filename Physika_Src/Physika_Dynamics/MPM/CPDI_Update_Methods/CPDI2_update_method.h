@@ -17,6 +17,10 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_CPDI_UPDATE_METHODS_CPDI2_UPDATE_METHOD_H_
 #define PHYSIKA_DYNAMICS_MPM_CPDI_UPDATE_METHODS_CPDI2_UPDATE_METHOD_H_
 
+#include <vector>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+
 namespace Physika{
 
 template <typename Scalar, int Dim> class CPDIMPMSolid;
@@ -27,6 +31,9 @@ class CPDI2UpdateMethod
 public:
     CPDI2UpdateMethod();
     virtual ~CPDI2UpdateMethod();
+    virtual void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,Dim> &weight_function,
+                                                   std::vector<std::vector<Scalar> > &particle_grid_weight,
+                                                   std::vector<std::vector<Vector<Scalar,Dim> > > &particle_grid_weight_gradient);
     virtual void updateParticleDomain();
     void setCPDIDriver(CPDIMPMSolid<Scalar,Dim> *cpdi_driver);
 protected:

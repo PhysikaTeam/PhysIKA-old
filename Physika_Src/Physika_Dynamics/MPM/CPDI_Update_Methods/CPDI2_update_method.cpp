@@ -15,6 +15,7 @@
  */
 
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
+#include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI2_update_method.h"
 
 namespace Physika{
@@ -28,6 +29,14 @@ CPDI2UpdateMethod<Scalar,Dim>::CPDI2UpdateMethod()
 template <typename Scalar, int Dim>
 CPDI2UpdateMethod<Scalar,Dim>::~CPDI2UpdateMethod()
 {
+}
+
+template <typename Scalar, int Dim>
+void CPDI2UpdateMethod<Scalar,Dim>::updateParticleInterpolationWeight(const GridWeightFunction<Scalar,Dim> &weight_function,
+                                                                     std::vector<std::vector<Scalar> > &particle_grid_weight,
+                                                                     std::vector<std::vector<Vector<Scalar,Dim> > > &particle_grid_weight_gradient)
+{
+//TO DO
 }
 
 template <typename Scalar, int Dim>

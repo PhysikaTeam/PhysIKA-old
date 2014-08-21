@@ -192,20 +192,18 @@ void MPMSolid<Scalar,Dim>::rasterize()
 
     //rasterize mass and momentum to grid
     resetGridData();
-    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> particle_pos = particle->position();
-        unsigned int j = 0;
-        for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
+        for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
         {
-            Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
-            if(is_bc_grid_node_(node_idx))
+            const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[i][j];
+            if(is_bc_grid_node_(pair.node_idx_))
                 continue; //skip grid nodes that are boundary condition
-            Scalar weight = this->particle_grid_weight_[i][j]; 
-            grid_mass_(node_idx) += weight*particle->mass();
-            grid_velocity_(node_idx) += weight*(particle->mass()*particle->velocity());
+            Scalar weight = pair.weight_value_; 
+            grid_mass_(pair.node_idx_) += weight*particle->mass();
+            grid_velocity_(pair.node_idx_) += weight*(particle->mass()*particle->velocity());
         }
     }
     //determine active grid nodes according to the grid mass
@@ -239,21 +237,18 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
     }
 
     //only explicit integration is implemented yet
-    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
-        Vector<Scalar,Dim> particle_pos = particle->position();
-        unsigned j = 0;
-        for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
+        for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
         {
-            Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
-            if(is_bc_grid_node_(node_idx))
+            const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[i][j];
+            if(is_bc_grid_node_(pair.node_idx_))
                 continue; //skip grid nodes that are boundary condition
-            Vector<Scalar,Dim> weight_gradient = this->particle_grid_weight_gradient_[i][j];
+            Vector<Scalar,Dim> weight_gradient = pair.gradient_value_;
             SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
-            if(grid_mass_(node_idx)>std::numeric_limits<Scalar>::epsilon())
-                grid_velocity_(node_idx) += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(node_idx);
+            if(grid_mass_(pair.node_idx_)>std::numeric_limits<Scalar>::epsilon())
+                grid_velocity_(pair.node_idx_) += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx_);
         }
     }
     //apply gravity
@@ -300,8 +295,7 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
         if(plugin)
             plugin->onUpdateParticleInterpolationWeight();
     }
-    PHYSIKA_ASSERT(this->particle_grid_weight_.size() == this->particles_.size());
-    PHYSIKA_ASSERT(this->particle_grid_weight_gradient_.size() == this->particles_.size());
+    PHYSIKA_ASSERT(this->particle_grid_weight_and_gradient_.size() == this->particles_.size());
     //precompute the interpolation weights and gradients
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     Vector<Scalar,Dim> grid_dx = (this->grid_).dX();
@@ -309,8 +303,8 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> particle_pos = particle->position();
-        unsigned int j = 0;
-        for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
+        this->particle_grid_pair_num_[i] = 0;
+        for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++iter)
         {
             Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
             Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
@@ -318,10 +312,10 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
                 particle_to_node[dim] /= grid_dx[dim];
             Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node);
             Scalar weight = this->weight_function_->weight(particle_to_node);
-            PHYSIKA_ASSERT(this->particle_grid_weight_[i].size()>j);
-            PHYSIKA_ASSERT(this->particle_grid_weight_gradient_[i].size()>j);
-            (this->particle_grid_weight_)[i][j] = weight;
-            (this->particle_grid_weight_gradient_)[i][j] = weight_gradient;
+            unsigned int j = this->particle_grid_pair_num_[i]++;
+            (this->particle_grid_weight_and_gradient_)[i][j].node_idx_ = node_idx;
+            (this->particle_grid_weight_and_gradient_)[i][j].weight_value_ = weight;
+            (this->particle_grid_weight_and_gradient_)[i][j].gradient_value_ = weight_gradient;
         }
     }
 }
@@ -338,17 +332,14 @@ void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
             plugin->onUpdateParticleConstitutiveModelState(dt);
     }
 
-    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
-        Vector<Scalar,Dim> particle_pos = particle->position();
         SquareMatrix<Scalar,Dim> particle_vel_grad(0);
-        unsigned int j = 0;
-        for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
+        for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
         {
-            Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
-            Vector<Scalar,Dim> weight_gradient = this->particle_grid_weight_gradient_[i][j];
+            Vector<unsigned int,Dim> node_idx = (this->particle_grid_weight_and_gradient_[i][j].node_idx_);
+            Vector<Scalar,Dim> weight_gradient = (this->particle_grid_weight_and_gradient_[i][j].gradient_value_);
             particle_vel_grad += grid_velocity_(node_idx).outerProduct(weight_gradient);
         }
         SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
@@ -371,20 +362,17 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
             plugin->onUpdateParticleVelocity();
     }
 
-    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     //interpolate delata of grid velocity to particle
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         if(this->is_bc_particle_[i])
             continue;//skip boundary particles
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
-        Vector<Scalar,Dim> particle_pos = particle->position();
         Vector<Scalar,Dim> new_vel = particle->velocity();
-        unsigned int j = 0;
-        for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++j,++iter)
-        {            
-            Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
-            Scalar weight = this->particle_grid_weight_[i][j]; 
+        for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
+        {
+            Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[i][j].node_idx_;
+            Scalar weight = this->particle_grid_weight_and_gradient_[i][j].weight_value_;
             new_vel += weight*(grid_velocity_(node_idx)-grid_velocity_before_(node_idx));
         }
         particle->setVelocity(new_vel);

@@ -70,14 +70,8 @@ void MPMSolidBase<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &part
     is_bc_particle_.push_back(not_boundary);
     particle_initial_volume_.push_back(new_particle->volume()); //store particle initial volume
     //for each particle, preallocate space that can store weight/gradient of maximum
-    //number of nodes in range
-    unsigned int max_num = 1;
-    for(unsigned int i = 0; i < Dim; ++i)
-        max_num *= (this->weight_function_->supportRadius())*2+1;
-    std::vector<Scalar> max_num_weight_vec(max_num);
-    this->particle_grid_weight_.push_back(max_num_weight_vec);
-    std::vector<Vector<Scalar,Dim> > max_num_weight_grad_vec(max_num);
-    this->particle_grid_weight_gradient_.push_back(max_num_weight_grad_vec);
+    //number of nodes in rangec
+    appendSpaceForWeightAndGradient();
 }
 
 template <typename Scalar, int Dim>
@@ -96,10 +90,10 @@ void MPMSolidBase<Scalar,Dim>::removeParticle(unsigned int particle_idx)
     particle_initial_volume_.erase(iter2);
     typename std::vector<unsigned char>::iterator iter3 = is_bc_particle_.begin() + particle_idx;
     is_bc_particle_.erase(iter3);
-    typename std::vector<std::vector<Scalar> >::iterator iter4 = this->particle_grid_weight_.begin() + particle_idx;
-    this->particle_grid_weight_.erase(iter4);
-    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter5 = this->particle_grid_weight_gradient_.begin() + particle_idx;
-    this->particle_grid_weight_gradient_.erase(iter5);
+    typename std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > >::iterator iter4 = this->particle_grid_weight_and_gradient_.begin() + particle_idx;
+    this->particle_grid_weight_and_gradient_.erase(iter4);
+    typename std::vector<unsigned int>::iterator iter5 = this->particle_grid_pair_num_.begin() + particle_idx;
+    this->particle_grid_pair_num_.erase(iter5);
 }
 
 template <typename Scalar, int Dim>
@@ -198,10 +192,20 @@ void MPMSolidBase<Scalar,Dim>::allocateSpaceForWeightAndGradient()
     unsigned int max_num = 1;
     for(unsigned int i = 0; i < Dim; ++i)
         max_num *= (this->weight_function_->supportRadius())*2+1;
-    std::vector<Scalar> max_num_weight_vec(max_num);
-    std::vector<Vector<Scalar,Dim> > max_num_weight_grad_vec(max_num);
-    this->particle_grid_weight_.resize(particles_.size(),max_num_weight_vec);
-    this->particle_grid_weight_gradient_.resize(particles_.size(),max_num_weight_grad_vec);
+    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
+    this->particle_grid_weight_and_gradient_.resize(particles_.size(),max_num_weight_and_gradient_vec);
+    this->particle_grid_pair_num_.resize(particles_.size(),0);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::appendSpaceForWeightAndGradient()
+{
+    unsigned int max_num = 1;
+    for(unsigned int i = 0; i < Dim; ++i)
+        max_num *= (this->weight_function_->supportRadius())*2+1;
+    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
+    this->particle_grid_weight_and_gradient_.push_back(max_num_weight_and_gradient_vec);
+    this->particle_grid_pair_num_.push_back(0);
 }
 
 //explicit instantiations
