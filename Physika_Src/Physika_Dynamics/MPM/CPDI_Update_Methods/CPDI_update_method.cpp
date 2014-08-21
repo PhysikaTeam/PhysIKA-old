@@ -215,7 +215,6 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
         particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
         ++particle_grid_pair_num;
     }
-
 }
 
 template <typename Scalar>

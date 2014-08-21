@@ -118,12 +118,12 @@ void UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::initNodeIdxGrid(con
     Vector<unsigned int,Dim> cell_idx;
     Vector<Scalar,Dim> weight;
     Range<unsigned int,Dim> node_idx_range;
-    grid_->cellIndexAndInterpolationWeight(influence_domain_min_corner,cell_idx,weight);
+    grid_->cellIndexAndBiasInCell(influence_domain_min_corner,cell_idx,weight);
     for(unsigned int i = 0; i < Dim; ++i)
         if(weight[i] > std::numeric_limits<Scalar>::epsilon())
             ++cell_idx[i];
     node_idx_range.setMinCorner(cell_idx);
-    grid_->cellIndexAndInterpolationWeight(influence_domain_max_corner,cell_idx,weight);
+    grid_->cellIndexAndBiasInCell(influence_domain_max_corner,cell_idx,weight);
     for(unsigned int i = 0; i < Dim; ++i)
         if(weight[i] > 1.0 - std::numeric_limits<Scalar>::epsilon())
             ++cell_idx[i];

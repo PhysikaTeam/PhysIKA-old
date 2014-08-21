@@ -225,8 +225,8 @@ Vector<unsigned int,Dim> GridBase<Scalar,Dim>::cellIndex(const Vector<Scalar,Dim
 }
 
 template <typename Scalar,int Dim>
-void GridBase<Scalar,Dim>::cellIndexAndInterpolationWeight(const Vector<Scalar,Dim> &position,
-                                                           Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &weight) const
+void GridBase<Scalar,Dim>::cellIndexAndBiasInCell(const Vector<Scalar,Dim> &position,
+                                                           Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &bias_in_cell) const
 {
     bool out_range = false;  //point out of grid range is clamped to grid
     Vector<Scalar,Dim> bias = position - domain_.minCorner();
@@ -245,7 +245,7 @@ void GridBase<Scalar,Dim>::cellIndexAndInterpolationWeight(const Vector<Scalar,D
         }
         PHYSIKA_ASSERT(dx_[i]>0);
         cell_idx[i] = static_cast<unsigned int>(bias[i]/dx_[i]);
-        weight[i] = bias[i]/dx_[i] - cell_idx[i];
+        bias_in_cell[i] = bias[i]/dx_[i] - cell_idx[i];
     }
     if(out_range)
         std::cerr<<"Warning: Point out of grid range, clamped to closest cell!\n";

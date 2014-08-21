@@ -54,9 +54,10 @@ public:
     Vector<Scalar,Dim> cellMaxCornerNode(const Vector<unsigned int,Dim> &cell_idx) const;
     //return the cell index that the given point is in, (left close right open interval for a cell)
     Vector<unsigned int,Dim> cellIndex(const Vector<Scalar,Dim> &position) const;
-    //return the cell index that the given point is in and the interpolation weight in the cell
-    void cellIndexAndInterpolationWeight(const Vector<Scalar,Dim> &position,
-                                         Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &weight) const;  
+    //return the cell index that the given point is in and the bias with respect to
+    //minimum corner of the cell
+    void cellIndexAndBiasInCell(const Vector<Scalar,Dim> &position,
+                                Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &bias_in_cell) const;  
     //modifiers
     void setCellNum(unsigned int cell_num);  //same cell number along each dimension
     void setCellNum(const Vector<unsigned int,Dim> &cell_num);
