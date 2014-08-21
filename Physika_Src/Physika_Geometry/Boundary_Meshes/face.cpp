@@ -39,7 +39,7 @@ template <typename Scalar>
 Face<Scalar>::Face(const vector<Vertex<Scalar> > &vertices)
     :has_normal_(false)
 {
-    for(int i = 0; i < vertices.size(); ++i)
+    for(unsigned int i = 0; i < vertices.size(); ++i)
         addVertex(vertices[i]);
 }
 
@@ -47,7 +47,7 @@ template <typename Scalar>
 Face<Scalar>::Face(const vector<Vertex<Scalar> > &vertices, const Vector<Scalar,3> &face_normal)
     :normal_(face_normal),has_normal_(true)
 {
-    for(int i = 0; i < vertices.size(); ++i)
+    for(unsigned int i = 0; i < vertices.size(); ++i)
         addVertex(vertices[i]);
 }
 

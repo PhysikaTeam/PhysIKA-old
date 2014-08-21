@@ -44,7 +44,7 @@ template <typename Scalar>
 FaceGroup<Scalar>::FaceGroup(const string &name, const vector<Face<Scalar> > &faces)
     :name_(name),material_index_(0)
 {
-    for(int i = 0; i < faces.size(); ++i)
+    for(unsigned int i = 0; i < faces.size(); ++i)
         addFace(faces[i]);
 }
 
@@ -58,7 +58,7 @@ template <typename Scalar>
 FaceGroup<Scalar>::FaceGroup(const string &name, unsigned int material_index, const vector<Face<Scalar> > &faces)
     :name_(name),material_index_(material_index)
 {
-    for(int i = 0; i < faces.size(); ++i)
+    for(unsigned int i = 0; i < faces.size(); ++i)
         addFace(faces[i]);
 }
 

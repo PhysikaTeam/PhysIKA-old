@@ -44,7 +44,7 @@ template <typename Scalar, int Dim>
 EdgeGroup<Scalar,Dim>::EdgeGroup(const string &name, const vector<Edge<Scalar,Dim> > &edges)
     :name_(name)
 {
-    for(int i = 0; i < edges.size(); ++i)
+    for(unsigned int i = 0; i < edges.size(); ++i)
         addEdge(edges[i]);
 }
 

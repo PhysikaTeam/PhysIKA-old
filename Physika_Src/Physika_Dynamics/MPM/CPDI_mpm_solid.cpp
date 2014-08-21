@@ -297,7 +297,7 @@ void CPDIMPMSolid<Scalar,Dim>::allocateSpaceForWeightAndGradient()
     //number of nodes in range of the domain corners
     unsigned int max_num = 1;
     for(unsigned int i = 0; i < Dim; ++i)
-        max_num *= (this->weight_function_->supportRadius())*2+1;
+        max_num *= static_cast<unsigned int>((this->weight_function_->supportRadius())*2+1);
     unsigned int corner_num = Dim==2 ? 4 : 8;
     max_num *= corner_num;
     std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
@@ -312,7 +312,7 @@ void CPDIMPMSolid<Scalar,Dim>::appendSpaceForWeightAndGradient()
     PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Wrong dimension specified!");
     unsigned int max_num = 1;
     for(unsigned int i = 0; i < Dim; ++i)
-        max_num *= (this->weight_function_->supportRadius())*2+1;
+        max_num *= static_cast<unsigned int>((this->weight_function_->supportRadius())*2+1);
     unsigned int corner_num = Dim==2 ? 4 : 8;
     max_num *= corner_num;
     std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
@@ -348,7 +348,7 @@ void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,3> 
     //determine the position of the corners via particle volume and position
     unsigned int corner_num = 8;
     domain_corner.resize(corner_num);
-    Scalar particle_radius = pow(particle.volume(),1.0/3.0)/2.0;//assume the particle occupies cubic space
+    Scalar particle_radius = pow(particle.volume(),static_cast<Scalar>(1.0/3.0))/2.0;//assume the particle occupies cubic space
     PHYSIKA_ASSERT(Dim==3);
     Vector<Scalar,3> min_corner = particle.position() - Vector<Scalar,3>(particle_radius);
     Vector<Scalar,3> bias(0);
