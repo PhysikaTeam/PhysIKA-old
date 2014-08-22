@@ -391,11 +391,17 @@ void MPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
             plugin->onUpdateParticlePosition(dt);
     }
 
-    //update particle's position with the new velocity
+    //update particle's position with the new grid velocity
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
-        Vector<Scalar,Dim> new_pos = particle->position() + particle->velocity()*dt;
+        Vector<Scalar,Dim> new_pos = particle->position();
+        for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
+        {
+            Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[i][j].node_idx_;
+            Scalar weight = this->particle_grid_weight_and_gradient_[i][j].weight_value_;
+            new_pos += weight*grid_velocity_(node_idx)*dt;
+        }
         particle->setPosition(new_pos);
     }
 }
