@@ -58,10 +58,9 @@ public:
     Scalar gridMass(const Vector<unsigned int,Dim> &node_idx) const;
     Vector<Scalar,Dim> gridVelocity(const Vector<unsigned int,Dim> &node_idx) const;
     void setGridVelocity(const Vector<unsigned int,Dim> &node_idx, const Vector<Scalar,Dim> &node_velocity);
-    //grid nodes used as boundary condition, i.e., grid velocity are not updated internally, it's updated via preset condition
-    //velocity boundary condition is supported
-    void addBCGridNode(const Vector<unsigned int,Dim> &node_idx);  
-    void addBCGridNodes(const std::vector<Vector<unsigned int,Dim> > &node_idx);
+    //grid nodes used as dirichlet boundary condition, velocity is prescribed
+    void addDirichletGridNode(const Vector<unsigned int,Dim> &node_idx);  
+    void addDirichletGridNodes(const std::vector<Vector<unsigned int,Dim> > &node_idx);
 
     //substeps in one time step
     virtual void rasterize();
@@ -79,9 +78,12 @@ protected:
     virtual Scalar minCellEdgeLength() const;
     virtual void applyGravityOnGrid(Scalar dt);
     bool isValidGridNodeIndex(const Vector<unsigned int,Dim> &node_idx) const;  //helper method, determine if input grid node index is valid
+    //solve on grid with different integration methods, called in solveOnGrid()
+    virtual void solveOnGridForwardEuler(Scalar dt);
+    virtual void solveOnGridBackwardEuler(Scalar dt);
 protected:
     Grid<Scalar,Dim> grid_;
-    ArrayND<unsigned char,Dim> is_bc_grid_node_;  //for each grid node, use one byte to indicate whether it's set as boundary condition
+    ArrayND<unsigned char,Dim> is_dirichlet_grid_node_;  //for each grid node, use one byte to indicate whether it's set as boundary condition
     //grid data stored on grid nodes
     std::vector<Vector<unsigned int,Dim> > active_grid_node_; //index of the grid nodes that is active
     ArrayND<Scalar,Dim> grid_mass_;

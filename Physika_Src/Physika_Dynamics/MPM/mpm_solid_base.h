@@ -51,10 +51,9 @@ public:
     const SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx);
     const std::vector<SolidParticle<Scalar,Dim>*>& allParticles() const;  //get all the simulation particles
-    //particles used as boundary condition, i.e., particle velocity are not updated internally, it's updated via preset condition
-    //velocity boundary condition is supported
-    void addBCParticle(unsigned int particle_idx);  //the particle is set as boundary condition
-    void addBCParticles(const std::vector<unsigned int> &particle_idx); //the particles are set as boundary condition
+    //particles used as Dirichlet boundary condition, velocity is prescribed 
+    void addDirichletParticle(unsigned int particle_idx);  //the particle is set as boundary condition
+    void addDirichletParticles(const std::vector<unsigned int> &particle_idx); //the particles are set as boundary condition
 
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
@@ -65,16 +64,27 @@ public:
     virtual void updateParticleConstitutiveModelState(Scalar dt)=0; //update the constitutive model state of particle, e.g., deformation gradient
     virtual void updateParticleVelocity()=0;  //update particle velocity using grid data
     virtual void updateParticlePosition(Scalar dt)=0;  //update particle position with new particle velocity
+    
+    //different time integration methods
+    enum IntegrationMethod{
+        FORWARD_EULER,
+        BACKWARD_EULER
+    };
+    void setTimeIntegrationMethod(const IntegrationMethod &method);
 protected:
     virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
     virtual void applyGravityOnGrid(Scalar dt) = 0;
     virtual void allocateSpaceForWeightAndGradient();
     virtual void appendSpaceForWeightAndGradient();
+    //solve on grid with different integration methods, called in solveOnGrid()
+    virtual void solveOnGridForwardEuler(Scalar dt) = 0;
+    virtual void solveOnGridBackwardEuler(Scalar dt) = 0;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
-    std::vector<unsigned char> is_bc_particle_;  //for each particle in particles_, use one byte to indicate whether it's set as boundary condition
-    std::vector<Scalar> particle_initial_volume_; 
+    std::vector<unsigned char> is_dirichlet_particle_;  //for each particle in particles_, use one byte to indicate whether it's set as dirichlet boundary condition
+    std::vector<Scalar> particle_initial_volume_;
+    IntegrationMethod integration_method_; 
 };
 
 }//namespace Physika

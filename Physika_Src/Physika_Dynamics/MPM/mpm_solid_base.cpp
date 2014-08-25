@@ -26,14 +26,14 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase()
-    :MPMBase<Scalar,Dim>()
+    :MPMBase<Scalar,Dim>(),integration_method_(FORWARD_EULER)
 {
     this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
 }
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
+    :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),integration_method_(FORWARD_EULER)
 {
     this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
 }
@@ -41,7 +41,7 @@ MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int en
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                const std::vector<SolidParticle<Scalar,Dim>*> &particles)
-    :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
+    :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),integration_method_(FORWARD_EULER)
 {
     setParticles(particles);
 }
@@ -67,7 +67,7 @@ void MPMSolidBase<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &part
     particles_.push_back(new_particle);
     //add space for particle related data
     unsigned char not_boundary = 0;
-    is_bc_particle_.push_back(not_boundary);
+    is_dirichlet_particle_.push_back(not_boundary);
     particle_initial_volume_.push_back(new_particle->volume()); //store particle initial volume
     //for each particle, preallocate space that can store weight/gradient of maximum
     //number of nodes in rangec
@@ -88,8 +88,8 @@ void MPMSolidBase<Scalar,Dim>::removeParticle(unsigned int particle_idx)
     //remove the record in particle related data
     typename std::vector<Scalar>::iterator iter2 = particle_initial_volume_.begin() + particle_idx;
     particle_initial_volume_.erase(iter2);
-    typename std::vector<unsigned char>::iterator iter3 = is_bc_particle_.begin() + particle_idx;
-    is_bc_particle_.erase(iter3);
+    typename std::vector<unsigned char>::iterator iter3 = is_dirichlet_particle_.begin() + particle_idx;
+    is_dirichlet_particle_.erase(iter3);
     typename std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > >::iterator iter4 = this->particle_grid_weight_and_gradient_.begin() + particle_idx;
     this->particle_grid_weight_and_gradient_.erase(iter4);
     typename std::vector<unsigned int>::iterator iter5 = this->particle_grid_pair_num_.begin() + particle_idx;
@@ -104,7 +104,7 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
         if(particles_[i])
             delete particles_[i];
     particles_.resize(particles.size());
-    is_bc_particle_.resize(particles.size());
+    is_dirichlet_particle_.resize(particles.size());
     particle_initial_volume_.resize(particles.size());
     //for each particle, preallocate space that can store weight/gradient of maximum
     //number of nodes in range
@@ -118,7 +118,7 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
             continue;
         } 
         particles_[i] = particles[i]->clone();
-        is_bc_particle_[i] = 0;
+        is_dirichlet_particle_[i] = 0;
         particle_initial_volume_[i] = particles_[i]->volume();
     }
 }
@@ -152,21 +152,27 @@ const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allPart
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidBase<Scalar,Dim>::addBCParticle(unsigned int particle_idx)
+void MPMSolidBase<Scalar,Dim>::addDirichletParticle(unsigned int particle_idx)
 {
     if(particle_idx>=particles_.size())
     {
         std::cerr<<"Warning: MPM particle index out of range, operation ignored!\n";
         return;
     }
-    is_bc_particle_[particle_idx] = 1;
+    is_dirichlet_particle_[particle_idx] = 1;
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidBase<Scalar,Dim>::addBCParticles(const std::vector<unsigned int> &particle_idx)
+void MPMSolidBase<Scalar,Dim>::addDirichletParticles(const std::vector<unsigned int> &particle_idx)
 {
     for(unsigned int i = 0; i < particle_idx.size(); ++i)
-        addBCParticle(particle_idx[i]);
+        addDirichletParticle(particle_idx[i]);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::setTimeIntegrationMethod(const IntegrationMethod &method)
+{
+    integration_method_ = method;
 }
 
 template <typename Scalar, int Dim>

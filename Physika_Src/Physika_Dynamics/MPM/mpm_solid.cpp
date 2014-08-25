@@ -160,7 +160,7 @@ void MPMSolid<Scalar,Dim>::setGridVelocity(const Vector<unsigned int, Dim> &node
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::addBCGridNode(const Vector<unsigned int,Dim> &node_idx)
+void MPMSolid<Scalar,Dim>::addDirichletGridNode(const Vector<unsigned int,Dim> &node_idx)
 {
     bool valid_idx = isValidGridNodeIndex(node_idx);
     if(!valid_idx)
@@ -168,14 +168,14 @@ void MPMSolid<Scalar,Dim>::addBCGridNode(const Vector<unsigned int,Dim> &node_id
         std::cerr<<"Warning: invalid node index, operation ignored!\n";
         return;
     }
-    is_bc_grid_node_(node_idx) = 1;
+    is_dirichlet_grid_node_(node_idx) = 1;
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::addBCGridNodes(const std::vector<Vector<unsigned int,Dim> > &node_idx)
+void MPMSolid<Scalar,Dim>::addDirichletGridNodes(const std::vector<Vector<unsigned int,Dim> > &node_idx)
 {
     for(unsigned int i = 0; i < node_idx.size(); ++i)
-        addBCGridNode(node_idx[i]);
+        addDirichletGridNode(node_idx[i]);
 }
 
 template <typename Scalar, int Dim>
@@ -199,7 +199,7 @@ void MPMSolid<Scalar,Dim>::rasterize()
         for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
         {
             const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[i][j];
-            if(is_bc_grid_node_(pair.node_idx_))
+            if(is_dirichlet_grid_node_(pair.node_idx_))
                 continue; //skip grid nodes that are boundary condition
             Scalar weight = pair.weight_value_; 
             grid_mass_(pair.node_idx_) += weight*particle->mass();
@@ -217,7 +217,7 @@ void MPMSolid<Scalar,Dim>::rasterize()
     for(unsigned int i = 0; i < active_grid_node_.size(); ++i)
     {
         Vector<unsigned int,Dim> node_idx = active_grid_node_[i];
-        if(is_bc_grid_node_(node_idx))
+        if(is_dirichlet_grid_node_(node_idx))
             continue; //skip grid nodes that are boundary condition
         grid_velocity_(node_idx) /= grid_mass_(node_idx);
         grid_velocity_before_(node_idx) = grid_velocity_(node_idx); //buffer the grid velocity before any update
@@ -236,24 +236,19 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
             plugin->onSolveOnGrid(dt);
     }
 
-    //only explicit integration is implemented yet
-    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    switch (this->integration_method_)
     {
-        SolidParticle<Scalar,Dim> *particle = this->particles_[i];
-        for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
-        {
-            const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[i][j];
-            if(is_bc_grid_node_(pair.node_idx_))
-                continue; //skip grid nodes that are boundary condition
-            Vector<Scalar,Dim> weight_gradient = pair.gradient_value_;
-            SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
-            if(grid_mass_(pair.node_idx_)>std::numeric_limits<Scalar>::epsilon())
-                grid_velocity_(pair.node_idx_) += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx_);
-        }
+    case this->FORWARD_EULER:
+        solveOnGridForwardEuler(dt);
+        break;
+    case this->BACKWARD_EULER:
+        solveOnGridBackwardEuler(dt);
+        break;
+    default:
+        break;
     }
     //apply gravity
     applyGravityOnGrid(dt);
-    //TO DO (implicit)
 }
 
 template <typename Scalar, int Dim>
@@ -362,10 +357,10 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
             plugin->onUpdateParticleVelocity();
     }
 
-    //interpolate delata of grid velocity to particle
+    //interpolate delta of grid velocity to particle
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
-        if(this->is_bc_particle_[i])
+        if(this->is_dirichlet_particle_[i])
             continue;//skip boundary particles
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> new_vel = particle->velocity();
@@ -396,11 +391,16 @@ void MPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
         Vector<Scalar,Dim> new_pos = particle->position();
-        for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
+        if(this->is_dirichlet_particle_[i]) //for dirichlet particles, update position with prescribed velocity
+            new_pos += this->particles_[i]->velocity()*dt;
+        else
         {
-            Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[i][j].node_idx_;
-            Scalar weight = this->particle_grid_weight_and_gradient_[i][j].weight_value_;
-            new_pos += weight*grid_velocity_(node_idx)*dt;
+            for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
+            {
+                Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[i][j].node_idx_;
+                Scalar weight = this->particle_grid_weight_and_gradient_[i][j].weight_value_;
+                new_pos += weight*grid_velocity_(node_idx)*dt;
+            }
         }
         particle->setPosition(new_pos);
     }
@@ -412,13 +412,13 @@ void MPMSolid<Scalar,Dim>::synchronizeGridData()
     Vector<unsigned int,Dim> node_num = grid_.nodeNum();
     for(unsigned int i = 0; i < Dim; ++i)
     {
-        is_bc_grid_node_.resize(node_num[i],i);
+        is_dirichlet_grid_node_.resize(node_num[i],i);
         grid_mass_.resize(node_num[i],i);
         grid_velocity_.resize(node_num[i],i);
         grid_velocity_before_.resize(node_num[i],i);
     }
     //initialize boundary condition grid node indicator
-    for(typename ArrayND<unsigned char,Dim>::Iterator iter = is_bc_grid_node_.begin(); iter != is_bc_grid_node_.end(); ++iter)
+    for(typename ArrayND<unsigned char,Dim>::Iterator iter = is_dirichlet_grid_node_.begin(); iter != is_dirichlet_grid_node_.end(); ++iter)
         *iter = 0;
 }
 
@@ -429,7 +429,7 @@ void MPMSolid<Scalar,Dim>::resetGridData()
     for(typename Grid<Scalar,Dim>::NodeIterator iter = grid_.nodeBegin(); iter != grid_.nodeEnd(); ++iter)
     {
         Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
-        if(is_bc_grid_node_(node_idx))
+        if(is_dirichlet_grid_node_(node_idx))
             continue; //skip grid nodes that are boundary condition
         grid_mass_(node_idx) = 0;
         grid_velocity_(node_idx) = Vector<Scalar,Dim>(0);
@@ -450,7 +450,7 @@ void MPMSolid<Scalar,Dim>::applyGravityOnGrid(Scalar dt)
     for(unsigned int i = 0; i < active_grid_node_.size(); ++i)
     {
         Vector<unsigned int,Dim> node_idx = active_grid_node_[i];
-        if(is_bc_grid_node_(node_idx))
+        if(is_dirichlet_grid_node_(node_idx))
             continue; //skip grid nodes that are boundary condition
         Vector<Scalar,Dim> gravity_vec(0);
         gravity_vec[1] = (-1)*(this->gravity_);
@@ -466,6 +466,32 @@ bool MPMSolid<Scalar,Dim>::isValidGridNodeIndex(const Vector<unsigned int,Dim> &
         if(node_idx[i] >= node_num[i])
             return false;
     return true;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
+{
+    //explicit integration
+    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    {
+        SolidParticle<Scalar,Dim> *particle = this->particles_[i];
+        for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
+        {
+            const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[i][j];
+            if(is_dirichlet_grid_node_(pair.node_idx_))
+                continue; //skip grid nodes that are boundary condition
+            Vector<Scalar,Dim> weight_gradient = pair.gradient_value_;
+            SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
+            if(grid_mass_(pair.node_idx_)>std::numeric_limits<Scalar>::epsilon())
+                grid_velocity_(pair.node_idx_) += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx_);
+        }
+    }
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
+{
+//TO DO
 }
 
 //explicit instantiations

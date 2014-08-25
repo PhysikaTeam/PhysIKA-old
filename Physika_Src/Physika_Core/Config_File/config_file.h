@@ -46,15 +46,15 @@ namespace Physika{
 class ConfigFile
 {
 
-    enum OptionType
-    {
-        Option_Int,
-		Option_Unsigned_Int,
-        Option_Bool,
-        Option_Float,
-        Option_Double,
-        Option_String,
-    };
+enum OptionType
+{
+    Option_Int,
+    Option_Unsigned_Int,
+    Option_Bool,
+    Option_Float,
+    Option_Double,
+    Option_String,
+};
 
 public:
 
@@ -74,7 +74,7 @@ public:
 
     bool parseFile(std::string file_name); //after addoptions, you can use this to parseFile to get options. if read success,return true; else return false;
 
-    void printOptions(); //print all options alread read in memory.
+    void printOptions(); //print all options already read in memory.
     
 protected:
 
@@ -85,7 +85,6 @@ protected:
 
     template <class T>
     int addOptionOperation(std::string option_name, T* dest_location);
-
 
     int findOption(std::string option_name);// find a option in the option_names_, if not find return -1,else return the index;
 };

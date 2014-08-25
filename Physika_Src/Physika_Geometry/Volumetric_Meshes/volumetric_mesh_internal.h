@@ -58,4 +58,3 @@ enum ElementType{
 }  //end of namespace Physika
 
 #endif //PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_INTERNAL_H_
-
