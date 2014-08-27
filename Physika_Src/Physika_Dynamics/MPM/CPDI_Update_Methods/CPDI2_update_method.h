@@ -20,24 +20,59 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Dynamics/MPM/mpm_internal.h"
+#include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI_update_method.h"
 
 namespace Physika{
 
-template <typename Scalar, int Dim> class CPDIMPMSolid;
+template <typename Scalar, int Dim> class GridWeightFunction;
+
+/*
+ * constructor is made protected to prohibit creating objects
+ * with Dim other than 2 and 3
+ */
 
 template <typename Scalar, int Dim>
-class CPDI2UpdateMethod
+class CPDI2UpdateMethod: public CPDIUpdateMethod<Scalar,Dim>
+{
+protected:
+    CPDI2UpdateMethod();
+    ~CPDI2UpdateMethod();
+};
+
+/*
+ * use partial specialization of class template to define CPDI2 update
+ * method for 2D and 3D
+ */
+
+template <typename Scalar>
+class CPDI2UpdateMethod<Scalar,2>: public CPDIUpdateMethod<Scalar,2>
 {
 public:
     CPDI2UpdateMethod();
     virtual ~CPDI2UpdateMethod();
-    virtual void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,Dim> &weight_function,
-                                                   std::vector<std::vector<Scalar> > &particle_grid_weight,
-                                                   std::vector<std::vector<Vector<Scalar,Dim> > > &particle_grid_weight_gradient);
-    virtual void updateParticleDomain();
-    void setCPDIDriver(CPDIMPMSolid<Scalar,Dim> *cpdi_driver);
+    //overwrite the updateParticleDomain() method in CPDIUpdateMethod
+    virtual void updateParticleDomain(const std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &particle_grid_weight_and_gradient,
+                                      const std::vector<unsigned int> &particle_grid_pair_num);
 protected:
-    CPDIMPMSolid<Scalar,Dim> *cpdi_driver_;
+    virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
+                                           std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
+                                           unsigned int &particle_grid_pair_num);
+};
+
+template <typename Scalar>
+class CPDI2UpdateMethod<Scalar,3>: public CPDIUpdateMethod<Scalar,3>
+{
+public:
+    CPDI2UpdateMethod();
+    virtual ~CPDI2UpdateMethod();
+    //overwrite the updateParticleDomain() method in CPDIUpdateMethod
+    virtual void updateParticleDomain(const std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &particle_grid_weight_and_gradient,
+                                      const std::vector<unsigned int> &particle_grid_pair_num);
+protected:
+    virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
+                                           std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
+                                           unsigned int &particle_grid_pair_num);
 };
 
 }  //end of namespace Physika

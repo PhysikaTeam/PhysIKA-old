@@ -60,11 +60,11 @@ public:
     void setCPDIUpdateMethod();
 
 protected:
-    //allocate space for particle_grid_weight_and_gradient_
+    //allocate space for precomputed node weight and gradient
     //In CPDI, the grid nodes that influence particles are the ones that are 
     //within influence range of the particle domain corners
     virtual void allocateSpaceForWeightAndGradient();
-    //append space for particle_grid_weight_and_gradient_ for one particle
+    //append space for precomputed node weight and gradient for one particle
     virtual void appendSpaceForWeightAndGradient();
     //trait method to init particle domain
     void initParticleDomain(const SolidParticle<Scalar,2> &particle, std::vector<Vector<Scalar,2> > &domain_corner);

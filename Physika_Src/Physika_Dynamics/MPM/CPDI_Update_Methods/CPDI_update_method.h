@@ -31,7 +31,8 @@ template <typename Scalar, int Dim> class SolidParticle;
 template <typename Scalar, int Dim> class Grid;
 
 /*
- * constructor is made protected to prohibit creating general object
+ * constructor is made protected to prohibit creating objects
+ * with Dim other than 2 and 3
  */
 
 template <typename Scalar, int Dim>
@@ -59,7 +60,7 @@ public:
     virtual void updateParticleDomain();
     void setCPDIDriver(CPDIMPMSolid<Scalar,2> *cpdi_driver);
 protected:
-    void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
+    virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
                                            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
                                            unsigned int &particle_grid_pair_num);
     //helper function, transform between multi-dimension index of grid and flat version index
@@ -81,7 +82,7 @@ public:
     virtual void updateParticleDomain();
     void setCPDIDriver(CPDIMPMSolid<Scalar,3> *cpdi_driver);
 protected:
-    void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
+    virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
                                            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
                                            unsigned int &particle_grid_pair_num);
     //helper function, transform between multi-dimension index of grid and flat version index

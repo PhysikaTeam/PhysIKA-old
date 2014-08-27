@@ -68,9 +68,9 @@ protected:
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const=0; //return maximum norm the particles' velocity
     virtual void applyGravityOnGrid(Scalar dt) = 0;
-    //allocate space for particle_grid_weight_and_gradient_ according to particle number
+    //allocate space for precomputed node weight and gradient according to particle number
     virtual void allocateSpaceForWeightAndGradient() = 0;
-    //append space for particle_grid_weight_and_gradient_ for one particle 
+    //append space for precomputed node weight and gradient for one particle 
     virtual void appendSpaceForWeightAndGradient() = 0; 
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;

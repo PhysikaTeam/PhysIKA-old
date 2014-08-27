@@ -14,33 +14,75 @@
  *
  */
 
-#include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
+#include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI2_update_method.h"
 
 namespace Physika{
 
-template <typename Scalar, int Dim>
-CPDI2UpdateMethod<Scalar,Dim>::CPDI2UpdateMethod()
-    :cpdi_driver_(NULL)
+template <typename Scalar>
+CPDI2UpdateMethod<Scalar,2>::CPDI2UpdateMethod()
+    :CPDIUpdateMethod<Scalar,2>()
 {
 }
 
-template <typename Scalar, int Dim>
-CPDI2UpdateMethod<Scalar,Dim>::~CPDI2UpdateMethod()
+template <typename Scalar>
+CPDI2UpdateMethod<Scalar,2>::~CPDI2UpdateMethod()
 {
 }
 
-template <typename Scalar, int Dim>
-void CPDI2UpdateMethod<Scalar,Dim>::updateParticleInterpolationWeight(const GridWeightFunction<Scalar,Dim> &weight_function,
-                                                                     std::vector<std::vector<Scalar> > &particle_grid_weight,
-                                                                     std::vector<std::vector<Vector<Scalar,Dim> > > &particle_grid_weight_gradient)
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,2>::updateParticleDomain(const std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &particle_grid_weight_and_gradient,
+                                                         const std::vector<unsigned int> &particle_grid_pair_num)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    ArrayND<Vector<Scalar,2>,2> particle_domain;
+    const std::vector<SolidParticle<Scalar,2>*> &particles = this->cpdi_driver_->allParticles();
+    for(unsigned int i = 0; i < particles.size(); ++i)
+    {
+        this->cpdi_driver_->currentParticleDomain(i,particle_domain);
+        for(typename ArrayND<Vector<Scalar,2>,2>::Iterator iter = particle_domain.begin(); iter != particle_domain.end(); ++iter)
+        {
+            Vector<Scalar,2> cur_corner_pos = *iter;
+        }
+    }
+//TO DO
+}
+
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
+                                           std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
+                                           unsigned int &particle_grid_pair_num)
 {
 //TO DO
 }
 
-template <typename Scalar, int Dim>
-void CPDI2UpdateMethod<Scalar,Dim>::updateParticleDomain()
+///////////////////////////////////////////////////// 3D ///////////////////////////////////////////////////
+
+template <typename Scalar>
+CPDI2UpdateMethod<Scalar,3>::CPDI2UpdateMethod()
+    :CPDIUpdateMethod<Scalar,3>()
+{
+}
+
+template <typename Scalar>
+CPDI2UpdateMethod<Scalar,3>::~CPDI2UpdateMethod()
+{
+}
+
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,3>::updateParticleDomain(const std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &particle_grid_weight_and_gradient,
+                                                         const std::vector<unsigned int> &particle_grid_pair_num)
+{
+//TO DO
+}
+
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
+                                           std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
+                                           unsigned int &particle_grid_pair_num)
 {
 //TO DO
 }
