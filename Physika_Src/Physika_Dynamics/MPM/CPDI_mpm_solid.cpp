@@ -302,6 +302,9 @@ void CPDIMPMSolid<Scalar,Dim>::allocateSpaceForAllParticleRelatedData()
     //domain_corners
     particle_domain_corners_.resize(this->particles_.size());
     initial_particle_domain_corners_.resize(this->particles_.size());
+    //add space for is_dirichelet_particle_ and particle_initial_volume_
+    this->is_dirichlet_particle_.resize(this->particles_.size());
+    this->particle_initial_volume_.resize(this->particles_.size());
 }
 
 template <typename Scalar, int Dim>
@@ -327,12 +330,15 @@ void CPDIMPMSolid<Scalar,Dim>::appendSpaceForParticleRelatedData()
     std::vector<Vector<Scalar,Dim> > domain_corner(corner_num);
     particle_domain_corners_.push_back(domain_corner); 
     initial_particle_domain_corners_.push_back(domain_corner);
+    //add space for is_dirichelet_particle_ and particle_initial_volume_
+    this->is_dirichlet_particle_.push_back(0);
+    this->particle_initial_volume_.push_back(0);
 }
 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::deleteParticleRelatedData(unsigned int particle_idx)
 {
-    MPMSolidBase<Scalar,Dim>::deleteParticleRelatedData(particle_idx);
+    MPMSolid<Scalar,Dim>::deleteParticleRelatedData(particle_idx);
     typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter = particle_domain_corners_.begin() + particle_idx;
     particle_domain_corners_.erase(iter);
     typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = initial_particle_domain_corners_.begin() + particle_idx;
