@@ -65,13 +65,12 @@ void MPMSolidBase<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &part
 {
     SolidParticle<Scalar,Dim> *new_particle = particle.clone();
     particles_.push_back(new_particle);
-    //add space for particle related data
-    unsigned char not_boundary = 0;
-    is_dirichlet_particle_.push_back(not_boundary);
-    particle_initial_volume_.push_back(new_particle->volume()); //store particle initial volume
-    //for each particle, preallocate space that can store weight/gradient of maximum
-    //number of nodes in rangec
-    appendSpaceForWeightAndGradient();
+    //append space for the new particle related data
+    appendSpaceForParticleRelatedData();
+    //set value
+    unsigned idx = this->particleNum() - 1;
+    is_dirichlet_particle_[idx] = 0;
+    particle_initial_volume_[idx] = new_particle->volume();
 }
 
 template <typename Scalar, int Dim>
@@ -86,14 +85,7 @@ void MPMSolidBase<Scalar,Dim>::removeParticle(unsigned int particle_idx)
     delete *iter; //release memory
     particles_.erase(iter);
     //remove the record in particle related data
-    typename std::vector<Scalar>::iterator iter2 = particle_initial_volume_.begin() + particle_idx;
-    particle_initial_volume_.erase(iter2);
-    typename std::vector<unsigned char>::iterator iter3 = is_dirichlet_particle_.begin() + particle_idx;
-    is_dirichlet_particle_.erase(iter3);
-    typename std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > >::iterator iter4 = this->particle_grid_weight_and_gradient_.begin() + particle_idx;
-    this->particle_grid_weight_and_gradient_.erase(iter4);
-    typename std::vector<unsigned int>::iterator iter5 = this->particle_grid_pair_num_.begin() + particle_idx;
-    this->particle_grid_pair_num_.erase(iter5);
+    deleteParticleRelatedData(particle_idx);
 }
 
 template <typename Scalar, int Dim>
@@ -104,12 +96,9 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
         if(particles_[i])
             delete particles_[i];
     particles_.resize(particles.size());
-    is_dirichlet_particle_.resize(particles.size());
-    particle_initial_volume_.resize(particles.size());
-    //for each particle, preallocate space that can store weight/gradient of maximum
-    //number of nodes in range
-    allocateSpaceForWeightAndGradient();
-    //add new particle data
+    //resize particle related data according to new particle number 
+    allocateSpaceForAllParticleRelatedData();
+    //set new particle data
     for(unsigned int i = 0; i < particles.size(); ++i)
     {
         if(particles[i]==NULL)
@@ -190,9 +179,12 @@ Scalar MPMSolidBase<Scalar,Dim>::maxParticleVelocityNorm() const
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidBase<Scalar,Dim>::allocateSpaceForWeightAndGradient()
+void MPMSolidBase<Scalar,Dim>::allocateSpaceForAllParticleRelatedData()
 {
     PHYSIKA_ASSERT(this->weight_function_);
+    //resize according to new particle number 
+    is_dirichlet_particle_.resize(particles_.size());
+    particle_initial_volume_.resize(particles_.size());
     //for each particle, preallocate space that can store weight/gradient of maximum
     //number of nodes in range
     unsigned int max_num = 1;
@@ -204,14 +196,29 @@ void MPMSolidBase<Scalar,Dim>::allocateSpaceForWeightAndGradient()
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidBase<Scalar,Dim>::appendSpaceForWeightAndGradient()
+void MPMSolidBase<Scalar,Dim>::appendSpaceForParticleRelatedData()
 {
+    //add space for particle related data
+    is_dirichlet_particle_.push_back(0);
+    particle_initial_volume_.push_back(0);
     unsigned int max_num = 1;
     for(unsigned int i = 0; i < Dim; ++i)
         max_num *= (this->weight_function_->supportRadius())*2+1;
     std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
     this->particle_grid_weight_and_gradient_.push_back(max_num_weight_and_gradient_vec);
     this->particle_grid_pair_num_.push_back(0);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::deleteParticleRelatedData(unsigned int particle_idx)
+{
+    MPMBase<Scalar,Dim>::deleteParticleRelatedData(particle_idx);
+    typename std::vector<Scalar>::iterator iter = particle_initial_volume_.begin() + particle_idx;
+    if(iter != particle_initial_volume_.end())
+        particle_initial_volume_.erase(iter);
+    typename std::vector<unsigned char>::iterator iter2 = is_dirichlet_particle_.begin() + particle_idx;
+    if(iter2 != is_dirichlet_particle_.end())
+        is_dirichlet_particle_.erase(iter2);
 }
 
 //explicit instantiations

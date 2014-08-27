@@ -75,14 +75,16 @@ protected:
     virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
     virtual void applyGravityOnGrid(Scalar dt) = 0;
-    virtual void allocateSpaceForWeightAndGradient();
-    virtual void appendSpaceForWeightAndGradient();
+    virtual void allocateSpaceForAllParticleRelatedData();
+    virtual void appendSpaceForParticleRelatedData();
+    virtual void deleteParticleRelatedData(unsigned int particle_idx);
     //solve on grid with different integration methods, called in solveOnGrid()
     virtual void solveOnGridForwardEuler(Scalar dt) = 0;
     virtual void solveOnGridBackwardEuler(Scalar dt) = 0;
 protected:
     std::vector<SolidParticle<Scalar,Dim>*> particles_;
-    std::vector<unsigned char> is_dirichlet_particle_;  //for each particle in particles_, use one byte to indicate whether it's set as dirichlet boundary condition
+    std::vector<unsigned char> is_dirichlet_particle_;  //for each particle in particles_, 
+                                                        //use one byte to indicate whether it's set as dirichlet boundary condition
     std::vector<Scalar> particle_initial_volume_;
     IntegrationMethod integration_method_; 
 };

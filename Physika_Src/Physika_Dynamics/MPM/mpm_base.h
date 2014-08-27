@@ -68,10 +68,13 @@ protected:
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const=0; //return maximum norm the particles' velocity
     virtual void applyGravityOnGrid(Scalar dt) = 0;
-    //allocate space for precomputed node weight and gradient according to particle number
-    virtual void allocateSpaceForWeightAndGradient() = 0;
-    //append space for precomputed node weight and gradient for one particle 
-    virtual void appendSpaceForWeightAndGradient() = 0; 
+    //allocate space for data related to particles according to particle number
+    virtual void allocateSpaceForAllParticleRelatedData() = 0;
+    //append space for data related to the newly added particle 
+    virtual void appendSpaceForParticleRelatedData() = 0;
+    //delete data that is attached with particles, called when a particle is removed
+    //need implementation in subclasses, when more data is attached to particles 
+    virtual void deleteParticleRelatedData(unsigned int particle_idx);
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
     MPMStepMethod<Scalar,Dim> *step_method_;
@@ -95,7 +98,7 @@ void MPMBase<Scalar,Dim>::setWeightFunction()
     weight_function_ = GridWeightFunctionCreator<GridWeightFunctionType>::createGridWeightFunction();
     //reallocate space for particle_grid_weight_and_gradient_
     //for each particle, preallocate space that can store weight/gradient of maximum number of nodes in range
-    allocateSpaceForWeightAndGradient();
+    allocateSpaceForAllParticleRelatedData();
 }
 
 template <typename Scalar, int Dim>

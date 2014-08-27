@@ -136,6 +136,18 @@ void MPMBase<Scalar,Dim>::setGravity(Scalar gravity)
         gravity_ = gravity;
 }
 
+template <typename Scalar, int Dim>
+void MPMBase<Scalar,Dim>::deleteParticleRelatedData(unsigned int particle_idx)
+{
+    typename std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > >::iterator iter =
+        this->particle_grid_weight_and_gradient_.begin() + particle_idx;
+    if(iter != this->particle_grid_weight_and_gradient_.end())
+        this->particle_grid_weight_and_gradient_.erase(iter);
+    typename std::vector<unsigned int>::iterator iter2 = this->particle_grid_pair_num_.begin() + particle_idx;
+    if(iter2 != this->particle_grid_pair_num_.end())
+        this->particle_grid_pair_num_.erase(iter2);
+}
+
 //explicit instantiations
 template class MPMBase<float,2>;
 template class MPMBase<float,3>;

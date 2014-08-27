@@ -38,7 +38,6 @@ public:
 
     //re-implemented methods compared to standard MPM
     virtual void addParticle(const SolidParticle<Scalar,Dim> &particle); //add particle and initialize the particle domain
-    virtual void removeParticle(unsigned int particle_idx);
     virtual void setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles); //set all simulation particles, data are copied
     virtual void updateParticleInterpolationWeight();  //compute the interpolation weight between particles and grid nodes
     virtual void updateParticleConstitutiveModelState(Scalar dt); //update particle domain after updating the constitutive model state
@@ -60,12 +59,14 @@ public:
     void setCPDIUpdateMethod();
 
 protected:
-    //allocate space for precomputed node weight and gradient
+    //allocate space for data related to all particles, e.g., precomputed node weight and gradient
     //In CPDI, the grid nodes that influence particles are the ones that are 
     //within influence range of the particle domain corners
-    virtual void allocateSpaceForWeightAndGradient();
-    //append space for precomputed node weight and gradient for one particle
-    virtual void appendSpaceForWeightAndGradient();
+    virtual void allocateSpaceForAllParticleRelatedData();
+    //append space for data related to the new particle
+    virtual void appendSpaceForParticleRelatedData();
+    //delete data related to a particle when it is removed
+    virtual void deleteParticleRelatedData(unsigned int particle_idx);
     //trait method to init particle domain
     void initParticleDomain(const SolidParticle<Scalar,2> &particle, std::vector<Vector<Scalar,2> > &domain_corner);
     void initParticleDomain(const SolidParticle<Scalar,3> &particle, std::vector<Vector<Scalar,3> > &domain_corner);
@@ -73,6 +74,10 @@ protected:
 protected:
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_domain_corners_;  //current particle domain corners
     std::vector<std::vector<Vector<Scalar,Dim> > > initial_particle_domain_corners_; //initial particle domain corners
+    //for each domain corner of the particles, store precomputed weights and gradients of grid nodes that is within influence range
+    //needed in CPDI2
+    std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > corner_grid_weight_and_gradient_;
+    std::vector<std::vector<unsigned int> > corner_grid_pair_num_; //the number of pairs for each corner of each particle
     CPDIUpdateMethod<Scalar,Dim> *cpdi_update_method_; //the cpdi method used to update particle domain
 };
 

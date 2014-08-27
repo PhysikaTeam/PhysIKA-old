@@ -59,30 +59,20 @@ template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &particle)
 {
     MPMSolid<Scalar,Dim>::addParticle(particle);
-    //add space for particle domain corners
     std::vector<Vector<Scalar,Dim> > domain_corner;
     //determine the position of the corners via particle volume and position
     initParticleDomain(particle,domain_corner);
-    particle_domain_corners_.push_back(domain_corner); 
-    initial_particle_domain_corners_.push_back(domain_corner);
-}
-
-template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::removeParticle(unsigned int particle_idx)
-{
-    MPMSolid<Scalar,Dim>::removeParticle(particle_idx);
-    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter = particle_domain_corners_.begin() + particle_idx;
-    particle_domain_corners_.erase(iter);
-    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = initial_particle_domain_corners_.begin() + particle_idx;
-    initial_particle_domain_corners_.erase(iter2);
+    unsigned int idx = this->particleNum() - 1;
+    //set domain corner for the newly added particle
+    //space has been appended in appendSpaceForParticleRelatedData(), called in addParticle() of base class
+    particle_domain_corners_[idx] = domain_corner; 
+    initial_particle_domain_corners_[idx] = domain_corner;
 }
 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles)
 {
     MPMSolid<Scalar,Dim>::setParticles(particles);
-    particle_domain_corners_.resize(particles.size());
-    initial_particle_domain_corners_.resize(particles.size());
     for(unsigned int i = 0; i < particle_domain_corners_.size(); ++i)
     {
         std::vector<Vector<Scalar,Dim> > domain_corner;
@@ -289,7 +279,7 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigne
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::allocateSpaceForWeightAndGradient()
+void CPDIMPMSolid<Scalar,Dim>::allocateSpaceForAllParticleRelatedData()
 {
     PHYSIKA_ASSERT(this->weight_function_);
     PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Wrong dimension specified!");
@@ -299,14 +289,23 @@ void CPDIMPMSolid<Scalar,Dim>::allocateSpaceForWeightAndGradient()
     for(unsigned int i = 0; i < Dim; ++i)
         max_num *= static_cast<unsigned int>((this->weight_function_->supportRadius())*2+1);
     unsigned int corner_num = Dim==2 ? 4 : 8;
+    typedef std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > pair_vec;
+    pair_vec corner_max_num_weight_and_gradient_vec(max_num);
+    std::vector<pair_vec> all_corner_max_num_vec(corner_num,corner_max_num_weight_and_gradient_vec);
+    this->corner_grid_weight_and_gradient_.resize(this->particles_.size(),all_corner_max_num_vec);
+    std::vector<unsigned int> corner_pair_num(corner_num,0);
+    this->corner_grid_pair_num_.resize(this->particles_.size(),corner_pair_num);
     max_num *= corner_num;
-    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
+    pair_vec max_num_weight_and_gradient_vec(max_num);
     this->particle_grid_weight_and_gradient_.resize(this->particles_.size(),max_num_weight_and_gradient_vec);
     this->particle_grid_pair_num_.resize(this->particles_.size(),0);
+    //domain_corners
+    particle_domain_corners_.resize(this->particles_.size());
+    initial_particle_domain_corners_.resize(this->particles_.size());
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::appendSpaceForWeightAndGradient()
+void CPDIMPMSolid<Scalar,Dim>::appendSpaceForParticleRelatedData()
 {
     PHYSIKA_ASSERT(this->weight_function_);
     PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Wrong dimension specified!");
@@ -314,10 +313,35 @@ void CPDIMPMSolid<Scalar,Dim>::appendSpaceForWeightAndGradient()
     for(unsigned int i = 0; i < Dim; ++i)
         max_num *= static_cast<unsigned int>((this->weight_function_->supportRadius())*2+1);
     unsigned int corner_num = Dim==2 ? 4 : 8;
+    typedef std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > pair_vec;
+    pair_vec corner_max_num_weight_and_gradient_vec(max_num);
+    std::vector<pair_vec> all_corner_max_num_vec(corner_num,corner_max_num_weight_and_gradient_vec);
+    this->corner_grid_weight_and_gradient_.push_back(all_corner_max_num_vec);
+    std::vector<unsigned int> corner_pair_num(corner_num,0);
+    this->corner_grid_pair_num_.push_back(corner_pair_num);
     max_num *= corner_num;
     std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
     this->particle_grid_weight_and_gradient_.push_back(max_num_weight_and_gradient_vec);
     this->particle_grid_pair_num_.push_back(0);
+    //add space for particle domain corners
+    std::vector<Vector<Scalar,Dim> > domain_corner(corner_num);
+    particle_domain_corners_.push_back(domain_corner); 
+    initial_particle_domain_corners_.push_back(domain_corner);
+}
+
+template <typename Scalar, int Dim>
+void CPDIMPMSolid<Scalar,Dim>::deleteParticleRelatedData(unsigned int particle_idx)
+{
+    MPMSolidBase<Scalar,Dim>::deleteParticleRelatedData(particle_idx);
+    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter = particle_domain_corners_.begin() + particle_idx;
+    particle_domain_corners_.erase(iter);
+    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = initial_particle_domain_corners_.begin() + particle_idx;
+    initial_particle_domain_corners_.erase(iter2);
+    typename std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > >::iterator iter3 =
+        corner_grid_weight_and_gradient_.begin() + particle_idx;
+    corner_grid_weight_and_gradient_.erase(iter3);
+    typename std::vector<std::vector<unsigned int> >::iterator iter4 = corner_grid_pair_num_.begin() + particle_idx;
+    corner_grid_pair_num_.erase(iter4);
 }
 
 template <typename Scalar, int Dim>
