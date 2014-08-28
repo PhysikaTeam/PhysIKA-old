@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_CPDI_MPM_SOLID_H_
 #define PHYSIKA_DYNAMICS_MPM_CPDI_MPM_SOLID_H_
 
+#include <string>
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -35,12 +36,18 @@ public:
     CPDIMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
              const std::vector<SolidParticle<Scalar,Dim>*> &particles, const Grid<Scalar,Dim> &grid);
     virtual ~CPDIMPMSolid();
+    
+    //restart support
+    virtual bool withRestartSupport() const;
+    virtual void write(const std::string &file_name);
+    virtual void read(const std::string &file_name);
 
     //re-implemented methods compared to standard MPM
     virtual void addParticle(const SolidParticle<Scalar,Dim> &particle); //add particle and initialize the particle domain
     virtual void setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles); //set all simulation particles, data are copied
     virtual void updateParticleInterpolationWeight();  //compute the interpolation weight between particles and grid nodes
     virtual void updateParticleConstitutiveModelState(Scalar dt); //update particle domain after updating the constitutive model state
+    virtual void updateParticlePosition(Scalar dt);
 
     //return current corners of given particle, empty array is returned if particle index is invalid
     void currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
@@ -70,7 +77,6 @@ protected:
     //trait method to init particle domain
     void initParticleDomain(const SolidParticle<Scalar,2> &particle, std::vector<Vector<Scalar,2> > &domain_corner);
     void initParticleDomain(const SolidParticle<Scalar,3> &particle, std::vector<Vector<Scalar,3> > &domain_corner);
-    void updateParticleDomain();  //update the particle domain in CPDI, called in updateParticleConstitutiveModelState()
 protected:
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_domain_corners_;  //current particle domain corners
     std::vector<std::vector<Vector<Scalar,Dim> > > initial_particle_domain_corners_; //initial particle domain corners

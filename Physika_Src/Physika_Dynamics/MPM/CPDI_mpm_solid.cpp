@@ -22,6 +22,7 @@
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
+#include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI2_update_method.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 
 namespace Physika{
@@ -53,6 +54,24 @@ CPDIMPMSolid<Scalar,Dim>::~CPDIMPMSolid()
 {
     if(cpdi_update_method_)
         delete cpdi_update_method_;
+}
+
+template <typename Scalar, int Dim>
+bool CPDIMPMSolid<Scalar,Dim>::withRestartSupport() const
+{
+    return false;
+}
+
+template <typename Scalar, int Dim>
+void CPDIMPMSolid<Scalar,Dim>::write(const std::string &file_name)
+{
+//TO DO
+}
+
+template <typename Scalar, int Dim>
+void CPDIMPMSolid<Scalar,Dim>::read(const std::string &file_name)
+{
+//TO DO
 }
 
 template <typename Scalar, int Dim>
@@ -101,14 +120,35 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
     std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > &particle_grid_weight_and_gradient = this->particle_grid_weight_and_gradient_;
     std::vector<unsigned int> &particle_grid_pair_num = this->particle_grid_pair_num_;
     const GridWeightFunction<Scalar,Dim> &weight_function = *(this->weight_function_);
-    cpdi_update_method_->updateParticleInterpolationWeight(weight_function,particle_grid_weight_and_gradient,particle_grid_pair_num);
+    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
+    if(update_method)  //CPDI2
+        update_method->updateParticleInterpolationWeight(weight_function,particle_grid_weight_and_gradient,particle_grid_pair_num,
+                                                         corner_grid_weight_and_gradient_,corner_grid_pair_num_);
+    else //CPDI
+        cpdi_update_method_->updateParticleInterpolationWeight(weight_function,particle_grid_weight_and_gradient,particle_grid_pair_num);
 }
 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 {
     MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(dt);
-    updateParticleDomain(); //update particle domain after update particle deformation gradient
+    //update particle domain after update particle deformation gradient
+    PHYSIKA_ASSERT(cpdi_update_method_);
+    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
+    if(update_method)  //CPDI2
+        update_method->updateParticleDomain(corner_grid_weight_and_gradient_,corner_grid_pair_num_,dt);
+    else //CPDI
+        cpdi_update_method_->updateParticleDomain();
+}
+
+template <typename Scalar, int Dim>
+void CPDIMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
+{
+    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
+    if(update_method)  //CPDI2
+        update_method->updateParticlePosition(dt);
+    else //CPDI
+        MPMSolid<Scalar,Dim>::updateParticlePosition(dt);
 }
 
 template <typename Scalar, int Dim>
@@ -391,13 +431,6 @@ void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,3> 
                 bias[2] = k*2*particle_radius;
                 domain_corner[i*2*2+j*2+k] = min_corner + bias;
             }
-}
-
-template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::updateParticleDomain()
-{
-    PHYSIKA_ASSERT(cpdi_update_method_);
-    cpdi_update_method_->updateParticleDomain();
 }
 
 //explicit instantiations

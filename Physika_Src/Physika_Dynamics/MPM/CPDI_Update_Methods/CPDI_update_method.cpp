@@ -48,9 +48,7 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(const GridWei
                                                                    std::vector<unsigned int> &particle_grid_pair_num)
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
-    ArrayND<Vector<Scalar,2>,2> particle_domain;
-    const std::vector<SolidParticle<Scalar,2>*> &particles = this->cpdi_driver_->allParticles();
-    for(unsigned int i = 0; i < particles.size(); ++i)
+    for(unsigned int i = 0; i < this->cpdi_driver_->particleNum(); ++i)
         updateParticleInterpolationWeight(i,weight_function,particle_grid_weight_and_gradient[i],particle_grid_pair_num[i]);
 }
 
@@ -265,9 +263,7 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(const GridWei
                                                                    std::vector<unsigned int> &particle_grid_pair_num)
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
-    ArrayND<Vector<Scalar,3>,3> particle_domain;
-    const std::vector<SolidParticle<Scalar,3>*> &particles = this->cpdi_driver_->allParticles();
-    for(unsigned int i = 0; i < particles.size(); ++i)
+    for(unsigned int i = 0; i < this->cpdi_driver_->particleNum(); ++i)
         updateParticleInterpolationWeight(i,weight_function,particle_grid_weight_and_gradient[i],particle_grid_pair_num[i]);
 }
 

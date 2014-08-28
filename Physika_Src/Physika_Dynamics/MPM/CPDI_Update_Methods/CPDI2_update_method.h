@@ -51,13 +51,24 @@ class CPDI2UpdateMethod<Scalar,2>: public CPDIUpdateMethod<Scalar,2>
 public:
     CPDI2UpdateMethod();
     virtual ~CPDI2UpdateMethod();
-    //overwrite the updateParticleDomain() method in CPDIUpdateMethod
-    virtual void updateParticleDomain(const std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &particle_grid_weight_and_gradient,
-                                      const std::vector<unsigned int> &particle_grid_pair_num);
+    //overwrite methods in CPDIUpdateMethod
+    virtual void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,2> &weight_function,
+                                                   std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &particle_grid_weight_and_gradient,
+                                                   std::vector<unsigned int> &particle_grid_pair_num,
+                                                   std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &corner_grid_weight_and_gradient,
+                                                   std::vector<std::vector<unsigned int> > &corner_grid_pair_num);
+
+    virtual void updateParticleDomain(const std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &corner_grid_weight_and_gradient,
+                                      const std::vector<std::vector<unsigned int> > &corner_grid_pair_num, Scalar dt);
+    
+    //CPDI2 updates particle position according to corner positions
+    virtual void updateParticlePosition(Scalar dt);
 protected:
     virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
-                                           std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
-                                           unsigned int &particle_grid_pair_num);
+                                                   std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
+                                                   unsigned int &particle_grid_pair_num,
+                                                   std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
+                                                   std::vector<unsigned int> &corner_grid_pair_num);
 };
 
 template <typename Scalar>
@@ -66,13 +77,24 @@ class CPDI2UpdateMethod<Scalar,3>: public CPDIUpdateMethod<Scalar,3>
 public:
     CPDI2UpdateMethod();
     virtual ~CPDI2UpdateMethod();
-    //overwrite the updateParticleDomain() method in CPDIUpdateMethod
-    virtual void updateParticleDomain(const std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &particle_grid_weight_and_gradient,
-                                      const std::vector<unsigned int> &particle_grid_pair_num);
+    //overwrite methods in CPDIUpdateMethod
+    virtual void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,3> &weight_function,
+                                                   std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &particle_grid_weight_and_gradient,
+                                                   std::vector<unsigned int> &particle_grid_pair_num,
+                                                   std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &corner_grid_weight_and_gradient,
+                                                   std::vector<std::vector<unsigned int> > &corner_grid_pair_num);
+
+    virtual void updateParticleDomain(const std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &corner_grid_weight_and_gradient,
+                                      const std::vector<std::vector<unsigned int> > &corner_grid_pair_num, Scalar dt);
+
+    //CPDI2 updates particle position according to corner positions
+    virtual void updateParticlePosition(Scalar dt);
 protected:
     virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
-                                           std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
-                                           unsigned int &particle_grid_pair_num);
+                                                   std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
+                                                   unsigned int &particle_grid_pair_num,
+                                                   std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
+                                                   std::vector<unsigned int> &corner_grid_pair_num);
 };
 
 }  //end of namespace Physika
