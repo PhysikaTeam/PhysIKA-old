@@ -146,7 +146,18 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
 {
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
     if(update_method)  //CPDI2
+    {
+        //plugin operation
+        MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+        for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+        {
+            plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+            if(plugin)
+                plugin->onUpdateParticlePosition(dt);
+        }
+        //update particle position with CPDI2
         update_method->updateParticlePosition(dt);
+    }
     else //CPDI
         MPMSolid<Scalar,Dim>::updateParticlePosition(dt);
 }
