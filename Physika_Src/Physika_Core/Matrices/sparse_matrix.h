@@ -14,6 +14,7 @@
 
 #ifndef PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_H_
 #define PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_H_
+
 #include <vector>
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
@@ -62,6 +63,7 @@ public:
     Trituple<Scalar> *col_next_;
 };
 
+
 /*class SparseMatrix is a data structure used to store SparseMatrix
  *it uses the Trituple as its node and connect them with a orthhogonal list
  */
@@ -81,7 +83,7 @@ public:
     bool remove(unsigned int i,unsigned int j);
     //resize the SparseMatrix and data in it will be deleted
     void resize(unsigned int new_rows, unsigned int new_cols);
-	SparseMatrix<Scalar> transpose() const;
+    SparseMatrix<Scalar> transpose() const;
     std::vector<Trituple<Scalar>> getRowElements(unsigned int ) const;
     std::vector<Trituple<Scalar>> getColElements(unsigned int ) const;
     //return value of matrix entry at index (i,j). Note: cannot be used as l-value!
@@ -102,7 +104,7 @@ public:
     SparseMatrix<Scalar> operator/ (Scalar) const;
     SparseMatrix<Scalar>& operator/= (Scalar);
 protected:
-	Trituple<Scalar> * ptr(unsigned int i, unsigned int j) ;
+    Trituple<Scalar> * ptr(unsigned int i, unsigned int j) ;
     void allocMemory(unsigned int rows, unsigned int cols);
     void deleteRowList(Trituple<Scalar> *);
     void deleteColList(Trituple<Scalar> *);
@@ -114,7 +116,7 @@ protected:
     Trituple<Scalar> ** row_head_;
     Trituple<Scalar> ** col_head_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-	Eigen::SparseMatrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> ptr_eigen_sparse_matrix_;
+    Eigen::SparseMatrix<Scalar> * ptr_eigen_sparse_matrix_ ;
 #endif
 };
 

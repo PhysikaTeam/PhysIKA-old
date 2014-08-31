@@ -260,7 +260,10 @@ struct abs_impl
   typedef typename NumTraits<Scalar>::Real RealScalar;
   static inline RealScalar run(const Scalar& x)
   {
-    using std::abs;
+	/*
+	 * commented by FeiZhu
+	 */
+    //using std::abs;
     return abs(x);
   }
 };
