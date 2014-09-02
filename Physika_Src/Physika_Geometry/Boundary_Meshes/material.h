@@ -52,7 +52,11 @@ public:
     const std::string& textureFileName() const;
     void setTextureFileName(const std::string &texture_file_name);
 
-    //TO DO: Add some static member methods here, predefined materials: rubber, iron, etc.
+    // predefined materials: rubber, iron, etc.
+	// names of the functions break the rule of coding style in order to emphasize the specialness of the static functions
+	static Material<Scalar> Rubber();
+	static Material<Scalar> Iron();
+	static Material<Scalar> Wood();
 
 protected:
     std::string name_;
