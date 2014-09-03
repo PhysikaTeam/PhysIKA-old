@@ -133,20 +133,21 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
 				idx_weight_map.insert(std::make_pair(node_idx_1d,0.25*corner_weight));
             //gradient correspond to this node
             typename std::map<unsigned int,Vector<Scalar,2> >::iterator gradient_map_iter = idx_gradient_map.find(node_idx_1d);
+            Scalar V_p = particle.volume();
             switch(flat_corner_idx)
             {
             case 0:
             {
                 if(gradient_map_iter != idx_gradient_map.end())
                 {
-                    gradient_map_iter->second[0] += 1.0/(2.0*particle.volume())*corner_weight*(r_x[1]-r_y[1]);
-                    gradient_map_iter->second[1] += 1.0/(2.0*particle.volume())*corner_weight*(-r_x[0]+r_y[0]);
+                    gradient_map_iter->second[0] += 1.0/(2.0*V_p)*corner_weight*(r_x[1]-r_y[1]);
+                    gradient_map_iter->second[1] += 1.0/(2.0*V_p)*corner_weight*(-r_x[0]+r_y[0]);
                 }
                 else
                 {
 					Vector<Scalar,2> gradient;
-                    gradient[0] = 1.0/(2.0*particle.volume())*corner_weight*(r_x[1]-r_y[1]);
-                    gradient[1] = 1.0/(2.0*particle.volume())*corner_weight*(-r_x[0]+r_y[0]);
+                    gradient[0] = 1.0/(2.0*V_p)*corner_weight*(r_x[1]-r_y[1]);
+                    gradient[1] = 1.0/(2.0*V_p)*corner_weight*(-r_x[0]+r_y[0]);
 					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
@@ -155,14 +156,14 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
             {
                 if(gradient_map_iter != idx_gradient_map.end())
                 {
-                    gradient_map_iter->second[0] += -1.0/(2.0*particle.volume())*corner_weight*(r_x[1]+r_y[1]);
-                    gradient_map_iter->second[1] += -1.0/(2.0*particle.volume())*corner_weight*(-r_x[0]-r_y[0]);
+                    gradient_map_iter->second[0] += -1.0/(2.0*V_p)*corner_weight*(r_x[1]+r_y[1]);
+                    gradient_map_iter->second[1] += -1.0/(2.0*V_p)*corner_weight*(-r_x[0]-r_y[0]);
                 }
                 else
                 {
 					Vector<Scalar,2> gradient;
-                    gradient[0] = -1.0/(2.0*particle.volume())*corner_weight*(r_x[1]+r_y[1]);
-                    gradient[1] = -1.0/(2.0*particle.volume())*corner_weight*(-r_x[0]-r_y[0]);
+                    gradient[0] = -1.0/(2.0*V_p)*corner_weight*(r_x[1]+r_y[1]);
+                    gradient[1] = -1.0/(2.0*V_p)*corner_weight*(-r_x[0]-r_y[0]);
 					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
@@ -171,14 +172,14 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
             {
                 if(gradient_map_iter != idx_gradient_map.end())
                 {
-                    gradient_map_iter->second[0] += 1.0/(2.0*particle.volume())*corner_weight*(r_x[1]+r_y[1]);
-                    gradient_map_iter->second[1] += 1.0/(2.0*particle.volume())*corner_weight*(-r_x[0]-r_y[0]);
+                    gradient_map_iter->second[0] += 1.0/(2.0*V_p)*corner_weight*(r_x[1]+r_y[1]);
+                    gradient_map_iter->second[1] += 1.0/(2.0*V_p)*corner_weight*(-r_x[0]-r_y[0]);
                 }
                 else
                 {
 					Vector<Scalar,2> gradient;
-                    gradient[0] = 1.0/(2.0*particle.volume())*corner_weight*(r_x[1]+r_y[1]);
-                    gradient[1] = 1.0/(2.0*particle.volume())*corner_weight*(-r_x[0]-r_y[0]);
+                    gradient[0] = 1.0/(2.0*V_p)*corner_weight*(r_x[1]+r_y[1]);
+                    gradient[1] = 1.0/(2.0*V_p)*corner_weight*(-r_x[0]-r_y[0]);
 					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
@@ -187,14 +188,14 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
             {
                 if(gradient_map_iter != idx_gradient_map.end())
                 {
-                    gradient_map_iter->second[0] += -1.0/(2.0*particle.volume())*corner_weight*(r_x[1]-r_y[1]);
-                    gradient_map_iter->second[1] += -1.0/(2.0*particle.volume())*corner_weight*(-r_x[0]+r_y[0]);
+                    gradient_map_iter->second[0] += -1.0/(2.0*V_p)*corner_weight*(r_x[1]-r_y[1]);
+                    gradient_map_iter->second[1] += -1.0/(2.0*V_p)*corner_weight*(-r_x[0]+r_y[0]);
                 }
                 else
                 {
 					Vector<Scalar,2> gradient;
-                    gradient[0] = -1.0/(2.0*particle.volume())*corner_weight*(r_x[1]-r_y[1]);
-                    gradient[1] = -1.0/(2.0*particle.volume())*corner_weight*(-r_x[0]+r_y[0]);
+                    gradient[0] = -1.0/(2.0*V_p)*corner_weight*(r_x[1]-r_y[1]);
+                    gradient[1] = -1.0/(2.0*V_p)*corner_weight*(-r_x[0]+r_y[0]);
 					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
@@ -271,7 +272,40 @@ template <typename Scalar>
 void CPDIUpdateMethod<Scalar,3>::updateParticleDomain()
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
-    //TO DO
+    ArrayND<Vector<Scalar,3>,3> particle_domain;
+    for(unsigned int i = 0; i < cpdi_driver_->particleNum(); ++i)
+    {
+        SquareMatrix<Scalar,3> deform_grad = (cpdi_driver_->particle(i)).deformationGradient();
+        cpdi_driver_->initialParticleDomain(i,particle_domain);
+        Vector<Scalar,3> particle_pos = (cpdi_driver_->particle(i)).position();
+        Vector<unsigned int,3> corner_idx(0);
+        Vector<Scalar,3> min_corner = particle_domain(corner_idx);
+        corner_idx[0] = 1;
+        Vector<Scalar,3> x_corner = particle_domain(corner_idx);
+        corner_idx[0] = 0; corner_idx[1] = 1;
+        Vector<Scalar,3> y_corner = particle_domain(corner_idx);
+        corner_idx[0] = 0; corner_idx[1] = 0; corner_idx[2] = 1;
+        Vector<Scalar,3> z_corner = particle_domain(corner_idx);
+        Vector<Scalar,3> r_x = x_corner - min_corner;
+        Vector<Scalar,3> r_y = y_corner - min_corner;
+        Vector<Scalar,3> r_z = z_corner - min_corner;
+        //update parallelogram
+        r_x = deform_grad * r_x;
+        r_y = deform_grad * r_y;
+        r_z = deform_grad * r_z;
+        //update 8 corners
+        min_corner = particle_pos - 0.5*r_x - 0.5*r_y - 0.5*r_z;
+        for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
+            for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
+                for(unsigned int idx_z = 0; idx_z < 2; ++idx_z)
+                {
+                    corner_idx[0] = idx_x;
+                    corner_idx[1] = idx_y;
+                    corner_idx[2] = idx_z;
+                    particle_domain(corner_idx) = min_corner + idx_x*r_x + idx_y*r_y + idx_z*r_z;
+                }
+        cpdi_driver_->setCurrentParticleDomain(i,particle_domain);
+    }
 }
 
 template <typename Scalar>
@@ -290,7 +324,199 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
                                                                    unsigned int &particle_grid_pair_num)
 {
-//TO DO
+    ArrayND<Vector<Scalar,3>,3> particle_domain;
+    this->cpdi_driver_->currentParticleDomain(particle_idx,particle_domain);
+    const SolidParticle<Scalar,3> &particle = this->cpdi_driver_->particle(particle_idx);
+    std::map<unsigned int,Scalar> idx_weight_map;
+    std::map<unsigned int,Vector<Scalar,3> > idx_gradient_map;
+    const Grid<Scalar,3> &grid = this->cpdi_driver_->grid();
+    Vector<Scalar,3> r_x = particle_domain(Vector<unsigned int,3>(1,0,0)) - particle_domain(Vector<unsigned int,3>(0));
+    Vector<Scalar,3> r_y = particle_domain(Vector<unsigned int,3>(0,1,0)) - particle_domain(Vector<unsigned int,3>(0));
+    Vector<Scalar,3> r_z = particle_domain(Vector<unsigned int,3>(0,0,1)) - particle_domain(Vector<unsigned int,3>(0));
+    Vector<Scalar,3> grid_dx = grid.dX();
+    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,3> InfluenceIterator;
+    //first compute the weight and gradient with respect to each grid node in the influence range
+    for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++corner_iter)
+    {
+        Vector<unsigned int,3> corner_idx = corner_iter.elementIndex();
+        unsigned int flat_corner_idx = flatIndex(corner_idx,Vector<unsigned int,3>(2));
+        for(InfluenceIterator iter(grid,particle_domain(corner_idx),weight_function); iter.valid(); ++iter)
+        {
+            Vector<unsigned int,3> node_idx = iter.nodeIndex();
+            unsigned int node_idx_1d = flatIndex(node_idx,grid.nodeNum());
+            Vector<Scalar,3> corner_to_node = particle_domain(corner_idx) - grid.node(node_idx);
+            for(unsigned int dim = 0; dim < 3; ++dim)
+                corner_to_node[dim] /= grid_dx[dim];
+            Scalar corner_weight = weight_function.weight(corner_to_node);
+            //weight correspond to this node
+            typename std::map<unsigned int,Scalar>::iterator weight_map_iter = idx_weight_map.find(node_idx_1d);
+            if(weight_map_iter != idx_weight_map.end())
+                weight_map_iter->second += 0.125*corner_weight;
+            else
+                idx_weight_map.insert(std::make_pair(node_idx_1d,0.125*corner_weight));
+            //gradient correspond to this node
+            typename std::map<unsigned int,Vector<Scalar,3> >::iterator gradient_map_iter = idx_gradient_map.find(node_idx_1d);
+            Scalar V_p = particle.volume();
+            switch(flat_corner_idx)
+            {
+            case 0:
+            {
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += 1.0/(4.0*V_p)*corner_weight*(r_x[1]*r_z[2]-r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[1] += 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_z[2]+r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[2] += 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                }
+                else
+                {
+					Vector<Scalar,3> gradient;
+                    gradient[0] = 1.0/(4.0*V_p)*corner_weight*(r_x[1]*r_z[2]-r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[1] = 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_z[2]+r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[2] = 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                }
+                break;
+            }
+            case 1:
+            {
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += -1.0/(4.0*V_p)*corner_weight*(-r_x[1]*r_z[2]+r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[1] += -1.0/(4.0*V_p)*corner_weight*(r_x[0]*r_z[2]-r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[2] += -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                }
+                else
+                {
+                    Vector<Scalar,3> gradient;
+                    gradient[0] = -1.0/(4.0*V_p)*corner_weight*(-r_x[1]*r_z[2]+r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[1] = -1.0/(4.0*V_p)*corner_weight*(r_x[0]*r_z[2]-r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[2] = -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                }
+                break;
+            }
+            case 2:
+            {
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += 1.0/(4.0*V_p)*corner_weight*(-r_x[1]*r_z[2]-r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[1] += 1.0/(4.0*V_p)*corner_weight*(r_x[0]*r_z[2]+r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[2] += 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                }
+                else
+                {
+                    Vector<Scalar,3> gradient;
+                    gradient[0] = 1.0/(4.0*V_p)*corner_weight*(-r_x[1]*r_z[2]-r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[1] = 1.0/(4.0*V_p)*corner_weight*(r_x[0]*r_z[2]+r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[2] = 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                }
+                break;
+            }
+            case 3:
+            {
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += -1.0/(4.0*V_p)*corner_weight*(r_x[1]*r_z[2]+r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[1] += -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_z[2]-r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[2] += -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                }
+                else
+                {
+                    Vector<Scalar,3> gradient;
+                    gradient[0] = -1.0/(4.0*V_p)*corner_weight*(r_x[1]*r_z[2]+r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[1] = -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_z[2]-r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[2] = -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                }
+                break;
+            }
+            case 4:
+            {
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += 1.0/(4.0*V_p)*corner_weight*(r_x[1]*r_z[2]+r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[1] += 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_z[2]-r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[2] += 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                }
+                else
+                {
+                    Vector<Scalar,3> gradient;
+                    gradient[0] = 1.0/(4.0*V_p)*corner_weight*(r_x[1]*r_z[2]+r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[1] = 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_z[2]-r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[2] = 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                }
+                break;
+            }
+            case 5:
+            {
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += -1.0/(4.0*V_p)*corner_weight*(-r_x[1]*r_z[2]-r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[1] += -1.0/(4.0*V_p)*corner_weight*(r_x[0]*r_z[2]+r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[2] += -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                }
+                else
+                {
+                    Vector<Scalar,3> gradient;
+                    gradient[0] = -1.0/(4.0*V_p)*corner_weight*(-r_x[1]*r_z[2]-r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[1] = -1.0/(4.0*V_p)*corner_weight*(r_x[0]*r_z[2]+r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[2] = -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                }
+                break;
+            }
+            case 6:
+            {
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += 1.0/(4.0*V_p)*corner_weight*(-r_x[1]*r_z[2]+r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[1] += 1.0/(4.0*V_p)*corner_weight*(r_x[0]*r_z[2]-r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[2] += 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                }
+                else
+                {
+                    Vector<Scalar,3> gradient;
+                    gradient[0] = 1.0/(4.0*V_p)*corner_weight*(-r_x[1]*r_z[2]+r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[1] = 1.0/(4.0*V_p)*corner_weight*(r_x[0]*r_z[2]-r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[2] = 1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                }
+                break;
+            }
+            case 7:
+            {
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += -1.0/(4.0*V_p)*corner_weight*(r_x[1]*r_z[2]-r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[1] += -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_z[2]+r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient_map_iter->second[2] += -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                }
+                else
+                {
+					Vector<Scalar,3> gradient;
+                    gradient[0] = -1.0/(4.0*V_p)*corner_weight*(r_x[1]*r_z[2]-r_y[1]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[1] = -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_z[2]+r_y[0]*r_z[2]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+                    gradient[2] = -1.0/(4.0*V_p)*corner_weight*(-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                }
+                break;
+            }
+            default:
+                PHYSIKA_ERROR("Particle domain corner number should be 8 for Dim=3");
+            }
+        }
+    }
+    //then store the data with respect to grid ndoes
+    particle_grid_pair_num = 0;
+    for(typename std::map<unsigned int,Scalar>::iterator iter = idx_weight_map.begin(); iter != idx_weight_map.end(); ++iter)
+    {
+        particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = multiDimIndex(iter->first,grid.nodeNum());
+        particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
+        particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+        ++particle_grid_pair_num;
+    }
 }
 
 template <typename Scalar>

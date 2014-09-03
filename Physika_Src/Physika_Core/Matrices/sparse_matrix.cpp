@@ -273,14 +273,10 @@ std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getColElements(unsigned int 
     return v;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     std::vector<Trituple<Scalar>> v;
-    for(int j = 0;j<ptr_eigen_sparse_matrix_->rows();++j)
-    {
-        Scalar value_temp = (*ptr_eigen_sparse_matrix_).coeff(j,i);
-        if(value_temp != 0)
-        {
-            v.push_back(Trituple<Scalar>(j,i,value_temp));
-        }
-    }
+	for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+	{
+		v.push_back(Trituple<Scalar>(it.row(), it.col(), it.value()));
+	}
     return v;
 #endif
 }
@@ -503,7 +499,6 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator= (const SparseMatrix<Scalar
     }
     return *this;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    //PHYSIKA_ASSERT(mat2.rows()==this->rows() && mat2.cols()==this->cols());
     (*ptr_eigen_sparse_matrix_) = (*(mat2.ptr_eigen_sparse_matrix_));
     return *this;
 #endif
@@ -620,14 +615,14 @@ VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) c
     return result;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     VectorND<Scalar> result(this->rows(),0);
-    for(unsigned int i=0;i<this->rows();++i)
+    for(unsigned int i=0;i<this->cols();++i)
     {
-        Scalar sum = 0;
-        for(unsigned int j=0;j<this->cols();++j)
-        {
-            sum += ptr_eigen_sparse_matrix_->coeff(i,j) * vec[j];
-        }
-        result[i] = sum;
+		for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+		{
+			Scalar value = it.value();
+			unsigned int j = it.row();
+			result[j] += value*vec[i];
+		}
     }
     return result;
 #endif

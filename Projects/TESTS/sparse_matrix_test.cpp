@@ -15,12 +15,13 @@
 
 #include <iostream>
 #include <ctime>
-#include "Physika_Dependency/Eigen/Sparse"
+#include "Physika_Dependency/Eigen/Eigen"
 #include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
-#define Max1 1000
-#define Max2 2000
+#define Max1 5000
+#define Max2 6000
 #define Max  10000
+#define Maxv 2000
 
 using namespace std;
 
@@ -53,8 +54,22 @@ void compare(const Physika::SparseMatrix<float> &a, const Eigen::SparseMatrix<fl
         if(correctness) cout<<"correctness OK!"<<endl;
         else cout<<"correctness bad!"<<endl;
 }
+void compare(const Physika::VectorND<float> &a, const Eigen::SparseVector<float> &b)
+{
+	for (unsigned int i = 0; i < a.dims(); ++i)
+	{
+		if (a[i] != b.coeff(i))
+		{
+			cout << "uncorrectly vector multiply a sparsematrix" << endl;
+			return;
+		}
+	}
+	cout << "correctly multiply" << endl;
+	return ;
+}
 int main()
 {
+	/*
     {
     cout<<"基本功能测试"<<endl;
     Physika::SparseMatrix<float> m1(5,5);
@@ -127,7 +142,7 @@ int main()
     //getchar();
     
     }
-    
+	*/
     clock_t start,end;
 
     srand(time(NULL));
@@ -180,9 +195,7 @@ int main()
         psm3.setEntry(row,col,v);
         esm3.coeffRef(row,col) = v;
     }
-    /*cout<<psm2<<endl;
-    cout<<endl;
-    cout<<psm3<<endl;*/
+
     start = clock();
     
     Physika::SparseMatrix<float> psm5 = psm2*psm3;
@@ -192,12 +205,44 @@ int main()
     Eigen::SparseMatrix<float> esm5 = esm2*esm3;
     end = clock();
     cout<<"eigen * consume time:"<<static_cast<double>(end - start)<<endl;
-
-    //cout<<"correctness multiply"<<endl;
-    
     compare(psm5,esm5);
 
+	cout << "vector multiply sparse matrix effeciency" << endl;
+	start = clock();
+	Physika::VectorND<float> Physika_vec(Max2, 0),Physika_vec_T(Max1,0);
+	Eigen::SparseVector<float> eigen_vec,eigen_vec_T;
+	eigen_vec.resize(Max2); eigen_vec_T.resize(Max1);
+	for (unsigned int i = 0; i < Maxv; ++i)
+	{
+		unsigned int a = rand() % Max2,c = rand() % Max1;
+		unsigned int b = rand() % Max;
+		Physika_vec[a] = b;
+		Physika_vec_T[c] = b;
+		eigen_vec.coeffRef(a) = b;
+		eigen_vec_T.coeffRef(c) = b;
+	}
+	start = clock();
+	Physika::VectorND<float> pr = psm2*Physika_vec;
+	end = clock();
+	cout << "Physika cost time:" << static_cast<double>(end - start) << endl;
+	start = clock();
+	Eigen::SparseVector<float> er = esm2*eigen_vec;
+	end = clock();
+	cout << "Eigen cost time:" << static_cast<double>(end - start) << endl;
+	cout << "correctness of SparseMatrix * Vector:" << endl;
+	compare(pr, er);
 
+	cout << "vector * matrix effectiveness" << endl;
+	start = clock();
+	Physika::VectorND<float> pr_T = Physika_vec_T*psm2;
+	end = clock();
+	cout << "Physika vec*matrix cost time:" << static_cast<double>(end - start) << endl;
+	start = clock();
+	//eigen_vec_T*esm2;//Eigen::SparseVector<float> er_T = 
+	end = clock();
+	//cout << "Eigen vec*matrix cost time:" << static_cast<double>(end - start) << endl;
+	cout << "correctness of vec * matrix:" << endl;
+	//compare(pr_T, er_T);
 
     /*psm = psm.transpose();
     esm = esm.transpose();

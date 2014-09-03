@@ -406,7 +406,47 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticleDomain()
         }
         else if(Dim==3)
         {
-            //TO DO
+            //get 8 corners
+            std::vector<unsigned int> corner_idx(3);
+            corner_idx[0] = corner_idx[1] = corner_idx[2] = 0;
+            Vector<Scalar,Dim> corner_1 = particle_domain(corner_idx);
+            corner_idx[0] = 0; corner_idx[1] = 0; corner_idx[2] = 1;
+            Vector<Scalar,Dim> corner_2 = particle_domain(corner_idx);
+            corner_idx[0] = 0; corner_idx[1] = 1; corner_idx[2] = 0;
+            Vector<Scalar,Dim> corner_3 = particle_domain(corner_idx);
+            corner_idx[0] = 0; corner_idx[1] = 1; corner_idx[2] = 1;
+            Vector<Scalar,Dim> corner_4 = particle_domain(corner_idx);
+            corner_idx[0] = 1; corner_idx[1] = 0; corner_idx[2] = 0;
+            Vector<Scalar,Dim> corner_5 = particle_domain(corner_idx);
+            corner_idx[0] = 1; corner_idx[1] = 0; corner_idx[2] = 1;
+            Vector<Scalar,Dim> corner_6 = particle_domain(corner_idx);
+            corner_idx[0] = 1; corner_idx[1] = 1; corner_idx[2] = 0;
+            Vector<Scalar,Dim> corner_7 = particle_domain(corner_idx);
+            corner_idx[0] = 1; corner_idx[1] = 1; corner_idx[2] = 1;
+            Vector<Scalar,Dim> corner_8 = particle_domain(corner_idx);
+            //render 12 edges
+            glBegin(GL_LINE_LOOP);
+            openGLVertex(corner_1);
+            openGLVertex(corner_2);
+            openGLVertex(corner_4);
+            openGLVertex(corner_3);
+            glEnd();
+            glBegin(GL_LINE_LOOP);
+            openGLVertex(corner_5);
+            openGLVertex(corner_6);
+            openGLVertex(corner_8);
+            openGLVertex(corner_7);
+            glEnd();
+            glBegin(GL_LINES);
+            openGLVertex(corner_1);
+            openGLVertex(corner_5);
+            openGLVertex(corner_2);
+            openGLVertex(corner_6);
+            openGLVertex(corner_4);
+            openGLVertex(corner_8);
+            openGLVertex(corner_3);
+            openGLVertex(corner_7);
+            glEnd();
         }
         else
             PHYSIKA_ERROR("Invalid dimension specified!");
