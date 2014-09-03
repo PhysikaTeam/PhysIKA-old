@@ -503,7 +503,7 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator= (const SparseMatrix<Scalar
     }
     return *this;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    PHYSIKA_ASSERT(mat2.rows()==this->rows() && mat2.cols()==this->cols());
+    //PHYSIKA_ASSERT(mat2.rows()==this->rows() && mat2.cols()==this->cols());
     (*ptr_eigen_sparse_matrix_) = (*(mat2.ptr_eigen_sparse_matrix_));
     return *this;
 #endif
