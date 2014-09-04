@@ -68,9 +68,7 @@ void MPMSolidBase<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &part
     //append space for the new particle related data
     appendSpaceForParticleRelatedData();
     //set value
-    unsigned idx = this->particleNum() - 1;
-    is_dirichlet_particle_[idx] = 0;
-    particle_initial_volume_[idx] = new_particle->volume();
+    initializeLastParticleRelatedData();
 }
 
 template <typename Scalar, int Dim>
@@ -96,8 +94,6 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
         if(particles_[i])
             delete particles_[i];
     particles_.resize(particles.size());
-    //resize particle related data according to new particle number 
-    allocateSpaceForAllParticleRelatedData();
     //set new particle data
     for(unsigned int i = 0; i < particles.size(); ++i)
     {
@@ -107,9 +103,11 @@ void MPMSolidBase<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scal
             continue;
         } 
         particles_[i] = particles[i]->clone();
-        is_dirichlet_particle_[i] = 0;
-        particle_initial_volume_[i] = particles_[i]->volume();
     }
+    //resize particle related data according to new particle number 
+    allocateSpaceForAllParticleRelatedData();
+    //initialize data related to the particles
+    initializeAllParticleRelatedData();
 }
 
 template <typename Scalar, int Dim>
@@ -196,6 +194,16 @@ void MPMSolidBase<Scalar,Dim>::allocateSpaceForAllParticleRelatedData()
 }
 
 template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::initializeAllParticleRelatedData()
+{
+    for(unsigned int i = 0; i < particleNum(); ++i)
+    {
+        is_dirichlet_particle_[i] = 0;
+        particle_initial_volume_[i] = particles_[i]->volume();
+    }
+}
+
+template <typename Scalar, int Dim>
 void MPMSolidBase<Scalar,Dim>::appendSpaceForParticleRelatedData()
 {
     //add space for particle related data
@@ -207,6 +215,14 @@ void MPMSolidBase<Scalar,Dim>::appendSpaceForParticleRelatedData()
     std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > max_num_weight_and_gradient_vec(max_num);
     this->particle_grid_weight_and_gradient_.push_back(max_num_weight_and_gradient_vec);
     this->particle_grid_pair_num_.push_back(0);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::initializeLastParticleRelatedData()
+{
+    unsigned idx = this->particleNum() - 1;
+    is_dirichlet_particle_[idx] = 0;
+    particle_initial_volume_[idx] = this->particles_[idx]->volume();
 }
 
 template <typename Scalar, int Dim>
