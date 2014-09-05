@@ -15,7 +15,7 @@
 #include<iostream>
 #include<string>
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
-#include "Physika_Geometry/Surface_Mesh/surface_mesh.h"
+#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 using Physika::ObjMeshIO;
 using Physika::SurfaceMesh;
 using namespace std;
@@ -24,8 +24,8 @@ using namespace std;
 int main()
 {
     SurfaceMesh<float> mesh;
-    ObjMeshIO<float>::load(string("C:/Users/acer/Documents/model/zhanshen.obj"), &mesh);
-    ObjMeshIO<float>::save(string("C:/Users/acer/Documents/model/zhanshen_fuben.obj"),&mesh);
+    ObjMeshIO<float>::load(string("D:/tencentFile/731595774/FileRecv/zhanshen.obj"), &mesh);
+    ObjMeshIO<float>::save(string("zhanshen_fuben.obj"),&mesh);
     /*
     int vertex_num = mesh.numVertices(),normal_num = mesh.numNormals(), texture_num = mesh.numTextureCoordinates();
     cout<<"vertex_num:"<<vertex_num<<endl;
@@ -48,6 +48,6 @@ int main()
         cout<<i<<"   "<<mesh.material(i).name()<<" "<<mesh.material(i).textureFileName() <<" Ns:"<<mesh.material(i).shininess()<<endl;
     */
 	cout<<"ok"<<endl;
-    getchar();
+   // getchar();
     return 0;
 }
