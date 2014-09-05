@@ -43,8 +43,6 @@ public:
     virtual void read(const std::string &file_name);
 
     //re-implemented methods compared to standard MPM
-    virtual void addParticle(const SolidParticle<Scalar,Dim> &particle); //add particle and initialize the particle domain
-    virtual void setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles); //set all simulation particles, data are copied
     virtual void updateParticleInterpolationWeight();  //compute the interpolation weight between particles and grid nodes
     virtual void updateParticleConstitutiveModelState(Scalar dt); //update particle domain after updating the constitutive model state
     virtual void updateParticlePosition(Scalar dt);
@@ -70,8 +68,10 @@ protected:
     //In CPDI, the grid nodes that influence particles are the ones that are 
     //within influence range of the particle domain corners
     virtual void allocateSpaceForAllParticleRelatedData();
+    virtual void initializeAllParticleRelatedData();
     //append space for data related to the new particle
     virtual void appendSpaceForParticleRelatedData();
+    virtual void initializeLastParticleRelatedData();
     //delete data related to a particle when it is removed
     virtual void deleteParticleRelatedData(unsigned int particle_idx);
     //trait method to init particle domain

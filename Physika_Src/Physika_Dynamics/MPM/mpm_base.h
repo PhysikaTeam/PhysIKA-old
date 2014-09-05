@@ -70,8 +70,12 @@ protected:
     virtual void applyGravityOnGrid(Scalar dt) = 0;
     //allocate space for data related to particles according to particle number
     virtual void allocateSpaceForAllParticleRelatedData() = 0;
+    //initialize the data related to all particles
+    virtual void initializeAllParticleRelatedData() = 0;
     //append space for data related to the newly added particle 
     virtual void appendSpaceForParticleRelatedData() = 0;
+    //initialize data related to the newly added particle, the last in list
+    virtual void initializeLastParticleRelatedData() = 0;
     //delete data that is attached with particles, called when a particle is removed
     //need implementation in subclasses, when more data is attached to particles 
     virtual void deleteParticleRelatedData(unsigned int particle_idx);

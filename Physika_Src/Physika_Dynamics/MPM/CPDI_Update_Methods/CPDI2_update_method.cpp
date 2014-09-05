@@ -92,7 +92,7 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticlePosition(Scalar dt)
         //coefficients
         Scalar a = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
         Scalar b = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[3]-particle_domain_vec[1]);
-        Scalar c = (particle_domain_vec[2]-particle_domain_vec[3]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+        Scalar c = (particle_domain_vec[3]-particle_domain_vec[2]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
         Scalar domain_volume = a + 0.5*(b+c);
         Vector<Scalar,2> new_pos = 1.0/(24.0*domain_volume)*((6.0*domain_volume-b-c)*particle_domain_vec[0]+(6.0*domain_volume-b+c)*particle_domain_vec[1]
                                                              +(6.0*domain_volume+b-c)*particle_domain_vec[2]+(6.0*domain_volume+b+c)*particle_domain_vec[3]);
@@ -120,7 +120,7 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int
     //coefficients
     Scalar a = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
     Scalar b = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[3]-particle_domain_vec[1]);
-    Scalar c = (particle_domain_vec[2]-particle_domain_vec[3]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+    Scalar c = (particle_domain_vec[3]-particle_domain_vec[2]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
     Scalar domain_volume = a + 0.5*(b+c);
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,2> InfluenceIterator;
     //first compute the weight and gradient with respect to each grid node in the influence range of the particle
