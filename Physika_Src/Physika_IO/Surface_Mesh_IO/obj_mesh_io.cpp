@@ -204,10 +204,14 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                         cerr<<"invalid vertx pos in this face "<<"line:"<<line_num<<endl;
                         return false;
                     }
+					transform.str("");
+					transform.clear();
                     transform<<vertex_indice.substr(loc+2);
                     if(!(transform>>nor))
                     {
                         cerr<<"invalid vertx nor in this face "<<"line:"<<line_num<<endl;
+						cerr << vertex_indice << endl;
+						cerr << line << endl;
                         return false;
                     }
                     Vertex<Scalar> vertex_temple(pos-1);
@@ -252,7 +256,6 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                             {
                                 cerr<<"invalid vertx tex in this face "<<"line:"<<line_num<<endl;
                                 cerr<<vertex_indice<<endl;
-                                cerr<<"haha"<<endl;
                                 return false;
                             }
                             Vertex<Scalar> vertex_temple(pos-1);
@@ -276,6 +279,7 @@ bool ObjMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *mesh)
                             if(!(transform>>nor))
                             {
                                 cerr<<"invalid vertx nor in this face "<<"line:"<<line_num<<endl;
+								cerr << line << endl;
                                 return false;
                             }
                             Vertex<Scalar> vertex_temple(pos-1);
