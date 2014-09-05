@@ -26,6 +26,8 @@ namespace Physika{
 /* class Trituple is used to store a node's message in the orthogonal list
  * every member in class Trituple is public.
  */
+
+template <typename Scalar> class SparseMatrixIterator;
 template <typename Scalar>
 class Trituple
 {
@@ -103,6 +105,7 @@ public:
     SparseMatrix<Scalar>& operator*= (Scalar);
     SparseMatrix<Scalar> operator/ (Scalar) const;
     SparseMatrix<Scalar>& operator/= (Scalar);
+    VectorND<Scalar> leftMultiVec(const VectorND<Scalar> &) const;
 protected:
     Trituple<Scalar> * ptr(unsigned int i, unsigned int j) ;
     void allocMemory(unsigned int rows, unsigned int cols);
@@ -117,6 +120,8 @@ protected:
     Trituple<Scalar> ** col_head_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     Eigen::SparseMatrix<Scalar> * ptr_eigen_sparse_matrix_ ;
+    //typename typedef Eigen::SparseMatrix<Scalar>::InnerIterator SpareseIterator;
+    friend class Physika::SparseMatrixIterator<Scalar>;
 #endif
 };
 
@@ -153,20 +158,7 @@ SparseMatrix<T> operator* (S scale, const SparseMatrix<T> &mat)
 template <typename Scalar>
 VectorND<Scalar> operator*(const VectorND<Scalar> &vec, const SparseMatrix<Scalar> &mat)
 {
-    VectorND<Scalar> result(mat.cols(),0);
-    Scalar sum =0;
-    for(unsigned int i=0;i<mat.cols();++i)
-    {
-        sum = 0;
-        std::vector<Trituple<Scalar>> a_col = mat.getColElements(i);
-        for(unsigned int j=0;j<a_col.size();++j)
-        {
-            unsigned int row = a_col[j].row_;
-            sum += a_col[j].value_* vec[row];
-        }
-        result[i] = sum;
-    }
-    return result;
+    return mat.leftMultiVec(vec);
 }
 
 }  //end of namespace Physika

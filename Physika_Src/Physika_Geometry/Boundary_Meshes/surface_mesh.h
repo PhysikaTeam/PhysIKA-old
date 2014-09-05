@@ -70,10 +70,10 @@ public:
     BoundaryMeshInternal::Material<Scalar>*       materialPtr(unsigned int material_idx);
     unsigned int            materialIndex(const std::string &material_name) const; //if no material with given name, return -1
     void                    setSingleMaterial(const BoundaryMeshInternal::Material<Scalar> &material); //set single material for entire mesh
-	const                   SurfaceMeshInternal::Face<Scalar>& face(unsigned int face_idx) const; 
-	SurfaceMeshInternal::Face<Scalar>&           face(unsigned int face_idx); 
-	const SurfaceMeshInternal::Face<Scalar>*     facePtr(unsigned int face_idx) const; 
-	SurfaceMeshInternal::Face<Scalar>*           facePtr(unsigned int face_idx); 
+    const                   SurfaceMeshInternal::Face<Scalar>& face(unsigned int face_idx) const; 
+    SurfaceMeshInternal::Face<Scalar>&           face(unsigned int face_idx); 
+    const SurfaceMeshInternal::Face<Scalar>*     facePtr(unsigned int face_idx) const; 
+    SurfaceMeshInternal::Face<Scalar>*           facePtr(unsigned int face_idx); 
 
     //adders
     void addMaterial(const BoundaryMeshInternal::Material<Scalar> &material);
@@ -84,13 +84,15 @@ public:
 
     //utilities
     enum VertexNormalType{
-	WEIGHTED_FACE_NORMAL = 0,
-	AVERAGE_FACE_NORMAL = 1,
-	FACE_NORMAL = 2};
+    WEIGHTED_FACE_NORMAL = 0,
+    AVERAGE_FACE_NORMAL = 1,
+    FACE_NORMAL = 2};
 
     void computeAllVertexNormals(VertexNormalType normal_type);
     void computeAllFaceNormals();
     void computeFaceNormal(SurfaceMeshInternal::Face<Scalar> &face);
+	// separate each group of mesh to individual SurfaceMesh
+	void separateByGroup(std::vector<SurfaceMesh<Scalar> > & surface_mesh_vec) const;
 
 protected:
     void setVertexNormalsToFaceNormals();

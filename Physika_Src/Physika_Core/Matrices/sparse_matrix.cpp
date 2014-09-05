@@ -55,6 +55,7 @@ void SparseMatrix<Scalar>::allocMemory(unsigned int rows, unsigned int cols)
     ptr_eigen_sparse_matrix_ = new Eigen::SparseMatrix<Scalar>(rows, cols);
     PHYSIKA_ASSERT(ptr_eigen_sparse_matrix_);
 #endif
+
 }
 
 template <typename Scalar>
@@ -273,10 +274,10 @@ std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getColElements(unsigned int 
     return v;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     std::vector<Trituple<Scalar>> v;
-	for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
-	{
-		v.push_back(Trituple<Scalar>(it.row(), it.col(), it.value()));
-	}
+    for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+    {
+        v.push_back(Trituple<Scalar>(it.row(), it.col(), it.value()));
+    }
     return v;
 #endif
 }
@@ -325,6 +326,7 @@ void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
     PHYSIKA_ASSERT(i>=0&&i<rows_);
     PHYSIKA_ASSERT(j>=0&&j<cols_);
     bool existing_entry = false;
+    //std::cout <<"row_head_["<<i<<']:' <<row_head_[i] << std::endl;
     Trituple<Scalar> *pointer = row_head_[i],*last_pointer = NULL;
     while(pointer)
     {
@@ -592,6 +594,43 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar>
 }
 
 template <typename Scalar>
+VectorND<Scalar> SparseMatrix<Scalar>::leftMultiVec (const VectorND<Scalar> &vec) const
+{
+    if (this->rows() != vec.dims())
+    {
+        std::cerr << "operator * between VectorND and SpaseMatrix failed because the two don't match" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    VectorND<Scalar> result(this->cols(),0);
+    Scalar sum =0;
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+    for(unsigned int i=0;i<this->cols();++i)
+    {
+        sum = 0;
+        std::vector<Trituple<Scalar>> a_col = this->getColElements(i);
+        for(unsigned int j=0;j<a_col.size();++j)
+        {
+            unsigned int row = a_col[j].row_;
+            sum += a_col[j].value_* vec[row];
+        }
+        result[i] = sum;
+    }
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+    for (unsigned int i = 0; i < this->cols(); ++i)
+    {
+        sum = 0;
+        for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+        {
+            sum += it.value()*vec[it.row()];
+        }
+        result[i] = sum;
+    }
+
+#endif
+    return result;
+}
+
+template <typename Scalar>
 VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) const
 {
     if(this->cols() != vec.dims())
@@ -617,12 +656,12 @@ VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) c
     VectorND<Scalar> result(this->rows(),0);
     for(unsigned int i=0;i<this->cols();++i)
     {
-		for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
-		{
-			Scalar value = it.value();
-			unsigned int j = it.row();
-			result[j] += value*vec[i];
-		}
+        for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+        {
+            Scalar value = it.value();
+            unsigned int j = it.row();
+            result[j] += value*vec[i];
+        }
     }
     return result;
 #endif

@@ -18,10 +18,12 @@
 #include "Physika_Dependency/Eigen/Eigen"
 #include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
-#define Max1 5000
-#define Max2 6000
+#include "Physika_Core/Timer/timer.h"
+#include "Physika_Core/Matrices/sparse_matrix_iterator.h"
+#define Max1 100
+#define Max2 100
 #define Max  10000
-#define Maxv 2000
+#define Maxv 100
 
 using namespace std;
 
@@ -143,43 +145,60 @@ int main()
     
     }
 	*/
-    clock_t start,end;
-
+	Physika::Timer timer;
     srand(time(NULL));
     cout<<"特定功能 高级测试"<<endl;
 
     //cout<<"insert "<<endl;
     Physika::SparseMatrix<float> psm(Max1,Max2);
     Eigen::SparseMatrix<float> esm(Max1, Max2);
-    start = clock();
     for(unsigned int i=0;i<Max;++i)
     {
         unsigned int row = rand()%Max1;
         unsigned int col = rand()%Max2;
         float v = rand()%Max+1;
+		//cout <<"i:"<< i <<" row:"<< row << " col:" << col << " value:"<<v<<endl;
         psm.setEntry(row,col,v);
         esm.coeffRef(row,col) = v;
     }
-    
+	Physika::SparseMatrixIterator<float> it(psm, Max2 / 2);
+	cout << "遍历速度测试：";
+	timer.startTimer();
+	print(psm.getColElements(Max2 / 2));
+	timer.stopTimer();
+	cout << "time cosuming psm 遍历:" << timer.getElapsedTime() << endl;
+	timer.startTimer();
+	for (Eigen::SparseMatrix<float>::InnerIterator it(esm, Max2 / 2); it; ++it)
+	{
+		cout << it.row() << ' ' << it.col() << ' ' << it.value() << endl;
+	}
+	timer.stopTimer();
+	cout << "time cosuming esm 遍历:" << timer.getElapsedTime() << endl;
+	timer.startTimer();
+	for (Physika::SparseMatrixIterator<float> it(psm, Max2 / 2); it; ++it)
+	{
+		cout << it.row() << ' ' << it.col() << ' ' << it.value() << endl;
+	}
+	timer.stopTimer();
+	cout << "time cosuming 包装eigen 遍历:" << timer.getElapsedTime() << endl;
+
     cout<<"测量矩阵转置正确性及时间效率"<<endl;
-    start = clock();
+	timer.startTimer();
     Eigen::SparseMatrix<float> esm4 = esm.transpose();
-    end = clock();
-    cout<<"esm time consuming:"<<(static_cast<double>(end - start))<<endl;
-    start = clock();
+	timer.stopTimer();
+    cout<<"esm time consuming:"<<timer.getElapsedTime()<<endl;
+    timer.startTimer();
     Physika::SparseMatrix<float> psm4 = psm.transpose();
-    end = clock();
-    cout<<"psm time consuming:"<<(static_cast<double>(end - start))<<endl;
+    timer.stopTimer();
+    cout<<"psm time consuming:"<<timer.getElapsedTime()<<endl;
     compare(psm4,esm4);
-    //cout<<"correctness transpose"<<endl;
-    //compare(psm4,esm4);
-    //cout<<"psm.transpose"<<endl;
-    //cout<<psm4<<endl;
     cout<<endl<<endl;
 
 
     cout<<"multiply effectiveness"<<endl;
-    Physika::SparseMatrix<float> psm2(Max1,Max2),psm3(Max2, Max1);
+
+	Physika::SparseMatrix<float> psm2(Max1, Max2);
+	Physika::SparseMatrix<float> psm3(Max2, Max1);
     Eigen::SparseMatrix<float> esm2(Max1, Max2), esm3(Max2, Max1);
     for(unsigned int i=0;i<Max;++i)
     {
@@ -196,19 +215,18 @@ int main()
         esm3.coeffRef(row,col) = v;
     }
 
-    start = clock();
-    
+	timer.startTimer();
     Physika::SparseMatrix<float> psm5 = psm2*psm3;
-    end = clock();
-    cout<<"physika * consume time:"<<static_cast<double>(end - start)<<endl;
-    start = clock();
+    timer.stopTimer();
+    cout<<"physika * consume time:"<<timer.getElapsedTime()<<endl;
+	timer.startTimer();
     Eigen::SparseMatrix<float> esm5 = esm2*esm3;
-    end = clock();
-    cout<<"eigen * consume time:"<<static_cast<double>(end - start)<<endl;
+	timer.stopTimer();
+    cout<<"eigen * consume time:"<<timer.getElapsedTime()<<endl;
     compare(psm5,esm5);
 
 	cout << "vector multiply sparse matrix effeciency" << endl;
-	start = clock();
+
 	Physika::VectorND<float> Physika_vec(Max2, 0),Physika_vec_T(Max1,0);
 	Eigen::SparseVector<float> eigen_vec,eigen_vec_T;
 	eigen_vec.resize(Max2); eigen_vec_T.resize(Max1);
@@ -221,28 +239,30 @@ int main()
 		eigen_vec.coeffRef(a) = b;
 		eigen_vec_T.coeffRef(c) = b;
 	}
-	start = clock();
+	timer.startTimer();
 	Physika::VectorND<float> pr = psm2*Physika_vec;
-	end = clock();
-	cout << "Physika cost time:" << static_cast<double>(end - start) << endl;
-	start = clock();
+	timer.stopTimer();
+	cout << "Physika cost time:" << timer.getElapsedTime()<< endl;
+	timer.startTimer();
 	Eigen::SparseVector<float> er = esm2*eigen_vec;
-	end = clock();
-	cout << "Eigen cost time:" << static_cast<double>(end - start) << endl;
+	timer.stopTimer();
+	cout << "Eigen cost time:" << timer.getElapsedTime() << endl;
 	cout << "correctness of SparseMatrix * Vector:" << endl;
 	compare(pr, er);
 
 	cout << "vector * matrix effectiveness" << endl;
-	start = clock();
+	timer.startTimer();
 	Physika::VectorND<float> pr_T = Physika_vec_T*psm2;
-	end = clock();
-	cout << "Physika vec*matrix cost time:" << static_cast<double>(end - start) << endl;
-	start = clock();
-	//eigen_vec_T*esm2;//Eigen::SparseVector<float> er_T = 
-	end = clock();
-	//cout << "Eigen vec*matrix cost time:" << static_cast<double>(end - start) << endl;
+	timer.stopTimer();
+	cout << "Physika vec*matrix cost time:" <<timer.getElapsedTime()<< endl;
+	Eigen::SparseMatrix<float> esm2t = esm2.transpose();
+	timer.startTimer();
+	Eigen::SparseVector<float> er_T = esm2t*eigen_vec_T;//Eigen::SparseVector<float> er_T = 
+	timer.stopTimer();
+	cout << "Eigen vec*matrix cost time:" << timer.getElapsedTime() << endl;
 	cout << "correctness of vec * matrix:" << endl;
-	//compare(pr_T, er_T);
+	compare(pr_T, er_T);
+
 
     /*psm = psm.transpose();
     esm = esm.transpose();

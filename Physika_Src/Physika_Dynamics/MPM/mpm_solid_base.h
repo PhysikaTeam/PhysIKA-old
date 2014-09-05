@@ -76,7 +76,9 @@ protected:
     virtual Scalar maxParticleVelocityNorm() const;
     virtual void applyGravityOnGrid(Scalar dt) = 0;
     virtual void allocateSpaceForAllParticleRelatedData();
+    virtual void initializeAllParticleRelatedData();
     virtual void appendSpaceForParticleRelatedData();
+    virtual void initializeLastParticleRelatedData();
     virtual void deleteParticleRelatedData(unsigned int particle_idx);
     //solve on grid with different integration methods, called in solveOnGrid()
     virtual void solveOnGridForwardEuler(Scalar dt) = 0;
