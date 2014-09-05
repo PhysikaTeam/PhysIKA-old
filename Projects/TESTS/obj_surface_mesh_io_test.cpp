@@ -24,7 +24,7 @@ using namespace std;
 int main()
 {
     SurfaceMesh<float> mesh;
-    ObjMeshIO<float>::load(string("D:/tencentFile/731595774/FileRecv/zhanshen.obj"), &mesh);
+    ObjMeshIO<float>::load(string("zhanshen.obj"), &mesh);
     ObjMeshIO<float>::save(string("zhanshen_fuben.obj"),&mesh);
     /*
     int vertex_num = mesh.numVertices(),normal_num = mesh.numNormals(), texture_num = mesh.numTextureCoordinates();

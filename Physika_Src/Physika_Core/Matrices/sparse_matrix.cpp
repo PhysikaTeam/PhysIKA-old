@@ -273,7 +273,7 @@ std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getColElements(unsigned int 
     return v;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     std::vector<Trituple<Scalar>> v;
-	for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+	for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
 	{
 		v.push_back(Trituple<Scalar>(it.row(), it.col(), it.value()));
 	}
@@ -617,7 +617,7 @@ VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) c
     VectorND<Scalar> result(this->rows(),0);
     for(unsigned int i=0;i<this->cols();++i)
     {
-		for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+		for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
 		{
 			Scalar value = it.value();
 			unsigned int j = it.row();

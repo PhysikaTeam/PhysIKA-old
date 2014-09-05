@@ -33,13 +33,14 @@ public:
     ~Face();
     explicit Face(const std::vector<Vertex<Scalar> > &vertices);
     Face(const std::vector<Vertex<Scalar> > &vertices, const Vector<Scalar,3> &face_normal);
-    unsigned int numVertices() const;
+    unsigned int          numVertices() const;
     const Vertex<Scalar>& vertex(unsigned int vert_idx) const;
-    Vertex<Scalar>& vertex(unsigned int vert_idx);
+    Vertex<Scalar>&       vertex(unsigned int vert_idx);
     const Vertex<Scalar>* vertexPtr(unsigned int vert_idx) const;
-    Vertex<Scalar>* vertexPtr(unsigned int vert_idx);
-    void setFaceNormal(const Vector<Scalar,3> &face_normal);
-    Vector<Scalar,3> faceNormal() const;
+    Vertex<Scalar>*       vertexPtr(unsigned int vert_idx);
+    void                  setFaceNormal(const Vector<Scalar,3> &face_normal);
+    Vector<Scalar,3>      faceNormal() const;
+
     bool hasFaceNormal() const;
     void addVertex(const Vertex<Scalar> &vertex);
     void reverseVertices(); //reverse the order of vertices

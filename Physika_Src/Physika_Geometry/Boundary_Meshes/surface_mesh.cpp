@@ -38,12 +38,12 @@ SurfaceMesh<Scalar>::SurfaceMesh()
     material_example.setName(string("default"));
     material_example.setShininess(24.2515);
     addMaterial(material_example);
-    material_example.setKa(Vector<Scalar, 3>(0.8941, 0.8392, 0.6000));
-    material_example.setKd(Vector<Scalar, 3>(0.8941, 0.8392, 0.6000));
-    material_example.setKs(Vector<Scalar, 3>(0.3500, 0.3500, 0.3500));
-    material_example.setName(string("default_iron"));
-    material_example.setShininess(32);
-    addMaterial(material_example);
+    //material_example.setKa(Vector<Scalar, 3>(0.8941, 0.8392, 0.6000));
+    //material_example.setKd(Vector<Scalar, 3>(0.8941, 0.8392, 0.6000));
+    //material_example.setKs(Vector<Scalar, 3>(0.3500, 0.3500, 0.3500));
+    //material_example.setName(string("default_iron"));
+    //material_example.setShininess(32);
+    //addMaterial(material_example);
 }
 
 template <typename Scalar>
@@ -550,6 +550,101 @@ void SurfaceMesh<Scalar>::computeAllFaceNormals()
             computeFaceNormal(face);
         }
     }
+}
+
+template <typename Scalar>
+void SurfaceMesh<Scalar>::separateByGroup(std::vector<SurfaceMesh<Scalar> > & surface_mesh_vec) const
+{
+	surface_mesh_vec.clear();
+	for(unsigned int group_id = 0; group_id < this->numGroups(); group_id ++)
+	{
+		surface_mesh_vec.push_back(SurfaceMesh()); //
+	}
+
+	// the following variable(flag) is used to save the new index of old index in new mesh
+	long * vertex_new_pos = new long[this->numVertices()];
+	long * vertex_new_normals = new long[this->numNormals()];
+	long * vertex_new_textures = new long[this->numTextureCoordinates()];
+
+	// initial flag to -1, which means that old index having no new index in new mesh
+	for(unsigned int group_id = 0; group_id < this->numGroups(); group_id++)
+	{
+		for(unsigned int i=0; i<this->numVertices(); i++)
+			vertex_new_pos[i] = -1;
+		for(unsigned int i=0; i<this->numNormals(); i++)
+			vertex_new_normals[i] = -1;
+		for(unsigned int i=0; i<this->numTextureCoordinates(); i++)
+			vertex_new_textures[i] = -1;
+
+		SurfaceMesh<Scalar> &     new_mesh_ref = surface_mesh_vec[group_id];  // get new mesh reference
+		new_mesh_ref.addGroup(FaceGroup<Scalar>());                           // add group to new mesh, each new mesh exists only one group
+		
+		FaceGroup<Scalar> &       new_group_ref = new_mesh_ref.group(0);      // get new group reference 
+		const FaceGroup<Scalar> & group_ref = this->group(group_id);          // get old group reference
+
+		new_mesh_ref.addMaterial(this->material(group_ref.materialIndex()));  // add material
+		new_group_ref.setName(group_ref.name());                              // set group name
+		new_group_ref.setMaterialIndex(1);                                    // set group material index
+
+		unsigned int face_num = group_ref.numFaces();
+		for(unsigned int face_id = 0; face_id<face_num; face_id++)
+		{
+			new_group_ref.addFace(Face<Scalar>());      // add new face
+			Face<Scalar> & new_face_ref = new_group_ref.face(new_group_ref.numFaces()-1);  // get last face reference of new group
+
+			const Face<Scalar> face_ref = group_ref.face(face_id);                         // get old face reference
+			if(face_ref.hasFaceNormal())               // set face normal
+			{
+				new_face_ref.setFaceNormal(face_ref.faceNormal());
+			}
+
+			unsigned int vertex_num = face_ref.numVertices();
+			for(unsigned int vertex_id = 0; vertex_id<vertex_num; vertex_id++)
+			{
+				new_face_ref.addVertex(Vertex<Scalar>()); // add new vertex
+
+				Vertex<Scalar> & new_vertex_ref = new_face_ref.vertex(new_face_ref.numVertices()-1); // get new vertex reference
+				const Vertex<Scalar> & vertex_ref = face_ref.vertex(vertex_id);                      // get old vertex reference
+
+				unsigned int pos_index = vertex_ref.positionIndex(); // save position and corresponding index
+				if(vertex_new_pos[pos_index] == -1)
+				{
+					new_mesh_ref.addVertexPosition(this->vertexPosition(pos_index));
+					vertex_new_pos[pos_index] = new_mesh_ref.numVertices()-1;
+				}
+				new_vertex_ref.setPositionIndex(vertex_new_pos[pos_index]);
+				
+
+				if(vertex_ref.hasNormal()) // if has vertex normal
+				{
+					unsigned int normal_index = vertex_ref.normalIndex();
+					if(vertex_new_normals[normal_index] == -1)
+					{
+						new_mesh_ref.addVertexNormal(this->vertexNormal(normal_index));
+						vertex_new_normals[normal_index] = new_mesh_ref.numNormals()-1;
+					}
+					new_vertex_ref.setNormalIndex(vertex_new_normals[normal_index]);
+				}
+
+				if(vertex_ref.hasTexture()) // if has texture
+				{
+					unsigned int texture_index = vertex_ref.textureCoordinateIndex();
+					if(vertex_new_textures[texture_index] == -1)
+					{
+						new_mesh_ref.addVertexTextureCoordinate(this->vertexTextureCoordinate(texture_index));
+						vertex_new_textures[texture_index] = new_mesh_ref.numTextureCoordinates()-1;
+					}
+					new_vertex_ref.setTextureCoordinateIndex(vertex_new_textures[texture_index]);
+				}
+			}
+		}
+	}
+
+	// free flag
+	delete [] vertex_new_pos;
+	delete [] vertex_new_normals;
+	delete [] vertex_new_textures;
+
 }
 
 template <typename Scalar>

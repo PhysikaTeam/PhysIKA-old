@@ -75,34 +75,6 @@ void CPDIMPMSolid<Scalar,Dim>::read(const std::string &file_name)
 }
 
 template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::addParticle(const SolidParticle<Scalar,Dim> &particle)
-{
-    MPMSolid<Scalar,Dim>::addParticle(particle);
-    std::vector<Vector<Scalar,Dim> > domain_corner;
-    //determine the position of the corners via particle volume and position
-    initParticleDomain(particle,domain_corner);
-    unsigned int idx = this->particleNum() - 1;
-    //set domain corner for the newly added particle
-    //space has been appended in appendSpaceForParticleRelatedData(), called in addParticle() of base class
-    particle_domain_corners_[idx] = domain_corner; 
-    initial_particle_domain_corners_[idx] = domain_corner;
-}
-
-template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::setParticles(const std::vector<SolidParticle<Scalar,Dim>*> &particles)
-{
-    MPMSolid<Scalar,Dim>::setParticles(particles);
-    for(unsigned int i = 0; i < particle_domain_corners_.size(); ++i)
-    {
-        std::vector<Vector<Scalar,Dim> > domain_corner;
-        //determine the position of the corners via particle volume and position
-        initParticleDomain(*particles[i],domain_corner);
-        particle_domain_corners_[i] = domain_corner;
-        initial_particle_domain_corners_[i] = domain_corner;
-    }
-}
-
-template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 {
     //plugin operation
@@ -359,6 +331,20 @@ void CPDIMPMSolid<Scalar,Dim>::allocateSpaceForAllParticleRelatedData()
 }
 
 template <typename Scalar, int Dim>
+void CPDIMPMSolid<Scalar,Dim>::initializeAllParticleRelatedData()
+{
+    MPMSolid<Scalar,Dim>::initializeAllParticleRelatedData();
+    for(unsigned int i = 0; i < particle_domain_corners_.size(); ++i)
+    {
+        std::vector<Vector<Scalar,Dim> > domain_corner;
+        //determine the position of the corners via particle volume and position
+        initParticleDomain(*(this->particles_[i]),domain_corner);
+        particle_domain_corners_[i] = domain_corner;
+        initial_particle_domain_corners_[i] = domain_corner;
+    }
+}
+
+template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::appendSpaceForParticleRelatedData()
 {
     PHYSIKA_ASSERT(this->weight_function_);
@@ -384,6 +370,20 @@ void CPDIMPMSolid<Scalar,Dim>::appendSpaceForParticleRelatedData()
     //add space for is_dirichelet_particle_ and particle_initial_volume_
     this->is_dirichlet_particle_.push_back(0);
     this->particle_initial_volume_.push_back(0);
+}
+
+template <typename Scalar, int Dim>
+void CPDIMPMSolid<Scalar,Dim>::initializeLastParticleRelatedData()
+{
+    MPMSolid<Scalar,Dim>::initializeLastParticleRelatedData();
+    std::vector<Vector<Scalar,Dim> > domain_corner;
+    //determine the position of the corners via particle volume and position
+    unsigned int idx = this->particleNum()-1;
+    initParticleDomain(*(this->particles_[idx]),domain_corner);
+    //set domain corner for the newly added particle
+    //space has been appended in appendSpaceForParticleRelatedData(), called in addParticle() of base class
+    particle_domain_corners_[idx] = domain_corner; 
+    initial_particle_domain_corners_[idx] = domain_corner;
 }
 
 template <typename Scalar, int Dim>
