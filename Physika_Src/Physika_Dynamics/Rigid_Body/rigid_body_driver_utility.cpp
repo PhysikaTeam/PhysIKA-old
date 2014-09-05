@@ -18,6 +18,8 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver_utility.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 
+#include "Physika_Core/Timer/timer.h"
+
 namespace Physika{
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -414,11 +416,18 @@ void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scala
     std::vector<Trituple<Scalar>> non_zeros;
     Scalar delta, m_value;
 
+    Timer time_;
+    time_.startTimer();
+    JMJ.getColElements(3);
+    time_.stopTimer();
+    std::cerr<<"|||"<<time_.getElapsedTime()*1000<<std::endl;
     //iteration
     for(unsigned int itr = 0; itr < iteration_count; ++itr)
     {
         //normal contact step
         JMDz_fric = JMD * z_fric;
+        
+        time_.startTimer();
         for(unsigned int i = 0; i < m; ++i)
         {
             delta = 0;
@@ -444,6 +453,8 @@ void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scala
             else
                 z_norm[i] = delta;
         }
+        
+        
         //friction step
         DMJz_norm = DMJ * z_norm;
         for(unsigned int i = 0; i < s; ++i)
@@ -467,7 +478,11 @@ void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scala
             if(delta > CoF[i / fric_sample_count] * z_norm[i / fric_sample_count])
                 z_fric[i] = CoF[i / fric_sample_count] * z_norm[i / fric_sample_count];
         }
+        
+        
     }
+
+    
 }
 
 template <typename Scalar>

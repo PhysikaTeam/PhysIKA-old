@@ -90,6 +90,10 @@ public:
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);
 
+    //method
+    void setCollisionDetectionMethod(CollisionDetectionMethod<Scalar, Dim>* collision_detection_method);
+    void setCollisionResponseMethod(RigidResponseMethod<Scalar, Dim>* collision_response_method);
+
 protected:
     //dynamics
     virtual void performGravity(Scalar dt);
@@ -100,6 +104,8 @@ protected:
 	std::vector<RigidBodyArchive<Scalar, Dim>* > rigid_body_archives_;
     CollisionDetectionMethod<Scalar, Dim>* collision_detection_method_;
     RigidResponseMethod<Scalar, Dim>* collision_response_method_;
+    bool is_default_detection_method_;
+    bool is_default_response_method_;
     Scalar gravity_;
     unsigned int step_;
 

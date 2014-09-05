@@ -117,6 +117,8 @@ template <typename Scalar,int Dim>
 RigidBodyDriver<Scalar, Dim>::RigidBodyDriver():
     collision_detection_method_(new CollisionDetectionMethodDTBVH<Scalar, Dim>()),
     collision_response_method_(new RigidResponseMethodBLCP<Scalar, Dim>()),
+    is_default_detection_method_(true),
+    is_default_response_method_(true),
     gravity_(9.81),
     step_(0)
 {
@@ -133,6 +135,10 @@ RigidBodyDriver<Scalar, Dim>::~RigidBodyDriver()
 		delete rigid_body_archives_[i];
 	}
 	rigid_body_archives_.clear();
+    if(is_default_detection_method_)
+        delete collision_detection_method_;
+    if(is_default_response_method_)
+        delete collision_response_method_;
 }
 
 template <typename Scalar,int Dim>
@@ -294,6 +300,35 @@ void RigidBodyDriver<Scalar, Dim>::addPlugin(DriverPluginBase<Scalar>* plugin)
     }
     plugin->setDriver(this);
     this->plugins_.push_back(plugin);
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::setCollisionDetectionMethod(CollisionDetectionMethod<Scalar, Dim>* collision_detection_method)
+{
+    if(collision_detection_method_ == NULL)
+    {
+        std::cerr<<"Null collision detection method!"<<std::endl;
+        return;
+    }
+    if(is_default_detection_method_)
+        delete collision_detection_method_;
+    collision_detection_method_ = collision_detection_method;
+    is_default_detection_method_ = false;
+}
+
+template <typename Scalar,int Dim>
+void RigidBodyDriver<Scalar, Dim>::setCollisionResponseMethod(RigidResponseMethod<Scalar, Dim>* collision_response_method)
+{
+    if(collision_response_method_ == NULL)
+    {
+        std::cerr<<"Null collision response method!"<<std::endl;
+        return;
+    }
+    if(is_default_response_method_)
+        delete collision_response_method_;
+    collision_response_method_ = collision_response_method;
+    collision_response_method_->setRigidDriver(this);
+    is_default_response_method_ = false;
 }
 
 template <typename Scalar,int Dim>
