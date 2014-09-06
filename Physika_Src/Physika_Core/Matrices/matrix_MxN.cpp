@@ -62,11 +62,6 @@ MatrixMxN<Scalar>::MatrixMxN(const MatrixMxN<Scalar> &mat2)
 template<typename Scalar>
 void MatrixMxN<Scalar>::allocMemory(unsigned int rows, unsigned int cols)
 { 
-    if(rows<0||cols<0)
-    {
-        std::cerr<<"Matrix size must be greater than zero!\n";
-        std::exit(EXIT_FAILURE);
-    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     ptr_eigen_matrix_MxN_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>(rows,cols);
     PHYSIKA_ASSERT(ptr_eigen_matrix_MxN_);
@@ -111,11 +106,6 @@ unsigned int MatrixMxN<Scalar>::cols() const
 template <typename Scalar>
 void MatrixMxN<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
 {
-    if(new_rows<0||new_cols<0)
-    {
-        std::cerr<<"Matrix size must be greater than zero!\n";
-        std::exit(EXIT_FAILURE);
-    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     (*ptr_eigen_matrix_MxN_).resize(new_rows,new_cols);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -455,7 +445,7 @@ Scalar MatrixMxN<Scalar>::determinant() const
         for(unsigned int ii = 1; ii < rows; ++ii)
             for(unsigned int jj =0; jj< cols; ++jj)
             {
-                if((jj==j)) continue;
+                if(jj==j) continue;
                 unsigned int row_idx = ii-1;
                 unsigned int col_idx = jj>j?jj-1:jj;
                 sub_mat(row_idx,col_idx) = (*this)(ii,jj);

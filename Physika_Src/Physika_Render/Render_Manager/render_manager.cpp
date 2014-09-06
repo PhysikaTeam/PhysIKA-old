@@ -58,7 +58,7 @@ void RenderManager::insertFront(RenderBase *render_task)
 
 void RenderManager::insertAtIndex(unsigned int index, RenderBase *task)
 {
-    bool index_valid = (index>=0)&&(index<render_list_.size());
+    bool index_valid = (index<render_list_.size());
     if(!index_valid)
     {
         std::cerr<<"Render task index out of range!\n";
@@ -93,7 +93,7 @@ void RenderManager::removeFront()
 
 void RenderManager::removeAtIndex(unsigned int index)
 {
-    bool index_valid = (index>=0)&&(index<render_list_.size());
+    bool index_valid = (index<render_list_.size());
     if(!index_valid)
     {
         std::cerr<<"Render task index out of range!\n";
@@ -115,7 +115,7 @@ void RenderManager::removeAll()
 
 const RenderBase* RenderManager::taskAtIndex(unsigned int index) const
 {
-    bool index_valid = (index>=0)&&(index<render_list_.size());
+    bool index_valid = (index<render_list_.size());
     if(!index_valid)
     {
         std::cerr<<"Render task index out of range!\n";
@@ -133,7 +133,7 @@ const RenderBase* RenderManager::taskAtIndex(unsigned int index) const
 
 RenderBase* RenderManager::taskAtIndex(unsigned int index)
 {
-    bool index_valid = (index>=0)&&(index<render_list_.size());
+    bool index_valid = (index<render_list_.size());
     if(!index_valid)
     {
         std::cerr<<"Render task index out of range!\n";
@@ -177,7 +177,7 @@ void RenderManager::renderAll()
 
 void RenderManager::renderAtIndex(unsigned int index)
 {
-    bool index_valid = (index>=0)&&(index<render_list_.size());
+    bool index_valid = (index<render_list_.size());
     if(!index_valid)
     {
         std::cerr<<"Render task index out of range!\n";

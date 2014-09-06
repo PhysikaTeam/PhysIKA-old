@@ -52,11 +52,6 @@ VectorND<Scalar>::VectorND(const VectorND<Scalar> &vec2)
 template <typename Scalar>
 void VectorND<Scalar>::allocMemory(unsigned int dims)
 {
-    if(dims<0)
-    {
-        std::cerr<<"Vector dimension must be greater than zero!\n";
-        std::exit(EXIT_FAILURE);
-    }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     ptr_eigen_vector_Nx_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,1>(dims);
     PHYSIKA_ASSERT(ptr_eigen_vector_Nx_);
@@ -90,11 +85,6 @@ unsigned int VectorND<Scalar>::dims() const
 template <typename Scalar>
 void VectorND<Scalar>::resize(unsigned int new_dim)
 {
-    if(new_dim<0)
-    {
-        std::cerr<<"Vector dimension must be greater than zero!\n";
-        std::exit(EXIT_FAILURE);
-    }
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     (*ptr_eigen_vector_Nx_).resize(new_dim);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)

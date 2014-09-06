@@ -170,7 +170,8 @@ void Array<ElementType>::permutate(unsigned int *ids, unsigned int size)
         PHYSIKA_ASSERT(data_);
         for (size_t i = 0; i < element_count_; i++)
             tmp[i] = data_[ids[i]];
-        memcpy(data_, tmp, element_count_ * sizeof(ElementType));
+        for (size_t i = 0; i < element_count_; i++)
+            data_[i] = tmp[i];
         delete[] tmp;
     }
 }
