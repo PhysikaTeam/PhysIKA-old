@@ -619,7 +619,7 @@ VectorND<Scalar> SparseMatrix<Scalar>::leftMultiVec (const VectorND<Scalar> &vec
     for (unsigned int i = 0; i < this->cols(); ++i)
     {
         sum = 0;
-        for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+        for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
         {
             sum += it.value()*vec[it.row()];
         }

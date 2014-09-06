@@ -238,10 +238,10 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
 
     switch (this->integration_method_)
     {
-    case this->FORWARD_EULER:
+    case MPMSolidBase<Scalar,Dim>::FORWARD_EULER:
         solveOnGridForwardEuler(dt);
         break;
-    case this->BACKWARD_EULER:
+    case MPMSolidBase<Scalar,Dim>::BACKWARD_EULER:
         solveOnGridBackwardEuler(dt);
         break;
     default:

@@ -75,13 +75,14 @@ private:
     inline Scalar SQR(Scalar x){return x * x;};
     inline Scalar CUBE(Scalar x){return x * x * x;};
 
+    struct InertiaTensorPolyhedron; //forward declaration
     struct InertiaTensorFace
     {
         unsigned int numVerts_;
         Scalar norm_[3];
         Scalar w_;
         unsigned int verts_[MAX_POLYGON_SZ];
-        struct InertiaTensor<Scalar>::InertiaTensorPolyhedron *poly_;
+        typename InertiaTensor<Scalar>::InertiaTensorPolyhedron *poly_;
     };
 
     struct InertiaTensorPolyhedron

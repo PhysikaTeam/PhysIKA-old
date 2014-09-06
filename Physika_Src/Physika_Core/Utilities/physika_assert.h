@@ -52,7 +52,7 @@
 //compile-time assert, only supported in C++0x or later
 //works in Release build as well
 #ifndef SUPPORT_STATIC_ASSERT
-#    define PHYSIKA_STATIC_ASSERT(condition,message) do{}while{false}
+#    define PHYSIKA_STATIC_ASSERT(condition,message) ;
 #else
 #    define PHYSIKA_STATIC_ASSERT(condition,message) static_assert(condition,message)
 #endif
