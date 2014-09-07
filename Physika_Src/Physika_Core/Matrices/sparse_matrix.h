@@ -18,6 +18,8 @@
 #include <vector>
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 
@@ -38,7 +40,7 @@ public:
         row_next_ = NULL;
         col_next_ = NULL;
     }
-    Trituple(int row, int col, Scalar value)
+    Trituple(unsigned int row, unsigned int col, Scalar value)
     {
         row_ = row;
         col_ = col;
@@ -58,8 +60,8 @@ public:
         return false;		
     }
 public:
-    int row_;
-    int col_;
+    unsigned int row_;
+    unsigned int col_;
     Scalar value_;
     Trituple<Scalar> *row_next_;
     Trituple<Scalar> *col_next_;
@@ -114,8 +116,8 @@ protected:
 protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
 //compressed orthogonal list based on Trituple
-    int rows_;
-    int cols_;
+    unsigned int rows_;
+    unsigned int cols_;
     Trituple<Scalar> ** row_head_;
     Trituple<Scalar> ** col_head_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
@@ -123,6 +125,14 @@ protected:
     //typename typedef Eigen::SparseMatrix<Scalar>::InnerIterator SpareseIterator;
     friend class Physika::SparseMatrixIterator<Scalar>;
 #endif
+private:
+    void compileTimeCheck()
+    {
+        //SparseMatrix<Scalar> is only defined for element type of integers and floating-point types
+        //compile time check
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                              "SparseMatrix<Scalar> are only defined for integer types and floating-point types.");
+    }
 };
 
 //overridding << for Trituple<Scalar>

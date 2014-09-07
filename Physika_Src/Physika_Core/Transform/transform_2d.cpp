@@ -13,8 +13,6 @@
  */
 
 #include <cmath>
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Transform/transform_2d.h"
 
 namespace Physika{
@@ -22,8 +20,6 @@ namespace Physika{
 template <typename Scalar>
 Transform<Scalar, 2>::~Transform()
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>
@@ -32,8 +28,6 @@ Transform<Scalar, 2>::Transform():
 		rotate_angle_(0),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template<typename Scalar>
@@ -42,8 +36,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation):
 		rotate_angle_(0),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template<typename Scalar>
@@ -52,8 +44,6 @@ Transform<Scalar, 2>::Transform(const Scalar &rotate_angle):
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template<typename Scalar>
@@ -61,8 +51,6 @@ Transform<Scalar, 2>::Transform(const SquareMatrix<Scalar, 2> &rotation):
 		translation_(Vector<Scalar, 2>(0)),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 	this->rotate_angle_ = acos(rotation(0,0));
 }
 
@@ -71,8 +59,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Squa
 		translation_(translation),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 	this->rotate_angle_ = acos(rotation(0,0));
 }
 
@@ -81,8 +67,6 @@ Transform<Scalar, 2>::Transform(const SquareMatrix<Scalar, 2> &rotation, const V
 		translation_(translation),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 	this->rotate_angle_ = acos(rotation(0,0));
 }
 
@@ -92,8 +76,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Scal
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template<typename Scalar>
@@ -102,8 +84,6 @@ Transform<Scalar, 2>::Transform(const Scalar &rotate_angle, const Vector<Scalar,
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template<typename Scalar>
@@ -111,8 +91,6 @@ Transform<Scalar, 2>::Transform(const SquareMatrix<Scalar, 2> &rotation, const V
 		translation_(translation),
 		scale_(scale)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 	this->rotate_angle_ = acos(rotation(0,0));
 }
 
@@ -121,8 +99,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Squa
 		translation_(translation),
 		scale_(scale)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 	this->rotate_angle_ = acos(rotation(0,0));
 }
 
@@ -131,8 +107,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Vect
 		translation_(translation),
 		scale_(scale)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 	this->rotate_angle_ = acos(rotation(0,0));
 }
 
@@ -142,8 +116,6 @@ Transform<Scalar, 2>::Transform(const Scalar &rotate_angle, const Vector<Scalar,
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template<typename Scalar>
@@ -152,8 +124,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Scal
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template<typename Scalar>
@@ -162,15 +132,11 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Vect
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template<typename Scalar>
 Transform<Scalar, 2>::Transform(const SquareMatrix<Scalar, 3> &matrix)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 	this->rotate_angle_ = acos(matrix(0,0));
 	this->translation_[0] = matrix(0,2);
 	this->translation_[1] = matrix(1,2);

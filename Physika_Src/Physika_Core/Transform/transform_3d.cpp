@@ -12,8 +12,6 @@
  *
  */
 
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Transform/transform_3d.h"
 
 namespace Physika{
@@ -21,8 +19,6 @@ namespace Physika{
 template <typename Scalar>
 Transform<Scalar, 3>::~Transform()
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>
@@ -30,8 +26,6 @@ Transform<Scalar, 3>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
     rotation_(0,0,0,1),
     scale_(Vector<Scalar, 3>(1,1,1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>
@@ -40,15 +34,11 @@ Transform<Scalar, 3>::Transform(const Vector<Scalar, 3> translation):
         rotation_(0,0,0,1),
         scale_(Vector<Scalar, 3>(1,1,1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>
 Transform<Scalar, 3>::Transform(const SquareMatrix<Scalar, 4>& matrix)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
     this->rotation_ = Quaternion<Scalar>(matrix);
     this->translation_[0] = matrix(0,3);
     this->translation_[1] = matrix(1,3);
@@ -58,8 +48,6 @@ Transform<Scalar, 3>::Transform(const SquareMatrix<Scalar, 4>& matrix)
 template <typename Scalar>
 Transform<Scalar, 3>::Transform(const SquareMatrix<Scalar, 3>& matrix)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
     this->rotation_ = Quaternion<Scalar>(matrix);
     this->translation_ = Vector<Scalar, 3>(0,0,0);
     this->scale_ = Vector<Scalar, 3>(1,1,1);
@@ -71,8 +59,6 @@ Transform<Scalar, 3>::Transform(const Quaternion<Scalar> rotation):
         rotation_(rotation),
         scale_(Vector<Scalar, 3>(1,1,1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>
@@ -81,8 +67,6 @@ Transform<Scalar, 3>::Transform(const Quaternion<Scalar>& rotation, const Vector
         rotation_(rotation),
         scale_(Vector<Scalar, 3>(1,1,1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>
@@ -91,8 +75,6 @@ Transform<Scalar, 3>::Transform(const Quaternion<Scalar>& rotation, const Vector
         rotation_(rotation),
         scale_(scale)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 template <typename Scalar>
 Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quaternion<Scalar>& rotation):
@@ -100,8 +82,6 @@ Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quat
         rotation_(rotation),
        scale_(Vector<Scalar, 3>(1,1,1))
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>
@@ -110,8 +90,6 @@ Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quat
         rotation_(rotation),
         scale_(scale)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>

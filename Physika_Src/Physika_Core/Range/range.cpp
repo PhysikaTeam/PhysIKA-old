@@ -15,8 +15,6 @@
 
 #include <cstdlib>
 #include <iostream>
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Range/range.h"
 
 namespace Physika{
@@ -25,26 +23,17 @@ template <typename Scalar,int Dim>
 Range<Scalar,Dim>::Range()
     :min_corner_(Vector<Scalar,Dim>(0)),max_corner_(Vector<Scalar,Dim>(0))
 {
-    PHYSIKA_STATIC_ASSERT(Dim==3||Dim==2,"Range<Scalar,Dim> are only defined for Dim==2 and Dim==3");
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "Range<Scalar,Dim> are only defined for integer types and floating-point types.");
 }
 
 template <typename Scalar,int Dim>
 Range<Scalar,Dim>::Range(const Vector<Scalar,Dim> &point)
     :min_corner_(point),max_corner_(point)
 {
-    PHYSIKA_STATIC_ASSERT(Dim==3||Dim==2,"Range<Scalar,Dim> are only defined for Dim==2 and Dim==3");
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "Range<Scalar,Dim> are only defined for integer types and floating-point types.");
 }
 
 template <typename Scalar,int Dim>
 Range<Scalar,Dim>::Range(const Vector<Scalar,Dim> &min_val, const Vector<Scalar,Dim> &max_val)
 {
-    PHYSIKA_STATIC_ASSERT(Dim==3||Dim==2,"Range<Scalar,Dim> are only defined for Dim==2 and Dim==3");
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "Range<Scalar,Dim> are only defined for integer types and floating-point types.");
     for(int i = 0; i < Dim; ++i)
         if(min_val[i]>max_val[i])
         {

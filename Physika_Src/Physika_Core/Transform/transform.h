@@ -25,20 +25,18 @@ template <typename Scalar, int Dim>
 class Transform
 {
 public:
-    Transform();
+    Transform(){}
     ~Transform(){}
-protected:
+private:
+    void compileTimeCheck()
+    {
+        //Transform<Scalar,Dim> is only defined for 2D&&3D with element type of floating-point types
+        //compile time check
+        PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Transform<Scalar,Dim> are only defined for Dim==2,3");
+        PHYSIKA_STATIC_ASSERT(is_floating_point<Scalar>::value,
+                              "Transform<Scalar,Dim> are only defined for floating-point types.");
+    }
 };
-
-template <typename Scalar, int Dim>
-Transform<Scalar,Dim>::Transform()
-{
-    //Transform<Scalar,Dim> is only defined for 2D&&3D with element type of floating-point types
-    //compile time check
-    PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Transform<Scalar,Dim> are only defined for Dim==2,3");
-    PHYSIKA_STATIC_ASSERT(is_floating_point<Scalar>::value,
-                      "Transform<Scalar,Dim> are only defined for floating-point types.");
-}
 
 }  //end of namespace Physika
 

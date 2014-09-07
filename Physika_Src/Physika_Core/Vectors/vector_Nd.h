@@ -18,6 +18,7 @@
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Utilities/type_utilities.h"
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_base.h"
 
 namespace Physika{
@@ -75,6 +76,12 @@ protected:
     Scalar *data_;
     unsigned int dims_;
 #endif
+private:
+    void compileTimeCheck()//dummy method for compile time check
+    {
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                              "VectorND<Scalar> are only defined for integer types and floating-point types.");
+    }
 };
 
 //overriding << for vectorND

@@ -16,8 +16,6 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/type_utilities.h"
-#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 
@@ -26,24 +24,18 @@ namespace Physika{
 template <typename Scalar>
 VectorND<Scalar>::VectorND()
 {
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "VectorND<Scalar,Dim> are only defined for integer types and floating-point types.");
     allocMemory(0);
 }
 
 template <typename Scalar>
 VectorND<Scalar>::VectorND(unsigned int dim)
 {
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "VectorND<Scalar,Dim> are only defined for integer types and floating-point types.");
     allocMemory(dim);
 }
 
 template <typename Scalar>
 VectorND<Scalar>::VectorND(unsigned int dim, Scalar value)
 {
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "VectorND<Scalar,Dim> are only defined for integer types and floating-point types.");
     allocMemory(dim);
     for(unsigned int i = 0; i < dim; ++i)
         (*this)[i] = value;

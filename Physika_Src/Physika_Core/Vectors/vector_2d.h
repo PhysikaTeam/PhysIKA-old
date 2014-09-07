@@ -18,6 +18,7 @@
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Utilities/type_utilities.h"
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector.h"
 
 namespace Physika{
@@ -72,7 +73,12 @@ protected:
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
     Scalar data_[2];
 #endif
-
+private:
+    void compileTimeCheck()//dummy method for compile time check
+    {
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                              "Vector<Scalar,2> are only defined for integer types and floating-point types.");
+    }
 };
 
 //overriding << for vector2D

@@ -15,8 +15,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 
@@ -29,8 +27,6 @@ Quaternion<Scalar>::Quaternion():
         z_(0),
         w_(1)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Quaternion<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>
@@ -40,16 +36,11 @@ Quaternion<Scalar>::Quaternion(Scalar x, Scalar y, Scalar z, Scalar w):
         z_(z),
         w_(w)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Quaternion<Scalar> are only defined for Scalar type of float and double");
-
 }
 
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(const Vector<Scalar,3> & unit_axis, Scalar angle_rad)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Quaternion<Scalar> are only defined for Scalar type of float and double");
     const Scalar a = angle_rad * (Scalar)0.5;
     const Scalar s = sin(a);
     w_ = cos(a);
@@ -61,8 +52,6 @@ Quaternion<Scalar>::Quaternion(const Vector<Scalar,3> & unit_axis, Scalar angle_
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(Scalar angle_rad, const Vector<Scalar,3> & unit_axis)
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Quaternion<Scalar> are only defined for Scalar type of float and double");
     const Scalar a = angle_rad * (Scalar)0.5;
     const Scalar s = sin(a);
     w_ = cos(a);
@@ -78,8 +67,6 @@ Quaternion<Scalar>::Quaternion(const Scalar *ptrq):
     z_(ptrq[2]),
     w_(ptrq[4])
 {
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Quaternion<Scalar> are only defined for Scalar type of float and double");
 }
 
 template <typename Scalar>

@@ -19,6 +19,8 @@
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Matrices/matrix_4x4.h"
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Transform/transform.h"
 
 namespace Physika{
@@ -88,6 +90,12 @@ protected:
     Vector<Scalar,3> translation_;
     Quaternion<Scalar> rotation_;
     Vector<Scalar,3> scale_;
+private:
+    void compileTimeCheck()
+    {
+        PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
+                              "Transform<Scalar> are only defined for Scalar type of float and double");
+    }
 };
 
 
