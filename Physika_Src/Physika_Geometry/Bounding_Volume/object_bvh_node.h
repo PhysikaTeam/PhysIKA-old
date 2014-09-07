@@ -49,8 +49,8 @@ public:
 protected:
 	typename CollidableObjectInternal::ObjectType object_type_;
 	CollidableObject<Scalar, Dim>* object_;
-	bool has_face_;
 	unsigned int face_index_;
+	bool has_face_;
 
     void buildFromFace();
 };

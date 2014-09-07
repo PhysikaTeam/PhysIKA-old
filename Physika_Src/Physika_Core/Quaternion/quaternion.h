@@ -16,8 +16,6 @@
 #define PHSYIKA_CORE_QUATERNION_QUATERNION_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Matrices/matrix_4x4.h"
@@ -93,9 +91,6 @@ public:
 
 protected:
     Scalar x_,y_,z_,w_;
-protected:
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Quaternion<Scalar> are only defined for Scalar type of float and double");
 };
 
 

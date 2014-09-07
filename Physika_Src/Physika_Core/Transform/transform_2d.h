@@ -15,8 +15,6 @@
 #ifndef PHSYIKA_CORE_TRANSFORM_TRANSFORM_2D_H_
 #define PHSYIKA_CORE_TRANSFORM_TRANSFORM_2D_H_
 
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Vectors/vector_2d.h"
@@ -99,10 +97,6 @@ protected:
 	//Use radian
     Scalar rotate_angle_;
     Vector<Scalar,2> scale_;
-
-protected:
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Transform<Scalar> are only defined for Scalar type of float and double");
 };
 
 

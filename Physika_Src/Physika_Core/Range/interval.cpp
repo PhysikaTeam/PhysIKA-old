@@ -14,6 +14,8 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Range/interval.h"
 
 namespace Physika{
@@ -21,16 +23,22 @@ namespace Physika{
 template <typename Scalar>
 Interval<Scalar>::Interval():min_val_(0),max_val_(0)
 {
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "Interval<Scalar> are only defined for integer types and floating-point types.");
 }
 
 template <typename Scalar>
 Interval<Scalar>::Interval(Scalar val):min_val_(val),max_val_(val)
 {
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "Interval<Scalar> are only defined for integer types and floating-point types.");
 }
 
 template <typename Scalar>
 Interval<Scalar>::Interval(Scalar min_val, Scalar max_val)
 {
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "Interval<Scalar> are only defined for integer types and floating-point types.");
     if(min_val>max_val)
     {
         std::cerr<<"Minimum value of interval must be equal or smaller than maximum value!\n";

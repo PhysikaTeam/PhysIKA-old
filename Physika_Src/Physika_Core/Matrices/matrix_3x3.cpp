@@ -111,7 +111,7 @@ SquareMatrix<Scalar,3>::~SquareMatrix()
 template <typename Scalar>
 Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int i, unsigned int j)
 {
-    bool index_valid = (i>=0&&i<3)&&(j>=0&&j<3);
+    bool index_valid = (i<3)&&(j<3);
     if(!index_valid)
     {
         std::cerr<<"Matrix index out of range!\n";
@@ -127,7 +127,7 @@ Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int i, unsigned int j)
 template <typename Scalar>
 const Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int i, unsigned int j) const
 {
-    bool index_valid = (i>=0&&i<3)&&(j>=0&&j<3);
+    bool index_valid = (i<3)&&(j<3);
     if(!index_valid)
     {
         std::cerr<<"Matrix index out of range!\n";

@@ -17,6 +17,7 @@
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 
@@ -25,18 +26,24 @@ namespace Physika{
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN()
 {
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "MatrixMxN<Scalar> are only defined for integer types and floating-point types.");
     allocMemory(0,0);
 }
 
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols)
 {
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "MatrixMxN<Scalar> are only defined for integer types and floating-point types.");
     allocMemory(rows,cols);
 }
 
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols, Scalar value)
 {
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "MatrixMxN<Scalar> are only defined for integer types and floating-point types.");
     allocMemory(rows,cols);
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j < cols; ++j)
@@ -46,6 +53,8 @@ MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols, Scalar value)
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols, Scalar *entries)
 {
+    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                      "MatrixMxN<Scalar> are only defined for integer types and floating-point types.");
     allocMemory(rows,cols);
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j < cols; ++j)
@@ -117,7 +126,7 @@ void MatrixMxN<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
 template <typename Scalar>
 Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j)
 {
-    bool index_in_range = (i>=0&&i<(*this).rows())&&(j>=0&&j<(*this).cols());
+    bool index_in_range = (i<(*this).rows())&&(j<(*this).cols());
     if(!index_in_range)
     {
         std::cerr<<"Matrix index out of range!\n";
@@ -133,7 +142,7 @@ Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j)
 template <typename Scalar>
 const Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j) const
 {
-    bool index_in_range = (i>=0&&i<(*this).rows())&&(j>=0&&j<(*this).cols());
+    bool index_in_range = (i<(*this).rows())&&(j<(*this).cols());
     if(!index_in_range)
     {
         std::cerr<<"Matrix index out of range!\n";

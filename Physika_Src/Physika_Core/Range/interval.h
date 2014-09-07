@@ -15,9 +15,6 @@
 #ifndef PHYSIKA_CORE_RANGE_INTERVAL_H_
 #define PHYSIKA_CORE_RANGE_INTERVAL_H_
 
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/type_utilities.h"
-
 namespace Physika{
 
 /*
@@ -48,9 +45,6 @@ public:
     static Interval<Scalar> unitInterval(); //[0,1]
 protected:
     Scalar min_val_, max_val_;
-protected:
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "Interval<Scalar> are only defined for integer types and floating-point types.");
 };
 
 }  //end of namespace Physika

@@ -16,8 +16,6 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_MXN_H_
 
 #include "Physika_Core/Utilities/global_config.h"
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 
 namespace Physika{
@@ -70,9 +68,6 @@ protected:
     Scalar *data_;
     int rows_,cols_;
 #endif
-protected:
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "MatrixMxN<Scalar> are only defined for integer types and floating-point types.");
 };
 
 //overriding << for MatrixMxN
