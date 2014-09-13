@@ -19,7 +19,6 @@ namespace Physika{
 template <typename Scalar>
 Transform<Scalar, 3>::~Transform()
 {
-    
 }
 
 template <typename Scalar>
@@ -27,7 +26,6 @@ Transform<Scalar, 3>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
     rotation_(0,0,0,1),
     scale_(Vector<Scalar, 3>(1,1,1))
 {
-
 }
 
 template <typename Scalar>
@@ -36,7 +34,6 @@ Transform<Scalar, 3>::Transform(const Vector<Scalar, 3> translation):
         rotation_(0,0,0,1),
         scale_(Vector<Scalar, 3>(1,1,1))
 {
-
 }
 
 template <typename Scalar>
@@ -62,7 +59,6 @@ Transform<Scalar, 3>::Transform(const Quaternion<Scalar> rotation):
         rotation_(rotation),
         scale_(Vector<Scalar, 3>(1,1,1))
 {
-
 }
 
 template <typename Scalar>
@@ -71,7 +67,6 @@ Transform<Scalar, 3>::Transform(const Quaternion<Scalar>& rotation, const Vector
         rotation_(rotation),
         scale_(Vector<Scalar, 3>(1,1,1))
 {
-    
 }
 
 template <typename Scalar>
@@ -80,7 +75,6 @@ Transform<Scalar, 3>::Transform(const Quaternion<Scalar>& rotation, const Vector
         rotation_(rotation),
         scale_(scale)
 {
-    
 }
 template <typename Scalar>
 Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quaternion<Scalar>& rotation):
@@ -88,8 +82,6 @@ Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quat
         rotation_(rotation),
        scale_(Vector<Scalar, 3>(1,1,1))
 {
-
-
 }
 
 template <typename Scalar>
@@ -98,7 +90,6 @@ Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quat
         rotation_(rotation),
         scale_(scale)
 {
-    
 }
 
 template <typename Scalar>

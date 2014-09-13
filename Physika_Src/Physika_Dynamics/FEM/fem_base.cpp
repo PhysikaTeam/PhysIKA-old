@@ -153,7 +153,7 @@ unsigned int FEMBase<Scalar,Dim>::numSimElements() const
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& FEMBase<Scalar,Dim>::vertexDisplacement(unsigned int vert_idx) const
+Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexDisplacement(unsigned int vert_idx) const
 {
     if(vert_idx >= vertex_displacements_.size())
     {
@@ -182,7 +182,7 @@ void FEMBase<Scalar,Dim>::resetVertexDisplacement()
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& FEMBase<Scalar,Dim>::vertexRestPosition(unsigned int vert_idx) const
+Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexRestPosition(unsigned int vert_idx) const
 {
     if(simulation_mesh_==NULL)
     {
@@ -214,7 +214,7 @@ Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexCurrentPosition(unsigned int vert_
 }
 
 template <typename Scalar, int Dim>
-const Vector<Scalar,Dim>& FEMBase<Scalar,Dim>::vertexVelocity(unsigned int vert_idx) const
+Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexVelocity(unsigned int vert_idx) const
 {
     if(vert_idx >= vertex_displacements_.size())
     {

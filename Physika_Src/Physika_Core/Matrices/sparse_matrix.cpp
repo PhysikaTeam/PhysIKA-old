@@ -193,7 +193,6 @@ bool SparseMatrix<Scalar>::remove(unsigned int i,unsigned int j)
 template <typename Scalar>
 void SparseMatrix<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
 {
-    PHYSIKA_ASSERT(new_rows>=0&&new_cols>=0);
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     for(unsigned int i=0;i<rows_;++i)
     {
@@ -235,7 +234,6 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::transpose() const
 template <typename Scalar>
 std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getRowElements(unsigned int i) const
 {
-    PHYSIKA_ASSERT(i>=0);
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     std::vector<Trituple<Scalar>> v;
     Trituple<Scalar>* pointer = row_head_[i];
@@ -262,7 +260,6 @@ std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getRowElements(unsigned int 
 template <typename Scalar>
 std::vector<Trituple<Scalar>> SparseMatrix<Scalar>::getColElements(unsigned int i) const
 {
-    PHYSIKA_ASSERT(i>=0);
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     std::vector<Trituple<Scalar>> v;
     Trituple<Scalar>* pointer = col_head_[i];
@@ -286,8 +283,8 @@ template <typename Scalar>
 Scalar SparseMatrix<Scalar>::operator() (unsigned int i, unsigned int j) const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    PHYSIKA_ASSERT(i>=0&&i<rows_);
-    PHYSIKA_ASSERT(j>=0&&j<cols_);
+    PHYSIKA_ASSERT(i<rows_);
+    PHYSIKA_ASSERT(j<cols_);
     Trituple<Scalar>* pointer = row_head_[i];
     while(pointer)
     {
@@ -304,8 +301,8 @@ template <typename Scalar>
 Trituple<Scalar>* SparseMatrix<Scalar>::ptr(unsigned int i, unsigned int j) 
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    PHYSIKA_ASSERT(i>=0&&i<rows_);
-    PHYSIKA_ASSERT(j>=0&&j<cols_);
+    PHYSIKA_ASSERT(i<rows_);
+    PHYSIKA_ASSERT(j<cols_);
     Trituple<Scalar>* pointer = row_head_[i];
     while(pointer)
     {
@@ -323,8 +320,8 @@ template <typename Scalar>
 void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    PHYSIKA_ASSERT(i>=0&&i<rows_);
-    PHYSIKA_ASSERT(j>=0&&j<cols_);
+    PHYSIKA_ASSERT(i<rows_);
+    PHYSIKA_ASSERT(j<cols_);
     bool existing_entry = false;
     //std::cout <<"row_head_["<<i<<']:' <<row_head_[i] << std::endl;
     Trituple<Scalar> *pointer = row_head_[i],*last_pointer = NULL;
@@ -619,7 +616,7 @@ VectorND<Scalar> SparseMatrix<Scalar>::leftMultiVec (const VectorND<Scalar> &vec
     for (unsigned int i = 0; i < this->cols(); ++i)
     {
         sum = 0;
-        for (Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
+        for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
         {
             sum += it.value()*vec[it.row()];
         }

@@ -93,9 +93,12 @@ public:
 
 protected:
     Scalar x_,y_,z_,w_;
-protected:
-    PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                           "Quaternion<Scalar> are only defined for Scalar type of float and double");
+private:
+    void compileTimeCheck()  //dummy method for compile time check
+    {
+        PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
+                              "Quaternion<Scalar> are only defined for Scalar type of float and double");
+    }
 };
 
 

@@ -41,19 +41,19 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
     if(file_extension.size() == 0)
     {
         std::cerr<<"No file extension found for the image file:"<<filename<<std::endl;
-        return NULL;
+        return false;
     }
     if(file_extension != string(".ppm"))
     {
         std::cerr<<"Unknown image file format:"<<file_extension<<std::endl;
-        return NULL;
+        return false;
     }
     fstream fp;
     fp.open(filename.c_str(),std::ios::in|std::ios::binary);
     if(!fp.is_open())
     {
         std::cerr<<"Couldn't opern .ppm file:"<<filename<<std::endl;
-        return NULL;
+        return false;
     }
     string file_head;
     while(getline(fp, file_head))

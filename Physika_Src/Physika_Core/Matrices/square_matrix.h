@@ -30,12 +30,15 @@ public:
     ~SquareMatrix(){}
     virtual unsigned int rows() const;
     virtual unsigned int cols() const;
-protected:
-    //SquareMatrix<Scalar,Dim> is only defined for 2D&&3D&&4D with element type of integers and floating-point types
-    //compile time check
-    PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3||Dim==4,"SquareMatrix<Scalar,Dim> are only defined for Dim==2,3,4");
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "SquareMatrix<Scalar,Dim> are only defined for integer types and floating-point types.");
+private:
+    void compileTimeCheck()
+    {
+        //SquareMatrix<Scalar,Dim> is only defined for 2D&&3D&&4D with element type of integers and floating-point types
+        //compile time check
+        PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3||Dim==4,"SquareMatrix<Scalar,Dim> are only defined for Dim==2,3,4");
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                              "SquareMatrix<Scalar,Dim> are only defined for integer types and floating-point types.");
+    }
 }; 
 
 }  //end of namespace Physika
