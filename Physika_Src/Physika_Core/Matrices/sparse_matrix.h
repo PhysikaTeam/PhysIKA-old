@@ -57,9 +57,21 @@ public:
         if(tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_)return true;
         return false;		
     }
-public:
-    int row_;
-    int col_;
+	unsigned int row()
+	{
+		return row_;
+	}
+	unsigned int col()
+	{
+		return col_;
+	}
+	Scalar value()
+	{
+		return value_;
+	}
+private:
+    unsigned int row_;
+    unsigned int col_;
     Scalar value_;
     Trituple<Scalar> *row_next_;
     Trituple<Scalar> *col_next_;
@@ -129,7 +141,7 @@ protected:
 template <typename Scalar>
 std::ostream& operator<<(std::ostream &s, const Trituple<Scalar> &tri)
 {
-    s<<" ("<<tri.row_<<", "<<tri.col_<<", "<<tri.value_<<") ";
+    s<<" ("<<tri.row()<<", "<<tri.col()<<", "<<tri.value()<<") ";
     return s;
 }
 
@@ -141,7 +153,7 @@ std::ostream& operator<< (std::ostream &s, const SparseMatrix<Scalar> &mat)
     for(unsigned int i = 0; i < mat.rows(); ++i)
     {
         v = mat.getRowElements(i);
-        for(unsigned int j=0;j< v.size();++j) s<<" ("<< v[j].row_<<", "<<v[j].col_<<", "<<v[j].value_<<") ";
+        for(unsigned int j=0;j< v.size();++j) s<<" ("<< v[j].row()<<", "<<v[j].col()<<", "<<v[j].value()<<") ";
         s<<std::endl;
     }
     return s;
