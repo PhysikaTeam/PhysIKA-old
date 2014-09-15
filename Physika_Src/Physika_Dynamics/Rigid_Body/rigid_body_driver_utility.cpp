@@ -17,6 +17,7 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_body_3d.h"
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver_utility.h"
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Matrices/sparse_matrix_iterator.h"
 
 #include "Physika_Core/Timer/timer.h"
 
@@ -28,9 +29,9 @@ namespace Physika{
 
 
 template <typename Scalar,int Dim>
-void RigidBodyDriverUtility<Scalar, Dim>::computeInvMassMatrix(RigidBodyDriver<Scalar, Dim>* driver, SparseMatrix<Scalar>& M_inv)
+void RigidBodyDriverUtility<Scalar, Dim>::computeMassMatrix(RigidBodyDriver<Scalar, Dim>* driver, SparseMatrix<Scalar>& M, SparseMatrix<Scalar>& M_inv)
 {
-    RigidBodyDriverUtilityTrait<Scalar>::computeInvMassMatrix(driver, M_inv, DimensionTrait<Dim>());
+    RigidBodyDriverUtilityTrait<Scalar>::computeMassMatrix(driver, M, M_inv, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
@@ -59,10 +60,10 @@ void RigidBodyDriverUtility<Scalar, Dim>::computeCoefficient(RigidBodyDriver<Sca
 
 template <typename Scalar,int Dim>
 void RigidBodyDriverUtility<Scalar, Dim>::solveBLCPWithPGS(RigidBodyDriver<Scalar, Dim>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
-    VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+    VectorND<Scalar>& pre_Jv, VectorND<Scalar>& post_Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count)
 {
-    RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(driver, JMJ, DMD, JMD, DMJ, Jv, Dv, z_norm, z_fric, CoR, CoF, iteration_count, DimensionTrait<Dim>());
+    RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(driver, JMJ, DMD, JMD, DMJ, pre_Jv, post_Jv, Dv, z_norm, z_fric, CoR, CoF, iteration_count, DimensionTrait<Dim>());
 }
 
 template <typename Scalar,int Dim>
@@ -78,13 +79,13 @@ void RigidBodyDriverUtility<Scalar, Dim>::applyImpulse(RigidBodyDriver<Scalar, D
 
 
 template <typename Scalar>
-void RigidBodyDriverUtilityTrait<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeMassMatrix(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& M, SparseMatrix<Scalar>& M_inv, DimensionTrait<2> trait)
 {
     //to do
 }
 
 template <typename Scalar>
-void RigidBodyDriverUtilityTrait<Scalar>::computeInvMassMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait)
+void RigidBodyDriverUtilityTrait<Scalar>::computeMassMatrix(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& M, SparseMatrix<Scalar>& M_inv, DimensionTrait<3> trait)
 {
     if(driver == NULL)
     {
@@ -97,6 +98,11 @@ void RigidBodyDriverUtilityTrait<Scalar>::computeInvMassMatrix(RigidBodyDriver<S
     unsigned int six_n = n * 6;
 
     //basic check of matrix's dimensions
+    if(M.rows() != six_n || M.cols() != six_n)
+    {
+        std::cerr<<"Dimension of matrix M is wrong!"<<std::endl;
+        return;
+    }
     if(M_inv.rows() != six_n || M_inv.cols() != six_n)
     {
         std::cerr<<"Dimension of matrix M_inv is wrong!"<<std::endl;
@@ -115,11 +121,21 @@ void RigidBodyDriverUtilityTrait<Scalar>::computeInvMassMatrix(RigidBodyDriver<S
         }
         if(!rigid_body->isFixed())//not fixed
         {
-            //inversed mass
+            //mass
+            M.setEntry(6 * i, 6 * i, rigid_body->mass());
+            M.setEntry(6 * i + 1, 6 * i + 1, rigid_body->mass());
+            M.setEntry(6 * i + 2, 6 * i + 2, rigid_body->mass());
             M_inv.setEntry(6 * i, 6 * i, (Scalar)1 / rigid_body->mass());
             M_inv.setEntry(6 * i + 1, 6 * i + 1, (Scalar)1 / rigid_body->mass());
             M_inv.setEntry(6 * i + 2, 6 * i + 2, (Scalar)1 / rigid_body->mass());
             //inversed inertia tensor
+            for(unsigned int j = 0; j < 3; ++j)
+            {
+                for(unsigned int k = 0; k < 3; ++k)
+                {
+                    M.setEntry(6 * i + 3 + j, 6 * i + 3 + k, rigid_body->spatialInertiaTensor()(j, k));
+                }
+            }
             for(unsigned int j = 0; j < 3; ++j)
             {
                 for(unsigned int k = 0; k < 3; ++k)
@@ -183,13 +199,13 @@ void RigidBodyDriverUtilityTrait<Scalar>::computeJacobianMatrix(RigidBodyDriver<
         angular_normal_rhs = (contact_point->globalContactPosition() - rigid_body->globalTranslation()).cross(contact_point->globalContactNormalRhs());
         for(unsigned int j = 0; j < 3; ++j)
         {
-            J.setEntry(i, object_lhs * 6 + j, contact_point->globalContactNormalLhs()[j]);
-            J.setEntry(i, object_rhs * 6 + j, contact_point->globalContactNormalRhs()[j]);
+            J.setEntry(i, object_lhs * 6 + j, -contact_point->globalContactNormalLhs()[j]);
+            J.setEntry(i, object_rhs * 6 + j, -contact_point->globalContactNormalRhs()[j]);
         }
         for(unsigned int j = 0; j < 3; ++j)
         {
-            J.setEntry(i, object_lhs * 6 + 3 + j, angular_normal_lhs[j]);
-            J.setEntry(i, object_rhs * 6 + 3 + j, angular_normal_rhs[j]);
+            J.setEntry(i, object_lhs * 6 + 3 + j, -angular_normal_lhs[j]);
+            J.setEntry(i, object_rhs * 6 + 3 + j, -angular_normal_rhs[j]);
         }
     }
 }
@@ -381,7 +397,7 @@ void RigidBodyDriverUtilityTrait<Scalar>::computeCoefficient(RigidBodyDriver<Sca
 
 template <typename Scalar>
 void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 2>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
-    VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+    VectorND<Scalar>& pre_Jv, VectorND<Scalar>& post_Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
     DimensionTrait<2> trait)
 {
@@ -390,7 +406,7 @@ void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scala
 
 template <typename Scalar>
 void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scalar, 3>* driver, SparseMatrix<Scalar>& JMJ, SparseMatrix<Scalar>& DMD, SparseMatrix<Scalar>& JMD, SparseMatrix<Scalar>& DMJ,
-    VectorND<Scalar>& Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
+    VectorND<Scalar>& pre_Jv, VectorND<Scalar>& post_Jv, VectorND<Scalar>& Dv, VectorND<Scalar>& z_norm, VectorND<Scalar>& z_fric,
     VectorND<Scalar>& CoR, VectorND<Scalar>& CoF, unsigned int iteration_count,
     DimensionTrait<3> trait)
 {
@@ -409,42 +425,34 @@ void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scala
     unsigned int six_n = n * 6;
     unsigned int s = DMD.cols();
     unsigned int fric_sample_count = s / m;
-    z_norm = Jv;
+    z_norm = -1 * pre_Jv;
     z_fric *= 0;
     VectorND<Scalar> JMDz_fric;
     VectorND<Scalar> DMJz_norm;
     std::vector<Trituple<Scalar>> non_zeros;
     Scalar delta, m_value;
-
-    Timer time_;
-    time_.startTimer();
-    JMJ.getColElements(3);
-    time_.stopTimer();
-    std::cerr<<"|||"<<time_.getElapsedTime()*1000<<std::endl;
+    
     //iteration
     for(unsigned int itr = 0; itr < iteration_count; ++itr)
     {
         //normal contact step
         JMDz_fric = JMD * z_fric;
         
-        time_.startTimer();
         for(unsigned int i = 0; i < m; ++i)
         {
             delta = 0;
-            non_zeros.clear();
-            non_zeros = JMJ.getRowElements(i);
-            unsigned int size_non_zeros = static_cast<unsigned int>(non_zeros.size());
-            for(unsigned int j = 0; j < size_non_zeros; ++j)
+            for(SparseMatrixIterator<Scalar> it(JMJ, i); it; ++it)
             {
-                if(non_zeros[j].col_ != i)//not diag
+                if(it.row() != i)
                 {
-                    delta += non_zeros[j].value_ * z_norm[non_zeros[j].col_];
+                    delta += it.value() * z_norm[it.row()];
                 }
             }
+            
             m_value = JMJ(i, i);
 
             if(m_value != 0)
-                delta = ((1 + CoR[i]) * Jv[i] - JMDz_fric[i] - delta) / m_value;
+                delta = (post_Jv[i] - pre_Jv[i] - JMDz_fric[i] - delta) / m_value;
             else
                 delta = 0;
 
@@ -454,23 +462,23 @@ void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scala
                 z_norm[i] = delta;
         }
         
-        
         //friction step
         DMJz_norm = DMJ * z_norm;
         for(unsigned int i = 0; i < s; ++i)
         {
             delta = 0;
-            non_zeros.clear();
-            non_zeros = DMD.getRowElements(i);
-            unsigned int size_non_zeros = static_cast<unsigned int>(non_zeros.size());
-            for(unsigned int j = 0; j < size_non_zeros; ++j)
+
+            for(SparseMatrixIterator<Scalar> it(DMD, i); it; ++it)
             {
-                if(non_zeros[j].col_ != i)//not diag
-                    delta += non_zeros[j].value_ * z_fric[non_zeros[j].col_];
+                if(it.row() != i)
+                {
+                    delta += it.value() * z_fric[it.row()];
+                }
             }
+
             m_value = DMD(i, i);
             if(m_value != 0)
-                delta = (Dv[i] - DMJz_norm[i] - delta) / m_value;
+                delta = (-Dv[i] - DMJz_norm[i] - delta) / m_value;
             else
                 delta = 0;
             if(delta < - CoF[i / fric_sample_count] * z_norm[i / fric_sample_count])
@@ -479,9 +487,7 @@ void RigidBodyDriverUtilityTrait<Scalar>::solveBLCPWithPGS(RigidBodyDriver<Scala
                 z_fric[i] = CoF[i / fric_sample_count] * z_norm[i / fric_sample_count];
         }
         
-        
     }
-
     
 }
 
@@ -532,8 +538,8 @@ void RigidBodyDriverUtilityTrait<Scalar>::applyImpulse(RigidBodyDriver<Scalar, 3
     }
 
     //calculate impulses from their magnitudes (z_norm, z_fric) and directions (J_T, D_T)
-    VectorND<Scalar> impulse_translation = J_T * z_norm * (-1);
-    VectorND<Scalar> impulse_angular = D_T * z_fric * (-1);
+    VectorND<Scalar> impulse_translation = J_T * z_norm;
+    VectorND<Scalar> impulse_angular = D_T * z_fric;
 
     //apply impulses to rigid bodies. This step will not cause velocity and configuration integral 
     RigidBody<Scalar, 3>* rigid_body = NULL;
