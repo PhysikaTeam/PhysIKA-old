@@ -18,6 +18,8 @@
 #include <vector>
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Matrices/matrix_base.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 
@@ -38,7 +40,7 @@ public:
         row_next_ = NULL;
         col_next_ = NULL;
     }
-    Trituple(int row, int col, Scalar value)
+    Trituple(unsigned int row, unsigned int col, Scalar value)
     {
         row_ = row;
         col_ = col;
@@ -57,9 +59,21 @@ public:
         if(tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_)return true;
         return false;		
     }
-public:
-    int row_;
-    int col_;
+    unsigned int row()
+    {
+        return row_;
+    }
+    unsigned int col()
+    {
+        return col_;
+    }
+    Scalar value()
+    {
+        return value_;
+    }
+private:
+    unsigned int row_;
+    unsigned int col_;
     Scalar value_;
     Trituple<Scalar> *row_next_;
     Trituple<Scalar> *col_next_;
@@ -114,8 +128,8 @@ protected:
 protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
 //compressed orthogonal list based on Trituple
-    int rows_;
-    int cols_;
+    unsigned int rows_;
+    unsigned int cols_;
     Trituple<Scalar> ** row_head_;
     Trituple<Scalar> ** col_head_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
@@ -123,13 +137,21 @@ protected:
     //typename typedef Eigen::SparseMatrix<Scalar>::InnerIterator SpareseIterator;
     friend class Physika::SparseMatrixIterator<Scalar>;
 #endif
+private:
+    void compileTimeCheck()
+    {
+        //SparseMatrix<Scalar> is only defined for element type of integers and floating-point types
+        //compile time check
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                              "SparseMatrix<Scalar> are only defined for integer types and floating-point types.");
+    }
 };
 
 //overridding << for Trituple<Scalar>
 template <typename Scalar>
 std::ostream& operator<<(std::ostream &s, const Trituple<Scalar> &tri)
 {
-    s<<" ("<<tri.row_<<", "<<tri.col_<<", "<<tri.value_<<") ";
+    s<<" ("<<tri.row()<<", "<<tri.col()<<", "<<tri.value()<<") ";
     return s;
 }
 
@@ -141,7 +163,7 @@ std::ostream& operator<< (std::ostream &s, const SparseMatrix<Scalar> &mat)
     for(unsigned int i = 0; i < mat.rows(); ++i)
     {
         v = mat.getRowElements(i);
-        for(unsigned int j=0;j< v.size();++j) s<<" ("<< v[j].row_<<", "<<v[j].col_<<", "<<v[j].value_<<") ";
+        for(unsigned int j=0;j< v.size();++j) s<<" ("<< v[j].row()<<", "<<v[j].col()<<", "<<v[j].value()<<") ";
         s<<std::endl;
     }
     return s;

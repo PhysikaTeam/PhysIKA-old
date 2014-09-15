@@ -20,7 +20,6 @@ namespace Physika{
 template <typename Scalar>
 Transform<Scalar, 2>::~Transform()
 {
-
 }
 
 template <typename Scalar>
@@ -29,7 +28,6 @@ Transform<Scalar, 2>::Transform():
 		rotate_angle_(0),
 		scale_(Vector<Scalar, 2>(1))
 {
-	
 }
 
 template<typename Scalar>
@@ -38,7 +36,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation):
 		rotate_angle_(0),
 		scale_(Vector<Scalar, 2>(1))
 {
-
 }
 
 template<typename Scalar>
@@ -47,7 +44,6 @@ Transform<Scalar, 2>::Transform(const Scalar &rotate_angle):
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-
 }
 
 template<typename Scalar>
@@ -80,7 +76,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Scal
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-
 }
 
 template<typename Scalar>
@@ -89,7 +84,6 @@ Transform<Scalar, 2>::Transform(const Scalar &rotate_angle, const Vector<Scalar,
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-
 }
 
 template<typename Scalar>
@@ -122,7 +116,6 @@ Transform<Scalar, 2>::Transform(const Scalar &rotate_angle, const Vector<Scalar,
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-
 }
 
 template<typename Scalar>
@@ -131,7 +124,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Scal
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-
 }
 
 template<typename Scalar>
@@ -140,7 +132,6 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Vect
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-
 }
 
 template<typename Scalar>

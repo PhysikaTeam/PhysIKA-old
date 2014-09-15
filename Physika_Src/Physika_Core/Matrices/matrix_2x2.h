@@ -16,6 +16,8 @@
 #define PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_
 
 #include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Matrices/square_matrix.h"
 
 namespace Physika{
@@ -66,6 +68,14 @@ protected:
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar data_[2][2];
 #endif
+private:
+    void compileTimeCheck()
+    {
+        //SquareMatrix<Scalar,Dim> is only defined for element type of integers and floating-point types
+        //compile time check
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                              "SquareMatrix<Scalar,2> are only defined for integer types and floating-point types.");
+    }
 
 };
 

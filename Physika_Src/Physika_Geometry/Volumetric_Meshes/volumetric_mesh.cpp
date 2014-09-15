@@ -93,7 +93,7 @@ VolumetricMesh<Scalar,Dim>& VolumetricMesh<Scalar,Dim>::operator= (const Volumet
 template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::eleVertNum(unsigned int ele_idx) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -104,13 +104,13 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleVertNum(unsigned int ele_idx) const
 template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const
 {   
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"element index out of range!\n";
         std::exit(EXIT_FAILURE);
     }
     unsigned int max_vert_num = uniform_ele_type_ ? vert_per_ele_[0] : vert_per_ele_[ele_idx];
-    if((local_vert_idx<0) || (local_vert_idx >= max_vert_num))
+    if(local_vert_idx >= max_vert_num)
     {
         std::cerr<<"vert_idx out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -141,7 +141,7 @@ unsigned int VolumetricMesh<Scalar,Dim>::regionNum() const
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_idx) const
 {
-    if((vert_idx<0) || (vert_idx>=this->vertNum()))
+    if(vert_idx>=this->vertNum())
     {
         std::cerr<<"vertex index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -159,7 +159,7 @@ Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, 
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -172,7 +172,7 @@ void VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, std::vector<Ve
 template <typename Scalar, int Dim>
 string VolumetricMesh<Scalar,Dim>::regionName(unsigned int region_idx) const
 {
-    if(region_idx<0||region_idx>=this->regionNum())
+    if(region_idx>=this->regionNum())
     {
         std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -184,7 +184,7 @@ string VolumetricMesh<Scalar,Dim>::regionName(unsigned int region_idx) const
 template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::regionEleNum(unsigned int region_idx) const
 {
-    if(region_idx<0||region_idx>=this->regionNum())
+    if(region_idx>=this->regionNum())
     {
         std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -209,7 +209,7 @@ unsigned int VolumetricMesh<Scalar,Dim>::regionEleNum(const string &region_name)
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::regionElements(unsigned int region_idx, vector<unsigned int> &elements) const
 {
-    if(region_idx<0||region_idx>=this->regionNum())
+    if(region_idx>=this->regionNum())
     {
         std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -236,7 +236,7 @@ void VolumetricMesh<Scalar,Dim>::regionElements(const string &region_name, vecto
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::renameRegion(unsigned int region_idx, const string &name)
 {
-    if(region_idx<0||region_idx>=this->regionNum())
+    if(region_idx>=this->regionNum())
     {
         std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -256,7 +256,7 @@ void VolumetricMesh<Scalar,Dim>::addRegion(const string &name, const vector<unsi
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeRegion(unsigned int region_idx)
 {
-    if(region_idx<0||region_idx>=this->regionNum())
+    if(region_idx>=this->regionNum())
     {
         std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -291,7 +291,7 @@ void VolumetricMesh<Scalar,Dim>::addVertex(const Vector<Scalar,Dim> &vertex)
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeVertex(unsigned int vert_idx)
 {
-    if((vert_idx<0) || (vert_idx>=this->vertNum()))
+    if(vert_idx>=this->vertNum())
     {
         std::cerr<<"vertex index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -366,7 +366,7 @@ void VolumetricMesh<Scalar,Dim>::addElement(const vector<unsigned int> &element)
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeElement(unsigned int ele_idx)
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
+    if(ele_idx>=this->ele_num_)
     {
         std::cerr<<"element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -393,12 +393,12 @@ void VolumetricMesh<Scalar,Dim>::removeElement(unsigned int ele_idx)
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::addElementInRegion(unsigned int region_idx, unsigned int new_ele_idx)
 {
-    if(region_idx<0||region_idx>=this->regionNum())
+    if(region_idx>=this->regionNum())
     {
         std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if((new_ele_idx<0) || (new_ele_idx>=this->ele_num_))
+    if(new_ele_idx>=this->ele_num_)
     {
         std::cerr<<"element index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -410,12 +410,12 @@ void VolumetricMesh<Scalar,Dim>::addElementInRegion(unsigned int region_idx, uns
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeElementInRegion(unsigned int region_idx, unsigned int ele_idx_in_region)
 {
-    if(region_idx<0||region_idx>=this->regionNum())
+    if(region_idx>=this->regionNum())
     {
         std::cerr<<"region_idx out of range!\n";
         std::exit(EXIT_FAILURE);
     }
-    if((ele_idx_in_region<0) || (ele_idx_in_region>=this->regionEleNum(region_idx)))
+    if(ele_idx_in_region>=this->regionEleNum(region_idx))
     {
         std::cerr<<"ele_idx_in_region out of range!\n";
         std::exit(EXIT_FAILURE);

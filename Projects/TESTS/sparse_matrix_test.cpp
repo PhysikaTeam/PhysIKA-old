@@ -20,10 +20,10 @@
 #include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Timer/timer.h"
 #include "Physika_Core/Matrices/sparse_matrix_iterator.h"
-#define Max1 100
-#define Max2 100
-#define Max  10000
-#define Maxv 100
+#define Max1 10
+#define Max2 10
+#define Max  100
+#define Maxv 10
 
 using namespace std;
 
@@ -164,20 +164,30 @@ int main()
 	Physika::SparseMatrixIterator<float> it(psm, Max2 / 2);
 	cout << "遍历速度测试：";
 	timer.startTimer();
-	print(psm.getColElements(Max2 / 2));
+	psm.getColElements(Max2 / 2);
 	timer.stopTimer();
 	cout << "time cosuming psm 遍历:" << timer.getElapsedTime() << endl;
 	timer.startTimer();
 	for (Eigen::SparseMatrix<float>::InnerIterator it(esm, Max2 / 2); it; ++it)
 	{
-		cout << it.row() << ' ' << it.col() << ' ' << it.value() << endl;
+		it.row();
+		it.value();
+		it.col();
+		//cout << it.row();
+		//cout << ' ' << it.col();
+		//cout << ' ' << it.value() << endl;
 	}
 	timer.stopTimer();
 	cout << "time cosuming esm 遍历:" << timer.getElapsedTime() << endl;
 	timer.startTimer();
 	for (Physika::SparseMatrixIterator<float> it(psm, Max2 / 2); it; ++it)
 	{
-		cout << it.row() << ' ' << it.col() << ' ' << it.value() << endl;
+		it.row();
+		it.value();
+		it.col();
+		//cout << it.row();
+		//cout << ' ' << it.col();
+		//cout << ' ' << it.value() << endl;
 	}
 	timer.stopTimer();
 	cout << "time cosuming 包装eigen 遍历:" << timer.getElapsedTime() << endl;

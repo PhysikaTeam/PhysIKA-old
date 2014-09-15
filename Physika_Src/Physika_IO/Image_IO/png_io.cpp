@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <iostream>
+#include <sstream>
 #include "Physika_IO/Image_IO/png_io.h"
 #include "Physika_Dependency/LodePNG/lodepng.h"
 #include "Physika_Core/Utilities/physika_assert.h"
@@ -55,7 +56,11 @@ bool PngIO::load(const std::string &filename, Image * image, Image::DataFormat d
     {
         error = lodepng::decode(image_vec, width, height, filename, LCT_RGB);
     }
-    string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);
+    std::stringstream adaptor;
+    adaptor<<error;
+    string error_str;
+    adaptor>>error_str;
+    string error_message = "decoder error "+error_str+string(": ")+lodepng_error_text(error);
     if(error!=0)
     {
         std::cerr<<error_message<<std::endl;
@@ -123,7 +128,11 @@ bool PngIO::save(const string &filename, const Image *image)
     {
         error = lodepng::encode(filename, image->rawData(), image->width(), image->height(), LCT_RGB);
     }
-    string error_message = "decoder error "+error+string(": ")+lodepng_error_text(error);   //define the error message 
+    std::stringstream adaptor;
+    adaptor<<error;
+    string error_str;
+    adaptor>>error_str;
+    string error_message = "decoder error "+error_str+string(": ")+lodepng_error_text(error);   //define the error message 
     if(error!=0)
     {
         std::cerr<<error_message<<std::endl;

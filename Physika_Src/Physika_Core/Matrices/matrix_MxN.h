@@ -70,9 +70,14 @@ protected:
     Scalar *data_;
     int rows_,cols_;
 #endif
-protected:
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "MatrixMxN<Scalar> are only defined for integer types and floating-point types.");
+private:
+    void compileTimeCheck()
+    {
+        //MatrixMxN<Scalar> is only defined for element type of integers and floating-point types
+        //compile time check
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                              "MatrixMxN<Scalar> are only defined for integer types and floating-point types.");
+    }
 };
 
 //overriding << for MatrixMxN

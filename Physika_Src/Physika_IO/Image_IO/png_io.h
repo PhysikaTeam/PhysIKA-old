@@ -16,7 +16,6 @@
 #define PHYSIKA_IO_IMAGE_IO_PNG_IO_H_
 
 #include <string>
-//#include "image_io.h"
 #include "Physika_Core/Image/image.h"
 
 namespace Physika{

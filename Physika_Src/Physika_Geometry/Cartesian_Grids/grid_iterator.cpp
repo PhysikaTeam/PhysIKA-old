@@ -151,7 +151,7 @@ GridNodeIterator<Scalar,Dim>& GridNodeIterator<Scalar,Dim>::operator++ ()
     }
     Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
-    for(unsigned int i = Dim-1; i >= 0; --i)
+    for(int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==node_num[i]-1) && (i!=0))
             index[i] = 0;
@@ -174,7 +174,7 @@ GridNodeIterator<Scalar,Dim>& GridNodeIterator<Scalar,Dim>::operator-- ()
     }
     Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
-    for(unsigned int i = Dim-1; i >= 0; --i)
+    for(int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==0) && (i!=0))
             index[i] = node_num[i]-1;
@@ -198,7 +198,7 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator++ (int)
     GridNodeIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
-    for(unsigned int i = Dim-1; i >= 0; --i)
+    for(int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==node_num[i]-1) && (i!=0))
             index[i] = 0;
@@ -222,7 +222,7 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator-- (int)
     GridNodeIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
-    for(unsigned int i = Dim-1; i >= 0; --i)
+    for(int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==0) && (i!=0))
             index[i] = node_num[i]-1;
@@ -337,7 +337,7 @@ GridCellIterator<Scalar,Dim>& GridCellIterator<Scalar,Dim>::operator++ ()
     }
     Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
-    for(unsigned int i = Dim-1; i >= 0; --i)
+    for(int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==cell_num[i]-1) && (i!=0))
             index[i] = 0;
@@ -360,7 +360,7 @@ GridCellIterator<Scalar,Dim>& GridCellIterator<Scalar,Dim>::operator-- ()
     }
     Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
-    for(unsigned int i = Dim-1; i >= 0; --i)
+    for(int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==0) && (i!=0))
             index[i] = cell_num[i]-1;
@@ -384,7 +384,7 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator++ (int)
     GridCellIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
-    for(unsigned int i = Dim-1; i >= 0; --i)
+    for(int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==cell_num[i]-1) && (i!=0))
             index[i] = 0;
@@ -408,7 +408,7 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator-- (int)
     GridCellIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
-    for(unsigned int i = Dim-1; i >= 0; --i)
+    for(int i = Dim-1; i >= 0; --i)
     {
         if((index[i]==0) && (i!=0))
             index[i] = cell_num[i]-1;

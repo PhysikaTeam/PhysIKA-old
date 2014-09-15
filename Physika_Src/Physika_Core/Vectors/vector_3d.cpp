@@ -66,7 +66,7 @@ Vector<Scalar,3>::~Vector()
 template <typename Scalar>
 Scalar& Vector<Scalar,3>::operator[] (unsigned int idx)
 {
-    if(idx<0||idx>=3)
+    if(idx>=3)
     {
         std::cout<<"Vector index out of range!\n";
         std::exit(EXIT_FAILURE);
@@ -81,7 +81,7 @@ Scalar& Vector<Scalar,3>::operator[] (unsigned int idx)
 template <typename Scalar>
 const Scalar& Vector<Scalar,3>::operator[] (unsigned int idx) const
 {
-    if(idx<0||idx>=3)
+    if(idx>=3)
     {
         std::cout<<"Vector index out of range!\n";
         std::exit(EXIT_FAILURE);

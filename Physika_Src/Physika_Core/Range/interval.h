@@ -48,9 +48,12 @@ public:
     static Interval<Scalar> unitInterval(); //[0,1]
 protected:
     Scalar min_val_, max_val_;
-protected:
-    PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                      "Interval<Scalar> are only defined for integer types and floating-point types.");
+private:
+    void compileTimeCheck()
+    {
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+                              "Interval<Scalar> are only defined for integer types and floating-point types.");
+    }
 };
 
 }  //end of namespace Physika

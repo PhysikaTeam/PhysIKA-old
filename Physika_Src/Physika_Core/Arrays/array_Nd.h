@@ -95,7 +95,6 @@ protected:
     unsigned int element_count_[Dim];  //number of element in each dimension
     ElementType *data_;  //data stored in 1D
 protected:
-    PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
     friend class ArrayNDIterator<ElementType,Dim>;
     friend class ArrayNDConstIterator<ElementType,Dim>;
 };

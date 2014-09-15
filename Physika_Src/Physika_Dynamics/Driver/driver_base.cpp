@@ -13,6 +13,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 #include "Physika_Dynamics/Driver/driver_base.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
 
@@ -97,7 +98,11 @@ void DriverBase<Scalar>::advanceFrame(unsigned int frame)
     //write to file
     if(write_to_file_)
     {
-        std::string file_name="Frame "+frame;
+        std::stringstream adaptor;
+        adaptor<<frame;
+        std::string frame_str;
+        adaptor>>frame_str;
+        std::string file_name=std::string("Frame ")+frame_str;
         write(file_name.c_str());
     }
 }

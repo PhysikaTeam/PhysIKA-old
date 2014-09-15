@@ -19,6 +19,7 @@ namespace Physika{
 template <typename ElementType,int Dim>
 ArrayND<ElementType,Dim>::ArrayND():data_(NULL)
 {
+    PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
 	for(unsigned int i = 0; i < Dim; ++i)
 		element_count_[i] = 0;
 }
@@ -26,6 +27,7 @@ ArrayND<ElementType,Dim>::ArrayND():data_(NULL)
 template <typename ElementType,int Dim>
 ArrayND<ElementType,Dim>::ArrayND(const std::vector<unsigned int> &element_counts):data_(NULL)
 {
+    PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
     if(element_counts.size()!=Dim)
     {
         std::cerr<<"Dimension of element counts mismatches the dimension of array!\n";
@@ -38,6 +40,7 @@ template <typename ElementType,int Dim>
 ArrayND<ElementType,Dim>::ArrayND(const std::vector<unsigned int> &element_counts, const ElementType &value)
     :data_(NULL)
 {
+    PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
     if(element_counts.size()!=Dim)
     {
         std::cerr<<"Dimension of element counts mismatches the dimension of array!\n";

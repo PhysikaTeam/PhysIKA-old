@@ -16,7 +16,6 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 
@@ -62,11 +61,6 @@ MatrixMxN<Scalar>::MatrixMxN(const MatrixMxN<Scalar> &mat2)
 template<typename Scalar>
 void MatrixMxN<Scalar>::allocMemory(unsigned int rows, unsigned int cols)
 { 
-    if(rows<0||cols<0)
-    {
-        std::cerr<<"Matrix size must be greater than zero!\n";
-        std::exit(EXIT_FAILURE);
-    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     ptr_eigen_matrix_MxN_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>(rows,cols);
     PHYSIKA_ASSERT(ptr_eigen_matrix_MxN_);
@@ -111,11 +105,6 @@ unsigned int MatrixMxN<Scalar>::cols() const
 template <typename Scalar>
 void MatrixMxN<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
 {
-    if(new_rows<0||new_cols<0)
-    {
-        std::cerr<<"Matrix size must be greater than zero!\n";
-        std::exit(EXIT_FAILURE);
-    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     (*ptr_eigen_matrix_MxN_).resize(new_rows,new_cols);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -127,7 +116,7 @@ void MatrixMxN<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
 template <typename Scalar>
 Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j)
 {
-    bool index_in_range = (i>=0&&i<(*this).rows())&&(j>=0&&j<(*this).cols());
+    bool index_in_range = (i<(*this).rows())&&(j<(*this).cols());
     if(!index_in_range)
     {
         std::cerr<<"Matrix index out of range!\n";
@@ -143,7 +132,7 @@ Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j)
 template <typename Scalar>
 const Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j) const
 {
-    bool index_in_range = (i>=0&&i<(*this).rows())&&(j>=0&&j<(*this).cols());
+    bool index_in_range = (i<(*this).rows())&&(j<(*this).cols());
     if(!index_in_range)
     {
         std::cerr<<"Matrix index out of range!\n";
@@ -455,7 +444,7 @@ Scalar MatrixMxN<Scalar>::determinant() const
         for(unsigned int ii = 1; ii < rows; ++ii)
             for(unsigned int jj =0; jj< cols; ++jj)
             {
-                if((jj==j)) continue;
+                if(jj==j) continue;
                 unsigned int row_idx = ii-1;
                 unsigned int col_idx = jj>j?jj-1:jj;
                 sub_mat(row_idx,col_idx) = (*this)(ii,jj);

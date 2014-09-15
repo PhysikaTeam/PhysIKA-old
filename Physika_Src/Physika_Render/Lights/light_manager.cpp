@@ -75,7 +75,7 @@ void LightManager::insertFront(Light * light_p)
 
 void LightManager::insertAtIndex(unsigned int index, Light *light)
 {
-    bool index_valid = (index>=0)&&(index<light_list_.size());
+    bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
         std::cerr<<"Light index out of range, operation will be ignored!\n";
@@ -124,7 +124,7 @@ void LightManager::removeFront()
 
 void LightManager::removeAtIndex(unsigned int index)
 {
-    bool index_valid = (index>=0)&&(index<light_list_.size());
+    bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
         std::cerr<<"light index out of range, operation will be ignored!!\n";
@@ -146,7 +146,7 @@ void LightManager::removeAll()
 
 const Light* LightManager::lightAtIndex(unsigned int index) const
 {
-    bool index_valid = (index>=0)&&(index<light_list_.size());
+    bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
         std::cerr<<"error: light index out of range, NULL is returned! \n";
@@ -164,7 +164,7 @@ const Light* LightManager::lightAtIndex(unsigned int index) const
 
 Light* LightManager::lightAtIndex(unsigned int index)
 {
-    bool index_valid = (index>=0)&&(index<light_list_.size());
+    bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
         std::cerr<<"error: Light index out of range, NULL is returned!!\n";
@@ -220,7 +220,7 @@ void LightManager::turnAllOff()
 
 void LightManager::turnLightOnAtIndex(unsigned int index)
 {
-    bool index_valid = (index>=0)&&(index<light_list_.size());
+    bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
         std::cerr<<"Light index out of range, operation will be ignored!!\n";
@@ -238,7 +238,7 @@ void LightManager::turnLightOnAtIndex(unsigned int index)
 
 void LightManager::turnLightOffAtIndex(unsigned int index)
 {
-    bool index_valid = (index>=0)&&(index<light_list_.size());
+    bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
         std::cerr<<"Light index out of range, operation will be ignored!!\n";
