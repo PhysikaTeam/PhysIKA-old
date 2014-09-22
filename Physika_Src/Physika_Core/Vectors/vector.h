@@ -32,9 +32,9 @@ public:
 private:
     void compileTimeCheck() //dummy method, only for compile time check
     {
-        //Vector<Scalar,Dim> is only defined for 2D&&3D&&4D with element type of integers and floating-point types
+        //Vector<Scalar,Dim> is only defined for 1D&&2D&&3D&&4D with element type of integers and floating-point types
         //compile time check
-        PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3||Dim==4,"Vector<Scalar,Dim> are only defined for Dim==2,3,4");
+        PHYSIKA_STATIC_ASSERT(Dim==1||Dim==2||Dim==3||Dim==4,"Vector<Scalar,Dim> are only defined for Dim==1,2,3,4");
         PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
                               "Vector<Scalar,Dim> are only defined for integer types and floating-point types.");
     }
