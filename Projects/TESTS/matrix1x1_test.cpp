@@ -20,14 +20,14 @@ using Physika::MatrixBase;
 int main()
 {
   cout<<"Matrix1x1 Test"<<endl;
-  Physika::Matrix1x1(double) mat_double(2.0);
+  Physika::SquareMatrix<double,1> mat_double(2.0);
   cout<<"A 1x1 matrix of double numbers:"<<endl;
   cout<<mat_double;
   cout<<"Rows: "<<mat_double.rows()<<" Cols: "<<mat_double.cols()<<endl;
   MatrixBase *base_pointer = &mat_double;
   cout<<"Test polymorphism, rows from MatrixBase pointer: "<<base_pointer->rows()<<endl;
   cout<<"Test polymorphism, cols from MatrixBase pointer: "<<base_pointer->cols()<<endl;
-  Physika::Matrix1x1(double) mat_double2(0.0);
+  Physika::SquareMatrix<double,1> mat_double2(0.0);
   cout<<"Another 1x1 matrix of double numbers:"<<endl;
   cout<<mat_double2;
   cout<<"matrix1 add matrix2: (+)"<<endl;
