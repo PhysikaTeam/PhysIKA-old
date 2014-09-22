@@ -17,7 +17,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/square_matrix.h"
-#include "Physika_Src/Physika_Dynamics/Rigid_Body/compressed_matrix.h"
+#include "Physika_Dynamics/Rigid_Body/compressed_matrix.h"
 
 namespace Physika{
 
