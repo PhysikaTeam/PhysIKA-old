@@ -18,6 +18,7 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver_utility.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Matrices/sparse_matrix_iterator.h"
+#include "Physika_Dynamics/Rigid_Body/rotation_dof.h"
 
 #include "Physika_Core/Timer/timer.h"
 
