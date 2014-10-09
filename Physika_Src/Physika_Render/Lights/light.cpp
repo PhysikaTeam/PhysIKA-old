@@ -95,6 +95,9 @@ GLenum Light::lightId() const
 void Light::setPosition(const Vector<float,3> &position)
 {
     this->light_position_ = position;
+
+	Vector<float,4> position_4(light_position_[0], light_position_[1], light_position_[2], 1.0f); // the last one is 1.0 to specify this light is position based.
+    openGLLightv(this->light_id_, GL_POSITION, position_4);
 }
 
 const Vector<float,3>& Light::position() const
