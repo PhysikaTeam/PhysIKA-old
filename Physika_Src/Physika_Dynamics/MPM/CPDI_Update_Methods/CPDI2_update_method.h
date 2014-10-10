@@ -26,6 +26,7 @@
 namespace Physika{
 
 template <typename Scalar, int Dim> class GridWeightFunction;
+template <typename ElementType, int Dim> ArrayND;
 
 /*
  * constructor is made protected to prohibit creating objects
