@@ -317,8 +317,8 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticlePosition(Scalar dt)
             Scalar approximate_integrate_shape_function_in_domain = gaussianIntegrateShapeFunctionValueInParticleDomain(multi_corner_idx,particle_domain);
             new_pos += 1.0/domain_volume*approximate_integrate_shape_function_in_domain*particle_domain_vec[flat_corner_idx];
         }
-        std::cout<<new_pos<<"\n";
-        getchar();
+        // std::cout<<particle.position()<<" "<<new_pos<<"\n";
+        // getchar();
         particle.setPosition(new_pos);
     }
 }
@@ -401,9 +401,9 @@ Scalar CPDI2UpdateMethod<Scalar,3>::gaussianIntegrateShapeFunctionValueInParticl
         for(unsigned int j = 0; j < 2; ++j)
             for(unsigned int k = 0; k < 2; ++k)
             {
-                Vector<Scalar,3> gauss_point((2*i-1)*one_over_sqrt_3,(2*j-1)*one_over_sqrt_3,(2*k-1)*one_over_sqrt_3);
+                Vector<Scalar,3> gauss_point((2.0*i-1)*one_over_sqrt_3,(2.0*j-1)*one_over_sqrt_3,(2.0*k-1)*one_over_sqrt_3);
                 SquareMatrix<Scalar,3> jacobian = particleDomainJacobian(gauss_point,particle_domain);
-                Scalar shape_function = 0.125*(1+(2*i-1)*gauss_point[0])*(1+(2*j-1)*gauss_point[1])*(1+(2*k-1)*gauss_point[2]);
+                Scalar shape_function = 0.125*(1+(2.0*i-1)*gauss_point[0])*(1+(2.0*j-1)*gauss_point[1])*(1+(2.0*k-1)*gauss_point[2]);
                 result += shape_function*jacobian.determinant();
             }
     return result;
@@ -419,14 +419,14 @@ Vector<Scalar,3> CPDI2UpdateMethod<Scalar,3>::gaussianIntegrateShapeFunctionGrad
         for(unsigned int j = 0; j < 2; ++j)
             for(unsigned int k = 0; k < 2; ++k)
             {
-                Vector<Scalar,3> gauss_point((2*i-1)*one_over_sqrt_3,(2*j-1)*one_over_sqrt_3,(2*k-1)*one_over_sqrt_3);
+                Vector<Scalar,3> gauss_point((2.0*i-1)*one_over_sqrt_3,(2.0*j-1)*one_over_sqrt_3,(2.0*k-1)*one_over_sqrt_3);
                 SquareMatrix<Scalar,3> jacobian = particleDomainJacobian(gauss_point,particle_domain);
                 SquareMatrix<Scalar,3> jacobian_inv_trans = jacobian.inverse().transpose();
                 Scalar jacobian_det = jacobian.determinant();
                 Vector<Scalar,3> shape_function_derivative;
-                shape_function_derivative[0] = 0.125*(2*i-1)*(1+(2*j-1)*gauss_point[1])*(1+(2*k-1)*gauss_point[2]);
-                shape_function_derivative[1] = 0.125*(1+(2*i-1)*gauss_point[0])*(2*j-1)*(1+(2*k-1)*gauss_point[2]);
-                shape_function_derivative[2] = 0.125*(1+(2*i-1)*gauss_point[0])*(1+(2*j-1)*gauss_point[1])*(2*k-1);
+                shape_function_derivative[0] = 0.125*(2.0*i-1)*(1+(2.0*j-1)*gauss_point[1])*(1+(2.0*k-1)*gauss_point[2]);
+                shape_function_derivative[1] = 0.125*(1+(2.0*i-1)*gauss_point[0])*(2.0*j-1)*(1+(2.0*k-1)*gauss_point[2]);
+                shape_function_derivative[2] = 0.125*(1+(2.0*i-1)*gauss_point[0])*(1+(2.0*j-1)*gauss_point[1])*(2.0*k-1);
                 result += jacobian_inv_trans*shape_function_derivative*jacobian_det;
             }
     return result;
@@ -445,9 +445,9 @@ SquareMatrix<Scalar,3> CPDI2UpdateMethod<Scalar,3>::particleDomainJacobian(const
         Vector<Scalar,3> domain_corner = *iter;
         for(unsigned int row = 0; row < 3; ++row)
         {
-            jacobian(row,0) += 0.125*(2*ele_idx[0]-1)*(1+(2*ele_idx[1]-1)*eval_point[1])*(1+(2*ele_idx[2]-1)*eval_point[2])*domain_corner[row];
-            jacobian(row,1) += 0.125*(1+(2*ele_idx[0]-1)*eval_point[0])*(2*ele_idx[1]-1)*(1+(2*ele_idx[2]-1)*eval_point[2])*domain_corner[row];
-            jacobian(row,2) += 0.125*(1+(2*ele_idx[0]-1)*eval_point[0])*(1+(2*ele_idx[1]-1)*eval_point[1])*(2*ele_idx[2]-1)*domain_corner[row];
+            jacobian(row,0) += 0.125*(2.0*ele_idx[0]-1)*(1+(2.0*ele_idx[1]-1)*eval_point[1])*(1+(2.0*ele_idx[2]-1)*eval_point[2])*domain_corner[row];
+            jacobian(row,1) += 0.125*(1+(2.0*ele_idx[0]-1)*eval_point[0])*(2.0*ele_idx[1]-1)*(1+(2.0*ele_idx[2]-1)*eval_point[2])*domain_corner[row];
+            jacobian(row,2) += 0.125*(1+(2.0*ele_idx[0]-1)*eval_point[0])*(1+(2.0*ele_idx[1]-1)*eval_point[1])*(2.0*ele_idx[2]-1)*domain_corner[row];
         }
     }
     return jacobian;
