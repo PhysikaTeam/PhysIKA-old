@@ -403,7 +403,7 @@ Scalar CPDI2UpdateMethod<Scalar,3>::gaussianIntegrateShapeFunctionValueInParticl
             {
                 Vector<Scalar,3> gauss_point((2.0*i-1)*one_over_sqrt_3,(2.0*j-1)*one_over_sqrt_3,(2.0*k-1)*one_over_sqrt_3);
                 SquareMatrix<Scalar,3> jacobian = particleDomainJacobian(gauss_point,particle_domain);
-                Scalar shape_function = 0.125*(1+(2.0*i-1)*gauss_point[0])*(1+(2.0*j-1)*gauss_point[1])*(1+(2.0*k-1)*gauss_point[2]);
+                Scalar shape_function = 0.125*(1+(2.0*corner_idx[0]-1)*gauss_point[0])*(1+(2.0*corner_idx[1]-1)*gauss_point[1])*(1+(2.0*corner_idx[2]-1)*gauss_point[2]);
                 result += shape_function*jacobian.determinant();
             }
     return result;
@@ -424,9 +424,9 @@ Vector<Scalar,3> CPDI2UpdateMethod<Scalar,3>::gaussianIntegrateShapeFunctionGrad
                 SquareMatrix<Scalar,3> jacobian_inv_trans = jacobian.inverse().transpose();
                 Scalar jacobian_det = jacobian.determinant();
                 Vector<Scalar,3> shape_function_derivative;
-                shape_function_derivative[0] = 0.125*(2.0*i-1)*(1+(2.0*j-1)*gauss_point[1])*(1+(2.0*k-1)*gauss_point[2]);
-                shape_function_derivative[1] = 0.125*(1+(2.0*i-1)*gauss_point[0])*(2.0*j-1)*(1+(2.0*k-1)*gauss_point[2]);
-                shape_function_derivative[2] = 0.125*(1+(2.0*i-1)*gauss_point[0])*(1+(2.0*j-1)*gauss_point[1])*(2.0*k-1);
+                shape_function_derivative[0] = 0.125*(2.0*corner_idx[0]-1)*(1+(2.0*corner_idx[1]-1)*gauss_point[1])*(1+(2.0*corner_idx[2]-1)*gauss_point[2]);
+                shape_function_derivative[1] = 0.125*(1+(2.0*corner_idx[0]-1)*gauss_point[0])*(2.0*corner_idx[1]-1)*(1+(2.0*corner_idx[2]-1)*gauss_point[2]);
+                shape_function_derivative[2] = 0.125*(1+(2.0*corner_idx[0]-1)*gauss_point[0])*(1+(2.0*corner_idx[1]-1)*gauss_point[1])*(2.0*corner_idx[2]-1);
                 result += jacobian_inv_trans*shape_function_derivative*jacobian_det;
             }
     return result;
