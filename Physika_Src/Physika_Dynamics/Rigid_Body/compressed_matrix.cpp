@@ -16,6 +16,8 @@
 #include "Physika_Core/Vectors/vector_1d.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Matrices/matrix_1x1.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Matrices/square_matrix.h"
 #include "Physika_Dynamics/Rigid_Body/compressed_matrix.h"
 
@@ -61,6 +63,12 @@ CompressedJacobianMatrix<Scalar, Dim>::~CompressedJacobianMatrix()
 }
 
 template<typename Scalar, int Dim>
+bool CompressedJacobianMatrix<Scalar, Dim>::isTransposed() const
+{
+    return is_transposed_;
+}
+
+template<typename Scalar, int Dim>
 unsigned int CompressedJacobianMatrix<Scalar, Dim>::rows() const
 {
     return num_row_element_;
@@ -90,6 +98,7 @@ void CompressedJacobianMatrix<Scalar, Dim>::setFirstValue(unsigned int row_index
         value[Dim + i] = value_rotation[i];
     }
     compressed_matrix_[row_index].first = value;
+    index_map_[row_index].first = column_index;
 }
 
 template<typename Scalar, int Dim>
@@ -110,6 +119,7 @@ void CompressedJacobianMatrix<Scalar, Dim>::setSecondValue(unsigned int row_inde
         value[Dim + i] = value_rotation[i];
     }
     compressed_matrix_[row_index].second = value;
+    index_map_[row_index].second = column_index;
 }
 
 template<typename Scalar, int Dim>
@@ -117,7 +127,7 @@ VectorND<Scalar> CompressedJacobianMatrix<Scalar, Dim>::firstValue (unsigned int
 {
     if(row_index >= num_row_element_)
     {
-        std::cerr<<"Index out of range when getting CompressedJacobianMatrix"<<std::endl;
+        std::cerr<<"Index out of range when getting CompressedJacobianMatrix's value"<<std::endl;
         VectorND<Scalar> error_return;
         return error_return;
     }
@@ -129,24 +139,50 @@ VectorND<Scalar> CompressedJacobianMatrix<Scalar, Dim>::secondValue (unsigned in
 {
     if(row_index >= num_row_element_)
     {
-        std::cerr<<"Index out of range when getting CompressedJacobianMatrix"<<std::endl;
-         VectorND<Scalar> error_return;
+        std::cerr<<"Index out of range when getting CompressedJacobianMatrix's value"<<std::endl;
+        VectorND<Scalar> error_return;
         return error_return;
     }
     return compressed_matrix_[row_index].second;
 }
 
 template<typename Scalar, int Dim>
+unsigned int CompressedJacobianMatrix<Scalar, Dim>::firstColumnIndex(unsigned int row_index) const
+{
+    if(row_index >= num_row_element_)
+    {
+        std::cerr<<"Index out of range when getting CompressedJacobianMatrix's index"<<std::endl;
+        return 0;
+    }
+    return index_map_[row_index].first;
+}
+
+template<typename Scalar, int Dim>
+unsigned int CompressedJacobianMatrix<Scalar, Dim>::secondColumnIndex(unsigned int row_index) const
+{
+    if(row_index >= num_row_element_)
+    {
+        std::cerr<<"Index out of range when getting CompressedJacobianMatrix's index"<<std::endl;
+        return 0;
+    }
+    return index_map_[row_index].second;
+}
+
+template<typename Scalar, int Dim>
 void CompressedJacobianMatrix<Scalar, Dim>::resize(unsigned int num_row_element, unsigned int num_column_element)
 {
-
+    is_transposed_ = false;
+    num_row_element_ = num_row_element;
+    num_columns_element_ = num_column_element;
+    compressed_matrix_.resize(num_row_element);
+    index_map_.resize(num_row_element);
 }
 
 template<typename Scalar, int Dim>
 CompressedJacobianMatrix<Scalar, Dim> CompressedJacobianMatrix<Scalar, Dim>::transpose() const
 {
     CompressedJacobianMatrix<Scalar, Dim> transposed(*this);
-    transposed.is_transposed_ = true;
+    transposed.is_transposed_ = !this->isTransposed();
     return transposed;
 }
 
@@ -167,9 +203,25 @@ CompressedJacobianMatrix<Scalar, Dim>& CompressedJacobianMatrix<Scalar, Dim>::op
 ///////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Scalar, int Dim>
-CompressedInertiaMatrix<Scalar, Dim>::CompressedInertiaMatrix()
+CompressedInertiaMatrix<Scalar, Dim>::CompressedInertiaMatrix():
+    num_element_(0)
 {
 
+}
+
+template<typename Scalar, int Dim>
+CompressedInertiaMatrix<Scalar, Dim>::CompressedInertiaMatrix(const CompressedInertiaMatrix<Scalar, Dim>& matrix):
+    num_element_(matrix.num_element_),
+    compressed_matrix_(matrix.compressed_matrix_)
+{
+
+}
+
+template<typename Scalar, int Dim>
+CompressedInertiaMatrix<Scalar, Dim>::CompressedInertiaMatrix(unsigned int num_element):
+    num_element_(num_element)
+{
+    resize(num_element);
 }
 
 template<typename Scalar, int Dim>
@@ -181,32 +233,72 @@ CompressedInertiaMatrix<Scalar, Dim>::~CompressedInertiaMatrix()
 template<typename Scalar, int Dim>
 unsigned int CompressedInertiaMatrix<Scalar, Dim>::numElement() const
 {
-    return 0;
+    return num_element_;
 }
 
 template<typename Scalar, int Dim>
 void CompressedInertiaMatrix<Scalar, Dim>::setMass(unsigned int index, Scalar mass)
 {
-
+    if(index >= num_element_)
+    {
+        std::cerr<<"Index out of range when getting CompressedInertiaMatrix"<<std::endl;
+        return;
+    }
+    VectorND<Scalar> row(Dim + RotationDof<Dim>::degree);
+    for(unsigned int i = 0; i < Dim; ++i)
+    {
+        row *= 0;
+        row[i] = mass;
+        compressed_matrix_[(Dim + RotationDof<Dim>::degree) * index + i] = row;
+    }
 }
 
 template<typename Scalar, int Dim>
 void CompressedInertiaMatrix<Scalar, Dim>::setInertiaTensor(unsigned int index, SquareMatrix<Scalar, RotationDof<Dim>::degree> inertia_tensor)
 {
-
+    if(index >= num_element_)
+    {
+        std::cerr<<"Index out of range when getting CompressedInertiaMatrix"<<std::endl;
+        return;
+    }
+    VectorND<Scalar> row(Dim + RotationDof<Dim>::degree);
+    for(unsigned int i = 0; i < RotationDof<Dim>::degree; ++i)
+    {
+        row *= 0;
+        for(unsigned int j = 0; j < RotationDof<Dim>::degree; ++j)
+        {
+            row[Dim + j] = inertia_tensor(i, j);
+        }
+        compressed_matrix_[(Dim + RotationDof<Dim>::degree) * index + Dim + i] = row;
+    }
 }
 
 template<typename Scalar, int Dim>
 VectorND<Scalar> CompressedInertiaMatrix<Scalar, Dim>::value(unsigned int index, unsigned int inner_index) const
 {
-    VectorND<Scalar> a;
-    return a;
+    if(index >= num_element_ || inner_index >= (Dim + RotationDof<Dim>::degree))
+    {
+        std::cerr<<"Index out of range when getting CompressedInertiaMatrix"<<std::endl;
+        VectorND<Scalar> error_return;
+        return error_return;
+    }
+    return compressed_matrix_[(Dim + RotationDof<Dim>::degree) * index + inner_index];
 }
 
 template<typename Scalar, int Dim>
 void CompressedInertiaMatrix<Scalar, Dim>::resize(unsigned int num_element)
 {
+    num_element_ = num_element;
+    compressed_matrix_.resize((Dim + RotationDof<Dim>::degree) * num_element);
+}
 
+template<typename Scalar, int Dim>
+CompressedInertiaMatrix<Scalar, Dim>& CompressedInertiaMatrix<Scalar, Dim>::operator= (const CompressedInertiaMatrix<Scalar, Dim>& matrix)
+{
+    CompressedInertiaMatrix<Scalar, Dim> temp_matrix(matrix);
+    num_element_ = matrix.num_element_;
+    compressed_matrix_.swap(temp_matrix.compressed_matrix_);
+    return *this;
 }
 
 template class CompressedJacobianMatrix<float, 2>;
