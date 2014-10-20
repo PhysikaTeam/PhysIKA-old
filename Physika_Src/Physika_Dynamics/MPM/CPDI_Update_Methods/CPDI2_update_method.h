@@ -20,12 +20,14 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI_update_method.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim> class GridWeightFunction;
+template <typename ElementType, int Dim> class ArrayND;
 
 /*
  * constructor is made protected to prohibit creating objects
@@ -95,6 +97,12 @@ protected:
                                                    unsigned int &particle_grid_pair_num,
                                                    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
                                                    std::vector<unsigned int> &corner_grid_pair_num);
+    //approximate integration of element shape function (gradient) over particle domain, using 2x2x2 Gauss integration points
+    Scalar gaussianIntegrateShapeFunctionValueInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
+    Vector<Scalar,3> gaussianIntegrateShapeFunctionGradientInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
+    //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate
+    //derivative with respect to vector is represented as row vector
+    SquareMatrix<Scalar,3> particleDomainJacobian(const Vector<Scalar,3> &eval_point, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
 };
 
 }  //end of namespace Physika

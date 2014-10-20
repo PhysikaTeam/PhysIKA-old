@@ -1,6 +1,6 @@
 /*
- * @file matrix2x2_test.cpp 
- * @brief Test the Matrix2x2 class.
+ * @file matrix1x1_test.cpp 
+ * @brief Test the Matrix1x1 class.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -13,22 +13,22 @@
  */
 
 #include <iostream>
-#include "Physika_Core/Matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_1x1.h"
 using namespace std;
 using Physika::MatrixBase;
 
 int main()
 {
-  cout<<"Matrix2x2 Test"<<endl;
-  Physika::SquareMatrix<double,2> mat_double(2.0,1.0,1.0,2.0);
-  cout<<"A 2x2 matrix of double numbers:"<<endl;
+  cout<<"Matrix1x1 Test"<<endl;
+  Physika::SquareMatrix<double,1> mat_double(2.0);
+  cout<<"A 1x1 matrix of double numbers:"<<endl;
   cout<<mat_double;
   cout<<"Rows: "<<mat_double.rows()<<" Cols: "<<mat_double.cols()<<endl;
   MatrixBase *base_pointer = &mat_double;
   cout<<"Test polymorphism, rows from MatrixBase pointer: "<<base_pointer->rows()<<endl;
   cout<<"Test polymorphism, cols from MatrixBase pointer: "<<base_pointer->cols()<<endl;
-  Physika::SquareMatrix<double,2> mat_double2(0.0,1.0,3.0,0.0);
-  cout<<"Another 2x2 matrix of double numbers:"<<endl;
+  Physika::SquareMatrix<double,1> mat_double2(0.0);
+  cout<<"Another 1x1 matrix of double numbers:"<<endl;
   cout<<mat_double2;
   cout<<"matrix1 add matrix2: (+)"<<endl;
   cout<<mat_double+mat_double2<<endl;

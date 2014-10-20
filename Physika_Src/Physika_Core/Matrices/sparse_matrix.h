@@ -25,8 +25,8 @@
 
 namespace Physika{
 
-/* class Trituple is used to store a node's message in the orthogonal list
- * every member in class Trituple is public.
+/*
+ * class Trituple is used to store a node's message in the orthogonal list
  */
 
 template <typename Scalar> class SparseMatrixIterator;
@@ -34,27 +34,15 @@ template <typename Scalar>
 class Trituple
 {
 public:
-    Trituple()
-    {
-        row_ = col_ = value_ = 0;
-        row_next_ = NULL;
-        col_next_ = NULL;
-    }
+    Trituple():row_(0),col_(0),value_(0),row_next_(NULL),col_next_(NULL){}
     Trituple(unsigned int row, unsigned int col, Scalar value)
+        :row_(row),col_(col),value_(value),row_next_(NULL),col_next_(NULL){}
+    bool operator==(const Trituple<Scalar> &tri2) const
     {
-        row_ = row;
-        col_ = col;
-        value_ = value;
-        row_next_ = col_next_ = NULL;
+        if(tri2.row_ == row_ && tri2.col_ == col_ && tri2.value_ == value_)return true;
+        return false;	
     }
-    bool operator==(const Trituple<Scalar> &tri2)
-    {
-        if(tri2.row_ != row_)return false;
-        if(tri2.col_ != col_)return false;
-        if(tri2.value_ != value_)return false;
-        return true;
-    }
-    bool operator!=(const Trituple<Scalar> &tri2)
+    bool operator!=(const Trituple<Scalar> &tri2) const
     {
         if(tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_)return true;
         return false;		
@@ -83,6 +71,9 @@ public:
 	{
 		value_ = k;
 	}
+    unsigned int row() const { return row_;}
+    unsigned int col() const { return col_;}
+    Scalar value() const { return value_;}
 private:
     unsigned int row_;
     unsigned int col_;
