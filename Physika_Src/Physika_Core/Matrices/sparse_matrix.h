@@ -71,6 +71,18 @@ public:
     {
         return value_;
     }
+	void setRow(unsigned int i)
+	{
+		row_ = i;
+	}
+	void setCol(unsigned int j)
+	{
+		col_ = j;
+	}
+	void setValue(Scalar k)
+	{
+		value_ = k;
+	}
 private:
     unsigned int row_;
     unsigned int col_;
