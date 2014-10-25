@@ -20,9 +20,12 @@
 #include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Timer/timer.h"
 #include "Physika_Core/Matrices/sparse_matrix_iterator.h"
-#define Max1 10
-#define Max2 10
-#define Max  100
+#include "Physika_Core/Matrices/matrix_MxN.h"
+
+#define Max1 312
+#define Max2 12
+#define Max3 156
+#define Max  3000
 #define Maxv 10
 
 using namespace std;
@@ -71,7 +74,7 @@ void compare(const Physika::VectorND<float> &a, const Eigen::SparseVector<float>
 }
 int main()
 {
-	/*
+	
     {
     cout<<"基本功能测试"<<endl;
     Physika::SparseMatrix<float> m1(5,5);
@@ -144,7 +147,7 @@ int main()
     //getchar();
     
     }
-	*/
+	
 	Physika::Timer timer;
     srand(time(NULL));
     cout<<"特定功能 高级测试"<<endl;
@@ -204,12 +207,12 @@ int main()
     compare(psm4,esm4);
     cout<<endl<<endl;
 
-
+	cout << "###############################" << endl;
     cout<<"multiply effectiveness"<<endl;
 
 	Physika::SparseMatrix<float> psm2(Max1, Max2);
-	Physika::SparseMatrix<float> psm3(Max2, Max1);
-    Eigen::SparseMatrix<float> esm2(Max1, Max2), esm3(Max2, Max1);
+	Physika::SparseMatrix<float> psm3(Max2, Max3);
+    Eigen::SparseMatrix<float> esm2(Max1, Max2), esm3(Max2, Max3);
     for(unsigned int i=0;i<Max;++i)
     {
         unsigned int row = rand()%Max1;
@@ -219,7 +222,7 @@ int main()
         esm2.coeffRef(row,col) = v;
 
         row = rand()%Max2;
-        col = rand()%Max1;
+        col = rand()%Max3;
         v = rand()%Max +1;
         psm3.setEntry(row,col,v);
         esm3.coeffRef(row,col) = v;
@@ -234,6 +237,29 @@ int main()
 	timer.stopTimer();
     cout<<"eigen * consume time:"<<timer.getElapsedTime()<<endl;
     compare(psm5,esm5);
+
+	cout << "#####################################" << endl;
+
+	Eigen::SparseMatrix<float,Eigen::RowMajor> esm2_(Max1, Max2);
+	Eigen::SparseMatrix<float,Eigen::ColMajor> esm3_(Max2, Max3);
+	for (unsigned int i = 0; i<Max; ++i)
+	{
+		unsigned int row = rand() % Max1;
+		unsigned int col = rand() % Max2;
+		float v = rand() % Max + 1;
+		esm2_.coeffRef(row, col) = v;
+
+		row = rand() % Max2;
+		col = rand() % Max3;
+		v = rand() % Max + 1;
+		esm3_.coeffRef(row, col) = v;
+	}
+
+	timer.startTimer();
+	Eigen::SparseMatrix<float> esm5_ = esm2_*esm3_;
+	timer.stopTimer();
+	cout << "modified  eigen * consume time:" << timer.getElapsedTime() << endl;
+	cout << "##########################################" << endl;
 
 	cout << "vector multiply sparse matrix effeciency" << endl;
 
@@ -260,7 +286,7 @@ int main()
 	cout << "correctness of SparseMatrix * Vector:" << endl;
 	compare(pr, er);
 
-	cout << "vector * matrix effectiveness" << endl;
+	//cout << "vector * matrix effectiveness" << endl;
 	timer.startTimer();
 	Physika::VectorND<float> pr_T = Physika_vec_T*psm2;
 	timer.stopTimer();
@@ -295,5 +321,37 @@ int main()
     if(correctness) cout<<"correctness OK!"<<endl;
     else cout<<"correctness bad!"<<endl;
     */
+	cout << endl;
+	cout << "***************************************" << endl;
+	cout << "***************************************" << endl;
+	cout << endl;
+	cout << "稠密矩阵测试" << endl;
+	Physika::MatrixMxN<float> pm1(Max1, Max2), pm2(Max2, Max3);
+	Eigen::Matrix<float, Max1, Max2> em1;
+	Eigen::Matrix<float, Max2, Max3> em2;
+	for (unsigned int i = 0; i<Max; ++i)
+	{
+		unsigned int row = rand() % Max1;
+		unsigned int col = rand() % Max2;
+		float v = rand() % Max + 1;
+		pm1(row, col) = v;
+		em1.coeffRef(row, col) = v;
+
+		row = rand() % Max2;
+		col = rand() % Max3;
+		v = rand() % Max + 1;
+		pm2(row, col) = v;
+		em2.coeffRef(row, col) = v;
+	}
+	timer.startTimer();
+	/*Physika::MatrixMxN<float> pm3 = pm1*pm2;
+	timer.stopTimer();
+	cout << "ok?" << endl;
+	cout << "physika * consume time:" << timer.getElapsedTime() << endl;*/
+	timer.startTimer();
+	/*Eigen::Matrix<float,Eigen::Dynamic,Eigen::Dynamic> em3 =*/ em1*em2;
+	timer.stopTimer();
+	cout << "eigen * consume time:" << timer.getElapsedTime() << endl;
+
     return 0;
 }

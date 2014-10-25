@@ -20,8 +20,10 @@
 #include "Physika_Dynamics/Rigid_Body/rigid_body_driver_utility.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Dynamics/Rigid_Body/rotation_dof.h"
+#include "Physika_Dynamics/Rigid_Body/compressed_matrix.h"
 
-
+#include "Physika_Core/Timer/timer.h"
 
 namespace Physika{
 
@@ -40,23 +42,24 @@ RigidResponseMethodBLCP<Scalar, Dim>::~RigidResponseMethodBLCP()
 template <typename Scalar, int Dim>
 void RigidResponseMethodBLCP<Scalar, Dim>::collisionResponse()
 {
-    /*
+    Timer t;
+    t.startTimer();
     //initialize
     unsigned int m = this->rigid_driver_->numContactPoint();//m: number of contact points
     unsigned int n = this->rigid_driver_->numRigidBody();//n: number of rigid bodies
     if(m == 0 || n == 0)//no collision or no rigid body
         return;
 
-    unsigned int six_n = n * 6;//six_n: designed only for 3-dimension rigid bodies. The DoF(Degree of Freedom) of a rigid-body system
+    unsigned int dof = n * (Dim + RotationDof<Dim>::degree);//DoF(Degree of Freedom) of a rigid-body system
     unsigned int fric_sample_count = 2;//count of friction sample directions
     unsigned int s = m * fric_sample_count;//s: number of friction sample. Here a square sample is adopted
-    std::vector<std::pair<VectorND<Scalar>, VectorND<Scalar> > > J(m);//Jacobian matrix. (m, six_n) dimension when uncompressed, (m, 12) dimension after compression
-    std::vector<std::pair<VectorND<Scalar>, VectorND<Scalar> > > D(s);//Jacobian matrix of friction. (s, six_n) dimension when uncompressed, (s, 12) dimension after compression
-    std::vector<VectorND<Scalar> > M(six_n);//inertia matrix. (six_n, six_n) dimension when uncompressed, (six_n, 6) dimension after compression
-    std::vector<VectorND<Scalar> > M_inv(six_n);//inversed inertia matrix. (six_n, six_n) dimension when uncompressed, (six_n, 6) dimension after compression
-    std::vector<std::pair<VectorND<Scalar>, VectorND<Scalar> > > MJ(m);//M * J. (six_n, m) dimension when uncompressed, (12, m) dimension after compression
-    std::vector<std::pair<VectorND<Scalar>, VectorND<Scalar> > > MD(s);//M * D. (six_n, s) dimension when uncompressed, (12, s) dimension after compression
-    VectorND<Scalar> v(six_n, 0);//generalized velocity of the system
+    CompressedJacobianMatrix<Scalar, Dim> J(m, n);//Jacobian matrix. (m, dof) dimension when uncompressed, (m, 12) dimension after compression
+    CompressedJacobianMatrix<Scalar, Dim> D(s, n);//Jacobian matrix of friction. (s, dof) dimension when uncompressed, (s, 12) dimension after compression
+    CompressedInertiaMatrix<Scalar, Dim> M(n);//inertia matrix. (dof, dof) dimension when uncompressed, (dof, 6) dimension after compression
+    CompressedInertiaMatrix<Scalar, Dim> M_inv(n);//inversed inertia matrix. (dof, dof) dimension when uncompressed, (dof, 6) dimension after compression
+    CompressedJacobianMatrix<Scalar, Dim> MJ(n, m);//M * J. (dof, m) dimension when uncompressed, (12, m) dimension after compression
+    CompressedJacobianMatrix<Scalar, Dim> MD(n, s);//M * D. (dof, s) dimension when uncompressed, (12, s) dimension after compression
+    VectorND<Scalar> v(dof, 0);//generalized velocity of the system
     VectorND<Scalar> Jv(m, 0);//normal relative velocity of each contact point (for normal contact impulse calculation)
     VectorND<Scalar> post_Jv(m, 0);//expected post-impact normal relative velocity of each contact point (for normal contact impulse calculation)
     VectorND<Scalar> Dv(s, 0);//tangent relative velocity of each contact point (for frictional contact impulse calculation)
@@ -69,8 +72,31 @@ void RigidResponseMethodBLCP<Scalar, Dim>::collisionResponse()
     RigidBodyDriverUtility<Scalar, Dim>::computeJacobianMatrix(this->rigid_driver_, J);
     RigidBodyDriverUtility<Scalar, Dim>::computeFricJacobianMatrix(this->rigid_driver_, D);
     RigidBodyDriverUtility<Scalar, Dim>::computeGeneralizedVelocity(this->rigid_driver_, v);
-    */
     
+    //compute other matrix in need
+    CompressedJacobianMatrix<Scalar, Dim> J_T = J;
+    J_T = J.transpose();
+    CompressedJacobianMatrix<Scalar, Dim> D_T = D;
+    D_T = D.transpose();
+    MJ = M_inv * J_T;
+    MD = M_inv * D_T;
+    Jv = J * v;
+    Dv = D * v;
+    t.stopTimer();
+    //std::cout<<t.getElapsedTime()<<std::endl;
+    //update CoR and CoF
+    RigidBodyDriverUtility<Scalar, Dim>::computeCoefficient(this->rigid_driver_, CoR, CoF);
+    
+    //calculate the expected post-impact velocity
+    for(unsigned int i = 0; i < m; ++i)
+        post_Jv[i] = -Jv[i] * CoR[i];
+
+    //solve BLCP with PGS. z_norm and z_fric are the unknown variables
+    RigidBodyDriverUtility<Scalar, Dim>::solveBLCPWithPGS(this->rigid_driver_, J, D, MJ, MD, Jv, post_Jv, Dv, z_norm, z_fric, CoR, CoF, 20);
+    //apply impulse
+    RigidBodyDriverUtility<Scalar, Dim>::applyImpulse(this->rigid_driver_, z_norm, z_fric, J_T, D_T);
+    
+    /*
     //initialize
     unsigned int m = this->rigid_driver_->numContactPoint();//m: number of contact points
     unsigned int n = this->rigid_driver_->numRigidBody();//n: number of rigid bodies
@@ -131,7 +157,7 @@ void RigidResponseMethodBLCP<Scalar, Dim>::collisionResponse()
 
     //apply impulse
     RigidBodyDriverUtility<Scalar, Dim>::applyImpulse(this->rigid_driver_, z_norm, z_fric, J_T, D_T);
-
+    */
     
 }
 

@@ -47,6 +47,30 @@ public:
         if(tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_)return true;
         return false;		
     }
+    unsigned int row()
+    {
+        return row_;
+    }
+    unsigned int col()
+    {
+        return col_;
+    }
+    Scalar value()
+    {
+        return value_;
+    }
+	void setRow(unsigned int i)
+	{
+		row_ = i;
+	}
+	void setCol(unsigned int j)
+	{
+		col_ = j;
+	}
+	void setValue(Scalar k)
+	{
+		value_ = k;
+	}
     unsigned int row() const { return row_;}
     unsigned int col() const { return col_;}
     Scalar value() const { return value_;}
