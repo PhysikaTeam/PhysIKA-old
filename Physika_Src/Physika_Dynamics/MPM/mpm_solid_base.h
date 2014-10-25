@@ -17,6 +17,8 @@
 
 #include <string>
 #include <vector>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 
 namespace Physika{
@@ -51,6 +53,9 @@ public:
     const SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int particle_idx);
     const std::vector<SolidParticle<Scalar,Dim>*>& allParticles() const;  //get all the simulation particles
+    //set and get external force on particles, gravity is not included
+    Vector<Scalar,Dim> externalForceOnParticle(unsigned int particle_idx) const;
+    void setExternalForceOnParticle(unsigned int particle_idx, const Vector<Scalar,Dim> &force);   
     //particles used as Dirichlet boundary condition, velocity is prescribed 
     void addDirichletParticle(unsigned int particle_idx);  //the particle is set as boundary condition
     void addDirichletParticles(const std::vector<unsigned int> &particle_idx); //the particles are set as boundary condition
@@ -63,6 +68,7 @@ public:
     virtual void updateParticleInterpolationWeight()=0;  //compute the interpolation weight between particles and grid nodes
     virtual void updateParticleConstitutiveModelState(Scalar dt)=0; //update the constitutive model state of particle, e.g., deformation gradient
     virtual void updateParticleVelocity()=0;  //update particle velocity using grid data
+    virtual void applyExternalForceOnParticles(Scalar dt)=0;  //external force (gravity excluded) is applied on particles
     virtual void updateParticlePosition(Scalar dt)=0;  //update particle position with new particle velocity
     
     //different time integration methods
@@ -88,6 +94,7 @@ protected:
     std::vector<unsigned char> is_dirichlet_particle_;  //for each particle in particles_, 
                                                         //use one byte to indicate whether it's set as dirichlet boundary condition
     std::vector<Scalar> particle_initial_volume_;
+    std::vector<Vector<Scalar,Dim> > particle_external_force_; //external force(/N), not acceleration
     IntegrationMethod integration_method_; 
 };
 

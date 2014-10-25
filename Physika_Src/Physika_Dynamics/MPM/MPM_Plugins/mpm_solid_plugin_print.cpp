@@ -31,13 +31,11 @@ MPMSolidPluginPrint<Scalar,Dim>::~MPMSolidPluginPrint()
 template <typename Scalar, int Dim>
 void MPMSolidPluginPrint<Scalar,Dim>::onBeginFrame(unsigned int frame)
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginPrint<Scalar,Dim>::onEndFrame(unsigned int frame)
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
@@ -92,6 +90,12 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginPrint<Scalar,Dim>::onUpdateParticleVelocity()
 {
     std::cout<<"Update particle velocity with grid velocity.\n";
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginPrint<Scalar,Dim>::onApplyExternalForceOnParticles(Scalar dt)
+{
+    std::cout<<"Apply external force on particles.\n";
 }
 
 template <typename Scalar, int Dim>

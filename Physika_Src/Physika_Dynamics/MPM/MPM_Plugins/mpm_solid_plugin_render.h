@@ -65,6 +65,7 @@ public:
     virtual void onUpdateParticleInterpolationWeight();
     virtual void onUpdateParticleConstitutiveModelState(Scalar dt);
     virtual void onUpdateParticleVelocity();
+    virtual void onApplyExternalForceOnParticles(Scalar dt);
     virtual void onUpdateParticlePosition(Scalar dt);
 
     //setters&&getters

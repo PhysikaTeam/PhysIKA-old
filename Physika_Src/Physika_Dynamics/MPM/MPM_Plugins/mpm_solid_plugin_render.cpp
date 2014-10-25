@@ -189,6 +189,11 @@ void MPMSolidPluginRender<Scalar,Dim>::onUpdateParticleVelocity()
 }
 
 template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::onApplyExternalForceOnParticles(Scalar dt)
+{
+}
+
+template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onUpdateParticlePosition(Scalar dt)
 {
 }

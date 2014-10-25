@@ -139,6 +139,28 @@ const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allPart
 }
 
 template <typename Scalar, int Dim>
+Vector<Scalar,Dim> MPMSolidBase<Scalar,Dim>::externalForceOnParticle(unsigned int particle_idx) const
+{
+    if(particle_idx>=particles_.size())
+    {
+        std::cerr<<"Error: MPM particle index out of range, abort program!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return particle_external_force_[particle_idx];
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::setExternalForceOnParticle(unsigned int particle_idx, const Vector<Scalar,Dim> &force)
+{
+    if(particle_idx>=particles_.size())
+    {
+        std::cerr<<"Error: MPM particle index out of range, abort program!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    particle_external_force_[particle_idx] = force;
+}
+
+template <typename Scalar, int Dim>
 void MPMSolidBase<Scalar,Dim>::addDirichletParticle(unsigned int particle_idx)
 {
     if(particle_idx>=particles_.size())
@@ -183,6 +205,7 @@ void MPMSolidBase<Scalar,Dim>::allocateSpaceForAllParticleRelatedData()
     //resize according to new particle number 
     is_dirichlet_particle_.resize(particles_.size());
     particle_initial_volume_.resize(particles_.size());
+    particle_external_force_.resize(particles_.size());
     //for each particle, preallocate space that can store weight/gradient of maximum
     //number of nodes in range
     unsigned int max_num = 1;
@@ -200,6 +223,7 @@ void MPMSolidBase<Scalar,Dim>::initializeAllParticleRelatedData()
     {
         is_dirichlet_particle_[i] = 0;
         particle_initial_volume_[i] = particles_[i]->volume();
+        particle_external_force_[i] = Vector<Scalar,Dim>(0);
     }
 }
 
@@ -209,6 +233,7 @@ void MPMSolidBase<Scalar,Dim>::appendSpaceForParticleRelatedData()
     //add space for particle related data
     is_dirichlet_particle_.push_back(0);
     particle_initial_volume_.push_back(0);
+    particle_external_force_.push_back(Vector<Scalar,Dim>(0));
     unsigned int max_num = 1;
     for(unsigned int i = 0; i < Dim; ++i)
         max_num *= (this->weight_function_->supportRadius())*2+1;
@@ -223,6 +248,7 @@ void MPMSolidBase<Scalar,Dim>::initializeLastParticleRelatedData()
     unsigned idx = this->particleNum() - 1;
     is_dirichlet_particle_[idx] = 0;
     particle_initial_volume_[idx] = this->particles_[idx]->volume();
+    particle_external_force_[idx] = Vector<Scalar,Dim>(0);
 }
 
 template <typename Scalar, int Dim>
@@ -235,6 +261,9 @@ void MPMSolidBase<Scalar,Dim>::deleteParticleRelatedData(unsigned int particle_i
     typename std::vector<unsigned char>::iterator iter2 = is_dirichlet_particle_.begin() + particle_idx;
     if(iter2 != is_dirichlet_particle_.end())
         is_dirichlet_particle_.erase(iter2);
+    typename std::vector<Vector<Scalar,Dim> >::iterator iter3 = particle_external_force_.begin() + particle_idx;
+    if(iter3 != particle_external_force_.end())
+        particle_external_force_.erase(iter3);
 }
 
 //explicit instantiations

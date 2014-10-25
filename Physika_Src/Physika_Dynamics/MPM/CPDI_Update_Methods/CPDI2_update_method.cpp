@@ -317,8 +317,6 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticlePosition(Scalar dt)
             Scalar approximate_integrate_shape_function_in_domain = gaussianIntegrateShapeFunctionValueInParticleDomain(multi_corner_idx,particle_domain);
             new_pos += 1.0/domain_volume*approximate_integrate_shape_function_in_domain*particle_domain_vec[flat_corner_idx];
         }
-        // std::cout<<particle.position()<<" "<<new_pos<<"\n";
-        // getchar();
         particle.setPosition(new_pos);
     }
 }

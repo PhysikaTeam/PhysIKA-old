@@ -375,6 +375,29 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
 }
 
 template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::applyExternalForceOnParticles(Scalar dt)
+{
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onApplyExternalForceOnParticles(dt);
+    }
+
+    for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    {
+        if(this->is_dirichlet_particle_[i])
+            continue;//skip boundary particles
+        SolidParticle<Scalar,Dim> *particle = this->particles_[i];
+        Vector<Scalar,Dim> new_vel = particle->velocity();
+        new_vel += this->particle_external_force_[i]/particle->mass()*dt;
+        particle->setVelocity(new_vel);
+    }
+}
+
+template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
 {
     //plugin operation

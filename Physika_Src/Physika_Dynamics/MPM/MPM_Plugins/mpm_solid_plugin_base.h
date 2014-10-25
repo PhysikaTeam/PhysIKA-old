@@ -43,6 +43,7 @@ public:
     virtual void onUpdateParticleInterpolationWeight() = 0;
     virtual void onUpdateParticleConstitutiveModelState(Scalar dt) = 0;
     virtual void onUpdateParticleVelocity() = 0;
+    virtual void onApplyExternalForceOnParticles(Scalar dt) = 0;
     virtual void onUpdateParticlePosition(Scalar dt) = 0;
 protected:
 };

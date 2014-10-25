@@ -70,6 +70,7 @@ public:
     virtual void updateParticleInterpolationWeight();
     virtual void updateParticleConstitutiveModelState(Scalar dt);
     virtual void updateParticleVelocity();
+    virtual void applyExternalForceOnParticles(Scalar dt);
     virtual void updateParticlePosition(Scalar dt);
 
 protected:
