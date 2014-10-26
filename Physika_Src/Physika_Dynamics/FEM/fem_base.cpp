@@ -303,6 +303,7 @@ void FEMBase<Scalar,Dim>::computeReferenceShapeMatrixInverse()
             Vector<Scalar,2> v1_minus_v3 = ele_vert_pos[0] - ele_vert_pos[2];
             Vector<Scalar,2> v2_minus_v3 = ele_vert_pos[1] - ele_vert_pos[2];
             SquareMatrix<Scalar,2> reference_shape_matrix(v1_minus_v3,v2_minus_v3);
+            reference_shape_matrix = reference_shape_matrix.transpose();
             SquareMatrix<Scalar,2> inv = reference_shape_matrix.inverse();
             SquareMatrix<Scalar,Dim> *mat_ptr = dynamic_cast<SquareMatrix<Scalar,Dim>*>(&inv);
             PHYSIKA_ASSERT(mat_ptr);
