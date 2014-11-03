@@ -1,6 +1,6 @@
 /*
  * @file CPDI_mpm_solid.cpp 
- * @Brief CPDI(CPDI2, modified CPDI2) MPM driver used to simulate solid, uniform grid.
+ * @Brief CPDI(CPDI2) MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -23,7 +23,6 @@
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI2_update_method.h"
-#include "Physika_Dynamics/MPM/CPDI_Update_Methods/modified_CPDI2_update_method.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 
 namespace Physika{
@@ -108,14 +107,8 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
     //update particle domain after update particle deformation gradient
     PHYSIKA_ASSERT(cpdi_update_method_);
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
-    if(update_method)  //CPDI2 or modified CPDI2
-    {
-        ModifiedCPDI2UpdateMethod<Scalar,Dim> *modified_cpdi2 = dynamic_cast<ModifiedCPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
-        if(modified_cpdi2)  //modified CPDI2
-            modified_cpdi2->updateParticleDomain(corner_grid_weight_and_gradient_,corner_grid_pair_num_,dt,this->grid_velocity_before_,domain_corner_velocities_);
-        else
-            update_method->updateParticleDomain(corner_grid_weight_and_gradient_,corner_grid_pair_num_,dt);
-    }
+    if(update_method)  //CPDI2
+        update_method->updateParticleDomain(corner_grid_weight_and_gradient_,corner_grid_pair_num_,dt);
     else //CPDI
         cpdi_update_method_->updateParticleDomain();
 }
@@ -135,7 +128,7 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
                 plugin->onUpdateParticlePosition(dt);
         }
         //update particle position with CPDI2
-        update_method->updateParticlePosition(dt);
+        update_method->updateParticlePosition(dt,this->is_dirichlet_particle_);
     }
     else //CPDI
         MPMSolid<Scalar,Dim>::updateParticlePosition(dt);
@@ -332,7 +325,6 @@ void CPDIMPMSolid<Scalar,Dim>::allocateSpaceForAllParticleRelatedData()
     //domain_corners
     particle_domain_corners_.resize(this->particles_.size());
     initial_particle_domain_corners_.resize(this->particles_.size());
-    domain_corner_velocities_.resize(this->particles_.size());
     //add space for is_dirichelet_particle_, particle_initial_volume_, and particle_external_force_
     this->is_dirichlet_particle_.resize(this->particles_.size());
     this->particle_initial_volume_.resize(this->particles_.size());
@@ -350,11 +342,6 @@ void CPDIMPMSolid<Scalar,Dim>::initializeAllParticleRelatedData()
         initParticleDomain(*(this->particles_[i]),domain_corner);
         particle_domain_corners_[i] = domain_corner;
         initial_particle_domain_corners_[i] = domain_corner;
-        //initialize the velocity of the corners with zero
-        PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Wrong dimension specified!");
-        unsigned int corner_num = (Dim == 2) ? 4 : 8;
-        std::vector<Vector<Scalar,Dim> > corner_vel(corner_num,Vector<Scalar,Dim>(0));
-        domain_corner_velocities_[i] = corner_vel;
     }
 }
 
@@ -381,8 +368,6 @@ void CPDIMPMSolid<Scalar,Dim>::appendSpaceForParticleRelatedData()
     std::vector<Vector<Scalar,Dim> > domain_corner(corner_num);
     particle_domain_corners_.push_back(domain_corner); 
     initial_particle_domain_corners_.push_back(domain_corner);
-    //add space for particle domain corner velocities
-    domain_corner_velocities_.push_back(domain_corner);
     //add space for is_dirichelet_particle_, particle_initial_volume_, and particle_external_force_
     this->is_dirichlet_particle_.push_back(0);
     this->particle_initial_volume_.push_back(0);
@@ -401,11 +386,6 @@ void CPDIMPMSolid<Scalar,Dim>::initializeLastParticleRelatedData()
     //space has been appended in appendSpaceForParticleRelatedData(), called in addParticle() of base class
     particle_domain_corners_[idx] = domain_corner; 
     initial_particle_domain_corners_[idx] = domain_corner;
-    //initialize the velocity of the corners with zero
-    PHYSIKA_STATIC_ASSERT(Dim==2||Dim==3,"Wrong dimension specified!");
-    unsigned int corner_num = (Dim == 2) ? 4 : 8;
-    std::vector<Vector<Scalar,Dim> > corner_vel(corner_num,Vector<Scalar,Dim>(0));
-    domain_corner_velocities_[idx] = corner_vel;
 }
 
 template <typename Scalar, int Dim>
@@ -416,13 +396,11 @@ void CPDIMPMSolid<Scalar,Dim>::deleteParticleRelatedData(unsigned int particle_i
     particle_domain_corners_.erase(iter);
     typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = initial_particle_domain_corners_.begin() + particle_idx;
     initial_particle_domain_corners_.erase(iter2);
-    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter3 = domain_corner_velocities_.begin() + particle_idx;
-    domain_corner_velocities_.erase(iter3);
-    typename std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > >::iterator iter4 =
+    typename std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > >::iterator iter3 =
         corner_grid_weight_and_gradient_.begin() + particle_idx;
-    corner_grid_weight_and_gradient_.erase(iter4);
-    typename std::vector<std::vector<unsigned int> >::iterator iter5 = corner_grid_pair_num_.begin() + particle_idx;
-    corner_grid_pair_num_.erase(iter5);
+    corner_grid_weight_and_gradient_.erase(iter3);
+    typename std::vector<std::vector<unsigned int> >::iterator iter4 = corner_grid_pair_num_.begin() + particle_idx;
+    corner_grid_pair_num_.erase(iter4);
 }
 
 template <typename Scalar, int Dim>

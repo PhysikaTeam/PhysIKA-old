@@ -1,6 +1,6 @@
 /*
  * @file CPDI_mpm_solid.h 
- * @Brief CPDI(CPDI2, modified CPDI2) MPM driver used to simulate solid, uniform grid.
+ * @Brief CPDI(CPDI2) MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -80,8 +80,6 @@ protected:
 protected:
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_domain_corners_;  //current particle domain corners
     std::vector<std::vector<Vector<Scalar,Dim> > > initial_particle_domain_corners_; //initial particle domain corners
-    //for modified CPDI2, store the velocities of the particle domain corners
-    std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocities_;
     //for each domain corner of the particles, store precomputed weights and gradients of grid nodes that is within influence range
     //needed in CPDI2
     std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > corner_grid_weight_and_gradient_;

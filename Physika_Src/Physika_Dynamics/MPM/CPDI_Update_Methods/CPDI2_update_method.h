@@ -64,7 +64,7 @@ public:
                                       const std::vector<std::vector<unsigned int> > &corner_grid_pair_num, Scalar dt);
     
     //CPDI2 updates particle position according to corner positions
-    virtual void updateParticlePosition(Scalar dt);
+    virtual void updateParticlePosition(Scalar dt, const std::vector<unsigned char> &is_dirichlet_particle);
 protected:
     virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
@@ -90,7 +90,7 @@ public:
                                       const std::vector<std::vector<unsigned int> > &corner_grid_pair_num, Scalar dt);
 
     //CPDI2 updates particle position according to corner positions
-    virtual void updateParticlePosition(Scalar dt);
+    virtual void updateParticlePosition(Scalar dt, const std::vector<unsigned char> &is_dirichlet_particle);
 protected:
     virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,

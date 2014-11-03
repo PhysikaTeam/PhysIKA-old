@@ -78,7 +78,7 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleDomain(const std::vector<std::ve
 }
 
 template <typename Scalar>
-void CPDI2UpdateMethod<Scalar,2>::updateParticlePosition(Scalar dt)
+void CPDI2UpdateMethod<Scalar,2>::updateParticlePosition(Scalar dt, const std::vector<unsigned char> &is_dirichlet_particle)
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
     ArrayND<Vector<Scalar,2>,2> particle_domain;
@@ -86,6 +86,12 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticlePosition(Scalar dt)
     for(unsigned int particle_idx = 0; particle_idx < this->cpdi_driver_->particleNum(); ++particle_idx)
     {
         SolidParticle<Scalar,2> &particle = this->cpdi_driver_->particle(particle_idx);
+        if(is_dirichlet_particle[particle_idx])  //update dirichlet particle's position with prescribed velocity
+        {
+            Vector<Scalar,2> new_pos = particle.position() + particle.velocity()*dt;
+            particle.setPosition(new_pos);
+            continue;
+        }
         this->cpdi_driver_->currentParticleDomain(particle_idx,particle_domain);
         unsigned int i = 0;
         for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
@@ -296,7 +302,7 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleDomain(const std::vector<std::ve
 }
 
 template <typename Scalar>
-void CPDI2UpdateMethod<Scalar,3>::updateParticlePosition(Scalar dt)
+void CPDI2UpdateMethod<Scalar,3>::updateParticlePosition(Scalar dt, const std::vector<unsigned char> &is_dirichlet_particle)
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
     ArrayND<Vector<Scalar,3>,3> particle_domain;
@@ -304,6 +310,12 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticlePosition(Scalar dt)
     for(unsigned int particle_idx = 0; particle_idx < this->cpdi_driver_->particleNum(); ++particle_idx)
     {
         SolidParticle<Scalar,3> &particle = this->cpdi_driver_->particle(particle_idx);
+        if(is_dirichlet_particle[particle_idx])  //update dirichlet particle's position with prescribed velocity
+        {
+            Vector<Scalar,3> new_pos = particle.position() + particle.velocity()*dt;
+            particle.setPosition(new_pos);
+            continue;
+        }
         this->cpdi_driver_->currentParticleDomain(particle_idx,particle_domain);
         unsigned int i = 0;
         for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i, ++corner_iter)
