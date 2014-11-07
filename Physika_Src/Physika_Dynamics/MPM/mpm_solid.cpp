@@ -195,14 +195,13 @@ void MPMSolid<Scalar,Dim>::rasterize()
     for(unsigned int i = 0; i < this->particles_.size(); ++i)
     {
         SolidParticle<Scalar,Dim> *particle = this->particles_[i];
-        Vector<Scalar,Dim> particle_pos = particle->position();
         for(unsigned int j = 0; j < this->particle_grid_pair_num_[i]; ++j)
         {
             const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[i][j];
-            if(is_dirichlet_grid_node_(pair.node_idx_))
-                continue; //skip grid nodes that are boundary condition
             Scalar weight = pair.weight_value_; 
             grid_mass_(pair.node_idx_) += weight*particle->mass();
+            if(is_dirichlet_grid_node_(pair.node_idx_)) //skip the velocity update of boundary nodes
+                continue;
             grid_velocity_(pair.node_idx_) += weight*(particle->mass()*particle->velocity());
         }
     }
@@ -452,9 +451,9 @@ void MPMSolid<Scalar,Dim>::resetGridData()
     for(typename Grid<Scalar,Dim>::NodeIterator iter = grid_.nodeBegin(); iter != grid_.nodeEnd(); ++iter)
     {
         Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+        grid_mass_(node_idx) = 0;
         if(is_dirichlet_grid_node_(node_idx))
             continue; //skip grid nodes that are boundary condition
-        grid_mass_(node_idx) = 0;
         grid_velocity_(node_idx) = Vector<Scalar,Dim>(0);
         grid_velocity_before_(node_idx) = Vector<Scalar,Dim>(0);
     }

@@ -19,6 +19,7 @@
 #include <map>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/dimension_trait.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
@@ -104,6 +105,27 @@ template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 {
     MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(dt);
+    
+    // //plugin operation
+    // MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    // for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    // {
+    //     plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+    //     if(plugin)
+    //         plugin->onUpdateParticleConstitutiveModelState(dt);
+    // }
+
+    // for(unsigned int i = 0; i < this->particles_.size(); ++i)
+    // {
+    //     SolidParticle<Scalar,Dim> *particle = this->particles_[i];
+    //     DimensionTrait<Dim> trait;
+    //     SquareMatrix<Scalar,Dim> particle_deform_grad = directComputeParticleDeformationGradient(i,trait);
+    //     particle->setDeformationGradient(particle_deform_grad);
+    //     Scalar J = particle_deform_grad.determinant();
+    //     Scalar particle_vol = J*(this->particle_initial_volume_[i]);
+    //     particle->setVolume(particle_vol);  //update particle volume
+    // }
+    
     //update particle domain after update particle deformation gradient
     PHYSIKA_ASSERT(cpdi_update_method_);
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
@@ -444,6 +466,41 @@ void CPDIMPMSolid<Scalar,Dim>::initParticleDomain(const SolidParticle<Scalar,3> 
                 bias[2] = k*2*particle_radius;
                 domain_corner[i*2*2+j*2+k] = min_corner + bias;
             }
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,2> CPDIMPMSolid<Scalar,Dim>::directComputeParticleDeformationGradient(unsigned int particle_idx, const DimensionTrait<2> &dim_trait)
+{
+    PHYSIKA_ASSERT(particle_idx>=0);
+    PHYSIKA_ASSERT(particle_idx<this->particles_.size());
+    std::vector<Vector<Scalar,Dim> > &cur_domain = particle_domain_corners_[particle_idx];
+    std::vector<Vector<Scalar,Dim> > &initial_domain = initial_particle_domain_corners_[particle_idx];
+    SquareMatrix<Scalar,Dim> particle_deform_grad,partial_x_partial_r(0), partial_X_partial_r(0);
+    Scalar r_x = 0, r_y = 0; //isoparametric parameters [-1,1], assume particle is at the center
+    Vector<Scalar,Dim> partial_x_partial_r_col1 = 0.25*((r_y-1)*cur_domain[0]-(1+r_y)*cur_domain[1]+(1-r_y)*cur_domain[2]+(1+r_y)*cur_domain[3]);
+    Vector<Scalar,Dim> partial_x_partial_r_col2 = 0.25*((r_x-1)*cur_domain[0]+(1-r_x)*cur_domain[1]-(1+r_x)*cur_domain[2]+(1+r_x)*cur_domain[3]);
+    Vector<Scalar,Dim> partial_X_partial_r_col1 = 0.25*((r_y-1)*initial_domain[0]-(1+r_y)*initial_domain[1]+(1-r_y)*initial_domain[2]+(1+r_y)*initial_domain[3]);
+    Vector<Scalar,Dim> partial_X_partial_r_col2 = 0.25*((r_x-1)*initial_domain[0]+(1-r_x)*initial_domain[1]-(1+r_x)*initial_domain[2]+(1+r_x)*initial_domain[3]);
+    for(unsigned int row = 0; row < 2; ++row)
+    {
+        partial_x_partial_r(row,0) = partial_x_partial_r_col1[row];
+        partial_x_partial_r(row,1) = partial_x_partial_r_col2[row];
+        partial_X_partial_r(row,0) = partial_X_partial_r_col1[row];
+        partial_X_partial_r(row,1) = partial_X_partial_r_col2[row];
+    }
+    particle_deform_grad = partial_x_partial_r*(partial_X_partial_r.inverse());
+    SquareMatrix<Scalar,2> result;
+    for(unsigned int row = 0; row < 2; ++row)
+        for(unsigned int col = 0; col < 2; ++col)
+            result(row,col) = particle_deform_grad(row,col);
+    return result;
+}
+    
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,3> CPDIMPMSolid<Scalar,Dim>::directComputeParticleDeformationGradient(unsigned int particle_idx, const DimensionTrait<3> &dim_trait)
+{
+    //TO DO
+    return SquareMatrix<Scalar,3>(0);
 }
 
 //explicit instantiations

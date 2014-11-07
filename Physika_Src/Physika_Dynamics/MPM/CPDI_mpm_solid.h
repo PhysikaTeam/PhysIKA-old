@@ -26,6 +26,7 @@
 namespace Physika{
 
 template <typename Scalar,int Dim> class SolidParticle;
+template <int Dim> struct DimensionTrait;
 
 template <typename Scalar, int Dim>
 class CPDIMPMSolid: public MPMSolid<Scalar,Dim>
@@ -77,6 +78,9 @@ protected:
     //trait method to init particle domain
     void initParticleDomain(const SolidParticle<Scalar,2> &particle, std::vector<Vector<Scalar,2> > &domain_corner);
     void initParticleDomain(const SolidParticle<Scalar,3> &particle, std::vector<Vector<Scalar,3> > &domain_corner);
+    //for modified CPDI2, use the shape of particle domain to compute deformation gradient directly
+    SquareMatrix<Scalar,2> directComputeParticleDeformationGradient(unsigned int particle_idx, const DimensionTrait<2> &dim_trait);
+    SquareMatrix<Scalar,3> directComputeParticleDeformationGradient(unsigned int particle_idx, const DimensionTrait<3> &dim_trait);
 protected:
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_domain_corners_;  //current particle domain corners
     std::vector<std::vector<Vector<Scalar,Dim> > > initial_particle_domain_corners_; //initial particle domain corners
