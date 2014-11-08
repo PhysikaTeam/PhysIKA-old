@@ -46,10 +46,10 @@ void MPMSolidStepMethodUSF<Scalar,Dim>::advanceStep(Scalar dt)
     mpm_solid_driver->rasterize();
     mpm_solid_driver->updateParticleConstitutiveModelState(dt);
     mpm_solid_driver->solveOnGrid(dt);
-    mpm_solid_driver->performGridCollision(dt);
+    mpm_solid_driver->resolveContactOnGrid(dt);
     mpm_solid_driver->updateParticleVelocity();
     mpm_solid_driver->applyExternalForceOnParticles(dt);
-    mpm_solid_driver->performParticleCollision(dt);
+    mpm_solid_driver->resolveContactOnParticles(dt);
     mpm_solid_driver->updateParticlePosition(dt);
     mpm_solid_driver->updateParticleInterpolationWeight();
 }

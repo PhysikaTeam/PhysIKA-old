@@ -251,7 +251,7 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::performGridCollision(Scalar dt)
+void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
 {
     //plugin operation
     MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
@@ -259,13 +259,13 @@ void MPMSolid<Scalar,Dim>::performGridCollision(Scalar dt)
     {
         plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
         if(plugin)
-            plugin->onPerformGridCollision(dt);
+            plugin->onResolveContactOnGrid(dt);
     }
 //TO DO
 }
 
 template <typename Scalar, int Dim>
-void MPMSolid<Scalar,Dim>::performParticleCollision(Scalar dt)
+void MPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
 {
     //plugin operation
     MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
@@ -273,7 +273,7 @@ void MPMSolid<Scalar,Dim>::performParticleCollision(Scalar dt)
     {
         plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
         if(plugin)
-            plugin->onPerformParticleCollision(dt);
+            plugin->onResolveContactOnParticles(dt);
     }
 //TO DO
 }

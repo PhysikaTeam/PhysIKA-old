@@ -38,8 +38,8 @@ public:
     //MPM Solid driver specific virtual methods
     virtual void onRasterize() = 0;
     virtual void onSolveOnGrid(Scalar dt) = 0;
-    virtual void onPerformGridCollision(Scalar dt) = 0;
-    virtual void onPerformParticleCollision(Scalar dt) = 0;
+    virtual void onResolveContactOnGrid(Scalar dt) = 0;
+    virtual void onResolveContactOnParticles(Scalar dt) = 0;
     virtual void onUpdateParticleInterpolationWeight() = 0;
     virtual void onUpdateParticleConstitutiveModelState(Scalar dt) = 0;
     virtual void onUpdateParticleVelocity() = 0;
