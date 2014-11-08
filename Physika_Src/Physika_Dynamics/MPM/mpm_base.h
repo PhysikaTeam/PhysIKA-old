@@ -87,10 +87,10 @@ protected:
     Scalar sound_speed_;
     //gravity: along negative y direction
     Scalar gravity_;
-    //precomputed weights and gradients of grid nodes that is within range of each particle
-    //for each particle, store the node-value pair
-    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > particle_grid_weight_and_gradient_;
-    std::vector<unsigned int> particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_ 
+    //precomputed weights and gradients for grid nodes that is within range of each particle
+    //for each particle of each object, store the node-value pair: [object_idx][particle_idx][pair_idx]
+    std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > particle_grid_weight_and_gradient_;
+    std::vector<std::vector<unsigned int> > particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_ 
 };
 
 template <typename Scalar, int Dim>

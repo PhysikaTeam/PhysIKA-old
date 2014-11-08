@@ -90,11 +90,11 @@ protected:
     virtual void solveOnGridForwardEuler(Scalar dt) = 0;
     virtual void solveOnGridBackwardEuler(Scalar dt) = 0;
 protected:
-    std::vector<SolidParticle<Scalar,Dim>*> particles_;
-    std::vector<unsigned char> is_dirichlet_particle_;  //for each particle in particles_, 
-                                                        //use one byte to indicate whether it's set as dirichlet boundary condition
-    std::vector<Scalar> particle_initial_volume_;
-    std::vector<Vector<Scalar,Dim> > particle_external_force_; //external force(/N), not acceleration
+    std::vector<std::vector<SolidParticle<Scalar,Dim>*> > particles_; //for each object, store the particles representing the object
+    std::vector<std::vector<unsigned char> > is_dirichlet_particle_;  //for each particle in particles_, 
+                                                                      //use one byte to indicate whether it's set as dirichlet boundary condition
+    std::vector<std::vector<Scalar> > particle_initial_volume_;
+    std::vector<std::vector<Vector<Scalar,Dim> > > particle_external_force_; //external force(/N), not acceleration
     IntegrationMethod integration_method_; 
 };
 
