@@ -63,8 +63,8 @@ public:
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
     virtual void solveOnGrid(Scalar dt)=0; //solve the dynamics system on grid
-    virtual void performGridCollision(Scalar dt)=0; //perform grid based collision with collidable object in scene
-    virtual void performParticleCollision(Scalar dt)=0;  //perform particle based collision with collidable object in scene
+    virtual void resolveContactOnGrid(Scalar dt)=0; //resolve contact on the grid, between mpm objects or with objects with other representations
+    virtual void resolveContactOnParticles(Scalar dt)=0;  //resolve contact on the particles, between mpm objects or with objects with other representations
     virtual void updateParticleInterpolationWeight()=0;  //compute the interpolation weight between particles and grid nodes
     virtual void updateParticleConstitutiveModelState(Scalar dt)=0; //update the constitutive model state of particle, e.g., deformation gradient
     virtual void updateParticleVelocity()=0;  //update particle velocity using grid data

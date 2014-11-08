@@ -164,12 +164,12 @@ void MPMSolidPluginRender<Scalar,Dim>::onSolveOnGrid(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginRender<Scalar,Dim>::onPerformGridCollision(Scalar dt)
+void MPMSolidPluginRender<Scalar,Dim>::onResolveContactOnGrid(Scalar dt)
 {
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginRender<Scalar,Dim>::onPerformParticleCollision(Scalar dt)
+void MPMSolidPluginRender<Scalar,Dim>::onResolveContactOnParticles(Scalar dt)
 {
 }
 

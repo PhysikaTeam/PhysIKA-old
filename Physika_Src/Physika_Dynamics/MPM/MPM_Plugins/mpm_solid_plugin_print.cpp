@@ -63,15 +63,15 @@ void MPMSolidPluginPrint<Scalar,Dim>::onSolveOnGrid(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginPrint<Scalar,Dim>::onPerformGridCollision(Scalar dt)
+void MPMSolidPluginPrint<Scalar,Dim>::onResolveContactOnGrid(Scalar dt)
 {
-    std::cout<<"Perform grid-based collision.\n";
+    std::cout<<"Resolve contact on grid.\n";
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginPrint<Scalar,Dim>::onPerformParticleCollision(Scalar dt)
+void MPMSolidPluginPrint<Scalar,Dim>::onResolveContactOnParticles(Scalar dt)
 {
-    std::cout<<"Perform particle-based collision.\n";
+    std::cout<<"Resolve contact on particles.\n";
 }
 
 template <typename Scalar, int Dim>
