@@ -44,12 +44,13 @@ CPDIUpdateMethod<Scalar,2>::~CPDIUpdateMethod()
 
 template <typename Scalar>
 void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(const GridWeightFunction<Scalar,2> &weight_function,
-                                                                   std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &particle_grid_weight_and_gradient,
-                                                                   std::vector<unsigned int> &particle_grid_pair_num)
+                                 std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
+                                 std::vector<std::vector<unsigned int> > &particle_grid_pair_num)
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
-    for(unsigned int i = 0; i < this->cpdi_driver_->particleNum(); ++i)
-        updateParticleInterpolationWeight(i,weight_function,particle_grid_weight_and_gradient[i],particle_grid_pair_num[i]);
+    for(unsigned int i = 0; i < this->cpdi_driver_->objectNum(); ++i)
+        for(unsigned int j = 0; j < this->cpdi_driver_->particleNumOfObject(i); ++j)
+            updateParticleInterpolationWeight(i,j,weight_function,particle_grid_weight_and_gradient[i][j],particle_grid_pair_num[i][j]);
 }
 
 template <typename Scalar>
@@ -57,32 +58,35 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleDomain()
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
     ArrayND<Vector<Scalar,2>,2> particle_domain;
-    for(unsigned int i = 0; i < cpdi_driver_->particleNum(); ++i)
+    for(unsigned int obj_idx = 0; obj_idx < cpdi_driver_->objectNum(); ++obj_idx)
     {
-        SquareMatrix<Scalar,2> deform_grad = (cpdi_driver_->particle(i)).deformationGradient();
-        cpdi_driver_->initialParticleDomain(i,particle_domain);
-        Vector<Scalar,2> particle_pos = (cpdi_driver_->particle(i)).position();
-        Vector<unsigned int,2> corner_idx(0);
-        Vector<Scalar,2> min_corner = particle_domain(corner_idx);
-        corner_idx[0] = 1;
-        Vector<Scalar,2> x_corner = particle_domain(corner_idx);
-        corner_idx[0] = 0; corner_idx[1] = 1;
-        Vector<Scalar,2> y_corner = particle_domain(corner_idx);
-        Vector<Scalar,2> r_x = x_corner - min_corner;
-        Vector<Scalar,2> r_y = y_corner - min_corner;
-        //update parallelogram
-        r_x = deform_grad * r_x;
-        r_y = deform_grad * r_y;
-        //update 4 corners
-        min_corner = particle_pos - 0.5*r_x - 0.5*r_y;
-        for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
-            for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
-            {
-                corner_idx[0] = idx_x;
-                corner_idx[1] = idx_y;
-                particle_domain(corner_idx) = min_corner + idx_x*r_x + idx_y*r_y;
-            }
-        cpdi_driver_->setCurrentParticleDomain(i,particle_domain);
+        for(unsigned int particle_idx = 0; particle_idx < cpdi_driver_->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            SquareMatrix<Scalar,2> deform_grad = (cpdi_driver_->particle(obj_idx,particle_idx)).deformationGradient();
+            cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,particle_domain);
+            Vector<Scalar,2> particle_pos = (cpdi_driver_->particle(obj_idx,particle_idx)).position();
+            Vector<unsigned int,2> corner_idx(0);
+            Vector<Scalar,2> min_corner = particle_domain(corner_idx);
+            corner_idx[0] = 1;
+            Vector<Scalar,2> x_corner = particle_domain(corner_idx);
+            corner_idx[0] = 0; corner_idx[1] = 1;
+            Vector<Scalar,2> y_corner = particle_domain(corner_idx);
+            Vector<Scalar,2> r_x = x_corner - min_corner;
+            Vector<Scalar,2> r_y = y_corner - min_corner;
+            //update parallelogram
+            r_x = deform_grad * r_x;
+            r_y = deform_grad * r_y;
+            //update 4 corners
+            min_corner = particle_pos - 0.5*r_x - 0.5*r_y;
+            for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
+                for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
+                {
+                    corner_idx[0] = idx_x;
+                    corner_idx[1] = idx_y;
+                    particle_domain(corner_idx) = min_corner + idx_x*r_x + idx_y*r_y;
+                }
+            cpdi_driver_->setCurrentParticleDomain(obj_idx,particle_idx,particle_domain);
+        }
     }
 }
 
@@ -98,13 +102,13 @@ void CPDIUpdateMethod<Scalar,2>::setCPDIDriver(CPDIMPMSolid<Scalar,2> *cpdi_driv
 }
 
 template <typename Scalar>
-void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
+void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
                                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
                                                                    unsigned int &particle_grid_pair_num)
 {
     ArrayND<Vector<Scalar,2>,2> particle_domain;
-    this->cpdi_driver_->currentParticleDomain(particle_idx,particle_domain);
-    const SolidParticle<Scalar,2> &particle = this->cpdi_driver_->particle(particle_idx);
+    this->cpdi_driver_->currentParticleDomain(object_idx,particle_idx,particle_domain);
+    const SolidParticle<Scalar,2> &particle = this->cpdi_driver_->particle(object_idx,particle_idx);
     std::map<unsigned int,Scalar> idx_weight_map;
     std::map<unsigned int,Vector<Scalar,2> > idx_gradient_map;
     const Grid<Scalar,2> &grid = this->cpdi_driver_->grid();
@@ -260,12 +264,13 @@ CPDIUpdateMethod<Scalar,3>::~CPDIUpdateMethod()
 
 template <typename Scalar>
 void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(const GridWeightFunction<Scalar,3> &weight_function,
-                                                                   std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &particle_grid_weight_and_gradient,
-                                                                   std::vector<unsigned int> &particle_grid_pair_num)
+                                 std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
+                                 std::vector<std::vector<unsigned int> > &particle_grid_pair_num)
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
-    for(unsigned int i = 0; i < this->cpdi_driver_->particleNum(); ++i)
-        updateParticleInterpolationWeight(i,weight_function,particle_grid_weight_and_gradient[i],particle_grid_pair_num[i]);
+    for(unsigned int i = 0; i < this->cpdi_driver_->objectNum(); ++i)
+        for(unsigned int j = 0; j < this->cpdi_driver_->particleNumOfObject(i); ++j)
+            updateParticleInterpolationWeight(i,j,weight_function,particle_grid_weight_and_gradient[i][j],particle_grid_pair_num[i][j]);
 }
 
 template <typename Scalar>
@@ -273,38 +278,41 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleDomain()
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
     ArrayND<Vector<Scalar,3>,3> particle_domain;
-    for(unsigned int i = 0; i < cpdi_driver_->particleNum(); ++i)
+    for(unsigned int obj_idx = 0; obj_idx <cpdi_driver_->objectNum(); ++obj_idx)
     {
-        SquareMatrix<Scalar,3> deform_grad = (cpdi_driver_->particle(i)).deformationGradient();
-        cpdi_driver_->initialParticleDomain(i,particle_domain);
-        Vector<Scalar,3> particle_pos = (cpdi_driver_->particle(i)).position();
-        Vector<unsigned int,3> corner_idx(0);
-        Vector<Scalar,3> min_corner = particle_domain(corner_idx);
-        corner_idx[0] = 1;
-        Vector<Scalar,3> x_corner = particle_domain(corner_idx);
-        corner_idx[0] = 0; corner_idx[1] = 1;
-        Vector<Scalar,3> y_corner = particle_domain(corner_idx);
-        corner_idx[0] = 0; corner_idx[1] = 0; corner_idx[2] = 1;
-        Vector<Scalar,3> z_corner = particle_domain(corner_idx);
-        Vector<Scalar,3> r_x = x_corner - min_corner;
-        Vector<Scalar,3> r_y = y_corner - min_corner;
-        Vector<Scalar,3> r_z = z_corner - min_corner;
-        //update parallelogram
-        r_x = deform_grad * r_x;
-        r_y = deform_grad * r_y;
-        r_z = deform_grad * r_z;
-        //update 8 corners
-        min_corner = particle_pos - 0.5*r_x - 0.5*r_y - 0.5*r_z;
-        for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
-            for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
-                for(unsigned int idx_z = 0; idx_z < 2; ++idx_z)
-                {
-                    corner_idx[0] = idx_x;
-                    corner_idx[1] = idx_y;
-                    corner_idx[2] = idx_z;
-                    particle_domain(corner_idx) = min_corner + idx_x*r_x + idx_y*r_y + idx_z*r_z;
-                }
-        cpdi_driver_->setCurrentParticleDomain(i,particle_domain);
+        for(unsigned int particle_idx = 0; particle_idx < cpdi_driver_->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            SquareMatrix<Scalar,3> deform_grad = (cpdi_driver_->particle(obj_idx,particle_idx)).deformationGradient();
+            cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,particle_domain);
+            Vector<Scalar,3> particle_pos = (cpdi_driver_->particle(obj_idx,particle_idx)).position();
+            Vector<unsigned int,3> corner_idx(0);
+            Vector<Scalar,3> min_corner = particle_domain(corner_idx);
+            corner_idx[0] = 1;
+            Vector<Scalar,3> x_corner = particle_domain(corner_idx);
+            corner_idx[0] = 0; corner_idx[1] = 1;
+            Vector<Scalar,3> y_corner = particle_domain(corner_idx);
+            corner_idx[0] = 0; corner_idx[1] = 0; corner_idx[2] = 1;
+            Vector<Scalar,3> z_corner = particle_domain(corner_idx);
+            Vector<Scalar,3> r_x = x_corner - min_corner;
+            Vector<Scalar,3> r_y = y_corner - min_corner;
+            Vector<Scalar,3> r_z = z_corner - min_corner;
+            //update parallelogram
+            r_x = deform_grad * r_x;
+            r_y = deform_grad * r_y;
+            r_z = deform_grad * r_z;
+            //update 8 corners
+            min_corner = particle_pos - 0.5*r_x - 0.5*r_y - 0.5*r_z;
+            for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
+                for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
+                    for(unsigned int idx_z = 0; idx_z < 2; ++idx_z)
+                    {
+                        corner_idx[0] = idx_x;
+                        corner_idx[1] = idx_y;
+                        corner_idx[2] = idx_z;
+                        particle_domain(corner_idx) = min_corner + idx_x*r_x + idx_y*r_y + idx_z*r_z;
+                    }
+            cpdi_driver_->setCurrentParticleDomain(obj_idx,particle_idx,particle_domain);
+        }
     }
 }
 
@@ -320,13 +328,13 @@ void CPDIUpdateMethod<Scalar,3>::setCPDIDriver(CPDIMPMSolid<Scalar,3> *cpdi_driv
 }
 
 template <typename Scalar>
-void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
+void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
                                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
                                                                    unsigned int &particle_grid_pair_num)
 {
     ArrayND<Vector<Scalar,3>,3> particle_domain;
-    this->cpdi_driver_->currentParticleDomain(particle_idx,particle_domain);
-    const SolidParticle<Scalar,3> &particle = this->cpdi_driver_->particle(particle_idx);
+    this->cpdi_driver_->currentParticleDomain(object_idx,particle_idx,particle_domain);
+    const SolidParticle<Scalar,3> &particle = this->cpdi_driver_->particle(object_idx,particle_idx);
     std::map<unsigned int,Scalar> idx_weight_map;
     std::map<unsigned int,Vector<Scalar,3> > idx_gradient_map;
     const Grid<Scalar,3> &grid = this->cpdi_driver_->grid();

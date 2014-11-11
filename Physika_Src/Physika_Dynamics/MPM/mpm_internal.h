@@ -25,6 +25,7 @@ namespace MPMInternal{
 /*
  * NodeIndexWeightGradientPair:
  * pair of the grid node and its interpolation weight/gradient value
+ * for uniform grid
  */
 
 template <typename Scalar,int Dim>

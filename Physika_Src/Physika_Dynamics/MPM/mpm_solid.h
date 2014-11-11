@@ -17,6 +17,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -31,6 +32,9 @@ template<typename Scalar,int Dim> class SolidParticle;
 /*
  * MPMSolid: simulate solid with MPM
  * Uniform grid is used as background grid
+ * 
+ * Single-valued variable is stored on the grid if no specific contact algorithm is employed
+ * Otherwise, multi-valued variable maybe attached to a grid node
  */
 
 template <typename Scalar, int Dim>
@@ -39,8 +43,7 @@ class MPMSolid: public MPMSolidBase<Scalar,Dim>
 public:
     MPMSolid();
     MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
-    MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
-             const std::vector<SolidParticle<Scalar,Dim>*> &particles, const Grid<Scalar,Dim> &grid);
+    MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file, const Grid<Scalar,Dim> &grid);
     virtual ~MPMSolid();
 
     //virtual methods
@@ -72,13 +75,19 @@ public:
     virtual void updateParticleVelocity();
     virtual void applyExternalForceOnParticles(Scalar dt);
     virtual void updateParticlePosition(Scalar dt);
-
+    
 protected:
     virtual void synchronizeGridData(); //synchronize grid data as grid changes, e.g., size of grid_mass_
     virtual void resetGridData();  //reset grid data to zero, needed before rasterize operation
     virtual Scalar minCellEdgeLength() const;
     virtual void applyGravityOnGrid(Scalar dt);
+    virtual void synchronizeWithInfluenceRangeChange(); //synchronize data when the influence range of weight function changes
     bool isValidGridNodeIndex(const Vector<unsigned int,Dim> &node_idx) const;  //helper method, determine if input grid node index is valid
+    //manage data attached to particles to stay up-to-date with the particles
+    virtual void appendAllParticleRelatedDataOfLastObject();
+    virtual void appendLastParticleRelatedDataOfObject(unsigned int object_idx);
+    virtual void deleteAllParticleRelatedDataOfObject(unsigned int object_idx);
+    virtual void deleteOneParticleRelatedDataOfObject(unsigned int object_idx, unsigned int particle_idx);
     //solve on grid with different integration methods, called in solveOnGrid()
     virtual void solveOnGridForwardEuler(Scalar dt);
     virtual void solveOnGridBackwardEuler(Scalar dt);
@@ -90,6 +99,10 @@ protected:
     ArrayND<Scalar,Dim> grid_mass_;
     ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_; //current grid velocity
     ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_before_; //grid velocity before any solve update
+    //precomputed weights and gradients for grid nodes that is within range of each particle
+    //for each particle of each object, store the node-value pair: [object_idx][particle_idx][pair_idx]
+    std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > particle_grid_weight_and_gradient_;
+    std::vector<std::vector<unsigned int> > particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_ 
 };
 
 }  //end of namespace Physika

@@ -26,7 +26,6 @@
 namespace Physika{
 
 template <typename Scalar,int Dim> class SolidParticle;
-template <int Dim> struct DimensionTrait;
 
 template <typename Scalar, int Dim>
 class CPDIMPMSolid: public MPMSolid<Scalar,Dim>
@@ -34,8 +33,7 @@ class CPDIMPMSolid: public MPMSolid<Scalar,Dim>
 public:
     CPDIMPMSolid();
     CPDIMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
-    CPDIMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
-             const std::vector<SolidParticle<Scalar,Dim>*> &particles, const Grid<Scalar,Dim> &grid);
+    CPDIMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file, const Grid<Scalar,Dim> &grid);
     virtual ~CPDIMPMSolid();
     
     //restart support
@@ -48,39 +46,34 @@ public:
     virtual void updateParticleConstitutiveModelState(Scalar dt); //update particle domain after updating the constitutive model state
     virtual void updateParticlePosition(Scalar dt);
 
-    //return current corners of given particle, empty array is returned if particle index is invalid
-    void currentParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
+    //return current corners of given particle, empty array is returned if index is invalid
+    void currentParticleDomain(unsigned int object_idx, unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
     //explicitly set current particle domain
-    void setCurrentParticleDomain(unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
-    //return initial corners of given particle, empty array is returned if particle index is invalid
-    void initialParticleDomain(unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
+    void setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    //return initial corners of given particle, empty array is returned if index is invalid
+    void initialParticleDomain(unsigned int object_idx, unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
     //explicitly initialize particle domain
-    void initializeParticleDomain(unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    void initializeParticleDomain(unsigned int object_idx, unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
     //get specific domain corner
-    Vector<Scalar,Dim> currentParticleDomainCorner(unsigned int particle_idx, const Vector<unsigned int,Dim> &corner_idx) const;
-    Vector<Scalar,Dim> initialParticleDomainCorner(unsigned int particle_idx, const Vector<unsigned int,Dim> &corner_idx) const;
+    Vector<Scalar,Dim> currentParticleDomainCorner(unsigned int object_idx, unsigned int particle_idx, const Vector<unsigned int,Dim> &corner_idx) const;
+    Vector<Scalar,Dim> initialParticleDomainCorner(unsigned int object_idx, unsigned int particle_idx, const Vector<unsigned int,Dim> &corner_idx) const;
 
     //set the particle domain update method using method update type as template
     template <typename CPDIUpdateMethodType>
     void setCPDIUpdateMethod();
 
 protected:
-    //allocate space for data related to all particles, e.g., precomputed node weight and gradient
+    virtual void synchronizeWithInfluenceRangeChange();
+    //manage data related to all particles, e.g., precomputed node weight and gradient
     //In CPDI, the grid nodes that influence particles are the ones that are 
     //within influence range of the particle domain corners
-    virtual void allocateSpaceForAllParticleRelatedData();
-    virtual void initializeAllParticleRelatedData();
-    //append space for data related to the new particle
-    virtual void appendSpaceForParticleRelatedData();
-    virtual void initializeLastParticleRelatedData();
-    //delete data related to a particle when it is removed
-    virtual void deleteParticleRelatedData(unsigned int particle_idx);
+    virtual void appendAllParticleRelatedDataOfLastObject();
+    virtual void appendLastParticleRelatedDataOfObject(unsigned int object_idx);
+    virtual void deleteAllParticleRelatedDataOfObject(unsigned int object_idx);
+    virtual void deleteOneParticleRelatedDataOfObject(unsigned int object_idx, unsigned int particle_idx);
     //trait method to init particle domain
     void initParticleDomain(const SolidParticle<Scalar,2> &particle, std::vector<Vector<Scalar,2> > &domain_corner);
     void initParticleDomain(const SolidParticle<Scalar,3> &particle, std::vector<Vector<Scalar,3> > &domain_corner);
-    //for modified CPDI2, use the shape of particle domain to compute deformation gradient directly
-    SquareMatrix<Scalar,2> directComputeParticleDeformationGradient(unsigned int particle_idx, const DimensionTrait<2> &dim_trait);
-    SquareMatrix<Scalar,3> directComputeParticleDeformationGradient(unsigned int particle_idx, const DimensionTrait<3> &dim_trait);
 protected:
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_domain_corners_;  //current particle domain corners
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > initial_particle_domain_corners_; //initial particle domain corners
