@@ -16,6 +16,7 @@
 #ifndef PHYSIKA_DYNAMICS_RIGID_BODY_COMPRESSED_MATRIX_H_
 #define PHYSIKA_DYNAMICS_RIGID_BODY_COMPRESSED_MATRIX_H_
 
+#include <vector>
 #include "Physika_Core/Vectors/vector_1d.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Dynamics/Rigid_Body/rotation_dof.h"
