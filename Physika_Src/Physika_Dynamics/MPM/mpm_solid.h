@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -58,12 +59,13 @@ public:
     //setters&&getters
     const Grid<Scalar,Dim>& grid() const;
     void setGrid(const Grid<Scalar,Dim> &grid);
-    Scalar gridMass(const Vector<unsigned int,Dim> &node_idx) const;
-    Vector<Scalar,Dim> gridVelocity(const Vector<unsigned int,Dim> &node_idx) const;
-    void setGridVelocity(const Vector<unsigned int,Dim> &node_idx, const Vector<Scalar,Dim> &node_velocity);
+    //get&&set the value at grid nodes corresponding to each object
+    Scalar gridMass(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const;
+    Vector<Scalar,Dim> gridVelocity(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const;
+    void setGridVelocity(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx, const Vector<Scalar,Dim> &node_velocity);
     //grid nodes used as dirichlet boundary condition, velocity is prescribed
-    void addDirichletGridNode(const Vector<unsigned int,Dim> &node_idx);  
-    void addDirichletGridNodes(const std::vector<Vector<unsigned int,Dim> > &node_idx);
+    void addDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx);  
+    void addDirichletGridNodes(unsigned int object_idx, const std::vector<Vector<unsigned int,Dim> > &node_idx);
 
     //substeps in one time step
     virtual void rasterize();
@@ -91,14 +93,18 @@ protected:
     //solve on grid with different integration methods, called in solveOnGrid()
     virtual void solveOnGridForwardEuler(Scalar dt);
     virtual void solveOnGridBackwardEuler(Scalar dt);
+    //helper method: conversion between a multi-dimensional grid index and its flat version
+    unsigned int flatIndex(const Vector<unsigned int,Dim> &index, const Vector<unsigned int,Dim> &dimension) const;
+    Vector<unsigned int,Dim> multiDimIndex(unsigned int flat_index, const Vector<unsigned int,Dim> &dimension) const;
 protected:
     Grid<Scalar,Dim> grid_;
-    ArrayND<unsigned char,Dim> is_dirichlet_grid_node_;  //for each grid node, use one byte to indicate whether it's set as boundary condition
     //grid data stored on grid nodes
-    std::vector<Vector<unsigned int,Dim> > active_grid_node_; //index of the grid nodes that is active
-    ArrayND<Scalar,Dim> grid_mass_;
-    ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_; //current grid velocity
-    ArrayND<Vector<Scalar,Dim>,Dim> grid_velocity_before_; //grid velocity before any solve update
+    //data at each node is a map whose element is the [object_idx, value] pair corresponding to the objects that occupy the node
+    ArrayND<std::set<unsigned int>,Dim> is_dirichlet_grid_node_;  //for each grid node, store the object id if it's set as boundary condition for the object
+    ArrayND<std::map<unsigned int,Scalar>,Dim> grid_mass_;
+    ArrayND<std::map<unsigned int,Vector<Scalar,Dim> >,Dim> grid_velocity_; //current grid velocity
+    ArrayND<std::map<unsigned int,Vector<Scalar,Dim> >,Dim> grid_velocity_before_; //grid velocity before any solve update
+    std::multimap<unsigned int,unsigned int> active_grid_node_; //the key is the flattened node index, the value is the object id
     //precomputed weights and gradients for grid nodes that is within range of each particle
     //for each particle of each object, store the node-value pair: [object_idx][particle_idx][pair_idx]
     std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > particle_grid_weight_and_gradient_;

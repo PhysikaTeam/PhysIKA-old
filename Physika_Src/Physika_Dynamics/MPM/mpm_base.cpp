@@ -22,7 +22,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase()
-    :DriverBase<Scalar>(), weight_function_(NULL), step_method_(NULL),
+    :DriverBase<Scalar>(), weight_function_(NULL), step_method_(NULL), contact_method_(NULL),
      cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
@@ -32,7 +32,7 @@ MPMBase<Scalar,Dim>::MPMBase()
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL),
-     step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
+     step_method_(NULL), contact_method_(NULL), cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
     weight_function_ = GridWeightFunctionCreator<GridPiecewiseCubicSpline<Scalar,Dim> >::createGridWeightFunction();
@@ -45,6 +45,8 @@ MPMBase<Scalar,Dim>::~MPMBase()
         delete weight_function_;
     if(step_method_)
         delete step_method_;
+    if(contact_method_)
+        delete contact_method_;
 }
 
 template <typename Scalar, int Dim>
@@ -134,6 +136,14 @@ void MPMBase<Scalar,Dim>::setGravity(Scalar gravity)
     }
     else
         gravity_ = gravity;
+}
+
+template <typename Scalar, int Dim>
+void MPMBase<Scalar,Dim>::resetContactMethod()
+{
+    if(contact_method_)
+        delete contact_method_;
+    contact_method_ = NULL;
 }
 
 //explicit instantiations

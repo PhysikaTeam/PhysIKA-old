@@ -72,7 +72,7 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleDomain(
                 for(unsigned int j = 0; j < corner_grid_pair_num[obj_idx][particle_idx][corner_idx]; ++j)
                 {
                     Scalar weight = corner_grid_weight_and_gradient[obj_idx][particle_idx][corner_idx][j].weight_value_;
-                    Vector<Scalar,2> node_vel = this->cpdi_driver_->gridVelocity(corner_grid_weight_and_gradient[obj_idx][particle_idx][corner_idx][j].node_idx_);
+                    Vector<Scalar,2> node_vel = this->cpdi_driver_->gridVelocity(obj_idx,corner_grid_weight_and_gradient[obj_idx][particle_idx][corner_idx][j].node_idx_);
                     cur_corner_pos += weight*node_vel*dt;
                 }
                 *iter = cur_corner_pos;
@@ -304,7 +304,7 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleDomain(
                 for(unsigned int j = 0; j < corner_grid_pair_num[obj_idx][particle_idx][corner_idx]; ++j)
                 {
                     Scalar weight = corner_grid_weight_and_gradient[obj_idx][particle_idx][corner_idx][j].weight_value_;
-                    Vector<Scalar,3> node_vel = this->cpdi_driver_->gridVelocity(corner_grid_weight_and_gradient[obj_idx][particle_idx][corner_idx][j].node_idx_);
+                    Vector<Scalar,3> node_vel = this->cpdi_driver_->gridVelocity(obj_idx,corner_grid_weight_and_gradient[obj_idx][particle_idx][corner_idx][j].node_idx_);
                     cur_corner_pos += weight*node_vel*dt;
                 }
                 *iter = cur_corner_pos;

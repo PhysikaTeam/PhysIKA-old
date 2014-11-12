@@ -386,11 +386,14 @@ void MPMSolidPluginRender<Scalar,Dim>::renderGridVelocity()
     {  
         Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
         Vector<Scalar,Dim> start = grid.node(node_idx);
-        Vector<Scalar,Dim> end = start + (this->velocity_scale_)*(driver->gridVelocity(node_idx));
-        glBegin(GL_LINES);
-        openGLVertex(start);
-        openGLVertex(end);
-        glEnd();
+        for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
+        {
+            Vector<Scalar,Dim> end = start + (this->velocity_scale_)*(driver->gridVelocity(obj_idx,node_idx));
+            glBegin(GL_LINES);
+            openGLVertex(start);
+            openGLVertex(end);
+            glEnd();
+        }
     }
 }
 

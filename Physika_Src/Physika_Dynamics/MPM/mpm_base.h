@@ -24,6 +24,7 @@
 #include "Physika_Dynamics/Driver/driver_base.h"
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
+#include "Physika_Dynamics/MPM/MPM_Contact_Methods/mpm_contact_method.h"
 
 namespace Physika{
 
@@ -57,13 +58,18 @@ public:
     Scalar gravity() const;
     void setGravity(Scalar gravity);
 
-    //set the type of weight function with weight function type as template,
-    //the scale between support domain and cell size is the method parameter
+    //set the type of weight function with weight function type as template
     template <typename GridWeightFunctionType>
     void setWeightFunction();
     //set the step method with the step method type as template
     template <typename MPMStepMethodType>
     void setStepMethod();
+    //set the contact method with the contact method type as template
+    template <typename MPMContactMethodType>
+    void setContactMethod();
+    //reset the contact method to default behavior, i.e., automatic handling via the grid
+    void resetContactMethod();
+        
 protected:
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const=0; //return maximum norm the particles' velocity
@@ -73,6 +79,7 @@ protected:
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
     MPMStepMethod<Scalar,Dim> *step_method_;
+    MPMContactMethod<Scalar,Dim> *contact_method_;
     //time step computation with CFL condition
     Scalar cfl_num_;
     Scalar sound_speed_;
@@ -99,6 +106,16 @@ void MPMBase<Scalar,Dim>::setStepMethod()
         delete step_method_;
     step_method_ = new MPMStepMethodType();
     step_method_->setMPMDriver(this);
+}
+
+template <typename Scalar, int Dim>
+template <typename MPMContactMethodType>
+void MPMBase<Scalar,Dim>::setContactMethod()
+{
+    if(contact_method_)
+        delete contact_method_;
+    contact_method_ = new MPMContactMethodType();
+    contact_method_->setMPMDriver(this);
 }
 
 }  //end of namespace Physika
