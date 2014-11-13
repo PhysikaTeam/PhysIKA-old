@@ -71,7 +71,11 @@ namespace Physika{
 		}
         operator bool ()
         {
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
             return first_ele_ != last_ele_;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+			return it;
+#endif
         }
     protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
