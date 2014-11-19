@@ -26,8 +26,7 @@ class MPMContactMethod
 {
 public:
     MPMContactMethod();
-    virtual ~MPMContactMethod();
-    virtual void resolveContact(Scalar dt) = 0;
+    virtual ~MPMContactMethod() = 0;
     void setMPMDriver(MPMBase<Scalar,Dim> *mpm_driver);
 protected:
     MPMBase<Scalar,Dim> *mpm_driver_; 
