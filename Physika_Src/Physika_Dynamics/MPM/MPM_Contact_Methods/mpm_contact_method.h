@@ -30,8 +30,7 @@ public:
     virtual void resolveContact(Scalar dt) = 0;
     void setMPMDriver(MPMBase<Scalar,Dim> *mpm_driver);
 protected:
-    MPMBase<Scalar,Dim> *mpm_driver_;
-    
+    MPMBase<Scalar,Dim> *mpm_driver_; 
 };
     
 }  //end of namespace Physika
