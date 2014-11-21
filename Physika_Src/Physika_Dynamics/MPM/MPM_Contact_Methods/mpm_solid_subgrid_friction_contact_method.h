@@ -58,10 +58,15 @@ public:
 protected:
     //put the particles of given object into buckets according to their positions, each bucket is a grid cell
     //the key of the map is the object id, and the value of the map is the vector of particles in this bucket
-    void initParticleBucket(const std::set<unsigned int> &objects, ArrayND<std::map<unsigned int,std::vector<unsigned int> >,Dim> &bucket);  
+    void initParticleBucket(const std::set<unsigned int> &objects, ArrayND<std::map<unsigned int,std::vector<unsigned int> >,Dim> &bucket) const;
+    //helper method to compute tangential direction from normal direction and the velocity difference
+    Vector<Scalar,2> tangentialDirection(const Vector<Scalar,2> &normal, const Vector<Scalar,2> &velocity_diff) const;  
+    Vector<Scalar,3> tangentialDirection(const Vector<Scalar,3> &normal, const Vector<Scalar,3> &velocity_diff) const;
+    //return indices of cells that is adjacent to given node
+    void adjacentCells(const Vector<unsigned int,Dim> &node_idx, std::vector<Vector<unsigned int,Dim> > &cells) const;  
 protected:
     Scalar friction_coefficient_;  //the coefficient between normal contact force and tangential frictional force 
-    Scalar collide_threshold_;  //the collide distance threshold expressed with respect to grid element size
+    Scalar collide_threshold_;  //the collide distance threshold expressed with respect to grid element size, in range (0,1]
     Scalar penalty_power_; //controls the power of the penalty function
 };
 

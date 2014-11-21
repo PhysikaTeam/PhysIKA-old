@@ -367,13 +367,15 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
         if(plugin)
             plugin->onResolveContactOnGrid(dt);
     }
+
     //resolve contact on grid with specific contact method
     if(contact_method_)
     {
         std::vector<Vector<unsigned int,Dim> > potential_collide_nodes;
         std::vector<std::vector<unsigned int> > objects_at_node;
+        std::set<unsigned int> involved_objects; //the set of objects involved in potential contact
         Vector<unsigned int,Dim> grid_node_num = grid_.nodeNum();
-        typename std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin();
+        std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin();
         while(iter != active_grid_node_.end())
         {
             unsigned int node_idx_1d = iter->first;
@@ -385,7 +387,10 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
                 while(object_count != 0) //element with equal key are stored in sequence in multimap
                 {
                     if(is_dirichlet_grid_node_(node_idx).count(iter->second) == 0)  //not dirichlet node for the object
+                    {
                         objects_at_this_node.push_back(iter->second);
+                        involved_objects.insert(iter->second);
+                    }
                     ++iter;
                     --object_count;
                 }
@@ -398,7 +403,47 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
             else //no object or single object
                 ++iter;
         }
-        //contact_method_->resolveContact(potential_collide_nodes,objects_at_node,dt);
+        //compute the normal of the involved objects at the potential contact nodes
+        std::vector<std::vector<Vector<Scalar,Dim> > > normal_at_node(potential_collide_nodes.size());
+        for(unsigned int i = 0; i < normal_at_node.size(); ++i)
+            normal_at_node[i].resize(objects_at_node[i].size());
+        ArrayND<std::map<unsigned int,Vector<Scalar,Dim> >,Dim> grid_normal;
+        Vector<unsigned int,Dim> grid_normal_dim = grid_normal.size();
+        for(unsigned int i = 0; i < Dim; ++i)
+        {
+            if(grid_normal_dim[i] != grid_node_num[i])
+                grid_normal.resize(grid_node_num[i],i);
+        }
+        for(std::set<unsigned int>::iterator obj_iter = involved_objects.begin(); obj_iter != involved_objects.end(); ++obj_iter)
+        {
+            unsigned int obj_idx = *obj_iter;
+            for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
+            {
+                SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
+                for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+                {
+                    const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i];
+                    Vector<Scalar,Dim> weight_gradient = pair.gradient_value_;
+                    typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator normal_iter = grid_normal(pair.node_idx_).find(obj_idx);
+                    if(normal_iter != grid_normal(pair.node_idx_).end())
+                        grid_normal(pair.node_idx_)[obj_idx] += weight_gradient*particle->mass();
+                    else
+                        grid_normal(pair.node_idx_).insert(std::make_pair(obj_idx,weight_gradient*particle->mass()));
+                }
+            }
+        }
+        for(unsigned int i = 0; i < potential_collide_nodes.size(); ++i)
+        {
+            Vector<unsigned int,Dim> node_idx = potential_collide_nodes[i];
+            for(unsigned int j = 0; objects_at_node[i].size(); ++j)
+            {
+                unsigned int obj_idx = objects_at_node[i][j];
+                //normalize normal 
+                normal_at_node[i][j] = grid_normal(node_idx)[obj_idx].normalize();
+            }
+        }
+        //resolve contact
+        contact_method_->resolveContact(potential_collide_nodes,objects_at_node,normal_at_node,dt);
     }
 }
 
@@ -634,7 +679,7 @@ void MPMSolid<Scalar,Dim>::applyGravityOnGrid(Scalar dt)
     Vector<unsigned int,Dim> grid_node_num = this->grid_.nodeNum();
     Vector<Scalar,Dim> gravity_vec(0);
     gravity_vec[1] = (-1)*(this->gravity_);
-    for(typename std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin(); iter != active_grid_node_.end(); ++iter)
+    for(std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin(); iter != active_grid_node_.end(); ++iter)
     {
         Vector<unsigned int,Dim> node_idx = multiDimIndex(iter->first,grid_node_num);
         for(unsigned int i = 0; i < this->objectNum(); ++i)
@@ -707,7 +752,7 @@ void MPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsigned int obj
     typename std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > >::iterator iter1 =
         particle_grid_weight_and_gradient_.begin() + object_idx;
     particle_grid_weight_and_gradient_.erase(iter1);
-    typename std::vector<std::vector<unsigned int> >::iterator iter2 = particle_grid_pair_num_.begin() + object_idx;
+    std::vector<std::vector<unsigned int> >::iterator iter2 = particle_grid_pair_num_.begin() + object_idx;
     particle_grid_pair_num_.erase(iter2);
 }
     
@@ -718,7 +763,7 @@ void MPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsigned int obj
     typename std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > >::iterator iter1 =
         particle_grid_weight_and_gradient_[object_idx].begin() + particle_idx;
     particle_grid_weight_and_gradient_[object_idx].erase(iter1);
-    typename std::vector<unsigned int>::iterator iter2 = particle_grid_pair_num_[object_idx].begin() + particle_idx;
+    std::vector<unsigned int>::iterator iter2 = particle_grid_pair_num_[object_idx].begin() + particle_idx;
     particle_grid_pair_num_[object_idx].erase(iter2);
 }
 

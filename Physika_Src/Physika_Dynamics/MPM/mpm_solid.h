@@ -101,8 +101,8 @@ protected:
     unsigned int flatIndex(const Vector<unsigned int,Dim> &index, const Vector<unsigned int,Dim> &dimension) const;
     Vector<unsigned int,Dim> multiDimIndex(unsigned int flat_index, const Vector<unsigned int,Dim> &dimension) const;
 protected:
-    MPMSolidContactMethod<Scalar,Dim> *contact_method_;
     Grid<Scalar,Dim> grid_;
+    MPMSolidContactMethod<Scalar,Dim> *contact_method_;
     //grid data stored on grid nodes
     //data at each node is a map whose element is the [object_idx, value] pair corresponding to the objects that occupy the node
     ArrayND<std::set<unsigned int>,Dim> is_dirichlet_grid_node_;  //for each grid node, store the object id if it's set as boundary condition for the object
