@@ -24,26 +24,27 @@
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 #include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
+#include "Physika_Dynamics/MPM/MPM_Contact_Methods/mpm_solid_contact_method.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid()
-    :MPMSolidBase<Scalar,Dim>()
+    :MPMSolidBase<Scalar,Dim>(), contact_method_(NULL)
 {
 }
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :MPMSolidBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
+    :MPMSolidBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), contact_method_(NULL)
 {
 }
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                const Grid<Scalar,Dim> &grid)
-    :MPMSolidBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),grid_(grid)
+    :MPMSolidBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),grid_(grid), contact_method_(NULL)
 {
     synchronizeGridData();
 }
@@ -51,6 +52,8 @@ MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame,
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::~MPMSolid()
 {
+    if(contact_method_)
+        delete contact_method_;
 }
 
 template <typename Scalar, int Dim>
@@ -216,6 +219,23 @@ void MPMSolid<Scalar,Dim>::addDirichletGridNodes(unsigned int object_idx, const 
 }
 
 template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::setContactMethod(const MPMSolidContactMethod<Scalar,Dim> &contact_method)
+{
+    if(contact_method_)
+        delete contact_method_;
+    contact_method_ = contact_method.clone();
+    contact_method_->setMPMDriver(this);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::resetContactMethod()
+{
+    if(contact_method_)
+        delete contact_method_;
+    contact_method_ = NULL;
+}
+
+template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
     //plugin operation
@@ -347,7 +367,39 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
         if(plugin)
             plugin->onResolveContactOnGrid(dt);
     }
-//TO DO
+    //resolve contact on grid with specific contact method
+    if(contact_method_)
+    {
+        std::vector<Vector<unsigned int,Dim> > potential_collide_nodes;
+        std::vector<std::vector<unsigned int> > objects_at_node;
+        Vector<unsigned int,Dim> grid_node_num = grid_.nodeNum();
+        typename std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin();
+        while(iter != active_grid_node_.end())
+        {
+            unsigned int node_idx_1d = iter->first;
+            unsigned int object_count = active_grid_node_.count(node_idx_1d);
+            if(object_count > 1) //multiple objects at the node
+            {
+                Vector<unsigned int,Dim> node_idx = multiDimIndex(node_idx_1d,grid_node_num);
+                std::vector<unsigned int> objects_at_this_node;
+                while(object_count != 0) //element with equal key are stored in sequence in multimap
+                {
+                    if(is_dirichlet_grid_node_(node_idx).count(iter->second) == 0)  //not dirichlet node for the object
+                        objects_at_this_node.push_back(iter->second);
+                    ++iter;
+                    --object_count;
+                }
+                if(objects_at_this_node.size() > 0)
+                {
+                    potential_collide_nodes.push_back(node_idx);
+                    objects_at_node.push_back(objects_at_this_node);
+                }
+            }
+            else //no object or single object
+                ++iter;
+        }
+        //contact_method_->resolveContact(potential_collide_nodes,objects_at_node,dt);
+    }
 }
 
 template <typename Scalar, int Dim>

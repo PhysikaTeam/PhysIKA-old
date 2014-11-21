@@ -254,6 +254,8 @@ void MPMSolidPluginRender<Scalar,Dim>::displayFunction(void)
         active_instance_->renderGridVelocity();
     if(active_instance_->render_particle_domain_)
         active_instance_->renderParticleDomain();
+
+    (window->renderManager()).renderAll(); //render all other tasks of render manager
     window->displayFrameRate();
     glutSwapBuffers();
 }
