@@ -28,8 +28,12 @@ class MPMSolidContactMethod: public MPMContactMethod<Scalar,Dim>
 public:
     MPMSolidContactMethod();
     ~MPMSolidContactMethod();
+    virtual MPMSolidContactMethod<Scalar,Dim>* clone() const = 0;
     //potential collide nodes are those where multiple velocity fields exist
-    virtual void resolveContact(const std::vector<Vector<unsigned int,Dim> > &potential_collide_nodes, Scalar dt) = 0;
+    virtual void resolveContact(const std::vector<Vector<unsigned int,Dim> > &potential_collide_nodes,
+                                const std::vector<std::vector<unsigned int> > &objects_at_node,
+                                const std::vector<std::vector<Vector<Scalar,Dim> > > &normal_at_node,
+                                Scalar dt) = 0;
 protected:
 };
 

@@ -29,6 +29,7 @@ namespace Physika{
 
 template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
+template<typename Scalar,int Dim> class MPMSolidContactMethod;
 
 /*
  * MPMSolid: simulate solid with MPM
@@ -66,6 +67,9 @@ public:
     //grid nodes used as dirichlet boundary condition, velocity is prescribed
     void addDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx);  
     void addDirichletGridNodes(unsigned int object_idx, const std::vector<Vector<unsigned int,Dim> > &node_idx);
+    //set contact method
+    void setContactMethod(const MPMSolidContactMethod<Scalar,Dim> &contact_method);
+    void resetContactMethod();  //reset the contact method to the one inherent in mpm
 
     //substeps in one time step
     virtual void rasterize();
@@ -97,6 +101,7 @@ protected:
     unsigned int flatIndex(const Vector<unsigned int,Dim> &index, const Vector<unsigned int,Dim> &dimension) const;
     Vector<unsigned int,Dim> multiDimIndex(unsigned int flat_index, const Vector<unsigned int,Dim> &dimension) const;
 protected:
+    MPMSolidContactMethod<Scalar,Dim> *contact_method_;
     Grid<Scalar,Dim> grid_;
     //grid data stored on grid nodes
     //data at each node is a map whose element is the [object_idx, value] pair corresponding to the objects that occupy the node

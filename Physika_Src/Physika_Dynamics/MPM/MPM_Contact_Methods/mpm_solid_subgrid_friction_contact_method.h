@@ -16,9 +16,12 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_MPM_CONTACT_METHODS_MPM_SOLID_SUBGRID_FRICTION_CONTACT_METHOD_H_
 #define PHYSIKA_DYNAMICS_MPM_MPM_CONTACT_METHODS_MPM_SOLID_SUBGRID_FRICTION_CONTACT_METHOD_H_
 
+#include <set>
+#include <map>
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Dynamics/MPM/MPM_Contact_Methods/mpm_solid_contact_method.h"
 
 namespace Physika{
@@ -28,6 +31,9 @@ namespace Physika{
  * 1. the Coulomb friction between objects is modeled
  * 2. the contact threshold is set with respect to the grid cell size such that resolution of 
  *    contact detection is increased to subgrid level
+ * 3. when objects approach each other within the threshold, a penalty function is applied to 
+ *    the velocity change in normal direction
+ * ref. < A new contact algorithm in the material point method for geotechnical simulations>
  */
 
 template <typename Scalar, int Dim>
@@ -35,15 +41,28 @@ class MPMSolidSubgridFrictionContactMethod: public MPMSolidContactMethod<Scalar,
 {
 public:
     MPMSolidSubgridFrictionContactMethod();
+    MPMSolidSubgridFrictionContactMethod(const MPMSolidSubgridFrictionContactMethod<Scalar,Dim> &contact_method);
     ~MPMSolidSubgridFrictionContactMethod();
-    virtual void resolveContact(const std::vector<Vector<unsigned int,Dim> > &potential_collide_nodes, Scalar dt);
+    MPMSolidSubgridFrictionContactMethod<Scalar,Dim>& operator= (const MPMSolidSubgridFrictionContactMethod<Scalar,Dim> &contact_method);
+    virtual MPMSolidSubgridFrictionContactMethod<Scalar,Dim>* clone() const;
+    virtual void resolveContact(const std::vector<Vector<unsigned int,Dim> > &potential_collide_nodes,
+                                const std::vector<std::vector<unsigned int> > &objects_at_node,
+                                const std::vector<std::vector<Vector<Scalar,Dim> > > &normal_at_node,
+                                Scalar dt);
     void setFrictionCoefficient(Scalar coefficient);
     void setCollideThreshold(Scalar threshold);
+    void setPenaltyPower(Scalar penalty_power);
     Scalar frictionCoefficient() const;
     Scalar collideThreshold() const;
+    Scalar penaltyPower() const;
+protected:
+    //put the particles of given object into buckets according to their positions, each bucket is a grid cell
+    //the key of the map is the object id, and the value of the map is the vector of particles in this bucket
+    void initParticleBucket(const std::set<unsigned int> &objects, ArrayND<std::map<unsigned int,std::vector<unsigned int> >,Dim> &bucket);  
 protected:
     Scalar friction_coefficient_;  //the coefficient between normal contact force and tangential frictional force 
     Scalar collide_threshold_;  //the collide distance threshold expressed with respect to grid element size
+    Scalar penalty_power_; //controls the power of the penalty function
 };
 
 }  //end of namespace Physika

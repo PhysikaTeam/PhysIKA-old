@@ -21,12 +21,12 @@ MPMSolidContactMethod<Scalar,Dim>::MPMSolidContactMethod()
     :MPMContactMethod<Scalar,Dim>()
 {
 }
-
+    
 template <typename Scalar, int Dim>
 MPMSolidContactMethod<Scalar,Dim>::~MPMSolidContactMethod()
 {
 }
-
+    
 //explicit instantiations
 template class MPMSolidContactMethod<float,2>;
 template class MPMSolidContactMethod<float,3>;
