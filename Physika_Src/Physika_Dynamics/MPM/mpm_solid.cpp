@@ -438,8 +438,12 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
             for(unsigned int j = 0; objects_at_node[i].size(); ++j)
             {
                 unsigned int obj_idx = objects_at_node[i][j];
-                //normalize normal 
-                normal_at_node[i][j] = grid_normal(node_idx)[obj_idx].normalize();
+                //normalize normal
+                typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator normal_iter = grid_normal(node_idx).find(obj_idx);
+                if(normal_iter != grid_normal(node_idx).end())
+                    normal_at_node[i][j] = grid_normal(node_idx)[obj_idx].normalize();
+                else
+                    PHYSIKA_ERROR("Error in computing grid normal!");
             }
         }
         //resolve contact

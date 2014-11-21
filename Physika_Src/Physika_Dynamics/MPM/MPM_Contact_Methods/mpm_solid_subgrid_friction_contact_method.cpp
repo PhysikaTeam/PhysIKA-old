@@ -28,14 +28,18 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::MPMSolidSubgridFrictionContactMethod()
-    :MPMSolidContactMethod<Scalar,Dim>(),friction_coefficient_(0.5),collide_threshold_(0.5)
+    :MPMSolidContactMethod<Scalar,Dim>(),
+     friction_coefficient_(0.5),
+     collide_threshold_(0.5),
+     penalty_power_(6)
 {
 }
 
 template <typename Scalar, int Dim>
 MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::MPMSolidSubgridFrictionContactMethod(const MPMSolidSubgridFrictionContactMethod<Scalar,Dim> &contact_method)
     :friction_coefficient_(contact_method.friction_coefficient_),
-    collide_threshold_(contact_method.collide_threshold_)
+     collide_threshold_(contact_method.collide_threshold_),
+     penalty_power_(contact_method.penalty_power_)
 {
     this->mpm_driver_ = contact_method.mpm_driver_;
 }
@@ -52,6 +56,7 @@ MPMSolidSubgridFrictionContactMethod<Scalar,Dim>& MPMSolidSubgridFrictionContact
     this->mpm_driver_ = contact_method.mpm_driver_;
     this->friction_coefficient_ = contact_method.friction_coefficient_;
     this->collide_threshold_ = contact_method.collide_threshold_;
+    this->penalty_power_ = contact_method.penalty_power_;
     return *this;
 }
 
@@ -73,6 +78,8 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
         std::cerr<<"Error: mpm driver and contact method mismatch, program abort!\n";
         std::exit(EXIT_FAILURE);
     }
+    if(potential_collide_nodes.empty())  //no contact, direct return
+        return;
     //first init the particle buckets of the involved objects
     std::set<unsigned int> involved_objects;
     for(unsigned int i = 0; i < objects_at_node.size(); ++i)
