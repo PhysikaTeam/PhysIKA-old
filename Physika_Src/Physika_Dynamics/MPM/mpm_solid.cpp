@@ -398,7 +398,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
             else //no object or single object
                 ++iter;
         }
-        contact_method_->resolveContact(potential_collide_nodes,objects_at_node,dt);
+        //contact_method_->resolveContact(potential_collide_nodes,objects_at_node,dt);
     }
 }
 
