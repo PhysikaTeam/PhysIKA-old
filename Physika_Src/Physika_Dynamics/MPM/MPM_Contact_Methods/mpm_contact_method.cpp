@@ -26,7 +26,12 @@ MPMContactMethod<Scalar,Dim>::MPMContactMethod()
     :mpm_driver_(NULL)
 {
 }
-    
+ 
+template <typename Scalar, int Dim>
+MPMContactMethod<Scalar,Dim>::~MPMContactMethod()
+{
+}
+   
 template <typename Scalar, int Dim>
 void MPMContactMethod<Scalar,Dim>::setMPMDriver(MPMBase<Scalar,Dim> *mpm_driver)
 {

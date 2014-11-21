@@ -238,8 +238,11 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::initParticleBucket(const 
 template <typename Scalar, int Dim>
 Vector<Scalar,2> MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::tangentialDirection(const Vector<Scalar,2> &normal, const Vector<Scalar,2> &velocity_diff) const
 {
-//TO DO
-    return Vector<Scalar,2>(0);
+    Vector<Scalar,2> tangent_dir(normal[1],-normal[0]);
+    tangent_dir.normalize();
+    if(tangent_dir.dot(normal) < 0)
+        tangent_dir *= -1;
+    return tangent_dir;
 }
 
 template <typename Scalar, int Dim>
