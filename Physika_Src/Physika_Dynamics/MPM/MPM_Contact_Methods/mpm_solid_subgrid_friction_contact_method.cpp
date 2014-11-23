@@ -89,6 +89,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
     initParticleBucket(involved_objects,particle_bucket);
     //resolve contact
     const Grid<Scalar,Dim> &grid = mpm_solid_driver->grid();
+    Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
     for(unsigned int i = 0; i <potential_collide_nodes.size(); ++i)
     {
         Vector<unsigned int,Dim> node_idx = potential_collide_nodes[i];
@@ -116,7 +117,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
             {
                 //approximate the distance from the grid to the object surface with the minimum distance to the particles in adjacent cells
                 std::vector<Vector<unsigned int,Dim> > adjacent_cells;
-                adjacentCells(node_idx,adjacent_cells);
+                adjacentCells(node_idx,grid_cell_num,adjacent_cells);
                 Scalar min_dist = (std::numeric_limits<Scalar>::max)();
                 for(unsigned int k = 0; k < adjacent_cells.size(); ++k)
                 {
@@ -262,7 +263,9 @@ Vector<Scalar,3> MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::tangentialDir
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::adjacentCells(const Vector<unsigned int,Dim> &node_idx, std::vector<Vector<unsigned int,Dim> > &cells) const
+void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::adjacentCells(const Vector<unsigned int,Dim> &node_idx,
+                                                                     const Vector<unsigned int,Dim> &cell_num,
+                                                                     std::vector<Vector<unsigned int,Dim> > &cells) const
 {
     cells.clear();
     Vector<unsigned int,Dim> cell_idx = node_idx;
@@ -275,7 +278,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::adjacentCells(const Vecto
             {
                 cell_idx[0] += offset_x;
                 cell_idx[1] += offset_y;
-                if(cell_idx[0] < 0 || cell_idx[1] < 0)
+                if(cell_idx[0] < 0 || cell_idx[1] < 0 || cell_idx[0] >= cell_num[0] || cell_idx[1] >= cell_num[1])
                     continue;
                 cells.push_back(cell_idx);
             }
@@ -290,7 +293,8 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::adjacentCells(const Vecto
                 cell_idx[0] += offset_x;
                 cell_idx[1] += offset_y;
                 cell_idx[2] += offset_z;
-                if(cell_idx[0] < 0 || cell_idx[1] < 0 || cell_idx[2] < 0)
+                if(cell_idx[0] < 0 || cell_idx[1] < 0 || cell_idx[2] < 0
+                    ||cell_idx[0] >= cell_num[0] || cell_idx[1] >= cell_num[1] || cell_idx[2] >= cell_num[2])
                     continue;
                 cells.push_back(cell_idx);
             }

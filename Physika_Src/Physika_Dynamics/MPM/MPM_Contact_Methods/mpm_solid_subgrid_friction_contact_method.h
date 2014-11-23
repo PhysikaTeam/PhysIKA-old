@@ -63,7 +63,7 @@ protected:
     Vector<Scalar,2> tangentialDirection(const Vector<Scalar,2> &normal, const Vector<Scalar,2> &velocity_diff) const;  
     Vector<Scalar,3> tangentialDirection(const Vector<Scalar,3> &normal, const Vector<Scalar,3> &velocity_diff) const;
     //return indices of cells that is adjacent to given node
-    void adjacentCells(const Vector<unsigned int,Dim> &node_idx, std::vector<Vector<unsigned int,Dim> > &cells) const;  
+    void adjacentCells(const Vector<unsigned int,Dim> &node_idx, const Vector<unsigned int,Dim> &cell_num, std::vector<Vector<unsigned int,Dim> > &cells) const;  
 protected:
     Scalar friction_coefficient_;  //the coefficient between normal contact force and tangential frictional force 
     Scalar collide_threshold_;  //the collide distance threshold expressed with respect to grid element size, in range (0,1]

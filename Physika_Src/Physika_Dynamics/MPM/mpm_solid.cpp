@@ -183,15 +183,9 @@ void MPMSolid<Scalar,Dim>::setGridVelocity(unsigned int object_idx, const Vector
     }
     typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_map_iter = grid_velocity_(node_idx).find(object_idx);
     if(vel_map_iter == grid_velocity_(node_idx).end())
-    {
         grid_velocity_(node_idx).insert(std::make_pair(object_idx,node_velocity));
-        grid_velocity_before_(node_idx).insert(std::make_pair(object_idx,node_velocity));
-    }
     else
-    {
         grid_velocity_(node_idx)[object_idx] = node_velocity;
-        grid_velocity_before_(node_idx)[object_idx] = node_velocity;
-    }
 }
 
 template <typename Scalar, int Dim>
@@ -278,14 +272,14 @@ void MPMSolid<Scalar,Dim>::rasterize()
     std::map<unsigned int,Vector<unsigned int,Dim> > active_node_idx_1d_nd_map;
     for(typename ArrayND<std::map<unsigned int,Scalar>,Dim>::Iterator iter = grid_mass_.begin(); iter != grid_mass_.end(); ++iter)
     {
-        Vector<unsigned int,Dim> ele_idx = iter.elementIndex();
+        Vector<unsigned int,Dim> node_idx = iter.elementIndex();
         for(unsigned int i = 0; i < this->objectNum(); ++i)
         {
-            if(gridMass(i,ele_idx)>std::numeric_limits<Scalar>::epsilon())
+            if(gridMass(i,node_idx)>std::numeric_limits<Scalar>::epsilon())
             {
-                unsigned int node_idx_1d = flatIndex(ele_idx,grid_node_num);
+                unsigned int node_idx_1d = flatIndex(node_idx,grid_node_num);
                 active_grid_node_.insert(std::make_pair(node_idx_1d,i));
-                active_node_idx_1d_nd_map.insert(std::make_pair(node_idx_1d,ele_idx));
+                active_node_idx_1d_nd_map.insert(std::make_pair(node_idx_1d,node_idx));
             }
         }
     }
@@ -407,13 +401,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
         std::vector<std::vector<Vector<Scalar,Dim> > > normal_at_node(potential_collide_nodes.size());
         for(unsigned int i = 0; i < normal_at_node.size(); ++i)
             normal_at_node[i].resize(objects_at_node[i].size());
-        ArrayND<std::map<unsigned int,Vector<Scalar,Dim> >,Dim> grid_normal;
-        Vector<unsigned int,Dim> grid_normal_dim = grid_normal.size();
-        for(unsigned int i = 0; i < Dim; ++i)
-        {
-            if(grid_normal_dim[i] != grid_node_num[i])
-                grid_normal.resize(grid_node_num[i],i);
-        }
+        ArrayND<std::map<unsigned int,Vector<Scalar,Dim> >,Dim> grid_normal(grid_node_num);
         for(std::set<unsigned int>::iterator obj_iter = involved_objects.begin(); obj_iter != involved_objects.end(); ++obj_iter)
         {
             unsigned int obj_idx = *obj_iter;
@@ -435,7 +423,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
         for(unsigned int i = 0; i < potential_collide_nodes.size(); ++i)
         {
             Vector<unsigned int,Dim> node_idx = potential_collide_nodes[i];
-            for(unsigned int j = 0; objects_at_node[i].size(); ++j)
+            for(unsigned int j = 0; j < objects_at_node[i].size(); ++j)
             {
                 unsigned int obj_idx = objects_at_node[i][j];
                 //normalize normal
@@ -482,11 +470,11 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
     Vector<Scalar,Dim> grid_dx = (this->grid_).dX();
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
     {
-        for(unsigned int i = 0; i < this->particleNumOfObject(obj_idx); ++i)
+        for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
         {
-            SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][i];
+            SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
             Vector<Scalar,Dim> particle_pos = particle->position();
-            this->particle_grid_pair_num_[obj_idx][i] = 0;
+            this->particle_grid_pair_num_[obj_idx][particle_idx] = 0;
             for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++iter)
             {
                 Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
@@ -495,10 +483,10 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
                     particle_to_node[dim] /= grid_dx[dim];
                 Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node);
                 Scalar weight = this->weight_function_->weight(particle_to_node);
-                unsigned int j = this->particle_grid_pair_num_[obj_idx][i]++;
-                (this->particle_grid_weight_and_gradient_)[obj_idx][i][j].node_idx_ = node_idx;
-                (this->particle_grid_weight_and_gradient_)[obj_idx][i][j].weight_value_ = weight;
-                (this->particle_grid_weight_and_gradient_)[obj_idx][i][j].gradient_value_ = weight_gradient;
+                unsigned int i = this->particle_grid_pair_num_[obj_idx][particle_idx]++;
+                (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].node_idx_ = node_idx;
+                (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].weight_value_ = weight;
+                (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].gradient_value_ = weight_gradient;
             }
         }
     }
@@ -690,7 +678,8 @@ void MPMSolid<Scalar,Dim>::applyGravityOnGrid(Scalar dt)
         {
             if(is_dirichlet_grid_node_(node_idx).count(i))
                 continue; //skip grid nodes that are boundary condition
-            grid_velocity_(node_idx)[i] += gravity_vec*dt;
+            if(gridMass(i,node_idx) > std::numeric_limits<Scalar>::epsilon()) //only update velocity of object that is active at this node
+                grid_velocity_(node_idx)[i] += gravity_vec*dt;
         }
     }
 }
