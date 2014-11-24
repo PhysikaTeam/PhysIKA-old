@@ -1,5 +1,5 @@
 /*
- * @file png_io.cpp 
+ * @file ppm_io.cpp 
  * @Brief load/save ppm file
  * @author Wei Chen
  * 
