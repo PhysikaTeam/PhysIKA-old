@@ -152,6 +152,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
             }
         }
     }
+    getchar();
 }
 
 template <typename Scalar, int Dim>

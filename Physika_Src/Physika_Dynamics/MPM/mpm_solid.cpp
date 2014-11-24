@@ -306,9 +306,19 @@ void MPMSolid<Scalar,Dim>::rasterize()
             //set all involved objects to uniform value at this node
             for(typename std::map<unsigned int,Scalar>::iterator mass_iter = grid_mass_(node_idx).begin(); mass_iter != grid_mass_(node_idx).end(); ++mass_iter)
                 mass_iter->second = mass_at_node;
+            //if for any involved object, this node is set as dirichlet, then the velocity of all objects is set as the prescribed velocity
+            for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(node_idx).begin();
+                vel_iter != grid_velocity_(node_idx).end(); ++vel_iter)
+                if(is_dirichlet_grid_node_(node_idx).count(iter->first))
+                {
+                    momentum_at_node = vel_iter->second;
+                    break;
+                }
+            //set the velocity
             for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(node_idx).begin();
                 vel_iter != grid_velocity_(node_idx).end(); ++vel_iter)
                 vel_iter->second = momentum_at_node;
+
         }
     }
     //compute grid's velocity, divide momentum by mass
