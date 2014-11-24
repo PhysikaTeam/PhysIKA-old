@@ -261,9 +261,15 @@ void MPMSolid<Scalar,Dim>::rasterize()
                     continue;
                 typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator iter2 = grid_velocity_(pair.node_idx_).find(obj_idx);
                 if(iter2 != grid_velocity_(pair.node_idx_).end())
+                {
                     grid_velocity_(pair.node_idx_)[obj_idx] += weight*(particle->mass()*particle->velocity());
+                    grid_velocity_before_(pair.node_idx_)[obj_idx] = grid_velocity_(pair.node_idx_)[obj_idx]; //buffer the grid velocity before any update
+                }
                 else
+                {
                     grid_velocity_(pair.node_idx_).insert(std::make_pair(obj_idx,weight*(particle->mass()*particle->velocity())));
+                    grid_velocity_before_(pair.node_idx_)[obj_idx] = grid_velocity_(pair.node_idx_)[obj_idx]; //buffer the grid velocity before any update
+                }
             }
         }
     }
@@ -283,44 +289,6 @@ void MPMSolid<Scalar,Dim>::rasterize()
             }
         }
     }
-    //if no special contact algorithm is used, multi-value at a grid node must be converted to single value for all involved objects
-    if(this->contact_method_==NULL)
-    {
-        for(typename std::map<unsigned int,Vector<unsigned int,Dim> >::iterator iter = active_node_idx_1d_nd_map.begin();
-            iter != active_node_idx_1d_nd_map.end(); ++iter)
-        {
-            unsigned int node_idx_1d = iter->first;
-            Vector<unsigned int,Dim> node_idx = iter->second;
-            std::multimap<unsigned int,unsigned int>::iterator beg = active_grid_node_.lower_bound(node_idx_1d),
-                end = active_grid_node_.upper_bound(node_idx_1d);
-            std::multimap<unsigned int,unsigned int>::iterator cur = beg;
-            Scalar mass_at_node = 0;
-            Vector<Scalar,Dim> momentum_at_node(0);
-            //accummulate values of all involved objects at this node
-            while(cur != end)
-            {
-                mass_at_node += grid_mass_(node_idx)[cur->second];
-                momentum_at_node += grid_velocity_(node_idx)[cur->second];
-                ++cur;
-            }
-            //set all involved objects to uniform value at this node
-            for(typename std::map<unsigned int,Scalar>::iterator mass_iter = grid_mass_(node_idx).begin(); mass_iter != grid_mass_(node_idx).end(); ++mass_iter)
-                mass_iter->second = mass_at_node;
-            //if for any involved object, this node is set as dirichlet, then the velocity of all objects is set as the prescribed velocity
-            for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(node_idx).begin();
-                vel_iter != grid_velocity_(node_idx).end(); ++vel_iter)
-                if(is_dirichlet_grid_node_(node_idx).count(vel_iter->first))
-                {
-                    momentum_at_node = vel_iter->second;
-                    break;
-                }
-            //set the velocity
-            for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(node_idx).begin();
-                vel_iter != grid_velocity_(node_idx).end(); ++vel_iter)
-                vel_iter->second = momentum_at_node;
-
-        }
-    }
     //compute grid's velocity, divide momentum by mass
     for(typename std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin(); iter != active_grid_node_.end(); ++iter)
     {
@@ -331,6 +299,49 @@ void MPMSolid<Scalar,Dim>::rasterize()
         grid_velocity_(node_idx)[object_idx] /= grid_mass_(node_idx)[object_idx];
         grid_velocity_before_(node_idx)[object_idx] = grid_velocity_(node_idx)[object_idx];  //buffer the grid velocity before any update
     }
+    //if no special contact algorithm is used, multi-value at a grid node must be converted to single value for all involved objects
+    // if(this->contact_method_==NULL)
+    // {
+    //     for(typename std::map<unsigned int,Vector<unsigned int,Dim> >::iterator iter = active_node_idx_1d_nd_map.begin();
+    //         iter != active_node_idx_1d_nd_map.end(); ++iter)
+    //     {
+    //         unsigned int node_idx_1d = iter->first;
+    //         Vector<unsigned int,Dim> node_idx = iter->second;
+    //         if(active_grid_node_.count(node_idx_1d) == 1) //skip single-valued node
+    //             continue;
+    //         std::multimap<unsigned int,unsigned int>::iterator beg = active_grid_node_.lower_bound(node_idx_1d),
+    //             end = active_grid_node_.upper_bound(node_idx_1d);
+    //         std::multimap<unsigned int,unsigned int>::iterator cur = beg;
+    //         Scalar mass_at_node = 0;
+    //         Vector<Scalar,Dim> momentum_at_node(0);
+    //         //accummulate values of all involved objects at this node
+    //         while(cur != end)
+    //         {
+    //             mass_at_node += grid_mass_(node_idx)[cur->second];
+    //             momentum_at_node += grid_mass_(node_idx)[cur->second] * grid_velocity_(node_idx)[cur->second];
+    //             ++cur;
+    //         }
+    //         momentum_at_node /= mass_at_node;//velocity at node
+    //         //set all involved objects to uniform value at this node
+    //         for(typename std::map<unsigned int,Scalar>::iterator mass_iter = grid_mass_(node_idx).begin(); mass_iter != grid_mass_(node_idx).end(); ++mass_iter)
+    //             mass_iter->second = mass_at_node;
+    //         //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
+    //         for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(node_idx).begin();
+    //             vel_iter != grid_velocity_(node_idx).end(); ++vel_iter)
+    //             if(is_dirichlet_grid_node_(node_idx).count(vel_iter->first))
+    //             {
+    //                 momentum_at_node = vel_iter->second;
+    //                 break;
+    //             }
+    //         //set the velocity
+    //         for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(node_idx).begin();
+    //             vel_iter != grid_velocity_(node_idx).end(); ++vel_iter)
+    //         {
+    //             vel_iter->second = momentum_at_node;
+    //             grid_velocity_before_(node_idx)[vel_iter->first] = vel_iter->second; //buffer the grid velocity before any update
+    //         }
+    //     }
+    // }
 }
 
 template <typename Scalar, int Dim>
@@ -561,9 +572,14 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
                 Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][i][j].node_idx_;
                 Scalar weight = this->particle_grid_weight_and_gradient_[obj_idx][i][j].weight_value_;
                 Vector<Scalar,Dim> cur_grid_vel(0),grid_vel_before(0);
-                cur_grid_vel = gridVelocity(obj_idx,node_idx);
-                if(grid_velocity_before_(node_idx).find(obj_idx)!=grid_velocity_before_(node_idx).end())
+                PHYSIKA_ASSERT(grid_velocity_(node_idx).size() == grid_velocity_before_(node_idx).size());
+                if(grid_velocity_(node_idx).find(obj_idx) != grid_velocity_(node_idx).end())
+                {
+                    cur_grid_vel = grid_velocity_(node_idx)[obj_idx];
                     grid_vel_before = grid_velocity_before_(node_idx)[obj_idx];
+                }
+                else
+                    PHYSIKA_ERROR("Error in updateParticleVelocity!");
                 new_vel += weight*(cur_grid_vel-grid_vel_before);
             }
             particle->setVelocity(new_vel);
@@ -786,7 +802,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                     continue; //skip grid nodes that are boundary condition
                 Vector<Scalar,Dim> weight_gradient = pair.gradient_value_;
                 SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
-                if(grid_mass_(pair.node_idx_)[obj_idx]>std::numeric_limits<Scalar>::epsilon())
+                if(gridMass(obj_idx,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
                     grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx_)[obj_idx];
             }
         }

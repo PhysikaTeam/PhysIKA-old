@@ -80,7 +80,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
     }
     if(potential_collide_nodes.empty())  //no contact, direct return
         return;
-    //first init the particle buckets of the involved objects
+    //init the particle buckets of the involved objects
     std::set<unsigned int> involved_objects;
     for(unsigned int i = 0; i < objects_at_node.size(); ++i)
         for(unsigned int j = 0; j < objects_at_node[i].size(); ++j)
@@ -152,7 +152,6 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
             }
         }
     }
-    getchar();
 }
 
 template <typename Scalar, int Dim>
