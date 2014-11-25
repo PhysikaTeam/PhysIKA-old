@@ -698,6 +698,8 @@ void MPMSolid<Scalar,Dim>::applyGravityOnGrid(Scalar dt)
         unsigned int obj_idx = iter->second;
         if(is_dirichlet_grid_node_(node_idx).count(obj_idx))
             continue; //skip grid nodes that are boundary condition
+        if(contact_method_==NULL && is_dirichlet_grid_node_(node_idx).size() >0)
+            continue; //if the inherent contact method is used, then the node is dirichlet for all objects once it's set for one
         grid_velocity_(node_idx)[obj_idx] += gravity_vec*dt;
     }
 }
@@ -801,6 +803,8 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                 }
                 else  //otherwise, grid velocity of all objects that ocuppy the node get updated
                 {
+                    if(is_dirichlet_grid_node_(pair.node_idx_).size() > 0)
+                        continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
                     for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(pair.node_idx_).begin();
                         vel_iter != grid_velocity_(pair.node_idx_).end(); ++vel_iter)
                         if(gridMass(vel_iter->first,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
