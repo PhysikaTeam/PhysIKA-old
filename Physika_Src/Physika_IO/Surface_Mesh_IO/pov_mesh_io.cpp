@@ -99,7 +99,7 @@ bool PovMeshIO<Scalar>::save(const string& filename, const SurfaceMesh<Scalar> *
 	fileout<<"   texture_list {\n";
 	fileout<<"      "<<mesh->numMaterials()<<",\n";
 	for (unsigned int idx = 0; idx<mesh->numMaterials(); idx++)
-		fileout<<"      "<<"texture{pigment{png \""<<mesh->material(idx).textureFileName()<<" \"}}\n";
+		fileout<<"      "<<"texture{ pigment{ image_map{ png \""<<mesh->material(idx).textureFileName()<<" \"}}}\n";
 	fileout<<"   }\n"; // end of texture_list
 
 	unsigned int num_face = mesh->numFaces();
