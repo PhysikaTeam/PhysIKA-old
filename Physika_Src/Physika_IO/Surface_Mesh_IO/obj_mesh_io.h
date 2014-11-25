@@ -36,10 +36,6 @@ public:
     // save a mesh to a obj file.
     static bool save(const std::string &filename, const SurfaceMesh<Scalar> *mesh);
 
-	// save obj mesh to mesh2 script supported by povRay, for more detail, please refer to
-	// http://www.povray.org/documentation/3.7.0/t2_3.html#t2_3_2_2
-	static bool saveToMesh2(const std::string & filename, const SurfaceMesh<Scalar> * mesh);
-
 protected:
     //memory of mesh is preallocated by caller
     //return true if succeed, otherwise return false
