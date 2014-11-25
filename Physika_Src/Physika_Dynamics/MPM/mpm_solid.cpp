@@ -801,7 +801,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                 }
                 else  //otherwise, grid velocity of all objects that ocuppy the node get updated
                 {
-                    for(typename std::multimap<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(pair.node_idx_).begin();
+                    for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(pair.node_idx_).begin();
                         vel_iter != grid_velocity_(pair.node_idx_).end(); ++vel_iter)
                         if(gridMass(vel_iter->first,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
                             vel_iter->second += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx_)[obj_idx];
