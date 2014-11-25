@@ -88,6 +88,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
     ArrayND<std::map<unsigned int,std::vector<unsigned int> >,Dim> particle_bucket;
     initParticleBucket(involved_objects,particle_bucket);
     //resolve contact
+    //NOTE: FOLLOWING METHOD IS ONLY CORRECT FOR TWO OBJECTS IN CONTACT!!!!
     const Grid<Scalar,Dim> &grid = mpm_solid_driver->grid();
     Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
     for(unsigned int i = 0; i <potential_collide_nodes.size(); ++i)
