@@ -72,87 +72,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
                                                                       const std::vector<std::vector<Vector<Scalar,Dim> > > &normal_at_node,
                                                                       Scalar dt)
 {
-    MPMSolid<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolid<Scalar,Dim>*>(this->mpm_driver_);
-    if(mpm_solid_driver == NULL)
-    {
-        std::cerr<<"Error: mpm driver and contact method mismatch, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    if(potential_collide_nodes.empty())  //no contact, direct return
-        return;
-    //init the particle buckets of the involved objects
-    std::set<unsigned int> involved_objects;
-    for(unsigned int i = 0; i < objects_at_node.size(); ++i)
-        for(unsigned int j = 0; j < objects_at_node[i].size(); ++j)
-            involved_objects.insert(objects_at_node[i][j]);
-    ArrayND<std::map<unsigned int,std::vector<unsigned int> >,Dim> particle_bucket;
-    initParticleBucket(involved_objects,particle_bucket);
-    //resolve contact
-    //NOTE: FOLLOWING METHOD IS ONLY CORRECT FOR TWO OBJECTS IN CONTACT!!!!
-    const Grid<Scalar,Dim> &grid = mpm_solid_driver->grid();
-    Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
-    for(unsigned int i = 0; i <potential_collide_nodes.size(); ++i)
-    {
-        Vector<unsigned int,Dim> node_idx = potential_collide_nodes[i];
-        Vector<Scalar,Dim> node_pos = grid.node(node_idx);
-        //first compute the center of mass velocity
-        Vector<Scalar,Dim> vel_com(0);
-        Scalar mass_com = 0;
-        for(unsigned int j = 0; j < objects_at_node[i].size(); ++j)
-        {
-            unsigned int obj_idx = objects_at_node[i][j];
-            Scalar mass = mpm_solid_driver->gridMass(obj_idx,node_idx);
-            Vector<Scalar,Dim> velocity = mpm_solid_driver->gridVelocity(obj_idx,node_idx);
-            vel_com += mass*velocity;
-            mass_com += mass;
-        }
-        vel_com /= mass_com;
-        //resolve contact for each object at the node
-        for(unsigned int j = 0; j < objects_at_node[i].size(); ++j)
-        {
-            unsigned int obj_idx = objects_at_node[i][j];
-            Vector<Scalar,Dim> trial_vel = mpm_solid_driver->gridVelocity(obj_idx,node_idx); //the velocity on grid that is solved independently
-            Vector<Scalar,Dim> vel_delta =  trial_vel - vel_com;
-            Scalar vel_delta_dot_norm = vel_delta.dot(normal_at_node[i][j]);
-            if(vel_delta_dot_norm > 0)  //objects apporaching each other
-            {
-                //approximate the distance from the grid to the object surface with the minimum distance to the particles in adjacent cells
-                std::vector<Vector<unsigned int,Dim> > adjacent_cells;
-                adjacentCells(node_idx,grid_cell_num,adjacent_cells);
-                Scalar min_dist = (std::numeric_limits<Scalar>::max)();
-                for(unsigned int k = 0; k < adjacent_cells.size(); ++k)
-                {
-                    Vector<unsigned int,Dim> cell_idx = adjacent_cells[k];
-                    std::vector<unsigned int> &particles_in_cell = particle_bucket(cell_idx)[obj_idx];
-                    for(unsigned int l = 0; l < particles_in_cell.size(); ++l)
-                    {
-                        const SolidParticle<Scalar,Dim> &particle = mpm_solid_driver->particle(obj_idx,particles_in_cell[l]); 
-                        Scalar dist = (node_pos - particle.position()).norm();
-                        if(dist < min_dist)
-                            min_dist = dist;
-                    }
-                }
-                Scalar dist_threshold = collide_threshold_ * grid.minEdgeLength();
-                if(min_dist < dist_threshold)
-                {
-                    //compute the tangential direction
-                    Vector<Scalar,Dim> tangent_dir = tangentialDirection(normal_at_node[i][j],vel_delta);
-                    //velocity difference in normal direction and tangential direction
-                    Scalar vel_delta_dot_tan = vel_delta.dot(tangent_dir);
-                    Vector<Scalar,Dim> vel_delta_norm = vel_delta_dot_norm * normal_at_node[i][j];
-                    Vector<Scalar,Dim> vel_delta_tan = vel_delta_dot_tan * tangent_dir;
-                    if(abs(vel_delta_dot_tan) > friction_coefficient_ * abs(vel_delta_dot_norm)) //slip with friction
-                        vel_delta_tan = friction_coefficient_ * vel_delta_norm;
-                    //apply a penalty function in the normal direction
-                    Scalar penalty_factor = 1 - pow(min_dist/dist_threshold,penalty_power_);
-                    vel_delta_norm *= penalty_factor;
-                    //update the grid velocity
-                    Vector<Scalar,Dim> new_vel = trial_vel - vel_delta_norm - vel_delta_tan;
-                    mpm_solid_driver->setGridVelocity(obj_idx,node_idx,new_vel);
-                }
-            }
-        }
-    }
+    resolveContactBetweenTwoObjects(potential_collide_nodes,objects_at_node,normal_at_node,dt);
 }
 
 template <typename Scalar, int Dim>
@@ -303,6 +223,106 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::adjacentCells(const Vecto
     }
     default:
         PHYSIKA_ERROR("Wrong dimension specified!");
+    }
+}
+
+
+template <typename Scalar, int Dim>
+void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoObjects(const std::vector<Vector<unsigned int,Dim> > &potential_collide_nodes,
+                                                                                       const std::vector<std::vector<unsigned int> > &objects_at_node,
+                                                                                       const std::vector<std::vector<Vector<Scalar,Dim> > > &normal_at_node,
+                                                                                       Scalar dt)
+{
+    MPMSolid<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolid<Scalar,Dim>*>(this->mpm_driver_);
+    if(mpm_solid_driver == NULL)
+    {
+        std::cerr<<"Error: mpm driver and contact method mismatch, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if(potential_collide_nodes.empty())  //no contact, direct return
+        return;
+    std::vector<std::vector<Vector<Scalar,Dim> > > normals = normal_at_node;  //normal will be modified to be colinear
+    unsigned int collide_object_num = 2; //FOLLOWING METHOD IS ONLY CORRECT FOR TWO OBJECTS IN CONTACT!!!!
+    //init the particle buckets of the involved objects
+    std::set<unsigned int> involved_objects;
+    for(unsigned int i = 0; i < objects_at_node.size(); ++i)
+        for(unsigned int j = 0; j < collide_object_num; ++j)
+            involved_objects.insert(objects_at_node[i][j]);
+    ArrayND<std::map<unsigned int,std::vector<unsigned int> >,Dim> particle_bucket;
+    initParticleBucket(involved_objects,particle_bucket);
+    //resolve contact
+    const Grid<Scalar,Dim> &grid = mpm_solid_driver->grid();
+    Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
+    for(unsigned int i = 0; i <potential_collide_nodes.size(); ++i)
+    {
+        Vector<unsigned int,Dim> node_idx = potential_collide_nodes[i];
+        Vector<Scalar,Dim> node_pos = grid.node(node_idx);
+        //first compute the center of mass velocity
+        Vector<Scalar,Dim> vel_com(0);
+        Scalar mass_com = 0;
+        for(unsigned int j = 0; j < collide_object_num; ++j)
+        {
+            unsigned int obj_idx = objects_at_node[i][j];
+            Scalar mass = mpm_solid_driver->gridMass(obj_idx,node_idx);
+            Vector<Scalar,Dim> velocity = mpm_solid_driver->gridVelocity(obj_idx,node_idx);
+            vel_com += mass*velocity;
+            mass_com += mass;
+        }
+        vel_com /= mass_com;
+        //average the normal of the two objects so that they're in opposite direction
+        normals[i][0] = (normal_at_node[i][0] - normal_at_node[i][1]).normalize();
+        normals[i][1] = -normals[i][0];
+        //approximate the distance between objects with minimum distance between particles along the normal direction
+        unsigned int obj_idx1 = objects_at_node[i][0], obj_idx2 = objects_at_node[i][1];
+        std::vector<Vector<unsigned int,Dim> > adjacent_cells;
+        adjacentCells(node_idx,grid_cell_num,adjacent_cells);
+        Scalar min_dist = (std::numeric_limits<Scalar>::max)();
+        for(unsigned int j = 0; j < adjacent_cells.size(); ++j)
+        {
+            Vector<unsigned int,Dim> cell_idx = adjacent_cells[j];
+            std::vector<unsigned int> &particles_in_cell_obj1 = particle_bucket(cell_idx)[obj_idx1];
+            std::vector<unsigned int> &particles_in_cell_obj2 = particle_bucket(cell_idx)[obj_idx2];
+            for(unsigned int k = 0; k < particles_in_cell_obj1.size(); ++k)
+                for(unsigned int l = 0; l < particles_in_cell_obj2.size(); ++l)
+                {
+                    const SolidParticle<Scalar,Dim> &particle1 = mpm_solid_driver->particle(obj_idx1,particles_in_cell_obj1[k]);
+                    const SolidParticle<Scalar,Dim> &particle2 = mpm_solid_driver->particle(obj_idx2,particles_in_cell_obj2[l]);
+                    Scalar dist = (particle1.position() - particle2.position()).dot(normals[i][0]);
+                    if(dist < 0)
+                        dist = -dist;
+                    if(dist < min_dist)
+                        min_dist = dist;
+                }
+        }
+        //resolve contact for each object at the node
+        for(unsigned int j = 0; j < collide_object_num; ++j)
+        {
+            unsigned int obj_idx = objects_at_node[i][j];
+            Vector<Scalar,Dim> trial_vel = mpm_solid_driver->gridVelocity(obj_idx,node_idx); //the velocity on grid that is solved independently
+            Vector<Scalar,Dim> vel_delta =  trial_vel - vel_com;
+            Scalar vel_delta_dot_norm = vel_delta.dot(normals[i][j]);
+            if(vel_delta_dot_norm > 0)  //objects apporaching each other
+            {
+                Scalar dist_threshold = collide_threshold_ * grid.minEdgeLength();
+                if(min_dist < dist_threshold)
+                {
+                    //compute the tangential direction
+                    Vector<Scalar,Dim> tangent_dir = tangentialDirection(normals[i][j],vel_delta);
+                    //velocity difference in normal direction and tangential direction
+                    Scalar vel_delta_dot_tan = vel_delta.dot(tangent_dir);
+                    Vector<Scalar,Dim> vel_delta_norm = vel_delta_dot_norm * normals[i][j];
+                    Vector<Scalar,Dim> vel_delta_tan = vel_delta_dot_tan * tangent_dir;
+                    if(abs(vel_delta_dot_tan) > friction_coefficient_ * abs(vel_delta_dot_norm)) //slip with friction
+                        vel_delta_tan = friction_coefficient_ * vel_delta_norm;
+                    //apply a penalty function in the normal direction
+                    Scalar penalty_factor = 1 - pow(min_dist/dist_threshold,penalty_power_);
+                    vel_delta_norm *= penalty_factor;
+                    //update the grid velocity
+                    Vector<Scalar,Dim> new_vel = trial_vel - vel_delta_norm - vel_delta_tan;
+                    mpm_solid_driver->setGridVelocity(obj_idx,node_idx,new_vel);
+                }
+            }
+        }
     }
 }
 
