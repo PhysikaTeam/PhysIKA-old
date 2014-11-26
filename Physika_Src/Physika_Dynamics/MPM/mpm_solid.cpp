@@ -384,6 +384,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
     {
         std::vector<Vector<unsigned int,Dim> > potential_collide_nodes;
         std::vector<std::vector<unsigned int> > objects_at_node;
+        std::vector<std::vector<unsigned char> > is_dirichlet_at_node;
         std::set<unsigned int> involved_objects; //the set of objects involved in potential contact
         Vector<unsigned int,Dim> grid_node_num = grid_.nodeNum();
         std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin();
@@ -395,13 +396,15 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
             {
                 Vector<unsigned int,Dim> node_idx = multiDimIndex(node_idx_1d,grid_node_num);
                 std::vector<unsigned int> objects_at_this_node;
+                std::vector<unsigned char> is_dirichlet_at_this_node;
                 while(object_count != 0) //element with equal key are stored in sequence in multimap
                 {
-                    if(is_dirichlet_grid_node_(node_idx).count(iter->second) == 0)  //not dirichlet node for the object
-                    {
-                        objects_at_this_node.push_back(iter->second);
-                        involved_objects.insert(iter->second);
-                    }
+                    objects_at_this_node.push_back(iter->second);
+                    involved_objects.insert(iter->second);
+                    if(is_dirichlet_grid_node_(node_idx).count(iter->second) > 0)
+                        is_dirichlet_at_this_node.push_back(0x01);
+                    else
+                        is_dirichlet_at_this_node.push_back(0x00);
                     ++iter;
                     --object_count;
                 }
@@ -409,6 +412,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
                 {
                     potential_collide_nodes.push_back(node_idx);
                     objects_at_node.push_back(objects_at_this_node);
+                    is_dirichlet_at_node.push_back(is_dirichlet_at_this_node);
                 }
             }
             else //no object or single object
@@ -452,7 +456,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
             }
         }
         //resolve contact
-        contact_method_->resolveContact(potential_collide_nodes,objects_at_node,normal_at_node,dt);
+        contact_method_->resolveContact(potential_collide_nodes,objects_at_node,normal_at_node,is_dirichlet_at_node,dt);
     }
 }
 

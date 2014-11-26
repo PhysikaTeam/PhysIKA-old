@@ -33,6 +33,7 @@ public:
     virtual void resolveContact(const std::vector<Vector<unsigned int,Dim> > &potential_collide_nodes,
                                 const std::vector<std::vector<unsigned int> > &objects_at_node,
                                 const std::vector<std::vector<Vector<Scalar,Dim> > > &normal_at_node,
+                                const std::vector<std::vector<unsigned char> > &is_dirichlet_at_node,
                                 Scalar dt) = 0;
 protected:
 };
