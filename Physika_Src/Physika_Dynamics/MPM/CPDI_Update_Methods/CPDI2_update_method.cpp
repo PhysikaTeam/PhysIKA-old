@@ -251,10 +251,13 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int
     particle_grid_pair_num = 0;
     for(typename std::map<unsigned int,Scalar>::iterator iter = idx_weight_map.begin(); iter != idx_weight_map.end(); ++iter)
     {
-        particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid.nodeNum());
-        particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
-        particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
-        ++particle_grid_pair_num;
+        if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
+        {
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            ++particle_grid_pair_num;
+        }
     }
 }
 
@@ -410,10 +413,13 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int
     particle_grid_pair_num = 0;
     for(typename std::map<unsigned int,Scalar>::iterator iter = idx_weight_map.begin(); iter != idx_weight_map.end(); ++iter)
     {
-        particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid.nodeNum());
-        particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
-        particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
-        ++particle_grid_pair_num;
+        if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
+        {
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            ++particle_grid_pair_num;
+        }
     }
 }
 

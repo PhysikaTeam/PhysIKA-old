@@ -1,3 +1,4 @@
+
 /*
  * @file mpm_solid.cpp
  * @Brief MPM driver used to simulate solid, uniform grid.
@@ -203,6 +204,8 @@ void MPMSolid<Scalar,Dim>::addDirichletGridNode(unsigned int object_idx, const V
         return;
     }
     is_dirichlet_grid_node_(node_idx).insert(object_idx);
+    //the dirichlet node is set fixed if not otherwise specified
+    setGridVelocity(object_idx, node_idx, Vector<Scalar,Dim>(0));
 }
 
 template <typename Scalar, int Dim>
@@ -264,7 +267,6 @@ void MPMSolid<Scalar,Dim>::rasterize()
                     grid_velocity_(pair.node_idx_)[obj_idx] += weight*(particle->mass()*particle->velocity());
                 else
                     grid_velocity_(pair.node_idx_).insert(std::make_pair(obj_idx,weight*(particle->mass()*particle->velocity())));
-                grid_velocity_before_(pair.node_idx_)[obj_idx] = grid_velocity_(pair.node_idx_)[obj_idx]; //buffer the grid velocity before any update
             }
         }
     }
@@ -289,9 +291,8 @@ void MPMSolid<Scalar,Dim>::rasterize()
     {
         unsigned int node_idx_1d = iter->first, object_idx = iter->second;
         Vector<unsigned int,Dim> node_idx = active_node_idx_1d_nd_map[node_idx_1d];
-        if(is_dirichlet_grid_node_(node_idx).count(object_idx))
-            continue; //skip grid nodes that are boundary condition
-        grid_velocity_(node_idx)[object_idx] /= grid_mass_(node_idx)[object_idx];
+        if(is_dirichlet_grid_node_(node_idx).count(object_idx) == 0) //skip grid nodes that are boundary condition
+            grid_velocity_(node_idx)[object_idx] /= grid_mass_(node_idx)[object_idx];
         grid_velocity_before_(node_idx)[object_idx] = grid_velocity_(node_idx)[object_idx];  //buffer the grid velocity before any update
     }
     //if no special contact algorithm is used, multi-value at a grid node must be converted to single value for all involved objects
@@ -497,12 +498,16 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
                 Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
                 for(unsigned int dim = 0; dim < Dim; ++dim)
                     particle_to_node[dim] /= grid_dx[dim];
-                Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node);
                 Scalar weight = this->weight_function_->weight(particle_to_node);
-                unsigned int i = this->particle_grid_pair_num_[obj_idx][particle_idx]++;
-                (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].node_idx_ = node_idx;
-                (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].weight_value_ = weight;
-                (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].gradient_value_ = weight_gradient;
+                 //ignore nodes that has zero weight value, assume positve weight value
+                if(weight > std::numeric_limits<Scalar>::epsilon()) 
+                {
+                    Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node);
+                    unsigned int i = this->particle_grid_pair_num_[obj_idx][particle_idx]++;
+                    (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].node_idx_ = node_idx;
+                    (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].weight_value_ = weight;
+                    (this->particle_grid_weight_and_gradient_)[obj_idx][particle_idx][i].gradient_value_ = weight_gradient;
+                }
             }
         }
     }
@@ -567,12 +572,12 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
                 Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
                 Scalar weight = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].weight_value_;
                 Vector<Scalar,Dim> cur_grid_vel(0),grid_vel_before(0);
-                PHYSIKA_ASSERT(grid_velocity_(node_idx).size() == grid_velocity_before_(node_idx).size());
                 if(grid_velocity_(node_idx).find(obj_idx) != grid_velocity_(node_idx).end())
-                {
                     cur_grid_vel = grid_velocity_(node_idx)[obj_idx];
+                else
+                    PHYSIKA_ERROR("Error in updateParticleVelocity!");
+                if(grid_velocity_before_(node_idx).find(obj_idx) != grid_velocity_before_(node_idx).end())
                     grid_vel_before = grid_velocity_before_(node_idx)[obj_idx];
-                }
                 else
                     PHYSIKA_ERROR("Error in updateParticleVelocity!");
                 new_vel += weight*(cur_grid_vel-grid_vel_before);
@@ -602,7 +607,9 @@ void MPMSolid<Scalar,Dim>::applyExternalForceOnParticles(Scalar dt)
                 continue;//skip boundary particles
             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
             Vector<Scalar,Dim> new_vel = particle->velocity();
-            new_vel += this->particle_external_force_[obj_idx][particle_idx]/particle->mass()*dt;
+            Scalar mass = particle->mass();
+            PHYSIKA_ASSERT(mass > std::numeric_limits<Scalar>::epsilon());
+            new_vel += this->particle_external_force_[obj_idx][particle_idx]/mass*dt;
             particle->setVelocity(new_vel);
         }
     }
@@ -696,7 +703,7 @@ void MPMSolid<Scalar,Dim>::applyGravityOnGrid(Scalar dt)
     {
         Vector<unsigned int,Dim> node_idx = multiDimIndex(iter->first,grid_node_num);
         unsigned int obj_idx = iter->second;
-        if(is_dirichlet_grid_node_(node_idx).count(obj_idx))
+        if(is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
             continue; //skip grid nodes that are boundary condition
         if(contact_method_==NULL && is_dirichlet_grid_node_(node_idx).size() >0)
             continue; //if the inherent contact method is used, then the node is dirichlet for all objects once it's set for one
@@ -796,11 +803,9 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                     continue; //skip grid nodes that are boundary condition
                 Vector<Scalar,Dim> weight_gradient = pair.gradient_value_;
                 SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
+                PHYSIKA_ASSERT(grid_mass_(pair.node_idx_)[obj_idx] > std::numeric_limits<Scalar>::epsilon());
                 if(contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
-                {
-                    if(gridMass(obj_idx,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
-                        grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx_)[obj_idx];
-                }
+                    grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx_)[obj_idx];
                 else  //otherwise, grid velocity of all objects that ocuppy the node get updated
                 {
                     if(is_dirichlet_grid_node_(pair.node_idx_).size() > 0)
