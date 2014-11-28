@@ -38,12 +38,6 @@ SurfaceMesh<Scalar>::SurfaceMesh()
     material_example.setName(string("default"));
     material_example.setShininess(24.2515);
     addMaterial(material_example);
-    //material_example.setKa(Vector<Scalar, 3>(0.8941, 0.8392, 0.6000));
-    //material_example.setKd(Vector<Scalar, 3>(0.8941, 0.8392, 0.6000));
-    //material_example.setKs(Vector<Scalar, 3>(0.3500, 0.3500, 0.3500));
-    //material_example.setName(string("default_iron"));
-    //material_example.setShininess(32);
-    //addMaterial(material_example);
 }
 
 template <typename Scalar>
@@ -79,6 +73,16 @@ template <typename Scalar>
 unsigned int SurfaceMesh<Scalar>::numTextureCoordinates() const
 {
     return vertex_textures_.size();
+}
+
+template <typename Scalar>
+unsigned int SurfaceMesh<Scalar>::numTextures() const
+{
+    unsigned int num_textures = 0;
+    for(unsigned int material_idx = 0; material_idx < materials_.size(); ++material_idx)
+        if(materials_[material_idx].hasTexture())
+            ++num_textures;
+    return num_textures;
 }
 
 template <typename Scalar>

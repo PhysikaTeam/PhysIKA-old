@@ -225,6 +225,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoO
                                                                                        const std::vector<std::vector<unsigned char> > &is_dirichlet_at_node,
                                                                                        Scalar dt)
 {
+    //FOLLOWING METHOD IS ONLY CORRECT FOR TWO OBJECTS IN CONTACT!!!!
     MPMSolid<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolid<Scalar,Dim>*>(this->mpm_driver_);
     if(mpm_solid_driver == NULL)
     {
@@ -234,7 +235,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoO
     if(potential_collide_nodes.empty())  //no contact, direct return
         return;
     std::vector<std::vector<Vector<Scalar,Dim> > > normals = normal_at_node;  //normal will be modified to be colinear
-    unsigned int collide_object_num = 2; //FOLLOWING METHOD IS ONLY CORRECT FOR TWO OBJECTS IN CONTACT!!!!
+    unsigned int collide_object_num = 2; 
     //init the particle buckets of the involved objects
     std::set<unsigned int> involved_objects;
     for(unsigned int i = 0; i < objects_at_node.size(); ++i)

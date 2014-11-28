@@ -39,6 +39,7 @@ public:
     unsigned int numFaces() const;
     unsigned int numNormals() const;
     unsigned int numTextureCoordinates() const;
+    unsigned int numTextures() const;
     unsigned int numGroups() const;
     unsigned int numMaterials() const;
     unsigned int numIsolatedVertices() const;
@@ -92,7 +93,7 @@ public:
     void computeAllFaceNormals();
     void computeFaceNormal(SurfaceMeshInternal::Face<Scalar> &face);
 	// separate each group of mesh to individual SurfaceMesh
-	void separateByGroup(std::vector<SurfaceMesh<Scalar> > & surface_mesh_vec) const;
+	void separateByGroup(std::vector<SurfaceMesh<Scalar> > &surface_mesh_vec) const;
 
 protected:
     void setVertexNormalsToFaceNormals();
