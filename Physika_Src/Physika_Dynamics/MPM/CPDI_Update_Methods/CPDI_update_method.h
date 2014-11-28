@@ -55,12 +55,12 @@ public:
     CPDIUpdateMethod();
     virtual ~CPDIUpdateMethod();
     virtual void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,2> &weight_function,
-                                                   std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &particle_grid_weight_and_gradient,
-                                                   std::vector<unsigned int> &particle_grid_pair_num);
+                 std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
+                                                   std::vector<std::vector<unsigned int> > &particle_grid_pair_num);
     virtual void updateParticleDomain();
     void setCPDIDriver(CPDIMPMSolid<Scalar,2> *cpdi_driver);
 protected:
-    virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
+    virtual void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
                                            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
                                            unsigned int &particle_grid_pair_num);
     //helper function, transform between multi-dimension index of grid and flat version index
@@ -77,12 +77,12 @@ public:
     CPDIUpdateMethod();
     virtual ~CPDIUpdateMethod();
     virtual void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,3> &weight_function,
-                                                   std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &particle_grid_weight_and_gradient,
-                                                   std::vector<unsigned int> &particle_grid_pair_num);
+                 std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
+                                                   std::vector<std::vector<unsigned int> > &particle_grid_pair_num);
     virtual void updateParticleDomain();
     void setCPDIDriver(CPDIMPMSolid<Scalar,3> *cpdi_driver);
 protected:
-    virtual void updateParticleInterpolationWeight(unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
+    virtual void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
                                            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
                                            unsigned int &particle_grid_pair_num);
     //helper function, transform between multi-dimension index of grid and flat version index

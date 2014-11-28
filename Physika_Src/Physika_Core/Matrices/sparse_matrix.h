@@ -47,9 +47,33 @@ public:
         if(tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_)return true;
         return false;		
     }
-    unsigned int row() const { return row_;}
-    unsigned int col() const { return col_;}
-    Scalar value() const { return value_;}
+    inline unsigned int row()
+    {
+        return row_;
+    }
+    inline unsigned int col()
+    {
+        return col_;
+    }
+    inline Scalar value()
+    {
+        return value_;
+    }
+    inline void setRow(unsigned int i)
+    {
+        row_ = i;
+    }
+    inline void setCol(unsigned int j)
+    {
+        col_ = j;
+    }
+    inline void setValue(Scalar k)
+    {
+        value_ = k;
+    }
+    inline unsigned int row() const { return row_;}
+    inline unsigned int col() const { return col_;}
+    inline Scalar value() const { return value_;}
 private:
     unsigned int row_;
     unsigned int col_;
@@ -66,12 +90,12 @@ template <typename Scalar>
 class SparseMatrix: public MatrixBase
 {
 public:
-    SparseMatrix();
-    SparseMatrix(unsigned int rows, unsigned int cols);
+    SparseMatrix(bool priority = 0);
+    SparseMatrix(unsigned int rows, unsigned int cols, bool priority = 0);
     SparseMatrix(const SparseMatrix<Scalar> &);
     ~SparseMatrix();
-    unsigned int rows() const;
-    unsigned int cols() const;
+    inline unsigned int rows() const;
+    inline unsigned int cols() const;
     //return the number of nonZero node
     unsigned int nonZeros() const;
     // remove a node(i,j) and adjust the orthogonal list
@@ -82,7 +106,7 @@ public:
     std::vector<Trituple<Scalar>> getRowElements(unsigned int ) const;
     std::vector<Trituple<Scalar>> getColElements(unsigned int ) const;
     //return value of matrix entry at index (i,j). Note: cannot be used as l-value!
-    Scalar operator() (unsigned int i, unsigned int j) const;
+    inline Scalar operator() (unsigned int i, unsigned int j) const;
     //insert matrix entry at index (i,j), if it already exits, replace it
     void setEntry(unsigned int i, unsigned int j, Scalar value);
     SparseMatrix<Scalar> operator+ (const SparseMatrix<Scalar> &) const;
@@ -100,18 +124,20 @@ public:
     SparseMatrix<Scalar>& operator/= (Scalar);
     VectorND<Scalar> leftMultiVec(const VectorND<Scalar> &) const;
 protected:
-    Trituple<Scalar> * ptr(unsigned int i, unsigned int j) ;
-    void allocMemory(unsigned int rows, unsigned int cols);
-    void deleteRowList(Trituple<Scalar> *);
-    void deleteColList(Trituple<Scalar> *);
+    void allocMemory(unsigned int rows, unsigned int cols, bool priority);
 protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-//compressed orthogonal list based on Trituple
+    //row-wise format or col-wise format
     unsigned int rows_;
     unsigned int cols_;
-    Trituple<Scalar> ** row_head_;
-    Trituple<Scalar> ** col_head_;
+    std::vector<Trituple<Scalar>> elements_; //a vector used to contain all the none-zero elements in a sparsematrix in order
+    std::vector<unsigned int> line_index_;   //line_index store the index of the first non-zero element of every row when priority is equal to 0 
+                                             //or every col when priority is equal to 1
+    bool priority_;                          //when priority is equal to 0, it means the elements_ is stored in a row-wise order.
+                                             //if priority is equal to 1, the elements_ is stored in a col-wise order.
+    friend class SparseMatrixIterator<Scalar>;  // declare friend class for iterator
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+    bool priority_;
     Eigen::SparseMatrix<Scalar> * ptr_eigen_sparse_matrix_ ;
     //typename typedef Eigen::SparseMatrix<Scalar>::InnerIterator SpareseIterator;
     friend class Physika::SparseMatrixIterator<Scalar>;
@@ -130,7 +156,7 @@ private:
 template <typename Scalar>
 std::ostream& operator<<(std::ostream &s, const Trituple<Scalar> &tri)
 {
-    s<<" ("<<tri.row()<<", "<<tri.col()<<", "<<tri.value()<<") ";
+    s<<"<"<<tri.row()<<", "<<tri.col()<<", "<<tri.value()<<">";
     return s;
 }
 

@@ -57,28 +57,19 @@ public:
     Scalar gravity() const;
     void setGravity(Scalar gravity);
 
-    //set the type of weight function with weight function type as template,
-    //the scale between support domain and cell size is the method parameter
+    //set the type of weight function with weight function type as template
     template <typename GridWeightFunctionType>
     void setWeightFunction();
     //set the step method with the step method type as template
     template <typename MPMStepMethodType>
     void setStepMethod();
+        
 protected:
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const=0; //return maximum norm the particles' velocity
     virtual void applyGravityOnGrid(Scalar dt) = 0;
-    //allocate space for data related to particles according to particle number
-    virtual void allocateSpaceForAllParticleRelatedData() = 0;
-    //initialize the data related to all particles
-    virtual void initializeAllParticleRelatedData() = 0;
-    //append space for data related to the newly added particle 
-    virtual void appendSpaceForParticleRelatedData() = 0;
-    //initialize data related to the newly added particle, the last in list
-    virtual void initializeLastParticleRelatedData() = 0;
-    //delete data that is attached with particles, called when a particle is removed
-    //need implementation in subclasses, when more data is attached to particles 
-    virtual void deleteParticleRelatedData(unsigned int particle_idx);
+    virtual void synchronizeWithInfluenceRangeChange()=0; //virtual method implemented by subclasses, synchronize data
+                                                          //when the influence range of weight function changes
 protected:
     GridWeightFunction<Scalar,Dim> *weight_function_;
     MPMStepMethod<Scalar,Dim> *step_method_;
@@ -87,10 +78,6 @@ protected:
     Scalar sound_speed_;
     //gravity: along negative y direction
     Scalar gravity_;
-    //precomputed weights and gradients of grid nodes that is within range of each particle
-    //for each particle, store the node-value pair
-    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > particle_grid_weight_and_gradient_;
-    std::vector<unsigned int> particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_ 
 };
 
 template <typename Scalar, int Dim>
@@ -100,9 +87,8 @@ void MPMBase<Scalar,Dim>::setWeightFunction()
     if(weight_function_)
         delete weight_function_;
     weight_function_ = GridWeightFunctionCreator<GridWeightFunctionType>::createGridWeightFunction();
-    //reallocate space for particle_grid_weight_and_gradient_
-    //for each particle, preallocate space that can store weight/gradient of maximum number of nodes in range
-    allocateSpaceForAllParticleRelatedData();
+    //synchronize some data with the influence change
+    synchronizeWithInfluenceRangeChange();
 }
 
 template <typename Scalar, int Dim>

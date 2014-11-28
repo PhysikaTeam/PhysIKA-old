@@ -31,13 +31,11 @@ MPMSolidPluginPrint<Scalar,Dim>::~MPMSolidPluginPrint()
 template <typename Scalar, int Dim>
 void MPMSolidPluginPrint<Scalar,Dim>::onBeginFrame(unsigned int frame)
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginPrint<Scalar,Dim>::onEndFrame(unsigned int frame)
 {
-//TO DO
 }
 
 template <typename Scalar, int Dim>
@@ -65,15 +63,15 @@ void MPMSolidPluginPrint<Scalar,Dim>::onSolveOnGrid(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginPrint<Scalar,Dim>::onPerformGridCollision(Scalar dt)
+void MPMSolidPluginPrint<Scalar,Dim>::onResolveContactOnGrid(Scalar dt)
 {
-    std::cout<<"Perform grid-based collision.\n";
+    std::cout<<"Resolve contact on grid.\n";
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginPrint<Scalar,Dim>::onPerformParticleCollision(Scalar dt)
+void MPMSolidPluginPrint<Scalar,Dim>::onResolveContactOnParticles(Scalar dt)
 {
-    std::cout<<"Perform particle-based collision.\n";
+    std::cout<<"Resolve contact on particles.\n";
 }
 
 template <typename Scalar, int Dim>
@@ -92,6 +90,12 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginPrint<Scalar,Dim>::onUpdateParticleVelocity()
 {
     std::cout<<"Update particle velocity with grid velocity.\n";
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginPrint<Scalar,Dim>::onApplyExternalForceOnParticles(Scalar dt)
+{
+    std::cout<<"Apply external force on particles.\n";
 }
 
 template <typename Scalar, int Dim>

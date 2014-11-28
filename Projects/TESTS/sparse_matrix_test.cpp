@@ -14,40 +14,62 @@
  */
 
 #include <iostream>
+#include <vector>
 #include <ctime>
 #include "Physika_Dependency/Eigen/Eigen"
 #include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Timer/timer.h"
 #include "Physika_Core/Matrices/sparse_matrix_iterator.h"
-#define Max1 10
-#define Max2 10
-#define Max  100
+#include "Physika_Core/Matrices/matrix_MxN.h"
+
+#define Max1 2000
+#define Max2 2000
+#define Max3 156
+#define Max  10000
 #define Maxv 10
+#define mytype double
 
 using namespace std;
+using std::cout;
 
-template <typename Scalar>
+template <class Scalar>
 void print(vector<Scalar> &v)
 {
     for(int i=0; i<v.size();++i)
         cout<<v[i]<<" ";
     cout<<endl;
 }
-void compare(const Physika::SparseMatrix<float> &a, const Eigen::SparseMatrix<float> &b)
+void compare(const Physika::SparseMatrix<mytype> &a, const Eigen::SparseMatrix<mytype> &b)
 {
-        std::vector<Physika::Trituple<float>> v;
+    /*if (a.nonZeros() != b.nonZeros())
+    {
+        cout<<"a.nonzeros:"<<a.nonZeros()<<endl;
+        cout << "b.nonZeros:" << b.nonZeros() << endl;
+        cout << "correctness bad!" << endl;
+        return;
+    }*/
+        std::vector<Physika::Trituple<mytype>> v;
         bool correctness = true;
         for(unsigned int i = 0;i<a.rows();++i)
         {
             v = a.getRowElements(i);
             for(unsigned int j=0;j<v.size();++j)
             {
-                int row = v[j].row_, col = v[j].col_;
-                float value = v[j].value_;
+                int row = v[j].row(), col = v[j].col();
+                mytype value = v[j].value();
                 if(b.coeff(row,col) != value)
                 {
-                    cout<<"eror:"<<row<<' '<<col<<endl;
+                    cout<<"eror: "<<row<<' '<<col<<" value: psm "<<value<<" "<<b.coeff(row,col)<<endl;
+                    correctness = false;
+                    break;
+                }
+            }
+            for (Eigen::SparseMatrix<mytype>::InnerIterator it(b, i); it; ++it)
+            {
+                if (it.value() != a(it.row(), it.col()))
+                {
+                    cout << "eror: " << it.row() << ' ' << it.col() << " value: psm " << a(it.row(),it.col()) << " " << it.value() << endl;
                     correctness = false;
                     break;
                 }
@@ -56,244 +78,201 @@ void compare(const Physika::SparseMatrix<float> &a, const Eigen::SparseMatrix<fl
         if(correctness) cout<<"correctness OK!"<<endl;
         else cout<<"correctness bad!"<<endl;
 }
-void compare(const Physika::VectorND<float> &a, const Eigen::SparseVector<float> &b)
+void compare(const Physika::VectorND<mytype> &a, const Eigen::SparseVector<mytype> &b)
 {
-	for (unsigned int i = 0; i < a.dims(); ++i)
-	{
-		if (a[i] != b.coeff(i))
-		{
-			cout << "uncorrectly vector multiply a sparsematrix" << endl;
-			return;
-		}
-	}
-	cout << "correctly multiply" << endl;
-	return ;
+    for (unsigned int i = 0; i < a.dims(); ++i)
+    {
+        if (a[i] != b.coeff(i))
+        {
+            cout << "uncorrectly vector multiply a sparsematrix" << endl;
+            return;
+        }
+    }
+    cout << "correctly multiply" << endl;
+    return ;
 }
 int main()
 {
-	/*
-    {
-    cout<<"基本功能测试"<<endl;
-    Physika::SparseMatrix<float> m1(5,5);
-    m1.setEntry(0,0,1);
-    m1.setEntry(1,1,1);
-    m1.setEntry(2,2,1);
-    m1.setEntry(3,3,1);
-    m1.setEntry(4,4,1);
-    cout<<"SparseMatrix<float> m1 as follow:"<<endl;
-    cout<<m1<<endl;
-    Physika::SparseMatrix<float> m2(m1);
-    m2.setEntry(0,4,5);
-    cout<<"SparseMatrix<float> m2 as follow:"<<endl;
-    cout<<m2<<endl;
-    cout<<"m1 rows:"<<m1.rows()<<endl;
-    cout<<"m1 cols:"<<m1.cols()<<endl;
-    cout<<"m1 nonzeros:"<<m1.nonZeros()<<endl;
-    cout<<"m1(3,3):"<<m1(3,3)<<endl;
-    cout<<"m1 + m2:"<<endl;
-    cout<<m1+m2<<endl;
-    cout<<"m1 += m2:"<<endl;
-    cout<<(m1 += m2)<<endl;
-    cout<<"m1 - m2:"<<endl;
-    cout<<m1 - m2<<endl;
-    cout<<"m1 -= m2:"<<endl;
-    cout<<(m1 -= m2)<<endl;
-    cout<<"m1 == m2? "<<(m1 == m2) <<endl;
-    cout<<"copy m1 to m2"<<endl;
-    cout<<(m2=m1)<<endl;
-    cout<<"m1 == m2? "<<(m1 == m2)<<endl;
-    cout<<"m1 != m2? "<<(m1 != m2)<<endl;
-    cout<<"m1 * 3"<<endl;
-    cout<<(m1*3)<<endl;
-    cout<<"m1*=3"<<endl;
-    cout<<(m1*=3)<<endl;
-    cout<<"m1 / 4"<<endl;
-    cout<<(m1/4)<<endl;
-    cout<<"m1/=4"<<endl;
-    cout<<(m1/=4)<<endl;
-    cout<<"m1.getRowElements(2):";
-    print(m1.getRowElements(2));
-    cout<<"m1.getColElements(1):";
-    print(m1.getColElements(1));
-    m1.remove(3,3);
-    cout<<"remove (3,3):"<<endl;
-    cout<<m1<<endl;
-    Physika::SparseMatrix<float> m3(5,4);
-    m3.setEntry(1,1,1);
-    m3.setEntry(2,2,1);
-    m3.setEntry(3,3,1);
-    m3.setEntry(0,0,1);
-    m3.setEntry(4,3,1);
-    cout<<"m3 as follow"<<endl;
-    cout<<m3<<endl;
-    cout<<"m1 * m3 ="<<endl;
-    cout<<m1*m3<<endl;
-    cout<<"vec[5]:"<<endl;
-    Physika::VectorND<float> vec(5,2.0);
-    cout<<vec<<endl;
-    cout<<(m1*vec)<<endl;
-    m1.setEntry(1,2,5);
-    cout<<"new m1"<<endl;
-    cout<<m1<<endl;
-    cout<<"m1.transpose():"<<endl;
-    cout<<m1.transpose()<<endl;
-    cout<<"m1"<<endl;
-    cout<<m1<<endl;
-    cout<<"vec * m1"<<endl;
-    cout<<(vec * m1)<<endl;
-    //getchar();
-    
-    }
-	*/
-	Physika::Timer timer;
+    //construct function check
+    Physika::SparseMatrix<mytype> m11(5, 5, false);
+    m11.setEntry(0, 0, 1);
+    m11.setEntry(1, 1, 1);
+    m11.setEntry(2, 2, 1);
+    m11.setEntry(3, 3, 1);
+    m11.setEntry(4, 4, 1);
+    cout << "SparseMatrix<mytype> m11 as follow:" << endl;
+    cout << m11 << endl;
+    Physika::SparseMatrix<mytype> ps1(Max1, Max2, false);
+    Eigen::SparseMatrix<mytype> es1(Max1, Max2);
+    Physika::Timer timer;
     srand(time(NULL));
-    cout<<"特定功能 高级测试"<<endl;
-
-    //cout<<"insert "<<endl;
-    Physika::SparseMatrix<float> psm(Max1,Max2);
-    Eigen::SparseMatrix<float> esm(Max1, Max2);
-    for(unsigned int i=0;i<Max;++i)
+    cout << "correctness of insert operation tests:";
+    for (unsigned int i = 0; i<Max; ++i)
     {
-        unsigned int row = rand()%Max1;
-        unsigned int col = rand()%Max2;
-        float v = rand()%Max+1;
-		//cout <<"i:"<< i <<" row:"<< row << " col:" << col << " value:"<<v<<endl;
-        psm.setEntry(row,col,v);
-        esm.coeffRef(row,col) = v;
+        unsigned int row = rand() % Max1;
+        unsigned int col = rand() % Max2;
+        mytype v = rand() % Max + 1;
+        ps1.setEntry(row, col, v);
+        es1.coeffRef(row, col) = v;
     }
-	Physika::SparseMatrixIterator<float> it(psm, Max2 / 2);
-	cout << "遍历速度测试：";
-	timer.startTimer();
-	psm.getColElements(Max2 / 2);
-	timer.stopTimer();
-	cout << "time cosuming psm 遍历:" << timer.getElapsedTime() << endl;
-	timer.startTimer();
-	for (Eigen::SparseMatrix<float>::InnerIterator it(esm, Max2 / 2); it; ++it)
-	{
-		it.row();
-		it.value();
-		it.col();
-		//cout << it.row();
-		//cout << ' ' << it.col();
-		//cout << ' ' << it.value() << endl;
-	}
-	timer.stopTimer();
-	cout << "time cosuming esm 遍历:" << timer.getElapsedTime() << endl;
-	timer.startTimer();
-	for (Physika::SparseMatrixIterator<float> it(psm, Max2 / 2); it; ++it)
-	{
-		it.row();
-		it.value();
-		it.col();
-		//cout << it.row();
-		//cout << ' ' << it.col();
-		//cout << ' ' << it.value() << endl;
-	}
-	timer.stopTimer();
-	cout << "time cosuming 包装eigen 遍历:" << timer.getElapsedTime() << endl;
-
-    cout<<"测量矩阵转置正确性及时间效率"<<endl;
-	timer.startTimer();
-    Eigen::SparseMatrix<float> esm4 = esm.transpose();
-	timer.stopTimer();
-    cout<<"esm time consuming:"<<timer.getElapsedTime()<<endl;
+    compare(ps1, es1);
+    Physika::SparseMatrix<mytype> ps2(ps1);
+    cout << "correctness of operator=:";
+    compare(ps2, es1);
+    //get rowElements and colElements function test
+    //iterator test
+    for (Physika::SparseMatrixIterator<mytype> it(ps1, Max1 / 2); it; ++it)
+    {
+        it.row();
+        it.value();
+        it.col();
+        cout <<"<"<< it.row();
+        cout << ", " << it.col();
+        cout << ", " << it.value() <<"> ";
+    }
+    cout << endl;
+    print(ps1.getRowElements(Max1 / 2));
+    //remove function test
+    for (unsigned int i = 0; i<Max/2; ++i)
+    {
+        unsigned int row = rand() % Max1;
+        unsigned int col = rand() % Max2;
+        ps1.remove(row, col);
+        es1.coeffRef(row, col) = 0;
+    }
+    cout << "remove function correctness:";
+    compare(ps1, es1);
+    //overall test
+    /*
+    {
+        cout <<"overall test"<< endl;
+        Physika::SparseMatrix<mytype> m1(5, 5);
+        m1.setEntry(0, 0, 1);
+        m1.setEntry(1, 1, 1);
+        m1.setEntry(2, 2, 1);
+        m1.setEntry(3, 3, 1);
+        m1.setEntry(4, 4, 1);
+        cout << "SparseMatrix<mytype> m1 as follow:" << endl;
+        cout << m1 << endl;
+        Physika::SparseMatrix<mytype> m2(m1);
+        m2.setEntry(0, 4, 5);
+        cout << "SparseMatrix<mytype> m2 as follow:" << endl;
+        cout << m2 << endl;
+        cout << "m1 rows:" << m1.rows() << endl;
+        cout << "m1 cols:" << m1.cols() << endl;
+        cout << "m1 nonzeros:" << m1.nonZeros() << endl;
+        cout << "m1(3,3):" << m1(3, 3) << endl;
+        cout << "m1 + m2:" << endl;
+        cout << m1 + m2 << endl;
+        cout << "m1 += m2:" << endl;
+        cout << (m1 += m2) << endl;
+        cout << "m1 - m2:" << endl;
+        cout << m1 - m2 << endl;
+        cout << "m1 -= m2:" << endl;
+        cout << (m1 -= m2) << endl;
+        cout << "m1 == m2? " << (m1 == m2) << endl;
+        cout << "copy m1 to m2" << endl;
+        cout << (m2 = m1) << endl;
+        cout << "m1 == m2? " << (m1 == m2) << endl;
+        cout << "m1 != m2? " << (m1 != m2) << endl;
+        cout << "m1 * 3" << endl;
+        cout << (m1 * 3) << endl;
+        cout << "m1*=3" << endl;
+        cout << (m1 *= 3) << endl;
+        cout << "m1 / 4" << endl;
+        cout << (m1 / 4) << endl;
+        cout << "m1/=4" << endl;
+        cout << (m1 /= 4) << endl;
+        cout << "m1.getRowElements(2):";
+        print(m1.getRowElements(2));
+        cout << "m1.getColElements(1):";
+        print(m1.getColElements(1));
+        m1.remove(3, 3);
+        cout << "remove (3,3):" << endl;
+        cout << m1 << endl;
+        Physika::SparseMatrix<mytype> m3(5, 4);
+        m3.setEntry(1, 1, 1);
+        m3.setEntry(2, 2, 1);
+        m3.setEntry(3, 3, 1);
+        m3.setEntry(0, 0, 1);
+        m3.setEntry(4, 3, 1);
+        cout << "m3 as follow" << endl;
+        cout << m3 << endl;
+        cout << "m1 * m3 =" << endl;
+        cout << m1*m3 << endl;
+        cout << "vec[5]:" << endl;
+        Physika::VectorND<mytype> vec(5, 2.0);
+        cout << vec << endl;
+        cout << (m1*vec) << endl;
+        m1.setEntry(1, 2, 5);
+        cout << "new m1" << endl;
+        cout << m1 << endl;
+        cout << "m1.transpose():" << endl;
+        cout << m1.transpose() << endl;
+        cout << "m1" << endl;
+        cout << m1 << endl;
+        cout << "vec * m1" << endl;
+        cout << (vec * m1) << endl;
+        //getchar();
+    }
+    */
+    //efficiency test
+    //insert psm esm
+    
+    cout << "insert in order" << endl;
+    Physika::SparseMatrix<mytype> psm(Max1, Max2);
+    Eigen::SparseMatrix<mytype> esm(Max1, Max2);
     timer.startTimer();
-    Physika::SparseMatrix<float> psm4 = psm.transpose();
-    timer.stopTimer();
-    cout<<"psm time consuming:"<<timer.getElapsedTime()<<endl;
-    compare(psm4,esm4);
-    cout<<endl<<endl;
-
-
-    cout<<"multiply effectiveness"<<endl;
-
-	Physika::SparseMatrix<float> psm2(Max1, Max2);
-	Physika::SparseMatrix<float> psm3(Max2, Max1);
-    Eigen::SparseMatrix<float> esm2(Max1, Max2), esm3(Max2, Max1);
-    for(unsigned int i=0;i<Max;++i)
+    for (unsigned int i = 0; i < Max1; ++i)
     {
-        unsigned int row = rand()%Max1;
-        unsigned int col = rand()%Max2;
-        float v =rand()%Max+1;
-        psm2.setEntry(row,col,v);
-        esm2.coeffRef(row,col) = v;
-
-        row = rand()%Max2;
-        col = rand()%Max1;
-        v = rand()%Max +1;
-        psm3.setEntry(row,col,v);
-        esm3.coeffRef(row,col) = v;
-    }
-
-	timer.startTimer();
-    Physika::SparseMatrix<float> psm5 = psm2*psm3;
-    timer.stopTimer();
-    cout<<"physika * consume time:"<<timer.getElapsedTime()<<endl;
-	timer.startTimer();
-    Eigen::SparseMatrix<float> esm5 = esm2*esm3;
-	timer.stopTimer();
-    cout<<"eigen * consume time:"<<timer.getElapsedTime()<<endl;
-    compare(psm5,esm5);
-
-	cout << "vector multiply sparse matrix effeciency" << endl;
-
-	Physika::VectorND<float> Physika_vec(Max2, 0),Physika_vec_T(Max1,0);
-	Eigen::SparseVector<float> eigen_vec,eigen_vec_T;
-	eigen_vec.resize(Max2); eigen_vec_T.resize(Max1);
-	for (unsigned int i = 0; i < Maxv; ++i)
-	{
-		unsigned int a = rand() % Max2,c = rand() % Max1;
-		unsigned int b = rand() % Max;
-		Physika_vec[a] = b;
-		Physika_vec_T[c] = b;
-		eigen_vec.coeffRef(a) = b;
-		eigen_vec_T.coeffRef(c) = b;
-	}
-	timer.startTimer();
-	Physika::VectorND<float> pr = psm2*Physika_vec;
-	timer.stopTimer();
-	cout << "Physika cost time:" << timer.getElapsedTime()<< endl;
-	timer.startTimer();
-	Eigen::SparseVector<float> er = esm2*eigen_vec;
-	timer.stopTimer();
-	cout << "Eigen cost time:" << timer.getElapsedTime() << endl;
-	cout << "correctness of SparseMatrix * Vector:" << endl;
-	compare(pr, er);
-
-	cout << "vector * matrix effectiveness" << endl;
-	timer.startTimer();
-	Physika::VectorND<float> pr_T = Physika_vec_T*psm2;
-	timer.stopTimer();
-	cout << "Physika vec*matrix cost time:" <<timer.getElapsedTime()<< endl;
-	Eigen::SparseMatrix<float> esm2t = esm2.transpose();
-	timer.startTimer();
-	Eigen::SparseVector<float> er_T = esm2t*eigen_vec_T;//Eigen::SparseVector<float> er_T = 
-	timer.stopTimer();
-	cout << "Eigen vec*matrix cost time:" << timer.getElapsedTime() << endl;
-	cout << "correctness of vec * matrix:" << endl;
-	compare(pr_T, er_T);
-
-
-    /*psm = psm.transpose();
-    esm = esm.transpose();
-    std::vector<Physika::Trituple<float>> v;
-    bool correctness = true;
-    for(unsigned int i = 0;i<psm.rows();++i)
-    {
-        v = psm.getRowElements(i);
-        for(unsigned int j=0;j<v.size();++j)
+        vector<Physika::Trituple<mytype>> vec_1 = ps1.getRowElements(i);
+        for (unsigned int j = 0; j < vec_1.size(); ++j)
         {
-            int row = v[j].row_, col = v[j].col_;
-            float value = v[j].value_;
-            if(esm.coeff(row,col) != value)
-            {
-                cout<<"eror:"<<row<<' '<<col<<endl;
-                correctness = false;
-            }
+            psm.setEntry(vec_1[j].row(), vec_1[j].col(), vec_1[j].value());
         }
     }
-    if(correctness) cout<<"correctness OK!"<<endl;
-    else cout<<"correctness bad!"<<endl;
-    */
+    timer.stopTimer();
+    cout << "psm insert time: " << timer.getElapsedTime() << endl;
+    for (unsigned int i = 0; i < Max1; ++i)
+    {
+        vector<Physika::Trituple<mytype>> vec_1 = ps1.getRowElements(i);
+        for (unsigned int j = 0; j < vec_1.size(); ++j)
+        {
+            esm.insert(vec_1[j].row(), vec_1[j].col()) = vec_1[j].value();
+        }
+    }
+    timer.stopTimer();
+    cout << "esm insert time: " << timer.getElapsedTime() << endl;
+    compare(psm, esm);
+    //transpose efficiency psm1 esm1
+    Physika::SparseMatrix<mytype> psm1(0, 0, 0);
+    Eigen::SparseMatrix<mytype> esm1;
+    timer.startTimer();
+    psm1 = psm.transpose();
+    timer.stopTimer();
+    cout << "psm transpose time: " << timer.getElapsedTime() << endl;
+    
+    timer.startTimer(); 
+    psm.transpose();
+    timer.stopTimer();
+    cout <<"only pushback the elements: "<< timer.getElapsedTime() << endl;
+    
+    timer.startTimer();
+    esm1 = esm.transpose();
+    timer.stopTimer();
+    cout << "esm transpose time: " << timer.getElapsedTime() << endl;
+    compare(psm1, esm1);
+    //multiply efficiency psm2,esm2
+    Physika::SparseMatrix<mytype> psm2;
+    Eigen::SparseMatrix<mytype> esm2;
+    timer.startTimer();
+    esm2 = esm*esm1;
+    timer.stopTimer();
+    cout << "esm multiply time: " << timer.getElapsedTime() << endl;
+    timer.startTimer();
+    psm2 = psm*psm1;
+    timer.stopTimer();
+    cout << "psm multiply time: " << timer.getElapsedTime() << endl;
+    compare(psm2, esm2);
     return 0;
 }

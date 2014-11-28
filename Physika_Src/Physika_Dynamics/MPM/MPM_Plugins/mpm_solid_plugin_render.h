@@ -60,11 +60,12 @@ public:
     //MPM Solid driver specific virtual methods
     virtual void onRasterize();
     virtual void onSolveOnGrid(Scalar dt);
-    virtual void onPerformGridCollision(Scalar dt);
-    virtual void onPerformParticleCollision(Scalar dt);
+    virtual void onResolveContactOnGrid(Scalar dt);
+    virtual void onResolveContactOnParticles(Scalar dt);
     virtual void onUpdateParticleInterpolationWeight();
     virtual void onUpdateParticleConstitutiveModelState(Scalar dt);
     virtual void onUpdateParticleVelocity();
+    virtual void onApplyExternalForceOnParticles(Scalar dt);
     virtual void onUpdateParticlePosition(Scalar dt);
 
     //setters&&getters

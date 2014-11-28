@@ -32,7 +32,7 @@ MPMBase<Scalar,Dim>::MPMBase()
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL),
-     step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
+     step_method_(NULL), cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
     weight_function_ = GridWeightFunctionCreator<GridPiecewiseCubicSpline<Scalar,Dim> >::createGridWeightFunction();
@@ -134,18 +134,6 @@ void MPMBase<Scalar,Dim>::setGravity(Scalar gravity)
     }
     else
         gravity_ = gravity;
-}
-
-template <typename Scalar, int Dim>
-void MPMBase<Scalar,Dim>::deleteParticleRelatedData(unsigned int particle_idx)
-{
-    typename std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > >::iterator iter =
-        this->particle_grid_weight_and_gradient_.begin() + particle_idx;
-    if(iter != this->particle_grid_weight_and_gradient_.end())
-        this->particle_grid_weight_and_gradient_.erase(iter);
-    typename std::vector<unsigned int>::iterator iter2 = this->particle_grid_pair_num_.begin() + particle_idx;
-    if(iter2 != this->particle_grid_pair_num_.end())
-        this->particle_grid_pair_num_.erase(iter2);
 }
 
 //explicit instantiations

@@ -164,12 +164,12 @@ void MPMSolidPluginRender<Scalar,Dim>::onSolveOnGrid(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginRender<Scalar,Dim>::onPerformGridCollision(Scalar dt)
+void MPMSolidPluginRender<Scalar,Dim>::onResolveContactOnGrid(Scalar dt)
 {
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginRender<Scalar,Dim>::onPerformParticleCollision(Scalar dt)
+void MPMSolidPluginRender<Scalar,Dim>::onResolveContactOnParticles(Scalar dt)
 {
 }
 
@@ -185,6 +185,11 @@ void MPMSolidPluginRender<Scalar,Dim>::onUpdateParticleConstitutiveModelState(Sc
 
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::onUpdateParticleVelocity()
+{
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::onApplyExternalForceOnParticles(Scalar dt)
 {
 }
 
@@ -249,6 +254,8 @@ void MPMSolidPluginRender<Scalar,Dim>::displayFunction(void)
         active_instance_->renderGridVelocity();
     if(active_instance_->render_particle_domain_)
         active_instance_->renderParticleDomain();
+
+    (window->renderManager()).renderAll(); //render all other tasks of render manager
     window->displayFrameRate();
     glutSwapBuffers();
 }
@@ -307,20 +314,29 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
 {
     MPMSolid<Scalar,Dim> *driver = this->driver();
     PHYSIKA_ASSERT(driver);
-    const std::vector<SolidParticle<Scalar,Dim>*> &all_particles = driver->allParticles();
-    Vector<Scalar,Dim> *particle_pos = new Vector<Scalar,Dim>[all_particles.size()];
-    for(unsigned int i = 0; i < all_particles.size(); ++i)
-        particle_pos[i] = all_particles[i]->position();
-    PointRender<Scalar,Dim> point_render(particle_pos,all_particles.size());
+    unsigned int total_particle_num = driver->totalParticleNum();
+    Vector<Scalar,Dim> *particle_pos = new Vector<Scalar,Dim>[total_particle_num];
+    unsigned int total_particle_idx = 0;
+    for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
+    {
+        const std::vector<SolidParticle<Scalar,Dim>*> &all_particles = driver->allParticlesOfObject(obj_idx);
+        for(unsigned int i = 0; i < all_particles.size(); ++i)
+            particle_pos[total_particle_idx++] = all_particles[i]->position();
+    }
+    PointRender<Scalar,Dim> point_render(particle_pos,total_particle_num);
     if(this->particle_render_mode_ == 0)
         point_render.setRenderAsPoint();
     else
     {
-        std::vector<Scalar> point_size(all_particles.size());
+        std::vector<Scalar> point_size(total_particle_num);
         //determine sphere size according to particle volume, assumes particle occupies rectangluar space
-        for(unsigned int i = 0; i < point_size.size(); ++i)
-            point_size[i] = (Dim==2) ? sqrt(all_particles[i]->volume())/2.0 :
-				pow(all_particles[i]->volume(),static_cast<Scalar>(1.0/3.0))/2.0;
+        total_particle_idx = 0;
+        for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
+            for(unsigned int particle_idx = 0; particle_idx < driver->particleNumOfObject(obj_idx); ++particle_idx)
+            {
+                const SolidParticle<Scalar,Dim> &particle = driver->particle(obj_idx,particle_idx);
+                point_size[total_particle_idx++] = (Dim==2) ? sqrt(particle.volume())/2.0 : pow(particle.volume(),static_cast<Scalar>(1.0/3.0))/2.0;
+            }
         point_render.setPointSize(point_size);
         point_render.setRenderAsSphere();
     }
@@ -345,15 +361,18 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticleVelocity()
     PHYSIKA_ASSERT(driver);
     openGLColor3(Color<Scalar>::Red());
     glDisable(GL_LIGHTING);
-    for(unsigned int i = 0; i < driver->particleNum(); ++i)
+    for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
     {
-        const SolidParticle<Scalar,Dim>& particle = driver->particle(i);
-        Vector<Scalar,Dim> start = particle.position();
-        Vector<Scalar,Dim> end = start + (this->velocity_scale_)*particle.velocity();
-        glBegin(GL_LINES);
-        openGLVertex(start);
-        openGLVertex(end);
-        glEnd();
+        for(unsigned int particle_idx = 0; particle_idx < driver->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            const SolidParticle<Scalar,Dim>& particle = driver->particle(obj_idx,particle_idx);
+            Vector<Scalar,Dim> start = particle.position();
+            Vector<Scalar,Dim> end = start + (this->velocity_scale_)*particle.velocity();
+            glBegin(GL_LINES);
+            openGLVertex(start);
+            openGLVertex(end);
+            glEnd();
+        }
     }
 }
 
@@ -369,11 +388,14 @@ void MPMSolidPluginRender<Scalar,Dim>::renderGridVelocity()
     {  
         Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
         Vector<Scalar,Dim> start = grid.node(node_idx);
-        Vector<Scalar,Dim> end = start + (this->velocity_scale_)*(driver->gridVelocity(node_idx));
-        glBegin(GL_LINES);
-        openGLVertex(start);
-        openGLVertex(end);
-        glEnd();
+        for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
+        {
+            Vector<Scalar,Dim> end = start + (this->velocity_scale_)*(driver->gridVelocity(obj_idx,node_idx));
+            glBegin(GL_LINES);
+            openGLVertex(start);
+            openGLVertex(end);
+            glEnd();
+        }
     }
 }
 
@@ -385,71 +407,74 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticleDomain()
         return;
     openGLColor3(Color<Scalar>::Cyan());
     glDisable(GL_LIGHTING);
-    for(unsigned int i = 0; i < driver->particleNum(); ++i)
+    for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
     {
-        ArrayND<Vector<Scalar,Dim>,Dim> particle_domain;
-        driver->currentParticleDomain(i,particle_domain);
-        PHYSIKA_ASSERT(particle_domain.totalElementCount());
-        if(Dim==2)
+        for(unsigned int particle_idx = 0; particle_idx < driver->particleNumOfObject(obj_idx); ++particle_idx)
         {
-            std::vector<unsigned int> corner_idx(2);
-            glBegin(GL_LINE_LOOP);
-            corner_idx[0] = 0; corner_idx[1] =0;
-            openGLVertex(particle_domain(corner_idx));
-            corner_idx[0] = 1; corner_idx[1] =0;
-            openGLVertex(particle_domain(corner_idx));
-            corner_idx[0] = 1; corner_idx[1] =1;
-            openGLVertex(particle_domain(corner_idx));
-            corner_idx[0] = 0; corner_idx[1] =1;
-            openGLVertex(particle_domain(corner_idx));
-            glEnd();
+            ArrayND<Vector<Scalar,Dim>,Dim> particle_domain;
+            driver->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+            PHYSIKA_ASSERT(particle_domain.totalElementCount());
+            if(Dim==2)
+            {
+                std::vector<unsigned int> corner_idx(2);
+                glBegin(GL_LINE_LOOP);
+                corner_idx[0] = 0; corner_idx[1] =0;
+                openGLVertex(particle_domain(corner_idx));
+                corner_idx[0] = 1; corner_idx[1] =0;
+                openGLVertex(particle_domain(corner_idx));
+                corner_idx[0] = 1; corner_idx[1] =1;
+                openGLVertex(particle_domain(corner_idx));
+                corner_idx[0] = 0; corner_idx[1] =1;
+                openGLVertex(particle_domain(corner_idx));
+                glEnd();
+            }
+            else if(Dim==3)
+            {
+                //get 8 corners
+                std::vector<unsigned int> corner_idx(3);
+                corner_idx[0] = corner_idx[1] = corner_idx[2] = 0;
+                Vector<Scalar,Dim> corner_1 = particle_domain(corner_idx);
+                corner_idx[0] = 0; corner_idx[1] = 0; corner_idx[2] = 1;
+                Vector<Scalar,Dim> corner_2 = particle_domain(corner_idx);
+                corner_idx[0] = 0; corner_idx[1] = 1; corner_idx[2] = 0;
+                Vector<Scalar,Dim> corner_3 = particle_domain(corner_idx);
+                corner_idx[0] = 0; corner_idx[1] = 1; corner_idx[2] = 1;
+                Vector<Scalar,Dim> corner_4 = particle_domain(corner_idx);
+                corner_idx[0] = 1; corner_idx[1] = 0; corner_idx[2] = 0;
+                Vector<Scalar,Dim> corner_5 = particle_domain(corner_idx);
+                corner_idx[0] = 1; corner_idx[1] = 0; corner_idx[2] = 1;
+                Vector<Scalar,Dim> corner_6 = particle_domain(corner_idx);
+                corner_idx[0] = 1; corner_idx[1] = 1; corner_idx[2] = 0;
+                Vector<Scalar,Dim> corner_7 = particle_domain(corner_idx);
+                corner_idx[0] = 1; corner_idx[1] = 1; corner_idx[2] = 1;
+                Vector<Scalar,Dim> corner_8 = particle_domain(corner_idx);
+                //render 12 edges
+                glBegin(GL_LINE_LOOP);
+                openGLVertex(corner_1);
+                openGLVertex(corner_2);
+                openGLVertex(corner_4);
+                openGLVertex(corner_3);
+                glEnd();
+                glBegin(GL_LINE_LOOP);
+                openGLVertex(corner_5);
+                openGLVertex(corner_6);
+                openGLVertex(corner_8);
+                openGLVertex(corner_7);
+                glEnd();
+                glBegin(GL_LINES);
+                openGLVertex(corner_1);
+                openGLVertex(corner_5);
+                openGLVertex(corner_2);
+                openGLVertex(corner_6);
+                openGLVertex(corner_4);
+                openGLVertex(corner_8);
+                openGLVertex(corner_3);
+                openGLVertex(corner_7);
+                glEnd();
+            }
+            else
+                PHYSIKA_ERROR("Invalid dimension specified!");
         }
-        else if(Dim==3)
-        {
-            //get 8 corners
-            std::vector<unsigned int> corner_idx(3);
-            corner_idx[0] = corner_idx[1] = corner_idx[2] = 0;
-            Vector<Scalar,Dim> corner_1 = particle_domain(corner_idx);
-            corner_idx[0] = 0; corner_idx[1] = 0; corner_idx[2] = 1;
-            Vector<Scalar,Dim> corner_2 = particle_domain(corner_idx);
-            corner_idx[0] = 0; corner_idx[1] = 1; corner_idx[2] = 0;
-            Vector<Scalar,Dim> corner_3 = particle_domain(corner_idx);
-            corner_idx[0] = 0; corner_idx[1] = 1; corner_idx[2] = 1;
-            Vector<Scalar,Dim> corner_4 = particle_domain(corner_idx);
-            corner_idx[0] = 1; corner_idx[1] = 0; corner_idx[2] = 0;
-            Vector<Scalar,Dim> corner_5 = particle_domain(corner_idx);
-            corner_idx[0] = 1; corner_idx[1] = 0; corner_idx[2] = 1;
-            Vector<Scalar,Dim> corner_6 = particle_domain(corner_idx);
-            corner_idx[0] = 1; corner_idx[1] = 1; corner_idx[2] = 0;
-            Vector<Scalar,Dim> corner_7 = particle_domain(corner_idx);
-            corner_idx[0] = 1; corner_idx[1] = 1; corner_idx[2] = 1;
-            Vector<Scalar,Dim> corner_8 = particle_domain(corner_idx);
-            //render 12 edges
-            glBegin(GL_LINE_LOOP);
-            openGLVertex(corner_1);
-            openGLVertex(corner_2);
-            openGLVertex(corner_4);
-            openGLVertex(corner_3);
-            glEnd();
-            glBegin(GL_LINE_LOOP);
-            openGLVertex(corner_5);
-            openGLVertex(corner_6);
-            openGLVertex(corner_8);
-            openGLVertex(corner_7);
-            glEnd();
-            glBegin(GL_LINES);
-            openGLVertex(corner_1);
-            openGLVertex(corner_5);
-            openGLVertex(corner_2);
-            openGLVertex(corner_6);
-            openGLVertex(corner_4);
-            openGLVertex(corner_8);
-            openGLVertex(corner_3);
-            openGLVertex(corner_7);
-            glEnd();
-        }
-        else
-            PHYSIKA_ERROR("Invalid dimension specified!");
     }
 }
 

@@ -63,20 +63,23 @@ public:
     //Render with choosen render mode
     virtual void render();
 
-	  virtual void printInfo()const;
+    virtual void printInfo()const;
 	
-    // note: renderSolidWithAlpha is a function to render volumetricMesh in solid mode, with a alpha value to represent the transparency.
-    //       a value of 0.0 denotes that the mesh is completely transparent.
-    //       naturally ,a increasing alpha value means the mesh has a higher opacity. 
-    //       while an alpha value of 1.0 is not meaning an absolute opacity strictly, which also depends on other states such as background color you are specifying.
-    //       default is 0.5 as shown in the follows
+    /* note: renderSolidWithAlpha is a function to render volumetricMesh in solid mode, with a alpha value to represent the transparency.
+     *       a value of 0.0 denotes that the mesh is completely transparent.
+     *       naturally ,a increasing alpha value means the mesh has a higher opacity. 
+     *       while an alpha value of 1.0 is not meaning an absolute opacity strictly, which also depends on other states such as background
+     *        color you are specifying.
+     *       default is 0.5 as shown in the follows
+     */
     void renderSolidWithAlpha(float alpha=0.5);
 
-    //The following four functions is used for rendering specific elements/vertices with custom color.
-    // 1: when you employ " vector< Color<float> > color" to sepcify your cunstom color, in the case of the color size smaller than
-    //    element_id/vertex_id 's , the face/vertex lacking of color will be rendered in default(white) color.
-    // 2: when you render specific vertices, the GL_POINT_SIZE will be "1.5" times of the orignal one so that you can 
-    //    distinguish the new specific vertices from the old one.
+    /* The following four functions is used for rendering specific elements/vertices with custom color.
+     * 1: when you employ " vector< Color<float> > color" to sepcify your cunstom color, in the case of the color size smaller than
+     *    element_id/vertex_id 's , the face/vertex lacking of color will be rendered in default(white) color.
+     *  2: when you render specific vertices, the GL_POINT_SIZE will be "1.5" times of the orignal one so that you can 
+     *    distinguish the new specific vertices from the old one.
+     */
     template<typename ColorType>
     void renderVertexWithColor(const std::vector<unsigned int> &vertex_id, const Color<ColorType> &color);
     template<typename ColorType>

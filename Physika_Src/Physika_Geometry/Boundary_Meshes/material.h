@@ -63,7 +63,7 @@ protected:
     Vector<Scalar,3> Ka_, Kd_, Ks_;
     Scalar shininess_;
     Scalar alpha_;
-    std::string texture_file_name_;  //full path of texture file name
+    std::string full_path_texture_file_name_;  //full path of texture file name
 };
 
 } //end of namespace BoundaryMeshInternal

@@ -28,7 +28,7 @@ template <typename Scalar, int Dim> class Transform;
 
 /*
  * Scalar can be float and double
- *
+ * 
  */
 
 template <typename Scalar>
@@ -62,15 +62,18 @@ public:
     void enableTexture();
     void disableTexture();
 
-    //whenever the mesh is modified, synchronize() must be called to update the render
+	void enableDisplayList();
+	void disableDisplayList();
+
+    //whenever the mesh is modified and displaylist is enabled, synchronize() must be called to update the render
     void synchronize();   
 
-    //Render with choosen render mode
+    //Render with chosen render mode
     virtual void render();
     virtual void printInfo() const;
 
 
-    //The following four functions is used for rendering specific faces/vertices with custom color.
+    // The following four functions is used for rendering specific faces/vertices with custom color.
     // 1: when you employ " vector< Color<float> > color" to sepcify your cunstom color, in the case of the color size smaller than
     //    face_id/vertex_id 's , the face/vertex lacking of color will be rendered in default(white) color.
     // 2: when you render specific vertices, the GL_POINT_SIZE will be "1.5" times of the orignal one so that you can 
@@ -113,6 +116,9 @@ protected:
     unsigned int wire_display_list_id_;     
     unsigned int solid_display_list_id_;
     unsigned int solid_with_custom_color_vector_display_list_id_;
+
+	// default is false
+	bool enable_displaylist_;
 
     //predefined render modes
     static const unsigned int render_solid_;
