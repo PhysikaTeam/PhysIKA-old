@@ -34,6 +34,7 @@ namespace Physika{
  * 3. when objects approach each other within the threshold, a penalty function is applied to 
  *    the velocity change in normal direction
  * 4. multiple objects can collide at a node with momentum conserved
+ * 5. the contact varies from elastic to inealstic, controlled by the coefficient of restitution
  *
  */
 
@@ -54,9 +55,11 @@ public:
     void setFrictionCoefficient(Scalar coefficient);
     void setCollideThreshold(Scalar threshold);
     void setPenaltyPower(Scalar penalty_power);
+    void setRestitutionCoefficient(Scalar restitution_coefficient);
     Scalar frictionCoefficient() const;
     Scalar collideThreshold() const;
     Scalar penaltyPower() const;
+    Scalar restitutionCoefficient() const;
 protected:
     //put the particles of given object into buckets according to their positions, each bucket is a grid cell
     //the key of the map is the object id, and the value of the map is the vector of particles in this bucket
@@ -74,6 +77,7 @@ protected:
     Scalar friction_coefficient_;  //the coefficient between normal contact force and tangential frictional force 
     Scalar collide_threshold_;  //the collide distance threshold expressed with respect to grid element size, in range (0,1]
     Scalar penalty_power_; //controls the power of the penalty function
+    Scalar restitution_coefficient_; //ranges from 0~1, controls the contact type [inelastic, elastic]
     ArrayND<std::map<unsigned int,std::vector<unsigned int> >,Dim> particle_bucket_;
 };
 

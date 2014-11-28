@@ -29,9 +29,10 @@ namespace Physika{
 template <typename Scalar, int Dim>
 MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::MPMSolidSubgridFrictionContactMethod()
     :MPMSolidContactMethod<Scalar,Dim>(),
-     friction_coefficient_(0.5),
-     collide_threshold_(0.5),
-     penalty_power_(6)
+    friction_coefficient_(0.5),
+    collide_threshold_(0.5),
+    penalty_power_(6),
+    restitution_coefficient_(0)
 {
 }
 
@@ -39,7 +40,8 @@ template <typename Scalar, int Dim>
 MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::MPMSolidSubgridFrictionContactMethod(const MPMSolidSubgridFrictionContactMethod<Scalar,Dim> &contact_method)
     :friction_coefficient_(contact_method.friction_coefficient_),
      collide_threshold_(contact_method.collide_threshold_),
-     penalty_power_(contact_method.penalty_power_)
+     penalty_power_(contact_method.penalty_power_),
+     restitution_coefficient_(contact_method.restitution_coefficient_)
 {
     this->mpm_driver_ = contact_method.mpm_driver_;
 }
@@ -57,6 +59,7 @@ MPMSolidSubgridFrictionContactMethod<Scalar,Dim>& MPMSolidSubgridFrictionContact
     this->friction_coefficient_ = contact_method.friction_coefficient_;
     this->collide_threshold_ = contact_method.collide_threshold_;
     this->penalty_power_ = contact_method.penalty_power_;
+    this->restitution_coefficient_ = contact_method.restitution_coefficient_;
     return *this;
 }
 
@@ -151,6 +154,23 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::setPenaltyPower(Scalar pe
 }
     
 template <typename Scalar, int Dim>
+void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::setRestitutionCoefficient(Scalar restitution_coefficient)
+{
+    if(restitution_coefficient < 0)
+    {
+        std::cerr<<"Warning: invalid restitution, 0 (inelastic contact) is used instead!\n";
+        restitution_coefficient_ = 0;
+    }
+    else if(restitution_coefficient > 1)
+    {
+        std::cerr<<"Warning: invalid restitution, 1 (elastic contact) is used instead!\n";
+        restitution_coefficient_ = 1;
+    }
+    else
+        restitution_coefficient_ = restitution_coefficient;
+}
+    
+template <typename Scalar, int Dim>
 Scalar MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::frictionCoefficient() const
 {
     return friction_coefficient_;
@@ -166,6 +186,12 @@ template <typename Scalar, int Dim>
 Scalar MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::penaltyPower() const
 {
     return penalty_power_;
+}
+    
+template <typename Scalar, int Dim>
+Scalar MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::restitutionCoefficient() const
+{
+    return restitution_coefficient_;
 }
     
 template <typename Scalar, int Dim>
@@ -268,72 +294,96 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoO
     const Grid<Scalar,Dim> &grid = mpm_solid_driver->grid();
     Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
     Vector<Scalar,Dim> node_pos = grid.node(node_idx);
-    //first compute the center of mass velocity
     Scalar obj1_mass = mpm_solid_driver->gridMass(object_idx1,node_idx), obj2_mass = mpm_solid_driver->gridMass(object_idx2,node_idx);
     Vector<Scalar,Dim> obj1_vel = mpm_solid_driver->gridVelocity(object_idx1,node_idx), obj2_vel = mpm_solid_driver->gridVelocity(object_idx2,node_idx);
-    Vector<Scalar,Dim> vel_com(0);
-    Scalar mass_com = 0;
-    if(is_object1_dirichlet_at_node) //if any of the two objects is dirichlet at the node, the center of mass velocity is the dirichlet velocity
-        vel_com = obj1_vel;
-    else if(is_object2_dirichlet_at_node)
-        vel_com = obj2_vel;
-    else
-        vel_com = (obj1_mass*obj1_vel + obj2_mass*obj2_vel)/(obj1_mass + obj2_mass);
     //average the normal of the two objects so that they're in opposite direction
     obj1_normal = (obj1_normal - obj2_normal).normalize();
     obj2_normal = -obj1_normal;
-    //approximate the distance between objects with minimum distance between particles along the normal direction
-    std::vector<Vector<unsigned int,Dim> > adjacent_cells;
-    adjacentCells(node_idx,grid_cell_num,adjacent_cells);
-    std::vector<unsigned int> particles_obj1;
-    std::vector<unsigned int> particles_obj2;
-    for(unsigned int i = 0; i < adjacent_cells.size(); ++i)
-    {
-        Vector<unsigned int,Dim> cell_idx = adjacent_cells[i];
-        std::vector<unsigned int> &particles_in_cell_obj1 = particle_bucket_(cell_idx)[object_idx1];
-        std::vector<unsigned int> &particles_in_cell_obj2 = particle_bucket_(cell_idx)[object_idx2];
-        particles_obj1.insert(particles_obj1.end(),particles_in_cell_obj1.begin(),particles_in_cell_obj1.end());
-        particles_obj2.insert(particles_obj2.end(),particles_in_cell_obj2.begin(),particles_in_cell_obj2.end());
-    }
-    Scalar min_dist = (std::numeric_limits<Scalar>::max)();
-    for(unsigned int i = 0; i < particles_obj1.size(); ++i)
-    {
-        const SolidParticle<Scalar,Dim> &particle1 = mpm_solid_driver->particle(object_idx1,particles_obj1[i]);
-        for(unsigned int j = 0; j < particles_obj2.size(); ++j)
+    Vector<Scalar,Dim> vel_delta = obj1_vel - obj2_vel;
+    if((obj1_vel-obj2_vel).dot(obj1_normal) > 0) //necessary condition 1: approach each other
+    {     
+        //first compute the velocity after contact with no slip condition
+        Vector<Scalar,Dim> obj1_new_vel(0), obj2_new_vel(0);
+        if(is_object1_dirichlet_at_node) //if any of the two objects is dirichlet at the node, treat it's mass as infinity
         {
-            const SolidParticle<Scalar,Dim> &particle2 = mpm_solid_driver->particle(object_idx2,particles_obj2[j]);
-            Scalar dist = (particle1.position() - particle2.position()).dot(obj1_normal);
-            if(dist < 0)
-                dist = -dist;
-            if(dist < min_dist)
-                min_dist = dist;
+            obj1_new_vel = obj1_vel;
+            obj2_new_vel = obj1_vel + restitution_coefficient_ * (obj1_vel - obj2_vel);
+        }
+        else if(is_object2_dirichlet_at_node)
+        {
+            obj1_new_vel = obj2_vel + restitution_coefficient_ * (obj2_vel - obj1_vel);
+            obj2_new_vel = obj2_vel;
+        }
+        else
+        {
+            obj1_new_vel = (obj1_mass * obj1_vel + obj2_mass * obj2_vel + restitution_coefficient_ * obj2_mass * (obj2_vel - obj1_vel))/(obj1_mass + obj2_mass);
+            obj2_new_vel = (obj1_mass * obj1_vel + obj2_mass * obj2_vel + restitution_coefficient_ * obj1_mass * (obj1_vel - obj2_vel))/(obj1_mass + obj2_mass);
+        }
+        //approximate the distance between objects with minimum distance between particles along the normal direction
+        std::vector<Vector<unsigned int,Dim> > adjacent_cells;
+        adjacentCells(node_idx,grid_cell_num,adjacent_cells);
+        std::vector<unsigned int> particles_obj1;
+        std::vector<unsigned int> particles_obj2;
+        for(unsigned int i = 0; i < adjacent_cells.size(); ++i)
+        {
+            Vector<unsigned int,Dim> cell_idx = adjacent_cells[i];
+            std::vector<unsigned int> &particles_in_cell_obj1 = particle_bucket_(cell_idx)[object_idx1];
+            std::vector<unsigned int> &particles_in_cell_obj2 = particle_bucket_(cell_idx)[object_idx2];
+            particles_obj1.insert(particles_obj1.end(),particles_in_cell_obj1.begin(),particles_in_cell_obj1.end());
+            particles_obj2.insert(particles_obj2.end(),particles_in_cell_obj2.begin(),particles_in_cell_obj2.end());
+        }
+        Scalar min_dist = (std::numeric_limits<Scalar>::max)();
+        for(unsigned int i = 0; i < particles_obj1.size(); ++i)
+        {
+            const SolidParticle<Scalar,Dim> &particle1 = mpm_solid_driver->particle(object_idx1,particles_obj1[i]);
+            for(unsigned int j = 0; j < particles_obj2.size(); ++j)
+            {
+                const SolidParticle<Scalar,Dim> &particle2 = mpm_solid_driver->particle(object_idx2,particles_obj2[j]);
+                Scalar dist = (particle1.position() - particle2.position()).dot(obj1_normal);
+                if(dist < 0)
+                    dist = -dist;
+                if(dist < min_dist)
+                    min_dist = dist;
+            }
+        }
+        //resolve contact for each object at the node
+        Scalar dist_threshold = collide_threshold_ * grid.minEdgeLength();
+        if(min_dist < dist_threshold) //necessary condition 2: objects close enough
+        {
+            //compute the tangential direction
+            Vector<Scalar,Dim> obj1_vel_delta = obj1_new_vel - obj1_vel, obj2_vel_delta = obj2_new_vel - obj2_vel;
+            Vector<Scalar,Dim> obj1_tangent_dir = tangentialDirection(obj1_normal,obj1_vel_delta);
+            Vector<Scalar,Dim> obj2_tangent_dir = -obj1_tangent_dir;
+            //velocity difference in normal direction and tangential direction
+            Scalar obj1_vel_delta_dot_norm = obj1_vel_delta.dot(obj1_normal);
+            Scalar obj2_vel_delta_dot_norm = obj2_vel_delta.dot(obj2_normal);
+            Scalar obj1_vel_delta_dot_tan = obj1_vel_delta.dot(obj1_tangent_dir);
+            Scalar obj2_vel_delta_dot_tan = obj2_vel_delta.dot(obj2_tangent_dir);
+            Vector<Scalar,Dim> obj1_vel_delta_norm = obj1_vel_delta_dot_norm * obj1_normal;
+            Vector<Scalar,Dim> obj2_vel_delta_norm = obj2_vel_delta_dot_norm * obj2_normal;
+            Vector<Scalar,Dim> obj1_vel_delta_tan = obj1_vel_delta_dot_tan * obj1_tangent_dir;
+            Vector<Scalar,Dim> obj2_vel_delta_tan = obj2_vel_delta_dot_tan * obj2_tangent_dir;
+            //slip with friction
+            if(abs(obj1_vel_delta_dot_tan) > friction_coefficient_ * abs(obj1_vel_delta_dot_norm))
+                obj1_vel_delta_tan = friction_coefficient_ * abs(obj1_vel_delta_dot_norm) * obj1_tangent_dir;
+            if(abs(obj2_vel_delta_dot_tan) > friction_coefficient_ * abs(obj2_vel_delta_dot_norm))
+                obj2_vel_delta_tan = friction_coefficient_ * abs(obj2_vel_delta_dot_norm) * obj2_tangent_dir;
+            //apply a penalty function in the normal direction
+            Scalar penalty_factor = 1 - pow(min_dist/dist_threshold,penalty_power_);
+            obj1_vel_delta_norm *= penalty_factor;
+            obj2_vel_delta_norm *= penalty_factor;
+            //get the grid velocity impulse for each object
+            if(is_object1_dirichlet_at_node == 0x00)
+                object1_node_velocity_delta = obj1_vel_delta_norm + obj1_vel_delta_tan;
+            else
+                object1_node_velocity_delta = Vector<Scalar,Dim>(0);
+            if(is_object2_dirichlet_at_node == 0x00)
+                object2_node_velocity_delta = obj2_vel_delta_norm + obj2_vel_delta_tan;  
+            else
+                object2_node_velocity_delta = Vector<Scalar,Dim>(0);       
         }
     }
-    //resolve contact for each object at the node
-    Vector<Scalar,Dim> trial_vel_obj1 = mpm_solid_driver->gridVelocity(object_idx1,node_idx);
-    Vector<Scalar,Dim> trial_vel_obj2 = mpm_solid_driver->gridVelocity(object_idx2,node_idx);
-    Vector<Scalar,Dim> vel_delta = trial_vel_obj1 - vel_com;
-    Scalar vel_delta_dot_norm = vel_delta.dot(obj1_normal);
-    Scalar dist_threshold = collide_threshold_ * grid.minEdgeLength();
-    if(vel_delta_dot_norm > 0 && min_dist < dist_threshold) //objects apporaching each other and close
-    {
-        //compute the tangential direction
-        Vector<Scalar,Dim> tangent_dir = tangentialDirection(obj1_normal,vel_delta);
-        //velocity difference in normal direction and tangential direction
-        Scalar vel_delta_dot_tan = vel_delta.dot(tangent_dir);
-        Vector<Scalar,Dim> vel_delta_norm = vel_delta_dot_norm * obj1_normal;
-        Vector<Scalar,Dim> vel_delta_tan = vel_delta_dot_tan * tangent_dir;
-        if(abs(vel_delta_dot_tan) > friction_coefficient_ * abs(vel_delta_dot_norm)) //slip with friction
-            vel_delta_tan = friction_coefficient_ * vel_delta_norm;
-        //apply a penalty function in the normal direction
-        Scalar penalty_factor = 1 - pow(min_dist/dist_threshold,penalty_power_);
-        vel_delta_norm *= penalty_factor;
-        //get the grid velocity impulse for each object
-        if(is_object1_dirichlet_at_node == 0x00)
-            object1_node_velocity_delta = - vel_delta_norm - vel_delta_tan;
-        if(is_object2_dirichlet_at_node == 0x00)
-            object2_node_velocity_delta = vel_delta_norm + vel_delta_tan;         
-    }
+   
 }
 
 //explicit instantiations
