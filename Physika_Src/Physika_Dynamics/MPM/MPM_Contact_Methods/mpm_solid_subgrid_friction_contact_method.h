@@ -1,6 +1,6 @@
 /*
  * @file mpm_solid_subgrid_friction_contact_method.h 
- * @Brief an algorithm that can resolve contact between mpm solids with subgrid resolution,
+ * @Brief an algorithm that can resolve contact between multiple mpm solids with subgrid resolution,
  *        the contact can be no-slip/free-slip with Coulomb friction model
  * @author Fei Zhu
  * 
@@ -33,7 +33,8 @@ namespace Physika{
  *    contact detection is increased to subgrid level
  * 3. when objects approach each other within the threshold, a penalty function is applied to 
  *    the velocity change in normal direction
- * ref. < A new contact algorithm in the material point method for geotechnical simulations>
+ * 4. multiple objects can collide at a node with momentum conserved
+ *
  */
 
 template <typename Scalar, int Dim>
@@ -64,16 +65,16 @@ protected:
     Vector<Scalar,Dim> tangentialDirection(const Vector<Scalar,Dim> &normal, const Vector<Scalar,Dim> &velocity_diff) const;
     //return indices of cells that is adjacent to given node
     void adjacentCells(const Vector<unsigned int,Dim> &node_idx, const Vector<unsigned int,Dim> &cell_num, std::vector<Vector<unsigned int,Dim> > &cells) const;
-    //temp method that only resolves contact between two objects
-    void resolveContactBetweenTwoObjects(const std::vector<Vector<unsigned int,Dim> > &potential_collide_nodes,
-                                         const std::vector<std::vector<unsigned int> > &objects_at_node,
-                                         const std::vector<std::vector<Vector<Scalar,Dim> > > &normal_at_node,
-                                         const std::vector<std::vector<unsigned char> > &is_dirichlet_at_node,
-                                         Scalar dt);  
+    //resolve contact between two objects, return the velocity impulse of applied on each object at the node
+    void resolveContactBetweenTwoObjects(const Vector<unsigned int,Dim> &node_idx, unsigned int object_idx1, unsigned int object_idx2,
+                                         const Vector<Scalar,Dim> &object1_normal_at_node, const Vector<Scalar,Dim> &object2_normal_at_node,
+                                         unsigned char is_object1_dirichlet_at_node, unsigned char is_object2_dirichlet_at_node, Scalar dt,
+                                         Vector<Scalar,Dim> &object1_node_velocity_delta, Vector<Scalar,Dim> &object2_node_velocity_delta);  
 protected:
     Scalar friction_coefficient_;  //the coefficient between normal contact force and tangential frictional force 
     Scalar collide_threshold_;  //the collide distance threshold expressed with respect to grid element size, in range (0,1]
     Scalar penalty_power_; //controls the power of the penalty function
+    ArrayND<std::map<unsigned int,std::vector<unsigned int> >,Dim> particle_bucket_;
 };
 
 }  //end of namespace Physika
