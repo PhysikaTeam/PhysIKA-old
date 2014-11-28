@@ -20,6 +20,7 @@
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Matrices/square_matrix.h"
 #include "Physika_Dynamics/Rigid_Body/compressed_matrix.h"
+#include <algorithm>
 
 namespace Physika{
 
@@ -31,7 +32,7 @@ template<typename Scalar, int Dim>
 CompressedJacobianMatrix<Scalar, Dim>::CompressedJacobianMatrix():
     is_transposed_(false),
     num_row_element_(0),
-    num_columns_element_(0)
+    num_column_element_(0)
 {
 
 }
@@ -40,9 +41,11 @@ template<typename Scalar, int Dim>
 CompressedJacobianMatrix<Scalar, Dim>::CompressedJacobianMatrix(const CompressedJacobianMatrix<Scalar, Dim>& matrix):
     is_transposed_(matrix.is_transposed_),
     num_row_element_(matrix.num_row_element_),
-    num_columns_element_(matrix.num_columns_element_),
+    num_column_element_(matrix.num_column_element_),
     compressed_matrix_(matrix.compressed_matrix_),
-    index_map_(matrix.index_map_)
+    index_map_(matrix.index_map_),
+    inverted_index_map_(matrix.inverted_index_map_),
+    relation_table_(matrix.relation_table_)
 {
     
 }
@@ -51,7 +54,7 @@ template<typename Scalar, int Dim>
 CompressedJacobianMatrix<Scalar, Dim>::CompressedJacobianMatrix(unsigned int num_row_element, unsigned int num_columns_element):
     is_transposed_(false),
     num_row_element_(num_row_element),
-    num_columns_element_(num_columns_element)
+    num_column_element_(num_columns_element)
 {
     resize(num_row_element, num_columns_element);
 }
@@ -77,13 +80,13 @@ unsigned int CompressedJacobianMatrix<Scalar, Dim>::rows() const
 template<typename Scalar, int Dim>
 unsigned int CompressedJacobianMatrix<Scalar, Dim>::cols() const
 {
-    return num_columns_element_;
+    return num_column_element_;
 }
 
 template<typename Scalar, int Dim>
 void CompressedJacobianMatrix<Scalar, Dim>::setFirstValue(unsigned int row_index, unsigned int column_index, const Vector<Scalar, Dim>& value_translation, const Vector<Scalar, RotationDof<Dim>::degree>& value_rotation)
 {
-    if(row_index >= num_row_element_ || column_index >= num_columns_element_)
+    if(row_index >= num_row_element_ || column_index >= num_column_element_)
     {
         std::cerr<<"Index out of range when setting CompressedJacobianMatrix"<<std::endl;
         return;
@@ -99,12 +102,13 @@ void CompressedJacobianMatrix<Scalar, Dim>::setFirstValue(unsigned int row_index
     }
     compressed_matrix_[row_index].first = value;
     index_map_[row_index].first = column_index;
+    inverted_index_map_[column_index].push_back(row_index);
 }
 
 template<typename Scalar, int Dim>
 void CompressedJacobianMatrix<Scalar, Dim>::setSecondValue(unsigned int row_index, unsigned int column_index, const Vector<Scalar, Dim>& value_translation, const Vector<Scalar, RotationDof<Dim>::degree>& value_rotation)
 {
-    if(row_index >= num_row_element_ || column_index >= num_columns_element_)
+    if(row_index >= num_row_element_ || column_index >= num_column_element_)
     {
         std::cerr<<"Index out of range when setting CompressedJacobianMatrix"<<std::endl;
         return;
@@ -120,10 +124,11 @@ void CompressedJacobianMatrix<Scalar, Dim>::setSecondValue(unsigned int row_inde
     }
     compressed_matrix_[row_index].second = value;
     index_map_[row_index].second = column_index;
+    inverted_index_map_[column_index].push_back(row_index);
 }
 
 template<typename Scalar, int Dim>
-VectorND<Scalar> CompressedJacobianMatrix<Scalar, Dim>::firstValue (unsigned int row_index) const
+const VectorND<Scalar>& CompressedJacobianMatrix<Scalar, Dim>::firstValue (unsigned int row_index) const
 {
     if(row_index >= num_row_element_)
     {
@@ -135,7 +140,7 @@ VectorND<Scalar> CompressedJacobianMatrix<Scalar, Dim>::firstValue (unsigned int
 }
 
 template<typename Scalar, int Dim>
-VectorND<Scalar> CompressedJacobianMatrix<Scalar, Dim>::secondValue (unsigned int row_index) const
+const VectorND<Scalar>& CompressedJacobianMatrix<Scalar, Dim>::secondValue (unsigned int row_index) const
 {
     if(row_index >= num_row_element_)
     {
@@ -169,13 +174,30 @@ unsigned int CompressedJacobianMatrix<Scalar, Dim>::secondColumnIndex(unsigned i
 }
 
 template<typename Scalar, int Dim>
+void CompressedJacobianMatrix<Scalar, Dim>::relatedRows(unsigned int row_index, std::vector<unsigned int>& related_index)
+{
+    unsigned int first_column = firstColumnIndex(row_index);
+    unsigned int second_column = secondColumnIndex(row_index);
+    related_index = inverted_index_map_[first_column];
+    related_index.insert(related_index.end(), inverted_index_map_[second_column].begin(), inverted_index_map_[second_column].end());
+    std::sort(related_index.begin(), related_index.end());
+    related_index.erase(std::unique(related_index.begin(), related_index.end()), related_index.end());//remove duplicated values
+}
+
+template<typename Scalar, int Dim>
 void CompressedJacobianMatrix<Scalar, Dim>::resize(unsigned int num_row_element, unsigned int num_column_element)
 {
     is_transposed_ = false;
     num_row_element_ = num_row_element;
-    num_columns_element_ = num_column_element;
+    num_column_element_ = num_column_element;
+    compressed_matrix_.clear();
     compressed_matrix_.resize(num_row_element);
+    index_map_.clear();
     index_map_.resize(num_row_element);
+    inverted_index_map_.clear();
+    inverted_index_map_.resize(num_column_element);
+    relation_table_.clear();
+    relation_table_.resize(num_row_element);
 }
 
 template<typename Scalar, int Dim>
@@ -192,9 +214,11 @@ CompressedJacobianMatrix<Scalar, Dim>& CompressedJacobianMatrix<Scalar, Dim>::op
     CompressedJacobianMatrix<Scalar, Dim> temp_matrix(matrix);
     is_transposed_ = matrix.is_transposed_;
     num_row_element_ = matrix.num_row_element_;
-    num_columns_element_ = matrix.num_columns_element_;
+    num_column_element_ = matrix.num_column_element_;
     compressed_matrix_.swap(temp_matrix.compressed_matrix_);
     index_map_.swap(temp_matrix.index_map_);
+    inverted_index_map_.swap(temp_matrix.inverted_index_map_);
+    relation_table_.swap(temp_matrix.relation_table_);
     return *this;
 }
 

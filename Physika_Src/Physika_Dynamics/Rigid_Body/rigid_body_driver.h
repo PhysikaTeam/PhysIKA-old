@@ -86,6 +86,7 @@ public:
     unsigned int numContactPoint() const;
     ContactPoint<Scalar, Dim>* contactPoint(unsigned int index);
     inline unsigned int step() const {return step_;};
+    inline void setDt(Scalar dt){this->dt_ = dt;};
 
 	//plugin
 	void addPlugin(DriverPluginBase<Scalar>* plugin);

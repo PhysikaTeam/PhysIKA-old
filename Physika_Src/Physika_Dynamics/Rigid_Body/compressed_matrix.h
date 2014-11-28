@@ -43,10 +43,12 @@ public:
     bool isTransposed() const;
     void setFirstValue(unsigned int row_index, unsigned int column_index, const Vector<Scalar, Dim>& value_translation, const Vector<Scalar, RotationDof<Dim>::degree>& value_rotation);
     void setSecondValue(unsigned int row_index, unsigned int column_index, const Vector<Scalar, Dim>& value_translation, const Vector<Scalar, RotationDof<Dim>::degree>& value_rotation);
-    VectorND<Scalar> firstValue(unsigned int row_index) const;//first value of the row (or the column if it is transposed). the return value should have the dimension of 6(3d) or 4(2d)
-    VectorND<Scalar> secondValue(unsigned int row_index) const;//second value of the row (or the column if it is transposed). the return value should have the dimension of 6(3d) or 4(2d)
+    const VectorND<Scalar>& firstValue(unsigned int row_index) const;//first value of the row (or the column if it is transposed). the return value should have the dimension of 6(3d) or 4(2d)
+    const VectorND<Scalar>& secondValue(unsigned int row_index) const;//second value of the row (or the column if it is transposed). the return value should have the dimension of 6(3d) or 4(2d)
     unsigned int firstColumnIndex(unsigned int row_index) const;
     unsigned int secondColumnIndex(unsigned int row_index) const;
+    void buildRelationTable();
+    void relatedRows(unsigned int row_index, std::vector<unsigned int>& related_index);//given a row index, get the rows containing one or more same column index with it, including the row itself
 
     void resize(unsigned int num_row_element, unsigned int num_column_element);
     CompressedJacobianMatrix<Scalar, Dim> transpose() const;
@@ -56,9 +58,11 @@ public:
 protected:
     bool is_transposed_;
     unsigned int num_row_element_;
-    unsigned int num_columns_element_;
+    unsigned int num_column_element_;
     std::vector<std::pair<VectorND<Scalar>, VectorND<Scalar> > > compressed_matrix_;
-    std::vector<std::pair<unsigned int, unsigned int> > index_map_;
+    std::vector<std::pair<unsigned int, unsigned int> > index_map_;//the i-th element represents the pair of two objects forming the i-th contact point
+    std::vector<std::vector<unsigned int> > inverted_index_map_;//the i-th element represents the contact points on the i-th object
+    std::vector<std::vector<unsigned int> > relation_table_;//the i-th element represents the contact points related to the i-th contact point
 };
 
 
@@ -195,6 +199,31 @@ VectorND<Scalar> operator* (const CompressedJacobianMatrix<Scalar, Dim>& jacobia
 }
 
 template <typename Scalar, int Dim>
+VectorND<Scalar> operator* (const CompressedInertiaMatrix<Scalar, Dim>& inertia, const VectorND<Scalar> vector)
+{
+    int dof = Dim + RotationDof<Dim>::degree;
+    if(inertia.numElement() * dof != vector.dims())
+    {
+        std::cerr<<"Inertia matrix doesn't match the size of vector!"<<std::endl;
+        return vector;
+    }
+    VectorND<Scalar> result(vector);
+    VectorND<Scalar> element(dof);
+    for(unsigned int i = 0; i < inertia.numElement(); ++i)
+    {
+        for(unsigned int j = 0; j < dof; ++j)
+        {
+            element[j] = vector[i * dof + j];
+        }
+        for(unsigned int j = 0; j < dof; ++j)
+        {
+            result[i * dof + j] = inertia.value(i, j).dot(element);
+        }
+    }
+    return result;
+}
+
+template <typename Scalar, int Dim>
 Scalar productValue(const CompressedJacobianMatrix<Scalar, Dim>& lhs, const CompressedJacobianMatrix<Scalar, Dim>& rhs, unsigned int row, unsigned int column)
 {
     if(lhs.isTransposed() || !rhs.isTransposed())
@@ -217,6 +246,8 @@ Scalar productValue(const CompressedJacobianMatrix<Scalar, Dim>& lhs, const Comp
     unsigned int first_column_index_rhs = rhs.firstColumnIndex(column);
     unsigned int second_column_index_rhs = rhs.secondColumnIndex(column);
 
+    VectorND<Scalar> test1(6);
+    VectorND<Scalar> test2(6);
     Scalar result = 0;
     if(first_column_index_lhs == first_column_index_rhs)
     {
