@@ -57,13 +57,13 @@ public:
     Scalar gravity() const;
     void setGravity(Scalar gravity);
 
-    //set the type of weight function with weight function type as template,
-    //the scale between support domain and cell size is the method parameter
+    //set the type of weight function with weight function type as template
     template <typename GridWeightFunctionType>
     void setWeightFunction();
     //set the step method with the step method type as template
     template <typename MPMStepMethodType>
     void setStepMethod();
+        
 protected:
     virtual Scalar minCellEdgeLength() const=0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const=0; //return maximum norm the particles' velocity

@@ -254,6 +254,8 @@ void MPMSolidPluginRender<Scalar,Dim>::displayFunction(void)
         active_instance_->renderGridVelocity();
     if(active_instance_->render_particle_domain_)
         active_instance_->renderParticleDomain();
+
+    (window->renderManager()).renderAll(); //render all other tasks of render manager
     window->displayFrameRate();
     glutSwapBuffers();
 }
@@ -386,11 +388,14 @@ void MPMSolidPluginRender<Scalar,Dim>::renderGridVelocity()
     {  
         Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
         Vector<Scalar,Dim> start = grid.node(node_idx);
-        Vector<Scalar,Dim> end = start + (this->velocity_scale_)*(driver->gridVelocity(node_idx));
-        glBegin(GL_LINES);
-        openGLVertex(start);
-        openGLVertex(end);
-        glEnd();
+        for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
+        {
+            Vector<Scalar,Dim> end = start + (this->velocity_scale_)*(driver->gridVelocity(obj_idx,node_idx));
+            glBegin(GL_LINES);
+            openGLVertex(start);
+            openGLVertex(end);
+            glEnd();
+        }
     }
 }
 

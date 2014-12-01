@@ -17,6 +17,8 @@
 #include "Physika_IO/Surface_Mesh_IO/surface_mesh_io.h"
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 #include "Physika_IO/Surface_Mesh_IO/stl_mesh_io.h"
+#include "Physika_IO/Surface_Mesh_IO/pov_mesh_io.h"
+
 using std::string;
 
 namespace Physika{
@@ -35,6 +37,8 @@ bool SurfaceMeshIO<Scalar>::load(const string &filename, SurfaceMesh<Scalar> *me
         return ObjMeshIO<Scalar>::load(filename,mesh);
     else if(suffix==string(".stl"))
         return StlMeshIO<Scalar>::load(filename,mesh);
+    else if(suffix==string(".povmesh"))
+        return PovMeshIO<Scalar>::load(filename,mesh);
     else
     {
         std::cerr<<"Unknown mesh file format!\n";
@@ -56,6 +60,8 @@ bool SurfaceMeshIO<Scalar>::save(const string &filename, const SurfaceMesh<Scala
         return ObjMeshIO<Scalar>::save(filename,mesh);
     else if(suffix==string(".stl"))
         return StlMeshIO<Scalar>::save(filename,mesh);
+    else if(suffix==string(".povmesh"))
+        return PovMeshIO<Scalar>::save(filename,mesh);
     else
     {
         std::cerr<<"Unknown mesh file format specified!\n";

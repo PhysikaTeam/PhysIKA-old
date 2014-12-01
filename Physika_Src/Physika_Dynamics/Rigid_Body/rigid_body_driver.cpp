@@ -174,13 +174,12 @@ void RigidBodyDriver<Scalar, Dim>::advanceStep(Scalar dt)
         if(plugin != NULL)
             plugin->onBeginRigidStep(step_, dt);
     }
-
+    
     //simulation step
     performGravity(dt);
 	collisionDetection();
     collisionResponse();
     updateRigidBody(dt);
-
     //plugin
     for(unsigned int i = 0; i < plugin_num; ++i)
     {

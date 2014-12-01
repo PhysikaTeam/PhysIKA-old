@@ -19,25 +19,75 @@
 
 namespace Physika{
     
-template <typename Scalar>
-class SparseMatrixIterator
-{
-public:
-	SparseMatrixIterator(SparseMatrix<Scalar> & mat, unsigned int i);
-	SparseMatrixIterator<Scalar>& operator++ ();
-	unsigned int row();
-	unsigned int col();
-	Scalar value();
-	operator bool();
-protected:
+    template <typename Scalar>
+    class SparseMatrixIterator
+    {
+    public:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-	unsigned int first_ele_ ,last_ele_;
-	SparseMatrix<Scalar> *ptr_matrix_;
+        SparseMatrixIterator(SparseMatrix<Scalar> & mat, unsigned int i)
+        {
+            first_ele_ = mat.line_index_[i];
+            last_ele_ = mat.line_index_[i + 1];
+            ptr_matrix_ = &mat;
+        }
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    typename Eigen::SparseMatrix<Scalar>::InnerIterator it;
+        SparseMatrixIterator(SparseMatrix<Scalar> & mat, unsigned int i) :it(*(mat.ptr_eigen_sparse_matrix_), i)
+        {
+            //it = Eigen::SparseMatrix<Scalar>::InnerIterator (*(mat.ptr_eigen_sparse_matrix_), i);
+        }
 #endif
-};
+        SparseMatrixIterator<Scalar>& operator++ ()
+        {
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+            first_ele_++;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+            ++it;
+#endif
+            return *this;
+        }
+        unsigned int row()
+        {
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+            return (ptr_matrix_->elements_[first_ele_]).row();
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+            return it.row();
+#endif
+        }
+        unsigned int col()
+        {
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+            return (ptr_matrix_->elements_[first_ele_]).col();
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+            return it.col();
+#endif
+        }
+        Scalar value()
+        {
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+            return (ptr_matrix_->elements_[first_ele_]).value();
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+            return it.value();
+#endif       
+        }
+        operator bool ()
+        {
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+            return first_ele_ != last_ele_;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+            return it;
+#endif
+        }
+    protected:
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+        unsigned int first_ele_ ,last_ele_;
+        SparseMatrix<Scalar> *ptr_matrix_;
+#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
+        typename Eigen::SparseMatrix<Scalar>::InnerIterator it;
+#endif
+    };
 
 }  //end of namespace Physika
+
+//implementation
 
 #endif //PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_ITERATOR_H_

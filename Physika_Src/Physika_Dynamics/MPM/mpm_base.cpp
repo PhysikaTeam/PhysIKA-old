@@ -32,7 +32,7 @@ MPMBase<Scalar,Dim>::MPMBase()
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL),
-     step_method_(NULL),cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
+     step_method_(NULL), cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
     //default weight function is piece-wise cubic b spline with support domain of 2 cell
     weight_function_ = GridWeightFunctionCreator<GridPiecewiseCubicSpline<Scalar,Dim> >::createGridWeightFunction();

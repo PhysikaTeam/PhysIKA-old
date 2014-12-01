@@ -32,14 +32,14 @@ Material<Scalar>::~Material()
 template <typename Scalar>
 Material<Scalar>::Material(const string &name, const Vector<Scalar,3> &Ka, const Vector<Scalar,3> &Kd,
                            const Vector<Scalar,3> &Ks, Scalar shininess, const string &texture_file_name)
-    :name_(name),Ka_(Ka),Kd_(Kd),Ks_(Ks),shininess_(shininess),texture_file_name_(texture_file_name)
+    :name_(name),Ka_(Ka),Kd_(Kd),Ks_(Ks),shininess_(shininess),full_path_texture_file_name_(texture_file_name)
 {
 }
 
 template <typename Scalar>
 Material<Scalar>::Material(const Material<Scalar> &material)
     :name_(material.name_),Ka_(material.Ka_),Kd_(material.Kd_),Ks_(material.Ks_),
-     shininess_(material.shininess_),texture_file_name_(material.texture_file_name_)
+     shininess_(material.shininess_),full_path_texture_file_name_(material.full_path_texture_file_name_)
 {
 }
 
@@ -51,7 +51,7 @@ Material<Scalar>& Material<Scalar>::operator= (const Material<Scalar> &material)
     Kd_ = material.Kd_;
     Ks_ = material.Ks_;
     shininess_ = material.shininess_;
-    texture_file_name_ = material.texture_file_name_;
+    full_path_texture_file_name_ = material.full_path_texture_file_name_;
     return *this;
 }
 
@@ -130,19 +130,19 @@ void Material<Scalar>::setAlpha(Scalar alpha)
 template <typename Scalar>
 bool Material<Scalar>::hasTexture() const
 {
-    return texture_file_name_.size()>0;
+    return full_path_texture_file_name_.size()>0;
 }
 
 template <typename Scalar>
 const string& Material<Scalar>::textureFileName() const
 {
-    return texture_file_name_;
+    return full_path_texture_file_name_;
 }
 
 template <typename Scalar>
 void Material<Scalar>::setTextureFileName(const string &texture_file_name)
 {
-    texture_file_name_ = texture_file_name;
+    full_path_texture_file_name_ = texture_file_name;
 }
 
 template <typename Scalar>
