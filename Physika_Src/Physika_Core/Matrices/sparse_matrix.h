@@ -82,6 +82,7 @@ private:
     Trituple<Scalar> *col_next_;
 };
 
+enum matrix_compressed_mode{ROW_MAJOR, COL_MAJOR};
 
 /*class SparseMatrix is a data structure used to store SparseMatrix
  *it uses the Trituple as its node and connect them with a orthhogonal list
@@ -90,14 +91,14 @@ template <typename Scalar>
 class SparseMatrix: public MatrixBase
 {
 public:
-    SparseMatrix(bool priority = 0);
-    SparseMatrix(unsigned int rows, unsigned int cols, bool priority = 0);
+    SparseMatrix(matrix_compressed_mode priority = ROW_MAJOR);
+	SparseMatrix(unsigned int rows, unsigned int cols, matrix_compressed_mode priority = ROW_MAJOR);
     SparseMatrix(const SparseMatrix<Scalar> &);
     ~SparseMatrix();
     inline unsigned int rows() const;
     inline unsigned int cols() const;
     //return the number of nonZero node
-    unsigned int nonZeros() const;
+    unsigned int nonZeros() const;                //itinerate the whole vector once to calculate the nonzeros
     // remove a node(i,j) and adjust the orthogonal list
     bool remove(unsigned int i,unsigned int j);
     //resize the SparseMatrix and data in it will be deleted
@@ -124,7 +125,7 @@ public:
     SparseMatrix<Scalar>& operator/= (Scalar);
     VectorND<Scalar> leftMultiVec(const VectorND<Scalar> &) const;
 protected:
-    void allocMemory(unsigned int rows, unsigned int cols, bool priority);
+    void allocMemory(unsigned int rows, unsigned int cols, matrix_compressed_mode priority);
 protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     //row-wise format or col-wise format
@@ -133,11 +134,11 @@ protected:
     std::vector<Trituple<Scalar>> elements_; //a vector used to contain all the none-zero elements in a sparsematrix in order
     std::vector<unsigned int> line_index_;   //line_index store the index of the first non-zero element of every row when priority is equal to 0 
                                              //or every col when priority is equal to 1
-    bool priority_;                          //when priority is equal to 0, it means the elements_ is stored in a row-wise order.
+	matrix_compressed_mode priority_;        //when priority is equal to 0, it means the elements_ is stored in a row-wise order.
                                              //if priority is equal to 1, the elements_ is stored in a col-wise order.
     friend class SparseMatrixIterator<Scalar>;  // declare friend class for iterator
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    bool priority_;
+	matrix_compressed_mode priority_;
     Eigen::SparseMatrix<Scalar> * ptr_eigen_sparse_matrix_ ;
     //typename typedef Eigen::SparseMatrix<Scalar>::InnerIterator SpareseIterator;
     friend class Physika::SparseMatrixIterator<Scalar>;
