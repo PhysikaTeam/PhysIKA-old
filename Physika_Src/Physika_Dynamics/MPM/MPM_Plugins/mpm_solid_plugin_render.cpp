@@ -41,7 +41,7 @@ MPMSolidPluginRender<Scalar,Dim>* MPMSolidPluginRender<Scalar,Dim>::active_insta
 
 template <typename Scalar, int Dim>
 MPMSolidPluginRender<Scalar,Dim>::MPMSolidPluginRender()
-    :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),pause_simulation_(false),
+    :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),pause_simulation_(true),
      simulation_finished_(false),render_particle_(true),render_grid_(true),
      render_particle_velocity_(false),render_grid_velocity_(false),render_particle_domain_(false),
      particle_render_mode_(0),velocity_scale_(1.0),auto_capture_frame_(false)

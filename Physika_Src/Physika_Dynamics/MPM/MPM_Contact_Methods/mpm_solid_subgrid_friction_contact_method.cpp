@@ -82,6 +82,8 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
         std::cerr<<"Error: mpm driver and contact method mismatch, program abort!\n";
         std::exit(EXIT_FAILURE);
     }
+    if(potential_collide_nodes.empty()) //no collision
+        return;
     //init particle bucket for all involved objects
     std::set<unsigned int> involved_objects;
     for(unsigned int i = 0; i < potential_collide_nodes.size(); ++i)
@@ -289,6 +291,9 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoO
 {
     MPMSolid<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolid<Scalar,Dim>*>(this->mpm_driver_);
     PHYSIKA_ASSERT(mpm_solid_driver);
+    //clear data
+    object1_node_velocity_delta = Vector<Scalar,Dim>(0);
+    object2_node_velocity_delta = Vector<Scalar,Dim>(0);       
     Vector<Scalar,Dim> obj1_normal = object1_normal_at_node, obj2_normal = object2_normal_at_node; //normal will be modified to be colinear
     //resolve contact
     const Grid<Scalar,Dim> &grid = mpm_solid_driver->grid();
@@ -375,12 +380,8 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoO
             //get the grid velocity impulse for each object
             if(is_object1_dirichlet_at_node == 0x00)
                 object1_node_velocity_delta = obj1_vel_delta_norm + obj1_vel_delta_tan;
-            else
-                object1_node_velocity_delta = Vector<Scalar,Dim>(0);
             if(is_object2_dirichlet_at_node == 0x00)
-                object2_node_velocity_delta = obj2_vel_delta_norm + obj2_vel_delta_tan;  
-            else
-                object2_node_velocity_delta = Vector<Scalar,Dim>(0);       
+                object2_node_velocity_delta = obj2_vel_delta_norm + obj2_vel_delta_tan;
         }
     }
    
