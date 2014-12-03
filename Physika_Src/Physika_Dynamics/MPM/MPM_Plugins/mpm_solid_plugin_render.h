@@ -103,7 +103,8 @@ protected:
     //screen capture switch
     bool auto_capture_frame_; //screen capture each frame's screen
     //timer to compute timing information of simulation
-    Timer timer_;  
+    Timer timer_;
+    Scalar total_time_; //the total time spent on simulation  
 };
 
 }  //end of namespace Physika

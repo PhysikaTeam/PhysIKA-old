@@ -39,7 +39,7 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation):
 }
 
 template<typename Scalar>
-Transform<Scalar, 2>::Transform(const Scalar &rotate_angle):
+Transform<Scalar, 2>::Transform(Scalar rotate_angle):
 		translation_(Vector<Scalar, 2>(0)),
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
@@ -63,35 +63,11 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Squa
 }
 
 template<typename Scalar>
-Transform<Scalar, 2>::Transform(const SquareMatrix<Scalar, 2> &rotation, const Vector<Scalar, 2> &translation):
-		translation_(translation),
-		scale_(Vector<Scalar, 2>(1))
-{
-	this->rotate_angle_ = acos(rotation(0,0));
-}
-
-template<typename Scalar>
-Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Scalar &rotate_angle):
+Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, Scalar rotate_angle):
 		translation_(translation),
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))
 {
-}
-
-template<typename Scalar>
-Transform<Scalar, 2>::Transform(const Scalar &rotate_angle, const Vector<Scalar, 2> &translation):
-		translation_(translation),
-		rotate_angle_(rotate_angle),
-		scale_(Vector<Scalar, 2>(1))
-{
-}
-
-template<typename Scalar>
-Transform<Scalar, 2>::Transform(const SquareMatrix<Scalar, 2> &rotation, const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale):
-		translation_(translation),
-		scale_(scale)
-{
-	this->rotate_angle_ = acos(rotation(0,0));
 }
 
 template<typename Scalar>
@@ -103,31 +79,7 @@ Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Squa
 }
 
 template<typename Scalar>
-Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale,  const SquareMatrix<Scalar, 2> &rotation):
-		translation_(translation),
-		scale_(scale)
-{
-	this->rotate_angle_ = acos(rotation(0,0));
-}
-
-template<typename Scalar>
-Transform<Scalar, 2>::Transform(const Scalar &rotate_angle, const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale):
-		translation_(translation),
-		rotate_angle_(rotate_angle),
-		scale_(Vector<Scalar, 2>(1))
-{
-}
-
-template<typename Scalar>
-Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Scalar &rotate_angle, const Vector<Scalar, 2> &scale):
-		translation_(translation),
-		rotate_angle_(rotate_angle),
-		scale_(Vector<Scalar, 2>(1))
-{
-}
-
-template<typename Scalar>
-Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale,  const Scalar &rotate_angle):
+Transform<Scalar, 2>::Transform(const Vector<Scalar, 2> &translation, Scalar rotate_angle, const Vector<Scalar, 2> &scale):
 		translation_(translation),
 		rotate_angle_(rotate_angle),
 		scale_(Vector<Scalar, 2>(1))

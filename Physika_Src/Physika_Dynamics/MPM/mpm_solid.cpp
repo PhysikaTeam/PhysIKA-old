@@ -542,7 +542,13 @@ void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
                 particle_vel_grad += gridVelocity(obj_idx,node_idx).outerProduct(weight_gradient);
             }
             SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
-            particle_deform_grad += dt*particle_vel_grad*particle_deform_grad;
+            //use the remedy in <Augmented MPM for phase-change and varied materials> to prevent |F| < 0
+            SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix(); 
+            if((identity + dt*particle_vel_grad).determinant() > 0) //normal update
+                particle_deform_grad += dt*particle_vel_grad*particle_deform_grad;
+            else //the remedy
+                particle_deform_grad += (dt*particle_vel_grad + 0.25*dt*dt*particle_vel_grad*particle_vel_grad)*particle_deform_grad;
+            PHYSIKA_ASSERT(particle_deform_grad.determinant() > 0);
             particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient
             Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
             particle->setVolume(particle_vol);  //update particle volume

@@ -17,6 +17,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <map>
 #include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"

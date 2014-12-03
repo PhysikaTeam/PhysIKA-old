@@ -17,11 +17,6 @@
 namespace Physika{
 
 template <typename Scalar>
-Transform<Scalar, 3>::~Transform()
-{
-}
-
-template <typename Scalar>
 Transform<Scalar, 3>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
     rotation_(0,0,0,1),
     scale_(Vector<Scalar, 3>(1,1,1))
@@ -29,10 +24,39 @@ Transform<Scalar, 3>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
 }
 
 template <typename Scalar>
-Transform<Scalar, 3>::Transform(const Vector<Scalar, 3> translation):
+Transform<Scalar, 3>::~Transform()
+{
+}
+
+template <typename Scalar>
+Transform<Scalar, 3>::Transform(const Vector<Scalar, 3> &translation):
         translation_(translation),
         rotation_(0,0,0,1),
         scale_(Vector<Scalar, 3>(1,1,1))
+{
+}
+
+template <typename Scalar>
+Transform<Scalar, 3>::Transform(const Quaternion<Scalar> &rotation):
+        translation_(0,0,0),
+        rotation_(rotation),
+        scale_(Vector<Scalar, 3>(1,1,1))
+{
+}
+
+template <typename Scalar>
+Transform<Scalar, 3>::Transform(const Vector<Scalar, 3> &translation, const Quaternion<Scalar> &rotation):
+        translation_(translation),
+        rotation_(rotation),
+        scale_(Vector<Scalar, 3>(1,1,1))
+{
+}
+
+template <typename Scalar>
+Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quaternion<Scalar>& rotation, const Vector<Scalar, 3>& scale):
+        translation_(translation),
+        rotation_(rotation),
+        scale_(scale)
 {
 }
 
@@ -51,45 +75,6 @@ Transform<Scalar, 3>::Transform(const SquareMatrix<Scalar, 3>& matrix)
     this->rotation_ = Quaternion<Scalar>(matrix);
     this->translation_ = Vector<Scalar, 3>(0,0,0);
     this->scale_ = Vector<Scalar, 3>(1,1,1);
-}
-
-template <typename Scalar>
-Transform<Scalar, 3>::Transform(const Quaternion<Scalar> rotation):
-        translation_(0,0,0),
-        rotation_(rotation),
-        scale_(Vector<Scalar, 3>(1,1,1))
-{
-}
-
-template <typename Scalar>
-Transform<Scalar, 3>::Transform(const Quaternion<Scalar>& rotation, const Vector<Scalar, 3>& translation):
-        translation_(translation),
-        rotation_(rotation),
-        scale_(Vector<Scalar, 3>(1,1,1))
-{
-}
-
-template <typename Scalar>
-Transform<Scalar, 3>::Transform(const Quaternion<Scalar>& rotation, const Vector<Scalar, 3>& translation, const Vector<Scalar, 3>& scale):
-        translation_(translation),
-        rotation_(rotation),
-        scale_(scale)
-{
-}
-template <typename Scalar>
-Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quaternion<Scalar>& rotation):
-        translation_(translation),
-        rotation_(rotation),
-       scale_(Vector<Scalar, 3>(1,1,1))
-{
-}
-
-template <typename Scalar>
-Transform<Scalar, 3>::Transform(const Vector<Scalar, 3>& translation, const Quaternion<Scalar>& rotation, const Vector<Scalar, 3>& scale):
-        translation_(translation),
-        rotation_(rotation),
-        scale_(scale)
-{
 }
 
 template <typename Scalar>

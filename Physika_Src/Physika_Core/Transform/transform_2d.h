@@ -40,18 +40,12 @@ public:
     Transform();
     ~Transform();
 	explicit Transform(const Vector<Scalar, 2> &translation);
-	explicit Transform(const Scalar &rotate_angle);
+	explicit Transform(Scalar rotate_angle);
 	explicit Transform(const SquareMatrix<Scalar, 2> &rotation);	   //rotation is represented by a matrix;
 	Transform(const Vector<Scalar, 2> &translation, const SquareMatrix<Scalar, 2> &rotation);
-	Transform(const SquareMatrix<Scalar, 2> &rotation, const Vector<Scalar, 2> &translation);
-	Transform(const Vector<Scalar, 2> &translation, const Scalar &rotate_angle);
-	Transform(const Scalar &rotate_angle, const Vector<Scalar, 2> &translation);
-	Transform(const SquareMatrix<Scalar, 2> &rotation, const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale);
+	Transform(const Vector<Scalar, 2> &translation, Scalar rotate_angle);
 	Transform(const Vector<Scalar, 2> &translation, const SquareMatrix<Scalar, 2> &rotation, const Vector<Scalar, 2> &scale);
-	Transform(const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale,  const SquareMatrix<Scalar, 2> &rotation);
-	Transform(const Scalar &rotate_angle, const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale);
-	Transform(const Vector<Scalar, 2> &translation, const Scalar &rotate_angle, const Vector<Scalar, 2> &scale);
-	Transform(const Vector<Scalar, 2> &translation, const Vector<Scalar, 2> &scale,  const Scalar &rotate_angle);
+	Transform(const Vector<Scalar, 2> &translation, Scalar rotate_angle, const Vector<Scalar, 2> &scale);
 
 	Transform(const SquareMatrix<Scalar, 3> &matrix);   //Init transform from a matrix.now it's not all right.Suggest not use this construction.
 	Transform(const Transform<Scalar, 2> &);

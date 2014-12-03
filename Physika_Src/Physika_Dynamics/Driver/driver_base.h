@@ -105,6 +105,7 @@ protected:
     bool write_to_file_;
     bool enable_timer_;
     Timer timer_;
+    Scalar total_simulation_time_; //the total time spent on simulation, for performance analysis
     Scalar time_;//current time point since simulation starts (from start frame)
     ConfigFile config_parser_; //parser of configuration file
 

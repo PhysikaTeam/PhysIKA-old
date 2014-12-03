@@ -44,7 +44,7 @@ MPMSolidPluginRender<Scalar,Dim>::MPMSolidPluginRender()
     :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),pause_simulation_(true),
      simulation_finished_(false),render_particle_(true),render_grid_(true),
      render_particle_velocity_(false),render_grid_velocity_(false),render_particle_domain_(false),
-     particle_render_mode_(0),velocity_scale_(1.0),auto_capture_frame_(false)
+     particle_render_mode_(0),velocity_scale_(1.0),auto_capture_frame_(false),total_time_(0)
 {
     activateCurrentInstance();
 }
@@ -93,16 +93,19 @@ void MPMSolidPluginRender<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
     MPMSolid<Scalar,Dim> *driver = this->driver();
     PHYSIKA_ASSERT(driver);
     unsigned int max_frame = driver->getEndFrame();
+    unsigned int start_frame = driver->getStartFrame();
     Scalar frame_rate = driver->frameRate();
     unsigned int cur_frame = static_cast<unsigned int>(time*frame_rate);
     unsigned int frame_last_step = static_cast<unsigned int>((time-dt)*frame_rate);
     if(cur_frame-frame_last_step==1) //ended a frame
     {
-        std::cout<<"End Frame "<<cur_frame<<" ";
+        std::cout<<"End Frame "<<cur_frame-1<<" ";
         if(driver->isTimerEnabled())
         {
             timer_.stopTimer();
-            std::cout<<timer_.getElapsedTime()<<" s";
+            Scalar time_cur_frame = timer_.getElapsedTime(); 
+            total_time_ += time_cur_frame;
+            std::cout<<time_cur_frame<<" s";
         }
         std::cout<<"\n";
         if(this->auto_capture_frame_)  //write screen to file
@@ -127,6 +130,7 @@ void MPMSolidPluginRender<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
     {
         this->simulation_finished_ = true;
         std::cout<<"Simulation Ended.\n";
+        std::cout<<"Total simulation time: "<<total_time_<<" s; Average: "<<total_time_/(max_frame-start_frame)<<" s/frame.\n";
     }
 }
 
