@@ -66,6 +66,9 @@ public:
     
     //CPDI2 updates particle position according to corner positions
     virtual void updateParticlePosition(Scalar dt, const std::vector<std::vector<unsigned char> > &is_dirichlet_particle);
+
+    //modified CPDI2: compute particle deformation gradient with the displacement of domain corners
+    void updateParticleDeformationGradient(Scalar dt);
 protected:
     virtual void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
@@ -93,6 +96,9 @@ public:
 
     //CPDI2 updates particle position according to corner positions
     virtual void updateParticlePosition(Scalar dt, const std::vector<std::vector<unsigned char> > &is_dirichlet_particle);
+
+    //modified CPDI2: compute particle deformation gradient with the displacement of domain corners
+    void updateParticleDeformationGradient(Scalar dt);
 protected:
     virtual void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,

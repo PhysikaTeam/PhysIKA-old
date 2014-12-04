@@ -116,6 +116,55 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticlePosition(Scalar dt, const std::v
 }
 
 template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,2>::updateParticleDeformationGradient(Scalar dt)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    ArrayND<Vector<Scalar,2>,2> particle_domain, initial_particle_domain;
+    std::vector<Vector<Scalar,2> > particle_domain_vec(4), particle_domain_displacement(4);
+    SquareMatrix<Scalar,2> identity = SquareMatrix<Scalar,2>::identityMatrix();
+    for(unsigned int obj_idx = 0; obj_idx < this->cpdi_driver_->objectNum(); ++obj_idx)
+    {
+        for(unsigned int particle_idx = 0; particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            SolidParticle<Scalar,2> &particle = this->cpdi_driver_->particle(obj_idx,particle_idx);
+            this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+            this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+            unsigned int i = 0;
+            for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
+                particle_domain_vec[i] = *corner_iter;
+            i = 0;
+            for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = initial_particle_domain.begin(); corner_iter != initial_particle_domain.end(); ++i,++corner_iter)
+                particle_domain_displacement[i] = particle_domain_vec[i] - (*corner_iter);
+            //coefficients
+            Scalar a = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+            Scalar b = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[3]-particle_domain_vec[1]);
+            Scalar c = (particle_domain_vec[3]-particle_domain_vec[2]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+            Scalar domain_volume = a + 0.5*(b+c);
+            SquareMatrix<Scalar,2> particle_deform_grad = identity;
+            Vector<Scalar,2> gradient_integral;
+            //corner 1
+            gradient_integral[0] = -0.5*a - 0.25*b - c/6.0;
+            gradient_integral[1] = -0.5*a - b/6.0 - 0.25*c;
+            particle_deform_grad += (1.0/domain_volume)*particle_domain_displacement[0].outerProduct(gradient_integral);
+            //corner 2
+            gradient_integral[0] = -0.5*a - 0.25*b - c/3.0;
+            gradient_integral[1] = 0.5*a + b/6.0 + 0.25*c;
+            particle_deform_grad += (1.0/domain_volume)*particle_domain_displacement[1].outerProduct(gradient_integral);
+            //corner 3
+            gradient_integral[0] = 0.5*a + 0.25*b + c/6.0;
+            gradient_integral[1] = -0.5*a - b/3.0 - 0.25*c;
+            particle_deform_grad += (1.0/domain_volume)*particle_domain_displacement[2].outerProduct(gradient_integral);
+            //corner 4
+            gradient_integral[0] = 0.5*a + 0.25*b + c/3.0;
+            gradient_integral[1] = 0.5*a + b/3.0 + 0.25*c;
+            particle_deform_grad += (1.0/domain_volume)*particle_domain_displacement[3].outerProduct(gradient_integral);
+            //update particle deformation gradient
+            particle.setDeformationGradient(particle_deform_grad);
+        }
+    }    
+}
+
+template <typename Scalar>
 void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
                                                                     std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
                                                                     unsigned int &particle_grid_pair_num,
@@ -350,6 +399,12 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticlePosition(Scalar dt, const std::v
             particle.setPosition(new_pos);
         }
     }
+}
+
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,3>::updateParticleDeformationGradient(Scalar dt)
+{
+//TO DO
 }
 
 template <typename Scalar>

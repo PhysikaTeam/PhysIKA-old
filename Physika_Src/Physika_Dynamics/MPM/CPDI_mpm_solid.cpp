@@ -101,15 +101,34 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 {
-    MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(dt);
-    
-    //update particle domain after update particle deformation gradient
-    PHYSIKA_ASSERT(cpdi_update_method_);
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
-    if(update_method)  //CPDI2
-        update_method->updateParticleDomain(corner_grid_weight_and_gradient_,corner_grid_pair_num_,dt);
-    else //CPDI
-        cpdi_update_method_->updateParticleDomain();
+    // CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
+    // if(update_method)  //CPDI2
+    // {
+    //     //plugin operation
+    //     MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    //     for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    //     {
+    //         plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+    //         if(plugin)
+    //             plugin->onUpdateParticleConstitutiveModelState(dt);
+    //     }
+    //     //update particle deformation gradient with the displacement of the domain corners
+    //     update_method->updateParticleDeformationGradient(dt);
+    //     //update particle volume
+    //     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+    //     {
+    //         for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
+    //         {
+    //             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
+    //             SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
+    //             std::cout<<particle_deform_grad;
+    //             Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
+    //             particle->setVolume(particle_vol);  //update particle volume
+    //         }
+    //     }
+    // }
+    // else //CPDI
+        MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(dt);
 }
 
 template <typename Scalar, int Dim>
@@ -126,11 +145,17 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
             if(plugin)
                 plugin->onUpdateParticlePosition(dt);
         }
+        //update particle domain before update particle position
+        update_method->updateParticleDomain(corner_grid_weight_and_gradient_,corner_grid_pair_num_,dt);
         //update particle position with CPDI2
         update_method->updateParticlePosition(dt,this->is_dirichlet_particle_);
     }
     else //CPDI
+    {
+        //update particle domain before update particle position
+        cpdi_update_method_->updateParticleDomain();
         MPMSolid<Scalar,Dim>::updateParticlePosition(dt);
+    }
 }
 
 template <typename Scalar, int Dim>

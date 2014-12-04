@@ -255,6 +255,7 @@ void MPMSolid<Scalar,Dim>::rasterize()
             {
                 const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i];
                 Scalar weight = pair.weight_value_;
+                PHYSIKA_ASSERT(weight > std::numeric_limits<Scalar>::epsilon());
                 typename std::map<unsigned int,Scalar>::iterator iter = grid_mass_(pair.node_idx_).find(obj_idx);
                 if(iter != grid_mass_(pair.node_idx_).end())
                     grid_mass_(pair.node_idx_)[obj_idx] += weight*particle->mass();
@@ -580,6 +581,8 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
             for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
             {
                 Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
+                if(gridMass(obj_idx,node_idx) <= std::numeric_limits<Scalar>::epsilon())
+                    continue;
                 Scalar weight = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].weight_value_;
                 Vector<Scalar,Dim> cur_grid_vel(0),grid_vel_before(0);
                 if(grid_velocity_(node_idx).find(obj_idx) != grid_velocity_(node_idx).end())
@@ -813,7 +816,8 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                     continue; //skip grid nodes that are boundary condition
                 Vector<Scalar,Dim> weight_gradient = pair.gradient_value_;
                 SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
-                PHYSIKA_ASSERT(grid_mass_(pair.node_idx_)[obj_idx] > std::numeric_limits<Scalar>::epsilon());
+                if(grid_mass_(pair.node_idx_)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
+                    continue; //skip grid nodes with near zero mass
                 if(contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
                     grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx_)[obj_idx];
                 else  //otherwise, grid velocity of all objects that ocuppy the node get updated
