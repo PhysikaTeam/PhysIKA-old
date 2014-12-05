@@ -142,22 +142,13 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleDeformationGradient(Scalar dt)
             Scalar domain_volume = a + 0.5*(b+c);
             SquareMatrix<Scalar,2> particle_deform_grad = identity;
             Vector<Scalar,2> gradient_integral;
-            //corner 1
-            gradient_integral[0] = -0.5*a - 0.25*b - c/6.0;
-            gradient_integral[1] = -0.5*a - b/6.0 - 0.25*c;
-            particle_deform_grad += (1.0/domain_volume)*particle_domain_displacement[0].outerProduct(gradient_integral);
-            //corner 2
-            gradient_integral[0] = -0.5*a - 0.25*b - c/3.0;
-            gradient_integral[1] = 0.5*a + b/6.0 + 0.25*c;
-            particle_deform_grad += (1.0/domain_volume)*particle_domain_displacement[1].outerProduct(gradient_integral);
-            //corner 3
-            gradient_integral[0] = 0.5*a + 0.25*b + c/6.0;
-            gradient_integral[1] = -0.5*a - b/3.0 - 0.25*c;
-            particle_deform_grad += (1.0/domain_volume)*particle_domain_displacement[2].outerProduct(gradient_integral);
-            //corner 4
-            gradient_integral[0] = 0.5*a + 0.25*b + c/3.0;
-            gradient_integral[1] = 0.5*a + b/3.0 + 0.25*c;
-            particle_deform_grad += (1.0/domain_volume)*particle_domain_displacement[3].outerProduct(gradient_integral);
+            i = 0;
+            for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
+            {
+                Vector<unsigned int,2> corner_idx = corner_iter.elementIndex();
+                gradient_integral = gaussIntegrateShapeFunctionGradientInParticleDomain(corner_idx,particle_domain,initial_particle_domain);
+                particle_deform_grad += 1.0/domain_volume * particle_domain_displacement[i].outerProduct(gradient_integral);
+            }
             //update particle deformation gradient
             particle.setDeformationGradient(particle_deform_grad);
         }
@@ -308,6 +299,49 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int
             ++particle_grid_pair_num;
         }
     }
+}
+
+template <typename Scalar>
+Vector<Scalar,2> CPDI2UpdateMethod<Scalar,2>::gaussIntegrateShapeFunctionGradientInParticleDomain(const Vector<unsigned int,2> &corner_idx, 
+                                                                                                        const ArrayND<Vector<Scalar,2>,2> &particle_domain,
+                                                                                                        const ArrayND<Vector<Scalar,2>,2> &initial_particle_domain)
+{
+    Vector<Scalar,2> result(0);
+    //2x2 gauss integration points
+    Scalar one_over_sqrt_3 = 1.0/sqrt(3.0);
+    for(unsigned int i = 0; i < 2; ++i)
+        for(unsigned int j = 0; j < 2; ++j)
+        {
+            Vector<Scalar,2> gauss_point((2.0*i-1)*one_over_sqrt_3,(2.0*j-1)*one_over_sqrt_3);
+            SquareMatrix<Scalar,2> jacobian = particleDomainJacobian(gauss_point,particle_domain);
+            Scalar jacobian_det = jacobian.determinant();
+            SquareMatrix<Scalar,2> ref_jacobian = particleDomainJacobian(gauss_point,initial_particle_domain);
+            SquareMatrix<Scalar,2> ref_jacobian_inv_trans = ref_jacobian.inverse().transpose();
+            Vector<Scalar,2> shape_function_derivative;
+            shape_function_derivative[0] = 0.25*(2.0*corner_idx[0]-1)*(1+(2.0*corner_idx[1]-1)*gauss_point[1]);
+            shape_function_derivative[1] = 0.25*(1+(2.0*corner_idx[0]-1)*gauss_point[0])*(2.0*corner_idx[1]-1);
+            result += ref_jacobian_inv_trans*shape_function_derivative*jacobian_det;
+        }
+    return result;
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,2> CPDI2UpdateMethod<Scalar,2>::particleDomainJacobian(const Vector<Scalar,2> &eval_point, const ArrayND<Vector<Scalar,2>,2> &particle_domain)
+{
+    PHYSIKA_ASSERT(eval_point[0]>=-1&&eval_point[0]<=1);
+    PHYSIKA_ASSERT(eval_point[1]>=-1&&eval_point[1]<=1);
+    SquareMatrix<Scalar,2> jacobian(0);
+    for(typename ArrayND<Vector<Scalar,2>,2>::ConstIterator iter = particle_domain.begin(); iter != particle_domain.end(); ++iter)
+    {
+        Vector<unsigned int,2> ele_idx = iter.elementIndex();
+        Vector<Scalar,2> domain_corner = *iter;
+        for(unsigned int row = 0; row < 2; ++row)
+        {
+            jacobian(row,0) += 0.25*(2.0*ele_idx[0]-1)*(1+(2.0*ele_idx[1]-1)*eval_point[1])*domain_corner[row];
+            jacobian(row,1) += 0.25*(1+(2.0*ele_idx[0]-1)*eval_point[0])*(2.0*ele_idx[1]-1)*domain_corner[row];
+        }
+    }
+    return jacobian;
 }
 
 ///////////////////////////////////////////////////// 3D ///////////////////////////////////////////////////

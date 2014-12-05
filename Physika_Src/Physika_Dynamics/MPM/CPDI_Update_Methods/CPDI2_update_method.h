@@ -75,6 +75,14 @@ protected:
                                                    unsigned int &particle_grid_pair_num,
                                                    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
                                                    std::vector<unsigned int> &corner_grid_pair_num);
+    //approximate integration of element shape function gradient over particle domain, using 2x2 Gauss integration points
+    //note: the gradient is with respect to reference configuration
+    Vector<Scalar,2> gaussIntegrateShapeFunctionGradientInParticleDomain(const Vector<unsigned int,2> &corner_idx,
+                                                                         const ArrayND<Vector<Scalar,2>,2> &particle_domain,
+                                                                         const ArrayND<Vector<Scalar,2>,2> &initial_particle_domain);
+    //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate
+    //derivative with respect to vector is represented as row vector
+    SquareMatrix<Scalar,2> particleDomainJacobian(const Vector<Scalar,2> &eval_point, const ArrayND<Vector<Scalar,2>,2> &particle_domain);
 };
 
 template <typename Scalar>
@@ -106,6 +114,7 @@ protected:
                                                    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
                                                    std::vector<unsigned int> &corner_grid_pair_num);
     //approximate integration of element shape function (gradient) over particle domain, using 2x2x2 Gauss integration points
+    //note: the gradient is with respect to current configuration instead of reference configuration
     Scalar gaussianIntegrateShapeFunctionValueInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
     Vector<Scalar,3> gaussianIntegrateShapeFunctionGradientInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
     //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate

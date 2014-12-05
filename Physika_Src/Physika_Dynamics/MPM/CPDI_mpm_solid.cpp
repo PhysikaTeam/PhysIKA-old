@@ -121,7 +121,6 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
     //         {
     //             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     //             SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
-    //             std::cout<<particle_deform_grad;
     //             Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
     //             particle->setVolume(particle_vol);  //update particle volume
     //         }
