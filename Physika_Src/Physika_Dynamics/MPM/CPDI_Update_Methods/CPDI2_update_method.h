@@ -68,7 +68,7 @@ public:
     virtual void updateParticlePosition(Scalar dt, const std::vector<std::vector<unsigned char> > &is_dirichlet_particle);
 
     //modified CPDI2: compute particle deformation gradient with the displacement of domain corners
-    void updateParticleDeformationGradient(Scalar dt);
+    void updateParticleDeformationGradient();
 protected:
     virtual void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
@@ -77,9 +77,9 @@ protected:
                                                    std::vector<unsigned int> &corner_grid_pair_num);
     //approximate integration of element shape function gradient over particle domain, using 2x2 Gauss integration points
     //note: the gradient is with respect to reference configuration
-    Vector<Scalar,2> gaussIntegrateShapeFunctionGradientInParticleDomain(const Vector<unsigned int,2> &corner_idx,
-                                                                         const ArrayND<Vector<Scalar,2>,2> &particle_domain,
-                                                                         const ArrayND<Vector<Scalar,2>,2> &initial_particle_domain);
+    Vector<Scalar,2> gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(const Vector<unsigned int,2> &corner_idx,
+                                                                                              const ArrayND<Vector<Scalar,2>,2> &particle_domain,
+                                                                                              const ArrayND<Vector<Scalar,2>,2> &initial_particle_domain);
     //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate
     //derivative with respect to vector is represented as row vector
     SquareMatrix<Scalar,2> particleDomainJacobian(const Vector<Scalar,2> &eval_point, const ArrayND<Vector<Scalar,2>,2> &particle_domain);
@@ -106,7 +106,7 @@ public:
     virtual void updateParticlePosition(Scalar dt, const std::vector<std::vector<unsigned char> > &is_dirichlet_particle);
 
     //modified CPDI2: compute particle deformation gradient with the displacement of domain corners
-    void updateParticleDeformationGradient(Scalar dt);
+    void updateParticleDeformationGradient();
 protected:
     virtual void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
                                                    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
@@ -115,8 +115,11 @@ protected:
                                                    std::vector<unsigned int> &corner_grid_pair_num);
     //approximate integration of element shape function (gradient) over particle domain, using 2x2x2 Gauss integration points
     //note: the gradient is with respect to current configuration instead of reference configuration
-    Scalar gaussianIntegrateShapeFunctionValueInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
-    Vector<Scalar,3> gaussianIntegrateShapeFunctionGradientInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
+    Scalar gaussIntegrateShapeFunctionValueInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
+    Vector<Scalar,3> gaussIntegrateShapeFunctionGradientToCurrentCoordinateInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
+    Vector<Scalar,3> gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(const Vector<unsigned int,3> &corner_idx,
+                                                                                              const ArrayND<Vector<Scalar,3>,3> &particle_domain,
+                                                                                              const ArrayND<Vector<Scalar,3>,3> &initial_particle_domain);
     //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate
     //derivative with respect to vector is represented as row vector
     SquareMatrix<Scalar,3> particleDomainJacobian(const Vector<Scalar,3> &eval_point, const ArrayND<Vector<Scalar,3>,3> &particle_domain);

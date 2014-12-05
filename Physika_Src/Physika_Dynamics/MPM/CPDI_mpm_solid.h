@@ -43,7 +43,7 @@ public:
 
     //re-implemented methods compared to standard MPM
     virtual void updateParticleInterpolationWeight();  //compute the interpolation weight between particles and grid nodes
-    virtual void updateParticleConstitutiveModelState(Scalar dt); //update particle domain after updating the constitutive model state
+    virtual void updateParticleConstitutiveModelState(Scalar dt); //CPDI2 could choose to directly compute deformation gradient
     virtual void updateParticlePosition(Scalar dt);
 
     //return current corners of given particle, empty array is returned if index is invalid
@@ -82,6 +82,9 @@ protected:
     std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > > corner_grid_weight_and_gradient_;
     std::vector<std::vector<std::vector<unsigned int> > > corner_grid_pair_num_; //the number of pairs for each corner of each particle
     CPDIUpdateMethod<Scalar,Dim> *cpdi_update_method_; //the cpdi method used to update particle domain
+    //we proposed a technique to compute particle deformation gradient directly from the displacement of the domain corners in CPDI2
+    //in comparison with the time integration strategy of traditional mpm
+    bool cpdi2_direct_compute_deform_grad_;
 };
 
 template <typename Scalar, int Dim>
