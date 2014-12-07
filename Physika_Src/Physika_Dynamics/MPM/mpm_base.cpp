@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Grid_Weight_Functions/grid_cubic_weight_functions.h"
+#include "Physika_Core/Grid_Weight_Functions/grid_linear_weight_functions.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_plugin_base.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 
@@ -25,8 +25,8 @@ MPMBase<Scalar,Dim>::MPMBase()
     :DriverBase<Scalar>(), weight_function_(NULL), step_method_(NULL),
      cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
-    //default weight function is piece-wise cubic b spline with support domain of 2 cell
-    weight_function_ = GridWeightFunctionCreator<GridPiecewiseCubicSpline<Scalar,Dim> >::createGridWeightFunction();
+    //default weight function is linear with support domain of 1 cell
+    weight_function_ = GridWeightFunctionCreator<GridLinearWeightFunction<Scalar,Dim> >::createGridWeightFunction();
 }
 
 template <typename Scalar, int Dim>
@@ -34,8 +34,8 @@ MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, S
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL),
      step_method_(NULL), cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
 {
-    //default weight function is piece-wise cubic b spline with support domain of 2 cell
-    weight_function_ = GridWeightFunctionCreator<GridPiecewiseCubicSpline<Scalar,Dim> >::createGridWeightFunction();
+    //default weight function is linear with support domain of 1 cell
+    weight_function_ = GridWeightFunctionCreator<GridLinearWeightFunction<Scalar,Dim> >::createGridWeightFunction();
 }
 
 template <typename Scalar, int Dim>
