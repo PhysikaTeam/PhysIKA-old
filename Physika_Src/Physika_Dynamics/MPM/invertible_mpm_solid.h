@@ -76,6 +76,7 @@ protected:
     std::vector<std::vector<unsigned char> > is_enriched_domain_corner_;  //use one byte to indicate whether it's enriched or not
     std::vector<std::vector<Scalar> > domain_corner_mass_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;
+    std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_before_;
     //interpolation weight between particle and the domain corners
     std::vector<std::vector<std::vector<Scalar> > > particle_corner_weight_;
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_;

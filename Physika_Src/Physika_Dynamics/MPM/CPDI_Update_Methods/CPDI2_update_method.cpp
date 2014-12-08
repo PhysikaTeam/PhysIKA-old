@@ -53,6 +53,13 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(const GridWe
 }
 
 template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                                                                            std::vector<std::vector<std::vector<Vector<Scalar,2> > > > &particle_corner_gradient)
+{
+//TO DO
+}
+
+template <typename Scalar>
 void CPDI2UpdateMethod<Scalar,2>::updateParticleDomain(
     const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
     const std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num, Scalar dt)
@@ -369,6 +376,13 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(const GridWe
         for(unsigned int j = 0; j < this->cpdi_driver_->particleNumOfObject(i); ++j)
             updateParticleInterpolationWeight(i,j,weight_function,particle_grid_weight_and_gradient[i][j],particle_grid_pair_num[i][j],
                                               corner_grid_weight_and_gradient[i][j],corner_grid_pair_num[i][j]);
+}
+
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                                                                            std::vector<std::vector<std::vector<Vector<Scalar,3> > > > &particle_corner_gradient)
+{
+//TO DO
 }
 
 template <typename Scalar>

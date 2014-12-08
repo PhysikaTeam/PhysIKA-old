@@ -59,6 +59,9 @@ public:
                  std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
                  std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
                  std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num);
+    //update the interpolation weight between particle and domain corners
+    virtual void updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                                                           std::vector<std::vector<std::vector<Vector<Scalar,2> > > > &particle_corner_gradient);
 
     virtual void updateParticleDomain(
         const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
@@ -97,7 +100,9 @@ public:
                  std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
                  std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
                  std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num);
-
+    //update the interpolation weight between particle and domain corners
+    virtual void updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                                                           std::vector<std::vector<std::vector<Vector<Scalar,3> > > > &particle_corner_gradient);
     virtual void updateParticleDomain(
         const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
         const std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num, Scalar dt);

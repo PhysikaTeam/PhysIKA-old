@@ -157,7 +157,10 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
         //compute domain corner's velocity, divide momentum by mass
         for(unsigned int corner_idx = 0; corner_idx < domain_corner_mass_[obj_idx].size(); ++corner_idx)
             if(domain_corner_mass_[obj_idx][corner_idx] > std::numeric_limits<Scalar>::epsilon())
+            {
                 domain_corner_velocity_[obj_idx][corner_idx] /= domain_corner_mass_[obj_idx][corner_idx];
+                domain_corner_velocity_before_[obj_idx][corner_idx] = domain_corner_velocity_[obj_idx][corner_idx];
+            }
     }    
     //determine active grid nodes according to the grid mass of each object
     Vector<unsigned int,Dim> grid_node_num = this->grid_.nodeNum();
@@ -233,13 +236,60 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 {
     CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight();
-    //TO DO: update the interpolation weight between particle and domain corner
+    //update the interpolation weight between particle and domain corner
+    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    if(update_method)  //CPDI2
+        update_method->updateParticleInterpolationWeightInDomain(particle_corner_weight_,particle_corner_gradient_);
+    else
+        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
 }
 
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 {
-    //TO DO:
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onUpdateParticleConstitutiveModelState(dt);
+    }
+    //update the deformation gradient with the velocity gradient from domain corners
+    //the velocity of ordinary domain corners are mapped from the grid node
+    unsigned int corner_num = (Dim == 2) ? 4 : 8;
+    for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+    {
+        for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            //determine particle type
+            unsigned int enriched_corner_num = 0;
+            for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+            {
+                unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
+                if(is_enriched_domain_corner_[obj_idx][global_corner_idx])
+                    ++enriched_corner_num;
+            }
+            SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
+            SquareMatrix<Scalar,Dim> particle_vel_grad(0);
+            for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+            {
+                unsigned int global_corner_idx =  particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
+                particle_vel_grad += domain_corner_velocity_[obj_idx][global_corner_idx].outerProduct(particle_corner_gradient_[obj_idx][particle_idx][corner_idx]);
+            }
+            SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
+            //use the remedy in <Augmented MPM for phase-change and varied materials> to prevent |F| < 0
+            SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix(); 
+            if((identity + dt*particle_vel_grad).determinant() > 0) //normal update
+                particle_deform_grad += dt*particle_vel_grad*particle_deform_grad;
+            else //the remedy
+                particle_deform_grad += (dt*particle_vel_grad + 0.25*dt*dt*particle_vel_grad*particle_vel_grad)*particle_deform_grad;
+            PHYSIKA_ASSERT(particle_deform_grad.determinant() > 0);
+            particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient
+            Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
+            particle->setVolume(particle_vol);  //update particle volume
+        }
+    }
 }
     
 template <typename Scalar, int Dim>
@@ -251,7 +301,24 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
 {
-    //TO DO:
+    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    if(update_method)  //CPDI2
+    {
+        //plugin operation
+        MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+        for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+        {
+            plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+            if(plugin)
+                plugin->onUpdateParticlePosition(dt);
+        }
+        //update particle domain before update particle position
+        //TO DO
+        //update particle position with CPDI2
+        update_method->updateParticlePosition(dt,this->is_dirichlet_particle_);
+    }
+    else
+        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
 }
     
 template <typename Scalar, int Dim>
@@ -339,6 +406,7 @@ void InvertibleMPMSolid<Scalar,Dim>::resetParticleDomainData()
             is_enriched_domain_corner_[obj_idx][domain_corner_idx] = 0x00;
             domain_corner_mass_[obj_idx][domain_corner_idx] = 0;
             domain_corner_velocity_[obj_idx][domain_corner_idx] = zero_vel;
+            domain_corner_velocity_before_[obj_idx][domain_corner_idx] = zero_vel;
         }
     }
 }
