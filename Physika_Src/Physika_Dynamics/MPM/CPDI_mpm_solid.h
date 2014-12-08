@@ -49,7 +49,7 @@ public:
     //return current corners of given particle, empty array is returned if index is invalid
     void currentParticleDomain(unsigned int object_idx, unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
     //explicitly set current particle domain
-    void setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    virtual void setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
     //return initial corners of given particle, empty array is returned if index is invalid
     void initialParticleDomain(unsigned int object_idx, unsigned int particle_idx, ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner) const;
     //explicitly initialize particle domain

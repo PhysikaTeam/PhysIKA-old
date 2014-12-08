@@ -19,12 +19,18 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim> class VolumetricMesh;
+template <typename Scalar, int Dim> class ArrayND;
+
+/*
+ * InvertibleMPMSolid: hybrid of FEM and CPDI2 for large deformation and invertible elasticity
+ * object number and particle number cannot be changed during run-time
+ *
+ */
 
 template <typename Scalar, int Dim>
 class InvertibleMPMSolid: public CPDIMPMSolid<Scalar,Dim>
@@ -43,18 +49,36 @@ public:
     //virtual methods
     virtual void initSimulationData();  //the topology of the particle domains will be initiated before simulation starts
     virtual void rasterize(); //according to the particle type, some data are rasterized to grid, others to domain corners
+    virtual void updateParticleInterpolationWeight();  //interpolation weight between particle and domain corners need to be updated as well
+    virtual void updateParticleConstitutiveModelState(Scalar dt);
+    virtual void updateParticleVelocity();
+    virtual void updateParticlePosition(Scalar dt);
+    //explicitly set current particle domain, data in particle_domain_mesh_ are updated as well
+    virtual void setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
 protected:
     //solve on grid is reimplemented
     virtual void solveOnGridForwardEuler(Scalar dt);
     virtual void solveOnGridBackwardEuler(Scalar dt);
+    virtual void appendAllParticleRelatedDataOfLastObject();
+    virtual void appendLastParticleRelatedDataOfObject(unsigned int object_idx);
+    virtual void deleteAllParticleRelatedDataOfObject(unsigned int object_idx);
+    virtual void deleteOneParticleRelatedDataOfObject(unsigned int object_idx, unsigned int particle_idx);
     virtual void resetParticleDomainData(); //needed before rasterization
-    void constructParticleDomainTopology(); //construct particle domain topology from the particle domain positions
+    void constructParticleDomainMesh(); //construct particle domain topology from the particle domain positions
+    bool isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const;  //determine if the particle needs enrichment
+    void updateParticleDomainEnrichState();
 
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
-    std::vector<VolumetricMesh<Scalar,Dim>*> particle_domains_;
-    //for each domain corner, use one byte to indicate whether it's enriched or not
-    std::vector<std::vector<std::vector<unsigned char> > > is_enriched_domain_corner_;
+    //each element corresponds to one particle domain
+    std::vector<VolumetricMesh<Scalar,Dim>*> particle_domain_mesh_;
+    //data attached to each domain corner (vertex of volumetric mesh element), 
+    std::vector<std::vector<unsigned char> > is_enriched_domain_corner_;  //use one byte to indicate whether it's enriched or not
+    std::vector<std::vector<Scalar> > domain_corner_mass_;
+    std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;
+    //interpolation weight between particle and the domain corners
+    std::vector<std::vector<std::vector<Scalar> > > particle_corner_weight_;
+    std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_;
 };
 
 }  //end of namespace Physika

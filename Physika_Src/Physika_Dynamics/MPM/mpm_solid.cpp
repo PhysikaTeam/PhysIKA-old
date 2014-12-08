@@ -74,7 +74,6 @@ void MPMSolid<Scalar,Dim>::initSimulationData()
 {
     resetGridData();
     updateParticleInterpolationWeight();//initialize the interpolation weight before simulation
-//TO DO
 }
 
 template <typename Scalar, int Dim>
