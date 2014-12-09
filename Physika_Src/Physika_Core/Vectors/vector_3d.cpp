@@ -208,8 +208,8 @@ Vector<Scalar,3> Vector<Scalar,3>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-	std::cerr<<"Vector Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
+        std::cerr<<"Vector Divide by zero error!\n";
+        std::exit(EXIT_FAILURE);
     }
     Scalar result[3];
     for(unsigned int i = 0; i < 3; ++i)

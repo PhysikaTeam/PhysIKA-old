@@ -57,6 +57,7 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeightInDomain(std:
                                                                             std::vector<std::vector<std::vector<Vector<Scalar,2> > > > &particle_corner_gradient)
 {
 //TO DO
+    PHYSIKA_ASSERT(this->cpdi_driver_);
 }
 
 template <typename Scalar>
