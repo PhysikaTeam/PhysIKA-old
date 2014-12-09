@@ -67,6 +67,7 @@ protected:
     void constructParticleDomainMesh(); //construct particle domain topology from the particle domain positions
     bool isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const;  //determine if the particle needs enrichment
     void updateParticleDomainEnrichState();
+    void applyGravityOnEnrichedDomainCorner(Scalar dt);
 
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
@@ -77,7 +78,7 @@ protected:
     std::vector<std::vector<Scalar> > domain_corner_mass_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_before_;
-    //interpolation weight between particle and the domain corners
+    //interpolation weight between particle and the domain corners, data attched to particle
     std::vector<std::vector<std::vector<Scalar> > > particle_corner_weight_;
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_;
 };

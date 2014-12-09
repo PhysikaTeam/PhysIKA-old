@@ -142,7 +142,7 @@ template <typename Scalar>
 bool Vector<Scalar,4>::operator== (const Vector<Scalar,4> &vec4) const
 {
     for(int i = 0; i < 4; ++i)
-        if((*this)[i] != vec4[i])
+        if(isEqual((*this)[i],vec4[i])==false)
             return false;
     return true;
 }

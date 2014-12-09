@@ -117,7 +117,7 @@ Vector<Scalar,1>& Vector<Scalar,1>::operator= (const Vector<Scalar,1> &vec2)
 template <typename Scalar>
 bool Vector<Scalar,1>::operator== (const Vector<Scalar,1> &vec2) const
 {
-    if((*this)[0] != vec2[0])
+    if(isEqual((*this)[0],vec2[0])==false)
         return false;
     return true;
 }

@@ -27,6 +27,10 @@ const float FLOAT_EPSILON = std::numeric_limits<float>::epsilon();
 const double DOUBLE_EPSILON = std::numeric_limits<double>::epsilon();
 
 ///////////////////////////////functions/////////////////////////////////////////////////
+/*
+ * Function List: Please update the list everytime you add/remove a function
+ * abs(); sqrt(); max(); min(); isEqual();
+ */
 
 /*
  * abs(), sqrt() are replacement for functions from std because some compilers do not
@@ -73,6 +77,21 @@ template <typename Scalar>
 inline Scalar min(Scalar lhs, Scalar rhs)
 {
 	return lhs < rhs ? lhs : rhs;
+}
+
+//compare if two floating point numbers are equal
+//ref: http://floating-point-gui.de/errors/comparison/
+template <typename Scalar>
+inline bool isEqual(Scalar a, Scalar b)
+{
+    Scalar abs_a = abs(a), abs_b = abs(b), diff = abs(a-b);
+    Scalar epsilon = std::numeric_limits<Scalar>::epsilon();
+    if(a == b)
+        return true;
+    else if(a==0||b==0||diff<epsilon)
+        return diff < epsilon;
+    else
+        return diff/(abs_a+abs_b) < epsilon;
 }
 
 }  //end of namespace Physika

@@ -136,7 +136,7 @@ template <typename Scalar>
 bool Vector<Scalar,2>::operator== (const Vector<Scalar,2> &vec2) const
 {
     for(unsigned int i = 0; i < 2; ++i)
-        if((*this)[i] != vec2[i])
+        if(isEqual((*this)[i],vec2[i])==false)
             return false;
     return true;
 }

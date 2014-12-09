@@ -119,7 +119,7 @@ SquareMatrix<Scalar,1>& SquareMatrix<Scalar,1>::operator= (const SquareMatrix<Sc
 template <typename Scalar>
 bool SquareMatrix<Scalar,1>::operator== (const SquareMatrix<Scalar,1> &mat2) const
 {
-    if((*this)(0,0) != mat2(0,0))
+    if(isEqual((*this)(0,0),mat2(0,0))==false)
         return false;
     return true;
 }

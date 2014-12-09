@@ -56,8 +56,36 @@ template <typename Scalar>
 void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
                                                                             std::vector<std::vector<std::vector<Vector<Scalar,2> > > > &particle_corner_gradient)
 {
-//TO DO
     PHYSIKA_ASSERT(this->cpdi_driver_);
+    ArrayND<Vector<Scalar,2>,2> particle_domain;
+    for(unsigned int obj_idx = 0; obj_idx < this->cpdi_driver_->objectNum(); ++obj_idx)
+    {
+        for(unsigned int particle_idx = 0; particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+            std::vector<Vector<Scalar,2> > particle_domain_vec;
+            for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++corner_iter)
+                particle_domain_vec.push_back(*corner_iter);
+            //coefficients
+            Scalar a = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+            Scalar b = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[3]-particle_domain_vec[1]);
+            Scalar c = (particle_domain_vec[3]-particle_domain_vec[2]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+            Scalar domain_volume = a + 0.5*(b+c);
+            //weight and gradient
+            particle_corner_weight[obj_idx][particle_idx][0] = 1.0/(24*domain_volume)*(6*domain_volume-b-c);
+            particle_corner_weight[obj_idx][particle_idx][1] = 1.0/(24*domain_volume)*(6*domain_volume-b+c);
+            particle_corner_weight[obj_idx][particle_idx][2] = 1.0/(24*domain_volume)*(6*domain_volume+b-c);
+            particle_corner_weight[obj_idx][particle_idx][3] = 1.0/(24*domain_volume)*(6*domain_volume+b+c);
+            particle_corner_gradient[obj_idx][particle_idx][0][0] = 1.0/(2*domain_volume)*(particle_domain_vec[2][1]-particle_domain_vec[1][1]);
+            particle_corner_gradient[obj_idx][particle_idx][0][1] = 1.0/(2*domain_volume)*(particle_domain_vec[1][0]-particle_domain_vec[2][0]);
+            particle_corner_gradient[obj_idx][particle_idx][1][0] = 1.0/(2*domain_volume)*(particle_domain_vec[0][1]-particle_domain_vec[3][1]);
+            particle_corner_gradient[obj_idx][particle_idx][1][1] = 1.0/(2*domain_volume)*(particle_domain_vec[3][0]-particle_domain_vec[0][0]);
+            particle_corner_gradient[obj_idx][particle_idx][2][0] = 1.0/(2*domain_volume)*(particle_domain_vec[3][1]-particle_domain_vec[0][1]);
+            particle_corner_gradient[obj_idx][particle_idx][2][1] = 1.0/(2*domain_volume)*(particle_domain_vec[0][0]-particle_domain_vec[3][0]);
+            particle_corner_gradient[obj_idx][particle_idx][3][0] = 1.0/(2*domain_volume)*(particle_domain_vec[1][1]-particle_domain_vec[2][1]);
+            particle_corner_gradient[obj_idx][particle_idx][3][1] = 1.0/(2*domain_volume)*(particle_domain_vec[2][0]-particle_domain_vec[1][0]);
+        }
+    }
 }
 
 template <typename Scalar>
@@ -383,7 +411,28 @@ template <typename Scalar>
 void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
                                                                             std::vector<std::vector<std::vector<Vector<Scalar,3> > > > &particle_corner_gradient)
 {
-//TO DO
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    ArrayND<Vector<Scalar,3>,3> particle_domain;
+    for(unsigned int obj_idx = 0; obj_idx < this->cpdi_driver_->objectNum(); ++obj_idx)
+    {
+        for(unsigned int particle_idx = 0; particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+            SolidParticle<Scalar,3> &particle = this->cpdi_driver_->particle(obj_idx,particle_idx);
+            //TO DO: compute domain volume instead of using particle volume
+            Scalar domain_volume = particle.volume();
+            Vector<unsigned int,3> corner_idx(0);
+            unsigned int corner_idx_1d = 0;
+            for(corner_idx[0] = 0; corner_idx[0] < 2; ++corner_idx[0])
+                for(corner_idx[1] = 0; corner_idx[1] < 2; ++corner_idx[1])
+                    for(corner_idx[2] = 0; corner_idx[2] < 2; ++corner_idx[2])
+                    {
+                        particle_corner_weight[obj_idx][particle_idx][corner_idx_1d] = 1.0/domain_volume*gaussIntegrateShapeFunctionValueInParticleDomain(corner_idx,particle_domain);
+                        particle_corner_gradient[obj_idx][particle_idx][corner_idx_1d] = 1.0/domain_volume*gaussIntegrateShapeFunctionGradientToCurrentCoordinateInParticleDomain(corner_idx,particle_domain);
+                        ++corner_idx_1d;
+                    }
+        }
+    }
 }
 
 template <typename Scalar>

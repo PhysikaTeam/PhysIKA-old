@@ -13,6 +13,7 @@
  */
 
 #include <limits>
+#include <algorithm>
 #include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
@@ -491,13 +492,13 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                         SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
                         //TO DO: consider the effect of contact
                         domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
-                        //apply the effect of gravity
-                        domain_corner_velocity_[obj_idx][global_corner_idx][1] += dt*(-1)*(this->gravity_);
                     }
                 }
             }
         }
     }
+    //apply gravity
+    applyGravityOnEnrichedDomainCorner(dt);
     
 }
 
@@ -573,20 +574,62 @@ void InvertibleMPMSolid<Scalar,Dim>::resetParticleDomainData()
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::constructParticleDomainMesh()
 {
-    if(Dim == 2)
+    //resize 
+    unsigned int obj_num = this->objectNum();
+    particle_domain_mesh_.resize(obj_num);
+    is_enriched_domain_corner_.resize(obj_num);
+    domain_corner_mass_.resize(obj_num);
+    domain_corner_velocity_.resize(obj_num);
+    domain_corner_velocity_before_.resize(obj_num);
+    //construct mesh
+    std::vector<Vector<Scalar,Dim> > corner_positions;
+    unsigned int *domains = NULL;
+    unsigned int corner_num = (Dim==2)?4:8;
+    for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
     {
+        unsigned int particle_num = this->particleNumOfObject(obj_idx);
+        domains = new unsigned int[particle_num*corner_num];
+        corner_positions.clear();
+        for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
+        {
+            for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+            {
+                typename std::vector<Vector<Scalar,Dim> >::iterator iter = std::find(corner_positions.begin(),corner_positions.end(),this->particle_domain_corners_[obj_idx][particle_idx][corner_idx]);
+                if(iter == corner_positions.end())
+                {
+                    corner_positions.push_back(this->particle_domain_corners_[obj_idx][particle_idx][corner_idx]);
+                    domains[particle_idx*corner_num+corner_idx] = corner_positions.size() - 1;
+                }
+                else
+                {
+                    unsigned int idx = static_cast<unsigned int>(iter-corner_positions.begin());
+                    domains[particle_idx*corner_num+corner_idx] = idx;
+                }
+            }
+        }
+        unsigned int vert_num = corner_positions.size();
+        Scalar *vertices = new Scalar[vert_num*Dim];
+        for(unsigned int i = 0; i < corner_positions.size(); ++i)
+            for(unsigned int j =0; j < Dim; ++j)
+                vertices[i*Dim+j] = corner_positions[i][j];
+        if(Dim == 2)
+            particle_domain_mesh_[obj_idx] = dynamic_cast<VolumetricMesh<Scalar,Dim>*>(new QuadMesh<Scalar>(vert_num,vertices,particle_num,domains));
+        else
+            particle_domain_mesh_[obj_idx] = dynamic_cast<VolumetricMesh<Scalar,Dim>*>(new CubicMesh<Scalar>(vert_num,vertices,particle_num,domains));
+        delete[] domains;
+        delete[] vertices;
+        //resize
+        is_enriched_domain_corner_[obj_idx].resize(vert_num);
+        domain_corner_mass_[obj_idx].resize(vert_num);
+        domain_corner_velocity_[obj_idx].resize(vert_num);
+        domain_corner_velocity_before_[obj_idx].resize(vert_num);
     }
-    else if(Dim == 3)
-    {
-    }
-    else
-        PHYSIKA_ERROR("Wrong dimension specified!");
 }
 
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
-    return false;
+    return true;
     //TO DO
 }
 
@@ -607,6 +650,15 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleDomainEnrichState()
                 }
             }
         }
+}
+
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::applyGravityOnEnrichedDomainCorner(Scalar dt)
+{
+    for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        for(unsigned int corner_idx = 0; corner_idx < domain_corner_velocity_[obj_idx].size(); ++corner_idx)
+            if(is_enriched_domain_corner_[obj_idx][corner_idx])
+                domain_corner_velocity_[obj_idx][corner_idx][1] += dt*(-1)*(this->gravity_);
 }
 
 //explicit instantiation

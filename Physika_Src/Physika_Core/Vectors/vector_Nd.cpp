@@ -204,7 +204,7 @@ bool VectorND<Scalar>::operator== (const VectorND<Scalar> &vec2) const
     if(dim1 != dim2)
         return false;
     for(unsigned int i = 0; i <= dim1; ++i)
-        if((*this)[i] != vec2[i])
+        if(isEqual((*this)[i],vec2[i])==false)
             return false;
     return true;
 }

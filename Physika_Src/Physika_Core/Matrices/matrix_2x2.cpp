@@ -171,7 +171,7 @@ bool SquareMatrix<Scalar,2>::operator== (const SquareMatrix<Scalar,2> &mat2) con
 {
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            if((*this)(i,j) != mat2(i,j))
+            if(isEqual((*this)(i,j),mat2(i,j))==false)
                 return false;
     return true;
 }
