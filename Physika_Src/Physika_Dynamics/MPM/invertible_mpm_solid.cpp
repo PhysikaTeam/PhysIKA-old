@@ -53,9 +53,7 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, uns
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::~InvertibleMPMSolid()
 {
-    for(unsigned int i = 0; i < particle_domain_mesh_.size(); ++i)
-        if(particle_domain_mesh_[i])
-            delete particle_domain_mesh_[i];
+    clearParticleDomainMesh();
 }
 
 template <typename Scalar, int Dim>
@@ -388,7 +386,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
                 plugin->onUpdateParticlePosition(dt);
         }
         //update particle domain before update particle position
-        //some domain corners(ordinary) are update with the velocity from grid, some(enriched) are updated with the corner velocity
+        //some domain corners(ordinary) are updated with the velocity from grid, some(enriched) are updated with the corner velocity
         unsigned int corner_num = (Dim == 2) ? 4 : 8;
         for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
         {
@@ -498,8 +496,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
         }
     }
     //apply gravity
-    applyGravityOnEnrichedDomainCorner(dt);
-    
+    applyGravityOnEnrichedDomainCorner(dt);    
 }
 
 template <typename Scalar, int Dim>
@@ -574,6 +571,7 @@ void InvertibleMPMSolid<Scalar,Dim>::resetParticleDomainData()
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::constructParticleDomainMesh()
 {
+    clearParticleDomainMesh(); //clear potential space
     //resize 
     unsigned int obj_num = this->objectNum();
     particle_domain_mesh_.resize(obj_num);
@@ -659,6 +657,14 @@ void InvertibleMPMSolid<Scalar,Dim>::applyGravityOnEnrichedDomainCorner(Scalar d
         for(unsigned int corner_idx = 0; corner_idx < domain_corner_velocity_[obj_idx].size(); ++corner_idx)
             if(is_enriched_domain_corner_[obj_idx][corner_idx])
                 domain_corner_velocity_[obj_idx][corner_idx][1] += dt*(-1)*(this->gravity_);
+}
+
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::clearParticleDomainMesh()
+{
+    for(unsigned int i = 0; i < particle_domain_mesh_.size(); ++i)
+        if(particle_domain_mesh_[i])
+            delete particle_domain_mesh_[i];
 }
 
 //explicit instantiation

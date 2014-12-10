@@ -68,6 +68,7 @@ protected:
     bool isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const;  //determine if the particle needs enrichment
     void updateParticleDomainEnrichState();
     void applyGravityOnEnrichedDomainCorner(Scalar dt);
+    void clearParticleDomainMesh();
 
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains

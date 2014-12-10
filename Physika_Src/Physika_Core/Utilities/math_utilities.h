@@ -28,7 +28,7 @@ const double DOUBLE_EPSILON = std::numeric_limits<double>::epsilon();
 
 ///////////////////////////////functions/////////////////////////////////////////////////
 /*
- * Function List: Please update the list everytime you add/remove a function
+ * Function List: Please update the list everytime you add/remove a function!!!
  * abs(); sqrt(); max(); min(); isEqual();
  */
 
@@ -63,16 +63,14 @@ inline double sqrt(Scalar value)
     return std::sqrt(static_cast<double>(value));
 }
 
-//undefine the max in WinDef.h
-#undef max
+#undef max //undefine the max in WinDef.h
 template <typename Scalar>
 inline Scalar max(Scalar lhs, Scalar rhs)
 {
 	return lhs > rhs ? lhs : rhs;	
 }
 
-//undefine the min in WinDef.h
-#undef min
+#undef min //undefine the min in WinDef.h
 template <typename Scalar>
 inline Scalar min(Scalar lhs, Scalar rhs)
 {
