@@ -77,8 +77,9 @@ void InvertibleMPMSolid<Scalar,Dim>::read(const std::string &file_name)
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::initSimulationData()
 {
-    MPMSolid<Scalar,Dim>::initSimulationData();
     constructParticleDomainMesh();
+    resetParticleDomainData();
+    MPMSolid<Scalar,Dim>::initSimulationData();
 }
 
 template <typename Scalar, int Dim>
@@ -234,11 +235,26 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
 {
-    CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight();
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onUpdateParticleInterpolationWeight();
+    }
+
+    PHYSIKA_ASSERT(this->particle_grid_weight_and_gradient_.size() == this->particles_.size());
+    PHYSIKA_ASSERT(this->cpdi_update_method_);
+    PHYSIKA_ASSERT(this->weight_function_);
+    const GridWeightFunction<Scalar,Dim> &weight_function = *(this->weight_function_);
     //update the interpolation weight between particle and domain corner
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method)  //CPDI2
-        update_method->updateParticleInterpolationWeightInDomain(particle_corner_weight_,particle_corner_gradient_);
+        update_method->updateParticleInterpolationWeightWithEnrichment(weight_function,particle_domain_mesh_,is_enriched_domain_corner_,
+                                                                       this->particle_grid_weight_and_gradient_,this->particle_grid_pair_num_,
+                                                                       this->corner_grid_weight_and_gradient_,this->corner_grid_pair_num_,
+                                                                       particle_corner_weight_,particle_corner_gradient_);
     else
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
 }
@@ -627,6 +643,20 @@ void InvertibleMPMSolid<Scalar,Dim>::constructParticleDomainMesh()
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
+    // unsigned int obj_num = this->objectNum();
+    // PHYSIKA_ASSERT(obj_idx<obj_num);
+    // unsigned int particle_num = this->particleNumOfObject(obj_idx);
+    // PHYSIKA_ASSERT(particle_idx<particle_num);
+    // //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
+    // for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+    // {
+    //     Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
+    //     if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
+    //         return false;
+    // }
+    // //rule two: only enrich while compression
+    // if(this->particles_[obj_idx][particle_idx]->volume() > this->particle_initial_volume_[obj_idx][particle_idx])
+    //     return false;
     return true;
     //TO DO
 }

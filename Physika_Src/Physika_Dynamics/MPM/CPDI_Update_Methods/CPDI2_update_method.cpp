@@ -20,6 +20,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
@@ -50,6 +51,26 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(const GridWe
         for(unsigned int j = 0; j < this->cpdi_driver_->particleNumOfObject(i); ++j)
             updateParticleInterpolationWeight(i,j,weight_function,particle_grid_weight_and_gradient[i][j],particle_grid_pair_num[i][j],
                                               corner_grid_weight_and_gradient[i][j],corner_grid_pair_num[i][j]);
+}
+
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeightWithEnrichment(const GridWeightFunction<Scalar,2> &weight_function,
+                                                                                  const std::vector<VolumetricMesh<Scalar,2>*> &particle_domain_mesh,
+                                                                                  const std::vector<std::vector<unsigned char> > &is_enriched_domain_corner,
+                                                                                  std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
+                                                                                  std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
+                                                                                  std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
+                                                                                  std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+                                                                                  std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                                                                                  std::vector<std::vector<std::vector<Vector<Scalar,2> > > > &particle_corner_gradient)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    for(unsigned int i = 0; i < this->cpdi_driver_->objectNum(); ++i)
+        for(unsigned int j = 0; j < this->cpdi_driver_->particleNumOfObject(i); ++j)
+            updateParticleInterpolationWeightWithEnrichment(i,j,weight_function,particle_domain_mesh[i],is_enriched_domain_corner[i],
+                                                             particle_grid_weight_and_gradient[i][j],particle_grid_pair_num[i][j],
+                                                             corner_grid_weight_and_gradient[i][j],corner_grid_pair_num[i][j],
+                                                             particle_corner_weight[i][j],particle_corner_gradient[i][j]);
 }
 
 template <typename Scalar>
@@ -338,6 +359,172 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int
 }
 
 template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeightWithEnrichment(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
+                                                                                  const VolumetricMesh<Scalar,2>* particle_domain_mesh,
+                                                                                  const std::vector<unsigned char> &is_enriched_domain_corner,
+                                                                                  std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
+                                                                                  unsigned int &particle_grid_pair_num,
+                                                                                  std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
+                                                                                  std::vector<unsigned int> &corner_grid_pair_num,
+                                                                                  std::vector<Scalar> &particle_corner_weight,
+                                                                                  std::vector<Vector<Scalar,2> > &particle_corner_gradient)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    ArrayND<Vector<Scalar,2>,2> particle_domain;
+    this->cpdi_driver_->currentParticleDomain(object_idx,particle_idx,particle_domain);
+    std::vector<Vector<Scalar,2> > particle_domain_vec;
+    for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++corner_iter)
+        particle_domain_vec.push_back(*corner_iter);
+    std::map<unsigned int,Scalar> idx_weight_map;
+    std::map<unsigned int,Vector<Scalar,2> > idx_gradient_map;
+    const Grid<Scalar,2> &grid = this->cpdi_driver_->grid();
+    Vector<Scalar,2> grid_dx = grid.dX();
+    //coefficients
+    Scalar a = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+    Scalar b = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[3]-particle_domain_vec[1]);
+    Scalar c = (particle_domain_vec[3]-particle_domain_vec[2]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+    Scalar domain_volume = a + 0.5*(b+c);
+    //the weight and gradient between particle and domain corners
+    particle_corner_weight[0] = 1.0/(24*domain_volume)*(6*domain_volume-b-c);
+    particle_corner_weight[1] = 1.0/(24*domain_volume)*(6*domain_volume-b+c);
+    particle_corner_weight[2] = 1.0/(24*domain_volume)*(6*domain_volume+b-c);
+    particle_corner_weight[3] = 1.0/(24*domain_volume)*(6*domain_volume+b+c);
+    particle_corner_gradient[0][0] = 1.0/(2*domain_volume)*(particle_domain_vec[2][1]-particle_domain_vec[1][1]);
+    particle_corner_gradient[0][1] = 1.0/(2*domain_volume)*(particle_domain_vec[1][0]-particle_domain_vec[2][0]);
+    particle_corner_gradient[1][0] = 1.0/(2*domain_volume)*(particle_domain_vec[0][1]-particle_domain_vec[3][1]);
+    particle_corner_gradient[1][1] = 1.0/(2*domain_volume)*(particle_domain_vec[3][0]-particle_domain_vec[0][0]);
+    particle_corner_gradient[2][0] = 1.0/(2*domain_volume)*(particle_domain_vec[3][1]-particle_domain_vec[0][1]);
+    particle_corner_gradient[2][1] = 1.0/(2*domain_volume)*(particle_domain_vec[0][0]-particle_domain_vec[3][0]);
+    particle_corner_gradient[3][0] = 1.0/(2*domain_volume)*(particle_domain_vec[1][1]-particle_domain_vec[2][1]);
+    particle_corner_gradient[3][1] = 1.0/(2*domain_volume)*(particle_domain_vec[2][0]-particle_domain_vec[1][0]);
+    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,2> InfluenceIterator;
+    //first compute the weight and gradient with respect to each grid node in the influence range of the particle
+    //node weight and gradient between domain corners and grid nodes are stored as well
+    for(unsigned int flat_corner_idx = 0; flat_corner_idx < particle_domain_vec.size(); ++flat_corner_idx)
+    {
+        corner_grid_pair_num[flat_corner_idx] = 0;
+        unsigned int node_num = 0;
+        unsigned int global_corner_idx = particle_domain_mesh->eleVertIndex(particle_idx,flat_corner_idx);
+        for(InfluenceIterator iter(grid,particle_domain_vec[flat_corner_idx],weight_function); iter.valid(); ++node_num,++iter)
+        {
+            Vector<unsigned int,2> node_idx = iter.nodeIndex();
+            unsigned int node_idx_1d = this->flatIndex(node_idx,grid.nodeNum());
+            Vector<Scalar,2> corner_to_node = particle_domain_vec[flat_corner_idx] - grid.node(node_idx);
+            for(unsigned int dim = 0; dim < 2; ++dim)
+                corner_to_node[dim] /= grid_dx[dim];
+            Scalar corner_weight = weight_function.weight(corner_to_node);
+            //weight and gradient correspond to this node for domain corners
+            corner_grid_weight_and_gradient[flat_corner_idx][node_num].node_idx_ = node_idx;
+            corner_grid_weight_and_gradient[flat_corner_idx][node_num].weight_value_ = corner_weight;
+            corner_grid_weight_and_gradient[flat_corner_idx][node_num].gradient_value_ = weight_function.gradient(corner_to_node);
+            ++corner_grid_pair_num[flat_corner_idx];
+            if(is_enriched_domain_corner[global_corner_idx])  //enriched domain corners do not contribute to grid
+                break;
+            //weight and gradient correspond to this node for particles
+            typename std::map<unsigned int,Scalar>::iterator weight_map_iter = idx_weight_map.find(node_idx_1d);
+            typename std::map<unsigned int,Vector<Scalar,2> >::iterator gradient_map_iter = idx_gradient_map.find(node_idx_1d);
+            switch(flat_corner_idx)
+            {
+            case 0:
+            {
+                if(weight_map_iter != idx_weight_map.end())
+                    weight_map_iter->second += 1.0/(24.0*domain_volume)*(6.0*domain_volume-b-c)*corner_weight;
+                else
+                    idx_weight_map.insert(std::make_pair(node_idx_1d,1.0/(24.0*domain_volume)*(6.0*domain_volume-b-c)*corner_weight));
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += 1.0/(2.0*domain_volume)*(particle_domain_vec[2][1]-particle_domain_vec[1][1])*corner_weight;
+                    gradient_map_iter->second[1] += 1.0/(2.0*domain_volume)*(particle_domain_vec[1][0]-particle_domain_vec[2][0])*corner_weight;
+                }
+                else
+                {
+					Vector<Scalar,2> gradient;
+                    gradient[0] = 1.0/(2.0*domain_volume)*(particle_domain_vec[2][1]-particle_domain_vec[1][1])*corner_weight;
+                    gradient[1] = 1.0/(2.0*domain_volume)*(particle_domain_vec[1][0]-particle_domain_vec[2][0])*corner_weight;
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                }
+                break;
+            }
+            case 1:
+            {
+                if(weight_map_iter != idx_weight_map.end())
+                    weight_map_iter->second += 1.0/(24.0*domain_volume)*(6.0*domain_volume-b+c)*corner_weight;
+                else
+                    idx_weight_map.insert(std::make_pair(node_idx_1d,1.0/(24.0*domain_volume)*(6.0*domain_volume-b+c)*corner_weight));
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += 1.0/(2.0*domain_volume)*(particle_domain_vec[0][1]-particle_domain_vec[3][1])*corner_weight;
+                    gradient_map_iter->second[1] += 1.0/(2.0*domain_volume)*(particle_domain_vec[3][0]-particle_domain_vec[0][0])*corner_weight;
+                }
+                else
+                {
+					Vector<Scalar,2> gradient;
+                    gradient[0] = 1.0/(2.0*domain_volume)*(particle_domain_vec[0][1]-particle_domain_vec[3][1])*corner_weight;
+                    gradient[1] = 1.0/(2.0*domain_volume)*(particle_domain_vec[3][0]-particle_domain_vec[0][0])*corner_weight;
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                }
+                break;
+            }
+            case 2:
+            {
+                if(weight_map_iter != idx_weight_map.end())
+                    weight_map_iter->second += 1.0/(24.0*domain_volume)*(6.0*domain_volume+b-c)*corner_weight;
+                else
+                    idx_weight_map.insert(std::make_pair(node_idx_1d,1.0/(24.0*domain_volume)*(6.0*domain_volume+b-c)*corner_weight));
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += 1.0/(2.0*domain_volume)*(particle_domain_vec[3][1]-particle_domain_vec[0][1])*corner_weight;
+                    gradient_map_iter->second[1] += 1.0/(2.0*domain_volume)*(particle_domain_vec[0][0]-particle_domain_vec[3][0])*corner_weight;
+                }
+                else
+                {
+					Vector<Scalar,2> gradient;
+                    gradient[0] = 1.0/(2.0*domain_volume)*(particle_domain_vec[3][1]-particle_domain_vec[0][1])*corner_weight;
+                    gradient[1] = 1.0/(2.0*domain_volume)*(particle_domain_vec[0][0]-particle_domain_vec[3][0])*corner_weight;
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                }
+                break;
+            }
+            case 3:
+            {
+                if(weight_map_iter != idx_weight_map.end())
+                    weight_map_iter->second += 1.0/(24.0*domain_volume)*(6.0*domain_volume+b+c)*corner_weight;
+                else
+                    idx_weight_map.insert(std::make_pair(node_idx_1d,1.0/(24.0*domain_volume)*(6.0*domain_volume+b+c)*corner_weight));
+                if(gradient_map_iter != idx_gradient_map.end())
+                {
+                    gradient_map_iter->second[0] += 1.0/(2.0*domain_volume)*(particle_domain_vec[1][1]-particle_domain_vec[2][1])*corner_weight;
+                    gradient_map_iter->second[1] += 1.0/(2.0*domain_volume)*(particle_domain_vec[2][0]-particle_domain_vec[1][0])*corner_weight;
+                }
+                else
+                {
+					Vector<Scalar,2> gradient;
+                    gradient[0] = 1.0/(2.0*domain_volume)*(particle_domain_vec[1][1]-particle_domain_vec[2][1])*corner_weight;
+                    gradient[1] = 1.0/(2.0*domain_volume)*(particle_domain_vec[2][0]-particle_domain_vec[1][0])*corner_weight;
+					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                }
+                break;
+            }
+            default:
+                PHYSIKA_ERROR("Particle domain corner number should be 4 for Dim=2");
+            }
+        }
+    }
+    //then store the data with respect to grid nodes
+    particle_grid_pair_num = 0;
+    for(typename std::map<unsigned int,Scalar>::iterator iter = idx_weight_map.begin(); iter != idx_weight_map.end(); ++iter)
+    {
+        if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
+        {
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            ++particle_grid_pair_num;
+        }
+    }
+}
+
+template <typename Scalar>
 Vector<Scalar,2> CPDI2UpdateMethod<Scalar,2>::gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(const Vector<unsigned int,2> &corner_idx, 
                                                                                                         const ArrayND<Vector<Scalar,2>,2> &particle_domain,
                                                                                                         const ArrayND<Vector<Scalar,2>,2> &initial_particle_domain)
@@ -405,6 +592,26 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(const GridWe
         for(unsigned int j = 0; j < this->cpdi_driver_->particleNumOfObject(i); ++j)
             updateParticleInterpolationWeight(i,j,weight_function,particle_grid_weight_and_gradient[i][j],particle_grid_pair_num[i][j],
                                               corner_grid_weight_and_gradient[i][j],corner_grid_pair_num[i][j]);
+}
+
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeightWithEnrichment(const GridWeightFunction<Scalar,3> &weight_function,
+                                                                                  const std::vector<VolumetricMesh<Scalar,3>*> &particle_domain_mesh,
+                                                                                  const std::vector<std::vector<unsigned char> > &is_enriched_domain_corner,
+                                                                                  std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
+                                                                                  std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
+                                                                                  std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
+                                                                                  std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+                                                                                  std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                                                                                  std::vector<std::vector<std::vector<Vector<Scalar,3> > > > &particle_corner_gradient)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    for(unsigned int i = 0; i < this->cpdi_driver_->objectNum(); ++i)
+        for(unsigned int j = 0; j < this->cpdi_driver_->particleNumOfObject(i); ++j)
+            updateParticleInterpolationWeightWithEnrichment(i,j,weight_function,particle_domain_mesh[i],is_enriched_domain_corner[i],
+                                                             particle_grid_weight_and_gradient[i][j],particle_grid_pair_num[i][j],
+                                                             corner_grid_weight_and_gradient[i][j],corner_grid_pair_num[i][j],
+                                                             particle_corner_weight[i][j],particle_corner_gradient[i][j]);
 }
 
 template <typename Scalar>
@@ -605,6 +812,19 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int
             ++particle_grid_pair_num;
         }
     }
+}
+
+template <typename Scalar>
+void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeightWithEnrichment(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
+                                                                 const VolumetricMesh<Scalar,3>* particle_domain_mesh,
+                                                                 const std::vector<unsigned char> &is_enriched_domain_corner,
+                                                                 std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
+                                                                 unsigned int &particle_grid_pair_num,
+                                                                 std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
+                                                                 std::vector<unsigned int> &corner_grid_pair_num,
+                                                                 std::vector<Scalar> &particle_corner_weight,
+                                                                 std::vector<Vector<Scalar,3> > &particle_corner_gradient)
+{//TO DO
 }
 
 template <typename Scalar>

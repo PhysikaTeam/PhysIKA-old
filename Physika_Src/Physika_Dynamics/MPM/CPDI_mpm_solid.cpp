@@ -357,7 +357,6 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigne
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::synchronizeWithInfluenceRangeChange()
 {
-    MPMSolid<Scalar,Dim>::synchronizeWithInfluenceRangeChange();
     //for each particle domain corner, allocate space that can store weight/gradient of maximum
     //number of nodes in range of the domain corners
     unsigned int max_num = 1;
@@ -366,14 +365,18 @@ void CPDIMPMSolid<Scalar,Dim>::synchronizeWithInfluenceRangeChange()
     unsigned int corner_num = Dim==2 ? 4 : 8;
     for(unsigned int i = 0; i < this->objectNum(); ++i)
         for(unsigned int j = 0; j < this->particleNumOfObject(i); ++j)
+        {
             for(unsigned int k = 0; k < corner_num; ++k)
                 corner_grid_weight_and_gradient_[i][j][k].resize(max_num);
+            //the maximum number of nodes in range of particles is the sum of domain corners
+            this->particle_grid_weight_and_gradient_[i][j].resize(max_num*corner_num);
+        }
 }
 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
 {
-    MPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject();
+    MPMSolidBase<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject();
     unsigned int corner_num = Dim==2 ? 4 : 8;
     unsigned int last_object_idx = this->objectNum() - 1;
     unsigned int particle_num_of_last_object = this->particleNumOfObject(last_object_idx);
@@ -397,12 +400,18 @@ void CPDIMPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
     std::vector<unsigned int> all_corner_grid_pair_num(corner_num);
     std::vector<std::vector<unsigned int> > all_particle_corner_grid_pair_num(particle_num_of_last_object,all_corner_grid_pair_num);
     corner_grid_pair_num_.push_back(all_particle_corner_grid_pair_num);
+    //the maximum number of nodes in range of particles is the sum of domain corners
+    pair_vec one_particle_grid_weight_and_gradient(max_num*corner_num);
+    std::vector<pair_vec> all_particle_grid_weight_and_gradient(particle_num_of_last_object,one_particle_grid_weight_and_gradient);
+    this->particle_grid_weight_and_gradient_.push_back(all_particle_grid_weight_and_gradient);
+    std::vector<unsigned int> all_particle_grid_pair_num(particle_num_of_last_object);
+    this->particle_grid_pair_num_.push_back(all_particle_grid_pair_num);
 }
     
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsigned int object_idx)
 {
-    MPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(object_idx);
+    MPMSolidBase<Scalar,Dim>::appendLastParticleRelatedDataOfObject(object_idx);
     unsigned int last_particle_idx = this->particleNumOfObject(object_idx) - 1;
     const SolidParticle<Scalar,Dim> &last_particle = this->particle(object_idx,last_particle_idx);
     unsigned int corner_num = Dim==2 ? 4 : 8;
@@ -419,6 +428,10 @@ void CPDIMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsigned in
     corner_grid_weight_and_gradient_[object_idx].push_back(all_corner_grid_weight_and_gradient);
     std::vector<unsigned int> all_corner_grid_pair_num(corner_num);
     corner_grid_pair_num_[object_idx].push_back(all_corner_grid_pair_num);
+    //the maximum number of nodes in range of particles is the sum of domain corners
+    pair_vec one_particle_grid_weight_and_gradient(max_num*corner_num);
+    this->particle_grid_weight_and_gradient_[object_idx].push_back(one_particle_grid_weight_and_gradient);
+    this->particle_grid_pair_num_[object_idx].push_back(0);
 }
     
 template <typename Scalar, int Dim>

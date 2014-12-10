@@ -28,6 +28,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim> class GridWeightFunction;
 template <typename ElementType, int Dim> class ArrayND;
+template <typename Scalar, int Dim> class VolumetricMesh;
 
 /*
  * constructor is made protected to prohibit creating objects
@@ -59,9 +60,16 @@ public:
                  std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
                  std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
                  std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num);
-    //update the interpolation weight between particle and domain corners
-    virtual void updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
-                                                           std::vector<std::vector<std::vector<Vector<Scalar,2> > > > &particle_corner_gradient);
+    //update the interpolation weight with enrichment
+    virtual void updateParticleInterpolationWeightWithEnrichment(const GridWeightFunction<Scalar,2> &weight_function,
+                 const std::vector<VolumetricMesh<Scalar,2>*> &particle_domain_mesh,
+                 const std::vector<std::vector<unsigned char> > &is_enriched_domain_corner,
+                 std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
+                 std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
+                 std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
+                 std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+                 std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                 std::vector<std::vector<std::vector<Vector<Scalar,2> > > > &particle_corner_gradient);
 
     virtual void updateParticleDomain(
         const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
@@ -78,6 +86,17 @@ protected:
                                                    unsigned int &particle_grid_pair_num,
                                                    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
                                                    std::vector<unsigned int> &corner_grid_pair_num);
+    virtual void updateParticleInterpolationWeightWithEnrichment(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
+                                                                 const VolumetricMesh<Scalar,2>* particle_domain_mesh,
+                                                                 const std::vector<unsigned char> &is_enriched_domain_corner,
+                                                                 std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
+                                                                 unsigned int &particle_grid_pair_num,
+                                                                 std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
+                                                                 std::vector<unsigned int> &corner_grid_pair_num,
+                                                                 std::vector<Scalar> &particle_corner_weight,
+                                                                 std::vector<Vector<Scalar,2> > &particle_corner_gradient);
+    virtual void updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                                                           std::vector<std::vector<std::vector<Vector<Scalar,2> > > > &particle_corner_gradient);
     //approximate integration of element shape function gradient over particle domain, using 2x2 Gauss integration points
     //note: the gradient is with respect to reference configuration
     Vector<Scalar,2> gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(const Vector<unsigned int,2> &corner_idx,
@@ -100,9 +119,17 @@ public:
                  std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
                  std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
                  std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num);
-    //update the interpolation weight between particle and domain corners
-    virtual void updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
-                                                           std::vector<std::vector<std::vector<Vector<Scalar,3> > > > &particle_corner_gradient);
+    //update the interpolation weight with enrichment
+    virtual void updateParticleInterpolationWeightWithEnrichment(const GridWeightFunction<Scalar,3> &weight_function,
+                 const std::vector<VolumetricMesh<Scalar,3>*> &particle_domain_mesh,
+                 const std::vector<std::vector<unsigned char> > &is_enriched_domain_corner,
+                 std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
+                 std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
+                 std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
+                 std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+                 std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                 std::vector<std::vector<std::vector<Vector<Scalar,3> > > > &particle_corner_gradient);
+
     virtual void updateParticleDomain(
         const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
         const std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num, Scalar dt);
@@ -118,6 +145,18 @@ protected:
                                                    unsigned int &particle_grid_pair_num,
                                                    std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
                                                    std::vector<unsigned int> &corner_grid_pair_num);
+    virtual void updateParticleInterpolationWeightWithEnrichment(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
+                                                                 const VolumetricMesh<Scalar,3>* particle_domain_mesh,
+                                                                 const std::vector<unsigned char> &is_enriched_domain_corner,
+                                                                 std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
+                                                                 unsigned int &particle_grid_pair_num,
+                                                                 std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
+                                                                 std::vector<unsigned int> &corner_grid_pair_num,
+                                                                 std::vector<Scalar> &particle_corner_weight,
+                                                                 std::vector<Vector<Scalar,3> > &particle_corner_gradient);
+    //update the interpolation weight between particle and domain corners
+    virtual void updateParticleInterpolationWeightInDomain(std::vector<std::vector<std::vector<Scalar> > > &particle_corner_weight,
+                                                           std::vector<std::vector<std::vector<Vector<Scalar,3> > > > &particle_corner_gradient);
     //approximate integration of element shape function (gradient) over particle domain, using 2x2x2 Gauss integration points
     //note: the gradient is with respect to current configuration instead of reference configuration
     Scalar gaussIntegrateShapeFunctionValueInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
