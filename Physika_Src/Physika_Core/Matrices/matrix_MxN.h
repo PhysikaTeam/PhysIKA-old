@@ -61,6 +61,9 @@ public:
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const MatrixMxN<Scalar> &) const;
+    void singularValueDecomposition(MatrixMxN<Scalar> &left_singular_vectors,
+                                    VectorND<Scalar> &singular_values,
+                                    MatrixMxN<Scalar> &right_singular_vectors) const;
 protected:
     void allocMemory(unsigned int rows, unsigned int cols);
 protected:
@@ -87,10 +90,11 @@ inline std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
     s<<"[";
     for(int i = 0; i < mat.rows(); ++i)
     {
-        for(int j = 0; j < mat.cols() - 1; ++j)
-	    s<<mat(i,j)<<", ";
-	if(i != mat.rows()-1)
-	    s<<mat(i,mat.cols() - 1)<<"; ";
+        for(int j = 0; j < mat.cols()-1; ++j)
+            s<<mat(i,j)<<", ";
+        s<<mat(i,mat.cols()-1);
+        if(i != mat.rows()-1)
+            s<<"; ";
     }
     s<<"]";
     return s;

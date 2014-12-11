@@ -197,17 +197,13 @@ SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::transpose() const
 template <typename Scalar>
 SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::inverse() const
 {
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,1,1> result_matrix = eigen_matrix_1x1_.inverse();
-    return SquareMatrix<Scalar,1>(result_matrix(0,0));
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    if(data_==0)
+    Scalar data = (*this)(0,0);
+    if(data==0)
     {
         std::cerr<<"Matrix not invertible!\n";
         std::exit(EXIT_FAILURE);
     }
-    return SquareMatrix<Scalar,1>(1/data_);
-#endif 
+    return SquareMatrix<Scalar,1>(1/data);
 }
 
 template <typename Scalar>

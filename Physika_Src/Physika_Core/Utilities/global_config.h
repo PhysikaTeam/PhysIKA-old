@@ -19,8 +19,8 @@
 
 /***********Matrix&Vector***********/
 
-//#define PHYSIKA_USE_EIGEN_MATRIX
-#define PHYSIKA_USE_BUILT_IN_MATRIX
+#define PHYSIKA_USE_EIGEN_MATRIX
+//#define PHYSIKA_USE_BUILT_IN_MATRIX
 
 //#define PHYSIKA_USE_EIGEN_VECTOR
 #define PHYSIKA_USE_BUILT_IN_VECTOR

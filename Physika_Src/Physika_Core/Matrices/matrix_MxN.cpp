@@ -368,17 +368,6 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
         std::cerr<<"Matrix not square matrix, it's not invertible!\n";
         std::exit(EXIT_FAILURE);
     }
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> result_eigen_matrix = (*ptr_eigen_matrix_MxN_).inverse();
-    Scalar *result = new Scalar[rows*cols];
-    PHYSIKA_ASSERT(result);
-    for(unsigned int i = 0; i < rows; ++i)
-        for(unsigned int j = 0; j < cols; ++j)
-            result[i*cols+j] = result_eigen_matrix(i,j);
-    MatrixMxN<Scalar> result_matrix(rows,cols,result);
-    delete result;
-    return result_matrix;
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = determinant();
     if(det==0)
     {
@@ -389,7 +378,6 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
     result = result.transpose();
     result /= det;
     return result;
-#endif
 }
 
 template <typename Scalar>
@@ -492,6 +480,43 @@ Scalar MatrixMxN<Scalar>::doubleContraction(const MatrixMxN<Scalar> &mat2) const
         for(unsigned int j = 0; j < col1; ++j)
             result += (*this)(i,j)*mat2(i,j);
     return result;
+}
+
+template <typename Scalar>
+void MatrixMxN<Scalar>::singularValueDecomposition(MatrixMxN<Scalar> &left_singular_vectors,
+                                                   VectorND<Scalar> &singular_values,
+                                                   MatrixMxN<Scalar> &right_singular_vectors) const
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    //hack: Eigen::SVD does not support integer types, hence we cast Scalar to long double for decomposition
+    unsigned int rows = this->rows(), cols = this->cols();
+    Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> temp_matrix(rows,cols);
+    for(unsigned int i = 0; i < rows; ++i)
+        for(unsigned int j = 0; j < cols; ++j)          
+                temp_matrix(i,j) = static_cast<long double>((*ptr_eigen_matrix_MxN_)(i,j));
+    Eigen::JacobiSVD<Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
+    const Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> &left = svd.matrixU(), &right = svd.matrixV();
+    const Eigen::Matrix<long double,Eigen::Dynamic,1> &values = svd.singularValues();
+    //resize if have to
+    if(left_singular_vectors.rows() != left.rows() || left_singular_vectors.cols() != left.cols())
+        left_singular_vectors.resize(left.rows(),left.cols());
+    if(right_singular_vectors.rows() != right.rows() || right_singular_vectors.cols() != right.cols())
+        right_singular_vectors.resize(right.rows(),right.cols());
+    if(singular_values.dims() != values.rows())
+        singular_values.resize(values.rows());
+    //copy the result
+    for(unsigned int i = 0; i < left.rows(); ++i)
+        for(unsigned int j = 0; j < left.cols(); ++j)
+            left_singular_vectors(i,j) = static_cast<Scalar>(left(i,j));
+    for(unsigned int i = 0; i < right.rows(); ++i)
+        for(unsigned int j = 0; j < right.cols(); ++j)
+            right_singular_vectors(i,j) = static_cast<Scalar>(right(i,j));
+    for(unsigned int i = 0; i < values.rows(); ++i)
+        singular_values[i] = static_cast<Scalar>(values(i,0));
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    std::cerr<<"SVD not implemeted for built in matrix!\n";
+    std::exit(EXIT_FAILURE);
+#endif
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

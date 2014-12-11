@@ -285,22 +285,17 @@ SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::transpose() const
 template <typename Scalar>
 SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse() const
 {
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,3,3> result_matrix = eigen_matrix_3x3_.inverse();
-    return SquareMatrix<Scalar,3>(result_matrix(0,0), result_matrix(0,1), result_matrix(0,2), result_matrix(1,0), result_matrix(1,1),result_matrix(1,2), result_matrix(2,0),result_matrix(2,1), result_matrix(2,2));
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = determinant();
     if(det==0)
     {
         std::cerr<<"Matrix not invertible!\n";
         std::exit(EXIT_FAILURE);
     }
-    return SquareMatrix<Scalar,3>((-data_[1][2] * data_[2][1] + data_[1][1] * data_[2][2])/det, (data_[0][2] * data_[2][1] - data_[0][1] * data_[2][2])/det, 
-                                  (-data_[0][2] * data_[1][1] + data_[0][1] * data_[1][2])/det, (data_[1][2] * data_[2][0] - data_[1][0] * data_[2][2])/det,
-                                  (-data_[0][2] * data_[2][0] + data_[0][0] * data_[2][2])/det, (data_[0][2] * data_[1][0] - data_[0][0] * data_[1][2])/det,
-                                  (-data_[1][1] * data_[2][0] + data_[1][0] * data_[2][1])/det, (data_[0][1] * data_[2][0] - data_[0][0] * data_[2][1])/det,
-                                  (-data_[0][1] * data_[1][0] + data_[0][0] * data_[1][1])/det);
-#endif 
+    return SquareMatrix<Scalar,3>((-(*this)(1,2) * (*this)(2,1) + (*this)(1,1) * (*this)(2,2))/det, ((*this)(0,2) * (*this)(2,1) - (*this)(0,1) * (*this)(2,2))/det, 
+                                  (-(*this)(0,2) * (*this)(1,1) + (*this)(0,1) * (*this)(1,2))/det, ((*this)(1,2) * (*this)(2,0) - (*this)(1,0) * (*this)(2,2))/det,
+                                  (-(*this)(0,2) * (*this)(2,0) + (*this)(0,0) * (*this)(2,2))/det, ((*this)(0,2) * (*this)(1,0) - (*this)(0,0) * (*this)(1,2))/det,
+                                  (-(*this)(1,1) * (*this)(2,0) + (*this)(1,0) * (*this)(2,1))/det, ((*this)(0,1) * (*this)(2,0) - (*this)(0,0) * (*this)(2,1))/det,
+                                  (-(*this)(0,1) * (*this)(1,0) + (*this)(0,0) * (*this)(1,1))/det);
 }
 
 template <typename Scalar>
@@ -334,6 +329,35 @@ Scalar SquareMatrix<Scalar,3>::doubleContraction(const SquareMatrix<Scalar,3> &m
         for(unsigned int j = 0; j < 3; ++j)
             result += (*this)(i,j)*mat2(i,j);
     return result;
+}
+
+template <typename Scalar>
+void SquareMatrix<Scalar,3>::singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
+                                                        Vector<Scalar,3> &singular_values,
+                                                        SquareMatrix<Scalar,3> &right_singular_vectors) const
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    //hack: Eigen::SVD does not support integer types, hence we cast Scalar to long double for decomposition
+    Eigen::Matrix<long double,3,3> temp_matrix;
+    for(unsigned int i = 0; i < 3; ++i)
+        for(unsigned int j = 0; j < 3; ++j)          
+            temp_matrix(i,j) = static_cast<long double>(eigen_matrix_3x3_(i,j));
+    Eigen::JacobiSVD<Eigen::Matrix<long double,3,3> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
+    const Eigen::Matrix<long double,3,3> &left = svd.matrixU(), &right = svd.matrixV();
+    const Eigen::Matrix<long double,3,1> &values = svd.singularValues();
+    for(unsigned int i = 0; i < 3; ++i)
+    {
+        singular_values[i] = static_cast<Scalar>(values(i,0));
+        for(unsigned int j = 0; j < 3; ++j)
+        {
+            left_singular_vectors(i,j) = static_cast<Scalar>(left(i,j));
+            right_singular_vectors(i,j) = static_cast<Scalar>(right(i,j));
+        }
+    }
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    std::cerr<<"SVD not implemeted for built in matrix!\n";
+    std::exit(EXIT_FAILURE);
+#endif
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

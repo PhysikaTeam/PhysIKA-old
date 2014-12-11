@@ -60,6 +60,10 @@ public:
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const SquareMatrix<Scalar,2> &) const;//double contraction
+    void singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
+                                    Vector<Scalar,2> &singular_values,
+                                    SquareMatrix<Scalar,2> &right_singular_vectors) const;
+
     static SquareMatrix<Scalar,2> identityMatrix();
  
 protected:

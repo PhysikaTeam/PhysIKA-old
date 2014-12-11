@@ -264,18 +264,13 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::transpose() const
 template <typename Scalar>
 SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
 {
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,2,2> result_matrix = eigen_matrix_2x2_.inverse();
-    return SquareMatrix<Scalar,2>(result_matrix(0,0), result_matrix(0,1), result_matrix(1,0), result_matrix(1,1));
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = determinant();
     if(det==0)
     {
         std::cerr<<"Matrix not invertible!\n";
         std::exit(EXIT_FAILURE);
     }
-    return SquareMatrix<Scalar,2>(data_[1][1]/det, -data_[0][1]/det, -data_[1][0]/det, data_[0][0]/det);
-#endif 
+    return SquareMatrix<Scalar,2>((*this)(1,1)/det, -(*this)(0,1)/det, -(*this)(1,0)/det, (*this)(0,0)/det);
 }
 
 template <typename Scalar>
@@ -308,6 +303,35 @@ Scalar SquareMatrix<Scalar,2>::doubleContraction(const SquareMatrix<Scalar,2> &m
         for(unsigned int j = 0; j < 2; ++j)
             result += (*this)(i,j)*mat2(i,j);
     return result;
+}
+
+template <typename Scalar>
+void SquareMatrix<Scalar,2>::singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
+                                                        Vector<Scalar,2> &singular_values,
+                                                        SquareMatrix<Scalar,2> &right_singular_vectors) const
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    //hack: Eigen::SVD does not support integer types, hence we cast Scalar to long double for decomposition
+    Eigen::Matrix<long double,2,2> temp_matrix;
+    for(unsigned int i = 0; i < 2; ++i)
+        for(unsigned int j = 0; j < 2; ++j)          
+            temp_matrix(i,j) = static_cast<long double>(eigen_matrix_2x2_(i,j));
+    Eigen::JacobiSVD<Eigen::Matrix<long double,2,2> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
+    const Eigen::Matrix<long double,2,2> &left = svd.matrixU(), &right = svd.matrixV();
+    const Eigen::Matrix<long double,2,1> &values = svd.singularValues();
+    for(unsigned int i = 0; i < 2; ++i)
+    {
+        singular_values[i] = static_cast<Scalar>(values(i,0));
+        for(unsigned int j = 0; j < 2; ++j)
+        {
+            left_singular_vectors(i,j) = static_cast<Scalar>(left(i,j));
+            right_singular_vectors(i,j) = static_cast<Scalar>(right(i,j));
+        }
+    }
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    std::cerr<<"SVD not implemeted for built in matrix!\n";
+    std::exit(EXIT_FAILURE);
+#endif
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
