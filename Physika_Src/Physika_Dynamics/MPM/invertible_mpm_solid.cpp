@@ -504,7 +504,6 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                             continue;
                         Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_[obj_idx][particle_idx][corner_idx];
                         SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
-                        //TO DO: consider the effect of contact
                         domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
                     }
                 }
@@ -643,17 +642,18 @@ void InvertibleMPMSolid<Scalar,Dim>::constructParticleDomainMesh()
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
-    // unsigned int obj_num = this->objectNum();
-    // PHYSIKA_ASSERT(obj_idx<obj_num);
-    // unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    // PHYSIKA_ASSERT(particle_idx<particle_num);
-    // //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
-    // for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
-    // {
-    //     Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
-    //     if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
-    //         return false;
-    // }
+    unsigned int obj_num = this->objectNum();
+    PHYSIKA_ASSERT(obj_idx<obj_num);
+    unsigned int particle_num = this->particleNumOfObject(obj_idx);
+    PHYSIKA_ASSERT(particle_idx<particle_num);
+    //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
+    //the dirichlet boundary is correctly enforced in this way
+    for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+    {
+        Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
+        if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
+            return false;
+    }
     // //rule two: only enrich while compression
     // if(this->particles_[obj_idx][particle_idx]->volume() > this->particle_initial_volume_[obj_idx][particle_idx])
     //     return false;
