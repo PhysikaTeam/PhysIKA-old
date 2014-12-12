@@ -519,6 +519,52 @@ void MatrixMxN<Scalar>::singularValueDecomposition(MatrixMxN<Scalar> &left_singu
 #endif
 }
 
+template <typename Scalar>
+void MatrixMxN<Scalar>::eigenDecomposition(VectorND<Scalar> &eigen_values_real, VectorND<Scalar> &eigen_values_imag,
+                                           MatrixMxN<Scalar> &eigen_vectors_real, MatrixMxN<Scalar> &eigen_vectors_imag)
+{
+    unsigned int rows = this->rows(), cols = this->cols();
+    if(rows != cols)
+    {
+        std::cerr<<"Eigen decomposition is only valid for square matrix!\n";
+        std::exit(EXIT_FAILURE);
+    }
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    //hack: Eigen::EigenSolver does not support integer types, hence we cast Scalar to long double for decomposition
+    Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> temp_matrix(rows,cols);
+    for(unsigned int i = 0; i < rows; ++i)
+        for(unsigned int j = 0; j < cols; ++j)          
+                temp_matrix(i,j) = static_cast<long double>((*ptr_eigen_matrix_MxN_)(i,j));
+    Eigen::EigenSolver<Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> > eigen(temp_matrix);
+    Eigen::Matrix<std::complex<long double>,Eigen::Dynamic,Eigen::Dynamic> vectors = eigen.eigenvectors();
+    const Eigen::Matrix<std::complex<long double>,Eigen::Dynamic,1> &values = eigen.eigenvalues();
+    //resize if have to
+    if(eigen_vectors_real.rows() != vectors.rows() || eigen_vectors_real.cols() != vectors.cols())
+        eigen_vectors_real.resize(vectors.rows(),vectors.cols());
+    if(eigen_vectors_imag.rows() != vectors.rows() || eigen_vectors_imag.cols() != vectors.cols())
+        eigen_vectors_imag.resize(vectors.rows(),vectors.cols());
+    if(eigen_values_real.dims() != values.rows())
+        eigen_values_real.resize(values.rows());
+    if(eigen_values_imag.dims() != values.rows())
+        eigen_values_imag.resize(values.rows());
+    //copy the result
+    for(unsigned int i = 0; i < vectors.rows(); ++i)
+        for(unsigned int j = 0; j < vectors.cols(); ++j)
+        {
+            eigen_vectors_real(i,j) = static_cast<Scalar>(vectors(i,j).real());
+            eigen_vectors_imag(i,j) = static_cast<Scalar>(vectors(i,j).imag());
+        }
+    for(unsigned int i = 0; i < values.rows(); ++i)
+    {
+        eigen_values_real[i] = static_cast<Scalar>(values(i,0).real());
+        eigen_values_imag[i] = static_cast<Scalar>(values(i,0).imag());
+    }
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    std::cerr<<"Eigen decomposition not implemeted for built in matrix!\n";
+    std::exit(EXIT_FAILURE);
+#endif
+}
+
 //explicit instantiation of template so that it could be compiled into a lib
 template class MatrixMxN<unsigned char>;
 template class MatrixMxN<unsigned short>;

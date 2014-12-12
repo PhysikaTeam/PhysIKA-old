@@ -360,6 +360,35 @@ void SquareMatrix<Scalar,3>::singularValueDecomposition(SquareMatrix<Scalar,3> &
 #endif
 }
 
+template <typename Scalar>
+void SquareMatrix<Scalar,3>::eigenDecomposition(Vector<Scalar,3> &eigen_values_real, Vector<Scalar,3> &eigen_values_imag,
+                                                SquareMatrix<Scalar,3> &eigen_vectors_real, SquareMatrix<Scalar,3> &eigen_vectors_imag)
+{
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    //hack: Eigen::EigenSolver does not support integer types, hence we cast Scalar to long double for decomposition
+    Eigen::Matrix<long double,3,3> temp_matrix;
+    for(unsigned int i = 0; i < 3; ++i)
+        for(unsigned int j = 0; j < 3; ++j)          
+            temp_matrix(i,j) = static_cast<long double>(eigen_matrix_3x3_(i,j));
+    Eigen::EigenSolver<Eigen::Matrix<long double,3,3> > eigen(temp_matrix);
+    Eigen::Matrix<std::complex<long double>,3,3> vectors = eigen.eigenvectors();
+    const Eigen::Matrix<std::complex<long double>,3,1> &values = eigen.eigenvalues();
+    for(unsigned int i = 0; i < 3; ++i)
+    {
+        eigen_values_real[i] = static_cast<Scalar>(values(i,0).real());
+        eigen_values_imag[i] = static_cast<Scalar>(values(i,0).imag());
+        for(unsigned int j = 0; j < 3; ++j)
+        {
+            eigen_vectors_real(i,j) = static_cast<Scalar>(vectors(i,j).real());
+            eigen_vectors_imag(i,j) = static_cast<Scalar>(vectors(i,j).imag());
+        }
+    }
+#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+    std::cerr<<"Eigen decomposition not implemeted for built in matrix!\n";
+    std::exit(EXIT_FAILURE);
+#endif
+}
+
 //explicit instantiation of template so that it could be compiled into a lib
 template class SquareMatrix<unsigned char,3>;
 template class SquareMatrix<unsigned short,3>;

@@ -61,8 +61,10 @@ public:
     Scalar trace() const;
     Scalar doubleContraction(const SquareMatrix<Scalar,2> &) const;//double contraction
     void singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
-                                    Vector<Scalar,2> &singular_values,
+                                    Vector<Scalar,2> &singular_values,   //singluar values are in descending order
                                     SquareMatrix<Scalar,2> &right_singular_vectors) const;
+    void eigenDecomposition(Vector<Scalar,2> &eigen_values_real, Vector<Scalar,2> &eigen_values_imag,
+                            SquareMatrix<Scalar,2> &eigen_vectors_real, SquareMatrix<Scalar,2> &eigen_vectors_imag);
 
     static SquareMatrix<Scalar,2> identityMatrix();
  

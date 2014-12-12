@@ -64,6 +64,8 @@ public:
     void singularValueDecomposition(MatrixMxN<Scalar> &left_singular_vectors,
                                     VectorND<Scalar> &singular_values,
                                     MatrixMxN<Scalar> &right_singular_vectors) const;
+    void eigenDecomposition(VectorND<Scalar> &eigen_values_real, VectorND<Scalar> &eigen_values_imag,
+                            MatrixMxN<Scalar> &eigen_vectors_real, MatrixMxN<Scalar> &eigen_vectors_imag);
 protected:
     void allocMemory(unsigned int rows, unsigned int cols);
 protected:
