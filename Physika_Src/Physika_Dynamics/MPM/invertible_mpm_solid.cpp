@@ -742,6 +742,7 @@ void InvertibleMPMSolid<Scalar,Dim>::diagonalizeDeformationGradient(const Square
     }
     else
     {
+        bool done = false;
         for(unsigned int col = 0; col < 2; ++col)
         {
             unsigned int col_a = col, col_b = (col+1)%2;
@@ -750,17 +751,27 @@ void InvertibleMPMSolid<Scalar,Dim>::diagonalizeDeformationGradient(const Square
                 //entry a of F^ is near zero, set column a of U to be orthonormal with  column b
                 left_rotation(0,col_a) = left_rotation(1,col_b);
                 left_rotation(1,col_a) = -left_rotation(0,col_b);
+                //the orthonormal vector leads to |U|<0, need to negate it
+                if(left_rotation.determinant() < 0)
+                {
+                    left_rotation(0,col_a) *= -1;
+                    left_rotation(1,col_a) *= -1;
+                }
+                done = true;
                 break;
             }
         }
-        //Case III, det(U) = -1: negate the minimal element of F^ and corresponding column of U
-        if(left_rotation.determinant() < 0)
+        if(!done)
         {
-            unsigned int smallest_value_idx = (diag_deform_grad(0,0) < diag_deform_grad(1,1)) ? 0 : 1;
-            //negate smallest singular value
-            diag_deform_grad(smallest_value_idx,smallest_value_idx) *= -1;
-            left_rotation(0,smallest_value_idx) *= -1;
-            left_rotation(1,smallest_value_idx) *= -1;
+            //Case III, det(U) = -1: negate the minimal element of F^ and corresponding column of U
+            if(left_rotation.determinant() < 0)
+            {
+                unsigned int smallest_value_idx = (diag_deform_grad(0,0) < diag_deform_grad(1,1)) ? 0 : 1;
+                //negate smallest singular value
+                diag_deform_grad(smallest_value_idx,smallest_value_idx) *= -1;
+                left_rotation(0,smallest_value_idx) *= -1;
+                left_rotation(1,smallest_value_idx) *= -1;
+            }
         }
     }
 }
@@ -843,6 +854,12 @@ void InvertibleMPMSolid<Scalar,Dim>::diagonalizeDeformationGradient(const Square
                     left_rotation(row,col_b) = left_rotation_col_b[row];
                     left_rotation(row,col_c) = left_rotation_col_c[row];
                 }
+                //the orthonormal vector leads to |U|<0, need to negate it
+                if(left_rotation.determinant() < 0)
+                {
+                    for(unsigned int row = 0; row < 3; ++row)
+                        left_rotation(row,col_b) *= -1;
+                }
                 done = true;
                 break;
             }
@@ -865,22 +882,31 @@ void InvertibleMPMSolid<Scalar,Dim>::diagonalizeDeformationGradient(const Square
                     left_rotation_col_a.normalize();
                     for(unsigned int row = 0; row < 3; ++row)
                         left_rotation(row,col_a) = left_rotation_col_a[row];
+                    //the orthonormal vector leads to |U|<0, need to negate it
+                    if(left_rotation.determinant() < 0)
+                    {
+                        for(unsigned int row = 0; row < 3; ++row)
+                            left_rotation(row,col_a) *= -1;
+                    }
                     done = true;
                     break;
                 }
             }
         }
-        //Case III, det(U) = -1: negate the minimal element of F^ and corresponding column of U
-        if(left_rotation.determinant() < 0)
+        if(!done)
         {
-            unsigned int smallest_value_idx = 0;
-            for(unsigned int i = 1; i < 3; ++i)
-                if(diag_deform_grad(i,i) < diag_deform_grad(smallest_value_idx,smallest_value_idx))
-                    smallest_value_idx = i;
-            //negate smallest singular value
-            diag_deform_grad(smallest_value_idx,smallest_value_idx) *= -1;
-            for(unsigned int i = 0; i < 3; ++i)
-                left_rotation(i,smallest_value_idx) *= -1;
+            //Case III, det(U) = -1: negate the minimal element of F^ and corresponding column of U
+            if(left_rotation.determinant() < 0)
+            {
+                unsigned int smallest_value_idx = 0;
+                for(unsigned int i = 1; i < 3; ++i)
+                    if(diag_deform_grad(i,i) < diag_deform_grad(smallest_value_idx,smallest_value_idx))
+                        smallest_value_idx = i;
+                //negate smallest singular value
+                diag_deform_grad(smallest_value_idx,smallest_value_idx) *= -1;
+                for(unsigned int i = 0; i < 3; ++i)
+                    left_rotation(i,smallest_value_idx) *= -1;
+            }
         }
     }
 }
