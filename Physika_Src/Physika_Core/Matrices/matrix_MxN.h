@@ -53,6 +53,8 @@ public:
     MatrixMxN<Scalar> operator* (Scalar) const;
     MatrixMxN<Scalar>& operator*= (Scalar);
     VectorND<Scalar> operator* (const VectorND<Scalar> &) const;
+    MatrixMxN<Scalar> operator* (const MatrixMxN<Scalar> &) const;
+    MatrixMxN<Scalar>& operator*= (const MatrixMxN<Scalar> &);
     MatrixMxN<Scalar> operator/ (Scalar) const;
     MatrixMxN<Scalar>& operator/= (Scalar);
     MatrixMxN<Scalar> transpose() const;

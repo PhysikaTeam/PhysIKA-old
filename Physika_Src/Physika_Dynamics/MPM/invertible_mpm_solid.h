@@ -25,6 +25,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim> class VolumetricMesh;
 template <typename Scalar, int Dim> class ArrayND;
+template <typename Scalar, int Dim> class SquareMatrix;
 
 /*
  * InvertibleMPMSolid: hybrid of FEM and CPDI2 for large deformation and invertible elasticity
@@ -65,10 +66,16 @@ protected:
     virtual void deleteOneParticleRelatedDataOfObject(unsigned int object_idx, unsigned int particle_idx);
     virtual void resetParticleDomainData(); //needed before rasterization
     void constructParticleDomainMesh(); //construct particle domain topology from the particle domain positions
+    void clearParticleDomainMesh();  //clear memory of particle domain mesh
     bool isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const;  //determine if the particle needs enrichment
     void updateParticleDomainEnrichState();
     void applyGravityOnEnrichedDomainCorner(Scalar dt);
-    void clearParticleDomainMesh();
+    //the diagonalization technique introduced in "Invertible Finite Elements for Robust Simulation of Large Deformation"
+    //trait methods for different dimension
+	void diagonalizeDeformationGradient(const SquareMatrix<Scalar,2> &deform_grad, SquareMatrix<Scalar,2> &left_rotation,
+		                                SquareMatrix<Scalar,2> &diag_deform_grad, SquareMatrix<Scalar,2> &right_rotation) const;
+	void diagonalizeDeformationGradient(const SquareMatrix<Scalar,3> &deform_grad, SquareMatrix<Scalar,3> &left_rotation,
+		                                SquareMatrix<Scalar,3> &diag_deform_grad, SquareMatrix<Scalar,3> &right_rotation) const;
 
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains

@@ -244,6 +244,18 @@ SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator* (const SquareMatrix<Sca
 }
 
 template <typename Scalar>
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator*= (const SquareMatrix<Scalar,3> &mat2)
+{
+    SquareMatrix<Scalar,3> result(0,0,0,0,0,0,0,0,0);
+    for(unsigned int i = 0; i < 3; ++i)
+        for(unsigned int j = 0; j < 3; ++j)
+            for(unsigned int k = 0; k < 3; ++k)
+                result(i,j) += (*this)(i,k) * mat2(k,j);
+    *this = result;
+    return *this;
+}
+    
+template <typename Scalar>
 SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
@@ -286,7 +298,7 @@ template <typename Scalar>
 SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse() const
 {
     Scalar det = determinant();
-    if(det==0)
+    if(isEqual(det,static_cast<Scalar>(0)))
     {
         std::cerr<<"Matrix not invertible!\n";
         std::exit(EXIT_FAILURE);

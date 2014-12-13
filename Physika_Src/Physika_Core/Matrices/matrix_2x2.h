@@ -53,6 +53,7 @@ public:
     SquareMatrix<Scalar,2>& operator*= (Scalar);
     Vector<Scalar,2> operator* (const Vector<Scalar,2> &) const;
     SquareMatrix<Scalar,2> operator* (const SquareMatrix<Scalar,2> &) const;
+    SquareMatrix<Scalar,2>& operator*= (const SquareMatrix<Scalar,2> &);
     SquareMatrix<Scalar,2> operator/ (Scalar) const;
     SquareMatrix<Scalar,2>& operator/= (Scalar);
     SquareMatrix<Scalar,2> transpose() const;

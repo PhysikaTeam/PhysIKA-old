@@ -253,7 +253,7 @@ bool MatrixMxN<Scalar>::operator== (const MatrixMxN<Scalar> &mat2) const
         return false;
     for(unsigned int i = 0; i < rows1; ++i)
         for(unsigned int j = 0; j < cols1; ++j)
-            if((*this)(i,j) != mat2(i,j))
+            if(isEqual((*this)(i,j),mat2(i,j)) == false)
                 return false;
     return true;
 }
@@ -279,6 +279,17 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (Scalar scale) const
 }
 
 template <typename Scalar>
+MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (Scalar scale)
+{
+    unsigned int rows = (*this).rows();
+    unsigned int cols = (*this).cols();
+    for(unsigned int i = 0; i < rows; ++i)
+        for(unsigned int j = 0; j < cols; ++j)
+            (*this)(i,j) = (*this)(i,j) * scale;
+    return *this;
+}
+    
+template <typename Scalar>
 VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) const
 {
     unsigned int mat_row = (*this).rows();
@@ -299,16 +310,46 @@ VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) cons
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (Scalar scale)
+MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (const MatrixMxN<Scalar> &mat2) const
 {
-    unsigned int rows = (*this).rows();
-    unsigned int cols = (*this).cols();
-    for(unsigned int i = 0; i < rows; ++i)
-        for(unsigned int j = 0; j < cols; ++j)
-            (*this)(i,j) = (*this)(i,j) * scale;
-    return *this;
+    unsigned int mat1_row = (*this).rows();
+    unsigned int mat1_col = (*this).cols();
+    unsigned int mat2_row = mat2.rows();
+    unsigned int mat2_col = mat2.cols();
+    if(mat1_col != mat2_row)
+    {
+        std::cerr<<"Matrix*Matrix: Matrix and matrix sizes do not match!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    MatrixMxN<Scalar> result(mat1_row,mat2_col,static_cast<Scalar>(0));
+    for(unsigned int i = 0; i < mat1_row; ++i)
+        for(unsigned int j = 0; j < mat2_col; ++j)
+            for(unsigned int k = 0; k < mat1_col; ++k)
+                result(i,j) += (*this)(i,k)*mat2(k,j);
+    return result;
 }
 
+template <typename Scalar>
+MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (const MatrixMxN<Scalar> &mat2)
+{
+    unsigned int mat1_row = (*this).rows();
+    unsigned int mat1_col = (*this).cols();
+    unsigned int mat2_row = mat2.rows();
+    unsigned int mat2_col = mat2.cols();
+    if(mat1_col != mat2_row)
+    {
+        std::cerr<<"Matrix*Matrix: Matrix and matrix sizes do not match!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    MatrixMxN<Scalar> result(mat1_row,mat2_col,static_cast<Scalar>(0));
+    for(unsigned int i = 0; i < mat1_row; ++i)
+        for(unsigned int j = 0; j < mat2_col; ++j)
+            for(unsigned int k = 0; k < mat1_col; ++k)
+                result(i,j) += (*this)(i,k)*mat2(k,j);
+    *this = result;
+    return *this;
+}
+    
 template <typename Scalar>
 MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 {
