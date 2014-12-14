@@ -261,7 +261,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
         update_method->updateParticleInterpolationWeightWithEnrichment(weight_function,particle_domain_mesh_,is_enriched_domain_corner_,
                                                                        this->particle_grid_weight_and_gradient_,this->particle_grid_pair_num_,
                                                                        this->corner_grid_weight_and_gradient_,this->corner_grid_pair_num_,
-                                                                       particle_corner_weight_,particle_corner_gradient_);
+                                                                       particle_corner_weight_,particle_corner_gradient_to_ref_,particle_corner_gradient_to_cur_);
     else
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
 }
@@ -309,7 +309,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar
                 {
                     unsigned int global_corner_idx =  particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
                     if(is_enriched_domain_corner_[obj_idx][global_corner_idx])
-                        particle_vel_grad += domain_corner_velocity_[obj_idx][global_corner_idx].outerProduct(particle_corner_gradient_[obj_idx][particle_idx][corner_idx]);
+                        particle_vel_grad += domain_corner_velocity_[obj_idx][global_corner_idx].outerProduct(particle_corner_gradient_to_cur_[obj_idx][particle_idx][corner_idx]);
                 }
             }
             SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
@@ -521,7 +521,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                     {
                         if(domain_corner_mass_[obj_idx][global_corner_idx] <= std::numeric_limits<Scalar>::epsilon())
                             continue;
-                        Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_[obj_idx][particle_idx][corner_idx];
+                        Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_to_ref_[obj_idx][particle_idx][corner_idx]; //weigt gradient with respect to reference configuration
                         SquareMatrix<Scalar,Dim> deform_grad = particle->deformationGradient();
                         SquareMatrix<Scalar,Dim> left_rotation, diag_deform_grad, right_rotation;
                         diagonalizeDeformationGradient(deform_grad,left_rotation,diag_deform_grad,right_rotation);
@@ -531,12 +531,17 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                                 diag_deform_grad(row,row) = principal_stretch_threshold_;
                         //temporarily set the deformation gradient of the particle to the diagonalized one to compute the unrotated stress
                         particle->setDeformationGradient(diag_deform_grad);
-                        // sigma = U*sigma^*U^T
-                        SquareMatrix<Scalar,Dim> cauchy_stress = left_rotation*(particle->cauchyStress())*(left_rotation.transpose());
+                        // P = U*P^*V^T
+                        SquareMatrix<Scalar,Dim> first_PiolaKirchoff_stress = left_rotation*(particle->firstPiolaKirchhoffStress())*(right_rotation.transpose());
                         //recover the deformation gradient of the particle
                         particle->setDeformationGradient(deform_grad);
-                        //SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
-                        domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
+                        //compute internal force with P and reference configuration
+                        Scalar particle_initial_volume = this->particle_initial_volume_[obj_idx][particle_idx];
+                        domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
+
+                        // Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_to_cur_[obj_idx][particle_idx][corner_idx];
+                        // SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
+                        // domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
                     }
                 }
             }
@@ -564,7 +569,8 @@ void InvertibleMPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
     std::vector<std::vector<Scalar> > all_particle_corner_weight(particle_num_of_last_object,one_particle_corner_weight);
     std::vector<std::vector<Vector<Scalar,Dim> > > all_particle_corner_gradient(particle_num_of_last_object,one_particle_corner_gradient);
     particle_corner_weight_.push_back(all_particle_corner_weight);
-    particle_corner_gradient_.push_back(all_particle_corner_gradient);
+    particle_corner_gradient_to_ref_.push_back(all_particle_corner_gradient);
+    particle_corner_gradient_to_cur_.push_back(all_particle_corner_gradient);
 }
 
 template <typename Scalar, int Dim>
@@ -575,7 +581,8 @@ void InvertibleMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsig
     std::vector<Scalar> one_particle_corner_weight(corner_num,0);
     std::vector<Vector<Scalar,Dim> > one_particle_corner_gradient(corner_num,Vector<Scalar,Dim>(0));
     particle_corner_weight_[object_idx].push_back(one_particle_corner_weight);
-    particle_corner_gradient_[object_idx].push_back(one_particle_corner_gradient);
+    particle_corner_gradient_to_ref_[object_idx].push_back(one_particle_corner_gradient);
+    particle_corner_gradient_to_cur_[object_idx].push_back(one_particle_corner_gradient);
 }
  
 template <typename Scalar, int Dim>
@@ -584,8 +591,10 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsign
     CPDIMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(object_idx);
     typename std::vector<std::vector<std::vector<Scalar> > >::iterator iter1 = particle_corner_weight_.begin() + object_idx;
     particle_corner_weight_.erase(iter1);
-    typename std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > >::iterator iter2 = particle_corner_gradient_.begin() + object_idx;
-    particle_corner_gradient_.erase(iter2);
+    typename std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > >::iterator iter2 = particle_corner_gradient_to_ref_.begin() + object_idx;
+    particle_corner_gradient_to_ref_.erase(iter2);
+    typename std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > >::iterator iter3 = particle_corner_gradient_to_cur_.begin() + object_idx;
+    particle_corner_gradient_to_cur_.erase(iter3);
 }
  
 template <typename Scalar, int Dim>
@@ -594,8 +603,10 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsign
     CPDIMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(object_idx,particle_idx);
     typename std::vector<std::vector<Scalar> >::iterator iter1 = particle_corner_weight_[object_idx].begin() + particle_idx;
     particle_corner_weight_[object_idx].erase(iter1);
-    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = particle_corner_gradient_[object_idx].begin() + particle_idx;
-    particle_corner_gradient_[object_idx].erase(iter2);
+    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = particle_corner_gradient_to_ref_[object_idx].begin() + particle_idx;
+    particle_corner_gradient_to_ref_[object_idx].erase(iter2);
+    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter3 = particle_corner_gradient_to_cur_[object_idx].begin() + particle_idx;
+    particle_corner_gradient_to_cur_[object_idx].erase(iter3);
 }
     
 template <typename Scalar, int Dim>

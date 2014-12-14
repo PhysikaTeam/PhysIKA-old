@@ -29,14 +29,14 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 CPDIMPMSolid<Scalar,Dim>::CPDIMPMSolid()
-    :MPMSolid<Scalar,Dim>(),cpdi_update_method_(NULL),cpdi2_direct_compute_deform_grad_(false)
+    :MPMSolid<Scalar,Dim>(),cpdi_update_method_(NULL)
 {
     setCPDIUpdateMethod<CPDIUpdateMethod<Scalar,Dim> >();
 }
 
 template <typename Scalar, int Dim>
 CPDIMPMSolid<Scalar,Dim>::CPDIMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :MPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),cpdi_update_method_(NULL),cpdi2_direct_compute_deform_grad_(false)
+    :MPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),cpdi_update_method_(NULL)
 {
     setCPDIUpdateMethod<CPDIUpdateMethod<Scalar,Dim> >();
 }
@@ -44,7 +44,7 @@ CPDIMPMSolid<Scalar,Dim>::CPDIMPMSolid(unsigned int start_frame, unsigned int en
 template <typename Scalar, int Dim>
 CPDIMPMSolid<Scalar,Dim>::CPDIMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                        const Grid<Scalar,Dim> &grid)
-    :MPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid),cpdi_update_method_(NULL),cpdi2_direct_compute_deform_grad_(false)
+    :MPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid),cpdi_update_method_(NULL)
 {
     setCPDIUpdateMethod<CPDIUpdateMethod<Scalar,Dim> >();
 }
@@ -96,38 +96,6 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
                                                          corner_grid_weight_and_gradient_,corner_grid_pair_num_);
     else //CPDI
         cpdi_update_method_->updateParticleInterpolationWeight(weight_function,this->particle_grid_weight_and_gradient_,this->particle_grid_pair_num_);
-}
-
-template <typename Scalar, int Dim>
-void CPDIMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
-{
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
-    if(update_method && cpdi2_direct_compute_deform_grad_)  //CPDI2 direct compute
-    {
-        //plugin operation
-        MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
-        for(unsigned int i = 0; i < this->plugins_.size(); ++i)
-        {
-            plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
-            if(plugin)
-                plugin->onUpdateParticleConstitutiveModelState(dt);
-        }
-        //update particle deformation gradient with the displacement of the domain corners
-        update_method->updateParticleDeformationGradient();
-        //update particle volume
-        for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
-        {
-            for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
-            {
-                SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
-                SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
-                Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
-                particle->setVolume(particle_vol);  //update particle volume
-            }
-        }
-    }
-    else //time update of F
-        MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(dt);
 }
 
 template <typename Scalar, int Dim>

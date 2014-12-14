@@ -91,7 +91,8 @@ protected:
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_before_;
     //interpolation weight between particle and the domain corners, data attached to particle
     std::vector<std::vector<std::vector<Scalar> > > particle_corner_weight_;
-    std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_;
+    std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_to_ref_;  //weight gradient to reference configuration of domain corner
+    std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_to_cur_; //weight gradient to current configuration of domain corner
     //for invertibility support, stretch below this threshold will be clamped to this value
     Scalar principal_stretch_threshold_;
 };
