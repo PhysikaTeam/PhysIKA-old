@@ -12,7 +12,9 @@
  *
  */
 
+#include <cstdlib>
 #include <limits>
+#include <iostream>
 #include <algorithm>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
@@ -30,24 +32,26 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
-    :CPDIMPMSolid<Scalar,Dim>()
+    :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.3)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
 }
 
 template <typename Scalar, int Dim>
-InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
+InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
+                                                   Scalar frame_rate, Scalar max_dt, bool write_to_file)
+    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.3)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
 }
 
 template <typename Scalar, int Dim>
-InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
+InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
+                                                   Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                                    const Grid<Scalar,Dim> &grid)
-    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid)
+    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.3)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -452,7 +456,19 @@ void InvertibleMPMSolid<Scalar,Dim>::setCurrentParticleDomain(unsigned int objec
         particle_domain_mesh_[object_idx]->setEleVertPos(particle_idx,corner_idx,*iter);
     }
 }
-
+    
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::setPrincipalStretchThreshold(Scalar threshold)
+{
+    if(threshold < 0)
+    {
+        std::cerr<<"Warning: invalid principal threshold provided, default value (0.3) is used instead!\n";
+        principal_stretch_threshold_ = 0.3;
+    }
+    else
+        principal_stretch_threshold_ = threshold;
+}
+    
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 {
@@ -506,7 +522,20 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                         if(domain_corner_mass_[obj_idx][global_corner_idx] <= std::numeric_limits<Scalar>::epsilon())
                             continue;
                         Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_[obj_idx][particle_idx][corner_idx];
-                        SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
+                        SquareMatrix<Scalar,Dim> deform_grad = particle->deformationGradient();
+                        SquareMatrix<Scalar,Dim> left_rotation, diag_deform_grad, right_rotation;
+                        diagonalizeDeformationGradient(deform_grad,left_rotation,diag_deform_grad,right_rotation);
+                        //clamp the principal stretch to the threshold if it's compressed too severely
+                        for(unsigned int row = 0; row < Dim; ++row)
+                            if(diag_deform_grad(row,row) < principal_stretch_threshold_)
+                                diag_deform_grad(row,row) = principal_stretch_threshold_;
+                        //temporarily set the deformation gradient of the particle to the diagonalized one to compute the unrotated stress
+                        particle->setDeformationGradient(diag_deform_grad);
+                        // sigma = U*sigma^*U^T
+                        SquareMatrix<Scalar,Dim> cauchy_stress = left_rotation*(particle->cauchyStress())*(left_rotation.transpose());
+                        //recover the deformation gradient of the particle
+                        particle->setDeformationGradient(deform_grad);
+                        //SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
                         domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
                     }
                 }
@@ -653,21 +682,21 @@ void InvertibleMPMSolid<Scalar,Dim>::clearParticleDomainMesh()
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
-    unsigned int obj_num = this->objectNum();
-    PHYSIKA_ASSERT(obj_idx<obj_num);
-    unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    PHYSIKA_ASSERT(particle_idx<particle_num);
-    //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
-    //the dirichlet boundary is correctly enforced in this way
-    for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
-    {
-        Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
-        if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
-            return false;
-    }
-    // //rule two: only enrich while compression
-    // if(this->particles_[obj_idx][particle_idx]->volume() > this->particle_initial_volume_[obj_idx][particle_idx])
-    //     return false;
+    // unsigned int obj_num = this->objectNum();
+    // PHYSIKA_ASSERT(obj_idx<obj_num);
+    // unsigned int particle_num = this->particleNumOfObject(obj_idx);
+    // PHYSIKA_ASSERT(particle_idx<particle_num);
+    // //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
+    // //the dirichlet boundary is correctly enforced in this way
+    // for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+    // {
+    //     Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
+    //     if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
+    //         return false;
+    // }
+    // // //rule two: only enrich while compression
+    // // if(this->particles_[obj_idx][particle_idx]->volume() > this->particle_initial_volume_[obj_idx][particle_idx])
+    // //     return false;
     return true;
     //TO DO
 }

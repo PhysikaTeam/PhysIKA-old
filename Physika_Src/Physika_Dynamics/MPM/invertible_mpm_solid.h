@@ -39,7 +39,8 @@ class InvertibleMPMSolid: public CPDIMPMSolid<Scalar,Dim>
 public:
     InvertibleMPMSolid();
     InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
-    InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file, const Grid<Scalar,Dim> &grid);
+    InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
+                       const Grid<Scalar,Dim> &grid);
     virtual ~InvertibleMPMSolid();
     
     //restart support
@@ -55,7 +56,9 @@ public:
     virtual void updateParticleVelocity();
     virtual void updateParticlePosition(Scalar dt);
     //explicitly set current particle domain, data in particle_domain_mesh_ are updated as well
-    virtual void setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx, const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    virtual void setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx,
+                                          const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
+    void setPrincipalStretchThreshold(Scalar threshold); //set the threshold of principal stretch, value under which will be clamped
 protected:
     //solve on grid is reimplemented
     virtual void solveOnGridForwardEuler(Scalar dt);
@@ -86,9 +89,11 @@ protected:
     std::vector<std::vector<Scalar> > domain_corner_mass_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_before_;
-    //interpolation weight between particle and the domain corners, data attched to particle
+    //interpolation weight between particle and the domain corners, data attached to particle
     std::vector<std::vector<std::vector<Scalar> > > particle_corner_weight_;
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_;
+    //for invertibility support, stretch below this threshold will be clamped to this value
+    Scalar principal_stretch_threshold_;
 };
 
 }  //end of namespace Physika
