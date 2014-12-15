@@ -344,7 +344,6 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
         point_render.setPointSize(point_size);
         point_render.setRenderAsSphere();
     }
-    point_render.setPointColor(0,Color<Scalar>::Red());
     point_render.render();
     delete[] particle_pos;
 }

@@ -32,7 +32,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
-    :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.3)
+    :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.1)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -41,7 +41,7 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.3)
+    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.1)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -51,7 +51,7 @@ template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                                    const Grid<Scalar,Dim> &grid)
-    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.3)
+    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.1)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -167,7 +167,6 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
             {
                 domain_corner_velocity_[obj_idx][corner_idx] /= domain_corner_mass_[obj_idx][corner_idx];
                 domain_corner_velocity_before_[obj_idx][corner_idx] = domain_corner_velocity_[obj_idx][corner_idx];
-                //std::cout<<obj_idx<<" "<<corner_idx<<" "<<domain_corner_mass_[obj_idx][corner_idx]<<"\n";
             }
     }    
     //determine active grid nodes according to the grid mass of each object
@@ -316,7 +315,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar
                 else //the remedy
                     particle_deform_grad += (dt*particle_vel_grad + 0.25*dt*dt*particle_vel_grad*particle_vel_grad)*particle_deform_grad;
             }
-            particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient
+            particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient (this deformation gradient might be inverted)
             Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
             particle->setVolume(particle_vol);  //update particle volume
         }
@@ -458,8 +457,8 @@ void InvertibleMPMSolid<Scalar,Dim>::setPrincipalStretchThreshold(Scalar thresho
 {
     if(threshold < 0)
     {
-        std::cerr<<"Warning: invalid principal threshold provided, default value (0.3) is used instead!\n";
-        principal_stretch_threshold_ = 0.3;
+        std::cerr<<"Warning: invalid principal threshold provided, default value (0.1) is used instead!\n";
+        principal_stretch_threshold_ = 0.1;
     }
     else
         principal_stretch_threshold_ = threshold;
@@ -484,7 +483,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                     ++enriched_corner_num;
             }
             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
-            if(enriched_corner_num < corner_num) //ordinary particle && transient particle get influence from grid
+            if(enriched_corner_num == 0) //ordinary particle solve only on the grid
             {
                 for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
                 {
@@ -508,7 +507,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                     }
                 }
             }
-            if(enriched_corner_num > 0) //transient/enriched particle get influence from domain corner as well
+            else //transient/enriched particle solve on domain corners
             { 
                 SquareMatrix<Scalar,Dim> deform_grad = particle->deformationGradient();
                 SquareMatrix<Scalar,Dim> left_rotation, diag_deform_grad, right_rotation;
@@ -520,7 +519,8 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                 //temporarily set the deformation gradient of the particle to the diagonalized one to compute the unrotated stress
                 particle->setDeformationGradient(diag_deform_grad);
                 // P = U*P^*V^T
-                SquareMatrix<Scalar,Dim> first_PiolaKirchoff_stress = left_rotation*(particle->firstPiolaKirchhoffStress())*(right_rotation.transpose());
+                SquareMatrix<Scalar,Dim> diag_first_PiolaKirchoff_stress = particle->firstPiolaKirchhoffStress();
+                SquareMatrix<Scalar,Dim> first_PiolaKirchoff_stress = left_rotation*diag_first_PiolaKirchoff_stress*(right_rotation.transpose());
                 //recover the deformation gradient of the particle
                 particle->setDeformationGradient(deform_grad);
                 //compute internal force with P and reference configuration
@@ -532,25 +532,43 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                     {
                         if(domain_corner_mass_[obj_idx][global_corner_idx] <= std::numeric_limits<Scalar>::epsilon())
                             continue;
-                        //weigt gradient with respect to reference configuration
-                        Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_to_ref_[obj_idx][particle_idx][corner_idx];
-                        domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
-                        // if(obj_idx == 0 && particle_idx == 0)
-                        // {
-                        //     //std::cout<<weight_gradient<<" "<<domain_corner_mass_[obj_idx][global_corner_idx]<<"\n";
-                        //     //std::cout<<corner_idx<<" "<<diag_deform_grad<<" "<<first_PiolaKirchoff_stress<<" ";
-                        //     //std::cout<<global_corner_idx<<" "<<this->initial_particle_domain_corners_[0][0][corner_idx]<<" "<<domain_corner_velocity_[obj_idx][global_corner_idx]<<" ";
-                        //     // std::cout<<(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx]<<"\n";
-                        // }
-                        // Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_to_cur_[obj_idx][particle_idx][corner_idx];
-                        // SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
-                        // domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
+                        // //weight gradient with respect to reference configuration
+                        // Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_to_ref_[obj_idx][particle_idx][corner_idx];
+                        // domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
+
+                        Vector<Scalar,Dim> weight_gradient = particle_corner_gradient_to_cur_[obj_idx][particle_idx][corner_idx];
+                        SquareMatrix<Scalar,Dim> cauchy_stress = particle->cauchyStress();
+                        domain_corner_velocity_[obj_idx][global_corner_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/domain_corner_mass_[obj_idx][global_corner_idx];
+                    }
+                    else if(enriched_corner_num < corner_num)  //transient particles rasterize the internal force of non-enriched corners to the grid, solve on the grid
+                    {//domain of transient particles may be degenerated, hence the internal force must be first mapped from particle to corner in the reference configuration, the mapped from corner to grid
+                        //in current configuration
+                        for(unsigned int i = 0; i < this->corner_grid_pair_num_[obj_idx][particle_idx][corner_idx]; ++i)
+                        {
+                            const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->corner_grid_weight_and_gradient_[obj_idx][particle_idx][corner_idx][i];
+                            if(this->is_dirichlet_grid_node_(pair.node_idx_).count(obj_idx) > 0)
+                                continue; //skip grid nodes that are boundary condition
+                            Scalar corner_grid_weight = pair.weight_value_;
+                            Vector<Scalar,Dim> particle_corner_gradient = particle_corner_gradient_to_ref_[obj_idx][particle_idx][corner_idx];
+                            Vector<Scalar,Dim> particle_grid_gradient = corner_grid_weight * particle_corner_gradient;
+                            if(this->grid_mass_(pair.node_idx_)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
+                                continue; //skip grid nodes with near zero mass
+                            if(this->contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
+                                this->grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*particle_grid_gradient/this->grid_mass_(pair.node_idx_)[obj_idx];
+                            else  //otherwise, grid velocity of all objects that ocuppy the node get updated
+                            {
+                                if(this->is_dirichlet_grid_node_(pair.node_idx_).size() > 0)
+                                    continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
+                                for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx_).begin();
+                                    vel_iter != this->grid_velocity_(pair.node_idx_).end(); ++vel_iter)
+                                    if(this->gridMass(vel_iter->first,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
+                                        vel_iter->second += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*particle_grid_gradient/this->grid_mass_(pair.node_idx_)[obj_idx];
+                            }
+                        }
                     }
                 }
             }
         }
-        for(unsigned int i = 0; i < 4; ++i)
-            std::cout<<domain_corner_velocity_[0][i][1]-domain_corner_velocity_before_[0][i][1]<<"\n";
     }
     //apply gravity
     applyGravityOnEnrichedDomainCorner(dt);    
@@ -770,7 +788,7 @@ void InvertibleMPMSolid<Scalar,Dim>::diagonalizeDeformationGradient(const Square
     diag_deform_grad(0,0) = eigen_values_real[0] > 0 ? sqrt(eigen_values_real[0]) : 0;
     diag_deform_grad(1,1) = eigen_values_real[1] > 0 ? sqrt(eigen_values_real[1]) : 0;
     diag_deform_grad(0,1) = diag_deform_grad(1,0) = 0;
-    //std::cout<<diag_deform_grad<<"\n";
+    std::cout<<diag_deform_grad<<"\n";
     //inverse of F^
     SquareMatrix<Scalar,2> diag_deform_grad_inverse(0);
     diag_deform_grad_inverse(0,0) = diag_deform_grad(0,0) > epsilon ? 1/diag_deform_grad(0,0) : 0;
@@ -803,7 +821,7 @@ void InvertibleMPMSolid<Scalar,Dim>::diagonalizeDeformationGradient(const Square
                     left_rotation(0,col_a) *= -1;
                     left_rotation(1,col_a) *= -1;
                 }
-                //std::cout<<col_a<<"near zero: "<<diag_deform_grad<<"\n";
+                std::cout<<col_a<<"near zero: "<<diag_deform_grad<<"\n";
                 done = true;
                 break;
             }
@@ -818,7 +836,7 @@ void InvertibleMPMSolid<Scalar,Dim>::diagonalizeDeformationGradient(const Square
                 diag_deform_grad(smallest_value_idx,smallest_value_idx) *= -1;
                 left_rotation(0,smallest_value_idx) *= -1;
                 left_rotation(1,smallest_value_idx) *= -1;
-                //std::cout<<"det(U)=-1 "<<smallest_value_idx<<" "<<diag_deform_grad<<"\n";
+                std::cout<<"det(U)=-1 "<<smallest_value_idx<<" "<<diag_deform_grad<<"\n";
             }
         }
     }

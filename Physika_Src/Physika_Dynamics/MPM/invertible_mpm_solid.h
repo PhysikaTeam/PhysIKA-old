@@ -30,6 +30,7 @@ template <typename Scalar, int Dim> class SquareMatrix;
 /*
  * InvertibleMPMSolid: hybrid of FEM and CPDI2 for large deformation and invertible elasticity
  * object number and particle number cannot be changed during run-time
+ * The constitutive model of the particles must be defined in the inverted regime 
  *
  */
 
