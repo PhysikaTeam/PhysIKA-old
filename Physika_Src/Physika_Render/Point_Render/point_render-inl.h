@@ -83,7 +83,17 @@ void PointRender<Scalar,Dim>::setPointColor(unsigned int point_idx, const Color<
         std::cerr<<"Error: Point index out of range, program abort!\n";
         std::exit(EXIT_FAILURE);
     }
-    if(point_idx>=colors_.size())  //previously color unset
+    if(colors_.size() == 1) //either only one point or all points use one color
+    {
+        Color<Scalar> color_before = colors_[0];
+        colors_.resize(point_num_);
+        for(unsigned int i = 0; i < point_idx; ++i)
+            colors_[i] = color_before;
+        colors_[point_idx] = point_color.template convertColor<Scalar>();
+        for(unsigned int i = point_idx + 1; i < point_num_; ++i)
+            colors_[i] = color_before;
+    }
+    else if(point_idx>=colors_.size())  //previously color unset
     {
         for(unsigned int i = 0; i < point_idx - colors_.size(); ++i)
             colors_.push_back(Color<Scalar>::Green());  //set Green for previous unset points

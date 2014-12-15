@@ -140,43 +140,38 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticlePosition(Scalar dt, const std::v
 }
 
 template <typename Scalar>
-void CPDI2UpdateMethod<Scalar,2>::updateParticleDeformationGradient()
+SquareMatrix<Scalar,2> CPDI2UpdateMethod<Scalar,2>::computeParticleDeformationGradientFromDomainShape(unsigned int obj_idx, unsigned int particle_idx)
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
+    PHYSIKA_ASSERT(obj_idx < this->cpdi_driver_->objectNum());
+    PHYSIKA_ASSERT(particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx));
     ArrayND<Vector<Scalar,2>,2> particle_domain, initial_particle_domain;
     std::vector<Vector<Scalar,2> > particle_domain_vec(4), particle_domain_displacement(4);
     SquareMatrix<Scalar,2> identity = SquareMatrix<Scalar,2>::identityMatrix();
-    for(unsigned int obj_idx = 0; obj_idx < this->cpdi_driver_->objectNum(); ++obj_idx)
+    SolidParticle<Scalar,2> &particle = this->cpdi_driver_->particle(obj_idx,particle_idx);
+    this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+    this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+    unsigned int i = 0;
+    for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
+        particle_domain_vec[i] = *corner_iter;
+    i = 0;
+    for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = initial_particle_domain.begin(); corner_iter != initial_particle_domain.end(); ++i,++corner_iter)
+        particle_domain_displacement[i] = particle_domain_vec[i] - (*corner_iter);
+    //coefficients
+    Scalar a = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+    Scalar b = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[3]-particle_domain_vec[1]);
+    Scalar c = (particle_domain_vec[3]-particle_domain_vec[2]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
+    Scalar domain_volume = a + 0.5*(b+c);
+    SquareMatrix<Scalar,2> particle_deform_grad = identity;
+    Vector<Scalar,2> gradient_integral;
+    i = 0;
+    for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
     {
-        for(unsigned int particle_idx = 0; particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx); ++particle_idx)
-        {
-            SolidParticle<Scalar,2> &particle = this->cpdi_driver_->particle(obj_idx,particle_idx);
-            this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
-            this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
-            unsigned int i = 0;
-            for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
-                particle_domain_vec[i] = *corner_iter;
-            i = 0;
-            for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = initial_particle_domain.begin(); corner_iter != initial_particle_domain.end(); ++i,++corner_iter)
-                particle_domain_displacement[i] = particle_domain_vec[i] - (*corner_iter);
-            //coefficients
-            Scalar a = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
-            Scalar b = (particle_domain_vec[2]-particle_domain_vec[0]).cross(particle_domain_vec[3]-particle_domain_vec[1]);
-            Scalar c = (particle_domain_vec[3]-particle_domain_vec[2]).cross(particle_domain_vec[1]-particle_domain_vec[0]);
-            Scalar domain_volume = a + 0.5*(b+c);
-            SquareMatrix<Scalar,2> particle_deform_grad = identity;
-            Vector<Scalar,2> gradient_integral;
-            i = 0;
-            for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
-            {
-                Vector<unsigned int,2> corner_idx = corner_iter.elementIndex();
-                gradient_integral = gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(corner_idx,particle_domain,initial_particle_domain);
-                particle_deform_grad += 1.0/domain_volume * particle_domain_displacement[i].outerProduct(gradient_integral);
-            }
-            //update particle deformation gradient
-            particle.setDeformationGradient(particle_deform_grad);
-        }
-    }    
+        Vector<unsigned int,2> corner_idx = corner_iter.elementIndex();
+        gradient_integral = gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(corner_idx,particle_domain,initial_particle_domain);
+        particle_deform_grad += 1.0/domain_volume * particle_domain_displacement[i].outerProduct(gradient_integral);
+    }
+    return particle_deform_grad;
 }
 
 template <typename Scalar>
@@ -661,40 +656,35 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticlePosition(Scalar dt, const std::v
 }
 
 template <typename Scalar>
-void CPDI2UpdateMethod<Scalar,3>::updateParticleDeformationGradient()
+SquareMatrix<Scalar,3> CPDI2UpdateMethod<Scalar,3>::computeParticleDeformationGradientFromDomainShape(unsigned int obj_idx, unsigned int particle_idx)
 {
     PHYSIKA_ASSERT(this->cpdi_driver_);
+    PHYSIKA_ASSERT(obj_idx < this->cpdi_driver_->objectNum());
+    PHYSIKA_ASSERT(particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx));
     ArrayND<Vector<Scalar,3>,3> particle_domain, initial_particle_domain;
     std::vector<Vector<Scalar,3> > particle_domain_vec(8), particle_domain_displacement(8);
     SquareMatrix<Scalar,3> identity = SquareMatrix<Scalar,3>::identityMatrix();
-    for(unsigned int obj_idx = 0; obj_idx < this->cpdi_driver_->objectNum(); ++obj_idx)
+    SolidParticle<Scalar,3> &particle = this->cpdi_driver_->particle(obj_idx,particle_idx);
+    this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+    this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+    unsigned int i = 0;
+    for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
+        particle_domain_vec[i] = *corner_iter;
+    i = 0;
+    for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = initial_particle_domain.begin(); corner_iter != initial_particle_domain.end(); ++i,++corner_iter)
+        particle_domain_displacement[i] = particle_domain_vec[i] - (*corner_iter);
+    //TO DO: compute domain volume instead of using particle volume
+    Scalar domain_volume = particle.volume();
+    SquareMatrix<Scalar,3> particle_deform_grad = identity;
+    Vector<Scalar,3> gradient_integral;
+    i = 0;
+    for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
     {
-        for(unsigned int particle_idx = 0; particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx); ++particle_idx)
-        {
-            SolidParticle<Scalar,3> &particle = this->cpdi_driver_->particle(obj_idx,particle_idx);
-            this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
-            this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
-            unsigned int i = 0;
-            for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
-                particle_domain_vec[i] = *corner_iter;
-            i = 0;
-            for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = initial_particle_domain.begin(); corner_iter != initial_particle_domain.end(); ++i,++corner_iter)
-                particle_domain_displacement[i] = particle_domain_vec[i] - (*corner_iter);
-            //TO DO: compute domain volume instead of using particle volume
-            Scalar domain_volume = particle.volume();
-            SquareMatrix<Scalar,3> particle_deform_grad = identity;
-            Vector<Scalar,3> gradient_integral;
-            i = 0;
-            for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
-            {
-                Vector<unsigned int,3> corner_idx = corner_iter.elementIndex();
-                gradient_integral = gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(corner_idx,particle_domain,initial_particle_domain);
-                particle_deform_grad += 1.0/domain_volume * particle_domain_displacement[i].outerProduct(gradient_integral);
-            }
-            //update particle deformation gradient
-            particle.setDeformationGradient(particle_deform_grad);
-        }
-    }    
+        Vector<unsigned int,3> corner_idx = corner_iter.elementIndex();
+        gradient_integral = gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(corner_idx,particle_domain,initial_particle_domain);
+        particle_deform_grad += 1.0/domain_volume * particle_domain_displacement[i].outerProduct(gradient_integral);
+    }
+    return particle_deform_grad;
 }
 
 template <typename Scalar>

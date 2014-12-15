@@ -20,6 +20,7 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI_update_method.h"
@@ -82,7 +83,7 @@ public:
     void updateParticlePosition(Scalar dt, const std::vector<std::vector<unsigned char> > &is_dirichlet_particle);
 
     //modified CPDI2: compute particle deformation gradient with the displacement of domain corners
-    void updateParticleDeformationGradient();
+    SquareMatrix<Scalar,2> computeParticleDeformationGradientFromDomainShape(unsigned int obj_idx, unsigned int particle_idx);
 protected:
     void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
@@ -143,7 +144,7 @@ public:
     void updateParticlePosition(Scalar dt, const std::vector<std::vector<unsigned char> > &is_dirichlet_particle);
 
     //modified CPDI2: compute particle deformation gradient with the displacement of domain corners
-    void updateParticleDeformationGradient();
+    SquareMatrix<Scalar,3> computeParticleDeformationGradientFromDomainShape(unsigned int obj_idx, unsigned int particle_idx);
 protected:
     void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
          std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,

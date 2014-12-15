@@ -126,14 +126,25 @@ void PointRender<Scalar,Dim>::setPointSize(unsigned int point_idx, Scalar point_
         std::cerr<<"Warning: invalid point size is provided, "<<default_point_size_<<" is used instead!\n";
         point_size = default_point_size_;
     }
-    if(point_idx >= point_sizes_.size())
+    if(point_sizes_.size() == 1) //either only one point or all points use one color
     {
+        Scalar point_size_before = point_sizes_[0];
+        point_sizes_.resize(point_num_);
+        for(unsigned int i = 0; i < point_idx; ++i)
+            point_sizes_[i] = point_size_before;
+        point_sizes_[point_idx] = point_size;
+        for(unsigned int i = point_idx + 1; i < point_num_; ++i)
+            point_sizes_[i] = point_size_before;
+    }
+    else if(point_idx >= point_sizes_.size()) //size unset
+    {
+        //set the size for points before that is unset
         for(unsigned int i = 0; i < point_idx - point_sizes_.size(); ++i)
             point_sizes_.push_back(default_point_size_);
         point_sizes_.push_back(point_size);
     }
     else
-        point_sizes_.push_back(point_size);
+        point_sizes_[point_idx] = point_size;
 }
 
 template<typename Scalar, int Dim>
