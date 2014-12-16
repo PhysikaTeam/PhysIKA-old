@@ -83,7 +83,20 @@ public:
     void updateParticlePosition(Scalar dt, const std::vector<std::vector<unsigned char> > &is_dirichlet_particle);
 
     //modified CPDI2: compute particle deformation gradient with the displacement of domain corners
+    //the deformation gradient of particle is the average of the integrated deformation gradient inside the domain
     SquareMatrix<Scalar,2> computeParticleDeformationGradientFromDomainShape(unsigned int obj_idx, unsigned int particle_idx);
+
+    //evaluate the deformation gradient of a given point inside the particle domain
+    //the given point is expressed as natural coordinate inside the primitive particle domain
+    SquareMatrix<Scalar,2> computeDeformationGradientAtPointInParticleDomain(unsigned int obj_idx, unsigned int particle_idx, const Vector<Scalar,2> &point_natural_coordinate);
+
+    //compute the element shape function gradient with respect to reference configuration at a given point inside the particle domain
+    //the given point is expressed as natural coordinate inside the primitive particle domain
+    Vector<Scalar,2> computeShapeFunctionGradientToReferenceCoordinateAtPointInParticleDomain(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                              const Vector<unsigned int,2> &corner_idx, const Vector<Scalar,2> &point_natural_coordinate);
+
+    //the jacobian matrix between the reference particle domain and the primitive one (expressed in natural coordinate)
+    SquareMatrix<Scalar,2> computeJacobianBetweenReferenceAndPrimitiveParticleDomain(unsigned int obj_idx, unsigned int particle_idx, const Vector<Scalar,2> &point_natural_coordinate);
 protected:
     void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
@@ -144,7 +157,20 @@ public:
     void updateParticlePosition(Scalar dt, const std::vector<std::vector<unsigned char> > &is_dirichlet_particle);
 
     //modified CPDI2: compute particle deformation gradient with the displacement of domain corners
+    //the deformation gradient of particle is the average of the integrated deformation gradient inside the domain
     SquareMatrix<Scalar,3> computeParticleDeformationGradientFromDomainShape(unsigned int obj_idx, unsigned int particle_idx);
+
+    //evaluate the deformation gradient of a given point inside the particle domain
+    //the given point is expressed as natural coordinate inside the primitive particle domain
+    SquareMatrix<Scalar,3> computeDeformationGradientAtPointInParticleDomain(unsigned int obj_idx, unsigned int particle_idx, const Vector<Scalar,3> &point_natural_coordinate);
+
+    //compute the element shape function gradient with respect to reference configuration at a given point inside the particle domain
+    //the given point is expressed as natural coordinate inside the primitive particle domain
+    Vector<Scalar,3> computeShapeFunctionGradientToReferenceCoordinateAtPointInParticleDomain(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                              const Vector<unsigned int,3> &corner_idx, const Vector<Scalar,3> &point_natural_coordinate);
+
+    //the jacobian matrix between the reference particle domain and the primitive one (expressed in natural coordinate)
+    SquareMatrix<Scalar,3> computeJacobianBetweenReferenceAndPrimitiveParticleDomain(unsigned int obj_idx, unsigned int particle_idx, const Vector<Scalar,3> &point_natural_coordinate);
 protected:
     void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
          std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,

@@ -34,8 +34,8 @@
  *
  */
 
-#ifndef PHSYIKA_CORE_CONFIG_FILE_CONFIG_FILE_H_
-#define PHSYIKA_CORE_CONFIG_FILE_CONFIG_FILE_H_
+#ifndef PHYSIKA_CORE_CONFIG_FILE_CONFIG_FILE_H_
+#define PHYSIKA_CORE_CONFIG_FILE_CONFIG_FILE_H_
 
 #include <iostream>
 #include <vector>
@@ -93,4 +93,4 @@ protected:
 
 }//end of namespace Physika
 
-#endif // PHSYIKA_CORE_CONFIG_FILE_CONFIG_FILE_H_
+#endif // PHYSIKA_CORE_CONFIG_FILE_CONFIG_FILE_H_

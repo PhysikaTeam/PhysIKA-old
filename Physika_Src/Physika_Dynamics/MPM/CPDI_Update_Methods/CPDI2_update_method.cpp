@@ -148,7 +148,6 @@ SquareMatrix<Scalar,2> CPDI2UpdateMethod<Scalar,2>::computeParticleDeformationGr
     ArrayND<Vector<Scalar,2>,2> particle_domain, initial_particle_domain;
     std::vector<Vector<Scalar,2> > particle_domain_vec(4), particle_domain_displacement(4);
     SquareMatrix<Scalar,2> identity = SquareMatrix<Scalar,2>::identityMatrix();
-    SolidParticle<Scalar,2> &particle = this->cpdi_driver_->particle(obj_idx,particle_idx);
     this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
     this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
     unsigned int i = 0;
@@ -172,6 +171,74 @@ SquareMatrix<Scalar,2> CPDI2UpdateMethod<Scalar,2>::computeParticleDeformationGr
         particle_deform_grad += 1.0/domain_volume * particle_domain_displacement[i].outerProduct(gradient_integral);
     }
     return particle_deform_grad;
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,2> CPDI2UpdateMethod<Scalar,2>::computeDeformationGradientAtPointInParticleDomain(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                                      const Vector<Scalar,2> &point_natural_coordinate)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    PHYSIKA_ASSERT(obj_idx < this->cpdi_driver_->objectNum());
+    PHYSIKA_ASSERT(particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx));
+    PHYSIKA_ASSERT(point_natural_coordinate[0] >= -1 && point_natural_coordinate[0] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[1] >= -1 && point_natural_coordinate[1] <= 1);
+    ArrayND<Vector<Scalar,2>,2> particle_domain, initial_particle_domain;
+    std::vector<Vector<Scalar,2> > particle_domain_vec(4), particle_domain_displacement(4);
+    SquareMatrix<Scalar,2> identity = SquareMatrix<Scalar,2>::identityMatrix();
+    this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+    this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+    unsigned int i = 0;
+    for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
+        particle_domain_vec[i] = *corner_iter;
+    i = 0;
+    for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = initial_particle_domain.begin(); corner_iter != initial_particle_domain.end(); ++i,++corner_iter)
+        particle_domain_displacement[i] = particle_domain_vec[i] - (*corner_iter);
+    SquareMatrix<Scalar,2> deform_grad = identity;
+    i = 0;
+    for(typename ArrayND<Vector<Scalar,2>,2>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
+    {
+        Vector<unsigned int,2> corner_idx = corner_iter.elementIndex();
+        Vector<Scalar,2> shape_function_gradient = computeShapeFunctionGradientToReferenceCoordinateAtPointInParticleDomain(obj_idx,particle_idx,corner_idx,point_natural_coordinate);
+        deform_grad +=  particle_domain_displacement[i].outerProduct(shape_function_gradient);
+    }
+    return deform_grad;
+}
+
+template <typename Scalar>
+Vector<Scalar,2> CPDI2UpdateMethod<Scalar,2>::computeShapeFunctionGradientToReferenceCoordinateAtPointInParticleDomain(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                          const Vector<unsigned int,2> &corner_idx, const Vector<Scalar,2> &point_natural_coordinate)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    PHYSIKA_ASSERT(obj_idx < this->cpdi_driver_->objectNum());
+    PHYSIKA_ASSERT(particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx));
+    PHYSIKA_ASSERT(corner_idx[0] < 2 && corner_idx[1] < 2);
+    PHYSIKA_ASSERT(point_natural_coordinate[0] >= -1 && point_natural_coordinate[0] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[1] >= -1 && point_natural_coordinate[1] <= 1);
+    ArrayND<Vector<Scalar,2>,2> particle_domain, initial_particle_domain;
+    this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+    this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+    SquareMatrix<Scalar,2> ref_jacobian = particleDomainJacobian(point_natural_coordinate,initial_particle_domain);
+    SquareMatrix<Scalar,2> ref_jacobian_inv_trans = ref_jacobian.inverse().transpose();
+    Vector<Scalar,2> shape_function_derivative;
+    shape_function_derivative[0] = 0.25*(2.0*corner_idx[0]-1)*(1+(2.0*corner_idx[1]-1)*point_natural_coordinate[1]);
+    shape_function_derivative[1] = 0.25*(1+(2.0*corner_idx[0]-1)*point_natural_coordinate[0])*(2.0*corner_idx[1]-1);
+    Vector<Scalar,2> gradient_to_ref = ref_jacobian_inv_trans*shape_function_derivative;
+    return gradient_to_ref;
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,2> CPDI2UpdateMethod<Scalar,2>::computeJacobianBetweenReferenceAndPrimitiveParticleDomain(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                                              const Vector<Scalar,2> &point_natural_coordinate)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    PHYSIKA_ASSERT(obj_idx < this->cpdi_driver_->objectNum());
+    PHYSIKA_ASSERT(particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx));
+    PHYSIKA_ASSERT(point_natural_coordinate[0] >= -1 && point_natural_coordinate[0] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[1] >= -1 && point_natural_coordinate[1] <= 1);
+    ArrayND<Vector<Scalar,2>,2> initial_particle_domain;
+    this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+    SquareMatrix<Scalar,2> ref_jacobian = particleDomainJacobian(point_natural_coordinate,initial_particle_domain);
+    return ref_jacobian;
 }
 
 template <typename Scalar>
@@ -685,6 +752,78 @@ SquareMatrix<Scalar,3> CPDI2UpdateMethod<Scalar,3>::computeParticleDeformationGr
         particle_deform_grad += 1.0/domain_volume * particle_domain_displacement[i].outerProduct(gradient_integral);
     }
     return particle_deform_grad;
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,3> CPDI2UpdateMethod<Scalar,3>::computeDeformationGradientAtPointInParticleDomain(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                                      const Vector<Scalar,3> &point_natural_coordinate)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    PHYSIKA_ASSERT(obj_idx < this->cpdi_driver_->objectNum());
+    PHYSIKA_ASSERT(particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx));
+    PHYSIKA_ASSERT(point_natural_coordinate[0] >= -1 && point_natural_coordinate[0] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[1] >= -1 && point_natural_coordinate[1] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[2] >= -1 && point_natural_coordinate[2] <= 1);
+    ArrayND<Vector<Scalar,3>,3> particle_domain, initial_particle_domain;
+    std::vector<Vector<Scalar,3> > particle_domain_vec(8), particle_domain_displacement(8);
+    SquareMatrix<Scalar,3> identity = SquareMatrix<Scalar,3>::identityMatrix();
+    this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+    this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+    unsigned int i = 0;
+    for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
+        particle_domain_vec[i] = *corner_iter;
+    i = 0;
+    for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = initial_particle_domain.begin(); corner_iter != initial_particle_domain.end(); ++i,++corner_iter)
+        particle_domain_displacement[i] = particle_domain_vec[i] - (*corner_iter);
+    SquareMatrix<Scalar,3> deform_grad = identity;
+    i = 0;
+    for(typename ArrayND<Vector<Scalar,3>,3>::Iterator corner_iter = particle_domain.begin(); corner_iter != particle_domain.end(); ++i,++corner_iter)
+    {
+        Vector<unsigned int,3> corner_idx = corner_iter.elementIndex();
+        Vector<Scalar,3> shape_function_gradient = computeShapeFunctionGradientToReferenceCoordinateAtPointInParticleDomain(obj_idx,particle_idx,corner_idx,point_natural_coordinate);
+        deform_grad +=  particle_domain_displacement[i].outerProduct(shape_function_gradient);
+    }
+    return deform_grad;
+}
+
+template <typename Scalar>
+Vector<Scalar,3> CPDI2UpdateMethod<Scalar,3>::computeShapeFunctionGradientToReferenceCoordinateAtPointInParticleDomain(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                                                       const Vector<unsigned int,3> &corner_idx, const Vector<Scalar,3> &point_natural_coordinate)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    PHYSIKA_ASSERT(obj_idx < this->cpdi_driver_->objectNum());
+    PHYSIKA_ASSERT(particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx));
+    PHYSIKA_ASSERT(corner_idx[0] < 2 && corner_idx[1] < 2 && corner_idx[2] < 2);
+    PHYSIKA_ASSERT(point_natural_coordinate[0] >= -1 && point_natural_coordinate[0] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[1] >= -1 && point_natural_coordinate[1] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[2] >= -1 && point_natural_coordinate[2] <= 1);
+    ArrayND<Vector<Scalar,3>,3> particle_domain, initial_particle_domain;
+    this->cpdi_driver_->currentParticleDomain(obj_idx,particle_idx,particle_domain);
+    this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+    SquareMatrix<Scalar,3> ref_jacobian = particleDomainJacobian(point_natural_coordinate,initial_particle_domain);
+    SquareMatrix<Scalar,3> ref_jacobian_inv_trans = ref_jacobian.inverse().transpose();
+    Vector<Scalar,3> shape_function_derivative;
+    shape_function_derivative[0] = 0.125*(2.0*corner_idx[0]-1)*(1+(2.0*corner_idx[1]-1)*point_natural_coordinate[1])*(1+(2.0*corner_idx[2]-1)*point_natural_coordinate[2]);
+    shape_function_derivative[1] = 0.125*(1+(2.0*corner_idx[0]-1)*point_natural_coordinate[0])*(2.0*corner_idx[1]-1)*(1+(2.0*corner_idx[2]-1)*point_natural_coordinate[2]);
+    shape_function_derivative[2] = 0.125*(1+(2.0*corner_idx[0]-1)*point_natural_coordinate[0])*(1+(2.0*corner_idx[1]-1)*point_natural_coordinate[1])*(2.0*corner_idx[2]-1);
+    Vector<Scalar,3> gradient_to_ref = ref_jacobian_inv_trans*shape_function_derivative;
+    return gradient_to_ref;
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,3> CPDI2UpdateMethod<Scalar,3>::computeJacobianBetweenReferenceAndPrimitiveParticleDomain(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                                              const Vector<Scalar,3> &point_natural_coordinate)
+{
+    PHYSIKA_ASSERT(this->cpdi_driver_);
+    PHYSIKA_ASSERT(obj_idx < this->cpdi_driver_->objectNum());
+    PHYSIKA_ASSERT(particle_idx < this->cpdi_driver_->particleNumOfObject(obj_idx));
+    PHYSIKA_ASSERT(point_natural_coordinate[0] >= -1 && point_natural_coordinate[0] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[1] >= -1 && point_natural_coordinate[1] <= 1);
+    PHYSIKA_ASSERT(point_natural_coordinate[2] >= -1 && point_natural_coordinate[2] <= 1);
+    ArrayND<Vector<Scalar,3>,3> initial_particle_domain;
+    this->cpdi_driver_->initialParticleDomain(obj_idx,particle_idx,initial_particle_domain);
+    SquareMatrix<Scalar,3> ref_jacobian = particleDomainJacobian(point_natural_coordinate,initial_particle_domain);
+    return ref_jacobian;
 }
 
 template <typename Scalar>
