@@ -19,6 +19,7 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Dynamics/Utilities/Deformation_Diagonalization/deformation_diagonalization.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 
 namespace Physika{
@@ -30,7 +31,6 @@ template <typename Scalar, int Dim> class SquareMatrix;
 /*
  * InvertibleMPMSolid: hybrid of FEM and CPDI2 for large deformation and invertible elasticity
  * object number and particle number cannot be changed during run-time
- * The constitutive model of the particles must be defined in the inverted regime 
  *
  */
 
@@ -74,13 +74,6 @@ protected:
     bool isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const;  //determine if the particle needs enrichment
     void updateParticleDomainEnrichState();
     void applyGravityOnEnrichedDomainCorner(Scalar dt);
-    //the diagonalization technique introduced in "Invertible Finite Elements for Robust Simulation of Large Deformation"
-    //trait methods for different dimension
-	void diagonalizeDeformationGradient(const SquareMatrix<Scalar,2> &deform_grad, SquareMatrix<Scalar,2> &left_rotation,
-		                                SquareMatrix<Scalar,2> &diag_deform_grad, SquareMatrix<Scalar,2> &right_rotation) const;
-	void diagonalizeDeformationGradient(const SquareMatrix<Scalar,3> &deform_grad, SquareMatrix<Scalar,3> &left_rotation,
-		                                SquareMatrix<Scalar,3> &diag_deform_grad, SquareMatrix<Scalar,3> &right_rotation) const;
-
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
@@ -96,6 +89,7 @@ protected:
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_to_cur_; //weight gradient to current configuration of domain corner
     //for invertibility support, stretch below this threshold will be clamped to this value
     Scalar principal_stretch_threshold_;
+    DeformationDiagonalization<Scalar,Dim> deform_grad_diagonalizer_; //the method used to diagonalize deformation gradient
 };
 
 }  //end of namespace Physika

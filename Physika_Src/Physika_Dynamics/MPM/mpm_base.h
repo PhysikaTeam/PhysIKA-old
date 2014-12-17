@@ -75,7 +75,7 @@ protected:
     MPMStepMethod<Scalar,Dim> *step_method_;
     //time step computation with CFL condition
     Scalar cfl_num_;
-    Scalar sound_speed_;
+    Scalar sound_speed_; //the sound speed in material
     //gravity: along negative y direction
     Scalar gravity_;
 };

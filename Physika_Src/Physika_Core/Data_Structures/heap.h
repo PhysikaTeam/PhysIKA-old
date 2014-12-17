@@ -27,7 +27,7 @@ template <class T>
 class MinHeap
 {
 public:
-    MinHeap(const int n);   //constructed function; n is the initial max number of elements the heap can contain
+    explicit MinHeap(const int n);   //constructed function; n is the initial max number of elements the heap can contain
     virtual ~MinHeap(){delete[]heap_array_;}
     bool isLeaf(int pos) const;
     int leftChild(int pos) const;
@@ -60,7 +60,7 @@ template <class T>
 class MaxHeap
 {
 public:
-    MaxHeap(const int n);   //constructed function; n is the initial max number of elements the heap can contain
+    explicit MaxHeap(const int n);   //constructed function; n is the initial max number of elements the heap can contain
     virtual ~MaxHeap(){delete[]heap_array_;}
     bool isLeaf(int pos) const;
     int leftChild(int pos) const;
