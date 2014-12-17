@@ -41,6 +41,7 @@ GridRender<Scalar,Dim>::GridRender(const Grid<Scalar,Dim> * grid)
 template <typename Scalar, int Dim>
 GridRender<Scalar,Dim>::~GridRender()
 {
+    glDeleteLists(this->display_list_id_, 1);
     this->display_list_id_ = 0;
     this->grid_ = NULL;
 }

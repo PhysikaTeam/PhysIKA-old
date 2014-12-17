@@ -796,22 +796,22 @@ void InvertibleMPMSolid<Scalar,Dim>::clearParticleDomainMesh()
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
-    unsigned int obj_num = this->objectNum();
-    PHYSIKA_ASSERT(obj_idx<obj_num);
-    unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    PHYSIKA_ASSERT(particle_idx<particle_num);
-    // //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
-    // //the dirichlet boundary is correctly enforced in this way
-    // for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
-    // {
-    //     Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
-    //     if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
-    //         return false;
-    // }
-    // //rule two: only enrich while compression
-    if(this->particles_[obj_idx][particle_idx]->volume() <0.2 * this->particle_initial_volume_[obj_idx][particle_idx])
+    // // unsigned int obj_num = this->objectNum();
+    // // PHYSIKA_ASSERT(obj_idx<obj_num);
+    // // unsigned int particle_num = this->particleNumOfObject(obj_idx);
+    // // PHYSIKA_ASSERT(particle_idx<particle_num);
+    // // // //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
+    // // // //the dirichlet boundary is correctly enforced in this way
+    // // // for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+    // // // {
+    // // //     Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
+    // // //     if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
+    // // //         return false;
+    // // // }
+    // // // //rule two: only enrich while compression
+    //if(this->particles_[obj_idx][particle_idx]->volume() <0.2 * this->particle_initial_volume_[obj_idx][particle_idx])
         return true;
-    return false;
+        //return false;
     //TO DO
 }
 

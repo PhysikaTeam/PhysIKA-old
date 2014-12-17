@@ -44,7 +44,7 @@ MPMSolidPluginRender<Scalar,Dim>::MPMSolidPluginRender()
     :MPMSolidPluginBase<Scalar,Dim>(),window_(NULL),pause_simulation_(true),
      simulation_finished_(false),render_particle_(true),render_grid_(true),
      render_particle_velocity_(false),render_grid_velocity_(false),render_particle_domain_(false),
-     particle_render_mode_(0),velocity_scale_(1.0),auto_capture_frame_(false),total_time_(0)
+     particle_render_mode_(0),grid_render_(NULL),velocity_scale_(1.0),auto_capture_frame_(false),total_time_(0)
 {
     activateCurrentInstance();
 }
@@ -52,6 +52,8 @@ MPMSolidPluginRender<Scalar,Dim>::MPMSolidPluginRender()
 template <typename Scalar, int Dim>
 MPMSolidPluginRender<Scalar,Dim>::~MPMSolidPluginRender()
 {
+    if(grid_render_)
+        delete grid_render_;
 }
 
 
@@ -223,6 +225,21 @@ void MPMSolidPluginRender<Scalar,Dim>::setWindow(GlutWindow *window)
 }
 
 template <typename Scalar, int Dim>
+void MPMSolidPluginRender<Scalar,Dim>::updateGridRender()
+{
+    MPMSolid<Scalar,Dim> *driver = this->driver();
+    if(driver==NULL)
+        std::cerr<<"Warning: No driver specified, operation ignored!\n";
+    else
+    {
+        if(grid_render_)
+            delete grid_render_;
+        const Grid<Scalar,Dim> &grid = driver->grid();
+        grid_render_ = new GridRender<Scalar,Dim>(&grid);
+    }
+}
+
+template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::idleFunction(void)
 {
     PHYSIKA_ASSERT(active_instance_);
@@ -351,11 +368,9 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::renderGrid()
 {
-    MPMSolid<Scalar,Dim> *driver = this->driver();
-    PHYSIKA_ASSERT(driver);
-    const Grid<Scalar,Dim> &grid = driver->grid();
-    GridRender<Scalar,Dim> grid_render(&grid);
-    grid_render.render();
+    if(grid_render_ == NULL)
+        updateGridRender();
+    grid_render_->render();
 }
 
 template <typename Scalar, int Dim>
@@ -411,11 +426,11 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticleDomain()
         return;
     openGLColor3(Color<Scalar>::Cyan());
     glDisable(GL_LIGHTING);
+    ArrayND<Vector<Scalar,Dim>,Dim> particle_domain;
     for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
     {
         for(unsigned int particle_idx = 0; particle_idx < driver->particleNumOfObject(obj_idx); ++particle_idx)
         {
-            ArrayND<Vector<Scalar,Dim>,Dim> particle_domain;
             driver->currentParticleDomain(obj_idx,particle_idx,particle_domain);
             PHYSIKA_ASSERT(particle_domain.totalElementCount());
             if(Dim==2)

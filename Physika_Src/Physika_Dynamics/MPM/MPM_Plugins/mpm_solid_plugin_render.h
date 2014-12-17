@@ -22,6 +22,7 @@
 namespace Physika{
 
 class GlutWindow;
+template <typename Scalar, int Dim> class GridRender;
 
 /*
  * MPMSolidPluginRender: plugin that provides a real-time window
@@ -71,6 +72,9 @@ public:
     //setters&&getters
     GlutWindow* window();
     void setWindow(GlutWindow *window);
+    
+    //call this method whenever the grid of the mpm driver is changed
+    void updateGridRender();
 
 protected:
     static void idleFunction(void); 
@@ -98,6 +102,8 @@ protected:
     bool render_grid_velocity_;
     bool render_particle_domain_;
     unsigned int particle_render_mode_;  // 0: particle rendered as point; otherwise: particle rendered as sphere
+    //for render grid
+    GridRender<Scalar,Dim> *grid_render_;
     //for render velocities
     Scalar velocity_scale_;
     //screen capture switch
