@@ -831,7 +831,12 @@ void InvertibleMPMSolid<Scalar,Dim>::applyGravityOnEnrichedDomainCorner(Scalar d
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::computeParticleInterpolationWeightInInitialDomain()
 {
-    //TO DO
+    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    if(update_method == NULL)
+        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+    for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
+            update_method->computeParticleInterpolationWeightInParticleDomain(obj_idx,particle_idx,particle_corner_weight_[obj_idx][particle_idx]);
 }
 
 //explicit instantiation
