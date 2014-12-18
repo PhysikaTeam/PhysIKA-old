@@ -86,6 +86,7 @@ void InvertibleMPMSolid<Scalar,Dim>::initSimulationData()
 {
     constructParticleDomainMesh();
     resetParticleDomainData();
+    computeParticleInterpolationWeightInInitialDomain(); //precomputation, in reference configuration
     MPMSolid<Scalar,Dim>::initSimulationData();
 }
 
@@ -260,8 +261,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
     if(update_method)  //CPDI2
         update_method->updateParticleInterpolationWeightWithEnrichment(weight_function,particle_domain_mesh_,is_enriched_domain_corner_,
                                                                        this->particle_grid_weight_and_gradient_,this->particle_grid_pair_num_,
-                                                                       this->corner_grid_weight_and_gradient_,this->corner_grid_pair_num_,
-                                                                       particle_corner_weight_,particle_corner_gradient_to_ref_,particle_corner_gradient_to_cur_);
+                                                                       this->corner_grid_weight_and_gradient_,this->corner_grid_pair_num_);
     else
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
 }
@@ -668,12 +668,8 @@ void InvertibleMPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
     unsigned int last_object_idx = this->objectNum() - 1;
     unsigned int particle_num_of_last_object = this->particleNumOfObject(last_object_idx);
     std::vector<Scalar> one_particle_corner_weight(corner_num,0);
-    std::vector<Vector<Scalar,Dim> > one_particle_corner_gradient(corner_num,Vector<Scalar,Dim>(0));
     std::vector<std::vector<Scalar> > all_particle_corner_weight(particle_num_of_last_object,one_particle_corner_weight);
-    std::vector<std::vector<Vector<Scalar,Dim> > > all_particle_corner_gradient(particle_num_of_last_object,one_particle_corner_gradient);
     particle_corner_weight_.push_back(all_particle_corner_weight);
-    particle_corner_gradient_to_ref_.push_back(all_particle_corner_gradient);
-    particle_corner_gradient_to_cur_.push_back(all_particle_corner_gradient);
 }
 
 template <typename Scalar, int Dim>
@@ -682,10 +678,7 @@ void InvertibleMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsig
     CPDIMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(object_idx);
     unsigned int corner_num = Dim==2 ? 4 : 8;
     std::vector<Scalar> one_particle_corner_weight(corner_num,0);
-    std::vector<Vector<Scalar,Dim> > one_particle_corner_gradient(corner_num,Vector<Scalar,Dim>(0));
     particle_corner_weight_[object_idx].push_back(one_particle_corner_weight);
-    particle_corner_gradient_to_ref_[object_idx].push_back(one_particle_corner_gradient);
-    particle_corner_gradient_to_cur_[object_idx].push_back(one_particle_corner_gradient);
 }
  
 template <typename Scalar, int Dim>
@@ -694,10 +687,6 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsign
     CPDIMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(object_idx);
     typename std::vector<std::vector<std::vector<Scalar> > >::iterator iter1 = particle_corner_weight_.begin() + object_idx;
     particle_corner_weight_.erase(iter1);
-    typename std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > >::iterator iter2 = particle_corner_gradient_to_ref_.begin() + object_idx;
-    particle_corner_gradient_to_ref_.erase(iter2);
-    typename std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > >::iterator iter3 = particle_corner_gradient_to_cur_.begin() + object_idx;
-    particle_corner_gradient_to_cur_.erase(iter3);
 }
  
 template <typename Scalar, int Dim>
@@ -706,10 +695,6 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsign
     CPDIMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(object_idx,particle_idx);
     typename std::vector<std::vector<Scalar> >::iterator iter1 = particle_corner_weight_[object_idx].begin() + particle_idx;
     particle_corner_weight_[object_idx].erase(iter1);
-    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = particle_corner_gradient_to_ref_[object_idx].begin() + particle_idx;
-    particle_corner_gradient_to_ref_[object_idx].erase(iter2);
-    typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter3 = particle_corner_gradient_to_cur_[object_idx].begin() + particle_idx;
-    particle_corner_gradient_to_cur_[object_idx].erase(iter3);
 }
     
 template <typename Scalar, int Dim>
@@ -843,6 +828,12 @@ void InvertibleMPMSolid<Scalar,Dim>::applyGravityOnEnrichedDomainCorner(Scalar d
                 domain_corner_velocity_[obj_idx][corner_idx][1] += dt*(-1)*(this->gravity_);
 }
  
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::computeParticleInterpolationWeightInInitialDomain()
+{
+    //TO DO
+}
+
 //explicit instantiation
 template class InvertibleMPMSolid<float,2>;
 template class InvertibleMPMSolid<double,2>;

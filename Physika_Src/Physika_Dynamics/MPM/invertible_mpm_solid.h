@@ -74,6 +74,8 @@ protected:
     bool isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const;  //determine if the particle needs enrichment
     void updateParticleDomainEnrichState();
     void applyGravityOnEnrichedDomainCorner(Scalar dt);
+    //compute the interpolation weight/gradient between particle and the domain corners, in reference configuration
+    void computeParticleInterpolationWeightInInitialDomain(); 
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
@@ -84,9 +86,8 @@ protected:
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_before_;
     //interpolation weight between particle and the domain corners, data attached to particle
+    //the weight is precomputed in the reference configuration of particle domain
     std::vector<std::vector<std::vector<Scalar> > > particle_corner_weight_;
-    std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_to_ref_;  //weight gradient to reference configuration of domain corner
-    std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_to_cur_; //weight gradient to current configuration of domain corner
     //for invertibility support, stretch below this threshold will be clamped to this value
     Scalar principal_stretch_threshold_;
     DeformationDiagonalization<Scalar,Dim> deform_grad_diagonalizer_; //the method used to diagonalize deformation gradient
