@@ -36,9 +36,10 @@ template <typename Scalar, int Dim> class VolumetricMesh;
 /*
  * Changes compared to conventional CPDI2 in the paper:
  * 1. integration over particle domain is conducted in initial particle domain
- *    instead of current particle domain
- * 2. do not compute weight/gradient between grid node and the particle with
- *     any enriched domain corners (enriched/trasient particles in the paper)
+ *     instead of current particle domain
+ * 2. computation of the weight/gradient between grid node and the particle with
+ *     any enriched domain corners (enriched/trasient particles in the paper) could
+ *     be optionally skipped (these domains could be degenerated)
  */
 
 
@@ -80,7 +81,8 @@ public:
            std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
            std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
            std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
-           std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num);
+           std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+           bool skip_enriched_particle_grid_weight_and_gradient_computation = false);
     
     //update particle domain with velocity on grid
     void updateParticleDomain(
@@ -123,7 +125,8 @@ protected:
            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
            unsigned int &particle_grid_pair_num,
            std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
-           std::vector<unsigned int> &corner_grid_pair_num);
+           std::vector<unsigned int> &corner_grid_pair_num,
+           bool skip_enriched_particle_grid_weight_and_gradient_computation = false);
     //approximate integration of element shape function gradient over particle domain, using 2x2 Gauss integration points
     //note: the gradient is with respect to current configuration instead of reference configuration
     //the integration domain is the INITIAL particle domain, instead of current particle domain as in the paper
@@ -155,7 +158,8 @@ public:
          std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
          std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
          std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
-         std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num);
+         std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+          bool skip_enriched_particle_grid_weight_and_gradient_computation = false);
 
     //update particle domain with velocity on grid
     void updateParticleDomain(
@@ -199,7 +203,8 @@ protected:
          std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
          unsigned int &particle_grid_pair_num,
          std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
-         std::vector<unsigned int> &corner_grid_pair_num);
+         std::vector<unsigned int> &corner_grid_pair_num,
+         bool skip_enriched_particle_grid_weight_and_gradient_computation = false);
     //approximate integration of element shape function (gradient) over particle domain, using 2x2x2 Gauss integration points
     //note: the gradient is with respect to current configuration instead of reference configuration
     //the integration domain is the INITIAL particle domain, instead of current particle domain as in the paper

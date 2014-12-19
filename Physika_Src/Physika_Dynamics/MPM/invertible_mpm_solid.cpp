@@ -261,7 +261,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
     if(update_method)  //CPDI2
         update_method->updateParticleInterpolationWeightWithEnrichment(weight_function,particle_domain_mesh_,is_enriched_domain_corner_,
                                                                        this->particle_grid_weight_and_gradient_,this->particle_grid_pair_num_,
-                                                                       this->corner_grid_weight_and_gradient_,this->corner_grid_pair_num_);
+                                                                       this->corner_grid_weight_and_gradient_,this->corner_grid_pair_num_,true);
     else
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
 }
