@@ -36,6 +36,7 @@ template <typename Scalar, int Dim> class VolumetricMesh;
 /*
  * Changes compared to conventional CPDI2 in the paper:
  * 1. integration over particle domain is conducted in initial particle domain
+ *    instead of current particle domain
  * 2. do not compute weight/gradient between grid node and the particle with
  *     any enriched domain corners (enriched/trasient particles in the paper)
  */
@@ -123,6 +124,12 @@ protected:
            unsigned int &particle_grid_pair_num,
            std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
            std::vector<unsigned int> &corner_grid_pair_num);
+    //approximate integration of element shape function gradient over particle domain, using 2x2 Gauss integration points
+    //note: the gradient is with respect to current configuration instead of reference configuration
+    //the integration domain is the INITIAL particle domain, instead of current particle domain as in the paper
+    Vector<Scalar,2> gaussIntegrateShapeFunctionGradientToCurrentCoordinateInParticleDomain(const Vector<unsigned int,2> &corner_idx,
+                                                                                            const ArrayND<Vector<Scalar,2>,2> &particle_domain,
+                                                                                            const ArrayND<Vector<Scalar,2>,2> &initial_particle_domain);
     //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate
     //derivative with respect to vector is represented as row vector
     SquareMatrix<Scalar,2> particleDomainJacobian(const Vector<Scalar,2> &eval_point, const ArrayND<Vector<Scalar,2>,2> &particle_domain);
@@ -202,6 +209,8 @@ protected:
     //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate
     //derivative with respect to vector is represented as row vector
     SquareMatrix<Scalar,3> particleDomainJacobian(const Vector<Scalar,3> &eval_point, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
+    //compute the volume of given particle domain
+    Scalar particleDomainVolume(const ArrayND<Vector<Scalar,3>,3> &particle_domain);
 };
 
 }  //end of namespace Physika
