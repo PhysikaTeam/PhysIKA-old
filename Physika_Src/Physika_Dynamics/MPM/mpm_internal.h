@@ -36,6 +36,19 @@ struct NodeIndexWeightGradientPair
     Vector<Scalar,Dim> gradient_value_;
 };
 
+/*
+ * NodeIndexWeightPair:
+ * pair of the grid node and its interpolation weight value
+ * for uniform grid
+ */
+
+template <typename Scalar,int Dim>
+struct NodeIndexWeightPair
+{
+    Vector<unsigned int,Dim> node_idx_;
+    Scalar weight_value_;
+};
+
 }  //end of namespace MPMInternal
 
 }  //end of namespace Physika

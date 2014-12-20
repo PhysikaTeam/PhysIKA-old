@@ -52,6 +52,7 @@ public:
     //virtual methods
     virtual void initSimulationData();  //the topology of the particle domains will be initiated before simulation starts
     virtual void rasterize(); //according to the particle type, some data are rasterized to grid, others to domain corners
+    virtual void resolveContactOnParticles(Scalar dt); //the contact between enriched domains are resolved on particle level
     virtual void updateParticleInterpolationWeight();  //interpolation weight between particle and domain corners need to be updated as well
     virtual void updateParticleConstitutiveModelState(Scalar dt);
     virtual void updateParticleVelocity();
@@ -75,7 +76,15 @@ protected:
     void updateParticleDomainEnrichState();
     void applyGravityOnEnrichedDomainCorner(Scalar dt);
     //compute the interpolation weight/gradient between particle and the domain corners, in reference configuration
-    void computeParticleInterpolationWeightInInitialDomain(); 
+    void computeParticleInterpolationWeightAndGradientInInitialDomain(); 
+    //for those particles with enriched domain corners, we have two choices while computing internal forces on the domain corners
+    //1. via quadrature points 2. via the particle
+    //in essence, the properties of the particle is the average of the domain
+    //we experimented with the two strategies for comparison
+    void solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                                                unsigned int enriched_corner_num, Scalar dt);
+    void solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                                unsigned int enriched_corner_num,  Scalar dt);
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
@@ -85,9 +94,10 @@ protected:
     std::vector<std::vector<Scalar> > domain_corner_mass_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_before_;
-    //interpolation weight between particle and the domain corners, data attached to particle
-    //the weight is precomputed in the reference configuration of particle domain
+    //interpolation weight/gradient between particle and the domain corners, data attached to particle
+    //the weight/gradient is precomputed in the reference configuration of particle domain
     std::vector<std::vector<std::vector<Scalar> > > particle_corner_weight_;
+    std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_;
     //for invertibility support, stretch below this threshold will be clamped to this value
     Scalar principal_stretch_threshold_;
     DeformationDiagonalization<Scalar,Dim> deform_grad_diagonalizer_; //the method used to diagonalize deformation gradient

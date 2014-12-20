@@ -76,9 +76,9 @@ protected:
 protected:
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_domain_corners_;  //current particle domain corners
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > initial_particle_domain_corners_; //initial particle domain corners
-    //for each domain corner of the particles, store precomputed weights and gradients of grid nodes that is within influence range
+    //for each domain corner of the particles, store precomputed weights of grid nodes that is within influence range
     //needed in CPDI2
-    std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > > corner_grid_weight_and_gradient_;
+    std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,Dim> > > > > corner_grid_weight_;
     std::vector<std::vector<std::vector<unsigned int> > > corner_grid_pair_num_; //the number of pairs for each corner of each particle
     CPDIUpdateMethod<Scalar,Dim> *cpdi_update_method_; //the cpdi method used to update particle domain
 };

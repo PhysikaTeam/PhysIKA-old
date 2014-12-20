@@ -36,10 +36,11 @@ template <typename Scalar, int Dim> class VolumetricMesh;
 /*
  * Changes compared to conventional CPDI2 in the paper:
  * 1. integration over particle domain is conducted in initial particle domain
- *     instead of current particle domain
- * 2. computation of the weight/gradient between grid node and the particle with
- *     any enriched domain corners (enriched/trasient particles in the paper) could
- *     be optionally skipped (these domains could be degenerated)
+ *     instead of in current particle domain
+ * 2. the gradient of weight function could be optionally set with respect to reference
+ *     configuration, because current particle domain might be degerated and the
+ *     gradient is not well defined
+ *     
  */
 
 
@@ -71,8 +72,9 @@ public:
     void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,2> &weight_function,
            std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
            std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
-           std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
-           std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num);
+           std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > > > &corner_grid_weight,
+           std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+           bool gradient_to_reference_coordinate = false);
     
     //update the interpolation weight with enrichment
     void updateParticleInterpolationWeightWithEnrichment(const GridWeightFunction<Scalar,2> &weight_function,
@@ -80,13 +82,13 @@ public:
            const std::vector<std::vector<unsigned char> > &is_enriched_domain_corner,
            std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
            std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
-           std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
+           std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > > > &corner_grid_weight,
            std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
-           bool skip_enriched_particle_grid_weight_and_gradient_computation = false);
+           bool gradient_to_reference_coordinate = false);
     
     //update particle domain with velocity on grid
     void updateParticleDomain(
-           const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > > &corner_grid_weight_and_gradient,
+           const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > > > &corner_grid_weight,
            const std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num, Scalar dt);
     
     //CPDI2 updates particle position according to corner positions
@@ -109,29 +111,32 @@ public:
     //the jacobian matrix between the reference particle domain and the primitive one (expressed in natural coordinate)
     SquareMatrix<Scalar,2> computeJacobianBetweenReferenceAndPrimitiveParticleDomain(unsigned int obj_idx, unsigned int particle_idx, const Vector<Scalar,2> &point_natural_coordinate);
 
-    //compute particle interpolation weight in particle domain
-    //the weight of particle is the average of the integrated weight inside the domain
+    //compute particle interpolation weight/gradient in particle domain
+    //the weight/gradient of particle is the average of the integrated weight/gradient inside the domain
     //the integration is in initial particle domain, for robustness
     void computeParticleInterpolationWeightInParticleDomain(unsigned int obj_idx, unsigned int particle_idx, std::vector<Scalar> &particle_corner_weight);
+    void computeParticleInterpolationGradientInParticleDomain(unsigned int obj_idx, unsigned int particle_idx, std::vector<Vector<Scalar,2> > &particle_corner_gradient);
 protected:
     void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
            unsigned int &particle_grid_pair_num,
-           std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
-           std::vector<unsigned int> &corner_grid_pair_num);
+           std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > &corner_grid_weight,
+           std::vector<unsigned int> &corner_grid_pair_num,
+           bool gradient_to_reference_coordinate);
     void updateParticleInterpolationWeightWithEnrichment(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
            const VolumetricMesh<Scalar,2>* particle_domain_mesh,
            const std::vector<unsigned char> &is_enriched_domain_corner,
            std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
            unsigned int &particle_grid_pair_num,
-           std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > &corner_grid_weight_and_gradient,
+           std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > &corner_grid_weight,
            std::vector<unsigned int> &corner_grid_pair_num,
-           bool skip_enriched_particle_grid_weight_and_gradient_computation = false);
+           bool gradient_to_reference_coordinate);
     //approximate integration of element shape function gradient over particle domain, using 2x2 Gauss integration points
-    //note: the gradient is with respect to current configuration instead of reference configuration
     //the integration domain is the INITIAL particle domain, instead of current particle domain as in the paper
     Vector<Scalar,2> gaussIntegrateShapeFunctionGradientToCurrentCoordinateInParticleDomain(const Vector<unsigned int,2> &corner_idx,
                                                                                             const ArrayND<Vector<Scalar,2>,2> &particle_domain,
+                                                                                            const ArrayND<Vector<Scalar,2>,2> &initial_particle_domain);
+    Vector<Scalar,2> gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(const Vector<unsigned int,2> &corner_idx,
                                                                                             const ArrayND<Vector<Scalar,2>,2> &initial_particle_domain);
     //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate
     //derivative with respect to vector is represented as row vector
@@ -148,8 +153,9 @@ public:
     void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,3> &weight_function,
          std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
          std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
-         std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
-         std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num);
+         std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > > > &corner_grid_weight,
+         std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+         bool gradient_to_reference_coordinate = false);
 
     //update the interpolation weight with enrichment
     void updateParticleInterpolationWeightWithEnrichment(const GridWeightFunction<Scalar,3> &weight_function,
@@ -157,13 +163,13 @@ public:
          const std::vector<std::vector<unsigned char> > &is_enriched_domain_corner,
          std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
          std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
-         std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
+         std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > > > &corner_grid_weight,
          std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
-          bool skip_enriched_particle_grid_weight_and_gradient_computation = false);
+         bool gradient_to_reference_coordinate = false);
 
     //update particle domain with velocity on grid
     void updateParticleDomain(
-         const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > > &corner_grid_weight_and_gradient,
+         const std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > > > &corner_grid_weight,
          const std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num, Scalar dt);
 
     //CPDI2 updates particle position according to corner positions
@@ -186,30 +192,33 @@ public:
     //the jacobian matrix between the reference particle domain and the primitive one (expressed in natural coordinate)
     SquareMatrix<Scalar,3> computeJacobianBetweenReferenceAndPrimitiveParticleDomain(unsigned int obj_idx, unsigned int particle_idx, const Vector<Scalar,3> &point_natural_coordinate);
 
-    //compute particle interpolation weight in particle domain
-    //the weight of particle is the average of the integrated weight inside the domain
+    //compute particle interpolation weight/gradient in particle domain
+    //the weight/gradient of particle is the average of the integrated weight/gradient inside the domain
     //the integration is in initial particle domain, for robustness
     void computeParticleInterpolationWeightInParticleDomain(unsigned int obj_idx, unsigned int particle_idx, std::vector<Scalar> &particle_corner_weight);
+    void computeParticleInterpolationGradientInParticleDomain(unsigned int obj_idx, unsigned int particle_idx, std::vector<Vector<Scalar,3> > &particle_corner_gradient);
     
 protected:
     void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
          std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
          unsigned int &particle_grid_pair_num,
-         std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
-         std::vector<unsigned int> &corner_grid_pair_num);
+         std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > &corner_grid_weight,
+         std::vector<unsigned int> &corner_grid_pair_num,
+         bool gradient_to_reference_coordinate);
     void updateParticleInterpolationWeightWithEnrichment(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
          const VolumetricMesh<Scalar,3>* particle_domain_mesh,
          const std::vector<unsigned char> &is_enriched_domain_corner,
          std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
          unsigned int &particle_grid_pair_num,
-         std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > &corner_grid_weight_and_gradient,
+         std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > &corner_grid_weight,
          std::vector<unsigned int> &corner_grid_pair_num,
-         bool skip_enriched_particle_grid_weight_and_gradient_computation = false);
+         bool gradient_to_reference_coordinate);
     //approximate integration of element shape function (gradient) over particle domain, using 2x2x2 Gauss integration points
-    //note: the gradient is with respect to current configuration instead of reference configuration
     //the integration domain is the INITIAL particle domain, instead of current particle domain as in the paper
     Scalar gaussIntegrateShapeFunctionValueInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain);
     Vector<Scalar,3> gaussIntegrateShapeFunctionGradientToCurrentCoordinateInParticleDomain(const Vector<unsigned int,3> &corner_idx, const ArrayND<Vector<Scalar,3>,3> &particle_domain,
+                                                                                            const ArrayND<Vector<Scalar,3>,3> &initial_particle_domain);
+    Vector<Scalar,3> gaussIntegrateShapeFunctionGradientToReferenceCoordinateInParticleDomain(const Vector<unsigned int,3> &corner_idx,
                                                                                             const ArrayND<Vector<Scalar,3>,3> &initial_particle_domain);
     //the jacobian matrix between particle domain expressed in cartesian coordinate and natural coordinate, evaluated at a point represented in natural coordinate
     //derivative with respect to vector is represented as row vector

@@ -93,7 +93,7 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(cpdi_update_method_);
     if(update_method)  //CPDI2
         update_method->updateParticleInterpolationWeight(weight_function,this->particle_grid_weight_and_gradient_,this->particle_grid_pair_num_,
-                                                         corner_grid_weight_and_gradient_,corner_grid_pair_num_);
+                                                         corner_grid_weight_,corner_grid_pair_num_);
     else //CPDI
         cpdi_update_method_->updateParticleInterpolationWeight(weight_function,this->particle_grid_weight_and_gradient_,this->particle_grid_pair_num_);
 }
@@ -113,7 +113,7 @@ void CPDIMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
                 plugin->onUpdateParticlePosition(dt);
         }
         //update particle domain before update particle position
-        update_method->updateParticleDomain(corner_grid_weight_and_gradient_,corner_grid_pair_num_,dt);
+        update_method->updateParticleDomain(corner_grid_weight_,corner_grid_pair_num_,dt);
         //update particle position with CPDI2
         update_method->updateParticlePosition(dt,this->is_dirichlet_particle_);
     }
@@ -335,7 +335,7 @@ void CPDIMPMSolid<Scalar,Dim>::synchronizeWithInfluenceRangeChange()
         for(unsigned int j = 0; j < this->particleNumOfObject(i); ++j)
         {
             for(unsigned int k = 0; k < corner_num; ++k)
-                corner_grid_weight_and_gradient_[i][j][k].resize(max_num);
+                corner_grid_weight_[i][j][k].resize(max_num);
             //the maximum number of nodes in range of particles is the sum of domain corners
             this->particle_grid_weight_and_gradient_[i][j].resize(max_num*corner_num);
         }
@@ -360,17 +360,18 @@ void CPDIMPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
     unsigned int max_num = 1;
     for(unsigned int i = 0; i < Dim; ++i)
         max_num *= static_cast<unsigned int>((this->weight_function_->supportRadius())*2+1);
-    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > one_corner_grid_weight_and_gradient(max_num);
-    typedef std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > pair_vec;
-    std::vector<pair_vec> all_corner_grid_weight_and_gradient(corner_num,one_corner_grid_weight_and_gradient);
-    std::vector<std::vector<pair_vec> > all_particle_corner_grid_weight_and_gradient(particle_num_of_last_object,all_corner_grid_weight_and_gradient);
-    corner_grid_weight_and_gradient_.push_back(all_particle_corner_grid_weight_and_gradient);
+    typedef MPMInternal::NodeIndexWeightPair<Scalar,Dim> weight_pair;
+    std::vector<weight_pair> one_corner_grid_weight(max_num);
+    std::vector<std::vector<weight_pair> > all_corner_grid_weight(corner_num,one_corner_grid_weight);
+    std::vector<std::vector<std::vector<weight_pair> > > all_particle_corner_grid_weight(particle_num_of_last_object,all_corner_grid_weight);
+    corner_grid_weight_.push_back(all_particle_corner_grid_weight);
     std::vector<unsigned int> all_corner_grid_pair_num(corner_num);
     std::vector<std::vector<unsigned int> > all_particle_corner_grid_pair_num(particle_num_of_last_object,all_corner_grid_pair_num);
     corner_grid_pair_num_.push_back(all_particle_corner_grid_pair_num);
     //the maximum number of nodes in range of particles is the sum of domain corners
-    pair_vec one_particle_grid_weight_and_gradient(max_num*corner_num);
-    std::vector<pair_vec> all_particle_grid_weight_and_gradient(particle_num_of_last_object,one_particle_grid_weight_and_gradient);
+    typedef MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> weight_gradient_pair;
+    std::vector<weight_gradient_pair> one_particle_grid_weight_and_gradient(max_num*corner_num);
+    std::vector<std::vector<weight_gradient_pair> > all_particle_grid_weight_and_gradient(particle_num_of_last_object,one_particle_grid_weight_and_gradient);
     this->particle_grid_weight_and_gradient_.push_back(all_particle_grid_weight_and_gradient);
     std::vector<unsigned int> all_particle_grid_pair_num(particle_num_of_last_object);
     this->particle_grid_pair_num_.push_back(all_particle_grid_pair_num);
@@ -390,14 +391,15 @@ void CPDIMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsigned in
     unsigned int max_num = 1;
     for(unsigned int i = 0; i < Dim; ++i)
         max_num *= static_cast<unsigned int>((this->weight_function_->supportRadius())*2+1);
-    std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > one_corner_grid_weight_and_gradient(max_num);
-    typedef std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > pair_vec;
-    std::vector<pair_vec> all_corner_grid_weight_and_gradient(corner_num,one_corner_grid_weight_and_gradient);
-    corner_grid_weight_and_gradient_[object_idx].push_back(all_corner_grid_weight_and_gradient);
+    typedef MPMInternal::NodeIndexWeightPair<Scalar,Dim> weight_pair;
+    std::vector<weight_pair> one_corner_grid_weight(max_num);
+    std::vector<std::vector<weight_pair> > all_corner_grid_weight(corner_num,one_corner_grid_weight);
+    corner_grid_weight_[object_idx].push_back(all_corner_grid_weight);
     std::vector<unsigned int> all_corner_grid_pair_num(corner_num);
     corner_grid_pair_num_[object_idx].push_back(all_corner_grid_pair_num);
     //the maximum number of nodes in range of particles is the sum of domain corners
-    pair_vec one_particle_grid_weight_and_gradient(max_num*corner_num);
+    typedef MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim>  weight_gradient_pair;
+    std::vector<weight_gradient_pair> one_particle_grid_weight_and_gradient(max_num*corner_num);
     this->particle_grid_weight_and_gradient_[object_idx].push_back(one_particle_grid_weight_and_gradient);
     this->particle_grid_pair_num_[object_idx].push_back(0);
 }
@@ -412,9 +414,9 @@ void CPDIMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsigned int
     typename std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > >::iterator iter2
         = initial_particle_domain_corners_.begin() + object_idx;
     initial_particle_domain_corners_.erase(iter2);
-    typename std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > >::iterator
-        iter3 = corner_grid_weight_and_gradient_.begin() + object_idx;
-    corner_grid_weight_and_gradient_.erase(iter3);
+    typename std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,Dim> > > > >::iterator
+        iter3 = corner_grid_weight_.begin() + object_idx;
+    corner_grid_weight_.erase(iter3);
     typename std::vector<std::vector<std::vector<unsigned int> > >::iterator iter4 = corner_grid_pair_num_.begin() + object_idx;
     corner_grid_pair_num_.erase(iter4);
 }
@@ -427,9 +429,9 @@ void CPDIMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsigned int
     particle_domain_corners_[object_idx].erase(iter1);
     typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = initial_particle_domain_corners_[object_idx].begin() + particle_idx;
     initial_particle_domain_corners_[object_idx].erase(iter2);
-    typename std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > >::iterator iter3 =
-        corner_grid_weight_and_gradient_[object_idx].begin() + particle_idx;
-    corner_grid_weight_and_gradient_[object_idx].erase(iter3);
+    typename std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,Dim> > > >::iterator iter3 =
+        corner_grid_weight_[object_idx].begin() + particle_idx;
+    corner_grid_weight_[object_idx].erase(iter3);
     typename std::vector<std::vector<unsigned int> >::iterator iter4 = corner_grid_pair_num_[object_idx].begin() + particle_idx;
     corner_grid_pair_num_[object_idx].erase(iter4);
 }
