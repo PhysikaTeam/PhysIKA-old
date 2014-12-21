@@ -253,6 +253,10 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
     //3. for each of the potential colliding pair, check if they're approaching each othter and close enough
     //4. if particle pair is in contact, compute the velocity impulse on the particle
 
+    // //parameters:
+    // Scalar collide_threshold = 0.3; //distance threshold expressed with respect to grid size
+    // Scalar dist_threshold = collide_threshold * (this->grid_).minEdgeLength();
+
     // //the bucket, key: 1d grid cell index, element: a map of object index and particles
     // std::multimap<unsigned int,std::map<unsigned int,std::vector<unsigned int> > > particle_bucket;
     // typedef std::multimap<unsigned int,std::map<unsigned int,std::vector<unsigned int> > > BucketType;
@@ -292,8 +296,59 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
     // typename BucketType::iterator iter = particle_bucket.begin();
     // while(iter != particle_bucket.end())
     // {
-    //     BucketEleType &obj_particle_map = iter->second;
-        
+    //     unsigned int cell_idx_1d = iter->first;
+    //     unsigned int object_count = particle_bucket.count(cell_idx_1d);
+    //     if(object_count > 1) //multiple objects in this cell
+    //     {
+    //         std::vector<unsigned int> objects_in_this_cell;
+    //         while(object_count !=0) //element with equal key are stored in sequence in multimap
+    //         {
+    //             typename BucketEleType::iterator obj_iter = (iter->second).begin();
+    //             unsigned int obj_idx = obj_iter->first;
+    //             objects_in_this_cell.push_back(obj_idx);
+    //             ++iter;
+    //             --object_count;
+    //         }
+    //         //now resolve contact between particles
+    //         for(unsigned int i = 0; i< objects_in_this_cell.size(); ++i)
+    //         {
+    //             unsigned int obj_idx1 = objects_in_this_cell[i];
+    //             std::vector<unsigned int> &obj1_particles = particle_bucket[cell_idx_1d][obj_idx1];
+    //             for(unsigned int j = i + 1; j < objects_in_this_cell.size(); ++j)
+    //             {
+    //                 unsigned int obj_idx2 = objects_in_this_cell[j];
+    //                 std::vector<unsigned int> &obj2_particles = particle_bucket[cell_idx_1d][obj_idx2];
+    //                 for(unsigned int k = 0; k < obj1_particles.size(); ++k)
+    //                 {
+    //                     unsigned int particle_idx1 = obj1_particles[k];
+    //                     const SolidParticle<Scalar,Dim> &obj1_particle = this->particle(obj_idx1,particle_idx1);
+    //                     Vector<Scalar,Dim> particle1_pos = obj1_particle.position();
+    //                     Vector<Scalar,Dim> Particle1_vel = obj1_particle.velocity();
+    //                     //TO DO: compute particle normal of particle1
+    //                     Vector<Scalar,Dim> particle1_normal;
+    //                     for(unsigned int  m = 0; m < obj2_particles.size(); ++m)
+    //                     {
+    //                         unsigned int particle_idx2 = obj2_particles[m];
+    //                         const SolidParticle<Scalar,Dim> &obj2_particle = this->particle(obj_idx2,particle_idx2);
+    //                         Vector<Scalar,Dim> particle2_pos = obj2_particle.position();
+    //                         Vector<Scalar,Dim> particl2_vel = obj2_particle.velocity(); 
+    //                         //TO DO: compute particle normal of particle2
+    //                         Vector<Scalar,Dim> particle2_normal;
+    //                         particle1_normal = (particle1_normal - particle2_normal).normalize();
+    //                         particle2_normal = - particle1_normal;
+    //                         //necessary condition 1: close enough
+    //                         Scalar dist = (particle1_pos - particle2_pos).norm();
+    //                         if(dist < dist_threshold)
+    //                         {
+
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     else //no object or single object
+    //         ++iter;  
     // }
 }
 
@@ -571,8 +626,8 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
             }
             else //transient/enriched particle solve on domain corners
             {
-                solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
-                //solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
+                //solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
+                solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
             }
         }
     }
