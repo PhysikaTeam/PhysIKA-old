@@ -102,7 +102,7 @@ void CompressedJacobianMatrix<Scalar, Dim>::setFirstValue(unsigned int row_index
     }
     compressed_matrix_[row_index].first = value;
     index_map_[row_index].first = column_index;
-    inverted_index_map_[column_index].push_back(row_index);
+    //inverted_index_map_[column_index].push_back(row_index);
 }
 
 template<typename Scalar, int Dim>
@@ -124,7 +124,7 @@ void CompressedJacobianMatrix<Scalar, Dim>::setSecondValue(unsigned int row_inde
     }
     compressed_matrix_[row_index].second = value;
     index_map_[row_index].second = column_index;
-    inverted_index_map_[column_index].push_back(row_index);
+    //inverted_index_map_[column_index].push_back(row_index);
 }
 
 template<typename Scalar, int Dim>
@@ -174,14 +174,61 @@ unsigned int CompressedJacobianMatrix<Scalar, Dim>::secondColumnIndex(unsigned i
 }
 
 template<typename Scalar, int Dim>
+void CompressedJacobianMatrix<Scalar, Dim>::buildRelationTable()
+{
+    //initialize inverted_index_map_
+    for(unsigned int row_index = 0; row_index < num_row_element_; ++row_index)
+    {
+        inverted_index_map_[index_map_[row_index].first].push_back(row_index);
+        inverted_index_map_[index_map_[row_index].second].push_back(row_index);
+    }
+
+    //for each row, find its related rows
+    for(unsigned int row_index = 0; row_index < num_row_element_; ++row_index)
+    {
+        unsigned int first_column = firstColumnIndex(row_index);
+        unsigned int second_column = secondColumnIndex(row_index);
+        int size_first(inverted_index_map_[first_column].size()), size_second(inverted_index_map_[second_column].size());
+        relation_table_[row_index].reserve(size_first + size_second);
+
+        unsigned int pointer_first(0), pointer_second(0);
+        unsigned int last_value(100000000), current_value;
+
+        //merge two ordered arrays and ignore duplicated elements
+        while(pointer_first < size_first || pointer_second < size_second)
+        {
+            if(pointer_first == size_first)
+            {
+                current_value = inverted_index_map_[second_column][pointer_second];
+                pointer_second ++;
+            }
+            else if(pointer_second == size_second)
+            {
+                current_value = inverted_index_map_[first_column][pointer_first];
+                pointer_first ++;
+            }
+            else if(inverted_index_map_[first_column][pointer_first] < inverted_index_map_[second_column][pointer_second])
+            {
+                current_value = inverted_index_map_[first_column][pointer_first];
+                pointer_first ++;
+            }
+            else
+            {
+                current_value = inverted_index_map_[second_column][pointer_second];
+                pointer_second ++;
+            }
+            if(current_value == last_value)
+                continue;
+            relation_table_[row_index].push_back(current_value);
+            last_value = current_value;
+        }
+    }
+}
+
+template<typename Scalar, int Dim>
 void CompressedJacobianMatrix<Scalar, Dim>::relatedRows(unsigned int row_index, std::vector<unsigned int>& related_index)
 {
-    unsigned int first_column = firstColumnIndex(row_index);
-    unsigned int second_column = secondColumnIndex(row_index);
-    related_index = inverted_index_map_[first_column];
-    related_index.insert(related_index.end(), inverted_index_map_[second_column].begin(), inverted_index_map_[second_column].end());
-    std::sort(related_index.begin(), related_index.end());
-    related_index.erase(std::unique(related_index.begin(), related_index.end()), related_index.end());//remove duplicated values
+    related_index = relation_table_[row_index];
 }
 
 template<typename Scalar, int Dim>
