@@ -89,7 +89,8 @@ protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
     std::vector<VolumetricMesh<Scalar,Dim>*> particle_domain_mesh_;
-    //data attached to each domain corner (vertex of volumetric mesh element), 
+    std::vector<std::vector<unsigned int> > enriched_particles_; //the index of the particles with all corners enriched
+    //data attached to each domain corner (vertex of volumetric mesh element)
     std::vector<std::vector<unsigned char> > is_enriched_domain_corner_;  //use one byte to indicate whether it's enriched or not
     std::vector<std::vector<Scalar> > domain_corner_mass_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;

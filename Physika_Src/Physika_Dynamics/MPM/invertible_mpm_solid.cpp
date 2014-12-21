@@ -16,6 +16,7 @@
 #include <limits>
 #include <iostream>
 #include <algorithm>
+#include <map>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Arrays/array_Nd.h"
@@ -246,6 +247,54 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
     MPMSolid<Scalar,Dim>::resolveContactOnParticles(dt);
     //since some dofs are solved on domain corners, the grid fails to resolve the contact between them
     //for those particles, we resolve the contact on particle level
+    //algorithm:
+    //1. for the enriched particles of each object, put it into the bucket indexed by the grid cell
+    //2. if particles of multiple objects are in the same cell, they're potential colliding
+    //3. for each of the potential colliding pair, check if they're approaching each othter and close enough
+    //4. if particle pair is in contact, compute the velocity impulse on the particle
+
+    // //the bucket, key: 1d grid cell index, element: a map of object index and particles
+    // std::multimap<unsigned int,std::map<unsigned int,std::vector<unsigned int> > > particle_bucket;
+    // typedef std::multimap<unsigned int,std::map<unsigned int,std::vector<unsigned int> > > BucketType;
+    // typedef std::map<unsigned int,std::vector<unsigned int> > BucketEleType;
+    // Vector<unsigned,Dim> idx_dim(2);
+    // for(unsigned int obj_idx = 0; obj_idx < enriched_particles_.size(); ++obj_idx)
+    //     for(unsigned int enriched_idx = 0; enriched_idx < enriched_particles_[obj_idx].size(); ++enriched_idx)
+    //     {
+    //         unsigned int particle_idx = enriched_particles_[obj_idx][enriched_idx];
+    //         const SolidParticle<Scalar,Dim> &particle = mpm_solid_driver->particle(obj_idx,particle_idx);
+    //         Vector<Scalar,Dim> particle_pos = particle.position();
+    //         Vector<unsigned int,Dim>  cell_idx;
+    //         Vector<Scalar,Dim> bias_in_cell;
+    //         (this->grid_).cellIndexAndBiasInCell(particle_pos,cell_idx,bias_in_cell);
+    //         unsigned int cell_idx_1d = this->flatIndex(cell_idx,idx_dim);
+    //         typename BucketType::iterator cell_iter = particle_bucket.find(cell_idx_1d);
+    //         if(cell_iter != particle_bucket.end()) //the cell is not empty
+    //         {
+    //             typename BucketEleType::iterator obj_iter = particle_bucket[cell_idx_1d].find(obj_idx);
+    //             if(obj_iter != particle_bucket[cell_idx_1d].end()) //the object has particles in this cell already
+    //                 particle_bucket[cell_idx_1d][obj_idx].push_back(particle_idx);
+    //             else //the object has not register this cell
+    //             {
+    //                 std::vector<unsigned int> single_particle(1,particle_idx);
+    //                 particle_bucket[cell_idx_1d].insert(std::make_pair(obj_idx,single_particle));
+    //             }
+    //         }
+    //         else  //the cell is empty
+    //         {
+    //             BucketEleType bucket_element;
+    //             std::vector<unsigned int> single_particle(1,particle_idx);
+    //             bucket_element.insert(std::make_pair(obj_idx,single_particle));
+    //             particle_bucket.insert(std::make_pair(cell_idx_1d,bucket_element));
+    //         }
+    //     }
+    // //now we have the bucket
+    // typename BucketType::iterator iter = particle_bucket.begin();
+    // while(iter != particle_bucket.end())
+    // {
+    //     BucketEleType &obj_particle_map = iter->second;
+        
+    // }
 }
 
 template <typename Scalar, int Dim>
@@ -522,8 +571,8 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
             }
             else //transient/enriched particle solve on domain corners
             {
-                //solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
-                solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
+                solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
+                //solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
             }
         }
     }
@@ -550,6 +599,8 @@ void InvertibleMPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
     std::vector<Vector<Scalar,Dim>> one_particle_corner_gradient(corner_num);
     std::vector<std::vector<Vector<Scalar,Dim> > > all_particle_corner_gradient(particle_num_of_last_object,one_particle_corner_gradient);
     particle_corner_gradient_.push_back(all_particle_corner_gradient);
+    std::vector<unsigned int> empty_enriched_particles;
+    enriched_particles_.push_back(empty_enriched_particles);
 }
 
 template <typename Scalar, int Dim>
@@ -571,6 +622,8 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsign
     particle_corner_weight_.erase(iter1);
     typename std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > >::iterator iter2 = particle_corner_gradient_.begin() + object_idx;
     particle_corner_gradient_.erase(iter2);
+    std::vector<std::vector<unsigned int> >::iterator iter3 = enriched_particles_.begin() + object_idx;
+    enriched_particles_.erase(iter3);
 }
  
 template <typename Scalar, int Dim>
@@ -597,6 +650,7 @@ void InvertibleMPMSolid<Scalar,Dim>::resetParticleDomainData()
             domain_corner_velocity_[obj_idx][domain_corner_idx] = zero_vel;
             domain_corner_velocity_before_[obj_idx][domain_corner_idx] = zero_vel;
         }
+        enriched_particles_[obj_idx].clear(); //clear enriched particles
     }
 }
 
@@ -701,6 +755,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleDomainEnrichState()
                     unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
                     is_enriched_domain_corner_[obj_idx][global_corner_idx] = 0x01;
                 }
+                enriched_particles_[obj_idx].push_back(particle_idx); //store the enriched particle index
             }
         }
 }
