@@ -15,6 +15,7 @@
 #include "Physika_Geometry/Bounding_Volume/bounding_volume.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_kdop18.h"
 #include "Physika_Geometry/Bounding_Volume/bounding_volume_octagon.h"
+#include "Physika_Geometry/Bounding_Volume/bounding_volume_axisAlignedBox.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
@@ -29,6 +30,7 @@ BoundingVolume<Scalar, Dim>* createBoundingVolume(BVType bv_type)
     {
     case KDOP18: bounding_volume = dynamic_cast<BoundingVolume<Scalar, Dim>* >(new BoundingVolumeKDOP18<Scalar>());break;
     case OCTAGON: bounding_volume = dynamic_cast<BoundingVolume<Scalar, Dim>* >(new BoundingVolumeOctagon<Scalar>());break;
+	case AXIS_ALIGNED_BOX: bounding_volume = dynamic_cast<BoundingVolume<Scalar, Dim>* >(new BoundingVolumeAxisAlignedBox<Scalar>());break;
     default: std::cerr<<"Wrong bounding volume type!"<<std::endl;bounding_volume = NULL;break;
     }
     return bounding_volume;

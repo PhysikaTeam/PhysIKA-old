@@ -16,6 +16,7 @@
 #define PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_MESH_BASED_COLLIDABLE_OBJECT_H_
 
 #include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
+#include <vector>
 
 namespace Physika{
 
@@ -49,14 +50,19 @@ public:
 	bool collideWithMesh(MeshBasedCollidableObject<Scalar>* object, unsigned int face_index_lhs, unsigned int face_index_rhs);
 
     //overlapPoint is the position of overlap. It will be changed after test if overlap is true.
-	static bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, Vector<Scalar, 3>& overlap_point);
+	static bool overlapEdgeTriangle(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& face_normal, Vector<Scalar, 3>& overlap_point);
 	static bool overlapEdgeQuad(const Vector<Scalar, 3>& vertex_edge_a, const Vector<Scalar, 3>& vertex_edge_b, const Vector<Scalar, 3>& vertex_face_a, const Vector<Scalar, 3>& vertex_face_b, const Vector<Scalar, 3>& vertex_face_c, const Vector<Scalar, 3>& vertex_face_d, Vector<Scalar, 3>& overlap_point);
 	
+	void updateVertPosVec();
+
 protected:
 	//mesh_ is used to define the shape of object, while transform_ is used to define the configuration
 	//For deformable object which only updates mesh_, transform_ can be set to identity
 	SurfaceMesh<Scalar>* mesh_;
 	Transform<Scalar, 3>* transform_;
+
+	//note: the vector is used to store all vertex position of mesh after transform, the motivation is to improve performance
+	std::vector<Vector<Scalar,3> > vert_pos_vec_;
 
 };
 

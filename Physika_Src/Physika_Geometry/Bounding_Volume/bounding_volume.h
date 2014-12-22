@@ -20,7 +20,7 @@ namespace Physika{
 template <typename Scalar,int Dim> class BoundingVolume;
 
 namespace BoundingVolumeInternal{
-    enum BVType {KDOP18, OCTAGON};
+    enum BVType {KDOP18, OCTAGON, AXIS_ALIGNED_BOX};
 
     template<typename Scalar, int Dim>
     BoundingVolume<Scalar, Dim>* createBoundingVolume(BVType bv_type);

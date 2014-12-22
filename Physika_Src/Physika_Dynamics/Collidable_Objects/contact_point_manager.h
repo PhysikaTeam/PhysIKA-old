@@ -34,6 +34,7 @@ public:
     //get & set
     void setCollisionResult(CollisionPairManager<Scalar, Dim>& collision_result);
     unsigned int numContactPoint() const;
+
     ContactPoint<Scalar, Dim>* contactPoint(unsigned int contact_index);
     const std::vector<ContactPoint<Scalar, Dim>* >& contactPoints() const;
     std::vector<ContactPoint<Scalar, Dim>* >& contactPoints();

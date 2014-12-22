@@ -75,6 +75,7 @@ void SceneBVHNode<Scalar, Dim>::resize()
 {
 	if(object_bvh_ == NULL)
 		return;
+	object_bvh_->updateCollidableObjVertPosVec();
 	object_bvh_->refit();
 	buildFromObjectBVH();
 }

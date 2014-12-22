@@ -28,6 +28,7 @@ BVHBase<Scalar, Dim>::BVHBase():
 {
     if(Dim == 3)
         bv_type_ = BoundingVolumeInternal::KDOP18;
+		//bv_type_ = BoundingVolumeInternal::AXIS_ALIGNED_BOX;
     else
         bv_type_ = BoundingVolumeInternal::OCTAGON;
 }
@@ -83,9 +84,9 @@ template <typename Scalar,int Dim>
 bool BVHBase<Scalar, Dim>::isEmpty() const
 {
 	if(root_node_ != NULL || numLeaf() != 0)
-		return true;
-	else
 		return false;
+	else
+		return true;
 }
 
 template <typename Scalar,int Dim>

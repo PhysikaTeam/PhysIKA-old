@@ -33,6 +33,9 @@ public:
 	//get & set
 	const CollidableObject<Scalar, Dim>* const collidableObject() const;
 	void setCollidableObject(CollidableObject<Scalar, Dim>* collidable_object);
+
+	// the function is used to update vert_pos_vec_ of Colliadble Object
+	void updateCollidableObjVertPosVec();
 	
 protected:
 	CollidableObject<Scalar, Dim>* collidable_object_;

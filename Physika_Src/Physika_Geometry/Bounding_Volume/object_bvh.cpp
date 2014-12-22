@@ -79,22 +79,27 @@ void ObjectBVH<Scalar, Dim>::buildFromMeshObject(MeshBasedCollidableObject<Scala
     }
 	ObjectBVHNode<Scalar, Dim>* node = NULL;
 
-	unsigned int group_num = mesh->numGroups();
-    for(unsigned int group_idx = 0; group_idx < group_num; ++group_idx)
-    {
-		FaceGroup<Scalar>& group = mesh->group(group_idx);
-		unsigned int face_num = group.numFaces();
-        for(unsigned int face_idx = 0; face_idx < face_num; ++face_idx)
-		{
-			node = new ObjectBVHNode<Scalar, Dim>();
-			node->setLeaf(true);
-			node->setBVType(this->bv_type_);
-			node->setObject(dynamic_cast<CollidableObject<Scalar, Dim>* >(collidable_object));
-			node->setFaceIndex(face_idx);
-			this->addNode(node);
-		}
-    }
+	// update collidable Object vert_pos_vec_;
+	updateCollidableObjVertPosVec();
+	unsigned int face_num = mesh->numFaces();          
+	for (unsigned int face_idx = 0; face_idx < face_num; face_idx++)
+	{
+		node = new ObjectBVHNode<Scalar, Dim>();
+		node->setLeaf(true);
+		node->setBVType(this->bv_type_);
+		node->setObject(dynamic_cast<CollidableObject<Scalar, Dim>* >(collidable_object));
+		node->setFaceIndex(face_idx);
+		this->addNode(node);
+	}
+
 	this->root_node_ = BVHBase<Scalar, Dim>::buildFromLeafList(0, this->numLeaf());
+}
+
+template <typename Scalar, int Dim>
+void ObjectBVH<Scalar, Dim>::updateCollidableObjVertPosVec()
+{
+	MeshBasedCollidableObject<Scalar> * object = dynamic_cast<MeshBasedCollidableObject<Scalar>*>(collidable_object_);
+	object->updateVertPosVec();
 }
 
 template class ObjectBVH<float, 2>;

@@ -149,13 +149,13 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     Vector<Scalar, 3> contact_normal_lhs(0);
 
     //test each edge of lhs with the face of rhs
+	Vector<Scalar,3> mesh_rhs_face_normal = collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx());
     for(unsigned int i = 0; i < num_vertex_lhs; i++)
     {
         if(is_rhs_tri)//triangle
         {
-            if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_lhs[i], vertex_lhs[(i + 1)%num_vertex_lhs], vertex_rhs[0], vertex_rhs[1], vertex_rhs[2], mesh_rhs_face_normal, temp_overlap_point))
             {
-                Vector<Scalar,3> mesh_rhs_face_normal = collision_pair->meshObjectRhs()->faceNormal(collision_pair->faceRhsIdx());
                 ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectLhsIdx(), collision_pair->objectRhsIdx(),
                     *dynamic_cast<Vector<Scalar, Dim>*>(&temp_overlap_point), 
                     *dynamic_cast<Vector<Scalar, Dim>*>(&mesh_rhs_face_normal) * (-1));
@@ -175,13 +175,13 @@ void ContactPointManager<Scalar, Dim>::getMeshContactPoint(CollisionPairMeshToMe
     }
 
     //test each edge of rhs with the face of lhs
+	Vector<Scalar,3> mesh_lhs_face_normal = collision_pair->meshObjectLhs()->faceNormal(collision_pair->faceLhsIdx());
     for(unsigned int i = 0; i < num_vertex_rhs; i++)
     {
         if(is_lhs_tri)//triangle
         {
-            if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], temp_overlap_point))
+            if(MeshBasedCollidableObject<Scalar>::overlapEdgeTriangle(vertex_rhs[i], vertex_rhs[(i + 1)%num_vertex_rhs], vertex_lhs[0], vertex_lhs[1], vertex_lhs[2], mesh_lhs_face_normal, temp_overlap_point))
             {
-                Vector<Scalar,3> mesh_lhs_face_normal = collision_pair->meshObjectLhs()->faceNormal(collision_pair->faceLhsIdx());
                 ContactPoint<Scalar, Dim>* contact_point = new ContactPoint<Scalar, Dim>(numContactPoint(), collision_pair->objectRhsIdx(), collision_pair->objectLhsIdx(),
                     *dynamic_cast<Vector<Scalar, Dim>*>(&temp_overlap_point), 
                     *dynamic_cast<Vector<Scalar, Dim>*>(&mesh_lhs_face_normal) * (-1));

@@ -41,9 +41,9 @@ public:
 	//structure maintain
 	void setCurrentObjectIndex(unsigned int current_object_lhs_idx, unsigned int current_object_rhs_idx);
 	void addPCS();
-	void addCollisionPair(CollisionPairBase<Scalar, Dim>* collision_pair);
 	void cleanCollisionPairs();//clean PCS and collision pairs
-
+	
+	void addCollisionPair(CollisionPairBase<Scalar, Dim>* collision_pair);
 	void addCollisionPair(MeshBasedCollidableObject<Scalar>* object_lhs, MeshBasedCollidableObject<Scalar>* object_rhs, unsigned int face_lhs_index, unsigned int face_rhs_index);
 
 protected:
@@ -58,6 +58,6 @@ protected:
 	std::vector<CollisionPairBase<Scalar, Dim>*> collision_pairs_;
 };
 
-}  //end of namespace Physikas
+}  //end of namespace Physika
 
 #endif  //PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_PAIR_MANAGER_H_

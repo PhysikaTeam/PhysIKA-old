@@ -67,6 +67,7 @@ public:
 	CollidableObject<Scalar, 3>* objectLhs();
 	const CollidableObject<Scalar, 3>* objectRhs() const;
 	CollidableObject<Scalar, 3>* objectRhs();
+
 	const MeshBasedCollidableObject<Scalar>* meshObjectLhs() const;
 	MeshBasedCollidableObject<Scalar>* meshObjectLhs();
 	const MeshBasedCollidableObject<Scalar>* meshObjectRhs() const;
@@ -77,6 +78,7 @@ public:
 	SurfaceMeshInternal::Face<Scalar>* faceRhsPtr();
 	unsigned int faceLhsIdx() const;
 	unsigned int faceRhsIdx() const;
+
 	unsigned int objectLhsIdx() const;
 	unsigned int objectRhsIdx() const;
 
@@ -91,6 +93,6 @@ protected:
 	SurfaceMeshInternal::Face<Scalar>* face_rhs_;
 };
 
-}  //end of namespace Physikas
+}  //end of namespace Physika
 
 #endif  //PHYSIKA_DYNAMICS_COLLIDABLE_OBJECTS_COLLISION_PAIR_H_
