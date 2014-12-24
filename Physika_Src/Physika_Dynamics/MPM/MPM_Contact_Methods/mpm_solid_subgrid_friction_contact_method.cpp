@@ -344,7 +344,8 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoO
             for(unsigned int j = 0; j < particles_obj2.size(); ++j)
             {
                 const SolidParticle<Scalar,Dim> &particle2 = mpm_solid_driver->particle(object_idx2,particles_obj2[j]);
-                Scalar dist = (particle1.position() - particle2.position()).dot(obj1_normal);
+                //Scalar dist = (particle1.position() - particle2.position()).dot(obj1_normal);
+                Scalar dist = (particle1.position() - particle2.position()).norm();
                 if(dist < 0)
                     dist = -dist;
                 if(dist < min_dist)

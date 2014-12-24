@@ -26,6 +26,7 @@
 #include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI2_update_method.h"
+#include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/invertible_mpm_solid.h"
 
@@ -244,6 +245,7 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
 {
+    //NOTE: THIS CODE IS EXPERIMENTAL!!!
     MPMSolid<Scalar,Dim>::resolveContactOnParticles(dt);
     //since some dofs are solved on domain corners, the grid fails to resolve the contact between them
     //for those particles, we resolve the contact on particle level
@@ -253,103 +255,214 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
     //3. for each of the potential colliding pair, check if they're approaching each othter and close enough
     //4. if particle pair is in contact, compute the velocity impulse on the particle
 
-    // //parameters:
-    // Scalar collide_threshold = 0.3; //distance threshold expressed with respect to grid size
-    // Scalar dist_threshold = collide_threshold * (this->grid_).minEdgeLength();
+    if(this->objectNum() <= 1)  //no contact for single body, save computation
+        return;
 
-    // //the bucket, key: 1d grid cell index, element: a map of object index and particles
-    // std::multimap<unsigned int,std::map<unsigned int,std::vector<unsigned int> > > particle_bucket;
-    // typedef std::multimap<unsigned int,std::map<unsigned int,std::vector<unsigned int> > > BucketType;
-    // typedef std::map<unsigned int,std::vector<unsigned int> > BucketEleType;
-    // Vector<unsigned,Dim> idx_dim(2);
-    // for(unsigned int obj_idx = 0; obj_idx < enriched_particles_.size(); ++obj_idx)
-    //     for(unsigned int enriched_idx = 0; enriched_idx < enriched_particles_[obj_idx].size(); ++enriched_idx)
-    //     {
-    //         unsigned int particle_idx = enriched_particles_[obj_idx][enriched_idx];
-    //         const SolidParticle<Scalar,Dim> &particle = mpm_solid_driver->particle(obj_idx,particle_idx);
-    //         Vector<Scalar,Dim> particle_pos = particle.position();
-    //         Vector<unsigned int,Dim>  cell_idx;
-    //         Vector<Scalar,Dim> bias_in_cell;
-    //         (this->grid_).cellIndexAndBiasInCell(particle_pos,cell_idx,bias_in_cell);
-    //         unsigned int cell_idx_1d = this->flatIndex(cell_idx,idx_dim);
-    //         typename BucketType::iterator cell_iter = particle_bucket.find(cell_idx_1d);
-    //         if(cell_iter != particle_bucket.end()) //the cell is not empty
-    //         {
-    //             typename BucketEleType::iterator obj_iter = particle_bucket[cell_idx_1d].find(obj_idx);
-    //             if(obj_iter != particle_bucket[cell_idx_1d].end()) //the object has particles in this cell already
-    //                 particle_bucket[cell_idx_1d][obj_idx].push_back(particle_idx);
-    //             else //the object has not register this cell
-    //             {
-    //                 std::vector<unsigned int> single_particle(1,particle_idx);
-    //                 particle_bucket[cell_idx_1d].insert(std::make_pair(obj_idx,single_particle));
-    //             }
-    //         }
-    //         else  //the cell is empty
-    //         {
-    //             BucketEleType bucket_element;
-    //             std::vector<unsigned int> single_particle(1,particle_idx);
-    //             bucket_element.insert(std::make_pair(obj_idx,single_particle));
-    //             particle_bucket.insert(std::make_pair(cell_idx_1d,bucket_element));
-    //         }
-    //     }
-    // //now we have the bucket
-    // typename BucketType::iterator iter = particle_bucket.begin();
-    // while(iter != particle_bucket.end())
-    // {
-    //     unsigned int cell_idx_1d = iter->first;
-    //     unsigned int object_count = particle_bucket.count(cell_idx_1d);
-    //     if(object_count > 1) //multiple objects in this cell
-    //     {
-    //         std::vector<unsigned int> objects_in_this_cell;
-    //         while(object_count !=0) //element with equal key are stored in sequence in multimap
-    //         {
-    //             typename BucketEleType::iterator obj_iter = (iter->second).begin();
-    //             unsigned int obj_idx = obj_iter->first;
-    //             objects_in_this_cell.push_back(obj_idx);
-    //             ++iter;
-    //             --object_count;
-    //         }
-    //         //now resolve contact between particles
-    //         for(unsigned int i = 0; i< objects_in_this_cell.size(); ++i)
-    //         {
-    //             unsigned int obj_idx1 = objects_in_this_cell[i];
-    //             std::vector<unsigned int> &obj1_particles = particle_bucket[cell_idx_1d][obj_idx1];
-    //             for(unsigned int j = i + 1; j < objects_in_this_cell.size(); ++j)
-    //             {
-    //                 unsigned int obj_idx2 = objects_in_this_cell[j];
-    //                 std::vector<unsigned int> &obj2_particles = particle_bucket[cell_idx_1d][obj_idx2];
-    //                 for(unsigned int k = 0; k < obj1_particles.size(); ++k)
-    //                 {
-    //                     unsigned int particle_idx1 = obj1_particles[k];
-    //                     const SolidParticle<Scalar,Dim> &obj1_particle = this->particle(obj_idx1,particle_idx1);
-    //                     Vector<Scalar,Dim> particle1_pos = obj1_particle.position();
-    //                     Vector<Scalar,Dim> Particle1_vel = obj1_particle.velocity();
-    //                     //TO DO: compute particle normal of particle1
-    //                     Vector<Scalar,Dim> particle1_normal;
-    //                     for(unsigned int  m = 0; m < obj2_particles.size(); ++m)
-    //                     {
-    //                         unsigned int particle_idx2 = obj2_particles[m];
-    //                         const SolidParticle<Scalar,Dim> &obj2_particle = this->particle(obj_idx2,particle_idx2);
-    //                         Vector<Scalar,Dim> particle2_pos = obj2_particle.position();
-    //                         Vector<Scalar,Dim> particl2_vel = obj2_particle.velocity(); 
-    //                         //TO DO: compute particle normal of particle2
-    //                         Vector<Scalar,Dim> particle2_normal;
-    //                         particle1_normal = (particle1_normal - particle2_normal).normalize();
-    //                         particle2_normal = - particle1_normal;
-    //                         //necessary condition 1: close enough
-    //                         Scalar dist = (particle1_pos - particle2_pos).norm();
-    //                         if(dist < dist_threshold)
-    //                         {
+    //parameters:
+    Scalar collide_threshold = 0.2; //distance threshold expressed with respect to grid size
+    Scalar dist_threshold = collide_threshold * (this->grid_).minEdgeLength();
 
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     else //no object or single object
-    //         ++iter;  
-    // }
+    //compute normal on grid nodes
+    Vector<unsigned int,Dim> grid_node_num = (this->grid_).nodeNum();
+    Vector<Scalar,Dim> grid_dx = (this->grid_).dX();
+    ArrayND<std::map<unsigned int,Vector<Scalar,Dim> >,Dim> grid_normal(grid_node_num);
+    typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
+    for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+    {
+        for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
+            Vector<Scalar,Dim> particle_pos = particle->position();
+            for(InfluenceIterator iter(this->grid_,particle_pos,*(this->weight_function_)); iter.valid(); ++iter)
+            {
+                Vector<unsigned int,Dim> node_idx = iter.nodeIndex();
+                Vector<Scalar,Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
+                for(unsigned int dim = 0; dim < Dim; ++dim)
+                    particle_to_node[dim] /= grid_dx[dim];
+                Scalar weight = this->weight_function_->weight(particle_to_node);
+                 //ignore nodes that has zero weight value, assume positve weight value
+                if(weight > std::numeric_limits<Scalar>::epsilon()) 
+                {
+                    Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node);
+                    typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator normal_iter = grid_normal(node_idx).find(obj_idx);
+                    if(normal_iter != grid_normal(node_idx).end())
+                        grid_normal(node_idx)[obj_idx] += weight_gradient*particle->mass();
+                    else
+                        grid_normal(node_idx).insert(std::make_pair(obj_idx,weight_gradient*particle->mass()));
+                }
+            }
+        }
+    }
+    //the bucket, key: 1d grid cell index, element: a map of object index and particles
+    std::map<unsigned int,std::map<unsigned int,std::vector<unsigned int> > > particle_bucket;
+    typedef std::map<unsigned int,std::map<unsigned int,std::vector<unsigned int> > > BucketType;
+    typedef std::map<unsigned int,std::vector<unsigned int> > BucketEleType;
+    std::map<unsigned int,std::map<unsigned int,std::vector<Vector<Scalar,Dim> > > > particle_bias_in_cell;
+    Vector<unsigned,Dim> idx_dim = (this->grid_).cellNum();
+    for(unsigned int obj_idx = 0; obj_idx < enriched_particles_.size(); ++obj_idx)
+        for(unsigned int enriched_idx = 0; enriched_idx < enriched_particles_[obj_idx].size(); ++enriched_idx)
+        {
+            unsigned int particle_idx = enriched_particles_[obj_idx][enriched_idx];
+            const SolidParticle<Scalar,Dim> &particle = this->particle(obj_idx,particle_idx);
+            Vector<Scalar,Dim> particle_pos = particle.position();
+            Vector<unsigned int,Dim>  cell_idx;
+            Vector<Scalar,Dim> bias_in_cell;
+            (this->grid_).cellIndexAndBiasInCell(particle_pos,cell_idx,bias_in_cell);
+            unsigned int cell_idx_1d = this->flatIndex(cell_idx,idx_dim);
+            typename BucketType::iterator cell_iter = particle_bucket.find(cell_idx_1d);
+            if(cell_iter != particle_bucket.end()) //the cell is not empty
+            {
+                typename BucketEleType::iterator obj_iter = particle_bucket[cell_idx_1d].find(obj_idx);
+                if(obj_iter != particle_bucket[cell_idx_1d].end()) //the object has particles in this cell already
+                {
+                    particle_bucket[cell_idx_1d][obj_idx].push_back(particle_idx);
+                    particle_bias_in_cell[cell_idx_1d][obj_idx].push_back(bias_in_cell);
+                }
+                else //the object has not register this cell
+                {
+                    std::vector<unsigned int> single_particle(1,particle_idx);
+                    particle_bucket[cell_idx_1d].insert(std::make_pair(obj_idx,single_particle));
+                    std::vector<Vector<Scalar,Dim> > single_particle_bias(1,bias_in_cell);
+                    particle_bias_in_cell[cell_idx_1d].insert(std::make_pair(obj_idx,single_particle_bias));
+                }
+            }
+            else  //the cell is empty
+            {
+                BucketEleType bucket_element;
+                std::vector<unsigned int> single_particle(1,particle_idx);
+                bucket_element.insert(std::make_pair(obj_idx,single_particle));
+                particle_bucket.insert(std::make_pair(cell_idx_1d,bucket_element));
+                std::map<unsigned int, std::vector<Vector<Scalar,Dim> > > bias_element;
+                std::vector<Vector<Scalar,Dim> > single_particle_bias(1,bias_in_cell);
+                bias_element.insert(std::make_pair(obj_idx,single_particle_bias));
+                particle_bias_in_cell.insert(std::make_pair(cell_idx_1d,bias_element));
+            }
+        }
+    //now we have the bucket
+    typename BucketType::iterator iter = particle_bucket.begin();
+    while(iter != particle_bucket.end())
+    {
+        unsigned int cell_idx_1d = iter->first;
+        unsigned int object_count = particle_bucket[cell_idx_1d].size();
+        ++iter;
+        if(object_count <= 1) //single object or no object
+            continue;
+        std::vector<unsigned int> objects_in_this_cell;
+        for(typename BucketEleType::iterator obj_iter = particle_bucket[cell_idx_1d].begin(); obj_iter != particle_bucket[cell_idx_1d].end(); ++obj_iter)
+        {
+            unsigned int obj_idx = obj_iter->first;
+            objects_in_this_cell.push_back(obj_idx);
+        }
+        //now resolve contact between particles
+        Vector<unsigned int,Dim> cell_idx = this->multiDimIndex(cell_idx_1d,idx_dim);
+        for(unsigned int i = 0; i< objects_in_this_cell.size(); ++i)
+        {
+            unsigned int obj_idx1 = objects_in_this_cell[i];
+            std::vector<unsigned int> &obj1_particles = particle_bucket[cell_idx_1d][obj_idx1];
+            for(unsigned int j = i + 1; j < objects_in_this_cell.size(); ++j)
+            {
+                unsigned int obj_idx2 = objects_in_this_cell[j];
+                std::vector<unsigned int> &obj2_particles = particle_bucket[cell_idx_1d][obj_idx2];
+                for(unsigned int k = 0; k < obj1_particles.size(); ++k)
+                {
+                    unsigned int particle_idx1 = obj1_particles[k];
+                    SolidParticle<Scalar,Dim> &obj1_particle = this->particle(obj_idx1,particle_idx1);
+                    Vector<Scalar,Dim> particle1_pos = obj1_particle.position();
+                    Vector<Scalar,Dim> particle1_vel = obj1_particle.velocity();
+                    Scalar particle1_mass = obj1_particle.mass();
+                    Vector<Scalar,Dim> particle1_normal(0);
+                    //interpolate particle normal from the cell nodes
+                    if(Dim == 2)
+                    {
+                        Vector<unsigned int,Dim> node_idx = cell_idx;
+                        for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
+                            for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
+                            {
+                                Scalar weight = (idx_x == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx1][k][0]) : particle_bias_in_cell[cell_idx_1d][obj_idx1][k][0];
+                                weight *= (idx_y == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx1][k][1]) : particle_bias_in_cell[cell_idx_1d][obj_idx1][k][1];
+                                node_idx[0] += idx_x;
+                                node_idx[1] += idx_y;
+                                particle1_normal += weight * (grid_normal(node_idx)[obj_idx1].normalize());
+                            }
+                    }
+                    else if(Dim == 3)
+                    {
+                        Vector<unsigned int,Dim> node_idx = cell_idx;
+                        for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
+                            for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
+                                for(unsigned int idx_z = 0; idx_z < 2; ++idx_z)
+                                {
+                                    Scalar weight = (idx_x == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx1][k][0]) : particle_bias_in_cell[cell_idx_1d][obj_idx1][k][0];
+                                    weight *= (idx_y == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx1][k][1]) : particle_bias_in_cell[cell_idx_1d][obj_idx1][k][1];
+                                    weight *= (idx_z == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx1][k][2]) : particle_bias_in_cell[cell_idx_1d][obj_idx1][k][2];
+                                    node_idx[0] += idx_x;
+                                    node_idx[1] += idx_y;
+                                    node_idx[2] += idx_z;
+                                    particle1_normal += weight * (grid_normal(node_idx)[obj_idx1].normalize());
+                                }
+                    }
+                    else
+                        PHYSIKA_ERROR("Wrong dimension specified!");
+                    particle1_normal.normalize();
+                    for(unsigned int  m = 0; m < obj2_particles.size(); ++m)
+                    {
+                        unsigned int particle_idx2 = obj2_particles[m];
+                        SolidParticle<Scalar,Dim> &obj2_particle = this->particle(obj_idx2,particle_idx2);
+                        Vector<Scalar,Dim> particle2_pos = obj2_particle.position();
+                        Vector<Scalar,Dim> particle2_vel = obj2_particle.velocity();
+                        Scalar particle2_mass = obj2_particle.mass();
+                        Vector<Scalar,Dim> particle2_normal;
+                        //interpolate particle normal from the cell nodes
+                        if(Dim == 2)
+                        {
+                            Vector<unsigned int,Dim> node_idx = cell_idx;
+                            for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
+                                for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
+                                {
+                                    Scalar weight = (idx_x == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx2][m][0]) : particle_bias_in_cell[cell_idx_1d][obj_idx2][m][0];
+                                    weight *= (idx_y == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx2][m][1]) : particle_bias_in_cell[cell_idx_1d][obj_idx2][m][1];
+                                    node_idx[0] += idx_x;
+                                    node_idx[1] += idx_y;
+                                    particle2_normal += weight * (grid_normal(node_idx)[obj_idx2].normalize());
+                                }
+                        }
+                        else if(Dim == 3)
+                        {
+                            Vector<unsigned int,Dim> node_idx = cell_idx;
+                            for(unsigned int idx_x = 0; idx_x < 2; ++idx_x)
+                                for(unsigned int idx_y = 0; idx_y < 2; ++idx_y)
+                                    for(unsigned int idx_z = 0; idx_z < 2; ++idx_z)
+                                    {
+                                        Scalar weight = (idx_x == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx2][m][0]) : particle_bias_in_cell[cell_idx_1d][obj_idx2][m][0];
+                                        weight *= (idx_y == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx2][m][1]) : particle_bias_in_cell[cell_idx_1d][obj_idx2][m][1];
+                                        weight *= (idx_z == 0) ?  (1 - particle_bias_in_cell[cell_idx_1d][obj_idx2][m][2]) : particle_bias_in_cell[cell_idx_1d][obj_idx2][m][2];
+                                        node_idx[0] += idx_x;
+                                        node_idx[1] += idx_y;
+                                        node_idx[2] += idx_z;
+                                        particle2_normal += weight * (grid_normal(node_idx)[obj_idx2].normalize());
+                                    }
+                        }
+                        else
+                            PHYSIKA_ERROR("Wrong dimension specified!");
+                        particle2_normal.normalize();
+                        particle1_normal = (particle1_normal - particle2_normal).normalize();
+                        particle2_normal = - particle1_normal;
+                        //necessary condition 1: close enough
+                        Scalar dist = (particle1_pos - particle2_pos).norm();
+                        //necessary condition 2: approach each other
+                        Vector<Scalar,Dim> vel_delta = particle1_vel - particle2_vel;
+                        if(dist < dist_threshold && vel_delta.dot(particle1_normal) > 0)
+                        {
+                            //simple contact model: two particles have the same new velocity
+                            Vector<Scalar,Dim> new_vel = (particle1_mass*particle1_vel+particle2_mass*particle2_vel)/(particle1_mass+particle2_mass);
+                            obj1_particle.setVelocity(new_vel);
+                            obj2_particle.setVelocity(new_vel);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -626,8 +739,8 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
             }
             else //transient/enriched particle solve on domain corners
             {
-                //solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
-                solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
+                solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
+                //solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
             }
         }
     }
@@ -776,22 +889,23 @@ void InvertibleMPMSolid<Scalar,Dim>::clearParticleDomainMesh()
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
-    // // unsigned int obj_num = this->objectNum();
-    // // PHYSIKA_ASSERT(obj_idx<obj_num);
-    // // unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    // // PHYSIKA_ASSERT(particle_idx<particle_num);
-    // // // //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
-    // // // //the dirichlet boundary is correctly enforced in this way
-    // // // for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
-    // // // {
-    // // //     Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
-    // // //     if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
-    // // //         return false;
-    // // // }
-    // // // //rule two: only enrich while compression
-    //if(this->particles_[obj_idx][particle_idx]->volume() <0.2 * this->particle_initial_volume_[obj_idx][particle_idx])
-    return true;
-    //return false;
+    // unsigned int obj_num = this->objectNum();
+    // PHYSIKA_ASSERT(obj_idx<obj_num);
+    // unsigned int particle_num = this->particleNumOfObject(obj_idx);
+    // PHYSIKA_ASSERT(particle_idx<particle_num);
+    // //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
+    // //the dirichlet boundary is correctly enforced in this way
+    // for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+    // {
+    //     Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
+    //     if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
+    //         return false;
+    // }
+    // //rule two: only enrich while compression
+    // Scalar compression_threshold = 0.5;
+    // if(this->particles_[obj_idx][particle_idx]->volume() <compression_threshold * this->particle_initial_volume_[obj_idx][particle_idx])
+        return true;
+    // return false;
     //TO DO
 }
 
