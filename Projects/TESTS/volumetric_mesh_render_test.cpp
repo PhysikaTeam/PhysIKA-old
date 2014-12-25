@@ -58,6 +58,9 @@ TetMesh<double> tet_mesh(7,tetvp,2,eletet);
 VolumetricMeshRender<double,3> meshRender;
 VolumetricMeshRender<double,3> meshRender2;
 VolumetricMesh<double,3>* vol_mesh;
+TetMesh<double> vol_mesh2;
+TetMesh<double> vol_mesh3;
+TetMesh<double> vol_mesh4;
 
 vector<unsigned int> element_id;
 vector<unsigned int> vertex_id;
@@ -74,7 +77,7 @@ void displayFunction()
     meshRender.disableRenderSolid();
     //meshRender.disableRenderWireframe();
     //meshRender.disableRenderVertices();
-    //meshRender.enableRenderVertices();
+    meshRender.enableRenderVertices();
     meshRender.enableRenderWireframe();
     glColor4f(1,0,0,1.0);
     meshRender.renderSolidWithAlpha(0.05);
@@ -107,11 +110,12 @@ void initFunction()
     
     //color_vector.push_back(Color<float>(1,0,0));
     //color_vector.push_back(Color<float>(0,1,0));
-    vol_mesh = VolumetricMeshIO<double,3>::load("e.smesh");
+    vol_mesh = VolumetricMeshIO<double,3>::load("volumetricMesh/block.smesh");
 
-    meshRender.setVolumetricMesh(vol_mesh);
+    
 	meshRender.printInfo();
-	getchar();
+
+	//getchar();
     vol_mesh->printInfo();
     cout<<"vertNum:"<<vol_mesh->vertNum()<<endl;
     cout<<"eleNum:"<<vol_mesh->eleNum()<<endl;
@@ -126,6 +130,37 @@ void initFunction()
         element_id.push_back(i);
         vertex_id.push_back(i);
     }
+
+	/**************************************************************************/
+	//construct vol_mesh2
+	for (unsigned int i=0; i<21; i++)
+		for (unsigned int j=0; j<21; j++)
+		{
+			vol_mesh2.addVertex(Vector<double,3>(-5+i*0.5,5-j*0.5,0.0));
+		}
+	VolumetricMeshIO<double,3>::save("volumetricMesh/square.smesh",&vol_mesh2);
+
+	//construct vol_mesh3
+	for (unsigned int i=0; i<7; i++)
+		for (unsigned int j=0; j<7; j++)
+			for (unsigned int k=0; k<21; k++)
+			{
+				vol_mesh3.addVertex(Vector<double,3>(-1.5+i*0.5,5-0.5*k,-1.5+j*0.5));
+			}
+	VolumetricMeshIO<double,3>::save("volumetricMesh/bar2.smesh",&vol_mesh3);
+
+	//construct vol_mesh4
+	for (unsigned int i=0; i<21; i++)
+		for (unsigned int j=0; j<21; j++)
+			for (unsigned int k=0; k<10; k++)
+			{
+				vol_mesh4.addVertex(Vector<double,3>(-5+i*0.5,5-0.5*j,-1+k*0.2));
+			}
+			VolumetricMeshIO<double,3>::save("volumetricMesh/block.smesh",&vol_mesh4);
+
+	vol_mesh = VolumetricMeshIO<double,3>::load("volumetricMesh/square.smesh");
+	meshRender.setVolumetricMesh(vol_mesh);
+
 }
 
 void keyboardFunction(unsigned char key, int x, int y )
@@ -148,7 +183,7 @@ int main()
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
     glut_window.setCameraPosition(Vector<double,3>(0,0,200));
     glut_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
-    glut_window.setCameraNearClip(0.001);
+    glut_window.setCameraNearClip(0.1);
     glut_window.setCameraFarClip(1.0e4);
     glut_window.setDisplayFunction(displayFunction);
     glut_window.setInitFunction(initFunction);
@@ -157,20 +192,6 @@ int main()
     glut_window.setIdleFunction(idleFunction);
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
     cout<<"Test window with GLUI controls:\n";
-    /*
-    GluiWindow glui_window;
-    glui_window.setDisplayFunction(displayFunction);
-    glui_window.setCameraPosition(Vector<double,3>(0,0,200));
-    glui_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
-    glui_window.setCameraNearClip(0.001);
-    glui_window.setCameraFarClip(1.0e4);
-    glui_window.setBackgroundColor(Color<double>::White());
-    glui_window.setTextColor(Color<double>::Black());
-    glui_window.setKeyboardFunction(keyboardFunction);
-    GLUI *glui = glui_window.gluiWindow();
-    PHYSIKA_ASSERT(glui);
-    glui->add_statictext("Simple Window with GLUI controls");
-    glui_window.createWindow();
-    */
+
     return 0;
 }
