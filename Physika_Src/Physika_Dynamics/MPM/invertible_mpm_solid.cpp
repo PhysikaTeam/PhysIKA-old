@@ -534,12 +534,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar
                     Vector<Scalar,Dim> weight_gradient = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].gradient_value_);
                     particle_vel_grad += this->gridVelocity(obj_idx,node_idx).outerProduct(weight_gradient);
                 }
-                //use the remedy in <Augmented MPM for phase-change and varied materials> to prevent |F| < 0
-                SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix(); 
-                if((identity + dt*particle_vel_grad).determinant() > 0) //normal update
-                    particle_deform_grad += dt*particle_vel_grad;
-                else //the remedy
-                    particle_deform_grad += (dt*particle_vel_grad + 0.25*dt*dt*particle_vel_grad*particle_vel_grad);
+                particle_deform_grad += dt*particle_vel_grad;
             }
             particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient (this deformation gradient might be inverted)
             Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
@@ -689,7 +684,18 @@ void InvertibleMPMSolid<Scalar,Dim>::setPrincipalStretchThreshold(Scalar thresho
     else
         principal_stretch_threshold_ = threshold;
 }
-    
+        
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const
+{
+    if(object_idx >= this->objectNum())
+    {
+        std::cerr<<"Error: object index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    enriched_particles = enriched_particles_[object_idx];
+}
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 {
@@ -739,8 +745,8 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
             }
             else //transient/enriched particle solve on domain corners
             {
-                solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
-                //solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
+                //solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
+                solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
             }
         }
     }
@@ -889,23 +895,23 @@ void InvertibleMPMSolid<Scalar,Dim>::clearParticleDomainMesh()
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
-    // unsigned int obj_num = this->objectNum();
-    // PHYSIKA_ASSERT(obj_idx<obj_num);
-    // unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    // PHYSIKA_ASSERT(particle_idx<particle_num);
-    // //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
-    // //the dirichlet boundary is correctly enforced in this way
-    // for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
-    // {
-    //     Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
-    //     if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
-    //         return false;
-    // }
-    // //rule two: only enrich while compression
-    // Scalar compression_threshold = 0.5;
-    // if(this->particles_[obj_idx][particle_idx]->volume() <compression_threshold * this->particle_initial_volume_[obj_idx][particle_idx])
+    unsigned int obj_num = this->objectNum();
+    PHYSIKA_ASSERT(obj_idx<obj_num);
+    unsigned int particle_num = this->particleNumOfObject(obj_idx);
+    PHYSIKA_ASSERT(particle_idx<particle_num);
+    //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
+    //the dirichlet boundary is correctly enforced in this way
+    for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+    {
+        Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
+        if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
+            return false;
+    }
+    //rule two: only enrich while compression
+    Scalar compression_threshold = 0.5;
+    if(this->particles_[obj_idx][particle_idx]->volume() <compression_threshold * this->particle_initial_volume_[obj_idx][particle_idx])
         return true;
-    // return false;
+    return false;
     //TO DO
 }
 

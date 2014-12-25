@@ -61,6 +61,7 @@ public:
     virtual void setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx,
                                           const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
     void setPrincipalStretchThreshold(Scalar threshold); //set the threshold of principal stretch, value under which will be clamped
+    void enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const; //return the index of enriched particles
 protected:
     //solve on grid is reimplemented
     virtual void solveOnGridForwardEuler(Scalar dt);

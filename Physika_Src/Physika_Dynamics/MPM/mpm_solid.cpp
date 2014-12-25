@@ -128,7 +128,7 @@ void MPMSolid<Scalar,Dim>::setGrid(const Grid<Scalar,Dim> &grid)
 template <typename Scalar, int Dim>
 Scalar MPMSolid<Scalar,Dim>::gridMass(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const
 {
-    if(object_idx < 0 || object_idx >= this->objectNum())
+    if(object_idx >= this->objectNum())
     {
         std::cerr<<"Error: object index out of range, program abort!\n";
         std::exit(EXIT_FAILURE);
@@ -149,7 +149,7 @@ Scalar MPMSolid<Scalar,Dim>::gridMass(unsigned int object_idx, const Vector<unsi
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> MPMSolid<Scalar,Dim>::gridVelocity(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const
 {
-    if(object_idx < 0 || object_idx >= this->objectNum())
+    if(object_idx >= this->objectNum())
     {
         std::cerr<<"Error: object index out of range, program abort!\n";
         std::exit(EXIT_FAILURE);
@@ -170,7 +170,7 @@ Vector<Scalar,Dim> MPMSolid<Scalar,Dim>::gridVelocity(unsigned int object_idx, c
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::setGridVelocity(unsigned int object_idx, const Vector<unsigned int, Dim> &node_idx, const Vector<Scalar,Dim> &node_velocity)
 {
-    if(object_idx < 0 || object_idx >= this->objectNum())
+    if(object_idx >= this->objectNum())
     {
         std::cerr<<"Warning: object index out of range, operation ignored!\n";
         return;
@@ -191,7 +191,7 @@ void MPMSolid<Scalar,Dim>::setGridVelocity(unsigned int object_idx, const Vector
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::addDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx)
 {
-    if(object_idx < 0 || object_idx >= this->objectNum())
+    if(object_idx >= this->objectNum())
     {
         std::cerr<<"Warning: object index out of range, operation ignored!\n";
         return;
