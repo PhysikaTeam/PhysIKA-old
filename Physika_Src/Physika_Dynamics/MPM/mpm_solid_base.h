@@ -25,6 +25,7 @@ namespace Physika{
 
 template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
+template<typename Scalar,int Dim> class CollidableObject;
 
 /*
  * MPMSolidBase: base class of all MPM drivers for solid
@@ -66,6 +67,13 @@ public:
     void addDirichletParticle(unsigned int object_idx, unsigned int particle_idx);  //the particle is set as boundary condition
     void addDirichletParticles(unsigned int object_idx, const std::vector<unsigned int> &particle_idx); //the particles are set as boundary condition
 
+    //manage the kinematic collidable objects in scene
+    unsigned int kinematicObjectNum() const;
+    void addKinematicObject(const CollidableObject<Scalar,Dim> &object);
+    void removeKinematicObject(unsigned int object_idx);
+    const CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx) const;
+    CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx);
+
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
     virtual void solveOnGrid(Scalar dt)=0; //solve the dynamics system on grid
@@ -103,6 +111,7 @@ protected:
                                                                       //use one byte to indicate whether it's set as dirichlet boundary condition
     std::vector<std::vector<Scalar> > particle_initial_volume_;
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_external_force_; //external force(/N), not acceleration
+    std::vector<CollidableObject<Scalar,Dim>*> collidable_objects_; //the kinematic collidable objects in scene
     IntegrationMethod integration_method_; 
 };
 

@@ -21,19 +21,25 @@
 namespace Physika{
 
 template <typename Scalar>
-class Sphere: public BasicGeometry
+class Sphere: public BasicGeometry<Scalar,3>
 {
 public:
     Sphere();
     Sphere(const Vector<Scalar,3> &center, Scalar radius);
+    Sphere(const Sphere<Scalar> &sphere);
     ~Sphere();
-    void printInfo() const;
+    Sphere<Scalar>& operator= (const Sphere<Scalar> &sphere);
+    Sphere<Scalar>* clone() const;
+    virtual void printInfo() const;
     Vector<Scalar,3> center() const;
+    void setCenter(const Vector<Scalar,3> &center);
     Scalar radius() const;
-    Scalar distance(const Vector<Scalar,3> &point) const;  //distance of a point to sphere surface
-    Scalar signedDistance(const Vector<Scalar,3> &point) const;  //signed distance of a point to a sphere surface
+    void setRadius(Scalar radius);
+    virtual Scalar distance(const Vector<Scalar,3> &point) const;  //distance of a point to sphere surface
+    virtual Scalar signedDistance(const Vector<Scalar,3> &point) const;  //signed distance of a point to a sphere surface
     bool inside(const Vector<Scalar,3> &point) const;  //d <= radius
     bool outside(const Vector<Scalar,3> &point) const; //d > radius
+    virtual Vector<Scalar,3> normal(const Vector<Scalar,3> &point) const; 
 protected:
     Vector<Scalar,3> center_;
     Scalar radius_;

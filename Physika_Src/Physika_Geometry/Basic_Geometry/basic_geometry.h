@@ -17,12 +17,26 @@
 
 namespace Physika{
 
+template <typename Scalar, int Dim> class Vector;
+
+/*
+ * Note on signed distance: positive outside, negative inside
+ *
+ */
+
+template <typename Scalar, int Dim>
 class BasicGeometry
 {
 public:
-    BasicGeometry(){}
-    virtual ~BasicGeometry(){}
+    BasicGeometry();
+    BasicGeometry(const BasicGeometry<Scalar,Dim> &geometry);
+    virtual ~BasicGeometry();
+    BasicGeometry<Scalar,Dim>& operator= (const BasicGeometry<Scalar,Dim> &geometry);
+    virtual BasicGeometry<Scalar,Dim>* clone() const = 0;
     virtual void printInfo() const = 0;
+    virtual Vector<Scalar,Dim> normal(const Vector<Scalar,Dim> &point) const = 0;
+    virtual Scalar distance(const Vector<Scalar,Dim> &point) const = 0; //distance to the surface of geometry
+    virtual Scalar signedDistance(const Vector<Scalar,Dim> &point) const = 0;  //signed distance to the surface of geometry
 protected:
 };
 

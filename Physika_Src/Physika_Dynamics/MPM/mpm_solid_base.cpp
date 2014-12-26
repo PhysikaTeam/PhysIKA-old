@@ -20,6 +20,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
+#include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USL.h"
 
@@ -42,10 +43,15 @@ MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int en
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::~MPMSolidBase()
 {
+    //delete the simulated particles
     for(unsigned int i = 0; i < particles_.size(); ++i)
         for(unsigned int j = 0; j < particles_[i].size(); ++j)
             if(particles_[i][j])
                 delete particles_[i][j];
+    //delete the kinematic objects
+    for(unsigned int i = 0; i < collidable_objects_.size(); ++i)
+        if(collidable_objects_[i])
+            delete collidable_objects_[i];
 }
 
 template <typename Scalar, int Dim>
@@ -250,6 +256,56 @@ void MPMSolidBase<Scalar,Dim>::addDirichletParticles(unsigned int object_idx, co
         std::cerr<<"Warning: "<<invalid_particle<<" invalid particle index are ignored!\n";
 }
     
+template <typename Scalar, int Dim>
+unsigned int MPMSolidBase<Scalar,Dim>::kinematicObjectNum() const
+{
+    return collidable_objects_.size();
+}
+    
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::addKinematicObject(const CollidableObject<Scalar,Dim> &object)
+{
+    CollidableObject<Scalar,Dim> *new_object = object.clone();
+    collidable_objects_.push_back(new_object);
+}
+        
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::removeKinematicObject(unsigned int object_idx)
+{
+    if(object_idx >= collidable_objects_.size())
+        std::cerr<<"Warning: kinematic object index out of range, operation ignored!\n";
+    else
+    {
+        typename std::vector<CollidableObject<Scalar,Dim>*>::iterator iter = collidable_objects_.begin() + object_idx;
+        collidable_objects_.erase(iter);
+    }
+}
+        
+template <typename Scalar, int Dim>
+const CollidableObject<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::kinematicObject(unsigned int object_idx) const
+{
+    if(object_idx >= collidable_objects_.size())
+    {
+        std::cerr<<"Error: kinematic object index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    PHYSIKA_ASSERT(collidable_objects_[object_idx]);
+    return *collidable_objects_[object_idx];
+}
+        
+template <typename Scalar, int Dim>
+CollidableObject<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::kinematicObject(unsigned int object_idx)
+{
+    if(object_idx >= collidable_objects_.size())
+    {
+        std::cerr<<"Error: kinematic object index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    PHYSIKA_ASSERT(collidable_objects_[object_idx]);
+    return *collidable_objects_[object_idx];
+}
+
+
 template <typename Scalar, int Dim>
 void MPMSolidBase<Scalar,Dim>::setTimeIntegrationMethod(const IntegrationMethod &method)
 {

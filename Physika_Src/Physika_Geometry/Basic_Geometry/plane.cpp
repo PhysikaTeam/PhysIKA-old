@@ -39,8 +39,28 @@ Plane<Scalar>::Plane(const Vector<Scalar,3> &x1, const Vector<Scalar,3> &x2, con
 }
 
 template <typename Scalar>
+Plane<Scalar>::Plane(const Plane<Scalar> &plane)
+    :normal_(plane.normal_),pos_(plane.pos_)
+{
+}
+
+template <typename Scalar>
 Plane<Scalar>::~Plane()
 {
+}
+
+template <typename Scalar>
+Plane<Scalar>& Plane<Scalar>::operator= (const Plane<Scalar> &plane)
+{
+    normal_ = plane.normal_;
+    pos_ = plane.pos_;
+    return *this;
+}
+
+template <typename Scalar>
+Plane<Scalar>* Plane<Scalar>::clone() const
+{
+    return new Plane<Scalar>(*this);
 }
 
 template <typename Scalar>
@@ -51,6 +71,18 @@ void Plane<Scalar>::printInfo() const
 
 template <typename Scalar>
 Vector<Scalar,3> Plane<Scalar>::normal() const
+{
+    return normal_;
+}
+
+template <typename Scalar>
+void Plane<Scalar>::setNormal(const Vector<Scalar,3> &normal)
+{
+    normal_ = normal;
+}
+
+template <typename Scalar>
+Vector<Scalar,3> Plane<Scalar>::normal(const Vector<Scalar,3> &point) const
 {
     return normal_;
 }
