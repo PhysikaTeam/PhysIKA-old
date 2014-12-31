@@ -63,6 +63,9 @@ public:
     void setPrincipalStretchThreshold(Scalar threshold); //set the threshold of principal stretch, value under which will be clamped
     void enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const; //return the index of enriched particles
     unsigned int enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const; //return the number of enriched domain corners of given particle
+    //explicitly enable/disable enrichment with particle domains
+    void enableEnrichment();
+    void disableEnrichment();
 protected:
     //solve on grid is reimplemented
     virtual void solveOnGridForwardEuler(Scalar dt);
@@ -104,6 +107,8 @@ protected:
     //for invertibility support, stretch below this threshold will be clamped to this value
     Scalar principal_stretch_threshold_;
     DeformationDiagonalization<Scalar,Dim> deform_grad_diagonalizer_; //the method used to diagonalize deformation gradient
+    //switch on/off particle enrichment
+    bool enable_enrichment_;
 };
 
 }  //end of namespace Physika

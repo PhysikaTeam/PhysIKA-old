@@ -56,6 +56,8 @@ public:
     void setSoundSpeed(Scalar sound_speed);
     Scalar gravity() const;
     void setGravity(Scalar gravity);
+    Scalar flipFraction() const;
+    void setFlipFraction(Scalar flip_fraction);
 
     //set the type of weight function with weight function type as template
     template <typename GridWeightFunctionType>
@@ -78,6 +80,9 @@ protected:
     Scalar sound_speed_; //the sound speed in material
     //gravity: along negative y direction
     Scalar gravity_;
+    //particle velocities are updated via a combination of FLIP and PIC from velocities on grid
+    //V_p = \theta * V_flip + (1-\theta) * V_pic
+    Scalar flip_fraction_;
 };
 
 template <typename Scalar, int Dim>

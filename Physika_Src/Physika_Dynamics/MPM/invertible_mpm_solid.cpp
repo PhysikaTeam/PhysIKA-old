@@ -34,7 +34,8 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
-    :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.1)
+    :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.1),
+    enable_enrichment_(true)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -43,7 +44,8 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.1)
+    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.1),
+    enable_enrichment_(true)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -53,7 +55,8 @@ template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                                    const Grid<Scalar,Dim> &grid)
-    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.1)
+    :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.1),
+    enable_enrichment_(true)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -527,7 +530,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
         if(plugin)
             plugin->onUpdateParticleVelocity();
     }
-    //interpolate delta of grid/corner velocity to particle
+    //update particle velocity with a combination of FLIP/PIC from grid/corner velocity
     //some are interpolated from grid, some are from domain corner
     unsigned int corner_num = (Dim == 2) ? 4 : 8;
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
@@ -539,7 +542,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
             //determine particle type
             unsigned int enriched_corner_num = enrichedDomainCornerNum(obj_idx,particle_idx);
             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
-            Vector<Scalar,Dim> new_vel = particle->velocity();
+            Vector<Scalar,Dim> flip_vel = particle->velocity(), pic_vel(0);
             if(enriched_corner_num < corner_num) //ordinary particle && transient particle get influence from grid
             {
                 for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
@@ -557,7 +560,8 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
                         grid_vel_before = this->grid_velocity_before_(node_idx)[obj_idx];
                     else
                         PHYSIKA_ERROR("Error in updateParticleVelocity!");
-                    new_vel += weight*(cur_grid_vel-grid_vel_before);
+                    flip_vel += weight*(cur_grid_vel-grid_vel_before);
+                    pic_vel += weight*cur_grid_vel;
                 }
             }
             if(enriched_corner_num > 0) //transient/enriched particle get influence from domain corner as well
@@ -568,10 +572,12 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
                     if(is_enriched_domain_corner_[obj_idx][global_corner_idx])
                     {
                         Scalar weight = particle_corner_weight_[obj_idx][obj_idx][corner_idx];
-                        new_vel += weight*(domain_corner_velocity_[obj_idx][global_corner_idx]-domain_corner_velocity_before_[obj_idx][global_corner_idx]);
+                        flip_vel += weight*(domain_corner_velocity_[obj_idx][global_corner_idx]-domain_corner_velocity_before_[obj_idx][global_corner_idx]);
+                        pic_vel += weight*domain_corner_velocity_[obj_idx][global_corner_idx];
                     }
                 }
             }
+            Vector<Scalar,Dim> new_vel = (this->flip_fraction_) * flip_vel + (1 - this->flip_fraction_) * pic_vel;
             particle->setVelocity(new_vel);
         }
     }
@@ -686,7 +692,19 @@ unsigned int InvertibleMPMSolid<Scalar,Dim>::enrichedDomainCornerNum(unsigned in
     }
     return enriched_corner_num;
 }
+       
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::enableEnrichment()
+{
+    enable_enrichment_ = true;
+}
 
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::disableEnrichment()
+{
+    enable_enrichment_ = false;
+}
+    
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 {
@@ -884,6 +902,9 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     PHYSIKA_ASSERT(obj_idx<obj_num);
     unsigned int particle_num = this->particleNumOfObject(obj_idx);
     PHYSIKA_ASSERT(particle_idx<particle_num);
+    //enrichment explicitly turned off
+    if(!enable_enrichment_)
+        return false;
     //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
     //the dirichlet boundary is correctly enforced in this way
     for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)

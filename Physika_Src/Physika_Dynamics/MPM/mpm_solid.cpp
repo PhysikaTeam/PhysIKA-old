@@ -607,7 +607,7 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
             plugin->onUpdateParticleVelocity();
     }
 
-    //interpolate delta of grid velocity to particle
+    //update particle velocity with a combination of FLIP && PIC strategy
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
     {  
         for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
@@ -615,7 +615,7 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
             if(this->is_dirichlet_particle_[obj_idx][particle_idx])
                 continue;//skip boundary particles
             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
-            Vector<Scalar,Dim> new_vel = particle->velocity();
+            Vector<Scalar,Dim> flip_vel = particle->velocity(), pic_vel(0);
             for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
             {
                 Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
@@ -631,8 +631,10 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
                     grid_vel_before = grid_velocity_before_(node_idx)[obj_idx];
                 else
                     PHYSIKA_ERROR("Error in updateParticleVelocity!");
-                new_vel += weight*(cur_grid_vel-grid_vel_before);
+                flip_vel += weight*(cur_grid_vel-grid_vel_before);
+                pic_vel += weight*cur_grid_vel;
             }
+            Vector<Scalar,Dim> new_vel = (this->flip_fraction_) * flip_vel + (1 - this->flip_fraction_) * pic_vel;
             particle->setVelocity(new_vel);
         }
     }
