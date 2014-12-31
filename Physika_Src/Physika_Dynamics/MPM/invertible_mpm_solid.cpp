@@ -25,8 +25,8 @@
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
+#include "Physika_Dynamics/Utilities/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI2_update_method.h"
-#include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/invertible_mpm_solid.h"
 
@@ -120,13 +120,7 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
             //transient: rasterize to grid and the enriched domain corners
             //enriched: rasterize only to domain corner
             unsigned int corner_num = (Dim==2) ? 4 : 8;
-            unsigned int enriched_corner_num = 0;
-            for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-            {
-                unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
-                if(is_enriched_domain_corner_[obj_idx][global_corner_idx])
-                    ++enriched_corner_num;
-            }
+            unsigned int enriched_corner_num = enrichedDomainCornerNum(obj_idx,particle_idx);
             if(enriched_corner_num < corner_num) //ordinary particle && transient particle get influence from grid
             {
                 //rasterize to grid
@@ -506,36 +500,15 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar
         if(plugin)
             plugin->onUpdateParticleConstitutiveModelState(dt);
     }
-    //update the deformation gradient with the velocity gradient from domain corners
-    //the velocity of ordinary domain corners are mapped from the grid node
-    unsigned int corner_num = (Dim == 2) ? 4 : 8;
+    //update the particle deformation gradient
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
     {
         for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
         {
-            //determine particle type
-            unsigned int enriched_corner_num = 0;
-            for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-            {
-                unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
-                if(is_enriched_domain_corner_[obj_idx][global_corner_idx])
-                    ++enriched_corner_num;
-            }
             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
-            SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient(); //deformation gradient before update
-            if(enriched_corner_num > 0) //transient/enriched particle compute deformation gradient directly from domain shape (like in FEM)
-                particle_deform_grad = update_method->computeParticleDeformationGradientFromDomainShape(obj_idx,particle_idx);
-            else //ordinary particle update deformation gradient as: F^(n+1) = F^n + dt*(partial_vel_partial_X)
-            {//Note: the gradient of velocity is with respect to reference configuration!!! In comparison with conventional MPM
-                SquareMatrix<Scalar,Dim> particle_vel_grad(0);
-                for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
-                {
-                    Vector<unsigned int,Dim> node_idx = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_);
-                    Vector<Scalar,Dim> weight_gradient = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].gradient_value_);
-                    particle_vel_grad += this->gridVelocity(obj_idx,node_idx).outerProduct(weight_gradient);
-                }
-                particle_deform_grad += dt*particle_vel_grad;
-            }
+            SquareMatrix<Scalar,Dim> particle_deform_grad;
+            //compute deformation gradient directly from domain shape (like in FEM) to mitigate artificial plasticity
+            particle_deform_grad = update_method->computeParticleDeformationGradientFromDomainShape(obj_idx,particle_idx);
             particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient (this deformation gradient might be inverted)
             Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
             particle->setVolume(particle_vol);  //update particle volume
@@ -564,13 +537,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
             if(this->is_dirichlet_particle_[obj_idx][particle_idx])
                 continue;//skip boundary particles
             //determine particle type
-            unsigned int enriched_corner_num = 0;
-            for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-            {
-                unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
-                if(is_enriched_domain_corner_[obj_idx][global_corner_idx])
-                    ++enriched_corner_num;
-            }
+            unsigned int enriched_corner_num = enrichedDomainCornerNum(obj_idx,particle_idx);
             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
             Vector<Scalar,Dim> new_vel = particle->velocity();
             if(enriched_corner_num < corner_num) //ordinary particle && transient particle get influence from grid
@@ -695,6 +662,30 @@ void InvertibleMPMSolid<Scalar,Dim>::enrichedParticles(unsigned int object_idx, 
     }
     enriched_particles = enriched_particles_[object_idx];
 }
+       
+template <typename Scalar, int Dim>
+unsigned int InvertibleMPMSolid<Scalar,Dim>::enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const
+{
+    if(object_idx >= this->objectNum())
+    {
+        std::cerr<<"Error: object index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if(particle_idx >= this->particleNumOfObject(object_idx))
+    {
+        std::cerr<<"Error: particle index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    unsigned int corner_num = (Dim==2) ? 4 : 8;
+    unsigned int enriched_corner_num = 0;
+    for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+    {
+        unsigned int global_corner_idx = particle_domain_mesh_[object_idx]->eleVertIndex(particle_idx,corner_idx);
+        if(is_enriched_domain_corner_[object_idx][global_corner_idx])
+            ++enriched_corner_num;
+    }
+    return enriched_corner_num;
+}
 
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
@@ -710,13 +701,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
         for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
         {
             //determine particle type
-            unsigned int enriched_corner_num = 0;
-            for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-            {
-                unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
-                if(is_enriched_domain_corner_[obj_idx][global_corner_idx])
-                    ++enriched_corner_num;
-            }
+            unsigned int enriched_corner_num = enrichedDomainCornerNum(obj_idx,particle_idx);
             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
             if(enriched_corner_num == 0) //ordinary particle solve only on the grid
             {

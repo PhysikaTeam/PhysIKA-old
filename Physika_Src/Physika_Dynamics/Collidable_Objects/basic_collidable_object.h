@@ -30,8 +30,8 @@ public:
     BasicCollidableObject(const BasicCollidableObject<Scalar,Dim> &object);
     ~BasicCollidableObject();
     BasicCollidableObject<Scalar,Dim>& operator= (const BasicCollidableObject<Scalar,Dim> &object);
-    BasicCollidableObject<Scalar,Dim>* clone() const;
-    bool collide(const Vector<Scalar,Dim> &point, const Vector<Scalar,Dim> &velocity, Vector<Scalar,Dim> &velocity_impulse) const;
+    virtual BasicCollidableObject<Scalar,Dim>* clone() const;
+    virtual bool collide(const Vector<Scalar,Dim> &point, const Vector<Scalar,Dim> &velocity, Vector<Scalar,Dim> &velocity_impulse) const;
     const BasicGeometry<Scalar,Dim>& shape() const;
     BasicGeometry<Scalar,Dim>& shape();
     void setShape(const BasicGeometry<Scalar,Dim> &geometry);

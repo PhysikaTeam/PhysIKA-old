@@ -29,7 +29,7 @@ template <typename Scalar, int Dim> class ArrayND;
 template <typename Scalar, int Dim> class SquareMatrix;
 
 /*
- * InvertibleMPMSolid: hybrid of FEM and CPDI2 for large deformation and invertible elasticity
+ * InvertibleMPMSolid: hybrid of FEM and modified CPDI2 for large deformation and invertible elasticity
  * object number and particle number cannot be changed during run-time
  *
  */
@@ -62,6 +62,7 @@ public:
                                           const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
     void setPrincipalStretchThreshold(Scalar threshold); //set the threshold of principal stretch, value under which will be clamped
     void enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const; //return the index of enriched particles
+    unsigned int enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const; //return the number of enriched domain corners of given particle
 protected:
     //solve on grid is reimplemented
     virtual void solveOnGridForwardEuler(Scalar dt);
@@ -83,9 +84,9 @@ protected:
     //in essence, the properties of the particle is the average of the domain
     //we experimented with the two strategies for comparison
     void solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx,
-                                                                                                                unsigned int enriched_corner_num, Scalar dt);
+                                                                       unsigned int enriched_corner_num, Scalar dt);
     void solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,
-                                                                                                unsigned int enriched_corner_num,  Scalar dt);
+                                                               unsigned int enriched_corner_num,  Scalar dt);
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
