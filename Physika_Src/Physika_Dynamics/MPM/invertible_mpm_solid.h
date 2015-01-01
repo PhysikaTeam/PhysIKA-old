@@ -54,7 +54,7 @@ public:
     virtual void rasterize(); //according to the particle type, some data are rasterized to grid, others to domain corners
     virtual void resolveContactOnParticles(Scalar dt); //the contact between enriched domains are resolved on particle level
     virtual void updateParticleInterpolationWeight();  //interpolation weight between particle and domain corners need to be updated as well
-    virtual void updateParticleConstitutiveModelState(Scalar dt);
+    virtual void updateParticleConstitutiveModelState(Scalar dt); //deformation gradient is directly computed instead of temporal update to mitigate artificial plasticity
     virtual void updateParticleVelocity();
     virtual void updateParticlePosition(Scalar dt);
     //explicitly set current particle domain, data in particle_domain_mesh_ are updated as well

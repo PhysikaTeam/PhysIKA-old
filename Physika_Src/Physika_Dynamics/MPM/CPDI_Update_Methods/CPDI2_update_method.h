@@ -123,14 +123,6 @@ protected:
            std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > &corner_grid_weight,
            std::vector<unsigned int> &corner_grid_pair_num,
            bool gradient_to_reference_coordinate);
-    void updateParticleInterpolationWeightWithEnrichment(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,2> &weight_function,
-           const VolumetricMesh<Scalar,2>* particle_domain_mesh,
-           const std::vector<unsigned char> &is_enriched_domain_corner,
-           std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > &particle_grid_weight_and_gradient,
-           unsigned int &particle_grid_pair_num,
-           std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > &corner_grid_weight,
-           std::vector<unsigned int> &corner_grid_pair_num,
-           bool gradient_to_reference_coordinate);
     //approximate integration of element shape function gradient over particle domain, using 2x2 Gauss integration points
     //the integration domain is the INITIAL particle domain, instead of current particle domain as in the paper
     Vector<Scalar,2> gaussIntegrateShapeFunctionGradientToCurrentCoordinateInParticleDomain(const Vector<unsigned int,2> &corner_idx,
@@ -200,14 +192,6 @@ public:
     
 protected:
     void updateParticleInterpolationWeight(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
-         std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
-         unsigned int &particle_grid_pair_num,
-         std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > &corner_grid_weight,
-         std::vector<unsigned int> &corner_grid_pair_num,
-         bool gradient_to_reference_coordinate);
-    void updateParticleInterpolationWeightWithEnrichment(unsigned int object_idx, unsigned int particle_idx, const GridWeightFunction<Scalar,3> &weight_function,
-         const VolumetricMesh<Scalar,3>* particle_domain_mesh,
-         const std::vector<unsigned char> &is_enriched_domain_corner,
          std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > &particle_grid_weight_and_gradient,
          unsigned int &particle_grid_pair_num,
          std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > &corner_grid_weight,

@@ -345,7 +345,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
 }
 
 template <typename Scalar>
-bool ObjMeshIO<Scalar>::save(const std::string &filename, const SurfaceMesh<Scalar> *mesh)
+bool ObjMeshIO<Scalar>::save(const std::string &filename, const SurfaceMesh<Scalar> *mesh, bool save_mtl)
 {
     if(mesh == NULL)
     {
@@ -366,8 +366,11 @@ bool ObjMeshIO<Scalar>::save(const std::string &filename, const SurfaceMesh<Scal
         return false;
     }
     std::string material_path = prefix + std::string(".mtl");
-    saveMaterials(material_path, mesh);
-    fileout<<"mtllib "<<FileUtilities::filenameInPath(prefix)<<".mtl"<<std::endl;
+    if(save_mtl)
+    {
+        saveMaterials(material_path, mesh);
+        fileout<<"mtllib "<<FileUtilities::filenameInPath(prefix)<<".mtl"<<std::endl;
+    }
     unsigned int num_vertices=mesh->numVertices(),i;
     for(i=0;i<num_vertices;++i)
     {
@@ -390,7 +393,8 @@ bool ObjMeshIO<Scalar>::save(const std::string &filename, const SurfaceMesh<Scal
     for(i=0;i<num_group;++i)
     {
         const FaceGroup<Scalar> *group_ptr = mesh->groupPtr(i);
-        fileout<<"usemtl "<<mesh->materialPtr(group_ptr->materialIndex())->name()<<std::endl;
+        if(save_mtl)
+            fileout<<"usemtl "<<mesh->materialPtr(group_ptr->materialIndex())->name()<<std::endl;
         fileout<<"g "<<group_ptr->name()<<std::endl;
         unsigned int num_face = group_ptr->numFaces(),j;
         const Face<Scalar> *face_ptr;

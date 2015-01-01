@@ -34,7 +34,7 @@ public:
     //memory of mesh is preallocated by caller
     //return true if succeed, otherwise return false
     // save a mesh to a obj file.
-    static bool save(const std::string &filename, const SurfaceMesh<Scalar> *mesh);
+    static bool save(const std::string &filename, const SurfaceMesh<Scalar> *mesh, bool save_mtl = false);
 
 protected:
     //memory of mesh is preallocated by caller
