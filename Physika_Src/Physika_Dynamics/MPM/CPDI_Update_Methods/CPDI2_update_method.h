@@ -43,7 +43,6 @@ template <typename Scalar, int Dim> class VolumetricMesh;
  *     
  */
 
-
 /*
  * constructor is made protected to prohibit creating objects
  * with Dim other than 2 and 3
@@ -68,14 +67,23 @@ class CPDI2UpdateMethod<Scalar,2>: public CPDIUpdateMethod<Scalar,2>
 public:
     CPDI2UpdateMethod();
     virtual ~CPDI2UpdateMethod();
-    //overwrite methods in CPDIUpdateMethod
+
     void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,2> &weight_function,
            std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
            std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
            std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > > > &corner_grid_weight,
            std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
            bool gradient_to_reference_coordinate = false);
-    
+    //faster version of updateParticleInterpolationWeight, remove redundent computation of corner-grid weight by providing topology strcuture of
+    //particle domains
+    void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,2> &weight_function,
+           const std::vector<VolumetricMesh<Scalar,2>*> &particle_domain_mesh,
+           std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
+           std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
+           std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,2> > > > > &corner_grid_weight,
+           std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+           bool gradient_to_reference_coordinate = false);
+
     //update the interpolation weight with enrichment
     void updateParticleInterpolationWeightWithEnrichment(const GridWeightFunction<Scalar,2> &weight_function,
            const std::vector<VolumetricMesh<Scalar,2>*> &particle_domain_mesh,
@@ -141,13 +149,22 @@ class CPDI2UpdateMethod<Scalar,3>: public CPDIUpdateMethod<Scalar,3>
 public:
     CPDI2UpdateMethod();
     virtual ~CPDI2UpdateMethod();
-    //overwrite methods in CPDIUpdateMethod
+
     void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,3> &weight_function,
          std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
          std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
          std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > > > &corner_grid_weight,
          std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
          bool gradient_to_reference_coordinate = false);
+    //faster version of updateParticleInterpolationWeight, remove redundent computation of corner-grid weight by providing topology strcuture of
+    //particle domains
+    void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,3> &weight_function,
+           const std::vector<VolumetricMesh<Scalar,3>*> &particle_domain_mesh,
+           std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
+           std::vector<std::vector<unsigned int> > &particle_grid_pair_num,
+           std::vector<std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightPair<Scalar,3> > > > > &corner_grid_weight,
+           std::vector<std::vector<std::vector<unsigned int> > > &corner_grid_pair_num,
+           bool gradient_to_reference_coordinate = false);
 
     //update the interpolation weight with enrichment
     void updateParticleInterpolationWeightWithEnrichment(const GridWeightFunction<Scalar,3> &weight_function,

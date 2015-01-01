@@ -30,7 +30,6 @@ template <typename Scalar, int Dim> class SquareMatrix;
 
 /*
  * InvertibleMPMSolid: hybrid of FEM and modified CPDI2 for large deformation and invertible elasticity
- * object number and particle number cannot be changed during run-time
  *
  */
 
@@ -66,6 +65,7 @@ public:
     //explicitly enable/disable enrichment with particle domains
     void enableEnrichment();
     void disableEnrichment();
+
 protected:
     //solve on grid is reimplemented
     virtual void solveOnGridForwardEuler(Scalar dt);
