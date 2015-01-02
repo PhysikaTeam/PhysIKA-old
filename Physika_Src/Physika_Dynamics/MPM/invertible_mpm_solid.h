@@ -1,6 +1,6 @@
 /*
  * @file invertible_mpm_solid.h 
- * @Brief a hybrid of FEM and CPDI2 for large deformation and invertible elasticity, uniform grid.
+ * @Brief a hybrid of FEM and modified CPDI2 for large deformation and invertible elasticity, uniform grid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -86,10 +86,8 @@ protected:
     //1. via quadrature points 2. via the particle
     //in essence, the properties of the particle is the average of the domain
     //we experimented with the two strategies for comparison
-    void solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx,
-                                                                       unsigned int enriched_corner_num, Scalar dt);
-    void solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,
-                                                               unsigned int enriched_corner_num,  Scalar dt);
+    void solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx, Scalar dt);
+    void solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,  Scalar dt);
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
