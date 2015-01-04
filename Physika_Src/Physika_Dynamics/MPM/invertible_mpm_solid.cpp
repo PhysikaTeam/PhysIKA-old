@@ -510,8 +510,23 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar
         {
             SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
             SquareMatrix<Scalar,Dim> particle_deform_grad;
-            //compute deformation gradient directly from domain shape (like in FEM) to mitigate artificial plasticity
-            particle_deform_grad = update_method->computeParticleDeformationGradientFromDomainShape(obj_idx,particle_idx);
+
+            unsigned int enriched_corner_num = enrichedDomainCornerNum(obj_idx,particle_idx);
+            if(enriched_corner_num > 0) //transient/enriched particle compute deformation gradient directly from domain shape (like in FEM)
+                particle_deform_grad = update_method->computeParticleDeformationGradientFromDomainShape(obj_idx,particle_idx);
+            else //ordinary particle update deformation gradient as: F^(n+1) = F^n + dt*(partial_vel_partial_X)
+            {//Note: the gradient of velocity is with respect to reference configuration!!! In comparison with conventional MPM
+                particle_deform_grad = particle->deformationGradient();
+                SquareMatrix<Scalar,Dim> particle_vel_grad(0);
+                for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+                {
+                    Vector<unsigned int,Dim> node_idx = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_);
+                    Vector<Scalar,Dim> weight_gradient = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].gradient_value_);
+                    particle_vel_grad += this->gridVelocity(obj_idx,node_idx).outerProduct(weight_gradient);
+                }
+                particle_deform_grad += dt*particle_vel_grad;
+            }
+
             particle->setDeformationGradient(particle_deform_grad);  //update deformation gradient (this deformation gradient might be inverted)
             Scalar particle_vol = (particle_deform_grad.determinant())*(this->particle_initial_volume_[obj_idx][particle_idx]);
             particle->setVolume(particle_vol);  //update particle volume
@@ -891,7 +906,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
             return false;
     }
     //rule two: only enrich while compression
-    Scalar compression_threshold = 0.2;
+    Scalar compression_threshold = 0.5;
     if(this->particles_[obj_idx][particle_idx]->volume() <compression_threshold * this->particle_initial_volume_[obj_idx][particle_idx])
         return true;
     return false;
@@ -952,7 +967,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithNoEnrichmentForwardEule
     SquareMatrix<Scalar,Dim> first_PiolaKirchoff_stress;
     //remedy for rule one of enrichment: some particles within range of dirichlet grid nodes may satisfy criteria of enrichment, but we prohibit its
     //enrichment for correct enforcement of dirichlet, we must do invert handling for this particles before rasterizing forces to grid
-    Scalar compression_threshold = 0.2;
+    Scalar compression_threshold = 0.5;
     if(particle->volume() < compression_threshold * particle_initial_volume)  //inverted particle
     {
         SquareMatrix<Scalar,Dim> deform_grad, left_rotation, diag_deform_grad, right_rotation, diag_first_PiolaKirchoff_stress;
