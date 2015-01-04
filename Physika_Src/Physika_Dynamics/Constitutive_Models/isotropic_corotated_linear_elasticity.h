@@ -1,6 +1,6 @@
 /*
- * @file isotropic_linear_elasticity.h
- * @brief Isotropic linear elastic constitutive model with infinitesimal strain measure
+ * @file isotropic_corotated_linear_elasticity.h
+ * @brief Corotated version of isotropic linear elastic constitutive model with infinitesimal strain measure
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ISOTROPIC_LINEAR_ELASTICITY_H_
-#define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ISOTROPIC_LINEAR_ELASTICITY_H_
+#ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ISOTROPIC_COROTATED_LINEAR_ELASTICITY_H_
+#define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ISOTROPIC_COROTATED_LINEAR_ELASTICITY_H_
 
 #include "Physika_Dynamics/Constitutive_Models/isotropic_hyperelastic_material.h"
 
@@ -23,17 +23,17 @@ template <typename Scalar, int Dim>
 class SquareMatrix;
 
 template <typename Scalar, int Dim>
-class IsotropicLinearElasticity: public IsotropicHyperelasticMaterial<Scalar,Dim>
+class IsotropicCorotatedLinearElasticity: public IsotropicHyperelasticMaterial<Scalar,Dim>
 {
 public:
-    IsotropicLinearElasticity();
+    IsotropicCorotatedLinearElasticity();
     //if par_type = YOUNG_AND_POISSON, then: par1 = young's modulus, par2 = poisson_ratio
     //if par_type = LAME_COEFFICIENTS, then: par1 = lambda, par2 = mu
-    IsotropicLinearElasticity(Scalar par1, Scalar par2, typename IsotropicHyperelasticMaterialInternal::ModulusType par_type);
-    IsotropicLinearElasticity(const IsotropicLinearElasticity<Scalar,Dim> &material);
-    ~IsotropicLinearElasticity();
-    IsotropicLinearElasticity<Scalar,Dim>& operator= (const IsotropicLinearElasticity<Scalar,Dim> &material);
-    IsotropicLinearElasticity<Scalar,Dim>* clone() const;
+    IsotropicCorotatedLinearElasticity(Scalar par1, Scalar par2, typename IsotropicHyperelasticMaterialInternal::ModulusType par_type);
+    IsotropicCorotatedLinearElasticity(const IsotropicCorotatedLinearElasticity<Scalar,Dim> &material);
+    ~IsotropicCorotatedLinearElasticity();
+    IsotropicCorotatedLinearElasticity<Scalar,Dim>& operator= (const IsotropicCorotatedLinearElasticity<Scalar,Dim> &material);
+    IsotropicCorotatedLinearElasticity<Scalar,Dim>* clone() const;
     void printInfo() const;
     Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient
     SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;
@@ -45,4 +45,4 @@ protected:
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ISOTROPIC_LINEAR_ELASTICITY_H_
+#endif //PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_ISOTROPIC_COROTATED_LINEAR_ELASTICITY_H_

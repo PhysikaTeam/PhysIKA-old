@@ -1,5 +1,5 @@
 /*
- * @file linear_elasticity.cpp
+ * @file isotropic_linear_elasticity.cpp
  * @brief Isotropic linear elastic constitutive model with infinitesimal strain measure
  * @author Fei Zhu
  * 

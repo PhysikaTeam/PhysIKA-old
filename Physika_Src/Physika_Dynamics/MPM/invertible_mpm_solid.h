@@ -81,13 +81,17 @@ protected:
     void updateParticleDomainEnrichState();
     void applyGravityOnEnrichedDomainCorner(Scalar dt);
     //compute the interpolation weight/gradient between particle and the domain corners, in reference configuration
-    void computeParticleInterpolationWeightAndGradientInInitialDomain(); 
+    void computeParticleInterpolationWeightAndGradientInInitialDomain();
+    
+    void solveForParticleWithNoEnrichmentForwardEulerOnGrid(unsigned int obj_idx, unsigned int particle_idx, Scalar dt);
     //for those particles with enriched domain corners, we have two choices while computing internal forces on the domain corners
     //1. via quadrature points 2. via the particle
     //in essence, the properties of the particle is the average of the domain
     //we experimented with the two strategies for comparison
-    void solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx, Scalar dt);
-    void solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,  Scalar dt);
+    void solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx,
+                                                                       unsigned int enriched_corner_num, Scalar dt);
+    void solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,
+                                                               unsigned int enriched_corner_num, Scalar dt);
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain

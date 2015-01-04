@@ -719,55 +719,14 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
         {
             //determine particle type
             unsigned int enriched_corner_num = enrichedDomainCornerNum(obj_idx,particle_idx);
-            SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
             if(enriched_corner_num == 0) //ordinary particle solve only on the grid
             {
-                SquareMatrix<Scalar,Dim> first_PiolaKirchoff_stress = particle->firstPiolaKirchhoffStress();
-                //remedy for rule one of enrichment: some particles within range of dirichlet grid nodes may satisfy criteria of enrichment, but we prohibit its
-                //enrichment for correct enforcement of dirichlet, we must do invert handling for this particles before rasterizing forces to grid
-                if(particle->volume() < 0)  //inverted particle
-                {
-                    SquareMatrix<Scalar,Dim> deform_grad, left_rotation, diag_deform_grad, right_rotation, diag_first_PiolaKirchoff_stress;
-                    deform_grad = particle->deformationGradient();
-                    deform_grad_diagonalizer_.diagonalizeDeformationGradient(deform_grad,left_rotation,diag_deform_grad,right_rotation);
-                    //clamp the principal stretch to the threshold if it's compressed too severely
-                    for(unsigned int row = 0; row < Dim; ++row)
-                        if(diag_deform_grad(row,row) < principal_stretch_threshold_)
-                            diag_deform_grad(row,row) = principal_stretch_threshold_;
-                    //temporarily set the deformation gradient of the particle to the diagonalized one to compute the unrotated stress
-                    particle->setDeformationGradient(diag_deform_grad);
-                    // P = U*P^*V^T
-                    diag_first_PiolaKirchoff_stress = particle->firstPiolaKirchhoffStress();
-                    first_PiolaKirchoff_stress = left_rotation*diag_first_PiolaKirchoff_stress*(right_rotation.transpose());
-                    //recover the deformation gradient of the particle
-                    particle->setDeformationGradient(deform_grad);
-                }
-                Scalar particle_initial_volume = this->particle_initial_volume_[obj_idx][particle_idx];
-                for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
-                {
-                    const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i];
-                    if(this->is_dirichlet_grid_node_(pair.node_idx_).count(obj_idx) > 0)
-                        continue; //skip grid nodes that are boundary condition
-                    Vector<Scalar,Dim> weight_gradient = pair.gradient_value_; //gradient is to reference configuration
-                    if(this->grid_mass_(pair.node_idx_)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
-                        continue; //skip grid nodes with near zero mass
-                    if(this->contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
-                        this->grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/this->grid_mass_(pair.node_idx_)[obj_idx];
-                    else  //otherwise, grid velocity of all objects that ocuppy the node get updated
-                    {
-                        if(this->is_dirichlet_grid_node_(pair.node_idx_).size() > 0)
-                            continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
-                        for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx_).begin();
-                            vel_iter != this->grid_velocity_(pair.node_idx_).end(); ++vel_iter)
-                            if(this->gridMass(vel_iter->first,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
-                                vel_iter->second += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/this->grid_mass_(pair.node_idx_)[obj_idx];
-                    }
-                }
+                solveForParticleWithNoEnrichmentForwardEulerOnGrid(obj_idx,particle_idx,dt);
             }
             else //transient/enriched particle solve on domain corners
             {
-                //solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
-                solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,dt); //compute the internal force on domain corner (and later map to grid) via particle
+                //solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via quadrature points
+                solveForParticleWithEnrichmentForwardEulerViaParticle(obj_idx,particle_idx,enriched_corner_num,dt); //compute the internal force on domain corner (and later map to grid) via particle
             }
         }
     }
@@ -932,7 +891,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
             return false;
     }
     //rule two: only enrich while compression
-    Scalar compression_threshold = 0.5;
+    Scalar compression_threshold = 0.2;
     if(this->particles_[obj_idx][particle_idx]->volume() <compression_threshold * this->particle_initial_volume_[obj_idx][particle_idx])
         return true;
     return false;
@@ -983,7 +942,61 @@ void InvertibleMPMSolid<Scalar,Dim>::computeParticleInterpolationWeightAndGradie
 }
 
 template <typename Scalar, int Dim>
-void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx, Scalar dt)
+void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithNoEnrichmentForwardEulerOnGrid(unsigned int obj_idx, unsigned int particle_idx, Scalar dt)
+{
+    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    if(update_method == NULL)
+        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+    SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
+    Scalar particle_initial_volume = this->particle_initial_volume_[obj_idx][particle_idx];
+    SquareMatrix<Scalar,Dim> first_PiolaKirchoff_stress;
+    //remedy for rule one of enrichment: some particles within range of dirichlet grid nodes may satisfy criteria of enrichment, but we prohibit its
+    //enrichment for correct enforcement of dirichlet, we must do invert handling for this particles before rasterizing forces to grid
+    Scalar compression_threshold = 0.2;
+    if(particle->volume() < compression_threshold * particle_initial_volume)  //inverted particle
+    {
+        SquareMatrix<Scalar,Dim> deform_grad, left_rotation, diag_deform_grad, right_rotation, diag_first_PiolaKirchoff_stress;
+        deform_grad = particle->deformationGradient();
+        deform_grad_diagonalizer_.diagonalizeDeformationGradient(deform_grad,left_rotation,diag_deform_grad,right_rotation);
+        //clamp the principal stretch to the threshold if it's compressed too severely
+        for(unsigned int row = 0; row < Dim; ++row)
+            if(diag_deform_grad(row,row) < principal_stretch_threshold_)
+                diag_deform_grad(row,row) = principal_stretch_threshold_;
+        //temporarily set the deformation gradient of the particle to the diagonalized one to compute the unrotated stress
+        particle->setDeformationGradient(diag_deform_grad);
+        // P = U*P^*V^T
+        diag_first_PiolaKirchoff_stress = particle->firstPiolaKirchhoffStress();
+        first_PiolaKirchoff_stress = left_rotation*diag_first_PiolaKirchoff_stress*(right_rotation.transpose());
+        //recover the deformation gradient of the particle
+        particle->setDeformationGradient(deform_grad);
+    }
+    else  //normal computation
+        first_PiolaKirchoff_stress = particle->firstPiolaKirchhoffStress();
+    for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
+    {
+        const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i];
+        if(this->is_dirichlet_grid_node_(pair.node_idx_).count(obj_idx) > 0)
+            continue; //skip grid nodes that are boundary condition
+        Vector<Scalar,Dim> weight_gradient = pair.gradient_value_; //gradient is to reference configuration
+        if(this->grid_mass_(pair.node_idx_)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
+            continue; //skip grid nodes with near zero mass
+        if(this->contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
+            this->grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/this->grid_mass_(pair.node_idx_)[obj_idx];
+        else  //otherwise, grid velocity of all objects that ocuppy the node get updated
+        {
+            if(this->is_dirichlet_grid_node_(pair.node_idx_).size() > 0)
+                continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
+            for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx_).begin();
+                vel_iter != this->grid_velocity_(pair.node_idx_).end(); ++vel_iter)
+                if(this->gridMass(vel_iter->first,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
+                    vel_iter->second += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/this->grid_mass_(pair.node_idx_)[obj_idx];
+        }
+    }
+}
+
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                                   unsigned int enriched_corner_num, Scalar dt)
 {
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
@@ -991,7 +1004,6 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
     //we assume the particle has enriched domain corners
     SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     unsigned int corner_num = (Dim == 2) ? 4 : 8;
-    unsigned int enriched_corner_num = enrichedDomainCornerNum(obj_idx,particle_idx);
     //2x2(2D),2x2x2(3D) quadrature points per domain are used to evaluate the internal force on the domain corners 
     //first get the quadrature points (different number for different dimension)
     std::vector<Vector<Scalar,Dim> > gauss_points;
@@ -1084,7 +1096,8 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
 }
 
 template <typename Scalar, int Dim>
-void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx, Scalar dt)
+void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,
+                                                                                           unsigned int enriched_corner_num, Scalar dt)
 {
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
@@ -1092,7 +1105,6 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
     //we assume the particle has enriched domain corners
     SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     unsigned int corner_num = (Dim == 2) ? 4 : 8;
-    unsigned int enriched_corner_num = enrichedDomainCornerNum(obj_idx,particle_idx);
     //map internal force from particle to domain corner (then to grid node)
     SquareMatrix<Scalar,Dim> deform_grad, left_rotation, diag_deform_grad, right_rotation,
         diag_first_PiolaKirchoff_stress, first_PiolaKirchoff_stress, particle_domain_jacobian_ref;
