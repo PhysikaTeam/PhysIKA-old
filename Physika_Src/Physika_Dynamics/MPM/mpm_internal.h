@@ -31,9 +31,9 @@ namespace MPMInternal{
 template <typename Scalar,int Dim>
 struct NodeIndexWeightGradientPair
 {
-    Vector<unsigned int,Dim> node_idx_;
-    Scalar weight_value_;
-    Vector<Scalar,Dim> gradient_value_;
+    Vector<unsigned int,Dim> node_idx;
+    Scalar weight_value;
+    Vector<Scalar,Dim> gradient_value;
 };
 
 /*
@@ -45,8 +45,8 @@ struct NodeIndexWeightGradientPair
 template <typename Scalar,int Dim>
 struct NodeIndexWeightPair
 {
-    Vector<unsigned int,Dim> node_idx_;
-    Scalar weight_value_;
+    Vector<unsigned int,Dim> node_idx;
+    Scalar weight_value;
 };
 
 }  //end of namespace MPMInternal

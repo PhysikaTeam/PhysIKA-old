@@ -218,9 +218,9 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
     {
         if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
         {
-            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = multiDimIndex(iter->first,grid.nodeNum());
-            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
-            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx = multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
             ++particle_grid_pair_num;
         }
     }
@@ -538,9 +538,9 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
     {
         if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
         {
-            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = multiDimIndex(iter->first,grid.nodeNum());
-            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
-            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx = multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
             ++particle_grid_pair_num;
         }
     }

@@ -66,7 +66,13 @@ void DeformationDiagonalization<Scalar,Dim>::diagonalizeDeformationGradient(cons
 {
     diagonalizationTrait(deform_grad,left_rotation,diag_deform_grad,right_rotation);
 }
-      
+            
+template <typename Scalar, int Dim>
+void DeformationDiagonalization<Scalar,Dim>::diagonalizeDeformationGradient(const SquareMatrix<Scalar,Dim> &deform_grad, DiagonalizedDeformation &diagonalized_deformation) const
+{
+    diagonalizeDeformationGradient(deform_grad,diagonalized_deformation.left_rotation,diagonalized_deformation.diag_deform_grad,diagonalized_deformation.right_rotation);
+}
+
 template <typename Scalar, int Dim>
 void DeformationDiagonalization<Scalar,Dim>::diagonalizationTrait(const SquareMatrix<Scalar,2> &deform_grad, SquareMatrix<Scalar,2> &left_rotation,
                                                                   SquareMatrix<Scalar,2> &diag_deform_grad, SquareMatrix<Scalar,2> &right_rotation) const

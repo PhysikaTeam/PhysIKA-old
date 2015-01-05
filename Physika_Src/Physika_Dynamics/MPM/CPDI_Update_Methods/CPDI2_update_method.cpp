@@ -123,8 +123,8 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(const GridWe
                     for(unsigned int corner_grid_pair_idx = 0; corner_grid_pair_idx < global_corner_grid_pair_num[global_corner_idx]; ++corner_grid_pair_idx)
                     {
                         corner_grid_weight[object_idx][particle_idx][flat_corner_idx][corner_grid_pair_idx] = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx];
-                        Scalar corner_weight = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].weight_value_;
-                        Vector<unsigned int,2> node_idx = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].node_idx_;
+                        Scalar corner_weight = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].weight_value;
+                        Vector<unsigned int,2> node_idx = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].node_idx;
                         unsigned int node_idx_1d = this->flatIndex(node_idx,grid_node_num);
                         //weight and gradient correspond to this node for particles
                         typename std::map<unsigned int,Scalar>::iterator weight_map_iter = idx_weight_map.find(node_idx_1d);
@@ -153,8 +153,8 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(const GridWe
                             corner_to_node[dim] /= grid_dx[dim];
                         Scalar corner_weight = weight_function.weight(corner_to_node);
                         //weight and gradient correspond to this node for domain corners
-                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].node_idx_ = node_idx;
-                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].weight_value_ = corner_weight;
+                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].node_idx = node_idx;
+                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].weight_value = corner_weight;
                         ++corner_grid_pair_num[object_idx][particle_idx][flat_corner_idx];
                         //store the computed weight between domain corners and grid nodes to avoid redundent computation for other particles
                         global_corner_grid_weight[global_corner_idx].push_back(corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num]);
@@ -181,9 +181,9 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(const GridWe
                 if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
                 {
                     Scalar this_particle_grid_pair_num = particle_grid_pair_num[object_idx][particle_idx];
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid_node_num);
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].weight_value_ = iter->second;
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].node_idx = this->multiDimIndex(iter->first,grid_node_num);
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].weight_value = iter->second;
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
                     ++particle_grid_pair_num[object_idx][particle_idx];
                 }
             }
@@ -266,8 +266,8 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeightWithEnrichmen
                     for(unsigned int corner_grid_pair_idx = 0; corner_grid_pair_idx < global_corner_grid_pair_num[global_corner_idx]; ++corner_grid_pair_idx)
                     {
                         corner_grid_weight[object_idx][particle_idx][flat_corner_idx][corner_grid_pair_idx] = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx];
-                        Scalar corner_weight = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].weight_value_;
-                        Vector<unsigned int,2> node_idx = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].node_idx_;
+                        Scalar corner_weight = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].weight_value;
+                        Vector<unsigned int,2> node_idx = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].node_idx;
                         unsigned int node_idx_1d = this->flatIndex(node_idx,grid_node_num);
                         //enriched domain corners do not contribute to grid
                         if(is_enriched_domain_corner[object_idx][global_corner_idx])  
@@ -299,8 +299,8 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeightWithEnrichmen
                             corner_to_node[dim] /= grid_dx[dim];
                         Scalar corner_weight = weight_function.weight(corner_to_node);
                         //weight and gradient correspond to this node for domain corners
-                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].node_idx_ = node_idx;
-                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].weight_value_ = corner_weight;
+                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].node_idx = node_idx;
+                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].weight_value = corner_weight;
                         ++corner_grid_pair_num[object_idx][particle_idx][flat_corner_idx];
                         //store the computed weight between domain corners and grid nodes to avoid redundent computation for other particles
                         global_corner_grid_weight[global_corner_idx].push_back(corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num]);
@@ -330,9 +330,9 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeightWithEnrichmen
                 if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
                 {
                     Scalar this_particle_grid_pair_num = particle_grid_pair_num[object_idx][particle_idx];
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid_node_num);
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].weight_value_ = iter->second;
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].node_idx = this->multiDimIndex(iter->first,grid_node_num);
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].weight_value = iter->second;
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
                     ++particle_grid_pair_num[object_idx][particle_idx];
                 }
             }
@@ -359,8 +359,8 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleDomain(
                 Vector<Scalar,2> cur_corner_pos = *iter;
                 for(unsigned int j = 0; j < corner_grid_pair_num[obj_idx][particle_idx][corner_idx]; ++j)
                 {
-                    Scalar weight = corner_grid_weight[obj_idx][particle_idx][corner_idx][j].weight_value_;
-                    Vector<Scalar,2> node_vel = this->cpdi_driver_->gridVelocity(obj_idx,corner_grid_weight[obj_idx][particle_idx][corner_idx][j].node_idx_);
+                    Scalar weight = corner_grid_weight[obj_idx][particle_idx][corner_idx][j].weight_value;
+                    Vector<Scalar,2> node_vel = this->cpdi_driver_->gridVelocity(obj_idx,corner_grid_weight[obj_idx][particle_idx][corner_idx][j].node_idx);
                     cur_corner_pos += weight*node_vel*dt;
                 }
                 *iter = cur_corner_pos;
@@ -608,8 +608,8 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int
                 corner_to_node[dim] /= grid_dx[dim];
             Scalar corner_weight = weight_function.weight(corner_to_node);
             //weight correspond to this node for domain corners
-            corner_grid_weight[flat_corner_idx][node_num].node_idx_ = node_idx;
-            corner_grid_weight[flat_corner_idx][node_num].weight_value_ = corner_weight;
+            corner_grid_weight[flat_corner_idx][node_num].node_idx = node_idx;
+            corner_grid_weight[flat_corner_idx][node_num].weight_value = corner_weight;
             ++corner_grid_pair_num[flat_corner_idx];
             //weight and gradient correspond to this node for particles
             typename std::map<unsigned int,Scalar>::iterator weight_map_iter = idx_weight_map.find(node_idx_1d);
@@ -687,9 +687,9 @@ void CPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int
     {
         if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
         {
-            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid.nodeNum());
-            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
-            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx = this->multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
             ++particle_grid_pair_num;
         }
     }
@@ -863,8 +863,8 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(const GridWe
                     for(unsigned int corner_grid_pair_idx = 0; corner_grid_pair_idx < global_corner_grid_pair_num[global_corner_idx]; ++corner_grid_pair_idx)
                     {
                         corner_grid_weight[object_idx][particle_idx][flat_corner_idx][corner_grid_pair_idx] = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx];
-                        Scalar corner_weight = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].weight_value_;
-                        Vector<unsigned int,3> node_idx = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].node_idx_;
+                        Scalar corner_weight = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].weight_value;
+                        Vector<unsigned int,3> node_idx = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].node_idx;
                         unsigned int node_idx_1d = this->flatIndex(node_idx,grid_node_num);
                         //weight and gradient correspond to this node for particles
                         typename std::map<unsigned int,Scalar>::iterator weight_map_iter = idx_weight_map.find(node_idx_1d);
@@ -893,8 +893,8 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(const GridWe
                             corner_to_node[dim] /= grid_dx[dim];
                         Scalar corner_weight = weight_function.weight(corner_to_node);
                         //weight correspond to this node for domain corners
-                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].node_idx_ = node_idx;
-                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].weight_value_ = corner_weight;
+                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].node_idx = node_idx;
+                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].weight_value = corner_weight;
                         ++corner_grid_pair_num[object_idx][particle_idx][flat_corner_idx];
                         //store the computed weight between domain corners and grid nodes to avoid redundent computation for other particles
                         global_corner_grid_weight[global_corner_idx].push_back(corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num]);
@@ -921,9 +921,9 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(const GridWe
                 if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
                 {
                     Scalar this_particle_grid_pair_num = particle_grid_pair_num[object_idx][particle_idx];
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid_node_num);
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].weight_value_ = iter->second;
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].node_idx = this->multiDimIndex(iter->first,grid_node_num);
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].weight_value = iter->second;
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
                     ++particle_grid_pair_num[object_idx][particle_idx];
                 }
             }
@@ -1005,8 +1005,8 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeightWithEnrichmen
                     for(unsigned int corner_grid_pair_idx = 0; corner_grid_pair_idx < global_corner_grid_pair_num[global_corner_idx]; ++corner_grid_pair_idx)
                     {
                         corner_grid_weight[object_idx][particle_idx][flat_corner_idx][corner_grid_pair_idx] = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx];
-                        Scalar corner_weight = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].weight_value_;
-                        Vector<unsigned int,3> node_idx = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].node_idx_;
+                        Scalar corner_weight = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].weight_value;
+                        Vector<unsigned int,3> node_idx = global_corner_grid_weight[global_corner_idx][corner_grid_pair_idx].node_idx;
                         unsigned int node_idx_1d = this->flatIndex(node_idx,grid_node_num);
                         //enriched domain corners do not contribute to grid
                         if(is_enriched_domain_corner[object_idx][global_corner_idx])  
@@ -1038,8 +1038,8 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeightWithEnrichmen
                             corner_to_node[dim] /= grid_dx[dim];
                         Scalar corner_weight = weight_function.weight(corner_to_node);
                         //weight correspond to this node for domain corners
-                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].node_idx_ = node_idx;
-                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].weight_value_ = corner_weight;
+                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].node_idx = node_idx;
+                        corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num].weight_value = corner_weight;
                         ++corner_grid_pair_num[object_idx][particle_idx][flat_corner_idx];
                         //store the computed weight between domain corners and grid nodes to avoid redundent computation for other particles
                         global_corner_grid_weight[global_corner_idx].push_back(corner_grid_weight[object_idx][particle_idx][flat_corner_idx][node_num]);
@@ -1069,9 +1069,9 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeightWithEnrichmen
                 if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
                 {
                     Scalar this_particle_grid_pair_num = particle_grid_pair_num[object_idx][particle_idx];
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid_node_num);
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].weight_value_ = iter->second;
-                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].node_idx = this->multiDimIndex(iter->first,grid_node_num);
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].weight_value = iter->second;
+                    particle_grid_weight_and_gradient[object_idx][particle_idx][this_particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
                     ++particle_grid_pair_num[object_idx][particle_idx];
                 }
             }
@@ -1097,8 +1097,8 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleDomain(
                 Vector<Scalar,3> cur_corner_pos = *iter;
                 for(unsigned int j = 0; j < corner_grid_pair_num[obj_idx][particle_idx][corner_idx]; ++j)
                 {
-                    Scalar weight = corner_grid_weight[obj_idx][particle_idx][corner_idx][j].weight_value_;
-                    Vector<Scalar,3> node_vel = this->cpdi_driver_->gridVelocity(obj_idx,corner_grid_weight[obj_idx][particle_idx][corner_idx][j].node_idx_);
+                    Scalar weight = corner_grid_weight[obj_idx][particle_idx][corner_idx][j].weight_value;
+                    Vector<Scalar,3> node_vel = this->cpdi_driver_->gridVelocity(obj_idx,corner_grid_weight[obj_idx][particle_idx][corner_idx][j].node_idx);
                     cur_corner_pos += weight*node_vel*dt;
                 }
                 *iter = cur_corner_pos;
@@ -1333,8 +1333,8 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int
                 corner_to_node[dim] /= grid_dx[dim];
             Scalar corner_weight = weight_function.weight(corner_to_node);
             //weight correspond to this node for domain corners
-            corner_grid_weight[flat_corner_idx][node_num].node_idx_ = node_idx;
-            corner_grid_weight[flat_corner_idx][node_num].weight_value_ = corner_weight;
+            corner_grid_weight[flat_corner_idx][node_num].node_idx = node_idx;
+            corner_grid_weight[flat_corner_idx][node_num].weight_value = corner_weight;
             ++corner_grid_pair_num[flat_corner_idx];
             //weight and gradient correspond to this node for particles
             typename std::map<unsigned int,Scalar>::iterator weight_map_iter = idx_weight_map.find(node_idx_1d);
@@ -1356,9 +1356,9 @@ void CPDI2UpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int
     {
         if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
         {
-            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = this->multiDimIndex(iter->first,grid.nodeNum());
-            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
-            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx = this->multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
             ++particle_grid_pair_num;
         }
     }

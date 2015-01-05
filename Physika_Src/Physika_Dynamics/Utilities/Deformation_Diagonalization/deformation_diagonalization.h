@@ -25,6 +25,11 @@ template <typename Scalar, int Dim>
 class DeformationDiagonalization
 {
 public:
+    //type definition, for convenience
+    typedef struct{
+        SquareMatrix<Scalar,Dim> left_rotation, diag_deform_grad, right_rotation;
+    }DiagonalizedDeformation;
+public:
     DeformationDiagonalization();  //initialize with default epsilon
     explicit DeformationDiagonalization(Scalar epsilon); //initialize with given epsilon
     ~DeformationDiagonalization();
@@ -32,6 +37,7 @@ public:
     void setEpsilon(Scalar epsilon);
 	void diagonalizeDeformationGradient(const SquareMatrix<Scalar,Dim> &deform_grad, SquareMatrix<Scalar,Dim> &left_rotation,
 		                                SquareMatrix<Scalar,Dim> &diag_deform_grad, SquareMatrix<Scalar,Dim> &right_rotation) const;
+    void diagonalizeDeformationGradient(const SquareMatrix<Scalar,Dim> &deform_grad, DiagonalizedDeformation &diagonalized_deformation) const;
 protected:
     //trait method for different dimension
 	void diagonalizationTrait(const SquareMatrix<Scalar,2> &deform_grad, SquareMatrix<Scalar,2> &left_rotation,

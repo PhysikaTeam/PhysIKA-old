@@ -92,6 +92,8 @@ protected:
                                                                        unsigned int enriched_corner_num, Scalar dt);
     void solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,
                                                                unsigned int enriched_corner_num, Scalar dt);
+    //conduct a modified SVD to deformation gradient of each particle
+    void diagonalizeParticleDeformationGradient();
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
@@ -106,9 +108,11 @@ protected:
     //the weight/gradient is precomputed in the reference configuration of particle domain
     std::vector<std::vector<std::vector<Scalar> > > particle_corner_weight_;
     std::vector<std::vector<std::vector<Vector<Scalar,Dim> > > > particle_corner_gradient_;
-    //for invertibility support, stretch below this threshold will be clamped to this value
-    Scalar principal_stretch_threshold_;
+    //precompute diagonalized deformation gradient for each particle
+    std::vector<std::vector<typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation> > particle_diagonalized_deform_grad_;
     DeformationDiagonalization<Scalar,Dim> deform_grad_diagonalizer_; //the method used to diagonalize deformation gradient
+    //for invertibility support, stretch below this threshold will be clamped to this value (considered inverted)
+    Scalar principal_stretch_threshold_;
     //switch on/off particle enrichment
     bool enable_enrichment_;
 };

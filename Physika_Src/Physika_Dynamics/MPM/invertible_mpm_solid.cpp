@@ -770,6 +770,8 @@ void InvertibleMPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
     particle_corner_gradient_.push_back(all_particle_corner_gradient);
     std::vector<unsigned int> empty_enriched_particles;
     enriched_particles_.push_back(empty_enriched_particles);
+    std::vector<typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation> all_particle_diag_deform_grad(particle_num_of_last_object);
+    particle_diagonalized_deform_grad_.push_back(all_particle_diag_deform_grad);
 }
 
 template <typename Scalar, int Dim>
@@ -781,6 +783,8 @@ void InvertibleMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsig
     particle_corner_weight_[object_idx].push_back(one_particle_corner_weight);
     std::vector<Vector<Scalar,Dim> > one_particle_corner_gradient(corner_num);
     particle_corner_gradient_[object_idx].push_back(one_particle_corner_gradient);
+    typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation one_particle_diag_deform_grad;
+    particle_diagonalized_deform_grad_[object_idx].push_back(one_particle_diag_deform_grad);
 }
  
 template <typename Scalar, int Dim>
@@ -793,6 +797,8 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsign
     particle_corner_gradient_.erase(iter2);
     std::vector<std::vector<unsigned int> >::iterator iter3 = enriched_particles_.begin() + object_idx;
     enriched_particles_.erase(iter3);
+    typename std::vector<std::vector<typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation> >::iterator iter4 = particle_diagonalized_deform_grad_.begin() + object_idx;
+    particle_diagonalized_deform_grad_.erase(iter4);
 }
  
 template <typename Scalar, int Dim>
@@ -803,6 +809,8 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsign
     particle_corner_weight_[object_idx].erase(iter1);
     typename std::vector<std::vector<Vector<Scalar,Dim> > >::iterator iter2 = particle_corner_gradient_[object_idx].begin() + particle_idx;
     particle_corner_gradient_[object_idx].erase(iter2);
+    typename std::vector<typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation>::iterator iter3 = particle_diagonalized_deform_grad_[object_idx].begin() + particle_idx;
+    particle_diagonalized_deform_grad_[object_idx].erase(iter3);
 }
     
 template <typename Scalar, int Dim>
@@ -905,10 +913,14 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
         if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
             return false;
     }
-    //rule two: only enrich while compression
+    //rule two: enrich for large compression
     Scalar compression_threshold = 0.5;
-    if(this->particles_[obj_idx][particle_idx]->volume() <compression_threshold * this->particle_initial_volume_[obj_idx][particle_idx])
-        return true;
+    for(unsigned int dim = 0; dim < Dim; ++dim)
+    {
+        const SquareMatrix<Scalar,Dim> &diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
+        if(diag_deform_grad(dim,dim) < compression_threshold)
+            return true;
+    }
     return false;
     //TO DO
 }
@@ -916,6 +928,9 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticleDomainEnrichState()
 {
+    //first precompute SVD of deformation gradient for each particle
+    diagonalizeParticleDeformationGradient();
+    //then check for each particle if the criteria is satisfied
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
         for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
         {
@@ -964,29 +979,24 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithNoEnrichmentForwardEule
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
     SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     Scalar particle_initial_volume = this->particle_initial_volume_[obj_idx][particle_idx];
-    SquareMatrix<Scalar,Dim> first_PiolaKirchoff_stress;
-    //remedy for rule one of enrichment: some particles within range of dirichlet grid nodes may satisfy criteria of enrichment, but we prohibit its
-    //enrichment for correct enforcement of dirichlet, we must do invert handling for this particles before rasterizing forces to grid
-    Scalar compression_threshold = 0.5;
-    if(particle->volume() < compression_threshold * particle_initial_volume)  //inverted particle
-    {
-        SquareMatrix<Scalar,Dim> deform_grad, left_rotation, diag_deform_grad, right_rotation, diag_first_PiolaKirchoff_stress;
-        deform_grad = particle->deformationGradient();
-        deform_grad_diagonalizer_.diagonalizeDeformationGradient(deform_grad,left_rotation,diag_deform_grad,right_rotation);
-        //clamp the principal stretch to the threshold if it's compressed too severely
-        for(unsigned int row = 0; row < Dim; ++row)
-            if(diag_deform_grad(row,row) < principal_stretch_threshold_)
-                diag_deform_grad(row,row) = principal_stretch_threshold_;
-        //temporarily set the deformation gradient of the particle to the diagonalized one to compute the unrotated stress
-        particle->setDeformationGradient(diag_deform_grad);
-        // P = U*P^*V^T
-        diag_first_PiolaKirchoff_stress = particle->firstPiolaKirchhoffStress();
-        first_PiolaKirchoff_stress = left_rotation*diag_first_PiolaKirchoff_stress*(right_rotation.transpose());
-        //recover the deformation gradient of the particle
-        particle->setDeformationGradient(deform_grad);
-    }
-    else  //normal computation
-        first_PiolaKirchoff_stress = particle->firstPiolaKirchhoffStress();
+
+    SquareMatrix<Scalar,Dim> deform_grad, diag_first_PiolaKirchoff_stress, first_PiolaKirchoff_stress;
+    deform_grad = particle->deformationGradient();
+    SquareMatrix<Scalar,Dim> left_rotation = particle_diagonalized_deform_grad_[obj_idx][particle_idx].left_rotation;
+    SquareMatrix<Scalar,Dim> diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
+    SquareMatrix<Scalar,Dim> right_rotation = particle_diagonalized_deform_grad_[obj_idx][particle_idx].right_rotation;
+    //clamp the principal stretch to the threshold if it's compressed too severely
+    for(unsigned int row = 0; row < Dim; ++row)
+        if(diag_deform_grad(row,row) < principal_stretch_threshold_)
+            diag_deform_grad(row,row) = principal_stretch_threshold_;
+    //temporarily set the deformation gradient of the particle to the diagonalized one to compute the unrotated stress
+    particle->setDeformationGradient(diag_deform_grad);
+    // P = U*P^*V^T
+    diag_first_PiolaKirchoff_stress = particle->firstPiolaKirchhoffStress();
+    first_PiolaKirchoff_stress = left_rotation*diag_first_PiolaKirchoff_stress*(right_rotation.transpose());
+    //recover the deformation gradient of the particle
+    particle->setDeformationGradient(deform_grad);
+
     for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
     {
         const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i];
@@ -1121,12 +1131,12 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
     SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     unsigned int corner_num = (Dim == 2) ? 4 : 8;
     //map internal force from particle to domain corner (then to grid node)
-    SquareMatrix<Scalar,Dim> deform_grad, left_rotation, diag_deform_grad, right_rotation,
-        diag_first_PiolaKirchoff_stress, first_PiolaKirchoff_stress, particle_domain_jacobian_ref;
-    Vector<Scalar,Dim> gauss_point, domain_shape_function_gradient_to_ref;
+    SquareMatrix<Scalar,Dim> deform_grad, diag_first_PiolaKirchoff_stress, first_PiolaKirchoff_stress;
     Vector<unsigned int,Dim> corner_idx_nd, corner_dim(2);
     deform_grad = particle->deformationGradient();
-    deform_grad_diagonalizer_.diagonalizeDeformationGradient(deform_grad,left_rotation,diag_deform_grad,right_rotation);
+    SquareMatrix<Scalar,Dim> left_rotation = particle_diagonalized_deform_grad_[obj_idx][particle_idx].left_rotation;
+    SquareMatrix<Scalar,Dim> diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
+    SquareMatrix<Scalar,Dim> right_rotation = particle_diagonalized_deform_grad_[obj_idx][particle_idx].right_rotation;
     //clamp the principal stretch to the threshold if it's compressed too severely
     for(unsigned int row = 0; row < Dim; ++row)
         if(diag_deform_grad(row,row) < principal_stretch_threshold_)
@@ -1181,6 +1191,20 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
             }
         }
     }
+}
+
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::diagonalizeParticleDeformationGradient()
+{
+    SquareMatrix<Scalar,Dim> deform_grad;
+    for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
+            typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation &deform_grad_svd = particle_diagonalized_deform_grad_[obj_idx][particle_idx];
+            deform_grad = particle->deformationGradient();
+            deform_grad_diagonalizer_.diagonalizeDeformationGradient(deform_grad,deform_grad_svd.left_rotation,deform_grad_svd.diag_deform_grad,deform_grad_svd.right_rotation);
+        }
 }
 
 //explicit instantiation
