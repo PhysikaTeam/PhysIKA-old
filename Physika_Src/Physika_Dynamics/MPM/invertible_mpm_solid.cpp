@@ -913,16 +913,23 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
         if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
             return false;
     }
-    //rule two: enrich for large compression
-    Scalar compression_threshold = 0.5;
-    for(unsigned int dim = 0; dim < Dim; ++dim)
+    //rule two: enrich for ill deformation of particle
+    Scalar ratio_threshold = 0.5;
+    const SquareMatrix<Scalar,Dim> &diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
+    Scalar min_stretch = abs(diag_deform_grad(0,0)), max_stretch = abs(diag_deform_grad(0,0));
+    for(unsigned int dim = 1; dim < Dim; ++dim)
     {
-        const SquareMatrix<Scalar,Dim> &diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
-        if(diag_deform_grad(dim,dim) < compression_threshold)
+        if(diag_deform_grad(dim,dim) < 0)  //already inverted, enrich
             return true;
+        Scalar abs_val = abs(diag_deform_grad(dim,dim));
+        if(abs_val < min_stretch)
+            min_stretch = abs_val;
+        if(abs_val > max_stretch)
+            max_stretch = abs_val;
     }
+    if(min_stretch < ratio_threshold * max_stretch) //inverse of condition number
+        return true;
     return false;
-    //TO DO
 }
 
 template <typename Scalar, int Dim>
