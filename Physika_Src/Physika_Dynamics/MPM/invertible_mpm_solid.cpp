@@ -130,20 +130,20 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
                 for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
                 {
                     const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i];
-                    Scalar weight = pair.weight_value_;
+                    Scalar weight = pair.weight_value;
                     PHYSIKA_ASSERT(weight > std::numeric_limits<Scalar>::epsilon());
-                    typename std::map<unsigned int,Scalar>::iterator iter = this->grid_mass_(pair.node_idx_).find(obj_idx);
-                    if(iter != this->grid_mass_(pair.node_idx_).end())
-                        this->grid_mass_(pair.node_idx_)[obj_idx] += weight*particle->mass();
+                    typename std::map<unsigned int,Scalar>::iterator iter = this->grid_mass_(pair.node_idx).find(obj_idx);
+                    if(iter != this->grid_mass_(pair.node_idx).end())
+                        this->grid_mass_(pair.node_idx)[obj_idx] += weight*particle->mass();
                     else
-                        this->grid_mass_(pair.node_idx_).insert(std::make_pair(obj_idx,weight*particle->mass()));
-                    if(this->is_dirichlet_grid_node_(pair.node_idx_).count(obj_idx) > 0) //skip the velocity update of boundary nodes
+                        this->grid_mass_(pair.node_idx).insert(std::make_pair(obj_idx,weight*particle->mass()));
+                    if(this->is_dirichlet_grid_node_(pair.node_idx).count(obj_idx) > 0) //skip the velocity update of boundary nodes
                         continue;
-                    typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator iter2 = this->grid_velocity_(pair.node_idx_).find(obj_idx);
-                    if(iter2 != this->grid_velocity_(pair.node_idx_).end())
-                        this->grid_velocity_(pair.node_idx_)[obj_idx] += weight*(particle->mass()*particle->velocity());
+                    typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator iter2 = this->grid_velocity_(pair.node_idx).find(obj_idx);
+                    if(iter2 != this->grid_velocity_(pair.node_idx).end())
+                        this->grid_velocity_(pair.node_idx)[obj_idx] += weight*(particle->mass()*particle->velocity());
                     else
-                        this->grid_velocity_(pair.node_idx_).insert(std::make_pair(obj_idx,weight*(particle->mass()*particle->velocity())));
+                        this->grid_velocity_(pair.node_idx).insert(std::make_pair(obj_idx,weight*(particle->mass()*particle->velocity())));
                 }
             }
             //transient/enriched particle needs to rasterize to enriched corners as well
@@ -520,8 +520,8 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar
                 SquareMatrix<Scalar,Dim> particle_vel_grad(0);
                 for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
                 {
-                    Vector<unsigned int,Dim> node_idx = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_);
-                    Vector<Scalar,Dim> weight_gradient = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].gradient_value_);
+                    Vector<unsigned int,Dim> node_idx = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx);
+                    Vector<Scalar,Dim> weight_gradient = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].gradient_value);
                     particle_vel_grad += this->gridVelocity(obj_idx,node_idx).outerProduct(weight_gradient);
                 }
                 particle_deform_grad += dt*particle_vel_grad;
@@ -562,10 +562,10 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
             {
                 for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
                 {
-                    Vector<unsigned int,Dim> node_idx = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_);
+                    Vector<unsigned int,Dim> node_idx = (this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx);
                     if(this->gridMass(obj_idx,node_idx) <= std::numeric_limits<Scalar>::epsilon())
                         continue;
-                    Scalar weight = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].weight_value_;
+                    Scalar weight = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].weight_value;
                     Vector<Scalar,Dim> cur_grid_vel(0),grid_vel_before(0);
                     if(this->grid_velocity_(node_idx).find(obj_idx) != this->grid_velocity_(node_idx).end())
                         cur_grid_vel = this->grid_velocity_(node_idx)[obj_idx];
@@ -630,8 +630,8 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
                         for(unsigned int i = 0; i < this->corner_grid_pair_num_[obj_idx][particle_idx][corner_idx]; ++i)
                         {
                             const MPMInternal::NodeIndexWeightPair<Scalar,Dim> &pair = this->corner_grid_weight_[obj_idx][particle_idx][corner_idx][i];
-                            Scalar weight = pair.weight_value_;
-                            Vector<Scalar,Dim> node_vel = this->gridVelocity(obj_idx,pair.node_idx_);
+                            Scalar weight = pair.weight_value;
+                            Vector<Scalar,Dim> node_vel = this->gridVelocity(obj_idx,pair.node_idx);
                             new_corner_pos += weight*node_vel*dt;
                         }
                     }
@@ -909,7 +909,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     //the dirichlet boundary is correctly enforced in this way
     for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
     {
-        Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx_;
+        Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx;
         if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
             return false;
     }
@@ -1007,21 +1007,21 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithNoEnrichmentForwardEule
     for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
     {
         const MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> &pair = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i];
-        if(this->is_dirichlet_grid_node_(pair.node_idx_).count(obj_idx) > 0)
+        if(this->is_dirichlet_grid_node_(pair.node_idx).count(obj_idx) > 0)
             continue; //skip grid nodes that are boundary condition
-        Vector<Scalar,Dim> weight_gradient = pair.gradient_value_; //gradient is to reference configuration
-        if(this->grid_mass_(pair.node_idx_)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
+        Vector<Scalar,Dim> weight_gradient = pair.gradient_value; //gradient is to reference configuration
+        if(this->grid_mass_(pair.node_idx)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
             continue; //skip grid nodes with near zero mass
         if(this->contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
-            this->grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/this->grid_mass_(pair.node_idx_)[obj_idx];
+            this->grid_velocity_(pair.node_idx)[obj_idx] += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/this->grid_mass_(pair.node_idx)[obj_idx];
         else  //otherwise, grid velocity of all objects that ocuppy the node get updated
         {
-            if(this->is_dirichlet_grid_node_(pair.node_idx_).size() > 0)
+            if(this->is_dirichlet_grid_node_(pair.node_idx).size() > 0)
                 continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
-            for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx_).begin();
-                vel_iter != this->grid_velocity_(pair.node_idx_).end(); ++vel_iter)
-                if(this->gridMass(vel_iter->first,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
-                    vel_iter->second += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/this->grid_mass_(pair.node_idx_)[obj_idx];
+            for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx).begin();
+                vel_iter != this->grid_velocity_(pair.node_idx).end(); ++vel_iter)
+                if(this->gridMass(vel_iter->first,pair.node_idx) > std::numeric_limits<Scalar>::epsilon())
+                    vel_iter->second += dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*weight_gradient/this->grid_mass_(pair.node_idx)[obj_idx];
         }
     }
 }
@@ -1105,21 +1105,21 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
                 for(unsigned int i = 0; i < this->corner_grid_pair_num_[obj_idx][particle_idx][corner_idx]; ++i)
                 {
                     const MPMInternal::NodeIndexWeightPair<Scalar,Dim> &pair = this->corner_grid_weight_[obj_idx][particle_idx][corner_idx][i];
-                    if(this->is_dirichlet_grid_node_(pair.node_idx_).count(obj_idx) > 0)
+                    if(this->is_dirichlet_grid_node_(pair.node_idx).count(obj_idx) > 0)
                         continue; //skip grid nodes that are boundary condition
-                    Scalar corner_grid_weight = pair.weight_value_;
-                    if(this->grid_mass_(pair.node_idx_)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
+                    Scalar corner_grid_weight = pair.weight_value;
+                    if(this->grid_mass_(pair.node_idx)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
                         continue; //skip grid nodes with near zero mass
                     if(this->contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
-                        this->grid_velocity_(pair.node_idx_)[obj_idx] += dt*(-1)*first_PiolaKirchoff_stress*corner_grid_weight*domain_shape_function_gradient_to_ref*jacobian_det/this->grid_mass_(pair.node_idx_)[obj_idx];
+                        this->grid_velocity_(pair.node_idx)[obj_idx] += dt*(-1)*first_PiolaKirchoff_stress*corner_grid_weight*domain_shape_function_gradient_to_ref*jacobian_det/this->grid_mass_(pair.node_idx)[obj_idx];
                     else  //otherwise, grid velocity of all objects that ocuppy the node get updated
                     {
-                        if(this->is_dirichlet_grid_node_(pair.node_idx_).size() > 0)
+                        if(this->is_dirichlet_grid_node_(pair.node_idx).size() > 0)
                             continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
-                        for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx_).begin();
-                            vel_iter != this->grid_velocity_(pair.node_idx_).end(); ++vel_iter)
-                            if(this->gridMass(vel_iter->first,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
-                                vel_iter->second += dt*(-1)*first_PiolaKirchoff_stress*corner_grid_weight*domain_shape_function_gradient_to_ref*jacobian_det/this->grid_mass_(pair.node_idx_)[obj_idx];
+                        for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx).begin();
+                            vel_iter != this->grid_velocity_(pair.node_idx).end(); ++vel_iter)
+                            if(this->gridMass(vel_iter->first,pair.node_idx) > std::numeric_limits<Scalar>::epsilon())
+                                vel_iter->second += dt*(-1)*first_PiolaKirchoff_stress*corner_grid_weight*domain_shape_function_gradient_to_ref*jacobian_det/this->grid_mass_(pair.node_idx)[obj_idx];
                     }
                 }
             }
@@ -1173,26 +1173,26 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
             for(unsigned int i = 0; i < this->corner_grid_pair_num_[obj_idx][particle_idx][corner_idx]; ++i)
             {
                 const MPMInternal::NodeIndexWeightPair<Scalar,Dim> &pair = this->corner_grid_weight_[obj_idx][particle_idx][corner_idx][i];
-                if(this->is_dirichlet_grid_node_(pair.node_idx_).count(obj_idx) > 0)
+                if(this->is_dirichlet_grid_node_(pair.node_idx).count(obj_idx) > 0)
                     continue; //skip grid nodes that are boundary condition
-                Scalar corner_grid_weight = pair.weight_value_;
-                if(this->grid_mass_(pair.node_idx_)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
+                Scalar corner_grid_weight = pair.weight_value;
+                if(this->grid_mass_(pair.node_idx)[obj_idx] <= std::numeric_limits<Scalar>::epsilon())
                     continue; //skip grid nodes with near zero mass
                 if(this->contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
                 {
-                    this->grid_velocity_(pair.node_idx_)[obj_idx] +=
-                        dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*corner_grid_weight*particle_corner_gradient_[obj_idx][particle_idx][corner_idx]/this->grid_mass_(pair.node_idx_)[obj_idx];
+                    this->grid_velocity_(pair.node_idx)[obj_idx] +=
+                        dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*corner_grid_weight*particle_corner_gradient_[obj_idx][particle_idx][corner_idx]/this->grid_mass_(pair.node_idx)[obj_idx];
                 }
                 else  //otherwise, grid velocity of all objects that ocuppy the node get updated
                 {
-                    if(this->is_dirichlet_grid_node_(pair.node_idx_).size() > 0)
+                    if(this->is_dirichlet_grid_node_(pair.node_idx).size() > 0)
                         continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
-                    for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx_).begin();
-                        vel_iter != this->grid_velocity_(pair.node_idx_).end(); ++vel_iter)
-                        if(this->gridMass(vel_iter->first,pair.node_idx_) > std::numeric_limits<Scalar>::epsilon())
+                    for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(pair.node_idx).begin();
+                        vel_iter != this->grid_velocity_(pair.node_idx).end(); ++vel_iter)
+                        if(this->gridMass(vel_iter->first,pair.node_idx) > std::numeric_limits<Scalar>::epsilon())
                         {
                             vel_iter->second += 
-                                dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*corner_grid_weight*particle_corner_gradient_[obj_idx][particle_idx][corner_idx]/this->grid_mass_(pair.node_idx_)[obj_idx];
+                                dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*corner_grid_weight*particle_corner_gradient_[obj_idx][particle_idx][corner_idx]/this->grid_mass_(pair.node_idx)[obj_idx];
                         }
                 }
             }
