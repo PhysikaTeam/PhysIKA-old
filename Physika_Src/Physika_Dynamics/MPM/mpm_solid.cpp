@@ -379,24 +379,27 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
         if(plugin)
             plugin->onResolveContactOnGrid(dt);
     }
-    //Contact 1: contact with the kinematic objects
-    Vector<unsigned int,Dim> grid_node_num = grid_.nodeNum();
-    for(std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin(); iter != active_grid_node_.end(); ++iter)
+    //Contact 1: contact with the kinematic objects    
+    if(!(this->collidable_objects_).empty())
     {
-        unsigned int node_idx_1d = iter->first;
-        Vector<unsigned int,Dim> node_idx = multiDimIndex(node_idx_1d,grid_node_num);
-        Vector<Scalar,Dim> node_pos = grid_.node(node_idx);
-        unsigned int object_idx = iter->second;
-        if(is_dirichlet_grid_node_(node_idx).count(object_idx) > 0)
-            continue;
-        Vector<Scalar,Dim> node_vel = gridVelocity(object_idx,node_idx);
-        Vector<Scalar,Dim> impulse(0);
-        for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
+        Vector<unsigned int,Dim> grid_node_num = grid_.nodeNum();
+        for(std::multimap<unsigned int,unsigned int>::iterator iter = active_grid_node_.begin(); iter != active_grid_node_.end(); ++iter)
         {
-            if((this->collidable_objects_[i])->collide(node_pos,node_vel,impulse))
+            unsigned int node_idx_1d = iter->first;
+            Vector<unsigned int,Dim> node_idx = multiDimIndex(node_idx_1d,grid_node_num);
+            Vector<Scalar,Dim> node_pos = grid_.node(node_idx);
+            unsigned int object_idx = iter->second;
+            if(is_dirichlet_grid_node_(node_idx).count(object_idx) > 0)
+                continue;
+            Vector<Scalar,Dim> node_vel = gridVelocity(object_idx,node_idx);
+            Vector<Scalar,Dim> impulse(0);
+            for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
             {
-                node_vel += impulse;
-                setGridVelocity(object_idx,node_idx,node_vel);
+                if((this->collidable_objects_[i])->collide(node_pos,node_vel,impulse))
+                {
+                    node_vel += impulse;
+                    setGridVelocity(object_idx,node_idx,node_vel);
+                }
             }
         }
     }
@@ -494,23 +497,26 @@ void MPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
         if(plugin)
             plugin->onResolveContactOnParticles(dt);
     }
-    //resolve contact with the kinematic objects in scene on the particle level
-    for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
-        for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
-        {
-            SolidParticle<Scalar,Dim> &particle = this->particle(obj_idx,particle_idx);
-            Vector<Scalar,Dim> particle_pos = particle.position();
-            Vector<Scalar,Dim> particle_vel = particle.velocity();
-            for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
+    //resolve contact with the kinematic objects in scene on the particle level    
+    if(!(this->collidable_objects_).empty())
+    {
+        for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+            for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
             {
-                Vector<Scalar,Dim> impulse(0);
-                if((this->collidable_objects_[i]->collide(particle_pos,particle_vel,impulse)))
+                SolidParticle<Scalar,Dim> &particle = this->particle(obj_idx,particle_idx);
+                Vector<Scalar,Dim> particle_pos = particle.position();
+                Vector<Scalar,Dim> particle_vel = particle.velocity();
+                for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
                 {
-                    particle_vel += impulse;
-                    particle.setVelocity(particle_vel);
+                    Vector<Scalar,Dim> impulse(0);
+                    if((this->collidable_objects_[i]->collide(particle_pos,particle_vel,impulse)))
+                    {
+                        particle_vel += impulse;
+                        particle.setVelocity(particle_vel);
+                    }
                 }
             }
-        }
+    }
 }
 
 template <typename Scalar, int Dim>

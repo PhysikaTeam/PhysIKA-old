@@ -46,8 +46,8 @@ public:
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
 
-    virtual Scalar computeTimeStep();
-    virtual void advanceStep(Scalar dt); //compute time step with CFL condition
+    virtual Scalar computeTimeStep(); //compute time step with CFL condition
+    virtual void advanceStep(Scalar dt);
 
     //getters&&setters
     Scalar cflConstant() const;

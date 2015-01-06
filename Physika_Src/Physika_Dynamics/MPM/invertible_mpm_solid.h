@@ -49,11 +49,12 @@ public:
     virtual void read(const std::string &file_name);
 
     //virtual methods
+    virtual Scalar computeTimeStep(); //time step must consider the velocity of the enriched domain corners
     virtual void initSimulationData();  //the topology of the particle domains will be initiated before simulation starts
     virtual void rasterize(); //according to the particle type, some data are rasterized to grid, others to domain corners
     virtual void resolveContactOnParticles(Scalar dt); //the contact between enriched domains are resolved on particle level
     virtual void updateParticleInterpolationWeight();  //interpolation weight between particle and domain corners need to be updated as well
-    virtual void updateParticleConstitutiveModelState(Scalar dt); //deformation gradient is directly computed instead of temporal update to mitigate artificial plasticity
+    virtual void updateParticleConstitutiveModelState(Scalar dt); 
     virtual void updateParticleVelocity();
     virtual void updateParticlePosition(Scalar dt);
     //explicitly set current particle domain, data in particle_domain_mesh_ are updated as well
@@ -65,6 +66,9 @@ public:
     //explicitly enable/disable enrichment with particle domains
     void enableEnrichment();
     void disableEnrichment();
+    //explicitly enable/disable solve entirely on particle comains, for comparison
+    void enableEntireEnrichment();
+    void disableEntireEnrichment();
 
 protected:
     //solve on grid is reimplemented
@@ -94,6 +98,8 @@ protected:
                                                                unsigned int enriched_corner_num, Scalar dt);
     //conduct a modified SVD to deformation gradient of each particle
     void diagonalizeParticleDeformationGradient();
+    //factorize skew information from the particle deformation gradient
+    SquareMatrix<Scalar,Dim> factorizeParticleSkewDeformation(unsigned int obj_idx, unsigned int particle_idx) const;
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
@@ -115,6 +121,7 @@ protected:
     Scalar principal_stretch_threshold_;
     //switch on/off particle enrichment
     bool enable_enrichment_;
+    bool enable_entire_enrichment_;
 };
 
 }  //end of namespace Physika
