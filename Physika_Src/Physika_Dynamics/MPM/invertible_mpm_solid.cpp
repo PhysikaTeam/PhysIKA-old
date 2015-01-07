@@ -266,25 +266,25 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
 {
     MPMSolid<Scalar,Dim>::resolveContactOnParticles(dt);
-    //contact 1: contact with the kinematic objects in scene on the enriched domain corner
-    if(!(this->collidable_objects_).empty())
-    {
-        for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
-            for(unsigned int corner_idx = 0; corner_idx < particle_domain_mesh_[obj_idx]->vertNum(); ++corner_idx)
-            {
-                if(is_enriched_domain_corner_[obj_idx][corner_idx])
-                {
-                    Vector<Scalar,Dim> corner_pos = particle_domain_mesh_[obj_idx]->vertPos(corner_idx);
-                    Vector<Scalar,Dim> &corner_vel = domain_corner_velocity_[obj_idx][corner_idx];
-                    for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
-                    {
-                        Vector<Scalar,Dim> impulse(0);
-                        if((this->collidable_objects_[i]->collide(corner_pos,corner_vel,impulse)))
-                            corner_vel += impulse;
-                    }
-                }
-            }
-    }
+    // //contact 1: contact with the kinematic objects in scene on the enriched domain corner
+    // if(!(this->collidable_objects_).empty())
+    // {
+    //     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+    //         for(unsigned int corner_idx = 0; corner_idx < particle_domain_mesh_[obj_idx]->vertNum(); ++corner_idx)
+    //         {
+    //             if(is_enriched_domain_corner_[obj_idx][corner_idx])
+    //             {
+    //                 Vector<Scalar,Dim> corner_pos = particle_domain_mesh_[obj_idx]->vertPos(corner_idx);
+    //                 Vector<Scalar,Dim> &corner_vel = domain_corner_velocity_[obj_idx][corner_idx];
+    //                 for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
+    //                 {
+    //                     Vector<Scalar,Dim> impulse(0);
+    //                     if((this->collidable_objects_[i]->collide(corner_pos,corner_vel,impulse)))
+    //                         corner_vel += impulse;
+    //                 }
+    //             }
+    //         }
+    // }
 
     //contact 2: contact between different simulated objects
     //NOTE: THIS CODE IS EXPERIMENTAL!!!
@@ -958,21 +958,38 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     PHYSIKA_ASSERT(obj_idx<obj_num);
     unsigned int particle_num = this->particleNumOfObject(obj_idx);
     PHYSIKA_ASSERT(particle_idx<particle_num);
-    //entire enrichment turned on
+    //rule one: if the particle is in a cell with all dirichlet nodes, the particle cannot be enriched
+    //the dirichlet boundary is correctly enforced in this way
+    const Grid<Scalar,Dim> &grid = this->grid();
+    Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
+    SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
+    Vector<unsigned int,Dim> cell_idx;
+    Vector<Scalar,Dim> bias_in_cell;
+    grid.cellIndexAndBiasInCell(particle->position(),cell_idx,bias_in_cell);
+    Vector<unsigned int,Dim> node_idx;
+    unsigned int cell_node_num = Dim == 2 ? 4 : 8;
+    Vector<unsigned int,Dim> cell_node_dim(2);
+    unsigned int cell_dirichlet_node_num = 0;
+    for(unsigned int flat_idx = 0; flat_idx < cell_node_num; ++flat_idx)
+    {
+        node_idx = cell_idx + this->multiDimIndex(flat_idx,cell_node_dim);
+        if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
+            ++cell_dirichlet_node_num;
+    }
+    if(cell_dirichlet_node_num == cell_node_num) //negotiable, not necessarily all nodes
+        return false;
+    //rule two: dirichlet particle is not enriched
+    if(this->is_dirichlet_particle_[obj_idx][particle_idx])
+        return false;
+    
+    //entire enrichment turned on, except those in rule dirichlet
     if(enable_entire_enrichment_)
         return true;
     //enrichment explicitly turned off
     if(!enable_enrichment_)
         return false;
-    //rule one: if there's any dirichlet grid node within the range of the particle, the particle cannot be enriched
-    //the dirichlet boundary is correctly enforced in this way
-    for(unsigned int i = 0; i < this->particle_grid_pair_num_[obj_idx][particle_idx]; ++i)
-    {
-        Vector<unsigned int,Dim> node_idx = this->particle_grid_weight_and_gradient_[obj_idx][particle_idx][i].node_idx;
-        if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
-            return false;
-    }
-    //rule two: enrich for ill-deformed particle
+    
+    //rule three: enrich for ill-deformed particle
     //metric function: f = min(f1,f2)
     Scalar condition_value = 0; //the metric number for enrichment: 0~1, enrich~no-enrich
     Scalar condition_threshold = 0.5;
