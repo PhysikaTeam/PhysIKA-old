@@ -132,7 +132,7 @@ void MPMSolidPluginRender<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
     {
         this->simulation_finished_ = true;
         std::cout<<"Simulation Ended.\n";
-        std::cout<<"Total simulation time: "<<total_time_<<" s; Average: "<<total_time_/(max_frame-start_frame)<<" s/frame.\n";
+        std::cout<<"Total simulation time: "<<total_time_<<" s; Average: "<<total_time_/(max_frame-start_frame+1)<<" s/frame.\n";
     }
 }
 

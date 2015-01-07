@@ -97,7 +97,7 @@ void DriverBase<Scalar>::advanceFrame(unsigned int frame)
     {
         std::cout<<"Simulation Ended.\n";
         if(enable_timer_)
-            std::cout<<"Total simulation time: "<<total_simulation_time_<<" s; Average: "<<total_simulation_time_/(end_frame_-start_frame_)<<" s/frame.\n";
+            std::cout<<"Total simulation time: "<<total_simulation_time_<<" s; Average: "<<total_simulation_time_/(end_frame_-start_frame_+1)<<" s/frame.\n";
     }
     //write to file
     if(write_to_file_)
