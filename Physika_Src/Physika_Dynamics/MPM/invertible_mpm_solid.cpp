@@ -92,7 +92,7 @@ Scalar InvertibleMPMSolid<Scalar,Dim>::computeTimeStep()
 {
     Scalar min_cell_size = this->minCellEdgeLength();
     Scalar max_particle_vel = this->maxParticleVelocityNorm();
-    Scalar max_corner_vel = std::numeric_limits<Scalar>::min();
+    Scalar max_corner_vel = (std::numeric_limits<Scalar>::min)();
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
         for(unsigned int corner_idx = 0; corner_idx < particle_domain_mesh_[obj_idx]->vertNum(); ++corner_idx)
         {
@@ -954,10 +954,8 @@ void InvertibleMPMSolid<Scalar,Dim>::clearParticleDomainMesh()
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
-    unsigned int obj_num = this->objectNum();
-    PHYSIKA_ASSERT(obj_idx<obj_num);
-    unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    PHYSIKA_ASSERT(particle_idx<particle_num);
+    PHYSIKA_ASSERT(obj_idx<this->objectNum());
+    PHYSIKA_ASSERT(particle_idx<this->particleNumOfObject(obj_idx));
     //rule one: if the particle is in a cell with all dirichlet nodes, the particle cannot be enriched
     //the dirichlet boundary is correctly enforced in this way
     const Grid<Scalar,Dim> &grid = this->grid();
@@ -996,7 +994,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     const SquareMatrix<Scalar,Dim> &diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
     //f1 =min_stretch/max_stretch (inverse of condition number of F)
     Scalar f1 = 0;
-    Scalar min_stretch = std::numeric_limits<Scalar>::max(), max_stretch = std::numeric_limits<Scalar>::min();
+    Scalar min_stretch = (std::numeric_limits<Scalar>::max)(), max_stretch = (std::numeric_limits<Scalar>::min)();
     for(unsigned int dim = 0; dim < Dim; ++dim)
     {
         if(diag_deform_grad(dim,dim) < principal_stretch_threshold_)  //already considered inverted, enrich
@@ -1011,8 +1009,8 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     SquareMatrix<Scalar,Dim> left_rotation,right_rotation;
     Vector<Scalar,Dim> singular_values;
     skew_deform.singularValueDecomposition(left_rotation,singular_values,right_rotation);
-    min_stretch = std::numeric_limits<Scalar>::max();
-    max_stretch = std::numeric_limits<Scalar>::min();
+    min_stretch = (std::numeric_limits<Scalar>::max)();
+    max_stretch = (std::numeric_limits<Scalar>::min)();
     for(unsigned int dim = 0; dim < Dim; ++dim)
     {
         min_stretch = (min_stretch < singular_values[dim]) ? min_stretch : singular_values[dim];
@@ -1074,10 +1072,8 @@ void InvertibleMPMSolid<Scalar,Dim>::computeParticleInterpolationWeightAndGradie
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithNoEnrichmentForwardEulerOnGrid(unsigned int obj_idx, unsigned int particle_idx, Scalar dt)
 {
-    unsigned int obj_num = this->objectNum();
-    PHYSIKA_ASSERT(obj_idx<obj_num);
-    unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    PHYSIKA_ASSERT(particle_idx<particle_num);
+    PHYSIKA_ASSERT(obj_idx<this->objectNum());
+    PHYSIKA_ASSERT(particle_idx<this->particleNumOfObject(obj_idx));
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
@@ -1127,10 +1123,8 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerViaQuadraturePoints(unsigned int obj_idx, unsigned int particle_idx,
                                                                                                    unsigned int enriched_corner_num, Scalar dt)
 {
-    unsigned int obj_num = this->objectNum();
-    PHYSIKA_ASSERT(obj_idx<obj_num);
-    unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    PHYSIKA_ASSERT(particle_idx<particle_num);
+    PHYSIKA_ASSERT(obj_idx<this->objectNum());
+    PHYSIKA_ASSERT(particle_idx<this->particleNumOfObject(obj_idx));
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
@@ -1232,10 +1226,8 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerViaParticle(unsigned int obj_idx, unsigned int particle_idx,
                                                                                            unsigned int enriched_corner_num, Scalar dt)
 {
-    unsigned int obj_num = this->objectNum();
-    PHYSIKA_ASSERT(obj_idx<obj_num);
-    unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    PHYSIKA_ASSERT(particle_idx<particle_num);
+    PHYSIKA_ASSERT(obj_idx<this->objectNum());
+    PHYSIKA_ASSERT(particle_idx<this->particleNumOfObject(obj_idx));
     CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
@@ -1322,10 +1314,8 @@ void InvertibleMPMSolid<Scalar,Dim>::diagonalizeParticleDeformationGradient()
 template <typename Scalar, int Dim>
 SquareMatrix<Scalar,Dim> InvertibleMPMSolid<Scalar,Dim>::factorizeParticleSkewDeformation(unsigned int obj_idx, unsigned int particle_idx) const
 {
-    unsigned int obj_num = this->objectNum();
-    PHYSIKA_ASSERT(obj_idx<obj_num);
-    unsigned int particle_num = this->particleNumOfObject(obj_idx);
-    PHYSIKA_ASSERT(particle_idx<particle_num);
+    PHYSIKA_ASSERT(obj_idx<this->objectNum());
+    PHYSIKA_ASSERT(particle_idx<this->particleNumOfObject(obj_idx));
     const SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     SquareMatrix<Scalar,Dim> F = particle->deformationGradient();
     SquareMatrix<Scalar,Dim> F_transpose_F = F.transpose()*F;
