@@ -74,7 +74,7 @@ public:
  
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,4,4> eigen_matrix_4x4_;
+    Eigen::Matrix<Scalar,4,4,Eigen::DontAlign> eigen_matrix_4x4_;
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar data_[4][4];
 #endif

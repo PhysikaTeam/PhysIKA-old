@@ -33,10 +33,6 @@
 //include necessary header files with different configurations
 #if defined(PHYSIKA_USE_EIGEN_MATRIX)||defined(PHYSIKA_USE_EIGEN_VECTOR)||defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 #include "Physika_Dependency/Eigen/Eigen"
-//disable aligment of Eigen for MSVC, workaround for working with STL
-#if defined(_MSC_VER)
-#define EIGEN_DONT_ALIGN_STATICALLY
-#endif
 #endif
 
 #endif //PHYSIKA_CORE_UTILITIES_GLOBAL_CONFIG_H_

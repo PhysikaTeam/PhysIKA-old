@@ -69,7 +69,7 @@ public:
 
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-    Eigen::Matrix<Scalar,2,1> eigen_vector_2x_;
+    Eigen::Matrix<Scalar,2,1,Eigen::DontAlign> eigen_vector_2x_;
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
     Scalar data_[2];
 #endif
