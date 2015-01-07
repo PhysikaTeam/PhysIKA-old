@@ -288,7 +288,9 @@ struct functor_traits<scalar_opposite_op<Scalar> >
 template<typename Scalar> struct scalar_abs_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_abs_op)
   typedef typename NumTraits<Scalar>::Real result_type;
-  EIGEN_STRONG_INLINE const result_type operator() (const Scalar& a) const { using std::abs; return abs(a); }
+  //FeiZhu: replaced 'abs(a)' with 'static_cast<result_type>(abs(a*static_cast<long double>(1.0)))'
+  //workaround for 'ambiguous call' under some compilers (e.g.,MSVC). Note: might be incorrect when scalar is std::complex
+  EIGEN_STRONG_INLINE const result_type operator() (const Scalar& a) const { using std::abs; return static_cast<result_type>(abs(a*static_cast<long double>(1.0))); }
   template<typename Packet>
   EIGEN_STRONG_INLINE const Packet packetOp(const Packet& a) const
   { return internal::pabs(a); }
