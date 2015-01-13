@@ -56,9 +56,9 @@ Vector<Scalar,4>::Vector(Scalar x)
 }
 
 template <typename Scalar>
-Vector<Scalar,4>::Vector(const Vector<Scalar,4> &vec4)
+Vector<Scalar,4>::Vector(const Vector<Scalar,4> &vec2)
 {
-    *this = vec4;
+    *this = vec2;
 }
 
 template <typename Scalar>
@@ -97,53 +97,64 @@ const Scalar& Vector<Scalar,4>::operator[] (unsigned int idx) const
 }
 
 template <typename Scalar>
-Vector<Scalar,4> Vector<Scalar,4>::operator+ (const Vector<Scalar,4> &vec4) const
+Vector<Scalar,4> Vector<Scalar,4>::operator+ (const Vector<Scalar,4> &vec2) const
 {
     Scalar result[4];
     for(int i = 0; i < 4; ++i)
-        result[i] = (*this)[i] + vec4[i];
+        result[i] = (*this)[i] + vec2[i];
     return Vector<Scalar,4>(result[0], result[1], result[2], result[3]);
 }
 
 template <typename Scalar>
-Vector<Scalar,4>& Vector<Scalar,4>::operator+= (const Vector<Scalar,4> &vec4)
+Vector<Scalar,4>& Vector<Scalar,4>::operator+= (const Vector<Scalar,4> &vec2)
 {
     for(int i = 0; i < 4; ++i)
-        (*this)[i] = (*this)[i] + vec4[i];
+        (*this)[i] = (*this)[i] + vec2[i];
     return *this;
 }
 
 template <typename Scalar>
-Vector<Scalar,4> Vector<Scalar,4>::operator- (const Vector<Scalar,4> &vec4) const
+Vector<Scalar,4> Vector<Scalar,4>::operator- (const Vector<Scalar,4> &vec2) const
 {
     Scalar result[4];
     for(int i = 0; i < 4; ++i)
-        result[i] = (*this)[i] - vec4[i];
+        result[i] = (*this)[i] - vec2[i];
     return Vector<Scalar,4>(result[0],result[1],result[2],result[3]);
 }
 
 template <typename Scalar>
-Vector<Scalar,4>& Vector<Scalar,4>::operator-= (const Vector<Scalar,4> &vec4)
+Vector<Scalar,4>& Vector<Scalar,4>::operator-= (const Vector<Scalar,4> &vec2)
 {
     for(int i = 0; i < 4; ++i)
-        (*this)[i] = (*this)[i] - vec4[i];
+        (*this)[i] = (*this)[i] - vec2[i];
     return *this;
 }
 
 template <typename Scalar>
-Vector<Scalar,4>& Vector<Scalar,4>::operator= (const Vector<Scalar,4> &vec4)
+Vector<Scalar,4>& Vector<Scalar,4>::operator= (const Vector<Scalar,4> &vec2)
 {
     for(int i = 0; i < 4; ++i)
-        (*this)[i] = vec4[i];
+        (*this)[i] = vec2[i];
     return *this;
 }
 
 template <typename Scalar>
-bool Vector<Scalar,4>::operator== (const Vector<Scalar,4> &vec4) const
+bool Vector<Scalar,4>::operator== (const Vector<Scalar,4> &vec2) const
 {
     for(int i = 0; i < 4; ++i)
-        if(isEqual((*this)[i],vec4[i])==false)
-            return false;
+    {
+        if(is_floating_point<Scalar>::value)
+        {
+            Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
+            if(isEqual((*this)[i],vec2[i],epsilon)==false)
+                return false;
+        }
+        else
+        {
+            if((*this)[i] != vec2[i])
+                return false;
+        }
+    }
     return true;
 }
 
@@ -268,18 +279,18 @@ Vector<Scalar,4> Vector<Scalar,4>::operator-(void) const
 }
 
 template <typename Scalar>
-Scalar Vector<Scalar,4>::dot(const Vector<Scalar,4>& vec4) const
+Scalar Vector<Scalar,4>::dot(const Vector<Scalar,4>& vec2) const
 {
-    return (*this)[0]*vec4[0] + (*this)[1]*vec4[1] + (*this)[2]*vec4[2] + (*this)[3]*vec4[3];
+    return (*this)[0]*vec2[0] + (*this)[1]*vec2[1] + (*this)[2]*vec2[2] + (*this)[3]*vec2[3];
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,4> Vector<Scalar,4>::outerProduct(const Vector<Scalar,4> &vec4) const
+SquareMatrix<Scalar,4> Vector<Scalar,4>::outerProduct(const Vector<Scalar,4> &vec2) const
 {
     SquareMatrix<Scalar,4> result;
     for(unsigned int i = 0; i < 4; ++i)
         for(unsigned int j = 0; j < 4; ++j)
-            result(i,j) = (*this)[i]*vec4[j];
+            result(i,j) = (*this)[i]*vec2[j];
     return result;
 }
 

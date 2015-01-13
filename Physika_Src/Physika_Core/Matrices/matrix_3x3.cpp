@@ -141,66 +141,77 @@ const Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int i, unsigned int j
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator+ (const SquareMatrix<Scalar,3> &mat3) const
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator+ (const SquareMatrix<Scalar,3> &mat2) const
 {
     Scalar result[9];
     for(unsigned int i = 0; i < 3; ++i)
         for(unsigned int j = 0; j < 3; ++j)
-            result[i*3+j] = (*this)(i,j) + mat3(i,j);
+            result[i*3+j] = (*this)(i,j) + mat2(i,j);
     return SquareMatrix<Scalar,3>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator+= (const SquareMatrix<Scalar,3> &mat3)
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator+= (const SquareMatrix<Scalar,3> &mat2)
 {
     for(unsigned int i = 0; i < 3; ++i)
         for(unsigned int j = 0; j < 3; ++j)
-            (*this)(i,j) = (*this)(i,j) + mat3(i,j);
+            (*this)(i,j) = (*this)(i,j) + mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator- (const SquareMatrix<Scalar,3> &mat3) const
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator- (const SquareMatrix<Scalar,3> &mat2) const
 {
     Scalar result[9];
     for(unsigned int i = 0; i < 3; ++i)
         for(unsigned int j = 0; j < 3; ++j)
-            result[i*3+j] = (*this)(i,j) - mat3(i,j);
+            result[i*3+j] = (*this)(i,j) - mat2(i,j);
     return SquareMatrix<Scalar,3>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8]);
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator-= (const SquareMatrix<Scalar,3> &mat3)
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator-= (const SquareMatrix<Scalar,3> &mat2)
 {
     for(unsigned int i = 0; i < 3; ++i)
         for(unsigned int j = 0; j < 3; ++j)
-            (*this)(i,j) = (*this)(i,j) - mat3(i,j);
+            (*this)(i,j) = (*this)(i,j) - mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator= (const SquareMatrix<Scalar,3> &mat3)
+SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator= (const SquareMatrix<Scalar,3> &mat2)
 {
     for(unsigned int i = 0; i < 3; ++i)
         for(unsigned int j = 0; j < 3; ++j)
-            (*this)(i,j) = mat3(i,j);
+            (*this)(i,j) = mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-bool SquareMatrix<Scalar,3>::operator== (const SquareMatrix<Scalar,3> &mat3) const
+bool SquareMatrix<Scalar,3>::operator== (const SquareMatrix<Scalar,3> &mat2) const
 {
     for(unsigned int i = 0; i < 3; ++i)
         for(unsigned int j = 0; j < 3; ++j)
-            if((*this)(i,j) != mat3(i,j))
-                return false;
+        {
+            if(is_floating_point<Scalar>::value)
+            {
+                Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
+                if(isEqual((*this)(i,j),mat2(i,j),epsilon)==false)
+                    return false;
+            }
+            else
+            {
+                if((*this)(i,j) != mat2(i,j))
+                    return false;
+            }
+        }
     return true;
 }
 
 template <typename Scalar>
-bool SquareMatrix<Scalar,3>::operator!= (const SquareMatrix<Scalar,3> &mat3) const
+bool SquareMatrix<Scalar,3>::operator!= (const SquareMatrix<Scalar,3> &mat2) const
 {
-    return !((*this)==mat3);
+    return !((*this)==mat2);
 }
 
 template <typename Scalar>
@@ -298,7 +309,18 @@ template <typename Scalar>
 SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse() const
 {
     Scalar det = determinant();
-    if(isEqual(det,static_cast<Scalar>(0)))
+    bool singular = false;
+    if(is_floating_point<Scalar>::value)
+    {
+        if(isEqual(det,static_cast<Scalar>(0)))
+            singular = true;
+    }
+    else
+    {
+        if(det == 0)
+            singular = true;
+    }
+    if(singular)
     {
         std::cerr<<"Matrix not invertible!\n";
         std::exit(EXIT_FAILURE);

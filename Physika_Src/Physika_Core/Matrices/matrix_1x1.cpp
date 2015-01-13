@@ -119,8 +119,17 @@ SquareMatrix<Scalar,1>& SquareMatrix<Scalar,1>::operator= (const SquareMatrix<Sc
 template <typename Scalar>
 bool SquareMatrix<Scalar,1>::operator== (const SquareMatrix<Scalar,1> &mat2) const
 {
-    if(isEqual((*this)(0,0),mat2(0,0))==false)
-        return false;
+    if(is_floating_point<Scalar>::value)
+    {
+        Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
+        if(isEqual((*this)(0,0),mat2(0,0),epsilon)==false)
+            return false;
+    }
+    else
+    {
+        if((*this)(0,0) != mat2(0,0))
+            return false;
+    }
     return true;
 }
 

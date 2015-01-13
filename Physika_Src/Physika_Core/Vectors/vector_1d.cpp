@@ -117,8 +117,17 @@ Vector<Scalar,1>& Vector<Scalar,1>::operator= (const Vector<Scalar,1> &vec2)
 template <typename Scalar>
 bool Vector<Scalar,1>::operator== (const Vector<Scalar,1> &vec2) const
 {
-    if(isEqual((*this)[0],vec2[0])==false)
-        return false;
+    if(is_floating_point<Scalar>::value)
+    {
+        Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
+        if(isEqual((*this)[0],vec2[0],epsilon)==false)
+            return false;
+    }
+    else
+    {
+        if((*this)[0] != vec2[0])
+            return false;
+    }
     return true;
 }
 

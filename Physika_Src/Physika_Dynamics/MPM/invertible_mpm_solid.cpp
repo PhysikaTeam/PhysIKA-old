@@ -974,6 +974,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
         if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
             ++cell_dirichlet_node_num;
     }
+//	if(cell_dirichlet_node_num > 0)
     if(cell_dirichlet_node_num == cell_node_num) //negotiable, not necessarily all nodes
         return false;
     //rule two: dirichlet particle is not enriched

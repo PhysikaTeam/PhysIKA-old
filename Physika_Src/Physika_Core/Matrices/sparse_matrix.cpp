@@ -1,7 +1,7 @@
 /*
  * @file sparse_matrix.cpp 
  * @brief Definition of sparse matrix, size of the matrix is dynamic.
- * @author Liyou Xu
+ * @author Liyou Xu, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -108,7 +108,8 @@ unsigned int SparseMatrix<Scalar>::nonZeros() const
     unsigned int non_zeros_ = elements_.size();
     for (unsigned int i = 0; i < elements_.size(); ++i)
     {
-        if (elements_[i].value() == 0)non_zeros_--;
+        if (isEqual(elements_[i].value(),static_cast<Scalar>(0)))
+            non_zeros_--;
     }
     return non_zeros_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
@@ -467,7 +468,17 @@ bool SparseMatrix<Scalar>::operator== (const SparseMatrix<Scalar> &mat2) const
     if (this->nonZeros() != mat2.nonZeros())return false;
     for (unsigned int i=0; i < elements_.size(); ++i)
     {
-        if (elements_[i].value() != mat2(elements_[i].row(), elements_[i].col()))return false;
+        if(is_floating_point<Scalar>::value)
+        {
+            Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
+            if(isEqual(elements_[i].value(),mat2(elements_[i].row(), elements_[i].col()),epsilon)==false)
+                return false;
+        }
+        else
+        {
+            if(elements_[i].value() != mat2(elements_[i].row(), elements_[i].col()))
+                return false;
+        }
     }
     return true;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)

@@ -13,33 +13,32 @@
 */
 #ifndef PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_ITERATOR_H_
 #define PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_ITERATOR_H_
-#include "Physika_Dependency/Eigen/Eigen"
-#include "Physika_Core/Matrices/sparse_matrix.h"
+
 #include <iostream>
+#include "Physika_Core/Utilities/global_config.h"
+#include "Physika_Core/Matrices/sparse_matrix.h"
 
 namespace Physika{
     
-    template <typename Scalar>
-    class SparseMatrixIterator
-    {
-    public:
-        SparseMatrixIterator(SparseMatrix<Scalar> & mat, unsigned int i);
-        SparseMatrixIterator<Scalar>& operator++();
-        unsigned int row();
-        unsigned int col();
-        Scalar value();
-        operator bool ();
-    protected:
+template <typename Scalar>
+class SparseMatrixIterator
+{
+public:
+    SparseMatrixIterator(SparseMatrix<Scalar> & mat, unsigned int i);
+    SparseMatrixIterator<Scalar>& operator++();
+    unsigned int row() const;
+    unsigned int col() const;
+    Scalar value() const;
+    operator bool () const;
+protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-        unsigned int first_ele_ ,last_ele_;
-        SparseMatrix<Scalar> *ptr_matrix_;
+    unsigned int first_ele_ ,last_ele_;
+    SparseMatrix<Scalar> *ptr_matrix_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-        typename Eigen::SparseMatrix<Scalar>::InnerIterator it;
+    typename Eigen::SparseMatrix<Scalar>::InnerIterator it;
 #endif
-    };
+};
 
 }  //end of namespace Physika
-
-//implementation
 
 #endif //PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_ITERATOR_H_

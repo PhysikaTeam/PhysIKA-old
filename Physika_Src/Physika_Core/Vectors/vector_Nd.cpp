@@ -204,8 +204,19 @@ bool VectorND<Scalar>::operator== (const VectorND<Scalar> &vec2) const
     if(dim1 != dim2)
         return false;
     for(unsigned int i = 0; i <= dim1; ++i)
-        if(isEqual((*this)[i],vec2[i])==false)
-            return false;
+    {
+        if(is_floating_point<Scalar>::value)
+        {
+            Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
+            if(isEqual((*this)[i],vec2[i],epsilon)==false)
+                return false;
+        }
+        else
+        {
+            if((*this)[i] != vec2[i])
+                return false;
+        }
+    }
     return true;
 }
 

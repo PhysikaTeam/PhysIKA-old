@@ -253,8 +253,19 @@ bool MatrixMxN<Scalar>::operator== (const MatrixMxN<Scalar> &mat2) const
         return false;
     for(unsigned int i = 0; i < rows1; ++i)
         for(unsigned int j = 0; j < cols1; ++j)
-            if(isEqual((*this)(i,j),mat2(i,j)) == false)
-                return false;
+        {
+            if(is_floating_point<Scalar>::value)
+            {
+                Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
+                if(isEqual((*this)(i,j),mat2(i,j),epsilon)==false)
+                    return false;
+            }
+            else
+            {
+                if((*this)(i,j) != mat2(i,j))
+                    return false;
+            }
+        }
     return true;
 }
 
@@ -410,7 +421,18 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
         std::exit(EXIT_FAILURE);
     }
     Scalar det = determinant();
-    if(det==0)
+    bool singular = false;
+    if(is_floating_point<Scalar>::value)
+    {
+        if(isEqual(det,static_cast<Scalar>(0)))
+            singular = true;
+    }
+    else
+    {
+        if(det == 0)
+            singular = true;
+    }
+    if(singular)
     {
         std::cerr<<"Matrix not invertible!\n";
         std::exit(EXIT_FAILURE);

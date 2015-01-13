@@ -129,9 +129,9 @@ SquareMatrix<Scalar,4>::SquareMatrix(const Vector<Scalar,4> &row1, const Vector<
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,4>::SquareMatrix(const SquareMatrix<Scalar,4> &mat4)
+SquareMatrix<Scalar,4>::SquareMatrix(const SquareMatrix<Scalar,4> &mat2)
 {
-    *this = mat4;
+    *this = mat2;
 }
 
 template <typename Scalar>
@@ -172,66 +172,77 @@ const Scalar& SquareMatrix<Scalar,4>::operator() (unsigned int i, unsigned int j
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator+ (const SquareMatrix<Scalar,4> &mat4) const
+SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator+ (const SquareMatrix<Scalar,4> &mat2) const
 {
     Scalar result[16];
     for(unsigned int i = 0; i < 4; ++i)
         for(unsigned int j = 0; j < 4; ++j)
-            result[i*4+j] = (*this)(i,j) + mat4(i,j);
+            result[i*4+j] = (*this)(i,j) + mat2(i,j);
     return SquareMatrix<Scalar,4>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8], result[9], result[10], result[11], result[12] , result[13], result[14], result[15]);
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator+= (const SquareMatrix<Scalar,4> &mat4)
+SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator+= (const SquareMatrix<Scalar,4> &mat2)
 {
     for(unsigned int i = 0; i < 4; ++i)
         for(unsigned int j = 0; j < 4; ++j)
-            (*this)(i,j) = (*this)(i,j) + mat4(i,j);
+            (*this)(i,j) = (*this)(i,j) + mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator- (const SquareMatrix<Scalar,4> &mat4) const
+SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator- (const SquareMatrix<Scalar,4> &mat2) const
 {
     Scalar result[16];
     for(unsigned int i = 0; i < 4; ++i)
         for(unsigned int j = 0; j < 4; ++j)
-            result[i*4+j] = (*this)(i,j) - mat4(i,j);
+            result[i*4+j] = (*this)(i,j) - mat2(i,j);
     return SquareMatrix<Scalar,4>(result[0], result[1], result[2], result[3] , result[4], result[5], result[6], result[7], result[8], result[9], result[10], result[11], result[12] , result[13], result[14], result[15]);
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator-= (const SquareMatrix<Scalar,4> &mat4)
+SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator-= (const SquareMatrix<Scalar,4> &mat2)
 {
     for(unsigned int i = 0; i < 4; ++i)
         for(unsigned int j = 0; j < 4; ++j)
-            (*this)(i,j) = (*this)(i,j) - mat4(i,j);
+            (*this)(i,j) = (*this)(i,j) - mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator= (const SquareMatrix<Scalar,4> &mat4)
+SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator= (const SquareMatrix<Scalar,4> &mat2)
 {
     for(unsigned int i = 0; i < 4; ++i)
         for(unsigned int j = 0; j < 4; ++j)
-            (*this)(i,j) = mat4(i,j);
+            (*this)(i,j) = mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-bool SquareMatrix<Scalar,4>::operator== (const SquareMatrix<Scalar,4> &mat4) const
+bool SquareMatrix<Scalar,4>::operator== (const SquareMatrix<Scalar,4> &mat2) const
 {
     for(unsigned int i = 0; i < 4; ++i)
         for(unsigned int j = 0; j < 4; ++j)
-            if((*this)(i,j) != mat4(i,j))
-                return false;
+        {
+            if(is_floating_point<Scalar>::value)
+            {
+                Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
+                if(isEqual((*this)(i,j),mat2(i,j),epsilon)==false)
+                    return false;
+            }
+            else
+            {
+                if((*this)(i,j) != mat2(i,j))
+                    return false;
+            }
+        }
     return true;
 }
 
 template <typename Scalar>
-bool SquareMatrix<Scalar,4>::operator!= (const SquareMatrix<Scalar,4> &mat4) const
+bool SquareMatrix<Scalar,4>::operator!= (const SquareMatrix<Scalar,4> &mat2) const
 {
-    return !((*this)==mat4);
+    return !((*this)==mat2);
 }
 
 template <typename Scalar>
@@ -329,11 +340,23 @@ template <typename Scalar>
 SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::inverse() const
 {
     Scalar det = determinant();
-    if(isEqual(det,static_cast<Scalar>(0)))
+    bool singular = false;
+    if(is_floating_point<Scalar>::value)
+    {
+        if(isEqual(det,static_cast<Scalar>(0)))
+            singular = true;
+    }
+    else
+    {
+        if(det == 0)
+            singular = true;
+    }
+    if(singular)
     {
         std::cerr<<"Matrix not invertible!\n";
         std::exit(EXIT_FAILURE);
-    }    //companion maxtrix
+    }
+    //companion maxtrix
     Scalar x00 = (SquareMatrix<Scalar, 3>((*this)(1,1), (*this)(1,2), (*this)(1,3), (*this)(2,1), (*this)(2,2), (*this)(2,3), (*this)(3,1), (*this)(3,2), (*this)(3,3))).determinant();
     Scalar x01 = - (SquareMatrix<Scalar, 3>((*this)(1,0), (*this)(1,2), (*this)(1,3), (*this)(2,0), (*this)(2,2), (*this)(2,3), (*this)(3,0), (*this)(3,2), (*this)(3,3))).determinant();
     Scalar x02 = (SquareMatrix<Scalar, 3>((*this)(1,0), (*this)(1,1), (*this)(1,3), (*this)(2,0), (*this)(2,1), (*this)(2,3), (*this)(3,0), (*this)(3,1), (*this)(3,3))).determinant();
