@@ -139,8 +139,7 @@ bool Vector<Scalar,2>::operator== (const Vector<Scalar,2> &vec2) const
     {
         if(is_floating_point<Scalar>::value)
         {
-            Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
-            if(isEqual((*this)[i],vec2[i],epsilon)==false)
+            if(isEqual((*this)[i],vec2[i])==false)
                 return false;
         }
         else

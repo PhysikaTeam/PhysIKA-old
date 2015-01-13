@@ -17,6 +17,7 @@
 #include <limits>
 #include <iostream>
 #include <algorithm>
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
@@ -393,13 +394,23 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
                 continue;
             Vector<Scalar,Dim> node_vel = gridVelocity(object_idx,node_idx);
             Vector<Scalar,Dim> impulse(0);
+            Scalar closest_dist = (std::numeric_limits<Scalar>::max)();
+            unsigned int closest_obj_idx = 0;
+            //get closest kinematic object idx
             for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
             {
-                if((this->collidable_objects_[i])->collide(node_pos,node_vel,impulse))
+                Scalar signed_distance = (this->collidable_objects_)[i]->signedDistance(node_pos);
+                if(signed_distance < closest_dist)
                 {
-                    node_vel += impulse;
-                    setGridVelocity(object_idx,node_idx,node_vel);
+                    closest_dist = signed_distance;
+                    closest_obj_idx = i;
                 }
+            }
+            //resolve contact with the closest kinematic object
+            if(this->collidable_objects_[closest_obj_idx]->collide(node_pos,node_vel,impulse))
+            {
+                node_vel += impulse;
+                setGridVelocity(object_idx,node_idx,node_vel);
             }
         }
     }
@@ -506,14 +517,24 @@ void MPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                 SolidParticle<Scalar,Dim> &particle = this->particle(obj_idx,particle_idx);
                 Vector<Scalar,Dim> particle_pos = particle.position();
                 Vector<Scalar,Dim> particle_vel = particle.velocity();
+                Scalar closest_dist = (std::numeric_limits<Scalar>::max)();
+                unsigned int closest_obj_idx = 0;
+                //get closest kinematic object idx
                 for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
                 {
-                    Vector<Scalar,Dim> impulse(0);
-                    if((this->collidable_objects_[i]->collide(particle_pos,particle_vel,impulse)))
+                    Scalar signed_distance = (this->collidable_objects_)[i]->signedDistance(particle_pos);
+                    if(signed_distance < closest_dist)
                     {
-                        particle_vel += impulse;
-                        particle.setVelocity(particle_vel);
+                        closest_dist = signed_distance;
+                        closest_obj_idx = i;
                     }
+                }
+                //resolve contact with the closest
+                Vector<Scalar,Dim> impulse(0);
+                if((this->collidable_objects_[closest_obj_idx]->collide(particle_pos,particle_vel,impulse)))
+                {
+                    particle_vel += impulse;
+                    particle.setVelocity(particle_vel);
                 }
             }
     }

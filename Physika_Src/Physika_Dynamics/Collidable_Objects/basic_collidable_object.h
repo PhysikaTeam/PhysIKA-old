@@ -32,6 +32,8 @@ public:
     BasicCollidableObject<Scalar,Dim>& operator= (const BasicCollidableObject<Scalar,Dim> &object);
     virtual BasicCollidableObject<Scalar,Dim>* clone() const;
     virtual bool collide(const Vector<Scalar,Dim> &point, const Vector<Scalar,Dim> &velocity, Vector<Scalar,Dim> &velocity_impulse) const;
+    virtual Scalar distance(const Vector<Scalar,Dim> &point) const;
+    virtual Scalar signedDistance(const Vector<Scalar,Dim> &point) const;
     const BasicGeometry<Scalar,Dim>& shape() const;
     BasicGeometry<Scalar,Dim>& shape();
     void setShape(const BasicGeometry<Scalar,Dim> &geometry);

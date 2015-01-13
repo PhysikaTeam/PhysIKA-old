@@ -80,15 +80,16 @@ inline Scalar min(Scalar lhs, Scalar rhs)
 //compare if two floating point numbers are equal
 //ref: http://floating-point-gui.de/errors/comparison/
 template <typename Scalar>
-inline bool isEqual(Scalar a, Scalar b, Scalar epsilon = std::numeric_limits<Scalar>::epsilon())
+inline bool isEqual(Scalar a, Scalar b, Scalar relative_tolerance = 2.0*std::numeric_limits<Scalar>::epsilon())
 {
     Scalar abs_a = abs(a), abs_b = abs(b), diff = abs(a-b);
+    Scalar epsilon = std::numeric_limits<Scalar>::epsilon();
     if(a == b)
         return true;
-    else if(a==0||b==0||diff<epsilon)
+    else if(a==0||b==0||diff<epsilon)  //absolute tolerance for near zero values
         return diff < epsilon;
-    else
-        return diff/(abs_a+abs_b) < epsilon;
+    else  //relative tolerance for others
+        return diff/(abs_a+abs_b) < relative_tolerance;
 }
 
 }  //end of namespace Physika

@@ -100,6 +100,18 @@ bool BasicCollidableObject<Scalar,Dim>::collide(const Vector<Scalar,Dim> &point,
 }
 
 template <typename Scalar, int Dim>
+Scalar BasicCollidableObject<Scalar,Dim>::distance(const Vector<Scalar,Dim> &point) const
+{
+    return shape_->distance(point);
+}
+
+template <typename Scalar, int Dim>
+Scalar BasicCollidableObject<Scalar,Dim>::signedDistance(const Vector<Scalar,Dim> &point) const
+{
+    return shape_->signedDistance(point);
+}
+
+template <typename Scalar, int Dim>
 const BasicGeometry<Scalar,Dim>& BasicCollidableObject<Scalar,Dim>::shape() const
 {
     PHYSIKA_ASSERT(shape_);

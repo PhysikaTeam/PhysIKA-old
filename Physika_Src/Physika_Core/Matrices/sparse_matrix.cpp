@@ -470,8 +470,7 @@ bool SparseMatrix<Scalar>::operator== (const SparseMatrix<Scalar> &mat2) const
     {
         if(is_floating_point<Scalar>::value)
         {
-            Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
-            if(isEqual(elements_[i].value(),mat2(elements_[i].row(), elements_[i].col()),epsilon)==false)
+            if(isEqual(elements_[i].value(),mat2(elements_[i].row(), elements_[i].col()))==false)
                 return false;
         }
         else

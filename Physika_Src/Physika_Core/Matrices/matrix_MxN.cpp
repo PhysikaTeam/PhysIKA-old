@@ -256,8 +256,7 @@ bool MatrixMxN<Scalar>::operator== (const MatrixMxN<Scalar> &mat2) const
         {
             if(is_floating_point<Scalar>::value)
             {
-                Scalar epsilon = 2.0*std::numeric_limits<Scalar>::epsilon();
-                if(isEqual((*this)(i,j),mat2(i,j),epsilon)==false)
+                if(isEqual((*this)(i,j),mat2(i,j))==false)
                     return false;
             }
             else

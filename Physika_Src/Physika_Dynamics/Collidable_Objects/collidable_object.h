@@ -34,6 +34,8 @@ public:
     //input a point and the velocity at the point, return true and the corresponding impulse enforced at the point due to contact if the point collides
     //with the collidable object, else return false
     virtual bool collide(const Vector<Scalar,Dim> &point, const Vector<Scalar,Dim> &velocity, Vector<Scalar,Dim> &velocity_impulse) const = 0;
+    virtual Scalar distance(const Vector<Scalar,Dim> &point) const = 0; //distance to the surface of the object
+    virtual Scalar signedDistance(const Vector<Scalar,Dim> &point) const = 0;  //signed distance to the surface of the object
     Scalar mu() const;
     void setMu(Scalar mu);
     bool isSticky() const;
