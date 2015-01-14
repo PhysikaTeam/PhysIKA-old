@@ -264,36 +264,66 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
  template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
 {
-    MPMSolid<Scalar,Dim>::resolveContactOnParticles(dt);
-    // //contact 1: contact with the kinematic objects in scene on the enriched domain corner
-    // if(!(this->collidable_objects_).empty())
-    // {
-    //     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
-    //         for(unsigned int corner_idx = 0; corner_idx < particle_domain_mesh_[obj_idx]->vertNum(); ++corner_idx)
-    //         {
-    //             if(is_enriched_domain_corner_[obj_idx][corner_idx])
-    //             {
-    //                 Vector<Scalar,Dim> corner_pos = particle_domain_mesh_[obj_idx]->vertPos(corner_idx);
-    //                 Vector<Scalar,Dim> &corner_vel = domain_corner_velocity_[obj_idx][corner_idx];
-    //                 Scalar closest_dist = (std::numeric_limits<Scalar>::max)();
-    //                 unsigned int closest_obj_idx = 0;
-    //                 //get closest kinematic object idx
-    //                 for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
-    //                 {
-    //                     Scalar signed_distance = (this->collidable_objects_)[i]->signedDistance(corner_pos);
-    //                     if(signed_distance < closest_dist)
-    //                     {
-    //                         closest_dist = signed_distance;
-    //                         closest_obj_idx = i;
-    //                     }
-    //                 }
-    //                 //resolve contact with the closest
-    //                 Vector<Scalar,Dim> impulse(0);
-    //                 if((this->collidable_objects_[closest_obj_idx]->collide(corner_pos,corner_vel,impulse)))
-    //                     corner_vel += impulse;
-    //             }
-    //         }
-    // }
+    //plugin operation
+    MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<MPMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onResolveContactOnParticles(dt);
+    }
+    //resolve contact with the kinematic objects in scene on the particle level
+    //mark the domain corner that is in contact as colliding
+    //the same impulse will be applied on the domain corners
+    if(!(this->collidable_objects_).empty())
+    {
+        for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+            for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
+            {
+                SolidParticle<Scalar,Dim> &particle = this->particle(obj_idx,particle_idx);
+                Vector<Scalar,Dim> particle_pos = particle.position();
+                Vector<Scalar,Dim> particle_vel = particle.velocity();
+                Scalar closest_dist = (std::numeric_limits<Scalar>::max)();
+                unsigned int closest_obj_idx = 0;
+                //get closest kinematic object idx
+                for(unsigned int i = 0; i < (this->collidable_objects_).size(); ++i)
+                {
+                    Scalar signed_distance = (this->collidable_objects_)[i]->signedDistance(particle_pos);
+                    if(signed_distance < closest_dist)
+                    {
+                        closest_dist = signed_distance;
+                        closest_obj_idx = i;
+                    }
+                }
+                //resolve contact with the closest
+                Vector<Scalar,Dim> impulse(0);
+                if((this->collidable_objects_[closest_obj_idx]->collide(particle_pos,particle_vel,impulse)))
+                {
+                    particle_vel += impulse;
+                    particle.setVelocity(particle_vel);
+                    //apply impulse to colliding corners
+                    unsigned int corner_num = Dim == 2 ? 4 : 8;
+                    for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+                    {
+                        unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
+                        Vector<Scalar,Dim> corner_pos = particle_domain_mesh_[obj_idx]->vertPos(global_corner_idx);
+                        Scalar corner_obj_dist = this->collidable_objects_[closest_obj_idx]->signedDistance(corner_pos);
+                        if(corner_obj_dist < this->collidable_objects_[closest_obj_idx]->collideThreshold())
+                        {
+                            if(is_colliding_domain_corner_[obj_idx][global_corner_idx])
+                                continue; //already marked as colliding by other particles, avoid redudent impulse
+                            //apply the same impulse to colliding domain corner
+                            if(is_enriched_domain_corner_[obj_idx][global_corner_idx])//corner enriched, apply impulse now
+                                domain_corner_velocity_[obj_idx][global_corner_idx] += impulse;
+                            else //the domain corner is enriched, use the variable to store impulse,
+                                 //apply impulse later because corner velocity is not computed yet
+                                domain_corner_velocity_[obj_idx][global_corner_idx] = impulse;
+                            is_colliding_domain_corner_[obj_idx][global_corner_idx] = 0x01;
+                        }
+                    }
+                }
+            }
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -459,6 +489,19 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
                     Vector<Scalar,Dim> new_corner_pos = this->particle_domain_corners_[obj_idx][particle_idx][corner_idx];
                     if(is_enriched_domain_corner_[obj_idx][global_corner_idx]) //update with corner's velocity
                         new_corner_pos += domain_corner_velocity_[obj_idx][global_corner_idx]*dt;
+                    else if(is_colliding_domain_corner_[obj_idx][global_corner_idx]) //compute corner velocity, apply colliding impulse on corner
+                    {                                                                //then update domain position
+                        Vector<Scalar,Dim> corner_vel(0);
+                        for(unsigned int i = 0; i < this->corner_grid_pair_num_[obj_idx][particle_idx][corner_idx]; ++i)
+                        {
+                            const MPMInternal::NodeIndexWeightPair<Scalar,Dim> &pair = this->corner_grid_weight_[obj_idx][particle_idx][corner_idx][i];
+                            Scalar weight = pair.weight_value;
+                            Vector<Scalar,Dim> node_vel = this->gridVelocity(obj_idx,pair.node_idx);
+                            corner_vel += weight*node_vel;
+                        }
+                        corner_vel += domain_corner_velocity_[obj_idx][global_corner_idx]; //apply impulse
+                        new_corner_pos += corner_vel*dt;
+                    }
                     else  //update with velocity from grid
                     {
                         for(unsigned int i = 0; i < this->corner_grid_pair_num_[obj_idx][particle_idx][corner_idx]; ++i)
@@ -669,6 +712,7 @@ void InvertibleMPMSolid<Scalar,Dim>::resetParticleDomainData()
         for(unsigned int domain_corner_idx = 0; domain_corner_idx < domain_corner_num; ++domain_corner_idx)
         {
             is_enriched_domain_corner_[obj_idx][domain_corner_idx] = 0x00;
+            is_colliding_domain_corner_[obj_idx][domain_corner_idx] = 0x00;
             domain_corner_mass_[obj_idx][domain_corner_idx] = 0;
             domain_corner_velocity_[obj_idx][domain_corner_idx] = zero_vel;
             domain_corner_velocity_before_[obj_idx][domain_corner_idx] = zero_vel;
@@ -685,6 +729,7 @@ void InvertibleMPMSolid<Scalar,Dim>::constructParticleDomainMesh()
     unsigned int obj_num = this->objectNum();
     particle_domain_mesh_.resize(obj_num);
     is_enriched_domain_corner_.resize(obj_num);
+    is_colliding_domain_corner_.resize(obj_num);
     domain_corner_mass_.resize(obj_num);
     domain_corner_velocity_.resize(obj_num);
     domain_corner_velocity_before_.resize(obj_num);
@@ -727,6 +772,7 @@ void InvertibleMPMSolid<Scalar,Dim>::constructParticleDomainMesh()
         delete[] vertices;
         //resize
         is_enriched_domain_corner_[obj_idx].resize(vert_num);
+        is_colliding_domain_corner_[obj_idx].resize(vert_num);
         domain_corner_mass_[obj_idx].resize(vert_num);
         domain_corner_velocity_[obj_idx].resize(vert_num);
         domain_corner_velocity_before_[obj_idx].resize(vert_num);

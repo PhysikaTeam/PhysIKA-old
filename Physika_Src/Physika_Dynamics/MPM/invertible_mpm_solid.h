@@ -52,7 +52,7 @@ public:
     virtual Scalar computeTimeStep(); //time step must consider the velocity of the enriched domain corners
     virtual void initSimulationData();  //the topology of the particle domains will be initiated before simulation starts
     virtual void rasterize(); //according to the particle type, some data are rasterized to grid, others to domain corners
-    virtual void resolveContactOnParticles(Scalar dt); //the contact between enriched domains are resolved on particle level
+    virtual void resolveContactOnParticles(Scalar dt); 
     virtual void updateParticleInterpolationWeight();  //interpolation weight between particle and domain corners need to be updated as well
     virtual void updateParticleConstitutiveModelState(Scalar dt); 
     virtual void updateParticleVelocity();
@@ -107,6 +107,7 @@ protected:
     std::vector<std::vector<unsigned int> > enriched_particles_; //the index of the particles with all corners enriched
     //data attached to each domain corner (vertex of volumetric mesh element)
     std::vector<std::vector<unsigned char> > is_enriched_domain_corner_;  //use one byte to indicate whether it's enriched or not
+    std::vector<std::vector<unsigned char> > is_colliding_domain_corner_; //indicate whether it's in contact with collide object, EXPERIMENTAL!
     std::vector<std::vector<Scalar> > domain_corner_mass_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_before_;
