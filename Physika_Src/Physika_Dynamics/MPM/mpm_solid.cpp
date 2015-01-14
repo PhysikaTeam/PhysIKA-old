@@ -24,7 +24,7 @@
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
-#include "Physika_Dynamics/Utilities/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
+#include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/MPM_Contact_Methods/mpm_solid_contact_method.h"

@@ -26,7 +26,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
-#include "Physika_Dynamics/Utilities/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
+#include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI_update_method.h"
 

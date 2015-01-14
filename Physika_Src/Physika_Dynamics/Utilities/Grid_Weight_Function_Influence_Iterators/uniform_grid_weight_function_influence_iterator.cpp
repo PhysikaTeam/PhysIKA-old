@@ -17,7 +17,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Range/range.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
-#include "Physika_Dynamics/Utilities/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
+#include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 
 namespace Physika{
 

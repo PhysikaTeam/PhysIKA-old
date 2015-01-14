@@ -36,6 +36,7 @@ public:
     virtual bool collide(const Vector<Scalar,Dim> &point, const Vector<Scalar,Dim> &velocity, Vector<Scalar,Dim> &velocity_impulse) const = 0;
     virtual Scalar distance(const Vector<Scalar,Dim> &point) const = 0; //distance to the surface of the object
     virtual Scalar signedDistance(const Vector<Scalar,Dim> &point) const = 0;  //signed distance to the surface of the object
+    virtual Vector<Scalar,Dim> normal(const Vector<Scalar,Dim> &point) const = 0; //normal at given point
     Scalar mu() const;
     void setMu(Scalar mu);
     bool isSticky() const;

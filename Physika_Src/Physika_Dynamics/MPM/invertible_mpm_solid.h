@@ -108,6 +108,7 @@ protected:
     //data attached to each domain corner (vertex of volumetric mesh element)
     std::vector<std::vector<unsigned char> > is_enriched_domain_corner_;  //use one byte to indicate whether it's enriched or not
     std::vector<std::vector<unsigned char> > is_colliding_domain_corner_; //indicate whether it's in contact with collide object, EXPERIMENTAL!
+    std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_colliding_impulse_; //the impulse applied on domain corners due to contact, EXPERIMENTAL!
     std::vector<std::vector<Scalar> > domain_corner_mass_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_velocity_before_;

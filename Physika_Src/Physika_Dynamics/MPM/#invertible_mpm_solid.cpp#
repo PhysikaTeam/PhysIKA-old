@@ -317,7 +317,7 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                             Scalar weight = pair.weight_value;
                             Vector<Scalar,Dim> node_vel = this->gridVelocity(obj_idx,pair.node_idx);
                             corner_vel += weight*node_vel;
-                        }
+                        } 
                     } 
                     //corner in contact with collidable object
                     //compute the impulse on domain corner

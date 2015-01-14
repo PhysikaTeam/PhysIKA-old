@@ -72,6 +72,7 @@ BasicCollidableObject<Scalar,Dim>* BasicCollidableObject<Scalar,Dim>::clone() co
 template <typename Scalar, int Dim>
 bool BasicCollidableObject<Scalar,Dim>::collide(const Vector<Scalar,Dim> &point, const Vector<Scalar,Dim> &velocity, Vector<Scalar,Dim> &velocity_impulse) const
 {
+    PHYSIKA_ASSERT(shape_);
     bool collide = false;
     Scalar signed_distance = shape_->signedDistance(point);
     Vector<Scalar,Dim> normal = shape_->normal(point);
@@ -102,13 +103,22 @@ bool BasicCollidableObject<Scalar,Dim>::collide(const Vector<Scalar,Dim> &point,
 template <typename Scalar, int Dim>
 Scalar BasicCollidableObject<Scalar,Dim>::distance(const Vector<Scalar,Dim> &point) const
 {
+    PHYSIKA_ASSERT(shape_);
     return shape_->distance(point);
 }
 
 template <typename Scalar, int Dim>
 Scalar BasicCollidableObject<Scalar,Dim>::signedDistance(const Vector<Scalar,Dim> &point) const
 {
+    PHYSIKA_ASSERT(shape_);
     return shape_->signedDistance(point);
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> BasicCollidableObject<Scalar,Dim>::normal(const Vector<Scalar,Dim> &point) const
+{
+    PHYSIKA_ASSERT(shape_);
+    return shape_->normal(point);
 }
 
 template <typename Scalar, int Dim>
