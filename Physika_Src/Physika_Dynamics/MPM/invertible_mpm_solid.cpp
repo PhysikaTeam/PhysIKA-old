@@ -332,6 +332,8 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                         //project the domain corner onto the surface of collidable object
                         Vector<Scalar,Dim> normal = this->collidable_objects_[closest_obj_idx]->normal(corner_pos);
                         corner_pos += (collide_threshold - corner_obj_dist) * normal;
+                        //update corner position with new velocity
+                        corner_pos += (corner_vel + impulse)*dt;
                         this->particle_domain_corners_[obj_idx][particle_idx][corner_idx] = corner_pos;
                         particle_domain_mesh_[obj_idx]->setVertPos(global_corner_idx,corner_pos);
                         //mark the corner as colliding, its position won't be update by the grid velocity
