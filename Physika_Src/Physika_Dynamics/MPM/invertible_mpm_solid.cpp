@@ -284,7 +284,8 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                 //resolve contact to colliding corners
                 unsigned int corner_num = Dim == 2 ? 4 : 8;
                 for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-                { 
+                {
+                    Vector<Scalar,Dim> corner_pos = this->particle_domain_corners_[obj_idx][particle_idx][corner_idx];
                     unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
                     if(is_colliding_domain_corner_[obj_idx][global_corner_idx])//already marked as colliding by other particles
                     {  
@@ -292,7 +293,25 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                         this->particle_domain_corners_[obj_idx][particle_idx][corner_idx] = particle_domain_mesh_[obj_idx]->vertPos(global_corner_idx);
                         continue; // avoid redudent impulse
                     }
-                    Vector<Scalar,Dim> corner_pos = this->particle_domain_corners_[obj_idx][particle_idx][corner_idx];
+                    //skip the corner that is in a cell with all dirichlet nodes
+                    const Grid<Scalar,Dim> &grid = this->grid();
+                    Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
+                    Vector<unsigned int,Dim> cell_idx;
+                    Vector<Scalar,Dim> bias_in_cell;
+                    grid.cellIndexAndBiasInCell(corner_pos,cell_idx,bias_in_cell);
+                    Vector<unsigned int,Dim> node_idx;
+                    unsigned int cell_node_num = Dim == 2 ? 4 : 8;
+                    Vector<unsigned int,Dim> cell_node_dim(2);
+                    unsigned int cell_dirichlet_node_num = 0;
+                    for(unsigned int flat_idx = 0; flat_idx < cell_node_num; ++flat_idx)
+                    {
+                        node_idx = cell_idx + this->multiDimIndex(flat_idx,cell_node_dim);
+                        if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
+                            ++cell_dirichlet_node_num;
+                    }
+                    if(cell_dirichlet_node_num == cell_node_num)
+                        continue;
+
                     Scalar closest_dist = (std::numeric_limits<Scalar>::max)();
                     unsigned int closest_obj_idx = 0;
                     //get closest kinematic object idx
@@ -341,6 +360,8 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                     }
                 }
                 //interpolate the impulse on domain corners to particles
+                if(this->is_dirichlet_particle_[obj_idx][particle_idx])
+                    continue; //skip dirichlet particle
                 SolidParticle<Scalar,Dim> &particle = this->particle(obj_idx,particle_idx);
                 Vector<Scalar,Dim> particle_vel = particle.velocity();
                 Vector<Scalar,Dim> particle_impulse(0);
@@ -831,7 +852,6 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
         if(this->is_dirichlet_grid_node_(node_idx).count(obj_idx) > 0)
             ++cell_dirichlet_node_num;
     }
-//	if(cell_dirichlet_node_num > 0)
     if(cell_dirichlet_node_num == cell_node_num) //negotiable, not necessarily all nodes
         return false;
     //rule two: dirichlet particle is not enriched
