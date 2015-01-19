@@ -868,7 +868,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     //rule three: enrich for ill-deformed particle
     //metric function: f = min(f1,f2)
     Scalar condition_value = 0; //the metric number for enrichment: 0~1, enrich~no-enrich
-    Scalar condition_threshold = 0.5;
+    Scalar condition_threshold = 0.6;
     const SquareMatrix<Scalar,Dim> &diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
     //f1 =min_stretch/max_stretch (inverse of condition number of F)
     Scalar f1 = 0;

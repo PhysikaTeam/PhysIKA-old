@@ -80,7 +80,7 @@ inline Scalar min(Scalar lhs, Scalar rhs)
 //compare if two floating point numbers are equal
 //ref: http://floating-point-gui.de/errors/comparison/
 template <typename Scalar>
-inline bool isEqual(Scalar a, Scalar b, Scalar relative_tolerance = 2.0*std::numeric_limits<Scalar>::epsilon())
+inline bool isEqual(Scalar a, Scalar b, Scalar relative_tolerance = 1.0e-6)
 {
     Scalar abs_a = abs(a), abs_b = abs(b), diff = abs(a-b);
     Scalar epsilon = std::numeric_limits<Scalar>::epsilon();
