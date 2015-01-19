@@ -110,6 +110,10 @@ Scalar Cylinder<Scalar>::signedDistance(const Vector<Scalar,3> &point) const
 {
     Vector<Scalar,3> new_center = center_;
     new_center[direction_] = point[direction_];
+    //return infinite if point outside range of tunnel
+    if((new_center[direction_] > center_[direction_] + 0.5*length_) ||
+       (new_center[direction_] < center_[direction_] - 0.5*length_))
+        return (std::numeric_limits<Scalar>::max)();
     return (point-new_center).norm()-radius_;
 }
 
