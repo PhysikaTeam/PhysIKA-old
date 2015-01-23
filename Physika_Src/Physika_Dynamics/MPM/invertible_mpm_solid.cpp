@@ -36,7 +36,7 @@ namespace Physika{
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
     :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.1),
-     enable_enrichment_(true), enable_entire_enrichment_(false)
+     enable_enrichment_(true), enable_entire_enrichment_(false), enrichment_metric_(0.6)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -46,7 +46,7 @@ template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.1),
-    enable_enrichment_(true), enable_entire_enrichment_(false)
+    enable_enrichment_(true), enable_entire_enrichment_(false), enrichment_metric_(0.6)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -57,7 +57,7 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, uns
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                                    const Grid<Scalar,Dim> &grid)
     :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.1),
-    enable_enrichment_(true), enable_entire_enrichment_(false)
+    enable_enrichment_(true), enable_entire_enrichment_(false), enrichment_metric_(0.6)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -647,7 +647,30 @@ void InvertibleMPMSolid<Scalar,Dim>::disableEntireEnrichment()
 {
     enable_entire_enrichment_ = false;
 }
-  
+         
+template <typename Scalar, int Dim>
+Scalar InvertibleMPMSolid<Scalar,Dim>::enrichmentMetric() const
+{
+    return enrichment_metric_;
+}
+         
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(Scalar metric)
+{
+    if(metric < 0)
+    {
+        std::cerr<<"Warning: negative metric provided, clamped to 0!\n";
+        enrichment_metric_ = 0;
+    }
+    else if(metric > 1)
+    {
+        std::cerr<<"Warning: metric clamped to 1!\n";
+        enrichment_metric_ = 1;
+    }
+    else
+        enrichment_metric_ = metric;
+}
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 {
@@ -868,7 +891,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     //rule three: enrich for ill-deformed particle
     //metric function: f = min(f1,f2)
     Scalar condition_value = 0; //the metric number for enrichment: 0~1, enrich~no-enrich
-    Scalar condition_threshold = 0.6;
+    Scalar condition_threshold = enrichment_metric_;
     const SquareMatrix<Scalar,Dim> &diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
     //f1 =min_stretch/max_stretch (inverse of condition number of F)
     Scalar f1 = 0;

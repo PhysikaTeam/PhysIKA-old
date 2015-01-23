@@ -69,6 +69,9 @@ public:
     //explicitly enable/disable solve entirely on particle comains, for comparison
     void enableEntireEnrichment();
     void disableEntireEnrichment();
+    //get&&set the metric value of enrichment criteria: 0~1, no enrichment ~ entire enrichment
+    Scalar enrichmentMetric() const;
+    void setEnrichmentMetric(Scalar metric);
 
 protected:
     //solve on grid is reimplemented
@@ -124,6 +127,7 @@ protected:
     //switch on/off particle enrichment
     bool enable_enrichment_;
     bool enable_entire_enrichment_;
+    Scalar enrichment_metric_;
 };
 
 }  //end of namespace Physika
