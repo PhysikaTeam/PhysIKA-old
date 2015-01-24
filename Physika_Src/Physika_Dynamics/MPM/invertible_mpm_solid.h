@@ -70,8 +70,8 @@ public:
     void enableEntireEnrichment();
     void disableEntireEnrichment();
     //get&&set the metric value of enrichment criteria: 0~1, no enrichment ~ entire enrichment
-    Scalar enrichmentMetric() const;
-    void setEnrichmentMetric(Scalar metric);
+    Scalar enrichmentMetric(unsigned int object_idx, unsigned int particle_idx) const;
+    void setEnrichmentMetric(unsigned int object_idx, unsigned int particle_idx, Scalar metric);
 
 protected:
     //solve on grid is reimplemented
@@ -127,7 +127,8 @@ protected:
     //switch on/off particle enrichment
     bool enable_enrichment_;
     bool enable_entire_enrichment_;
-    Scalar enrichment_metric_;
+    static Scalar default_enrich_metric_;
+    std::vector<std::vector<Scalar> > particle_enrich_metric_;
 };
 
 }  //end of namespace Physika

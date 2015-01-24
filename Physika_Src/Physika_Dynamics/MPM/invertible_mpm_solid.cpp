@@ -34,9 +34,12 @@
 namespace Physika{
 
 template <typename Scalar, int Dim>
+Scalar InvertibleMPMSolid<Scalar,Dim>::default_enrich_metric_ = 0.6;
+    
+template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
     :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.1),
-     enable_enrichment_(true), enable_entire_enrichment_(false), enrichment_metric_(0.6)
+     enable_enrichment_(true), enable_entire_enrichment_(false)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -46,7 +49,7 @@ template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.1),
-    enable_enrichment_(true), enable_entire_enrichment_(false), enrichment_metric_(0.6)
+    enable_enrichment_(true), enable_entire_enrichment_(false)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -57,7 +60,7 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, uns
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                                    const Grid<Scalar,Dim> &grid)
     :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.1),
-    enable_enrichment_(true), enable_entire_enrichment_(false), enrichment_metric_(0.6)
+    enable_enrichment_(true), enable_entire_enrichment_(false)
 {
     //only works with CPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
@@ -649,26 +652,46 @@ void InvertibleMPMSolid<Scalar,Dim>::disableEntireEnrichment()
 }
          
 template <typename Scalar, int Dim>
-Scalar InvertibleMPMSolid<Scalar,Dim>::enrichmentMetric() const
+Scalar InvertibleMPMSolid<Scalar,Dim>::enrichmentMetric(unsigned int object_idx, unsigned int particle_idx) const
 {
-    return enrichment_metric_;
+    if(object_idx >= this->objectNum())
+    {
+        std::cerr<<"Error: object index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if(particle_idx >= this->particleNumOfObject(object_idx))
+    {
+        std::cerr<<"Error: particle index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return particle_enrich_metric_[object_idx][particle_idx];
 }
          
 template <typename Scalar, int Dim>
-void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(Scalar metric)
+void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx, unsigned int particle_idx, Scalar metric)
 {
+    if(object_idx >= this->objectNum())
+    {
+        std::cerr<<"Error: object index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    if(particle_idx >= this->particleNumOfObject(object_idx))
+    {
+        std::cerr<<"Error: particle index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
     if(metric < 0)
     {
         std::cerr<<"Warning: negative metric provided, clamped to 0!\n";
-        enrichment_metric_ = 0;
+        particle_enrich_metric_[object_idx][particle_idx] = 0;
     }
     else if(metric > 1)
     {
         std::cerr<<"Warning: metric clamped to 1!\n";
-        enrichment_metric_ = 1;
+        particle_enrich_metric_[object_idx][particle_idx] = 1;
     }
     else
-        enrichment_metric_ = metric;
+        particle_enrich_metric_[object_idx][particle_idx] = metric;
 }
 
 template <typename Scalar, int Dim>
@@ -723,6 +746,8 @@ void InvertibleMPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
     enriched_particles_.push_back(empty_enriched_particles);
     std::vector<typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation> all_particle_diag_deform_grad(particle_num_of_last_object);
     particle_diagonalized_deform_grad_.push_back(all_particle_diag_deform_grad);
+    std::vector<Scalar> enrich_metric(particle_num_of_last_object,default_enrich_metric_);
+    particle_enrich_metric_.push_back(enrich_metric);
 }
 
 template <typename Scalar, int Dim>
@@ -736,6 +761,7 @@ void InvertibleMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsig
     particle_corner_gradient_[object_idx].push_back(one_particle_corner_gradient);
     typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation one_particle_diag_deform_grad;
     particle_diagonalized_deform_grad_[object_idx].push_back(one_particle_diag_deform_grad);
+    particle_enrich_metric_[object_idx].push_back(default_enrich_metric_);
 }
  
 template <typename Scalar, int Dim>
@@ -750,6 +776,8 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsign
     enriched_particles_.erase(iter3);
     typename std::vector<std::vector<typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation> >::iterator iter4 = particle_diagonalized_deform_grad_.begin() + object_idx;
     particle_diagonalized_deform_grad_.erase(iter4);
+    typename std::vector<std::vector<Scalar> >::iterator iter5 = particle_enrich_metric_.begin() + object_idx;
+    particle_enrich_metric_.erase(iter5);
 }
  
 template <typename Scalar, int Dim>
@@ -762,6 +790,8 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsign
     particle_corner_gradient_[object_idx].erase(iter2);
     typename std::vector<typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation>::iterator iter3 = particle_diagonalized_deform_grad_[object_idx].begin() + particle_idx;
     particle_diagonalized_deform_grad_[object_idx].erase(iter3);
+    typename std::vector<Scalar>::iterator iter4 = particle_enrich_metric_[object_idx].begin() + particle_idx;
+    particle_enrich_metric_[object_idx].erase(iter4);
 }
     
 template <typename Scalar, int Dim>
@@ -891,7 +921,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     //rule three: enrich for ill-deformed particle
     //metric function: f = min(f1,f2)
     Scalar condition_value = 0; //the metric number for enrichment: 0~1, enrich~no-enrich
-    Scalar condition_threshold = enrichment_metric_;
+    Scalar condition_threshold = particle_enrich_metric_[obj_idx][particle_idx];
     const SquareMatrix<Scalar,Dim> &diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
     //f1 =min_stretch/max_stretch (inverse of condition number of F)
     Scalar f1 = 0;
