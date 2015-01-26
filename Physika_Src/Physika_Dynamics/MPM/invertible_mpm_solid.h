@@ -100,8 +100,6 @@ protected:
     void diagonalizeParticleDeformationGradient();
     //factorize skew information from the particle deformation gradient
     SquareMatrix<Scalar,Dim> factorizeParticleSkewDeformation(unsigned int obj_idx, unsigned int particle_idx) const;
-    //detect self collision grid cells
-    void detectGridCellsWithSelfContact();
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
@@ -128,8 +126,6 @@ protected:
     bool enable_entire_enrichment_;
     static Scalar default_enrich_metric_;
     std::vector<std::vector<Scalar> > particle_enrich_metric_;
-    //EXPERIMENTAL: grid cell that contains self collision, all particles in the cell must be enriched in order to recover from self collision
-    std::vector<std::vector<Vector<unsigned int,Dim> > > grid_cell_with_self_collision_;
 };
 
 }  //end of namespace Physika
