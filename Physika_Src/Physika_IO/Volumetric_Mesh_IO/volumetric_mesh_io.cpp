@@ -296,6 +296,14 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         pointer->addRegion(region_name,region);
         region.clear();
     }
+    if(pointer->regionNum() == 0) //no region read from file, add one region named "AllElements"
+    {
+        region.resize(pointer->eleNum());
+        for(unsigned int ele_idx = 0; ele_idx < pointer->eleNum(); ++ele_idx)
+            region[ele_idx] = ele_idx;
+        region_name = string("AllElements");
+        pointer->addRegion(region_name,region);
+    }
     return pointer;
 }
 
