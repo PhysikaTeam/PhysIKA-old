@@ -60,11 +60,6 @@ public:
     void regionElements(unsigned int region_idx, std::vector<unsigned int> &elements) const;
     void regionElements(const std::string &region_name, std::vector<unsigned int> &elements) const; //print error and return empty elements if no region with the given name
     
-    //setters
-    void setVertPos(unsigned int vert_idx, const Vector<Scalar,Dim> &vert_pos);
-    void setEleVertPos(unsigned int ele_idx, unsigned int local_vert_idx, const Vector<Scalar,Dim> &vert_pos);
-    void setEleVertPos(unsigned int ele_idx, const std::vector<Vector<Scalar,Dim> > &positions);
-
     /* modification
      * Note: the user may be obligated to maintain the validity of mesh data after calling the modification methods
      * e.g., Calling addVertex() will not automatically add the vertex to any region

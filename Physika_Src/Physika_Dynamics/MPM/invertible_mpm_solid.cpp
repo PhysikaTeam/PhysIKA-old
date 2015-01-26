@@ -290,12 +290,6 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                 {
                     Vector<Scalar,Dim> corner_pos = this->particle_domain_corners_[obj_idx][particle_idx][corner_idx];
                     unsigned int global_corner_idx = particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
-                    if(is_colliding_domain_corner_[obj_idx][global_corner_idx])//already marked as colliding by other particles
-                    {  
-                        //project domain corner to target position determined by other particle
-                        this->particle_domain_corners_[obj_idx][particle_idx][corner_idx] = particle_domain_mesh_[obj_idx]->vertPos(global_corner_idx);
-                        continue; // avoid redudent impulse
-                    }
                     //skip the corner that is in a cell with all dirichlet nodes
                     const Grid<Scalar,Dim> &grid = this->grid();
                     Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
@@ -357,7 +351,6 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                         //update corner position with new velocity
                         corner_pos += (corner_vel + impulse)*dt;
                         this->particle_domain_corners_[obj_idx][particle_idx][corner_idx] = corner_pos;
-                        particle_domain_mesh_[obj_idx]->setVertPos(global_corner_idx,corner_pos);
                         //mark the corner as colliding, its position won't be update by the grid velocity
                         is_colliding_domain_corner_[obj_idx][global_corner_idx] = 0x01;
                     }
@@ -555,7 +548,6 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
                         }
                     }
                     this->particle_domain_corners_[obj_idx][particle_idx][corner_idx] = new_corner_pos;
-                    particle_domain_mesh_[obj_idx]->setVertPos(global_corner_idx,new_corner_pos);
                 }
             }
         }
@@ -564,20 +556,6 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
     }
     else
         PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
-}
-    
-template <typename Scalar, int Dim>
-void InvertibleMPMSolid<Scalar,Dim>::setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx,
-                                                              const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner)
-{
-    CPDIMPMSolid<Scalar,Dim>::setCurrentParticleDomain(object_idx,particle_idx,particle_domain_corner);
-    //set the data in particle_domain_mesh_ as well
-    unsigned int corner_idx = 0;
-    for(typename ArrayND<Vector<Scalar,Dim>,Dim>::ConstIterator iter = particle_domain_corner.begin(); iter != particle_domain_corner.end(); ++corner_idx,++iter)
-    {
-        PHYSIKA_ASSERT(particle_domain_mesh_[object_idx]);
-        particle_domain_mesh_[object_idx]->setEleVertPos(particle_idx,corner_idx,*iter);
-    }
 }
     
 template <typename Scalar, int Dim>
@@ -917,15 +895,21 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     //enrichment explicitly turned off
     if(!enable_enrichment_)
         return false;
-    
-    //rule three: enrich for ill-deformed particle
+
+    //rule three: enrich for particle in a cell with self contact
+    typename std::vector<Vector<unsigned int,Dim> >::const_iterator iter = std::find(grid_cell_with_self_collision_[obj_idx].begin(),
+                                                                               grid_cell_with_self_collision_[obj_idx].end(), cell_idx);    
+    if(iter != grid_cell_with_self_collision_[obj_idx].end())
+        return true;
+
+    //rule four: enrich for ill-deformed particle
     //metric function: f = min(f1,f2)
     Scalar condition_value = 0; //the metric number for enrichment: 0~1, enrich~no-enrich
     Scalar condition_threshold = particle_enrich_metric_[obj_idx][particle_idx];
     const SquareMatrix<Scalar,Dim> &diag_deform_grad = particle_diagonalized_deform_grad_[obj_idx][particle_idx].diag_deform_grad;
     //f1 =min_stretch/max_stretch (inverse of condition number of F)
     Scalar f1 = 0;
-    Scalar min_stretch = (std::numeric_limits<Scalar>::max)(), max_stretch = (std::numeric_limits<Scalar>::min)();
+    Scalar min_stretch = (std::numeric_limits<Scalar>::max)(), max_stretch = (std::numeric_limits<Scalar>::lowest)();
     for(unsigned int dim = 0; dim < Dim; ++dim)
     {
         if(diag_deform_grad(dim,dim) < principal_stretch_threshold_)  //already considered inverted, enrich
@@ -941,7 +925,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     Vector<Scalar,Dim> singular_values;
     skew_deform.singularValueDecomposition(left_rotation,singular_values,right_rotation);
     min_stretch = (std::numeric_limits<Scalar>::max)();
-    max_stretch = (std::numeric_limits<Scalar>::min)();
+    max_stretch = (std::numeric_limits<Scalar>::lowest)();
     for(unsigned int dim = 0; dim < Dim; ++dim)
     {
         min_stretch = (min_stretch < singular_values[dim]) ? min_stretch : singular_values[dim];
@@ -959,6 +943,8 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleDomainEnrichState()
 {
     //first precompute SVD of deformation gradient for each particle
     diagonalizeParticleDeformationGradient();
+    //then detect grid cells with self contact
+    detectGridCellsWithSelfContact();
     //then check for each particle if the criteria is satisfied
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
         for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
@@ -1283,6 +1269,64 @@ SquareMatrix<Scalar,Dim> InvertibleMPMSolid<Scalar,Dim>::factorizeParticleSkewDe
     else
         PHYSIKA_ERROR("Wrong dimension specified!");
     return skew;
+}
+
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::detectGridCellsWithSelfContact()
+{
+    unsigned int obj_num = this->objectNum();
+    grid_cell_with_self_collision_.resize(obj_num);
+    std::map<unsigned int, std::vector<unsigned int> > particle_bucket; //key: 1d cell index; value: particles in cell
+    Vector<unsigned int,Dim> cell_idx;
+    Vector<Scalar,Dim> bias_in_cell;
+    const Grid<Scalar,Dim> &grid = this->grid();
+    Vector<unsigned int,Dim> grid_cell_num = grid.cellNum();
+    for(unsigned int obj_idx = 0; obj_idx < obj_num; ++obj_idx)
+    {
+        //first init particle buckets
+        particle_bucket.clear();
+        for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            const SolidParticle<Scalar,Dim> &particle = this->particle(obj_idx,particle_idx);
+            Vector<Scalar,Dim> particle_pos = particle.position();
+            grid.cellIndexAndBiasInCell(particle_pos,cell_idx,bias_in_cell);
+            unsigned int cell_idx_1d = this->flatIndex(cell_idx,grid_cell_num);
+            std::map<unsigned int,std::vector<unsigned int> >::iterator iter = particle_bucket.find(cell_idx_1d);
+            if(iter != particle_bucket.end())
+                (iter->second).push_back(particle_idx);
+            else
+            {
+                std::vector<unsigned int> new_bucket_entry(1,particle_idx);
+                particle_bucket.insert(std::make_pair(cell_idx_1d,new_bucket_entry));
+            }
+        }
+        //then detect  the cells contains self contact
+        grid_cell_with_self_collision_[obj_idx].clear();
+        for(std::map<unsigned int,std::vector<unsigned int> >::iterator iter = particle_bucket.begin(); iter != particle_bucket.end(); ++iter)
+        {
+            std::vector<unsigned int> &particles_in_cell = iter->second;
+            bool with_self_contact = false;
+            for(unsigned int i = 0; i < particles_in_cell.size(); ++i)
+            {
+                unsigned int particle_idx_1 = particles_in_cell[i];
+                const SolidParticle<Scalar,Dim> &particle = this->particle(obj_idx,particle_idx_1);
+                Vector<Scalar,Dim> particle_pos = particle.position();
+                for(unsigned int j = i + 1; j < particles_in_cell.size(); ++j)
+                {
+                    unsigned int particle_idx_2 = particles_in_cell[j];
+                    if(particle_domain_mesh_[obj_idx]->containsVertex(particle_idx_2,particle_pos))
+                    {//particle 1 penetrated into the particle domain of particle 2: self contact
+                        Vector<unsigned int,Dim> cell_idx = this->multiDimIndex(iter->first,grid_cell_num);
+                        grid_cell_with_self_collision_[obj_idx].push_back(cell_idx);
+                        with_self_contact = true;
+                        break;
+                    }
+                }
+                if(with_self_contact)
+                    break;
+            }
+        }
+    }
 }
 
 //explicit instantiation

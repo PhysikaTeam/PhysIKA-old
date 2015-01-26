@@ -57,9 +57,6 @@ public:
     virtual void updateParticleConstitutiveModelState(Scalar dt); 
     virtual void updateParticleVelocity();
     virtual void updateParticlePosition(Scalar dt);
-    //explicitly set current particle domain, data in particle_domain_mesh_ are updated as well
-    virtual void setCurrentParticleDomain(unsigned int object_idx, unsigned int particle_idx,
-                                          const ArrayND<Vector<Scalar,Dim>,Dim> &particle_domain_corner);
     void setPrincipalStretchThreshold(Scalar threshold); //set the threshold of principal stretch, value under which will be clamped
     void enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const; //return the index of enriched particles
     unsigned int enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const; //return the number of enriched domain corners of given particle
@@ -103,6 +100,8 @@ protected:
     void diagonalizeParticleDeformationGradient();
     //factorize skew information from the particle deformation gradient
     SquareMatrix<Scalar,Dim> factorizeParticleSkewDeformation(unsigned int obj_idx, unsigned int particle_idx) const;
+    //detect self collision grid cells
+    void detectGridCellsWithSelfContact();
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain
@@ -129,6 +128,8 @@ protected:
     bool enable_entire_enrichment_;
     static Scalar default_enrich_metric_;
     std::vector<std::vector<Scalar> > particle_enrich_metric_;
+    //EXPERIMENTAL: grid cell that contains self collision, all particles in the cell must be enriched in order to recover from self collision
+    std::vector<std::vector<Vector<unsigned int,Dim> > > grid_cell_with_self_collision_;
 };
 
 }  //end of namespace Physika

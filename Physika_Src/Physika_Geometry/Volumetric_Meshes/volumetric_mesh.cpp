@@ -234,42 +234,6 @@ void VolumetricMesh<Scalar,Dim>::regionElements(const string &region_name, vecto
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMesh<Scalar,Dim>::setVertPos(unsigned int vert_idx, const Vector<Scalar,Dim> &vert_pos)
-{
-    if(vert_idx>=this->vertNum())
-    {
-        std::cerr<<"vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    vertices_[vert_idx] = vert_pos;
-}
-
-template <typename Scalar, int Dim>
-void VolumetricMesh<Scalar,Dim>::setEleVertPos(unsigned int ele_idx, unsigned int local_vert_idx, const Vector<Scalar,Dim> &vert_pos)
-{
-    unsigned int global_vert_idx = eleVertIndex(ele_idx,local_vert_idx);
-    setVertPos(global_vert_idx,vert_pos);
-}
-
-template <typename Scalar, int Dim>
-void VolumetricMesh<Scalar,Dim>::setEleVertPos(unsigned int ele_idx, const vector<Vector<Scalar,Dim> > &positions)
-{    
-    if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    unsigned int ele_vert_num = this->eleVertNum(ele_idx); 
-    if(positions.size() < ele_vert_num)
-    {
-        std::cerr<<"Insufficient number of vertex positions provided!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    for(unsigned int i = 0; i < ele_vert_num; ++i)
-        setEleVertPos(ele_idx,i,positions[i]);
-}
-
-template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::renameRegion(unsigned int region_idx, const string &name)
 {
     if(region_idx>=this->regionNum())
