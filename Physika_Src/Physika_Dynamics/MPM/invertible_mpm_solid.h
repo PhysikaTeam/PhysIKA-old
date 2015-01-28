@@ -69,6 +69,7 @@ public:
     //get&&set the metric value of enrichment criteria: 0~1, no enrichment ~ entire enrichment
     Scalar enrichmentMetric(unsigned int object_idx, unsigned int particle_idx) const;
     void setEnrichmentMetric(unsigned int object_idx, unsigned int particle_idx, Scalar metric);
+    void setEnrichmentMetric(unsigned int object_idx, Scalar metric); //set uniform enrichment metric for all particles
 
 protected:
     //solve on grid is reimplemented

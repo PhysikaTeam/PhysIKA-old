@@ -671,6 +671,19 @@ void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx
     else
         particle_enrich_metric_[object_idx][particle_idx] = metric;
 }
+         
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx, Scalar metric)
+{
+    if(object_idx >= this->objectNum())
+    {
+        std::cerr<<"Error: object index out of range, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    unsigned int particle_num = this->particleNumOfObject(object_idx);
+    for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
+        setEnrichmentMetric(object_idx,particle_idx,metric);
+}
 
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
