@@ -68,7 +68,6 @@ const Vertex<Scalar>& Face<Scalar>::vertex(unsigned int vert_idx) const
 template <typename Scalar>
 Vertex<Scalar>& Face<Scalar>::vertex(unsigned int vert_idx)
 {
-    PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
     return vertices_[vert_idx];
 }
@@ -76,7 +75,6 @@ Vertex<Scalar>& Face<Scalar>::vertex(unsigned int vert_idx)
 template <typename Scalar>
 const Vertex<Scalar>* Face<Scalar>::vertexPtr(unsigned int vert_idx) const
 {
-    PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
     return &(vertices_[vert_idx]);
 }
@@ -84,7 +82,6 @@ const Vertex<Scalar>* Face<Scalar>::vertexPtr(unsigned int vert_idx) const
 template <typename Scalar>
 Vertex<Scalar>* Face<Scalar>::vertexPtr(unsigned int vert_idx)
 {
-    PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
     return &(vertices_[vert_idx]);
 }

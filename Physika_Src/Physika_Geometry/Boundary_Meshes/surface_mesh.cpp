@@ -561,9 +561,7 @@ void SurfaceMesh<Scalar>::separateByGroup(std::vector<SurfaceMesh<Scalar> > & su
 {
 	surface_mesh_vec.clear();
 	for(unsigned int group_id = 0; group_id < this->numGroups(); group_id ++)
-	{
-		surface_mesh_vec.push_back(SurfaceMesh()); //
-	}
+		surface_mesh_vec.push_back(SurfaceMesh());
 
 	// the following variable(flag) is used to save the new index of old index in new mesh
 	long * vertex_new_pos = new long[this->numVertices()];
@@ -678,8 +676,7 @@ void SurfaceMesh<Scalar>::setVertexNormalsToFaceNormals()
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);
-            if(!face.hasFaceNormal())
-                computeFaceNormal(face);
+            computeFaceNormal(face);
             addVertexNormal(face.faceNormal());
             for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
             {
@@ -702,8 +699,7 @@ void SurfaceMesh<Scalar>::setVertexNormalsToAverageFaceNormals()
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);
-            if(!face.hasFaceNormal())
-                computeFaceNormal(face);
+            computeFaceNormal(face);
             const Vector<Scalar,3> &face_normal = face.faceNormal();
             for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
             {
@@ -750,8 +746,7 @@ void SurfaceMesh<Scalar>::setVertexNormalsToWeightedFaceNormals()
         for(unsigned int face_idx = 0; face_idx < group.numFaces(); ++face_idx)
         {
             Face<Scalar> &face = group.face(face_idx);
-            if(!face.hasFaceNormal())
-                computeFaceNormal(face);
+            computeFaceNormal(face);
             const Vector<Scalar,3> &face_normal = face.faceNormal();
             for(unsigned int vert_idx = 0; vert_idx < face.numVertices(); ++vert_idx)
             {
