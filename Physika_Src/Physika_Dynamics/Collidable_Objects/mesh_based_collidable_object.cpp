@@ -76,7 +76,7 @@ Vector<Scalar, 3> MeshBasedCollidableObject<Scalar>::faceNormal(unsigned int fac
 	if (face.hasFaceNormal())
 	{
 		if (transform_ != NULL)
-			return transform_->transform(face.faceNormal());
+			return transform_->rotate(face.faceNormal());
 		else
 			return face.faceNormal();
 	}
@@ -154,7 +154,7 @@ bool MeshBasedCollidableObject<Scalar>::collideWithMesh(MeshBasedCollidableObjec
     Vector<Scalar, 3> overlap_point;
 
 	//test each edge of lhs with the face of rhs
-	Vector<Scalar,3> mesh_rhs_face_normal = faceNormal(face_index_rhs);
+	Vector<Scalar,3> mesh_rhs_face_normal = object->faceNormal(face_index_rhs);
 	for(unsigned int i = 0; i < num_vertex_lhs; i++)
 	{
 		if(is_rhs_tri)//triangle
