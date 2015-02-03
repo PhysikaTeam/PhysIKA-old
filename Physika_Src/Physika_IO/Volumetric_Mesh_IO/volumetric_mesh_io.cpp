@@ -26,7 +26,7 @@
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
-#include "Physika_Core/Utilities/File_Utilities/parse_line.h"
+#include "Physika_Core/Utilities/File_Utilities/file_content_utilities.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 
 using std::string;
@@ -131,7 +131,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         }
         getline(*fp,line_str);
         //first remove preceding blanks from this line
-        line_str = FileUtilities::removeWhitespaces(line_str);
+        line_str = FileUtilities::removeWhitespaces(line_str,1);
         str_in.clear();
         str_in.str("");
         str_in<<line_str;

@@ -13,6 +13,7 @@
  */
 
 #include <iostream>
+#include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/png_io.h"
 #include "Physika_IO/Image_IO/ppm_io.h"
@@ -28,13 +29,7 @@ bool ImageIO::load(const string & filename, Image* image)
 
 bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data_format)
 {
-    string::size_type suffix_idx = filename.rfind('.');
-    if(suffix_idx>=filename.size())
-    {
-        std::cerr<<"No file extension found for the image file!\n";
-        return false;
-    }
-    string suffix = filename.substr(suffix_idx);
+    string suffix = FileUtilities::fileExtension(filename);
     if(suffix==string(".png"))
         return PngIO::load(filename, image, data_format);
     else  if(suffix==string(".ppm"))
@@ -48,26 +43,37 @@ bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data
 
 bool ImageIO::save(const string &filename, const Image * image)
 {
-    string::size_type suffix_idx = filename.rfind('.');
-    if(suffix_idx >= filename.size())
-    {
-        std::cerr<<"No file extension specified!\n";
-        return false;
-    }
-    string suffix = filename.substr(suffix_idx);
+    string suffix = FileUtilities::fileExtension(filename);
     if(suffix==string(".png"))
-    {
             return PngIO::save(filename, image);
-    }
     else if(suffix==string(".ppm"))
-    {
             return PPMIO::save(filename, image);
-    }
     else
     {
         std::cerr<<"Unknown image file format specified!\n";
         return false;
     }
+}
+
+bool ImageIO::checkFileNameAndImage(const std::string &filename, const std::string &expected_extension, const Image *image)
+{
+	std::string file_extension = FileUtilities::fileExtension(filename);
+	if(file_extension.size() == 0)
+	{
+		std::cerr<<"No file extension found for the image file:"<<filename<<std::endl;
+		return false;
+	}
+	if(file_extension != expected_extension)
+	{
+		std::cerr<<"Unknown file format:"<<file_extension<<std::endl;
+		return false;
+	}
+    if(image == NULL)
+    {
+        std::cerr<<"NULL image passed to ImageIO"<<std::endl;
+        return false;
+    }
+    return true;
 }
 
 } //end of namespace Physika

@@ -1,7 +1,7 @@
 /*
  * @file parseline.cpp
- * @brief Some universal functions when processing files' path.
- * @author LiYou Xu
+ * @brief Some universal functions when processing file content.
+ * @author Fei Zhu, LiYou Xu
  * @acknowledge Jernej Barbic, author of VegaFEM
  *
  * This file is part of Physika, a versatile physics simulation library.
@@ -14,7 +14,7 @@
  */
 
 
-#include "Physika_Core/Utilities/File_Utilities/parse_line.h"
+#include "Physika_Core/Utilities/File_Utilities/file_content_utilities.h"
 using std::string;
 
 namespace Physika{

@@ -15,6 +15,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/png_io.h"
 #include "Physika_Dependency/LodePNG/lodepng.h"
 #include "Physika_Core/Utilities/physika_assert.h"
@@ -31,18 +32,8 @@ bool PngIO::load(const string &filename,Image *image )
 
 bool PngIO::load(const std::string &filename, Image * image, Image::DataFormat data_format)
 {
-    string::size_type suffix_idx = filename.rfind('.');
-    if(suffix_idx>=filename.size())
-    {
-        std::cerr<<"No file extension found for the image file!\n";
+    if(ImageIO::checkFileNameAndImage(filename,string(".png"),image) == false)
         return false;
-    }
-    string suffix = filename.substr(suffix_idx);
-    if(suffix!=string(".png"))                                     //if the filename is not ended with ".png"
-    {
-        std::cerr<<"Unknown image file format!\n";
-        return false;
-    }
 
     unsigned int width, height;
     unsigned int error;
@@ -107,18 +98,9 @@ bool PngIO::load(const std::string &filename, Image * image, Image::DataFormat d
 
 bool PngIO::save(const string &filename, const Image *image)
 {
-    string::size_type suffix_idx = filename.rfind('.');
-    if(suffix_idx>=filename.size())
-    {
-        std::cerr<<"No file extension specified!\n";
+    if(ImageIO::checkFileNameAndImage(filename,string(".png"),image) == false)
         return false;
-    }
-    string suffix = filename.substr(suffix_idx);
-    if(suffix!=string(".png"))                                     //if the filename is not ended with ".png"
-    {
-        std::cerr<<"Wrong file extension specified for PNG file!\n";
-        return false;
-    }
+
     unsigned int error;
     if(image->dataFormat() == Image::RGBA)
     {

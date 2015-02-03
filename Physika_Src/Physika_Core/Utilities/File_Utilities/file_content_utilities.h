@@ -1,7 +1,7 @@
 /*
- * @file parseline.h 
- * @brief Some universal functions when preprocessing an input line.
- * @author LiYou Xu
+ * @file file_content_utilities.h 
+ * @brief Some universal functions when preprocessing file content.
+ * @author Fei Zhu, LiYou Xu
  * @acknowledge Jernej Barbic, author of VegaFEM
  *
  * This file is part of Physika, a versatile physics simulation library.
@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_PARSELINE_H_
-#define PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_PARSELINE_H_
+#ifndef PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_CONTENT_UTILITIES_H_
+#define PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_CONTENT_UTILITIES_H_
 
 #include<string>
 
@@ -23,10 +23,11 @@ namespace Physika{
 namespace FileUtilities{
 
 //remove abundant whitespaces
-std::string removeWhitespaces(const std::string &line, unsigned int num_retained_spaces = 1);
+//replace each whitespace squence with a squence of fixed number of white spaces 
+std::string removeWhitespaces(const std::string &line, unsigned int num_retained_spaces = 0);
 
 } //end of namespace FileUtilities
 
 } //end of namespace Physika
 
-#endif //PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_PARSELINE_H_
+#endif //PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_CONTENT_UTILITIES_H_

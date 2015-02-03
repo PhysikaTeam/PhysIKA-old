@@ -33,6 +33,10 @@ public:
     static bool load(const std::string &filename, SurfaceMesh<Scalar> *mesh);
     static bool save(const std::string &filename, const SurfaceMesh<Scalar> *mesh);
 
+    //check if the input filename and mesh is valid, called in load and save of specific IO classes
+    //return true if check succeeds
+    static bool checkFileNameAndMesh(const std::string &filename, const std::string &expected_extension, 
+                                     const SurfaceMesh<Scalar> *mesh);
 protected:
 };
 

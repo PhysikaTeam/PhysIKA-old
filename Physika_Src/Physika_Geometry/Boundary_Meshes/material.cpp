@@ -31,15 +31,15 @@ Material<Scalar>::~Material()
 
 template <typename Scalar>
 Material<Scalar>::Material(const string &name, const Vector<Scalar,3> &Ka, const Vector<Scalar,3> &Kd,
-                           const Vector<Scalar,3> &Ks, Scalar shininess, const string &texture_file_name)
-    :name_(name),Ka_(Ka),Kd_(Kd),Ks_(Ks),shininess_(shininess),full_path_texture_file_name_(texture_file_name)
+                           const Vector<Scalar,3> &Ks, Scalar shininess, Scalar alpha, const string &texture_file_name)
+    :name_(name),Ka_(Ka),Kd_(Kd),Ks_(Ks),shininess_(shininess),alpha_(alpha),full_path_texture_file_name_(texture_file_name)
 {
 }
 
 template <typename Scalar>
 Material<Scalar>::Material(const Material<Scalar> &material)
     :name_(material.name_),Ka_(material.Ka_),Kd_(material.Kd_),Ks_(material.Ks_),
-     shininess_(material.shininess_),full_path_texture_file_name_(material.full_path_texture_file_name_)
+     shininess_(material.shininess_),alpha_(material.alpha_),full_path_texture_file_name_(material.full_path_texture_file_name_)
 {
 }
 
@@ -51,6 +51,7 @@ Material<Scalar>& Material<Scalar>::operator= (const Material<Scalar> &material)
     Kd_ = material.Kd_;
     Ks_ = material.Ks_;
     shininess_ = material.shininess_;
+    alpha_ = material.alpha_;
     full_path_texture_file_name_ = material.full_path_texture_file_name_;
     return *this;
 }
@@ -150,15 +151,15 @@ Material<Scalar> Material<Scalar>::Rubber()
 {
 	// materail name,ka,kd,ks,shiness,texture file name
 	return Material<Scalar>(string("Rubber"),Vector<Scalar,3>(1.0, 1.0, 1.0),Vector<Scalar,3>(1.0, 1.0, 1.0),
-                           Vector<Scalar,3>(1.0, 1.0, 1.0),1.0,string(""));
+                            Vector<Scalar,3>(1.0, 1.0, 1.0),1.0,1.0,string(""));
 }
 
 template <typename Scalar>
 Material<Scalar> Material<Scalar>::Iron()
 {
 	// materail name,ka,kd,ks,shiness,texture file name
-	return Material<Scalar>(string("Iron"),Vector<Scalar,3>(1.0, 1.0, 1.0),Vector<Scalar,3>(1.0, 1.0, 1.0),
-                           Vector<Scalar,3>(1.0, 1.0, 1.0),1.0,string(""));
+	return Material<Scalar>(string("Iron"),Vector<Scalar,3>(0.1),Vector<Scalar,3>(0.5),
+                            Vector<Scalar,3>(0),65,1.0,string(""));
 }
 
 template <typename Scalar>
@@ -166,7 +167,7 @@ Material<Scalar> Material<Scalar>::Wood()
 {
 	// materail name,ka,kd,ks,shiness,texture file name
 	return Material<Scalar>(string("Wood"),Vector<Scalar,3>(1.0, 1.0, 1.0),Vector<Scalar,3>(1.0, 1.0, 1.0),
-                           Vector<Scalar,3>(1.0, 1.0, 1.0),1.0,string(""));
+                            Vector<Scalar,3>(1.0, 1.0, 1.0),1.0,1.0,string(""));
 }
 
 //explicit instantitation

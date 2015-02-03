@@ -1,7 +1,7 @@
 /*
  * @file image_io.h 
  * @Brief image_io class, it is used to import/save image files such as bmp etc.
- * @author Sheng Yang, Fei Zhu
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
@@ -33,6 +33,10 @@ public:
      */
     static bool save(const std::string &filename, const Image* image);
 
+    //check if the input filename and image is valid, called in load and save of specific IO classes
+    //return true if check succeeds
+    static bool checkFileNameAndImage(const std::string &filename, const std::string &expected_extension,
+                                      const Image *image);
 
 protected:
 };

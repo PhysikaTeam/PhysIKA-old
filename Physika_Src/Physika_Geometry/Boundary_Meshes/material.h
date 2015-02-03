@@ -33,7 +33,7 @@ public:
     Material();
     ~Material();
     Material(const std::string &name, const Vector<Scalar,3> &Ka, const Vector<Scalar,3> &Kd, const Vector<Scalar,3> &Ks,
-             Scalar shininess, const std::string &texture_file_name=std::string());
+             Scalar shininess, Scalar alpha, const std::string &texture_file_name=std::string());
     Material(const Material<Scalar> &material);
     Material<Scalar>& operator= (const Material<Scalar> &material);
     const std::string& name() const;
@@ -63,7 +63,7 @@ protected:
     Vector<Scalar,3> Ka_, Kd_, Ks_;
     Scalar shininess_;
     Scalar alpha_;
-    std::string full_path_texture_file_name_;  //full path of texture file name
+    std::string full_path_texture_file_name_;  //store the full path of texture file so that texture could be correctly loaded while rendering
 };
 
 } //end of namespace BoundaryMeshInternal

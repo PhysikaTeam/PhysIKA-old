@@ -20,6 +20,11 @@ namespace Physika{
 
 template <typename Scalar> class SurfaceMesh;
 
+/*
+ * load/save mesh to PovRay mesh2 object script
+ * Note: material information is lost in .povmesh, while texture information stays
+ */
+
 template <typename Scalar>
 class PovMeshIO
 {
