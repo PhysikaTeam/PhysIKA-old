@@ -281,7 +281,8 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
             num_group_faces ++;
             current_group->addFace(face_temple);
         }
-        else if(type_of_line == std::string("#") || type_of_line == std::string("") ){}
+        else if(type_of_line == std::string("#") || type_of_line == std::string("") )
+        {}
         else if(type_of_line == std::string("usemtl"))
         {
             if (num_group_faces > 0)
@@ -331,7 +332,8 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
         }		
     }//end while
     ifs.close();
-    //std::cerr some file message
+    if(mesh->numMaterials() == 0) //no material read from file, add a default one
+        mesh->addMaterial(Material<Scalar>::Iron());
     return true;
 }
 
@@ -533,8 +535,8 @@ bool ObjMeshIO<Scalar>::loadMaterials(const std::string &filename, SurfaceMesh<S
             break;
         }
     }
-    if(num_mtl == 0)                            //attention at least one material must be in mesh
-        mesh->addMaterial(material_example);
+    //attention at least one material must be in mesh
+    mesh->addMaterial(material_example);
     ifs.close();
     return true;
 }

@@ -241,8 +241,9 @@ bool PovMeshIO<Scalar>::load(const std::string& filename, SurfaceMesh<Scalar> *m
                     {
                         if(!default_group_created) //create default group if not created yet
                         {
-                            FaceGroup<Scalar> group(std::string("default"));
+                            FaceGroup<Scalar> group(std::string("default"),0);
                             mesh->addGroup(group);
+                            mesh->addMaterial(Material<Scalar>::Iron());
                             default_group_created = true;
                         }
                         tex_idx = 0;
@@ -319,6 +320,7 @@ bool PovMeshIO<Scalar>::load(const std::string& filename, SurfaceMesh<Scalar> *m
             }
         }
     }
+    filein.close();
     return true;
 }
 
@@ -419,7 +421,7 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         fileout<<"   }\n"; // end of texture_list
     }
 
-	
+    	
 	// face_indices
     unsigned int face_num = mesh->numFaces();
     if(face_num > 0 && vert_num > 0)
