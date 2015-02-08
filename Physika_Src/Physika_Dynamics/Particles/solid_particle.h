@@ -38,6 +38,8 @@ public:
     virtual SolidParticle<Scalar,Dim>* clone() const;
     SolidParticle<Scalar,Dim>& operator= (const SolidParticle<Scalar,Dim> &particle);
     SquareMatrix<Scalar,Dim> deformationGradient() const;
+    const ConstitutiveModel<Scalar,Dim>& constitutiveModel() const;
+    ConstitutiveModel<Scalar,Dim>& constitutiveModel();
     Scalar energy() const;
     SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress() const;
     SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress() const;

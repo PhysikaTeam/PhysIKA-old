@@ -90,6 +90,28 @@ SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::deformationGradient() const
 }
 
 template <typename Scalar, int Dim>
+const ConstitutiveModel<Scalar,Dim>& SolidParticle<Scalar,Dim>::constitutiveModel() const
+{
+    if(constitutive_model_==NULL)
+    {
+        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return *constitutive_model_;
+}
+
+template <typename Scalar, int Dim>
+ConstitutiveModel<Scalar,Dim>& SolidParticle<Scalar,Dim>::constitutiveModel()
+{
+    if(constitutive_model_==NULL)
+    {
+        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
+        std::exit(EXIT_FAILURE);
+    }
+    return *constitutive_model_;
+}
+    
+template <typename Scalar, int Dim>
 Scalar SolidParticle<Scalar,Dim>::energy() const
 {
     if(constitutive_model_==NULL)
