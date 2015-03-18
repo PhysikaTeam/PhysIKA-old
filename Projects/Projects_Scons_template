@@ -88,6 +88,7 @@ if use_gl==True:
         else:
             additional_libs.append('glui64')
         additional_libs.append('glut')
+        additional_libs.append('X11')
         additional_libs.append('GLU')
         additional_libs.append('GL')
     elif os_name=='Windows':

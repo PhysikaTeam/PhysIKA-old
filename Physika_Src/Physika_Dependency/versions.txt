@@ -12,3 +12,4 @@ Physika specific changes:
 4.freeglut 3.0.0
 Physic specific changes:
 *delete android/blackberry/egl code
+*remove some error output in terminal: gles_stubs.c
