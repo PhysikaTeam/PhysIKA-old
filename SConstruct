@@ -154,7 +154,10 @@ for name in dependencies:
     else: #LIBS ARE PRECOMPILED, COPY HEADERS AND LIBS RESPECTIVELY
        #COPY HEADERS
        if name=='OpenGL':  #SPECIAL HANDLING FOR OPENGL HEADERS, TO KEEP THE "#include <GL/XXX.h>" STYLE
-          Command(target_dependency_include_path+name+'/GL/',src_dependency_root_path+name+'/GL/',Copy("$TARGET","$SOURCE"))
+          lib_header_files=glob(os.path.join(src_dependency_root_path+name,'GL/*.h'))
+          for header_file in lib_header_files:
+              target_file=header_file.replace(src_dependency_root_path,target_dependency_include_path)    #COPY INTO OPENGL HEADER DIRECTORY
+              Command(target_file,header_file,Copy("$TARGET","$SOURCE"))
        else:
           Command(target_dependency_include_path+name+'/',src_dependency_root_path+name+'/include/',Copy("$TARGET","$SOURCE"))
        #COPY LIBS

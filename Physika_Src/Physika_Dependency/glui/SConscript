@@ -67,7 +67,7 @@ else:
    lib_target=env.StaticLibrary(target=lib_file,source=lib_src_files)
 
 #COPY GLUI HEADER TO TARGET DIRECTORY
-header_target=Command(target_root_path+’include/OpenGL/GL/glui.h’,’GL/glui.h’,Copy("$TARGET","$SOURCE”))
+header_target=Command(target_root_path+'include/OpenGL/GL/glui.h','GL/glui.h',Copy("$TARGET","$SOURCE"))
 
 #CUSTOMIZE CLEAN OPTION
 lib_delete_files=glob(os.path.join(src_root_path,'*.pdb'))
