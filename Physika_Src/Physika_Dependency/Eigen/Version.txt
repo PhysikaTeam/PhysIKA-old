@@ -1,5 +1,0 @@
-Eigen 3.2.3
-
-Physika specific changes:
-
-1. Eigen/src/Core/Functors.h: issue with abs()

@@ -57,7 +57,7 @@ if build_type=='Release':
    compile_action='g++ -o $TARGET $SOURCE -c -O3 -Wall -fno-strict-aliasing -std=gnu++0x -DNDEBUG '
 else:
    compile_action='g++ -o $TARGET $SOURCE -c -g -Wall -fno-strict-aliasing -std=gnu++0x '
-compile_action=compile_action+'-I '+' -I '.join(include_path)
+compile_action=compile_action+' -I '+' -I '.join(include_path)
 compile=Builder(action=compile_action)
 arc_lib=Builder(action='ar rcs $TARGET $SOURCES')
 
@@ -150,7 +150,7 @@ for name in dependencies:
     if name in pure_copy: #ONLY HEADERS, DIRECT COPY
        Command(target_dependency_include_path+name,src_dependency_root_path+name,Copy("$TARGET","$SOURCE"))
     elif os.path.isfile(src_dependency_root_path+name+'/SConscript'): #SCONS SCRIPT FOR THE DEPENDENCY EXISTS, CALL THE BUILD
-       SConscript(src_dependency_root_path+name+'/SConscript',exports='env os_name os_architecture compiler')
+       SConscript(src_dependency_root_path+name+'/SConscript',exports='env os_name os_architecture compiler build_type')
     else: #LIBS ARE PRECOMPILED, COPY HEADERS AND LIBS RESPECTIVELY
        #COPY HEADERS
        if name=='OpenGL':  #SPECIAL HANDLING FOR OPENGL HEADERS, TO KEEP THE "#include <GL/XXX.h>" STYLE

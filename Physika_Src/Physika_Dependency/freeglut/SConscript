@@ -1,0 +1,98 @@
+#################################################################
+# Scons script for freeglut-3.0.0
+# called by Scons script of Physika
+# @author: Fei Zhu, 03/17/2015        
+#################################################################
+
+######################CONFIGURATIONS#############################
+# IMPORT FROM PARENT SCONS SCRIPT
+Import('env os_name os_architecture compiler build_type')
+#################################################################
+
+#IMPORTS
+import os
+from os.path import basename
+from glob import glob
+
+#PHYSIKA ROOT PATH
+physika_root_path='../../../'
+
+#SRC PATH
+src_root_path='./src/'
+header_root_path='./include/'
+include_path=[header_root_path,src_root_path]
+
+#LIB NAME
+lib_name='glut'
+
+#LIB PREFIX AND SUFFIX 
+if os_name=='Windows':
+    obj_suffix='.obj'
+    lib_suffix='.lib'
+elif os_name in ('Linux','Darwin'):
+    lib_preffix='lib'
+    obj_suffix='.o'
+    lib_suffix='.a'
+
+#COPY CONSTRUCTION ENVIRONMENT FROM ENV, ONLY CHANGE INCLUDE PATH FOR COMPILE
+lib_env=env.Clone()
+if compiler=='g++':
+   #BUILDERS
+   if build_type=='Release':
+      compile_action='gcc -o $TARGET $SOURCE -c -O3 -Wall -fno-strict-aliasing -DNDEBUG '
+   else:
+      compile_action='gcc -o $TARGET $SOURCE -c -g -Wall -fno-strict-aliasing '
+   for path in include_path:
+      path=os.path.abspath(path)
+      compile_action=compile_action+' -I '+path
+   compile=Builder(action=compile_action)
+   arc_lib=Builder(action='ar rcs $TARGET $SOURCES')
+   lib_env.Replace(BUILDERS={'COMPILE':compile,'ARCLIB':arc_lib})
+else:   
+   lib_env.Replace(CPPPATH=header_root_path)
+
+#COMPILE SRC FILES AND ARCHIVE INTO LIB
+lib_target=[]
+target_root_path=physika_root_path+'Public_Library/'
+lib_obj_files=[]
+#SRC FILES, FREEGLUT IS WRITTEN IN C/C++
+lib_src_files=glob(os.path.join(src_root_path,'*.cpp'))
+lib_src_files=lib_src_files+glob(os.path.join(src_root_path,'*.c'))
+for dir in os.listdir(src_root_path):
+    if os_name in ('Linux','Darwin') and dir=='mswin':  #SKIP SRC FOR WINDOWS WHILE NOT IN WINDOWS
+        continue
+    elif os_name=='Windows' and dir=='x11': #SKIP SRC FOR X11 WHILE IN WINDOW
+        continue
+    src_dir = os.path.join(src_root_path,dir)
+    if os.path.isdir(src_dir):
+        lib_src_files=lib_src_files+glob(os.path.join(src_dir,'*.cpp'))
+        lib_src_files=lib_src_files+glob(os.path.join(src_dir,'*.c'))
+#HEADER FILES
+lib_header_files=glob(os.path.join(header_root_path,'GL/*.h'))
+if compiler=='g++':
+    for src_file in lib_src_files:
+        obj_file=os.path.splitext(src_file)[0]+obj_suffix
+	lib_obj_files.append(obj_file)
+	lib_env.COMPILE(obj_file,src_file)
+lib_file=lib_name+lib_suffix
+if os_name in ('Linux','Darwin'):
+   lib_file=lib_preffix+lib_file
+lib_file=target_root_path+'lib/'+os.path.basename(lib_file)
+if compiler=='g++':
+   lib_env.ARCLIB(lib_file,lib_obj_files)
+else:
+   lib_target=lib_env.StaticLibrary(target=lib_file,source=lib_src_files)
+
+#COPY HEADERS TO TARGET DIRECTORY, LIBS ARE ALREADY THERE
+header_target=[]
+for header_file in lib_header_files:
+    if header_file.find(header_root_path)==0:
+       target_file=header_file.replace(header_root_path,target_root_path+'include/OpenGL/')    #COPY INTO OPENGL HEADER DIRECTORY
+       header_target=Command(target_file,header_file,Copy("$TARGET","$SOURCE"))
+
+#CUSTOMIZE CLEAN OPTION
+lib_delete_files=glob(os.path.join(src_root_path,'*.pdb'))
+header_delete_files= [os.path.join(target_root_path+'include/', name) for name in os.listdir(target_root_path+'include/')
+                      if os.path.isdir(os.path.join(target_root_path+'include/', name))]
+Clean(lib_target,lib_delete_files)
+Clean(header_target,header_delete_files)
