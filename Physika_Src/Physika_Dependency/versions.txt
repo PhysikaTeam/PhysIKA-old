@@ -10,6 +10,3 @@ Physika specific changes:
 3.LodePNG v20131222
 
 4.freeglut 3.0.0
-Physic specific changes:
-*delete android/blackberry/egl code
-*remove some error output in terminal: gles_stubs.c

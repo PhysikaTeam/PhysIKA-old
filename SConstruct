@@ -38,7 +38,8 @@ src_root_path='Physika_Src/'
 
 #INCLUDE_PATH
 gl_include_path=src_root_path+'Physika_Dependency/OpenGL/'    #SPECIAL HANDLING FOR OPENGL HEADERS, TO KEEP THE "#include <GL/XXX.h>" STYLE
-include_path=[src_root_path,gl_include_path]
+glui_include_path=src_root_path+'Physika_Dependency/glui/'
+include_path=[src_root_path,gl_include_path,glui_include_path]
 
 #LIB NAMES
 lib_names=get_immediate_subdirectories(src_root_path)
@@ -56,8 +57,9 @@ else:
 if build_type=='Release':
    compile_action='g++ -o $TARGET $SOURCE -c -O3 -Wall -fno-strict-aliasing -std=gnu++0x -DNDEBUG '
 else:
-   compile_action='g++ -o $TARGET $SOURCE -c -g -Wall -fno-strict-aliasing -std=gnu++0x '
-compile_action=compile_action+' -I '+' -I '.join(include_path)
+   compile_action='g++ -o $TARGET $SOURCE -c -g -Wall -fno-strict-aliasing -std=gnu++0x '  
+for path in include_path:
+    compile_action=compile_action+' -I '+path
 compile=Builder(action=compile_action)
 arc_lib=Builder(action='ar rcs $TARGET $SOURCES')
 
