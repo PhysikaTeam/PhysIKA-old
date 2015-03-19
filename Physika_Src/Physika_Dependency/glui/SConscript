@@ -45,7 +45,7 @@ elif os_name in ('Linux','Darwin'):
         lib_suffix='64.a'
 
 #ADD ADDITIONAL INCLUDE PATH
-external_include_path = external_include_path+[physika_root_path+'Physika_Dependency/OpenGL/']
+external_include_path = external_include_path+[physika_root_path+'Physika_Src/Physika_Dependency/OpenGL/']
 env.Append(CPPPATH=external_include_path)
 
 #COMPILE SRC FILES AND ARCHIVE INTO LIB
