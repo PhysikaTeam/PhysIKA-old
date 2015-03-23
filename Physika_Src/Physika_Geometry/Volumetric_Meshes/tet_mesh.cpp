@@ -96,7 +96,7 @@ Scalar TetMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 }
 
 template <typename Scalar>
-bool TetMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
+bool TetMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
 {
     if(ele_idx>=this->ele_num_)
     {

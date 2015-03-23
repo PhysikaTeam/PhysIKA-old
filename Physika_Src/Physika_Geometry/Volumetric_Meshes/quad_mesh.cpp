@@ -95,7 +95,7 @@ Scalar QuadMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 }
 
 template <typename Scalar>
-bool QuadMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
+bool QuadMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
 {
     if(ele_idx>=this->ele_num_)
     {

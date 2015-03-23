@@ -86,7 +86,7 @@ public:
     virtual VolumetricMeshInternal::ElementType elementType() const=0;
     virtual unsigned int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element
     virtual Scalar eleVolume(unsigned int ele_idx) const=0;
-    virtual bool   containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
+    virtual bool   containPoint(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
     virtual void   interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, std::vector<Scalar> &weights) const=0; 
 protected:
     /* init mesh given data, all elements belong to one default region 'AllElements'

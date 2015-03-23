@@ -42,7 +42,7 @@ public:
     VolumetricMeshInternal::ElementType elementType() const;
     unsigned int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
-    bool containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const;
+    bool containPoint(unsigned int ele_idx, const Vector<Scalar,3> &pos) const;
     void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, std::vector<Scalar> &weights) const;
 protected:
 };

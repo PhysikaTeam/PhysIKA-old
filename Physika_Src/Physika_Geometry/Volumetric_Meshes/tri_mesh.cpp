@@ -94,7 +94,7 @@ Scalar TriMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 }
 
 template <typename Scalar>
-bool TriMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
+bool TriMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
 {
     if((ele_idx<0) || (ele_idx>=this->ele_num_))
     {
