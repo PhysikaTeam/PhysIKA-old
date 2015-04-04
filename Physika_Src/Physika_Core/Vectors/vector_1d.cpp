@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Matrices/matrix_1x1.h"
 #include "Physika_Core/Vectors/vector_1d.h"
 
@@ -51,10 +52,7 @@ template <typename Scalar>
 Scalar& Vector<Scalar,1>::operator[] (unsigned int idx)
 {
     if(idx>=1)
-    {
-        std::cout<<"Vector index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vector index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_1x_(idx);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -66,10 +64,7 @@ template <typename Scalar>
 const Scalar& Vector<Scalar,1>::operator[] (unsigned int idx) const
 {
     if(idx>=1)
-    {
-        std::cout<<"Vector index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vector index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return eigen_vector_1x_(idx);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -188,10 +183,7 @@ template <typename Scalar>
 Vector<Scalar,1> Vector<Scalar,1>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Vector Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vector Divide by zero error!");
     Scalar result;
     result = (*this)[0] / scale;
     return Vector<Scalar,1>(result);
@@ -201,10 +193,7 @@ template <typename Scalar>
 Vector<Scalar,1>& Vector<Scalar,1>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Vector Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vector Divide by zero error!");
     (*this)[0] = (*this)[0] / scale;
     return *this;
 }

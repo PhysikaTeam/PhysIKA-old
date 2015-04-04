@@ -14,12 +14,21 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Vectors/vector_1d.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 using Physika::PhysikaException;
+using Physika::Vector;
 using namespace std;
+
+void testFunction()
+{
+    Vector<float,1> vector_1d(0);
+    std::cout<<vector_1d[1]<<"\n";
+}
 
 int main()
 {
+    testFunction();
     throw PhysikaException("Test PhysikaException");
     return 0;
 }
