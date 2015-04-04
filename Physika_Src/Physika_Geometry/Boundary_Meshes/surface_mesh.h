@@ -19,6 +19,7 @@
 #include <string>
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Geometry/Boundary_Meshes/boundary_mesh.h"
 #include "Physika_Geometry/Boundary_Meshes/vertex.h"
 #include "Physika_Geometry/Boundary_Meshes/face.h"
 #include "Physika_Geometry/Boundary_Meshes/face_group.h"
@@ -27,7 +28,7 @@
 namespace Physika{
 
 template <typename Scalar>
-class SurfaceMesh
+class SurfaceMesh: public BoundaryMesh
 {
 public:
     //constructors && deconstructors
@@ -35,6 +36,7 @@ public:
     ~SurfaceMesh();
 
     //basic info
+    unsigned int dims() const {return 3;}
     unsigned int numVertices() const;
     unsigned int numFaces() const;
     unsigned int numNormals() const;

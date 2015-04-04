@@ -35,7 +35,7 @@ protected:
     unsigned int first_ele_ ,last_ele_;
     SparseMatrix<Scalar> *ptr_matrix_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    typename Eigen::SparseMatrix<Scalar>::InnerIterator it;
+    typename Eigen::SparseMatrix<Scalar>::InnerIterator it_;
 #endif
 };
 
