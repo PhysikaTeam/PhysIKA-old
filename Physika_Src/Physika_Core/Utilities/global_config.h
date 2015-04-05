@@ -28,6 +28,9 @@
 //#define PHYSIKA_USE_EIGEN_SPARSE_MATRIX
 #define PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
 
+/***********PhysikaException***********/
+#define PHYSIKA_EXCEPTION_WITH_STACK_TRACE
+
 ////////////////////////////////////////////
 
 //include necessary header files with different configurations

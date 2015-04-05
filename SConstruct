@@ -195,7 +195,3 @@ header_delete_files= [os.path.join(target_root_path+'include/', name) for name i
                       if os.path.isdir(os.path.join(target_root_path+'include/', name))]
 Clean(sln,sln_delete_files)
 Clean(header_target,header_delete_files)
-
-
-    
-    	    

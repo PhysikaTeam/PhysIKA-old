@@ -15,6 +15,7 @@
 #include <limits>
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
@@ -119,8 +120,8 @@ Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j)
     bool index_in_range = (i<(*this).rows())&&(j<(*this).cols());
     if(!index_in_range)
     {
-        std::cerr<<"Matrix index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix index out of range!");
+         
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_)(i,j);
@@ -135,8 +136,8 @@ const Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j) con
     bool index_in_range = (i<(*this).rows())&&(j<(*this).cols());
     if(!index_in_range)
     {
-        std::cerr<<"Matrix index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix index out of range!");
+         
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_)(i,j);
@@ -155,8 +156,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator+ (const MatrixMxN<Scalar> &mat2) c
     bool size_match = (rows==rows2)&&(cols==cols2);
     if(!size_match)
     {
-        std::cerr<<"Cannot add two matrix of different sizes!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Cannot add two matrix of different sizes!");
+         
     }
     Scalar *result = new Scalar[rows*cols];
     for(unsigned int i = 0; i < rows; ++i)
@@ -177,8 +178,8 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator+= (const MatrixMxN<Scalar> &mat2)
     bool size_match = (rows==rows2)&&(cols==cols2);
     if(!size_match)
     {
-        std::cerr<<"Cannot add two matrix of different sizes!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Cannot add two matrix of different sizes!");
+         
     }
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j <cols; ++j)
@@ -196,8 +197,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator- (const MatrixMxN<Scalar> &mat2) c
     bool size_match = (rows==rows2)&&(cols==cols2);
     if(!size_match)
     {
-        std::cerr<<"Cannot subtract two matrix of different sizes!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Cannot subtract two matrix of different sizes!");
+         
     }
     Scalar *result = new Scalar[rows*cols];
     for(unsigned int i = 0; i < rows; ++i)
@@ -218,8 +219,8 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator-= (const MatrixMxN<Scalar> &mat2)
     bool size_match = (rows==rows2)&&(cols==cols2);
     if(!size_match)
     {
-        std::cerr<<"Cannot subtract two matrix of different sizes!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Cannot subtract two matrix of different sizes!");
+         
     }
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j <cols; ++j)
@@ -307,8 +308,8 @@ VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) cons
     unsigned int vec_dim = vec.dims();
     if(mat_col!=vec_dim)
     {
-        std::cerr<<"Matrix*Vector: Matrix and vector sizes do not match!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix*Vector: Matrix and vector sizes do not match!");
+         
     }
     VectorND<Scalar> result(mat_row,0.0);
     for(unsigned int i = 0; i < mat_row; ++i)
@@ -328,8 +329,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (const MatrixMxN<Scalar> &mat2) c
     unsigned int mat2_col = mat2.cols();
     if(mat1_col != mat2_row)
     {
-        std::cerr<<"Matrix*Matrix: Matrix and matrix sizes do not match!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix*Matrix: Matrix and matrix sizes do not match!");
+         
     }
     MatrixMxN<Scalar> result(mat1_row,mat2_col,static_cast<Scalar>(0));
     for(unsigned int i = 0; i < mat1_row; ++i)
@@ -348,8 +349,8 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (const MatrixMxN<Scalar> &mat2)
     unsigned int mat2_col = mat2.cols();
     if(mat1_col != mat2_row)
     {
-        std::cerr<<"Matrix*Matrix: Matrix and matrix sizes do not match!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix*Matrix: Matrix and matrix sizes do not match!");
+         
     }
     MatrixMxN<Scalar> result(mat1_row,mat2_col,static_cast<Scalar>(0));
     for(unsigned int i = 0; i < mat1_row; ++i)
@@ -365,8 +366,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-        std::cerr<<"Matrix Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix Divide by zero error!");
+         
     }
     unsigned int rows = (*this).rows();
     unsigned int cols = (*this).cols();
@@ -384,8 +385,8 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-        std::cerr<<"Matrix Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix Divide by zero error!");
+         
     }
     unsigned int rows = (*this).rows();
     unsigned int cols = (*this).cols();
@@ -416,8 +417,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
     unsigned int cols = (*this).cols();
     if(rows!=cols)
     {
-        std::cerr<<"Matrix not square matrix, it's not invertible!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix not square matrix, it's not invertible!");
+         
     }
     Scalar det = determinant();
     bool singular = false;
@@ -433,8 +434,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
     }
     if(singular)
     {
-        std::cerr<<"Matrix not invertible!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix not invertible!");
+         
     }
     MatrixMxN<Scalar> result = cofactorMatrix();
     result = result.transpose();
@@ -449,8 +450,8 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::cofactorMatrix() const
     unsigned int cols = (*this).cols();
     if(rows!=cols)
     {
-        std::cerr<<"Matrix not square matrix, cofactor matrix does not exit!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix not square matrix, cofactor matrix does not exit!");
+         
     }
     MatrixMxN<Scalar> mat(rows,cols);
     for(unsigned int i = 0; i < rows; ++i)
@@ -479,8 +480,8 @@ Scalar MatrixMxN<Scalar>::determinant() const
     unsigned int cols = (*this).cols();
     if(rows!=cols)
     {
-        std::cerr<<"Matrix not square matrix, determinant does not exit!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix not square matrix, determinant does not exit!");
+         
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return (*ptr_eigen_matrix_MxN_).determinant();
@@ -515,8 +516,8 @@ Scalar MatrixMxN<Scalar>::trace() const
     unsigned int cols = (*this).cols();
     if(rows!=cols)
     {
-        std::cerr<<"Matrix not square matrix, trace does not exit!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix not square matrix, trace does not exit!");
+         
     }
     Scalar result = 0.0;
     for(unsigned int i = 0; i < rows; ++i)
@@ -534,8 +535,8 @@ Scalar MatrixMxN<Scalar>::doubleContraction(const MatrixMxN<Scalar> &mat2) const
     bool size_match = (row1==row2)&&(col1==col2);
     if(!size_match)
     {
-        std::cerr<<"Cannot compute double contraction of two matrix with different sizes!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Cannot compute double contraction of two matrix with different sizes!");
+         
     }
     Scalar result = 0.0;
     for(unsigned int i = 0; i < row1; ++i)
@@ -576,8 +577,8 @@ void MatrixMxN<Scalar>::singularValueDecomposition(MatrixMxN<Scalar> &left_singu
     for(unsigned int i = 0; i < values.rows(); ++i)
         singular_values[i] = static_cast<Scalar>(values(i,0));
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    std::cerr<<"SVD not implemeted for built in matrix!\n";
-    std::exit(EXIT_FAILURE);
+    throw PhysikaException("SVD not implemeted for built in matrix!");
+     
 #endif
 }
 
@@ -588,8 +589,8 @@ void MatrixMxN<Scalar>::eigenDecomposition(VectorND<Scalar> &eigen_values_real, 
     unsigned int rows = this->rows(), cols = this->cols();
     if(rows != cols)
     {
-        std::cerr<<"Eigen decomposition is only valid for square matrix!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Eigen decomposition is only valid for square matrix!");
+         
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     //hack: Eigen::EigenSolver does not support integer types, hence we cast Scalar to long double for decomposition
@@ -622,8 +623,8 @@ void MatrixMxN<Scalar>::eigenDecomposition(VectorND<Scalar> &eigen_values_real, 
         eigen_values_imag[i] = static_cast<Scalar>(values(i,0).imag());
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    std::cerr<<"Eigen decomposition not implemeted for built in matrix!\n";
-    std::exit(EXIT_FAILURE);
+    throw PhysikaException("Eigen decomposition not implemeted for built in matrix!");
+     
 #endif
 }
 

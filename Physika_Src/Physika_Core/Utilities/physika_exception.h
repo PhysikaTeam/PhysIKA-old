@@ -1,7 +1,7 @@
 /*
  * @file physika_exception.h 
- * @brief Customized exception for Physika, throw an exception in case of error
- *        so that callers of Physika can handle it.
+ * @brief Customized exception with stack trace information for Physika, throw an exception 
+ *        in case of error so that callers of Physika can handle it.
  * @author FeiZhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -18,17 +18,26 @@
 
 #include <string>
 #include <exception>
+#include "Physika_Core/Utilities/global_config.h"
+#ifdef PHYSIKA_EXCEPTION_WITH_STACK_TRACE
+#include "Physika_Core/Utilities/physika_stack_trace.h"
+#endif
 
 namespace Physika{
 
 class PhysikaException: public std::exception
 {
 public:
-    explicit PhysikaException(const std::string &msg) throw():std::exception(),error_msg_(msg){}
-    virtual ~PhysikaException() throw(){}
-    virtual const char* what() const throw(){return error_msg_.c_str();}
+    explicit PhysikaException(const std::string &msg) throw();
+    virtual ~PhysikaException() throw();
+    virtual const char* what() const throw();
+protected:
+    PhysikaException(); //prohibit default constructor
 protected:
     std::string error_msg_;
+#ifdef PHYSIKA_EXCEPTION_WITH_STACK_TRACE
+    PhysikaStackTrace stack_trace_;
+#endif
 };
 
 } //end of namespace Physika

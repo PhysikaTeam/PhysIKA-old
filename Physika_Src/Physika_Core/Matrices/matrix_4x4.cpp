@@ -14,6 +14,7 @@
 
 #include <limits>
 #include <cstdlib>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_4d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
@@ -145,8 +146,8 @@ Scalar& SquareMatrix<Scalar,4>::operator() (unsigned int i, unsigned int j)
     bool index_valid = (i<4)&&(j<4);
     if(!index_valid)
     {
-        std::cerr<<"Matrix index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix index out of range!");
+         
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_4x4_(i,j);
@@ -161,8 +162,8 @@ const Scalar& SquareMatrix<Scalar,4>::operator() (unsigned int i, unsigned int j
     bool index_valid = (i<4)&&(j<4);
     if(!index_valid)
     {
-        std::cerr<<"Matrix index out of range!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix index out of range!");
+         
     }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_4x4_(i,j);
@@ -301,8 +302,8 @@ SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-        std::cerr<<"Matrix Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix Divide by zero error!");
+         
     }
     Scalar result[16];
     for(unsigned int i = 0; i < 4; ++i)
@@ -316,8 +317,8 @@ SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
     {
-        std::cerr<<"Matrix Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix Divide by zero error!");
+         
     }
     for(unsigned int i = 0; i < 4; ++i)
         for(unsigned int j = 0; j < 4; ++j)
@@ -352,8 +353,8 @@ SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::inverse() const
     }
     if(singular)
     {
-        std::cerr<<"Matrix not invertible!\n";
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("Matrix not invertible!");
+         
     }
     //companion maxtrix
     Scalar x00 = (SquareMatrix<Scalar, 3>((*this)(1,1), (*this)(1,2), (*this)(1,3), (*this)(2,1), (*this)(2,2), (*this)(2,3), (*this)(3,1), (*this)(3,2), (*this)(3,3))).determinant();
@@ -438,8 +439,8 @@ void SquareMatrix<Scalar,4>::singularValueDecomposition(SquareMatrix<Scalar,4> &
         }
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    std::cerr<<"SVD not implemeted for built in matrix!\n";
-    std::exit(EXIT_FAILURE);
+    throw PhysikaException("SVD not implemeted for built in matrix!");
+     
 #endif
 }
 
@@ -467,8 +468,8 @@ void SquareMatrix<Scalar,4>::eigenDecomposition(Vector<Scalar,4> &eigen_values_r
         }
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    std::cerr<<"Eigen decomposition not implemeted for built in matrix!\n";
-    std::exit(EXIT_FAILURE);
+    throw PhysikaException("Eigen decomposition not implemeted for built in matrix!");
+     
 #endif
 }
 

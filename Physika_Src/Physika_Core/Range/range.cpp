@@ -15,6 +15,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Range/range.h"
 
 namespace Physika{
@@ -36,10 +37,7 @@ Range<Scalar,Dim>::Range(const Vector<Scalar,Dim> &min_val, const Vector<Scalar,
 {
     for(int i = 0; i < Dim; ++i)
         if(min_val[i]>max_val[i])
-        {
-            std::cerr<<"Minimum corner of a range must has entries equal or smaller than the maximum corner.\n";
-            std::exit(EXIT_FAILURE);
-        }
+            throw PhysikaException("Minimum corner of a range must has entries equal or smaller than the maximum corner.");
     min_corner_ = min_val;
     max_corner_ = max_val;
 }
@@ -93,7 +91,7 @@ Scalar Range<Scalar,Dim>::size() const
     Vector<Scalar,Dim> edge_lengths = edgeLengths();
     Scalar result = 1.0;
     for(int i = 0; i < Dim; ++i)
-	result *= edge_lengths[i];
+        result *= edge_lengths[i];
     return result;
 }
 

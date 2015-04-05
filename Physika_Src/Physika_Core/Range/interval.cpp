@@ -14,6 +14,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Range/interval.h"
 
 namespace Physika{
@@ -32,10 +33,7 @@ template <typename Scalar>
 Interval<Scalar>::Interval(Scalar min_val, Scalar max_val)
 {
     if(min_val>max_val)
-    {
-        std::cerr<<"Minimum value of interval must be equal or smaller than maximum value!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Minimum value of interval must be equal or smaller than maximum value!");
     min_val_ = min_val;
     max_val_ = max_val;
 }

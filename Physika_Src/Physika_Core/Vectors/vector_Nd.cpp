@@ -15,6 +15,7 @@
 #include <limits>
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
@@ -96,11 +97,8 @@ void VectorND<Scalar>::resize(unsigned int new_dim)
 template <typename Scalar>
 Scalar& VectorND<Scalar>::operator[] (unsigned int idx)
 {
-    if(idx<0||idx>=(*this).dims())
-    {
-        std::cout<<"Vector index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(idx>=(*this).dims())
+        throw PhysikaException("Vector index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_)[idx];
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -111,11 +109,8 @@ Scalar& VectorND<Scalar>::operator[] (unsigned int idx)
 template <typename Scalar>
 const Scalar& VectorND<Scalar>::operator[] (unsigned int idx) const
 {
-    if(idx<0||idx>=(*this).dims())
-    {
-        std::cout<<"Vector index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(idx>=(*this).dims())
+        throw PhysikaException("Vector index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     return (*ptr_eigen_vector_Nx_)[idx];
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
@@ -129,10 +124,7 @@ VectorND<Scalar> VectorND<Scalar>::operator+ (const VectorND<Scalar> &vec2) cons
     unsigned int dim1 = (*this).dims();
     unsigned int dim2 = vec2.dims();
     if(dim1!=dim2)
-    {
-        std::cout<<"Cannot add two vectors of different dimensions!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot add two vectors of different dimensions!");
     VectorND<Scalar> result(dim1);
     for(unsigned int i = 0; i < dim1; ++i)
         result[i] = (*this)[i] + vec2[i];
@@ -145,10 +137,7 @@ VectorND<Scalar>& VectorND<Scalar>::operator+= (const VectorND<Scalar> &vec2)
     unsigned int dim1 = (*this).dims();
     unsigned int dim2 = vec2.dims();
     if(dim1!=dim2)
-    {
-        std::cout<<"Cannot add two vectors of different dimensions!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot add two vectors of different dimensions!");
     for(unsigned int i = 0; i < dim1; ++i)
         (*this)[i] = (*this)[i] + vec2[i];
     return *this;
@@ -160,10 +149,7 @@ VectorND<Scalar> VectorND<Scalar>::operator- (const VectorND<Scalar> &vec2) cons
     unsigned int dim1 = (*this).dims();
     unsigned int dim2 = vec2.dims();
     if(dim1!=dim2)
-    {
-        std::cout<<"Cannot subtract two vectors of different dimensions!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot subtract two vectors of different dimensions!");
     VectorND<Scalar> result(dim1);
     for(unsigned int i = 0; i < dim1; ++i)
         result[i] = (*this)[i] - vec2[i];
@@ -176,10 +162,7 @@ VectorND<Scalar>& VectorND<Scalar>::operator-= (const VectorND<Scalar> &vec2)
     unsigned int dim1 = (*this).dims();
     unsigned int dim2 = vec2.dims();
     if(dim1!=dim2)
-    {
-        std::cout<<"Cannot subtract two vectors of different dimensions!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot subtract two vectors of different dimensions!");
     for(unsigned int i = 0; i < dim1; ++i)
         (*this)[i] = (*this)[i] - vec2[i];
     return *this;
@@ -259,10 +242,7 @@ template <typename Scalar>
 VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Vector Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vector Divide by zero error!");
     unsigned int dim = (*this).dims();
     VectorND<Scalar> result(dim);
     for(unsigned int i = 0; i < dim; ++i)
@@ -301,10 +281,7 @@ template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Vector Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vector Divide by zero error!");
     unsigned int dim = (*this).dims();
     for(unsigned int i = 0; i < dim; ++i)
         (*this)[i] = (*this)[i] / scale;

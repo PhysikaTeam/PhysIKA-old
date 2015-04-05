@@ -14,6 +14,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
@@ -516,8 +517,8 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar>
 {
     if(this->cols() != mat2.rows())
     {
-        std::cerr<<"operator * between two SparseMatrixes failed because they don't match"<<std::endl;
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("operator * between two SparseMatrixes failed because they don't match");
+         
     }
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX 
     if (priority_ == ROW_MAJOR && mat2.priority_ == ROW_MAJOR)
@@ -588,7 +589,7 @@ VectorND<Scalar> SparseMatrix<Scalar>::leftMultiVec (const VectorND<Scalar> &vec
     if (this->rows() != vec.dims())
     {
         std::cerr << "operator * between VectorND and SpaseMatrix failed because the two don't match" << std::endl;
-        std::exit(EXIT_FAILURE);
+         
     }
     VectorND<Scalar> result(this->cols(),0);
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
@@ -620,8 +621,8 @@ VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) c
 {
     if(this->cols() != vec.dims())
     {
-        std::cerr<<"operator * between SpaseMatrix and VectorND failed because the two don't match"<<std::endl;
-        std::exit(EXIT_FAILURE);
+        throw PhysikaException("operator * between SpaseMatrix and VectorND failed because the two don't match");
+         
     }
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     VectorND<Scalar> result(rows_, 0);

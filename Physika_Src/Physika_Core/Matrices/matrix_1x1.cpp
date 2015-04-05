@@ -15,6 +15,7 @@
 #include <limits>
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_1d.h"
 #include "Physika_Core/Matrices/matrix_1x1.h"
@@ -52,10 +53,7 @@ Scalar& SquareMatrix<Scalar,1>::operator() (unsigned int i, unsigned int j)
 {
     bool index_valid = (i<1)&&(j<1);
     if(!index_valid)
-    {
-        std::cerr<<"Matrix index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Matrix index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_1x1_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -68,10 +66,7 @@ const Scalar& SquareMatrix<Scalar,1>::operator() (unsigned int i, unsigned int j
 {
     bool index_valid = (i<1)&&(j<1);
     if(!index_valid)
-    {
-        std::cerr<<"Matrix index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Matrix index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_1x1_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -173,10 +168,7 @@ template <typename Scalar>
 SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Matrix Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Matrix Divide by zero error!");
     Scalar result;
     result = (*this)(0,0) / scale;
     return SquareMatrix<Scalar,1>(result);
@@ -186,10 +178,7 @@ template <typename Scalar>
 SquareMatrix<Scalar,1>& SquareMatrix<Scalar,1>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Matrix Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Matrix Divide by zero error!");
     (*this)(0,0) = (*this)(0,0) / scale;
     return *this;
 }
@@ -207,10 +196,7 @@ SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::inverse() const
 {
     Scalar data = (*this)(0,0);
     if(data==0)
-    {
-        std::cerr<<"Matrix not invertible!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Matrix not invertible!");
     return SquareMatrix<Scalar,1>(1/data);
 }
 

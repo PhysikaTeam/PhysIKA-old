@@ -51,6 +51,8 @@ additional_lib_path=[]
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
 #NOTE: THE ORDER MATTERS
 physika_libs=['Physika_GUI','Physika_Dynamics','Physika_Render','Physika_IO','Physika_Geometry','Physika_Core','LodePNG']
+if build_msvc==True:
+    physika_libs.append('StackWalker')
 
 #ADDITIONAL LIBS TO LINK
 #EXAMPLE: additional_libs=['lib1','lib2']

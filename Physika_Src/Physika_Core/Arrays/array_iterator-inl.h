@@ -17,6 +17,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 
 namespace Physika{
 
@@ -49,10 +50,7 @@ template <typename ElementType>
 bool ArrayIterator<ElementType>::operator== (const ArrayIterator<ElementType> &iterator) const
 {
     if((array_==NULL)||(iterator.array_==NULL))
-    {
-        std::cerr<<"Error: undefined operator == for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator == for uninitialized iterator!");
     return (element_idx_ == iterator.element_idx_)&&(array_ == iterator.array_);
 }
 
@@ -60,10 +58,7 @@ template <typename ElementType>
 bool ArrayIterator<ElementType>::operator!= (const ArrayIterator<ElementType> &iterator) const
 {
     if((array_==NULL)||(iterator.array_==NULL))
-    {
-        std::cerr<<"Error: undefined operator != for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator != for uninitialized iterator!");
     return (element_idx_ != iterator.element_idx_)||(array_ != iterator.array_);
 }
 
@@ -71,10 +66,7 @@ template <typename ElementType>
 ArrayIterator<ElementType>& ArrayIterator<ElementType>::operator++ ()
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator ++ for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator ++ for uninitialized iterator!");
     ++element_idx_;
     return *this;
 }
@@ -83,10 +75,7 @@ template <typename ElementType>
 ArrayIterator<ElementType>& ArrayIterator<ElementType>::operator-- ()
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator -- for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator -- for uninitialized iterator!");
     --element_idx_;
     return *this;
 }
@@ -95,10 +84,7 @@ template <typename ElementType>
 ArrayIterator<ElementType> ArrayIterator<ElementType>::operator++ (int)
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator ++ for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator ++ for uninitialized iterator!");
     ArrayIterator<ElementType> iterator(*this);
     ++element_idx_;
     return iterator;
@@ -108,10 +94,7 @@ template <typename ElementType>
 ArrayIterator<ElementType> ArrayIterator<ElementType>::operator-- (int)
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator -- for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator -- for uninitialized iterator!");
     ArrayIterator<ElementType> iterator(*this);
     --element_idx_;
     return iterator;
@@ -121,10 +104,7 @@ template <typename ElementType>
 ArrayIterator<ElementType> ArrayIterator<ElementType>::operator+ (int stride) const
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator + for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator + for uninitialized iterator!");
     ArrayIterator<ElementType> iterator(*this);
     iterator.element_idx_ += stride;
     return iterator;
@@ -134,10 +114,7 @@ template <typename ElementType>
 ArrayIterator<ElementType> ArrayIterator<ElementType>::operator- (int stride) const
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator - for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator - for uninitialized iterator!");
     ArrayIterator<ElementType> iterator(*this);
     iterator.element_idx_ -= stride;
     return iterator;
@@ -147,10 +124,7 @@ template <typename ElementType>
 const ElementType& ArrayIterator<ElementType>::operator *() const
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator * for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator * for uninitialized iterator!");
     //leave valid check of index to array class
     return (*array_)[element_idx_];
 }
@@ -159,10 +133,7 @@ template <typename ElementType>
 ElementType& ArrayIterator<ElementType>::operator *()
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator * for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator * for uninitialized iterator!");
     //leave valid check of index to array class
     return (*array_)[element_idx_];
 }

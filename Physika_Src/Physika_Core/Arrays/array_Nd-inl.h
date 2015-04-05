@@ -14,6 +14,8 @@
 #ifndef PHYSIKA_CORE_ARRAYS_ARRAY_ND_INL_H_
 #define PHYSIKA_CORE_ARRAYS_ARRAY_ND_INL_H_
 
+#include "Physika_Core/Utilities/physika_exception.h"
+
 namespace Physika{
 
 template <typename ElementType,int Dim>
@@ -29,10 +31,7 @@ ArrayND<ElementType,Dim>::ArrayND(const std::vector<unsigned int> &element_count
 {
     PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
     if(element_counts.size()!=Dim)
-    {
-        std::cerr<<"Dimension of element counts mismatches the dimension of array!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Dimension of element counts mismatches the dimension of array!");
     resize(element_counts);
 }
 
@@ -42,10 +41,7 @@ ArrayND<ElementType,Dim>::ArrayND(const std::vector<unsigned int> &element_count
 {
     PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
     if(element_counts.size()!=Dim)
-    {
-        std::cerr<<"Dimension of element counts mismatches the dimension of array!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Dimension of element counts mismatches the dimension of array!");
     resize(element_counts);
     unsigned int total_count = totalElementCount();
     for(unsigned int i = 0; i < total_count; ++i)
@@ -106,10 +102,7 @@ template <typename ElementType,int Dim>
 unsigned int ArrayND<ElementType,Dim>::elementCount(unsigned int dim) const
 {
     if(dim>=Dim)
-    {
-        std::cerr<<"Dimension out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Dimension out of range!");
     return element_count_[dim];
 }
 
@@ -145,10 +138,7 @@ template <typename ElementType,int Dim>
 void ArrayND<ElementType,Dim>::resize(unsigned int count, unsigned int dim)
 {
     if(dim>=Dim)
-    {
-        std::cerr<<"Dimension out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Dimension out of range!");
     element_count_[dim] = count;
     allocate();
 }
@@ -157,10 +147,7 @@ template <typename ElementType,int Dim>
 void ArrayND<ElementType,Dim>::resize(const std::vector<unsigned int> &count)
 {
     if(count.size()!=Dim)
-    {
-        std::cerr<<"Dimension of element counts mismatches the dimension of array!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Dimension of element counts mismatches the dimension of array!");
     for(unsigned int i = 0; i < count.size(); ++i)
         element_count_[i] = count[i];
     allocate();
@@ -182,17 +169,11 @@ template <typename ElementType,int Dim>
 ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const std::vector<unsigned int> &idx)
 {
     if(idx.size()!=Dim)
-    {
-        std::cerr<<"Dimension of index mismatches the dimension of array!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Dimension of index mismatches the dimension of array!");
     for(unsigned int i = 0; i < idx.size(); ++i)
     {
         if(idx[i]>=element_count_[i])
-        {
-            std::cerr<<"Array index out of range!\n";
-            std::exit(EXIT_FAILURE);
-        }
+            throw PhysikaException("Array index out of range!");
     }
     unsigned int index_1d = index1D(idx);
     return data_[index_1d];
@@ -202,17 +183,11 @@ template <typename ElementType,int Dim>
 const ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const std::vector<unsigned int> &idx) const
 {
     if(idx.size()!=Dim)
-    {
-        std::cerr<<"Dimension of index mismatches the dimension of array!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Dimension of index mismatches the dimension of array!");
     for(unsigned int i = 0; i < idx.size(); ++i)
     {
         if(idx[i]>=element_count_[i])
-        {
-            std::cerr<<"Array index out of range!\n";
-            std::exit(EXIT_FAILURE);
-        }
+            throw PhysikaException("Array index out of range!");
     }
     unsigned int index_1d = index1D(idx);
     return data_[index_1d];
@@ -265,10 +240,7 @@ ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const Vector<unsigned int,
     for(unsigned int i = 0; i < Dim; ++i)
     {
         if(idx[i]>=element_count_[i])
-        {
-            std::cerr<<"Array index out of range!\n";
-            std::exit(EXIT_FAILURE);
-        }
+            throw PhysikaException("Array index out of range!");
         idx_vec.push_back(idx[i]);
     }
     unsigned int index_1d = index1D(idx_vec);
@@ -283,10 +255,7 @@ const ElementType& ArrayND<ElementType,Dim>::elementAtIndex(const Vector<unsigne
     for(unsigned int i = 0; i < Dim; ++i)
     {
         if(idx[i]>=element_count_[i])
-        {
-            std::cerr<<"Array index out of range!\n";
-            std::exit(EXIT_FAILURE);
-        }
+            throw PhysikaException("Array index out of range!");
         idx_vec.push_back(idx[i]);
     }
     unsigned int index_1d = index1D(idx_vec);

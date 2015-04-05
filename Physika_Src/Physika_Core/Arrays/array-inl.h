@@ -15,6 +15,7 @@
 #define PHYSIKA_CORE_ARRAYS_ARRAY_INL_H_
 
 #include <cstdlib>
+#include "Physika_Core/Utilities/physika_exception.h"
 
 namespace Physika{
 
@@ -101,10 +102,7 @@ template <typename ElementType>
 ElementType& Array<ElementType>::operator[] (unsigned int id)
 {
     if(id>=element_count_)
-    {
-        std::cerr<<"Array index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Array index out of range!");
     return data_[id];
 }
 
@@ -112,10 +110,7 @@ template <typename ElementType>
 const ElementType& Array<ElementType>::operator[] (unsigned int id) const
 {
     if(id>=element_count_)
-    {
-        std::cerr<<"Array index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Array index out of range!");
     return data_[id];
 }
 
@@ -159,10 +154,7 @@ template <typename ElementType>
 void Array<ElementType>::permutate(unsigned int *ids, unsigned int size)
 {
     if(size != element_count_)
-    {
-        std::cerr << "array size do not match!" << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException( "array size do not match!");
     if(element_count_>0)
     {
         ElementType * tmp = new ElementType[element_count_];

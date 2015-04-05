@@ -15,6 +15,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Range/range.h"
 #include "Physika_Core/Vectors/vector_2d.h"
@@ -31,10 +32,7 @@ Image::Image(unsigned int width, unsigned int height, Image::DataFormat data_for
     :width_(width),height_(height),data_format_(data_format),raw_data_(NULL)
 {
     if(raw_data==NULL)
-    {
-        std::cerr<<"Pointer to image data is NULL.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Pointer to image data is NULL.");
     allocMemory();
     unsigned int data_size = sizeof(unsigned char)*pixelSize()*width_*height_;
     memcpy(raw_data_,raw_data,data_size);
@@ -85,10 +83,7 @@ unsigned char* Image::rawData()
 void Image::setRawData(unsigned int width, unsigned int height, DataFormat data_format, const unsigned char *raw_data)
 {
     if(raw_data==NULL)
-    {
-        std::cerr<<"Pointer to image data is NULL.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Pointer to image data is NULL.");
     width_ = width;
     height_ = height;
     data_format_ = data_format;
