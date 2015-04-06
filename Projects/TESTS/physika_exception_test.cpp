@@ -29,6 +29,6 @@ void testFunction()
 int main()
 {
     testFunction();
-    throw PhysikaException("Test PhysikaException");
+    //throw PhysikaException("Test PhysikaException");
     return 0;
 }

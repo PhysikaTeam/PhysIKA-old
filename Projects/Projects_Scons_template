@@ -51,8 +51,6 @@ additional_lib_path=[]
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
 #NOTE: THE ORDER MATTERS
 physika_libs=['Physika_GUI','Physika_Dynamics','Physika_Render','Physika_IO','Physika_Geometry','Physika_Core','LodePNG']
-if build_msvc==True:
-    physika_libs.append('StackWalker')
 
 #ADDITIONAL LIBS TO LINK
 #EXAMPLE: additional_libs=['lib1','lib2']
@@ -71,6 +69,14 @@ if os_name in ('Linux','Darwin') or (os_name=='Windows' and build_msvc==False):
    compiler='g++'
 else:
    compiler='msvc'
+
+#PHYSIKA IS DEPENDENT ON STACKWALKER ONLY ON WINDOWS WITH MSVC
+if compiler=='msvc':
+    physika_libs.append('StackWalker')
+
+#FOR STACK TRACE SUPPORT
+if os_name in ('Linux','Darwin'):
+    additional_libs.append('dl')
 
 #SRC FILES
 src_files=[]
@@ -113,11 +119,12 @@ if compiler=='g++':
    CC='g++'
    CXX='g++'
    tools=['gcc','g++','gnulink']
+   LINKFLAGS=['-rdynamic']  #FOR STACK TRACE SUPPORT
    if build_type=='Release':
       CCFLAGS=['-O3','-Wall','-fno-strict-aliasing','-std=gnu++0x','-DNDEBUG']
    else:
       CCFLAGS=['-Wall','-std=gnu++0x','-fno-strict-aliasing','-g']
-   env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
+   env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,LINKFLAGS=LINKFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
 else:
    if build_type=='Release':
       CCFLAGS=['/Ox','/EHsc','/DNDEBUG','/W3']
