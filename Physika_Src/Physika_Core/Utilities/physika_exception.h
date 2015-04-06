@@ -31,6 +31,7 @@ public:
     explicit PhysikaException(const std::string &msg) throw();
     virtual ~PhysikaException() throw();
     virtual const char* what() const throw();
+    std::string errorMessage() const throw();
 protected:
     PhysikaException(); //prohibit default constructor
 protected:

@@ -31,7 +31,6 @@ PhysikaException::~PhysikaException() throw()
 
 const char* PhysikaException::what() const throw()
 {
-
 #ifdef PHYSIKA_EXCEPTION_WITH_STACK_TRACE
     std::string msg = std::string("[") + error_msg_ + std::string("]\n");
     msg = msg + stack_trace_.toString();
@@ -40,6 +39,17 @@ const char* PhysikaException::what() const throw()
     return error_msg_.c_str();
 #endif
 }
-    
+  
+std::string PhysikaException::errorMessage() const throw()
+{
+#ifdef PHYSIKA_EXCEPTION_WITH_STACK_TRACE
+    std::string msg = std::string("[") + error_msg_ + std::string("]\n");
+    msg = msg + stack_trace_.toString();
+    return msg;    
+#else
+    return error_msg_;
+#endif
+}
+  
 } //end of namespace Physika
     

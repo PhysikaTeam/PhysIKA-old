@@ -28,7 +28,13 @@ void testFunction()
 
 int main()
 {
-    testFunction();
+    try{
+        testFunction();
+    }
+    catch(PhysikaException &e)
+    {
+        cout<<e.errorMessage()<<"\n";
+    }
     //throw PhysikaException("Test PhysikaException");
     return 0;
 }

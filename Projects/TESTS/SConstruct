@@ -76,6 +76,8 @@ if compiler=='msvc':
 #FOR STACK TRACE SUPPORT
 if os_name in ('Linux','Darwin'):
     additional_libs.append('dl')
+elif compiler=='msvc':
+    additional_libs.append('Advapi32')
 
 #SRC FILES
 src_files=['physika_exception_test.cpp']
