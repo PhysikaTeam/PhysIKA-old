@@ -12,9 +12,8 @@
  *
  */
 
-#include <cstdlib>
-#include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
@@ -73,8 +72,9 @@ void FEMBase<Scalar,Dim>::loadSimulationMesh(const std::string &file_name)
     simulation_mesh_ = VolumetricMeshIO<Scalar,Dim>::load(file_name);
     if(simulation_mesh_ == NULL)
     {
-        std::cerr<<"Failed to load simulation mesh from "<<file_name<<"\n";
-        std::exit(EXIT_FAILURE);
+        std::string err("Failed to load simulation mesh from ");
+        err += file_name;
+        throw PhysikaException(err);
     }
     synchronizeDataWithSimulationMesh();
 }
@@ -109,7 +109,7 @@ void FEMBase<Scalar,Dim>::setSimulationMesh(const VolumetricMesh<Scalar,Dim> &me
             );
         break;
     case VolumetricMeshInternal::NON_UNIFORM:
-        PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
+        throw PhysikaException("FEM with non-uniform element type not implemented yet.");
         break;
     default:
         PHYSIKA_ERROR("Unknown element type.");
@@ -119,25 +119,26 @@ void FEMBase<Scalar,Dim>::setSimulationMesh(const VolumetricMesh<Scalar,Dim> &me
 }
 
 template <typename Scalar, int Dim>
-const VolumetricMesh<Scalar,Dim>* FEMBase<Scalar,Dim>::simulationMesh() const
+const VolumetricMesh<Scalar,Dim>& FEMBase<Scalar,Dim>::simulationMesh() const
 {
-    return simulation_mesh_;
+    if(simulation_mesh_==NULL)
+        throw PhysikaException("Simulation mesh not set.");
+    return *simulation_mesh_;
 }
 
 template <typename Scalar, int Dim>
-VolumetricMesh<Scalar,Dim>* FEMBase<Scalar,Dim>::simulationMesh()
+VolumetricMesh<Scalar,Dim>& FEMBase<Scalar,Dim>::simulationMesh()
 {
-    return simulation_mesh_;
+    if(simulation_mesh_==NULL)
+        throw PhysikaException("Simulation mesh not set.");
+    return *simulation_mesh_;
 }
 
 template <typename Scalar, int Dim>
 unsigned int FEMBase<Scalar,Dim>::numSimVertices() const
 {
     if(simulation_mesh_==NULL)
-    {
-        std::cerr<<"Simulation mesh not set.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Simulation mesh not set.");
     return simulation_mesh_->vertNum();
 }
 
@@ -145,10 +146,7 @@ template <typename Scalar, int Dim>
 unsigned int FEMBase<Scalar,Dim>::numSimElements() const
 {
     if(simulation_mesh_==NULL)
-    {
-        std::cerr<<"Simulation mesh not set.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Simulation mesh not set.");
     return simulation_mesh_->eleNum();
 }
 
@@ -156,10 +154,7 @@ template <typename Scalar, int Dim>
 Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexDisplacement(unsigned int vert_idx) const
 {
     if(vert_idx >= vertex_displacements_.size())
-    {
-        std::cerr<<"Vertex index out of range.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vertex index out of range.");
     return vertex_displacements_[vert_idx];
 }
 
@@ -167,10 +162,7 @@ template <typename Scalar, int Dim>
 void FEMBase<Scalar,Dim>::setVertexDisplacement(unsigned int vert_idx, const Vector<Scalar,Dim> &u)
 {
     if(vert_idx >= vertex_displacements_.size())
-    {
-        std::cerr<<"Vertex index out of range.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vertex index out of range.");
     vertex_displacements_[vert_idx] = u;
 }
 
@@ -184,59 +176,36 @@ void FEMBase<Scalar,Dim>::resetVertexDisplacement()
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexRestPosition(unsigned int vert_idx) const
 {
-    if(simulation_mesh_==NULL)
-    {
-        std::cerr<<"Simulation mesh not set.\n";
-        std::exit(EXIT_FAILURE);
-    }
     if(vert_idx >= vertex_displacements_.size())
-    {
-        std::cerr<<"Vertex index out of range.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vertex index out of range.");
+    if(simulation_mesh_ == NULL)
+        throw PhysikaException("Simulation mesh not set.");
     return simulation_mesh_->vertPos(vert_idx);
 }
 
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexCurrentPosition(unsigned int vert_idx) const
 {
-    if(simulation_mesh_==NULL)
-    {
-        std::cerr<<"Simulation mesh not set.\n";
-        std::exit(EXIT_FAILURE);
-    }
     if(vert_idx >= vertex_displacements_.size())
-    {
-        std::cerr<<"Vertex index out of range.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Vertex index out of range.");
+    if(simulation_mesh_ == NULL)
+        throw PhysikaException("Simulation mesh not set.");
     return simulation_mesh_->vertPos(vert_idx) + vertex_displacements_[vert_idx];  
 }
 
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexVelocity(unsigned int vert_idx) const
 {
-    if(vert_idx >= vertex_displacements_.size())
-    {
-        std::cerr<<"Vertex index out of range.\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(vert_idx >= vertex_velocities_.size())
+        throw PhysikaException("Vertex index out of range.");
     return vertex_velocities_[vert_idx];
 }
 
 template <typename Scalar, int Dim>
 void FEMBase<Scalar,Dim>::setVertexVelocity(unsigned int vert_idx, const Vector<Scalar,Dim> &v)
 {
-    if(simulation_mesh_==NULL)
-    {
-        std::cerr<<"Simulation mesh not set.\n";
-        std::exit(EXIT_FAILURE);
-    }
-    if(vert_idx >= vertex_displacements_.size())
-    {
-        std::cerr<<"Vertex index out of range.\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(vert_idx >= vertex_velocities_.size())
+        throw PhysikaException("Vertex index out of range.");
     vertex_velocities_[vert_idx] = v;
 }
 
@@ -248,106 +217,46 @@ void FEMBase<Scalar,Dim>::resetVertexVelocity()
 }
 
 template <typename Scalar, int Dim>
+Vector<Scalar,Dim> FEMBase<Scalar,Dim>::vertexExternalForce(unsigned int vert_idx) const
+{
+    if(vert_idx >= vertex_external_forces_.size())
+        throw PhysikaException("Vertex index out of range.");
+    return vertex_external_forces_[vert_idx];
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setVertexExternalForce(unsigned int vert_idx, const Vector<Scalar,Dim> &f)
+{
+    if(vert_idx >= vertex_external_forces_.size())
+        throw PhysikaException("Vertex index out of range.");
+    vertex_external_forces_[vert_idx] = f;
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::resetVertexExternalForce()
+{
+    for(unsigned int i = 0; i < vertex_external_forces_.size(); ++i)
+        vertex_external_forces_[i] = Vector<Scalar,Dim>(0);
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::applyVertexExternalForce()
+{
+    unsigned int vert_num = numSimVertices();
+    Scalar dt = computeTimeStep();
+    for(unsigned int i = 0; i < vert_num; ++i)
+        vertex_velocities_[i] += vertex_external_forces_[i]/lumped_vertex_mass_[i]*dt;
+}
+
+template <typename Scalar, int Dim>
 void FEMBase<Scalar,Dim>::synchronizeDataWithSimulationMesh()
 {
-    vertex_displacements_.resize(simulation_mesh_->vertNum());
-    vertex_velocities_.resize(simulation_mesh_->vertNum());
-    computeReferenceShapeMatrixInverse();
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,Dim> FEMBase<Scalar,Dim>::deformationGradient(unsigned int ele_idx) const
-{
-//TO DO
-    unsigned int ele_num = simulation_mesh_->eleNum();
-    PHYSIKA_ASSERT(ele_idx<ele_num);
-    VolumetricMeshInternal::ElementType ele_type = simulation_mesh_->elementType();
-    switch(ele_type)
-    {
-    case VolumetricMeshInternal::TRI:
-        break;
-    case VolumetricMeshInternal::QUAD:
-        break;
-    case VolumetricMeshInternal::TET:
-        break;
-    case VolumetricMeshInternal::CUBIC:
-        break;
-    case VolumetricMeshInternal::NON_UNIFORM:
-        PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
-        break;
-    default:
-        PHYSIKA_ERROR("Unknown element type.");
-        break;
-    }
-    return SquareMatrix<Scalar,Dim>();
-}
-
-template <typename Scalar, int Dim>
-void FEMBase<Scalar,Dim>::computeReferenceShapeMatrixInverse()
-{
-    reference_shape_matrix_inv_.clear();
-    VolumetricMeshInternal::ElementType ele_type = simulation_mesh_->elementType();
-    unsigned int ele_num = simulation_mesh_->eleNum();
-    switch(ele_type)
-    {
-    case VolumetricMeshInternal::TRI:
-    {
-        std::vector<Vector<Scalar,2> > ele_vert_pos;
-        for(unsigned int i = 0; i < ele_num; ++i)
-        {
-            ele_vert_pos.clear();
-            TriMesh<Scalar> *tri_mesh = dynamic_cast<TriMesh<Scalar>*>(simulation_mesh_);
-            PHYSIKA_ASSERT(tri_mesh);
-            tri_mesh->eleVertPos(i,ele_vert_pos);
-            PHYSIKA_ASSERT(ele_vert_pos.size()==3);
-            Vector<Scalar,2> v1_minus_v3 = ele_vert_pos[0] - ele_vert_pos[2];
-            Vector<Scalar,2> v2_minus_v3 = ele_vert_pos[1] - ele_vert_pos[2];
-            SquareMatrix<Scalar,2> reference_shape_matrix(v1_minus_v3,v2_minus_v3);
-            reference_shape_matrix = reference_shape_matrix.transpose();
-            SquareMatrix<Scalar,2> inv = reference_shape_matrix.inverse();
-            SquareMatrix<Scalar,Dim> *mat_ptr = dynamic_cast<SquareMatrix<Scalar,Dim>*>(&inv);
-            PHYSIKA_ASSERT(mat_ptr);
-            reference_shape_matrix_inv_.push_back(*mat_ptr);
-        }
-        break;
-    }
-    case VolumetricMeshInternal::QUAD:
-    {
-        break;
-    }
-    case VolumetricMeshInternal::TET:
-    {
-        std::vector<Vector<Scalar,3> > ele_vert_pos;
-        for(unsigned int i = 0; i < ele_num; ++i)
-        {
-            ele_vert_pos.clear();
-            TetMesh<Scalar> *tet_mesh = dynamic_cast<TetMesh<Scalar>*>(simulation_mesh_);
-            PHYSIKA_ASSERT(tet_mesh);
-            tet_mesh->eleVertPos(i,ele_vert_pos);
-            PHYSIKA_ASSERT(ele_vert_pos.size()==4);
-            Vector<Scalar,3> v1_minus_v4 = ele_vert_pos[0] - ele_vert_pos[3];
-            Vector<Scalar,3> v2_minus_v4 = ele_vert_pos[1] - ele_vert_pos[3];
-            Vector<Scalar,3> v3_minus_v4 = ele_vert_pos[2] - ele_vert_pos[3];
-            SquareMatrix<Scalar,3> reference_shape_matrix(v1_minus_v4,v2_minus_v4,v3_minus_v4);
-            SquareMatrix<Scalar,3> inv = reference_shape_matrix.inverse();
-            SquareMatrix<Scalar,Dim> *mat_ptr = dynamic_cast<SquareMatrix<Scalar,Dim>*>(&inv);
-            PHYSIKA_ASSERT(mat_ptr);
-            reference_shape_matrix_inv_.push_back(*mat_ptr);
-        }
-        break;
-    }
-    case VolumetricMeshInternal::CUBIC:
-    {
-        break;
-    }
-    case VolumetricMeshInternal::NON_UNIFORM:
-        PHYSIKA_ERROR("Non-uniform element type not implemented yet.");
-        break;
-    default:
-        PHYSIKA_ERROR("Unknown element type.");
-        break;
-    }
-//TO DO
+    PHYSIKA_ASSERT(simulation_mesh_);
+    unsigned int vert_num = simulation_mesh_->vertNum();
+    vertex_displacements_.resize(vert_num);
+    vertex_velocities_.resize(vert_num);
+    vertex_external_forces_.resize(vert_num);
+    lumped_vertex_mass_.resize(vert_num);
 }
 
 //explicit instantiations

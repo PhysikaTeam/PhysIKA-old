@@ -66,7 +66,7 @@ void NeoHookean<Scalar,Dim>::printInfo() const
 }
 
 template <typename Scalar, int Dim>
-Scalar NeoHookean<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
+Scalar NeoHookean<Scalar,Dim>::energyDensity(const SquareMatrix<Scalar,Dim> &F) const
 {
     Scalar trace_c = (F.transpose()*F).trace();
     Scalar J = F.determinant();

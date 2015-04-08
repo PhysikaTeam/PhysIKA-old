@@ -41,7 +41,7 @@ public:
     FEMBase();
     FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
     FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
-        const VolumetricMesh<Scalar,Dim> &mesh);
+            const VolumetricMesh<Scalar,Dim> &mesh);
     virtual ~FEMBase();
 
     //virtual methods for subclass to implement
@@ -60,8 +60,8 @@ public:
     void setGravity(Scalar gravity);
     void loadSimulationMesh(const std::string &file_name); //load the simulation mesh from file
     void setSimulationMesh(const VolumetricMesh<Scalar,Dim> &mesh);  //set the simulation mesh via an external mesh
-    const VolumetricMesh<Scalar,Dim>* simulationMesh() const;  //return NULL if not set
-    VolumetricMesh<Scalar,Dim>* simulationMesh();
+    const VolumetricMesh<Scalar,Dim>& simulationMesh() const;
+    VolumetricMesh<Scalar,Dim>& simulationMesh();
 
     unsigned int numSimVertices() const; //number of simulation mesh vertices
     unsigned int numSimElements() const; //number of simulation mesh elements
@@ -73,16 +73,18 @@ public:
     Vector<Scalar,Dim> vertexVelocity(unsigned int vert_idx) const;
     void setVertexVelocity(unsigned int vert_idx, const Vector<Scalar,Dim> &v);
     void resetVertexVelocity();
+    Vector<Scalar,Dim> vertexExternalForce(unsigned int vert_idx) const;
+    void setVertexExternalForce(unsigned int vert_idx, const Vector<Scalar,Dim> &f);
+    void resetVertexExternalForce();
 protected:
-    void synchronizeDataWithSimulationMesh();  //synchronize related data when simulation mesh is changed (dimension of displacement vector, etc.)
-    SquareMatrix<Scalar,Dim> deformationGradient(unsigned int ele_idx) const;  //compute the deformation gradient of given element, constant strain element
-    void computeReferenceShapeMatrixInverse();  //compute the inverse of the reference shape matrix for each element, precomputation for deformation gradient
-                                                //called only once when simulation mesh is set
+    virtual void applyVertexExternalForce();
+    virtual void synchronizeDataWithSimulationMesh();  //synchronize related data when simulation mesh is changed (dimension of displacement vector, etc.)
 protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
-    std::vector<Vector<Scalar,Dim> > vertex_displacements_;  //displacement of simulation mesh vertices
-    std::vector<Vector<Scalar,Dim> > vertex_velocities_;  //velocities of simulation mesh vertices
-    std::vector<SquareMatrix<Scalar,Dim> > reference_shape_matrix_inv_; //store precomputed data (inverse of Dm) for deformation gradient computation: F = Ds*inv(Dm)
+    std::vector<Vector<Scalar,Dim> > vertex_displacements_;  
+    std::vector<Vector<Scalar,Dim> > vertex_velocities_; 
+    std::vector<Vector<Scalar,Dim> > vertex_external_forces_;
+    std::vector<Scalar> lumped_vertex_mass_;
     Scalar gravity_;
 };
 

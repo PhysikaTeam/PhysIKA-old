@@ -35,7 +35,7 @@ public:
     NeoHookean<Scalar,Dim>& operator= (const NeoHookean<Scalar,Dim> &material);
     NeoHookean<Scalar,Dim>* clone() const;
     void printInfo() const;
-    Scalar energy(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient
+    Scalar energyDensity(const SquareMatrix<Scalar,Dim> &F) const;//compute potential energy density from given deformation gradient
     SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;
     SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;
     SquareMatrix<Scalar,Dim> cauchyStress(const SquareMatrix<Scalar,Dim> &F) const;

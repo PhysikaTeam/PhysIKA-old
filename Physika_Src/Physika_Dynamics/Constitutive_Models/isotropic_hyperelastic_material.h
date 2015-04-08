@@ -53,7 +53,7 @@ public:
     void setPoissonRatio(Scalar);
     virtual IsotropicHyperelasticMaterial<Scalar,Dim>* clone() const=0;
     virtual void printInfo() const=0;
-    virtual Scalar energy(const SquareMatrix<Scalar,Dim> &F) const=0;//compute potential energy density from given deformation gradient
+    virtual Scalar energyDensity(const SquareMatrix<Scalar,Dim> &F) const=0;//compute potential energy density from given deformation gradient
     virtual SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
     virtual SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
     virtual SquareMatrix<Scalar,Dim> cauchyStress(const SquareMatrix<Scalar,Dim> &F) const=0;

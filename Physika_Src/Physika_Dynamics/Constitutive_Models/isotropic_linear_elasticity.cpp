@@ -66,7 +66,7 @@ void IsotropicLinearElasticity<Scalar,Dim>::printInfo() const
 }
 
 template <typename Scalar, int Dim>
-Scalar IsotropicLinearElasticity<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
+Scalar IsotropicLinearElasticity<Scalar,Dim>::energyDensity(const SquareMatrix<Scalar,Dim> &F) const
 {
     SquareMatrix<Scalar,Dim> e = 0.5*(F.transpose()+F)-SquareMatrix<Scalar,Dim>::identityMatrix();
     Scalar trace_e = e.trace();

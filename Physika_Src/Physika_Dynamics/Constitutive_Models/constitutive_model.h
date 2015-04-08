@@ -28,7 +28,7 @@ public:
     virtual ~ConstitutiveModel(){}
     virtual ConstitutiveModel* clone() const=0;  //clone the constitutive model
     virtual void printInfo() const=0;
-    virtual Scalar energy(const SquareMatrix<Scalar,Dim> &F) const=0;//compute potential energy density from given deformation gradient
+    virtual Scalar energyDensity(const SquareMatrix<Scalar,Dim> &F) const=0;//compute potential energy density from given deformation gradient
     virtual SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
     virtual SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
     virtual SquareMatrix<Scalar,Dim> cauchyStress(const SquareMatrix<Scalar,Dim> &F) const=0;

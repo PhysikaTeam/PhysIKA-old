@@ -59,8 +59,8 @@ public:
     void setHomogeneousMaterial(const ConstitutiveModel<Scalar,Dim> &material);  
     void setRegionWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);  //the number of materials must be no less than the number of regions on simulation mesh
     void setElementWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);  //the number of materials must be no less than the number of simulation elements
-    const ConstitutiveModel<Scalar,Dim>* elementMaterial(unsigned int ele_idx) const;  //return the material of specific simulation element, return NULL if not set
-    ConstitutiveModel<Scalar,Dim>* elementMaterial(unsigned int ele_idx);
+    const ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx) const;  
+    ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx);
 protected:
     void clearMaterial(); //clear current material
     void addMaterial(const ConstitutiveModel<Scalar,Dim> &material);

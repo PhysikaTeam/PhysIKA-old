@@ -71,7 +71,7 @@ void IsotropicCorotatedLinearElasticity<Scalar,Dim>::printInfo() const
 }
 
 template <typename Scalar, int Dim>
-Scalar IsotropicCorotatedLinearElasticity<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
+Scalar IsotropicCorotatedLinearElasticity<Scalar,Dim>::energyDensity(const SquareMatrix<Scalar,Dim> &F) const
 {
     SquareMatrix<Scalar,Dim> U,V;
     Vector<Scalar,Dim> sigma;

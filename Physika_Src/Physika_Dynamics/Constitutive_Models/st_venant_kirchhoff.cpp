@@ -65,7 +65,7 @@ void StVK<Scalar,Dim>::printInfo() const
 }
 
 template <typename Scalar, int Dim>
-Scalar StVK<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
+Scalar StVK<Scalar,Dim>::energyDensity(const SquareMatrix<Scalar,Dim> &F) const
 {
     SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
     SquareMatrix<Scalar,Dim> E = (F.transpose()*F-identity)/2;

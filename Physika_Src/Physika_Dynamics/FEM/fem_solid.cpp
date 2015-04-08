@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 #include "Physika_Dynamics/FEM/fem_solid.h"
@@ -49,12 +50,14 @@ FEMSolid<Scalar,Dim>::~FEMSolid()
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
-{//TO DO
+{
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::printConfigFileFormat()
-{//TO DO
+{
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
@@ -82,12 +85,14 @@ bool FEMSolid<Scalar,Dim>::withRestartSupport() const
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::write(const std::string &file_name)
-{//TO DO
+{
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::read(const std::string &file_name)
-{//TO DO
+{
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
@@ -113,10 +118,7 @@ void FEMSolid<Scalar,Dim>::setRegionWiseMaterial(const std::vector<ConstitutiveM
 {
     unsigned int region_num = this->simulation_mesh_->regionNum();
     if(materials.size() < region_num)
-    {
-        std::cerr<<"Size of materials must be no less than the number of simulation mesh regions.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Size of materials must be no less than the number of simulation mesh regions.");
     clearMaterial();
     for(unsigned int i = 0; i < region_num; ++i)
         addMaterial(*materials[i]);
@@ -127,63 +129,60 @@ void FEMSolid<Scalar,Dim>::setElementWiseMaterial(const std::vector<Constitutive
 {
     unsigned int ele_num = this->simulation_mesh_->eleNum();
     if(materials.size() < ele_num)
-    {
-        std::cerr<<"Size of materials must be no less than the number of simulation mesh elements.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Size of materials must be no less than the number of simulation mesh elements.");
     clearMaterial();
     for(unsigned int i = 0; i < ele_num; ++i)
         addMaterial(*materials[i]);
 }
 
 template <typename Scalar, int Dim>
-const ConstitutiveModel<Scalar,Dim>* FEMSolid<Scalar,Dim>::elementMaterial(unsigned int ele_idx) const
+const ConstitutiveModel<Scalar,Dim>& FEMSolid<Scalar,Dim>::elementMaterial(unsigned int ele_idx) const
 {
     unsigned int ele_num = this->simulation_mesh_->eleNum();
     unsigned int region_num = this->simulation_mesh_->regionNum();
     if(ele_idx >= ele_num)
-    {
-        std::cerr<<"Element index out of range.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Element index out of range.");
     unsigned int material_num = constitutive_model_.size();
     if(material_num == 0) //constitutive model not set
-        return NULL;
+        throw PhysikaException("Element constitutive model not set.");
     else if(material_num == 1)//homogeneous material
-        return constitutive_model_[0];
+        return *constitutive_model_[0];
     else if(material_num == region_num)//region-wise material
     {
         int region_idx = this->simulation_mesh_->eleRegionIndex(ele_idx);
-        return (region_idx == -1)? NULL : constitutive_model_[region_idx];
+        if(region_idx==-1)
+            throw PhysikaException("Element doesn't belong to any region, can't find its constitutive model in region-wise data.");
+        else
+            return *constitutive_model_[region_idx];
     }
     else if(material_num == ele_num) //element-wise material
-        return constitutive_model_[ele_idx];
+        return *constitutive_model_[ele_idx];
     else
         PHYSIKA_ERROR("Invalid material number.");
 }
 
 template <typename Scalar, int Dim>
-ConstitutiveModel<Scalar,Dim>* FEMSolid<Scalar,Dim>::elementMaterial(unsigned int ele_idx)
+ConstitutiveModel<Scalar,Dim>& FEMSolid<Scalar,Dim>::elementMaterial(unsigned int ele_idx)
 {
     unsigned int ele_num = this->simulation_mesh_->eleNum();
     unsigned int region_num = this->simulation_mesh_->regionNum();
     if(ele_idx >= ele_num)
-    {
-        std::cerr<<"Element index out of range.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Element index out of range.");
     unsigned int material_num = constitutive_model_.size();
     if(material_num == 0) //constitutive model not set
-        return NULL;
+        throw PhysikaException("Element constitutive model not set.");
     else if(material_num == 1)//homogeneous material
-        return constitutive_model_[0];
+        return *constitutive_model_[0];
     else if(material_num == region_num)//region-wise material
     {
         int region_idx = this->simulation_mesh_->eleRegionIndex(ele_idx);
-        return (region_idx == -1)? NULL : constitutive_model_[region_idx];
+        if(region_idx==-1)
+            throw PhysikaException("Element doesn't belong to any region, can't find its constitutive model in region-wise data.");
+        else
+            return *constitutive_model_[region_idx];
     }
     else if(material_num == ele_num) //element-wise material
-        return constitutive_model_[ele_idx];
+        return *constitutive_model_[ele_idx];
     else
         PHYSIKA_ERROR("Invalid material number.");
 }
