@@ -19,6 +19,7 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Dynamics/Utilities/time_stepping_method.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 
 namespace Physika{
@@ -84,13 +85,8 @@ public:
     virtual void updateParticleVelocity()=0;  //update particle velocity using grid data
     virtual void applyExternalForceOnParticles(Scalar dt)=0;  //external force (gravity excluded) is applied on particles
     virtual void updateParticlePosition(Scalar dt)=0;  //update particle position with new particle velocity
-    
-    //different time integration methods
-    enum IntegrationMethod{
-        FORWARD_EULER,
-        BACKWARD_EULER
-    };
-    void setTimeIntegrationMethod(const IntegrationMethod &method);
+ 
+    void setTimeSteppingMethod(TimeSteppingMethod method);
 protected:
     virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
@@ -112,7 +108,7 @@ protected:
     std::vector<std::vector<Scalar> > particle_initial_volume_;
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_external_force_; //external force(/N), not acceleration
     std::vector<CollidableObject<Scalar,Dim>*> collidable_objects_; //the kinematic collidable objects in scene
-    IntegrationMethod integration_method_; 
+    TimeSteppingMethod integration_method_; 
 };
 
 }//namespace Physika

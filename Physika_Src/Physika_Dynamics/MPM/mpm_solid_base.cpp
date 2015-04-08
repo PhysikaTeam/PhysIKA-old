@@ -16,6 +16,7 @@
 #include <iostream>
 #include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -67,10 +68,7 @@ template <typename Scalar, int Dim>
 unsigned int MPMSolidBase<Scalar,Dim>::particleNumOfObject(unsigned int object_idx) const
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     return particles_[object_idx].size();
 }
  
@@ -149,15 +147,9 @@ template <typename Scalar, int Dim>
 const SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int object_idx, unsigned int particle_idx) const
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx>=particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     return *particles_[object_idx][particle_idx];
 }
 
@@ -165,15 +157,9 @@ template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int object_idx, unsigned int particle_idx)
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx>=particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     return *particles_[object_idx][particle_idx];
 }
 
@@ -181,10 +167,7 @@ template <typename Scalar, int Dim>
 const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allParticlesOfObject(unsigned int object_idx) const
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     return particles_[object_idx];
 }
     
@@ -192,15 +175,9 @@ template <typename Scalar, int Dim>
 Vector<Scalar,Dim> MPMSolidBase<Scalar,Dim>::externalForceOnParticle(unsigned int object_idx, unsigned int particle_idx) const
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx>=particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     return particle_external_force_[object_idx][particle_idx];
 }
 
@@ -285,10 +262,7 @@ template <typename Scalar, int Dim>
 const CollidableObject<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::kinematicObject(unsigned int object_idx) const
 {
     if(object_idx >= collidable_objects_.size())
-    {
-        std::cerr<<"Error: kinematic object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("kinematic object index out of range!");
     PHYSIKA_ASSERT(collidable_objects_[object_idx]);
     return *collidable_objects_[object_idx];
 }
@@ -297,17 +271,14 @@ template <typename Scalar, int Dim>
 CollidableObject<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::kinematicObject(unsigned int object_idx)
 {
     if(object_idx >= collidable_objects_.size())
-    {
-        std::cerr<<"Error: kinematic object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("kinematic object index out of range!");
     PHYSIKA_ASSERT(collidable_objects_[object_idx]);
     return *collidable_objects_[object_idx];
 }
 
 
 template <typename Scalar, int Dim>
-void MPMSolidBase<Scalar,Dim>::setTimeIntegrationMethod(const IntegrationMethod &method)
+void MPMSolidBase<Scalar,Dim>::setTimeSteppingMethod(TimeSteppingMethod method)
 {
     integration_method_ = method;
 }

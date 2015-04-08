@@ -21,6 +21,7 @@
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
@@ -81,13 +82,13 @@ bool InvertibleMPMSolid<Scalar,Dim>::withRestartSupport() const
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::write(const std::string &file_name)
 {
-    //TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::read(const std::string &file_name)
 {
-    //TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
@@ -574,10 +575,7 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     enriched_particles = enriched_particles_[object_idx];
 }
        
@@ -585,15 +583,9 @@ template <typename Scalar, int Dim>
 unsigned int InvertibleMPMSolid<Scalar,Dim>::enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx >= this->particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     unsigned int corner_num = (Dim==2) ? 4 : 8;
     unsigned int enriched_corner_num = 0;
     for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
@@ -633,15 +625,9 @@ template <typename Scalar, int Dim>
 Scalar InvertibleMPMSolid<Scalar,Dim>::enrichmentMetric(unsigned int object_idx, unsigned int particle_idx) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx >= this->particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     return particle_enrich_metric_[object_idx][particle_idx];
 }
          
@@ -649,15 +635,9 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx, unsigned int particle_idx, Scalar metric)
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx >= this->particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     if(metric < 0)
     {
         std::cerr<<"Warning: negative metric provided, clamped to 0!\n";
@@ -676,10 +656,7 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx, Scalar metric)
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     unsigned int particle_num = this->particleNumOfObject(object_idx);
     for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
         setEnrichmentMetric(object_idx,particle_idx,metric);
@@ -717,7 +694,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>

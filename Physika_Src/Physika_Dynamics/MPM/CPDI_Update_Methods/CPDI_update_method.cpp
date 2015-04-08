@@ -24,6 +24,7 @@
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
@@ -95,10 +96,7 @@ template <typename Scalar>
 void CPDIUpdateMethod<Scalar,2>::setCPDIDriver(CPDIMPMSolid<Scalar,2> *cpdi_driver)
 {
     if(cpdi_driver==NULL)
-    {
-        std::cerr<<"Error: Cannot set NULL CPDI driver to CPDIUpdateMethod, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot set NULL CPDI driver to CPDIUpdateMethod!");
     this->cpdi_driver_ = cpdi_driver;
 }
 
@@ -326,10 +324,7 @@ template <typename Scalar>
 void CPDIUpdateMethod<Scalar,3>::setCPDIDriver(CPDIMPMSolid<Scalar,3> *cpdi_driver)
 {
     if(cpdi_driver==NULL)
-    {
-        std::cerr<<"Error: Cannot set NULL CPDI driver to CPDIUpdateMethod, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot set NULL CPDI driver to CPDIUpdateMethod!");
     this->cpdi_driver_ = cpdi_driver;
 }
 

@@ -19,6 +19,7 @@
 #include <algorithm>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
@@ -62,13 +63,13 @@ MPMSolid<Scalar,Dim>::~MPMSolid()
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::initConfiguration(const std::string &file_name)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::printConfigFileFormat()
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
@@ -105,13 +106,13 @@ bool MPMSolid<Scalar,Dim>::withRestartSupport() const
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::write(const std::string &file_name)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::read(const std::string &file_name)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
@@ -131,16 +132,10 @@ template <typename Scalar, int Dim>
 Scalar MPMSolid<Scalar,Dim>::gridMass(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     bool valid_node_idx = isValidGridNodeIndex(node_idx);
     if(!valid_node_idx)
-    {
-        std::cerr<<"Error: invalid node index, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid node index!");
     typename std::map<unsigned int,Scalar>::const_iterator mass_map_iter = grid_mass_(node_idx).find(object_idx);
     if(mass_map_iter != grid_mass_(node_idx).end())
         return mass_map_iter->second;
@@ -152,16 +147,10 @@ template <typename Scalar, int Dim>
 Vector<Scalar,Dim> MPMSolid<Scalar,Dim>::gridVelocity(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     bool valid_node_idx = isValidGridNodeIndex(node_idx);
     if(!valid_node_idx)
-    {
-        std::cerr<<"Error: invalid node index, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid node index!");
     typename std::map<unsigned int,Vector<Scalar,Dim> >::const_iterator vel_map_iter = grid_velocity_(node_idx).find(object_idx);
     if(vel_map_iter != grid_velocity_(node_idx).end())
         return vel_map_iter->second;
@@ -356,14 +345,18 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
 
     switch (this->integration_method_)
     {
-    case MPMSolidBase<Scalar,Dim>::FORWARD_EULER:
+    case FORWARD_EULER:
         solveOnGridForwardEuler(dt);
         break;
-    case MPMSolidBase<Scalar,Dim>::BACKWARD_EULER:
+    case BACKWARD_EULER:
         solveOnGridBackwardEuler(dt);
         break;
     default:
+    {
+        std::string method_name = timeSteppingMethodName(this->integration_method_);
+        throw PhysikaException(method_name+std::string("integration not implemented!"));
         break;
+    }
     }
     //apply gravity
     applyGravityOnGrid(dt);
@@ -904,7 +897,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>

@@ -16,6 +16,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USF.h"
 
@@ -37,10 +38,7 @@ void MPMSolidStepMethodUSF<Scalar,Dim>::advanceStep(Scalar dt)
 {
     MPMSolidBase<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolidBase<Scalar,Dim>*>(this->mpm_driver_);
     if(mpm_solid_driver==NULL)
-    {
-        std::cerr<<"Error: MPM driver and step method mismatch, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: MPM driver and step method mismatch!");
     //now advance step, the constitutive model state 
     //of the particles are updated at beginning of time step
     mpm_solid_driver->rasterize();

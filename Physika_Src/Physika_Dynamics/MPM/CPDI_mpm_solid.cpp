@@ -19,6 +19,7 @@
 #include <map>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
@@ -65,13 +66,13 @@ bool CPDIMPMSolid<Scalar,Dim>::withRestartSupport() const
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::write(const std::string &file_name)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::read(const std::string &file_name)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
@@ -263,15 +264,9 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::currentParticleDomainCorner(unsigne
                                                                                  const Vector<unsigned int,Dim> &corner_idx) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     else if(particle_idx >= this->particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     unsigned int corner_num = Dim==2 ? 4 : 8;
     unsigned int corner_num_per_dim = 2;
     Vector<unsigned int,Dim> idx = corner_idx;
@@ -283,10 +278,7 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::currentParticleDomainCorner(unsigne
         idx_1d += idx[i];
     }
     if(idx_1d >= corner_num)
-    {
-        std::cerr<<"Error: corner index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("corner index out of range!");
     return particle_domain_corners_[object_idx][particle_idx][idx_1d];
 }
 
@@ -295,15 +287,9 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigne
                                                                                  const Vector<unsigned int,Dim> &corner_idx) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     else if(particle_idx >= this->particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     unsigned int corner_num = Dim==2 ? 4 : 8;
     unsigned int corner_num_per_dim = 2;
     Vector<unsigned int,Dim> idx = corner_idx;
@@ -315,10 +301,7 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigne
         idx_1d += idx[i];
     }
     if(idx_1d >= corner_num)
-    {
-        std::cerr<<"Error: corner index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("corner index out of range!");
     return initial_particle_domain_corners_[object_idx][particle_idx][idx_1d];
 }
 

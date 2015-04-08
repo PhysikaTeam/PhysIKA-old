@@ -18,6 +18,7 @@
 #include <limits>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
@@ -78,10 +79,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
 {
     MPMSolid<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolid<Scalar,Dim>*>(this->mpm_driver_);
     if(mpm_solid_driver == NULL)
-    {
-        std::cerr<<"Error: mpm driver and contact method mismatch, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("mpm driver and contact method mismatch!");
     if(potential_collide_nodes.empty()) //no collision
         return;
     //init particle bucket for all involved objects
