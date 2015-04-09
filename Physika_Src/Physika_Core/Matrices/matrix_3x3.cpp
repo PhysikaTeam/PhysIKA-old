@@ -114,10 +114,7 @@ Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int i, unsigned int j)
 {
     bool index_valid = (i<3)&&(j<3);
     if(!index_valid)
-    {
         throw PhysikaException("Matrix index out of range!");
-         
-    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -130,15 +127,30 @@ const Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int i, unsigned int j
 {
     bool index_valid = (i<3)&&(j<3);
     if(!index_valid)
-    {
         throw PhysikaException("Matrix index out of range!");
-         
-    }
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_3x3_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     return data_[i][j];
 #endif
+}
+
+template <typename Scalar>
+Vector<Scalar,3> SquareMatrix<Scalar,3>::rowVector(unsigned int i) const
+{
+    if(i>=3)
+        throw PhysikaException("Matrix index out of range!");
+    Vector<Scalar,3> result((*this)(i,0),(*this)(i,1),(*this)(i,2));
+    return result;
+}
+
+template <typename Scalar>
+Vector<Scalar,3> SquareMatrix<Scalar,3>::colVector(unsigned int i) const
+{
+    if(i>=3)
+        throw PhysikaException("Matrix index out of range!");
+    Vector<Scalar,3> result((*this)(0,i),(*this)(1,i),(*this)(2,i));
+    return result;
 }
 
 template <typename Scalar>
@@ -270,10 +282,7 @@ template <typename Scalar>
 SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator/ (Scalar scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
         throw PhysikaException("Matrix Divide by zero error!");
-         
-    }
     Scalar result[9];
     for(unsigned int i = 0; i < 3; ++i)
         for(unsigned int j = 0; j < 3; ++j)
@@ -285,10 +294,7 @@ template <typename Scalar>
 SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator/= (Scalar scale)
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
         throw PhysikaException("Matrix Divide by zero error!");
-         
-    }
     for(unsigned int i = 0; i < 3; ++i)
         for(unsigned int j = 0; j < 3; ++j)
             (*this)(i,j) = (*this)(i,j) / scale;
@@ -321,10 +327,7 @@ SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse() const
             singular = true;
     }
     if(singular)
-    {
         throw PhysikaException("Matrix not invertible!");
-         
-    }
     return SquareMatrix<Scalar,3>((-(*this)(1,2) * (*this)(2,1) + (*this)(1,1) * (*this)(2,2))/det, ((*this)(0,2) * (*this)(2,1) - (*this)(0,1) * (*this)(2,2))/det, 
                                   (-(*this)(0,2) * (*this)(1,1) + (*this)(0,1) * (*this)(1,2))/det, ((*this)(1,2) * (*this)(2,0) - (*this)(1,0) * (*this)(2,2))/det,
                                   (-(*this)(0,2) * (*this)(2,0) + (*this)(0,0) * (*this)(2,2))/det, ((*this)(0,2) * (*this)(1,0) - (*this)(0,0) * (*this)(1,2))/det,
@@ -390,7 +393,6 @@ void SquareMatrix<Scalar,3>::singularValueDecomposition(SquareMatrix<Scalar,3> &
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     throw PhysikaException("SVD not implemeted for built in matrix!");
-     
 #endif
 }
 
@@ -419,7 +421,6 @@ void SquareMatrix<Scalar,3>::eigenDecomposition(Vector<Scalar,3> &eigen_values_r
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     throw PhysikaException("Eigen decomposition not implemeted for built in matrix!");
-     
 #endif
 }
 

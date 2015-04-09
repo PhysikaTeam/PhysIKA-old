@@ -45,6 +45,8 @@ public:
     inline unsigned int cols() const{return 4;}
     Scalar& operator() (unsigned int i, unsigned int j );
     const Scalar& operator() (unsigned int i, unsigned int j) const;
+    Vector<Scalar,4> rowVector(unsigned int i) const;
+    Vector<Scalar,4> colVector(unsigned int i) const;
     SquareMatrix<Scalar,4> operator+ (const SquareMatrix<Scalar,4> &) const;
     SquareMatrix<Scalar,4>& operator+= (const SquareMatrix<Scalar,4> &);
     SquareMatrix<Scalar,4> operator- (const SquareMatrix<Scalar,4> &) const;

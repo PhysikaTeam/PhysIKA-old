@@ -75,6 +75,20 @@ const Scalar& SquareMatrix<Scalar,1>::operator() (unsigned int i, unsigned int j
 }
 
 template <typename Scalar>
+Vector<Scalar,1> SquareMatrix<Scalar,1>::rowVector(unsigned int i) const
+{
+    Scalar val = (*this)(i,i);
+    return Vector<Scalar,1>(val);
+}
+
+template <typename Scalar>
+Vector<Scalar,1> SquareMatrix<Scalar,1>::colVector(unsigned int i) const
+{
+    Scalar val = (*this)(i,i);
+    return Vector<Scalar,1>(val);
+}
+
+template <typename Scalar>
 SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator+ (const SquareMatrix<Scalar,1> &mat2) const
 {
     Scalar result;

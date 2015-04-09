@@ -43,6 +43,8 @@ public:
     void resize(unsigned int new_rows, unsigned int new_cols);  //resize the matrix to new_rows*new_cols
     Scalar& operator() (unsigned int i, unsigned int j);
     const Scalar& operator() (unsigned int i, unsigned int j) const;
+    VectorND<Scalar> rowVector(unsigned int i) const;
+    VectorND<Scalar> colVector(unsigned int i) const;
     MatrixMxN<Scalar> operator+ (const MatrixMxN<Scalar> &) const;
     MatrixMxN<Scalar>& operator+= (const MatrixMxN<Scalar> &);
     MatrixMxN<Scalar> operator- (const MatrixMxN<Scalar> &) const;
