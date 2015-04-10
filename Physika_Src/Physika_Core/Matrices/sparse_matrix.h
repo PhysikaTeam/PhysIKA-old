@@ -41,8 +41,8 @@ public:
 	SparseMatrix(unsigned int rows, unsigned int cols, SparseMatrixInternal::SparseMatrixStoreMode priority = SparseMatrixInternal::ROW_MAJOR);
     SparseMatrix(const SparseMatrix<Scalar> &);
     ~SparseMatrix();
-    inline unsigned int rows() const;
-    inline unsigned int cols() const;
+    unsigned int rows() const;
+    unsigned int cols() const;
     //return the number of nonZero node
     unsigned int nonZeros() const;                //itinerate the whole vector once to calculate the nonzeros
     // remove a node(i,j) and adjust the orthogonal list
@@ -50,10 +50,10 @@ public:
     //resize the SparseMatrix and data in it will be deleted
     void resize(unsigned int new_rows, unsigned int new_cols);
     SparseMatrix<Scalar> transpose() const;
-    std::vector<SparseMatrixInternal::Trituple<Scalar>> rowElements(unsigned int row) const;
-    std::vector<SparseMatrixInternal::Trituple<Scalar>> colElements(unsigned int col) const;
+    void rowElements(unsigned int row, std::vector<Scalar> &elements) const;
+    void colElements(unsigned int col, std::vector<Scalar> &elements) const;
     //return value of matrix entry at index (i,j). Note: cannot be used as l-value!
-    inline Scalar operator() (unsigned int i, unsigned int j) const;
+    Scalar operator() (unsigned int i, unsigned int j) const;
     //insert matrix entry at index (i,j), if it already exits, replace it
     void setEntry(unsigned int i, unsigned int j, Scalar value);
     SparseMatrix<Scalar> operator+ (const SparseMatrix<Scalar> &) const;
@@ -78,10 +78,9 @@ protected:
     unsigned int rows_;
     unsigned int cols_;
     std::vector<SparseMatrixInternal::Trituple<Scalar>> elements_; //a vector used to contain all the none-zero elements in a sparsematrix in order
-    std::vector<unsigned int> line_index_;   //line_index store the index of the first non-zero element of every row when priority is equal to 0 
-                                             //or every col when priority is equal to 1
-	SparseMatrixInternal::SparseMatrixStoreMode priority_;        //when priority is equal to 0, it means the elements_ is stored in a row-wise order.
-                                             //if priority is equal to 1, the elements_ is stored in a col-wise order.
+    std::vector<unsigned int> line_index_;   //line_index store the index of the first non-zero element of every row when priority is equal to ROW_MAJOR 
+                                             //or every col when priority is equal to COL_MAJOR
+	SparseMatrixInternal::SparseMatrixStoreMode priority_;        
     friend class SparseMatrixIterator<Scalar>;  // declare friend class for iterator
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	SparseMatrixInternal::SparseMatrixStoreMode priority_;

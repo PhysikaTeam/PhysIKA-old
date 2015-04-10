@@ -21,9 +21,15 @@
 
 namespace Physika{
 
-/* if vertices of a cube are v[0`7]
- * we consider six faces of the cube are [0,1,2,3] [4,5,6,7] [0,1,4,5] [2,3,6,7] [1,2,5,6] [0,3,4,7]
- * [a,b,c,d] means that a face constains a,b,c,d vertex
+/*
+ * the order of the vertices matters:
+ *
+ *                     7--------6
+ *                    / |       / |
+ *                   4-|------5 |
+ *                   |  3-----|- 2
+ *                   |/        | /
+ *                  0---------1
  */
 
 template <typename Scalar> class Vector<Scalar,3>;
