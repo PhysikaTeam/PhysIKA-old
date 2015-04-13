@@ -30,7 +30,7 @@ template <typename Scalar> class SparseMatrixIterator;
 
 /*
  * class SparseMatrix is a data structure used to store SparseMatrix
- * it uses the Trituple as its node and connect them with a orthhogonal list
+ * it uses the Trituple as its node in a triple list
  *
  */
 template <typename Scalar>

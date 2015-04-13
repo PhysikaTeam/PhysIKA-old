@@ -26,26 +26,22 @@ enum SparseMatrixStoreMode{
 };
 
 /*
- * class Trituple is used to store a node's information in the orthogonal list
+ * class Trituple is used to store a node's information in SparseMatrix
  */
 template <typename Scalar>
 class Trituple
 {
 public:
-    Trituple():row_(0),col_(0),value_(0),row_next_(NULL),col_next_(NULL){}
+    Trituple():row_(0),col_(0),value_(0){}
     Trituple(unsigned int row, unsigned int col, Scalar value)
-        :row_(row),col_(col),value_(value),row_next_(NULL),col_next_(NULL){}
+        :row_(row),col_(col),value_(value){}
     bool operator==(const Trituple<Scalar> &tri2) const
     {
-        if(tri2.row_ == row_ && tri2.col_ == col_ && tri2.value_ == value_)
-            return true;
-        return false;	
+        return (tri2.row_ == row_ && tri2.col_ == col_ && tri2.value_ == value_);
     }
     bool operator!=(const Trituple<Scalar> &tri2) const
     {
-        if(tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_)
-            return true;
-        return false;		
+        return (tri2.row_ != row_ || tri2.col_ != col_ || tri2.value_ != value_);
     }
     inline unsigned int row() const { return row_;}
     inline unsigned int col() const { return col_;}
@@ -57,8 +53,6 @@ private:
     unsigned int row_;
     unsigned int col_;
     Scalar value_;
-    Trituple<Scalar> *row_next_;
-    Trituple<Scalar> *col_next_;
 };
 
 //overridding << for SparseMatrixInternal::Trituple<Scalar>
