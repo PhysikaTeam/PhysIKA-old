@@ -19,8 +19,7 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Matrices/matrix_2x2.h"
-#include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Dynamics/Driver/driver_base.h"
 
 namespace Physika{
@@ -38,10 +37,18 @@ template <typename Scalar, int Dim>
 class FEMBase: public DriverBase<Scalar>
 {
 public:
+    //different mass matrix types, we use lumped mass by default
+    enum MassMatrixType{
+        CONSISTENT_MASS,
+        LUMPED_MASS
+    };
+public:
     FEMBase();
     FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
     FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
             const VolumetricMesh<Scalar,Dim> &mesh);
+    FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
+            const VolumetricMesh<Scalar,Dim> &mesh, MassMatrixType mass_matrix_type);
     virtual ~FEMBase();
 
     //virtual methods for subclass to implement
@@ -76,23 +83,29 @@ public:
     Vector<Scalar,Dim> vertexExternalForce(unsigned int vert_idx) const;
     void setVertexExternalForce(unsigned int vert_idx, const Vector<Scalar,Dim> &f);
     void resetVertexExternalForce();
-
+    
+    //material density
+    //set***Density() needs to be called to update density if volumetric mesh is updated
     unsigned int densityNum() const;
     void setHomogeneousDensity(Scalar density);
     void setRegionWiseDensity(const std::vector<Scalar> &density);
     void setElementWiseDensity(const std::vector<Scalar> &density);
     Scalar elementDensity(unsigned int ele_idx) const;
 protected:
-    virtual void applyVertexExternalForce();
+    void applyGravity(Scalar dt);
+    virtual void applyVertexExternalForce(Scalar dt);
     virtual void synchronizeDataWithSimulationMesh();  //synchronize related data when simulation mesh is changed (dimension of displacement vector, etc.)
+    void generateMassMatrix();
 protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
+    MassMatrixType mass_matrix_type_;
+    SparseMatrix<Scalar> mass_matrix_;
+    //data attached to mesh vertices
     std::vector<Vector<Scalar,Dim> > vertex_displacements_;  
     std::vector<Vector<Scalar,Dim> > vertex_velocities_; 
     std::vector<Vector<Scalar,Dim> > vertex_external_forces_;
-    std::vector<Scalar> lumped_vertex_mass_;
     std::vector<Scalar> material_density_;  //density: homogeneous, element-wise, or region-wise
-    Scalar gravity_;
+    Scalar gravity_; //magnitude of gravity, along negative y direction
 };
 
 }  //end of namespace Physika

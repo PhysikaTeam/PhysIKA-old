@@ -18,6 +18,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Matrices/sparse_matrix.h"
+#include "Physika_Core/Matrices/sparse_matrix_iterator.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
@@ -37,8 +38,15 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateLumpedMass(const Volumetri
     unsigned int vert_num = volumetric_mesh.vertNum();
     PHYSIKA_ASSERT(lumped_mass_mat.nonZeros() == vert_num);
     lumped_mass.resize(vert_num);
-    for(unsigned int row = 0; row < vert_num; ++row)
-        lumped_mass[row] = lumped_mass_mat(row,row);
+    SparseMatrixIterator<Scalar> mass_iter(lumped_mass_mat);
+    while(mass_iter)
+    {
+        unsigned int row = mass_iter.row();
+        unsigned int col = mass_iter.col();
+        PHYSIKA_ASSERT(row == col);
+        lumped_mass[row] = mass_iter.value();
+        ++mass_iter;
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -71,8 +79,15 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateLumpedMass(const Volumetri
     unsigned int vert_num = volumetric_mesh.vertNum();
     PHYSIKA_ASSERT(lumped_mass_mat.nonZeros() == vert_num);
     lumped_mass.resize(vert_num);
-    for(unsigned int row = 0; row < vert_num; ++row)
-        lumped_mass[row] = lumped_mass_mat(row,row);
+    SparseMatrixIterator<Scalar> mass_iter(lumped_mass_mat);
+    while(mass_iter)
+    {
+        unsigned int row = mass_iter.row();
+        unsigned int col = mass_iter.col();
+        PHYSIKA_ASSERT(row == col);
+        lumped_mass[row] = mass_iter.value();
+        ++mass_iter;
+    }
 }
 
 template <typename Scalar, int Dim>

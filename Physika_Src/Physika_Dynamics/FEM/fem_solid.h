@@ -17,11 +17,13 @@
 
 #include <vector>
 #include <string>
+#include "Physika_Dynamics/Utilities/time_stepping_method.h"
 #include "Physika_Dynamics/FEM/fem_base.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim> class ConstitutiveModel;
+template <typename Scalar, int Dim> class FEMSolidForceModel;
 
 /*
  * FEM driver for solids, not necessarily homogeneous:
@@ -55,6 +57,7 @@ public:
     void addPlugin(DriverPluginBase<Scalar> *plugin);
 
     //set&&get constitutive model (data are copied)
+    //set***Material() needs to be called to update material if volumetric mesh is updated
     unsigned int materialNum() const;
     void setHomogeneousMaterial(const ConstitutiveModel<Scalar,Dim> &material);
     //the number of materials must be no less than the number of regions on simulation mesh
@@ -63,11 +66,19 @@ public:
     void setElementWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);  
     const ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx) const;  
     ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx);
+
+    void setTimeSteppingMethod(TimeSteppingMethod method);
 protected:
     void clearMaterial(); //clear current material
     void addMaterial(const ConstitutiveModel<Scalar,Dim> &material);
+    void advanceStepForwardEuler(Scalar dt);
+    void advanceStepBackwardEuler(Scalar dt);
+    virtual void synchronizeDataWithSimulationMesh();
+    void createFEMSolidForceModel();
 protected:
     std::vector<ConstitutiveModel<Scalar,Dim> *> constitutive_model_;
+    TimeSteppingMethod integration_method_;
+    FEMSolidForceModel<Scalar,Dim> *force_model_;
 };
 
 }  //end of namespace Physika

@@ -51,16 +51,12 @@ void SparseMatrix<Scalar>::allocMemory(unsigned int rows, unsigned int cols, Spa
     if(priority_ == SparseMatrixInternal::ROW_MAJOR) //row-wise
     {
         for(unsigned int i=0;i<=rows_;++i)
-        {
             line_index_.push_back(0);
-        }
     }
     else
     {
         for (unsigned int i = 0; i <= cols_; ++i)
-        {
             line_index_.push_back(0);
-        }
     }
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	if (priority_ == SparseMatrixInternal::ROW_MAJOR)
@@ -138,15 +134,12 @@ bool SparseMatrix<Scalar>::remove(unsigned int i,unsigned int j)
             if (priority_ == SparseMatrixInternal::COL_MAJOR)
             {
                 for (unsigned int j1 = j + 1; j1 <= cols_; ++j1)
-                {
                     line_index_[j1] -= 1;
-                }
             }
-            else{
+            else
+            {
                 for (unsigned int j1 = i + 1; j1 <= rows_; ++j1)
-                {
                     line_index_[j1] -= 1;
-                }
             }
             return true;
         }
@@ -272,7 +265,8 @@ void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
         {
             unsigned int i1 = line_index_[j];
             elements_.insert(elements_.begin() + i1, SparseMatrixInternal::Trituple<Scalar>(i, j, value));
-            for (unsigned int i2 = j + 1; i2 <= cols_; ++i2)line_index_[i2] += 1;
+            for (unsigned int i2 = j + 1; i2 <= cols_; ++i2)
+                line_index_[i2] += 1;
             return;
         }
         for (unsigned int i1 = line_index_[j]; i1 < line_index_[j + 1]; ++i1)   //if it already exists, just modify the value. 
@@ -284,15 +278,17 @@ void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
             }
         }
         elements_.insert(elements_.begin() + line_index_[j], SparseMatrixInternal::Trituple<Scalar>(i, j, value));    //if it not exists, just insert the first place of the col
-        for (unsigned int i2 = j + 1; i2 <= cols_; ++i2)line_index_[i2] += 1;
-        return ;
+        for (unsigned int i2 = j + 1; i2 <= cols_; ++i2)
+            line_index_[i2] += 1;
     }
-    else{
+    else
+    {
         if (line_index_[i] == line_index_[i + 1])          //the same with above
         {
             unsigned int i1 = line_index_[i];
             elements_.insert(elements_.begin() + i1, SparseMatrixInternal::Trituple<Scalar>(i, j, value));
-            for (unsigned int i2 = i + 1; i2 <= rows_; ++i2)line_index_[i2] += 1;
+            for (unsigned int i2 = i + 1; i2 <= rows_; ++i2)
+                line_index_[i2] += 1;
             return;
         }
         for (unsigned int i1 = line_index_[i]; i1 < line_index_[i + 1]; ++i1)
@@ -304,8 +300,8 @@ void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
             }
         }
         elements_.insert(elements_.begin() + line_index_[i], SparseMatrixInternal::Trituple<Scalar>(i, j, value));
-        for (unsigned int i2 = i + 1; i2 <= rows_; ++i2)line_index_[i2] += 1;
-        return ;
+        for (unsigned int i2 = i + 1; i2 <= rows_; ++i2)
+            line_index_[i2] += 1;
     }
     
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
@@ -495,8 +491,10 @@ bool SparseMatrix<Scalar>::operator== (const SparseMatrix<Scalar> &mat2) const
 template <typename Scalar>
 bool SparseMatrix<Scalar>::operator!= (const SparseMatrix<Scalar> &mat2) const
 {
-    if(*this == mat2)return false;
-    else return true;
+    if(*this == mat2)
+        return false;
+    else
+        return true;
 }
 
 template <typename Scalar>
@@ -505,9 +503,7 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (Scalar scale) const
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     SparseMatrix<Scalar> result(*this);
     for(unsigned int i=0;i<elements_.size();++i)
-    {
         result.elements_[i].setValue(elements_[i].value()*scale);
-    }
     return result;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     SparseMatrix<Scalar> result(this->rows(), this->cols());
@@ -604,9 +600,7 @@ VectorND<Scalar> SparseMatrix<Scalar>::leftMultiplyVector(const VectorND<Scalar>
     {
         sum = 0;
         for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(*ptr_eigen_sparse_matrix_, i); it; ++it)
-        {
             sum += it.value()*vec[it.row()];
-        }
         result[i] = sum;
     }
 
@@ -649,9 +643,7 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator*=(Scalar scale)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     for (unsigned int i = 0; i<elements_.size(); ++i)
-    {
         elements_[i].setValue(elements_[i].value()*scale);
-    }
     return *this;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     *ptr_eigen_sparse_matrix_ = *ptr_eigen_sparse_matrix_ * scale;
@@ -662,12 +654,12 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator*=(Scalar scale)
 template <typename Scalar>
 SparseMatrix<Scalar> SparseMatrix<Scalar>::operator/ (Scalar scale) const
 {
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+        throw PhysikaException("Matrix Divide by zero error!");
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     SparseMatrix<Scalar> result(*this);
     for (unsigned int i = 0; i<elements_.size(); ++i)
-    {
         result.elements_[i].setValue(elements_[i].value()/scale);
-    }
     return result;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     SparseMatrix<Scalar> result(this->rows(),this->cols());
@@ -679,11 +671,11 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator/ (Scalar scale) const
 template <typename Scalar>
 SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator/=(Scalar scale)
 {
+    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+        throw PhysikaException("Matrix Divide by zero error!");
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     for (unsigned int i = 0; i<elements_.size(); ++i)
-    {
         elements_[i].setValue(elements_[i].value()/scale);
-    }
     return *this;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     *ptr_eigen_sparse_matrix_ = *ptr_eigen_sparse_matrix_ / scale;

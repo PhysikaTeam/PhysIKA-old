@@ -18,26 +18,31 @@
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
+#include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/fem_solid_force_model.h"
+#include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/tri_tet_mesh_fem_solid_force_model.h"
+#include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/quad_cubic_mesh_fem_solid_force_model.h"
 #include "Physika_Dynamics/FEM/fem_solid.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 FEMSolid<Scalar,Dim>::FEMSolid()
-    :FEMBase<Scalar,Dim>()
+    :FEMBase<Scalar,Dim>(),integration_method_(FORWARD_EULER),force_model_(NULL)
 {
 }
 
 template <typename Scalar, int Dim>
 FEMSolid<Scalar,Dim>::FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :FEMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file)
+    :FEMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),
+     integration_method_(FORWARD_EULER),force_model_(NULL)
 {
 }
 
 template <typename Scalar, int Dim>
 FEMSolid<Scalar,Dim>::FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                const VolumetricMesh<Scalar,Dim> &mesh)
-    :FEMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,mesh)
+    :FEMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,mesh),
+     integration_method_(FORWARD_EULER)
 {
 }
 
@@ -67,7 +72,27 @@ void FEMSolid<Scalar,Dim>::initSimulationData()
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::advanceStep(Scalar dt)
-{//TO DO
+{
+    //plugin operation, begin time step
+
+    switch(this->integration_method_)
+    {
+    case FORWARD_EULER:
+        advanceStepForwardEuler(dt);
+        break;
+    case BACKWARD_EULER:
+        advanceStepBackwardEuler(dt);
+        break;
+    default:
+    {
+        std::string method_name = timeSteppingMethodName(this->integration_method_);
+        throw PhysikaException(method_name+std::string("integration not implemented!"));
+        break;
+    }
+    }
+    this->time_ += dt;
+
+    //plugin operation, end time step
 }
 
 template <typename Scalar, int Dim>
@@ -188,6 +213,12 @@ ConstitutiveModel<Scalar,Dim>& FEMSolid<Scalar,Dim>::elementMaterial(unsigned in
 }
 
 template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::setTimeSteppingMethod(TimeSteppingMethod method)
+{
+    integration_method_ = method;
+}
+
+template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::clearMaterial()
 {
     for(unsigned int i = 0 ; i < constitutive_model_.size(); ++i)
@@ -202,6 +233,29 @@ void FEMSolid<Scalar,Dim>::addMaterial(const ConstitutiveModel<Scalar,Dim> &mate
     ConstitutiveModel<Scalar,Dim> *single_material = material.clone();
     PHYSIKA_ASSERT(single_material);
     constitutive_model_.push_back(single_material);
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::advanceStepForwardEuler(Scalar dt)
+{
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::advanceStepBackwardEuler(Scalar dt)
+{
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::synchronizeDataWithSimulationMesh()
+{
+    FEMBase<Scalar,Dim>::synchronizeDataWithSimulationMesh();
+    //TO DO
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::createFEMSolidForceModel()
+{
+//TO DO
 }
 
 //explicit instantiations
