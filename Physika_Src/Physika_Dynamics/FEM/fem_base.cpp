@@ -240,6 +240,63 @@ void FEMBase<Scalar,Dim>::resetVertexExternalForce()
 }
 
 template <typename Scalar, int Dim>
+unsigned int FEMBase<Scalar,Dim>::densityNum() const
+{
+    return material_density_.size();
+}
+    
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setHomogeneousDensity(Scalar density)
+{
+    material_density_.clear();
+    material_density_.push_back(density);
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setRegionWiseDensity(const std::vector<Scalar> &density)
+{
+    unsigned int region_num = this->simulation_mesh_->regionNum();
+    if(density.size() < region_num)
+        throw PhysikaException("Size of densities must be no less than the number of simulation mesh regions.");
+    material_density_ = density;
+}
+ 
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setElementWiseDensity(const std::vector<Scalar> &density)
+{
+    unsigned int ele_num = this->simulation_mesh_->eleNum();
+    if(density.size() < ele_num)
+        throw PhysikaException("Size of densities must be no less than the number of simulation mesh elements.");
+    material_density_ = density;
+}
+    
+template <typename Scalar, int Dim>
+Scalar FEMBase<Scalar,Dim>::elementDensity(unsigned int ele_idx) const
+{
+    unsigned int ele_num = this->simulation_mesh_->eleNum();
+    unsigned int region_num = this->simulation_mesh_->regionNum();
+    if(ele_idx >= ele_num)
+        throw PhysikaException("Element index out of range.");
+    unsigned int density_num = material_density_.size();
+    if(density_num == 0)
+        throw PhysikaException("Density not set.");
+    else if(density_num == 1)
+        return material_density_[0];
+    else if(density_num == region_num)
+    {
+        int region_idx = this->simulation_mesh_->eleRegionIndex(ele_idx);
+        if(region_idx==-1)
+            throw PhysikaException("Element doesn't belong to any region, can't find its density in region-wise data.");
+        else
+            return material_density_[region_idx];
+    }
+    else if(density_num == ele_num)
+        return material_density_[ele_idx];
+    else
+        PHYSIKA_ERROR("Invalid density number.");
+}
+
+template <typename Scalar, int Dim>
 void FEMBase<Scalar,Dim>::applyVertexExternalForce()
 {
     unsigned int vert_num = numSimVertices();

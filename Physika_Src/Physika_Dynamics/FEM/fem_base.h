@@ -76,6 +76,12 @@ public:
     Vector<Scalar,Dim> vertexExternalForce(unsigned int vert_idx) const;
     void setVertexExternalForce(unsigned int vert_idx, const Vector<Scalar,Dim> &f);
     void resetVertexExternalForce();
+
+    unsigned int densityNum() const;
+    void setHomogeneousDensity(Scalar density);
+    void setRegionWiseDensity(const std::vector<Scalar> &density);
+    void setElementWiseDensity(const std::vector<Scalar> &density);
+    Scalar elementDensity(unsigned int ele_idx) const;
 protected:
     virtual void applyVertexExternalForce();
     virtual void synchronizeDataWithSimulationMesh();  //synchronize related data when simulation mesh is changed (dimension of displacement vector, etc.)
@@ -85,6 +91,7 @@ protected:
     std::vector<Vector<Scalar,Dim> > vertex_velocities_; 
     std::vector<Vector<Scalar,Dim> > vertex_external_forces_;
     std::vector<Scalar> lumped_vertex_mass_;
+    std::vector<Scalar> material_density_;  //density: homogeneous, element-wise, or region-wise
     Scalar gravity_;
 };
 

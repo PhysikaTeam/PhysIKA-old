@@ -62,8 +62,9 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateLumpedMass(const Volumetri
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshMassGenerator<Scalar,Dim>::generateLumpedMass(const VolumetricMesh<Scalar,Dim> &volumetric_mesh, const std::vector<Scalar> &density, std::vector<Scalar> &lumped_mass,
-                                                                                                                 typename VolumetricMeshMassGenerator<Scalar,Dim>::DensityOption density_option)
+void VolumetricMeshMassGenerator<Scalar,Dim>::generateLumpedMass(const VolumetricMesh<Scalar,Dim> &volumetric_mesh, const std::vector<Scalar> &density,
+                                                                 std::vector<Scalar> &lumped_mass,
+                                                                 typename VolumetricMeshMassGenerator<Scalar,Dim>::DensityOption density_option)
 {
     SparseMatrix<Scalar> lumped_mass_mat;
     generateLumpedMass(volumetric_mesh,density,lumped_mass_mat,density_option);
@@ -75,8 +76,9 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateLumpedMass(const Volumetri
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshMassGenerator<Scalar,Dim>::generateLumpedMass(const VolumetricMesh<Scalar,Dim> &volumetric_mesh, const std::vector<Scalar> &density, SparseMatrix<Scalar> &lumped_mass,
-                                                                                                                 typename VolumetricMeshMassGenerator<Scalar,Dim>::DensityOption density_option)
+void VolumetricMeshMassGenerator<Scalar,Dim>::generateLumpedMass(const VolumetricMesh<Scalar,Dim> &volumetric_mesh, const std::vector<Scalar> &density,
+                                                                 SparseMatrix<Scalar> &lumped_mass,
+                                                                 typename VolumetricMeshMassGenerator<Scalar,Dim>::DensityOption density_option)
 {
     SparseMatrix<Scalar> consistent_mass;
     generateConsistentMass(volumetric_mesh,density,consistent_mass,density_option);
@@ -121,8 +123,9 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateConsistentMass(const Volum
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshMassGenerator<Scalar,Dim>::generateConsistentMass(const VolumetricMesh<Scalar,Dim> &volumetric_mesh, const std::vector<Scalar> &density, SparseMatrix<Scalar> &consistent_mass,
-                                                                                                                     typename VolumetricMeshMassGenerator<Scalar,Dim>::DensityOption density_option)
+void VolumetricMeshMassGenerator<Scalar,Dim>::generateConsistentMass(const VolumetricMesh<Scalar,Dim> &volumetric_mesh, const std::vector<Scalar> &density,
+                                                                     SparseMatrix<Scalar> &consistent_mass,
+                                                                     typename VolumetricMeshMassGenerator<Scalar,Dim>::DensityOption density_option)
 {
     if(density_option != ELEMENT_WISE && density_option != REGION_WISE)
         throw PhysikaException("Unknown DesnityOption!");
@@ -173,7 +176,8 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateConsistentMass(const Volum
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const VolumetricMesh<Scalar,Dim> &volumetric_mesh, unsigned int ele_idx, Scalar density, MatrixMxN<Scalar> &ele_mass)
+void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const VolumetricMesh<Scalar,Dim> &volumetric_mesh, unsigned int ele_idx,
+                                                                            Scalar density, MatrixMxN<Scalar> &ele_mass)
 {
     VolumetricMeshInternal::ElementType ele_type = volumetric_mesh.elementType();
     switch(ele_type)
@@ -213,13 +217,28 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(cons
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const TriMesh<Scalar> &tri_mesh, unsigned int ele_idx, Scalar density, MatrixMxN<Scalar> &ele_mass)
+void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const TriMesh<Scalar> &tri_mesh, unsigned int ele_idx,
+                                                                            Scalar density, MatrixMxN<Scalar> &ele_mass)
 {
-    throw PhysikaException("Not implemented!");
+    /*
+     * consistent mass matrix of a triangle = mass/12*[M],
+     * where [M] is a matrix:
+     * M(i,j) = 2 if i == j
+     * M(i,j) = 1 if i and j are end points of an edge
+     *
+     */
+    if(ele_idx >= tri_mesh.eleNum())
+        throw PhysikaException("volumetric mesh element index out of range!");
+    Scalar factor = density*tri_mesh.eleVolume(ele_idx)/12.0;
+    ele_mass.resize(3,3);
+    for(unsigned int i = 0; i < 3; ++i)
+        for(unsigned int j = 0; j < 3; ++j)
+            ele_mass(i,j) = (i == j) ? 2*factor: factor;
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const TetMesh<Scalar> &tet_mesh, unsigned int ele_idx, Scalar density, MatrixMxN<Scalar> &ele_mass)
+void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const TetMesh<Scalar> &tet_mesh, unsigned int ele_idx,
+                                                                            Scalar density, MatrixMxN<Scalar> &ele_mass)
 {
     /*
      * consistent mass matrix of a tetrahedron = mass/20*[M],
@@ -235,13 +254,32 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(cons
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const QuadMesh<Scalar> &quad_mesh, unsigned int ele_idx, Scalar density, MatrixMxN<Scalar> &ele_mass)
+void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const QuadMesh<Scalar> &quad_mesh, unsigned int ele_idx,
+                                                                            Scalar density, MatrixMxN<Scalar> &ele_mass)
 {
-    throw PhysikaException("Not implemented!");
+    /*
+     * consistent mass matrix of a quad = mass/36*[M],
+     * where [M] ia a matrix:
+     * M(i,j) = 4, if i == j
+     * M(i,j) = 2, if i and j are end points of an edge
+     * M(i,j) = 1, if i and j are diagonal corners
+     */
+    if(ele_idx >= quad_mesh.eleNum())
+        throw PhysikaException("volumetric mesh element index out of range!");
+    ele_mass.resize(4,4);
+    Scalar factor = density*quad_mesh.eleVolume(ele_idx)/36.0;
+    Scalar stencil[16] = {4,2,1,2,
+                          2,4,2,1,
+                          1,2,4,2,
+                          2,1,2,4};
+    for(unsigned int i = 0; i < 4; ++i)
+        for(unsigned int j = 0; j < 4; ++j)
+            ele_mass(i,j) = factor * stencil[i*4+j];
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const CubicMesh<Scalar> &cubic_mesh, unsigned int ele_idx, Scalar density, MatrixMxN<Scalar> &ele_mass)
+void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(const CubicMesh<Scalar> &cubic_mesh, unsigned int ele_idx,
+                                                                            Scalar density, MatrixMxN<Scalar> &ele_mass)
 {
     /*
      * consistent mass matrix of a hexhahedron = mass/216*[M],
@@ -256,6 +294,17 @@ void VolumetricMeshMassGenerator<Scalar,Dim>::generateElementConsistentMass(cons
         throw PhysikaException("volumetric mesh element index out of range!");
     ele_mass.resize(8,8);
     Scalar factor = density*cubic_mesh.eleVolume(ele_idx)/216.0;
+    Scalar stencil[64] = {8,4,2,4,4,2,1,2,
+                          4,8,4,2,2,4,2,1,
+                          2,4,8,4,1,2,4,2,
+                          4,2,4,8,2,1,2,4,
+                          4,2,1,2,8,4,2,4,
+                          2,4,2,1,4,8,4,2,
+                          1,2,4,2,2,4,8,4,
+                          2,1,2,4,4,2,4,8};
+    for(unsigned int i = 0; i < 8; ++i)
+        for(unsigned int j = 0; j < 8; ++j)
+            ele_mass(i,j) = factor * stencil[i*8+j];
 }
 
 //explicit instantiations

@@ -56,9 +56,11 @@ public:
 
     //set&&get constitutive model (data are copied)
     unsigned int materialNum() const;
-    void setHomogeneousMaterial(const ConstitutiveModel<Scalar,Dim> &material);  
-    void setRegionWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);  //the number of materials must be no less than the number of regions on simulation mesh
-    void setElementWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);  //the number of materials must be no less than the number of simulation elements
+    void setHomogeneousMaterial(const ConstitutiveModel<Scalar,Dim> &material);
+    //the number of materials must be no less than the number of regions on simulation mesh
+    void setRegionWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);
+    //the number of materials must be no less than the number of simulation elements
+    void setElementWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);  
     const ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx) const;  
     ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx);
 protected:

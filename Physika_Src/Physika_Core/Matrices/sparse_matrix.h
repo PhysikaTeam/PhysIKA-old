@@ -80,14 +80,12 @@ protected:
     std::vector<SparseMatrixInternal::Trituple<Scalar>> elements_; //a vector used to contain all the none-zero elements in a sparsematrix in order
     std::vector<unsigned int> line_index_;   //line_index store the index of the first non-zero element of every row when priority is equal to ROW_MAJOR 
                                              //or every col when priority is equal to COL_MAJOR
-	SparseMatrixInternal::SparseMatrixStoreMode priority_;        
-    friend class SparseMatrixIterator<Scalar>;  // declare friend class for iterator
+	SparseMatrixInternal::SparseMatrixStoreMode priority_;  
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	SparseMatrixInternal::SparseMatrixStoreMode priority_;
     Eigen::SparseMatrix<Scalar> * ptr_eigen_sparse_matrix_ ;
-    //typename typedef Eigen::SparseMatrix<Scalar>::InnerIterator SpareseIterator;
-    friend class Physika::SparseMatrixIterator<Scalar>;
-#endif
+#endif      
+    friend class SparseMatrixIterator<Scalar>;  // declare friend class for iterator
 private:
     void compileTimeCheck()
     {
