@@ -11,21 +11,22 @@
 * http://www.gnu.org/licenses/gpl-2.0.html
 *
 */
+
+#include "Physika_Core/Matrices/sparse_matrix.h"
 #include "Physika_Core/Matrices/sparse_matrix_iterator.h"
 
 namespace Physika{
 
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
 template <typename Scalar>
-SparseMatrixIterator<Scalar>::SparseMatrixIterator(SparseMatrix<Scalar> & mat, unsigned int i)
-{
-	first_ele_ = mat.line_index_[i];
-	last_ele_ = mat.line_index_[i + 1];
-	ptr_matrix_ = &mat;
+SparseMatrixIterator<Scalar>::SparseMatrixIterator(SparseMatrix<Scalar> & mat)
+    :ptr_matrix_(&mat),ele_it_(mat.elements_.begin())
+{   
 }
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 template <typename Scalar>
-SparseMatrixIterator<Scalar>::SparseMatrixIterator(SparseMatrix<Scalar> & mat, unsigned int i):it_(*(mat.ptr_eigen_sparse_matrix_), i)
+SparseMatrixIterator<Scalar>::SparseMatrixIterator(SparseMatrix<Scalar> & mat)
+    :ptr_matrix_ (&mat),outer_idx_(0),it_(*(mat.ptr_eigen_sparse_matrix_), 0)
 {
 }
 #endif
@@ -34,9 +35,14 @@ template <typename Scalar>
 SparseMatrixIterator<Scalar>& SparseMatrixIterator<Scalar>::operator++ ()
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-	first_ele_++;
+        ++ele_it_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	++it_;
+    if(!it_ && outer_idx_ < ptr_matrix_->eigen_sparse_matrix_->outerSize())  //next row/col if reached end of this inner loop
+    {
+        ++outer_idx_;
+        it_ = Eigen::SparseMatrix<Scalar>::InnerIterator(*(ptr_matrix_->eigen_sparse_matrix_), outer_idx_);
+    }
 #endif
 	return *this;
 }
@@ -45,7 +51,7 @@ template <typename Scalar>
 unsigned int SparseMatrixIterator<Scalar>::row() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-	return (ptr_matrix_->elements_[first_ele_]).row();
+	return (*ele_it_).row();
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	return it_.row();
 #endif
@@ -55,7 +61,7 @@ template <typename Scalar>
 unsigned int SparseMatrixIterator<Scalar>::col() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-	return (ptr_matrix_->elements_[first_ele_]).col();
+	return (*ele_it_).col();
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	return it_.col();
 #endif
@@ -65,7 +71,7 @@ template <typename Scalar>
 Scalar SparseMatrixIterator<Scalar>::value() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-	return (ptr_matrix_->elements_[first_ele_]).value();
+	return (*ele_it_).value();
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	return it_.value();
 #endif       
@@ -75,7 +81,7 @@ template <typename Scalar>
 SparseMatrixIterator<Scalar>::operator bool() const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-	return first_ele_ != last_ele_;
+	return ele_it_ != (ptr_matrix_->elements_).end();
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	return (bool)(it_);
 #endif 

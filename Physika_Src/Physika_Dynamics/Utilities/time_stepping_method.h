@@ -13,7 +13,7 @@
  */
 
 #ifndef PHYSIKA_DYNAMICS_UTILITIES_TIME_STEPPING_METHOD_H_
-#define PHYSIKA_DYNAMICS_UTILITIES_TIME_TEPPING_METHOD_H_
+#define PHYSIKA_DYNAMICS_UTILITIES_TIME_STEPPING_METHOD_H_
 
 #include <string>
 #include "Physika_Core/Utilities/physika_exception.h"
