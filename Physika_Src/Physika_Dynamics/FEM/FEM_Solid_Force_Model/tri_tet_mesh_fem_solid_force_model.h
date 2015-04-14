@@ -16,13 +16,13 @@
 #define PHYSIKA_DYNAMICS_FEM_FEM_SOLID_FORCE_MODEL_TRI_TET_MESH_FEM_SOLID_FORCE_MODEL_H_
 
 #include <vector>
-#include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/fem_solid_force_model.h"
 
 namespace Physika{
+
+template <typename Scalar, int Dim> class Vector;
 
 template <typename Scalar, int Dim>
 class TriTetMeshFEMSolidForceModel: public FEMSolidForceModel<Scalar,Dim>
@@ -34,13 +34,13 @@ public:
     virtual void setDriver(const FEMSolid<Scalar,Dim> *fem_solid_driver); //precomputed data is updated correspondently
     void updatePrecomputedData(); //whenever the volumetric mesh is modified, this method needs to be called to update the precomputed data
     //given world space coordinates of mesh vertices, compute the internal forces on the entire mesh
-    void computeGlobalInternalForces(const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const;
+    virtual void computeGlobalInternalForces(const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const;
     //compute internal forces on vertices of a specific element
-    void computeElementInternalForces(unsigned int ele_idx, const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const;
+    virtual void computeElementInternalForces(unsigned int ele_idx, const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const;
     //compute force differentials, for implicit time stepping
-    void computeGlobalInternalForceDifferentials(const std::vector<Vector<Scalar,Dim> > &current_vert_pos, const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
+    virtual void computeGlobalInternalForceDifferentials(const std::vector<Vector<Scalar,Dim> > &current_vert_pos, const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
                                                                           std::vector<Vector<Scalar,Dim> > &force_differentials) const;
-    void computeElementInternalForceDifferentials(unsigned int ele_idx, const std::vector<Vector<Scalar,Dim> > &current_vert_pos, const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
+    virtual void computeElementInternalForceDifferentials(unsigned int ele_idx, const std::vector<Vector<Scalar,Dim> > &current_vert_pos, const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
                                                                              std::vector<Vector<Scalar,Dim> > &force_differentials) const;
 protected:
     void computeReferenceElementVolume();

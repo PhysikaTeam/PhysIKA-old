@@ -12,6 +12,8 @@
  *
  */
 
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
 #include "Physika_Geometry/Volumetric_Meshes/tri_mesh.h"

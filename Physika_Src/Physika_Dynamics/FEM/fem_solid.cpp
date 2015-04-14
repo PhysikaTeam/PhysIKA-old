@@ -17,6 +17,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/fem_solid_force_model.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/tri_tet_mesh_fem_solid_force_model.h"
@@ -49,8 +50,8 @@ FEMSolid<Scalar,Dim>::FEMSolid(unsigned int start_frame, unsigned int end_frame,
 template <typename Scalar, int Dim>
 FEMSolid<Scalar,Dim>::~FEMSolid()
 {
-    for(unsigned int i = 0; i < constitutive_model_.size(); ++i)
-        delete constitutive_model_[i];
+    clearMaterial();
+    clearFEMSolidForceModel();
 }
 
 template <typename Scalar, int Dim>
@@ -243,19 +244,39 @@ void FEMSolid<Scalar,Dim>::advanceStepForwardEuler(Scalar dt)
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::advanceStepBackwardEuler(Scalar dt)
 {
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::synchronizeDataWithSimulationMesh()
 {
     FEMBase<Scalar,Dim>::synchronizeDataWithSimulationMesh();
-    //TO DO
+    createFEMSolidForceModel();
 }
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::createFEMSolidForceModel()
 {
-//TO DO
+    VolumetricMeshInternal::ElementType ele_type = this->simulation_mesh_->elementType();
+    if(ele_type == VolumetricMeshInternal::TET || ele_type == VolumetricMeshInternal::TRI)
+    {
+        clearFEMSolidForceModel();
+        force_model_ = new TriTetMeshFEMSolidForceModel<Scalar,Dim>(this);
+    }
+    else if(ele_type == VolumetricMeshInternal::QUAD || ele_type == VolumetricMeshInternal::CUBIC)
+    {
+        clearFEMSolidForceModel();
+        force_model_ = new QuadCubicMeshFEMSolidForceModel<Scalar,Dim>(this);
+    }
+    else
+        throw PhysikaException("Unsupported element type!");
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::clearFEMSolidForceModel()
+{
+    if(force_model_)
+        delete force_model_;
 }
 
 //explicit instantiations

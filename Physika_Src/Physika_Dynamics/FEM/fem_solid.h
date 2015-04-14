@@ -75,6 +75,7 @@ protected:
     void advanceStepBackwardEuler(Scalar dt);
     virtual void synchronizeDataWithSimulationMesh();
     void createFEMSolidForceModel();
+    void clearFEMSolidForceModel();
 protected:
     std::vector<ConstitutiveModel<Scalar,Dim> *> constitutive_model_;
     TimeSteppingMethod integration_method_;
