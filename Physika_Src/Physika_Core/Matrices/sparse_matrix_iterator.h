@@ -14,6 +14,7 @@
 #ifndef PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_ITERATOR_H_
 #define PHYSIKA_CORE_MATRICES_SPARSE_MATRIX_ITERATOR_H_
 
+#include <vector>
 #include <iostream>
 #include "Physika_Core/Utilities/global_config.h"
 #include "Physika_Core/Matrices/sparse_matrix_internal.h"

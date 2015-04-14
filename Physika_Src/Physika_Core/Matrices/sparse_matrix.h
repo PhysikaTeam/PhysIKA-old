@@ -77,7 +77,7 @@ protected:
     //row-wise format or col-wise format
     unsigned int rows_;
     unsigned int cols_;
-    std::vector<SparseMatrixInternal::Trituple<Scalar>> elements_; //a vector used to contain all the none-zero elements in a sparsematrix in order
+    std::vector<SparseMatrixInternal::Trituple<Scalar> > elements_; //a vector used to contain all the none-zero elements in a sparsematrix in order
     std::vector<unsigned int> line_index_;   //line_index store the index of the first non-zero element of every row when priority is equal to ROW_MAJOR 
                                              //or every col when priority is equal to COL_MAJOR
 	SparseMatrixInternal::SparseMatrixStoreMode priority_;  
