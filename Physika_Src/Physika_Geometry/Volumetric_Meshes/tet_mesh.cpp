@@ -13,11 +13,14 @@
  */
 
 #include <cmath>
+#include <set>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Arrays/array.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
 #include "Physika_Geometry/Volumetric_Meshes/tet_mesh.h"
 
 namespace Physika{
@@ -81,10 +84,7 @@ template <typename Scalar>
 Scalar TetMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"TetMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("TetMesh element index out of range!");
     Array< Vector<Scalar,3> > ele_vertices(4);
     for(unsigned int i = 0; i < 4; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -99,10 +99,7 @@ template <typename Scalar>
 bool TetMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"TetMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("TetMesh element index out of range!");
     std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = (weights[0]>=0)&&(weights[1]>=0)&&(weights[2]>=0)&&(weights[3]>=0);
@@ -141,10 +138,7 @@ void TetMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
   wi = Di / D0
 */
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"TetMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("TetMesh element index out of range!");
     Array< Vector<Scalar,3> > ele_vertices(4);
     for(unsigned int i = 0; i < 4; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -174,6 +168,108 @@ Scalar TetMesh<Scalar>::getTetDeterminant(const Vector<Scalar,3> &a, const Vecto
     SquareMatrix<Scalar,3> m2(a,b,d);
     SquareMatrix<Scalar,3> m3(a,b,c);
     return m0.determinant()*(-1) + m1.determinant() - m2.determinant() + m3.determinant();
+}
+
+template<typename Scalar>
+void TetMesh<Scalar>::generateBoundaryInformation()
+{
+    (this->boundary_elements_).clear();
+    (this->boundary_vertices_).clear();
+    typedef std::set<std::vector<unsigned int>,VolumetricMeshInternal::CompareVector<unsigned int> > FaceSet;
+    FaceSet boundary_faces;
+    FaceSet::iterator iter;
+    std::vector<unsigned int> face(3);
+    //traverse the elements, insert the faces into a set, if a face is shared by
+    //two elements, erase it from the set
+    //the set is left with boundary faces in the end
+    for(unsigned int ele_idx = 0; ele_idx < this->ele_num_; ++ele_idx)
+    {
+        unsigned int vert_idx0 = this->eleVertIndex(ele_idx,0);
+        unsigned int vert_idx1 = this->eleVertIndex(ele_idx,1);
+        unsigned int vert_idx2 = this->eleVertIndex(ele_idx,2);
+        unsigned int vert_idx3 = this->eleVertIndex(ele_idx,3);
+        //face 012
+        face[0] = vert_idx0; face[1] = vert_idx1; face[2] = vert_idx2;
+        std::sort(face.begin(),face.end());
+        iter = boundary_faces.find(face);
+        if(iter == boundary_faces.end())
+            boundary_faces.insert(face);
+        else 
+            boundary_faces.erase(iter);
+        //face 013
+        face[0] = vert_idx0; face[1] = vert_idx1; face[2] = vert_idx3;
+        std::sort(face.begin(),face.end());
+        iter = boundary_faces.find(face);
+        if(iter == boundary_faces.end())
+            boundary_faces.insert(face);
+        else 
+            boundary_faces.erase(iter);
+        //face 023
+        face[0] = vert_idx0; face[1] = vert_idx2; face[2] = vert_idx3;
+        std::sort(face.begin(),face.end());
+        iter = boundary_faces.find(face);
+        if(iter == boundary_faces.end())
+            boundary_faces.insert(face);
+        else 
+            boundary_faces.erase(iter);
+        //face 123
+        face[0] = vert_idx1; face[1] = vert_idx2; face[2] = vert_idx3;
+        std::sort(face.begin(),face.end());
+        iter = boundary_faces.find(face);
+        if(iter == boundary_faces.end())
+            boundary_faces.insert(face);
+        else 
+            boundary_faces.erase(iter);
+    }
+    //now traverse the elements again, if the element has any boudnary face, it is
+    //a boundary element, and the corresponding vertices of the face are boundary vertices
+    for(unsigned int ele_idx = 0; ele_idx < this->ele_num_; ++ele_idx)
+    {
+        unsigned int vert_idx0 = this->eleVertIndex(ele_idx,0);
+        unsigned int vert_idx1 = this->eleVertIndex(ele_idx,1);
+        unsigned int vert_idx2 = this->eleVertIndex(ele_idx,2);
+        unsigned int vert_idx3 = this->eleVertIndex(ele_idx,3);
+        //face 012
+        face[0] = vert_idx0; face[1] = vert_idx1; face[2] = vert_idx2;
+        std::sort(face.begin(),face.end());
+        iter = boundary_faces.find(face);
+        if(iter != boundary_faces.end())
+        {
+            (this->boundary_elements_).insert(ele_idx);
+            for(unsigned int i = 0; i < face.size(); ++i)
+                (this->boundary_vertices_).insert(face[i]);
+        }
+        //face 013
+        face[0] = vert_idx0; face[1] = vert_idx1; face[2] = vert_idx3;
+        std::sort(face.begin(),face.end());
+        iter = boundary_faces.find(face);
+        if(iter != boundary_faces.end())
+        {
+            (this->boundary_elements_).insert(ele_idx);
+            for(unsigned int i = 0; i < face.size(); ++i)
+                (this->boundary_vertices_).insert(face[i]);
+        }
+        //face 023
+        face[0] = vert_idx0; face[1] = vert_idx2; face[2] = vert_idx3;
+        std::sort(face.begin(),face.end());
+        iter = boundary_faces.find(face);
+        if(iter != boundary_faces.end())
+        {
+            (this->boundary_elements_).insert(ele_idx);
+            for(unsigned int i = 0; i < face.size(); ++i)
+                (this->boundary_vertices_).insert(face[i]);
+        }
+        //face 123
+        face[0] = vert_idx1; face[1] = vert_idx2; face[2] = vert_idx3;
+        std::sort(face.begin(),face.end());
+        iter = boundary_faces.find(face);
+        if(iter != boundary_faces.end())
+        {
+            (this->boundary_elements_).insert(ele_idx);
+            for(unsigned int i = 0; i < face.size(); ++i)
+                (this->boundary_vertices_).insert(face[i]);
+        }
+    }
 }
 
 //explicit instantitation

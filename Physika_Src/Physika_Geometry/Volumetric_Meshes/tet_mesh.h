@@ -41,6 +41,7 @@ public:
 protected:
     //helper method for interpolationWeights()
     Scalar getTetDeterminant(const Vector<Scalar,3> &a, const Vector<Scalar,3> &b, const Vector<Scalar,3> &c, const Vector<Scalar,3> &d) const;
+    virtual void generateBoundaryInformation();
 };
 
 }//end of namespace Physika

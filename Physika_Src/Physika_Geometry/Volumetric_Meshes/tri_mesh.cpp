@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
@@ -81,10 +82,7 @@ template <typename Scalar>
 Scalar TriMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"TriMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("TriMesh element index out of range!");
     Array< Vector<Scalar,2> > ele_vertices(3);
     for(unsigned int i = 0; i < 3; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -96,11 +94,8 @@ Scalar TriMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 template <typename Scalar>
 bool TriMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
 {
-    if((ele_idx<0) || (ele_idx>=this->ele_num_))
-    {
-        std::cerr<<"TriMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(ele_idx>=this->ele_num_)
+        throw PhysikaException("TriMesh element index out of range!");
     std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = (weights[0]>=0)&&(weights[1]>=0)&&(weights[2]>=0);
@@ -118,10 +113,7 @@ void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
 
 */
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"TriMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("TriMesh element index out of range!");
     Array< Vector<Scalar,2> > ele_vertices(3);
     for(unsigned int i = 0; i < 3; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -133,6 +125,12 @@ void TriMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<Sc
     weights.clear();
     for(unsigned int i = 0; i <3; ++i)
         weights.push_back(result[i]);
+}
+
+template <typename Scalar>
+void TriMesh<Scalar>::generateBoundaryInformation()
+{
+    throw PhysikaException("Not implemented!");
 }
 
 //explicit instantitation

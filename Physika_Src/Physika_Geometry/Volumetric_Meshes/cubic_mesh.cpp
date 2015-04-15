@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Arrays/array.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
@@ -79,10 +80,7 @@ template <typename Scalar>
 Scalar CubicMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"CubicMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("CubicMesh element index out of range!");
     Array< Vector<Scalar,3> > ele_vertices(8);
     for(unsigned int i = 0; i < 8; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -97,10 +95,7 @@ template <typename Scalar>
 bool CubicMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"CubicMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("CubicMesh element index out of range!");
     std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = true;
@@ -122,10 +117,7 @@ void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<
  *Dz1 =
  */
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"CubicMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("CubicMesh element index out of range!");
     Array< Vector<Scalar,3> > ele_vertices(8);
     for(unsigned int i = 0; i < 8; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -145,6 +137,12 @@ void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<
     weights[5] = Dx0 * Dy1 * Dz0;
     weights[6] = Dx0 * Dy0 * Dz0;
     weights[7] = Dx1 * Dy0 * Dz0;
+}
+
+template <typename Scalar>
+void CubicMesh<Scalar>::generateBoundaryInformation()
+{
+    throw PhysikaException("Not implemented!");
 }
 
 //explicit instantitation

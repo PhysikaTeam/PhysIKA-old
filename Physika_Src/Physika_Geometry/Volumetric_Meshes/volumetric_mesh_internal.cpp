@@ -71,13 +71,11 @@ const vector<unsigned int>& Region::elements() const
 
 void Region::addElement(unsigned int new_ele_idx)
 {
-    PHYSIKA_ASSERT(new_ele_idx>=0);
     elements_.push_back(new_ele_idx);
 }
 
 void Region::removeElement(unsigned int ele_idx)
 {
-    PHYSIKA_ASSERT(ele_idx>=0);
     int local_idx = this->elementLocalIndex(ele_idx);
     if(local_idx>=0)
         removeElementAtIndex(local_idx);
@@ -87,7 +85,6 @@ void Region::removeElement(unsigned int ele_idx)
 
 void Region::removeElementAtIndex(unsigned int ele_idx_in_region)
 {
-    PHYSIKA_ASSERT(ele_idx_in_region>=0);
     PHYSIKA_ASSERT(ele_idx_in_region<elements_.size());
     vector<unsigned int>::iterator iter = elements_.begin() + ele_idx_in_region;
     elements_.erase(iter);
@@ -95,7 +92,6 @@ void Region::removeElementAtIndex(unsigned int ele_idx_in_region)
 
 int Region::elementLocalIndex(unsigned int ele_idx)
 {
-    PHYSIKA_ASSERT(ele_idx>=0);
     vector<unsigned int>::iterator iter = find(elements_.begin(),elements_.end(),ele_idx);
     if(iter==elements_.end())
         return -1;

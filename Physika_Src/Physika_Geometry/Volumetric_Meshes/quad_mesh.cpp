@@ -15,6 +15,7 @@
 #include <iostream>
 #include "Physika_Core/Arrays/array.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
@@ -80,10 +81,7 @@ template <typename Scalar>
 Scalar QuadMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"QuadMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("QuadMesh element index out of range!");
     Array< Vector<Scalar,2> > ele_vertices(4);
     for(unsigned int i = 0; i < 4; ++i)
 	ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -98,10 +96,7 @@ template <typename Scalar>
 bool QuadMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,2> &pos) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"QuadMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("QuadMesh element index out of range!");
     std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = (weights[0]>=0) && (weights[1]>=0) && (weights[2]>=0 && (weights[3]>=0));
@@ -119,10 +114,7 @@ void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<S
  *
  */
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"QuadMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("QuadMesh element index out of range!");
     Array< Vector<Scalar,2> > ele_vertices(4);
     for(unsigned int i = 0; i < 4; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -137,6 +129,12 @@ void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<S
     weights[1] = Dx0 * Dy1;
     weights[2] = Dx0 * Dy0;
     weights[3] = Dx1 * Dy0;
+}
+
+template <typename Scalar>
+void QuadMesh<Scalar>::generateBoundaryInformation()
+{
+    throw PhysikaException("Not implemented!");
 }
 
 //explicit instantitation

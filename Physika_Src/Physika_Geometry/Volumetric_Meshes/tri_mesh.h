@@ -39,6 +39,7 @@ public:
     bool containPoint(unsigned int ele_idx, const Vector<Scalar,2> &pos) const;
     void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,2> &pos, std::vector<Scalar> &weights) const;
 protected:
+    virtual void generateBoundaryInformation();
 };
 
 }  //end of namespace Physika
