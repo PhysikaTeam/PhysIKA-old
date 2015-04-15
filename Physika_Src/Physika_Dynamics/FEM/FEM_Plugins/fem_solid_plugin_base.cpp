@@ -1,6 +1,6 @@
 /*
- * @file mpm_solid_plugin_base.cpp 
- * @brief base class of plugins for drivers derived from MPMSolidBase.
+ * @file fem_plugin_base.cpp 
+ * @brief base class of plugins for FEMSolid drivers.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -12,44 +12,44 @@
  *
  */
 
-#include <cstdlib>
-#include <iostream>
 #include "Physika_Core/Utilities/physika_exception.h"
-#include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
+#include "Physika_Dynamics/Driver/driver_base.h"
+#include "Physika_Dynamics/FEM/fem_solid.h"
+#include "Physika_Dynamics/FEM/FEM_Plugins/fem_solid_plugin_base.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-MPMSolidPluginBase<Scalar,Dim>::MPMSolidPluginBase()
+FEMSolidPluginBase<Scalar,Dim>::FEMSolidPluginBase()
     :DriverPluginBase<Scalar>()
 {
 }
 
 template <typename Scalar, int Dim>
-MPMSolidPluginBase<Scalar,Dim>::~MPMSolidPluginBase()
+FEMSolidPluginBase<Scalar,Dim>::~FEMSolidPluginBase()
 {
 }
 
 template <typename Scalar, int Dim>
-MPMSolidBase<Scalar,Dim>* MPMSolidPluginBase<Scalar,Dim>::driver()
+FEMSolid<Scalar,Dim>* FEMSolidPluginBase<Scalar,Dim>::driver()
 {
-    return dynamic_cast<MPMSolidBase<Scalar,Dim>*>(this->driver_);
+    return dynamic_cast<FEMSolid<Scalar,Dim>*>(this->driver_);
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidPluginBase<Scalar,Dim>::setDriver(DriverBase<Scalar>* driver)
+void FEMSolidPluginBase<Scalar,Dim>::setDriver(DriverBase<Scalar> *driver)
 {
-    if(driver==NULL)
+    if(driver == NULL)
         throw PhysikaException("Error: NULL driver pointer provided to driver plugin!");
-    if(dynamic_cast<MPMSolidBase<Scalar,Dim>*>(driver)==NULL)
+    if(dynamic_cast<FEMSolid<Scalar,Dim>*>(driver) == NULL)
         throw PhysikaException("Wrong type of driver specified!");
     this->driver_ = driver;
 }
 
 //explicit instantiations
-template class MPMSolidPluginBase<float,2>;
-template class MPMSolidPluginBase<float,3>;
-template class MPMSolidPluginBase<double,2>;
-template class MPMSolidPluginBase<double,3>;
+template class FEMSolidPluginBase<float,2>;
+template class FEMSolidPluginBase<float,3>;
+template class FEMSolidPluginBase<double,2>;
+template class FEMSolidPluginBase<double,3>;
 
 }  //end of namespace Physika

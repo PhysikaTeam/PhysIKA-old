@@ -22,6 +22,7 @@
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/fem_solid_force_model.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/tri_tet_mesh_fem_solid_force_model.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/quad_cubic_mesh_fem_solid_force_model.h"
+#include "Physika_Dynamics/FEM/FEM_Plugins/fem_solid_plugin_base.h"
 #include "Physika_Dynamics/FEM/fem_solid.h"
 
 namespace Physika{
@@ -68,13 +69,20 @@ void FEMSolid<Scalar,Dim>::printConfigFileFormat()
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::initSimulationData()
-{//TO DO
+{//DO NOTHING FOR NOW
 }
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::advanceStep(Scalar dt)
 {
     //plugin operation, begin time step
+    FEMSolidPluginBase<Scalar,Dim> *plugin = NULL;
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<FEMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onBeginTimeStep(this->time_,dt);
+    }
 
     switch(this->integration_method_)
     {
@@ -94,6 +102,12 @@ void FEMSolid<Scalar,Dim>::advanceStep(Scalar dt)
     this->time_ += dt;
 
     //plugin operation, end time step
+    for(unsigned int i = 0; i < this->plugins_.size(); ++i)
+    {
+        plugin = dynamic_cast<FEMSolidPluginBase<Scalar,Dim>*>(this->plugins_[i]);
+        if(plugin)
+            plugin->onEndTimeStep(this->time_,dt);
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -123,7 +137,19 @@ void FEMSolid<Scalar,Dim>::read(const std::string &file_name)
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::addPlugin(DriverPluginBase<Scalar> *plugin)
-{//TO DO
+{
+    if(plugin == NULL)
+    {
+        std::cerr<<"Warning: NULL plugin provided, operation ignored!\n";
+        return;
+    }
+    if(dynamic_cast<FEMSolidPluginBase<Scalar,Dim>*>(plugin) == NULL)
+    {
+        std::cerr<<"Warning: Wrong type of plugin provide, operation ignored!\n";
+        return;
+    }
+    plugin->setDriver(this);
+    this->plugins_.push_back(plugin);
 }
 
 template <typename Scalar, int Dim>
@@ -239,6 +265,7 @@ void FEMSolid<Scalar,Dim>::addMaterial(const ConstitutiveModel<Scalar,Dim> &mate
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::advanceStepForwardEuler(Scalar dt)
 {
+
 }
 
 template <typename Scalar, int Dim>

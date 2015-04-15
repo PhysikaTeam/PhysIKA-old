@@ -93,7 +93,6 @@ public:
     Scalar elementDensity(unsigned int ele_idx) const;
 protected:
     void applyGravity(Scalar dt);
-    virtual void applyVertexExternalForce(Scalar dt);
     virtual void synchronizeDataWithSimulationMesh();  //synchronize related data when simulation mesh is changed (dimension of displacement vector, etc.)
     void generateMassMatrix();
 protected:

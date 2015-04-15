@@ -63,7 +63,9 @@ public:
     //boundary information
     bool isBoundaryElement(unsigned int ele_idx);
     bool isBoundaryVertex(unsigned int vert_idx);
-    bool isBoundaryFace(std::vector<unsigned int> face);
+    //given a vector of vertices representing a face (vertex order doesn't matter), check if it's a boundary
+    //in 2D the face is actually edge
+    bool isBoundaryFace(std::vector<unsigned int> face); 
     void boundaryElements(std::vector<unsigned int> &boundary_elements);
     void boundaryVertices(std::vector<unsigned int> &boundary_vertices);
     
@@ -120,6 +122,7 @@ protected:
     //exterior boundary information
     std::set<unsigned int> boundary_vertices_;
     std::set<unsigned int> boundary_elements_;
+    //a set of vertex vectors, each vector represents the unoriented face of the elements
     std::set<std::vector<unsigned int>, VolumetricMeshInternal::CompareVector<unsigned int> > boundary_faces_;
 };
 

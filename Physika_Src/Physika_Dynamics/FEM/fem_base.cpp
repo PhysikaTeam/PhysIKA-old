@@ -320,30 +320,6 @@ void FEMBase<Scalar,Dim>::applyGravity(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void FEMBase<Scalar,Dim>::applyVertexExternalForce(Scalar dt)
-{
-    unsigned int vert_num = numSimVertices();
-    if(mass_matrix_type_ == CONSISTENT_MASS)
-    {
-        throw PhysikaException("Not implemented!");
-    }
-    else if(mass_matrix_type_ == LUMPED_MASS)
-    {
-        SparseMatrixIterator<Scalar> iter(mass_matrix_);
-        while(iter)
-        {
-            unsigned int row = iter.row();
-            unsigned int col = iter.col();
-            PHYSIKA_ASSERT(row == col);
-            vertex_velocities_[row] += vertex_external_forces_[row]/iter.value()*dt;
-            ++iter;
-        }
-    }
-    else
-        throw PhysikaException("Unknown mass matrix type!");
-}
-
-template <typename Scalar, int Dim>
 void FEMBase<Scalar,Dim>::synchronizeDataWithSimulationMesh()
 {
     PHYSIKA_ASSERT(simulation_mesh_);

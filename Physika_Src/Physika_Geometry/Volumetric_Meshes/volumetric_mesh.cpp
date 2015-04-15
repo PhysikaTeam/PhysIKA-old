@@ -237,7 +237,7 @@ template <typename Scalar, int Dim>
 bool VolumetricMesh<Scalar, Dim>::isBoundaryFace(std::vector<unsigned int> face)
 {
     std::sort(face.begin(), face.end());
-    if (boundary_vertices_.empty())
+    if (boundary_faces_.empty())
         generateBoundaryInformation();
     if (boundary_faces_.find(face) != boundary_faces_.end())
         return true;
