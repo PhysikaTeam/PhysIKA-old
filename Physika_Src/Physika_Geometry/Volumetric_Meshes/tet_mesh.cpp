@@ -176,7 +176,6 @@ void TetMesh<Scalar>::generateBoundaryInformation()
     (this->boundary_elements_).clear();
     (this->boundary_vertices_).clear();
     typedef std::set<std::vector<unsigned int>,VolumetricMeshInternal::CompareVector<unsigned int> > FaceSet;
-    FaceSet boundary_faces;
     FaceSet::iterator iter;
     std::vector<unsigned int> face(3);
     //traverse the elements, insert the faces into a set, if a face is shared by
@@ -191,35 +190,35 @@ void TetMesh<Scalar>::generateBoundaryInformation()
         //face 012
         face[0] = vert_idx0; face[1] = vert_idx1; face[2] = vert_idx2;
         std::sort(face.begin(),face.end());
-        iter = boundary_faces.find(face);
-        if(iter == boundary_faces.end())
-            boundary_faces.insert(face);
+        iter = boundary_faces_.find(face);
+        if(iter == boundary_faces_.end())
+            boundary_faces_.insert(face);
         else 
-            boundary_faces.erase(iter);
+            boundary_faces_.erase(iter);
         //face 013
         face[0] = vert_idx0; face[1] = vert_idx1; face[2] = vert_idx3;
         std::sort(face.begin(),face.end());
-        iter = boundary_faces.find(face);
-        if(iter == boundary_faces.end())
-            boundary_faces.insert(face);
+        iter = boundary_faces_.find(face);
+        if(iter == boundary_faces_.end())
+            boundary_faces_.insert(face);
         else 
-            boundary_faces.erase(iter);
+            boundary_faces_.erase(iter);
         //face 023
         face[0] = vert_idx0; face[1] = vert_idx2; face[2] = vert_idx3;
         std::sort(face.begin(),face.end());
-        iter = boundary_faces.find(face);
-        if(iter == boundary_faces.end())
-            boundary_faces.insert(face);
+        iter = boundary_faces_.find(face);
+        if(iter == boundary_faces_.end())
+            boundary_faces_.insert(face);
         else 
-            boundary_faces.erase(iter);
+            boundary_faces_.erase(iter);
         //face 123
         face[0] = vert_idx1; face[1] = vert_idx2; face[2] = vert_idx3;
         std::sort(face.begin(),face.end());
-        iter = boundary_faces.find(face);
-        if(iter == boundary_faces.end())
-            boundary_faces.insert(face);
+        iter = boundary_faces_.find(face);
+        if(iter == boundary_faces_.end())
+            boundary_faces_.insert(face);
         else 
-            boundary_faces.erase(iter);
+            boundary_faces_.erase(iter);
     }
     //now traverse the elements again, if the element has any boudnary face, it is
     //a boundary element, and the corresponding vertices of the face are boundary vertices
@@ -232,8 +231,8 @@ void TetMesh<Scalar>::generateBoundaryInformation()
         //face 012
         face[0] = vert_idx0; face[1] = vert_idx1; face[2] = vert_idx2;
         std::sort(face.begin(),face.end());
-        iter = boundary_faces.find(face);
-        if(iter != boundary_faces.end())
+        iter = boundary_faces_.find(face);
+        if(iter != boundary_faces_.end())
         {
             (this->boundary_elements_).insert(ele_idx);
             for(unsigned int i = 0; i < face.size(); ++i)
@@ -242,8 +241,8 @@ void TetMesh<Scalar>::generateBoundaryInformation()
         //face 013
         face[0] = vert_idx0; face[1] = vert_idx1; face[2] = vert_idx3;
         std::sort(face.begin(),face.end());
-        iter = boundary_faces.find(face);
-        if(iter != boundary_faces.end())
+        iter = boundary_faces_.find(face);
+        if(iter != boundary_faces_.end())
         {
             (this->boundary_elements_).insert(ele_idx);
             for(unsigned int i = 0; i < face.size(); ++i)
@@ -252,8 +251,8 @@ void TetMesh<Scalar>::generateBoundaryInformation()
         //face 023
         face[0] = vert_idx0; face[1] = vert_idx2; face[2] = vert_idx3;
         std::sort(face.begin(),face.end());
-        iter = boundary_faces.find(face);
-        if(iter != boundary_faces.end())
+        iter = boundary_faces_.find(face);
+        if(iter != boundary_faces_.end())
         {
             (this->boundary_elements_).insert(ele_idx);
             for(unsigned int i = 0; i < face.size(); ++i)
@@ -262,8 +261,8 @@ void TetMesh<Scalar>::generateBoundaryInformation()
         //face 123
         face[0] = vert_idx1; face[1] = vert_idx2; face[2] = vert_idx3;
         std::sort(face.begin(),face.end());
-        iter = boundary_faces.find(face);
-        if(iter != boundary_faces.end())
+        iter = boundary_faces_.find(face);
+        if(iter != boundary_faces_.end())
         {
             (this->boundary_elements_).insert(ele_idx);
             for(unsigned int i = 0; i < face.size(); ++i)

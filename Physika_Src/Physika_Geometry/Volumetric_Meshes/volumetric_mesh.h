@@ -63,6 +63,7 @@ public:
     //boundary information
     bool isBoundaryElement(unsigned int ele_idx);
     bool isBoundaryVertex(unsigned int vert_idx);
+    bool isBoundaryFace(std::vector<unsigned int> face);
     void boundaryElements(std::vector<unsigned int> &boundary_elements);
     void boundaryVertices(std::vector<unsigned int> &boundary_vertices);
     
@@ -119,6 +120,7 @@ protected:
     //exterior boundary information
     std::set<unsigned int> boundary_vertices_;
     std::set<unsigned int> boundary_elements_;
+    std::set<std::vector<unsigned int>, VolumetricMeshInternal::CompareVector<unsigned int> > boundary_faces_;
 };
 
 }  //end of namespace Physika
