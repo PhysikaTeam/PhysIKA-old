@@ -16,9 +16,11 @@
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
+#include "Physika_Core/Matrices/sparse_matrix_iterator.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
+#include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/fem_solid_force_model.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/tri_tet_mesh_fem_solid_force_model.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/quad_cubic_mesh_fem_solid_force_model.h"
@@ -53,6 +55,7 @@ FEMSolid<Scalar,Dim>::~FEMSolid()
 {
     clearMaterial();
     clearFEMSolidForceModel();
+    clearKinematicObjects();
 }
 
 template <typename Scalar, int Dim>
@@ -108,13 +111,6 @@ void FEMSolid<Scalar,Dim>::advanceStep(Scalar dt)
         if(plugin)
             plugin->onEndTimeStep(this->time_,dt);
     }
-}
-
-template <typename Scalar, int Dim>
-Scalar FEMSolid<Scalar,Dim>::computeTimeStep()
-{
-//TO DO
-    return 0;
 }
 
 template <typename Scalar, int Dim>
@@ -246,6 +242,49 @@ void FEMSolid<Scalar,Dim>::setTimeSteppingMethod(TimeSteppingMethod method)
 }
 
 template <typename Scalar, int Dim>
+unsigned int FEMSolid<Scalar,Dim>::kinematicObjectNum() const
+{
+    return collidable_objects_.size();
+}
+    
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::addKinematicObject(const CollidableObject<Scalar,Dim> &object)
+{
+    CollidableObject<Scalar,Dim> *new_object = object.clone();
+    collidable_objects_.push_back(new_object);
+}
+        
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::removeKinematicObject(unsigned int object_idx)
+{
+    if(object_idx >= collidable_objects_.size())
+        std::cerr<<"Warning: kinematic object index out of range, operation ignored!\n";
+    else
+    {
+        typename std::vector<CollidableObject<Scalar,Dim>*>::iterator iter = collidable_objects_.begin() + object_idx;
+        collidable_objects_.erase(iter);
+    }
+}
+        
+template <typename Scalar, int Dim>
+const CollidableObject<Scalar,Dim>& FEMSolid<Scalar,Dim>::kinematicObject(unsigned int object_idx) const
+{
+    if(object_idx >= collidable_objects_.size())
+        throw PhysikaException("kinematic object index out of range!");
+    PHYSIKA_ASSERT(collidable_objects_[object_idx]);
+    return *collidable_objects_[object_idx];
+}
+        
+template <typename Scalar, int Dim>
+CollidableObject<Scalar,Dim>& FEMSolid<Scalar,Dim>::kinematicObject(unsigned int object_idx)
+{
+    if(object_idx >= collidable_objects_.size())
+        throw PhysikaException("kinematic object index out of range!");
+    PHYSIKA_ASSERT(collidable_objects_[object_idx]);
+    return *collidable_objects_[object_idx];
+}
+
+template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::clearMaterial()
 {
     for(unsigned int i = 0 ; i < constitutive_model_.size(); ++i)
@@ -265,7 +304,43 @@ void FEMSolid<Scalar,Dim>::addMaterial(const ConstitutiveModel<Scalar,Dim> &mate
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::advanceStepForwardEuler(Scalar dt)
 {
-
+    if(this->mass_matrix_type_ == FEMBase<Scalar,Dim>::CONSISTENT_MASS)
+    {
+        //using consistent matrix requires solving a linear system
+        throw PhysikaException("Not implemented!");
+    }
+    else if(this->mass_matrix_type_ == FEMBase<Scalar,Dim>::LUMPED_MASS)
+    {
+        unsigned int vert_num = this->numSimVertices();
+        //first compute internal forces
+        std::vector<Vector<Scalar,Dim> > internal_force;
+        PHYSIKA_ASSERT(force_model_);
+        std::vector<Vector<Scalar,Dim> > vertex_cur_pos(vert_num);
+        for(unsigned int i = 0; i < vert_num; ++i)
+            vertex_cur_pos[i] = this->vertexCurrentPosition(i);
+        force_model_->computeGlobalInternalForces(vertex_cur_pos,internal_force);
+        //now apply internal forces and external forces
+        SparseMatrixIterator<Scalar> mat_iter(this->mass_matrix_);
+        while(mat_iter)
+        {
+            unsigned int row = mat_iter.row();
+            unsigned int col = mat_iter.col();
+            PHYSIKA_ASSERT(row == col);
+            Scalar vert_mass =mat_iter.value();
+            (this->vertex_velocities_)[row] += internal_force[row]/vert_mass*dt;//internal force
+            (this->vertex_velocities_)[row] += (this->vertex_external_forces_)[row]/vert_mass*dt;//external force
+            ++mat_iter;
+        }
+        //apply gravity
+        this->applyGravity(dt);
+        //update vertex positions with the new velocities
+        for(unsigned int i = 0; i < vert_num; ++i)
+            (this->vertex_displacements_)[i] += (this->vertex_velocities_)[i]*dt;
+        //after update the vertex positions, resolve the contact with kinematic objects in scene
+        resolveContactWithKinematicObjects();
+    }
+    else
+        PHYSIKA_ERROR("Unknown mass matrix type!");
 }
 
 template <typename Scalar, int Dim>
@@ -304,6 +379,21 @@ void FEMSolid<Scalar,Dim>::clearFEMSolidForceModel()
 {
     if(force_model_)
         delete force_model_;
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::clearKinematicObjects()
+{
+    //delete the kinematic objects
+    for(unsigned int i = 0; i < collidable_objects_.size(); ++i)
+        if(collidable_objects_[i])
+            delete collidable_objects_[i];
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::resolveContactWithKinematicObjects()
+{
+    //resolve contact with the kinematic objects in scene
 }
 
 //explicit instantiations

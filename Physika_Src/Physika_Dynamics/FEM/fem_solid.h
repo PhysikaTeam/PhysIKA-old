@@ -24,6 +24,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim> class ConstitutiveModel;
 template <typename Scalar, int Dim> class FEMSolidForceModel;
+template<typename Scalar,int Dim> class CollidableObject;
 
 /*
  * FEM driver for solids, not necessarily homogeneous:
@@ -50,7 +51,6 @@ public:
     void printConfigFileFormat();
     void initSimulationData();
     void advanceStep(Scalar dt);
-    Scalar computeTimeStep();
     bool withRestartSupport() const;
     void write(const std::string &file_name);
     void read(const std::string &file_name);
@@ -68,6 +68,14 @@ public:
     ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx);
 
     void setTimeSteppingMethod(TimeSteppingMethod method);
+
+    //manage the kinematic collidable objects in scene
+    unsigned int kinematicObjectNum() const;
+    void addKinematicObject(const CollidableObject<Scalar,Dim> &object);
+    void removeKinematicObject(unsigned int object_idx);
+    const CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx) const;
+    CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx);
+
 protected:
     void clearMaterial(); //clear current material
     void addMaterial(const ConstitutiveModel<Scalar,Dim> &material);
@@ -76,10 +84,13 @@ protected:
     virtual void synchronizeDataWithSimulationMesh();
     void createFEMSolidForceModel();
     void clearFEMSolidForceModel();
+    void clearKinematicObjects();
+    void resolveContactWithKinematicObjects();
 protected:
     std::vector<ConstitutiveModel<Scalar,Dim> *> constitutive_model_;
     TimeSteppingMethod integration_method_;
     FEMSolidForceModel<Scalar,Dim> *force_model_;
+    std::vector<CollidableObject<Scalar,Dim>*> collidable_objects_; //the kinematic collidable objects in scene
 };
 
 }  //end of namespace Physika

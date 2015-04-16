@@ -29,7 +29,7 @@ const double DOUBLE_EPSILON = std::numeric_limits<double>::epsilon();
 ///////////////////////////////functions/////////////////////////////////////////////////
 /*
  * Function List: Please update the list everytime you add/remove a function!!!
- * abs(); sqrt(); max(); min(); isEqual();
+ * abs(); sqrt(); cbrt(); max(); min(); isEqual();
  */
 
 /*
@@ -61,6 +61,33 @@ template <typename Scalar>
 inline double sqrt(Scalar value)
 {
     return std::sqrt(static_cast<double>(value));
+}
+
+inline float cbrt(float value)
+{
+    float base = value > 0.0f ? value : -value;
+    float sign = value > 0.0f ? 1.0f : -1.0f;
+    return sign*std::pow(base,1.0f/3.0f);
+}
+
+inline double cbrt(double value)
+{
+    double base = value > 0.0 ? value : -value;
+    double sign = value > 0.0 ? 1.0 : -1.0;
+    return sign*std::pow(base,1.0/3.0);
+}
+
+inline long double cbrt(long double value)
+{
+    long double base = value > 0.0 ? value : -value;
+    long double sign = value > 0.0 ? 1.0 : -1.0;
+    return sign*std::pow(base,1.0/3.0);
+}
+
+template <typename Scalar>
+inline double cbrt(Scalar value)
+{
+    return cbrt(static_cast<double>(value));
 }
 
 #undef max //undefine the max in WinDef.h

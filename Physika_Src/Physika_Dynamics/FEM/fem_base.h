@@ -56,7 +56,7 @@ public:
     virtual void printConfigFileFormat()=0;
     virtual void initSimulationData()=0;
     virtual void advanceStep(Scalar dt)=0;
-    virtual Scalar computeTimeStep()=0;
+    virtual Scalar computeTimeStep();
     virtual bool withRestartSupport() const=0;
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
@@ -65,6 +65,10 @@ public:
     //getters && setters
     Scalar gravity() const;
     void setGravity(Scalar gravity);
+    Scalar cflConstant() const;
+    void setCFLConstant(Scalar cfl);
+    Scalar soundSpeed() const;
+    void setSoundSpeed(Scalar sound_speed);
     void loadSimulationMesh(const std::string &file_name); //load the simulation mesh from file
     void setSimulationMesh(const VolumetricMesh<Scalar,Dim> &mesh);  //set the simulation mesh via an external mesh
     const VolumetricMesh<Scalar,Dim>& simulationMesh() const;
@@ -95,6 +99,8 @@ protected:
     void applyGravity(Scalar dt);
     virtual void synchronizeDataWithSimulationMesh();  //synchronize related data when simulation mesh is changed (dimension of displacement vector, etc.)
     void generateMassMatrix();
+    Scalar maxVertexVelocityNorm() const;
+    Scalar minElementCharacteristicLength() const;
 protected:
     VolumetricMesh<Scalar,Dim> *simulation_mesh_;
     MassMatrixType mass_matrix_type_;
@@ -105,6 +111,9 @@ protected:
     std::vector<Vector<Scalar,Dim> > vertex_external_forces_;
     std::vector<Scalar> material_density_;  //density: homogeneous, element-wise, or region-wise
     Scalar gravity_; //magnitude of gravity, along negative y direction
+    //time step computation with CFL condition
+    Scalar cfl_num_;
+    Scalar sound_speed_; //the sound speed in material
 };
 
 }  //end of namespace Physika

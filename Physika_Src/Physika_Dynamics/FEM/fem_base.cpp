@@ -12,9 +12,11 @@
  *
  */
 
-#include "Physika_Core/Matrices/sparse_matrix_iterator.h"
+#include <limits>
+#include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh_internal.h"
@@ -29,14 +31,14 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 FEMBase<Scalar,Dim>::FEMBase()
-    :DriverBase<Scalar>(),simulation_mesh_(NULL),mass_matrix_type_(FEMBase<Scalar,Dim>::LUMPED_MASS),gravity_(9.8)
+    :DriverBase<Scalar>(),simulation_mesh_(NULL),mass_matrix_type_(FEMBase<Scalar,Dim>::LUMPED_MASS),gravity_(9.8),cfl_num_(0.5),sound_speed_(340.0)
 {
 }
 
 template <typename Scalar, int Dim>
 FEMBase<Scalar,Dim>::FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file),
-     simulation_mesh_(NULL),mass_matrix_type_(FEMBase<Scalar,Dim>::LUMPED_MASS),gravity_(9.8)
+     simulation_mesh_(NULL),mass_matrix_type_(FEMBase<Scalar,Dim>::LUMPED_MASS),gravity_(9.8),cfl_num_(0.5),sound_speed_(340.0)
 {
 }
 
@@ -44,7 +46,7 @@ template <typename Scalar, int Dim>
 FEMBase<Scalar,Dim>::FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                              const VolumetricMesh<Scalar,Dim> &mesh)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file),
-     simulation_mesh_(NULL),mass_matrix_type_(FEMBase<Scalar,Dim>::LUMPED_MASS),gravity_(9.8)
+     simulation_mesh_(NULL),mass_matrix_type_(FEMBase<Scalar,Dim>::LUMPED_MASS),gravity_(9.8),cfl_num_(0.5),sound_speed_(340.0)
 {
     setSimulationMesh(mesh);
 }
@@ -53,7 +55,7 @@ template <typename Scalar, int Dim>
 FEMBase<Scalar,Dim>::FEMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                              const VolumetricMesh<Scalar,Dim> &mesh, typename FEMBase<Scalar,Dim>::MassMatrixType mass_matrix_type)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file),
-     simulation_mesh_(NULL),mass_matrix_type_(mass_matrix_type),gravity_(9.8)
+     simulation_mesh_(NULL),mass_matrix_type_(mass_matrix_type),gravity_(9.8),cfl_num_(0.5),sound_speed_(340.0)
 {
     setSimulationMesh(mesh);
 }
@@ -66,6 +68,19 @@ FEMBase<Scalar,Dim>::~FEMBase()
 }
 
 template <typename Scalar, int Dim>
+Scalar FEMBase<Scalar,Dim>::computeTimeStep()
+{
+    //dt = cfl_num*L/(c+v_max), where L is the minimum characteristic length of element 
+    //we approximate the chracteristic length of each element as square root of element volume in 2D and
+    //cube root of element volume in 3D
+    Scalar chracteristic_length = minElementCharacteristicLength();
+    Scalar max_vel = maxVertexVelocityNorm();
+    this->dt_ = (cfl_num_*chracteristic_length)/(sound_speed_+max_vel);
+    this->dt_ = this->dt_ > this->max_dt_ ? this->max_dt_ : this->dt_;
+    return this->dt_;
+}
+
+template <typename Scalar, int Dim>
 Scalar FEMBase<Scalar,Dim>::gravity() const
 {
     return gravity_;
@@ -75,6 +90,42 @@ template <typename Scalar, int Dim>
 void FEMBase<Scalar,Dim>::setGravity(Scalar gravity)
 {
     gravity_ = gravity;
+}
+
+template <typename Scalar, int Dim>
+Scalar FEMBase<Scalar,Dim>::cflConstant() const
+{
+    return cfl_num_;
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setCFLConstant(Scalar cfl)
+{
+    if(cfl<0)
+    {
+        std::cerr<<"Warning: Invalid CFL constant specified, use default value (0.5) instead!\n";
+        cfl_num_ = 0.5;
+    }
+    else
+        cfl_num_ = cfl;
+}
+
+template <typename Scalar, int Dim>
+Scalar FEMBase<Scalar,Dim>::soundSpeed() const
+{
+    return sound_speed_;
+}
+
+template <typename Scalar, int Dim>
+void FEMBase<Scalar,Dim>::setSoundSpeed(Scalar sound_speed)
+{
+    if(sound_speed<0)
+    {
+        std::cerr<<"Warning: Negative sound speed specified, use its absolute value instead!\n";
+        sound_speed_ = -sound_speed;
+    }
+    else
+        sound_speed_ = sound_speed;
 }
 
 template <typename Scalar, int Dim>
@@ -371,6 +422,93 @@ void FEMBase<Scalar,Dim>::generateMassMatrix()
     }
     else
         throw PhysikaException("Unknown mass matrix type!");
+}
+
+template <typename Scalar, int Dim>
+Scalar FEMBase<Scalar,Dim>::maxVertexVelocityNorm() const
+{
+    Scalar max_norm_sqr = 0;
+    for(unsigned int i = 0; i < vertex_velocities_.size(); ++i)
+    {
+        Scalar vel_norm_sqr = vertex_velocities_[i].normSquared();
+        if(vel_norm_sqr > max_norm_sqr)
+            max_norm_sqr = vel_norm_sqr;
+    }
+    return sqrt(max_norm_sqr);
+}
+
+template <typename Scalar, int Dim>
+Scalar FEMBase<Scalar,Dim>::minElementCharacteristicLength() const
+{
+    PHYSIKA_ASSERT(simulation_mesh_);
+    unsigned int ele_num = simulation_mesh_->eleNum();
+    Scalar min_length = (std::numeric_limits<Scalar>::max)();
+    std::vector<Vector<Scalar,2> > ele_vert_pos_trait_2d;
+    std::vector<Vector<Scalar,3> > ele_vert_pos_trait_3d;
+    VolumetricMeshInternal::ElementType ele_type = simulation_mesh_->elementType();
+    for(unsigned int ele_idx = 0; ele_idx < ele_num; ++ele_idx)
+    {
+        unsigned int ele_vert_num = simulation_mesh_->eleVertNum();
+        ele_vert_pos_trait_2d.resize(ele_vert_num);
+        ele_vert_pos_trait_3d.resize(ele_vert_num);
+        for(unsigned int local_vert_idx = 0; local_vert_idx < ele_vert_num; ++local_vert_idx)
+        {
+            unsigned int global_vert_idx = simulation_mesh_->eleVertIndex(ele_idx,local_vert_idx);
+            Vector<Scalar,Dim> vert_pos = vertexCurrentPosition(global_vert_idx);
+            for(unsigned int i = 0; i < 2; ++i)
+            {
+                ele_vert_pos_trait_2d[local_vert_idx][i] = vert_pos[i];
+                ele_vert_pos_trait_3d[local_vert_idx][i] = vert_pos[i];
+            }
+            ele_vert_pos_trait_3d[local_vert_idx][2] = vert_pos[2];
+        }
+        //approximate the characteristic length of the element as the square/cube root of element volume
+        Scalar ele_length = min_length;
+        //assume vertices of elements are in correct order
+        switch(ele_type)
+        {
+        case VolumetricMeshInternal::TRI:
+        {
+            Vector<Scalar,2> b_minus_a = ele_vert_pos_trait_2d[1] - ele_vert_pos_trait_2d[0];
+            Vector<Scalar,2> c_minus_a = ele_vert_pos_trait_2d[2] - ele_vert_pos_trait_2d[0]; 
+            ele_length = abs(b_minus_a.cross(c_minus_a))/2.0;
+            ele_length = sqrt(ele_length);
+            break;
+        }
+        case VolumetricMeshInternal::TET:
+        {
+            Vector<Scalar,3> a_minus_d = ele_vert_pos_trait_3d[0] - ele_vert_pos_trait_3d[3];
+            Vector<Scalar,3> b_minus_d = ele_vert_pos_trait_3d[1] - ele_vert_pos_trait_3d[3];
+            Vector<Scalar,3> c_minus_d = ele_vert_pos_trait_3d[2] - ele_vert_pos_trait_3d[3]; 
+            ele_length = 1.0/6*abs(a_minus_d.dot(b_minus_d.cross(c_minus_d)));
+            ele_length = cbrt(ele_length);
+            break;
+        }
+        case VolumetricMeshInternal::QUAD:
+        {
+            Vector<Scalar,2> a_minus_d = ele_vert_pos_trait_2d[0] - ele_vert_pos_trait_2d[3];
+            Vector<Scalar,2> b_minus_d = ele_vert_pos_trait_2d[1] - ele_vert_pos_trait_2d[3];
+            Vector<Scalar,2> c_minus_d = ele_vert_pos_trait_2d[2] - ele_vert_pos_trait_2d[3]; 
+            ele_length = 1.0/2*abs((b_minus_d.cross(a_minus_d)) + (b_minus_d.cross(c_minus_d)));
+            ele_length = sqrt(ele_length);
+            break;
+        }
+        case VolumetricMeshInternal::CUBIC:
+        {
+            Vector<Scalar,3> fir_minus_0 = ele_vert_pos_trait_3d[1] - ele_vert_pos_trait_3d[0];
+            Vector<Scalar,3> thi_minus_0 = ele_vert_pos_trait_3d[3] - ele_vert_pos_trait_3d[0];
+            Vector<Scalar,3> fou_minus_0 = ele_vert_pos_trait_3d[4] - ele_vert_pos_trait_3d[0]; 
+            ele_length = 1.0 * (fir_minus_0.norm() * thi_minus_0.norm() * fou_minus_0.norm() ) ;   
+            ele_length = cbrt(ele_length);
+            break;
+        }
+        default:
+            PHYSIKA_ERROR("Unsupported element type!");
+            break;
+        }
+        min_length = ele_length < min_length ? ele_length : min_length;
+    }
+    return min_length;
 }
 
 //explicit instantiations
