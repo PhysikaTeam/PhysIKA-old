@@ -16,12 +16,12 @@
 #define PHYSIKA_DYNAMICS_MPM_MPM_PLUGINS_MPM_SOLID_PLUGIN_BASE_H_
 
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
-#include "Physika_Dynamics/Driver/driver_plugin_base.h"
+#include "Physika_Dynamics/MPM/MPM_Plugins/mpm_plugin_base.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-class MPMSolidPluginBase: public DriverPluginBase<Scalar>
+class MPMSolidPluginBase: public MPMPluginBase<Scalar,Dim>
 {
 public:
     MPMSolidPluginBase();

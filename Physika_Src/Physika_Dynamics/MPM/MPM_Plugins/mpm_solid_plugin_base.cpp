@@ -21,7 +21,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolidPluginBase<Scalar,Dim>::MPMSolidPluginBase()
-    :DriverPluginBase<Scalar>()
+    :MPMPluginBase<Scalar,Dim>()
 {
 }
 
