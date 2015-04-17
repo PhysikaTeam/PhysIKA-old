@@ -93,7 +93,7 @@ public:
     void setElementWiseDensity(unsigned int object_idx, const std::vector<Scalar> &density);
     Scalar elementDensity(unsigned int object_idx, unsigned int ele_idx) const;
 protected:
-    void applyGravity(unsigned int object_idx, Scalar dt);
+    virtual void applyGravity(unsigned int object_idx, Scalar dt);
     virtual void appendDataWithObject(); //append data associated with the newly added object
     virtual void removeDataWithObject(unsigned int object_idx);  //remove data associated with specific object
     void generateMassMatrix(unsigned int object_idx);

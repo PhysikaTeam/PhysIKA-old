@@ -289,6 +289,47 @@ CollidableObject<Scalar,Dim>& FEMSolid<Scalar,Dim>::kinematicObject(unsigned int
 }
 
 template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::setDirichletVertex(unsigned int object_idx, unsigned int vert_idx)
+{
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("Object index out of range!");
+    if(vert_idx >= this->numSimVertices(object_idx))
+        throw PhysikaException("Vertex index out of range!");
+    is_dirichlet_vertex_[object_idx][vert_idx] = 0x01;
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::setDirichletVertices(unsigned int object_idx, const std::vector<unsigned int> &vert_idx)
+{
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("Object index out of range!");
+    unsigned int invalid_vert = 0;
+    for(unsigned int i = 0; i < vert_idx.size(); ++i)
+    {
+        if(vert_idx[i] >= this->numSimVertices(object_idx))
+            ++invalid_vert;
+        else
+            is_dirichlet_vertex_[object_idx][vert_idx[i]] = 0x01;
+    }
+    if(invalid_vert >0)
+        std::cerr<<"Warning: "<<invalid_vert<<" invalid vertex index are ignored!\n";
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::applyGravity(unsigned int object_idx, Scalar dt)
+{
+    PHYSIKA_ASSERT(object_idx < this->objectNum());
+    unsigned int vert_num = this->numSimVertices(object_idx);
+    Vector<Scalar,Dim> gravity_vec(0);
+    gravity_vec[1] = -(this->gravity_); //along negative y direction
+    for(unsigned int i = 0; i < vert_num; ++i)
+    {
+        if(is_dirichlet_vertex_[object_idx][i] == 0x00)
+            this->vertex_velocities_[object_idx][i] += gravity_vec * dt;
+    }
+}
+
+template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::appendDataWithObject()
 {
     FEMBase<Scalar,Dim>::appendDataWithObject();
@@ -297,6 +338,9 @@ void FEMSolid<Scalar,Dim>::appendDataWithObject()
     force_model_.push_back(NULL);
     unsigned int last_obj_idx = this->objectNum() - 1;
     createFEMSolidForceModel(last_obj_idx);
+    unsigned int last_obj_vert_num = this->numSimVertices(last_obj_idx);
+    std::vector<unsigned char> dirichlet(last_obj_vert_num,0x00);
+    is_dirichlet_vertex_.push_back(dirichlet);
 }
 
 template <typename Scalar, int Dim>
@@ -308,6 +352,8 @@ void FEMSolid<Scalar,Dim>::removeDataWithObject(unsigned int object_idx)
     constitutive_model_.erase(iter1);
     typename std::vector<FEMSolidForceModel<Scalar,Dim>*>::iterator iter2 = force_model_.begin() + object_idx;
     force_model_.erase(iter2);
+    std::vector<std::vector<unsigned char> >::iterator iter3 = is_dirichlet_vertex_.begin() + object_idx;
+    is_dirichlet_vertex_.erase(iter3);
 }
 
 template <typename Scalar, int Dim>
@@ -368,8 +414,11 @@ void FEMSolid<Scalar,Dim>::advanceStepForwardEuler(Scalar dt)
                 unsigned int col = mat_iter.col();
                 PHYSIKA_ASSERT(row == col);
                 Scalar vert_mass =mat_iter.value();
-                (this->vertex_velocities_[obj_idx])[row] += internal_force[row]/vert_mass*dt;//internal force
-                (this->vertex_velocities_[obj_idx])[row] += (this->vertex_external_forces_[obj_idx])[row]/vert_mass*dt;//external force
+                if(is_dirichlet_vertex_[obj_idx][row] == 0x00) //apply forces if not a dirichlet vertex
+                {
+                    (this->vertex_velocities_[obj_idx])[row] += internal_force[row]/vert_mass*dt;//internal force
+                    (this->vertex_velocities_[obj_idx])[row] += (this->vertex_external_forces_[obj_idx])[row]/vert_mass*dt;//external force
+                }
                 ++mat_iter;
             }
             //apply gravity
@@ -418,6 +467,7 @@ void FEMSolid<Scalar,Dim>::clearAllFEMSolidForceModels()
     for(unsigned int i = 0; i < force_model_.size(); ++i)
         if(force_model_[i])
             delete force_model_[i];
+    force_model_.clear();
 }
 
 template <typename Scalar, int Dim>
@@ -426,6 +476,7 @@ void FEMSolid<Scalar,Dim>::clearFEMSolidForceModel(unsigned int object_idx)
     PHYSIKA_ASSERT(object_idx < this->objectNum());
     if(force_model_[object_idx])
         delete force_model_[object_idx];
+    force_model_[object_idx] = NULL;
 }
 
 template <typename Scalar, int Dim>
@@ -435,6 +486,7 @@ void FEMSolid<Scalar,Dim>::clearKinematicObjects()
     for(unsigned int i = 0; i < collidable_objects_.size(); ++i)
         if(collidable_objects_[i])
             delete collidable_objects_[i];
+    collidable_objects_.clear();
 }
 
 template <typename Scalar, int Dim>
@@ -449,6 +501,8 @@ void FEMSolid<Scalar,Dim>::resolveContactWithKinematicObjects(unsigned int objec
         {
             for(unsigned int vert_idx = 0; vert_idx < this->numSimVertices(obj_idx); ++vert_idx)
             {
+                if(is_dirichlet_vertex_[obj_idx][vert_idx])  //skip dirichlet vertices
+                    continue;
                 Vector<Scalar,Dim> vert_pos = this->vertexCurrentPosition(obj_idx,vert_idx);
                 //get closest kinematic object idx
                 Scalar closest_dist = (std::numeric_limits<Scalar>::max)();

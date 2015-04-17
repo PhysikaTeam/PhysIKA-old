@@ -73,8 +73,13 @@ public:
     void removeKinematicObject(unsigned int object_idx);
     const CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx) const;
     CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx);
+    
+    //vertices used as Dirichlet boundary condition, velocity is prescribed
+    void setDirichletVertex(unsigned int object_idx, unsigned int vert_idx);
+    void setDirichletVertices(unsigned int object_idx, const std::vector<unsigned int> &vert_idx);
 
 protected:
+    virtual void applyGravity(unsigned int object_idx, Scalar dt);
     virtual void appendDataWithObject();
     virtual void removeDataWithObject(unsigned int object_idx);
     void clearAllMaterials(); //clear materials of all objects
@@ -90,6 +95,7 @@ protected:
 protected:
     std::vector<std::vector<ConstitutiveModel<Scalar,Dim> *> > constitutive_model_;
     std::vector<FEMSolidForceModel<Scalar,Dim>*> force_model_;
+    std::vector<std::vector<unsigned char> > is_dirichlet_vertex_; //use one byte for each mesh vertex to indicate whether it's set as dirichlet boundary condition
     std::vector<CollidableObject<Scalar,Dim>*> collidable_objects_; //the kinematic collidable objects in scene
     TimeSteppingMethod integration_method_;
 };

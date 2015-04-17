@@ -540,6 +540,7 @@ void FEMBase<Scalar,Dim>::clearSimulationMesh()
     for(unsigned int i = 0; i < simulation_mesh_.size(); ++i)
         if(simulation_mesh_[i])
             delete simulation_mesh_[i];
+    simulation_mesh_.clear();
 }
 
 //explicit instantiations
