@@ -42,8 +42,6 @@ class FEMSolid: public FEMBase<Scalar,Dim>
 public:
     FEMSolid();
     FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
-    FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
-             const VolumetricMesh<Scalar,Dim> &mesh);
     ~FEMSolid();
 
     //virtual methods
@@ -58,14 +56,14 @@ public:
 
     //set&&get constitutive model (data are copied)
     //set***Material() needs to be called to update material if volumetric mesh is updated
-    unsigned int materialNum() const;
-    void setHomogeneousMaterial(const ConstitutiveModel<Scalar,Dim> &material);
-    //the number of materials must be no less than the number of regions on simulation mesh
-    void setRegionWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);
-    //the number of materials must be no less than the number of simulation elements
-    void setElementWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);  
-    const ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx) const;  
-    ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx);
+    unsigned int materialNum(unsigned int object_idx) const;
+    void setHomogeneousMaterial(unsigned int object_idx, const ConstitutiveModel<Scalar,Dim> &material);
+    //the number of materials must match the number of regions on simulation mesh
+    void setRegionWiseMaterial(unsigned int object_idx, const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);
+    //the number of materials must match the number of simulation elements
+    void setElementWiseMaterial(unsigned int object_idx, const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials);  
+    const ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int object_idx, unsigned int ele_idx) const;  
+    ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int object_idx, unsigned int ele_idx);
 
     void setTimeSteppingMethod(TimeSteppingMethod method);
 
@@ -77,20 +75,23 @@ public:
     CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx);
 
 protected:
-    void clearMaterial(); //clear current material
-    void addMaterial(const ConstitutiveModel<Scalar,Dim> &material);
+    virtual void appendDataWithObject();
+    virtual void removeDataWithObject(unsigned int object_idx);
+    void clearAllMaterials(); //clear materials of all objects
+    void clearMaterial(unsigned int object_idx); //clear material of a specific object
+    void addMaterial(unsigned int object_idx, const ConstitutiveModel<Scalar,Dim> &material);
     void advanceStepForwardEuler(Scalar dt);
     void advanceStepBackwardEuler(Scalar dt);
-    virtual void synchronizeDataWithSimulationMesh();
-    void createFEMSolidForceModel();
-    void clearFEMSolidForceModel();
+    void createFEMSolidForceModel(unsigned int object_idx);
+    void clearAllFEMSolidForceModels();
+    void clearFEMSolidForceModel(unsigned int object_idx);
     void clearKinematicObjects();
-    void resolveContactWithKinematicObjects();
+    void resolveContactWithKinematicObjects(unsigned int object_idx);
 protected:
-    std::vector<ConstitutiveModel<Scalar,Dim> *> constitutive_model_;
-    TimeSteppingMethod integration_method_;
-    FEMSolidForceModel<Scalar,Dim> *force_model_;
+    std::vector<std::vector<ConstitutiveModel<Scalar,Dim> *> > constitutive_model_;
+    std::vector<FEMSolidForceModel<Scalar,Dim>*> force_model_;
     std::vector<CollidableObject<Scalar,Dim>*> collidable_objects_; //the kinematic collidable objects in scene
+    TimeSteppingMethod integration_method_;
 };
 
 }  //end of namespace Physika

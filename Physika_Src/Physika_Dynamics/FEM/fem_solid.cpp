@@ -12,7 +12,7 @@
  *
  */
 
-#include <cstdlib>
+#include <limits>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
@@ -31,21 +31,13 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 FEMSolid<Scalar,Dim>::FEMSolid()
-    :FEMBase<Scalar,Dim>(),integration_method_(FORWARD_EULER),force_model_(NULL)
+    :FEMBase<Scalar,Dim>(),integration_method_(FORWARD_EULER)
 {
 }
 
 template <typename Scalar, int Dim>
 FEMSolid<Scalar,Dim>::FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :FEMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),
-     integration_method_(FORWARD_EULER),force_model_(NULL)
-{
-}
-
-template <typename Scalar, int Dim>
-FEMSolid<Scalar,Dim>::FEMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
-                               const VolumetricMesh<Scalar,Dim> &mesh)
-    :FEMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,mesh),
      integration_method_(FORWARD_EULER)
 {
 }
@@ -53,8 +45,8 @@ FEMSolid<Scalar,Dim>::FEMSolid(unsigned int start_frame, unsigned int end_frame,
 template <typename Scalar, int Dim>
 FEMSolid<Scalar,Dim>::~FEMSolid()
 {
-    clearMaterial();
-    clearFEMSolidForceModel();
+    clearAllMaterials();
+    clearAllFEMSolidForceModels();
     clearKinematicObjects();
 }
 
@@ -149,88 +141,100 @@ void FEMSolid<Scalar,Dim>::addPlugin(DriverPluginBase<Scalar> *plugin)
 }
 
 template <typename Scalar, int Dim>
-unsigned int FEMSolid<Scalar,Dim>::materialNum() const
+unsigned int FEMSolid<Scalar,Dim>::materialNum(unsigned int object_idx) const
 {
-    return constitutive_model_.size();
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("Object index out of range!");
+    return constitutive_model_[object_idx].size();
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::setHomogeneousMaterial(const ConstitutiveModel<Scalar,Dim> &material)
+void FEMSolid<Scalar,Dim>::setHomogeneousMaterial(unsigned int object_idx, const ConstitutiveModel<Scalar,Dim> &material)
 {
-    clearMaterial();
-    addMaterial(material);
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("Object index out of range!");
+    clearMaterial(object_idx);
+    addMaterial(object_idx,material);
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::setRegionWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials)
+void FEMSolid<Scalar,Dim>::setRegionWiseMaterial(unsigned int object_idx, const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials)
 {
-    unsigned int region_num = this->simulation_mesh_->regionNum();
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("Object index out of range!");
+    unsigned int region_num = this->simulation_mesh_[object_idx]->regionNum();
     if(materials.size() < region_num)
-        throw PhysikaException("Size of materials must be no less than the number of simulation mesh regions.");
-    clearMaterial();
+        throw PhysikaException("Size of materials doesn't match the number of simulation mesh regions.");
+    clearMaterial(object_idx);
     for(unsigned int i = 0; i < region_num; ++i)
-        addMaterial(*materials[i]);
+        addMaterial(object_idx,*materials[i]);
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::setElementWiseMaterial(const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials)
+void FEMSolid<Scalar,Dim>::setElementWiseMaterial(unsigned int object_idx, const std::vector<ConstitutiveModel<Scalar,Dim>*> &materials)
 {
-    unsigned int ele_num = this->simulation_mesh_->eleNum();
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("Object index out of range!");
+    unsigned int ele_num = this->simulation_mesh_[object_idx]->eleNum();
     if(materials.size() < ele_num)
-        throw PhysikaException("Size of materials must be no less than the number of simulation mesh elements.");
-    clearMaterial();
+        throw PhysikaException("Size of materials doesn't match the number of simulation mesh elements.");
+    clearMaterial(object_idx);
     for(unsigned int i = 0; i < ele_num; ++i)
-        addMaterial(*materials[i]);
+        addMaterial(object_idx,*materials[i]);
 }
 
 template <typename Scalar, int Dim>
-const ConstitutiveModel<Scalar,Dim>& FEMSolid<Scalar,Dim>::elementMaterial(unsigned int ele_idx) const
+const ConstitutiveModel<Scalar,Dim>& FEMSolid<Scalar,Dim>::elementMaterial(unsigned int object_idx, unsigned int ele_idx) const
 {
-    unsigned int ele_num = this->simulation_mesh_->eleNum();
-    unsigned int region_num = this->simulation_mesh_->regionNum();
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("Object index out of range!");
+    unsigned int ele_num = this->simulation_mesh_[object_idx]->eleNum();
+    unsigned int region_num = this->simulation_mesh_[object_idx]->regionNum();
     if(ele_idx >= ele_num)
         throw PhysikaException("Element index out of range.");
-    unsigned int material_num = constitutive_model_.size();
+    unsigned int material_num = constitutive_model_[object_idx].size();
     if(material_num == 0) //constitutive model not set
         throw PhysikaException("Element constitutive model not set.");
     else if(material_num == 1)//homogeneous material
-        return *constitutive_model_[0];
+        return *constitutive_model_[object_idx][0];
     else if(material_num == region_num)//region-wise material
     {
-        int region_idx = this->simulation_mesh_->eleRegionIndex(ele_idx);
+        int region_idx = this->simulation_mesh_[object_idx]->eleRegionIndex(ele_idx);
         if(region_idx==-1)
             throw PhysikaException("Element doesn't belong to any region, can't find its constitutive model in region-wise data.");
         else
-            return *constitutive_model_[region_idx];
+            return *constitutive_model_[object_idx][region_idx];
     }
     else if(material_num == ele_num) //element-wise material
-        return *constitutive_model_[ele_idx];
+        return *constitutive_model_[object_idx][ele_idx];
     else
         PHYSIKA_ERROR("Invalid material number.");
 }
 
 template <typename Scalar, int Dim>
-ConstitutiveModel<Scalar,Dim>& FEMSolid<Scalar,Dim>::elementMaterial(unsigned int ele_idx)
+ConstitutiveModel<Scalar,Dim>& FEMSolid<Scalar,Dim>::elementMaterial(unsigned int object_idx, unsigned int ele_idx)
 {
-    unsigned int ele_num = this->simulation_mesh_->eleNum();
-    unsigned int region_num = this->simulation_mesh_->regionNum();
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("Object index out of range!");
+    unsigned int ele_num = this->simulation_mesh_[object_idx]->eleNum();
+    unsigned int region_num = this->simulation_mesh_[object_idx]->regionNum();
     if(ele_idx >= ele_num)
         throw PhysikaException("Element index out of range.");
-    unsigned int material_num = constitutive_model_.size();
+    unsigned int material_num = constitutive_model_[object_idx].size();
     if(material_num == 0) //constitutive model not set
         throw PhysikaException("Element constitutive model not set.");
     else if(material_num == 1)//homogeneous material
-        return *constitutive_model_[0];
+        return *constitutive_model_[object_idx][0];
     else if(material_num == region_num)//region-wise material
     {
-        int region_idx = this->simulation_mesh_->eleRegionIndex(ele_idx);
+        int region_idx = this->simulation_mesh_[object_idx]->eleRegionIndex(ele_idx);
         if(region_idx==-1)
             throw PhysikaException("Element doesn't belong to any region, can't find its constitutive model in region-wise data.");
         else
-            return *constitutive_model_[region_idx];
+            return *constitutive_model_[object_idx][region_idx];
     }
     else if(material_num == ele_num) //element-wise material
-        return *constitutive_model_[ele_idx];
+        return *constitutive_model_[object_idx][ele_idx];
     else
         PHYSIKA_ERROR("Invalid material number.");
 }
@@ -285,62 +289,100 @@ CollidableObject<Scalar,Dim>& FEMSolid<Scalar,Dim>::kinematicObject(unsigned int
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::clearMaterial()
+void FEMSolid<Scalar,Dim>::appendDataWithObject()
+{
+    FEMBase<Scalar,Dim>::appendDataWithObject();
+    std::vector<ConstitutiveModel<Scalar,Dim>*> empty_material;
+    constitutive_model_.push_back(empty_material);
+    force_model_.push_back(NULL);
+    unsigned int last_obj_idx = this->objectNum() - 1;
+    createFEMSolidForceModel(last_obj_idx);
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::removeDataWithObject(unsigned int object_idx)
+{
+    PHYSIKA_ASSERT(object_idx < this->objectNum());
+    FEMBase<Scalar,Dim>::removeDataWithObject(object_idx);
+    typename std::vector<std::vector<ConstitutiveModel<Scalar,Dim>*> >::iterator iter1 = constitutive_model_.begin() + object_idx;
+    constitutive_model_.erase(iter1);
+    typename std::vector<FEMSolidForceModel<Scalar,Dim>*>::iterator iter2 = force_model_.begin() + object_idx;
+    force_model_.erase(iter2);
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::clearAllMaterials()
 {
     for(unsigned int i = 0 ; i < constitutive_model_.size(); ++i)
-        if(constitutive_model_[i])
-            delete constitutive_model_[i];
+        for(unsigned int j = 0; j < constitutive_model_[i].size(); ++j)
+            if(constitutive_model_[i][j])
+                delete constitutive_model_[i][j];
     constitutive_model_.clear();
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::addMaterial(const ConstitutiveModel<Scalar,Dim> &material)
+void FEMSolid<Scalar,Dim>::clearMaterial(unsigned int object_idx)
 {
+    PHYSIKA_ASSERT(object_idx < this->objectNum());
+    for(unsigned int i = 0 ; i < constitutive_model_[object_idx].size(); ++i)
+        if(constitutive_model_[object_idx][i])
+            delete constitutive_model_[object_idx][i];
+    constitutive_model_[object_idx].clear();
+}
+
+template <typename Scalar, int Dim>
+void FEMSolid<Scalar,Dim>::addMaterial(unsigned int object_idx, const ConstitutiveModel<Scalar,Dim> &material)
+{
+    PHYSIKA_ASSERT(object_idx < this->objectNum());
     ConstitutiveModel<Scalar,Dim> *single_material = material.clone();
     PHYSIKA_ASSERT(single_material);
-    constitutive_model_.push_back(single_material);
+    constitutive_model_[object_idx].push_back(single_material);
 }
 
 template <typename Scalar, int Dim>
 void FEMSolid<Scalar,Dim>::advanceStepForwardEuler(Scalar dt)
 {
-    if(this->mass_matrix_type_ == FEMBase<Scalar,Dim>::CONSISTENT_MASS)
+    unsigned int obj_num = this->objectNum();
+    for(unsigned int obj_idx = 0; obj_idx < obj_num; ++obj_idx)
     {
-        //using consistent matrix requires solving a linear system
-        throw PhysikaException("Not implemented!");
-    }
-    else if(this->mass_matrix_type_ == FEMBase<Scalar,Dim>::LUMPED_MASS)
-    {
-        unsigned int vert_num = this->numSimVertices();
-        //first compute internal forces
-        std::vector<Vector<Scalar,Dim> > internal_force;
-        PHYSIKA_ASSERT(force_model_);
-        std::vector<Vector<Scalar,Dim> > vertex_cur_pos(vert_num);
-        for(unsigned int i = 0; i < vert_num; ++i)
-            vertex_cur_pos[i] = this->vertexCurrentPosition(i);
-        force_model_->computeGlobalInternalForces(vertex_cur_pos,internal_force);
-        //now apply internal forces and external forces
-        SparseMatrixIterator<Scalar> mat_iter(this->mass_matrix_);
-        while(mat_iter)
+        if(this->mass_matrix_type_[obj_idx] == FEMBase<Scalar,Dim>::CONSISTENT_MASS)
         {
-            unsigned int row = mat_iter.row();
-            unsigned int col = mat_iter.col();
-            PHYSIKA_ASSERT(row == col);
-            Scalar vert_mass =mat_iter.value();
-            (this->vertex_velocities_)[row] += internal_force[row]/vert_mass*dt;//internal force
-            (this->vertex_velocities_)[row] += (this->vertex_external_forces_)[row]/vert_mass*dt;//external force
-            ++mat_iter;
+            //using consistent matrix requires solving a linear system
+            throw PhysikaException("Not implemented!");
         }
-        //apply gravity
-        this->applyGravity(dt);
-        //update vertex positions with the new velocities
-        for(unsigned int i = 0; i < vert_num; ++i)
-            (this->vertex_displacements_)[i] += (this->vertex_velocities_)[i]*dt;
-        //after update the vertex positions, resolve the contact with kinematic objects in scene
-        resolveContactWithKinematicObjects();
+        else if(this->mass_matrix_type_[obj_idx] == FEMBase<Scalar,Dim>::LUMPED_MASS)
+        {
+            unsigned int vert_num = this->numSimVertices(obj_idx);
+            //first compute internal forces
+            std::vector<Vector<Scalar,Dim> > internal_force;
+            PHYSIKA_ASSERT(force_model_[obj_idx]);
+            std::vector<Vector<Scalar,Dim> > vertex_cur_pos(vert_num);
+            for(unsigned int vert_idx = 0; vert_idx < vert_num; ++vert_idx)
+                vertex_cur_pos[vert_idx] = this->vertexCurrentPosition(obj_idx,vert_idx);
+            force_model_[obj_idx]->computeGlobalInternalForces(vertex_cur_pos,internal_force);
+            //now apply internal forces and external forces
+            SparseMatrixIterator<Scalar> mat_iter(this->mass_matrix_[obj_idx]);
+            while(mat_iter)
+            {
+                unsigned int row = mat_iter.row();
+                unsigned int col = mat_iter.col();
+                PHYSIKA_ASSERT(row == col);
+                Scalar vert_mass =mat_iter.value();
+                (this->vertex_velocities_[obj_idx])[row] += internal_force[row]/vert_mass*dt;//internal force
+                (this->vertex_velocities_[obj_idx])[row] += (this->vertex_external_forces_[obj_idx])[row]/vert_mass*dt;//external force
+                ++mat_iter;
+            }
+            //apply gravity
+            this->applyGravity(obj_idx,dt);
+            //update vertex positions with the new velocities
+            for(unsigned int vert_idx = 0; vert_idx < vert_num; ++vert_idx)
+                (this->vertex_displacements_[obj_idx])[vert_idx] += (this->vertex_velocities_[obj_idx])[vert_idx]*dt;
+            //after update the vertex positions, resolve the contact with kinematic objects in scene
+            resolveContactWithKinematicObjects(obj_idx);
+        }
+        else
+            PHYSIKA_ERROR("Unknown mass matrix type!");
     }
-    else
-        PHYSIKA_ERROR("Unknown mass matrix type!");
 }
 
 template <typename Scalar, int Dim>
@@ -350,35 +392,40 @@ void FEMSolid<Scalar,Dim>::advanceStepBackwardEuler(Scalar dt)
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::synchronizeDataWithSimulationMesh()
+void FEMSolid<Scalar,Dim>::createFEMSolidForceModel(unsigned int object_idx)
 {
-    FEMBase<Scalar,Dim>::synchronizeDataWithSimulationMesh();
-    createFEMSolidForceModel();
+    PHYSIKA_ASSERT(object_idx < this->objectNum());
+    clearFEMSolidForceModel(object_idx);
+    VolumetricMeshInternal::ElementType ele_type = (this->simulation_mesh_[object_idx])->elementType();
+    switch(ele_type)
+    {
+    case VolumetricMeshInternal::TRI:
+    case VolumetricMeshInternal::TET:
+        force_model_[object_idx] = new TriTetMeshFEMSolidForceModel<Scalar,Dim>(*(this->simulation_mesh_[object_idx]),constitutive_model_[object_idx]);
+        break;
+    case VolumetricMeshInternal::QUAD:
+    case VolumetricMeshInternal::CUBIC:
+        force_model_[object_idx] = new QuadCubicMeshFEMSolidForceModel<Scalar,Dim>(*(this->simulation_mesh_[object_idx]),constitutive_model_[object_idx]);
+        break;
+    default:
+        PHYSIKA_ERROR("Unsupported element type!");
+    }
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::createFEMSolidForceModel()
+void FEMSolid<Scalar,Dim>::clearAllFEMSolidForceModels()
 {
-    VolumetricMeshInternal::ElementType ele_type = this->simulation_mesh_->elementType();
-    if(ele_type == VolumetricMeshInternal::TET || ele_type == VolumetricMeshInternal::TRI)
-    {
-        clearFEMSolidForceModel();
-        force_model_ = new TriTetMeshFEMSolidForceModel<Scalar,Dim>(this);
-    }
-    else if(ele_type == VolumetricMeshInternal::QUAD || ele_type == VolumetricMeshInternal::CUBIC)
-    {
-        clearFEMSolidForceModel();
-        force_model_ = new QuadCubicMeshFEMSolidForceModel<Scalar,Dim>(this);
-    }
-    else
-        throw PhysikaException("Unsupported element type!");
+    for(unsigned int i = 0; i < force_model_.size(); ++i)
+        if(force_model_[i])
+            delete force_model_[i];
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::clearFEMSolidForceModel()
+void FEMSolid<Scalar,Dim>::clearFEMSolidForceModel(unsigned int object_idx)
 {
-    if(force_model_)
-        delete force_model_;
+    PHYSIKA_ASSERT(object_idx < this->objectNum());
+    if(force_model_[object_idx])
+        delete force_model_[object_idx];
 }
 
 template <typename Scalar, int Dim>
@@ -391,9 +438,48 @@ void FEMSolid<Scalar,Dim>::clearKinematicObjects()
 }
 
 template <typename Scalar, int Dim>
-void FEMSolid<Scalar,Dim>::resolveContactWithKinematicObjects()
+void FEMSolid<Scalar,Dim>::resolveContactWithKinematicObjects(unsigned int object_idx)
 {
     //resolve contact with the kinematic objects in scene
+    //detect collision between the mesh vertices and the closest collidable object
+    //impulse will be applied on the colliding vertices and the vertices will be projected onto the surface of colliding object
+    if(!(this->collidable_objects_).empty())
+    {
+        for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        {
+            for(unsigned int vert_idx = 0; vert_idx < this->numSimVertices(obj_idx); ++vert_idx)
+            {
+                Vector<Scalar,Dim> vert_pos = this->vertexCurrentPosition(obj_idx,vert_idx);
+                //get closest kinematic object idx
+                Scalar closest_dist = (std::numeric_limits<Scalar>::max)();
+                unsigned int closest_obj_idx = 0;
+                for(unsigned int i = 0; i < this->collidable_objects_.size(); ++i)
+                {
+                    Scalar signed_distance = (this->collidable_objects_)[i]->signedDistance(vert_pos);
+                    if(signed_distance < closest_dist)
+                    {
+                        closest_dist = signed_distance;
+                        closest_obj_idx = i;
+                    }
+                }
+                Vector<Scalar,Dim> vert_vel = this->vertexVelocity(obj_idx,vert_idx);
+                Vector<Scalar,Dim> impulse(0);
+                Scalar collide_threshold = this->collidable_objects_[closest_obj_idx]->collideThreshold();
+                if(this->collidable_objects_[closest_obj_idx]->collide(vert_pos,vert_vel,impulse))
+                {
+                    //project the vertex onto the surface of the collidable object
+                    Vector<Scalar,Dim> normal = this->collidable_objects_[closest_obj_idx]->normal(vert_pos);
+                    vert_pos += (collide_threshold - closest_dist) * normal;
+                    Vector<Scalar,Dim> vert_ref_pos = this->vertexRestPosition(obj_idx,vert_idx);
+                    this->setVertexDisplacement(obj_idx,vert_idx,vert_pos-vert_ref_pos);
+                    //apply the impulse to change vertex velocity
+                    Vector<Scalar,Dim> vert_vel = this->vertexVelocity(obj_idx,vert_idx);
+                    vert_vel += impulse;
+                    this->setVertexVelocity(obj_idx,vert_idx,vert_vel);
+                }
+            }
+        }
+    }
 }
 
 //explicit instantiations

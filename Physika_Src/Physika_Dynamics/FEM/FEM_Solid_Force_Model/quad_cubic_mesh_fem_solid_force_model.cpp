@@ -15,20 +15,15 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Utilities/physika_exception.h"
-#include "Physika_Dynamics/FEM/fem_solid.h"
+#include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/quad_cubic_mesh_fem_solid_force_model.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-QuadCubicMeshFEMSolidForceModel<Scalar,Dim>::QuadCubicMeshFEMSolidForceModel()
-    :FEMSolidForceModel<Scalar,Dim>()
-{
-}
-
-template <typename Scalar, int Dim>
-QuadCubicMeshFEMSolidForceModel<Scalar,Dim>::QuadCubicMeshFEMSolidForceModel(const FEMSolid<Scalar,Dim> *fem_solid_driver)
-    :FEMSolidForceModel<Scalar,Dim>(fem_solid_driver)
+QuadCubicMeshFEMSolidForceModel<Scalar,Dim>::QuadCubicMeshFEMSolidForceModel(const VolumetricMesh<Scalar,Dim> &simulation_mesh, 
+                                                                       const std::vector<ConstitutiveModel<Scalar,Dim>*> &constitutive_model)
+    :FEMSolidForceModel<Scalar,Dim>(simulation_mesh,constitutive_model)
 {
 }
 

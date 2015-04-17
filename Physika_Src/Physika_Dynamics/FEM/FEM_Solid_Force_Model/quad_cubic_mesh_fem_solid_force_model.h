@@ -20,14 +20,15 @@
 
 namespace Physika{
 
+template <typename Scalar, int Dim> class VolumetricMesh;
+template <typename Scalar, int Dim> class ConstitutiveModel;
 template <typename Scalar, int Dim> class Vector;
 
 template <typename Scalar, int Dim>
 class QuadCubicMeshFEMSolidForceModel: public FEMSolidForceModel<Scalar,Dim>
 {
 public:
-    QuadCubicMeshFEMSolidForceModel();
-    explicit QuadCubicMeshFEMSolidForceModel(const FEMSolid<Scalar,Dim> *fem_solid_driver);
+    QuadCubicMeshFEMSolidForceModel(const VolumetricMesh<Scalar,Dim> &simulation_mesh, const std::vector<ConstitutiveModel<Scalar,Dim>*> &constitutive_model);
     ~QuadCubicMeshFEMSolidForceModel();
 
     //given world space coordinates of mesh vertices, compute the internal forces on the entire mesh
@@ -42,6 +43,7 @@ public:
                                                                                        const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
                                                                                        std::vector<Vector<Scalar,Dim> > &force_differentials) const;
 protected:
+    QuadCubicMeshFEMSolidForceModel();
 };
     
 } //end of namespace Physika

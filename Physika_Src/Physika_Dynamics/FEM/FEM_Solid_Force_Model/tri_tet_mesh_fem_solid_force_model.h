@@ -22,16 +22,17 @@
 
 namespace Physika{
 
+template <typename Scalar, int Dim> class VolumetricMesh;
+template <typename Scalar, int Dim> class ConstitutiveModel;
 template <typename Scalar, int Dim> class Vector;
 
 template <typename Scalar, int Dim>
 class TriTetMeshFEMSolidForceModel: public FEMSolidForceModel<Scalar,Dim>
 {
 public:
-    TriTetMeshFEMSolidForceModel();
-    explicit TriTetMeshFEMSolidForceModel(const FEMSolid<Scalar,Dim> *fem_solid_driver);
+    TriTetMeshFEMSolidForceModel(const VolumetricMesh<Scalar,Dim> &simulation_mesh, const std::vector<ConstitutiveModel<Scalar,Dim>*> &constitutive_model);
     ~TriTetMeshFEMSolidForceModel();
-    virtual void setDriver(const FEMSolid<Scalar,Dim> *fem_solid_driver); //precomputed data is updated correspondently
+
     void updatePrecomputedData(); //whenever the volumetric mesh is modified, this method needs to be called to update the precomputed data
     //given world space coordinates of mesh vertices, compute the internal forces on the entire mesh
     virtual void computeGlobalInternalForces(const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const;
@@ -46,6 +47,7 @@ protected:
     void computeReferenceElementVolume();
     void computeReferenceShapeMatrixInverse();
 protected:
+    TriTetMeshFEMSolidForceModel();
     std::vector<Scalar> reference_element_volume_;
     std::vector<SquareMatrix<Scalar,Dim> > reference_shape_matrix_inv_;//store precomputed data (inverse of Dm) for deformation gradient computation: F = Ds*inv(Dm)
 };

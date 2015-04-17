@@ -12,43 +12,49 @@
  *
  */
 
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
-#include "Physika_Dynamics/FEM/fem_solid.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
+#include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/fem_solid_force_model.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-FEMSolidForceModel<Scalar,Dim>::FEMSolidForceModel()
-    :fem_solid_driver_(NULL)
-{
-}
-
-template <typename Scalar, int Dim>
-FEMSolidForceModel<Scalar,Dim>::FEMSolidForceModel(const FEMSolid<Scalar,Dim> *fem_solid_driver)
-    :fem_solid_driver_(fem_solid_driver)
+FEMSolidForceModel<Scalar,Dim>::FEMSolidForceModel(const VolumetricMesh<Scalar,Dim> &simulation_mesh, const std::vector<ConstitutiveModel<Scalar,Dim>*> &constitutive_model)
+    :simulation_mesh_(simulation_mesh), constitutive_model_(constitutive_model)
 {
 }
 
 template <typename Scalar, int Dim>    
 FEMSolidForceModel<Scalar,Dim>::~FEMSolidForceModel()
 {
-    if(fem_solid_driver_)
-        fem_solid_driver_ = NULL;
 }
 
 template <typename Scalar, int Dim>    
-const FEMSolid<Scalar,Dim>* FEMSolidForceModel<Scalar,Dim>::driver() const
+const ConstitutiveModel<Scalar,Dim>& FEMSolidForceModel<Scalar,Dim>::elementMaterial(unsigned int ele_idx) const
 {
-    return fem_solid_driver_;
-}
-
-template <typename Scalar, int Dim>
-void FEMSolidForceModel<Scalar,Dim>::setDriver(const FEMSolid<Scalar,Dim> *fem_solid_driver)
-{
-    if(fem_solid_driver == NULL)
-        throw PhysikaException("NULL FEMSolidDriver passed to FEMSolidForceModel!");
-    fem_solid_driver_ = fem_solid_driver;
+    unsigned int ele_num = simulation_mesh_.eleNum();
+    unsigned int region_num = simulation_mesh_.regionNum();
+    if(ele_idx >= ele_num)
+        throw PhysikaException("Element index out of range.");
+    unsigned int material_num = constitutive_model_.size();
+    if(material_num == 0) //constitutive model not set
+        throw PhysikaException("Element constitutive model not set.");
+    else if(material_num == 1)//homogeneous material
+        return *constitutive_model_[0];
+    else if(material_num == region_num)//region-wise material
+    {
+        int region_idx = simulation_mesh_.eleRegionIndex(ele_idx);
+        if(region_idx==-1)
+            throw PhysikaException("Element doesn't belong to any region, can't find its constitutive model in region-wise data.");
+        else
+            return *constitutive_model_[region_idx];
+    }
+    else if(material_num == ele_num) //element-wise material
+        return *constitutive_model_[ele_idx];
+    else
+        PHYSIKA_ERROR("Invalid material number.");
 }
 
 //explicit instantiations

@@ -28,18 +28,17 @@ namespace Physika{
  *         into one driver class without messing up the code
  */
 
-template <typename Scalar, int Dim> class FEMSolid;
+template <typename Scalar, int Dim> class VolumetricMesh;
+template <typename Scalar, int Dim> class ConstitutiveModel;
 template <typename Scalar, int Dim> class Vector;
 
 template <typename Scalar, int Dim>
 class FEMSolidForceModel
 {
 public:
-    FEMSolidForceModel();
-    explicit FEMSolidForceModel(const FEMSolid<Scalar,Dim> *fem_solid_driver);
+    //construct force model with volumetric mesh and constitutive model, the constitutive model can be uniform, region-wise, and element-wise on the mesh
+    FEMSolidForceModel(const VolumetricMesh<Scalar,Dim> &simulation_mesh, const std::vector<ConstitutiveModel<Scalar,Dim>*> &constitutive_model);
     virtual ~FEMSolidForceModel();
-    virtual const FEMSolid<Scalar,Dim>* driver() const;
-    virtual void setDriver(const FEMSolid<Scalar,Dim> *fem_solid_driver);
 
     //given world space coordinates of mesh vertices, compute the internal forces on the entire mesh
     virtual void computeGlobalInternalForces(const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const = 0;
@@ -53,7 +52,11 @@ public:
                                                                                        const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
                                                                                        std::vector<Vector<Scalar,Dim> > &force_differentials) const = 0;
 protected:
-    const FEMSolid<Scalar,Dim> *fem_solid_driver_;
+    const ConstitutiveModel<Scalar,Dim>& elementMaterial(unsigned int ele_idx) const;
+protected:
+    FEMSolidForceModel(); //prohibit default constructor
+    const VolumetricMesh<Scalar,Dim> &simulation_mesh_;
+    const std::vector<ConstitutiveModel<Scalar,Dim>*> &constitutive_model_;
 };
 
 }  //end of namespace Physika

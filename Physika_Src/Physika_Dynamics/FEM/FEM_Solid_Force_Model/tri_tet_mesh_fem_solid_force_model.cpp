@@ -19,20 +19,14 @@
 #include "Physika_Geometry/Volumetric_Meshes/tri_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/tet_mesh.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
-#include "Physika_Dynamics/FEM/fem_solid.h"
 #include "Physika_Dynamics/FEM/FEM_Solid_Force_Model/tri_tet_mesh_fem_solid_force_model.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
-TriTetMeshFEMSolidForceModel<Scalar,Dim>::TriTetMeshFEMSolidForceModel()
-    :FEMSolidForceModel<Scalar,Dim>()
-{
-}
-
-template <typename Scalar, int Dim>
-TriTetMeshFEMSolidForceModel<Scalar,Dim>::TriTetMeshFEMSolidForceModel(const FEMSolid<Scalar,Dim> *fem_solid_driver)
-    :FEMSolidForceModel<Scalar,Dim>(fem_solid_driver)
+TriTetMeshFEMSolidForceModel<Scalar,Dim>::TriTetMeshFEMSolidForceModel(const VolumetricMesh<Scalar,Dim> &simulation_mesh, 
+                                                                       const std::vector<ConstitutiveModel<Scalar,Dim>*> &constitutive_model)
+    :FEMSolidForceModel<Scalar,Dim>(simulation_mesh,constitutive_model)
 {
     updatePrecomputedData();
 }
@@ -43,19 +37,10 @@ TriTetMeshFEMSolidForceModel<Scalar,Dim>::~TriTetMeshFEMSolidForceModel()
 }
 
 template <typename Scalar, int Dim>
-void TriTetMeshFEMSolidForceModel<Scalar,Dim>::setDriver(const FEMSolid<Scalar,Dim> *fem_solid_driver)
-{
-    this->fem_solid_driver_ = fem_solid_driver;
-    updatePrecomputedData();
-}
-
-template <typename Scalar, int Dim>
 void TriTetMeshFEMSolidForceModel<Scalar,Dim>::updatePrecomputedData()
 {
-    if(this->fem_solid_driver_ == NULL)
-        throw PhysikaException("FEM solid driver not set!");
     //first check if the volumetric mesh is TriMesh or TetMesh
-    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->fem_solid_driver_)->simulationMesh(); 
+    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->simulation_mesh_); 
     VolumetricMeshInternal::ElementType ele_type = sim_mesh.elementType();
     if((ele_type != VolumetricMeshInternal::TRI) && (ele_type != VolumetricMeshInternal::TET))
         throw PhysikaException("Simulation mesh element type and FEM force model mismatch!");
@@ -66,9 +51,7 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::updatePrecomputedData()
 template <typename Scalar, int Dim>
 void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeGlobalInternalForces(const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const
 {
-    if(this->fem_solid_driver_ == NULL)
-        throw PhysikaException("FEM solid driver not set!");
-    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->fem_solid_driver_)->simulationMesh();
+    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->simulation_mesh_);
     unsigned int vert_num = sim_mesh.vertNum();
     if(current_vert_pos.size() != vert_num)
         throw PhysikaException("Size of provided vertex position vector doesn't match mesh vertex number!");
@@ -94,9 +77,7 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeGlobalInternalForces(const
 template <typename Scalar, int Dim>
 void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeElementInternalForces(unsigned int ele_idx, const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const
 {
-    if(this->fem_solid_driver_ == NULL)
-        throw PhysikaException("FEM solid driver not set!");
-    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->fem_solid_driver_)->simulationMesh();
+    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->simulation_mesh_);
     unsigned int ele_num = sim_mesh.eleNum();
     if(ele_idx >= ele_num)
         throw PhysikaException("Simulation mesh element index out of range!");
@@ -149,7 +130,7 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeElementInternalForces(unsi
         throw PhysikaException("Simulation mesh element type and FEM force model mismatch!");
     }
     SquareMatrix<Scalar,Dim> deform_grad = shape_matrix*reference_shape_matrix_inv_[ele_idx];
-    const ConstitutiveModel<Scalar,Dim> &ele_material = this->fem_solid_driver_->elementMaterial(ele_idx);
+    const ConstitutiveModel<Scalar,Dim> &ele_material = this->elementMaterial(ele_idx);
     SquareMatrix<Scalar,Dim> first_Piola_Kirchhoff_stress = ele_material.firstPiolaKirchhoffStress(deform_grad);
     SquareMatrix<Scalar,Dim> force_as_col = (-1.0)*reference_element_volume_[ele_idx]*first_Piola_Kirchhoff_stress*(reference_shape_matrix_inv_[ele_idx].transpose());
     force.resize(ele_vert_num,Vector<Scalar,Dim>(0));
@@ -182,7 +163,7 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeElementInternalForceDiffer
 template <typename Scalar, int Dim>
 void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeReferenceElementVolume()
 {
-    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->fem_solid_driver_)->simulationMesh();
+    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->simulation_mesh_);
     unsigned int ele_num = sim_mesh.eleNum();
     reference_element_volume_.resize(ele_num);
     for(unsigned int ele_idx = 0; ele_idx < ele_num; ++ele_idx)
@@ -192,7 +173,7 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeReferenceElementVolume()
 template <typename Scalar, int Dim>
 void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeReferenceShapeMatrixInverse()
 {
-    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->fem_solid_driver_)->simulationMesh();
+    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->simulation_mesh_);
     unsigned int ele_num = sim_mesh.eleNum();
     reference_shape_matrix_inv_.resize(ele_num);
     VolumetricMeshInternal::ElementType ele_type = sim_mesh.elementType();
