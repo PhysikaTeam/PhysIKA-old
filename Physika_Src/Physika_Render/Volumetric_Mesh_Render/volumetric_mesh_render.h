@@ -24,30 +24,24 @@ template <typename Scalar, int Dim> class VolumetricMesh;
 template <typename Scalar> class Color;
 template <typename Scalar, int Dim> class Transform;
 
-/*
-template <typename Scalar, int Dim> class VolumetericMeshRender;
-template <typename Scalar, int Dim> 
-std::ostream & operator<<(std::ostream& , const VolumetricMeshRender<Scalar,Dim>&);
-*/
-
 template <typename Scalar, int Dim>
 class VolumetricMeshRender: public RenderBase
 {
 public:
     //constructions
     VolumetricMeshRender();
-    VolumetricMeshRender(VolumetricMesh<Scalar, Dim> *mesh);
-    VolumetricMeshRender(VolumetricMesh<Scalar, Dim> *mesh, Transform<Scalar, Dim> *transform);
+    explicit VolumetricMeshRender(const VolumetricMesh<Scalar, Dim> *mesh);
+    VolumetricMeshRender(const VolumetricMesh<Scalar, Dim> *mesh, const Transform<Scalar, Dim> *transform);
     //destruction
     ~VolumetricMeshRender();
 
     //Get and Set
-    const VolumetricMesh<Scalar, Dim>* mesh()const;
-    void setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh);
-    void setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh, Transform<Scalar, Dim>* transform);
+    const VolumetricMesh<Scalar, Dim>* mesh() const;
+    void setVolumetricMesh(const VolumetricMesh<Scalar, Dim>* mesh);
+    void setVolumetricMesh(const VolumetricMesh<Scalar, Dim>* mesh, const Transform<Scalar, Dim>* transform);
 
     const Transform<Scalar, Dim>* transform()const;
-    void setTransform(Transform<Scalar, Dim>* transform);
+    void setTransform(const Transform<Scalar, Dim>* transform);
 
     //set render mode
     void enableRenderSolid();
@@ -105,8 +99,8 @@ protected:
     void drawCubic(unsigned int ele_idx);
 protected:
     unsigned int render_mode_;
-    VolumetricMesh<Scalar,Dim> *mesh_;
-    Transform<Scalar, Dim> *transform_;
+    const VolumetricMesh<Scalar,Dim> *mesh_;
+    const Transform<Scalar, Dim> *transform_;
 
 
     //displaylist ids

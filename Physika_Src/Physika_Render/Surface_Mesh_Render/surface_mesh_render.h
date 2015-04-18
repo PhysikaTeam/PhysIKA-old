@@ -28,7 +28,7 @@ template <typename Scalar, int Dim> class Transform;
 
 /*
  * Scalar can be float and double
- * 
+ * display list is not enable in default
  */
 
 template <typename Scalar>
@@ -38,7 +38,7 @@ public:
     //Constructions
     SurfaceMeshRender();
     //the parameter is not const because renderer may call method of mesh to modify its normals
-    SurfaceMeshRender(SurfaceMesh<Scalar>* mesh);
+    explicit SurfaceMeshRender(SurfaceMesh<Scalar>* mesh);
     SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar, 3>* transform);
     ~SurfaceMeshRender();
 

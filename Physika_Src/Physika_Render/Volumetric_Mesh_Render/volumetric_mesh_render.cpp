@@ -40,7 +40,7 @@ VolumetricMeshRender<Scalar, Dim>::VolumetricMeshRender()
 }
 
 template <typename Scalar, int Dim>
-VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim>* mesh)
+VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(const VolumetricMesh<Scalar,Dim>* mesh)
     :mesh_(mesh),
     transform_(NULL),
     vertex_display_list_id_(0),
@@ -52,7 +52,7 @@ VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim
 }
 
 template <typename Scalar, int Dim>
-VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(VolumetricMesh<Scalar,Dim>* mesh, Transform<Scalar, Dim>* transform)
+VolumetricMeshRender<Scalar,Dim>::VolumetricMeshRender(const VolumetricMesh<Scalar,Dim>* mesh, const Transform<Scalar, Dim>* transform)
     :mesh_(mesh),
     transform_(transform),
     vertex_display_list_id_(0),
@@ -77,14 +77,14 @@ const VolumetricMesh<Scalar,Dim>* VolumetricMeshRender<Scalar,Dim>::mesh()const
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshRender<Scalar,Dim>::setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh)
+void VolumetricMeshRender<Scalar,Dim>::setVolumetricMesh(const VolumetricMesh<Scalar, Dim>* mesh)
 {
     this->mesh_ = mesh;
     this->deleteDisplayLists();
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshRender<Scalar,Dim>::setVolumetricMesh(VolumetricMesh<Scalar, Dim>* mesh, Transform<Scalar, Dim>*transform)
+void VolumetricMeshRender<Scalar,Dim>::setVolumetricMesh(const VolumetricMesh<Scalar, Dim>* mesh, const Transform<Scalar, Dim>*transform)
 {
     this->mesh_ = mesh;
     this->transform_ = transform;
@@ -98,7 +98,7 @@ const Transform<Scalar, Dim>* VolumetricMeshRender<Scalar,Dim>::transform()const
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMeshRender<Scalar,Dim>::setTransform(Transform<Scalar, Dim>* transform)
+void VolumetricMeshRender<Scalar,Dim>::setTransform(const Transform<Scalar, Dim>* transform)
 {
     this->transform_ = transform;
 }
@@ -294,9 +294,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertices()
     glPushAttrib(GL_LIGHTING_BIT|GL_ENABLE_BIT);
     glPushMatrix();
     if(this->transform_ != NULL)
-    {
-        openGLMultMatrix(this->transform_->transformMatrix());	
-    }
+        openGLMultMatrix(this->transform_->transformMatrix());
     if(!glIsList(this->vertex_display_list_id_))
     {
         this->vertex_display_list_id_ = glGenLists(1);
@@ -308,15 +306,12 @@ void VolumetricMeshRender<Scalar,Dim>::renderVertices()
         {
             Vector<Scalar,Dim> position = this->mesh_->vertPos(vertex_idx);
             openGLVertex(position);
-            
         }
         glEnd();
         glEndList();
     }
     else
-    {
         glCallList(this->vertex_display_list_id_);
-    }
     glPopMatrix();
     glPopAttrib();
 }
@@ -330,9 +325,7 @@ void VolumetricMeshRender<Scalar,Dim>::renderWireframe()
 
     glPushMatrix();
     if(this->transform_ != NULL)
-    {
-        openGLMultMatrix(this->transform_->transformMatrix());	
-    }
+        openGLMultMatrix(this->transform_->transformMatrix());
 
     bool is_uniform = this->mesh_->isUniformElementType();
 
@@ -341,28 +334,23 @@ void VolumetricMeshRender<Scalar,Dim>::renderWireframe()
         this->wire_display_list_id_ = glGenLists(1);
         glNewList(this->wire_display_list_id_, GL_COMPILE_AND_EXECUTE);
         unsigned int num_ele = this->mesh_->eleNum();
+        VolumetricMeshInternal::ElementType ele_type =  this->mesh_->elementType();
         for(unsigned int ele_idx=0; ele_idx<num_ele; ele_idx++)
         {
             if(is_uniform)
             {
-                // we will deal with type ElementType::TRI/QUAD in some way
-                if(	  this->mesh_->elementType() == VolumetricMeshInternal::TRI
-                    ||this->mesh_->elementType() == VolumetricMeshInternal::QUAD)
-                {
+                // we will deal with type ElementType::TRI/QUAD in the same way
+                if(ele_type  == VolumetricMeshInternal::TRI
+                   || ele_type == VolumetricMeshInternal::QUAD)
                     this->drawTriOrQuad(ele_idx);
-                }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::TET)
-                {
+                if(ele_type == VolumetricMeshInternal::TET)
                     this->drawTet(ele_idx);
-                }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::CUBIC)
-                {
+                if(ele_type == VolumetricMeshInternal::CUBIC)
                     this->drawCubic(ele_idx);
-                }
 
-                if(this->mesh_->elementType() == VolumetricMeshInternal::NON_UNIFORM)
+                if(ele_type == VolumetricMeshInternal::NON_UNIFORM)
                 {
                     // waiting for implementation
                     //

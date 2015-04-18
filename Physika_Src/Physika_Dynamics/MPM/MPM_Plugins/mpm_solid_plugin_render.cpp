@@ -13,7 +13,6 @@
  */
 
 #include <cmath>
-#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -24,6 +23,7 @@
 #include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Point_Render/point_render.h"
 #include "Physika_Render/Grid_Render/grid_render.h"
@@ -147,15 +147,9 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::setDriver(DriverBase<Scalar> *driver)
 {
     if(driver==NULL)
-    {
-        std::cerr<<"Error: NULL driver pointer provided to driver plugin, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("NULL driver pointer provided to driver plugin!");
     if(dynamic_cast<MPMSolid<Scalar,Dim>*>(driver)==NULL)
-    {
-        std::cerr<<"Error: Wrong type of driver specified, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Wrong type of driver specified!");
     this->driver_ = driver;
 }
 
@@ -214,10 +208,7 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::setWindow(GlutWindow *window)
 {
     if(window==NULL)
-    {
-        std::cerr<<"Error: NULL window pointer provided to render plugin, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("NULL window pointer provided to render plugin!");
     window_ = window;
     window_->setIdleFunction(MPMSolidPluginRender<Scalar,Dim>::idleFunction);
     window_->setDisplayFunction(MPMSolidPluginRender<Scalar,Dim>::displayFunction);
