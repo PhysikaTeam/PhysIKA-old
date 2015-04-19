@@ -41,42 +41,20 @@ void print(vector<Scalar> &v)
         cout<<v[i]<<" ";
     cout<<endl;
 }
-void compare(const Physika::SparseMatrix<mytype> &a, const Eigen::SparseMatrix<mytype> &b)
+void compare(Physika::SparseMatrix<mytype> &a, const Eigen::SparseMatrix<mytype> &b)   //attention : eigen + will return a const sparsematrix object
 {
-    /*if (a.nonZeros() != b.nonZeros())
-    {
-        cout<<"a.nonzeros:"<<a.nonZeros()<<endl;
-        cout << "b.nonZeros:" << b.nonZeros() << endl;
-        cout << "correctness bad!" << endl;
-        return;
-    }*/
-        std::vector<Physika::Trituple<mytype>> v;
+        std::vector<mytype> v;
         bool correctness = true;
-        for(unsigned int i = 0;i<a.rows();++i)
-        {
-            v = a.getRowElements(i);
-            for(unsigned int j=0;j<v.size();++j)
-            {
-                int row = v[j].row(), col = v[j].col();
-                mytype value = v[j].value();
-                if(b.coeff(row,col) != value)
-                {
-                    cout<<"eror: "<<row<<' '<<col<<" value: psm "<<value<<" "<<b.coeff(row,col)<<endl;
-                    correctness = false;
-                    break;
-                }
-            }
-        }
-		for (unsigned int i = 0; i < b.outerSize();++i)
-           for (Eigen::SparseMatrix<mytype>::InnerIterator it(b, i); it; ++it)
-            {
-                if (it.value() != a(it.row(), it.col()))
-                {
-                    cout << "eror: " << it.row() << ' ' << it.col() << " value: psm " << a(it.row(),it.col()) << " " << it.value() << endl;
-                    correctness = false;
-                    break;
-                }
-            }
+		Physika::SparseMatrixIterator<mytype> it(a);
+		for (; it; ++it){
+			unsigned int row = it.row();
+			unsigned int col = it.col();
+			mytype value = it.value();
+			if (b.coeff(row, col) != value){
+				correctness = false;
+				break;
+			}
+		}
         if(correctness) cout<<"correctness OK!"<<endl;
         else cout<<"correctness bad!"<<endl;
 }
@@ -107,7 +85,7 @@ void compare(const vector<T> &a, const vector<T> &b){
 }
 int main()
 {
-    Physika::SparseMatrix<mytype> ps1(Max1, Max2, Physika::ROW_MAJOR);
+	Physika::SparseMatrix<mytype> ps1(Max1, Max2, Physika::SparseMatrixInternal::ROW_MAJOR);
     Eigen::SparseMatrix<mytype> es1(Max1, Max2);
     cout << "correctness of insert operation tests:";
     for (unsigned int i = 0; i<Max; ++i)
@@ -134,29 +112,31 @@ int main()
 		es2.coeffRef(row, col) = 0;
 	}
 	compare(ps2, es2);
-
+	es2 = es2.transpose();
 	cout << "correctness of operation transpose:";
-	compare(ps2.transpose(), es2.transpose());
+	compare(ps2.transpose(), es2);
 
 
     //get rowElements and colElements function test
     //iterator test
 	cout << "correctness of iterator and getRowElements ";
-	vector<Physika::Trituple<mytype>> iterator_v;
-    for (Physika::SparseMatrixIterator<mytype> it(ps2, Max1 / 2); it; ++it)
+	vector<mytype> iterator_v;
+	vector<mytype> getrow;
+    for (Physika::SparseMatrixIterator<mytype> it(ps2); it; ++it)
     {
         it.row();
         it.value();
         it.col();
-		iterator_v.push_back(Physika::Trituple<mytype>(it.row(), it.col(), it.value()));
-        /*cout <<"<"<< it.row();
-        cout << ", " << it.col();
-        cout << ", " << it.value() <<"> ";*/
+		iterator_v.push_back(it.value());
     }
-   // print(ps2.getRowElements(Max1 / 2));
-	compare(iterator_v, ps2.getRowElements(Max1 / 2));
+    for(unsigned int i=0;i<ps2.rows();++i){
+		vector<mytype> temple;
+    	ps2.rowElements(i, temple);
+    	for(unsigned int j=0;j<temple.size();++j)getrow.push_back(temple[j]);
+    }
+	compare(iterator_v, getrow);
  
-	Physika::SparseMatrix<mytype> ps3(Max1, Max2, Physika::ROW_MAJOR);
+	Physika::SparseMatrix<mytype> ps3(Max1, Max2, Physika::SparseMatrixInternal::ROW_MAJOR);
 	Eigen::SparseMatrix<mytype> es3(Max1, Max2);
 	for (unsigned int i = 0; i<Max; ++i)
 	{
@@ -167,7 +147,7 @@ int main()
 		es3.coeffRef(row, col) = v;
 	}
 	cout << "correctness of +:";
-	compare(ps1 + ps3, es1 + es3);
+	compare((ps1 + ps3), (es1 + es3));
 
 	cout << "correctness of +=:";
 	compare(ps1 += ps3, es1 += es3);
