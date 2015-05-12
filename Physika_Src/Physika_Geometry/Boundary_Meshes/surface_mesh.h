@@ -81,6 +81,7 @@ public:
     //adders
     void addMaterial(const BoundaryMeshInternal::Material<Scalar> &material);
     void addGroup(const SurfaceMeshInternal::FaceGroup<Scalar> &group);
+    void removeGroup(unsigned int group_idx);
     void addVertexPosition(const Vector<Scalar,3> &position);
     void addVertexNormal(const Vector<Scalar,3> &normal);
     void addVertexTextureCoordinate(const Vector<Scalar,2> &texture_coordinate);

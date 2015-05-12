@@ -497,6 +497,12 @@ void SurfaceMesh<Scalar>::addGroup(const FaceGroup<Scalar> &group)
 }
 
 template <typename Scalar>
+void SurfaceMesh<Scalar>::removeGroup(unsigned int group_idx){
+    groups_.erase(groups_.begin()+group_idx);
+
+}
+
+template <typename Scalar>
 void SurfaceMesh<Scalar>::addVertexPosition(const Vector<Scalar,3> &position)
 {
     vertex_positions_.push_back(position);
