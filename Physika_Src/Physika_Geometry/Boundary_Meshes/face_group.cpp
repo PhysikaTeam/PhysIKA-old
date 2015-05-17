@@ -83,7 +83,6 @@ void FaceGroup<Scalar>::setName(const string &name)
 template <typename Scalar>
 const Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx) const
 {
-    PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
     return faces_[face_idx];
 }
@@ -91,7 +90,6 @@ const Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx) const
 template <typename Scalar>
 Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx)
 {
-    PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
     return faces_[face_idx];
 }
@@ -99,7 +97,6 @@ Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx)
 template <typename Scalar>
 const Face<Scalar>* FaceGroup<Scalar>::facePtr(unsigned int face_idx) const
 {
-    PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
     return &(faces_[face_idx]);
 }
@@ -107,7 +104,6 @@ const Face<Scalar>* FaceGroup<Scalar>::facePtr(unsigned int face_idx) const
 template <typename Scalar>
 Face<Scalar>* FaceGroup<Scalar>::facePtr(unsigned int face_idx)
 {
-    PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
     return &(faces_[face_idx]);
 }

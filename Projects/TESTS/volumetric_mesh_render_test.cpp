@@ -1,5 +1,5 @@
 /*
- * @file glut_window_test.cpp 
+ * @file volumetric_mesh_render_test.cpp 
  * @brief Test VolumetricMeshRender of Physika.
  * @author Wei Chen
  * 

@@ -56,6 +56,7 @@ public:
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
     virtual void addPlugin(DriverPluginBase<Scalar> *plugin)=0;
+    
     virtual Scalar computeTimeStep();
     
     //getters && setters

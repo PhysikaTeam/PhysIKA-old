@@ -60,7 +60,6 @@ unsigned int Face<Scalar>::numVertices() const
 template <typename Scalar>
 const Vertex<Scalar>& Face<Scalar>::vertex(unsigned int vert_idx) const
 {
-    PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
     return vertices_[vert_idx];
 }

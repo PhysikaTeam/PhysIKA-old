@@ -18,6 +18,7 @@
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
+#include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Color/color.h"
 #include "Physika_Render/Volumetric_Mesh_Render/volumetric_mesh_render.h"
@@ -32,9 +33,11 @@ FEMSolidPluginRender<Scalar,Dim>* FEMSolidPluginRender<Scalar,Dim>::active_insta
 template <typename Scalar, int Dim>
 FEMSolidPluginRender<Scalar,Dim>::FEMSolidPluginRender()
     :FEMSolidPluginBase<Scalar,Dim>(),
-     window_(NULL),volumetric_mesh_render_(NULL),pause_simulation_(true),
+     window_(NULL),pause_simulation_(true),
      simulation_finished_(false),render_velocity_(false),
-     velocity_scale_(1.0),auto_capture_frame_(false),total_time_(0)
+     velocity_scale_(1.0),auto_capture_frame_(false),
+     render_mesh_vertex_(false),render_mesh_wireframe_(true),
+     render_mesh_solid_(false),total_time_(0)
 {
     activateCurrentInstance();
 }
@@ -42,6 +45,7 @@ FEMSolidPluginRender<Scalar,Dim>::FEMSolidPluginRender()
 template <typename Scalar, int Dim>
 FEMSolidPluginRender<Scalar,Dim>::~FEMSolidPluginRender()
 {
+    clearVolumetricMeshRender();
 }
 
 template <typename Scalar, int Dim>
@@ -124,6 +128,14 @@ void FEMSolidPluginRender<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
 }
 
 template <typename Scalar, int Dim>
+void FEMSolidPluginRender<Scalar,Dim>::setDriver(DriverBase<Scalar> *driver)
+{
+    FEMSolidPluginBase<Scalar,Dim>::setDriver(driver);
+    //initialize the volumetric mesh render
+    updateVolumetricMeshRender();
+}
+
+template <typename Scalar, int Dim>
 GlutWindow* FEMSolidPluginRender<Scalar,Dim>::window()
 {
     return window_;
@@ -139,6 +151,24 @@ void FEMSolidPluginRender<Scalar,Dim>::setWindow(GlutWindow *window)
     window_->setDisplayFunction(FEMSolidPluginRender<Scalar,Dim>::displayFunction);
     window_->setKeyboardFunction(FEMSolidPluginRender<Scalar,Dim>::keyboardFunction);
 }
+
+template <typename Scalar, int Dim>
+void FEMSolidPluginRender<Scalar,Dim>::updateVolumetricMeshRender()
+{
+    FEMSolid<Scalar,Dim> *fem_driver = this->driver();
+    clearVolumetricMeshRender();
+    unsigned int obj_num = fem_driver->objectNum();
+    volumetric_mesh_render_.resize(obj_num,NULL);
+    volumetric_mesh_vert_displacement_.resize(obj_num);
+    for(unsigned int obj_idx = 0; obj_idx < obj_num; ++obj_idx)
+    {
+        volumetric_mesh_vert_displacement_[obj_idx].resize(fem_driver->numSimVertices(obj_idx));
+        const VolumetricMesh<Scalar,Dim> &sim_mesh = fem_driver->simulationMesh(obj_idx);
+        volumetric_mesh_render_[obj_idx] = new VolumetricMeshRender<Scalar,Dim>(&sim_mesh,&volumetric_mesh_vert_displacement_[obj_idx]);
+        volumetric_mesh_render_[obj_idx]->disableDisplayList();
+    }
+}
+
 
 template <typename Scalar, int Dim>
 void FEMSolidPluginRender<Scalar,Dim>::idleFunction(void)
@@ -166,9 +196,28 @@ void FEMSolidPluginRender<Scalar,Dim>::displayFunction(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     window->applyCameraAndLights();
 
+    //render vertex velocity
     if(active_instance_->render_velocity_)
         active_instance_->renderVertexVelocity();
-
+    //render deformed volumetric mesh
+    active_instance_->updateVolumetricMeshDisplacement();
+    for(unsigned int i = 0; i < active_instance_->volumetric_mesh_render_.size(); ++i)
+    {
+        if(active_instance_->render_mesh_solid_)
+            active_instance_->volumetric_mesh_render_[i]->enableRenderSolid();
+        else
+            active_instance_->volumetric_mesh_render_[i]->disableRenderSolid();
+        if(active_instance_->render_mesh_vertex_)
+            active_instance_->volumetric_mesh_render_[i]->enableRenderVertices();
+        else
+            active_instance_->volumetric_mesh_render_[i]->disableRenderVertices();
+        if(active_instance_->render_mesh_wireframe_)
+            active_instance_->volumetric_mesh_render_[i]->enableRenderWireframe();
+        else
+            active_instance_->volumetric_mesh_render_[i]->disableRenderWireframe();
+        active_instance_->volumetric_mesh_render_[i]->render();
+    }
+    
     (window->renderManager()).renderAll(); //render all other tasks of render manager
     window->displayFrameRate();
     glutSwapBuffers();
@@ -197,6 +246,15 @@ void FEMSolidPluginRender<Scalar,Dim>::keyboardFunction(unsigned char key, int x
     case 'S':
         active_instance_->auto_capture_frame_ = !(active_instance_->auto_capture_frame_);
         break;
+    case 'p':
+        active_instance_->render_mesh_vertex_ = !(active_instance_->render_mesh_vertex_);
+        break;
+    case 'w':
+        active_instance_->render_mesh_wireframe_ = !(active_instance_->render_mesh_wireframe_);
+        break;
+    case 'm':
+        active_instance_->render_mesh_solid_ = !(active_instance_->render_mesh_solid_);
+        break;
     default:
         break;
     }
@@ -211,6 +269,46 @@ void FEMSolidPluginRender<Scalar,Dim>::activateCurrentInstance()
 template <typename Scalar, int Dim>
 void FEMSolidPluginRender<Scalar,Dim>::renderVertexVelocity()
 {
+    FEMSolid<Scalar,Dim> *fem_driver = this->driver();
+    PHYSIKA_ASSERT(fem_driver);
+    openGLColor3(Color<Scalar>::Red());
+    glDisable(GL_LIGHTING);
+    for(unsigned int obj_idx = 0; obj_idx < fem_driver->objectNum(); ++obj_idx)
+    {
+        for(unsigned int vert_idx = 0; vert_idx < fem_driver->numSimVertices(obj_idx); ++vert_idx)
+        {
+            Vector<Scalar,Dim> start = fem_driver->vertexCurrentPosition(obj_idx,vert_idx);
+            Vector<Scalar,Dim> end = start + (velocity_scale_)*(fem_driver->vertexVelocity(obj_idx,vert_idx));
+            glBegin(GL_LINES);
+            openGLVertex(start);
+            openGLVertex(end);
+            glEnd();
+        }
+    }
+}
+
+template <typename Scalar, int Dim>
+void FEMSolidPluginRender<Scalar,Dim>::clearVolumetricMeshRender()
+{
+    for(unsigned int i = 0; i < volumetric_mesh_render_.size(); ++i)
+        if(volumetric_mesh_render_[i])
+            delete volumetric_mesh_render_[i];
+    volumetric_mesh_render_.clear();
+}
+    
+template <typename Scalar, int Dim>
+void FEMSolidPluginRender<Scalar,Dim>::updateVolumetricMeshDisplacement()
+{
+    FEMSolid<Scalar,Dim> *fem_driver = this->driver();
+    PHYSIKA_ASSERT(fem_driver);
+    PHYSIKA_ASSERT(volumetric_mesh_vert_displacement_.size() == fem_driver->objectNum());
+    PHYSIKA_ASSERT(volumetric_mesh_render_.size() == fem_driver->objectNum());
+    for(unsigned int obj_idx = 0; obj_idx < fem_driver->objectNum(); ++obj_idx)
+    {
+        PHYSIKA_ASSERT(volumetric_mesh_vert_displacement_[obj_idx].size() == fem_driver->numSimVertices(obj_idx));
+        for(unsigned int vert_idx = 0; vert_idx < fem_driver->numSimVertices(obj_idx); ++vert_idx)
+            volumetric_mesh_vert_displacement_[obj_idx][vert_idx] = fem_driver->vertexDisplacement(obj_idx,vert_idx);
+    }
 }
 
 //explicit instantiations

@@ -307,6 +307,8 @@ void FEMBase<Scalar,Dim>::setHomogeneousDensity(unsigned int object_idx, Scalar 
         throw PhysikaException("Object index out of range!");
     material_density_[object_idx].clear();
     material_density_[object_idx].push_back(density);
+    //compute mass matrix
+    generateMassMatrix(object_idx);
 }
 
 template <typename Scalar, int Dim>
@@ -318,6 +320,8 @@ void FEMBase<Scalar,Dim>::setRegionWiseDensity(unsigned int object_idx, const st
     if(density.size() < region_num)
         throw PhysikaException("Size of densities doesn't match the number of simulation mesh regions!");
     material_density_[object_idx] = density;
+    //compute mass matrix
+    generateMassMatrix(object_idx);
 }
  
 template <typename Scalar, int Dim>
@@ -329,6 +333,8 @@ void FEMBase<Scalar,Dim>::setElementWiseDensity(unsigned int object_idx, const s
     if(density.size() < ele_num)
         throw PhysikaException("Size of densities doesn't match the number of simulation mesh elements!");
     material_density_[object_idx] = density;
+    //compute mass matrix
+    generateMassMatrix(object_idx);
 }
     
 template <typename Scalar, int Dim>
@@ -375,7 +381,6 @@ void FEMBase<Scalar,Dim>::appendDataWithObject()
 {
     unsigned int last_obj_idx = this->objectNum() - 1;
     mass_matrix_.push_back(SparseMatrix<Scalar>());
-    generateMassMatrix(last_obj_idx);
     unsigned int last_obj_vert_num = simulation_mesh_[last_obj_idx]->vertNum();
     std::vector<Vector<Scalar,Dim> > zero_vec(last_obj_vert_num,Vector<Scalar,Dim>(0));
     vertex_displacements_.push_back(zero_vec);

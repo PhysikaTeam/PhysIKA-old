@@ -78,13 +78,17 @@ public:
     const SurfaceMeshInternal::Face<Scalar>*     facePtr(unsigned int face_idx) const; 
     SurfaceMeshInternal::Face<Scalar>*           facePtr(unsigned int face_idx); 
 
-    //adders
+    //modifiers
     void addMaterial(const BoundaryMeshInternal::Material<Scalar> &material);
+    void removeMaterial(unsigned int material_idx);
     void addGroup(const SurfaceMeshInternal::FaceGroup<Scalar> &group);
     void removeGroup(unsigned int group_idx);
     void addVertexPosition(const Vector<Scalar,3> &position);
+    void removeVertexPosition(unsigned int position_idx);
     void addVertexNormal(const Vector<Scalar,3> &normal);
+    void removeVertexNormal(unsigned int normal_idx);
     void addVertexTextureCoordinate(const Vector<Scalar,2> &texture_coordinate);
+    void removeVertexTextureCoordinate(unsigned int texture_idx);
 
     //utilities
     enum VertexNormalType{
