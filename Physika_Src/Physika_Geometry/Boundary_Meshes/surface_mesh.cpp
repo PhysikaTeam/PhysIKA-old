@@ -13,9 +13,9 @@
  */
 
 #include <cmath>
-#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 using std::vector;
 using std::string;
@@ -137,12 +137,9 @@ bool SurfaceMesh<Scalar>::isQuadrilateralMesh() const
 template <typename Scalar>
 Vector<Scalar,3> SurfaceMesh<Scalar>::vertexPosition(unsigned int vert_idx) const
 {
-    bool index_valid = (vert_idx>=0)&&(vert_idx<vertex_positions_.size());
+    bool index_valid = (vert_idx<vertex_positions_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh vertex index out of range!");
     return vertex_positions_[vert_idx];
 }
 
@@ -156,12 +153,9 @@ Vector<Scalar,3> SurfaceMesh<Scalar>::vertexPosition(const Vertex<Scalar> &verte
 template <typename Scalar>
 void SurfaceMesh<Scalar>::setVertexPosition(unsigned int vert_idx, const Vector<Scalar,3> &position)
 {
-    bool index_valid = (vert_idx>=0)&&(vert_idx<vertex_positions_.size());
+    bool index_valid = (vert_idx<vertex_positions_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh vertex index out of range!");
     vertex_positions_[vert_idx] = position;
 }
 
@@ -175,12 +169,9 @@ void SurfaceMesh<Scalar>::setVertexPosition(const Vertex<Scalar> &vertex, const 
 template <typename Scalar>
 Vector<Scalar,3> SurfaceMesh<Scalar>::vertexNormal(unsigned int normal_idx) const
 {
-    bool index_valid = (normal_idx>=0)&&(normal_idx<vertex_normals_.size());
+    bool index_valid = (normal_idx<vertex_normals_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh vertex normal index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh vertex normal index out of range!");
     return vertex_normals_[normal_idx];
 }
 
@@ -194,12 +185,9 @@ Vector<Scalar,3> SurfaceMesh<Scalar>::vertexNormal(const Vertex<Scalar> &vertex)
 template <typename Scalar>
 void SurfaceMesh<Scalar>::setVertexNormal(unsigned int normal_idx, const Vector<Scalar,3> &normal)
 {
-    bool index_valid = (normal_idx>=0)&&(normal_idx<vertex_normals_.size());
+    bool index_valid = (normal_idx<vertex_normals_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh vertex normal index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh vertex normal index out of range!");
     vertex_normals_[normal_idx] = normal;
 }
 
@@ -213,12 +201,9 @@ void SurfaceMesh<Scalar>::setVertexNormal(const Vertex<Scalar> &vertex, const Ve
 template <typename Scalar>
 Vector<Scalar,2> SurfaceMesh<Scalar>::vertexTextureCoordinate(unsigned int texture_idx) const
 {
-    bool index_valid = (texture_idx>=0)&&(texture_idx<vertex_textures_.size());
+    bool index_valid = (texture_idx<vertex_textures_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh vertex texture index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh vertex texture index out of range!");
     return vertex_textures_[texture_idx];
 }
 
@@ -232,12 +217,9 @@ Vector<Scalar,2> SurfaceMesh<Scalar>::vertexTextureCoordinate(const Vertex<Scala
 template <typename Scalar>
 void SurfaceMesh<Scalar>::setVertexTextureCoordinate(unsigned int texture_idx, const Vector<Scalar,2> &texture_coordinate)
 {
-    bool index_valid = (texture_idx>=0)&&(texture_idx<vertex_textures_.size());
+    bool index_valid = (texture_idx<vertex_textures_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh vertex texture index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh vertex texture index out of range!");
     vertex_textures_[texture_idx] = texture_coordinate;
 }
 
@@ -251,48 +233,36 @@ void SurfaceMesh<Scalar>::setVertexTextureCoordinate(const Vertex<Scalar> &verte
 template <typename Scalar>
 const FaceGroup<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx) const
 {
-    bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
+    bool index_valid = (group_idx<groups_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh group index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh group index out of range!");
     return groups_[group_idx];
 }
 
 template <typename Scalar>
 FaceGroup<Scalar>& SurfaceMesh<Scalar>::group(unsigned int group_idx)
 {
-    bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
+    bool index_valid = (group_idx<groups_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh group index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh group index out of range!");
     return groups_[group_idx];
 }
 
 template <typename Scalar>
 const FaceGroup<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx) const
 {
-    bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
+    bool index_valid = (group_idx<groups_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh group index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh group index out of range!");
     return &(groups_[group_idx]);
 }
 
 template <typename Scalar>
 FaceGroup<Scalar>* SurfaceMesh<Scalar>::groupPtr(unsigned int group_idx)
 {
-    bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
+    bool index_valid = (group_idx<groups_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh group index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh group index out of range!");
     return &(groups_[group_idx]);
 }
 
@@ -317,48 +287,36 @@ FaceGroup<Scalar>* SurfaceMesh<Scalar>::groupPtr(const string &name)
 template <typename Scalar>
 const Material<Scalar>& SurfaceMesh<Scalar>::material(unsigned int material_idx) const
 {
-    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
+    bool index_valid = (material_idx<materials_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh material index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh material index out of range!");
     return materials_[material_idx];
 }
 
 template <typename Scalar>
 Material<Scalar>& SurfaceMesh<Scalar>::material(unsigned int material_idx)
 {
-    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
+    bool index_valid = (material_idx<materials_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh material index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh material index out of range!");
     return materials_[material_idx];
 }
 
 template <typename Scalar>
 const Material<Scalar>* SurfaceMesh<Scalar>::materialPtr(unsigned int material_idx) const
 {
-    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
+    bool index_valid = (material_idx<materials_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh material index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh material index out of range!");
     return &(materials_[material_idx]);
 }
 
 template <typename Scalar>
 Material<Scalar>* SurfaceMesh<Scalar>::materialPtr(unsigned int material_idx)
 {
-    bool index_valid = (material_idx>=0)&&(material_idx<materials_.size());
+    bool index_valid = (material_idx<materials_.size());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh material index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh material index out of range!");
     return &(materials_[material_idx]);
 }
 
@@ -383,12 +341,9 @@ void SurfaceMesh<Scalar>::setSingleMaterial(const Material<Scalar> &material)
 template <typename Scalar>
 const Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) const 
 {
-    bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
+    bool index_valid = (face_idx<numFaces());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh face index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh face index out of range!");
 	unsigned int current_face_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
@@ -401,20 +356,14 @@ const Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) const
 		else
 			current_face_sum += group_face_num;
 	}
-	std::cerr<<"SurfaceMesh face index out of range!\n";
-	std::exit(EXIT_FAILURE);
-    return groups_[0].face(0);
 }
 
 template <typename Scalar>
 Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx) 
 {
-    bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
+    bool index_valid = (face_idx<numFaces());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh face index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh face index out of range!");
 	unsigned int current_face_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
@@ -427,20 +376,14 @@ Face<Scalar>& SurfaceMesh<Scalar>::face(unsigned int face_idx)
 		else
 			current_face_sum += group_face_num;
 	}
-	std::cerr<<"SurfaceMesh face index out of range!\n";
-	std::exit(EXIT_FAILURE);
-    return groups_[0].face(0);
 }
 
 template <typename Scalar>
 const Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) const 
 {
-    bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
+    bool index_valid = (face_idx<numFaces());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh face index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh face index out of range!");
 	unsigned int current_face_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
@@ -453,20 +396,14 @@ const Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) const
 		else
 			current_face_sum += group_face_num;
 	}
-	std::cerr<<"SurfaceMesh face index out of range!\n";
-	std::exit(EXIT_FAILURE);
-    return groups_[0].facePtr(0);
 }
 
 template <typename Scalar>
 Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx) 
 {
-    bool index_valid = (face_idx>=0)&&(face_idx<numFaces());
+    bool index_valid = (face_idx<numFaces());
     if(!index_valid)
-    {
-        std::cerr<<"SurfaceMesh face index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SurfaceMesh face index out of range!");
 	unsigned int current_face_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
@@ -479,9 +416,6 @@ Face<Scalar>* SurfaceMesh<Scalar>::facePtr(unsigned int face_idx)
 		else
 			current_face_sum += group_face_num;
 	}
-	std::cerr<<"SurfaceMesh face index out of range!\n";
-	std::exit(EXIT_FAILURE);
-    return groups_[0].facePtr(0);
 }
 
 template <typename Scalar>
@@ -491,9 +425,27 @@ void SurfaceMesh<Scalar>::addMaterial(const Material<Scalar> &material)
 }
 
 template <typename Scalar>
+void SurfaceMesh<Scalar>::removeMaterial(unsigned int material_idx)
+{
+    if(material_idx >= materials_.size())
+        std::cerr<<"Warning: material index out of range, operation ignored!\n";
+    else
+        materials_.erase(materials_.begin()+material_idx);
+}
+
+template <typename Scalar>
 void SurfaceMesh<Scalar>::addGroup(const FaceGroup<Scalar> &group)
 {
     groups_.push_back(group);
+}
+
+template <typename Scalar>
+void SurfaceMesh<Scalar>::removeGroup(unsigned int group_idx)
+{
+    if(group_idx >= groups_.size())
+        std::cerr<<"Warning: group index out of range, operation ignored!\n";
+    else
+        groups_.erase(groups_.begin()+group_idx);
 }
 
 template <typename Scalar>
@@ -503,15 +455,42 @@ void SurfaceMesh<Scalar>::addVertexPosition(const Vector<Scalar,3> &position)
 }
 
 template <typename Scalar>
+void SurfaceMesh<Scalar>::removeVertexPosition(unsigned int position_idx)
+{
+    if(position_idx >= vertex_positions_.size())
+        std::cerr<<"Warning: vertex position index out of range, operation ignored!\n";
+    else
+        vertex_positions_.erase(vertex_positions_.begin()+position_idx);
+}
+
+template <typename Scalar>
 void SurfaceMesh<Scalar>::addVertexNormal(const Vector<Scalar,3> &normal)
 {
     vertex_normals_.push_back(normal);
 }
 
 template <typename Scalar>
+void SurfaceMesh<Scalar>::removeVertexNormal(unsigned int normal_idx)
+{
+    if(normal_idx >= vertex_normals_.size())
+        std::cerr<<"Warning: vertex normal index out of range, operation ignored!\n";
+    else
+        vertex_normals_.erase(vertex_normals_.begin()+normal_idx);
+}
+
+template <typename Scalar>
 void SurfaceMesh<Scalar>::addVertexTextureCoordinate(const Vector<Scalar,2> &texture_coordinate)
 {
     vertex_textures_.push_back(texture_coordinate);
+}
+
+template <typename Scalar>
+void SurfaceMesh<Scalar>::removeVertexTextureCoordinate(unsigned int texture_idx)
+{
+    if(texture_idx >= vertex_textures_.size())
+        std::cerr<<"Warning: vertex texture index out of range, operation ignored!\n";
+    else
+        vertex_textures_.erase(vertex_textures_.begin()+texture_idx);
 }
 
 template <typename Scalar>

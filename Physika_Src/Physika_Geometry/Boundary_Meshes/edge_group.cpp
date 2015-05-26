@@ -69,7 +69,6 @@ void EdgeGroup<Scalar,Dim>::setName(const string &name)
 template <typename Scalar, int Dim>
 const Edge<Scalar,Dim>& EdgeGroup<Scalar,Dim>::edge(unsigned int edge_idx) const
 {
-    PHYSIKA_ASSERT(edge_idx>=0);
     PHYSIKA_ASSERT(edge_idx<edges_.size());
     return edges_[edge_idx];
 }
@@ -77,7 +76,6 @@ const Edge<Scalar,Dim>& EdgeGroup<Scalar,Dim>::edge(unsigned int edge_idx) const
 template <typename Scalar, int Dim>
 Edge<Scalar,Dim>& EdgeGroup<Scalar,Dim>::edge(unsigned int edge_idx)
 {
-    PHYSIKA_ASSERT(edge_idx>=0);
     PHYSIKA_ASSERT(edge_idx<edges_.size());
     return edges_[edge_idx];
 }
@@ -85,7 +83,6 @@ Edge<Scalar,Dim>& EdgeGroup<Scalar,Dim>::edge(unsigned int edge_idx)
 template <typename Scalar, int Dim>
 const Edge<Scalar,Dim>* EdgeGroup<Scalar,Dim>::edgePtr(unsigned int edge_idx) const
 {
-    PHYSIKA_ASSERT(edge_idx>=0);
     PHYSIKA_ASSERT(edge_idx<edges_.size());
     return &(edges_[edge_idx]);
 }
@@ -93,7 +90,6 @@ const Edge<Scalar,Dim>* EdgeGroup<Scalar,Dim>::edgePtr(unsigned int edge_idx) co
 template <typename Scalar, int Dim>
 Edge<Scalar,Dim>* EdgeGroup<Scalar,Dim>::edgePtr(unsigned int edge_idx)
 {
-    PHYSIKA_ASSERT(edge_idx>=0);
     PHYSIKA_ASSERT(edge_idx<edges_.size());
     return &(edges_[edge_idx]);
 }

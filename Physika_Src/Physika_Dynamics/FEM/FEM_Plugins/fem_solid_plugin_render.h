@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_DYNAMICS_FEM_FEM_PLUGINS_FEM_SOLID_PLUGIN_RENDER_H_
 #define PHYSIKA_DYNAMICS_FEM_FEM_PLUGINS_FEM_SOLID_PLUGIN_RENDER_H_
 
+#include <vector>
 #include "Physika_Core/Timer/timer.h"
 #include "Physika_Dynamics/FEM/fem_solid.h"
 #include "Physika_Dynamics/FEM/FEM_Plugins/fem_solid_plugin_base.h"
@@ -36,6 +37,9 @@ template <typename Scalar, int Dim> class VolumetricMeshRender;
  * 5. SPACE: pause/continue simulation
  * 6. i: increase velocity display scale
  * 7. d: decrease velocity display scale
+ * 8. p: render volumetric mesh vertex
+ * 9. w: render volumetric mesh wireframe
+ * 10. m: render volumetric mesh solid
  */
 
 template <typename Scalar, int Dim>
@@ -52,9 +56,14 @@ public:
     virtual void onBeginTimeStep(Scalar time, Scalar dt);
     virtual void onEndTimeStep(Scalar time, Scalar dt); 
 
+    virtual void setDriver(DriverBase<Scalar> *driver);  //initialize mesh render after driver is set
+    
     //setters&&getters
     GlutWindow* window();
     void setWindow(GlutWindow *window);
+
+    //call this method if volumetric mesh number/topology is changed
+    void updateVolumetricMeshRender();
 
 protected:
     static void idleFunction(void);
@@ -63,17 +72,21 @@ protected:
     void activateCurrentInstance(); //activate this instance, called in constructor
 
     void renderVertexVelocity();
-    void renderVolumetricMesh();
-
+    void clearVolumetricMeshRender();
+    void updateVolumetricMeshDisplacement();
 protected:
     GlutWindow *window_;
     static FEMSolidPluginRender<Scalar,Dim> *active_instance_; //current active instance
-    VolumetricMeshRender<Scalar,Dim> *volumetric_mesh_render_; //for rendering volumetric mesh
+    std::vector<VolumetricMeshRender<Scalar,Dim>*> volumetric_mesh_render_; //for rendering volumetric mesh
+    std::vector<std::vector<Vector<Scalar,Dim> > > volumetric_mesh_vert_displacement_; //for rendering deformed volumetric mesh
     bool pause_simulation_;
     bool simulation_finished_;
     bool render_velocity_;
     Scalar velocity_scale_;
     bool auto_capture_frame_;
+    bool render_mesh_vertex_;
+    bool render_mesh_wireframe_;
+    bool render_mesh_solid_;
     Timer timer_;
     Scalar total_time_; //total time spent on simulation
 };

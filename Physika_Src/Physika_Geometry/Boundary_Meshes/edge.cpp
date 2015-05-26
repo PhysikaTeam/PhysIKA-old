@@ -53,7 +53,6 @@ unsigned int Edge<Scalar,Dim>::numVertices() const
 template <typename Scalar, int Dim>
 const Vertex<Scalar>& Edge<Scalar,Dim>::vertex(unsigned int vert_idx) const
 {
-    PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
     return vertices_[vert_idx];
 }
@@ -61,7 +60,6 @@ const Vertex<Scalar>& Edge<Scalar,Dim>::vertex(unsigned int vert_idx) const
 template <typename Scalar, int Dim>
 Vertex<Scalar>& Edge<Scalar,Dim>::vertex(unsigned int vert_idx)
 {
-    PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
     return vertices_[vert_idx];
 }
@@ -69,7 +67,6 @@ Vertex<Scalar>& Edge<Scalar,Dim>::vertex(unsigned int vert_idx)
 template <typename Scalar, int Dim>
 const Vertex<Scalar>* Edge<Scalar,Dim>::vertexPtr(unsigned int vert_idx) const
 {
-    PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
     return &(vertices_[vert_idx]);
 }
@@ -77,7 +74,6 @@ const Vertex<Scalar>* Edge<Scalar,Dim>::vertexPtr(unsigned int vert_idx) const
 template <typename Scalar, int Dim>
 Vertex<Scalar>* Edge<Scalar,Dim>::vertexPtr(unsigned int vert_idx)
 {
-    PHYSIKA_ASSERT(vert_idx>=0);
     PHYSIKA_ASSERT(vert_idx<vertices_.size());
     return &(vertices_[vert_idx]);
 }

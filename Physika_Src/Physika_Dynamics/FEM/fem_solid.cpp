@@ -155,6 +155,8 @@ void FEMSolid<Scalar,Dim>::setHomogeneousMaterial(unsigned int object_idx, const
         throw PhysikaException("Object index out of range!");
     clearMaterial(object_idx);
     addMaterial(object_idx,material);
+    //create fem force model
+    createFEMSolidForceModel(object_idx);
 }
 
 template <typename Scalar, int Dim>
@@ -168,6 +170,8 @@ void FEMSolid<Scalar,Dim>::setRegionWiseMaterial(unsigned int object_idx, const 
     clearMaterial(object_idx);
     for(unsigned int i = 0; i < region_num; ++i)
         addMaterial(object_idx,*materials[i]);
+    //create fem force model
+    createFEMSolidForceModel(object_idx);
 }
 
 template <typename Scalar, int Dim>
@@ -181,6 +185,8 @@ void FEMSolid<Scalar,Dim>::setElementWiseMaterial(unsigned int object_idx, const
     clearMaterial(object_idx);
     for(unsigned int i = 0; i < ele_num; ++i)
         addMaterial(object_idx,*materials[i]);
+    //create fem force model
+    createFEMSolidForceModel(object_idx);
 }
 
 template <typename Scalar, int Dim>
@@ -337,7 +343,6 @@ void FEMSolid<Scalar,Dim>::appendDataWithObject()
     constitutive_model_.push_back(empty_material);
     force_model_.push_back(NULL);
     unsigned int last_obj_idx = this->objectNum() - 1;
-    createFEMSolidForceModel(last_obj_idx);
     unsigned int last_obj_vert_num = this->numSimVertices(last_obj_idx);
     std::vector<unsigned char> dirichlet(last_obj_vert_num,0x00);
     is_dirichlet_vertex_.push_back(dirichlet);
