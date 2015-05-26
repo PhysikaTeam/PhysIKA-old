@@ -81,7 +81,7 @@ inline long double cbrt(long double value)
 {
     long double base = value > 0.0 ? value : -value;
     long double sign = value > 0.0 ? 1.0 : -1.0;
-    return sign*std::pow(base,1.0/3.0);
+    return sign*std::pow(base,static_cast<long double>(1.0/3.0));
 }
 
 template <typename Scalar>
