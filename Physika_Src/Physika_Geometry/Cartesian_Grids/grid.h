@@ -55,7 +55,7 @@ public:
     //return the cell index that the given point is in, (left close right open interval for a cell)
     Vector<unsigned int,Dim> cellIndex(const Vector<Scalar,Dim> &position) const;
     //return the cell index that the given point is in and the bias with respect to
-    //minimum corner of the cell
+    //minimum corner of the cell, bias is in range [0,1)
     void cellIndexAndBiasInCell(const Vector<Scalar,Dim> &position,
                                 Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &bias_in_cell) const;  
     //modifiers

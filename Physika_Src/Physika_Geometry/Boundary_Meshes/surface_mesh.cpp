@@ -13,6 +13,7 @@
  */
 
 #include <cmath>
+#include <limits>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
@@ -134,6 +135,21 @@ bool SurfaceMesh<Scalar>::isQuadrilateralMesh() const
     return true;
 }
 
+template <typename Scalar>
+Range<Scalar,3> SurfaceMesh<Scalar>::axisAlignedBoundingBox() const
+{
+    Vector<Scalar,3> min_corner((std::numeric_limits<Scalar>::max)()), max_corner(std::numeric_limits<Scalar>::lowest());
+    for(unsigned int vert_idx = 0; vert_idx < vertex_positions_.size(); ++vert_idx)
+    {
+        for(unsigned int dim = 0; dim < 3; ++dim)
+        {
+            min_corner[dim] = min_corner[dim] > vertex_positions_[vert_idx][dim] ? vertex_positions_[vert_idx][dim] : min_corner[dim];
+            max_corner[dim] = max_corner[dim] > vertex_positions_[vert_idx][dim] ? max_corner[dim] : vertex_positions_[vert_idx][dim];
+        }
+    }
+    return Range<Scalar,3>(min_corner,max_corner);
+}
+    
 template <typename Scalar>
 Vector<Scalar,3> SurfaceMesh<Scalar>::vertexPosition(unsigned int vert_idx) const
 {
@@ -617,7 +633,6 @@ void SurfaceMesh<Scalar>::separateByGroup(std::vector<SurfaceMesh<Scalar> > & su
 	delete [] vertex_new_pos;
 	delete [] vertex_new_normals;
 	delete [] vertex_new_textures;
-
 }
 
 template <typename Scalar>
