@@ -70,13 +70,13 @@
 
         /* Link with Win32 static freeglut lib */
 #       if FREEGLUT_LIB_PRAGMAS
-//  Fei Zhu: Physika use freeglut as glut
+//  Fei Zhu: Physika uses unified names in different build
 /* #           ifdef NDEBUG */
 /* #              pragma comment (lib, "freeglut_static.lib") */
 /* #           else */
 /* #              pragma comment (lib, "freeglut_staticd.lib") */
 /* #           endif */
-#              pragma comment (lib, "glut.lib")
+#              pragma comment (lib, "freeglut.lib")
 #       endif
 
 /* Windows shared library (DLL) */
@@ -90,13 +90,13 @@
 
             /* Link with Win32 shared freeglut lib */
 #           if FREEGLUT_LIB_PRAGMAS
-//  Fei Zhu: Physika use freeglut as glut
+//  Fei Zhu: Physika uses unified names in different build
 /* #               ifdef NDEBUG */
 /* #                   pragma comment (lib, "freeglut.lib") */
 /* #               else */
 /* #                   pragma comment (lib, "freeglutd.lib") */
 /* #               endif */
-#              pragma comment (lib, "glut.lib")
+#              pragma comment (lib, "freeglut.lib")
 #           endif
 
 #       endif
