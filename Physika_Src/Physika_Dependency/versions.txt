@@ -10,5 +10,7 @@ Physika specific changes:
 3.LodePNG v20131222
 
 4.freeglut 3.0.0
+* freeglut_std.h: replace any freeglut related pragma comment to glut, see comments
+  therein
 
 5.StackWalkder 2014.12.28
