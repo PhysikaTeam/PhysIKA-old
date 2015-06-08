@@ -497,7 +497,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
                     unsigned int global_corner_idx =  particle_domain_mesh_[obj_idx]->eleVertIndex(particle_idx,corner_idx);
                     if(is_enriched_domain_corner_[obj_idx][global_corner_idx])
                     {
-                        Scalar weight = particle_corner_weight_[obj_idx][obj_idx][corner_idx];
+                        Scalar weight = particle_corner_weight_[obj_idx][particle_idx][corner_idx];
                         flip_vel += weight*(domain_corner_velocity_[obj_idx][global_corner_idx]-domain_corner_velocity_before_[obj_idx][global_corner_idx]);
                         pic_vel += weight*domain_corner_velocity_[obj_idx][global_corner_idx];
                     }
