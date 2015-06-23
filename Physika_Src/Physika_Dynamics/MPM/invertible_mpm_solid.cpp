@@ -28,7 +28,7 @@
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 #include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
-#include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI2_update_method.h"
+#include "Physika_Dynamics/MPM/CPDI_Update_Methods/robust_CPDI2_update_method.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/invertible_mpm_solid.h"
 
@@ -42,8 +42,8 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
     :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.1),
      enable_enrichment_(true), enable_entire_enrichment_(false)
 {
-    //only works with CPDI2
-    CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
+    //only works with RobustCPDI2
+    CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
 }
 
 template <typename Scalar, int Dim>
@@ -52,8 +52,8 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, uns
     :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.1),
     enable_enrichment_(true), enable_entire_enrichment_(false)
 {
-    //only works with CPDI2
-    CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
+    //only works with RobustCPDI2
+    CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
 }
 
 template <typename Scalar, int Dim>
@@ -63,8 +63,8 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, uns
     :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.1),
     enable_enrichment_(true), enable_entire_enrichment_(false)
 {
-    //only works with CPDI2
-    CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<CPDI2UpdateMethod<Scalar,Dim> >();
+    //only works with RobustCPDI2
+    CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
 }
 
 template <typename Scalar, int Dim>
@@ -390,22 +390,21 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
     PHYSIKA_ASSERT(this->weight_function_);
     const GridWeightFunction<Scalar,Dim> &weight_function = *(this->weight_function_);
     //update the interpolation weight between particle and domain corner
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
-    bool gradient_to_reference_coordinate = true;  //compute particle grid gradient with respect to reference coordinate
-    if(update_method)  //CPDI2
+    RobustCPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<RobustCPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    if(update_method)  //RobustCPDI2
         update_method->updateParticleInterpolationWeightWithEnrichment(weight_function,particle_domain_mesh_,is_enriched_domain_corner_,
                                                                        this->particle_grid_weight_and_gradient_,this->particle_grid_pair_num_,
-                                                                       this->corner_grid_weight_,this->corner_grid_pair_num_,gradient_to_reference_coordinate);
+                                                                       this->corner_grid_weight_,this->corner_grid_pair_num_);
     else
-        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+        throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
 }
 
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
 {
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    RobustCPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<RobustCPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
-        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+        throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
     //plugin operation
     MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
     for(unsigned int i = 0; i < this->plugins_.size(); ++i)
@@ -481,11 +480,11 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
                     if(this->grid_velocity_(node_idx).find(obj_idx) != this->grid_velocity_(node_idx).end())
                         cur_grid_vel = this->grid_velocity_(node_idx)[obj_idx];
                     else
-                        PHYSIKA_ERROR("Error in updateParticleVelocity!");
+                        throw PhysikaException("Error in updateParticleVelocity!");
                     if(this->grid_velocity_before_(node_idx).find(obj_idx) != this->grid_velocity_before_(node_idx).end())
                         grid_vel_before = this->grid_velocity_before_(node_idx)[obj_idx];
                     else
-                        PHYSIKA_ERROR("Error in updateParticleVelocity!");
+                        throw PhysikaException("Error in updateParticleVelocity!");
                     flip_vel += weight*(cur_grid_vel-grid_vel_before);
                     pic_vel += weight*cur_grid_vel;
                 }
@@ -512,8 +511,8 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
 {
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
-    if(update_method)  //CPDI2
+    RobustCPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<RobustCPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    if(update_method)  //RobustCPDI2
     {
         //plugin operation
         MPMSolidPluginBase<Scalar,Dim> *plugin = NULL;
@@ -552,11 +551,11 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
                 }
             }
         }
-        //update particle position with CPDI2
+        //update particle position with RobustCPDI2
         update_method->updateParticlePosition(dt,this->is_dirichlet_particle_);
     }
     else
-        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+        throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
 }
     
 template <typename Scalar, int Dim>
@@ -665,9 +664,9 @@ void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 {
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    RobustCPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<RobustCPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
-        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+        throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
     //explicit integration
     //integration on grid and domain corner
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
@@ -957,9 +956,9 @@ void InvertibleMPMSolid<Scalar,Dim>::applyGravityOnEnrichedDomainCorner(Scalar d
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::computeParticleInterpolationWeightAndGradientInInitialDomain()
 {
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    RobustCPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<RobustCPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
-        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+        throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
         for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
         {
@@ -973,9 +972,9 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithNoEnrichmentForwardEule
 {
     PHYSIKA_ASSERT(obj_idx<this->objectNum());
     PHYSIKA_ASSERT(particle_idx<this->particleNumOfObject(obj_idx));
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    RobustCPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<RobustCPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
-        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+        throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
     SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     Scalar particle_initial_volume = this->particle_initial_volume_[obj_idx][particle_idx];
 
@@ -1024,9 +1023,9 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
 {
     PHYSIKA_ASSERT(obj_idx<this->objectNum());
     PHYSIKA_ASSERT(particle_idx<this->particleNumOfObject(obj_idx));
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    RobustCPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<RobustCPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
-        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+        throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
     //we assume the particle has enriched domain corners
     SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     unsigned int corner_num = (Dim == 2) ? 4 : 8;
@@ -1057,7 +1056,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
                 }
     }
     else
-        PHYSIKA_ERROR("Wrong dimension specified!");
+        throw PhysikaException("Wrong dimension specified!");
     //now quadrature
     SquareMatrix<Scalar,Dim> deform_grad, left_rotation, diag_deform_grad, right_rotation,
         diag_first_PiolaKirchoff_stress, first_PiolaKirchoff_stress, particle_domain_jacobian_ref;
@@ -1127,9 +1126,9 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
 {
     PHYSIKA_ASSERT(obj_idx<this->objectNum());
     PHYSIKA_ASSERT(particle_idx<this->particleNumOfObject(obj_idx));
-    CPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<CPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
+    RobustCPDI2UpdateMethod<Scalar,Dim> *update_method = dynamic_cast<RobustCPDI2UpdateMethod<Scalar,Dim>*>(this->cpdi_update_method_);
     if(update_method == NULL)
-        PHYSIKA_ERROR("Invertible MPM only supports CPDI2!");
+        throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
     //we assume the particle has enriched domain corners
     SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     unsigned int corner_num = (Dim == 2) ? 4 : 8;
@@ -1249,7 +1248,7 @@ SquareMatrix<Scalar,Dim> InvertibleMPMSolid<Scalar,Dim>::factorizeParticleSkewDe
         skew(2,2) = F.determinant()/(denominator_22*col1_cross_col2);
     }
     else
-        PHYSIKA_ERROR("Wrong dimension specified!");
+        throw PhysikaException("Wrong dimension specified!");
     return skew;
 }
 

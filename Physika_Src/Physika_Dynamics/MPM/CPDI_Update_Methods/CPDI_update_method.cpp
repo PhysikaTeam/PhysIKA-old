@@ -1,6 +1,6 @@
 /*
  * @file CPDI_update_method.cpp 
- * @Brief the particle domain update procedure introduced in paper:
+ * @brief the particle domain update procedure introduced in paper:
  *        "A convected particle domain interpolation technique to extend applicability of
  *         the material point method for problems involving massive deformations"
  *        It's the base class of all update methods derived from CPDI
