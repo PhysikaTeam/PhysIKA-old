@@ -25,6 +25,7 @@
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
+#include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 #include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
@@ -659,6 +660,14 @@ void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx
     unsigned int particle_num = this->particleNumOfObject(object_idx);
     for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
         setEnrichmentMetric(object_idx,particle_idx,metric);
+}
+         
+template <typename Scalar, int Dim>
+bool InvertibleMPMSolid<Scalar,Dim>::saveParticleDomain(unsigned int object_idx, const std::string &file_name) const
+{
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    return VolumetricMeshIO<Scalar,Dim>::save(file_name,particle_domain_mesh_[object_idx]);
 }
 
 template <typename Scalar, int Dim>

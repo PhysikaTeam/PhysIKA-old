@@ -71,6 +71,9 @@ public:
     void setEnrichmentMetric(unsigned int object_idx, unsigned int particle_idx, Scalar metric);
     void setEnrichmentMetric(unsigned int object_idx, Scalar metric); //set uniform enrichment metric for all particles
 
+    //save particle domain as Physika::VolumetricMesh
+    virtual bool saveParticleDomain(unsigned int object_idx, const std::string &file_name) const;
+
 protected:
     //solve on grid is reimplemented
     virtual void solveOnGridForwardEuler(Scalar dt);

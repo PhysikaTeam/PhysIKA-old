@@ -20,6 +20,9 @@
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
+#include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
+#include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
@@ -303,6 +306,58 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigne
     if(idx_1d >= corner_num)
         throw PhysikaException("corner index out of range!");
     return initial_particle_domain_corners_[object_idx][particle_idx][idx_1d];
+}
+
+template <typename Scalar, int Dim>
+bool CPDIMPMSolid<Scalar,Dim>::saveParticleDomain(unsigned int object_idx, const std::string &file_name) const
+{
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    //construct Physika::VolumetricMesh from the particle domain data, and save it to disk
+    std::vector<Vector<Scalar,Dim> > corner_positions;
+    unsigned int *domains = NULL;
+    unsigned int corner_num = (Dim==2)?4:8;
+    unsigned int particle_num = this->particleNumOfObject(object_idx);
+    domains = new unsigned int[particle_num*corner_num];
+    corner_positions.clear();
+    for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
+    {
+        for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+        {
+            typename std::vector<Vector<Scalar,Dim> >::iterator iter = std::find(corner_positions.begin(),corner_positions.end(),particle_domain_corners_[object_idx][particle_idx][corner_idx]);
+            if(iter == corner_positions.end())
+            {
+                corner_positions.push_back(particle_domain_corners_[object_idx][particle_idx][corner_idx]);
+                domains[particle_idx*corner_num+corner_idx] = corner_positions.size() - 1;
+            }
+            else
+            {
+                unsigned int idx = static_cast<unsigned int>(iter-corner_positions.begin());
+                domains[particle_idx*corner_num+corner_idx] = idx;
+            }
+        }
+    }
+    unsigned int vert_num = corner_positions.size();
+    Scalar *vertices = new Scalar[vert_num*Dim];
+    for(unsigned int i = 0; i < corner_positions.size(); ++i)
+        for(unsigned int j =0; j < Dim; ++j)
+            vertices[i*Dim+j] = corner_positions[i][j];
+    bool status = false;
+    if(Dim == 2)
+    {
+        QuadMesh<Scalar> *vol_mesh = new QuadMesh<Scalar>(vert_num,vertices,particle_num,domains);
+        status = VolumetricMeshIO<Scalar,2>::save(file_name,vol_mesh);
+        delete vol_mesh;
+    }
+    else
+    {
+        CubicMesh<Scalar> *vol_mesh = new CubicMesh<Scalar>(vert_num,vertices,particle_num,domains);
+        status = VolumetricMeshIO<Scalar,3>::save(file_name,vol_mesh);
+        delete vol_mesh;
+    }
+    delete[] domains;
+    delete[] vertices;
+    return status;
 }
 
 template <typename Scalar, int Dim>
