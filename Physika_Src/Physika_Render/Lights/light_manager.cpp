@@ -11,7 +11,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
-#include <cstdlib>
+
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Render/Lights/light_manager.h"
@@ -107,8 +107,7 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
     }
     else
     {
-        std::cerr<<"Cannot insert NULL light to LightManager!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot insert NULL light to LightManager, operation ignored!\n";
     }
 }
 

@@ -1,6 +1,6 @@
 /*
  * @file light.h 
- * @Brief a light class for OpenGL.
+ * @brief a light class for OpenGL.
  * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.

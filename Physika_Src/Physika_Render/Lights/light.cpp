@@ -1,6 +1,6 @@
 /*
  * @file light.cpp 
- * @Brief a light class for OpenGL.
+ * @brief a light class for OpenGL.
  * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
@@ -11,7 +11,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
-#include <cstdlib>
+
 #include <iostream>
 #include "Physika_Core/Vectors/vector_4d.h"
 #include "Physika_Render/Lights/light.h"
@@ -33,7 +33,7 @@ Light::Light(GLenum light_id)
     unsigned int idx = light_id-GL_LIGHT0;
 	if(this->is_occupied_[idx] == true)
 	{
-		std::cerr<<"error: this id has been occupied, system will try to allocate another light id for you!"<<std::endl;
+		std::cerr<<"Warning: this id has been occupied, system will try to allocate another light id for you!"<<std::endl;
 		this->createOneLight();
 	}
 	else
@@ -159,8 +159,7 @@ void Light::createOneLight()
 		idx++;
 	if(idx == 8)
 	{
-		std::cerr<<"fatal error: all lights have been occupied, the program will exit!!!"<<std::endl;
-		std::exit(EXIT_FAILURE);
+		std::cerr<<"Warning: all lights have been occupied, operation ignored!"<<std::endl;
 	}
 	else
 	{
