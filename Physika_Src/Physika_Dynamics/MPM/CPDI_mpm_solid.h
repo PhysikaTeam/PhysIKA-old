@@ -62,7 +62,7 @@ public:
     void setCPDIUpdateMethod();
 
     //save particle domain as Physika::VolumetricMesh
-    virtual bool saveParticleDomain(unsigned int object_idx, const std::string &file_name) const;
+    bool saveParticleDomain(unsigned int object_idx, const std::string &file_name) const;
 
 protected:
     virtual void synchronizeWithInfluenceRangeChange();

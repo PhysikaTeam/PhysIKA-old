@@ -661,15 +661,7 @@ void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx
     for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
         setEnrichmentMetric(object_idx,particle_idx,metric);
 }
-         
-template <typename Scalar, int Dim>
-bool InvertibleMPMSolid<Scalar,Dim>::saveParticleDomain(unsigned int object_idx, const std::string &file_name) const
-{
-    if(object_idx >= this->objectNum())
-        throw PhysikaException("object index out of range!");
-    return VolumetricMeshIO<Scalar,Dim>::save(file_name,particle_domain_mesh_[object_idx]);
-}
-
+ 
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 {
