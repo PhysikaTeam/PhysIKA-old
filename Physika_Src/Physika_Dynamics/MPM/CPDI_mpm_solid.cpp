@@ -1,6 +1,6 @@
 /*
  * @file CPDI_mpm_solid.cpp 
- * @Brief CPDI(CPDI2) MPM driver used to simulate solid, uniform grid.
+ * @brief CPDI(CPDI2) MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
