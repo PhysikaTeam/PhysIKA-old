@@ -1,12 +1,12 @@
 /*
- * @file matrix_3x3.cpp 
+ * @file matrix_3x3.cpp
  * @brief 3x3 matrix.
  * @author Sheng Yang, Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -277,7 +277,7 @@ SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator*= (const SquareMatrix<S
     *this = result;
     return *this;
 }
-    
+
 template <typename Scalar>
 SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator/ (Scalar scale) const
 {
@@ -328,7 +328,7 @@ SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse() const
     }
     if(singular)
         throw PhysikaException("Matrix not invertible!");
-    return SquareMatrix<Scalar,3>((-(*this)(1,2) * (*this)(2,1) + (*this)(1,1) * (*this)(2,2))/det, ((*this)(0,2) * (*this)(2,1) - (*this)(0,1) * (*this)(2,2))/det, 
+    return SquareMatrix<Scalar,3>((-(*this)(1,2) * (*this)(2,1) + (*this)(1,1) * (*this)(2,2))/det, ((*this)(0,2) * (*this)(2,1) - (*this)(0,1) * (*this)(2,2))/det,
                                   (-(*this)(0,2) * (*this)(1,1) + (*this)(0,1) * (*this)(1,2))/det, ((*this)(1,2) * (*this)(2,0) - (*this)(1,0) * (*this)(2,2))/det,
                                   (-(*this)(0,2) * (*this)(2,0) + (*this)(0,0) * (*this)(2,2))/det, ((*this)(0,2) * (*this)(1,0) - (*this)(0,0) * (*this)(1,2))/det,
                                   (-(*this)(1,1) * (*this)(2,0) + (*this)(1,0) * (*this)(2,1))/det, ((*this)(0,1) * (*this)(2,0) - (*this)(0,0) * (*this)(2,1))/det,
@@ -342,7 +342,7 @@ Scalar SquareMatrix<Scalar,3>::determinant() const
     return eigen_matrix_3x3_.determinant();
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     return (data_[0][0]*data_[1][1]*data_[2][2] + data_[0][1]*data_[1][2]*data_[2][0] + data_[0][2]*data_[1][0]*data_[2][1])
-        - (data_[0][2]*data_[1][1]*data_[2][0] + data_[0][1]*data_[1][0]*data_[2][2] + data_[0][0]*data_[1][2]*data_[2][1]); 
+        - (data_[0][2]*data_[1][1]*data_[2][0] + data_[0][1]*data_[1][0]*data_[2][2] + data_[0][0]*data_[1][2]*data_[2][1]);
 #endif
 }
 
@@ -350,12 +350,6 @@ template <typename Scalar>
 Scalar SquareMatrix<Scalar,3>::trace() const
 {
     return (*this)(0,0) + (*this)(1,1) + (*this)(2,2);
-}
-
-template <typename Scalar>
-SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::identityMatrix()
-{
-    return SquareMatrix<Scalar,3>(1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0);
 }
 
 template <typename Scalar>
@@ -369,6 +363,22 @@ Scalar SquareMatrix<Scalar,3>::doubleContraction(const SquareMatrix<Scalar,3> &m
 }
 
 template <typename Scalar>
+Scalar SquareMatrix<Scalar,3>::frobeniusNorm() const
+{
+    Scalar result = 0;
+    for(unsigned int i = 0; i < 3; ++i)
+        for(unsigned int j = 0; j < 3; ++j)
+            result += (*this)(i,j)*(*this)(i,j);
+    return sqrt(result);
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::identityMatrix()
+{
+    return SquareMatrix<Scalar,3>(1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0);
+}
+
+template <typename Scalar>
 void SquareMatrix<Scalar,3>::singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
                                                         Vector<Scalar,3> &singular_values,
                                                         SquareMatrix<Scalar,3> &right_singular_vectors) const
@@ -377,7 +387,7 @@ void SquareMatrix<Scalar,3>::singularValueDecomposition(SquareMatrix<Scalar,3> &
     //hack: Eigen::SVD does not support integer types, hence we cast Scalar to long double for decomposition
     Eigen::Matrix<long double,3,3> temp_matrix;
     for(unsigned int i = 0; i < 3; ++i)
-        for(unsigned int j = 0; j < 3; ++j)          
+        for(unsigned int j = 0; j < 3; ++j)
             temp_matrix(i,j) = static_cast<long double>(eigen_matrix_3x3_(i,j));
     Eigen::JacobiSVD<Eigen::Matrix<long double,3,3> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
     const Eigen::Matrix<long double,3,3> &left = svd.matrixU(), &right = svd.matrixV();
@@ -404,7 +414,7 @@ void SquareMatrix<Scalar,3>::eigenDecomposition(Vector<Scalar,3> &eigen_values_r
     //hack: Eigen::EigenSolver does not support integer types, hence we cast Scalar to long double for decomposition
     Eigen::Matrix<long double,3,3> temp_matrix;
     for(unsigned int i = 0; i < 3; ++i)
-        for(unsigned int j = 0; j < 3; ++j)          
+        for(unsigned int j = 0; j < 3; ++j)
             temp_matrix(i,j) = static_cast<long double>(eigen_matrix_3x3_(i,j));
     Eigen::EigenSolver<Eigen::Matrix<long double,3,3> > eigen(temp_matrix);
     Eigen::Matrix<std::complex<long double>,3,3> vectors = eigen.eigenvectors();

@@ -1,12 +1,12 @@
 /*
- * @file matrix_2x2.h 
+ * @file matrix_2x2.h
  * @brief 2x2 matrix.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -63,6 +63,7 @@ public:
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const SquareMatrix<Scalar,2> &) const;//double contraction
+    Scalar frobeniusNorm() const;
     void singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
                                     Vector<Scalar,2> &singular_values,   //singluar values are in descending order
                                     SquareMatrix<Scalar,2> &right_singular_vectors) const;
@@ -70,7 +71,7 @@ public:
                             SquareMatrix<Scalar,2> &eigen_vectors_real, SquareMatrix<Scalar,2> &eigen_vectors_imag);
 
     static SquareMatrix<Scalar,2> identityMatrix();
- 
+
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,2,2,Eigen::DontAlign> eigen_matrix_2x2_;

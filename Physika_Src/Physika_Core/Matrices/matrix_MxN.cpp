@@ -1,12 +1,12 @@
 /*
- * @file matrix_MxN.cpp 
+ * @file matrix_MxN.cpp
  * @brief matrix of arbitrary size, and size could be changed during runtime.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -61,7 +61,7 @@ MatrixMxN<Scalar>::MatrixMxN(const MatrixMxN<Scalar> &mat2)
 
 template<typename Scalar>
 void MatrixMxN<Scalar>::allocMemory(unsigned int rows, unsigned int cols)
-{ 
+{
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     ptr_eigen_matrix_MxN_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>(rows,cols);
     PHYSIKA_ASSERT(ptr_eigen_matrix_MxN_);
@@ -303,7 +303,7 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (Scalar scale)
             (*this)(i,j) = (*this)(i,j) * scale;
     return *this;
 }
-    
+
 template <typename Scalar>
 VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) const
 {
@@ -355,7 +355,7 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (const MatrixMxN<Scalar> &mat2)
     *this = result;
     return *this;
 }
-    
+
 template <typename Scalar>
 MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 {
@@ -517,6 +517,18 @@ Scalar MatrixMxN<Scalar>::doubleContraction(const MatrixMxN<Scalar> &mat2) const
 }
 
 template <typename Scalar>
+Scalar MatrixMxN<Scalar>::frobeniusNorm() const
+{
+    Scalar result = 0;
+    unsigned int rows = this->rows();
+    unsigned int cols = this->cols();
+    for(unsigned int i = 0; i < rows; ++i)
+        for(unsigned int j = 0; j < cols; ++j)
+            result += (*this)(i,j)*(*this)(i,j);
+    return sqrt(result);
+}
+
+template <typename Scalar>
 void MatrixMxN<Scalar>::singularValueDecomposition(MatrixMxN<Scalar> &left_singular_vectors,
                                                    VectorND<Scalar> &singular_values,
                                                    MatrixMxN<Scalar> &right_singular_vectors) const
@@ -526,7 +538,7 @@ void MatrixMxN<Scalar>::singularValueDecomposition(MatrixMxN<Scalar> &left_singu
     unsigned int rows = this->rows(), cols = this->cols();
     Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> temp_matrix(rows,cols);
     for(unsigned int i = 0; i < rows; ++i)
-        for(unsigned int j = 0; j < cols; ++j)          
+        for(unsigned int j = 0; j < cols; ++j)
                 temp_matrix(i,j) = static_cast<long double>((*ptr_eigen_matrix_MxN_)(i,j));
     Eigen::JacobiSVD<Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
     const Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> &left = svd.matrixU(), &right = svd.matrixV();
@@ -563,7 +575,7 @@ void MatrixMxN<Scalar>::eigenDecomposition(VectorND<Scalar> &eigen_values_real, 
     //hack: Eigen::EigenSolver does not support integer types, hence we cast Scalar to long double for decomposition
     Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> temp_matrix(rows,cols);
     for(unsigned int i = 0; i < rows; ++i)
-        for(unsigned int j = 0; j < cols; ++j)          
+        for(unsigned int j = 0; j < cols; ++j)
                 temp_matrix(i,j) = static_cast<long double>((*ptr_eigen_matrix_MxN_)(i,j));
     Eigen::EigenSolver<Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> > eigen(temp_matrix);
     Eigen::Matrix<std::complex<long double>,Eigen::Dynamic,Eigen::Dynamic> vectors = eigen.eigenvectors();

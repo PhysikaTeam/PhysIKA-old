@@ -1,12 +1,12 @@
 /*
- * @file matrix_1x1.h 
+ * @file matrix_1x1.h
  * @brief 1x1 matrix.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -60,8 +60,9 @@ public:
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const SquareMatrix<Scalar,1> &) const;//double contraction
+    Scalar frobeniusNorm() const;
     static SquareMatrix<Scalar,1> identityMatrix();
- 
+
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     Eigen::Matrix<Scalar,1,1> eigen_matrix_1x1_;

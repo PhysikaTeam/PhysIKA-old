@@ -1,12 +1,12 @@
 /*
- * @file matrix_MxN.h 
+ * @file matrix_MxN.h
  * @brief matrix of arbitrary size, and size could be changed during runtime.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -28,13 +28,13 @@ template <typename Scalar> class VectorND;
  * MatrixMxN<Scalar> are defined for C++ fundamental integer types and floating-point types
  */
 
-template <typename Scalar> 
+template <typename Scalar>
 class MatrixMxN: public MatrixBase
 {
 public:
     MatrixMxN(); //construct an empty matrix
     MatrixMxN(unsigned int rows, unsigned int cols); //construct an uninitialized matrix of size rows*cols
-    MatrixMxN(unsigned int rows, unsigned int cols, Scalar value); //construct an matrix of size rows*cols with the entry value                  
+    MatrixMxN(unsigned int rows, unsigned int cols, Scalar value); //construct an matrix of size rows*cols with the entry value
     MatrixMxN(unsigned int rows, unsigned int cols, Scalar *entries);  //construct a matrix with given size and data
     MatrixMxN(const MatrixMxN<Scalar>&);  //copy constructor
     ~MatrixMxN();
@@ -65,6 +65,7 @@ public:
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const MatrixMxN<Scalar> &) const;
+    Scalar frobeniusNorm() const;
     void singularValueDecomposition(MatrixMxN<Scalar> &left_singular_vectors,
                                     VectorND<Scalar> &singular_values,
                                     MatrixMxN<Scalar> &right_singular_vectors) const;

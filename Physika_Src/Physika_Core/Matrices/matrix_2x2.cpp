@@ -1,12 +1,12 @@
 /*
- * @file matrix_2x2.cpp 
+ * @file matrix_2x2.cpp
  * @brief 2x2 matrix.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -256,7 +256,7 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator*= (const SquareMatrix<S
     *this = result;
     return *this;
 }
-    
+
 template <typename Scalar>
 SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 {
@@ -327,12 +327,6 @@ Scalar SquareMatrix<Scalar,2>::trace() const
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::identityMatrix()
-{
-    return SquareMatrix<Scalar,2>(1.0,0.0,0.0,1.0);
-}
-
-template <typename Scalar>
 Scalar SquareMatrix<Scalar,2>::doubleContraction(const SquareMatrix<Scalar,2> &mat2) const
 {
     Scalar result = 0;
@@ -340,6 +334,22 @@ Scalar SquareMatrix<Scalar,2>::doubleContraction(const SquareMatrix<Scalar,2> &m
         for(unsigned int j = 0; j < 2; ++j)
             result += (*this)(i,j)*mat2(i,j);
     return result;
+}
+
+template <typename Scalar>
+Scalar SquareMatrix<Scalar,2>::frobeniusNorm() const
+{
+    Scalar result = 0;
+    for(unsigned int i = 0; i < 2; ++i)
+        for(unsigned int j = 0; j < 2; ++j)
+            result += (*this)(i,j)*(*this)(i,j);
+    return sqrt(result);
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::identityMatrix()
+{
+    return SquareMatrix<Scalar,2>(1.0,0.0,0.0,1.0);
 }
 
 template <typename Scalar>
@@ -351,7 +361,7 @@ void SquareMatrix<Scalar,2>::singularValueDecomposition(SquareMatrix<Scalar,2> &
     //hack: Eigen::SVD does not support integer types, hence we cast Scalar to long double for decomposition
     Eigen::Matrix<long double,2,2> temp_matrix;
     for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)          
+        for(unsigned int j = 0; j < 2; ++j)
             temp_matrix(i,j) = static_cast<long double>(eigen_matrix_2x2_(i,j));
     Eigen::JacobiSVD<Eigen::Matrix<long double,2,2> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
     const Eigen::Matrix<long double,2,2> &left = svd.matrixU(), &right = svd.matrixV();
@@ -378,7 +388,7 @@ void SquareMatrix<Scalar,2>::eigenDecomposition(Vector<Scalar,2> &eigen_values_r
     //hack: Eigen::EigenSolver does not support integer types, hence we cast Scalar to long double for decomposition
     Eigen::Matrix<long double,2,2> temp_matrix;
     for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)          
+        for(unsigned int j = 0; j < 2; ++j)
             temp_matrix(i,j) = static_cast<long double>(eigen_matrix_2x2_(i,j));
     Eigen::EigenSolver<Eigen::Matrix<long double,2,2> > eigen(temp_matrix);
     Eigen::Matrix<std::complex<long double>,2,2> vectors = eigen.eigenvectors();
@@ -394,7 +404,7 @@ void SquareMatrix<Scalar,2>::eigenDecomposition(Vector<Scalar,2> &eigen_values_r
         }
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    throw PhysikaException("Eigen decomposition not implemeted for built in matrix!");     
+    throw PhysikaException("Eigen decomposition not implemeted for built in matrix!");
 #endif
 }
 

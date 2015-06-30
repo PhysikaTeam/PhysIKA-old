@@ -1,12 +1,12 @@
 /*
- * @file matrix_1x1.cpp 
+ * @file matrix_1x1.cpp
  * @brief 1x1 matrix.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -231,17 +231,23 @@ Scalar SquareMatrix<Scalar,1>::trace() const
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::identityMatrix()
-{
-    return SquareMatrix<Scalar,1>(1);
-}
-
-template <typename Scalar>
 Scalar SquareMatrix<Scalar,1>::doubleContraction(const SquareMatrix<Scalar,1> &mat2) const
 {
     Scalar result = 0;
     result += (*this)(0,0)*mat2(0,0);
     return result;
+}
+
+template <typename Scalar>
+Scalar SquareMatrix<Scalar,1>::frobeniusNorm() const
+{
+    return (*this)(0,0);
+}
+
+template <typename Scalar>
+SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::identityMatrix()
+{
+    return SquareMatrix<Scalar,1>(1);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
