@@ -171,8 +171,7 @@ SquareMatrix<Scalar,Dim> StomakhinSnowModel<Scalar,Dim>::cauchyStress(const Squa
     Scalar lambda,mu;
     prepareParameters(F,F_e,R_e,F_p,lambda,mu);
     Scalar J_e = F_e.determinant();
-    SquareMatrix<Scalar,Dim> P = 2*mu*(F_e-R_e)+lambda*(J_e-1)*J_e*(F_e.inverse()).transpose();
-    return 1.0/J_e*P*F_e.transpose();
+    return 2*mu/J_e*(F_e-R_e)*F_e.transpose()+lambda/J_e*(J_e-1)*J_e*SquareMatrix<Scalar,Dim>::identityMatrix();
 }
 
 template <typename Scalar, int Dim>
