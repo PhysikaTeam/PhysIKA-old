@@ -1,12 +1,12 @@
 /*
- * @file sparse_matrix.h 
+ * @file sparse_matrix.h
  * @brief Definition of sparse matrix, size of the matrix is dynamic.
  * @author Fei Zhu, Liyou Xu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -69,8 +69,8 @@ public:
     SparseMatrix<Scalar>& operator*= (Scalar);
     SparseMatrix<Scalar> operator/ (Scalar) const;
     SparseMatrix<Scalar>& operator/= (Scalar);
-    VectorND<Scalar> leftMultiplyVector(const VectorND<Scalar> &) const;
 protected:
+    VectorND<Scalar> leftMultiplyVector(const VectorND<Scalar> &) const;
     void allocMemory(unsigned int rows, unsigned int cols, SparseMatrixInternal::SparseMatrixStoreMode priority);
 protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
@@ -78,13 +78,13 @@ protected:
     unsigned int rows_;
     unsigned int cols_;
     std::vector<SparseMatrixInternal::Trituple<Scalar> > elements_; //a vector used to contain all the none-zero elements in a sparsematrix in order
-    std::vector<unsigned int> line_index_;   //line_index store the index of the first non-zero element of every row when priority is equal to ROW_MAJOR 
+    std::vector<unsigned int> line_index_;   //line_index store the index of the first non-zero element of every row when priority is equal to ROW_MAJOR
                                              //or every col when priority is equal to COL_MAJOR
-	SparseMatrixInternal::SparseMatrixStoreMode priority_;  
+	SparseMatrixInternal::SparseMatrixStoreMode priority_;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
 	SparseMatrixInternal::SparseMatrixStoreMode priority_;
     Eigen::SparseMatrix<Scalar> * ptr_eigen_sparse_matrix_ ;
-#endif      
+#endif
     friend class SparseMatrixIterator<Scalar>;  // declare friend class for iterator
 private:
     void compileTimeCheck()

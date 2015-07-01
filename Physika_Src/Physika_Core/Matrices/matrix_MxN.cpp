@@ -565,6 +565,19 @@ void MatrixMxN<Scalar>::singularValueDecomposition(MatrixMxN<Scalar> &left_singu
 }
 
 template <typename Scalar>
+void MatrixMxN<Scalar>::singularValueDecomposition(MatrixMxN<Scalar> &left_singular_vectors,
+                                                   MatrixMxN<Scalar> &singular_values_diagonal,
+                                                   MatrixMxN<Scalar> &right_singular_vectors) const
+{
+    VectorND<Scalar> singular_values;
+    singularValueDecomposition(left_singular_vectors,singular_values,right_singular_vectors);
+    if(singular_values_diagonal.rows() != singular_values.dims() || singular_values_diagonal.cols() != singular_values.dims())
+        singular_values_diagonal.resize(singular_values.dims(),singular_values.dims());
+    for(unsigned int i = 0; i < singular_values_diagonal.rows(); ++i)
+        for(unsigned int j = 0; j < singular_values_diagonal.cols(); ++j)
+            singular_values_diagonal(i,j) = (i==j) ? singular_values[i] : 0;
+}
+template <typename Scalar>
 void MatrixMxN<Scalar>::eigenDecomposition(VectorND<Scalar> &eigen_values_real, VectorND<Scalar> &eigen_values_imag,
                                            MatrixMxN<Scalar> &eigen_vectors_real, MatrixMxN<Scalar> &eigen_vectors_imag)
 {

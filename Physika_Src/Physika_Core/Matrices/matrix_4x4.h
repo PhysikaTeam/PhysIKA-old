@@ -70,6 +70,9 @@ public:
     void singularValueDecomposition(SquareMatrix<Scalar,4> &left_singular_vectors,
                                     Vector<Scalar,4> &singular_values, //singluar values are in descending order
                                     SquareMatrix<Scalar,4> &right_singular_vectors) const;
+    void singularValueDecomposition(SquareMatrix<Scalar,4> &left_singular_vectors,
+                                    SquareMatrix<Scalar,4> &singular_values_diagonal,   //singluar values in descending order as a diagonal matrix
+                                    SquareMatrix<Scalar,4> &right_singular_vectors) const;
     void eigenDecomposition(Vector<Scalar,4> &eigen_values_real, Vector<Scalar,4> &eigen_values_imag,
                             SquareMatrix<Scalar,4> &eigen_vectors_real, SquareMatrix<Scalar,4> &eigen_vectors_imag);
 

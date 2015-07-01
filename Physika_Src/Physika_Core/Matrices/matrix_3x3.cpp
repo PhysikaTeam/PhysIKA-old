@@ -407,6 +407,18 @@ void SquareMatrix<Scalar,3>::singularValueDecomposition(SquareMatrix<Scalar,3> &
 }
 
 template <typename Scalar>
+void SquareMatrix<Scalar,3>::singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
+                                                        SquareMatrix<Scalar,3> &singular_values_diagonal,
+                                                        SquareMatrix<Scalar,3> &right_singular_vectors) const
+{
+    Vector<Scalar,3> singular_values;
+    singularValueDecomposition(left_singular_vectors,singular_values,right_singular_vectors);
+    for(unsigned int i = 0; i < 3; ++i)
+        for(unsigned int j = 0; j < 3; ++j)
+            singular_values_diagonal(i,j) = (i==j) ? singular_values[i] : 0;
+}
+
+template <typename Scalar>
 void SquareMatrix<Scalar,3>::eigenDecomposition(Vector<Scalar,3> &eigen_values_real, Vector<Scalar,3> &eigen_values_imag,
                                                 SquareMatrix<Scalar,3> &eigen_vectors_real, SquareMatrix<Scalar,3> &eigen_vectors_imag)
 {

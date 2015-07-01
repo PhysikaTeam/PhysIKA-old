@@ -183,21 +183,17 @@ void StomakhinSnowModel<Scalar,Dim>::prepareParameters(const SquareMatrix<Scalar
                                                         Scalar &lambda, Scalar &mu) const
 {
     SquareMatrix<Scalar,Dim> U_e,V_e;
-    Vector<Scalar,Dim> S_e;
+    SquareMatrix<Scalar,Dim> S_e;
     F.singularValueDecomposition(U_e,S_e,V_e);
     for(unsigned int i = 0; i < Dim; ++i)
     {
-        if(S_e[i] > stretching_yield_)
-            S_e[i] = stretching_yield_;
-        if(S_e[i] < compression_yield_)
-            S_e[i] = compression_yield_;
+        if(S_e(i,i) > stretching_yield_)
+            S_e(i,i) = stretching_yield_;
+        if(S_e(i,i) < compression_yield_)
+            S_e(i,i) = compression_yield_;
     }
-    SquareMatrix<Scalar,Dim> S_e_mat;
-    for(unsigned int i = 0; i < Dim; ++i)
-        for(unsigned int j = 0; j < Dim; ++j)
-            S_e_mat(i,j) = (i==j)?S_e[i]:0;
-    F_p = V_e*S_e_mat.inverse()*U_e.transpose()*F;
-    F_e = U_e*S_e_mat*V_e.transpose();
+    F_p = V_e*S_e.inverse()*U_e.transpose()*F;
+    F_e = U_e*S_e*V_e.transpose();
     R_e = U_e*V_e.transpose();
     Scalar hardening_power = std::pow(E,hardening_factor_*(1.0-F_p.determinant()));
     lambda = hardening_power * (this->lambda_);
