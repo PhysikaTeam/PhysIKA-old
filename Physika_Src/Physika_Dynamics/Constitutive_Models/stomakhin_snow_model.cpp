@@ -28,24 +28,29 @@ template <typename Scalar, int Dim>
 StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel()
     :IsotropicHyperelasticMaterial<Scalar,Dim>(),
     stretching_yield_((std::numeric_limits<Scalar>::max)()),
-    compression_yield_(std::numeric_limits<Scalar>::lowest())
+    compression_yield_(std::numeric_limits<Scalar>::lowest()),
     hardening_factor_(0.0)
 {
 }
 
 template <typename Scalar, int Dim>
-StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel(Scalar par1, Scalar par2, typename IsotropicHyperelasticMaterialInternal::ModulusType par_type)
+StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel(Scalar par1, Scalar par2,
+    typename IsotropicHyperelasticMaterialInternal::ModulusType par_type)
     :IsotropicHyperelasticMaterial<Scalar,Dim>(par1,par2,par_type),
     stretching_yield_((std::numeric_limits<Scalar>::max)()),
-    compression_yield_(std::numeric_limits<Scalar>::lowest())
+    compression_yield_(std::numeric_limits<Scalar>::lowest()),
     hardening_factor_(0.0)
 {
 }
 
 template <typename Scalar, int Dim>
-StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel(Scalar par1, Scalar par2, typename IsotropicHyperelasticMaterialInternal::ModulusType par_type, Scalar stretching_yield, Scalar compression_yield, Scalar hardening_factor)
+StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel(Scalar par1, Scalar par2,
+    typename IsotropicHyperelasticMaterialInternal::ModulusType par_type,
+    Scalar stretching_yield, Scalar compression_yield, Scalar hardening_factor)
     :IsotropicHyperelasticMaterial<Scalar,Dim>(par1,par2,par_type),
-    stretching_yield_(stretching_yield), compression_yield_(compression_yield),hardening_factor_(hardening_factor)
+    stretching_yield_(stretching_yield),
+    compression_yield_(compression_yield),
+    hardening_factor_(hardening_factor)
 {
 }
 
@@ -131,7 +136,7 @@ Scalar StomakhinSnowModel<Scalar,Dim>::energyDensity(const SquareMatrix<Scalar,D
     SquareMatrix<Scalar,Dim> F_e,R_e,F_p;
     Scalar lambda,mu;
     prepareParameters(F,F_e,R_e,F_p,lambda,mu);
-    Scalar norm = (F_e-R_e).frebeniusNorm();
+    Scalar norm = (F_e-R_e).frobeniusNorm();
     Scalar J_e = F_e.determinant();
     Scalar energy = mu*norm*norm+0.5*lambda*(J_e-1)*(J_e-1);
     return energy;
@@ -166,7 +171,7 @@ SquareMatrix<Scalar,Dim> StomakhinSnowModel<Scalar,Dim>::cauchyStress(const Squa
     Scalar lambda,mu;
     prepareParameters(F,F_e,R_e,F_p,lambda,mu);
     Scalar J_e = F_e.determinant();
-    SquareMatrix<Scalar,Dim> P = 2*mu*(F_e-R_e)+lambda*(J_e-1)*J_e*F_e_inverse.transpose();
+    SquareMatrix<Scalar,Dim> P = 2*mu*(F_e-R_e)+lambda*(J_e-1)*J_e*(F_e.inverse()).transpose();
     return 1.0/J_e*P*F_e.transpose();
 }
 
@@ -192,10 +197,11 @@ void StomakhinSnowModel<Scalar,Dim>::prepareParameters(const SquareMatrix<Scalar
         for(unsigned int j = 0; j < Dim; ++j)
             S_e_mat(i,j) = (i==j)?S_e[i]:0;
     F_p = V_e*S_e_mat.inverse()*U_e.transpose()*F;
-    F_e = U_e*S_e*V_e.transpose();
+    F_e = U_e*S_e_mat*V_e.transpose();
     R_e = U_e*V_e.transpose();
-    Scalar hardening_power = hardening_factor_*(1-F_p.determinant());
-    //TO DO
+    Scalar hardening_power = std::pow(E,hardening_factor_*(1.0-F_p.determinant()));
+    lambda = hardening_power * (this->lambda_);
+    mu = hardening_power * (this->mu_);
 }
 
 //explicit instantiations

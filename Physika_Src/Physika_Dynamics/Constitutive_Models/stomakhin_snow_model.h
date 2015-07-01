@@ -28,13 +28,14 @@ template <typename Scalar, int Dim>
 class StomakhinSnowModel: public IsotropicHyperelasticMaterial<Scalar,Dim>
 {
 public:
-    StomakhinSnowModel(){}
+    StomakhinSnowModel();
     //if par_type = YOUNG_AND_POISSON, then: par1 = young's modulus, par2 = poisson_ratio
     //if par_type = LAME_COEFFICIENTS, then: par1 = lambda, par2 = mu
     StomakhinSnowModel(Scalar par1, Scalar par2, IsotropicHyperelasticMaterialInternal::ModulusType par_type);
-    StomakhinSnowModel(Scalar par1, Scalar par2, IsotropicHyperelasticMaterialInternal::ModulusType par_type, Scalar stretching_yield, Scalar compression_yield, Scalar hardening_factor);
+    StomakhinSnowModel(Scalar par1, Scalar par2, IsotropicHyperelasticMaterialInternal::ModulusType par_type,
+                       Scalar stretching_yield, Scalar compression_yield, Scalar hardening_factor);
     StomakhinSnowModel(const StomakhinSnowModel<Scalar,Dim> &material);
-    virtual ~StomakhinSnowModel(){}
+    virtual ~StomakhinSnowModel();
     StomakhinSnowModel<Scalar,Dim>& operator= (const StomakhinSnowModel<Scalar,Dim> &material);
     virtual StomakhinSnowModel<Scalar,Dim>* clone() const;
     Scalar stretchingYield() const;
