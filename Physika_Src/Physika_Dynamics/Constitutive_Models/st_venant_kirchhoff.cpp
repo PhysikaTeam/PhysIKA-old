@@ -109,6 +109,7 @@ SquareMatrix<Scalar,Dim> StVK<Scalar,Dim>::firstPiolaKirchhoffStressDifferential
                                                                 const SquareMatrix<Scalar,Dim> &F_differential) const
 {
     //TO DO
+    return SquareMatrix<Scalar,Dim>(0);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
