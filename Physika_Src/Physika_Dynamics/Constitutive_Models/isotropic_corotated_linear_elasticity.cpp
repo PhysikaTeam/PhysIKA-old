@@ -2,11 +2,11 @@
  * @file isotropic_corotated_linear_elasticity.cpp
  * @brief Corotated version of isotropic linear elastic constitutive model with infinitesimal strain measure
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -114,6 +114,15 @@ SquareMatrix<Scalar,Dim> IsotropicCorotatedLinearElasticity<Scalar,Dim>::cauchyS
     Scalar J = F.determinant();
     SquareMatrix<Scalar,Dim> stress = 1/J*firstPiolaKirchhoffStress(F)*F.transpose();
     return stress;
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> IsotropicCorotatedLinearElasticity<Scalar,Dim>::firstPiolaKirchhoffStressDifferential(
+                                                                const SquareMatrix<Scalar,Dim> &F,
+                                                                const SquareMatrix<Scalar,Dim> &F_differential) const
+{
+    //TO DO
+    return SquareMatrix<Scalar,Dim>(0);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

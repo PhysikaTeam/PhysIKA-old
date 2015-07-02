@@ -2,11 +2,11 @@
  * @file  st_venant_kirchhoff.cpp
  * @brief St.Venant-Kirchhoff hyperelastic material model
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -101,6 +101,14 @@ SquareMatrix<Scalar,Dim> StVK<Scalar,Dim>::cauchyStress(const SquareMatrix<Scala
     Scalar J = F.determinant();
     SquareMatrix<Scalar,Dim> stress = 1/J*firstPiolaKirchhoffStress(F)*F.transpose();
     return stress;
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> StVK<Scalar,Dim>::firstPiolaKirchhoffStressDifferential(
+                                                                const SquareMatrix<Scalar,Dim> &F,
+                                                                const SquareMatrix<Scalar,Dim> &F_differential) const
+{
+    //TO DO
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

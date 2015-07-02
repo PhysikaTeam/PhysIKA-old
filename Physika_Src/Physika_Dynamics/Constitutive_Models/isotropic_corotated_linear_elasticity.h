@@ -2,11 +2,11 @@
  * @file isotropic_corotated_linear_elasticity.h
  * @brief Corotated version of isotropic linear elastic constitutive model with infinitesimal strain measure
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -39,6 +39,11 @@ public:
     SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;
     SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const;
     SquareMatrix<Scalar,Dim> cauchyStress(const SquareMatrix<Scalar,Dim> &F) const;
+    //differential of first PiolaKirchhoff stress, for implicit time integration
+    // \delta P = dP/dF : (\delta F)
+    // \delta is differential
+    virtual SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStressDifferential(const SquareMatrix<Scalar,Dim> &F,
+                                     const SquareMatrix<Scalar,Dim> &F_differential) const;
 
 protected:
 };

@@ -2,11 +2,11 @@
  * @file isotropic_linear_elasticity.cpp
  * @brief Isotropic linear elastic constitutive model with infinitesimal strain measure
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -100,6 +100,14 @@ SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::cauchyStress(con
     Scalar mu = this->mu_;
     SquareMatrix<Scalar,Dim> stress = lambda*trace_e*identity+2*mu*e;
     return stress;
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::firstPiolaKirchhoffStressDifferential(
+                                                                const SquareMatrix<Scalar,Dim> &F,
+                                                                const SquareMatrix<Scalar,Dim> &F_differential) const
+{
+    //TO DO
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
