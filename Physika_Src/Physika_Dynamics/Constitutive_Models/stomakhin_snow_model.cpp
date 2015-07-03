@@ -27,7 +27,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel()
-    :IsotropicHyperelasticMaterial<Scalar,Dim>(),
+    :IsotropicFixedCorotatedMaterial<Scalar,Dim>(),
     stretching_yield_((std::numeric_limits<Scalar>::max)()),
     compression_yield_(std::numeric_limits<Scalar>::lowest()),
     hardening_factor_(0.0)
@@ -37,7 +37,7 @@ StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel()
 template <typename Scalar, int Dim>
 StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel(Scalar par1, Scalar par2,
     typename IsotropicHyperelasticMaterialInternal::ModulusType par_type)
-    :IsotropicHyperelasticMaterial<Scalar,Dim>(par1,par2,par_type),
+    :IsotropicFixedCorotatedMaterial<Scalar,Dim>(par1,par2,par_type),
     stretching_yield_((std::numeric_limits<Scalar>::max)()),
     compression_yield_(std::numeric_limits<Scalar>::lowest()),
     hardening_factor_(0.0)
@@ -48,7 +48,7 @@ template <typename Scalar, int Dim>
 StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel(Scalar par1, Scalar par2,
     typename IsotropicHyperelasticMaterialInternal::ModulusType par_type,
     Scalar stretching_yield, Scalar compression_yield, Scalar hardening_factor)
-    :IsotropicHyperelasticMaterial<Scalar,Dim>(par1,par2,par_type),
+    :IsotropicFixedCorotatedMaterial<Scalar,Dim>(par1,par2,par_type),
     stretching_yield_(stretching_yield),
     compression_yield_(compression_yield),
     hardening_factor_(hardening_factor)
@@ -57,7 +57,7 @@ StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel(Scalar par1, Scalar par2,
 
 template <typename Scalar, int Dim>
 StomakhinSnowModel<Scalar,Dim>::StomakhinSnowModel(const StomakhinSnowModel<Scalar,Dim> &material)
-    :IsotropicHyperelasticMaterial<Scalar,Dim>(material),
+    :IsotropicFixedCorotatedMaterial<Scalar,Dim>(material),
     stretching_yield_(material.stretching_yield_),
     compression_yield_(material.compression_yield_),
     hardening_factor_(material.hardening_factor_)

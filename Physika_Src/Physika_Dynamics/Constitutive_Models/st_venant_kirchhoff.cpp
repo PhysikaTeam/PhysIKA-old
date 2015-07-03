@@ -108,8 +108,12 @@ SquareMatrix<Scalar,Dim> StVK<Scalar,Dim>::firstPiolaKirchhoffStressDifferential
                                                                 const SquareMatrix<Scalar,Dim> &F,
                                                                 const SquareMatrix<Scalar,Dim> &F_differential) const
 {
-    //TO DO
-    return SquareMatrix<Scalar,Dim>(0);
+    Scalar mu = this->mu_;
+    Scalar lambda = this->lambda_;
+    SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
+    SquareMatrix<Scalar,Dim> E = 0.5*(F.transpose()*F-identity);
+    SquareMatrix<Scalar,Dim> E_differential = 0.5*(F_differential.transpose()*F+F.transpose()*F_differential);
+    return F_differential*(2.0*mu*E+lambda*E.trace()*identity)+F*(2.0*mu*E_differential+lambda*E_differential.trace()*identity);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

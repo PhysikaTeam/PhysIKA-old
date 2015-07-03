@@ -114,6 +114,7 @@ int main()
     cout<<"P: "<<isotropic_hyperelastic_material->firstPiolaKirchhoffStress(F)<<endl;
     cout<<"S: "<<isotropic_hyperelastic_material->secondPiolaKirchhoffStress(F)<<endl;
     cout<<"sigma: "<<isotropic_hyperelastic_material->cauchyStress(F)<<endl;
+    testGradients(isotropic_hyperelastic_material);
 
     isotropic_hyperelastic_material = &linear_material;
     isotropic_hyperelastic_material->printInfo();
@@ -121,6 +122,7 @@ int main()
     cout<<"P: "<<isotropic_hyperelastic_material->firstPiolaKirchhoffStress(F)<<endl;
     cout<<"S: "<<isotropic_hyperelastic_material->secondPiolaKirchhoffStress(F)<<endl;
     cout<<"sigma: "<<isotropic_hyperelastic_material->cauchyStress(F)<<endl;
+    testGradients(isotropic_hyperelastic_material);
 
     isotropic_hyperelastic_material = &snow_material;
     isotropic_hyperelastic_material->printInfo();

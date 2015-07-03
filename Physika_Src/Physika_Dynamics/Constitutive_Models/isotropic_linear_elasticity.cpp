@@ -79,20 +79,6 @@ Scalar IsotropicLinearElasticity<Scalar,Dim>::energyDensity(const SquareMatrix<S
 template <typename Scalar, int Dim>
 SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
 {
-    //for linear elastic materials all stress measures are identical because F ~= I
-    return cauchyStress(F);
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
-{
-    //for linear elastic materials all stress measures are identical because F ~= I
-    return cauchyStress(F);
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::cauchyStress(const SquareMatrix<Scalar,Dim> &F) const
-{
     SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
     SquareMatrix<Scalar,Dim> e = 0.5*(F.transpose()+F)-identity;
     Scalar trace_e = e.trace();
@@ -103,12 +89,30 @@ SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::cauchyStress(con
 }
 
 template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
+{
+    return F.inverse()*firstPiolaKirchhoffStress(F);
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::cauchyStress(const SquareMatrix<Scalar,Dim> &F) const
+{
+    Scalar J = F.determinant();
+    SquareMatrix<Scalar,Dim> stress = 1/J*firstPiolaKirchhoffStress(F)*F.transpose();
+    return stress;
+}
+
+template <typename Scalar, int Dim>
 SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::firstPiolaKirchhoffStressDifferential(
                                                                 const SquareMatrix<Scalar,Dim> &F,
                                                                 const SquareMatrix<Scalar,Dim> &F_differential) const
 {
-    //TO DO
-    return SquareMatrix<Scalar,Dim>(0);
+    Scalar mu = this->mu_;
+    Scalar lambda = this->lambda_;
+    SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
+    SquareMatrix<Scalar,Dim> e = 0.5*(F.transpose()+F)-identity;
+    SquareMatrix<Scalar,Dim> e_differential = 0.5*(F_differential.transpose()+F_differential);
+    return 2.0*mu*e_differential+lambda*e_differential.trace()*identity;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

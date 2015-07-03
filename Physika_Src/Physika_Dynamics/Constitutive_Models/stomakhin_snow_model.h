@@ -16,7 +16,7 @@
 #ifndef PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_STOMAKHIN_SNOW_MODEL_H_
 #define PHYSIKA_DYNAMICS_CONSTITUTIVE_MODELS_STOMAKHIN_SNOW_MODEL_H_
 
-#include "Physika_Dynamics/Constitutive_Models/isotropic_hyperelastic_material.h"
+#include "Physika_Dynamics/Constitutive_Models/isotropic_fixed_corotated_material.h"
 
 namespace Physika{
 
@@ -28,7 +28,7 @@ namespace Physika{
  */
 
 template <typename Scalar, int Dim>
-class StomakhinSnowModel: public IsotropicHyperelasticMaterial<Scalar,Dim>
+class StomakhinSnowModel: public IsotropicFixedCorotatedMaterial<Scalar,Dim>
 {
 public:
     StomakhinSnowModel();
