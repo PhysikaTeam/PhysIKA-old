@@ -235,7 +235,7 @@ SquareMatrix<Scalar,3> StomakhinSnowModel<Scalar,Dim>::rotationDifferential(cons
 {
     SquareMatrix<Scalar,3> M = R_e.transpose()*F_differential;
     SquareMatrix<Scalar,3> S = R_e.transpose()*F_e;
-    SquareMatrix<Scalar,3> K(S(1,1)+S(0,0),S(2,1),-S(2,0),S(2,1),S(2,2),S(1,0),-S(2,0),S(1,0),S(2,2)+S(1,1));
+    SquareMatrix<Scalar,3> K(S(1,1)+S(0,0),S(2,1),-S(2,0),S(2,1),S(2,2)+S(0,0),S(1,0),-S(2,0),S(1,0),S(2,2)+S(1,1));
     Vector<Scalar,3> L(M(1,0)-M(0,1),-M(0,2)+M(2,0),-M(1,2)+M(2,1));
     Vector<Scalar,3> RV = K.inverse()*L; //solve K*x=L
     SquareMatrix<Scalar,3> RTdR(0,-RV[0],-RV[1],RV[0],0,-RV[2],RV[1],RV[2],0);
@@ -256,11 +256,11 @@ SquareMatrix<Scalar,3> StomakhinSnowModel<Scalar,Dim>::cofactorMatrixDifferentia
     return SquareMatrix<Scalar,3>(F_differential(1,1)*F_e(2,2)+F_e(1,1)*F_differential(2,2)-F_differential(2,1)*F_e(1,2)-F_e(2,1)*F_differential(1,2),
                                   F_differential(2,0)*F_e(1,2)+F_e(2,0)*F_differential(1,2)-F_differential(1,0)*F_e(2,2)-F_e(1,0)*F_differential(2,2),
                                   F_differential(1,0)*F_e(2,1)+F_e(1,0)*F_differential(2,1)-F_differential(2,0)*F_e(1,1)-F_e(2,0)*F_differential(1,1),
-                                  F_differential(2,1)*F_e(0,2)+F_e(2,1)*F_differential(0,2)-F_differential(2,1)*F_e(1,2)-F_e(2,1)*F_differential(1,2),
+                                  F_differential(2,1)*F_e(0,2)+F_e(2,1)*F_differential(0,2)-F_differential(0,1)*F_e(2,2)-F_e(0,1)*F_differential(2,2),
                                   F_differential(0,0)*F_e(2,2)+F_e(0,0)*F_differential(2,2)-F_differential(2,0)*F_e(0,2)-F_e(2,0)*F_differential(0,2),
                                   F_differential(2,0)*F_e(0,1)+F_e(2,0)*F_differential(0,1)-F_differential(0,0)*F_e(2,1)-F_e(0,0)*F_differential(2,1),
                                   F_differential(0,1)*F_e(1,2)+F_e(0,1)*F_differential(1,2)-F_differential(1,1)*F_e(0,2)-F_e(1,1)*F_differential(0,2),
-                                  F_differential(1,0)*F_e(2,1)+F_e(1,0)*F_differential(2,1)-F_differential(0,0)*F_e(1,2)-F_e(0,0)*F_differential(1,2),
+                                  F_differential(1,0)*F_e(0,2)+F_e(1,0)*F_differential(0,2)-F_differential(0,0)*F_e(1,2)-F_e(0,0)*F_differential(1,2),
                                   F_differential(0,0)*F_e(1,1)+F_e(0,0)*F_differential(1,1)-F_differential(1,0)*F_e(0,1)-F_e(1,0)*F_differential(0,1));
 }
 

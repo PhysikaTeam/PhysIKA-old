@@ -1,10 +1,10 @@
 #################################################################
 # Scons script PhysikaTest project
 # @author: Fei Zhu, 04/27/2014
-# Usage: 
+# Usage:
 #       1. Write the test code in a single cpp file
 #       2. Edit the script by making src_files variable src file
-#       3. Build the project by entering "scons" in terminal               
+#       3. Build the project by entering "scons" in terminal
 #################################################################
 
 #IMPORTS
@@ -80,7 +80,7 @@ elif compiler=='msvc':
     additional_libs.append('Advapi32')
 
 #SRC FILES
-src_files=['fem_solid_test.cpp']
+src_files=['constitutive_models_test.cpp']
 inc_files=[]
 #for dir,_,_ in os.walk(src_root_path):
 #    if dir not in ignored_src_path:
