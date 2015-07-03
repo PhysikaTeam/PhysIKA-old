@@ -16,6 +16,7 @@
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Dynamics/Constitutive_Models/constitutive_model_internal.h"
 #include "Physika_Dynamics/Constitutive_Models/neo_hookean.h"
 
 namespace Physika{
@@ -109,8 +110,13 @@ SquareMatrix<Scalar,Dim> NeoHookean<Scalar,Dim>::firstPiolaKirchhoffStressDiffer
                                                                 const SquareMatrix<Scalar,Dim> &F,
                                                                 const SquareMatrix<Scalar,Dim> &F_differential) const
 {
-    //TO DO
-    return SquareMatrix<Scalar,Dim>(0);
+    Scalar mu = this->mu_;
+    Scalar lambda = this->lambda_;
+    Scalar J = F.determinant();
+    Scalar lnJ = log(J);
+    SquareMatrix<Scalar,Dim> He = J*(F.inverse()).transpose();
+    return mu*F_differential+((lambda-(lambda*lnJ-mu))/(J*J)*He.doubleContraction(F_differential))*He
+           +(lambda*lnJ-mu)/J*ConstitutiveModelInternal::cofactorMatrixDifferential(F,F_differential);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

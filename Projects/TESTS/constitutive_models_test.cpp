@@ -21,6 +21,7 @@
 #include "Physika_Dynamics/Constitutive_Models/neo_hookean.h"
 #include "Physika_Dynamics/Constitutive_Models/st_venant_kirchhoff.h"
 #include "Physika_Dynamics/Constitutive_Models/isotropic_linear_elasticity.h"
+#include "Physika_Dynamics/Constitutive_Models/isotropic_fixed_corotated_material.h"
 #include "Physika_Dynamics/Constitutive_Models/isotropic_hyperelastic_material.h"
 #include "Physika_Dynamics/Constitutive_Models/stomakhin_snow_model.h"
 using namespace std;
@@ -28,6 +29,7 @@ using Physika::SquareMatrix;
 using Physika::StomakhinSnowModel;
 using Physika::NeoHookean;
 using Physika::StVK;
+using Physika::IsotropicFixedCorotatedMaterial;
 using Physika::IsotropicLinearElasticity;
 using Physika::IsotropicHyperelasticMaterial;
 using Physika::IsotropicHyperelasticMaterialInternal::ModulusType;
@@ -77,6 +79,7 @@ int main()
     NeoHookean<Scalar,Dim> neo_hookean_material(lambda,mu,par_type);
     StVK<Scalar,Dim> stvk_material(lambda,mu,par_type);
     IsotropicLinearElasticity<Scalar,Dim> linear_material(lambda,mu,par_type);
+    IsotropicFixedCorotatedMaterial<Scalar,Dim> corotated_linear_material(lambda,mu,par_type);
     StomakhinSnowModel<Scalar,Dim> snow_material(lambda,mu,par_type);
     IsotropicHyperelasticMaterial<Scalar,Dim> *isotropic_hyperelastic_material;
     SquareMatrix<Scalar,Dim> F(0.0);
@@ -103,20 +106,29 @@ int main()
     isotropic_hyperelastic_material->setPoissonRatio(0.4);
     cout<<"E: "<<isotropic_hyperelastic_material->youngsModulus()<<", Nu: "<<isotropic_hyperelastic_material->poissonRatio()<<endl;
     cout<<"Lambda: "<<isotropic_hyperelastic_material->lambda()<<", Mu: "<<isotropic_hyperelastic_material->mu()<<endl;
+    testGradients(isotropic_hyperelastic_material);
+
     isotropic_hyperelastic_material = &stvk_material;
     isotropic_hyperelastic_material->printInfo();
     cout<<"Internal energy: "<<isotropic_hyperelastic_material->energyDensity(F)<<endl;
     cout<<"P: "<<isotropic_hyperelastic_material->firstPiolaKirchhoffStress(F)<<endl;
     cout<<"S: "<<isotropic_hyperelastic_material->secondPiolaKirchhoffStress(F)<<endl;
     cout<<"sigma: "<<isotropic_hyperelastic_material->cauchyStress(F)<<endl;
+
     isotropic_hyperelastic_material = &linear_material;
     isotropic_hyperelastic_material->printInfo();
     cout<<"Internal energy: "<<isotropic_hyperelastic_material->energyDensity(F)<<endl;
     cout<<"P: "<<isotropic_hyperelastic_material->firstPiolaKirchhoffStress(F)<<endl;
     cout<<"S: "<<isotropic_hyperelastic_material->secondPiolaKirchhoffStress(F)<<endl;
     cout<<"sigma: "<<isotropic_hyperelastic_material->cauchyStress(F)<<endl;
+
     isotropic_hyperelastic_material = &snow_material;
     isotropic_hyperelastic_material->printInfo();
     testGradients(isotropic_hyperelastic_material);
+
+    isotropic_hyperelastic_material = &corotated_linear_material;
+    isotropic_hyperelastic_material->printInfo();
+    testGradients(isotropic_hyperelastic_material);
+
     return 0;
 }

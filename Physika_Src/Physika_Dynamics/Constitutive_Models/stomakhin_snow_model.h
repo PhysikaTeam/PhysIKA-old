@@ -64,19 +64,6 @@ protected:
                            SquareMatrix<Scalar,Dim> &R_e,   //rotation part
                            SquareMatrix<Scalar,Dim> &F_p,   //plastic part
                            Scalar &lambda, Scalar &mu) const;
-    //helper methods for computing stress differential
-    //differential of rotation part of F
-    SquareMatrix<Scalar,2> rotationDifferential(const SquareMatrix<Scalar,2> &F_e,
-                                                const SquareMatrix<Scalar,2> &R_e,
-                                                const SquareMatrix<Scalar,2> &F_differential) const;
-    SquareMatrix<Scalar,3> rotationDifferential(const SquareMatrix<Scalar,3> &F_e,
-                                                const SquareMatrix<Scalar,3> &R_e,
-                                                const SquareMatrix<Scalar,3> &F_differential) const;
-    //differential of J*F.inverse().transpose()
-    SquareMatrix<Scalar,2> cofactorMatrixDifferential(const SquareMatrix<Scalar,2> &F_e,
-                                                      const SquareMatrix<Scalar,2> &F_differential) const;
-    SquareMatrix<Scalar,3> cofactorMatrixDifferential(const SquareMatrix<Scalar,3> &F_e,
-                                                      const SquareMatrix<Scalar,3> &F_differential) const;
 protected:
     Scalar stretching_yield_, compression_yield_; //the two thresholds in the paper
     Scalar hardening_factor_; //the epsilon in the paper

@@ -20,6 +20,7 @@
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Dynamics/Constitutive_Models/constitutive_model_internal.h"
 #include "Physika_Dynamics/Constitutive_Models/stomakhin_snow_model.h"
 
 namespace Physika{
@@ -183,10 +184,10 @@ SquareMatrix<Scalar,Dim> StomakhinSnowModel<Scalar,Dim>::firstPiolaKirchhoffStre
     Scalar lambda,mu;
     prepareParameters(F,F_e,R_e,F_p,lambda,mu);
     Scalar J_e = F_e.determinant();
-    SquareMatrix<Scalar,Dim> R_differential = rotationDifferential(F_e,R_e,F_differential);
+    SquareMatrix<Scalar,Dim> R_differential = ConstitutiveModelInternal::rotationDifferential(F_e,R_e,F_differential);
     SquareMatrix<Scalar,Dim> J_F_inv_trans = J_e*(F_e.inverse()).transpose();
     return 2*mu*(F_differential-R_differential)+lambda*J_F_inv_trans*J_F_inv_trans.doubleContraction(F_differential)
-           +lambda*(J_e-1)*cofactorMatrixDifferential(F_e,F_differential);
+           +lambda*(J_e-1)*ConstitutiveModelInternal::cofactorMatrixDifferential(F_e,F_differential);
 }
 
 template <typename Scalar, int Dim>
@@ -212,56 +213,6 @@ void StomakhinSnowModel<Scalar,Dim>::prepareParameters(const SquareMatrix<Scalar
     Scalar hardening_power = std::pow(E,hardening_factor_*(1.0-F_p.determinant()));
     lambda = hardening_power * (this->lambda_);
     mu = hardening_power * (this->mu_);
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,2> StomakhinSnowModel<Scalar,Dim>::rotationDifferential(const SquareMatrix<Scalar,2> &F_e,
-                                                                            const SquareMatrix<Scalar,2> &R_e,
-                                                                            const SquareMatrix<Scalar,2> &F_differential) const
-{
-    SquareMatrix<Scalar,2> M = R_e.transpose()*F_differential;
-    SquareMatrix<Scalar,2> S = R_e.transpose()*F_e;
-    if(S(1,1)+S(0,0)<std::numeric_limits<Scalar>::epsilon())
-        return SquareMatrix<Scalar,2>(0);
-    Scalar a = (M(0,1)-M(1,0))/(S(1,1)+S(0,0));
-    SquareMatrix<Scalar,2> RTdR(0,a,-a,0);
-    return R_e*RTdR;
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,3> StomakhinSnowModel<Scalar,Dim>::rotationDifferential(const SquareMatrix<Scalar,3> &F_e,
-                                                                            const SquareMatrix<Scalar,3> &R_e,
-                                                                            const SquareMatrix<Scalar,3> &F_differential) const
-{
-    SquareMatrix<Scalar,3> M = R_e.transpose()*F_differential;
-    SquareMatrix<Scalar,3> S = R_e.transpose()*F_e;
-    SquareMatrix<Scalar,3> K(S(1,1)+S(0,0),S(2,1),-S(2,0),S(2,1),S(2,2)+S(0,0),S(1,0),-S(2,0),S(1,0),S(2,2)+S(1,1));
-    Vector<Scalar,3> L(M(1,0)-M(0,1),-M(0,2)+M(2,0),-M(1,2)+M(2,1));
-    Vector<Scalar,3> RV = K.inverse()*L; //solve K*x=L
-    SquareMatrix<Scalar,3> RTdR(0,-RV[0],-RV[1],RV[0],0,-RV[2],RV[1],RV[2],0);
-    return R_e*RTdR;
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,2> StomakhinSnowModel<Scalar,Dim>::cofactorMatrixDifferential(const SquareMatrix<Scalar,2> &F_e,
-                                                                                  const SquareMatrix<Scalar,2> &F_differential) const
-{
-    return SquareMatrix<Scalar,2>(F_differential(1,1),-F_differential(1,0),-F_differential(0,1),F_differential(0,0));
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,3> StomakhinSnowModel<Scalar,Dim>::cofactorMatrixDifferential(const SquareMatrix<Scalar,3> &F_e,
-                                                                                  const SquareMatrix<Scalar,3> &F_differential) const
-{
-    return SquareMatrix<Scalar,3>(F_differential(1,1)*F_e(2,2)+F_e(1,1)*F_differential(2,2)-F_differential(2,1)*F_e(1,2)-F_e(2,1)*F_differential(1,2),
-                                  F_differential(2,0)*F_e(1,2)+F_e(2,0)*F_differential(1,2)-F_differential(1,0)*F_e(2,2)-F_e(1,0)*F_differential(2,2),
-                                  F_differential(1,0)*F_e(2,1)+F_e(1,0)*F_differential(2,1)-F_differential(2,0)*F_e(1,1)-F_e(2,0)*F_differential(1,1),
-                                  F_differential(2,1)*F_e(0,2)+F_e(2,1)*F_differential(0,2)-F_differential(0,1)*F_e(2,2)-F_e(0,1)*F_differential(2,2),
-                                  F_differential(0,0)*F_e(2,2)+F_e(0,0)*F_differential(2,2)-F_differential(2,0)*F_e(0,2)-F_e(2,0)*F_differential(0,2),
-                                  F_differential(2,0)*F_e(0,1)+F_e(2,0)*F_differential(0,1)-F_differential(0,0)*F_e(2,1)-F_e(0,0)*F_differential(2,1),
-                                  F_differential(0,1)*F_e(1,2)+F_e(0,1)*F_differential(1,2)-F_differential(1,1)*F_e(0,2)-F_e(1,1)*F_differential(0,2),
-                                  F_differential(1,0)*F_e(0,2)+F_e(1,0)*F_differential(0,2)-F_differential(0,0)*F_e(1,2)-F_e(0,0)*F_differential(1,2),
-                                  F_differential(0,0)*F_e(1,1)+F_e(0,0)*F_differential(1,1)-F_differential(1,0)*F_e(0,1)-F_e(1,0)*F_differential(0,1));
 }
 
 //explicit instantiations
