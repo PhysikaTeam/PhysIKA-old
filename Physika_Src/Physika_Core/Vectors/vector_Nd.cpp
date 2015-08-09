@@ -1,12 +1,12 @@
 /*
-* @file vector_Nd.cpp 
+* @file vector_Nd.cpp
 * @brief Arbitrary dimension vector, dimension could be changed at runtime.
 * @author Fei Zhu
-* 
+*
 * This file is part of Physika, a versatile physics simulation library.
 * Copyright (C) 2013- Physika Group.
 *
-* This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+* This Source Code Form is subject to the terms of the GNU General Public License v2.0.
 * If a copy of the GPL was not distributed with this file, you can obtain one at:
 * http://www.gnu.org/licenses/gpl-2.0.html
 *
@@ -166,7 +166,7 @@ VectorND<Scalar>& VectorND<Scalar>::operator-= (const VectorND<Scalar> &vec2)
     for(unsigned int i = 0; i < dim1; ++i)
         (*this)[i] = (*this)[i] - vec2[i];
     return *this;
-} 
+}
 
 template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::operator= (const VectorND<Scalar> &vec2)
@@ -338,7 +338,8 @@ Scalar VectorND<Scalar>::dot(const VectorND<Scalar> &vec2) const
 {
     unsigned int dim1 = (*this).dims();
     unsigned int dim2 = vec2.dims();
-    PHYSIKA_ASSERT(dim1 == dim2);
+    if(dim1 != dim2)
+        throw PhysikaException("vector dimension mismatch!");
     Scalar result = static_cast<Scalar>(0.0);
     for(unsigned int i = 0; i < dim1; ++i)
         result += (*this)[i]*vec2[i];

@@ -49,7 +49,7 @@ additional_lib_path=[]
 
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
 #NOTE: THE ORDER MATTERS
-physika_libs=['Physika_GUI','Physika_Dynamics','Physika_Render','Physika_IO','Physika_Geometry','Physika_Core','LodePNG']
+physika_libs=['Physika_GUI','Physika_Dynamics','Physika_Render','Physika_IO','Physika_Geometry','Physika_Numerics','Physika_Core','LodePNG']
 
 #ADDITIONAL LIBS TO LINK
 #EXAMPLE: additional_libs=['lib1','lib2']
@@ -80,7 +80,7 @@ elif compiler=='msvc':
     additional_libs.append('Advapi32')
 
 #SRC FILES
-src_files=['constitutive_models_test.cpp']
+src_files=['linear_system_solvers_test.cpp']
 inc_files=[]
 #for dir,_,_ in os.walk(src_root_path):
 #    if dir not in ignored_src_path:

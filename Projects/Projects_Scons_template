@@ -1,11 +1,11 @@
 #################################################################
 # Scons script template for Projects based on Physika
 # @author: Fei Zhu, 04/15/2014
-# Usage: 
+# Usage:
 #       1. Copy the script to root directory of your project
 #          and rename it to "SConstruct"
 #       2. Edit the script and make necessary modifications
-#       3. Build the project by entering "scons" in terminal               
+#       3. Build the project by entering "scons" in terminal
 #################################################################
 
 #IMPORTS
@@ -50,7 +50,7 @@ additional_lib_path=[]
 
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
 #NOTE: THE ORDER MATTERS
-physika_libs=['Physika_GUI','Physika_Dynamics','Physika_Render','Physika_IO','Physika_Geometry','Physika_Core','LodePNG']
+physika_libs=['Physika_GUI','Physika_Dynamics','Physika_Render','Physika_IO','Physika_Geometry','Physika_Numerics','Physika_Core','LodePNG']
 
 #ADDITIONAL LIBS TO LINK
 #EXAMPLE: additional_libs=['lib1','lib2']
@@ -137,7 +137,7 @@ else:
    	arc='x86'
    else:
 	arc='amd64'
-   env=Environment(CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV,MSVS_ARCH=arc,TARGET_ARCH=arc)  
+   env=Environment(CCFLAGS=CCFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV,MSVS_ARCH=arc,TARGET_ARCH=arc)
    #DEBUG INFORMATION
    if build_type=='Debug':
       env['LINKFLAGS']=['/DEBUG']
