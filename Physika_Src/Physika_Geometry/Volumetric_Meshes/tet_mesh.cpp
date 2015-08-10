@@ -174,8 +174,7 @@ Scalar TetMesh<Scalar>::getTetDeterminant(const Vector<Scalar,3> &a, const Vecto
 template<typename Scalar>
 void TetMesh<Scalar>::generateBoundaryInformation()
 {
-    (this->boundary_elements_).clear();
-    (this->boundary_vertices_).clear();
+	this->clearBoundaryInformation();
     typedef std::set<std::vector<unsigned int>,VolumetricMeshInternal::CompareVector<unsigned int> > FaceSet;
     FaceSet::iterator iter;
     std::vector<unsigned int> face(3);

@@ -396,15 +396,12 @@ void VolumetricMesh<Scalar,Dim>::removeElement(unsigned int ele_idx)
     if(ele_idx>=this->ele_num_)
         throw PhysikaException("element index out of range!");
     //first remove this element from all regions
-    if(this->regionNum()>1)
+    for(int i = 0; i < regions_.size(); ++i)
     {
-        for(int i = 0; i < regions_.size(); ++i)
-        {
-            PHYSIKA_ASSERT(regions_[i]);
-            int ele_local_idx = regions_[i]->elementLocalIndex(ele_idx);
-            if(ele_local_idx>=0)
-                regions_[i]->removeElementAtIndex(ele_local_idx);
-        }
+        PHYSIKA_ASSERT(regions_[i]);
+        int ele_local_idx = regions_[i]->elementLocalIndex(ele_idx);
+        if(ele_local_idx>=0)
+            regions_[i]->removeElementAtIndex(ele_local_idx);
     }
     //then remove this element
     unsigned int ele_start_idx = eleStartIdx(ele_idx);
@@ -501,6 +498,7 @@ void VolumetricMesh<Scalar,Dim>::clearBoundaryInformation()
 {
     boundary_vertices_.clear();
     boundary_elements_.clear();
+	boundary_faces_.clear();
 }
 
 //explicit instantiations
