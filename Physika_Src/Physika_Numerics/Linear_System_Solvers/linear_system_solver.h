@@ -24,10 +24,21 @@ template <typename Scalar>
 class LinearSystemSolver
 {
 public:
-    LinearSystemSolver(){}
-    virtual ~LinearSystemSolver(){}
+    LinearSystemSolver();
+    virtual ~LinearSystemSolver();
     //procedure to solve the linear system
-    virtual bool solve(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x) = 0;
+    bool solve(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x);
+    //enable/disable preconditioner
+    inline void enablePreconditioner() {use_preconditioner_ = true;}
+    inline void disablePreconditioner() {use_preconditioner_ = false;}
+    //query preconditioner enabled state
+    inline bool isPreconditionerEnabled() const {return use_preconditioner_;}
+protected:
+    //virtual methods for subclass to implement
+    virtual bool solveWithoutPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x) = 0;
+    virtual bool solveWithPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x) = 0;
+protected:
+    bool use_preconditioner_;
 };
 
 }  //end of namespace Physika

@@ -1,12 +1,12 @@
 /*
- * @file sparse_matrix.cpp 
+ * @file sparse_matrix.cpp
  * @brief Definition of sparse matrix, size of the matrix is dynamic.
  * @author Liyou Xu, Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -68,13 +68,11 @@ void SparseMatrix<Scalar>::allocMemory(unsigned int rows, unsigned int cols, Spa
 
 }
 
-
-
 template <typename Scalar>
 SparseMatrix<Scalar>::~SparseMatrix()
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    
+
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     delete ptr_eigen_sparse_matrix_;
 #endif
@@ -269,7 +267,7 @@ void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
                 line_index_[i2] += 1;
             return;
         }
-        for (unsigned int i1 = line_index_[j]; i1 < line_index_[j + 1]; ++i1)   //if it already exists, just modify the value. 
+        for (unsigned int i1 = line_index_[j]; i1 < line_index_[j + 1]; ++i1)   //if it already exists, just modify the value.
         {
             if (elements_[i1].row() == i)
             {
@@ -303,7 +301,7 @@ void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
         for (unsigned int i2 = i + 1; i2 <= rows_; ++i2)
             line_index_[i2] += 1;
     }
-    
+
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     (*ptr_eigen_sparse_matrix_).coeffRef(i,j) = value;
 #endif
@@ -517,7 +515,7 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar>
 {
     if(this->cols() != mat2.rows())
         throw PhysikaException("operator * between two SparseMatrixes failed because they don't match");
-#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX 
+#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     if (priority_ == SparseMatrixInternal::ROW_MAJOR && mat2.priority_ == SparseMatrixInternal::ROW_MAJOR)
     {
         SparseMatrix<Scalar> result(rows_,mat2.cols_,SparseMatrixInternal::ROW_MAJOR);
@@ -536,7 +534,7 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar>
                     Scalar v_right = mat2.elements_[k].value();                              //assume the average number of nonzeros in a row is SR
                     result.setEntry(i, result_y, result(i, result_y) + v_left*v_right);           //time complexity O(SR*SR*rows) = O(matrix_left_nonzeros * SR)
                 }
-            }		
+            }
         }
         return result;
     }

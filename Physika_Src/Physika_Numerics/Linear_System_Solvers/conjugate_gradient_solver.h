@@ -26,8 +26,10 @@ class ConjugateGradientSolver: public IterativeSolver<Scalar>
 public:
     ConjugateGradientSolver();
     ~ConjugateGradientSolver();
-    virtual bool solve(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x);
 protected:
+    virtual bool solveWithoutPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x);
+    virtual bool solveWithPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x);
+
 };
 
 }  //end of namespace Physika

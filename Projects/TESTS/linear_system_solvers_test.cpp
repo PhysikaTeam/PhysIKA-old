@@ -39,9 +39,23 @@ int main()
     PlainGeneralizedVector<Scalar> b(2);
     b[0] = 1; b[1] = 0;
     PlainGeneralizedVector<Scalar> x(2,0);
+    //CG
     ConjugateGradientSolver<Scalar> cg_solver;
     cg_solver.solve(linear_system,b,x);
     cout<<"Physika CG solver terminated in "<<cg_solver.iterationsUsed()<<" iterations\n";
+    cout<<"Norm of residual :"<<cg_solver.residualMagnitude()<<"\n";
+    cout<<"Solution: "<<x<<"\n";
+    //PCG with jacobi preconditioner
+    linear_system.computeJacobiPreconditioner();
+    if(linear_system.preconditioner())
+        std::cout<<"Yes\n";
+    else
+        std::cout<<"No\n";
+    cg_solver.reset();
+    cg_solver.enablePreconditioner();
+    x[0] = 2; x[1] = 0;
+    cg_solver.solve(linear_system,b,x);
+    cout<<"Physika PCG solver with Jacobi preconditioner terminated in "<<cg_solver.iterationsUsed()<<" iterations\n";
     cout<<"Norm of residual :"<<cg_solver.residualMagnitude()<<"\n";
     cout<<"Solution: "<<x<<"\n";
     return 0;

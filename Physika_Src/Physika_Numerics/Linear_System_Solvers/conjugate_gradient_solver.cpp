@@ -34,7 +34,7 @@ ConjugateGradientSolver<Scalar>::~ConjugateGradientSolver()
 }
 
 template <typename Scalar>
-bool ConjugateGradientSolver<Scalar>::solve(const LinearSystem<Scalar> &system,
+bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSystem<Scalar> &system,
                                             const GeneralizedVector<Scalar> &b,
                                             GeneralizedVector<Scalar> &x)
 {
@@ -50,6 +50,7 @@ bool ConjugateGradientSolver<Scalar>::solve(const LinearSystem<Scalar> &system,
     Scalar delta = delta_0;
     GeneralizedVector<Scalar> *q = d->clone();
     GeneralizedVector<Scalar> *temp = d->clone();
+    this->residual_magnitude_sqr_ = delta;
     while((this->iterations_used_ < this->max_iterations_) && (delta > tolerance_sqr*delta_0))
     {
         system.multiply(*d,*q);
@@ -87,6 +88,64 @@ bool ConjugateGradientSolver<Scalar>::solve(const LinearSystem<Scalar> &system,
     return delta > tolerance_sqr*delta_0 ? false : true;
 }
 
+template <typename Scalar>
+bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem<Scalar> &system,
+                                            const GeneralizedVector<Scalar> &b,
+                                            GeneralizedVector<Scalar> &x)
+{
+    //see b.3 of the reference for notations
+    this->iterations_used_ = 0;
+    Scalar tolerance_sqr = (this->tolerance_)*(this->tolerance_);
+    GeneralizedVector<Scalar> *r = b.clone(); //create a vector with the same type with b
+    system.multiply(x,*r); //r = Ax
+    (*r) *= -1;
+    (*r) += b; //r = b - Ax
+    GeneralizedVector<Scalar> *d = r->clone();
+    system.preconditionerMultiply(*r,*d); //d = Tr
+    Scalar delta_0 = r->dot(*d);
+    Scalar delta = delta_0;
+    GeneralizedVector<Scalar> *q = d->clone();
+    GeneralizedVector<Scalar> *temp = d->clone();
+    GeneralizedVector<Scalar> *s = d->clone();
+    this->residual_magnitude_sqr_ = delta;
+    while((this->iterations_used_ < this->max_iterations_) &&(delta > tolerance_sqr*delta_0))
+    {
+        system.multiply(*d,*q); //q = Ad
+        Scalar alpha = delta/(d->dot(*q));
+        *temp = *d;
+        *temp *= alpha;
+        x += *temp; //x = x + alpha*d
+        if((this->iterations_used_)%50 == 0) //direct compute residual every 50 iterations
+        {
+            system.multiply(x,*r);
+            (*r) *= -1;
+            (*r) += b; //r = b - Ax
+        }
+        else
+        {
+            *temp = *q;
+            *temp *= alpha;
+            *r -= *temp; //r = r - alpha*q
+        }
+        system.preconditionerMultiply(*r,*s); //s = Tr
+        Scalar delta_old = delta;
+        delta = r->dot(*s);
+        Scalar beta = delta/delta_old;
+        *temp = *d;
+        *temp *= beta;
+        *d = *s;
+        *d += *temp; //d = s + beta*d
+        this->iterations_used_ = this->iterations_used_ + 1;
+        this->residual_magnitude_sqr_ = delta;
+    }
+    delete r;
+    delete d;
+    delete q;
+    delete temp;
+    delete s;
+    //return false if didn't converge with maximum iterations
+    return delta > tolerance_sqr*delta_0 ? false : true;
+}
 //explicit instantiations
 template class ConjugateGradientSolver<float>;
 template class ConjugateGradientSolver<double>;

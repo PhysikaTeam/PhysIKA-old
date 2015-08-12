@@ -25,7 +25,6 @@ class IterativeSolver: public LinearSystemSolver<Scalar>
 public:
     IterativeSolver();
     virtual ~IterativeSolver();
-    virtual bool solve(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x) = 0;
     //set solver options
     Scalar tolerance() const;
     void setTolerance(Scalar tol);
@@ -36,6 +35,9 @@ public:
     unsigned int iterationsUsed() const;
     //reset solver
     void reset();
+protected:
+    virtual bool solveWithoutPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x) = 0;
+    virtual bool solveWithPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x) = 0;
 protected:
     Scalar tolerance_; //terminate tolerance
     unsigned int max_iterations_; //maximum iterations allowed
