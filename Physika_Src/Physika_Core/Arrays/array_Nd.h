@@ -1,5 +1,5 @@
 /*
- * @file array_Nd.h 
+ * @file array_Nd.h
  * @brief  Multi-dimensional array class.
  * @author Fei Zhu
  * @Suggestion: Choose between Array and std::vector at your will.
@@ -8,7 +8,7 @@
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -37,9 +37,9 @@ namespace Physika{
  * Hence:
  *       Use Array<ElementType> for 1D array and ArrayND<ElmentType,Dim> for higer dimension
  *       ArrayND<ElementType,1> will result in compiler error due to the static assert
- * 
+ *
  * Dim is arbitrary, but most probably it's 2 and 3.
- * Elements of ArrayND can be accessed via index or iterator, the index is represented as 
+ * Elements of ArrayND can be accessed via index or iterator, the index is represented as
  * a std::vector. Physika::Vector can also be used as index if and only if Dim = 2,3,4.
  */
 
@@ -78,7 +78,7 @@ public:
     const ElementType& operator() (const Vector<unsigned int,Dim> &idx) const; //get element at given index
     ElementType& elementAtIndex(const Vector<unsigned int,Dim> &idx);
     const ElementType& elementAtIndex(const Vector<unsigned int,Dim> &idx) const;
-    
+
     //iterator
     typedef ArrayNDIterator<ElementType,Dim> Iterator;
     typedef ArrayNDConstIterator<ElementType,Dim> ConstIterator;

@@ -1,11 +1,11 @@
 /*
- * @file array_Nd-inl.h 
+ * @file array_Nd-inl.h
  * @brief  Implementation of methods in array_Nd.h.
  * @author Fei Zhu
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -76,7 +76,8 @@ template <typename ElementType,int Dim>
 ArrayND<ElementType,Dim>::ArrayND(const ArrayND<ElementType,Dim> &array)
     :data_(NULL)
 {
-    std::vector<unsigned int> element_counts = array.size();
+    std::vector<unsigned int> element_counts;
+    array.size(element_counts);
     resize(element_counts);
     unsigned int total_count = totalElementCount();
     memcpy(data_,array.data_,sizeof(ElementType)*total_count);
@@ -91,7 +92,8 @@ ArrayND<ElementType,Dim>::~ArrayND()
 template <typename ElementType,int Dim>
 ArrayND<ElementType,Dim>& ArrayND<ElementType,Dim>::operator= (const ArrayND<ElementType,Dim> &array)
 {
-    std::vector<unsigned int> element_counts = array.size();
+    std::vector<unsigned int> element_counts;
+    array.size(element_counts);
     resize(element_counts);
     unsigned int total_count = totalElementCount();
     memcpy(data_,array.data_,sizeof(ElementType)*total_count);

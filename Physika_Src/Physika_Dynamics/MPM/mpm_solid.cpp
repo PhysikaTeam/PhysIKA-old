@@ -3,11 +3,11 @@
  * @file mpm_solid.cpp
  * @Brief MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -223,6 +223,60 @@ void MPMSolid<Scalar,Dim>::resetContactMethod()
 }
 
 template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::activeGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &active_nodes) const
+{
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    active_nodes.clear();
+    Vector<unsigned int,Dim> grid_node_dim = grid_.nodeNum();
+    for(std::multimap<unsigned int,unsigned int>::const_iterator iter = active_grid_node_.begin(); iter != active_grid_node_.end(); ++iter)
+    {
+        unsigned int node_idx_1d = iter->first, obj_idx = iter->second;
+        if(obj_idx == object_idx)
+        {
+            Vector<unsigned int,Dim> node_idx = multiDimIndex(node_idx_1d,grid_node_dim);
+            active_nodes.push_back(node_idx);
+        }
+    }
+}
+
+template <typename Scalar, int Dim>
+bool MPMSolid<Scalar,Dim>::isDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const
+{
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if(is_dirichlet_grid_node_(node_idx).count(object_idx) > 0)
+        return true;
+    else
+        return false;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar,Dim>::dirichletGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &dirichlet_nodes) const
+{
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    dirichlet_nodes.clear();
+    // //direct implementation, traverse all grid nodes
+    // typename ArrayND<std::set<unsigned int>,Dim>::ConstIterator iter = is_dirichlet_grid_node_.begin();
+    // while(iter != is_dirichlet_grid_node_.end())
+    // {
+    //     if((*iter).count(object_idx) > 0)
+    //         dirichlet_nodes.push_back(iter.elementIndex());
+    //     ++iter;
+    // }
+    //cheap implementation, traverse all active grid nodes
+    Vector<unsigned int,Dim> grid_node_dim = grid_.nodeNum();
+    for(std::multimap<unsigned int,unsigned int>::const_iterator iter = active_grid_node_.begin(); iter != active_grid_node_.end(); ++iter)
+    {
+        unsigned int node_idx_1d = iter->first, obj_idx = iter->second;
+        Vector<unsigned int,Dim> node_idx = multiDimIndex(node_idx_1d,grid_node_dim);
+        if(obj_idx == object_idx && is_dirichlet_grid_node_(node_idx).count(object_idx) > 0)
+            dirichlet_nodes.push_back(node_idx);
+    }
+}
+
+template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
     //plugin operation
@@ -373,7 +427,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
         if(plugin)
             plugin->onResolveContactOnGrid(dt);
     }
-    //Contact 1: contact with the kinematic objects    
+    //Contact 1: contact with the kinematic objects
     if(!(this->collidable_objects_).empty())
     {
         Vector<unsigned int,Dim> grid_node_num = grid_.nodeNum();
@@ -501,7 +555,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
         if(plugin)
             plugin->onResolveContactOnParticles(dt);
     }
-    //resolve contact with the kinematic objects in scene on the particle level    
+    //resolve contact with the kinematic objects in scene on the particle level
     if(!(this->collidable_objects_).empty())
     {
         for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
@@ -544,7 +598,7 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
         if(plugin)
             plugin->onUpdateParticleInterpolationWeight();
     }
-    
+
     //precompute the interpolation weights and gradients
     typedef UniformGridWeightFunctionInfluenceIterator<Scalar,Dim> InfluenceIterator;
     Vector<Scalar,Dim> grid_dx = (this->grid_).dX();
@@ -563,7 +617,7 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
                     particle_to_node[dim] /= grid_dx[dim];
                 Scalar weight = this->weight_function_->weight(particle_to_node);
                  //ignore nodes that has zero weight value, assume positve weight value
-                if(weight > std::numeric_limits<Scalar>::epsilon()) 
+                if(weight > std::numeric_limits<Scalar>::epsilon())
                 {
                     Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node);
                     unsigned int i = this->particle_grid_pair_num_[obj_idx][particle_idx]++;
@@ -602,7 +656,7 @@ void MPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar dt)
             }
             SquareMatrix<Scalar,Dim> particle_deform_grad = particle->deformationGradient();
             //use the remedy in <Augmented MPM for phase-change and varied materials> to prevent |F| < 0
-            SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix(); 
+            SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
             if((identity + dt*particle_vel_grad).determinant() > 0) //normal update
                 particle_deform_grad += dt*particle_vel_grad*particle_deform_grad;
             else //the remedy
@@ -629,7 +683,7 @@ void MPMSolid<Scalar,Dim>::updateParticleVelocity()
 
     //update particle velocity with a combination of FLIP && PIC strategy
     for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
-    {  
+    {
         for(unsigned int particle_idx = 0; particle_idx < this->particleNumOfObject(obj_idx); ++particle_idx)
         {
             if(this->is_dirichlet_particle_[obj_idx][particle_idx])
@@ -825,7 +879,7 @@ void MPMSolid<Scalar,Dim>::appendAllParticleRelatedDataOfLastObject()
     std::vector<unsigned int> particle_grid_pair_num_vec(particle_num_of_last_object,0);
     particle_grid_pair_num_.push_back(particle_grid_pair_num_vec);
 }
-    
+
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsigned int object_idx)
 {
@@ -837,7 +891,7 @@ void MPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsigned int ob
     particle_grid_weight_and_gradient_[object_idx].push_back(particle_max_num_weight_and_gradient_vec);
     particle_grid_pair_num_[object_idx].push_back(0);
 }
-    
+
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsigned int object_idx)
 {
@@ -848,7 +902,7 @@ void MPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsigned int obj
     std::vector<std::vector<unsigned int> >::iterator iter2 = particle_grid_pair_num_.begin() + object_idx;
     particle_grid_pair_num_.erase(iter2);
 }
-    
+
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsigned int object_idx, unsigned int particle_idx)
 {

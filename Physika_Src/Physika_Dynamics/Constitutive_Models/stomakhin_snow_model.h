@@ -57,6 +57,10 @@ public:
     // \delta is differential
     virtual SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStressDifferential(const SquareMatrix<Scalar,Dim> &F,
                                      const SquareMatrix<Scalar,Dim> &F_differential) const;
+    //decompose deformation into elastic && plastic part
+    void deformationDecomposition(const SquareMatrix<Scalar,Dim> &F,
+                                  SquareMatrix<Scalar,Dim> &F_e,
+                                  SquareMatrix<Scalar,Dim> &F_p) const;
 protected:
     //compute related material paramters according to current deformation gradient
     void prepareParameters(const SquareMatrix<Scalar,Dim> &F,

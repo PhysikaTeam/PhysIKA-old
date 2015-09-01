@@ -1,7 +1,7 @@
 /*
  * @file linear_system.h
- * @brief base class of all classes describing the linear system Ax = b. It either provides the coefficient
- *        matrix A explicitly for direct solvers or provides multiply() method for iterative solvers.
+ * @brief base class of all classes describing the linear system Ax = b. It provides the coefficient
+ *        matrix A implicitly with multiply() method.
  * @author Fei Zhu
  *
  * This file is part of Physika, a versatile physics simulation library.
@@ -19,46 +19,32 @@
 namespace Physika{
 
 template <typename RawScalar> class GeneralizedVector;
-template <typename Scalar> class GeneralizedMatrix;
 
 /*
  * LinearSystem:
  * Derive the class by implementing the multiply method
- * Note: if A can not be conveniently provided explicitly for specific linear system, it is recommended
- *       to hide methods related to explicit form of A in subclass by overriding
+ *
  */
 template <typename Scalar>
 class LinearSystem
 {
 public:
-    LinearSystem(); //construct without coefficent matrix provided
-    explicit LinearSystem(const GeneralizedMatrix<Scalar> &coefficient_matrix); //construct with coefficient matrix explicitly provided
+    LinearSystem();
     virtual ~LinearSystem();
 
-    //get the coefficient matrix,return NULL if not explicitly set
-    const GeneralizedMatrix<Scalar>* coefficientMatrix() const;
-    GeneralizedMatrix<Scalar>* coefficientMatrix();
-    //set the coefficient matrix
-    void setCoefficientMatrix(const GeneralizedMatrix<Scalar> &matrix);
     //the method for iterative solvers so that matrix A does not need to be explicitly provided
     //input x return Ax
     //the default implementation is multiply between matrix and plain vector
-    virtual void multiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const;
+    virtual void multiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const = 0;
 
-    //get the preconditioner matrix, return NULL if not explicitly set
-    const GeneralizedMatrix<Scalar>* preconditioner() const;
-    GeneralizedMatrix<Scalar>* preconditioner();
-    //set the preconditioner
-    void setPreconditioner(const GeneralizedMatrix<Scalar> &matrix);
     //the method for iterative solvers so that preconditioner needn't to be explicitly provided
     //input x return Tx
     //the default implementation here is multiply between matrix and plain vector
-    virtual void preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const;
-    //predefined preconditioners: only work if A is explicitly provided
-    void computeJacobiPreconditioner(); //aka diagonal preconditioner
+    virtual void preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const = 0;
 protected:
-    GeneralizedMatrix<Scalar> *coefficient_matrix_; //A
-    GeneralizedMatrix<Scalar> *preconditioner_; //preconditioner of the linear system
+    //disable default copy
+    LinearSystem(const LinearSystem<Scalar> &linear_system);
+    LinearSystem<Scalar>& operator= (const LinearSystem<Scalar> &linear_system);
 };
 
 } //end of namespace Physika

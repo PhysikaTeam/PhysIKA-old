@@ -215,6 +215,25 @@ void StomakhinSnowModel<Scalar,Dim>::prepareParameters(const SquareMatrix<Scalar
     mu = hardening_power * (this->mu_);
 }
 
+template <typename Scalar, int Dim>
+void StomakhinSnowModel<Scalar,Dim>::deformationDecomposition(const SquareMatrix<Scalar,Dim> &F,
+                                                              SquareMatrix<Scalar,Dim> &F_e,
+                                                              SquareMatrix<Scalar,Dim> &F_p) const
+{
+        SquareMatrix<Scalar,Dim> U_e,V_e;
+        SquareMatrix<Scalar,Dim> S_e;
+        F.singularValueDecomposition(U_e,S_e,V_e);
+        for(unsigned int i = 0; i < Dim; ++i)
+        {
+            if(S_e(i,i) > stretching_yield_)
+                S_e(i,i) = stretching_yield_;
+            if(S_e(i,i) < compression_yield_)
+                S_e(i,i) = compression_yield_;
+        }
+        F_p = V_e*S_e.inverse()*U_e.transpose()*F;
+        F_e = U_e*S_e*V_e.transpose();
+}
+
 //explicit instantiations
 template class StomakhinSnowModel<float,2>;
 template class StomakhinSnowModel<float,3>;

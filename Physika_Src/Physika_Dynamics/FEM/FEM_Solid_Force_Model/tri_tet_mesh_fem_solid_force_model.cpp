@@ -1,12 +1,12 @@
 /*
- * @file tri_tet_mesh_fem_solid_force_model.cpp 
+ * @file tri_tet_mesh_fem_solid_force_model.cpp
  * @Brief fem solid force model for constant strain triangle and tetrahedron mesh.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -24,7 +24,7 @@
 namespace Physika{
 
 template <typename Scalar, int Dim>
-TriTetMeshFEMSolidForceModel<Scalar,Dim>::TriTetMeshFEMSolidForceModel(const VolumetricMesh<Scalar,Dim> &simulation_mesh, 
+TriTetMeshFEMSolidForceModel<Scalar,Dim>::TriTetMeshFEMSolidForceModel(const VolumetricMesh<Scalar,Dim> &simulation_mesh,
                                                                        const std::vector<ConstitutiveModel<Scalar,Dim>*> &constitutive_model)
     :FEMSolidForceModel<Scalar,Dim>(simulation_mesh,constitutive_model)
 {
@@ -40,7 +40,7 @@ template <typename Scalar, int Dim>
 void TriTetMeshFEMSolidForceModel<Scalar,Dim>::updatePrecomputedData()
 {
     //first check if the volumetric mesh is TriMesh or TetMesh
-    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->simulation_mesh_); 
+    const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->simulation_mesh_);
     VolumetricMeshInternal::ElementType ele_type = sim_mesh.elementType();
     if((ele_type != VolumetricMeshInternal::TRI) && (ele_type != VolumetricMeshInternal::TET))
         throw PhysikaException("Simulation mesh element type and FEM force model mismatch!");
@@ -75,7 +75,9 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeGlobalInternalForces(const
 }
 
 template <typename Scalar, int Dim>
-void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeElementInternalForces(unsigned int ele_idx, const std::vector<Vector<Scalar,Dim> > &current_vert_pos, std::vector<Vector<Scalar,Dim> > &force) const
+void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeElementInternalForces(unsigned int ele_idx,
+                                        const std::vector<Vector<Scalar,Dim> > &current_vert_pos,
+                                        std::vector<Vector<Scalar,Dim> > &force) const
 {
     const VolumetricMesh<Scalar,Dim> &sim_mesh = (this->simulation_mesh_);
     unsigned int ele_num = sim_mesh.eleNum();
@@ -143,19 +145,19 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeElementInternalForces(unsi
 
 template <typename Scalar, int Dim>
 void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeGlobalInternalForceDifferentials(
-                                                                              const std::vector<Vector<Scalar,Dim> > &current_vert_pos,
-                                                                              const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
-                                                                              std::vector<Vector<Scalar,Dim> > &force_differentials) const
+                                               const std::vector<Vector<Scalar,Dim> > &current_vert_pos,
+                                               const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
+                                               std::vector<Vector<Scalar,Dim> > &force_differentials) const
 {
     throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeElementInternalForceDifferentials(
-                                                                              unsigned int ele_idx,
-                                                                              const std::vector<Vector<Scalar,Dim> > &current_vert_pos,
-                                                                              const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
-                                                                              std::vector<Vector<Scalar,Dim> > &force_differentials) const
+                                                unsigned int ele_idx,
+                                                const std::vector<Vector<Scalar,Dim> > &current_vert_pos,
+                                                const std::vector<Vector<Scalar,Dim> > &vert_pos_differentials,
+                                                std::vector<Vector<Scalar,Dim> > &force_differentials) const
 {
     throw PhysikaException("Not implemented!");
 }

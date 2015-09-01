@@ -15,7 +15,7 @@
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_MxN.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
-#include "Physika_Numerics/Linear_System_Solvers/linear_system.h"
+#include "Physika_Numerics/Linear_System_Solvers/matrix_linear_system.h"
 #include "Physika_Numerics/Linear_System_Solvers/plain_generalized_vector.h"
 #include "Physika_Numerics/Linear_System_Solvers/generalized_matrix.h"
 #include "Physika_Numerics/Linear_System_Solvers/conjugate_gradient_solver.h"
@@ -23,7 +23,7 @@
 
 using Physika::MatrixMxN;
 using Physika::VectorND;
-using Physika::LinearSystem;
+using Physika::MatrixLinearSystem;
 using Physika::PlainGeneralizedVector;
 using Physika::GeneralizedMatrix;
 using Physika::ConjugateGradientSolver;
@@ -35,7 +35,7 @@ int main()
     MatrixMxN<Scalar> A_data(2,2);
     A_data(0,0) = 2; A_data(0,1) = -1; A_data(1,0) = -1; A_data(1,1) = 2;
     GeneralizedMatrix<Scalar> A(A_data);
-    LinearSystem<Scalar> linear_system(A);
+    MatrixLinearSystem<Scalar> linear_system(A);
     PlainGeneralizedVector<Scalar> b(2);
     b[0] = 1; b[1] = 0;
     PlainGeneralizedVector<Scalar> x(2,0);
