@@ -90,6 +90,12 @@ bool ConfigFile::parseFile(const std::string &file_name)
     {
         count++;
         inputstream.getline(line, maxlen);
+        // remove any trailing line feed and carriage return
+        // for consistent behavior under different os
+        if (line[strlen(line)-1] == 10)
+            line[strlen(line)-1] = 0;
+        if (line[strlen(line)-1] == 13)
+            line[strlen(line)-1] = 0;
         std::string str(line);
         if(str[0] == '#' || str[0] == '\0')
             continue;
@@ -117,10 +123,15 @@ bool ConfigFile::parseFile(const std::string &file_name)
         {
             count++;
             inputstream.getline(line, maxlen);
-            std::string data(line);
-            if(data[0] == '#' || data[0] == '\0')
+            // remove any trailing line feed and carriage return
+            // for consistent behavior under different os
+            if (line[strlen(line)-1] == 10)
+                line[strlen(line)-1] = 0;
+            if (line[strlen(line)-1] == 13)
+                line[strlen(line)-1] = 0;
+            if(line[0] == '#' || line[0] == '\0')
                 continue;
-            data_entry = data;
+            data_entry = std::string(line);
             break;
         }
         if(data_entry == "")
@@ -262,7 +273,7 @@ int ConfigFile::findOption(const std::string &option_name)
         return iter - option_names_.begin();
 }
 
-void ConfigFile::printOptions()
+void ConfigFile::printOptions() const
 {
     for (unsigned int i = 0; i < option_names_.size(); i++)
     {
@@ -292,6 +303,51 @@ void ConfigFile::printOptions()
         }
     }
 
+}
+
+bool ConfigFile::saveOptions(const std::string &file_name) const
+{
+    std::ofstream output_file(file_name);
+    if (!output_file)
+    {
+        std::cerr << "Error: Cannot open file " << file_name << "\n";
+        return false;
+    }
+    unsigned int option_num = option_names_.size();
+    for (unsigned int i = 0; i < option_num; ++i)
+    {
+        output_file << "*" << option_names_[i] << "\n";
+        switch (option_types_[i])
+        {
+        case OptionType::Option_Int:
+            output_file << *(int*)(dest_locations_[i]) << "\n";
+            break;
+        case OptionType::Option_Unsigned_Int:
+            output_file << *(unsigned int*)(dest_locations_[i]) << "\n";
+            break;
+        case OptionType::Option_Bool:
+            output_file << *(bool*)(dest_locations_[i]) << "\n";
+            break;
+        case OptionType::Option_Float:
+            output_file << *(float*)(dest_locations_[i]) << "\n";
+            break;
+        case OptionType::Option_Double:
+            output_file << *(double*)(dest_locations_[i]) << "\n";
+            break;
+        case OptionType::Option_String:
+            output_file << *(std::string*)(dest_locations_[i]) << "\n";
+            break;
+        default:
+            std::cerr << "Unknown option type for " << option_names_[i] << "\n";
+            std::cerr << "Terminated\n";
+            output_file.close();
+            return false;
+            break;
+        }
+        output_file << "\n";
+    }
+    output_file.close();
+    return true;
 }
 
 template <class T>

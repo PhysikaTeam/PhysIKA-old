@@ -72,7 +72,8 @@ public:
     //parse file after options are added
     bool parseFile(const std::string &file_name);
 
-    void printOptions(); //print all options already read in memory.
+    void printOptions() const; //print all options already read in memory
+    bool saveOptions(const std::string &file_name) const;
 protected:
     template <class T>
     bool addOptionOperation(const std::string &option_name, T* dest_location);
