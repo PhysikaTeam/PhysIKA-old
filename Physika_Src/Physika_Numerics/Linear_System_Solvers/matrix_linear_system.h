@@ -26,7 +26,7 @@ template <typename Scalar>
 class MatrixLinearSystem: public LinearSystem<Scalar>
 {
 public:
-    MatrixLinearSystem(); //construct without coefficent matrix provided
+    MatrixLinearSystem(); //construct without coefficient matrix provided
     //construct with coefficient matrix explicitly provided
     explicit MatrixLinearSystem(const GeneralizedMatrix<Scalar> &coefficient_matrix);
     virtual ~MatrixLinearSystem();
@@ -36,7 +36,7 @@ public:
     GeneralizedMatrix<Scalar>* coefficientMatrix();
     //set the coefficient matrix
     void setCoefficientMatrix(const GeneralizedMatrix<Scalar> &matrix);
-    //the default implementation is multiply between matrix and plain vector
+    //the default implementation is multiply between matrix and PlainGeneralizedVector
     virtual void multiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const;
 
     //get the preconditioner matrix, return NULL if not explicitly set
@@ -44,7 +44,7 @@ public:
     GeneralizedMatrix<Scalar>* preconditioner();
     //set the preconditioner
     void setPreconditioner(const GeneralizedMatrix<Scalar> &matrix);
-    //the default implementation here is multiply between matrix and plain vector
+    //the default implementation here is multiply between matrix and PlainGeneralizedVector
     virtual void preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const;
     //predefined preconditioners: only work if A is explicitly provided
     void computeJacobiPreconditioner(); //aka diagonal preconditioner

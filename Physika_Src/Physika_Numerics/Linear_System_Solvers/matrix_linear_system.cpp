@@ -93,7 +93,7 @@ void MatrixLinearSystem<Scalar>::multiply(const GeneralizedVector<Scalar> &x, Ge
         }
     }
     else
-        throw PhysikaException("Coeffcient matrix not provided!");
+        throw PhysikaException("Coefficient matrix not provided!");
 }
 
 template <typename Scalar>

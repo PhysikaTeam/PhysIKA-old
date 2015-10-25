@@ -26,6 +26,7 @@ template <typename Scalar, int Dim>
 class Vector: public VectorBase
 {
 public:
+    typedef Scalar ValueType;
     Vector(){}
     ~Vector(){}
     virtual unsigned int dims() const;

@@ -55,9 +55,9 @@ else:
 
 #BUILDERS
 if build_type=='Release':
-   compile_action='g++ -o $TARGET $SOURCE -c -O3 -Wall -fno-strict-aliasing -std=gnu++0x -DNDEBUG '
+   compile_action='g++ -o $TARGET $SOURCE -c -O3 -Wall -fno-strict-aliasing -std=gnu++11 -DNDEBUG '
 else:
-   compile_action='g++ -o $TARGET $SOURCE -c -g -Wall -fno-strict-aliasing -std=gnu++0x '  
+   compile_action='g++ -o $TARGET $SOURCE -c -g -Wall -fno-strict-aliasing -std=gnu++11 '  
 for path in include_path:
     compile_action=compile_action+' -I '+path
 compile=Builder(action=compile_action)

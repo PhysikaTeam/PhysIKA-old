@@ -34,12 +34,10 @@ public:
 
     //the method for iterative solvers so that matrix A does not need to be explicitly provided
     //input x return Ax
-    //the default implementation is multiply between matrix and plain vector
     virtual void multiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const = 0;
 
     //the method for iterative solvers so that preconditioner needn't to be explicitly provided
     //input x return Tx
-    //the default implementation here is multiply between matrix and plain vector
     virtual void preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const = 0;
 protected:
     //disable default copy

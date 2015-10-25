@@ -33,6 +33,7 @@ template <typename Scalar>
 class VectorND: public VectorBase
 {
 public:
+    typedef Scalar ValueType;
     VectorND();//empty vector, dim = 0
     explicit VectorND(unsigned int dim);//vector with given dimension
     VectorND(unsigned int dim, Scalar value);//vector with given dimension initialized with one value
@@ -90,17 +91,16 @@ inline std::ostream& operator<< (std::ostream &s, const VectorND<Scalar> &vec)
 {
     unsigned int dim = vec.dims();
     s<<"(";
-    for(unsigned int i = 0; i < dim-1; ++i)
+    for(unsigned int i = 0; i < dim; ++i)
     {
         if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
-            s<<static_cast<unsigned int>(vec[i])<<", ";
+            s<<static_cast<unsigned int>(vec[i]);
         else
-            s<<vec[i]<<", ";
+            s<<vec[i];
+        if (i < dim - 1)
+            s << ", ";
     }
-    if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
-        s<<static_cast<unsigned int>(vec[dim-1])<<")";
-    else
-        s<<vec[dim-1]<<")";
+    s<<")";
     return s;
 }
 

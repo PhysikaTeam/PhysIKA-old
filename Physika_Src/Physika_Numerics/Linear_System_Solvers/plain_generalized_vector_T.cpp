@@ -1,18 +1,19 @@
 /*
- * @file plain_generalized_vector.cpp
- * @brief the most general version of GeneralizedVector, which is in fact a wrraper of
- *        VectorND
- * @author Fei Zhu
- *
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
- *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
- * If a copy of the GPL was not distributed with this file, you can obtain one at:
- * http://www.gnu.org/licenses/gpl-2.0.html
- *
- */
+* @file plain_generalized_vector_T.cpp
+* @brief definition of PlainGeneralizedVector for template type float/double
+* @author Fei Zhu
+*
+* This file is part of Physika, a versatile physics simulation library.
+* Copyright (C) 2013- Physika Group.
+*
+* This Source Code Form is subject to the terms of the GNU General Public License v2.0.
+* If a copy of the GPL was not distributed with this file, you can obtain one at:
+* http://www.gnu.org/licenses/gpl-2.0.html
+*
+*/
 
+#include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Numerics/Linear_System_Solvers/plain_generalized_vector.h"
 
 namespace Physika{
@@ -98,31 +99,29 @@ void PlainGeneralizedVector<Scalar>::resize(unsigned int new_size)
 template <typename Scalar>
 PlainGeneralizedVector<Scalar>& PlainGeneralizedVector<Scalar>::operator+= (const GeneralizedVector<Scalar> &vector)
 {
-    const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
-    data_ += plain_vector.data_;
-    return *this;
+    try{
+        const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
+        data_ += plain_vector.data_;
+        return *this;
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument type!");
+    }
 }
 
 template <typename Scalar>
 PlainGeneralizedVector<Scalar>& PlainGeneralizedVector<Scalar>::operator-= (const GeneralizedVector<Scalar> &vector)
 {
-    const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
-    data_ -= plain_vector.data_;
-    return *this;
-}
-
-template <typename Scalar>
-PlainGeneralizedVector<Scalar>& PlainGeneralizedVector<Scalar>:: operator+= (Scalar value)
-{
-    data_ += value;
-    return *this;
-}
-
-template <typename Scalar>
-PlainGeneralizedVector<Scalar>& PlainGeneralizedVector<Scalar>:: operator-= (Scalar value)
-{
-    data_ -= value;
-    return *this;
+    try{
+        const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
+        data_ -= plain_vector.data_;
+        return *this;
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument type!");
+    }
 }
 
 template <typename Scalar>
@@ -135,6 +134,8 @@ PlainGeneralizedVector<Scalar>& PlainGeneralizedVector<Scalar>:: operator*= (Sca
 template <typename Scalar>
 PlainGeneralizedVector<Scalar>& PlainGeneralizedVector<Scalar>:: operator/= (Scalar value)
 {
+    if (isEqual(value, static_cast<Scalar>(0.0)) == true)
+        throw PhysikaException("divide by zero!");
     data_ /= value;
     return *this;
 }
@@ -154,15 +155,27 @@ Scalar PlainGeneralizedVector<Scalar>::normSquared() const
 template <typename Scalar>
 Scalar PlainGeneralizedVector<Scalar>::dot(const GeneralizedVector<Scalar> &vector) const
 {
-    const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
-    return data_.dot(plain_vector.data_);
+    try{
+        const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
+        return data_.dot(plain_vector.data_);
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument type!");
+    }
 }
 
 template <typename Scalar>
 void PlainGeneralizedVector<Scalar>::copy(const GeneralizedVector<Scalar> &vector)
 {
-    const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
-    data_ = plain_vector.data_;
+    try{
+        const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
+        data_ = plain_vector.data_;
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument type!");
+    }
 }
 
 template <typename Scalar>

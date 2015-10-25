@@ -22,7 +22,7 @@ namespace Physika{
  * GeneralizedVector: base class of linear-system dependent vector types to represent x and b.
  * Derived GeneralizedVector class generally comes along with specific LinearSystem class.
  * A derived example:
- * For a dim-dimensional simulation, A is matrix of size dim*n*dim*n, x and b are vectors of size dim*n,
+ * For a dim-dimensional simulation, A is matrix of size dim*n * dim*n, x and b are vectors of size dim*n,
  * where n is the number of free nodes/particles. With GeneralizedMatrix and GeneralizedVector, the matrix could
  * be defined as matrix of size n*n and vector is a vector of size n whose elements are dim*1 vectors. In this
  * way, we save memory and ease coding by eliminating the need for flatting vectors.
@@ -50,8 +50,6 @@ public:
     virtual unsigned int size() const = 0; //number of elements in the vector
     virtual GeneralizedVector<RawScalar>& operator+= (const GeneralizedVector<RawScalar> &vector) = 0;
     virtual GeneralizedVector<RawScalar>& operator-= (const GeneralizedVector<RawScalar> &vector) = 0;
-    virtual GeneralizedVector<RawScalar>& operator+= (RawScalar) = 0;
-    virtual GeneralizedVector<RawScalar>& operator-= (RawScalar) = 0;
     virtual GeneralizedVector<RawScalar>& operator*= (RawScalar) = 0;
     virtual GeneralizedVector<RawScalar>& operator/= (RawScalar) = 0;
     virtual RawScalar norm() const = 0;

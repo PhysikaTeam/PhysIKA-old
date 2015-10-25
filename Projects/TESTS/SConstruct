@@ -122,9 +122,9 @@ if compiler=='g++':
    tools=['gcc','g++','gnulink']
    LINKFLAGS=['-rdynamic']  #FOR STACK TRACE SUPPORT
    if build_type=='Release':
-      CCFLAGS=['-O3','-Wall','-fno-strict-aliasing','-std=gnu++0x','-DNDEBUG']
+      CCFLAGS=['-O3','-Wall','-fno-strict-aliasing','-std=gnu++11','-DNDEBUG']
    else:
-      CCFLAGS=['-Wall','-std=gnu++0x','-fno-strict-aliasing','-g']
+      CCFLAGS=['-Wall','-std=gnu++11','-fno-strict-aliasing','-g']
    env=Environment(CC=CC,CXX=CXX,tools=tools,CCFLAGS=CCFLAGS,LINKFLAGS=LINKFLAGS,CPPPATH=include_path,LIBPATH=lib_path,RPATH=lib_path,LIBS=libs,ENV=ENV)
 else:
    if build_type=='Release':

@@ -1,16 +1,17 @@
 /*
- * @file uniform_grid_generalized_vector.cpp
- * @brief generalized vector for solving the linear system Ax = b on uniform grid
- * @author Fei Zhu
- *
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
- *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
- * If a copy of the GPL was not distributed with this file, you can obtain one at:
- * http://www.gnu.org/licenses/gpl-2.0.html
- *
- */
+* @file uniform_grid_generalized_vector_T.cpp
+* @brief generalized vector for solving the linear system Ax = b on uniform grid
+*        defined for float/double element type
+* @author Fei Zhu
+*
+* This file is part of Physika, a versatile physics simulation library.
+* Copyright (C) 2013- Physika Group.
+*
+* This Source Code Form is subject to the terms of the GNU General Public License v2.0.
+* If a copy of the GPL was not distributed with this file, you can obtain one at:
+* http://www.gnu.org/licenses/gpl-2.0.html
+*
+*/
 
 #include <typeinfo>
 #include <algorithm>
@@ -18,7 +19,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_exception.h"
-#include "Physika_Dynamics/Utilities/Grid_Generalized_Vectors/uniform_grid_generalized_vector.h"
+#include "Physika_Dynamics/Utilities/Grid_Generalized_Vectors/uniform_grid_generalized_vector_T.h"
 
 namespace Physika{
 
@@ -134,44 +135,6 @@ UniformGridGeneralizedVector<Scalar,Dim>& UniformGridGeneralizedVector<Scalar,Di
 }
 
 template <typename Scalar, int Dim>
-UniformGridGeneralizedVector<Scalar,Dim>& UniformGridGeneralizedVector<Scalar,Dim>::operator+= (Scalar value)
-{
-    if(active_node_idx_.size() == data_.totalElementCount()) // all entries active
-    {
-        for(typename ArrayND<Scalar,Dim>::Iterator iter = data_.begin(); iter != data_.end(); ++iter)
-            *iter += value;
-    }
-    else
-    {
-        for(unsigned int i = 0; i < active_node_idx_.size(); ++i)
-        {
-            Vector<unsigned int,Dim> node_idx = active_node_idx_[i];
-            data_(node_idx) += value;
-        }
-    }
-    return *this;
-}
-
-template <typename Scalar, int Dim>
-UniformGridGeneralizedVector<Scalar,Dim>& UniformGridGeneralizedVector<Scalar,Dim>::operator-= (Scalar value)
-{
-    if(active_node_idx_.size() == data_.totalElementCount()) // all entries active
-    {
-        for(typename ArrayND<Scalar,Dim>::Iterator iter = data_.begin(); iter != data_.end(); ++iter)
-            *iter -= value;
-    }
-    else
-    {
-        for(unsigned int i = 0; i < active_node_idx_.size(); ++i)
-        {
-            Vector<unsigned int,Dim> node_idx = active_node_idx_[i];
-            data_(node_idx) -= value;
-        }
-    }
-    return *this;
-}
-
-template <typename Scalar, int Dim>
 UniformGridGeneralizedVector<Scalar,Dim>& UniformGridGeneralizedVector<Scalar,Dim>::operator*= (Scalar value)
 {
     if(active_node_idx_.size() == data_.totalElementCount()) // all entries active
@@ -193,6 +156,8 @@ UniformGridGeneralizedVector<Scalar,Dim>& UniformGridGeneralizedVector<Scalar,Di
 template <typename Scalar, int Dim>
 UniformGridGeneralizedVector<Scalar,Dim>& UniformGridGeneralizedVector<Scalar,Dim>::operator/= (Scalar value)
 {
+    if (isEqual(value, static_cast<Scalar>(0.0)))
+        throw PhysikaException("Divide by zero!");
     if(active_node_idx_.size() == data_.totalElementCount()) // all entries active
     {
         for(typename ArrayND<Scalar,Dim>::Iterator iter = data_.begin(); iter != data_.end(); ++iter)
