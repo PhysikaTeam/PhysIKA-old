@@ -1,6 +1,7 @@
 /*
  * @file mpm_uniform_grid_generalized_vector.h
  * @brief generalized vector for mpm drivers with uniform grid
+ *        defined for element type Vector<Scalar,Dim>
  * @author Fei Zhu
  *
  * This file is part of Physika, a versatile physics simulation library.
@@ -15,19 +16,28 @@
 #ifndef PHYSIKA_DYNAMICS_MPM_MPM_LINEAR_SYSTEMS_MPM_UNIFORM_GRID_GENERALIZED_VECTOR_H_
 #define PHYSIKA_DYNAMICS_MPM_MPM_LINEAR_SYSTEMS_MPM_UNIFORM_GRID_GENERALIZED_VECTOR_H_
 
-#include "Physika_Dynamics/Utilities/Grid_Generalized_Vectors/uniform_grid_generalized_vector.h"
+#include <vector>
+#include "Physika_Dynamics/Utilities/Grid_Generalized_Vectors/uniform_grid_generalized_vector_TV.h"
 
 namespace Physika{
-
-template <typename Scalar, int Dim> class Vector;
 
 /*
  * MPMUniformGridGeneralizedVector: a special UniformGridGeneralizedVector whose inner-product
  * is scaled with mass at corresponding node
+ * the element is Vector<Scalar,Dim> where Dim = 2/3 
  */
 
+//default template, constructor made private to prohibit instance
+template <typename Scalar>
+class MPMUniformGridGeneralizedVector
+{
+private:
+    MPMUniformGridGeneralizedVector();
+};
+
+//partial specialization for Vector<Scalar,Dim>
 template <typename Scalar, int Dim>
-class MPMUniformGridGeneralizedVector: public UniformGridGeneralizedVector<Scalar,Dim>
+class MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >: public UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim>
 {
 public:
     //all grid nodes active, node mass set to 1
@@ -35,10 +45,10 @@ public:
     MPMUniformGridGeneralizedVector(const Vector<unsigned int,Dim> &grid_size,
                                     const std::vector<Vector<unsigned int,Dim> > &active_grid_nodes,
                                     const std::vector<Scalar> &active_node_mass);
-    MPMUniformGridGeneralizedVector(const MPMUniformGridGeneralizedVector<Scalar,Dim> &vector);
+    MPMUniformGridGeneralizedVector(const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &vector);
     ~MPMUniformGridGeneralizedVector();
-    MPMUniformGridGeneralizedVector<Scalar,Dim>& operator= (const MPMUniformGridGeneralizedVector<Scalar,Dim> &vector);
-    virtual MPMUniformGridGeneralizedVector<Scalar,Dim>* clone() const;
+    MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >& operator= (const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &vector);
+    virtual MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >* clone() const;
     virtual Scalar norm() const;
     virtual Scalar normSquared() const;
     virtual Scalar dot(const GeneralizedVector<Scalar> &vector) const;

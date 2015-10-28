@@ -487,7 +487,7 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleStartIdx(unsigned int ele_idx) const
         ele_idx_start = ele_idx*vert_per_ele_[0];
     else
     {
-        for(int i = 0; i < ele_idx; ++i)
+        for(unsigned int i = 0; i < ele_idx; ++i)
             ele_idx_start += vert_per_ele_[i];
     }
     return ele_idx_start;

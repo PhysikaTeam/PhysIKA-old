@@ -355,7 +355,7 @@ void MPMSolid<Scalar,Dim>::rasterize()
             std::multimap<unsigned int,unsigned int>::iterator cur = beg;
             Scalar mass_at_node = 0;
             Vector<Scalar,Dim> momentum_at_node(0);
-            //accummulate values of all involved objects at this node
+            //accumulate values of all involved objects at this node
             while(cur != end)
             {
                 mass_at_node += grid_mass_(node_idx)[cur->second];

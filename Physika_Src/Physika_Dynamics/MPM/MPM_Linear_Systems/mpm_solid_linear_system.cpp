@@ -44,8 +44,8 @@ void MPMSolidLinearSystem<Scalar,Dim>::preconditionerMultiply(const GeneralizedV
                                                               GeneralizedVector<Scalar> &result) const
 {
     try{
-        const MPMUniformGridGeneralizedVector<Scalar,Dim> &mpm_x = dynamic_cast<const MPMUniformGridGeneralizedVector<Scalar,Dim>&>(x);
-        MPMUniformGridGeneralizedVector<Scalar,Dim> &mpm_result = dynamic_cast<MPMUniformGridGeneralizedVector<Scalar,Dim>&>(result);
+        const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &mpm_x = dynamic_cast<const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >&>(x);
+        MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &mpm_result = dynamic_cast<MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >&>(result);
         jacobiPreconditionerMultiply(mpm_x,mpm_result);
     }
     catch(std::bad_cast &e)
@@ -61,8 +61,8 @@ void MPMSolidLinearSystem<Scalar,Dim>::setActiveObject(int obj_idx)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const MPMUniformGridGeneralizedVector<Scalar,Dim> &x,
-                                                                    MPMUniformGridGeneralizedVector<Scalar,Dim> &result) const
+void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &x,
+                                                                    MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
 {
     //TO DO
 }

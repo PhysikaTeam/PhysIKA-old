@@ -20,7 +20,7 @@
 namespace Physika{
 
 template <typename Scalar, int Dim> class MPMSolid;
-template <typename Scalar, int Dim> class MPMUniformGridGeneralizedVector;
+template <typename Scalar> class MPMUniformGridGeneralizedVector;
 
 /*
  * MPMSolidLinearSystem: linear system for implicit integration of MPMSolid driver
@@ -39,8 +39,8 @@ public:
     //construct one global linear system for all objects if obj_idx is set to -1 (all objects are solved on one grid)
     void setActiveObject(int obj_idx);
 protected:
-    void jacobiPreconditionerMultiply(const MPMUniformGridGeneralizedVector<Scalar,Dim> &x,
-                                      MPMUniformGridGeneralizedVector<Scalar,Dim> &result) const;
+    void jacobiPreconditionerMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &x,
+                                      MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &result) const;
     //disable default copy
     MPMSolidLinearSystem();
     MPMSolidLinearSystem(const MPMSolidLinearSystem<Scalar,Dim> &linear_system);
