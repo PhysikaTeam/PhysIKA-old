@@ -58,7 +58,7 @@ Scalar FEMBase<Scalar,Dim>::computeTimeStep()
     //for each object we compute a dt, and the global dt is the minimum of all objects
     Scalar dt = this->max_dt_;
     unsigned int obj_num = this->objectNum();
-    for(unsigned int obj_idx = 0; obj_idx < obj_num; ++obj_num)
+    for(unsigned int obj_idx = 0; obj_idx < obj_num; ++obj_idx)
     {
         Scalar chracteristic_length = minElementCharacteristicLength(obj_idx);
         Scalar max_vel = maxVertexVelocityNorm(obj_idx);
@@ -338,7 +338,7 @@ void FEMBase<Scalar,Dim>::setElementWiseDensity(unsigned int object_idx, const s
 }
     
 template <typename Scalar, int Dim>
-Scalar FEMBase<Scalar,Dim>::elementDensity(unsigned int object_idx, unsigned int ele_idx) const
+Scalar FEMBase<Scalar,Dim>::elementDensity(unsigned int object_idx, unsigned int ele_idx) const     
 {
     if(object_idx >= this->objectNum())
         throw PhysikaException("Object index out of range!");
@@ -366,7 +366,7 @@ Scalar FEMBase<Scalar,Dim>::elementDensity(unsigned int object_idx, unsigned int
 }
 
 template <typename Scalar, int Dim>
-void FEMBase<Scalar,Dim>::applyGravity(unsigned int object_idx, Scalar dt)
+void FEMBase<Scalar,Dim>::applyGravity(unsigned int object_idx, Scalar dt)  // g * dt = d(v)
 {
     PHYSIKA_ASSERT(object_idx < this->objectNum());
     unsigned int vert_num = numSimVertices(object_idx);
@@ -465,7 +465,7 @@ Scalar FEMBase<Scalar,Dim>::maxVertexVelocityNorm(unsigned int object_idx) const
 }
 
 template <typename Scalar, int Dim>
-Scalar FEMBase<Scalar,Dim>::minElementCharacteristicLength(unsigned int object_idx) const
+Scalar FEMBase<Scalar,Dim>::minElementCharacteristicLength(unsigned int object_idx) const //这一段有问题，不同体网格类型的volume是已经有函数的，不需要如此麻烦
 {
     PHYSIKA_ASSERT(object_idx < this->objectNum());
     PHYSIKA_ASSERT(simulation_mesh_[object_idx]);
