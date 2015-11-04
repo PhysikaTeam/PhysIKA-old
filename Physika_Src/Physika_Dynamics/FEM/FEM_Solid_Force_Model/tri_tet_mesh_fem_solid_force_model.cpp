@@ -63,8 +63,11 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeGlobalInternalForces(const
     {
         unsigned int ele_vert_num = sim_mesh.eleVertNum(ele_idx);
         ele_vert_pos.resize(ele_vert_num);
-        for(unsigned int local_vert_idx = 0; local_vert_idx < ele_vert_num; ++local_vert_idx)
-            ele_vert_pos[local_vert_idx] = sim_mesh.eleVertPos(ele_idx,local_vert_idx);
+        for (unsigned int local_vert_idx = 0; local_vert_idx < ele_vert_num; ++local_vert_idx)
+        {
+            unsigned int vert_idx = sim_mesh.eleVertIndex(ele_idx, local_vert_idx);
+            ele_vert_pos[local_vert_idx] = current_vert_pos[vert_idx];
+        }
         computeElementInternalForces(ele_idx,ele_vert_pos,ele_force);
         for(unsigned int local_vert_idx = 0; local_vert_idx < ele_vert_num; ++local_vert_idx)
         {

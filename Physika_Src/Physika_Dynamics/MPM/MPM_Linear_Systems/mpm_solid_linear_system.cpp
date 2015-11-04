@@ -1,6 +1,6 @@
 /*
  * @file mpm_solid_linear_system.cpp
- * @brief linear system for implicit integration of MPMSolid driver
+ * @brief linear system for implicit integration of MPMSolid && CPDIMPMSolid driver
  * @author Fei Zhu
  *
  * This file is part of Physika, a versatile physics simulation library.
@@ -36,7 +36,14 @@ template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> &x,
                                                 GeneralizedVector<Scalar> &result) const
 {
-    //TO DO
+    if (active_obj_idx_ == -1) //all objects solved together
+    {
+
+    }
+    else  //solve for active object
+    {
+
+    }
 }
 
 template <typename Scalar, int Dim>
@@ -58,13 +65,22 @@ template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar,Dim>::setActiveObject(int obj_idx)
 {
     active_obj_idx_ = obj_idx;
+    //all negative values are set to -1
+    active_obj_idx_ = active_obj_idx_ < 0 ? -1 : active_obj_idx_;
 }
 
 template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &x,
                                                                     MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
 {
-    //TO DO
+    if (active_obj_idx_ == -1) //all objects solved together
+    {
+
+    }
+    else  //solve for one active object
+    {
+
+    }
 }
 
 //explicit instantiations

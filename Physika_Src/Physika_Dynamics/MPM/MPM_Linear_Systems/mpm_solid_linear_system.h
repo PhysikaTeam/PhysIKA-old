@@ -1,6 +1,6 @@
 /*
  * @file mpm_solid_linear_system.h
- * @brief linear system for implicit integration of MPMSolid driver
+ * @brief linear system for implicit integration of MPMSolid && CPDIMPMSolid driver
  * @author Fei Zhu
  *
  * This file is part of Physika, a versatile physics simulation library.
