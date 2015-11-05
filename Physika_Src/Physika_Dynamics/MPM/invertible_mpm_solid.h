@@ -120,7 +120,7 @@ protected:
     //precompute diagonalized deformation gradient for each particle
     std::vector<std::vector<typename DeformationDiagonalization<Scalar,Dim>::DiagonalizedDeformation> > particle_diagonalized_deform_grad_;
     DeformationDiagonalization<Scalar,Dim> deform_grad_diagonalizer_; //the method used to diagonalize deformation gradient
-    //for invertibility support, stretch below this threshold will be clamped to this value (considered inverted)
+    //for inversion support, stretch below this threshold will be clamped to this value (considered inverted)
     Scalar principal_stretch_threshold_;
     //switch on/off particle enrichment
     bool enable_enrichment_;

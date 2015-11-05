@@ -13,6 +13,7 @@
  */
 
 #include <typeinfo>
+#include <vector>
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_uniform_grid_generalized_vector.h"
@@ -36,13 +37,31 @@ template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> &x,
                                                 GeneralizedVector<Scalar> &result) const
 {
-    if (active_obj_idx_ == -1) //all objects solved together
+    try
     {
+        const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
+        MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &rr = dynamic_cast<MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(result);
+        internalForceDifferential(xx, rr);
+        if (active_obj_idx_ == -1) //all objects solved together
+        {
 
+        }
+        else  //solve for active object
+        {
+            std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+            mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
+            Scalar dt_square = mpm_solid_driver_->computeTimeStep();
+            dt_square *= dt_square;
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
+                rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / mpm_solid_driver_->gridMass(active_obj_idx_, node_idx);
+            }
+        }
     }
-    else  //solve for active object
+    catch (std::bad_cast &e)
     {
-
+        throw PhysikaException("Incorrect argument!");
     }
 }
 
@@ -67,6 +86,20 @@ void MPMSolidLinearSystem<Scalar,Dim>::setActiveObject(int obj_idx)
     active_obj_idx_ = obj_idx;
     //all negative values are set to -1
     active_obj_idx_ = active_obj_idx_ < 0 ? -1 : active_obj_idx_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidLinearSystem<Scalar, Dim>::internalForceDifferential(const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
+                                                                  MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
+{
+    if (active_obj_idx_ == -1) //all objects solved together
+    {
+
+    }
+    else  //solve for one active object
+    {
+
+    }
 }
 
 template <typename Scalar, int Dim>

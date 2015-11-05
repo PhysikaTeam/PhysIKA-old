@@ -39,6 +39,9 @@ public:
     //construct one global linear system for all objects if obj_idx is set to -1 (all objects are solved on one grid)
     void setActiveObject(int obj_idx);
 protected:
+    //negative of potential energy Hessian acted on an arbitrary increment x_diff
+    void internalForceDifferential(const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
+                                   MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const;
     void jacobiPreconditionerMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &x,
                                       MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &result) const;
     //disable default copy
