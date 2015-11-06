@@ -82,7 +82,7 @@ Scalar MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >::normSquared() const
     if (this->active_node_idx_.size() == this->data_.totalElementCount()) //all entries active
     {
         unsigned int i = 0;
-        for (typename ArrayND<Vector<Scalar, Dim>, Dim>::ConstIterator iter = data_.begin(); iter != data_.end(); ++iter, ++i)
+        for (typename ArrayND<Vector<Scalar, Dim>, Dim>::ConstIterator iter = this->data_.begin(); iter != this->data_.end(); ++iter, ++i)
             norm_sqr += (*iter).normSquared()*active_node_mass_[i];
     }
     else
@@ -108,12 +108,12 @@ Scalar MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >::dot(const Generaliz
         if (this->active_node_idx_.size() == this->data_.totalElementCount()) //all entries active
         {
             unsigned int i = 0;
-            for (typename ArrayND<Vector<Scalar, Dim>, Dim>::ConstIterator iter = data_.begin(); iter != data_.end(); ++iter, ++i)
+            for (typename ArrayND<Vector<Scalar, Dim>, Dim>::ConstIterator iter = this->data_.begin(); iter != this->data_.end(); ++iter, ++i)
             {
                 Vector<unsigned int, Dim> node_idx = iter.elementIndex();
                 result += (*iter).dot(mpm_vec.data_(node_idx))*active_node_mass_[i];
             }
-            
+
         }
         else
         {

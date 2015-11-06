@@ -41,7 +41,7 @@ void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> 
     {
         const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
         MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &rr = dynamic_cast<MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(result);
-        internalForceDifferential(xx, rr);
+        energyHessianMultiply(xx, rr);
         if (active_obj_idx_ == -1) //all objects solved together
         {
 
@@ -89,7 +89,7 @@ void MPMSolidLinearSystem<Scalar,Dim>::setActiveObject(int obj_idx)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidLinearSystem<Scalar, Dim>::internalForceDifferential(const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
+void MPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
                                                                   MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
 {
     if (active_obj_idx_ == -1) //all objects solved together

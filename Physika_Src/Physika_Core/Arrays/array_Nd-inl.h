@@ -80,7 +80,8 @@ ArrayND<ElementType,Dim>::ArrayND(const ArrayND<ElementType,Dim> &array)
     array.size(element_counts);
     resize(element_counts);
     unsigned int total_count = totalElementCount();
-    memcpy(data_,array.data_,sizeof(ElementType)*total_count);
+    for(unsigned int i = 0; i < total_count; ++i)
+        data_[i] = array.data_[i];
 }
 
 template <typename ElementType,int Dim>
@@ -96,7 +97,8 @@ ArrayND<ElementType,Dim>& ArrayND<ElementType,Dim>::operator= (const ArrayND<Ele
     array.size(element_counts);
     resize(element_counts);
     unsigned int total_count = totalElementCount();
-    memcpy(data_,array.data_,sizeof(ElementType)*total_count);
+    for(unsigned int i = 0; i < total_count; ++i)
+        data_[i] = array.data_[i];
     return *this;
 }
 

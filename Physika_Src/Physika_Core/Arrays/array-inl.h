@@ -50,7 +50,8 @@ Array<ElementType>::Array(unsigned int element_count, const ElementType &value)
     :data_(NULL)
 {
     resize(element_count);
-    memset(data_, value, sizeof(ElementType)*element_count_);
+    for(unsigned int i = 0; i < element_count_; ++i)
+        data_[i] = value;
 }
 
 template <typename ElementType>
@@ -58,7 +59,8 @@ Array<ElementType>::Array(unsigned int element_count, const ElementType *data)
     :data_(NULL)
 {
     resize(element_count);
-    memcpy(data_, data, sizeof(ElementType) * element_count_);
+    for(unsigned int i = 0; i < element_count_; ++i)
+        data_[i] = data[i];
 }
 
 template <typename ElementType>
@@ -66,7 +68,8 @@ Array<ElementType>::Array(const Array<ElementType> &arr)
     :data_(NULL)
 {
     resize(arr.elementCount());
-    memcpy(data_, arr.data(), sizeof(ElementType) * element_count_);
+    for(unsigned int i = 0; i < element_count_; ++i)
+        data_[i] = arr.data_[i];
 }
 
 template <typename ElementType>
@@ -79,7 +82,8 @@ template <typename ElementType>
 Array<ElementType>& Array<ElementType>::operator = (const Array<ElementType> &arr)
 {
     resize(arr.elementCount());
-    memcpy(data_,arr.data(), sizeof(ElementType) * element_count_);
+    for(unsigned int i = 0; i < element_count_; ++i)
+        data_[i] = arr.data_[i];
     return *this;
 }
 
