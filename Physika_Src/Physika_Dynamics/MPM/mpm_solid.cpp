@@ -277,6 +277,46 @@ void MPMSolid<Scalar,Dim>::dirichletGridNodes(unsigned int object_idx, std::vect
 }
 
 template <typename Scalar, int Dim>
+void MPMSolid<Scalar, Dim>::gridNodesInRange(unsigned int object_idx, unsigned int particle_idx, std::vector<Vector<unsigned int, Dim> > &grid_nodes) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    grid_nodes.clear();
+    const SolidParticle<Scalar, Dim> &particle = this->particle(object_idx, particle_idx);
+    Vector<Scalar, Dim> particle_pos = particle.position();
+    typedef UniformGridWeightFunctionInfluenceIterator<Scalar, Dim> InfluenceIterator;
+    for (InfluenceIterator iter(this->grid_, particle_pos, *(this->weight_function_)); iter.valid(); ++iter)
+        grid_nodes.push_back(iter.nodeIndex());
+}
+
+template <typename Scalar, int Dim>
+void MPMSolid<Scalar, Dim>::activeGridNodes(std::vector<Vector<unsigned int, Dim> > &active_nodes) const
+{
+    std::set<unsigned int> grid_node_1d_set;
+    for (std::multimap<unsigned int, unsigned int>::const_iterator iter = active_grid_node_.begin(); iter != active_grid_node_.end(); ++iter)
+        grid_node_1d_set.insert(iter->first);
+    active_nodes.clear();
+    Vector<unsigned int, Dim> grid_node_dim = grid_.nodeNum();
+    for (std::set<unsigned int>::iterator iter = grid_node_1d_set.begin(); iter != grid_node_1d_set.end(); ++iter)
+    {
+        Vector<unsigned int, Dim> node_idx = multiDimIndex(*iter, grid_node_dim);
+        active_nodes.push_back(node_idx);
+    }
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolid<Scalar, Dim>::gridMass(const Vector<unsigned int, Dim> &node_idx) const
+{
+    Scalar mass = 0.0;
+    for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        mass += gridMass(obj_idx, node_idx);
+    return mass;
+}
+
+
+template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
     //plugin operation

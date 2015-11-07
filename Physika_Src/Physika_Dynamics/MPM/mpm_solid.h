@@ -70,10 +70,14 @@ public:
     //set contact method
     void setContactMethod(const MPMSolidContactMethod<Scalar,Dim> &contact_method);
     void resetContactMethod();  //reset the contact method to the one inherent in mpm
-    //query
+    //query for each object
     void activeGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &active_nodes) const;
     bool isDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const;
     void dirichletGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &dirichlet_nodes) const;
+    void gridNodesInRange(unsigned int object_idx, unsigned int particle_idx, std::vector<Vector<unsigned int, Dim> > &grid_nodes) const;
+    //query for all objects
+    void activeGridNodes(std::vector<Vector<unsigned int, Dim> > &active_nodes) const;
+    Scalar gridMass(const Vector<unsigned int, Dim> &node_idx) const;
 
     //substeps in one time step
     virtual void rasterize();

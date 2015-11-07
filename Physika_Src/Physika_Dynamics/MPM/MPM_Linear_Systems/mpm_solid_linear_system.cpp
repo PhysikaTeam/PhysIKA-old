@@ -14,7 +14,10 @@
 
 #include <typeinfo>
 #include <vector>
+#include "Physika_Core/Matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Utilities/physika_exception.h"
+#include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_uniform_grid_generalized_vector.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_solid_linear_system.h"
@@ -42,16 +45,21 @@ void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> 
         const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
         MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &rr = dynamic_cast<MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(result);
         energyHessianMultiply(xx, rr);
+        Scalar dt_square = mpm_solid_driver_->computeTimeStep();
+        dt_square *= dt_square;
+        std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
         if (active_obj_idx_ == -1) //all objects solved together
         {
-
+            mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
+                rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / mpm_solid_driver_->gridMass(node_idx);
+            }
         }
         else  //solve for active object
         {
-            std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
             mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
-            Scalar dt_square = mpm_solid_driver_->computeTimeStep();
-            dt_square *= dt_square;
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
@@ -92,13 +100,24 @@ template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
                                                                   MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
 {
+    std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+    std::vector<SquareMatrix<Scalar, Dim> > A_p(mpm_solid_driver_->totalParticleNum(), SquareMatrix<Scalar, Dim>(0));
+    unsigned global_particle_idx = 0;
+    std::vector<Vector<unsigned int, Dim> > nodes_in_range;
+    for (unsigned int obj_idx = 0; obj_idx < mpm_solid_driver_->objectNum(); ++obj_idx)
+    {
+        for (unsigned int particle_idx = 0; particle_idx < mpm_solid_driver_->particleNumOfObject(obj_idx); ++particle_idx, ++global_particle_idx)
+        {
+            mpm_solid_driver_->gridNodesInRange(obj_idx, particle_idx,nodes_in_range);
+        }
+    }
     if (active_obj_idx_ == -1) //all objects solved together
     {
-
+        mpm_solid_driver_->activeGridNodes(active_grid_nodes);
     }
     else  //solve for one active object
     {
-
+        mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
     }
 }
 
@@ -108,11 +127,11 @@ void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const MPMUni
 {
     if (active_obj_idx_ == -1) //all objects solved together
     {
-
+        //TO DO
     }
     else  //solve for one active object
     {
-
+        //TO DO
     }
 }
 
