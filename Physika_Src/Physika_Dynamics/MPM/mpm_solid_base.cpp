@@ -164,6 +164,16 @@ SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int objec
 }
 
 template <typename Scalar, int Dim>
+Scalar MPMSolidBase<Scalar, Dim>::particleInitialVolume(unsigned int object_idx, unsigned int particle_idx) const
+{
+    if (object_idx >= objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    return particle_initial_volume_[object_idx][particle_idx];
+}
+
+template <typename Scalar, int Dim>
 const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allParticlesOfObject(unsigned int object_idx) const
 {
     if(object_idx>=objectNum())

@@ -60,6 +60,7 @@ public:
     void removeParticle(unsigned int object_idx, unsigned int particle_idx);
     const SolidParticle<Scalar,Dim>& particle(unsigned int object_idx, unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int object_idx, unsigned int particle_idx);
+    Scalar particleInitialVolume(unsigned int object_idx, unsigned int particle_idx) const;
     const std::vector<SolidParticle<Scalar,Dim>*>& allParticlesOfObject(unsigned int object_idx) const;    
     //set and get external force on particles, gravity is not included
     Vector<Scalar,Dim> externalForceOnParticle(unsigned int object_idx, unsigned int particle_idx) const;

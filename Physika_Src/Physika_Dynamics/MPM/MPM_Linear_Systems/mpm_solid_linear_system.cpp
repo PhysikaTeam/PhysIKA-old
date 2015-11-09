@@ -18,6 +18,7 @@
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
+#include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_uniform_grid_generalized_vector.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_solid_linear_system.h"
@@ -100,24 +101,43 @@ template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
                                                                   MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
 {
-    std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
-    std::vector<SquareMatrix<Scalar, Dim> > A_p(mpm_solid_driver_->totalParticleNum(), SquareMatrix<Scalar, Dim>(0));
-    unsigned global_particle_idx = 0;
-    std::vector<Vector<unsigned int, Dim> > nodes_in_range;
-    for (unsigned int obj_idx = 0; obj_idx < mpm_solid_driver_->objectNum(); ++obj_idx)
-    {
-        for (unsigned int particle_idx = 0; particle_idx < mpm_solid_driver_->particleNumOfObject(obj_idx); ++particle_idx, ++global_particle_idx)
-        {
-            mpm_solid_driver_->gridNodesInRange(obj_idx, particle_idx,nodes_in_range);
-        }
-    }
+    result.setValue(Vector<Scalar, Dim>(0));
+    std::vector<unsigned int> active_objects;
     if (active_obj_idx_ == -1) //all objects solved together
     {
-        mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+        active_objects.resize(mpm_solid_driver_->objectNum());
+        for (unsigned int obj_idx = 0; obj_idx < active_objects.size(); ++obj_idx)
+            active_objects[obj_idx] = obj_idx;
     }
     else  //solve for one active object
     {
-        mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
+        active_objects.resize(1);
+        active_objects[0] = active_obj_idx_;
+    }
+    std::vector<Vector<unsigned int, Dim> > nodes_in_range;
+    for (unsigned int active_idx = 0; active_idx < active_objects.size(); ++active_idx)
+    {
+        unsigned int obj_idx = active_objects[active_idx];
+        for (unsigned int particle_idx = 0; particle_idx < mpm_solid_driver_->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            SquareMatrix<Scalar, Dim> A_p(0);
+            mpm_solid_driver_->gridNodesInRange(obj_idx, particle_idx, nodes_in_range);
+            const SolidParticle<Scalar, Dim> &particle = mpm_solid_driver_->particle(obj_idx, particle_idx);
+            for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
+            {
+                const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
+                Vector<Scalar, Dim> weight_gradient = mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
+                A_p += x_diff[node_idx].outerProduct(weight_gradient);
+            }
+            SquareMatrix<Scalar, Dim> particle_deform_grad = particle.deformationGradient();
+            A_p = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(particle_deform_grad,A_p * particle_deform_grad);
+            for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
+            {
+                const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
+                Vector<Scalar, Dim> weight_gradient = mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
+                result[node_idx] += mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
+            }
+        }
     }
 }
 
@@ -125,14 +145,15 @@ template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &x,
                                                                     MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
 {
-    if (active_obj_idx_ == -1) //all objects solved together
-    {
-        //TO DO
-    }
-    else  //solve for one active object
-    {
-        //TO DO
-    }
+    //if (active_obj_idx_ == -1) //all objects solved together
+    //{
+    //    //TO DO
+    //}
+    //else  //solve for one active object
+    //{
+    //    //TO DO
+    //}
+    throw PhysikaException("Not implemented!");
 }
 
 //explicit instantiations

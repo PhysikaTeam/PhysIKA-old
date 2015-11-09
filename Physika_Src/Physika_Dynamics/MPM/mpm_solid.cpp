@@ -22,6 +22,7 @@
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Numerics/Linear_System_Solvers/conjugate_gradient_solver.h"
 #include "Physika_Dynamics/Driver/driver_plugin_base.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
@@ -29,26 +30,31 @@
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/MPM_Contact_Methods/mpm_solid_contact_method.h"
+#include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_solid_linear_system.h"
+#include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_uniform_grid_generalized_vector.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid()
-    :MPMSolidBase<Scalar,Dim>(), contact_method_(NULL)
+    :MPMSolidBase<Scalar,Dim>(), contact_method_(NULL),
+    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
 {
 }
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :MPMSolidBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), contact_method_(NULL)
+    :MPMSolidBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), contact_method_(NULL),
+    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
 {
 }
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                const Grid<Scalar,Dim> &grid)
-    :MPMSolidBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),grid_(grid), contact_method_(NULL)
+     :MPMSolidBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), grid_(grid), contact_method_(NULL),
+      mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
 {
     synchronizeGridData();
 }
@@ -58,6 +64,12 @@ MPMSolid<Scalar,Dim>::~MPMSolid()
 {
     if(contact_method_)
         delete contact_method_;
+    if (mpm_solid_system_)
+        delete mpm_solid_system_;
+    if (system_rhs_)
+        delete system_rhs_;
+    if (system_x_)
+        delete system_x_;
 }
 
 template <typename Scalar, int Dim>
@@ -283,12 +295,36 @@ void MPMSolid<Scalar, Dim>::gridNodesInRange(unsigned int object_idx, unsigned i
         throw PhysikaException("object index out of range!");
     if (particle_idx >= this->particleNumOfObject(object_idx))
         throw PhysikaException("particle index out of range!");
-    grid_nodes.clear();
+    grid_nodes.resize(particle_grid_pair_num_[object_idx][particle_idx]);
+    for (unsigned int i = 0; i < grid_nodes.size(); ++i)
+        grid_nodes[i] = particle_grid_weight_and_gradient_[object_idx][particle_idx][i].node_idx;
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolid<Scalar, Dim>::weight(unsigned int object_idx, unsigned int particle_idx, const Vector<unsigned int, Dim> &node_idx) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
     const SolidParticle<Scalar, Dim> &particle = this->particle(object_idx, particle_idx);
     Vector<Scalar, Dim> particle_pos = particle.position();
-    typedef UniformGridWeightFunctionInfluenceIterator<Scalar, Dim> InfluenceIterator;
-    for (InfluenceIterator iter(this->grid_, particle_pos, *(this->weight_function_)); iter.valid(); ++iter)
-        grid_nodes.push_back(iter.nodeIndex());
+    Vector<Scalar, Dim> node_pos = this->grid_.node(node_idx);
+    return this->weight_function_->weight(node_pos - particle_pos);
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar, Dim> MPMSolid<Scalar, Dim>::weightGradient(unsigned int object_idx, unsigned int particle_idx, const Vector<unsigned int, Dim> &node_idx) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    const SolidParticle<Scalar, Dim> &particle = this->particle(object_idx, particle_idx);
+    Vector<Scalar, Dim> particle_pos = particle.position();
+    Vector<Scalar, Dim> node_pos = this->grid_.node(node_idx);
+    return this->weight_function_->gradient(node_pos - particle_pos);
+
 }
 
 template <typename Scalar, int Dim>
@@ -974,7 +1010,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                     continue; //skip grid nodes with near zero mass
                 if(contact_method_)  //if contact method other than the inherent one is employed, update the grid velocity of each object independently
                     grid_velocity_(pair.node_idx)[obj_idx] += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx)[obj_idx];
-                else  //otherwise, grid velocity of all objects that ocuppy the node get updated
+                else  //otherwise, grid velocity of all objects that occupy the node get updated
                 {
                     if(is_dirichlet_grid_node_(pair.node_idx).size() > 0)
                         continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
@@ -991,7 +1027,26 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
 {
-    throw PhysikaException("Not implemented!");
+    //initialize linear system
+    if (mpm_solid_system_ == NULL)
+        mpm_solid_system_ = new MPMSolidLinearSystem<Scalar,Dim>(this);
+    Vector<unsigned int, Dim> grid_node_num = grid_.nodeNum();
+    if (system_rhs_ == NULL)
+        system_rhs_ = new MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
+    if (system_x_ == NULL)
+        system_x_ = new MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
+    std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+    if (contact_method_) //contact method is used, solve each object independently
+    {
+        //TO DO
+    }
+    else //no contact method used, solve on single value grid
+    {
+        activeGridNodes(active_grid_nodes);
+        system_rhs_->setActivePattern(active_grid_nodes);
+        system_x_->setActivePattern(active_grid_nodes);
+        //TO DO
+    }
 }
 
 template <typename Scalar, int Dim>

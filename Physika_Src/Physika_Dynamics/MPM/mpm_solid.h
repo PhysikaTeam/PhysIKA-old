@@ -30,6 +30,9 @@ namespace Physika{
 template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
 template<typename Scalar,int Dim> class MPMSolidContactMethod;
+template<typename Scalar,int Dim> class MPMSolidLinearSystem;
+template<typename Scalar> class MPMUniformGridGeneralizedVector;
+template<typename Scalar> class LinearSystemSolver;
 
 /*
  * MPMSolid: simulate solid with MPM
@@ -75,6 +78,8 @@ public:
     bool isDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const;
     void dirichletGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &dirichlet_nodes) const;
     void gridNodesInRange(unsigned int object_idx, unsigned int particle_idx, std::vector<Vector<unsigned int, Dim> > &grid_nodes) const;
+    Scalar weight(unsigned int object_idx, unsigned int particle_idx, const Vector<unsigned int, Dim> &node_idx) const;
+    Vector<Scalar, Dim> weightGradient(unsigned int object_idx, unsigned int particle_idx, const Vector<unsigned int, Dim> &node_idx) const;
     //query for all objects
     void activeGridNodes(std::vector<Vector<unsigned int, Dim> > &active_nodes) const;
     Scalar gridMass(const Vector<unsigned int, Dim> &node_idx) const;
@@ -122,6 +127,10 @@ protected:
     //for each particle of each object, store the node-value pair: [object_idx][particle_idx][pair_idx]
     std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > particle_grid_weight_and_gradient_;
     std::vector<std::vector<unsigned int> > particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_
+    //for implicit integration
+    MPMSolidLinearSystem<Scalar, Dim> *mpm_solid_system_;
+    MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > *system_rhs_; //the right hand side of the linear system Ax = b
+    MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > *system_x_;  //the unknown x of the linear system Ax = b
 };
 
 }  //end of namespace Physika
