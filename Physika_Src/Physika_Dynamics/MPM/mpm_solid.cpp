@@ -39,14 +39,14 @@ namespace Physika{
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid()
     :MPMSolidBase<Scalar,Dim>(), contact_method_(NULL),
-    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
+    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL), system_solver_(NULL)
 {
 }
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :MPMSolidBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), contact_method_(NULL),
-    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
+    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL), system_solver_(NULL)
 {
 }
 
@@ -54,7 +54,7 @@ template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                const Grid<Scalar,Dim> &grid)
      :MPMSolidBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), grid_(grid), contact_method_(NULL),
-      mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
+      mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL), system_solver_(NULL)
 {
     synchronizeGridData();
 }
@@ -64,12 +64,14 @@ MPMSolid<Scalar,Dim>::~MPMSolid()
 {
     if(contact_method_)
         delete contact_method_;
-    if (mpm_solid_system_)
+    if(mpm_solid_system_)
         delete mpm_solid_system_;
-    if (system_rhs_)
+    if(system_rhs_)
         delete system_rhs_;
-    if (system_x_)
+    if(system_x_)
         delete system_x_;
+    if(system_solver_)
+        delete system_solver_;
 }
 
 template <typename Scalar, int Dim>
@@ -1027,7 +1029,9 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
 {
-    //initialize linear system
+    if(this->objectNum() == 0) //no objects in scene
+        return;
+    //create linear system && solver
     if (mpm_solid_system_ == NULL)
         mpm_solid_system_ = new MPMSolidLinearSystem<Scalar,Dim>(this);
     Vector<unsigned int, Dim> grid_node_num = grid_.nodeNum();
@@ -1035,17 +1039,40 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         system_rhs_ = new MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
     if (system_x_ == NULL)
         system_x_ = new MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
+    if (system_solver_ == NULL) //CG solver by default
+        system_solver_ = new ConjugateGradientSolver<Scalar>();
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+    std::vector<Scalar> active_grid_mass;
+    solveOnGridForwardEuler(dt); //explicit solve used as rhs and initial guess
     if (contact_method_) //contact method is used, solve each object independently
     {
         //TO DO
     }
     else //no contact method used, solve on single value grid
     {
+        //initialized system && solver
         activeGridNodes(active_grid_nodes);
         system_rhs_->setActivePattern(active_grid_nodes);
         system_x_->setActivePattern(active_grid_nodes);
-        //TO DO
+        active_grid_mass.resize(active_grid_nodes.size());
+        for(unsigned int i = 0; i < active_grid_mass.size(); ++i)
+            active_grid_mass[i] = gridMass(active_grid_nodes[i]);
+        system_rhs_->setActiveNodeMass(active_grid_mass);
+        system_x_->setActiveNodeMass(active_grid_mass);
+        for(unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+        {
+            //all objects share the same velocity at one grid node
+            (*system_rhs_)[active_grid_nodes[i]] = this->gridVelocity(0,active_grid_nodes[i]);
+            (*system_x_)[active_grid_nodes[i]] = (*system_rhs_)[active_grid_nodes[i]];
+        }
+        //solve
+        system_solver_->solve(*mpm_solid_system_,*system_rhs_,*system_x_);
+        //apply the solve result
+        for(unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+        {
+            for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+                this->setGridVelocity(obj_idx,active_grid_nodes[i],(*system_x_)[active_grid_nodes[i]]);
+        }
     }
 }
 

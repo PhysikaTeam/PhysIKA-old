@@ -131,6 +131,7 @@ protected:
     MPMSolidLinearSystem<Scalar, Dim> *mpm_solid_system_;
     MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > *system_rhs_; //the right hand side of the linear system Ax = b
     MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > *system_x_;  //the unknown x of the linear system Ax = b
+    LinearSystemSolver<Scalar> *system_solver_; //the solver used to solve Ax = b
 };
 
 }  //end of namespace Physika
