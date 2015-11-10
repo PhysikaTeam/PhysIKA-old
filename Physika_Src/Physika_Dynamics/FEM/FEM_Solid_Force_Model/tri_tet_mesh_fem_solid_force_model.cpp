@@ -138,7 +138,8 @@ void TriTetMeshFEMSolidForceModel<Scalar,Dim>::computeElementInternalForces(unsi
     const ConstitutiveModel<Scalar,Dim> &ele_material = this->elementMaterial(ele_idx);
     SquareMatrix<Scalar,Dim> first_Piola_Kirchhoff_stress = ele_material.firstPiolaKirchhoffStress(deform_grad);
     SquareMatrix<Scalar,Dim> force_as_col = (-1.0)*reference_element_volume_[ele_idx]*first_Piola_Kirchhoff_stress*(reference_shape_matrix_inv_[ele_idx].transpose());
-    force.resize(ele_vert_num,Vector<Scalar,Dim>(0));
+    force.resize(ele_vert_num);
+    force[ele_vert_num - 1] = Vector<Scalar, Dim>(0);
     for(unsigned int i = 0; i < ele_vert_num - 1; ++i)
     {
         force[i] = force_as_col.colVector(i);

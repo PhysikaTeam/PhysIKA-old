@@ -1046,7 +1046,27 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
     solveOnGridForwardEuler(dt); //explicit solve used as rhs and initial guess
     if (contact_method_) //contact method is used, solve each object independently
     {
-        //TO DO
+        for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        {
+            activeGridNodes(obj_idx, active_grid_nodes);
+            system_rhs_->setActivePattern(active_grid_nodes);
+            system_x_->setActivePattern(active_grid_nodes);
+            active_grid_mass.resize(active_grid_nodes.size());
+            for (unsigned int i = 0; i < active_grid_mass.size(); ++i)
+                active_grid_mass[i] = gridMass(obj_idx,active_grid_nodes[i]);
+            system_rhs_->setActiveNodeMass(active_grid_mass);
+            system_x_->setActiveNodeMass(active_grid_mass);
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                (*system_rhs_)[active_grid_nodes[i]] = this->gridVelocity(obj_idx, active_grid_nodes[i]);
+                (*system_x_)[active_grid_nodes[i]] = (*system_rhs_)[active_grid_nodes[i]];
+            }
+            //solve
+            system_solver_->solve(*mpm_solid_system_, *system_rhs_, *system_x_);
+            //apply the solve result
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+                this->setGridVelocity(obj_idx, active_grid_nodes[i], (*system_x_)[active_grid_nodes[i]]);
+        }
     }
     else //no contact method used, solve on single value grid
     {
