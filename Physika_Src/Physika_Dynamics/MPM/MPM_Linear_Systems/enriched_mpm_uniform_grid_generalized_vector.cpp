@@ -17,4 +17,32 @@
 
 namespace Physika{
 
+// template <typename Scalar, int Dim>
+// EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >::EnrichedMPMUniformGridGeneralizedVector
+//                                                               (const Vector<unsigned int, Dim> &grid_size,
+//                                                                unsigned int particle_num)
+// {
+//     //TO DO
+// }
+//
+// template <typename Scalar, int Dim>
+// EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >::EnrichedMPMUniformGridGeneralizedVector
+//                                        (const Vector<unsigned int, Dim> &grid_size,
+//                                         unsigned int particle_num,
+//                                         const std::vector<Vector<unsigned, Dim> > &active_grid_nodes,
+//                                         const std::vector<Scalar> &active_node_mass,
+//                                         const std::vector<Vector<unsigned int, 2> >&active_domain_corners,
+//                                         const std::vector<Scalar> &active_domain_corner_mass)
+// {
+//     //TO DO
+// }
+
+
+
+//explicit instantiations
+template class EnrichedMPMUniformGridGeneralizedVector<Vector<float,2> >;
+template class EnrichedMPMUniformGridGeneralizedVector<Vector<float,3> >;
+template class EnrichedMPMUniformGridGeneralizedVector<Vector<double,2> >;
+template class EnrichedMPMUniformGridGeneralizedVector<Vector<double,3> >;
+
 }  //end of namespace Physika
