@@ -61,7 +61,7 @@ public:
     virtual Scalar norm() const;
     virtual Scalar normSquared() const;
     virtual Scalar dot(const GeneralizedVector<Scalar> &vector) const;
-    //accessors
+    //accessors: data at grid nodes and domain corners
     const Vector<Scalar, Dim>& operator()(const Vector<unsigned int, Dim> &idx) const;
     Vector<Scalar, Dim>& operator()(const Vector<unsigned int, Dim> &idx);
     const Vector<Scalar, Dim>& operator()(unsigned int particle_idx, unsigned int corner_idx) const;
@@ -75,7 +75,7 @@ protected:
     EnrichedMPMUniformGridGeneralizedVector();
     virtual void copy(const GeneralizedVector<Scalar> &vector);
     bool checkActivePattern(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >& vector) const; //check if active pattern matches
-    void sortActiveNodesAndCorners(); //sort the active node index && domain corners in ascending order
+    void sortActiveDomainCorners(); //sort the active domain corners in ascending order
 protected:
     MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > grid_data_;
     std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_data_;
