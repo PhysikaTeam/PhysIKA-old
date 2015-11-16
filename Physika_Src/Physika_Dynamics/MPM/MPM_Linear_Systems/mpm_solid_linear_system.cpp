@@ -20,7 +20,6 @@
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
-#include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_uniform_grid_generalized_vector.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_solid_linear_system.h"
 
 namespace Physika{
@@ -43,8 +42,8 @@ void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> 
 {
     try
     {
-        const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
-        MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &rr = dynamic_cast<MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(result);
+        const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &xx = dynamic_cast<const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim>&>(x);
+        UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &rr = dynamic_cast<UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim>&>(result);
         energyHessianMultiply(xx, rr);
         Scalar dt_square = mpm_solid_driver_->computeTimeStep();
         dt_square *= dt_square;
@@ -79,14 +78,48 @@ void MPMSolidLinearSystem<Scalar,Dim>::preconditionerMultiply(const GeneralizedV
                                                               GeneralizedVector<Scalar> &result) const
 {
     try{
-        const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &mpm_x = dynamic_cast<const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >&>(x);
-        MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &mpm_result = dynamic_cast<MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >&>(result);
+        const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &mpm_x = dynamic_cast<const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim>&>(x);
+        UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &mpm_result = dynamic_cast<UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim>&>(result);
         jacobiPreconditionerMultiply(mpm_x,mpm_result);
     }
     catch(std::bad_cast &e)
     {
         throw PhysikaException("Incorrect argument type!");
     }
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolidLinearSystem<Scalar, Dim>::innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const
+{
+    Scalar result = 0;
+    try{
+        const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &xx = dynamic_cast<const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim>&>(x);
+        UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &yy = dynamic_cast<UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim>&>(y);
+        std::vector<Vector<unsigned int, Dim> > active_nodes;
+        if (active_obj_idx_ == -1) //solve for all objects
+        {
+            mpm_solid_driver_->activeGridNodes(active_nodes);
+            for (unsigned int i = 0; i < active_nodes.size(); ++i)
+            {
+                Vector<unsigned int, Dim> &node_idx = active_nodes[i];
+                result += xx[node_idx] * yy[node_idx] * mpm_solid_driver_->gridMass(node_idx);
+            }
+        }
+        else  //solve for active object
+        {
+            mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_nodes);
+            for (unsigned int i = 0; i < active_nodes.size(); ++i)
+            {
+                Vector<unsigned int, Dim> &node_idx = active_nodes[i];
+                result += xx[node_idx] * yy[node_idx] * mpm_solid_driver_->gridMass(active_obj_idx_,node_idx);
+            }
+        }
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument type!");
+    }
+    return result;
 }
 
 template <typename Scalar, int Dim>
@@ -98,8 +131,8 @@ void MPMSolidLinearSystem<Scalar,Dim>::setActiveObject(int obj_idx)
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
-                                                                  MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
+void MPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &x_diff,
+                                                                  UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &result) const
 {
     result.setValue(Vector<Scalar, Dim>(0));
     std::vector<unsigned int> active_objects;
@@ -142,8 +175,8 @@ void MPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const MPMUniformGr
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > &x,
-                                                                    MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
+void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &x,
+                                                                    UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &result) const
 {
     //if (active_obj_idx_ == -1) //all objects solved together
     //{

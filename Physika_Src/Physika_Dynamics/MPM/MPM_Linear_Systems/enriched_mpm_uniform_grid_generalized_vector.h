@@ -17,10 +17,14 @@
 #define PHYSIKA_DYNAMICS_MPM_MPM_LINEAR_SYSTEMS_ENRICHED_MPM_UNIFORM_GRID_GENERALIZED_VECTOR_H_
 
 #include <vector>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Numerics/Linear_System_Solvers/generalized_vector.h"
-#include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_uniform_grid_generalized_vector.h"
+#include "Physika_Dynamics/Utilities/Grid_Generalized_Vectors/uniform_grid_generalized_vector_TV.h"
 
 namespace Physika{
+
+template <typename Scalar, int Dim> class VolumetricMesh;
 
 /*
  * EnrichedMPMUniformGridGeneralizedVector: the generalized vector for mpm drivers enriched with
@@ -41,14 +45,17 @@ template <typename Scalar, int Dim>
 class EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >: public GeneralizedVector<Scalar>
 {
 public:
-    //all grid nodes active, node mass set to 1, no active enriched domain corners
-    EnrichedMPMUniformGridGeneralizedVector(const Vector<unsigned int, Dim> &grid_size, unsigned int particle_num);
+    //all grid nodes active, no particles marked as enriched
     EnrichedMPMUniformGridGeneralizedVector(const Vector<unsigned int, Dim> &grid_size,
-                                            unsigned int particle_num,
+                                            unsigned int object_num,
+                                            const std::vector<unsigned int> &particle_num,
+                                            const std::vector<VolumetricMesh<Scalar,Dim>*> &particle_domain_topology);
+    EnrichedMPMUniformGridGeneralizedVector(const Vector<unsigned int, Dim> &grid_size,
+                                            unsigned int object_num,
+                                            const std::vector<unsigned int> &particle_num,
                                             const std::vector<Vector<unsigned, Dim> > &active_grid_nodes,
-                                            const std::vector<Scalar> &active_node_mass,
-                                            const std::vector<Vector<unsigned int, 2> >&active_domain_corners,
-                                            const std::vector<Scalar> &active_domain_corner_mass);
+                                            const std::vector<std::vector<unsigned int> > &enriched_particles,
+                                            const std::vector<VolumetricMesh<Scalar,Dim>*> &particle_domain_topology);
     EnrichedMPMUniformGridGeneralizedVector(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &vector);
     ~EnrichedMPMUniformGridGeneralizedVector();
     EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >& operator= (const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &vector);
@@ -58,29 +65,24 @@ public:
     virtual EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >& operator-= (const GeneralizedVector<Scalar> &vector);
     virtual EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >& operator*= (Scalar);
     virtual EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >& operator/= (Scalar);
-    virtual Scalar norm() const;
-    virtual Scalar normSquared() const;
-    virtual Scalar dot(const GeneralizedVector<Scalar> &vector) const;
     //accessors: data at grid nodes and domain corners
-    const Vector<Scalar, Dim>& operator()(const Vector<unsigned int, Dim> &idx) const;
-    Vector<Scalar, Dim>& operator()(const Vector<unsigned int, Dim> &idx);
-    const Vector<Scalar, Dim>& operator()(unsigned int particle_idx, unsigned int corner_idx) const;
-    Vector<Scalar, Dim>& operator()(unsigned int particle_idx, unsigned int corner_idx);
+    const Vector<Scalar, Dim>& operator[](const Vector<unsigned int, Dim> &idx) const;
+    Vector<Scalar, Dim>& operator[](const Vector<unsigned int, Dim> &idx);
+    const Vector<Scalar, Dim>& operator()(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const;
+    Vector<Scalar, Dim>& operator()(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx);
     void setValue(const Vector<Scalar,Dim> &value);
     void setActivePattern(const std::vector<Vector<unsigned int, Dim> > &active_grid_nodes,
-                          const std::vector<Vector<unsigned int,2> > &active_particle_domain_corners);
-    void setActiveNodeMass(const std::vector<Scalar> &active_node_mass);
-    void setActiveDomainCornerMass(const std::vector<Scalar> &active_corner_mass);
+                          const std::vector<std::vector<unsigned int> > &enriched_particles);
 protected:
     EnrichedMPMUniformGridGeneralizedVector();
     virtual void copy(const GeneralizedVector<Scalar> &vector);
     bool checkActivePattern(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >& vector) const; //check if active pattern matches
     void sortActiveDomainCorners(); //sort the active domain corners in ascending order
 protected:
-    MPMUniformGridGeneralizedVector<Vector<Scalar,Dim> > grid_data_;
-    std::vector<std::vector<Vector<Scalar,Dim> > > domain_corner_data_;
-    std::vector<Vector<unsigned int, 2> > active_particle_domain_corners_; //each pair represents [particle_idx, corner_idx]
-    std::vector<Scalar> active_domain_corner_mass_;
+    UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> grid_data_;
+    std::vector<std::vector<Vector<Scalar, Dim> > > domain_corner_data_;
+    std::vector<std::vector<unsigned int> > enriched_particles_;
+    std::vector<VolumetricMesh<Scalar, Dim>*> particle_domain_topology_;
 };
 
 }

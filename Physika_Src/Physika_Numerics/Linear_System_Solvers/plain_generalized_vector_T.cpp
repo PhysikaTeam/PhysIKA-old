@@ -141,31 +141,6 @@ PlainGeneralizedVector<Scalar>& PlainGeneralizedVector<Scalar>:: operator/= (Sca
 }
 
 template <typename Scalar>
-Scalar PlainGeneralizedVector<Scalar>::norm() const
-{
-    return data_.norm();
-}
-
-template <typename Scalar>
-Scalar PlainGeneralizedVector<Scalar>::normSquared() const
-{
-    return data_.normSquared();
-}
-
-template <typename Scalar>
-Scalar PlainGeneralizedVector<Scalar>::dot(const GeneralizedVector<Scalar> &vector) const
-{
-    try{
-        const PlainGeneralizedVector<Scalar> &plain_vector = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(vector);
-        return data_.dot(plain_vector.data_);
-    }
-    catch (std::bad_cast &e)
-    {
-        throw PhysikaException("Incorrect argument type!");
-    }
-}
-
-template <typename Scalar>
 void PlainGeneralizedVector<Scalar>::copy(const GeneralizedVector<Scalar> &vector)
 {
     try{

@@ -53,9 +53,6 @@ public:
     virtual PlainGeneralizedVector<Vector<Scalar, Dim> >& operator-= (const GeneralizedVector<Scalar> &vector);
     virtual PlainGeneralizedVector<Vector<Scalar, Dim> >& operator*= (Scalar);
     virtual PlainGeneralizedVector<Vector<Scalar, Dim> >& operator/= (Scalar);
-    virtual Scalar norm() const;
-    virtual Scalar normSquared() const;
-    virtual Scalar dot(const GeneralizedVector<Scalar> &vector) const;
     //wrap each dimension of values into a vector
     PlainGeneralizedVector<Scalar> vectorAtDim(unsigned int val_dim_idx) const;
 

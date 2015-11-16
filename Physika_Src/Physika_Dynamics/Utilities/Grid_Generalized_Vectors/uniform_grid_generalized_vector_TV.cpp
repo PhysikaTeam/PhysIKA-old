@@ -176,65 +176,6 @@ UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim>& UniformGridGenera
 }
 
 template <typename Scalar, int GridDim, int EleDim>
-Scalar UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim>::norm() const
-{
-    return sqrt(normSquared());
-}
-
-template <typename Scalar, int GridDim, int EleDim>
-Scalar UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim>::normSquared() const
-{
-    Scalar norm_sqr = 0;
-    if (active_node_idx_.size() == data_.totalElementCount())  //all entries active
-    {
-        for (typename ArrayND<Vector<Scalar, EleDim>, GridDim>::ConstIterator iter = data_.begin(); iter != data_.end(); ++iter)
-            norm_sqr += (*iter).normSquared();
-    }
-    else
-    {
-        for (unsigned int i = 0; i < active_node_idx_.size(); ++i)
-        {
-            Vector<unsigned int, GridDim> node_idx = active_node_idx_[i];
-            norm_sqr += data_(node_idx).normSquared();
-        }
-    }
-    return norm_sqr;
-}
-
-template <typename Scalar, int GridDim, int EleDim>
-Scalar UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim>::dot(const GeneralizedVector<Scalar> &vector) const
-{
-    Scalar result = 0;
-    try{
-        const UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim>& grid_vec = dynamic_cast<const UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim>&>(vector);
-        bool same_pattern = checkActivePattern(grid_vec);
-        if (!same_pattern)
-            throw PhysikaException("Active entry pattern does not match!");
-        if (active_node_idx_.size() == data_.totalElementCount()) // all entries active
-        {
-            for (typename ArrayND<Vector<Scalar, EleDim>, GridDim>::ConstIterator iter = data_.begin(); iter != data_.end(); ++iter)
-            {
-                Vector<unsigned int, GridDim> node_idx = iter.elementIndex();
-                result += (*iter).dot(grid_vec.data_(node_idx));
-            }
-        }
-        else
-        {
-            for (unsigned int i = 0; i < active_node_idx_.size(); ++i)
-            {
-                Vector<unsigned int, GridDim> node_idx = active_node_idx_[i];
-                result += data_(node_idx).dot(grid_vec.data_(node_idx));
-            }
-        }
-    }
-    catch (std::bad_cast& e)
-    {
-        throw PhysikaException("Incorrect argument type!");
-    }
-    return result;
-}
-
-template <typename Scalar, int GridDim, int EleDim>
 const Vector<Scalar, EleDim>& UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim>::operator[] (const Vector<unsigned int, GridDim> &idx) const
 {
     return data_(idx);

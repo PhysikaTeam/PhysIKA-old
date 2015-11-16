@@ -661,7 +661,7 @@ void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx
     for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
         setEnrichmentMetric(object_idx,particle_idx,metric);
 }
- 
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 {

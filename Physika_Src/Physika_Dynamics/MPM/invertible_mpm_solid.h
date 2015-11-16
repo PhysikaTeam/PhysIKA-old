@@ -63,7 +63,7 @@ public:
     //explicitly enable/disable enrichment with particle domains
     void enableEnrichment();
     void disableEnrichment();
-    //explicitly enable/disable solve entirely on particle comains, for comparison
+    //explicitly enable/disable solve entirely on particle domains, for comparison
     void enableEntireEnrichment();
     void disableEntireEnrichment();
     //get&&set the metric value of enrichment criteria: 0~1, no enrichment ~ entire enrichment

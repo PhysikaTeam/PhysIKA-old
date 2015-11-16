@@ -174,6 +174,25 @@ void MatrixLinearSystem<Scalar>::computeJacobiPreconditioner()
         std::cerr<<"Warning: coefficient matrix not explicitly provided, computeJacobiPreconditioner() operation ignored!\n";
 }
 
+template <typename Scalar>
+Scalar MatrixLinearSystem<Scalar>::innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const
+{
+    try{
+        Scalar result = 0;
+        const PlainGeneralizedVector<Scalar> &plain_x = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(x);
+        const PlainGeneralizedVector<Scalar> &plain_y = dynamic_cast<const PlainGeneralizedVector<Scalar>&>(y);
+        if (plain_x.size() != plain_y.size())
+            throw PhysikaException("Vector size mismatch!");
+        for (unsigned int i = 0; i < plain_x.size(); ++i)
+            result += plain_x[i] * plain_y[i];
+        return result;
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument type!");
+    }
+}
+
 //explicit instantiations
 template class MatrixLinearSystem<float>;
 template class MatrixLinearSystem<double>;

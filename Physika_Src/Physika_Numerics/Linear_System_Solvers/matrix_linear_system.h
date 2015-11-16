@@ -48,6 +48,9 @@ public:
     virtual void preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const;
     //predefined preconditioners: only work if A is explicitly provided
     void computeJacobiPreconditioner(); //aka diagonal preconditioner
+
+    //the default implementation here is standard vector inner-product
+    virtual Scalar innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const;
 protected:
     //disable default copy
     MatrixLinearSystem(const MatrixLinearSystem<Scalar> &linear_system);

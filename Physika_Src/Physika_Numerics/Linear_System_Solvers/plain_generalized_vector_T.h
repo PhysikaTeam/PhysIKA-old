@@ -46,9 +46,6 @@ public:
     virtual PlainGeneralizedVector<Scalar>& operator-= (const GeneralizedVector<Scalar> &vector);
     virtual PlainGeneralizedVector<Scalar>& operator*= (Scalar);
     virtual PlainGeneralizedVector<Scalar>& operator/= (Scalar);
-    virtual Scalar norm() const;
-    virtual Scalar normSquared() const;
-    virtual Scalar dot(const GeneralizedVector<Scalar> &vector) const;
 
     //advance accessors
     inline const VectorND<Scalar>& rawVector() const {return data_;}

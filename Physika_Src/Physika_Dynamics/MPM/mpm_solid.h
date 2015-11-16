@@ -23,6 +23,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
+#include "Physika_Dynamics/Utilities/Grid_Generalized_Vectors/uniform_grid_generalized_vector_TV.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
 
 namespace Physika{
@@ -31,7 +32,6 @@ template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
 template<typename Scalar,int Dim> class MPMSolidContactMethod;
 template<typename Scalar,int Dim> class MPMSolidLinearSystem;
-template<typename Scalar> class MPMUniformGridGeneralizedVector;
 template<typename Scalar> class LinearSystemSolver;
 
 /*
@@ -129,8 +129,8 @@ protected:
     std::vector<std::vector<unsigned int> > particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_
     //for implicit integration
     MPMSolidLinearSystem<Scalar, Dim> *mpm_solid_system_;
-    MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > *system_rhs_; //the right hand side of the linear system Ax = b
-    MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > *system_x_;  //the unknown x of the linear system Ax = b
+    UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim> *system_rhs_; //the right hand side of the linear system Ax = b
+    UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim> *system_x_;  //the unknown x of the linear system Ax = b
     LinearSystemSolver<Scalar> *system_solver_; //the solver used to solve Ax = b
 };
 

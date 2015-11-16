@@ -33,7 +33,7 @@ namespace Physika{
  * the type of raw data in the vector
  *
  * GeneralizedVector makes extensive use of polymorphism,
- * one pitfall of this design is that implementation of LinearSystemSolvers
+ * one flaw of this design is that implementation of LinearSystemSolvers
  * becomes a little inconvenient since they don't know the dynamic type of
  * vectors and have to use pointers/references to enable polymorphism.
  */
@@ -52,9 +52,6 @@ public:
     virtual GeneralizedVector<RawScalar>& operator-= (const GeneralizedVector<RawScalar> &vector) = 0;
     virtual GeneralizedVector<RawScalar>& operator*= (RawScalar) = 0;
     virtual GeneralizedVector<RawScalar>& operator/= (RawScalar) = 0;
-    virtual RawScalar norm() const = 0;
-    virtual RawScalar normSquared() const = 0;
-    virtual RawScalar dot(const GeneralizedVector<RawScalar> &vector) const = 0;
 protected:
     //the actual engine of assign operator, so that assign operator needs not to be made virtual while polymorphism
     //is still enabled when calling assignment operator with pointer/reference to base class

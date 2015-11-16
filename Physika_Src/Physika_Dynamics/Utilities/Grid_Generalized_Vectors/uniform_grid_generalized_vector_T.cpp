@@ -175,65 +175,6 @@ UniformGridGeneralizedVector<Scalar,Dim>& UniformGridGeneralizedVector<Scalar,Di
 }
 
 template <typename Scalar, int Dim>
-Scalar UniformGridGeneralizedVector<Scalar,Dim>::norm() const
-{
-    return sqrt(normSquared());
-}
-
-template <typename Scalar, int Dim>
-Scalar UniformGridGeneralizedVector<Scalar,Dim>::normSquared() const
-{
-    Scalar norm_sqr = 0;
-    if(active_node_idx_.size() == data_.totalElementCount()) // all entries active
-    {
-        for(typename ArrayND<Scalar,Dim>::ConstIterator iter = data_.begin(); iter != data_.end(); ++iter)
-            norm_sqr += (*iter)*(*iter);
-    }
-    else
-    {
-        for(unsigned int i = 0; i < active_node_idx_.size(); ++i)
-        {
-            Vector<unsigned int,Dim> node_idx = active_node_idx_[i];
-            norm_sqr += data_(node_idx)*data_(node_idx);
-        }
-    }
-    return norm_sqr;
-}
-
-template <typename Scalar, int Dim>
-Scalar UniformGridGeneralizedVector<Scalar,Dim>::dot(const GeneralizedVector<Scalar> &vector) const
-{
-    Scalar result = 0;
-    try{
-        const UniformGridGeneralizedVector<Scalar,Dim>& grid_vec = dynamic_cast<const UniformGridGeneralizedVector<Scalar,Dim>&>(vector);
-        bool same_pattern = checkActivePattern(grid_vec);
-        if(!same_pattern)
-            throw PhysikaException("Active entry pattern does not match!");
-        if(active_node_idx_.size() == data_.totalElementCount()) // all entries active
-        {
-            for(typename ArrayND<Scalar,Dim>::ConstIterator iter = data_.begin(); iter != data_.end(); ++iter)
-            {
-                Vector<unsigned int,Dim> node_idx = iter.elementIndex();
-                result += (*iter)*grid_vec.data_(node_idx);
-            }
-        }
-        else
-        {
-            for(unsigned int i = 0; i < active_node_idx_.size(); ++i)
-            {
-                Vector<unsigned int,Dim> node_idx = active_node_idx_[i];
-                result += data_(node_idx)*grid_vec.data_(node_idx);
-            }
-        }
-    }
-    catch(std::bad_cast& e)
-    {
-        throw PhysikaException("Incorrect argument type!");
-    }
-    return result;
-}
-
-template <typename Scalar, int Dim>
 const Scalar& UniformGridGeneralizedVector<Scalar,Dim>::operator[] (const Vector<unsigned int,Dim> &idx) const
 {
     return data_(idx);

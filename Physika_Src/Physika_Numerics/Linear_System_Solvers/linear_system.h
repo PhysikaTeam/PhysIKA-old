@@ -39,6 +39,9 @@ public:
     //the method for iterative solvers so that preconditioner needn't to be explicitly provided
     //input x return Tx
     virtual void preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const = 0;
+
+    //the method that defines linear system specific inner-product of two vectors
+    virtual Scalar innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const = 0;
 protected:
     //disable default copy
     LinearSystem(const LinearSystem<Scalar> &linear_system);

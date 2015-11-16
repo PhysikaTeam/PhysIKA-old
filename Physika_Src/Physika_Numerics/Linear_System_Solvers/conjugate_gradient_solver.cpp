@@ -46,7 +46,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSys
     (*r) *= -1;
     (*r) += b; //r = b - Ax
     GeneralizedVector<Scalar> *d = r->clone();
-    Scalar delta_0 = r->normSquared();
+    Scalar delta_0 = system.innerProduct(*r, *r); 
     Scalar delta = delta_0;
     GeneralizedVector<Scalar> *q = d->clone();
     GeneralizedVector<Scalar> *temp = d->clone();
@@ -54,7 +54,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSys
     while((this->iterations_used_ < this->max_iterations_) && (delta > tolerance_sqr*delta_0))
     {
         system.multiply(*d,*q);
-        Scalar alpha = delta/(d->dot(*q));
+        Scalar alpha = delta / (system.innerProduct(*d, *q));
         *temp = *d;
         *temp *= alpha;
         x += *temp; //x = x + alpha*d
@@ -71,7 +71,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSys
             *r -= *temp; //r = r - alpha*q
         }
         Scalar delta_old = delta;
-        delta = r->normSquared();
+        delta = system.innerProduct(*r, *r);
         Scalar beta = delta/delta_old;
         *temp = *d;
         *temp *= beta;
@@ -102,7 +102,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
     (*r) += b; //r = b - Ax
     GeneralizedVector<Scalar> *d = r->clone();
     system.preconditionerMultiply(*r,*d); //d = Tr
-    Scalar delta_0 = r->dot(*d);
+    Scalar delta_0 = system.innerProduct(*r,*d);
     Scalar delta = delta_0;
     GeneralizedVector<Scalar> *q = d->clone();
     GeneralizedVector<Scalar> *temp = d->clone();
@@ -111,7 +111,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
     while((this->iterations_used_ < this->max_iterations_) &&(delta > tolerance_sqr*delta_0))
     {
         system.multiply(*d,*q); //q = Ad
-        Scalar alpha = delta/(d->dot(*q));
+        Scalar alpha = delta/(system.innerProduct(*d,*q));
         *temp = *d;
         *temp *= alpha;
         x += *temp; //x = x + alpha*d
@@ -129,7 +129,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
         }
         system.preconditionerMultiply(*r,*s); //s = Tr
         Scalar delta_old = delta;
-        delta = r->dot(*s);
+        delta = system.innerProduct(*r, *s);
         Scalar beta = delta/delta_old;
         *temp = *d;
         *temp *= beta;

@@ -17,9 +17,10 @@
 #ifndef PHYSIKA_DYNAMICS_UTILITIES_DEFORMATION_DIAGONALIZATION_DEFORMATION_DIAGONALIZATION_H_
 #define PHYSIKA_DYNAMICS_UTILITIES_DEFORMATION_DIAGONALIZATION_DEFORMATION_DIAGONALIZATION_H_
 
-namespace Physika{
+#include "Physika_Core/Matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
 
-template <typename Scalar, int Dim> class SquareMatrix;
+namespace Physika{
 
 template <typename Scalar, int Dim>
 class DeformationDiagonalization

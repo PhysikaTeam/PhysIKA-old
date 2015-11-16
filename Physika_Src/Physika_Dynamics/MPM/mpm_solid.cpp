@@ -31,7 +31,6 @@
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 #include "Physika_Dynamics/MPM/MPM_Contact_Methods/mpm_solid_contact_method.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_solid_linear_system.h"
-#include "Physika_Dynamics/MPM/MPM_Linear_Systems/mpm_uniform_grid_generalized_vector.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
 
 namespace Physika{
@@ -1036,13 +1035,12 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         mpm_solid_system_ = new MPMSolidLinearSystem<Scalar,Dim>(this);
     Vector<unsigned int, Dim> grid_node_num = grid_.nodeNum();
     if (system_rhs_ == NULL)
-        system_rhs_ = new MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
+        system_rhs_ = new UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim>(grid_node_num);
     if (system_x_ == NULL)
-        system_x_ = new MPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
+        system_x_ = new UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim>(grid_node_num);
     if (system_solver_ == NULL) //CG solver by default
         system_solver_ = new ConjugateGradientSolver<Scalar>();
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
-    std::vector<Scalar> active_grid_mass;
     solveOnGridForwardEuler(dt); //explicit solve used as rhs and initial guess
     if (contact_method_) //contact method is used, solve each object independently
     {
@@ -1051,11 +1049,6 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
             activeGridNodes(obj_idx, active_grid_nodes);
             system_rhs_->setActivePattern(active_grid_nodes);
             system_x_->setActivePattern(active_grid_nodes);
-            active_grid_mass.resize(active_grid_nodes.size());
-            for (unsigned int i = 0; i < active_grid_mass.size(); ++i)
-                active_grid_mass[i] = gridMass(obj_idx,active_grid_nodes[i]);
-            system_rhs_->setActiveNodeMass(active_grid_mass);
-            system_x_->setActiveNodeMass(active_grid_mass);
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 (*system_rhs_)[active_grid_nodes[i]] = this->gridVelocity(obj_idx, active_grid_nodes[i]);
@@ -1074,11 +1067,6 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         activeGridNodes(active_grid_nodes);
         system_rhs_->setActivePattern(active_grid_nodes);
         system_x_->setActivePattern(active_grid_nodes);
-        active_grid_mass.resize(active_grid_nodes.size());
-        for(unsigned int i = 0; i < active_grid_mass.size(); ++i)
-            active_grid_mass[i] = gridMass(active_grid_nodes[i]);
-        system_rhs_->setActiveNodeMass(active_grid_mass);
-        system_x_->setActiveNodeMass(active_grid_mass);
         for(unsigned int i = 0; i < active_grid_nodes.size(); ++i)
         {
             //all objects share the same velocity at one grid node

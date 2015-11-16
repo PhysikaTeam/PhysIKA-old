@@ -163,39 +163,6 @@ PlainGeneralizedVector<Vector<Scalar, Dim> >& PlainGeneralizedVector<Vector<Scal
 }
 
 template <typename Scalar, int Dim>
-Scalar PlainGeneralizedVector<Vector<Scalar, Dim> >::norm() const
-{
-    return sqrt(normSquared());
-}
-
-template <typename Scalar, int Dim>
-Scalar PlainGeneralizedVector<Vector<Scalar, Dim> >::normSquared() const
-{
-    Scalar norm_sqr = 0.0;
-    for (unsigned int i = 0; i < data_.size(); ++i)
-        norm_sqr += data_[i].normSquared();
-    return norm_sqr;
-}
-
-template <typename Scalar, int Dim>
-Scalar PlainGeneralizedVector<Vector<Scalar, Dim> >::dot(const GeneralizedVector<Scalar> &vector) const
-{
-    if (vector.size() != this->size())
-        throw PhysikaException("PlainGeneralizedVector size mismatch!");
-    try{
-        const PlainGeneralizedVector<Vector<Scalar, Dim> > &plain_vector = dynamic_cast<const PlainGeneralizedVector<Vector<Scalar, Dim> >&>(vector);
-        Scalar result = 0.0;
-        for (unsigned int i = 0; i < data_.size(); ++i)
-            result += data_[i].dot(plain_vector[i]);
-        return result;
-    }
-    catch (std::bad_cast &e)
-    {
-        throw PhysikaException("Incorrect argument type!");
-    }
-}
-
-template <typename Scalar, int Dim>
 PlainGeneralizedVector<Scalar> PlainGeneralizedVector<Vector<Scalar, Dim> >::vectorAtDim(unsigned int val_dim_idx) const
 {
     if (val_dim_idx >= Dim)

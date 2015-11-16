@@ -46,10 +46,7 @@ public:
     virtual UniformGridGeneralizedVector<Scalar,Dim>& operator+= (const GeneralizedVector<Scalar> &vector);
     virtual UniformGridGeneralizedVector<Scalar,Dim>& operator-= (const GeneralizedVector<Scalar> &vector);
     virtual UniformGridGeneralizedVector<Scalar,Dim>& operator*= (Scalar);
-    virtual UniformGridGeneralizedVector<Scalar,Dim>& operator/= (Scalar);
-    virtual Scalar norm() const;
-    virtual Scalar normSquared() const;
-    virtual Scalar dot(const GeneralizedVector<Scalar> &vector) const;
+    virtual UniformGridGeneralizedVector<Scalar, Dim>& operator/= (Scalar);
     //setters && getters
     const Scalar& operator[](const Vector<unsigned int,Dim> &idx) const;
     Scalar& operator[](const Vector<unsigned int,Dim> &idx);

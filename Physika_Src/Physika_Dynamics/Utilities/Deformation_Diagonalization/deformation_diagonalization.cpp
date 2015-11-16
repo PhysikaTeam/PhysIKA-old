@@ -18,8 +18,6 @@
 #include <iostream>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Matrices/matrix_2x2.h"
-#include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Dynamics/Utilities/Deformation_Diagonalization/deformation_diagonalization.h"
 

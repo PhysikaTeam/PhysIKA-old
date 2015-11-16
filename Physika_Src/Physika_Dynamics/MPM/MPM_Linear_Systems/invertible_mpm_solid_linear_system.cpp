@@ -36,13 +36,48 @@ InvertibleMPMSolidLinearSystem<Scalar, Dim>::~InvertibleMPMSolidLinearSystem()
 template <typename Scalar, int Dim>
 void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const
 {
-    //TO DO
+    try
+    {
+        const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
+        EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &rr = dynamic_cast<EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(result);
+        energyHessianMultiply(xx, rr);
+        Scalar dt_square = invertible_mpm_solid_driver_->computeTimeStep();
+        dt_square *= dt_square;
+        std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+        std::vector<Vector<unsigned int, 2> > enriched_domain_corners;
+        if (active_obj_idx_ == -1)  //all objects solved together
+        {
+            invertible_mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+            //TO DO: get enriched domain corners
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
+                rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(node_idx);
+            }
+            //TO DO:
+        }
+        else //solve for active object
+        {
+
+        }
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument!");
+    }
 }
 
 template <typename Scalar, int Dim>
 void InvertibleMPMSolidLinearSystem<Scalar, Dim>::preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const
 {
     //TO DO
+}
+
+template <typename Scalar, int Dim>
+Scalar InvertibleMPMSolidLinearSystem<Scalar, Dim>::innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const
+{
+    //TO DO
+    return 0;
 }
 
 template <typename Scalar, int Dim>
