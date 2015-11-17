@@ -26,53 +26,47 @@ namespace Physika{
 template <typename Scalar, int Dim>
 EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >::EnrichedMPMUniformGridGeneralizedVector
                                                              (const Vector<unsigned int, Dim> &grid_size,
-                                                              unsigned int object_num,
-                                                              const std::vector<unsigned int> &particle_num,
                                                               const std::vector<VolumetricMesh<Scalar,Dim>*> &particle_domain_topology)
                                                               :grid_data_(grid_size)
 {
-    domain_corner_data_.resize(object_num);
-    if (particle_num.size() != object_num)
-        throw PhysikaException("object_num and particle_num vector size mismatch!");
-    if (particle_domain_topology.size() != object_num)
-        throw PhysikaException("object_num and particle_domain_topology vector size mismatch!");
-    for (unsigned int obj_idx = 0; obj_idx < object_num; ++obj_idx)
+    unsigned int obj_num = particle_domain_topology.size();
+    domain_corner_data_.resize(obj_num);
+    enriched_particles_.resize(obj_num);
+    for (unsigned int obj_idx = 0; obj_idx < obj_num; ++obj_idx)
     {
+        PHYSIKA_ASSERT(particle_domain_topology[obj_idx]);
+        domain_corner_data_[obj_idx].resize(particle_domain_topology[obj_idx]->vertNum(), Vector<Scalar, Dim>(0));
+        enriched_particles_[obj_idx].clear();
     }
-   //no domain corner enriched
-    enriched_particles_.clear();
     particle_domain_topology_ = particle_domain_topology;
 }
 
 template <typename Scalar, int Dim>
 EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >::EnrichedMPMUniformGridGeneralizedVector
                                       (const Vector<unsigned int, Dim> &grid_size,
-                                       unsigned int object_num,
-                                       const std::vector<unsigned int> &particle_num,
                                        const std::vector<Vector<unsigned, Dim> > &active_grid_nodes,
                                        const std::vector<std::vector<unsigned int> > &enriched_particles,
                                        const std::vector<VolumetricMesh<Scalar,Dim>*> &particle_domain_topology)
                                        :grid_data_(grid_size,active_grid_nodes)
 {
-    unsigned int corner_num = Dim == 2 ? 4 : 8;
-    domain_corner_data_.resize(object_num);
-    if (particle_num.size() != object_num)
-        throw PhysikaException("object_num and particle_num vector size mismatch!");
-    for (unsigned int obj_idx = 0; obj_idx < object_num; ++obj_idx)
+    if (enriched_particles.size() != particle_domain_topology.size())
+        throw PhysikaException("Inconsistent object number: enriched_particles and particle_domain_topology vector size mismatch!");
+    unsigned int obj_num = enriched_particles.size();
+    domain_corner_data_.resize(obj_num);
+    for (unsigned int obj_idx = 0; obj_idx < obj_num; ++obj_idx)
     {
-        domain_corner_data_[obj_idx].resize(particle_num[obj_idx]);
-        for (unsigned int particle_idx = 0; particle_idx < particle_num[obj_idx]; ++particle_idx)
-            domain_corner_data_[obj_idx][particle_idx].resize(corner_num, Vector<Scalar, Dim>(0));
+        PHYSIKA_ASSERT(particle_domain_topology[obj_idx]);
+        domain_corner_data_[obj_idx].resize(particle_domain_topology[obj_idx]->vertNum(), Vector<Scalar, Dim>(0));
     }
-   active_particle_domain_corners_ = active_domain_corners;
-   sortActiveDomainCorners();
+    enriched_particles_ = enriched_particles;
+    particle_domain_topology_ = particle_domain_topology;
 }
 
 template <typename Scalar, int Dim>
 EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >::EnrichedMPMUniformGridGeneralizedVector(
                           const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &vector)
                           :grid_data_(vector.grid_data_), domain_corner_data_(vector.domain_corner_data_),
-                           active_particle_domain_corners_(vector.active_particle_domain_corners_)
+                          enriched_particles_(vector.enriched_particles_), particle_domain_topology_(vector.particle_domain_topology_)
 {
 
 }
@@ -89,7 +83,8 @@ EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >& EnrichedMPMUnifor
 {
     grid_data_ = vector.grid_data_;
     domain_corner_data_ = vector.domain_corner_data_;
-    active_particle_domain_corners_ = vector.active_particle_domain_corners_;
+    enriched_particles_ = vector.enriched_particles_;
+    particle_domain_topology_ = vector.particle_domain_topology_;
     return *this;
 }
 
@@ -102,6 +97,7 @@ EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >* EnrichedMPMUnifor
 template <typename Scalar, int Dim>
 unsigned int EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >::size() const
 {
+    unsigned int enriched_corner_num = 0;
     return grid_data_.size() + active_particle_domain_corners_.size();
 }
 

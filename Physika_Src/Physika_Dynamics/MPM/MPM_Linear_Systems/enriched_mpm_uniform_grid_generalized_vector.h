@@ -47,12 +47,8 @@ class EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar,Dim> >: public Gener
 public:
     //all grid nodes active, no particles marked as enriched
     EnrichedMPMUniformGridGeneralizedVector(const Vector<unsigned int, Dim> &grid_size,
-                                            unsigned int object_num,
-                                            const std::vector<unsigned int> &particle_num,
                                             const std::vector<VolumetricMesh<Scalar,Dim>*> &particle_domain_topology);
     EnrichedMPMUniformGridGeneralizedVector(const Vector<unsigned int, Dim> &grid_size,
-                                            unsigned int object_num,
-                                            const std::vector<unsigned int> &particle_num,
                                             const std::vector<Vector<unsigned, Dim> > &active_grid_nodes,
                                             const std::vector<std::vector<unsigned int> > &enriched_particles,
                                             const std::vector<VolumetricMesh<Scalar,Dim>*> &particle_domain_topology);
@@ -77,12 +73,12 @@ protected:
     EnrichedMPMUniformGridGeneralizedVector();
     virtual void copy(const GeneralizedVector<Scalar> &vector);
     bool checkActivePattern(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >& vector) const; //check if active pattern matches
-    void sortActiveDomainCorners(); //sort the active domain corners in ascending order
+    void setEnrichedDomainCorners(const std::vector<)
 protected:
     UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> grid_data_;
-    std::vector<std::vector<Vector<Scalar, Dim> > > domain_corner_data_;
-    std::vector<std::vector<unsigned int> > enriched_particles_;
-    std::vector<VolumetricMesh<Scalar, Dim>*> particle_domain_topology_;
+    std::vector<std::vector<Vector<Scalar, Dim> > > domain_corner_data_;  //data at particle domain corners (mesh node of volumetric mesh)
+    std::vector<std::vector<unsigned int> > enriched_domain_corners_;  //index of enriched domain corners (node index of volumetric mesh)
+    std::vector<VolumetricMesh<Scalar, Dim>*> particle_domain_topology_;  //volumetric mesh representing topology of particle domains
 };
 
 }
