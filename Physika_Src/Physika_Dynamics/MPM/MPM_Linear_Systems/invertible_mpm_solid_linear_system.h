@@ -19,6 +19,7 @@
 
 namespace Physika{
 
+template <typename Scalar, int Dim> class Vector;
 template <typename Scalar, int Dim> class InvertibleMPMSolid;
 template <typename Scalar> class EnrichedMPMUniformGridGeneralizedVector;
 

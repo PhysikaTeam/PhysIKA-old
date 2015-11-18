@@ -13,6 +13,10 @@
 */
 
 #include <typeinfo>
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/MPM/invertible_mpm_solid.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/enriched_mpm_uniform_grid_generalized_vector.h"
@@ -44,21 +48,48 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
         Scalar dt_square = invertible_mpm_solid_driver_->computeTimeStep();
         dt_square *= dt_square;
         std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
-        std::vector<Vector<unsigned int, 2> > enriched_domain_corners;
+        std::vector<unsigned int> enriched_particles;
+        unsigned int corner_num = Dim == 2 ? 4 : 8;
         if (active_obj_idx_ == -1)  //all objects solved together
         {
             invertible_mpm_solid_driver_->activeGridNodes(active_grid_nodes);
-            //TO DO: get enriched domain corners
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
                 rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(node_idx);
             }
-            //TO DO:
+            for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
+            {
+                invertible_mpm_solid_driver_->enrichedParticles(obj_idx, enriched_particles);
+                for (unsigned int i = 0; i < enriched_particles.size(); ++i)
+                {
+                    unsigned int particle_idx = enriched_particles[i];
+                    for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+                    {
+                        Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(obj_idx, particle_idx, corner_idx);
+                        rr(obj_idx, particle_idx, corner_idx) = xx(obj_idx, particle_idx, corner_idx) + dt_square*rr(obj_idx, particle_idx, corner_idx) / corner_mass;
+                    }
+                }
+            }
         }
         else //solve for active object
         {
-
+            invertible_mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
+                rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(active_obj_idx_,node_idx);
+            }
+            invertible_mpm_solid_driver_->enrichedParticles(active_obj_idx_, enriched_particles);
+            for (unsigned int i = 0; i < enriched_particles.size(); ++i)
+            {
+                unsigned int particle_idx = enriched_particles[i];
+                for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+                {
+                    Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(active_obj_idx_, particle_idx, corner_idx);
+                    rr(active_obj_idx_, particle_idx, corner_idx) = xx(active_obj_idx_, particle_idx, corner_idx) + dt_square*rr(active_obj_idx_, particle_idx, corner_idx) / corner_mass;
+                }
+            }
         }
     }
     catch (std::bad_cast &e)
@@ -70,14 +101,77 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
 template <typename Scalar, int Dim>
 void InvertibleMPMSolidLinearSystem<Scalar, Dim>::preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const
 {
-    //TO DO
+    try
+    {
+        const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
+        EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &rr = dynamic_cast<EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(result);
+        jacobiPreconditionerMultiply(xx, rr);
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument type!");
+    }
 }
 
 template <typename Scalar, int Dim>
 Scalar InvertibleMPMSolidLinearSystem<Scalar, Dim>::innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const
 {
-    //TO DO
-    return 0;
+    Scalar result = 0;
+    try
+    {
+        const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
+        const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &yy = dynamic_cast<const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(y);
+
+        std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+        std::vector<unsigned int> enriched_particles;
+        unsigned int corner_num = Dim == 2 ? 4 : 8;
+        if (active_obj_idx_ == -1)  //all objects solved together
+        {
+            invertible_mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
+                result += xx[node_idx].dot(yy[node_idx])*invertible_mpm_solid_driver_->gridMass(node_idx);
+            }
+            for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
+            {
+                invertible_mpm_solid_driver_->enrichedParticles(obj_idx, enriched_particles);
+                for (unsigned int i = 0; i < enriched_particles.size(); ++i)
+                {
+                    unsigned int particle_idx = enriched_particles[i];
+                    for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+                    {
+                        Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(obj_idx, particle_idx, corner_idx);
+                        result += xx(obj_idx, particle_idx, corner_idx).dot(yy(obj_idx, particle_idx, corner_idx))*corner_mass;
+                    }
+                }
+            }
+        }
+        else //solve for active object
+        {
+            invertible_mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
+                result += xx[node_idx].dot(yy[node_idx])*invertible_mpm_solid_driver_->gridMass(active_obj_idx_,node_idx);
+            }
+            invertible_mpm_solid_driver_->enrichedParticles(active_obj_idx_, enriched_particles);
+            for (unsigned int i = 0; i < enriched_particles.size(); ++i)
+            {
+                unsigned int particle_idx = enriched_particles[i];
+                for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+                {
+                    Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(active_obj_idx_, particle_idx, corner_idx);
+                    result += xx(active_obj_idx_, particle_idx, corner_idx).dot(yy(active_obj_idx_, particle_idx, corner_idx))*corner_mass;
+                }
+            }
+        }
+    }
+    catch (std::bad_cast &e)
+    {
+        throw PhysikaException("Incorrect argument type!");
+    }
+    return result;
 }
 
 template <typename Scalar, int Dim>
@@ -92,7 +186,59 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
                                                                         EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
 {
-    //TO DO
+    result.setValue(Vector<Scalar, Dim>(0));
+    std::vector<unsigned int> active_objects;
+    if (active_obj_idx_ == -1) //all objects solved together
+    {
+        active_objects.resize(invertible_mpm_solid_driver_->objectNum());
+        for (unsigned int obj_idx = 0; obj_idx < active_objects.size(); ++obj_idx)
+            active_objects[obj_idx] = obj_idx;
+    }
+    else  //solve for one active object
+    {
+        active_objects.resize(1);
+        active_objects[0] = active_obj_idx_;
+    }
+    std::vector<Vector<unsigned int, Dim> > nodes_in_range;
+    std::vector<unsigned int> enriched_particles;
+    unsigned int corner_num = Dim == 2 ? 4 : 8;
+    for (unsigned int active_idx = 0; active_idx < active_objects.size(); ++active_idx)
+    {
+        unsigned int obj_idx = active_objects[active_idx];
+        //grid nodes
+        for (unsigned int particle_idx = 0; particle_idx < invertible_mpm_solid_driver_->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            SquareMatrix<Scalar, Dim> A_p(0);
+            invertible_mpm_solid_driver_->gridNodesInRange(obj_idx, particle_idx, nodes_in_range);
+            const SolidParticle<Scalar, Dim> &particle = invertible_mpm_solid_driver_->particle(obj_idx, particle_idx);
+            for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
+            {
+                const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
+                Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
+                A_p += x_diff[node_idx].outerProduct(weight_gradient);
+            }
+            SquareMatrix<Scalar, Dim> particle_deform_grad = particle.deformationGradient();
+            A_p = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(particle_deform_grad, A_p * particle_deform_grad);
+            for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
+            {
+                const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
+                Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
+                result[node_idx] += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
+            }            
+        }
+        //enriched domain corners
+        invertible_mpm_solid_driver_->enrichedParticles(obj_idx, enriched_particles);
+        for (unsigned int idx = 0; idx < enriched_particles.size(); ++idx)
+        {
+            unsigned int particle_idx = enriched_particles[idx];
+            const SolidParticle<Scalar, Dim> &particle = invertible_mpm_solid_driver_->particle(obj_idx, particle_idx);
+            for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+            {
+                //TO DO
+            }
+        }
+
+    }
 }
 
 template <typename Scalar, int Dim>

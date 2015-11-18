@@ -94,7 +94,7 @@ Scalar MPMSolidLinearSystem<Scalar, Dim>::innerProduct(const GeneralizedVector<S
     Scalar result = 0;
     try{
         const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &xx = dynamic_cast<const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim>&>(x);
-        UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &yy = dynamic_cast<UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim>&>(y);
+        const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &yy = dynamic_cast<const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim>&>(y);
         std::vector<Vector<unsigned int, Dim> > active_nodes;
         if (active_obj_idx_ == -1) //solve for all objects
         {
@@ -102,7 +102,7 @@ Scalar MPMSolidLinearSystem<Scalar, Dim>::innerProduct(const GeneralizedVector<S
             for (unsigned int i = 0; i < active_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_nodes[i];
-                result += xx[node_idx] * yy[node_idx] * mpm_solid_driver_->gridMass(node_idx);
+                result += xx[node_idx].dot(yy[node_idx]) * mpm_solid_driver_->gridMass(node_idx);
             }
         }
         else  //solve for active object
@@ -111,7 +111,7 @@ Scalar MPMSolidLinearSystem<Scalar, Dim>::innerProduct(const GeneralizedVector<S
             for (unsigned int i = 0; i < active_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_nodes[i];
-                result += xx[node_idx] * yy[node_idx] * mpm_solid_driver_->gridMass(active_obj_idx_,node_idx);
+                result += xx[node_idx].dot(yy[node_idx]) * mpm_solid_driver_->gridMass(active_obj_idx_,node_idx);
             }
         }
     }

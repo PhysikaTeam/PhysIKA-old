@@ -596,7 +596,34 @@ unsigned int InvertibleMPMSolid<Scalar,Dim>::enrichedDomainCornerNum(unsigned in
     }
     return enriched_corner_num;
 }
-       
+
+template <typename Scalar, int Dim>
+Scalar InvertibleMPMSolid<Scalar, Dim>::domainCornerMass(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    unsigned int corner_num = Dim == 2 ? 4 : 8;
+    if (corner_idx >= corner_num)
+        throw PhysikaException("corner index out of range!");
+    unsigned global_corner_idx = particle_domain_mesh_[object_idx]->eleVertIndex(particle_idx, corner_idx);
+    return domain_corner_mass_[object_idx][global_corner_idx];
+}
+
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> InvertibleMPMSolid<Scalar, Dim>::domainCornerVelocity(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    unsigned int corner_num = Dim == 2 ? 4 : 8;
+    if (corner_idx >= corner_num)
+        throw PhysikaException("corner index out of range!");
+    unsigned global_corner_idx = particle_domain_mesh_[object_idx]->eleVertIndex(particle_idx, corner_idx);
+    return domain_corner_velocity_[object_idx][global_corner_idx];
+}
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::enableEnrichment()
 {

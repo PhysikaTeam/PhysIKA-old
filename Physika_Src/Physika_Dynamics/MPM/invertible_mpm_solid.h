@@ -60,6 +60,8 @@ public:
     void setPrincipalStretchThreshold(Scalar threshold); //set the threshold of principal stretch, value under which will be clamped
     void enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const; //return the index of enriched particles
     unsigned int enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const; //return the number of enriched domain corners of given particle
+    Scalar domainCornerMass(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //return the mass of particle domain corner
+    Vector<Scalar, Dim> domainCornerVelocity(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const;  //return the velocity of particle domain corner
     //explicitly enable/disable enrichment with particle domains
     void enableEnrichment();
     void disableEnrichment();

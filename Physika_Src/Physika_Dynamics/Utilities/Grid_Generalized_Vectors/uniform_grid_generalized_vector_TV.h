@@ -53,10 +53,11 @@ public:
     //wrap each dimension of vector value into a grid vector
     UniformGridGeneralizedVector<Scalar, GridDim> vectorAtDim(unsigned int val_dim_idx) const;
     unsigned int valueDim() const;
+    //check if active grid node pattern matches
+    bool checkActivePattern(const UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim> &vector) const;
 protected:
     UniformGridGeneralizedVector(); //default constructor made protected
     virtual void copy(const GeneralizedVector<Scalar> &vector);
-    bool checkActivePattern(const UniformGridGeneralizedVector<Vector<Scalar, EleDim>, GridDim> &vector) const; //check if active grid node pattern matches
     void sortActiveNodes(); //sort the active node index in ascending order
 protected:
     ArrayND<Vector<Scalar,EleDim>, GridDim> data_;
@@ -94,10 +95,11 @@ public:
     //wrap each dimension of vector value into a grid vector
     UniformGridGeneralizedVector<Scalar, Dim> vectorAtDim(unsigned int val_dim_idx) const;
     unsigned int valueDim() const;
+    //check if active grid node pattern matches
+    bool checkActivePattern(const UniformGridGeneralizedVector<VectorND<Scalar>, Dim> &vector) const; 
 protected:
     UniformGridGeneralizedVector(); //default constructor made protected
     virtual void copy(const GeneralizedVector<Scalar> &vector);
-    bool checkActivePattern(const UniformGridGeneralizedVector<VectorND<Scalar>, Dim> &vector) const; //check if active grid node pattern matches
     void sortActiveNodes(); //sort the active node index in ascending order
 protected:
     ArrayND<VectorND<Scalar>, Dim> data_;

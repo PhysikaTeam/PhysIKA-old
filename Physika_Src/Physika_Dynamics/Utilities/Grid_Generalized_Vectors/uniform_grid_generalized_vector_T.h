@@ -51,11 +51,11 @@ public:
     const Scalar& operator[](const Vector<unsigned int,Dim> &idx) const;
     Scalar& operator[](const Vector<unsigned int,Dim> &idx);
     void setValue(Scalar value); //set one value for all entries
-    void setActivePattern(const std::vector<Vector<unsigned int,Dim> > &active_grid_nodes);
+    void setActivePattern(const std::vector<Vector<unsigned int, Dim> > &active_grid_nodes);
+    bool checkActivePattern(const UniformGridGeneralizedVector<Scalar, Dim> &vector) const; //check if active grid node pattern matches
 protected:
     UniformGridGeneralizedVector(); //default constructor made protected
     virtual void copy(const GeneralizedVector<Scalar> &vector);
-    bool checkActivePattern(const UniformGridGeneralizedVector<Scalar,Dim> &vector) const; //check if active grid node pattern matches
     void sortActiveNodes(); //sort the active node index in ascending order
 protected:
     ArrayND<Scalar,Dim> data_;
