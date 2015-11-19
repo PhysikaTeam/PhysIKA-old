@@ -62,6 +62,8 @@ public:
     unsigned int enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const; //return the number of enriched domain corners of given particle
     Scalar domainCornerMass(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //return the mass of particle domain corner
     Vector<Scalar, Dim> domainCornerVelocity(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const;  //return the velocity of particle domain corner
+    Scalar particleDomainCornerWeight(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //interpolation weight between particle and domain corner
+    Vector<Scalar, Dim> particleDomainCornerGradient(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //gradient of interpolation function between particle and domain corner
     //explicitly enable/disable enrichment with particle domains
     void enableEnrichment();
     void disableEnrichment();
@@ -129,6 +131,7 @@ protected:
     bool enable_entire_enrichment_;
     static Scalar default_enrich_metric_;
     std::vector<std::vector<Scalar> > particle_enrich_metric_;
+    //for implicit integration
 };
 
 }  //end of namespace Physika

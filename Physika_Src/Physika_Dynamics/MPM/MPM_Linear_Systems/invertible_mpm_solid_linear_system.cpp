@@ -18,6 +18,8 @@
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Utilities/physika_exception.h"
+#include "Physika_Dynamics/Particles/solid_particle.h"
+#include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 #include "Physika_Dynamics/MPM/invertible_mpm_solid.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/enriched_mpm_uniform_grid_generalized_vector.h"
 #include "Physika_Dynamics/MPM/MPM_Linear_Systems/invertible_mpm_solid_linear_system.h"
@@ -232,12 +234,20 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const En
         {
             unsigned int particle_idx = enriched_particles[idx];
             const SolidParticle<Scalar, Dim> &particle = invertible_mpm_solid_driver_->particle(obj_idx, particle_idx);
+            SquareMatrix<Scalar, Dim> A_p(0);
             for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
             {
-                //TO DO
+                Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
+                A_p += x_diff(obj_idx, particle_idx, corner_idx).outerProduct(weight_gradient);
+            }
+            SquareMatrix<Scalar, Dim> particle_deform_grad = particle.deformationGradient();
+            A_p = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(particle_deform_grad, A_p * particle_deform_grad);
+            for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+            {
+                Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
+                result(obj_idx, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
             }
         }
-
     }
 }
 
