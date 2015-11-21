@@ -7,8 +7,8 @@
 
 ######################CONFIGURATIONS#############################
 #BUILD TYPE
-build_type='Release'
-#build_type='Debug'
+#build_type='Release'
+build_type='Debug'
 
 #BUILD MSVC PROJECTS FOR WINDOWS
 build_msvc=True

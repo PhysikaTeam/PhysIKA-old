@@ -23,6 +23,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Numerics/Linear_System_Solvers/conjugate_gradient_solver.h"
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
@@ -31,6 +32,7 @@
 #include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/robust_CPDI2_update_method.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
+#include "Physika_Dynamics/MPM/MPM_Linear_Systems/invertible_mpm_solid_linear_system.h"
 #include "Physika_Dynamics/MPM/invertible_mpm_solid.h"
 
 namespace Physika{
@@ -41,7 +43,8 @@ Scalar InvertibleMPMSolid<Scalar,Dim>::default_enrich_metric_ = 0.6;
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
     :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.1),
-     enable_enrichment_(true), enable_entire_enrichment_(false)
+     enable_enrichment_(true), enable_entire_enrichment_(false),
+     invertible_mpm_system_(NULL), invertible_system_rhs_(NULL), invertible_system_x_(NULL)
 {
     //only works with RobustCPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
@@ -51,7 +54,8 @@ template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, unsigned int end_frame,
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file), principal_stretch_threshold_(0.1),
-    enable_enrichment_(true), enable_entire_enrichment_(false)
+    enable_enrichment_(true), enable_entire_enrichment_(false),
+    invertible_mpm_system_(NULL), invertible_system_rhs_(NULL), invertible_system_x_(NULL)
 {
     //only works with RobustCPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
@@ -62,7 +66,8 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, uns
                                                    Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                                    const Grid<Scalar,Dim> &grid)
     :CPDIMPMSolid<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file,grid), principal_stretch_threshold_(0.1),
-    enable_enrichment_(true), enable_entire_enrichment_(false)
+    enable_enrichment_(true), enable_entire_enrichment_(false),
+    invertible_mpm_system_(NULL), invertible_system_rhs_(NULL), invertible_system_x_(NULL)
 {
     //only works with RobustCPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
@@ -72,6 +77,12 @@ template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::~InvertibleMPMSolid()
 {
     clearParticleDomainMesh();
+    if (invertible_mpm_system_)
+        delete invertible_mpm_system_;
+    if (invertible_system_rhs_)
+        delete invertible_system_rhs_;
+    if (invertible_system_x_)
+        delete invertible_system_x_;
 }
 
 template <typename Scalar, int Dim>
@@ -626,6 +637,20 @@ Vector<Scalar,Dim> InvertibleMPMSolid<Scalar, Dim>::domainCornerVelocity(unsigne
 }
 
 template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar, Dim>::setDomainCornerVelocity(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx, const Vector<Scalar, Dim> &velocity)
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    unsigned int corner_num = Dim == 2 ? 4 : 8;
+    if (corner_idx >= corner_num)
+        throw PhysikaException("corner index out of range!");
+    unsigned global_corner_idx = particle_domain_mesh_[object_idx]->eleVertIndex(particle_idx, corner_idx);
+    domain_corner_velocity_[object_idx][global_corner_idx] = velocity;
+}
+
+template <typename Scalar, int Dim>
 Scalar InvertibleMPMSolid<Scalar, Dim>::particleDomainCornerWeight(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const
 {
     if (object_idx >= this->objectNum())
@@ -748,7 +773,95 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
 {
-    throw PhysikaException("Not implemented!");
+    if (this->objectNum() == 0) //no objects in scene
+        return;
+    //create linear system && solver
+    if (invertible_mpm_system_ == NULL)
+        invertible_mpm_system_ = new InvertibleMPMSolidLinearSystem<Scalar, Dim>(this);
+    Vector<unsigned int, Dim> grid_node_num = this->grid_.nodeNum();
+    if (invertible_system_rhs_ == NULL)
+        invertible_system_rhs_ = new EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
+    if (invertible_system_x_ == NULL)
+        invertible_system_x_ = new EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
+    if (this->system_solver_ == NULL) //CG solver by default
+        this->system_solver_ = new ConjugateGradientSolver<Scalar>();
+    std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+    std::vector<std::vector<unsigned int> > enriched_particles;
+    std::vector<VolumetricMesh<Scalar, Dim>*> particle_domain_topology;
+    solveOnGridForwardEuler(dt); //explicit solve used as rhs and initial guess
+    unsigned int corner_num = Dim == 2 ? 4 : 8;
+    if (this->contact_method_) //contact method is used, solve each object independently
+    {
+        enriched_particles.resize(1);
+        particle_domain_topology.resize(1);
+        for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        {
+            activeGridNodes(obj_idx, active_grid_nodes);
+            enrichedParticles(obj_idx, enriched_particles[0]);
+            particle_domain_topology[0] = particle_domain_mesh_[obj_idx];
+            invertible_system_rhs_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
+            invertible_system_x_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                (*invertible_system_rhs_)[active_grid_nodes[i]] = this->gridVelocity(obj_idx, active_grid_nodes[i]);
+                (*invertible_system_x_)[active_grid_nodes[i]] = (*invertible_system_rhs_)[active_grid_nodes[i]];
+            }
+            for (unsigned int i = 0; i < enriched_particles[0].size(); ++i)
+            {
+                for (unsigned int j = 0; j < corner_num; ++j)
+                {
+                    (*invertible_system_rhs_)(0, enriched_particles[0][i], j) = this->domainCornerVelocity(obj_idx, enriched_particles[0][i], j);
+                    (*invertible_system_x_)(0, enriched_particles[0][i], j) = (*invertible_system_rhs_)(0, enriched_particles[0][i], j);
+                }
+            }
+            //solve
+            system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
+            //apply the solve result
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+                this->setGridVelocity(obj_idx, active_grid_nodes[i], (*invertible_system_x_)[active_grid_nodes[i]]);
+            for (unsigned int i = 0; i < enriched_particles[0].size(); ++i)
+                for (unsigned int j = 0; j < corner_num; ++j)
+                    this->setDomainCornerVelocity(obj_idx,enriched_particles[0][i],j,(*invertible_system_x_)(0, enriched_particles[0][i], j));
+        }
+    }
+    else //no contact method used, solve on single value grid
+    {
+        enriched_particles.resize(this->objectNum());
+        particle_domain_topology.resize(this->objectNum());
+        activeGridNodes(active_grid_nodes);
+        for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+        {
+            //all objects share the same velocity at one grid node
+            (*invertible_system_rhs_)[active_grid_nodes[i]] = this->gridVelocity(0, active_grid_nodes[i]);
+            (*invertible_system_x_)[active_grid_nodes[i]] = (*invertible_system_rhs_)[active_grid_nodes[i]];
+        }
+        for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        {
+            enrichedParticles(obj_idx, enriched_particles[obj_idx]);
+            particle_domain_topology[obj_idx] = particle_domain_mesh_[obj_idx];
+            for (unsigned int i = 0; i < enriched_particles[obj_idx].size(); ++i)
+            {
+                for (unsigned int j = 0; j < corner_num; ++j)
+                {
+                    (*invertible_system_rhs_)(obj_idx, enriched_particles[obj_idx][i], j) = this->domainCornerVelocity(obj_idx, enriched_particles[obj_idx][i], j);
+                    (*invertible_system_x_)(obj_idx, enriched_particles[obj_idx][i], j) = (*invertible_system_rhs_)(obj_idx, enriched_particles[obj_idx][i], j);
+                }
+            }
+        }
+        invertible_system_rhs_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
+        invertible_system_x_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
+        //solve
+        system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
+        //apply the solve result
+        for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        {
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+                this->setGridVelocity(obj_idx, active_grid_nodes[i], (*invertible_system_x_)[active_grid_nodes[i]]);
+            for (unsigned int i = 0; i < enriched_particles[0].size(); ++i)
+                for (unsigned int j = 0; j < corner_num; ++j)
+                    this->setDomainCornerVelocity(obj_idx, enriched_particles[obj_idx][i], j, (*invertible_system_x_)(obj_idx, enriched_particles[obj_idx][i], j));
+        }
+    }
 }
 
 template <typename Scalar, int Dim>

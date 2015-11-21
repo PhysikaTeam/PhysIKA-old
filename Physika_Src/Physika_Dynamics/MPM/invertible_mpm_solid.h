@@ -20,6 +20,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Dynamics/Utilities/Deformation_Diagonalization/deformation_diagonalization.h"
+#include "Physika_Dynamics/MPM/MPM_Linear_Systems/enriched_mpm_uniform_grid_generalized_vector.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 
 namespace Physika{
@@ -27,6 +28,7 @@ namespace Physika{
 template <typename Scalar, int Dim> class VolumetricMesh;
 template <typename Scalar, int Dim> class ArrayND;
 template <typename Scalar, int Dim> class SquareMatrix;
+template <typename Scalar, int Dim> class InvertibleMPMSolidLinearSystem;
 
 /*
  * InvertibleMPMSolid: hybrid of FEM and modified CPDI2 for large deformation and invertible elasticity
@@ -62,6 +64,7 @@ public:
     unsigned int enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const; //return the number of enriched domain corners of given particle
     Scalar domainCornerMass(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //return the mass of particle domain corner
     Vector<Scalar, Dim> domainCornerVelocity(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const;  //return the velocity of particle domain corner
+    void setDomainCornerVelocity(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx, const Vector<Scalar, Dim> &velocity); //set velocity of particle domain corner
     Scalar particleDomainCornerWeight(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //interpolation weight between particle and domain corner
     Vector<Scalar, Dim> particleDomainCornerGradient(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //gradient of interpolation function between particle and domain corner
     //explicitly enable/disable enrichment with particle domains
@@ -132,6 +135,9 @@ protected:
     static Scalar default_enrich_metric_;
     std::vector<std::vector<Scalar> > particle_enrich_metric_;
     //for implicit integration
+    InvertibleMPMSolidLinearSystem<Scalar, Dim> *invertible_mpm_system_;
+    EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > *invertible_system_rhs_;
+    EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > *invertible_system_x_;
 };
 
 }  //end of namespace Physika
