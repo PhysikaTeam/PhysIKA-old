@@ -330,11 +330,11 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> &group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
             {
-                Face<Scalar> face_ref = group_ref.face(face_idx);          // get face reference
+                Face<Scalar> &face_ref = group_ref.face(face_idx);          // get face reference
                 unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
                 glBegin(GL_POLYGON);                                       // draw polygon with wire mode
                 for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
@@ -385,7 +385,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> &group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
             unsigned int material_ID = group_ref.materialIndex();
 
@@ -420,7 +420,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
 
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
             {
-                Face<Scalar> face_ref = group_ref.face(face_idx);          // get face reference
+                Face<Scalar> &face_ref = group_ref.face(face_idx);          // get face reference
                 unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
                 glBegin(GL_POLYGON);                                       // draw polygon with SOLID MODE
                 for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++) // loop for every vertex
@@ -502,12 +502,12 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> &group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
     
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
             {
-                Face<Scalar> face_ref = group_ref.face(face_idx);          // get face reference
+                Face<Scalar> &face_ref = group_ref.face(face_idx);          // get face reference
                 unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
                 glBegin(GL_POLYGON);                                       // draw polygon with SOLID MODE
                 for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++) // loop for every vertex
@@ -693,7 +693,7 @@ void SurfaceMeshRender<Scalar>::loadTextures()
 
     for(unsigned int material_idx=0; material_idx<num_material; material_idx++) // loop for ervery material
     {
-        Material<Scalar> material_ref = this->mesh_->material(material_idx);    // get material reference
+        Material<Scalar> &material_ref = this->mesh_->material(material_idx);    // get material reference
 
 
         if(material_ref.hasTexture())    // if have a texture

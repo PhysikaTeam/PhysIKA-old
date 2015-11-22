@@ -181,7 +181,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                 unsigned int tex;
                 if(vertex_indice.find(std::string("//")) != std::string::npos)
                 {   //    v//n
-                    unsigned int loc = vertex_indice.find(std::string("//"));
+                    std::string::size_type loc = vertex_indice.find(std::string("//"));
                     std::stringstream transform;
                     transform.str("");
                     transform.clear();
@@ -223,7 +223,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                     }
                     else 
                     {    //  v/t
-                        unsigned int loc = vertex_indice.find(std::string("/"));
+                        std::string::size_type loc = vertex_indice.find(std::string("/"));
                         std::stringstream transform;
                         transform.str("");
                         transform.clear();
@@ -233,7 +233,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                             std::cerr<<"invalid vertx pos in this face "<<"line:"<<line_num<<std::endl;
                             return false;
                         }
-                        unsigned int loc2 = vertex_indice.find(std::string("/"), loc + 1);
+                        std::string::size_type loc2 = vertex_indice.find(std::string("/"), loc + 1);
                         if(loc2 == std::string::npos)
                         {
                             transform.str("");
