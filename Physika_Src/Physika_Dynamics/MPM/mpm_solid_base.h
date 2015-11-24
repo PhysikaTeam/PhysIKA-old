@@ -87,7 +87,9 @@ public:
     virtual void applyExternalForceOnParticles(Scalar dt)=0;  //external force (gravity excluded) is applied on particles
     virtual void updateParticlePosition(Scalar dt)=0;  //update particle position with new particle velocity
  
+    //set && get time stepping method
     void setTimeSteppingMethod(TimeSteppingMethod method);
+    TimeSteppingMethod timeSteppingMethod() const;
 protected:
     virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;

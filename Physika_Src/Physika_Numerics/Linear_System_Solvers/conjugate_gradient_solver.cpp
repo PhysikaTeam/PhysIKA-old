@@ -13,6 +13,7 @@
  *
  */
 
+#include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Numerics/Linear_System_Solvers/generalized_vector.h"
 #include "Physika_Numerics/Linear_System_Solvers/linear_system.h"
@@ -85,7 +86,17 @@ bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSys
     delete q;
     delete temp;
     //return false if didn't converge with maximum iterations
-    return delta > tolerance_sqr*delta_0 ? false : true;
+    bool status = delta > tolerance_sqr*delta_0 ? false : true;
+    if (this->status_log_)
+    {
+        std::cout << "CG solver ";
+        if (!status)
+            std::cout << "did not converge";
+        else
+            std::cout << "converged";
+        std::cout << " in " << this->iterations_used_ << " iterations, residual: " << this->residualMagnitude() << ".\n";
+    }
+    return status;
 }
 
 template <typename Scalar>
@@ -144,7 +155,17 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
     delete temp;
     delete s;
     //return false if didn't converge with maximum iterations
-    return delta > tolerance_sqr*delta_0 ? false : true;
+    bool status = delta > tolerance_sqr*delta_0 ? false : true;
+    if (this->status_log_)
+    {
+        std::cout << "PCG solver ";
+        if (!status)
+            std::cout << "did not converge";
+        else
+            std::cout << "converged";
+        std::cout << " in " << this->iterations_used_ << " iterations, residual: " << this->residualMagnitude() << ".\n";
+    }
+    return status;
 }
 //explicit instantiations
 template class ConjugateGradientSolver<float>;

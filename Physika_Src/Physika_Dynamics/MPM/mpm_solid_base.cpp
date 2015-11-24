@@ -294,6 +294,12 @@ void MPMSolidBase<Scalar,Dim>::setTimeSteppingMethod(TimeSteppingMethod method)
 }
 
 template <typename Scalar, int Dim>
+TimeSteppingMethod MPMSolidBase<Scalar, Dim>::timeSteppingMethod() const
+{
+    return integration_method_;
+}
+
+template <typename Scalar, int Dim>
 Scalar MPMSolidBase<Scalar,Dim>::maxParticleVelocityNorm() const
 {
     if(particles_.empty())

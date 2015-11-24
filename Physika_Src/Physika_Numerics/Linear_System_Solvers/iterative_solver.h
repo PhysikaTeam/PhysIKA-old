@@ -35,6 +35,9 @@ public:
     unsigned int iterationsUsed() const;
     //reset solver
     void reset();
+    //enable/disable status log
+    void enableStatusLog();
+    void disableStatusLog();
 protected:
     virtual bool solveWithoutPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x) = 0;
     virtual bool solveWithPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x) = 0;
@@ -43,6 +46,7 @@ protected:
     unsigned int max_iterations_; //maximum iterations allowed
     Scalar residual_magnitude_sqr_; // |b-Ax|^2
     unsigned int iterations_used_;  //iterations actually used
+    bool status_log_; //enable/disable log status of solve
 };
 
 }  //end of namespace Physika
