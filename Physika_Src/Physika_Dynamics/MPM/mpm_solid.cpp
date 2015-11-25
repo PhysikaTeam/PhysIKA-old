@@ -1049,16 +1049,20 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
             activeGridNodes(obj_idx, active_grid_nodes);
             system_rhs_->setActivePattern(active_grid_nodes);
             system_x_->setActivePattern(active_grid_nodes);
+            mpm_solid_system_->setActiveObject(obj_idx);
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 (*system_rhs_)[active_grid_nodes[i]] = this->gridVelocity(obj_idx, active_grid_nodes[i]);
                 (*system_x_)[active_grid_nodes[i]] = (*system_rhs_)[active_grid_nodes[i]];
             }
             //solve
-            system_solver_->solve(*mpm_solid_system_, *system_rhs_, *system_x_);
-            //apply the solve result
-            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
-                this->setGridVelocity(obj_idx, active_grid_nodes[i], (*system_x_)[active_grid_nodes[i]]);
+            bool status = system_solver_->solve(*mpm_solid_system_, *system_rhs_, *system_x_);
+            if (status)
+            {
+                //apply the solve result only if implicit solve converges, otherwise explicit results are used
+                for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+                    this->setGridVelocity(obj_idx, active_grid_nodes[i], (*system_x_)[active_grid_nodes[i]]);
+            }
         }
     }
     else //no contact method used, solve on single value grid
@@ -1067,6 +1071,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         activeGridNodes(active_grid_nodes);
         system_rhs_->setActivePattern(active_grid_nodes);
         system_x_->setActivePattern(active_grid_nodes);
+        mpm_solid_system_->setActiveObject(-1);
         for(unsigned int i = 0; i < active_grid_nodes.size(); ++i)
         {
             //all objects share the same velocity at one grid node
@@ -1074,12 +1079,15 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
             (*system_x_)[active_grid_nodes[i]] = (*system_rhs_)[active_grid_nodes[i]];
         }
         //solve
-        system_solver_->solve(*mpm_solid_system_,*system_rhs_,*system_x_);
-        //apply the solve result
-        for(unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+        bool status = system_solver_->solve(*mpm_solid_system_,*system_rhs_,*system_x_);
+        if (status)
         {
-            for(unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
-                this->setGridVelocity(obj_idx,active_grid_nodes[i],(*system_x_)[active_grid_nodes[i]]);
+            //apply the solve result only if implicit solve converges, otherwise explicit results are used
+            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+            {
+                for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+                    this->setGridVelocity(obj_idx, active_grid_nodes[i], (*system_x_)[active_grid_nodes[i]]);
+            }
         }
     }
 }

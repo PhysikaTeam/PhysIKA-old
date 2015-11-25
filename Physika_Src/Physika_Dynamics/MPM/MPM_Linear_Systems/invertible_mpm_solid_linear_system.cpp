@@ -89,7 +89,7 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
                 for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
                 {
                     Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(active_obj_idx_, particle_idx, corner_idx);
-                    rr(active_obj_idx_, particle_idx, corner_idx) = xx(active_obj_idx_, particle_idx, corner_idx) + dt_square*rr(active_obj_idx_, particle_idx, corner_idx) / corner_mass;
+                    rr(0, particle_idx, corner_idx) = xx(0, particle_idx, corner_idx) + dt_square*rr(0, particle_idx, corner_idx) / corner_mass;
                 }
             }
         }
@@ -164,7 +164,7 @@ Scalar InvertibleMPMSolidLinearSystem<Scalar, Dim>::innerProduct(const Generaliz
                 for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
                 {
                     Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(active_obj_idx_, particle_idx, corner_idx);
-                    result += xx(active_obj_idx_, particle_idx, corner_idx).dot(yy(active_obj_idx_, particle_idx, corner_idx))*corner_mass;
+                    result += xx(0, particle_idx, corner_idx).dot(yy(0, particle_idx, corner_idx))*corner_mass;
                 }
             }
         }
@@ -238,14 +238,20 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const En
             for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
             {
                 Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
-                A_p += x_diff(obj_idx, particle_idx, corner_idx).outerProduct(weight_gradient);
+                if (active_idx == -1)
+                    A_p += x_diff(obj_idx, particle_idx, corner_idx).outerProduct(weight_gradient);
+                else
+                    A_p += x_diff(0, particle_idx, corner_idx).outerProduct(weight_gradient);
             }
             SquareMatrix<Scalar, Dim> particle_deform_grad = particle.deformationGradient();
             A_p = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(particle_deform_grad, A_p * particle_deform_grad);
             for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
             {
                 Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
-                result(obj_idx, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
+                if (active_idx == -1)
+                    result(obj_idx, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
+                else
+                    result(0, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
             }
         }
     }

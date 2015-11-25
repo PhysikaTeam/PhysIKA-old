@@ -801,6 +801,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
             particle_domain_topology[0] = particle_domain_mesh_[obj_idx];
             invertible_system_rhs_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
             invertible_system_x_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
+            invertible_mpm_system_->setActiveObject(obj_idx);
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 (*invertible_system_rhs_)[active_grid_nodes[i]] = this->gridVelocity(obj_idx, active_grid_nodes[i]);
@@ -815,13 +816,16 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
                 }
             }
             //solve
-            system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
-            //apply the solve result
-            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
-                this->setGridVelocity(obj_idx, active_grid_nodes[i], (*invertible_system_x_)[active_grid_nodes[i]]);
-            for (unsigned int i = 0; i < enriched_particles[0].size(); ++i)
-                for (unsigned int j = 0; j < corner_num; ++j)
-                    this->setDomainCornerVelocity(obj_idx,enriched_particles[0][i],j,(*invertible_system_x_)(0, enriched_particles[0][i], j));
+            bool status = system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
+            if (status)
+            {
+                //apply the solve result only if implicit solve converges, otherwise explicit results are used
+                for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+                    this->setGridVelocity(obj_idx, active_grid_nodes[i], (*invertible_system_x_)[active_grid_nodes[i]]);
+                for (unsigned int i = 0; i < enriched_particles[0].size(); ++i)
+                    for (unsigned int j = 0; j < corner_num; ++j)
+                        this->setDomainCornerVelocity(obj_idx, enriched_particles[0][i], j, (*invertible_system_x_)(0, enriched_particles[0][i], j));
+            }
         }
     }
     else //no contact method used, solve on single value grid
@@ -850,16 +854,20 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         }
         invertible_system_rhs_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
         invertible_system_x_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
+        invertible_mpm_system_->setActiveObject(-1);
         //solve
-        system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
-        //apply the solve result
-        for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+        bool status = system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
+        if (status)
         {
-            for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
-                this->setGridVelocity(obj_idx, active_grid_nodes[i], (*invertible_system_x_)[active_grid_nodes[i]]);
-            for (unsigned int i = 0; i < enriched_particles[0].size(); ++i)
-                for (unsigned int j = 0; j < corner_num; ++j)
-                    this->setDomainCornerVelocity(obj_idx, enriched_particles[obj_idx][i], j, (*invertible_system_x_)(obj_idx, enriched_particles[obj_idx][i], j));
+            //apply the solve result only if implicit solve converges, otherwise explicit results are used
+            for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
+            {
+                for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
+                    this->setGridVelocity(obj_idx, active_grid_nodes[i], (*invertible_system_x_)[active_grid_nodes[i]]);
+                for (unsigned int i = 0; i < enriched_particles[0].size(); ++i)
+                    for (unsigned int j = 0; j < corner_num; ++j)
+                        this->setDomainCornerVelocity(obj_idx, enriched_particles[obj_idx][i], j, (*invertible_system_x_)(obj_idx, enriched_particles[obj_idx][i], j));
+            }
         }
     }
 }
@@ -1069,7 +1077,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
         max_stretch = (max_stretch > diag_deform_grad(dim,dim)) ? max_stretch : diag_deform_grad(dim,dim);
     }
     f1 = min_stretch/max_stretch;
-    //f2 = inverse condition number of the matrix that represents skew, decomposited from F
+    //f2 = inverse condition number of the matrix that represents skew, decomposed from F
     //ref: Algebraic Mesh Quality Metrics
     SquareMatrix<Scalar,Dim> skew_deform = factorizeParticleSkewDeformation(obj_idx,particle_idx);
     SquareMatrix<Scalar,Dim> left_rotation,right_rotation;
