@@ -581,7 +581,13 @@ void InvertibleMPMSolid<Scalar,Dim>::setPrincipalStretchThreshold(Scalar thresho
     else
         principal_stretch_threshold_ = threshold;
 }
-        
+
+template <typename Scalar, int Dim>
+Scalar InvertibleMPMSolid<Scalar, Dim>::principalStretchThreshold() const
+{
+    return principal_stretch_threshold_;
+}
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const
 {
@@ -740,6 +746,35 @@ void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx
     for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
         setEnrichmentMetric(object_idx,particle_idx,metric);
 }
+
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar, Dim>::diagonalizedParticleDeformationGradient(unsigned int object_idx, unsigned int particle_idx,
+                                                                              SquareMatrix<Scalar, Dim> &left_rotation,
+                                                                              SquareMatrix<Scalar, Dim> &diag_deform_grad,
+                                                                              SquareMatrix<Scalar, Dim> &right_rotation) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    left_rotation = particle_diagonalized_deform_grad_[object_idx][particle_idx].left_rotation;
+    diag_deform_grad = particle_diagonalized_deform_grad_[object_idx][particle_idx].diag_deform_grad;
+    right_rotation = particle_diagonalized_deform_grad_[object_idx][particle_idx].right_rotation;
+}
+
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar, Dim>::diagonalizedParticleDeformationGradient(unsigned int object_idx, unsigned int particle_idx,
+                                          typename DeformationDiagonalization<Scalar, Dim>::DiagonalizedDeformation &diag_deform) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    diag_deform.left_rotation = particle_diagonalized_deform_grad_[object_idx][particle_idx].left_rotation;
+    diag_deform.diag_deform_grad = particle_diagonalized_deform_grad_[object_idx][particle_idx].diag_deform_grad;
+    diag_deform.right_rotation = particle_diagonalized_deform_grad_[object_idx][particle_idx].right_rotation;
+}
+
 
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)

@@ -59,7 +59,9 @@ public:
     virtual void updateParticleConstitutiveModelState(Scalar dt); 
     virtual void updateParticleVelocity();
     virtual void updateParticlePosition(Scalar dt);
+
     void setPrincipalStretchThreshold(Scalar threshold); //set the threshold of principal stretch, value under which will be clamped
+    Scalar principalStretchThreshold() const; //return the threshold of principal stretch
     void enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const; //return the index of enriched particles
     unsigned int enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const; //return the number of enriched domain corners of given particle
     Scalar domainCornerMass(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //return the mass of particle domain corner
@@ -77,7 +79,13 @@ public:
     Scalar enrichmentMetric(unsigned int object_idx, unsigned int particle_idx) const;
     void setEnrichmentMetric(unsigned int object_idx, unsigned int particle_idx, Scalar metric);
     void setEnrichmentMetric(unsigned int object_idx, Scalar metric); //set uniform enrichment metric for all particles
-
+    //get diagonalized particle deformation
+    void diagonalizedParticleDeformationGradient(unsigned int object_idx, unsigned int particle_idx,
+                                                 SquareMatrix<Scalar, Dim> &left_rotation,
+                                                 SquareMatrix<Scalar, Dim> &diag_deform_grad,
+                                                 SquareMatrix<Scalar, Dim> &right_rotation) const;
+    void diagonalizedParticleDeformationGradient(unsigned int object_idx, unsigned int particle_idx,
+                                                 typename DeformationDiagonalization<Scalar, Dim>::DiagonalizedDeformation &diag_deform) const;
 protected:
     //solve on grid is reimplemented
     virtual void solveOnGridForwardEuler(Scalar dt);
