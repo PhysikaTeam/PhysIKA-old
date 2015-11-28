@@ -1,12 +1,12 @@
 /*
- * @file invertible_mpm_solid.cpp 
+ * @file invertible_mpm_solid.cpp
  * @brief a hybrid of FEM and modified CPDI2 for large deformation and invertible elasticity, uniform grid.
  * @author Fei Zhu
- * 
+ *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -39,7 +39,7 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 Scalar InvertibleMPMSolid<Scalar,Dim>::default_enrich_metric_ = 0.6;
-    
+
 template <typename Scalar, int Dim>
 InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
     :CPDIMPMSolid<Scalar,Dim>(), principal_stretch_threshold_(0.1),
@@ -197,7 +197,7 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
                         domain_corner_mass_[obj_idx][global_corner_idx] += weight*particle->mass();
                         domain_corner_velocity_[obj_idx][global_corner_idx] += weight*(particle->mass()*particle->velocity());
                     }
-                } 
+                }
             }
         }
         //compute domain corner's velocity, divide momentum by mass
@@ -207,7 +207,7 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
                 domain_corner_velocity_[obj_idx][corner_idx] /= domain_corner_mass_[obj_idx][corner_idx];
                 domain_corner_velocity_before_[obj_idx][corner_idx] = domain_corner_velocity_[obj_idx][corner_idx];
             }
-    }    
+    }
     //determine active grid nodes according to the grid mass of each object
     Vector<unsigned int,Dim> grid_node_num = this->grid_.nodeNum();
     std::map<unsigned int,Vector<unsigned int,Dim> > active_node_idx_1d_nd_map;
@@ -347,7 +347,7 @@ void InvertibleMPMSolid<Scalar,Dim>::resolveContactOnParticles(Scalar dt)
                             Vector<Scalar,Dim> node_vel = this->gridVelocity(obj_idx,pair.node_idx);
                             corner_vel += weight*node_vel;
                         }
-                    } 
+                    }
                     //corner in contact with collidable object
                     //compute the impulse on domain corner
                     //project the corner onto the surface of collidable object
@@ -455,7 +455,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleConstitutiveModelState(Scalar
         }
     }
 }
-    
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
 {
@@ -519,7 +519,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticleVelocity()
         }
     }
 }
- 
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
 {
@@ -569,7 +569,7 @@ void InvertibleMPMSolid<Scalar,Dim>::updateParticlePosition(Scalar dt)
     else
         throw PhysikaException("Invertible MPM only supports RobustCPDI2!");
 }
-    
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::setPrincipalStretchThreshold(Scalar threshold)
 {
@@ -595,7 +595,7 @@ void InvertibleMPMSolid<Scalar,Dim>::enrichedParticles(unsigned int object_idx, 
         throw PhysikaException("object index out of range!");
     enriched_particles = enriched_particles_[object_idx];
 }
-       
+
 template <typename Scalar, int Dim>
 unsigned int InvertibleMPMSolid<Scalar,Dim>::enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const
 {
@@ -707,7 +707,7 @@ void InvertibleMPMSolid<Scalar,Dim>::disableEnrichment()
 {
     enable_enrichment_ = false;
 }
-         
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::enableEntireEnrichment()
 {
@@ -719,7 +719,7 @@ void InvertibleMPMSolid<Scalar,Dim>::disableEntireEnrichment()
 {
     enable_entire_enrichment_ = false;
 }
-         
+
 template <typename Scalar, int Dim>
 Scalar InvertibleMPMSolid<Scalar,Dim>::enrichmentMetric(unsigned int object_idx, unsigned int particle_idx) const
 {
@@ -729,7 +729,7 @@ Scalar InvertibleMPMSolid<Scalar,Dim>::enrichmentMetric(unsigned int object_idx,
         throw PhysikaException("particle index out of range!");
     return particle_enrich_metric_[object_idx][particle_idx];
 }
-         
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx, unsigned int particle_idx, Scalar metric)
 {
@@ -750,7 +750,7 @@ void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx
     else
         particle_enrich_metric_[object_idx][particle_idx] = metric;
 }
-         
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::setEnrichmentMetric(unsigned int object_idx, Scalar metric)
 {
@@ -816,7 +816,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
         }
     }
     //apply gravity
-    applyGravityOnEnrichedDomainCorner(dt);    
+    applyGravityOnEnrichedDomainCorner(dt);
 }
 
 template <typename Scalar, int Dim>
@@ -845,7 +845,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         particle_domain_topology.resize(1);
         for (unsigned int obj_idx = 0; obj_idx < this->objectNum(); ++obj_idx)
         {
-            activeGridNodes(obj_idx, active_grid_nodes);
+            this->activeGridNodes(obj_idx, active_grid_nodes);
             enrichedParticles(obj_idx, enriched_particles[0]);
             particle_domain_topology[0] = particle_domain_mesh_[obj_idx];
             invertible_system_rhs_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
@@ -865,7 +865,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
                 }
             }
             //solve
-            bool status = system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
+            bool status = this->system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
             if (status)
             {
                 //apply the solve result only if implicit solve converges, otherwise explicit results are used
@@ -881,7 +881,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
     {
         enriched_particles.resize(this->objectNum());
         particle_domain_topology.resize(this->objectNum());
-        activeGridNodes(active_grid_nodes);
+        this->activeGridNodes(active_grid_nodes);
         for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
         {
             //all objects share the same velocity at one grid node
@@ -905,7 +905,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         invertible_system_x_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
         invertible_mpm_system_->setActiveObject(-1);
         //solve
-        bool status = system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
+        bool status = this->system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
         if (status)
         {
             //apply the solve result only if implicit solve converges, otherwise explicit results are used
@@ -955,7 +955,7 @@ void InvertibleMPMSolid<Scalar,Dim>::appendLastParticleRelatedDataOfObject(unsig
     particle_diagonalized_deform_grad_[object_idx].push_back(one_particle_diag_deform_grad);
     particle_enrich_metric_[object_idx].push_back(default_enrich_metric_);
 }
- 
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsigned int object_idx)
 {
@@ -971,7 +971,7 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteAllParticleRelatedDataOfObject(unsign
     typename std::vector<std::vector<Scalar> >::iterator iter5 = particle_enrich_metric_.begin() + object_idx;
     particle_enrich_metric_.erase(iter5);
 }
- 
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsigned int object_idx, unsigned int particle_idx)
 {
@@ -985,7 +985,7 @@ void InvertibleMPMSolid<Scalar,Dim>::deleteOneParticleRelatedDataOfObject(unsign
     typename std::vector<Scalar>::iterator iter4 = particle_enrich_metric_[object_idx].begin() + particle_idx;
     particle_enrich_metric_[object_idx].erase(iter4);
 }
-    
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::resetParticleDomainData()
 {
@@ -1010,7 +1010,7 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::constructParticleDomainMesh()
 {
     clearParticleDomainMesh(); //clear potential space
-    //resize 
+    //resize
     unsigned int obj_num = this->objectNum();
     particle_domain_mesh_.resize(obj_num);
     is_enriched_domain_corner_.resize(obj_num);
@@ -1065,7 +1065,7 @@ void InvertibleMPMSolid<Scalar,Dim>::constructParticleDomainMesh()
         domain_corner_velocity_before_[obj_idx].resize(vert_num);
     }
 }
-    
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::clearParticleDomainMesh()
 {
@@ -1073,7 +1073,7 @@ void InvertibleMPMSolid<Scalar,Dim>::clearParticleDomainMesh()
         if(particle_domain_mesh_[i])
             delete particle_domain_mesh_[i];
 }
-    
+
 template <typename Scalar, int Dim>
 bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_idx, unsigned int particle_idx) const
 {
@@ -1102,7 +1102,7 @@ bool InvertibleMPMSolid<Scalar,Dim>::isEnrichCriteriaSatisfied(unsigned int obj_
     //rule two: dirichlet particle is not enriched
     if(this->is_dirichlet_particle_[obj_idx][particle_idx])
         return false;
-    
+
     //entire enrichment turned on, except those in rule dirichlet
     if(enable_entire_enrichment_)
         return true;
@@ -1177,7 +1177,7 @@ void InvertibleMPMSolid<Scalar,Dim>::applyGravityOnEnrichedDomainCorner(Scalar d
             if(is_enriched_domain_corner_[obj_idx][corner_idx])
                 domain_corner_velocity_[obj_idx][corner_idx][1] += dt*(-1)*(this->gravity_);
 }
- 
+
 template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::computeParticleInterpolationWeightAndGradientInInitialDomain()
 {
@@ -1254,7 +1254,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
     //we assume the particle has enriched domain corners
     SolidParticle<Scalar,Dim> *particle = this->particles_[obj_idx][particle_idx];
     unsigned int corner_num = (Dim == 2) ? 4 : 8;
-    //2x2(2D),2x2x2(3D) quadrature points per domain are used to evaluate the internal force on the domain corners 
+    //2x2(2D),2x2x2(3D) quadrature points per domain are used to evaluate the internal force on the domain corners
     //first get the quadrature points (different number for different dimension)
     std::vector<Vector<Scalar,Dim> > gauss_points;
     Scalar one_over_sqrt_3 = 1.0/sqrt(3.0);
@@ -1411,7 +1411,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveForParticleWithEnrichmentForwardEulerV
                         vel_iter != this->grid_velocity_(pair.node_idx).end(); ++vel_iter)
                         if(this->gridMass(vel_iter->first,pair.node_idx) > std::numeric_limits<Scalar>::epsilon())
                         {
-                            vel_iter->second += 
+                            vel_iter->second +=
                                 dt*(-1)*particle_initial_volume*first_PiolaKirchoff_stress*corner_grid_weight*particle_corner_gradient_[obj_idx][particle_idx][corner_idx]/this->grid_mass_(pair.node_idx)[obj_idx];
                         }
                 }
