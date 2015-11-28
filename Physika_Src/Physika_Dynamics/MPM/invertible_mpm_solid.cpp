@@ -615,6 +615,20 @@ unsigned int InvertibleMPMSolid<Scalar,Dim>::enrichedDomainCornerNum(unsigned in
 }
 
 template <typename Scalar, int Dim>
+bool InvertibleMPMSolid<Scalar, Dim>::isEnrichedDomainCorner(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    unsigned int corner_num = (Dim == 2) ? 4 : 8;
+    if (corner_idx >= corner_num)
+        throw PhysikaException("corner index out of range!");
+    unsigned int global_corner_idx = particle_domain_mesh_[object_idx]->eleVertIndex(particle_idx, corner_idx);
+    return is_enriched_domain_corner_[object_idx][global_corner_idx];    
+}
+
+template <typename Scalar, int Dim>
 Scalar InvertibleMPMSolid<Scalar, Dim>::domainCornerMass(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const
 {
     if (object_idx >= this->objectNum())

@@ -64,6 +64,7 @@ public:
     Scalar principalStretchThreshold() const; //return the threshold of principal stretch
     void enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const; //return the index of enriched particles
     unsigned int enrichedDomainCornerNum(unsigned int object_idx, unsigned int particle_idx) const; //return the number of enriched domain corners of given particle
+    bool isEnrichedDomainCorner(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //return enrichment status of domain corner
     Scalar domainCornerMass(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const; //return the mass of particle domain corner
     Vector<Scalar, Dim> domainCornerVelocity(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const;  //return the velocity of particle domain corner
     void setDomainCornerVelocity(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx, const Vector<Scalar, Dim> &velocity); //set velocity of particle domain corner

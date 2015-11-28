@@ -202,24 +202,40 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const En
         active_objects[0] = active_obj_idx_;
     }
     std::vector<Vector<unsigned int, Dim> > nodes_in_range;
-    std::vector<unsigned int> enriched_particles;
     unsigned int corner_num = Dim == 2 ? 4 : 8;
     SquareMatrix<Scalar, Dim> particle_deform_grad, left_rotation, diag_deform_grad, right_rotation, rotated_dP;
     Scalar stretch_threshold = invertible_mpm_solid_driver_->principalStretchThreshold();
     for (unsigned int active_idx = 0; active_idx < active_objects.size(); ++active_idx)
     {
         unsigned int obj_idx = active_objects[active_idx];
-        //grid nodes
         for (unsigned int particle_idx = 0; particle_idx < invertible_mpm_solid_driver_->particleNumOfObject(obj_idx); ++particle_idx)
         {
             SquareMatrix<Scalar, Dim> A_p(0);
             invertible_mpm_solid_driver_->gridNodesInRange(obj_idx, particle_idx, nodes_in_range);
             const SolidParticle<Scalar, Dim> &particle = invertible_mpm_solid_driver_->particle(obj_idx, particle_idx);
-            for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
-            {
-                const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
-                Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
-                A_p += x_diff[node_idx].outerProduct(weight_gradient);
+            unsigned int enriched_corner_num = invertible_mpm_solid_driver_->enrichedDomainCornerNum(obj_idx, particle_idx);
+            if (enriched_corner_num < corner_num)
+            {//grid nodes
+                for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
+                {
+                    const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
+                    Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
+                    A_p += x_diff[node_idx].outerProduct(weight_gradient);
+                }
+            }
+            if (enriched_corner_num > 0)
+            {//enriched domain corners
+                for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+                {
+                    if (invertible_mpm_solid_driver_->isEnrichedDomainCorner(obj_idx, particle_idx, corner_idx))
+                    {
+                        Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
+                        if (active_idx == -1)
+                            A_p += x_diff(obj_idx, particle_idx, corner_idx).outerProduct(weight_gradient);
+                        else
+                            A_p += x_diff(0, particle_idx, corner_idx).outerProduct(weight_gradient);
+                    }
+                }
             }
             //use technique from 'Teran et al. 05: Robust Quasistatic Finite Elements and Flesh Simulation' to ensure positive definiteness
             particle_deform_grad = particle.deformationGradient();
@@ -228,46 +244,30 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const En
             for (unsigned int row = 0; row < Dim; ++row)
                 if (diag_deform_grad(row, row) < stretch_threshold)
                     diag_deform_grad(row, row) = stretch_threshold;
-            rotated_dP = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(diag_deform_grad, left_rotation.transpose()*A_p*particle_deform_grad*right_rotation);
+            rotated_dP = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(diag_deform_grad, left_rotation.transpose()*A_p*right_rotation);
             A_p = left_rotation*rotated_dP*right_rotation.transpose();
-            for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
+            if (enriched_corner_num < corner_num)
             {
-                const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
-                Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
-                result[node_idx] += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
-            }            
-        }
-        //enriched domain corners
-        invertible_mpm_solid_driver_->enrichedParticles(obj_idx, enriched_particles);
-        for (unsigned int idx = 0; idx < enriched_particles.size(); ++idx)
-        {
-            unsigned int particle_idx = enriched_particles[idx];
-            const SolidParticle<Scalar, Dim> &particle = invertible_mpm_solid_driver_->particle(obj_idx, particle_idx);
-            SquareMatrix<Scalar, Dim> A_p(0);
-            for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-            {
-                Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
-                if (active_idx == -1)
-                    A_p += x_diff(obj_idx, particle_idx, corner_idx).outerProduct(weight_gradient);
-                else
-                    A_p += x_diff(0, particle_idx, corner_idx).outerProduct(weight_gradient);
+                for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
+                {
+                    const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
+                    Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
+                    result[node_idx] += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*weight_gradient;
+                }
             }
-            //use technique from 'Teran et al. 05: Robust Quasistatic Finite Elements and Flesh Simulation' to ensure positive definiteness
-            particle_deform_grad = particle.deformationGradient();
-            invertible_mpm_solid_driver_->diagonalizedParticleDeformationGradient(obj_idx, particle_idx, left_rotation, diag_deform_grad, right_rotation);
-            //clamp the principal stretch to the threshold if it's compressed too severely
-            for (unsigned int row = 0; row < Dim; ++row)
-                if (diag_deform_grad(row, row) < stretch_threshold)
-                    diag_deform_grad(row, row) = stretch_threshold;
-            rotated_dP = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(diag_deform_grad, left_rotation.transpose()*A_p*particle_deform_grad*right_rotation);
-            A_p = left_rotation*rotated_dP*right_rotation.transpose();
-            for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+            if (enriched_corner_num > 0)
             {
-                Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
-                if (active_idx == -1)
-                    result(obj_idx, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
-                else
-                    result(0, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
+                for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+                {
+                    if (invertible_mpm_solid_driver_->isEnrichedDomainCorner(obj_idx, particle_idx, corner_idx))
+                    {
+                        Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
+                        if (active_idx == -1)
+                            result(obj_idx, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*weight_gradient;
+                        else
+                            result(0, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*weight_gradient;
+                    }
+                }
             }
         }
     }
