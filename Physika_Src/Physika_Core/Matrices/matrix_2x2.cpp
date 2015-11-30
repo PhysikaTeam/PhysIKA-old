@@ -363,7 +363,7 @@ void SquareMatrix<Scalar,2>::singularValueDecomposition(SquareMatrix<Scalar,2> &
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
             temp_matrix(i,j) = static_cast<long double>(eigen_matrix_2x2_(i,j));
-    Eigen::JacobiSVD<Eigen::Matrix<long double,2,2> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
+    Eigen::JacobiSVD<Eigen::Matrix<long double,2,2> > svd(temp_matrix,Eigen::ComputeFullU|Eigen::ComputeFullV);
     const Eigen::Matrix<long double,2,2> &left = svd.matrixU(), &right = svd.matrixV();
     const Eigen::Matrix<long double,2,1> &values = svd.singularValues();
     for(unsigned int i = 0; i < 2; ++i)
