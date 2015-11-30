@@ -178,6 +178,34 @@ Scalar InvertibleMPMSolidLinearSystem<Scalar, Dim>::innerProduct(const Generaliz
 }
 
 template <typename Scalar, int Dim>
+void InvertibleMPMSolidLinearSystem<Scalar, Dim>::filter(GeneralizedVector<Scalar> &x) const
+{
+	try
+	{
+		EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
+		std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+		if (active_obj_idx_ == -1) //solve for all objects
+		{
+			invertible_mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+			for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+				if (invertible_mpm_solid_driver_->isDirichletGridNode(*iter))
+					xx[*iter] = Vector<Scalar, Dim>(0.0);
+		}
+		else
+		{
+			invertible_mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
+			for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+				if (invertible_mpm_solid_driver_->isDirichletGridNode(active_obj_idx_, *iter))
+					xx[*iter] = Vector<Scalar, Dim>(0.0);
+		}
+	}
+	catch (std::bad_cast &e)
+	{
+		throw PhysikaException("Incorrect argument type!");
+	}
+}
+
+template <typename Scalar, int Dim>
 void InvertibleMPMSolidLinearSystem<Scalar, Dim>::setActiveObject(int obj_idx)
 {
     active_obj_idx_ = obj_idx;

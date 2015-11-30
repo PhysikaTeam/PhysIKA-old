@@ -124,6 +124,33 @@ Scalar MPMSolidLinearSystem<Scalar, Dim>::innerProduct(const GeneralizedVector<S
 }
 
 template <typename Scalar, int Dim>
+void MPMSolidLinearSystem<Scalar, Dim>::filter(GeneralizedVector<Scalar> &x) const
+{
+	try{
+		UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &xx = dynamic_cast<UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim>&>(x);
+		std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+		if (active_obj_idx_ == -1) //solve for all objects
+		{
+			mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+			for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+				if (mpm_solid_driver_->isDirichletGridNode(*iter))
+					xx[*iter] = Vector<Scalar, Dim>(0.0);
+		}
+		else
+		{
+			mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
+			for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+				if (mpm_solid_driver_->isDirichletGridNode(active_obj_idx_,*iter))
+					xx[*iter] = Vector<Scalar, Dim>(0.0);
+		}
+	}
+	catch (std::bad_cast &e)
+	{
+		throw PhysikaException("Incorrect argument type!");
+	}
+}
+
+template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar,Dim>::setActiveObject(int obj_idx)
 {
     active_obj_idx_ = obj_idx;

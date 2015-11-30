@@ -254,6 +254,12 @@ void MPMSolid<Scalar,Dim>::activeGridNodes(unsigned int object_idx, std::vector<
 }
 
 template <typename Scalar, int Dim>
+bool MPMSolid<Scalar, Dim>::isDirichletGridNode(const Vector<unsigned int, Dim> &node_idx) const
+{
+	return is_dirichlet_grid_node_(node_idx).size() > 0;
+}
+
+template <typename Scalar, int Dim>
 bool MPMSolid<Scalar,Dim>::isDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const
 {
     if(object_idx >= this->objectNum())

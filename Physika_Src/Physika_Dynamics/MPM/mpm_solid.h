@@ -75,6 +75,7 @@ public:
     void resetContactMethod();  //reset the contact method to the one inherent in mpm
     //query for each object
     void activeGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &active_nodes) const;
+	bool isDirichletGridNode(const Vector<unsigned int, Dim> &node_idx) const; //return true if the node is set Dirichlet for any object
     bool isDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const;
     void dirichletGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &dirichlet_nodes) const;
     void gridNodesInRange(unsigned int object_idx, unsigned int particle_idx, std::vector<Vector<unsigned int, Dim> > &grid_nodes) const;

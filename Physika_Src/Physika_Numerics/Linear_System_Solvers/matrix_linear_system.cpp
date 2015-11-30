@@ -193,6 +193,12 @@ Scalar MatrixLinearSystem<Scalar>::innerProduct(const GeneralizedVector<Scalar> 
     }
 }
 
+template <typename Scalar>
+void MatrixLinearSystem<Scalar>::filter(GeneralizedVector<Scalar> &x) const
+{
+
+}
+
 //explicit instantiations
 template class MatrixLinearSystem<float>;
 template class MatrixLinearSystem<double>;

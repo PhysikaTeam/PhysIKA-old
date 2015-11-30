@@ -42,6 +42,10 @@ public:
 
     //the method that defines linear system specific inner-product of two vectors
     virtual Scalar innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const = 0;
+
+	//the filter procedure to maintain the invariant of some components in x during iterative solve
+	//used to apply constraints in simulation, ref. <Large Steps in Cloth Simulation>
+	virtual void filter(GeneralizedVector<Scalar> &x) const = 0;
 protected:
     //disable default copy
     LinearSystem(const LinearSystem<Scalar> &linear_system);

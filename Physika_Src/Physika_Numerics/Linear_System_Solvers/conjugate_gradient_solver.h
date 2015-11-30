@@ -2,6 +2,7 @@
  * @file conjugate_gradient_solver.h
  * @brief implementation of conjugate gradient solver for semi-definite sparse linear system Ax = b
  * @reference <An Introduction to the Conjugate Gradient Method without the Agonizing Pain>
+ *                     <Large Steps in Cloth Simulation>
  * @author Fei Zhu
  *
  * This file is part of Physika, a versatile physics simulation library.
@@ -20,6 +21,11 @@
 
 namespace Physika{
 
+/*
+ * Implementation of the modified conjugate gradient method with the technique introduced
+ * in <Large Steps in Cloth Simulation> to support constraints in simulation (e.g., Dirichlet BCs)
+ */
+
 template <typename Scalar>
 class ConjugateGradientSolver: public IterativeSolver<Scalar>
 {
@@ -29,7 +35,6 @@ public:
 protected:
     virtual bool solveWithoutPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x);
     virtual bool solveWithPreconditioner(const LinearSystem<Scalar> &system, const GeneralizedVector<Scalar> &b, GeneralizedVector<Scalar> &x);
-
 };
 
 }  //end of namespace Physika
