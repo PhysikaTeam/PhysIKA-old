@@ -147,7 +147,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
         *d = *s;
         *d += *temp; //d = s + beta*d
         this->iterations_used_ = this->iterations_used_ + 1;
-        this->residual_magnitude_sqr_ = delta;
+        this->residual_magnitude_sqr_ = system.innerProduct(*r,*r);
     }
     delete r;
     delete d;
@@ -163,7 +163,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
             std::cout << "did not converge";
         else
             std::cout << "converged";
-        std::cout << " in " << this->iterations_used_ << " iterations, residual: " << this->residualMagnitude() << ".\n";
+        std::cout << " in " << this->iterations_used_ << " iterations, residual: " << this->residualMagnitude()<< ".\n";
     }
     return status;
 }

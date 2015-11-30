@@ -17,6 +17,7 @@
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Utilities/physika_exception.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 #include "Physika_Dynamics/MPM/mpm_solid.h"
@@ -175,18 +176,100 @@ void MPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const UniformGridG
 }
 
 template <typename Scalar, int Dim>
+void MPMSolidLinearSystem<Scalar, Dim>::energyHessianDiagonalMultiply(const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &x_diff,
+                                                                      UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &result) const
+{
+    result.setValue(Vector<Scalar, Dim>(0));
+    std::vector<unsigned int> active_objects;
+    if (active_obj_idx_ == -1) //all objects solved together
+    {
+        active_objects.resize(mpm_solid_driver_->objectNum());
+        for (unsigned int obj_idx = 0; obj_idx < active_objects.size(); ++obj_idx)
+            active_objects[obj_idx] = obj_idx;
+    }
+    else  //solve for one active object
+    {
+        active_objects.resize(1);
+        active_objects[0] = active_obj_idx_;
+    }
+    std::vector<Vector<unsigned int, Dim> > nodes_in_range;
+    for (unsigned int active_idx = 0; active_idx < active_objects.size(); ++active_idx)
+    {
+        unsigned int obj_idx = active_objects[active_idx];
+        for (unsigned int particle_idx = 0; particle_idx < mpm_solid_driver_->particleNumOfObject(obj_idx); ++particle_idx)
+        {
+            SquareMatrix<Scalar, Dim> A_p(0);
+            mpm_solid_driver_->gridNodesInRange(obj_idx, particle_idx, nodes_in_range);
+            const SolidParticle<Scalar, Dim> &particle = mpm_solid_driver_->particle(obj_idx, particle_idx);
+            SquareMatrix<Scalar, Dim> particle_deform_grad = particle.deformationGradient();
+            for (unsigned int idx = 0; idx < nodes_in_range.size(); ++idx)
+            {
+                const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
+                Vector<Scalar, Dim> weight_gradient = mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
+                A_p = x_diff[node_idx].outerProduct(weight_gradient);
+                A_p = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(particle_deform_grad, A_p * particle_deform_grad);
+                result[node_idx] += mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
+            }
+        }
+    }
+}
+
+template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &x,
                                                                     UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &result) const
 {
-    //if (active_obj_idx_ == -1) //all objects solved together
-    //{
-    //    //TO DO
-    //}
-    //else  //solve for one active object
-    //{
-    //    //TO DO
-    //}
-    throw PhysikaException("Not implemented!");
+    //in order to compute diag(A)^-1*x, we compute 1/(diag(A)*1/x)
+    UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> rr = x;
+    Scalar dt_square = mpm_solid_driver_->computeTimeStep();
+    dt_square *= dt_square;
+    std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+    const Scalar big_scalar = 1.0e7;
+    if (active_obj_idx_ == -1) //all objects solved together
+    {
+        mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+            for (unsigned int dim = 0; dim < Dim; ++dim)
+            {
+                if (isEqual(rr[*iter][dim], static_cast<Scalar>(0.0)) == true)
+                    rr[*iter][dim] = big_scalar;  //approximation
+                else
+                    rr[*iter][dim] = 1.0 / rr[*iter][dim];
+            }
+        energyHessianDiagonalMultiply(rr, result);
+        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+            result[*iter] = rr[*iter] + dt_square*result[*iter] / mpm_solid_driver_->gridMass(*iter);
+        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+            for (unsigned int dim = 0; dim < Dim; ++dim)
+            {
+                if (isEqual(result[*iter][dim], static_cast<Scalar>(0.0)) == true)
+                    result[*iter][dim] = big_scalar; //approximation
+                else
+                    result[*iter][dim] = 1.0 / result[*iter][dim];
+            }
+    }
+    else  //solve for one active object
+    {
+        mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
+        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+            for (unsigned int dim = 0; dim < Dim; ++dim)
+            {
+                if (isEqual(rr[*iter][dim], static_cast<Scalar>(0.0)) == true)
+                    rr[*iter][dim] = big_scalar;
+                else
+                    rr[*iter][dim] = 1.0 / rr[*iter][dim];
+            }
+        energyHessianDiagonalMultiply(rr, result);
+        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+            result[*iter] = rr[*iter] + dt_square*result[*iter] / mpm_solid_driver_->gridMass(active_obj_idx_,*iter);
+        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
+            for (unsigned int dim = 0; dim < Dim; ++dim)
+            {
+                if (isEqual(result[*iter][dim], static_cast<Scalar>(0.0)) == true)
+                    result[*iter][dim] = big_scalar;  //approximation
+                else
+                    result[*iter][dim] = 1.0 / result[*iter][dim];
+            }
+    }
 }
 
 //explicit instantiations

@@ -80,7 +80,7 @@ elif compiler=='msvc':
     additional_libs.append('Advapi32')
 
 #SRC FILES
-src_files=['config_file_test.cpp']
+src_files=['linear_system_solvers_test.cpp']
 inc_files=[]
 #for dir,_,_ in os.walk(src_root_path):
 #    if dir not in ignored_src_path:

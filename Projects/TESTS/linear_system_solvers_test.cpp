@@ -58,5 +58,6 @@ int main()
     cout<<"Physika PCG solver with Jacobi preconditioner terminated in "<<cg_solver.iterationsUsed()<<" iterations\n";
     cout<<"Norm of residual :"<<cg_solver.residualMagnitude()<<"\n";
     cout<<"Solution: "<<x<<"\n";
+    getchar();
     return 0;
 }

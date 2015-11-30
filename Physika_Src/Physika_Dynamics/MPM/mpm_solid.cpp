@@ -1040,6 +1040,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         system_x_ = new UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim>(grid_node_num);
     if (system_solver_ == NULL) //CG solver by default
         system_solver_ = new ConjugateGradientSolver<Scalar>();
+    //system_solver_->enablePreconditioner();
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
     solveOnGridForwardEuler(dt); //explicit solve used as rhs and initial guess
     if (contact_method_) //contact method is used, solve each object independently
