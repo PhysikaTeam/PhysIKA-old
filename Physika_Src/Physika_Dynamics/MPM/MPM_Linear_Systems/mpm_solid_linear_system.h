@@ -44,9 +44,8 @@ protected:
     //potential energy Hessian acted on an arbitrary increment x_diff
     void energyHessianMultiply(const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &x_diff,
                                UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &result) const;
-    //diagonal of energy Hessian acted on an arbitrary increment x_diff, for jacobi precondition
-    void energyHessianDiagonalMultiply(const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &x_diff,
-                                       UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &result) const;
+    //diagonal of energy Hessian, for jacobi precondition
+    void energyHessianDiagonal(UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &diagonals) const;
     void jacobiPreconditionerMultiply(const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &x,
                                       UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &result) const;
     //disable default copy

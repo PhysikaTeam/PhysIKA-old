@@ -90,6 +90,10 @@ public:
     //set && get time stepping method
     void setTimeSteppingMethod(TimeSteppingMethod method);
     TimeSteppingMethod timeSteppingMethod() const;
+    //set && get the semi-implicit fraction, ref. <a material point method for snow simulation>
+    //only valid when BACKWARD_EULER is set by setTimeSteppingMethod()
+    void setImplicitSteppingFraction(Scalar fraction);
+    Scalar implicitSteppingFraction() const;
 protected:
     virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
@@ -112,6 +116,7 @@ protected:
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_external_force_; //external force(/N), not acceleration
     std::vector<CollidableObject<Scalar,Dim>*> collidable_objects_; //the kinematic collidable objects in scene
     TimeSteppingMethod integration_method_; 
+    Scalar implicit_step_fraction_;
 };
 
 }//namespace Physika

@@ -48,18 +48,19 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
         const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &xx = dynamic_cast<const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(x);
         EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &rr = dynamic_cast<EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >&>(result);
         energyHessianMultiply(xx, rr);
-        Scalar dt_square = invertible_mpm_solid_driver_->computeTimeStep();
+        Scalar dt_square = invertible_mpm_solid_driver_->timeStep();
         dt_square *= dt_square;
         std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
         std::vector<unsigned int> enriched_particles;
         unsigned int corner_num = Dim == 2 ? 4 : 8;
+        Scalar beta = invertible_mpm_solid_driver_->implicitSteppingFraction();
         if (active_obj_idx_ == -1)  //all objects solved together
         {
             invertible_mpm_solid_driver_->activeGridNodes(active_grid_nodes);
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
-                rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(node_idx);
+                rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(node_idx);
             }
             for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
             {
@@ -70,7 +71,7 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
                     for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
                     {
                         Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(obj_idx, particle_idx, corner_idx);
-                        rr(obj_idx, particle_idx, corner_idx) = xx(obj_idx, particle_idx, corner_idx) + dt_square*rr(obj_idx, particle_idx, corner_idx) / corner_mass;
+                        rr(obj_idx, particle_idx, corner_idx) = xx(obj_idx, particle_idx, corner_idx) + beta*dt_square*rr(obj_idx, particle_idx, corner_idx) / corner_mass;
                     }
                 }
             }
@@ -81,7 +82,7 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
-                rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(active_obj_idx_,node_idx);
+                rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(active_obj_idx_, node_idx);
             }
             invertible_mpm_solid_driver_->enrichedParticles(active_obj_idx_, enriched_particles);
             for (unsigned int i = 0; i < enriched_particles.size(); ++i)
@@ -90,7 +91,7 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
                 for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
                 {
                     Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(active_obj_idx_, particle_idx, corner_idx);
-                    rr(0, particle_idx, corner_idx) = xx(0, particle_idx, corner_idx) + dt_square*rr(0, particle_idx, corner_idx) / corner_mass;
+                    rr(0, particle_idx, corner_idx) = xx(0, particle_idx, corner_idx) + beta*dt_square*rr(0, particle_idx, corner_idx) / corner_mass;
                 }
             }
         }
@@ -303,10 +304,9 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const En
 }
 
 template <typename Scalar, int Dim>
-void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianDiagonalMultiply(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
-                                                                                EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
+void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianDiagonal(EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &diagonals) const
 {
-    result.setValue(Vector<Scalar, Dim>(0));
+    diagonals.setValue(Vector<Scalar, Dim>(0));
     std::vector<unsigned int> active_objects;
     if (active_obj_idx_ == -1) //all objects solved together
     {
@@ -344,10 +344,12 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianDiagonalMultiply(
                 {
                     const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
                     Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
-                    A_p = x_diff[node_idx].outerProduct(weight_gradient);
+                    A_p = weight_gradient.outerProduct(weight_gradient);
                     rotated_dP = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(diag_deform_grad, left_rotation.transpose()*A_p*right_rotation);
                     A_p = left_rotation*rotated_dP*right_rotation.transpose();
-                    result[node_idx] += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*weight_gradient;
+                    A_p = invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p;
+                    for (unsigned int i = 0; i < Dim; ++i)
+                        diagonals[node_idx][i] += A_p(i, i);
                 }
             }
             if (enriched_corner_num > 0)
@@ -358,10 +360,12 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::energyHessianDiagonalMultiply(
                     {
                         Vector<Scalar, Dim> weight_gradient = invertible_mpm_solid_driver_->particleDomainCornerGradient(obj_idx, particle_idx, corner_idx);
                         unsigned int idx = active_obj_idx_ == -1 ? obj_idx : 0;
-                        A_p = x_diff(idx, particle_idx, corner_idx).outerProduct(weight_gradient);
+                        A_p = weight_gradient.outerProduct(weight_gradient);
                         rotated_dP = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(diag_deform_grad, left_rotation.transpose()*A_p*right_rotation);
                         A_p = left_rotation*rotated_dP*right_rotation.transpose();
-                        result(idx, particle_idx, corner_idx) += invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*weight_gradient;
+                        A_p = invertible_mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p;
+                        for (unsigned int i = 0; i < Dim; ++i)
+                            diagonals(idx, particle_idx, corner_idx)[i] += A_p(i, i);
                     }
                 }
             }
@@ -373,44 +377,25 @@ template <typename Scalar, int Dim>
 void InvertibleMPMSolidLinearSystem<Scalar, Dim>::jacobiPreconditionerMultiply(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x,
                                                                                EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const
 {
-    //in order to compute diag(A)^-1*x, we compute 1/(diag(A)*1/x)
-    EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > rr = x;
-    Scalar dt_square = invertible_mpm_solid_driver_->computeTimeStep();
+    Scalar dt_square = invertible_mpm_solid_driver_->timeStep();
     dt_square *= dt_square;
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
     std::vector<unsigned int> enriched_particles;
     unsigned int corner_num = Dim == 2 ? 4 : 8;
-    const Scalar big_scalar = 1.0e7;
+    Scalar beta = invertible_mpm_solid_driver_->implicitSteppingFraction();
+    EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > diagonals = x;
     if (active_obj_idx_ == -1)  //all objects solved together
     {
         invertible_mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+        energyHessianDiagonal(diagonals);
         for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            for (unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if (isEqual(rr[*iter][dim], static_cast<Scalar>(0.0)) == true)
-                    rr[*iter][dim] = big_scalar; //approximation
-                else
-                    rr[*iter][dim] = 1.0 / rr[*iter][dim];
-            }
-        for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
         {
-            invertible_mpm_solid_driver_->enrichedParticles(obj_idx, enriched_particles);
-            for (std::vector<unsigned int>::iterator iter = enriched_particles.begin(); iter != enriched_particles.end(); ++iter)
-            {
-                unsigned int particle_idx = *iter;
-                for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-                    for (unsigned int dim = 0; dim < Dim; ++dim)
-                    {
-                        if (isEqual(rr(obj_idx, particle_idx, corner_idx)[dim], static_cast<Scalar>(0.0)) == true)
-                            rr(obj_idx, particle_idx, corner_idx)[dim] = big_scalar; //approximation
-                        else
-                            rr(obj_idx, particle_idx, corner_idx)[dim] = 1.0 / rr(obj_idx, particle_idx, corner_idx)[dim];
-                    }
-            }
+            SquareMatrix<Scalar, Dim> inv_diag(0.0);
+            Scalar grid_mass = invertible_mpm_solid_driver_->gridMass(*iter);
+            for (unsigned int i = 0; i < Dim; ++i)
+                inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            result[*iter] = inv_diag*x[*iter];
         }
-        energyHessianDiagonalMultiply(rr, result);
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            result[*iter] = rr[*iter] + dt_square*result[*iter] / invertible_mpm_solid_driver_->gridMass(*iter);
         for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
         {
             invertible_mpm_solid_driver_->enrichedParticles(obj_idx, enriched_particles);
@@ -420,93 +405,38 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::jacobiPreconditionerMultiply(c
                 for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
                 {
                     Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(obj_idx, particle_idx, corner_idx);
-                    result(obj_idx, particle_idx, corner_idx) = rr(obj_idx, particle_idx, corner_idx) + dt_square*result(obj_idx, particle_idx, corner_idx) / corner_mass;
+                    SquareMatrix<Scalar, Dim> inv_diag(0.0);
+                    for (unsigned int i = 0; i < Dim; ++i)
+                        inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals(obj_idx, particle_idx, corner_idx)[i] / corner_mass);
+                    result(obj_idx, particle_idx, corner_idx) = inv_diag*x(obj_idx, particle_idx, corner_idx);
                 }
-            }
-        }
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            for (unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if (isEqual(result[*iter][dim], static_cast<Scalar>(0.0)) == true)
-                    result[*iter][dim] = big_scalar; //approximation
-                else
-                    result[*iter][dim] = 1.0 / result[*iter][dim];
-            }
-        for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
-        {
-            invertible_mpm_solid_driver_->enrichedParticles(obj_idx, enriched_particles);
-            for (std::vector<unsigned int>::iterator iter = enriched_particles.begin(); iter != enriched_particles.end(); ++iter)
-            {
-                unsigned int particle_idx = *iter;
-                for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-                    for (unsigned int dim = 0; dim < Dim; ++dim)
-                    {
-                        if (isEqual(result(obj_idx, particle_idx, corner_idx)[dim], static_cast<Scalar>(0.0)) == true)
-                            result(obj_idx, particle_idx, corner_idx)[dim] = big_scalar; //approximation
-                        else
-                            result(obj_idx, particle_idx, corner_idx)[dim] = 1.0 / result(obj_idx, particle_idx, corner_idx)[dim];
-                    }
             }
         }
     }
     else //solve for active object
     {
         invertible_mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            for (unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if (isEqual(rr[*iter][dim], static_cast<Scalar>(0.0)) == true)
-                    rr[*iter][dim] = big_scalar; //approximation
-                else
-                    rr[*iter][dim] = 1.0 / rr[*iter][dim];
-            }
         invertible_mpm_solid_driver_->enrichedParticles(active_obj_idx_, enriched_particles);
-        for (std::vector<unsigned int>::iterator iter = enriched_particles.begin(); iter != enriched_particles.end(); ++iter)
+        energyHessianDiagonal(diagonals);
+        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
         {
-            unsigned int particle_idx = *iter;
-            for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-                for (unsigned int dim = 0; dim < Dim; ++dim)
-                {
-                    if (isEqual(rr(0, particle_idx, corner_idx)[dim], static_cast<Scalar>(0.0)) == true)
-                        rr(0, particle_idx, corner_idx)[dim] = big_scalar; //approximation
-                    else
-                        rr(0, particle_idx, corner_idx)[dim] = 1.0 / rr(0, particle_idx, corner_idx)[dim];
-                }
+            SquareMatrix<Scalar, Dim> inv_diag(0.0);
+            Scalar grid_mass = invertible_mpm_solid_driver_->gridMass(active_obj_idx_,*iter);
+            for (unsigned int i = 0; i < Dim; ++i)
+                inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            result[*iter] = inv_diag*x[*iter];
         }
-        energyHessianDiagonalMultiply(rr, result);
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            result[*iter] = rr[*iter] + dt_square*result[*iter] / invertible_mpm_solid_driver_->gridMass(active_obj_idx_,*iter);
-        invertible_mpm_solid_driver_->enrichedParticles(active_obj_idx_, enriched_particles);
         for (std::vector<unsigned int>::iterator iter = enriched_particles.begin(); iter != enriched_particles.end(); ++iter)
         {
             unsigned int particle_idx = *iter;
             for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
             {
                 Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(active_obj_idx_, particle_idx, corner_idx);
-                result(0, particle_idx, corner_idx) = rr(0, particle_idx, corner_idx) + dt_square*result(0, particle_idx, corner_idx) / corner_mass;
+                SquareMatrix<Scalar, Dim> inv_diag(0.0);
+                for (unsigned int i = 0; i < Dim; ++i)
+                    inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals(0, particle_idx, corner_idx)[i] / corner_mass);
+                result(0, particle_idx, corner_idx) = inv_diag*x(0,particle_idx,corner_idx);
             }
-        }
-
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            for (unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if (isEqual(result[*iter][dim], static_cast<Scalar>(0.0)) == true)
-                    result[*iter][dim] = big_scalar; //approximation
-                else
-                    result[*iter][dim] = 1.0 / result[*iter][dim];
-            }
-        invertible_mpm_solid_driver_->enrichedParticles(active_obj_idx_, enriched_particles);
-        for (std::vector<unsigned int>::iterator iter = enriched_particles.begin(); iter != enriched_particles.end(); ++iter)
-        {
-            unsigned int particle_idx = *iter;
-            for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
-                for (unsigned int dim = 0; dim < Dim; ++dim)
-                {
-                    if (isEqual(result(0, particle_idx, corner_idx)[dim], static_cast<Scalar>(0.0)) == true)
-                        result(0, particle_idx, corner_idx)[dim] = big_scalar; //approximation
-                    else
-                        result(0, particle_idx, corner_idx)[dim] = 1.0 / result(0, particle_idx, corner_idx)[dim];
-                }
         }
     }
 }

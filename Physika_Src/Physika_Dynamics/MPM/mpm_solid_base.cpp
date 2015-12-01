@@ -29,14 +29,14 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase()
-    :MPMBase<Scalar,Dim>(),integration_method_(FORWARD_EULER)
+    :MPMBase<Scalar, Dim>(), integration_method_(FORWARD_EULER), implicit_step_fraction_(1.0)
 {
     this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
 }
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),integration_method_(FORWARD_EULER)
+    :MPMBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), integration_method_(FORWARD_EULER), implicit_step_fraction_(1.0)
 {
     this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
 }
@@ -297,6 +297,32 @@ template <typename Scalar, int Dim>
 TimeSteppingMethod MPMSolidBase<Scalar, Dim>::timeSteppingMethod() const
 {
     return integration_method_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::setImplicitSteppingFraction(Scalar fraction)
+{
+    bool invalid = false;
+    if (fraction < 0)
+    {
+        fraction = 0;
+        invalid = true;
+    }
+    if (fraction > 1)
+    {
+        fraction = 1;
+        invalid = true;
+    }
+    if (invalid)
+        std::cerr << "Warning: Invalid implicit stepping fraction, clamped to [0,1]!\n";
+    implicit_step_fraction_ = fraction;
+}
+
+
+template <typename Scalar, int Dim>
+Scalar MPMSolidBase<Scalar, Dim>::implicitSteppingFraction() const
+{
+    return implicit_step_fraction_;
 }
 
 template <typename Scalar, int Dim>

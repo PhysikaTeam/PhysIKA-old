@@ -46,16 +46,17 @@ void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> 
         const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &xx = dynamic_cast<const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim>&>(x);
         UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &rr = dynamic_cast<UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim>&>(result);
         energyHessianMultiply(xx, rr);
-        Scalar dt_square = mpm_solid_driver_->computeTimeStep();
+        Scalar dt_square = mpm_solid_driver_->timeStep();
         dt_square *= dt_square;
         std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
+        Scalar beta = mpm_solid_driver_->implicitSteppingFraction();
         if (active_obj_idx_ == -1) //all objects solved together
         {
             mpm_solid_driver_->activeGridNodes(active_grid_nodes);
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
-                rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / mpm_solid_driver_->gridMass(node_idx);
+                rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / mpm_solid_driver_->gridMass(node_idx);
             }
         }
         else  //solve for active object
@@ -64,7 +65,7 @@ void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> 
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
-                rr[node_idx] = xx[node_idx] + dt_square*rr[node_idx] / mpm_solid_driver_->gridMass(active_obj_idx_, node_idx);
+                rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / mpm_solid_driver_->gridMass(active_obj_idx_, node_idx);
             }
         }
     }
@@ -203,10 +204,9 @@ void MPMSolidLinearSystem<Scalar, Dim>::energyHessianMultiply(const UniformGridG
 }
 
 template <typename Scalar, int Dim>
-void MPMSolidLinearSystem<Scalar, Dim>::energyHessianDiagonalMultiply(const UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &x_diff,
-                                                                      UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &result) const
+void MPMSolidLinearSystem<Scalar, Dim>::energyHessianDiagonal(UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> &diagonals) const
 {
-    result.setValue(Vector<Scalar, Dim>(0));
+    diagonals.setValue(Vector<Scalar, Dim>(0));
     std::vector<unsigned int> active_objects;
     if (active_obj_idx_ == -1) //all objects solved together
     {
@@ -233,9 +233,11 @@ void MPMSolidLinearSystem<Scalar, Dim>::energyHessianDiagonalMultiply(const Unif
             {
                 const Vector<unsigned int, Dim> &node_idx = nodes_in_range[idx];
                 Vector<Scalar, Dim> weight_gradient = mpm_solid_driver_->weightGradient(obj_idx, particle_idx, node_idx);
-                A_p = x_diff[node_idx].outerProduct(weight_gradient);
+                A_p = (particle_deform_grad.transpose()*weight_gradient).outerProduct(weight_gradient);
                 A_p = particle.constitutiveModel().firstPiolaKirchhoffStressDifferential(particle_deform_grad, A_p * particle_deform_grad);
-                result[node_idx] += mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p*particle_deform_grad.transpose()*weight_gradient;
+                A_p = mpm_solid_driver_->particleInitialVolume(obj_idx, particle_idx)*A_p;
+                for (unsigned int i = 0; i < Dim; ++i)
+                    diagonals[node_idx][i] += A_p(i, i);
             }
         }
     }
@@ -245,57 +247,36 @@ template <typename Scalar, int Dim>
 void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &x,
                                                                     UniformGridGeneralizedVector<Vector<Scalar,Dim>,Dim> &result) const
 {
-    //in order to compute diag(A)^-1*x, we compute 1/(diag(A)*1/x)
-    UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> rr = x;
-    Scalar dt_square = mpm_solid_driver_->computeTimeStep();
+    Scalar dt_square = mpm_solid_driver_->timeStep();
     dt_square *= dt_square;
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
-    const Scalar big_scalar = 1.0e7;
+    UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim> diagonals = x;
+    Scalar beta = mpm_solid_driver_->implicitSteppingFraction();
     if (active_obj_idx_ == -1) //all objects solved together
     {
         mpm_solid_driver_->activeGridNodes(active_grid_nodes);
+        energyHessianDiagonal(diagonals);
         for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            for (unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if (isEqual(rr[*iter][dim], static_cast<Scalar>(0.0)) == true)
-                    rr[*iter][dim] = big_scalar;  //approximation
-                else
-                    rr[*iter][dim] = 1.0 / rr[*iter][dim];
-            }
-        energyHessianDiagonalMultiply(rr, result);
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            result[*iter] = rr[*iter] + dt_square*result[*iter] / mpm_solid_driver_->gridMass(*iter);
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            for (unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if (isEqual(result[*iter][dim], static_cast<Scalar>(0.0)) == true)
-                    result[*iter][dim] = big_scalar; //approximation
-                else
-                    result[*iter][dim] = 1.0 / result[*iter][dim];
-            }
+        {
+            SquareMatrix<Scalar, Dim> inv_diag(0.0);
+            Scalar grid_mass = mpm_solid_driver_->gridMass(*iter);
+            for (unsigned int i = 0; i < Dim; ++i)
+                inv_diag(i,i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i]/grid_mass);
+            result[*iter] = inv_diag*x[*iter];
+        }
     }
     else  //solve for one active object
     {
         mpm_solid_driver_->activeGridNodes(active_obj_idx_, active_grid_nodes);
+        energyHessianDiagonal(diagonals);
         for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            for (unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if (isEqual(rr[*iter][dim], static_cast<Scalar>(0.0)) == true)
-                    rr[*iter][dim] = big_scalar;
-                else
-                    rr[*iter][dim] = 1.0 / rr[*iter][dim];
-            }
-        energyHessianDiagonalMultiply(rr, result);
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            result[*iter] = rr[*iter] + dt_square*result[*iter] / mpm_solid_driver_->gridMass(active_obj_idx_,*iter);
-        for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
-            for (unsigned int dim = 0; dim < Dim; ++dim)
-            {
-                if (isEqual(result[*iter][dim], static_cast<Scalar>(0.0)) == true)
-                    result[*iter][dim] = big_scalar;  //approximation
-                else
-                    result[*iter][dim] = 1.0 / result[*iter][dim];
-            }
+        {
+            SquareMatrix<Scalar, Dim> inv_diag(0.0);
+            Scalar grid_mass = mpm_solid_driver_->gridMass(active_obj_idx_,*iter);
+            for (unsigned int i = 0; i < Dim; ++i)
+                inv_diag(i,i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            result[*iter] = inv_diag*x[*iter];
+        }
     }
 }
 

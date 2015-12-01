@@ -485,7 +485,12 @@ void MPMSolid<Scalar,Dim>::solveOnGrid(Scalar dt)
     case FORWARD_EULER:
         solveOnGridForwardEuler(dt);
         break;
+    case TRAPEZOID:
+        this->implicit_step_fraction_ = 0.5;
+        solveOnGridBackwardEuler(dt);
+        break;
     case BACKWARD_EULER:
+        this->implicit_step_fraction_ = 1.0;
         solveOnGridBackwardEuler(dt);
         break;
     default:
@@ -1046,7 +1051,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         system_x_ = new UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim>(grid_node_num);
     if (system_solver_ == NULL) //CG solver by default
         system_solver_ = new ConjugateGradientSolver<Scalar>();
-    //system_solver_->enablePreconditioner();
+    system_solver_->enablePreconditioner();
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
     solveOnGridForwardEuler(dt); //explicit solve used as rhs and initial guess
     if (contact_method_) //contact method is used, solve each object independently

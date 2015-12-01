@@ -94,6 +94,7 @@ public:
     inline void disableTimer(){enable_timer_=false;}
     inline bool isTimerEnabled() const {return enable_timer_;}
     inline Scalar currentTime() const {return time_;} //return current time point
+    inline Scalar timeStep() const { return dt_; } //return the time step, avoid calling computeTimeStep() multiple times in a single step
 
 protected:
     unsigned int start_frame_;

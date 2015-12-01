@@ -834,7 +834,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         invertible_system_x_ = new EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
     if (this->system_solver_ == NULL) //CG solver by default
         this->system_solver_ = new ConjugateGradientSolver<Scalar>();
-    //this->system_solver_->enablePreconditioner();
+    this->system_solver_->enablePreconditioner();
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
     std::vector<std::vector<unsigned int> > enriched_particles;
     std::vector<VolumetricMesh<Scalar, Dim>*> particle_domain_topology;

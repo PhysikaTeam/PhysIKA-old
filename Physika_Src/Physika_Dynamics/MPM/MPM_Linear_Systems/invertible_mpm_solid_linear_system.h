@@ -45,9 +45,8 @@ protected:
     //potential energy Hessian acted on an arbitrary increment x_diff
     void energyHessianMultiply(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
                                EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const;
-    //diagonal of energy Hessian acted on an arbitrary increment x_diff, for jacobi precondition
-    void energyHessianDiagonalMultiply(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x_diff,
-                                       EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const;
+    //diagonal of energy Hessian, for jacobi precondition
+    void energyHessianDiagonal(EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &diagonals) const;
     void jacobiPreconditionerMultiply(const EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &x,
                                       EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> > &result) const;
     //disable default copy

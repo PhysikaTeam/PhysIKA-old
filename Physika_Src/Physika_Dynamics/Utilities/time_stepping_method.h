@@ -31,6 +31,7 @@ namespace Physika{
  enum TimeSteppingMethod{
      FORWARD_EULER,
      BACKWARD_EULER,
+     TRAPEZOID,
      VERLET,
      NEWMARK,
      LEAP_FROG,
@@ -48,6 +49,8 @@ namespace Physika{
      case BACKWARD_EULER:
          return std::string("BACKWARD_EULER");
          break;
+     case TRAPEZOID:
+         return std::string("TRAPEZOID");
      case VERLET:
          return std::string("VERLET");
          break;
