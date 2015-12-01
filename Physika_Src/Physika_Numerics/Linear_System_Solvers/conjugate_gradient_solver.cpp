@@ -47,7 +47,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSys
     system.multiply(x,*r); //r = Ax
     (*r) *= -1;
     (*r) += b; //r = b - Ax
-	system.filter(*r); //filter procedure to keep invariant of some components
+    system.filter(*r); //filter procedure to keep invariant of some components
     GeneralizedVector<Scalar> *d = r->clone();
     Scalar delta_0 = system.innerProduct(*r, *r); 
     Scalar delta = delta_0;
@@ -57,7 +57,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSys
     while((this->iterations_used_ < this->max_iterations_) && (delta > tolerance_sqr*delta_0))
     {
         system.multiply(*d,*q);
-		system.filter(*q);
+        system.filter(*q);
         Scalar alpha = delta / (system.innerProduct(*d, *q));
         *temp = *d;
         *temp *= alpha;
@@ -67,7 +67,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSys
             system.multiply(x,*r);
             (*r) *= -1;
             (*r) += b; //r = b - Ax
-			system.filter(*r);
+            system.filter(*r);
         }
         else
         {
@@ -82,7 +82,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithoutPreconditioner(const LinearSys
         *temp *= beta;
         *d = *r;
         *d += *temp;  //d = r + beta*d
-		system.filter(*d); 
+        system.filter(*d); 
         this->iterations_used_ = this->iterations_used_ + 1;
         this->residual_magnitude_sqr_ = delta;
     }
@@ -116,10 +116,10 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
     system.multiply(x,*r); //r = Ax
     (*r) *= -1;
     (*r) += b; //r = b - Ax
-	system.filter(*r);
+    system.filter(*r);
     GeneralizedVector<Scalar> *d = r->clone();
     system.preconditionerMultiply(*r,*d); //d = Tr
-	system.filter(*d);
+    system.filter(*d);
     Scalar delta_0 = system.innerProduct(*r,*d);
     Scalar delta = delta_0;
     GeneralizedVector<Scalar> *q = d->clone();
@@ -129,7 +129,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
     while((this->iterations_used_ < this->max_iterations_) &&(delta > tolerance_sqr*delta_0))
     {
         system.multiply(*d,*q); //q = Ad
-		system.filter(*q);
+        system.filter(*q);
         Scalar alpha = delta/(system.innerProduct(*d,*q));
         *temp = *d;
         *temp *= alpha;
@@ -139,7 +139,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
             system.multiply(x,*r);
             (*r) *= -1;
             (*r) += b; //r = b - Ax
-			system.filter(*r);
+            system.filter(*r);
         }
         else
         {
@@ -155,7 +155,7 @@ bool ConjugateGradientSolver<Scalar>::solveWithPreconditioner(const LinearSystem
         *temp *= beta;
         *d = *s;
         *d += *temp; //d = s + beta*d
-		system.filter(*d);
+        system.filter(*d);
         this->iterations_used_ = this->iterations_used_ + 1;
         this->residual_magnitude_sqr_ = system.innerProduct(*r,*r);
     }
