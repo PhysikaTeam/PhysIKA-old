@@ -589,6 +589,39 @@ Scalar InvertibleMPMSolid<Scalar, Dim>::principalStretchThreshold() const
 }
 
 template <typename Scalar, int Dim>
+unsigned int InvertibleMPMSolid<Scalar, Dim>::totalDomainCornerNum() const
+{
+    unsigned int total_num = 0;
+    for (typename std::vector<VolumetricMesh<Scalar, Dim>*>::const_iterator iter = particle_domain_mesh_.begin();
+        iter != particle_domain_mesh_.end(); ++iter)
+    {
+        PHYSIKA_ASSERT(*iter);
+        total_num += (*iter)->vertNum();
+    }
+    return total_num;
+}
+
+template <typename Scalar, int Dim>
+unsigned int InvertibleMPMSolid<Scalar, Dim>::domainCornerNum(unsigned int object_idx) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    PHYSIKA_ASSERT(particle_domain_mesh_[object_idx]);
+    return particle_domain_mesh_[object_idx]->vertNum();
+}
+
+template <typename Scalar, int Dim>
+unsigned int InvertibleMPMSolid<Scalar, Dim>::globalDomainCornerIndex(unsigned int object_idx, unsigned int particle_idx, unsigned int corner_idx) const
+{
+    if (object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= this->particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    PHYSIKA_ASSERT(particle_domain_mesh_[object_idx]);
+    return particle_domain_mesh_[object_idx]->eleVertIndex(particle_idx, corner_idx);
+}
+
+template <typename Scalar, int Dim>
 void InvertibleMPMSolid<Scalar,Dim>::enrichedParticles(unsigned int object_idx, std::vector<unsigned int> &enriched_particles) const
 {
     if(object_idx >= this->objectNum())

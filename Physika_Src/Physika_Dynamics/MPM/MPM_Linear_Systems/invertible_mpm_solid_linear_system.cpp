@@ -139,14 +139,20 @@ Scalar InvertibleMPMSolidLinearSystem<Scalar, Dim>::innerProduct(const Generaliz
             }
             for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
             {
+                std::vector<unsigned char> visit_tag(invertible_mpm_solid_driver_->domainCornerNum(obj_idx),0x00);
                 invertible_mpm_solid_driver_->enrichedParticles(obj_idx, enriched_particles);
                 for (unsigned int i = 0; i < enriched_particles.size(); ++i)
                 {
                     unsigned int particle_idx = enriched_particles[i];
                     for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
                     {
-                        Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(obj_idx, particle_idx, corner_idx);
-                        result += xx(obj_idx, particle_idx, corner_idx).dot(yy(obj_idx, particle_idx, corner_idx))*corner_mass;
+                        unsigned int global_idx = invertible_mpm_solid_driver_->globalDomainCornerIndex(obj_idx, particle_idx, corner_idx);
+                        if (visit_tag[global_idx] == 0x00)
+                        {
+                            Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(obj_idx, particle_idx, corner_idx);
+                            result += xx(obj_idx, particle_idx, corner_idx).dot(yy(obj_idx, particle_idx, corner_idx))*corner_mass;
+                            visit_tag[global_idx] = 0x01;
+                        }
                     }
                 }
             }
@@ -160,13 +166,19 @@ Scalar InvertibleMPMSolidLinearSystem<Scalar, Dim>::innerProduct(const Generaliz
                 result += xx[node_idx].dot(yy[node_idx])*invertible_mpm_solid_driver_->gridMass(active_obj_idx_,node_idx);
             }
             invertible_mpm_solid_driver_->enrichedParticles(active_obj_idx_, enriched_particles);
+            std::vector<unsigned char> visit_tag(invertible_mpm_solid_driver_->domainCornerNum(active_obj_idx_), 0x00);
             for (unsigned int i = 0; i < enriched_particles.size(); ++i)
             {
                 unsigned int particle_idx = enriched_particles[i];
                 for (unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
                 {
-                    Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(active_obj_idx_, particle_idx, corner_idx);
-                    result += xx(0, particle_idx, corner_idx).dot(yy(0, particle_idx, corner_idx))*corner_mass;
+                    unsigned int global_idx = invertible_mpm_solid_driver_->globalDomainCornerIndex(active_obj_idx_, particle_idx, corner_idx);
+                    if (visit_tag[global_idx] == 0x00)
+                    {
+                        Scalar corner_mass = invertible_mpm_solid_driver_->domainCornerMass(active_obj_idx_, particle_idx, corner_idx);
+                        result += xx(0, particle_idx, corner_idx).dot(yy(0, particle_idx, corner_idx))*corner_mass;
+                        visit_tag[global_idx] = 0x01;
+                    }
                 }
             }
         }
