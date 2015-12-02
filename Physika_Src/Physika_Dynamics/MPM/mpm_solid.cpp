@@ -314,10 +314,21 @@ Scalar MPMSolid<Scalar, Dim>::weight(unsigned int object_idx, unsigned int parti
         throw PhysikaException("object index out of range!");
     if (particle_idx >= this->particleNumOfObject(object_idx))
         throw PhysikaException("particle index out of range!");
-    const SolidParticle<Scalar, Dim> &particle = this->particle(object_idx, particle_idx);
-    Vector<Scalar, Dim> particle_pos = particle.position();
-    Vector<Scalar, Dim> node_pos = this->grid_.node(node_idx);
-    return this->weight_function_->weight(node_pos - particle_pos);
+    unsigned int pair_idx = 0;
+    for (; pair_idx < particle_grid_pair_num_[object_idx][particle_idx]; ++pair_idx)
+    {
+        if (particle_grid_weight_and_gradient_[object_idx][particle_idx][pair_idx].node_idx == node_idx)
+            break;
+    }
+    return particle_grid_weight_and_gradient_[object_idx][particle_idx][pair_idx].weight_value;
+
+    //const SolidParticle<Scalar, Dim> &particle = this->particle(object_idx, particle_idx);
+    //Vector<Scalar, Dim> particle_pos = particle.position();
+    //Vector<Scalar, Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
+    //Vector<Scalar, Dim> grid_dx = (this->grid_).dX();
+    //for (unsigned int dim = 0; dim < Dim; ++dim)
+    //    particle_to_node[dim] /= grid_dx[dim];
+    //return this->weight_function_->weight(particle_to_node);
 }
 
 template <typename Scalar, int Dim>
@@ -327,11 +338,21 @@ Vector<Scalar, Dim> MPMSolid<Scalar, Dim>::weightGradient(unsigned int object_id
         throw PhysikaException("object index out of range!");
     if (particle_idx >= this->particleNumOfObject(object_idx))
         throw PhysikaException("particle index out of range!");
-    const SolidParticle<Scalar, Dim> &particle = this->particle(object_idx, particle_idx);
-    Vector<Scalar, Dim> particle_pos = particle.position();
-    Vector<Scalar, Dim> node_pos = this->grid_.node(node_idx);
-    return this->weight_function_->gradient(node_pos - particle_pos);
+    unsigned int pair_idx = 0;
+    for (; pair_idx < particle_grid_pair_num_[object_idx][particle_idx]; ++pair_idx)
+    {
+        if (particle_grid_weight_and_gradient_[object_idx][particle_idx][pair_idx].node_idx == node_idx)
+            break;
+    }
+    return particle_grid_weight_and_gradient_[object_idx][particle_idx][pair_idx].gradient_value;
 
+    /*const SolidParticle<Scalar, Dim> &particle = this->particle(object_idx, particle_idx);
+    Vector<Scalar, Dim> particle_pos = particle.position();
+    Vector<Scalar, Dim> particle_to_node = particle_pos - (this->grid_).node(node_idx);
+    Vector<Scalar, Dim> grid_dx = (this->grid_).dX();
+    for (unsigned int dim = 0; dim < Dim; ++dim)
+        particle_to_node[dim] /= grid_dx[dim];
+    return this->weight_function_->gradient(particle_to_node);*/
 }
 
 template <typename Scalar, int Dim>

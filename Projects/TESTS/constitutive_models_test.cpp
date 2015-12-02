@@ -131,6 +131,6 @@ int main()
     isotropic_hyperelastic_material = &corotated_linear_material;
     isotropic_hyperelastic_material->printInfo();
     testGradients(isotropic_hyperelastic_material);
-
+    getchar();
     return 0;
 }
