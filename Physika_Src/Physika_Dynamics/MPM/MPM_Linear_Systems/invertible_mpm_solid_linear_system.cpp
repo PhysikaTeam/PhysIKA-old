@@ -13,6 +13,7 @@
 */
 
 #include <typeinfo>
+#include <limits>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
@@ -60,7 +61,9 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
-                rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(node_idx);
+                Scalar grid_mass = invertible_mpm_solid_driver_->gridMass(node_idx);
+                if (grid_mass > std::numeric_limits<Scalar>::epsilon())
+                    rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / grid_mass;
             }
             for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
             {
@@ -82,7 +85,9 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::multiply(const GeneralizedVect
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
-                rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / invertible_mpm_solid_driver_->gridMass(active_obj_idx_, node_idx);
+                Scalar grid_mass = invertible_mpm_solid_driver_->gridMass(active_obj_idx_, node_idx);
+                if (grid_mass > std::numeric_limits<Scalar>::epsilon())
+                    rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / grid_mass;
             }
             invertible_mpm_solid_driver_->enrichedParticles(active_obj_idx_, enriched_particles);
             for (unsigned int i = 0; i < enriched_particles.size(); ++i)
@@ -404,8 +409,11 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::jacobiPreconditionerMultiply(c
         {
             SquareMatrix<Scalar, Dim> inv_diag(0.0);
             Scalar grid_mass = invertible_mpm_solid_driver_->gridMass(*iter);
-            for (unsigned int i = 0; i < Dim; ++i)
-                inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            if (grid_mass > std::numeric_limits<Scalar>::epsilon())
+            {
+                for (unsigned int i = 0; i < Dim; ++i)
+                    inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            }
             result[*iter] = inv_diag*x[*iter];
         }
         for (unsigned int obj_idx = 0; obj_idx < invertible_mpm_solid_driver_->objectNum(); ++obj_idx)
@@ -434,8 +442,11 @@ void InvertibleMPMSolidLinearSystem<Scalar, Dim>::jacobiPreconditionerMultiply(c
         {
             SquareMatrix<Scalar, Dim> inv_diag(0.0);
             Scalar grid_mass = invertible_mpm_solid_driver_->gridMass(active_obj_idx_,*iter);
-            for (unsigned int i = 0; i < Dim; ++i)
-                inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            if (grid_mass > std::numeric_limits<Scalar>::epsilon())
+            {
+                for (unsigned int i = 0; i < Dim; ++i)
+                    inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            }
             result[*iter] = inv_diag*x[*iter];
         }
         for (std::vector<unsigned int>::iterator iter = enriched_particles.begin(); iter != enriched_particles.end(); ++iter)

@@ -13,6 +13,7 @@
  */
 
 #include <typeinfo>
+#include <limits>
 #include <vector>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
@@ -56,7 +57,9 @@ void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> 
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
-                rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / mpm_solid_driver_->gridMass(node_idx);
+                Scalar grid_mass = mpm_solid_driver_->gridMass(node_idx);
+                if (grid_mass > std::numeric_limits<Scalar>::epsilon())
+                    rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / grid_mass;
             }
         }
         else  //solve for active object
@@ -65,7 +68,9 @@ void MPMSolidLinearSystem<Scalar,Dim>::multiply(const GeneralizedVector<Scalar> 
             for (unsigned int i = 0; i < active_grid_nodes.size(); ++i)
             {
                 Vector<unsigned int, Dim> &node_idx = active_grid_nodes[i];
-                rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / mpm_solid_driver_->gridMass(active_obj_idx_, node_idx);
+                Scalar grid_mass = mpm_solid_driver_->gridMass(active_obj_idx_, node_idx);
+                if (grid_mass > std::numeric_limits<Scalar>::epsilon())
+                    rr[node_idx] = xx[node_idx] + beta*dt_square*rr[node_idx] / grid_mass;
             }
         }
     }
@@ -260,8 +265,11 @@ void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const Unifor
         {
             SquareMatrix<Scalar, Dim> inv_diag(0.0);
             Scalar grid_mass = mpm_solid_driver_->gridMass(*iter);
-            for (unsigned int i = 0; i < Dim; ++i)
-                inv_diag(i,i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i]/grid_mass);
+            if (grid_mass >  std::numeric_limits<Scalar>::epsilon())
+            {
+                for (unsigned int i = 0; i < Dim; ++i)
+                    inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            }
             result[*iter] = inv_diag*x[*iter];
         }
     }
@@ -272,9 +280,12 @@ void MPMSolidLinearSystem<Scalar,Dim>::jacobiPreconditionerMultiply(const Unifor
         for (typename std::vector<Vector<unsigned int, Dim> >::iterator iter = active_grid_nodes.begin(); iter != active_grid_nodes.end(); ++iter)
         {
             SquareMatrix<Scalar, Dim> inv_diag(0.0);
-            Scalar grid_mass = mpm_solid_driver_->gridMass(active_obj_idx_,*iter);
-            for (unsigned int i = 0; i < Dim; ++i)
-                inv_diag(i,i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            Scalar grid_mass = mpm_solid_driver_->gridMass(active_obj_idx_, *iter);
+            if (grid_mass  > std::numeric_limits<Scalar>::epsilon())
+            {
+                for (unsigned int i = 0; i < Dim; ++i)
+                    inv_diag(i, i) = 1.0 / (1 + beta*dt_square*diagonals[*iter][i] / grid_mass);
+            }
             result[*iter] = inv_diag*x[*iter];
         }
     }
