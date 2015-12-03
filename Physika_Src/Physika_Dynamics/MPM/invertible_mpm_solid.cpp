@@ -48,6 +48,7 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid()
 {
     //only works with RobustCPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
+    invertible_mpm_system_ = new InvertibleMPMSolidLinearSystem<Scalar, Dim>(this);
 }
 
 template <typename Scalar, int Dim>
@@ -59,6 +60,7 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, uns
 {
     //only works with RobustCPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
+    invertible_mpm_system_ = new InvertibleMPMSolidLinearSystem<Scalar, Dim>(this);
 }
 
 template <typename Scalar, int Dim>
@@ -71,6 +73,7 @@ InvertibleMPMSolid<Scalar,Dim>::InvertibleMPMSolid(unsigned int start_frame, uns
 {
     //only works with RobustCPDI2
     CPDIMPMSolid<Scalar,Dim>::template setCPDIUpdateMethod<RobustCPDI2UpdateMethod<Scalar,Dim> >();
+    invertible_mpm_system_ = new InvertibleMPMSolidLinearSystem<Scalar, Dim>(this);
 }
 
 template <typename Scalar, int Dim>
@@ -857,17 +860,11 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
 {
     if (this->objectNum() == 0) //no objects in scene
         return;
-    //create linear system && solver
-    if (invertible_mpm_system_ == NULL)
-        invertible_mpm_system_ = new InvertibleMPMSolidLinearSystem<Scalar, Dim>(this);
-    Vector<unsigned int, Dim> grid_node_num = this->grid_.nodeNum();
-    if (invertible_system_rhs_ == NULL)
-        invertible_system_rhs_ = new EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
-    if (invertible_system_x_ == NULL)
-        invertible_system_x_ = new EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(grid_node_num);
-    if (this->system_solver_ == NULL) //CG solver by default
-        this->system_solver_ = new ConjugateGradientSolver<Scalar>();
-    this->system_solver_->enablePreconditioner();
+    //linear system && solver should have been initialized
+    PHYSIKA_ASSERT(invertible_mpm_system_);
+    PHYSIKA_ASSERT(invertible_system_rhs_);
+    PHYSIKA_ASSERT(invertible_system_x_);
+    PHYSIKA_ASSERT(this->linear_system_solver_);
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
     std::vector<std::vector<unsigned int> > enriched_particles;
     std::vector<VolumetricMesh<Scalar, Dim>*> particle_domain_topology;
@@ -899,7 +896,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
                 }
             }
             //solve
-            bool status = this->system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
+            bool status = this->linear_system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
             if (status)
             {
                 //apply the solve result only if implicit solve converges, otherwise explicit results are used
@@ -939,7 +936,7 @@ void InvertibleMPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
         invertible_system_x_->setActivePattern(active_grid_nodes, enriched_particles, particle_domain_topology);
         invertible_mpm_system_->setActiveObject(-1);
         //solve
-        bool status = this->system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
+        bool status = this->linear_system_solver_->solve(*invertible_mpm_system_, *invertible_system_rhs_, *invertible_system_x_);
         if (status)
         {
             //apply the solve result only if implicit solve converges, otherwise explicit results are used
@@ -1509,6 +1506,26 @@ SquareMatrix<Scalar,Dim> InvertibleMPMSolid<Scalar,Dim>::factorizeParticleSkewDe
     else
         throw PhysikaException("Wrong dimension specified!");
     return skew;
+}
+
+
+template <typename Scalar, int Dim>
+void InvertibleMPMSolid<Scalar, Dim>::synchronizeGridData()
+{
+    Vector<unsigned int, Dim> node_num = this->grid_.nodeNum();
+    for (unsigned int i = 0; i < Dim; ++i)
+    {
+        this->is_dirichlet_grid_node_.resize(node_num[i], i);
+        this->grid_mass_.resize(node_num[i], i);
+        this->grid_velocity_.resize(node_num[i], i);
+        this->grid_velocity_before_.resize(node_num[i], i);
+    }
+    if (invertible_system_rhs_)
+        delete invertible_system_rhs_;
+    invertible_system_rhs_ = new EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(node_num);
+    if (invertible_system_x_)
+        delete invertible_system_x_;
+    invertible_system_x_ = new EnrichedMPMUniformGridGeneralizedVector<Vector<Scalar, Dim> >(node_num);
 }
 
 //explicit instantiation

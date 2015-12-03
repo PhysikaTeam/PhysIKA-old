@@ -120,6 +120,7 @@ protected:
     void diagonalizeParticleDeformationGradient();
     //factorize skew information from the particle deformation gradient
     SquareMatrix<Scalar,Dim> factorizeParticleSkewDeformation(unsigned int obj_idx, unsigned int particle_idx) const;
+    virtual void synchronizeGridData(); //synchronize grid data as grid changes
 protected:
     //for each object, store one volumetric mesh to represent the topology of particle domains
     //each element corresponds to one particle domain

@@ -51,6 +51,19 @@ void MPMSolidPluginPrint<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
 }
 
 template <typename Scalar, int Dim>
+void MPMSolidPluginPrint<Scalar, Dim>::setDriver(DriverBase<Scalar>* driver)
+{
+    if (driver == NULL)
+        throw PhysikaException("Error: NULL driver pointer provided to driver plugin!");
+    MPMSolidBase<Scalar, Dim> *mpm_driver = dynamic_cast<MPMSolidBase<Scalar, Dim>*>(driver);
+    if (mpm_driver == NULL)
+        throw PhysikaException("Wrong type of driver specified!");
+    else
+        mpm_driver->enableSolverStatusLog();
+    this->driver_ = mpm_driver;
+}
+
+template <typename Scalar, int Dim>
 void MPMSolidPluginPrint<Scalar,Dim>::onRasterize()
 {
     std::cout<<"Rasterize particle data to grid.\n";

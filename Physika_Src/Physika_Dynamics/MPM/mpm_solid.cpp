@@ -38,23 +38,26 @@ namespace Physika{
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid()
     :MPMSolidBase<Scalar,Dim>(), contact_method_(NULL),
-    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL), system_solver_(NULL)
+    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
 {
+    mpm_solid_system_ = new MPMSolidLinearSystem<Scalar, Dim>(this);
 }
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :MPMSolidBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), contact_method_(NULL),
-    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL), system_solver_(NULL)
+    mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
 {
+    mpm_solid_system_ = new MPMSolidLinearSystem<Scalar, Dim>(this);
 }
 
 template <typename Scalar, int Dim>
 MPMSolid<Scalar,Dim>::MPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file,
                                const Grid<Scalar,Dim> &grid)
      :MPMSolidBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), grid_(grid), contact_method_(NULL),
-      mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL), system_solver_(NULL)
+      mpm_solid_system_(NULL), system_rhs_(NULL), system_x_(NULL)
 {
+    mpm_solid_system_ = new MPMSolidLinearSystem<Scalar, Dim>(this);
     synchronizeGridData();
 }
 
@@ -69,8 +72,6 @@ MPMSolid<Scalar,Dim>::~MPMSolid()
         delete system_rhs_;
     if(system_x_)
         delete system_x_;
-    if(system_solver_)
-        delete system_solver_;
 }
 
 template <typename Scalar, int Dim>
@@ -897,6 +898,12 @@ void MPMSolid<Scalar,Dim>::synchronizeGridData()
         grid_velocity_.resize(node_num[i],i);
         grid_velocity_before_.resize(node_num[i],i);
     }
+    if (system_rhs_)
+        delete system_rhs_;
+    system_rhs_ = new UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim>(node_num);
+    if (system_x_)
+        delete system_x_;
+    system_x_ = new UniformGridGeneralizedVector<Vector<Scalar, Dim>, Dim>(node_num);
 }
 
 template <typename Scalar, int Dim>
@@ -1062,17 +1069,11 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
 {
     if(this->objectNum() == 0) //no objects in scene
         return;
-    //create linear system && solver
-    if (mpm_solid_system_ == NULL)
-        mpm_solid_system_ = new MPMSolidLinearSystem<Scalar,Dim>(this);
-    Vector<unsigned int, Dim> grid_node_num = grid_.nodeNum();
-    if (system_rhs_ == NULL)
-        system_rhs_ = new UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim>(grid_node_num);
-    if (system_x_ == NULL)
-        system_x_ = new UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim>(grid_node_num);
-    if (system_solver_ == NULL) //CG solver by default
-        system_solver_ = new ConjugateGradientSolver<Scalar>();
-    system_solver_->enablePreconditioner();
+    //linear system && solver should have been initialized
+    PHYSIKA_ASSERT(mpm_solid_system_);
+    PHYSIKA_ASSERT(system_rhs_);
+    PHYSIKA_ASSERT(system_x_);
+    PHYSIKA_ASSERT(this->linear_system_solver_);
     std::vector<Vector<unsigned int, Dim> > active_grid_nodes;
     solveOnGridForwardEuler(dt); //explicit solve used as rhs and initial guess
     if (contact_method_) //contact method is used, solve each object independently
@@ -1089,7 +1090,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
                 (*system_x_)[active_grid_nodes[i]] = (*system_rhs_)[active_grid_nodes[i]];
             }
             //solve
-            bool status = system_solver_->solve(*mpm_solid_system_, *system_rhs_, *system_x_);
+            bool status = this->linear_system_solver_->solve(*mpm_solid_system_, *system_rhs_, *system_x_);
             if (status)
             {
                 //apply the solve result only if implicit solve converges, otherwise explicit results are used
@@ -1112,7 +1113,7 @@ void MPMSolid<Scalar,Dim>::solveOnGridBackwardEuler(Scalar dt)
             (*system_x_)[active_grid_nodes[i]] = (*system_rhs_)[active_grid_nodes[i]];
         }
         //solve
-        bool status = system_solver_->solve(*mpm_solid_system_,*system_rhs_,*system_x_);
+        bool status = this->linear_system_solver_->solve(*mpm_solid_system_,*system_rhs_,*system_x_);
         if (status)
         {
             //apply the solve result only if implicit solve converges, otherwise explicit results are used

@@ -32,7 +32,6 @@ template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
 template<typename Scalar,int Dim> class MPMSolidContactMethod;
 template<typename Scalar,int Dim> class MPMSolidLinearSystem;
-template<typename Scalar> class LinearSystemSolver;
 
 /*
  * MPMSolid: simulate solid with MPM
@@ -132,7 +131,6 @@ protected:
     MPMSolidLinearSystem<Scalar, Dim> *mpm_solid_system_;
     UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim> *system_rhs_; //the right hand side of the linear system Ax = b
     UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim> *system_x_;  //the unknown x of the linear system Ax = b
-    LinearSystemSolver<Scalar> *system_solver_; //the solver used to solve Ax = b
 };
 
 }  //end of namespace Physika

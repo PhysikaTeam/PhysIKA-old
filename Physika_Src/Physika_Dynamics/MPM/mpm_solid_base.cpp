@@ -20,6 +20,7 @@
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Numerics/Linear_System_Solvers/conjugate_gradient_solver.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
@@ -29,16 +30,19 @@ namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase()
-    :MPMBase<Scalar, Dim>(), integration_method_(FORWARD_EULER), implicit_step_fraction_(1.0)
+    :MPMBase<Scalar, Dim>(), integration_method_(FORWARD_EULER), implicit_step_fraction_(1.0), linear_system_solver_(NULL)
 {
     this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
+    linear_system_solver_ = new ConjugateGradientSolver<Scalar>(); //CG solver by default
 }
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :MPMBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), integration_method_(FORWARD_EULER), implicit_step_fraction_(1.0)
+    :MPMBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), integration_method_(FORWARD_EULER),
+    implicit_step_fraction_(1.0), linear_system_solver_(NULL)
 {
     this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
+    linear_system_solver_ = new ConjugateGradientSolver<Scalar>(); //CG solver by default
 }
 
 template <typename Scalar, int Dim>
@@ -53,6 +57,9 @@ MPMSolidBase<Scalar,Dim>::~MPMSolidBase()
     for(unsigned int i = 0; i < collidable_objects_.size(); ++i)
         if(collidable_objects_[i])
             delete collidable_objects_[i];
+    //delete linear solver
+    if (linear_system_solver_)
+        delete linear_system_solver_;
 }
 
 template <typename Scalar, int Dim>
@@ -323,6 +330,48 @@ template <typename Scalar, int Dim>
 Scalar MPMSolidBase<Scalar, Dim>::implicitSteppingFraction() const
 {
     return implicit_step_fraction_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::enableSolverPreconditioner()
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->enablePreconditioner();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::disableSolverPreconditioner()
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->disablePreconditioner();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::setSolverTolerance(Scalar tol)
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->setTolerance(tol);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::setSolverMaxIterations(unsigned int iter)
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->setMaxIterations(iter);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::enableSolverStatusLog()
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->enableStatusLog();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::disableSolverStatusLog()
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->disableStatusLog();
 }
 
 template <typename Scalar, int Dim>

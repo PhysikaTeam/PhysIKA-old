@@ -22,7 +22,7 @@ template <typename Scalar>
 IterativeSolver<Scalar>::IterativeSolver()
     :LinearSystemSolver<Scalar>(),
     tolerance_(1.0e-6),max_iterations_(1000),
-    residual_magnitude_sqr_(0), iterations_used_(0), status_log_(true)
+    residual_magnitude_sqr_(0), iterations_used_(0), status_log_(false)
 {
     residual_magnitude_sqr_ = (std::numeric_limits<Scalar>::max)();
 }

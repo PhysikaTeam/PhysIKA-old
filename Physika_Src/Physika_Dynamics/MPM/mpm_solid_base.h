@@ -26,7 +26,8 @@ namespace Physika{
 
 template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
-template<typename Scalar,int Dim> class CollidableObject;
+template<typename Scalar, int Dim> class CollidableObject;
+template<typename Scalar> class IterativeSolver;
 
 /*
  * MPMSolidBase: base class of all MPM drivers for solid
@@ -94,6 +95,14 @@ public:
     //only valid when BACKWARD_EULER is set by setTimeSteppingMethod()
     void setImplicitSteppingFraction(Scalar fraction);
     Scalar implicitSteppingFraction() const;
+
+    //set parameters to the iterative solver for implicit time integration
+    void enableSolverPreconditioner();
+    void disableSolverPreconditioner();
+    void setSolverTolerance(Scalar tol);
+    void setSolverMaxIterations(unsigned int iter);
+    void enableSolverStatusLog();
+    void disableSolverStatusLog();
 protected:
     virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
@@ -115,8 +124,10 @@ protected:
     std::vector<std::vector<Scalar> > particle_initial_volume_;
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_external_force_; //external force(/N), not acceleration
     std::vector<CollidableObject<Scalar,Dim>*> collidable_objects_; //the kinematic collidable objects in scene
-    TimeSteppingMethod integration_method_; 
+    TimeSteppingMethod integration_method_;
+    //for implicit time integration
     Scalar implicit_step_fraction_;
+    IterativeSolver<Scalar> *linear_system_solver_; //the iterative solver used to solve Ax = b
 };
 
 }//namespace Physika

@@ -31,6 +31,7 @@ public:
     virtual void onEndFrame(unsigned int frame);
     virtual void onBeginTimeStep(Scalar time, Scalar dt);
     virtual void onEndTimeStep(Scalar time, Scalar dt);
+    virtual void setDriver(DriverBase<Scalar>* driver);
 
     //MPM Solid driver specific virtual methods
     virtual void onRasterize();
