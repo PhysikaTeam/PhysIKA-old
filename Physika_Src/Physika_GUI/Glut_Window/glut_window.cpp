@@ -18,6 +18,7 @@
 #include <sstream>
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_Core/Image/image.h"
 #include "Physika_IO/Image_IO/image_io.h"
@@ -398,10 +399,7 @@ bool GlutWindow::saveScreen()
 void GlutWindow::displayFrameRate() const
 {
     if(!glutGet(GLUT_INIT_STATE))  //window is not created
-    {
-        std::cerr<<"Cannot display frame rate before a window is created.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot display frame rate before a window is created.");
     if(display_fps_)
     {
         static unsigned int frame = 0, time = 0, time_base = 0;

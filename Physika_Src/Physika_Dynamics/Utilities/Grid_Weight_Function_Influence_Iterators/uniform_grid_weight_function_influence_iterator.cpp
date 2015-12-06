@@ -17,6 +17,7 @@
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Range/range.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 
 namespace Physika{
@@ -89,11 +90,8 @@ operator++ (int)
 template <typename Scalar, int Dim>
 Vector<unsigned int,Dim> UniformGridWeightFunctionInfluenceIterator<Scalar,Dim>::nodeIndex() const
 {
-    if(this->valid()==false)
-    {
-        std::cerr<<"Error: invalid UniformGridWeightFunctionInfluenceIterator, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->valid() == false)
+        throw PhysikaException("Invalid UniformGridWeightFunctionInfluenceIterator!");
     return node_idx_grid_.node(node_iter_.nodeIndex());
 }
 

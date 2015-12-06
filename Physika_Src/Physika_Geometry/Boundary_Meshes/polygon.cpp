@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Boundary_Meshes/polygon.h"
 using std::vector;
 using std::string;
@@ -115,10 +116,7 @@ const Vector<Scalar,2>& Polygon<Scalar>::vertexPosition(unsigned int vert_idx) c
 {
     bool index_valid = (vert_idx>=0)&&(vert_idx<vertex_positions_.size());
     if(!index_valid)
-    {
-        std::cerr<<"Polygon vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Polygon vertex index out of range!");
     return vertex_positions_[vert_idx];
 }
 
@@ -133,11 +131,8 @@ template <typename Scalar>
 void Polygon<Scalar>::setVertexPosition(unsigned int vert_idx, const Vector<Scalar,2> &position)
 {
     bool index_valid = (vert_idx>=0)&&(vert_idx<vertex_positions_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon vertex index out of range!");
     vertex_positions_[vert_idx] = position;
 }
 
@@ -152,11 +147,8 @@ template <typename Scalar>
 const Vector<Scalar,2>& Polygon<Scalar>::vertexNormal(unsigned int normal_idx) const
 {
     bool index_valid = (normal_idx>=0)&&(normal_idx<vertex_normals_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon vertex normal index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon vertex normal index out of range!");
     return vertex_normals_[normal_idx];
 }
 
@@ -170,12 +162,9 @@ const Vector<Scalar,2>& Polygon<Scalar>::vertexNormal(const Vertex<Scalar> &vert
 template <typename Scalar>
 void Polygon<Scalar>::setVertexNormal(unsigned int normal_idx, const Vector<Scalar,2> &normal)
 {
-    bool index_valid = (normal_idx>=0)&&(normal_idx<vertex_normals_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon vertex normal index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    bool index_valid = (normal_idx >= 0) && (normal_idx < vertex_normals_.size());
+    if (!index_valid)
+        throw PhysikaException("Polygon vertex normal index out of range!");
     vertex_normals_[normal_idx] = normal;
 }
 
@@ -190,11 +179,8 @@ template <typename Scalar>
 const Vector<Scalar,2>& Polygon<Scalar>::vertexTextureCoordinate(unsigned int texture_idx) const
 {
     bool index_valid = (texture_idx>=0)&&(texture_idx<vertex_textures_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon vertex texture index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon vertex texture index out of range!");
     return vertex_textures_[texture_idx];
 }
 
@@ -209,11 +195,8 @@ template <typename Scalar>
 void Polygon<Scalar>::setVertexTextureCoordinate(unsigned int texture_idx, const Vector<Scalar,2> &texture_coordinate)
 {
     bool index_valid = (texture_idx>=0)&&(texture_idx<vertex_textures_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon vertex texture index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon vertex texture index out of range!");
     vertex_textures_[texture_idx] = texture_coordinate;
 }
 
@@ -229,10 +212,7 @@ const EdgeGroup<Scalar,2>& Polygon<Scalar>::group(unsigned int group_idx) const
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
     if(!index_valid)
-    {
-        std::cerr<<"Polygon group index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Polygon group index out of range!");
     return groups_[group_idx];
 }
 
@@ -240,11 +220,8 @@ template <typename Scalar>
 EdgeGroup<Scalar,2>& Polygon<Scalar>::group(unsigned int group_idx)
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon group index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon group index out of range!");
     return groups_[group_idx];
 }
 
@@ -252,11 +229,8 @@ template <typename Scalar>
 const EdgeGroup<Scalar,2>* Polygon<Scalar>::groupPtr(unsigned int group_idx) const
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon group index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon group index out of range!");
     return &(groups_[group_idx]);
 }
 
@@ -264,11 +238,8 @@ template <typename Scalar>
 EdgeGroup<Scalar,2>* Polygon<Scalar>::groupPtr(unsigned int group_idx)
 {
     bool index_valid = (group_idx>=0)&&(group_idx<groups_.size());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon group index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon group index out of range!");
     return &(groups_[group_idx]);
 }
 
@@ -324,11 +295,8 @@ template <typename Scalar>
 const Edge<Scalar,2>& Polygon<Scalar>::edge(unsigned int edge_idx) const 
 {
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon edge index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon edge index out of range!");
 	unsigned int current_edge_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
@@ -340,9 +308,8 @@ const Edge<Scalar,2>& Polygon<Scalar>::edge(unsigned int edge_idx) const
 		}
 		else
 			current_edge_sum += group_edge_num;
-	}
-	std::cerr<<"Polygon edge index out of range!\n";
-	std::exit(EXIT_FAILURE);
+    }
+    throw PhysikaException("Polygon edge index out of range!");
     return groups_[0].edge(0);
 }
 
@@ -350,11 +317,8 @@ template <typename Scalar>
 Edge<Scalar,2>& Polygon<Scalar>::edge(unsigned int edge_idx) 
 {
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon edge index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon edge index out of range!");
 	unsigned int current_edge_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
@@ -366,9 +330,8 @@ Edge<Scalar,2>& Polygon<Scalar>::edge(unsigned int edge_idx)
 		}
 		else
 			current_edge_sum += group_edge_num;
-	}
-	std::cerr<<"Polygon edge index out of range!\n";
-	std::exit(EXIT_FAILURE);
+    }
+    throw PhysikaException("Polygon edge index out of range!");
     return groups_[0].edge(0);
 }
 
@@ -376,11 +339,8 @@ template <typename Scalar>
 const Edge<Scalar,2>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) const 
 {
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon edge index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon edge index out of range!");
 	unsigned int current_edge_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
@@ -392,9 +352,8 @@ const Edge<Scalar,2>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) const
 		}
 		else
 			current_edge_sum += group_edge_num;
-	}
-	std::cerr<<"Polygon edge index out of range!\n";
-	std::exit(EXIT_FAILURE);
+    }
+    throw PhysikaException("Polygon edge index out of range!");
     return groups_[0].edgePtr(0);
 }
 
@@ -402,11 +361,8 @@ template <typename Scalar>
 Edge<Scalar,2>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) 
 {
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
-    if(!index_valid)
-    {
-        std::cerr<<"Polygon edge index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (!index_valid)
+        throw PhysikaException("Polygon edge index out of range!");
 	unsigned int current_edge_sum = 0;
 	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
 	{
@@ -418,9 +374,8 @@ Edge<Scalar,2>* Polygon<Scalar>::edgePtr(unsigned int edge_idx)
 		}
 		else
 			current_edge_sum += group_edge_num;
-	}
-	std::cerr<<"Polygon edge index out of range!\n";
-	std::exit(EXIT_FAILURE);
+    }
+    throw PhysikaException("Polygon edge index out of range!");
     return groups_[0].edgePtr(0);
 }
 

@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 
 namespace Physika{
@@ -149,11 +150,8 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::node(const Vector<unsigned int,Dim> &no
 {
     for(unsigned int i = 0; i < Dim; ++i)
     {
-        if(node_idx[i]>cell_num_[i])
-        {
-            std::cerr<<"Error: Grid node index out of range, program abort!\n";
-            std::exit(EXIT_FAILURE);
-        }
+        if (node_idx[i] > cell_num_[i])
+            throw PhysikaException("Grid node index out of range!");
     }
     Vector<Scalar,Dim> bias;
     for(unsigned int i = 0; i < Dim; ++i)
@@ -166,11 +164,8 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::cellCenter(const Vector<unsigned int,Di
 {
     for(unsigned int i = 0; i < Dim; ++i)
     {
-        if(cell_idx[i]>=cell_num_[i])
-        {
-            std::cerr<<"Error: Grid cell index out of range, program abort!\n";
-            std::exit(EXIT_FAILURE);
-        }
+        if (cell_idx[i] >= cell_num_[i])
+            throw PhysikaException("Grid node index out of range!");
     }
     Vector<Scalar,Dim> cor_node = node(cell_idx);
     return cor_node+0.5*dx_;
@@ -181,11 +176,8 @@ Vector<Scalar,Dim> GridBase<Scalar,Dim>::cellMinCornerNode(const Vector<unsigned
 {
     for(unsigned int i = 0; i < Dim; ++i)
     {
-        if(cell_idx[i]>=cell_num_[i])
-        {
-            std::cerr<<"Error: Grid cell index out of range, program abort!\n";
-            std::exit(EXIT_FAILURE);
-        }
+        if (cell_idx[i] >= cell_num_[i])
+            throw PhysikaException("Grid node index out of range!");
     }
     return node(cell_idx);
 }

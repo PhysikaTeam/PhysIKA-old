@@ -15,6 +15,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Cartesian_Grids/grid_iterator.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 
@@ -48,22 +49,16 @@ GridIteratorBase<Scalar,Dim>& GridIteratorBase<Scalar,Dim>::operator= (const Gri
 template <typename Scalar,int Dim>
 bool GridIteratorBase<Scalar,Dim>::operator== (const GridIteratorBase<Scalar,Dim> &iterator) const
 {
-    if((this->grid_==NULL)||(iterator.grid_==NULL))
-    {
-        std::cerr<<"Undefined operator == for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if ((this->grid_ == NULL) || (iterator.grid_ == NULL))
+        throw PhysikaException("Undefined operator == for uninitialized iterator!");
     return (index_==iterator.index_)&&(grid_==iterator.grid_);
 }
 
 template <typename Scalar,int Dim>
 bool GridIteratorBase<Scalar,Dim>::operator!= (const GridIteratorBase<Scalar,Dim> &iterator) const
 {
-    if((this->grid_==NULL)||(iterator.grid_==NULL))
-    {
-        std::cerr<<"Undefined operator != for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if ((this->grid_ == NULL) || (iterator.grid_ == NULL))
+        throw PhysikaException("Undefined operator != for uninitialized iterator!");
     return (!(index_==iterator.index_)) || (grid_!=iterator.grid_);
 }
 
@@ -144,11 +139,8 @@ bool GridNodeIterator<Scalar,Dim>::operator!= (const GridNodeIterator<Scalar,Dim
 template <typename Scalar,int Dim>
 GridNodeIterator<Scalar,Dim>& GridNodeIterator<Scalar,Dim>::operator++ ()
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator ++ for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator ++ for uninitialized iterator!");
     Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
     for(int i = Dim-1; i >= 0; --i)
@@ -167,11 +159,8 @@ GridNodeIterator<Scalar,Dim>& GridNodeIterator<Scalar,Dim>::operator++ ()
 template <typename Scalar,int Dim>
 GridNodeIterator<Scalar,Dim>& GridNodeIterator<Scalar,Dim>::operator-- ()
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator -- for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator -- for uninitialized iterator!");
     Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
     for(int i = Dim-1; i >= 0; --i)
@@ -190,11 +179,8 @@ GridNodeIterator<Scalar,Dim>& GridNodeIterator<Scalar,Dim>::operator-- ()
 template <typename Scalar,int Dim>
 GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator++ (int)
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator ++ for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator ++ for uninitialized iterator!");
     GridNodeIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
@@ -214,11 +200,8 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator++ (int)
 template <typename Scalar,int Dim>
 GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator-- (int)
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator -- for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator -- for uninitialized iterator!");
     GridNodeIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> node_num = (this->grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
@@ -238,11 +221,8 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator-- (int)
 template <typename Scalar,int Dim>
 GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator+ (int stride) const
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator + for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator + for uninitialized iterator!");
     GridNodeIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> node_num = (iterator.grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = iterator.index_;
@@ -255,11 +235,8 @@ GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator+ (int stride
 template <typename Scalar,int Dim>
 GridNodeIterator<Scalar,Dim> GridNodeIterator<Scalar,Dim>::operator- (int stride) const
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator - for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator - for uninitialized iterator!");
     GridNodeIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> node_num = (iterator.grid_)->nodeNum();
     Vector<unsigned int,Dim> &index = iterator.index_;
@@ -273,10 +250,7 @@ template <typename Scalar,int Dim>
 Vector<unsigned int,Dim> GridNodeIterator<Scalar,Dim>::nodeIndex() const
 {
     if(this->validCheck()==false)
-    {
-        std::cerr<<"nodeIndex(): Invalid iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("nodeIndex(): Invalid iterator!");
     return this->index_;
 }
 
@@ -331,10 +305,7 @@ template <typename Scalar,int Dim>
 GridCellIterator<Scalar,Dim>& GridCellIterator<Scalar,Dim>::operator++ ()
 {
     if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator ++ for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Undefined operator ++ for uninitialized iterator!");
     Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
     for(int i = Dim-1; i >= 0; --i)
@@ -353,11 +324,8 @@ GridCellIterator<Scalar,Dim>& GridCellIterator<Scalar,Dim>::operator++ ()
 template <typename Scalar,int Dim>
 GridCellIterator<Scalar,Dim>& GridCellIterator<Scalar,Dim>::operator-- ()
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator -- for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator -- for uninitialized iterator!");
     Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
     for(int i = Dim-1; i >= 0; --i)
@@ -376,11 +344,8 @@ GridCellIterator<Scalar,Dim>& GridCellIterator<Scalar,Dim>::operator-- ()
 template <typename Scalar,int Dim>
 GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator++ (int)
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator ++ for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator ++ for uninitialized iterator!");
     GridCellIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
@@ -400,11 +365,8 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator++ (int)
 template <typename Scalar,int Dim>
 GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator-- (int)
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator -- for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator -- for uninitialized iterator!");
     GridCellIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> cell_num = (this->grid_)->cellNum();
     Vector<unsigned int,Dim> &index = this->index_; //for ease of coding
@@ -424,11 +386,8 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator-- (int)
 template <typename Scalar,int Dim>
 GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator+ (int stride) const
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator + for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator + for uninitialized iterator!");
     GridCellIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> cell_num = (iterator.grid_)->cellNum();
     Vector<unsigned int,Dim> &index = iterator.index_;
@@ -441,11 +400,8 @@ GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator+ (int stride
 template <typename Scalar,int Dim>
 GridCellIterator<Scalar,Dim> GridCellIterator<Scalar,Dim>::operator- (int stride) const
 {
-    if(this->grid_==NULL)
-    {
-        std::cerr<<"Undefined operator - for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if (this->grid_ == NULL)
+        throw PhysikaException("Undefined operator - for uninitialized iterator!");
     GridCellIterator<Scalar,Dim> iterator(*this);
     Vector<unsigned int,Dim> cell_num = (iterator.grid_)->cellNum();
     Vector<unsigned int,Dim> &index = iterator.index_;
@@ -459,10 +415,7 @@ template <typename Scalar,int Dim>
 Vector<unsigned int,Dim> GridCellIterator<Scalar,Dim>::cellIndex() const
 {
     if(this->validCheck()==false)
-    {
-        std::cerr<<"cellIndex(): Invalid iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("cellIndex(): Invalid iterator!");
     return this->index_;
 }
 
