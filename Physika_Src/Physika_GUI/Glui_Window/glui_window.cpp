@@ -65,6 +65,7 @@ void GluiWindow::createWindow()
     glutSpecialFunc(special_function_);
     glutMotionFunc(motion_function_);
     glutMouseFunc(mouse_function_);
+    glutMouseWheelFunc(mouse_wheel_function_);
     PHYSIKA_ASSERT(glui_);
     glui_->set_main_gfx_window(window_id_);
     GLUI_Master.set_glutIdleFunc(idle_function_);

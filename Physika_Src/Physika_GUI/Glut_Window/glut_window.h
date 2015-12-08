@@ -162,6 +162,7 @@ public:
     void setSpecialFunction(void (*func)(int key, int x, int y));
     void setMotionFunction(void (*func)(int x, int y));
     void setMouseFunction(void (*func)(int button, int state, int x, int y));
+    void setMouseWheelFunction(void(*func)(int wheel, int direction, int x, int y));
     void setInitFunction(void (*func)(void)); //the init function before entering mainloop
     static void bindDefaultKeys(unsigned char key, int x, int y);  //bind the default keyboard behaviors
     //direct operation on camera, render manager, and light manager
@@ -183,6 +184,7 @@ protected:
     static void specialFunction(int key, int x, int y);  //do nothing
     static void motionFunction(int x, int y);  //left button: rotate, middle button: zoom, right button: translate
     static void mouseFunction(int button, int state, int x, int y);  //keep track of mouse state
+    static void mouseWheelFunction(int wheel, int direction, int x, int y); //mouse wheel: zoom
     static void initFunction(void);  // init viewport and background color
 
     void initCallbacks();  //init default callbacks
@@ -219,6 +221,7 @@ protected:
     void (*special_function_)(int key, int x, int y);
     void (*motion_function_)(int x, int y);
     void (*mouse_function_)(int button, int state, int x, int y);
+    void(*mouse_wheel_function_)(int wheel, int direction, int x, int y);
     void (*init_function_)(void);
 };
 

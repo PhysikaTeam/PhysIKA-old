@@ -89,6 +89,7 @@ void GlutWindow::createWindow()
     glutSpecialFunc(special_function_);
     glutMotionFunc(motion_function_);
     glutMouseFunc(mouse_function_);
+    glutMouseWheelFunc(mouse_wheel_function_);
     (*init_function_)(); //call the init function before entering main loop
     glutMainLoop();
 }
@@ -547,6 +548,17 @@ void GlutWindow::setMouseFunction(void (*func)(int button, int state, int x, int
         mouse_function_ = func;
 }
 
+void GlutWindow::setMouseWheelFunction(void(*func)(int wheel, int direction, int x, int y))
+{
+    if (func == NULL)
+    {
+        std::cerr << "NULL callback function provided, use default instead.\n";
+        mouse_wheel_function_ = GlutWindow::mouseWheelFunction;
+    }
+    else
+        mouse_wheel_function_ = func;
+}
+
 void GlutWindow::setInitFunction(void (*func)(void))
 {
     if(func==NULL)
@@ -633,7 +645,7 @@ void GlutWindow::motionFunction(int x, int y)
     int mouse_delta_y = y - window->mouse_position_[1];
     window->mouse_position_[0] = x;
     window->mouse_position_[1] = y;
-    double scale = 0.02;  //sensativity of the mouse
+    double scale = 0.02;  //sensitivity of the mouse
     double camera_radius = (window->cameraFocusPosition()-window->cameraPosition()).norm();
     if(window->left_button_down_)  //left button handles camera rotation
     {
@@ -675,6 +687,27 @@ void GlutWindow::mouseFunction(int button, int state, int x, int y)
     window->mouse_position_[1] = y;
 }
 
+void GlutWindow::mouseWheelFunction(int wheel, int direction, int x, int y)
+{
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    double scale = 0.02;  //sensitivity of the mouse
+    double camera_radius = (window->cameraFocusPosition() - window->cameraPosition()).norm();
+    switch (direction)
+    {
+    case 1:  //mouse wheel up: zoom out
+        window->zoomCameraOut(camera_radius*scale);
+        break;
+    case -1: //mouse wheel down: zoom in
+        window->zoomCameraIn(camera_radius*scale);
+        break;
+    default:
+        break;
+    }
+    window->mouse_position_[0] = x;
+    window->mouse_position_[1] = y;
+}
+
 void GlutWindow::initFunction(void)
 {
     int width = glutGet(GLUT_WINDOW_WIDTH);
@@ -706,6 +739,7 @@ void GlutWindow::initCallbacks()
     special_function_ = GlutWindow::specialFunction;
     motion_function_ = GlutWindow::motionFunction;
     mouse_function_ = GlutWindow::mouseFunction;
+    mouse_wheel_function_ = GlutWindow::mouseWheelFunction;
     init_function_ = GlutWindow::initFunction;
 }
 
