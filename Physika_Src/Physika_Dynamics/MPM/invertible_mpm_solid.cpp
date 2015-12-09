@@ -223,7 +223,7 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
             {
                 unsigned int node_idx_1d = this->flatIndex(node_idx,grid_node_num);
                 this->active_grid_node_.insert(std::make_pair(node_idx_1d,obj_idx));
-                active_node_idx_1d_nd_map.insert(std::make_pair(node_idx_1d,node_idx));
+                active_node_idx_1d_nd_map.insert(std::make_pair(node_idx_1d, node_idx));
             }
         }
     }
@@ -237,7 +237,7 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
         this->grid_velocity_before_(node_idx)[object_idx] = this->grid_velocity_(node_idx)[object_idx];  //buffer the grid velocity before any update
     }
     //if no special contact algorithm is used, multi-value at a grid node must be converted to single value for all involved objects
-    if(this->contact_method_==NULL)
+    if (this->contact_method_ == NULL && this->objectNum() > 1)
     {
         for(typename std::map<unsigned int,Vector<unsigned int,Dim> >::iterator iter = active_node_idx_1d_nd_map.begin();
             iter != active_node_idx_1d_nd_map.end(); ++iter)
@@ -251,7 +251,7 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
             std::multimap<unsigned int,unsigned int>::iterator cur = beg;
             Scalar mass_at_node = 0;
             Vector<Scalar,Dim> momentum_at_node(0);
-            //accummulate values of all involved objects at this node
+            //accumulate values of all involved objects at this node
             while(cur != end)
             {
                 mass_at_node += this->grid_mass_(node_idx)[cur->second];
@@ -260,8 +260,6 @@ void InvertibleMPMSolid<Scalar,Dim>::rasterize()
             }
             momentum_at_node /= mass_at_node;//velocity at node
             //set all involved objects to uniform value at this node
-            for(typename std::map<unsigned int,Scalar>::iterator mass_iter = this->grid_mass_(node_idx).begin(); mass_iter != this->grid_mass_(node_idx).end(); ++mass_iter)
-                mass_iter->second = mass_at_node;
             //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
             for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = this->grid_velocity_(node_idx).begin();
                 vel_iter != this->grid_velocity_(node_idx).end(); ++vel_iter)

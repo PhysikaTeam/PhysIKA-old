@@ -380,7 +380,6 @@ Scalar MPMSolid<Scalar, Dim>::gridMass(const Vector<unsigned int, Dim> &node_idx
     return mass;
 }
 
-
 template <typename Scalar, int Dim>
 void MPMSolid<Scalar,Dim>::rasterize()
 {
@@ -446,7 +445,7 @@ void MPMSolid<Scalar,Dim>::rasterize()
         grid_velocity_before_(node_idx)[object_idx] = grid_velocity_(node_idx)[object_idx];  //buffer the grid velocity before any update
     }
     //if no special contact algorithm is used, multi-value at a grid node must be converted to single value for all involved objects
-    if(this->contact_method_==NULL)
+    if(this->contact_method_==NULL && this->objectNum() > 1)
     {
         for(typename std::map<unsigned int,Vector<unsigned int,Dim> >::iterator iter = active_node_idx_1d_nd_map.begin();
             iter != active_node_idx_1d_nd_map.end(); ++iter)
@@ -469,8 +468,6 @@ void MPMSolid<Scalar,Dim>::rasterize()
             }
             momentum_at_node /= mass_at_node;//velocity at node
             //set all involved objects to uniform value at this node
-            for(typename std::map<unsigned int,Scalar>::iterator mass_iter = grid_mass_(node_idx).begin(); mass_iter != grid_mass_(node_idx).end(); ++mass_iter)
-                mass_iter->second = mass_at_node;
             //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
             for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(node_idx).begin();
                 vel_iter != grid_velocity_(node_idx).end(); ++vel_iter)
@@ -726,7 +723,7 @@ void MPMSolid<Scalar,Dim>::updateParticleInterpolationWeight()
                 for(unsigned int dim = 0; dim < Dim; ++dim)
                     particle_to_node[dim] /= grid_dx[dim];
                 Scalar weight = this->weight_function_->weight(particle_to_node);
-                 //ignore nodes that has zero weight value, assume positve weight value
+                 //ignore nodes that has zero weight value, assume positive weight value
                 if(weight > std::numeric_limits<Scalar>::epsilon())
                 {
                     Vector<Scalar,Dim> weight_gradient = this->weight_function_->gradient(particle_to_node);
@@ -1056,8 +1053,8 @@ void MPMSolid<Scalar,Dim>::solveOnGridForwardEuler(Scalar dt)
                         continue;  //if for any involved object, this node is set as dirichlet, then the node is dirichlet for all objects
                     for(typename std::map<unsigned int,Vector<Scalar,Dim> >::iterator vel_iter = grid_velocity_(pair.node_idx).begin();
                         vel_iter != grid_velocity_(pair.node_idx).end(); ++vel_iter)
-                        if(gridMass(vel_iter->first,pair.node_idx) > std::numeric_limits<Scalar>::epsilon())
-                            vel_iter->second += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient/grid_mass_(pair.node_idx)[obj_idx];
+                        if (gridMass(vel_iter->first, pair.node_idx) > std::numeric_limits<Scalar>::epsilon())
+                            vel_iter->second += dt*(-1)*(particle->volume())*cauchy_stress*weight_gradient / grid_mass_(pair.node_idx)[obj_idx];
                 }
             }
         }
