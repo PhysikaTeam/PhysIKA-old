@@ -24,7 +24,7 @@
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
-#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USL.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USF.h"
 
 namespace Physika{
 
@@ -32,7 +32,7 @@ template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase()
     :MPMBase<Scalar, Dim>(), integration_method_(FORWARD_EULER), implicit_step_fraction_(1.0), linear_system_solver_(NULL)
 {
-    this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
+    this->template setStepMethod<MPMSolidStepMethodUSF<Scalar,Dim> >(); //default step method is USF
     linear_system_solver_ = new ConjugateGradientSolver<Scalar>(); //CG solver by default
 }
 
@@ -41,7 +41,7 @@ MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int en
     :MPMBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), integration_method_(FORWARD_EULER),
     implicit_step_fraction_(1.0), linear_system_solver_(NULL)
 {
-    this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
+    this->template setStepMethod<MPMSolidStepMethodUSF<Scalar,Dim> >(); //default step method is USF
     linear_system_solver_ = new ConjugateGradientSolver<Scalar>(); //CG solver by default
 }
 

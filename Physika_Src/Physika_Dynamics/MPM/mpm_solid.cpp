@@ -571,7 +571,7 @@ void MPMSolid<Scalar,Dim>::resolveContactOnGrid(Scalar dt)
 
     //Contact 2: contact between simulated objects
     //resolve contact on grid with specific contact method
-    if(contact_method_)
+    if(contact_method_ && this->objectNum() > 1)
     {
         std::vector<Vector<unsigned int,Dim> > potential_collide_nodes;
         std::vector<std::vector<unsigned int> > objects_at_node;
