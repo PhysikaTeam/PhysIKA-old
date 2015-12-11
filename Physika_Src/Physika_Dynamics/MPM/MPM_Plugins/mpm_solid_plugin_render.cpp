@@ -79,7 +79,7 @@ void MPMSolidPluginRender<Scalar,Dim>::onBeginTimeStep(Scalar time, Scalar dt)
     Scalar cur_frame_scalar = time*frame_rate;
     unsigned int cur_frame = static_cast<unsigned int>(cur_frame_scalar);
     unsigned int start_frame = driver->getStartFrame();
-    if(cur_frame_scalar-start_frame<std::numeric_limits<Scalar>::epsilon()) //begins the first frame
+    if (cur_frame_scalar - start_frame < std::numeric_limits<Scalar>::epsilon()) //begins the first frame
     {
         if(driver->isTimerEnabled())
             timer_.startTimer();
@@ -120,12 +120,15 @@ void MPMSolidPluginRender<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
             file_name += cur_frame_str+std::string(".png");
             this->window_->saveScreen(file_name);
         }
-        if(driver->isTimerEnabled())
+        if (cur_frame < max_frame)
         {
-            //start timer for next frame
-            //not accurate if something happens between time steps
-            if(cur_frame < max_frame)
+            if (driver->isTimerEnabled())
+            {
+                //start timer for next frame
+                //not accurate if something happens between time steps
                 timer_.startTimer();
+            }
+            std::cout << "Begin Frame " << cur_frame << "\n";
         }
     }
     if(cur_frame >= max_frame)
