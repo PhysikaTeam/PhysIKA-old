@@ -124,13 +124,13 @@ def generate(env):
     
     
     # create builders that make static & shared objects from .cu files
-    static_obj, shared_obj = SCons.Tool.createObjBuilders(env)
+    static_obj_builder, shared_obj_builder = SCons.Tool.createObjBuilders(env)
 
     # Add this suffix to the list of things buildable by Object
-    static_obj.add_action(cuda_suffix, '$NVCCCOM')
-    shared_obj.add_action(cuda_suffix, '$SHNVCCCOM')
-    static_obj.add_emitter(cuda_suffix, SCons.Defaults.StaticObjectEmitter)
-    shared_obj.add_emitter(cuda_suffix, SCons.Defaults.SharedObjectEmitter)
+    static_obj_builder.add_action(cuda_suffix, '$NVCCCOM')
+    shared_obj_builder.add_action(cuda_suffix, '$SHNVCCCOM')
+    static_obj_builder.add_emitter(cuda_suffix, SCons.Defaults.StaticObjectEmitter)
+    shared_obj_builder.add_emitter(cuda_suffix, SCons.Defaults.SharedObjectEmitter)
 
     # Add this suffix to the list of things scannable
     SCons.Tool.SourceFileScanner.add_scanner(cuda_suffix, cuda_scanner)
