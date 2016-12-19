@@ -66,7 +66,7 @@ public:
     Vector<Scalar,3> operator - (void) const;
     Scalar dot(const Vector<Scalar,3>&) const;
     SquareMatrix<Scalar,3> outerProduct(const Vector<Scalar,3>&) const;
-	
+    
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     Eigen::Matrix<Scalar,3,1> eigen_vector_3x_;

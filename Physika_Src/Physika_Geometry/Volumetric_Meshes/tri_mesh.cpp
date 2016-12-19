@@ -32,7 +32,7 @@ TriMesh<Scalar>::TriMesh():VolumetricMesh<Scalar,2>()
 
 template <typename Scalar>
 TriMesh<Scalar>::TriMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements)
-	:VolumetricMesh<Scalar,2>(vert_num, vertices, ele_num, elements, 3)
+    :VolumetricMesh<Scalar,2>(vert_num, vertices, ele_num, elements, 3)
 {
 }
 

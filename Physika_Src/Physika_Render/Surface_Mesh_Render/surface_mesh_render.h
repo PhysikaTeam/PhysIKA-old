@@ -62,8 +62,8 @@ public:
     void enableTexture();
     void disableTexture();
 
-	void enableDisplayList();
-	void disableDisplayList();
+    void enableDisplayList();
+    void disableDisplayList();
 
     //whenever the mesh is modified and displaylist is enabled, synchronize() must be called to update the render
     void synchronize();   
@@ -117,8 +117,8 @@ protected:
     unsigned int solid_display_list_id_;
     unsigned int solid_with_custom_color_vector_display_list_id_;
 
-	// default is false
-	bool enable_displaylist_;
+    // default is false
+    bool enable_displaylist_;
 
     //predefined render modes
     static const unsigned int render_solid_;

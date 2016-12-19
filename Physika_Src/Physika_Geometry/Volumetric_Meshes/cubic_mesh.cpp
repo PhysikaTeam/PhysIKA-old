@@ -30,7 +30,7 @@ CubicMesh<Scalar>::CubicMesh():VolumetricMesh<Scalar,3>()
 
 template <typename Scalar>
 CubicMesh<Scalar>::CubicMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements)
-	:VolumetricMesh<Scalar, 3>(vert_num, vertices, ele_num, elements, 8)
+    :VolumetricMesh<Scalar, 3>(vert_num, vertices, ele_num, elements, 8)
 {
 }
 
@@ -99,7 +99,7 @@ bool CubicMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,3
     std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = true;
-	for(unsigned int i=0; i<8; ++i)
+    for(unsigned int i=0; i<8; ++i)
         if(weights[i] < 0)
             vert_in_ele = false;
     return vert_in_ele;
@@ -120,7 +120,7 @@ void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<
         throw PhysikaException("CubicMesh element index out of range!");
     Array< Vector<Scalar,3> > ele_vertices(8);
     for(unsigned int i = 0; i < 8; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+    ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar Dx0,Dx1,Dy0,Dy1,Dz0,Dz1;
     Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);
     Dx1 = (ele_vertices[1][0] - pos[0])/(ele_vertices[1][0] - ele_vertices[0][0]);

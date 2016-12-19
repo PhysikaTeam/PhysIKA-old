@@ -251,32 +251,32 @@ inline void openGLLightv(GLenum light, GLenum pname, const Color<ColorType>& col
 template <int Dim>
 inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, Dim>& pos_dir)
 {
-	float param[Dim];
-	for(unsigned int i=0; i<Dim; i++)
-	{
-		param[i] = pos_dir[i];
-	}
-	glLightfv(light, pname, param);
+    float param[Dim];
+    for(unsigned int i=0; i<Dim; i++)
+    {
+        param[i] = pos_dir[i];
+    }
+    glLightfv(light, pname, param);
 }
 template <int Dim>
 inline void openGLLightv(GLenum light, GLenum pname,const Vector<double, Dim>& pos_dir)
 {
-	float param[Dim];
-	for(unsigned int i=0; i<Dim; i++)
-	{
-		param[i] = static_cast<float>(pos_dir[i]);
-	}
-	glLightfv(light, pname, param);
+    float param[Dim];
+    for(unsigned int i=0; i<Dim; i++)
+    {
+        param[i] = static_cast<float>(pos_dir[i]);
+    }
+    glLightfv(light, pname, param);
 }
 template <int Dim>
 inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, Dim>& pos_dir)
 {
-	int param[Dim];
-	for(unsigned int i=0; i<Dim; i++)
-	{
-		param[i] = pos_dir[i];
-	}
-	glLightiv(light, pname, param);
+    int param[Dim];
+    for(unsigned int i=0; i<Dim; i++)
+    {
+        param[i] = pos_dir[i];
+    }
+    glLightiv(light, pname, param);
 }
 
 /*

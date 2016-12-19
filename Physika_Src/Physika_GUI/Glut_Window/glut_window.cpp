@@ -384,7 +384,7 @@ bool GlutWindow::saveScreen(const std::string &file_name) const
     image.flipVertically();
     bool status = ImageIO::save(file_name,&image);
     delete[] data;
-	return status;
+    return status;
 }
 
 bool GlutWindow::saveScreen()
@@ -607,9 +607,9 @@ void GlutWindow::reshapeFunction(int width, int height)
     //update view port and projection
     glViewport(0,0,width,height);
     glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(fov, aspect,near_clip,far_clip);
-	glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluPerspective(fov, aspect,near_clip,far_clip);
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
 

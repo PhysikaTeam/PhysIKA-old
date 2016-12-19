@@ -80,42 +80,42 @@ Transform<Scalar, 3>::Transform(const SquareMatrix<Scalar, 3>& matrix)
 template <typename Scalar>
 Transform<Scalar,3>::Transform(const Transform<Scalar, 3> &trans)
 {
-	this->translation_ = trans.translation();
-	this->rotation_ = trans.rotation();
-	this->scale_ = trans.scale();
+    this->translation_ = trans.translation();
+    this->rotation_ = trans.rotation();
+    this->scale_ = trans.scale();
 }
 
 template <typename Scalar>
 Transform<Scalar, 3> & Transform<Scalar,3>::operator= (const Transform<Scalar, 3> &trans)
 {
-	this->translation_ = trans.translation();
-	this->rotation_ = trans.rotation();
-	this->scale_ = trans.scale();
-	return *this;
+    this->translation_ = trans.translation();
+    this->rotation_ = trans.rotation();
+    this->scale_ = trans.scale();
+    return *this;
 }
 
 template <typename Scalar>
 bool Transform<Scalar,3>::operator== (const Transform<Scalar, 3> &trans) const
 {
-	return this->rotation_ == trans.rotation() && this->translation_ == trans.translation() && this->scale_ == trans.scale();
+    return this->rotation_ == trans.rotation() && this->translation_ == trans.translation() && this->scale_ == trans.scale();
 }
 
 template <typename Scalar>
 bool Transform<Scalar,3>::operator!= (const Transform<Scalar, 3> &trans) const
 {
-	return !(this->rotation_ == trans.rotation() && this->translation_ == trans.translation() && this->scale_ == trans.scale());
+    return !(this->rotation_ == trans.rotation() && this->translation_ == trans.translation() && this->scale_ == trans.scale());
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar, 3> Transform<Scalar, 3>::rotation3x3Matrix() const
 {
-	return this->rotation_.get3x3Matrix(); 
+    return this->rotation_.get3x3Matrix(); 
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar, 4> Transform<Scalar, 3>::rotation4x4Matrix() const
 {
-	return this->rotation_.get4x4Matrix(); 
+    return this->rotation_.get4x4Matrix(); 
 }
 
 
@@ -171,7 +171,7 @@ Vector<Scalar,3> Transform<Scalar,3>::scaling(const Vector<Scalar, 3>& input) co
     tmp[0] *= this->scale_[0];
     tmp[1] *= this->scale_[1];
     tmp[2] *= this->scale_[2];
-	return tmp;
+    return tmp;
 }
 
 template <typename Scalar>

@@ -149,24 +149,24 @@ void Material<Scalar>::setTextureFileName(const string &texture_file_name)
 template <typename Scalar>
 Material<Scalar> Material<Scalar>::Rubber()
 {
-	// materail name,ka,kd,ks,shiness,texture file name
-	return Material<Scalar>(string("Rubber"),Vector<Scalar,3>(1.0, 1.0, 1.0),Vector<Scalar,3>(1.0, 1.0, 1.0),
+    // materail name,ka,kd,ks,shiness,texture file name
+    return Material<Scalar>(string("Rubber"),Vector<Scalar,3>(1.0, 1.0, 1.0),Vector<Scalar,3>(1.0, 1.0, 1.0),
                             Vector<Scalar,3>(1.0, 1.0, 1.0),1.0,1.0,string(""));
 }
 
 template <typename Scalar>
 Material<Scalar> Material<Scalar>::Iron()
 {
-	// materail name,ka,kd,ks,shiness,texture file name
-	return Material<Scalar>(string("Iron"),Vector<Scalar,3>(0.1),Vector<Scalar,3>(0.5),
+    // materail name,ka,kd,ks,shiness,texture file name
+    return Material<Scalar>(string("Iron"),Vector<Scalar,3>(0.1),Vector<Scalar,3>(0.5),
                             Vector<Scalar,3>(0),65,1.0,string(""));
 }
 
 template <typename Scalar>
 Material<Scalar> Material<Scalar>::Wood()
 {
-	// materail name,ka,kd,ks,shiness,texture file name
-	return Material<Scalar>(string("Wood"),Vector<Scalar,3>(1.0, 1.0, 1.0),Vector<Scalar,3>(1.0, 1.0, 1.0),
+    // materail name,ka,kd,ks,shiness,texture file name
+    return Material<Scalar>(string("Wood"),Vector<Scalar,3>(1.0, 1.0, 1.0),Vector<Scalar,3>(1.0, 1.0, 1.0),
                             Vector<Scalar,3>(1.0, 1.0, 1.0),1.0,1.0,string(""));
 }
 

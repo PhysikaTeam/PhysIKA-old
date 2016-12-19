@@ -98,14 +98,14 @@ inline double cbrt(Scalar value)
 template <typename Scalar>
 inline Scalar max(Scalar lhs, Scalar rhs)
 {
-	return lhs > rhs ? lhs : rhs;
+    return lhs > rhs ? lhs : rhs;
 }
 
 #undef min //undefine the min in WinDef.h
 template <typename Scalar>
 inline Scalar min(Scalar lhs, Scalar rhs)
 {
-	return lhs < rhs ? lhs : rhs;
+    return lhs < rhs ? lhs : rhs;
 }
 
 //compare if two floating point numbers are equal

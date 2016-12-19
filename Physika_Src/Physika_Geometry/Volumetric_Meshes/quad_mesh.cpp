@@ -31,7 +31,7 @@ QuadMesh<Scalar>::QuadMesh():VolumetricMesh<Scalar,2>()
 
 template <typename Scalar>
 QuadMesh<Scalar>::QuadMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements)
-	:VolumetricMesh<Scalar, 2>(vert_num, vertices, ele_num, elements, 4)
+    :VolumetricMesh<Scalar, 2>(vert_num, vertices, ele_num, elements, 4)
 {
 }
 
@@ -84,7 +84,7 @@ Scalar QuadMesh<Scalar>::eleVolume(unsigned int ele_idx) const
         throw PhysikaException("QuadMesh element index out of range!");
     Array< Vector<Scalar,2> > ele_vertices(4);
     for(unsigned int i = 0; i < 4; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+    ele_vertices[i] = this->eleVertPos(ele_idx,i);
     //volume = 1/2*|ab x ac + ac x ad|
     Vector<Scalar,2> a_minus_d = ele_vertices[0] - ele_vertices[3];
     Vector<Scalar,2> b_minus_d = ele_vertices[1] - ele_vertices[3];
@@ -123,7 +123,7 @@ void QuadMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<S
     Dx1 = (ele_vertices[1][0] - pos[0])/(ele_vertices[1][0] - ele_vertices[0][0]);
     Dy0 = (pos[1] - ele_vertices[1][1])/(ele_vertices[2][1] - ele_vertices[1][1]);
     Dy1 = (ele_vertices[2][1] - pos[1])/(ele_vertices[2][1] - ele_vertices[1][1]);
-	//std::cout<<"dx0:"<<Dx0<<' '<<Dx1<<' '<<Dy0<<' '<<Dy1<<std::endl;
+    //std::cout<<"dx0:"<<Dx0<<' '<<Dx1<<' '<<Dy0<<' '<<Dy1<<std::endl;
     weights.resize(4);
     weights[0] = Dx1 * Dy1;
     weights[1] = Dx0 * Dy1;

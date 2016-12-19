@@ -44,19 +44,22 @@ public:
     VolumetricMesh<Scalar,Dim>& operator= (const VolumetricMesh<Scalar,Dim> &volumetric_mesh);
     
     //query
-    inline unsigned int       vertNum() const{return vertices_.size();}
-    inline unsigned int       eleNum() const{return ele_num_;}
-    inline bool               isUniformElementType() const{return uniform_ele_type_;}
-    unsigned int              eleVertNum(unsigned int ele_idx) const;
-    unsigned int              eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
-    int eleRegionIndex(unsigned int ele_idx) const;  //return the index of the region that the element belongs to, return -1 if it does not belong to any region
-    unsigned int              regionNum() const;
+    inline unsigned int vertNum() const{return vertices_.size();}
+    inline unsigned int eleNum() const{return ele_num_;}
+    inline bool         isUniformElementType() const{return uniform_ele_type_;}
+    unsigned int        eleVertNum(unsigned int ele_idx) const;
+    unsigned int        eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
+    int                 eleRegionIndex(unsigned int ele_idx) const;  //return the index of the region that the element belongs to, return -1 if it does not belong to any region
+    unsigned int        regionNum() const;
+
     Vector<Scalar,Dim> vertPos(unsigned int vert_idx) const;
     Vector<Scalar,Dim> eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const;
-    void eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const; //return positions of one element's vertices
-    std::string               regionName(unsigned int region_idx) const;
-    unsigned int              regionEleNum(unsigned int region_idx) const;
-    unsigned int              regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
+    void               eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const; //return positions of one element's vertices
+
+    std::string  regionName(unsigned int region_idx) const;
+    unsigned int regionEleNum(unsigned int region_idx) const;
+    unsigned int regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
+
     //given the region index or name, return the elements of this region
     void regionElements(unsigned int region_idx, std::vector<unsigned int> &elements) const;
     void regionElements(const std::string &region_name, std::vector<unsigned int> &elements) const; //print error and return empty elements if no region with the given name

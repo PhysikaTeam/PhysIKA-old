@@ -87,7 +87,7 @@ public:
     void turnOff() const;
     bool isLightOn() const;
     void printInfo() const;
-	static void printOccupyInfo();
+    static void printOccupyInfo();
 protected:
     void createOneLight();  //create one light with a random avaible id
     //disable copy
@@ -96,7 +96,7 @@ protected:
 protected:
     GLenum light_id_;
     Vector<float,3> light_position_;
-	static bool is_occupied_[8];
+    static bool is_occupied_[8];
 };
 
 std::ostream &  operator<< (std::ostream& out, const Light& light);

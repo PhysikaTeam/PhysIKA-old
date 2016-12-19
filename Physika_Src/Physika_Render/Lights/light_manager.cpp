@@ -38,11 +38,11 @@ void LightManager::insertBack(Light * light_p)
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
-	if(this->lightIndex(light_p) != -1)
-	{
-		std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
+    if(this->lightIndex(light_p) != -1)
+    {
+        std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
         return ;
-	}
+    }
     if(this->numLights()<8)
         this->light_list_.push_back(light_p);
     else
@@ -59,11 +59,11 @@ void LightManager::insertFront(Light * light_p)
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
-	if(this->lightIndex(light_p) != -1)
-	{
-		std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
+    if(this->lightIndex(light_p) != -1)
+    {
+        std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
         return ;
-	}
+    }
     if(this->numLights()<8)
         this->light_list_.push_front(light_p);
     else
@@ -81,14 +81,14 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
         std::cerr<<"Light index out of range, operation will be ignored!\n";
         return ;
     }
-	
+    
     if(light)
     {
-		if(this->lightIndex(light) != -1)
-		{
-			std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light)<<", operation will be ignored!"<<std::endl;
-			return ;
-		}
+        if(this->lightIndex(light) != -1)
+        {
+            std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light)<<", operation will be ignored!"<<std::endl;
+            return ;
+        }
         if(this->numLights()<8)
         {
             list<Light*>::iterator pos = light_list_.begin();

@@ -50,20 +50,20 @@ public:
     //whenever the grid is modified, synchronize() must be called to update the render
     void synchronize();
 
-	// render in default mode
+    // render in default mode
     virtual void render();
 
     // set the color used to rendered grid
     template <typename ColorType>
     void setGridColor(const Color<ColorType> &color);
 
-	// note: the highlighted node will be rendered 3 times larger. 
+    // note: the highlighted node will be rendered 3 times larger. 
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const Color<ColorType> &color);
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const std::vector< Color<ColorType> > &color);
 
-	// note: the edges of cell will be rendered 2 times wider.
+    // note: the edges of cell will be rendered 2 times wider.
     template <typename ColorType>
     void renderCellWithColor(const std::vector< Vector<unsigned int,Dim> > & cell_vec, const Color<ColorType> &color);
     template <typename ColorType>

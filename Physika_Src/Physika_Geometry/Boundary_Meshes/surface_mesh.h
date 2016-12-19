@@ -101,8 +101,8 @@ public:
     void computeAllVertexNormals(VertexNormalType normal_type);
     void computeAllFaceNormals();
     void computeFaceNormal(SurfaceMeshInternal::Face<Scalar> &face);
-	// separate each group of mesh to individual SurfaceMesh
-	void separateByGroup(std::vector<SurfaceMesh<Scalar> > &surface_meshes) const;
+    // separate each group of mesh to individual SurfaceMesh
+    void separateByGroup(std::vector<SurfaceMesh<Scalar> > &surface_meshes) const;
 
 protected:
     void setVertexNormalsToFaceNormals();

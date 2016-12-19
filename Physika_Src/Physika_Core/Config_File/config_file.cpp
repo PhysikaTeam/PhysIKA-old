@@ -179,14 +179,14 @@ bool ConfigFile::parseFile(const std::string &file_name)
             stream >> data;
             *(unsigned int*) dest_locations_[index] = data;
         }
-		else if(option_types_[index] == Option_Int)
+        else if(option_types_[index] == Option_Int)
         {
             for (unsigned int i = 0; i < data_entry.length(); i++)
             {
                 if(data_entry[i] < '0' || data_entry[i] > '9')
                 {
-					if(i == 0 && (data_entry[i] == '+' || data_entry[i] == '-'))
-						continue;
+                    if(i == 0 && (data_entry[i] == '+' || data_entry[i] == '-'))
+                        continue;
                     std::cerr<<"Error: invalid int specification: line "<<count<<" "<<data_entry<<std::endl;
                     inputstream.close();
                     return false;
@@ -206,7 +206,7 @@ bool ConfigFile::parseFile(const std::string &file_name)
             else
                data_tmp = data_entry;
 
-			bool dot_flag = false;
+            bool dot_flag = false;
             if(data_tmp != "")
             {
                 for (unsigned int i = 0; i < data_tmp.length()-1; i++)
@@ -215,8 +215,8 @@ bool ConfigFile::parseFile(const std::string &file_name)
                     {
                         if(data_tmp[i] == '.' && dot_flag == false)
                         {
-							dot_flag = true;
-							continue;
+                            dot_flag = true;
+                            continue;
                         }
                         if(i == 0 && (data_tmp[i] == '+' || data_tmp[i] == '-'))
                             continue;
@@ -283,7 +283,7 @@ void ConfigFile::printOptions() const
         case Option_Int:
             std::cout<<"Option name: "<<option_names_[i].c_str()<<", value: "<<*(int*)(dest_locations_[i])<<std::endl;
             break;
-		case Option_Unsigned_Int:
+        case Option_Unsigned_Int:
             std::cout<<"Option name: "<<option_names_[i].c_str()<<", value: "<<*(unsigned int*)(dest_locations_[i])<<std::endl;
             break;
         case Option_Bool:

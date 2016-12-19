@@ -334,15 +334,15 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         std::cerr<<"PovMeshIO only supports triangle mesh\n";
         return false;
     }
-	std::fstream fileout(filename.c_str(),std::ios::out|std::ios::trunc);
-	if(!fileout.is_open())
-	{
-		std::cerr<<"Error: failed to open "<<filename<<"\n";
-		return false;
-	}
-	fileout<<"mesh2 {\n";
+    std::fstream fileout(filename.c_str(),std::ios::out|std::ios::trunc);
+    if(!fileout.is_open())
+    {
+        std::cerr<<"Error: failed to open "<<filename<<"\n";
+        return false;
+    }
+    fileout<<"mesh2 {\n";
 
-	//vertex_vectors
+    //vertex_vectors
     unsigned int vert_num = mesh->numVertices();
     if(vert_num > 0)
     {
@@ -360,7 +360,7 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         fileout<<"   }\n"; //end of vertex_vertors
     }
 
-	// normal_vectors
+    // normal_vectors
     unsigned int normal_num = mesh->numNormals();
     if(normal_num > 0)
     {
@@ -378,7 +378,7 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         fileout<<"   }\n"; //end of normal_vertors
     }
 
-	// uv_vectors
+    // uv_vectors
     unsigned int tex_coord_num = mesh->numTextureCoordinates();
     if(tex_coord_num > 0)
     {
@@ -396,7 +396,7 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         fileout<<"   }\n"; //end of uv_vectors
     }
 
-	// texture_list
+    // texture_list
     unsigned int tex_num = mesh->numTextures();
     std::map<std::string,unsigned int> texture_name_idx_map;
     unsigned int tex_idx = 0;
@@ -421,8 +421,8 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         fileout<<"   }\n"; // end of texture_list
     }
 
-    	
-	// face_indices
+        
+    // face_indices
     unsigned int face_num = mesh->numFaces();
     if(face_num > 0 && vert_num > 0)
     {
@@ -454,7 +454,7 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         fileout<<"   }\n"; //end of face_indices
     }
 
-	// normal_indices
+    // normal_indices
     if(face_num > 0 && normal_num > 0)
     {
         fileout<<"   normal_indices {\n";
@@ -474,7 +474,7 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         fileout<<"   }\n"; //end of normal_indices
     }
 
-	// uv_indices
+    // uv_indices
     if(face_num > 0 && tex_coord_num > 0)
     {
         fileout<<"   uv_indices {\n";
@@ -494,10 +494,10 @@ bool PovMeshIO<Scalar>::save(const std::string& filename, const SurfaceMesh<Scal
         fileout<<"   }\n"; //end of uv_indices
     }
 
-	fileout<<"}\n"; //end of mesh2
+    fileout<<"}\n"; //end of mesh2
 
-	fileout.close();
-	return true;
+    fileout.close();
+    return true;
 }
 
 //explicit instantitation

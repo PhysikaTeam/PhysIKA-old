@@ -22,8 +22,8 @@ template <typename ElementType,int Dim>
 ArrayND<ElementType,Dim>::ArrayND():data_(NULL)
 {
     PHYSIKA_STATIC_ASSERT(Dim>1,"ArrayND are defined for dimension higher than 1");
-	for(unsigned int i = 0; i < Dim; ++i)
-		element_count_[i] = 0;
+    for(unsigned int i = 0; i < Dim; ++i)
+        element_count_[i] = 0;
 }
 
 template <typename ElementType,int Dim>
@@ -134,8 +134,8 @@ template <typename ElementType,int Dim>
 void ArrayND<ElementType,Dim>::clear()
 {
     release();
-	for(unsigned int i = 0; i < Dim; ++i)
-		element_count_[i] = 0;
+    for(unsigned int i = 0; i < Dim; ++i)
+        element_count_[i] = 0;
 }
 
 template <typename ElementType,int Dim>

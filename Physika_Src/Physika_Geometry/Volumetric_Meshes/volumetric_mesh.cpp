@@ -498,7 +498,7 @@ void VolumetricMesh<Scalar,Dim>::clearBoundaryInformation()
 {
     boundary_vertices_.clear();
     boundary_elements_.clear();
-	boundary_faces_.clear();
+    boundary_faces_.clear();
 }
 
 //explicit instantiations

@@ -46,7 +46,7 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender()
     wire_display_list_id_(0),
     solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0),
-	enable_displaylist_(false)
+    enable_displaylist_(false)
 {
     initRenderMode();
 }
@@ -59,7 +59,7 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh)
     wire_display_list_id_(0),
     solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0),
-	enable_displaylist_(false)
+    enable_displaylist_(false)
 {
     initRenderMode();
     loadTextures();
@@ -73,7 +73,7 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transfor
     wire_display_list_id_(0),
     solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0),
-	enable_displaylist_(false)
+    enable_displaylist_(false)
 {
     initRenderMode();
     loadTextures();
@@ -185,14 +185,14 @@ void SurfaceMeshRender<Scalar>::disableTexture()
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::enableDisplayList()
 {
-	this->enable_displaylist_ = true;
+    this->enable_displaylist_ = true;
 }
 
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::disableDisplayList()
 {
-	this->enable_displaylist_ = false;
-	this->deleteDisplayLists();
+    this->enable_displaylist_ = false;
+    this->deleteDisplayLists();
 }
 
 template <typename Scalar>
@@ -223,35 +223,35 @@ void SurfaceMeshRender<Scalar>::render()
 template<typename Scalar>
 void SurfaceMeshRender<Scalar>::printInfo()const
 {
-	std::cout<<"mesh_address: "<<this->mesh_<<std::endl;
-	std::cout<<"transform_address: "<<this->transform_<<std::endl;
-	unsigned int render_mode = this->render_mode_;
-	std::cout<<"render_mode: ";
-	if(render_mode & this->render_solid_)
-		std::cout<<"solid ";
-	if(render_mode & this->render_wireframe_)
-		std::cout<<"wireFrame ";
-	if(render_mode & this->render_vertices_)
-		std::cout<<"vertex ";
-	if(render_mode & this->render_texture_)
-		std::cout<<"texture ";
-	if(render_mode & this->render_flat_or_smooth_)
-		std::cout<<"smooth ";
-	else
-		std::cout<<"flat ";
-	std::cout<<std::endl;
-	std::cout<<"texture: "<<this->textures_.size()<<" in all, ";
-	unsigned int texture_num_available = 0;
-	for(unsigned int i=0; i<this->textures_.size(); i++)
-	{
-		if(this->textures_[i].first == true)
-			texture_num_available++;
-	}
-	std::cout<<texture_num_available<<" available."<<std::endl;
-	std::cout<<"vertex_display_list_id_: "<<this->vertex_display_list_id_<<std::endl;
-	std::cout<<"wire_display_list_id_: "<<this->wire_display_list_id_<<std::endl;
-	std::cout<<"solid_display_list_id_: "<<this->solid_display_list_id_<<std::endl;
-	std::cout<<"solid_with_custom_color_vector_display_list_id_: "<<this->solid_with_custom_color_vector_display_list_id_<<std::endl;
+    std::cout<<"mesh_address: "<<this->mesh_<<std::endl;
+    std::cout<<"transform_address: "<<this->transform_<<std::endl;
+    unsigned int render_mode = this->render_mode_;
+    std::cout<<"render_mode: ";
+    if(render_mode & this->render_solid_)
+        std::cout<<"solid ";
+    if(render_mode & this->render_wireframe_)
+        std::cout<<"wireFrame ";
+    if(render_mode & this->render_vertices_)
+        std::cout<<"vertex ";
+    if(render_mode & this->render_texture_)
+        std::cout<<"texture ";
+    if(render_mode & this->render_flat_or_smooth_)
+        std::cout<<"smooth ";
+    else
+        std::cout<<"flat ";
+    std::cout<<std::endl;
+    std::cout<<"texture: "<<this->textures_.size()<<" in all, ";
+    unsigned int texture_num_available = 0;
+    for(unsigned int i=0; i<this->textures_.size(); i++)
+    {
+        if(this->textures_[i].first == true)
+            texture_num_available++;
+    }
+    std::cout<<texture_num_available<<" available."<<std::endl;
+    std::cout<<"vertex_display_list_id_: "<<this->vertex_display_list_id_<<std::endl;
+    std::cout<<"wire_display_list_id_: "<<this->wire_display_list_id_<<std::endl;
+    std::cout<<"solid_display_list_id_: "<<this->solid_display_list_id_<<std::endl;
+    std::cout<<"solid_with_custom_color_vector_display_list_id_: "<<this->solid_with_custom_color_vector_display_list_id_<<std::endl;
 
 }
 
@@ -277,11 +277,11 @@ void SurfaceMeshRender<Scalar>::renderVertices()
     }
     if(! glIsList(this->vertex_display_list_id_))
     {
-		if (this->enable_displaylist_)
-		{
-			this->vertex_display_list_id_=glGenLists(1);
-			glNewList(this->vertex_display_list_id_, GL_COMPILE_AND_EXECUTE);
-		}
+        if (this->enable_displaylist_)
+        {
+            this->vertex_display_list_id_=glGenLists(1);
+            glNewList(this->vertex_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        }
         
         glDisable(GL_LIGHTING);
         unsigned int num_vertex = this->mesh_->numVertices();      //get the number of vertices
@@ -293,15 +293,15 @@ void SurfaceMeshRender<Scalar>::renderVertices()
         }
         glEnd();
 
-		if (this->enable_displaylist_)
-		{
-			glEndList();
-		}
+        if (this->enable_displaylist_)
+        {
+            glEndList();
+        }
         
     }
     else
     {
-		glCallList(this->vertex_display_list_id_);
+        glCallList(this->vertex_display_list_id_);
     }
     glPopMatrix();
     glPopAttrib();
@@ -321,11 +321,11 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
     }
     if(! glIsList(this->wire_display_list_id_))
     {
-		if (this->enable_displaylist_)
-		{
-			this->wire_display_list_id_=glGenLists(1);
-			glNewList(this->wire_display_list_id_, GL_COMPILE_AND_EXECUTE);
-		}
+        if (this->enable_displaylist_)
+        {
+            this->wire_display_list_id_=glGenLists(1);
+            glNewList(this->wire_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        }
         
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
@@ -346,14 +346,14 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
                 glEnd();
             }
         }
-		if (enable_displaylist_)
-		{
-			glEndList();
-		}  
+        if (enable_displaylist_)
+        {
+            glEndList();
+        }  
     }
     else
     {
-		glCallList(this->wire_display_list_id_);
+        glCallList(this->wire_display_list_id_);
     }
     glPopMatrix();
     glPopAttrib();
@@ -375,11 +375,11 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     }
     if (! glIsList(this->solid_display_list_id_))
     {   
-		if (enable_displaylist_)
-		{
-			this->solid_display_list_id_=glGenLists(1);
-			glNewList(this->solid_display_list_id_, GL_COMPILE_AND_EXECUTE);
-		}
+        if (enable_displaylist_)
+        {
+            this->solid_display_list_id_=glGenLists(1);
+            glNewList(this->solid_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        }
         
 
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
@@ -459,15 +459,15 @@ void SurfaceMeshRender<Scalar>::renderSolid()
             glDisable(GL_TEXTURE_2D);
         }
 
-		if (enable_displaylist_)
-		{
-			glEndList();
-		}
+        if (enable_displaylist_)
+        {
+            glEndList();
+        }
         
     }
     else
     {
-		glCallList(this->solid_display_list_id_);  
+        glCallList(this->solid_display_list_id_);  
     }
     glPopMatrix();
     glPopAttrib();
@@ -492,11 +492,11 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
     }
     if (! glIsList(this->solid_with_custom_color_vector_display_list_id_))
     {   
-		if (enable_displaylist_)
-		{
-			this->solid_with_custom_color_vector_display_list_id_=glGenLists(1);
-			glNewList(this->solid_with_custom_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
-		}
+        if (enable_displaylist_)
+        {
+            this->solid_with_custom_color_vector_display_list_id_=glGenLists(1);
+            glNewList(this->solid_with_custom_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        }
         
 
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
@@ -523,15 +523,15 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
                 glEnd();
             }
         }
-		if (enable_displaylist_)
-		{
-			glEndList();
-		}
+        if (enable_displaylist_)
+        {
+            glEndList();
+        }
         
     }
     else
     {
-		glCallList(this->solid_with_custom_color_vector_display_list_id_);
+        glCallList(this->solid_with_custom_color_vector_display_list_id_);
     }
     glPopMatrix();
     glPopAttrib();

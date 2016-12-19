@@ -36,40 +36,40 @@ template <typename Scalar,int Dim>
 class BoundingVolume
 {
 public:
-	//constructors && deconstructors
-	BoundingVolume();
-	virtual ~BoundingVolume();
+    //constructors && deconstructors
+    BoundingVolume();
+    virtual ~BoundingVolume();
 
-	//set
-	virtual void setBoundingVolume(const BoundingVolume<Scalar, Dim>* const bounding_volume) = 0;
-	virtual void setBoundingVolume(const Vector<Scalar,Dim>& point) = 0;
-	virtual void setBoundingVolume(const Vector<Scalar,Dim>& point_a, const Vector<Scalar,Dim>& point_b) = 0;
+    //set
+    virtual void setBoundingVolume(const BoundingVolume<Scalar, Dim>* const bounding_volume) = 0;
+    virtual void setBoundingVolume(const Vector<Scalar,Dim>& point) = 0;
+    virtual void setBoundingVolume(const Vector<Scalar,Dim>& point_a, const Vector<Scalar,Dim>& point_b) = 0;
 
-	virtual BoundingVolumeInternal::BVType bvType() const=0;
+    virtual BoundingVolumeInternal::BVType bvType() const=0;
 
-	//basic operation
-	virtual bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const = 0;
-	virtual bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume, BoundingVolume<Scalar, Dim>* return_volume) const = 0;
-	virtual bool isInside(const Vector<Scalar,Dim> &point) const = 0;
-	virtual Vector<Scalar,Dim> center() const = 0;
-	//x-axis 
-	virtual Scalar width() const = 0;
-	//y-axis
-	virtual Scalar height() const = 0;
-	//z-axis
-	virtual Scalar depth() const = 0;
+    //basic operation
+    virtual bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume) const = 0;
+    virtual bool isOverlap(const BoundingVolume<Scalar, Dim>* const bounding_volume, BoundingVolume<Scalar, Dim>* return_volume) const = 0;
+    virtual bool isInside(const Vector<Scalar,Dim> &point) const = 0;
+    virtual Vector<Scalar,Dim> center() const = 0;
+    //x-axis 
+    virtual Scalar width() const = 0;
+    //y-axis
+    virtual Scalar height() const = 0;
+    //z-axis
+    virtual Scalar depth() const = 0;
 
-	//*****WARNING! This function is used for setting a BV empty. For now it only has implement for float and double.*****
-	//*****To support more types, add corresponding functions in the child class*****
-	virtual void setEmpty() = 0;
+    //*****WARNING! This function is used for setting a BV empty. For now it only has implement for float and double.*****
+    //*****To support more types, add corresponding functions in the child class*****
+    virtual void setEmpty() = 0;
 
-	//union operation
-	virtual void unionWith(const Vector<Scalar,Dim> &point) = 0;
-	virtual void unionWith(const BoundingVolume<Scalar, Dim>* const bounding_volume) = 0;
-	virtual void obtainUnion(const BoundingVolume<Scalar, Dim>* const bounding_volume_lhs, const BoundingVolume<Scalar, Dim>* const bounding_volume_rhs) = 0;
+    //union operation
+    virtual void unionWith(const Vector<Scalar,Dim> &point) = 0;
+    virtual void unionWith(const BoundingVolume<Scalar, Dim>* const bounding_volume) = 0;
+    virtual void obtainUnion(const BoundingVolume<Scalar, Dim>* const bounding_volume_lhs, const BoundingVolume<Scalar, Dim>* const bounding_volume_rhs) = 0;
 
 protected:
-	
+    
 };
 
 }  //end of namespace Physika

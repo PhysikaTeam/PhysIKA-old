@@ -60,7 +60,7 @@ public:
     ~ConfigFile();
 
     bool addOption(const std::string &option_name, int* dest_location);
-	bool addOption(const std::string &option_name, unsigned int* dest_location);
+    bool addOption(const std::string &option_name, unsigned int* dest_location);
     bool addOption(const std::string &option_name, bool* dest_location);
     bool addOption(const std::string &option_name, float* dest_location);
     bool addOption(const std::string &option_name, double* dest_location);

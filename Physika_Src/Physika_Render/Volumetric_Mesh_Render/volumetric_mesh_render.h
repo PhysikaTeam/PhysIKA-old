@@ -68,7 +68,7 @@ public:
     virtual void render();
 
     virtual void printInfo()const;
-	
+    
     /* 
      * renderSolidWithAlpha() is a function to render volumetricMesh in solid mode, with a alpha value to represent the transparency.
      * a value of 0.0 denotes that the mesh is completely transparent.
@@ -108,6 +108,7 @@ protected:
     void drawTet(unsigned int ele_idx);
     void drawCubic(unsigned int ele_idx);
     void deleteDisplayLists();
+
 protected:
     const VolumetricMesh<Scalar,Dim> *mesh_;
     const Transform<Scalar, Dim> *transform_;

@@ -37,7 +37,7 @@ public:
     virtual void multiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const;
     virtual void preconditionerMultiply(const GeneralizedVector<Scalar> &x, GeneralizedVector<Scalar> &result) const;
     virtual Scalar innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const;
-	virtual void filter(GeneralizedVector<Scalar> &x) const; //used to apply Dirichlet BCs
+    virtual void filter(GeneralizedVector<Scalar> &x) const; //used to apply Dirichlet BCs
     //set the object to construct the linear system for (each object of InvertibleMPMSolid is solved independently)
     //construct one global linear system for all objects if obj_idx is set to -1 (all objects are solved on one grid)
     void setActiveObject(int obj_idx);

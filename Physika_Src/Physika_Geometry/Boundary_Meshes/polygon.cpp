@@ -41,7 +41,7 @@ Polygon<Scalar>::~Polygon(){}
 template <typename Scalar>
 unsigned int Polygon<Scalar>::numVertices() const
 {
-	return this->vertex_positions_.size();
+    return this->vertex_positions_.size();
 }
 
 template <typename Scalar>
@@ -102,13 +102,13 @@ unsigned int Polygon<Scalar>::numIsolatedVertices() const
 template <typename Scalar>
 bool Polygon<Scalar>::isTriangularPolygon() const
 {
-	return this->numVertices() == 3;
+    return this->numVertices() == 3;
 }
 
 template <typename Scalar>
 bool Polygon<Scalar>::isQuadrilateralPolygon() const
 {
-	return this->numVertices() == 4;
+    return this->numVertices() == 4;
 }
 
 template <typename Scalar>
@@ -297,17 +297,17 @@ const Edge<Scalar,2>& Polygon<Scalar>::edge(unsigned int edge_idx) const
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
     if (!index_valid)
         throw PhysikaException("Polygon edge index out of range!");
-	unsigned int current_edge_sum = 0;
-	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
-	{
-		const EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
-		unsigned int group_edge_num = current_group.numEdges();
-		if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
-		{
-			return current_group.edge(edge_idx - current_edge_sum);
-		}
-		else
-			current_edge_sum += group_edge_num;
+    unsigned int current_edge_sum = 0;
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+    {
+        const EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
+        unsigned int group_edge_num = current_group.numEdges();
+        if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
+        {
+            return current_group.edge(edge_idx - current_edge_sum);
+        }
+        else
+            current_edge_sum += group_edge_num;
     }
     throw PhysikaException("Polygon edge index out of range!");
     return groups_[0].edge(0);
@@ -319,17 +319,17 @@ Edge<Scalar,2>& Polygon<Scalar>::edge(unsigned int edge_idx)
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
     if (!index_valid)
         throw PhysikaException("Polygon edge index out of range!");
-	unsigned int current_edge_sum = 0;
-	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
-	{
-		EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
-		unsigned int group_edge_num = current_group.numEdges();
-		if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
-		{
-			return current_group.edge(edge_idx - current_edge_sum);
-		}
-		else
-			current_edge_sum += group_edge_num;
+    unsigned int current_edge_sum = 0;
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+    {
+        EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
+        unsigned int group_edge_num = current_group.numEdges();
+        if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
+        {
+            return current_group.edge(edge_idx - current_edge_sum);
+        }
+        else
+            current_edge_sum += group_edge_num;
     }
     throw PhysikaException("Polygon edge index out of range!");
     return groups_[0].edge(0);
@@ -341,17 +341,17 @@ const Edge<Scalar,2>* Polygon<Scalar>::edgePtr(unsigned int edge_idx) const
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
     if (!index_valid)
         throw PhysikaException("Polygon edge index out of range!");
-	unsigned int current_edge_sum = 0;
-	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
-	{
-		const EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
-		unsigned int group_edge_num = current_group.numEdges();
-		if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
-		{
-			return current_group.edgePtr(edge_idx - current_edge_sum);
-		}
-		else
-			current_edge_sum += group_edge_num;
+    unsigned int current_edge_sum = 0;
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+    {
+        const EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
+        unsigned int group_edge_num = current_group.numEdges();
+        if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
+        {
+            return current_group.edgePtr(edge_idx - current_edge_sum);
+        }
+        else
+            current_edge_sum += group_edge_num;
     }
     throw PhysikaException("Polygon edge index out of range!");
     return groups_[0].edgePtr(0);
@@ -363,17 +363,17 @@ Edge<Scalar,2>* Polygon<Scalar>::edgePtr(unsigned int edge_idx)
     bool index_valid = (edge_idx>=0)&&(edge_idx<numEdges());
     if (!index_valid)
         throw PhysikaException("Polygon edge index out of range!");
-	unsigned int current_edge_sum = 0;
-	for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
-	{
-		EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
-		unsigned int group_edge_num = current_group.numEdges();
-		if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
-		{
-			return current_group.edgePtr(edge_idx - current_edge_sum);
-		}
-		else
-			current_edge_sum += group_edge_num;
+    unsigned int current_edge_sum = 0;
+    for(unsigned int group_idx = 0; group_idx < groups_.size(); ++group_idx)
+    {
+        EdgeGroup<Scalar,2>& current_group = groups_[group_idx];
+        unsigned int group_edge_num = current_group.numEdges();
+        if(current_edge_sum + group_edge_num > edge_idx)//find the group containing this edge
+        {
+            return current_group.edgePtr(edge_idx - current_edge_sum);
+        }
+        else
+            current_edge_sum += group_edge_num;
     }
     throw PhysikaException("Polygon edge index out of range!");
     return groups_[0].edgePtr(0);
@@ -446,13 +446,13 @@ void Polygon<Scalar>::computeEdgeNormal(Edge<Scalar,2> &edge)
 template <typename Scalar>
 void Polygon<Scalar>::setVertexNormalsToEdgeNormals()
 {
-	// to do
+    // to do
 }
 
 template <typename Scalar>
 void Polygon<Scalar>::setVertexNormalsToAverageEdgeNormals()
 {
-	// to do
+    // to do
 }
 
 template <typename Scalar>

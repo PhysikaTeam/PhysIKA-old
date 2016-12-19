@@ -50,12 +50,12 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     string file_extension = FileUtilities::fileExtension(filename);
     if(file_extension.size() == 0)
     {
-		std::cerr<<"No file extension found for the mesh file:"<<filename<<std::endl;
+        std::cerr<<"No file extension found for the mesh file:"<<filename<<std::endl;
         return NULL;
     }
     if(file_extension != string(".smesh"))
     {
-		std::cerr<<"Unknown mesh file format:"<<file_extension<<std::endl;
+        std::cerr<<"Unknown mesh file format:"<<file_extension<<std::endl;
         return NULL;
     }
     vector<fstream *> file_stack;
@@ -63,7 +63,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     fp->open(filename.c_str(),std::ios::in);
     if(!(*fp))
     {
-		std::cerr<<"Couldn't opern .smesh file:"<<filename<<std::endl;
+        std::cerr<<"Couldn't opern .smesh file:"<<filename<<std::endl;
         return NULL;
     }
     // first check the mesh type
@@ -94,11 +94,11 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         std::cerr<<"Non-uniform element type not implemented yet.\n";
         return NULL;
     }
-	else 
-	{
-		std::cerr<<"Unknow elements type:"<<mesh_type<<std::endl;
-		return NULL;
-	}
+    else 
+    {
+        std::cerr<<"Unknow elements type:"<<mesh_type<<std::endl;
+        return NULL;
+    }
     enum ParseSession{
         NOT_SET,
         VERTICES,
@@ -260,7 +260,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
                             for(int i=0; i<ele_dim; i++)
                             {
                                 str_in>> ele;
-								elements.push_back(ele - index_start_vert);
+                                elements.push_back(ele - index_start_vert);
                             }
                             pointer->addElement(elements);
                             start_index_decided = false;
@@ -271,7 +271,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
                             for(int i=0; i<ele_dim; ++i)
                             {
                                 str_in>>ele;
-								elements.push_back(ele - index_start_ele);
+                                elements.push_back(ele - index_start_ele);
                             }
                             pointer->addElement(elements);
                         }
@@ -282,10 +282,10 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
             {
                 unsigned int region_index;
                 char comma;
-				if(line_str[0]==',')str_in>>comma;
+                if(line_str[0]==',')str_in>>comma;
                 while(str_in>>region_index)
                 {
-					region.push_back(region_index - index_start_ele);
+                    region.push_back(region_index - index_start_ele);
                     str_in>>comma;
                 }
             }

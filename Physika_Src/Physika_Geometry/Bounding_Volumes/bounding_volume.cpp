@@ -35,7 +35,7 @@ BoundingVolume<Scalar, Dim>* createBoundingVolume(BVType bv_type)
     case OCTAGON: 
         bounding_volume = dynamic_cast<BoundingVolume<Scalar, Dim>* >(new BoundingVolumeOctagon<Scalar>());
         break;
-	case AXIS_ALIGNED_BOX:
+    case AXIS_ALIGNED_BOX:
         bounding_volume = dynamic_cast<BoundingVolume<Scalar, Dim>* >(new BoundingVolumeAxisAlignedBox<Scalar>());
         break;
     default: 

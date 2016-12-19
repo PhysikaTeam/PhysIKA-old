@@ -486,8 +486,8 @@ void RobustCPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsign
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,1.0/(24.0*domain_volume)*(6.0*domain_volume-b-c)*corner_weight));
-					Vector<Scalar,2> gradient = 1.0/domain_volume*gradient_integral*corner_weight;
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    Vector<Scalar,2> gradient = 1.0/domain_volume*gradient_integral*corner_weight;
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -501,8 +501,8 @@ void RobustCPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsign
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,1.0/(24.0*domain_volume)*(6.0*domain_volume-b+c)*corner_weight));
-					Vector<Scalar,2> gradient = 1.0/domain_volume*gradient_integral*corner_weight;
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    Vector<Scalar,2> gradient = 1.0/domain_volume*gradient_integral*corner_weight;
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -516,8 +516,8 @@ void RobustCPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsign
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,1.0/(24.0*domain_volume)*(6.0*domain_volume+b-c)*corner_weight));
-					Vector<Scalar,2> gradient = 1.0/domain_volume*gradient_integral*corner_weight;
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    Vector<Scalar,2> gradient = 1.0/domain_volume*gradient_integral*corner_weight;
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -531,9 +531,9 @@ void RobustCPDI2UpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsign
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,1.0/(24.0*domain_volume)*(6.0*domain_volume+b+c)*corner_weight));
-					Vector<Scalar,2> gradient = 1.0/domain_volume*gradient_integral*corner_weight;
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    Vector<Scalar,2> gradient = 1.0/domain_volume*gradient_integral*corner_weight;
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }

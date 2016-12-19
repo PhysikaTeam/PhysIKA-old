@@ -57,17 +57,17 @@ bool ImageIO::save(const string &filename, const Image * image)
 
 bool ImageIO::checkFileNameAndImage(const std::string &filename, const std::string &expected_extension, const Image *image)
 {
-	std::string file_extension = FileUtilities::fileExtension(filename);
-	if(file_extension.size() == 0)
-	{
-		std::cerr<<"No file extension found for the image file:"<<filename<<std::endl;
-		return false;
-	}
-	if(file_extension != expected_extension)
-	{
-		std::cerr<<"Unknown file format:"<<file_extension<<std::endl;
-		return false;
-	}
+    std::string file_extension = FileUtilities::fileExtension(filename);
+    if(file_extension.size() == 0)
+    {
+        std::cerr<<"No file extension found for the image file:"<<filename<<std::endl;
+        return false;
+    }
+    if(file_extension != expected_extension)
+    {
+        std::cerr<<"Unknown file format:"<<file_extension<<std::endl;
+        return false;
+    }
     if(image == NULL)
     {
         std::cerr<<"NULL image passed to ImageIO"<<std::endl;

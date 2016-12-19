@@ -59,9 +59,9 @@ void SparseMatrix<Scalar>::allocMemory(unsigned int rows, unsigned int cols, Spa
             line_index_.push_back(0);
     }
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-	if (priority_ == SparseMatrixInternal::ROW_MAJOR)
+    if (priority_ == SparseMatrixInternal::ROW_MAJOR)
         ptr_eigen_sparse_matrix_ = new Eigen::SparseMatrix<Scalar, Eigen::RowMajor>(rows, cols);
-	else
+    else
         ptr_eigen_sparse_matrix_ = new Eigen::SparseMatrix<Scalar, Eigen::ColMajor>(rows, cols);
     PHYSIKA_ASSERT(ptr_eigen_sparse_matrix_);
 #endif
@@ -171,8 +171,8 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::transpose() const
         result.elements_[i].setCol(elements_[i].row());
     }
     result.line_index_ = line_index_;
-	if (priority_ == SparseMatrixInternal::ROW_MAJOR)result.priority_ = SparseMatrixInternal::COL_MAJOR;
-	else result.priority_ = SparseMatrixInternal::ROW_MAJOR;
+    if (priority_ == SparseMatrixInternal::ROW_MAJOR)result.priority_ = SparseMatrixInternal::COL_MAJOR;
+    else result.priority_ = SparseMatrixInternal::ROW_MAJOR;
     return result;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
     *result.ptr_eigen_sparse_matrix_ = (*ptr_eigen_sparse_matrix_).transpose();

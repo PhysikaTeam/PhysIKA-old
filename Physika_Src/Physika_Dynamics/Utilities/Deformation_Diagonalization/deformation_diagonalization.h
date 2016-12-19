@@ -36,14 +36,14 @@ public:
     ~DeformationDiagonalization();
     Scalar epsilon() const;
     void setEpsilon(Scalar epsilon);
-	void diagonalizeDeformationGradient(const SquareMatrix<Scalar,Dim> &deform_grad, SquareMatrix<Scalar,Dim> &left_rotation,
-		                                SquareMatrix<Scalar,Dim> &diag_deform_grad, SquareMatrix<Scalar,Dim> &right_rotation) const;
+    void diagonalizeDeformationGradient(const SquareMatrix<Scalar,Dim> &deform_grad, SquareMatrix<Scalar,Dim> &left_rotation,
+                                        SquareMatrix<Scalar,Dim> &diag_deform_grad, SquareMatrix<Scalar,Dim> &right_rotation) const;
     void diagonalizeDeformationGradient(const SquareMatrix<Scalar,Dim> &deform_grad, DiagonalizedDeformation &diagonalized_deformation) const;
 protected:
     //trait method for different dimension
-	void diagonalizationTrait(const SquareMatrix<Scalar,2> &deform_grad, SquareMatrix<Scalar,2> &left_rotation,
+    void diagonalizationTrait(const SquareMatrix<Scalar,2> &deform_grad, SquareMatrix<Scalar,2> &left_rotation,
                               SquareMatrix<Scalar,2> &diag_deform_grad, SquareMatrix<Scalar,2> &right_rotation) const;
-	void diagonalizationTrait(const SquareMatrix<Scalar,3> &deform_grad, SquareMatrix<Scalar,3> &left_rotation,
+    void diagonalizationTrait(const SquareMatrix<Scalar,3> &deform_grad, SquareMatrix<Scalar,3> &left_rotation,
                               SquareMatrix<Scalar,3> &diag_deform_grad, SquareMatrix<Scalar,3> &right_rotation) const;
 protected:
     Scalar epsilon_; //the epsilon value used to determine if some value is close to zero

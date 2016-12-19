@@ -52,8 +52,8 @@ public:
     //the default implementation here is standard vector inner-product
     virtual Scalar innerProduct(const GeneralizedVector<Scalar> &x, const GeneralizedVector<Scalar> &y) const;
 
-	//the default implementation here is do nothing
-	virtual void filter(GeneralizedVector<Scalar> &x) const;
+    //the default implementation here is do nothing
+    virtual void filter(GeneralizedVector<Scalar> &x) const;
 protected:
     //disable default copy
     MatrixLinearSystem(const MatrixLinearSystem<Scalar> &linear_system);
