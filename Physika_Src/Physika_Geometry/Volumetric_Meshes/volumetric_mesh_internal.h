@@ -62,7 +62,7 @@ class CompareVector
 {
 public:
     //return true if v1 < v2
-    bool operator()(const std::vector<Scalar> &v1, const std::vector<Scalar> &v2)
+    bool operator()(const std::vector<Scalar> &v1, const std::vector<Scalar> &v2) const
     {
         unsigned int size1 = v1.size();
         unsigned int size2  = v2.size();
