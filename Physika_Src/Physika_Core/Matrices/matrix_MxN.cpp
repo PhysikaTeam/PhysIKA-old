@@ -620,16 +620,21 @@ void MatrixMxN<Scalar>::eigenDecomposition(VectorND<Scalar> &eigen_values_real, 
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class MatrixMxN<unsigned char>;
-template class MatrixMxN<unsigned short>;
-template class MatrixMxN<unsigned int>;
-template class MatrixMxN<unsigned long>;
-template class MatrixMxN<unsigned long long>;
-template class MatrixMxN<signed char>;
-template class MatrixMxN<short>;
-template class MatrixMxN<int>;
-template class MatrixMxN<long>;
-template class MatrixMxN<long long>;
+
+//Eigen 3.3.1 Matrix<Scalar, Dynamic, Dymamic> fails compile for Integer Types due to the static_assert in PartialPivLU.
+//This may could be a bug in Eigen's lastest version, so we temporarily disable all explict instantiation of Integer Type for MatrixMxN
+
+//template class MatrixMxN<unsigned char>;
+//template class MatrixMxN<unsigned short>;
+//template class MatrixMxN<unsigned int>;
+//template class MatrixMxN<unsigned long>;
+//template class MatrixMxN<unsigned long long>;
+//template class MatrixMxN<signed char>;
+//template class MatrixMxN<short>;
+//template class MatrixMxN<int>;
+//template class MatrixMxN<long>;
+//template class MatrixMxN<long long>;
+
 template class MatrixMxN<float>;
 template class MatrixMxN<double>;
 template class MatrixMxN<long double>;
