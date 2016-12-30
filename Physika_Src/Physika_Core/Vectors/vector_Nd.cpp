@@ -357,16 +357,21 @@ MatrixMxN<Scalar> VectorND<Scalar>::outerProduct(const VectorND<Scalar> &vec2) c
 }
 
 //explicit instantiation
-template class VectorND<unsigned char>;
-template class VectorND<unsigned short>;
-template class VectorND<unsigned int>;
-template class VectorND<unsigned long>;
-template class VectorND<unsigned long long>;
-template class VectorND<signed char>;
-template class VectorND<short>;
-template class VectorND<int>;
-template class VectorND<long>;
-template class VectorND<long long>;
+
+//Eigen 3.3.1 Matrix<Scalar, Dynamic, Dymamic> fails compile for Integer Types due to the static_assert in PartialPivLU.
+//This may could be a bug in Eigen's lastest version, so we temporarily disable all explict instantiation of Integer Type for MatrixMxN
+
+//template class VectorND<unsigned char>;
+//template class VectorND<unsigned short>;
+//template class VectorND<unsigned int>;
+//template class VectorND<unsigned long>;
+//template class VectorND<unsigned long long>;
+//template class VectorND<signed char>;
+//template class VectorND<short>;
+//template class VectorND<int>;
+//template class VectorND<long>;
+//template class VectorND<long long>;
+
 template class VectorND<float>;
 template class VectorND<double>;
 template class VectorND<long double>;
