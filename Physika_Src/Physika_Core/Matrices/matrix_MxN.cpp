@@ -1,7 +1,7 @@
 /*
  * @file matrix_MxN.cpp
  * @brief matrix of arbitrary size, and size could be changed during runtime.
- * @author Fei Zhu
+ * @author Fei Zhu, Wei Chen
  *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -24,20 +24,26 @@ namespace Physika{
 
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN()
+    :MatrixMxN(0, 0) //delegating ctor
 {
-    allocMemory(0,0);
 }
 
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols)
+    :MatrixMxN(rows, cols, static_cast<Scalar>(0)) //delegating ctor, static_cast is needed to distinguish 0 from Scalar and Scalar *
 {
-    allocMemory(rows,cols);
 }
 
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols, Scalar value)
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    :eigen_matrix_MxN_(rows, cols)
+#endif
 {
+#ifdef PHYSIKA_USE_BUILT_IN_MATRIX
     allocMemory(rows,cols);
+#endif
+
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j < cols; ++j)
             (*this)(i,j) = value;
@@ -45,8 +51,14 @@ MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols, Scalar value)
 
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols, Scalar *entries)
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    :eigen_matrix_MxN_(rows, cols)
+#endif
 {
-    allocMemory(rows,cols);
+#ifdef PHYSIKA_USE_BUILT_IN_MATRIX
+    allocMemory(rows, cols);
+#endif
+
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j < cols; ++j)
             (*this)(i,j) = entries[i*cols+j];
@@ -54,18 +66,20 @@ MatrixMxN<Scalar>::MatrixMxN(unsigned int rows, unsigned int cols, Scalar *entri
 
 template <typename Scalar>
 MatrixMxN<Scalar>::MatrixMxN(const MatrixMxN<Scalar> &mat2)
+#ifdef PHYSIKA_USE_EIGEN_MATRIX
+    :eigen_matrix_MxN_(mat2.eigen_matrix_MxN_)
+#endif
 {
+#ifdef PHYSIKA_USE_BUILT_IN_MATRIX
     allocMemory(mat2.rows(),mat2.cols());
     *this = mat2;
+#endif
 }
 
 template<typename Scalar>
 void MatrixMxN<Scalar>::allocMemory(unsigned int rows, unsigned int cols)
 {
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    ptr_eigen_matrix_MxN_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>(rows,cols);
-    PHYSIKA_ASSERT(ptr_eigen_matrix_MxN_);
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+#ifdef PHYSIKA_USE_BUILT_IN_MATRIX
     data_ = new Scalar[rows*cols];
     PHYSIKA_ASSERT(data_);
     rows_ = rows;
@@ -76,9 +90,7 @@ void MatrixMxN<Scalar>::allocMemory(unsigned int rows, unsigned int cols)
 template <typename Scalar>
 MatrixMxN<Scalar>::~MatrixMxN()
 {
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    delete ptr_eigen_matrix_MxN_;
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
+#ifdef PHYSIKA_USE_BUILT_IN_MATRIX
     delete[] data_;
 #endif
 }
@@ -87,7 +99,7 @@ template <typename Scalar>
 unsigned int MatrixMxN<Scalar>::rows() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return (*ptr_eigen_matrix_MxN_).rows();
+    return eigen_matrix_MxN_.rows();
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     return rows_;
 #endif
@@ -97,34 +109,32 @@ template <typename Scalar>
 unsigned int MatrixMxN<Scalar>::cols() const
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return (*ptr_eigen_matrix_MxN_).cols();
+    return eigen_matrix_MxN_.cols();
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     return cols_;
 #endif
 }
 
 template <typename Scalar>
-void MatrixMxN<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
+void MatrixMxN<Scalar>::resize(unsigned int new_rows, unsigned int new_cols, Scalar init_val = 0)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    (*ptr_eigen_matrix_MxN_).resize(new_rows,new_cols);
+    eigen_matrix_MxN_.resize(new_rows,new_cols);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     delete[] data_;
     allocMemory(new_rows, new_cols);
 #endif
+
+    //initialize
+    for (unsigned int i = 0; i < new_rows; ++i)
+        for (unsigned int j = 0; j < new_cols; ++j)
+            (*this)(i, j) = init_val;
 }
 
 template <typename Scalar>
 Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j)
 {
-    bool index_in_range = (i<(*this).rows())&&(j<(*this).cols());
-    if(!index_in_range)
-        throw PhysikaException("Matrix index out of range!");
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return (*ptr_eigen_matrix_MxN_)(i,j);
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    return data_[i*cols_+j];
-#endif
+    return const_cast<Scalar &>(static_cast<const MatrixMxN<Scalar> & >(*this)(i, j));
 }
 
 template <typename Scalar>
@@ -134,14 +144,14 @@ const Scalar& MatrixMxN<Scalar>::operator() (unsigned int i, unsigned int j) con
     if(!index_in_range)
         throw PhysikaException("Matrix index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return (*ptr_eigen_matrix_MxN_)(i,j);
+    return eigen_matrix_MxN_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     return data_[i*cols_+j];
 #endif
 }
 
 template <typename Scalar>
-VectorND<Scalar> MatrixMxN<Scalar>::rowVector(unsigned int i) const
+const VectorND<Scalar> MatrixMxN<Scalar>::rowVector(unsigned int i) const
 {
     if(i>=(*this).rows())
         throw PhysikaException("Matrix index out of range!");
@@ -152,7 +162,7 @@ VectorND<Scalar> MatrixMxN<Scalar>::rowVector(unsigned int i) const
 }
 
 template <typename Scalar>
-VectorND<Scalar> MatrixMxN<Scalar>::colVector(unsigned int i) const
+const VectorND<Scalar> MatrixMxN<Scalar>::colVector(unsigned int i) const
 {
     if(i>=(*this).cols())
         throw PhysikaException("Matrix index out of range!");
@@ -163,22 +173,9 @@ VectorND<Scalar> MatrixMxN<Scalar>::colVector(unsigned int i) const
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> MatrixMxN<Scalar>::operator+ (const MatrixMxN<Scalar> &mat2) const
+const MatrixMxN<Scalar> MatrixMxN<Scalar>::operator+ (const MatrixMxN<Scalar> &mat2) const
 {
-    unsigned int rows = (*this).rows();
-    unsigned int cols = (*this).cols();
-    unsigned int rows2 = mat2.rows();
-    unsigned int cols2 = mat2.cols();
-    bool size_match = (rows==rows2)&&(cols==cols2);
-    if(!size_match)
-        throw PhysikaException("Cannot add two matrix of different sizes!");
-    Scalar *result = new Scalar[rows*cols];
-    for(unsigned int i = 0; i < rows; ++i)
-        for(unsigned int j = 0; j < cols; ++j)
-            result[i*cols+j] = (*this)(i,j) + mat2(i,j);
-    MatrixMxN<Scalar> result_matrix(rows, cols, result);
-    delete result;
-    return result_matrix;
+    return MatrixMxN<Scalar>(*this) += mat2;
 }
 
 template <typename Scalar>
@@ -193,27 +190,14 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator+= (const MatrixMxN<Scalar> &mat2)
         throw PhysikaException("Cannot add two matrix of different sizes!");
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j <cols; ++j)
-            (*this)(i,j) = (*this)(i,j) + mat2(i,j);
+            (*this)(i,j) += mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> MatrixMxN<Scalar>::operator- (const MatrixMxN<Scalar> &mat2) const
+const MatrixMxN<Scalar> MatrixMxN<Scalar>::operator- (const MatrixMxN<Scalar> &mat2) const
 {
-    unsigned int rows = (*this).rows();
-    unsigned int cols = (*this).cols();
-    unsigned int rows2 = mat2.rows();
-    unsigned int cols2 = mat2.cols();
-    bool size_match = (rows==rows2)&&(cols==cols2);
-    if(!size_match)
-        throw PhysikaException("Cannot subtract two matrix of different sizes!");
-    Scalar *result = new Scalar[rows*cols];
-    for(unsigned int i = 0; i < rows; ++i)
-        for(unsigned int j = 0; j < cols; ++j)
-            result[i*cols+j] = (*this)(i,j) - mat2(i,j);
-    MatrixMxN<Scalar> result_matrix(rows, cols, result);
-    delete result;
-    return result_matrix;
+    return MatrixMxN<Scalar>(*this) -= mat2;
 }
 
 template <typename Scalar>
@@ -228,7 +212,7 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator-= (const MatrixMxN<Scalar> &mat2)
         throw PhysikaException("Cannot subtract two matrix of different sizes!");
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j <cols; ++j)
-            (*this)(i,j) = (*this)(i,j) - mat2(i,j);
+            (*this)(i,j) -= mat2(i,j);
     return *this;
 }
 
@@ -280,17 +264,9 @@ bool MatrixMxN<Scalar>::operator!= (const MatrixMxN<Scalar> &mat2) const
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (Scalar scale) const
+const MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (Scalar scale) const
 {
-    unsigned int rows = (*this).rows();
-    unsigned int cols = (*this).cols();
-    Scalar *result = new Scalar[rows*cols];
-    for(unsigned int i = 0; i < rows; ++i)
-        for(unsigned int j = 0; j < cols; ++j)
-            result[i*cols+j] = (*this)(i,j) * scale;
-    MatrixMxN<Scalar> result_matrix(rows,cols,result);
-    delete result;
-    return result_matrix;
+    return MatrixMxN<Scalar>(*this) *= scale;
 }
 
 template <typename Scalar>
@@ -300,12 +276,12 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (Scalar scale)
     unsigned int cols = (*this).cols();
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j < cols; ++j)
-            (*this)(i,j) = (*this)(i,j) * scale;
+            (*this)(i,j) *= scale;
     return *this;
 }
 
 template <typename Scalar>
-VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) const
+const VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) const
 {
     unsigned int mat_row = (*this).rows();
     unsigned int mat_col = (*this).cols();
@@ -322,20 +298,9 @@ VectorND<Scalar> MatrixMxN<Scalar>::operator* (const VectorND<Scalar> &vec) cons
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (const MatrixMxN<Scalar> &mat2) const
+const MatrixMxN<Scalar> MatrixMxN<Scalar>::operator* (const MatrixMxN<Scalar> &mat2) const
 {
-    unsigned int mat1_row = (*this).rows();
-    unsigned int mat1_col = (*this).cols();
-    unsigned int mat2_row = mat2.rows();
-    unsigned int mat2_col = mat2.cols();
-    if(mat1_col != mat2_row)
-        throw PhysikaException("Matrix*Matrix: Matrix and matrix sizes do not match!");
-    MatrixMxN<Scalar> result(mat1_row,mat2_col,static_cast<Scalar>(0));
-    for(unsigned int i = 0; i < mat1_row; ++i)
-        for(unsigned int j = 0; j < mat2_col; ++j)
-            for(unsigned int k = 0; k < mat1_col; ++k)
-                result(i,j) += (*this)(i,k)*mat2(k,j);
-    return result;
+    return MatrixMxN<Scalar>(*this) *= mat2;
 }
 
 template <typename Scalar>
@@ -357,36 +322,26 @@ MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator*= (const MatrixMxN<Scalar> &mat2)
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
+const MatrixMxN<Scalar> MatrixMxN<Scalar>::operator/ (Scalar scale) const
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-        throw PhysikaException("Matrix Divide by zero error!");
-    unsigned int rows = (*this).rows();
-    unsigned int cols = (*this).cols();
-    Scalar *result = new Scalar[rows*cols];
-    for(unsigned int i = 0; i < rows; ++i)
-        for(unsigned int j = 0; j < cols; ++j)
-            result[i*cols+j] = (*this)(i,j) / scale;
-    MatrixMxN<Scalar> result_matrix(rows,cols,result);
-    delete result;
-    return result_matrix;
+    return MatrixMxN<Scalar>(*this) /= scale;
 }
 
 template <typename Scalar>
 MatrixMxN<Scalar>& MatrixMxN<Scalar>::operator/= (Scalar scale)
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    if(abs(scale)<=std::numeric_limits<Scalar>::epsilon())
         throw PhysikaException("Matrix Divide by zero error!");
     unsigned int rows = (*this).rows();
     unsigned int cols = (*this).cols();
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j < cols; ++j)
-            (*this)(i,j) = (*this)(i,j) / scale;
+            (*this)(i,j) /= scale;
     return *this;
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> MatrixMxN<Scalar>::transpose() const
+const MatrixMxN<Scalar> MatrixMxN<Scalar>::transpose() const
 {
     unsigned int rows = (*this).rows();
     unsigned int cols = (*this).cols();
@@ -400,7 +355,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::transpose() const
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
+const MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
 {
     unsigned int rows = (*this).rows();
     unsigned int cols = (*this).cols();
@@ -427,7 +382,7 @@ MatrixMxN<Scalar> MatrixMxN<Scalar>::inverse() const
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> MatrixMxN<Scalar>::cofactorMatrix() const
+const MatrixMxN<Scalar> MatrixMxN<Scalar>::cofactorMatrix() const
 {
     unsigned int rows = (*this).rows();
     unsigned int cols = (*this).cols();
@@ -461,7 +416,7 @@ Scalar MatrixMxN<Scalar>::determinant() const
     if(rows!=cols)
         throw PhysikaException("Matrix not square matrix, determinant does not exit!");
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return (*ptr_eigen_matrix_MxN_).determinant();
+    return eigen_matrix_MxN_.determinant();
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
     Scalar det = 0.0;
     if(rows==1)
@@ -539,7 +494,7 @@ void MatrixMxN<Scalar>::singularValueDecomposition(MatrixMxN<Scalar> &left_singu
     Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> temp_matrix(rows,cols);
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j < cols; ++j)
-                temp_matrix(i,j) = static_cast<long double>((*ptr_eigen_matrix_MxN_)(i,j));
+                temp_matrix(i,j) = static_cast<long double>(eigen_matrix_MxN_(i,j));
     Eigen::JacobiSVD<Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
     const Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> &left = svd.matrixU(), &right = svd.matrixV();
     const Eigen::Matrix<long double,Eigen::Dynamic,1> &values = svd.singularValues();
@@ -589,7 +544,7 @@ void MatrixMxN<Scalar>::eigenDecomposition(VectorND<Scalar> &eigen_values_real, 
     Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> temp_matrix(rows,cols);
     for(unsigned int i = 0; i < rows; ++i)
         for(unsigned int j = 0; j < cols; ++j)
-                temp_matrix(i,j) = static_cast<long double>((*ptr_eigen_matrix_MxN_)(i,j));
+                temp_matrix(i,j) = static_cast<long double>(eigen_matrix_MxN_(i,j));
     Eigen::EigenSolver<Eigen::Matrix<long double,Eigen::Dynamic,Eigen::Dynamic> > eigen(temp_matrix);
     Eigen::Matrix<std::complex<long double>,Eigen::Dynamic,Eigen::Dynamic> vectors = eigen.eigenvectors();
     const Eigen::Matrix<std::complex<long double>,Eigen::Dynamic,1> &values = eigen.eigenvalues();
@@ -622,7 +577,7 @@ void MatrixMxN<Scalar>::eigenDecomposition(VectorND<Scalar> &eigen_values_real, 
 //explicit instantiation of template so that it could be compiled into a lib
 
 //Eigen 3.3.1 Matrix<Scalar, Dynamic, Dymamic> fails compile for Integer Types due to the static_assert in PartialPivLU.
-//This may could be a bug in Eigen's lastest version, so we temporarily disable all explict instantiation of Integer Type for MatrixMxN
+//This may could be a bug in Eigen's latest version, so we temporarily disable all explicit instantiation of Integer Type for MatrixMxN
 
 //template class MatrixMxN<unsigned char>;
 //template class MatrixMxN<unsigned short>;

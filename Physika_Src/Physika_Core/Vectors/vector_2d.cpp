@@ -1,7 +1,7 @@
 /*
  * @file vector_2d.cpp 
  * @brief 2d vector.
- * @author Fei Zhu
+ * @author Fei Zhu, Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -24,7 +24,15 @@ namespace Physika{
 
 template <typename Scalar>
 Vector<Scalar,2>::Vector()
+    :Vector(0) //delegating ctor
 {
+}
+
+template <typename Scalar>
+Vector<Scalar, 2>::Vector(Scalar x)
+    :Vector(x, x) //delegating ctor
+{
+
 }
 
 template <typename Scalar>
@@ -39,38 +47,11 @@ Vector<Scalar,2>::Vector(Scalar x, Scalar y)
 #endif
 }
 
-template <typename Scalar>
-Vector<Scalar,2>::Vector(Scalar x)
-{
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    eigen_vector_2x_(0)=x;
-    eigen_vector_2x_(1)=x;
-#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    data_[0]=data_[1]=x;
-#endif
-}
-
-template <typename Scalar>
-Vector<Scalar,2>::Vector(const Vector<Scalar,2> &vec2)
-{
-    *this = vec2;
-}
-
-template <typename Scalar>
-Vector<Scalar,2>::~Vector()
-{
-}
 
 template <typename Scalar>
 Scalar& Vector<Scalar,2>::operator[] (unsigned int idx)
 {
-    if(idx>=2)
-        throw PhysikaException("Vector index out of range!");
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    return eigen_vector_2x_(idx);
-#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    return data_[idx];
-#endif
+    return const_cast<Scalar &>(static_cast<const Vector<Scalar, 2> &>(*this)[idx]);
 }
 
 template <typename Scalar>
@@ -86,44 +67,30 @@ const Scalar& Vector<Scalar,2>::operator[] (unsigned int idx) const
 }
 
 template <typename Scalar>
-Vector<Scalar,2> Vector<Scalar,2>::operator+ (const Vector<Scalar,2> &vec2) const
+const Vector<Scalar,2> Vector<Scalar,2>::operator+ (const Vector<Scalar,2> &vec2) const
 {
-    Scalar result[2];
-    for(unsigned int i = 0; i < 2; ++i)
-        result[i] = (*this)[i] + vec2[i];
-    return Vector<Scalar,2>(result[0],result[1]);
+    return Vector<Scalar, 2>(*this) += vec2;
 }
 
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator+= (const Vector<Scalar,2> &vec2)
 {
     for(unsigned int i = 0; i < 2; ++i)
-        (*this)[i] = (*this)[i] + vec2[i];
+        (*this)[i] += vec2[i];
     return *this;
 }
 
 template <typename Scalar>
-Vector<Scalar,2> Vector<Scalar,2>::operator- (const Vector<Scalar,2> &vec2) const
+const Vector<Scalar,2> Vector<Scalar,2>::operator- (const Vector<Scalar,2> &vec2) const
 {
-    Scalar result[2];
-    for(unsigned int i = 0; i < 2; ++i)
-        result[i] = (*this)[i] - vec2[i];
-    return Vector<Scalar,2>(result[0],result[1]);
+    return Vector<Scalar, 2>(*this) -= vec2;
 }
 
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator-= (const Vector<Scalar,2> &vec2)
 {
     for(unsigned int i = 0; i < 2; ++i)
-        (*this)[i] = (*this)[i] - vec2[i];
-    return *this;
-}
-
-template <typename Scalar>
-Vector<Scalar,2>& Vector<Scalar,2>::operator= (const Vector<Scalar,2> &vec2)
-{
-    for(unsigned int i = 0; i < 2; ++i)
-        (*this)[i] = vec2[i];
+        (*this)[i] -= vec2[i];
     return *this;
 }
 
@@ -153,78 +120,68 @@ bool Vector<Scalar,2>::operator!= (const Vector<Scalar,2> &vec2) const
 }
 
 template <typename Scalar>
-Vector<Scalar,2> Vector<Scalar,2>::operator* (Scalar scale) const
+const Vector<Scalar, 2> Vector<Scalar, 2>::operator+(Scalar value) const
 {
-    Scalar result[2];
-    for(unsigned int i = 0; i < 2; ++i)
-        result[i] = (*this)[i] * scale;
-    return Vector<Scalar,2>(result[0],result[1]);
-}
-
-
-
-template <typename Scalar>
-Vector<Scalar, 2> Vector<Scalar, 2>::operator-(Scalar value) const
-{
-    Scalar result[2];
-    for(unsigned int i = 0; i < 2; ++i)
-        result[i] = (*this)[i] - value;
-    return  Vector<Scalar,2>(result[0],result[1]);
-}
-
-template <typename Scalar>
-Vector<Scalar, 2> Vector<Scalar, 2>::operator+(Scalar value) const
-{
-    Scalar result[2];
-    for(unsigned int i = 0; i < 2; ++i)
-        result[i] = (*this)[i] + value;
-    return  Vector<Scalar,2>(result[0],result[1]);
+    return Vector<Scalar, 2>(*this) += value;
 }
 
 
 template <typename Scalar>
-Vector<Scalar,2>& Vector<Scalar,2>::operator+= (Scalar value)
+Vector<Scalar, 2>& Vector<Scalar, 2>::operator+= (Scalar value)
 {
-    for(unsigned int i = 0; i < 2; ++i)
-        (*this)[i] = (*this)[i] + value;
+    for (unsigned int i = 0; i < 2; ++i)
+        (*this)[i] += value;
     return *this;
 }
 
 template <typename Scalar>
-Vector<Scalar,2>& Vector<Scalar,2>::operator-= (Scalar value)
+const Vector<Scalar, 2> Vector<Scalar, 2>::operator-(Scalar value) const
 {
-    for(unsigned int i = 0; i < 2; ++i)
-        (*this)[i] = (*this)[i] - value;
+    return Vector<Scalar, 2>(*this) -= value;
+}
+
+template <typename Scalar>
+Vector<Scalar, 2>& Vector<Scalar, 2>::operator-= (Scalar value)
+{
+    for (unsigned int i = 0; i < 2; ++i)
+        (*this)[i] -= value;
     return *this;
+}
+
+template <typename Scalar>
+const Vector<Scalar,2> Vector<Scalar,2>::operator* (Scalar scale) const
+{
+    return Vector<Scalar, 2>(*this) *= scale;
 }
 
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator*= (Scalar scale)
 {
     for(unsigned int i = 0; i < 2; ++i)
-        (*this)[i] = (*this)[i] * scale;
+        (*this)[i] *= scale;
     return *this;
 }
 
 template <typename Scalar>
-Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
+const Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar scale) const
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-        throw PhysikaException("Vector Divide by zero error!");
-    Scalar result[2];
-    for(unsigned int i = 0; i < 2; ++i)
-        result[i] = (*this)[i] / scale;
-    return Vector<Scalar,2>(result[0],result[1]);
+    return Vector<Scalar, 2>(*this) /= scale;
 }
 
 template <typename Scalar>
 Vector<Scalar,2>& Vector<Scalar,2>::operator/= (Scalar scale)
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    if(abs(scale) <= std::numeric_limits<Scalar>::epsilon())
         throw PhysikaException("Vector Divide by zero error!");
     for(unsigned int i = 0; i < 2; ++i)
-        (*this)[i] = (*this)[i] / scale;
+        (*this)[i] /= scale;
     return *this;
+}
+
+template <typename Scalar>
+const Vector<Scalar, 2> Vector<Scalar, 2>::operator-(void) const
+{
+    return Vector<Scalar, 2>(-(*this)[0], -(*this)[1]);
 }
 
 template <typename Scalar>
@@ -250,7 +207,7 @@ Vector<Scalar,2>& Vector<Scalar,2>::normalize()
     if(nonzero_norm)
     {
         for(int i = 0; i < 2; ++i)
-        (*this)[i] = (*this)[i] / norm;
+            (*this)[i] /= norm;
     }
     return *this;
 }
@@ -262,19 +219,13 @@ Scalar Vector<Scalar,2>::cross(const Vector<Scalar,2>& vec2) const
 }
 
 template <typename Scalar>
-Vector<Scalar,2> Vector<Scalar,2>::operator-(void) const
-{
-    return Vector<Scalar,2>(-(*this)[0],-(*this)[1]);
-}
-
-template <typename Scalar>
 Scalar Vector<Scalar,2>::dot(const Vector<Scalar,2>& vec2) const
 {
     return (*this)[0]*vec2[0] + (*this)[1]*vec2[1];
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> Vector<Scalar,2>::outerProduct(const Vector<Scalar,2> &vec2) const
+const SquareMatrix<Scalar,2> Vector<Scalar,2>::outerProduct(const Vector<Scalar,2> &vec2) const
 {
     SquareMatrix<Scalar,2> result;
     for(unsigned int i = 0; i < 2; ++i)

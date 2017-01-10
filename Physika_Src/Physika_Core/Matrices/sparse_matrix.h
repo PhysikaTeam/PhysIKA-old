@@ -1,7 +1,7 @@
 /*
  * @file sparse_matrix.h
  * @brief Definition of sparse matrix, size of the matrix is dynamic.
- * @author Fei Zhu, Liyou Xu
+ * @author Fei Zhu, Liyou Xu, Wei Chen
  *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -39,38 +39,52 @@ class SparseMatrix: public MatrixBase
 public:
     explicit SparseMatrix(SparseMatrixInternal::SparseMatrixStoreMode priority = SparseMatrixInternal::ROW_MAJOR);
     SparseMatrix(unsigned int rows, unsigned int cols, SparseMatrixInternal::SparseMatrixStoreMode priority = SparseMatrixInternal::ROW_MAJOR);
+   
     SparseMatrix(const SparseMatrix<Scalar> &);
     ~SparseMatrix();
+   
     unsigned int rows() const;
     unsigned int cols() const;
+
     //return the number of nonZero node
     unsigned int nonZeros() const;                //itinerate the whole vector once to calculate the nonzeros
     // remove a node(i,j) and adjust the orthogonal list
     bool remove(unsigned int i,unsigned int j);
+
     //resize the SparseMatrix and data in it will be deleted
     void resize(unsigned int new_rows, unsigned int new_cols);
-    SparseMatrix<Scalar> transpose() const;
+
+    const SparseMatrix<Scalar> transpose() const;
     void rowElements(unsigned int row, std::vector<Scalar> &elements) const;
     void colElements(unsigned int col, std::vector<Scalar> &elements) const;
+
     //return value of matrix entry at index (i,j). Note: cannot be used as l-value!
     Scalar operator() (unsigned int i, unsigned int j) const;
+
     //insert matrix entry at index (i,j), if it already exits, replace it
     void setEntry(unsigned int i, unsigned int j, Scalar value);
-    SparseMatrix<Scalar> operator+ (const SparseMatrix<Scalar> &) const;
+
+    const SparseMatrix<Scalar> operator+ (const SparseMatrix<Scalar> &) const;
     SparseMatrix<Scalar>& operator+= (const SparseMatrix<Scalar> &);
-    SparseMatrix<Scalar> operator- (const SparseMatrix<Scalar> &) const;
+    const SparseMatrix<Scalar> operator- (const SparseMatrix<Scalar> &) const;
     SparseMatrix<Scalar>& operator-= (const SparseMatrix<Scalar> &);
+
     SparseMatrix<Scalar>& operator= (const SparseMatrix<Scalar> &);
+
     bool operator== (const SparseMatrix<Scalar> &) const;
     bool operator!= (const SparseMatrix<Scalar> &) const;
-    SparseMatrix<Scalar> operator* (Scalar) const;
-    SparseMatrix<Scalar> operator* (const SparseMatrix<Scalar> &) const;
-    VectorND<Scalar> operator* (const VectorND<Scalar> &) const;
+
+    const SparseMatrix<Scalar> operator* (Scalar) const;
     SparseMatrix<Scalar>& operator*= (Scalar);
-    SparseMatrix<Scalar> operator/ (Scalar) const;
+    const SparseMatrix<Scalar> operator* (const SparseMatrix<Scalar> &) const;
+    const VectorND<Scalar> operator* (const VectorND<Scalar> &) const;
+   
+
+    const SparseMatrix<Scalar> operator/ (Scalar) const;
     SparseMatrix<Scalar>& operator/= (Scalar);
+
 protected:
-    VectorND<Scalar> leftMultiplyVector(const VectorND<Scalar> &) const;
+    const VectorND<Scalar> leftMultiplyVector(const VectorND<Scalar> &) const;
     void allocMemory(unsigned int rows, unsigned int cols, SparseMatrixInternal::SparseMatrixStoreMode priority);
 protected:
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
@@ -113,14 +127,14 @@ std::ostream& operator<< (std::ostream &s, const SparseMatrix<Scalar> &mat)
 
 //make * operator commutative
 template <typename S, typename T>
-SparseMatrix<T> operator* (S scale, const SparseMatrix<T> &mat)
+const SparseMatrix<T> operator* (S scale, const SparseMatrix<T> &mat)
 {
     return mat*scale;
 }
 
 //multiply a row vector with a sparse matrix
 template <typename Scalar>
-VectorND<Scalar> operator*(const VectorND<Scalar> &vec, const SparseMatrix<Scalar> &mat)
+const VectorND<Scalar> operator*(const VectorND<Scalar> &vec, const SparseMatrix<Scalar> &mat)
 {
     return mat.leftMultiplyVector(vec);
 }

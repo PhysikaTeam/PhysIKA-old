@@ -1,7 +1,7 @@
 /*
  * @file sparse_matrix.cpp
  * @brief Definition of sparse matrix, size of the matrix is dynamic.
- * @author Liyou Xu, Fei Zhu
+ * @author Liyou Xu, Fei Zhu, Wei Chen
  *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -160,7 +160,7 @@ void SparseMatrix<Scalar>::resize(unsigned int new_rows, unsigned int new_cols)
 }
 
 template <typename Scalar>
-SparseMatrix<Scalar> SparseMatrix<Scalar>::transpose() const
+const SparseMatrix<Scalar> SparseMatrix<Scalar>::transpose() const
 {
     SparseMatrix<Scalar> result(this->cols(), this->rows());
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
@@ -308,26 +308,9 @@ void SparseMatrix<Scalar>::setEntry(unsigned int i,unsigned int j, Scalar value)
 }
 
 template <typename Scalar>
-SparseMatrix<Scalar> SparseMatrix<Scalar>::operator+ (const SparseMatrix<Scalar> &mat2) const
+const SparseMatrix<Scalar> SparseMatrix<Scalar>::operator+ (const SparseMatrix<Scalar> &mat2) const
 {
-#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
-    SparseMatrix<Scalar> result(mat2);
-    for(unsigned int i=0; i<elements_.size(); ++i)
-    {
-        unsigned int x = elements_[i].row();
-        unsigned int y = elements_[i].col();
-        Scalar v = elements_[i].value();
-        v += result(x,y);
-        result.setEntry(x,y,v);
-    }
-    return result;
-#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    PHYSIKA_ASSERT(mat2.rows()==this->rows() && mat2.cols()==this->cols());
-    SparseMatrix<Scalar> result(this->rows(), this->cols());
-    (*result.ptr_eigen_sparse_matrix_) =  (*ptr_eigen_sparse_matrix_) + (*(mat2.ptr_eigen_sparse_matrix_));
-    return result;
-#endif
+    return SparseMatrix<Scalar>(*this) += mat2;
 }
 
 template <typename Scalar>
@@ -352,7 +335,7 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator+= (const SparseMatrix<Scala
 }
 
 template <typename Scalar>
-SparseMatrix<Scalar> SparseMatrix<Scalar>::operator- (const SparseMatrix<Scalar> &mat2) const
+const SparseMatrix<Scalar> SparseMatrix<Scalar>::operator- (const SparseMatrix<Scalar> &mat2) const
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
     PHYSIKA_ASSERT(mat2.rows()==rows_ && mat2.cols()==cols_);
@@ -496,22 +479,26 @@ bool SparseMatrix<Scalar>::operator!= (const SparseMatrix<Scalar> &mat2) const
 }
 
 template <typename Scalar>
-SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (Scalar scale) const
+const SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (Scalar scale) const
+{
+    return SparseMatrix<Scalar>(*this) *= scale;
+}
+
+template <typename Scalar>
+SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator*=(Scalar scale)
 {
 #ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    SparseMatrix<Scalar> result(*this);
-    for(unsigned int i=0;i<elements_.size();++i)
-        result.elements_[i].setValue(elements_[i].value()*scale);
-    return result;
+    for (unsigned int i = 0; i < elements_.size(); ++i)
+        elements_[i].setValue(elements_[i].value()*scale);
+    return *this;
 #elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    SparseMatrix<Scalar> result(this->rows(), this->cols());
-    *(result.ptr_eigen_sparse_matrix_) = *(ptr_eigen_sparse_matrix_) * scale;
-    return result;
+    *ptr_eigen_sparse_matrix_ = *ptr_eigen_sparse_matrix_ * scale;
+    return *this;
 #endif
 }
 
 template <typename Scalar>
-SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar> &mat2) const
+const SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar> &mat2) const
 {
     if(this->cols() != mat2.rows())
         throw PhysikaException("operator * between two SparseMatrixes failed because they don't match");
@@ -579,7 +566,7 @@ SparseMatrix<Scalar> SparseMatrix<Scalar>::operator* (const SparseMatrix<Scalar>
 }
 
 template <typename Scalar>
-VectorND<Scalar> SparseMatrix<Scalar>::leftMultiplyVector(const VectorND<Scalar> &vec) const
+const VectorND<Scalar> SparseMatrix<Scalar>::leftMultiplyVector(const VectorND<Scalar> &vec) const
 {
     if(this->rows() != vec.dims())
         throw PhysikaException("operator * between VectorND and SpaseMatrix failed because the two don't match");
@@ -607,7 +594,7 @@ VectorND<Scalar> SparseMatrix<Scalar>::leftMultiplyVector(const VectorND<Scalar>
 }
 
 template <typename Scalar>
-VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) const
+const VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) const
 {
     if(this->cols() != vec.dims())
         throw PhysikaException("operator * between SpaseMatrix and VectorND failed because the two don't match");
@@ -637,33 +624,9 @@ VectorND<Scalar> SparseMatrix<Scalar>::operator* (const VectorND<Scalar> &vec) c
 }
 
 template <typename Scalar>
-SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator*=(Scalar scale)
+const SparseMatrix<Scalar> SparseMatrix<Scalar>::operator/ (Scalar scale) const
 {
-#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    for (unsigned int i = 0; i<elements_.size(); ++i)
-        elements_[i].setValue(elements_[i].value()*scale);
-    return *this;
-#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    *ptr_eigen_sparse_matrix_ = *ptr_eigen_sparse_matrix_ * scale;
-    return *this;
-#endif
-}
-
-template <typename Scalar>
-SparseMatrix<Scalar> SparseMatrix<Scalar>::operator/ (Scalar scale) const
-{
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-        throw PhysikaException("Matrix Divide by zero error!");
-#ifdef PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
-    SparseMatrix<Scalar> result(*this);
-    for (unsigned int i = 0; i<elements_.size(); ++i)
-        result.elements_[i].setValue(elements_[i].value()/scale);
-    return result;
-#elif defined(PHYSIKA_USE_EIGEN_SPARSE_MATRIX)
-    SparseMatrix<Scalar> result(this->rows(),this->cols());
-    *result.ptr_eigen_sparse_matrix_ = *ptr_eigen_sparse_matrix_ / scale;
-    return result;
-#endif
+    return SparseMatrix<Scalar>(*this) /= scale;
 }
 
 template <typename Scalar>

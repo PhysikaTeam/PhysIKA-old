@@ -1,7 +1,7 @@
 /*
 * @file vector_Nd.h 
 * @brief Arbitrary dimension vector, dimension could be changed at runtime.
-* @author Fei Zhu
+* @author Fei Zhu, Wei Chen
 * 
 * This file is part of Physika, a versatile physics simulation library.
 * Copyright (C) 2013- Physika Group.
@@ -37,45 +37,53 @@ public:
     VectorND();//empty vector, dim = 0
     explicit VectorND(unsigned int dim);//vector with given dimension
     VectorND(unsigned int dim, Scalar value);//vector with given dimension initialized with one value
+
     VectorND(const VectorND<Scalar>&);
     ~VectorND();
+
     unsigned int dims() const;
-    void resize(unsigned int new_dim);
+    void resize(unsigned int new_dim, Scalar init_val = 0);
+
     Scalar& operator[] (unsigned int);
     const Scalar& operator[] (unsigned int) const;
-    VectorND<Scalar> operator+ (const VectorND<Scalar> &) const;
+
+    const VectorND<Scalar> operator+ (const VectorND<Scalar> &) const;
     VectorND<Scalar>& operator+= (const VectorND<Scalar> &);
-    VectorND<Scalar> operator- (const VectorND<Scalar> &) const;
+    const VectorND<Scalar> operator- (const VectorND<Scalar> &) const;
     VectorND<Scalar>& operator-= (const VectorND<Scalar> &);
+
     VectorND<Scalar>& operator= (const VectorND<Scalar> &);
+
     bool operator== (const VectorND<Scalar> &) const;
     bool operator!= (const VectorND<Scalar> &) const;
 
-    VectorND<Scalar> operator+ (Scalar) const;
-    VectorND<Scalar> operator- (Scalar) const;
-    VectorND<Scalar> operator* (Scalar) const;
-    VectorND<Scalar> operator/ (Scalar) const;
+    const VectorND<Scalar> operator+ (Scalar) const;
+    const VectorND<Scalar> operator- (Scalar) const;
+    const VectorND<Scalar> operator* (Scalar) const;
+    const VectorND<Scalar> operator/ (Scalar) const;
 
     VectorND<Scalar>& operator+= (Scalar);
     VectorND<Scalar>& operator-= (Scalar);
     VectorND<Scalar>& operator*= (Scalar);
     VectorND<Scalar>& operator/= (Scalar);
 
+    const VectorND<Scalar> operator - (void) const;
+
     Scalar norm() const;
     Scalar normSquared() const;
     VectorND<Scalar>& normalize();
-    VectorND<Scalar> operator - (void) const;
     Scalar dot(const VectorND<Scalar>&) const;
-    MatrixMxN<Scalar> outerProduct(const VectorND<Scalar>&) const;
+    const MatrixMxN<Scalar> outerProduct(const VectorND<Scalar>&) const;
 
 protected:
     void allocMemory(unsigned int dims);
+
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-    Eigen::Matrix<Scalar,Eigen::Dynamic,1> *ptr_eigen_vector_Nx_;
+    Eigen::Matrix<Scalar,Eigen::Dynamic,1> eigen_vector_Nx_;
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    Scalar *data_;
-    unsigned int dims_;
+    Scalar *data_;      //default: zero vector
+    unsigned int dims_; //default: 0
 #endif
 private:
     void compileTimeCheck()//dummy method for compile time check
@@ -106,7 +114,7 @@ inline std::ostream& operator<< (std::ostream &s, const VectorND<Scalar> &vec)
 
 //make * operator commutative
 template <typename S, typename T>
-inline VectorND<T> operator *(S scale, const VectorND<T> &vec)
+inline const VectorND<T> operator *(S scale, const VectorND<T> &vec)
 {
     return vec * scale;
 }

@@ -300,7 +300,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoO
     Scalar obj1_mass = mpm_solid_driver->gridMass(object_idx1,node_idx), obj2_mass = mpm_solid_driver->gridMass(object_idx2,node_idx);
     Vector<Scalar,Dim> obj1_vel = mpm_solid_driver->gridVelocity(object_idx1,node_idx), obj2_vel = mpm_solid_driver->gridVelocity(object_idx2,node_idx);
     //average the normal of the two objects so that they're in opposite direction
-    obj1_normal = (obj1_normal - obj2_normal).normalize();
+    obj1_normal = Vector<Scalar, Dim>(obj1_normal - obj2_normal).normalize();
     obj2_normal = -obj1_normal;
     Vector<Scalar,Dim> vel_delta = obj1_vel - obj2_vel;
     if((obj1_vel-obj2_vel).dot(obj1_normal) > 0) //necessary condition 1: approach each other

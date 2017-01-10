@@ -21,7 +21,7 @@ project_name = 'PhysikaTest'
 
 #SRC FILES
 #src_files = ['cuda_test.cpp']
-src_files = ['matrixMxN_test.cpp']
+src_files = ['vector1d_test.cpp']
 #src_files = ['surface_mesh_render_test.cpp']
 
 #BUILD TYPE
@@ -29,9 +29,9 @@ src_files = ['matrixMxN_test.cpp']
 build_type = 'Debug'
 
 #MSVC VERSION FOR WINDOWS ENV
-msvc_version = '10.0'   #VS2010
+#msvc_version = '10.0'   #VS2010
 #msvc_version = '12.0'   #VS2013
-#msvc_version = '14.0'   #VS2015
+msvc_version = '14.0'   #VS2015
 
 #USE OPENGL(GL,GLU,GLUT,GLUI) OR NOT
 use_gl = True

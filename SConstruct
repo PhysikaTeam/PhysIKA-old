@@ -9,17 +9,19 @@
 ######################CONFIGURATIONS#############################
 
 #MSVC VERSION FOR WINDOWS ENV
-msvc_version = '10.0'   #VS2010
+#msvc_version = '10.0'   #VS2010
 #msvc_version = '12.0'   #VS2013
-#msvc_version = '14.0'   #VS2015
+
+#TO SUPPORT C++11/14, VS2015 IS NEEDED
+msvc_version = '14.0'   #VS2015
 
 #USE OPENMP
 #use_openmp = True
 use_openmp = False
 
 #USE CUDA
-#use_cuda = True
-use_cuda = False
+use_cuda = True
+#use_cuda = False
 #################################################################
 
 #IMPORTS
@@ -196,29 +198,22 @@ for name in dependencies:
             
         #COPY LIBS
         src_dependency_lib_path = src_dependency_root_path+name+'/lib/'
+        
         if os_name == 'Linux':
             src_dependency_lib_path = src_dependency_lib_path+'Linux/'
         elif os_name == 'Windows':
             src_dependency_lib_path = src_dependency_lib_path+'Windows/'
         elif os_name == 'Darwin':
             src_dependency_lib_path = src_dependency_lib_path+'Apple/'
+            
         if os_architecture == '32bit':
             src_dependency_lib_path = src_dependency_lib_path+'X86/'
         else:
             src_dependency_lib_path = src_dependency_lib_path+'X64/'
             
-        #ON WINDOWS, G++ AND MSVC ARE SUPPORTED. WE PLACE LIB FILES COMPATIBLE ON THE TWO COMPILERS IN src_dependency_lib_path,
-        #AND LIB FILES NOT COMPATIBLE ARE PLACED IN TWO DIRECTORIES NAMED 'msvc' AND 'g++' RESPECTIVELY
         for lib_name in os.listdir(src_dependency_lib_path):
-            lib_full_path = os.path.join(src_dependency_lib_path, lib_name)
-            if os_name == 'Windows' and os.path.isdir(lib_full_path):
-                if lib_name == compiler:
-                    for spec_lib_name in os.listdir(lib_full_path):
-                        Command(target_root_path+'lib/release/'+spec_lib_name, os.path.join(lib_full_path, spec_lib_name), Copy("$TARGET", "$SOURCE"))
-                        Command(target_root_path+'lib/debug/'+spec_lib_name, os.path.join(lib_full_path, spec_lib_name), Copy("$TARGET", "$SOURCE"))
-            else:
-                Command(target_root_path+'lib/release/'+lib_name, os.path.join(src_dependency_lib_path, lib_name), Copy("$TARGET", "$SOURCE"))
-                Command(target_root_path+'lib/debug/'+lib_name, os.path.join(src_dependency_lib_path, lib_name), Copy("$TARGET", "$SOURCE")) 
+            Command(target_root_path+'lib/release/'+lib_name, os.path.join(src_dependency_lib_path, lib_name), Copy("$TARGET", "$SOURCE"))
+            Command(target_root_path+'lib/debug/'+lib_name, os.path.join(src_dependency_lib_path, lib_name), Copy("$TARGET", "$SOURCE")) 
 
 #CUSTOMIZE CLEAN OPTION
 sln_delete_files = ['release/', 'obj/', 'Physika.suo', 'Physika.sdf']

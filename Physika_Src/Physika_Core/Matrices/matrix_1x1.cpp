@@ -1,7 +1,7 @@
 /*
  * @file matrix_1x1.cpp
  * @brief 1x1 matrix.
- * @author Fei Zhu
+ * @author Fei Zhu, Wei Chen
  *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -24,6 +24,7 @@ namespace Physika{
 
 template <typename Scalar>
 SquareMatrix<Scalar,1>::SquareMatrix()
+    :SquareMatrix<Scalar, 1>(0) //delegating ctor
 {
 }
 
@@ -38,27 +39,9 @@ SquareMatrix<Scalar,1>::SquareMatrix(Scalar value)
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1>::SquareMatrix(const SquareMatrix<Scalar,1> &mat2)
-{
-    *this = mat2;
-}
-
-template <typename Scalar>
-SquareMatrix<Scalar,1>::~SquareMatrix()
-{
-}
-
-template <typename Scalar>
 Scalar& SquareMatrix<Scalar,1>::operator() (unsigned int i, unsigned int j)
 {
-    bool index_valid = (i<1)&&(j<1);
-    if(!index_valid)
-        throw PhysikaException("Matrix index out of range!");
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return eigen_matrix_1x1_(i,j);
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    return data_;
-#endif
+    return const_cast<Scalar &>(static_cast<const SquareMatrix<Scalar, 1> &>(*this)(i, j));
 }
 
 template <typename Scalar>
@@ -75,53 +58,42 @@ const Scalar& SquareMatrix<Scalar,1>::operator() (unsigned int i, unsigned int j
 }
 
 template <typename Scalar>
-Vector<Scalar,1> SquareMatrix<Scalar,1>::rowVector(unsigned int i) const
+const Vector<Scalar,1> SquareMatrix<Scalar,1>::rowVector(unsigned int i) const
 {
     Scalar val = (*this)(i,i);
     return Vector<Scalar,1>(val);
 }
 
 template <typename Scalar>
-Vector<Scalar,1> SquareMatrix<Scalar,1>::colVector(unsigned int i) const
+const Vector<Scalar,1> SquareMatrix<Scalar,1>::colVector(unsigned int i) const
 {
     Scalar val = (*this)(i,i);
     return Vector<Scalar,1>(val);
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator+ (const SquareMatrix<Scalar,1> &mat2) const
+const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator+ (const SquareMatrix<Scalar,1> &mat2) const
 {
-    Scalar result;
-    result = (*this)(0,0) + mat2(0,0);
-    return SquareMatrix<Scalar,1>(result);
+    return SquareMatrix<Scalar,1>(*this) += mat2;
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar,1>& SquareMatrix<Scalar,1>::operator+= (const SquareMatrix<Scalar,1> &mat2)
 {
-    (*this)(0,0) = (*this)(0,0) + mat2(0,0);
+    (*this)(0,0) += mat2(0,0);
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator- (const SquareMatrix<Scalar,1> &mat2) const
+const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator- (const SquareMatrix<Scalar,1> &mat2) const
 {
-    Scalar result;
-    result = (*this)(0,0) - mat2(0,0);
-    return SquareMatrix<Scalar,1>(result);
+    return SquareMatrix<Scalar, 1>(*this) -= mat2;
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar,1>& SquareMatrix<Scalar,1>::operator-= (const SquareMatrix<Scalar,1> &mat2)
 {
-    (*this)(0,0) = (*this)(0,0) - mat2(0,0);
-    return *this;
-}
-
-template <typename Scalar>
-SquareMatrix<Scalar,1>& SquareMatrix<Scalar,1>::operator= (const SquareMatrix<Scalar,1> &mat2)
-{
-    (*this)(0,0) = mat2(0,0);
+    (*this)(0,0) -= mat2(0,0);
     return *this;
 }
 
@@ -148,22 +120,20 @@ bool SquareMatrix<Scalar,1>::operator!= (const SquareMatrix<Scalar,1> &mat2) con
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator* (Scalar scale) const
+const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator* (Scalar scale) const
 {
-    Scalar result;
-    result = (*this)(0,0) * scale;
-    return SquareMatrix<Scalar,1>(result);
+    return SquareMatrix<Scalar, 1>(*this) *= scale;
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar,1>& SquareMatrix<Scalar,1>::operator*= (Scalar scale)
 {
-    (*this)(0,0) = (*this)(0,0) * scale;
+    (*this)(0,0) *= scale;
     return *this;
 }
 
 template <typename Scalar>
-Vector<Scalar,1> SquareMatrix<Scalar,1>::operator* (const Vector<Scalar,1> &vec) const
+const Vector<Scalar,1> SquareMatrix<Scalar,1>::operator* (const Vector<Scalar,1> &vec) const
 {
     Vector<Scalar,1> result(0);
     result[0] += (*this)(0,0) * vec[0];
@@ -171,42 +141,42 @@ Vector<Scalar,1> SquareMatrix<Scalar,1>::operator* (const Vector<Scalar,1> &vec)
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator* (const SquareMatrix<Scalar,1> &mat2) const
+const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator* (const SquareMatrix<Scalar,1> &mat2) const
 {
-    SquareMatrix<Scalar,1> result(0);
-    result(0,0) += (*this)(0,0) * mat2(0,0);
-    return result;
+    return SquareMatrix<Scalar, 1>(*this) *= mat2;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator/ (Scalar scale) const
+SquareMatrix<Scalar, 1> & SquareMatrix<Scalar, 1>::operator*= (const SquareMatrix<Scalar, 1> &mat2) 
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-        throw PhysikaException("Matrix Divide by zero error!");
-    Scalar result;
-    result = (*this)(0,0) / scale;
-    return SquareMatrix<Scalar,1>(result);
+    (*this)(0, 0) *= mat2(0, 0);
+    return *this;
+}
+
+
+template <typename Scalar>
+const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::operator/ (Scalar scale) const
+{
+    return SquareMatrix<Scalar,1>(*this) /= scale;
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar,1>& SquareMatrix<Scalar,1>::operator/= (Scalar scale)
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    if(abs(scale)<=std::numeric_limits<Scalar>::epsilon())
         throw PhysikaException("Matrix Divide by zero error!");
-    (*this)(0,0) = (*this)(0,0) / scale;
+    (*this)(0,0) /= scale;
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::transpose() const
+const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::transpose() const
 {
-    Scalar result;
-    result = (*this)(0,0);
-    return SquareMatrix<Scalar,1>(result);
+    return SquareMatrix<Scalar,1>(*this);
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::inverse() const
+const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::inverse() const
 {
     Scalar data = (*this)(0,0);
     if(data==0)
@@ -241,11 +211,11 @@ Scalar SquareMatrix<Scalar,1>::doubleContraction(const SquareMatrix<Scalar,1> &m
 template <typename Scalar>
 Scalar SquareMatrix<Scalar,1>::frobeniusNorm() const
 {
-    return (*this)(0,0);
+    return abs((*this)(0,0));
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::identityMatrix()
+const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::identityMatrix()
 {
     return SquareMatrix<Scalar,1>(1);
 }

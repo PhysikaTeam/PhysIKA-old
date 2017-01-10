@@ -1,7 +1,7 @@
 /*
 * @file vector_3d.h 
 * @brief 3d vector.
-* @author Sheng Yang, Fei Zhu
+* @author Sheng Yang, Fei Zhu, Wei Chen
 * 
 * This file is part of Physika, a versatile physics simulation library.
 * Copyright (C) 2013- Physika Group.
@@ -34,44 +34,50 @@ class Vector<Scalar,3>: public VectorBase
 {
 public:
     Vector();
-    Vector(Scalar x, Scalar y, Scalar z);
     explicit Vector(Scalar);
-    Vector(const Vector<Scalar,3>&);
-    ~Vector();
+    Vector(Scalar x, Scalar y, Scalar z);
+    Vector(const Vector<Scalar,3>&) = default;
+    ~Vector() = default;
+
     inline unsigned int dims() const{return 3;}
+
     Scalar& operator[] (unsigned int);
     const Scalar& operator[] (unsigned int) const;
-    Vector<Scalar,3> operator+ (const Vector<Scalar,3> &) const;
+
+    const Vector<Scalar,3> operator+ (const Vector<Scalar,3> &) const;
     Vector<Scalar,3>& operator+= (const Vector<Scalar,3> &);
-    Vector<Scalar,3> operator- (const Vector<Scalar,3> &) const;
+    const Vector<Scalar,3> operator- (const Vector<Scalar,3> &) const;
     Vector<Scalar,3>& operator-= (const Vector<Scalar,3> &);
-    Vector<Scalar,3>& operator= (const Vector<Scalar,3> &);
+
+    Vector<Scalar,3>& operator= (const Vector<Scalar,3> &) = default;
+
     bool operator== (const Vector<Scalar,3> &) const;
     bool operator!= (const Vector<Scalar,3> &) const;
 
-    Vector<Scalar,3> operator* (Scalar) const;
-    Vector<Scalar,3> operator- (Scalar) const;
-    Vector<Scalar,3> operator+ (Scalar) const;
-    Vector<Scalar,3> operator/ (Scalar) const;
+    const Vector<Scalar,3> operator* (Scalar) const;
+    const Vector<Scalar,3> operator- (Scalar) const;
+    const Vector<Scalar,3> operator+ (Scalar) const;
+    const Vector<Scalar,3> operator/ (Scalar) const;
 
     Vector<Scalar,3>& operator+= (Scalar);
     Vector<Scalar,3>& operator-= (Scalar);
     Vector<Scalar,3>& operator*= (Scalar);
     Vector<Scalar,3>& operator/= (Scalar);
 
+    const Vector<Scalar, 3> operator - (void) const;
+
     Scalar norm() const;
     Scalar normSquared() const;
     Vector<Scalar,3>& normalize();
     Vector<Scalar,3> cross(const Vector<Scalar,3> &) const;
-    Vector<Scalar,3> operator - (void) const;
     Scalar dot(const Vector<Scalar,3>&) const;
-    SquareMatrix<Scalar,3> outerProduct(const Vector<Scalar,3>&) const;
+    const SquareMatrix<Scalar,3> outerProduct(const Vector<Scalar,3>&) const;
     
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-    Eigen::Matrix<Scalar,3,1> eigen_vector_3x_;
+    Eigen::Matrix<Scalar,3,1> eigen_vector_3x_; //default: zero vector
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    Scalar data_[3];
+    Scalar data_[3]; //default: zero vector
 #endif
 private:
     void compileTimeCheck()//dummy method for compile time check
@@ -95,7 +101,7 @@ inline std::ostream& operator<< (std::ostream &s, const Vector<Scalar,3> &vec)
 
 //make * operator commutative
 template <typename S, typename T>
-inline Vector<T,3> operator *(S scale, const Vector<T,3> &vec)
+inline const Vector<T,3> operator *(S scale, const Vector<T,3> &vec)
 {
     return vec * scale;
 }

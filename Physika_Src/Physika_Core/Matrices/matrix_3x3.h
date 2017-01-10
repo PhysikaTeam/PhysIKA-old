@@ -1,7 +1,7 @@
 /*
  * @file matrix_3x3.h
  * @brief 3x3 matrix.
- * @author Sheng Yang, Fei Zhu
+ * @author Sheng Yang, Fei Zhu, Wei Chen
  *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -36,34 +36,47 @@ public:
     explicit SquareMatrix(Scalar);
     SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22);
     SquareMatrix(const Vector<Scalar,3> &row1, const Vector<Scalar,3> &row2, const Vector<Scalar,3> &row3);
-    SquareMatrix(const SquareMatrix<Scalar,3>&);
-    ~SquareMatrix();
+    
+    SquareMatrix(const SquareMatrix<Scalar,3>&) = default;
+    ~SquareMatrix() = default;
+
     inline unsigned int rows() const{return 3;}
     inline unsigned int cols() const{return 3;}
+
     Scalar& operator() (unsigned int i, unsigned int j );
     const Scalar& operator() (unsigned int i, unsigned int j) const;
-    Vector<Scalar,3> rowVector(unsigned int i) const;
-    Vector<Scalar,3> colVector(unsigned int i) const;
-    SquareMatrix<Scalar,3> operator+ (const SquareMatrix<Scalar,3> &) const;
+
+    const Vector<Scalar,3> rowVector(unsigned int i) const;
+    const Vector<Scalar,3> colVector(unsigned int i) const;
+
+    const SquareMatrix<Scalar,3> operator+ (const SquareMatrix<Scalar,3> &) const;
     SquareMatrix<Scalar,3>& operator+= (const SquareMatrix<Scalar,3> &);
-    SquareMatrix<Scalar,3> operator- (const SquareMatrix<Scalar,3> &) const;
+    const SquareMatrix<Scalar,3> operator- (const SquareMatrix<Scalar,3> &) const;
     SquareMatrix<Scalar,3>& operator-= (const SquareMatrix<Scalar,3> &);
-    SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &);
+
+    SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &) = default;
+
     bool operator== (const SquareMatrix<Scalar,3> &) const;
     bool operator!= (const SquareMatrix<Scalar,3> &) const;
-    SquareMatrix<Scalar,3> operator* (Scalar) const;
+
+    const SquareMatrix<Scalar,3> operator* (Scalar) const;
     SquareMatrix<Scalar,3>& operator*= (Scalar);
-    Vector<Scalar,3> operator* (const Vector<Scalar,3> &) const;
-    SquareMatrix<Scalar,3> operator* (const SquareMatrix<Scalar,3> &) const;
+
+    const Vector<Scalar,3> operator* (const Vector<Scalar,3> &) const;
+    const SquareMatrix<Scalar,3> operator* (const SquareMatrix<Scalar,3> &) const;
     SquareMatrix<Scalar,3>& operator*= (const SquareMatrix<Scalar,3> &);
-    SquareMatrix<Scalar,3> operator/ (Scalar) const;
+
+    const SquareMatrix<Scalar,3> operator/ (Scalar) const;
     SquareMatrix<Scalar,3>& operator/= (Scalar);
-    SquareMatrix<Scalar,3> transpose() const;
-    SquareMatrix<Scalar,3> inverse() const;
+
+    const SquareMatrix<Scalar,3> transpose() const;
+    const SquareMatrix<Scalar,3> inverse() const;
+
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const SquareMatrix<Scalar,3> &) const;//double contraction
     Scalar frobeniusNorm() const;
+
     void singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
                                     Vector<Scalar,3> &singular_values,   //singluar values are in descending order
                                     SquareMatrix<Scalar,3> &right_singular_vectors) const;
@@ -73,13 +86,13 @@ public:
     void eigenDecomposition(Vector<Scalar,3> &eigen_values_real, Vector<Scalar,3> &eigen_values_imag,
                             SquareMatrix<Scalar,3> &eigen_vectors_real, SquareMatrix<Scalar,3> &eigen_vectors_imag);
 
-    static SquareMatrix<Scalar,3> identityMatrix();
+    static const SquareMatrix<Scalar,3> identityMatrix();
 
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,3,3> eigen_matrix_3x3_;
+    Eigen::Matrix<Scalar,3,3> eigen_matrix_3x3_; //default: zero matrix
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    Scalar data_[3][3];
+    Scalar data_[3][3]; //default: zero matrix
 #endif
 private:
     void compileTimeCheck()
@@ -113,7 +126,7 @@ inline std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,3> &
 
 //make * operator commutative
 template <typename S, typename T>
-inline SquareMatrix<T,3> operator* (S scale, const SquareMatrix<T,3> &mat)
+inline const SquareMatrix<T,3> operator* (S scale, const SquareMatrix<T,3> &mat)
 {
     return mat*scale;
 }

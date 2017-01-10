@@ -1,7 +1,7 @@
 /*
  * @file matrix_2x2.cpp
  * @brief 2x2 matrix.
- * @author Fei Zhu
+ * @author Fei Zhu, Wei Chen
  *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -24,23 +24,14 @@ namespace Physika{
 
 template <typename Scalar>
 SquareMatrix<Scalar,2>::SquareMatrix()
+    :SquareMatrix(0) //delegating ctor
 {
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar,2>::SquareMatrix(Scalar value)
+    :SquareMatrix(value, value, value, value) //delegating ctor
 {
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    eigen_matrix_2x2_(0,0) = value;
-    eigen_matrix_2x2_(0,1) = value;
-    eigen_matrix_2x2_(1,0) = value;
-    eigen_matrix_2x2_(1,1) = value;
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    data_[0][0]=value;
-    data_[0][1]=value;
-    data_[1][0]=value;
-    data_[1][1]=value;
-#endif
 }
 
 template <typename Scalar>
@@ -78,27 +69,9 @@ SquareMatrix<Scalar,2>::SquareMatrix(const Vector<Scalar,2> &row1, const Vector<
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2>::SquareMatrix(const SquareMatrix<Scalar,2> &mat2)
-{
-    *this = mat2;
-}
-
-template <typename Scalar>
-SquareMatrix<Scalar,2>::~SquareMatrix()
-{
-}
-
-template <typename Scalar>
 Scalar& SquareMatrix<Scalar,2>::operator() (unsigned int i, unsigned int j)
 {
-    bool index_valid = (i<2)&&(j<2);
-    if(!index_valid)
-        throw PhysikaException("Matrix index out of range!");
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return eigen_matrix_2x2_(i,j);
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    return data_[i][j];
-#endif
+    return const_cast<Scalar &>(static_cast<const SquareMatrix<Scalar, 2> &>(*this)(i, j));
 }
 
 template <typename Scalar>
@@ -115,7 +88,7 @@ const Scalar& SquareMatrix<Scalar,2>::operator() (unsigned int i, unsigned int j
 }
 
 template <typename Scalar>
-Vector<Scalar,2> SquareMatrix<Scalar,2>::rowVector(unsigned int i) const
+const Vector<Scalar,2> SquareMatrix<Scalar,2>::rowVector(unsigned int i) const
 {
     if(i>=2)
         throw PhysikaException("Matrix index out of range!");
@@ -124,7 +97,7 @@ Vector<Scalar,2> SquareMatrix<Scalar,2>::rowVector(unsigned int i) const
 }
 
 template <typename Scalar>
-Vector<Scalar,2> SquareMatrix<Scalar,2>::colVector(unsigned int i) const
+const Vector<Scalar,2> SquareMatrix<Scalar,2>::colVector(unsigned int i) const
 {
     if(i>=2)
         throw PhysikaException("Matrix index out of range!");
@@ -133,13 +106,9 @@ Vector<Scalar,2> SquareMatrix<Scalar,2>::colVector(unsigned int i) const
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator+ (const SquareMatrix<Scalar,2> &mat2) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator+ (const SquareMatrix<Scalar,2> &mat2) const
 {
-    Scalar result[4];
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            result[i*2+j] = (*this)(i,j) + mat2(i,j);
-    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar, 2>(*this) += mat2;
 }
 
 template <typename Scalar>
@@ -147,18 +116,14 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator+= (const SquareMatrix<S
 {
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = (*this)(i,j) + mat2(i,j);
+            (*this)(i,j) += mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator- (const SquareMatrix<Scalar,2> &mat2) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator- (const SquareMatrix<Scalar,2> &mat2) const
 {
-    Scalar result[4];
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            result[i*2+j] = (*this)(i,j) - mat2(i,j);
-    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar, 2>(*this) -= mat2;
 }
 
 template <typename Scalar>
@@ -166,16 +131,7 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator-= (const SquareMatrix<S
 {
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = (*this)(i,j) - mat2(i,j);
-    return *this;
-}
-
-template <typename Scalar>
-SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator= (const SquareMatrix<Scalar,2> &mat2)
-{
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = mat2(i,j);
+            (*this)(i,j) -= mat2(i,j);
     return *this;
 }
 
@@ -206,13 +162,9 @@ bool SquareMatrix<Scalar,2>::operator!= (const SquareMatrix<Scalar,2> &mat2) con
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (Scalar scale) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (Scalar scale) const
 {
-    Scalar result[4];
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            result[i*2+j] = (*this)(i,j) * scale;
-    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar, 2>(*this) *= scale;
 }
 
 template <typename Scalar>
@@ -220,12 +172,12 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator*= (Scalar scale)
 {
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = (*this)(i,j) * scale;
+            (*this)(i,j) *= scale;
     return *this;
 }
 
 template <typename Scalar>
-Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec) const
+const Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec) const
 {
     Vector<Scalar,2> result(0);
     for(unsigned int i = 0; i < 2; ++i)
@@ -235,14 +187,9 @@ Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec)
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (const SquareMatrix<Scalar,2> &mat2) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (const SquareMatrix<Scalar,2> &mat2) const
 {
-    SquareMatrix<Scalar,2> result(0,0,0,0);
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            for(unsigned int k = 0; k < 2; ++k)
-                result(i,j) += (*this)(i,k) * mat2(k,j);
-    return result;
+    return SquareMatrix<Scalar, 2>(*this) *= mat2;
 }
 
 template <typename Scalar>
@@ -258,30 +205,24 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator*= (const SquareMatrix<S
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-        throw PhysikaException("Matrix Divide by zero error!");
-    Scalar result[4];
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            result[i*2+j] = (*this)(i,j) / scale;
-    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar, 2>(*this) /= scale;
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator/= (Scalar scale)
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
+    if(abs(scale)<=std::numeric_limits<Scalar>::epsilon())
         throw PhysikaException("Matrix Divide by zero error!");
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = (*this)(i,j) / scale;
+            (*this)(i,j) /= scale;
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::transpose() const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::transpose() const
 {
     Scalar result[4];
     for(unsigned int i = 0; i < 2; ++i)
@@ -291,7 +232,7 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::transpose() const
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
 {
     Scalar det = determinant();
     bool singular = false;
@@ -347,7 +288,7 @@ Scalar SquareMatrix<Scalar,2>::frobeniusNorm() const
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::identityMatrix()
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::identityMatrix()
 {
     return SquareMatrix<Scalar,2>(1.0,0.0,0.0,1.0);
 }

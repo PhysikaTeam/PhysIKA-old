@@ -1,7 +1,7 @@
 /*
  * @file vector_2d.h
  * @brief 2d vector.
- * @author Fei Zhu
+ * @author Fei Zhu, Wei Chen
  *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -34,44 +34,50 @@ class Vector<Scalar,2>: public VectorBase
 {
 public:
     Vector();
-    Vector(Scalar x, Scalar y);
     explicit Vector(Scalar);
-    Vector(const Vector<Scalar,2>&);
-    ~Vector();
+    Vector(Scalar x, Scalar y);
+    Vector(const Vector<Scalar,2>&) = default;
+    ~Vector() = default;
+
     inline unsigned int dims() const{return 2;}
+
     Scalar& operator[] (unsigned int);
     const Scalar& operator[] (unsigned int) const;
-    Vector<Scalar,2> operator+ (const Vector<Scalar,2> &) const;
+
+    const Vector<Scalar,2> operator+ (const Vector<Scalar,2> &) const;
     Vector<Scalar,2>& operator+= (const Vector<Scalar,2> &);
-    Vector<Scalar,2> operator- (const Vector<Scalar,2> &) const;
+    const Vector<Scalar,2> operator- (const Vector<Scalar,2> &) const;
     Vector<Scalar,2>& operator-= (const Vector<Scalar,2> &);
-    Vector<Scalar,2>& operator= (const Vector<Scalar,2> &);
+
+    Vector<Scalar,2>& operator= (const Vector<Scalar,2> &) = default;
+
     bool operator== (const Vector<Scalar,2> &) const;
     bool operator!= (const Vector<Scalar,2> &) const;
 
-    Vector<Scalar,2> operator* (Scalar) const;
-    Vector<Scalar,2> operator- (Scalar) const;
-    Vector<Scalar,2> operator+ (Scalar) const;
-    Vector<Scalar,2> operator/ (Scalar) const;
+    const Vector<Scalar,2> operator* (Scalar) const;
+    const Vector<Scalar,2> operator- (Scalar) const;
+    const Vector<Scalar,2> operator+ (Scalar) const;
+    const Vector<Scalar,2> operator/ (Scalar) const;
 
     Vector<Scalar,2>& operator+= (Scalar);
     Vector<Scalar,2>& operator-= (Scalar);
     Vector<Scalar,2>& operator*= (Scalar);
     Vector<Scalar,2>& operator/= (Scalar);
 
+    const Vector<Scalar, 2> operator - (void) const;
+
     Scalar norm() const;
     Scalar normSquared() const;
     Vector<Scalar,2>& normalize();
     Scalar cross(const Vector<Scalar,2> &)const;
-    Vector<Scalar,2> operator - (void) const;
     Scalar dot(const Vector<Scalar,2>&) const;
-    SquareMatrix<Scalar,2> outerProduct(const Vector<Scalar,2>&) const;
+    const SquareMatrix<Scalar,2> outerProduct(const Vector<Scalar,2>&) const;
 
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-    Eigen::Matrix<Scalar,2,1,Eigen::DontAlign> eigen_vector_2x_;
+    Eigen::Matrix<Scalar,2,1,Eigen::DontAlign> eigen_vector_2x_; //default: zero vector
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    Scalar data_[2];
+    Scalar data_[2]; //default: zero vector
 #endif
 private:
     void compileTimeCheck()//dummy method for compile time check
@@ -94,7 +100,7 @@ inline std::ostream& operator<< (std::ostream &s, const Vector<Scalar,2> &vec)
 
 //make * operator commutative
 template <typename S, typename T>
-inline Vector<T,2> operator *(S scale, const Vector<T,2> &vec)
+inline const Vector<T,2> operator *(S scale, const Vector<T,2> &vec)
 {
     return vec * scale;
 }

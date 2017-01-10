@@ -1,7 +1,7 @@
 /*
  * @file matrix_1x1.h
  * @brief 1x1 matrix.
- * @author Fei Zhu
+ * @author Fei Zhu, Wei Chen
  *
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -34,40 +34,53 @@ class SquareMatrix<Scalar,1>: public MatrixBase
 public:
     SquareMatrix();
     explicit SquareMatrix(Scalar);
-    SquareMatrix(const SquareMatrix<Scalar,1> &);
-    ~SquareMatrix();
+    SquareMatrix(const SquareMatrix<Scalar,1> &) = default;
+    ~SquareMatrix() = default;
+
     inline unsigned int rows() const{return 1;}
     inline unsigned int cols() const{return 1;}
+
     Scalar& operator() (unsigned int i, unsigned int j);
     const Scalar& operator() (unsigned int i, unsigned int j) const;
-    Vector<Scalar,1> rowVector(unsigned int i) const;
-    Vector<Scalar,1> colVector(unsigned int i) const;
-    SquareMatrix<Scalar,1> operator+ (const SquareMatrix<Scalar,1> &) const;
+
+    const Vector<Scalar,1> rowVector(unsigned int i) const;
+    const Vector<Scalar,1> colVector(unsigned int i) const;
+
+    const SquareMatrix<Scalar,1> operator+ (const SquareMatrix<Scalar,1> &) const;
     SquareMatrix<Scalar,1>& operator+= (const SquareMatrix<Scalar,1> &);
-    SquareMatrix<Scalar,1> operator- (const SquareMatrix<Scalar,1> &) const;
+    const SquareMatrix<Scalar,1> operator- (const SquareMatrix<Scalar,1> &) const;
     SquareMatrix<Scalar,1>& operator-= (const SquareMatrix<Scalar,1> &);
-    SquareMatrix<Scalar,1>& operator= (const SquareMatrix<Scalar,1> &);
+
+    SquareMatrix<Scalar,1>& operator= (const SquareMatrix<Scalar,1> &) = default;
+
     bool operator== (const SquareMatrix<Scalar,1> &) const;
     bool operator!= (const SquareMatrix<Scalar,1> &) const;
-    SquareMatrix<Scalar,1> operator* (Scalar) const;
+
+    const SquareMatrix<Scalar,1> operator* (Scalar) const;
     SquareMatrix<Scalar,1>& operator*= (Scalar);
-    Vector<Scalar,1> operator* (const Vector<Scalar,1> &) const;
-    SquareMatrix<Scalar,1> operator* (const SquareMatrix<Scalar,1> &) const;
-    SquareMatrix<Scalar,1> operator/ (Scalar) const;
+    
+    const Vector<Scalar,1> operator* (const Vector<Scalar,1> &) const;
+    const SquareMatrix<Scalar,1> operator* (const SquareMatrix<Scalar,1> &) const;
+    SquareMatrix<Scalar, 1> & operator *= (const SquareMatrix<Scalar, 1> &);
+
+    const SquareMatrix<Scalar,1> operator/ (Scalar) const;
     SquareMatrix<Scalar,1>& operator/= (Scalar);
-    SquareMatrix<Scalar,1> transpose() const;
-    SquareMatrix<Scalar,1> inverse() const;
+
+    const SquareMatrix<Scalar,1> transpose() const;
+    const SquareMatrix<Scalar,1> inverse() const;
+
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const SquareMatrix<Scalar,1> &) const;//double contraction
     Scalar frobeniusNorm() const;
-    static SquareMatrix<Scalar,1> identityMatrix();
+
+    static const SquareMatrix<Scalar,1> identityMatrix();
 
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,1,1> eigen_matrix_1x1_;
+    Eigen::Matrix<Scalar,1,1> eigen_matrix_1x1_; //default:zero matrix
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    Scalar data_;
+    Scalar data_; //default:zero matrix
 #endif
 private:
     void compileTimeCheck()
@@ -97,7 +110,7 @@ inline std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,1> &
 
 //make * operator commutative
 template <typename S, typename T>
-inline SquareMatrix<T,1> operator* (S scale, const SquareMatrix<T,1> &mat)
+inline const SquareMatrix<T,1> operator* (S scale, const SquareMatrix<T,1> &mat)
 {
     return mat*scale;
 }
