@@ -9,8 +9,8 @@
 ######################CONFIGURATIONS#############################
 
 #BUILD TYPE
-build_type = 'Release'
-#build_type = 'Debug'
+#build_type = 'Release'
+build_type = 'Debug'
 
 #MSVC VERSION FOR WINDOWS ENV
 #msvc_version = '10.0'   #VS2010
@@ -69,7 +69,7 @@ else:
 
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
 #NOTE: THE ORDER MATTERS
-physika_libs = ['Physika_GUI', 'Physika_Dynamics', 'Physika_Render', 'Physika_IO', 'Physika_Geometry', 'Physika_Core', 'Physika_Numerics', 'LodePNG']
+physika_libs = ['Physika_GUI', 'Physika_Dynamics', 'Physika_Render', 'Physika_IO', 'Physika_Geometry', 'Physika_Core', 'Physika_Numerics', 'LodePNG', 'cuda_link']
 
 #PHYSIKA IS DEPENDENT ON STACKWALKER ONLY ON WINDOWS WITH MSVC
 if compiler == 'msvc':
@@ -108,6 +108,7 @@ if use_gl == True:
         additional_libs.append('freeglut')
         additional_libs.append('glu32')
         additional_libs.append('opengl32')
+        additional_libs.append('glew32')
 
 #INCLUDE PATH AND LIB PATH
 include_path = physika_inc_path+additional_inc_path
@@ -148,6 +149,9 @@ else:
     if use_openmp: CCFLAGS.append('/openmp') #openmp support
     debug_env.Replace(CCFLAGS = CCFLAGS)
     
+    debug_env['LINKFLAGS'] = ['/DEBUG']
+    debug_env['CCPDBFLAGS'] = '/Zi /Fd${TARGET}.pdb'
+    
 #CUDA SUPPORT
 if use_cuda == True:
     release_env.Tool('cuda', toolpath = ['../Documentation/Cuda_Scons_Tool/'])
@@ -161,6 +165,8 @@ google_test_libs = SConscript('google_test/SConscript', exports = 'release_env o
 ###################################################################################################
 #generate project for non-unit test
 
+debug_target = ['Physika_Test_Src\\Physika_Non_Unit_Test_Src\\Physika_Dynamics\\SPH\\GPU_SPH\\cuda_pbd_sph_test.exe']
+
 non_unit_test_env = []
 if build_type == 'Debug':
     non_unit_test_env = debug_env
@@ -173,17 +179,20 @@ for dir,_,_ in os.walk('Physika_Test_Src/Physika_Non_Unit_Test_Src/'):
     
 for src_file in non_unit_test_src_files:
     target_name = os.path.splitext(src_file)[0]
-    non_unit_test_env.Program(target_name, src_file)
+    target = non_unit_test_env.Program(target_name, src_file)
+    print target
     
     #WINDOWS WORKAROUND: COPY DLLS TO EXECUTIVE DIRECTORY
     if os_name == 'Windows':
         for rpath in lib_path:
+            if not os.path.exists(rpath):
+                continue
             for dll_name in os.listdir(rpath):
                 if dll_name.endswith('.dll'):
                     Command(os.path.dirname(target_name)+'/'+dll_name, rpath+dll_name, Copy("$TARGET", "$SOURCE"))
 
 if compiler == 'msvc':
-    non_unit_test_proj = non_unit_test_env.MSVSProject(target = 'Physika_Non_Unit_Test'+env['MSVSPROJECTSUFFIX'], srcs = non_unit_test_src_files, variant = 'debug', auto_build_solution = 0)
+    non_unit_test_proj = non_unit_test_env.MSVSProject(target = 'Physika_Non_Unit_Test'+env['MSVSPROJECTSUFFIX'], srcs = non_unit_test_src_files, buildtarget = debug_target, variant = 'debug', auto_build_solution = 0)
 ###################################################################################################
 
 ###################################################################################################
@@ -233,6 +242,7 @@ physika_header_files = []
 
 for dir,_,_ in os.walk(physika_src_root):
     physika_src_files.extend(glob(os.path.join(dir, '*.cpp')))
+    physika_src_files.extend(glob(os.path.join(dir, '*.cu')))
     physika_header_files.extend(glob(os.path.join(dir, '*.h')))
 
 if compiler == 'msvc':
@@ -250,7 +260,7 @@ if compiler == 'msvc':
 sln_delete_files = ['release/', 'obj/', 'Physika.suo', 'Physika.sdf']
 sln_delete_files.extend(['debug/', 'obj/', 'Physika.suo', 'Physika.sdf'])
 for name in os.listdir('./'):
-    if name.endswith('.user') or name.endswith('.pdb') or name.endswith('.ilk') or name.endswith('.db'):
+    if name.endswith('.user') or name.endswith('.pdb') or name.endswith('.ilk') or name.endswith('.db') or name.endswith('.vs'):
         sln_delete_files.append(name)
         
 Clean(sln, sln_delete_files)

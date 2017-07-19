@@ -645,16 +645,21 @@ SparseMatrix<Scalar>& SparseMatrix<Scalar>::operator/=(Scalar scale)
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class SparseMatrix<unsigned char>;
-template class SparseMatrix<unsigned short>;
-template class SparseMatrix<unsigned int>;
-template class SparseMatrix<unsigned long>;
-template class SparseMatrix<unsigned long long>;
-template class SparseMatrix<signed char>;
-template class SparseMatrix<short>;
-template class SparseMatrix<int>;
-template class SparseMatrix<long>;
-template class SparseMatrix<long long>;
+
+//Eigen 3.3.1 Matrix<Scalar, Dynamic, Dymamic> fails compile for Integer Types due to the static_assert in PartialPivLU.
+//This may could be a bug in Eigen's latest version, so we temporarily disable all explicit instantiation of Integer Type for SparseMatrix
+
+//template class SparseMatrix<unsigned char>;
+//template class SparseMatrix<unsigned short>;
+//template class SparseMatrix<unsigned int>;
+//template class SparseMatrix<unsigned long>;
+//template class SparseMatrix<unsigned long long>;
+//template class SparseMatrix<signed char>;
+//template class SparseMatrix<short>;
+//template class SparseMatrix<int>;
+//template class SparseMatrix<long>;
+//template class SparseMatrix<long long>;
+
 template class SparseMatrix<float>;
 template class SparseMatrix<double>;
 template class SparseMatrix<long double>;

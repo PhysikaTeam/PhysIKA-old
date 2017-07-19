@@ -90,6 +90,9 @@ public:
     template <typename ColorType>
     void setTextColor(const Color<ColorType> &color);
 
+    void enableEventMode();
+    void disableEventMode();
+
     //camera operations
     const Vector<double,3>& cameraPosition() const;
     void setCameraPosition(const Vector<double,3> &position);
@@ -210,6 +213,7 @@ protected:
     int mouse_position_[2];
     //fps display
     bool display_fps_;
+    bool event_mode_;
     Color<double> text_color_; //the color to display text, e.g. fps
     //current screen capture file index
     unsigned int screen_capture_file_index_;

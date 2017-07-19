@@ -66,7 +66,7 @@ additional_lib_path = []
 
 #PHYSIKA LIBS TO LINK: NOTE NECESSARILLY ALL PHYSIKA LIBS
 #NOTE: THE ORDER MATTERS
-physika_libs = ['Physika_GUI', 'Physika_Dynamics', 'Physika_Render', 'Physika_IO', 'Physika_Geometry', 'Physika_Core', 'Physika_Numerics', 'LodePNG']
+physika_libs = ['Physika_GUI', 'Physika_Dynamics', 'Physika_Render', 'Physika_IO', 'Physika_Geometry', 'Physika_Core', 'Physika_Numerics', 'LodePNG', 'cuda_link']
 
 #ADDITIONAL LIBS TO LINK
 #EXAMPLE: additional_libs=['lib1','lib2']
@@ -119,6 +119,7 @@ if use_gl == True:
         additional_libs.append('freeglut')
         additional_libs.append('glu32')
         additional_libs.append('opengl32')
+        additional_libs.append('glew32s')
 
 #INCLUDE PATH AND LIB PATH
 include_path = physika_inc_path+additional_inc_path

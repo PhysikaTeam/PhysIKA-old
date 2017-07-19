@@ -78,6 +78,8 @@ def generate(env):
     #add cuda runtime libpath and lib    
     env.Append(LIBPATH = cuda_lib_path)
     env.Append(LIBS = 'cudart')
+    env.Append(LIBS = 'cudadevrt')
+    env.Append(LIBS = 'curand')
 
     # "NVCC common command line"
     if not env.has_key('_NVCCCOMCOM'):
@@ -117,17 +119,19 @@ def generate(env):
     # set cuda complier
     env['NVCC'] = 'nvcc'
     env['SHNVCC'] = 'nvcc'
+    
+    # set cuda compute arch
+    env['CUDA_ARCH'] = '-arch=compute_52'
   
     # 'NVCC Command'
-    env['NVCCCOM']   = '$NVCC   -o $TARGET -c -std=c++11 $NVCCFLAGS   $_NVCCWRAPCFLAGS   $_NVCCWRAPCCFLAGS   $_NVCCCOMCOM $SOURCES'
-    env['SHNVCCCOM'] = '$SHNVCC -o $TARGET -c -std=c++11 $SHNVCCFLAGS $_NVCCWRAPSHCFLAGS $_NVCCWRAPSHCCFLAGS $_NVCCCOMCOM $SOURCES'
-    
-    
+    env['NVCCCOM']   = '$NVCC   -o $TARGET $CUDA_ARCH -dlink -c -dc -std=c++11 $NVCCFLAGS   $_NVCCWRAPCFLAGS   $_NVCCWRAPCCFLAGS   $_NVCCCOMCOM $SOURCES'
+    env['SHNVCCCOM'] = '$SHNVCC -o $TARGET $CUDA_ARCH -dlink -c -dc -std=c++11 $SHNVCCFLAGS $_NVCCWRAPSHCFLAGS $_NVCCWRAPSHCCFLAGS $_NVCCCOMCOM $SOURCES'
+
     # create builders that make static & shared objects from .cu files
     static_obj_builder, shared_obj_builder = SCons.Tool.createObjBuilders(env)
 
     # Add this suffix to the list of things buildable by Object
-    static_obj_builder.add_action(cuda_suffix, '$NVCCCOM')
+    static_obj_builder.add_action(cuda_suffix, '$NVCCCOM') 
     shared_obj_builder.add_action(cuda_suffix, '$SHNVCCCOM')
     static_obj_builder.add_emitter(cuda_suffix, SCons.Defaults.StaticObjectEmitter)
     shared_obj_builder.add_emitter(cuda_suffix, SCons.Defaults.SharedObjectEmitter)

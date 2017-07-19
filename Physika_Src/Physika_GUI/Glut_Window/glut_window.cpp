@@ -16,6 +16,7 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <GL/glew.h>
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"
@@ -28,7 +29,7 @@ namespace Physika{
 
 GlutWindow::GlutWindow()
     :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480),
-     display_fps_(true),screen_capture_file_index_(0)
+     display_fps_(true),screen_capture_file_index_(0),event_mode_(false)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
@@ -40,7 +41,7 @@ GlutWindow::GlutWindow()
 
 GlutWindow::GlutWindow(const std::string &window_name)
     :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480),
-     display_fps_(true),screen_capture_file_index_(0)
+     display_fps_(true),screen_capture_file_index_(0), event_mode_(false)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
@@ -52,7 +53,7 @@ GlutWindow::GlutWindow(const std::string &window_name)
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
     :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height),
-     display_fps_(true),screen_capture_file_index_(0)
+     display_fps_(true),screen_capture_file_index_(0), event_mode_(false)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
@@ -90,8 +91,18 @@ void GlutWindow::createWindow()
     glutMotionFunc(motion_function_);
     glutMouseFunc(mouse_function_);
     glutMouseWheelFunc(mouse_wheel_function_);
+
+    if (glewInit() != GLEW_OK)
+    {
+        std::cerr << "error: can't init glew!\n";
+        std::exit(EXIT_FAILURE);
+    }
+
     (*init_function_)(); //call the init function before entering main loop
-    glutMainLoop();
+    if (event_mode_ == false)
+    {
+        glutMainLoop();
+    }
 }
 
 void GlutWindow::closeWindow()
@@ -118,6 +129,16 @@ int GlutWindow::height() const
         return glutGet(GLUT_WINDOW_HEIGHT);
     else
         return initial_height_;
+}
+
+void GlutWindow::enableEventMode()
+{
+    this->event_mode_ = true;
+}
+
+void GlutWindow::disableEventMode()
+{
+    this->event_mode_ = false;
 }
 
 ////////////////////////////////////////////////// camera operations////////////////////////////////////////////////////////////////////////

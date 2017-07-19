@@ -102,12 +102,12 @@ if compiler == 'g++':
     debug_env.Replace(CCFLAGS = CCFLAGS)
 else:
     #release
-    CCFLAGS = ['/Ox', '/EHsc', '/DNDEBUG', '/W3', '/MDd']
+    CCFLAGS = ['/Ox', '/EHsc', '/DNDEBUG', '/W3', '/MDd', '/wd\"4819\"']
     if use_openmp: CCFLAGS.append('/openmp') #openmp support
     release_env.Replace(CCFLAGS = CCFLAGS)
         
     #debug
-    CCFLAGS = ['/Od', '/Zi', '/EHsc', '/W3', '/MDd']
+    CCFLAGS = ['/Od', '/Zi', '/EHsc', '/W3', '/MDd', '/wd\"4819\"']
     if use_openmp: CCFLAGS.append('/openmp') #openmp support
     debug_env.Replace(CCFLAGS = CCFLAGS)
 
@@ -115,6 +115,11 @@ else:
 if use_cuda == True:
     release_env.Tool('cuda', toolpath = ['./Documentation/Cuda_Scons_Tool/'])
     debug_env.Tool('cuda', toolpath = ['./Documentation/Cuda_Scons_Tool/'])
+    
+    NVCCLINKCOM = '$NVCC $CUDA_ARCH -dlink $SOURCES -lcurand -lcudadevrt -o $TARGET'
+    cuda_link_builder = Builder(action = NVCCLINKCOM)
+    release_env.Append(BUILDERS = {'cuda_linker' : cuda_link_builder})
+    debug_env.Append(BUILDERS = {'cuda_linker' : cuda_link_builder})
 
 #COMPILE LIBS
 for name in lib_names:
@@ -142,22 +147,52 @@ for name in lib_names:
     release_lib_file = target_root_path+'lib/release/'+os.path.basename(lib_file)
     debug_lib_file   = target_root_path+'lib/debug/'+os.path.basename(lib_file)
     
-    #release lib
-    release_obj_files = [os.path.splitext(src_file)[0]+'_release'+obj_suffix  for src_file in lib_src_files]
+    #============================================================================================================================================
+    
+    #release obj files
+    release_obj_files = [os.path.splitext(src_file)[0]+'_release'+('_cu' if os.path.splitext(src_file)[1] == '.cu' else '')+obj_suffix  for src_file in lib_src_files]
     for obj_file, src_file in zip(release_obj_files, lib_src_files):
         release_env.Object(obj_file, src_file)
+    
+    #release lib
     release_lib = release_env.StaticLibrary(target = release_lib_file, source = release_obj_files)
     
-    #debug lib
-    debug_obj_files = [os.path.splitext(src_file)[0]+'_debug'+obj_suffix for src_file in lib_src_files]
+    #============================================================================================================================================
+    
+    #debug obj files
+    debug_obj_files = [os.path.splitext(src_file)[0]+'_debug'+('_cu' if os.path.splitext(src_file)[1] == '.cu' else '')+obj_suffix for src_file in lib_src_files]
     for obj_file, src_file in zip(debug_obj_files, lib_src_files):
         debug_env.Object(obj_file, src_file)
+    
+    #debug lib
     debug_lib = debug_env.StaticLibrary(target = debug_lib_file, source = debug_obj_files)
+    
+    #============================================================================================================================================
     
     if compiler == 'msvc':
         proj = debug_env.MSVSProject(target = name+env['MSVSPROJECTSUFFIX'], srcs = lib_src_files, incs = lib_header_files, buildtarget = debug_lib, variant = 'debug', auto_build_solution = 0)
         proj_files.append(str(proj[0]))
+
+if use_cuda:
+    all_cuda_src_files = []
+    for dir,_,_ in os.walk(src_root_path):
+        all_cuda_src_files.extend(glob(os.path.join(dir, '*.cu')))   
     
+    #=======================================================================================================================
+    all_release_cuda_obj_files = [os.path.splitext(src_file)[0]+'_release_cu'+obj_suffix for src_file in all_cuda_src_files]
+    release_cuda_link_target = os.path.join(src_root_path, 'release_cuda_link.obj')
+    release_cuda_link_obj = release_env.cuda_linker(target = release_cuda_link_target, source = all_release_cuda_obj_files)
+    
+    release_cuda_link_lib  = target_root_path+'lib/release/cuda_link'
+    release_env.StaticLibrary(target = release_cuda_link_lib, source = release_cuda_link_obj)
+    
+    #=======================================================================================================================
+    all_debug_cuda_obj_files = [os.path.splitext(src_file)[0]+'_debug_cu'+obj_suffix for src_file in all_cuda_src_files]
+    debug_cuda_link_target = os.path.join(src_root_path, 'debug_cuda_link.obj')
+    debug_cuda_link_obj = debug_env.cuda_linker(target = debug_cuda_link_target, source = all_debug_cuda_obj_files)
+    
+    debug_cuda_link_lib = target_root_path+'lib/debug/cuda_link'
+    debug_env.StaticLibrary(target = debug_cuda_link_lib, source = debug_cuda_link_obj)
            
 #GENERATE MSVC SOLUTION
 sln = []
@@ -190,6 +225,10 @@ for name in dependencies:
         #COPY HEADERS
         if name == 'OpenGL':  #SPECIAL HANDLING FOR OPENGL HEADERS, TO KEEP THE "#include <GL/XXX.h>" STYLE
             lib_header_files = glob(os.path.join(src_dependency_root_path+name, 'GL/*.h'))
+            
+            for dir,_,_ in os.walk(os.path.join(src_dependency_root_path+name, 'glm/')):
+                lib_header_files.extend(glob(os.path.join(dir, '*.hpp')))
+                
             for header_file in lib_header_files:
                 target_file = header_file.replace(src_dependency_root_path, target_dependency_include_path)    #COPY INTO OPENGL HEADER DIRECTORY
                 Command(target_file, header_file, Copy("$TARGET", "$SOURCE"))
@@ -219,7 +258,7 @@ for name in dependencies:
 sln_delete_files = ['release/', 'obj/', 'Physika.suo', 'Physika.sdf']
 sln_delete_files.extend(['debug/', 'obj/', 'Physika.suo', 'Physika.sdf'])
 for name in os.listdir('./'):
-    if name.endswith('.user') or name.endswith('.pdb') or name.endswith('.ilk'):
+    if name.endswith('.user') or name.endswith('.pdb') or name.endswith('.ilk') or name.endswith('.db') or name.endswith('.vs'):
         sln_delete_files.append(name)
 
 header_delete_files = [os.path.join(target_root_path+'include/', name) for name in os.listdir(target_root_path+'include/')
@@ -227,6 +266,11 @@ header_delete_files = [os.path.join(target_root_path+'include/', name) for name 
                       
 Clean(sln, sln_delete_files)
 Clean(header_target, header_delete_files)
+
+cuda_link_objs = []
+for dir,_,_ in os.walk(src_root_path):
+        cuda_link_objs.extend(glob(os.path.join(dir, '*.link.obj')))
+Clean(debug_lib, cuda_link_objs)
 
 #DELETE ADDTIONAL LIB DIRECTORY
 Clean(debug_lib,   target_root_path+'lib/debug/')
