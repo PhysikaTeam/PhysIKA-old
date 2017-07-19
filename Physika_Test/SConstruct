@@ -262,5 +262,11 @@ sln_delete_files.extend(['debug/', 'obj/', 'Physika.suo', 'Physika.sdf'])
 for name in os.listdir('./'):
     if name.endswith('.user') or name.endswith('.pdb') or name.endswith('.ilk') or name.endswith('.db') or name.endswith('.vs'):
         sln_delete_files.append(name)
+
+for dir,_,_ in os.walk('./'):
+    sln_delete_files.extend(glob(os.path.join(dir, '*.ilk')))
+    sln_delete_files.extend(glob(os.path.join(dir, '*.pdb')))
+    sln_delete_files.extend(glob(os.path.join(dir, '*.dll')))
+
         
 Clean(sln, sln_delete_files)

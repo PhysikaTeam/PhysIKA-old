@@ -184,6 +184,8 @@ if compiler == 'msvc':
 #WINDOWS WORKAROUND: COPY DLLS TO EXECUTIVE DIRECTORY
 if os_name == 'Windows':
     for rpath in lib_path:
+        if not os.path.exists(rpath):
+            continue
         for dll_name in os.listdir(rpath):
             if dll_name.endswith('.dll'):
                 Command(dll_name, rpath+dll_name, Copy("$TARGET", "$SOURCE"))
