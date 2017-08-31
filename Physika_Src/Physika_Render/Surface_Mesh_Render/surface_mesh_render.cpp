@@ -212,12 +212,16 @@ void SurfaceMeshRender<Scalar>::render()
         std::cerr<<"No mesh is binded to the MeshRender!\n";
         return;
     }
+
     if(render_mode_ & render_solid_)
         renderSolid();
+
     if(render_mode_ & render_wireframe_)
         renderWireframe();
+
     if(render_mode_ & render_vertices_)
         renderVertices();
+
 }
 
 template<typename Scalar>
@@ -373,12 +377,13 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
+
     if (! glIsList(this->solid_display_list_id_))
     {   
         if (enable_displaylist_)
         {
             this->solid_display_list_id_=glGenLists(1);
-            glNewList(this->solid_display_list_id_, GL_COMPILE_AND_EXECUTE);
+            glVerify(glNewList(this->solid_display_list_id_, GL_COMPILE_AND_EXECUTE));
         }
         
 
@@ -402,27 +407,27 @@ void SurfaceMeshRender<Scalar>::renderSolid()
             GLfloat specular[4] = { static_cast<GLfloat>(Ks[0]), static_cast<GLfloat>(Ks[1]), static_cast<GLfloat>(Ks[2]), static_cast<GLfloat>(alpha) };
             
             // set material property for group
-            openGLMaterialv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-            openGLMaterialv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
-            openGLMaterialv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-            openGLMaterial (GL_FRONT_AND_BACK, GL_SHININESS, static_cast<GLfloat>(shininess));
+            glVerify(openGLMaterialv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient));
+            glVerify(openGLMaterialv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse));
+            glVerify(openGLMaterialv(GL_FRONT_AND_BACK, GL_SPECULAR, specular));
+            glVerify(openGLMaterial (GL_FRONT_AND_BACK, GL_SHININESS, static_cast<GLfloat>(shininess)));
 
             // if have a texture, then enable it
             if(this->textures_[material_ID].first==true && (this->render_mode_ & render_texture_) )
             {
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D,this->textures_[material_ID].second);
+                glVerify(glEnable(GL_TEXTURE_2D));
+                glVerify(glBindTexture(GL_TEXTURE_2D,this->textures_[material_ID].second));
             }
             else
             {
-                glDisable(GL_TEXTURE_2D);
+                glVerify(glDisable(GL_TEXTURE_2D));
             }
 
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
             {
                 Face<Scalar> &face_ref = group_ref.face(face_idx);          // get face reference
                 unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
-                glBegin(GL_POLYGON);                                       // draw polygon with SOLID MODE
+                glVerify(glBegin(GL_POLYGON));                                       // draw polygon with SOLID MODE
                 for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++) // loop for every vertex
                 {
                     // if use smooth mode 
@@ -432,14 +437,13 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                         {
                             unsigned int vertex_normal_ID = face_ref.vertex(vertex_idx).normalIndex();
                             Vector<Scalar,3> vertex_normal = this->mesh_->vertexNormal(vertex_normal_ID);
-                            openGLNormal(vertex_normal);
+                            glVerify(openGLNormal(vertex_normal));
                         }
                     }
                     else if(face_ref.hasFaceNormal())
                     {
                         Vector<Scalar,3> face_normal = face_ref.faceNormal();
-                        openGLNormal(face_normal);
-
+                        glVerify(openGLNormal(face_normal));
                     }
 
                     // if vertex has a texture coordinate
@@ -447,30 +451,31 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                     {
                         unsigned int vertex_texture_ID = face_ref.vertex(vertex_idx).textureCoordinateIndex();
                         Vector<Scalar,2> vertex_textureCoord = this->mesh_->vertexTextureCoordinate(vertex_texture_ID);
-                        openGLTexCoord(vertex_textureCoord);
+                        glVerify(openGLTexCoord(vertex_textureCoord));
                     }
                     unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
                     Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-                    openGLVertex(position);
+                    glVerify(openGLVertex(position));
                 }
-                glEnd();
+                glVerify(glEnd());
             }
 
-            glDisable(GL_TEXTURE_2D);
+            glVerify(glDisable(GL_TEXTURE_2D));
         }
 
         if (enable_displaylist_)
         {
-            glEndList();
+            glVerify(glEndList());
         }
         
     }
     else
     {
-        glCallList(this->solid_display_list_id_);  
+        glVerify(glCallList(this->solid_display_list_id_));
     }
-    glPopMatrix();
-    glPopAttrib();
+
+    glVerify(glPopMatrix());
+    glVerify(glPopAttrib());
 }
 
 template <typename Scalar> template<typename ColorType>
