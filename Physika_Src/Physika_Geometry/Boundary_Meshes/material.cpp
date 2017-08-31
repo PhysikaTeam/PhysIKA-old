@@ -21,6 +21,7 @@ namespace BoundaryMeshInternal{
 
 template <typename Scalar>
 Material<Scalar>::Material()
+    :name_("default"), Ka_(0.2, 0.2, 0.2), Kd_(0.8, 0.8, 0.8), Ks_(0.0, 0.0, 0.0), shininess_(0.0), alpha_(1.0)
 {
 }
 
