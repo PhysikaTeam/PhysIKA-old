@@ -5,7 +5,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -15,6 +15,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USL.h"
 
@@ -36,10 +37,7 @@ void MPMSolidStepMethodUSL<Scalar,Dim>::advanceStep(Scalar dt)
 {
     MPMSolidBase<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolidBase<Scalar,Dim>*>(this->mpm_driver_);
     if(mpm_solid_driver==NULL)
-    {
-        std::cerr<<"Error: MPM driver and step method mismatch, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: MPM driver and step method mismatch!");
     //now advance step, the constitutive model state 
     //of the particles are updated at the end of time step
     mpm_solid_driver->rasterize();

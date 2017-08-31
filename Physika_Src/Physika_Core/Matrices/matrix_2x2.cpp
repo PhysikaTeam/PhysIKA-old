@@ -1,12 +1,12 @@
 /*
- * @file matrix_2x2.cpp 
+ * @file matrix_2x2.cpp
  * @brief 2x2 matrix.
- * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * @author Fei Zhu, Wei Chen
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -15,6 +15,7 @@
 #include <limits>
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
@@ -23,23 +24,14 @@ namespace Physika{
 
 template <typename Scalar>
 SquareMatrix<Scalar,2>::SquareMatrix()
+    :SquareMatrix(0) //delegating ctor
 {
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar,2>::SquareMatrix(Scalar value)
+    :SquareMatrix(value, value, value, value) //delegating ctor
 {
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    eigen_matrix_2x2_(0,0) = value;
-    eigen_matrix_2x2_(0,1) = value;
-    eigen_matrix_2x2_(1,0) = value;
-    eigen_matrix_2x2_(1,1) = value;
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    data_[0][0]=value;
-    data_[0][1]=value;
-    data_[1][0]=value;
-    data_[1][1]=value;
-#endif
 }
 
 template <typename Scalar>
@@ -77,30 +69,9 @@ SquareMatrix<Scalar,2>::SquareMatrix(const Vector<Scalar,2> &row1, const Vector<
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2>::SquareMatrix(const SquareMatrix<Scalar,2> &mat2)
-{
-    *this = mat2;
-}
-
-template <typename Scalar>
-SquareMatrix<Scalar,2>::~SquareMatrix()
-{
-}
-
-template <typename Scalar>
 Scalar& SquareMatrix<Scalar,2>::operator() (unsigned int i, unsigned int j)
 {
-    bool index_valid = (i<2)&&(j<2);
-    if(!index_valid)
-    {
-        std::cerr<<"Matrix index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    return eigen_matrix_2x2_(i,j);
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    return data_[i][j];
-#endif
+    return const_cast<Scalar &>(static_cast<const SquareMatrix<Scalar, 2> &>(*this)(i, j));
 }
 
 template <typename Scalar>
@@ -108,10 +79,7 @@ const Scalar& SquareMatrix<Scalar,2>::operator() (unsigned int i, unsigned int j
 {
     bool index_valid = (i<2)&&(j<2);
     if(!index_valid)
-    {
-        std::cerr<<"Matrix index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Matrix index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     return eigen_matrix_2x2_(i,j);
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
@@ -120,13 +88,27 @@ const Scalar& SquareMatrix<Scalar,2>::operator() (unsigned int i, unsigned int j
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator+ (const SquareMatrix<Scalar,2> &mat2) const
+const Vector<Scalar,2> SquareMatrix<Scalar,2>::rowVector(unsigned int i) const
 {
-    Scalar result[4];
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            result[i*2+j] = (*this)(i,j) + mat2(i,j);
-    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
+    if(i>=2)
+        throw PhysikaException("Matrix index out of range!");
+    Vector<Scalar,2> result((*this)(i,0),(*this)(i,1));
+    return result;
+}
+
+template <typename Scalar>
+const Vector<Scalar,2> SquareMatrix<Scalar,2>::colVector(unsigned int i) const
+{
+    if(i>=2)
+        throw PhysikaException("Matrix index out of range!");
+    Vector<Scalar,2> result((*this)(0,i),(*this)(1,i));
+    return result;
+}
+
+template <typename Scalar>
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator+ (const SquareMatrix<Scalar,2> &mat2) const
+{
+    return SquareMatrix<Scalar, 2>(*this) += mat2;
 }
 
 template <typename Scalar>
@@ -134,18 +116,14 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator+= (const SquareMatrix<S
 {
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = (*this)(i,j) + mat2(i,j);
+            (*this)(i,j) += mat2(i,j);
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator- (const SquareMatrix<Scalar,2> &mat2) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator- (const SquareMatrix<Scalar,2> &mat2) const
 {
-    Scalar result[4];
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            result[i*2+j] = (*this)(i,j) - mat2(i,j);
-    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar, 2>(*this) -= mat2;
 }
 
 template <typename Scalar>
@@ -153,16 +131,7 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator-= (const SquareMatrix<S
 {
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = (*this)(i,j) - mat2(i,j);
-    return *this;
-}
-
-template <typename Scalar>
-SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator= (const SquareMatrix<Scalar,2> &mat2)
-{
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = mat2(i,j);
+            (*this)(i,j) -= mat2(i,j);
     return *this;
 }
 
@@ -171,8 +140,18 @@ bool SquareMatrix<Scalar,2>::operator== (const SquareMatrix<Scalar,2> &mat2) con
 {
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            if(isEqual((*this)(i,j),mat2(i,j))==false)
-                return false;
+        {
+            if(is_floating_point<Scalar>::value)
+            {
+                if(isEqual((*this)(i,j),mat2(i,j))==false)
+                    return false;
+            }
+            else
+            {
+                if((*this)(i,j) != mat2(i,j))
+                    return false;
+            }
+        }
     return true;
 }
 
@@ -183,13 +162,9 @@ bool SquareMatrix<Scalar,2>::operator!= (const SquareMatrix<Scalar,2> &mat2) con
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (Scalar scale) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (Scalar scale) const
 {
-    Scalar result[4];
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            result[i*2+j] = (*this)(i,j) * scale;
-    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar, 2>(*this) *= scale;
 }
 
 template <typename Scalar>
@@ -197,12 +172,12 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator*= (Scalar scale)
 {
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = (*this)(i,j) * scale;
+            (*this)(i,j) *= scale;
     return *this;
 }
 
 template <typename Scalar>
-Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec) const
+const Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec) const
 {
     Vector<Scalar,2> result(0);
     for(unsigned int i = 0; i < 2; ++i)
@@ -212,14 +187,9 @@ Vector<Scalar,2> SquareMatrix<Scalar,2>::operator* (const Vector<Scalar,2> &vec)
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (const SquareMatrix<Scalar,2> &mat2) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator* (const SquareMatrix<Scalar,2> &mat2) const
 {
-    SquareMatrix<Scalar,2> result(0,0,0,0);
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            for(unsigned int k = 0; k < 2; ++k)
-                result(i,j) += (*this)(i,k) * mat2(k,j);
-    return result;
+    return SquareMatrix<Scalar, 2>(*this) *= mat2;
 }
 
 template <typename Scalar>
@@ -233,38 +203,26 @@ SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator*= (const SquareMatrix<S
     *this = result;
     return *this;
 }
-    
+
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::operator/ (Scalar scale) const
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Matrix Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    Scalar result[4];
-    for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)
-            result[i*2+j] = (*this)(i,j) / scale;
-    return SquareMatrix<Scalar,2>(result[0], result[1], result[2], result[3]);
+    return SquareMatrix<Scalar, 2>(*this) /= scale;
 }
 
 template <typename Scalar>
 SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator/= (Scalar scale)
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Matrix Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(abs(scale)<=std::numeric_limits<Scalar>::epsilon())
+        throw PhysikaException("Matrix Divide by zero error!");
     for(unsigned int i = 0; i < 2; ++i)
         for(unsigned int j = 0; j < 2; ++j)
-            (*this)(i,j) = (*this)(i,j) / scale;
+            (*this)(i,j) /= scale;
     return *this;
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::transpose() const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::transpose() const
 {
     Scalar result[4];
     for(unsigned int i = 0; i < 2; ++i)
@@ -274,14 +232,22 @@ SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::transpose() const
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
 {
     Scalar det = determinant();
-    if(isEqual(det,static_cast<Scalar>(0)))
+    bool singular = false;
+    if(is_floating_point<Scalar>::value)
     {
-        std::cerr<<"Matrix not invertible!\n";
-        std::exit(EXIT_FAILURE);
+        if(isEqual(det,static_cast<Scalar>(0)))
+            singular = true;
     }
+    else
+    {
+        if(det == 0)
+            singular = true;
+    }
+    if(singular)
+        throw PhysikaException("Matrix not invertible!");
     return SquareMatrix<Scalar,2>((*this)(1,1)/det, -(*this)(0,1)/det, -(*this)(1,0)/det, (*this)(0,0)/det);
 }
 
@@ -302,12 +268,6 @@ Scalar SquareMatrix<Scalar,2>::trace() const
 }
 
 template <typename Scalar>
-SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::identityMatrix()
-{
-    return SquareMatrix<Scalar,2>(1.0,0.0,0.0,1.0);
-}
-
-template <typename Scalar>
 Scalar SquareMatrix<Scalar,2>::doubleContraction(const SquareMatrix<Scalar,2> &mat2) const
 {
     Scalar result = 0;
@@ -315,6 +275,22 @@ Scalar SquareMatrix<Scalar,2>::doubleContraction(const SquareMatrix<Scalar,2> &m
         for(unsigned int j = 0; j < 2; ++j)
             result += (*this)(i,j)*mat2(i,j);
     return result;
+}
+
+template <typename Scalar>
+Scalar SquareMatrix<Scalar,2>::frobeniusNorm() const
+{
+    Scalar result = 0;
+    for(unsigned int i = 0; i < 2; ++i)
+        for(unsigned int j = 0; j < 2; ++j)
+            result += (*this)(i,j)*(*this)(i,j);
+    return sqrt(result);
+}
+
+template <typename Scalar>
+const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::identityMatrix()
+{
+    return SquareMatrix<Scalar,2>(1.0,0.0,0.0,1.0);
 }
 
 template <typename Scalar>
@@ -326,9 +302,9 @@ void SquareMatrix<Scalar,2>::singularValueDecomposition(SquareMatrix<Scalar,2> &
     //hack: Eigen::SVD does not support integer types, hence we cast Scalar to long double for decomposition
     Eigen::Matrix<long double,2,2> temp_matrix;
     for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)          
+        for(unsigned int j = 0; j < 2; ++j)
             temp_matrix(i,j) = static_cast<long double>(eigen_matrix_2x2_(i,j));
-    Eigen::JacobiSVD<Eigen::Matrix<long double,2,2> > svd(temp_matrix,Eigen::ComputeThinU|Eigen::ComputeThinV);
+    Eigen::JacobiSVD<Eigen::Matrix<long double,2,2> > svd(temp_matrix,Eigen::ComputeFullU|Eigen::ComputeFullV);
     const Eigen::Matrix<long double,2,2> &left = svd.matrixU(), &right = svd.matrixV();
     const Eigen::Matrix<long double,2,1> &values = svd.singularValues();
     for(unsigned int i = 0; i < 2; ++i)
@@ -341,9 +317,20 @@ void SquareMatrix<Scalar,2>::singularValueDecomposition(SquareMatrix<Scalar,2> &
         }
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    std::cerr<<"SVD not implemeted for built in matrix!\n";
-    std::exit(EXIT_FAILURE);
+    throw PhysikaException("SVD not implemeted for built in matrix!");
 #endif
+}
+
+template <typename Scalar>
+void SquareMatrix<Scalar,2>::singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
+                                                        SquareMatrix<Scalar,2> &singular_values_diagonal,
+                                                        SquareMatrix<Scalar,2> &right_singular_vectors) const
+{
+    Vector<Scalar,2> singular_values;
+    singularValueDecomposition(left_singular_vectors,singular_values,right_singular_vectors);
+    for(unsigned int i = 0; i < 2; ++i)
+        for(unsigned int j = 0; j < 2; ++j)
+            singular_values_diagonal(i,j) = (i==j) ? singular_values[i] : 0;
 }
 
 template <typename Scalar>
@@ -354,7 +341,7 @@ void SquareMatrix<Scalar,2>::eigenDecomposition(Vector<Scalar,2> &eigen_values_r
     //hack: Eigen::EigenSolver does not support integer types, hence we cast Scalar to long double for decomposition
     Eigen::Matrix<long double,2,2> temp_matrix;
     for(unsigned int i = 0; i < 2; ++i)
-        for(unsigned int j = 0; j < 2; ++j)          
+        for(unsigned int j = 0; j < 2; ++j)
             temp_matrix(i,j) = static_cast<long double>(eigen_matrix_2x2_(i,j));
     Eigen::EigenSolver<Eigen::Matrix<long double,2,2> > eigen(temp_matrix);
     Eigen::Matrix<std::complex<long double>,2,2> vectors = eigen.eigenvectors();
@@ -370,8 +357,7 @@ void SquareMatrix<Scalar,2>::eigenDecomposition(Vector<Scalar,2> &eigen_values_r
         }
     }
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    std::cerr<<"Eigen decomposition not implemeted for built in matrix!\n";
-    std::exit(EXIT_FAILURE);
+    throw PhysikaException("Eigen decomposition not implemeted for built in matrix!");
 #endif
 }
 

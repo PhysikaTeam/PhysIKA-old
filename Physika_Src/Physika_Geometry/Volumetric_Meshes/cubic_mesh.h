@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -21,9 +21,15 @@
 
 namespace Physika{
 
-/* if vertices of a cube are v[0`7]
- * we consider six faces of the cube are [0,1,2,3] [4,5,6,7] [0,1,4,5] [2,3,6,7] [1,2,5,6] [0,3,4,7]
- * [a,b,c,d] means that a face constains a,b,c,d vertex
+/*
+ * the order of the vertices matters:
+ *
+ *                     7--------6
+ *                    / |       / |
+ *                   4-|------5 |
+ *                   |  3-----|- 2
+ *                   |/        | /
+ *                  0---------1
  */
 
 template <typename Scalar> class Vector<Scalar,3>;
@@ -42,9 +48,10 @@ public:
     VolumetricMeshInternal::ElementType elementType() const;
     unsigned int eleVertNum() const;
     Scalar eleVolume(unsigned int ele_idx) const;
-    bool containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const;
+    bool containPoint(unsigned int ele_idx, const Vector<Scalar,3> &pos) const;
     void interpolationWeights(unsigned int ele_idx, const Vector<Scalar,3> &pos, std::vector<Scalar> &weights) const;
 protected:
+    virtual void generateBoundaryInformation();
 };
 
 }  //end of namespace Physika

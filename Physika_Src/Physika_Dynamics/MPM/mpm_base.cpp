@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -23,7 +23,7 @@ namespace Physika{
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase()
     :DriverBase<Scalar>(), weight_function_(NULL), step_method_(NULL),
-     cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
+    cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8),flip_fraction_(0.95)
 {
     //default weight function is linear with support domain of 1 cell
     weight_function_ = GridWeightFunctionCreator<GridLinearWeightFunction<Scalar,Dim> >::createGridWeightFunction();
@@ -32,7 +32,7 @@ MPMBase<Scalar,Dim>::MPMBase()
 template <typename Scalar, int Dim>
 MPMBase<Scalar,Dim>::MPMBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
     :DriverBase<Scalar>(start_frame,end_frame,frame_rate,max_dt,write_to_file), weight_function_(NULL),
-     step_method_(NULL), cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8)
+     step_method_(NULL), cfl_num_(0.5),sound_speed_(340.0),gravity_(9.8),flip_fraction_(0.95)
 {
     //default weight function is linear with support domain of 1 cell
     weight_function_ = GridWeightFunctionCreator<GridLinearWeightFunction<Scalar,Dim> >::createGridWeightFunction();
@@ -136,6 +136,32 @@ void MPMBase<Scalar,Dim>::setGravity(Scalar gravity)
         gravity_ = gravity;
 }
 
+template <typename Scalar, int Dim>
+Scalar MPMBase<Scalar,Dim>::flipFraction() const
+{
+    return flip_fraction_;
+}
+
+template <typename Scalar, int Dim>
+void MPMBase<Scalar,Dim>::setFlipFraction(Scalar flip_fraction)
+{
+    bool invalid = false;
+    if(flip_fraction < 0)
+    {
+        invalid = true;
+        flip_fraction_ = 0;
+    }
+    else if(flip_fraction > 1)
+    {
+        invalid = true;
+        flip_fraction_ = 1;
+    }
+    else
+        flip_fraction_ = flip_fraction;
+    if(invalid)
+        std::cerr<<"Warning: FLIP fraction clamped to range [0,1]!\n";
+}
+    
 //explicit instantiations
 template class MPMBase<float,2>;
 template class MPMBase<float,3>;

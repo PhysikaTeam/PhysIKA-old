@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -14,6 +14,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
 
 namespace Physika{
@@ -39,15 +40,9 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginBase<Scalar,Dim>::setDriver(DriverBase<Scalar>* driver)
 {
     if(driver==NULL)
-    {
-        std::cerr<<"Error: NULL driver pointer provided to driver plugin, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: NULL driver pointer provided to driver plugin!");
     if(dynamic_cast<MPMSolidBase<Scalar,Dim>*>(driver)==NULL)
-    {
-        std::cerr<<"Error: Wrong type of driver specified, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Wrong type of driver specified!");
     this->driver_ = driver;
 }
 

@@ -4,14 +4,14 @@
  * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
-#include <cstdlib>
+
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Render/Lights/light_manager.h"
@@ -38,11 +38,11 @@ void LightManager::insertBack(Light * light_p)
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
-	if(this->lightIndex(light_p) != -1)
-	{
-		std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
+    if(this->lightIndex(light_p) != -1)
+    {
+        std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
         return ;
-	}
+    }
     if(this->numLights()<8)
         this->light_list_.push_back(light_p);
     else
@@ -59,11 +59,11 @@ void LightManager::insertFront(Light * light_p)
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
-	if(this->lightIndex(light_p) != -1)
-	{
-		std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
+    if(this->lightIndex(light_p) != -1)
+    {
+        std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
         return ;
-	}
+    }
     if(this->numLights()<8)
         this->light_list_.push_front(light_p);
     else
@@ -81,14 +81,14 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
         std::cerr<<"Light index out of range, operation will be ignored!\n";
         return ;
     }
-	
+    
     if(light)
     {
-		if(this->lightIndex(light) != -1)
-		{
-			std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light)<<", operation will be ignored!"<<std::endl;
-			return ;
-		}
+        if(this->lightIndex(light) != -1)
+        {
+            std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light)<<", operation will be ignored!"<<std::endl;
+            return ;
+        }
         if(this->numLights()<8)
         {
             list<Light*>::iterator pos = light_list_.begin();
@@ -107,8 +107,7 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
     }
     else
     {
-        std::cerr<<"Cannot insert NULL light to LightManager!\n";
-        std::exit(EXIT_FAILURE);
+        std::cerr<<"Cannot insert NULL light to LightManager, operation ignored!\n";
     }
 }
 

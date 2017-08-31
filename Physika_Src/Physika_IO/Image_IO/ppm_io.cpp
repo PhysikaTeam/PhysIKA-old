@@ -4,7 +4,7 @@
  * @author Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -16,9 +16,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/ppm_io.h"
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/File_Utilities/parse_line.h"
+#include "Physika_Core/Utilities/File_Utilities/file_content_utilities.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 using std::string;
 using std::getline;
@@ -36,18 +37,9 @@ bool PPMIO::load(const string &filename,Image *image )
 
 bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat data_format)
 {
-    string dir = FileUtilities::dirName(filename);
-    string file_extension = FileUtilities::fileExtension(filename);
-    if(file_extension.size() == 0)
-    {
-        std::cerr<<"No file extension found for the image file:"<<filename<<std::endl;
+    if(ImageIO::checkFileNameAndImage(filename,string(".ppm"),image) == false)
         return false;
-    }
-    if(file_extension != string(".ppm"))
-    {
-        std::cerr<<"Unknown image file format:"<<file_extension<<std::endl;
-        return false;
-    }
+
     fstream fp;
     fp.open(filename.c_str(),std::ios::in|std::ios::binary);
     if(!fp.is_open())
@@ -58,7 +50,7 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
     string file_head;
     while(getline(fp, file_head))
     {
-        file_head = FileUtilities::removeWhitespaces(file_head);
+        file_head = FileUtilities::removeWhitespaces(file_head,1);
         if(file_head.at(0) == '#')
             continue;
         else
@@ -74,14 +66,14 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
     int para_num = 0;
     while(para_num<3 && getline(fp, file_head)  )
     {
-        file_head = FileUtilities::removeWhitespaces(file_head);
+        file_head = FileUtilities::removeWhitespaces(file_head,1);
         if(file_head.at(0) == '#')
             continue;
         else
         {
             if(file_head.find('#') != file_head.npos)
                 file_head.substr(0,file_head.find('#'));
-            file_head = FileUtilities::removeWhitespaces(file_head);
+            file_head = FileUtilities::removeWhitespaces(file_head,1);
             stringstream strstream(file_head);
             while(strstream>>file_para[para_num])  // important sentence
             { 
@@ -131,18 +123,9 @@ bool PPMIO::load(const std::string &filename, Image * image, Image::DataFormat d
 
 bool PPMIO::save(const string &filename, const Image *image)
 {
-    string::size_type suffix_idx = filename.rfind('.');
-    if(suffix_idx>=filename.size())
-    {
-        std::cerr<<"No file extension specified!\n";
+    if(ImageIO::checkFileNameAndImage(filename,string(".ppm"),image) == false)
         return false;
-    }
-    string suffix = filename.substr(suffix_idx);
-    if(suffix!=string(".ppm"))                                     //if the filename is not ended with ".png"
-    {
-        std::cerr<<"Wrong file extension specified for PPM file!\n";
-        return false;
-    }
+
     fstream fp;
     fp.open(filename.c_str(),std::ios::out|std::ios::binary);
     if(!fp.is_open())

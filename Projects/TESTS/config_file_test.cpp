@@ -1,20 +1,20 @@
 /*
- * @file config_file_test.cpp 
+ * @file config_file_test.cpp
  * @brief Test ConfigFile of Physika.
  * @author ShengYang
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  */
 
 #include <iostream>
-#include "Physika_Core/Config_File/config_file.h"
 #include <fstream>
+#include "Physika_Core/Config_File/config_file.h"
 using namespace Physika;
 using namespace std;
 
@@ -37,7 +37,7 @@ int main()
     configfile.addOptionOptional("bool_d", &bool_d, false);
     string file_name = "config_test.txt";
 
-    if(configfile.parseFile(file_name) == 0)
+    if(configfile.parseFile(file_name))
     {
         cout<<"Parse File success!"<<endl;
     }

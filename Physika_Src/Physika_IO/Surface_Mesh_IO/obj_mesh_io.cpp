@@ -4,7 +4,7 @@
 * @author Fei Zhu, Liyou Xu
 * 
 * This file is part of Physika, a versatile physics simulation library.
-* Copyright (C) 2013 Physika Group.
+* Copyright (C) 2013- Physika Group.
 *
 * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
 * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -19,8 +19,9 @@
 #include <fstream>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
-#include "Physika_Core/Utilities/File_Utilities/parse_line.h"
+#include "Physika_Core/Utilities/File_Utilities/file_content_utilities.h"
 #include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
+#include "Physika_IO/Surface_Mesh_IO/surface_mesh_io.h"
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 
 using Physika::SurfaceMeshInternal::Face;
@@ -33,18 +34,8 @@ namespace Physika{
 template <typename Scalar>
 bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *mesh)
 {
-    if(mesh == NULL)
-    {
-        std::cerr<<"NULL mesh passed to ObjMeshIO"<<std::endl;
+    if(SurfaceMeshIO<Scalar>::checkFileNameAndMesh(filename,std::string(".obj"),mesh) == false)
         return false;
-    }
-    std::string::size_type suffix_idx = filename.find('.');
-    std::string suffix = filename.substr(suffix_idx);
-    if(suffix != std::string(".obj"))
-    {
-        std::cerr<<"this is not a obj file"<<std::endl;
-        return false;
-    }
     // a indicator points to current group 
     FaceGroup<Scalar>* current_group = NULL;
     // num of total faces
@@ -60,7 +51,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
     std::fstream ifs( filename.c_str(),std::ios::in);
     if(!ifs)
     {
-        std::cerr<<"couldn't open "<<filename<<"\n";
+        std::cerr<<"Error: failed to open "<<filename<<"\n";
         return false;
     }
     std::string  line;
@@ -69,13 +60,13 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
     {
         ++line_num;
         std::getline(ifs,line);
-        line = FileUtilities::removeWhitespaces(line);
+        line = FileUtilities::removeWhitespaces(line,1);
         std::string line_next;
         unsigned int line_length=line.size();
         while (line_length > 0 && line[line_length-1] == '\\')     //if the last character in a line is '\',we will merge nextline into this one
         {
             std::getline(ifs,line_next);
-            line_next = FileUtilities::removeWhitespaces(line_next);
+            line_next = FileUtilities::removeWhitespaces(line_next,1);
             line[line_length-1] = ' ';
             line = line + line_next;
             line_length = line.size();
@@ -91,17 +82,17 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
             Scalar x,y,z;
             if(!(stream>>x))
             {
-                std::cerr<<"error:stream>>x "<<"line:"<<line_num<<std::endl;
+                std::cerr<<"Error:stream>>x "<<"line:"<<line_num<<std::endl;
                 return false;
             }
             if(!(stream>>y))
             {
-                std::cerr<<"error:stream>>y "<<"line:"<<line_num<<std::endl;
+                std::cerr<<"Error:stream>>y "<<"line:"<<line_num<<std::endl;
                 return false;
             }
             if(!(stream>>z))
             {
-                std::cerr<<"error:stream>>z "<<"line:"<<line_num<<std::endl;
+                std::cerr<<"Error:stream>>z "<<"line:"<<line_num<<std::endl;
                 return false;
             }
             mesh->addVertexPosition(Vector<Scalar,3>(x,y,z));
@@ -148,7 +139,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
             unsigned int length=group_name.size();
             if(length < 1)
             {
-                std::cerr<<"warning: empty group name come in and we consider it as a default group "<<"line:"<<line_num<<std::endl;
+                std::cerr<<"Warning: parsed empty group name and we consider it as a default group "<<"line:"<<line_num<<std::endl;
                 FaceGroup<Scalar> *p=mesh->groupPtr(std::string("default"));
                 if(p == NULL)
                 {
@@ -190,7 +181,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                 unsigned int tex;
                 if(vertex_indice.find(std::string("//")) != std::string::npos)
                 {   //    v//n
-                    unsigned int loc = vertex_indice.find(std::string("//"));
+                    std::string::size_type loc = vertex_indice.find(std::string("//"));
                     std::stringstream transform;
                     transform.str("");
                     transform.clear();
@@ -200,14 +191,14 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                         std::cerr<<"invalid vertx pos in this face "<<"line:"<<line_num<<std::endl;
                         return false;
                     }
-					transform.str("");
-					transform.clear();
+                    transform.str("");
+                    transform.clear();
                     transform<<vertex_indice.substr(loc+2);
                     if(!(transform>>nor))
                     {
                         std::cerr<<"invalid vertx nor in this face "<<"line:"<<line_num<<std::endl;
-						std::cerr << vertex_indice << std::endl;
-						std::cerr << line << std::endl;
+                        std::cerr << vertex_indice << std::endl;
+                        std::cerr << line << std::endl;
                         return false;
                     }
                     Vertex<Scalar> vertex_temple(pos-1);
@@ -232,7 +223,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                     }
                     else 
                     {    //  v/t
-                        unsigned int loc = vertex_indice.find(std::string("/"));
+                        std::string::size_type loc = vertex_indice.find(std::string("/"));
                         std::stringstream transform;
                         transform.str("");
                         transform.clear();
@@ -242,7 +233,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                             std::cerr<<"invalid vertx pos in this face "<<"line:"<<line_num<<std::endl;
                             return false;
                         }
-                        unsigned int loc2 = vertex_indice.find(std::string("/"), loc + 1);
+                        std::string::size_type loc2 = vertex_indice.find(std::string("/"), loc + 1);
                         if(loc2 == std::string::npos)
                         {
                             transform.str("");
@@ -275,7 +266,7 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                             if(!(transform>>nor))
                             {
                                 std::cerr<<"invalid vertx nor in this face "<<"line:"<<line_num<<std::endl;
-								std::cerr << line << std::endl;
+                                std::cerr << line << std::endl;
                                 return false;
                             }
                             Vertex<Scalar> vertex_temple(pos-1);
@@ -290,7 +281,8 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
             num_group_faces ++;
             current_group->addFace(face_temple);
         }
-        else if(type_of_line == std::string("#") || type_of_line == std::string("") ){}
+        else if(type_of_line == std::string("#") || type_of_line == std::string("") )
+        {}
         else if(type_of_line == std::string("usemtl"))
         {
             if (num_group_faces > 0)
@@ -340,25 +332,17 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
         }		
     }//end while
     ifs.close();
-    //std::cerr some file message
+    if(mesh->numMaterials() == 0) //no material read from file, add a default one
+        mesh->addMaterial(Material<Scalar>::Iron());
     return true;
 }
 
 template <typename Scalar>
-bool ObjMeshIO<Scalar>::save(const std::string &filename, const SurfaceMesh<Scalar> *mesh)
+bool ObjMeshIO<Scalar>::save(const std::string &filename, const SurfaceMesh<Scalar> *mesh, bool save_mtl)
 {
-    if(mesh == NULL)
-    {
-        std::cerr<<"NULL mesh passed to ObjMeshIO"<<std::endl;
+    if(SurfaceMeshIO<Scalar>::checkFileNameAndMesh(filename,std::string(".obj"),mesh) == false)
         return false;
-    }
-    std::string::size_type suffix_idx = filename.find('.');
-    std::string suffix = filename.substr(suffix_idx), prefix = filename.substr(0, suffix_idx);
-    if(suffix != std::string(".obj"))
-    {
-        std::cerr<<"this is not a obj file"<<std::endl;
-        return false;
-    }	
+    std::string prefix = FileUtilities::removeFileExtension(filename);
     std::fstream fileout(filename.c_str(),std::ios::out|std::ios::trunc);
     if(!fileout)
     {
@@ -366,8 +350,11 @@ bool ObjMeshIO<Scalar>::save(const std::string &filename, const SurfaceMesh<Scal
         return false;
     }
     std::string material_path = prefix + std::string(".mtl");
-    saveMaterials(material_path, mesh);
-    fileout<<"mtllib "<<FileUtilities::filenameInPath(prefix)<<".mtl"<<std::endl;
+    if(save_mtl)
+    {
+        saveMaterials(material_path, mesh);
+        fileout<<"mtllib "<<FileUtilities::filenameInPath(prefix)<<".mtl"<<std::endl;
+    }
     unsigned int num_vertices=mesh->numVertices(),i;
     for(i=0;i<num_vertices;++i)
     {
@@ -390,7 +377,8 @@ bool ObjMeshIO<Scalar>::save(const std::string &filename, const SurfaceMesh<Scal
     for(i=0;i<num_group;++i)
     {
         const FaceGroup<Scalar> *group_ptr = mesh->groupPtr(i);
-        fileout<<"usemtl "<<mesh->materialPtr(group_ptr->materialIndex())->name()<<std::endl;
+        if(save_mtl)
+            fileout<<"usemtl "<<mesh->materialPtr(group_ptr->materialIndex())->name()<<std::endl;
         fileout<<"g "<<group_ptr->name()<<std::endl;
         unsigned int num_face = group_ptr->numFaces(),j;
         const Face<Scalar> *face_ptr;
@@ -423,7 +411,7 @@ bool ObjMeshIO<Scalar>::loadMaterials(const std::string &filename, SurfaceMesh<S
 {
     if(mesh == NULL)
     {
-        std::cerr<<"error:invalid mesh point."<<std::endl;
+        std::cerr<<"error:invalid mesh pointer."<<std::endl;
         return false;
     }
     unsigned int line_num = 0;
@@ -455,12 +443,7 @@ bool ObjMeshIO<Scalar>::loadMaterials(const std::string &filename, SurfaceMesh<S
 
         case 'n':
             if(num_mtl > 0) mesh->addMaterial(material_example);
-            material_example.setKa(Vector<Scalar,3> (0.1, 0.1, 0.1));
-            material_example.setKd(Vector<Scalar,3> (0.5, 0.5, 0.5));
-            material_example.setKs(Vector<Scalar,3> (0.0, 0.0, 0.0));
-            material_example.setShininess(65);
-            material_example.setAlpha(1);
-            material_example.setTextureFileName(std::string());
+            material_example = Material<Scalar>::Iron();
             char mtl_name[maxline];
             stream>>mtl_name;
             num_mtl++;
@@ -552,8 +535,8 @@ bool ObjMeshIO<Scalar>::loadMaterials(const std::string &filename, SurfaceMesh<S
             break;
         }
     }
-    if(num_mtl >= 0)                            //attention at least one material must be in mesh
-        mesh->addMaterial(material_example);
+    //attention at least one material must be in mesh
+    mesh->addMaterial(material_example);
     ifs.close();
     return true;
 }
@@ -569,7 +552,7 @@ bool ObjMeshIO<Scalar>::saveMaterials(const std::string &filename, const Surface
     }
     if(mesh == NULL)
     {
-        std::cerr<<"error:invalid mesh point."<<std::endl;
+        std::cerr<<"error:invalid mesh pointer."<<std::endl;
         return false;
     }
     unsigned int num_mtl = mesh->numMaterials();

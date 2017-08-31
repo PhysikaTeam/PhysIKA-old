@@ -1,12 +1,12 @@
 /*
- * @file matrix_2x2.h 
+ * @file matrix_2x2.h
  * @brief 2x2 matrix.
- * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * @author Fei Zhu, Wei Chen
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -36,44 +36,61 @@ public:
     explicit SquareMatrix(Scalar);
     SquareMatrix(Scalar x00, Scalar x01, Scalar x10, Scalar x11);
     SquareMatrix(const Vector<Scalar,2> &row1, const Vector<Scalar,2> &row2);
-    SquareMatrix(const SquareMatrix<Scalar,2> &);
-    ~SquareMatrix();
+
+    SquareMatrix(const SquareMatrix<Scalar,2> &) = default;
+    ~SquareMatrix() = default;
+
     inline unsigned int rows() const{return 2;}
     inline unsigned int cols() const{return 2;}
+
     Scalar& operator() (unsigned int i, unsigned int j);
     const Scalar& operator() (unsigned int i, unsigned int j) const;
-    SquareMatrix<Scalar,2> operator+ (const SquareMatrix<Scalar,2> &) const;
+
+    const Vector<Scalar,2> rowVector(unsigned int i) const;
+    const Vector<Scalar,2> colVector(unsigned int i) const;
+
+    const SquareMatrix<Scalar,2> operator+ (const SquareMatrix<Scalar,2> &) const;
     SquareMatrix<Scalar,2>& operator+= (const SquareMatrix<Scalar,2> &);
-    SquareMatrix<Scalar,2> operator- (const SquareMatrix<Scalar,2> &) const;
+    const SquareMatrix<Scalar,2> operator- (const SquareMatrix<Scalar,2> &) const;
     SquareMatrix<Scalar,2>& operator-= (const SquareMatrix<Scalar,2> &);
-    SquareMatrix<Scalar,2>& operator= (const SquareMatrix<Scalar,2> &);
+
+    SquareMatrix<Scalar,2>& operator= (const SquareMatrix<Scalar,2> &) = default;
+
     bool operator== (const SquareMatrix<Scalar,2> &) const;
     bool operator!= (const SquareMatrix<Scalar,2> &) const;
-    SquareMatrix<Scalar,2> operator* (Scalar) const;
+
+    const SquareMatrix<Scalar,2> operator* (Scalar) const;
     SquareMatrix<Scalar,2>& operator*= (Scalar);
-    Vector<Scalar,2> operator* (const Vector<Scalar,2> &) const;
-    SquareMatrix<Scalar,2> operator* (const SquareMatrix<Scalar,2> &) const;
+
+    const Vector<Scalar,2> operator* (const Vector<Scalar,2> &) const;
+    const SquareMatrix<Scalar,2> operator* (const SquareMatrix<Scalar,2> &) const;
     SquareMatrix<Scalar,2>& operator*= (const SquareMatrix<Scalar,2> &);
-    SquareMatrix<Scalar,2> operator/ (Scalar) const;
+
+    const SquareMatrix<Scalar,2> operator/ (Scalar) const;
     SquareMatrix<Scalar,2>& operator/= (Scalar);
-    SquareMatrix<Scalar,2> transpose() const;
-    SquareMatrix<Scalar,2> inverse() const;
+
+    const SquareMatrix<Scalar,2> transpose() const;
+    const SquareMatrix<Scalar,2> inverse() const;
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const SquareMatrix<Scalar,2> &) const;//double contraction
+    Scalar frobeniusNorm() const;
     void singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
                                     Vector<Scalar,2> &singular_values,   //singluar values are in descending order
+                                    SquareMatrix<Scalar,2> &right_singular_vectors) const;
+    void singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
+                                    SquareMatrix<Scalar,2> &singular_values_diagonal,   //singluar values in descending order as a diagonal matrix
                                     SquareMatrix<Scalar,2> &right_singular_vectors) const;
     void eigenDecomposition(Vector<Scalar,2> &eigen_values_real, Vector<Scalar,2> &eigen_values_imag,
                             SquareMatrix<Scalar,2> &eigen_vectors_real, SquareMatrix<Scalar,2> &eigen_vectors_imag);
 
-    static SquareMatrix<Scalar,2> identityMatrix();
- 
+    static const SquareMatrix<Scalar,2> identityMatrix();
+
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,2,2> eigen_matrix_2x2_;
+    Eigen::Matrix<Scalar,2,2,Eigen::DontAlign> eigen_matrix_2x2_; //default: zero matrix
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    Scalar data_[2][2];
+    Scalar data_[2][2]; //default: zero matrix
 #endif
 private:
     void compileTimeCheck()
@@ -105,7 +122,7 @@ inline std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,2> &
 
 //make * operator commutative
 template <typename S, typename T>
-inline SquareMatrix<T,2> operator* (S scale, const SquareMatrix<T,2> &mat)
+inline const SquareMatrix<T,2> operator* (S scale, const SquareMatrix<T,2> &mat)
 {
     return mat*scale;
 }

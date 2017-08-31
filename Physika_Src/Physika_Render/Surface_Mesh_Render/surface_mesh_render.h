@@ -4,7 +4,7 @@
  * @author Fei Zhu, Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -28,7 +28,7 @@ template <typename Scalar, int Dim> class Transform;
 
 /*
  * Scalar can be float and double
- * 
+ * display list is not enable in default
  */
 
 template <typename Scalar>
@@ -38,7 +38,7 @@ public:
     //Constructions
     SurfaceMeshRender();
     //the parameter is not const because renderer may call method of mesh to modify its normals
-    SurfaceMeshRender(SurfaceMesh<Scalar>* mesh);
+    explicit SurfaceMeshRender(SurfaceMesh<Scalar>* mesh);
     SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transform<Scalar, 3>* transform);
     ~SurfaceMeshRender();
 
@@ -62,8 +62,8 @@ public:
     void enableTexture();
     void disableTexture();
 
-	void enableDisplayList();
-	void disableDisplayList();
+    void enableDisplayList();
+    void disableDisplayList();
 
     //whenever the mesh is modified and displaylist is enabled, synchronize() must be called to update the render
     void synchronize();   
@@ -117,8 +117,8 @@ protected:
     unsigned int solid_display_list_id_;
     unsigned int solid_with_custom_color_vector_display_list_id_;
 
-	// default is false
-	bool enable_displaylist_;
+    // default is false
+    bool enable_displaylist_;
 
     //predefined render modes
     static const unsigned int render_solid_;

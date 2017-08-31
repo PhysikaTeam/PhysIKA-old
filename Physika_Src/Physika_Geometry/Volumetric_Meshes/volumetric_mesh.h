@@ -5,7 +5,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -16,6 +16,7 @@
 #ifndef PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
 #define PHYSIKA_GEOMETRY_VOLUMETRIC_MESHES_VOLUMETRIC_MESH_H_
 
+#include <set>
 #include <vector>
 #include <string>
 #include "Physika_Core/Vectors/vector_2d.h"
@@ -43,28 +44,34 @@ public:
     VolumetricMesh<Scalar,Dim>& operator= (const VolumetricMesh<Scalar,Dim> &volumetric_mesh);
     
     //query
-    inline unsigned int       vertNum() const{return vertices_.size();}
-    inline unsigned int       eleNum() const{return ele_num_;}
-    inline bool               isUniformElementType() const{return uniform_ele_type_;}
-    unsigned int              eleVertNum(unsigned int ele_idx) const;
-    unsigned int              eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
-    int eleRegionIndex(unsigned int ele_idx) const;  //return the index of the region that the element belongs to, return -1 if it does not belong to any region
-    unsigned int              regionNum() const;
+    inline unsigned int vertNum() const{return vertices_.size();}
+    inline unsigned int eleNum() const{return ele_num_;}
+    inline bool         isUniformElementType() const{return uniform_ele_type_;}
+    unsigned int        eleVertNum(unsigned int ele_idx) const;
+    unsigned int        eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
+    int                 eleRegionIndex(unsigned int ele_idx) const;  //return the index of the region that the element belongs to, return -1 if it does not belong to any region
+    unsigned int        regionNum() const;
+
     Vector<Scalar,Dim> vertPos(unsigned int vert_idx) const;
     Vector<Scalar,Dim> eleVertPos(unsigned int ele_idx, unsigned int local_vert_idx) const;
-    void eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const; //return positions of one element's vertices
-    std::string               regionName(unsigned int region_idx) const;
-    unsigned int              regionEleNum(unsigned int region_idx) const;
-    unsigned int              regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
+    void               eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const; //return positions of one element's vertices
+
+    std::string  regionName(unsigned int region_idx) const;
+    unsigned int regionEleNum(unsigned int region_idx) const;
+    unsigned int regionEleNum(const std::string &region_name) const; //print error and return 0 if no region with the given name
+
     //given the region index or name, return the elements of this region
     void regionElements(unsigned int region_idx, std::vector<unsigned int> &elements) const;
     void regionElements(const std::string &region_name, std::vector<unsigned int> &elements) const; //print error and return empty elements if no region with the given name
+    //boundary information
+    bool isBoundaryElement(unsigned int ele_idx);
+    bool isBoundaryVertex(unsigned int vert_idx);
+    //given a vector of vertices representing a face (vertex order doesn't matter), check if it's a boundary
+    //in 2D the face is actually edge
+    bool isBoundaryFace(std::vector<unsigned int> face); 
+    void boundaryElements(std::vector<unsigned int> &boundary_elements);
+    void boundaryVertices(std::vector<unsigned int> &boundary_vertices);
     
-    //setters
-    void setVertPos(unsigned int vert_idx, const Vector<Scalar,Dim> &vert_pos);
-    void setEleVertPos(unsigned int ele_idx, unsigned int local_vert_idx, const Vector<Scalar,Dim> &vert_pos);
-    void setEleVertPos(unsigned int ele_idx, const std::vector<Vector<Scalar,Dim> > &positions);
-
     /* modification
      * Note: the user may be obligated to maintain the validity of mesh data after calling the modification methods
      * e.g., Calling addVertex() will not automatically add the vertex to any region
@@ -91,7 +98,7 @@ public:
     virtual VolumetricMeshInternal::ElementType elementType() const=0;
     virtual unsigned int    eleVertNum() const=0; //only valid when uniform_ele_type_ is true, return the number of vertices per element
     virtual Scalar eleVolume(unsigned int ele_idx) const=0;
-    virtual bool   containsVertex(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
+    virtual bool   containPoint(unsigned int ele_idx, const Vector<Scalar,Dim> &pos) const=0;
     virtual void   interpolationWeights(unsigned int ele_idx, const Vector<Scalar,Dim> &pos, std::vector<Scalar> &weights) const=0; 
 protected:
     /* init mesh given data, all elements belong to one default region 'AllElements'
@@ -100,7 +107,12 @@ protected:
      */
     void init(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements, const unsigned int *vert_per_ele, bool uniform_ele_type);
     //return the start index of given element in elements_
-    unsigned int eleStartIdx(unsigned int ele_idx) const; 
+    unsigned int eleStartIdx(unsigned int ele_idx) const;
+    //compute boundary_vertices_ and boundary_elements_ 
+    virtual void generateBoundaryInformation() = 0;
+    //clear boundary information
+    //NOTE: call this method in mesh modification methods that involve modification of vertices and elements !!!
+    void clearBoundaryInformation();
 protected:
     std::vector<Vector<Scalar,Dim> > vertices_;
     unsigned int ele_num_;
@@ -110,6 +122,11 @@ protected:
     //if uniform_ele_type_ = false, vert_per_ele_ is a list of integers, corresponding to each element
     std::vector<unsigned int> vert_per_ele_;
     std::vector<VolumetricMeshInternal::Region*> regions_;
+    //exterior boundary information
+    std::set<unsigned int> boundary_vertices_;
+    std::set<unsigned int> boundary_elements_;
+    //a set of vertex vectors, each vector represents the unoriented face of the elements
+    std::set<std::vector<unsigned int>, VolumetricMeshInternal::CompareVector<unsigned int> > boundary_faces_;
 };
 
 }  //end of namespace Physika

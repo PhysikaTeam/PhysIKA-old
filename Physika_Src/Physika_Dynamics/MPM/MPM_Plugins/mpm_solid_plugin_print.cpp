@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -48,6 +48,19 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginPrint<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
 {
     std::cout<<"End time step, time: "<<time<<", time step: "<<dt<<"\n";
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidPluginPrint<Scalar, Dim>::setDriver(DriverBase<Scalar>* driver)
+{
+    if (driver == NULL)
+        throw PhysikaException("Error: NULL driver pointer provided to driver plugin!");
+    MPMSolidBase<Scalar, Dim> *mpm_driver = dynamic_cast<MPMSolidBase<Scalar, Dim>*>(driver);
+    if (mpm_driver == NULL)
+        throw PhysikaException("Wrong type of driver specified!");
+    else
+        mpm_driver->enableSolverStatusLog();
+    this->driver_ = mpm_driver;
 }
 
 template <typename Scalar, int Dim>

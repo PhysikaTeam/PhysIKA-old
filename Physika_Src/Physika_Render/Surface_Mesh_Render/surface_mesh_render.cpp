@@ -4,7 +4,7 @@
  * @author Fei Zhu ,Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -46,7 +46,7 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender()
     wire_display_list_id_(0),
     solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0),
-	enable_displaylist_(false)
+    enable_displaylist_(false)
 {
     initRenderMode();
 }
@@ -59,7 +59,7 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh)
     wire_display_list_id_(0),
     solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0),
-	enable_displaylist_(false)
+    enable_displaylist_(false)
 {
     initRenderMode();
     loadTextures();
@@ -73,7 +73,7 @@ SurfaceMeshRender<Scalar>::SurfaceMeshRender(SurfaceMesh<Scalar>* mesh, Transfor
     wire_display_list_id_(0),
     solid_display_list_id_(0),
     solid_with_custom_color_vector_display_list_id_(0),
-	enable_displaylist_(false)
+    enable_displaylist_(false)
 {
     initRenderMode();
     loadTextures();
@@ -185,14 +185,14 @@ void SurfaceMeshRender<Scalar>::disableTexture()
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::enableDisplayList()
 {
-	this->enable_displaylist_ = true;
+    this->enable_displaylist_ = true;
 }
 
 template <typename Scalar>
 void SurfaceMeshRender<Scalar>::disableDisplayList()
 {
-	this->enable_displaylist_ = false;
-	this->deleteDisplayLists();
+    this->enable_displaylist_ = false;
+    this->deleteDisplayLists();
 }
 
 template <typename Scalar>
@@ -212,46 +212,50 @@ void SurfaceMeshRender<Scalar>::render()
         std::cerr<<"No mesh is binded to the MeshRender!\n";
         return;
     }
+
     if(render_mode_ & render_solid_)
         renderSolid();
+
     if(render_mode_ & render_wireframe_)
         renderWireframe();
+
     if(render_mode_ & render_vertices_)
         renderVertices();
+
 }
 
 template<typename Scalar>
 void SurfaceMeshRender<Scalar>::printInfo()const
 {
-	std::cout<<"mesh_address: "<<this->mesh_<<std::endl;
-	std::cout<<"transform_address: "<<this->transform_<<std::endl;
-	unsigned int render_mode = this->render_mode_;
-	std::cout<<"render_mode: ";
-	if(render_mode & this->render_solid_)
-		std::cout<<"solid ";
-	if(render_mode & this->render_wireframe_)
-		std::cout<<"wireFrame ";
-	if(render_mode & this->render_vertices_)
-		std::cout<<"vertex ";
-	if(render_mode & this->render_texture_)
-		std::cout<<"texture ";
-	if(render_mode & this->render_flat_or_smooth_)
-		std::cout<<"smooth ";
-	else
-		std::cout<<"flat ";
-	std::cout<<std::endl;
-	std::cout<<"texture: "<<this->textures_.size()<<" in all, ";
-	unsigned int texture_num_available = 0;
-	for(unsigned int i=0; i<this->textures_.size(); i++)
-	{
-		if(this->textures_[i].first == true)
-			texture_num_available++;
-	}
-	std::cout<<texture_num_available<<" available."<<std::endl;
-	std::cout<<"vertex_display_list_id_: "<<this->vertex_display_list_id_<<std::endl;
-	std::cout<<"wire_display_list_id_: "<<this->wire_display_list_id_<<std::endl;
-	std::cout<<"solid_display_list_id_: "<<this->solid_display_list_id_<<std::endl;
-	std::cout<<"solid_with_custom_color_vector_display_list_id_: "<<this->solid_with_custom_color_vector_display_list_id_<<std::endl;
+    std::cout<<"mesh_address: "<<this->mesh_<<std::endl;
+    std::cout<<"transform_address: "<<this->transform_<<std::endl;
+    unsigned int render_mode = this->render_mode_;
+    std::cout<<"render_mode: ";
+    if(render_mode & this->render_solid_)
+        std::cout<<"solid ";
+    if(render_mode & this->render_wireframe_)
+        std::cout<<"wireFrame ";
+    if(render_mode & this->render_vertices_)
+        std::cout<<"vertex ";
+    if(render_mode & this->render_texture_)
+        std::cout<<"texture ";
+    if(render_mode & this->render_flat_or_smooth_)
+        std::cout<<"smooth ";
+    else
+        std::cout<<"flat ";
+    std::cout<<std::endl;
+    std::cout<<"texture: "<<this->textures_.size()<<" in all, ";
+    unsigned int texture_num_available = 0;
+    for(unsigned int i=0; i<this->textures_.size(); i++)
+    {
+        if(this->textures_[i].first == true)
+            texture_num_available++;
+    }
+    std::cout<<texture_num_available<<" available."<<std::endl;
+    std::cout<<"vertex_display_list_id_: "<<this->vertex_display_list_id_<<std::endl;
+    std::cout<<"wire_display_list_id_: "<<this->wire_display_list_id_<<std::endl;
+    std::cout<<"solid_display_list_id_: "<<this->solid_display_list_id_<<std::endl;
+    std::cout<<"solid_with_custom_color_vector_display_list_id_: "<<this->solid_with_custom_color_vector_display_list_id_<<std::endl;
 
 }
 
@@ -277,11 +281,11 @@ void SurfaceMeshRender<Scalar>::renderVertices()
     }
     if(! glIsList(this->vertex_display_list_id_))
     {
-		if (this->enable_displaylist_)
-		{
-			this->vertex_display_list_id_=glGenLists(1);
-			glNewList(this->vertex_display_list_id_, GL_COMPILE_AND_EXECUTE);
-		}
+        if (this->enable_displaylist_)
+        {
+            this->vertex_display_list_id_=glGenLists(1);
+            glNewList(this->vertex_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        }
         
         glDisable(GL_LIGHTING);
         unsigned int num_vertex = this->mesh_->numVertices();      //get the number of vertices
@@ -293,15 +297,15 @@ void SurfaceMeshRender<Scalar>::renderVertices()
         }
         glEnd();
 
-		if (this->enable_displaylist_)
-		{
-			glEndList();
-		}
+        if (this->enable_displaylist_)
+        {
+            glEndList();
+        }
         
     }
     else
     {
-		glCallList(this->vertex_display_list_id_);
+        glCallList(this->vertex_display_list_id_);
     }
     glPopMatrix();
     glPopAttrib();
@@ -321,20 +325,20 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
     }
     if(! glIsList(this->wire_display_list_id_))
     {
-		if (this->enable_displaylist_)
-		{
-			this->wire_display_list_id_=glGenLists(1);
-			glNewList(this->wire_display_list_id_, GL_COMPILE_AND_EXECUTE);
-		}
+        if (this->enable_displaylist_)
+        {
+            this->wire_display_list_id_=glGenLists(1);
+            glNewList(this->wire_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        }
         
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> &group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
             {
-                Face<Scalar> face_ref = group_ref.face(face_idx);          // get face reference
+                Face<Scalar> &face_ref = group_ref.face(face_idx);          // get face reference
                 unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
                 glBegin(GL_POLYGON);                                       // draw polygon with wire mode
                 for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++)
@@ -346,14 +350,14 @@ void SurfaceMeshRender<Scalar>::renderWireframe()
                 glEnd();
             }
         }
-		if (enable_displaylist_)
-		{
-			glEndList();
-		}  
+        if (enable_displaylist_)
+        {
+            glEndList();
+        }  
     }
     else
     {
-		glCallList(this->wire_display_list_id_);
+        glCallList(this->wire_display_list_id_);
     }
     glPopMatrix();
     glPopAttrib();
@@ -373,19 +377,20 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     {
         openGLMultMatrix(this->transform_->transformMatrix());	
     }
+
     if (! glIsList(this->solid_display_list_id_))
     {   
-		if (enable_displaylist_)
-		{
-			this->solid_display_list_id_=glGenLists(1);
-			glNewList(this->solid_display_list_id_, GL_COMPILE_AND_EXECUTE);
-		}
+        if (enable_displaylist_)
+        {
+            this->solid_display_list_id_=glGenLists(1);
+            glVerify(glNewList(this->solid_display_list_id_, GL_COMPILE_AND_EXECUTE));
+        }
         
 
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> &group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
             unsigned int material_ID = group_ref.materialIndex();
 
@@ -402,27 +407,27 @@ void SurfaceMeshRender<Scalar>::renderSolid()
             GLfloat specular[4] = { static_cast<GLfloat>(Ks[0]), static_cast<GLfloat>(Ks[1]), static_cast<GLfloat>(Ks[2]), static_cast<GLfloat>(alpha) };
             
             // set material property for group
-            openGLMaterialv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-            openGLMaterialv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
-            openGLMaterialv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-            openGLMaterial (GL_FRONT_AND_BACK, GL_SHININESS, static_cast<GLfloat>(shininess));
+            glVerify(openGLMaterialv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient));
+            glVerify(openGLMaterialv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse));
+            glVerify(openGLMaterialv(GL_FRONT_AND_BACK, GL_SPECULAR, specular));
+            glVerify(openGLMaterial (GL_FRONT_AND_BACK, GL_SHININESS, static_cast<GLfloat>(shininess)));
 
             // if have a texture, then enable it
             if(this->textures_[material_ID].first==true && (this->render_mode_ & render_texture_) )
             {
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D,this->textures_[material_ID].second);
+                glVerify(glEnable(GL_TEXTURE_2D));
+                glVerify(glBindTexture(GL_TEXTURE_2D,this->textures_[material_ID].second));
             }
             else
             {
-                glDisable(GL_TEXTURE_2D);
+                glVerify(glDisable(GL_TEXTURE_2D));
             }
 
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
             {
-                Face<Scalar> face_ref = group_ref.face(face_idx);          // get face reference
+                Face<Scalar> &face_ref = group_ref.face(face_idx);          // get face reference
                 unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
-                glBegin(GL_POLYGON);                                       // draw polygon with SOLID MODE
+                glVerify(glBegin(GL_POLYGON));                                       // draw polygon with SOLID MODE
                 for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++) // loop for every vertex
                 {
                     // if use smooth mode 
@@ -432,14 +437,13 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                         {
                             unsigned int vertex_normal_ID = face_ref.vertex(vertex_idx).normalIndex();
                             Vector<Scalar,3> vertex_normal = this->mesh_->vertexNormal(vertex_normal_ID);
-                            openGLNormal(vertex_normal);
+                            glVerify(openGLNormal(vertex_normal));
                         }
                     }
                     else if(face_ref.hasFaceNormal())
                     {
                         Vector<Scalar,3> face_normal = face_ref.faceNormal();
-                        openGLNormal(face_normal);
-
+                        glVerify(openGLNormal(face_normal));
                     }
 
                     // if vertex has a texture coordinate
@@ -447,30 +451,31 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                     {
                         unsigned int vertex_texture_ID = face_ref.vertex(vertex_idx).textureCoordinateIndex();
                         Vector<Scalar,2> vertex_textureCoord = this->mesh_->vertexTextureCoordinate(vertex_texture_ID);
-                        openGLTexCoord(vertex_textureCoord);
+                        glVerify(openGLTexCoord(vertex_textureCoord));
                     }
                     unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
                     Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-                    openGLVertex(position);
+                    glVerify(openGLVertex(position));
                 }
-                glEnd();
+                glVerify(glEnd());
             }
 
-            glDisable(GL_TEXTURE_2D);
+            glVerify(glDisable(GL_TEXTURE_2D));
         }
 
-		if (enable_displaylist_)
-		{
-			glEndList();
-		}
+        if (enable_displaylist_)
+        {
+            glVerify(glEndList());
+        }
         
     }
     else
     {
-		glCallList(this->solid_display_list_id_);  
+        glVerify(glCallList(this->solid_display_list_id_));
     }
-    glPopMatrix();
-    glPopAttrib();
+
+    glVerify(glPopMatrix());
+    glVerify(glPopAttrib());
 }
 
 template <typename Scalar> template<typename ColorType>
@@ -492,22 +497,22 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
     }
     if (! glIsList(this->solid_with_custom_color_vector_display_list_id_))
     {   
-		if (enable_displaylist_)
-		{
-			this->solid_with_custom_color_vector_display_list_id_=glGenLists(1);
-			glNewList(this->solid_with_custom_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
-		}
+        if (enable_displaylist_)
+        {
+            this->solid_with_custom_color_vector_display_list_id_=glGenLists(1);
+            glNewList(this->solid_with_custom_color_vector_display_list_id_, GL_COMPILE_AND_EXECUTE);
+        }
         
 
         unsigned int num_group = this->mesh_->numGroups();                 // get group number
         for(unsigned int group_idx=0; group_idx<num_group; group_idx++)    // loop for every group
         {
-            FaceGroup<Scalar> group_ref = this->mesh_->group(group_idx);       // get group reference
+            FaceGroup<Scalar> &group_ref = this->mesh_->group(group_idx);       // get group reference
             unsigned int num_face = group_ref.numFaces();                  // get face number
     
             for(unsigned int face_idx=0; face_idx<num_face; face_idx++)    // loop for every face
             {
-                Face<Scalar> face_ref = group_ref.face(face_idx);          // get face reference
+                Face<Scalar> &face_ref = group_ref.face(face_idx);          // get face reference
                 unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
                 glBegin(GL_POLYGON);                                       // draw polygon with SOLID MODE
                 for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++) // loop for every vertex
@@ -523,15 +528,15 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
                 glEnd();
             }
         }
-		if (enable_displaylist_)
-		{
-			glEndList();
-		}
+        if (enable_displaylist_)
+        {
+            glEndList();
+        }
         
     }
     else
     {
-		glCallList(this->solid_with_custom_color_vector_display_list_id_);
+        glCallList(this->solid_with_custom_color_vector_display_list_id_);
     }
     glPopMatrix();
     glPopAttrib();
@@ -693,7 +698,7 @@ void SurfaceMeshRender<Scalar>::loadTextures()
 
     for(unsigned int material_idx=0; material_idx<num_material; material_idx++) // loop for ervery material
     {
-        Material<Scalar> material_ref = this->mesh_->material(material_idx);    // get material reference
+        Material<Scalar> &material_ref = this->mesh_->material(material_idx);    // get material reference
 
 
         if(material_ref.hasTexture())    // if have a texture

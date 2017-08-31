@@ -1,13 +1,13 @@
 /*
- * @file vector.h 
- * @brief This abstract class is intended to provide a uniform interface for Vector2D and Vector3D.
- *        Vector2D and Vector3D are implemented using template partial specialization of this class. 
+ * @file vector.h
+ * @brief This abstract class is intended to provide a uniform interface for Vector of dimension 1,2,3,4.
+ *        Vectors are implemented using template partial specialization of this class.
  * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -26,6 +26,7 @@ template <typename Scalar, int Dim>
 class Vector: public VectorBase
 {
 public:
+    typedef Scalar ValueType;
     Vector(){}
     ~Vector(){}
     virtual unsigned int dims() const;

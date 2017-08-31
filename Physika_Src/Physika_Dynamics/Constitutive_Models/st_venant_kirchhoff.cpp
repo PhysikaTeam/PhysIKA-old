@@ -2,11 +2,11 @@
  * @file  st_venant_kirchhoff.cpp
  * @brief St.Venant-Kirchhoff hyperelastic material model
  * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -65,7 +65,7 @@ void StVK<Scalar,Dim>::printInfo() const
 }
 
 template <typename Scalar, int Dim>
-Scalar StVK<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
+Scalar StVK<Scalar,Dim>::energyDensity(const SquareMatrix<Scalar,Dim> &F) const
 {
     SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
     SquareMatrix<Scalar,Dim> E = (F.transpose()*F-identity)/2;
@@ -101,6 +101,19 @@ SquareMatrix<Scalar,Dim> StVK<Scalar,Dim>::cauchyStress(const SquareMatrix<Scala
     Scalar J = F.determinant();
     SquareMatrix<Scalar,Dim> stress = 1/J*firstPiolaKirchhoffStress(F)*F.transpose();
     return stress;
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> StVK<Scalar,Dim>::firstPiolaKirchhoffStressDifferential(
+                                                                const SquareMatrix<Scalar,Dim> &F,
+                                                                const SquareMatrix<Scalar,Dim> &F_differential) const
+{
+    Scalar mu = this->mu_;
+    Scalar lambda = this->lambda_;
+    SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
+    SquareMatrix<Scalar,Dim> E = 0.5*(F.transpose()*F-identity);
+    SquareMatrix<Scalar,Dim> E_differential = 0.5*(F_differential.transpose()*F+F.transpose()*F_differential);
+    return F_differential*(2.0*mu*E+lambda*E.trace()*identity)+F*(2.0*mu*E_differential+lambda*E_differential.trace()*identity);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

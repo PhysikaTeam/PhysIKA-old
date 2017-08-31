@@ -5,7 +5,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -65,6 +65,7 @@ void GluiWindow::createWindow()
     glutSpecialFunc(special_function_);
     glutMotionFunc(motion_function_);
     glutMouseFunc(mouse_function_);
+    glutMouseWheelFunc(mouse_wheel_function_);
     PHYSIKA_ASSERT(glui_);
     glui_->set_main_gfx_window(window_id_);
     GLUI_Master.set_glutIdleFunc(idle_function_);

@@ -4,7 +4,7 @@
  * @author Fei Zhu, liyou Xu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -26,7 +26,7 @@
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
-#include "Physika_Core/Utilities/File_Utilities/parse_line.h"
+#include "Physika_Core/Utilities/File_Utilities/file_content_utilities.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 
 using std::string;
@@ -50,12 +50,12 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     string file_extension = FileUtilities::fileExtension(filename);
     if(file_extension.size() == 0)
     {
-		std::cerr<<"No file extension found for the mesh file:"<<filename<<std::endl;
+        std::cerr<<"No file extension found for the mesh file:"<<filename<<std::endl;
         return NULL;
     }
     if(file_extension != string(".smesh"))
     {
-		std::cerr<<"Unknown mesh file format:"<<file_extension<<std::endl;
+        std::cerr<<"Unknown mesh file format:"<<file_extension<<std::endl;
         return NULL;
     }
     vector<fstream *> file_stack;
@@ -63,7 +63,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     fp->open(filename.c_str(),std::ios::in);
     if(!(*fp))
     {
-		std::cerr<<"Couldn't opern .smesh file:"<<filename<<std::endl;
+        std::cerr<<"Couldn't opern .smesh file:"<<filename<<std::endl;
         return NULL;
     }
     // first check the mesh type
@@ -94,11 +94,11 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         std::cerr<<"Non-uniform element type not implemented yet.\n";
         return NULL;
     }
-	else 
-	{
-		std::cerr<<"Unknow elements type:"<<mesh_type<<std::endl;
-		return NULL;
-	}
+    else 
+    {
+        std::cerr<<"Unknow elements type:"<<mesh_type<<std::endl;
+        return NULL;
+    }
     enum ParseSession{
         NOT_SET,
         VERTICES,
@@ -131,7 +131,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
         }
         getline(*fp,line_str);
         //first remove preceding blanks from this line
-        line_str = FileUtilities::removeWhitespaces(line_str);
+        line_str = FileUtilities::removeWhitespaces(line_str,1);
         str_in.clear();
         str_in.str("");
         str_in<<line_str;
@@ -260,7 +260,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
                             for(int i=0; i<ele_dim; i++)
                             {
                                 str_in>> ele;
-								elements.push_back(ele - index_start_vert);
+                                elements.push_back(ele - index_start_vert);
                             }
                             pointer->addElement(elements);
                             start_index_decided = false;
@@ -271,7 +271,7 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
                             for(int i=0; i<ele_dim; ++i)
                             {
                                 str_in>>ele;
-								elements.push_back(ele - index_start_ele);
+                                elements.push_back(ele - index_start_ele);
                             }
                             pointer->addElement(elements);
                         }
@@ -282,10 +282,10 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
             {
                 unsigned int region_index;
                 char comma;
-				if(line_str[0]==',')str_in>>comma;
+                if(line_str[0]==',')str_in>>comma;
                 while(str_in>>region_index)
                 {
-					region.push_back(region_index - index_start_ele);
+                    region.push_back(region_index - index_start_ele);
                     str_in>>comma;
                 }
             }
@@ -295,6 +295,14 @@ VolumetricMesh<Scalar,Dim>* VolumetricMeshIO<Scalar,Dim>::load(const string &fil
     {
         pointer->addRegion(region_name,region);
         region.clear();
+    }
+    if(pointer->regionNum() == 0) //no region read from file, add one region named "AllElements"
+    {
+        region.resize(pointer->eleNum());
+        for(unsigned int ele_idx = 0; ele_idx < pointer->eleNum(); ++ele_idx)
+            region[ele_idx] = ele_idx;
+        region_name = string("AllElements");
+        pointer->addRegion(region_name,region);
     }
     return pointer;
 }

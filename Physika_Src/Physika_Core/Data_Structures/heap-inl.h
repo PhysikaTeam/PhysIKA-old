@@ -4,7 +4,7 @@
  * @author Mike Xu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -16,6 +16,7 @@
 #ifndef PHYSIKA_CORE_DATA_STRUCTURES_HEAP_INL_H_
 #define PHYSIKA_CORE_DATA_STRUCTURES_HEAP_INL_H_
 
+#include "Physika_Core/Utilities/physika_exception.h"
 
 namespace Physika{
 
@@ -34,10 +35,7 @@ template <class T>
 bool MinHeap<T>::isLeaf(int pos) const
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function isLeaf()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function isLeaf()");
     return (pos >= current_size_/2)&&(pos < CurrentSize);
 }
 
@@ -45,10 +43,7 @@ template <class T>
 int MinHeap<T>::leftChild(int pos) const
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function leftChild()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function leftChild()");
     return 2*pos+1;
 }
 
@@ -56,10 +51,7 @@ template <class T>
 int MinHeap<T>::rightChild(int pos) const
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function rightChild()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function rightChild()");
     return 2*pos+2;
 }
 
@@ -67,10 +59,7 @@ template <class T>
 int MinHeap<T>::parent(int pos) const
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function parent()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function parent()");
     return (pos-1)/2;
 }
 
@@ -78,10 +67,7 @@ template <class T>
 void MinHeap<T>::shiftDown(int pos)
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function shiftDown()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function shiftDown()");
     int i = pos;
     int j = 2*i+1;
     T temp = heap_array_[i];
@@ -121,10 +107,7 @@ template <class T>
 void MinHeap<T>::shiftUp(int pos)
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function shiftUp()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function shiftUp()");
     int temppos = pos;
     T temp = heap_array_[temppos];
     while((temppos > 0)&&(heap_array_[parent(temppos)] > temp))
@@ -139,10 +122,9 @@ template <class T>
 T & MinHeap<T>::removeMin()
 {
     if(current_size_ == 0)
+        throw PhysikaException("can't remove from empty heap");
+    else
     {
-        cout<<"can't delete";exit(1);
-    }
-    else{
         T temp = heap_array_[0];
         heap_array_[0] = heap_array_[--current_size_];
         if(current_size_ > 1)
@@ -155,10 +137,7 @@ template <class T>
 bool MinHeap<T>::remove(int pos, T& node)
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function remove()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function remove()");
     if((pos < 0)||(pos >= current_size_))
     {
         return false;
@@ -186,10 +165,7 @@ template <class T>
 bool MaxHeap<T>::isLeaf(int pos) const
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function isLeaf()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function isLeaf()");
     return (pos >= current_size_/2)&&(pos < CurrentSize);
 }
 
@@ -197,10 +173,7 @@ template <class T>
 int MaxHeap<T>::leftChild(int pos) const
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function leftChild()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function leftChild()");
     return 2*pos+1;
 }
 
@@ -208,10 +181,7 @@ template <class T>
 int MaxHeap<T>::rightChild(int pos) const
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function rightChild()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function rightChild()");
     return 2*pos+2;
 }
 
@@ -219,10 +189,7 @@ template <class T>
 int MaxHeap<T>::parent(int pos) const
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function parent()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function parent()");
     return (pos-1)/2;
 }
 
@@ -230,10 +197,7 @@ template <class T>
 void MaxHeap<T>::shiftDown(int pos)
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function shiftDown()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function shiftDown()");
     int i = pos;
     int j = 2*i+1;
     T temp = heap_array_[i];
@@ -273,10 +237,7 @@ template <class T>
 void MaxHeap<T>::shiftUp(int pos)
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function shiftUp()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function shiftUp()");
     int temppos = pos;
     T temp = heap_array_[temppos];
     while((temppos > 0)&&(heap_array_[parent(temppos)] < temp))
@@ -291,10 +252,9 @@ template <class T>
 T & MaxHeap<T>::removeMax()
 {
     if(current_size_ == 0)
+        throw PhysikaException("can't remove from empty heap");
+    else
     {
-        cout<<"can't delete";exit(1);
-    }
-    else{
         T temp = heap_array_[0];
         heap_array_[0] = heap_array_[--current_size_];
         if(current_size_ > 1)
@@ -307,10 +267,7 @@ template <class T>
 bool MaxHeap<T>::remove(int pos, T& node)
 {
     if(pos >= current_size_||pos < 0)
-    {
-        std::cerr<<"invalid position when call function remove()\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("invalid position when call function remove()");
     if((pos < 0)||(pos >= current_size_))
     {
         return false;

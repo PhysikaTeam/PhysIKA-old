@@ -4,7 +4,7 @@
  * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -17,6 +17,7 @@
 #include <iostream>
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Core/Utilities/math_utilities.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 
 namespace Physika{
 
@@ -164,10 +165,7 @@ template <typename Scalar>
 Quaternion<Scalar>  Quaternion<Scalar>::operator / (const Scalar& scale) const
 {
     if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-	std::cerr<<"Quaternion Divide by zero error!\n";
-	std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Quaternion Divide by zero error!");
     return Quaternion(x_ / scale, y_ / scale, z_ / scale, w_ / scale);
 }
 
@@ -191,10 +189,7 @@ template <typename Scalar>
 Scalar&  Quaternion<Scalar>::operator[] (unsigned int idx)
 {
     if(idx > 3)
-    {
-        std::cerr<<"Quaternion index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Quaternion index out of range!");
     switch(idx)
     {
     case 0:
@@ -214,10 +209,7 @@ template <typename Scalar>
 const Scalar&  Quaternion<Scalar>::operator[] (unsigned int idx) const
 {
     if(idx > 3)
-    {
-        std::cerr<<"Quaternion index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Quaternion index out of range!");
     switch(idx)
     {
     case 0:

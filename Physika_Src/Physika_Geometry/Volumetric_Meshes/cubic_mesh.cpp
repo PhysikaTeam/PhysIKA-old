@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Arrays/array.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
@@ -29,7 +30,7 @@ CubicMesh<Scalar>::CubicMesh():VolumetricMesh<Scalar,3>()
 
 template <typename Scalar>
 CubicMesh<Scalar>::CubicMesh(unsigned int vert_num, const Scalar *vertices, unsigned int ele_num, const unsigned int *elements)
-	:VolumetricMesh<Scalar, 3>(vert_num, vertices, ele_num, elements, 8)
+    :VolumetricMesh<Scalar, 3>(vert_num, vertices, ele_num, elements, 8)
 {
 }
 
@@ -79,10 +80,7 @@ template <typename Scalar>
 Scalar CubicMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"CubicMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("CubicMesh element index out of range!");
     Array< Vector<Scalar,3> > ele_vertices(8);
     for(unsigned int i = 0; i < 8; ++i)
         ele_vertices[i] = this->eleVertPos(ele_idx,i);
@@ -94,17 +92,14 @@ Scalar CubicMesh<Scalar>::eleVolume(unsigned int ele_idx) const
 }
 
 template <typename Scalar>
-bool CubicMesh<Scalar>::containsVertex(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
+bool CubicMesh<Scalar>::containPoint(unsigned int ele_idx, const Vector<Scalar,3> &pos) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"CubicMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("CubicMesh element index out of range!");
     std::vector<Scalar> weights;
     interpolationWeights(ele_idx,pos,weights);
     bool vert_in_ele = true;
-	for(unsigned int i=0; i<8; ++i)
+    for(unsigned int i=0; i<8; ++i)
         if(weights[i] < 0)
             vert_in_ele = false;
     return vert_in_ele;
@@ -122,13 +117,10 @@ void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<
  *Dz1 =
  */
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"CubicMesh element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("CubicMesh element index out of range!");
     Array< Vector<Scalar,3> > ele_vertices(8);
     for(unsigned int i = 0; i < 8; ++i)
-	ele_vertices[i] = this->eleVertPos(ele_idx,i);
+    ele_vertices[i] = this->eleVertPos(ele_idx,i);
     Scalar Dx0,Dx1,Dy0,Dy1,Dz0,Dz1;
     Dx0 = (pos[0] - ele_vertices[0][0])/(ele_vertices[1][0] - ele_vertices[0][0]);
     Dx1 = (ele_vertices[1][0] - pos[0])/(ele_vertices[1][0] - ele_vertices[0][0]);
@@ -145,6 +137,12 @@ void CubicMesh<Scalar>::interpolationWeights(unsigned int ele_idx, const Vector<
     weights[5] = Dx0 * Dy1 * Dz0;
     weights[6] = Dx0 * Dy0 * Dz0;
     weights[7] = Dx1 * Dy0 * Dz0;
+}
+
+template <typename Scalar>
+void CubicMesh<Scalar>::generateBoundaryInformation()
+{
+    throw PhysikaException("Not implemented!");
 }
 
 //explicit instantitation

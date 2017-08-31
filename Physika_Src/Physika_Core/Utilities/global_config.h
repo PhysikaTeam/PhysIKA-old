@@ -4,7 +4,7 @@
  * @author FeiZhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -22,11 +22,14 @@
 #define PHYSIKA_USE_EIGEN_MATRIX
 //#define PHYSIKA_USE_BUILT_IN_MATRIX
 
-//#define PHYSIKA_USE_EIGEN_VECTOR
-#define PHYSIKA_USE_BUILT_IN_VECTOR
+#define PHYSIKA_USE_EIGEN_VECTOR
+//#define PHYSIKA_USE_BUILT_IN_VECTOR
 
 //#define PHYSIKA_USE_EIGEN_SPARSE_MATRIX
 #define PHYSIKA_USE_BUILT_IN_SPARSE_MATRIX
+
+/***********PhysikaException***********/
+#define PHYSIKA_EXCEPTION_WITH_STACK_TRACE
 
 ////////////////////////////////////////////
 

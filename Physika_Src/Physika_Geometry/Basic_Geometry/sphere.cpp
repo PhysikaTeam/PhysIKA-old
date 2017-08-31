@@ -4,7 +4,7 @@
  * @author FeiZhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -28,17 +28,32 @@ template <typename Scalar>
 Sphere<Scalar>::Sphere(const Vector<Scalar,3> &center, Scalar radius)
     :center_(center)
 {
-    if(radius<0)
-    {
-        std::cerr<<"Radius of a sphere must be equal or greater than zero!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    radius_ = radius;
+    setRadius(radius);
+}
+
+template <typename Scalar>
+Sphere<Scalar>::Sphere(const Sphere<Scalar> &sphere)
+    :center_(sphere.center_),radius_(sphere.radius_)
+{
 }
 
 template <typename Scalar>
 Sphere<Scalar>::~Sphere()
 {
+}
+
+template <typename Scalar>
+Sphere<Scalar>& Sphere<Scalar>::operator= (const Sphere<Scalar> &sphere)
+{
+    center_ = sphere.center_;
+    radius_ = sphere.radius_;
+    return *this;
+}
+
+template <typename Scalar>
+Sphere<Scalar>* Sphere<Scalar>::clone() const
+{
+    return new Sphere<Scalar>(*this);
 }
 
 template <typename Scalar>
@@ -54,9 +69,27 @@ Vector<Scalar,3> Sphere<Scalar>::center() const
 }
 
 template <typename Scalar>
+void Sphere<Scalar>::setCenter(const Vector<Scalar,3> &center)
+{
+    center_ = center;
+}
+
+template <typename Scalar>
 Scalar Sphere<Scalar>::radius() const
 {
     return radius_;
+}
+
+template <typename Scalar>
+void Sphere<Scalar>::setRadius(Scalar radius)
+{
+    if(radius<0)
+    {
+        std::cerr<<"Warning: invalid radius provided, default value (0) is used instead!\n";
+        radius_ = 0;
+    }
+    else
+        radius_ = radius;
 }
 
 template <typename Scalar>
@@ -86,5 +119,17 @@ bool Sphere<Scalar>::outside(const Vector<Scalar,3> &point) const
 {
     return !inside(point);
 }
+
+template <typename Scalar>
+Vector<Scalar,3> Sphere<Scalar>::normal(const Vector<Scalar,3> &point) const
+{
+    Vector<Scalar,3> normal = point - center_;
+    normal.normalize();
+    return normal;
+}
+
+//explicit instantiation
+template class Sphere<float>;
+template class Sphere<double>;
 
 }  //end of namespace Physika

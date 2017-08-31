@@ -1,11 +1,11 @@
 /*
  * @file file_path_utilities.cpp
  * @brief Some universal functions when processing files' path.
- * @author LiYou Xu
+ * @author LiYou Xu, Fei Zhu
  * @acknowledge Jernej Barbic, author of VegaFEM
  *
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -46,6 +46,14 @@ string fileExtension(const string &path)
     if(pos != string::npos)
         return path.substr(pos);
     else return string("");
+}
+string removeFileExtension(const std::string &path)
+{
+    string::size_type pos = path.rfind('.');
+    if(pos != string::npos)
+        return path.substr(0,pos);
+    else
+        return path;
 }
 
 } //end of namespace FilePathUtilities

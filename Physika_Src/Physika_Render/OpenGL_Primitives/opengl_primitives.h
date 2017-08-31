@@ -4,10 +4,10 @@
  *        If a render is type-dependent, these primitives should be used instead of
  *        directly casting to one type
  * @Note: If the openGL function you need to use is not here, you can add it here
- * @author Fei Zhu
+ * @author Fei Zhu, Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -19,6 +19,7 @@
 #define PHYSIKA_RENDER_OPENGL_PRIMITIVES_OPENGL_PRIMITIVES_H_
 
 #include <GL/gl.h>
+
 #include <iostream>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
@@ -251,32 +252,32 @@ inline void openGLLightv(GLenum light, GLenum pname, const Color<ColorType>& col
 template <int Dim>
 inline void openGLLightv(GLenum light, GLenum pname,const Vector<float, Dim>& pos_dir)
 {
-	float param[Dim];
-	for(unsigned int i=0; i<Dim; i++)
-	{
-		param[i] = pos_dir[i];
-	}
-	glLightfv(light, pname, param);
+    float param[Dim];
+    for(unsigned int i=0; i<Dim; i++)
+    {
+        param[i] = pos_dir[i];
+    }
+    glLightfv(light, pname, param);
 }
 template <int Dim>
 inline void openGLLightv(GLenum light, GLenum pname,const Vector<double, Dim>& pos_dir)
 {
-	float param[Dim];
-	for(unsigned int i=0; i<Dim; i++)
-	{
-		param[i] = static_cast<float>(pos_dir[i]);
-	}
-	glLightfv(light, pname, param);
+    float param[Dim];
+    for(unsigned int i=0; i<Dim; i++)
+    {
+        param[i] = static_cast<float>(pos_dir[i]);
+    }
+    glLightfv(light, pname, param);
 }
 template <int Dim>
 inline void openGLLightv(GLenum light, GLenum pname,const Vector<int, Dim>& pos_dir)
 {
-	int param[Dim];
-	for(unsigned int i=0; i<Dim; i++)
-	{
-		param[i] = pos_dir[i];
-	}
-	glLightiv(light, pname, param);
+    int param[Dim];
+    for(unsigned int i=0; i<Dim; i++)
+    {
+        param[i] = pos_dir[i];
+    }
+    glLightiv(light, pname, param);
 }
 
 /*
@@ -419,6 +420,54 @@ inline void openGLMultMatrix(const SquareMatrix<double,4> & matrix)
             matrix_[i*4+j] = matrix(j,i);
     glMultMatrixd(matrix_);
 }
+
+/*
+ * glAssert, assert function extracted from Flex
+ */
+inline void glAssert(const char* msg, long line, const char* file)
+{
+    struct glError
+    {
+        GLenum code;
+        const char* name;
+    };
+
+    static const glError errors[] = { 
+                                      { GL_NO_ERROR, "No Error" },
+                                      { GL_INVALID_ENUM, "Invalid Enum" },
+                                      { GL_INVALID_VALUE, "Invalid Value" },
+                                      { GL_INVALID_OPERATION, "Invalid Operation" }
+                                    };
+
+    GLenum e = glGetError();
+
+    if (e == GL_NO_ERROR)
+    {
+        return;
+    }
+    else
+    {
+        const char* errorName = "Unknown error";
+
+        // find error message
+        for (uint32_t i = 0; i < sizeof(errors) / sizeof(glError); i++)
+        {
+            if (errors[i].code == e)
+            {
+                errorName = errors[i].name;
+            }
+        }
+
+        printf("OpenGL: %s - error %s in %s at line %d\n", msg, errorName, file, int(line));
+        assert(0);
+    }
+}
+
+#if defined(NDEBUG)
+    #define glVerify(x) x
+#else
+    #define glVerify(x) {x; glAssert(#x, __LINE__, __FILE__);}
+#endif
 
 } //end of namespace Physika
 

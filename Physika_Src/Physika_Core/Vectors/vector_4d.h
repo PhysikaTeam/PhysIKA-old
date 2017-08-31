@@ -1,10 +1,10 @@
 /*
  * @file vector_4d.h 
  * @brief 4d vector.
- * @author Liyou Xu, Fei Zhu
+ * @author Liyou Xu, Fei Zhu, Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -34,43 +34,49 @@ class Vector<Scalar,4>: public VectorBase
 {
 public:
     Vector();
-    Vector(Scalar x, Scalar y, Scalar z, Scalar w);
     explicit Vector(Scalar);
-    Vector(const Vector<Scalar,4>&);
-    ~Vector();
+    Vector(Scalar x, Scalar y, Scalar z, Scalar w);
+    Vector(const Vector<Scalar,4>&) = default;
+    ~Vector() = default;
+
     inline unsigned int dims() const{return 4;}
+
     Scalar& operator[] (unsigned int);
     const Scalar& operator[] (unsigned int) const;
-    Vector<Scalar,4> operator+ (const Vector<Scalar,4> &) const;
+
+    const Vector<Scalar,4> operator+ (const Vector<Scalar,4> &) const;
     Vector<Scalar,4>& operator+= (const Vector<Scalar,4> &);
-    Vector<Scalar,4> operator- (const Vector<Scalar,4> &) const;
+    const Vector<Scalar,4> operator- (const Vector<Scalar,4> &) const;
     Vector<Scalar,4>& operator-= (const Vector<Scalar,4> &);
-    Vector<Scalar,4>& operator= (const Vector<Scalar,4> &);
+
+    Vector<Scalar,4>& operator= (const Vector<Scalar,4> &) = default;
+
     bool operator== (const Vector<Scalar,4> &) const;
     bool operator!= (const Vector<Scalar,4> &) const;
 
-    Vector<Scalar,4> operator+ (Scalar) const;
-    Vector<Scalar,4> operator- (Scalar) const;
-    Vector<Scalar,4> operator* (Scalar) const;
-    Vector<Scalar,4> operator/ (Scalar) const;
+    const Vector<Scalar,4> operator+ (Scalar) const;
+    const Vector<Scalar,4> operator- (Scalar) const;
+    const Vector<Scalar,4> operator* (Scalar) const;
+    const Vector<Scalar,4> operator/ (Scalar) const;
 
     Vector<Scalar,4>& operator+= (Scalar);
     Vector<Scalar,4>& operator-= (Scalar);
     Vector<Scalar,4>& operator*= (Scalar);
     Vector<Scalar,4>& operator/= (Scalar);
 
+    const Vector<Scalar, 4> operator - (void) const;
+
     Scalar norm() const;
     Scalar normSquared() const;
     Vector<Scalar,4>& normalize();
-    Vector<Scalar,4> operator - (void) const;
     Scalar dot(const Vector<Scalar,4>&) const;
-    SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
+    const SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
 
 protected:
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-    Eigen::Matrix<Scalar,4,1> eigen_vector_4x_;
+    Eigen::Matrix<Scalar,4,1,Eigen::DontAlign> eigen_vector_4x_; //default: zero vector
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    Scalar data_[4];
+    Scalar data_[4]; //default: zero vector
 #endif
 private:
     void compileTimeCheck()//dummy method for compile time check
@@ -94,7 +100,7 @@ inline std::ostream& operator<< (std::ostream &s, const Vector<Scalar,4> &vec)
 
 //make * operator commutative
 template <typename S, typename T>
-inline Vector<T,4> operator *(S scale, const Vector<T,4> &vec)
+inline const Vector<T,4> operator *(S scale, const Vector<T,4> &vec)
 {
     return vec * scale;
 }

@@ -1,12 +1,12 @@
 /*
- * @file CPDI_mpm_solid.h 
- * @Brief CPDI(CPDI2) MPM driver used to simulate solid, uniform grid.
+ * @file CPDI_mpm_solid.h
+ * @brief CPDI(CPDI2) MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -35,7 +35,7 @@ public:
     CPDIMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file);
     CPDIMPMSolid(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file, const Grid<Scalar,Dim> &grid);
     virtual ~CPDIMPMSolid();
-    
+
     //restart support
     virtual bool withRestartSupport() const;
     virtual void write(const std::string &file_name);
@@ -61,10 +61,13 @@ public:
     template <typename CPDIUpdateMethodType>
     void setCPDIUpdateMethod();
 
+    //save particle domain as Physika::VolumetricMesh
+    bool saveParticleDomain(unsigned int object_idx, const std::string &file_name) const;
+
 protected:
     virtual void synchronizeWithInfluenceRangeChange();
     //manage data related to all particles, e.g., precomputed node weight and gradient
-    //In CPDI, the grid nodes that influence particles are the ones that are 
+    //In CPDI, the grid nodes that influence particles are the ones that are
     //within influence range of the particle domain corners
     virtual void appendAllParticleRelatedDataOfLastObject();
     virtual void appendLastParticleRelatedDataOfObject(unsigned int object_idx);

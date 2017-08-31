@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -19,12 +19,15 @@
 #include <vector>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Dynamics/Utilities/time_stepping_method.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 
 namespace Physika{
 
 template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
+template<typename Scalar, int Dim> class CollidableObject;
+template<typename Scalar> class IterativeSolver;
 
 /*
  * MPMSolidBase: base class of all MPM drivers for solid
@@ -58,6 +61,7 @@ public:
     void removeParticle(unsigned int object_idx, unsigned int particle_idx);
     const SolidParticle<Scalar,Dim>& particle(unsigned int object_idx, unsigned int particle_idx) const;
     SolidParticle<Scalar,Dim>& particle(unsigned int object_idx, unsigned int particle_idx);
+    Scalar particleInitialVolume(unsigned int object_idx, unsigned int particle_idx) const;
     const std::vector<SolidParticle<Scalar,Dim>*>& allParticlesOfObject(unsigned int object_idx) const;    
     //set and get external force on particles, gravity is not included
     Vector<Scalar,Dim> externalForceOnParticle(unsigned int object_idx, unsigned int particle_idx) const;
@@ -65,6 +69,13 @@ public:
     //particles used as Dirichlet boundary condition, velocity is prescribed 
     void addDirichletParticle(unsigned int object_idx, unsigned int particle_idx);  //the particle is set as boundary condition
     void addDirichletParticles(unsigned int object_idx, const std::vector<unsigned int> &particle_idx); //the particles are set as boundary condition
+
+    //manage the kinematic collidable objects in scene
+    unsigned int kinematicObjectNum() const;
+    void addKinematicObject(const CollidableObject<Scalar,Dim> &object);
+    void removeKinematicObject(unsigned int object_idx);
+    const CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx) const;
+    CollidableObject<Scalar,Dim>& kinematicObject(unsigned int object_idx);
 
     //substeps in one time step
     virtual void rasterize()=0;  //rasterize data to grid
@@ -76,13 +87,22 @@ public:
     virtual void updateParticleVelocity()=0;  //update particle velocity using grid data
     virtual void applyExternalForceOnParticles(Scalar dt)=0;  //external force (gravity excluded) is applied on particles
     virtual void updateParticlePosition(Scalar dt)=0;  //update particle position with new particle velocity
-    
-    //different time integration methods
-    enum IntegrationMethod{
-        FORWARD_EULER,
-        BACKWARD_EULER
-    };
-    void setTimeIntegrationMethod(const IntegrationMethod &method);
+ 
+    //set && get time stepping method
+    void setTimeSteppingMethod(TimeSteppingMethod method);
+    TimeSteppingMethod timeSteppingMethod() const;
+    //set && get the semi-implicit fraction, ref. <a material point method for snow simulation>
+    //only valid when BACKWARD_EULER is set by setTimeSteppingMethod()
+    void setImplicitSteppingFraction(Scalar fraction);
+    Scalar implicitSteppingFraction() const;
+
+    //set parameters to the iterative solver for implicit time integration
+    void enableSolverPreconditioner();
+    void disableSolverPreconditioner();
+    void setSolverTolerance(Scalar tol);
+    void setSolverMaxIterations(unsigned int iter);
+    void enableSolverStatusLog();
+    void disableSolverStatusLog();
 protected:
     virtual Scalar minCellEdgeLength() const = 0; //minimum edge length of the background grid, for dt computation
     virtual Scalar maxParticleVelocityNorm() const;
@@ -103,7 +123,11 @@ protected:
                                                                       //use one byte to indicate whether it's set as dirichlet boundary condition
     std::vector<std::vector<Scalar> > particle_initial_volume_;
     std::vector<std::vector<Vector<Scalar,Dim> > > particle_external_force_; //external force(/N), not acceleration
-    IntegrationMethod integration_method_; 
+    std::vector<CollidableObject<Scalar,Dim>*> collidable_objects_; //the kinematic collidable objects in scene
+    TimeSteppingMethod integration_method_;
+    //for implicit time integration
+    Scalar implicit_step_fraction_;
+    IterativeSolver<Scalar> *linear_system_solver_; //the iterative solver used to solve Ax = b
 };
 
 }//namespace Physika

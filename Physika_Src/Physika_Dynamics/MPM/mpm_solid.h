@@ -1,12 +1,12 @@
 /*
- * @file mpm_solid.h 
+ * @file mpm_solid.h
  * @Brief MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -23,6 +23,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
+#include "Physika_Dynamics/Utilities/Grid_Generalized_Vectors/uniform_grid_generalized_vector_TV.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
 
 namespace Physika{
@@ -30,11 +31,12 @@ namespace Physika{
 template<typename Scalar> class DriverPluginBase;
 template<typename Scalar,int Dim> class SolidParticle;
 template<typename Scalar,int Dim> class MPMSolidContactMethod;
+template<typename Scalar,int Dim> class MPMSolidLinearSystem;
 
 /*
  * MPMSolid: simulate solid with MPM
  * Uniform grid is used as background grid
- * 
+ *
  * Single-valued variable is stored on the grid if no specific contact algorithm is employed
  * Otherwise, multi-valued variable maybe attached to a grid node
  */
@@ -56,7 +58,7 @@ public:
     virtual bool withRestartSupport() const;
     virtual void write(const std::string &file_name);
     virtual void read(const std::string &file_name);
-    
+
     //setters&&getters
     const Grid<Scalar,Dim>& grid() const;
     void setGrid(const Grid<Scalar,Dim> &grid);
@@ -65,11 +67,22 @@ public:
     Vector<Scalar,Dim> gridVelocity(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const;
     void setGridVelocity(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx, const Vector<Scalar,Dim> &node_velocity);
     //grid nodes used as dirichlet boundary condition, velocity is prescribed
-    void addDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx);  
+    void addDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx);
     void addDirichletGridNodes(unsigned int object_idx, const std::vector<Vector<unsigned int,Dim> > &node_idx);
     //set contact method
     void setContactMethod(const MPMSolidContactMethod<Scalar,Dim> &contact_method);
     void resetContactMethod();  //reset the contact method to the one inherent in mpm
+    //query for each object
+    void activeGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &active_nodes) const;
+    bool isDirichletGridNode(const Vector<unsigned int, Dim> &node_idx) const; //return true if the node is set Dirichlet for any object
+    bool isDirichletGridNode(unsigned int object_idx, const Vector<unsigned int,Dim> &node_idx) const;
+    void dirichletGridNodes(unsigned int object_idx, std::vector<Vector<unsigned int,Dim> > &dirichlet_nodes) const;
+    void gridNodesInRange(unsigned int object_idx, unsigned int particle_idx, std::vector<Vector<unsigned int, Dim> > &grid_nodes) const;
+    Scalar weight(unsigned int object_idx, unsigned int particle_idx, const Vector<unsigned int, Dim> &node_idx) const;
+    Vector<Scalar, Dim> weightGradient(unsigned int object_idx, unsigned int particle_idx, const Vector<unsigned int, Dim> &node_idx) const;
+    //query for all objects
+    void activeGridNodes(std::vector<Vector<unsigned int, Dim> > &active_nodes) const;
+    Scalar gridMass(const Vector<unsigned int, Dim> &node_idx) const;
 
     //substeps in one time step
     virtual void rasterize();
@@ -81,7 +94,7 @@ public:
     virtual void updateParticleVelocity();
     virtual void applyExternalForceOnParticles(Scalar dt);
     virtual void updateParticlePosition(Scalar dt);
-    
+
 protected:
     virtual void synchronizeGridData(); //synchronize grid data as grid changes, e.g., size of grid_mass_
     virtual void resetGridData();  //reset grid data to zero, needed before rasterize operation
@@ -113,7 +126,11 @@ protected:
     //precomputed weights and gradients for grid nodes that is within range of each particle
     //for each particle of each object, store the node-value pair: [object_idx][particle_idx][pair_idx]
     std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,Dim> > > > particle_grid_weight_and_gradient_;
-    std::vector<std::vector<unsigned int> > particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_ 
+    std::vector<std::vector<unsigned int> > particle_grid_pair_num_; //the number of pairs in particle_grid_weight_and_gradient_
+    //for implicit integration
+    MPMSolidLinearSystem<Scalar, Dim> *mpm_solid_system_;
+    UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim> *system_rhs_; //the right hand side of the linear system Ax = b
+    UniformGridGeneralizedVector<Vector<Scalar, Dim>,Dim> *system_x_;  //the unknown x of the linear system Ax = b
 };
 
 }  //end of namespace Physika

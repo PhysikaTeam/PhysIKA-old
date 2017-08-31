@@ -1,12 +1,12 @@
 /*
- * @file matrix_MxN.h 
+ * @file matrix_MxN.h
  * @brief matrix of arbitrary size, and size could be changed during runtime.
- * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * @author Fei Zhu, Wei Chen
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -28,54 +28,78 @@ template <typename Scalar> class VectorND;
  * MatrixMxN<Scalar> are defined for C++ fundamental integer types and floating-point types
  */
 
-template <typename Scalar> 
+template <typename Scalar>
 class MatrixMxN: public MatrixBase
 {
 public:
     MatrixMxN(); //construct an empty matrix
     MatrixMxN(unsigned int rows, unsigned int cols); //construct an uninitialized matrix of size rows*cols
-    MatrixMxN(unsigned int rows, unsigned int cols, Scalar value); //construct an matrix of size rows*cols with the entry value                  
+    MatrixMxN(unsigned int rows, unsigned int cols, Scalar value); //construct an matrix of size rows*cols with the entry value
     MatrixMxN(unsigned int rows, unsigned int cols, Scalar *entries);  //construct a matrix with given size and data
+    
     MatrixMxN(const MatrixMxN<Scalar>&);  //copy constructor
     ~MatrixMxN();
+
     unsigned int rows() const;
     unsigned int cols() const;
-    void resize(unsigned int new_rows, unsigned int new_cols);  //resize the matrix to new_rows*new_cols
+
+    void resize(unsigned int new_rows, unsigned int new_cols, Scalar init_val = 0);  //resize the matrix to new_rows*new_cols
+    
     Scalar& operator() (unsigned int i, unsigned int j);
     const Scalar& operator() (unsigned int i, unsigned int j) const;
-    MatrixMxN<Scalar> operator+ (const MatrixMxN<Scalar> &) const;
+    
+    const VectorND<Scalar> rowVector(unsigned int i) const;
+    const VectorND<Scalar> colVector(unsigned int i) const;
+
+    const MatrixMxN<Scalar> operator+ (const MatrixMxN<Scalar> &) const;
     MatrixMxN<Scalar>& operator+= (const MatrixMxN<Scalar> &);
-    MatrixMxN<Scalar> operator- (const MatrixMxN<Scalar> &) const;
+    const MatrixMxN<Scalar> operator- (const MatrixMxN<Scalar> &) const;
     MatrixMxN<Scalar>& operator-= (const MatrixMxN<Scalar> &);
+
     MatrixMxN<Scalar>& operator= (const MatrixMxN<Scalar> &);
+
     bool operator== (const MatrixMxN<Scalar> &)const;
     bool operator!= (const MatrixMxN<Scalar> &)const;
-    MatrixMxN<Scalar> operator* (Scalar) const;
+
+    const MatrixMxN<Scalar> operator* (Scalar) const;
     MatrixMxN<Scalar>& operator*= (Scalar);
-    VectorND<Scalar> operator* (const VectorND<Scalar> &) const;
-    MatrixMxN<Scalar> operator* (const MatrixMxN<Scalar> &) const;
+
+    const VectorND<Scalar> operator* (const VectorND<Scalar> &) const;
+    const MatrixMxN<Scalar> operator* (const MatrixMxN<Scalar> &) const;
     MatrixMxN<Scalar>& operator*= (const MatrixMxN<Scalar> &);
-    MatrixMxN<Scalar> operator/ (Scalar) const;
+
+    const MatrixMxN<Scalar> operator/ (Scalar) const;
     MatrixMxN<Scalar>& operator/= (Scalar);
-    MatrixMxN<Scalar> transpose() const;
-    MatrixMxN<Scalar> inverse() const;
-    MatrixMxN<Scalar> cofactorMatrix() const;
+
+    const MatrixMxN<Scalar> transpose() const;
+    const MatrixMxN<Scalar> inverse() const;
+
+    const MatrixMxN<Scalar> cofactorMatrix() const;
+
     Scalar determinant() const;
     Scalar trace() const;
     Scalar doubleContraction(const MatrixMxN<Scalar> &) const;
+    Scalar frobeniusNorm() const;
+
     void singularValueDecomposition(MatrixMxN<Scalar> &left_singular_vectors,
                                     VectorND<Scalar> &singular_values,
                                     MatrixMxN<Scalar> &right_singular_vectors) const;
-    void eigenDecomposition(VectorND<Scalar> &eigen_values_real, VectorND<Scalar> &eigen_values_imag,
-                            MatrixMxN<Scalar> &eigen_vectors_real, MatrixMxN<Scalar> &eigen_vectors_imag);
+    void singularValueDecomposition(MatrixMxN<Scalar> &left_singular_vectors,
+                                    MatrixMxN<Scalar> &singular_values_diagonal,   //singluar values in descending order as a diagonal matrix
+                                    MatrixMxN<Scalar> &right_singular_vectors) const;
+    void eigenDecomposition(VectorND<Scalar> &eigen_values_real, 
+                            VectorND<Scalar> &eigen_values_imag,
+                            MatrixMxN<Scalar> &eigen_vectors_real, 
+                            MatrixMxN<Scalar> &eigen_vectors_imag);
 protected:
     void allocMemory(unsigned int rows, unsigned int cols);
+
 protected:
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> *ptr_eigen_matrix_MxN_;
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> eigen_matrix_MxN_; //default: zero matrix
 #elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    Scalar *data_;
-    int rows_,cols_;
+    Scalar *data_;  //default: zero matrix
+    int rows_,cols_;//default: 0
 #endif
 private:
     void compileTimeCheck()
@@ -106,7 +130,7 @@ inline std::ostream& operator<< (std::ostream &s, const MatrixMxN<Scalar> &mat)
 
 //make * operator commutative
 template <typename S, typename T>
-inline MatrixMxN<T> operator* (S scale, const MatrixMxN<T> &mat)
+inline const MatrixMxN<T> operator* (S scale, const MatrixMxN<T> &mat)
 {
     return mat*scale;
 }

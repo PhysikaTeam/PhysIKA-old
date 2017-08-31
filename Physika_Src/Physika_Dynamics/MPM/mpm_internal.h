@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -31,9 +31,9 @@ namespace MPMInternal{
 template <typename Scalar,int Dim>
 struct NodeIndexWeightGradientPair
 {
-    Vector<unsigned int,Dim> node_idx_;
-    Scalar weight_value_;
-    Vector<Scalar,Dim> gradient_value_;
+    Vector<unsigned int,Dim> node_idx;
+    Scalar weight_value;
+    Vector<Scalar,Dim> gradient_value;
 };
 
 /*
@@ -45,8 +45,8 @@ struct NodeIndexWeightGradientPair
 template <typename Scalar,int Dim>
 struct NodeIndexWeightPair
 {
-    Vector<unsigned int,Dim> node_idx_;
-    Scalar weight_value_;
+    Vector<unsigned int,Dim> node_idx;
+    Scalar weight_value;
 };
 
 }  //end of namespace MPMInternal

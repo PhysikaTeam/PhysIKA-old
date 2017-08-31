@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -16,8 +16,10 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <GL/glew.h>
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_Core/Image/image.h"
 #include "Physika_IO/Image_IO/image_io.h"
@@ -27,7 +29,7 @@ namespace Physika{
 
 GlutWindow::GlutWindow()
     :window_name_(std::string("Physika Glut Window")),window_id_(-1),initial_width_(640),initial_height_(480),
-     display_fps_(true),screen_capture_file_index_(0)
+     display_fps_(true),screen_capture_file_index_(0),event_mode_(false)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
@@ -39,7 +41,7 @@ GlutWindow::GlutWindow()
 
 GlutWindow::GlutWindow(const std::string &window_name)
     :window_name_(window_name),window_id_(-1),initial_width_(640),initial_height_(480),
-     display_fps_(true),screen_capture_file_index_(0)
+     display_fps_(true),screen_capture_file_index_(0), event_mode_(false)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
@@ -51,7 +53,7 @@ GlutWindow::GlutWindow(const std::string &window_name)
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
     :window_name_(window_name),window_id_(-1),initial_width_(width),initial_height_(height),
-     display_fps_(true),screen_capture_file_index_(0)
+     display_fps_(true),screen_capture_file_index_(0), event_mode_(false)
 {
     background_color_ = Color<double>::Black();
     text_color_ = Color<double>::White();
@@ -88,8 +90,19 @@ void GlutWindow::createWindow()
     glutSpecialFunc(special_function_);
     glutMotionFunc(motion_function_);
     glutMouseFunc(mouse_function_);
+    glutMouseWheelFunc(mouse_wheel_function_);
+
+    if (glewInit() != GLEW_OK)
+    {
+        std::cerr << "error: can't init glew!\n";
+        std::exit(EXIT_FAILURE);
+    }
+
     (*init_function_)(); //call the init function before entering main loop
-    glutMainLoop();
+    if (event_mode_ == false)
+    {
+        glutMainLoop();
+    }
 }
 
 void GlutWindow::closeWindow()
@@ -116,6 +129,16 @@ int GlutWindow::height() const
         return glutGet(GLUT_WINDOW_HEIGHT);
     else
         return initial_height_;
+}
+
+void GlutWindow::enableEventMode()
+{
+    this->event_mode_ = true;
+}
+
+void GlutWindow::disableEventMode()
+{
+    this->event_mode_ = false;
 }
 
 ////////////////////////////////////////////////// camera operations////////////////////////////////////////////////////////////////////////
@@ -382,7 +405,7 @@ bool GlutWindow::saveScreen(const std::string &file_name) const
     image.flipVertically();
     bool status = ImageIO::save(file_name,&image);
     delete[] data;
-	return status;
+    return status;
 }
 
 bool GlutWindow::saveScreen()
@@ -398,10 +421,7 @@ bool GlutWindow::saveScreen()
 void GlutWindow::displayFrameRate() const
 {
     if(!glutGet(GLUT_INIT_STATE))  //window is not created
-    {
-        std::cerr<<"Cannot display frame rate before a window is created.\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot display frame rate before a window is created.");
     if(display_fps_)
     {
         static unsigned int frame = 0, time = 0, time_base = 0;
@@ -549,6 +569,17 @@ void GlutWindow::setMouseFunction(void (*func)(int button, int state, int x, int
         mouse_function_ = func;
 }
 
+void GlutWindow::setMouseWheelFunction(void(*func)(int wheel, int direction, int x, int y))
+{
+    if (func == NULL)
+    {
+        std::cerr << "NULL callback function provided, use default instead.\n";
+        mouse_wheel_function_ = GlutWindow::mouseWheelFunction;
+    }
+    else
+        mouse_wheel_function_ = func;
+}
+
 void GlutWindow::setInitFunction(void (*func)(void))
 {
     if(func==NULL)
@@ -597,9 +628,9 @@ void GlutWindow::reshapeFunction(int width, int height)
     //update view port and projection
     glViewport(0,0,width,height);
     glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(fov, aspect,near_clip,far_clip);
-	glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluPerspective(fov, aspect,near_clip,far_clip);
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
 
@@ -635,7 +666,7 @@ void GlutWindow::motionFunction(int x, int y)
     int mouse_delta_y = y - window->mouse_position_[1];
     window->mouse_position_[0] = x;
     window->mouse_position_[1] = y;
-    double scale = 0.02;  //sensativity of the mouse
+    double scale = 0.02;  //sensitivity of the mouse
     double camera_radius = (window->cameraFocusPosition()-window->cameraPosition()).norm();
     if(window->left_button_down_)  //left button handles camera rotation
     {
@@ -677,6 +708,27 @@ void GlutWindow::mouseFunction(int button, int state, int x, int y)
     window->mouse_position_[1] = y;
 }
 
+void GlutWindow::mouseWheelFunction(int wheel, int direction, int x, int y)
+{
+    GlutWindow *window = static_cast<GlutWindow*>(glutGetWindowData());
+    PHYSIKA_ASSERT(window);
+    double scale = 0.02;  //sensitivity of the mouse
+    double camera_radius = (window->cameraFocusPosition() - window->cameraPosition()).norm();
+    switch (direction)
+    {
+    case 1:  //mouse wheel up: zoom out
+        window->zoomCameraOut(camera_radius*scale);
+        break;
+    case -1: //mouse wheel down: zoom in
+        window->zoomCameraIn(camera_radius*scale);
+        break;
+    default:
+        break;
+    }
+    window->mouse_position_[0] = x;
+    window->mouse_position_[1] = y;
+}
+
 void GlutWindow::initFunction(void)
 {
     int width = glutGet(GLUT_WINDOW_WIDTH);
@@ -708,6 +760,7 @@ void GlutWindow::initCallbacks()
     special_function_ = GlutWindow::specialFunction;
     motion_function_ = GlutWindow::motionFunction;
     mouse_function_ = GlutWindow::mouseFunction;
+    mouse_wheel_function_ = GlutWindow::mouseWheelFunction;
     init_function_ = GlutWindow::initFunction;
 }
 

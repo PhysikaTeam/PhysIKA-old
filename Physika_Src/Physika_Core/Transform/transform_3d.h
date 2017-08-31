@@ -4,7 +4,7 @@
  * @author Sheng Yang, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -42,29 +42,29 @@ public:
     Transform(const Vector<Scalar, 3> &translation, const Quaternion<Scalar> &rotation, const Vector<Scalar, 3> &scale);
     Transform(const SquareMatrix<Scalar, 4> &);		//now it's not all right.Suggest not use this construction.
     Transform(const SquareMatrix<Scalar, 3> &);
-	Transform(const Transform<Scalar, 3> &);
+    Transform(const Transform<Scalar, 3> &);
 
-	/*operator*/
-	Transform<Scalar, 3> & operator = (const Transform<Scalar, 3> &);
-	bool operator == (const Transform<Scalar, 3> &) const;
-	bool operator != (const Transform<Scalar, 3> &) const;
+    /*operator*/
+    Transform<Scalar, 3> & operator = (const Transform<Scalar, 3> &);
+    bool operator == (const Transform<Scalar, 3> &) const;
+    bool operator != (const Transform<Scalar, 3> &) const;
 
 
     /* Get and Set */
 
-	//Get Matrix;
+    //Get Matrix;
     SquareMatrix<Scalar, 3> rotation3x3Matrix() const;
     SquareMatrix<Scalar, 4> rotation4x4Matrix() const;
-	SquareMatrix<Scalar, 4> translation4x4Matrix() const;
+    SquareMatrix<Scalar, 4> translation4x4Matrix() const;
     SquareMatrix<Scalar, 4> scale4x4Matrix() const;
     SquareMatrix<Scalar, 4> transformMatrix() const;
 
-	//Get Variable
+    //Get Variable
     inline Quaternion<Scalar> rotation() const { return rotation_; }
     inline Vector<Scalar, 3> translation() const { return translation_; }
     inline Vector<Scalar, 3> scale() const { return scale_; }
 
-	//Set
+    //Set
     inline void setRotation(const Quaternion<Scalar> &rotation) { rotation_ = rotation; }
     inline void setRotation(const SquareMatrix<Scalar, 3> &rotation) { rotation_ = Quaternion<Scalar>(rotation); }
     inline void setRotation(const Vector<Scalar, 3> &rotation ) { rotation_ = Quaternion<Scalar>(rotation); }
@@ -76,9 +76,9 @@ public:
     //Order is scale > rotate > translate. If you want another order, you can get scale/rotation/translation component and do it yourself.
     Vector<Scalar, 3> transform(const Vector<Scalar, 3> &input) const;
 
-	Vector<Scalar, 3> rotate(const Vector<Scalar, 3> &input) const;
-	Vector<Scalar, 3> translate(const Vector<Scalar, 3> &input) const; 
-	Vector<Scalar, 3> scaling(const Vector<Scalar, 3> &input) const;
+    Vector<Scalar, 3> rotate(const Vector<Scalar, 3> &input) const;
+    Vector<Scalar, 3> translate(const Vector<Scalar, 3> &input) const; 
+    Vector<Scalar, 3> scaling(const Vector<Scalar, 3> &input) const;
 
 
     static inline Transform<Scalar, 3> identityTransform() { return Transform<Scalar, 3>(); }

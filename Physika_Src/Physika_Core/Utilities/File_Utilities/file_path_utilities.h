@@ -1,11 +1,11 @@
 /*
  * @file file_path_utilities.h 
  * @brief Some universal functions when processing files' name.
- * @author LiYou Xu
+ * @author LiYou Xu, Fei Zhu
  * @acknowledge Jernej Barbic, author of VegaFEM
  *
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -30,6 +30,8 @@ std::string filenameInPath(const std::string &path);
 
 //extract the file extension out of its path. if the file doesn't have a file extension, it will return empty string.  ex. fileExtension(string("five.txt"))  will return string(".txt") .
 std::string fileExtension(const std::string &path);
+
+std::string removeFileExtension(const std::string &path);
 
 } //end of namespace File_Utilities
 

@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -46,8 +46,8 @@ public:
     virtual void write(const std::string &file_name)=0;
     virtual void read(const std::string &file_name)=0;
 
-    virtual Scalar computeTimeStep();
-    virtual void advanceStep(Scalar dt); //compute time step with CFL condition
+    virtual Scalar computeTimeStep(); //compute time step with CFL condition
+    virtual void advanceStep(Scalar dt);
 
     //getters&&setters
     Scalar cflConstant() const;
@@ -56,6 +56,8 @@ public:
     void setSoundSpeed(Scalar sound_speed);
     Scalar gravity() const;
     void setGravity(Scalar gravity);
+    Scalar flipFraction() const;
+    void setFlipFraction(Scalar flip_fraction);
 
     //set the type of weight function with weight function type as template
     template <typename GridWeightFunctionType>
@@ -78,6 +80,9 @@ protected:
     Scalar sound_speed_; //the sound speed in material
     //gravity: along negative y direction
     Scalar gravity_;
+    //particle velocities are updated via a combination of FLIP and PIC from velocities on grid
+    //V_p = \theta * V_flip + (1-\theta) * V_pic
+    Scalar flip_fraction_;
 };
 
 template <typename Scalar, int Dim>

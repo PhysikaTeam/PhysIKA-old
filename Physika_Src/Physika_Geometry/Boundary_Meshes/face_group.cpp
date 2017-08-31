@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -83,7 +83,6 @@ void FaceGroup<Scalar>::setName(const string &name)
 template <typename Scalar>
 const Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx) const
 {
-    PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
     return faces_[face_idx];
 }
@@ -91,7 +90,6 @@ const Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx) const
 template <typename Scalar>
 Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx)
 {
-    PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
     return faces_[face_idx];
 }
@@ -99,7 +97,6 @@ Face<Scalar>& FaceGroup<Scalar>::face(unsigned int face_idx)
 template <typename Scalar>
 const Face<Scalar>* FaceGroup<Scalar>::facePtr(unsigned int face_idx) const
 {
-    PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
     return &(faces_[face_idx]);
 }
@@ -107,7 +104,6 @@ const Face<Scalar>* FaceGroup<Scalar>::facePtr(unsigned int face_idx) const
 template <typename Scalar>
 Face<Scalar>* FaceGroup<Scalar>::facePtr(unsigned int face_idx)
 {
-    PHYSIKA_ASSERT(face_idx>=0);
     PHYSIKA_ASSERT(face_idx<faces_.size());
     return &(faces_[face_idx]);
 }

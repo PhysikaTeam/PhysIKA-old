@@ -1,12 +1,12 @@
 /*
-* @file vector_Nd.cpp 
+* @file vector_Nd.cpp
 * @brief Arbitrary dimension vector, dimension could be changed at runtime.
-* @author Fei Zhu
-* 
-* This file is part of Physika, a versatile physics simulation library.
-* Copyright (C) 2013 Physika Group.
+* @author Fei Zhu, Wei Chen
 *
-* This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+* This file is part of Physika, a versatile physics simulation library.
+* Copyright (C) 2013- Physika Group.
+*
+* This Source Code Form is subject to the terms of the GNU General Public License v2.0.
 * If a copy of the GPL was not distributed with this file, you can obtain one at:
 * http://www.gnu.org/licenses/gpl-2.0.html
 *
@@ -15,6 +15,7 @@
 #include <limits>
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Matrices/matrix_MxN.h"
 #include "Physika_Core/Vectors/vector_Nd.h"
@@ -23,38 +24,46 @@ namespace Physika{
 
 template <typename Scalar>
 VectorND<Scalar>::VectorND()
+    :VectorND(0) //delegating ctor
 {
-    allocMemory(0);
 }
 
 template <typename Scalar>
 VectorND<Scalar>::VectorND(unsigned int dim)
+    :VectorND(dim, 0) //delegating ctor
 {
-    allocMemory(dim);
 }
 
 template <typename Scalar>
 VectorND<Scalar>::VectorND(unsigned int dim, Scalar value)
+#ifdef PHYSIKA_USE_EIGEN_VECTOR
+    :eigen_vector_Nx_(dim)
+#endif 
 {
+#ifdef PHYSIKA_USE_BUILT_IN_VECTOR
     allocMemory(dim);
+#endif
+
     for(unsigned int i = 0; i < dim; ++i)
         (*this)[i] = value;
 }
 
 template <typename Scalar>
 VectorND<Scalar>::VectorND(const VectorND<Scalar> &vec2)
+#ifdef PHYSIKA_USE_EIGEN_VECTOR
+    :eigen_vector_Nx_(vec2.eigen_vector_Nx_)
+#endif 
 {
-    allocMemory(vec2.dims());
+#ifdef PHYSIKA_USE_BUILT_IN_VECTOR
+    allocMemory(dim);
     *this = vec2;
+#endif  
 }
 
 template <typename Scalar>
 void VectorND<Scalar>::allocMemory(unsigned int dims)
 {
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    ptr_eigen_vector_Nx_ = new Eigen::Matrix<Scalar,Eigen::Dynamic,1>(dims);
-    PHYSIKA_ASSERT(ptr_eigen_vector_Nx_);
-#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+#ifdef PHYSIKA_USE_BUILT_IN_VECTOR
     data_ = new Scalar[dims];
     dims_ = dims;
     PHYSIKA_ASSERT(data_);
@@ -64,9 +73,7 @@ void VectorND<Scalar>::allocMemory(unsigned int dims)
 template <typename Scalar>
 VectorND<Scalar>::~VectorND()
 {
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    delete ptr_eigen_vector_Nx_;
-#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
+#ifdef PHYSIKA_USE_BUILT_IN_VECTOR
     delete[] data_;
 #endif
 }
@@ -75,68 +82,50 @@ template <typename Scalar>
 unsigned int VectorND<Scalar>::dims() const
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-    return (*ptr_eigen_vector_Nx_).rows();
+    return eigen_vector_Nx_.rows();
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
     return dims_;
 #endif
 }
 
 template <typename Scalar>
-void VectorND<Scalar>::resize(unsigned int new_dim)
+void VectorND<Scalar>::resize(unsigned int new_dim, Scalar init_val = 0)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-    (*ptr_eigen_vector_Nx_).resize(new_dim);
+    eigen_vector_Nx_.resize(new_dim);
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
     if(data_)
         delete[] data_;
     allocMemory(new_dim);
 #endif
+
+    //initialize 
+    for (unsigned int i = 0; i < new_dim; ++i)
+        (*this)[i] = init_val;
 }
 
 template <typename Scalar>
 Scalar& VectorND<Scalar>::operator[] (unsigned int idx)
 {
-    if(idx<0||idx>=(*this).dims())
-    {
-        std::cout<<"Vector index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    return (*ptr_eigen_vector_Nx_)[idx];
-#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    return data_[idx];
-#endif
+    return const_cast<Scalar &>(static_cast<const VectorND<Scalar> &>(*this)[idx]);
 }
 
 template <typename Scalar>
 const Scalar& VectorND<Scalar>::operator[] (unsigned int idx) const
 {
-    if(idx<0||idx>=(*this).dims())
-    {
-        std::cout<<"Vector index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(idx>=(*this).dims())
+        throw PhysikaException("Vector index out of range!");
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
-    return (*ptr_eigen_vector_Nx_)[idx];
+    return eigen_vector_Nx_[idx];
 #elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
     return data_[idx];
 #endif
 }
 
 template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator+ (const VectorND<Scalar> &vec2) const
+const VectorND<Scalar> VectorND<Scalar>::operator+ (const VectorND<Scalar> &vec2) const
 {
-    unsigned int dim1 = (*this).dims();
-    unsigned int dim2 = vec2.dims();
-    if(dim1!=dim2)
-    {
-        std::cout<<"Cannot add two vectors of different dimensions!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    VectorND<Scalar> result(dim1);
-    for(unsigned int i = 0; i < dim1; ++i)
-        result[i] = (*this)[i] + vec2[i];
-    return result;
+    return VectorND<Scalar>(*this) += vec2;
 }
 
 template <typename Scalar>
@@ -145,29 +134,16 @@ VectorND<Scalar>& VectorND<Scalar>::operator+= (const VectorND<Scalar> &vec2)
     unsigned int dim1 = (*this).dims();
     unsigned int dim2 = vec2.dims();
     if(dim1!=dim2)
-    {
-        std::cout<<"Cannot add two vectors of different dimensions!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot add two vectors of different dimensions!");
     for(unsigned int i = 0; i < dim1; ++i)
-        (*this)[i] = (*this)[i] + vec2[i];
+        (*this)[i] += vec2[i];
     return *this;
 }
 
 template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator- (const VectorND<Scalar> &vec2) const
+const VectorND<Scalar> VectorND<Scalar>::operator- (const VectorND<Scalar> &vec2) const
 {
-    unsigned int dim1 = (*this).dims();
-    unsigned int dim2 = vec2.dims();
-    if(dim1!=dim2)
-    {
-        std::cout<<"Cannot subtract two vectors of different dimensions!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    VectorND<Scalar> result(dim1);
-    for(unsigned int i = 0; i < dim1; ++i)
-        result[i] = (*this)[i] - vec2[i];
-    return result;
+    return VectorND<Scalar>(*this) -= vec2;
 }
 
 template <typename Scalar>
@@ -176,14 +152,11 @@ VectorND<Scalar>& VectorND<Scalar>::operator-= (const VectorND<Scalar> &vec2)
     unsigned int dim1 = (*this).dims();
     unsigned int dim2 = vec2.dims();
     if(dim1!=dim2)
-    {
-        std::cout<<"Cannot subtract two vectors of different dimensions!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot subtract two vectors of different dimensions!");
     for(unsigned int i = 0; i < dim1; ++i)
-        (*this)[i] = (*this)[i] - vec2[i];
+        (*this)[i] -= vec2[i];
     return *this;
-} 
+}
 
 template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::operator= (const VectorND<Scalar> &vec2)
@@ -203,9 +176,19 @@ bool VectorND<Scalar>::operator== (const VectorND<Scalar> &vec2) const
     unsigned int dim2 = vec2.dims();
     if(dim1 != dim2)
         return false;
-    for(unsigned int i = 0; i <= dim1; ++i)
-        if(isEqual((*this)[i],vec2[i])==false)
-            return false;
+    for(unsigned int i = 0; i < dim1; ++i)
+    {
+        if(is_floating_point<Scalar>::value)
+        {
+            if(isEqual((*this)[i],vec2[i])==false)
+                return false;
+        }
+        else
+        {
+            if((*this)[i] != vec2[i])
+                return false;
+        }
+    }
     return true;
 }
 
@@ -216,48 +199,27 @@ bool VectorND<Scalar>::operator!= (const VectorND<Scalar> &vec2) const
 }
 
 template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator+(Scalar value) const
+const VectorND<Scalar> VectorND<Scalar>::operator+(Scalar value) const
 {
-    unsigned int dim = (*this).dims();
-    VectorND<Scalar> result(dim);
-    for(unsigned int i = 0; i < dim; ++i)
-        result[i] = (*this)[i] + value;
-    return result;
+    return VectorND<Scalar>(*this) += value;
 }
 
 template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator-(Scalar value) const
+const VectorND<Scalar> VectorND<Scalar>::operator-(Scalar value) const
 {
-    unsigned int dim = (*this).dims();
-    VectorND<Scalar> result(dim);
-    for(unsigned int i = 0; i < dim; ++i)
-        result[i] = (*this)[i] - value;
-    return result;
+    return VectorND<Scalar>(*this) -= value;
 }
 
 template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator* (Scalar scale) const
+const VectorND<Scalar> VectorND<Scalar>::operator* (Scalar scale) const
 {
-    unsigned int dim = (*this).dims();
-    VectorND<Scalar> result(dim);
-    for(unsigned int i = 0; i < dim; ++i)
-        result[i] = (*this)[i] * scale;
-    return result;
+    return VectorND<Scalar>(*this) *= scale;
 }
 
 template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
+const VectorND<Scalar> VectorND<Scalar>::operator/ (Scalar scale) const
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Vector Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    unsigned int dim = (*this).dims();
-    VectorND<Scalar> result(dim);
-    for(unsigned int i = 0; i < dim; ++i)
-        result[i] = (*this)[i] / scale;
-    return result;
+    return VectorND<Scalar>(*this) /= scale;
 }
 
 template <typename Scalar>
@@ -265,7 +227,7 @@ VectorND<Scalar>& VectorND<Scalar>::operator+= (Scalar value)
 {
     unsigned int dim = (*this).dims();
     for(unsigned int i = 0; i < dim; ++i)
-        (*this)[i] = (*this)[i] + value;
+        (*this)[i] += value;
     return *this;
 }
 
@@ -274,7 +236,7 @@ VectorND<Scalar>& VectorND<Scalar>::operator-= (Scalar value)
 {
     unsigned int dim = (*this).dims();
     for(unsigned int i = 0; i < dim; ++i)
-        (*this)[i] = (*this)[i] - value;
+        (*this)[i] -= value;
     return *this;
 }
 
@@ -283,32 +245,35 @@ VectorND<Scalar>& VectorND<Scalar>::operator*= (Scalar scale)
 {
     unsigned int dim = (*this).dims();
     for(unsigned int i = 0; i < dim; ++i)
-        (*this)[i] = (*this)[i] * scale;
+        (*this)[i] *= scale;
     return *this;
 }
 
 template <typename Scalar>
 VectorND<Scalar>& VectorND<Scalar>::operator/= (Scalar scale)
 {
-    if(abs(scale)<std::numeric_limits<Scalar>::epsilon())
-    {
-        std::cerr<<"Vector Divide by zero error!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(abs(scale)<=std::numeric_limits<Scalar>::epsilon())
+        throw PhysikaException("Vector Divide by zero error!");
     unsigned int dim = (*this).dims();
     for(unsigned int i = 0; i < dim; ++i)
-        (*this)[i] = (*this)[i] / scale;
+        (*this)[i] /= scale;
     return *this;
+}
+
+template <typename Scalar>
+const VectorND<Scalar> VectorND<Scalar>::operator - (void) const
+{
+    unsigned int dim = (*this).dims();
+    VectorND<Scalar> result(dim);
+    for (unsigned int i = 0; i < dim; ++i)
+        result[i] = -(*this)[i];
+    return result;
 }
 
 template <typename Scalar>
 Scalar VectorND<Scalar>::norm() const
 {
-    Scalar result = static_cast<Scalar>(0);
-    unsigned int dim = (*this).dims();
-    for(unsigned int i = 0; i < dim; ++i)
-        result += (*this)[i]*(*this)[i];
-    result = static_cast<Scalar>(sqrt(result));
+    Scalar result = static_cast<Scalar>(sqrt(this->normSquared()));
     return result;
 }
 
@@ -331,19 +296,9 @@ VectorND<Scalar>& VectorND<Scalar>::normalize()
     {
         unsigned int dim = (*this).dims();
         for(unsigned int i = 0; i < dim; ++i)
-            (*this)[i] = (*this)[i] / norm;
+            (*this)[i] /= norm;
     }
     return *this;
-}
-
-template <typename Scalar>
-VectorND<Scalar> VectorND<Scalar>::operator - (void ) const
-{
-    unsigned int dim = (*this).dims();
-    VectorND<Scalar> result(dim);
-    for(unsigned int i = 0; i < dim; ++i)
-        result[i] = - (*this)[i];
-    return result;
 }
 
 template <typename Scalar>
@@ -351,7 +306,8 @@ Scalar VectorND<Scalar>::dot(const VectorND<Scalar> &vec2) const
 {
     unsigned int dim1 = (*this).dims();
     unsigned int dim2 = vec2.dims();
-    PHYSIKA_ASSERT(dim1 == dim2);
+    if(dim1 != dim2)
+        throw PhysikaException("vector dimension mismatch!");
     Scalar result = static_cast<Scalar>(0.0);
     for(unsigned int i = 0; i < dim1; ++i)
         result += (*this)[i]*vec2[i];
@@ -359,7 +315,7 @@ Scalar VectorND<Scalar>::dot(const VectorND<Scalar> &vec2) const
 }
 
 template <typename Scalar>
-MatrixMxN<Scalar> VectorND<Scalar>::outerProduct(const VectorND<Scalar> &vec2) const
+const MatrixMxN<Scalar> VectorND<Scalar>::outerProduct(const VectorND<Scalar> &vec2) const
 {
     MatrixMxN<Scalar> result(this->dims(),vec2.dims());
     for(unsigned int i = 0; i < result.rows(); ++i)
@@ -369,16 +325,21 @@ MatrixMxN<Scalar> VectorND<Scalar>::outerProduct(const VectorND<Scalar> &vec2) c
 }
 
 //explicit instantiation
-template class VectorND<unsigned char>;
-template class VectorND<unsigned short>;
-template class VectorND<unsigned int>;
-template class VectorND<unsigned long>;
-template class VectorND<unsigned long long>;
-template class VectorND<signed char>;
-template class VectorND<short>;
-template class VectorND<int>;
-template class VectorND<long>;
-template class VectorND<long long>;
+
+//Eigen 3.3.1 Matrix<Scalar, Dynamic, Dymamic> fails compile for Integer Types due to the static_assert in PartialPivLU.
+//This may could be a bug in Eigen's latest version, so we temporarily disable all explicit instantiation of Integer Type for MatrixMxN
+
+//template class VectorND<unsigned char>;
+//template class VectorND<unsigned short>;
+//template class VectorND<unsigned int>;
+//template class VectorND<unsigned long>;
+//template class VectorND<unsigned long long>;
+//template class VectorND<signed char>;
+//template class VectorND<short>;
+//template class VectorND<int>;
+//template class VectorND<long>;
+//template class VectorND<long long>;
+
 template class VectorND<float>;
 template class VectorND<double>;
 template class VectorND<long double>;

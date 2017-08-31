@@ -4,7 +4,7 @@
  * @author FeiZhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -39,8 +39,28 @@ Plane<Scalar>::Plane(const Vector<Scalar,3> &x1, const Vector<Scalar,3> &x2, con
 }
 
 template <typename Scalar>
+Plane<Scalar>::Plane(const Plane<Scalar> &plane)
+    :normal_(plane.normal_),pos_(plane.pos_)
+{
+}
+
+template <typename Scalar>
 Plane<Scalar>::~Plane()
 {
+}
+
+template <typename Scalar>
+Plane<Scalar>& Plane<Scalar>::operator= (const Plane<Scalar> &plane)
+{
+    normal_ = plane.normal_;
+    pos_ = plane.pos_;
+    return *this;
+}
+
+template <typename Scalar>
+Plane<Scalar>* Plane<Scalar>::clone() const
+{
+    return new Plane<Scalar>(*this);
 }
 
 template <typename Scalar>
@@ -51,6 +71,18 @@ void Plane<Scalar>::printInfo() const
 
 template <typename Scalar>
 Vector<Scalar,3> Plane<Scalar>::normal() const
+{
+    return normal_;
+}
+
+template <typename Scalar>
+void Plane<Scalar>::setNormal(const Vector<Scalar,3> &normal)
+{
+    normal_ = normal;
+}
+
+template <typename Scalar>
+Vector<Scalar,3> Plane<Scalar>::normal(const Vector<Scalar,3> &point) const
 {
     return normal_;
 }

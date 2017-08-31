@@ -4,7 +4,7 @@
  * @author Fei Zhu, Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -12,13 +12,14 @@
  *
  */
 
-#ifndef PHYSIKA_GEOMETRY_POLYGON_POLYGON_H_
-#define PHYSIKA_GEOMETRY_POLYGON_POLYGON_H_
+#ifndef PHYSIKA_GEOMETRY_BOUNDARY_MESHES_POLYGON_H_
+#define PHYSIKA_GEOMETRY_BOUNDARY_MESHES_POLYGON_H_
 
 #include <vector>
 #include <string>
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Geometry/Boundary_Meshes/boundary_mesh.h"
 #include "Physika_Geometry/Boundary_Meshes/vertex.h"
 #include "Physika_Geometry/Boundary_Meshes/edge.h"
 #include "Physika_Geometry/Boundary_Meshes/edge_group.h"
@@ -32,7 +33,7 @@ using BoundaryMeshInternal::EdgeGroup;
 using BoundaryMeshInternal::Material;
 
 template <typename Scalar>
-class Polygon
+class Polygon: public BoundaryMesh
 {
 public:
     //constructors && deconstructors
@@ -40,6 +41,7 @@ public:
     ~Polygon();
 
     //basic info
+    unsigned int dims() const {return 2;}
     unsigned int numVertices() const;
     unsigned int numEdges() const;
     unsigned int numNormals() const;

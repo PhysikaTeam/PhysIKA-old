@@ -5,7 +5,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -55,7 +55,7 @@ public:
     //return the cell index that the given point is in, (left close right open interval for a cell)
     Vector<unsigned int,Dim> cellIndex(const Vector<Scalar,Dim> &position) const;
     //return the cell index that the given point is in and the bias with respect to
-    //minimum corner of the cell
+    //minimum corner of the cell, bias is in range [0,1)
     void cellIndexAndBiasInCell(const Vector<Scalar,Dim> &position,
                                 Vector<unsigned int,Dim> &cell_idx, Vector<Scalar,Dim> &bias_in_cell) const;  
     //modifiers

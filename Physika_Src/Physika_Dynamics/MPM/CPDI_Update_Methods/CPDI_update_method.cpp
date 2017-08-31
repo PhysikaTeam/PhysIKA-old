@@ -1,13 +1,13 @@
 /*
  * @file CPDI_update_method.cpp 
- * @Brief the particle domain update procedure introduced in paper:
+ * @brief the particle domain update procedure introduced in paper:
  *        "A convected particle domain interpolation technique to extend applicability of
  *         the material point method for problems involving massive deformations"
  *        It's the base class of all update methods derived from CPDI
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -24,9 +24,10 @@
 #include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Grid_Weight_Functions/grid_weight_function.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
-#include "Physika_Dynamics/MPM/Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
+#include "Physika_Dynamics/Utilities/Grid_Weight_Function_Influence_Iterators/uniform_grid_weight_function_influence_iterator.h"
 #include "Physika_Dynamics/MPM/CPDI_mpm_solid.h"
 #include "Physika_Dynamics/MPM/CPDI_Update_Methods/CPDI_update_method.h"
 
@@ -95,10 +96,7 @@ template <typename Scalar>
 void CPDIUpdateMethod<Scalar,2>::setCPDIDriver(CPDIMPMSolid<Scalar,2> *cpdi_driver)
 {
     if(cpdi_driver==NULL)
-    {
-        std::cerr<<"Error: Cannot set NULL CPDI driver to CPDIUpdateMethod, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot set NULL CPDI driver to CPDIUpdateMethod!");
     this->cpdi_driver_ = cpdi_driver;
 }
 
@@ -146,10 +144,10 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,0.25*corner_weight));
-					Vector<Scalar,2> gradient;
+                    Vector<Scalar,2> gradient;
                     gradient[0] = 1.0/(2.0*V_p)*corner_weight*(r_x[1]-r_y[1]);
                     gradient[1] = 1.0/(2.0*V_p)*corner_weight*(-r_x[0]+r_y[0]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -164,10 +162,10 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,0.25*corner_weight));
-					Vector<Scalar,2> gradient;
+                    Vector<Scalar,2> gradient;
                     gradient[0] = -1.0/(2.0*V_p)*corner_weight*(r_x[1]+r_y[1]);
                     gradient[1] = -1.0/(2.0*V_p)*corner_weight*(-r_x[0]-r_y[0]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -182,10 +180,10 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,0.25*corner_weight));
-					Vector<Scalar,2> gradient;
+                    Vector<Scalar,2> gradient;
                     gradient[0] = 1.0/(2.0*V_p)*corner_weight*(r_x[1]+r_y[1]);
                     gradient[1] = 1.0/(2.0*V_p)*corner_weight*(-r_x[0]-r_y[0]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -200,10 +198,10 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,0.25*corner_weight));
-					Vector<Scalar,2> gradient;
+                    Vector<Scalar,2> gradient;
                     gradient[0] = -1.0/(2.0*V_p)*corner_weight*(r_x[1]-r_y[1]);
                     gradient[1] = -1.0/(2.0*V_p)*corner_weight*(-r_x[0]+r_y[0]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -218,9 +216,9 @@ void CPDIUpdateMethod<Scalar,2>::updateParticleInterpolationWeight(unsigned int 
     {
         if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
         {
-            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = multiDimIndex(iter->first,grid.nodeNum());
-            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
-            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx = multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
             ++particle_grid_pair_num;
         }
     }
@@ -326,10 +324,7 @@ template <typename Scalar>
 void CPDIUpdateMethod<Scalar,3>::setCPDIDriver(CPDIMPMSolid<Scalar,3> *cpdi_driver)
 {
     if(cpdi_driver==NULL)
-    {
-        std::cerr<<"Error: Cannot set NULL CPDI driver to CPDIUpdateMethod, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot set NULL CPDI driver to CPDIUpdateMethod!");
     this->cpdi_driver_ = cpdi_driver;
 }
 
@@ -379,11 +374,11 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,0.125*corner_weight));
-					Vector<Scalar,3> gradient;
+                    Vector<Scalar,3> gradient;
                     gradient[0] = 1.0/(4.0*V_p)*corner_weight*(r_z[1]*r_y[2]-r_y[1]*r_z[2]-r_z[1]*r_x[2]+r_x[1]*r_z[2]+r_y[1]*r_x[2]-r_x[1]*r_y[2]);
                     gradient[1] = 1.0/(4.0*V_p)*corner_weight*(-r_z[0]*r_y[2]+r_y[0]*r_z[2]+r_z[0]*r_x[2]-r_x[0]*r_z[2]-r_y[0]*r_x[2]+r_x[0]*r_y[2]);
                     gradient[2] = 1.0/(4.0*V_p)*corner_weight*(-r_y[0]*r_z[1]+r_z[0]*r_y[1]+r_x[0]*r_z[1]-r_z[0]*r_x[1]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -403,7 +398,7 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                     gradient[0] = 1.0/(4.0*V_p)*corner_weight*(r_z[1]*r_y[2]-r_y[1]*r_z[2]-r_z[1]*r_x[2]+r_x[1]*r_z[2]-r_y[1]*r_x[2]+r_x[1]*r_y[2]);
                     gradient[1] = 1.0/(4.0*V_p)*corner_weight*(-r_z[0]*r_y[2]+r_y[0]*r_z[2]+r_z[0]*r_x[2]-r_x[0]*r_z[2]+r_y[0]*r_x[2]-r_x[0]*r_y[2]);
                     gradient[2] = 1.0/(4.0*V_p)*corner_weight*(-r_y[0]*r_z[1]+r_z[0]*r_y[1]+r_x[0]*r_z[1]-r_z[0]*r_y[1]+r_x[0]*r_y[1]-r_y[0]*r_x[1]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
                 }
                 break;
             }
@@ -423,7 +418,7 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                     gradient[0] = 1.0/(4.0*V_p)*corner_weight*(r_z[1]*r_y[2]-r_y[1]*r_z[2]+r_z[1]*r_x[2]-r_x[1]*r_z[2]+r_y[1]*r_x[2]-r_x[1]*r_y[2]);
                     gradient[1] = 1.0/(4.0*V_p)*corner_weight*(-r_z[0]*r_y[2]+r_y[0]*r_z[2]-r_z[0]*r_x[2]+r_x[0]*r_z[2]-r_y[0]*r_x[2]+r_x[0]*r_y[2]);
                     gradient[2] = 1.0/(4.0*V_p)*corner_weight*(-r_y[0]*r_z[1]+r_z[0]*r_y[1]-r_x[0]*r_z[1]+r_z[0]*r_x[1]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
                 }
                 break;
             }
@@ -443,7 +438,7 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                     gradient[0] = 1.0/(4.0*V_p)*corner_weight*(r_z[1]*r_y[2]-r_y[1]*r_z[2]+r_z[1]*r_x[2]-r_x[1]*r_z[2]-r_y[1]*r_x[2]+r_x[1]*r_y[2]);
                     gradient[1] = 1.0/(4.0*V_p)*corner_weight*(-r_z[0]*r_y[2]+r_y[0]*r_z[2]-r_z[0]*r_x[2]+r_x[0]*r_z[2]+r_y[0]*r_x[2]-r_x[0]*r_y[2]);
                     gradient[2] = 1.0/(4.0*V_p)*corner_weight*(-r_y[0]*r_z[1]+r_z[0]*r_y[1]-r_x[0]*r_z[1]+r_z[0]*r_x[1]+r_x[0]*r_y[1]-r_y[0]*r_x[1]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
                 }
                 break;
             }
@@ -463,7 +458,7 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                     gradient[0] = -1.0/(4.0*V_p)*corner_weight*(r_z[1]*r_y[2]-r_y[1]*r_z[2]+r_z[1]*r_x[2]-r_x[1]*r_z[2]-r_y[1]*r_x[2]+r_x[1]*r_y[2]);
                     gradient[1] = -1.0/(4.0*V_p)*corner_weight*(-r_z[0]*r_y[2]+r_y[0]*r_z[2]-r_z[0]*r_x[2]+r_x[0]*r_z[2]+r_y[0]*r_x[2]-r_x[0]*r_y[2]);
                     gradient[2] = -1.0/(4.0*V_p)*corner_weight*(-r_y[0]*r_z[1]+r_z[0]*r_y[1]-r_x[0]*r_z[1]+r_z[0]*r_x[1]+r_x[0]*r_y[1]-r_y[0]*r_x[1]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
                 }
                 break;
             }
@@ -483,7 +478,7 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                     gradient[0] = -1.0/(4.0*V_p)*corner_weight*(r_z[1]*r_y[2]-r_y[1]*r_z[2]+r_z[1]*r_x[2]-r_x[1]*r_z[2]+r_y[1]*r_x[2]-r_x[1]*r_y[2]);
                     gradient[1] = -1.0/(4.0*V_p)*corner_weight*(-r_z[0]*r_y[2]+r_y[0]*r_z[2]-r_z[0]*r_x[2]+r_x[0]*r_z[2]-r_y[0]*r_x[2]+r_x[0]*r_y[2]);
                     gradient[2] = -1.0/(4.0*V_p)*corner_weight*(-r_y[0]*r_z[1]+r_z[0]*r_y[1]-r_x[0]*r_z[1]+r_z[0]*r_x[1]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
                 }
                 break;
             }
@@ -503,7 +498,7 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                     gradient[0] = -1.0/(4.0*V_p)*corner_weight*(r_z[1]*r_y[2]-r_y[1]*r_z[2]-r_z[1]*r_x[2]+r_x[1]*r_z[2]-r_y[1]*r_x[2]+r_x[1]*r_y[2]);
                     gradient[1] = -1.0/(4.0*V_p)*corner_weight*(-r_z[0]*r_y[2]+r_y[0]*r_z[2]+r_z[0]*r_x[2]-r_x[0]*r_z[2]+r_y[0]*r_x[2]-r_x[0]*r_y[2]);
                     gradient[2] = -1.0/(4.0*V_p)*corner_weight*(-r_y[0]*r_z[1]+r_z[0]*r_y[1]+r_x[0]*r_z[1]-r_z[0]*r_y[1]+r_x[0]*r_y[1]-r_y[0]*r_x[1]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient)); 
                 }
                 break;
             }
@@ -519,11 +514,11 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
                 else
                 {
                     idx_weight_map.insert(std::make_pair(node_idx_1d,0.125*corner_weight));
-					Vector<Scalar,3> gradient;
+                    Vector<Scalar,3> gradient;
                     gradient[0] = -1.0/(4.0*V_p)*corner_weight*(r_z[1]*r_y[2]-r_y[1]*r_z[2]-r_z[1]*r_x[2]+r_x[1]*r_z[2]+r_y[1]*r_x[2]-r_x[1]*r_y[2]);
                     gradient[1] = -1.0/(4.0*V_p)*corner_weight*(-r_z[0]*r_y[2]+r_y[0]*r_z[2]+r_z[0]*r_x[2]-r_x[0]*r_z[2]-r_y[0]*r_x[2]+r_x[0]*r_y[2]);
                     gradient[2] = -1.0/(4.0*V_p)*corner_weight*(-r_y[0]*r_z[1]+r_z[0]*r_y[1]+r_x[0]*r_z[1]-r_z[0]*r_x[1]-r_x[0]*r_y[1]+r_y[0]*r_x[1]);
-					idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
+                    idx_gradient_map.insert(std::make_pair(node_idx_1d,gradient));
                 }
                 break;
             }
@@ -538,9 +533,9 @@ void CPDIUpdateMethod<Scalar,3>::updateParticleInterpolationWeight(unsigned int 
     {
         if(iter->second > std::numeric_limits<Scalar>::epsilon()) //ignore nodes that have zero weight value, assume positive weight
         {
-            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx_ = multiDimIndex(iter->first,grid.nodeNum());
-            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value_ = iter->second;
-            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value_ = idx_gradient_map[iter->first];
+            particle_grid_weight_and_gradient[particle_grid_pair_num].node_idx = multiDimIndex(iter->first,grid.nodeNum());
+            particle_grid_weight_and_gradient[particle_grid_pair_num].weight_value = iter->second;
+            particle_grid_weight_and_gradient[particle_grid_pair_num].gradient_value = idx_gradient_map[iter->first];
             ++particle_grid_pair_num;
         }
     }

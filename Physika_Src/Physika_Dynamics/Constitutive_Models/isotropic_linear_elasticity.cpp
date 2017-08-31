@@ -1,12 +1,12 @@
 /*
- * @file linear_elasticity.cpp
+ * @file isotropic_linear_elasticity.cpp
  * @brief Isotropic linear elastic constitutive model with infinitesimal strain measure
  * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -66,7 +66,7 @@ void IsotropicLinearElasticity<Scalar,Dim>::printInfo() const
 }
 
 template <typename Scalar, int Dim>
-Scalar IsotropicLinearElasticity<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
+Scalar IsotropicLinearElasticity<Scalar,Dim>::energyDensity(const SquareMatrix<Scalar,Dim> &F) const
 {
     SquareMatrix<Scalar,Dim> e = 0.5*(F.transpose()+F)-SquareMatrix<Scalar,Dim>::identityMatrix();
     Scalar trace_e = e.trace();
@@ -79,20 +79,6 @@ Scalar IsotropicLinearElasticity<Scalar,Dim>::energy(const SquareMatrix<Scalar,D
 template <typename Scalar, int Dim>
 SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
 {
-    //for linear elastic materials all stress measures are identical because F ~= I
-    return cauchyStress(F);
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
-{
-    //for linear elastic materials all stress measures are identical because F ~= I
-    return cauchyStress(F);
-}
-
-template <typename Scalar, int Dim>
-SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::cauchyStress(const SquareMatrix<Scalar,Dim> &F) const
-{
     SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
     SquareMatrix<Scalar,Dim> e = 0.5*(F.transpose()+F)-identity;
     Scalar trace_e = e.trace();
@@ -100,6 +86,33 @@ SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::cauchyStress(con
     Scalar mu = this->mu_;
     SquareMatrix<Scalar,Dim> stress = lambda*trace_e*identity+2*mu*e;
     return stress;
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const
+{
+    return F.inverse()*firstPiolaKirchhoffStress(F);
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::cauchyStress(const SquareMatrix<Scalar,Dim> &F) const
+{
+    Scalar J = F.determinant();
+    SquareMatrix<Scalar,Dim> stress = 1/J*firstPiolaKirchhoffStress(F)*F.transpose();
+    return stress;
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> IsotropicLinearElasticity<Scalar,Dim>::firstPiolaKirchhoffStressDifferential(
+                                                                const SquareMatrix<Scalar,Dim> &F,
+                                                                const SquareMatrix<Scalar,Dim> &F_differential) const
+{
+    Scalar mu = this->mu_;
+    Scalar lambda = this->lambda_;
+    SquareMatrix<Scalar,Dim> identity = SquareMatrix<Scalar,Dim>::identityMatrix();
+    SquareMatrix<Scalar,Dim> e = 0.5*(F.transpose()+F)-identity;
+    SquareMatrix<Scalar,Dim> e_differential = 0.5*(F_differential.transpose()+F_differential);
+    return 2.0*mu*e_differential+lambda*e_differential.trace()*identity;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

@@ -5,7 +5,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -18,6 +18,7 @@
 #include <limits>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Geometry/Cartesian_Grids/grid.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
@@ -78,10 +79,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContact(const std:
 {
     MPMSolid<Scalar,Dim> *mpm_solid_driver = dynamic_cast<MPMSolid<Scalar,Dim>*>(this->mpm_driver_);
     if(mpm_solid_driver == NULL)
-    {
-        std::cerr<<"Error: mpm driver and contact method mismatch, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("mpm driver and contact method mismatch!");
     if(potential_collide_nodes.empty()) //no collision
         return;
     //init particle bucket for all involved objects
@@ -302,7 +300,7 @@ void MPMSolidSubgridFrictionContactMethod<Scalar,Dim>::resolveContactBetweenTwoO
     Scalar obj1_mass = mpm_solid_driver->gridMass(object_idx1,node_idx), obj2_mass = mpm_solid_driver->gridMass(object_idx2,node_idx);
     Vector<Scalar,Dim> obj1_vel = mpm_solid_driver->gridVelocity(object_idx1,node_idx), obj2_vel = mpm_solid_driver->gridVelocity(object_idx2,node_idx);
     //average the normal of the two objects so that they're in opposite direction
-    obj1_normal = (obj1_normal - obj2_normal).normalize();
+    obj1_normal = Vector<Scalar, Dim>(obj1_normal - obj2_normal).normalize();
     obj2_normal = -obj1_normal;
     Vector<Scalar,Dim> vel_delta = obj1_vel - obj2_vel;
     if((obj1_vel-obj2_vel).dot(obj1_normal) > 0) //necessary condition 1: approach each other

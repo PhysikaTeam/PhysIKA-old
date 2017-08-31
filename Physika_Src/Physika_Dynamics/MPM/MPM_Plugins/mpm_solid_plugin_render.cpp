@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -13,7 +13,6 @@
  */
 
 #include <cmath>
-#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -24,6 +23,7 @@
 #include "Physika_Core/Arrays/array_Nd.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Point_Render/point_render.h"
 #include "Physika_Render/Grid_Render/grid_render.h"
@@ -79,7 +79,7 @@ void MPMSolidPluginRender<Scalar,Dim>::onBeginTimeStep(Scalar time, Scalar dt)
     Scalar cur_frame_scalar = time*frame_rate;
     unsigned int cur_frame = static_cast<unsigned int>(cur_frame_scalar);
     unsigned int start_frame = driver->getStartFrame();
-    if(cur_frame_scalar-start_frame<std::numeric_limits<Scalar>::epsilon()) //begins the first frame
+    if (cur_frame_scalar - start_frame < std::numeric_limits<Scalar>::epsilon()) //begins the first frame
     {
         if(driver->isTimerEnabled())
             timer_.startTimer();
@@ -120,19 +120,22 @@ void MPMSolidPluginRender<Scalar,Dim>::onEndTimeStep(Scalar time, Scalar dt)
             file_name += cur_frame_str+std::string(".png");
             this->window_->saveScreen(file_name);
         }
-        if(driver->isTimerEnabled())
+        if (cur_frame < max_frame)
         {
-            //start timer for next frame
-            //not accurate if something happens between time steps
-            if(cur_frame < max_frame)
+            if (driver->isTimerEnabled())
+            {
+                //start timer for next frame
+                //not accurate if something happens between time steps
                 timer_.startTimer();
+            }
+            std::cout << "Begin Frame " << cur_frame << "\n";
         }
     }
     if(cur_frame >= max_frame)
     {
         this->simulation_finished_ = true;
         std::cout<<"Simulation Ended.\n";
-        std::cout<<"Total simulation time: "<<total_time_<<" s; Average: "<<total_time_/(max_frame-start_frame)<<" s/frame.\n";
+        std::cout<<"Total simulation time: "<<total_time_<<" s; Average: "<<total_time_/(max_frame-start_frame+1)<<" s/frame.\n";
     }
 }
 
@@ -147,15 +150,9 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::setDriver(DriverBase<Scalar> *driver)
 {
     if(driver==NULL)
-    {
-        std::cerr<<"Error: NULL driver pointer provided to driver plugin, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("NULL driver pointer provided to driver plugin!");
     if(dynamic_cast<MPMSolid<Scalar,Dim>*>(driver)==NULL)
-    {
-        std::cerr<<"Error: Wrong type of driver specified, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Wrong type of driver specified!");
     this->driver_ = driver;
 }
 
@@ -214,10 +211,7 @@ template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::setWindow(GlutWindow *window)
 {
     if(window==NULL)
-    {
-        std::cerr<<"Error: NULL window pointer provided to render plugin, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("NULL window pointer provided to render plugin!");
     window_ = window;
     window_->setIdleFunction(MPMSolidPluginRender<Scalar,Dim>::idleFunction);
     window_->setDisplayFunction(MPMSolidPluginRender<Scalar,Dim>::displayFunction);

@@ -4,7 +4,7 @@
  * @author Wei Chen, Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -50,20 +50,20 @@ public:
     //whenever the grid is modified, synchronize() must be called to update the render
     void synchronize();
 
-	// render in default mode
+    // render in default mode
     virtual void render();
 
     // set the color used to rendered grid
     template <typename ColorType>
     void setGridColor(const Color<ColorType> &color);
 
-	// note: the highlighted node will be rendered 3 times larger. 
+    // note: the highlighted node will be rendered 3 times larger. 
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const Color<ColorType> &color);
     template <typename ColorType>
     void renderNodeWithColor(const std::vector< Vector<unsigned int,Dim> > & node_vec, const std::vector< Color<ColorType> > &color);
 
-	// note: the edges of cell will be rendered 2 times wider.
+    // note: the edges of cell will be rendered 2 times wider.
     template <typename ColorType>
     void renderCellWithColor(const std::vector< Vector<unsigned int,Dim> > & cell_vec, const Color<ColorType> &color);
     template <typename ColorType>

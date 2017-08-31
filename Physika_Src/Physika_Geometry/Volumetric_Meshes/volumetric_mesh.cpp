@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -12,9 +12,9 @@
  *
  */
 
-#include <cstdlib>
 #include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 using std::string;
 using std::vector;
@@ -94,10 +94,7 @@ template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::eleVertNum(unsigned int ele_idx) const
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("element index out of range!");
     return uniform_ele_type_?vert_per_ele_[0]:vert_per_ele_[ele_idx];
 }
 
@@ -105,16 +102,10 @@ template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const
 {   
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("element index out of range!");
     unsigned int max_vert_num = uniform_ele_type_ ? vert_per_ele_[0] : vert_per_ele_[ele_idx];
     if(local_vert_idx >= max_vert_num)
-    {
-        std::cerr<<"vert_idx out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("vert_idx out of range!");
     unsigned int ele_idx_start = eleStartIdx(ele_idx);
     return elements_[ele_idx_start + local_vert_idx];
 }
@@ -141,11 +132,8 @@ unsigned int VolumetricMesh<Scalar,Dim>::regionNum() const
 template <typename Scalar, int Dim>
 Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::vertPos(unsigned int vert_idx) const
 {
-    if(vert_idx>=this->vertNum())
-    {
-        std::cerr<<"vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(vert_idx >= vertNum())
+        throw PhysikaException("Vertex index out of range!");
     return vertices_[vert_idx];
 }
 
@@ -159,11 +147,8 @@ Vector<Scalar,Dim> VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, 
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::eleVertPos(unsigned int ele_idx, std::vector<Vector<Scalar,Dim> > &positions) const
 {
-    if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    if(ele_idx >= eleNum())
+        throw PhysikaException("Element index out of range!");
     positions.clear();
     for(unsigned int i = 0; i < this->eleVertNum(ele_idx); ++i)
         positions.push_back(this->eleVertPos(ele_idx,i));
@@ -173,10 +158,7 @@ template <typename Scalar, int Dim>
 string VolumetricMesh<Scalar,Dim>::regionName(unsigned int region_idx) const
 {
     if(region_idx>=this->regionNum())
-    {
-        std::cerr<<"region_idx out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("region_idx out of range!");
     PHYSIKA_ASSERT(regions_[region_idx]);
     return regions_[region_idx]->name();
 }
@@ -185,10 +167,7 @@ template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::regionEleNum(unsigned int region_idx) const
 {
     if(region_idx>=this->regionNum())
-    {
-        std::cerr<<"region_idx out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("region_idx out of range!");
     PHYSIKA_ASSERT(regions_[region_idx]);
     return regions_[region_idx]->elementNum();
 }
@@ -210,10 +189,7 @@ template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::regionElements(unsigned int region_idx, vector<unsigned int> &elements) const
 {
     if(region_idx>=this->regionNum())
-    {
-        std::cerr<<"region_idx out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("region_idx out of range!");
     PHYSIKA_ASSERT(regions_[region_idx]);
     elements = regions_[region_idx]->elements();
 }
@@ -234,49 +210,67 @@ void VolumetricMesh<Scalar,Dim>::regionElements(const string &region_name, vecto
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMesh<Scalar,Dim>::setVertPos(unsigned int vert_idx, const Vector<Scalar,Dim> &vert_pos)
+bool VolumetricMesh<Scalar,Dim>::isBoundaryElement(unsigned int ele_idx)
 {
-    if(vert_idx>=this->vertNum())
-    {
-        std::cerr<<"vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    vertices_[vert_idx] = vert_pos;
+    if(ele_idx >= eleNum())
+        throw PhysikaException("Element index out of range!");
+    if(boundary_elements_.empty())
+        generateBoundaryInformation();
+    if(boundary_elements_.find(ele_idx) != boundary_elements_.end())
+        return true;
+    return false;
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMesh<Scalar,Dim>::setEleVertPos(unsigned int ele_idx, unsigned int local_vert_idx, const Vector<Scalar,Dim> &vert_pos)
+bool VolumetricMesh<Scalar,Dim>::isBoundaryVertex(unsigned int vert_idx)
 {
-    unsigned int global_vert_idx = eleVertIndex(ele_idx,local_vert_idx);
-    setVertPos(global_vert_idx,vert_pos);
+    if(vert_idx >= vertNum())
+        throw PhysikaException("Vertex index out of range!");
+    if(boundary_vertices_.empty())
+        generateBoundaryInformation();
+    if(boundary_vertices_.find(vert_idx) != boundary_vertices_.end())
+        return true;
+    return false;
 }
 
 template <typename Scalar, int Dim>
-void VolumetricMesh<Scalar,Dim>::setEleVertPos(unsigned int ele_idx, const vector<Vector<Scalar,Dim> > &positions)
-{    
-    if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    unsigned int ele_vert_num = this->eleVertNum(ele_idx); 
-    if(positions.size() < ele_vert_num)
-    {
-        std::cerr<<"Insufficient number of vertex positions provided!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    for(unsigned int i = 0; i < ele_vert_num; ++i)
-        setEleVertPos(ele_idx,i,positions[i]);
+bool VolumetricMesh<Scalar, Dim>::isBoundaryFace(std::vector<unsigned int> face)
+{
+    std::sort(face.begin(), face.end());
+    if (boundary_faces_.empty())
+        generateBoundaryInformation();
+    if (boundary_faces_.find(face) != boundary_faces_.end())
+        return true;
+    return false;
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar,Dim>::boundaryElements(std::vector<unsigned int> &boundary_elements)
+{
+    if(boundary_elements_.empty())
+        generateBoundaryInformation();
+    boundary_elements.resize(boundary_elements_.size());
+    unsigned int idx = 0;
+    for(std::set<unsigned int>::iterator iter = boundary_elements_.begin(); iter != boundary_elements_.end(); ++iter,++idx)
+        boundary_elements[idx] = *iter;
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar,Dim>::boundaryVertices(std::vector<unsigned int> &boundary_vertices)
+{
+    if(boundary_vertices_.empty())
+        generateBoundaryInformation();
+    boundary_vertices.resize(boundary_vertices_.size());
+    unsigned int idx = 0;
+    for(std::set<unsigned int>::iterator iter = boundary_vertices_.begin(); iter != boundary_vertices_.end(); ++iter,++idx)
+        boundary_vertices[idx] = *iter;
 }
 
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::renameRegion(unsigned int region_idx, const string &name)
 {
     if(region_idx>=this->regionNum())
-    {
-        std::cerr<<"region_idx out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("region_idx out of range!");
     PHYSIKA_ASSERT(regions_[region_idx]);
     regions_[region_idx]->setName(name);
 }
@@ -293,10 +287,7 @@ template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeRegion(unsigned int region_idx)
 {
     if(region_idx>=this->regionNum())
-    {
-        std::cerr<<"region_idx out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("region_idx out of range!");
     PHYSIKA_ASSERT(regions_[region_idx]);
     delete regions_[region_idx];
     vector<Region*>::iterator iter = regions_.begin()+region_idx;
@@ -322,16 +313,15 @@ template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::addVertex(const Vector<Scalar,Dim> &vertex)
 {
     vertices_.push_back(vertex);
+    //clear boundary information since the mesh has been modified
+    clearBoundaryInformation();
 }
 
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeVertex(unsigned int vert_idx)
 {
     if(vert_idx>=this->vertNum())
-    {
-        std::cerr<<"vertex index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("vertex index out of range!");
     typename vector<Vector<Scalar,Dim> >::iterator iter = vertices_.begin() + vert_idx;
     vertices_.erase(iter);
     //make the new mesh data valid: remove its reference in elements and adjust the vertex indices of other elements
@@ -356,6 +346,8 @@ void VolumetricMesh<Scalar,Dim>::removeVertex(unsigned int vert_idx)
             vert_per_ele_[i] -= reference_count;
     }
     elements_ = new_elements; //update the elements
+    //clear boundary information since the mesh has been modified
+    clearBoundaryInformation();
 }
 
 template <typename Scalar, int Dim>
@@ -393,30 +385,23 @@ void VolumetricMesh<Scalar,Dim>::addElement(const vector<unsigned int> &element)
         ++ele_num_;
     }
     else
-    {
-        std::cerr<<"Invalid vertex number for the new element!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Invalid vertex number for the new element!");
+    //clear boundary information since the mesh has been modified
+    clearBoundaryInformation();
 }
 
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeElement(unsigned int ele_idx)
 {
     if(ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("element index out of range!");
     //first remove this element from all regions
-    if(this->regionNum()>1)
+    for(int i = 0; i < regions_.size(); ++i)
     {
-        for(int i = 0; i < regions_.size(); ++i)
-        {
-            PHYSIKA_ASSERT(regions_[i]);
-            int ele_local_idx = regions_[i]->elementLocalIndex(ele_idx);
-            if(ele_local_idx>=0)
-                regions_[i]->removeElementAtIndex(ele_local_idx);
-        }
+        PHYSIKA_ASSERT(regions_[i]);
+        int ele_local_idx = regions_[i]->elementLocalIndex(ele_idx);
+        if(ele_local_idx>=0)
+            regions_[i]->removeElementAtIndex(ele_local_idx);
     }
     //then remove this element
     unsigned int ele_start_idx = eleStartIdx(ele_idx);
@@ -424,21 +409,17 @@ void VolumetricMesh<Scalar,Dim>::removeElement(unsigned int ele_idx)
     typename vector<unsigned int>::iterator iter_begin = elements_.begin() + ele_start_idx;
     typename vector<unsigned int>::iterator iter_end = iter_begin + ele_vert_num;
     elements_.erase(iter_begin,iter_end);
+    //clear boundary information since the mesh has been modified
+    clearBoundaryInformation();
 }
 
 template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::addElementInRegion(unsigned int region_idx, unsigned int new_ele_idx)
 {
     if(region_idx>=this->regionNum())
-    {
-        std::cerr<<"region_idx out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    if(new_ele_idx>=this->ele_num_)
-    {
-        std::cerr<<"element index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("region_idx out of range!");
+    if(new_ele_idx>=this->eleNum())
+        throw PhysikaException("new_ele_idx out of range!");
     PHYSIKA_ASSERT(regions_[region_idx]);
     regions_[region_idx]->addElement(new_ele_idx);
 }
@@ -447,15 +428,9 @@ template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::removeElementInRegion(unsigned int region_idx, unsigned int ele_idx_in_region)
 {
     if(region_idx>=this->regionNum())
-    {
-        std::cerr<<"region_idx out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("region_idx out of range!");
     if(ele_idx_in_region>=this->regionEleNum(region_idx))
-    {
-        std::cerr<<"ele_idx_in_region out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("ele_idx_in_region out of range!");
     PHYSIKA_ASSERT(regions_[region_idx]);
     regions_[region_idx]->removeElement(ele_idx_in_region);
 }
@@ -506,17 +481,24 @@ void VolumetricMesh<Scalar,Dim>::init(unsigned int vert_num, const Scalar *verti
 template <typename Scalar, int Dim>
 unsigned int VolumetricMesh<Scalar,Dim>::eleStartIdx(unsigned int ele_idx) const
 {
-    PHYSIKA_ASSERT(ele_idx>=0);
     PHYSIKA_ASSERT(ele_idx<ele_num_);
     unsigned int ele_idx_start = 0;
     if(uniform_ele_type_)
         ele_idx_start = ele_idx*vert_per_ele_[0];
     else
     {
-        for(int i = 0; i < ele_idx; ++i)
+        for(unsigned int i = 0; i < ele_idx; ++i)
             ele_idx_start += vert_per_ele_[i];
     }
     return ele_idx_start;
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar,Dim>::clearBoundaryInformation()
+{
+    boundary_vertices_.clear();
+    boundary_elements_.clear();
+    boundary_faces_.clear();
 }
 
 //explicit instantiations

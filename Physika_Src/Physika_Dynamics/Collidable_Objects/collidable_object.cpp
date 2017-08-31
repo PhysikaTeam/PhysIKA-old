@@ -1,10 +1,11 @@
 /*
- * @file  collidable_object.cpp
- * @brief abstract base class of all collidable objects, provide common interface
- * @author Tianxiang Zhang
+ * @file collidable_object.cpp 
+ * @brief base class of all collidable objects. A collidable object is the kinematic object
+ *            in scene that is used for simple contact effects.
+ * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -12,64 +13,109 @@
  *
  */
 
+#include <iostream>
 #include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_method.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_detection_method_DTBVH.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_pair.h"
-#include "Physika_Dynamics/Collidable_Objects/collision_pair_manager.h"
-#include "Physika_Dynamics/Collidable_Objects/contact_point.h"
-#include "Physika_Dynamics/Collidable_Objects/contact_point_manager.h"
 
 namespace Physika{
 
-template <typename Scalar,int Dim>
-CollidableObject<Scalar, Dim>::CollidableObject()
+template <typename Scalar, int Dim>
+CollidableObject<Scalar,Dim>::CollidableObject()
+    :mu_(0), sticky_(false),collide_threshold_(0),velocity_(0)
 {
-
 }
 
-template <typename Scalar,int Dim>
-CollidableObject<Scalar, Dim>::~CollidableObject()
+template <typename Scalar, int Dim>
+CollidableObject<Scalar,Dim>::CollidableObject(Scalar mu, bool sticky)
+    :mu_(mu),sticky_(sticky),collide_threshold_(0),velocity_(0)
 {
-
 }
 
-template <typename Scalar,int Dim>
-bool CollidableObject<Scalar, Dim>::collideWithObject(CollidableObject<Scalar, Dim> *object, Vector<Scalar,Dim> &contact_point, Vector<Scalar,Dim> &contact_normal, CollisionDetectionMethod<Scalar, Dim>* method)
+template <typename Scalar, int Dim>
+CollidableObject<Scalar,Dim>::CollidableObject(const CollidableObject<Scalar,Dim> &object)
+    :mu_(object.mu_),sticky_(object.sticky_),
+     collide_threshold_(object.collide_threshold_),velocity_(object.velocity_)
 {
-    bool need_delete = false;
-    if(method == NULL)
+}
+
+template <typename Scalar, int Dim>
+CollidableObject<Scalar,Dim>::~CollidableObject()
+{
+}
+
+template <typename Scalar, int Dim>
+CollidableObject<Scalar,Dim>& CollidableObject<Scalar,Dim>::operator= (const CollidableObject<Scalar,Dim> &object)
+{
+    mu_ = object.mu_;
+    sticky_ = object.sticky_;
+    collide_threshold_ = object.collide_threshold_;
+    velocity_ = object.velocity_;
+    return *this;
+}
+
+template <typename Scalar, int Dim>
+Scalar CollidableObject<Scalar,Dim>::mu() const
+{
+    return mu_;
+}
+
+template <typename Scalar, int Dim>
+void CollidableObject<Scalar,Dim>::setMu(Scalar mu)
+{
+    if(mu < 0)
     {
-        method = new CollisionDetectionMethodDTBVH<Scalar, Dim>;
-        need_delete = true;
+        std::cerr<<"Warning: invalid mu provided, default value (0) is used instead!\n";
+        mu_ = 0;
     }
-    method->addCollidableObject(this);
-    method->addCollidableObject(object);
-    bool is_collide = method->collisionDetection();
-    if(is_collide)
+    else
+        mu_ = mu;
+}
+
+template <typename Scalar, int Dim>
+bool CollidableObject<Scalar,Dim>::isSticky() const
+{
+    return sticky_;
+}
+
+template <typename Scalar, int Dim>
+void CollidableObject<Scalar,Dim>::setSticky(bool sticky)
+{
+    sticky_ = sticky;
+}
+
+template <typename Scalar, int Dim>
+Scalar CollidableObject<Scalar,Dim>::collideThreshold() const
+{
+    return collide_threshold_;
+}
+
+template <typename Scalar, int Dim>
+void CollidableObject<Scalar,Dim>::setCollideThreshold(Scalar threshold)
+{
+    if(threshold < 0)
     {
-        Vector<Scalar, Dim> position(0), normal(0);
-        for(unsigned int i = 0; i < method->numContactPoint(); ++i)
-        {
-            position += method->contactPoint(i)->globalContactPosition();
-            normal += method->contactPoint(i)->globalContactNormalLhs();
-        }
-        if(method->numContactPoint() != 0)
-        {
-            position /= method->numContactPoint();
-            normal.normalize();
-        }
-        contact_point = position;
-        contact_normal = normal;
+        std::cerr<<"Invalid threshold provided, default value (0) is used instead!\n";
+        collide_threshold_ = 0;
     }
-    if(need_delete)
-        delete method;
-    return is_collide;
+    else
+        collide_threshold_ = threshold;
 }
 
-template class CollidableObject<float, 2>;
-template class CollidableObject<double, 2>;
-template class CollidableObject<float, 3>;
-template class CollidableObject<double, 3>;
-
+template <typename Scalar, int Dim>
+Vector<Scalar,Dim> CollidableObject<Scalar,Dim>::velocity() const
+{
+    return velocity_;
 }
+
+template <typename Scalar, int Dim>
+void CollidableObject<Scalar,Dim>::setVelocity(const Vector<Scalar,Dim> &velocity)
+{
+    velocity_ = velocity;
+}
+
+//explicit instantiations
+template class CollidableObject<float,2>;
+template class CollidableObject<float,3>;
+template class CollidableObject<double,2>;
+template class CollidableObject<double,3>;
+
+}  //end of namespace Physika

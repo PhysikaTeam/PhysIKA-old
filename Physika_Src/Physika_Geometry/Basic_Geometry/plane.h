@@ -4,7 +4,7 @@
  * @author FeiZhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -20,19 +20,28 @@
 
 namespace Physika{
 
+/*
+ * Plane: a plane with direction
+ */
+
 template <typename Scalar>
-class Plane: public BasicGeometry
+class Plane: public BasicGeometry<Scalar,3>
 {
 public:
     Plane();
     Plane(const Vector<Scalar,3> &normal, const Vector<Scalar,3> &point_on_plane);
     //specify plane with 3 points, the order of the points determines the direction of the plane
     Plane(const Vector<Scalar,3> &x1, const Vector<Scalar,3> &x2, const Vector<Scalar,3> &x3);
+    Plane(const Plane<Scalar> &plane);
     ~Plane();
-    void printInfo() const;
+    Plane<Scalar>& operator= (const Plane<Scalar> &plane);
+    Plane<Scalar>* clone() const;
+    virtual void printInfo() const;
     Vector<Scalar,3> normal() const;
-    Scalar distance(const Vector<Scalar,3> &point) const;  //distance of given point to the plane
-    Scalar signedDistance(const Vector<Scalar,3> &point) const; //signed distance of given point to the plane (consider plane direction)
+    void setNormal(const Vector<Scalar,3> &normal);
+    virtual Vector<Scalar,3> normal(const Vector<Scalar,3> &point) const;
+    virtual Scalar distance(const Vector<Scalar,3> &point) const;  //distance of given point to the plane
+    virtual Scalar signedDistance(const Vector<Scalar,3> &point) const; //signed distance of given point to the plane (consider plane direction)
 protected:
     Vector<Scalar,3> normal_;  //normal of the plane
     Vector<Scalar,3> pos_;  //one point on the plane

@@ -4,7 +4,7 @@
  * @author Fei Zhu
  *
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -20,6 +20,7 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_4d.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 
 namespace Physika{
@@ -53,10 +54,7 @@ template <typename ElementType, int Dim>
 bool ArrayNDIterator<ElementType,Dim>::operator== (const ArrayNDIterator<ElementType,Dim> &iterator) const
 {
     if((array_==NULL)||(iterator.array_==NULL))
-    {
-        std::cerr<<"Error: undefined operator == for unintialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator == for unintialized iterator!");
     return (element_idx_ == iterator.element_idx_)&&(array_ == iterator.array_);
 }
 
@@ -64,10 +62,7 @@ template <typename ElementType, int Dim>
 bool ArrayNDIterator<ElementType,Dim>::operator!= (const ArrayNDIterator<ElementType,Dim> &iterator) const
 {
     if((array_==NULL)||(iterator.array_==NULL))
-    {
-        std::cerr<<"Error: undefined operator != for unintialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator != for unintialized iterator!");
     return (element_idx_ != iterator.element_idx_)||(array_ != iterator.array_);
 }
 
@@ -75,10 +70,7 @@ template <typename ElementType, int Dim>
 ArrayNDIterator<ElementType,Dim>& ArrayNDIterator<ElementType,Dim>::operator++ ()
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator ++ for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator ++ for uninitialized iterator!");
     ++element_idx_;
     return *this;
 }
@@ -87,10 +79,7 @@ template <typename ElementType, int Dim>
 ArrayNDIterator<ElementType,Dim>& ArrayNDIterator<ElementType,Dim>::operator-- ()
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator -- for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator -- for uninitialized iterator!");
     --element_idx_;
     return *this;
 }
@@ -99,10 +88,7 @@ template <typename ElementType, int Dim>
 ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator++ (int)
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator ++ for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator ++ for uninitialized iterator!");
     ArrayNDIterator<ElementType,Dim> iterator(*this);
     ++element_idx_;
     return iterator;
@@ -112,10 +98,7 @@ template <typename ElementType, int Dim>
 ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator-- (int)
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator -- for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator -- for uninitialized iterator!");
     ArrayNDIterator<ElementType,Dim> iterator(*this);
     --element_idx_;
     return iterator;
@@ -125,10 +108,7 @@ template <typename ElementType, int Dim>
 ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator+ (int stride) const
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator + for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator + for uninitialized iterator!");
     ArrayNDIterator<ElementType,Dim> iterator(*this);
     iterator.element_idx_ += stride;
     return iterator;
@@ -138,10 +118,7 @@ template <typename ElementType, int Dim>
 ArrayNDIterator<ElementType,Dim> ArrayNDIterator<ElementType,Dim>::operator- (int stride) const
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator - for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator - for uninitialized iterator!");
     ArrayNDIterator<ElementType,Dim> iterator(*this);
     iterator.element_idx_ -= stride;
     return iterator;
@@ -151,15 +128,9 @@ template <typename ElementType, int Dim>
 const ElementType& ArrayNDIterator<ElementType,Dim>::operator *() const
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator * for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator * for uninitialized iterator!");
     if(element_idx_ >= array_->totalElementCount())
-    {
-        std::cerr<<"Error: iterator out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: iterator out of range!");
     return array_->data_[element_idx_];
 }
 
@@ -167,15 +138,9 @@ template <typename ElementType, int Dim>
 ElementType& ArrayNDIterator<ElementType,Dim>::operator *()
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined operator * for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined operator * for uninitialized iterator!");
     if(element_idx_ >= array_->totalElementCount())
-    {
-        std::cerr<<"Error: iterator out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: iterator out of range!");
     return array_->data_[element_idx_];
 }
 
@@ -183,10 +148,7 @@ template <typename ElementType, int Dim>
 void ArrayNDIterator<ElementType,Dim>::elementIndex(std::vector<unsigned int> &element_idx) const
 {
     if(array_==NULL)
-    {
-        std::cerr<<"Error: undefined behavior to get element index for uninitialized iterator!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Error: undefined behavior to get element index for uninitialized iterator!");
     element_idx.resize(Dim);
     unsigned int flat_index = this->element_idx_;
     for(unsigned int i = 0; i < Dim; ++i)

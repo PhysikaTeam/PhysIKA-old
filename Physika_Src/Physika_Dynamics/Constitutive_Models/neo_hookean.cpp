@@ -2,11 +2,11 @@
  * @file  neo_hookean.cpp
  * @brief Neo-Hookean hyperelastic material model
  * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -16,6 +16,7 @@
 #include <iostream>
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Dynamics/Constitutive_Models/constitutive_model_internal.h"
 #include "Physika_Dynamics/Constitutive_Models/neo_hookean.h"
 
 namespace Physika{
@@ -66,7 +67,7 @@ void NeoHookean<Scalar,Dim>::printInfo() const
 }
 
 template <typename Scalar, int Dim>
-Scalar NeoHookean<Scalar,Dim>::energy(const SquareMatrix<Scalar,Dim> &F) const
+Scalar NeoHookean<Scalar,Dim>::energyDensity(const SquareMatrix<Scalar,Dim> &F) const
 {
     Scalar trace_c = (F.transpose()*F).trace();
     Scalar J = F.determinant();
@@ -102,6 +103,20 @@ SquareMatrix<Scalar,Dim> NeoHookean<Scalar,Dim>::cauchyStress(const SquareMatrix
     Scalar J = F.determinant();
     SquareMatrix<Scalar,Dim> stress = 1/J*firstPiolaKirchhoffStress(F)*F.transpose();
     return stress;
+}
+
+template <typename Scalar, int Dim>
+SquareMatrix<Scalar,Dim> NeoHookean<Scalar,Dim>::firstPiolaKirchhoffStressDifferential(
+                                                                const SquareMatrix<Scalar,Dim> &F,
+                                                                const SquareMatrix<Scalar,Dim> &F_differential) const
+{
+    Scalar mu = this->mu_;
+    Scalar lambda = this->lambda_;
+    Scalar J = F.determinant();
+    Scalar lnJ = log(J);
+    SquareMatrix<Scalar,Dim> He = J*(F.inverse()).transpose();
+    return mu*F_differential+((lambda-(lambda*lnJ-mu))/(J*J)*He.doubleContraction(F_differential))*He
+           +(lambda*lnJ-mu)/J*ConstitutiveModelInternal::cofactorMatrixDifferential(F,F_differential);
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

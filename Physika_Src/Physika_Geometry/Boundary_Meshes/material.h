@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -33,7 +33,7 @@ public:
     Material();
     ~Material();
     Material(const std::string &name, const Vector<Scalar,3> &Ka, const Vector<Scalar,3> &Kd, const Vector<Scalar,3> &Ks,
-             Scalar shininess, const std::string &texture_file_name=std::string());
+             Scalar shininess, Scalar alpha, const std::string &texture_file_name=std::string());
     Material(const Material<Scalar> &material);
     Material<Scalar>& operator= (const Material<Scalar> &material);
     const std::string& name() const;
@@ -53,17 +53,17 @@ public:
     void setTextureFileName(const std::string &texture_file_name);
 
     // predefined materials: rubber, iron, etc.
-	// names of the functions break the rule of coding style in order to emphasize the specialness of the static functions
-	static Material<Scalar> Rubber();
-	static Material<Scalar> Iron();
-	static Material<Scalar> Wood();
+    // names of the functions break the rule of coding style in order to emphasize the specialness of the static functions
+    static Material<Scalar> Rubber();
+    static Material<Scalar> Iron();
+    static Material<Scalar> Wood();
 
 protected:
     std::string name_;
     Vector<Scalar,3> Ka_, Kd_, Ks_;
     Scalar shininess_;
     Scalar alpha_;
-    std::string full_path_texture_file_name_;  //full path of texture file name
+    std::string full_path_texture_file_name_;  //store the full path of texture file so that texture could be correctly loaded while rendering
 };
 
 } //end of namespace BoundaryMeshInternal

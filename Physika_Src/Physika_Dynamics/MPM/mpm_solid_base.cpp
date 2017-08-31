@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -16,36 +16,50 @@
 #include <iostream>
 #include <algorithm>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Numerics/Linear_System_Solvers/conjugate_gradient_solver.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
+#include "Physika_Dynamics/Collidable_Objects/collidable_object.h"
 #include "Physika_Dynamics/MPM/mpm_solid_base.h"
-#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USL.h"
+#include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_solid_step_method_USF.h"
 
 namespace Physika{
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase()
-    :MPMBase<Scalar,Dim>(),integration_method_(FORWARD_EULER)
+    :MPMBase<Scalar, Dim>(), integration_method_(FORWARD_EULER), implicit_step_fraction_(1.0), linear_system_solver_(NULL)
 {
-    this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
+    this->template setStepMethod<MPMSolidStepMethodUSF<Scalar,Dim> >(); //default step method is USF
+    linear_system_solver_ = new ConjugateGradientSolver<Scalar>(); //CG solver by default
 }
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::MPMSolidBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :MPMBase<Scalar,Dim>(start_frame,end_frame,frame_rate,max_dt,write_to_file),integration_method_(FORWARD_EULER)
+    :MPMBase<Scalar, Dim>(start_frame, end_frame, frame_rate, max_dt, write_to_file), integration_method_(FORWARD_EULER),
+    implicit_step_fraction_(1.0), linear_system_solver_(NULL)
 {
-    this->template setStepMethod<MPMSolidStepMethodUSL<Scalar,Dim> >(); //default step method is USL
+    this->template setStepMethod<MPMSolidStepMethodUSF<Scalar,Dim> >(); //default step method is USF
+    linear_system_solver_ = new ConjugateGradientSolver<Scalar>(); //CG solver by default
 }
 
 template <typename Scalar, int Dim>
 MPMSolidBase<Scalar,Dim>::~MPMSolidBase()
 {
+    //delete the simulated particles
     for(unsigned int i = 0; i < particles_.size(); ++i)
         for(unsigned int j = 0; j < particles_[i].size(); ++j)
             if(particles_[i][j])
                 delete particles_[i][j];
+    //delete the kinematic objects
+    for(unsigned int i = 0; i < collidable_objects_.size(); ++i)
+        if(collidable_objects_[i])
+            delete collidable_objects_[i];
+    //delete linear solver
+    if (linear_system_solver_)
+        delete linear_system_solver_;
 }
 
 template <typename Scalar, int Dim>
@@ -61,10 +75,7 @@ template <typename Scalar, int Dim>
 unsigned int MPMSolidBase<Scalar,Dim>::particleNumOfObject(unsigned int object_idx) const
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     return particles_[object_idx].size();
 }
  
@@ -143,15 +154,9 @@ template <typename Scalar, int Dim>
 const SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int object_idx, unsigned int particle_idx) const
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx>=particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     return *particles_[object_idx][particle_idx];
 }
 
@@ -159,26 +164,27 @@ template <typename Scalar, int Dim>
 SolidParticle<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::particle(unsigned int object_idx, unsigned int particle_idx)
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx>=particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     return *particles_[object_idx][particle_idx];
+}
+
+template <typename Scalar, int Dim>
+Scalar MPMSolidBase<Scalar, Dim>::particleInitialVolume(unsigned int object_idx, unsigned int particle_idx) const
+{
+    if (object_idx >= objectNum())
+        throw PhysikaException("object index out of range!");
+    if (particle_idx >= particleNumOfObject(object_idx))
+        throw PhysikaException("particle index out of range!");
+    return particle_initial_volume_[object_idx][particle_idx];
 }
 
 template <typename Scalar, int Dim>
 const std::vector<SolidParticle<Scalar,Dim>*>& MPMSolidBase<Scalar,Dim>::allParticlesOfObject(unsigned int object_idx) const
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     return particles_[object_idx];
 }
     
@@ -186,15 +192,9 @@ template <typename Scalar, int Dim>
 Vector<Scalar,Dim> MPMSolidBase<Scalar,Dim>::externalForceOnParticle(unsigned int object_idx, unsigned int particle_idx) const
 {
     if(object_idx>=objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     if(particle_idx>=particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     return particle_external_force_[object_idx][particle_idx];
 }
 
@@ -251,9 +251,127 @@ void MPMSolidBase<Scalar,Dim>::addDirichletParticles(unsigned int object_idx, co
 }
     
 template <typename Scalar, int Dim>
-void MPMSolidBase<Scalar,Dim>::setTimeIntegrationMethod(const IntegrationMethod &method)
+unsigned int MPMSolidBase<Scalar,Dim>::kinematicObjectNum() const
+{
+    return collidable_objects_.size();
+}
+    
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::addKinematicObject(const CollidableObject<Scalar,Dim> &object)
+{
+    CollidableObject<Scalar,Dim> *new_object = object.clone();
+    collidable_objects_.push_back(new_object);
+}
+        
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::removeKinematicObject(unsigned int object_idx)
+{
+    if(object_idx >= collidable_objects_.size())
+        std::cerr<<"Warning: kinematic object index out of range, operation ignored!\n";
+    else
+    {
+        typename std::vector<CollidableObject<Scalar,Dim>*>::iterator iter = collidable_objects_.begin() + object_idx;
+        collidable_objects_.erase(iter);
+    }
+}
+        
+template <typename Scalar, int Dim>
+const CollidableObject<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::kinematicObject(unsigned int object_idx) const
+{
+    if(object_idx >= collidable_objects_.size())
+        throw PhysikaException("kinematic object index out of range!");
+    PHYSIKA_ASSERT(collidable_objects_[object_idx]);
+    return *collidable_objects_[object_idx];
+}
+        
+template <typename Scalar, int Dim>
+CollidableObject<Scalar,Dim>& MPMSolidBase<Scalar,Dim>::kinematicObject(unsigned int object_idx)
+{
+    if(object_idx >= collidable_objects_.size())
+        throw PhysikaException("kinematic object index out of range!");
+    PHYSIKA_ASSERT(collidable_objects_[object_idx]);
+    return *collidable_objects_[object_idx];
+}
+
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar,Dim>::setTimeSteppingMethod(TimeSteppingMethod method)
 {
     integration_method_ = method;
+}
+
+template <typename Scalar, int Dim>
+TimeSteppingMethod MPMSolidBase<Scalar, Dim>::timeSteppingMethod() const
+{
+    return integration_method_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::setImplicitSteppingFraction(Scalar fraction)
+{
+    bool invalid = false;
+    if (fraction < 0)
+    {
+        fraction = 0;
+        invalid = true;
+    }
+    if (fraction > 1)
+    {
+        fraction = 1;
+        invalid = true;
+    }
+    if (invalid)
+        std::cerr << "Warning: Invalid implicit stepping fraction, clamped to [0,1]!\n";
+    implicit_step_fraction_ = fraction;
+}
+
+
+template <typename Scalar, int Dim>
+Scalar MPMSolidBase<Scalar, Dim>::implicitSteppingFraction() const
+{
+    return implicit_step_fraction_;
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::enableSolverPreconditioner()
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->enablePreconditioner();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::disableSolverPreconditioner()
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->disablePreconditioner();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::setSolverTolerance(Scalar tol)
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->setTolerance(tol);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::setSolverMaxIterations(unsigned int iter)
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->setMaxIterations(iter);
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::enableSolverStatusLog()
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->enableStatusLog();
+}
+
+template <typename Scalar, int Dim>
+void MPMSolidBase<Scalar, Dim>::disableSolverStatusLog()
+{
+    PHYSIKA_ASSERT(linear_system_solver_);
+    linear_system_solver_->disableStatusLog();
 }
 
 template <typename Scalar, int Dim>

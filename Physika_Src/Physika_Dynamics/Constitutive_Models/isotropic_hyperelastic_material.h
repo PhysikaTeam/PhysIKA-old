@@ -1,12 +1,12 @@
 /*
  * @file  isotropic_hyperelastic_material.h
- * @brief Abstract parent class of all hyperelastic material models
+ * @brief Abstract parent class of all isotropic hyperelastic material models
  * @author Fei Zhu
- * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -53,10 +53,15 @@ public:
     void setPoissonRatio(Scalar);
     virtual IsotropicHyperelasticMaterial<Scalar,Dim>* clone() const=0;
     virtual void printInfo() const=0;
-    virtual Scalar energy(const SquareMatrix<Scalar,Dim> &F) const=0;//compute potential energy density from given deformation gradient
+    virtual Scalar energyDensity(const SquareMatrix<Scalar,Dim> &F) const=0;//compute potential energy density from given deformation gradient
     virtual SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
     virtual SquareMatrix<Scalar,Dim> secondPiolaKirchhoffStress(const SquareMatrix<Scalar,Dim> &F) const=0;
     virtual SquareMatrix<Scalar,Dim> cauchyStress(const SquareMatrix<Scalar,Dim> &F) const=0;
+    //differential of first PiolaKirchhoff stress, for implicit time integration
+    // \delta P = dP/dF : (\delta F)
+    // \delta is differential
+    virtual SquareMatrix<Scalar,Dim> firstPiolaKirchhoffStressDifferential(const SquareMatrix<Scalar,Dim> &F,
+                                     const SquareMatrix<Scalar,Dim> &F_differential) const=0;
 protected:
     void lameCoefsFromYoungAndPoisson(Scalar young_modulus, Scalar poisson_ratio, Array<Scalar> &lame_coefs) const;
     void youngAndPoissonFromLameCoefs(Scalar lambda, Scalar mu, Array<Scalar> &young_and_poisson) const;

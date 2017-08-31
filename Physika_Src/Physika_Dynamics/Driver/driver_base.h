@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -94,6 +94,7 @@ public:
     inline void disableTimer(){enable_timer_=false;}
     inline bool isTimerEnabled() const {return enable_timer_;}
     inline Scalar currentTime() const {return time_;} //return current time point
+    inline Scalar timeStep() const { return dt_; } //return the time step, avoid calling computeTimeStep() multiple times in a single step
 
 protected:
     unsigned int start_frame_;

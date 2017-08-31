@@ -4,7 +4,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -12,9 +12,9 @@
  *
  */
 
-#include <cstdlib>
 #include <iostream>
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Render/Render_Base/render_base.h"
 #include "Physika_Render/Render_Manager/render_manager.h"
 using std::list;
@@ -39,10 +39,7 @@ void RenderManager::insertBack(RenderBase *render_task)
     if(render_task)
         render_list_.push_back(render_task);
     else
-    {
-        std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        std::cerr<<"Cannot insert NULL render task to RenderManager, operation ignored!\n";
 }
 
 void RenderManager::insertFront(RenderBase *render_task)
@@ -50,20 +47,14 @@ void RenderManager::insertFront(RenderBase *render_task)
     if(render_task)
         render_list_.push_front(render_task);
     else
-    {
-        std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        std::cerr<<"Cannot insert NULL render task to RenderManager, operation ignored!\n";
 }
 
 void RenderManager::insertAtIndex(unsigned int index, RenderBase *task)
 {
     bool index_valid = (index<render_list_.size());
     if(!index_valid)
-    {
-        std::cerr<<"Render task index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Render task index out of range!");
     if(task)
     {
         list<RenderBase*>::iterator pos = render_list_.begin();
@@ -75,10 +66,7 @@ void RenderManager::insertAtIndex(unsigned int index, RenderBase *task)
         render_list_.insert(pos,task);
     }
     else
-    {
-        std::cerr<<"Cannot insert NULL render task to RenderManager!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        std::cerr<<"Cannot insert NULL render task to RenderManager, operation ignored!\n";
 }
 
 void RenderManager::removeBack()
@@ -95,10 +83,7 @@ void RenderManager::removeAtIndex(unsigned int index)
 {
     bool index_valid = (index<render_list_.size());
     if(!index_valid)
-    {
-        std::cerr<<"Render task index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Render task index out of range!");
     list<RenderBase*>::iterator pos = render_list_.begin();
     while(index != 0)
     {
@@ -117,10 +102,7 @@ const RenderBase* RenderManager::taskAtIndex(unsigned int index) const
 {
     bool index_valid = (index<render_list_.size());
     if(!index_valid)
-    {
-        std::cerr<<"Render task index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Render task index out of range!");
     list<RenderBase*>::const_iterator iter = render_list_.begin();
     while(index != 0)
     {
@@ -135,10 +117,7 @@ RenderBase* RenderManager::taskAtIndex(unsigned int index)
 {
     bool index_valid = (index<render_list_.size());
     if(!index_valid)
-    {
-        std::cerr<<"Render task index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Render task index out of range!");
     list<RenderBase*>::iterator iter = render_list_.begin();
     while(index != 0)
     {
@@ -179,10 +158,7 @@ void RenderManager::renderAtIndex(unsigned int index)
 {
     bool index_valid = (index<render_list_.size());
     if(!index_valid)
-    {
-        std::cerr<<"Render task index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Render task index out of range!");
     list<RenderBase*>::iterator iter = render_list_.begin();
     while(index != 0)
     {

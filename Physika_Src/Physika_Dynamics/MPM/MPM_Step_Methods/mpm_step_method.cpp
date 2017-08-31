@@ -8,7 +8,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -18,6 +18,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/MPM/mpm_base.h"
 #include "Physika_Dynamics/MPM/MPM_Step_Methods/mpm_step_method.h"
 
@@ -38,10 +39,7 @@ template <typename Scalar, int Dim>
 void MPMStepMethod<Scalar,Dim>::setMPMDriver(MPMBase<Scalar,Dim> *mpm_driver)
 {
     if(mpm_driver==NULL)
-    {
-        std::cerr<<"Error: Cannot set NULL MPM driver to MPMStepMethod, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Cannot set NULL MPM driver to MPMStepMethod!");
     this->mpm_driver_ = mpm_driver;
 }
 

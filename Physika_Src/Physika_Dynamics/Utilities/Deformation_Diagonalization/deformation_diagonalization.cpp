@@ -6,7 +6,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -18,8 +18,6 @@
 #include <iostream>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Matrices/matrix_2x2.h"
-#include "Physika_Core/Matrices/matrix_3x3.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Dynamics/Utilities/Deformation_Diagonalization/deformation_diagonalization.h"
 
@@ -66,7 +64,13 @@ void DeformationDiagonalization<Scalar,Dim>::diagonalizeDeformationGradient(cons
 {
     diagonalizationTrait(deform_grad,left_rotation,diag_deform_grad,right_rotation);
 }
-      
+            
+template <typename Scalar, int Dim>
+void DeformationDiagonalization<Scalar,Dim>::diagonalizeDeformationGradient(const SquareMatrix<Scalar,Dim> &deform_grad, DiagonalizedDeformation &diagonalized_deformation) const
+{
+    diagonalizeDeformationGradient(deform_grad,diagonalized_deformation.left_rotation,diagonalized_deformation.diag_deform_grad,diagonalized_deformation.right_rotation);
+}
+
 template <typename Scalar, int Dim>
 void DeformationDiagonalization<Scalar,Dim>::diagonalizationTrait(const SquareMatrix<Scalar,2> &deform_grad, SquareMatrix<Scalar,2> &left_rotation,
                                                                   SquareMatrix<Scalar,2> &diag_deform_grad, SquareMatrix<Scalar,2> &right_rotation) const

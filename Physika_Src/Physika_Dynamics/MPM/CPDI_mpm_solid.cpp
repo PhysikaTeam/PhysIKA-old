@@ -1,10 +1,10 @@
 /*
  * @file CPDI_mpm_solid.cpp 
- * @Brief CPDI(CPDI2) MPM driver used to simulate solid, uniform grid.
+ * @brief CPDI(CPDI2) MPM driver used to simulate solid, uniform grid.
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -19,6 +19,10 @@
 #include <map>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/physika_exception.h"
+#include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
+#include "Physika_Geometry/Volumetric_Meshes/cubic_mesh.h"
+#include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/MPM/mpm_internal.h"
 #include "Physika_Dynamics/MPM/MPM_Plugins/mpm_solid_plugin_base.h"
@@ -65,13 +69,13 @@ bool CPDIMPMSolid<Scalar,Dim>::withRestartSupport() const
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::write(const std::string &file_name)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
 void CPDIMPMSolid<Scalar,Dim>::read(const std::string &file_name)
 {
-//TO DO
+    throw PhysikaException("Not implemented!");
 }
 
 template <typename Scalar, int Dim>
@@ -263,15 +267,9 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::currentParticleDomainCorner(unsigne
                                                                                  const Vector<unsigned int,Dim> &corner_idx) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     else if(particle_idx >= this->particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     unsigned int corner_num = Dim==2 ? 4 : 8;
     unsigned int corner_num_per_dim = 2;
     Vector<unsigned int,Dim> idx = corner_idx;
@@ -283,10 +281,7 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::currentParticleDomainCorner(unsigne
         idx_1d += idx[i];
     }
     if(idx_1d >= corner_num)
-    {
-        std::cerr<<"Error: corner index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("corner index out of range!");
     return particle_domain_corners_[object_idx][particle_idx][idx_1d];
 }
 
@@ -295,15 +290,9 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigne
                                                                                  const Vector<unsigned int,Dim> &corner_idx) const
 {
     if(object_idx >= this->objectNum())
-    {
-        std::cerr<<"Error: object index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("object index out of range!");
     else if(particle_idx >= this->particleNumOfObject(object_idx))
-    {
-        std::cerr<<"Error: particle index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("particle index out of range!");
     unsigned int corner_num = Dim==2 ? 4 : 8;
     unsigned int corner_num_per_dim = 2;
     Vector<unsigned int,Dim> idx = corner_idx;
@@ -315,11 +304,60 @@ Vector<Scalar,Dim> CPDIMPMSolid<Scalar,Dim>::initialParticleDomainCorner(unsigne
         idx_1d += idx[i];
     }
     if(idx_1d >= corner_num)
-    {
-        std::cerr<<"Error: corner index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("corner index out of range!");
     return initial_particle_domain_corners_[object_idx][particle_idx][idx_1d];
+}
+
+template <typename Scalar, int Dim>
+bool CPDIMPMSolid<Scalar,Dim>::saveParticleDomain(unsigned int object_idx, const std::string &file_name) const
+{
+    if(object_idx >= this->objectNum())
+        throw PhysikaException("object index out of range!");
+    //construct Physika::VolumetricMesh from the particle domain data, and save it to disk
+    std::vector<Vector<Scalar,Dim> > corner_positions;
+    unsigned int *domains = NULL;
+    unsigned int corner_num = (Dim==2)?4:8;
+    unsigned int particle_num = this->particleNumOfObject(object_idx);
+    domains = new unsigned int[particle_num*corner_num];
+    corner_positions.clear();
+    for(unsigned int particle_idx = 0; particle_idx < particle_num; ++particle_idx)
+    {
+        for(unsigned int corner_idx = 0; corner_idx < corner_num; ++corner_idx)
+        {
+            typename std::vector<Vector<Scalar,Dim> >::iterator iter = std::find(corner_positions.begin(),corner_positions.end(),particle_domain_corners_[object_idx][particle_idx][corner_idx]);
+            if(iter == corner_positions.end())
+            {
+                corner_positions.push_back(particle_domain_corners_[object_idx][particle_idx][corner_idx]);
+                domains[particle_idx*corner_num+corner_idx] = corner_positions.size() - 1;
+            }
+            else
+            {
+                unsigned int idx = static_cast<unsigned int>(iter-corner_positions.begin());
+                domains[particle_idx*corner_num+corner_idx] = idx;
+            }
+        }
+    }
+    unsigned int vert_num = corner_positions.size();
+    Scalar *vertices = new Scalar[vert_num*Dim];
+    for(unsigned int i = 0; i < corner_positions.size(); ++i)
+        for(unsigned int j =0; j < Dim; ++j)
+            vertices[i*Dim+j] = corner_positions[i][j];
+    bool status = false;
+    if(Dim == 2)
+    {
+        QuadMesh<Scalar> *vol_mesh = new QuadMesh<Scalar>(vert_num,vertices,particle_num,domains);
+        status = VolumetricMeshIO<Scalar,2>::save(file_name,vol_mesh);
+        delete vol_mesh;
+    }
+    else
+    {
+        CubicMesh<Scalar> *vol_mesh = new CubicMesh<Scalar>(vert_num,vertices,particle_num,domains);
+        status = VolumetricMeshIO<Scalar,3>::save(file_name,vol_mesh);
+        delete vol_mesh;
+    }
+    delete[] domains;
+    delete[] vertices;
+    return status;
 }
 
 template <typename Scalar, int Dim>

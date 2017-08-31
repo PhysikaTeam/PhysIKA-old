@@ -4,7 +4,7 @@
  * @author Sheng Yang, Fei Zhu.
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -15,6 +15,7 @@
 #include <cstddef>
 #include <iostream>
 #include <GL/glut.h>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Render/Point_Render/point_render.h"
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 
@@ -101,10 +102,7 @@ template<typename Scalar, int Dim>
 Scalar PointRender<Scalar,Dim>::pointSize(unsigned int point_idx) const
 {
     if(point_idx>=point_num_)
-    {
-        std::cerr<<"Error: Point index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Point index out of range!");
     if(point_sizes_.size()==1)
         return point_sizes_[0];
     else if(point_idx>=point_sizes_.size())
@@ -117,10 +115,7 @@ template<typename Scalar, int Dim>
 void PointRender<Scalar,Dim>::setPointSize(unsigned int point_idx, Scalar point_size)
 {
     if(point_idx>=point_num_)
-    {
-        std::cerr<<"Error: Point index out of range, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Point index out of range!");
     if(point_size<=0)
     {
         std::cerr<<"Warning: invalid point size is provided, "<<default_point_size_<<" is used instead!\n";

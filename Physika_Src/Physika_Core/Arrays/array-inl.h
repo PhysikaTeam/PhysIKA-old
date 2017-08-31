@@ -1,11 +1,11 @@
 /*
- * @file array-inl.h 
+ * @file array-inl.h
  * @brief implementation of methods in array.h
  * @author Sheng Yang, Fei Zhu
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
+ * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -15,6 +15,7 @@
 #define PHYSIKA_CORE_ARRAYS_ARRAY_INL_H_
 
 #include <cstdlib>
+#include "Physika_Core/Utilities/physika_exception.h"
 
 namespace Physika{
 
@@ -30,7 +31,7 @@ std::ostream & operator<< (std::ostream &s, const Array<ElementType> &arr)
             s<<", ";
     }
     s<<"]";
-    return s; 
+    return s;
 }
 
 template <typename ElementType>
@@ -49,7 +50,8 @@ Array<ElementType>::Array(unsigned int element_count, const ElementType &value)
     :data_(NULL)
 {
     resize(element_count);
-    memset(data_, value, sizeof(ElementType)*element_count_);
+    for(unsigned int i = 0; i < element_count_; ++i)
+        data_[i] = value;
 }
 
 template <typename ElementType>
@@ -57,7 +59,8 @@ Array<ElementType>::Array(unsigned int element_count, const ElementType *data)
     :data_(NULL)
 {
     resize(element_count);
-    memcpy(data_, data, sizeof(ElementType) * element_count_);
+    for(unsigned int i = 0; i < element_count_; ++i)
+        data_[i] = data[i];
 }
 
 template <typename ElementType>
@@ -65,7 +68,8 @@ Array<ElementType>::Array(const Array<ElementType> &arr)
     :data_(NULL)
 {
     resize(arr.elementCount());
-    memcpy(data_, arr.data(), sizeof(ElementType) * element_count_);
+    for(unsigned int i = 0; i < element_count_; ++i)
+        data_[i] = arr.data_[i];
 }
 
 template <typename ElementType>
@@ -78,7 +82,8 @@ template <typename ElementType>
 Array<ElementType>& Array<ElementType>::operator = (const Array<ElementType> &arr)
 {
     resize(arr.elementCount());
-    memcpy(data_,arr.data(), sizeof(ElementType) * element_count_);
+    for(unsigned int i = 0; i < element_count_; ++i)
+        data_[i] = arr.data_[i];
     return *this;
 }
 
@@ -101,10 +106,7 @@ template <typename ElementType>
 ElementType& Array<ElementType>::operator[] (unsigned int id)
 {
     if(id>=element_count_)
-    {
-        std::cerr<<"Array index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Array index out of range!");
     return data_[id];
 }
 
@@ -112,10 +114,7 @@ template <typename ElementType>
 const ElementType& Array<ElementType>::operator[] (unsigned int id) const
 {
     if(id>=element_count_)
-    {
-        std::cerr<<"Array index out of range!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("Array index out of range!");
     return data_[id];
 }
 
@@ -159,10 +158,7 @@ template <typename ElementType>
 void Array<ElementType>::permutate(unsigned int *ids, unsigned int size)
 {
     if(size != element_count_)
-    {
-        std::cerr << "array size do not match!" << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException( "array size do not match!");
     if(element_count_>0)
     {
         ElementType * tmp = new ElementType[element_count_];

@@ -1,13 +1,13 @@
 /*
  * @file CPDI_update_method.h 
- * @Brief the particle domain update procedure introduced in paper:
+ * @brief the particle domain update procedure introduced in paper:
  *        "A convected particle domain interpolation technique to extend applicability of
  *         the material point method for problems involving massive deformations"
  *        It's the base class of all update methods derived from CPDI
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -55,8 +55,8 @@ public:
     CPDIUpdateMethod();
     virtual ~CPDIUpdateMethod();
     void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,2> &weight_function,
-                 std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
-                 std::vector<std::vector<unsigned int> > &particle_grid_pair_num);
+                                           std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,2> > > > &particle_grid_weight_and_gradient,
+                                           std::vector<std::vector<unsigned int> > &particle_grid_pair_num);
     void updateParticleDomain();
     void setCPDIDriver(CPDIMPMSolid<Scalar,2> *cpdi_driver);
 protected:
@@ -77,8 +77,8 @@ public:
     CPDIUpdateMethod();
     virtual ~CPDIUpdateMethod();
     void updateParticleInterpolationWeight(const GridWeightFunction<Scalar,3> &weight_function,
-                 std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
-                                                   std::vector<std::vector<unsigned int> > &particle_grid_pair_num);
+                                           std::vector<std::vector<std::vector<MPMInternal::NodeIndexWeightGradientPair<Scalar,3> > > > &particle_grid_weight_and_gradient,
+                                           std::vector<std::vector<unsigned int> > &particle_grid_pair_num);
     void updateParticleDomain();
     void setCPDIDriver(CPDIMPMSolid<Scalar,3> *cpdi_driver);
 protected:

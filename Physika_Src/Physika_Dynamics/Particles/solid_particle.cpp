@@ -5,7 +5,7 @@
  * @author Fei Zhu
  * 
  * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013 Physika Group.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -15,6 +15,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Dynamics/Particles/solid_particle.h"
 #include "Physika_Dynamics/Constitutive_Models/constitutive_model.h"
 
@@ -90,24 +91,34 @@ SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::deformationGradient() const
 }
 
 template <typename Scalar, int Dim>
+const ConstitutiveModel<Scalar,Dim>& SolidParticle<Scalar,Dim>::constitutiveModel() const
+{
+    if(constitutive_model_==NULL)
+        throw PhysikaException("SolidParticle constitutive model not set!");
+    return *constitutive_model_;
+}
+
+template <typename Scalar, int Dim>
+ConstitutiveModel<Scalar,Dim>& SolidParticle<Scalar,Dim>::constitutiveModel()
+{
+    if(constitutive_model_==NULL)
+        throw PhysikaException("SolidParticle constitutive model not set!");
+    return *constitutive_model_;
+}
+    
+template <typename Scalar, int Dim>
 Scalar SolidParticle<Scalar,Dim>::energy() const
 {
     if(constitutive_model_==NULL)
-    {
-        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
-    return constitutive_model_->energy(F_);
+        throw PhysikaException("SolidParticle constitutive model not set!");
+    return constitutive_model_->energyDensity(F_)*this->volume();
 }
 
 template <typename Scalar, int Dim>
 SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::firstPiolaKirchhoffStress() const
 {
     if(constitutive_model_==NULL)
-    {
-        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SolidParticle constitutive model not set!");
     return constitutive_model_->firstPiolaKirchhoffStress(F_);
 }
 
@@ -115,10 +126,7 @@ template <typename Scalar, int Dim>
 SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::secondPiolaKirchhoffStress() const
 {
     if(constitutive_model_==NULL)
-    {
-        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SolidParticle constitutive model not set!");
     return constitutive_model_->secondPiolaKirchhoffStress(F_);
 }
 
@@ -126,10 +134,7 @@ template <typename Scalar, int Dim>
 SquareMatrix<Scalar,Dim> SolidParticle<Scalar,Dim>::cauchyStress() const
 {
     if(constitutive_model_==NULL)
-    {
-        std::cerr<<"Error: SolidParticle constitutive model not set, program abort!\n";
-        std::exit(EXIT_FAILURE);
-    }
+        throw PhysikaException("SolidParticle constitutive model not set!");
     return constitutive_model_->cauchyStress(F_);
 }
 
