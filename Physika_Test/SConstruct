@@ -165,7 +165,7 @@ google_test_libs = SConscript('google_test/SConscript', exports = 'release_env o
 ###################################################################################################
 #generate project for non-unit test
 
-debug_target = ['Physika_Test_Src\\Physika_Non_Unit_Test_Src\\Physika_Dynamics\\SPH\\GPU_SPH\\cuda_pbd_sph_test.exe']
+debug_target = ['Physika_Test_Src\\Physika_Non_Unit_Test_Src\\\Physika_Render\\Screen_Based_Render_Manager\\vdrift_render_test.exe']
 
 non_unit_test_env = []
 if build_type == 'Debug':
