@@ -4,9 +4,9 @@ A physics simulation library that a couple of guys and I plan to develop.
 
 @authors:
 Fei Zhu, 
+Wei Chen,
 Sheng Yang, 
 Tianxiang Zhang,
-Wei Chen,
 Liyou Xu,
 
 @Last update of this file:
@@ -19,6 +19,8 @@ Wei Chen, 08/31/2017
 *Build Tool*: Scons
 
 *Platforms*: Windows, Linux, MacOS
+
+*Language*: C++ 11/14 & Cuda
 
 *Compiler*: GNU G++, MSVC(2015 or newer)
 
