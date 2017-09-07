@@ -1,6 +1,6 @@
 **Physika**
 
-A physical Engine capable of simulating a variety of phenomena including rigid body dynamics, deformation of soft body, fluid, collision detection and response, etc.
+A physics engine capable of simulating a variety of phenomena including rigid body dynamics, deformation of soft body, fluid, collision detection and response, etc.
 
 @authors:
 Fei Zhu, 
