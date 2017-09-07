@@ -336,10 +336,10 @@ void ScreenBasedRenderManager::applyShadowMap()
     glm::mat4 light_transform_mat = light_proj_mat*light_model_view_mat;
 
     /*******************************************************************************************************************/
-    std::cout <<"light_pos: "<< light_pos_ << std::endl;
-    std::cout <<"light_target: "<< light_target_ << std::endl;
-    std::cout <<"light_dir: "<< light_dir[0] << " " << light_dir[1] << " " << light_dir[2] << std::endl;
-    std::cout << "------------------------------------" << std::endl;
+    //std::cout <<"light_pos: "<< light_pos_ << std::endl;
+    //std::cout <<"light_target: "<< light_target_ << std::endl;
+    //std::cout <<"light_dir: "<< light_dir[0] << " " << light_dir[1] << " " << light_dir[2] << std::endl;
+    //std::cout << "------------------------------------" << std::endl;
     /*******************************************************************************************************************/
 
     glVerify(glUniformMatrix4fv(glGetUniformLocation(this->shape_program_.id(), "lightTransform"), 1, false, glm::value_ptr(light_transform_mat)));
@@ -538,9 +538,9 @@ void ScreenBasedRenderManager::setCameraProjAndModelViewMatrix()
     const Vector<double, 3> & camera_up_dir = this->glut_window_->cameraUpDirection();
 
     /************************************************************************/
-    std::cout << "camera_pos: " << camera_pos << std::endl;
-    std::cout << "camera_focus_pos: " << camera_focus_pos << std::endl;
-    std::cout << "camera_up_dir: " << camera_up_dir << std::endl;
+    //std::cout << "camera_pos: " << camera_pos << std::endl;
+    //std::cout << "camera_focus_pos: " << camera_focus_pos << std::endl;
+    //std::cout << "camera_up_dir: " << camera_up_dir << std::endl;
     /************************************************************************/
 
     glm::vec3 glm_camera_pos = { camera_pos[0], camera_pos[1], camera_pos[2] };
@@ -566,6 +566,7 @@ void ScreenBasedRenderManager::setLightProjAndModelViewMatrix()
     glm::mat4 light_model_view_mat = glm::lookAt(light_pos, light_target, light_up);
 
     /************************************************************************************************************/
+    /*
     std::cout << "light_pos: " << light_pos_ << std::endl;
     std::cout << "light_target: " << light_target_ << std::endl;
     std::cout << "light_fov: " << light_fov_ << std::endl;
@@ -581,6 +582,7 @@ void ScreenBasedRenderManager::setLightProjAndModelViewMatrix()
     std::cout << std::endl;
 
     std::cout << "------------------------------------" << std::endl;
+    */
     /************************************************************************************************************/
 
     this->setProjAndModelViewMatrix(glm::value_ptr(light_proj_mat), glm::value_ptr(light_model_view_mat));
