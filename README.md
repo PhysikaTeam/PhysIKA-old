@@ -7,7 +7,7 @@ Fei Zhu,
 Wei Chen,
 Sheng Yang, 
 Tianxiang Zhang,
-Liyou Xu,
+Liyou Xu
 
 @Last update of this file:
 Wei Chen, 08/31/2017
