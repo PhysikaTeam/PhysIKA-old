@@ -1,6 +1,6 @@
 **Physika**
 
-A physics simulation library that a couple of guys and I plan to develop.
+A physical Engine capable of simulating a variety of phenomena including rigid body dynamics, deformation of soft body, fluid, collision detection and response, etc.
 
 @authors:
 Fei Zhu, 
