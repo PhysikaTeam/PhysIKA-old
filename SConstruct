@@ -226,8 +226,8 @@ for name in dependencies:
         if name == 'OpenGL':  #SPECIAL HANDLING FOR OPENGL HEADERS, TO KEEP THE "#include <GL/XXX.h>" STYLE
             lib_header_files = glob(os.path.join(src_dependency_root_path+name, 'GL/*.h'))
             
-            for dir,_,_ in os.walk(os.path.join(src_dependency_root_path+name, 'glm/')):
-                lib_header_files.extend(glob(os.path.join(dir, '*.hpp')))
+            #copy glm
+            Command(target_dependency_include_path+name+'/glm', src_dependency_root_path+name+'/glm', Copy("$TARGET","$SOURCE"))
                 
             for header_file in lib_header_files:
                 target_file = header_file.replace(src_dependency_root_path, target_dependency_include_path)    #COPY INTO OPENGL HEADER DIRECTORY
