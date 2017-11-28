@@ -66,7 +66,7 @@ Quaternion<Scalar>::Quaternion(const Scalar *ptrq):
     x_(ptrq[0]),
     y_(ptrq[1]),
     z_(ptrq[2]),
-    w_(ptrq[4])
+    w_(ptrq[3])
 {
 }
 
