@@ -75,13 +75,7 @@ GlutWindow::~GlutWindow()
 
 void GlutWindow::createWindow()
 {
-    window_id_ = glutCreateWindow(window_name_.c_str());
-    if (glewInit() != GLEW_OK)
-    {
-        std::cerr << "error: can't init glew!\n";
-        std::exit(EXIT_FAILURE);
-    }
-
+    glutShowWindow();
     glutSetWindowData(this);  //bind 'this' pointer with the window
     glutDisplayFunc(display_function_);
     glutIdleFunc(idle_function_);
@@ -96,9 +90,7 @@ void GlutWindow::createWindow()
 
     (*init_function_)(); //call the init function before entering main loop
     if (event_mode_ == false)
-    {
         glutMainLoop();
-    }
 }
 
 void GlutWindow::closeWindow()
@@ -759,6 +751,15 @@ void GlutWindow::initOpenGLContext()
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);  //this option allows leaving the glut loop without exit program
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA);
     glutInitWindowSize(initial_width_, initial_height_);
+    window_id_ = glutCreateWindow(window_name_.c_str());
+    glutHideWindow();
+
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK)
+    {
+        std::cerr << "error: can't init glew!\n";
+        std::exit(EXIT_FAILURE);
+    }
 
 }
 
