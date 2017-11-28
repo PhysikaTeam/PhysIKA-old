@@ -190,6 +190,7 @@ protected:
     static void mouseWheelFunction(int wheel, int direction, int x, int y); //mouse wheel: zoom
     static void initFunction(void);  // init viewport and background color
 
+    void initOpenGLContext();
     void initCallbacks();  //init default callbacks
     void resetMouseState();  //rest mouse
     void initDefaultLight(); //init a default light

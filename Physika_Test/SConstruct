@@ -190,7 +190,7 @@ for src_file in non_unit_test_src_files:
                     Command(os.path.dirname(target_name)+'/'+dll_name, rpath+dll_name, Copy("$TARGET", "$SOURCE"))
 
 if compiler == 'msvc':
-    debug_target = ['Physika_Test_Src\\Physika_Non_Unit_Test_Src\\\Physika_Render\\Screen_Based_Render_Manager\\vdrift_render_test.exe']
+    debug_target = ['Physika_Test_Src\\Physika_Non_Unit_Test_Src\\\Physika_Render\\Screen_Based_Render_Manager\\screen_based_render_manager_test.exe']
     non_unit_test_proj = non_unit_test_env.MSVSProject(target = 'Physika_Non_Unit_Test'+env['MSVSPROJECTSUFFIX'], srcs = non_unit_test_src_files, buildtarget = debug_target, variant = 'debug', auto_build_solution = 0)
 ###################################################################################################
 

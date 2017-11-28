@@ -37,6 +37,8 @@ GlutWindow::GlutWindow()
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
     light_manager_.insertBack(&default_light_);
+
+    initOpenGLContext();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name)
@@ -49,6 +51,8 @@ GlutWindow::GlutWindow(const std::string &window_name)
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
     light_manager_.insertBack(&default_light_);
+
+    initOpenGLContext();
 }
 
 GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsigned int height)
@@ -60,8 +64,9 @@ GlutWindow::GlutWindow(const std::string &window_name, unsigned int width, unsig
     resetMouseState();
     camera_.setCameraAspect((GLdouble)initial_width_/initial_height_);
     initCallbacks();
-    default_light_.turnOn();
     light_manager_.insertBack(&default_light_);
+
+    initOpenGLContext();
 }
 
 GlutWindow::~GlutWindow()
@@ -70,18 +75,13 @@ GlutWindow::~GlutWindow()
 
 void GlutWindow::createWindow()
 {
-    resetMouseState(); //reset the state of mouse every time the window is created
-    int argc = 1;
-    const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
-    char *argv[1];
-    char name_str[max_length];
-    strcpy(name_str,window_name_.c_str());
-    argv[0] = name_str;
-    glutInit(&argc,argv);
-    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);  //this option allows leaving the glut loop without exit program
-    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_ALPHA);
-    glutInitWindowSize(initial_width_,initial_height_);
-    window_id_ = glutCreateWindow(name_str);
+    window_id_ = glutCreateWindow(window_name_.c_str());
+    if (glewInit() != GLEW_OK)
+    {
+        std::cerr << "error: can't init glew!\n";
+        std::exit(EXIT_FAILURE);
+    }
+
     glutSetWindowData(this);  //bind 'this' pointer with the window
     glutDisplayFunc(display_function_);
     glutIdleFunc(idle_function_);
@@ -92,11 +92,7 @@ void GlutWindow::createWindow()
     glutMouseFunc(mouse_function_);
     glutMouseWheelFunc(mouse_wheel_function_);
 
-    if (glewInit() != GLEW_OK)
-    {
-        std::cerr << "error: can't init glew!\n";
-        std::exit(EXIT_FAILURE);
-    }
+    resetMouseState(); //reset the state of mouse every time the window is created
 
     (*init_function_)(); //call the init function before entering main loop
     if (event_mode_ == false)
@@ -748,6 +744,22 @@ void GlutWindow::initFunction(void)
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );						// specify implementation-specific hints
     Color<double> background_color = window->background_color_;
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
+}
+
+void GlutWindow::initOpenGLContext()
+{
+    int argc = 1;
+    const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
+    char *argv[1];
+    char name_str[max_length];
+    strcpy(name_str, window_name_.c_str());
+    argv[0] = name_str;
+
+    glutInit(&argc, argv);
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);  //this option allows leaving the glut loop without exit program
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA);
+    glutInitWindowSize(initial_width_, initial_height_);
+
 }
 
 void GlutWindow::initCallbacks()
