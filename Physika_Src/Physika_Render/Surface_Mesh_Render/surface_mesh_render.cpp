@@ -22,6 +22,7 @@
 #include "Physika_Render/Color/color.h"
 #include "Physika_Core/Transform/transform_3d.h"
 #include "Physika_Core/Image/image.h"
+#include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
 
 
 namespace Physika{
@@ -97,7 +98,7 @@ template <typename Scalar>
 void SurfaceMeshRender<Scalar>::setSurfaceMesh(SurfaceMesh<Scalar> *mesh)
 {
     mesh_ = mesh;
-    //after updating the mesh, the textures needed to be update correspondently
+    //after updating the mesh, the textures needed to be update correspondingly
     releaseTextures();
     loadTextures();
     deleteDisplayLists();
@@ -427,7 +428,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
             {
                 Face<Scalar> &face_ref = group_ref.face(face_idx);          // get face reference
                 unsigned int num_vertex = face_ref.numVertices();          // get vertex number of face
-                glVerify(glBegin(GL_POLYGON));                                       // draw polygon with SOLID MODE
+                glBegin(GL_POLYGON);                                       // draw polygon with SOLID MODE
                 for(unsigned int vertex_idx=0; vertex_idx<num_vertex; vertex_idx++) // loop for every vertex
                 {
                     // if use smooth mode 
@@ -437,13 +438,13 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                         {
                             unsigned int vertex_normal_ID = face_ref.vertex(vertex_idx).normalIndex();
                             Vector<Scalar,3> vertex_normal = this->mesh_->vertexNormal(vertex_normal_ID);
-                            glVerify(openGLNormal(vertex_normal));
+                            openGLNormal(vertex_normal);
                         }
                     }
                     else if(face_ref.hasFaceNormal())
                     {
                         Vector<Scalar,3> face_normal = face_ref.faceNormal();
-                        glVerify(openGLNormal(face_normal));
+                        openGLNormal(face_normal);
                     }
 
                     // if vertex has a texture coordinate
@@ -451,11 +452,11 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                     {
                         unsigned int vertex_texture_ID = face_ref.vertex(vertex_idx).textureCoordinateIndex();
                         Vector<Scalar,2> vertex_textureCoord = this->mesh_->vertexTextureCoordinate(vertex_texture_ID);
-                        glVerify(openGLTexCoord(vertex_textureCoord));
+                        openGLTexCoord(vertex_textureCoord);
                     }
                     unsigned position_ID = face_ref.vertex(vertex_idx).positionIndex();   // get vertex positionIndex in "surface mesh"
                     Vector<Scalar,3> position = this->mesh_->vertexPosition(position_ID); // get the position of vertex which is stored in "surface mesh"
-                    glVerify(openGLVertex(position));
+                    openGLVertex(position);
                 }
                 glVerify(glEnd());
             }
@@ -696,7 +697,7 @@ void SurfaceMeshRender<Scalar>::loadTextures()
     if(this->textures_.size() != num_material)
         this->textures_.resize(num_material);                  // resize the Array: textures_ ,which store the texture information from material, thus its size is equal to material size
 
-    for(unsigned int material_idx=0; material_idx<num_material; material_idx++) // loop for ervery material
+    for(unsigned int material_idx=0; material_idx<num_material; material_idx++) // loop for every material
     {
         Material<Scalar> &material_ref = this->mesh_->material(material_idx);    // get material reference
 
@@ -717,13 +718,18 @@ void SurfaceMeshRender<Scalar>::loadTextures()
                 this->textures_[material_idx] = texture;
                 continue;
             }
+
+            //if use png file, we vertically flip the image 
+            if(FileUtilities::fileExtension(material_ref.textureFileName()) == ".png")
+                image.flipVertically();
+            
             texture.first = true;
             glEnable(GL_TEXTURE_2D);
             glGenTextures(1, &(texture.second));                              // generate texture object
             glBindTexture(GL_TEXTURE_2D, texture.second);                     // bind the texture
 
-            openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);     // set paremeters GL_TEXTURE_WRAP_S
-            openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);     // set paremeters GL_TEXTURE_WRAP_T
+            openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);     // set parameters GL_TEXTURE_WRAP_S
+            openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);     // set parameters GL_TEXTURE_WRAP_T
             openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /// warning: we have to set the FILTER, otherwise the TEXTURE will "not" appear
 
@@ -732,6 +738,7 @@ void SurfaceMeshRender<Scalar>::loadTextures()
             glDisable(GL_TEXTURE_2D);         
 
             this->textures_[material_idx] = texture; // add texture to Array textures_
+            
         }
         else
         {
@@ -751,7 +758,7 @@ void SurfaceMeshRender<Scalar>::releaseTextures()
         if(this->textures_[material_idx].first==true)
         {
             this->textures_[material_idx].first=false;
-            glDeleteTextures(1,&this->textures_[material_idx].second);
+            glVerify(glDeleteTextures(1,&this->textures_[material_idx].second));
         }
     }
 }
@@ -760,10 +767,10 @@ template <typename Scalar>
 void SurfaceMeshRender<Scalar>::deleteDisplayLists()
 {
     //old displaylists are deleted whenever synchronization is needed
-    glDeleteLists(this->solid_display_list_id_, 1);
-    glDeleteLists(this->wire_display_list_id_, 1);
-    glDeleteLists(this->vertex_display_list_id_, 1);
-    glDeleteLists(this->solid_with_custom_color_vector_display_list_id_, 1);
+    glVerify(glDeleteLists(this->solid_display_list_id_, 1));
+    glVerify(glDeleteLists(this->wire_display_list_id_, 1));
+    glVerify(glDeleteLists(this->vertex_display_list_id_, 1));
+    glVerify(glDeleteLists(this->solid_with_custom_color_vector_display_list_id_, 1));
 
     this->solid_display_list_id_ = 0;
     this->wire_display_list_id_ = 0;
@@ -771,7 +778,7 @@ void SurfaceMeshRender<Scalar>::deleteDisplayLists()
     this->solid_with_custom_color_vector_display_list_id_ = 0;
 }
 
-//explicit instantitation
+//explicit instantiation
 template class SurfaceMeshRender<float>;
 template class SurfaceMeshRender<double>;
 
