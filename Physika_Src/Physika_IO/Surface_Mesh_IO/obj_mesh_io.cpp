@@ -270,8 +270,8 @@ bool ObjMeshIO<Scalar>::load(const std::string &filename, SurfaceMesh<Scalar> *m
                                 return false;
                             }
                             Vertex<Scalar> vertex_temple(pos-1);
-                            vertex_temple.setNormalIndex(nor-1);
-                            vertex_temple.setTextureCoordinateIndex(tex-1);
+                            if (nor != 0)vertex_temple.setNormalIndex(nor - 1);
+                            if (tex != 0)vertex_temple.setTextureCoordinateIndex(tex - 1);
                             face_temple.addVertex(vertex_temple);
                         }
                     }
