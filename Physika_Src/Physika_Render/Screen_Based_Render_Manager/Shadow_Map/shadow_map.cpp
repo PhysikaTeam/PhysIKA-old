@@ -12,7 +12,9 @@
 *
 */
 
-#include <GL/glew.h>
+#include <Physika_Render/OpenGL_Primitives/glew_utilities.h>
+#include <Physika_Render/OpenGL_Primitives/opengl_primitives.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -53,7 +55,14 @@ void ShadowMap::initShadowFrameBuffer()
     glVerify(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadow_resolution_, shadow_resolution_, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL));
 
     //bind shadow_TEX to shadow_FBO
-    glVerify(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->shadow_FBO_, 0));
+    glVerify(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->shadow_TEX_, 0));
+
+    if (openGlCheckCurFramebufferStatus() != GL_FRAMEBUFFER_COMPLETE)
+        exit(EXIT_FAILURE);
+
+    //switch to default screen buffer & texture
+    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    glVerify(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 void ShadowMap::destoryShadowFrameBuffer()
@@ -72,14 +81,14 @@ void ShadowMap::beginShadowMap()
     glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->shadow_FBO_));
 
     //clear background and depth buffer
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glVerify(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+    glVerify(glClear(GL_DEPTH_BUFFER_BIT));
 
     //reset viewport 
-    glViewport(0, 0, shadow_resolution_, shadow_resolution_);
+    glVerify(glViewport(0, 0, shadow_resolution_, shadow_resolution_));
 
     // draw back faces 
-    glDisable(GL_CULL_FACE);
+    glVerify(glDisable(GL_CULL_FACE));
 
     //use shadow_program
     this->shadow_program_.use();
@@ -95,10 +104,13 @@ void ShadowMap::endShadowMap()
     glDisable(GL_POLYGON_OFFSET_FILL);
 
     //enable cull face
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
 
     //unuse shadow_program
     this->shadow_program_.unUse();
+    
+    //switch to default screen buffer
+    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 GLuint ShadowMap::shadowTexId() const

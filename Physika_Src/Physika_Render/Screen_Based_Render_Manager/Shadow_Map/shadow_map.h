@@ -44,8 +44,8 @@ public:
 
 private:
 
-    GLuint shadow_TEX_;
-    GLuint shadow_FBO_;
+    GLuint shadow_TEX_ = 0;
+    GLuint shadow_FBO_ = 0;
 
     ShaderProgram shadow_program_;
 
