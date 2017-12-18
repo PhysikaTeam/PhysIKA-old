@@ -42,14 +42,18 @@ public:
     GLuint shadowTexId() const;
     GLuint shadowFboId() const;
 
+    void renderShadowTexToScreen();
+
 private:
 
     GLuint shadow_TEX_ = 0;
     GLuint shadow_FBO_ = 0;
 
-    ShaderProgram shadow_program_;
+    ShaderProgram shadow_program_;              //used to create shadow map
+    ShaderProgram shadow_map_render_program_;   //used to render shadow map to screen
 
-    static const int shadow_resolution_ = 2048;
+    static const int shadow_width_resolution_ = 2048;
+    static const int shadow_height_resolution_ = 2048;
 };
 
 }// end of namespace Physika

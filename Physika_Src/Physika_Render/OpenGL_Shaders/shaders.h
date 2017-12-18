@@ -21,33 +21,233 @@ namespace Physika{
 
 shaders in this file are extracted from Flex, which include:
 
-1.vertex_point_shader
-2.fragment_point_shader
+1.vertex_pass_through_shader
+2.fragment_pass_through_shader
 
-3.vertex_shader
-4.pass_through_shader
+3.shadow_map_fragment_shader
 
+4.vertex_shader
 5.frament_shader
 
-6.vertex_point_depth_shader
-7.fragment_point_thickness_shader
+6.vertex_point_shader
+7.fragment_point_shader
 
-8.vertex_ellipsoid_depth_shader
-9.geometry_ellipsoid_depth_shader
-10.fragment_ellipsoid_depth_shader
+8.vertex_point_depth_shader
+9.fragment_point_thickness_shader
 
-11.vertex_pass_through_shader
-12.fragment_blur_depth_shader
-13.fragment_composite_shader
+10.vertex_ellipsoid_depth_shader
+11.geometry_ellipsoid_depth_shader
+12.fragment_ellipsoid_depth_shader
 
-14.vertex_diffuse_shader
-15.geometry_diffuse_shader
-16.fragment_diffuse_shader
+13.vertex_pass_through_shader
+14.fragment_blur_depth_shader
+15.fragment_composite_shader
+
+16.vertex_diffuse_shader
+17.geometry_diffuse_shader
+18.fragment_diffuse_shader
 
 */
 
 
 #define STRINGIFY(A) #A
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//vertex pass through shader
+static const char * vertex_pass_through_shader = STRINGIFY(
+
+void main()
+{
+    gl_Position = vec4(gl_Vertex.xyz, 1.0);
+    gl_TexCoord[0] = gl_MultiTexCoord0;
+}
+
+);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static const char * fragment_pass_through_shader = STRINGIFY(
+
+void main()
+{
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+}
+
+);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//shadow map fragment shader
+static const char * shadow_map_fragment_shader = STRINGIFY(
+
+uniform sampler2D  shadow_tex;
+
+void main()
+{
+    float depth_value = texture2D(shadow_tex, gl_TexCoord[0].xy).r;
+    
+    float mag_factor = 10.0f;
+    gl_FragColor = vec4(mag_factor*(1.0f - depth_value), 0.0f, 0.0f, 1.0f);
+}
+
+);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// vertex shader
+static const char * vertex_shader = "#version 130\n" STRINGIFY(
+
+uniform mat4 lightTransform;
+uniform vec3 lightDir;
+
+uniform float bias;
+uniform float expand;
+
+uniform vec4 clipPlane;
+
+uniform mat4 objectTransform;
+
+void main()
+{
+    vec3 n = normalize((objectTransform*vec4(gl_Normal, 0.0)).xyz);  //normal
+    vec3 p = (objectTransform*vec4(gl_Vertex.xyz, 1.0)).xyz;         //vertex pos after object transform
+
+    //vertex pos after modelview & projection transform
+    gl_Position = gl_ModelViewProjectionMatrix * vec4(p + expand*n, 1.0);
+
+    gl_TexCoord[0].xyz = n;                                          //vertex normal
+    //gl_TexCoord[1] = lightTransform*vec4(p + n*bias, 1.0);           //vertex pos after light transform
+    gl_TexCoord[1] = lightTransform*vec4(p, 1.0);                    //vertex pos after light transform
+    gl_TexCoord[2] = gl_ModelViewMatrix * vec4(lightDir, 0.0);       //no use ?
+    gl_TexCoord[3].xyz = p;                                          //vertex pos before transform                          
+    gl_TexCoord[4] = gl_Color;                                       //vertex color
+    gl_TexCoord[5] = gl_MultiTexCoord0;                              //vertex texcoord
+    gl_TexCoord[6] = gl_SecondaryColor;                              //vertex secondary color
+    gl_TexCoord[7] = gl_ModelViewMatrix * vec4(gl_Vertex.xyz, 1.0);  //vertex pos after modelview transform
+
+    gl_ClipDistance[0] = dot(clipPlane, vec4(gl_Vertex.xyz, 1.0));
+}
+
+);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+static const char * fragment_shader = "#version 130\n" STRINGIFY(
+
+uniform vec3 lightDir;
+uniform vec3 lightPos;
+uniform float spotMin;
+uniform float spotMax;
+
+uniform vec3 color;
+uniform vec4 fogColor;
+
+uniform vec2 shadowTaps[12];
+
+uniform sampler2D tex;
+uniform sampler2D shadowTex;
+
+
+uniform bool sky;
+uniform bool grid;
+uniform bool texture;
+
+// sample shadow map
+float shadowSample()
+{
+    vec3 pos = vec3(gl_TexCoord[1].xyz / gl_TexCoord[1].w);
+
+    //convert to NDC
+    vec3 uvw = pos.xyz*0.5 + 0.5;   
+
+    // user clip
+    if (uvw.x  < 0.0 || uvw.x > 1.0)
+        return 1.0;
+    if (uvw.y < 0.0 || uvw.y > 1.0)
+        return 1.0;
+
+    float s = 0.0;
+    float radius = 0.002f;
+    float bias = 0.000f;
+
+    const int numTaps = 12;
+    for (int i = 0; i < numTaps; i++)
+    {
+        bool isShadow = uvw.z - bias > texture2D(shadowTex, vec2(uvw.xy + shadowTaps[i] * radius)).r;
+        if (isShadow == false) s += 1;
+    }
+    s /= numTaps;
+
+    return s;
+}
+
+float filterwidth(vec2 v)
+{
+    vec2 fw = max(abs(dFdx(v)), abs(dFdy(v)));
+    return max(fw.x, fw.y);
+}
+
+vec2 bump(vec2 x)
+{
+    return (floor((x) / 2) + 2.f * max(((x) / 2) - floor((x) / 2) - .5f, 0.f));
+}
+
+float checker(vec2 uv)
+{
+    float width = filterwidth(uv);
+    vec2 p0 = uv - 0.5 * width;
+    vec2 p1 = uv + 0.5 * width;
+
+    vec2 i = (bump(p1) - bump(p0)) / width;
+    return i.x * i.y + (1 - i.x) * (1 - i.y);
+}
+
+void main()
+{
+    
+    // calculate lighting
+    //float shadow = max(shadowSample(), 0.5);
+    float shadow = shadowSample();
+
+    vec3 lVec = normalize(gl_TexCoord[3].xyz - lightPos);
+    vec3 lPos = vec3(gl_TexCoord[1].xyz / gl_TexCoord[1].w);
+    float attenuation = max(smoothstep(spotMax, spotMin, dot(lPos.xy, lPos.xy)), 0.05);
+
+    vec3 n = gl_TexCoord[0].xyz;
+    vec3 color = gl_TexCoord[4].xyz;
+
+    if (!gl_FrontFacing)
+    {
+        color = gl_TexCoord[6].xyz;
+        n *= -1.0f;
+    }
+
+    if (grid && (n.y > 0.995))
+        color *= 1.0 - 0.25 * checker(vec2(gl_TexCoord[3].x, gl_TexCoord[3].z));
+    else if (grid && abs(n.z) > 0.995)
+        color *= 1.0 - 0.25 * checker(vec2(gl_TexCoord[3].y, gl_TexCoord[3].x));
+
+    if (texture)
+        color *= texture2D(tex, gl_TexCoord[5].xy).xyz;
+
+    // direct light term
+    float wrap = 0.0;
+    vec3 diffuse = color*max(0.0, (-dot(lightDir, n) + wrap) / (1.0 + wrap)*shadow)*attenuation;
+
+    // wrap ambient term aligned with light dir
+    vec3 light = vec3(0.03, 0.025, 0.025)*1.5;
+    vec3 dark = vec3(0.025, 0.025, 0.03);
+    vec3 ambient = 4.0*color*mix(dark, light, -dot(lightDir, n)*0.5 + 0.5)*attenuation;
+
+    vec3 fog = mix(vec3(fogColor), diffuse + ambient, exp(gl_TexCoord[7].z*fogColor.w));
+
+    gl_FragColor = vec4(pow(fog, vec3(1.0 / 2.2)), 1.0);
+    
+    //gl_FragColor = vec4(shadow);
+    //gl_FragColor = vec4(texture2D(tex, gl_TexCoord[5].xy) == texture2D(shadowTex, gl_TexCoord[5].xy));
+    
+}
+
+);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -94,7 +294,6 @@ void main()
     else if (mode == 2)
     {
         gl_PointSize *= clamp(gl_Vertex.w*0.25, 0.0f, 1.0);
-
         gl_TexCoord[3].xyzw = vec4(clamp(gl_Vertex.w*0.05, 0.0f, 1.0));
     }
     else
@@ -190,171 +389,6 @@ void main()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// vertex shader
-static const char * vertex_shader = "#version 130\n" STRINGIFY(
-
-uniform mat4 lightTransform;
-uniform vec3 lightDir;
-uniform float bias;
-uniform vec4 clipPlane;
-uniform float expand;
-
-uniform mat4 objectTransform;
-
-void main()
-{
-    vec3 n = normalize((objectTransform*vec4(gl_Normal, 0.0)).xyz);
-    vec3 p = (objectTransform*vec4(gl_Vertex.xyz, 1.0)).xyz;
-
-    // calculate window-space point size
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(p + expand*n, 1.0);
-
-    gl_TexCoord[0].xyz = n;
-    gl_TexCoord[1] = lightTransform*vec4(p + n*bias, 1.0);
-    gl_TexCoord[2] = gl_ModelViewMatrix*vec4(lightDir, 0.0);
-    gl_TexCoord[3].xyz = p;
-    gl_TexCoord[4] = gl_Color;
-    gl_TexCoord[5] = gl_MultiTexCoord0;
-    gl_TexCoord[6] = gl_SecondaryColor;
-    gl_TexCoord[7] = gl_ModelViewMatrix*vec4(gl_Vertex.xyz, 1.0);
-
-    gl_ClipDistance[0] = dot(clipPlane, vec4(gl_Vertex.xyz, 1.0));
-}
-
-);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-static const char * pass_through_shader = STRINGIFY(
-
-void main()
-{
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-
-}
-
-);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// pixel shader for rendering points as shaded spheres
-static const char * fragment_shader = STRINGIFY(
-
-uniform vec3 lightDir;
-uniform vec3 lightPos;
-uniform float spotMin;
-uniform float spotMax;
-uniform vec3 color;
-uniform vec4 fogColor;
-
-uniform sampler2DShadow shadowTex;
-uniform vec2 shadowTaps[12];
-
-uniform sampler2D tex;
-uniform bool sky;
-
-uniform bool grid;
-uniform bool texture;
-
-float sqr(float x) { return x*x; }
-
-// sample shadow map
-float shadowSample()
-{
-    vec3 pos = vec3(gl_TexCoord[1].xyz / gl_TexCoord[1].w);
-    vec3 uvw = (pos.xyz*0.5) + vec3(0.5);
-
-    // user clip
-    if (uvw.x  < 0.0 || uvw.x > 1.0)
-        return 1.0;
-    if (uvw.y < 0.0 || uvw.y > 1.0)
-        return 1.0;
-
-    float s = 0.0;
-    float radius = 0.002;
-
-    const int numTaps = 12;
-
-    for (int i = 0; i < numTaps; i++)
-    {
-        s += shadow2D(shadowTex, vec3(uvw.xy + shadowTaps[i] * radius, uvw.z)).r;
-    }
-
-    s /= numTaps;
-    return s;
-}
-
-float filterwidth(vec2 v)
-{
-    vec2 fw = max(abs(dFdx(v)), abs(dFdy(v)));
-    return max(fw.x, fw.y);
-}
-
-vec2 bump(vec2 x)
-{
-    return (floor((x) / 2) + 2.f * max(((x) / 2) - floor((x) / 2) - .5f, 0.f));
-}
-
-float checker(vec2 uv)
-{
-    float width = filterwidth(uv);
-    vec2 p0 = uv - 0.5 * width;
-    vec2 p1 = uv + 0.5 * width;
-
-    vec2 i = (bump(p1) - bump(p0)) / width;
-    return i.x * i.y + (1 - i.x) * (1 - i.y);
-}
-
-void main()
-{
-    // calculate lighting
-    float shadow = max(shadowSample(), 0.5);
-
-    vec3 lVec = normalize(gl_TexCoord[3].xyz - (lightPos));
-    vec3 lPos = vec3(gl_TexCoord[1].xyz / gl_TexCoord[1].w);
-    float attenuation = max(smoothstep(spotMax, spotMin, dot(lPos.xy, lPos.xy)), 0.05);
-
-    vec3 n = gl_TexCoord[0].xyz;
-    vec3 color = gl_TexCoord[4].xyz;
-
-    if (!gl_FrontFacing)
-    {
-        color = gl_TexCoord[6].xyz;
-        n *= -1.0f;
-    }
-
-    if (grid && (n.y > 0.995))
-    {
-        color *= 1.0 - 0.25 * checker(vec2(gl_TexCoord[3].x, gl_TexCoord[3].z));
-    }
-    else if (grid && abs(n.z) > 0.995)
-    {
-        color *= 1.0 - 0.25 * checker(vec2(gl_TexCoord[3].y, gl_TexCoord[3].x));
-    }
-
-    if (texture)
-    {
-        color = texture2D(tex, gl_TexCoord[5].xy).xyz;
-    }
-
-    // direct light term
-    float wrap = 0.0;
-    vec3 diffuse = color*vec3(1.0, 1.0, 1.0)*max(0.0, (-dot(lightDir, n) + wrap) / (1.0 + wrap)*shadow)*attenuation;
-
-    // wrap ambient term aligned with light dir
-    vec3 light = vec3(0.03, 0.025, 0.025)*1.5;
-    vec3 dark = vec3(0.025, 0.025, 0.03);
-    vec3 ambient = 4.0*color*mix(dark, light, -dot(lightDir, n)*0.5 + 0.5)*attenuation;
-
-    vec3 fog = mix(vec3(fogColor), diffuse + ambient, exp(gl_TexCoord[7].z*fogColor.w));
-
-    gl_FragColor = vec4(pow(fog, vec3(1.0 / 2.2)), 1.0);
-}
-
-);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
 static const char * vertex_point_depth_shader = STRINGIFY(
 
 uniform float pointRadius;  // point size in world space
@@ -420,7 +454,6 @@ void main()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Ellipsoid shaders
-
 static const char * vertex_ellipsoid_depth_shader = "#version 120\n" STRINGIFY(
 
 // rotation matrix in xyz, scale in w
@@ -650,20 +683,6 @@ void main()
         discard;
 
     gl_FragColor = vec4(0.5, 0.0, 0.0, 1.0);
-}
-
-);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Composite shaders
-
-static const char * vertex_pass_through_shader = STRINGIFY(
-
-void main()
-{
-    gl_Position = vec4(gl_Vertex.xyz, 1.0);
-    gl_TexCoord[0] = gl_MultiTexCoord0;
 }
 
 );

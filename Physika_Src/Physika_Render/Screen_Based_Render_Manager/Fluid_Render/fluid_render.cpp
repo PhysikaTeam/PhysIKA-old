@@ -962,8 +962,6 @@ void FluidRender::setDiffuseShadow(bool diffuse_shadow)
 
 void FluidRender::renderToFullScreenQuad()
 {
-    glColor3f(1.0f, 1.0f, 1.0f);
-
     glBegin(GL_QUADS);
 
     glTexCoord2f(0.0f, 0.0f);

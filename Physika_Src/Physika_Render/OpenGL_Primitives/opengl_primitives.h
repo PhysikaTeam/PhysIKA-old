@@ -421,6 +421,41 @@ inline void openGLMultMatrix(const SquareMatrix<double,4> & matrix)
     glMultMatrixd(matrix_);
 }
 
+//utility function used to render texture to full screen
+inline void openGLRenderToFullScreenQuad()
+{
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    glBegin(GL_QUADS);
+
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2f(-1.0f, -1.0f);
+
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2f(1.0f, -1.0f);
+
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2f(1.0f, 1.0f);
+
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2f(-1.0f, 1.0f);
+
+    glEnd();
+}
+
+inline void openGLRenderSimpleTriangle()
+{
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    glBegin(GL_TRIANGLES);
+
+    glVertex2f(-0.5f, -0.5f);
+    glVertex2f(0.5f,  -0.5f);
+    glVertex2f(0.0f, 0.5f);
+
+    glEnd();
+}
+
 /*
  * glAssert, assert function extracted from Flex
  */

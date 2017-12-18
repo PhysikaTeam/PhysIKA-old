@@ -14,6 +14,7 @@
 
 #include <Physika_Render/OpenGL_Primitives/glew_utilities.h>
 #include <Physika_Render/OpenGL_Primitives/opengl_primitives.h>
+#include <GL/freeglut.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -21,11 +22,13 @@
 #include "Physika_Render/OpenGL_Shaders/shaders.h"
 #include "Physika_Render/Screen_Based_Render_Manager/Shadow_Map/shadow_map.h"
 
+
 namespace Physika {
 
 ShadowMap::ShadowMap()
 {
-    this->shadow_program_.createFromCStyleString(vertex_shader, pass_through_shader);
+    this->shadow_program_.createFromCStyleString(vertex_shader, fragment_pass_through_shader);
+    this->shadow_map_render_program_.createFromCStyleString(vertex_pass_through_shader, shadow_map_fragment_shader);
     this->initShadowFrameBuffer();
 }
 
@@ -46,19 +49,28 @@ void ShadowMap::initShadowFrameBuffer()
     glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
+    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
+    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
+    
+    GLfloat border_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glVerify(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color));
+
     //this is to allow usage of shadow2DProj function in the shader 
-    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE));
-    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL));
-    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY));
+    //glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE));
+    //glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS));
+    //glVerify(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY));
 
     //allocate memory
-    glVerify(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadow_resolution_, shadow_resolution_, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL));
+    glVerify(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadow_width_resolution_, shadow_height_resolution_, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
 
     //bind shadow_TEX to shadow_FBO
     glVerify(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->shadow_TEX_, 0));
 
     if (openGlCheckCurFramebufferStatus() != GL_FRAMEBUFFER_COMPLETE)
         exit(EXIT_FAILURE);
+
+    //init depth buffer values to 1.0f
+    glVerify(glClear(GL_DEPTH_BUFFER_BIT));
 
     //switch to default screen buffer & texture
     glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -73,6 +85,8 @@ void ShadowMap::destoryShadowFrameBuffer()
 
 void ShadowMap::beginShadowMap()
 {
+    glEnable(GL_DEPTH_TEST);
+
     //enable polygon offset
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(8.f, 8.f);
@@ -81,11 +95,10 @@ void ShadowMap::beginShadowMap()
     glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->shadow_FBO_));
 
     //clear background and depth buffer
-    glVerify(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
     glVerify(glClear(GL_DEPTH_BUFFER_BIT));
 
     //reset viewport 
-    glVerify(glViewport(0, 0, shadow_resolution_, shadow_resolution_));
+    glVerify(glViewport(0, 0, shadow_width_resolution_, shadow_height_resolution_));
 
     // draw back faces 
     glVerify(glDisable(GL_CULL_FACE));
@@ -121,6 +134,42 @@ GLuint ShadowMap::shadowTexId() const
 GLuint ShadowMap::shadowFboId() const
 {
     return this->shadow_FBO_;
+}
+
+void ShadowMap::renderShadowTexToScreen()
+{
+    glVerify(glPushAttrib(GL_ALL_ATTRIB_BITS));
+
+    this->shadow_map_render_program_.use();
+    
+    glVerify(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+    glVerify(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_TEX_));
+    openGLRenderToFullScreenQuad();
+    glVerify(glBindTexture(GL_TEXTURE_2D, 0));
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    this->shadow_map_render_program_.unUse();
+
+    glVerify(glPopAttrib());
+
+    glVerify(glFinish());
+    glVerify(glutSwapBuffers());
 }
 
 }// end of namespace Physi
