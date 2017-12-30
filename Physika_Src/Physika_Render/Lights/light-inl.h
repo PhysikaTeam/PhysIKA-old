@@ -1,6 +1,6 @@
 /*
  * @file light-inl.h 
- * @Brief template function implemantation of  light class for OpenGL.
+ * @Brief template function implementation of  light class for OpenGL.
  * @author Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
