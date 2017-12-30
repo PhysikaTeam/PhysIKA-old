@@ -10,9 +10,15 @@ Physika_Test/**/*.dll
 *.sln
 *.vcxproj
 *.filters
+*.user
 *.VC.db
 *.VC.opendb
 *.exe
 *.ilk
 *.pdb
+*.vs/
+*.cd
+
+Physika_Test/debug
+debug/
 
