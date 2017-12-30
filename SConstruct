@@ -8,12 +8,9 @@
 
 ######################CONFIGURATIONS#############################
 
-#MSVC VERSION FOR WINDOWS ENV
-#msvc_version = '10.0'   #VS2010
-#msvc_version = '12.0'   #VS2013
-
-#TO SUPPORT C++11/14, VS2015 IS NEEDED
+#MSVC VERSION FOR WINDOWS ENV, TO SUPPORT C++11/14, VS2015 IS NEEDED
 msvc_version = '14.0'   #VS2015
+#msvc_version = '14.1'  #VS2017
 
 #USE OPENMP
 #use_openmp = True
@@ -22,6 +19,25 @@ use_openmp = False
 #USE CUDA
 use_cuda = True
 #use_cuda = False
+#################################################################
+
+
+#################################################################
+#HINTS OUTPUT
+
+print(
+'''
+*********************************************************************************************
+Note: 
+1. To support C++11/14 on windows platform, VS2015 or VS2017 is needed, you would sepcify "msvc_version" variable in this script.
+2. You would also specify to use "openmp" and enable "cuda" compiling by setting the "use_openmp" & "use_cuda" variable in this script.
+				 
+Error Shooting:
+1. On windows 8/10, administrator privilege is required to "scons" the project, so you should run shell window as admin.
+   For the same reason, you should also open .sln file as admin to enable building in VS IDE.
+*********************************************************************************************
+''')
+
 #################################################################
 
 #IMPORTS
