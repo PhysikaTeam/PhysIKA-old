@@ -5,7 +5,11 @@
 *.pyc
 
 Physika_Src/**/*.obj
+Physika_Test/**/*_test.obj
+Physika_Test/google_test/src/*.obj
 Physika_Test/**/*.dll
+
+_CL_*
 
 *.sln
 *.vcxproj
