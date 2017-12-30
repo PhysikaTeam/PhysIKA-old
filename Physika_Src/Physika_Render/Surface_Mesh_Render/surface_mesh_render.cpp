@@ -14,7 +14,10 @@
 
 #include <cstddef>
 #include <iostream>
+
+#include <GL/glew.h>
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
+
 #include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
 #include "Physika_Geometry/Boundary_Meshes/face_group.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
@@ -23,6 +26,7 @@
 #include "Physika_Core/Transform/transform_3d.h"
 #include "Physika_Core/Image/image.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
+
 
 
 namespace Physika{
@@ -370,7 +374,7 @@ void SurfaceMeshRender<Scalar>::renderSolid()
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // set polygon mode FILL for SOLID MODE
-    glDisable(GL_COLOR_MATERIAL);              /// warning: we have to disable GL_COLOR_MATERIAL, otherwise the material propertity won't appear!!!
+    glDisable(GL_COLOR_MATERIAL);              /// warning: we have to disable GL_COLOR_MATERIAL, otherwise the material property won't appear!!!
     glEnable(GL_LIGHTING);                     
 
     glPushMatrix();
@@ -416,8 +420,15 @@ void SurfaceMeshRender<Scalar>::renderSolid()
             // if have a texture, then enable it
             if(this->textures_[material_ID].first==true && (this->render_mode_ & render_texture_) )
             {
+                glVerify(glActiveTexture(GL_TEXTURE0));
                 glVerify(glEnable(GL_TEXTURE_2D));
-                glVerify(glBindTexture(GL_TEXTURE_2D,this->textures_[material_ID].second));
+                glVerify(glBindTexture(GL_TEXTURE_2D, this->textures_[material_ID].second));
+                
+                //need further consideration
+                GLint cur_program_id = 0;
+                glGetIntegerv(GL_CURRENT_PROGRAM, &cur_program_id);
+                if(cur_program_id != 0)
+                    glVerify(glUniform1i(glGetUniformLocation(cur_program_id, "texture"), 1));
             }
             else
             {
@@ -461,7 +472,19 @@ void SurfaceMeshRender<Scalar>::renderSolid()
                 glVerify(glEnd());
             }
 
-            glVerify(glDisable(GL_TEXTURE_2D));
+            if (this->textures_[material_ID].first == true && (this->render_mode_ & render_texture_))
+            {
+                glVerify(glActiveTexture(GL_TEXTURE0));
+                glVerify(glDisable(GL_TEXTURE_2D));
+                glVerify(glBindTexture(GL_TEXTURE_2D, 0));
+
+                // need further consideration
+                GLint cur_program_id = 0;
+                glGetIntegerv(GL_CURRENT_PROGRAM, &cur_program_id);
+                if (cur_program_id != 0)
+                    glVerify(glUniform1i(glGetUniformLocation(cur_program_id, "texture"), 0));
+            }
+
         }
 
         if (enable_displaylist_)
@@ -484,7 +507,7 @@ void SurfaceMeshRender<Scalar>::renderSolidWithCustomColor(const std::vector< Co
 {
     if(this->mesh_->numVertices()!= color.size())
     {
-        std::cerr<<"warning: the size of color don't equal to vertex number in SurfaceMesh, the vertex lacking of cunstom color will be rendered in white color !"<<std::endl;
+        std::cerr<<"warning: the size of color don't equal to vertex number in SurfaceMesh, the vertex lacking of custom color will be rendered in white color !"<<std::endl;
     }
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // set polygon mode FILL for SOLID MODE
@@ -657,7 +680,7 @@ void SurfaceMeshRender<Scalar>::renderVertexWithColor(const std::vector<unsigned
 {
     if(vertex_id.size()!= color.size())
     {
-        std::cerr<<"warning: the size of vertex_id don't equal to color's, the vertex lacking of cunstom color will be rendered in white color !!"<<std::endl;
+        std::cerr<<"warning: the size of vertex_id don't equal to color's, the vertex lacking of custom color will be rendered in white color !!"<<std::endl;
     }
     glPushAttrib(GL_LIGHTING_BIT|GL_POLYGON_BIT|GL_ENABLE_BIT|GL_TEXTURE_BIT|GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_POINT_BIT);
     glDisable(GL_LIGHTING);                        /// turn light off, otherwise the color may not appear
@@ -733,9 +756,12 @@ void SurfaceMeshRender<Scalar>::loadTextures()
             openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             openGLTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /// warning: we have to set the FILTER, otherwise the TEXTURE will "not" appear
 
-            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_MODULATE);        /// warning
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.rawData()); //generate texture 
-            glDisable(GL_TEXTURE_2D);         
+
+            //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_MODULATE);
+            
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glDisable(GL_TEXTURE_2D);
 
             this->textures_[material_idx] = texture; // add texture to Array textures_
             
