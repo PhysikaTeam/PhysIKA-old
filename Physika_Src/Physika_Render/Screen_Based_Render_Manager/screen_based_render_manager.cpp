@@ -60,10 +60,7 @@ ScreenBasedRenderManager::~ScreenBasedRenderManager()
 
 void ScreenBasedRenderManager::initMsaaFrameBuffer()
 {
-    
-    //switch to default render frame buffer, need further consideration
-    //glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-
+   
     //determine msaa_samples
     int samples;
     glGetIntegerv(GL_MAX_SAMPLES_EXT, &samples);
@@ -86,7 +83,11 @@ void ScreenBasedRenderManager::initMsaaFrameBuffer()
     glVerify(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this->msaa_depth_RBO_));
 
     //check frame buffer status
-    glVerify(glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cerr << "error: msaa_FBO is incomplete !" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
 
     glEnable(GL_MULTISAMPLE);
 }
@@ -100,11 +101,12 @@ void ScreenBasedRenderManager::destroyMsaaFrameBuffer()
 
 void ScreenBasedRenderManager::render()
 {
-    //begin frame, background color needs further consideration
-    this->beginFrame(Color<float>::Black());
-
+    
     //create shadow map
     this->createShadowMap();
+
+    //begin frame, background color needs further consideration
+    this->beginFrame(Color<float>::Black());
 
     //create lighting map, i.e. draw all shapes with light
     this->createCameraMap();
@@ -116,6 +118,10 @@ void ScreenBasedRenderManager::render()
     //end frame
     this->endFrame();
 
+    //switch to default screen buffer to render depth buffer
+    //glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    //glVerify(glViewport(0, 0, this->screen_width_, this->screen_height_));
+    //this->shadow_map_.renderShadowTexToScreen();
 }
 
 const GlutWindow * ScreenBasedRenderManager::glutWindow() const
@@ -260,11 +266,11 @@ void ScreenBasedRenderManager::createCameraMap()
     //set camera projection and model view matrix
     this->setCameraProjAndModelViewMatrix();
 
-    //draw planes
-    this->drawPlanes();
-
     //draw shapes
     this->drawShapes();
+
+    //draw planes
+    this->drawPlanes();
 
     //end lighting
     this->endLighting();
@@ -315,6 +321,8 @@ void ScreenBasedRenderManager::beginLighting()
     glVerify(glUniform4fv(glGetUniformLocation(this->shape_program_.id(), "fogColor"), 1, glm::value_ptr(glm_fog_color)));
 
     glVerify(glUniformMatrix4fv(glGetUniformLocation(this->shape_program_.id(), "objectTransform"), 1, false, glm::value_ptr(glm::mat4(1.0))));
+
+    //glVerify(glUniform1i(glGetUniformLocation(this->shape_program_.id(), "texture"), 1));
 }
 
 void ScreenBasedRenderManager::applyShadowMap()
@@ -359,11 +367,14 @@ void ScreenBasedRenderManager::applyShadowMap()
 
     glVerify(glUniform2fv(glGetUniformLocation(this->shape_program_.id(), "shadowTaps"), 12, shadow_taps));
 
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE0);
+    glVerify(glUniform1i(glGetUniformLocation(this->shape_program_.id(), "shadowTex"), 1));
+    glVerify(glUniform1i(glGetUniformLocation(this->shape_program_.id(), "tex"), 0));
 
-    //switch to shadow_TEX
+    //associate shadowTex to uniform variable (shadowTex) in fragment shader
+    glActiveTexture(GL_TEXTURE1);
+    glEnable(GL_TEXTURE_2D);
     glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_map_.shadowTexId()));
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void ScreenBasedRenderManager::applyShadowMapWithSpecifiedShaderProgram(ShaderProgram & shader_program)
@@ -400,10 +411,10 @@ void ScreenBasedRenderManager::applyShadowMapWithSpecifiedShaderProgram(ShaderPr
 
     glVerify(glUniform2fv(glGetUniformLocation(shader_program.id(), "shadowTaps"), 12, shadow_taps));
 
-    glEnable(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE0);
+    glEnable(GL_TEXTURE_2D);
 
-    //switch to shadow_TEX
+    //associate shadowTex to uniform variable (shadowTex) in fragment shader
     glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_map_.shadowTexId()));
 }
 
@@ -413,8 +424,8 @@ void ScreenBasedRenderManager::endLighting()
     this->shape_program_.unUse();
 
     //what the fuck????????????
-    glActiveTexture(GL_TEXTURE1);
-    glDisable(GL_TEXTURE_2D);
+    //glActiveTexture(GL_TEXTURE1);
+    //glDisable(GL_TEXTURE_2D);
 
     glActiveTexture(GL_TEXTURE0);
 }
@@ -435,13 +446,14 @@ void ScreenBasedRenderManager::drawPlanes()
     glVerify(glUniform1f(bias, 0.0f));
     GLint grid = glGetUniformLocation(this->shape_program_.id(), "grid");
     glVerify(glUniform1i(grid, 1));
+
     GLint expand = glGetUniformLocation(this->shape_program_.id(), "expand");
     glVerify(glUniform1f(expand , 0.0f));
+    GLint texture = glGetUniformLocation(this->shape_program_.id(), "texture");
+    glVerify(glUniform1i(texture, 0));
 
     for (int i = 0; i < this->plans_.size(); ++i)
-    {
         this->drawPlane(this->plans_[i]);
-    }
 
     glVerify(glUniform1i(grid, 0));
     glVerify(glUniform1f(bias, this->shadow_bias_));
