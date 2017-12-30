@@ -178,7 +178,7 @@ for dir,_,_ in os.walk('Physika_Test_Src/Physika_Non_Unit_Test_Src/'):
 for src_file in non_unit_test_src_files:
     target_name = os.path.splitext(src_file)[0]
     target = non_unit_test_env.Program(target_name, src_file)
-    print target
+    print(target)
     
     #WINDOWS WORKAROUND: COPY DLLS TO EXECUTIVE DIRECTORY
     if os_name == 'Windows':
