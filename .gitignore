@@ -3,3 +3,8 @@
 *~
 .sconsign.dblite
 *.pyc
+*_debug.obj
+*_release.obj
+*_debug_cu.obj
+*_release_cu.obj
+*glui_*.obj
