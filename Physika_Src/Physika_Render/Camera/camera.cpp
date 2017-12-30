@@ -12,9 +12,14 @@
  *
  */
 
+#include <iostream>
+
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <iostream>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Physika_Core/Quaternion/quaternion.h"
 #include "Physika_Render/Camera/camera.h"
 
@@ -35,36 +40,6 @@ Camera<Scalar>::Camera(const Vector<Scalar,3> &camera_position, const Vector<Sca
 }
 
 template <typename Scalar>
-Camera<Scalar>::Camera(const Camera<Scalar> &camera)
-{
-    camera_position_ = camera.camera_position_;
-    camera_up_ = camera.camera_up_;
-    focus_position_ = camera.focus_position_;
-    fov_ = camera.fov_;
-    view_aspect_ = camera.view_aspect_;
-    near_clip_ = camera.near_clip_;
-    far_clip_ = camera.far_clip_;
-}
-
-template <typename Scalar>
-Camera<Scalar>& Camera<Scalar>::operator= (const Camera<Scalar> &camera)
-{
-    camera_position_ = camera.camera_position_;
-    camera_up_ = camera.camera_up_;
-    focus_position_ = camera.focus_position_;
-    fov_ = camera.fov_;
-    view_aspect_ = camera.view_aspect_;
-    near_clip_ = camera.near_clip_;
-    far_clip_ = camera.far_clip_;
-    return *this;
-}
-
-template <typename Scalar>
-Camera<Scalar>::~Camera()
-{
-}
-
-template <typename Scalar>
 void Camera<Scalar>::look()
 {
     glMatrixMode(GL_PROJECTION);
@@ -73,9 +48,32 @@ void Camera<Scalar>::look()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(camera_position_[0],camera_position_[1],camera_position_[2],
-               focus_position_[0],focus_position_[1],focus_position_[2],
-               camera_up_[0],camera_up_[1],camera_up_[2]);
+              focus_position_[0],focus_position_[1],focus_position_[2],
+              camera_up_[0],camera_up_[1],camera_up_[2]);
 }
+
+template <typename Scalar>
+glm::mat4 Camera<Scalar>::projectionMatrix() const
+{
+    return glm::perspective(glm::radians(fov_), view_aspect_, near_clip_, far_clip_);
+}
+
+template <typename Scalar>
+glm::mat4 Camera<Scalar>::viewMatrix() const
+{
+    glm::vec3 glm_camera_pos = { camera_position_[0], camera_position_[1], camera_position_[2] };
+    glm::vec3 glm_camera_focus_pos = { focus_position_[0], focus_position_[1], focus_position_[2] };
+    glm::vec3 glm_camera_up_dir = { camera_up_[0], camera_up_[1], camera_up_[2] };
+
+    return glm::lookAt(glm_camera_pos, glm_camera_focus_pos, glm_camera_up_dir);
+}
+
+template <typename Scalar>
+glm::mat4 Camera<Scalar>::projectionAndViewMatrix() const
+{
+    return this->projectionMatrix()*this->viewMatrix();
+}
+
 
 template <typename Scalar>
 void Camera<Scalar>::orbitUp(Scalar rad)

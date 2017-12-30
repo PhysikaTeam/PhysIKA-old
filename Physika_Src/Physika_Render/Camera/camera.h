@@ -15,6 +15,7 @@
 #ifndef PHYSIKA_RENDER_CAMERA_CAMERA_H_
 #define PHYSIKA_RENDER_CAMERA_CAMERA_H_
 
+#include <glm/fwd.hpp>
 #include "Physika_Core/Vectors/vector_3d.h"
 
 namespace Physika{
@@ -29,7 +30,7 @@ namespace Physika{
  * 5. near_clip_: distance from the camera position to the near clip plane
  * 6. far_clip_: distance from the camera position to the far clip plane
  * 7. view_aspect_: aspect of the camera's view (width/height)
- * Usage in OpenGL envrionment:
+ * Usage in OpenGL environment:
  * 1. Set view port via glVieport()
  * 2. Call look() method of camera to set the projection and model view transformation
  * Example code:
@@ -46,12 +47,18 @@ public:
                 //field of view 45 degrees, view aspect 640/480, near clip 1.0, far clip 100.0
     Camera(const Vector<Scalar,3> &camera_position, const Vector<Scalar,3> &camera_up, const Vector<Scalar,3> &focus_position,
            Scalar field_of_view, Scalar view_aspect, Scalar near_clip, Scalar far_clip);
-    Camera(const Camera<Scalar> &camera);
-    Camera<Scalar>& operator= (const Camera<Scalar> &camera);
-    ~Camera();
 
-    //apply the camera
+    Camera(const Camera<Scalar> &camera) = default;
+    Camera<Scalar>& operator= (const Camera<Scalar> &camera) = default;
+    ~Camera() = default;
+
+    //[deprecated] apply the camera 
     void look();
+
+    glm::mat4 projectionMatrix() const;
+    glm::mat4 viewMatrix() const;
+    glm::mat4 projectionAndViewMatrix() const;
+    
 
     //rotate the camera around the focus (spherical camera)
     void orbitUp(Scalar rad);
@@ -90,11 +97,12 @@ public:
     void setCameraNearClip(Scalar near_clip);
     Scalar cameraFarClip() const;
     void setCameraFarClip(Scalar far_clip);
-protected:
+
+private:
     Vector<Scalar,3> camera_position_;
     Vector<Scalar,3> camera_up_;
     Vector<Scalar,3> focus_position_;
-    Scalar fov_;
+    Scalar fov_;  //in degrees
     Scalar view_aspect_;
     Scalar near_clip_;
     Scalar far_clip_;
