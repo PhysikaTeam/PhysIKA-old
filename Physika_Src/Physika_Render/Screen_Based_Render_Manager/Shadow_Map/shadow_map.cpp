@@ -19,7 +19,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Physika_Render/OpenGL_Shaders/shaders.h"
+#include "Physika_Render/OpenGL_Shaders/shader_srcs.h"
 #include "Physika_Render/Screen_Based_Render_Manager/Shadow_Map/shadow_map.h"
 
 

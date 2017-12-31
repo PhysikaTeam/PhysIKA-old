@@ -1,5 +1,5 @@
 /*
-* @file shaders.h
+* @file shader_srcs.h
 * @Brief GLSL shaders from Flex
 * @author Wei Chen
 *

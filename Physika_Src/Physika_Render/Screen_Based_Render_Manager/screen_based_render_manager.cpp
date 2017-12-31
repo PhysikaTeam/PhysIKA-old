@@ -23,7 +23,7 @@
 #include "Physika_Core/Vectors/vector_4d.h"
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Color/color.h"
-#include "Physika_Render/OpenGL_Shaders/shaders.h"
+#include "Physika_Render/OpenGL_Shaders/shader_srcs.h"
 #include "Physika_Render/Render_Base/render_base.h"
 #include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
 #include "Physika_Render/Screen_Based_Render_Manager/screen_based_render_manager.h"

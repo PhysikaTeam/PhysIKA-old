@@ -18,7 +18,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
-#include "Physika_Render/OpenGL_Shaders/shaders.h"
+#include "Physika_Render/OpenGL_Shaders/shader_srcs.h"
 
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Screen_Based_Render_Manager/screen_based_render_manager.h"
