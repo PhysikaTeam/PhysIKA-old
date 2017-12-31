@@ -18,6 +18,16 @@
 #include <string>
 #include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 
+#include <glm/fwd.hpp>
+
+#include "Physika_Core/Vectors/vector_2d.h"
+#include "Physika_Core/Vectors/vector_3d.h"
+#include "Physika_Core/Vectors/vector_4d.h"
+
+#include "Physika_Core/Matrices/matrix_2x2.h"
+#include "Physika_Core/Matrices/matrix_3x3.h"
+#include "Physika_Core/Matrices/matrix_4x4.h"
+
 namespace Physika {
 
 class ShaderProgram
@@ -26,7 +36,12 @@ public:
 
     ShaderProgram() = default;
 
+    //disable copy
+    ShaderProgram(const ShaderProgram & rhs) = delete;
+    ShaderProgram & operator = (const ShaderProgram & rhs) = delete;
+
     ~ShaderProgram();
+
     /*
     ShaderProgram(const char * vertex_shader_source,
                   const char * fragment_shader_source,
@@ -55,14 +70,40 @@ public:
 
     void destory();
 
-    ShaderProgram(const ShaderProgram &) = delete;
-    ShaderProgram & operator = (const ShaderProgram &) = delete;
-
     void use() const;
     void unUse() const;
 
+    //setter
+    bool setBool(const std::string & name, bool val);
+    bool setInt(const std::string & name, int val);
+    bool setFloat(const std::string & name, float val);
+
+    bool setVec2(const std::string & name, const Vector2f & val);
+    bool setVec2(const std::string & name, const glm::vec2 & val);
+    bool setVec2(const std::string & name, float x, float y);
+
+    bool setVec3(const std::string & name, const Vector3f & val);
+    bool setVec3(const std::string & name, const glm::vec3 & val);
+    bool setVec3(const std::string & name, float x, float y, float z);
+    
+    bool setVec4(const std::string & name, const Vector4f & val);
+    bool setVec4(const std::string & name, const glm::vec4 & val);
+    bool setVec4(const std::string & name, float x, float y, float z, float w);
+
+    bool setMat2(const std::string & name, const Matrix2f & val);
+    bool setMat2(const std::string & name, const glm::mat2 & val);
+
+    bool setMat3(const std::string & name, const Matrix3f & val);
+    bool setMat3(const std::string & name, const glm::mat3 & val);
+    
+    bool setMat4(const std::string & name, const Matrix4f & val);
+    bool setMat4(const std::string & name, const glm::mat4 & val);
+
     bool isValid() const;
     GLuint id() const;
+
+private:
+    void check() const;
 
 
 private:
