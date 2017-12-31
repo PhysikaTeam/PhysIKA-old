@@ -12,15 +12,29 @@
  *
  */
 
+#include <type_traits>
 #include "Physika_Render/Color/color.h"
 
 namespace Physika{
+
+/*
+Note: for integer type, we return std::numeric_limits<Scalar>::max(),
+      while for float type, we return 1.0.
+*/
+template<typename Scalar>
+Scalar colorMax()
+{
+    if (std::is_integral<Scalar>::value == true)
+        return std::numeric_limits<Scalar>::max();
+    else
+        return static_cast<Scalar>(1.0);
+}
 
 template <typename Scalar>
 Color<Scalar>::Color()
 {
     rgba_[0] = rgba_[1] = rgba_[2] = 0;
-    rgba_[3] = std::numeric_limits<Scalar>::max();
+    rgba_[3] = colorMax<Scalar>();
 }
 
 template <typename Scalar>
@@ -29,7 +43,7 @@ Color<Scalar>::Color(Scalar red, Scalar green, Scalar blue)
     rgba_[0] = red;
     rgba_[1] = green;
     rgba_[2] = blue;
-    rgba_[3] = std::numeric_limits<Scalar>::max();
+    rgba_[3] = colorMax<Scalar>();
 }
 
 template <typename Scalar>
@@ -120,7 +134,7 @@ void Color<Scalar>::setAlphaChannel(Scalar alpha)
 template <typename Scalar>
 Color<Scalar> Color<Scalar>::Red()
 {
-    Scalar red = std::numeric_limits<Scalar>::max();
+    Scalar red = colorMax<Scalar>();
     Scalar green = 0, blue = 0;
     return Color<Scalar>(red,green,blue);
 }
@@ -128,7 +142,7 @@ Color<Scalar> Color<Scalar>::Red()
 template <typename Scalar>
 Color<Scalar> Color<Scalar>::Green()
 {
-    Scalar green = std::numeric_limits<Scalar>::max();
+    Scalar green = colorMax<Scalar>();
     Scalar red = 0, blue = 0;
     return Color<Scalar>(red,green,blue);
 }
@@ -136,7 +150,7 @@ Color<Scalar> Color<Scalar>::Green()
 template <typename Scalar>
 Color<Scalar> Color<Scalar>::Blue()
 {
-    Scalar blue = std::numeric_limits<Scalar>::max();
+    Scalar blue = colorMax<Scalar>();
     Scalar red = 0, green = 0;
     return Color<Scalar>(red,green,blue);
 }
@@ -144,9 +158,9 @@ Color<Scalar> Color<Scalar>::Blue()
 template <typename Scalar>
 Color<Scalar> Color<Scalar>::White()
 {
-    Scalar red = std::numeric_limits<Scalar>::max();
-    Scalar green = std::numeric_limits<Scalar>::max();
-    Scalar blue = std::numeric_limits<Scalar>::max();
+    Scalar red = colorMax<Scalar>();
+    Scalar green = colorMax<Scalar>();
+    Scalar blue = colorMax<Scalar>();
     return Color<Scalar>(red,green,blue);
 }
 
@@ -159,17 +173,17 @@ Color<Scalar> Color<Scalar>::Black()
 template <typename Scalar>
 Color<Scalar> Color<Scalar>::Gray()
 {
-    Scalar red = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
-    Scalar green = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
-    Scalar blue = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    Scalar red = static_cast<Scalar>(colorMax<Scalar>()/2.0);
+    Scalar green = static_cast<Scalar>(colorMax<Scalar>() /2.0);
+    Scalar blue = static_cast<Scalar>(colorMax<Scalar>() /2.0);
     return Color<Scalar>(red,green,blue);
 }
 
 template <typename Scalar>
 Color<Scalar> Color<Scalar>::Yellow()
 {
-    Scalar red = std::numeric_limits<Scalar>::max();
-    Scalar green = std::numeric_limits<Scalar>::max();
+    Scalar red = colorMax<Scalar>();
+    Scalar green = colorMax<Scalar>();
     Scalar blue = 0;
     return Color<Scalar>(red,green,blue);
 }
@@ -177,8 +191,8 @@ Color<Scalar> Color<Scalar>::Yellow()
 template <typename Scalar>
 Color<Scalar> Color<Scalar>::Purple()
 {
-    Scalar red = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
-    Scalar blue = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    Scalar red = static_cast<Scalar>(colorMax<Scalar>() /2.0);
+    Scalar blue = static_cast<Scalar>(colorMax<Scalar>() /2.0);
     Scalar green = 0;
     return Color<Scalar>(red,green,blue);
 }
@@ -187,12 +201,12 @@ template <typename Scalar>
 Color<Scalar> Color<Scalar>::Cyan()
 {
     Scalar red = 0;
-    Scalar green = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
-    Scalar blue = static_cast<Scalar>(std::numeric_limits<Scalar>::max()/2.0);
+    Scalar green = static_cast<Scalar>(colorMax<Scalar>() /2.0);
+    Scalar blue = static_cast<Scalar>(colorMax<Scalar>() /2.0);
     return Color<Scalar>(red,green,blue);
 }
 
-//explicit instantions
+//explicit instantiation
 template class Color<signed char>;
 template class Color<short>;
 template class Color<int>;

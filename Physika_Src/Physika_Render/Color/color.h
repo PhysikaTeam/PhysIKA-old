@@ -1,7 +1,7 @@
 /*
  * @file color.h 
  * @Brief the color for rendering.
- * @author Fei Zhu
+ * @author Fei Zhu, Wei Chen
  * 
  * This file is part of Physika, a versatile physics simulation library.
  * Copyright (C) 2013- Physika Group.
@@ -39,14 +39,17 @@ public:
     Color(); //black
     Color(Scalar red, Scalar green, Scalar blue);
     Color(Scalar red, Scalar green, Scalar blue, Scalar aplha);
+
     Color(const Color<Scalar> &color);
     Color& operator= (const Color<Scalar> &color);
     bool operator== (const Color<Scalar> &color);
     bool operator!= (const Color<Scalar> &color);
+
     Scalar redChannel() const;
     Scalar greenChannel() const;
     Scalar blueChannel() const;
     Scalar alphaChannel() const;
+
     void setRedChannel(Scalar);
     void setGreenChannel(Scalar);
     void setBlueChannel(Scalar);
@@ -92,18 +95,27 @@ std::ostream& operator<< (std::ostream &s, const Color<Scalar> &color)
     return s;
 }
 
-//implementation of color convertion
+//implementation of color conversion
 template <typename Scalar>
 template <typename TargetType>
 Color<TargetType> Color<Scalar>::convertColor() const
 {
     Interval<TargetType> target_type_range((std::numeric_limits<TargetType>::min)(),(std::numeric_limits<TargetType>::max)());
     Interval<Scalar> src_type_range((std::numeric_limits<Scalar>::min)(),(std::numeric_limits<Scalar>::max)());
-    Scalar src_red = this->redChannel(), src_green = this->greenChannel(), src_blue = this->blueChannel(), src_alpha = this->alphaChannel();
-    if(is_same<TargetType,Scalar>::value)  //target type and source type are the same
-        return Color<TargetType>(static_cast<TargetType>(src_red),static_cast<TargetType>(src_green),static_cast<TargetType>(src_blue),
+
+    Scalar src_red = this->redChannel();
+    Scalar src_green = this->greenChannel();
+    Scalar src_blue = this->blueChannel();
+    Scalar src_alpha = this->alphaChannel();
+
+    if (is_same<TargetType, Scalar>::value || (is_floating_point<Scalar>::value && is_floating_point<TargetType>::value))  //target type and source type are the same, or both are float type
+    {
+        return Color<TargetType>(static_cast<TargetType>(src_red),
+                                 static_cast<TargetType>(src_green),
+                                 static_cast<TargetType>(src_blue),
                                  static_cast<TargetType>(src_alpha));
-    else if(is_floating_point<Scalar>::value)  //source type is floating point, first clamp it into [0,1] before conversion
+    }
+    else if(is_floating_point<Scalar>::value)  //from float type to integer type, first clamp it into [0,1] before conversion
     {
         src_red = src_red > 1 ? 1 : src_red;
         src_red = src_red < 0 ? 0 : src_red;
@@ -113,23 +125,31 @@ Color<TargetType> Color<Scalar>::convertColor() const
         src_blue = src_blue < 0 ? 0 : src_blue;
         src_alpha = src_alpha > 1 ? 1 : src_alpha;
         src_alpha = src_alpha < 0 ? 0 : src_alpha;
-        TargetType target_red = static_cast<TargetType>(src_red*target_type_range.size()+target_type_range.minVal());
-        TargetType target_green = static_cast<TargetType>(src_green*target_type_range.size()+target_type_range.minVal());
-        TargetType target_blue = static_cast<TargetType>(src_blue*target_type_range.size()+target_type_range.minVal());
-        TargetType target_alpha = static_cast<TargetType>(src_alpha*target_type_range.size()+target_type_range.minVal());
-        return Color<TargetType>(target_red,target_green,target_blue,target_alpha);
+
+        TargetType target_red = static_cast<TargetType>(src_red * std::numeric_limits<Scalar>::max());
+        TargetType target_green = static_cast<TargetType>(src_green * std::numeric_limits<Scalar>::max());
+        TargetType target_blue = static_cast<TargetType>(src_blue * std::numeric_limits<Scalar>::max());
+        TargetType target_alpha = static_cast<TargetType>(src_alpha * std::numeric_limits<Scalar>::max());
+
+        return Color<TargetType>(target_red, target_green, target_blue, target_alpha);
     }
-    else
+    else if(is_integer<Scalar>::value && is_floating_point<TargetType>::value) //from integer type to floating type
     {
-        TargetType target_red = static_cast<TargetType>((src_red - src_type_range.minVal())*1.0/src_type_range.size()*target_type_range.size()
-                                +target_type_range.minVal());
-        TargetType target_green = static_cast<TargetType>((src_green - src_type_range.minVal())*1.0/src_type_range.size()*target_type_range.size()
-                                +target_type_range.minVal());
-        TargetType target_blue = static_cast<TargetType>((src_blue - src_type_range.minVal())*1.0/src_type_range.size()*target_type_range.size()
-                                +target_type_range.minVal());
-        TargetType target_alpha = static_cast<TargetType>((src_alpha - src_type_range.minVal())*1.0/src_type_range.size()*target_type_range.size()
-                                +target_type_range.minVal());
-        return Color<TargetType>(target_red,target_green,target_blue,target_alpha);
+        TargetType target_red = static_cast<TargetType>(src_red) / std::numeric_limits<Scalar>::max();
+        TargetType target_green = static_cast<TargetType>(src_green) / std::numeric_limits<Scalar>::max();
+        TargetType target_blue = static_cast<TargetType>(src_blue) / std::numeric_limits<Scalar>::max();
+        TargetType target_alpha = static_cast<TargetType>(src_alpha) / std::numeric_limits<Scalar>::max();
+
+        return Color<TargetType>(target_red, target_green, target_blue, target_alpha);
+    }
+    else //from integer type to integer type
+    {
+        TargetType target_red = static_cast<float>(src_red) / std::numeric_limits<Scalar>::max() * std::numeric_limits<TargetType>::max();
+        TargetType target_green = static_cast<float>(src_green) / std::numeric_limits<Scalar>::max() * std::numeric_limits<TargetType>::max();
+        TargetType target_blue = static_cast<float>(src_blue) / std::numeric_limits<Scalar>::max() * std::numeric_limits<TargetType>::max();
+        TargetType target_alpha = static_cast<float>(src_alpha) / std::numeric_limits<Scalar>::max() * std::numeric_limits<TargetType>::max();
+
+        return Color<TargetType>(target_red, target_green, target_blue, target_alpha);
     }
 }
 
