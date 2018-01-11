@@ -65,14 +65,17 @@ public:
     inline Vector<Scalar, 3> scale() const { return scale_; }
 
     //Set
+    inline void setRotation(const Vector<Scalar, 3> & unit_axis, Scalar angle_rad) { rotation_ = Quaternion<Scalar>(unit_axis, angle_rad); }
     inline void setRotation(const Quaternion<Scalar> &rotation) { rotation_ = rotation; }
     inline void setRotation(const SquareMatrix<Scalar, 3> &rotation) { rotation_ = Quaternion<Scalar>(rotation); }
     inline void setRotation(const Vector<Scalar, 3> &rotation ) { rotation_ = Quaternion<Scalar>(rotation); }
+
     inline void setScale(const Vector<Scalar, 3> &scale ) { scale_ = scale; }
+    inline void setUniformScalar(Scalar scale) { scale_ = Vector<Scalar, 3>(scale); }
     inline void setTranslation(const Vector<Scalar, 3> &translation) { translation_ = translation; }
     inline void setIdentity() { rotation_ = Quaternion<Scalar>(0,0,0,1); translation_ = Vector<Scalar, 3>(0,0,0); scale_ = Vector<Scalar, 3>(1,1,1);}
 
-    /* Funtions*/
+    /* Functions*/
     //Order is scale > rotate > translate. If you want another order, you can get scale/rotation/translation component and do it yourself.
     Vector<Scalar, 3> transform(const Vector<Scalar, 3> &input) const;
 
@@ -95,7 +98,8 @@ private:
     }
 };
 
-
+using Transform3f = Transform<float, 3>;
+using Transform3d = Transform<double, 3>;
 
 }//end of namespace Physika
 

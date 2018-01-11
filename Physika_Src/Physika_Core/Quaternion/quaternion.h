@@ -41,7 +41,7 @@ public:
     explicit Quaternion(const Scalar *); 
     Quaternion(const Quaternion<Scalar> &);
     explicit Quaternion(const SquareMatrix<Scalar, 3> &);   //init from a 3x3matrix
-    explicit Quaternion(const SquareMatrix<Scalar,4> &);         //init from a 4x4matrix
+    explicit Quaternion(const SquareMatrix<Scalar,4> &);    //init from a 4x4matrix
     explicit Quaternion(const Vector<Scalar, 3>& );         //init form roll pitch yaw/ Euler angle;
     
     /* Assignment operators */
@@ -60,22 +60,25 @@ public:
     inline void setZ(const Scalar& z) { z_ = z;}
     inline void setW(const Scalar& w) { w_ = w;}
 
+    //rotate
+    const Vector<Scalar, 3> rotate(const Vector<Scalar, 3>) const;    // rotates passed vec by this.
+    void toRadiansAndUnitAxis(Scalar& angle, Vector<Scalar, 3>& axis) const;
+
     /* Special functions */
     Scalar norm();
     Quaternion<Scalar>& normalize();
+
     void set(const Vector<Scalar,3>&, Scalar );
     void set(Scalar , const Vector<Scalar,3>& );
     void set(const Vector<Scalar,3>& );                              //set from a euler angle.
+
     Scalar getAngle() const;                                         // return the angle between this quat and the identity quaternion.
     Scalar getAngle(const Quaternion<Scalar>&) const;                // return the angle between this and the argument
-    Scalar dot(const Quaternion<Scalar> &) const;
     Quaternion<Scalar> getConjugate() const;                         // return the conjugate
-    const Vector<Scalar,3> rotate(const Vector<Scalar,3> ) const;    // rotates passed vec by this;
-    SquareMatrix<Scalar, 3> get3x3Matrix() const;  //return 3x3matrix format
-    SquareMatrix<Scalar, 4> get4x4Matrix() const;        //return 4x4matrix with a identity transform.
+    
+    SquareMatrix<Scalar, 3> get3x3Matrix() const;                    //return 3x3matrix format
+    SquareMatrix<Scalar, 4> get4x4Matrix() const;                    //return 4x4matrix with a identity transform.
     Vector<Scalar, 3> getEulerAngle() const;
-    void toRadiansAndUnitAxis(Scalar& angle, Vector<Scalar, 3>& axis) const;
-  
 
     /* Operator overloading */
     Quaternion<Scalar> operator - (const Quaternion<Scalar>& ) const;
@@ -88,6 +91,7 @@ public:
     bool operator != (const Quaternion<Scalar>& ) const;
     Scalar& operator[] (unsigned int);
     const Scalar& operator[] (unsigned int) const;
+    Scalar dot(const Quaternion<Scalar> &) const;
 
     static inline Quaternion<Scalar> identityQuaternion() { return Quaternion<Scalar>(0,0,0,1); }
 
