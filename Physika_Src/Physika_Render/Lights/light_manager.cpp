@@ -13,67 +13,114 @@
  */
 
 #include <iostream>
+#include <memory>
+
 #include "Physika_Core/Utilities/physika_assert.h"
+
+#include "Physika_Render/OpenGL_Primitives/glew_utilities.h"
 #include "Physika_Render/Lights/light_manager.h"
-#include "Physika_Render/Lights/light.h"
+#include "Physika_Render/Lights/light_base.h"
+#include "Physika_Render/Lights/flash_light.h"
 
 using std::list;
 
-namespace Physika
+namespace Physika{
+
+void LightManager::configLightsToCurBindShader()
 {
+    int directional_light_num = 0;
+    int point_light_num = 0;
+    int spot_light_num = 0;
+    int flex_spot_light_num = 0;
 
-LightManager::LightManager(){}
+    for (int i = 0; i < this->numLights(); ++i)
+    {
+        const std::shared_ptr<LightBase> & light = this->lightAtIndex(i);
 
-LightManager::~LightManager(){}
+        //if light is disabled, then skip it
+        if (light->isEnableLighting() == false)
+            continue;
+
+        if (light->type() == LightType::DIRECTIONAL_LIGHT)
+        {
+            std::string light_str = "directional_lights[" + std::to_string(directional_light_num) + "]";
+            light->configToCurBindShader(light_str);
+
+            ++directional_light_num;
+        }
+        else if (light->type() == LightType::POINT_LIGHT)
+        {
+            std::string light_str = "point_lights[" + std::to_string(point_light_num) + "]";
+            light->configToCurBindShader(light_str);
+
+            ++point_light_num;
+        }
+        else if (light->type() == LightType::SPOT_LIGHT)
+        {
+            std::string light_str = "spot_lights[" + std::to_string(spot_light_num) + "]";
+            light->configToCurBindShader(light_str);
+
+            ++spot_light_num;
+        }
+        else if (light->type() == LightType::FLEX_SPOT_LIGHT)
+        {
+            std::string light_str = "flex_spot_lights[" + std::to_string(flex_spot_light_num) + "]";
+            light->configToCurBindShader(light_str);
+
+            ++flex_spot_light_num;
+        }
+        else
+        {
+            throw PhysikaException("error: unknown Light Type");
+        }
+    }
+
+    openGLSetCurBindShaderInt("directional_light_num", directional_light_num);
+    openGLSetCurBindShaderInt("point_light_num", point_light_num);
+    openGLSetCurBindShaderInt("spot_light_num", spot_light_num);
+    openGLSetCurBindShaderInt("flex_spot_light_num", flex_spot_light_num);
+}
 
 unsigned int LightManager::numLights()const
 {
     return this->light_list_.size();
 }
 
-void LightManager::insertBack(Light * light_p)
+void LightManager::insertBack(std::shared_ptr<LightBase> light_p)
 {
-    if(light_p == NULL)
+    if(light_p == nullptr)
     {
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
-    if(this->lightIndex(light_p) != -1)
+
+    if (this->lightIndex(light_p) != -1)
     {
-        std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
-        return ;
+        std::cerr << "error: this light is already in LightManager, its index is " << this->lightIndex(light_p) << ", operation will be ignored!" << std::endl;
+        return;
     }
-    if(this->numLights()<8)
-        this->light_list_.push_back(light_p);
-    else
-    {
-        std::cerr<<"error: the length of light list will be greater than '8', we only preserve 8 light id at most, operation will be ignored!"<<std::endl;
-        return ;
-    }
+
+    this->light_list_.push_back(std::move(light_p));
 }
 
-void LightManager::insertFront(Light * light_p)
+void LightManager::insertFront(std::shared_ptr<LightBase> light_p)
 {
-    if(light_p == NULL)
+    if(light_p == nullptr)
     {
         std::cerr<<"error: Cannot insert NULL light to LightManager, operation will be ignored!"<<std::endl;
         return ;
     }
-    if(this->lightIndex(light_p) != -1)
+    
+    if (this->lightIndex(light_p) != -1)
     {
-        std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
-        return ;
+        std::cerr << "error: this light is already in LightManager, its index is " << this->lightIndex(light_p) << ", operation will be ignored!" << std::endl;
+        return;
     }
-    if(this->numLights()<8)
-        this->light_list_.push_front(light_p);
-    else
-    {
-        std::cerr<<"error: the length of light list will be greater than '8', we only preserve 8 light id at most, operation will be ignored! "<<std::endl;
-        return ;
-    }
+
+    this->light_list_.push_front(std::move(light_p));
 }
 
-void LightManager::insertAtIndex(unsigned int index, Light *light)
+void LightManager::insertAtIndex(unsigned int index, std::shared_ptr<LightBase> light_p)
 {
     bool index_valid = (index<light_list_.size());
     if(!index_valid)
@@ -82,32 +129,26 @@ void LightManager::insertAtIndex(unsigned int index, Light *light)
         return ;
     }
     
-    if(light)
+    if(light_p)
     {
-        if(this->lightIndex(light) != -1)
+        if(this->lightIndex(light_p) != -1)
         {
-            std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light)<<", operation will be ignored!"<<std::endl;
+            std::cerr<<"error: this light is already in LightManager, its index is "<<this->lightIndex(light_p)<<", operation will be ignored!"<<std::endl;
             return ;
         }
-        if(this->numLights()<8)
+
+        auto pos = light_list_.begin();
+        while (index != 0)
         {
-            list<Light*>::iterator pos = light_list_.begin();
-            while(index != 0)
-            {
-                --index;
-                ++pos;
-            }
-            light_list_.insert(pos,light);
+            --index;
+            ++pos;
         }
-        else
-        {
-            std::cerr<<"error: the length of light list will be greater than '8', we only perserve 8 light id at most, operation will be ignored! "<<std::endl;
-            return ;
-        }
+        light_list_.insert(pos, light_p);
+
     }
     else
     {
-        std::cerr<<"Cannot insert NULL light to LightManager, operation ignored!\n";
+        std::cerr << "error: cannot insert NULL light to LightManager, operation will be ignored!";
     }
 }
 
@@ -126,10 +167,10 @@ void LightManager::removeAtIndex(unsigned int index)
     bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"light index out of range, operation will be ignored!!\n";
+        std::cerr<<"error: light index out of range, operation will be ignored!!\n";
         return ;
     }
-    list<Light*>::iterator pos = light_list_.begin();
+    auto pos = light_list_.begin();
     while(index != 0)
     {
         --index;
@@ -143,51 +184,51 @@ void LightManager::removeAll()
     light_list_.clear();
 }
 
-const Light* LightManager::lightAtIndex(unsigned int index) const
+std::shared_ptr<const LightBase> LightManager::lightAtIndex(unsigned int index) const
 {
     bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
         std::cerr<<"error: light index out of range, NULL is returned! \n";
-        return NULL;
+        return {};
     }
-    list<Light*>::const_iterator iter = light_list_.begin();
+    auto iter = light_list_.begin();
     while(index != 0)
     {
         --index;
         ++iter;
     }
-    Light *cur_render = *iter;
-    return cur_render;
+    return *iter;
 }
 
-Light* LightManager::lightAtIndex(unsigned int index)
+std::shared_ptr<LightBase> LightManager::lightAtIndex(unsigned int index)
 {
     bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
         std::cerr<<"error: Light index out of range, NULL is returned!!\n";
-        return NULL;
+        return {};
     }
-    list<Light*>::iterator iter = light_list_.begin();
+    
+    auto iter = light_list_.begin();
     while(index != 0)
     {
         --index;
         ++iter;
     }
-    Light *cur_render = *iter;
-    return cur_render;
+
+    return *iter;
 }
 
-int LightManager::lightIndex(Light *light) const
+int LightManager::lightIndex(const std::shared_ptr< const LightBase> & light_p) const
 {
-    if(light==NULL)
+    if(light_p == nullptr)
         return -1;
-    list<Light*>::const_iterator iter = light_list_.begin();
+    auto iter = light_list_.begin();
     int index = 0;
     while(iter != light_list_.end())
     {
-        if(*iter == light)
+        if(*iter == light_p)
             return index;
         ++iter;
         ++index;
@@ -197,22 +238,22 @@ int LightManager::lightIndex(Light *light) const
 
 void LightManager::turnAllOn()
 {
-    list<Light *>::iterator iter = light_list_.begin();
+    auto iter = light_list_.begin();
     while(iter != light_list_.end())
     {
         PHYSIKA_ASSERT(*iter);
-        (*iter)->turnOn();
-        iter++;
+        (*iter)->enableLighting();
+        ++iter;
     }
 }
 
 void LightManager::turnAllOff()
 {
-    list<Light *>::iterator iter = light_list_.begin();
+    auto iter = light_list_.begin();
     while(iter != light_list_.end())
     {
         PHYSIKA_ASSERT(*iter);
-        (*iter)->turnOff();
+        (*iter)->disableLighting();
         iter++;
     }
 }
@@ -222,17 +263,18 @@ void LightManager::turnLightOnAtIndex(unsigned int index)
     bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"Light index out of range, operation will be ignored!!\n";
+        std::cerr<<"error: light index out of range, operation will be ignored!!\n";
         return ;
     }
-    list<Light *>::iterator iter = light_list_.begin();
+
+    auto iter = light_list_.begin();
     while(index != 0)
     {
         iter++;
         index--;
     }
     PHYSIKA_ASSERT(*iter);
-    (*iter)->turnOn();
+    (*iter)->enableLighting();
 }
 
 void LightManager::turnLightOffAtIndex(unsigned int index)
@@ -240,84 +282,28 @@ void LightManager::turnLightOffAtIndex(unsigned int index)
     bool index_valid = (index<light_list_.size());
     if(!index_valid)
     {
-        std::cerr<<"Light index out of range, operation will be ignored!!\n";
+        std::cerr<<"error: light index out of range, operation will be ignored!!\n";
         return ;
     }
-    list<Light *>::iterator iter = light_list_.begin();
+    
+    auto iter = light_list_.begin();
     while(index != 0)
     {
         iter++;
         index--;
     }
     PHYSIKA_ASSERT(*iter);
-    (*iter)->turnOff();
+    (*iter)->disableLighting();
 }
 
-void LightManager::lightScene()
-{
-    list<Light *>::iterator iter = light_list_.begin();
-    while(iter != light_list_.end())
-    {
-        PHYSIKA_ASSERT(*iter);
-        (*iter)->lightScene();
-        iter++;
-    }
-}
-
-void LightManager::setLightModelLocalViewer(bool viewer)
-{
-    openGLLightModel(GL_LIGHT_MODEL_LOCAL_VIEWER, viewer);
-}
-
-bool LightManager::lightModelLocalViewer()const
-{
-    unsigned char viewer;
-    glGetBooleanv(GL_LIGHT_MODEL_LOCAL_VIEWER, &viewer);
-    if(viewer == GL_FALSE)
-        return false;
-    else
-        return true;
-}
-
-void LightManager::setLightModelTwoSide(bool two_side)
-{
-    openGLLightModel(GL_LIGHT_MODEL_TWO_SIDE, two_side);
-}
-
-bool LightManager::lightModelTwoSize()const
-{
-    unsigned char two_side;
-    glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE, &two_side);
-    if(two_side == GL_TRUE)
-        return true;
-    else
-        return false;
-}
-/*
-void LightManager::setLightModelColorControl(GLenum penum)
-{
-    openGLLightModel(GL_LIGHT_MODEL_COLOR_CONTRUL, penum);
-}
-
-GLenum LightManager::lightModelColorControl()const
-{
-    int color_control;
-    glGetIntegerv(GL_LIGHT_COLOR_CONTROL, &color_control);
-    return (GLenum)color_control;
-}
-*/
 
 void LightManager::printInfo()
 {
     std::cout<<"light number: "<<this->numLights()<<std::endl;
     for(unsigned int i=0; i<this->numLights();i++)
     {
-        std::cout<<"light id: "<<this->lightAtIndex(i)->lightId()<<"  state: "<< this->lightAtIndex(i)->isLightOn()<<std::endl;
+        std::cout<<"light id: "<< i <<"  state: "<< this->lightAtIndex(i)->isEnableLighting()<<std::endl;
     }
-    std::cout<<"light model ambient: "<<this->lightModelAmbient<float>()<<std::endl;
-    std::cout<<"light model local viewer: "<<this->lightModelLocalViewer()<<std::endl;
-    std::cout<<"light model two side: "<<this->lightModelTwoSize()<<std::endl;
-    //std::cout<<"light model color control: "<<this->lightModelColorControl()<<std::endl;
 }
 
 std::ostream& operator << (std::ostream& out, const LightManager & light_manager)
@@ -325,11 +311,8 @@ std::ostream& operator << (std::ostream& out, const LightManager & light_manager
     out<<"light number: "<<light_manager.numLights()<<std::endl;
     for(unsigned int i=0; i<light_manager.numLights();i++)
     {
-        out<<"light id: "<<(light_manager.lightAtIndex(i))->lightId()<<"  state: "<< (light_manager.lightAtIndex(i))->isLightOn()<<std::endl;
+        out<<"light id: "<<i<<"  state: "<< (light_manager.lightAtIndex(i))->isEnableLighting() <<std::endl;
     }
-    out<<"light model ambient: "<<light_manager.lightModelAmbient<float>()<<std::endl;
-    out<<"light model local viewer: "<<light_manager.lightModelLocalViewer()<<std::endl;
-    out<<"light model two side: "<<light_manager.lightModelTwoSize()<<std::endl;
     return out;
 }
 
