@@ -55,10 +55,7 @@ public:
     //[deprecated] apply the camera 
     void look();
 
-    glm::mat4 projectionMatrix() const;
-    glm::mat4 viewMatrix() const;
-    glm::mat4 projectionAndViewMatrix() const;
-    
+    void configCameraToCurBindShader();
 
     //rotate the camera around the focus (spherical camera)
     void orbitUp(Scalar rad);
@@ -83,14 +80,14 @@ public:
     void translateLeft(Scalar dist);
 
     //getters && setters
-    const Vector<Scalar,3>& cameraPosition() const;
+    const Vector<Scalar,3> & cameraPosition() const;
     void setCameraPosition(const Vector<Scalar,3> &position);
-    const Vector<Scalar,3>& cameraUpDirection() const;
+    const Vector<Scalar,3> & cameraUpDirection() const;
     void setCameraUpDirection(const Vector<Scalar,3> &up);
-    const Vector<Scalar,3>& cameraFocusPosition() const;
+    const Vector<Scalar,3> & cameraFocusPosition() const;
     void setCameraFocusPosition(const Vector<Scalar,3> &focus);
-    Scalar cameraFOV() const;
-    void setCameraFOV(Scalar fov);
+    Scalar cameraFOV() const;       //in degrees
+    void setCameraFOV(Scalar fov);  //in degrees
     Scalar cameraAspect() const;
     void setCameraAspect(Scalar aspect);
     Scalar cameraNearClip() const;

@@ -14,6 +14,7 @@
 
 #include <iostream>
 
+#include "Physika_Render/OpenGL_Primitives/glew_utilities.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -53,27 +54,26 @@ void Camera<Scalar>::look()
 }
 
 template <typename Scalar>
-glm::mat4 Camera<Scalar>::projectionMatrix() const
+void Camera<Scalar>::configCameraToCurBindShader()
 {
-    return glm::perspective(glm::radians(fov_), view_aspect_, near_clip_, far_clip_);
-}
+    //projection matrix
+    glm::mat4 proj_trans = glm::perspective(glm::radians(fov_), view_aspect_, near_clip_, far_clip_);
+    openGLSetCurBindShaderMat4("proj_trans", proj_trans);
 
-template <typename Scalar>
-glm::mat4 Camera<Scalar>::viewMatrix() const
-{
+    //view matrix
     glm::vec3 glm_camera_pos = { camera_position_[0], camera_position_[1], camera_position_[2] };
     glm::vec3 glm_camera_focus_pos = { focus_position_[0], focus_position_[1], focus_position_[2] };
     glm::vec3 glm_camera_up_dir = { camera_up_[0], camera_up_[1], camera_up_[2] };
 
-    return glm::lookAt(glm_camera_pos, glm_camera_focus_pos, glm_camera_up_dir);
-}
+    glm::mat4 view_trans = glm::lookAt(glm_camera_pos, glm_camera_focus_pos, glm_camera_up_dir);
+    openGLSetCurBindShaderMat4("view_trans", view_trans);
 
-template <typename Scalar>
-glm::mat4 Camera<Scalar>::projectionAndViewMatrix() const
-{
-    return this->projectionMatrix()*this->viewMatrix();
-}
+    //model matrix: default to identity matrix
+    openGLSetCurBindShaderMat4("model_trans", glm::mat4());
 
+    //view pos
+    openGLSetCurBindShaderVec3("view_pos", camera_position_);
+}
 
 template <typename Scalar>
 void Camera<Scalar>::orbitUp(Scalar rad)
