@@ -24,7 +24,7 @@ namespace Physika{
 
 class GlutWindow;
 class ScreenBasedRenderManager;
-class FluidRender;
+//class FluidRender;
 
 
 class CudaPBDSPHPluginRender : public SPHPluginBase<float, 3>
@@ -59,7 +59,7 @@ private:
     GlutWindow * window_;
 
     ScreenBasedRenderManager * screen_based_render_manager_ = NULL;
-    FluidRender * fluid_render_ = NULL;
+    //FluidRender * fluid_render_ = NULL;
 
     cudaGraphicsResource * cuda_pos_vbo_resource_;
 

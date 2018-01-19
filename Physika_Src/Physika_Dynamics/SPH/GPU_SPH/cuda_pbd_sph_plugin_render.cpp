@@ -22,7 +22,7 @@
 
 #include "Physika_GUI/Glut_Window/glut_window.h"
 #include "Physika_Render/Screen_Based_Render_Manager/screen_based_render_manager.h"
-#include "Physika_Render/Screen_Based_Render_Manager/Fluid_Render/fluid_render.h"
+//#include "Physika_Render/Screen_Based_Render_Manager/Fluid_Render/fluid_render.h"
 
 #include "Physika_Dynamics/SPH/GPU_SPH/cuda_pbd_sph.h"
 #include "Physika_Dynamics/SPH/GPU_SPH/cuda_pbd_sph_plugin_render.h"
@@ -40,7 +40,7 @@ CudaPBDSPHPluginRender::~CudaPBDSPHPluginRender()
 {
     //need further consideration
     delete this->screen_based_render_manager_;
-    delete this->fluid_render_;
+    //delete this->fluid_render_;
 }
 
 void CudaPBDSPHPluginRender::onBeginFrame(unsigned int frame)
@@ -92,19 +92,24 @@ void CudaPBDSPHPluginRender::unmapVBOBuffer()
 
 void CudaPBDSPHPluginRender::initFunction()
 {
-    active_instance_->screen_based_render_manager_ = new ScreenBasedRenderManager(active_instance_->window_);
+    //modify by Wei Chen, 2017, 1.14
+    active_instance_->screen_based_render_manager_ = new ScreenBasedRenderManager();
 
     //need further consideration
-    active_instance_->screen_based_render_manager_->addPlane({ 0.0f, 1.0f, 0.0f, 0.0f });
+    /*
+    //comment by Wei Chen, 2017, 1.12
 
+    //active_instance_->screen_based_render_manager_->addPlane({ 0.0f, 1.0f, 0.0f, 0.0f });
     active_instance_->screen_based_render_manager_->setLightPos({ 4.35653f, 12.5529f, 5.77261f });
     active_instance_->screen_based_render_manager_->setLightTarget({ 1.508125f, 1.00766f, 0.0f });
     active_instance_->screen_based_render_manager_->setLightFov(28.0725f);
     active_instance_->screen_based_render_manager_->setLightSpotMin(0.0);
     active_instance_->screen_based_render_manager_->setLightSpotMax(0.5);
+    */
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    /*
     unsigned int screen_width = active_instance_->window_->width();
     unsigned int screen_height = active_instance_->window_->height();
 
@@ -139,7 +144,7 @@ void CudaPBDSPHPluginRender::initFunction()
 
     GLuint pos_VBO = active_instance_->fluid_render_->fluidPositionVBO();
     cudaGraphicsGLRegisterBuffer(&active_instance_->cuda_pos_vbo_resource_, pos_VBO, cudaGraphicsMapFlagsWriteDiscard);
-
+    */
 
 }
 
