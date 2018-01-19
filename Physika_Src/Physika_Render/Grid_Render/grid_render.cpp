@@ -174,7 +174,7 @@ void GridRender<Scalar,Dim>::render()
     glPopAttrib();
 }
 
-//explicit instantitationtemplate class Grid<unsigned char,2>;
+//explicit instantiation 
 template class GridRender<unsigned short,2>;
 template class GridRender<unsigned int,2>;
 template class GridRender<unsigned long,2>;
