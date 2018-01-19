@@ -30,7 +30,6 @@ int main()
 
     CudaPBDSPH * cuda_pbd_sph = SceneLoader::Load("Ball");
 
-    
     GlutWindow glut_window("cuda_pbd_sph_test", 1280, 720);
     glut_window.enableEventMode();
 
@@ -42,15 +41,14 @@ int main()
     cout << "Window name: " << glut_window.name() << "\n";
     cout << "Window size: " << glut_window.width() << "x" << glut_window.height() << "\n";
 
-    glut_window.setCameraPosition(Vector<double, 3>(0, 0.1, 5));
-    glut_window.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
-    glut_window.setCameraNearClip(0.01);
-    glut_window.setCameraFarClip(1.0e3);
+    //glut_window.setCameraPosition(Vector<double, 3>(0, 0.1, 5));
+    //glut_window.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
+    
+    //glut_window.setCameraNearClip(0.01);
+    //glut_window.setCameraFarClip(1.0e3);
+    
     glut_window.createWindow();
-
-
     cuda_pbd_sph->run();
     
-
     return 0;
 }
