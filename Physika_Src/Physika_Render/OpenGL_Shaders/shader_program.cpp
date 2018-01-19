@@ -20,10 +20,7 @@
 
 #include "Physika_Core/Utilities/physika_exception.h"
 
-//glew.h must be included before gl.h
-#include <GL/glew.h>
-#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
-
+#include "Physika_Render/OpenGL_Primitives/glew_utilities.h"
 #include "Physika_Render/OpenGL_Shaders/shader_program.h"
 
 namespace Physika {
@@ -72,6 +69,19 @@ ShaderProgram::ShaderProgram(const char * vertex_shader_source,
                                  tess_evaluation_shader_source);
 }
 */
+
+ShaderProgram::ShaderProgram(ShaderProgram && rhs) noexcept
+{
+    this->program_ = rhs.program_;
+    rhs.program_ = 0;
+}
+
+ShaderProgram & ShaderProgram::operator= (ShaderProgram && rhs) noexcept
+{
+    this->program_ = rhs.program_;
+    rhs.program_ = 0;
+    return *this;
+}
 
 ShaderProgram::~ShaderProgram()
 {
@@ -224,19 +234,6 @@ void ShaderProgram::unUse() const
     glVerify(glUseProgram(0));
 }
 
-void ShaderProgram::check() const
-{
-    if (this->isValid() == false)
-        throw PhysikaException("error: invalid shader program!");
-
-    GLint cur_program_id = 0;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &cur_program_id);
-
-    if (cur_program_id != this->program_)
-        throw PhysikaException("error: this shader_program is not binded, please call use() before setting");
-
-}
-
 bool ShaderProgram::setBool(const std::string & name, bool val) 
 {
     return this->setInt(name, val);
@@ -244,168 +241,117 @@ bool ShaderProgram::setBool(const std::string & name, bool val)
 
 bool ShaderProgram::setInt(const std::string & name, int val) 
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniform1i(location, val));
-    return true;
+    return openGLSetShaderInt(this->program_, name, val);
 }
 
 bool ShaderProgram::setFloat(const std::string & name, float val)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniform1f(location, val));
-    return true;
+    return openGLSetShaderFloat(this->program_, name, val);
 }
 
 bool ShaderProgram::setVec2(const std::string & name, const Vector2f & val)
 {
-    glm::vec2 glm_val = { val[0], val[1] };
-    return this->setVec2(name, glm_val);
+    return openGLSetShaderVec2(this->program_, name, val);
+}
+
+bool ShaderProgram::setVec2(const std::string & name, const Vector2d & val)
+{
+    return openGLSetShaderVec2(this->program_, name, val);
 }
 
 bool ShaderProgram::setVec2(const std::string & name, const glm::vec2 & val)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniform2fv(location, 1, glm::value_ptr(val)));
-    return true;
+    return openGLSetShaderVec2(this->program_, name, val);
 }
 
 bool ShaderProgram::setVec2(const std::string & name, float x, float y)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniform2f(location, x, y));
-    return true;
+    return openGLSetShaderVec2(this->program_, name, x, y);
 }
 
 bool ShaderProgram::setVec3(const std::string & name, const Vector3f & val)
 {
-    glm::vec3 glm_val = { val[0], val[1], val[2] };
-    return this->setVec3(name, glm_val);
+    return openGLSetShaderVec3(this->program_, name, val);
+}
+
+bool ShaderProgram::setVec3(const std::string & name, const Vector3d & val)
+{
+    return openGLSetShaderVec3(this->program_, name, val);
 }
 
 bool ShaderProgram::setVec3(const std::string & name, const glm::vec3 & val)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniform3fv(location, 1, glm::value_ptr(val)));
-    return true;
+    return openGLSetShaderVec3(this->program_, name, val);
 }
 
 bool ShaderProgram::setVec3(const std::string & name, float x, float y, float z)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniform3f(location, x, y, z));
-    return true;
+    return openGLSetShaderVec3(this->program_, name, x, y, z);
 }
 
 bool ShaderProgram::setVec4(const std::string & name, const Vector4f & val)
 {
-    glm::vec4 glm_val = { val[0], val[1], val[2], val[3] };
-    return this->setVec4(name, glm_val);
+    return openGLSetShaderVec4(this->program_, name, val);
+}
+
+bool ShaderProgram::setVec4(const std::string & name, const Vector4d & val)
+{
+    return openGLSetShaderVec4(this->program_, name, val);
 }
 
 bool ShaderProgram::setVec4(const std::string & name, const glm::vec4 & val)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniform4fv(location, 1, glm::value_ptr(val)));
-    return true;
+    return openGLSetShaderVec4(this->program_, name, val);
 }
 
 bool ShaderProgram::setVec4(const std::string & name, float x, float y, float z, float w)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniform4f(location, x, y, z, w));
-    return true;
+    return openGLSetShaderVec4(this->program_, name, x, y, z, w);
 }
 
 bool ShaderProgram::setMat2(const std::string & name, const Matrix2f & val)
 {
-    glm::mat2 glm_mat = {val(0,0), val(1,0),  //col 0
-                         val(0,1), val(1,1)}; //col 1
+    return openGLSetShaderMat2(this->program_, name, val);
+}
 
-    return this->setMat2(name, glm_mat);
+bool ShaderProgram::setMat2(const std::string & name, const Matrix2d & val)
+{
+    return openGLSetShaderMat2(this->program_, name, val);
 }
 
 bool ShaderProgram::setMat2(const std::string & name, const glm::mat2 & val)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(val)));
-    return true;
+    return openGLSetShaderMat2(this->program_, name, val);
 }
 
 bool ShaderProgram::setMat3(const std::string & name, const Matrix3f & val)
 {
-    glm::mat3 glm_mat = { val(0,0), val(1,0), val(2,0),    //col 0
-                          val(0,1), val(1,1), val(2,1),    //col 1
-                          val(0,2), val(1,2), val(2,2)};   //col 2
+    return openGLSetShaderMat3(this->program_, name, val);
+}
 
-    return this->setMat3(name, glm_mat);
+bool ShaderProgram::setMat3(const std::string & name, const Matrix3d & val)
+{
+    return openGLSetShaderMat3(this->program_, name, val);
 }
 
 bool ShaderProgram::setMat3(const std::string & name, const glm::mat3 & val)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(val)));
-    return true;
+    return openGLSetShaderMat3(this->program_, name, val);
 }
 
 bool ShaderProgram::setMat4(const std::string & name, const Matrix4f & val)
 {
-    glm::mat4 glm_mat = { val(0,0), val(1,0), val(2,0), val(3,0),   //col 0
-                          val(0,1), val(1,1), val(2,1), val(3,1),   //col 1
-                          val(0,2), val(1,2), val(2,2), val(3,2),   //col 2
-                          val(0,3), val(1,3), val(2,3), val(3,3)};  //col 3
+    return openGLSetShaderMat4(this->program_, name, val);
+}
 
-    return this->setMat4(name, glm_mat);
+bool ShaderProgram::setMat4(const std::string & name, const Matrix4d & val)
+{
+    return openGLSetShaderMat4(this->program_, name, val);
 }
 
 bool ShaderProgram::setMat4(const std::string & name, const glm::mat4 & val)
 {
-    check();
-    int location = glGetUniformLocation(this->program_, name.c_str());
-    if (location == -1)
-        return false;
-
-    glVerify(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(val)));
-    return true;
+    return openGLSetShaderMat4(this->program_, name, val);
 }
 
 bool ShaderProgram::isValid() const
@@ -413,7 +359,7 @@ bool ShaderProgram::isValid() const
     return glIsProgram(this->program_);
 }
 
-GLuint ShaderProgram::id() const
+unsigned int ShaderProgram::id() const
 {
     return this->program_;
 }
