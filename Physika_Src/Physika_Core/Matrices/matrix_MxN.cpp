@@ -116,7 +116,7 @@ unsigned int MatrixMxN<Scalar>::cols() const
 }
 
 template <typename Scalar>
-void MatrixMxN<Scalar>::resize(unsigned int new_rows, unsigned int new_cols, Scalar init_val = 0)
+void MatrixMxN<Scalar>::resize(unsigned int new_rows, unsigned int new_cols, Scalar init_val)
 {
 #ifdef PHYSIKA_USE_EIGEN_MATRIX
     eigen_matrix_MxN_.resize(new_rows,new_cols);
@@ -350,7 +350,7 @@ const MatrixMxN<Scalar> MatrixMxN<Scalar>::transpose() const
         for(unsigned int j = 0; j < cols; ++j)
             result[j*rows+i] = (*this)(i,j);
     MatrixMxN<Scalar> result_matrix(cols,rows,result);
-    delete result;
+    delete [] result;
     return result_matrix;
 }
 
