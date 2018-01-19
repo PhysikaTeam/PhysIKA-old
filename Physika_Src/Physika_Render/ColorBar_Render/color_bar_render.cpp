@@ -64,21 +64,22 @@ void ColorBarRender<Scalar>::render()
     // undefined in lib or dll?
     //glWindowPos2f(pos[0],pos[1]); 
 
-    glMatrixMode(GL_PROJECTION);
+    glVerify(glMatrixMode(GL_PROJECTION));
     glPushMatrix();
     glLoadIdentity();
     unsigned int win_width = glutGet(GLUT_WINDOW_WIDTH);
     unsigned int win_height = glutGet(GLUT_WINDOW_HEIGHT);
     gluOrtho2D(0.0, (GLfloat)win_width, 0.0, (GLfloat)win_height);
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
-    glRasterPos2f(pos[0], pos[1]);
+    glVerify(glRasterPos2f(pos[0], pos[1]));
 
     unsigned int width = color_bar_->width();
     unsigned int height = color_bar_->height();
     float * pixels = new float[width*height*3];
-    PHYSIKA_ASSERT(pixels);
+
     const ColorMap<Scalar> & color_map = color_bar_->colorMap();
     if (color_bar_->isHorizon() == false)
     {
@@ -95,7 +96,7 @@ void ColorBarRender<Scalar>::render()
                 pixels[(i*width+j)*3+2] = b;
             }
         }
-        glDrawPixels(width, height, GL_RGB, GL_FLOAT, pixels);
+        glVerify(glDrawPixels(width, height, GL_RGB, GL_FLOAT, pixels));
     }
     else
     {
@@ -112,11 +113,11 @@ void ColorBarRender<Scalar>::render()
                 pixels[(j*height+i)*3+2] = b;
             }
         }
-        glDrawPixels(height, width, GL_RGB, GL_FLOAT, pixels);
+        glVerify(glDrawPixels(height, width, GL_RGB, GL_FLOAT, pixels));
     }
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
+    glVerify(glPopMatrix());
+    glVerify(glMatrixMode(GL_PROJECTION));
+    glVerify(glPopMatrix());
 
     delete [] pixels;
 }
