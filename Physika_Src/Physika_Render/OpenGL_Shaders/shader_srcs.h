@@ -252,57 +252,62 @@ void main()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // vertex shader
-static const char * vertex_point_shader = "#version 130\n" STRINGIFY(
+static const char * vertex_point_shader = "#version 330 core\n" STRINGIFY(
 
-uniform float pointRadius;  // point size in world space
-uniform float pointScale;   // scale to calculate size in pixels
+layout(location = 0) in vec4 vert_pos;
+
+in float density;
+in int phase;
+
+uniform mat4 proj_trans;
+uniform mat4 view_trans;
+uniform mat4 model_trans;
+
+uniform float pointRadius;  
+uniform float pointScale;   
 
 uniform mat4 lightTransform;
 uniform vec3 lightDir;
-uniform vec3 lightDirView;
 
 uniform vec4 colors[8];
-
-uniform vec4 transmission;
 uniform int mode;
 
-//in int density;
-in float density;
-in int phase;
-in vec4 velocity;
+out vec3 frag_pos;
+out vec4 frag_light_space_pos;
+out vec4 frag_view_space_light_dir;
+out vec4 frag_view_space_pos;
+out vec4 reflect_col;
 
 void main()
 {
-    // calculate window-space point size
-    vec4 viewPos = gl_ModelViewMatrix*vec4(gl_Vertex.xyz, 1.0);
 
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(gl_Vertex.xyz, 1.0);
-    gl_PointSize = -pointScale * (pointRadius / viewPos.z);
+    vec4 view_pos = view_trans * model_trans * vec4(vert_pos.xyz, 1.0);
 
-    gl_TexCoord[0] = gl_MultiTexCoord0;
-    gl_TexCoord[1] = lightTransform*vec4(gl_Vertex.xyz - lightDir*pointRadius*2.0, 1.0);
-    gl_TexCoord[2] = gl_ModelViewMatrix*vec4(lightDir, 0.0);
+    gl_Position = proj_trans * view_trans * model_trans  * vec4(vert_pos.xyz, 1.0);
+    gl_PointSize = -1.0 * pointScale * (pointRadius / view_pos.z);
+
+    frag_pos.xyz = vert_pos.xyz;
+    frag_view_space_pos.xyz = view_pos.xyz;
+    frag_light_space_pos = lightTransform*vec4(vert_pos.xyz - lightDir*pointRadius*2.0, 1.0);
+    frag_view_space_light_dir = view_trans * model_trans * vec4(lightDir, 0.0);
 
     if (mode == 1)
     {
         // density visualization
         if (density < 0.0f)
-            gl_TexCoord[3].xyz = mix(vec3(0.1, 0.1, 1.0), vec3(0.1, 1.0, 1.0), -density);
+            reflect_col.xyz = mix(vec3(0.1, 0.1, 1.0), vec3(0.1, 1.0, 1.0), -density);
         else
-            gl_TexCoord[3].xyz = mix(vec3(1.0, 1.0, 1.0), vec3(0.1, 0.2, 1.0), density);
+            reflect_col.xyz = mix(vec3(1.0, 1.0, 1.0), vec3(0.1, 0.2, 1.0), density);
     }
     else if (mode == 2)
     {
-        gl_PointSize *= clamp(gl_Vertex.w*0.25, 0.0f, 1.0);
-        gl_TexCoord[3].xyzw = vec4(clamp(gl_Vertex.w*0.05, 0.0f, 1.0));
+        gl_PointSize *= clamp(vert_pos.w*0.25, 0.0f, 1.0);
+        reflect_col.xyzw = vec4(clamp(vert_pos.w*0.05, 0.0f, 1.0));
     }
     else
     {
-        gl_TexCoord[3].xyz = mix(colors[phase % 8].xyz*2.0, vec3(1.0), 0.1);
+        reflect_col.xyz = mix(colors[phase % 8].xyz*2.0, vec3(1.0), 0.1);
     }
-
-    gl_TexCoord[4].xyz = gl_Vertex.xyz;
-    gl_TexCoord[5].xyz = viewPos.xyz;
 }
 
 );
@@ -310,7 +315,17 @@ void main()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // pixel shader for rendering points as shaded spheres
-static const char * fragment_point_shader = STRINGIFY(
+static const char * fragment_point_shader = "#version 330 core\n" STRINGIFY(
+
+in vec3 frag_pos;
+in vec4 frag_light_space_pos;
+in vec4 frag_view_space_light_dir;
+in vec4 frag_view_space_pos;
+in vec4 reflect_col;
+
+out vec4 frag_color;
+
+uniform mat4 proj_trans;
 
 uniform vec3 lightDir;
 uniform vec3 lightPos;
@@ -318,14 +333,15 @@ uniform float spotMin;
 uniform float spotMax;
 uniform int mode;
 
-uniform sampler2DShadow shadowTex;
+uniform sampler2D shadowTex;
 uniform vec2 shadowTaps[12];
-uniform float pointRadius;  // point size in world space
+
+uniform float pointRadius;  
 
 // sample shadow map
 float shadowSample()
 {
-    vec3 pos = vec3(gl_TexCoord[1].xyz / gl_TexCoord[1].w);
+    vec3 pos = vec3(frag_light_space_pos.xyz / frag_light_space_pos.w);
     vec3 uvw = (pos.xyz*0.5) + vec3(0.5);
 
     // user clip
@@ -339,50 +355,52 @@ float shadowSample()
 
     for (int i = 0; i < 8; i++)
     {
-        s += shadow2D(shadowTex, vec3(uvw.xy + shadowTaps[i] * radius, uvw.z)).r;
+        bool is_shadow = uvw.z > texture(shadowTex, uvw.xy + shadowTaps[i] * radius).r;
+        if (is_shadow == false) s += 1;
     }
 
     s /= 8.0;
     return s;
 }
 
-float sqr(float x) { return x*x; }
+float square(float x) { return x*x; }
 
 void main()
 {
     // calculate normal from texture coordinates
     vec3 normal;
-    normal.xy = gl_TexCoord[0].xy*vec2(2.0, -2.0) + vec2(-1.0, 1.0);
+    normal.xy = gl_PointCoord.xy*vec2(2.0, -2.0) + vec2(-1.0, 1.0);
     float mag = dot(normal.xy, normal.xy);
     if (mag > 1.0) discard;   // kill pixels outside circle
     normal.z = sqrt(1.0 - mag);
 
     if (mode == 2)
     {
-        float alpha = normal.z*gl_TexCoord[3].w;
-        gl_FragColor.xyz = gl_TexCoord[3].xyz*alpha;
-        gl_FragColor.w = alpha;
+        float alpha = normal.z*reflect_col.w;
+        frag_color.xyz = reflect_col.xyz*alpha;
+        frag_color.w = alpha;
         return;
     }
 
     // calculate lighting
-    float shadow = shadowSample();
+    //float shadow = shadowSample();
+    float shadow = 1.0;
 
-    vec3 lVec = normalize(gl_TexCoord[4].xyz - (lightPos));
-    vec3 lPos = vec3(gl_TexCoord[1].xyz / gl_TexCoord[1].w);
+    vec3 lVec = normalize(frag_pos.xyz - lightPos);
+    vec3 lPos = vec3(frag_light_space_pos.xyz / frag_light_space_pos.w);
     float attenuation = max(smoothstep(spotMax, spotMin, dot(lPos.xy, lPos.xy)), 0.05);
 
     vec3 diffuse = vec3(0.9, 0.9, 0.9);
-    vec3 reflectance = gl_TexCoord[3].xyz;
+    vec3 reflectance = reflect_col.xyz;
 
-    vec3 Lo = diffuse*reflectance*max(0.0, sqr(-dot(gl_TexCoord[2].xyz, normal)*0.5 + 0.5))*max(0.2, shadow)*attenuation;
+    vec3 Lo = diffuse*reflectance*max(0.0, square(-dot(frag_view_space_light_dir.xyz, normal)*0.5 + 0.5))*max(0.2, shadow)*attenuation;
 
-    gl_FragColor = vec4(pow(Lo, vec3(1.0 / 2.2)), 1.0);
+    frag_color = vec4(pow(Lo, vec3(1.0 / 2.2)), 1.0);
 
-    vec3 eyePos = gl_TexCoord[5].xyz + normal*pointRadius;//*2.0;
-    vec4 ndcPos = gl_ProjectionMatrix * vec4(eyePos, 1.0);
-    ndcPos.z /= ndcPos.w;
-    gl_FragDepth = ndcPos.z*0.5 + 0.5;
+    vec3 eye_pos = frag_view_space_pos.xyz + normal*pointRadius;
+    vec4 ndc_pos = proj_trans * vec4(eye_pos, 1.0);
+    ndc_pos.z /= ndc_pos.w;
+    gl_FragDepth = ndc_pos.z*0.5 + 0.5;
 }
 
 );
@@ -391,17 +409,21 @@ void main()
 
 static const char * vertex_point_depth_shader = STRINGIFY(
 
+uniform mat4 proj_trans;
+uniform mat4 view_trans;
+uniform mat4 model_trans;
+
 uniform float pointRadius;  // point size in world space
 uniform float pointScale;   // scale to calculate size in pixels
 
 void main()
 {
     // calculate window-space point size
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(gl_Vertex.xyz, 1.0);
+    gl_Position = proj_trans * view_trans * model_trans * vec4(gl_Vertex.xyz, 1.0);
     gl_PointSize = pointScale * (pointRadius / gl_Position.w);
 
     gl_TexCoord[0] = gl_MultiTexCoord0;
-    gl_TexCoord[1] = gl_ModelViewMatrix * vec4(gl_Vertex.xyz, 1.0);
+    gl_TexCoord[1] = view_trans * model_trans * vec4(gl_Vertex.xyz, 1.0);
 }
 
 );
@@ -454,7 +476,11 @@ void main()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Ellipsoid shaders
-static const char * vertex_ellipsoid_depth_shader = "#version 120\n" STRINGIFY(
+static const char * vertex_ellipsoid_depth_shader = "#version 330 compatibility\n" STRINGIFY(
+
+uniform mat4 proj_trans;
+uniform mat4 view_trans;
+uniform mat4 model_trans;
 
 // rotation matrix in xyz, scale in w
 attribute vec4 q1;
@@ -489,11 +515,13 @@ bool solveQuadratic(float a, float b, float c, out float minT, out float maxT)
         minT = maxT;
         maxT = tmp;
     }
-
     return true;
 }
 
-float DotInvW(vec4 a, vec4 b) { return a.x*b.x + a.y*b.y + a.z*b.z - a.w*b.w; }
+float DotInvW(vec4 a, vec4 b)
+{
+    return a.x*b.x + a.y*b.y + a.z*b.z - a.w*b.w;
+}
 
 void main()
 {
@@ -507,7 +535,7 @@ void main()
     q[3] = vec4(worldPos, 1.0);
 
     // transforms a normal to parameter space (inverse transpose of (q*modelview)^-T)
-    mat4 invClip = transpose(gl_ModelViewProjectionMatrix*q);
+    mat4 invClip = transpose(proj_trans * view_trans * model_trans * q);
 
     // solve for the right hand bounds in homogenous clip space
     float a1 = DotInvW(invClip[3], invClip[3]);
@@ -541,7 +569,7 @@ void main()
     invq[3] = -(invq*gl_Position);
 
     // transform a point from view space to parameter space
-    invq = invq*gl_ModelViewMatrixInverse;
+    invq = invq*inverse(view_trans * model_trans);
 
     // pass down
     gl_TexCoord[1] = invq[0];
@@ -550,7 +578,7 @@ void main()
     gl_TexCoord[4] = invq[3];
 
     // compute ndc pos for frustrum culling in GS
-    vec4 ndcPos = gl_ModelViewProjectionMatrix * vec4(worldPos.xyz, 1.0);
+    vec4 ndcPos = proj_trans * view_trans * model_trans * vec4(worldPos.xyz, 1.0);
     gl_TexCoord[5] = ndcPos / ndcPos.w;
 }
 
@@ -606,7 +634,11 @@ void main()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // pixel shader for rendering points as shaded spheres
-static const char *fragment_ellipsoid_depth_shader = "#version 120\n" STRINGIFY(
+static const char *fragment_ellipsoid_depth_shader = "#version 330 compatibility\n" STRINGIFY(
+
+uniform mat4 proj_trans;
+uniform mat4 view_trans;
+uniform mat4 model_trans;
 
 uniform vec3 invViewport;
 uniform vec3 invProjection;
@@ -654,7 +686,7 @@ void main()
     invQuadric[3] = gl_TexCoord[3];
 
     vec4 ndcPos = vec4(gl_FragCoord.xy*invViewport.xy*vec2(2.0, 2.0) - vec2(1.0, 1.0), -1.0, 1.0);
-    vec4 viewDir = gl_ProjectionMatrixInverse*ndcPos;
+    vec4 viewDir = inverse(proj_trans)*ndcPos;
 
     // ray to parameter space
     vec4 dir = invQuadric*vec4(viewDir.xyz, 0.0);
@@ -671,7 +703,7 @@ void main()
     if (solveQuadratic(a, 2.0*b, c, minT, maxT))
     {
         vec3 eyePos = viewDir.xyz*minT;
-        vec4 ndcPos = gl_ProjectionMatrix * vec4(eyePos, 1.0);
+        vec4 ndcPos = proj_trans * vec4(eyePos, 1.0);
         ndcPos.z /= ndcPos.w;
 
         gl_FragColor = vec4(eyePos.z, 1.0, 1.0, 1.0);
