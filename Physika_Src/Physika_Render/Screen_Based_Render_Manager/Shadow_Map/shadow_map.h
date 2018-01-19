@@ -16,7 +16,6 @@
 #ifndef PHYSIKA_RENDER_SCREEN_BASED_MAP_SHADOW_RENDER_SHADOW_MAP_H
 #define PHYSIKA_RENDER_SCREEN_BASED_MAP_SHADOW_RENDER_SHADOW_MAP_H
 
-#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
 #include "Physika_Render/OpenGL_Shaders/shader_program.h"
 
 namespace Physika{
@@ -27,33 +26,36 @@ public:
     ShadowMap();
     ~ShadowMap();
 
-private:
-
-    void initShadowFrameBuffer();
-    void destoryShadowFrameBuffer();
-
-public:
+    //disable copy
     ShadowMap(const ShadowMap &) = delete;
     ShadowMap & operator = (const ShadowMap &) = delete;
+
+    //enable move
+    ShadowMap(ShadowMap && rhs) noexcept;
+    ShadowMap & operator = (ShadowMap && rhs) noexcept;
 
     void beginShadowMap();
     void endShadowMap();
 
-    GLuint shadowTexId() const;
-    GLuint shadowFboId() const;
+    unsigned int shadowMapTexId() const;
+    unsigned int shadowMapFboId() const;
 
-    void renderShadowTexToScreen();
+    void renderShadowMapToScreen();
+
+private:
+    void initShadowMapFBO();
+    void destoryShadowMapFBO();
 
 private:
 
-    GLuint shadow_TEX_ = 0;
-    GLuint shadow_FBO_ = 0;
+    unsigned int shadow_map_TEX_ = 0;
+    unsigned int shadow_map_FBO_ = 0;
 
-    ShaderProgram shadow_program_;              //used to create shadow map
-    ShaderProgram shadow_map_render_program_;   //used to render shadow map to screen
+    ShaderProgram shadow_map_program_;              //used to create shadow map
+    ShaderProgram shadow_map_render_program_;       //used to render shadow map to screen
 
-    static const int shadow_width_resolution_ = 2048;
-    static const int shadow_height_resolution_ = 2048;
+    const int shadow_width_resolution_ = 2048;
+    const int shadow_height_resolution_ = 2048;
 };
 
 }// end of namespace Physika

@@ -12,131 +12,144 @@
 *
 */
 
-#include <Physika_Render/OpenGL_Primitives/glew_utilities.h>
-#include <Physika_Render/OpenGL_Primitives/opengl_primitives.h>
-#include <GL/freeglut.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Physika_Render/OpenGL_Shaders/shader_srcs.h"
-#include "Physika_Render/Screen_Based_Render_Manager/Shadow_Map/shadow_map.h"
+#include <Physika_Render/OpenGL_Primitives/glew_utilities.h>
+#include <GL/freeglut.h>
 
+#include "Physika_Render/OpenGL_Shaders/shader_srcs.h"
+
+
+#include "shadow_map_shader_srcs.h"
+#include "shadow_map.h"
 
 namespace Physika {
 
 ShadowMap::ShadowMap()
 {
-    this->shadow_program_.createFromCStyleString(vertex_shader, fragment_pass_through_shader);
+    this->shadow_map_program_.createFromCStyleString(shadow_map_vertex_shader, shadow_map_frag_shader);
     this->shadow_map_render_program_.createFromCStyleString(vertex_pass_through_shader, shadow_map_fragment_shader);
-    this->initShadowFrameBuffer();
+    this->initShadowMapFBO();
+}
+
+ShadowMap::ShadowMap(ShadowMap && rhs) noexcept
+    :shadow_map_program_(std::move(rhs.shadow_map_program_)),
+    shadow_map_render_program_(std::move(rhs.shadow_map_render_program_))
+{
+    this->shadow_map_TEX_ = rhs.shadow_map_TEX_;
+    this->shadow_map_FBO_ = rhs.shadow_map_FBO_;
+
+    rhs.shadow_map_TEX_ = 0;
+    rhs.shadow_map_FBO_ = 0;
+}
+
+ShadowMap & ShadowMap::operator =(ShadowMap && rhs) noexcept
+{
+    this->shadow_map_program_ = std::move(rhs.shadow_map_program_);
+    this->shadow_map_render_program_ = std::move(rhs.shadow_map_render_program_);
+
+    this->shadow_map_TEX_ = rhs.shadow_map_TEX_;
+    this->shadow_map_FBO_ = rhs.shadow_map_FBO_;
+
+    rhs.shadow_map_TEX_ = 0;
+    rhs.shadow_map_FBO_ = 0;
+
+    return *this;
 }
 
 ShadowMap::~ShadowMap()
 {
-    this->destoryShadowFrameBuffer();
+    this->destoryShadowMapFBO();
 }
 
-void ShadowMap::initShadowFrameBuffer()
+void ShadowMap::initShadowMapFBO()
 {
     //create shadow_FBO
-    glVerify(glGenFramebuffers(1, &this->shadow_FBO_));
-    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->shadow_FBO_));
+    glVerify(glGenFramebuffers(1, &this->shadow_map_FBO_));
+    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->shadow_map_FBO_));
 
     //create shadow_TEX
-    glVerify(glGenTextures(1, &this->shadow_TEX_));
-    glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_TEX_));
+    glVerify(glGenTextures(1, &this->shadow_map_TEX_));
+    glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_map_TEX_));
+
+    //set filter & wrap
     glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-
     glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
     glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
     
+    //set border color
     GLfloat border_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
     glVerify(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color));
-
-    //this is to allow usage of shadow2DProj function in the shader 
-    //glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE));
-    //glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS));
-    //glVerify(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY));
 
     //allocate memory
     glVerify(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadow_width_resolution_, shadow_height_resolution_, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
 
     //bind shadow_TEX to shadow_FBO
-    glVerify(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->shadow_TEX_, 0));
+    glVerify(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->shadow_map_TEX_, 0));
 
-    if (openGlCheckCurFramebufferStatus() != GL_FRAMEBUFFER_COMPLETE)
+    if (openGLCheckCurFramebufferStatus() != GL_FRAMEBUFFER_COMPLETE)
         exit(EXIT_FAILURE);
-
-    //init depth buffer values to 1.0f
-    glVerify(glClear(GL_DEPTH_BUFFER_BIT));
 
     //switch to default screen buffer & texture
     glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
     glVerify(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void ShadowMap::destoryShadowFrameBuffer()
+void ShadowMap::destoryShadowMapFBO()
 {
-    glVerify(glDeleteTextures(1, &this->shadow_TEX_));
-    glVerify(glDeleteFramebuffers(1, &this->shadow_FBO_));
+    glVerify(glDeleteTextures(1, &this->shadow_map_TEX_));
+    glVerify(glDeleteFramebuffers(1, &this->shadow_map_FBO_));
 }
 
 void ShadowMap::beginShadowMap()
 {
-    glEnable(GL_DEPTH_TEST);
-
-    //enable polygon offset
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(8.f, 8.f);
-
-    //switch to shadow_FBO
-    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->shadow_FBO_));
-
-    //clear background and depth buffer
-    glVerify(glClear(GL_DEPTH_BUFFER_BIT));
-
-    //reset viewport 
+    //switch to shadow_FBO & reset viewport
+    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->shadow_map_FBO_));
     glVerify(glViewport(0, 0, shadow_width_resolution_, shadow_height_resolution_));
 
-    // draw back faces 
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+    glVerify(glEnable(GL_DEPTH_TEST));
     glVerify(glDisable(GL_CULL_FACE));
 
-    //use shadow_program
-    this->shadow_program_.use();
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(8.f, 8.f);
+    
+    //clear depth buffer
+    glVerify(glClear(GL_DEPTH_BUFFER_BIT));
 
-    //set shadow_program uniform data
-    glVerify(glUniformMatrix4fv(glGetUniformLocation(this->shadow_program_.id(), "objectTransform"), 1, false, glm::value_ptr(glm::mat4(1.0))));
+    //use shadow_program
+    this->shadow_map_program_.use();
 }
 
 
 void ShadowMap::endShadowMap()
 {
-    //disable polygon offset
-    glDisable(GL_POLYGON_OFFSET_FILL);
-
-    //enable cull face
-    glEnable(GL_CULL_FACE);
-
     //unuse shadow_program
-    this->shadow_program_.unUse();
+    this->shadow_map_program_.unUse();
     
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glEnable(GL_CULL_FACE);
+ 
+    glVerify(glPopAttrib());
+
     //switch to default screen buffer
     glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-GLuint ShadowMap::shadowTexId() const
+unsigned int ShadowMap::shadowMapTexId() const
 {
-    return this->shadow_TEX_;
+    return this->shadow_map_TEX_;
 }
 
-GLuint ShadowMap::shadowFboId() const
+unsigned int ShadowMap::shadowMapFboId() const
 {
-    return this->shadow_FBO_;
+    return this->shadow_map_FBO_;
 }
 
-void ShadowMap::renderShadowTexToScreen()
+void ShadowMap::renderShadowMapToScreen()
 {
     glVerify(glPushAttrib(GL_ALL_ATTRIB_BITS));
 
@@ -154,7 +167,7 @@ void ShadowMap::renderShadowTexToScreen()
     glPushMatrix();
     glLoadIdentity();
 
-    glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_TEX_));
+    glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_map_TEX_));
     openGLRenderToFullScreenQuad();
     glVerify(glBindTexture(GL_TEXTURE_2D, 0));
 
@@ -172,4 +185,4 @@ void ShadowMap::renderShadowTexToScreen()
     glVerify(glutSwapBuffers());
 }
 
-}// end of namespace Physi
+}// end of namespace Physika
