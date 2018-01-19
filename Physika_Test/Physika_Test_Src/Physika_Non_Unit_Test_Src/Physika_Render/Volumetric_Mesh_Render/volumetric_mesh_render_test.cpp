@@ -71,8 +71,9 @@ void displayFunction()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
     GlutWindow *cur_window = (GlutWindow*)glutGetWindowData();
+    
     //cur_window->orbitCameraRight(0.1);
-    (cur_window->camera()).look();
+    //(cur_window->camera()).look();
 
     meshRender.disableRenderSolid();
     //meshRender.disableRenderWireframe();
@@ -181,10 +182,12 @@ int main()
     GlutWindow glut_window;
     cout<<"Window name: "<<glut_window.name()<<"\n";
     cout<<"Window size: "<<glut_window.width()<<"x"<<glut_window.height()<<"\n";
-    glut_window.setCameraPosition(Vector<double,3>(0,0,200));
-    glut_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
-    glut_window.setCameraNearClip(0.1);
-    glut_window.setCameraFarClip(1.0e4);
+    
+    //glut_window.setCameraPosition(Vector<double,3>(0,0,200));
+    //glut_window.setCameraFocusPosition(Vector<double,3>(0,0,0));
+    //glut_window.setCameraNearClip(0.1);
+    //glut_window.setCameraFarClip(1.0e4);
+    
     glut_window.setDisplayFunction(displayFunction);
     glut_window.setInitFunction(initFunction);
     cout<<"Test GlutWindow with custom display function:\n";
