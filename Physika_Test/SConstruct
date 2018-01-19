@@ -27,6 +27,26 @@ use_openmp = False
 #USE CUDA
 use_cuda = True
 #use_cuda = False
+
+#DEBUG TARGET
+
+#debug_target = 'grid_render_task_test.exe'
+#debug_target = 'color_bar_render_task_test.exe'
+#debug_target = 'volumetric_mesh_render_task_test.exe'
+#debug_target = 'cubic_mesh_render_task_test.exe'
+#debug_target = 'tri_mesh_render_task_test.exe'
+#debug_target = 'tet_mesh_render_task_test.exe'
+#debug_target = 'quad_render_task_test.exe'
+#debug_target = 'cube_render_task_test.exe'
+#debug_target = 'tetrahedron_render_task_test.exe'
+#debug_target = 'triangle_render_task_test.exe'
+#debug_target = 'line_render_task_test.exe'
+#debug_target = 'Point_render_task_test.exe'
+#debug_target = 'fluid_render_task_test.exe'
+#debug_target = 'screen_based_fluid_render_test.exe'
+debug_target = 'screen_based_render_manager_test.exe'
+#debug_target = 'surface_mesh_solid_render_task_test.exe'
+
 #################################################################
 
 #################################################################
@@ -195,7 +215,12 @@ for src_file in non_unit_test_src_files:
     target = non_unit_test_env.Program(target_name, src_file)
     print(target)
     
-    #WINDOWS WORKAROUND: COPY DLLS TO EXECUTIVE DIRECTORY
+    #COPY EXECUTABLE FILE TO PHYSIKA TEST ROOT DIRECTORY 
+    target_str = str(target[0])
+    Command(os.path.split(target_str)[1], target_str, Copy("$TARGET", "$SOURCE"))
+    
+     
+    #WINDOWS WORKAROUND: COPY DLLS TO EXECUTIVE DIRECTORY AND PHYSIKA TEST ROOT DIRECTORY
     if os_name == 'Windows':
         for rpath in lib_path:
             if not os.path.exists(rpath):
@@ -203,9 +228,9 @@ for src_file in non_unit_test_src_files:
             for dll_name in os.listdir(rpath):
                 if dll_name.endswith('.dll'):
                     Command(os.path.dirname(target_name)+'/'+dll_name, rpath+dll_name, Copy("$TARGET", "$SOURCE"))
+                    Command(dll_name, rpath+dll_name, Copy("$TARGET", "$SOURCE"))
 
 if compiler == 'msvc':
-    debug_target = ['Physika_Test_Src\\Physika_Non_Unit_Test_Src\\\Physika_Render\\Screen_Based_Render_Manager\\screen_based_render_manager_test.exe']
     non_unit_test_proj = non_unit_test_env.MSVSProject(target = 'Physika_Non_Unit_Test'+env['MSVSPROJECTSUFFIX'], srcs = non_unit_test_src_files, buildtarget = debug_target, variant = 'debug', auto_build_solution = 0)
 ###################################################################################################
 
