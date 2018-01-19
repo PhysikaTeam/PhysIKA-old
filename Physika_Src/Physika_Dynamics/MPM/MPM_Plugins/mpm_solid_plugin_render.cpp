@@ -251,12 +251,17 @@ void MPMSolidPluginRender<Scalar,Dim>::idleFunction(void)
 template <typename Scalar, int Dim>
 void MPMSolidPluginRender<Scalar,Dim>::displayFunction(void)
 {
+    throw PhysikaException("error: this function is deprecated by Wei Chen in 1.19, 2018");
+
+    /*
+     
     PHYSIKA_ASSERT(active_instance_);
     GlutWindow *window = active_instance_->window_;
     PHYSIKA_ASSERT(window);
     Color<double> background_color = window->backgroundColor<double>();
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     window->applyCameraAndLights();
 
     if(active_instance_->render_particle_)
@@ -271,8 +276,11 @@ void MPMSolidPluginRender<Scalar,Dim>::displayFunction(void)
         active_instance_->renderParticleDomain();
 
     (window->renderManager()).renderAll(); //render all other tasks of render manager
+
     window->displayFrameRate();
     glutSwapBuffers();
+
+    */
 }
 
 template <typename Scalar, int Dim>
@@ -344,7 +352,7 @@ void MPMSolidPluginRender<Scalar,Dim>::renderParticles()
     else
     {
         std::vector<Scalar> point_size(total_particle_num);
-        //determine sphere size according to particle volume, assumes particle occupies rectangluar space
+        //determine sphere size according to particle volume, assumes particle occupies rectangular space
         total_particle_idx = 0;
         for(unsigned int obj_idx = 0; obj_idx < driver->objectNum(); ++obj_idx)
             for(unsigned int particle_idx = 0; particle_idx < driver->particleNumOfObject(obj_idx); ++particle_idx)

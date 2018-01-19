@@ -188,12 +188,17 @@ void FEMSolidPluginRender<Scalar,Dim>::idleFunction(void)
 template <typename Scalar, int Dim>
 void FEMSolidPluginRender<Scalar,Dim>::displayFunction(void)
 {
+    throw PhysikaException("error: this function is deprecated by Wei Chen in 1.19, 2018");
+
+    /*
+     
     PHYSIKA_ASSERT(active_instance_);
     GlutWindow *window = active_instance_->window_;
     PHYSIKA_ASSERT(window);
     Color<double> background_color = window->backgroundColor<double>();
     glClearColor(background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), background_color.alphaChannel());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
     window->applyCameraAndLights();
 
     //render vertex velocity
@@ -219,8 +224,11 @@ void FEMSolidPluginRender<Scalar,Dim>::displayFunction(void)
     }
     
     (window->renderManager()).renderAll(); //render all other tasks of render manager
+
     window->displayFrameRate();
     glutSwapBuffers();
+
+    */
 }
 
 template <typename Scalar, int Dim>
