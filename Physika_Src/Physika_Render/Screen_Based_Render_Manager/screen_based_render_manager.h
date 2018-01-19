@@ -15,131 +15,88 @@
 #ifndef PHYSIKA_RENDER_SCREEN_BASED_RENDER_MANAGER_SCREEN_BASED_RENDER_MANAGER_H
 #define PHYSIKA_RENDER_SCREEN_BASED_RENDER_MANAGER_SCREEN_BASED_RENDER_MANAGER_H
 
-#include <list>
-
-#include "Physika_Core/Vectors/vector_3d.h"
-
-#include "Physika_Render/OpenGL_Primitives/opengl_primitives.h"
-#include "Physika_Render/Color/color.h"
-
 #include "Physika_Render/OpenGL_Shaders/shader_program.h"
-#include "Physika_Render/Screen_Based_Render_Manager/Fluid_Render/fluid_render.h"
 #include "Physika_Render/Screen_Based_Render_Manager/Shadow_Map/shadow_map.h"
 
 namespace Physika{
 
-class GlutWindow;
-class RenderBase;
 class ShaderProgram;
+class SpotLight;
+class FlexSpotLight;
 
 class ScreenBasedRenderManager 
 {
 public:
-
-    //ScreenBasedRenderManager();
-    //ScreenBasedRenderManager(unsigned int screen_width, unsigned int screen_height);
-    ScreenBasedRenderManager(GlutWindow * glut_window);
-
+    ScreenBasedRenderManager();
     ~ScreenBasedRenderManager();
 
+    //disable copy
     ScreenBasedRenderManager(const ScreenBasedRenderManager &) = delete;
     ScreenBasedRenderManager & operator = (const ScreenBasedRenderManager &) = delete;
 
+    void enableUseShadowmap();
+    void disableUseShadowmap();
+    bool isUseShadowmap() const;
+
+    void enableUseGammaCorrection();
+    void disableUseGammaCorrection();
+    bool isUseGammaCorrection() const;
+
+    void enableUseHDR();
+    void disableUseHDR();
+    bool isUseHDR() const;
+
+    unsigned int screenWidth() const;
+    unsigned int screenHeight() const;
+
     void render();
-    void drawShapes();
+    void renderAllNormalRenderTasks(bool bind_shader = true);
+    void renderAllScreenBasedRenderTasks();
 
-    void applyShadowMap();
-    void applyShadowMapWithSpecifiedShaderProgram(ShaderProgram & shader_program);
+    void resetMsaaFBO(unsigned int screen_width, unsigned int screen_height);
+    unsigned int msaaFBO() const;
 
-    //getters
-    const GlutWindow * glutWindow() const;
+private:
+    void beginFrame();
+    void endFrame();
+    void renderToScreen();
 
-    const Vector<float, 3> & lightPos() const;
-    const Vector<float, 3> & lightTarget() const;
-    float lightFov() const;
-    float lightSpotMin() const;
-    float lightSpotMax() const;
+    void createSpotLightShadowMaps();
+    void setSpotLightProjAndViewMatrix(const SpotLight * spot_light);
+    void configSpotLightShadowMapUnifroms(const SpotLight * spot_light, unsigned int spot_light_id, unsigned int shadow_map_tex_unit);
 
-    //setters
-    void addRender(RenderBase * render);
-    void addPlane(const Vector<float, 4> & plane);
-
-    void setGlutWindow(GlutWindow * glut_window);
-    void setFluidRender(FluidRender * fluid_render);
-
-    //set light parameters
-    void setLightPos(const Vector<float, 3> & light_pos);
-    void setLightTarget(const Vector<float, 3> & light_target);
-    void setLightFov(float light_fov);
-    void setLightSpotMin(float light_spot_min);
-    void setLightSpotMax(float light_spot_max);
-    void setFogDistance(float fog_distance);
-    void setShadowBias(float shadow_bias);
-
-    GLuint msaaFBO() const;
-    const ShadowMap & shadowMap() const;
+    void createFlexSpotLightShadowMaps();
+    void setFlexSpotLightProjAndViewMatrix(const FlexSpotLight * spot_light);
+    void configFlexSpotLightShadowMapUnifroms(const FlexSpotLight * spot_light, unsigned int spot_light_id, unsigned int shadow_map_tex_unit);
 
 private:
     void initMsaaFrameBuffer();
     void destroyMsaaFrameBuffer();
 
-private:
-
-    void drawPlanes();
-    void drawPlane(const Vector<float, 4> & plane);
-    void getBasisFromNormalVector(const Vector<float, 3> & w, Vector<float, 3> & u, Vector<float, 3> & v);
-
-    void beginFrame(const Color<float> & clear_color);
-
-    void createShadowMap();
-    void createCameraMap();
-
-    void endFrame();
+    void initScreenVAO();
+    void destroyScreenVAO();
 
 private:
-    void beginLighting();
-    void endLighting();
+    unsigned int screen_width_ = 1280; //change by resetMsaaFBO()
+    unsigned int screen_height_ = 720; //change by resetMsaaFBO()
 
-private:
-    //need further consideration
-    void setCameraProjAndModelViewMatrix();
-    void setLightProjAndModelViewMatrix();
-    void setProjAndModelViewMatrix(GLfloat * proj_mat, GLfloat * model_view_mat);
+    bool use_shadow_map_ = true;
+    bool use_gamma_correction_ = true;
+    bool use_hdr_ = false;
 
-private:
+    int          msaa_samples_ = 8;
+    unsigned int msaa_FBO_ = 0;
+    unsigned int msaa_color_RBO_ = 0;
+    unsigned int msaa_color_TEX_ = 0;
+    unsigned int msaa_depth_RBO_ = 0;
 
-    GlutWindow * glut_window_ = nullptr;
-    unsigned int screen_width_;
-    unsigned int screen_height_;
+    ShaderProgram msaa_shader_program_;
+    unsigned int screen_VAO_ = 0;
+    unsigned int screen_vertex_VBO_ = 0;
 
-    int msaa_samples_ = 8;
-
-    GLuint msaa_FBO_ = 0;
-    GLuint msaa_color_RBO_ = 0;
-    GLuint msaa_depth_RBO_ = 0;
-
-    ShaderProgram shape_program_;
-
-    //render
-    FluidRender * fluid_render_ = nullptr;
-    std::list<RenderBase *> render_list_;
-
-    //planes
-    std::vector<Vector<float, 4> > plans_;
-
-    //shader map
-    ShadowMap shadow_map_;
-    float shadow_bias_ = 0.05f;
-
-    //light parameters
-    Vector<float, 3> light_pos_;
-    Vector<float, 3> light_target_;
-    float            light_fov_ = 45.0f;
-    float            light_spot_min_ = 0.5f;
-    float            light_spot_max_ = 1.0f;
-
-    float fog_distance_ = 0.0f;
-    
+    //spot light shadow maps
+    std::vector<ShadowMap> spot_light_shadow_maps_;
+    std::vector<ShadowMap> flex_spot_light_shadow_maps_;    
 };
 
 }//end of namespace Physika

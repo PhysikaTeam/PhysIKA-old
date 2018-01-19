@@ -13,83 +13,404 @@
 */
 
 #include <cmath>
-#include <GL/glew.h>
+
+#include "Physika_Render/OpenGL_Primitives/glew_utilities.h"
 #include <GL/freeglut.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_4d.h"
-#include "Physika_GUI/Glut_Window/glut_window.h"
+
 #include "Physika_Render/Color/color.h"
-#include "Physika_Render/OpenGL_Shaders/shader_srcs.h"
-#include "Physika_Render/Render_Base/render_base.h"
-#include "Physika_Render/Surface_Mesh_Render/surface_mesh_render.h"
-#include "Physika_Render/Screen_Based_Render_Manager/screen_based_render_manager.h"
+#include "Physika_Render/Lights/light_base.h"
+#include "Physika_Render/Lights/spot_light.h"
+#include "Physika_Render/Lights/flex_spot_light.h"
+#include "Physika_Render/Render_Task_Base/render_task_base.h"
+#include "Physika_Render/Render_Scene_Config/render_scene_config.h"
+#include "Physika_Render/Global_Unifrom_Config/global_uniform_config.h"
+
+#include "screen_based_render_manager.h"
+#include "screen_based_shader_srcs.h"
 
 namespace Physika {
 
-/*
 ScreenBasedRenderManager::ScreenBasedRenderManager()
 {
+    this->msaa_shader_program_.createFromCStyleString(screen_based_vertex_shader, screen_based_frag_shader);
     this->initMsaaFrameBuffer();
-    this->shape_program_.createFromCStyleString(vertex_shader, fragment_shader);
-}
-
-
-ScreenBasedRenderManager::ScreenBasedRenderManager(unsigned int screen_width, unsigned int screen_height)
-    :screen_width_(screen_width), screen_height_(screen_height)
-{
-    this->initMsaaFrameBuffer();
-    this->shape_program_.createFromCStyleString(vertex_shader, fragment_shader);
-}
-*/
-
-ScreenBasedRenderManager::ScreenBasedRenderManager(GlutWindow * glut_window)
-    :glut_window_(glut_window), screen_width_(glut_window->width()), screen_height_(glut_window->height())
-{
-    this->initMsaaFrameBuffer();
-    this->shape_program_.createFromCStyleString(vertex_shader, fragment_shader);
+    this->initScreenVAO();
 }
 
 ScreenBasedRenderManager::~ScreenBasedRenderManager()
 {
     this->destroyMsaaFrameBuffer();
+    this->destroyScreenVAO();
+}
+
+void ScreenBasedRenderManager::enableUseShadowmap()
+{
+    use_shadow_map_ = true;
+}
+
+void ScreenBasedRenderManager::disableUseShadowmap()
+{
+    use_shadow_map_ = false;
+}
+
+bool ScreenBasedRenderManager::isUseShadowmap() const
+{
+    return use_shadow_map_;
+}
+
+void ScreenBasedRenderManager::enableUseGammaCorrection()
+{
+    use_gamma_correction_ = true;
+}
+
+void ScreenBasedRenderManager::disableUseGammaCorrection()
+{
+    use_gamma_correction_ = false;
+}
+
+bool ScreenBasedRenderManager::isUseGammaCorrection() const
+{
+    return use_gamma_correction_;
+}
+
+void ScreenBasedRenderManager::enableUseHDR()
+{
+    use_hdr_ = true;
+}
+
+void ScreenBasedRenderManager::disableUseHDR()
+{
+    use_hdr_ = false;
+}
+
+bool ScreenBasedRenderManager::isUseHDR() const
+{
+    return use_hdr_;
+}
+
+unsigned int ScreenBasedRenderManager::screenWidth() const
+{
+    return screen_width_;
+}
+
+unsigned int ScreenBasedRenderManager::screenHeight() const
+{
+    return screen_height_;
+}
+
+void ScreenBasedRenderManager::render()
+{
+    //create shadow map for spot lights
+    if(use_shadow_map_)
+    {
+        this->createSpotLightShadowMaps();
+        this->createFlexSpotLightShadowMaps();
+    }
+    
+    this->beginFrame();
+
+    this->renderAllNormalRenderTasks();
+    this->renderAllScreenBasedRenderTasks();
+
+    this->endFrame();
+
+    this->renderToScreen();
+
+    //switch to default screen buffer to render depth buffer
+    //glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    //glVerify(glViewport(0, 0, this->screen_width_, this->screen_height_));
+    //this->spot_light_shadow_maps_[0].renderShadowMapToScreen();
+}
+
+void ScreenBasedRenderManager::resetMsaaFBO(unsigned int screen_width, unsigned int screen_height)
+{
+    if (this->screen_width_ == screen_width && this->screen_height_ == screen_height)
+        return;
+
+    this->screen_width_ = screen_width;
+    this->screen_height_ = screen_height;
+
+    this->destroyMsaaFrameBuffer();
+    this->initMsaaFrameBuffer();
+}
+
+unsigned int ScreenBasedRenderManager::msaaFBO() const
+{
+    return this->msaa_FBO_;
+}
+
+void ScreenBasedRenderManager::renderAllNormalRenderTasks(bool bind_shader)
+{
+    RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
+
+    for (unsigned int i = 0; i < render_scene_config.numRenderTasks(); ++i)
+    {
+        std::shared_ptr<RenderTaskBase> render_task = render_scene_config.getRenderTaskAtIndex(i);
+        if (render_task->type() != RenderTaskType::NORMAL_RENDER_TASK)
+            continue;
+
+        if (bind_shader == true)
+            render_task->enableBindShader();
+        else
+            render_task->disableBindShader();
+
+        render_task->renderTask();
+    }
+}
+
+void ScreenBasedRenderManager::renderAllScreenBasedRenderTasks()
+{
+    RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
+
+    for (unsigned int i = 0; i < render_scene_config.numRenderTasks(); ++i)
+    {
+        std::shared_ptr<RenderTaskBase> render_task = render_scene_config.getRenderTaskAtIndex(i);
+        if (render_task->type() != RenderTaskType::SCREEN_BASED_RENDER_TASK)
+            continue;
+
+        render_task->renderTask();
+    }
+}
+
+void ScreenBasedRenderManager::beginFrame()
+{
+    float window_clear_color[3];
+    glGetFloatv(GL_COLOR_CLEAR_VALUE, window_clear_color);
+
+    //switch to msaa_FBO & set view port
+    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->msaa_FBO_));
+    glVerify(glViewport(0, 0, this->screen_width_, this->screen_height_));
+
+    glVerify(glPushAttrib(GL_ALL_ATTRIB_BITS));
+
+    glVerify(glEnable(GL_DEPTH_TEST));
+    glVerify(glClearColor(window_clear_color[0], window_clear_color[1], window_clear_color[2], 1.0f));
+    glVerify(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+
+void ScreenBasedRenderManager::endFrame()
+{
+    glVerify(glPopAttrib());
+
+    //clear all global uniform configs
+    GlobalUniformConfig & global_uniform_config = GlobalUniformConfig::getSingleton();
+    global_uniform_config.clear();
+
+    /*
+     
+    //render to default frame buffer
+
+    //specify msaa_FBO to read and default FBO to draw
+    glVerify(glBindFramebuffer(GL_READ_FRAMEBUFFER, this->msaa_FBO_));
+    glVerify(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+
+    //blit the msaa_FBO to the window(default FBO), i.e. render to the current window
+    glVerify(glBlitFramebuffer(0, 0, this->screen_width_, this->screen_height_, 0, 0, this->screen_width_, this->screen_height_, GL_COLOR_BUFFER_BIT, GL_LINEAR));
+
+    //render help to back buffer
+    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+    */
+}
+
+void ScreenBasedRenderManager::renderToScreen()
+{
+    //switch back to the default frame buffer
+    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    glVerify(glViewport(0, 0, this->screen_width_, this->screen_height_));
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    this->msaa_shader_program_.use();
+    openGLSetCurBindShaderBool("use_gamma_correction", use_gamma_correction_);
+    openGLSetCurBindShaderBool("use_hdr", use_hdr_);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, msaa_color_TEX_);
+
+    glBindVertexArray(screen_VAO_);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    this->msaa_shader_program_.unUse();
+}
+
+void ScreenBasedRenderManager::createSpotLightShadowMaps()
+{
+    RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
+
+    unsigned int cur_spot_light_id = 0;
+    for(unsigned int i = 0; i < render_scene_config.numLights(); ++i)
+    {
+        const std::shared_ptr<LightBase> & light = render_scene_config.lightAtIndex(i);
+        if (light->type() != LightType::SPOT_LIGHT || light->isEnableLighting() == false)
+            continue;
+
+        //add new default shadow map for spot light
+        if (cur_spot_light_id == spot_light_shadow_maps_.size())
+            this->spot_light_shadow_maps_.emplace_back();
+            
+        ShadowMap & shadow_map = this->spot_light_shadow_maps_[cur_spot_light_id];
+        SpotLight * spot_light = static_cast<SpotLight *>(light.get());
+        unsigned int shadow_map_tex_id = shadow_map.shadowMapTexId();
+
+        shadow_map.beginShadowMap();
+
+        //config light projection & view matrix
+        this->setSpotLightProjAndViewMatrix(spot_light);
+
+        this->renderAllNormalRenderTasks(false);
+
+        shadow_map.endShadowMap();
+
+        //bind shadow map to texture unit
+        glActiveTexture(GL_TEXTURE1 + cur_spot_light_id); //start from one
+        glBindTexture(GL_TEXTURE_2D, shadow_map_tex_id);
+        glActiveTexture(GL_TEXTURE0);
+
+        //config shadow map to uniforms
+        unsigned int shadow_map_tex_unit = cur_spot_light_id + 1;
+        this->configSpotLightShadowMapUnifroms(spot_light, cur_spot_light_id, shadow_map_tex_unit);
+
+        ++cur_spot_light_id;
+    }
+}
+
+void ScreenBasedRenderManager::createFlexSpotLightShadowMaps()
+{
+    RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
+
+    unsigned int cur_flex_spot_light_id = 0;
+    for (unsigned int i = 0; i < render_scene_config.numLights(); ++i)
+    {
+        const std::shared_ptr<LightBase> & light = render_scene_config.lightAtIndex(i);
+        if (light->type() != LightType::FLEX_SPOT_LIGHT || light->isEnableLighting() == false)
+            continue;
+
+        //add new default shadow map for spot light
+        if (cur_flex_spot_light_id == flex_spot_light_shadow_maps_.size())
+            this->flex_spot_light_shadow_maps_.emplace_back();
+
+        ShadowMap & shadow_map = this->flex_spot_light_shadow_maps_[cur_flex_spot_light_id];
+        FlexSpotLight * flex_spot_light = static_cast<FlexSpotLight *>(light.get());
+        unsigned int shadow_map_tex_id = shadow_map.shadowMapTexId();
+
+        shadow_map.beginShadowMap();
+
+        //config light projection & view matrix
+        this->setFlexSpotLightProjAndViewMatrix(flex_spot_light);
+
+        this->renderAllNormalRenderTasks(false);
+
+        shadow_map.endShadowMap();
+
+        //bind shadow map to texture unit
+        glActiveTexture(GL_TEXTURE1 + this->spot_light_shadow_maps_.size() + cur_flex_spot_light_id);
+        glBindTexture(GL_TEXTURE_2D, shadow_map_tex_id);
+        glActiveTexture(GL_TEXTURE0);
+
+        //config shadow map to uniforms
+        unsigned int shadow_map_tex_unit = this->spot_light_shadow_maps_.size() + cur_flex_spot_light_id + 1;
+        this->configFlexSpotLightShadowMapUnifroms(flex_spot_light, cur_flex_spot_light_id, shadow_map_tex_unit);
+
+        ++cur_flex_spot_light_id;
+    }
+}
+
+void ScreenBasedRenderManager::setSpotLightProjAndViewMatrix(const SpotLight * spot_light)
+{
+    glm::mat4 light_proj_mat = spot_light->lightProjMatrix();
+    glm::mat4 light_view_mat = spot_light->lightViewMatrix();
+
+    openGLSetCurBindShaderMat4("light_proj_trans", light_proj_mat);
+    openGLSetCurBindShaderMat4("light_view_trans", light_view_mat);
+}
+
+void ScreenBasedRenderManager::configSpotLightShadowMapUnifroms(const SpotLight * spot_light, unsigned int spot_light_id, unsigned int shadow_map_tex_unit)
+{
+    GlobalUniformConfig & global_uniform_config = GlobalUniformConfig::getSingleton();
+    global_uniform_config.setBool("use_shadow_map", true);
+
+    std::string shadow_map_str = "spot_light_shadow_maps[" + std::to_string(spot_light_id) + "]";
+    global_uniform_config.setInt(shadow_map_str + ".shadow_map_tex", shadow_map_tex_unit);
+    global_uniform_config.setBool(shadow_map_str + ".has_shadow_map", true);
+    
+}
+
+void ScreenBasedRenderManager::setFlexSpotLightProjAndViewMatrix(const FlexSpotLight * flex_spot_light)
+{
+    glm::mat4 light_proj_mat = flex_spot_light->lightProjMatrix();
+    glm::mat4 light_view_mat = flex_spot_light->lightViewMatrix();
+
+    openGLSetCurBindShaderMat4("light_proj_trans", light_proj_mat);
+    openGLSetCurBindShaderMat4("light_view_trans", light_view_mat);
+}
+
+void ScreenBasedRenderManager::configFlexSpotLightShadowMapUnifroms(const FlexSpotLight * flex_spot_light, unsigned int flex_spot_light_id, unsigned int shadow_map_tex_unit)
+{
+    GlobalUniformConfig & global_uniform_config = GlobalUniformConfig::getSingleton();
+    global_uniform_config.setBool("use_shadow_map", true);
+
+    std::string shadow_map_str = "flex_spot_light_shadow_maps[" + std::to_string(flex_spot_light_id) + "]";
+    global_uniform_config.setInt(shadow_map_str + ".shadow_map_tex", shadow_map_tex_unit);
+    global_uniform_config.setBool(shadow_map_str + ".has_shadow_map", true);
 }
 
 void ScreenBasedRenderManager::initMsaaFrameBuffer()
 {
-   
     //determine msaa_samples
     int samples;
     glGetIntegerv(GL_MAX_SAMPLES_EXT, &samples);
-    samples = std::min({ samples, this->msaa_samples_, 4 }); // clamp samples to 4 to avoid problems with point sprite scaling
+    samples = std::min({ samples, this->msaa_samples_, 4 }); // clamp samples to 4
 
-    //create msaa_FBO
+                                                             //create msaa_FBO
     glVerify(glGenFramebuffers(1, &this->msaa_FBO_));
     glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->msaa_FBO_));
 
     //create msaa_color_RBO & bind it to msaa_FBO
-    glVerify(glGenRenderbuffers(1, &this->msaa_color_RBO_));
-    glVerify(glBindRenderbuffer(GL_RENDERBUFFER, this->msaa_color_RBO_));
-    glVerify(glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGBA8, this->screen_width_, this->screen_height_));
-    glVerify(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, this->msaa_color_RBO_));
+    //glVerify(glGenRenderbuffers(1, &this->msaa_color_RBO_));
+    //glVerify(glBindRenderbuffer(GL_RENDERBUFFER, this->msaa_color_RBO_));
+    //glVerify(glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGBA8, this->screen_width_, this->screen_height_));
+    //glVerify(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, this->msaa_color_RBO_));
+    //glVerify(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+
+    glVerify(glGenTextures(1, &this->msaa_color_TEX_));
+    glVerify(glBindTexture(GL_TEXTURE_2D, this->msaa_color_TEX_));
+    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    glVerify(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    glVerify(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, this->screen_width_, this->screen_height_, 0, GL_RGB, GL_FLOAT, nullptr));
+    glVerify(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->msaa_color_TEX_, 0));
+    glVerify(glBindTexture(GL_TEXTURE_2D, 0));
 
     //create msaa_depth_RBO & bind it to msaa_FBO
     glVerify(glGenRenderbuffers(1, &this->msaa_depth_RBO_));
     glVerify(glBindRenderbuffer(GL_RENDERBUFFER, this->msaa_depth_RBO_));
     glVerify(glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT, this->screen_width_, this->screen_height_));
     glVerify(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this->msaa_depth_RBO_));
+    glVerify(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 
     //check frame buffer status
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         std::cerr << "error: msaa_FBO is incomplete !" << std::endl;
         std::exit(EXIT_FAILURE);
     }
 
     glEnable(GL_MULTISAMPLE);
+
+    //switch to default framebuffer
+    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 void ScreenBasedRenderManager::destroyMsaaFrameBuffer()
@@ -97,517 +418,42 @@ void ScreenBasedRenderManager::destroyMsaaFrameBuffer()
     glVerify(glDeleteFramebuffers(1, &this->msaa_FBO_));
     glVerify(glDeleteRenderbuffers(1, &this->msaa_color_RBO_));
     glVerify(glDeleteRenderbuffers(1, &this->msaa_depth_RBO_));
+    glVerify(glDeleteTextures(1, &this->msaa_color_TEX_));
 }
 
-void ScreenBasedRenderManager::render()
+void ScreenBasedRenderManager::initScreenVAO()
 {
-    
-    //create shadow map
-    this->createShadowMap();
+    float screen_vertices[] = {
+                                // positions        //tex coords
+                                -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+                                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+                                 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
 
-    //begin frame, background color needs further consideration
-    this->beginFrame(Color<float>::Black());
+                                 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+                                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+                                 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+                               };
 
-    //create lighting map, i.e. draw all shapes with light
-    this->createCameraMap();
+    // setup plane VAO
+    glGenVertexArrays(1, &screen_VAO_);
+    glBindVertexArray(screen_VAO_);
 
-    //render fluid
-    if(this->fluid_render_)
-        this->fluid_render_->render(this, this->shadow_map_.shadowTexId());
+    glGenBuffers(1, &screen_vertex_VBO_);
+    glBindBuffer(GL_ARRAY_BUFFER, screen_vertex_VBO_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(screen_vertices), &screen_vertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    //end frame
-    this->endFrame();
-
-    //switch to default screen buffer to render depth buffer
-    //glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-    //glVerify(glViewport(0, 0, this->screen_width_, this->screen_height_));
-    //this->shadow_map_.renderShadowTexToScreen();
+    glBindVertexArray(0);
 }
 
-const GlutWindow * ScreenBasedRenderManager::glutWindow() const
+void ScreenBasedRenderManager::destroyScreenVAO()
 {
-    return this->glut_window_;
+    glDeleteVertexArrays(1, &screen_VAO_);
+    glDeleteBuffers(1, &screen_vertex_VBO_);
 }
-
-const Vector<float, 3> & ScreenBasedRenderManager::lightPos() const
-{
-    return this->light_pos_;
-}
-
-const Vector<float, 3> & ScreenBasedRenderManager::lightTarget() const
-{
-    return this->light_target_;
-}
-
-float ScreenBasedRenderManager::lightFov() const
-{
-    return this->light_fov_;
-}
-
-float ScreenBasedRenderManager::lightSpotMin() const
-{
-    return this->light_spot_min_;
-}
-
-float ScreenBasedRenderManager::lightSpotMax() const
-{
-    return this->light_spot_max_;
-}
-
-void ScreenBasedRenderManager::addRender(RenderBase * render)
-{
-    this->render_list_.push_back(render);
-}
-
-void ScreenBasedRenderManager::addPlane(const Vector<float, 4> & plane)
-{
-    this->plans_.push_back(plane);
-}
-
-void ScreenBasedRenderManager::setGlutWindow(GlutWindow * glut_window)
-{
-    this->glut_window_ = glut_window;
-}
-
-void ScreenBasedRenderManager::setFluidRender(FluidRender * fluid_render)
-{
-    this->fluid_render_ = fluid_render;
-}
-
-void ScreenBasedRenderManager::setLightPos(const Vector<float, 3> & light_pos)
-{
-    this->light_pos_ = light_pos;
-}
-
-void ScreenBasedRenderManager::setLightTarget(const Vector<float, 3> & light_target)
-{
-    this->light_target_ = light_target;
-}
-
-void ScreenBasedRenderManager::setLightFov(float light_fov)
-{
-    this->light_fov_ = light_fov;
-}
-
-void ScreenBasedRenderManager::setLightSpotMin(float light_spot_min)
-{
-    this->light_spot_min_ = light_spot_min;
-}
-
-void ScreenBasedRenderManager::setLightSpotMax(float light_spot_max)
-{
-    this->light_spot_max_ = light_spot_max;
-}
-
-void ScreenBasedRenderManager::setFogDistance(float fog_distance)
-{
-    this->fog_distance_ = fog_distance;
-}
-
-void ScreenBasedRenderManager::setShadowBias(float shadow_bias)
-{
-    this->shadow_bias_ = shadow_bias;
-}
-
-GLuint ScreenBasedRenderManager::msaaFBO() const
-{
-    return this->msaa_FBO_;
-}
-
-const ShadowMap & ScreenBasedRenderManager::shadowMap() const
-{
-    return this->shadow_map_;
-}
-
-void ScreenBasedRenderManager::beginFrame(const Color<float> & clear_color)
-{
-    glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-
-    glDisable(GL_LIGHTING);
-    glDisable(GL_BLEND);
-
-    //set point size
-    glPointSize(5.0f);
-
-    //switch to msaa_FBO
-    glVerify(glBindFramebuffer(GL_DRAW_FRAMEBUFFER_EXT, this->msaa_FBO_));
-
-    //need further consideration
-    glVerify(glClearColor(clear_color.redChannel(), clear_color.greenChannel(), clear_color.blueChannel(), 0.0f));
-    
-    glVerify(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-}
-
-void ScreenBasedRenderManager::createShadowMap()
-{
-    //begin shadow map
-    this->shadow_map_.beginShadowMap();
-
-    //set light project matrix & model view matrix
-    this->setLightProjAndModelViewMatrix();
-
-    //draw scene shapes
-    this->drawShapes();
-
-    //end shadow map
-    this->shadow_map_.endShadowMap();
-
-}
-
-void ScreenBasedRenderManager::createCameraMap()
-{
-    //begin lighting
-    this->beginLighting();
-
-    //apply shadow map
-    this->applyShadowMap();
-
-    //set camera projection and model view matrix
-    this->setCameraProjAndModelViewMatrix();
-
-    //draw shapes
-    this->drawShapes();
-
-    //draw planes
-    this->drawPlanes();
-
-    //end lighting
-    this->endLighting();
-}
-
-void ScreenBasedRenderManager::endFrame()
-{
-    //specify msaa_FBO to read and default FBO to draw
-    glVerify(glBindFramebuffer(GL_READ_FRAMEBUFFER_EXT, this->msaa_FBO_));
-    glVerify(glBindFramebuffer(GL_DRAW_FRAMEBUFFER_EXT, 0));
-
-    //blit the msaa_FBO to the window(default FBO), i.e. render to the current window
-    glVerify(glBlitFramebuffer(0, 0, this->screen_width_, this->screen_height_, 0, 0, this->screen_width_, this->screen_height_, GL_COLOR_BUFFER_BIT, GL_LINEAR));
-    
-    //render help to back buffer
-    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-    glVerify(glClear(GL_DEPTH_BUFFER_BIT));
-
-    //finish rendering
-    glVerify(glFinish());
-
-    //swap buffers
-    glVerify(glutSwapBuffers());
-}
-
-void ScreenBasedRenderManager::beginLighting()
-{
-    //switch to msaa_FBO
-    glVerify(glBindFramebuffer(GL_FRAMEBUFFER, this->msaa_FBO_));
-
-    //set view port
-    glVerify(glViewport(0, 0, this->screen_width_, this->screen_height_));
-
-    glDepthMask(GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    glDisable(GL_CULL_FACE);
-
-    //use solid_diffuse_program
-    this->shape_program_.use();
-    
-    glVerify(glUniform1i( glGetUniformLocation(this->shape_program_.id(), "grid"), 0));
-    glVerify(glUniform1f( glGetUniformLocation(this->shape_program_.id(), "spotMin"), this->light_spot_min_));
-    glVerify(glUniform1f( glGetUniformLocation(this->shape_program_.id(), "spotMax"), this->light_spot_max_));
-
-    Color<float> background_color = glut_window_->backgroundColor<float>();
-    glm::vec4 glm_fog_color = { background_color.redChannel(), background_color.greenChannel(), background_color.blueChannel(), this->fog_distance_ };
-    glVerify(glUniform4fv(glGetUniformLocation(this->shape_program_.id(), "fogColor"), 1, glm::value_ptr(glm_fog_color)));
-
-    glVerify(glUniformMatrix4fv(glGetUniformLocation(this->shape_program_.id(), "objectTransform"), 1, false, glm::value_ptr(glm::mat4(1.0))));
-
-    //glVerify(glUniform1i(glGetUniformLocation(this->shape_program_.id(), "texture"), 1));
-}
-
-void ScreenBasedRenderManager::applyShadowMap()
-{
-
-    //calculate light projection matrix
-    glm::mat4 light_proj_mat = glm::perspective(glm::radians(this->light_fov_), 1.0f, 1.0f, 1000.0f);
-
-    //calculate light model view matrix
-    glm::vec3 light_pos = { this->light_pos_[0], this->light_pos_[1], this->light_pos_[2] };
-    glm::vec3 light_target = { this->light_target_[0], this->light_target_[1], this->light_target_[2] };
-    glm::vec3 light_dir = glm::normalize(light_target - light_pos);
-    glm::vec3 light_up = { 0.0f, 1.0f, 0.0f };
-
-
-    glm::mat4 light_model_view_mat = glm::lookAt(light_pos, light_target, light_up);
-
-    //calculate light transform matrix
-    glm::mat4 light_transform_mat = light_proj_mat*light_model_view_mat;
-
-    /*******************************************************************************************************************/
-    //std::cout <<"light_pos: "<< light_pos_ << std::endl;
-    //std::cout <<"light_target: "<< light_target_ << std::endl;
-    //std::cout <<"light_dir: "<< light_dir[0] << " " << light_dir[1] << " " << light_dir[2] << std::endl;
-    //std::cout << "------------------------------------" << std::endl;
-    /*******************************************************************************************************************/
-
-    glVerify(glUniformMatrix4fv(glGetUniformLocation(this->shape_program_.id(), "lightTransform"), 1, false, glm::value_ptr(light_transform_mat)));
-    glVerify(glUniform3fv(      glGetUniformLocation(this->shape_program_.id(), "lightPos"), 1, glm::value_ptr(light_pos)));
-    glVerify(glUniform3fv(      glGetUniformLocation(this->shape_program_.id(), "lightDir"), 1, glm::value_ptr(light_dir)));
-    glVerify(glUniform1f(       glGetUniformLocation(this->shape_program_.id(), "bias"), this->shadow_bias_));
-
-
-    float shadow_taps[24] = {
-                                -0.326212f, -0.40581f,  -0.840144f,  -0.07358f,
-                                -0.695914f,  0.457137f, -0.203345f,   0.620716f,
-                                 0.96234f,  -0.194983f,  0.473434f,  -0.480026f,
-                                 0.519456f,  0.767022f,  0.185461f,  -0.893124f,
-                                 0.507431f,  0.064425f,  0.89642f,    0.412458f,
-                                -0.32194f,  -0.932615f,  -0.791559f, -0.59771f
-                             };
-
-    glVerify(glUniform2fv(glGetUniformLocation(this->shape_program_.id(), "shadowTaps"), 12, shadow_taps));
-
-    glVerify(glUniform1i(glGetUniformLocation(this->shape_program_.id(), "shadowTex"), 1));
-    glVerify(glUniform1i(glGetUniformLocation(this->shape_program_.id(), "tex"), 0));
-
-    //associate shadowTex to uniform variable (shadowTex) in fragment shader
-    glActiveTexture(GL_TEXTURE1);
-    glEnable(GL_TEXTURE_2D);
-    glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_map_.shadowTexId()));
-    glActiveTexture(GL_TEXTURE0);
-}
-
-void ScreenBasedRenderManager::applyShadowMapWithSpecifiedShaderProgram(ShaderProgram & shader_program)
-{
-    //calculate light projection matrix
-    glm::mat4 light_proj_mat = glm::perspective(glm::radians(this->light_fov_), 1.0f, 1.0f, 1000.0f);
-
-    //calculate light model view matrix
-    glm::vec3 light_pos = { this->light_pos_[0], this->light_pos_[1], this->light_pos_[2] };
-    glm::vec3 light_target = { this->light_target_[0], this->light_target_[1], this->light_target_[2] };
-    glm::vec3 light_dir = glm::normalize(light_target - light_pos);
-    glm::vec3 light_up = { 0.0f, 1.0f, 0.0f };
-
-
-    glm::mat4 light_model_view_mat = glm::lookAt(light_pos, light_target, light_up);
-
-    //calculate light transform matrix
-    glm::mat4 light_transform_mat = light_proj_mat*light_model_view_mat;
-
-    glVerify(glUniformMatrix4fv(glGetUniformLocation(shader_program.id(), "lightTransform"), 1, false, glm::value_ptr(light_transform_mat)));
-    glVerify(glUniform3fv(glGetUniformLocation(shader_program.id(), "lightPos"), 1, glm::value_ptr(light_pos)));
-    glVerify(glUniform3fv(glGetUniformLocation(shader_program.id(), "lightDir"), 1, glm::value_ptr(light_dir)));
-    glVerify(glUniform1f(glGetUniformLocation(shader_program.id(), "bias"), this->shadow_bias_));
-
-
-    float shadow_taps[24] = {
-                              -0.326212f, -0.40581f,  -0.840144f,  -0.07358f,
-                              -0.695914f,  0.457137f, -0.203345f,   0.620716f,
-                               0.96234f,  -0.194983f,  0.473434f,  -0.480026f,
-                               0.519456f,  0.767022f,  0.185461f,  -0.893124f,
-                               0.507431f,  0.064425f,  0.89642f,    0.412458f,
-                              -0.32194f,  -0.932615f,  -0.791559f, -0.59771f
-                             };
-
-    glVerify(glUniform2fv(glGetUniformLocation(shader_program.id(), "shadowTaps"), 12, shadow_taps));
-
-    glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
-
-    //associate shadowTex to uniform variable (shadowTex) in fragment shader
-    glVerify(glBindTexture(GL_TEXTURE_2D, this->shadow_map_.shadowTexId()));
-}
-
-void ScreenBasedRenderManager::endLighting()
-{
-    //unuse solid_diffuse_program
-    this->shape_program_.unUse();
-
-    //what the fuck????????????
-    //glActiveTexture(GL_TEXTURE1);
-    //glDisable(GL_TEXTURE_2D);
-
-    glActiveTexture(GL_TEXTURE0);
-}
-
-void ScreenBasedRenderManager::drawShapes()
-{
-    glDisable(GL_CULL_FACE);
-    for (RenderBase * render : this->render_list_)
-        render->render();
-}
-
-void ScreenBasedRenderManager::drawPlanes()
-{
-    // diffuse 		
-    glColor3f(0.9f, 0.9f, 0.9f);
-
-    GLint bias = glGetUniformLocation(this->shape_program_.id(), "bias");
-    glVerify(glUniform1f(bias, 0.0f));
-    GLint grid = glGetUniformLocation(this->shape_program_.id(), "grid");
-    glVerify(glUniform1i(grid, 1));
-
-    GLint expand = glGetUniformLocation(this->shape_program_.id(), "expand");
-    glVerify(glUniform1f(expand , 0.0f));
-    GLint texture = glGetUniformLocation(this->shape_program_.id(), "texture");
-    glVerify(glUniform1i(texture, 0));
-
-    for (int i = 0; i < this->plans_.size(); ++i)
-        this->drawPlane(this->plans_[i]);
-
-    glVerify(glUniform1i(grid, 0));
-    glVerify(glUniform1f(bias, this->shadow_bias_));
-}
-
-void ScreenBasedRenderManager::drawPlane(const Vector<float, 4> & plane)
-{
-    Vector<float, 3> normal(plane[0], plane[1], plane[2]);
-    Vector<float, 3> u, v;
-    getBasisFromNormalVector(normal, u, v);
-
-    Vector<float, 3> c = normal * -plane[3];
-
-    /************************************************/
-    //std::cout << "p: " << plane << std::endl;
-    //std::cout << "u: " << u << std::endl;
-    //std::cout << "v: " << v << std::endl;
-    //std::cout << "c: " << c << std::endl;
-    /************************************************/
-
-    glBegin(GL_QUADS);
-
-    float plane_size = 200.0f;
-
-    // draw a grid of quads, otherwise z precision suffers
-    for (int x = -3; x <= 3; ++x)
-    {
-        for (int y = -3; y <= 3; ++y)
-        {
-            Vector<float, 3> coff = c + u*float(x)*plane_size*2.0f + v*float(y)*plane_size*2.0f;
-            //std::cout << "coff: " << coff << std::endl;
-
-            glTexCoord2f(1.0f, 1.0f);
-            glNormal3f(plane[0], plane[1], plane[2]);
-            Vector<float, 3> v1 = coff + u*plane_size + v*plane_size;
-            glVertex3f(v1[0], v1[1], v1[2]);
-
-            //std::cout << "v1: " << v1 << std::endl;
-
-            glTexCoord2f(0.0f, 1.0f);
-            glNormal3f(plane[0], plane[1], plane[2]);
-            Vector<float, 3> v2 = coff - u*plane_size + v*plane_size;
-            glVertex3f(v2[0], v2[1], v2[2]);
-
-            //std::cout << "v2: " << v2 << std::endl;
-
-            glTexCoord2f(0.0f, 0.0f);
-            glNormal3f(plane[0], plane[1], plane[2]);
-            Vector<float, 3> v3 = coff - u*plane_size - v*plane_size;
-            glVertex3f(v3[0], v3[1], v3[2]);
-
-            //std::cout << "v3: " << v3 << std::endl;
-
-            glTexCoord2f(1.0f, 0.0f);
-            glNormal3f(plane[0], plane[1], plane[2]);
-            Vector<float, 3> v4 = coff + u*plane_size - v*plane_size;
-            glVertex3f(v4[0], v4[1], v4[2]);
-
-            //std::cout << "v4: " << v4 << std::endl;
-        }
-    }
-
-    glEnd();
-}
-
-void ScreenBasedRenderManager::getBasisFromNormalVector(const Vector<float, 3> & w, Vector<float, 3> & u, Vector<float, 3> & v)
-{
-    if (fabsf(w[0]) > fabsf(w[1]))
-    {
-        float inv_len = 1.0f / sqrtf(w[0] * w[0] + w[2] * w[2]);
-        u = Vector<float, 3>(-w[2]*inv_len, 0.0f, w[0]*inv_len);
-    }
-    else
-    {
-        float inv_len = 1.0f / sqrtf(w[1] * w[1] + w[2] * w[2]);
-        u = Vector<float, 3>(0.0f, w[2]*inv_len, -w[1]*inv_len);
-    }
-
-    v = w.cross(u);
-
-}
-
-void ScreenBasedRenderManager::setCameraProjAndModelViewMatrix()
-{
-    //calculate projection matrix
-    glm::mat4 proj_mat = glm::perspective(glm::radians(this->glut_window_->cameraFOV()),
-                                          this->glut_window_->cameraAspect(),
-                                          this->glut_window_->cameraNearClip(),
-                                          this->glut_window_->cameraFarClip());
-
-    //calculate model view matrix
-    const Vector<double, 3> & camera_pos = this->glut_window_->cameraPosition();
-    const Vector<double, 3> & camera_focus_pos = this->glut_window_->cameraFocusPosition();
-    const Vector<double, 3> & camera_up_dir = this->glut_window_->cameraUpDirection();
-
-    /************************************************************************/
-    //std::cout << "camera_pos: " << camera_pos << std::endl;
-    //std::cout << "camera_focus_pos: " << camera_focus_pos << std::endl;
-    //std::cout << "camera_up_dir: " << camera_up_dir << std::endl;
-    /************************************************************************/
-
-    glm::vec3 glm_camera_pos = { camera_pos[0], camera_pos[1], camera_pos[2] };
-    glm::vec3 glm_camera_focus_pos = { camera_focus_pos[0], camera_focus_pos[1], camera_focus_pos[2] };
-    glm::vec3 glm_camera_up_dir = { camera_up_dir[0], camera_up_dir[1], camera_up_dir[2] };
-
-    glm::mat4 model_view_mat = glm::lookAt(glm_camera_pos, glm_camera_focus_pos, glm_camera_up_dir);
-
-    //set projection and model view matrix
-    this->setProjAndModelViewMatrix(glm::value_ptr(proj_mat), glm::value_ptr(model_view_mat));
-}
-
-void ScreenBasedRenderManager::setLightProjAndModelViewMatrix()
-{
-    //calculate light projection matrix
-    glm::mat4 light_proj_mat = glm::perspective(glm::radians(this->light_fov_), 1.0f, 1.0f, 1000.0f);
-
-    //calculate light model view matrix
-    glm::vec3 light_pos = { this->light_pos_[0], this->light_pos_[1], this->light_pos_[2] };
-    glm::vec3 light_target = { this->light_target_[0], this->light_target_[1], this->light_target_[2] };
-    glm::vec3 light_up = { 0.0f, 1.0f, 0.0f };
-
-    glm::mat4 light_model_view_mat = glm::lookAt(light_pos, light_target, light_up);
-
-    /************************************************************************************************************/
-    /*
-    std::cout << "light_pos: " << light_pos_ << std::endl;
-    std::cout << "light_target: " << light_target_ << std::endl;
-    std::cout << "light_fov: " << light_fov_ << std::endl;
-
-    std::cout << "light_proj_mat: " << std::endl;
-    for (int i = 0; i < 16; ++i)
-        std::cout << glm::value_ptr(light_proj_mat)[i] << " ";
-    std::cout << std::endl;
-
-    std::cout << "light_model_view_mat: " << std::endl;
-    for (int i = 0; i < 16; ++i)
-        std::cout << glm::value_ptr(light_model_view_mat)[i] << " ";
-    std::cout << std::endl;
-
-    std::cout << "------------------------------------" << std::endl;
-    */
-    /************************************************************************************************************/
-
-    this->setProjAndModelViewMatrix(glm::value_ptr(light_proj_mat), glm::value_ptr(light_model_view_mat));
-}
-
-void ScreenBasedRenderManager::setProjAndModelViewMatrix(GLfloat * proj_mat, GLfloat * model_view_mat)
-{
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(proj_mat);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(model_view_mat);
-}
-
 
 }//end of namespace Physika
