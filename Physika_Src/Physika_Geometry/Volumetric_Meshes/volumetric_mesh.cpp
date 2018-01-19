@@ -267,6 +267,14 @@ void VolumetricMesh<Scalar,Dim>::boundaryVertices(std::vector<unsigned int> &bou
 }
 
 template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar, Dim>::boundaryVertices(std::set<unsigned int> &boundary_vertices)
+{
+    if (boundary_vertices_.empty())
+        generateBoundaryInformation();
+    boundary_vertices = boundary_vertices_;
+}
+
+template <typename Scalar, int Dim>
 void VolumetricMesh<Scalar,Dim>::renameRegion(unsigned int region_idx, const string &name)
 {
     if(region_idx>=this->regionNum())

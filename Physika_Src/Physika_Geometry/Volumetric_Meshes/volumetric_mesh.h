@@ -26,7 +26,7 @@
 namespace Physika{
 
 /*
- * The elements of volumetric mesh can optionally belong to diffferent regions.
+ * The elements of volumetric mesh can optionally belong to different regions.
  * We assume the regions have unique names.
  * By default, all elements of the mesh belong to one region called 'AllElements'
  */
@@ -70,6 +70,7 @@ public:
     //in 2D the face is actually edge
     bool isBoundaryFace(std::vector<unsigned int> face); 
     void boundaryElements(std::vector<unsigned int> &boundary_elements);
+    void boundaryVertices(std::set<unsigned int> & boundary_vertices);
     void boundaryVertices(std::vector<unsigned int> &boundary_vertices);
     
     /* modification
