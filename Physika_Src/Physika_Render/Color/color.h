@@ -82,6 +82,16 @@ protected:
     Scalar rgba_[4]; 
 };
 
+// type alias
+using Color4f = Color<float>;
+using Color4d = Color<double>;
+using Color4i = Color<int>;
+using Color4ui = Color<unsigned int>;
+using Color4s = Color<short>;
+using Color4us = Color<unsigned short>;
+using Color4c = Color<signed char>;
+using Color4uc = Color<unsigned char>;
+
 //override << for Color
 template <typename Scalar>
 std::ostream& operator<< (std::ostream &s, const Color<Scalar> &color)
