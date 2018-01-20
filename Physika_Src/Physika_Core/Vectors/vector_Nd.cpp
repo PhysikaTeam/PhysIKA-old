@@ -89,7 +89,7 @@ unsigned int VectorND<Scalar>::dims() const
 }
 
 template <typename Scalar>
-void VectorND<Scalar>::resize(unsigned int new_dim, Scalar init_val = 0)
+void VectorND<Scalar>::resize(unsigned int new_dim, Scalar init_val)
 {
 #ifdef PHYSIKA_USE_EIGEN_VECTOR
     eigen_vector_Nx_.resize(new_dim);

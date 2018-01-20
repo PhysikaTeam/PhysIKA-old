@@ -22,7 +22,7 @@ namespace Physika{
 
 template <typename Scalar>
 QuadMeshRenderUtil<Scalar>::QuadMeshRenderUtil(QuadMesh<Scalar> * mesh, bool auto_compute_normal)
-    :VolumetricMeshRenderUtilBase(mesh), mesh_(mesh),
+    :VolumetricMeshRenderUtilBase<Scalar, 2>(mesh), mesh_(mesh),
     quad_render_util_(std::make_shared<QuadRenderUtil>())
 {
     this->initQuadRenderUtil(auto_compute_normal);
@@ -42,7 +42,7 @@ void QuadMeshRenderUtil<Scalar>::setMesh(VolumetricMesh<Scalar, 2> * mesh, bool 
         throw PhysikaException("error invalid mesh pointer!");
 
     //call base set mesh
-    this->VolumetricMeshRenderUtilBase::setMesh(mesh, auto_compute_normal);
+    this->VolumetricMeshRenderUtilBase<Scalar, 2>::setMesh(mesh, auto_compute_normal);
 
     this->initQuadRenderUtil(auto_compute_normal);
 }

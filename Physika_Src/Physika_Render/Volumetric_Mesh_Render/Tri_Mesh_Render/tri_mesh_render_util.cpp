@@ -22,7 +22,7 @@ namespace Physika{
 
 template <typename Scalar>
 TriMeshRenderUtil<Scalar>::TriMeshRenderUtil(TriMesh<Scalar> * mesh, bool auto_compute_normal)
-    :VolumetricMeshRenderUtilBase(mesh), mesh_(mesh),
+    :VolumetricMeshRenderUtilBase<Scalar, 2>(mesh), mesh_(mesh),
     tri_render_util_(std::make_shared<TriangleRenderUtil>())
 {
     this->initTriangleRenderUtil(auto_compute_normal);
@@ -42,7 +42,7 @@ void TriMeshRenderUtil<Scalar>::setMesh(VolumetricMesh<Scalar, 2> * mesh, bool a
         throw PhysikaException("error invalid mesh pointer!");
 
     //call base set mesh
-    this->VolumetricMeshRenderUtilBase::setMesh(mesh, auto_compute_normal);
+    this->VolumetricMeshRenderUtilBase<Scalar, 2>::setMesh(mesh, auto_compute_normal);
 
     this->initTriangleRenderUtil(auto_compute_normal);
 }

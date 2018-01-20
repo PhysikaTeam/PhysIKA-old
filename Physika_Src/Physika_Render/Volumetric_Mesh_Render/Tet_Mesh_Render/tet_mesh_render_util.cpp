@@ -22,7 +22,7 @@ namespace Physika{
 
 template <typename Scalar>
 TetMeshRenderUtil<Scalar>::TetMeshRenderUtil(TetMesh<Scalar> * mesh, bool auto_compute_normal)
-    :VolumetricMeshRenderUtilBase(mesh), mesh_(mesh),
+    :VolumetricMeshRenderUtilBase<Scalar, 3>(mesh), mesh_(mesh),
     tet_render_util_(std::make_shared<TetrahedronRenderUtil>())
 {
     this->initTetrahedronRenderUtil(auto_compute_normal);
@@ -42,7 +42,7 @@ void TetMeshRenderUtil<Scalar>::setMesh(VolumetricMesh<Scalar, 3> * mesh, bool a
         throw PhysikaException("error invalid mesh pointer!");
 
     //call base set mesh
-    this->VolumetricMeshRenderUtilBase::setMesh(mesh, auto_compute_normal);
+    this->VolumetricMeshRenderUtilBase<Scalar, 3>::setMesh(mesh, auto_compute_normal);
 
     this->initTetrahedronRenderUtil(auto_compute_normal);
 }

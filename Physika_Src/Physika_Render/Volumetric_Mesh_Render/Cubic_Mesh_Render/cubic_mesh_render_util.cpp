@@ -22,7 +22,7 @@ namespace Physika{
 
 template <typename Scalar>
 CubicMeshRenderUtil<Scalar>::CubicMeshRenderUtil(CubicMesh<Scalar> * mesh, bool auto_compute_normal)
-    :VolumetricMeshRenderUtilBase(mesh), mesh_(mesh),
+    :VolumetricMeshRenderUtilBase<Scalar, 3>(mesh), mesh_(mesh),
     cube_render_util_(std::make_shared<CubeRenderUtil>())
 {
     this->initCubeRenderUtil(auto_compute_normal);
@@ -42,7 +42,7 @@ void CubicMeshRenderUtil<Scalar>::setMesh(VolumetricMesh<Scalar, 3> * mesh, bool
         throw PhysikaException("error: invalid mesh pointer!");
 
     //call base set mesh
-    this->VolumetricMeshRenderUtilBase::setMesh(mesh, auto_compute_normal);
+    this->VolumetricMeshRenderUtilBase<Scalar, 3>::setMesh(mesh, auto_compute_normal);
 
     this->initCubeRenderUtil(auto_compute_normal);
 }

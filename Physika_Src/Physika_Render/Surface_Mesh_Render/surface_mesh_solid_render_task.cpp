@@ -23,9 +23,9 @@ namespace Physika {
 
 template<typename Scalar>
 SurfaceMeshSolidRenderTask<Scalar>::SurfaceMeshSolidRenderTask(std::shared_ptr<SurfaceMeshRenderUtil<Scalar>> render_util)
-    :SurfaceMeshCustomColorRenderTaskBase(render_util)
+    :SurfaceMeshCustomColorRenderTaskBase<Scalar>(std::move(render_util))
 {
-    shader_.createFromCStyleString(triangle_solid_render_vertex_shader, triangle_solid_render_frag_shader);
+    this->shader_.createFromCStyleString(triangle_solid_render_vertex_shader, triangle_solid_render_frag_shader);
 }
 
 

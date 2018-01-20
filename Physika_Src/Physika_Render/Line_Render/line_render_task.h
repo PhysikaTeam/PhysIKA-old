@@ -43,8 +43,10 @@ public:
     void setLineWidth(float line_width);
     float lineWidth() const;
 
+protected:
+    void renderTaskImpl() override;  //Note: we design renderTaskImpl to be "protected" as the same reason for "TriangleCustomColor::renderTaskImpl".
+
 private:
-    void renderTaskImpl() override;
     void configColorToLineVAO();
 
 private:

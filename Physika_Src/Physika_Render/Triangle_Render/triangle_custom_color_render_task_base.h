@@ -45,10 +45,15 @@ public:
     void setTriangleColors(const std::vector<Color4f> & colors);
     virtual void setElementColors(const std::vector<Color4f> & colors);
 
-private:
-    void renderTaskImpl() final;
-    virtual void customConfigs() = 0;
+protected:
+    void renderTaskImpl() final;  //Note: we intentionlly change the renderTaskImpl access mode from "private" to "protected",
+                                  //      which enable us to further change it from "protected" to "public" by "using ***Base::renderTaskImpl" after the "public:" descriptor.
+                                  //      We specially do this for volumetricMesh***RenderTask(s).
 
+                                  //Note: we have no necessary do this for msvc(VS) compiler as it's legal to "using ***Base::renderTaskImpl" although it's "private".
+
+private:
+    virtual void customConfigs() = 0;
     void configColorToTriangleVAO();
 
 private:

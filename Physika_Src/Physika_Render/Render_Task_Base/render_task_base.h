@@ -47,8 +47,10 @@ private:
     virtual void renderTaskImpl() = 0;
 
 protected:
+    Shader shader_;  //enable creation in derived class
+
+private:
     bool enable_bind_shader_ = true; //hook to enable/disable bind shader
-    Shader shader_;
     Transform3f transform_;
 };
     

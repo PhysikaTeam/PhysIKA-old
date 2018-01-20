@@ -18,6 +18,7 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
 #include "vector_types.h"
 #include "vector_functions.h"
 
@@ -49,7 +50,7 @@ public:
             for (float y = m_center1.y - m_R; y < m_center1.y + m_R; y += s) {
                 for (float z = m_center1.z - m_R; z < m_center1.z + m_R; z += s) {
                     float dist = (x - m_center1.x)*(x - m_center1.x) + (y - m_center1.y)*(y - m_center1.y) + (z - m_center1.z)*(z - m_center1.z);
-                    if (sqrt(dist) < m_R)
+                    if (std::sqrt(dist) < m_R)
                     {
                         float3 pos = make_float3(float(x), float(y), float(z));
                         positions.push_back(pos);

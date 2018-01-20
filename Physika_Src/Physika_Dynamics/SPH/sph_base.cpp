@@ -31,7 +31,7 @@ SPHBase<Scalar, Dim>::SPHBase()
 
 template<typename Scalar, int Dim>
 SPHBase<Scalar, Dim>::SPHBase(unsigned int start_frame, unsigned int end_frame, Scalar frame_rate, Scalar max_dt, bool write_to_file)
-    :DriverBase(start_frame, end_frame, frame_rate, max_dt, write_to_file)
+    :DriverBase<Scalar>(start_frame, end_frame, frame_rate, max_dt, write_to_file)
 {
 
 }
