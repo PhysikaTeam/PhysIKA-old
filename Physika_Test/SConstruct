@@ -25,8 +25,8 @@ use_gl = True
 use_openmp = False
 
 #USE CUDA
-use_cuda = True
-#use_cuda = False
+#use_cuda = True
+use_cuda = False
 
 #DEBUG TARGET
 
@@ -134,9 +134,13 @@ if use_gl == True:
             additional_libs.append('glui32')
         else:
             additional_libs.append('glui64')
+        if os_name == "Darwin":
+            additional_lib_path.append("/usr/X11/lib")
+
         additional_libs.append('freeglut')
         additional_libs.append('GLU')
         additional_libs.append('GL')
+        additional_libs.append('GLEW')
         additional_libs.append('X11')
     elif os_name == 'Windows':
         additional_libs.append('glui32')
@@ -251,7 +255,8 @@ unit_test_env.Append(LIBS = 'gtest_and_gmock')
 unit_test_env.Append(LIBS = 'gtest_and_gmock_main')
 
 #link main function defined in lib 'gtest_and_gmock_main'
-unit_test_env.Append(LINKFLAGS = '/SUBSYSTEM:CONSOLE')
+if compiler == 'msvc':
+    unit_test_env.Append(LINKFLAGS = '/SUBSYSTEM:CONSOLE')
 
 unit_test_src_files = []
 for dir,_,_ in os.walk('Physika_Test_Src/Physika_Unit_Test_Src/'):
@@ -307,5 +312,5 @@ for dir,_,_ in os.walk('./'):
     sln_delete_files.extend(glob(os.path.join(dir, '*.pdb')))
     sln_delete_files.extend(glob(os.path.join(dir, '*.dll')))
 
-        
-Clean(sln, sln_delete_files)
+if compiler == "msvc":
+    Clean(sln, sln_delete_files)
