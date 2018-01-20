@@ -6,6 +6,7 @@
 
 Physika_Src/**/*.obj
 Physika_Test/**/*_test.obj
+Physika_Test/**/*_test
 Physika_Test/google_test/src/*.obj
 Physika_Test/**/*.dll
 
