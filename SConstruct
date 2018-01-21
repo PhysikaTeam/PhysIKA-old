@@ -28,10 +28,11 @@ use_cuda = True
 print(
 '''
 *********************************************************************************************
-Note: 
+Note:
 1. To support C++11/14 on windows platform, VS2015 or VS2017 is needed, you would sepcify "msvc_version" variable in this script.
 2. You would also specify to use "openmp" and enable "cuda" compiling by setting the "use_openmp" & "use_cuda" variable in this script.
-				 
+3. When disable cuda, we would ignore all .cu files, and all .cpp files that if their path exists a string name "cuda" or "gpu"(case insensitive). 
+
 Trouble Shooting:
 1. On windows 8/10, administrator privilege is required to "scons" the project, so you should run shell window as admin.
    For the same reason, you should also open .sln file as admin to enable building in VS IDE.
@@ -158,10 +159,18 @@ for name in lib_names:
             lib_src_files.extend(glob(os.path.join(dir, '*.cu')))
             lib_header_files.extend(glob(os.path.join(dir, '*.cuh')))
             header_files.extend(glob(os.path.join(dir, '*.cuh')))
-        
-    for src_file in lib_src_files:
-        if src_file in ignored_src_files:
-            lib_src_files.remove(src_file)
+
+    #disable compiling for .cpp file if not use cuda && file path exists a 'cuda' or 'gpu' string (case insensitive)
+    if use_cuda == False:
+        for src_file in lib_src_files:
+            lower_src_file = src_file.lower()
+            if lower_src_file.find('cuda') != -1 or lower_src_file.find('gpu') != -1:
+                print('ignore cuda file: ' + src_file)
+                ignored_src_files.append(src_file)
+
+    #remove igonre src files
+    lib_src_files = [src_file for src_file in lib_src_files if src_file not in ignored_src_files]
+
                 
     lib_file = name+lib_suffix
     if os_name in ('Linux', 'Darwin'):
