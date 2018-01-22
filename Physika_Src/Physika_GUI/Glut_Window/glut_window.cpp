@@ -520,7 +520,6 @@ void GlutWindow::initOpenGLContext()
     glutInit(&argc, argv);
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);  //this option allows leaving the glut loop without exit program
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA);
-    glutInitContextVersion(3, 3);
     glutInitWindowSize(initial_width_, initial_height_);
     window_id_ = glutCreateWindow(window_name_.c_str());
     glutHideWindow();
