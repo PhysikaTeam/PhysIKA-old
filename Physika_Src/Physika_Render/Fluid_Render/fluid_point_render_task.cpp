@@ -31,6 +31,16 @@ FluidPointRenderTask::FluidPointRenderTask(std::shared_ptr<FluidRenderUtil> rend
     shader_.createFromCStyleString(fluid_point_vert_shader, fluid_point_frag_shader);
 }
 
+float FluidPointRenderTask::radius() const
+{
+    return this->radius_;
+}
+
+void FluidPointRenderTask::setRadius(float radius)
+{
+    this->radius_ = radius;
+}
+
 void FluidPointRenderTask::renderTaskImpl()
 {
     glVerify(glPushAttrib(GL_ALL_ATTRIB_BITS));

@@ -25,8 +25,10 @@ class FluidPointRenderTask: public RenderTaskBase
 {
 public:
     FluidPointRenderTask(std::shared_ptr<FluidRenderUtil> render_util);
-    
 
+    float radius() const;
+    void setRadius(float radius);
+    
 private:
     void renderTaskImpl() override;
 

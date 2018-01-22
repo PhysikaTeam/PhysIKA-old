@@ -33,6 +33,19 @@ public:
     
     RenderTaskType type() const override;  //return RenderTaskType::SCREEN_BASED_RENDER_TASK
 
+    void setDrawOpaque(bool draw_opaque);
+    void setFluidRadius(float fluid_radius);
+    void setFluidBlur(float fluid_blur);
+    void setFluidIor(float fluid_ior);
+    void setFluidColor(Color<float> fluid_color);
+
+    void setDrawDiffuseParticle(bool draw_diffuse_particle);
+    void setDiffuseColor(Color<float> diffuse_color);
+    void setDiffuseScale(float diffuse_scale);
+    void setDiffuseMotionScale(float diffuse_motion_scale);
+    void setDiffuseInscatter(float diffuse_inscatter);
+    void setDiffuseOutscatter(float diffuse_outscatter); 
+
 private:
     void renderTaskImpl() override;
     void renderDiffuseParticle(bool front);
@@ -53,19 +66,15 @@ private:
     std::shared_ptr<FluidRenderUtil> render_util_;
 
     //------------------------------------------------------------------------------
-
-    bool draw_diffuse_particle_ = false;
-    bool draw_opaque_ = false;
-
-    //------------------------------------------------------------------------------
-
     float radius_ = 0.01f;
     float fov_ = 3.14159f / 4.0f;
 
-    float fluid_blur_ = 1.0f;
-    float fluid_ior_ = 1.0f;
+    bool         draw_opaque_ = false;
+    float        fluid_blur_ = 1.0f;
+    float        fluid_ior_ = 1.0f;
     Color<float> fluid_color_ = { 0.1f, 0.4f, 0.8f, 1.0f };
 
+    bool         draw_diffuse_particle_ = false;
     Color<float> diffuse_color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
     float        diffuse_scale_ = 0.5;
     float        diffuse_motion_scale_ = 1.0f;

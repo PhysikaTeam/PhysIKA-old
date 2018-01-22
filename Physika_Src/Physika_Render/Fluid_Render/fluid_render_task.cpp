@@ -48,6 +48,61 @@ RenderTaskType FluidRenderTask::type() const
     return RenderTaskType::SCREEN_BASED_RENDER_TASK;
 }
 
+void FluidRenderTask::setDrawOpaque(bool draw_opaque)
+{
+    this->draw_opaque_ = draw_opaque;
+}
+
+void FluidRenderTask::setFluidRadius(float fluid_radius)
+{
+    this->radius_ = fluid_radius;
+}
+
+void FluidRenderTask::setFluidBlur(float fluid_blur)
+{
+    this->fluid_blur_ = fluid_blur;
+}
+
+void FluidRenderTask::setFluidIor(float fluid_ior)
+{
+    this->fluid_ior_ = fluid_ior;
+}
+
+void FluidRenderTask::setFluidColor(Color<float> fluid_color)
+{
+    this->fluid_color_ = fluid_color;
+}
+
+void FluidRenderTask::setDrawDiffuseParticle(bool draw_diffuse_particle)
+{
+    this->draw_diffuse_particle_ = draw_diffuse_particle;
+}
+
+void FluidRenderTask::setDiffuseColor(Color<float> diffuse_color)
+{
+    this->diffuse_color_ = diffuse_color;
+}
+
+void FluidRenderTask::setDiffuseScale(float diffuse_scale)
+{
+    this->diffuse_scale_ = diffuse_scale;
+}
+
+void FluidRenderTask::setDiffuseMotionScale(float diffuse_motion_scale)
+{
+    this->diffuse_motion_scale_ = diffuse_motion_scale;
+}
+
+void FluidRenderTask::setDiffuseInscatter(float diffuse_inscatter)
+{
+    this->diffuse_inscatter_ = diffuse_inscatter;
+}
+
+void FluidRenderTask::setDiffuseOutscatter(float diffuse_outscatter)
+{
+    this->diffuse_outscatter_ = diffuse_outscatter;
+}
+
 void FluidRenderTask::initFrameBuffers()
 {
     RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
