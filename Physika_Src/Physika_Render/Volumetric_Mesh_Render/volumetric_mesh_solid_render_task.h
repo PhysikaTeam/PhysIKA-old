@@ -37,6 +37,9 @@ public:
     VolumetricMeshSolidRenderTask(const VolumetricMeshSolidRenderTask &) = delete;
     VolumetricMeshSolidRenderTask & operator = (const VolumetricMeshSolidRenderTask &) = delete;
 
+    void setUnifromColor(const Color4f & color);
+    void setElementColors(const std::vector<Color4f> & colors);
+
 private:
     void initShader();
     void initSolidRenderTask();

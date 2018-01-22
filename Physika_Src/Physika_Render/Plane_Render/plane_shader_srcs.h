@@ -33,76 +33,11 @@ uniform mat4 model_trans;
 
 //-------------------------------------------------------------------------------------------------
 
-struct SpotLight
-{
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
-    vec3 pos;
-    float constant_atten;
-    float linear_atten;
-    float quadratic_atten;
-
-    vec3 spot_direction;
-    float spot_exponent;
-    float spot_cutoff;       //in radians
-
-    bool use_spot_outer_cutoff;
-    float spot_outer_cutoff; //in radians
-
-    mat4 light_trans;
-};
-
-uniform int spot_light_num = 0;
-uniform SpotLight spot_lights[10];
-
-out vec4 frag_spot_light_space_pos[10];
-
-void calcuFragSpotLightSpacePos()
-{
-    for (int i = 0; i < spot_light_num; ++i)
-        frag_spot_light_space_pos[i] = spot_lights[i].light_trans * model_trans * vec4(vert_pos, 1.0);
-}
-
-//-------------------------------------------------------------------------------------------------
-
-struct FlexSpotLight
-{
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
-    vec3 pos;
-
-    vec3 spot_direction;
-    float spot_min;
-    float spot_max;
-
-    mat4 light_trans;
-};
-
-uniform int flex_spot_light_num = 0;
-uniform FlexSpotLight flex_spot_lights[10];
-
-out vec4 frag_flex_spot_light_space_pos[10];
-
-void calcuFlexFragSpotLightSpacePos()
-{
-    for (int i = 0; i < flex_spot_light_num; ++i)
-        frag_flex_spot_light_space_pos[i] = flex_spot_lights[i].light_trans * model_trans * vec4(vert_pos, 1.0);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void main()
 {
     frag_pos = (model_trans * vec4(vert_pos, 1.0)).xyz;
     frag_normal = mat3(transpose(inverse(model_trans))) * vert_normal;
     gl_Position = proj_trans * view_trans * vec4(frag_pos, 1.0);
-
-    calcuFragSpotLightSpacePos();
-    calcuFlexFragSpotLightSpacePos();
 }
 
 );
@@ -120,9 +55,10 @@ out vec4 frag_color;
 
 uniform vec3 view_pos;
 uniform bool use_light = true;
+uniform bool use_shadow_map;
 uniform bool render_grid;
 
-//-------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 
 struct Material
 {
@@ -161,7 +97,7 @@ float shininess()
     return use_material ? material.shininess : default_shininess;
 }
 
-//-------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 
 struct DirectionalLight
 {
@@ -202,7 +138,7 @@ vec3 calcuDirectionalLightColor()
     return total_light_color;
 }
 
-//-------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 
 struct PointLight
 {
@@ -283,13 +219,10 @@ uniform int spot_light_num = 0;
 uniform SpotLight spot_lights[10];
 uniform SpotLightShadowMap spot_light_shadow_maps[10];
 
-in vec4 frag_spot_light_space_pos[10];
-
-
 float calcuSpotLightShadowAttenuation(int light_id)
 {
-    //vec4 frag_light_space_pos = spot_lights[light_id].light_trans * vec4(frag_pos, 1.0);
-    vec4 frag_light_space_pos = frag_spot_light_space_pos[light_id];
+    vec4 frag_light_space_pos = spot_lights[light_id].light_trans * vec4(frag_pos, 1.0);
+    //vec4 frag_light_space_pos = frag_spot_light_space_pos[light_id];
     vec3 pos = frag_light_space_pos.xyz / frag_light_space_pos.w;
 
     //convert to texture coord space
@@ -373,7 +306,7 @@ vec3 calcuSpotLightColor()
 
         vec3 light_color = ambient + (diffuse + specular) * attenuation * spot_factor * intensity;
 
-        if (spot_light_shadow_maps[i].has_shadow_map)
+        if (use_shadow_map && spot_light_shadow_maps[i].has_shadow_map)
             light_color *= calcuSpotLightShadowAttenuation(i);
 
         //vec3 light_color = vec3(calcuSpotLightShadowAttenuation(i));
@@ -383,7 +316,7 @@ vec3 calcuSpotLightColor()
     return total_light_color;
 }
 
-//----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 
 struct FlexSpotLight
 {
@@ -410,12 +343,10 @@ uniform int flex_spot_light_num = 0;
 uniform FlexSpotLight flex_spot_lights[10];
 uniform FlexSpotLightShadowMap flex_spot_light_shadow_maps[10];
 
-in vec4 frag_flex_spot_light_space_pos[10];
-
 float calcuFlexSpotLightShadowAttenuation(int light_id)
 {
-    //vec4 frag_light_space_pos = flex_spot_lights[light_id].light_trans * vec4(frag_pos, 1.0);
-    vec4 frag_light_space_pos = frag_flex_spot_light_space_pos[light_id];
+    vec4 frag_light_space_pos = flex_spot_lights[light_id].light_trans * vec4(frag_pos, 1.0);
+    //vec4 frag_light_space_pos = frag_flex_spot_light_space_pos[light_id];
     vec3 pos = frag_light_space_pos.xyz / frag_light_space_pos.w;
 
     //convert to texture coord space
@@ -488,7 +419,7 @@ vec3 calcuFlexSpotLightColor()
 
         vec3 light_color = diffuse + ambient;
 
-        if (flex_spot_light_shadow_maps[i].has_shadow_map)
+        if (use_shadow_map && flex_spot_light_shadow_maps[i].has_shadow_map)
             light_color *= calcuFlexSpotLightShadowAttenuation(i);
 
         //light_color = vec3(light.spot_max);

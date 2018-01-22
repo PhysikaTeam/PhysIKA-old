@@ -18,9 +18,6 @@
 #include <Physika_Render/OpenGL_Primitives/glew_utilities.h>
 #include <GL/freeglut.h>
 
-#include "Physika_Render/OpenGL_Shaders/shader_srcs.h"
-
-
 #include "shadow_map_shader_srcs.h"
 #include "shadow_map.h"
 
@@ -29,7 +26,7 @@ namespace Physika {
 ShadowMap::ShadowMap()
 {
     this->shadow_map_program_.createFromCStyleString(shadow_map_vertex_shader, shadow_map_frag_shader);
-    this->shadow_map_render_program_.createFromCStyleString(vertex_pass_through_shader, shadow_map_fragment_shader);
+    this->shadow_map_render_program_.createFromCStyleString(shadow_map_render_vertex_shader, shadow_map_render_frag_shader);
     this->initShadowMapFBO();
 }
 

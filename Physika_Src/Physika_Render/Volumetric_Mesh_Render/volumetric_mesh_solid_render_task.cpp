@@ -31,11 +31,41 @@
 namespace Physika{
 
 template <typename Scalar, int Dim>
-Physika::VolumetricMeshSolidRenderTask<Scalar, Dim>::VolumetricMeshSolidRenderTask(std::shared_ptr<VolumetricMeshRenderUtil<Scalar, Dim>> render_util)
+VolumetricMeshSolidRenderTask<Scalar, Dim>::VolumetricMeshSolidRenderTask(std::shared_ptr<VolumetricMeshRenderUtil<Scalar, Dim>> render_util)
     :render_util_(render_util)
 {
     this->initShader();
     this->initSolidRenderTask();
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMeshSolidRenderTask<Scalar, Dim>::setUnifromColor(const Color4f & color)
+{
+    PHYSIKA_ASSERT(cubic_mesh_solid_render_task_ || quad_mesh_solid_render_task_ || tet_mesh_solid_render_task_ || tri_mesh_solid_render_task_);
+
+    if (cubic_mesh_solid_render_task_)
+        cubic_mesh_solid_render_task_->setUniformColor(color);
+    if (quad_mesh_solid_render_task_)
+        quad_mesh_solid_render_task_->setUniformColor(color);
+    if (tet_mesh_solid_render_task_)
+        tet_mesh_solid_render_task_->setUniformColor(color);
+    if (tri_mesh_solid_render_task_)
+        tri_mesh_solid_render_task_->setUniformColor(color);
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMeshSolidRenderTask<Scalar, Dim>::setElementColors(const std::vector<Color4f> & colors)
+{
+    PHYSIKA_ASSERT(cubic_mesh_solid_render_task_ || quad_mesh_solid_render_task_ || tet_mesh_solid_render_task_ || tri_mesh_solid_render_task_);
+
+    if (cubic_mesh_solid_render_task_)
+        cubic_mesh_solid_render_task_->setElementColors(colors);
+    if (quad_mesh_solid_render_task_)
+        quad_mesh_solid_render_task_->setElementColors(colors);
+    if (tet_mesh_solid_render_task_)
+        tet_mesh_solid_render_task_->setElementColors(colors);
+    if (tri_mesh_solid_render_task_)
+        tri_mesh_solid_render_task_->setElementColors(colors);
 }
 
 template <typename Scalar, int Dim>

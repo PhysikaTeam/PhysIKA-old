@@ -114,6 +114,9 @@ void ScreenBasedRenderManager::render()
         this->createFlexSpotLightShadowMaps();
     }
     
+    GlobalUniformConfig & global_uniform_config = GlobalUniformConfig::getSingleton();
+    global_uniform_config.setBool("use_shadow_map", use_shadow_map_);
+    
     this->beginFrame();
 
     this->renderAllNormalRenderTasks();

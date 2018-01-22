@@ -63,6 +63,7 @@ uniform vec3 view_pos;
 
 uniform bool use_light = true;
 uniform bool use_custom_color;
+uniform bool use_shadow_map;
 
 uniform bool use_tex;
 uniform bool has_tex;
@@ -317,7 +318,7 @@ vec3 calcuSpotLightColor()
 
         vec3 light_color = ambient + (diffuse + specular) * attenuation * spot_factor * intensity;
 
-        if (spot_light_shadow_maps[i].has_shadow_map)
+        if (use_shadow_map && spot_light_shadow_maps[i].has_shadow_map)
             light_color *= calcuSpotLightShadowAttenuation(i);
 
         //vec3 light_color = vec3(calcuSpotLightShadowAttenuation(i));
@@ -430,7 +431,7 @@ vec3 calcuFlexSpotLightColor()
 
         vec3 light_color = diffuse + ambient;
 
-        if (flex_spot_light_shadow_maps[i].has_shadow_map)
+        if (use_shadow_map && flex_spot_light_shadow_maps[i].has_shadow_map)
             light_color *= calcuFlexSpotLightShadowAttenuation(i);
 
         //light_color = vec3(light.spot_max);

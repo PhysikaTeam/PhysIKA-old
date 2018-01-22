@@ -44,4 +44,29 @@ void main()
 
 );
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+static const char * shadow_map_render_vertex_shader = STRINGIFY(
+
+void main()
+{
+    gl_Position = vec4(gl_Vertex.xyz, 1.0);
+    gl_TexCoord[0] = gl_MultiTexCoord0;
+}
+
+);
+
+static const char * shadow_map_render_frag_shader = STRINGIFY(
+
+uniform sampler2D  shadow_tex;
+
+void main()
+{
+    float depth_value = texture2D(shadow_tex, gl_TexCoord[0].xy).r;
+    
+    float mag_factor = 10.0f;
+    gl_FragColor = vec4(mag_factor*(1.0f - depth_value), 0.0f, 0.0f, 1.0f);
+}
+
+);
+
 }//end of namespace Physika

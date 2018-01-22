@@ -41,6 +41,36 @@ Physika::VolumetricMeshWireframeRenderTask<Scalar, Dim>::VolumetricMeshWireframe
 }
 
 template <typename Scalar, int Dim>
+void VolumetricMeshWireframeRenderTask<Scalar, Dim>::setUniformColor(const Color4f & color)
+{
+    PHYSIKA_ASSERT(cubic_mesh_wireframe_render_task_ || quad_mesh_wireframe_render_task_ || tet_mesh_wireframe_render_task_ || tri_mesh_wireframe_render_task_);
+
+    if (cubic_mesh_wireframe_render_task_)
+        cubic_mesh_wireframe_render_task_->setUniformColor(color);
+    if (quad_mesh_wireframe_render_task_)
+        quad_mesh_wireframe_render_task_->setUniformColor(color);
+    if (tet_mesh_wireframe_render_task_)
+        tet_mesh_wireframe_render_task_->setUniformColor(color);
+    if (tri_mesh_wireframe_render_task_)
+        tri_mesh_wireframe_render_task_->setUniformColor(color);
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMeshWireframeRenderTask<Scalar, Dim>::setElementColors(const std::vector<Color4f> & colors)
+{
+    PHYSIKA_ASSERT(cubic_mesh_wireframe_render_task_ || quad_mesh_wireframe_render_task_ || tet_mesh_wireframe_render_task_ || tri_mesh_wireframe_render_task_);
+
+    if (cubic_mesh_wireframe_render_task_)
+        cubic_mesh_wireframe_render_task_->setElementColors(colors);
+    if (quad_mesh_wireframe_render_task_)
+        quad_mesh_wireframe_render_task_->setElementColors(colors);
+    if (tet_mesh_wireframe_render_task_)
+        tet_mesh_wireframe_render_task_->setElementColors(colors);
+    if (tri_mesh_wireframe_render_task_)
+        tri_mesh_wireframe_render_task_->setElementColors(colors);
+}
+
+template <typename Scalar, int Dim>
 void VolumetricMeshWireframeRenderTask<Scalar, Dim>::initShader()
 {
     const VolumetricMesh<Scalar, Dim> * mesh = render_util_->mesh();

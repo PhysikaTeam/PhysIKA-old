@@ -64,7 +64,7 @@ inline void openGLCheckShaderBind(int shader_id)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define DEBUG_OUTPUT true
+#define DEBUG_OUTPUT false
 
 inline bool openGLSetShaderInt(int shader_id, const std::string & name, int val)
 {

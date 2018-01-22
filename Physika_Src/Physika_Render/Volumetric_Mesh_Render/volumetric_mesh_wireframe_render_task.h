@@ -37,6 +37,9 @@ public:
     VolumetricMeshWireframeRenderTask(const VolumetricMeshWireframeRenderTask &) = delete;
     VolumetricMeshWireframeRenderTask & operator = (const VolumetricMeshWireframeRenderTask &) = delete;
 
+    void setUniformColor(const Color4f & color);
+    void setElementColors(const std::vector<Color4f> & colors);
+
 private:
     void initShader();
     void initWireframeRenderTask();
