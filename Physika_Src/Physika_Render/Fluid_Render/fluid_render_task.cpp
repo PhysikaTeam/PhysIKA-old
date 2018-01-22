@@ -627,6 +627,10 @@ void FluidRenderTask::configCameraUniforms()
     RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
     Camera<double> & camera = render_scene_config.camera();
     camera.configCameraToCurBindShader();
+
+    //set model transform, need further consideration
+    const Matrix4f & model_trans = this->transform().transformMatrix();
+    openGLSetCurBindShaderMat4("model_trans", model_trans);
 }
 
 }//end of namespace Physika
