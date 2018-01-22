@@ -55,9 +55,9 @@ struct SpotLight
 };
 
 uniform int spot_light_num = 0;
-uniform SpotLight spot_lights[5];
+uniform SpotLight spot_lights[10];
 
-out vec4 frag_spot_light_space_pos[5];
+out vec4 frag_spot_light_space_pos[10];
 
 void calcuFragSpotLightSpacePos()
 {
@@ -83,9 +83,9 @@ struct FlexSpotLight
 };
 
 uniform int flex_spot_light_num = 0;
-uniform FlexSpotLight flex_spot_lights[5];
+uniform FlexSpotLight flex_spot_lights[10];
 
-out vec4 frag_flex_spot_light_space_pos[5];
+out vec4 frag_flex_spot_light_space_pos[10];
 
 void calcuFlexFragSpotLightSpacePos()
 {
@@ -280,10 +280,10 @@ struct SpotLightShadowMap
 };
 
 uniform int spot_light_num = 0;
-uniform SpotLight spot_lights[5];
-uniform SpotLightShadowMap spot_light_shadow_maps[5];
+uniform SpotLight spot_lights[10];
+uniform SpotLightShadowMap spot_light_shadow_maps[10];
 
-in vec4 frag_spot_light_space_pos[5];
+in vec4 frag_spot_light_space_pos[10];
 
 
 float calcuSpotLightShadowAttenuation(int light_id)
@@ -407,10 +407,10 @@ struct FlexSpotLightShadowMap
 };
 
 uniform int flex_spot_light_num = 0;
-uniform FlexSpotLight flex_spot_lights[5];
-uniform FlexSpotLightShadowMap flex_spot_light_shadow_maps[5];
+uniform FlexSpotLight flex_spot_lights[10];
+uniform FlexSpotLightShadowMap flex_spot_light_shadow_maps[10];
 
-in vec4 frag_flex_spot_light_space_pos[5];
+in vec4 frag_flex_spot_light_space_pos[10];
 
 float calcuFlexSpotLightShadowAttenuation(int light_id)
 {
