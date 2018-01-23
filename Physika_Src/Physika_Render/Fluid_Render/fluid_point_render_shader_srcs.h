@@ -160,7 +160,7 @@ void main()
 
     vec3 Lo = diffuse*reflectance*max(0.0, square(-dot(frag_view_space_light_dir.xyz, normal)*0.5 + 0.5))*max(0.2, shadow)*attenuation;
 
-    frag_color = vec4(pow(Lo, vec3(1.0 / 2.2)), 1.0);
+    frag_color = vec4(Lo, 1.0);
 
     vec3 eye_pos = frag_view_space_pos.xyz + normal*pointRadius;
     vec4 ndc_pos = proj_trans * vec4(eye_pos, 1.0);
