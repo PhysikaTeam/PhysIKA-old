@@ -493,6 +493,10 @@ void main()
 
 static const char * fragment_composite_shader = STRINGIFY(
 
+uniform mat4 proj_trans;
+uniform mat4 view_trans;
+uniform mat4 model_trans;
+
 uniform sampler2D tex;
 uniform vec2 invTexScale;
 uniform vec3 lightPos;
@@ -588,12 +592,12 @@ void main()
     //vec3 dx = dFdx(eyePos.xyz);
     //vec3 dy = dFdy(eyePos.xyz);
 
-    vec4 worldPos = gl_ModelViewMatrixInverse*vec4(eyePos, 1.0);
+    vec4 worldPos = inverse(view_trans * model_trans)*vec4(eyePos, 1.0);
 
     float attenuation;
     float shadow = shadowSample(worldPos.xyz, attenuation);
 
-    vec3 l = (gl_ModelViewMatrix*vec4(lightDir, 0.0)).xyz;
+    vec3 l = (view_trans * model_trans*vec4(lightDir, 0.0)).xyz;
     vec3 v = -normalize(eyePos);
 
     vec3 n = normalize(cross(dx, dy));
@@ -609,7 +613,7 @@ void main()
     float ln = dot(l, n)*attenuation;
 
     vec3 rEye = reflect(-v, n).xyz;
-    vec3 rWorld = (gl_ModelViewMatrixInverse*vec4(rEye, 0.0)).xyz;
+    vec3 rWorld = (inverse(view_trans * model_trans)*vec4(rEye, 0.0)).xyz;
 
     vec2 texScale = vec2(0.75, 1.0);	// to account for backbuffer aspect ratio (todo: pass in)
 
@@ -649,7 +653,7 @@ void main()
         gl_FragColor = vec4(n*0.5 + vec3(0.5), 1.0);
 
     // write valid z
-    vec4 clipPos = gl_ProjectionMatrix*vec4(0.0, 0.0, eyeZ, 1.0);
+    vec4 clipPos = proj_trans*vec4(0.0, 0.0, eyeZ, 1.0);
     clipPos.z /= clipPos.w;
 
     gl_FragDepth = clipPos.z*0.5 + 0.5;

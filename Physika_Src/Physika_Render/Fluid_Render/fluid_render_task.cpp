@@ -592,6 +592,7 @@ void FluidRenderTask::renderFluidParticle()
     glVerify(glBindTexture(GL_TEXTURE_2D, this->scene_TEX_));
 
     this->composite_program_.use();
+    this->configCameraUniforms();
     this->configFakeLightUniforms();
 
     openGLSetCurBindShaderVec2("invTexScale", glm::vec2(1.0f / screen_width, 1.0f / screen_height));
