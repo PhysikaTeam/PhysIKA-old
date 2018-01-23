@@ -46,7 +46,7 @@ uniform vec3 view_pos;
 
 ------------------------------------------------------------------------------------------------------
 
-光源：
+光照和阴影：
 
 struct DirectionalLight
 {
@@ -57,6 +57,8 @@ struct DirectionalLight
     vec3 direction;
 };
 
+uniform int directional_light_num = 0;
+uniform DirectionalLight directional_lights[5];
 
 struct PointLight
 {
@@ -70,6 +72,9 @@ struct PointLight
     float quadratic_atten;
 };
 
+uniform int point_light_num = 0;
+uniform PointLight point_lights[5];
+
 struct SpotLight
 {
     vec3 ambient;
@@ -82,18 +87,51 @@ struct SpotLight
     float quadratic_atten;
 
     vec3 spot_direction;
-    float spot_exponent; //need further consideration
-    float spot_cutoff; //in radians
+    float spot_exponent;
+    float spot_cutoff;       //in radians
+
+    bool use_spot_outer_cutoff;
+    float spot_outer_cutoff; //in radians
+
+    mat4 light_trans;
 };
 
-uniform int directional_light_num = 0;
-uniform DirectionalLight[5] directional_lights;
-
-uniform int point_light_num = 0;
-uniform PointLight point_lights[5];
+struct SpotLightShadowMap
+{
+    bool has_shadow_map;
+    sampler2D shadow_map_tex;
+};
 
 uniform int spot_light_num = 0;
-uniform SpotLight spot_lights[5];
+uniform SpotLight spot_lights[10];
+uniform SpotLightShadowMap spot_light_shadow_maps[10];
+
+struct FlexSpotLight
+{
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    vec3 pos;
+
+    vec3 spot_direction;
+    float spot_min;
+    float spot_max;
+
+    mat4 light_trans;
+};
+
+struct FlexSpotLightShadowMap
+{
+    bool has_shadow_map;
+    sampler2D shadow_map_tex;
+};
+
+uniform int flex_spot_light_num = 0;
+uniform FlexSpotLight flex_spot_lights[10];
+uniform FlexSpotLightShadowMap flex_spot_light_shadow_maps[10];
+
+uniform bool use_shadow_map; //全局设置是否使用shadow_map
 
 ------------------------------------------------------------------------------------------------------
 
@@ -108,7 +146,13 @@ struct Material
     float alpha;
 };
 
-Material material;
+vec3 default_Ka = vec3(0.2);
+vec3 default_Kd = vec3(0.8);
+vec3 default_Ks = vec3(0.0);
+float default_shininess = 0.0;
+
+uniform bool use_material;
+uniform Material material;
 
 ------------------------------------------------------------------------------------------------------
 
@@ -120,27 +164,7 @@ uniform sampler2D tex; //texture unit 0
 
 ------------------------------------------------------------------------------------------------------
 
-阴影：
-
-聚光灯阴影：
-
-struct SpotLightShadowMap
-{
-    mat4 light_trans; 
-    sampler2D shadow_map_tex;
-};
-
-uniform bool use_shadow_map;
-uniform SpotLightShadowMap spot_light_shadow_maps[5];
-
-------------------------------------------------------------------------------------------------------
-
 颜色：
-
-uniform vec3 col; //颜色
-
-uniform bool use_solid_col;
-uniform vec3 solid_col;
 
 uniform bool use_custom_col;  //对应顶点输入 layout (location = 3) in vec3 vert_col; 
 
