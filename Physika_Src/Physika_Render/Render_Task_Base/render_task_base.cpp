@@ -36,7 +36,11 @@ void RenderTaskBase::renderTask()
     const Matrix4f & model_trans = transform_.transformMatrix();
     openGLSetCurBindShaderMat4("model_trans", model_trans);
 
+    glVerify(glPushAttrib(GL_ALL_ATTRIB_BITS));
+
     renderTaskImpl();
+
+    glVerify(glPopAttrib());
 
     if (enable_bind_shader_ == true)
         shader_.unBind();
