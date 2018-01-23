@@ -105,10 +105,10 @@ void FluidPointRenderTask::configCustomUniforms()
 
 void FluidPointRenderTask::configFakeLightUniforms(bool reverse_light_dir)
 {
-    glm::vec3 light_pos = { 100, 150, 0 };
+    glm::vec3 light_pos = { 0, 150, 0 };
     glm::vec3 light_target = { 0, 0, 0 };
     glm::vec3 light_dir = glm::normalize(light_target - light_pos);
-    glm::vec3 light_up = { 0.0f, 1.0f, 0.0f };
+    glm::vec3 light_up = { 1.0f, 0.0f, 0.0f };
 
     glm::mat4 light_proj_mat = glm::perspective(glm::radians(45.0f), 1.0f, 1.0f, 1000.0f);
     glm::mat4 light_model_view_mat = glm::lookAt(light_pos, light_target, light_up);
