@@ -33,6 +33,8 @@ public:
     ColorBarRenderTask() = default;
     explicit ColorBarRenderTask(const ColorBar<Scalar> & color_bar);
 
+    RenderTaskType type() const override; //return RenderTaskType::SCREEN_BASED_RENDER_TASK
+
     void setColorBar(const ColorBar<Scalar> & color_bar);
     const ColorBar<Scalar> & colorBar() const;
 

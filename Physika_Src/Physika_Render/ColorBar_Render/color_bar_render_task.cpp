@@ -29,6 +29,12 @@ ColorBarRenderTask<Scalar>::ColorBarRenderTask(const ColorBar<Scalar> & color_ba
 }
 
 template <typename Scalar>
+RenderTaskType ColorBarRenderTask<Scalar>::type() const
+{
+    return RenderTaskType::SCREEN_BASED_RENDER_TASK;
+}
+
+template <typename Scalar>
 void ColorBarRenderTask<Scalar>::setColorBar(const ColorBar<Scalar> & color_bar)
 {
     color_bar_ = color_bar;
