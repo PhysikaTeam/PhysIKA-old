@@ -131,6 +131,7 @@ uniform int flex_spot_light_num = 0;
 uniform FlexSpotLight flex_spot_lights[10];
 uniform FlexSpotLightShadowMap flex_spot_light_shadow_maps[10];
 
+uniform bool use_light;
 uniform bool use_shadow_map; //全局设置是否使用shadow_map
 
 ------------------------------------------------------------------------------------------------------
