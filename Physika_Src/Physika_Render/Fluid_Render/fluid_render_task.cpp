@@ -556,6 +556,8 @@ void FluidRenderTask::renderFluidParticle()
     glVerify(this->renderToFullScreenQuad());
     //---------------------------------------------------------------------------
 
+    this->depth_blur_program_.unUse();
+
     glActiveTexture(GL_TEXTURE0);
     glDisable(GL_TEXTURE_RECTANGLE);
 
@@ -620,6 +622,8 @@ void FluidRenderTask::renderFluidParticle()
     //render to msaa_FBO
     glVerify(this->renderToFullScreenQuad());
     //---------------------------------------------------------------------------
+
+    this->composite_program_.unUse();
 
     // reset state
     glActiveTexture(GL_TEXTURE5);
