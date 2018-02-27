@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Core/Utilities/cuda_math_utilities.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/cuda_rand_number.h"
 #include "Physika_Core/Utilities/cuda_helper_math.h"
 #include "Physika_Core/Cuda_Array/cuda_array.h"

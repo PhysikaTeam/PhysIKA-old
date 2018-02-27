@@ -23,7 +23,7 @@
 
 #include "Physika_Core/Timer/timer.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Utilities/cuda_math_utilities.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/cuda_helper_math.h"
 
 #include "Physika_Dynamics/SPH/GPU_SPH/cuda_pbd_sph.h"

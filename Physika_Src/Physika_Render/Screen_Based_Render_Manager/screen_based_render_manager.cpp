@@ -12,6 +12,7 @@
 *
 */
 
+#include <algorithm>
 #include <cmath>
 
 #include "Physika_Render/OpenGL_Primitives/glew_utilities.h"

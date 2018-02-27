@@ -15,6 +15,8 @@
 #include <cmath>
 #include <set>
 #include <iostream>
+#include <algorithm>
+
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/physika_exception.h"

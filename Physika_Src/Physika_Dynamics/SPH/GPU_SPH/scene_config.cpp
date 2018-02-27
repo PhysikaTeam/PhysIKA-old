@@ -12,6 +12,7 @@
  *
  */
 
+#include <string>
 #include <fstream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Dynamics/SPH/GPU_SPH/scene_config.h"

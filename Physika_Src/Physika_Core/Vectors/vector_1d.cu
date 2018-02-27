@@ -13,77 +13,71 @@
  */
 
 #include <limits>
-#include <cstdlib>
-#include <iostream>
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Utilities/physika_exception.h"
-#include "Physika_Core/Matrices/matrix_1x1.h"
+//#include "Physika_Core/Matrices/matrix_1x1.h"
 #include "Physika_Core/Vectors/vector_1d.h"
 
 namespace Physika{
 
 template <typename Scalar>
-Vector<Scalar,1>::Vector()
+CPU_GPU_FUNC_DECL Vector<Scalar,1>::Vector()
     :Vector(0) //delegating ctor
 {
 }
 
 template <typename Scalar>
-Vector<Scalar,1>::Vector(Scalar x)
+CPU_GPU_FUNC_DECL Vector<Scalar,1>::Vector(Scalar x)
+    :data_(x)
 {
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    eigen_vector_1x_(0)=x;
-#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    data_=x;
-#endif
 }
 
 template <typename Scalar>
-Scalar& Vector<Scalar,1>::operator[] (unsigned int idx)
+CPU_GPU_FUNC_DECL Scalar& Vector<Scalar,1>::operator[] (unsigned int idx)
 {
     return const_cast<Scalar &> (static_cast<const Vector<Scalar, 1> &>(*this)[idx]);
 }
 
 template <typename Scalar>
-const Scalar& Vector<Scalar,1>::operator[] (unsigned int idx) const
+CPU_GPU_FUNC_DECL const Scalar& Vector<Scalar,1>::operator[] (unsigned int idx) const
 {
+#ifndef __CUDA_ARCH__
     if(idx>=1)
         throw PhysikaException("Vector index out of range!");
-#ifdef PHYSIKA_USE_EIGEN_VECTOR
-    return eigen_vector_1x_(idx);
-#elif defined(PHYSIKA_USE_BUILT_IN_VECTOR)
-    return data_;
 #endif
+    return data_;
 }
 
+
+
 template <typename Scalar>
-const Vector<Scalar,1> Vector<Scalar,1>::operator+ (const Vector<Scalar,1> &vec2) const
+CPU_GPU_FUNC_DECL const Vector<Scalar,1> Vector<Scalar,1>::operator+ (const Vector<Scalar,1> &vec2) const
 {
     return Vector<Scalar,1>(*this) += vec2;
 }
 
 template <typename Scalar>
-Vector<Scalar,1>& Vector<Scalar,1>::operator+= (const Vector<Scalar,1> &vec2)
+CPU_GPU_FUNC_DECL Vector<Scalar,1>& Vector<Scalar,1>::operator+= (const Vector<Scalar,1> &vec2)
 {
     (*this)[0] += vec2[0];
     return *this;
 }
 
 template <typename Scalar>
-const Vector<Scalar,1> Vector<Scalar,1>::operator- (const Vector<Scalar,1> &vec2) const
+CPU_GPU_FUNC_DECL const Vector<Scalar,1> Vector<Scalar,1>::operator- (const Vector<Scalar,1> &vec2) const
 {
     return Vector<Scalar, 1>(*this) -= vec2;
 }
 
 template <typename Scalar>
-Vector<Scalar,1>& Vector<Scalar,1>::operator-= (const Vector<Scalar,1> &vec2)
+CPU_GPU_FUNC_DECL Vector<Scalar,1>& Vector<Scalar,1>::operator-= (const Vector<Scalar,1> &vec2)
 {
     (*this)[0] -= vec2[0];
     return *this;
 }
 
 template <typename Scalar>
-bool Vector<Scalar,1>::operator== (const Vector<Scalar,1> &vec2) const
+CPU_GPU_FUNC_DECL bool Vector<Scalar,1>::operator== (const Vector<Scalar,1> &vec2) const
 {
     if(is_floating_point<Scalar>::value)
     {
@@ -99,87 +93,92 @@ bool Vector<Scalar,1>::operator== (const Vector<Scalar,1> &vec2) const
 }
 
 template <typename Scalar>
-bool Vector<Scalar,1>::operator!= (const Vector<Scalar,1> &vec2) const
+CPU_GPU_FUNC_DECL bool Vector<Scalar,1>::operator!= (const Vector<Scalar,1> &vec2) const
 {
     return !((*this)==vec2);
 }
 
 template <typename Scalar>
-const Vector<Scalar, 1> Vector<Scalar, 1>::operator+(Scalar value) const
+CPU_GPU_FUNC_DECL const Vector<Scalar, 1> Vector<Scalar, 1>::operator+(Scalar value) const
 {
     return Vector<Scalar, 1>(*this) += value;
 }
 
 
 template <typename Scalar>
-Vector<Scalar, 1>& Vector<Scalar, 1>::operator+= (Scalar value)
+CPU_GPU_FUNC_DECL Vector<Scalar, 1>& Vector<Scalar, 1>::operator+= (Scalar value)
 {
     (*this)[0] += value;
     return *this;
 }
 
 template <typename Scalar>
-const Vector<Scalar, 1> Vector<Scalar, 1>::operator-(Scalar value) const
+CPU_GPU_FUNC_DECL const Vector<Scalar, 1> Vector<Scalar, 1>::operator-(Scalar value) const
 {
     return Vector<Scalar, 1>(*this) -= value;
 }
 
 template <typename Scalar>
-Vector<Scalar, 1>& Vector<Scalar, 1>::operator-= (Scalar value)
+CPU_GPU_FUNC_DECL Vector<Scalar, 1>& Vector<Scalar, 1>::operator-= (Scalar value)
 {
     (*this)[0] -= value;
     return *this;
 }
 
 template <typename Scalar>
-const Vector<Scalar,1> Vector<Scalar,1>::operator* (Scalar scale) const
+CPU_GPU_FUNC_DECL const Vector<Scalar,1> Vector<Scalar,1>::operator* (Scalar scale) const
 {
     return Vector<Scalar,1>(*this) *= scale;
 }
 
 template <typename Scalar>
-Vector<Scalar, 1>& Vector<Scalar, 1>::operator*= (Scalar scale)
+CPU_GPU_FUNC_DECL Vector<Scalar, 1>& Vector<Scalar, 1>::operator*= (Scalar scale)
 {
     (*this)[0] *= scale;
     return *this;
 }
 
 template <typename Scalar>
-const Vector<Scalar,1> Vector<Scalar,1>::operator/ (Scalar scale) const
+CPU_GPU_FUNC_DECL const Vector<Scalar,1> Vector<Scalar,1>::operator/ (Scalar scale) const
 {
     return Vector<Scalar,1>(*this) /= scale;
 }
 
+    
 template <typename Scalar>
-Vector<Scalar,1>& Vector<Scalar,1>::operator/= (Scalar scale)
+CPU_GPU_FUNC_DECL Vector<Scalar,1>& Vector<Scalar,1>::operator/= (Scalar scale)
 {
+#ifndef __CUDA_ARCH__
     if(abs(scale) <= std::numeric_limits<Scalar>::epsilon())
         throw PhysikaException("Vector Divide by zero error!");
+#endif
+
     (*this)[0] /= scale;
     return *this;
 }
+    
 
 template <typename Scalar>
-const Vector<Scalar, 1> Vector<Scalar, 1>::operator-(void) const
+CPU_GPU_FUNC_DECL const Vector<Scalar, 1> Vector<Scalar, 1>::operator-(void) const
 {
     return Vector<Scalar, 1>(-(*this)[0]);
 }
 
 template <typename Scalar>
-Scalar Vector<Scalar,1>::norm() const
+CPU_GPU_FUNC_DECL Scalar Vector<Scalar,1>::norm() const
 {
     return abs((*this)[0]);
 }
 
 template <typename Scalar>
-Scalar Vector<Scalar,1>::normSquared() const
+CPU_GPU_FUNC_DECL Scalar Vector<Scalar,1>::normSquared() const
 {
     Scalar result = (*this)[0]*(*this)[0];
     return result;
 }
 
 template <typename Scalar>
-Vector<Scalar,1>& Vector<Scalar,1>::normalize()
+CPU_GPU_FUNC_DECL Vector<Scalar,1>& Vector<Scalar,1>::normalize()
 {
     Scalar norm = (*this).norm();
     bool nonzero_norm = norm > std::numeric_limits<Scalar>::epsilon();
@@ -189,20 +188,21 @@ Vector<Scalar,1>& Vector<Scalar,1>::normalize()
 }
 
 template <typename Scalar>
-Scalar Vector<Scalar,1>::cross(const Vector<Scalar,1>& vec2) const
+CPU_GPU_FUNC_DECL Scalar Vector<Scalar,1>::cross(const Vector<Scalar,1>& vec2) const
 {
     //cross product of 2 1d vectors is 0
     return 0;
 }
 
 template <typename Scalar>
-Scalar Vector<Scalar,1>::dot(const Vector<Scalar,1>& vec2) const
+CPU_GPU_FUNC_DECL Scalar Vector<Scalar,1>::dot(const Vector<Scalar,1>& vec2) const
 {
     return (*this)[0]*vec2[0];
 }
 
+/*
 template <typename Scalar>
-const SquareMatrix<Scalar,1> Vector<Scalar,1>::outerProduct(const Vector<Scalar,1> &vec2) const
+CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,1> Vector<Scalar,1>::outerProduct(const Vector<Scalar,1> &vec2) const
 {
     SquareMatrix<Scalar,1> result;
     for(unsigned int i = 0; i < 1; ++i)
@@ -210,6 +210,7 @@ const SquareMatrix<Scalar,1> Vector<Scalar,1>::outerProduct(const Vector<Scalar,
             result(i,j) = (*this)[i]*vec2[j];
     return result;
 }
+*/
 
 //explicit instantiation of template so that it could be compiled into a lib
 template class Vector<unsigned char,1>;

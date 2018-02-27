@@ -55,7 +55,7 @@ VectorND<Scalar>::VectorND(const VectorND<Scalar> &vec2)
 #endif 
 {
 #ifdef PHYSIKA_USE_BUILT_IN_VECTOR
-    allocMemory(dim);
+    allocMemory(vec2.dims());
     *this = vec2;
 #endif  
 }
