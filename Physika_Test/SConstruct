@@ -30,6 +30,7 @@ use_cuda = False
 
 #DEBUG TARGET
 
+#debug_target = 'render_demo.exe'
 #debug_target = 'grid_render_task_test.exe'
 #debug_target = 'color_bar_render_task_test.exe'
 #debug_target = 'volumetric_mesh_render_task_test.exe'
@@ -41,10 +42,10 @@ use_cuda = False
 #debug_target = 'tetrahedron_render_task_test.exe'
 #debug_target = 'triangle_render_task_test.exe'
 #debug_target = 'line_render_task_test.exe'
-#debug_target = 'Point_render_task_test.exe'
+debug_target = 'Point_render_task_test.exe'
 #debug_target = 'fluid_render_task_test.exe'
 #debug_target = 'screen_based_fluid_render_test.exe'
-debug_target = 'screen_based_render_manager_test.exe'
+#debug_target = 'screen_based_render_manager_test.exe'
 #debug_target = 'surface_mesh_solid_render_task_test.exe'
 
 #################################################################

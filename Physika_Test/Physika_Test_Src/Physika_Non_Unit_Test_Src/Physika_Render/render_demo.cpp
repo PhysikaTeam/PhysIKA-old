@@ -48,6 +48,7 @@
 #include "Physika_Render/Fluid_Render/fluid_point_render_task.h"
 #include "Physika_Render/Fluid_Render/fluid_render_task.h"
 
+#include "Physika_Render/ColorBar_Render/color_bar_render_task.h"
 #include "Physika_Render/Plane_Render/plane_render_task.h"
 
 #include "Physika_Render/Screen_Based_Render_Manager/screen_based_render_manager.h"
@@ -306,6 +307,17 @@ void addPlaneRenderTasks()
 
 //==========================================================================================================================================================================
 
+void addColorBarTasks()
+{
+    RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
+
+    ColorBar<float> color_bar;
+    auto color_bar_render_task = make_shared<ColorBarRenderTask<float>>(color_bar);
+    render_scene_config.pushBackRenderTask(color_bar_render_task);
+}
+
+//==========================================================================================================================================================================
+
 GLfloat * readVec4File(const string & file_name, int & num)
 {
     fstream file(file_name, ios::in);
@@ -394,9 +406,11 @@ void addFluidRenderTasks()
     auto fluid_point_render_task = make_shared<FluidPointRenderTask>(fluid_render_util);
 
     Transform<float, 3> fluid_point_transform;
-    //fluid_point_transform.setScale({ 2.0f, 2.0f, 2.0f });
-    fluid_point_transform.setTranslation({ 0, 0, 45 });
+    fluid_point_transform.setScale({ 4.0f, 4.0f, 4.0f });
+    fluid_point_transform.setTranslation({ -5, 0, 45 });
     fluid_point_render_task->setTransform(fluid_point_transform);
+
+    fluid_point_render_task->setRadius(0.04f);
 
     render_scene_config.pushBackRenderTask(fluid_point_render_task);
 
@@ -404,8 +418,11 @@ void addFluidRenderTasks()
     auto fluid_render_task = make_shared<FluidRenderTask>(fluid_render_util);
 
     Transform<float, 3> fluid_transform;
-    fluid_transform.setTranslation({ 0, 0, 55 });
+    fluid_transform.setScale({ 4.0f, 4.0f, 4.0f });
+    fluid_transform.setTranslation({ -5, 0, 55 });
     fluid_render_task->setTransform(fluid_transform);
+
+    fluid_render_task->setFluidRadius(0.04f);
 
     render_scene_config.pushBackRenderTask(fluid_render_task);
 }
@@ -465,22 +482,17 @@ void initFunction()
 {
     addTeaPotMeshRenderTasks();
     
-    //addBallAndFlowerAndAntiqueMeshRenderTasks();
+    addBallAndFlowerAndAntiqueMeshRenderTasks();
     
     addVolMeshRenderTasks();
 
-    //addFluidRenderTasks();
-
     addPlaneRenderTasks();
 
+    addFluidRenderTasks();
+
+    addColorBarTasks();
+
     addLights();
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-
-    RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
-    ScreenBasedRenderManager & render_manager = render_scene_config.screenBasedRenderManager();
-    //render_manager.disableUseShadowmap();
-    //render_manager.disableUseGammaCorrection();
     
     //-----------------------------------------------------------------------------------------------------------------------------------------
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);

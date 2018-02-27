@@ -44,7 +44,7 @@ std::vector<Vector3d> getVolumetricMeshCubes(CubicMesh<double> * mesh)
     std::vector<Vector3d> pos_vec;
 
     unsigned int num_ele = mesh->eleNum();
-    for (unsigned int ele_idx = 0; ele_idx < 1; ele_idx++)
+    for (unsigned int ele_idx = 0; ele_idx < num_ele; ele_idx++)
     {
         for(int i = 0; i < 8; ++i)
         {

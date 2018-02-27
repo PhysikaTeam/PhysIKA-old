@@ -44,7 +44,7 @@ std::vector<Vector3d> getVolumetricMeshQuads(CubicMesh<double> * mesh)
     std::vector<Vector3d> pos_vec;
 
     unsigned int num_ele = mesh->eleNum();
-    for (unsigned int ele_idx = 0; ele_idx < 1; ele_idx++)
+    for (unsigned int ele_idx = 0; ele_idx < num_ele; ele_idx++)
     {
         Vector<double, 3> pos_0 = mesh->eleVertPos(ele_idx, 0);
         Vector<double, 3> pos_1 = mesh->eleVertPos(ele_idx, 1);
