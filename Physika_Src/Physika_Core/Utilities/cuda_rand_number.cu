@@ -23,7 +23,10 @@ __device__ CudaRandNumber::CudaRandNumber(int seed)
     curand_init(seed, 0, 0, &s_);
 }
 
-__device__ CudaRandNumber::~CudaRandNumber() {}
+__device__ CudaRandNumber::~CudaRandNumber()
+{
+
+}
 
 //brief	Generate a float number ranging from 0 to 1.
 __device__ float CudaRandNumber::generate()
