@@ -25,11 +25,12 @@ use_gl = True
 use_openmp = False
 
 #USE CUDA
-#use_cuda = True
-use_cuda = False
+use_cuda = True
+#use_cuda = False
 
 #DEBUG TARGET
-
+debug_target = 'cuda_matrix_2x2_test.exe'
+#debug_target = 'cuda_vector_2d_test.exe'
 #debug_target = 'render_demo.exe'
 #debug_target = 'grid_render_task_test.exe'
 #debug_target = 'color_bar_render_task_test.exe'
@@ -42,7 +43,7 @@ use_cuda = False
 #debug_target = 'tetrahedron_render_task_test.exe'
 #debug_target = 'triangle_render_task_test.exe'
 #debug_target = 'line_render_task_test.exe'
-debug_target = 'Point_render_task_test.exe'
+#debug_target = 'Point_render_task_test.exe'
 #debug_target = 'fluid_render_task_test.exe'
 #debug_target = 'screen_based_fluid_render_test.exe'
 #debug_target = 'screen_based_render_manager_test.exe'
@@ -198,6 +199,11 @@ if use_cuda == True:
     release_env.Tool('cuda', toolpath = ['../Documentation/Cuda_Scons_Tool/'])
     debug_env.Tool('cuda', toolpath = ['../Documentation/Cuda_Scons_Tool/'])
 
+    NVCCLINKCOM = '$NVCC $CUDA_ARCH -dlink $SOURCES -lcurand -lcudadevrt -o $TARGET'
+    cuda_link_builder = Builder(action = NVCCLINKCOM)
+    release_env.Append(BUILDERS = {'cuda_linker' : cuda_link_builder})
+    debug_env.Append(BUILDERS = {'cuda_linker' : cuda_link_builder})
+
 ###################################################################################################
 #generate gtest and gmock libraries    
 google_test_libs = SConscript('google_test/SConscript', exports = 'release_env os_name os_architecture compiler')
@@ -215,6 +221,9 @@ else:
 non_unit_test_src_files = []
 for dir,_,_ in os.walk('Physika_Test_Src/Physika_Non_Unit_Test_Src/'):
     non_unit_test_src_files.extend(glob(os.path.join(dir, '*.cpp')))
+
+    if use_cuda == True:
+        non_unit_test_src_files.extend(glob(os.path.join(dir, '*.cu')))
     
 for src_file in non_unit_test_src_files:
     target_name = os.path.splitext(src_file)[0]
@@ -224,7 +233,14 @@ for src_file in non_unit_test_src_files:
     if use_cuda == False and (lower_target_name.find('cuda') != -1 or lower_target_name.find('gpu') != -1):
         continue
 
-    target = non_unit_test_env.Program(target_name, src_file)
+    if src_file.endswith('.cpp'):
+        target = non_unit_test_env.Program(target_name, src_file)
+    else:
+        obj_file = non_unit_test_env.Object(target_name, src_file)
+        cuda_obj_file = os.path.splitext(src_file)[0] + '_cu.obj'
+        non_unit_test_env.cuda_linker(target = cuda_obj_file, source = obj_file)
+        target = non_unit_test_env.Program(target_name, [obj_file, cuda_obj_file])
+
     print(target)
     
     #COPY EXECUTABLE FILE TO PHYSIKA TEST ROOT DIRECTORY 

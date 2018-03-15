@@ -16,6 +16,7 @@
 #define PHYSIKA_CORE_VECTORS_VECTOR_1D_H_
 
 #include <iostream>
+
 #include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
@@ -33,7 +34,7 @@ template <typename Scalar>
 class Vector<Scalar,1>
 {
 public:
-    CPU_GPU_FUNC_DECL Vector();
+    CPU_GPU_FUNC_DECL Vector(); //default: 0
     CPU_GPU_FUNC_DECL explicit Vector(Scalar);
     CPU_GPU_FUNC_DECL Vector(const Vector<Scalar,1>&) = default;
     CPU_GPU_FUNC_DECL ~Vector() = default;
@@ -79,7 +80,7 @@ protected:
 private:
     void compileTimeCheck()//dummy method for compile time check
     {
-        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value || is_floating_point<Scalar>::value),
                               "Vector<Scalar,1> are only defined for integer types and floating-point types.");
     }
 };
