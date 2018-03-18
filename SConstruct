@@ -125,12 +125,12 @@ if compiler == 'g++':
     debug_env.Replace(CCFLAGS = CCFLAGS)
 else:
     #release
-    CCFLAGS = ['/Ox', '/EHsc', '/DNDEBUG', '/W3', '/MDd', '/wd\"4819\"']
+    CCFLAGS = ['/Ox', '/EHsc', '/DNDEBUG', '/W3', '/FS', '/MDd', '/wd\"4819\"']
     if use_openmp: CCFLAGS.append('/openmp') #openmp support
     release_env.Replace(CCFLAGS = CCFLAGS)
         
     #debug
-    CCFLAGS = ['/Od', '/Zi', '/EHsc', '/W3', '/MDd', '/wd\"4819\"']
+    CCFLAGS = ['/Od', '/Zi', '/EHsc', '/W3', '/MDd', '/FS', '/wd\"4819\"']
     if use_openmp: CCFLAGS.append('/openmp') #openmp support
     debug_env.Replace(CCFLAGS = CCFLAGS)
 
