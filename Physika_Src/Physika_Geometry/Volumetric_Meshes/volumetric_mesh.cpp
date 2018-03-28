@@ -111,6 +111,23 @@ unsigned int VolumetricMesh<Scalar,Dim>::eleVertIndex(unsigned int ele_idx, unsi
 }
 
 template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar, Dim>::eleVertIndex(unsigned int ele_idx, std::vector<unsigned int> & vert_idx) const
+{
+    if (ele_idx >= this->ele_num_)
+        throw PhysikaException("element index out of range!");
+    
+    unsigned int max_vert_num = uniform_ele_type_ ? vert_per_ele_[0] : vert_per_ele_[ele_idx];
+
+    vert_idx.clear();
+    unsigned int ele_idx_start = eleStartIdx(ele_idx);
+    for (unsigned int local_vert_idx = 0; local_vert_idx < max_vert_num; local_vert_idx++)
+    {
+        vert_idx.push_back(elements_[ele_idx_start + local_vert_idx]);
+    }
+
+}
+
+template <typename Scalar, int Dim>
 int VolumetricMesh<Scalar,Dim>::eleRegionIndex(unsigned int ele_idx) const
 {
     for(unsigned int i = 0; i < regions_.size(); ++i)
@@ -272,6 +289,52 @@ void VolumetricMesh<Scalar, Dim>::boundaryVertices(std::set<unsigned int> &bound
     if (boundary_vertices_.empty())
         generateBoundaryInformation();
     boundary_vertices = boundary_vertices_;
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar, Dim>::setVertPos(unsigned int vert_idx, const Vector<Scalar, Dim> &vert_pos)
+{
+    if (vert_idx >= this->vertNum())
+        throw PhysikaException("Vertex index out of range!");
+    vertices_[vert_idx] = vert_pos;
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar, Dim>::setEleVertPos(unsigned int ele_idx, unsigned int local_vert_idx, const Vector<Scalar, Dim> &vert_pos)
+{
+    unsigned int global_vert_idx = eleVertIndex(ele_idx, local_vert_idx);
+    setVertPos(global_vert_idx, vert_pos);
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar, Dim>::setEleVertPos(unsigned int ele_idx, const vector<Vector<Scalar, Dim> > &positions)
+{
+    if (ele_idx >= this->ele_num_)
+        throw PhysikaException("Element index out of range!");
+
+    unsigned int ele_vert_num = this->eleVertNum(ele_idx);
+    if (positions.size() < ele_vert_num)
+        throw PhysikaException("Insufficient number of vertex positions provided!");
+    
+    for (unsigned int i = 0; i < ele_vert_num; ++i)
+        setEleVertPos(ele_idx, i, positions[i]);
+}
+
+template <typename Scalar, int Dim>
+void VolumetricMesh<Scalar, Dim>::setEleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx, unsigned int new_global_vert_index)
+{
+    if (ele_idx >= this->ele_num_)
+        throw PhysikaException("Element index out of range!");
+
+    unsigned int max_vert_num = uniform_ele_type_ ? vert_per_ele_[0] : vert_per_ele_[ele_idx];
+    if (local_vert_idx >= max_vert_num)
+        throw PhysikaException("Vertex index out of range!");
+
+    unsigned int ele_idx_start = eleStartIdx(ele_idx);
+    elements_[ele_idx_start + local_vert_idx] = new_global_vert_index;
+
+    //clear boundary information since the mesh topology has been modified
+    clearBoundaryInformation();
 }
 
 template <typename Scalar, int Dim>
