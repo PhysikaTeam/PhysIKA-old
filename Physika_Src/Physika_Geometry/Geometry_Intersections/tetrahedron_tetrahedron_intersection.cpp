@@ -123,6 +123,98 @@ bool intersectTetrahedra(const std::vector<Vector<Scalar,3> > &tet_a, const std:
     return true;
 }
 
+template <typename Scalar>
+bool intersectTetrahedra(const std::vector<Vector<Scalar, 3> > & tet_a,
+    const std::vector<Vector<Scalar, 3> > & tet_b,
+    const std::vector<Vector<Scalar, 3> > & tet_a_face_normal_vec,
+    const std::vector<Vector<Scalar, 3> > & tet_b_face_normal_vec,
+    std::vector<unsigned char> & masks,
+    std::vector<std::vector<Scalar> > & coord,
+    std::vector<Vector<Scalar, 3> > & teta_to_tetb_vec,
+    std::vector<Vector<Scalar, 3> > & tetb_to_teta_vec)
+
+{
+
+    PHYSIKA_ASSERT(tet_a.size() == 4);
+    PHYSIKA_ASSERT(tet_b.size() == 4);
+    PHYSIKA_ASSERT(tet_a_face_normal_vec.size() == 4);
+    PHYSIKA_ASSERT(tet_b_face_normal_vec.size() == 4);
+
+    //vector from v_a0 to vb_i
+    for (unsigned int i = 0; i < teta_to_tetb_vec.size(); ++i)
+        teta_to_tetb_vec[i] = tet_b[i] - tet_a[0];
+
+    //test face 0 of tet a
+    const Vector<Scalar, 3> & tet_a_face_0_normal = tet_a_face_normal_vec[0];
+    if (findSeparatingPlaneForTetAFace(teta_to_tetb_vec, tet_a_face_0_normal, coord[0], masks[0]))
+        return false;
+
+    //test face 1 of tet a
+    const Vector<Scalar, 3> & tet_a_face_1_normal = tet_a_face_normal_vec[1];
+    if (findSeparatingPlaneForTetAFace(teta_to_tetb_vec, tet_a_face_1_normal, coord[1], masks[1]))
+        return false;
+    //test the common edge of face 0 and face 1
+    if (findSeparatingPlaneForTetAEdge(coord, masks, 0, 1))
+        return false;
+
+    //test face 2 of tet a
+    const Vector<Scalar, 3> & tet_a_face_2_normal = tet_a_face_normal_vec[2];
+    if (findSeparatingPlaneForTetAFace(teta_to_tetb_vec, tet_a_face_2_normal, coord[2], masks[2]))
+        return false;
+    //test edge 0-2 and edge 1-2
+    if (findSeparatingPlaneForTetAEdge(coord, masks, 0, 2))
+        return false;
+    if (findSeparatingPlaneForTetAEdge(coord, masks, 1, 2))
+        return false;
+
+    //test face 3 of tet a
+    const Vector<Scalar, 3> & tet_a_face_3_normal = tet_a_face_normal_vec[3];
+    //update teta_to_tetb_vec before testing
+    for (unsigned int i = 0; i < teta_to_tetb_vec.size(); ++i)
+        teta_to_tetb_vec[i] = tet_b[i] - tet_a[1];
+    if (findSeparatingPlaneForTetAFace(teta_to_tetb_vec, tet_a_face_3_normal, coord[3], masks[3]))
+        return false;
+    //test edge 0-3,1-3,2-3
+    if (findSeparatingPlaneForTetAEdge(coord, masks, 0, 3))
+        return false;
+    if (findSeparatingPlaneForTetAEdge(coord, masks, 1, 3))
+        return false;
+    if (findSeparatingPlaneForTetAEdge(coord, masks, 2, 3))
+        return false;
+    //test if vertices of tet b is inside tet a, if any vertex is inside, return true
+    if ((masks[0] | masks[1] | masks[2] | masks[3]) != 0x0F)
+        return true;
+
+    for (unsigned int i = 0; i < tetb_to_teta_vec.size(); ++i)
+        tetb_to_teta_vec[i] = tet_a[i] - tet_b[0];
+
+    //test face 0 of tet b
+    const Vector<Scalar, 3> & tet_b_face_0_normal = tet_b_face_normal_vec[0];
+    if (findSeparatingPlaneForTetBFace(tetb_to_teta_vec, tet_b_face_0_normal))
+        return false;
+
+    //test face 1 of tet b
+    const Vector<Scalar, 3> & tet_b_face_1_normal = tet_b_face_normal_vec[1];
+    if (findSeparatingPlaneForTetBFace(tetb_to_teta_vec, tet_b_face_1_normal))
+        return false;
+
+    //test face 2 of tet b
+    const Vector<Scalar, 3> & tet_b_face_2_normal = tet_b_face_normal_vec[2];
+    if (findSeparatingPlaneForTetBFace(tetb_to_teta_vec, tet_b_face_2_normal))
+        return false;
+
+    //test face 3 of tet b
+    const Vector<Scalar, 3> & tet_b_face_3_normal = tet_b_face_normal_vec[3];
+    //update tetb_to_teta_vec before testing
+    for (unsigned int i = 0; i < tetb_to_teta_vec.size(); ++i)
+        tetb_to_teta_vec[i] = tet_a[i] - tet_b[1];
+    if (findSeparatingPlaneForTetBFace(tetb_to_teta_vec, tet_b_face_3_normal))
+        return false;
+
+    //if no separation plane found, return true
+    return true;
+}
+
 //internal functions used in intersectTetrahedra()
 template <typename Scalar>
 bool findSeparatingPlaneForTetAFace(const std::vector<Vector<Scalar,3> > &teta_to_tetb_vec, const Vector<Scalar,3> &tet_a_face_normal,
