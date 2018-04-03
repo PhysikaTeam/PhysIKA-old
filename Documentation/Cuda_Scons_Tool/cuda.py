@@ -34,6 +34,7 @@ def generate(env):
     cuda_bin_path = ''
     cuda_inc_path = ''
     cuda_lib_path = ''
+    cuda_dll_path = ''
     
     cuda_path = None
     if 'CUDA_PATH' in os.environ:
@@ -59,11 +60,16 @@ def generate(env):
     cuda_inc_path = cuda_path+'/include/'
     cuda_bin_path = cuda_path+'/bin/'
     
+    cuda_version_str = os.path.basename(cuda_path)
+    cuda_version_id = filter(str.isdigit, cuda_version_str)
+    
     if os_name == 'Windows':
         if os_architecture == '32bit':
             cuda_lib_path = cuda_path+'/lib/Win32/'
+            cuda_dll_path = cuda_path+'/bin/cudart32_'+cuda_version_id+'.dll'
         else:
             cuda_lib_path = cuda_path+'/lib/X64/'
+            cuda_dll_path = cuda_path+'/bin/cudart64_'+cuda_version_id+'.dll'
     elif os_name == 'Linux':
         if os_architecture == '32bit':
             cuda_lib_path = cuda_path+'/lib/'
@@ -80,6 +86,7 @@ def generate(env):
     env.Append(LIBS = 'cudart')
     env.Append(LIBS = 'cudadevrt')
     env.Append(LIBS = 'curand')
+    env['CUDA_DLL_PATH'] = cuda_dll_path
 
     # "NVCC common command line"
     if not env.has_key('_NVCCCOMCOM'):
