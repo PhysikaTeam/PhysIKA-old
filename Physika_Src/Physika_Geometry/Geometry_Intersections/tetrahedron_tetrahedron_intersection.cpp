@@ -333,6 +333,24 @@ bool findSeparatingPlaneForTetBFace(const std::vector<Vector<Scalar,3> > &tetb_t
 //explicit instantiation
 template bool intersectTetrahedra<float>(const std::vector<Vector<float,3> > &tet_a, const std::vector<Vector<float,3> > &tet_b);
 template bool intersectTetrahedra<double>(const std::vector<Vector<double,3> > &tet_a, const std::vector<Vector<double,3> > &tet_b);
+    
+template bool intersectTetrahedra<float>(const std::vector<Vector<float,3> > & tet_a, 
+                                         const std::vector<Vector<float,3> > & tet_b,
+                                         const std::vector<Vector<float,3> > & tet_a_face_normal_vec,
+                                         const std::vector<Vector<float,3> > & tet_b_face_normal_vec,
+                                         std::vector<unsigned char> & masks,
+                                         std::vector<std::vector<float> > & coord,
+                                         std::vector<Vector<float,3> > & teta_to_tetb_vec,
+                                         std::vector<Vector<float,3> > & tetb_to_teta_vec);
+
+template bool intersectTetrahedra<double>(const std::vector<Vector<double,3> > & tet_a, 
+                                          const std::vector<Vector<double,3> > & tet_b,
+                                          const std::vector<Vector<double,3> > & tet_a_face_normal_vec,
+                                          const std::vector<Vector<double,3> > & tet_b_face_normal_vec,
+                                          std::vector<unsigned char> & masks,
+                                          std::vector<std::vector<double> > & coord,
+                                          std::vector<Vector<double,3> > & teta_to_tetb_vec,
+                                          std::vector<Vector<double,3> > & tetb_to_teta_vec);
 }
 
 }  //end of namespace Physika
