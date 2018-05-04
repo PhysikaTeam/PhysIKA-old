@@ -8,7 +8,7 @@
 int main()
 {
 	Physika::Base b;
-//	std::shared_ptr<framework::Field> f(new framework::Field);
+	std::shared_ptr<Physika::Field> f(new Physika::Field);
 //	b.addField(NULL);
 //	b.removeField(f);
 

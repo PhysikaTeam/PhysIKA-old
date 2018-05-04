@@ -46,3 +46,4 @@ Public_Library/lib/release/cudart32_91.dll
 Build/x64/Release/Physika_Core.lib
 Build/x64/Release/cudart32_91.dll
 Build/x64/Release/cudart64_91.dll
+Public_Library/lib/release/cudart64_91.dll
