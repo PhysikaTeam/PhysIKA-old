@@ -46,8 +46,8 @@ SurfaceMesh<double> mesh;
 void initFunction()
 {
     cout << "loading mesh ......" << endl;
-    ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/scene_dense_mesh_refine_texture.obj", &mesh);
-    //ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/teapot.obj", &mesh);
+    //ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/scene_dense_mesh_refine_texture.obj", &mesh);
+    ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/teapot.obj", &mesh);
     //ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/bottom_plane.obj", &mesh);
     //ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/ball_high.obj", &mesh);
     //ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/SunFlower.obj", &mesh);
@@ -88,7 +88,7 @@ void initFunction()
     //-----------------------------------------------------------------------------------------------------------------------------------------
     auto wireframe_render_task = make_shared<SurfaceMeshWireframeRenderTask<double>>(render_util);
     wireframe_render_task->setUniformColor(Color4f::Black());
-    //render_scene_config.pushBackRenderTask(wireframe_render_task);
+    render_scene_config.pushBackRenderTask(wireframe_render_task);
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
     auto point_render_task = make_shared<SurfaceMeshPointRenderTask<double>>(render_util);
@@ -149,7 +149,7 @@ void initFunction()
 
 void displayFunction()
 {
-
+    /*
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(1.0, 1.0);
@@ -159,6 +159,22 @@ void displayFunction()
     RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
     render_scene_config.renderAllTasks();
     
+    cur_window->displayFrameRate();
+    glutPostRedisplay();
+    glutSwapBuffers();
+    */
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		     // Clear Screen and Depth Buffer
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1.0, 1.0);
+
+    RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
+    ScreenBasedRenderManager & render_manager = render_scene_config.screenBasedRenderManager();
+    render_manager.disableUseGammaCorrection();
+
+    render_manager.render();
+
+    GlutWindow *cur_window = (GlutWindow*)glutGetWindowData();
     cur_window->displayFrameRate();
     glutPostRedisplay();
     glutSwapBuffers();

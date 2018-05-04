@@ -19,6 +19,9 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
+#define CPU_GPU_FUNC_DECL __host__ __device__
+#define CPU_FUNC_DECL __host__
+#define GPU_FUNC_DECL __device__
 
 namespace Physika{
 

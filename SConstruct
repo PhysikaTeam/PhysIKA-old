@@ -125,12 +125,12 @@ if compiler == 'g++':
     debug_env.Replace(CCFLAGS = CCFLAGS)
 else:
     #release
-    CCFLAGS = ['/Ox', '/EHsc', '/DNDEBUG', '/W3', '/FS', '/MDd', '/wd\"4819\"']
+    CCFLAGS = ['/Ox', '/EHsc', '/DNDEBUG', '/W3', '/FS', '/bigobj', '/MDd', '/wd\"4819\"']
     if use_openmp: CCFLAGS.append('/openmp') #openmp support
     release_env.Replace(CCFLAGS = CCFLAGS)
         
     #debug
-    CCFLAGS = ['/Od', '/Zi', '/EHsc', '/W3', '/MDd', '/FS', '/wd\"4819\"']
+    CCFLAGS = ['/Od', '/Zi', '/EHsc', '/W3', '/FS', '/bigobj', '/MDd', '/wd\"4819\"']
     if use_openmp: CCFLAGS.append('/openmp') #openmp support
     debug_env.Replace(CCFLAGS = CCFLAGS)
 
@@ -284,6 +284,15 @@ for name in dependencies:
         for lib_name in os.listdir(src_dependency_lib_path):
             Command(target_root_path+'lib/release/'+lib_name, os.path.join(src_dependency_lib_path, lib_name), Copy("$TARGET", "$SOURCE"))
             Command(target_root_path+'lib/debug/'+lib_name, os.path.join(src_dependency_lib_path, lib_name), Copy("$TARGET", "$SOURCE")) 
+
+#COPY CUDA DLL FILE
+if use_cuda == True:
+    assert debug_env['CUDA_DLL_PATH'] == release_env['CUDA_DLL_PATH']
+    cuda_dll_path = debug_env['CUDA_DLL_PATH']
+    cuda_dll_name = os.path.split(cuda_dll_path)[1]
+    
+    Command(target_root_path+'lib/release/'+cuda_dll_name, cuda_dll_path, Copy("$TARGET", "$SOURCE"))
+    Command(target_root_path+'lib/debug/'+cuda_dll_name, cuda_dll_path, Copy("$TARGET", "$SOURCE")) 
 
 #CUSTOMIZE CLEAN OPTION
 sln_delete_files = ['release/', 'obj/', 'Physika.suo', 'Physika.sdf']

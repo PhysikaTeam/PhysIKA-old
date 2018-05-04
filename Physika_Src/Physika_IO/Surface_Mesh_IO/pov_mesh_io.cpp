@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <map>
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"

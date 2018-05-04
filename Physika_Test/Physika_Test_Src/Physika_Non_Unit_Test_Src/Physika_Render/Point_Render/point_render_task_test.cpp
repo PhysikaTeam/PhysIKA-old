@@ -68,12 +68,17 @@ void initFunction()
     auto point_render_task = make_shared<PointRenderTask>(point_render_util);
     //point_render_task->disableUsePointSprite();
     point_render_task->setPointScaleForPointSprite(30.0);
-    //render_scene_config.pushBackRenderTask(point_render_task);
+    render_scene_config.pushBackRenderTask(point_render_task);
 
     //---------------------------------------------------------------------------------------------------------------------
     auto point_vector_render_task = make_shared<PointVectorRenderTask>(point_render_util);
     point_vector_render_task->setPointVectors(vector_vec);
     point_vector_render_task->setScaleFactor(0.2);
+
+    Transform3f trans;
+    trans.setTranslation({ 15, 0, 0 });
+    point_vector_render_task->setTransform(trans);
+
     render_scene_config.pushBackRenderTask(point_vector_render_task);
 
     //---------------------------------------------------------------------------------------------------------------------

@@ -14,6 +14,7 @@
 
 #include <limits>
 #include <iostream>
+#include <sstream>
 #include <GL/gl.h>
 #include <GL/freeglut.h>
 #include "Physika_Core/Utilities/physika_assert.h"

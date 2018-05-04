@@ -48,6 +48,7 @@ protected:
 //element type of volumetric mesh
 enum ElementType{
     TRI, //2D triangle
+    TRI3D, //3D triangle
     QUAD, //2D quad
     TET, //3D tet
     CUBIC, //3D cubic

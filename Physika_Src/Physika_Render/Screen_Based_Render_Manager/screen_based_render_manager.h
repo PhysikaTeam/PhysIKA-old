@@ -15,6 +15,8 @@
 #ifndef PHYSIKA_RENDER_SCREEN_BASED_RENDER_MANAGER_SCREEN_BASED_RENDER_MANAGER_H
 #define PHYSIKA_RENDER_SCREEN_BASED_RENDER_MANAGER_SCREEN_BASED_RENDER_MANAGER_H
 
+#include <vector>
+
 #include "Physika_Render/OpenGL_Shaders/shader_program.h"
 #include "Physika_Render/Screen_Based_Render_Manager/Shadow_Map/shadow_map.h"
 

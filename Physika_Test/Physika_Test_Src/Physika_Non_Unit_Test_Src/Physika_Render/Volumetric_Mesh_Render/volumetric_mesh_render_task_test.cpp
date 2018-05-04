@@ -44,8 +44,8 @@ VolumetricMesh<double, 3> * mesh;
 void initFunction()
 {
     cout << "loading mesh ......" << endl;
-    //mesh = VolumetricMeshIO<double, 3>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Vol_Mesh/tire.smesh");
-    mesh = VolumetricMeshIO<double, 3>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Vol_Mesh/bunny3.smesh");
+    mesh = VolumetricMeshIO<double, 3>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Vol_Mesh/bar.smesh");
+    //mesh = VolumetricMeshIO<double, 3>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Vol_Mesh/bunny3.smesh");
     cout << "load mesh successfully" << endl;
 
     //---------------------------------------------------------------------------------------------------------------------
@@ -94,10 +94,21 @@ void initFunction()
     //flash_light->setAmbient(Color4f::White());
     //render_scene_config.pushBackLight(flash_light);
 
+    
+    auto fir_spot_light = make_shared<SpotLight>();
+    fir_spot_light->setPos({ 0, 50, 0 });
+    fir_spot_light->setSpotDirection({ 0, -1, 0 });
+    fir_spot_light->setSpotCutoff(0.0);
+    fir_spot_light->setSpotOuterCutoff(20);
+    //fir_spot_light->setAmbient(Color4f::Gray());
+    //fir_spot_light->setDiffuse(Color4f::Black());
+    //fir_spot_light->setSpecular(Color4f::Black());
+    render_scene_config.pushBackLight(fir_spot_light);
 
     auto flash_light_2 = make_shared<FlashLight>();
     flash_light_2->setAmbient(Color4f::White());
     render_scene_config.pushBackLight(flash_light_2);
+    
 
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
@@ -106,7 +117,7 @@ void initFunction()
     glClearColor(0.49, 0.49, 0.49, 1.0);
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
 }
 
 void displayFunction()

@@ -49,6 +49,7 @@ public:
     inline bool         isUniformElementType() const{return uniform_ele_type_;}
     unsigned int        eleVertNum(unsigned int ele_idx) const;
     unsigned int        eleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx) const; //return the global vertex index of a specific vertex of the element
+    void                eleVertIndex(unsigned int ele_idx, std::vector<unsigned int> & vert_idx) const;
     int                 eleRegionIndex(unsigned int ele_idx) const;  //return the index of the region that the element belongs to, return -1 if it does not belong to any region
     unsigned int        regionNum() const;
 
@@ -72,6 +73,12 @@ public:
     void boundaryElements(std::vector<unsigned int> &boundary_elements);
     void boundaryVertices(std::set<unsigned int> & boundary_vertices);
     void boundaryVertices(std::vector<unsigned int> &boundary_vertices);
+
+    //setters
+    void setVertPos(unsigned int vert_idx, const Vector<Scalar, Dim> &vert_pos);
+    void setEleVertPos(unsigned int ele_idx, unsigned int local_vert_idx, const Vector<Scalar, Dim> &vert_pos);
+    void setEleVertPos(unsigned int ele_idx, const std::vector<Vector<Scalar, Dim> > &positions);
+    void setEleVertIndex(unsigned int ele_idx, unsigned int local_vert_idx, unsigned int new_global_vert_index); //used to control the topology of mesh, need further consideration
     
     /* modification
      * Note: the user may be obligated to maintain the validity of mesh data after calling the modification methods

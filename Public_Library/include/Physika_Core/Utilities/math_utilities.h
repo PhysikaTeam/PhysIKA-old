@@ -17,22 +17,26 @@
 
 #include <limits>
 #include <cmath>
+#include "Physika_Core/Utilities/cuda_utilities.h"
 
 namespace Physika{
 
 ////////////////////////////////constants//////////////////////////////////////////////
-const double PI = 3.14159265358979323846;
-const double E = 2.71828182845904523536;
-const float FLOAT_EPSILON = std::numeric_limits<float>::epsilon();
-const double DOUBLE_EPSILON = std::numeric_limits<double>::epsilon();
-const float FLOAT_MAX = (std::numeric_limits<float>::max)();
-const double DOUBLE_MAX = (std::numeric_limits<double>::max)();
-const float FLOAT_MIN = std::numeric_limits<float>::lowest();
-const double DOUBLE_MIN = std::numeric_limits<double>::lowest();
+
+//Note: use "constexpr" instead "const" for cuda codes
+
+constexpr double PI = 3.14159265358979323846;
+constexpr double E = 2.71828182845904523536;
+constexpr float FLOAT_EPSILON = std::numeric_limits<float>::epsilon();
+constexpr double DOUBLE_EPSILON = std::numeric_limits<double>::epsilon();
+constexpr float FLOAT_MAX = (std::numeric_limits<float>::max)();
+constexpr double DOUBLE_MAX = (std::numeric_limits<double>::max)();
+constexpr float FLOAT_MIN = std::numeric_limits<float>::lowest();
+constexpr double DOUBLE_MIN = std::numeric_limits<double>::lowest();
 
 ///////////////////////////////functions/////////////////////////////////////////////////
 /*
- * Function List: Please update the list everytime you add/remove a function!!!
+ * Function List: Please update the list every time you add/remove a function!!!
  * abs(); sqrt(); cbrt(); max(); min(); isEqual();
  */
 
@@ -41,7 +45,7 @@ const double DOUBLE_MIN = std::numeric_limits<double>::lowest();
  * support sqrt and abs of integer type
  */
 template <typename Scalar>
-inline Scalar abs(Scalar value)
+CPU_GPU_FUNC_DECL Scalar abs(Scalar value)
 {
     return value>=0?value:-value;
 }
@@ -111,7 +115,7 @@ inline Scalar min(Scalar lhs, Scalar rhs)
 //compare if two floating point numbers are equal
 //ref: http://floating-point-gui.de/errors/comparison/
 template <typename Scalar>
-inline bool isEqual(Scalar a, Scalar b, double relative_tolerance = 1.0e-6)
+CPU_GPU_FUNC_DECL bool isEqual(Scalar a, Scalar b, double relative_tolerance = 1.0e-6)
 {
     Scalar abs_a = abs(a), abs_b = abs(b), diff = abs(a-b);
     Scalar epsilon = std::numeric_limits<Scalar>::epsilon();

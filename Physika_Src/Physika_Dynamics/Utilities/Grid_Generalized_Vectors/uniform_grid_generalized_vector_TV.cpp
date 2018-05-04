@@ -13,6 +13,8 @@
 *
 */
 
+#include <algorithm>
+
 #include "Physika_Core/Vectors/vector_1d.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"

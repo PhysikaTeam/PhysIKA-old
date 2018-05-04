@@ -17,7 +17,7 @@
 #define PHYSIKA_DYNAMICS_SPH_GPU_SPH_KERNELS_H_
 
 #include <cuda_runtime.h>
-#include "Physika_Core/Utilities/cuda_math_utilities.h"
+#include "Physika_Core/Utilities/math_utilities.h"
 
 namespace Physika{
 

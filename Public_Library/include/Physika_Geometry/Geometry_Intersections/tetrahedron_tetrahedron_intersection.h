@@ -27,6 +27,16 @@ namespace GeometryIntersections{
 template <typename Scalar>
 bool intersectTetrahedra(const std::vector<Vector<Scalar,3> > &tet_a, const std::vector<Vector<Scalar,3> > &tet_b);
 
+template <typename Scalar>
+bool intersectTetrahedra(const std::vector<Vector<Scalar,3> > & tet_a, 
+                         const std::vector<Vector<Scalar,3> > & tet_b, 
+                         const std::vector<Vector<Scalar, 3> > & tet_a_face_normal_vec, 
+                         const std::vector<Vector<Scalar, 3> > & tet_b_face_normal_vec,
+                         std::vector<unsigned char> & masks,
+                         std::vector<std::vector<Scalar> > & coord,
+                         std::vector<Vector<Scalar,3> > & teta_to_tetb_vec,
+                         std::vector<Vector<Scalar,3> > & tetb_to_teta_vec);
+
 }  //end of namespace GeometryIntersections
 
 } //end of namespace Physika

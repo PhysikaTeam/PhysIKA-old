@@ -15,8 +15,10 @@
 #ifndef PHYSIKA_CORE_MATRICES_MATRIX_3X3_H_
 #define PHYSIKA_CORE_MATRICES_MATRIX_3X3_H_
 
-#include "Physika_Core/Utilities/global_config.h"
+#include <glm/mat3x3.hpp>
+
 #include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Physika_Core/Utilities/type_utilities.h"
 #include "Physika_Core/Matrices/square_matrix.h"
 
@@ -25,82 +27,85 @@ namespace Physika{
 template <typename Scalar, int Dim> class Vector;
 
 /*
- * SquareMatrix<Scalar,3> are defined for C++ fundamental integer types and floating-point types
+ * SquareMatrix<Scalar,3> are defined for C++ fundamental integers types and floating-point types
  */
 
 template <typename Scalar>
-class SquareMatrix<Scalar,3>: public MatrixBase
+class SquareMatrix<Scalar,3>
 {
 public:
-    SquareMatrix();
-    explicit SquareMatrix(Scalar);
-    SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22);
-    SquareMatrix(const Vector<Scalar,3> &row1, const Vector<Scalar,3> &row2, const Vector<Scalar,3> &row3);
+    CPU_GPU_FUNC_DECL SquareMatrix();
+    CPU_GPU_FUNC_DECL explicit SquareMatrix(Scalar);
+    CPU_GPU_FUNC_DECL SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22);
+    CPU_GPU_FUNC_DECL SquareMatrix(const Vector<Scalar,3> &row1, const Vector<Scalar,3> &row2, const Vector<Scalar,3> &row3);
     
-    SquareMatrix(const SquareMatrix<Scalar,3>&) = default;
-    ~SquareMatrix() = default;
+    CPU_GPU_FUNC_DECL SquareMatrix(const SquareMatrix<Scalar,3>&) = default;
+    CPU_GPU_FUNC_DECL ~SquareMatrix() = default;
 
-    inline unsigned int rows() const{return 3;}
-    inline unsigned int cols() const{return 3;}
+    CPU_GPU_FUNC_DECL  static unsigned int rows() {return 3;}
+    CPU_GPU_FUNC_DECL  static unsigned int cols() {return 3;}
 
-    Scalar& operator() (unsigned int i, unsigned int j );
-    const Scalar& operator() (unsigned int i, unsigned int j) const;
+    CPU_GPU_FUNC_DECL Scalar& operator() (unsigned int i, unsigned int j );
+    CPU_GPU_FUNC_DECL const Scalar& operator() (unsigned int i, unsigned int j) const;
 
-    const Vector<Scalar,3> rowVector(unsigned int i) const;
-    const Vector<Scalar,3> colVector(unsigned int i) const;
+    CPU_GPU_FUNC_DECL const Vector<Scalar,3> rowVector(unsigned int i) const;
+    CPU_GPU_FUNC_DECL const Vector<Scalar,3> colVector(unsigned int i) const;
 
-    const SquareMatrix<Scalar,3> operator+ (const SquareMatrix<Scalar,3> &) const;
-    SquareMatrix<Scalar,3>& operator+= (const SquareMatrix<Scalar,3> &);
-    const SquareMatrix<Scalar,3> operator- (const SquareMatrix<Scalar,3> &) const;
-    SquareMatrix<Scalar,3>& operator-= (const SquareMatrix<Scalar,3> &);
+    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> operator+ (const SquareMatrix<Scalar,3> &) const;
+    CPU_GPU_FUNC_DECL SquareMatrix<Scalar,3>& operator+= (const SquareMatrix<Scalar,3> &);
+    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> operator- (const SquareMatrix<Scalar,3> &) const;
+    CPU_GPU_FUNC_DECL SquareMatrix<Scalar,3>& operator-= (const SquareMatrix<Scalar,3> &);
 
-    SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &) = default;
+    CPU_GPU_FUNC_DECL SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &) = default;
 
-    bool operator== (const SquareMatrix<Scalar,3> &) const;
-    bool operator!= (const SquareMatrix<Scalar,3> &) const;
+    CPU_GPU_FUNC_DECL bool operator== (const SquareMatrix<Scalar,3> &) const;
+    CPU_GPU_FUNC_DECL bool operator!= (const SquareMatrix<Scalar,3> &) const;
 
-    const SquareMatrix<Scalar,3> operator* (Scalar) const;
-    SquareMatrix<Scalar,3>& operator*= (Scalar);
+    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> operator* (Scalar) const;
+    CPU_GPU_FUNC_DECL SquareMatrix<Scalar,3>& operator*= (Scalar);
 
-    const Vector<Scalar,3> operator* (const Vector<Scalar,3> &) const;
-    const SquareMatrix<Scalar,3> operator* (const SquareMatrix<Scalar,3> &) const;
-    SquareMatrix<Scalar,3>& operator*= (const SquareMatrix<Scalar,3> &);
+    CPU_GPU_FUNC_DECL const Vector<Scalar,3> operator* (const Vector<Scalar,3> &) const;
+    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> operator* (const SquareMatrix<Scalar,3> &) const;
+    CPU_GPU_FUNC_DECL SquareMatrix<Scalar,3>& operator*= (const SquareMatrix<Scalar,3> &);
 
-    const SquareMatrix<Scalar,3> operator/ (Scalar) const;
-    SquareMatrix<Scalar,3>& operator/= (Scalar);
+    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> operator/ (Scalar) const;
+    CPU_GPU_FUNC_DECL SquareMatrix<Scalar,3>& operator/= (Scalar);
 
-    const SquareMatrix<Scalar,3> transpose() const;
-    const SquareMatrix<Scalar,3> inverse() const;
+    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar, 3> operator- (void) const;
 
-    Scalar determinant() const;
-    Scalar trace() const;
-    Scalar doubleContraction(const SquareMatrix<Scalar,3> &) const;//double contraction
-    Scalar frobeniusNorm() const;
+    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> transpose() const;
+    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> inverse() const;
+
+    CPU_GPU_FUNC_DECL Scalar determinant() const;
+    CPU_GPU_FUNC_DECL Scalar trace() const;
+    CPU_GPU_FUNC_DECL Scalar doubleContraction(const SquareMatrix<Scalar,3> &) const;//double contraction
+    CPU_GPU_FUNC_DECL Scalar frobeniusNorm() const;
 
     void singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
-                                    Vector<Scalar,3> &singular_values,   //singluar values are in descending order
+                                    Vector<Scalar,3> &singular_values,   //singular values are in descending order
                                     SquareMatrix<Scalar,3> &right_singular_vectors) const;
-    void singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
-                                    SquareMatrix<Scalar,3> &singular_values_diagonal,   //singluar values in descending order as a diagonal matrix
-                                    SquareMatrix<Scalar,3> &right_singular_vectors) const;
-    void eigenDecomposition(Vector<Scalar,3> &eigen_values_real, Vector<Scalar,3> &eigen_values_imag,
-                            SquareMatrix<Scalar,3> &eigen_vectors_real, SquareMatrix<Scalar,3> &eigen_vectors_imag);
 
-    static const SquareMatrix<Scalar,3> identityMatrix();
+    void singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
+                                    SquareMatrix<Scalar,3> &singular_values_diagonal,   //singular values in descending order as a diagonal matrix
+                                    SquareMatrix<Scalar,3> &right_singular_vectors) const;
+
+    void eigenDecomposition(Vector<Scalar,3> &eigen_values_real, 
+                            Vector<Scalar,3> &eigen_values_imag,
+                            SquareMatrix<Scalar,3> &eigen_vectors_real,
+                            SquareMatrix<Scalar,3> &eigen_vectors_imag);
+
+    CPU_GPU_FUNC_DECL static const SquareMatrix<Scalar,3> identityMatrix();
 
 protected:
-#ifdef PHYSIKA_USE_EIGEN_MATRIX
-    Eigen::Matrix<Scalar,3,3> eigen_matrix_3x3_; //default: zero matrix
-#elif defined(PHYSIKA_USE_BUILT_IN_MATRIX)
-    Scalar data_[3][3]; //default: zero matrix
-#endif
+    glm::tmat3x3<Scalar> data_; //default: zero matrix
+
 private:
     void compileTimeCheck()
     {
         //SquareMatrix<Scalar,Dim> is only defined for element type of integers and floating-point types
         //compile time check
-        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value||is_floating_point<Scalar>::value),
-                              "SquareMatrix<Scalar,3> are only defined for integer types and floating-point types.");
+        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value || is_floating_point<Scalar>::value),
+                              "SquareMatrix<Scalar,3> are only defined for integers types and floating-point types.");
     }
 
 };
@@ -126,7 +131,7 @@ inline std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,3> &
 
 //make * operator commutative
 template <typename S, typename T>
-inline const SquareMatrix<T,3> operator* (S scale, const SquareMatrix<T,3> &mat)
+CPU_GPU_FUNC_DECL  const SquareMatrix<T,3> operator* (S scale, const SquareMatrix<T,3> &mat)
 {
     return mat*scale;
 }
