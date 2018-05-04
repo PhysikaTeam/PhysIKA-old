@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Linear_System_Solvers">
+      <UniqueIdentifier>{67d149b7-6c6c-4731-ade5-5f242f90e60c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\conjugate_gradient_solver.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\generalized_matrix.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\generalized_vector.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\iterative_solver.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\linear_system.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\linear_system_solver.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\matrix_linear_system.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\plain_generalized_vector.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\plain_generalized_vector_T.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\plain_generalized_vector_TV.h">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\conjugate_gradient_solver.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\generalized_matrix.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\generalized_vector.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\iterative_solver.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\linear_system.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\linear_system_solver.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\matrix_linear_system.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\plain_generalized_vector_T.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Numerics\Linear_System_Solvers\plain_generalized_vector_TV.cpp">
+      <Filter>Linear_System_Solvers</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physika_Core", "Physika_Core.vcxproj", "{F84F5FD2-2BF0-43AB-92DB-4AFBE244D133}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physika_Framework", "Physika_Framework.vcxproj", "{4C92E564-1CF4-4443-A893-CEDFB3864B82}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physika_Geometry", "Physika_Geometry.vcxproj", "{CE1B6999-6E15-4DFD-87FF-30002069A98B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physika_GUI", "Physika_GUI.vcxproj", "{FBDC8DEA-8315-4BAE-9DFE-6412AA899BC4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physika_IO", "Physika_IO.vcxproj", "{4B1293EC-887C-4E33-868E-67BF2F4BEF04}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physika_Render", "Physika_Render.vcxproj", "{79291DFF-2352-4F41-811D-8D29F2372F77}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physika_Numerics", "Physika_Numerics.vcxproj", "{1FB5A716-FBC8-42BB-8CF1-32F4C9339A67}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "App_Test", "App_Test\App_Test.vcxproj", "{01BE38FA-E41A-4608-86C4-FC989263DB8C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F84F5FD2-2BF0-43AB-92DB-4AFBE244D133}.Debug|x64.ActiveCfg = Debug|x64
+		{F84F5FD2-2BF0-43AB-92DB-4AFBE244D133}.Debug|x64.Build.0 = Debug|x64
+		{F84F5FD2-2BF0-43AB-92DB-4AFBE244D133}.Release|x64.ActiveCfg = Release|x64
+		{F84F5FD2-2BF0-43AB-92DB-4AFBE244D133}.Release|x64.Build.0 = Release|x64
+		{4C92E564-1CF4-4443-A893-CEDFB3864B82}.Debug|x64.ActiveCfg = Debug|x64
+		{4C92E564-1CF4-4443-A893-CEDFB3864B82}.Debug|x64.Build.0 = Debug|x64
+		{4C92E564-1CF4-4443-A893-CEDFB3864B82}.Release|x64.ActiveCfg = Release|x64
+		{4C92E564-1CF4-4443-A893-CEDFB3864B82}.Release|x64.Build.0 = Release|x64
+		{CE1B6999-6E15-4DFD-87FF-30002069A98B}.Debug|x64.ActiveCfg = Debug|x64
+		{CE1B6999-6E15-4DFD-87FF-30002069A98B}.Debug|x64.Build.0 = Debug|x64
+		{CE1B6999-6E15-4DFD-87FF-30002069A98B}.Release|x64.ActiveCfg = Release|x64
+		{CE1B6999-6E15-4DFD-87FF-30002069A98B}.Release|x64.Build.0 = Release|x64
+		{FBDC8DEA-8315-4BAE-9DFE-6412AA899BC4}.Debug|x64.ActiveCfg = Debug|x64
+		{FBDC8DEA-8315-4BAE-9DFE-6412AA899BC4}.Debug|x64.Build.0 = Debug|x64
+		{FBDC8DEA-8315-4BAE-9DFE-6412AA899BC4}.Release|x64.ActiveCfg = Release|x64
+		{FBDC8DEA-8315-4BAE-9DFE-6412AA899BC4}.Release|x64.Build.0 = Release|x64
+		{4B1293EC-887C-4E33-868E-67BF2F4BEF04}.Debug|x64.ActiveCfg = Debug|x64
+		{4B1293EC-887C-4E33-868E-67BF2F4BEF04}.Debug|x64.Build.0 = Debug|x64
+		{4B1293EC-887C-4E33-868E-67BF2F4BEF04}.Release|x64.ActiveCfg = Release|x64
+		{4B1293EC-887C-4E33-868E-67BF2F4BEF04}.Release|x64.Build.0 = Release|x64
+		{79291DFF-2352-4F41-811D-8D29F2372F77}.Debug|x64.ActiveCfg = Debug|x64
+		{79291DFF-2352-4F41-811D-8D29F2372F77}.Debug|x64.Build.0 = Debug|x64
+		{79291DFF-2352-4F41-811D-8D29F2372F77}.Release|x64.ActiveCfg = Release|x64
+		{79291DFF-2352-4F41-811D-8D29F2372F77}.Release|x64.Build.0 = Release|x64
+		{1FB5A716-FBC8-42BB-8CF1-32F4C9339A67}.Debug|x64.ActiveCfg = Debug|x64
+		{1FB5A716-FBC8-42BB-8CF1-32F4C9339A67}.Debug|x64.Build.0 = Debug|x64
+		{1FB5A716-FBC8-42BB-8CF1-32F4C9339A67}.Release|x64.ActiveCfg = Release|x64
+		{1FB5A716-FBC8-42BB-8CF1-32F4C9339A67}.Release|x64.Build.0 = Release|x64
+		{01BE38FA-E41A-4608-86C4-FC989263DB8C}.Debug|x64.ActiveCfg = Debug|x64
+		{01BE38FA-E41A-4608-86C4-FC989263DB8C}.Debug|x64.Build.0 = Debug|x64
+		{01BE38FA-E41A-4608-86C4-FC989263DB8C}.Release|x64.ActiveCfg = Release|x64
+		{01BE38FA-E41A-4608-86C4-FC989263DB8C}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

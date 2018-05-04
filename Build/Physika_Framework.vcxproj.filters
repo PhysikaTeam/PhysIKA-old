@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Action">
+      <UniqueIdentifier>{a84b6b14-0a8b-4060-8d96-b2ade2748ae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{e148d9ac-5aad-4602-82d7-62da78eb7bea}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Base.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ControllerAnimation.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\DeviceContext.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Field.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Module.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleController.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleRender.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleTopology.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Node.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Object.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActAnimate.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActDraw.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\Action.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerAnimation.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DataTypes.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DeviceContext.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Field.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Module.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleController.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleGeometry.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleRender.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleTopology.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Node.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Object.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActAnimate.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActDraw.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\Action.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Typedef.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Platform.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array2D.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array3D.h" />
+  </ItemGroup>
+</Project>

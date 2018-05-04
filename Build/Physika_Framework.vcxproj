@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActAnimate.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActDraw.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\Action.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Base.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ControllerAnimation.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\DeviceContext.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Field.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Module.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleController.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleRender.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleTopology.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Node.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Object.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActAnimate.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActDraw.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\Action.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array2D.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array3D.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerAnimation.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DataTypes.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DeviceContext.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Field.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Module.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleController.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleGeometry.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleRender.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleTopology.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Node.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Object.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Platform.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Typedef.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4C92E564-1CF4-4443-A893-CEDFB3864B82}</ProjectGuid>
+    <RootNamespace>Physika_Framework</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\Public_Library\lib\debug\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\Public_Library\lib\release\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.targets" />
+  </ImportGroup>
+</Project>
