@@ -27,3 +27,22 @@ _CL_*
 Physika_Test/debug
 debug/
 
+*.log
+*.obj
+*.tlog
+Public_Library/lib/release/Physika_Core.lib
+Public_Library/lib/release/Physika_Dynamics.lib
+Public_Library/lib/release/Physika_Framework.lib
+Public_Library/lib/release/Physika_GUI.lib
+Public_Library/lib/release/Physika_Geometry.lib
+Public_Library/lib/release/Physika_IO.lib
+Public_Library/lib/release/Physika_Numerics.lib
+Public_Library/lib/release/Physika_Render.lib
+Public_Library/lib/release/cudart32_91.dll
+*.deps
+*.cache
+*.iobj
+*.ipdb
+Build/x64/Release/Physika_Core.lib
+Build/x64/Release/cudart32_91.dll
+Build/x64/Release/cudart64_91.dll
