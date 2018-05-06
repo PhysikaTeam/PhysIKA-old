@@ -131,10 +131,5 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.h">
       <Filter>Action</Filter>
     </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Typedef.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Platform.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array2D.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array3D.h" />
   </ItemGroup>
 </Project>

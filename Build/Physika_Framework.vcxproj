@@ -36,9 +36,6 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActDraw.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\Action.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array2D.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Arrays\Array3D.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerAnimation.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.h" />
@@ -56,8 +53,6 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Node.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Object.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Platform.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Typedef.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4C92E564-1CF4-4443-A893-CEDFB3864B82}</ProjectGuid>
@@ -101,7 +96,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework\;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -123,7 +118,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

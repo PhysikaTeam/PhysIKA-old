@@ -222,9 +222,6 @@
     <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array-inl.h">
       <Filter>Arrays</Filter>
     </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\cuda_array.h">
-      <Filter>Cuda_Array</Filter>
-    </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.h">
       <Filter>Quaternion</Filter>
     </ClInclude>
@@ -234,6 +231,20 @@
     <ClInclude Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array.h">
+      <Filter>Cuda_Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array2D.h">
+      <Filter>Cuda_Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array3D.h">
+      <Filter>Cuda_Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.h">
+      <Filter>Cuda_Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Platform.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Typedef.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\cubic_weight_functions.cpp">
@@ -308,9 +319,6 @@
     <ClCompile Include="..\Physika_Src\Physika_Core\Arrays\array_manager.cpp">
       <Filter>Arrays</Filter>
     </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\cuda_array.cpp">
-      <Filter>Cuda_Array</Filter>
-    </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp">
       <Filter>Quaternion</Filter>
     </ClCompile>
@@ -345,6 +353,9 @@
     </CudaCompile>
     <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.cu">
       <Filter>Matrices</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.cu">
+      <Filter>Cuda_Array</Filter>
     </CudaCompile>
   </ItemGroup>
 </Project>

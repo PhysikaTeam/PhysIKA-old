@@ -24,7 +24,10 @@
     <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_const_iterator.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_iterator-inl.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_iterator.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\cuda_array.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array2D.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array3D.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_cubic_weight_functions.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_linear_weight_functions.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_quadratic_weight_functions.h" />
@@ -41,6 +44,7 @@
     <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_internal.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_iterator.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\square_matrix.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Platform.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Range\interval.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Range\range.h" />
@@ -48,6 +52,7 @@
     <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform_2d.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform_3d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Typedef.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_helper_math.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_rand_number.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_utilities.h" />
@@ -79,7 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Core\Arrays\array_manager.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\cuda_array.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_cubic_weight_functions.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_linear_weight_functions.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_quadratic_weight_functions.cpp" />
@@ -108,6 +112,7 @@
     <ClCompile Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.cu" />
     <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_1x1.cu" />
     <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cu" />
     <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cu" />
@@ -159,7 +164,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -182,7 +187,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

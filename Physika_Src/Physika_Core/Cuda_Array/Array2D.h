@@ -10,18 +10,19 @@ namespace Physika {
 	class Array2D
 	{
 	public:
-		Array2D()
+		Array2D(const std::shared_ptr<MemoryManager<deviceType>> alloc = std::make_shared<DefaultMemoryManager<deviceType>>())
 			: m_nx(0)
 			, m_ny(0)
 			, m_totalNum(0)
 			, m_data(NULL)
 		{};
 
-		Array2D(int nx, int ny, DeviceType deviceType = DeviceType::GPU)
+		Array2D(int nx, int ny, const std::shared_ptr<MemoryManager<deviceType>> alloc = std::make_shared<DefaultMemoryManager<deviceType>>())
 			: m_nx(nx)
 			, m_ny(ny)
 			, m_totalNum(nx*ny)
 			, m_data(NULL)
+			, m_alloc(alloc)
 		{
 			AllocMemory();
 		};
@@ -80,6 +81,7 @@ namespace Physika {
 		int m_ny;
 		int m_totalNum;
 		T*	m_data;
+		std::shared_ptr<MemoryManager<deviceType>> m_alloc;
 	};
 
 	template<typename T, DeviceType deviceType>
@@ -93,17 +95,19 @@ namespace Physika {
 	template<typename T, DeviceType deviceType>
 	void Array2D<T, deviceType>::Reset()
 	{
-		switch (deviceType)
-		{
-		case CPU:
-			memset((void*)m_data, 0, m_totalNum * sizeof(T));
-			break;
-		case GPU:
-			cudaMemset(m_data, 0, m_totalNum * sizeof(T));
-			break;
-		default:
-			break;
-		}
+// 		switch (deviceType)
+// 		{
+// 		case CPU:
+// 			memset((void*)m_data, 0, m_totalNum * sizeof(T));
+// 			break;
+// 		case GPU:
+// 			cudaMemset(m_data, 0, m_totalNum * sizeof(T));
+// 			break;
+// 		default:
+// 			break;
+// 		}
+
+		m_alloc->initMemory((void*)m_data, 0, m_totalNum * sizeof(T));
 	}
 
 	template<typename T, DeviceType deviceType>
@@ -111,17 +115,19 @@ namespace Physika {
 	{
 		if (m_data != NULL)
 		{
-			switch (deviceType)
-			{
-			case CPU:
-				delete[]m_data;
-				break;
-			case GPU:
-				(cudaFree(m_data));
-				break;
-			default:
-				break;
-			}
+// 			switch (deviceType)
+// 			{
+// 			case CPU:
+// 				delete[]m_data;
+// 				break;
+// 			case GPU:
+// 				(cudaFree(m_data));
+// 				break;
+// 			default:
+// 				break;
+// 			}
+
+			m_alloc->releaseMemory((void**)&m_data);
 		}
 
 		m_data = NULL;
@@ -133,17 +139,20 @@ namespace Physika {
 	template<typename T, DeviceType deviceType>
 	void Array2D<T, deviceType>::AllocMemory()
 	{
-		switch (deviceType)
-		{
-		case CPU:
-			m_data = new T[m_totalNum];
-			break;
-		case GPU:
-			(cudaMalloc((void**)&m_data, m_totalNum * sizeof(T)));
-			break;
-		default:
-			break;
-		}
+// 		switch (deviceType)
+// 		{
+// 		case CPU:
+// 			m_data = new T[m_totalNum];
+// 			break;
+// 		case GPU:
+// 			(cudaMalloc((void**)&m_data, m_totalNum * sizeof(T)));
+// 			break;
+// 		default:
+// 			break;
+// 		}
+		size_t pitch;
+
+		m_alloc->allocMemory2D((void**)&m_data, pitch, m_nx, m_ny, sizeof(T));
 
 		Reset();
 	}

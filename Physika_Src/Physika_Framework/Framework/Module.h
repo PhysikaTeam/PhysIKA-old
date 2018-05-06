@@ -1,5 +1,5 @@
 #pragma once
-#include "Platform.h"
+#include "Physika_Core/Platform.h"
 #include <memory>
 #include <vector>
 #include <cassert>

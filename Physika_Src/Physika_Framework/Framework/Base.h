@@ -40,6 +40,12 @@ public:
 	}
 
 	template<typename T>
+	std::shared_ptr< HostVariable<T> > allocHostVariable(std::string name, std::string description, T value)
+	{
+		return allocVariable<T, DeviceType::CPU>(name, description, value);
+	}
+
+	template<typename T>
 	std::shared_ptr< HostBuffer<T> > allocHostBuffer(std::string name, std::string description, int num)
 	{
 		return allocArrayBuffer<T, DeviceType::CPU>(name, description, num);
@@ -76,7 +82,27 @@ protected:
 			return nullptr;
 		}
 
-		auto var = Variable<T, deviceType>::create(name, description);
+		auto var = TypeInfo::New<Variable<T, deviceType>>(name, description);//Variable<T, deviceType>::create(name, description);
+		this->addField(name, TypeInfo::CastPointerUp<Field>(var));
+		return var;
+	}
+
+	/// Allocate variables in context
+	template<typename T, DeviceType deviceType>
+	std::shared_ptr< Variable<T, deviceType> >
+		allocVariable(std::string name, std::string description, T value)
+	{
+		std::shared_ptr<Field> ret = this->getField(name);
+		if (nullptr != ret)
+		{
+			std::cout << "Variable " << name
+				<< " conflicts with existing fields!"
+				<< std::endl;
+			return nullptr;
+		}
+
+		auto var = TypeInfo::New<Variable<T, deviceType>>(name, description);//Variable<T, deviceType>::create(name, description);
+		var->setValue(value);
 		this->addField(name, TypeInfo::CastPointerUp<Field>(var));
 		return var;
 	}
@@ -95,7 +121,7 @@ protected:
 			return nullptr;
 		}
 
-		auto var = ArrayBuffer<T, deviceType>::create(name, description, num);
+		auto var = TypeInfo::New<ArrayBuffer<T, deviceType>>(name, description, num);// ArrayBuffer<T, deviceType>::create(name, description, num);
 		this->addField(name, TypeInfo::CastPointerUp<Field>(var));
 		return var;
 	}

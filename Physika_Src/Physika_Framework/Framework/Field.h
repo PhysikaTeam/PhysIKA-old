@@ -4,8 +4,10 @@
 #include <string>
 #include <cuda_runtime.h>
 #include "Typedef.h"
-#include "Arrays/Array.h"
+#include "Physika_Core/Cuda_Array/Array.h"
+#include "Physika_Core/Cuda_Array/MemoryManager.h"
 
+using namespace Physika;
 namespace Physika {
 /*!
 *	\class	Variable
@@ -87,15 +89,16 @@ public:
 	void setValue(T val);
 
 	inline T* getDataPtr() { return m_data; }
-
-	static std::shared_ptr< Variable<T, deviceType> > 	create(std::string name, std::string description)
-	{
-		return TypeInfo::New<Variable<T, deviceType>>(name, description);
-	}
+// 
+// 	static std::shared_ptr< Variable<T, deviceType> > 	create(std::string name, std::string description)
+// 	{
+// 		return TypeInfo::New<Variable<T, deviceType>>(name, description);
+// 	}
 
 private:
 	Variable() {};
 	T* m_data;
+	std::shared_ptr<MemoryManager<deviceType>> m_alloc;
 };
 
 
@@ -104,13 +107,16 @@ template<typename T, DeviceType deviceType>
 Variable<T, deviceType>::Variable(std::string name, std::string description)
 	: Field(name, description)
 	, m_data(NULL)
+	, m_alloc(std::make_shared<DefaultMemoryManager<deviceType>>())
 {
-	switch (deviceType)
-	{
-	case GPU:	(cudaMalloc((void**)&m_data, 1 * sizeof(T)));	break;
-	case CPU:	m_data = new T;	break;
-	default:	break;
-	}
+	m_alloc->allocMemory1D((void**)&m_data, 1, sizeof(T));
+
+// 	switch (deviceType)
+// 	{
+// 	case GPU:	(cudaMalloc((void**)&m_data, 1 * sizeof(T)));	break;
+// 	case CPU:	m_data = new T;	break;
+// 	default:	break;
+// 	}
 }
 
 template<typename T, DeviceType deviceType>
@@ -118,19 +124,22 @@ Variable<T, deviceType>::~Variable()
 {
 	if (m_data != NULL)
 	{
-		switch (deviceType)
-		{
-		case GPU:	(cudaFree(m_data));	break;
-		case CPU:	delete m_data;	break;
-		default:
-			break;
-		}
+		m_alloc->releaseMemory((void**)&m_data);
+// 		switch (deviceType)
+// 		{
+// 		case GPU:	(cudaFree(m_data));	break;
+// 		case CPU:	delete m_data;	break;
+// 		default:
+// 			break;
+// 		}
 	}
 };
 
 template<typename T, DeviceType deviceType>
 void Variable<T, deviceType>::setValue(T val)
 {
+//	m_alloc->initMemory((void*)m_data, val, 1 * sizeof(T));
+
 	switch (deviceType)
 	{
 	case GPU:	(cudaMemcpy(m_data, &val, sizeof(T), cudaMemcpyHostToDevice));	break;
@@ -169,7 +178,6 @@ template<typename T, DeviceType deviceType>
 class ArrayBuffer : public Field
 {
 public:
-	ArrayBuffer(int num);
 	ArrayBuffer(std::string name, std::string description, int num = 1);
 	~ArrayBuffer() override;
 
@@ -184,13 +192,13 @@ public:
 	Array<T>& getValue() { return *m_data; }
 
 public:
-	static ArrayBuffer* create(int num) { return new ArrayBuffer<T, deviceType>(num); }
-
-	static std::shared_ptr< ArrayBuffer<T, deviceType> > 
-		create(std::string name, std::string description, int num)
-	{
-		return TypeInfo::New<ArrayBuffer<T, deviceType>>(name, description, num);//SPtr< ArrayBuffer<T, deviceType> > var( new ArrayBuffer<T, deviceType>(name, description) );
-	}
+// 	static ArrayBuffer* create(int num) { return new ArrayBuffer<T, deviceType>(num); }
+// 
+// 	static std::shared_ptr< ArrayBuffer<T, deviceType> > 
+// 		create(std::string name, std::string description, int num)
+// 	{
+// 		return TypeInfo::New<ArrayBuffer<T, deviceType>>(name, description, num);//SPtr< ArrayBuffer<T, deviceType> > var( new ArrayBuffer<T, deviceType>(name, description) );
+// 	}
 
 private:
 	ArrayBuffer() {};
@@ -198,13 +206,13 @@ private:
 	Array<T>* m_data;
 };
 
-template<typename T, DeviceType deviceType>
-ArrayBuffer<T, deviceType>::ArrayBuffer(int num)
-	: Field()
-	, m_data(NULL)
-{
-	m_data = new Array<T, deviceType>(num);
-}
+// template<typename T, DeviceType deviceType>
+// ArrayBuffer<T, deviceType>::ArrayBuffer(int num)
+// 	: Field()
+// 	, m_data(NULL)
+// {
+// 	m_data = new Array<T, deviceType>(num);
+// }
 
 template<typename T, DeviceType deviceType>
 ArrayBuffer<T, deviceType>::ArrayBuffer(std::string name, std::string description, int num)
