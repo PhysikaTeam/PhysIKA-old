@@ -26,6 +26,18 @@ Wei Chen, 08/31/2017
 
 =============================================================
 
+**Complilation &  Installation:**
+
+*1*: install Python in the way you like.
+
+*2*: ```pip install scons``` to install scons tool.
+
+*3*: open the command line window in ```Physika``` root folder, and type ```scons``` to compile all source codes(.cpp & .cu) to lib files in Public_Library. If you are using MSVC, ```.sln``` file would be generated simultaneously.
+
+*4*: open the command line window in ```Physika/Physika_Test``` folder, and type ```scons``` to generate test projects. If you are using MSVC, ```.sln``` file would be generated simultaneously.
+
+=============================================================
+
 **Code Structure:**
 
 *Documentation*: Documentations related to this project, including coding style and development plans. It also contain scons compiler tool for cuda codes.
