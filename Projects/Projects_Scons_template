@@ -192,6 +192,7 @@ if use_cuda == True:
 
 #BUILD
 target = env.Program(target_name, src_files)
+
 #GENERATE MSVC PROJECT OPTIONALLY
 if compiler == 'msvc':
     sln = env.MSVSProject(target=target_name+env['MSVSPROJECTSUFFIX'], srcs=src_files, incs=inc_files, buildtarget=target, variant=build_type)
