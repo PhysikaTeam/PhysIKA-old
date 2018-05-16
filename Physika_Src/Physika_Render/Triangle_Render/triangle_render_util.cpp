@@ -13,7 +13,10 @@
  */
 
 #include "Physika_Render/OpenGL_Primitives/glew_utilities.h"
+#include "Physika_Render/Triangle_Render/triangle_gl_cuda_buffer.h"
+#include "Physika_Render/Utilities/vbo_cuda_mapper.h"
 #include "triangle_render_util.h"
+
 
 namespace Physika{
 
@@ -107,7 +110,7 @@ void TriangleRenderUtil::setTriangles(const std::vector<Vector<Scalar, Dim>> & p
 }
 
 template <typename Scalar>
-void TriangleRenderUtil::setNormals(const std::vector<Vector<Scalar, 3>> & normals)
+void TriangleRenderUtil::setNormalsPerVertex(const std::vector<Vector<Scalar, 3>> & normals)
 {
     if (normals.size() != triangle_num_ * 3)
         throw PhysikaException("error: normal size not match triangle size!");
@@ -115,6 +118,19 @@ void TriangleRenderUtil::setNormals(const std::vector<Vector<Scalar, 3>> & norma
     std::vector<glm::vec3> glm_normal_vec(normals.size());
     for (unsigned int i = 0; i < normals.size(); ++i)
         glm_normal_vec[i] = { normals[i][0], normals[i][1], normals[i][2] };
+
+    this->updateNormalVBOData(glm_normal_vec);
+}
+
+template <typename Scalar>
+void TriangleRenderUtil::setNormalsPerTriangle(const std::vector<Vector<Scalar, 3>> & normals)
+{
+    if (normals.size() != triangle_num_)
+        throw PhysikaException("error: normal size not match triangle size!");
+
+    std::vector<glm::vec3> glm_normal_vec(3 * normals.size());
+    for (unsigned int i = 0; i < normals.size(); ++i)
+        glm_normal_vec[i] = { normals[i / 3][0], normals[i / 3][1], normals[i / 3][2] };
 
     this->updateNormalVBOData(glm_normal_vec);
 }
@@ -130,6 +146,42 @@ void TriangleRenderUtil::setTexCoords(const std::vector<Vector<Scalar, 2>> & tex
         glm_normal_vec[i] = { tex_coords[i][0], tex_coords[i][1]};
 
     this->updateTexCoordVBOData(glm_normal_vec);
+}
+
+TriangleGLCudaBuffer TriangleRenderUtil::mapTriangleGLCudaBuffer(unsigned int triangle_num /* = 0 */)
+{
+    if(pos_vbo_mapper_ == nullptr || normal_vbo_mapper_ == nullptr || (triangle_num != 0 && triangle_num_ != triangle_num))
+    {
+        pos_vbo_mapper_ = std::make_shared<VBOCudaMapper>(triangle_VBO_, sizeof(float) * 9 * triangle_num);
+        normal_vbo_mapper_ = std::make_shared<VBOCudaMapper>(normal_VBO_, sizeof(float) * 9 * triangle_num);
+
+        triangle_num_ = triangle_num;
+
+        //Note: config VBO to VAO
+        glVerify(glBindVertexArray(triangle_VAO_));
+
+        glBindBuffer(GL_ARRAY_BUFFER, normal_VBO_);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glVerify(glBindVertexArray(0));
+
+    }
+
+    const std::pair<float *, unsigned int>  & pos_res = pos_vbo_mapper_->mapVBOBuffer();
+    const std::pair<float *, unsigned int>  & normal_res = normal_vbo_mapper_->mapVBOBuffer();
+
+    PHYSIKA_ASSERT(triangle_num_ == pos_res.second / sizeof(float) / 9);
+    PHYSIKA_ASSERT(triangle_num_ == normal_res.second / sizeof(float) / 9);
+
+    return TriangleGLCudaBuffer(pos_res.first, normal_res.first, triangle_num_);
+}
+
+void TriangleRenderUtil::unmapTriangleGLCudaBuffer()
+{
+    pos_vbo_mapper_->unmapVBOBuffer();
+    normal_vbo_mapper_->unmapVBOBuffer();
 }
 
 unsigned int TriangleRenderUtil::triangleNum() const
@@ -241,8 +293,10 @@ template void TriangleRenderUtil::setTriangles<float, 3>(const std::vector<Vecto
 template void TriangleRenderUtil::setTriangles<double, 2>(const std::vector<Vector<double, 2>> & pos_vec, std::vector<unsigned int> & indices, bool auto_compute_normal);
 template void TriangleRenderUtil::setTriangles<double, 3>(const std::vector<Vector<double, 3>> & pos_vec, std::vector<unsigned int> & indices, bool auto_compute_normal);
 
-template void TriangleRenderUtil::setNormals<float>(const std::vector<Vector<float, 3>> & normals);
-template void TriangleRenderUtil::setNormals<double>(const std::vector<Vector<double, 3>> & normals);
+template void TriangleRenderUtil::setNormalsPerVertex<float>(const std::vector<Vector<float, 3>> & normals);
+template void TriangleRenderUtil::setNormalsPerVertex<double>(const std::vector<Vector<double, 3>> & normals);
+template void TriangleRenderUtil::setNormalsPerTriangle<float>(const std::vector<Vector<float, 3>> & normals);
+template void TriangleRenderUtil::setNormalsPerTriangle<double>(const std::vector<Vector<double, 3>> & normals);
 
 template void TriangleRenderUtil::setTexCoords<float>(const std::vector<Vector<float, 2>> & tex_coords);
 template void TriangleRenderUtil::setTexCoords<double>(const std::vector<Vector<double, 2>> & tex_coords);

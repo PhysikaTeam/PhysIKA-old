@@ -12,6 +12,9 @@
  *
  */
 
+#include "Physika_Render/Quad_Render/quad_gl_cuda_buffer.h"
+#include "cube_gl_cuda_buffer.h"
+
 #include "cube_render_util.h"
 
 namespace Physika{
@@ -145,6 +148,17 @@ template <typename Scalar>
 void CubeRenderUtil::setNormals(const std::vector<Vector<Scalar, 3>> & normals)
 {
     quad_render_util_->setNormals(normals);
+}
+
+CubeGLCudaBuffer CubeRenderUtil::mapCubeGLCudaBuffer(unsigned int cube_num)
+{
+    QuadGLCudaBuffer quad_gl_cuda_buffer = quad_render_util_->mapQuadGLCudaBuffer(6 * cube_num);
+    return CubeGLCudaBuffer(quad_gl_cuda_buffer);
+}
+
+void CubeRenderUtil::unmapCubeGLCudaBuffer()
+{
+    quad_render_util_->unmapQuadGLCudaBuffer();
 }
 
 unsigned int CubeRenderUtil::cubeNum() const

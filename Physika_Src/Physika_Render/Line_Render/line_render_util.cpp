@@ -13,7 +13,12 @@
  */
 
 #include "Physika_Render/OpenGL_Primitives/glew_utilities.h"
+#include "Physika_Render/Line_Render/line_gl_cuda_buffer.h"
+#include "Physika_Render/Point_Render/point_gl_cuda_buffer.h"
+#include "Physika_Render/Utilities/vbo_cuda_mapper.h"
+
 #include "line_render_util.h"
+
 
 namespace Physika{
 
@@ -99,6 +104,26 @@ void LineRenderUtil::setLines(const std::vector<Vector<Scalar, Dim>> & pos_vec, 
 
     line_num_ = glm_pos_vec.size() / 2;
     this->updateLineVBOData(glm_pos_vec);
+}
+
+LineGLCudaBuffer LineRenderUtil::mapLineGLCudaBuffer(unsigned int line_num)
+{
+    if(cuda_vbo_mapper_ == nullptr || (line_num != 0 && line_num_ != line_num ))
+    {
+        cuda_vbo_mapper_ = std::make_shared<VBOCudaMapper>(line_VBO_, sizeof(float) * 6 * line_num);
+        line_num_ = line_num;
+    }
+
+    const std::pair<float *, unsigned int>  & res = cuda_vbo_mapper_->mapVBOBuffer();
+    PHYSIKA_ASSERT(line_num_ == res.second / sizeof(float) / 6);
+
+    return LineGLCudaBuffer(res.first, line_num_);
+}
+
+void LineRenderUtil::unmapLineGLCudaBuffer()
+{
+    if (cuda_vbo_mapper_ != nullptr)
+        cuda_vbo_mapper_->unmapVBOBuffer();
 }
 
 void LineRenderUtil::draw()

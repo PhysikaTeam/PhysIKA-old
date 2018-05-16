@@ -27,6 +27,8 @@
 
 namespace Physika {
 
+class CubeGLCudaBuffer;
+
 class CubeRenderUtil
 {
 public:
@@ -46,6 +48,10 @@ public:
     //Note: normal_num = 6 * cube num, per normal for one face
     template <typename Scalar>
     void setNormals(const std::vector<Vector<Scalar, 3>> & normals);
+
+    CubeGLCudaBuffer mapCubeGLCudaBuffer(unsigned int cube_name);
+    void unmapCubeGLCudaBuffer();
+
 
     unsigned int cubeNum() const;
     std::shared_ptr<QuadRenderUtil> getInnerQuadRenderUtil();

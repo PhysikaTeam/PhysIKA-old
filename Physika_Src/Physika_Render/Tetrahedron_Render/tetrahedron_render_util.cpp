@@ -13,6 +13,8 @@
  */
 
 #include "Physika_Render/OpenGL_Primitives/glew_utilities.h"
+#include "Physika_Render/Triangle_Render/triangle_gl_cuda_buffer.h"
+#include "tetrahedron_gl_cuda_buffer.h"
 #include "tetrahedron_render_util.h"
 
 namespace Physika{
@@ -107,7 +109,18 @@ void TetrahedronRenderUtil::setTetrahedrons(const std::vector<Vector<Scalar, 3>>
 template <typename Scalar>
 void TetrahedronRenderUtil::setNormals(const std::vector<Vector<Scalar, 3>> & normals)
 {
-    triangle_render_util_->setNormals(normals);
+    triangle_render_util_->setNormalsPerTriangle(normals);
+}
+
+TetrahedronGLCudaBuffer TetrahedronRenderUtil::mapTetrahedronGLCudaBuffer(unsigned int tet_num)
+{
+    TriangleGLCudaBuffer triangle_gl_cuda_buffer = triangle_render_util_->mapTriangleGLCudaBuffer(4 * tet_num);
+    return TetrahedronGLCudaBuffer(triangle_gl_cuda_buffer);
+}
+
+void TetrahedronRenderUtil::unmapTetrahedronGLCudaBuffer()
+{
+    triangle_render_util_->unmapTriangleGLCudaBuffer();
 }
 
 unsigned int TetrahedronRenderUtil::tetrahedronNum() const

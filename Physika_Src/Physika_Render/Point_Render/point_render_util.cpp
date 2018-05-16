@@ -13,6 +13,9 @@
  */
 
 #include "Physika_Render/OpenGL_Primitives/glew_utilities.h"
+#include "Physika_Render/Utilities/vbo_cuda_mapper.h"
+#include "Physika_Render/Point_Render/point_gl_cuda_buffer.h"
+
 #include "point_render_util.h"
 
 namespace Physika{
@@ -46,6 +49,27 @@ void PointRenderUtil::setPoints(const std::vector<Vector<Scalar, Dim>> & pos_vec
 
     this->updatePositionVBOData(glm_pos_vec);
 
+}
+
+PointGLCudaBuffer PointRenderUtil::mapPointGLCudaBuffer(unsigned int point_num)
+{
+    if(cuda_vbo_mapper_ == nullptr || (point_num != 0 && point_num_ != point_num))
+    {
+        cuda_vbo_mapper_ = std::make_shared<VBOCudaMapper>(pos_VBO_, sizeof(float) * 3 * point_num);
+        point_num_ = point_num;
+    }
+
+    const std::pair<float *, unsigned int>  & res = cuda_vbo_mapper_->mapVBOBuffer();
+    PHYSIKA_ASSERT(point_num_ == res.second / sizeof(float) / 3);
+
+    return PointGLCudaBuffer(res.first, point_num_);
+
+}
+
+void PointRenderUtil::unmapPointGLCudaBuffer()
+{
+    if (cuda_vbo_mapper_ != nullptr)
+        cuda_vbo_mapper_->unmapVBOBuffer();
 }
 
 unsigned int PointRenderUtil::pointNum() const

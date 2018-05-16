@@ -15,13 +15,18 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include <glm/glm.hpp>
 
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 
+
 namespace Physika {
+
+class VBOCudaMapper;
+class TriangleGLCudaBuffer;
 
 class TriangleRenderUtil
 {
@@ -43,12 +48,20 @@ public:
     template <typename Scalar, int Dim>
     void setTriangles(const std::vector<Vector<Scalar, Dim>> & pos_vec, std::vector<unsigned int> & indices, bool auto_compute_normal = true);
 
+    //Note: normals.size() = 3 * triangle_num
     template <typename Scalar>
-    void setNormals(const std::vector<Vector<Scalar, 3>> & normals);
+    void setNormalsPerVertex(const std::vector<Vector<Scalar, 3>> & normals);
+
+    //Note: normals.size() = triangle_num
+    template <typename Scalar>
+    void setNormalsPerTriangle(const std::vector<Vector<Scalar, 3>> & normals);
 
     template <typename Scalar>
     void setTexCoords(const std::vector<Vector<Scalar, 2>> & tex_coords);
 
+    //Note: triangle_num = 0 means that you want maintain the pre-set triangle_num.    
+    TriangleGLCudaBuffer mapTriangleGLCudaBuffer(unsigned int triangle_num = 0);
+    void unmapTriangleGLCudaBuffer();
 
     unsigned int triangleNum() const;
     void draw();
@@ -72,6 +85,9 @@ private:
     unsigned int normal_VBO_ = 0;
     unsigned int tex_coord_VBO_ = 0;
     unsigned int triangle_VAO_ = 0;
+
+    std::shared_ptr<VBOCudaMapper> pos_vbo_mapper_;
+    std::shared_ptr<VBOCudaMapper> normal_vbo_mapper_;
 };
 
 }//end of namespace Physika

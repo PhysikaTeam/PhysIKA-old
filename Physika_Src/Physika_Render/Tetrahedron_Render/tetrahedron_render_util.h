@@ -27,6 +27,8 @@
 
 namespace Physika {
 
+class TetrahedronGLCudaBuffer;
+
 class TetrahedronRenderUtil
 {
 public:
@@ -43,9 +45,12 @@ public:
     template <typename Scalar>
     void setTetrahedrons(const std::vector<Vector<Scalar, 3>> & pos_vec, std::vector<unsigned int> & indices, bool auto_compute_normal = true);
 
-    //Note: normal_num = 4 * tet_num, per normal for one face
+    //Note: normals.size() = 4 * tet_num, per normal for one face
     template <typename Scalar>
     void setNormals(const std::vector<Vector<Scalar, 3>> & normals);
+
+    TetrahedronGLCudaBuffer mapTetrahedronGLCudaBuffer(unsigned int tet_num);
+    void unmapTetrahedronGLCudaBuffer();
 
     unsigned int tetrahedronNum() const;
     std::shared_ptr<TriangleRenderUtil> getInnerTriangleRenderUtil();

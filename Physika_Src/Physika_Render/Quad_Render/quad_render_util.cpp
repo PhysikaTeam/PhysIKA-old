@@ -13,6 +13,7 @@
  */
 
 #include "quad_render_util.h"
+#include "quad_gl_cuda_buffer.h"
 
 namespace Physika{
 
@@ -124,7 +125,21 @@ void QuadRenderUtil::setNormals(const std::vector<Vector<Scalar, 3>> & normals)
     for (unsigned int i = 0; i < normals.size(); ++i)
         triangle_normals.insert(triangle_normals.end(), 2, normals[i]);
 
-    triangle_render_util_->setNormals(triangle_normals);
+    triangle_render_util_->setNormalsPerTriangle(triangle_normals);
+}
+
+QuadGLCudaBuffer QuadRenderUtil::mapQuadGLCudaBuffer(unsigned int quad_num)
+{
+    LineGLCudaBuffer line_gl_cuda_buffer = line_render_util_->mapLineGLCudaBuffer(4 * quad_num);
+    TriangleGLCudaBuffer triangle_gl_cuda_buffer = triangle_render_util_->mapTriangleGLCudaBuffer(2 * quad_num);
+
+    return QuadGLCudaBuffer(line_gl_cuda_buffer, triangle_gl_cuda_buffer);
+}
+
+void QuadRenderUtil::unmapQuadGLCudaBuffer()
+{
+    line_render_util_->unmapLineGLCudaBuffer();
+    triangle_render_util_->unmapTriangleGLCudaBuffer();
 }
 
 unsigned int QuadRenderUtil::quadNum() const

@@ -20,8 +20,12 @@
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Render/Color/color.h"
+#include <memory>
 
 namespace Physika{
+
+class VBOCudaMapper;
+class PointGLCudaBuffer;
 
 class PointRenderUtil
 {
@@ -35,6 +39,10 @@ public:
 
     template <typename Scalar, int Dim>
     void setPoints(const std::vector<Vector<Scalar, Dim>> & pos_vec);
+
+    //Note: point_num = 0 means that you want maintain the pre-set point_num.    
+    PointGLCudaBuffer mapPointGLCudaBuffer(unsigned int point_num = 0);
+    void unmapPointGLCudaBuffer();
 
     unsigned int pointNum() const;
     void draw();
@@ -51,6 +59,8 @@ private:
     unsigned int point_num_ = 0;
     unsigned int pos_VBO_ = 0;
     unsigned int point_VAO_ = 0;
+
+    std::shared_ptr<VBOCudaMapper> cuda_vbo_mapper_;
 };
     
 }//end of namespace Physika

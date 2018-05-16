@@ -24,6 +24,8 @@
 
 namespace Physika {
 
+class QuadGLCudaBuffer;
+
 class QuadRenderUtil
 {
 public:
@@ -40,9 +42,13 @@ public:
     template <typename Scalar, int Dim>
     void setQuads(const std::vector<Vector<Scalar, Dim>> & pos_vec, std::vector<unsigned int> & indices, bool auto_compute_normal = true);
 
-    //Note: normal num = quad num
+    //Note: normal.size() = quad num
     template <typename Scalar>
     void setNormals(const std::vector<Vector<Scalar, 3>> & normals);
+
+    //Note: quad_num = 0 means that you want maintain the pre-set quad_num.    
+    QuadGLCudaBuffer mapQuadGLCudaBuffer(unsigned int quad_num = 0);
+    void unmapQuadGLCudaBuffer();
 
     unsigned int quadNum() const;
     std::shared_ptr<LineRenderUtil> getInnerLineRenderUtil();

@@ -261,7 +261,7 @@ void SurfaceMeshRenderUtil<Scalar>::initGroupRenderUtils()
         group_render_util->setTriangles(pos_vec, false);
 
         if (normal_vec.size() > 0)
-            group_render_util->setNormals(normal_vec);
+            group_render_util->setNormalsPerVertex(normal_vec);
 
         if (tex_coord_vec.size() > 0)
             group_render_util->setTexCoords(tex_coord_vec);

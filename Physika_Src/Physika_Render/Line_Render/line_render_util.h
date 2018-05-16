@@ -15,13 +15,18 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include <glm/glm.hpp>
 
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Utilities/physika_exception.h"
 
+
 namespace Physika{
+
+class VBOCudaMapper;
+class LineGLCudaBuffer;
 
 class LineRenderUtil
 {
@@ -42,6 +47,9 @@ public:
     template <typename Scalar, int Dim>
     void setLines(const std::vector<Vector<Scalar, Dim>> & pos_vec, std::vector<unsigned int> & indices);
 
+    //Note: line_num = 0 means that you want maintain the pre-set line_num.  
+    LineGLCudaBuffer mapLineGLCudaBuffer(unsigned int line_num = 0);
+    void unmapLineGLCudaBuffer();
 
     unsigned int lineNum() const;
     void draw();
@@ -58,6 +66,8 @@ private:
     unsigned int line_num_ = 0;
     unsigned int line_VBO_ = 0;
     unsigned int line_VAO_ = 0;
+
+    std::shared_ptr<VBOCudaMapper> cuda_vbo_mapper_;
 };
     
 }//end of namespace Physika
