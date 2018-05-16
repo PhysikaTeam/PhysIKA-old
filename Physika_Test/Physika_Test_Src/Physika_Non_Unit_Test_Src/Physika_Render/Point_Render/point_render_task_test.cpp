@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <memory>
+#include <cuda_runtime_api.h>
 #include <GL/freeglut.h>
 
 #include "Physika_Core/Utilities/physika_assert.h"
@@ -32,7 +33,10 @@
 #include "Physika_Render/Render_Scene_Config/render_scene_config.h"
 #include "Physika_Render/Point_Render/point_render_util.h"
 #include "Physika_Render/Point_Render/point_render_task.h"
+#include "Physika_Render/Point_Render/point_gl_cuda_buffer.h"
 #include "Physika_Render/Point_Render/point_vector_render_task.h"
+#include "Physika_Render/Utilities/gl_cuda_buffer_test_tool.h"
+
 
 using namespace std;
 using namespace Physika;
@@ -53,16 +57,26 @@ void initFunction()
     RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
 
     //---------------------------------------------------------------------------------------------------------------------
-    std::vector<Vector3d>  pos_vec;
+    std::vector<Vector3f>  pos_vec;
     for (unsigned int i = 0; i < mesh.numVertices(); ++i)
-        pos_vec.push_back(mesh.vertexPosition(i));
+    {
+        const Vector3d & pos = mesh.vertexPosition(i);
+        pos_vec.push_back(Vector3f(pos[0], pos[1], pos[2]));
+    }
+        
 
     std::vector<Vector3f> vector_vec;
     for (unsigned int i = 0; i < mesh.numVertices(); ++i)
         vector_vec.push_back({ 0, 1, 0 });
 
     auto point_render_util = make_shared<PointRenderUtil>();
-    point_render_util->setPoints(pos_vec);
+
+    //point_render_util->setPoints(pos_vec);
+
+    PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(mesh.numVertices());
+    //cudaMemcpy(point_gl_cuda_buffer.getCudaPosPtr(), pos_vec.data(), sizeof(float) * 3 * pos_vec.size(), cudaMemcpyHostToDevice);
+    setPointGLCudaBuffer(pos_vec, point_gl_cuda_buffer);
+    point_render_util->unmapPointGLCudaBuffer();
 
     //---------------------------------------------------------------------------------------------------------------------
     auto point_render_task = make_shared<PointRenderTask>(point_render_util);

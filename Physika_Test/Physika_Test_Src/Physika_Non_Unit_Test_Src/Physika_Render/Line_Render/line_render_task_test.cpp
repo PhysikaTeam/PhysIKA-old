@@ -15,6 +15,7 @@
 #include <iostream>
 #include <memory>
 #include <GL/freeglut.h>
+#include <cuda_runtime_api.h>
 
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
@@ -33,6 +34,8 @@
 #include "Physika_Render/Render_Scene_Config/render_scene_config.h"
 #include "Physika_Render/Line_Render/line_render_util.h"
 #include "Physika_Render/Line_Render/line_render_task.h"
+#include "Physika_Render/Line_Render/line_gl_cuda_buffer.h"
+#include "Physika_Render/Utilities/gl_cuda_buffer_test_tool.h"
 
 using namespace std;
 using namespace Physika;
@@ -106,7 +109,16 @@ void initFunction()
     vector<Vector3d>  pos_vec = getSurfaceMeshLines(mesh);
 
     auto line_render_util = make_shared<LineRenderUtil>();
-    line_render_util->setLinePairs(pos_vec);
+    //line_render_util->setLinePairs(pos_vec);
+
+    vector<Vector3f> float_pos_vec;
+    for (unsigned int i = 0; i < pos_vec.size(); ++i)
+        float_pos_vec.push_back(Vector3f(pos_vec[i][0], pos_vec[i][1], pos_vec[i][2]));
+
+    LineGLCudaBuffer line_gl_cuda_buffer = line_render_util->mapLineGLCudaBuffer(float_pos_vec.size() / 2);
+    //cudaMemcpy(line_gl_cuda_buffer.getCudaPosPtr(), float_pos_vec.data(), sizeof(float) * 3 * float_pos_vec.size(), cudaMemcpyHostToDevice);
+    setLineGLCudaBuffer(float_pos_vec, line_gl_cuda_buffer);
+    line_render_util->unmapLineGLCudaBuffer();
 
     //---------------------------------------------------------------------------------------------------------------------
     auto line_render_task = make_shared<LineRenderTask>(line_render_util);

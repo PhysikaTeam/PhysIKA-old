@@ -16,7 +16,6 @@
 
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Vectors/vector_4d.h"
-#include "Physika_Core/Utilities/cuda_math_utilities.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Transform/transform_3d.h"
 

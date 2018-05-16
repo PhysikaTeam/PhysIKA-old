@@ -34,6 +34,9 @@
 #include "Physika_Render/Triangle_Render/triangle_render_util.h"
 #include "Physika_Render/Triangle_Render/triangle_wireframe_render_task.h"
 #include "Physika_Render/Triangle_Render/triangle_solid_render_task.h"
+#include "Physika_Render/Triangle_Render/triangle_gl_cuda_buffer.h"
+#include "Physika_Render/Utilities/gl_cuda_buffer_test_tool.h"
+#include <cuda_runtime_api.h>
 
 using namespace std;
 using namespace Physika;
@@ -102,7 +105,17 @@ void initFunction()
     std::vector<Vector3d>  pos_vec = getSurfaceMeshTriangles(mesh);
 
     auto triangle_render_util = make_shared<TriangleRenderUtil>();
-    triangle_render_util->setTriangles(pos_vec);
+    //triangle_render_util->setTriangles(pos_vec);
+
+    vector<Vector3f> float_pos_vec;
+    for (unsigned int i = 0; i < pos_vec.size(); ++i)
+        float_pos_vec.push_back(Vector3f(pos_vec[i][0], pos_vec[i][1], pos_vec[i][2]));
+
+    TriangleGLCudaBuffer triangle_gl_cuda_buffer = triangle_render_util->mapTriangleGLCudaBuffer(float_pos_vec.size() / 3);
+    //cudaMemcpy(triangle_gl_cuda_buffer.getCudaPosPtr(), float_pos_vec.data(), 3 * sizeof(float) * float_pos_vec.size(), cudaMemcpyHostToDevice);
+    setTriangleGLCudaBuffer(float_pos_vec, triangle_gl_cuda_buffer);
+    triangle_render_util->unmapTriangleGLCudaBuffer();
+
 
     //---------------------------------------------------------------------------------------------------------------------
     auto triangle_wireframe_render_task = make_shared<TriangleWireframeRenderTask>(triangle_render_util);
