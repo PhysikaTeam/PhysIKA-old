@@ -1,0 +1,361 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Weight_Functions">
+      <UniqueIdentifier>{a6f8bcca-75bd-410a-9d67-e961f59d5a48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vectors">
+      <UniqueIdentifier>{7e0f750c-5522-4bce-bf04-7f2258abdffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{1dedb537-28e8-4abc-88df-9376bd683dec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Transform">
+      <UniqueIdentifier>{6d193234-561d-4ac3-9ca9-6a03270ba182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Range">
+      <UniqueIdentifier>{7bdb27bd-a8b8-431a-a477-7c553bd36c94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{c05e6cc7-4f2a-466e-8de9-ead662fcfa80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Matrices">
+      <UniqueIdentifier>{f1a0f751-4b16-4e4f-aa21-f8369c2d25c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Grid_Weight_Functions">
+      <UniqueIdentifier>{dd856e00-33b2-44b2-92f7-64a055cbd5ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Image">
+      <UniqueIdentifier>{8e7f1ecd-ac06-4d58-adf1-b8ebf0c4032e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Arrays">
+      <UniqueIdentifier>{765a1c4d-5d81-4bda-8dc4-3777f2b8cf10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cuda_Array">
+      <UniqueIdentifier>{505965ad-654f-461d-a1bb-eec42365e376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quaternion">
+      <UniqueIdentifier>{213ebecb-3b24-4c79-a0b1-2e02671a4a93}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\cubic_weight_functions.h">
+      <Filter>Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\hexic_weight_functions.h">
+      <Filter>Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\linear_weight_functions.h">
+      <Filter>Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\quadratic_weight_functions.h">
+      <Filter>Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\quartic_weight_functions.h">
+      <Filter>Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\quintic_weight_functions.h">
+      <Filter>Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\weight_function.h">
+      <Filter>Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\weight_function_creator.h">
+      <Filter>Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_1d.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_2d.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_3d.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_4d.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_base.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_Nd.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_helper_math.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_rand_number.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_utilities.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cxx11_support.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\dimension_trait.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\glm_utilities.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\global_config.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\math_utilities.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\physika_assert.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\physika_exception.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\type_utilities.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform.h">
+      <Filter>Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform_2d.h">
+      <Filter>Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform_3d.h">
+      <Filter>Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Range\interval.h">
+      <Filter>Range</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Range\range.h">
+      <Filter>Range</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Timer\timer.h">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_1x1.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_base.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_MxN.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_internal.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_iterator.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\square_matrix.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_cubic_weight_functions.h">
+      <Filter>Grid_Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_linear_weight_functions.h">
+      <Filter>Grid_Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_quadratic_weight_functions.h">
+      <Filter>Grid_Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_weight_function.h">
+      <Filter>Grid_Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_weight_function_creator.h">
+      <Filter>Grid_Weight_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Image\image.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_const_iterator.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_const_iterator-inl.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_iterator.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_iterator-inl.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_manager.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_const_iterator.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_const_iterator-inl.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_iterator.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_iterator-inl.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd-inl.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array-inl.h">
+      <Filter>Arrays</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.h">
+      <Filter>Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\physika_stack_trace.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array.h">
+      <Filter>Cuda_Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array2D.h">
+      <Filter>Cuda_Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array3D.h">
+      <Filter>Cuda_Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.h">
+      <Filter>Cuda_Array</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Platform.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Typedef.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\cubic_weight_functions.cpp">
+      <Filter>Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\hexic_weight_functions.cpp">
+      <Filter>Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\linear_weight_functions.cpp">
+      <Filter>Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\quadratic_weight_functions.cpp">
+      <Filter>Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\quartic_weight_functions.cpp">
+      <Filter>Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\quintic_weight_functions.cpp">
+      <Filter>Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_Nd.cpp">
+      <Filter>Vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Utilities\physika_exception.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_2d.cpp">
+      <Filter>Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_3d.cpp">
+      <Filter>Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Range\interval.cpp">
+      <Filter>Range</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Range\range.cpp">
+      <Filter>Range</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Timer\timer.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_MxN.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_iterator.cpp">
+      <Filter>Matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_cubic_weight_functions.cpp">
+      <Filter>Grid_Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_linear_weight_functions.cpp">
+      <Filter>Grid_Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_quadratic_weight_functions.cpp">
+      <Filter>Grid_Weight_Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Image\image.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Arrays\array_manager.cpp">
+      <Filter>Arrays</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp">
+      <Filter>Quaternion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Utilities\physika_stack_trace.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_1d.cu">
+      <Filter>Vectors</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_2d.cu">
+      <Filter>Vectors</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_3d.cu">
+      <Filter>Vectors</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_4d.cu">
+      <Filter>Vectors</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_1x1.cu">
+      <Filter>Matrices</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cu">
+      <Filter>Matrices</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cu">
+      <Filter>Matrices</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.cu">
+      <Filter>Matrices</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.cu">
+      <Filter>Cuda_Array</Filter>
+    </CudaCompile>
+  </ItemGroup>
+</Project>

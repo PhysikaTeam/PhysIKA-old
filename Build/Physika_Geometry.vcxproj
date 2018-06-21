@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\basic_geometry.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\circle.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\cylinder.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\plane.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\sphere.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\boundary_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge_group.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face_group.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\material.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\polygon.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\surface_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\vertex.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_axis_aligned_box.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_kdop18.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_octagon.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid_iterator.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Geometry_Intersections\tetrahedron_tetrahedron_intersection.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\cubic_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\quad_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tet_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri3d_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\basic_geometry.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\circle.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\cylinder.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\plane.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\sphere.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge_group.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face_group.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\material.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\polygon.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\surface_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\vertex.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_axis_aligned_box.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_kdop18.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_octagon.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid_iterator.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Geometry_Intersections\tetrahedron_tetrahedron_intersection.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\cubic_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\quad_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tet_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri3d_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CE1B6999-6E15-4DFD-87FF-30002069A98B}</ProjectGuid>
+    <RootNamespace>Physika_Geometry</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\Public_Library\lib\debug\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\Public_Library\lib\release\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.targets" />
+  </ImportGroup>
+</Project>

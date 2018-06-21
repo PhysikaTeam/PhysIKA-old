@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array-inl.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_const_iterator-inl.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_const_iterator.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_iterator-inl.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_iterator.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_manager.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd-inl.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_const_iterator-inl.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_const_iterator.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_iterator-inl.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Arrays\array_Nd_iterator.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array2D.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array3D.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_cubic_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_linear_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_quadratic_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_weight_function.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_weight_function_creator.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Image\image.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_1x1.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_base.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_MxN.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_internal.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_iterator.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\square_matrix.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Platform.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Range\interval.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Range\range.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Timer\timer.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform_2d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform_3d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Typedef.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_helper_math.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_rand_number.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_utilities.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cxx11_support.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\dimension_trait.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\glm_utilities.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\global_config.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\math_utilities.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\physika_assert.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\physika_exception.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\physika_stack_trace.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\type_utilities.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_1d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_2d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_3d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_4d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_base.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_Nd.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\cubic_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\hexic_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\linear_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\quadratic_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\quartic_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\quintic_weight_functions.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\weight_function.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Weight_Functions\weight_function_creator.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Arrays\array_manager.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_cubic_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_linear_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Grid_Weight_Functions\grid_quadratic_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Image\image.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_MxN.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_iterator.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Range\interval.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Range\range.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Timer\timer.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_2d.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_3d.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Utilities\physika_exception.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Utilities\physika_stack_trace.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_Nd.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\cubic_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\hexic_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\linear_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\quadratic_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\quartic_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Weight_Functions\quintic_weight_functions.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_1x1.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_1d.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_2d.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_3d.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_4d.cu" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F84F5FD2-2BF0-43AB-92DB-4AFBE244D133}</ProjectGuid>
+    <RootNamespace>Physika_Core</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\Public_Library\lib\debug\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\Public_Library\lib\release\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.targets" />
+  </ImportGroup>
+</Project>
