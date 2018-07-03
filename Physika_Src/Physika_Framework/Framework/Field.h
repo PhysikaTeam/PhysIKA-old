@@ -101,22 +101,20 @@ private:
 	std::shared_ptr<MemoryManager<deviceType>> m_alloc;
 };
 
-
-
 template<typename T, DeviceType deviceType>
 Variable<T, deviceType>::Variable(std::string name, std::string description)
 	: Field(name, description)
 	, m_data(NULL)
 	, m_alloc(std::make_shared<DefaultMemoryManager<deviceType>>())
 {
-	m_alloc->allocMemory1D((void**)&m_data, 1, sizeof(T));
+//	m_alloc->allocMemory1D((void**)&m_data, 1, sizeof(T));
 
-// 	switch (deviceType)
-// 	{
-// 	case GPU:	(cudaMalloc((void**)&m_data, 1 * sizeof(T)));	break;
-// 	case CPU:	m_data = new T;	break;
-// 	default:	break;
-// 	}
+	switch (deviceType)
+	{
+	case GPU:	(cudaMalloc((void**)&m_data, 1 * sizeof(T)));	break;
+	case CPU:	m_data = new T;	break;
+	default:	break;
+	}
 }
 
 template<typename T, DeviceType deviceType>
