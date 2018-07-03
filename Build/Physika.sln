@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physika_Numerics", "Physika
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "App_Test", "App_Test\App_Test.vcxproj", "{01BE38FA-E41A-4608-86C4-FC989263DB8C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSystem", "ParticleSystem\ParticleSystem.vcxproj", "{CE052271-92AA-4F03-A89D-1731C27297AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -57,6 +59,10 @@ Global
 		{01BE38FA-E41A-4608-86C4-FC989263DB8C}.Debug|x64.Build.0 = Debug|x64
 		{01BE38FA-E41A-4608-86C4-FC989263DB8C}.Release|x64.ActiveCfg = Release|x64
 		{01BE38FA-E41A-4608-86C4-FC989263DB8C}.Release|x64.Build.0 = Release|x64
+		{CE052271-92AA-4F03-A89D-1731C27297AC}.Debug|x64.ActiveCfg = Debug|x64
+		{CE052271-92AA-4F03-A89D-1731C27297AC}.Debug|x64.Build.0 = Debug|x64
+		{CE052271-92AA-4F03-A89D-1731C27297AC}.Release|x64.ActiveCfg = Release|x64
+		{CE052271-92AA-4F03-A89D-1731C27297AC}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -86,12 +86,13 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Include>..\Physika_Src\;..\Physika_Src\Physika_Framework\;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</Include>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <CudaCompile Include="main.cu">
       <FileType>Document</FileType>
-    </ClCompile>
+    </CudaCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

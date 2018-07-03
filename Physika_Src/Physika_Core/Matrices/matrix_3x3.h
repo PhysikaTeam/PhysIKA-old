@@ -81,7 +81,7 @@ public:
     CPU_GPU_FUNC_DECL Scalar doubleContraction(const SquareMatrix<Scalar,3> &) const;//double contraction
     CPU_GPU_FUNC_DECL Scalar frobeniusNorm() const;
 
-    void singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
+	void singularValueDecomposition(SquareMatrix<Scalar, 3> &left_singular_vectors,
                                     Vector<Scalar,3> &singular_values,   //singular values are in descending order
                                     SquareMatrix<Scalar,3> &right_singular_vectors) const;
 

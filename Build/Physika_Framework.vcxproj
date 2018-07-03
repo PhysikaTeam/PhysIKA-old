@@ -30,6 +30,10 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Node.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Object.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet .cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\PointSet.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\UnstructuredPointSet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActAnimate.h" />
@@ -53,6 +57,10 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Node.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Object.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\PointSet.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\UnstructuredPointSet.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4C92E564-1CF4-4443-A893-CEDFB3864B82}</ProjectGuid>

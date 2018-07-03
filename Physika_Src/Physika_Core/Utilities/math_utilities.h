@@ -34,6 +34,9 @@ constexpr double DOUBLE_MAX = (std::numeric_limits<double>::max)();
 constexpr float FLOAT_MIN = std::numeric_limits<float>::lowest();
 constexpr double DOUBLE_MIN = std::numeric_limits<double>::lowest();
 
+#define M_PI 3.14159265358979323846
+#define M_E 2.71828182845904523536
+
 ///////////////////////////////functions/////////////////////////////////////////////////
 /*
  * Function List: Please update the list every time you add/remove a function!!!

@@ -7,6 +7,9 @@
     <Filter Include="Framework">
       <UniqueIdentifier>{e148d9ac-5aad-4602-82d7-62da78eb7bea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Topology">
+      <UniqueIdentifier>{1313dde3-3522-4fd2-8ca3-33cc5c12fe50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Base.cpp">
@@ -65,6 +68,18 @@
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.cpp">
       <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet .cpp">
+      <Filter>Topology</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\PointSet.cpp">
+      <Filter>Topology</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.cpp">
+      <Filter>Topology</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\UnstructuredPointSet.cpp">
+      <Filter>Topology</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +145,18 @@
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.h">
       <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet.h">
+      <Filter>Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\PointSet.h">
+      <Filter>Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.h">
+      <Filter>Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\UnstructuredPointSet.h">
+      <Filter>Topology</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

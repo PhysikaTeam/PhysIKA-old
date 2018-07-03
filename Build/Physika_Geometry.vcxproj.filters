@@ -19,6 +19,9 @@
     <Filter Include="Volumetric_Meshes">
       <UniqueIdentifier>{0f0377ad-a745-4b46-9ec1-0da2515f4914}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDF">
+      <UniqueIdentifier>{026cd58d-94b6-4659-88f2-fff0e3d5ee9c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\basic_geometry.h">
@@ -105,6 +108,9 @@
     <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.h">
       <Filter>Volumetric_Meshes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\SDF\DistanceField3D.h">
+      <Filter>SDF</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\basic_geometry.cpp">
@@ -188,5 +194,10 @@
     <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.cpp">
       <Filter>Volumetric_Meshes</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Geometry\SDF\DistanceField3D.cu">
+      <Filter>SDF</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

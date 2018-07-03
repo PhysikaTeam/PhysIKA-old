@@ -192,7 +192,7 @@ public:
 	Array<T>& getValue() { return *m_data; }
 
 public:
-// 	static ArrayBuffer* create(int num) { return new ArrayBuffer<T, deviceType>(num); }
+	static ArrayBuffer* create(int num) { return new ArrayBuffer<T, deviceType>("default", "default", num); }
 // 
 // 	static std::shared_ptr< ArrayBuffer<T, deviceType> > 
 // 		create(std::string name, std::string description, int num)

@@ -19,6 +19,8 @@ public:
 
 	virtual ~Module(void);
 
+	virtual bool initialize() { return false; }
+
 	virtual bool execute() { return false; }
 
 	virtual bool updateStates() { return true; }

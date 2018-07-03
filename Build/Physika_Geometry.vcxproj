@@ -32,6 +32,7 @@
     <ClInclude Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid.h" />
     <ClInclude Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid_iterator.h" />
     <ClInclude Include="..\Physika_Src\Physika_Geometry\Geometry_Intersections\tetrahedron_tetrahedron_intersection.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\SDF\DistanceField3D.h" />
     <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\cubic_mesh.h" />
     <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\quad_mesh.h" />
     <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tet_mesh.h" />
@@ -68,6 +69,9 @@
     <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri_mesh.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Geometry\SDF\DistanceField3D.cu" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CE1B6999-6E15-4DFD-87FF-30002069A98B}</ProjectGuid>
@@ -133,7 +137,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;../Physika_Src/Physika_Core/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
