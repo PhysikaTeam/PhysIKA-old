@@ -15,7 +15,7 @@
 #include <cmath>
 #include <limits>
 
-#include "Physika_Core/Utilities/physika_exception.h"
+//#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Core/Matrices/matrix_3x3.h"
@@ -61,11 +61,11 @@ CPU_GPU_FUNC_DECL Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int i, un
 template <typename Scalar>
 CPU_GPU_FUNC_DECL const Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int i, unsigned int j) const
 {
-#ifndef __CUDA_ARCH__
-    bool index_valid = (i < 3) && (j < 3);
-    if (!index_valid)
-        throw PhysikaException("Matrix index out of range!");
-#endif
+// #ifndef __CUDA_ARCH__
+//     bool index_valid = (i < 3) && (j < 3);
+//     if (!index_valid)
+//         throw PhysikaException("Matrix index out of range!");
+// #endif
     //Note: glm is column-based
     return data_[j][i];
 }
@@ -73,10 +73,10 @@ CPU_GPU_FUNC_DECL const Scalar& SquareMatrix<Scalar,3>::operator() (unsigned int
 template <typename Scalar>
 CPU_GPU_FUNC_DECL const Vector<Scalar,3> SquareMatrix<Scalar,3>::rowVector(unsigned int i) const
 {
-#ifndef __CUDA_ARCH__
-    if(i>=3)
-        throw PhysikaException("Matrix index out of range!");
-#endif
+// #ifndef __CUDA_ARCH__
+//     if(i>=3)
+//         throw PhysikaException("Matrix index out of range!");
+// #endif
     Vector<Scalar,3> result((*this)(i,0),(*this)(i,1),(*this)(i,2));
     return result;
 }
@@ -84,10 +84,10 @@ CPU_GPU_FUNC_DECL const Vector<Scalar,3> SquareMatrix<Scalar,3>::rowVector(unsig
 template <typename Scalar>
 CPU_GPU_FUNC_DECL const Vector<Scalar,3> SquareMatrix<Scalar,3>::colVector(unsigned int i) const
 {
-#ifndef __CUDA_ARCH__
-    if(i>=3)
-        throw PhysikaException("Matrix index out of range!");
-#endif
+// #ifndef __CUDA_ARCH__
+//     if(i>=3)
+//         throw PhysikaException("Matrix index out of range!");
+// #endif
     Vector<Scalar,3> result((*this)(0,i),(*this)(1,i),(*this)(2,i));
     return result;
 }
@@ -176,10 +176,10 @@ CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::operator/
 template <typename Scalar>
 CPU_GPU_FUNC_DECL SquareMatrix<Scalar,3>& SquareMatrix<Scalar,3>::operator/= (Scalar scale)
 {
-#ifndef __CUDA_ARCH__
-    if (abs(scale) <= std::numeric_limits<Scalar>::epsilon())
-        throw PhysikaException("Matrix Divide by zero error!");
-#endif
+// #ifndef __CUDA_ARCH__
+//     if (abs(scale) <= std::numeric_limits<Scalar>::epsilon())
+//         throw PhysikaException("Matrix Divide by zero error!");
+// #endif
     data_ /= scale;
     return *this;
 }
@@ -206,11 +206,11 @@ CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::inverse()
     SquareMatrix<Scalar, 3> res;
     res.data_ = glm::inverse(data_);
 
-#ifndef __CUDA_ARCH__
-    double fir_ele = static_cast<double>(res(0, 0));
-    if (std::isnan(fir_ele) == true || std::isinf(fir_ele) == true)
-        throw PhysikaException("Matrix not invertible!");
-#endif
+// #ifndef __CUDA_ARCH__
+//     double fir_ele = static_cast<double>(res(0, 0));
+//     if (std::isnan(fir_ele) == true || std::isinf(fir_ele) == true)
+//         throw PhysikaException("Matrix not invertible!");
+// #endif
 
     return res;
 }

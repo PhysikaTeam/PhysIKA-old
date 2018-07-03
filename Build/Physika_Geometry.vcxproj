@@ -11,64 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\basic_geometry.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\circle.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\cylinder.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\plane.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\sphere.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\boundary_mesh.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge_group.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face_group.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\material.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\polygon.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\surface_mesh.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\vertex.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_axis_aligned_box.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_kdop18.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_octagon.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid_iterator.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Geometry_Intersections\tetrahedron_tetrahedron_intersection.h" />
     <ClInclude Include="..\Physika_Src\Physika_Geometry\SDF\DistanceField3D.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\cubic_mesh.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\quad_mesh.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tet_mesh.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri3d_mesh.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri_mesh.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\basic_geometry.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\circle.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\cylinder.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\plane.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\sphere.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge_group.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face_group.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\material.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\polygon.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\surface_mesh.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\vertex.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_axis_aligned_box.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_kdop18.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Bounding_Volumes\bounding_volume_octagon.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Cartesian_Grids\grid_iterator.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Geometry_Intersections\tetrahedron_tetrahedron_intersection.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\cubic_mesh.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\quad_mesh.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tet_mesh.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri3d_mesh.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri_mesh.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\Physika_Src\Physika_Geometry\SDF\DistanceField3D.cu" />
@@ -80,7 +23,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
@@ -115,12 +58,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Physika_Src/;../Physika_Src/Physika_Dependency/OpenGL/;../Physika_Src/Physika_Core/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Physika_Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Public_Library\lib\debug;$(CUDA_API_PATH)\lib\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"

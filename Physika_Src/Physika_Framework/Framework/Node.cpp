@@ -26,7 +26,7 @@ void Node::setName(std::string name)
 	{
 		m_node_name = this->allocHostVariable<std::string>("node_name", "Node name");
 	}
-	m_node_name->setValue(name);
+//	m_node_name->setValue(name);
 }
 
 std::string Node::getName()

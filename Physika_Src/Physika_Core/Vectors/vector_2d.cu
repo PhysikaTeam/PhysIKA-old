@@ -16,7 +16,7 @@
 #include <glm/gtx/norm.hpp>
 
 #include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/physika_exception.h"
+//#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 
@@ -49,10 +49,10 @@ CPU_GPU_FUNC_DECL Scalar& Vector<Scalar,2>::operator[] (unsigned int idx)
 template <typename Scalar>
 CPU_GPU_FUNC_DECL const Scalar& Vector<Scalar,2>::operator[] (unsigned int idx) const
 {
-#ifndef __CUDA_ARCH__
-    if (idx >= 2)
-        throw PhysikaException("Vector index out of range!");
-#endif
+// #ifndef __CUDA_ARCH__
+//     if (idx >= 2)
+//         throw PhysikaException("Vector index out of range!");
+// #endif
     return data_[idx];
 }
 
@@ -143,10 +143,10 @@ CPU_GPU_FUNC_DECL const Vector<Scalar,2> Vector<Scalar,2>::operator/ (Scalar sca
 template <typename Scalar>
 CPU_GPU_FUNC_DECL Vector<Scalar,2>& Vector<Scalar,2>::operator/= (Scalar scale)
 {
-#ifndef __CUDA_ARCH__
-    if (abs(scale) <= std::numeric_limits<Scalar>::epsilon())
-        throw PhysikaException("Vector Divide by zero error!");
-#endif
+// #ifndef __CUDA_ARCH__
+//     if (abs(scale) <= std::numeric_limits<Scalar>::epsilon())
+//         throw PhysikaException("Vector Divide by zero error!");
+// #endif
     data_ /= scale;
     return *this;
 }

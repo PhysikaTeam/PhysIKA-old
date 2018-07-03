@@ -23,7 +23,7 @@ namespace Physika {
 #  define cuvSafeCall(X)  \
       if(strcmp(#X,"cudaThreadSynchronize()")!=0){ X; Physika::checkCudaError(#X); }
 #else
-#  define cuvSafeCall(X) X; cuv::checkCudaError(#X);
+#  define cuvSafeCall(X) X; Physika::checkCudaError(#X);
 #endif
 
 // 	template<typename T>
