@@ -7,17 +7,10 @@
 #include "Physika_Framework/Framework/SceneGraph.h"
 #include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
 #include <string>
+#include "Physika_Core/Timer/GTimer.h"
 
 int main()
 {
-	std::string* str = new std::string;
-	*str = "zzz";
-
-	Physika::Base b;
-	std::shared_ptr< HostVariable<std::string> > var = b.allocHostVariable<std::string>("name", "description");
-	var->setValue(std::string("aa"));
-
-
 	std::shared_ptr<SceneGraph> scene = SceneGraph::getInstance();
 
 	std::shared_ptr<ParticleSystem<DataType3f>> psystem =
@@ -25,10 +18,16 @@ int main()
 
 	psystem->initialize();
 
-// 	Physika::Base b;
-// 	std::shared_ptr<Physika::Field> f(new Physika::Field);
-//	b.addField(NULL);
-//	b.removeField(f);
+	GTimer timer;
 
+	timer.start();
+	for (int i = 0; i < 10; i++)
+	{
+		psystem->advance(0.001f);
+	}
+	timer.stop();
+
+	std::cout << "Totoal time: " << timer.getEclipsedTime() << std::endl;
+	
     return 0;
 }
