@@ -7,7 +7,7 @@ namespace Physika
 {
 	Physika::Node* SceneLoaderXML::load(const std::string filename)
 	{
-
+		return NULL;
 	}
 
 	bool SceneLoaderXML::canLoadFileByExtension(const std::string extension)

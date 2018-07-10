@@ -37,6 +37,7 @@ namespace Physika
 	SceneLoader* SceneLoaderFactory::addEntry(SceneLoader *loader)
 	{
 		m_loaders.push_back(loader);
+		return loader;
 	}
 
 }
