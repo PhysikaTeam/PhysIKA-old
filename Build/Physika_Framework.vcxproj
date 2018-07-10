@@ -30,6 +30,8 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Node.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Object.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderFactory.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderXML.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet .cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\PointSet.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.cpp" />
@@ -57,6 +59,8 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Node.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Object.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderFactory.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderXML.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\PointSet.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.h" />

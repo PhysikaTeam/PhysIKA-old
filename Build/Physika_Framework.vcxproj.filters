@@ -81,6 +81,12 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\UnstructuredPointSet.cpp">
       <Filter>Topology</Filter>
     </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderFactory.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderXML.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h">
@@ -157,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\UnstructuredPointSet.h">
       <Filter>Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderFactory.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderXML.h">
+      <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
