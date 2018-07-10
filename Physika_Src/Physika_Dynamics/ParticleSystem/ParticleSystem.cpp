@@ -67,7 +67,7 @@ namespace Physika
 
 		SetParticleNumber(positions.size());
 
-		SPtr<DeviceContext> dc = getContext();
+		std::shared_ptr<DeviceContext> dc = getContext();
 
 		dc->allocDeviceBuffer<Coord>("POSITION", "Particle positions", m_num->getValue());
 		dc->allocDeviceBuffer<Coord>("VELOCITY", "Particle velocities", m_num->getValue());
@@ -81,6 +81,7 @@ namespace Physika
 		Function1Pt::Copy(*(this->GetNewVelocityBuffer()->getDataPtr()), velocities);
 		Function1Pt::Copy(*(this->GetAttributeBuffer()->getDataPtr()), attributes);
 
+		int nn = this->GetParticleNumber();
 		this->addModule("CONSTRAIN_DENSITY", new DensityPBD<TDataType>(this));
 		this->addModule("COMPUTE_VISCOSITY", new ViscosityBase<TDataType>(this));
 		this->addModule("COMPUTE_NEIGHBORS", new NeighborQuery<TDataType>(this));

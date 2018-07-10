@@ -1,5 +1,6 @@
 #pragma once
 #include "Framework/ModuleController.h"
+#include "Physika_Core/Platform.h"
 
 namespace Physika
 {
@@ -12,6 +13,7 @@ public:
 	AnimationController();
 	virtual ~AnimationController();
 
+	virtual void step(Real dt);
 private:
 
 };

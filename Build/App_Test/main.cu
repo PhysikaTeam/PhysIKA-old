@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include "Physika_Core/Vectors/vector_fixed.h"
 #include "Framework/Base.h"
@@ -19,7 +18,6 @@ int main()
 	psystem->initialize();
 
 	GTimer timer;
-
 	timer.start();
 	for (int i = 0; i < 10; i++)
 	{
@@ -27,7 +25,7 @@ int main()
 	}
 	timer.stop();
 
-	std::cout << "Totoal time: " << timer.getEclipsedTime() << std::endl;
+	std::cout << "Total time: " << timer.getEclipsedTime() << std::endl;
 	
     return 0;
 }

@@ -14,6 +14,7 @@ Node::Node(std::string name)
 	m_dt = 0.001f;
 
 	m_parent = NULL;
+	m_context = NULL;
 }
 
 Node::~Node()
@@ -124,7 +125,6 @@ bool Node::addModule(std::string name, Module* module)
 	{
 		m_modules[name] = module;
 		m_module_list.push_back(module);
-		module->setContext(m_context);
 
 		module->insertToNode(this);
 	}

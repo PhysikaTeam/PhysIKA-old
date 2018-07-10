@@ -16,6 +16,7 @@ class Module : public Object
 	DECLARE_CLASS(Module)
 public:
 	Module();
+	Module(Node* node);
 
 	virtual ~Module(void);
 
@@ -55,10 +56,11 @@ public:
 		return m_outs[id];
 	}
 
-	void setContext(std::shared_ptr<DeviceContext> context) {
-		m_context = context;
+	void setNode(Node* node) {
+		m_node = node;
 	}
-	std::shared_ptr<DeviceContext> getContext() { return m_context; }
+
+	std::shared_ptr<DeviceContext> getContext();
 
 public:
 	virtual bool insertToNode(Node* node) { return false; }
@@ -66,10 +68,8 @@ public:
 
 private:
 	std::vector<std::string> m_ins;
-
 	std::vector<std::string> m_outs;
 
-	DeviceType m_deviceType;
-	std::shared_ptr<DeviceContext> m_context;
+	Node* m_node;
 };
 }

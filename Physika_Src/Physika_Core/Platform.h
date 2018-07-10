@@ -44,10 +44,10 @@ enum DeviceType
 	UNDEFINED
 };
 // 
-// #ifdef PRECISION_FLOAT
-// typedef float Real;
-// #else
-// typedef double Real;
-// #endif
+#ifdef PRECISION_FLOAT
+typedef float Real;
+#else
+typedef double Real;
+#endif
 
 //#define SIMULATION2D

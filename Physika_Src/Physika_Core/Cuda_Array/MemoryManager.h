@@ -20,10 +20,10 @@ namespace Physika {
 
 	// use this macro to make sure no error occurs when cuda functions are called
 #ifdef NDEBUG
-#  define cuvSafeCall(X)  \
+#  define cuSafeCall(X)  \
       if(strcmp(#X,"cudaThreadSynchronize()")!=0){ X; Physika::checkCudaError(#X); }
 #else
-#  define cuvSafeCall(X) X; Physika::checkCudaError(#X);
+#  define cuSafeCall(X) X; Physika::checkCudaError(#X);
 #endif
 
 // 	template<typename T>

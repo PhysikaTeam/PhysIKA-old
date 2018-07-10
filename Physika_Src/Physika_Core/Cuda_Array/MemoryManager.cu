@@ -19,7 +19,7 @@ namespace Physika {
 			break;
 		case GPU:
 			assert(*ptr == 0);
-			cuvSafeCall(cudaMalloc(ptr, memsize * valueSize));
+			cuSafeCall(cudaMalloc(ptr, memsize * valueSize));
 			assert(*ptr);
 			break;
 		default:
@@ -38,7 +38,7 @@ namespace Physika {
 			assert(*ptr);
 			break;
 		case GPU:
-			cuvSafeCall(cudaMallocPitch(ptr, &pitch, valueSize * width, height));
+			cuSafeCall(cudaMallocPitch(ptr, &pitch, valueSize * width, height));
 			assert(*ptr);
 			break;
 		default:
@@ -76,7 +76,7 @@ namespace Physika {
 			break;
 		case GPU:
 			assert(*ptr != 0);
-			cuvSafeCall(cudaFree(*ptr));
+			cuSafeCall(cudaFree(*ptr));
 			*ptr = 0;
 			break;
 		default:
@@ -91,7 +91,7 @@ namespace Physika {
 		{
 		case CPU:
 			assert(*ptr == 0);
-			cuvSafeCall(cudaMallocHost(ptr, memsize * valueSize));
+			cuSafeCall(cudaMallocHost(ptr, memsize * valueSize));
 			assert(*ptr != 0);
 			break;
 		case GPU:
@@ -114,7 +114,7 @@ namespace Physika {
 			allocMemory1D(ptr, height * width, valueSize);
 			break;
 		case GPU:
-			cuvSafeCall(cudaMallocPitch(ptr, &pitch, valueSize * width, height));
+			cuSafeCall(cudaMallocPitch(ptr, &pitch, valueSize * width, height));
 			break;
 		case UNDEFINED:
 			break;
@@ -137,7 +137,7 @@ namespace Physika {
 		{
 		case CPU:
 			assert(*ptr != 0);
-			cuvSafeCall(cudaFreeHost(*ptr));
+			cuSafeCall(cudaFreeHost(*ptr));
 			*ptr = 0;
 			break;
 		case GPU:

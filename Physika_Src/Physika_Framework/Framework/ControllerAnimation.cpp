@@ -13,4 +13,9 @@ AnimationController::~AnimationController()
 {
 }
 
+void AnimationController::step(Real dt)
+{
+
+}
+
 }

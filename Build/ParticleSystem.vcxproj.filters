@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Modules">
+      <UniqueIdentifier>{3fa5e9ba-f376-44cf-b373-d0ef07883238}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityConstraint.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityPBD.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityProjective.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensitySimple.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\NeighborQuery.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticlePrediction.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\SummationDensity.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\SurfaceTension.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ViscosityBase.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Kernel.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Attribute.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\INeighbors.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityConstraint.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityPBD.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityProjective.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensitySimple.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\NeighborQuery.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticlePrediction.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\SummationDensity.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\SurfaceTension.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ViscosityBase.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.cpp" />
+  </ItemGroup>
+</Project>

@@ -26,7 +26,8 @@ void SceneGraph::draw()
 
 void SceneGraph::advance(float dt)
 {
-
+	std::shared_ptr<AnimationController>  aController = m_root->getAnimationController();
+	//	aController->
 }
 
 void SceneGraph::takeOneFrame()
