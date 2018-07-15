@@ -9,32 +9,37 @@
 
 namespace Physika {
 
-
+	template<typename TDataType>
 	class Barrier
 	{
 	public:
+		typedef typename TDataType::Real Real;
+		typedef typename TDataType::Coord Coord;
+
 		Barrier() { normalFriction = 0.95f; tangentialFriction = 0.1f; }
 		~Barrier() {};
 
 		//		virtual void Inside(const float3& in_pos) const;
-		virtual void Constrain(DeviceArray<float3>& posArr, DeviceArray<float3>& velArr, DeviceArray<int>& attArr, float dt) const {};
+		virtual void Constrain(DeviceArray<Coord>& posArr, DeviceArray<Coord>& velArr, DeviceArray<int>& attArr, Real dt) {};
 
 		void SetNormalFriction(float val) { normalFriction = val; }
 		void SetTangentialFriction(float val) { tangentialFriction = val; }
 
 	protected:
-		float normalFriction;
-		float tangentialFriction;
+		Real normalFriction;
+		Real tangentialFriction;
 	};
 
-
-	class BarrierDistanceField3D : public Barrier {
+	template<typename TDataType>
+	class BarrierDistanceField3D : public Barrier<TDataType> {
 
 	public:
+		typedef typename TDataType::Real Real;
+		typedef typename TDataType::Coord Coord;
 
 		// CONVENTION: normal n should point outwards, i.e., away from inside
 		// of constraint
-		BarrierDistanceField3D(Physika::DistanceField3D *df) :
+		BarrierDistanceField3D(DistanceField3D<TDataType> *df) :
 			Barrier(), distancefield3d(df) {
 		}
 
@@ -44,14 +49,14 @@ namespace Physika {
 		// 			distancefield3d->GetDistance(p, dist, normal);
 		// 		}
 
-		virtual void Constrain(DeviceArray<float3>& posArr, DeviceArray<float3>& velArr, DeviceArray<int>& attArr, float dt) const;
+		void Constrain(DeviceArray<Coord>& posArr, DeviceArray<Coord>& velArr, DeviceArray<int>& attArr, Real dt) override;
 
-		Physika::DistanceField3D * distancefield3d;
+		DistanceField3D<TDataType> * distancefield3d;
 	};
 
 
 	template<typename TDataType>
-	class BoundaryManager : public Physika::Module
+	class BoundaryManager : public Module
 	{
 	public:
 		typedef typename TDataType::Real Real;
@@ -64,7 +69,7 @@ namespace Physika {
 
 		void Constrain(DeviceArray<Coord>& posArr, DeviceArray<Coord>& velArr, DeviceArray<Attribute>& attArr, float dt);
 
-		void InsertBarrier(Barrier *in_barrier) {
+		void InsertBarrier(Barrier<TDataType> *in_barrier) {
 			m_barriers.push_back(in_barrier);
 		}
 
@@ -79,10 +84,16 @@ namespace Physika {
 
 	public:
 		ParticleSystem<TDataType>* m_parent;
-		std::vector<Barrier *> m_barriers;
+		std::vector<Barrier<TDataType> *> m_barriers;
 
 		DeviceBuffer<int>* m_bConstrained;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class BoundaryManager<DataType3f>;
+	template class BarrierDistanceField3D<DataType3f>;
+#else
+	template class BoundaryManager<DataType3d>;
+	template class BarrierDistanceField3D<DataType3d>;
+#endif
 }

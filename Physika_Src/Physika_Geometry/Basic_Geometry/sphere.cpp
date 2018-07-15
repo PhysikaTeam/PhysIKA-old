@@ -59,7 +59,7 @@ Sphere<Scalar>* Sphere<Scalar>::clone() const
 template <typename Scalar>
 void Sphere<Scalar>::printInfo() const
 {
-    std::cout<<"3D sphere, center: "<<center_<<", radius: "<<radius_<<std::endl;
+//    std::cout<<"3D sphere, center: "<<center_<<", radius: "<<radius_<<std::endl;
 }
 
 template <typename Scalar>

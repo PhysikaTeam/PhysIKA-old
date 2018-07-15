@@ -1,7 +1,7 @@
 #include "Timer.h"
 using namespace Physika;
 
-Timer::Timer()
+CTimer::CTimer()
 {
 #ifdef _WIN32
 	use_qpc = QueryPerformanceFrequency(&t_freq);
@@ -12,12 +12,12 @@ Timer::Timer()
 #endif
 }
 
-Timer::~Timer()
+CTimer::~CTimer()
 {
 
 }
 
-void Timer::Start()
+void CTimer::Start()
 {
 #ifdef _WIN32
 	QueryPerformanceCounter(&t_init);
@@ -26,7 +26,7 @@ void Timer::Start()
 #endif
 }
 
-double Timer::Time()
+double CTimer::Time()
 {
 #ifdef _WIN32
 	QueryPerformanceCounter(&t_end);

@@ -29,8 +29,12 @@ namespace Physika {
 	private:
 		ParticleSystem<TDataType>* m_parent;
 
-		DeviceBuffer<float>* m_energy;
+		DeviceBuffer<Real>* m_energy;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class SurfaceTension<DataType3f>;
+#else
+	template class SurfaceTension<DataType3d>;
+#endif
 }

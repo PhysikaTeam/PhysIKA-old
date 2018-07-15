@@ -20,24 +20,24 @@
 
 namespace Physika{
 
-CPU_GPU_FUNC_DECL LineGLCudaBuffer::LineGLCudaBuffer(float * line_data_dev_ptr, unsigned int line_num)
+COMM_FUNC LineGLCudaBuffer::LineGLCudaBuffer(float * line_data_dev_ptr, unsigned int line_num)
     :line_data_dev_ptr_(line_data_dev_ptr), line_num_(line_num)
 {
     
 }
 
-CPU_GPU_FUNC_DECL unsigned int LineGLCudaBuffer::lineNum() const
+COMM_FUNC unsigned int LineGLCudaBuffer::lineNum() const
 {
     return line_num_;
 }
 
-CPU_GPU_FUNC_DECL float * LineGLCudaBuffer::getCudaPosPtr()
+COMM_FUNC float * LineGLCudaBuffer::getCudaPosPtr()
 {
     return line_data_dev_ptr_;
 }
 
 template <typename Scalar, int Dim>
-GPU_FUNC_DECL bool LineGLCudaBuffer::setLine(unsigned int idx, const Vector<Scalar, Dim> & fir_point, const Vector<Scalar, Dim> & sec_point)
+GPU_FUNC bool LineGLCudaBuffer::setLine(unsigned int idx, const Vector<Scalar, Dim> & fir_point, const Vector<Scalar, Dim> & sec_point)
 {
     if (Dim == 2)
         return setLine(idx, fir_point[0], fir_point[1], static_cast<Scalar>(0), sec_point[0], sec_point[1], static_cast<Scalar>(0));
@@ -46,13 +46,13 @@ GPU_FUNC_DECL bool LineGLCudaBuffer::setLine(unsigned int idx, const Vector<Scal
 }
 
 template <typename Scalar>
-GPU_FUNC_DECL bool LineGLCudaBuffer::setLine(unsigned int idx, Scalar x1, Scalar y1, Scalar x2, Scalar y2)
+GPU_FUNC bool LineGLCudaBuffer::setLine(unsigned int idx, Scalar x1, Scalar y1, Scalar x2, Scalar y2)
 {
     return setLine(idx, x1, y1, static_cast<Scalar>(0), x2, y2, static_cast<Scalar>(0));
 }
 
 template <typename Scalar>
-GPU_FUNC_DECL bool LineGLCudaBuffer::setLine(unsigned int idx, Scalar x1, Scalar y1, Scalar z1, Scalar x2, Scalar y2, Scalar z2)
+GPU_FUNC bool LineGLCudaBuffer::setLine(unsigned int idx, Scalar x1, Scalar y1, Scalar z1, Scalar x2, Scalar y2, Scalar z2)
 {
     if (idx >= line_num_)
         return false;
@@ -69,15 +69,15 @@ GPU_FUNC_DECL bool LineGLCudaBuffer::setLine(unsigned int idx, Scalar x1, Scalar
 }
 
 //explicit instantiations
-template GPU_FUNC_DECL bool LineGLCudaBuffer::setLine<float, 2>(unsigned int idx, const Vector<float, 2> &, const Vector<float, 2> &);
-template GPU_FUNC_DECL bool LineGLCudaBuffer::setLine<float, 3>(unsigned int idx, const Vector<float, 3> &, const Vector<float, 3> &);
-template GPU_FUNC_DECL bool LineGLCudaBuffer::setLine<double, 2>(unsigned int idx, const Vector<double, 2> &, const Vector<double, 2> &);
-template GPU_FUNC_DECL bool LineGLCudaBuffer::setLine<double, 3>(unsigned int idx, const Vector<double, 3> &, const Vector<double, 3> &);
+template GPU_FUNC bool LineGLCudaBuffer::setLine<float, 2>(unsigned int idx, const Vector<float, 2> &, const Vector<float, 2> &);
+template GPU_FUNC bool LineGLCudaBuffer::setLine<float, 3>(unsigned int idx, const Vector<float, 3> &, const Vector<float, 3> &);
+template GPU_FUNC bool LineGLCudaBuffer::setLine<double, 2>(unsigned int idx, const Vector<double, 2> &, const Vector<double, 2> &);
+template GPU_FUNC bool LineGLCudaBuffer::setLine<double, 3>(unsigned int idx, const Vector<double, 3> &, const Vector<double, 3> &);
 
-template GPU_FUNC_DECL bool LineGLCudaBuffer::setLine<float>(unsigned int idx, float, float, float, float);
-template GPU_FUNC_DECL bool LineGLCudaBuffer::setLine<double>(unsigned int idx, double, double, double, double);
+template GPU_FUNC bool LineGLCudaBuffer::setLine<float>(unsigned int idx, float, float, float, float);
+template GPU_FUNC bool LineGLCudaBuffer::setLine<double>(unsigned int idx, double, double, double, double);
 
-template GPU_FUNC_DECL bool LineGLCudaBuffer::setLine<float>(unsigned int idx, float, float, float, float, float, float);
-template GPU_FUNC_DECL bool LineGLCudaBuffer::setLine<double>(unsigned int idx, double, double, double, double, double, double);
+template GPU_FUNC bool LineGLCudaBuffer::setLine<float>(unsigned int idx, float, float, float, float, float, float);
+template GPU_FUNC bool LineGLCudaBuffer::setLine<double>(unsigned int idx, double, double, double, double, double, double);
 
 }//end of namespace Physika

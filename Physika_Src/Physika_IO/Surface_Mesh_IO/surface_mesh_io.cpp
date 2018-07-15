@@ -14,7 +14,7 @@
  */
 
 #include <iostream>
-#include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
+#include "Physika_IO/File_Utilities/file_path_utilities.h"
 #include "Physika_IO/Surface_Mesh_IO/surface_mesh_io.h"
 #include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 #include "Physika_IO/Surface_Mesh_IO/stl_mesh_io.h"

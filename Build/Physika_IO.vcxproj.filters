@@ -13,12 +13,15 @@
     <Filter Include="tinyxml">
       <UniqueIdentifier>{64a9c765-edb4-4b9c-b33e-99e64ff6b2c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File_Utilitities">
+      <UniqueIdentifier>{9e338ccd-1fa3-4660-8dc6-99fc39f2a98c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Volumetric_Meshes">
+      <UniqueIdentifier>{c1acc6b1-2e8e-4c77-a3d2-2aa9edb96a32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_IO\Image_IO\image_io.h">
-      <Filter>Image_IO</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_IO\Image_IO\png_io.h">
       <Filter>Image_IO</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_IO\Image_IO\ppm_io.h">
@@ -42,12 +45,19 @@
     <ClInclude Include="..\Physika_Src\Physika_Dependency\tinyxml\tinyxml2.h">
       <Filter>tinyxml</Filter>
     </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_IO\File_Utilities\file_content_utilities.h">
+      <Filter>File_Utilitities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_IO\File_Utilities\file_path_utilities.h">
+      <Filter>File_Utilitities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_IO\Image_IO\png_io.h">
+      <Filter>Image_IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Dependency\LodePNG\lodepng.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_IO\Image_IO\image_io.cpp">
-      <Filter>Image_IO</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_IO\Image_IO\png_io.cpp">
       <Filter>Image_IO</Filter>
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_IO\Image_IO\ppm_io.cpp">
@@ -71,5 +81,15 @@
     <ClCompile Include="..\Physika_Src\Physika_Dependency\tinyxml\tinyxml2.cpp">
       <Filter>tinyxml</Filter>
     </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_IO\File_Utilities\file_content_utilities.cpp">
+      <Filter>File_Utilitities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_IO\File_Utilities\file_path_utilities.cpp">
+      <Filter>File_Utilitities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_IO\Image_IO\png_io.cpp">
+      <Filter>Image_IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Dependency\LodePNG\lodepng.cpp" />
   </ItemGroup>
 </Project>

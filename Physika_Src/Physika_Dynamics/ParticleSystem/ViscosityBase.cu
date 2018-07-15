@@ -1,6 +1,5 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Utilities/template_functions.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
 #include "ViscosityBase.h"
 
@@ -18,7 +17,7 @@ namespace Physika
 // 	__constant__ VB_STATE const_vb_state;
 
 	template<typename Real>
-	__device__ float VB_VisWeight(const Real r, const Real h)
+	__device__ Real VB_VisWeight(const Real r, const Real h)
 	{
 		Real q = r / h;
 		if (q > 1.0f) return 0.0;
@@ -40,26 +39,26 @@ namespace Physika
 		Real viscosity,
 		Real smoothingLength,
 		Real samplingDistance,
-		float dt)
+		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.Size()) return;
 		if (!attArr[pId].IsDynamic()) return;
 
 		Real r;
-		Coord dv_i = Make<Coord>(0);
+		Coord dv_i(0);
 		Coord pos_i = posArr[pId];
 		Coord vel_i = velArr[pId];
-		float totalWeight = 0.0f;
+		Real totalWeight = 0.0f;
 		int nbSize = neighbors[pId].size;
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			r = length(pos_i - posArr[j]);
+			r = (pos_i - posArr[j]).norm();
 
 			if (r > EPSILON)
 			{
-				float weight = VB_VisWeight(r, smoothingLength);
+				Real weight = VB_VisWeight(r, smoothingLength);
 				totalWeight += weight;
 				dv_i += weight * velArr[j];
 			}
@@ -114,7 +113,7 @@ namespace Physika
 		DeviceArray<NeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
 		DeviceArray<Coord>* oldVel = m_oldVel->getDataPtr();
 		DeviceArray<Coord>* bufVel = m_bufVel->getDataPtr();
-		float dt = m_parent->getDt();
+		Real dt = m_parent->getDt();
 
 		uint pDims = cudaGridSize(posArr->Size(), BLOCK_SIZE);
 

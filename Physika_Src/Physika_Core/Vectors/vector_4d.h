@@ -17,11 +17,7 @@
 
 #include <iostream>
 #include <glm/vec4.hpp>
-
-#include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Utilities/type_utilities.h"
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Vectors/vector.h"
+#include "Physika_Core/Vectors/vector_base.h"
 
 namespace Physika{
 
@@ -35,80 +31,82 @@ template <typename Scalar>
 class Vector<Scalar,4>
 {
 public:
-    CPU_GPU_FUNC_DECL Vector();
-    CPU_GPU_FUNC_DECL explicit Vector(Scalar);
-    CPU_GPU_FUNC_DECL Vector(Scalar x, Scalar y, Scalar z, Scalar w);
-    CPU_GPU_FUNC_DECL Vector(const Vector<Scalar,4>&) = default;
-    CPU_GPU_FUNC_DECL ~Vector() = default;
+	typedef Scalar VarType;
 
-    CPU_GPU_FUNC_DECL  static unsigned int dims() {return 4;}
+    COMM_FUNC Vector();
+    COMM_FUNC explicit Vector(Scalar);
+    COMM_FUNC Vector(Scalar x, Scalar y, Scalar z, Scalar w);
+    COMM_FUNC Vector(const Vector<Scalar,4>&) = default;
+    COMM_FUNC ~Vector() = default;
 
-    CPU_GPU_FUNC_DECL Scalar& operator[] (unsigned int);
-    CPU_GPU_FUNC_DECL const Scalar& operator[] (unsigned int) const;
+    COMM_FUNC  static const int dims() {return 4;}
 
-    CPU_GPU_FUNC_DECL const Vector<Scalar,4> operator+ (const Vector<Scalar,4> &) const;
-    CPU_GPU_FUNC_DECL Vector<Scalar,4>& operator+= (const Vector<Scalar,4> &);
-    CPU_GPU_FUNC_DECL const Vector<Scalar,4> operator- (const Vector<Scalar,4> &) const;
-    CPU_GPU_FUNC_DECL Vector<Scalar,4>& operator-= (const Vector<Scalar,4> &);
+    COMM_FUNC Scalar& operator[] (unsigned int);
+    COMM_FUNC const Scalar& operator[] (unsigned int) const;
 
-    CPU_GPU_FUNC_DECL Vector<Scalar,4>& operator= (const Vector<Scalar,4> &) = default;
+    COMM_FUNC const Vector<Scalar,4> operator+ (const Vector<Scalar,4> &) const;
+    COMM_FUNC Vector<Scalar,4>& operator+= (const Vector<Scalar,4> &);
+    COMM_FUNC const Vector<Scalar,4> operator- (const Vector<Scalar,4> &) const;
+    COMM_FUNC Vector<Scalar,4>& operator-= (const Vector<Scalar,4> &);
+	COMM_FUNC const Vector<Scalar, 4> operator* (const Vector<Scalar, 4> &) const;
+	COMM_FUNC Vector<Scalar, 4>& operator*= (const Vector<Scalar, 4> &);
+	COMM_FUNC const Vector<Scalar, 4> operator/ (const Vector<Scalar, 4> &) const;
+	COMM_FUNC Vector<Scalar, 4>& operator/= (const Vector<Scalar, 4> &);
 
-    CPU_GPU_FUNC_DECL bool operator== (const Vector<Scalar,4> &) const;
-    CPU_GPU_FUNC_DECL bool operator!= (const Vector<Scalar,4> &) const;
+    COMM_FUNC Vector<Scalar,4>& operator= (const Vector<Scalar,4> &) = default;
 
-    CPU_GPU_FUNC_DECL const Vector<Scalar,4> operator+ (Scalar) const;
-    CPU_GPU_FUNC_DECL const Vector<Scalar,4> operator- (Scalar) const;
-    CPU_GPU_FUNC_DECL const Vector<Scalar,4> operator* (Scalar) const;
-    CPU_GPU_FUNC_DECL const Vector<Scalar,4> operator/ (Scalar) const;
+    COMM_FUNC bool operator== (const Vector<Scalar,4> &) const;
+    COMM_FUNC bool operator!= (const Vector<Scalar,4> &) const;
 
-    CPU_GPU_FUNC_DECL Vector<Scalar,4>& operator+= (Scalar);
-    CPU_GPU_FUNC_DECL Vector<Scalar,4>& operator-= (Scalar);
-    CPU_GPU_FUNC_DECL Vector<Scalar,4>& operator*= (Scalar);
-    CPU_GPU_FUNC_DECL Vector<Scalar,4>& operator/= (Scalar);
+    COMM_FUNC const Vector<Scalar,4> operator+ (Scalar) const;
+    COMM_FUNC const Vector<Scalar,4> operator- (Scalar) const;
+    COMM_FUNC const Vector<Scalar,4> operator* (Scalar) const;
+    COMM_FUNC const Vector<Scalar,4> operator/ (Scalar) const;
 
-    CPU_GPU_FUNC_DECL const Vector<Scalar, 4> operator - (void) const;
+    COMM_FUNC Vector<Scalar,4>& operator+= (Scalar);
+    COMM_FUNC Vector<Scalar,4>& operator-= (Scalar);
+    COMM_FUNC Vector<Scalar,4>& operator*= (Scalar);
+    COMM_FUNC Vector<Scalar,4>& operator/= (Scalar);
 
-    CPU_GPU_FUNC_DECL Scalar norm() const;
-    CPU_GPU_FUNC_DECL Scalar normSquared() const;
-    CPU_GPU_FUNC_DECL Vector<Scalar,4>& normalize();
-    CPU_GPU_FUNC_DECL Scalar dot(const Vector<Scalar,4>&) const;
-    CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
+    COMM_FUNC const Vector<Scalar, 4> operator - (void) const;
+
+    COMM_FUNC Scalar norm() const;
+    COMM_FUNC Scalar normSquared() const;
+    COMM_FUNC Vector<Scalar,4>& normalize();
+    COMM_FUNC Scalar dot(const Vector<Scalar,4>&) const;
+//    COMM_FUNC const SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
 
 protected:
     glm::tvec4<Scalar> data_; //default: zero vector
-
-private:
-    void compileTimeCheck()//dummy method for compile time check
-    {
-        PHYSIKA_STATIC_ASSERT((is_integer<Scalar>::value || is_floating_point<Scalar>::value),
-                              "Vector<Scalar,3> are only defined for integer types and floating-point types.");
-    }
-
 };
 
-//overriding << for vector2D
-template <typename Scalar>
-inline std::ostream& operator<< (std::ostream &s, const Vector<Scalar,4> &vec)
-{
-    if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
-        s<<"("<<static_cast<int>(vec[0])<<", "<<static_cast<int>(vec[1])<<", "<<static_cast<int>(vec[2])<<", "<<static_cast<int>(vec[3])<<")";
-    else
-        s<<"("<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<", "<<vec[3]<<")";
-    return s;
-}
+// 
+// //overriding << for vector2D
+// template <typename Scalar>
+// inline std::ostream& operator<< (std::ostream &s, const Vector<Scalar,4> &vec)
+// {
+//     if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
+//         s<<"("<<static_cast<int>(vec[0])<<", "<<static_cast<int>(vec[1])<<", "<<static_cast<int>(vec[2])<<", "<<static_cast<int>(vec[3])<<")";
+//     else
+//         s<<"("<<vec[0]<<", "<<vec[1]<<", "<<vec[2]<<", "<<vec[3]<<")";
+//     return s;
+// }
 
 //make * operator commutative
-template <typename S, typename T>
-CPU_GPU_FUNC_DECL  const Vector<T,4> operator *(S scale, const Vector<T,4> &vec)
-{
-    return vec * scale;
-}
+// template <typename S, typename T>
+// COMM_FUNC  const Vector<T,4> operator *(S scale, const Vector<T,4> &vec)
+// {
+//     return vec * scale;
+// }
 
+template class Vector<float, 4>;
+template class Vector<double, 4>;
 //convenient typedefs
 typedef Vector<float,4> Vector4f;
 typedef Vector<double,4> Vector4d;
-typedef Vector<int,4> Vector4i;
+//typedef Vector<int,4> Vector4i;
 
 } //end of namespace Physika
 
+#include "vector_4d.inl"
 #endif //PHYSIKA_CORE_VECTORS_VECTOR_4D_H_

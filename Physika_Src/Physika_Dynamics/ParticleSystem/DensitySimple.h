@@ -26,5 +26,9 @@ namespace Physika {
 		DeviceBuffer<Coord>* m_dPos;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class DensitySimple<DataType3f>;
+#else
+	template class DensitySimple<DataType3d>;
+#endif
 }

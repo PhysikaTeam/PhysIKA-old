@@ -66,7 +66,7 @@ Plane<Scalar>* Plane<Scalar>::clone() const
 template <typename Scalar>
 void Plane<Scalar>::printInfo() const
 {
-    std::cout<<"3D plane, normal: "<<normal_<<std::endl;
+//    std::cout<<"3D plane, normal: "<<normal_<<std::endl;
 }
 
 template <typename Scalar>

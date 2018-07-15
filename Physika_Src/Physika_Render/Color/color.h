@@ -17,8 +17,8 @@
 
 #include <limits>
 #include <iostream>
-#include "Physika_Core/Utilities/type_utilities.h"
-#include "Physika_Core/Range/interval.h"
+//#include "Physika_Core/Utilities/type_utilities.h"
+#include "Physika_Render/interval.h"
 
 namespace Physika{
 

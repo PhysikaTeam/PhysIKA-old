@@ -15,12 +15,18 @@ THE SOFTWARE.
 #include <string>
 #include "Physika_Core/Platform.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Vectors/vector.h"
 #include "Physika_Core/Cuda_Array/Array3D.h"
+#include "Physika_Core/DataTypes.h"
 
 namespace Physika {
 
+	template<typename TDataType>
 	class DistanceField3D {
 	public:
+		typedef typename TDataType::Real Real;
+		typedef typename TDataType::Coord Coord;
+
 		DistanceField3D();
 
 		DistanceField3D(std::string filename);
@@ -30,78 +36,78 @@ namespace Physika {
 		*/
 		~DistanceField3D();
 
-		void SetSpace(const float3 p0, const float3 p1, int nbx, int nby, int nbz);
+		void SetSpace(const Coord p0, const Coord p1, int nbx, int nby, int nbz);
 		void Release();
 
-		void Translate(const float3& t);
-		void Scale(const float s);
+		void Translate(const Coord& t);
+		void Scale(const Real s);
 		void Invert();
 
-		void DistanceFieldToBox(float3& lo, float3& hi, bool inverted);
+		void DistanceFieldToBox(Coord& lo, Coord& hi, bool inverted);
 
-		void DistanceFieldToCylinder(float3& center, float radius, float height, int axis, bool inverted);
+		void DistanceFieldToCylinder(Coord& center, Real radius, Real height, int axis, bool inverted);
 
-		void DistanceFieldToSphere(float3& center, float radius, bool inverted);
+		void DistanceFieldToSphere(Coord& center, Real radius, bool inverted);
 
-		HYBRID_FUNC void GetDistance(const float3 &p, float &d, float3 &g) {
+		COMM_FUNC void GetDistance(const Coord &p, Real &d, Coord &g) {
 			// get cell and lerp values
-			float3 fp = (p - left)*make_float3(1.0f/h.x, 1.0f/h.y, 1.0f/h.z);
-			const int i = (int)floor(fp.x);
-			const int j = (int)floor(fp.y);
-			const int k = (int)floor(fp.z);
+			Coord fp = (p - left)*Coord(1.0/h[0], 1.0/h[1], 1.0/h[2]);
+			const int i = (int)floor(fp[0]);
+			const int j = (int)floor(fp[1]);
+			const int k = (int)floor(fp[2]);
 			if (i < 0 || i >= gDist.Nx() - 1 || j < 0 || j >= gDist.Ny() - 1 || k < 0 || k >= gDist.Nz()-1) {
 				if (bInvert) d = -100000.0f;
 				else d = 100000.0f;
-				g = make_float3(0.0f);
+				g = Coord(0);
 				return;
 			}
-			float3 ip = make_float3(i, j, k);
+			Coord ip = Coord(i, j, k);
 
-			float3 alphav = fp - ip;
-			float alpha = alphav.x;
-			float beta = alphav.y;
-			float gamma = alphav.z;
+			Coord alphav = fp - ip;
+			Real alpha = alphav[0];
+			Real beta = alphav[1];
+			Real gamma = alphav[2];
 
-			float d000 = gDist(i, j, k);
-			float d100 = gDist(i + 1, j, k);
-			float d010 = gDist(i, j + 1, k);
-			float d110 = gDist(i + 1, j + 1, k);
-			float d001 = gDist(i, j, k + 1);
-			float d101 = gDist(i + 1, j, k + 1);
-			float d011 = gDist(i, j + 1, k + 1);
-			float d111 = gDist(i + 1, j + 1, k + 1);
+			Real d000 = gDist(i, j, k);
+			Real d100 = gDist(i + 1, j, k);
+			Real d010 = gDist(i, j + 1, k);
+			Real d110 = gDist(i + 1, j + 1, k);
+			Real d001 = gDist(i, j, k + 1);
+			Real d101 = gDist(i + 1, j, k + 1);
+			Real d011 = gDist(i, j + 1, k + 1);
+			Real d111 = gDist(i + 1, j + 1, k + 1);
 
-			float dx00 = Lerp(d000, d100, alpha);
-			float dx10 = Lerp(d010, d110, alpha);
-			float dxy0 = Lerp(dx00, dx10, beta);
+			Real dx00 = Lerp(d000, d100, alpha);
+			Real dx10 = Lerp(d010, d110, alpha);
+			Real dxy0 = Lerp(dx00, dx10, beta);
 
-			float dx01 = Lerp(d001, d101, alpha);
-			float dx11 = Lerp(d011, d111, alpha);
-			float dxy1 = Lerp(dx01, dx11, beta);
+			Real dx01 = Lerp(d001, d101, alpha);
+			Real dx11 = Lerp(d011, d111, alpha);
+			Real dxy1 = Lerp(dx01, dx11, beta);
 
-			float d0y0 = Lerp(d000, d010, beta);
-			float d0y1 = Lerp(d001, d011, beta);
-			float d0yz = Lerp(d0y0, d0y1, gamma);
+			Real d0y0 = Lerp(d000, d010, beta);
+			Real d0y1 = Lerp(d001, d011, beta);
+			Real d0yz = Lerp(d0y0, d0y1, gamma);
 
-			float d1y0 = Lerp(d100, d110, beta);
-			float d1y1 = Lerp(d101, d111, beta);
-			float d1yz = Lerp(d1y0, d1y1, gamma);
+			Real d1y0 = Lerp(d100, d110, beta);
+			Real d1y1 = Lerp(d101, d111, beta);
+			Real d1yz = Lerp(d1y0, d1y1, gamma);
 
-			float dx0z = Lerp(dx00, dx01, gamma);
-			float dx1z = Lerp(dx10, dx11, gamma);
+			Real dx0z = Lerp(dx00, dx01, gamma);
+			Real dx1z = Lerp(dx10, dx11, gamma);
 
-			g.x = d0yz - d1yz;
-			g.y = dx0z - dx1z;
-			g.z = dxy0 - dxy1;
+			g[0] = d0yz - d1yz;
+			g[1] = dx0z - dx1z;
+			g[2] = dxy0 - dxy1;
 
-			float l = length(g);
-			if (l < 0.0001f) g = make_float3(0.0f);
-			else g = normalize(g);
+			Real l = g.norm();
+			if (l < 0.0001f) g = Coord(0);
+			else g = g.normalize();
 
 			d = (1.0f - gamma) * dxy0 + gamma * dxy1;
 		}
 
-		HYBRID_FUNC inline float Lerp(float a, float b, float alpha) const {
+		COMM_FUNC inline Real Lerp(Real a, Real b, Real alpha) const {
 			return (1.0f-alpha)*a + alpha *b;
 		}
 
@@ -109,14 +115,17 @@ namespace Physika {
 		void ReadSDF(std::string filename);
 
 	public:
-		float3 left;		// lower left front corner
-		float3 h;			// single cell sizes
+		Coord left;		// lower left front corner
+		Coord h;			// single cell sizes
 
-		Grid1f gDist;
+		DeviceArray3D<Real> gDist;
 
 		bool bInvert;
 	};
 
+
+	template class DistanceField3D<DataType3f>;
+	template class DistanceField3D<DataType3d>;
 }
 
 #endif

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Framework/DataTypes.h"
+#include "Physika_Core/DataTypes.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "INeighbors.h"
@@ -17,6 +17,8 @@ namespace Physika{
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
+
+//		static_assert(Coord::dims() == 3, "GridHash only works for three dimensional spaces!");
 
 		GridHash();
 		~GridHash();
@@ -47,18 +49,18 @@ namespace Physika{
 
 		__device__ inline int GetIndex(Coord pos)
 		{
-			int i = floor((pos.x - lo.x) / ds);
-			int j = floor((pos.y - lo.y) / ds);
-			int k = floor((pos.z - lo.z) / ds);
+			int i = floor((pos[0] - lo[0]) / ds);
+			int j = floor((pos[1] - lo[1]) / ds);
+			int k = floor((pos[2] - lo[2]) / ds);
 
 			return GetIndex(i, j, k);
 		}
 
 		__device__ inline int3 GetIndex3(Coord pos)
 		{
-			int i = floor((pos.x - lo.x) / ds);
-			int j = floor((pos.y - lo.y) / ds);
-			int k = floor((pos.z - lo.z) / ds);
+			int i = floor((pos[0] - lo[0]) / ds);
+			int j = floor((pos[1] - lo[1]) / ds);
+			int k = floor((pos[2] - lo[2]) / ds);
 
 			return make_int3(i, j, k);
 		}
@@ -82,5 +84,9 @@ namespace Physika{
 		int* counter;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class GridHash<DataType3f>;
+#else
+	template class GridHash<DataType3d>;
+#endif
 }

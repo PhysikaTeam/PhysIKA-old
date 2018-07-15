@@ -49,12 +49,12 @@ inline float fmaxf(float a, float b)
     return a > b ? a : b;
 }
 
-inline int max(int a, int b)
+inline __host__ __device__ int max(int a, int b)
 {
     return a > b ? a : b;
 }
 
-inline int min(int a, int b)
+inline __host__ __device__ int min(int a, int b)
 {
     return a < b ? a : b;
 }

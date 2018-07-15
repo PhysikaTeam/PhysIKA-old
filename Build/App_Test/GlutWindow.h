@@ -40,7 +40,7 @@ public:
     // destructor
     virtual ~GlutWindow();
 
-    void setBackgroundColor(const Vector3f color);
+    void setBackgroundColor(const Vectorold3f color);
 
     // inherited from GlutWindow
     virtual void CallBackMouseFunc(int button, int state, int x, int y);
@@ -53,7 +53,7 @@ public:
 	virtual void CallBackVisibilityFunc(int visible);
 	virtual void CallBackPassiveMotionFunc(int x, int y);
 
-    void drawString(std::string s, Vector3f color, int x, int y);
+    void drawString(std::string s, Vectorold3f color, int x, int y);
 
     void saveImage(int iter=0) const;
 
@@ -67,9 +67,9 @@ private:
 
     int _width;
     int _height;
-    Vector3f _backgroundcolor;
+    Vectorold3f _backgroundcolor;
 
-    Timer _timer;
+    CTimer _timer;
 
     bool _animate;
     int _totalmsec;

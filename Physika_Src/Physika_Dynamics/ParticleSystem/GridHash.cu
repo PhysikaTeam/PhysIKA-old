@@ -1,4 +1,5 @@
 #include "GridHash.h"
+#include "Physika_Core/Utilities/cuda_helper_math.h"
 
 namespace Physika{
 
@@ -50,10 +51,10 @@ namespace Physika{
 
 		Coord nSeg = (_hi - _lo) / ds;
 
-		nx = ceil(nSeg.x) + 1 + 2 * padding;
-		ny = ceil(nSeg.y) + 1 + 2 * padding;
-		nz = ceil(nSeg.z) + 1 + 2 * padding;
-		hi = lo + make_float3(nx, ny, nz)*ds;
+		nx = ceil(nSeg[0]) + 1 + 2 * padding;
+		ny = ceil(nSeg[1]) + 1 + 2 * padding;
+		nz = ceil(nSeg[2]) + 1 + 2 * padding;
+		hi = lo + Coord(nx, ny, nz)*ds;
 
 		num = nx*ny*nz;
 
@@ -76,7 +77,7 @@ namespace Physika{
 		if (gId < 0) return;
 
 		int index = atomicAdd(&(hash.counter[gId]), 1);
-		index = min(index, hash.npMax - 1);
+		index = index < hash.npMax - 1 ? index : hash.npMax - 1;
 		hash.ids[gId * hash.npMax + index] = pId;
 	}
 
@@ -114,7 +115,7 @@ namespace Physika{
 
 		int tId = threadIdx.x;
 		int ids[BUCKETS][CAPACITY];
-		float distance[CAPACITY];
+		Real distance[CAPACITY];
 		int counter[BUCKETS];
 
 		for (int i = 0; i < BUCKETS; i++)
@@ -132,10 +133,10 @@ namespace Physika{
 				int totalNum = min(hash.GetCounter(cId), hash.npMax);
 				for (int i = 0; i < totalNum; i++) {
 					int nbId = hash.GetParticleId(cId, i);
-					float d_ij = length(pos_ijk - posArr[nbId]);
+					Real d_ij = (pos_ijk - posArr[nbId]).norm();
 					if (d_ij < h)
 					{
-						int bId = floor(pow(d_ij / h, 3.0f)*BUCKETS);
+						int bId = floor(pow(d_ij / h, Real(3))*BUCKETS);
 						bId = clamp(bId, 0, BUCKETS - 1);
 //						printf("exceeded %i", bId);
 						if (counter[bId] < CAPACITY)
@@ -171,12 +172,12 @@ namespace Physika{
 			{
 				for (int i = 0; i < btSize; i++)
 				{
-					distance[i] = length(pos_ijk - posArr[ids[bId][i]]);
+					distance[i] = (pos_ijk - posArr[ids[bId][i]]).norm();
 				}
 				int rN = nbMaxNum - totalNum + btSize;
 				for (int k = 0; k < rN; k++)
 				{
-					float minDist = distance[k];
+					Real minDist = distance[k];
 					int id = k;
 					for (int t = k + 1; t < btSize; t++)
 					{
@@ -229,7 +230,7 @@ namespace Physika{
 				int totalNum = min(hash.GetCounter(cId), hash.npMax);
 				for (int i = 0; i < totalNum; i++) {
 					int nbId = hash.GetParticleId(cId, i);
-					float d_ij = length(pos_ijk - posArr[nbId]);
+					float d_ij = (pos_ijk - posArr[nbId]).norm();
 					if (d_ij < h)
 					{
 						if (counter < nbMaxNum)

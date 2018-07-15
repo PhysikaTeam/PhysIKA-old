@@ -1,6 +1,5 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Utilities/template_functions.h"
 #include "SurfaceTension.h"
 
 
@@ -30,7 +29,7 @@ namespace Physika
 		if (pId >= posArr.Size()) return;
 
 		Real total_weight = Real(0);
-		Coord dir_i = Make<Coord>(0);
+		Coord dir_i(0);
 
 		SmoothKernel<Real> kern;
 
@@ -39,7 +38,7 @@ namespace Physika
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			Real r = length(pos_i - posArr[j]);
+			Real r = (pos_i - posArr[j]).norm();
 
 			if (r > EPSILON)
 			{
@@ -50,7 +49,7 @@ namespace Physika
 		}
 
 		total_weight = total_weight < EPSILON ? 1.0f : total_weight;
-		Real absDir = length(dir_i) / total_weight;
+		Real absDir = dir_i.norm() / total_weight;
 
 		energyArr[pId] = absDir*absDir;
 	}
@@ -81,14 +80,14 @@ namespace Physika
 
 		SmoothKernel<Real> kern;
 
-		Coord F_i = Make<Coord>(0);
-		Coord dv_pi = Make<Coord>(0);
+		Coord F_i(0);
+		Coord dv_pi(0);
 		Coord pos_i = posArr[pId];
 		int nbSize = neighbors[pId].size;
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			float r = length(pos_i - posArr[j]);
+			float r = (pos_i - posArr[j]).norm();
 
 			if (r > EPSILON)
 			{

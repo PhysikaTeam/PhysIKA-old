@@ -1,5 +1,4 @@
 #include "DensitySimple.h"
-#include "Physika_Core/Utilities/template_functions.h"
 
 namespace Physika
 {
@@ -25,7 +24,7 @@ namespace Physika
 
 		Coord pos_i = posArr[pId];
 
-		Coord deltaX = Make<Coord>(0);
+		Coord deltaX(0);
 		Real total_weight = 0;
 
 		SpikyKernel<Real> kern;
@@ -34,7 +33,7 @@ namespace Physika
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			Real r = length(pos_i - posArr[j]);
+			Real r = (pos_i - posArr[j]).norm();
 
 			if (r < samplingDistance && r > EPSILON)
 			{
@@ -55,15 +54,27 @@ namespace Physika
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			Real r = length(pos_i - posArr[j]);
+			Real r = (pos_i - posArr[j]).norm();
 
 			if (r < samplingDistance && r > EPSILON)
 			{
 				Real weight_ij = kern.Weight(r, smoothingLength) / total_weight;
 				dP_ij = 0.2f*weight_ij * (samplingDistance - r) * (pos_i - posArr[j]) * (1.0f / r);
 
-				AtomicAdd(dPos[pId], dP_ij);
-				AtomicAdd(dPos[j], -dP_ij);
+				atomicAdd(&dPos[pId][0], dP_ij[0]);
+				atomicAdd(&dPos[j][0], -dP_ij[0]);
+
+				if (Coord::dims() >= 2)
+				{
+					atomicAdd(&dPos[pId][1], dP_ij[1]);
+					atomicAdd(&dPos[j][1], -dP_ij[1]);
+				}
+
+				if (Coord::dims() >= 3)
+				{
+					atomicAdd(&dPos[pId][2], dP_ij[2]);
+					atomicAdd(&dPos[j][2], -dP_ij[2]);
+				}
 // 
 // 				atomicAdd(&dPos[pId].x, dP_ij.x);
 // 				atomicAdd(&dPos[pId].y, dP_ij.y);

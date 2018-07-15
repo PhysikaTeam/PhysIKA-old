@@ -267,11 +267,11 @@ public:
 	{
 	}
 
-	void Translate(const Vector3f &trans);
+	void Translate(const Vectorold3f &trans);
 	void TranslateX(const float &dist);
 	void TranslateY(const float &dist);
 	void TranslateZ(const float &dist);
-	void Rotate(const float angle, Vector3f &axis);
+	void Rotate(const float angle, Vectorold3f &axis);
 	void RotateX(const float &angle);
 	void RotateY(const float &angle);
 	void RotateZ(const float &angle);

@@ -6,7 +6,7 @@ namespace Physika {
 	class SceneLoader
 	{
 	public:
-		virtual Node* load(const std::string filename) = 0;
+		virtual Node* load(const std::string filename) { return NULL; }
 
 		virtual bool canLoadFileByName(const std::string filename) {
 			std::string str = filename;

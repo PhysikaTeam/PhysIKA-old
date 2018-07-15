@@ -27,16 +27,16 @@ template <typename Scalar, int Dim> class Vector;
 class PointGLCudaBuffer
 {
 public:
-    CPU_GPU_FUNC_DECL PointGLCudaBuffer(float * point_data_dev_ptr, unsigned int point_num);
+    COMM_FUNC PointGLCudaBuffer(float * point_data_dev_ptr, unsigned int point_num);
 
-    CPU_GPU_FUNC_DECL unsigned int pointNum() const;
-    CPU_GPU_FUNC_DECL float * getCudaPosPtr(); //return the raw pointer, each point position uses 3 float nums representing (x, y, z).
+    COMM_FUNC unsigned int pointNum() const;
+    COMM_FUNC float * getCudaPosPtr(); //return the raw pointer, each point position uses 3 float nums representing (x, y, z).
 
     template<typename Scalar, int Dim>
-    GPU_FUNC_DECL bool setPoint(unsigned int idx, const Vector<Scalar, Dim> & pos);
+    GPU_FUNC bool setPoint(unsigned int idx, const Vector<Scalar, Dim> & pos);
 
     template<typename Scalar>
-    GPU_FUNC_DECL bool setPoint(unsigned int idx, Scalar x, Scalar y, Scalar z = 0);
+    GPU_FUNC bool setPoint(unsigned int idx, Scalar x, Scalar y, Scalar z = 0);
 
 private:
     float * point_data_dev_ptr_;

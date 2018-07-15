@@ -38,5 +38,9 @@ namespace Physika {
 		Real m_w;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class DensityProjective<DataType3f>;
+#else
+	template class DensityProjective<DataType3d>;
+#endif
 }

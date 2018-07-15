@@ -2,7 +2,8 @@
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "DensityProjective.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
-#include "Physika_Core/Utilities/template_functions.h"
+#include "Physika_Core/Vectors/vector.h"
+//#include "Physika_Core/Utilities/template_functions.h"
 
 namespace Physika
 {
@@ -30,8 +31,8 @@ namespace Physika
 
 		Coord pos_i = posArr[pId];
 
-		Real lamda_i = 0.0f;
-		Coord grad_ci = Make<Coord>(0.0);
+		Real lamda_i = 0;
+		Coord grad_ci(0);
 
 		SpikyKernel<Real> kern;
 
@@ -39,17 +40,17 @@ namespace Physika
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			Real r = length(pos_i - posArr[j]);
+			Real r = (pos_i - posArr[j]).norm();
 
 			if (r > EPSILON)
 			{
 				Coord g = kern.Gradient(r, smoothingLength)*(pos_i - posArr[j]) * (1.0f / r);
 				grad_ci += g;
-				lamda_i += dot(g, g);
+				lamda_i += g.dot(g);
 			}
 		}
 
-		lamda_i += dot(grad_ci, grad_ci);
+		lamda_i += grad_ci.dot(grad_ci);
 
 		Real rho_i = rhoArr[pId];
 
@@ -78,19 +79,24 @@ namespace Physika
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			Real r = length(pos_i - posArr[j]);
+			Real r = (pos_i - posArr[j]).norm();
 			if (r > EPSILON)
 			{
 				Coord dp_ij = 5.0f*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)*(pos_i - posArr[j]) * (1.0f / r);
-				AtomicAdd(dPos[pId], dp_ij);
-// 				atomicAdd(&dPos[pId].x, dp_ij.x);
-// 				atomicAdd(&dPos[pId].y, dp_ij.y);
-// 				atomicAdd(&dPos[pId].z, dp_ij.z);
+				atomicAdd(&dPos[pId][0], dp_ij[0]);
+				atomicAdd(&dPos[j][0], -dp_ij[0]);
 
-				AtomicAdd(dPos[j], dp_ij);
-// 				atomicAdd(&dPos[j].x, -dp_ij.x);
-// 				atomicAdd(&dPos[j].y, -dp_ij.y);
-// 				atomicAdd(&dPos[j].z, -dp_ij.z);
+				if (Coord::dims() >= 2)
+				{
+					atomicAdd(&dPos[pId][1], dp_ij[1]);
+					atomicAdd(&dPos[j][1], -dp_ij[1]);
+				}
+
+				if (Coord::dims() >= 3)
+				{
+					atomicAdd(&dPos[pId][2], dp_ij[2]);
+					atomicAdd(&dPos[j][2], -dp_ij[2]);
+				}
 			}
 		}
 	}
@@ -151,7 +157,7 @@ namespace Physika
 
 		int num = m_parent->GetParticleNumber();
 
-		m_lamda = DeviceBuffer<float>::create(num);
+		m_lamda = DeviceBuffer<Real>::create(num);
 		m_deltaPos = DeviceBuffer<Coord>::create(num);
 		m_posTmp = DeviceBuffer<Coord>::create(num);
 

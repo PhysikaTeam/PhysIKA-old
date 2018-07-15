@@ -9,11 +9,11 @@ namespace Physika
 	class NeighborList
 	{
 	public:
-		HYBRID_FUNC NeighborList() { size = 0; }
-		HYBRID_FUNC ~NeighborList() {};
+		COMM_FUNC NeighborList() { size = 0; }
+		COMM_FUNC ~NeighborList() {};
 
-		HYBRID_FUNC int& operator[] (int id) { return ids[id]; }
-		HYBRID_FUNC int operator[] (int id) const { return ids[id]; }
+		COMM_FUNC int& operator[] (int id) { return ids[id]; }
+		COMM_FUNC int operator[] (int id) const { return ids[id]; }
 	public:
 		int size;
 		int ids[NEIGHBOR_SIZE];
@@ -23,8 +23,8 @@ namespace Physika
 	class RestShape
 	{
 	public:
-		HYBRID_FUNC RestShape() { size = 0; }
-		HYBRID_FUNC ~RestShape() {};
+		COMM_FUNC RestShape() { size = 0; }
+		COMM_FUNC ~RestShape() {};
 	public:
 		int size;
 		int idx;

@@ -16,19 +16,19 @@
 
 namespace Physika{
     
-CPU_GPU_FUNC_DECL CubeGLCudaBuffer::CubeGLCudaBuffer(QuadGLCudaBuffer cuda_triangle_gl_buffer)
+COMM_FUNC CubeGLCudaBuffer::CubeGLCudaBuffer(QuadGLCudaBuffer cuda_triangle_gl_buffer)
     :quad_gl_cuda_buffer_(cuda_triangle_gl_buffer)
 {
     
 }
 
-CPU_GPU_FUNC_DECL unsigned int CubeGLCudaBuffer::cubeNum() const
+COMM_FUNC unsigned int CubeGLCudaBuffer::cubeNum() const
 {
     return quad_gl_cuda_buffer_.quadNum() / 6;
 }
 
 template<typename Scalar>
-GPU_FUNC_DECL bool CubeGLCudaBuffer::setCube(unsigned int idx, 
+GPU_FUNC bool CubeGLCudaBuffer::setCube(unsigned int idx, 
                                              const Vector<Scalar, 3> & v0, 
                                              const Vector<Scalar, 3> & v1, 
                                              const Vector<Scalar, 3> & v2, 
@@ -54,7 +54,7 @@ GPU_FUNC_DECL bool CubeGLCudaBuffer::setCube(unsigned int idx,
 }
 
 template<typename Scalar>
-GPU_FUNC_DECL bool CubeGLCudaBuffer::setCube(unsigned int idx, 
+GPU_FUNC bool CubeGLCudaBuffer::setCube(unsigned int idx, 
                                              const Vector<Scalar, 3> & v0, 
                                              const Vector<Scalar, 3> & v1, 
                                              const Vector<Scalar, 3> & v2, 
@@ -85,11 +85,11 @@ GPU_FUNC_DECL bool CubeGLCudaBuffer::setCube(unsigned int idx,
 }
 
 //explicit instantiations
-template GPU_FUNC_DECL bool CubeGLCudaBuffer::setCube<float>(unsigned int idx, const Vector<float, 3> & v0, const Vector<float, 3> & v1, const Vector<float, 3> & v2, const Vector<float, 3> & v3, const Vector<float, 3> & v4, const Vector<float, 3> & v5, const Vector<float, 3> & v6, const Vector<float, 3> & v7, bool auto_compute_normal);
-template GPU_FUNC_DECL bool CubeGLCudaBuffer::setCube<double>(unsigned int idx, const Vector<double, 3> & v0, const Vector<double, 3> & v1, const Vector<double, 3> & v2, const Vector<double, 3> & v3, const Vector<double, 3> & v4, const Vector<double, 3> & v5, const Vector<double, 3> & v6, const Vector<double, 3> & v7, bool auto_compute_normal);
+template GPU_FUNC bool CubeGLCudaBuffer::setCube<float>(unsigned int idx, const Vector<float, 3> & v0, const Vector<float, 3> & v1, const Vector<float, 3> & v2, const Vector<float, 3> & v3, const Vector<float, 3> & v4, const Vector<float, 3> & v5, const Vector<float, 3> & v6, const Vector<float, 3> & v7, bool auto_compute_normal);
+template GPU_FUNC bool CubeGLCudaBuffer::setCube<double>(unsigned int idx, const Vector<double, 3> & v0, const Vector<double, 3> & v1, const Vector<double, 3> & v2, const Vector<double, 3> & v3, const Vector<double, 3> & v4, const Vector<double, 3> & v5, const Vector<double, 3> & v6, const Vector<double, 3> & v7, bool auto_compute_normal);
 
-template GPU_FUNC_DECL bool CubeGLCudaBuffer::setCube<float>(unsigned int idx, const Vector<float, 3> & v0, const Vector<float, 3> & v1, const Vector<float, 3> & v2, const Vector<float, 3> & v3, const Vector<float, 3> & v4, const Vector<float, 3> & v5, const Vector<float, 3> & v6, const Vector<float, 3> & v7, const Vector<float, 3> & face_normal_0, const Vector<float, 3> & face_normal_1, const Vector<float, 3> & face_normal_2, const Vector<float, 3> & face_normal_3, const Vector<float, 3> & face_normal_4, const Vector<float, 3> & face_normal_5);
-template GPU_FUNC_DECL bool CubeGLCudaBuffer::setCube<double>(unsigned int idx, const Vector<double, 3> & v0, const Vector<double, 3> & v1, const Vector<double, 3> & v2, const Vector<double, 3> & v3, const Vector<double, 3> & v4, const Vector<double, 3> & v5, const Vector<double, 3> & v6, const Vector<double, 3> & v7, const Vector<double, 3> & face_normal_0, const Vector<double, 3> & face_normal_1, const Vector<double, 3> & face_normal_2, const Vector<double, 3> & face_normal_3, const Vector<double, 3> & face_normal_4, const Vector<double, 3> & face_normal_5);
+template GPU_FUNC bool CubeGLCudaBuffer::setCube<float>(unsigned int idx, const Vector<float, 3> & v0, const Vector<float, 3> & v1, const Vector<float, 3> & v2, const Vector<float, 3> & v3, const Vector<float, 3> & v4, const Vector<float, 3> & v5, const Vector<float, 3> & v6, const Vector<float, 3> & v7, const Vector<float, 3> & face_normal_0, const Vector<float, 3> & face_normal_1, const Vector<float, 3> & face_normal_2, const Vector<float, 3> & face_normal_3, const Vector<float, 3> & face_normal_4, const Vector<float, 3> & face_normal_5);
+template GPU_FUNC bool CubeGLCudaBuffer::setCube<double>(unsigned int idx, const Vector<double, 3> & v0, const Vector<double, 3> & v1, const Vector<double, 3> & v2, const Vector<double, 3> & v3, const Vector<double, 3> & v4, const Vector<double, 3> & v5, const Vector<double, 3> & v6, const Vector<double, 3> & v7, const Vector<double, 3> & face_normal_0, const Vector<double, 3> & face_normal_1, const Vector<double, 3> & face_normal_2, const Vector<double, 3> & face_normal_3, const Vector<double, 3> & face_normal_4, const Vector<double, 3> & face_normal_5);
 
 
 }//end of namespace Physika

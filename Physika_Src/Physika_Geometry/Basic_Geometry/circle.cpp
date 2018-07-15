@@ -59,7 +59,7 @@ Circle<Scalar>* Circle<Scalar>::clone() const
 template <typename Scalar>
 void Circle<Scalar>::printInfo() const
 {
-    std::cout<<"2D circle, center: "<<center_<<", radius: "<<radius_<<std::endl;
+//    std::cout<<"2D circle, center: "<<center_<<", radius: "<<radius_<<std::endl;
 }
 
 template <typename Scalar>

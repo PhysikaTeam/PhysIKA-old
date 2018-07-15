@@ -27,6 +27,8 @@ public:
 	virtual void takeOneFrame();
 	virtual void run();
 
+	virtual bool load(std::string name);
+
 	virtual void invoke(unsigned char type, unsigned char key, int x, int y) {};
 
 	template<class TNode, class ...Args>

@@ -35,5 +35,9 @@ namespace Physika {
 		ParticleSystem<TDataType>* m_parent;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class SummationDensity<DataType3f>;
+#else
+	template class SummationDensity<DataType3d>;
+#endif
 }

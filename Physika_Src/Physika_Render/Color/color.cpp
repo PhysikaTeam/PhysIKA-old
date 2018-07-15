@@ -13,7 +13,7 @@
  */
 
 #include <type_traits>
-#include "Physika_Render/Color/color.h"
+#include "color.h"
 
 namespace Physika{
 

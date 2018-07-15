@@ -2,6 +2,7 @@
 #define FRAMEWORK_DENSITYPBD_H
 
 #include "Platform.h"
+#include "Physika_Core/DataTypes.h"
 #include "Framework/Module.h"
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "DensityConstraint.h"
@@ -38,9 +39,11 @@ namespace Physika {
 		DeviceBuffer<Coord>* m_deltaPos;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class DensityPBD<DataType3f>;
-
-// 	template class DensityPBD<DataType3d>;
+#else
+ 	template class DensityPBD<DataType3d>;
+#endif
 }
 
 #endif

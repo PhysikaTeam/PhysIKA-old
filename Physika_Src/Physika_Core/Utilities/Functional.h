@@ -7,7 +7,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs + rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs + rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs + rhs; }
 	}; // end plus
 
 	template<typename T>
@@ -15,7 +15,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs - rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs - rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs - rhs; }
 	}; // end minus
 
 	template<typename T>
@@ -23,7 +23,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs * rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs * rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs * rhs; }
 	}; // end multiplies
 
 	template<typename T>
@@ -31,7 +31,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs / rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs / rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs / rhs; }
 	}; // end divides
 
 	template<typename T>
@@ -39,7 +39,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs % rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs % rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs % rhs; }
 	}; // end modulus
 
 	template<typename T>
@@ -47,7 +47,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>-x</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T x) const { return -x; }
+		COMM_FUNC inline T operator()(const T x) const { return -x; }
 	}; // end negate
 
 	template<typename T>
@@ -55,7 +55,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs == rhs</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs == rhs; }
+		COMM_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs == rhs; }
 	}; // end equal_to
 
 	template<typename T>
@@ -63,7 +63,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs != rhs</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs != rhs; }
+		COMM_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs != rhs; }
 	}; // end not_equal_to
 
 	template<typename T>
@@ -71,7 +71,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs > rhs</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs > rhs; }
+		COMM_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs > rhs; }
 	}; // end greater
 
 	template<typename T>
@@ -79,7 +79,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs < rhs</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs < rhs; }
+		COMM_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs < rhs; }
 	}; // end less
 
 	template<typename T>
@@ -87,7 +87,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs >= rhs</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs >= rhs; }
+		COMM_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs >= rhs; }
 	}; // end greater_equal
 
 	template<typename T>
@@ -95,7 +95,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs <= rhs</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs <= rhs; }
+		COMM_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs <= rhs; }
 	}; // end less_equal
 
 	template<typename T>
@@ -103,7 +103,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs && rhs</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs && rhs; }
+		COMM_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs && rhs; }
 	}; // end logical_and
 
 	template<typename T>
@@ -111,7 +111,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs || rhs</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs || rhs; }
+		COMM_FUNC inline bool operator()(const T lhs, const T rhs) const { return lhs || rhs; }
 	}; // end logical_or
 
 	template<typename T>
@@ -119,7 +119,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>!x</tt>.
 		*/
-		HYBRID_FUNC inline bool operator()(const T &x) const { return !x; }
+		COMM_FUNC inline bool operator()(const T &x) const { return !x; }
 	}; // end logical_not
 
 	template<typename T>
@@ -127,7 +127,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs & rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs & rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs & rhs; }
 	}; // end bit_and
 
 	template<typename T>
@@ -135,7 +135,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs | rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs | rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs | rhs; }
 	}; // end bit_or
 
 	template<typename T>
@@ -143,7 +143,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs ^ rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs ^ rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs ^ rhs; }
 	}; // end bit_xor
 
 	template<typename T>
@@ -151,7 +151,7 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>rhs < lhs ? lhs : rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs < rhs ? rhs : lhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs < rhs ? rhs : lhs; }
 	}; // end maximum
 
 	template<typename T>
@@ -159,6 +159,6 @@ namespace Physika
 	{
 		/*! Function call operator. The return value is <tt>lhs < rhs ? lhs : rhs</tt>.
 		*/
-		HYBRID_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs < rhs ? lhs : rhs; }
+		COMM_FUNC inline T operator()(const T lhs, const T rhs) const { return lhs < rhs ? lhs : rhs; }
 	}; // end minimum
 }

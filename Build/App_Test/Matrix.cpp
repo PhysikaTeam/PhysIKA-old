@@ -2,7 +2,7 @@
 using namespace Physika;
 
 template<typename T>
-void Transform3D<T>::Translate( const Vector3f &trans )
+void Transform3D<T>::Translate( const Vectorold3f &trans )
 {
 	Identity();
 
@@ -33,7 +33,7 @@ void Transform3D<T>::TranslateZ( const float &dist )
 }
 
 template<typename T>
-void Transform3D<T>::Rotate( const float angle, Vector3f &axis )
+void Transform3D<T>::Rotate( const float angle, Vectorold3f &axis )
 {
 	double a = DEGTORAD(angle);
 	float c = cos(a);

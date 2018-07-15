@@ -80,53 +80,53 @@ namespace Physika {
 	// 	return (dist > 0);
 	// }
 
-	template<typename Real, typename Coord>
+	template<typename Real, typename Coord, typename TDataType>
 	__global__ void K_Constrain(
 		DeviceArray<Coord> posArr,
 		DeviceArray<Coord> velArr,
 		DeviceArray<int> attArr, 
-		DistanceField3D df, 
+		DistanceField3D<TDataType> df,
 		Real normalFriction, 
 		Real tangentialFriction,
-		float dt)
+		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 
 		if (pId >= posArr.Size()) return;
 		if (attArr[pId] == 0) return;
 
-		float3 pos = posArr[pId];
-		float3 vec = velArr[pId];
+		Coord pos = posArr[pId];
+		Coord vec = velArr[pId];
 
-		float dist;
-		float3 normal;
+		Real dist;
+		Coord normal;
 		df.GetDistance(pos, dist, normal);
 		// constrain particle
 		if (dist <= 0) {
-			float olddist = -dist;
+			Real olddist = -dist;
 			Physika::RandNumber rGen(pId);
 			dist = 0.0001f*rGen.Generate();
 			// reflect position
 			pos -= (olddist + dist)*normal;
 			// reflect velocity
-			float vlength = length(vec);
-			float vec_n = dot(vec, normal);
-			float3 vec_normal = vec_n*normal;
-			float3 vec_tan = vec - vec_normal;
+			Real vlength = vec.norm();
+			Real vec_n = vec.dot(normal);
+			Coord vec_normal = vec_n*normal;
+			Coord vec_tan = vec - vec_normal;
 			if (vec_n > 0) vec_normal = -vec_normal;
 			vec_normal *= (1.0f - normalFriction);
 			vec = vec_normal + vec_tan;
-			vec *= pow((float)M_E, -dt*tangentialFriction);
+			vec *= pow(Real(M_E), -dt*tangentialFriction);
 		}
 
 		posArr[pId] = pos;
 		velArr[pId] = vec;
 	}
 
-	void BarrierDistanceField3D::Constrain(DeviceArray<float3>& posArr, DeviceArray<float3>& velArr, DeviceArray<int>& attArr, float dt) const
+	template<typename TDataType>
+	void BarrierDistanceField3D<TDataType>::Constrain(DeviceArray<Coord>& posArr, DeviceArray<Coord>& velArr, DeviceArray<int>& attArr, Real dt)
 	{
 		uint pDim = cudaGridSize(posArr.Size(), BLOCK_SIZE);
 		K_Constrain << <pDim, BLOCK_SIZE >> > (posArr, velArr, attArr, *distancefield3d, normalFriction, tangentialFriction, dt);
 	}
-
 }

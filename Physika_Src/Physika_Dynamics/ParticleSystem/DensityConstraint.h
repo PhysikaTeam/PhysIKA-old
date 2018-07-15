@@ -37,6 +37,10 @@ namespace Physika {
 	};
 }
 
+#ifdef PRECISION_FLOAT
 template class DensityConstraint<DataType3f>;
+#else
+template class DensityConstraint<DataType3d>;
+#endif
 
 #endif

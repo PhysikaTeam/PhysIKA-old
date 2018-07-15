@@ -16,19 +16,19 @@
 
 namespace Physika{
 
-CPU_GPU_FUNC_DECL TetrahedronGLCudaBuffer::TetrahedronGLCudaBuffer(TriangleGLCudaBuffer cuda_triangle_gl_buffer)
+COMM_FUNC TetrahedronGLCudaBuffer::TetrahedronGLCudaBuffer(TriangleGLCudaBuffer cuda_triangle_gl_buffer)
     :triangle_gl_cuda_buffer_(cuda_triangle_gl_buffer)
 {
     
 }
 
-CPU_GPU_FUNC_DECL unsigned int TetrahedronGLCudaBuffer::tetrahedrondNum() const
+COMM_FUNC unsigned int TetrahedronGLCudaBuffer::tetrahedrondNum() const
 {
     return triangle_gl_cuda_buffer_.triangleNum() / 4;
 }
 
 template <typename Scalar>
-GPU_FUNC_DECL bool TetrahedronGLCudaBuffer::setTetrahedron(unsigned int idx, const Vector<Scalar, 3>& v0, const Vector<Scalar, 3>& v1, const Vector<Scalar, 3>& v2, const Vector<Scalar, 3>& v3, bool auto_compute_normal)
+GPU_FUNC bool TetrahedronGLCudaBuffer::setTetrahedron(unsigned int idx, const Vector<Scalar, 3>& v0, const Vector<Scalar, 3>& v1, const Vector<Scalar, 3>& v2, const Vector<Scalar, 3>& v3, bool auto_compute_normal)
 {
     if (idx >= tetrahedrondNum())
         return false;
@@ -42,7 +42,7 @@ GPU_FUNC_DECL bool TetrahedronGLCudaBuffer::setTetrahedron(unsigned int idx, con
 }
 
 template <typename Scalar>
-GPU_FUNC_DECL bool TetrahedronGLCudaBuffer::setTetrahedron(unsigned int idx, const Vector<Scalar, 3>& v0, const Vector<Scalar, 3>& v1, const Vector<Scalar, 3>& v2, const Vector<Scalar, 3>& v3, const Vector<Scalar, 3>& face_normal_0, const Vector<Scalar, 3>& face_normal_1, const Vector<Scalar, 3>& face_normal_2, const Vector<Scalar, 3>& face_normal_3)
+GPU_FUNC bool TetrahedronGLCudaBuffer::setTetrahedron(unsigned int idx, const Vector<Scalar, 3>& v0, const Vector<Scalar, 3>& v1, const Vector<Scalar, 3>& v2, const Vector<Scalar, 3>& v3, const Vector<Scalar, 3>& face_normal_0, const Vector<Scalar, 3>& face_normal_1, const Vector<Scalar, 3>& face_normal_2, const Vector<Scalar, 3>& face_normal_3)
 {
     if (idx >= tetrahedrondNum())
         return false;
@@ -56,11 +56,11 @@ GPU_FUNC_DECL bool TetrahedronGLCudaBuffer::setTetrahedron(unsigned int idx, con
 }
 
 //explicit instantiations
-template GPU_FUNC_DECL bool TetrahedronGLCudaBuffer::setTetrahedron<float>(unsigned int idx, const Vector<float, 3> & v0, const Vector<float, 3> & v1, const Vector<float, 3> & v2, const Vector<float, 3> & v3, bool auto_compute_normal);
-template GPU_FUNC_DECL bool TetrahedronGLCudaBuffer::setTetrahedron<double>(unsigned int idx, const Vector<double, 3> & v0, const Vector<double, 3> & v1, const Vector<double, 3> & v2, const Vector<double, 3> & v3, bool auto_compute_normal);
+template GPU_FUNC bool TetrahedronGLCudaBuffer::setTetrahedron<float>(unsigned int idx, const Vector<float, 3> & v0, const Vector<float, 3> & v1, const Vector<float, 3> & v2, const Vector<float, 3> & v3, bool auto_compute_normal);
+template GPU_FUNC bool TetrahedronGLCudaBuffer::setTetrahedron<double>(unsigned int idx, const Vector<double, 3> & v0, const Vector<double, 3> & v1, const Vector<double, 3> & v2, const Vector<double, 3> & v3, bool auto_compute_normal);
 
-template GPU_FUNC_DECL bool TetrahedronGLCudaBuffer::setTetrahedron<float>(unsigned int idx, const Vector<float, 3> & v0, const Vector<float, 3> & v1, const Vector<float, 3> & v2, const Vector<float, 3> & v3, const Vector<float, 3> & face_normal_0, const Vector<float, 3> & face_normal_1, const Vector<float, 3> & face_normal_2, const Vector<float, 3> & face_normal_3);
-template GPU_FUNC_DECL bool TetrahedronGLCudaBuffer::setTetrahedron<double>(unsigned int idx, const Vector<double, 3> & v0, const Vector<double, 3> & v1, const Vector<double, 3> & v2, const Vector<double, 3> & v3, const Vector<double, 3> & face_normal_0, const Vector<double, 3> & face_normal_1, const Vector<double, 3> & face_normal_2, const Vector<double, 3> & face_normal_3);
+template GPU_FUNC bool TetrahedronGLCudaBuffer::setTetrahedron<float>(unsigned int idx, const Vector<float, 3> & v0, const Vector<float, 3> & v1, const Vector<float, 3> & v2, const Vector<float, 3> & v3, const Vector<float, 3> & face_normal_0, const Vector<float, 3> & face_normal_1, const Vector<float, 3> & face_normal_2, const Vector<float, 3> & face_normal_3);
+template GPU_FUNC bool TetrahedronGLCudaBuffer::setTetrahedron<double>(unsigned int idx, const Vector<double, 3> & v0, const Vector<double, 3> & v1, const Vector<double, 3> & v2, const Vector<double, 3> & v3, const Vector<double, 3> & face_normal_0, const Vector<double, 3> & face_normal_1, const Vector<double, 3> & face_normal_2, const Vector<double, 3> & face_normal_3);
 
     
 }//end of namespace Physika

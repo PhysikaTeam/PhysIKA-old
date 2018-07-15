@@ -18,8 +18,8 @@
 #include <sstream>
 #include <map>
 #include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
-#include "Physika_Core/Utilities/File_Utilities/file_content_utilities.h"
+#include "Physika_IO/File_Utilities/file_path_utilities.h"
+#include "Physika_IO/File_Utilities/file_content_utilities.h"
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"
 #include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"

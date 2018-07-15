@@ -24,10 +24,10 @@ namespace Physika
 		m_restDensity = this->allocHostVariable<Real>("restDensity", "Rest density", Real(1000));
 		m_viscosity = this->allocHostVariable<Real>("viscosity", "Viscosity", Real(0.05));
 
-		m_lowerBound = this->allocHostVariable<Coord>("lowerBound", "Lower bound", make_float3(0));
-		m_upperBound = this->allocHostVariable<Coord>("upperBound", "Upper bound", make_float3(1));
+		m_lowerBound = this->allocHostVariable<Coord>("lowerBound", "Lower bound", Coord(0));
+		m_upperBound = this->allocHostVariable<Coord>("upperBound", "Upper bound", Coord(1));
 
-		m_gravity = this->allocHostVariable<Coord>("gravity", "gravity", make_float3(0.0f, -9.8f, 0.0f));
+		m_gravity = this->allocHostVariable<Coord>("gravity", "gravity", Coord(0.0f, -9.8f, 0.0f));
 	}
 
 	template<typename TDataType>
@@ -53,9 +53,15 @@ namespace Physika
 		for (float x = 0.4; x < 0.6; x += 0.005f) {
 			for (float y = 0.1; y < 0.2; y += 0.005f) {
 				for (float z = 0.4; z < 0.6; z += 0.005f) {
-					float3 pos = make_float3(float(x), float(y), float(z));
-					positions.push_back(pos);
-					velocities.push_back(make_float3(0));
+					//float3 pos = make_float3(float(x), float(y), float(z));
+					positions.push_back(Coord(float(x), float(y), float(z)));
+					//velocities.push_back(Coord(0));
+					if (x < 0.5)
+					{
+						velocities.push_back(Coord(1, 0, 0));
+					}
+					else
+						velocities.push_back(Coord(-1, 0, 0));
 					Attribute attri;
 					attri.SetFluid();
 					attri.SetDynamic();
@@ -91,11 +97,11 @@ namespace Physika
 
 		BoundaryManager<TDataType>* bmgr = new BoundaryManager<TDataType>(this);
 
-		DistanceField3D * box = new DistanceField3D();
+		DistanceField3D<TDataType> * box = new DistanceField3D<TDataType>();
 		box->SetSpace(this->GetLowerBound() - this->GetSamplingDistance() * 5, this->GetUpperBound() + this->GetSamplingDistance() * 5, 105, 105, 105);
 		box->DistanceFieldToBox(this->GetLowerBound(), this->GetUpperBound(), true);
 		//		box->DistanceFieldToSphere(make_float3(0.5f), 0.2f, true);
-		bmgr->InsertBarrier(new BarrierDistanceField3D(box));
+		bmgr->InsertBarrier(new BarrierDistanceField3D<TDataType>(box));
 		this->addModule("BOUNDARY_HANDLING", bmgr);
 
 

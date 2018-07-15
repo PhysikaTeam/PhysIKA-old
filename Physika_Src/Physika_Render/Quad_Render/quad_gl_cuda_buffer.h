@@ -29,12 +29,12 @@ template <typename Scalar, int Dim> class Vector;
 class QuadGLCudaBuffer
 {
 public:
-    CPU_GPU_FUNC_DECL QuadGLCudaBuffer(LineGLCudaBuffer cuda_line_gl_buffer, TriangleGLCudaBuffer cuda_triangle_gl_buffer);
+    COMM_FUNC QuadGLCudaBuffer(LineGLCudaBuffer cuda_line_gl_buffer, TriangleGLCudaBuffer cuda_triangle_gl_buffer);
 
-    CPU_GPU_FUNC_DECL unsigned int quadNum() const;
+    COMM_FUNC unsigned int quadNum() const;
 
     template<typename Scalar, int Dim>
-    GPU_FUNC_DECL bool setQuad(unsigned int idx, 
+    GPU_FUNC bool setQuad(unsigned int idx, 
                                const Vector<Scalar, Dim> & v0, 
                                const Vector<Scalar, Dim> & v1, 
                                const Vector<Scalar, Dim> & v2, 
@@ -42,7 +42,7 @@ public:
                                bool auto_compute_normal = true);
 
     template<typename Scalar, int Dim>
-    GPU_FUNC_DECL bool setQuad(unsigned int idx,
+    GPU_FUNC bool setQuad(unsigned int idx,
                                const Vector<Scalar, Dim> & v0,
                                const Vector<Scalar, Dim> & v1,
                                const Vector<Scalar, Dim> & v2,

@@ -1,5 +1,6 @@
 #ifndef FRAMEWORK_PARTICLESYSTEM_H
 #define FRAMEWORK_PARTICLESYSTEM_H
+#include "Physika_Core/DataTypes.h"
 #include "Framework/Node.h"
 #include "Framework/DeviceContext.h"
 #include "Framework/Module.h"
@@ -126,8 +127,11 @@ namespace Physika {
 		HostVariablePtr<Coord> m_gravity;
 	};
 
-
+#ifdef PRECISION_FLOAT
 	template class ParticleSystem<DataType3f>;
+#else
+	template class ParticleSystem<DataType3d>;
+#endif
 }
 
 #endif

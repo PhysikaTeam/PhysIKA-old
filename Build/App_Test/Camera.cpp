@@ -32,10 +32,10 @@ using namespace std;
 
 
 Camera::Camera() {
-    _eye = Vector3f(0,0,3);
-    _light = Vector3f(0,0,3);
+    _eye = Vectorold3f(0,0,3);
+    _light = Vectorold3f(0,0,3);
     _rotation = 0;
-    _rotation_axis = Vector3f(0,1,0);
+    _rotation_axis = Vectorold3f(0,1,0);
     _fov = 0.90f;
 }
 
@@ -79,7 +79,7 @@ float Camera::GetPixelArea() const {
     return _pixelarea;
 }
 
-Vector3f Camera::GetEye() const {
+Vectorold3f Camera::GetEye() const {
     return _eye;
 }
 
@@ -89,7 +89,7 @@ Transform3D<float> Camera::GetCombinedMatrix2() const {
     float width = _width;
     float height = _height;
     // set up modelview
-    Vector3f n; Vector3f u; Vector3f v;
+    Vectorold3f n; Vectorold3f u; Vectorold3f v;
     GetCoordSystem(n,v,u);
     Transform3D<float> modelview(u.x, u.y, u.z, -_eye.Dot(u),
                          v.x, v.y, v.z, -_eye.Dot(v),
@@ -118,7 +118,7 @@ Transform3D<float> Camera::GetCombinedMatrix() const {
     float width = _width;
     float height = _height;
     // set up modelview
-    Vector3f n; Vector3f u; Vector3f v;
+    Vectorold3f n; Vectorold3f u; Vectorold3f v;
     GetCoordSystem(n,v,u);
     Transform3D<float> modelview(u.x, u.y, u.z, -_eye.Dot(u),
                          v.x, v.y, v.z, -_eye.Dot(v),
@@ -149,50 +149,50 @@ void Camera::Rotate(Quat1f &rotquat) {
     // set up orthogonal camera system
     Quat1f q(_rotation, _rotation_axis);
     q.x = -q.x;
-    Vector3f viewdir(0,0,-1);
+    Vectorold3f viewdir(0,0,-1);
     q.Rotate(viewdir);
     // end set up orth system
     //   q = Quat1f(angle, axis);
     q = rotquat;
     Quat1f currq(_rotation, _rotation_axis);
-    Vector3f rotcenter = _eye + 3.0f*viewdir;
-    Vector3f rotcenter2 = _light + 3.0f*viewdir;
+    Vectorold3f rotcenter = _eye + 3.0f*viewdir;
+    Vectorold3f rotcenter2 = _light + 3.0f*viewdir;
     currq = q.ComposeWith(currq);
     currq.ToRotAxis(_rotation, _rotation_axis);
     // set up orthogonal camera system
     Quat1f q2(_rotation, _rotation_axis);
     q2.x = -q2.x;
-    Vector3f viewdir2(0,0,-1);
+    Vectorold3f viewdir2(0,0,-1);
     q2.Rotate(viewdir2);
 
     _eye = rotcenter - 3.0f*viewdir2;
     _light = rotcenter2 - 3.0f*viewdir2;
 }
 
-Vector3f Camera::GetViewDir() const {
+Vectorold3f Camera::GetViewDir() const {
     Quat1f q(_rotation, _rotation_axis);
     q.x = -q.x;
-    Vector3f viewdir(0,0,1);
+    Vectorold3f viewdir(0,0,1);
     q.Rotate(viewdir);
     return viewdir;
 }
 
-void Camera::GetCoordSystem(Vector3f &view, Vector3f &up, Vector3f &right) const {
+void Camera::GetCoordSystem(Vectorold3f &view, Vectorold3f &up, Vectorold3f &right) const {
     Quat1f q(_rotation, _rotation_axis);
     q.x = -q.x;
-    view = Vector3f(0,0,1);
+    view = Vectorold3f(0,0,1);
     q.Rotate(view);
-    up = Vector3f(0,1,0);
+    up = Vectorold3f(0,1,0);
     q.Rotate(up);
     right = -view.Cross(up);
 }
 
-void Camera::Translate(const Vector3f translation) {
+void Camera::Translate(const Vectorold3f translation) {
     Quat1f q(_rotation, _rotation_axis);
     q.x = -q.x;
-    Vector3f xax(1,0,0);
-    Vector3f yax(0,1,0);
-    Vector3f zax(0,0,1);
+    Vectorold3f xax(1,0,0);
+    Vectorold3f yax(0,1,0);
+    Vectorold3f zax(0,0,1);
 
     q.Rotate(xax);
     q.Rotate(yax);
@@ -203,12 +203,12 @@ void Camera::Translate(const Vector3f translation) {
           translation.z * zax;
 }
 
-void Camera::TranslateLight(const Vector3f translation) {
+void Camera::TranslateLight(const Vectorold3f translation) {
     Quat1f q(_rotation, _rotation_axis);
     q.x = -q.x;
-    Vector3f xax(1,0,0);
-    Vector3f yax(0,1,0);
-    Vector3f zax(0,0,1);
+    Vectorold3f xax(1,0,0);
+    Vectorold3f yax(0,1,0);
+    Vectorold3f zax(0,0,1);
 
     q.Rotate(xax);
     q.Rotate(yax);
@@ -224,16 +224,16 @@ void Camera::Zoom(float amount) {
     _fov = max(_fov, 0.01f);
 }
 
-Vector3f Camera::GetPosition(float x, float y) {
+Vectorold3f Camera::GetPosition(float x, float y) {
     float r = x*x+y*y;
     float t = 0.5f * 1*1;
     if (r<t) {
-        Vector3f result(x,y,sqrt(2.0f*t-r));
+        Vectorold3f result(x,y,sqrt(2.0f*t-r));
         result.Normalize();
         return result;
     }
     else {
-        Vector3f result(x,y, t/sqrt(r));
+        Vectorold3f result(x,y, t/sqrt(r));
         result.Normalize();
         return result;
     }
@@ -243,9 +243,9 @@ Quat1f Camera::GetQuaternion(float x1, float y1, float x2, float y2) {
     if ((x1==x2)&&(y1==y2)) {
         return Quat1f(1,0,0,0);
     }
-    Vector3f pos1 = GetPosition(x1,y1);
-    Vector3f pos2 = GetPosition(x2,y2);
-    Vector3f rotaxis = pos1.Cross(pos2);
+    Vectorold3f pos1 = GetPosition(x1,y1);
+    Vectorold3f pos2 = GetPosition(x2,y2);
+    Vectorold3f rotaxis = pos1.Cross(pos2);
     rotaxis.Normalize();
     float rotangle = 2*sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
     return Quat1f(rotangle, rotaxis);
@@ -265,7 +265,7 @@ void Camera::TranslateToPoint(float x, float y) {
     float dy = y - _y;
     float dz = 0;
     RegisterPoint(x,y);
-    Translate(Vector3f(-dx,-dy,-dz));
+    Translate(Vectorold3f(-dx,-dy,-dz));
 }
 
 void Camera::TranslateLightToPoint(float x, float y) {
@@ -273,7 +273,7 @@ void Camera::TranslateLightToPoint(float x, float y) {
     float dy = y - _y;
     float dz = 0;
     RegisterPoint(x,y);
-    TranslateLight(Vector3f(3*dx,3*dy,3*dz));
+    TranslateLight(Vectorold3f(3*dx,3*dy,3*dz));
 }
 
 

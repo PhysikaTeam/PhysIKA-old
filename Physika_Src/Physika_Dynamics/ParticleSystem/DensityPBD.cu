@@ -1,5 +1,5 @@
 #include <cuda_runtime.h>
-#include "Physika_Core/Utilities/template_functions.h"
+//#include "Physika_Core/Utilities/template_functions.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "DensityPBD.h"
 
@@ -12,7 +12,6 @@ namespace Physika
 // 		Real smoothingLength;
 // 		SpikyKernel kernSpiky;
 // 	};
-
 //	__constant__ PBD_STATE const_pbd_state;
 
 	template <typename Real, typename Coord>
@@ -31,23 +30,23 @@ namespace Physika
 		SpikyKernel<Real> kern;
 
 		Real lamda_i = Real(0);
-		Coord grad_ci = Make<Coord>(Real(0));
+		Coord grad_ci(0);
 
 		int nbSize = neighbors[pId].size;
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			Real r = length(pos_i - posArr[j]);
+			Real r = (pos_i - posArr[j]).norm();
 
 			if (r > EPSILON)
 			{
 				Coord g = kern.Gradient(r, smoothingLength)*(pos_i - posArr[j]) * (1.0f / r);
 				grad_ci += g;
-				lamda_i += dot(g, g);
+				lamda_i += g.dot(g);
 			}
 		}
 
-		lamda_i += dot(grad_ci, grad_ci);
+		lamda_i += grad_ci.dot(grad_ci);
 
 		Real rho_i = rhoArr[pId];
 
@@ -63,7 +62,7 @@ namespace Physika
 		DeviceArray<Coord> posArr, 
 		DeviceArray<NeighborList> neighbors, 
 		Real smoothingLength,
-		float dt)
+		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.Size()) return;
@@ -77,19 +76,24 @@ namespace Physika
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			Real r = length(pos_i - posArr[j]);
+			Real r = (pos_i - posArr[j]).norm();
 			if (r > EPSILON)
 			{
-				Coord dp_ij = 0.1*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)*(pos_i - posArr[j]) * (1.0f / r);
-// 				atomicAdd(&dPos[pId].x, dp_ij.x);
-// 				atomicAdd(&dPos[pId].y, dp_ij.y);
-// 				atomicAdd(&dPos[pId].z, dp_ij.z);
-				AtomicAdd(dPos[pId], dp_ij);
-// 
-// 				atomicAdd(&dPos[j].x, -dp_ij.x);
-// 				atomicAdd(&dPos[j].y, -dp_ij.y);
-// 				atomicAdd(&dPos[j].z, -dp_ij.z);
-				AtomicAdd(dPos[j], -dp_ij);
+				Coord dp_ij = (pos_i - posArr[j])*0.1*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
+				atomicAdd(&dPos[pId][0], dp_ij[0]);
+				atomicAdd(&dPos[j][0], -dp_ij[0]);
+
+				if (Coord::dims() >= 2)
+				{
+					atomicAdd(&dPos[pId][1], dp_ij[1]);
+					atomicAdd(&dPos[j][1], -dp_ij[1]);
+				}
+				
+				if (Coord::dims() >= 3)
+				{
+					atomicAdd(&dPos[pId][2], dp_ij[2]);
+					atomicAdd(&dPos[j][2], -dp_ij[2]);
+				}
 			}
 		}
 	}

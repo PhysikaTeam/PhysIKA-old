@@ -158,9 +158,9 @@ std::shared_ptr<Physika::Field> Base::getField(const std::string name)
 	return nullptr;
 }
 
-Vector<std::string> Base::getFieldAlias(std::shared_ptr<Field> field)
+std::vector<std::string> Base::getFieldAlias(std::shared_ptr<Field> field)
 {
-	Vector<std::string> names;
+	std::vector<std::string> names;
 	MapPtr<Field>::iterator iter;
 	for (iter = m_fieldAlias.begin(); iter != m_fieldAlias.end(); iter++)
 	{

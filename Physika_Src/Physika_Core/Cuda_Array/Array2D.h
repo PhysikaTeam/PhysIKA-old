@@ -41,37 +41,37 @@ namespace Physika {
 		inline T*		GetDataPtr() { return m_data; }
 		void			SetDataPtr(T* _data) { m_data = _data; }
 
-		HYBRID_FUNC inline int Nx() { return m_nx; }
-		HYBRID_FUNC inline int Ny() { return m_ny; }
+		COMM_FUNC inline int Nx() { return m_nx; }
+		COMM_FUNC inline int Ny() { return m_ny; }
 
-		HYBRID_FUNC inline T operator () (const int i, const int j) const
+		COMM_FUNC inline T operator () (const int i, const int j) const
 		{
 			return m_data[i + j*m_nx];
 		}
 
-		HYBRID_FUNC inline T& operator () (const int i, const int j)
+		COMM_FUNC inline T& operator () (const int i, const int j)
 		{
 			return m_data[i + j*m_nx];
 		}
 
-		HYBRID_FUNC inline int Index(const int i, const int j)
+		COMM_FUNC inline int Index(const int i, const int j)
 		{
 			return i + j*m_nx;
 		}
 
-		HYBRID_FUNC inline T operator [] (const int id) const
+		COMM_FUNC inline T operator [] (const int id) const
 		{
 			return m_data[id];
 		}
 
-		HYBRID_FUNC inline T& operator [] (const int id)
+		COMM_FUNC inline T& operator [] (const int id)
 		{
 			return m_data[id];
 		}
 
-		HYBRID_FUNC inline int Size() { return m_totalNum; }
-		HYBRID_FUNC inline bool IsCPU() { return deviceType; }
-		HYBRID_FUNC inline bool IsGPU() { return deviceType; }
+		COMM_FUNC inline int Size() { return m_totalNum; }
+		COMM_FUNC inline bool IsCPU() { return deviceType; }
+		COMM_FUNC inline bool IsGPU() { return deviceType; }
 
 	public:
 		void AllocMemory();

@@ -10,8 +10,8 @@ using namespace Physika;
 
 class Camera {
 public:
-	Vector3f _eye;
-	Vector3f _light;
+	Vectorold3f _eye;
+	Vectorold3f _light;
 
 	Camera();
 
@@ -24,30 +24,30 @@ public:
 	Transform3D<float> GetCombinedMatrix() const;
 	Transform3D<float> GetCombinedMatrix2() const;
 
-	Vector3f GetViewDir() const;
+	Vectorold3f GetViewDir() const;
 
 	float GetPixelArea() const;
 	int GetWidth() const;
 	int GetHeight() const;
-	Vector3f GetEye() const;
+	Vectorold3f GetEye() const;
 
 
 	float _neardist;
 	float _fardist;
 	float _right;
 
-	void GetCoordSystem(Vector3f &view, Vector3f &up, Vector3f &right) const;
+	void GetCoordSystem(Vectorold3f &view, Vectorold3f &up, Vectorold3f &right) const;
 	void Rotate(Quat1f &rotquat);
 
 private:
 
-	void Translate(const Vector3f translation);
-	void TranslateLight(const Vector3f translation);
-	Vector3f GetPosition(float x, float y);
+	void Translate(const Vectorold3f translation);
+	void TranslateLight(const Vectorold3f translation);
+	Vectorold3f GetPosition(float x, float y);
 	Quat1f GetQuaternion(float x1, float y1, float x2, float y2);
 
 	float _rotation;
-	Vector3f _rotation_axis;
+	Vectorold3f _rotation_axis;
 	float _fov;
 
 	float _x;

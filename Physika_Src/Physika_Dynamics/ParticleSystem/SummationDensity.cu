@@ -1,6 +1,5 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Utilities/template_functions.h"
 #include "SummationDensity.h"
 
 namespace Physika
@@ -34,7 +33,7 @@ namespace Physika
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors[pId][ne];
-			r = length(pos_i - posArr[j]);
+			r = (pos_i - posArr[j]).norm();
 
 			rho_i += mass*kern.Weight(r, smoothingLength);
 		}

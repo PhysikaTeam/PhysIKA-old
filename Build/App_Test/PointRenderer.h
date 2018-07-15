@@ -13,7 +13,7 @@ class PointRenderer : public IRenderer
 {
 public:
 	PointRenderer() { data = NULL; n = 0; }
-	PointRenderer(Vector3f** _data, int* _n);
+	PointRenderer(Vectorold3f** _data, int* _n);
 	~PointRenderer(void);
 
 	virtual void Render(const Camera &camera);
@@ -22,7 +22,7 @@ public:
 	void SetMarker(bool** _marker) { marker = _marker; }
 
 private:
-	Vector3f** data;
+	Vectorold3f** data;
 	float** mapping;
 	float* green;
 	bool** marker;

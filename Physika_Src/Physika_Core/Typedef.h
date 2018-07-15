@@ -5,16 +5,11 @@
 #include <memory>
 #include <string>
 
-#include "Framework/DataTypes.h"
-
 using uint = unsigned int;
 using String = std::string;
 
 template<class T>
 using SPtr = std::shared_ptr<T>;
-
-template<class T>
-using Vector = std::vector< T >;
 
 template<class T>
 using VectorPtr = std::vector< std::shared_ptr<T> >;

@@ -29,7 +29,9 @@ namespace Physika {
 		ParticleSystem<TDataType>* m_parent;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class ParticlePrediction<DataType3f>;
-
-// 	template class ParticlePrediction<DataType3d>;
+#else
+ 	template class ParticlePrediction<DataType3d>;
+#endif
 }

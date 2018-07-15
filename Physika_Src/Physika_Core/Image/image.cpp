@@ -19,7 +19,7 @@
 #include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Range/range.h"
 #include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Core/Image/image.h"
+#include "image.h"
 
 namespace Physika{
 

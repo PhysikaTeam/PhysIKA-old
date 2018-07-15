@@ -98,9 +98,6 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DataTypes.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DeviceContext.h">
       <Filter>Framework</Filter>
     </ClInclude>

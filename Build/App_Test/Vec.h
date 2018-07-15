@@ -800,12 +800,12 @@ template class Vec<3,double>;
 template class Vec<4,float>;
 template class Vec<4,double>;
 
-typedef Vec<2,float> Vector2f;
-typedef Vec<2,double> Vector2d;
-typedef Vec<3,float> Vector3f;
-typedef Vec<3,double> Vector3d;
-typedef Vec<4,float> Vector4f;
-typedef Vec<4,double> Vector4d;
+typedef Vec<2,float> Vectorold2f;
+typedef Vec<2,double> Vectorold2d;
+typedef Vec<3,float> Vectorold3f;
+typedef Vec<3,double> Vectorold3d;
+typedef Vec<4,float> Vectorold4f;
+typedef Vec<4,double> Vectorold4d;
 
 } // namespace mfd
 

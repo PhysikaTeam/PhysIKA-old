@@ -62,19 +62,19 @@ namespace Physika {
 			m_data = tp;
 		}
 
-		HYBRID_FUNC inline T& operator [] (unsigned int id)
+		COMM_FUNC inline T& operator [] (unsigned int id)
 		{
 			return m_data[id];
 		}
 
-		HYBRID_FUNC inline T operator [] (unsigned int id) const
+		COMM_FUNC inline T operator [] (unsigned int id) const
 		{
 			return m_data[id];
 		}
 
-		HYBRID_FUNC inline int Size() { return m_totalNum; }
-		HYBRID_FUNC inline bool isCPU() { return deviceType == DeviceType::CPU; }
-		HYBRID_FUNC inline bool isGPU() { return deviceType == DeviceType::GPU; }
+		COMM_FUNC inline int Size() { return m_totalNum; }
+		COMM_FUNC inline bool isCPU() { return deviceType == DeviceType::CPU; }
+		COMM_FUNC inline bool isGPU() { return deviceType == DeviceType::GPU; }
 
 	protected:
 		void allocMemory();

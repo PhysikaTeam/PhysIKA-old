@@ -7,7 +7,7 @@
 #include "CUDAFunction.h"
 
 
-PointRenderer::PointRenderer(Vector3f** _data, int* _n)
+PointRenderer::PointRenderer(Vectorold3f** _data, int* _n)
 {
 	data = _data;
 	n = _n;

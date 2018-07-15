@@ -41,7 +41,7 @@ GlutWindow::GlutWindow(char * file, int width, int height) {
 
 	glutInit(&dummy_argc, dummy_argv);
 
-    setBackgroundColor(Vector3f(0.3,0.3,0.3));
+    setBackgroundColor(Vectorold3f(0.3,0.3,0.3));
     glutInitDisplayMode (GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -105,7 +105,7 @@ void GlutWindow::initViewerShape(int width, int height) {
 void GlutWindow::initViewerOrientation() {
 }
 
-void GlutWindow::setBackgroundColor(const Vector3f color) {
+void GlutWindow::setBackgroundColor(const Vectorold3f color) {
     _backgroundcolor = color;
 }
 
@@ -152,14 +152,14 @@ void GlutWindow::displayFPS(float cost) {
 			stream << (fps);
 			string s = stream.str();
 			string s2 = string("fps: ") +s;
-			drawString(s2, Vector3f(1.0,0.0,0.0),5,_height-19);
+			drawString(s2, Vectorold3f(1.0,0.0,0.0),5,_height-19);
 		}
 		else {
 			stream.precision(2);
 			stream << (1.0f/fps);
 			string s = stream.str();
 			string s2 = string("spf: ") +s;
-			drawString(s2, Vector3f(1.0,0.0,0.0),5,_height-19);
+			drawString(s2, Vectorold3f(1.0,0.0,0.0),5,_height-19);
 		}
 	}     
 }
@@ -271,7 +271,7 @@ void GlutWindow::CallBackKeyboardFunc(unsigned char key, int x, int y) {
             cout << "Red: "; int red; cin >> red;
             cout << "Green: "; int green; cin >> green;
             cout << "Blue: "; int blue; cin >> blue;
-            setBackgroundColor(Vector3f(float(red)/255.0f, float(green)/255.0f, float(blue)/255.0f));
+            setBackgroundColor(Vectorold3f(float(red)/255.0f, float(green)/255.0f, float(blue)/255.0f));
             break;
         }
 	case 'j':{ // don't know what the GLUT_... for this is
@@ -328,7 +328,7 @@ void GlutWindow::CallBackPassiveMotionFunc( int x, int y )
 
 // --------------------------------------------------------------------------------//
 // STRING DRAWING UTILITY FUNCTION
-void GlutWindow::drawString(std::string s, Vector3f color, int x, int y) {
+void GlutWindow::drawString(std::string s, Vectorold3f color, int x, int y) {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();

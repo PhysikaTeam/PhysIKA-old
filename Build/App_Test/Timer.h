@@ -14,12 +14,12 @@ namespace Physika {
 	 *	\class	Timer
 	 *	\brief	Measure time intervals in milliseconds.
 	 */
-	class Timer
+	class CTimer
 	{
 	public:
 
-		Timer();
-		virtual ~Timer();
+		CTimer();
+		virtual ~CTimer();
 
 		/*!
 		 *	\brief	Start the timing.

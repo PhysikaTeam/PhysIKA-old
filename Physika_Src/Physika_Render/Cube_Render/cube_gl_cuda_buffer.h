@@ -29,12 +29,12 @@ template <typename Scalar, int Dim> class Vector;
 class CubeGLCudaBuffer
 {
 public:
-    CPU_GPU_FUNC_DECL CubeGLCudaBuffer(QuadGLCudaBuffer cuda_triangle_gl_buffer);
+    COMM_FUNC CubeGLCudaBuffer(QuadGLCudaBuffer cuda_triangle_gl_buffer);
 
-    CPU_GPU_FUNC_DECL unsigned int cubeNum() const;
+    COMM_FUNC unsigned int cubeNum() const;
 
     template<typename Scalar>
-    GPU_FUNC_DECL bool setCube(unsigned int idx, 
+    GPU_FUNC bool setCube(unsigned int idx, 
                                const Vector<Scalar, 3> & v0, 
                                const Vector<Scalar, 3> & v1, 
                                const Vector<Scalar, 3> & v2, 
@@ -46,7 +46,7 @@ public:
                                bool auto_compute_normal = true);
 
     template<typename Scalar>
-    GPU_FUNC_DECL bool setCube(unsigned int idx,
+    GPU_FUNC bool setCube(unsigned int idx,
                                const Vector<Scalar, 3> & v0,
                                const Vector<Scalar, 3> & v1,
                                const Vector<Scalar, 3> & v2,

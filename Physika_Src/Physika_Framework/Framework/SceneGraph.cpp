@@ -1,5 +1,6 @@
 #include "SceneGraph.h"
 #include "Action/ActAnimate.h"
+#include "Framework/SceneLoaderFactory.h"
 
 namespace Physika
 {
@@ -38,6 +39,18 @@ void SceneGraph::takeOneFrame()
 void SceneGraph::run()
 {
 
+}
+
+bool SceneGraph::load(std::string name)
+{
+	SceneLoader* loader = SceneLoaderFactory::getInstance()->getEntryByFileName(name);
+	if (loader)
+	{
+		m_root = std::shared_ptr<Node>(loader->load(name));
+		return true;
+	}
+
+	return false;
 }
 
 }

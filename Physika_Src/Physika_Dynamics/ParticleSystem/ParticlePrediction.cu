@@ -1,6 +1,5 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Utilities/template_functions.h"
 #include "ParticlePrediction.h"
 
 namespace Physika
@@ -17,7 +16,7 @@ namespace Physika
 		DeviceArray<Coord> posArr,
 		DeviceArray<Coord> velArr,
 		Coord bodyForce,
-		float dt)
+		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.Size()) return;
@@ -38,7 +37,7 @@ namespace Physika
 		DeviceArray<Coord> posArr,
 		DeviceArray<Coord> velArr,
 		DeviceArray<Attribute> attriArr, 
-		float dt)
+		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.Size()) return;
@@ -70,7 +69,7 @@ namespace Physika
 		DeviceArray<Coord> velArr,
 		DeviceArray<Attribute> attriArr, 
 		Coord bodyForce,
-		float dt)
+		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= velArr.Size()) return;
@@ -91,14 +90,14 @@ namespace Physika
 		DeviceArray<Coord> newVel,
 		DeviceArray<Coord> oldVel,
 		DeviceArray<Attribute> attriArr, 
-		float dt)
+		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= newPos.Size()) return;
 
 		if (!attriArr[pId].IsFixed())
 		{
-			newPos[pId] = oldPos[pId] + 0.5f * dt * (oldVel[pId] + newVel[pId]);
+			newPos[pId] = oldPos[pId] + 0.5 * dt * (oldVel[pId] + newVel[pId]);
 
 #ifdef SIMULATION2D
 			newPos[pId].z = 0.5f;
@@ -153,7 +152,7 @@ namespace Physika
 		DeviceArray<Attribute>* attriArr = m_parent->GetAttributeBuffer()->getDataPtr();
 
 		uint pDims = cudaGridSize(velArr->Size(), BLOCK_SIZE);
-		Coord gravity = Make<Coord>(0);
+		Coord gravity(0);
 		PP_PredictVelocity <Coord> << <pDims, BLOCK_SIZE >> > (*velArr, *attriArr, gravity, dt);
 	}
 

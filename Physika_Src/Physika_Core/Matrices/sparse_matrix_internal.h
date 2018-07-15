@@ -59,8 +59,8 @@ private:
 template <typename Scalar>
 std::ostream& operator<<(std::ostream &s, const SparseMatrixInternal::Trituple<Scalar> &tri)
 {
-    s<<"<"<<tri.row()<<", "<<tri.col()<<", "<<tri.value()<<">";
-    return s;
+	s << "<" << tri.row() << ", " << tri.col() << ", " << tri.value() << ">";
+	return s;
 }
 
 }  //end of namespace SparseMatrixInternal

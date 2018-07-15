@@ -24,9 +24,9 @@
 #include "cuda_helper_math.h"
 #include <iostream>
 
-#define CPU_GPU_FUNC_DECL __host__ __device__
-#define CPU_FUNC_DECL __host__
-#define GPU_FUNC_DECL __device__
+#define COMM_FUNC __host__ __device__
+#define CPU_FUNC __host__
+#define GPU_FUNC __device__
 
 namespace Physika{
 

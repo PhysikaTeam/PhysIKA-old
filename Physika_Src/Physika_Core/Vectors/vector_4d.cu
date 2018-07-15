@@ -14,10 +14,10 @@
 
 #include <limits>
 #include <glm/gtx/norm.hpp>
-
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 //#include "Physika_Core/Utilities/physika_exception.h"
-#include "Physika_Core/Matrices/matrix_4x4.h"
+//#include "Physika_Core/Matrices/matrix_4x4.h"
 #include "Physika_Core/Vectors/vector_4d.h"
 
 namespace Physika{
@@ -184,28 +184,34 @@ CPU_GPU_FUNC_DECL Scalar Vector<Scalar,4>::dot(const Vector<Scalar,4>& vec2) con
 }
 
 template <typename Scalar>
-CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,4> Vector<Scalar,4>::outerProduct(const Vector<Scalar,4> &vec2) const
+CPU_GPU_FUNC_DECL Scalar Physika::Vector<Scalar, 4>::length() const
 {
-    SquareMatrix<Scalar, 4> result;
-    for (unsigned int i = 0; i < 4; ++i)
-        for (unsigned int j = 0; j < 4; ++j)
-            result(i, j) = (*this)[i] * vec2[j];
-    return result;
+	return glm::length(data_);
 }
 
+// template <typename Scalar>
+// CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,4> Vector<Scalar,4>::outerProduct(const Vector<Scalar,4> &vec2) const
+// {
+//     SquareMatrix<Scalar, 4> result;
+//     for (unsigned int i = 0; i < 4; ++i)
+//         for (unsigned int j = 0; j < 4; ++j)
+//             result(i, j) = (*this)[i] * vec2[j];
+//     return result;
+// }
+
 //explicit instantiation of template so that it could be compiled into a lib
-template class Vector<unsigned char, 4>;
-template class Vector<unsigned short, 4>;
-template class Vector<unsigned int, 4>;
-template class Vector<unsigned long, 4>;
-template class Vector<unsigned long long, 4>;
-template class Vector<signed char, 4>;
-template class Vector<short, 4>;
-template class Vector<int, 4>;
-template class Vector<long, 4>;
-template class Vector<long long, 4>;
+// template class Vector<unsigned char, 4>;
+// template class Vector<unsigned short, 4>;
+// template class Vector<unsigned int, 4>;
+// template class Vector<unsigned long, 4>;
+// template class Vector<unsigned long long, 4>;
+// template class Vector<signed char, 4>;
+// template class Vector<short, 4>;
+// template class Vector<int, 4>;
+// template class Vector<long, 4>;
+// template class Vector<long long, 4>;
 template class Vector<float,4>;
 template class Vector<double,4>;
-template class Vector<long double,4>;
+//template class Vector<long double,4>;
 
 } //end of namespace Physika

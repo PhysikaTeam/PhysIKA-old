@@ -1,144 +1,153 @@
 #include <fstream>
 #include "DistanceField3D.h"
+#include "Physika_Core/Utilities/cuda_helper_math.h"
 
 namespace Physika{
 
-	__device__  float DistanceToPlane(const float3 &p, const float3 &o, const float3 &n) {
-		return fabs(dot(p - o, n));
+	template <typename Coord>
+	__device__  float DistanceToPlane(const Coord &p, const Coord &o, const Coord &n) {
+		return fabs((p - o, n).length());
 	}
 
-	__device__  float DistanceToSegment(float3& pos, float3& lo, float3& hi)
+	template <typename Coord>
+	__device__  Real DistanceToSegment(Coord& pos, Coord& lo, Coord& hi)
 	{
-		float3 seg = hi - lo;
-		float3 edge1 = pos - lo;
-		float3 edge2 = pos - hi;
-		if (dot(edge1, seg) < 0.0f)
+		typedef typename Coord::VarType Real;
+		Coord seg = hi - lo;
+		Coord edge1 = pos - lo;
+		Coord edge2 = pos - hi;
+		if (edge1.dot(seg) < 0.0f)
 		{
-			return length(edge1);
+			return edge1.norm();
 		}
-		if (dot(edge2, -seg) < 0.0f)
+		if (edge2.dot(-seg) < 0.0f)
 		{
-			return length(edge2);
+			return edge2.norm();
 		}
-		float length1 = dot(edge1, edge1);
-		normalize(seg);
-		float length2 = dot(edge1, seg);
-		return sqrt(length1 - length2*length2);
+		Real length1 = edge1.dot(edge1);
+		seg.normalize();
+		Real length2 = edge1.dot(seg);
+		return std::sqrt(length1 - length2*length2);
 	}
 
-	__device__  float DistanceToSqure(float3& pos, float3& lo, float3& hi, int axis)
+	template <typename Coord>
+	__device__  Real DistanceToSqure(Coord& pos, Coord& lo, Coord& hi, int axis)
 	{
-		float3 n;
-		float3 corner1, corner2, corner3, corner4;
-		float3 loCorner, hiCorner, p;
+		typedef typename Coord::VarType Real;
+		Coord n;
+		Coord corner1, corner2, corner3, corner4;
+		Coord loCorner, hiCorner, p;
 		switch (axis)
 		{
 		case 0:
-			corner1 = make_float3(lo.x, lo.y, lo.z);
-			corner2 = make_float3(lo.x, hi.y, lo.z);
-			corner3 = make_float3(lo.x, hi.y, hi.z);
-			corner4 = make_float3(lo.x, lo.y, hi.z);
-			n = make_float3(1.0f, 0.0f, 0.0f);
+			corner1 = Coord(lo[0], lo[1], lo[2]);
+			corner2 = Coord(lo[0], hi[1], lo[2]);
+			corner3 = Coord(lo[0], hi[1], hi[2]);
+			corner4 = Coord(lo[0], lo[1], hi[2]);
+			n = Coord(1.0, 0.0, 0.0);
 
-			loCorner = make_float3(lo.y, lo.z, 0.0f);
-			hiCorner = make_float3(hi.y, hi.z, 0.0f);
-			p = make_float3(pos.y, pos.z, 0.0f);
+			loCorner = Coord(lo[1], lo[2], 0.0);
+			hiCorner = Coord(hi[1], hi[2], 0.0);
+			p = Coord(pos[1], pos[2], 0.0f);
 			break;
 		case 1:
-			corner1 = make_float3(lo.x, lo.y, lo.z);
-			corner2 = make_float3(lo.x, lo.y, hi.z);
-			corner3 = make_float3(hi.x, lo.y, hi.z);
-			corner4 = make_float3(hi.x, lo.y, lo.z);
-			n = make_float3(0.0f, 1.0f, 0.0f);
+			corner1 = Coord(lo[0], lo[1], lo[2]);
+			corner2 = Coord(lo[0], lo[1], hi[2]);
+			corner3 = Coord(hi[0], lo[1], hi[2]);
+			corner4 = Coord(hi[0], lo[1], lo[2]);
+			n = Coord(0.0f, 1.0f, 0.0f);
 
-			loCorner = make_float3(lo.x, lo.z, 0.0f);
-			hiCorner = make_float3(hi.x, hi.z, 0.0f);
-			p = make_float3(pos.x, pos.z, 0.0f);
+			loCorner = Coord(lo[0], lo[2], 0.0f);
+			hiCorner = Coord(hi[0], hi[2], 0.0f);
+			p = Coord(pos[0], pos[2], 0.0f);
 			break;
 		case 2:
-			corner1 = make_float3(lo.x, lo.y, lo.z);
-			corner2 = make_float3(hi.x, lo.y, lo.z);
-			corner3 = make_float3(hi.x, hi.y, lo.z);
-			corner4 = make_float3(lo.x, hi.y, lo.z);
-			n = make_float3(0.0f, 0.0f, 1.0f);
+			corner1 = Coord(lo[0], lo[1], lo[2]);
+			corner2 = Coord(hi[0], lo[1], lo[2]);
+			corner3 = Coord(hi[0], hi[1], lo[2]);
+			corner4 = Coord(lo[0], hi[1], lo[2]);
+			n = Coord(0.0f, 0.0f, 1.0f);
 
-			loCorner = make_float3(lo.x, lo.y, 0.0f);
-			hiCorner = make_float3(hi.x, hi.y, 0.0f);
-			p = make_float3(pos.x, pos.y, 0.0f);
+			loCorner = Coord(lo[0], lo[1], 0.0);
+			hiCorner = Coord(hi[0], hi[1], 0.0);
+			p = Coord(pos[0], pos[1], 0.0f);
 			break;
 		}
 
-		float dist1 = DistanceToSegment(pos, corner1, corner2);
-		float dist2 = DistanceToSegment(pos, corner2, corner3);
-		float dist3 = DistanceToSegment(pos, corner3, corner4);
-		float dist4 = DistanceToSegment(pos, corner4, corner1);
-		float dist5 = abs(dot(pos - corner1, n));
-		if (p.x < hiCorner.x && p.x > loCorner.x && p.y < hiCorner.y && p.y > loCorner.y)
+		Real dist1 = DistanceToSegment(pos, corner1, corner2);
+		Real dist2 = DistanceToSegment(pos, corner2, corner3);
+		Real dist3 = DistanceToSegment(pos, corner3, corner4);
+		Real dist4 = DistanceToSegment(pos, corner4, corner1);
+		Real dist5 = abs(n.dot(pos - corner1));
+		if (p[0] < hiCorner[0] && p[0] > loCorner[0] && p[1] < hiCorner[1] && p[1] > loCorner[1])
 			return dist5;
 		else
 			return min(min(dist1, dist2), min(dist3, dist4));
 	}
 
-	__device__  float DistanceToBox(float3& pos, float3& lo, float3& hi)
+	template <typename Coord>
+	__device__  Real DistanceToBox(Coord& pos, Coord& lo, Coord& hi)
 	{
-		float3 corner0 = make_float3(lo.x, lo.y, lo.z);
-		float3 corner1 = make_float3(hi.x, lo.y, lo.z);
-		float3 corner2 = make_float3(hi.x, hi.y, lo.z);
-		float3 corner3 = make_float3(lo.x, hi.y, lo.z);
-		float3 corner4 = make_float3(lo.x, lo.y, hi.z);
-		float3 corner5 = make_float3(hi.x, lo.y, hi.z);
-		float3 corner6 = make_float3(hi.x, hi.y, hi.z);
-		float3 corner7 = make_float3(lo.x, hi.y, hi.z);
-		float dist0 = length(pos - corner0);
-		float dist1 = length(pos - corner1);
-		float dist2 = length(pos - corner2);
-		float dist3 = length(pos - corner3);
-		float dist4 = length(pos - corner4);
-		float dist5 = length(pos - corner5);
-		float dist6 = length(pos - corner6);
-		float dist7 = length(pos - corner7);
-		if (pos.x < hi.x && pos.x > lo.x && pos.y < hi.y && pos.y > lo.y && pos.z < hi.z && pos.z > lo.z)
+		typedef typename Coord::VarType Real;
+		Coord corner0(lo[0], lo[1], lo[2]);
+		Coord corner1(hi[0], lo[1], lo[2]);
+		Coord corner2(hi[0], hi[1], lo[2]);
+		Coord corner3(lo[0], hi[1], lo[2]);
+		Coord corner4(lo[0], lo[1], hi[2]);
+		Coord corner5(hi[0], lo[1], hi[2]);
+		Coord corner6(hi[0], hi[1], hi[2]);
+		Coord corner7(lo[0], hi[1], hi[2]);
+		Real dist0 = (pos - corner0).norm();
+		Real dist1 = (pos - corner1).norm();
+		Real dist2 = (pos - corner2).norm();
+		Real dist3 = (pos - corner3).norm();
+		Real dist4 = (pos - corner4).norm();
+		Real dist5 = (pos - corner5).norm();
+		Real dist6 = (pos - corner6).norm();
+		Real dist7 = (pos - corner7).norm();
+		if (pos[0] < hi[0] && pos[0] > lo[0] && pos[1] < hi[1] && pos[1] > lo[1] && pos[2] < hi[2] && pos[2] > lo[2])
 		{
-			float distx = min(abs(pos.x - hi.x), abs(pos.x - lo.x));
-			float disty = min(abs(pos.y - hi.y), abs(pos.y - lo.y));
-			float distz = min(abs(pos.z - hi.z), abs(pos.z - lo.z));
-			float mindist = min(distx, disty);
+			Real distx = min(abs(pos[0] - hi[0]), abs(pos[0] - lo[0]));
+			Real disty = min(abs(pos[1] - hi[1]), abs(pos[1] - lo[1]));
+			Real distz = min(abs(pos[2] - hi[2]), abs(pos[2] - lo[2]));
+			Real mindist = min(distx, disty);
 			mindist = min(mindist, distz);
 			return mindist;
 		}
 		else
 		{
-			float distx1 = DistanceToSqure(pos, corner0, corner7, 0);
-			float distx2 = DistanceToSqure(pos, corner1, corner6, 0);
-			float disty1 = DistanceToSqure(pos, corner0, corner5, 1);
-			float disty2 = DistanceToSqure(pos, corner3, corner6, 1);
-			float distz1 = DistanceToSqure(pos, corner0, corner2, 2);
-			float distz2 = DistanceToSqure(pos, corner4, corner6, 2);
+			Real distx1 = DistanceToSqure(pos, corner0, corner7, 0);
+			Real distx2 = DistanceToSqure(pos, corner1, corner6, 0);
+			Real disty1 = DistanceToSqure(pos, corner0, corner5, 1);
+			Real disty2 = DistanceToSqure(pos, corner3, corner6, 1);
+			Real distz1 = DistanceToSqure(pos, corner0, corner2, 2);
+			Real distz2 = DistanceToSqure(pos, corner4, corner6, 2);
 			return -min(min(min(distx1, distx2), min(disty1, disty2)), min(distz1, distz2));
 		}
 	}
 
-	__device__  float DistanceToCylinder(float3& pos, float3& center, float radius, float height, int axis)
+	template <typename Real, typename Coord>
+	__device__  Real DistanceToCylinder(Coord& pos, Coord& center, Real radius, Real height, int axis)
 	{
-		float distR;
-		float distH;
+		Real distR;
+		Real distH;
 		switch (axis)
 		{
 		case 0:
-			distH = abs(pos.x - center.x);
-			distR = length(make_float3(0.0f, pos.y - center.y, pos.z - center.z));
+			distH = abs(pos[0] - center[0]);
+			distR = Coord(0.0, pos[1] - center[1], pos[2] - center[2]).norm();
 			break;
 		case 1:
-			distH = abs(pos.y - center.y);
-			distR = length(make_float3(pos.x - center.x, 0.0f, pos.z - center.z));
+			distH = abs(pos[1] - center[1]);
+			distR = Coord(pos[0] - center[0], 0.0, pos[2] - center[2]).norm();
 			break;
 		case 2:
-			distH = abs(pos.z - center.z);
-			distR = length(make_float3(pos.x - center.x, pos.y - center.y, 0.0f));
+			distH = abs(pos[2] - center[2]);
+			distR = Coord(pos[0] - center[0], pos[1] - center[1], 0.0).norm();
 			break;
 		}
 
-		float halfH = height / 2.0f;
+		Real halfH = height / 2.0f;
 		if (distH <= halfH && distR <= radius)
 		{
 			return -min(halfH - distH, radius - distR);
@@ -153,49 +162,55 @@ namespace Physika{
 		}
 		else
 		{
-			float l1 = distR - radius;
-			float l2 = distH - halfH;
-			return sqrt(l1*l1 + l2*l2);
+// 			Real l1 = distR - radius;
+// 			Real l2 = distH - halfH;
+//			return sqrt(l1*l1 + l2*l2);
+			return Vector<Real, 2>(distR - radius, distH - halfH).norm();
 		}
 
 
 	}
 
-	__device__  float DistanceToSphere(float3& pos, float3& center, float radius)
+	template <typename Real, typename Coord>
+	__device__  Real DistanceToSphere(Coord& pos, Coord& center, Real radius)
 	{
-		return length(pos - center) - radius;
+		return (pos - center).length() - radius;
 	}
 
-
-	DistanceField3D::DistanceField3D()
+	template<typename TDataType>
+	DistanceField3D<TDataType>::DistanceField3D()
 	{
 	}
 
-
-	DistanceField3D::DistanceField3D(std::string filename)
+	template<typename TDataType>
+	DistanceField3D<TDataType>::DistanceField3D(std::string filename)
 	{
 		ReadSDF(filename);
 		bInvert = false;
 	}
 
-	void DistanceField3D::SetSpace(const float3 p0, const float3 p1, int nbx, int nby, int nbz)
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::SetSpace(const Coord p0, const Coord p1, int nbx, int nby, int nbz)
 	{
 		left = p0;
 
-		h = (p1 - p0)*make_float3(1.0f / float(nbx+1), 1.0f / float(nby+1), 1.0f / float(nbz+1));
+		h = (p1 - p0)*Coord(1.0 / Real(nbx+1), 1.0 / Real(nby+1), 1.0 / Real(nbz+1));
 
 		gDist.Resize(nbx+1, nby+1, nbz+1);
 	}
 
-	DistanceField3D::~DistanceField3D()
+	template<typename TDataType>
+	DistanceField3D<TDataType>::~DistanceField3D()
 	{
 	}
 
-	void DistanceField3D::Translate(const float3 &t) {
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::Translate(const Coord &t) {
 		left += t;
 	}
 
-	__global__ void K_Scale(Grid1f distance, float s)
+	template <typename Real>
+	__global__ void K_Scale(DeviceArray3D<Real> distance, float s)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		int j = threadIdx.y + (blockIdx.y * blockDim.y);
@@ -208,13 +223,14 @@ namespace Physika{
 		distance(i, j, k) = s*distance(i, j, k);
 	}
 
-	void DistanceField3D::Scale(const float s) {
-		left.x *= s;
-		left.y *= s;
-		left.z *= s;
-		h.x *= s;
-		h.y *= s;
-		h.z *= s;
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::Scale(const Real s) {
+		left[0] *= s;
+		left[1] *= s;
+		left[2] *= s;
+		h[0] *= s;
+		h[1] *= s;
+		h[2] *= s;
 
 		dim3 blockSize = make_uint3(8, 8, 8);
 		dim3 gridDims = cudaGridSize3D(make_uint3(gDist.Nx(), gDist.Ny(), gDist.Nz()), blockSize);
@@ -222,7 +238,8 @@ namespace Physika{
 		K_Scale << <gridDims, blockSize >> >(gDist, s);
 	}
 
-	__global__ void K_Invert(Grid1f distance)
+	template<typename Real>
+	__global__ void K_Invert(DeviceArray3D<Real> distance)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		int j = threadIdx.y + (blockIdx.y * blockDim.y);
@@ -235,7 +252,8 @@ namespace Physika{
 		distance(i, j, k) = -distance(i, j, k);
 	}
 
-	void DistanceField3D::Invert() 
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::Invert()
 	{
 		dim3 blockSize = make_uint3(8, 8, 8);
 		dim3 gridDims = cudaGridSize3D(make_uint3(gDist.Nx(), gDist.Ny(), gDist.Nz()), blockSize);
@@ -243,7 +261,8 @@ namespace Physika{
 		K_Invert << <gridDims, blockSize >> >(gDist);
 	}
 
-	__global__ void K_DistanceFieldToBox(Grid1f distance, float3 start, float3 h, float3 lo, float3 hi, bool inverted)
+	template <typename Real, typename Coord>
+	__global__ void K_DistanceFieldToBox(DeviceArray3D<Real> distance, Coord start, Coord h, Coord lo, Coord hi, bool inverted)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		int j = threadIdx.y + (blockIdx.y * blockDim.y);
@@ -254,12 +273,13 @@ namespace Physika{
 		if (k >= distance.Nz()) return;
 
 		int sign = inverted ? 1.0f : -1.0f;
-		float3 p = start + make_float3(i, j, k)*h;
+		Coord p = start + Coord(i, j, k)*h;
 
 		distance(i, j, k) = sign*DistanceToBox(p, lo, hi);
 	}
 
-	void DistanceField3D::DistanceFieldToBox(float3& lo, float3& hi, bool inverted)
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::DistanceFieldToBox(Coord& lo, Coord& hi, bool inverted)
 	{
 		bInvert = inverted;
 
@@ -269,7 +289,8 @@ namespace Physika{
 		K_DistanceFieldToBox << <gridDims, blockSize >> >(gDist, left, h, lo, hi, inverted);
 	}
 
-	__global__ void K_DistanceFieldToCylinder(Grid1f distance, float3 start, float3 h, float3 center, float radius, float height, int axis, bool inverted)
+	template <typename Real, typename Coord>
+	__global__ void K_DistanceFieldToCylinder(DeviceArray3D<Real> distance, Coord start, Coord h, Coord center, Real radius, Real height, int axis, bool inverted)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		int j = threadIdx.y + (blockIdx.y * blockDim.y);
@@ -281,12 +302,13 @@ namespace Physika{
 
 		int sign = inverted ? -1.0f : 1.0f;
 
-		float3 p = start + make_float3(i, j, k)*h;
+		Coord p = start + Coord(i, j, k)*h;
 
 		distance(i, j, k) = sign*DistanceToCylinder(p, center, radius, height, axis);
 	}
 
-	void DistanceField3D::DistanceFieldToCylinder(float3& center, float radius, float height, int axis, bool inverted)
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::DistanceFieldToCylinder(Coord& center, Real radius, Real height, int axis, bool inverted)
 	{
 		bInvert = inverted;
 
@@ -296,8 +318,8 @@ namespace Physika{
 		K_DistanceFieldToCylinder << <gridDims, blockSize >> >(gDist, left, h, center, radius, height, axis, inverted);
 	}
 
-
-	__global__ void K_DistanceFieldToSphere(Grid1f distance, float3 start, float3 h, float3 center, float radius, bool inverted)
+	template <typename Real, typename Coord>
+	__global__ void K_DistanceFieldToSphere(DeviceArray3D<Real> distance, Coord start, Coord h, Coord center, Real radius, bool inverted)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		int j = threadIdx.y + (blockIdx.y * blockDim.y);
@@ -309,14 +331,15 @@ namespace Physika{
 
 		int sign = inverted ? -1.0f : 1.0f;
 
-		float3 p = start + make_float3(i, j, k)*h;
+		Coord p = start + Coord(i, j, k)*h;
 
-		float3 dir = p - center;
+		Coord dir = p - center;
 
-		distance(i, j, k) = sign*(length(dir)-radius);
+		distance(i, j, k) = sign*(dir.norm()-radius);
 	}
 
-	void DistanceField3D::DistanceFieldToSphere(float3& center, float radius, bool inverted)
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::DistanceFieldToSphere(Coord& center, Real radius, bool inverted)
 	{
 		bInvert = inverted;
 
@@ -326,8 +349,8 @@ namespace Physika{
 		K_DistanceFieldToSphere << <gridDims, blockSize >> >(gDist, left, h, center, radius, inverted);
 	}
 
-
-	void DistanceField3D::ReadSDF(std::string filename)
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::ReadSDF(std::string filename)
 	{
 		std::ifstream input(filename.c_str(), std::ios::in);
 		int nbx, nby, nbz;
@@ -335,25 +358,25 @@ namespace Physika{
 		input >> xx;
 		input >> yy;
 		input >> zz;
-		input >> left.x;
-		input >> left.y;
-		input >> left.z;
-		float t_h;
+		input >> left[0];
+		input >> left[1];
+		input >> left[2];
+		Real t_h;
 		input >> t_h;
 
 		std::cout << "SDF: " << xx << ", " << yy << ", " << zz << std::endl;
-		std::cout << "SDF: " << left.x << ", " << left.y << ", " << left.z << std::endl;
-		std::cout << "SDF: " << left.x + t_h*xx << ", " << left.y + t_h*yy << ", " << left.z + t_h*zz << std::endl;
+		std::cout << "SDF: " << left[0] << ", " << left[1] << ", " << left[2] << std::endl;
+		std::cout << "SDF: " << left[0] + t_h*xx << ", " << left[1] + t_h*yy << ", " << left[2] + t_h*zz << std::endl;
 
 		nbx = xx;
 		nby = yy;
 		nbz = zz;
-		h.x = t_h;
-		h.y = t_h;
-		h.z = t_h;
+		h[0] = t_h;
+		h[1] = t_h;
+		h[2] = t_h;
 
 		int idd = 0;
-		float* distances = new float[(nbx)*(nby)*(nbz)];
+		Real* distances = new Real[(nbx)*(nby)*(nbz)];
 		for (int k = 0; k < zz; k++) {
 			for (int j = 0; j < yy; j++) {
 				for (int i = 0; i < xx; i++) {
@@ -366,12 +389,13 @@ namespace Physika{
 		input.close();
 
 		gDist.Resize(nbx, nby, nbz);
-		cudaCheck(cudaMemcpy(gDist.GetDataPtr(), distances, (nbx)*(nby)*(nbz) * sizeof(float), cudaMemcpyHostToDevice));
+		cudaCheck(cudaMemcpy(gDist.GetDataPtr(), distances, (nbx)*(nby)*(nbz) * sizeof(Real), cudaMemcpyHostToDevice));
 
 		std::cout << "read data successful" << std::endl;
 	}
 
-	void DistanceField3D::Release()
+	template<typename TDataType>
+	void DistanceField3D<TDataType>::Release()
 	{
 		gDist.Release();
 	}

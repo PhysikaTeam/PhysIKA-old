@@ -22,6 +22,9 @@
     <Filter Include="Quaternion">
       <UniqueIdentifier>{213ebecb-3b24-4c79-a0b1-2e02671a4a93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Image">
+      <UniqueIdentifier>{cdecc1ea-cb10-4c51-b564-55416f185a1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector.h">
@@ -37,9 +40,6 @@
       <Filter>Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_4d.h">
-      <Filter>Vectors</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_base.h">
       <Filter>Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\cuda_helper_math.h">
@@ -72,9 +72,6 @@
     <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform_3d.h">
       <Filter>Transform</Filter>
     </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Timer\timer.h">
-      <Filter>Timer</Filter>
-    </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_1x1.h">
       <Filter>Matrices</Filter>
     </ClInclude>
@@ -85,21 +82,6 @@
       <Filter>Matrices</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.h">
-      <Filter>Matrices</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_base.h">
-      <Filter>Matrices</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_MxN.h">
-      <Filter>Matrices</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix.h">
-      <Filter>Matrices</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_internal.h">
-      <Filter>Matrices</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_iterator.h">
       <Filter>Matrices</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\square_matrix.h">
@@ -149,6 +131,30 @@
     <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\CudaRand.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector_base.h">
+      <Filter>Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\DataTypes.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_base.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Timer\CTimer.h">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\physika_exception.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Utilities\physika_stack_trace.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Image\image.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Range\range.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_2d.cpp">
@@ -157,44 +163,28 @@
     <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_3d.cpp">
       <Filter>Transform</Filter>
     </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Core\Timer\timer.cpp">
-      <Filter>Timer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Core\Matrices\sparse_matrix_iterator.cpp">
-      <Filter>Matrices</Filter>
-    </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp">
       <Filter>Quaternion</Filter>
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Core\Timer\GTimer.cpp">
       <Filter>Timer</Filter>
     </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Timer\CTimer.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Utilities\physika_exception.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Utilities\physika_stack_trace.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Image\image.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Core\Range\range.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_1d.cu">
-      <Filter>Vectors</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_2d.cu">
-      <Filter>Vectors</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_3d.cu">
-      <Filter>Vectors</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\Physika_Src\Physika_Core\Vectors\vector_4d.cu">
-      <Filter>Vectors</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_1x1.cu">
-      <Filter>Matrices</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.cu">
-      <Filter>Matrices</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.cu">
-      <Filter>Matrices</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.cu">
-      <Filter>Matrices</Filter>
-    </CudaCompile>
     <CudaCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.cu">
       <Filter>Arrays</Filter>
     </CudaCompile>
@@ -207,5 +197,31 @@
     <CudaCompile Include="..\Physika_Src\Physika_Core\Utilities\Function2Pt.cu">
       <Filter>Utilities</Filter>
     </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Physika_Src\Physika_Core\Vectors\vector_3d.inl">
+      <Filter>Vectors</Filter>
+    </None>
+    <None Include="..\Physika_Src\Physika_Core\Vectors\vector_2d.inl">
+      <Filter>Vectors</Filter>
+    </None>
+    <None Include="..\Physika_Src\Physika_Core\Vectors\vector_1d.inl">
+      <Filter>Vectors</Filter>
+    </None>
+    <None Include="..\Physika_Src\Physika_Core\Vectors\vector_4d.inl">
+      <Filter>Vectors</Filter>
+    </None>
+    <None Include="..\Physika_Src\Physika_Core\Matrices\matrix_3x3.inl">
+      <Filter>Matrices</Filter>
+    </None>
+    <None Include="..\Physika_Src\Physika_Core\Matrices\matrix_2x2.inl">
+      <Filter>Matrices</Filter>
+    </None>
+    <None Include="..\Physika_Src\Physika_Core\Matrices\matrix_1x1.inl">
+      <Filter>Matrices</Filter>
+    </None>
+    <None Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.inl">
+      <Filter>Matrices</Filter>
+    </None>
   </ItemGroup>
 </Project>

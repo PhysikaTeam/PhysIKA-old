@@ -19,20 +19,20 @@
 
 namespace Physika {
 
-CPU_GPU_FUNC_DECL QuadGLCudaBuffer::QuadGLCudaBuffer(LineGLCudaBuffer cuda_line_gl_buffer, TriangleGLCudaBuffer cuda_triangle_gl_buffer)
+COMM_FUNC QuadGLCudaBuffer::QuadGLCudaBuffer(LineGLCudaBuffer cuda_line_gl_buffer, TriangleGLCudaBuffer cuda_triangle_gl_buffer)
     :line_gl_cuda_buffer_(cuda_line_gl_buffer), triangle_gl_cuda_buffer_(cuda_triangle_gl_buffer)
 {
     
 }
 
-CPU_GPU_FUNC_DECL unsigned int QuadGLCudaBuffer::quadNum() const
+COMM_FUNC unsigned int QuadGLCudaBuffer::quadNum() const
 {
-    PHYSIKA_ASSERT(line_gl_cuda_buffer_.lineNum() / 4 == triangle_gl_cuda_buffer_.triangleNum() / 2);
+//    PHYSIKA_ASSERT(line_gl_cuda_buffer_.lineNum() / 4 == triangle_gl_cuda_buffer_.triangleNum() / 2);
     return triangle_gl_cuda_buffer_.triangleNum() / 2;
 }
 
 template<typename Scalar, int Dim>
-GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad(unsigned int idx, 
+GPU_FUNC bool QuadGLCudaBuffer::setQuad(unsigned int idx, 
                                              const Vector<Scalar, Dim>& v0, 
                                              const Vector<Scalar, Dim>& v1, 
                                              const Vector<Scalar, Dim>& v2, 
@@ -55,7 +55,7 @@ GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad(unsigned int idx,
 }
 
 template<typename Scalar, int Dim>
-GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad(unsigned int idx, 
+GPU_FUNC bool QuadGLCudaBuffer::setQuad(unsigned int idx, 
                                              const Vector<Scalar, Dim>& v0, 
                                              const Vector<Scalar, Dim>& v1, 
                                              const Vector<Scalar, Dim>& v2, 
@@ -77,14 +77,14 @@ GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad(unsigned int idx,
 }
 
 //explicit instantiations
-template GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad<float, 2>(unsigned int, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 2> &, bool);
-template GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad<float, 3>(unsigned int, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &, bool);
-template GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad<double, 2>(unsigned int, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 2> &, bool);
-template GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad<double, 3>(unsigned int, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &, bool);
+template GPU_FUNC bool QuadGLCudaBuffer::setQuad<float, 2>(unsigned int, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 2> &, bool);
+template GPU_FUNC bool QuadGLCudaBuffer::setQuad<float, 3>(unsigned int, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &, bool);
+template GPU_FUNC bool QuadGLCudaBuffer::setQuad<double, 2>(unsigned int, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 2> &, bool);
+template GPU_FUNC bool QuadGLCudaBuffer::setQuad<double, 3>(unsigned int, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &, bool);
 
-template GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad<float, 2>(unsigned int, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 3> &);
-template GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad<float, 3>(unsigned int, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &);
-template GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad<double, 2>(unsigned int, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 3> &);
-template GPU_FUNC_DECL bool QuadGLCudaBuffer::setQuad<double, 3>(unsigned int, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &);
+template GPU_FUNC bool QuadGLCudaBuffer::setQuad<float, 2>(unsigned int, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 2> &, const Vector<float, 3> &);
+template GPU_FUNC bool QuadGLCudaBuffer::setQuad<float, 3>(unsigned int, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &, const Vector<float, 3> &);
+template GPU_FUNC bool QuadGLCudaBuffer::setQuad<double, 2>(unsigned int, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 2> &, const Vector<double, 3> &);
+template GPU_FUNC bool QuadGLCudaBuffer::setQuad<double, 3>(unsigned int, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &, const Vector<double, 3> &);
 
 }//end of namespace Physika

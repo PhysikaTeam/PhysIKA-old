@@ -19,7 +19,6 @@
 #define PHYSIKA_RENDER_OPENGL_PRIMITIVES_OPENGL_PRIMITIVES_H_
 
 #include <GL/gl.h>
-
 #include <iostream>
 #include "Physika_Core/Vectors/vector_2d.h"
 #include "Physika_Core/Vectors/vector_3d.h"

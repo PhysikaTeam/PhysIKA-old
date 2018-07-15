@@ -29,12 +29,12 @@ template <typename Scalar, int Dim> class Vector;
 class TetrahedronGLCudaBuffer
 {
 public:
-    CPU_GPU_FUNC_DECL TetrahedronGLCudaBuffer(TriangleGLCudaBuffer cuda_triangle_gl_buffer);
+    COMM_FUNC TetrahedronGLCudaBuffer(TriangleGLCudaBuffer cuda_triangle_gl_buffer);
 
-    CPU_GPU_FUNC_DECL unsigned int tetrahedrondNum() const;
+    COMM_FUNC unsigned int tetrahedrondNum() const;
 
     template<typename Scalar>
-    GPU_FUNC_DECL bool setTetrahedron(unsigned int idx, 
+    GPU_FUNC bool setTetrahedron(unsigned int idx, 
                                const Vector<Scalar, 3> & v0, 
                                const Vector<Scalar, 3> & v1, 
                                const Vector<Scalar, 3> & v2, 
@@ -42,7 +42,7 @@ public:
                                bool auto_compute_normal = true);
 
     template<typename Scalar>
-    GPU_FUNC_DECL bool setTetrahedron(unsigned int idx,
+    GPU_FUNC bool setTetrahedron(unsigned int idx,
                                const Vector<Scalar, 3> & v0,
                                const Vector<Scalar, 3> & v1,
                                const Vector<Scalar, 3> & v2,

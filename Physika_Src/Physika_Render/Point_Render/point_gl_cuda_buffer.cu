@@ -20,23 +20,23 @@
 
 namespace Physika{
 
-CPU_GPU_FUNC_DECL PointGLCudaBuffer::PointGLCudaBuffer(float * point_data_dev_ptr, unsigned int point_num)
+COMM_FUNC PointGLCudaBuffer::PointGLCudaBuffer(float * point_data_dev_ptr, unsigned int point_num)
     :point_data_dev_ptr_(point_data_dev_ptr), point_num_(point_num)
 {    
 }
 
-CPU_GPU_FUNC_DECL float * PointGLCudaBuffer::getCudaPosPtr()
+COMM_FUNC float * PointGLCudaBuffer::getCudaPosPtr()
 {
     return point_data_dev_ptr_;
 }
 
-CPU_GPU_FUNC_DECL unsigned int PointGLCudaBuffer::pointNum() const
+COMM_FUNC unsigned int PointGLCudaBuffer::pointNum() const
 {
     return point_num_;
 }
     
 template<typename Scalar, int Dim>
-GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint(unsigned int idx, const Vector<Scalar, Dim> & pos)
+GPU_FUNC bool PointGLCudaBuffer::setPoint(unsigned int idx, const Vector<Scalar, Dim> & pos)
 {
     if (Dim == 2)
         return setPoint(idx, pos[0], pos[1], static_cast<Scalar>(0));
@@ -45,7 +45,7 @@ GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint(unsigned int idx, const Vector<Sc
 }
 
 template<typename Scalar>
-GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint(unsigned int idx, Scalar x, Scalar y, Scalar z = 0)
+GPU_FUNC bool PointGLCudaBuffer::setPoint(unsigned int idx, Scalar x, Scalar y, Scalar z = 0)
 {
     if (idx >= point_num_)
         return false;
@@ -58,12 +58,12 @@ GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint(unsigned int idx, Scalar x, Scala
 }
 
 //explicit instantiations
-template GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint<float, 2>(unsigned int, const Vector<float, 2> &);
-template GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint<float, 3>(unsigned int, const Vector<float, 3> &);
-template GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint<double, 2>(unsigned int, const Vector<double, 2> &);
-template GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint<double, 3>(unsigned int, const Vector<double, 3> &);
+template GPU_FUNC bool PointGLCudaBuffer::setPoint<float, 2>(unsigned int, const Vector<float, 2> &);
+template GPU_FUNC bool PointGLCudaBuffer::setPoint<float, 3>(unsigned int, const Vector<float, 3> &);
+template GPU_FUNC bool PointGLCudaBuffer::setPoint<double, 2>(unsigned int, const Vector<double, 2> &);
+template GPU_FUNC bool PointGLCudaBuffer::setPoint<double, 3>(unsigned int, const Vector<double, 3> &);
 
-template GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint<float>(unsigned int, float, float, float);
-template GPU_FUNC_DECL bool PointGLCudaBuffer::setPoint<double>(unsigned int, double, double, double);
+template GPU_FUNC bool PointGLCudaBuffer::setPoint<float>(unsigned int, float, float, float);
+template GPU_FUNC bool PointGLCudaBuffer::setPoint<double>(unsigned int, double, double, double);
 
 }//end of namespace Physika

@@ -1,31 +1,16 @@
-/*
- * @file vector_base.h
- * @brief Base class of vectors, all vectors inherit from this class.
- * @author Fei Zhu
- *
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
- *
- * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
- * If a copy of the GPL was not distributed with this file, you can obtain one at:
- * http://www.gnu.org/licenses/gpl-2.0.html
- *
- */
+#pragma once
+#include <cuda_runtime.h>
+#include <iostream>
+#include "Physika_Core/Platform.h"
 
-#ifndef PHYSIKA_CORE_VECTORS_VECTOR_BASE_H_
-#define PHYSIKA_CORE_VECTORS_VECTOR_BASE_H_
-
-namespace Physika{
-
-class VectorBase
-{
-public:
-    VectorBase(){}
-    virtual ~VectorBase(){}
-    virtual unsigned int dims() const=0;
-protected:
-};
+namespace Physika {
+	template <typename Scalar, int Dim>
+	class Vector
+	{
+	public:
+		COMM_FUNC Vector() {};
+		COMM_FUNC ~Vector() {};
+	};
 
 }  //end of namespace Physika
 
-#endif //PHYSIKA_CORE_VECTORS_VECTOR_BASE_H_

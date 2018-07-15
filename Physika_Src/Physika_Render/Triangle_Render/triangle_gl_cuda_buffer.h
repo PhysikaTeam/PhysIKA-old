@@ -27,29 +27,29 @@ template <typename Scalar, int Dim> class Vector;
 class TriangleGLCudaBuffer
 {
 public:
-    CPU_GPU_FUNC_DECL TriangleGLCudaBuffer(float * pos_dev_ptr, float * normal_dev_ptr, unsigned int triangle_num);
+    COMM_FUNC TriangleGLCudaBuffer(float * pos_dev_ptr, float * normal_dev_ptr, unsigned int triangle_num);
 
-    CPU_GPU_FUNC_DECL unsigned int triangleNum() const;
-    CPU_GPU_FUNC_DECL float * getCudaPosPtr();      //return the raw position pointer, each triangle uses 9 float nums representing (x1, y1, z1), (x2, y2, z2), (x3, y3, z3).
-    CPU_GPU_FUNC_DECL float * getCudaNormalPtr();   //return the raw normal pointer, each triangle uses 9 float nums representing (nx1, ny1, nz1), (nx2, ny2, nz2), (nx3, ny3, nz3);
+    COMM_FUNC unsigned int triangleNum() const;
+    COMM_FUNC float * getCudaPosPtr();      //return the raw position pointer, each triangle uses 9 float nums representing (x1, y1, z1), (x2, y2, z2), (x3, y3, z3).
+    COMM_FUNC float * getCudaNormalPtr();   //return the raw normal pointer, each triangle uses 9 float nums representing (nx1, ny1, nz1), (nx2, ny2, nz2), (nx3, ny3, nz3);
 
 
     template<typename Scalar, int Dim>
-    GPU_FUNC_DECL bool setTriangle(unsigned int idx, 
+    GPU_FUNC bool setTriangle(unsigned int idx, 
                                    const Vector<Scalar, Dim> & v0, 
                                    const Vector<Scalar, Dim> & v1, 
                                    const Vector<Scalar, Dim> & v2, 
                                    bool auto_compute_normal = true);
 
     template<typename Scalar, int Dim>
-    GPU_FUNC_DECL bool setTriangle(unsigned int idx,
+    GPU_FUNC bool setTriangle(unsigned int idx,
                                    const Vector<Scalar, Dim> & v0,
                                    const Vector<Scalar, Dim> & v1,
                                    const Vector<Scalar, Dim> & v2,
                                    const Vector<Scalar, 3> & triangle_normal);
 
     template<typename Scalar, int Dim>
-    GPU_FUNC_DECL bool setTriangle(unsigned int idx,
+    GPU_FUNC bool setTriangle(unsigned int idx,
                                    const Vector<Scalar, Dim> & v0,
                                    const Vector<Scalar, Dim> & v1,
                                    const Vector<Scalar, Dim> & v2,
@@ -59,13 +59,13 @@ public:
 
 private:
     template<typename Scalar, int Dim>
-    GPU_FUNC_DECL void setTrianglePos(unsigned int idx, 
+    GPU_FUNC void setTrianglePos(unsigned int idx, 
                                       const Vector<Scalar, Dim> & v0, 
                                       const Vector<Scalar, Dim> & v1,
                                       const Vector<Scalar, Dim> & v2);
 
     template<typename Scalar>
-    GPU_FUNC_DECL void setTriangleNormal(unsigned int idx, 
+    GPU_FUNC void setTriangleNormal(unsigned int idx, 
                                          const Vector<Scalar, 3> & v0_normal,
                                          const Vector<Scalar, 3> & v1_normal,
                                          const Vector<Scalar, 3> & v2_normal);

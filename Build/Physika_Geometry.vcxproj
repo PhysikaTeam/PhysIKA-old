@@ -11,10 +11,55 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\basic_geometry.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\circle.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\cylinder.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\plane.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\sphere.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\boundary_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge_group.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face_group.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\material.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\polygon.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\surface_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\vertex.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Geometry_Intersections\tetrahedron_tetrahedron_intersection.h" />
     <ClInclude Include="..\Physika_Src\Physika_Geometry\SDF\DistanceField3D.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\cubic_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\quad_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tet_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri3d_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\Physika_Src\Physika_Geometry\SDF\DistanceField3D.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\basic_geometry.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\circle.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\cylinder.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\plane.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Basic_Geometry\sphere.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\edge_group.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\face_group.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\material.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\polygon.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\surface_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Boundary_Meshes\vertex.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Geometry_Intersections\tetrahedron_tetrahedron_intersection.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\cubic_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\quad_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tet_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri3d_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\tri_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Geometry\Volumetric_Meshes\volumetric_mesh_internal.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CE1B6999-6E15-4DFD-87FF-30002069A98B}</ProjectGuid>
@@ -72,6 +117,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>compute_60,sm_60</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -96,6 +142,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>compute_60,sm_60</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

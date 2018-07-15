@@ -32,5 +32,9 @@ namespace Physika {
 		DeviceBuffer<Coord>* m_bufVel;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class ViscosityBase<DataType3f>;
+#else
+	template class ViscosityBase<DataType3d>;
+#endif
 }

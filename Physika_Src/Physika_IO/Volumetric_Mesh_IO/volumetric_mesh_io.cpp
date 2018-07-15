@@ -26,8 +26,8 @@
 #include "Physika_Geometry/Volumetric_Meshes/quad_mesh.h"
 #include "Physika_Geometry/Volumetric_Meshes/volumetric_mesh.h"
 #include "Physika_IO/Volumetric_Mesh_IO/volumetric_mesh_io.h"
-#include "Physika_Core/Utilities/File_Utilities/file_content_utilities.h"
-#include "Physika_Core/Utilities/File_Utilities/file_path_utilities.h"
+#include "Physika_IO/File_Utilities/file_content_utilities.h"
+#include "Physika_IO/File_Utilities/file_path_utilities.h"
 
 using std::string;
 using std::fstream;

@@ -30,5 +30,9 @@ namespace Physika {
 		GridHash<TDataType> hash;
 	};
 
+#ifdef PRECISION_FLOAT
 	template class NeighborQuery<DataType3f>;
+#else
+	template class NeighborQuery<DataType3d>;
+#endif
 }

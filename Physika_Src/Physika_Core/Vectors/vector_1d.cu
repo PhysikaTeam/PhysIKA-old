@@ -15,9 +15,8 @@
 #include <limits>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/epsilon.hpp>
-
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/math_utilities.h"
-//#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Matrices/matrix_1x1.h"
 #include "Physika_Core/Vectors/vector_1d.h"
 
@@ -190,6 +189,14 @@ CPU_GPU_FUNC_DECL Scalar Vector<Scalar,1>::dot(const Vector<Scalar,1>& vec2) con
     return data_ * vec2.data_;;
 }
 
+
+template <typename Scalar>
+CPU_GPU_FUNC_DECL Scalar Physika::Vector<Scalar, 1>::length() const
+{
+	return glm::abs(data_);
+}
+
+
 template <typename Scalar>
 CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,1> Vector<Scalar,1>::outerProduct(const Vector<Scalar,1> &vec2) const
 {
@@ -199,18 +206,18 @@ CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,1> Vector<Scalar,1>::outerProduct(co
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class Vector<unsigned char, 1>;
-template class Vector<unsigned short, 1>;
-template class Vector<unsigned int, 1>;
-template class Vector<unsigned long, 1>;
-template class Vector<unsigned long long, 1>;
-template class Vector<signed char, 1>;
-template class Vector<short, 1>;
-template class Vector<int, 1>;
-template class Vector<long, 1>;
-template class Vector<long long, 1>;
+// template class Vector<unsigned char, 1>;
+// template class Vector<unsigned short, 1>;
+// template class Vector<unsigned int, 1>;
+// template class Vector<unsigned long, 1>;
+// template class Vector<unsigned long long, 1>;
+// template class Vector<signed char, 1>;
+// template class Vector<short, 1>;
+// template class Vector<int, 1>;
+// template class Vector<long, 1>;
+// template class Vector<long long, 1>;
 template class Vector<float,1>;
 template class Vector<double,1>;
-template class Vector<long double,1>;
+//template class Vector<long double,1>;
 
 } //end of namespace Physika

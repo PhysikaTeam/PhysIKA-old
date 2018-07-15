@@ -15,7 +15,7 @@
 #ifndef PHYSIKA_GUI_GLUT_WINDOW_GLUT_WINDOW_H_
 #define PHYSIKA_GUI_GLUT_WINDOW_GLUT_WINDOW_H_
 
-#include <GL/gl.h>
+//#include <GL/gl.h>
 #include "Physika_Render/Color/color.h"
 #include "Physika_Render/Render_Scene_Config/render_scene_config.h"
 

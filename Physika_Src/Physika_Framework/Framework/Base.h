@@ -30,7 +30,7 @@ public:
 	bool removeFieldAlias(const std::string name, MapPtr<Field>& fieldAlias);
 
 	std::shared_ptr<Field>		getField(const std::string name);
-	Vector<std::string>	getFieldAlias(std::shared_ptr<Field> data);
+	std::vector<std::string>	getFieldAlias(std::shared_ptr<Field> data);
 	int				getFieldAliasCount(std::shared_ptr<Field> data);
 
 	template<typename T>

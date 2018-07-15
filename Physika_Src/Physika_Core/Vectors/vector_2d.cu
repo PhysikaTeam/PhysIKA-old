@@ -14,7 +14,7 @@
 
 #include <limits>
 #include <glm/gtx/norm.hpp>
-
+#include "Physika_Core/Utilities/physika_assert.h"
 #include "Physika_Core/Utilities/math_utilities.h"
 //#include "Physika_Core/Utilities/physika_exception.h"
 #include "Physika_Core/Matrices/matrix_2x2.h"
@@ -188,6 +188,12 @@ template <typename Scalar>
 CPU_GPU_FUNC_DECL Scalar Vector<Scalar,2>::dot(const Vector<Scalar,2>& vec2) const
 {
     return glm::dot(data_, vec2.data_);
+}
+
+template <typename Scalar>
+CPU_GPU_FUNC_DECL Scalar Physika::Vector<Scalar, 2>::length() const
+{
+	return glm::length(data_);
 }
 
 template <typename Scalar>

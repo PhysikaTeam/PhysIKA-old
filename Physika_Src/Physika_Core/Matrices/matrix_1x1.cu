@@ -213,18 +213,18 @@ CPU_GPU_FUNC_DECL const SquareMatrix<Scalar,1> SquareMatrix<Scalar,1>::identityM
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
-template class SquareMatrix<unsigned char, 1>;
-template class SquareMatrix<unsigned short, 1>;
-template class SquareMatrix<unsigned int, 1>;
-template class SquareMatrix<unsigned long, 1>;
-template class SquareMatrix<unsigned long long, 1>;
-template class SquareMatrix<signed char, 1>;
-template class SquareMatrix<short, 1>;
-template class SquareMatrix<int, 1>;
-template class SquareMatrix<long, 1>;
-template class SquareMatrix<long long, 1>;
+// template class SquareMatrix<unsigned char, 1>;
+// template class SquareMatrix<unsigned short, 1>;
+// template class SquareMatrix<unsigned int, 1>;
+// template class SquareMatrix<unsigned long, 1>;
+// template class SquareMatrix<unsigned long long, 1>;
+// template class SquareMatrix<signed char, 1>;
+// template class SquareMatrix<short, 1>;
+// template class SquareMatrix<int, 1>;
+// template class SquareMatrix<long, 1>;
+// template class SquareMatrix<long long, 1>;
 template class SquareMatrix<float,1>;
 template class SquareMatrix<double,1>;
-template class SquareMatrix<long double,1>;
+//template class SquareMatrix<long double,1>;
 
 }  //end of namespace Physika

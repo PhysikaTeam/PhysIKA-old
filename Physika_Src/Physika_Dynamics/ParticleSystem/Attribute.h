@@ -9,8 +9,8 @@ namespace Physika
 	class Attribute
 	{
 	public:
-		HYBRID_FUNC Attribute() { m_tag = 0; }
-		HYBRID_FUNC ~Attribute() {};
+		COMM_FUNC Attribute() { m_tag = 0; }
+		COMM_FUNC ~Attribute() {};
 
 		enum MaterialType
 		{
@@ -34,31 +34,31 @@ namespace Physika
 			OBJECTID_MASK = 0x000000FF
 		};
 
-		HYBRID_FUNC inline void SetMaterialType(MaterialType type) { m_tag = ((~MATERIAL_MASK) & m_tag) | type; }
-		HYBRID_FUNC inline void SetKinematicType(KinematicType type) { m_tag = ((~KINEMATIC_MASK) & m_tag) | type; }
-		HYBRID_FUNC inline void SetObjectId(unsigned id) { m_tag = ((~OBJECTID_MASK) & m_tag) | id; }
+		COMM_FUNC inline void SetMaterialType(MaterialType type) { m_tag = ((~MATERIAL_MASK) & m_tag) | type; }
+		COMM_FUNC inline void SetKinematicType(KinematicType type) { m_tag = ((~KINEMATIC_MASK) & m_tag) | type; }
+		COMM_FUNC inline void SetObjectId(unsigned id) { m_tag = ((~OBJECTID_MASK) & m_tag) | id; }
 
-		HYBRID_FUNC inline MaterialType GetMaterialType() { return (MaterialType)(m_tag&MATERIAL_MASK); }
-		HYBRID_FUNC inline KinematicType GetKinematicType() { return (KinematicType)(m_tag&KINEMATIC_MASK); }
-		HYBRID_FUNC inline unsigned GetObjectId() { (unsigned)(m_tag&OBJECTID_MASK); }
+		COMM_FUNC inline MaterialType GetMaterialType() { return (MaterialType)(m_tag&MATERIAL_MASK); }
+		COMM_FUNC inline KinematicType GetKinematicType() { return (KinematicType)(m_tag&KINEMATIC_MASK); }
+		COMM_FUNC inline unsigned GetObjectId() { (unsigned)(m_tag&OBJECTID_MASK); }
 
-		HYBRID_FUNC inline bool IsFluid() { return MaterialType::MATERIAL_FLUID == GetMaterialType(); }
-		HYBRID_FUNC inline bool IsRigid() { return MaterialType::MATERIAL_RIGID == GetMaterialType(); }
-		HYBRID_FUNC inline bool IsElastic() { return MaterialType::MATERIAL_ELASTIC == GetMaterialType(); }
-		HYBRID_FUNC inline bool IsPlastic() { return MaterialType::MATERIAL_PLASTIC == GetMaterialType(); }
+		COMM_FUNC inline bool IsFluid() { return MaterialType::MATERIAL_FLUID == GetMaterialType(); }
+		COMM_FUNC inline bool IsRigid() { return MaterialType::MATERIAL_RIGID == GetMaterialType(); }
+		COMM_FUNC inline bool IsElastic() { return MaterialType::MATERIAL_ELASTIC == GetMaterialType(); }
+		COMM_FUNC inline bool IsPlastic() { return MaterialType::MATERIAL_PLASTIC == GetMaterialType(); }
 
-		HYBRID_FUNC inline void SetFluid() { SetMaterialType(MaterialType::MATERIAL_FLUID); }
-		HYBRID_FUNC inline void SetRigid() { SetMaterialType(MaterialType::MATERIAL_RIGID); }
-		HYBRID_FUNC inline void SetElastic() { SetMaterialType(MaterialType::MATERIAL_ELASTIC); }
-		HYBRID_FUNC inline void SetPlastic() { SetMaterialType(MaterialType::MATERIAL_PLASTIC); }
+		COMM_FUNC inline void SetFluid() { SetMaterialType(MaterialType::MATERIAL_FLUID); }
+		COMM_FUNC inline void SetRigid() { SetMaterialType(MaterialType::MATERIAL_RIGID); }
+		COMM_FUNC inline void SetElastic() { SetMaterialType(MaterialType::MATERIAL_ELASTIC); }
+		COMM_FUNC inline void SetPlastic() { SetMaterialType(MaterialType::MATERIAL_PLASTIC); }
 
-		HYBRID_FUNC inline bool IsFixed() { return KinematicType::KINEMATIC_FIXED == GetKinematicType(); }
-		HYBRID_FUNC inline bool IsPassive() { return KinematicType::KINEMATIC_PASSIVE == GetKinematicType(); }
-		HYBRID_FUNC inline bool IsDynamic() { return KinematicType::KINEMATIC_POSITIVE == GetKinematicType(); }
+		COMM_FUNC inline bool IsFixed() { return KinematicType::KINEMATIC_FIXED == GetKinematicType(); }
+		COMM_FUNC inline bool IsPassive() { return KinematicType::KINEMATIC_PASSIVE == GetKinematicType(); }
+		COMM_FUNC inline bool IsDynamic() { return KinematicType::KINEMATIC_POSITIVE == GetKinematicType(); }
 
-		HYBRID_FUNC inline void SetFixed() { SetKinematicType(KinematicType::KINEMATIC_FIXED); }
-		HYBRID_FUNC inline void SetPassive() { SetKinematicType(KinematicType::KINEMATIC_PASSIVE); }
-		HYBRID_FUNC inline void SetDynamic() { SetKinematicType(KinematicType::KINEMATIC_POSITIVE); }
+		COMM_FUNC inline void SetFixed() { SetKinematicType(KinematicType::KINEMATIC_FIXED); }
+		COMM_FUNC inline void SetPassive() { SetKinematicType(KinematicType::KINEMATIC_PASSIVE); }
+		COMM_FUNC inline void SetDynamic() { SetKinematicType(KinematicType::KINEMATIC_POSITIVE); }
 
 	private:
 		unsigned m_tag;

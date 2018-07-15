@@ -45,7 +45,6 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerAnimation.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DataTypes.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DeviceContext.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Field.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Module.h" />
@@ -108,7 +107,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework\;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework\;..\Physika_Src\Physika_Core\;..\Physika_Src\Physika_Dependency\OpenGL\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -121,6 +120,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>compute_60,sm_60</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,7 +130,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework;..\Physika_Src\Physika_Core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework;..\Physika_Src\Physika_Core\;..\Physika_Src\Physika_Dependency\OpenGL\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -145,6 +145,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>compute_60,sm_60</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
