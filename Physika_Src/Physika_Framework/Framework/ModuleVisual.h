@@ -4,14 +4,14 @@
 namespace Physika
 {
 
-class RenderModule : public Module
+class VisualModule : public Module
 {
-	DECLARE_CLASS(RenderModule)
+	DECLARE_CLASS(VisualModule)
 public:
-	RenderModule();
-	virtual ~RenderModule();
+	VisualModule();
+	virtual ~VisualModule();
 
-	virtual void Display() {};
+	virtual void display() {};
 
 private:
 	bool insertToNode(Node* node) override;

@@ -18,6 +18,7 @@
 //#include <GL/gl.h>
 #include "Physika_Render/Color/color.h"
 #include "Physika_Render/Render_Scene_Config/render_scene_config.h"
+#include "Physika_GUI/BaseWindow.h"
 
 namespace Physika{
 
@@ -61,7 +62,7 @@ namespace Physika{
 
 class RenderSceneConfig;
 
-class GlutWindow
+class GlutWindow : public BaseWindow
 {
 public:
     GlutWindow();                                                                        //initialize a window with default name and size

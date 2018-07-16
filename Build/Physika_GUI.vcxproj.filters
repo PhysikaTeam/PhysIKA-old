@@ -23,5 +23,6 @@
     <ClInclude Include="..\Physika_Src\Physika_GUI\Glut_Window\glut_window.h">
       <Filter>Glut_Window</Filter>
     </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_GUI\BaseWindow.h" />
   </ItemGroup>
 </Project>

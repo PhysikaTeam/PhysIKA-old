@@ -13,7 +13,7 @@ class TopologyModule;
 class ForceModule;
 class ConstraintModule;
 class CollisionModule;
-class RenderModule;
+class VisualModule;
 
 class Node : public Base
 {
@@ -147,7 +147,7 @@ public:
 	NODE_ADD_SPECIAL_MODULE(ForceModule, m_force_list)
 	NODE_ADD_SPECIAL_MODULE(ConstraintModule, m_constraint_list)
 	NODE_ADD_SPECIAL_MODULE(CollisionModule, m_collision_list)
-	NODE_ADD_SPECIAL_MODULE(RenderModule, m_render_list)
+	NODE_ADD_SPECIAL_MODULE(VisualModule, m_render_list)
 
 private:
 	float m_dt;
@@ -168,7 +168,7 @@ private:
 	std::list<ForceModule*> m_force_list;
 	std::list<ConstraintModule*> m_constraint_list;
 	std::list<CollisionModule*> m_collision_list;
-	std::list<RenderModule*> m_render_list;
+	std::list<VisualModule*> m_render_list;
 
 	std::shared_ptr<DeviceContext> m_context;
 

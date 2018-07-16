@@ -25,7 +25,7 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleController.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleRender.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleVisual.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleTopology.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Node.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Object.cpp" />
@@ -53,7 +53,7 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleController.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleGeometry.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleRender.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleVisual.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleTopology.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Node.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Object.h" />

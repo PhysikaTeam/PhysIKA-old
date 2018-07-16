@@ -1,5 +1,5 @@
 #include "ActDraw.h"
-#include "Framework/ModuleRender.h"
+#include "Framework/ModuleVisual.h"
 
 namespace Physika
 {
@@ -16,11 +16,11 @@ namespace Physika
 
 	void DrawAct::Process(Node* node)
 	{
-		std::list<RenderModule*>& list = node->getRenderModuleList();
-		std::list<RenderModule*>::iterator iter;
+		std::list<VisualModule*>& list = node->getVisualModuleList();
+		std::list<VisualModule*>::iterator iter;
 		for (iter = list.begin(); iter != list.end(); iter++)
 		{
-			(*iter)->Display();
+			(*iter)->display();
 		}
 	}
 }

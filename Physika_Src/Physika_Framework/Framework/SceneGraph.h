@@ -1,6 +1,6 @@
 #pragma once
-#include "Framework/Base.h"
-#include "Framework/Node.h"
+#include "Physika_Framework/Framework/Base.h"
+#include "Physika_Framework/Framework/Node.h"
 
 namespace Physika {
 class SceneGraph : public Base

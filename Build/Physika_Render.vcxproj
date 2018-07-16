@@ -11,7 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Render\Cube_Render\cube_gl_cuda_buffer.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Render\Line_Render\line_gl_cuda_buffer.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_gl_cuda_buffer.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Render\Quad_Render\quad_gl_cuda_buffer.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_gl_cuda_buffer.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_gl_cuda_buffer.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Render\Utilities\gl_cuda_buffer_test_tool.cu" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Render\Camera\camera.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\ColorBar\ColorMap\color_map.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\Color\color.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\Cube_Render\cube_render_util.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\Cube_Render\cube_solid_render_task.cpp" />
@@ -54,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Render\Camera\camera.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\ColorBar\ColorMap\color_map.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Color\color.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Cube_Render\cube_gl_cuda_buffer.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Cube_Render\cube_render_util.h" />
@@ -110,13 +121,7 @@
     <ClInclude Include="..\Physika_Src\Physika_Render\Utilities\vertex_color_attrib_config.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Cube_Render\cube_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Line_Render\line_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Quad_Render\quad_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Utilities\gl_cuda_buffer_test_tool.cu" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79291DFF-2352-4F41-811D-8D29F2372F77}</ProjectGuid>
@@ -191,7 +196,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework\;..\Physika_Src\Physika_Core\;../Physika_Src/Physika_Dependency/OpenGL/;%(AdditionalIncludeDirectories)$(g3d)\G3D10\build\include;$(CUDA_API_PATH)\include;..\Physika_Src\Physika_Dependency\gtest\include;$(g3d)\G3D10\build\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Physika_Src\;..\Physika_Src\Physika_Framework\;..\Physika_Src\Physika_Core\;../Physika_Src/Physika_Dependency/OpenGL/;$(CUDA_API_PATH)\include;..\Physika_Src\Physika_Dependency\gtest\include;$(g3d)\G3D10\build\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

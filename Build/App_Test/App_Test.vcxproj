@@ -10,6 +10,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <FileType>Document</FileType>
+    </ClCompile>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{01BE38FA-E41A-4608-86C4-FC989263DB8C}</ProjectGuid>
     <RootNamespace>App_Test</RootNamespace>
@@ -53,7 +58,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Physika_Core.lib;Physika_Framework.lib;ParticleSystem.lib;Physika_Geometry.lib;Physika_GUI.lib;Physika_IO.lib;Physika_Render.lib;glew64.lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Physika_Core.lib;Physika_Framework.lib;ParticleSystem.lib;Physika_Geometry.lib;Physika_GUI.lib;Physika_IO.lib;Physika_Render.lib;freeglut.lib;glew32.lib;glew32s.lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Public_Library\lib\debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -80,7 +85,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Physika_Core.lib;Physika_Framework.lib;ParticleSystem.lib;Physika_Geometry.lib;Physika_GUI.lib;Physika_IO.lib;Physika_Render.lib;glew32.lib;opengl32.lib;glu32.lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Physika_Core.lib;Physika_Framework.lib;ParticleSystem.lib;Physika_Geometry.lib;Physika_GUI.lib;Physika_IO.lib;Physika_Render.lib;freeglut.lib;glew32.lib;glew32s.lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Public_Library\lib\release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -95,37 +100,6 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <CodeGeneration>compute_60,sm_60</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="GlutMaster.cpp" />
-    <ClCompile Include="GlutWindow.cpp" />
-    <ClCompile Include="Image.cpp" />
-    <ClCompile Include="main.cpp">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Matrix.cpp" />
-    <ClCompile Include="PointRenderer.cpp" />
-    <ClCompile Include="Timer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Color.h" />
-    <ClInclude Include="CUDAFunction.h" />
-    <ClInclude Include="GlutMaster.h" />
-    <ClInclude Include="GlutWindow.h" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="IRenderer.h" />
-    <ClInclude Include="IWindow.h" />
-    <ClInclude Include="Matrix.h" />
-    <ClInclude Include="PointRenderer.h" />
-    <ClInclude Include="Quaternion.h" />
-    <ClInclude Include="StaticAssert.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Vec.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="CUDAFunction.cu" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.1.targets" />

@@ -42,9 +42,6 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleRender.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleTopology.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -87,6 +84,9 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderXML.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleVisual.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h">
@@ -120,9 +120,6 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleGeometry.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleRender.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleTopology.h">
@@ -165,6 +162,9 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderXML.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleVisual.h">
       <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>

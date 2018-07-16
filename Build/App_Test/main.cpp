@@ -1,4 +1,4 @@
-/*#include <iostream>
+#include <iostream>
 #include <memory>
 #include <cuda_runtime_api.h>
 #include <GL/freeglut.h>
@@ -23,97 +23,44 @@
 #include "Physika_Render/Point_Render/point_vector_render_task.h"
 #include "Physika_Render/Utilities/gl_cuda_buffer_test_tool.h"
 
+#include "Physika_Framework/Framework/SceneGraph.h"
+#include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
 
 using namespace std;
 using namespace Physika;
 
 SurfaceMesh<double> mesh;
+std::shared_ptr<ParticleSystem<DataType3f>> psystem;
+std::shared_ptr<PointRenderUtil> point_render_util;
+
 
 void initFunction()
 {
-	cout << "loading mesh ......" << endl;
-	//ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/scene_dense_mesh_refine_texture.obj", &mesh);
-	ObjMeshIO<double>::load("../../Physika_Test/Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/teapot.obj", &mesh);
-	//ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/bottom_plane.obj", &mesh);
-	//ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/ball_high.obj", &mesh);
-	//ObjMeshIO<double>::load("Physika_Test_Src/Physika_Non_Unit_Test_Src/Physika_Render/Obj_Mesh/SunFlower.obj", &mesh);
-	cout << "load mesh successfully" << endl;
-
 	//---------------------------------------------------------------------------------------------------------------------
 	RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
+	point_render_util = make_shared<PointRenderUtil>();
 
-	//---------------------------------------------------------------------------------------------------------------------
-	std::vector<Vector3f>  pos_vec;
-	for (unsigned int i = 0; i < mesh.numVertices(); ++i)
-	{
-		const Vector3d & pos = mesh.vertexPosition(i);
-		pos_vec.push_back(Vector3f(pos[0], pos[1], pos[2]));
-	}
-
-
-	std::vector<Vector3f> vector_vec;
-	for (unsigned int i = 0; i < mesh.numVertices(); ++i)
-		vector_vec.push_back({ 0, 1, 0 });
-
-	auto point_render_util = make_shared<PointRenderUtil>();
-
-	//point_render_util->setPoints(pos_vec);
-
-	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(mesh.numVertices());
-	//cudaMemcpy(point_gl_cuda_buffer.getCudaPosPtr(), pos_vec.data(), sizeof(float) * 3 * pos_vec.size(), cudaMemcpyHostToDevice);
-	setPointGLCudaBuffer(pos_vec, point_gl_cuda_buffer);
+//	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(pos_vec.size());
+//	cudaMemcpy(point_gl_cuda_buffer.getCudaPosPtr(), pos_vec.data(), sizeof(float) * 3 * pos_vec.size(), cudaMemcpyHostToDevice);
+	DeviceBuffer<float3>* xyz = (DeviceBuffer<float3>*)psystem->GetNewPositionBuffer();
+	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
+	
+	//setPointGLCudaBuffer(pos_vec, point_gl_cuda_buffer);
 	point_render_util->unmapPointGLCudaBuffer();
 
 	//---------------------------------------------------------------------------------------------------------------------
 	auto point_render_task = make_shared<PointRenderTask>(point_render_util);
 	//point_render_task->disableUsePointSprite();
-	point_render_task->setPointScaleForPointSprite(30.0);
+	point_render_task->setPointScaleForPointSprite(3.0);
 	render_scene_config.pushBackRenderTask(point_render_task);
-
-	//---------------------------------------------------------------------------------------------------------------------
-	auto point_vector_render_task = make_shared<PointVectorRenderTask>(point_render_util);
-	point_vector_render_task->setPointVectors(vector_vec);
-	point_vector_render_task->setScaleFactor(0.2);
-
-	Transform3f trans;
-	trans.setTranslation({ 15, 0, 0 });
-	point_vector_render_task->setTransform(trans);
-
-	render_scene_config.pushBackRenderTask(point_vector_render_task);
-
-	//---------------------------------------------------------------------------------------------------------------------
-	//light config
-
-	//auto directional_light = make_shared<DirectionalLight>();
-	//directional_light->setDirection({ 0, -1, 0 });
-	//render_scene_config.pushBackLight(directional_light);
-
-
-	//auto point_light = make_shared<PointLight>();
-	////point_light->setPos({ 0, 10, 0 });
-	//point_light->setPos({ 0, 0, 100 });
-	////point_light->setDiffuse(Color4f::Red());
-	////point_light->setSpecular(Color4f::Black());
-	//render_scene_config.pushBackLight(point_light);
-
-	//auto spot_light = make_shared<SpotLight>();
-	//spot_light->setPos({ 0, 100, 0 });
-	//spot_light->setSpotDirection({ 0, -1, 0 });
-	//spot_light->setSpotCutoff(0.0);
-	//spot_light->setSpotOuterCutoff(20);
-	////spot_light->setSpotExponent(16);
-	//spot_light->setAmbient(Color4f::Gray());
-	//render_scene_config.pushBackLight(spot_light);
 
 	auto flash_light = make_shared<FlashLight>();
 	//flash_light->setAmbient(Color4f::White());
 	render_scene_config.pushBackLight(flash_light);
 
-	
-// 	auto flash_light_2 = make_shared<FlashLight>();
-// 	flash_light_2->setAmbient(Color4f::White());
-// 	render_scene_config.pushBackLight(flash_light_2);
-	
+	render_scene_config.zoomCameraOut(3.0);
+	render_scene_config.translateCameraRight(0.5);
+
 
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
@@ -136,6 +83,11 @@ void displayFunction()
 
 	GlutWindow * cur_window = (GlutWindow*)glutGetWindowData();
 	cur_window->displayFrameRate();
+	DeviceBuffer<float3>* xyz = (DeviceBuffer<float3>*)psystem->GetNewPositionBuffer();
+	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
+	cudaMemcpy(point_gl_cuda_buffer.getCudaPosPtr(), xyz->getDataPtr()->getDataPtr(), sizeof(float) * 3 * xyz->size(), cudaMemcpyDeviceToDevice);
+	point_render_util->unmapPointGLCudaBuffer();
+	cur_window->getScene()->takeOneFrame();
 	glutPostRedisplay();
 	glutSwapBuffers();
 }
@@ -155,9 +107,16 @@ void keyboardFunction(unsigned char key, int x, int y)
 
 int main()
 {
+	std::shared_ptr<SceneGraph> scene = SceneGraph::getInstance();
+
+	psystem = scene->createNewScene<ParticleSystem<DataType3f>>("root");
+	psystem->initialize();
+
 	GlutWindow glut_window;
 	cout << "Window name: " << glut_window.name() << "\n";
 	cout << "Window size: " << glut_window.width() << "x" << glut_window.height() << "\n";
+
+	glut_window.setScene(scene);
 
 	RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
 	//render_scene_config.setCameraPosition(Vector<double, 3>(0, 0, 200));
@@ -174,58 +133,4 @@ int main()
 	cout << "Test window with GLUI controls:\n";
 
 	return 0;
-}*/
-
-
-#include <stdio.h>
-#include "Physika_Core/Vectors/vector_fixed.h"
-#include "Framework/Base.h"
-#include "Framework/Field.h"
-#include "Framework/Module.h"
-#include "Physika_Framework/Framework/SceneGraph.h"
-#include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
-#include <string>
-#include "Physika_Core/Timer/GTimer.h"
-#include "GlutWindow.h"
-#include "GlutMaster.h"
-#include "PointRenderer.h"
-#include <gtest/gtest.h>
-
-using namespace Physika;
-
-int main(int argc, char **argv) {
-// 	testing::InitGoogleTest(&argc, argv);
-// 	int ret = RUN_ALL_TESTS();
-	
-	std::shared_ptr<SceneGraph> scene = SceneGraph::getInstance();
-
-	std::shared_ptr<ParticleSystem<DataType3f>> psystem =
-		scene->createNewScene<ParticleSystem<DataType3f>>("root");
-
-	psystem->initialize();
-
-	GTimer timer;
-	timer.start();
-	for (int i = 0; i < 10; i++)
-	{
-		psystem->advance(0.001f);
-	}
-	timer.stop();
-
-	GlutWindow* win = new GlutWindow("first", 1024, 768);
-
-	win->SetSimulation(scene.get());
-
-	CudaPointRender* renderer = new CudaPointRender((Array<float3>*)psystem->GetNewPositionBuffer()->getDataPtr());
-	renderer->SetColorIndex(psystem->GetDensityBuffer()->getDataPtr());
-	win->AddRenderer(renderer);
-
-	GlutMaster::instance()->SetActiveWindow("first", win);
-	GlutMaster::instance()->SetIdleToCurrentWindow();
-	GlutMaster::instance()->EnableIdleFunction();
-	GlutMaster::instance()->CallGlutMainLoop();
-	
-	std::cout << "Total time: " << timer.getEclipsedTime() << std::endl;
-	
-    return 0;
 }
