@@ -1,6 +1,8 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "SurfaceTension.h"
+#include "INeighbors.h"
+#include "Attribute.h"
 
 
 namespace Physika
@@ -21,12 +23,12 @@ namespace Physika
 	(
 		DeviceArray<Real> energyArr,
 		DeviceArray<Coord> posArr,
-		DeviceArray<NeighborList> neighbors,
+		DeviceArray<SPHNeighborList> neighbors,
 		Real smoothingLength
 	)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		Real total_weight = Real(0);
 		Coord dir_i(0);
@@ -61,7 +63,7 @@ namespace Physika
 		DeviceArray<Real> energyArr, 
 		DeviceArray<Coord> posArr, 
 		DeviceArray<Attribute> attArr,
-		DeviceArray<NeighborList> neighbors, 
+		DeviceArray<SPHNeighborList> neighbors, 
 		Real smoothingLength,
 		Real mass,
 		Real restDensity,
@@ -69,7 +71,7 @@ namespace Physika
 	)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 		if (!attArr[pId].IsDynamic()) return;
 
 		Real Vref = mass / restDensity;
@@ -108,41 +110,32 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	SurfaceTension<TDataType>::SurfaceTension(ParticleSystem<TDataType>* parent)
+	SurfaceTension<TDataType>::SurfaceTension()
 		:Module()
-		,m_parent(parent)
 	{
-		assert(m_parent != NULL);
-
-		setInputSize(2);
-		setOutputSize(1);
-
-		int num = m_parent->GetParticleNumber();
-
-		m_energy = DeviceBuffer<Real>::create(num);
-
-		updateStates();
 	}
 
 	template<typename TDataType>
 	bool SurfaceTension<TDataType>::execute()
 	{
-		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
-		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
-		DeviceArray<Attribute>* attArr = m_parent->GetAttributeBuffer()->getDataPtr();
-		float dt = m_parent->getDt();
-
-		DeviceArray<NeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
-
-		DeviceArray<Real>* energy = m_energy->getDataPtr();
-
-		Real mass = m_parent->GetParticleMass();
-		Real smoothingLength = m_parent->GetSmoothingLength();
-		Real restDensity = m_parent->GetRestDensity();
-
-		uint pDims = cudaGridSize(posArr->Size(), BLOCK_SIZE);
-		ST_ComputeSurfaceEnergy <Real, Coord> << < pDims, BLOCK_SIZE >> > (*energy, *posArr, *neighborArr, smoothingLength);
-		ST_ComputeSurfaceTension <Real, Coord> << < pDims, BLOCK_SIZE >> > (*velArr, *energy, *posArr, *attArr, *neighborArr, smoothingLength, mass, restDensity, dt);
+// 		m_energy = DeviceBuffer<Real>::create(num);
+// 
+// 		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
+// 		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
+// 		DeviceArray<Attribute>* attArr = m_parent->GetAttributeBuffer()->getDataPtr();
+// 		float dt = m_parent->getDt();
+// 
+// 		DeviceArray<SPHNeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
+// 
+// 		DeviceArray<Real>* energy = m_energy->getDataPtr();
+// 
+// 		Real mass = m_parent->GetParticleMass();
+// 		Real smoothingLength = m_parent->GetSmoothingLength();
+// 		Real restDensity = m_parent->GetRestDensity();
+// 
+// 		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
+// 		ST_ComputeSurfaceEnergy <Real, Coord> << < pDims, BLOCK_SIZE >> > (*energy, *posArr, *neighborArr, smoothingLength);
+// 		ST_ComputeSurfaceTension <Real, Coord> << < pDims, BLOCK_SIZE >> > (*velArr, *energy, *posArr, *attArr, *neighborArr, smoothingLength, mass, restDensity, dt);
 
 		return true;
 	}

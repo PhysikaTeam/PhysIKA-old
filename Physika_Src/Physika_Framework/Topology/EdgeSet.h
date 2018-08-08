@@ -10,8 +10,15 @@ namespace Physika
 		EdgeSet();
 		~EdgeSet();
 
-	private:
+		void updatePointNeighbors() override;
+
+		DeviceArray<Edge>* getEdges() {return &m_edges;}
+		NeighborList<int>* getEdgeNeighbors() { return &m_edgeNeighbors; }
+
+	protected:
 		DeviceArray<Edge> m_edges;
+		DeviceArray<int> m_edgeNeighbors;
 	};
+
 }
 

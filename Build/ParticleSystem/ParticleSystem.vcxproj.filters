@@ -15,12 +15,6 @@
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityPBD.h">
       <Filter>Modules</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityProjective.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensitySimple.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\NeighborQuery.h">
       <Filter>Modules</Filter>
     </ClInclude>
@@ -36,11 +30,11 @@
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ViscosityBase.h">
       <Filter>Modules</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Kernel.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Attribute.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\INeighbors.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.cu">
@@ -50,12 +44,6 @@
       <Filter>Modules</Filter>
     </CudaCompile>
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityPBD.cu">
-      <Filter>Modules</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityProjective.cu">
-      <Filter>Modules</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensitySimple.cu">
       <Filter>Modules</Filter>
     </CudaCompile>
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\NeighborQuery.cu">

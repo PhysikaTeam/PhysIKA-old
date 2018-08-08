@@ -11,7 +11,7 @@ class TopologyModule : public Module
 
 public:
 	typedef unsigned int PointType;
-	typedef FixedVector<PointType, 1>	Point;
+	typedef PointType					Point;
 	typedef FixedVector<PointType, 2>	Edge;
 	typedef FixedVector<PointType, 3>	Triangle;
 	typedef FixedVector<PointType, 4>	Quad;
@@ -25,7 +25,17 @@ public:
 
 	virtual int getDOF() { return 0; }
 
-private:
+	virtual bool updateTopology() { return true; }
 
+	inline void tagAsChanged() { m_topologyChanged = true; }
+	inline void tagAsUnchanged() { m_topologyChanged = false; }
+	inline bool isTopologyChanged() { return m_topologyChanged; }
+
+public:
+	void insertToNodeImpl(Node* node) override;
+	void deleteFromNodeImpl(Node* node) override;
+
+private:
+	bool m_topologyChanged;
 };
 }

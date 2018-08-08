@@ -72,9 +72,10 @@ namespace Physika {
 			return m_data[id];
 		}
 
-		COMM_FUNC inline int Size() { return m_totalNum; }
+		COMM_FUNC inline int size() { return m_totalNum; }
 		COMM_FUNC inline bool isCPU() { return deviceType == DeviceType::CPU; }
 		COMM_FUNC inline bool isGPU() { return deviceType == DeviceType::GPU; }
+		COMM_FUNC inline bool isEmpty() { return m_data == NULL; }
 
 	protected:
 		void allocMemory();

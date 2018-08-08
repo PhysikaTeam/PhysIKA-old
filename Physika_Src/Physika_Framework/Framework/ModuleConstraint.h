@@ -3,16 +3,21 @@
 
 namespace Physika
 {
+class Field;
+
 class ConstraintModule : public Module
 {
-	DECLARE_CLASS(ConstraintModule)
 public:
 	ConstraintModule();
 	virtual ~ConstraintModule();
 
-	bool insertToNode(Node* node) override;
-	bool deleteFromNode(Node* node) override;
-private:
+	//interface for data initialization, must be called before execution
+	virtual bool connectPosition(std::shared_ptr<Field>& pos) = 0;
+	virtual bool connectVelocity(std::shared_ptr<Field>& vel) = 0;
 
+
+	void insertToNodeImpl(Node* node) override;
+	void deleteFromNodeImpl(Node* node) override;
+private:
 };
 }

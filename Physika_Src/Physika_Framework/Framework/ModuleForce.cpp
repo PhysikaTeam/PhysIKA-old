@@ -13,16 +13,14 @@ ForceModule::~ForceModule()
 {
 }
 
-bool ForceModule::insertToNode(Node* node)
+void ForceModule::insertToNodeImpl(Node* node)
 {
 	node->addForceModule(this);
-	return true;
 }
 
-bool ForceModule::deleteFromNode(Node* node)
+void ForceModule::deleteFromNodeImpl(Node* node)
 {
 	node->deleteForceModule(this);
-	return true;
 }
 
 }

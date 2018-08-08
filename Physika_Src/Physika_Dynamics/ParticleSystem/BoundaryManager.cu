@@ -1,6 +1,7 @@
 #include "Physika_Core/Utilities/CudaRand.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "BoundaryManager.h"
+#include "Physika_Framework/Framework/Node.h"
 
 namespace Physika {
 
@@ -17,18 +18,20 @@ namespace Physika {
 		DeviceArray<Attribute> attArr)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= attArr.Size()) return;
+		if (pId >= attArr.size()) return;
 
 		status[pId] = NeedConstrain(attArr[pId]) ? 1 : 0;
 	}
 
+
 	template<typename TDataType>
-	BoundaryManager<TDataType>::BoundaryManager(ParticleSystem<TDataType>* parent)
-		:Module()
-		, m_parent(parent)
+	BoundaryManager<TDataType>::BoundaryManager()
+		: Module()
+		, m_bConstrained(NULL)
 	{
-		int pNum = m_parent->GetParticleNumber();
-		m_bConstrained = DeviceBuffer<int>::create(pNum);
+		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
+		initArgument(&m_velocity, "Velocity", "CUDA array used to store particles' velocities");
+		initArgument(&m_attribute, "Attribute", "CUDA array used to store particles' attributes");
 	}
 
 	template<typename TDataType>
@@ -44,19 +47,25 @@ namespace Physika {
 	template<typename TDataType>
 	bool BoundaryManager<TDataType>::execute()
 	{
-		Array<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
-		Array<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
-		Array<Attribute>* attArr = m_parent->GetAttributeBuffer()->getDataPtr();
+		DeviceArray<Coord>* posArr = m_position.getField().getDataPtr();
+		DeviceArray<Coord>* velArr = m_velocity.getField().getDataPtr();
+		DeviceArray<Attribute>* attArr = m_attribute.getField().getDataPtr();
 
-		float dt = m_parent->getDt();
+		Real dt = getParent()->getDt();
 
 		Constrain(*posArr, *velArr, *attArr, dt);
 		return true;
 	}
 
+
 	template<typename TDataType>
 	void BoundaryManager<TDataType>::Constrain(DeviceArray<Coord>& posArr, DeviceArray<Coord>& velArr, DeviceArray<Attribute>& attArr, float dt)
 	{
+		int pNum = posArr.size();
+		if (m_bConstrained == NULL)
+		{
+			m_bConstrained = DeviceBuffer<int>::create(pNum);
+		}
 		DeviceArray<int>* stat = m_bConstrained->getDataPtr();
 		uint pDims = cudaGridSize(m_bConstrained->size(), BLOCK_SIZE);
 		BM_CheckStatues << <pDims, BLOCK_SIZE >> > (*stat, attArr);
@@ -92,7 +101,7 @@ namespace Physika {
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 		if (attArr[pId] == 0) return;
 
 		Coord pos = posArr[pId];
@@ -126,7 +135,7 @@ namespace Physika {
 	template<typename TDataType>
 	void BarrierDistanceField3D<TDataType>::Constrain(DeviceArray<Coord>& posArr, DeviceArray<Coord>& velArr, DeviceArray<int>& attArr, Real dt)
 	{
-		uint pDim = cudaGridSize(posArr.Size(), BLOCK_SIZE);
+		uint pDim = cudaGridSize(posArr.size(), BLOCK_SIZE);
 		K_Constrain << <pDim, BLOCK_SIZE >> > (posArr, velArr, attArr, *distancefield3d, normalFriction, tangentialFriction, dt);
 	}
 }

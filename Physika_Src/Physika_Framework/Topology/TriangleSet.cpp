@@ -11,4 +11,11 @@ namespace Physika
 	TriangleSet<Coord>::~TriangleSet()
 	{
 	}
+
+	template<typename Coord>
+	void TriangleSet<Coord>::updatePointNeighbors()
+	{
+
+	}
+
 }

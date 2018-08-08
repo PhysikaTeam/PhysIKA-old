@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Physika_Framework/Framework/Field.h"
+#include "Physika_Framework/Framework/Object.h"
 
 namespace Physika {
 /**
@@ -10,10 +11,14 @@ namespace Physika {
 *  It defines how to retrieve information about an class (name, type, data fields).
 *
 */
-class Base
+
+class Base : public Object
 {
 public:
-	Base() {};
+	typedef std::vector<std::shared_ptr<Field>> FieldVector;
+	typedef std::map<std::string, std::shared_ptr<Field>> FieldMap;
+
+	Base() : Object() {};
 	virtual ~Base() {};
 
 	bool addField(std::shared_ptr<Field> data);
@@ -163,9 +168,8 @@ protected:
 	}
 
 private:
-	VectorPtr<Field> m_field;
-
-	MapPtr<Field> m_fieldAlias;
+	FieldVector m_field;
+	FieldMap m_fieldAlias;
 };
 
 }

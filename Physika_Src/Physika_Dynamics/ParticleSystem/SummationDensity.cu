@@ -1,6 +1,7 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "SummationDensity.h"
+#include "Attribute.h"
 
 namespace Physika
 {
@@ -17,13 +18,13 @@ namespace Physika
 	__global__ void SD_ComputeDensity(
 		DeviceArray<Real> rhoArr,
 		DeviceArray<Coord> posArr,
-		DeviceArray<NeighborList> neighbors,
+		DeviceArray<SPHNeighborList> neighbors,
 		Real smoothingLength,
 		Real mass
 	)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		SpikyKernel<Real> kern;
 		Real r;
@@ -40,36 +41,41 @@ namespace Physika
 		rhoArr[pId] = rho_i;
 	}
 
+
 	template<typename TDataType>
-	SummationDensity<TDataType>::SummationDensity(ParticleSystem<TDataType>* parent)
+	SummationDensity<TDataType>::SummationDensity()
 		:Module()
-		,m_parent(parent)
-		,m_factor(1.0f)
+		, m_factor(1.0f)
 	{
-		assert(m_parent != NULL);
-
-		setInputSize(1);
-		setOutputSize(1);
-
-		updateStates();
+		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
+		initArgument(&m_density, "Density", "CUDA array used to store particles' densities");
+		initArgument(&m_radius, "Radius", "Smoothing length");
+		initArgument(&m_neighbors, "Neighbors", "Neighbors");
+		initArgument(&m_mass, "Mass", "Particle mass");
 	}
 
 	template<typename TDataType>
-	bool SummationDensity<TDataType>::execute()
+	bool SummationDensity<TDataType>::initialize()
 	{
-		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
-		DeviceArray<Real>* rhoArr = m_parent->GetDensityBuffer()->getDataPtr();
-		DeviceArray<NeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
-		float dt = m_parent->getDt();
+		return true;
+	}
 
-		Real mass = m_factor * m_parent->GetParticleMass();
-		Real smoothingLength = m_parent->GetSmoothingLength();
+	template<typename TDataType>
+	bool Physika::SummationDensity<TDataType>::execute()
+	{
+		DeviceArray<Coord>* posArr = m_position.getField().getDataPtr();
+		DeviceArray<Real>* rhoArr = m_density.getField().getDataPtr();
+		DeviceArray<SPHNeighborList>* neighborArr = m_neighbors.getField().getDataPtr();
 
-		uint pDims = cudaGridSize(posArr->Size(), BLOCK_SIZE);
+		Real mass = m_mass.getField().getValue();
+		Real smoothingLength = m_radius.getField().getValue();
+
+		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
 		SD_ComputeDensity <Real, Coord> << <pDims, BLOCK_SIZE >> > (*rhoArr, *posArr, *neighborArr, smoothingLength, mass);
 
 		return true;
 	}
+
 
 	template<typename TDataType>
 	bool SummationDensity<TDataType>::updateStates()

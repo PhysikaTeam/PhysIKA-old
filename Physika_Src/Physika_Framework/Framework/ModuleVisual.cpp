@@ -6,6 +6,7 @@ namespace Physika
 IMPLEMENT_CLASS(VisualModule)
 
 VisualModule::VisualModule()
+	: Module()
 {
 }
 
@@ -13,16 +14,14 @@ VisualModule::~VisualModule()
 {
 }
 
-bool VisualModule::insertToNode(Node* node)
+void VisualModule::insertToNodeImpl(Node* node)
 {
 	node->addVisualModule(this);
-	return true;
 }
 
-bool VisualModule::deleteFromNode(Node* node)
+void VisualModule::deleteFromNodeImpl(Node* node)
 {
 	node->deleteVisualModule(this);
-	return true;
 }
 
 }

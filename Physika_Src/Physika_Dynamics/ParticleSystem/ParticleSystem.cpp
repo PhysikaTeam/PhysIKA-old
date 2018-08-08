@@ -1,178 +1,190 @@
 #include "ParticleSystem.h"
+#include "Framework/DeviceContext.h"
+#include "Attribute.h"
+#include "INeighbors.h"
+#include "Physika_Framework/Topology/PointSet.h"
+#include "Physika_Framework/Framework/Node.h"
 #include "DensityPBD.h"
 #include "ParticlePrediction.h"
-#include "ViscosityBase.h"
 #include "NeighborQuery.h"
 #include "SummationDensity.h"
-#include "SurfaceTension.h"
-#include "DensitySimple.h"
 #include "BoundaryManager.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "ViscosityBase.h"
 #include "Physika_Core/Utilities/Reduction.h"
-
+#include "Physika_Core/Utilities/Function1Pt.h"
 
 namespace Physika
 {
 	template<typename TDataType>
-	ParticleSystem<TDataType>::ParticleSystem(String name)
-		: Node(name)
+	ParticleSystem<TDataType>::ParticleSystem()
+		: NumericalModel()
 	{
-		m_num = this->allocHostVariable<size_t>("num", "Particle number");
-		m_mass = this->allocHostVariable<Real>("mass", "Particle mass", Real(1));
-		m_smoothingLength = this->allocHostVariable<Real>("smoothingLength", "Smoothing length", Real(0.0125));
-		m_samplingDistance = this->allocHostVariable<Real>("samplingDistance", "Sampling distance", Real(0.005));
-		m_restDensity = this->allocHostVariable<Real>("restDensity", "Rest density", Real(1000));
-		m_viscosity = this->allocHostVariable<Real>("viscosity", "Viscosity", Real(0.05));
+	}
 
-		m_lowerBound = this->allocHostVariable<Coord>("lowerBound", "Lower bound", Coord(0));
-		m_upperBound = this->allocHostVariable<Coord>("upperBound", "Upper bound", Coord(1));
+	template<typename TDataType>
+	ParticleSystem<TDataType>::~ParticleSystem()
+	{
 
-		m_gravity = this->allocHostVariable<Coord>("gravity", "gravity", Coord(0.0f, -9.8f, 0.0f));
 	}
 
 	template<typename TDataType>
 	bool ParticleSystem<TDataType>::initialize()
 	{
-		setAsCurrentContext();
+		this->NumericalModel::initialize();
 
-// 		for (int m = 0; m < models.size(); m++)
-// 		{
-// 			int num = models[m]->positions.size();
-// 			for (int i = 0; i < num; i++)
-// 			{
-// 				poss.push_back(models[m]->positions[i]);
-// 				vels.push_back(models[m]->velocities[i]);
-// 				atts.push_back(models[m]->attributes[i]);
-// 			}
-// 		}
+		Node* parent = getParent();
+		if (parent == NULL)
+		{
+			Log::sendMessage(Log::Error, "Should insert this module into a node!");
+			return false;
+		}
 
+		PointSet<Coord>* pSet = dynamic_cast<PointSet<Coord>*>(parent->getTopologyModule());
+		if (pSet == NULL)
+		{
+			Log::sendMessage(Log::Error, "The topology module is not supported!");
+			return false;
+		}
 
+		m_num = this->allocHostVariable<size_t>("num", "Particle number", (size_t)pSet->getPointSize());
+		m_mass = this->allocHostVariable<Real>("mass", "Particle mass", Real(1));
+		m_smoothingLength = this->allocHostVariable<Real>("smoothingLength", "Smoothing length", Real(0.0125));
+		m_samplingDistance = this->allocHostVariable<Real>("samplingDistance", "Sampling distance", Real(0.005));
+		m_restDensity = this->allocHostVariable<Real>("restDensity", "Rest density", Real(1000));
+
+		m_lowerBound = this->allocHostVariable<Coord>("lowerBound", "Lower bound", Coord(0));
+		m_upperBound = this->allocHostVariable<Coord>("upperBound", "Upper bound", Coord(1));
+
+		m_gravity = this->allocHostVariable<Coord>("gravity", "gravity", Coord(0.0f, -9.8f, 0.0f));
+
+		std::shared_ptr<DeviceContext> dc = getParent()->getContext();
+
+		dc->enable();
+
+		std::cout << "Point number: " << m_num->getValue() << std::endl;
+		auto posBuf = dc->allocDeviceBuffer<Coord>("POSITION1", "Particle positions", m_num->getValue());
+		auto velBuf = dc->allocDeviceBuffer<Coord>("VELOCITY1", "Particle velocities", m_num->getValue());
+		auto restPos = dc->allocDeviceBuffer<Coord>("OLD_POSITION1", "Old particle positions", m_num->getValue());
+		auto restVel = dc->allocDeviceBuffer<Coord>("OLD_VELOCITY1", "Particle positions", m_num->getValue());
+		auto rhoBuf = dc->allocDeviceBuffer<Real>("DENSITY1", "Particle densities", m_num->getValue());
+		auto neighborBuf = dc->allocDeviceBuffer<SPHNeighborList>("NEIGHBORHOOD1", "Particle neighbor ids", m_num->getValue());
+		auto attBuf = dc->allocDeviceBuffer<Attribute>("ATTRIBUTE1", "Particle attributes", m_num->getValue());
+
+		auto pbdModule = new DensityPBD<TDataType>();
+		pbdModule->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
+		pbdModule->connectVelocity(TypeInfo::CastPointerUp<Field>(velBuf));
+		pbdModule->connectDensity(TypeInfo::CastPointerUp<Field>(rhoBuf));
+		pbdModule->connectRadius(TypeInfo::CastPointerUp<Field>(m_smoothingLength));
+		pbdModule->connectAttribute(TypeInfo::CastPointerUp<Field>(attBuf));
+		pbdModule->connectMass(TypeInfo::CastPointerUp<Field>(m_mass));
+		pbdModule->connectNeighbor(TypeInfo::CastPointerUp<Field>(neighborBuf));
+
+		auto prediction = new ParticlePrediction<TDataType>();
+		prediction->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
+		prediction->connectVelocity(TypeInfo::CastPointerUp<Field>(velBuf));
+		prediction->connectAttribute(TypeInfo::CastPointerUp<Field>(attBuf));
+
+		auto nQuery = new NeighborQuery<TDataType>();
+		nQuery->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
+		nQuery->connectNeighbor(TypeInfo::CastPointerUp<Field>(neighborBuf));
+		nQuery->connectSamplingDistance(TypeInfo::CastPointerUp<Field>(m_samplingDistance));
+		nQuery->connectSmoothingLength(TypeInfo::CastPointerUp<Field>(m_smoothingLength));
+
+		auto* bmgr = new BoundaryManager<TDataType>();
+		Coord lo(0.0f);
+		Coord hi(1.0f);
+		DistanceField3D<TDataType> * box = new DistanceField3D<TDataType>();
+		box->SetSpace(lo - m_samplingDistance->getValue() * 5, hi + m_samplingDistance->getValue() * 5, 105, 105, 105);
+		box->DistanceFieldToBox(lo, hi, true);
+		//		box->DistanceFieldToSphere(make_float3(0.5f), 0.2f, true);
+		bmgr->InsertBarrier(new BarrierDistanceField3D<TDataType>(box));
+		bmgr->connectAttribute(TypeInfo::CastPointerUp<Field>(attBuf));
+		bmgr->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
+		bmgr->connectVelocity(TypeInfo::CastPointerUp<Field>(velBuf));
+
+		auto* visModule = new ViscosityBase<TDataType>();
+		visModule->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
+		visModule->connectVelocity(TypeInfo::CastPointerUp<Field>(velBuf));
+		visModule->connectAttribute(TypeInfo::CastPointerUp<Field>(attBuf));
+		visModule->connectDensity(TypeInfo::CastPointerUp<Field>(rhoBuf));
+		visModule->connectSamplingDistance(TypeInfo::CastPointerUp<Field>(m_samplingDistance));
+		visModule->connectRadius(TypeInfo::CastPointerUp<Field>(m_smoothingLength));
+		visModule->connectNeighbor(TypeInfo::CastPointerUp<Field>(neighborBuf));
+
+		parent->addModule(nQuery);
+		parent->addModule(pbdModule);
+		parent->addModule(prediction);
+		parent->addModule(bmgr);
+		parent->addModule(visModule);
+		
 		std::vector<Coord> positions;
 		std::vector<Coord> velocities;
 		std::vector<Attribute> attributes;
-		for (float x = 0.4; x < 0.6; x += 0.005f) {
-			for (float y = 0.1; y < 0.2; y += 0.005f) {
-				for (float z = 0.4; z < 0.6; z += 0.005f) {
-					//float3 pos = make_float3(float(x), float(y), float(z));
-					positions.push_back(Coord(float(x), float(y), float(z)));
-					//velocities.push_back(Coord(0));
-					if (x < 0.5)
-					{
-						velocities.push_back(Coord(1, 0, 0));
-					}
-					else
-						velocities.push_back(Coord(-1, 0, 0));
-					Attribute attri;
-					attri.SetFluid();
-					attri.SetDynamic();
-					attributes.push_back(attri);
-				}
-			}
-		}
-
-
-		SetParticleNumber(positions.size());
-
-		std::shared_ptr<DeviceContext> dc = getContext();
-
-		dc->allocDeviceBuffer<Coord>("POSITION", "Particle positions", m_num->getValue());
-		dc->allocDeviceBuffer<Coord>("VELOCITY", "Particle velocities", m_num->getValue());
-		dc->allocDeviceBuffer<Coord>("OLD_POSITION", "Old particle positions", m_num->getValue());
-		dc->allocDeviceBuffer<Coord>("OLD_VELOCITY", "Particle positions", m_num->getValue());
-		dc->allocDeviceBuffer<Real>("DENSITY", "Particle densities", m_num->getValue());
-		dc->allocDeviceBuffer<NeighborList>("NEIGHBORHOOD", "Particle neighbor ids", m_num->getValue());
-		dc->allocDeviceBuffer<Attribute>("ATTRIBUTE", "Particle attributes", m_num->getValue());
-
-		Function1Pt::Copy(*(this->GetNewPositionBuffer()->getDataPtr()), positions);
-		Function1Pt::Copy(*(this->GetNewVelocityBuffer()->getDataPtr()), velocities);
-		Function1Pt::Copy(*(this->GetAttributeBuffer()->getDataPtr()), attributes);
-
-		int nn = this->GetParticleNumber();
-		this->addModule("CONSTRAIN_DENSITY", new DensityPBD<TDataType>(this));
-		this->addModule("COMPUTE_VISCOSITY", new ViscosityBase<TDataType>(this));
-		this->addModule("COMPUTE_NEIGHBORS", new NeighborQuery<TDataType>(this));
-		this->addModule("COMPUTE_DENSITY", new SummationDensity<TDataType>(this));
-		this->addModule("COMPUTE_SURFACE_TENSION", new SurfaceTension<TDataType>(this));
- 		this->addModule("PREDICT_PARTICLES", new ParticlePrediction<TDataType>(this));
-
-		BoundaryManager<TDataType>* bmgr = new BoundaryManager<TDataType>(this);
-
-		DistanceField3D<TDataType> * box = new DistanceField3D<TDataType>();
-		box->SetSpace(this->GetLowerBound() - this->GetSamplingDistance() * 5, this->GetUpperBound() + this->GetSamplingDistance() * 5, 105, 105, 105);
-		box->DistanceFieldToBox(this->GetLowerBound(), this->GetUpperBound(), true);
-		//		box->DistanceFieldToSphere(make_float3(0.5f), 0.2f, true);
-		bmgr->InsertBarrier(new BarrierDistanceField3D<TDataType>(box));
-		this->addModule("BOUNDARY_HANDLING", bmgr);
-
-
-		if (1)
+		for (int i = 0; i < m_num->getValue(); i++)
 		{
-			this->execute("COMPUTE_NEIGHBORS");
-			this->execute("COMPUTE_DENSITY");
+			velocities.push_back(Coord(0, -1.0, 0));
+			Attribute attri;
+			attri.SetFluid();
+			attri.SetDynamic();
+			attributes.push_back(attri);
+		}
+		Function1Pt::Copy(*(posBuf->getDataPtr()), *(pSet->getPoints()));
+		Function1Pt::Copy(*(velBuf->getDataPtr()), velocities);
+		Function1Pt::Copy(*(attBuf->getDataPtr()), attributes);
 
-			DeviceArray<Real>* gpgRho = this->GetDensityBuffer()->getDataPtr();
 
-			Reduction<Real>* pReduce = Reduction<Real>::Create(gpgRho->Size());
+ 		if (1)
+ 		{
+ 			nQuery->execute();
+			auto summation = new SummationDensity<TDataType>();
+			summation->setParent(parent);
+			summation->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
+			summation->connectNeighbor(TypeInfo::CastPointerUp<Field>(neighborBuf));
+			summation->connectMass(TypeInfo::CastPointerUp<Field>(m_mass));
+			summation->connectRadius(TypeInfo::CastPointerUp<Field>(m_smoothingLength));
+			summation->connectDensity(TypeInfo::CastPointerUp<Field>(rhoBuf));
+			summation->initialize();
+			summation->execute();
 
-			Real maxRho = pReduce->Maximum(gpgRho->getDataPtr(), gpgRho->Size());
+			DeviceArray<Real>* gpgRho = rhoBuf->getDataPtr();
 
-			SummationDensity<TDataType>* sd = this->getModule<SummationDensity<TDataType>>("COMPUTE_DENSITY");// TypeInfo::CastPointerDown<SummationDensity<TDataType>>(this->GetModule("COMPUTE_DENSITY"));
-			sd->SetCorrectFactor(this->GetRestDensity() / maxRho);
+			Reduction<Real>* pReduce = Reduction<Real>::Create(gpgRho->size());
 
-// 			this->Execute("COMPUTE_DENSITY");
-// 			maxRho = pReduce->Maximum(gpgRho->GetDataPtr(), gpgRho->Size());
+			Real maxRho = pReduce->Maximum(gpgRho->getDataPtr(), gpgRho->size());
 
-			std::cout << "Maximum Density: " << maxRho << std::endl;
+			Real newMass = m_restDensity->getValue() / maxRho * m_mass->getValue();
+			m_mass->setValue(newMass);
+
+			std::cout << "Test for Maximum Density: " << maxRho << std::endl;
 
 			delete pReduce;
-		}
-
-		this->updateModules();
+ 		}
+// 
+// 		Function1Pt::Copy(*(pSet->getPoints()), *(posBuf->getDataPtr()));
+// 		BoundaryManager<TDataType>* bmgr = new BoundaryManager<TDataType>(this);
+// 
+// 		DistanceField3D<TDataType> * box = new DistanceField3D<TDataType>();
+// 		box->SetSpace(this->GetLowerBound() - this->GetSamplingDistance() * 5, this->GetUpperBound() + this->GetSamplingDistance() * 5, 105, 105, 105);
+// 		box->DistanceFieldToBox(this->GetLowerBound(), this->GetUpperBound(), true);
+// 		//		box->DistanceFieldToSphere(make_float3(0.5f), 0.2f, true);
+// 		bmgr->InsertBarrier(new BarrierDistanceField3D<TDataType>(box));
+// 		parent->addModule("BOUNDARY_HANDLING", bmgr);
 
 		return true;
 	}
 
 	template<typename TDataType>
-	void ParticleSystem<TDataType>::SetParticleNumber(size_t num)
+	bool ParticleSystem<TDataType>::execute()
 	{
-		m_num->setValue(num);
+		PointSet<Coord>* pSet = dynamic_cast<PointSet<Coord>*>(getParent()->getTopologyModule());
+		std::shared_ptr<DeviceContext> dc = getParent()->getContext();
+		dc->enable();
+		std::shared_ptr<Field> field = dc->getField("POSITION1");
+		std::shared_ptr<DeviceBuffer<Coord>> pBuf = TypeInfo::CastPointerDown<DeviceBuffer<Coord>>(field);
+
+		Function1Pt::Copy(*(pSet->getPoints()), *(pBuf->getDataPtr()));
+		return true;
 	}
 
 
-	template<typename TDataType>
-	void ParticleSystem<TDataType>::advance(float dt)
-	{
-		Function1Pt::Copy(this->GetOldPositionBuffer()->getValue(), this->GetNewPositionBuffer()->getValue());
-		Function1Pt::Copy(this->GetOldVelocityBuffer()->getValue(), this->GetNewVelocityBuffer()->getValue());
-
-		this->execute("PREDICT_PARTICLES");
-		this->execute("COMPUTE_NEIGHBORS");
-//		this->Execute("COMPUTE_SURFACE_TENSION");
-		this->execute("CONSTRAIN_DENSITY");
-		this->execute("COMPUTE_VISCOSITY");
-		this->execute("BOUNDARY_HANDLING");
-
-// 		this->GetParticlePrediction()->PredictPosition(dt);
-// 		this->GetParticlePrediction()->PredictVelocity(dt);
-// 		this->GetNeighborQuery()->Execute();
-// 		this->GetSurfaceTension()->Execute(dt);
-// 		this->GetDensityConstraint()->Execute(dt);
-// 		this->GetSummationDensity()->Execute();
-// 		this->GetVelocityConstraint()->Execute(dt);
-// 		this->GetViscosityModuel()->Execute(dt);
-// 		//		this->GetParticlePrediction()->CorrectPosition(dt);
-// 		this->GetBoundaryManager()->Execute(dt);
-	}
-
-	template<typename TDataType>
-	DeviceBuffer<Attribute>* ParticleSystem<TDataType>::GetAttributeBuffer() {
-		SPtr< DeviceBuffer<Attribute> > buf = getContext()->getDeviceBuffer<Attribute>("ATTRIBUTE");
-		return buf.get();
-	}
-
-	template<typename TDataType>
-	DeviceBuffer<NeighborList>* ParticleSystem<TDataType>::GetNeighborBuffer() {
-		SPtr< DeviceBuffer<NeighborList> > buf = getContext()->getDeviceBuffer<NeighborList>("NEIGHBORHOOD");
-		return buf.get();
-	}
 }

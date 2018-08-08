@@ -2,6 +2,7 @@
 //#include "Physika_Core/Utilities/template_functions.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "DensityPBD.h"
+#include "Physika_Framework/Framework/Node.h"
 
 namespace Physika
 {
@@ -19,11 +20,11 @@ namespace Physika
 		DeviceArray<Real> lambdaArr, 
 		DeviceArray<Real> rhoArr, 
 		DeviceArray<Coord> posArr, 
-		DeviceArray<NeighborList> neighbors,
+		DeviceArray<SPHNeighborList> neighbors,
 		Real smoothingLength)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		Coord pos_i = posArr[pId];
 
@@ -60,12 +61,12 @@ namespace Physika
 		DeviceArray<Coord> dPos, 
 		DeviceArray<Real> lambdas, 
 		DeviceArray<Coord> posArr, 
-		DeviceArray<NeighborList> neighbors, 
+		DeviceArray<SPHNeighborList> neighbors, 
 		Real smoothingLength,
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		Coord pos_i = posArr[pId];
 		Real lamda_i = lambdas[pId];
@@ -104,10 +105,10 @@ namespace Physika
 		DeviceArray<Coord> velArr, 
 		DeviceArray<Coord> dPos, 
 		DeviceArray<Attribute> attArr, 
-		float dt)
+		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		if (attArr[pId].IsDynamic())
 		{
@@ -119,76 +120,67 @@ namespace Physika
 
 	template<typename TDataType>
 	Physika::DensityPBD<TDataType>::DensityPBD()
+		: DensityConstraint<TDataType>()
+		, m_lamda(NULL)
+		, m_deltaPos(NULL)
+		, densitySum(NULL)
 	{
-
-	}
-
-	template<typename TDataType>
-	DensityPBD<TDataType>::DensityPBD(ParticleSystem<TDataType>* parent)
-		:DensityConstraint(parent)
-		,m_parent(parent)
-		,m_maxIteration(1)
-	{
-		assert(m_parent != NULL);
-
-		setInputSize(2);
-		setOutputSize(1);
-
-		int num = m_parent->GetParticleNumber();
-
-		m_lamda = DeviceBuffer<Real>::create(num);
-		m_deltaPos = DeviceBuffer<Coord>::create(num);
-
-		updateStates();
+		initArgument(&m_attribute, "Attribute", "Attributes");
+		initArgument(&m_mass, "Mass", "Particle mass");
 	}
 
 	template<typename TDataType>
 	bool DensityPBD<TDataType>::execute()
 	{
-		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
-		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
-		DeviceArray<Real>* rhoArr = m_parent->GetDensityBuffer()->getDataPtr();
-		DeviceArray<Attribute>* attArr = m_parent->GetAttributeBuffer()->getDataPtr();
+		DeviceArray<Coord>* posArr = m_position.getField().getDataPtr();
+		DeviceArray<Coord>* velArr = m_velocity.getField().getDataPtr();
+		DeviceArray<Real>* rhoArr = m_density.getField().getDataPtr();
+		DeviceArray<Attribute>* attArr = m_attribute.getField().getDataPtr();
 
-		DeviceArray<NeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
+		DeviceArray<SPHNeighborList>* neighborArr = m_neighbors.getField().getDataPtr();
+
+		int num = posArr->size();
+
+		if (m_lamda == NULL)
+			m_lamda = DeviceBuffer<Real>::create(num);
+		if (m_deltaPos == NULL)
+			m_deltaPos = DeviceBuffer<Coord>::create(num);
 
 		DeviceArray<Real>* lamda = m_lamda->getDataPtr();
 		DeviceArray<Coord>* deltaPos = m_deltaPos->getDataPtr();
 
-		float dt = m_parent->getDt();
+		Real dt = getParent()->getDt();
 
-		Real smoothingLength = m_parent->GetSmoothingLength();
+		Real smoothingLength = m_radius.getField().getValue();
 
-		dim3 pDims = int(ceil(posArr->Size() / BLOCK_SIZE + 0.5f));
 
-		Module* densitySum = m_parent->getModule("COMPUTE_DENSITY");
+		dim3 pDims = int(ceil(posArr->size() / BLOCK_SIZE + 0.5f));
 
+		if (densitySum == NULL)
+		{
+			densitySum = new SummationDensity<TDataType>();
+			densitySum->setParent(getParent());
+			densitySum->connectPosition(m_position.getFieldPtr());
+			densitySum->connectNeighbor(m_neighbors.getFieldPtr());
+			densitySum->connectMass(m_mass.getFieldPtr());
+			densitySum->connectRadius(m_radius.getFieldPtr());
+			densitySum->connectDensity(m_density.getFieldPtr());
+			densitySum->initialize();
+		}
+		
 		int it = 0;
 		while (it < 5)
 		{
 			deltaPos->Reset();
 
 			densitySum->execute();
- 			DC_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (*lamda, *rhoArr, *posArr, *neighborArr, smoothingLength);
- 			DC_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (*deltaPos, *lamda, *posArr, *neighborArr, smoothingLength, dt);
- 			DC_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (*posArr, *velArr, *deltaPos, *attArr, dt);
+			DC_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (*lamda, *rhoArr, *posArr, *neighborArr, smoothingLength);
+			DC_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (*deltaPos, *lamda, *posArr, *neighborArr, smoothingLength, dt);
+			DC_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (*posArr, *velArr, *deltaPos, *attArr, dt);
 
 			it++;
 		}
 
 		return true;
 	}
-
-	template<typename TDataType>
-	bool DensityPBD<TDataType>::updateStates()
-	{
-// 		PBD_STATE cm;
-// 		cm.mass = m_parent->GetParticleMass();
-// 		cm.smoothingLength = m_parent->GetSmoothingLength();
-// 		cm.kernSpiky = SpikyKernel();
-// 		cudaMemcpyToSymbol(const_pbd_state, &cm, sizeof(PBD_STATE));
-
-		return true;
-	}
-
 }

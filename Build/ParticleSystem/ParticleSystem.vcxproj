@@ -15,8 +15,6 @@
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityConstraint.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityPBD.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityProjective.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensitySimple.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\INeighbors.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Kernel.h" />
@@ -31,8 +29,6 @@
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityConstraint.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityPBD.cu" />
-    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityProjective.cu" />
-    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensitySimple.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\NeighborQuery.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticlePrediction.cu" />

@@ -68,7 +68,7 @@ namespace Physika{
 	__global__ void K_ConstructHashTable(GridHash<TDataType> hash, Array<TDataType::Coord> pos)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= pos.Size()) return;
+		if (pId >= pos.size()) return;
 
 		//hash.PushPosition(pos[pId], pId);
 
@@ -84,7 +84,7 @@ namespace Physika{
 	template<typename TDataType>
 	void GridHash<TDataType>::ConstructHashTable(Array<Coord>& pos)
 	{
-		dim3 pDims = int(ceil(pos.Size() / BLOCK_SIZE + 0.5f));
+		dim3 pDims = int(ceil(pos.size() / BLOCK_SIZE + 0.5f));
 		K_ConstructHashTable << <pDims, BLOCK_SIZE >> > (*this, pos);
 	}
 
@@ -104,14 +104,14 @@ namespace Physika{
 	template<typename Real, typename Coord, typename TDataType>
 	__global__ void K_ComputeNeighbors(
 		Physika::Array<Coord> posArr, 
-		Physika::Array<NeighborList> neighbors, 
+		Physika::Array<SPHNeighborList> neighbors, 
 		Physika::GridHash<TDataType> hash, 
 		Real h, 
 		Real pdist, 
 		int nbMaxNum)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId > posArr.Size()) return;
+		if (pId > posArr.size()) return;
 
 		int tId = threadIdx.x;
 		int ids[BUCKETS][CAPACITY];
@@ -199,21 +199,21 @@ namespace Physika{
 	}
 
 	template<typename TDataType>
-	void GridHash<TDataType>::QueryNeighbors(Array<Coord>& posArr, Array<NeighborList>& neighbors, Real h, Real pdist, int nbMaxNum)
+	void GridHash<TDataType>::QueryNeighbors(Array<Coord>& posArr, Array<SPHNeighborList>& neighbors, Real h, Real pdist, int nbMaxNum)
 	{
 		Clear();
 		ConstructHashTable(posArr);
 
-		dim3 pDims = int(ceil(posArr.Size() / BLOCK_SIZE + 0.5f));
+		dim3 pDims = int(ceil(posArr.size() / BLOCK_SIZE + 0.5f));
 
 		K_ComputeNeighbors <Real, Coord> << <pDims, BLOCK_SIZE >> >(posArr, neighbors, *this, h, pdist, nbMaxNum);
 	}
 
 	template<typename Real, typename Coord, typename TDataType>
-	__global__ void K_ComputeNeighborSlow(Physika::Array<Coord> posArr, Physika::Array<NeighborList> neighbors, Physika::GridHash<TDataType> hash, Real h, int nbMaxNum)
+	__global__ void K_ComputeNeighborSlow(Physika::Array<Coord> posArr, Physika::Array<SPHNeighborList> neighbors, Physika::GridHash<TDataType> hash, Real h, int nbMaxNum)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId > posArr.Size()) return;
+		if (pId > posArr.size()) return;
 
 		int tId = threadIdx.x;
 		int ids[NEIGHBOR_SIZE];
@@ -272,12 +272,12 @@ namespace Physika{
 	}
 
 	template<typename TDataType>
-	void GridHash<TDataType>::QueryNeighborSlow(Array<Coord>& posArr, Array<NeighborList>& neighbors, Real h, int nbMaxNum)
+	void GridHash<TDataType>::QueryNeighborSlow(Array<Coord>& posArr, Array<SPHNeighborList>& neighbors, Real h, int nbMaxNum)
 	{
 		Clear();
 		ConstructHashTable(posArr);
 
-		dim3 pDims = int(ceil(posArr.Size() / BLOCK_SIZE + 0.5f));
+		dim3 pDims = int(ceil(posArr.size() / BLOCK_SIZE + 0.5f));
 
 // 		CTimer timer;
 // 		timer.Start();

@@ -1,5 +1,9 @@
 #include "Node.h"
 #include "Action/Action.h"
+#include "Framework/DeviceContext.h"
+#include "Framework/Module.h"
+#include "Framework/ControllerAnimation.h"
+#include "Framework/ControllerRender.h"
 
 namespace Physika
 {
@@ -107,6 +111,15 @@ void Node::removeChild(std::shared_ptr<Node> child)
 	}
 }
 
+std::shared_ptr<DeviceContext> Node::getContext()
+{
+	if (m_context == nullptr)
+	{
+		m_context = TypeInfo::New<DeviceContext>();
+	}
+	return m_context;
+}
+
 bool Node::addModule(std::string name, Module* module)
 {
 	if (getContext() == nullptr || module == NULL)
@@ -130,6 +143,24 @@ bool Node::addModule(std::string name, Module* module)
 	}
 
 	return true;
+}
+
+bool Node::addModule(Module* module)
+{
+	std::list<Module*>::iterator found = std::find(m_module_list.begin(), m_module_list.end(), module);
+	if (found == m_module_list.end())
+	{
+		m_module_list.push_back(module);
+		module->setParent(this);
+		return true;
+	}
+
+	return false;
+}
+
+bool Node::deleteModule(Module* module)
+{
+	return false;
 }
 
 void Node::doTraverse(Action* act)

@@ -17,9 +17,9 @@ namespace Physika
 		template<typename T1, typename T2>
 		void Length(DeviceArray<T1>& lhs, DeviceArray<T2>& rhs)
 		{
-			assert(lhs.Size() == rhs.Size());
-			unsigned pDim = cudaGridSize(rhs.Size(), BLOCK_SIZE);
-			KerLength << <pDim, BLOCK_SIZE >> > (lhs.getDataPtr(), rhs.getDataPtr(), lhs.Size());
+			assert(lhs.size() == rhs.size());
+			unsigned pDim = cudaGridSize(rhs.size(), BLOCK_SIZE);
+			KerLength << <pDim, BLOCK_SIZE >> > (lhs.getDataPtr(), rhs.getDataPtr(), lhs.size());
 		}
 	}
 }

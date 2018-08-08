@@ -10,6 +10,9 @@
     <Filter Include="Topology">
       <UniqueIdentifier>{1313dde3-3522-4fd2-8ca3-33cc5c12fe50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mapping">
+      <UniqueIdentifier>{8c87995a-6751-44e5-afda-a8ad9a2d53e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Base.cpp">
@@ -66,16 +69,10 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.cpp">
       <Filter>Action</Filter>
     </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet .cpp">
-      <Filter>Topology</Filter>
-    </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\PointSet.cpp">
       <Filter>Topology</Filter>
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.cpp">
-      <Filter>Topology</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\UnstructuredPointSet.cpp">
       <Filter>Topology</Filter>
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderFactory.cpp">
@@ -85,6 +82,18 @@
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleVisual.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet.cpp">
+      <Filter>Topology</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\UniformGrid.cpp">
+      <Filter>Topology</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\NumericalModel.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Log.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,9 +164,6 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.h">
       <Filter>Topology</Filter>
     </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\UnstructuredPointSet.h">
-      <Filter>Topology</Filter>
-    </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderFactory.h">
       <Filter>Framework</Filter>
     </ClInclude>
@@ -165,6 +171,18 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleVisual.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\NeighborList.h">
+      <Filter>Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\UniformGrid.h">
+      <Filter>Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\NumericalModel.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Log.h">
       <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,16 +13,14 @@ CollisionModule::~CollisionModule()
 {
 }
 
-bool CollisionModule::insertToNode(Node* node)
+void CollisionModule::insertToNodeImpl(Node* node)
 {
 	node->addCollisionModule(this);
-	return true;
 }
 
-bool CollisionModule::deleteFromNode(Node* node)
+void CollisionModule::deleteFromNodeImpl(Node* node)
 {
 	node->deleteCollisionModule(this);
-	return true;
 }
 
 }

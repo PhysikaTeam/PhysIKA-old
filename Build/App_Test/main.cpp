@@ -15,7 +15,6 @@
 #include "Physika_Render/Lights/spot_light.h"
 #include "Physika_Render/Lights/flash_light.h"
 
-
 #include "Physika_Render/Render_Scene_Config/render_scene_config.h"
 #include "Physika_Render/Point_Render/point_render_util.h"
 #include "Physika_Render/Point_Render/point_render_task.h"
@@ -25,34 +24,49 @@
 
 #include "Physika_Framework/Framework/SceneGraph.h"
 #include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
+#include "Physika_Framework/Topology/PointSet.h"
+#include "Physika_Framework/Framework/Log.h"
+#include "Physika_Render/VisualModule/PointRenderModule.h"
 
 using namespace std;
 using namespace Physika;
 
 SurfaceMesh<double> mesh;
-std::shared_ptr<ParticleSystem<DataType3f>> psystem;
 std::shared_ptr<PointRenderUtil> point_render_util;
+PointSet<Vector3f>* pSet;
 
+void RecieveLogMessage(const Log::Message& m)
+{
+	switch (m.type)
+	{
+	case Log::Info:
+		cout << ">>>: " << m.text << endl; break;
+	case Log::Warning:
+		cout << "???: " << m.text << endl; break;
+	case Log::Error:
+		cout << "!!!: " << m.text << endl; break;
+	case Log::User:
+		cout << ">>>: " << m.text << endl; break;
+	default: break;
+	}
+}
 
 void initFunction()
 {
 	//---------------------------------------------------------------------------------------------------------------------
 	RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
-	point_render_util = make_shared<PointRenderUtil>();
-
-//	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(pos_vec.size());
-//	cudaMemcpy(point_gl_cuda_buffer.getCudaPosPtr(), pos_vec.data(), sizeof(float) * 3 * pos_vec.size(), cudaMemcpyHostToDevice);
-	DeviceBuffer<float3>* xyz = (DeviceBuffer<float3>*)psystem->GetNewPositionBuffer();
-	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
-	
-	//setPointGLCudaBuffer(pos_vec, point_gl_cuda_buffer);
-	point_render_util->unmapPointGLCudaBuffer();
-
-	//---------------------------------------------------------------------------------------------------------------------
-	auto point_render_task = make_shared<PointRenderTask>(point_render_util);
-	//point_render_task->disableUsePointSprite();
-	point_render_task->setPointScaleForPointSprite(3.0);
-	render_scene_config.pushBackRenderTask(point_render_task);
+// 	point_render_util = make_shared<PointRenderUtil>();
+// 
+// 	DeviceArray<float3>* xyz = (DeviceArray<float3>*)pSet->getPoints();
+// 	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
+// 	
+// 	point_render_util->unmapPointGLCudaBuffer();
+// 
+// 	//---------------------------------------------------------------------------------------------------------------------
+// 	auto point_render_task = make_shared<PointRenderTask>(point_render_util);
+// 	//point_render_task->disableUsePointSprite();
+// 	point_render_task->setPointScaleForPointSprite(3.0);
+// 	render_scene_config.pushBackRenderTask(point_render_task);
 
 	auto flash_light = make_shared<FlashLight>();
 	//flash_light->setAmbient(Color4f::White());
@@ -83,11 +97,12 @@ void displayFunction()
 
 	GlutWindow * cur_window = (GlutWindow*)glutGetWindowData();
 	cur_window->displayFrameRate();
-	DeviceBuffer<float3>* xyz = (DeviceBuffer<float3>*)psystem->GetNewPositionBuffer();
-	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
-	cudaMemcpy(point_gl_cuda_buffer.getCudaPosPtr(), xyz->getDataPtr()->getDataPtr(), sizeof(float) * 3 * xyz->size(), cudaMemcpyDeviceToDevice);
-	point_render_util->unmapPointGLCudaBuffer();
+// 	DeviceArray<float3>* xyz = (DeviceArray<float3>*)pSet->getPoints();
+// 	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
+// 	cudaMemcpy(point_gl_cuda_buffer.getCudaPosPtr(), xyz->getDataPtr(), sizeof(float) * 3 * xyz->size(), cudaMemcpyDeviceToDevice);
+// 	point_render_util->unmapPointGLCudaBuffer();
 	cur_window->getScene()->takeOneFrame();
+	cur_window->getScene()->draw();
 	glutPostRedisplay();
 	glutSwapBuffers();
 }
@@ -107,14 +122,43 @@ void keyboardFunction(unsigned char key, int x, int y)
 
 int main()
 {
-	std::shared_ptr<SceneGraph> scene = SceneGraph::getInstance();
-
-	psystem = scene->createNewScene<ParticleSystem<DataType3f>>("root");
-	psystem->initialize();
-
 	GlutWindow glut_window;
 	cout << "Window name: " << glut_window.name() << "\n";
 	cout << "Window size: " << glut_window.width() << "x" << glut_window.height() << "\n";
+
+	RenderSceneConfig & render_scene_config1 = RenderSceneConfig::getSingleton();
+
+	Log::setOutput("console_log.txt");
+	Log::setLevel(Log::Info);
+	Log::setUserReceiver(&RecieveLogMessage);
+	
+	Log::sendMessage(Log::Info, "Initialization begin");
+	std::shared_ptr<SceneGraph> scene = SceneGraph::getInstance();
+
+	std::shared_ptr<Node> root = scene->createNewScene<Node>("root");
+
+	pSet = new PointSet<Vector3f>();
+	std::vector<Vector3f> positions;
+	for (float x = 0.4; x < 0.6; x += 0.005f) {
+		for (float y = 0.1; y < 0.2; y += 0.005f) {
+			for (float z = 0.4; z < 0.6; z += 0.005f) {
+				positions.push_back(Vector3f(float(x), float(y), float(z)));
+			}
+		}
+	}
+	pSet->initialize(positions);
+
+	root->setTopologyModule(pSet);
+
+	auto pS2 = new ParticleSystem<DataType3f>();
+	root->setNumericalModel(pS2);
+	pS2->initialize();
+
+	auto render = new PointRenderModule();
+	render->setParent(root.get());
+	render->initialize();
+	root->addVisualModule(render);
+
 
 	glut_window.setScene(scene);
 

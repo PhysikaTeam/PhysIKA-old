@@ -22,12 +22,12 @@ namespace Physika
 		DeviceArray<Real> lambdaArr, 
 		DeviceArray<Real> rhoArr, 
 		DeviceArray<Coord> posArr, 
-		DeviceArray<NeighborList> neighbors,
+		DeviceArray<SPHNeighborList> neighbors,
 		Real smoothingLength
 	)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		Coord pos_i = posArr[pId];
 
@@ -64,11 +64,11 @@ namespace Physika
 		DeviceArray<Coord> dPos, 
 		DeviceArray<Real> lambdas,
 		DeviceArray<Coord> posArr, 
-		DeviceArray<NeighborList> neighbors,
+		DeviceArray<SPHNeighborList> neighbors,
 		Real smoothingLength)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		Coord pos_i = posArr[pId];
 		Real lamda_i = lambdas[pId];
@@ -112,7 +112,7 @@ namespace Physika
 		float dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		if (attArr[pId].IsDynamic())
 		{
@@ -135,7 +135,7 @@ namespace Physika
 		float dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		if (attArr[pId].IsDynamic())
 		{
@@ -151,9 +151,6 @@ namespace Physika
 		,m_w(10.0f)
 	{
 		assert(m_parent != NULL);
-
-		setInputSize(2);
-		setOutputSize(1);
 
 		int num = m_parent->GetParticleNumber();
 
@@ -173,7 +170,7 @@ namespace Physika
 		DeviceArray<Attribute>* attArr = m_parent->GetAttributeBuffer()->getDataPtr();
 		float dt = m_parent->getDt();
 
-		DeviceArray<NeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
+		DeviceArray<SPHNeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
 
 		DeviceArray<Real>* lamda = m_lamda->getDataPtr();
 		DeviceArray<Coord>* deltaPos = m_deltaPos->getDataPtr();
@@ -182,7 +179,7 @@ namespace Physika
 		Real mass = m_parent->GetParticleMass();
 		Real smoothingLength = m_parent->GetSmoothingLength();
 
-		dim3 pDims = int(ceil(posArr->Size() / BLOCK_SIZE + 0.5f));
+		dim3 pDims = int(ceil(posArr->size() / BLOCK_SIZE + 0.5f));
 
 		Module* densitySum = m_parent->getModule("SummationDensity");
 

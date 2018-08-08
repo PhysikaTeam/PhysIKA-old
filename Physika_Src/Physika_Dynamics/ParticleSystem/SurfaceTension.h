@@ -2,7 +2,7 @@
 #include "Platform.h"
 #include "Framework/Module.h"
 #include "Physika_Core/Cuda_Array/Array.h"
-#include "ParticleSystem.h"
+#include "Physika_Core/DataTypes.h"
 #include "Kernel.h"
 
 namespace Physika {
@@ -14,7 +14,7 @@ namespace Physika {
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
-		SurfaceTension(ParticleSystem<TDataType>* parent);
+		SurfaceTension();
 		~SurfaceTension() override {};
 		
 		bool execute() override;
@@ -27,8 +27,6 @@ namespace Physika {
 // 		}
 
 	private:
-		ParticleSystem<TDataType>* m_parent;
-
 		DeviceBuffer<Real>* m_energy;
 	};
 

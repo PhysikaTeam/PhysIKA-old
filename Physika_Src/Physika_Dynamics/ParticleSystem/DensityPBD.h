@@ -7,6 +7,8 @@
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "DensityConstraint.h"
 #include "Kernel.h"
+#include "SummationDensity.h"
+#include "Attribute.h"
 
 namespace Physika {
 
@@ -19,25 +21,28 @@ namespace Physika {
 		typedef typename TDataType::Coord Coord;
 
 		DensityPBD();
-		DensityPBD(ParticleSystem<TDataType>* parent);
 		~DensityPBD() override {};
-		
-		bool execute() override;
 
-		bool updateStates() override;
+		bool execute() override;
 
 // 		static DensityPBD* Create(ParticleSystem<TDataType>* parent, DeviceType deviceType = DeviceType::GPU)
 // 		{
 // 			return new DensityPBD(parent, deviceType);
 // 		}
+		bool connectAttribute(std::shared_ptr<Field>& att) { return connect(att, m_attribute); }
+		bool connectMass(std::shared_ptr<Field>& mass) { return connect(mass, m_mass); }
 
 	protected:
 		int m_maxIteration;
-		ParticleSystem<TDataType>* m_parent;
-
 		DeviceBuffer<Real>* m_lamda;
 		DeviceBuffer<Coord>* m_deltaPos;
+		
+		Slot<HostVariable<Real>>  m_mass;
+		Slot<DeviceBuffer<Attribute>> m_attribute;
+
+		SummationDensity<TDataType>* densitySum;
 	};
+
 
 #ifdef PRECISION_FLOAT
 	template class DensityPBD<DataType3f>;

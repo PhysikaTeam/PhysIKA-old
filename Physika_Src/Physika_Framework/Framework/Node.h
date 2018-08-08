@@ -1,12 +1,9 @@
 #pragma once
 #include "Base.h"
 #include "Typedef.h"
-#include "Framework/Module.h"
-#include "Framework/ControllerAnimation.h"
-#include "Framework/ControllerRender.h"
 
 namespace Physika {
-
+class Module;
 class DeviceContext;
 class Action;
 class TopologyModule;
@@ -14,6 +11,9 @@ class ForceModule;
 class ConstraintModule;
 class CollisionModule;
 class VisualModule;
+class NumericalModel;
+class RenderController;
+class AnimationController;
 
 class Node : public Base
 {
@@ -53,7 +53,7 @@ public:
 	}
 
 	std::shared_ptr<Node> addChild(std::shared_ptr<Node> child) { 
-		m_children.push_back(child); 
+		m_children.push_back(child);
 		return child; 
 	}
 
@@ -67,18 +67,15 @@ public:
 	virtual void advance(float dt) {};
 	virtual void takeOneFrame() {};
 
-	inline std::shared_ptr<DeviceContext> getContext()
-	{
-		if (m_context == nullptr)
-		{
-			m_context = TypeInfo::New<DeviceContext>();
-		}
-		return m_context;
-	}
+	inline std::shared_ptr<DeviceContext> getContext();
 
 	void setContext(std::shared_ptr<DeviceContext> context) { m_context = context; }
 
-	virtual bool addModule(std::string name, Module* module);
+	
+	bool addModule(std::string name, Module* module);
+
+	bool addModule(Module* module);
+	bool deleteModule(Module* module);
 
 	virtual void doTraverse(Action* act);
 	void traverse(Action* act);
@@ -90,17 +87,23 @@ public:
 
 	virtual void setAsCurrentContext();
 
-	void setTopologyModule(std::shared_ptr<TopologyModule> topology) { m_topology = topology; }
-	std::shared_ptr<TopologyModule>
-		getTopologyModule() { return m_topology; }
+	void setTopologyModule(TopologyModule* topology) {
+		m_topology = topology;
+		addModule((Module*)topology);
+	}
+	void setNumericalModel(NumericalModel* numerical){
+		m_numerical_model = numerical;
+		addModule((Module*)numerical);
+	}
 
-	void setRenderController(std::shared_ptr<RenderController> controller) { m_render_controller = controller; }
-	std::shared_ptr<RenderController>
-		getRenderController() { return m_render_controller; }
+	NumericalModel* getNumericalModel() { return m_numerical_model; }
+	TopologyModule* getTopologyModule() { return m_topology; }
 
-	void setAnimationController(std::shared_ptr<AnimationController> controller) { m_animation_controller = controller; }
-	std::shared_ptr<AnimationController>
-		getAnimationController() { return m_animation_controller; }
+	void setRenderController(RenderController* controller) { m_render_controller = controller; }
+	RenderController* getRenderController() { return m_render_controller; }
+
+	void setAnimationController(AnimationController* controller) { m_animation_controller = controller; }
+	AnimationController* getAnimationController() { return m_animation_controller; }
 
 	Module* getModule(std::string name);
 
@@ -120,28 +123,31 @@ public:
 	template<class TModule>
 	TModule* getModule()
 	{
-		TModule* tmp = new TModule;
-		Module* base = NULL;
-		std::list<std::string, Module*>::iterator iter;
-		for (iter = m_module_list.begin(); iter != m_module_list.end(); iter++)
-		{
-			if ((*iter)->GetClassInfo() == tmp->GetClassInfo())
-			{
-				base = *iter;
-				break;
-			}
-		}
-		delete tmp;
-		return TypeInfo::CastPointerDown<TModule>(base);
+// 		TModule* tmp = new TModule;
+// 		Module* base = NULL;
+// 		std::list<Module*>::iterator iter;
+// 		for (iter = m_module_list.begin(); iter != m_module_list.end(); iter++)
+// 		{
+// 			if ((*iter)->getClassInfo() == tmp->getClassInfo())
+// 			{
+// 				base = *iter;
+// 				break;
+// 			}
+// 		}
+// 		delete tmp;
+// 		return TypeInfo::CastPointerDown<TModule>(base);
+		return;
 	}
+
+	std::list<Module*>& getModuleList() { return m_module_list; }
 
 	bool execute(std::string name);
 
 	virtual void updateModules() {};
 
 #define NODE_ADD_SPECIAL_MODULE( CLASSNAME, SEQUENCENAME ) \
-	virtual void add##CLASSNAME( CLASSNAME* module) { SEQUENCENAME.push_back(module); } \
-	virtual void delete##CLASSNAME( CLASSNAME* module) { SEQUENCENAME.remove(module); } \
+	virtual void add##CLASSNAME( CLASSNAME* module) { SEQUENCENAME.push_back(module); addModule((Module*)module);} \
+	virtual void delete##CLASSNAME( CLASSNAME* module) { SEQUENCENAME.remove(module); deleteModule((Module*)module); } \
 	std::list<CLASSNAME*>& get##CLASSNAME##List(){ return SEQUENCENAME;}
 
 	NODE_ADD_SPECIAL_MODULE(ForceModule, m_force_list)
@@ -161,9 +167,11 @@ private:
 	std::list<Module*> m_module_list;
 	std::map<std::string, Module*> m_modules;
 
-	std::shared_ptr<TopologyModule> m_topology;
-	std::shared_ptr<RenderController> m_render_controller;
-	std::shared_ptr<AnimationController> m_animation_controller;
+	TopologyModule* m_topology;
+	NumericalModel* m_numerical_model;
+
+	RenderController* m_render_controller;
+	AnimationController* m_animation_controller;
 
 	std::list<ForceModule*> m_force_list;
 	std::list<ConstraintModule*> m_constraint_list;

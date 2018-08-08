@@ -1,6 +1,7 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "ParticlePrediction.h"
+#include "Physika_Framework/Framework/Node.h"
 
 namespace Physika
 {
@@ -19,7 +20,7 @@ namespace Physika
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		Coord pos_i = posArr[pId];
 		Coord vel_i = velArr[pId];
@@ -40,7 +41,7 @@ namespace Physika
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		if (!attriArr[pId].IsFixed())
 		{
@@ -72,7 +73,7 @@ namespace Physika
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= velArr.Size()) return;
+		if (pId >= velArr.size()) return;
 
 		if (attriArr[pId].IsDynamic())
 		{
@@ -93,7 +94,7 @@ namespace Physika
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= newPos.Size()) return;
+		if (pId >= newPos.size()) return;
 
 		if (!attriArr[pId].IsFixed())
 		{
@@ -106,29 +107,28 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	ParticlePrediction<TDataType>::ParticlePrediction(ParticleSystem<TDataType>* parent)
+	Physika::ParticlePrediction<TDataType>::ParticlePrediction()
 		:Module()
-		,m_parent(parent)
 	{
-		assert(m_parent != NULL);
-
-		setInputSize(1);
-		setOutputSize(1);
+		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
+		initArgument(&m_velocity, "Velocity", "CUDA array used to store particles' velocities");
+		initArgument(&m_attribute, "Attribute", "CUDA array used to store particles' attributes");
 
 		updateStates();
 	}
 
 	template<typename TDataType>
-	bool ParticlePrediction<TDataType>::execute()
+	bool Physika::ParticlePrediction<TDataType>::execute()
 	{
-		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
-		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
-		DeviceArray<Attribute>* attriArr = m_parent->GetAttributeBuffer()->getDataPtr();
-		Coord gravity = m_parent->GetGravity();
-		float dt = m_parent->getDt();
-		
-		uint pDims = cudaGridSize(posArr->Size(), BLOCK_SIZE);
-		
+		DeviceArray<Coord>* posArr = m_position.getField().getDataPtr();
+		DeviceArray<Coord>* velArr = m_velocity.getField().getDataPtr();
+		DeviceArray<Attribute>* attriArr = m_attribute.getField().getDataPtr();
+
+		Coord gravity = Coord(0.0f, -9.8f, 0.0f);
+		float dt = getParent()->getDt();
+
+		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
+
 		PP_Predict <Coord> << <pDims, BLOCK_SIZE >> > (*posArr, *velArr, gravity, dt);
 
 		return true;
@@ -137,36 +137,36 @@ namespace Physika
 	template<typename TDataType>
 	void ParticlePrediction<TDataType>::PredictPosition(float dt)
 	{
-		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
-		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
-		DeviceArray<Attribute>* attriArr = m_parent->GetAttributeBuffer()->getDataPtr();
-
-		uint pDims = cudaGridSize(posArr->Size(), BLOCK_SIZE);
-		PP_PredictPosition <Coord> << <pDims, BLOCK_SIZE >> > (*posArr, *velArr, *attriArr, dt);
+// 		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
+// 		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
+// 		DeviceArray<Attribute>* attriArr = m_parent->GetAttributeBuffer()->getDataPtr();
+// 
+// 		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
+// 		PP_PredictPosition <Coord> << <pDims, BLOCK_SIZE >> > (*posArr, *velArr, *attriArr, dt);
 	}
 
 	template<typename TDataType>
 	void ParticlePrediction<TDataType>::PredictVelocity(float dt)
 	{
-		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
-		DeviceArray<Attribute>* attriArr = m_parent->GetAttributeBuffer()->getDataPtr();
-
-		uint pDims = cudaGridSize(velArr->Size(), BLOCK_SIZE);
-		Coord gravity(0);
-		PP_PredictVelocity <Coord> << <pDims, BLOCK_SIZE >> > (*velArr, *attriArr, gravity, dt);
+// 		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
+// 		DeviceArray<Attribute>* attriArr = m_parent->GetAttributeBuffer()->getDataPtr();
+// 
+// 		uint pDims = cudaGridSize(velArr->size(), BLOCK_SIZE);
+// 		Coord gravity(0);
+// 		PP_PredictVelocity <Coord> << <pDims, BLOCK_SIZE >> > (*velArr, *attriArr, gravity, dt);
 	}
 
 	template<typename TDataType>
 	void ParticlePrediction<TDataType>::CorrectPosition(float dt)
 	{
-		DeviceArray<Coord>* oldPos = m_parent->GetOldPositionBuffer()->getDataPtr();
-		DeviceArray<Coord>* newPos = m_parent->GetNewPositionBuffer()->getDataPtr();
-		DeviceArray<Coord>* oldVel = m_parent->GetOldVelocityBuffer()->getDataPtr();
-		DeviceArray<Coord>* newVel = m_parent->GetNewVelocityBuffer()->getDataPtr();
-		DeviceArray<Attribute>* attriArr = m_parent->GetAttributeBuffer()->getDataPtr();
-
-		uint pDims = cudaGridSize(oldPos->Size(), BLOCK_SIZE);
-		PP_CorrectPosition << <pDims, BLOCK_SIZE >> > (*newPos, *oldPos, *newVel, *oldVel, *attriArr, dt);
+// 		DeviceArray<Coord>* oldPos = m_parent->GetOldPositionBuffer()->getDataPtr();
+// 		DeviceArray<Coord>* newPos = m_parent->GetNewPositionBuffer()->getDataPtr();
+// 		DeviceArray<Coord>* oldVel = m_parent->GetOldVelocityBuffer()->getDataPtr();
+// 		DeviceArray<Coord>* newVel = m_parent->GetNewVelocityBuffer()->getDataPtr();
+// 		DeviceArray<Attribute>* attriArr = m_parent->GetAttributeBuffer()->getDataPtr();
+// 
+// 		uint pDims = cudaGridSize(oldPos->size(), BLOCK_SIZE);
+// 		PP_CorrectPosition << <pDims, BLOCK_SIZE >> > (*newPos, *oldPos, *newVel, *oldVel, *attriArr, dt);
 	}
 
 	template<typename TDataType>

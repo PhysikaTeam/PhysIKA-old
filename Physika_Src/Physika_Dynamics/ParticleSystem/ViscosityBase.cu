@@ -2,6 +2,9 @@
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
 #include "ViscosityBase.h"
+#include "Attribute.h"
+#include "INeighbors.h"
+#include "Physika_Framework/Framework/Node.h"
 
 
 namespace Physika
@@ -34,7 +37,7 @@ namespace Physika
 		DeviceArray<Coord> velOld,
 		DeviceArray<Coord> posArr,
 		DeviceArray<Coord> velArr,
-		DeviceArray<NeighborList> neighbors,
+		DeviceArray<SPHNeighborList> neighbors,
 		DeviceArray<Attribute> attArr,
 		Real viscosity,
 		Real smoothingLength,
@@ -42,7 +45,7 @@ namespace Physika
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 		if (!attArr[pId].IsDynamic()) return;
 
 		Real r;
@@ -81,46 +84,55 @@ namespace Physika
 		DeviceArray<Coord> dVel)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= velArr.Size()) return;
+		if (pId >= velArr.size()) return;
 
 		velArr[pId] = dVel[pId];
 	}
 
 	template<typename TDataType>
-	ViscosityBase<TDataType>::ViscosityBase(ParticleSystem<TDataType>* parent)
+	ViscosityBase<TDataType>::ViscosityBase()
 		:Module()
-		, m_parent(parent)
+		, m_oldVel(NULL)
+		, m_bufVel(NULL)
 	{
-		assert(m_parent != NULL);
+		m_viscosity = this->allocHostVariable<Real>("viscosity", "Viscosity", Real(0.05));
 
-		setInputSize(2);
-		setOutputSize(1);
-
-		int num = m_parent->GetParticleNumber();
-
-		m_oldVel = DeviceBuffer<Coord>::create(num);
-		m_bufVel = DeviceBuffer<Coord>::create(num);
-
-		updateStates();
+		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
+		initArgument(&m_velocity, "Velocity", "CUDA array used to store particles' velocities");
+		initArgument(&m_density, "Density", "CUDA array used to store particles' densities");
+		initArgument(&m_radius, "Radius", "Smoothing length");
+		initArgument(&m_neighbors, "Neighbors", "Neighbors");
+		initArgument(&m_samplingDistance, "SamplingDistance", "Sampling distance");
+		initArgument(&m_attribute, "Attribute", "Particle attribute");
 	}
 
 	template<typename TDataType>
 	bool ViscosityBase<TDataType>::execute()
 	{
-		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
-		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
-		DeviceArray<Attribute>* attArr = m_parent->GetAttributeBuffer()->getDataPtr();
-		DeviceArray<NeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
+		DeviceArray<Coord>* posArr = m_position.getField().getDataPtr();
+		DeviceArray<Coord>* velArr = m_velocity.getField().getDataPtr();
+		DeviceArray<Attribute>* attArr = m_attribute.getField().getDataPtr();
+		DeviceArray<SPHNeighborList>* neighborArr = m_neighbors.getField().getDataPtr();
+
+		int num = posArr->size();
+		if (m_oldVel == NULL)
+		{
+			m_oldVel = DeviceBuffer<Coord>::create(num);
+		}
+		if (m_bufVel == NULL)
+		{
+			m_bufVel = DeviceBuffer<Coord>::create(num);
+		}
+
 		DeviceArray<Coord>* oldVel = m_oldVel->getDataPtr();
 		DeviceArray<Coord>* bufVel = m_bufVel->getDataPtr();
-		Real dt = m_parent->getDt();
+		Real dt = getParent()->getDt();
 
-		uint pDims = cudaGridSize(posArr->Size(), BLOCK_SIZE);
+		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
 
-		Real mass = m_parent->GetParticleMass();
-		Real smoothingLength = m_parent->GetSmoothingLength();
-		Real viscosity = m_parent->GetViscosity();
-		Real samplingDistance = m_parent->GetSamplingDistance();
+		Real smoothingLength = m_radius.getField().getValue();
+		Real viscosity = m_viscosity->getValue();
+		Real samplingDistance = m_samplingDistance.getField().getValue();
 
 		Function1Pt::Copy(*oldVel, *velArr);
 		for (int t = 0; t < 5; t++)
@@ -128,20 +140,6 @@ namespace Physika
 			Function1Pt::Copy(*bufVel, *velArr);
 			VB_ApplyViscosity <Real, Coord> << < pDims, BLOCK_SIZE >> > (*velArr, *oldVel, *posArr, *bufVel, *neighborArr, *attArr, viscosity, smoothingLength, samplingDistance, dt);
 		}
-
-		return true;
-	}
-
-	template<typename TDataType>
-	bool ViscosityBase<TDataType>::updateStates()
-	{
-// 		VB_STATE cm;
-// 		cm.mass = m_parent->GetParticleMass();
-// 		cm.smoothingLength = m_parent->GetSmoothingLength();
-// 		cm.viscosity = m_parent->GetViscosity();
-// 		cm.samplingDistance = m_parent->GetSamplingDistance();
-// 		cudaMemcpyToSymbol(const_vb_state, &cm, sizeof(VB_STATE));
-
 		return true;
 	}
 

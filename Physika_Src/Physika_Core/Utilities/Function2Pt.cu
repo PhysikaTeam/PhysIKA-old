@@ -39,36 +39,36 @@ namespace Physika
 		template <typename T>
 		void Plus(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 		{
-			assert(zArr.Size() == xArr.Size() && zArr.Size() == yArr.Size());
-			unsigned pDim = cudaGridSize(zArr.Size(), BLOCK_SIZE);
-			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.Size(), PlusFunc<T>());
+			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
+			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
+			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.size(), PlusFunc<T>());
 
 		}
 
 		template <typename T>
 		void Subtract(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 		{
-			assert(zArr.Size() == xArr.Size() && zArr.Size() == yArr.Size());
-			unsigned pDim = cudaGridSize(zArr.Size(), BLOCK_SIZE);
-			KerTwoPointFunc <<<pDim, BLOCK_SIZE >>> (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.Size(), MinusFunc<T>());
+			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
+			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
+			KerTwoPointFunc <<<pDim, BLOCK_SIZE >>> (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.size(), MinusFunc<T>());
 		}
 
 
 		template <typename T>
 		void Multiply(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 		{
-			assert(zArr.Size() == xArr.Size() && zArr.Size() == yArr.Size());
-			unsigned pDim = cudaGridSize(zArr.Size(), BLOCK_SIZE);
-			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.Size(), MultiplyFunc<T>());
+			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
+			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
+			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.size(), MultiplyFunc<T>());
 
 		}
 
 		template <typename T>
 		void Divide(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 		{
-			assert(zArr.Size() == xArr.Size() && zArr.Size() == yArr.Size());
-			unsigned pDim = cudaGridSize(zArr.Size(), BLOCK_SIZE);
-			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.Size(), DivideFunc<T>());
+			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
+			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
+			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.size(), DivideFunc<T>());
 
 		}
 
@@ -76,9 +76,9 @@ namespace Physika
 		template <typename T>
 		void Saxpy(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr, T alpha)
 		{
-			assert(zArr.Size() == xArr.Size() && zArr.Size() == yArr.Size());
-			unsigned pDim = cudaGridSize(zArr.Size(), BLOCK_SIZE);
-			KerSaxpy << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), alpha, zArr.Size());
+			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
+			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
+			KerSaxpy << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), alpha, zArr.size());
 		}
 	}
 }

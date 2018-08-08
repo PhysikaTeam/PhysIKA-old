@@ -4,10 +4,13 @@
 
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "Physika_Geometry/SDF/DistanceField3D.h"
-#include "ParticleSystem.h"
+#include "Attribute.h"
+#include "cuda_runtime.h"
 #include "Framework/Module.h"
 
 namespace Physika {
+
+//	template <typename> class ParticleSystem;
 
 	template<typename TDataType>
 	class Barrier
@@ -62,7 +65,7 @@ namespace Physika {
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
-		BoundaryManager(ParticleSystem<TDataType>* parent = NULL);
+		BoundaryManager();
 		~BoundaryManager(void);
 
 		bool execute() override;
@@ -77,14 +80,21 @@ namespace Physika {
 			return (int)m_barriers.size();
 		}
 
+		virtual bool connectPosition(std::shared_ptr<Field>& pos) { return connect(pos, m_position); }
+		virtual bool connectVelocity(std::shared_ptr<Field>& vel) { return connect(vel, m_velocity); }
+		virtual bool connectAttribute(std::shared_ptr<Field>& att) { return connect(att, m_attribute); }
+
 // 		static BoundaryManager* Create(ParticleSystem<TDataType>* parent, DeviceType deviceType = DeviceType::GPU)
 // 		{
 // 			return new BoundaryManager(parent, deviceType);
 // 		}
 
 	public:
-		ParticleSystem<TDataType>* m_parent;
 		std::vector<Barrier<TDataType> *> m_barriers;
+
+		Slot<DeviceBuffer<Coord>> m_position;
+		Slot<DeviceBuffer<Coord>> m_velocity;
+		Slot<DeviceBuffer<Attribute>> m_attribute;
 
 		DeviceBuffer<int>* m_bConstrained;
 	};

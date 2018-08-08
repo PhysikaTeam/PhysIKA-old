@@ -14,8 +14,8 @@ public:
 	virtual void display() {};
 
 private:
-	bool insertToNode(Node* node) override;
-	bool deleteFromNode(Node* node) override;
+	void insertToNodeImpl(Node* node) override;
+	void deleteFromNodeImpl(Node* node) override;
 };
 
 }

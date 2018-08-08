@@ -11,8 +11,15 @@ namespace Physika
 		TriangleSet();
 		~TriangleSet();
 
-	private:
+		DeviceArray<Triangle>* getTriangles() { return &m_triangls; }
+
+		NeighborList<int>* getTriangleNeighbors() { return &m_triangleNeighbors; }
+
+		void updatePointNeighbors() override;
+
+	protected:
 		DeviceArray<Triangle> m_triangls;
+		DeviceArray<int> m_triangleNeighbors;
 	};
 
 }

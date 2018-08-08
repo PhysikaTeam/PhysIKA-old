@@ -1,5 +1,6 @@
 #include "SceneGraph.h"
 #include "Action/ActAnimate.h"
+#include "Action/ActDraw.h"
 #include "Framework/SceneLoaderFactory.h"
 
 namespace Physika
@@ -22,12 +23,12 @@ bool SceneGraph::initialize()
 
 void SceneGraph::draw()
 {
-
+	m_root->traverse<DrawAct>();
 }
 
 void SceneGraph::advance(float dt)
 {
-	std::shared_ptr<AnimationController>  aController = m_root->getAnimationController();
+	AnimationController*  aController = m_root->getAnimationController();
 	//	aController->
 }
 

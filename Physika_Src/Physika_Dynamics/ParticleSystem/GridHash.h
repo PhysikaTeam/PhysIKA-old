@@ -30,9 +30,9 @@ namespace Physika{
 		/*!
 		*	\brief	May not be correct at extreme cases.
 		*/
-		void QueryNeighbors(Array<Coord>& posArr, Array<NeighborList>& neighbors, Real h, Real pdist, int nbMaxNum);
+		void QueryNeighbors(Array<Coord>& posArr, Array<SPHNeighborList>& neighbors, Real h, Real pdist, int nbMaxNum);
 
-		void QueryNeighborSlow(Array<Coord>& posArr, Array<NeighborList>& neighbors, Real h, int nbMaxNum);
+		void QueryNeighborSlow(Array<Coord>& posArr, Array<SPHNeighborList>& neighbors, Real h, int nbMaxNum);
 
 		void Clear();
 

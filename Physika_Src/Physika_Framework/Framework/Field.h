@@ -179,7 +179,7 @@ public:
 	ArrayBuffer(std::string name, std::string description, int num = 1);
 	~ArrayBuffer() override;
 
-	size_t size() override { return m_data->Size(); }
+	size_t size() override { return m_data->size(); }
 	void resize(int num);
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
 	const std::string getClassName() override { return std::string("ArrayBuffer"); }
@@ -234,7 +234,7 @@ ArrayBuffer<T, deviceType>::~ArrayBuffer()
 	{
 		m_data->release();
 		delete m_data;
-	}	
+	}
 }
 
 

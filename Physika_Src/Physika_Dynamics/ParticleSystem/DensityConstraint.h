@@ -4,7 +4,8 @@
 #include "Platform.h"
 #include "Framework/ModuleConstraint.h"
 #include "Physika_Core/Cuda_Array/Array.h"
-#include "ParticleSystem.h"
+#include "Physika_Core/DataTypes.h"
+#include "INeighbors.h"
 #include "Kernel.h"
 
 namespace Physika {
@@ -17,24 +18,31 @@ namespace Physika {
 		typedef typename TDataType::Coord Coord;
 
 		DensityConstraint();
-		DensityConstraint(ParticleSystem<TDataType>* parent);
 		~DensityConstraint() override {};
 		
-		bool execute() override;
-
 		bool updateStates() override;
-
-		ParticleSystem<TDataType>* GetParent() { return m_parent; }
-		void SetParent(ParticleSystem<TDataType>* p) { m_parent = p; }
 
 // 		static DensityConstraint* Create(ParticleSystem<TDataType>* parent, DeviceType deviceType = DeviceType::GPU)
 // 		{
 // 			return new DensityConstraint(parent, deviceType);
 // 		}
 
+
+		bool connectPosition(std::shared_ptr<Field>& pos) override { return connect(pos, m_position); }
+		bool connectVelocity(std::shared_ptr<Field>& vel) override { return connect(vel, m_velocity); }
+		
+		virtual bool connectDensity(std::shared_ptr<Field>& rho)   { return connect(rho, m_density); }
+		virtual bool connectRadius(std::shared_ptr<Field>& radius) { return connect(radius, m_radius); }
+		virtual bool connectNeighbor(std::shared_ptr<Field>& neighbor) { return connect(neighbor, m_neighbors); }
+
 	protected:
-		ParticleSystem<TDataType>* m_parent;
+		Slot<HostVariable<Real>>  m_radius;
+		Slot<DeviceBuffer<Coord>> m_position;
+		Slot<DeviceBuffer<Coord>> m_velocity;
+		Slot<DeviceBuffer<Real>>  m_density;
+		Slot<DeviceBuffer<SPHNeighborList>> m_neighbors;
 	};
+
 }
 
 #ifdef PRECISION_FLOAT

@@ -15,12 +15,12 @@ namespace Physika
 	__global__ void DIS_ComputeDelta(
 		DeviceArray<Coord> dPos, 
 		DeviceArray<Coord> posArr, 
-		DeviceArray<NeighborList> neighbors,
+		DeviceArray<SPHNeighborList> neighbors,
 		Real smoothingLength,
 		Real samplingDistance)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 
 		Coord pos_i = posArr[pId];
 
@@ -95,7 +95,7 @@ namespace Physika
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.Size()) return;
+		if (pId >= posArr.size()) return;
 		if (!attArr[pId].IsDynamic()) return;
 
 		posArr[pId] += dPos[pId];
@@ -108,9 +108,6 @@ namespace Physika
 		: DensityConstraint(parent)
 	{
 		assert(m_parent != NULL);
-
-		setInputSize(1);
-		setOutputSize(1);
 
 		int num = m_parent->GetParticleNumber();
 
@@ -131,12 +128,12 @@ namespace Physika
 		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
 		DeviceArray<Coord>* velArr = m_parent->GetNewVelocityBuffer()->getDataPtr();
 		DeviceArray<Attribute>* attArr = m_parent->GetAttributeBuffer()->getDataPtr();
-		DeviceArray<NeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
+		DeviceArray<SPHNeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
 		float dt = m_parent->getDt();
 
 		DeviceArray<Coord>* dPos = m_dPos->getDataPtr();
 
-		dim3 pDims = int(ceil(posArr->Size() / BLOCK_SIZE + 0.5f));
+		dim3 pDims = int(ceil(posArr->size() / BLOCK_SIZE + 0.5f));
 
 		Real samplingDistance = 0.5f*m_parent->GetSamplingDistance();
 		Real smoothingLength = 0.9f*m_parent->GetSamplingDistance();

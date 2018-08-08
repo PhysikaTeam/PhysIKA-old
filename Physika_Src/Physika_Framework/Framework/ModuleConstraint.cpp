@@ -3,8 +3,6 @@
 
 namespace Physika
 {
-IMPLEMENT_CLASS(ConstraintModule)
-
 ConstraintModule::ConstraintModule()
 {
 }
@@ -13,16 +11,14 @@ ConstraintModule::~ConstraintModule()
 {
 }
 
-bool ConstraintModule::insertToNode(Node* node)
+void ConstraintModule::insertToNodeImpl(Node* node)
 {
 	node->addConstraintModule(this);
-	return true;
 }
 
-bool ConstraintModule::deleteFromNode(Node* node)
+void ConstraintModule::deleteFromNodeImpl(Node* node)
 {
 	node->deleteConstraintModule(this);
-	return true;
 }
 
 }

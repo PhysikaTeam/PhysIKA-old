@@ -6,11 +6,11 @@ namespace Physika
 {
 	#define NEIGHBOR_SIZE 30
 
-	class NeighborList
+	class SPHNeighborList
 	{
 	public:
-		COMM_FUNC NeighborList() { size = 0; }
-		COMM_FUNC ~NeighborList() {};
+		COMM_FUNC SPHNeighborList() { size = 0; }
+		COMM_FUNC ~SPHNeighborList() {};
 
 		COMM_FUNC int& operator[] (int id) { return ids[id]; }
 		COMM_FUNC int operator[] (int id) const { return ids[id]; }

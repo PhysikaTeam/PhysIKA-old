@@ -2,18 +2,17 @@
 #include "Platform.h"
 #include <list>
 #include <memory>
-#include "Framework/Base.h"
-#include "Framework/Field.h"
+#include "Framework/Module.h"
 
 namespace Physika
 {
 /**
 *  \brief Base class for simulation context
 *
-*  This class contains all shared data and modules for a simulation algorithm.
+*  This class contains all shared data for a simulation algorithm.
 *
 */
-class DeviceContext : public Base
+class DeviceContext : public Module
 {
 public:
 	DeviceContext();

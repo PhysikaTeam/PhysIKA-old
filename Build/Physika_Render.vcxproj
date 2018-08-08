@@ -39,7 +39,6 @@
     <ClCompile Include="..\Physika_Src\Physika_Render\Line_Render\line_render_util.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\OpenGL_Shaders\shader.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\OpenGL_Shaders\shader_program.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_render.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_render_task.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_render_util.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_vector_render_task.cpp" />
@@ -61,6 +60,7 @@
     <ClCompile Include="..\Physika_Src\Physika_Render\Utilities\point_vector_attrib_config.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\Utilities\vbo_cuda_mapper.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\Utilities\vertex_color_attrib_config.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\VisualModule\PointRenderModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Render\Camera\camera.h" />
@@ -89,7 +89,6 @@
     <ClInclude Include="..\Physika_Src\Physika_Render\OpenGL_Shaders\shader_program.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_gl_cuda_buffer.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render-inl.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render_shader_srcs.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render_task.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render_util.h" />
@@ -119,9 +118,7 @@
     <ClInclude Include="..\Physika_Src\Physika_Render\Utilities\point_vector_attrib_config.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Utilities\vbo_cuda_mapper.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\Utilities\vertex_color_attrib_config.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\VisualModule\PointRenderModule.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79291DFF-2352-4F41-811D-8D29F2372F77}</ProjectGuid>

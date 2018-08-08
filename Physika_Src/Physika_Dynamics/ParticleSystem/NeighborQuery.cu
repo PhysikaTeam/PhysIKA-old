@@ -1,37 +1,37 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Framework/Framework/Node.h"
 #include "NeighborQuery.h"
 
 namespace Physika
 {
 	template<typename TDataType>
-	NeighborQuery<TDataType>::NeighborQuery(ParticleSystem<TDataType>* parent)
+	Physika::NeighborQuery<TDataType>::NeighborQuery()
 		:Module()
-		,m_parent(parent)
 	{
-		assert(parent != NULL);
-
-		setInputSize(1);
-		setOutputSize(1);
-
-		Real samplingDistance = m_parent->GetSamplingDistance();
-		Coord lowerBound = m_parent->GetLowerBound();
-		Coord upperBound = m_parent->GetUpperBound();
+		Real samplingDistance = 0.0125;
+		Coord lowerBound(0);
+		Coord upperBound(1.0);
 		hash.SetSpace(2 * samplingDistance, lowerBound, upperBound);
+
+		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
+		initArgument(&m_neighbors, "Neighbors", "Neighbors");
+		initArgument(&m_samplingDistance, "SamplingDistance", "Sampling Distance");
+		initArgument(&m_smoothingLength, "SmoothingLength", "Smoothing Length");
 	}
 
 	template<typename TDataType>
-	bool NeighborQuery<TDataType>::execute()
+	bool Physika::NeighborQuery<TDataType>::execute()
 	{
-		DeviceArray<Coord>* posArr = m_parent->GetNewPositionBuffer()->getDataPtr();
-		DeviceArray<NeighborList>* neighborArr = m_parent->GetNeighborBuffer()->getDataPtr();
-		float dt = m_parent->getDt();
+		DeviceArray<Coord>* posArr = m_position.getField().getDataPtr();
+		DeviceArray<SPHNeighborList>* neighborArr = m_neighbors.getField().getDataPtr();
 
-		Real smoothingLength = m_parent->GetSmoothingLength();
+		Real smoothingLength = m_smoothingLength.getField().getValue();
 
 		hash.QueryNeighborSlow(*posArr, *neighborArr, smoothingLength, NEIGHBOR_SIZE);
 
 		return true;
 	}
+
 
 }
