@@ -12,10 +12,6 @@ public:
 	virtual ~VisualModule();
 
 	virtual void display() {};
-
-private:
-	void insertToNodeImpl(Node* node) override;
-	void deleteFromNodeImpl(Node* node) override;
 };
 
 }

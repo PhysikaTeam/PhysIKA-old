@@ -10,9 +10,6 @@ public:
 	ForceModule();
 	virtual ~ForceModule();
 
-public:
-	void insertToNodeImpl(Node* node) override;
-	void deleteFromNodeImpl(Node* node) override;
 private:
 
 };

@@ -11,9 +11,6 @@ public:
 	CollisionModule();
 	virtual ~CollisionModule();
 
-private:
-	void insertToNodeImpl(Node* node) override;
-	void deleteFromNodeImpl(Node* node) override;
 };
 
 }

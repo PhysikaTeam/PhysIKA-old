@@ -30,9 +30,6 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Field.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Module.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -96,6 +93,12 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Log.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActInit.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Module.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h">
@@ -111,9 +114,6 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Field.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Module.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.h">
@@ -183,6 +183,12 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Log.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActInit.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Module.h">
       <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,6 +16,17 @@ Module::~Module(void)
 	m_arguments.clear();
 }
 
+bool Module::initialize()
+{
+	if (m_initialized)
+	{
+		return true;
+	}
+	m_initialized = initializeImpl();
+
+	return m_initialized;
+}
+
 bool Module::isArgumentComplete()
 {
 	std::list<BaseSlot*>::iterator iter = m_arguments.begin();
@@ -33,18 +44,6 @@ bool Module::isArgumentComplete()
 bool Module::isInitialized()
 {
 	return m_initialized;
-}
-
-void Module::insertToNode(Node* node)
-{
-	setParent(node);
-	insertToNodeImpl(node);
-}
-
-void Module::deleteFromNode(Node* node)
-{
-	setParent(NULL);
-	deleteFromNodeImpl(node);
 }
 
 void Module::initArgument(BaseSlot* arg, std::string name, std::string desc)

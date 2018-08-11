@@ -31,10 +31,6 @@ public:
 	inline void tagAsUnchanged() { m_topologyChanged = false; }
 	inline bool isTopologyChanged() { return m_topologyChanged; }
 
-public:
-	void insertToNodeImpl(Node* node) override;
-	void deleteFromNodeImpl(Node* node) override;
-
 private:
 	bool m_topologyChanged;
 };

@@ -25,7 +25,7 @@ namespace Physika {
 		
 		bool execute() override;
 
-		bool initialize() override;
+		bool initializeImpl() override;
 
 		bool updateStates() override;
 

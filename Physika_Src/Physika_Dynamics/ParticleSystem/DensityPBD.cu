@@ -165,7 +165,7 @@ namespace Physika
 			densitySum->connectMass(m_mass.getFieldPtr());
 			densitySum->connectRadius(m_radius.getFieldPtr());
 			densitySum->connectDensity(m_density.getFieldPtr());
-			densitySum->initialize();
+			densitySum->initializeImpl();
 		}
 		
 		int it = 0;

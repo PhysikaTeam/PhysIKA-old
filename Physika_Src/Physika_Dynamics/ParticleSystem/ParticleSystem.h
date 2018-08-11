@@ -15,8 +15,10 @@ namespace Physika
 		ParticleSystem();
 		virtual ~ParticleSystem();
 
-		bool initialize() override;
 		bool execute() override;
+
+	protected:
+		bool initializeImpl() override;
 
 	private:
 		HostVariablePtr<size_t> m_num;

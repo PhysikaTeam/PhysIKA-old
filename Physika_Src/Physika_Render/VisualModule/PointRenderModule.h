@@ -13,9 +13,10 @@ namespace Physika
 		PointRenderModule();
 		~PointRenderModule();
 
-		bool  initialize() override;
-
 		void display() override;
+
+	protected:
+		bool  initializeImpl() override;
 
 	private:
 		std::shared_ptr<PointRenderUtil> point_render_util;

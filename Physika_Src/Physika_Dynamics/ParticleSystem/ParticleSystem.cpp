@@ -28,9 +28,9 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	bool ParticleSystem<TDataType>::initialize()
+	bool ParticleSystem<TDataType>::initializeImpl()
 	{
-		this->NumericalModel::initialize();
+		this->NumericalModel::initializeImpl();
 
 		Node* parent = getParent();
 		if (parent == NULL)
@@ -44,6 +44,11 @@ namespace Physika
 		{
 			Log::sendMessage(Log::Error, "The topology module is not supported!");
 			return false;
+		}
+
+		if (!pSet->isInitialized())
+		{
+			pSet->initialize();
 		}
 
 		m_num = this->allocHostVariable<size_t>("num", "Particle number", (size_t)pSet->getPointSize());
@@ -143,7 +148,7 @@ namespace Physika
 			summation->connectMass(TypeInfo::CastPointerUp<Field>(m_mass));
 			summation->connectRadius(TypeInfo::CastPointerUp<Field>(m_smoothingLength));
 			summation->connectDensity(TypeInfo::CastPointerUp<Field>(rhoBuf));
-			summation->initialize();
+			summation->initializeImpl();
 			summation->execute();
 
 			DeviceArray<Real>* gpgRho = rhoBuf->getDataPtr();

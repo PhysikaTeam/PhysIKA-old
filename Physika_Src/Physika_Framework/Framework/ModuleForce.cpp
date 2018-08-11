@@ -13,14 +13,4 @@ ForceModule::~ForceModule()
 {
 }
 
-void ForceModule::insertToNodeImpl(Node* node)
-{
-	node->addForceModule(this);
-}
-
-void ForceModule::deleteFromNodeImpl(Node* node)
-{
-	node->deleteForceModule(this);
-}
-
 }

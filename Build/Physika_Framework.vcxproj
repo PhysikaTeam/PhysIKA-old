@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActAnimate.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActDraw.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActInit.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\Action.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Base.cpp" />
@@ -42,6 +43,7 @@
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActAnimate.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActDraw.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActInit.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\Action.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h" />

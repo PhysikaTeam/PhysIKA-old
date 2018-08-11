@@ -55,7 +55,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	bool SummationDensity<TDataType>::initialize()
+	bool SummationDensity<TDataType>::initializeImpl()
 	{
 		return true;
 	}

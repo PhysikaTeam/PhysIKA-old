@@ -52,9 +52,9 @@ public:
 		return addChild(TypeInfo::New<TNode>(name));
 	}
 
-	std::shared_ptr<Node> addChild(std::shared_ptr<Node> child) { 
+	std::shared_ptr<Node> addChild(std::shared_ptr<Node> child) {
 		m_children.push_back(child);
-		return child; 
+		return child;
 	}
 
 	void removeChild(std::shared_ptr<Node> child);
@@ -157,6 +157,7 @@ public:
 
 private:
 	float m_dt;
+	bool m_initalized;
 
 	HostVariablePtr<bool> m_active;
 	HostVariablePtr<bool> m_visible;

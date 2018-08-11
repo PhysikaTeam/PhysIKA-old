@@ -16,14 +16,4 @@ TopologyModule::~TopologyModule()
 {
 }
 
-void TopologyModule::insertToNodeImpl(Node* node)
-{
-	node->setTopologyModule(this);
-}
-
-void TopologyModule::deleteFromNodeImpl(Node* node)
-{
-
-}
-
 }

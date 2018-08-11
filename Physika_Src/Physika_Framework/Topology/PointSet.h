@@ -13,8 +13,7 @@ namespace Physika
 		PointSet();
 		~PointSet();
 
-		bool initialize() override;
-		virtual void initialize(std::vector<Coord>& pos);
+		virtual void setPoints(std::vector<Coord>& pos);
 
 		DeviceArray<Coord>* getPoints() { return &m_coords; }
 		int getPointSize() { return m_coords.size(); };
@@ -23,6 +22,8 @@ namespace Physika
 		virtual void updatePointNeighbors();
 
 	protected:
+		bool initializeImpl() override;
+
 		DeviceArray<Coord> m_coords;
 		NeighborList<int> m_pointNeighbors;
 	};

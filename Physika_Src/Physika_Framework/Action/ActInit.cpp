@@ -1,27 +1,26 @@
-#include "ActAnimate.h"
+#include "ActInit.h"
 #include "Physika_Framework/Framework/Module.h"
 #include "Physika_Framework/Framework/NumericalModel.h"
 
 namespace Physika
 {
-	
-	AnimateAct::AnimateAct()
+	InitAct::InitAct()
 	{
 
 	}
 
-	AnimateAct::~AnimateAct()
+	InitAct::~InitAct()
 	{
 
 	}
 
-	void AnimateAct::Process(Node* node)
+	void InitAct::Process(Node* node)
 	{
 		std::list<Module*> list = node->getModuleList();
 		std::list<Module*>::iterator iter = list.begin();
 		for (; iter != list.end(); iter++)
 		{
-			(*iter)->execute();
+			(*iter)->initialize();
 		}
 	}
 

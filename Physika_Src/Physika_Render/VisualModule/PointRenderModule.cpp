@@ -15,7 +15,7 @@ namespace Physika
 	{
 	}
 
-	bool PointRenderModule::initialize()
+	bool PointRenderModule::initializeImpl()
 	{
 		Node* parent = getParent();
 		if (parent == NULL)
@@ -29,6 +29,11 @@ namespace Physika
 		{
 			Log::sendMessage(Log::Error, "The topology module is not supported!");
 			return false;
+		}
+
+		if (!pSet->isInitialized())
+		{
+			pSet->initialize();
 		}
 
 		point_render_util = std::make_shared<PointRenderUtil>();

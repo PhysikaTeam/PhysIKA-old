@@ -14,14 +14,4 @@ VisualModule::~VisualModule()
 {
 }
 
-void VisualModule::insertToNodeImpl(Node* node)
-{
-	node->addVisualModule(this);
-}
-
-void VisualModule::deleteFromNodeImpl(Node* node)
-{
-	node->deleteVisualModule(this);
-}
-
 }

@@ -49,3 +49,5 @@ Build/x64/Release/Physika_Core.lib
 Build/x64/Release/cudart32_91.dll
 Build/x64/Release/cudart64_91.dll
 Build/App_Test/console_log.txt
+Build/x64/Release/console_log.txt
+Build/x64/Release/App_Test

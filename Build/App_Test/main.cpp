@@ -138,27 +138,16 @@ int main()
 	std::shared_ptr<Node> root = scene->createNewScene<Node>("root");
 
 	pSet = new PointSet<Vector3f>();
-	std::vector<Vector3f> positions;
-	for (float x = 0.4; x < 0.6; x += 0.005f) {
-		for (float y = 0.1; y < 0.2; y += 0.005f) {
-			for (float z = 0.4; z < 0.6; z += 0.005f) {
-				positions.push_back(Vector3f(float(x), float(y), float(z)));
-			}
-		}
-	}
-	pSet->initialize(positions);
 
 	root->setTopologyModule(pSet);
 
 	auto pS2 = new ParticleSystem<DataType3f>();
 	root->setNumericalModel(pS2);
-	pS2->initialize();
 
 	auto render = new PointRenderModule();
-	render->setParent(root.get());
-	render->initialize();
 	root->addVisualModule(render);
 
+	scene->initialize();
 
 	glut_window.setScene(scene);
 

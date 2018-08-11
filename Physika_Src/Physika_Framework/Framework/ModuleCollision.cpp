@@ -13,14 +13,4 @@ CollisionModule::~CollisionModule()
 {
 }
 
-void CollisionModule::insertToNodeImpl(Node* node)
-{
-	node->addCollisionModule(this);
-}
-
-void CollisionModule::deleteFromNodeImpl(Node* node)
-{
-	node->deleteCollisionModule(this);
-}
-
 }

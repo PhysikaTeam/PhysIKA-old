@@ -139,7 +139,7 @@ bool Node::addModule(std::string name, Module* module)
 		m_modules[name] = module;
 		m_module_list.push_back(module);
 
-		module->insertToNode(this);
+//		module->insertToNode(this);
 	}
 
 	return true;

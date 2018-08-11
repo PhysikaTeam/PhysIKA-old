@@ -1,6 +1,7 @@
 #include "SceneGraph.h"
 #include "Action/ActAnimate.h"
 #include "Action/ActDraw.h"
+#include "Action/ActInit.h"
 #include "Framework/SceneLoaderFactory.h"
 
 namespace Physika
@@ -18,6 +19,7 @@ std::shared_ptr<SceneGraph> SceneGraph::getInstance()
 
 bool SceneGraph::initialize()
 {
+	m_root->traverse<InitAct>();
 	return false;
 }
 

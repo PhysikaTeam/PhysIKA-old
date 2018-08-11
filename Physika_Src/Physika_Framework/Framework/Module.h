@@ -63,7 +63,7 @@ public:
 
 	virtual ~Module(void);
 
-	virtual bool initialize() { m_initialized = true; return m_initialized; }
+	bool initialize();
 
 	virtual bool execute() { return false; }
 
@@ -104,14 +104,9 @@ public:
 	bool isArgumentComplete();
 	bool isInitialized();
 
-public:
-	void insertToNode(Node* node);
-	void deleteFromNode(Node* node);
-	virtual void insertToNodeImpl(Node* node) {};
-	virtual void deleteFromNodeImpl(Node* node) {};
-
 protected:
 	void initArgument(BaseSlot* arg, std::string name, std::string desc);
+	virtual bool initializeImpl() { return m_initialized; }
 
 private:
 	Node* m_node;
