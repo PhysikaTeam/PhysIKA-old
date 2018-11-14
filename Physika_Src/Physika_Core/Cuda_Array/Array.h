@@ -41,7 +41,7 @@ namespace Physika {
 		/*!
 		*	\brief	Clear all data to zero.
 		*/
-		void Reset();
+		void reset();
 
 		/*!
 		*	\brief	Free allocated memory.	Should be called before the object is deleted.
@@ -135,11 +135,11 @@ namespace Physika {
 
 		m_alloc->allocMemory1D((void**)&m_data, m_totalNum, sizeof(T));
 
-		Reset();
+		reset();
 	}
 
 	template<typename T, DeviceType deviceType>
-	void Array<T, deviceType>::Reset()
+	void Array<T, deviceType>::reset()
 	{
 // 		switch (deviceType)
 // 		{

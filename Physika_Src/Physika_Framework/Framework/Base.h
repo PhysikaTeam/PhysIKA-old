@@ -31,14 +31,27 @@ public:
 	bool findFieldAlias(const std::string name, MapPtr<Field>& fieldAlias);
 
 	bool removeField(std::shared_ptr<Field> data);
-	bool removeFieldAlias(const std::string name); 
+	bool removeFieldAlias(const std::string name);
 	bool removeFieldAlias(const std::string name, MapPtr<Field>& fieldAlias);
 
-	std::shared_ptr<Field>		getField(const std::string name);
+	std::shared_ptr<Field>	getField(const std::string name);
+
+	template<typename T>
+	std::shared_ptr< T > getField(std::string name)
+	{
+		MapPtr<Field>::iterator iter = m_fieldAlias.find(name);
+		if (iter != m_fieldAlias.end())
+		{
+			return std::dynamic_pointer_cast<T>(iter->second);
+		}
+		return nullptr;
+	}
+
+
 	std::vector<std::string>	getFieldAlias(std::shared_ptr<Field> data);
 	int				getFieldAliasCount(std::shared_ptr<Field> data);
 
-	template<typename T>
+/*	template<typename T>
 	std::shared_ptr< HostVariable<T> > allocHostVariable(std::string name, std::string description)
 	{
 		return allocVariable<T, DeviceType::CPU>(name, description);
@@ -67,7 +80,6 @@ public:
 	{
 		return getArrayBuffer<T, DeviceType::CPU>(name);
 	}
-
 
 	//#define CONTEXT_ADD_SEPCIAL_DATA()
 
@@ -165,7 +177,7 @@ protected:
 		}
 
 		return TypeInfo::CastPointerDown<FieldType>(ret);
-	}
+	}*/
 
 private:
 	FieldVector m_field;

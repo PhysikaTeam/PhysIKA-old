@@ -2,19 +2,19 @@
 
 namespace Physika
 {
-	template<typename Coord>
-	EdgeSet<Coord>::EdgeSet()
+	template<typename TDataType>
+	EdgeSet<TDataType>::EdgeSet()
 	{
 	}
 
-	template<typename Coord>
-	EdgeSet<Coord>::~EdgeSet()
+	template<typename TDataType>
+	EdgeSet<TDataType>::~EdgeSet()
 	{
 		
 	}
 
-	template<typename Coord>
-	void EdgeSet<Coord>::updatePointNeighbors()
+	template<typename TDataType>
+	void EdgeSet<TDataType>::updatePointNeighbors()
 	{
 		if (m_coords.isEmpty())
 			return;

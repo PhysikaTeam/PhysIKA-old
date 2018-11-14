@@ -6,9 +6,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Kernel.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Attribute.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ElasticityModule.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Peridynamics.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityConstraint.h">
       <Filter>Modules</Filter>
     </ClInclude>
@@ -30,16 +32,12 @@
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ViscosityBase.h">
       <Filter>Modules</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Kernel.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Attribute.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\INeighbors.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\FixedPoints.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.cu">
-      <Filter>Modules</Filter>
-    </CudaCompile>
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ElasticityModule.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityConstraint.cu">
       <Filter>Modules</Filter>
     </CudaCompile>
@@ -61,9 +59,12 @@
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ViscosityBase.cu">
       <Filter>Modules</Filter>
     </CudaCompile>
-    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.cu" />
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\FixedPoints.cu">
+      <Filter>Modules</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.cpp" />
+    <ClCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Peridynamics.cpp" />
   </ItemGroup>
 </Project>

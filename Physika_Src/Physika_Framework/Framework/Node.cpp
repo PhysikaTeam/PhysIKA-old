@@ -1,25 +1,36 @@
 #include "Node.h"
 #include "Action/Action.h"
-#include "Framework/DeviceContext.h"
-#include "Framework/Module.h"
-#include "Framework/ControllerAnimation.h"
-#include "Framework/ControllerRender.h"
 
 namespace Physika
 {
+IMPLEMENT_CLASS(Node)
+
+Node::Node()
+	: Base()
+	, m_parent(NULL)
+{
+	setName("default");
+
+	m_active = HostVariable<bool>::createField(this, "active", "this is a variable!", true);
+	m_visible = HostVariable<bool>::createField(this, "visible", "this is a variable!", true);
+	m_time = HostVariable<float>::createField(this, "time", "this is a variable!", 0.0f);
+
+	m_dt = 0.001f;
+}
+
 Node::Node(std::string name)
+	: Base()
+	, m_parent(NULL)
 {
 	setName(name);
 
-	m_active = this->allocHostVariable<bool>("active", "this is a variable!");	m_active->setValue(true);
-	m_visible = this->allocHostVariable<bool>("visible", "this is a variable!"); m_visible->setValue(true);
-	m_time = this->allocHostVariable<float>("time", "this is a variable!"); m_time->setValue(0.0f);
+	m_active = HostVariable<bool>::createField(this, "active", "this is a variable!", true);
+	m_visible = HostVariable<bool>::createField(this, "visible", "this is a variable!", true);
+	m_time = HostVariable<float>::createField(this, "time", "this is a variable!", 0.0f);
 		
 	m_dt = 0.001f;
-
-	m_parent = NULL;
-	m_context = NULL;
 }
+
 
 Node::~Node()
 {
@@ -29,9 +40,9 @@ void Node::setName(std::string name)
 {
 	if (m_node_name == nullptr)
 	{
-		m_node_name = this->allocHostVariable<std::string>("node_name", "Node name");
+		m_node_name = HostVariable<std::string>::createField(this, "node_name", "Node name", name);
 	}
-	m_node_name->setValue(name);
+//	m_node_name->setValue(name);
 }
 
 std::string Node::getName()
@@ -116,10 +127,56 @@ std::shared_ptr<DeviceContext> Node::getContext()
 	if (m_context == nullptr)
 	{
 		m_context = TypeInfo::New<DeviceContext>();
+		m_context->setParent(this);
+		addModule(m_context);
 	}
 	return m_context;
 }
 
+void Node::setContext(std::shared_ptr<DeviceContext> context)
+{
+	if (m_context != nullptr)
+	{
+		deleteModule(m_context);
+	}
+
+	m_context = context; 
+	addModule(m_context);
+}
+
+std::shared_ptr<MechanicalState> Node::getMechanicalState()
+{
+	if (m_mechanical_state == nullptr)
+	{
+		m_mechanical_state = TypeInfo::New<MechanicalState>();
+		m_mechanical_state->setParent(this);
+		addModule(m_mechanical_state);
+	}
+	return m_mechanical_state;
+}
+
+void Node::setMechanicalState(std::shared_ptr<MechanicalState> state)
+{
+	if (m_mechanical_state != nullptr)
+	{
+		deleteModule(m_mechanical_state);
+	}
+
+	m_mechanical_state = state; 
+	addModule(state);
+}
+
+/*
+std::shared_ptr<MechanicalState> Node::getMechanicalState()
+{
+	if (m_mechanical_state == nullptr)
+	{
+		m_mechanical_state = TypeInfo::New<MechanicalState>();
+		m_mechanical_state->setParent(this);
+	}
+	return m_mechanical_state;
+}*/
+/*
 bool Node::addModule(std::string name, Module* module)
 {
 	if (getContext() == nullptr || module == NULL)
@@ -144,10 +201,10 @@ bool Node::addModule(std::string name, Module* module)
 
 	return true;
 }
-
-bool Node::addModule(Module* module)
+*/
+bool Node::addModule(std::shared_ptr<Module> module)
 {
-	std::list<Module*>::iterator found = std::find(m_module_list.begin(), m_module_list.end(), module);
+	std::list<std::shared_ptr<Module>>::iterator found = std::find(m_module_list.begin(), m_module_list.end(), module);
 	if (found == m_module_list.end())
 	{
 		m_module_list.push_back(module);
@@ -158,7 +215,7 @@ bool Node::addModule(Module* module)
 	return false;
 }
 
-bool Node::deleteModule(Module* module)
+bool Node::deleteModule(std::shared_ptr<Module> module)
 {
 	return false;
 }
@@ -186,7 +243,62 @@ void Node::setAsCurrentContext()
 	getContext()->enable();
 }
 
-Module* Node::getModule(std::string name)
+void Node::setTopologyModule(std::shared_ptr<TopologyModule> topology)
+{
+	if (m_topology != nullptr)
+	{
+		deleteModule(m_topology);
+	}
+	m_topology = topology;
+	addModule(topology);
+}
+
+void Node::setNumericalModel(std::shared_ptr<NumericalModel> numerical)
+{
+	if (m_numerical_model != nullptr)
+	{
+		deleteModule(m_numerical_model);
+	}
+	m_numerical_model = numerical;
+	addModule(numerical);
+}
+
+void Node::setCollidableObject(std::shared_ptr<CollidableObject> collidable)
+{
+	if (m_collidable_object != nullptr)
+	{
+		deleteModule(m_collidable_object);
+	}
+	m_collidable_object = collidable;
+	addModule(collidable);
+}
+
+void Node::setRenderController(std::shared_ptr<RenderController> controller)
+{
+	if (m_render_controller != nullptr)
+	{
+		deleteModule(m_render_controller);
+	}
+	m_render_controller = controller;
+	addModule(m_render_controller);
+}
+
+void Node::setAnimationController(std::shared_ptr<AnimationController> controller)
+{
+	if (m_animation_controller != nullptr)
+	{
+		deleteModule(m_animation_controller);
+	}
+	m_animation_controller = controller;
+	addModule(m_animation_controller);
+}
+
+std::shared_ptr<AnimationController> Node::getAnimationController()
+{
+	return m_animation_controller;
+}
+
+/*Module* Node::getModule(std::string name)
 {
 	std::map<std::string, Module*>::iterator result = m_modules.find(name);
 	if (result == m_modules.end())
@@ -195,17 +307,6 @@ Module* Node::getModule(std::string name)
 	}
 
 	return result->second;
-}
-
-bool Node::execute(std::string name)
-{
-	Module* module = getModule(name);
-	if (module == NULL)
-	{
-		return false;
-	}
-
-	return module->execute();
-}
+}*/
 
 }

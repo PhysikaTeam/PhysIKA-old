@@ -16,10 +16,19 @@ namespace Physika
 
 	void DrawAct::Process(Node* node)
 	{
-		std::list<VisualModule*>& list = node->getVisualModuleList();
-		for (std::list<VisualModule*>::iterator iter = list.begin(); iter != list.end(); iter++)
+		if (!node->isVisible())
 		{
-			(*iter)->display();
+			return;
+		}
+
+		auto& list = node->getVisualModuleList();
+		for (std::list<std::shared_ptr<VisualModule>>::iterator iter = list.begin(); iter != list.end(); iter++)
+		{
+			if ((*iter)->isVisible())
+			{
+				(*iter)->updateRenderingContext();
+				(*iter)->display();
+			}
 		}
 	}
 }

@@ -11,114 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Cube_Render\cube_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Line_Render\line_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Quad_Render\quad_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_gl_cuda_buffer.cu" />
-    <CudaCompile Include="..\Physika_Src\Physika_Render\Utilities\gl_cuda_buffer_test_tool.cu" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\LineRender.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\OpenGLContext.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\PointRender.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\PointRenderModule.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\ShaderProgram.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\TriangleRender.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Physika_Src\Physika_Render\Camera\camera.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\ColorBar\ColorMap\color_map.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Color\color.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Cube_Render\cube_render_util.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Cube_Render\cube_solid_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Cube_Render\cube_wireframe_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Global_Unifrom_Config\global_uniform_config.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\interval.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Lights\directional_light.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Lights\flash_light.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Lights\flex_spot_light.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Lights\light_base.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Lights\light_manager.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Lights\point_light.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Lights\spot_light.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Line_Render\line_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Line_Render\line_render_util.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\OpenGL_Shaders\shader.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\OpenGL_Shaders\shader_program.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_render_util.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Point_Render\point_vector_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Quad_Render\quad_render_util.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Quad_Render\quad_solid_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Quad_Render\quad_wireframe_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Render_Scene_Config\render_scene_config.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Render_Task_Base\render_task_base.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Render_Task_Manager\render_task_manager.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Screen_Based_Render_Manager\screen_based_render_manager.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Screen_Based_Render_Manager\Shadow_Map\shadow_map.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_render_util.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_solid_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_wireframe_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_custom_color_render_task_base.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_render_util.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_solid_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_wireframe_render_task.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Utilities\point_vector_attrib_config.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Utilities\vbo_cuda_mapper.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\Utilities\vertex_color_attrib_config.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\VisualModule\PointRenderModule.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Physika_Src\Physika_Render\Camera\camera.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\ColorBar\ColorMap\color_map.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Color\color.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Cube_Render\cube_gl_cuda_buffer.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Cube_Render\cube_render_util.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Cube_Render\cube_solid_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Cube_Render\cube_wireframe_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Global_Unifrom_Config\global_uniform_config.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\interval.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Lights\directional_light.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Lights\flash_light.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Lights\flex_spot_light.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Lights\light_base.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Lights\light_manager.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Lights\point_light.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Lights\spot_light.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Line_Render\line_gl_cuda_buffer.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Line_Render\line_render_shader_srcs.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Line_Render\line_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Line_Render\line_render_util.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\OpenGL_Primitives\glew_utilities.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\OpenGL_Primitives\opengl_primitives.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\OpenGL_Shaders\shader.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\OpenGL_Shaders\shader_program.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_gl_cuda_buffer.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render-inl.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render_shader_srcs.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_render_util.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_vector_render_shader_srcs.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Point_Render\point_vector_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Quad_Render\quad_gl_cuda_buffer.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Quad_Render\quad_render_util.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Quad_Render\quad_solid_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Quad_Render\quad_wireframe_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Render_Scene_Config\render_scene_config.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Render_Task_Base\render_task_base.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Render_Task_Manager\render_task_manager.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Screen_Based_Render_Manager\screen_based_render_manager.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Screen_Based_Render_Manager\Shadow_Map\shadow_map.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_gl_cuda_buffer.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_render_util.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_solid_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Tetrahedron_Render\tetrahedron_wireframe_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_custom_color_render_task_base.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_gl_cuda_buffer.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_render_util.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_solid_render_shader_srcs.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_solid_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_wireframe_render_shader_srcs.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Triangle_Render\triangle_wireframe_render_task.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Utilities\gl_cuda_buffer_test_tool.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Utilities\point_vector_attrib_config.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Utilities\vbo_cuda_mapper.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\Utilities\vertex_color_attrib_config.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Render\VisualModule\PointRenderModule.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\CudaVBOMapper.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\GlewHelper.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\LineRender.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\OpenGLContext.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\PointRender.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\PointRenderModule.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\ShaderProgram.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\TriangleRender.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79291DFF-2352-4F41-811D-8D29F2372F77}</ProjectGuid>
@@ -189,7 +97,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>

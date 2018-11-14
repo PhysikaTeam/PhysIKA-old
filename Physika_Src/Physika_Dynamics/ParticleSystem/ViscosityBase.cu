@@ -3,7 +3,7 @@
 #include "Physika_Core/Utilities/Function1Pt.h"
 #include "ViscosityBase.h"
 #include "Attribute.h"
-#include "INeighbors.h"
+#include "Physika_Framework/Topology/INeighbors.h"
 #include "Physika_Framework/Framework/Node.h"
 
 
@@ -91,11 +91,11 @@ namespace Physika
 
 	template<typename TDataType>
 	ViscosityBase<TDataType>::ViscosityBase()
-		:Module()
+		:ForceModule()
 		, m_oldVel(NULL)
 		, m_bufVel(NULL)
 	{
-		m_viscosity = this->allocHostVariable<Real>("viscosity", "Viscosity", Real(0.05));
+		m_viscosity = HostVariable<Real>::createField(this, "viscosity", "Viscosity", Real(0.05));
 
 		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
 		initArgument(&m_velocity, "Velocity", "CUDA array used to store particles' velocities");
@@ -128,7 +128,7 @@ namespace Physika
 		DeviceArray<Coord>* bufVel = m_bufVel->getDataPtr();
 		Real dt = getParent()->getDt();
 
-		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
+		cuint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
 
 		Real smoothingLength = m_radius.getField().getValue();
 		Real viscosity = m_viscosity->getValue();

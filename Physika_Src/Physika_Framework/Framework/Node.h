@@ -1,23 +1,32 @@
 #pragma once
 #include "Base.h"
 #include "Typedef.h"
+#include "FieldVar.h"
+#include "Physika_Core/Platform.h"
+#include "NumericalModel.h"
+#include "ModuleTopology.h"
+#include "DeviceContext.h"
+#include "MechanicalState.h"
+#include "ModuleForce.h"
+#include "ModuleConstraint.h"
+#include "CollisionModel.h"
+#include "CollidableObject.h"
+#include "ModuleVisual.h"
+#include "ControllerAnimation.h"
+#include "ControllerRender.h"
 
 namespace Physika {
-class Module;
-class DeviceContext;
 class Action;
-class TopologyModule;
-class ForceModule;
-class ConstraintModule;
-class CollisionModule;
-class VisualModule;
-class NumericalModel;
-class RenderController;
-class AnimationController;
 
 class Node : public Base
 {
+	DECLARE_CLASS(Node)
 public:
+
+	template<class T>
+	using SPtr = std::shared_ptr<T>;
+
+	Node();
 	Node(std::string name);
 	virtual ~Node();
 
@@ -41,10 +50,10 @@ public:
 	virtual void setVisible(bool visible);
 
 	/// Simulation time
-	virtual float getTime();
+	virtual Real getTime();
 
 	/// Simulation timestep
-	virtual float getDt();
+	virtual Real getDt();
 
 	template<class TNode>
 	std::shared_ptr<TNode> createChild(std::string name)
@@ -54,6 +63,7 @@ public:
 
 	std::shared_ptr<Node> addChild(std::shared_ptr<Node> child) {
 		m_children.push_back(child);
+		child->setParent(this);
 		return child;
 	}
 
@@ -67,15 +77,31 @@ public:
 	virtual void advance(float dt) {};
 	virtual void takeOneFrame() {};
 
-	inline std::shared_ptr<DeviceContext> getContext();
+	std::shared_ptr<DeviceContext> getContext();
+	void setContext(std::shared_ptr<DeviceContext> context);
 
-	void setContext(std::shared_ptr<DeviceContext> context) { m_context = context; }
+	std::shared_ptr<MechanicalState> getMechanicalState();
+	void setMechanicalState(std::shared_ptr<MechanicalState> state);
 
-	
-	bool addModule(std::string name, Module* module);
+	//bool addModule(std::string name, Module* module);
 
-	bool addModule(Module* module);
-	bool deleteModule(Module* module);
+	bool addModule(std::shared_ptr<Module> module);
+
+	template<class TModule>
+	bool addModule(std::shared_ptr<TModule> tModule)
+	{
+		std::shared_ptr<Module> module = std::dynamic_pointer_cast<Module>(tModule);
+		return addModule(module);
+	}
+
+	template<class TModule>
+	bool deleteModule(std::shared_ptr<TModule> tModule)
+	{
+		std::shared_ptr<Module> module = std::dynamic_pointer_cast<Module>(tModule);
+		return deleteModule(module);
+	}
+
+	bool deleteModule(std::shared_ptr<Module> module);
 
 	virtual void doTraverse(Action* act);
 	void traverse(Action* act);
@@ -87,97 +113,81 @@ public:
 
 	virtual void setAsCurrentContext();
 
-	void setTopologyModule(TopologyModule* topology) {
-		m_topology = topology;
-		addModule((Module*)topology);
-	}
-	void setNumericalModel(NumericalModel* numerical){
-		m_numerical_model = numerical;
-		addModule((Module*)numerical);
-	}
+	void setTopologyModule(std::shared_ptr<TopologyModule> topology);
+	void setNumericalModel(std::shared_ptr<NumericalModel> numerical);
+	void setCollidableObject(std::shared_ptr<CollidableObject> collidable);
+	void setRenderController(std::shared_ptr<RenderController> controller);
+	void setAnimationController(std::shared_ptr<AnimationController> controller);
 
-	NumericalModel* getNumericalModel() { return m_numerical_model; }
-	TopologyModule* getTopologyModule() { return m_topology; }
+	std::shared_ptr<CollidableObject>		getCollidableObject() { return m_collidable_object; }
+	std::shared_ptr<NumericalModel>			getNumericalModel() { return m_numerical_model; }
+	std::shared_ptr<TopologyModule>			getTopologyModule() { return m_topology; }
+	std::shared_ptr<RenderController>		getRenderController() { return m_render_controller; }
+	std::shared_ptr<AnimationController>	getAnimationController();
 
-	void setRenderController(RenderController* controller) { m_render_controller = controller; }
-	RenderController* getRenderController() { return m_render_controller; }
-
-	void setAnimationController(AnimationController* controller) { m_animation_controller = controller; }
-	AnimationController* getAnimationController() { return m_animation_controller; }
-
-	Module* getModule(std::string name);
+	//Module* getModule(std::string name);
 
 	template<class TModule>
-	TModule* getModule(std::string name)
+	std::shared_ptr<TModule> getModule()
 	{
-		Module* module = getModule(name);
-		TModule* t_module = TypeInfo::CastPointerDown<TModule>(module);
-		if (t_module == NULL)
+		TModule* tmp = new TModule;
+		std::shared_ptr<Module> base;
+		std::list<std::shared_ptr<Module>>::iterator iter;
+		for (iter = m_module_list.begin(); iter != m_module_list.end(); iter++)
 		{
-			return NULL;
+			if ((*iter)->getClassInfo() == tmp->getClassInfo())
+			{
+				base = *iter;
+				break;
+			}
 		}
-
-		return t_module;
+		delete tmp;
+		return TypeInfo::CastPointerDown<TModule>(base);
 	}
 
-	template<class TModule>
-	TModule* getModule()
-	{
-// 		TModule* tmp = new TModule;
-// 		Module* base = NULL;
-// 		std::list<Module*>::iterator iter;
-// 		for (iter = m_module_list.begin(); iter != m_module_list.end(); iter++)
-// 		{
-// 			if ((*iter)->getClassInfo() == tmp->getClassInfo())
-// 			{
-// 				base = *iter;
-// 				break;
-// 			}
-// 		}
-// 		delete tmp;
-// 		return TypeInfo::CastPointerDown<TModule>(base);
-		return;
-	}
-
-	std::list<Module*>& getModuleList() { return m_module_list; }
-
-	bool execute(std::string name);
+	std::list<std::shared_ptr<Module>>& getModuleList() { return m_module_list; }
 
 	virtual void updateModules() {};
 
 #define NODE_ADD_SPECIAL_MODULE( CLASSNAME, SEQUENCENAME ) \
-	virtual void add##CLASSNAME( CLASSNAME* module) { SEQUENCENAME.push_back(module); addModule((Module*)module);} \
-	virtual void delete##CLASSNAME( CLASSNAME* module) { SEQUENCENAME.remove(module); deleteModule((Module*)module); } \
-	std::list<CLASSNAME*>& get##CLASSNAME##List(){ return SEQUENCENAME;}
+	virtual void add##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.push_back(module); addModule(module);} \
+	virtual void delete##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.remove(module); deleteModule(module); } \
+	std::list<std::shared_ptr<CLASSNAME>>& get##CLASSNAME##List(){ return SEQUENCENAME;}
 
 	NODE_ADD_SPECIAL_MODULE(ForceModule, m_force_list)
 	NODE_ADD_SPECIAL_MODULE(ConstraintModule, m_constraint_list)
-	NODE_ADD_SPECIAL_MODULE(CollisionModule, m_collision_list)
+	NODE_ADD_SPECIAL_MODULE(CollisionModel, m_collision_list)
 	NODE_ADD_SPECIAL_MODULE(VisualModule, m_render_list)
 
 private:
-	float m_dt;
+	void setParent(Node* p) { m_parent = p; }
+
+private:
+	Real m_dt;
 	bool m_initalized;
 
 	HostVariablePtr<bool> m_active;
 	HostVariablePtr<bool> m_visible;
-	HostVariablePtr<float> m_time;
+	HostVariablePtr<Real> m_time;
 
 	HostVariablePtr<std::string> m_node_name;
 
-	std::list<Module*> m_module_list;
-	std::map<std::string, Module*> m_modules;
+	std::list<std::shared_ptr<Module>> m_module_list;
+	//std::map<std::string, Module*> m_modules;
 
-	TopologyModule* m_topology;
-	NumericalModel* m_numerical_model;
+	std::shared_ptr<TopologyModule> m_topology;
+	std::shared_ptr<NumericalModel> m_numerical_model;
+	std::shared_ptr<MechanicalState> m_mechanical_state;
 
-	RenderController* m_render_controller;
-	AnimationController* m_animation_controller;
+	std::shared_ptr<CollidableObject> m_collidable_object;
 
-	std::list<ForceModule*> m_force_list;
-	std::list<ConstraintModule*> m_constraint_list;
-	std::list<CollisionModule*> m_collision_list;
-	std::list<VisualModule*> m_render_list;
+	std::shared_ptr<RenderController> m_render_controller;
+	std::shared_ptr<AnimationController> m_animation_controller;
+
+	std::list<std::shared_ptr<ForceModule>> m_force_list;
+	std::list<std::shared_ptr<ConstraintModule>> m_constraint_list;
+	std::list<std::shared_ptr<CollisionModel>> m_collision_list;
+	std::list<std::shared_ptr<VisualModule>> m_render_list;
 
 	std::shared_ptr<DeviceContext> m_context;
 

@@ -2,43 +2,45 @@
 #include <vector_types.h>
 #include "Physika_Core/Vectors/vector.h"
 #include "Physika_Core/Matrices/matrix.h"
+#include "Physika_Core/Rigid/rigid.h"
 
 namespace Physika
 {
-	template<class TReal, class TCoord, class TMatrix>
+	template<class TReal, class TCoord, class TMatrix, class TRigid>
 	class DataTypes
 	{
 	public:
 		typedef TReal Real;
 		typedef TCoord Coord;
 		typedef TMatrix Matrix;
+		typedef TRigid Rigid;
 
-		static const char* name();
+		static const char* getName();
 	};
 
 	/// 1f DOF, single precision
-	typedef DataTypes<float, Vector1f, Matrix1f> DataType1f;
-	template<> inline const char* DataType1f::name() { return "DataType1f"; }
+	typedef DataTypes<float, Vector1f, Matrix1f, Rigid<float, 1>> DataType1f;
+	template<> inline const char* DataType1f::getName() { return "DataType1f"; }
 
 	/// 2f DOF, single precision
-	typedef DataTypes<float, Vector2f, Matrix2f> DataType2f;
-	template<> inline const char* DataType2f::name() { return "DataType2f"; }
+	typedef DataTypes<float, Vector2f, Matrix2f, Rigid2f> DataType2f;
+	template<> inline const char* DataType2f::getName() { return "DataType2f"; }
 
 	/// 3f DOF, single precision
-	typedef DataTypes<float, Vector3f, Matrix3f> DataType3f;
-	template<> inline const char* DataType3f::name() { return "DataType3f"; }
+	typedef DataTypes<float, Vector3f, Matrix3f, Rigid3f> DataType3f;
+	template<> inline const char* DataType3f::getName() { return "DataType3f"; }
 
 	/// 1d DOF, double precision
-	typedef DataTypes<double, Vector1d, Matrix1d> DataType1d;
-	template<> inline const char* DataType1d::name() { return "DataType1d"; }
+	typedef DataTypes<double, Vector1d, Matrix1d, Rigid<double, 1>> DataType1d;
+	template<> inline const char* DataType1d::getName() { return "DataType1d"; }
 
 	/// 2d DOF, double precision
-	typedef DataTypes<double, Vector2d, Matrix2d> DataType2d;
-	template<> inline const char* DataType2d::name() { return "DataType2d"; }
+	typedef DataTypes<double, Vector2d, Matrix2d, Rigid2d> DataType2d;
+	template<> inline const char* DataType2d::getName() { return "DataType2d"; }
 
 	/// 3d DOF, double precision
-	typedef DataTypes<double, Vector3d, Matrix3d> DataType3d;
-	template<> inline const char* DataType3d::name() { return "DataType3d"; }
+	typedef DataTypes<double, Vector3d, Matrix3d, Rigid3d> DataType3d;
+	template<> inline const char* DataType3d::getName() { return "DataType3d"; }
 }
 
 

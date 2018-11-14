@@ -6,7 +6,7 @@ namespace Physika {
 	class SceneLoader
 	{
 	public:
-		virtual Node* load(const std::string filename) { return NULL; }
+		virtual std::shared_ptr<Node> load(const std::string filename) { return nullptr; }
 
 		virtual bool canLoadFileByName(const std::string filename) {
 			std::string str = filename;
@@ -26,7 +26,7 @@ namespace Physika {
 		typedef std::vector<SceneLoader*> SceneLoaderList;
 
 		/// Get the ObjectFactory singleton instance
-		static SceneLoaderFactory* getInstance();
+		static SceneLoaderFactory& getInstance();
 
 	public:
 		/// Get an entry given a file extension
@@ -42,6 +42,8 @@ namespace Physika {
 		SceneLoaderList* getEntryList() { return &m_loaders; }
 
 	private:
+		SceneLoaderFactory();
+
 		/// Main class registry
 		SceneLoaderList m_loaders;
 	};

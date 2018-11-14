@@ -2,6 +2,5 @@
 
 namespace Physika
 {
-	
 }
 

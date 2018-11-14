@@ -6,7 +6,7 @@
 #include "Physika_Geometry/SDF/DistanceField3D.h"
 #include "Attribute.h"
 #include "cuda_runtime.h"
-#include "Framework/Module.h"
+#include "Framework/ModuleConstraint.h"
 
 namespace Physika {
 
@@ -59,7 +59,7 @@ namespace Physika {
 
 
 	template<typename TDataType>
-	class BoundaryManager : public Module
+	class BoundaryManager : public ConstraintModule
 	{
 	public:
 		typedef typename TDataType::Real Real;

@@ -4,24 +4,19 @@
 
 namespace Physika
 {
-	class State
-	{
-	public:
-		static std::string position() { return "Position"; }
-		static std::string velocity() { return "Velocity"; }
-		static std::string acceleration() { return "Acceleration"; }
-		static std::string force() { return "Force"; }
-	};
-
 	class NumericalModel : public Module
 	{
-		DECLARE_CLASS(NumericalModel)
 	public:
 		NumericalModel();
 		~NumericalModel() override;
 
-	protected:
+		virtual void step(Real dt) {};
 
+		virtual void updateTopology() = 0;
+
+		std::string getModuleType() override { return "NumericalModel"; }
+	protected:
+		
 	private:
 
 	};

@@ -38,15 +38,15 @@ namespace Physika{
 	#define BLOCK_SIZE 64
 	#define cudaCheck(x) { cudaError_t err = x; if (err != cudaSuccess) { printf("Cuda error: %d in %s at %s:%d\n", err, #x, __FILE__, __LINE__); printf("Cuda status: %s\n", cudaGetErrorString( cudaGetLastError() ) ); assert(0);} }
 
-	using uint = unsigned int;
+	using cuint = unsigned int;
 
-	static uint iDivUp(uint a, uint b)
+	static cuint iDivUp(cuint a, cuint b)
 	{
 		return (a % b != 0) ? (a / b + 1) : (a / b);
 	}
 
 	// compute grid and thread block size for a given number of elements
-	static uint cudaGridSize(uint totalSize, uint blockSize)
+	static cuint cudaGridSize(cuint totalSize, cuint blockSize)
 	{
 		return iDivUp(totalSize, blockSize);
 	}

@@ -4,10 +4,13 @@
 
 namespace Physika
 {
-	template<typename Coord>
-	class TriangleSet : public EdgeSet<Coord>
+	template<typename TDataType>
+	class TriangleSet : public EdgeSet<TDataType>
 	{
 	public:
+		typedef typename TDataType::Real Real;
+		typedef typename TDataType::Coord Coord;
+
 		TriangleSet();
 		~TriangleSet();
 

@@ -25,6 +25,9 @@
     <Filter Include="Image">
       <UniqueIdentifier>{cdecc1ea-cb10-4c51-b564-55416f185a1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rigid">
+      <UniqueIdentifier>{cea71a95-85ce-401a-be06-9429e548eb4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector.h">
@@ -83,12 +86,6 @@
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.h">
       <Filter>Matrices</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\square_matrix.h">
-      <Filter>Matrices</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.h">
-      <Filter>Quaternion</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Platform.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Typedef.h" />
@@ -155,6 +152,24 @@
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Core\Range\range.h" />
     <ClInclude Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.h">
+      <Filter>Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Rigid\rigid_2d.h">
+      <Filter>Rigid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Rigid\rigid_3d.h">
+      <Filter>Rigid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Rigid\rigid_base.h">
+      <Filter>Rigid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Rigid\rigid.h">
+      <Filter>Rigid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\square_matrix.h">
+      <Filter>Matrices</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_2d.cpp">
@@ -162,9 +177,6 @@
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_3d.cpp">
       <Filter>Transform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp">
-      <Filter>Quaternion</Filter>
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Core\Timer\GTimer.cpp">
       <Filter>Timer</Filter>
@@ -183,6 +195,9 @@
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Core\Range\range.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.cpp">
+      <Filter>Quaternion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.cu">

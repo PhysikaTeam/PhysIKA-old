@@ -1,11 +1,12 @@
 #include "SceneLoaderFactory.h"
+#include "SceneLoaderXML.h"
 
 namespace Physika
 {
-	SceneLoaderFactory* SceneLoaderFactory::getInstance()
+	SceneLoaderFactory& SceneLoaderFactory::getInstance()
 	{
 		static SceneLoaderFactory m_instance;
-		return &m_instance;
+		return m_instance;
 	}
 
 	SceneLoader* SceneLoaderFactory::getEntryByFileExtension(std::string extension)
@@ -38,6 +39,12 @@ namespace Physika
 	{
 		m_loaders.push_back(loader);
 		return loader;
+	}
+
+	SceneLoaderFactory::SceneLoaderFactory()
+	{
+		SceneLoaderXML* xmlLoder = new SceneLoaderXML();
+		this->addEntry(xmlLoder);
 	}
 
 }

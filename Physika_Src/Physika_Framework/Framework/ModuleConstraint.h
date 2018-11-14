@@ -12,9 +12,12 @@ public:
 	virtual ~ConstraintModule();
 
 	//interface for data initialization, must be called before execution
-	virtual bool connectPosition(std::shared_ptr<Field>& pos) = 0;
-	virtual bool connectVelocity(std::shared_ptr<Field>& vel) = 0;
+	virtual bool connectPosition(std::shared_ptr<Field>& pos) { return true; }
+	virtual bool connectVelocity(std::shared_ptr<Field>& vel) { return true; }
 
+	virtual void constrain() {};
+
+	std::string getModuleType() override { return "ConstraintModule"; }
 private:
 };
 }

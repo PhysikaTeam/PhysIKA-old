@@ -1,40 +1,35 @@
 #include <iostream>
 #include <memory>
 #include <cuda_runtime_api.h>
+#include <GL/glew.h>
 #include <GL/freeglut.h>
 
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
-#include "Physika_Geometry/Boundary_Meshes/surface_mesh.h"
-#include "Physika_GUI/Glut_Window/glut_window.h"
-
-#include "Physika_Render/ColorBar/ColorMap/color_map.h"
-
-#include "Physika_Render/Lights/directional_light.h"
-#include "Physika_Render/Lights/point_light.h"
-#include "Physika_Render/Lights/spot_light.h"
-#include "Physika_Render/Lights/flash_light.h"
-
-#include "Physika_Render/Render_Scene_Config/render_scene_config.h"
-#include "Physika_Render/Point_Render/point_render_util.h"
-#include "Physika_Render/Point_Render/point_render_task.h"
-#include "Physika_Render/Point_Render/point_gl_cuda_buffer.h"
-#include "Physika_Render/Point_Render/point_vector_render_task.h"
-#include "Physika_Render/Utilities/gl_cuda_buffer_test_tool.h"
+#include "Physika_GUI/GlutGUI/GLApp.h"
 
 #include "Physika_Framework/Framework/SceneGraph.h"
-#include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
 #include "Physika_Framework/Topology/PointSet.h"
 #include "Physika_Framework/Framework/Log.h"
-#include "Physika_Render/VisualModule/PointRenderModule.h"
+
+#include "Physika_Render/PointRenderModule.h"
+
+#include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
+#include "Physika_Dynamics/ParticleSystem/Peridynamics.h"
+
+#include "Physika_Framework/Collision/CollidableSDF.h"
+#include "Physika_Framework/Collision/CollidablePoints.h"
+#include "Physika_Framework/Collision/CollisionSDF.h"
+#include "Physika_Dynamics/RigidBody/RigidBody.h"
+#include "Physika_Framework/Framework/Gravity.h"
+#include "Physika_Dynamics/ParticleSystem/FixedPoints.h"
+#include "Physika_Framework/Collision/CollisionPoints.h"
 
 using namespace std;
 using namespace Physika;
 
-SurfaceMesh<double> mesh;
-std::shared_ptr<PointRenderUtil> point_render_util;
-PointSet<Vector3f>* pSet;
+#define DEMO_1
+//#define DEMO_2
 
+#ifdef DEMO_1
 void RecieveLogMessage(const Log::Message& m)
 {
 	switch (m.type)
@@ -51,119 +46,309 @@ void RecieveLogMessage(const Log::Message& m)
 	}
 }
 
-void initFunction()
+void CreateScene1()
 {
-	//---------------------------------------------------------------------------------------------------------------------
-	RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
-// 	point_render_util = make_shared<PointRenderUtil>();
-// 
-// 	DeviceArray<float3>* xyz = (DeviceArray<float3>*)pSet->getPoints();
-// 	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
-// 	
-// 	point_render_util->unmapPointGLCudaBuffer();
-// 
-// 	//---------------------------------------------------------------------------------------------------------------------
-// 	auto point_render_task = make_shared<PointRenderTask>(point_render_util);
-// 	//point_render_task->disableUsePointSprite();
-// 	point_render_task->setPointScaleForPointSprite(3.0);
-// 	render_scene_config.pushBackRenderTask(point_render_task);
+	SceneGraph& scene = SceneGraph::getInstance();
 
-	auto flash_light = make_shared<FlashLight>();
-	//flash_light->setAmbient(Color4f::White());
-	render_scene_config.pushBackLight(flash_light);
+	std::shared_ptr<Node> root = scene.createNewScene<Node>("root");
+	auto collidable1 = std::make_shared<CollidableSDF<DataType3f>>();
+	root->setCollidableObject(collidable1);
 
-	render_scene_config.zoomCameraOut(3.0);
-	render_scene_config.translateCameraRight(0.5);
+// 	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
+// 	auto* pSet1 = new PointSet<Vector3f>();
+// 	c1->setTopologyModule(pSet1);
 
+	//create root node
+	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
 
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+	auto pSet = std::make_shared<PointSet<DataType3f>>();
+	c1->setTopologyModule(pSet);
 
-	glClearDepth(1.0);
-	glClearColor(0.49, 0.49, 0.49, 1.0);
+	auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
+//	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
+//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
+	c1->setNumericalModel(pS1);
 
-	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
+	auto render = std::make_shared<PointRenderModule>();
+	//	render->setVisible(false);
+	c1->addVisualModule(render);
+
+	auto cPoints = std::make_shared<CollidablePoints<DataType3f>>();
+	c1->setCollidableObject(cPoints);
+
+	auto gravity = std::make_shared<Gravity<DataType3f>>();
+	c1->addForceModule(gravity);
+
+//	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
+//	fixed->addPoint(0);
+//	c1->addConstraintModule(fixed);
+
+	auto cModel = std::make_shared<CollisionSDF<DataType3f>>();
+	cModel->setCollidableSDF(collidable1);
+	cModel->addCollidableObject(cPoints);
+	//	cModel->setSDF(collidable1->getSDF());
+	root->addCollisionModel(cModel);
+	
+//	auto pModel = std::make_shared<CollisionPoints<DataType3f>>();
+//	pModel->addCollidableObject(cPoints);
+//	root->addCollisionModel(pModel);
 }
 
-void displayFunction()
+
+
+void CreateScene2()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(1.0, 1.0);
+	SceneGraph& scene = SceneGraph::getInstance();
 
-	RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
-	render_scene_config.renderAllTasks();
+	std::shared_ptr<Node> root = scene.createNewScene<Node>("root");
+	auto collidable1 = std::make_shared<CollidableSDF<DataType3f>>();
+	root->setCollidableObject(collidable1);
 
-	GlutWindow * cur_window = (GlutWindow*)glutGetWindowData();
-	cur_window->displayFrameRate();
-// 	DeviceArray<float3>* xyz = (DeviceArray<float3>*)pSet->getPoints();
-// 	PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
-// 	cudaMemcpy(point_gl_cuda_buffer.getCudaPosPtr(), xyz->getDataPtr(), sizeof(float) * 3 * xyz->size(), cudaMemcpyDeviceToDevice);
-// 	point_render_util->unmapPointGLCudaBuffer();
-	cur_window->getScene()->takeOneFrame();
-	cur_window->getScene()->draw();
-	glutPostRedisplay();
-	glutSwapBuffers();
-}
+	// 	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
+	// 	auto* pSet1 = new PointSet<Vector3f>();
+	// 	c1->setTopologyModule(pSet1);
 
-void keyboardFunction(unsigned char key, int x, int y)
-{
-	GlutWindow::bindDefaultKeys(key, x, y);
-	switch (key)
-	{
-	case 't':
-		cout << "test\n";
-		break;
-	default:
-		break;
+	//create root node
+	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
+
+	auto pSet = std::make_shared<PointSet<DataType3f>>();
+	c1->setTopologyModule(pSet);
+
+	auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
+	//	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
+	//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
+	c1->setNumericalModel(pS1);
+
+	auto render = std::make_shared<PointRenderModule>();
+	//	render->setVisible(false);
+	c1->addVisualModule(render);
+
+	auto cPoints = std::make_shared<CollidablePoints<DataType3f>>();
+	c1->setCollidableObject(cPoints);
+
+	auto gravity = std::make_shared<Gravity<DataType3f>>();
+	c1->addForceModule(gravity);
+
+	//	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
+	//	fixed->addPoint(0);
+	//	c1->addConstraintModule(fixed);
+
+	//create root node
+	std::shared_ptr<Node> c2 = root->createChild<Node>("child2");
+
+	auto pSet2 = std::make_shared<PointSet<DataType3f>>();
+	std::vector<DataType3f::Coord> positions;
+	for (float x = 0.65; x < 0.75; x += 0.005f) {
+		for (float y = 0.2; y < 0.3; y += 0.005f) {
+			for (float z = 0.45; z < 0.55; z += 0.005f) {
+				positions.push_back(DataType3f::Coord(DataType3f::Real(x), DataType3f::Real(y), DataType3f::Real(z)));
+			}
+		}
 	}
+	pSet2->setPoints(positions);
+	c2->setTopologyModule(pSet2);
+
+//	auto pS2 = std::make_shared<ParticleSystem<DataType3f>>();
+	auto pS2 = std::make_shared<Peridynamics<DataType3f>>();
+//	auto pS2 = std::make_shared<RigidBody<DataType3f>>();
+	c2->setNumericalModel(pS2);
+
+	auto render2 = std::make_shared<PointRenderModule>();
+	//	render->setVisible(false);
+	c2->addVisualModule(render2);
+
+	auto cPoints2 = std::make_shared<CollidablePoints<DataType3f>>();
+	c2->setCollidableObject(cPoints2);
+
+	auto gravity2 = std::make_shared<Gravity<DataType3f>>();
+	c2->addForceModule(gravity2);
+
+
+	auto cModel = std::make_shared<CollisionSDF<DataType3f>>();
+	cModel->setCollidableSDF(collidable1);
+	cModel->addCollidableObject(cPoints);
+	cModel->addCollidableObject(cPoints2);
+//	cModel->setSDF(collidable1->getSDF());
+	root->addCollisionModel(cModel);
+
+	auto pModel = std::make_shared<CollisionPoints<DataType3f>>();
+	pModel->addCollidableObject(cPoints);
+	pModel->addCollidableObject(cPoints2);
+	root->addCollisionModel(pModel);
+}
+
+void CreateScene3()
+{
+	SceneGraph& scene = SceneGraph::getInstance();
+
+	std::shared_ptr<Node> root = scene.createNewScene<Node>("root");
+	auto collidable1 = std::make_shared<CollidableSDF<DataType3f>>();
+	root->setCollidableObject(collidable1);
+
+	// 	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
+	// 	auto* pSet1 = new PointSet<Vector3f>();
+	// 	c1->setTopologyModule(pSet1);
+
+	//create child node 1
+	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
+
+	auto pSet = std::make_shared<PointSet<DataType3f>>();
+	c1->setTopologyModule(pSet);
+
+	auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
+	//	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
+	//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
+	c1->setNumericalModel(pS1);
+
+	auto render = std::make_shared<PointRenderModule>();
+	//	render->setVisible(false);
+	c1->addVisualModule(render);
+
+	auto cPoints = std::make_shared<CollidablePoints<DataType3f>>();
+	c1->setCollidableObject(cPoints);
+
+	auto gravity = std::make_shared<Gravity<DataType3f>>();
+	c1->addForceModule(gravity);
+
+	//	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
+	//	fixed->addPoint(0);
+	//	c1->addConstraintModule(fixed);
+
+	//create child node 2
+	std::shared_ptr<Node> c2 = root->createChild<Node>("child2");
+
+	auto pSet2 = std::make_shared<PointSet<DataType3f>>();
+	std::vector<DataType3f::Coord> positions;
+	for (float x = 0.65; x < 0.75; x += 0.005f) {
+		for (float y = 0.2; y < 0.3; y += 0.005f) {
+			for (float z = 0.45; z < 0.55; z += 0.005f) {
+				positions.push_back(DataType3f::Coord(DataType3f::Real(x), DataType3f::Real(y), DataType3f::Real(z)));
+			}
+		}
+	}
+	pSet2->setPoints(positions);
+	c2->setTopologyModule(pSet2);
+
+	//	auto pS2 = std::make_shared<ParticleSystem<DataType3f>>();
+	auto pS2 = std::make_shared<Peridynamics<DataType3f>>();
+	//	auto pS2 = std::make_shared<RigidBody<DataType3f>>();
+	c2->setNumericalModel(pS2);
+
+	auto render2 = std::make_shared<PointRenderModule>();
+	//	render->setVisible(false);
+	c2->addVisualModule(render2);
+
+	auto cPoints2 = std::make_shared<CollidablePoints<DataType3f>>();
+	c2->setCollidableObject(cPoints2);
+
+	auto gravity2 = std::make_shared<Gravity<DataType3f>>();
+	c2->addForceModule(gravity2);
+
+
+	//create child node 3
+	std::shared_ptr<Node> c3 = root->createChild<Node>("child2");
+
+	auto pSet3 = std::make_shared<PointSet<DataType3f>>();
+	std::vector<DataType3f::Coord> positions3;
+	for (float x = 0.25; x < 0.35; x += 0.005f) {
+		for (float y = 0.2; y < 0.3; y += 0.005f) {
+			for (float z = 0.45; z < 0.55; z += 0.005f) {
+				positions3.push_back(DataType3f::Coord(DataType3f::Real(x), DataType3f::Real(y), DataType3f::Real(z)));
+			}
+		}
+	}
+	pSet3->setPoints(positions3);
+	c3->setTopologyModule(pSet3);
+
+	//	auto pS2 = std::make_shared<ParticleSystem<DataType3f>>();
+	//auto pS3 = std::make_shared<Peridynamics<DataType3f>>();
+	auto pS3 = std::make_shared<RigidBody<DataType3f>>();
+	c3->setNumericalModel(pS3);
+
+	auto render3 = std::make_shared<PointRenderModule>();
+	//	render->setVisible(false);
+	c3->addVisualModule(render3);
+
+	auto cPoints3 = std::make_shared<CollidablePoints<DataType3f>>();
+	c3->setCollidableObject(cPoints3);
+
+	auto gravity3 = std::make_shared<Gravity<DataType3f>>();
+	c3->addForceModule(gravity3);
+
+	auto cModel = std::make_shared<CollisionSDF<DataType3f>>();
+	cModel->setCollidableSDF(collidable1);
+	cModel->addCollidableObject(cPoints);
+	cModel->addCollidableObject(cPoints2);
+	cModel->addCollidableObject(cPoints3);
+	//	cModel->setSDF(collidable1->getSDF());
+	root->addCollisionModel(cModel);
+
+	auto pModel = std::make_shared<CollisionPoints<DataType3f>>();
+	pModel->addCollidableObject(cPoints);
+	pModel->addCollidableObject(cPoints2);
+	pModel->addCollidableObject(cPoints3);
+	root->addCollisionModel(pModel);
 }
 
 int main()
 {
-	GlutWindow glut_window;
-	cout << "Window name: " << glut_window.name() << "\n";
-	cout << "Window size: " << glut_window.width() << "x" << glut_window.height() << "\n";
-
-	RenderSceneConfig & render_scene_config1 = RenderSceneConfig::getSingleton();
+//	SceneGraph::getInstance().load("scene.xml");
+//	CreateScene1();
+//	CreateScene2();
+	CreateScene3();
 
 	Log::setOutput("console_log.txt");
 	Log::setLevel(Log::Info);
 	Log::setUserReceiver(&RecieveLogMessage);
-	
-	Log::sendMessage(Log::Info, "Initialization begin");
-	std::shared_ptr<SceneGraph> scene = SceneGraph::getInstance();
+	Log::sendMessage(Log::Info, "Simulation begin");
 
-	std::shared_ptr<Node> root = scene->createNewScene<Node>("root");
+	GLApp window;
+	window.createWindow(1024, 768);
 
-	pSet = new PointSet<Vector3f>();
+	window.mainLoop();
 
-	root->setTopologyModule(pSet);
-
-	auto pS2 = new ParticleSystem<DataType3f>();
-	root->setNumericalModel(pS2);
-
-	auto render = new PointRenderModule();
-	root->addVisualModule(render);
-
-	scene->initialize();
-
-	glut_window.setScene(scene);
-
-	RenderSceneConfig & render_scene_config = RenderSceneConfig::getSingleton();
-	//render_scene_config.setCameraPosition(Vector<double, 3>(0, 0, 200));
-	//render_scene_config.setCameraFocusPosition(Vector<double, 3>(0, 0, 0));
-	render_scene_config.setCameraNearClip(0.1);
-	render_scene_config.setCameraFarClip(1.0e3);
-
-	glut_window.setDisplayFunction(displayFunction);
-	glut_window.setInitFunction(initFunction);
-
-	cout << "Test GlutWindow with custom display function:\n";
-	glut_window.createWindow();
-	cout << "Window size: " << glut_window.width() << "x" << glut_window.height() << "\n";
-	cout << "Test window with GLUI controls:\n";
-
+	Log::sendMessage(Log::Info, "Simulation end!");
 	return 0;
 }
+
+#endif // DEMO_1
+
+
+#ifdef DEMO_2
+
+#include "Physika_GUI/QtGUI/QtApp.h"
+
+int main()
+{
+	SceneGraph& scene = SceneGraph::getInstance();
+
+	//create root node
+	std::shared_ptr<Node> root = scene.createNewScene<Node>("root");
+
+	auto pSet = std::make_shared<PointSet<Vector3f>>();
+	root->setTopologyModule(pSet);
+
+	std::vector<Vector3f> positions;
+	for (float x = 0.4; x < 0.6; x += 0.005f) {
+		for (float y = 0.1; y < 0.1075; y += 0.005f) {
+			for (float z = 0.4; z < 0.6; z += 0.005f) {
+				positions.push_back(Vector3f(Real(x), Real(y), Real(z)));
+			}
+		}
+	}
+	pSet->setPoints(positions);
+
+	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
+	root->setNumericalModel(pS1);
+
+	auto render = std::make_shared<PointRenderModule>();
+	render->scale(100.0f, 100.0f, 100.0f);
+	root->addVisualModule(render);
+
+	QtApp app;
+	app.createWindow(1024, 768);
+
+	app.mainLoop();
+}
+
+#endif // DEMO_2

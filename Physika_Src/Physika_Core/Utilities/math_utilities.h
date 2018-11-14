@@ -68,11 +68,11 @@ COMM_FUNC Scalar abs(Scalar value)
 //     return std::sqrt(value);
 // }
 
-template <typename Scalar>
-inline double sqrt(Scalar value)
-{
-    return std::sqrt(static_cast<double>(value));
-}
+// template <typename Scalar>
+// inline double sqrt(Scalar value)
+// {
+//     return std::sqrt(static_cast<double>(value));
+// }
 
 inline float cbrt(float value)
 {

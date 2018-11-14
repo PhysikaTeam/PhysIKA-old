@@ -71,9 +71,10 @@ public:
     COMM_FUNC Scalar cross(const Vector<Scalar,1> &)const;
     COMM_FUNC Scalar dot(const Vector<Scalar,1>&) const;
 //    COMM_FUNC const SquareMatrix<Scalar,1> outerProduct(const Vector<Scalar,1>&) const;
+	COMM_FUNC Scalar* getDataPtr() { return &data_; }
 
-protected:
-    Scalar data_; //default: 0
+public:
+	Scalar data_; //default: 0
 };
 
 //overriding << for vector1D

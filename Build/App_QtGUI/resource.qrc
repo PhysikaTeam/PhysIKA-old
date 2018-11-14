@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/res">
+        <file>qt.png</file>
+        <file>titlebarLeft.png</file>
+        <file>titlebarCenter.png</file>
+        <file>titlebarRight.png</file>
+        <file>icon/AddLayer.png</file>
+        <file>icon/AppPreferences.png</file>
+        <file>icon/CloseAll.png</file>
+        <file>icon/CloseFile.png</file>
+        <file>icon/Copy.png</file>
+        <file>icon/DefaultDirectoryIcon.png</file>
+        <file>icon/Document.png</file>
+        <file>icon/NewFile.png</file>
+        <file>icon/NextWindow.png</file>
+        <file>icon/OpenFile.png</file>
+        <file>icon/PreviousWindow.png</file>
+        <file>icon/Print.png</file>
+        <file>icon/Redo.png</file>
+        <file>icon/RemoveCustomProperty.png</file>
+        <file>icon/Save.png</file>
+        <file>icon/SaveAs.png</file>
+        <file>icon/Undo.png</file>
+        <file>icon/ZoomIn.png</file>
+        <file>icon/ZoomOut.png</file>
+        <file>icon/ZoomToSelection.png</file>
+    </qresource>
+</RCC>

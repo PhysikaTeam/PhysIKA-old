@@ -78,6 +78,8 @@ public:
 
     COMM_FUNC static const SquareMatrix<Scalar,1> identityMatrix();
 
+	COMM_FUNC Scalar* getDataPtr() { return &data_; }
+
 protected:
     Scalar data_; //default:zero matrix
 

@@ -10,6 +10,7 @@ namespace Physika
 
 	template<typename TDataType>
 	DensityConstraint<TDataType>::DensityConstraint()
+		: ConstraintModule()
 	{
 		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
 		initArgument(&m_velocity, "Velocity", "CUDA array used to store particles' velocities");

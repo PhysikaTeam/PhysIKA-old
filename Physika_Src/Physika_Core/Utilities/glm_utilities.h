@@ -16,14 +16,14 @@
 
 #include <glm/glm.hpp>
 #include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Render/Color/color.h"
+//#include "Physika_Render/Color/color.h"
 
 namespace Physika{
 
-inline glm::vec3 convertCol3(const Color4f & col)
-{
-    return glm::vec3(col.redChannel(), col.greenChannel(), col.blueChannel());
-}
+// inline glm::vec3 convertCol3(const Color4f & col)
+// {
+//     return glm::vec3(col.redChannel(), col.greenChannel(), col.blueChannel());
+// }
 
 template <typename Scalar>
 inline glm::vec3 convert(const Vector<Scalar, 3> & val)

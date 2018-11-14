@@ -6,10 +6,14 @@
 
 namespace Physika
 {
-	template<typename Coord>
+	template<typename TDataType>
 	class PointSet : public TopologyModule
 	{
+		DECLARE_CLASS_1(PointSet, TDataType)
 	public:
+		typedef typename TDataType::Real Real;
+		typedef typename TDataType::Coord Coord;
+
 		PointSet();
 		~PointSet();
 
@@ -29,7 +33,7 @@ namespace Physika
 	};
 
 
-	template class PointSet<Vector3f>;
-	template class PointSet<Vector3d>;
+	template class PointSet<DataType3f>;
+	template class PointSet<DataType3d>;
 }
 

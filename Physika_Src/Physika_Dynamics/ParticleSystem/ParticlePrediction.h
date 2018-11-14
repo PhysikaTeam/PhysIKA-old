@@ -5,6 +5,7 @@
 #include "Physika_Core/DataTypes.h"
 #include "Attribute.h"
 #include "Kernel.h"
+#include "Framework/FieldArray.h"
 
 namespace Physika {
 	template<typename TDataType>

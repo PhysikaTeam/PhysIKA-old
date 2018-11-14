@@ -1,28 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Glui_Window">
-      <UniqueIdentifier>{bec2d6e3-b351-4558-a66b-aa4385ee234a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Glut_Window">
-      <UniqueIdentifier>{59011deb-8d37-43c5-8ce8-891a387ba455}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="..\Physika_Src\Physika_GUI\GlutGUI\Camera.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_GUI\GlutGUI\GLApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Physika_Src\Physika_GUI\Glui_Window\glui_window.cpp">
-      <Filter>Glui_Window</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_GUI\Glut_Window\glut_window.cpp">
-      <Filter>Glut_Window</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Physika_Src\Physika_GUI\Glui_Window\glui_window.h">
-      <Filter>Glui_Window</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_GUI\Glut_Window\glut_window.h">
-      <Filter>Glut_Window</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_GUI\BaseWindow.h" />
+    <ClInclude Include="..\Physika_Src\Physika_GUI\GlutGUI\Camera.h" />
+    <ClInclude Include="..\Physika_Src\Physika_GUI\AppBase.h" />
+    <ClInclude Include="..\Physika_Src\Physika_GUI\GlutGUI\GLApp.h" />
   </ItemGroup>
 </Project>

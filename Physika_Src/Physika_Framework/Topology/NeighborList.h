@@ -1,5 +1,7 @@
 #pragma once
 #include "Platform.h"
+#include "Physika_Core/Cuda_Array/Array.h"
+
 namespace Physika
 {
 	template<class ElementType>

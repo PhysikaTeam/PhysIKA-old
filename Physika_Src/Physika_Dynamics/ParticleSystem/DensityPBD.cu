@@ -3,6 +3,7 @@
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "DensityPBD.h"
 #include "Physika_Framework/Framework/Node.h"
+#include <string>
 
 namespace Physika
 {
@@ -171,7 +172,7 @@ namespace Physika
 		int it = 0;
 		while (it < 5)
 		{
-			deltaPos->Reset();
+			deltaPos->reset();
 
 			densitySum->execute();
 			DC_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (*lamda, *rhoArr, *posArr, *neighborArr, smoothingLength);
