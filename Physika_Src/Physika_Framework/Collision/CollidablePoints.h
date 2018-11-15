@@ -40,7 +40,6 @@ namespace Physika
 		bool m_bUniformRaidus;
 		Real m_radius;
 		
-		DeviceArray<Coord> m_initPos;
 		DeviceArray<Coord> m_positions;
 		DeviceArray<Coord> m_velocities;
 	};

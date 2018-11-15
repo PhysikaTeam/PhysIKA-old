@@ -60,7 +60,6 @@ namespace Physika
 
 		auto initPoints = pSet->getPoints();
 
-		m_initPos.resize(initPoints->size());
 		m_positions.resize(initPoints->size());
 		Function1Pt::Copy(m_positions, *initPoints);
 
@@ -102,7 +101,6 @@ namespace Physika
 			auto mp = std::dynamic_pointer_cast<RigidToPoints<TDataType>>(m_mapping);
 
 			mp->applyTransform(Rigid(center, Quaternion<Real>(rotation)), m_positions);
-
 		}
 		else
 		{
@@ -115,8 +113,6 @@ namespace Physika
 			Function1Pt::Copy(m_positions, *(pBuf->getDataPtr()));
 			Function1Pt::Copy(m_velocities, *(vBuf->getDataPtr()));
 		}
-
-		Function1Pt::Copy(m_initPos, m_positions);
 	}
 
 	template<typename TDataType>
@@ -127,30 +123,51 @@ namespace Physika
 		auto dc = getParent()->getMechanicalState();
 		if (mType == MechanicalState::RIGIDBODY)
 		{
+			auto center = mstate->getField<HostVariable<Coord>>(MechanicalState::position())->getValue();
+			auto rotation = mstate->getField<HostVariable<Matrix>>(MechanicalState::rotation())->getValue();
+			auto vel = mstate->getField<HostVariable<Coord>>(MechanicalState::velocity())->getValue();
+			
 			HostArray<Coord> hPos;
 			HostArray<Coord> hInitPos;
+			DeviceArray<Coord> dInitPos;
 			hPos.resize(m_positions.size());
 			hInitPos.resize(m_positions.size());
+			dInitPos.resize(m_positions.size());
+
+			auto mp = std::dynamic_pointer_cast<RigidToPoints<TDataType>>(m_mapping);
+			mp->applyTransform(Rigid(center, Quaternion<Real>(rotation)), dInitPos);
+
+			Real dt = getParent()->getDt();
+
 			Function1Pt::Copy(hPos, m_positions);
-			Function1Pt::Copy(hInitPos, m_initPos);
-			Coord center(0);
+			Function1Pt::Copy(hInitPos, dInitPos);
+			Coord displacement(0);
+			Coord angularVel(0);
 			int nn = 0;
 			for (int i = 0; i < hPos.size(); i++)
 			{
-				if ((hInitPos[i] - hPos[i]).norm() > EPSILON)
+				Coord r = hInitPos[i] - center;
+				if ((hInitPos[i] - hPos[i]).norm() > EPSILON && r.norm() > EPSILON)
 				{
-					center += (hPos[i] - hInitPos[i]);
+					displacement += (hPos[i] - hInitPos[i]);
+					Coord vel_i = (hPos[i] - hInitPos[i]) / dt;
+					angularVel += r.cross(vel_i) / r.normSquared();
 					nn++;
 				}
-					
 			}
-			if(nn > 0)
-				center /= nn;
-
-			auto massCenter = mstate->getField<HostVariable<Coord>>(MechanicalState::position())->getValue();
-			dc->getField<HostVariable<Coord>>(MechanicalState::position())->setValue(center+ massCenter);
+			if (nn > 0)
+			{
+				displacement /= nn;
+				angularVel /= nn;
+			}
+			
+			dc->getField<HostVariable<Coord>>(MechanicalState::position())->setValue(center + displacement);
+			dc->getField<HostVariable<Coord>>(MechanicalState::velocity())->setValue(vel + displacement/ dt);
+			dc->getField<HostVariable<Coord>>(MechanicalState::angularVelocity())->setValue(angularVel);
 
 			hPos.release();
+			hInitPos.release();
+			dInitPos.release();
 		}
 		else
 		{

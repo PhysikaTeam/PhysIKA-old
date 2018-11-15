@@ -196,7 +196,7 @@ void CreateScene3()
 	c1->setTopologyModule(pSet);
 
 	auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
-	//	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
+	//auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
 	//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
 	c1->setNumericalModel(pS1);
 

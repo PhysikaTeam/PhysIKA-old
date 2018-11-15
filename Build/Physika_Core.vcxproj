@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Algorithm\MatrixFunc.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array2D.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Cuda_Array\Array3D.h" />
@@ -75,6 +76,7 @@
     <ClCompile Include="..\Physika_Src\Physika_Dependency\StackWalker\StackWalker.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Algorithm\MatrixFunc.inl" />
     <CudaCompile Include="..\Physika_Src\Physika_Core\Cuda_Array\MemoryManager.cu" />
     <CudaCompile Include="..\Physika_Src\Physika_Core\Utilities\Function1Pt.cu" />
     <CudaCompile Include="..\Physika_Src\Physika_Core\Utilities\Function2Pt.cu" />
@@ -96,6 +98,8 @@
     <ProjectGuid>{F84F5FD2-2BF0-43AB-92DB-4AFBE244D133}</ProjectGuid>
     <RootNamespace>Physika_Core</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <CudaToolkitCustomDir>
+    </CudaToolkitCustomDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

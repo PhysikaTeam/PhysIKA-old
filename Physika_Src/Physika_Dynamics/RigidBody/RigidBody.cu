@@ -63,7 +63,7 @@ namespace Physika
 		HostVariable<Coord>::createField(mstate.get(), MechanicalState::init_position(), "Initial position", cenPos);
 		auto center = HostVariable<Coord>::createField(mstate.get(), MechanicalState::position(), "Mass center", cenPos);
 		auto vel = HostVariable<Coord>::createField(mstate.get(), MechanicalState::velocity(), "Translational velocity", Coord(0, 0, 0));
-		auto angularVel = HostVariable<RotateCoord>::createField(mstate.get(), MechanicalState::angularVelocity(), "Angular velocity", RotateCoord(0, 0, 0));
+		auto angularVel = HostVariable<RotateCoord>::createField(mstate.get(), MechanicalState::angularVelocity(), "Angular velocity", RotateCoord(0, 0, 10));
 		HostVariable<Coord>::createField(mstate.get(), MechanicalState::force(), "Force", Coord(0));
 		HostVariable<RotateCoord>::createField(mstate.get(), MechanicalState::forceMoment(), "Force moment", RotateCoord(0));
 
@@ -104,7 +104,7 @@ namespace Physika
 		angularVel += dt*(invMass*forceMoment);
 		transVel += dt*force / mass;
 
-		m_quaternion = m_quaternion + (0.5f * dt) * Quaternion<Real>(0, angularVel[0], angularVel[1], angularVel[2])*m_quaternion;
+		m_quaternion = m_quaternion + (0.5f * dt) * Quaternion<Real>(0, angularVel[0], angularVel[1], angularVel[2])*(m_quaternion);
 		
 		m_quaternion.normalize();
 		m_displacement = transVel*dt;
