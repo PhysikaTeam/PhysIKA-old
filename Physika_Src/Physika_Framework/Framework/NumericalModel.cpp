@@ -2,8 +2,6 @@
 
 namespace Physika
 {
-	IMPLEMENT_CLASS(NumericalModel)
-
 	NumericalModel::NumericalModel()
 		: Module()
 	{

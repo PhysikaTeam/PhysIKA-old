@@ -77,10 +77,11 @@ public:
     COMM_FUNC Vector<Scalar,3> cross(const Vector<Scalar,3> &) const;
     COMM_FUNC Scalar dot(const Vector<Scalar,3>&) const;
 //    COMM_FUNC const SquareMatrix<Scalar,3> outerProduct(const Vector<Scalar,3>&) const;
-    
-protected:
 
-    glm::tvec3<Scalar> data_; //default: zero vector
+	COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
+    
+public:
+	glm::tvec3<Scalar> data_; //default: zero vector
 };
 
 template class Vector<float, 3>;

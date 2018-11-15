@@ -100,6 +100,8 @@ public:
 
     COMM_FUNC static const SquareMatrix<Scalar,2> identityMatrix();
 
+	COMM_FUNC Scalar* getDataPtr() { return &data_[0].x; }
+
 protected:
     glm::tmat2x2<Scalar> data_; //default: zero matrix
 

@@ -4,6 +4,7 @@
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "Physika_Core/DataTypes.h"
 #include "Kernel.h"
+#include "Framework/FieldArray.h"
 
 namespace Physika {
 

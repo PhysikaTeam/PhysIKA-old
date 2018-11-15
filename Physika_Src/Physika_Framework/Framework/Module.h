@@ -7,6 +7,7 @@
 #include "Framework/Base.h"
 #include "Framework/Log.h"
 #include "Physika_Core/Typedef.h"
+#include "Physika_Core/DataTypes.h"
 
 namespace Physika
 {
@@ -103,6 +104,8 @@ public:
 
 	bool isArgumentComplete();
 	bool isInitialized();
+
+	virtual std::string getModuleType() { return "Module"; }
 
 protected:
 	void initArgument(BaseSlot* arg, std::string name, std::string desc);

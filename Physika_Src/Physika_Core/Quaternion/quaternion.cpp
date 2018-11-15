@@ -53,12 +53,13 @@ Quaternion<Scalar>::Quaternion(const Vector<Scalar,3> & unit_axis, Scalar angle_
 template <typename Scalar>
 Quaternion<Scalar>::Quaternion(Scalar angle_rad, const Vector<Scalar,3> & unit_axis)
 {
-    const Scalar a = angle_rad * (Scalar)0.5;
-    const Scalar s = sin(a);
-    w_ = cos(a);
-    x_ = unit_axis[0] * s;
-    y_ = unit_axis[1] * s;
-    z_ = unit_axis[2] * s;
+	Scalar c = cos(0.5f*angle_rad);
+	Scalar s = sin(0.5f*angle_rad);
+	Scalar t = s / unit_axis.norm();
+	x_ = c;
+	y_ = unit_axis[0]*t;
+	z_ = unit_axis[1] *t;
+	w_ = unit_axis[2] *t;
 }
 
 template <typename Scalar>
@@ -154,10 +155,20 @@ Quaternion<Scalar>  Quaternion<Scalar>::operator * (const Scalar& scale) const
 template <typename Scalar>
 Quaternion<Scalar> Quaternion<Scalar>::operator * (const Quaternion<Scalar>& q) const
 {
-    return Quaternion(  w_ * q.x() + x_ * q.w() + y_ * q.z() - z_ * q.y(),
+/*    return Quaternion(  w_ * q.x() + x_ * q.w() + y_ * q.z() - z_ * q.y(),
                         w_ * q.y() + y_ * q.w() + z_ * q.x() - x_ * q.z(),
                         w_ * q.z() + z_ * q.w() + x_ * q.y() - y_ * q.x(),
-                        w_ * q.w() - x_ * q.x() - y_ * q.y() - z_ * q.z());
+                        w_ * q.w() - x_ * q.x() - y_ * q.y() - z_ * q.z());*/
+/*	return Quaternion(x_ * q.x() - y_ * q.y() - z_ * q.z() - w_ * q.w(),
+					  x_ * q.y() + y_ * q.x() + z_ * q.w() - w_ * q.z(),
+					  x_ * q.z() + z_ * q.x() + w_ * q.y() - y_ * q.w(),
+					  x_ * q.w() + w_ * q.x() + y_ * q.z() - z_ * q.z());*/
+	Quaternion result;
+	result.x_ = x_*q.x_ - y_*q.y_ - z_*q.z_ - w_*q.w_;
+	result.y_ = x_*q.y_ + y_*q.x_ + z_*q.w_ - w_*q.z_;
+	result.z_ = x_*q.z_ + z_*q.x_ + w_*q.y_ - y_*q.w_;
+	result.w_ = x_*q.w_ + w_*q.x_ + y_*q.z_ - z_*q.y_;
+	return result;
 }
 
 
@@ -236,14 +247,17 @@ Scalar Quaternion<Scalar>::norm()
 template <typename Scalar>
 Quaternion<Scalar>& Quaternion<Scalar>::normalize()
 {
-    Scalar norm = this->norm();
-    if (norm)
-    {
-        w_/=norm;
-        x_/=norm;
-        y_/=norm;
-        z_/=norm;
-    }
+	Scalar d = sqrt(x_*x_ + y_*y_ + z_*z_ + w_*w_);
+	if (d < 0.00001) {
+		x_ = 1.0f;
+		y_ = z_ = w_ = 0.0f;
+		return *this;
+	}
+	d = 1.0 / d;
+	x_ *= d;
+	y_ *= d;
+	z_ *= d;
+	w_ *= d;
     return *this;
 }
 
@@ -336,6 +350,22 @@ const Vector<Scalar,3> Quaternion<Scalar>::rotate(const Vector<Scalar,3> v) cons
         );
 }
 
+template <typename Scalar>
+void Quaternion<Scalar>::rotateVector(Vector<Scalar, 3>& v)
+{
+	Scalar xlen = v.norm();
+	if (xlen == 0.0f) return;
+
+	Quaternion p(0, v[0], v[1], v[2]);
+	Quaternion qbar(x_, -y_, -z_, -w_);
+	Quaternion qtmp;
+	qtmp = ComposeWith(p);
+	qtmp = qtmp.ComposeWith(qbar);
+	v[0] = qtmp.y_; v[1] = qtmp.z_; v[2] = qtmp.w_;
+	v.normalize();
+	v *= xlen;
+}
+
 
 template <typename Scalar>
 SquareMatrix<Scalar, 3> Quaternion<Scalar>::get3x3Matrix() const
@@ -348,6 +378,7 @@ SquareMatrix<Scalar, 3> Quaternion<Scalar>::get3x3Matrix() const
     return SquareMatrix<Scalar, 3>(Scalar(1) - yy - zz, xy - zw, xz + yw,
                                     xy + zw, Scalar(1) - xx - zz, yz - xw,
                                    xz - yw, yz + xw, Scalar(1) - xx - yy);
+
 }
 
 template <typename Scalar>

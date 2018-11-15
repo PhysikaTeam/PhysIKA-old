@@ -1,20 +1,22 @@
 #include "ParticleSystem.h"
 #include "Framework/DeviceContext.h"
 #include "Attribute.h"
-#include "INeighbors.h"
+#include "Physika_Framework/Topology/INeighbors.h"
 #include "Physika_Framework/Topology/PointSet.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "DensityPBD.h"
 #include "ParticlePrediction.h"
 #include "NeighborQuery.h"
 #include "SummationDensity.h"
-#include "BoundaryManager.h"
 #include "ViscosityBase.h"
 #include "Physika_Core/Utilities/Reduction.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Framework/Framework/MechanicalState.h"
 
 namespace Physika
 {
+	IMPLEMENT_CLASS_1(ParticleSystem, TDataType)
+
 	template<typename TDataType>
 	ParticleSystem<TDataType>::ParticleSystem()
 		: NumericalModel()
@@ -39,7 +41,7 @@ namespace Physika
 			return false;
 		}
 
-		PointSet<Coord>* pSet = dynamic_cast<PointSet<Coord>*>(parent->getTopologyModule());
+		PointSet<TDataType>* pSet = dynamic_cast<PointSet<TDataType>*>(parent->getTopologyModule().get());
 		if (pSet == NULL)
 		{
 			Log::sendMessage(Log::Error, "The topology module is not supported!");
@@ -51,31 +53,34 @@ namespace Physika
 			pSet->initialize();
 		}
 
-		m_num = this->allocHostVariable<size_t>("num", "Particle number", (size_t)pSet->getPointSize());
-		m_mass = this->allocHostVariable<Real>("mass", "Particle mass", Real(1));
-		m_smoothingLength = this->allocHostVariable<Real>("smoothingLength", "Smoothing length", Real(0.0125));
-		m_samplingDistance = this->allocHostVariable<Real>("samplingDistance", "Sampling distance", Real(0.005));
-		m_restDensity = this->allocHostVariable<Real>("restDensity", "Rest density", Real(1000));
+		auto mstate = parent->getMechanicalState();
+		mstate->setMaterialType(MechanicalState::FLUID);
 
-		m_lowerBound = this->allocHostVariable<Coord>("lowerBound", "Lower bound", Coord(0));
-		m_upperBound = this->allocHostVariable<Coord>("upperBound", "Upper bound", Coord(1));
+		m_num = HostVariable<size_t>::createField(mstate.get(), "num", "Particle number", (size_t)pSet->getPointSize());
+		m_mass = HostVariable<Real>::createField(mstate.get(), MechanicalState::mass(), "Particle mass", Real(1));
+		m_smoothingLength = HostVariable<Real>::createField(mstate.get(), "smoothingLength", "Smoothing length", Real(0.0125));
+		m_samplingDistance = HostVariable<Real>::createField(mstate.get(), "samplingDistance", "Sampling distance", Real(0.005));
+		m_restDensity = HostVariable<Real>::createField(mstate.get(), "restDensity", "Rest density", Real(1000));
 
-		m_gravity = this->allocHostVariable<Coord>("gravity", "gravity", Coord(0.0f, -9.8f, 0.0f));
+		m_lowerBound = HostVariable<Coord>::createField(mstate.get(), "lowerBound", "Lower bound", Coord(0));
+		m_upperBound = HostVariable<Coord>::createField(mstate.get(), "upperBound", "Upper bound", Coord(1));
+
+		m_gravity = HostVariable<Coord>::createField(mstate.get(),"gravity", "gravity", Coord(0.0f, -9.8f, 0.0f));
 
 		std::shared_ptr<DeviceContext> dc = getParent()->getContext();
 
 		dc->enable();
 
 		std::cout << "Point number: " << m_num->getValue() << std::endl;
-		auto posBuf = dc->allocDeviceBuffer<Coord>("POSITION1", "Particle positions", m_num->getValue());
-		auto velBuf = dc->allocDeviceBuffer<Coord>("VELOCITY1", "Particle velocities", m_num->getValue());
-		auto restPos = dc->allocDeviceBuffer<Coord>("OLD_POSITION1", "Old particle positions", m_num->getValue());
-		auto restVel = dc->allocDeviceBuffer<Coord>("OLD_VELOCITY1", "Particle positions", m_num->getValue());
-		auto rhoBuf = dc->allocDeviceBuffer<Real>("DENSITY1", "Particle densities", m_num->getValue());
-		auto neighborBuf = dc->allocDeviceBuffer<SPHNeighborList>("NEIGHBORHOOD1", "Particle neighbor ids", m_num->getValue());
-		auto attBuf = dc->allocDeviceBuffer<Attribute>("ATTRIBUTE1", "Particle attributes", m_num->getValue());
+		auto posBuf = DeviceBuffer<Coord>::createField(mstate.get(), MechanicalState::position(), "Particle positions", m_num->getValue());
+		auto velBuf = DeviceBuffer<Coord>::createField(mstate.get(), MechanicalState::velocity(), "Particle velocities", m_num->getValue());
+		auto restPos = DeviceBuffer<Coord>::createField(mstate.get(), MechanicalState::pre_position(), "Old particle positions", m_num->getValue());
+		auto restVel = DeviceBuffer<Coord>::createField(mstate.get(), MechanicalState::pre_velocity(), "Particle positions", m_num->getValue());
+		auto rhoBuf = DeviceBuffer<Real>::createField(mstate.get(), "DENSITY1", "Particle densities", m_num->getValue());
+		auto neighborBuf = DeviceBuffer<SPHNeighborList>::createField(mstate.get(), "NEIGHBORHOOD1", "Particle neighbor ids", m_num->getValue());
+		auto attBuf = DeviceBuffer<Attribute>::createField(mstate.get(), "ATTRIBUTE1", "Particle attributes", m_num->getValue());
 
-		auto pbdModule = new DensityPBD<TDataType>();
+		auto pbdModule = std::make_shared<DensityPBD<TDataType>>();
 		pbdModule->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
 		pbdModule->connectVelocity(TypeInfo::CastPointerUp<Field>(velBuf));
 		pbdModule->connectDensity(TypeInfo::CastPointerUp<Field>(rhoBuf));
@@ -84,30 +89,18 @@ namespace Physika
 		pbdModule->connectMass(TypeInfo::CastPointerUp<Field>(m_mass));
 		pbdModule->connectNeighbor(TypeInfo::CastPointerUp<Field>(neighborBuf));
 
-		auto prediction = new ParticlePrediction<TDataType>();
+		auto prediction = std::make_shared<ParticlePrediction<TDataType>>();
 		prediction->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
 		prediction->connectVelocity(TypeInfo::CastPointerUp<Field>(velBuf));
 		prediction->connectAttribute(TypeInfo::CastPointerUp<Field>(attBuf));
 
-		auto nQuery = new NeighborQuery<TDataType>();
+		auto nQuery = std::make_shared<NeighborQuery<TDataType>>();
 		nQuery->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
 		nQuery->connectNeighbor(TypeInfo::CastPointerUp<Field>(neighborBuf));
 		nQuery->connectSamplingDistance(TypeInfo::CastPointerUp<Field>(m_samplingDistance));
 		nQuery->connectSmoothingLength(TypeInfo::CastPointerUp<Field>(m_smoothingLength));
 
-		auto* bmgr = new BoundaryManager<TDataType>();
-		Coord lo(0.0f);
-		Coord hi(1.0f);
-		DistanceField3D<TDataType> * box = new DistanceField3D<TDataType>();
-		box->SetSpace(lo - m_samplingDistance->getValue() * 5, hi + m_samplingDistance->getValue() * 5, 105, 105, 105);
-		box->DistanceFieldToBox(lo, hi, true);
-		//		box->DistanceFieldToSphere(make_float3(0.5f), 0.2f, true);
-		bmgr->InsertBarrier(new BarrierDistanceField3D<TDataType>(box));
-		bmgr->connectAttribute(TypeInfo::CastPointerUp<Field>(attBuf));
-		bmgr->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
-		bmgr->connectVelocity(TypeInfo::CastPointerUp<Field>(velBuf));
-
-		auto* visModule = new ViscosityBase<TDataType>();
+		auto visModule = std::make_shared<ViscosityBase<TDataType>>();
 		visModule->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
 		visModule->connectVelocity(TypeInfo::CastPointerUp<Field>(velBuf));
 		visModule->connectAttribute(TypeInfo::CastPointerUp<Field>(attBuf));
@@ -117,10 +110,13 @@ namespace Physika
 		visModule->connectNeighbor(TypeInfo::CastPointerUp<Field>(neighborBuf));
 
 		parent->addModule(nQuery);
-		parent->addModule(pbdModule);
+		//parent->addModule(pbdModule);
+		parent->addConstraintModule(pbdModule);
 		parent->addModule(prediction);
-		parent->addModule(bmgr);
-		parent->addModule(visModule);
+//		parent->addModule(bmgr);
+		//parent->addConstraintModule(bmgr);
+		//parent->addModule(visModule);
+		parent->addForceModule(visModule);
 		
 		std::vector<Coord> positions;
 		std::vector<Coord> velocities;
@@ -175,21 +171,43 @@ namespace Physika
 // 		bmgr->InsertBarrier(new BarrierDistanceField3D<TDataType>(box));
 // 		parent->addModule("BOUNDARY_HANDLING", bmgr);
 
+		m_mapping = std::make_shared<PointsToPoints<TDataType>>();
+		m_mapping->initialize(*(posBuf->getDataPtr()), *(pSet->getPoints()));
+
 		return true;
 	}
 
 	template<typename TDataType>
 	bool ParticleSystem<TDataType>::execute()
 	{
-		PointSet<Coord>* pSet = dynamic_cast<PointSet<Coord>*>(getParent()->getTopologyModule());
-		std::shared_ptr<DeviceContext> dc = getParent()->getContext();
-		dc->enable();
-		std::shared_ptr<Field> field = dc->getField("POSITION1");
-		std::shared_ptr<DeviceBuffer<Coord>> pBuf = TypeInfo::CastPointerDown<DeviceBuffer<Coord>>(field);
-
-		Function1Pt::Copy(*(pSet->getPoints()), *(pBuf->getDataPtr()));
 		return true;
 	}
 
+	template<typename TDataType>
+	void ParticleSystem<TDataType>::step(Real dt)
+	{
+		Node* parent = getParent();
+		if (parent == NULL)
+		{
+			Log::sendMessage(Log::Error, "Parent not set for ParticleSystem!");
+			return;
+		}
+		auto& list = parent->getModuleList();
+		std::list<std::shared_ptr<Module>>::iterator iter = list.begin();
+		for (; iter != list.end(); iter++)
+		{
+			(*iter)->execute();
+		}
+	}
 
+	template<typename TDataType>
+	void ParticleSystem<TDataType>::updateTopology()
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<TDataType>>(getParent()->getTopologyModule());
+		auto dc = getParent()->getMechanicalState();
+		auto pBuf = dc->getField<DeviceBuffer<Coord>>(MechanicalState::position());
+
+		m_mapping->applyTranform(*(pBuf->getDataPtr()), *(pSet->getPoints()));
+		//Function1Pt::Copy(*(pSet->getPoints()), *(pBuf->getDataPtr()));
+	}
 }

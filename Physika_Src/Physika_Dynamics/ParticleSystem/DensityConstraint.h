@@ -3,12 +3,14 @@
 
 #include "Platform.h"
 #include "Framework/ModuleConstraint.h"
-#include "Physika_Core/Cuda_Array/Array.h"
 #include "Physika_Core/DataTypes.h"
-#include "INeighbors.h"
+#include "Framework/FieldArray.h"
+#include "Framework/FieldVar.h"
+#include "Physika_Framework/Topology/INeighbors.h"
 #include "Kernel.h"
 
 namespace Physika {
+
 	template<typename TDataType>
 	class DensityConstraint : public ConstraintModule
 	{
@@ -43,12 +45,12 @@ namespace Physika {
 		Slot<DeviceBuffer<SPHNeighborList>> m_neighbors;
 	};
 
-}
-
 #ifdef PRECISION_FLOAT
 template class DensityConstraint<DataType3f>;
 #else
 template class DensityConstraint<DataType3d>;
 #endif
+
+}
 
 #endif

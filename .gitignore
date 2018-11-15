@@ -45,6 +45,9 @@ Public_Library/lib/release/cudart32_91.dll
 *.tlog
 *.iobj
 *.ipdb
+
+AutoBuild/*
+
 Build/x64/Release/Physika_Core.lib
 Build/x64/Release/cudart32_91.dll
 Build/x64/Release/cudart64_91.dll
@@ -52,4 +55,16 @@ Build/App_Test/console_log.txt
 Build/x64/Release/console_log.txt
 Build/x64/Release/App_Test
 
-AutoBuild/*
+Build/App_Test/screen_capture_7.png
+Build/App_Test/screen_capture_6.png
+Build/App_Test/screen_capture_5.png
+Build/App_Test/screen_capture_4.png
+Build/App_Test/screen_capture_3.png
+Build/App_Test/screen_capture_2.png
+Build/App_Test/screen_capture_1.png
+Build/App_Test/screen_capture_0.png
+Build/App_QtGUI/release/moc_mainwindow.cpp
+Build/App_QtGUI/release/moc_QLichtWidget.cpp
+Build/App_QtGUI/release/moc_DockWidget.cpp
+Build/App_QtGUI/release/moc_toolbar.cpp
+

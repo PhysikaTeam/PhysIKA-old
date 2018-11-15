@@ -76,8 +76,9 @@ public:
     COMM_FUNC Scalar dot(const Vector<Scalar,4>&) const;
 //    COMM_FUNC const SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
 
-protected:
-    glm::tvec4<Scalar> data_; //default: zero vector
+	COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
+public:
+	glm::tvec4<Scalar> data_; //default: zero vector
 };
 
 // 

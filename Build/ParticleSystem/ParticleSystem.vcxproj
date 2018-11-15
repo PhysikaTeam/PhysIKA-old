@@ -12,24 +12,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Attribute.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityConstraint.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityPBD.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.h" />
-    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\INeighbors.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ElasticityModule.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\FixedPoints.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Kernel.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\NeighborQuery.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticlePrediction.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.h" />
+    <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Peridynamics.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\SummationDensity.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\SurfaceTension.h" />
     <ClInclude Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ViscosityBase.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\BoundaryManager.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityConstraint.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\DensityPBD.cu" />
-    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\GridHash.cu" />
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ElasticityModule.cu" />
+    <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\FixedPoints.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\NeighborQuery.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticlePrediction.cu" />
     <CudaCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\SummationDensity.cu" />
@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\ParticleSystem.cpp" />
+    <ClCompile Include="..\..\Physika_Src\Physika_Dynamics\ParticleSystem\Peridynamics.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CE052271-92AA-4F03-A89D-1731C27297AC}</ProjectGuid>
@@ -100,7 +101,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>

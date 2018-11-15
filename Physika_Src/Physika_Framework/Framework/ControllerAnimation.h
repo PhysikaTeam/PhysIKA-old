@@ -13,7 +13,7 @@ public:
 	AnimationController();
 	virtual ~AnimationController();
 
-	virtual void step(Real dt);
+	bool execute() override;
 private:
 
 };

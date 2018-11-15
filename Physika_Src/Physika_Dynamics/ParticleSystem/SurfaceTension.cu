@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "SurfaceTension.h"
-#include "INeighbors.h"
+#include "Physika_Framework/Topology/INeighbors.h"
 #include "Attribute.h"
 
 

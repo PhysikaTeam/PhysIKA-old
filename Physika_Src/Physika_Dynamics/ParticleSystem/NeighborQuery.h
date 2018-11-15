@@ -2,8 +2,10 @@
 #include "Platform.h"
 #include "Framework/Module.h"
 #include "Physika_Core/Cuda_Array/Array.h"
+#include "Framework/FieldVar.h"
+#include "Framework/FieldArray.h"
 #include "Kernel.h"
-#include "GridHash.h"
+#include "Physika_Framework/Topology/GridHash.h"
 
 namespace Physika {
 	template<typename TDataType>

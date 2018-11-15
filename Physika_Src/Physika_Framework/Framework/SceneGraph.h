@@ -6,21 +6,11 @@ namespace Physika {
 class SceneGraph : public Base
 {
 public:
-	SceneGraph()
-		:m_elapsedTime(0)
-		, m_maxTime(0)
-		, m_frameRate(25)
-		, m_frameNumber(0)
-		, m_frameCost(0)
-	{};
-
-	~SceneGraph() {};
-
-public:
 	void setRootNode(std::shared_ptr<Node> root) { m_root = root; }
 	std::shared_ptr<Node> getRootNode() { return m_root; }
 
 	virtual bool initialize();
+	bool isInitialized() { return m_initialized; }
 
 	virtual void draw();
 	virtual void advance(float dt);
@@ -40,7 +30,7 @@ public:
 	}
 
 public:
-	static std::shared_ptr<SceneGraph> getInstance();
+	static SceneGraph& getInstance();
 
 	inline void setTotalTime(float t) { m_maxTime = t; }
 	inline float getTotalTime() { return m_maxTime; }
@@ -52,6 +42,27 @@ public:
 	inline int getFrameNumber() { return m_frameNumber; }
 
 private:
+	SceneGraph()
+		:m_elapsedTime(0)
+		, m_maxTime(0)
+		, m_frameRate(25)
+		, m_frameNumber(0)
+		, m_frameCost(0)
+		, m_initialized(false)
+	{};
+
+	/**
+	* To avoid erroneous operations
+	*/
+	SceneGraph(const SceneGraph&) {};
+	SceneGraph& operator=(const SceneGraph&) {};
+
+	~SceneGraph() {};
+
+
+private:
+	bool m_initialized;
+
 	float m_elapsedTime;
 	float m_maxTime;
 	float m_frameRate;
@@ -61,8 +72,6 @@ private:
 
 private:
 	std::shared_ptr<Node> m_root;
-
-	static std::shared_ptr<SceneGraph> m_instance;
 };
 
 }

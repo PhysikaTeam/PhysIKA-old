@@ -3,8 +3,10 @@
 #include "Framework/Module.h"
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "Physika_Core/DataTypes.h"
-#include "INeighbors.h"
+#include "Physika_Framework/Topology/INeighbors.h"
 #include "Kernel.h"
+#include "Framework/FieldVar.h"
+#include "Framework/FieldArray.h"
 
 namespace Physika {
 

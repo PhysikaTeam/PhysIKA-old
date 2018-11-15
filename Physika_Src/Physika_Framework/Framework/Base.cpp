@@ -1,4 +1,5 @@
 #include "Base.h"
+#include "Physika_Framework/Framework/Field.h"
 
 namespace Physika {
 

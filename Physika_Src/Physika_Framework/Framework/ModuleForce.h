@@ -10,6 +10,9 @@ public:
 	ForceModule();
 	virtual ~ForceModule();
 
+	virtual void applyForce() {};
+
+	std::string getModuleType() override { return "ForceModule"; }
 private:
 
 };

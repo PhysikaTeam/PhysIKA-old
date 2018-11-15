@@ -2,18 +2,18 @@
 
 namespace Physika
 {
-	template<typename Coord>
-	TriangleSet<Coord>::TriangleSet()
+	template<typename TDataType>
+	TriangleSet<TDataType>::TriangleSet()
 	{
 	}
 
-	template<typename Coord>
-	TriangleSet<Coord>::~TriangleSet()
+	template<typename TDataType>
+	TriangleSet<TDataType>::~TriangleSet()
 	{
 	}
 
-	template<typename Coord>
-	void TriangleSet<Coord>::updatePointNeighbors()
+	template<typename TDataType>
+	void TriangleSet<TDataType>::updatePointNeighbors()
 	{
 
 	}

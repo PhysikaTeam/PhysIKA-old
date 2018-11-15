@@ -27,6 +27,10 @@
     <ClInclude Include="..\Physika_Src\Physika_Core\Platform.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Quaternion\quaternion.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Range\range.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Rigid\rigid.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Rigid\rigid_2d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Rigid\rigid_3d.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Core\Rigid\rigid_base.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Timer\GTimer.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Timer\CTimer.h" />
     <ClInclude Include="..\Physika_Src\Physika_Core\Transform\transform.h" />
@@ -150,7 +154,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>

@@ -13,6 +13,9 @@
     <Filter Include="Mapping">
       <UniqueIdentifier>{8c87995a-6751-44e5-afda-a8ad9a2d53e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Collision">
+      <UniqueIdentifier>{9e77ba25-3622-4835-8f64-b466fba63081}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Base.cpp">
@@ -28,9 +31,6 @@
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Field.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.cpp">
@@ -99,6 +99,27 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Module.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\MechanicalState.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\CollidableObject.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\CollisionModel.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Collision\CollidableCube.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Collision\CollidablePoints.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\FieldArray.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\FieldVar.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h">
@@ -114,9 +135,6 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Field.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.h">
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.h">
@@ -191,5 +209,80 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Module.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\MechanicalState.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\CollidableObject.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\CollisionModel.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollidableSDF.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollisionSDF.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollidableCube.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollidablePoints.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\FieldArray.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\FieldVar.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Mapping\Mapping.h">
+      <Filter>Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\Point.h">
+      <Filter>Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Mapping\PointsToPoints.h">
+      <Filter>Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Mapping\RigidToPoints.h">
+      <Filter>Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Gravity.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollisionPoints.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\GridHash.h">
+      <Filter>Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\INeighbors.h">
+      <Filter>Topology</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Collision\CollidableSDF.cpp">
+      <Filter>Collision</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Collision\CollisionSDF.cu">
+      <Filter>Collision</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Mapping\RigidToPoints.cu">
+      <Filter>Mapping</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Mapping\PointsToPoints.cu">
+      <Filter>Mapping</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Framework\Gravity.cu">
+      <Filter>Framework</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Collision\CollisionPoints.cu">
+      <Filter>Collision</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Topology\GridHash.cu">
+      <Filter>Topology</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

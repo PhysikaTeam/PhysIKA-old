@@ -62,7 +62,32 @@ public:
 
     //rotate
     const Vector<Scalar, 3> rotate(const Vector<Scalar, 3>) const;    // rotates passed vec by this.
+
+	void rotateVector(Vector<Scalar, 3>& v);
+	
     void toRadiansAndUnitAxis(Scalar& angle, Vector<Scalar, 3>& axis) const;
+
+	Quaternion ComposeWith(Quaternion<Scalar> & q) {
+		Quaternion result;
+		result.x_ = x_*q.x_ - y_*q.y_ - z_*q.z_ - w_*q.w_;
+		result.y_ = x_*q.y_ + y_*q.x_ + z_*q.w_ - w_*q.z_;
+		result.z_ = x_*q.z_ + z_*q.x_ + w_*q.y_ - y_*q.w_;
+		result.w_ = x_*q.w_ + w_*q.x_ + y_*q.z_ - z_*q.y_;
+		result.normalize();
+		return result;
+	}
+
+	void ToRotAxis(Scalar &rot, Vector<Scalar, 3> &axis) {
+		rot = 2.0f * acos(x_);
+		if (rot == 0) {
+			axis[0] = axis[1] = 0; axis[2] = 1;
+			return;
+		}
+		axis[0] = y_;
+		axis[1] = z_;
+		axis[2] = w_;
+		axis.normalize();
+	}
 
     /* Special functions */
     Scalar norm();
@@ -95,7 +120,7 @@ public:
 
     static inline Quaternion<Scalar> identityQuaternion() { return Quaternion<Scalar>(0,0,0,1); }
 
-protected:
+public:
     Scalar x_,y_,z_,w_;
 private:
     void compileTimeCheck()  //dummy method for compile time check

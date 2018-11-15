@@ -11,13 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Physika_Src\Physika_GUI\Glui_Window\glui_window.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_GUI\Glut_Window\glut_window.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_GUI\GlutGUI\Camera.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_GUI\GlutGUI\GLApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Physika_Src\Physika_GUI\BaseWindow.h" />
-    <ClInclude Include="..\Physika_Src\Physika_GUI\Glui_Window\glui_window.h" />
-    <ClInclude Include="..\Physika_Src\Physika_GUI\Glut_Window\glut_window.h" />
+    <ClInclude Include="..\Physika_Src\Physika_GUI\AppBase.h" />
+    <ClInclude Include="..\Physika_Src\Physika_GUI\GlutGUI\Camera.h" />
+    <ClInclude Include="..\Physika_Src\Physika_GUI\GlutGUI\GLApp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FBDC8DEA-8315-4BAE-9DFE-6412AA899BC4}</ProjectGuid>

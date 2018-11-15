@@ -16,14 +16,27 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActInit.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\Action.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Collision\CollidableCube.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Collision\CollidablePoints.cpp" />
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Collision\CollisionPoints.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Collision\CollisionSDF.cu">
+      <FileType>CppCode</FileType>
+    </CudaCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Base.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\CollidableObject.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ControllerAnimation.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\DeviceContext.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Field.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\FieldArray.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\FieldVar.cpp" />
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Framework\Gravity.cu">
+      <FileType>CppCode</FileType>
+    </CudaCompile>
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Log.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\MechanicalState.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\Module.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\CollisionModel.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleController.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.cpp" />
@@ -39,6 +52,9 @@
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\PointSet.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Framework\Topology\UniformGrid.cpp" />
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Mapping\PointsToPoints.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Mapping\RigidToPoints.cu" />
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Topology\GridHash.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActAnimate.h" />
@@ -46,14 +62,25 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActInit.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\Action.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Action\ActNodeInfo.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollidableCube.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollidablePoints.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollidableSDF.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollisionPoints.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Collision\CollisionSDF.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Base.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\CollidableObject.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerAnimation.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ControllerRender.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\DeviceContext.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Field.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\FieldArray.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\FieldVar.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Gravity.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Log.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\MechanicalState.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\Module.h" />
-    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleCollision.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\CollisionModel.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleConstraint.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleController.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\ModuleForce.h" />
@@ -66,11 +93,20 @@
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneGraph.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderFactory.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Framework\SceneLoaderXML.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Mapping\Mapping.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Mapping\PointsToPoints.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Mapping\RigidToPoints.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\EdgeSet.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\GridHash.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\INeighbors.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\NeighborList.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\Point.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\PointSet.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\TriangleSet.h" />
     <ClInclude Include="..\Physika_Src\Physika_Framework\Topology\UniformGrid.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\Physika_Src\Physika_Framework\Collision\CollidableSDF.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4C92E564-1CF4-4443-A893-CEDFB3864B82}</ProjectGuid>
@@ -133,7 +169,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>

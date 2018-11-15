@@ -23,7 +23,7 @@ public:
 	bool setDevice(int i);
 	int getDevice();
 
-	template<typename T>
+/*	template<typename T>
 	std::shared_ptr< DeviceVariable<T> > allocDeviceVariable(std::string name, std::string description)
 	{
 		return allocVariable<T, DeviceType::GPU>(name, description);
@@ -45,7 +45,7 @@ public:
 	std::shared_ptr< DeviceBuffer<T> > getDeviceBuffer(std::string name)
 	{
 		return getArrayBuffer<T, DeviceType::GPU>(name);
-	}
+	}*/
 
 public:
 	int m_deviceID;

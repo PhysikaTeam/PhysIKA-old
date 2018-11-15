@@ -70,7 +70,7 @@ namespace Physika
 		Real mass = m_mass.getField().getValue();
 		Real smoothingLength = m_radius.getField().getValue();
 
-		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
+		cuint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
 		SD_ComputeDensity <Real, Coord> << <pDims, BLOCK_SIZE >> > (*rhoArr, *posArr, *neighborArr, smoothingLength, mass);
 
 		return true;

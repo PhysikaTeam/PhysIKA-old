@@ -6,21 +6,23 @@
 
 namespace Physika
 {
-std::shared_ptr<SceneGraph> SceneGraph::m_instance = nullptr;
-
-std::shared_ptr<SceneGraph> SceneGraph::getInstance()
+SceneGraph& SceneGraph::getInstance()
 {
-	if (m_instance == NULL)
-	{
-		m_instance = TypeInfo::New<SceneGraph>();
-	}
+	static SceneGraph m_instance;
 	return m_instance;
 }
 
 bool SceneGraph::initialize()
 {
+	if (m_initialized)
+	{
+		return true;
+	}
+	//TODO: check initialization
 	m_root->traverse<InitAct>();
-	return false;
+	m_initialized = true;
+
+	return m_initialized;
 }
 
 void SceneGraph::draw()
@@ -30,7 +32,7 @@ void SceneGraph::draw()
 
 void SceneGraph::advance(float dt)
 {
-	AnimationController*  aController = m_root->getAnimationController();
+//	AnimationController*  aController = m_root->getAnimationController();
 	//	aController->
 }
 
@@ -46,10 +48,10 @@ void SceneGraph::run()
 
 bool SceneGraph::load(std::string name)
 {
-	SceneLoader* loader = SceneLoaderFactory::getInstance()->getEntryByFileName(name);
+	SceneLoader* loader = SceneLoaderFactory::getInstance().getEntryByFileName(name);
 	if (loader)
 	{
-		m_root = std::shared_ptr<Node>(loader->load(name));
+		m_root = loader->load(name);
 		return true;
 	}
 

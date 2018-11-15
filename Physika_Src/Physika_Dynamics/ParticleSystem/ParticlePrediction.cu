@@ -25,9 +25,8 @@ namespace Physika
 		Coord pos_i = posArr[pId];
 		Coord vel_i = velArr[pId];
 
-		pos_i += vel_i*dt;
 		vel_i += bodyForce*dt;
-//		vel_i += 20.0f*(make_float3(0.5f, 0.2f, 0.5f) - posArr[pId])*dt;
+		pos_i += vel_i*dt;
 
 		posArr[pId] = pos_i;
 		velArr[pId] = vel_i;
@@ -127,7 +126,7 @@ namespace Physika
 		Coord gravity = Coord(0.0f, -9.8f, 0.0f);
 		float dt = getParent()->getDt();
 
-		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
+		cuint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
 
 		PP_Predict <Coord> << <pDims, BLOCK_SIZE >> > (*posArr, *velArr, gravity, dt);
 

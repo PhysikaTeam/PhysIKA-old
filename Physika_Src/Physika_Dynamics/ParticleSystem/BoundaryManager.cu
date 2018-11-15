@@ -26,7 +26,7 @@ namespace Physika {
 
 	template<typename TDataType>
 	BoundaryManager<TDataType>::BoundaryManager()
-		: Module()
+		: ConstraintModule()
 		, m_bConstrained(NULL)
 	{
 		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
@@ -67,7 +67,7 @@ namespace Physika {
 			m_bConstrained = DeviceBuffer<int>::create(pNum);
 		}
 		DeviceArray<int>* stat = m_bConstrained->getDataPtr();
-		uint pDims = cudaGridSize(m_bConstrained->size(), BLOCK_SIZE);
+		cuint pDims = cudaGridSize(m_bConstrained->size(), BLOCK_SIZE);
 		BM_CheckStatues << <pDims, BLOCK_SIZE >> > (*stat, attArr);
 
 		for (int i = 0; i < m_barriers.size(); i++)
@@ -135,7 +135,7 @@ namespace Physika {
 	template<typename TDataType>
 	void BarrierDistanceField3D<TDataType>::Constrain(DeviceArray<Coord>& posArr, DeviceArray<Coord>& velArr, DeviceArray<int>& attArr, Real dt)
 	{
-		uint pDim = cudaGridSize(posArr.size(), BLOCK_SIZE);
+		cuint pDim = cudaGridSize(posArr.size(), BLOCK_SIZE);
 		K_Constrain << <pDim, BLOCK_SIZE >> > (posArr, velArr, attArr, *distancefield3d, normalFriction, tangentialFriction, dt);
 	}
 }

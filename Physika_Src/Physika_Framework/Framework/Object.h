@@ -6,6 +6,7 @@ namespace Physika
 class Object;
 class ClassInfo;
 
+
 typedef Object* (*ObjectConstructorFn)(void);
 bool Register(ClassInfo* ci);
 
@@ -44,7 +45,6 @@ public:
 	ObjectConstructorFn m_objectConstructor;
 };
 
-
 #define DECLARE_CLASS(name) \
 public: \
     static ClassInfo ms_classinfo; \
@@ -76,7 +76,7 @@ public:  \
 
 #define IMPLEMENT_CLASS_COMMON_1(name, T1, func) \
 template<typename T1>		\
-ClassInfo name<T1>::ms_classinfo(_STR(name##T1), \
+ClassInfo name<T1>::ms_classinfo(std::string(_STR(name))+std::string("<")+std::string(T1::getName())+std::string(">"), \
             (ObjectConstructorFn) func); \
 							\
 template<typename T1>		\

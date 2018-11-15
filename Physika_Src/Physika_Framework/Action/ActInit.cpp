@@ -16,8 +16,8 @@ namespace Physika
 
 	void InitAct::Process(Node* node)
 	{
-		std::list<Module*> list = node->getModuleList();
-		std::list<Module*>::iterator iter = list.begin();
+		auto& list = node->getModuleList();
+		std::list<std::shared_ptr<Module>>::iterator iter = list.begin();
 		for (; iter != list.end(); iter++)
 		{
 			(*iter)->initialize();

@@ -9,7 +9,7 @@ namespace Physika
 	Physika::NeighborQuery<TDataType>::NeighborQuery()
 		:Module()
 	{
-		Real samplingDistance = 0.0125;
+		Real samplingDistance = 0.005;
 		Coord lowerBound(0);
 		Coord upperBound(1.0);
 		hash.SetSpace(2 * samplingDistance, lowerBound, upperBound);
