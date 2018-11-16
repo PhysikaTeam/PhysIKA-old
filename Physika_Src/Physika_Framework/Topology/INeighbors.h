@@ -1,6 +1,6 @@
 #pragma once
 #include <vector_types.h>
-#include "Platform.h"
+#include "Physika_Core/Platform.h"
 
 namespace Physika
 {

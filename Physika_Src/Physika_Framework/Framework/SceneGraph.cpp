@@ -1,8 +1,8 @@
 #include "SceneGraph.h"
-#include "Action/ActAnimate.h"
-#include "Action/ActDraw.h"
-#include "Action/ActInit.h"
-#include "Framework/SceneLoaderFactory.h"
+#include "Physika_Framework/Action/ActAnimate.h"
+#include "Physika_Framework/Action/ActDraw.h"
+#include "Physika_Framework/Action/ActInit.h"
+#include "Physika_Framework/Framework/SceneLoaderFactory.h"
 
 namespace Physika
 {

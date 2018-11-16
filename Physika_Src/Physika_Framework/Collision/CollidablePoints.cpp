@@ -4,8 +4,8 @@
 #include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Framework/Topology/PointSet.h"
-#include "Mapping/RigidToPoints.h"
-#include "Mapping/PointsToPoints.h"
+#include "Physika_Framework/Mapping/RigidToPoints.h"
+#include "Physika_Framework/Mapping/PointsToPoints.h"
 #include "Physika_Core/Utilities/Reduction.h"
 
 namespace Physika

@@ -1,6 +1,6 @@
 #pragma once
-#include "Framework/ModuleTopology.h"
-#include "Topology/NeighborList.h"
+#include "Physika_Framework/Framework/ModuleTopology.h"
+#include "Physika_Framework/Topology/NeighborList.h"
 #include "Physika_Core/Vectors/vector.h"
 
 

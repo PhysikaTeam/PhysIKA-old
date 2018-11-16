@@ -1,13 +1,13 @@
 #pragma once
-#include "Platform.h"
-#include "Framework/ModuleForce.h"
+#include "Physika_Core/Platform.h"
+#include "Physika_Framework/Framework/ModuleForce.h"
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "Kernel.h"
 #include "Physika_Core/DataTypes.h"
 #include "Attribute.h"
 #include "Physika_Framework/Topology/INeighbors.h"
-#include "Framework/FieldVar.h"
-#include "Framework/FieldArray.h"
+#include "Physika_Framework/Framework/FieldVar.h"
+#include "Physika_Framework/Framework/FieldArray.h"
 
 namespace Physika {
 	template<typename TDataType>

@@ -1,5 +1,5 @@
 #pragma once
-#include "Framework/ModuleController.h"
+#include "Physika_Framework/Framework/ModuleController.h"
 #include "Physika_Core/Platform.h"
 
 namespace Physika

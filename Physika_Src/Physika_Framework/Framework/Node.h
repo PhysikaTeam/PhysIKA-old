@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include "Typedef.h"
+#include "Physika_Core/Typedef.h"
 #include "FieldVar.h"
 #include "Physika_Core/Platform.h"
 #include "NumericalModel.h"

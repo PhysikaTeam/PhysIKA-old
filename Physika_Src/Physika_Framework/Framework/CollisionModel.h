@@ -1,6 +1,6 @@
 #pragma once
-#include "Framework/Module.h"
-#include "Framework/CollidableObject.h"
+#include "Physika_Framework/Framework/Module.h"
+#include "Physika_Framework/Framework/CollidableObject.h"
 
 namespace Physika
 {

@@ -1,5 +1,6 @@
 #pragma once
 #include "DensityConstraint.h"
+#include "ParticleSystem.h"
 
 namespace Physika {
 

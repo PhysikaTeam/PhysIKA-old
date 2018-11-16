@@ -1,6 +1,6 @@
 #include "SceneLoaderXML.h"
 #include <algorithm>
-#include "Framework.h"
+#include "Physika_Framework/Framework.h"
 
 namespace Physika
 {

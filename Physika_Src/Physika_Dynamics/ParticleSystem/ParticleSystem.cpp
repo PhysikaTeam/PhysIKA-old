@@ -1,5 +1,5 @@
 #include "ParticleSystem.h"
-#include "Framework/DeviceContext.h"
+#include "Physika_Framework/Framework/DeviceContext.h"
 #include "Attribute.h"
 #include "Physika_Framework/Topology/INeighbors.h"
 #include "Physika_Framework/Topology/PointSet.h"

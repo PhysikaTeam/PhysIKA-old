@@ -2,6 +2,7 @@
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "DensityProjective.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
+#include "Attribute.h"
 #include "Physika_Core/Vectors/vector.h"
 //#include "Physika_Core/Utilities/template_functions.h"
 

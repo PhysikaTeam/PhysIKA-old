@@ -1,11 +1,11 @@
 #ifndef FRAMEWORK_DENSITYCONSTRAINT_H
 #define FRAMEWORK_DENSITYCONSTRAINT_H
 
-#include "Platform.h"
-#include "Framework/ModuleConstraint.h"
+#include "Physika_Core/Platform.h"
+#include "Physika_Framework/Framework/ModuleConstraint.h"
 #include "Physika_Core/DataTypes.h"
-#include "Framework/FieldArray.h"
-#include "Framework/FieldVar.h"
+#include "Physika_Framework/Framework/FieldArray.h"
+#include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Topology/INeighbors.h"
 #include "Kernel.h"
 

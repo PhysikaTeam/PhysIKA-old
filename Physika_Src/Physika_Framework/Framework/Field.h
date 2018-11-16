@@ -1,9 +1,9 @@
 #pragma once
-#include "Platform.h"
+#include "Physika_Core/Platform.h"
 #include <typeinfo>
 #include <string>
 #include <cuda_runtime.h>
-#include "Typedef.h"
+#include "Physika_Core/Typedef.h"
 
 namespace Physika {
 	class Base;

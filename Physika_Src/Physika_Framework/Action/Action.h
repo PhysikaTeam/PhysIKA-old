@@ -1,7 +1,7 @@
 #ifndef FRAMEWORK_ACTION_H
 #define FRAMEWORK_ACTION_H
 
-#include "Framework/Node.h"
+#include "Physika_Framework/Framework/Node.h"
 
 namespace Physika
 {

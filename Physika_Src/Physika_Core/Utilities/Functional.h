@@ -1,5 +1,6 @@
 #pragma once
-#include "Platform.h"
+#include "Physika_Core/Platform.h"
+
 namespace Physika
 {
 	template<typename T>

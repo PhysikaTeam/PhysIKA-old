@@ -1,5 +1,5 @@
 #pragma once
-#include "Typedef.h"
+#include "Physika_Core/Typedef.h"
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "Physika_Core/Cuda_Array/MemoryManager.h"
 #include "Field.h"

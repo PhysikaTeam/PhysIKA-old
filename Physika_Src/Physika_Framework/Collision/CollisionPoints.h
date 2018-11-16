@@ -1,6 +1,6 @@
 #pragma once
 #include "Physika_Core/Cuda_Array/Array.h"
-#include "Framework/CollisionModel.h"
+#include "Physika_Framework/Framework/CollisionModel.h"
 
 namespace Physika
 {

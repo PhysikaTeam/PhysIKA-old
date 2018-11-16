@@ -1,5 +1,5 @@
-#include "Framework/ModuleVisual.h"
-#include "Framework/Node.h"
+#include "Physika_Framework/Framework/ModuleVisual.h"
+#include "Physika_Framework/Framework/Node.h"
 
 namespace Physika
 {

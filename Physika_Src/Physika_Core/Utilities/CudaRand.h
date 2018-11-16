@@ -1,6 +1,6 @@
 #pragma once
 #include <curand_kernel.h> 
-#include "Platform.h"
+#include "Physika_Core/Platform.h"
 
 namespace Physika {
 

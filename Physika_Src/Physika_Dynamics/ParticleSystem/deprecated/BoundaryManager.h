@@ -6,7 +6,7 @@
 #include "Physika_Geometry/SDF/DistanceField3D.h"
 #include "Attribute.h"
 #include "cuda_runtime.h"
-#include "Framework/ModuleConstraint.h"
+#include "Physika_Framework/Framework/ModuleConstraint.h"
 
 namespace Physika {
 

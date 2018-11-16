@@ -1,4 +1,4 @@
-#include "CollidableSpheres.h"
+#include "CollidableTriangleMesh.h"
 
 namespace Physika
 {

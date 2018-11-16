@@ -6,8 +6,8 @@
 #include "Physika_Framework/Topology/INeighbors.h"
 #include "ParticlePrediction.h"
 #include "ElasticityModule.h"
-#include "Framework/FieldVar.h"
-#include "Mapping/PointsToPoints.h"
+#include "Physika_Framework/Framework/FieldVar.h"
+#include "Physika_Framework/Mapping/PointsToPoints.h"
 
 namespace Physika
 {

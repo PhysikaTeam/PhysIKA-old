@@ -1,6 +1,6 @@
 #pragma once
-#include "Vectors/vector_fixed.h"
-#include "Framework/Module.h"
+#include "Physika_Core/Vectors/vector_fixed.h"
+#include "Physika_Framework/Framework/Module.h"
 
 namespace Physika
 {

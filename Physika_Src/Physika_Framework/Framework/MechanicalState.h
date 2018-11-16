@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Physika_Core/Platform.h"
 #include "Physika_Core/Typedef.h"
-#include "Framework/Module.h"
+#include "Physika_Framework/Framework/Module.h"
 
 namespace Physika
 {

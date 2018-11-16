@@ -4,8 +4,8 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
-#include "Framework/Base.h"
-#include "Framework/Log.h"
+#include "Physika_Framework/Framework/Base.h"
+#include "Physika_Framework/Framework/Log.h"
 #include "Physika_Core/Typedef.h"
 #include "Physika_Core/DataTypes.h"
 

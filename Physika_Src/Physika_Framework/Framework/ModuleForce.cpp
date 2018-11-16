@@ -1,5 +1,5 @@
 #include "ModuleForce.h"
-#include "Framework/Node.h"
+#include "Physika_Framework/Framework/Node.h"
 
 namespace Physika
 {

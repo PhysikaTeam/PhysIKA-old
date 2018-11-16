@@ -1,7 +1,7 @@
 #include "RigidBody.h"
-#include "Framework/Node.h"
-#include "Topology/PointSet.h"
-#include "Framework/MechanicalState.h"
+#include "Physika_Framework/Framework/Node.h"
+#include "Physika_Framework/Topology/PointSet.h"
+#include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
 #include "Physika_Core/Utilities/cuda_helper_math.h"
 

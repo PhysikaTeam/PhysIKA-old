@@ -1,6 +1,6 @@
 #pragma once
-#include "Platform.h"
-#include "Framework/Module.h"
+#include "Physika_Core/Platform.h"
+#include "Physika_Framework/Framework/Module.h"
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "ParticleSystem.h"
 #include "DensityConstraint.h"

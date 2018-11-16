@@ -1,8 +1,8 @@
 #pragma once
 #include "Physika_Core/DataTypes.h"
 #include "Physika_Framework/Framework/NumericalModel.h"
-#include "Framework/FieldVar.h"
-#include "Mapping/PointsToPoints.h"
+#include "Physika_Framework/Framework/FieldVar.h"
+#include "Physika_Framework/Mapping/PointsToPoints.h"
 
 namespace Physika
 {

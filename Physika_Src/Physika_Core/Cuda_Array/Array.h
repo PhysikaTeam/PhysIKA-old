@@ -3,7 +3,7 @@
 #include <vector>
 #include <cuda_runtime.h>
 #include <memory>
-#include "Platform.h"
+#include "Physika_Core/Platform.h"
 #include "Physika_Core/Cuda_Array/MemoryManager.h"
 
 namespace Physika {

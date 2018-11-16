@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include <cuda_runtime.h>
-#include "Platform.h"
+#include "Physika_Core/Platform.h"
 
 namespace Physika {
 

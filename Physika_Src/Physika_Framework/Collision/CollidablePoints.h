@@ -1,7 +1,7 @@
 #pragma once
 #include "Physika_Core/Cuda_Array/Array.h"
-#include "Framework/CollidableObject.h"
-#include "Framework/FieldArray.h"
+#include "Physika_Framework/Framework/CollidableObject.h"
+#include "Physika_Framework/Framework/FieldArray.h"
 
 namespace Physika
 {

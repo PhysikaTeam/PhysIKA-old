@@ -1,5 +1,5 @@
 #pragma once
-#include "Framework/CollisionModel.h"
+#include "Physika_Framework/Framework/CollisionModel.h"
 
 namespace Physika
 {

@@ -2,10 +2,10 @@
 #include <vector_types.h>
 #include <vector>
 #include "Physika_Core/DataTypes.h"
-#include "Framework/FieldVar.h"
+#include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Framework/NumericalModel.h"
 #include "Physika_Core/Quaternion/quaternion.h"
-#include "Mapping/RigidToPoints.h"
+#include "Physika_Framework/Mapping/RigidToPoints.h"
 
 namespace Physika
 {

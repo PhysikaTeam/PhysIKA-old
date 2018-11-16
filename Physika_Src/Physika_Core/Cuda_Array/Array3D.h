@@ -1,7 +1,8 @@
 #pragma once
 #include <assert.h>
 #include <cuda_runtime.h>
-#include "Platform.h"
+#include "Physika_Core/Platform.h"
+
 namespace Physika {
 
 #define INVALID -1

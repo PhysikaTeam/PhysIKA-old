@@ -1,12 +1,12 @@
 #pragma once
-#include "Platform.h"
-#include "Framework/Module.h"
+#include "Physika_Core/Platform.h"
+#include "Physika_Framework/Framework/Module.h"
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "Physika_Core/DataTypes.h"
 #include "Physika_Framework/Topology/INeighbors.h"
 #include "Kernel.h"
-#include "Framework/FieldVar.h"
-#include "Framework/FieldArray.h"
+#include "Physika_Framework/Framework/FieldVar.h"
+#include "Physika_Framework/Framework/FieldArray.h"
 
 namespace Physika {
 

@@ -1,10 +1,10 @@
 #include "CollisionPoints.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
-#include "Framework/Node.h"
-#include "Framework/CollidableObject.h"
+#include "Physika_Framework/Framework/Node.h"
+#include "Physika_Framework/Framework/CollidableObject.h"
 #include "Physika_Framework/Collision/CollidablePoints.h"
-#include "Topology/GridHash.h"
+#include "Physika_Framework/Topology/GridHash.h"
 
 namespace Physika
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "Physika_Core/Cuda_Array/Array.h"
-#include "Mapping/Mapping.h"
+#include "Physika_Framework/Mapping/Mapping.h"
 
 namespace Physika
 {

@@ -1,8 +1,8 @@
 #pragma once
-#include "Platform.h"
-#include "Framework/ModuleConstraint.h"
+#include "Physika_Core/Platform.h"
+#include "Physika_Framework/Framework/ModuleConstraint.h"
 #include "Physika_Core/DataTypes.h"
-#include "Framework/FieldArray.h"
+#include "Physika_Framework/Framework/FieldArray.h"
 
 namespace Physika {
 

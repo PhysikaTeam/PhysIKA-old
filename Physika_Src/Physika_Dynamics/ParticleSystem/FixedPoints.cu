@@ -2,9 +2,9 @@
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Physika_Framework/Framework/Log.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
-#include "Framework/FieldVar.h"
-#include "Framework/MechanicalState.h"
-#include "Framework/Node.h"
+#include "Physika_Framework/Framework/FieldVar.h"
+#include "Physika_Framework/Framework/MechanicalState.h"
+#include "Physika_Framework/Framework/Node.h"
 #include "FixedPoints.h"
 
 namespace Physika
