@@ -44,6 +44,8 @@
     <ProjectGuid>{CE052271-92AA-4F03-A89D-1731C27297AC}</ProjectGuid>
     <RootNamespace>ParticleSystem</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <CudaToolkitCustomDir>
+    </CudaToolkitCustomDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

@@ -65,6 +65,8 @@
     <ProjectGuid>{CE1B6999-6E15-4DFD-87FF-30002069A98B}</ProjectGuid>
     <RootNamespace>Physika_Geometry</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <CudaToolkitCustomDir>
+    </CudaToolkitCustomDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

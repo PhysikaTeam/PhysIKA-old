@@ -28,6 +28,9 @@
     <Filter Include="Rigid">
       <UniqueIdentifier>{cea71a95-85ce-401a-be06-9429e548eb4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Algorithm">
+      <UniqueIdentifier>{60799577-df96-41b9-8881-524b784e2016}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Physika_Src\Physika_Core\Vectors\vector.h">
@@ -170,6 +173,9 @@
     <ClInclude Include="..\Physika_Src\Physika_Core\Matrices\square_matrix.h">
       <Filter>Matrices</Filter>
     </ClInclude>
+    <ClInclude Include="..\Physika_Src\Physika_Core\Algorithm\MatrixFunc.h">
+      <Filter>Algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Core\Transform\transform_2d.cpp">
@@ -211,6 +217,9 @@
     </CudaCompile>
     <CudaCompile Include="..\Physika_Src\Physika_Core\Utilities\Function2Pt.cu">
       <Filter>Utilities</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\Physika_Src\Physika_Core\Algorithm\MatrixFunc.inl">
+      <Filter>Algorithm</Filter>
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
