@@ -5,10 +5,10 @@ find_package(CUDA)										                                        #目前CMake
 find_package(Qt5Widgets CONFIG REQUIRED)                                                        #查找widget包
 find_package(Qt5OpenGL)
 
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "CXX STANDARD VERSION 11,14,17")                         #默认为本项目下各编译目标指定C++14语言特性
+set(CMAKE_CXX_STANDARD 11 CACHE STRING "CXX STANDARD VERSION 11,14,17")                         #默认为本项目下各编译目标指定C++14语言特性
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)                                                         #默认为本项目下各编译目标开启fPIC模式，cuda下面会开启rdc模式
 set(CMAKE_CUDA_SEPARABLE_COMPILATION ON CACHE BOOL "DEFAULT SET SEPERABLE COMPILATION MODE")    #默认为本项目下各编译目标指定cuda分离编译模式
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch=sm_60")                                         #默认为所有cuda代码生成computability6.0下二进制代码
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch=sm_30")                                         #默认为所有cuda代码生成computability6.0下二进制代码
 
 include_directories("Physika_Src")                                                              #默认为本项目下各编译目标添加Physika_Src/ 目录
 include_directories("Physika_Src/Physika_Dependency")                                           #默认为本项目下各编译目标添加Physika_Src/Physika_Dependency/ 目录
