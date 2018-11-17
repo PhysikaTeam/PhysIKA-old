@@ -13,6 +13,7 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch=sm_60")                         
 include_directories("Physika_Src")                                                              #默认为本项目下各编译目标添加Physika_Src/ 目录
 include_directories("Physika_Src/Physika_Dependency")                                           #默认为本项目下各编译目标添加Physika_Src/Physika_Dependency/ 目录
 include_directories("Physika_Src/Physika_Dependency/OpenGL")                                    #默认为本项目下各编译目标添加Physika_Src/Physika_Dependency/OpenGL 目录
+include_directories("Physika_Src/Physika_Dependency/irrLicht/include")                          #默认为本项目下各编译目标添加Physika_Src/Physika_dependency/irrLicht/include 目录
 include_directories(${CUDA_TOOLKIT_INCLUDE})                                 	                #默认为本项目下各编译目标添加cuda/include 目录
 message(STATUS "cuda include directoy is ${CUDA_TOOLKIT_INCLUDE}" )
 

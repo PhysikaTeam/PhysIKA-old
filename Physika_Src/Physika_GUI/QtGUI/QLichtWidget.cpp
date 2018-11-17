@@ -4,6 +4,7 @@
 #include <iostream> 
 #include <qevent.h>
 #include "QLichtWidget.h"
+using namespace Physika;
 
 QLichtWidget::QLichtWidget(QWidget* parent) :
 	QWidget(parent)
