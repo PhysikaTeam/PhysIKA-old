@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(LIB_NAMES Physika_Core Physika_Dynamics Physika_Framework Physika_GUI Physika_Render)
+set(LIB_NAMES Physika_Core Physika_Dynamics Physika_Framework Physika_Geometry Physika_GUI Physika_IO Physika_Render)
 #set(LIB_NAMES Physika_Core Physika_Dynamics Physika_Framework Physika_Geometry Physika_GUI Physika_IO Physika_Numerics Physika_Render)
 
 foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
@@ -14,7 +14,13 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
         "${LIB_SRC_DIR}/*.h*"
     )
 
-    list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                                #排除deprecated 文件下面的所有文件
+    list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 文件下面的所有文件
+
+    if(LIB_NAME STREQUAL "Physika_Core")
+        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/StackWalker/StackWalker.cpp")
+        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/tinyxml/tinyxml2.cpp")
+        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/lodePNG/lodepng.cpp")
+    endif()
 
     add_library(${LIB_NAME} STATIC ${LIB_SRC})                                      #添加编译目标 静态链接库
 

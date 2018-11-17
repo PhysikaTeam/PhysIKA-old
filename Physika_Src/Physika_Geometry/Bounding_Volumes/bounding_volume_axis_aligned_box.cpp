@@ -111,7 +111,7 @@ bool BoundingVolumeAxisAlignedBox<Scalar>::isOverlap(const BoundingVolume<Scalar
         return false;
     }
     const BoundingVolumeAxisAlignedBox<Scalar> * const bv = dynamic_cast<const BoundingVolumeAxisAlignedBox<Scalar>* const>(bounding_volume);
-    PHYSIKA_ASSERT(bv);
+    //PHYSIKA_ASSERT(bv);
     if (dist_[0]>bv->dist_[3] || dist_[3]<bv->dist_[0] || dist_[1]>bv->dist_[4] || dist_[4]<bv->dist_[1] || dist_[2]>bv->dist_[5] || dist_[5]<bv->dist_[2])
     {
         return false;
@@ -142,8 +142,8 @@ bool BoundingVolumeAxisAlignedBox<Scalar>::isOverlap(const BoundingVolume<Scalar
 
     const BoundingVolumeAxisAlignedBox<Scalar> * const bv = dynamic_cast<const BoundingVolumeAxisAlignedBox<Scalar>* const>(bounding_volume);
     BoundingVolumeAxisAlignedBox<Scalar> * return_bv = dynamic_cast<BoundingVolumeAxisAlignedBox<Scalar>*>(return_volume);
-    PHYSIKA_ASSERT(bv);
-    PHYSIKA_ASSERT(return_bv);
+    //PHYSIKA_ASSERT(bv);
+    //PHYSIKA_ASSERT(return_bv);
     return_bv->dist_[0] = min(bv->dist_[0],dist_[0]);
     return_bv->dist_[1] = min(bv->dist_[1],dist_[1]);
     return_bv->dist_[2] = min(bv->dist_[2],dist_[2]);
@@ -226,7 +226,7 @@ void BoundingVolumeAxisAlignedBox<Scalar>::unionWith(const BoundingVolume<Scalar
         return;
     }
     const BoundingVolumeAxisAlignedBox<Scalar> * const bv = dynamic_cast<const BoundingVolumeAxisAlignedBox<Scalar>* const>(bounding_volume);
-    PHYSIKA_ASSERT(bv);
+    //PHYSIKA_ASSERT(bv);
     dist_[0] = min(bv->dist_[0],dist_[0]);
     dist_[1] = min(bv->dist_[1],dist_[1]);
     dist_[2] = min(bv->dist_[2],dist_[2]);
@@ -256,8 +256,8 @@ void BoundingVolumeAxisAlignedBox<Scalar>::obtainUnion(const BoundingVolume<Scal
     }
     const BoundingVolumeAxisAlignedBox<Scalar> * const bv_lhs = dynamic_cast<const BoundingVolumeAxisAlignedBox<Scalar>* const>(bounding_volume_lhs);
     const BoundingVolumeAxisAlignedBox<Scalar> * const bv_rhs = dynamic_cast<const BoundingVolumeAxisAlignedBox<Scalar>* const>(bounding_volume_rhs);
-    PHYSIKA_ASSERT(bv_lhs);
-    PHYSIKA_ASSERT(bv_rhs);
+    //PHYSIKA_ASSERT(bv_lhs);
+    //PHYSIKA_ASSERT(bv_rhs);
     dist_[0] = min(bv_lhs->dist_[0],bv_rhs->dist_[0]);
     dist_[1] = min(bv_lhs->dist_[1],bv_rhs->dist_[1]);
     dist_[2] = min(bv_lhs->dist_[2],bv_rhs->dist_[2]);

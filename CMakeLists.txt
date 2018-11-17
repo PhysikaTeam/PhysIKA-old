@@ -20,19 +20,23 @@ message(STATUS "cuda include directoy is ${CUDA_TOOLKIT_INCLUDE}" )
 #link_libraries(${CUDA_CUDART_LIBRARY})                                                         #因为自动会添加cudart_static.lib所以不需要自己再添加别的了
 #message(STATUS "cuda libraries is ${CUDA_CUDART_LIBRARY}")
 
-link_libraries(Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL PhysLeo)                                                    # 设置链接至QT库 PhysLeo库
+link_libraries(Qt5::Widgets Qt5::Core Qt5::Gui)                                     # 设置链接至QT库 PhysLeo库
+
+link_directories("Physika_Src/Physika_Dependency/irrLicht/lib/Win64-visualStudio")
+link_libraries("Irrlicht")
 
 if(WIN32)                                                                                       #根据不同平台添加opengl库目录和对应的链接库
-    link_directories("DependentLibraries/lib/Windows/X64")
+    link_directories("Physika_Src/Physika_Dependency/OpenGL/lib/Windows/X64")
     link_libraries(freeglut glew32 glu32 opengl32)
 endif()
 if(APPLE)
-    link_directories("DependentLibraries/lib/Apple/X64")
+    link_directories("Physika_Src/Physika_Dependency/OpenGL/lib/Apple/X64")
 elseif(UNIX)
-    link_directories("DependentLibraries/lib/Linux/X64")
+    link_directories("Physika_Src/Physika_Dependency/OpenGL/lib/Linux/X64")
 endif()
 
 
 add_subdirectory(Physika_Src)
+add_subdirectory(Projects)
 
 
