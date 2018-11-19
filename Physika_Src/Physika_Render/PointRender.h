@@ -41,6 +41,8 @@ public:
     void setPointSize(float point_size);
     float pointSize() const;
 
+	void setColor(glm::vec3 color);
+
     void setPointScaleForPointSprite(float point_scale);
     float pointScaleForPointSprite() const;
 
@@ -54,11 +56,11 @@ public:
 private:
     bool use_point_sprite_ = true;
 
-    float point_size_ = 2.0f;
+    float point_size_ = 5.0f;
     float point_scale_ = 5.0f; //for point sprite
 
 	CudaVBOMapper<glm::vec3> m_vertVBO;
-	CudaVBOMapper<glm::vec3> m_color;
+	CudaVBOMapper<glm::vec3> m_vertexColor;
 
 	ShaderProgram m_glsl;
 //	GLSLProgram*  nvGLSL;

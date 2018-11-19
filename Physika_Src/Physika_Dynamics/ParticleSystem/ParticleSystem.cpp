@@ -56,29 +56,29 @@ namespace Physika
 		auto mstate = parent->getMechanicalState();
 		mstate->setMaterialType(MechanicalState::FLUID);
 
-		m_num = HostVariable<size_t>::createField(mstate.get(), "num", "Particle number", (size_t)pSet->getPointSize());
-		m_mass = HostVariable<Real>::createField(mstate.get(), MechanicalState::mass(), "Particle mass", Real(1));
-		m_smoothingLength = HostVariable<Real>::createField(mstate.get(), "smoothingLength", "Smoothing length", Real(0.0125));
-		m_samplingDistance = HostVariable<Real>::createField(mstate.get(), "samplingDistance", "Sampling distance", Real(0.005));
-		m_restDensity = HostVariable<Real>::createField(mstate.get(), "restDensity", "Rest density", Real(1000));
+		m_num = HostVarField<size_t>::createField(mstate.get(), "num", "Particle number", (size_t)pSet->getPointSize());
+		m_mass = HostVarField<Real>::createField(mstate.get(), MechanicalState::mass(), "Particle mass", Real(1));
+		m_smoothingLength = HostVarField<Real>::createField(mstate.get(), "smoothingLength", "Smoothing length", Real(0.0125));
+		m_samplingDistance = HostVarField<Real>::createField(mstate.get(), "samplingDistance", "Sampling distance", Real(0.005));
+		m_restDensity = HostVarField<Real>::createField(mstate.get(), "restDensity", "Rest density", Real(1000));
 
-		m_lowerBound = HostVariable<Coord>::createField(mstate.get(), "lowerBound", "Lower bound", Coord(0));
-		m_upperBound = HostVariable<Coord>::createField(mstate.get(), "upperBound", "Upper bound", Coord(1));
+		m_lowerBound = HostVarField<Coord>::createField(mstate.get(), "lowerBound", "Lower bound", Coord(0));
+		m_upperBound = HostVarField<Coord>::createField(mstate.get(), "upperBound", "Upper bound", Coord(1));
 
-		m_gravity = HostVariable<Coord>::createField(mstate.get(),"gravity", "gravity", Coord(0.0f, -9.8f, 0.0f));
+		m_gravity = HostVarField<Coord>::createField(mstate.get(),"gravity", "gravity", Coord(0.0f, -9.8f, 0.0f));
 
 		std::shared_ptr<DeviceContext> dc = getParent()->getContext();
 
 		dc->enable();
 
 		std::cout << "Point number: " << m_num->getValue() << std::endl;
-		auto posBuf = DeviceBuffer<Coord>::createField(mstate.get(), MechanicalState::position(), "Particle positions", m_num->getValue());
-		auto velBuf = DeviceBuffer<Coord>::createField(mstate.get(), MechanicalState::velocity(), "Particle velocities", m_num->getValue());
-		auto restPos = DeviceBuffer<Coord>::createField(mstate.get(), MechanicalState::pre_position(), "Old particle positions", m_num->getValue());
-		auto restVel = DeviceBuffer<Coord>::createField(mstate.get(), MechanicalState::pre_velocity(), "Particle positions", m_num->getValue());
-		auto rhoBuf = DeviceBuffer<Real>::createField(mstate.get(), "DENSITY1", "Particle densities", m_num->getValue());
-		auto neighborBuf = DeviceBuffer<SPHNeighborList>::createField(mstate.get(), "NEIGHBORHOOD1", "Particle neighbor ids", m_num->getValue());
-		auto attBuf = DeviceBuffer<Attribute>::createField(mstate.get(), "ATTRIBUTE1", "Particle attributes", m_num->getValue());
+		auto posBuf = DeviceArrayField<Coord>::createField(mstate.get(), MechanicalState::position(), "Particle positions", m_num->getValue());
+		auto velBuf = DeviceArrayField<Coord>::createField(mstate.get(), MechanicalState::velocity(), "Particle velocities", m_num->getValue());
+		auto restPos = DeviceArrayField<Coord>::createField(mstate.get(), MechanicalState::pre_position(), "Old particle positions", m_num->getValue());
+		auto restVel = DeviceArrayField<Coord>::createField(mstate.get(), MechanicalState::pre_velocity(), "Particle positions", m_num->getValue());
+		auto rhoBuf = DeviceArrayField<Real>::createField(mstate.get(), "DENSITY1", "Particle densities", m_num->getValue());
+		auto neighborBuf = DeviceArrayField<SPHNeighborList>::createField(mstate.get(), "NEIGHBORHOOD1", "Particle neighbor ids", m_num->getValue());
+		auto attBuf = DeviceArrayField<Attribute>::createField(mstate.get(), "ATTRIBUTE1", "Particle attributes", m_num->getValue());
 
 		auto pbdModule = std::make_shared<DensityPBD<TDataType>>();
 		pbdModule->connectPosition(TypeInfo::CastPointerUp<Field>(posBuf));
@@ -205,7 +205,7 @@ namespace Physika
 	{
 		auto pSet = TypeInfo::CastPointerDown<PointSet<TDataType>>(getParent()->getTopologyModule());
 		auto dc = getParent()->getMechanicalState();
-		auto pBuf = dc->getField<DeviceBuffer<Coord>>(MechanicalState::position());
+		auto pBuf = dc->getField<DeviceArrayField<Coord>>(MechanicalState::position());
 
 		m_mapping->applyTranform(*(pBuf->getDataPtr()), *(pSet->getPoints()));
 		//Function1Pt::Copy(*(pSet->getPoints()), *(pBuf->getDataPtr()));

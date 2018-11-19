@@ -72,8 +72,8 @@ namespace Physika
 		if (mType == MechanicalState::RIGIDBODY)
 		{
 			auto mapping = std::make_shared<RigidToPoints<TDataType>>();
-			auto center = mstate->getField<HostVariable<Coord>>(MechanicalState::position())->getValue();
-			auto rotation = mstate->getField<HostVariable<Matrix>>(MechanicalState::rotation())->getValue();
+			auto center = mstate->getField<HostVarField<Coord>>(MechanicalState::position())->getValue();
+			auto rotation = mstate->getField<HostVarField<Matrix>>(MechanicalState::rotation())->getValue();
 
 			mapping->initialize(Rigid(center, Quaternion<Real>(rotation)), m_positions);
 			m_mapping = mapping;
@@ -93,8 +93,8 @@ namespace Physika
 		auto mType = mstate->getMaterialType();
 		if (mType == MechanicalState::RIGIDBODY)
 		{
-			auto center = mstate->getField<HostVariable<Coord>>(MechanicalState::position())->getValue();
-			auto rotation = mstate->getField<HostVariable<Matrix>>(MechanicalState::rotation())->getValue();
+			auto center = mstate->getField<HostVarField<Coord>>(MechanicalState::position())->getValue();
+			auto rotation = mstate->getField<HostVarField<Matrix>>(MechanicalState::rotation())->getValue();
 
 			auto pSet = TypeInfo::CastPointerDown<PointSet<TDataType>>(getParent()->getTopologyModule());
 
@@ -105,10 +105,10 @@ namespace Physika
 		else
 		{
 			std::shared_ptr<Field> pos = mstate->getField(MechanicalState::position());
-			std::shared_ptr<DeviceBuffer<Coord>> pBuf = TypeInfo::CastPointerDown<DeviceBuffer<Coord>>(pos);
+			std::shared_ptr<DeviceArrayField<Coord>> pBuf = TypeInfo::CastPointerDown<DeviceArrayField<Coord>>(pos);
 
 			std::shared_ptr<Field> vel = mstate->getField(MechanicalState::velocity());
-			std::shared_ptr<DeviceBuffer<Coord>> vBuf = TypeInfo::CastPointerDown<DeviceBuffer<Coord>>(vel);
+			std::shared_ptr<DeviceArrayField<Coord>> vBuf = TypeInfo::CastPointerDown<DeviceArrayField<Coord>>(vel);
 
 			Function1Pt::Copy(m_positions, *(pBuf->getDataPtr()));
 			Function1Pt::Copy(m_velocities, *(vBuf->getDataPtr()));
@@ -123,9 +123,9 @@ namespace Physika
 		auto dc = getParent()->getMechanicalState();
 		if (mType == MechanicalState::RIGIDBODY)
 		{
-			auto center = mstate->getField<HostVariable<Coord>>(MechanicalState::position())->getValue();
-			auto rotation = mstate->getField<HostVariable<Matrix>>(MechanicalState::rotation())->getValue();
-			auto vel = mstate->getField<HostVariable<Coord>>(MechanicalState::velocity())->getValue();
+			auto center = mstate->getField<HostVarField<Coord>>(MechanicalState::position())->getValue();
+			auto rotation = mstate->getField<HostVarField<Matrix>>(MechanicalState::rotation())->getValue();
+			auto vel = mstate->getField<HostVarField<Coord>>(MechanicalState::velocity())->getValue();
 			
 			HostArray<Coord> hPos;
 			HostArray<Coord> hInitPos;
@@ -161,9 +161,9 @@ namespace Physika
 				angularVel /= nn;
 			}
 			
-			dc->getField<HostVariable<Coord>>(MechanicalState::position())->setValue(center + displacement);
-			dc->getField<HostVariable<Coord>>(MechanicalState::velocity())->setValue(vel + displacement/ dt);
-			dc->getField<HostVariable<Coord>>(MechanicalState::angularVelocity())->setValue(angularVel);
+			dc->getField<HostVarField<Coord>>(MechanicalState::position())->setValue(center + displacement);
+			dc->getField<HostVarField<Coord>>(MechanicalState::velocity())->setValue(vel + displacement/ dt);
+			dc->getField<HostVarField<Coord>>(MechanicalState::angularVelocity())->setValue(angularVel);
 
 			hPos.release();
 			hInitPos.release();
@@ -171,8 +171,8 @@ namespace Physika
 		}
 		else
 		{
-			auto posArr = dc->getField<DeviceBuffer<Coord>>(MechanicalState::position());
-			auto velArr = dc->getField<DeviceBuffer<Coord>>(MechanicalState::velocity());
+			auto posArr = dc->getField<DeviceArrayField<Coord>>(MechanicalState::position());
+			auto velArr = dc->getField<DeviceArrayField<Coord>>(MechanicalState::velocity());
 
 			Function1Pt::Copy(*(posArr->getDataPtr()), m_positions);
 			Function1Pt::Copy(*(velArr->getDataPtr()), m_velocities);

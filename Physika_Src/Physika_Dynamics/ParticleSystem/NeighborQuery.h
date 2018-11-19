@@ -34,10 +34,10 @@ namespace Physika {
 		int m_maxIteration;
 		GridHash<TDataType> hash;
 
-		Slot<HostVariable<Real>>  m_samplingDistance;
-		Slot<HostVariable<Real>>  m_smoothingLength;
-		Slot<DeviceBuffer<Coord>> m_position;
-		Slot<DeviceBuffer<SPHNeighborList>> m_neighbors;
+		Slot<HostVarField<Real>>  m_samplingDistance;
+		Slot<HostVarField<Real>>  m_smoothingLength;
+		Slot<DeviceArrayField<Coord>> m_position;
+		Slot<DeviceArrayField<SPHNeighborList>> m_neighbors;
 	};
 
 #ifdef PRECISION_FLOAT

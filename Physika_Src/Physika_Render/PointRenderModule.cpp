@@ -14,6 +14,8 @@ namespace Physika
 
 	PointRenderModule::PointRenderModule()
 		: VisualModule()
+		, m_mode(PointRenderModule::SPRITE)
+		, m_color(Vector3f(0.0f, 0.0, 1.0f))
 	{
 	}
 
@@ -56,6 +58,18 @@ namespace Physika
 
 		m_pointRender = std::make_shared<PointRender>();
 		m_pointRender->resize(xyz->size());
+
+		switch (m_mode)
+		{
+		case PointRenderModule::POINT:
+			m_pointRender->disableUsePointSprite();
+			break;
+		case PointRenderModule::SPRITE:
+			m_pointRender->enableUsePointSprite();
+			break;
+		default:
+			break;
+		}
 
 // 		m_lineRender = std::make_shared<LineRender>();
 // 		m_lineRender->resize(xyz->size()/2);
@@ -104,6 +118,8 @@ namespace Physika
 		DeviceArray<float3>* xyz = (DeviceArray<float3>*)pSet->getPoints();
 
 		m_pointRender->setVertexArray(*xyz);
+
+//		m_pointRender->setColor(glm::vec3(m_color[0], m_color[1], m_color[2]));
 	}
 
 	void PointRenderModule::display()
@@ -118,6 +134,16 @@ namespace Physika
  		m_pointRender->display();
 
 		glPopMatrix();
+	}
+
+	void PointRenderModule::setRenderMode(RenderMode mode)
+	{
+		m_mode = mode;
+	}
+
+	void PointRenderModule::setColor(Vector3f color)
+	{
+		m_color = color;
 	}
 
 }

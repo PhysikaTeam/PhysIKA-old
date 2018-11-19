@@ -8,11 +8,11 @@
 namespace Physika {
 
 template<typename T, DeviceType deviceType>
-class ArrayBuffer : public Field
+class ArrayField : public Field
 {
 public:
-	ArrayBuffer(std::string name, std::string description, int num = 1);
-	~ArrayBuffer() override;
+	ArrayField(std::string name, std::string description, int num = 1);
+	~ArrayField() override;
 
 	size_t size() override { return m_data->size(); }
 	void resize(int num);
@@ -27,7 +27,7 @@ public:
 	void reset() override { m_data->reset(); }
 
 public:
-	static ArrayBuffer* create(int num) { return new ArrayBuffer<T, deviceType>("default", "default", num); }
+	static ArrayField* create(int num) { return new ArrayField<T, deviceType>("default", "default", num); }
 
 // 	static std::shared_ptr< ArrayBuffer<T, deviceType> >
 // 		create(std::string name, std::string description, int num)
@@ -35,7 +35,7 @@ public:
 // 		return TypeInfo::New<ArrayBuffer<T, deviceType>>(name, description, num);//SPtr< ArrayBuffer<T, deviceType> > var( new ArrayBuffer<T, deviceType>(name, description) );
 // 	}
 
-	static std::shared_ptr< ArrayBuffer<T, deviceType> >
+	static std::shared_ptr< ArrayField<T, deviceType> >
 		createField(Base* module, std::string name, std::string description, int num)
 	{
 		std::shared_ptr<Field> ret = module->getField(name);
@@ -47,13 +47,13 @@ public:
 			return nullptr;
 		}
 
-		auto var = TypeInfo::New<ArrayBuffer<T, deviceType>>(name, description, num);//SPtr< ArrayBuffer<T, deviceType> > var( new ArrayBuffer<T, deviceType>(name, description) );
+		auto var = TypeInfo::New<ArrayField<T, deviceType>>(name, description, num);//SPtr< ArrayBuffer<T, deviceType> > var( new ArrayBuffer<T, deviceType>(name, description) );
 		module->addField(name, var);
 		return var;
 	}
 
 private:
-	ArrayBuffer() {};
+	ArrayField() {};
 
 	Array<T>* m_data;
 };
@@ -68,7 +68,7 @@ private:
 // }
 
 template<typename T, DeviceType deviceType>
-ArrayBuffer<T, deviceType>::ArrayBuffer(std::string name, std::string description, int num)
+ArrayField<T, deviceType>::ArrayField(std::string name, std::string description, int num)
 	: Field(name, description)
 	, m_data(NULL)
 {
@@ -77,13 +77,13 @@ ArrayBuffer<T, deviceType>::ArrayBuffer(std::string name, std::string descriptio
 
 
 template<typename T, DeviceType deviceType>
-void ArrayBuffer<T, deviceType>::resize(int num)
+void ArrayField<T, deviceType>::resize(int num)
 {
 	m_data->resize(num);
 }
 
 template<typename T, DeviceType deviceType>
-ArrayBuffer<T, deviceType>::~ArrayBuffer()
+ArrayField<T, deviceType>::~ArrayField()
 {
 	if (m_data != NULL)
 	{
@@ -94,8 +94,8 @@ ArrayBuffer<T, deviceType>::~ArrayBuffer()
 
 
 template<typename T>
-using HostBuffer = ArrayBuffer<T, DeviceType::CPU>;
+using HostArrayField = ArrayField<T, DeviceType::CPU>;
 
 template<typename T>
-using DeviceBuffer = ArrayBuffer<T, DeviceType::GPU>;
+using DeviceArrayField = ArrayField<T, DeviceType::GPU>;
 }

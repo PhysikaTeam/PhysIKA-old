@@ -14,7 +14,14 @@ namespace Physika
 		PointRenderModule();
 		~PointRenderModule();
 
+		enum RenderMode {
+			POINT = 0,
+			SPRITE
+		};
+
 		void display() override;
+		void setRenderMode(RenderMode mode);
+		void setColor(Vector3f color);
 
 	protected:
 		bool  initializeImpl() override;
@@ -22,6 +29,9 @@ namespace Physika
 		void updateRenderingContext() override;
 
 	private:
+		RenderMode m_mode;
+		Vector3f m_color;
+
 // 		std::shared_ptr<PointRenderUtil> point_render_util;
 // 		std::shared_ptr<PointRenderTask> point_render_task;
 		std::shared_ptr<PointRender> m_pointRender;

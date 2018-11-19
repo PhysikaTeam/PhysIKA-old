@@ -28,7 +28,7 @@ namespace Physika {
 // 		}
 
 	private:
-		DeviceBuffer<Real>* m_energy;
+		DeviceArrayField<Real>* m_energy;
 	};
 
 #ifdef PRECISION_FLOAT

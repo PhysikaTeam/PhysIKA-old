@@ -143,9 +143,9 @@ namespace Physika
 		int num = posArr->size();
 
 		if (m_lamda == NULL)
-			m_lamda = DeviceBuffer<Real>::create(num);
+			m_lamda = DeviceArrayField<Real>::create(num);
 		if (m_deltaPos == NULL)
-			m_deltaPos = DeviceBuffer<Coord>::create(num);
+			m_deltaPos = DeviceArrayField<Coord>::create(num);
 
 		DeviceArray<Real>* lamda = m_lamda->getDataPtr();
 		DeviceArray<Coord>* deltaPos = m_deltaPos->getDataPtr();

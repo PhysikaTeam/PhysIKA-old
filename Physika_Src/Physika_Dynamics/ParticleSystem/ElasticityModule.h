@@ -37,20 +37,20 @@ namespace Physika {
 		bool connectRestShape(std::shared_ptr<Field>& restShape) { return connect(restShape, m_restShape); }
 
 	private:
-		DeviceBuffer<Real>* m_lambdas;
-		DeviceBuffer<Real>* m_bulkCoef;
-		DeviceBuffer<Coord>* m_tmpPos;
-		DeviceBuffer<Coord>* m_accPos;
-		DeviceBuffer<Matrix>* m_refMatrix;
+		DeviceArrayField<Real>* m_lambdas;
+		DeviceArrayField<Real>* m_bulkCoef;
+		DeviceArrayField<Coord>* m_tmpPos;
+		DeviceArrayField<Coord>* m_accPos;
+		DeviceArrayField<Matrix>* m_refMatrix;
 
-		Slot<HostVariable<Real>>  m_radius;
-		Slot<HostVariable<Real>>  m_samplingDistance;
-		Slot<DeviceBuffer<int>>  m_state;
-		Slot<DeviceBuffer<Coord>> m_position;
-		Slot<DeviceBuffer<Coord>> m_prePosition;
-		Slot<DeviceBuffer<Coord>> m_initPosition;
-		Slot<DeviceBuffer<Coord>>  m_velocity;
-		Slot<DeviceBuffer<RestShape>> m_restShape;
+		Slot<HostVarField<Real>>  m_radius;
+		Slot<HostVarField<Real>>  m_samplingDistance;
+		Slot<DeviceArrayField<int>>  m_state;
+		Slot<DeviceArrayField<Coord>> m_position;
+		Slot<DeviceArrayField<Coord>> m_prePosition;
+		Slot<DeviceArrayField<Coord>> m_initPosition;
+		Slot<DeviceArrayField<Coord>>  m_velocity;
+		Slot<DeviceArrayField<RestShape>> m_restShape;
 	};
 
 

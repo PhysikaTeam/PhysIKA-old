@@ -57,15 +57,15 @@ namespace Physika
 		auto mstate = parent->getMechanicalState();
 		mstate->setMaterialType(MechanicalState::RIGIDBODY);
 
-		HostVariable<Real>::createField(mstate.get(), MechanicalState::mass(), "Mass", Real(1));
-		HostVariable<Matrix>::createField(mstate.get(), MechanicalState::angularMass(), "Angular momentum", Matrix::identityMatrix());
-		HostVariable<Matrix>::createField(mstate.get(), MechanicalState::rotation(), "Orientation", m_quaternion.get3x3Matrix());
-		HostVariable<Coord>::createField(mstate.get(), MechanicalState::init_position(), "Initial position", cenPos);
-		auto center = HostVariable<Coord>::createField(mstate.get(), MechanicalState::position(), "Mass center", cenPos);
-		auto vel = HostVariable<Coord>::createField(mstate.get(), MechanicalState::velocity(), "Translational velocity", Coord(0, 0, 0));
-		auto angularVel = HostVariable<RotateCoord>::createField(mstate.get(), MechanicalState::angularVelocity(), "Angular velocity", RotateCoord(0, 0, 10));
-		HostVariable<Coord>::createField(mstate.get(), MechanicalState::force(), "Force", Coord(0));
-		HostVariable<RotateCoord>::createField(mstate.get(), MechanicalState::forceMoment(), "Force moment", RotateCoord(0));
+		HostVarField<Real>::createField(mstate.get(), MechanicalState::mass(), "Mass", Real(1));
+		HostVarField<Matrix>::createField(mstate.get(), MechanicalState::angularMass(), "Angular momentum", Matrix::identityMatrix());
+		HostVarField<Matrix>::createField(mstate.get(), MechanicalState::rotation(), "Orientation", m_quaternion.get3x3Matrix());
+		HostVarField<Coord>::createField(mstate.get(), MechanicalState::init_position(), "Initial position", cenPos);
+		auto center = HostVarField<Coord>::createField(mstate.get(), MechanicalState::position(), "Mass center", cenPos);
+		auto vel = HostVarField<Coord>::createField(mstate.get(), MechanicalState::velocity(), "Translational velocity", Coord(0, 0, 0));
+		auto angularVel = HostVarField<RotateCoord>::createField(mstate.get(), MechanicalState::angularVelocity(), "Angular velocity", RotateCoord(0, 0, 10));
+		HostVarField<Coord>::createField(mstate.get(), MechanicalState::force(), "Force", Coord(0));
+		HostVarField<RotateCoord>::createField(mstate.get(), MechanicalState::forceMoment(), "Force moment", RotateCoord(0));
 
 		m_mapping = std::make_shared<RigidToPoints<TDataType>>();
 		m_mapping->initialize(Rigid(cenPos, m_quaternion), *(pSet->getPoints()));
@@ -84,12 +84,12 @@ namespace Physika
 			(*iter)->applyForce();
 		}
 
-		auto massField = mstate->getField<HostVariable<Real>>(MechanicalState::mass());
-		auto rotationField = mstate->getField<HostVariable<Matrix>>(MechanicalState::rotation());
-		auto angularMassField = mstate->getField<HostVariable<Matrix>>(MechanicalState::angularMass());
-		auto posField = mstate->getField<HostVariable<Coord>>(MechanicalState::position());
-		auto transVelField = mstate->getField<HostVariable<Coord>>(MechanicalState::velocity());
-		auto angularVelField = mstate->getField<HostVariable<RotateCoord>>(MechanicalState::angularVelocity());
+		auto massField = mstate->getField<HostVarField<Real>>(MechanicalState::mass());
+		auto rotationField = mstate->getField<HostVarField<Matrix>>(MechanicalState::rotation());
+		auto angularMassField = mstate->getField<HostVarField<Matrix>>(MechanicalState::angularMass());
+		auto posField = mstate->getField<HostVarField<Coord>>(MechanicalState::position());
+		auto transVelField = mstate->getField<HostVarField<Coord>>(MechanicalState::velocity());
+		auto angularVelField = mstate->getField<HostVarField<RotateCoord>>(MechanicalState::angularVelocity());
 
 		Real mass = massField->getValue();
 		Coord center = posField->getValue();
@@ -97,8 +97,8 @@ namespace Physika
 		Coord angularVel = angularVelField->getValue();
 		Matrix angularMass = angularMassField->getValue();
 
-		Coord force = mstate->getField<HostVariable<Coord>>(MechanicalState::force())->getValue();
-		Coord forceMoment = mstate->getField<HostVariable<Coord>>(MechanicalState::forceMoment())->getValue();
+		Coord force = mstate->getField<HostVarField<Coord>>(MechanicalState::force())->getValue();
+		Coord forceMoment = mstate->getField<HostVarField<Coord>>(MechanicalState::forceMoment())->getValue();
 
 		Matrix invMass = angularMass;
 		angularVel += dt*(invMass*forceMoment);
@@ -127,7 +127,7 @@ namespace Physika
 	void RigidBody<TDataType>::updateTopology()
 	{
 		auto mstate = getParent()->getMechanicalState();
-		auto center = mstate->getField<HostVariable<Coord>>(MechanicalState::position())->getValue();
+		auto center = mstate->getField<HostVarField<Coord>>(MechanicalState::position())->getValue();
 
 		auto pSet = TypeInfo::CastPointerDown<PointSet<TDataType>>(getParent()->getTopologyModule());
 		auto points = pSet->getPoints();

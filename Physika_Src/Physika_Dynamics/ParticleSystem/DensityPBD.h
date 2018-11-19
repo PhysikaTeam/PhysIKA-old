@@ -34,11 +34,11 @@ namespace Physika {
 
 	protected:
 		int m_maxIteration;
-		DeviceBuffer<Real>* m_lamda;
-		DeviceBuffer<Coord>* m_deltaPos;
+		DeviceArrayField<Real>* m_lamda;
+		DeviceArrayField<Coord>* m_deltaPos;
 		
-		Slot<HostVariable<Real>>  m_mass;
-		Slot<DeviceBuffer<Attribute>> m_attribute;
+		Slot<HostVarField<Real>>  m_mass;
+		Slot<DeviceArrayField<Attribute>> m_attribute;
 
 		SummationDensity<TDataType>* densitySum;
 	};

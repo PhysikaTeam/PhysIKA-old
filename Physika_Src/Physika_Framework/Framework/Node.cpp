@@ -11,9 +11,9 @@ Node::Node()
 {
 	setName("default");
 
-	m_active = HostVariable<bool>::createField(this, "active", "this is a variable!", true);
-	m_visible = HostVariable<bool>::createField(this, "visible", "this is a variable!", true);
-	m_time = HostVariable<float>::createField(this, "time", "this is a variable!", 0.0f);
+	m_active = HostVarField<bool>::createField(this, "active", "this is a variable!", true);
+	m_visible = HostVarField<bool>::createField(this, "visible", "this is a variable!", true);
+	m_time = HostVarField<float>::createField(this, "time", "this is a variable!", 0.0f);
 
 	m_dt = 0.001f;
 }
@@ -24,9 +24,9 @@ Node::Node(std::string name)
 {
 	setName(name);
 
-	m_active = HostVariable<bool>::createField(this, "active", "this is a variable!", true);
-	m_visible = HostVariable<bool>::createField(this, "visible", "this is a variable!", true);
-	m_time = HostVariable<float>::createField(this, "time", "this is a variable!", 0.0f);
+	m_active = HostVarField<bool>::createField(this, "active", "this is a variable!", true);
+	m_visible = HostVarField<bool>::createField(this, "visible", "this is a variable!", true);
+	m_time = HostVarField<float>::createField(this, "time", "this is a variable!", 0.0f);
 		
 	m_dt = 0.001f;
 }
@@ -40,7 +40,7 @@ void Node::setName(std::string name)
 {
 	if (m_node_name == nullptr)
 	{
-		m_node_name = HostVariable<std::string>::createField(this, "node_name", "Node name", name);
+		m_node_name = HostVarField<std::string>::createField(this, "node_name", "Node name", name);
 	}
 //	m_node_name->setValue(name);
 }

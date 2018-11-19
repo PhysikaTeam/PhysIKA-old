@@ -38,11 +38,11 @@ namespace Physika {
 		virtual bool connectNeighbor(std::shared_ptr<Field>& neighbor) { return connect(neighbor, m_neighbors); }
 
 	protected:
-		Slot<HostVariable<Real>>  m_radius;
-		Slot<DeviceBuffer<Coord>> m_position;
-		Slot<DeviceBuffer<Coord>> m_velocity;
-		Slot<DeviceBuffer<Real>>  m_density;
-		Slot<DeviceBuffer<SPHNeighborList>> m_neighbors;
+		Slot<HostVarField<Real>>  m_radius;
+		Slot<DeviceArrayField<Coord>> m_position;
+		Slot<DeviceArrayField<Coord>> m_velocity;
+		Slot<DeviceArrayField<Real>>  m_density;
+		Slot<DeviceArrayField<SPHNeighborList>> m_neighbors;
 	};
 
 #ifdef PRECISION_FLOAT

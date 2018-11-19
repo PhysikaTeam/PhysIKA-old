@@ -11,13 +11,13 @@ namespace Physika {
 *	\brief	Variables of build-in data types.
 */
 template<typename T, DeviceType deviceType = DeviceType::CPU>
-class Variable : public Field
+class VarField : public Field
 {
 public:
-	Variable(std::string name, std::string description);
+	VarField(std::string name, std::string description);
 
 public:
-	~Variable() override;
+	~VarField() override;
 
 	size_t size() override { return 1; }
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
@@ -36,7 +36,7 @@ public:
 // 		return TypeInfo::New<Variable<T, deviceType>>(name, description);
 // 	}
 
-	static std::shared_ptr< Variable<T, deviceType> >
+	static std::shared_ptr< VarField<T, deviceType> >
 		createField(Base* module, std::string name, std::string description, T value)
 	{
 		std::shared_ptr<Field> ret = module->getField(name);
@@ -48,20 +48,20 @@ public:
 			return nullptr;
 		}
 
-		auto var = TypeInfo::New<Variable<T, deviceType>>(name, description);//Variable<T, deviceType>::create(name, description);
+		auto var = TypeInfo::New<VarField<T, deviceType>>(name, description);//Variable<T, deviceType>::create(name, description);
 		var->setValue(value);
 		module->addField(name, TypeInfo::CastPointerUp<Field>(var));
 		return var;
 	}
 
 private:
-	Variable() {};
+	VarField() {};
 	T* m_data;
 	std::shared_ptr<MemoryManager<deviceType>> m_alloc;
 };
 
 template<typename T, DeviceType deviceType>
-Variable<T, deviceType>::Variable(std::string name, std::string description)
+VarField<T, deviceType>::VarField(std::string name, std::string description)
 	: Field(name, description)
 	, m_data(NULL)
 	, m_alloc(std::make_shared<DefaultMemoryManager<deviceType>>())
@@ -77,7 +77,7 @@ Variable<T, deviceType>::Variable(std::string name, std::string description)
 }
 
 template<typename T, DeviceType deviceType>
-Variable<T, deviceType>::~Variable()
+VarField<T, deviceType>::~VarField()
 {
 	if (m_data != NULL)
 	{
@@ -93,7 +93,7 @@ Variable<T, deviceType>::~Variable()
 };
 
 template<typename T, DeviceType deviceType /*= DeviceType::CPU*/>
-void Physika::Variable<T, deviceType>::reset()
+void Physika::VarField<T, deviceType>::reset()
 {
 	T value = T(0);
 	switch (deviceType)
@@ -106,7 +106,7 @@ void Physika::Variable<T, deviceType>::reset()
 }
 
 template<typename T, DeviceType deviceType>
-void Variable<T, deviceType>::setValue(T val)
+void VarField<T, deviceType>::setValue(T val)
 {
 //	m_alloc->initMemory((void*)m_data, val, 1 * sizeof(T));
 
@@ -120,7 +120,7 @@ void Variable<T, deviceType>::setValue(T val)
 }
 
 template<typename T, DeviceType deviceType>
-T Variable<T, deviceType>::getValue()
+T VarField<T, deviceType>::getValue()
 {
 	T val;
 	switch (deviceType)
@@ -133,15 +133,15 @@ T Variable<T, deviceType>::getValue()
 }
 
 template<typename T>
-using HostVariable = Variable<T, DeviceType::CPU>;
+using HostVarField = VarField<T, DeviceType::CPU>;
 
 template<typename T>
-using DeviceVariable = Variable<T, DeviceType::GPU>;
+using DeviceVarField = VarField<T, DeviceType::GPU>;
 
 template<typename T>
-using HostVariablePtr = std::shared_ptr< HostVariable<T> >;
+using HostVariablePtr = std::shared_ptr< HostVarField<T> >;
 
 template<typename T>
-using DeviceVariablePtr = std::shared_ptr< DeviceVariable<T> >;
+using DeviceVariablePtr = std::shared_ptr< DeviceVarField<T> >;
 
 }

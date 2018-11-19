@@ -45,12 +45,12 @@ namespace Physika {
 		int m_maxIteration;
 		Real m_factor;
 
-		Slot<HostVariable<Real>>  m_mass;
-		Slot<HostVariable<Real>>  m_radius;
+		Slot<HostVarField<Real>>  m_mass;
+		Slot<HostVarField<Real>>  m_radius;
 
-		Slot<DeviceBuffer<Coord>> m_position;
-		Slot<DeviceBuffer<Real>>  m_density;
-		Slot<DeviceBuffer<SPHNeighborList>> m_neighbors;
+		Slot<DeviceArrayField<Coord>> m_position;
+		Slot<DeviceArrayField<Real>>  m_density;
+		Slot<DeviceArrayField<SPHNeighborList>> m_neighbors;
 	};
 
 #ifdef PRECISION_FLOAT

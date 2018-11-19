@@ -31,9 +31,9 @@ namespace Physika {
 		virtual bool connectVelocity(std::shared_ptr<Field>& vel) { return connect(vel, m_velocity); }
 		virtual bool connectAttribute(std::shared_ptr<Field>& att) { return connect(att, m_attribute); }
 	private:
-		Slot<DeviceBuffer<Coord>> m_position;
-		Slot<DeviceBuffer<Coord>> m_velocity;
-		Slot<DeviceBuffer<Attribute>> m_attribute;
+		Slot<DeviceArrayField<Coord>> m_position;
+		Slot<DeviceArrayField<Coord>> m_velocity;
+		Slot<DeviceArrayField<Attribute>> m_attribute;
 	};
 
 #ifdef PRECISION_FLOAT

@@ -139,7 +139,7 @@ PointRender::~PointRender()
 void PointRender::resize(unsigned int num)
 {
 	m_vertVBO.resize(num);
-	m_color.resize(num);
+	m_vertexColor.resize(num);
 }
 
 
@@ -163,6 +163,20 @@ void PointRender::setPointSize(float point_size)
 float PointRender::pointSize() const
 {
     return point_size_;
+}
+
+void PointRender::setColor(glm::vec3 color)
+{
+	glm::vec3* colors = new glm::vec3(m_vertexColor.getSize());
+	for (size_t i = 0; i < m_vertexColor.getSize(); i++)
+	{
+		colors[i] = color;
+	}
+
+	m_vertexColor.cudaMap();
+//	cudaMemcpy(clrBuf, colors, sizeof(float3) * m_color.getSize(), cudaMemcpyHostToHost);
+	m_vertexColor.cudaUnmap();
+	delete[] colors;
 }
 
 void PointRender::setPointScaleForPointSprite(float point_scale)

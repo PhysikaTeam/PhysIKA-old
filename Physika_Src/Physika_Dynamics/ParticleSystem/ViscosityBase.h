@@ -39,18 +39,18 @@ namespace Physika {
 
 
 	private:
-		DeviceBuffer<Coord>* m_oldVel;
-		DeviceBuffer<Coord>* m_bufVel;
+		DeviceArrayField<Coord>* m_oldVel;
+		DeviceArrayField<Coord>* m_bufVel;
 
 		HostVariablePtr<Real> m_viscosity;
 
-		Slot<HostVariable<Real>>  m_radius;
-		Slot<HostVariable<Real>>  m_samplingDistance;
-		Slot<DeviceBuffer<Coord>> m_position;
-		Slot<DeviceBuffer<Coord>> m_velocity;
-		Slot<DeviceBuffer<Attribute>> m_attribute;
-		Slot<DeviceBuffer<Real>>  m_density;
-		Slot<DeviceBuffer<SPHNeighborList>> m_neighbors;
+		Slot<HostVarField<Real>>  m_radius;
+		Slot<HostVarField<Real>>  m_samplingDistance;
+		Slot<DeviceArrayField<Coord>> m_position;
+		Slot<DeviceArrayField<Coord>> m_velocity;
+		Slot<DeviceArrayField<Attribute>> m_attribute;
+		Slot<DeviceArrayField<Real>>  m_density;
+		Slot<DeviceArrayField<SPHNeighborList>> m_neighbors;
 	};
 
 #ifdef PRECISION_FLOAT

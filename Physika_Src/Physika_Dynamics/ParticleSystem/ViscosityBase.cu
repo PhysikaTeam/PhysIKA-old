@@ -95,7 +95,7 @@ namespace Physika
 		, m_oldVel(NULL)
 		, m_bufVel(NULL)
 	{
-		m_viscosity = HostVariable<Real>::createField(this, "viscosity", "Viscosity", Real(0.05));
+		m_viscosity = HostVarField<Real>::createField(this, "viscosity", "Viscosity", Real(0.05));
 
 		initArgument(&m_position, "Position", "CUDA array used to store particles' positions");
 		initArgument(&m_velocity, "Velocity", "CUDA array used to store particles' velocities");
@@ -117,11 +117,11 @@ namespace Physika
 		int num = posArr->size();
 		if (m_oldVel == NULL)
 		{
-			m_oldVel = DeviceBuffer<Coord>::create(num);
+			m_oldVel = DeviceArrayField<Coord>::create(num);
 		}
 		if (m_bufVel == NULL)
 		{
-			m_bufVel = DeviceBuffer<Coord>::create(num);
+			m_bufVel = DeviceArrayField<Coord>::create(num);
 		}
 
 		DeviceArray<Coord>* oldVel = m_oldVel->getDataPtr();

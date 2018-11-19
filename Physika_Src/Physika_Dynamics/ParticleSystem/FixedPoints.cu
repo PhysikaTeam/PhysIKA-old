@@ -66,15 +66,15 @@ namespace Physika
 		auto mstate = getParent()->getMechanicalState();
 		if (mstate->getMaterialType() == MechanicalState::RIGIDBODY)
 		{
-			auto init_poss = mstate->getField<HostVariable<Coord>>(MechanicalState::init_position())->getValue();
-			mstate->getField<HostVariable<Coord>>(MechanicalState::position())->setValue(init_poss);
-			mstate->getField<HostVariable<Coord>>(MechanicalState::velocity())->setValue(Coord(0));
+			auto init_poss = mstate->getField<HostVarField<Coord>>(MechanicalState::init_position())->getValue();
+			mstate->getField<HostVarField<Coord>>(MechanicalState::position())->setValue(init_poss);
+			mstate->getField<HostVarField<Coord>>(MechanicalState::velocity())->setValue(Coord(0));
 		}
 		else
 		{
-			auto init_poss = mstate->getField<DeviceBuffer<Coord>>(MechanicalState::init_position())->getValue();
-			auto poss = mstate->getField<DeviceBuffer<Coord>>(MechanicalState::position())->getValue();
-			auto vels = mstate->getField<DeviceBuffer<Coord>>(MechanicalState::velocity())->getValue();
+			auto init_poss = mstate->getField<DeviceArrayField<Coord>>(MechanicalState::init_position())->getValue();
+			auto poss = mstate->getField<DeviceArrayField<Coord>>(MechanicalState::position())->getValue();
+			auto vels = mstate->getField<DeviceArrayField<Coord>>(MechanicalState::velocity())->getValue();
 
 			uint pDims = cudaGridSize(m_device_ids.size(), BLOCK_SIZE);
 

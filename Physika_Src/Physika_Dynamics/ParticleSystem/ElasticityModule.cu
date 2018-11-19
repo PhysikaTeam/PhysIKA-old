@@ -443,15 +443,15 @@ namespace Physika
 		
 		int num = posArr->size();
 		if (NULL == m_refMatrix)
-			m_refMatrix = DeviceBuffer<Matrix>::create(num);
+			m_refMatrix = DeviceArrayField<Matrix>::create(num);
 		if (NULL == m_tmpPos)
-			m_tmpPos = DeviceBuffer<Coord>::create(num);
+			m_tmpPos = DeviceArrayField<Coord>::create(num);
 		if (NULL == m_lambdas)
-			m_lambdas = DeviceBuffer<Real>::create(num);
+			m_lambdas = DeviceArrayField<Real>::create(num);
 		if (NULL == m_accPos)
-			m_accPos = DeviceBuffer<Coord>::create(num);
+			m_accPos = DeviceArrayField<Coord>::create(num);
 		if (NULL == m_bulkCoef)
-			m_bulkCoef = DeviceBuffer<Real>::create(num);
+			m_bulkCoef = DeviceArrayField<Real>::create(num);
 
 		DeviceArray<int>* states = m_state.getField().getDataPtr();
 		DeviceArray<Coord>* initPos = m_initPosition.getField().getDataPtr();

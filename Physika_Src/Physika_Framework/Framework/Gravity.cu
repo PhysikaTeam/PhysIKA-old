@@ -38,15 +38,15 @@ void Gravity<TDataType>::applyForce()
 	auto mstate = getParent()->getMechanicalState();
 	if (mstate->getMaterialType() == MechanicalState::RIGIDBODY)
 	{
-		auto massField = mstate->getField<HostVariable<Real>>(MechanicalState::mass());
-		auto forceField = mstate->getField<HostVariable<Coord>>(MechanicalState::force());
+		auto massField = mstate->getField<HostVarField<Real>>(MechanicalState::mass());
+		auto forceField = mstate->getField<HostVarField<Coord>>(MechanicalState::force());
 		Coord nForce = forceField->getValue() + m_gravity * massField->getValue();
 		forceField->setValue(nForce);
 	}
 	else
 	{
-		auto massField = mstate->getField<HostVariable<Real>>(MechanicalState::mass());
-		auto forceField = mstate->getField<DeviceBuffer<Coord>>(MechanicalState::force());
+		auto massField = mstate->getField<HostVarField<Real>>(MechanicalState::mass());
+		auto forceField = mstate->getField<DeviceArrayField<Coord>>(MechanicalState::force());
 
 		auto oldForce = forceField->getValue();
 		Coord deltaF = massField->getValue()*m_gravity;
