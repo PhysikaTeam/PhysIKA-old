@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 
 set(PROJECTS_NAMES APP_Test)
 
-link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                                       # 设置PhysLeo库路径
-link_libraries(Physika_Core Physika_Dynamics Physika_Framework Physika_Geometry Physika_GUI Physika_IO Physika_Render)   
+link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                                       # 设置库路径
+link_libraries(Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)
+link_libraries(ParticleSystem RigidBody)
+link_libraries(GlutGUI QtGUI)   
 
 foreach(PROJECT_NAME IN ITEMS ${PROJECTS_NAMES})
     set(SRC_DIR "${PROJECT_SOURCE_DIR}/Projects/${PROJECT_NAME}")
@@ -19,6 +21,8 @@ foreach(PROJECT_NAME IN ITEMS ${PROJECTS_NAMES})
     list(FILTER SRC_LIST EXCLUDE REGEX .*Media/.*)                                  #排除deprecated 文件下面的所有文件
 
     add_executable(${PROJECT_NAME} ${SRC_LIST})                                          #添加编译目标 静态链接库
+    file(RELATIVE_PATH PROJECT_PATH_REL "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")                 #判断当前project在根目录下的相对路径
+    set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "${PROJECT_PATH_REL}")      #为project设定folder目录
 
     message("${CMAKE_CURRENT_BINARY_DIR}")
 

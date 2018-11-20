@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(LIB_NAMES Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)
+set(LIB_NAMES ParticleSystem RigidBody)
 
 foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
-    set(LIB_SRC_DIR "${PROJECT_SOURCE_DIR}/Physika_Src/${LIB_NAME}")
+    set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${LIB_NAME}")
 
-    file(                                                                           #利用glob命令读取所有源文件list
-        GLOB_RECURSE LIB_SRC 
+    file(                                                                           
+        GLOB_RECURSE LIB_SRC                                                        #利用glob命令读取所有源文件list
         LIST_DIRECTORIES false
         CONFIGURE_DEPENDS
         "${LIB_SRC_DIR}/*.c*"
@@ -14,13 +14,6 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     )
 
     list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 目录下面的所有文件
-
-    if(LIB_NAME STREQUAL "Physika_Core")                                            #特殊处理 把stackWalker tinyxml2 lodepng3个源文件编如core模块
-        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/StackWalker/StackWalker.cpp")
-        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/tinyxml/tinyxml2.cpp")
-        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/lodePNG/lodepng.cpp")
-    endif()
-
 
     add_library(${LIB_NAME} STATIC ${LIB_SRC})                                      #添加编译目标 静态链接库
 
@@ -37,6 +30,3 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set_target_properties(${LIB_NAME} PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)    #cmake 会自动延迟cuda dlink操作直到静态库被编译成动态库或者exe，
                                                                                     #但这样影响了后面其他工程对PhysLeo.lib的引用，现在还有些原因未明，暂时在编译成库之前开启dlink
 endforeach()
-
-add_subdirectory(Physika_Dynamics)
-add_subdirectory(Physika_GUI)

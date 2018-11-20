@@ -4,7 +4,7 @@ project(Physika LANGUAGES CXX CUDA)                                             
 find_package(CUDA REQUIRED)										                                #目前CMake对cuda的语言支持，并没有加入原有的一些变量，所以此处仍然需要find_package来提供这些变量的值
 find_package(Qt5 COMPONENTS Core Widgets)                                                       #查找qt包,可选项
 
-
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)                                                    #为sln内部projects设置管理folder
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "CXX STANDARD VERSION 11,14,17")                         #默认为本项目下各编译目标指定C++11语言特性
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)                                                         #默认为本项目下各编译目标开启fPIC模式，cuda下面会开启rdc模式
 set(CMAKE_CUDA_SEPARABLE_COMPILATION ON CACHE BOOL "DEFAULT SET SEPERABLE COMPILATION MODE")    #默认为本项目下各编译目标指定cuda分离编译模式
