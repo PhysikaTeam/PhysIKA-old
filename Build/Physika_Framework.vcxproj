@@ -108,6 +108,9 @@
   <ItemGroup>
     <CudaCompile Include="..\Physika_Src\Physika_Framework\Collision\CollidableSDF.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4C92E564-1CF4-4443-A893-CEDFB3864B82}</ProjectGuid>
     <RootNamespace>Physika_Framework</RootNamespace>

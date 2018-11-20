@@ -30,8 +30,9 @@ namespace Physika {
 GLApp::GLApp()
     :m_winName(std::string("Physika 1.0")),m_winID(-1),m_width(640),m_height(480),
      display_fps_(true),screen_capture_file_index_(0),event_mode_(false)
+	, m_bAnimate(true)
 {
-    background_color_ = Color(0.5, 0.5, 0.5, 1.0);
+    background_color_ = Color(1.0, 1.0, 1.0, 1.0);
     text_color_ = Color(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
@@ -338,7 +339,8 @@ void GLApp::idleFunction(void)
 	SceneGraph& scenegraph = SceneGraph::getInstance();
 
 	GLApp * cur_window = (GLApp*)glutGetWindowData();
-	scenegraph.takeOneFrame();
+	if(cur_window->isActive())
+		scenegraph.takeOneFrame();
 
     glutPostRedisplay();
 }
@@ -365,6 +367,8 @@ void GLApp::keyboardFunction(unsigned char key, int x, int y)
     case 'f': //f: enable/disable FPS display
         (window->display_fps_) = !(window->display_fps_);
         break;
+	case ' ':
+		window->m_bAnimate = !(window->m_bAnimate);
     default:
         break;
     }

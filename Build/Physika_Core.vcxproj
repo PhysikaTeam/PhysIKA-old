@@ -93,6 +93,7 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\Physika_Src\Physika_Core\Vectors\vector_4d.inl" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F84F5FD2-2BF0-43AB-92DB-4AFBE244D133}</ProjectGuid>

@@ -8,9 +8,11 @@
 
 #include "Physika_Framework/Framework/SceneGraph.h"
 #include "Physika_Framework/Topology/PointSet.h"
+#include "Physika_Framework/Topology/TriangleSet.h"
 #include "Physika_Framework/Framework/Log.h"
 
 #include "Physika_Render/PointRenderModule.h"
+#include "Physika_Render/SurfaceMeshRender.h"
 
 #include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
 #include "Physika_Dynamics/ParticleSystem/Peridynamics.h"
@@ -54,23 +56,15 @@ void CreateScene1()
 	auto collidable1 = std::make_shared<CollidableSDF<DataType3f>>();
 	root->setCollidableObject(collidable1);
 
-// 	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
-// 	auto* pSet1 = new PointSet<Vector3f>();
-// 	c1->setTopologyModule(pSet1);
-
-	//create root node
 	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
 
 	auto pSet = std::make_shared<PointSet<DataType3f>>();
 	c1->setTopologyModule(pSet);
 
 	auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
-//	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
-//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
 	c1->setNumericalModel(pS1);
 
 	auto render = std::make_shared<PointRenderModule>();
-	//	render->setVisible(false);
 	c1->addVisualModule(render);
 
 	auto cPoints = std::make_shared<CollidablePoints<DataType3f>>();
@@ -79,19 +73,10 @@ void CreateScene1()
 	auto gravity = std::make_shared<Gravity<DataType3f>>();
 	c1->addForceModule(gravity);
 
-//	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
-//	fixed->addPoint(0);
-//	c1->addConstraintModule(fixed);
-
 	auto cModel = std::make_shared<CollisionSDF<DataType3f>>();
 	cModel->setCollidableSDF(collidable1);
 	cModel->addCollidableObject(cPoints);
-	//	cModel->setSDF(collidable1->getSDF());
 	root->addCollisionModel(cModel);
-	
-//	auto pModel = std::make_shared<CollisionPoints<DataType3f>>();
-//	pModel->addCollidableObject(cPoints);
-//	root->addCollisionModel(pModel);
 }
 
 
@@ -114,8 +99,8 @@ void CreateScene2()
 	auto pSet = std::make_shared<PointSet<DataType3f>>();
 	c1->setTopologyModule(pSet);
 
-	auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
-	//	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
+	//auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
+		auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
 	//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
 	c1->setNumericalModel(pS1);
 
@@ -129,9 +114,9 @@ void CreateScene2()
 	auto gravity = std::make_shared<Gravity<DataType3f>>();
 	c1->addForceModule(gravity);
 
-	//	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
-	//	fixed->addPoint(0);
-	//	c1->addConstraintModule(fixed);
+	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
+	fixed->addPoint(0);
+	c1->addConstraintModule(fixed);
 
 	//create root node
 	std::shared_ptr<Node> c2 = root->createChild<Node>("child2");
@@ -148,8 +133,8 @@ void CreateScene2()
 	pSet2->setPoints(positions);
 	c2->setTopologyModule(pSet2);
 
-//	auto pS2 = std::make_shared<ParticleSystem<DataType3f>>();
-	auto pS2 = std::make_shared<Peridynamics<DataType3f>>();
+	auto pS2 = std::make_shared<ParticleSystem<DataType3f>>();
+//	auto pS2 = std::make_shared<Peridynamics<DataType3f>>();
 //	auto pS2 = std::make_shared<RigidBody<DataType3f>>();
 	c2->setNumericalModel(pS2);
 
@@ -174,7 +159,7 @@ void CreateScene2()
 	auto pModel = std::make_shared<CollisionPoints<DataType3f>>();
 	pModel->addCollidableObject(cPoints);
 	pModel->addCollidableObject(cPoints2);
-	root->addCollisionModel(pModel);
+//	root->addCollisionModel(pModel);
 }
 
 void CreateScene3()
@@ -202,6 +187,7 @@ void CreateScene3()
 
 	auto render = std::make_shared<PointRenderModule>();
 	//	render->setVisible(false);
+	render->setRenderMode(PointRenderModule::POINT);
 	c1->addVisualModule(render);
 
 	auto cPoints = std::make_shared<CollidablePoints<DataType3f>>();
@@ -290,12 +276,52 @@ void CreateScene3()
 	root->addCollisionModel(pModel);
 }
 
+void CreateScene4()
+{
+	SceneGraph& scene = SceneGraph::getInstance();
+
+	std::shared_ptr<Node> root = scene.createNewScene<Node>("root");
+	auto collidable1 = std::make_shared<CollidableSDF<DataType3f>>();
+	root->setCollidableObject(collidable1);
+
+	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
+
+	auto pSet = std::make_shared<TriangleSet<DataType3f>>();
+	c1->setTopologyModule(pSet);
+
+	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
+	for (size_t i = 0; i < 2; i++)
+	{
+		fixed->addPoint(i);
+	}
+	
+	c1->addConstraintModule(fixed);
+
+	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
+	c1->setNumericalModel(pS1);
+
+	auto render = std::make_shared<SurfaceMeshRender>();
+	c1->addVisualModule(render);
+
+	auto cPoints = std::make_shared<CollidablePoints<DataType3f>>();
+	c1->setCollidableObject(cPoints);
+
+	auto gravity = std::make_shared<Gravity<DataType3f>>();
+	c1->addForceModule(gravity);
+
+	auto cModel = std::make_shared<CollisionSDF<DataType3f>>();
+	cModel->setCollidableSDF(collidable1);
+	cModel->addCollidableObject(cPoints);
+	root->addCollisionModel(cModel);
+}
+
 int main()
 {
 //	SceneGraph::getInstance().load("scene.xml");
 //	CreateScene1();
 //	CreateScene2();
 	CreateScene3();
+//	CreateScene4();
 
 	Log::setOutput("console_log.txt");
 	Log::setLevel(Log::Info);

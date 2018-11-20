@@ -223,6 +223,13 @@ namespace Physika
 
 		prediction->execute();
 		elasticity->execute();
+
+ 		auto& list = parent->getConstraintModuleList();
+ 		std::list<std::shared_ptr<ConstraintModule>>::iterator iter = list.begin();
+ 		for (; iter != list.end(); iter++)
+ 		{
+			(*iter)->constrain();
+ 		}
 	}
 
 	template<typename TDataType>

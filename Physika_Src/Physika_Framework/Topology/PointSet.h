@@ -33,7 +33,10 @@ namespace Physika
 	};
 
 
+#ifdef PRECISION_FLOAT
 	template class PointSet<DataType3f>;
+#else
 	template class PointSet<DataType3d>;
+#endif
 }
 

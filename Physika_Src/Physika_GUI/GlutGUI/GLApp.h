@@ -38,7 +38,7 @@ public:
     //save screenshot to file
     bool saveScreen(const std::string &file_name) const;  //save to file with given name
     bool saveScreen();                                    //save to file with default name "screen_capture_XXX.png"
-
+	bool isActive() { return m_bAnimate; }
 	void drawString(std::string s, Color &color, int x, int y);
 
     //display frame-rate
@@ -117,6 +117,8 @@ protected:
 
     //event mode
     bool event_mode_;
+
+	bool m_bAnimate;
     
     //current screen capture file index
     unsigned int screen_capture_file_index_;

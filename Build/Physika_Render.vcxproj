@@ -13,9 +13,16 @@
   <ItemGroup>
     <ClCompile Include="..\Physika_Src\Physika_Render\LineRender.cpp" />
     <ClCompile Include="..\Physika_Src\Physika_Render\OpenGLContext.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\PointRender.cpp" />
-    <ClCompile Include="..\Physika_Src\Physika_Render\PointRenderModule.cpp" />
+    <ClCompile Include="..\Physika_Src\Physika_Render\PointRender.cpp">
+      <FileType>CppCode</FileType>
+    </ClCompile>
+    <ClCompile Include="..\Physika_Src\Physika_Render\PointRenderModule.cpp">
+      <FileType>CppCode</FileType>
+    </ClCompile>
     <ClCompile Include="..\Physika_Src\Physika_Render\ShaderProgram.cpp" />
+    <CudaCompile Include="..\Physika_Src\Physika_Render\SurfaceMeshRender.cu">
+      <FileType>CppCode</FileType>
+    </CudaCompile>
     <ClCompile Include="..\Physika_Src\Physika_Render\TriangleRender.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -26,6 +33,7 @@
     <ClInclude Include="..\Physika_Src\Physika_Render\PointRender.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\PointRenderModule.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\ShaderProgram.h" />
+    <ClInclude Include="..\Physika_Src\Physika_Render\SurfaceMeshRender.h" />
     <ClInclude Include="..\Physika_Src\Physika_Render\TriangleRender.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

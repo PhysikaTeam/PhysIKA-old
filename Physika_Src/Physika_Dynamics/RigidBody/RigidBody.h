@@ -12,7 +12,7 @@ namespace Physika
 	template<typename TDataType>
 	class RigidBody : public NumericalModel
 	{
-		DECLARE_CLASS_1(Peridynamics, TDataType)
+		DECLARE_CLASS_1(RigidBody, TDataType)
 
 	public:
 		typedef typename TDataType::Real Real;

@@ -20,8 +20,13 @@ namespace Physika
 
 	protected:
 		DeviceArray<Edge> m_edges;
-		DeviceArray<int> m_edgeNeighbors;
+		NeighborList<int> m_edgeNeighbors;
 	};
 
+#ifdef PRECISION_FLOAT
+	template class EdgeSet<DataType3f>;
+#else
+	template class EdgeSet<DataType3d>;
+#endif
 }
 

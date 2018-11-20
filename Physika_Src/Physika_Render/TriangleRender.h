@@ -36,7 +36,10 @@ public:
 	void setVertexArray(DeviceArray<float3>& vertArray);
 
 	void setNormalArray(HostArray<float3>& normArray);
+	void setNormalArray(DeviceArray<float3>& normArray);
+
 	void setColorArray(HostArray<float3>& colorArray);
+	void setColorArray(DeviceArray<float3>& colorArray);
 
 
     void enableUseCustomColor();

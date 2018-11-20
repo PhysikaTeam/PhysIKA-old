@@ -56,7 +56,7 @@ public:
 private:
     bool use_point_sprite_ = true;
 
-    float point_size_ = 5.0f;
+    float point_size_ = 2.0f;
     float point_scale_ = 5.0f; //for point sprite
 
 	CudaVBOMapper<glm::vec3> m_vertVBO;

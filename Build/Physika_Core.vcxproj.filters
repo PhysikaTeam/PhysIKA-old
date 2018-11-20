@@ -247,5 +247,6 @@
     <None Include="..\Physika_Src\Physika_Core\Matrices\matrix_4x4.inl">
       <Filter>Matrices</Filter>
     </None>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

@@ -146,9 +146,21 @@ void TriangleRender::setNormalArray(HostArray<float3>& normArray)
 	m_normVBO.cudaUnmap();
 }
 
+void TriangleRender::setNormalArray(DeviceArray<float3>& normArray)
+{
+	cudaMemcpy(m_normVBO.cudaMap(), normArray.getDataPtr(), sizeof(float3) * m_normVBO.getSize(), cudaMemcpyDeviceToDevice);
+	m_normVBO.cudaUnmap();
+}
+
 void TriangleRender::setColorArray(HostArray<float3>& colorArray)
 {
 	cudaMemcpy(m_colorVBO.cudaMap(), colorArray.getDataPtr(), sizeof(float3) * m_colorVBO.getSize(), cudaMemcpyHostToDevice);
+	m_colorVBO.cudaUnmap();
+}
+
+void TriangleRender::setColorArray(DeviceArray<float3>& colorArray)
+{
+	cudaMemcpy(m_colorVBO.cudaMap(), colorArray.getDataPtr(), sizeof(float3) * m_colorVBO.getSize(), cudaMemcpyDeviceToDevice);
 	m_colorVBO.cudaUnmap();
 }
 
@@ -194,7 +206,7 @@ void TriangleRender::display()
 		m_solidShader.setMat4("ProjectionMatrix", projMat);
 		m_solidShader.setMat4("MVP", projMat * mvMat);
 
-		glm::vec4  worldLight = glm::vec4(5.0f, 5.0f, 2.0f, 1.0f);
+		glm::vec4  worldLight = glm::vec4(-5.0f, 5.0f, 2.0f, 1.0f);
 		m_solidShader.setVec3("Material.Kd", 0.9f, 0.5f, 0.3f);
 		m_solidShader.setVec3("Light.Ld", 1.0f, 1.0f, 1.0f);
 		m_solidShader.setVec4("Light.Position", mvMat*worldLight);
