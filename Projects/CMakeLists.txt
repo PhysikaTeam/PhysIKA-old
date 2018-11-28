@@ -5,7 +5,10 @@ set(PROJECTS_NAMES APP_Test)
 link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                                       # 设置库路径
 link_libraries(Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)
 link_libraries(ParticleSystem RigidBody)
-link_libraries(GlutGUI QtGUI)   
+link_libraries(GlutGUI)
+if(Qt5_FOUND)
+    link_libraries(QtGUI)                                                                   #链接QtGUI库
+endif()   
 
 foreach(PROJECT_NAME IN ITEMS ${PROJECTS_NAMES})
     set(SRC_DIR "${PROJECT_SOURCE_DIR}/Projects/${PROJECT_NAME}")
