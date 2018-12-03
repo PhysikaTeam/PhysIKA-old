@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(CMAKE_AUTOMOC ON)                                                                   # 开启自动moc功能
+set(CMAKE_AUTOUIC ON)                                                                   # 开启自动uic功能
+
 set(PROJECTS_NAMES APP_Test)
 
 link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                                       # 设置库路径
