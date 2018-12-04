@@ -1,7 +1,7 @@
 #pragma once
 #include "Physika_Framework/Framework/Node.h"
 #include "SceneLoaderFactory.h"
-#include "Physika_Dependency/tinyxml/tinyxml2.h"
+#include "tinyxml/tinyxml2.h"
 using namespace tinyxml2;
 
 namespace Physika {

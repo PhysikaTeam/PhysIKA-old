@@ -32,14 +32,14 @@ foreach(PROJECT_NAME IN ITEMS ${PROJECTS_NAMES})
 
     message("${CMAKE_CURRENT_BINARY_DIR}")
 
-    file(COPY "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/OpenGL/lib/Windows/X64/freeglut.dll" 
-			  "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/OpenGL/lib/Windows/X64/glew32.dll" 
-			  "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/OpenGL/lib/Windows/X64/glu32.dll" 
-			  "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/OpenGL/lib/Windows/X64/opengl32.dll" 
+    file(COPY "${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64/freeglut.dll" 
+			  "${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64/glew32.dll" 
+			  "${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64/glu32.dll" 
+			  "${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64/opengl32.dll" 
 			  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 	if(WIN32) 
-		file(COPY "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/irrLicht/lib/Win64-visualStudio/Irrlicht.dll" 
+		file(COPY "${PROJECT_SOURCE_DIR}/Extern/irrLicht/lib/Win64-visualStudio/Irrlicht.dll" 
 				  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 	endif()
 

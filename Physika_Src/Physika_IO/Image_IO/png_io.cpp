@@ -17,7 +17,7 @@
 #include <sstream>
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/png_io.h"
-#include "Physika_Dependency/LodePNG/lodepng.h"
+#include "LodePNG/lodepng.h"
 #include "Physika_Core/Utilities/physika_assert.h"
 
 using std::string;

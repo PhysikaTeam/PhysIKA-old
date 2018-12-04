@@ -1,8 +1,0 @@
-# smesh file.
-
-*VERTICES
-*INCLUDE bunny3.node
-
-*ELEMENTS
-TET
-*INCLUDE bunny3.ele

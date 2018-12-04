@@ -16,9 +16,9 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 目录下面的所有文件
 
     if(LIB_NAME STREQUAL "Physika_Core")                                            #特殊处理 把stackWalker tinyxml2 lodepng3个源文件编如core模块
-        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/StackWalker/StackWalker.cpp")
-        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/tinyxml/tinyxml2.cpp")
-        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Physika_Src/Physika_Dependency/lodePNG/lodepng.cpp")
+        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Extern/StackWalker/StackWalker.cpp")
+        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Extern/tinyxml/tinyxml2.cpp")
+        list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Extern/lodePNG/lodepng.cpp")
     endif()
 
 
