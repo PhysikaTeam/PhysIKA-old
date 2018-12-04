@@ -8,6 +8,11 @@ endif()
 foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${LIB_NAME}")
 
+    if(${LIB_NAME} STREQUAL QtGUI)
+        set(CMAKE_AUTOMOC ON)                                                                   # 开启自动moc功能
+        set(CMAKE_AUTOUIC ON)                                                                   # 开启自动uic功能
+    endif()
+
     file(                                                                           
         GLOB_RECURSE LIB_SRC                                                        #利用glob命令读取所有源文件list
         LIST_DIRECTORIES false
