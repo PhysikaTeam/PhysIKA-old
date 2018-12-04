@@ -155,7 +155,7 @@ ToolBar::ToolBar(const QString &title, QWidget *parent)
     : QToolBar(parent)
     , spinbox(Q_NULLPTR)
     , spinboxAction(Q_NULLPTR)
-	, m_mediaDir("../../media/icon/")
+	, m_mediaDir("../Media/icon/")
 {
     setWindowTitle(title);
     setObjectName(title);

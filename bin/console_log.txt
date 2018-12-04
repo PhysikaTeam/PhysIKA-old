@@ -1,5 +1,0 @@
-11:46:35 | info    | Simulation begin
-11:46:36 | warning | root: No numerical model is set!
-11:46:37 | warning | root: No numerical model is set!
-11:46:37 | warning | root: No numerical model is set!
-11:46:37 | warning | root: No numerical model is set!

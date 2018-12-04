@@ -298,7 +298,7 @@ void QLichtWidget::initIrrlicht()
 
 
 
-	IAnimatedMesh* mesh = smgr->getMesh("Media/sydney.md2");
+	IAnimatedMesh* mesh = smgr->getMesh("../Media/sydney.md2");
 	if (!mesh)
 	{
 		device->drop();
@@ -310,7 +310,7 @@ void QLichtWidget::initIrrlicht()
 	{
 		node->setMaterialFlag(EMF_LIGHTING, false);
 		node->setMD2Animation(scene::EMAT_STAND);
-		node->setMaterialTexture(0, driver->getTexture("Media/sydney.bmp"));
+		node->setMaterialTexture(0, driver->getTexture("../Media/sydney.bmp"));
 	}
 
 	setActiveCameraMaya();

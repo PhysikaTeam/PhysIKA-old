@@ -26,8 +26,8 @@
 using namespace std;
 using namespace Physika;
 
-#define DEMO_1
-//#define DEMO_2
+//#define DEMO_1
+#define DEMO_2
 
 #ifdef DEMO_1
 void RecieveLogMessage(const Log::Message& m)
@@ -325,7 +325,7 @@ int main()
 	//create root node
 	std::shared_ptr<Node> root = scene.createNewScene<Node>("root");
 
-	auto pSet = std::make_shared<PointSet<Vector3f>>();
+	auto pSet = std::make_shared<PointSet<DataType3f>>();
 	root->setTopologyModule(pSet);
 
 	std::vector<Vector3f> positions;
