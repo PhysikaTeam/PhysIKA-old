@@ -33,6 +33,7 @@ elseif(UNIX)
     link_directories("Physika_Src/Physika_Dependency/OpenGL/lib/Linux/X64")
 endif()
 
+file(COPY "Media/" DESTINATION "Media")
 
 add_subdirectory(Physika_Src)
 add_subdirectory(Projects)
