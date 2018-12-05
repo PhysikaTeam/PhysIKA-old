@@ -1,0 +1,9 @@
+/*.suo
+/*.user
+/*.sdf
+/*.opensdf
+/Debug_*
+/Release_*
+/x64
+/Itanium
+/ipch

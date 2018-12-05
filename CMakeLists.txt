@@ -11,28 +11,29 @@ set(CMAKE_CUDA_SEPARABLE_COMPILATION ON CACHE BOOL "DEFAULT SET SEPERABLE COMPIL
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch=sm_30")                                         #默认为所有cuda代码生成computability3.0下二进制代码
 
 include_directories("Physika_Src")                                                              #默认为本项目下各编译目标添加Physika_Src/ 目录
-include_directories("Physika_Src/Physika_Dependency")                                           #默认为本项目下各编译目标添加Physika_Src/Physika_Dependency/ 目录
-include_directories("Physika_Src/Physika_Dependency/OpenGL")                                    #默认为本项目下各编译目标添加Physika_Src/Physika_Dependency/OpenGL 目录
-include_directories("Physika_Src/Physika_Dependency/irrLicht/include")                          #默认为本项目下各编译目标添加Physika_Src/Physika_dependency/irrLicht/include 目录
+include_directories("Extern")                                           #默认为本项目下各编译目标添加Physika_Src/Physika_Dependency/ 目录
+include_directories("Extern/OpenGL")                                    #默认为本项目下各编译目标添加Physika_Src/Physika_Dependency/OpenGL 目录
+include_directories("Extern/irrLicht/include")                          #默认为本项目下各编译目标添加Physika_Src/Physika_dependency/irrLicht/include 目录
 include_directories(${CUDA_TOOLKIT_INCLUDE})                                 	                #默认为本项目下各编译目标添加cuda/include 目录
 
 if(Qt5_FOUND)
     link_libraries(Qt5::Widgets Qt5::Core Qt5::Gui)                                             #设置链接至QT库
 endif()
 
-link_directories("Physika_Src/Physika_Dependency/irrLicht/lib/Win64-visualStudio")              #添加irrlicht库目录和对应的库
+link_directories("Extern/irrLicht/lib/Win64-visualStudio")              #添加irrlicht库目录和对应的库
 link_libraries("Irrlicht")
 
 if(WIN32)                                                                                       #根据不同平台添加opengl库目录和对应的链接库
-    link_directories("Physika_Src/Physika_Dependency/OpenGL/lib/Windows/X64")
+    link_directories("Extern/OpenGL/lib/Windows/X64")
     link_libraries(freeglut glew32 glu32 opengl32)
 endif()
 if(APPLE)
-    link_directories("Physika_Src/Physika_Dependency/OpenGL/lib/Apple/X64")
+    link_directories("Extern/OpenGL/lib/Apple/X64")
 elseif(UNIX)
-    link_directories("Physika_Src/Physika_Dependency/OpenGL/lib/Linux/X64")
+    link_directories("Extern/OpenGL/lib/Linux/X64")
 endif()
 
+file(COPY "Media/" DESTINATION "Media")
 
 add_subdirectory(Physika_Src)
 add_subdirectory(Projects)

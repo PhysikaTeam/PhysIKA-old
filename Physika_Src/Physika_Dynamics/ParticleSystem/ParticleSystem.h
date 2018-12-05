@@ -8,6 +8,10 @@ namespace Physika
 {
 	class Mapping;
 
+	/*!
+	*	\class	ParticleSystem
+	*	\brief	Implementing position-based fluids.
+	*/
 	template<typename TDataType>
 	class ParticleSystem : public NumericalModel
 	{
