@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.10)
 
-set(PROJECTS_NAMES APP_Test)
+set(PROJECTS_NAMES APP_Test App_Peridynamics)
 
 link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                                                           # 设置库路径
 link_libraries(Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)

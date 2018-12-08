@@ -18,12 +18,12 @@
 
 namespace Physika {
 
-	typedef glm::vec4 Color;
+typedef glm::vec4 Color;
 
 class GLApp : public AppBase
 {
 public:
-    GLApp();                                                                        //initialize a window with default name and size
+    GLApp();
    ~GLApp();
 
     void createWindow(int width, int height) override; //create window with the parameters set
@@ -31,6 +31,8 @@ public:
     const std::string& name() const;
     int getWidth() const;
     int getHeight() const;
+	void setWidth(int width);
+	void setHeight(int height);
 
     void enableEventMode();
     void disableEventMode();
@@ -42,9 +44,14 @@ public:
 	void drawString(std::string s, Color &color, int x, int y);
 
     //display frame-rate
-    void displayFrameRate();  
+    void drawFrameRate();  
     void enableDisplayFrameRate();
     void disableDisplayFrameRate();
+	bool isShowFrameRate();
+
+	void enableBackground();
+	void disableBackground();
+	bool isShowBackground();
 
     //advanced: 
     //set custom callback functions
@@ -69,6 +76,7 @@ public:
     static void bindDefaultKeys(unsigned char key, int x, int y);  //bind the default keyboard behaviors
     
 	void mainLoop() override;
+	void setSecondaryLineNumber(int num);
 
 protected:
     //default callback functions
@@ -98,6 +106,11 @@ protected:
     void(*mouse_wheel_function_)(int wheel, int direction, int x, int y);
     void(*init_function_)(void);
 
+	void drawBackground();
+	void drawAxis();
+
+	void initViewer();
+
 protected:
     //basic information of window
     std::string m_winName;
@@ -105,6 +118,9 @@ protected:
 
     unsigned int m_width;
     unsigned int m_height;
+
+	int m_secLineNum;
+
 	Color background_color_; //use double type in order not to make GlutWindow template
 	Color text_color_;       //the color to display text, e.g. fps
 
@@ -119,6 +135,7 @@ protected:
     bool event_mode_;
 
 	bool m_bAnimate;
+	bool m_bShowBackground;
     
     //current screen capture file index
     unsigned int screen_capture_file_index_;

@@ -31,8 +31,10 @@ GLApp::GLApp()
     :m_winName(std::string("Physika 1.0")),m_winID(-1),m_width(640),m_height(480),
      display_fps_(true),screen_capture_file_index_(0),event_mode_(false)
 	, m_bAnimate(true)
+	, m_secLineNum(10)
+	, m_bShowBackground(true)
 {
-    background_color_ = Color(1.0, 1.0, 1.0, 1.0);
+    background_color_ = Color(0.6, 0.6, 0.6, 1.0);
     text_color_ = Color(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
@@ -106,6 +108,16 @@ int GLApp::getHeight() const
         return m_height;
 }
 
+void GLApp::setWidth(int width)
+{
+	m_width = width;
+}
+
+void GLApp::setHeight(int height)
+{
+	m_height = height;
+}
+
 void GLApp::enableEventMode()
 {
     this->event_mode_ = true;
@@ -142,7 +154,7 @@ bool GLApp::saveScreen()
     return saveScreen(file_name);
 }
 
-void GLApp::displayFrameRate()
+void GLApp::drawFrameRate()
 {
     if(!glutGet(GLUT_INIT_STATE))  //window is not created
         throw PhysikaException("Cannot display frame rate before a window is created.");
@@ -164,7 +176,7 @@ void GLApp::displayFrameRate()
         if(fps>1.0)  //show fps
         {
             adaptor<<fps;
-            str = std::string("FPS: ") + adaptor.str();
+            str = std::string(" Frame rate: ") + adaptor.str();
         }
         else  //show spf
         {
@@ -185,6 +197,26 @@ void GLApp::enableDisplayFrameRate()
 void GLApp::disableDisplayFrameRate()
 {
     display_fps_ = false;
+}
+
+bool GLApp::isShowFrameRate()
+{
+	return display_fps_;
+}
+
+void GLApp::enableBackground()
+{
+	m_bShowBackground = true;
+}
+
+void GLApp::disableBackground()
+{
+	m_bShowBackground = false;
+}
+
+bool GLApp::isShowBackground()
+{
+	return m_bShowBackground;
 }
 
 ////////////////////////////////////////////////// set custom callback functions ////////////////////////////////////////////////////////////////////
@@ -302,6 +334,11 @@ void GLApp::mainLoop()
 		glutMainLoop();
 }
 
+void GLApp::setSecondaryLineNumber(int num)
+{
+	m_secLineNum = num;
+}
+
 ////////////////////////////////////////////////// default callback functions ////////////////////////////////////////////////////////////////////
 
 void GLApp::displayFunction(void)
@@ -314,22 +351,18 @@ void GLApp::displayFunction(void)
     glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glLineWidth(4);
-	glBegin(GL_LINES);
-	glColor3f(1, 0, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(1, 0, 0);
-	glColor3f(0, 1, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 1, 0);
-	glColor3f(0, 0, 1);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 0, 1);
-	glEnd();
+	if (cur_window->isShowBackground())
+	{
+		cur_window->drawBackground();
+	}
+	
+	if (cur_window->isShowFrameRate())
+	{
+		cur_window->drawFrameRate();
+	}
 
 	scenegraph.draw();
 
-    cur_window->displayFrameRate();
     glutPostRedisplay();
     glutSwapBuffers();
 }
@@ -347,9 +380,15 @@ void GLApp::idleFunction(void)
 
 void GLApp::reshapeFunction(int width, int height)
 {
-    GLApp *window = static_cast<GLApp*>(glutGetWindowData());
-	window->activeCamera().setGL(0.01f, 10.0f, width, height);
+	GLApp *window = static_cast<GLApp*>(glutGetWindowData());
+
 	glViewport(0, 0, width, height);
+
+ 	window->activeCamera().setGL(0.01f, 10.0f, width, height);
+ 	window->setWidth(width);
+ 	window->setHeight(height);
+
+	glutPostRedisplay();
 }
 
 void GLApp::keyboardFunction(unsigned char key, int x, int y)
@@ -485,6 +524,134 @@ void GLApp::initDefaultLight()
 //     render_scene_config.pushBackLight(std::move(flash_light));
 }
 
+void GLApp::drawBackground()
+{
+	int xmin = -10;
+	int xmax = 10;
+	int zmin = -10;
+	int zmax = 10;
+
+	float s = 1.0f;
+	int nSub = 10;
+	float sub_s = s / nSub;
+
+	glPushMatrix();
+
+	float ep = 0.0001f;
+	glPushMatrix();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//Draw background grid
+	glLineWidth(2.0f);
+	glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+	glBegin(GL_LINES);
+	for (int i = xmin; i <= xmax; i++)
+	{
+		glVertex3f(i*s, 0, zmin*s);
+		glVertex3f(i*s, 0, zmax*s);
+	}
+	for (int i = zmin; i <= zmax; i++)
+	{
+		glVertex3f(xmin*s, 0, i*s);
+		glVertex3f(xmax*s, 0, i*s);
+	}
+	
+	glEnd();
+
+	glLineWidth(1.0f);
+	glLineStipple(1, 0x5555);
+	glEnable(GL_LINE_STIPPLE);
+	glColor4f(0.55f, 0.55f, 0.55f, 1.0f);
+	glBegin(GL_LINES);
+	for (int i = xmin; i <= xmax; i++)
+	{
+		for (int j = 1; j < nSub; j++)
+		{
+			glVertex3f(i*s + j*sub_s, 0, zmin*s);
+			glVertex3f(i*s + j*sub_s, 0, zmax*s);
+		}
+	}
+	for (int i = zmin; i <= zmax; i++)
+	{
+		for (int j = 1; j < nSub; j++)
+		{
+			glVertex3f(xmin*s, 0, i*s + j*sub_s);
+			glVertex3f(xmax*s, 0, i*s + j*sub_s);
+		}
+	}
+	glEnd();
+	glDisable(GL_LINE_STIPPLE);
+
+	glPopMatrix();
+
+	drawAxis();
+}
+
+void GLApp::drawAxis()
+{
+	GLfloat mv[16];
+	GLfloat proj[16];
+	glGetFloatv(GL_PROJECTION_MATRIX, proj);
+	glGetFloatv(GL_MODELVIEW_MATRIX, mv);
+	mv[12] = mv[13] = mv[14] = 0.0;
+
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+	glMatrixMode(GL_PROJECTION);
+	
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, 0.0, 1.0, 1.0, -1.0, 1.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(mv);
+
+	//Draw axes
+	glViewport(20, 10, 90, 80);
+	glColor3ub(255, 255, 255);
+	glLineWidth(1.0f);
+	const float len = 0.9f;
+	GLfloat origin[3] = {0.0f, 0.0f, 0.0f};
+	glBegin(GL_LINES);
+	glColor3f(1, 0, 0);
+	glVertex3f(origin[0], origin[1], origin[2]);
+	glVertex3f(origin[0] + len, origin[1], origin[2]);
+	glColor3f(0, 1, 0);
+	glVertex3f(origin[0], origin[1], origin[2]);
+	glVertex3f(origin[0], origin[1] + len, origin[2]);
+	glColor3f(0, 0, 1);
+	glVertex3f(origin[0], origin[1], origin[2]);
+	glVertex3f(origin[0], origin[1], origin[2] + len);
+	glEnd();
+
+	// Draw labels
+	glColor3f(1, 0, 0);
+	glRasterPos3f(origin[0] + len, origin[1], origin[2]);
+	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, 'x');
+	glColor3f(0, 1, 0);
+	glRasterPos3f(origin[0], origin[1] + len, origin[2]);
+	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, 'y');
+	glColor3f(0, 0, 1);
+	glRasterPos3f(origin[0], origin[1], origin[2] + len);
+	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, 'z');
+
+	glPopAttrib();
+
+	// Restore viewport, projection and model-view matrices
+	glViewport(0, 0, getWidth(), getHeight());
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+}
+
+void GLApp::initViewer()
+{
+	activeCamera().setGL(0.01f, 10.0f, m_width, m_height);
+	glViewport(0, 0, m_width, m_height);
+}
+
 void GLApp::drawString(std::string s, Color &color, int x, int y)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -508,9 +675,10 @@ void GLApp::drawString(std::string s, Color &color, int x, int y)
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-	glEnable(GL_LIGHTING);
 
 	glPopAttrib();
+
+	glViewport(0, 0, getWidth(), getHeight());
 }
 
 } //end of namespace Physika

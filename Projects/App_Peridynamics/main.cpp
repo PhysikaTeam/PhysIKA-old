@@ -26,10 +26,6 @@
 using namespace std;
 using namespace Physika;
 
-#define DEMO_1
-//#define DEMO_2
-
-#ifdef DEMO_1
 void RecieveLogMessage(const Log::Message& m)
 {
 	switch (m.type)
@@ -58,14 +54,13 @@ void CreateScene()
 	// 	auto* pSet1 = new PointSet<Vector3f>();
 	// 	c1->setTopologyModule(pSet1);
 
-	//create child node 1
+	//create root node
 	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
 
 	auto pSet = std::make_shared<PointSet<DataType3f>>();
 	c1->setTopologyModule(pSet);
 
-	auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
-	//auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
+	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
 	//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
 	c1->setNumericalModel(pS1);
 
@@ -83,81 +78,17 @@ void CreateScene()
 	//	fixed->addPoint(0);
 	//	c1->addConstraintModule(fixed);
 
-	//create child node 2
-	std::shared_ptr<Node> c2 = root->createChild<Node>("child2");
-
-	auto pSet2 = std::make_shared<PointSet<DataType3f>>();
-	std::vector<DataType3f::Coord> positions;
-	for (float x = 0.65; x < 0.75; x += 0.005f) {
-		for (float y = 0.2; y < 0.3; y += 0.005f) {
-			for (float z = 0.45; z < 0.55; z += 0.005f) {
-				positions.push_back(DataType3f::Coord(DataType3f::Real(x), DataType3f::Real(y), DataType3f::Real(z)));
-			}
-		}
-	}
-	pSet2->setPoints(positions);
-	c2->setTopologyModule(pSet2);
-
-	//	auto pS2 = std::make_shared<ParticleSystem<DataType3f>>();
-	auto pS2 = std::make_shared<Peridynamics<DataType3f>>();
-	//	auto pS2 = std::make_shared<RigidBody<DataType3f>>();
-	c2->setNumericalModel(pS2);
-
-	auto render2 = std::make_shared<PointRenderModule>();
-	//	render->setVisible(false);
-	c2->addVisualModule(render2);
-
-	auto cPoints2 = std::make_shared<CollidablePoints<DataType3f>>();
-	c2->setCollidableObject(cPoints2);
-
-	auto gravity2 = std::make_shared<Gravity<DataType3f>>();
-	c2->addForceModule(gravity2);
-
-
-	//create child node 3
-	std::shared_ptr<Node> c3 = root->createChild<Node>("child2");
-
-	auto pSet3 = std::make_shared<PointSet<DataType3f>>();
-	std::vector<DataType3f::Coord> positions3;
-	for (float x = 0.25; x < 0.35; x += 0.005f) {
-		for (float y = 0.2; y < 0.3; y += 0.005f) {
-			for (float z = 0.45; z < 0.55; z += 0.005f) {
-				positions3.push_back(DataType3f::Coord(DataType3f::Real(x), DataType3f::Real(y), DataType3f::Real(z)));
-			}
-		}
-	}
-	pSet3->setPoints(positions3);
-	c3->setTopologyModule(pSet3);
-
-	//	auto pS2 = std::make_shared<ParticleSystem<DataType3f>>();
-	//auto pS3 = std::make_shared<Peridynamics<DataType3f>>();
-	auto pS3 = std::make_shared<RigidBody<DataType3f>>();
-	c3->setNumericalModel(pS3);
-
-	auto render3 = std::make_shared<PointRenderModule>();
-	//	render->setVisible(false);
-	c3->addVisualModule(render3);
-
-	auto cPoints3 = std::make_shared<CollidablePoints<DataType3f>>();
-	c3->setCollidableObject(cPoints3);
-
-	auto gravity3 = std::make_shared<Gravity<DataType3f>>();
-	c3->addForceModule(gravity3);
-
 	auto cModel = std::make_shared<CollisionSDF<DataType3f>>();
 	cModel->setCollidableSDF(collidable1);
 	cModel->addCollidableObject(cPoints);
-	cModel->addCollidableObject(cPoints2);
-	cModel->addCollidableObject(cPoints3);
-	//	cModel->setSDF(collidable1->getSDF());
+//	cModel->setSDF(collidable1->getSDF());
 	root->addCollisionModel(cModel);
 
 	auto pModel = std::make_shared<CollisionPoints<DataType3f>>();
 	pModel->addCollidableObject(cPoints);
-	pModel->addCollidableObject(cPoints2);
-	pModel->addCollidableObject(cPoints3);
 	root->addCollisionModel(pModel);
 }
+
 
 int main()
 {
@@ -169,13 +100,11 @@ int main()
 	Log::sendMessage(Log::Info, "Simulation begin");
 
 	GLApp window;
-	window.createWindow(1024, 768);
+	window.createWindow(800, 600);
 
 	window.mainLoop();
 
 	Log::sendMessage(Log::Info, "Simulation end!");
 	return 0;
 }
-
-#endif
 
