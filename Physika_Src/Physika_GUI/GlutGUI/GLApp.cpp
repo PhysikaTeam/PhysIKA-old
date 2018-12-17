@@ -30,7 +30,7 @@ namespace Physika {
 GLApp::GLApp()
     :m_winName(std::string("Physika 1.0")),m_winID(-1),m_width(640),m_height(480),
      display_fps_(true),screen_capture_file_index_(0),event_mode_(false)
-	, m_bAnimate(true)
+	, m_bAnimate(false)
 	, m_secLineNum(10)
 	, m_bShowBackground(true)
 {
@@ -78,8 +78,8 @@ void GLApp::createWindow(int width, int height)
 	m_camera.registerPoint(0.5f, 0.5f);
 	m_camera.translateToPoint(0, 0);
 
-	m_camera.zoom(3.0);
-	m_camera.setGL(0.01f, 10.0f, getWidth(), getHeight());
+	m_camera.zoom(3.0f);
+	m_camera.setGL(0.01f, 10.0f, (float)getWidth(), (float)getHeight());
 }
 
 void GLApp::closeWindow()
@@ -384,7 +384,7 @@ void GLApp::reshapeFunction(int width, int height)
 
 	glViewport(0, 0, width, height);
 
- 	window->activeCamera().setGL(0.01f, 10.0f, width, height);
+ 	window->activeCamera().setGL(0.01f, 10.0f, (float)width, (float)height);
  	window->setWidth(width);
  	window->setHeight(height);
 
@@ -431,7 +431,7 @@ void GLApp::motionFunction(int x, int y)
 	else if (window->getButtonType() == GLUT_MIDDLE_BUTTON) {
 		activeCamera.translateLightToPoint(float(x) / float(window->getWidth()) - 0.5f, float(window->getHeight() - y) / float(window->getHeight()) - 0.5f);
 	}
-	activeCamera.setGL(0.01f, 10.0f, window->getWidth(), window->getHeight());
+	activeCamera.setGL(0.01f, 10.0f, (float)window->getWidth(), (float)window->getHeight());
 	glutPostRedisplay();
 }
 
@@ -455,12 +455,12 @@ void GLApp::mouseWheelFunction(int wheel, int direction, int x, int y)
 	switch (direction)
 	{
 	case 1:
-		activeCamera.zoom(-0.3);
-		activeCamera.setGL(0.01f, 10.0f, window->getWidth(), window->getHeight());
+		activeCamera.zoom(-0.3f);
+		activeCamera.setGL(0.01f, 10.0f, (float)window->getWidth(), (float)window->getHeight());
 		break;
 	case -1:
-		activeCamera.zoom(0.3);
-		activeCamera.setGL(0.01f, 10.0f, window->getWidth(), window->getHeight());
+		activeCamera.zoom(0.3f);
+		activeCamera.setGL(0.01f, 10.0f, (float)window->getWidth(), (float)window->getHeight());
 	default:
 		break;
 	}
@@ -646,12 +646,6 @@ void GLApp::drawAxis()
 	glPopMatrix();
 }
 
-void GLApp::initViewer()
-{
-	activeCamera().setGL(0.01f, 10.0f, m_width, m_height);
-	glViewport(0, 0, m_width, m_height);
-}
-
 void GLApp::drawString(std::string s, Color &color, int x, int y)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -666,7 +660,7 @@ void GLApp::drawString(std::string s, Color &color, int x, int y)
 	glDisable(GL_TEXTURE_2D);
 	gluOrtho2D(0, getWidth(), 0, getHeight());
 	glColor3f(color.r, color.g, color.b);
-	glRasterPos2f(x, y);
+	glRasterPos2i(x, y);
 
 	for (int i = 0; i < (int)s.length(); i++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);

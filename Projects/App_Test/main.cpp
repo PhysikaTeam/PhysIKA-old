@@ -12,7 +12,7 @@
 
 #include "Physika_Render/PointRenderModule.h"
 
-#include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
+#include "Physika_Dynamics/ParticleSystem/ParticleFluid.h"
 #include "Physika_Dynamics/ParticleSystem/Peridynamics.h"
 
 #include "Physika_Framework/Collision/CollidableSDF.h"
@@ -64,7 +64,7 @@ void CreateScene()
 	auto pSet = std::make_shared<PointSet<DataType3f>>();
 	c1->setTopologyModule(pSet);
 
-	auto pS1 = std::make_shared<ParticleSystem<DataType3f>>();
+	auto pS1 = std::make_shared<ParticleFluid<DataType3f>>();
 	//auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
 	//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
 	c1->setNumericalModel(pS1);
@@ -78,10 +78,6 @@ void CreateScene()
 
 	auto gravity = std::make_shared<Gravity<DataType3f>>();
 	c1->addForceModule(gravity);
-
-	//	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
-	//	fixed->addPoint(0);
-	//	c1->addConstraintModule(fixed);
 
 	//create child node 2
 	std::shared_ptr<Node> c2 = root->createChild<Node>("child2");
@@ -98,6 +94,12 @@ void CreateScene()
 	pSet2->setPoints(positions);
 	c2->setTopologyModule(pSet2);
 
+// 	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
+// 	fixed->addPoint(0);
+// 	fixed->addPoint(1);
+// 	fixed->addPoint(2);
+// 	c2->addConstraintModule(fixed);
+
 	//	auto pS2 = std::make_shared<ParticleSystem<DataType3f>>();
 	auto pS2 = std::make_shared<Peridynamics<DataType3f>>();
 	//	auto pS2 = std::make_shared<RigidBody<DataType3f>>();
@@ -112,7 +114,6 @@ void CreateScene()
 
 	auto gravity2 = std::make_shared<Gravity<DataType3f>>();
 	c2->addForceModule(gravity2);
-
 
 	//create child node 3
 	std::shared_ptr<Node> c3 = root->createChild<Node>("child2");
@@ -149,7 +150,6 @@ void CreateScene()
 	cModel->addCollidableObject(cPoints);
 	cModel->addCollidableObject(cPoints2);
 	cModel->addCollidableObject(cPoints3);
-	//	cModel->setSDF(collidable1->getSDF());
 	root->addCollisionModel(cModel);
 
 	auto pModel = std::make_shared<CollisionPoints<DataType3f>>();

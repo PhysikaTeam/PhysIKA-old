@@ -1,15 +1,14 @@
 #pragma once
-
 #include "Physika_Core/DataTypes.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Physika_Core/Cuda_Array/Array.h"
-#include "INeighbors.h"
+#include "Physika_Framework/Topology/NeighborList.h"
 
 namespace Physika{
 
-#define INVALID -1
-#define BUCKETS 8
-#define CAPACITY 16
+	#define INVALID -1
+	#define BUCKETS 8
+	#define CAPACITY 16
 
 	template<typename TDataType>
 	class GridHash
@@ -18,27 +17,18 @@ namespace Physika{
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
-//		static_assert(Coord::dims() == 3, "GridHash only works for three dimensional spaces!");
-
 		GridHash();
 		~GridHash();
 
-		void SetSpace(Real _h, Coord _lo, Coord _hi);
+		void setSpace(Real _h, Coord _lo, Coord _hi);
 
-		void ConstructHashTable(Array<Coord>& pos);
+		void construct(DeviceArray<Coord>& pos);
 
-		/*!
-		*	\brief	May not be correct at extreme cases.
-		*/
-		void QueryNeighbors(Array<Coord>& posArr, Array<SPHNeighborList>& neighbors, Real h, Real pdist, int nbMaxNum);
+		void clear();
 
-		void QueryNeighborSlow(Array<Coord>& posArr, Array<SPHNeighborList>& neighbors, Real h, int nbMaxNum);
+		void release();
 
-		void Clear();
-
-		void Release();
-
-		__device__ inline int GetIndex(int i, int j, int k)
+		GPU_FUNC inline int getIndex(int i, int j, int k)
 		{
 			if (i < 0 || i >= nx) return INVALID;
 			if (j < 0 || j >= ny) return INVALID;
@@ -47,16 +37,16 @@ namespace Physika{
 			return i + j*nx + k*nx*ny;
 		}
 
-		__device__ inline int GetIndex(Coord pos)
+		GPU_FUNC inline int getIndex(Coord pos)
 		{
 			int i = floor((pos[0] - lo[0]) / ds);
 			int j = floor((pos[1] - lo[1]) / ds);
 			int k = floor((pos[2] - lo[2]) / ds);
 
-			return GetIndex(i, j, k);
+			return getIndex(i, j, k);
 		}
 
-		__device__ inline int3 GetIndex3(Coord pos)
+		GPU_FUNC inline int3 getIndex3(Coord pos)
 		{
 			int i = floor((pos[0] - lo[0]) / ds);
 			int j = floor((pos[1] - lo[1]) / ds);
@@ -65,9 +55,9 @@ namespace Physika{
 			return make_int3(i, j, k);
 		}
 
-		__device__ inline int GetCounter(int gId) { return counter[gId]; }
+		GPU_FUNC inline int getCounter(int gId) { return counter[gId]; }
 
-		__device__ inline int GetParticleId(int gId, int n) { return ids[gId*npMax + n]; }
+		GPU_FUNC inline int getParticleId(int gId, int n) { return ids[gId*npMax + n]; }
 
 	public:
 		int num;

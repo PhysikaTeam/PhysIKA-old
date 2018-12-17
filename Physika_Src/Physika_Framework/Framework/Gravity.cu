@@ -22,7 +22,7 @@ Gravity<TDataType>::~Gravity()
 }
 
 template <typename Coord>
-__global__ void AddGravity(
+__global__ void K_AddGravity(
 	DeviceArray<Coord> points,
 	Coord force)
 {
@@ -33,7 +33,7 @@ __global__ void AddGravity(
 }
 
 template<typename TDataType>
-void Gravity<TDataType>::applyForce()
+bool Gravity<TDataType>::applyForce()
 {
 	auto mstate = getParent()->getMechanicalState();
 	if (mstate->getMaterialType() == MechanicalState::RIGIDBODY)
@@ -52,8 +52,10 @@ void Gravity<TDataType>::applyForce()
 		Coord deltaF = massField->getValue()*m_gravity;
 
 		uint pDims = cudaGridSize(oldForce.size(), BLOCK_SIZE);
-		AddGravity << <pDims, BLOCK_SIZE >> > (oldForce, deltaF);
+		K_AddGravity << <pDims, BLOCK_SIZE >> > (oldForce, deltaF);
 	}
+
+	return true;
 }
 
 }

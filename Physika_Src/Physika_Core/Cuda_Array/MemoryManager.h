@@ -1,5 +1,7 @@
 #pragma once
-
+#ifdef _MSC_VER
+#pragma warning(disable: 4661) // disable warning 4345
+#endif
 #include <assert.h>
 #include <map>
 #include <string>
@@ -37,6 +39,7 @@ namespace Physika {
 	class MemoryManager {
 
 	public:
+		MemoryManager() {};
 
 		virtual ~MemoryManager() {
 		}
@@ -59,6 +62,7 @@ namespace Physika {
 	class DefaultMemoryManager : public MemoryManager<deviceType> {
 
 	public:
+		DefaultMemoryManager() {};
 
 		virtual ~DefaultMemoryManager() {
 		}
@@ -81,6 +85,7 @@ namespace Physika {
 	class CudaMemoryManager : public DefaultMemoryManager<deviceType> {
 
 	public:
+		CudaMemoryManager() {};
 
 		virtual ~CudaMemoryManager() {
 		}
@@ -94,7 +99,6 @@ namespace Physika {
 		void releaseMemory(void** ptr) override;
 
 	};
-
 
 
 	template class DefaultMemoryManager<DeviceType::CPU>;

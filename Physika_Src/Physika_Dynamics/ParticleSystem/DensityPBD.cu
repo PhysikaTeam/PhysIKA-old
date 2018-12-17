@@ -4,24 +4,20 @@
 #include "DensityPBD.h"
 #include "Physika_Framework/Framework/Node.h"
 #include <string>
+#include "Kernel.h"
+#include "DensitySummation.h"
+#include "Physika_Framework/Topology/FieldNeighbor.h"
 
 namespace Physika
 {
 	IMPLEMENT_CLASS_1(DensityPBD, TDataType)
-// 	struct PBD_STATE
-// 	{
-// 		Real mass;
-// 		Real smoothingLength;
-// 		SpikyKernel kernSpiky;
-// 	};
-//	__constant__ PBD_STATE const_pbd_state;
 
 	template <typename Real, typename Coord>
-	__global__ void DC_ComputeLambdas(
-		DeviceArray<Real> lambdaArr, 
-		DeviceArray<Real> rhoArr, 
-		DeviceArray<Coord> posArr, 
-		DeviceArray<SPHNeighborList> neighbors,
+	__global__ void K_ComputeLambdas(
+		DeviceArray<Real> lambdaArr,
+		DeviceArray<Real> rhoArr,
+		DeviceArray<Coord> posArr,
+		NeighborList<int> neighbors,
 		Real smoothingLength)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
@@ -34,10 +30,10 @@ namespace Physika
 		Real lamda_i = Real(0);
 		Coord grad_ci(0);
 
-		int nbSize = neighbors[pId].size;
+		int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
-			int j = neighbors[pId][ne];
+			int j = neighbors.getElement(pId, ne);
 			Real r = (pos_i - posArr[j]).norm();
 
 			if (r > EPSILON)
@@ -58,11 +54,11 @@ namespace Physika
 	}
 
 	template <typename Real, typename Coord>
-	__global__ void DC_ComputeDisplacement(
+	__global__ void K_ComputeDisplacement(
 		DeviceArray<Coord> dPos, 
 		DeviceArray<Real> lambdas, 
 		DeviceArray<Coord> posArr, 
-		DeviceArray<SPHNeighborList> neighbors, 
+		NeighborList<int> neighbors, 
 		Real smoothingLength,
 		Real dt)
 	{
@@ -74,10 +70,10 @@ namespace Physika
 
 		SpikyKernel<Real> kern;
 
-		int nbSize = neighbors[pId].size;
+		int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
-			int j = neighbors[pId][ne];
+			int j = neighbors.getElement(pId, ne);
 			Real r = (pos_i - posArr[j]).norm();
 			if (r > EPSILON)
 			{
@@ -101,83 +97,96 @@ namespace Physika
 	}
 
 	template <typename Real, typename Coord>
-	__global__ void DC_UpdatePosition(
+	__global__ void K_UpdatePosition(
 		DeviceArray<Coord> posArr, 
 		DeviceArray<Coord> velArr, 
 		DeviceArray<Coord> dPos, 
-		DeviceArray<Attribute> attArr, 
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
-		if (attArr[pId].IsDynamic())
+		posArr[pId] += dPos[pId];
+		velArr[pId] += dPos[pId] / dt;
+	}
+
+
+	template<typename TDataType>
+	DensityPBD<TDataType>::DensityPBD()
+		: ConstraintModule()
+		, m_massID(MechanicalState::mass())
+		, m_posID(MechanicalState::position())
+		, m_velID(MechanicalState::velocity())
+		, m_neighborhoodID(MechanicalState::particle_neighbors())
+		, m_smoothingLength(0.0125)
+		, m_maxIteration(5)
+	{
+	}
+
+	template<typename TDataType>
+	DensityPBD<TDataType>::~DensityPBD()
+	{
+		m_rhoArr.release();
+		m_lamda.release();
+		m_deltaPos.release();
+	}
+
+	template<typename TDataType>
+	bool DensityPBD<TDataType>::initializeImpl()
+	{
+		m_densitySum = getParent()->getModule<DensitySummation<TDataType>>();
+		if (m_densitySum == nullptr)
 		{
-			posArr[pId] += dPos[pId];
-			velArr[pId] += dPos[pId] / dt;
+			auto summation = std::make_shared<DensitySummation<TDataType>>();
+			summation->setSmoothingLength(m_smoothingLength);
+
+			getParent()->addModule(summation);
 		}
-	}
-
-
-	template<typename TDataType>
-	Physika::DensityPBD<TDataType>::DensityPBD()
-		: DensityConstraint<TDataType>()
-		, m_lamda(NULL)
-		, m_deltaPos(NULL)
-		, densitySum(NULL)
-	{
-		initArgument(&m_attribute, "Attribute", "Attributes");
-		initArgument(&m_mass, "Mass", "Particle mass");
+		return true;
 	}
 
 	template<typename TDataType>
-	bool DensityPBD<TDataType>::execute()
+	bool DensityPBD<TDataType>::constrain()
 	{
-		DeviceArray<Coord>* posArr = m_position.getField().getDataPtr();
-		DeviceArray<Coord>* velArr = m_velocity.getField().getDataPtr();
-		DeviceArray<Real>* rhoArr = m_density.getField().getDataPtr();
-		DeviceArray<Attribute>* attArr = m_attribute.getField().getDataPtr();
+		auto mstate = getParent()->getMechanicalState();
+		if (!mstate)
+		{
+			std::cout << "Cannot find a parent node for DensityPBD!" << std::endl;
+			return false;
+		}
 
-		DeviceArray<SPHNeighborList>* neighborArr = m_neighbors.getField().getDataPtr();
+		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
+		auto velFd = mstate->getField<DeviceArrayField<Coord>>(m_velID);
+		auto neighborFd = mstate->getField<NeighborField<int>>(m_neighborhoodID);
 
-		int num = posArr->size();
+		if (posFd == nullptr || velFd == nullptr || neighborFd == nullptr)
+		{
+			std::cout << "Incomplete inputs for DensityPBD!" << std::endl;
+			return false;
+		}
 
-		if (m_lamda == NULL)
-			m_lamda = DeviceArrayField<Real>::create(num);
-		if (m_deltaPos == NULL)
-			m_deltaPos = DeviceArrayField<Coord>::create(num);
+		int num = posFd->size();
 
-		DeviceArray<Real>* lamda = m_lamda->getDataPtr();
-		DeviceArray<Coord>* deltaPos = m_deltaPos->getDataPtr();
+		if (m_lamda.size() != num)
+			m_lamda.resize(num);
+		if (m_deltaPos.size() != num)
+			m_deltaPos.resize(num);
+		if (m_rhoArr.size() != num)
+			m_rhoArr.resize(num);
 
 		Real dt = getParent()->getDt();
 
-		Real smoothingLength = m_radius.getField().getValue();
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
-
-		dim3 pDims = int(ceil(posArr->size() / BLOCK_SIZE + 0.5f));
-
-		if (densitySum == NULL)
-		{
-			densitySum = new SummationDensity<TDataType>();
-			densitySum->setParent(getParent());
-			densitySum->connectPosition(m_position.getFieldPtr());
-			densitySum->connectNeighbor(m_neighbors.getFieldPtr());
-			densitySum->connectMass(m_mass.getFieldPtr());
-			densitySum->connectRadius(m_radius.getFieldPtr());
-			densitySum->connectDensity(m_density.getFieldPtr());
-			densitySum->initializeImpl();
-		}
-		
 		int it = 0;
-		while (it < 5)
+		while (it < m_maxIteration)
 		{
-			deltaPos->reset();
+			m_deltaPos.reset();
+			m_densitySum->compute(m_rhoArr);
 
-			densitySum->execute();
-			DC_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (*lamda, *rhoArr, *posArr, *neighborArr, smoothingLength);
-			DC_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (*deltaPos, *lamda, *posArr, *neighborArr, smoothingLength, dt);
-			DC_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (*posArr, *velArr, *deltaPos, *attArr, dt);
+			K_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (m_lamda, m_rhoArr, posFd->getValue(), neighborFd->getValue(), m_smoothingLength);
+			K_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (m_deltaPos, m_lamda, posFd->getValue(), neighborFd->getValue(), m_smoothingLength, dt);
+			K_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (posFd->getValue(), velFd->getValue(), m_deltaPos, dt);
 
 			it++;
 		}

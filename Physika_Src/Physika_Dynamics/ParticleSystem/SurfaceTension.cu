@@ -1,29 +1,18 @@
 #include <cuda_runtime.h>
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "SurfaceTension.h"
-#include "Physika_Framework/Topology/INeighbors.h"
-#include "Attribute.h"
-
+#include "Physika_Framework/Framework/MechanicalState.h"
+#include "Physika_Framework/Topology/NeighborList.h"
+#include "Kernel.h"
 
 namespace Physika
 {
-// 	struct ST_STATE
-// 	{
-// 		float mass;
-// 		float smoothingLength;
-// 		float restDensity;
-// 		SmoothKernel kernSmooth;
-// 	};
-
-//	__constant__ ST_STATE const_st_state;
-
-
 	template<typename Real, typename Coord>
 	__global__ void ST_ComputeSurfaceEnergy
 	(
 		DeviceArray<Real> energyArr,
 		DeviceArray<Coord> posArr,
-		DeviceArray<SPHNeighborList> neighbors,
+		NeighborList<int> neighbors,
 		Real smoothingLength
 	)
 	{
@@ -36,10 +25,10 @@ namespace Physika
 		SmoothKernel<Real> kern;
 
 		Coord pos_i = posArr[pId];
-		int nbSize = neighbors[pId].size;
+		int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
-			int j = neighbors[pId][ne];
+			int j = neighbors.getElement(pId, ne);
 			Real r = (pos_i - posArr[j]).norm();
 
 			if (r > EPSILON)
@@ -62,8 +51,7 @@ namespace Physika
 		DeviceArray<Coord> velArr, 
 		DeviceArray<Real> energyArr, 
 		DeviceArray<Coord> posArr, 
-		DeviceArray<Attribute> attArr,
-		DeviceArray<SPHNeighborList> neighbors, 
+		NeighborList<int> neighbors,
 		Real smoothingLength,
 		Real mass,
 		Real restDensity,
@@ -72,10 +60,8 @@ namespace Physika
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
-		if (!attArr[pId].IsDynamic()) return;
 
 		Real Vref = mass / restDensity;
-
 
 		float alpha = (float) 945.0f / (32.0f * (float)M_PI * smoothingLength * smoothingLength * smoothingLength);
 		float ceof = 16000.0f * alpha;
@@ -85,10 +71,10 @@ namespace Physika
 		Coord F_i(0);
 		Coord dv_pi(0);
 		Coord pos_i = posArr[pId];
-		int nbSize = neighbors[pId].size;
+		int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
-			int j = neighbors[pId][ne];
+			int j = neighbors.getElement(pId, ne);
 			float r = (pos_i - posArr[j]).norm();
 
 			if (r > EPSILON)
@@ -111,8 +97,14 @@ namespace Physika
 
 	template<typename TDataType>
 	SurfaceTension<TDataType>::SurfaceTension()
-		:Module()
+		: ForceModule()
+		, m_posID(MechanicalState::position())
+		, m_velID(MechanicalState::velocity())
+		, m_neighborhoodID(MechanicalState::particle_neighbors())
+		, m_intensity(Real(1))
+		, m_soothingLength(Real(0.0125))
 	{
+
 	}
 
 	template<typename TDataType>
@@ -141,16 +133,8 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	bool SurfaceTension<TDataType>::updateStates()
+	bool SurfaceTension<TDataType>::applyForce()
 	{
-// 		ST_STATE cm;
-// 		cm.mass = m_parent->GetParticleMass();
-// 		cm.smoothingLength = m_parent->GetSmoothingLength();
-// 		cm.kernSmooth = SmoothKernel();
-// 		cm.restDensity = m_parent->GetRestDensity();
-// 
-// 		cudaMemcpyToSymbol(const_st_state, &cm, sizeof(ST_STATE));
-
 		return true;
 	}
 

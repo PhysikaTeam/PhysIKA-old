@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cassert>
-
+#include "Physika_Core/Platform.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 
 namespace Physika

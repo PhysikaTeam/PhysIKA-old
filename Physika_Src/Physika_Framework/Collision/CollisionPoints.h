@@ -5,6 +5,8 @@
 namespace Physika
 {
 template <typename> class CollidablePoints;
+template <typename> class NeighborQuery;
+template <typename> class NeighborList;
 template <typename> class GridHash;
 
 template<typename TDataType>
@@ -31,7 +33,8 @@ protected:
 	DeviceArray<Coord> m_points;
 	DeviceArray<Coord> m_vels;
 
-	std::shared_ptr<GridHash<TDataType>> m_gHash;
+	std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
+	std::shared_ptr<NeighborList<int>> m_nList;
 
 	std::vector<std::shared_ptr<CollidablePoints<TDataType>>> m_collidableObjects;
 };

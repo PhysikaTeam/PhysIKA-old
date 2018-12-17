@@ -19,7 +19,7 @@ namespace Physika
 	};
 
 	/// 1f DOF, single precision
-	typedef DataTypes<float, Vector1f, Matrix1f, Rigid<float, 1>> DataType1f;
+	typedef DataTypes<float, float, float, Rigid<float, 1>> DataType1f;
 	template<> inline const char* DataType1f::getName() { return "DataType1f"; }
 
 	/// 2f DOF, single precision
@@ -31,7 +31,7 @@ namespace Physika
 	template<> inline const char* DataType3f::getName() { return "DataType3f"; }
 
 	/// 1d DOF, double precision
-	typedef DataTypes<double, Vector1d, Matrix1d, Rigid<double, 1>> DataType1d;
+	typedef DataTypes<double, float, float, Rigid<double, 1>> DataType1d;
 	template<> inline const char* DataType1d::getName() { return "DataType1d"; }
 
 	/// 2d DOF, double precision

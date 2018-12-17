@@ -8,7 +8,7 @@ bool Base::addField(std::shared_ptr<Field> data)
 	return addField(data->getObjectName(), data);
 }
 
-bool Base::addField(std::string name, std::shared_ptr<Field> data)
+bool Base::addField(FieldID name, std::shared_ptr<Field> data)
 {
 	if (findField(data) == NULL)
 	{
@@ -27,7 +27,7 @@ bool Base::addField(std::string name, std::shared_ptr<Field> data)
 	return true;
 }
 
-bool Base::addFieldAlias(std::string name, std::shared_ptr<Field> data)
+bool Base::addFieldAlias(FieldID name, std::shared_ptr<Field> data)
 {
 	if (findFieldAlias(name) == NULL)
 	{
@@ -47,7 +47,7 @@ bool Base::addFieldAlias(std::string name, std::shared_ptr<Field> data)
 
 }
 
-bool Base::addFieldAlias(std::string name, std::shared_ptr<Field> data, MapPtr<Field>& fieldAlias)
+bool Base::addFieldAlias(FieldID name, std::shared_ptr<Field> data, MapPtr<Field>& fieldAlias)
 {
 	if (findFieldAlias(name, fieldAlias) == NULL)
 	{
@@ -77,7 +77,7 @@ bool Base::findField(std::shared_ptr<Field> data)
 	return true;
 }
 
-bool Base::findFieldAlias(const std::string name)
+bool Base::findFieldAlias(const FieldID name)
 {
 	MapPtr<Field>::iterator result = m_fieldAlias.find(name);
 	// return false if no alias is found!
@@ -88,7 +88,7 @@ bool Base::findFieldAlias(const std::string name)
 	return true;
 }
 
-bool Base::findFieldAlias(const std::string name, MapPtr<Field>& fieldAlias)
+bool Base::findFieldAlias(const FieldID name, MapPtr<Field>& fieldAlias)
 {
 	MapPtr<Field>::iterator result = fieldAlias.find(name);
 	// return false if no alias is found!
@@ -125,12 +125,12 @@ bool Base::removeField(std::shared_ptr<Field> data)
 	return true;
 }
 
-bool Base::removeFieldAlias(const std::string name)
+bool Base::removeFieldAlias(const FieldID name)
 {
 	return removeFieldAlias(name, m_fieldAlias);
 }
 
-bool Base::removeFieldAlias(const std::string name, MapPtr<Field>& fieldAlias)
+bool Base::removeFieldAlias(const FieldID name, MapPtr<Field>& fieldAlias)
 {
 	MapPtr<Field>::iterator iter = fieldAlias.find(name);
 	if (iter != fieldAlias.end())
@@ -149,7 +149,7 @@ bool Base::removeFieldAlias(const std::string name, MapPtr<Field>& fieldAlias)
 	return false;
 }
 
-std::shared_ptr<Physika::Field> Base::getField(const std::string name)
+std::shared_ptr<Physika::Field> Base::getField(const FieldID name)
 {
 	MapPtr<Field>::iterator iter = m_fieldAlias.find(name);
 	if (iter != m_fieldAlias.end())
@@ -161,7 +161,7 @@ std::shared_ptr<Physika::Field> Base::getField(const std::string name)
 
 std::vector<std::string> Base::getFieldAlias(std::shared_ptr<Field> field)
 {
-	std::vector<std::string> names;
+	std::vector<FieldID> names;
 	MapPtr<Field>::iterator iter;
 	for (iter = m_fieldAlias.begin(); iter != m_fieldAlias.end(); iter++)
 	{

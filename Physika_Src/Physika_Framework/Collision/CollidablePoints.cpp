@@ -61,7 +61,7 @@ namespace Physika
 		auto initPoints = pSet->getPoints();
 
 		m_positions.resize(initPoints->size());
-		Function1Pt::Copy(m_positions, *initPoints);
+		Function1Pt::copy(m_positions, *initPoints);
 
 		m_velocities.resize(initPoints->size());
 		m_velocities.reset();
@@ -110,8 +110,8 @@ namespace Physika
 			std::shared_ptr<Field> vel = mstate->getField(MechanicalState::velocity());
 			std::shared_ptr<DeviceArrayField<Coord>> vBuf = TypeInfo::CastPointerDown<DeviceArrayField<Coord>>(vel);
 
-			Function1Pt::Copy(m_positions, *(pBuf->getDataPtr()));
-			Function1Pt::Copy(m_velocities, *(vBuf->getDataPtr()));
+			Function1Pt::copy(m_positions, *(pBuf->getDataPtr()));
+			Function1Pt::copy(m_velocities, *(vBuf->getDataPtr()));
 		}
 	}
 
@@ -139,8 +139,8 @@ namespace Physika
 
 			Real dt = getParent()->getDt();
 
-			Function1Pt::Copy(hPos, m_positions);
-			Function1Pt::Copy(hInitPos, dInitPos);
+			Function1Pt::copy(hPos, m_positions);
+			Function1Pt::copy(hInitPos, dInitPos);
 			Coord displacement(0);
 			Coord angularVel(0);
 			int nn = 0;
@@ -174,8 +174,8 @@ namespace Physika
 			auto posArr = dc->getField<DeviceArrayField<Coord>>(MechanicalState::position());
 			auto velArr = dc->getField<DeviceArrayField<Coord>>(MechanicalState::velocity());
 
-			Function1Pt::Copy(*(posArr->getDataPtr()), m_positions);
-			Function1Pt::Copy(*(velArr->getDataPtr()), m_velocities);
+			Function1Pt::copy(*(posArr->getDataPtr()), m_positions);
+			Function1Pt::copy(*(velArr->getDataPtr()), m_velocities);
 		}
 	}
 }

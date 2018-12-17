@@ -11,6 +11,8 @@ template<typename T, DeviceType deviceType>
 class ArrayField : public Field
 {
 public:
+	typedef T VarType;
+
 	ArrayField(std::string name, std::string description, int num = 1);
 	~ArrayField() override;
 
@@ -28,12 +30,6 @@ public:
 
 public:
 	static ArrayField* create(int num) { return new ArrayField<T, deviceType>("default", "default", num); }
-
-// 	static std::shared_ptr< ArrayBuffer<T, deviceType> >
-// 		create(std::string name, std::string description, int num)
-// 	{
-// 		return TypeInfo::New<ArrayBuffer<T, deviceType>>(name, description, num);//SPtr< ArrayBuffer<T, deviceType> > var( new ArrayBuffer<T, deviceType>(name, description) );
-// 	}
 
 	static std::shared_ptr< ArrayField<T, deviceType> >
 		createField(Base* module, std::string name, std::string description, int num)

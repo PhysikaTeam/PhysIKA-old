@@ -62,13 +62,11 @@ class Module : public Base
 public:
 	Module();
 
-	virtual ~Module(void);
+	~Module(void) override;
 
 	bool initialize();
 
 	virtual bool execute() { return false; }
-
-	virtual bool updateStates() { return true; }
 
 	void setParent(Node* node) {
 		m_node = node;

@@ -56,6 +56,22 @@ COMM_FUNC SquareMatrix<Scalar,4>::SquareMatrix(const Vector<Scalar,4> &row1, con
 {
 }
 
+
+template <typename Scalar>
+COMM_FUNC SquareMatrix<Scalar, 4>::SquareMatrix(const SquareMatrix<Scalar, 4>& mat)
+{
+	(*this)(0, 0) = mat(0, 0);	(*this)(0, 1) = mat(0, 1);	(*this)(0, 2) = mat(0, 2);	(*this)(0, 3) = mat(0, 3);
+	(*this)(1, 0) = mat(1, 0);	(*this)(1, 1) = mat(1, 1);	(*this)(1, 2) = mat(1, 2);	(*this)(1, 3) = mat(1, 3);
+	(*this)(2, 0) = mat(2, 0);	(*this)(2, 1) = mat(2, 1);	(*this)(2, 2) = mat(2, 2);	(*this)(2, 3) = mat(2, 3);
+	(*this)(3, 0) = mat(3, 0);	(*this)(3, 1) = mat(3, 1);	(*this)(3, 2) = mat(3, 2);	(*this)(3, 3) = mat(3, 3);
+}
+
+template <typename Scalar>
+COMM_FUNC SquareMatrix<Scalar, 4>::~SquareMatrix()
+{
+
+}
+
 template <typename Scalar>
 COMM_FUNC Scalar& SquareMatrix<Scalar,4>::operator() (unsigned int i, unsigned int j)
 {
@@ -75,7 +91,7 @@ COMM_FUNC const Scalar& SquareMatrix<Scalar,4>::operator() (unsigned int i, unsi
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar,4> SquareMatrix<Scalar,4>::rowVector(unsigned int i) const
+COMM_FUNC const Vector<Scalar,4> SquareMatrix<Scalar,4>::row(unsigned int i) const
 {
 // #ifndef __CUDA_ARCH__
 //     if (i >= 4)
@@ -86,7 +102,7 @@ COMM_FUNC const Vector<Scalar,4> SquareMatrix<Scalar,4>::rowVector(unsigned int 
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar,4> SquareMatrix<Scalar,4>::colVector(unsigned int i) const
+COMM_FUNC const Vector<Scalar,4> SquareMatrix<Scalar,4>::col(unsigned int i) const
 {
 // #ifndef __CUDA_ARCH__
 //     if (i >= 4)
@@ -94,6 +110,24 @@ COMM_FUNC const Vector<Scalar,4> SquareMatrix<Scalar,4>::colVector(unsigned int 
 // #endif
     Vector<Scalar,4> result((*this)(0,i),(*this)(1,i),(*this)(2,i),(*this)(3,i));
     return result;
+}
+
+template <typename Scalar>
+COMM_FUNC void SquareMatrix<Scalar, 4>::setRow(unsigned int i, Vector<Scalar, 4>& vec)
+{
+	data_[0][i] = vec[0];
+	data_[1][i] = vec[1];
+	data_[2][i] = vec[2];
+	data_[3][i] = vec[3];
+}
+
+template <typename Scalar>
+COMM_FUNC void SquareMatrix<Scalar, 4>::setCol(unsigned int j, Vector<Scalar, 4>& vec)
+{
+	data_[j][0] = vec[0];
+	data_[j][1] = vec[1];
+	data_[j][2] = vec[2];
+	data_[j][3] = vec[3];
 }
 
 template <typename Scalar>
@@ -121,6 +155,15 @@ COMM_FUNC SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator-= (const Squa
     data_ -= mat2.data_;
     return *this;
 }
+
+
+template <typename Scalar>
+COMM_FUNC SquareMatrix<Scalar, 4>& SquareMatrix<Scalar, 4>::operator=(const SquareMatrix<Scalar, 4> &mat2)
+{
+	data_ = mat2.data_;
+	return *this;
+}
+
 
 template <typename Scalar>
 COMM_FUNC bool SquareMatrix<Scalar,4>::operator== (const SquareMatrix<Scalar,4> &mat2) const
@@ -248,6 +291,42 @@ COMM_FUNC Scalar SquareMatrix<Scalar,4>::frobeniusNorm() const
         for (unsigned int j = 0; j < 4; ++j)
             result += (*this)(i, j)*(*this)(i, j);
     return glm::sqrt(result);
+}
+
+template <typename Scalar>
+COMM_FUNC Scalar SquareMatrix<Scalar, 4>::oneNorm() const
+{
+	const SquareMatrix<Scalar, 4>& A = (*this);
+	const Scalar sum1 = fabs(A(0, 0)) + fabs(A(1, 0)) + fabs(A(2, 0)) + fabs(A(3, 0));
+	const Scalar sum2 = fabs(A(0, 1)) + fabs(A(1, 1)) + fabs(A(2, 1)) + fabs(A(3, 1));
+	const Scalar sum3 = fabs(A(0, 2)) + fabs(A(1, 2)) + fabs(A(2, 2)) + fabs(A(3, 2));
+	const Scalar sum4 = fabs(A(0, 3)) + fabs(A(1, 3)) + fabs(A(2, 3)) + fabs(A(3, 3));
+	Scalar maxSum = sum1;
+	if (sum2 > maxSum)
+		maxSum = sum2;
+	if (sum3 > maxSum)
+		maxSum = sum3;
+	if (sum4 > maxSum)
+		maxSum = sum4;
+	return maxSum;
+}
+
+template <typename Scalar>
+COMM_FUNC Scalar SquareMatrix<Scalar, 4>::infNorm() const
+{
+	const SquareMatrix<Scalar, 4>& A = (*this);
+	const Scalar sum1 = fabs(A(0, 0)) + fabs(A(0, 1)) + fabs(A(0, 2)) + fabs(A(0, 3));
+	const Scalar sum2 = fabs(A(1, 0)) + fabs(A(1, 1)) + fabs(A(1, 2)) + fabs(A(1, 3));
+	const Scalar sum3 = fabs(A(2, 0)) + fabs(A(2, 1)) + fabs(A(2, 2)) + fabs(A(2, 3));
+	const Scalar sum4 = fabs(A(3, 0)) + fabs(A(3, 1)) + fabs(A(3, 2)) + fabs(A(3, 3));
+	Scalar maxSum = sum1;
+	if (sum2 > maxSum)
+		maxSum = sum2;
+	if (sum3 > maxSum)
+		maxSum = sum3;
+	if (sum4 > maxSum)
+		maxSum = sum4;
+	return maxSum;
 }
 
 template <typename Scalar>

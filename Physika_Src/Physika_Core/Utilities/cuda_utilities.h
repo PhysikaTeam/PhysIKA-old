@@ -24,10 +24,6 @@
 #include "cuda_helper_math.h"
 #include <iostream>
 
-#define COMM_FUNC __host__ __device__
-#define CPU_FUNC __host__
-#define GPU_FUNC __device__
-
 namespace Physika{
 
 #define INVALID -1

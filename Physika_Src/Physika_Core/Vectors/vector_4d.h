@@ -36,10 +36,10 @@ public:
     COMM_FUNC Vector();
     COMM_FUNC explicit Vector(Scalar);
     COMM_FUNC Vector(Scalar x, Scalar y, Scalar z, Scalar w);
-    COMM_FUNC Vector(const Vector<Scalar,4>&) = default;
-    COMM_FUNC ~Vector() = default;
+    COMM_FUNC Vector(const Vector<Scalar,4>&);
+    COMM_FUNC ~Vector();
 
-    COMM_FUNC  static const int dims() {return 4;}
+	COMM_FUNC  static const int dims() { return (const int)4; }
 
     COMM_FUNC Scalar& operator[] (unsigned int);
     COMM_FUNC const Scalar& operator[] (unsigned int) const;
@@ -53,7 +53,7 @@ public:
 	COMM_FUNC const Vector<Scalar, 4> operator/ (const Vector<Scalar, 4> &) const;
 	COMM_FUNC Vector<Scalar, 4>& operator/= (const Vector<Scalar, 4> &);
 
-    COMM_FUNC Vector<Scalar,4>& operator= (const Vector<Scalar,4> &) = default;
+    COMM_FUNC Vector<Scalar,4>& operator= (const Vector<Scalar,4> &);
 
     COMM_FUNC bool operator== (const Vector<Scalar,4> &) const;
     COMM_FUNC bool operator!= (const Vector<Scalar,4> &) const;
@@ -80,6 +80,7 @@ public:
 public:
 	glm::tvec4<Scalar> data_; //default: zero vector
 };
+
 
 // 
 // //overriding << for vector2D

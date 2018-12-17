@@ -109,8 +109,6 @@ protected:
 	void drawBackground();
 	void drawAxis();
 
-	void initViewer();
-
 protected:
     //basic information of window
     std::string m_winName;

@@ -12,7 +12,7 @@
 
 #include "Physika_Render/PointRenderModule.h"
 
-#include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
+#include "Physika_Dynamics/ParticleSystem/ParticleFluid.h"
 #include "Physika_Dynamics/ParticleSystem/Peridynamics.h"
 
 #include "Physika_Framework/Collision/CollidableSDF.h"
@@ -89,9 +89,24 @@ void CreateScene()
 	root->addCollisionModel(pModel);
 }
 
+#include "Physika_Core/Matrices/matrix.h"
+#include "Physika_Core/Algorithm/MatrixFunc.h"
 
 int main()
 {
+// 	Matrix3f mat = Matrix3f::identityMatrix();
+// 	mat(0, 0) = 0.0f;
+// 	mat(1, 0) = 1.0f;
+// 	mat(0, 1) = 1.0f;
+// 	mat(1, 1) = 0.0f;
+// 	mat(1, 2) = 5.0f;
+// 	Matrix3f R;
+// 	polarDecomposition(mat, R, 0.0001f);
+// 
+// 	std::cout << R(0, 0) << " " << R(0, 1) << " " << R(0, 2) << std::endl;
+// 	std::cout << R(1, 0) << " " << R(1, 1) << " " << R(1, 2) << std::endl;
+// 	std::cout << R(2, 0) << " " << R(2, 1) << " " << R(2, 2) << std::endl;
+
 	CreateScene();
 
 	Log::setOutput("console_log.txt");
@@ -100,7 +115,7 @@ int main()
 	Log::sendMessage(Log::Info, "Simulation begin");
 
 	GLApp window;
-	window.createWindow(800, 600);
+	window.createWindow(1024, 768);
 
 	window.mainLoop();
 

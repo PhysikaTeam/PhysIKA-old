@@ -99,8 +99,9 @@ namespace Physika
 		Vector3f rotcenter2 = m_light + 3.0f*viewdir;
 // 		currq = q.ComposeWith(currq);
 // 		currq.ToRotAxis(m_rotation, m_rotation_axis);
-		currq = q.ComposeWith(currq);
-		currq.ToRotAxis(m_rotation, m_rotation_axis);
+		currq = q * currq;
+		q.normalize();
+		currq.toRotationAxis(m_rotation, m_rotation_axis);
 		// set up orthogonal camera system
 		Quat1f q2(m_rotation, m_rotation_axis);
 		//q2.x = -q2.x;

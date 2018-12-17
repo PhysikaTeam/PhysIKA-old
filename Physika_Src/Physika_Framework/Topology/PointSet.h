@@ -15,7 +15,7 @@ namespace Physika
 		typedef typename TDataType::Coord Coord;
 
 		PointSet();
-		~PointSet();
+		~PointSet() override;
 
 		virtual void setPoints(std::vector<Coord>& pos);
 

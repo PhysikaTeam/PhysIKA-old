@@ -1,16 +1,23 @@
 #pragma once
 #include <vector_types.h>
 #include <vector>
-#include "Physika_Core/DataTypes.h"
 #include "Physika_Framework/Framework/NumericalModel.h"
-#include "Physika_Framework/Topology/INeighbors.h"
-#include "ParticlePrediction.h"
 #include "ElasticityModule.h"
 #include "Physika_Framework/Framework/FieldVar.h"
-#include "Physika_Framework/Mapping/PointsToPoints.h"
+
 
 namespace Physika
 {
+	template<typename TDataType> class PointsToPoints;
+	template<typename TDataType> class ParticleIntegrator;
+
+	/*!
+	*	\class	ParticleSystem
+	*	\brief	Projective peridynamics
+	*
+	*	This class implements the projective peridynamics.
+	*	Refer to He et al' "Projective peridynamics for modeling versatile elastoplastic materials" for details.
+	*/
 	template<typename TDataType>
 	class Peridynamics : public NumericalModel
 	{
@@ -19,13 +26,12 @@ namespace Physika
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
-		typedef typename TRestShape<TDataType> RestShape;
 
 		Peridynamics();
 		~Peridynamics() override {};
 
 		/*!
-		*	\brief	All variables should be set appropriately before Initliazed() is called.
+		*	\brief	All variables should be set appropriately before initializeImpl() is called.
 		*/
 		bool initializeImpl() override;
 
@@ -35,11 +41,9 @@ namespace Physika
 
 	private:
 		std::shared_ptr<PointsToPoints<TDataType>> m_mapping;
+		std::shared_ptr<ParticleIntegrator<TDataType>> prediction;
 
-		std::shared_ptr<ParticlePrediction<TDataType>> prediction;
-		std::shared_ptr<ElasticityModule<TDataType>> elasticity;
-
-		HostVariablePtr<size_t> m_num;
+		HostVariablePtr<int> m_num;
 		HostVariablePtr<Real> m_mass;
 		HostVariablePtr<Real> m_smoothingLength;
 		HostVariablePtr<Real> m_samplingDistance;
@@ -49,6 +53,6 @@ namespace Physika
 #ifdef PRECISION_FLOAT
 	template class Peridynamics<DataType3f>;
 #else
-	template class ParticleSystem<DataType3d>;
+	template class ParticleFluid<DataType3d>;
 #endif
 }

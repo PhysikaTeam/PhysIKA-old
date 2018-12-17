@@ -40,7 +40,7 @@ namespace Physika
 	void PointSet<TDataType>::setPoints(std::vector<Coord>& pos)
 	{
 		m_coords.resize(pos.size());
-		Function1Pt::Copy(m_coords, pos);
+		Function1Pt::copy(m_coords, pos);
 
 		tagAsChanged();
 	}

@@ -4,7 +4,7 @@
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Framework/Framework/CollidableObject.h"
 #include "Physika_Framework/Collision/CollidablePoints.h"
-#include "Physika_Framework/Topology/GridHash.h"
+#include "Physika_Framework/Topology/NeighborQuery.h"
 
 namespace Physika
 {
@@ -49,7 +49,7 @@ namespace Physika
 		DeviceArray<Coord> points,
 		DeviceArray<Coord> newPoints,
 		DeviceArray<Real> weights,
-		DeviceArray<SPHNeighborList> neighbors,
+		NeighborList<int> neighbors,
 		Real radius
 	)
 	{
@@ -59,12 +59,12 @@ namespace Physika
 		Real r;
 		Coord pos_i = points[pId];
 		int id_i = objIds[pId];
-		int nbSize = neighbors[pId].size;
+		int nbSize = neighbors.getNeighborSize(pId);
 		int col_num = 0;
 		Coord pos_num = Coord(0);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
-			int j = neighbors[pId][ne];
+			int j = neighbors.getElement(pId, ne);
 			r = (pos_i - points[j]).norm();
 			if (r < radius && objIds[j] != id_i)
 			{
@@ -154,20 +154,20 @@ namespace Physika
 			start += num;
 		}
 
-		if (m_gHash == nullptr)
+		if (m_nbrQuery == nullptr)
 		{
-			m_gHash = std::make_shared<GridHash<TDataType>>();
-			Real samplingDistance = 0.005;
-			Coord lowerBound(0);
-			Coord upperBound(1.0);
-			m_gHash->SetSpace(2 * samplingDistance, lowerBound, upperBound);
+			m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
 		}
-
-		DeviceArray<SPHNeighborList>* neighborArr = new DeviceArray<SPHNeighborList>(m_points.size());
+		if (m_nList == nullptr)
+		{
+			m_nList = std::make_shared<NeighborList<int>>();
+			m_nList->resize(m_points.size());
+			m_nList->setNeighborLimit(5);
+		}
+		
 
 		Real radius = 0.005;
-
-		m_gHash->QueryNeighborSlow(m_points, *neighborArr, radius, NEIGHBOR_SIZE);
+		m_nbrQuery->queryParticleNeighbors(*m_nList, m_points, radius);
 
 		DeviceArray<Coord> posBuf;
 		posBuf.resize(m_points.size());
@@ -178,16 +178,16 @@ namespace Physika
 		DeviceArray<Coord> init_pos;
 		init_pos.resize(m_points.size());
 
-		Function1Pt::Copy(init_pos, m_points);
+		Function1Pt::copy(init_pos, m_points);
 
 		uint pDims = cudaGridSize(m_points.size(), BLOCK_SIZE);
 		for (size_t it = 0; it < 5; it++)
 		{
 			weights.reset();
 			posBuf.reset();
-			K_Collide << <pDims, BLOCK_SIZE >> > (m_objId, m_points, posBuf, weights, *neighborArr, radius);
+			K_Collide << <pDims, BLOCK_SIZE >> > (m_objId, m_points, posBuf, weights, *m_nList, radius);
 			K_ComputeTarget << <pDims, BLOCK_SIZE >> > (m_points, posBuf, weights);
-			Function1Pt::Copy(m_points, posBuf);
+			Function1Pt::copy(m_points, posBuf);
 		}
 
 		K_ComputeVelocity << <pDims, BLOCK_SIZE >> > (init_pos, m_points, m_vels, getParent()->getDt());
@@ -195,9 +195,6 @@ namespace Physika
 		posBuf.release();
 		weights.release();
 		init_pos.release();
-
-		neighborArr->release();
-		delete neighborArr;
 
 		start = 0;
 		for (int i = 0; i < m_collidableObjects.size(); i++)
@@ -242,7 +239,7 @@ namespace Physika
 		m_points.resize(totalNum);
 		m_vels.resize(totalNum);
 
-		Function1Pt::Copy(m_objId, ids);
+		Function1Pt::copy(m_objId, ids);
 
 		return true;
 	}

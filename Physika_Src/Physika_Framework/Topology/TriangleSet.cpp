@@ -55,7 +55,7 @@ namespace Physika
 	void TriangleSet<TDataType>::setTriangles(std::vector<Triangle>& triangles)
 	{
 		m_triangls.resize(triangles.size());
-		Function1Pt::Copy(m_triangls, triangles);
+		Function1Pt::copy(m_triangls, triangles);
 	}
 
 }

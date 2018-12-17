@@ -148,16 +148,79 @@ namespace Physika
 		R(2, 0) = c0[2];	R(2, 1) = c1[2];	R(2, 2) = c2[2];
 	}
 
-	template <typename Real>
-	COMM_FUNC SquareMatrix<Real, 3> inverse(const SquareMatrix<Real, 3> mat)
+	template<typename Real>
+	COMM_FUNC void polarDecomposition(const SquareMatrix<Real, 3> &M, SquareMatrix<Real, 3> &R, Real tolerance)
 	{
+		SquareMatrix<Real, 3> Mt = M.transpose();
+		Real Mone = M.oneNorm();
+		Real Minf = M.infNorm();
+		Real Eone;
+		SquareMatrix<Real, 3> MadjTt, Et;
+		do
+		{
+			MadjTt.setRow(0, Mt.row(1).cross(Mt.row(2))); //glm::cross(Mt[1], Mt[2]);
+			MadjTt.setRow(1, Mt.row(2).cross(Mt.row(0))); //glm::cross(Mt[2], Mt[0]);
+			MadjTt.setRow(2, Mt.row(0).cross(Mt.row(1))); //glm::cross(Mt[0], Mt[1]);
 
-	}
+			Real det = Mt(0, 0) * MadjTt(0, 0) + Mt(1, 0) * MadjTt(1, 0) + Mt(2, 0) * MadjTt(2, 0);
 
+			if (fabs(det) < 1.0e-12)
+			{
+				Vector<Real, 3> len;
+				unsigned int index = 0xffffffff;
+				for (unsigned int i = 0; i < 3; i++)
+				{
+					len[i] = MadjTt.col(i).norm();
+					if (len[i] > 1.0e-12)
+					{
+						// index of valid cross product
+						// => is also the index of the vector in Mt that must be exchanged
+						index = i;
+						break;
+					}
+				}
+				if (index == 0xffffffff)
+				{
+					R = SquareMatrix<Real, 3>::identityMatrix();
+					return;
+				}
+				else
+				{
+					Mt.setRow(index, Mt.row((index + 1) % 3).cross(Mt.row((index + 2) % 3))); //Mt[index] = glm::cross(Mt[(index + 1) % 3], Mt[(index + 2) % 3]);
+					MadjTt.setRow((index + 1) % 3, Mt.row((index + 2) % 3).cross(Mt.row((index) % 3))); //MadjTt[(index + 1) % 3] = glm::cross(Mt[(index + 2) % 3], Mt[(index) % 3]);;
+					MadjTt.setRow((index + 2) % 3, Mt.row((index) % 3).cross(Mt.row((index + 1) % 3))); //MadjTt[(index + 2) % 3] = glm::cross(Mt[(index) % 3], Mt[(index + 1) % 3]);
+					SquareMatrix<Real, 3> M2 = Mt.transpose();
+					Mone = M2.oneNorm();
+					Minf = M2.infNorm();
+					det = Mt(0, 0) * MadjTt(0, 0) + Mt(1, 0) * MadjTt(1, 0) + Mt(2, 0) * MadjTt(2, 0);
+				}
+			}
 
-	template <typename Scalar>
-	COMM_FUNC SquareMatrix<Real, 2> inverse(const SquareMatrix<Real, 2> mat)
-	{
+			const Real MadjTone = MadjTt.oneNorm();
+			const Real MadjTinf = MadjTt.infNorm();
 
+			const Real gamma = sqrt(sqrt((MadjTone*MadjTinf) / (Mone*Minf)) / fabs(det));
+
+			const Real g1 = gamma*0.5f;
+			const Real g2 = 0.5f / (gamma*det);
+
+			for (unsigned char i = 0; i < 3; i++)
+			{
+				for (unsigned char j = 0; j < 3; j++)
+				{
+					Et(i, j) = Mt(i, j);
+					Mt(i, j) = g1*Mt(i, j) + g2*MadjTt(i, j);
+					Et(i, j) -= Mt(i, j);
+				}
+			}
+
+			Eone = Et.oneNorm();
+
+			Mone = Mt.oneNorm();
+			Minf = Mt.infNorm();
+		} while (Eone > Mone * tolerance);
+
+		// Q = Mt^T 
+		R = Mt.transpose();
 	}
 }

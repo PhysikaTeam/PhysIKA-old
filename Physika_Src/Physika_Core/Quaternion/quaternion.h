@@ -29,118 +29,88 @@ namespace Physika{
  * Quaternion is defined for float and double.
  */
 
-template <typename Scalar>
+template <typename Real>
 class Quaternion
 {
 public:    
     /* Constructors */
-    Quaternion();
-    Quaternion(Scalar x, Scalar y, Scalar z, Scalar w);
-    Quaternion(const Vector<Scalar,3> &unit_axis, Scalar angle_rad);  //init from the rotation axis and angle(in radian)
-    Quaternion(Scalar angle_rad, const Vector<Scalar,3> &unit_axis);
-    explicit Quaternion(const Scalar *); 
-    Quaternion(const Quaternion<Scalar> &);
-    explicit Quaternion(const SquareMatrix<Scalar, 3> &);   //init from a 3x3matrix
-    explicit Quaternion(const SquareMatrix<Scalar,4> &);    //init from a 4x4matrix
-    explicit Quaternion(const Vector<Scalar, 3>& );         //init form roll pitch yaw/ Euler angle;
+	COMM_FUNC Quaternion();
+	COMM_FUNC Quaternion(Real x, Real y, Real z, Real w);
+	COMM_FUNC Quaternion(const Vector<Real,3> &unit_axis, Real angle_rad);  //init from the rotation axis and angle(in radian)
+	COMM_FUNC Quaternion(Real angle_rad, const Vector<Real,3> &unit_axis);
+	COMM_FUNC explicit Quaternion(const Real *);
+	COMM_FUNC Quaternion(const Quaternion<Real> &);
+	COMM_FUNC explicit Quaternion(const SquareMatrix<Real, 3> &);   //init from a 3x3matrix
+	COMM_FUNC explicit Quaternion(const SquareMatrix<Real,4> &);    //init from a 4x4matrix
+	COMM_FUNC explicit Quaternion(const Vector<Real, 3>& );         //init form roll pitch yaw/ Euler angle;
     
     /* Assignment operators */
-    Quaternion<Scalar> &operator = (const Quaternion<Scalar> &);
-    Quaternion<Scalar> &operator += (const Quaternion<Scalar> &);
-    Quaternion<Scalar> &operator -= (const Quaternion<Scalar> &);
+	COMM_FUNC Quaternion<Real> &operator = (const Quaternion<Real> &);
+	COMM_FUNC Quaternion<Real> &operator += (const Quaternion<Real> &);
+	COMM_FUNC Quaternion<Real> &operator -= (const Quaternion<Real> &);
     
     /* Get and Set functions */
-    inline Scalar x() const { return x_;}
-    inline Scalar y() const { return y_;}
-    inline Scalar z() const { return z_;}
-    inline Scalar w() const { return w_;}
+	COMM_FUNC inline Real x() const { return x_;}
+	COMM_FUNC inline Real y() const { return y_;}
+	COMM_FUNC inline Real z() const { return z_;}
+	COMM_FUNC inline Real w() const { return w_;}
 
-    inline void setX(const Scalar& x) { x_ = x;}
-    inline void setY(const Scalar& y) { y_ = y;}
-    inline void setZ(const Scalar& z) { z_ = z;}
-    inline void setW(const Scalar& w) { w_ = w;}
+	COMM_FUNC inline void setX(const Real& x) { x_ = x;}
+	COMM_FUNC inline void setY(const Real& y) { y_ = y;}
+	COMM_FUNC inline void setZ(const Real& z) { z_ = z;}
+	COMM_FUNC inline void setW(const Real& w) { w_ = w;}
 
     //rotate
-    const Vector<Scalar, 3> rotate(const Vector<Scalar, 3>) const;    // rotates passed vec by this.
-
-	void rotateVector(Vector<Scalar, 3>& v);
-	
-    void toRadiansAndUnitAxis(Scalar& angle, Vector<Scalar, 3>& axis) const;
-
-	Quaternion ComposeWith(Quaternion<Scalar> & q) {
-		Quaternion result;
-		result.x_ = x_*q.x_ - y_*q.y_ - z_*q.z_ - w_*q.w_;
-		result.y_ = x_*q.y_ + y_*q.x_ + z_*q.w_ - w_*q.z_;
-		result.z_ = x_*q.z_ + z_*q.x_ + w_*q.y_ - y_*q.w_;
-		result.w_ = x_*q.w_ + w_*q.x_ + y_*q.z_ - z_*q.y_;
-		result.normalize();
-		return result;
-	}
-
-	void ToRotAxis(Scalar &rot, Vector<Scalar, 3> &axis) {
-		rot = 2.0f * acos(x_);
-		if (rot == 0) {
-			axis[0] = axis[1] = 0; axis[2] = 1;
-			return;
-		}
-		axis[0] = y_;
-		axis[1] = z_;
-		axis[2] = w_;
-		axis.normalize();
-	}
+	COMM_FUNC const Vector<Real, 3> rotate(const Vector<Real, 3>) const;    // rotates passed vec by this.
+	COMM_FUNC void rotateVector(Vector<Real, 3>& v);
+	COMM_FUNC void toRotationAxis(Real &rot, Vector<Real, 3> &axis) const;
 
     /* Special functions */
-    Scalar norm();
-    Quaternion<Scalar>& normalize();
+	COMM_FUNC Real norm();
+	COMM_FUNC Quaternion<Real>& normalize();
 
-    void set(const Vector<Scalar,3>&, Scalar );
-    void set(Scalar , const Vector<Scalar,3>& );
-    void set(const Vector<Scalar,3>& );                              //set from a euler angle.
+	COMM_FUNC void set(const Vector<Real,3>&, Real );
+	COMM_FUNC void set(Real , const Vector<Real,3>& );
+	COMM_FUNC void set(const Vector<Real,3>& );                              //set from a euler angle.
 
-    Scalar getAngle() const;                                         // return the angle between this quat and the identity quaternion.
-    Scalar getAngle(const Quaternion<Scalar>&) const;                // return the angle between this and the argument
-    Quaternion<Scalar> getConjugate() const;                         // return the conjugate
+	COMM_FUNC Real getAngle() const;                                         // return the angle between this quat and the identity quaternion.
+	COMM_FUNC Real getAngle(const Quaternion<Real>&) const;                // return the angle between this and the argument
+	COMM_FUNC Quaternion<Real> getConjugate() const;                         // return the conjugate
     
-    SquareMatrix<Scalar, 3> get3x3Matrix() const;                    //return 3x3matrix format
-    SquareMatrix<Scalar, 4> get4x4Matrix() const;                    //return 4x4matrix with a identity transform.
-    Vector<Scalar, 3> getEulerAngle() const;
+	COMM_FUNC SquareMatrix<Real, 3> get3x3Matrix() const;                    //return 3x3matrix format
+	COMM_FUNC SquareMatrix<Real, 4> get4x4Matrix() const;                    //return 4x4matrix with a identity transform.
+	COMM_FUNC Vector<Real, 3> getEulerAngle() const;
 
     /* Operator overloading */
-    Quaternion<Scalar> operator - (const Quaternion<Scalar>& ) const;
-    Quaternion<Scalar> operator - (void) const;
-    Quaternion<Scalar> operator + (const Quaternion<Scalar>& ) const;
-    Quaternion<Scalar> operator * (const Quaternion<Scalar>& ) const;
-    Quaternion<Scalar> operator * (const Scalar& ) const;
-    Quaternion<Scalar> operator / (const Scalar& ) const;
-    bool operator == (const Quaternion<Scalar>& ) const;
-    bool operator != (const Quaternion<Scalar>& ) const;
-    Scalar& operator[] (unsigned int);
-    const Scalar& operator[] (unsigned int) const;
-    Scalar dot(const Quaternion<Scalar> &) const;
+	COMM_FUNC Quaternion<Real> operator - (const Quaternion<Real>& ) const;
+	COMM_FUNC Quaternion<Real> operator - (void) const;
+	COMM_FUNC Quaternion<Real> operator + (const Quaternion<Real>& ) const;
+	COMM_FUNC Quaternion<Real> operator * (const Quaternion<Real>& ) const;
+	COMM_FUNC Quaternion<Real> operator * (const Real& ) const;
+	COMM_FUNC Quaternion<Real> operator / (const Real& ) const;
+	COMM_FUNC bool operator == (const Quaternion<Real>& ) const;
+	COMM_FUNC bool operator != (const Quaternion<Real>& ) const;
+	COMM_FUNC Real& operator[] (unsigned int);
+	COMM_FUNC const Real& operator[] (unsigned int) const;
+	COMM_FUNC Real dot(const Quaternion<Real> &) const;
 
-    static inline Quaternion<Scalar> identityQuaternion() { return Quaternion<Scalar>(0,0,0,1); }
+	COMM_FUNC static inline Quaternion<Real> Identity() { return Quaternion<Real>(0,0,0,1); }
 
 public:
-    Scalar x_,y_,z_,w_;
-private:
-    void compileTimeCheck()  //dummy method for compile time check
-    {
-        PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                              "Quaternion<Scalar> are only defined for Scalar type of float and double");
-    }
+    Real x_,y_,z_,w_;
 };
 
 
-template <typename Scalar>
-inline std::ostream& operator<< (std::ostream &s, const Quaternion<Scalar> &quat)
+template <typename Real>
+inline std::ostream& operator<< (std::ostream &s, const Quaternion<Real> &quat)
 {
-    s <<quat.x()<<", "<<quat.y()<<", "<<quat.z()<<", "<<quat.w()<<std::endl;
+	s << quat.x() << ", " << quat.y() << ", " << quat.z() << ", " << quat.w() << std::endl;
     return s; 
 }
 
 //make * operator commutative
 template <typename S, typename T>
-inline Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
+COMM_FUNC inline Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
 {
     return quad * scale;
 }

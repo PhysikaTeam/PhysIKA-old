@@ -47,6 +47,18 @@ COMM_FUNC SquareMatrix<Scalar,2>::SquareMatrix(const Vector<Scalar,2> &row1, con
 }
 
 template <typename Scalar>
+COMM_FUNC SquareMatrix<Scalar, 2>::SquareMatrix(const SquareMatrix<Scalar, 2> &mat)
+{
+	data_ = mat.data_;
+}
+
+template <typename Scalar>
+COMM_FUNC SquareMatrix<Scalar, 2>::~SquareMatrix()
+{
+
+}
+
+template <typename Scalar>
 COMM_FUNC Scalar& SquareMatrix<Scalar,2>::operator() (unsigned int i, unsigned int j)
 {
     return const_cast<Scalar &>(static_cast<const SquareMatrix<Scalar, 2> &>(*this)(i, j));
@@ -65,7 +77,7 @@ COMM_FUNC const Scalar& SquareMatrix<Scalar,2>::operator() (unsigned int i, unsi
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar,2> SquareMatrix<Scalar,2>::rowVector(unsigned int i) const
+COMM_FUNC const Vector<Scalar,2> SquareMatrix<Scalar,2>::row(unsigned int i) const
 {
 // #ifndef __CUDA_ARCH__
 //     if(i>=2)
@@ -76,7 +88,7 @@ COMM_FUNC const Vector<Scalar,2> SquareMatrix<Scalar,2>::rowVector(unsigned int 
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar,2> SquareMatrix<Scalar,2>::colVector(unsigned int i) const
+COMM_FUNC const Vector<Scalar,2> SquareMatrix<Scalar,2>::col(unsigned int i) const
 {
 // #ifndef __CUDA_ARCH__
 //     if(i>=2)
@@ -84,6 +96,20 @@ COMM_FUNC const Vector<Scalar,2> SquareMatrix<Scalar,2>::colVector(unsigned int 
 // #endif
     Vector<Scalar,2> result((*this)(0,i),(*this)(1,i));
     return result;
+}
+
+template <typename Scalar>
+COMM_FUNC void SquareMatrix<Scalar, 2>::setRow(unsigned int i, Vector<Scalar, 2>& vec)
+{
+	data_[0][i] = vec[0];
+	data_[1][i] = vec[1];
+}
+
+template <typename Scalar>
+COMM_FUNC void SquareMatrix<Scalar, 2>::setCol(unsigned int j, Vector<Scalar, 2>& vec)
+{
+	data_[j][0] = vec[0];
+	data_[j][1] = vec[1];
 }
 
 template <typename Scalar>
@@ -110,6 +136,14 @@ COMM_FUNC SquareMatrix<Scalar,2>& SquareMatrix<Scalar,2>::operator-= (const Squa
 {
     data_ -= mat2.data_;
     return *this;
+}
+
+
+template <typename Scalar>
+COMM_FUNC SquareMatrix<Scalar, 2>& SquareMatrix<Scalar, 2>::operator=(const SquareMatrix<Scalar, 2> &mat)
+{
+	data_ = mat.data_;
+	return *this;
 }
 
 template <typename Scalar>
@@ -199,12 +233,6 @@ COMM_FUNC const SquareMatrix<Scalar,2> SquareMatrix<Scalar,2>::inverse() const
     SquareMatrix<Scalar, 2> res;
     res.data_ = glm::inverse(data_);
 
-// #ifndef __CUDA_ARCH__
-//     double fir_ele = static_cast<double>(res(0, 0));
-//     if(std::isnan(fir_ele) == true || std::isinf(fir_ele) == true)
-//         throw PhysikaException("Matrix not invertible!");
-// #endif
-
     return res;
 }
 
@@ -238,6 +266,30 @@ COMM_FUNC Scalar SquareMatrix<Scalar,2>::frobeniusNorm() const
         for (unsigned int j = 0; j < 2; ++j)
             result += (*this)(i, j)*(*this)(i, j);
     return glm::sqrt(result);
+}
+
+template <typename Scalar>
+COMM_FUNC Scalar SquareMatrix<Scalar, 2>::oneNorm() const
+{
+	const SquareMatrix<Scalar, 2>& A = (*this);
+	const Scalar sum1 = fabs(A(0, 0)) + fabs(A(1, 0));
+	const Scalar sum2 = fabs(A(0, 1)) + fabs(A(1, 1));
+	Scalar maxSum = sum1;
+	if (sum2 > maxSum)
+		maxSum = sum2;
+	return maxSum;
+}
+
+template <typename Scalar>
+COMM_FUNC Scalar SquareMatrix<Scalar, 2>::infNorm() const
+{
+	const SquareMatrix<Scalar, 2>& A = (*this);
+	const Scalar sum1 = fabs(A(0, 0)) + fabs(A(0, 1));
+	const Scalar sum2 = fabs(A(1, 0)) + fabs(A(1, 1));
+	Scalar maxSum = sum1;
+	if (sum2 > maxSum)
+		maxSum = sum2;
+	return maxSum;
 }
 
 template <typename Scalar>

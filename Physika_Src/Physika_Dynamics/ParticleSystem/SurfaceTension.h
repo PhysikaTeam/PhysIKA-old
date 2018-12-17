@@ -1,15 +1,11 @@
 #pragma once
-#include "Physika_Core/Platform.h"
-#include "Physika_Framework/Framework/Module.h"
-#include "Physika_Core/Cuda_Array/Array.h"
-#include "Physika_Core/DataTypes.h"
-#include "Kernel.h"
+#include "Physika_Framework/Framework/ModuleForce.h"
 #include "Physika_Framework/Framework/FieldArray.h"
 
 namespace Physika {
 
 	template<typename TDataType>
-	class SurfaceTension : public Physika::Module
+	class SurfaceTension : public ForceModule
 	{
 	public:
 		typedef typename TDataType::Real Real;
@@ -20,14 +16,24 @@ namespace Physika {
 		
 		bool execute() override;
 
-		bool updateStates() override;
+		bool applyForce() override;
 
-// 		static SurfaceTension* Create(ParticleSystem<TDataType>* parent, DeviceType deviceType = DeviceType::GPU)
-// 		{
-// 			return new SurfaceTension(parent, deviceType);
-// 		}
+		void setPositionID(FieldID id) { m_posID = id; }
+		void setVelocityID(FieldID id) { m_velID = id; }
+		void setNeighborhoodID(FieldID id) { m_neighborhoodID = id; }
+
+		void setIntensity(Real intensity) { m_intensity = intensity; }
+		void setSmoothingLength(Real len) { m_soothingLength = len; }
+
+	protected:
+		FieldID m_posID;
+		FieldID m_velID;
+		FieldID m_neighborhoodID;
 
 	private:
+		Real m_intensity;
+		Real m_soothingLength;
+
 		DeviceArrayField<Real>* m_energy;
 	};
 

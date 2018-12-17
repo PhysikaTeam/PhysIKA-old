@@ -94,8 +94,8 @@ class Object
 {
 	DECLARE_CLASS(Object)
 public:
-	Object() {}
-	virtual ~Object() {}
+	Object() {};
+	virtual ~Object() {};
 	static bool registerClass(ClassInfo* ci);
 	static Object* createObject(std::string name);
 };

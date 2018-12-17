@@ -111,8 +111,10 @@ namespace Physika {
 // 				break;
 // 			}
 // 		}
-
-		m_alloc->releaseMemory((void**)&m_data);
+		if (m_data != NULL)
+		{
+			m_alloc->releaseMemory((void**)&m_data);
+		}
 		
 		m_data = NULL;
 		m_totalNum = 0;

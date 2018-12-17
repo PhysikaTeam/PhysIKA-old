@@ -15,7 +15,7 @@ namespace Physika {
 
 		COMM_FUNC Rigid()
 			: m_p(0)
-			, m_quat(Quaternion<Scalar>::identityQuaternion())
+			, m_quat(Quaternion<Scalar>::Identity())
 		{};
 
 		COMM_FUNC Rigid(Vector<Scalar, 3> p, Quaternion<Scalar> quat)

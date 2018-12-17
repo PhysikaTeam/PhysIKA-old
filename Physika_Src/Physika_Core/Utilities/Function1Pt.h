@@ -10,7 +10,7 @@ namespace Physika
 	namespace Function1Pt
 	{ 
 		template<typename T, DeviceType dType1, DeviceType dType2>
-		void Copy(Array<T, dType1>& arr1, Array<T, dType2>& arr2)
+		void copy(Array<T, dType1>& arr1, Array<T, dType2>& arr2)
 		{
 			assert(arr1.size() == arr2.size());
 			int totalNum = arr1.size();
@@ -21,7 +21,7 @@ namespace Physika
 		}
 
 		template<typename T, DeviceType deviceType>
-		void Copy(Array<T, deviceType>& arr, std::vector<T>& vec)
+		void copy(Array<T, deviceType>& arr, std::vector<T>& vec)
 		{
 			assert(vec.size() == arr.size());
 			int totalNum = arr.size();
@@ -39,7 +39,7 @@ namespace Physika
 		}
 
 		template<typename T, DeviceType dType1, DeviceType dType2>
-		void Copy(Array2D<T, dType1>& g1, Array2D<T, dType1>& g2)
+		void copy(Array2D<T, dType1>& g1, Array2D<T, dType1>& g2)
 		{
 			assert(g1.Size() == g2.Size() && g1.Nx()() == g2.Nx() && g2.Ny() == g2.Ny());
 			int totalNum = g1.Size();
@@ -50,7 +50,7 @@ namespace Physika
 		}
 
 		template<typename T, DeviceType dType1, DeviceType dType2>
-		void Copy(Array3D<T, dType1>& g1, Array3D<T, dType1>& g2)
+		void copy(Array3D<T, dType1>& g1, Array3D<T, dType1>& g2)
 		{
 			assert(g1.Size() == g2.Size() && g1.Nx()() == g2.Nx() && g2.Ny() == g2.Ny() && g1.Nz() == g2.Nz());
 			int totalNum = g1.Size();

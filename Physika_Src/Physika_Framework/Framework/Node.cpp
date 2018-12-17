@@ -204,7 +204,7 @@ bool Node::addModule(std::string name, Module* module)
 */
 bool Node::addModule(std::shared_ptr<Module> module)
 {
-	std::list<std::shared_ptr<Module>>::iterator found = std::find(m_module_list.begin(), m_module_list.end(), module);
+	auto found = std::find(m_module_list.begin(), m_module_list.end(), module);
 	if (found == m_module_list.end())
 	{
 		m_module_list.push_back(module);
@@ -217,7 +217,14 @@ bool Node::addModule(std::shared_ptr<Module> module)
 
 bool Node::deleteModule(std::shared_ptr<Module> module)
 {
-	return false;
+	auto found = std::find(m_module_list.begin(), m_module_list.end(), module);
+	if (found != m_module_list.end())
+	{
+		m_module_list.erase(found);
+		return true;
+	}
+		
+	return true;
 }
 
 void Node::doTraverse(Action* act)

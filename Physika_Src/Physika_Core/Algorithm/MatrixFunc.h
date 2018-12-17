@@ -4,11 +4,11 @@
 
 namespace Physika
 {
-	template <typename Real, int Dim>
-	COMM_FUNC SquareMatrix<Real, Dim> inverse(const SquareMatrix<Real, Dim> mat);
-
 	template<typename Real, int Dim>
 	COMM_FUNC void polarDecomposition(const SquareMatrix<Real, Dim> &A, SquareMatrix<Real, Dim> &R, SquareMatrix<Real, Dim> &U, SquareMatrix<Real, Dim> &D);
+
+	template<typename Real, int Dim>
+	COMM_FUNC void polarDecomposition(const SquareMatrix<Real, Dim> &M, SquareMatrix<Real, Dim> &R, Real tolerance);
 }
 
 #include "MatrixFunc.inl"

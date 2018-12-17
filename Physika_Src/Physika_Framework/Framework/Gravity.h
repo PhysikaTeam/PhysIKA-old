@@ -14,9 +14,14 @@ public:
 	Gravity();
 	virtual ~Gravity();
 
-	void applyForce() override;
+	bool applyForce() override;
 
 	void setGravity(Coord g) { m_gravity = g; }
+
+	void setMassID(FieldID id) { m_massID = id; }
+protected:
+	FieldID m_massID;
+
 private:
 	Coord m_gravity;
 };

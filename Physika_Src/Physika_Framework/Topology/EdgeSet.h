@@ -11,7 +11,7 @@ namespace Physika
 		typedef typename TDataType::Coord Coord;
 
 		EdgeSet();
-		~EdgeSet();
+		~EdgeSet() override;
 
 		void updatePointNeighbors() override;
 

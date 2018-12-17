@@ -2,6 +2,7 @@
 #include <vector_types.h>
 #include <vector>
 #include "Physika_Core/DataTypes.h"
+#include "Physika_Core/Platform.h"
 #include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Framework/NumericalModel.h"
 #include "Physika_Core/Quaternion/quaternion.h"

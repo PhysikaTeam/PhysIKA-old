@@ -14,6 +14,8 @@ template<typename T, DeviceType deviceType = DeviceType::CPU>
 class VarField : public Field
 {
 public:
+	typedef T VarType;
+
 	VarField(std::string name, std::string description);
 
 public:
@@ -30,11 +32,6 @@ public:
 	inline T* getDataPtr() { return m_data; }
 
 	void reset() override;
-
-// 	static std::shared_ptr< Variable<T, deviceType> > 	create(std::string name, std::string description)
-// 	{
-// 		return TypeInfo::New<Variable<T, deviceType>>(name, description);
-// 	}
 
 	static std::shared_ptr< VarField<T, deviceType> >
 		createField(Base* module, std::string name, std::string description, T value)

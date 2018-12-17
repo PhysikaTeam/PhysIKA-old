@@ -21,7 +21,7 @@ public:
 	typedef FixedVector<PointType, 8>	Hexahedron;
 public:
 	TopologyModule();
-	virtual ~TopologyModule();
+	~TopologyModule() override;
 
 	virtual int getDOF() { return 0; }
 

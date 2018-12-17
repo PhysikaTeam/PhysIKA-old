@@ -34,7 +34,7 @@ namespace Physika
 	{
 		if (from.size() == to.size())
 		{
-			Function1Pt::Copy(to, from);
+			Function1Pt::copy(to, from);
 		}
 		else
 		{

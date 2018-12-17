@@ -41,8 +41,8 @@ public:
     COMM_FUNC SquareMatrix(Scalar x00, Scalar x01, Scalar x02, Scalar x10, Scalar x11, Scalar x12, Scalar x20, Scalar x21, Scalar x22);
     COMM_FUNC SquareMatrix(const Vector<Scalar,3> &row1, const Vector<Scalar,3> &row2, const Vector<Scalar,3> &row3);
     
-    COMM_FUNC SquareMatrix(const SquareMatrix<Scalar,3>&) = default;
-    COMM_FUNC ~SquareMatrix() = default;
+    COMM_FUNC SquareMatrix(const SquareMatrix<Scalar,3>&);
+    COMM_FUNC ~SquareMatrix();
 
     COMM_FUNC  static unsigned int rows() {return 3;}
     COMM_FUNC  static unsigned int cols() {return 3;}
@@ -50,15 +50,18 @@ public:
     COMM_FUNC Scalar& operator() (unsigned int i, unsigned int j );
     COMM_FUNC const Scalar& operator() (unsigned int i, unsigned int j) const;
 
-    COMM_FUNC const Vector<Scalar,3> rowVector(unsigned int i) const;
-    COMM_FUNC const Vector<Scalar,3> colVector(unsigned int i) const;
+    COMM_FUNC const Vector<Scalar,3> row(unsigned int i) const;
+    COMM_FUNC const Vector<Scalar,3> col(unsigned int i) const;
+
+	COMM_FUNC void setRow(unsigned int i, Vector<Scalar, 3>& vec);
+	COMM_FUNC void setCol(unsigned int j, Vector<Scalar, 3>& vec);
 
     COMM_FUNC const SquareMatrix<Scalar,3> operator+ (const SquareMatrix<Scalar,3> &) const;
     COMM_FUNC SquareMatrix<Scalar,3>& operator+= (const SquareMatrix<Scalar,3> &);
     COMM_FUNC const SquareMatrix<Scalar,3> operator- (const SquareMatrix<Scalar,3> &) const;
     COMM_FUNC SquareMatrix<Scalar,3>& operator-= (const SquareMatrix<Scalar,3> &);
 
-    COMM_FUNC SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &) = default;
+    COMM_FUNC SquareMatrix<Scalar,3>& operator= (const SquareMatrix<Scalar,3> &);
 
     COMM_FUNC bool operator== (const SquareMatrix<Scalar,3> &) const;
     COMM_FUNC bool operator!= (const SquareMatrix<Scalar,3> &) const;
@@ -82,19 +85,8 @@ public:
     COMM_FUNC Scalar trace() const;
     COMM_FUNC Scalar doubleContraction(const SquareMatrix<Scalar,3> &) const;//double contraction
     COMM_FUNC Scalar frobeniusNorm() const;
-
-	void singularValueDecomposition(SquareMatrix<Scalar, 3> &left_singular_vectors,
-                                    Vector<Scalar,3> &singular_values,   //singular values are in descending order
-                                    SquareMatrix<Scalar,3> &right_singular_vectors) const;
-
-    void singularValueDecomposition(SquareMatrix<Scalar,3> &left_singular_vectors,
-                                    SquareMatrix<Scalar,3> &singular_values_diagonal,   //singular values in descending order as a diagonal matrix
-                                    SquareMatrix<Scalar,3> &right_singular_vectors) const;
-
-    void eigenDecomposition(Vector<Scalar,3> &eigen_values_real, 
-                            Vector<Scalar,3> &eigen_values_imag,
-                            SquareMatrix<Scalar,3> &eigen_vectors_real,
-                            SquareMatrix<Scalar,3> &eigen_vectors_imag);
+	COMM_FUNC Scalar oneNorm() const;
+	COMM_FUNC Scalar infNorm() const;
 
     COMM_FUNC static const SquareMatrix<Scalar,3> identityMatrix();
 
@@ -113,25 +105,6 @@ private:
     }
 
 };
-
-//overriding << for SquareMatrix<Scalar,3>
-// template <typename Scalar>
-// inline std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,3> &mat)
-// {
-//     if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
-//     {
-//         s<<"["<<static_cast<int>(mat(0,0))<<", "<<static_cast<int>(mat(0,1))<<", "<<static_cast<int>(mat(0,2))<<"; ";
-//         s<<static_cast<int>(mat(1,0))<<", "<<static_cast<int>(mat(1,1))<<", "<<static_cast<int>(mat(1,2))<<"; ";
-//         s<<static_cast<int>(mat(2,0))<<", "<<static_cast<int>(mat(2,1))<<", "<<static_cast<int>(mat(2,2))<<"]";
-//     }
-//     else
-//     {
-//         s<<"["<<mat(0,0)<<", "<<mat(0,1)<<", "<<mat(0,2)<<"; ";
-//         s<<mat(1,0)<<", "<<mat(1,1)<<", "<<mat(1,2)<<"; ";
-//         s<<mat(2,0)<<", "<<mat(2,1)<<", "<<mat(2,2)<<"]";
-//     }
-//     return s;
-// }
 
 //make * operator commutative
 template <typename S, typename T>

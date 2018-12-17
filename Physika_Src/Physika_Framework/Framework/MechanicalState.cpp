@@ -15,8 +15,7 @@ namespace Physika
 	void MechanicalState::resetForce()
 	{
 		resetField(MechanicalState::force());
-		resetField(MechanicalState::forceMoment());
-		resetField(MechanicalState::d_force());
+		resetField(MechanicalState::torque());
 	}
 
 	void MechanicalState::resetField(std::string name)
@@ -26,6 +25,36 @@ namespace Physika
 		{
 			field->reset();
 		}
+	}
+
+	FieldID MechanicalState::addAuxiliaryID(FieldID id)
+	{
+		m_auxIDs.insert(id);
+		return id;
+	}
+
+	void MechanicalState::deleteAuxiliaryID(FieldID id)
+	{
+		if (hasAuxiliaryID(id))
+		{
+			m_auxIDs.erase(id);
+		}
+	}
+
+	void MechanicalState::clearAllIDs()
+	{
+		m_auxIDs.clear();
+	}
+
+	bool MechanicalState::hasAuxiliaryID(FieldID id)
+	{
+		auto ret = m_auxIDs.find(id);
+		if (ret == m_auxIDs.end())
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 }

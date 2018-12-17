@@ -1,4 +1,5 @@
 #pragma once
+#include "Physika_Core/Platform.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 
 namespace Physika {
@@ -7,15 +8,15 @@ namespace Physika {
 	class Kernel
 	{
 	public:
-		__host__ __device__ Kernel() {};
-		__host__ __device__ ~Kernel() {};
+		COMM_FUNC Kernel() {};
+		COMM_FUNC ~Kernel() {};
 
-		__host__ __device__ inline virtual Real Weight(const Real r, const Real h)
+		COMM_FUNC inline virtual Real Weight(const Real r, const Real h)
 		{
 			return Real(0);
 		}
 
-		__host__ __device__ inline virtual Real Gradient(const Real r, const Real h)
+		COMM_FUNC inline virtual Real Gradient(const Real r, const Real h)
 		{
 			return Real(0);
 		}
@@ -26,10 +27,10 @@ namespace Physika {
 	class SpikyKernel : public Kernel<Real>
 	{
 	public:
-		__host__ __device__ SpikyKernel() : Kernel<Real>() {};
-		__host__ __device__ ~SpikyKernel() {};
+		COMM_FUNC SpikyKernel() : Kernel<Real>() {};
+		COMM_FUNC ~SpikyKernel() {};
 
-		__host__ __device__ inline Real Weight(const Real r, const Real h) override
+		COMM_FUNC inline Real Weight(const Real r, const Real h) override
 		{
 			const Real q = r / h;
 			if (q > 1.0f) return 0.0f;
@@ -40,7 +41,7 @@ namespace Physika {
 			}
 		}
 
-		__host__ __device__ inline Real Gradient(const Real r, const Real h) override
+		COMM_FUNC inline Real Gradient(const Real r, const Real h) override
 		{
 			const Real q = r / h;
 			if (q > 1.0f) return 0.0;
@@ -58,10 +59,10 @@ namespace Physika {
 	class CubicKernel : public Kernel<Real>
 	{
 	public:
-		__host__ __device__ CubicKernel() : Kernel<Real>() {};
-		__host__ __device__ ~CubicKernel() {};
+		COMM_FUNC CubicKernel() : Kernel<Real>() {};
+		COMM_FUNC ~CubicKernel() {};
 
-		__host__ __device__ inline Real Weight(const Real r, const Real h) override
+		COMM_FUNC inline Real Weight(const Real r, const Real h) override
 		{
 			const Real hh = h*h;
 			const Real q = 2.0f*r / h;
@@ -84,7 +85,7 @@ namespace Physika {
 			}
 		}
 
-		__host__ __device__ inline Real Gradient(const Real r, const Real h) override
+		COMM_FUNC inline Real Gradient(const Real r, const Real h) override
 		{
 			const Real hh = h*h;
 			const Real q = 2.0f*r / h;
@@ -112,10 +113,10 @@ namespace Physika {
 	class SmoothKernel : public Kernel<Real>
 	{
 	public:
-		__host__ __device__ SmoothKernel() : Kernel<Real>() {};
-		__host__ __device__ ~SmoothKernel() {};
+		COMM_FUNC SmoothKernel() : Kernel<Real>() {};
+		COMM_FUNC ~SmoothKernel() {};
 
-		__host__ __device__ inline Real Weight(const Real r, const Real h) override
+		COMM_FUNC inline Real Weight(const Real r, const Real h) override
 		{
 			const Real q = r / h;
 			if (q > 1.0f) return 0.0f;
@@ -124,7 +125,7 @@ namespace Physika {
 			}
 		}
 
-		__host__ __device__ inline Real Gradient(const Real r, const Real h) override
+		COMM_FUNC inline Real Gradient(const Real r, const Real h) override
 		{
 			const Real q = r / h;
 			if (q > 1.0f) return 0.0f;
@@ -141,10 +142,10 @@ namespace Physika {
 	class QuarticKernel : public Kernel<Real>
 	{
 	public:
-		__host__ __device__ QuarticKernel() : Kernel<Real>() {};
-		__host__ __device__ ~QuarticKernel() {};
+		COMM_FUNC QuarticKernel() : Kernel<Real>() {};
+		COMM_FUNC ~QuarticKernel() {};
 
-		__host__ __device__ inline Real Weight(const Real r, const Real h) override
+		COMM_FUNC inline Real Weight(const Real r, const Real h) override
 		{
 			const Real hh = h*h;
 			const Real q = 2.5f*r / h;
@@ -175,7 +176,7 @@ namespace Physika {
 			}
 		}
 
-		__host__ __device__ inline Real Gradient(const Real r, const Real h) override
+		COMM_FUNC inline Real Gradient(const Real r, const Real h) override
 		{
 			const Real hh = h*h;
 			const Real q = 2.5f*r / h;

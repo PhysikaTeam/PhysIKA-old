@@ -41,9 +41,8 @@ public:
     COMM_FUNC SquareMatrix(Scalar x00, Scalar x01, Scalar x10, Scalar x11);
     COMM_FUNC SquareMatrix(const Vector<Scalar,2> &row1, const Vector<Scalar,2> &row2);
 
-
-    COMM_FUNC SquareMatrix(const SquareMatrix<Scalar,2> &) = default;
-    COMM_FUNC ~SquareMatrix() = default;
+    COMM_FUNC SquareMatrix(const SquareMatrix<Scalar,2> &);
+    COMM_FUNC ~SquareMatrix();
 
     COMM_FUNC static unsigned int rows() {return 2;}
     COMM_FUNC static unsigned int cols() {return 2;}
@@ -51,15 +50,18 @@ public:
     COMM_FUNC Scalar& operator() (unsigned int i, unsigned int j);
     COMM_FUNC const Scalar& operator() (unsigned int i, unsigned int j) const;
 
-    COMM_FUNC const Vector<Scalar,2> rowVector(unsigned int i) const;
-    COMM_FUNC const Vector<Scalar,2> colVector(unsigned int i) const;
+    COMM_FUNC const Vector<Scalar,2> row(unsigned int i) const;
+    COMM_FUNC const Vector<Scalar,2> col(unsigned int i) const;
+
+	COMM_FUNC void setRow(unsigned int i, Vector<Scalar, 2>& vec);
+	COMM_FUNC void setCol(unsigned int j, Vector<Scalar, 2>& vec);
 
     COMM_FUNC const SquareMatrix<Scalar,2> operator+ (const SquareMatrix<Scalar,2> &) const;
     COMM_FUNC SquareMatrix<Scalar,2>& operator+= (const SquareMatrix<Scalar,2> &);
     COMM_FUNC const SquareMatrix<Scalar,2> operator- (const SquareMatrix<Scalar,2> &) const;
     COMM_FUNC SquareMatrix<Scalar,2>& operator-= (const SquareMatrix<Scalar,2> &);
 
-    COMM_FUNC SquareMatrix<Scalar,2>& operator= (const SquareMatrix<Scalar,2> &) = default;
+    COMM_FUNC SquareMatrix<Scalar,2>& operator= (const SquareMatrix<Scalar,2> &);
 
     COMM_FUNC bool operator== (const SquareMatrix<Scalar,2> &) const;
     COMM_FUNC bool operator!= (const SquareMatrix<Scalar,2> &) const;
@@ -84,19 +86,8 @@ public:
     COMM_FUNC Scalar trace() const;
     COMM_FUNC Scalar doubleContraction(const SquareMatrix<Scalar,2> &) const;//double contraction
     COMM_FUNC Scalar frobeniusNorm() const;
-
-    void singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
-                                    Vector<Scalar,2> &singular_values,   //singular values are in descending order
-                                    SquareMatrix<Scalar,2> &right_singular_vectors) const;
-
-    void singularValueDecomposition(SquareMatrix<Scalar,2> &left_singular_vectors,
-                                    SquareMatrix<Scalar,2> &singular_values_diagonal,   //singular values in descending order as a diagonal matrix
-                                    SquareMatrix<Scalar,2> &right_singular_vectors) const;
-
-    void eigenDecomposition(Vector<Scalar,2> &eigen_values_real,
-                            Vector<Scalar,2> &eigen_values_imag,
-                            SquareMatrix<Scalar,2> &eigen_vectors_real,
-                            SquareMatrix<Scalar,2> &eigen_vectors_imag);
+	COMM_FUNC Scalar oneNorm() const;
+	COMM_FUNC Scalar infNorm() const;
 
     COMM_FUNC static const SquareMatrix<Scalar,2> identityMatrix();
 

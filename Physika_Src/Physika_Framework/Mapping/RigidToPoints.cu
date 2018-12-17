@@ -29,7 +29,7 @@ namespace Physika
 	{
 		m_refRigid = rigid;
 		m_refPoints.resize(points.size());
-		Function1Pt::Copy(m_refPoints, points);
+		Function1Pt::copy(m_refPoints, points);
 	}
 
 	template <typename Coord, typename Rigid, typename Matrix>

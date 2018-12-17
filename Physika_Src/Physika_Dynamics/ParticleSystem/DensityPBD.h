@@ -1,19 +1,17 @@
-#ifndef FRAMEWORK_DENSITYPBD_H
-#define FRAMEWORK_DENSITYPBD_H
-
-#include "Physika_Core/Platform.h"
-#include "Physika_Core/DataTypes.h"
-#include "Physika_Framework/Framework/Module.h"
+#pragma once
 #include "Physika_Core/Cuda_Array/Array.h"
-#include "DensityConstraint.h"
-#include "Kernel.h"
-#include "SummationDensity.h"
-#include "Attribute.h"
+#include "Physika_Framework/Framework/ModuleConstraint.h"
 
 namespace Physika {
 
+	template<typename TDataType> class DensitySummation;
+
+	/*!
+	*	\class	DensityPBD
+	*	\brief	This class implements a position-based solver for incompressibility.
+	*/
 	template<typename TDataType>
-	class DensityPBD : public DensityConstraint<TDataType>
+	class DensityPBD : public ConstraintModule
 	{
 		DECLARE_CLASS_1(DensityPBD, TDataType)
 	public:
@@ -21,26 +19,36 @@ namespace Physika {
 		typedef typename TDataType::Coord Coord;
 
 		DensityPBD();
-		~DensityPBD() override {};
+		~DensityPBD() override;
 
-		bool execute() override;
+		bool constrain() override;
 
-// 		static DensityPBD* Create(ParticleSystem<TDataType>* parent, DeviceType deviceType = DeviceType::GPU)
-// 		{
-// 			return new DensityPBD(parent, deviceType);
-// 		}
-		bool connectAttribute(std::shared_ptr<Field>& att) { return connect(att, m_attribute); }
-		bool connectMass(std::shared_ptr<Field>& mass) { return connect(mass, m_mass); }
+		void setMassID(FieldID id) { m_massID = id; }
+		void setPositionID(FieldID id) { m_posID = id; }
+		void setVelocityID(FieldID id) { m_velID = id; }
+		void setNeighborhoodID(FieldID id) {m_neighborhoodID = id; }
+
+		void setIterationNumber(int n) { m_maxIteration = n; }
+		void setSmoothingLength(Real len) { m_smoothingLength = len; }
 
 	protected:
-		int m_maxIteration;
-		DeviceArrayField<Real>* m_lamda;
-		DeviceArrayField<Coord>* m_deltaPos;
-		
-		Slot<HostVarField<Real>>  m_mass;
-		Slot<DeviceArrayField<Attribute>> m_attribute;
+		bool initializeImpl() override;
 
-		SummationDensity<TDataType>* densitySum;
+	protected:
+		FieldID m_massID;
+		FieldID m_posID;
+		FieldID m_velID;
+		FieldID m_neighborhoodID;
+
+	private:
+		int m_maxIteration;
+		Real m_smoothingLength;
+
+		DeviceArray<Real> m_rhoArr;
+		DeviceArray<Real> m_lamda;
+		DeviceArray<Coord> m_deltaPos;
+
+		std::shared_ptr<DensitySummation<TDataType>> m_densitySum;
 	};
 
 
@@ -50,5 +58,3 @@ namespace Physika {
  	template class DensityPBD<DataType3d>;
 #endif
 }
-
-#endif

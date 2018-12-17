@@ -36,10 +36,10 @@ public:
     COMM_FUNC Vector();
     COMM_FUNC explicit Vector(Scalar);
     COMM_FUNC Vector(Scalar x, Scalar y);
-    COMM_FUNC Vector(const Vector<Scalar,2>&) = default;
-    COMM_FUNC ~Vector() = default;
+    COMM_FUNC Vector(const Vector<Scalar,2>&);
+    COMM_FUNC ~Vector();
 
-    COMM_FUNC static const int dims() {return 2;}
+    COMM_FUNC static const int dims() {return (const int)2;}
 
     COMM_FUNC Scalar& operator[] (unsigned int);
     COMM_FUNC const Scalar& operator[] (unsigned int) const;
@@ -53,7 +53,7 @@ public:
 	COMM_FUNC const Vector<Scalar, 2> operator/ (const Vector<Scalar, 2> &) const;
 	COMM_FUNC Vector<Scalar, 2>& operator/= (const Vector<Scalar, 2> &);
 
-    COMM_FUNC Vector<Scalar,2>& operator= (const Vector<Scalar,2> &) = default;
+    COMM_FUNC Vector<Scalar,2>& operator= (const Vector<Scalar,2> &);
 
     COMM_FUNC bool operator== (const Vector<Scalar,2> &) const;
     COMM_FUNC bool operator!= (const Vector<Scalar,2> &) const;

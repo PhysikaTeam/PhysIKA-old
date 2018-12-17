@@ -52,7 +52,7 @@ public:
 
 private:
     bool use_custom_color_ = true;
-	int m_lineWidth = 2.0f;
+	int m_lineWidth = 2;
 
 	bool m_bShowWireframe = false;
 	bool m_bEnableLighting = false;

@@ -41,6 +41,19 @@ COMM_FUNC Vector<Scalar,4>::Vector(Scalar x, Scalar y, Scalar z, Scalar w)
 }
 
 template <typename Scalar>
+COMM_FUNC Vector<Scalar, 4>::Vector(const Vector<Scalar, 4>& vec2)
+	: data_(vec2.data_)
+{
+
+}
+
+template <typename Scalar>
+COMM_FUNC Vector<Scalar, 4>::~Vector()
+{
+
+}
+
+template <typename Scalar>
 COMM_FUNC Scalar& Vector<Scalar,4>::operator[] (unsigned int idx)
 {
     return const_cast<Scalar &> (static_cast<const Vector<Scalar, 4> &>(*this)[idx]);
@@ -105,6 +118,13 @@ template <typename Scalar>
 COMM_FUNC Vector<Scalar, 4>& Vector<Scalar, 4>::operator/=(const Vector<Scalar, 4> &vec2)
 {
 	data_[0] /= vec2.data_[0];	data_[1] /= vec2.data_[1];	data_[2] /= vec2.data_[2];	data_[3] /= vec2.data_[3];
+	return *this;
+}
+
+template <typename Scalar>
+COMM_FUNC Vector<Scalar, 4>& Vector<Scalar, 4>::operator=(const Vector<Scalar, 4> & vec2)
+{
+	data_ = vec2.data_;
 	return *this;
 }
 

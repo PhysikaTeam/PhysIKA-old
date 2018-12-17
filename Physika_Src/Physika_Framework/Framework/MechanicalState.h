@@ -3,6 +3,7 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
+#include <set>
 #include "Physika_Core/Platform.h"
 #include "Physika_Core/Typedef.h"
 #include "Physika_Framework/Framework/Module.h"
@@ -25,24 +26,39 @@ public:
 	MechanicalState();
 	virtual ~MechanicalState(void);
 
-	static std::string position() { return "position"; }
-	static std::string pre_position() { return "pre_position"; }
-	static std::string d_position() { return "d_position"; }
-	static std::string init_position() { return "init_position"; }
 
-	static std::string velocity() { return "velocity"; }
-	static std::string angularVelocity() { return "angular_velocity"; }
-	static std::string pre_velocity() { return "pre_velocity"; }
+	/**
+	* @brief The following functions return the most commonly used Field IDs
+	*/
+	static FieldID position() { return "position"; }
+	static FieldID pre_position() { return "pre_position"; }
+	static FieldID init_position() { return "init_position"; }
 
-	static std::string acceleration() { return "acceleration"; }
+	static FieldID velocity() { return "velocity"; }
+	static FieldID pre_velocity() { return "pre_velocity"; }
 
-	static std::string force() { return "force"; }
-	static std::string forceMoment() { return "force_moment"; }
-	static std::string d_force() { return "d_force"; }
+	static FieldID angularVelocity() { return "angular_velocity"; }
 	
-	static std::string mass() { return "mass"; }
-	static std::string angularMass() { return "angular_mass"; }
-	static std::string rotation() { return "rotation"; }
+	static FieldID acceleration() { return "acceleration"; }
+
+	static FieldID force() { return "force"; }
+	static FieldID torque() { return "force_moment"; }
+	
+	static FieldID mass() { return "mass"; }
+	static FieldID angularMass() { return "angular_mass"; }
+	static FieldID rotation() { return "rotation"; }
+
+
+	/**
+	* @brief The following functions return Field IDs for particle system
+	*/
+	static FieldID density() { return "density"; }
+	static FieldID volume() { return "volume"; }
+	static FieldID particle_neighbors() { return "particle_neighbors"; }
+	static FieldID particle_attribute() { return "particle_attribute"; }
+
+
+	static FieldID reference_particles() { return "reference_particles"; }
 
 	std::string getModuleType() override { return "MechanicalState"; }
 
@@ -51,7 +67,18 @@ public:
 
 	void resetForce();
 	void resetField(std::string name);
+
+	/**
+	* @brief The following functions operate on Field IDs that are specific to each numerical method
+	*/
+	FieldID addAuxiliaryID(FieldID id);
+	void deleteAuxiliaryID(FieldID id);
+	void clearAllIDs();
+	bool hasAuxiliaryID(FieldID id);
 private:
 	MaterialType m_type;
+
+	/**m_auxIDs is used to store extra field IDs */
+	std::set<FieldID> m_auxIDs;
 };
 }

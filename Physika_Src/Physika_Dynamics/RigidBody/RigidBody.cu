@@ -45,7 +45,7 @@ namespace Physika
 		auto points = pSet->getPoints();
 		HostArray<Coord> vertex;
 		vertex.resize(points->size());
-		Function1Pt::Copy(vertex, *points);
+		Function1Pt::copy(vertex, *points);
 		Coord cenPos(0);
 		for (size_t i = 0; i < vertex.size(); i++)
 		{
@@ -65,7 +65,7 @@ namespace Physika
 		auto vel = HostVarField<Coord>::createField(mstate.get(), MechanicalState::velocity(), "Translational velocity", Coord(0, 0, 0));
 		auto angularVel = HostVarField<RotateCoord>::createField(mstate.get(), MechanicalState::angularVelocity(), "Angular velocity", RotateCoord(0, 0, 10));
 		HostVarField<Coord>::createField(mstate.get(), MechanicalState::force(), "Force", Coord(0));
-		HostVarField<RotateCoord>::createField(mstate.get(), MechanicalState::forceMoment(), "Force moment", RotateCoord(0));
+		HostVarField<RotateCoord>::createField(mstate.get(), MechanicalState::torque(), "Force moment", RotateCoord(0));
 
 		m_mapping = std::make_shared<RigidToPoints<TDataType>>();
 		m_mapping->initialize(Rigid(cenPos, m_quaternion), *(pSet->getPoints()));
@@ -98,7 +98,7 @@ namespace Physika
 		Matrix angularMass = angularMassField->getValue();
 
 		Coord force = mstate->getField<HostVarField<Coord>>(MechanicalState::force())->getValue();
-		Coord forceMoment = mstate->getField<HostVarField<Coord>>(MechanicalState::forceMoment())->getValue();
+		Coord forceMoment = mstate->getField<HostVarField<Coord>>(MechanicalState::torque())->getValue();
 
 		Matrix invMass = angularMass;
 		angularVel += dt*(invMass*forceMoment);

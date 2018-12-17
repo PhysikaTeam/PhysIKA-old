@@ -1,156 +1,38 @@
 #include <cuda_runtime.h>
+#include "ElasticityModule.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Core/Algorithm/MatrixFunc.h"
-#include "ElasticityModule.h"
+#include "Kernel.h"
 
 namespace Physika
 {
-// 	struct EM_STATE
-// 	{
-// 		float mass;
-// 		float smoothingLength;
-// 		float samplingDistance;
-// 		float restDensity;
-// //		SmoothKernel<float> kernSmooth;
-// 	};
-// 
-// 	__constant__ EM_STATE const_em_state;
-
-
-	__device__ float OneNorm(const glm::mat3 &A)
-	{
-		const float sum1 = fabs(A[0][0]) + fabs(A[1][0]) + fabs(A[2][0]);
-		const float sum2 = fabs(A[0][1]) + fabs(A[1][1]) + fabs(A[2][1]);
-		const float sum3 = fabs(A[0][2]) + fabs(A[1][2]) + fabs(A[2][2]);
-		float maxSum = sum1;
-		if (sum2 > maxSum)
-			maxSum = sum2;
-		if (sum3 > maxSum)
-			maxSum = sum3;
-		return maxSum;
-	}
-
-
-	/** Return the inf norm of the matrix.
-	*/
-	__device__ float InfNorm(const glm::mat3 &A)
-	{
-		const float sum1 = fabs(A[0][0]) + fabs(A[1][0]) + fabs(A[2][0]);
-		const float sum2 = fabs(A[0][1]) + fabs(A[1][1]) + fabs(A[2][1]);
-		const float sum3 = fabs(A[0][2]) + fabs(A[1][2]) + fabs(A[2][2]);
-		float maxSum = sum1;
-		if (sum2 > maxSum)
-			maxSum = sum2;
-		if (sum3 > maxSum)
-			maxSum = sum3;
-		return maxSum;
-	}
-
-	__device__ void PolarDecompositionStable(
-		const glm::mat3 &M,
-		const float tolerance, 
-		glm::mat3 &R)
-	{
-		glm::mat3 Mt = glm::transpose(M);
-		float Mone = OneNorm(M);
-		float Minf = InfNorm(M);
-		float Eone;
-		glm::mat3 MadjTt, Et;
-		do
-		{
-			MadjTt[0] = glm::cross(Mt[1], Mt[2]);
-			MadjTt[1] = glm::cross(Mt[2], Mt[0]);
-			MadjTt[2] = glm::cross(Mt[0], Mt[1]);
-
-			float det = Mt[0][0] * MadjTt[0][0] + Mt[0][1] * MadjTt[0][1] + Mt[0][2] * MadjTt[0][2];
-
-			if (fabs(det) < 1.0e-12)
-			{
-				glm::vec3 len;
-				unsigned int index = 0xffffffff;
-				for (unsigned int i = 0; i < 3; i++)
-				{
-					len[i] = MadjTt[i].length();
-					if (len[i] > 1.0e-12)
-					{
-						// index of valid cross product
-						// => is also the index of the vector in Mt that must be exchanged
-						index = i;
-						break;
-					}
-				}
-				if (index == 0xffffffff)
-				{
-					R = glm::mat3();
-					return;
-				}
-				else
-				{
-					Mt[index] = glm::cross(Mt[(index + 1) % 3], Mt[(index + 2) % 3]);
-					MadjTt[(index + 1) % 3] = glm::cross(Mt[(index + 2) % 3], Mt[(index) % 3]);;
-					MadjTt[(index + 2) % 3] = glm::cross(Mt[(index) % 3], Mt[(index + 1) % 3]);
-					glm::mat3 M2 = glm::transpose(Mt);
-					Mone = OneNorm(M2);
-					Minf = InfNorm(M2);
-					det = Mt[0][0] * MadjTt[0][0] + Mt[0][1] * MadjTt[0][1] + Mt[0][2] * MadjTt[0][2];
-				}
-			}
-
-			const float MadjTone = OneNorm(MadjTt);
-			const float MadjTinf = InfNorm(MadjTt);
-
-			const float gamma = sqrt(sqrt((MadjTone*MadjTinf) / (Mone*Minf)) / fabs(det));
-
-			const float g1 = gamma*0.5f;
-			const float g2 = 0.5f / (gamma*det);
-
-			for (unsigned char i = 0; i < 3; i++)
-			{
-				for (unsigned char j = 0; j < 3; j++)
-				{
-					Et[i][j] = Mt[i][j];
-					Mt[i][j] = g1*Mt[i][j] + g2*MadjTt[i][j];
-					Et[i][j] -= Mt[i][j];
-				}
-			}
-
-			Eone = OneNorm(Et);
-
-			Mone = OneNorm(Mt);
-			Minf = InfNorm(Mt);
-		} while (Eone > Mone * tolerance);
-
-		// Q = Mt^T 
-		R = glm::transpose(Mt);
-	}
-
-	template <typename Real, typename Coord, typename Matrix, typename RestShape>
+	template <typename Real, typename Coord, typename Matrix, typename NPair>
 	__global__ void EM_PrecomputeShape(
-		DeviceArray<Matrix> matArr, 
-		DeviceArray<RestShape> restShapes,
+		DeviceArray<Matrix> matArr,
+		NeighborList<NPair> restShapes,
 		SmoothKernel<Real> kernSmooth,
-		Real smoothingLength,
-		Real samplingDistance)
+		Real smoothingLength)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= matArr.size()) return;
 
-		Coord rest_i = restShapes[pId].pos[restShapes[pId].idx];
-		int size_i = restShapes[pId].size;
+		NPair np_i = restShapes.getElement(pId, 0);
+		Coord rest_i = np_i.pos;
+		int size_i = restShapes.getNeighborSize(pId);
 
 		Real total_weight = 0.0f;
 		Matrix mat_i = Matrix(0);
 		for (int ne = 0; ne < size_i; ne++)
 		{
-			int j = restShapes[pId].ids[ne];
-			Real r = restShapes[pId].distance[ne];
+			NPair np_j = restShapes.getElement(pId, ne);
+			Coord rest_j = np_j.pos;
+			Real r = (rest_i-rest_j).norm();
 
 			if (r > EPSILON)
 			{
 				Real weight = kernSmooth.Weight(r, smoothingLength);
-				//Vector3f q = (shape_i.pos[ne] - rest_i)*(1.0f/r)*weight;
-				Coord q = (restShapes[pId].pos[ne] - rest_i)*sqrt(weight);
+				Coord q = (rest_j - rest_i)*sqrt(weight);
 
 				mat_i(0, 0) += q[0] * q[0]; mat_i(0, 1) += q[0] * q[1]; mat_i(0, 2) += q[0] * q[2];
 				mat_i(1, 0) += q[1] * q[0]; mat_i(1, 1) += q[1] * q[1]; mat_i(1, 2) += q[1] * q[2];
@@ -166,20 +48,19 @@ namespace Physika
 		}
 
 		Matrix R, U, D;
-		//PolarDecompositionNew<Real, Coord, Matrix>(mat_i, R, U, D);
 		polarDecomposition(mat_i, R, U, D);
 
-		Real threshold = 0.0001f*samplingDistance;
+		Real threshold = 0.0001f*smoothingLength;
 		D(0, 0) = D(0, 0) > threshold ? 1.0 / D(0, 0) : 1.0;
 		D(1, 1) = D(1, 1) > threshold ? 1.0 / D(1, 1) : 1.0;
 		D(2, 2) = D(2, 2) > threshold ? 1.0 / D(2, 2) : 1.0;
 
-		mat_i = U.transpose()*D*U*R.transpose();
+		mat_i = R.transpose()*U*D*U.transpose();
 
 		matArr[pId] = mat_i;
 	}
 
-	template <typename Real, typename Coord, typename Matrix, typename RestShape>
+/*	template <typename Real, typename Coord, typename Matrix, typename RestShape>
 	__global__ void EM_RotateRestShape(
 		DeviceArray<Coord> posArr,
 		DeviceArray<Matrix> matArr,
@@ -259,46 +140,49 @@ namespace Physika
 				restShapes[pId].pos[ne] = v3 + rest_i;
 			}
 		}
-	}
+	}*/
 
 	__device__ float EM_GetStiffness(int r)
 	{
 		return 10.0f;
 	}
 
-	template <typename Real, typename Coord, typename Matrix, typename RestShape>
+	template <typename Real, typename Coord, typename Matrix, typename NPair>
 	__global__ void EM_EnforceElasticity(
 		DeviceArray<Coord> accuPos,
 		DeviceArray<Real> accuLamdas,
 		DeviceArray<Real> bulkCoefs,
 		DeviceArray<Coord> posArr,
-		DeviceArray<Matrix> matArr, 
-		DeviceArray<RestShape> restShapes,
+		DeviceArray<Matrix> matArr,
+		NeighborList<NPair> restShapes,
 		SmoothKernel<Real> kernSmooth,
-		Real smoothingLength,
-		Real samplingDistance)
+		Real smoothingLength)
 	{
 
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
-		Coord rest_i = restShapes[pId].pos[restShapes[pId].idx];
-		int size_i = restShapes[pId].size;
+		NPair np_i = restShapes.getElement(pId, 0);
+		Coord rest_i = np_i.pos;
+		int size_i = restShapes.getNeighborSize(pId);
 
 		//			cout << i << " " << rids[shape_i.ids[shape_i.idx]] << endl;
 		Real total_weight = 0.0f;
 		Matrix deform_i = Matrix(0.0f);
 		for (int ne = 0; ne < size_i; ne++)
 		{
-			int j = restShapes[pId].ids[ne];
-			Real r = restShapes[pId].distance[ne];
+			NPair np_j = restShapes.getElement(pId, ne);
+			Coord rest_j = np_j.pos;
+			int j = np_j.j;
+
+			Real r = (rest_j - rest_i).norm();
 
 			if (r > EPSILON)
 			{
 				Real weight = kernSmooth.Weight(r, smoothingLength);
 
 				Coord p = (posArr[j] - posArr[pId]);
-				Coord q = (restShapes[pId].pos[ne] - rest_i)*weight;
+				Coord q = (rest_j - rest_i)*weight;
 
 				deform_i(0, 0) += p[0] * q[0]; deform_i(0, 1) += p[0] * q[1]; deform_i(0, 2) += p[0] * q[2];
 				deform_i(1, 0) += p[1] * q[0]; deform_i(1, 1) += p[1] * q[1]; deform_i(1, 2) += p[1] * q[2];
@@ -318,22 +202,25 @@ namespace Physika
 			total_weight = 1.0f;
 		}
 
-//		if ((deform_i.determinant()) < 0.01f)
-// 		{
-// 			deform_i = Matrix::identityMatrix();
-// 		}
-	
+		if ((deform_i.determinant()) < 0.01f)
+		{
+			deform_i = Matrix::identityMatrix();
+		}
+
 		Matrix mat_i = deform_i;
+
 		for (int ne = 0; ne < size_i; ne++)
 		{
-			int j = restShapes[pId].ids[ne];
-			Real r = restShapes[pId].distance[ne];
+			NPair np_j = restShapes.getElement(pId, ne);
+			Coord rest_j = np_j.pos;
+			int j = np_j.j;
+			Real r = (rest_j - rest_i).norm();
 
 			if (r > EPSILON)
 			{
 				Real weight = kernSmooth.Weight(r, smoothingLength);
 
-				Coord q = (rest_i - restShapes[pId].pos[ne])*(1.0f / r);
+				Coord q = (rest_i - rest_j)*(1.0f / r);
 				//Coord p = Vec2Float(Float2Vec(q)*mat_i);
 				Coord p = mat_i*q;
 				//p = normalize(p);
@@ -353,13 +240,13 @@ namespace Physika
 				Real l_i = dir_i.norm();
 
 				Real ratio = weight / total_weight;
-				Real cc = (samplingDistance / r);
-				if (r < 0.8*samplingDistance)
+				Real cc = (smoothingLength / r);
+				if (r < 0.8*smoothingLength)
 				{
 					cc = 1.0 / 0.8f;
 				}
 
-				Real bulk_ij = 1.0f*EM_GetStiffness(l_i/r)*ratio*cc*cc;
+				Real bulk_ij = 1.0f*EM_GetStiffness(l_i / r)*ratio*cc*cc;
 				Coord vec_ij = bulk_ij*dir_i;
 
 				atomicAdd(&accuLamdas[pId], bulk_ij);
@@ -380,25 +267,16 @@ namespace Physika
 	}
 
 	template <typename Real, typename Coord>
-	__global__ void EM_UpdatePosition(
+	__global__ void K_UpdatePosition(
 		DeviceArray<Coord> posArr,
 		DeviceArray<Coord> tmpPos,
 		DeviceArray<Coord> accuPos,
-		DeviceArray<Real> accuLambda,
-		DeviceArray<int> bFixed, 
-		DeviceArray<Coord> fixedPts)
+		DeviceArray<Real> accuLambda)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
-		if (bFixed[pId] > 0)
-		{
-			posArr[pId] = fixedPts[pId];
-		}
-		else
-		{
-			posArr[pId] = (tmpPos[pId] + accuPos[pId]) / (1.0f + accuLambda[pId]);
-		}
+		posArr[pId] = (tmpPos[pId] + accuPos[pId]) / (1.0f + accuLambda[pId]);
 
 // 		if (pId % 200 == 0)
 // 		{
@@ -407,7 +285,7 @@ namespace Physika
 	}
 
 	template <typename Real, typename Coord>
-	__global__ void EM_UpdateVelocity(
+	__global__ void K_UpdateVelocity(
 		DeviceArray<Coord> velArr,
 		DeviceArray<Coord> prePos,
 		DeviceArray<Coord> curPos,
@@ -422,26 +300,39 @@ namespace Physika
 	template<typename TDataType>
 	ElasticityModule<TDataType>::ElasticityModule()
 		: ConstraintModule()
+		, m_neighborhoodID(MechanicalState::particle_neighbors())
+		, m_initPosID(MechanicalState::init_position())
+		, m_posPreID(MechanicalState::pre_position())
 		, m_refMatrix(NULL)
 		, m_tmpPos(NULL)
 		, m_lambdas(NULL)
 		, m_accPos(NULL)
 		, m_bulkCoef(NULL)
+		, m_needUpdate(true)
+		, m_horizon(Real(0.0125))
 	{
 	}
 
 	template<typename TDataType>
-	bool ElasticityModule<TDataType>::execute()
+	bool ElasticityModule<TDataType>::constrain()
 	{
 		Real dt = getParent()->getDt();
 
-		DeviceArray<Coord>* posArr = m_position.getField().getDataPtr();
-		DeviceArray<Coord>* velArr = m_velocity.getField().getDataPtr();
-		DeviceArray<Coord>* prePosArr = m_prePosition.getField().getDataPtr();
+		auto mstate = getParent()->getMechanicalState();
+		if (!mstate)
+		{
+			std::cout << "Cannot find a parent node for SummationDensity!" << std::endl;
+		}
 
-		uint pDims = cudaGridSize(posArr->size(), BLOCK_SIZE);
-		
-		int num = posArr->size();
+		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
+		auto velFd = mstate->getField<DeviceArrayField<Coord>>(m_velID);
+		auto posPreFd = mstate->getField<DeviceArrayField<Coord>>(m_posPreID);
+		auto neighborFd = mstate->getField<NeighborField<int>>(m_neighborhoodID);
+
+
+		uint pDims = cudaGridSize(posFd->size(), BLOCK_SIZE);
+
+		int num = posFd->size();
 		if (NULL == m_refMatrix)
 			m_refMatrix = DeviceArrayField<Matrix>::create(num);
 		if (NULL == m_tmpPos)
@@ -453,22 +344,20 @@ namespace Physika
 		if (NULL == m_bulkCoef)
 			m_bulkCoef = DeviceArrayField<Real>::create(num);
 
-		DeviceArray<int>* states = m_state.getField().getDataPtr();
-		DeviceArray<Coord>* initPos = m_initPosition.getField().getDataPtr();
-
-		DeviceArray<RestShape>* restShapeArr = m_restShape.getField().getDataPtr();
 
 		DeviceArray<Matrix>* matArr = m_refMatrix->getDataPtr();
-
 		DeviceArray<Real>* lambda = m_lambdas->getDataPtr();
 		DeviceArray<Real>* bulks = m_bulkCoef->getDataPtr();
 		DeviceArray<Coord>* accPos = m_accPos->getDataPtr();
 		DeviceArray<Coord>* tmpPos = m_tmpPos->getDataPtr();
 
-		Real smoothingLength = m_radius.getField().getValue();
-		Real samplingDistance = m_samplingDistance.getField().getValue();
-		Function1Pt::Copy(*tmpPos, *posArr);
-		EM_PrecomputeShape <Real, Coord, Matrix, RestShape> << <pDims, BLOCK_SIZE >> > (*matArr, *restShapeArr, SmoothKernel<Real>(), smoothingLength, samplingDistance);
+		if (isUpdateRequired())
+		{
+			construct(neighborFd->getValue(), posFd->getValue());
+		}
+
+		Function1Pt::copy(*tmpPos, posFd->getValue());
+		EM_PrecomputeShape <Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (*matArr, m_refPos, SmoothKernel<Real>(), m_horizon);
 
 		int total_itoration = 5;
 		int itor = 0;
@@ -477,23 +366,77 @@ namespace Physika
 			accPos->reset();
 			lambda->reset();
 			EM_EnforceElasticity << <pDims, BLOCK_SIZE >> > (
-				*accPos, 
-				*lambda, 
-				*bulks, 
-				*posArr, 
-				*matArr, 
-				*restShapeArr, 
-				SmoothKernel<Real>(), 
-				smoothingLength, 
-				samplingDistance);
-			EM_UpdatePosition << <pDims, BLOCK_SIZE >> > (*posArr, *tmpPos, *accPos, *lambda, *states, *initPos);
+				*accPos,
+				*lambda,
+				*bulks,
+				posFd->getValue(),
+				*matArr,
+				m_refPos,
+				SmoothKernel<Real>(),
+				m_horizon);
+			K_UpdatePosition << <pDims, BLOCK_SIZE >> > (posFd->getValue(), *tmpPos, *accPos, *lambda);
 			itor++;
 		}
 
 //		EM_RotateRestShape << <pDims, BLOCK_SIZE >> > (*posArr, *matArr, *restShapeArr);
 
-		EM_UpdateVelocity << <pDims, BLOCK_SIZE >> > (*velArr, *prePosArr, *posArr, dt);
+		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (velFd->getValue(), posPreFd->getValue(), posFd->getValue(), dt);
 
 		return true;
+	}
+
+	template <typename Coord, typename NPair>
+	__global__ void K_UpdateRestShape(
+		NeighborList<NPair> shape,
+		NeighborList<int> nbr,
+		DeviceArray<Coord> pos)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= pos.size()) return;
+
+		NPair np;
+		int nbSize = nbr.getNeighborSize(pId);
+		
+		for (int ne = 0; ne < nbSize; ne++)
+		{
+			int j = nbr.getElement(pId, ne);
+			np.j = j;
+			np.pos = pos[j];
+ 			if (pId != j)
+ 			{
+ 				shape.setElement(pId, ne, np);
+			}
+			else
+			{
+				if (ne == 0)
+				{
+					shape.setElement(pId, ne, np);
+				}
+				else
+				{
+					auto ele = shape.getElement(pId, 0);
+					shape.setElement(pId, 0, np);
+					shape.setElement(pId, ne, ele);
+				}
+			}
+		}
+	}
+
+	template<typename TDataType>
+	void ElasticityModule<TDataType>::construct(NeighborList<int>& nbr, DeviceArray<Coord>& pos)
+	{
+		m_refPos.resize(nbr.size());
+		if (nbr.isLimited())
+		{
+			m_refPos.setNeighborLimit(nbr.getNeighborLimit());
+		}
+
+		Function1Pt::copy(m_refPos.getIndex(), nbr.getIndex());
+
+		uint pDims = cudaGridSize(pos.size(), BLOCK_SIZE);
+
+		K_UpdateRestShape<< <pDims, BLOCK_SIZE >> > (m_refPos, nbr, pos);
+
+		m_needUpdate = false;
 	}
 }

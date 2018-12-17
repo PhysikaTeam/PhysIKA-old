@@ -1,7 +1,5 @@
 #pragma once
-#include "Physika_Core/Platform.h"
 #include "Physika_Framework/Framework/ModuleConstraint.h"
-#include "Physika_Core/DataTypes.h"
 #include "Physika_Framework/Framework/FieldArray.h"
 
 namespace Physika {
@@ -19,9 +17,16 @@ namespace Physika {
 		
 		void addPoint(int id);
 
-		void constrain() override;
+		void clear();
+
+		bool constrain() override;
+
+		void setInitPositionID(FieldID id) { m_initPosID = id; }
 
 	protected:
+		FieldID m_initPosID;
+
+	private:
 		std::vector<int> m_ids;
 		DeviceArray<int> m_device_ids;
 	};
