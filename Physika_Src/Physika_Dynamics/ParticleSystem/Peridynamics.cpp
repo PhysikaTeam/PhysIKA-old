@@ -8,6 +8,7 @@
 #include "Physika_Framework/Mapping/PointsToPoints.h"
 #include "ParticleIntegrator.h"
 #include "Physika_Framework/Topology/NeighborQuery.h"
+#include "HyperelasticForce.h"
 
 namespace Physika 
 {
@@ -72,12 +73,12 @@ namespace Physika
 		auto nQuery = std::make_shared<NeighborQuery<TDataType>>();
 		nQuery->setRadius(0.0125);
 
-		auto elasticity = std::make_shared<ElasticityModule<TDataType>>();
-		elasticity->setHorizon(0.0125);
+		m_elasticity = std::make_shared<ElasticityModule<TDataType>>();
+		m_elasticity->setHorizon(0.0125);
 
 		parent->addModule(nQuery);
 		parent->addModule(prediction);
-		parent->addConstraintModule(elasticity);
+		parent->addConstraintModule(m_elasticity);
 
 		Function1Pt::copy(*(posBuf->getDataPtr()), *(pSet->getPoints()));
 		Function1Pt::copy(*(initPosBuf->getDataPtr()), *(pSet->getPoints()));
@@ -118,8 +119,8 @@ namespace Physika
 		prediction->integrate();
 
  		auto& constraintList = parent->getConstraintModuleList();
- 		std::list<std::shared_ptr<ConstraintModule>>::iterator iter = constraintList.begin();
- 		for (; iter != constraintList.end(); iter++)
+ 		std::list<std::shared_ptr<ConstraintModule>>::reverse_iterator iter = constraintList.rbegin();
+ 		for (; iter != constraintList.rend(); iter++)
  		{
 			(*iter)->constrain();
  		}

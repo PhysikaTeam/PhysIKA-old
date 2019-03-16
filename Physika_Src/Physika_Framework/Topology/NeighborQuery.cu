@@ -160,8 +160,8 @@ namespace Physika
 
 		queryNeighborSize(nbrNum, pos, h);
 
-		int sum = thrust::reduce(nbrNum.getDataPtr(), nbrNum.getDataPtr() + nbrNum.size(), (int)0, thrust::plus<int>());
-		thrust::exclusive_scan(nbrNum.getDataPtr(), nbrNum.getDataPtr() + nbrNum.size(), nbrNum.getDataPtr());
+		int sum = thrust::reduce(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr()+ nbrNum.size(), (int)0, thrust::plus<int>());
+		thrust::exclusive_scan(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr() + nbrNum.size(), nbrNum.getDataPtr());
 
 		DeviceArray<int>& elements = nbrList.getElements();
 		elements.resize(sum);

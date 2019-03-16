@@ -106,6 +106,11 @@ float Node::getDt()
 	return m_dt;
 }
 
+void Node::setDt(Real dt)
+{
+	m_dt = dt;
+}
+
 void Node::removeChild(std::shared_ptr<Node> child)
 {
 	ListPtr<Node>::iterator iter = m_children.begin();

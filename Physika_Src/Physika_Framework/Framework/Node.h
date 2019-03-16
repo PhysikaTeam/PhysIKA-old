@@ -55,6 +55,8 @@ public:
 	/// Simulation timestep
 	virtual Real getDt();
 
+	void setDt(Real dt);
+
 	template<class TNode>
 	std::shared_ptr<TNode> createChild(std::string name)
 	{

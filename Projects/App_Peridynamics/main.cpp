@@ -56,9 +56,19 @@ void CreateScene()
 
 	//create root node
 	std::shared_ptr<Node> c1 = root->createChild<Node>("child1");
+	c1->setDt(0.0005);
 
 	auto pSet = std::make_shared<PointSet<DataType3f>>();
 	c1->setTopologyModule(pSet);
+	std::vector<DataType3f::Coord> positions;
+	for (float x = 0.65; x < 0.75; x += 0.005f) {
+		for (float y = 0.2; y < 0.3; y += 0.005f) {
+			for (float z = 0.45; z < 0.55; z += 0.005f) {
+				positions.push_back(DataType3f::Coord(DataType3f::Real(x), DataType3f::Real(y), DataType3f::Real(z)));
+			}
+		}
+	}
+	pSet->setPoints(positions);
 
 	auto pS1 = std::make_shared<Peridynamics<DataType3f>>();
 	//	auto pS1 = std::make_shared<RigidBody<DataType3f>>();
@@ -74,9 +84,14 @@ void CreateScene()
 	auto gravity = std::make_shared<Gravity<DataType3f>>();
 	c1->addForceModule(gravity);
 
-	//	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
-	//	fixed->addPoint(0);
-	//	c1->addConstraintModule(fixed);
+	auto fixed = std::make_shared<FixedPoints<DataType3f>>();
+// 	for (int i = 0; i < 2; i++)
+// 	{
+// 		fixed->addPoint(i);
+// 	}
+	fixed->addPoint(1);
+	
+	c1->addConstraintModule(fixed);
 
 	auto cModel = std::make_shared<CollisionSDF<DataType3f>>();
 	cModel->setCollidableSDF(collidable1);

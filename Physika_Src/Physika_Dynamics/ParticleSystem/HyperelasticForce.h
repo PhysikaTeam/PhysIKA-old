@@ -2,12 +2,12 @@
 #include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Framework/FieldArray.h"
 #include "Physika_Framework/Topology/FieldNeighbor.h"
-#include "Physika_Framework/Framework/ModuleConstraint.h"
+#include "Physika_Framework/Framework/ModuleForce.h"
 
 namespace Physika {
 
 	template<typename TDataType>
-	class ElasticityModule : public ConstraintModule
+	class HyperelasticForce : public ForceModule
 	{
 	public:
 		typedef typename TDataType::Real Real;
@@ -15,16 +15,19 @@ namespace Physika {
 		typedef typename TDataType::Matrix Matrix;
 		typedef typename TPair<TDataType> NPair;
 
-		ElasticityModule();
-		~ElasticityModule() override {};
+		HyperelasticForce();
+		~HyperelasticForce() override {};
 		
-		bool constrain() override;
+		bool applyForce() override;
 
 		void construct(NeighborList<int>& nbr, DeviceArray<Coord>& pos);
 		bool isUpdateRequired() { return m_needUpdate; }
 
 		void setHorizon(Real len) { m_horizon = len; }
 	protected:
+		FieldID m_posID;
+		FieldID m_velID;
+		FieldID m_forceID;
 		FieldID m_initPosID;
 		FieldID m_posPreID;
 		FieldID m_neighborhoodID;
@@ -44,8 +47,8 @@ namespace Physika {
 
 
 #ifdef PRECISION_FLOAT
-	template class ElasticityModule<DataType3f>;
+	template class HyperelasticForce<DataType3f>;
 #else
-	template class DensityPBD<DataType3d>;
+	template class HyperelasticForce<DataType3d>;
 #endif
 }

@@ -8,6 +8,16 @@
 
 namespace Physika {
 
+	template<typename TDataType>
+	class TPair
+	{
+	public:
+		typedef typename TDataType::Coord Coord;
+
+		int j;
+		Coord pos;
+	};
+
 template<typename T>
 class NeighborField : public Field
 {

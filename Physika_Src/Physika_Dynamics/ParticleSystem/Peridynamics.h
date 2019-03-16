@@ -8,8 +8,9 @@
 
 namespace Physika
 {
-	template<typename TDataType> class PointsToPoints;
-	template<typename TDataType> class ParticleIntegrator;
+	template<typename> class PointsToPoints;
+	template<typename> class ParticleIntegrator;
+	template<typename> class ElasticityModule;
 
 	/*!
 	*	\class	ParticleSystem
@@ -42,6 +43,7 @@ namespace Physika
 	private:
 		std::shared_ptr<PointsToPoints<TDataType>> m_mapping;
 		std::shared_ptr<ParticleIntegrator<TDataType>> prediction;
+		std::shared_ptr<ElasticityModule<TDataType>>  m_elasticity;
 
 		HostVariablePtr<int> m_num;
 		HostVariablePtr<Real> m_mass;

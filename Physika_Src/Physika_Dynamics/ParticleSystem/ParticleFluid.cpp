@@ -62,7 +62,7 @@ namespace Physika
 		m_pNum = pSet->getPointSize();
 		std::cout << "Point number: " << m_pNum << std::endl;
 		
-		m_smoothingLength = HostVarField<Real>::createField(this, "smoothingLength", "Smoothing length", Real(0.0125));
+		m_smoothingLength = HostVarField<Real>::createField(this, "smoothingLength", "Smoothing length", Real(0.011));
 		m_samplingDistance = HostVarField<Real>::createField(this, "samplingDistance", "Sampling distance", Real(0.005));
 		m_restDensity = HostVarField<Real>::createField(this, "restDensity", "Rest density", Real(1000));
 
@@ -77,7 +77,7 @@ namespace Physika
 		auto force		= DeviceArrayField<Coord>::createField(mstate.get(), MechanicalState::force(), "Particle forces", m_pNum);
 		auto restVel	= DeviceArrayField<Coord>::createField(mstate.get(), MechanicalState::pre_velocity(), "Particle positions", m_pNum);
 		auto rhoBuf		= DeviceArrayField<Real>::createField(mstate.get(), MechanicalState::density(), "Particle densities", m_pNum);
-		auto adaptNbr	= NeighborField<int>::createField(mstate.get(), MechanicalState::particle_neighbors(), "Particle neighbor ids", m_pNum, 30);
+		auto adaptNbr	= NeighborField<int>::createField(mstate.get(), MechanicalState::particle_neighbors(), "Particle neighbor ids", m_pNum);
 
 		// Create modules
 		auto pbdModule = std::make_shared<DensityPBD<TDataType>>();

@@ -77,7 +77,7 @@ namespace Physika
 			Real r = (pos_i - posArr[j]).norm();
 			if (r > EPSILON)
 			{
-				Coord dp_ij = (pos_i - posArr[j])*0.1*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
+				Coord dp_ij = 1.0f*(pos_i - posArr[j])*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
 				atomicAdd(&dPos[pId][0], dp_ij[0]);
 				atomicAdd(&dPos[j][0], -dp_ij[0]);
 
