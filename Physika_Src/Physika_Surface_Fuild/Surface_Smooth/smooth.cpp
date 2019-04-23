@@ -5,8 +5,8 @@
 #include <OpenMesh/Tools/Smoother/JacobiLaplaceSmootherT.hh>
 #include <OpenMesh/Tools/Decimater/DecimaterT.hh>
 #include <OpenMesh/Tools/Decimater/ModQuadricT.hh>
-#include "windowstimer.h"
-#include "boundrecorder.h"
+#include "Physika_Surface_Fuild/Surface_Utilities/windowstimer.h"
+#include "Physika_Surface_Fuild/Surface_Utilities/boundrecorder.h"
 
 using namespace std;
 
