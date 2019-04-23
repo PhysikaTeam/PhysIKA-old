@@ -1,5 +1,5 @@
 #include "indexonvertex.h"
-#include "boundrecorder.h"
+#include "Physika_Surface_Fuild/Surface_Utilities/boundrecorder.h"
 #include <iostream>
 #include <cmath>
 #include <queue>
@@ -25,7 +25,7 @@ MyMesh::FaceHandle IndexOnVertex::search(MyMesh const &mesh, MyMesh::Point p) co
 	else {
 		int ind_x = (int)((rot_p[0] - x0) / dx);
 		int ind_y = (int)((rot_p[1] - y0) / dy);
-		// HACK: ÎªÁË±ÜÃâÓëGPU½á¹û²»Ò»ÖÂ£¬È¥µôÁËË÷Òı
+		// HACK: ä¸ºäº†é¿å…ä¸GPUç»“æœä¸ä¸€è‡´ï¼Œå»æ‰äº†ç´¢å¼•
 		//std::vector<OpenMesh::FaceHandle> const &contain = this->contain[ind_x * ny + ind_y];
 		std::vector<OpenMesh::FaceHandle> const &contain = roundFh;
 		for (auto it = contain.begin(); it != contain.end(); ++it) {
@@ -43,7 +43,7 @@ MyMesh::FaceHandle IndexOnVertex::search(MyMesh const &mesh, MyMesh::Point p) co
 }
 
 MyMesh::VertexHandle IndexOnVertex::nearest_vertex(MyMesh const &mesh, MyMesh::Point p, std::function<bool(MyMesh::VertexHandle)> condition) const {
-	// Todo: ¼Ó¿ìËÑË÷ËÙ¶È
+	// Todo: åŠ å¿«æœç´¢é€Ÿåº¦
 	bool is_first = true;
 	MyMesh::VertexHandle vh;
 	float min_sqrnorm;
@@ -141,7 +141,7 @@ MyMesh::Point IndexOnVertex::coord_conv(MyMesh::Point const coord_from[3], MyMes
 
 static bool _have_intersection(float x0, float x1, float y0, float y1, MyMesh::Point const &a, MyMesh::Point const &b, MyMesh::Point const &c) {
 	auto divide = [](float ax, float ay, float bx, float by, float cx, float cy, float dx, float dy) {
-		// Ö±ÏßABÊÇ·ñ·Ö¸ôµãC¡¢µãD
+		// ç›´çº¿ABæ˜¯å¦åˆ†éš”ç‚¹Cã€ç‚¹D
 		auto lx = bx - ax;
 		auto ly = by - ay;
 		auto dist = [&](float x, float y) {
@@ -187,7 +187,7 @@ void IndexOnVertex::rebuild_from(MyMesh const &mesh, MyMesh::VertexHandle vh, st
 		rot[0] = MyMesh::Point(0, 1, 0) % rot[2];
 	rot[0].normalize();
 #else
-	// Ëæ»ú×ø±êÖá£¬ÓÃÓÚ±©Â¶Î´×ø±ê×ª»»µÄÎÊÌâ
+	// éšæœºåæ ‡è½´ï¼Œç”¨äºæš´éœ²æœªåæ ‡è½¬æ¢çš„é—®é¢˜
 	do {
 		rot[0] = MyMesh::Point((float)rand(), (float)rand(), (float)rand()).normalized() % rot[2];
 	} while (rot[0].norm() < 1e-3);
@@ -250,7 +250,7 @@ void IndexOnVertex::rebuild_from(MyMesh const &mesh, MyMesh::VertexHandle vh, st
 			}
 		}
 	}
-	// ¹¹½¨vec_ring_1_ordered£¬ÔÚ±ß½çÊ±£¬±£Ö¤±ß½çµãÔÚÇ°2¸öÔªËØ
+	// æ„å»ºvec_ring_1_orderedï¼Œåœ¨è¾¹ç•Œæ—¶ï¼Œä¿è¯è¾¹ç•Œç‚¹åœ¨å‰2ä¸ªå…ƒç´ 
 	std::queue<MyMesh::HalfedgeHandle> que_hh;
 	for (auto voh_it = mesh.cvoh_ccwiter(vh); voh_it.is_valid(); ++voh_it)
 		que_hh.push(*voh_it);
