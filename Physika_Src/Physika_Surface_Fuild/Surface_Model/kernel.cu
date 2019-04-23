@@ -1,7 +1,7 @@
 #include "kernel.cuh"
-#include "cutil_math.h"
-#include "indexonvertex.h"
-#include "cvfem.h"
+#include "Physika_Surface_Fuild/Surface_Utilities/cutil_math.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/indexonvertex.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/cvfem.h"
 
 #define COMPUTE_DIV_METHOD 2
 
@@ -116,7 +116,7 @@ __device__ int nearest_vertex(float3 p, int i, bool flag, bufListSWE buf)
 		int idx = buf.m_vertex_nearVert[i][k];
 		if (idx < 0) break;
 		if (!flag) { // for velocity fast march
-			// HACK: ¶à¼ÆËãÒ»È¦v
+			// HACK: å¤šè®¡ç®—ä¸€åœˆv
 			if (buf.m_depth[idx] <= swSimData.m_depth_threshold && !buf.m_on_water_boundary[idx])
 				continue;
 		}
@@ -410,12 +410,12 @@ __global__ void extrapolate_depth_kern(bufListSWE buf, int vnum) {
 				if (!opph.is_valid)
 					break;
 				if (opph.is_boundary)
-					continue; // ²»´æÔÚ´ËÈý½ÇÐÎ
+					continue; // ä¸å­˜åœ¨æ­¤ä¸‰è§’å½¢
 				if (opph.opph_is_boundary)
-					continue; // ´Ë±ß²»´æÔÚÏà¶ÔµÄÃæ
+					continue; // æ­¤è¾¹ä¸å­˜åœ¨ç›¸å¯¹çš„é¢
 				if (buf.m_depth[opph.from_v] <= swSimData.m_depth_threshold ||
 					buf.m_depth[opph.to_v] <= swSimData.m_depth_threshold)
-					continue; // ²»ÊÇÓÐË®µÄÃæ
+					continue; // ä¸æ˜¯æœ‰æ°´çš„é¢
 				float3 o = buf.m_point[i];
 				float3 a = buf.m_point[opph.from_v] - o;
 				float3 b = buf.m_point[opph.to_v] - o;
@@ -518,8 +518,8 @@ __global__ void compute_pressure_kern(bufListSWE buf, int vnum)
 		float pg = -g_ind.z * b;
 		buf.m_pressure_gravity[i] = pg;
 		if (buf.m_boundary[i]) {
-			// Ä£ÐÍ±ß½çÇÒÊÇË®µÄ±ß½çµÄµã£¬´Ó¸½½üË®µÄ±ß½çµ«·ÇÄ£ÐÍ±ß½çµÄµãÍâ²å
-			// µ«Ò²¿ÉÄÜÎÞ·¨Íâ²å£¬ÐèÒª³õÊ¼»¯£¬ÒÔÃâµÃ³ö²»¿ÉÔ¤ÁÏµÄÖµ
+			// æ¨¡åž‹è¾¹ç•Œä¸”æ˜¯æ°´çš„è¾¹ç•Œçš„ç‚¹ï¼Œä»Žé™„è¿‘æ°´çš„è¾¹ç•Œä½†éžæ¨¡åž‹è¾¹ç•Œçš„ç‚¹å¤–æ’
+			// ä½†ä¹Ÿå¯èƒ½æ— æ³•å¤–æ’ï¼Œéœ€è¦åˆå§‹åŒ–ï¼Œä»¥å…å¾—å‡ºä¸å¯é¢„æ–™çš„å€¼
 			buf.m_pressure_surface[i] = 0;
 			return;
 		}
@@ -593,7 +593,7 @@ __global__ void compute_pressure_kern(bufListSWE buf, int vnum)
 				for (size_t i = 0; i < ring_size; i++) {
 					size_t succ = (i == ring_size - 1) ? 0 : i + 1;
 					if (ring[i].have_water || ring[succ].have_water) {
-						F += partial_area(make_float3(0, 0, extrapolate_depth), ring[i].water_point, ring[succ].water_point) * coef_LL; // ¸ß¶ÈÎªÍâ²åµÄ¸º¸ß¶È£¨ÎªÁË±ÜÃâ±ßÔµÃæÆ¬ÒòÎª²ÉÑùÎÊÌâ¶ø¹ý±¡£©
+						F += partial_area(make_float3(0, 0, extrapolate_depth), ring[i].water_point, ring[succ].water_point) * coef_LL; // é«˜åº¦ä¸ºå¤–æ’çš„è´Ÿé«˜åº¦ï¼ˆä¸ºäº†é¿å…è¾¹ç¼˜é¢ç‰‡å› ä¸ºé‡‡æ ·é—®é¢˜è€Œè¿‡è–„ï¼‰
 						F += partial_area(o, ring[i].bottom_point, ring[succ].bottom_point) * coef_LS;
 						area_from_direct_n += dot(cross(ring[i].water_point - make_float3(0, 0, extrapolate_depth), ring[succ].water_point - make_float3(0, 0, extrapolate_depth)), n) / 6;
 					}
@@ -609,10 +609,10 @@ __global__ void compute_pressure_kern(bufListSWE buf, int vnum)
 				buf.m_pressure_surface[i] = ps;
 				return;
 			} else {
-				// ÖÜÎ§Ë®µÄÇé¿ö»ìÂÒ£¬°´´ËµãÓÐË®À´¼ÆËãÑ¹Ç¿ps£¬¼´²»continue
+				// å‘¨å›´æ°´çš„æƒ…å†µæ··ä¹±ï¼ŒæŒ‰æ­¤ç‚¹æœ‰æ°´æ¥è®¡ç®—åŽ‹å¼ºpsï¼Œå³ä¸continue
 			}
 		} else {
-			// ÖÜÎ§ÎÞË®£¬²»ÐèÒª¼ÆËãÑ¹Ç¿
+			// å‘¨å›´æ— æ°´ï¼Œä¸éœ€è¦è®¡ç®—åŽ‹å¼º
 			buf.m_pressure_surface[i] = 0;
 			return;
 		}
@@ -671,7 +671,7 @@ __global__ void update_velocity_kern ( bufListSWE buf, int vnum )
 
 	float b = buf.m_bottom[i];
 	float d = buf.m_depth[i];
-	// HACK: ¶à¼ÆËãÒ»È¦v
+	// HACK: å¤šè®¡ç®—ä¸€åœˆv
 	if (d <= swSimData.m_depth_threshold && !buf.m_on_water_boundary[i])
 		return;
 	float pg = buf.m_pressure_gravity[i];
@@ -689,7 +689,7 @@ __global__ void update_velocity_kern ( bufListSWE buf, int vnum )
 		float vp = vpg + vps;
 		if (vd <= swSimData.m_depth_threshold) {
 #if 1
-			// HACK: Ç¿ÐÐÍâ²å
+			// HACK: å¼ºè¡Œå¤–æ’
 			vp = pg + vps;
 #else
 			if (g_ind.z <= 0.0f)
@@ -711,12 +711,12 @@ __global__ void update_velocity_kern ( bufListSWE buf, int vnum )
 	}
 	// HACK:
 	// SPECIAL CODE FOR CASE 4
-	// Ôö¼Ó¸÷ÏòÍ¬ÐÔµÄÄ¦²ÁÁ¦
+	// å¢žåŠ å„å‘åŒæ€§çš„æ‘©æ“¦åŠ›
 	if (swSimData.m_situation == 4)
 		vel += swSimData.dt * -1.0f * vel;
 	vel += swSimData.dt*(-grad + make_float3(g_ind.x, g_ind.y, 0));
 	
-	// ·çÁ¦
+	// é£ŽåŠ›
 	if (swSimData.m_wind_coef != 0) {
 		float3 wind_vel = buf.m_wind_velocity[i];
 		wind_vel.z = 0;
@@ -849,7 +849,7 @@ __global__ void update_depth_kern ( bufListSWE buf, int vnum )
 
 	if (d > swSimData.m_depth_threshold) {
 		d += swSimData.dt * buf.m_float_tmp[i];
-		// HACK: Ç¿ÖÆÏÞÖÆË®Ãæ¸ß¶È
+		// HACK: å¼ºåˆ¶é™åˆ¶æ°´é¢é«˜åº¦
 		if (swSimData.m_situation == 9 && d > 3.0f)
 			d = 2.8f;
 	}
