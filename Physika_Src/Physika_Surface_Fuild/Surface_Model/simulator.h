@@ -1,7 +1,7 @@
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
 
-#include "mymesh.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/mymesh.h"
 
 class Simulator {
 public:
@@ -90,24 +90,24 @@ public://private:
 	OpenMesh::VPropHandleT<int> m_label;
 	OpenMesh::VPropHandleT<float> m_pressure;
 
-	// pull#1:Ôö¼Ó
-	// ²»ĞèÒªµÄÊôĞÔ
+	// pull#1:å¢åŠ 
+	// ä¸éœ€è¦çš„å±æ€§
 	OpenMesh::VPropHandleT<MyMesh::Point> m_normal;
-	// ²»Ğè´«µİµÄÊôĞÔ
-	OpenMesh::VPropHandleT<bool> m_on_water_boundary; // ÔÚadvectÄ©Î²¸üĞÂÕâ¸öÊôĞÔ
-	// ²»Ğè´«µİµÄÊôĞÔ
+	// ä¸éœ€ä¼ é€’çš„å±æ€§
+	OpenMesh::VPropHandleT<bool> m_on_water_boundary; // åœ¨advectæœ«å°¾æ›´æ–°è¿™ä¸ªå±æ€§
+	// ä¸éœ€ä¼ é€’çš„å±æ€§
 	OpenMesh::VPropHandleT<bool> m_once_have_water;
-	// ĞÂÔöµÄÊôĞÔ
-	OpenMesh::VPropHandleT<float> m_extrapolate_depth; // ÔÚadvectÄ©Î²¸üĞÂÕâ¸öÊôĞÔ¡£½öÔÚwater_boundary¼ÆËã²åÖµ£¬ÆäËüµãÖ±½Ó¸´ÖÆdepth
-	// ²»Ğè´«µİµÄÊôĞÔ
+	// æ–°å¢çš„å±æ€§
+	OpenMesh::VPropHandleT<float> m_extrapolate_depth; // åœ¨advectæœ«å°¾æ›´æ–°è¿™ä¸ªå±æ€§ã€‚ä»…åœ¨water_boundaryè®¡ç®—æ’å€¼ï¼Œå…¶å®ƒç‚¹ç›´æ¥å¤åˆ¶depth
+	// ä¸éœ€ä¼ é€’çš„å±æ€§
 	OpenMesh::VPropHandleT<float> m_pressure_gravity;
-	// ²»Ğè´«µİµÄÊôĞÔ
+	// ä¸éœ€ä¼ é€’çš„å±æ€§
 	OpenMesh::VPropHandleT<float> m_pressure_surface;
-	// ²»Ğè´«µİµÄÊôĞÔ
+	// ä¸éœ€ä¼ é€’çš„å±æ€§
 	OpenMesh::VPropHandleT<MyMesh::FaceHandle> m_origin_face;
-	// ĞÂÔöµÄÊôĞÔ
+	// æ–°å¢çš„å±æ€§
 	OpenMesh::VPropHandleT<Tensor22> m_tensor;
-	// ĞÂÔöµÄÊôĞÔ
+	// æ–°å¢çš„å±æ€§
 	OpenMesh::VPropHandleT<MyMesh::Point> m_wind_velocity;
 
 
@@ -123,7 +123,7 @@ public://private:
 	// bool* is_boundary_e; //?
 	int* c_boundary;
 
-	// pull#1:Ôö¼Ó
+	// pull#1:å¢åŠ 
 	bool *c_once_have_water;
 	bool *c_on_water_boundary;
 	float *c_extrapolate_depth;
