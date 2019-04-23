@@ -1,11 +1,13 @@
 ﻿cmake_minimum_required(VERSION 3.10)
 
-set(PROJECTS_NAMES App_Test App_Peridynamics App_QtGUI App_Helmholtz)
+#set(PROJECTS_NAMES App_Test App_Peridynamics App_QtGUI App_Helmholtz)
+ set(PROJECTS_NAMES App_Test2)
 
 link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                                                           # 设置库路径
-link_libraries(Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)
-link_libraries(ParticleSystem RigidBody)
-link_libraries(GlutGUI)
+#link_libraries(Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)
+#link_libraries(ParticleSystem RigidBody)
+#link_libraries(GlutGUI)
+link_libraries（Physika_Shallow_Water）
 if(Qt5_FOUND)
     link_libraries(QtGUI)                                                                                       #链接QtGUI库
 endif()   
