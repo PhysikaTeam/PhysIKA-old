@@ -1,7 +1,7 @@
 #ifndef SMOOTH_H
 #define SMOOTH_H
 
-#include "mymesh.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/mymesh.h"
 #include <vector>
 #include <functional>
 
