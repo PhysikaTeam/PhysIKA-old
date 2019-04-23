@@ -6,12 +6,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
-#include "indexonvertex.h"
-#include "indexofmesh.h"
-#include "cvfem.h"
-#include "smooth.h"
-#include "boundrecorder.h"
-#include "windowstimer.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/indexonvertex.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/indexofmesh.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/cvfem.h"
+#include "Physika_Surface_Fuild/Surface_Smooth/smooth.h"
+#include "Physika_Surface_Fuild/Surface_Utilities/boundrecorder.h"
+#include "Physika_Surface_Fuild/Surface_Utilities/windowstimer.h"
 #include <vector>
 #include <queue>
 #include <deque>
@@ -99,7 +99,7 @@ void Simulator::output_obj_cuda(int frame) {
 		perror("output error");
 		exit(-1);
 	}
-	// HACK: ±ÜÃâË®ÔÚÄ£ĞÍÏÂ·½µÄÎÊÌâ
+	// HACK: é¿å…æ°´åœ¨æ¨¡å‹ä¸‹æ–¹çš„é—®é¢˜
 	float const h_gain = 0.10f;
 	int num_v_start = 1;
 	for (size_t i = 0; i < m_origin.n_vertices(); i++) {
@@ -250,11 +250,11 @@ void Simulator::set_initial_constants() {
 	m_g = MyMesh::Point(0, -1, 0).normalized() * 9.80f;
 	m_rotate_center = MyMesh::Point(0, 0, 0);
 
-	// Ä¦²ÁÁ¦ÏµÊı
+	// æ‘©æ“¦åŠ›ç³»æ•°
 	m_have_tensor = false;
 	m_fric_coef = 1.3f;
 
-	// ±íÃæÕÅÁ¦µÄÏµÊı
+	// è¡¨é¢å¼ åŠ›çš„ç³»æ•°
 	m_gamma = 1.000f;
 	// gamma is surface tension coefficient divided by density, theoretical value for 25 degree(C) water is 7.2*10^-5 (N/m)/(kg/m^3)
 	// note: surface tension force not negligible under length scale less than about 4mm, so gamma value should be set with careful considering mesh edge length. Try using mm or cm instead of m
@@ -262,10 +262,10 @@ void Simulator::set_initial_constants() {
 	m_water_boundary_tension_multiplier = 1.0f;
 	m_max_p_bs = 10.0f;
 
-	// ·çÁ¦
+	// é£åŠ›
 	m_wind_coef = 0;
 
-	// Ä£ÄâÖ¡ÉèÖÃ
+	// æ¨¡æ‹Ÿå¸§è®¾ç½®
 	m_stepnum = 0;
 	m_total_steps = 1000;
 	m_output_step = 10;
@@ -502,7 +502,7 @@ void Simulator::generate_origin() {
 }
 
 void Simulator::generate_mesh() {
-	// Áîm_meshÎªm_originµÄÆ½»¬Íø¸ñ
+	// ä»¤m_meshä¸ºm_originçš„å¹³æ»‘ç½‘æ ¼
 	m_mesh.clear();
 	switch (m_situation) {
 	case 1: case 2: case 3: case 5: case 6: case 8:
@@ -588,7 +588,7 @@ void Simulator::add_index_to_vertex(int ring) {
 }
 
 void Simulator::match_bottom_height() {
-	// Todo: ÓÃÀàËÆ¹âÏß¸ú×ÙµÄkd-tree·½·¨¼ÓËÙ
+	// Todo: ç”¨ç±»ä¼¼å…‰çº¿è·Ÿè¸ªçš„kd-treeæ–¹æ³•åŠ é€Ÿ
 	std::map<int, std::string> cache_filename;
 	cache_filename[9] = "obj_models/trunk.bottom.txt";
 	cache_filename[16] = "obj_models/Creature.bottom.txt";
@@ -597,7 +597,7 @@ void Simulator::match_bottom_height() {
 		ifstream in;
 		in.open(filename);
 		if (!!in) {
-			cout << "´Ó " << filename << " µ¼ÈëÆ½»¬Íø¸ñµ½Ô­Íø¸ñµÄÓ³Éä" << endl;
+			cout << "ä» " << filename << " å¯¼å…¥å¹³æ»‘ç½‘æ ¼åˆ°åŸç½‘æ ¼çš„æ˜ å°„" << endl;
 			for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
 				float bottom;
 				int fidx;
@@ -609,11 +609,11 @@ void Simulator::match_bottom_height() {
 			return;
 		}
 	}
-	cout << "´ÓÔ­Íø¸ñÏòÆ½»¬Íø¸ñÓ³Éä" << endl;
+	cout << "ä»åŸç½‘æ ¼å‘å¹³æ»‘ç½‘æ ¼æ˜ å°„" << endl;
 	IndexOfMesh origin_index(m_origin);
 	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
 #if 0
-		// ¼ÆËã2-ringÆ½¾ù·¨Ïò
+		// è®¡ç®—2-ringå¹³å‡æ³•å‘
 		map<MyMesh::VertexHandle, int> m;
 		calc_vertex_nring(m_mesh, *v_it, 2, m);
 		MyMesh::Point n(0, 0, 0);
@@ -637,20 +637,20 @@ void Simulator::match_bottom_height() {
 		MyMesh::FaceHandle fh;
 		float dist;
 		origin_index.nearest_intersection(base, normal, fh, dist);
-		// Todo: ÅĞ¶ÏÑØ·¨ÏòµÄ½»µãÊÇ·ñÕıÈ·£¨ÏÖÔÚÈÏÎª¾àÀëÔÚ2ÒÔÄÚÔòÕıÈ·£¬·ñÔò¿ÉÄÜÓ³Éäµ½ÁËÆäËüÃæÉÏ£©
+		// Todo: åˆ¤æ–­æ²¿æ³•å‘çš„äº¤ç‚¹æ˜¯å¦æ­£ç¡®ï¼ˆç°åœ¨è®¤ä¸ºè·ç¦»åœ¨2ä»¥å†…åˆ™æ­£ç¡®ï¼Œå¦åˆ™å¯èƒ½æ˜ å°„åˆ°äº†å…¶å®ƒé¢ä¸Šï¼‰
 		if (fabs(dist) > 2)
 			fh = *m_origin.faces_end();
 		m_mesh.property(m_origin_face, *v_it) = fh;
 		if (fh == *m_origin.faces_end()) {
-			// ½«´Ó¸½½üµÄµãÍâ²å
+			// å°†ä»é™„è¿‘çš„ç‚¹å¤–æ’
 			n_not_matched++;
-			m_mesh.property(m_bottom, *v_it) = 999.0; // µ±Î´ÄÜ³É¹¦Íâ²åÊ±£¬ÈÃ´íÎó¸üÃ÷ÏÔ
+			m_mesh.property(m_bottom, *v_it) = 999.0; // å½“æœªèƒ½æˆåŠŸå¤–æ’æ—¶ï¼Œè®©é”™è¯¯æ›´æ˜æ˜¾
 		} else {
 			m_mesh.property(m_bottom, *v_it) = dist;
 		}
 	}
-	cout << n_not_matched << " ¸öÆ½»¬Íø¸ñ¶¥µãÑØ·¨ÏòÓëÔ­Íø¸ñÃ»ÓĞ½»µã" << endl;
-	// ·¨ÏòÎ´Æ¥ÅäµÄÃæÆ¬µÄµã´Ó¸½½üµÄµãÈ¡bottom
+	cout << n_not_matched << " ä¸ªå¹³æ»‘ç½‘æ ¼é¡¶ç‚¹æ²¿æ³•å‘ä¸åŸç½‘æ ¼æ²¡æœ‰äº¤ç‚¹" << endl;
+	// æ³•å‘æœªåŒ¹é…çš„é¢ç‰‡çš„ç‚¹ä»é™„è¿‘çš„ç‚¹å–bottom
 	std::queue<MyMesh::VertexHandle> q;
 	std::set<MyMesh::VertexHandle> set_not_matched;
 	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
@@ -678,7 +678,7 @@ void Simulator::match_bottom_height() {
 		}
 	}
 	if (n_not_matched != set_not_matched.size())
-		cout << "´íÎó£ºÓĞĞ©·¨Ïò²»ÓëÔ­Íø¸ñÏà½»µÄµãÎ´ÄÜ´Ó¸½½üµãÍâ²å" << endl;
+		cout << "é”™è¯¯ï¼šæœ‰äº›æ³•å‘ä¸ä¸åŸç½‘æ ¼ç›¸äº¤çš„ç‚¹æœªèƒ½ä»é™„è¿‘ç‚¹å¤–æ’" << endl;
 	if (cache_filename.find(m_situation) != cache_filename.end()) {
 		std::string filename(cache_filename[m_situation]);
 		ofstream out(filename);
@@ -700,7 +700,7 @@ void Simulator::calculate_tensor() {
 		ifstream in;
 		in.open(filename);
 		if (!!in) {
-			cout << "´Ó " << filename << " µ¼ÈëÄ¦²ÁÁ¦ÕÅÁ¿" << endl;
+			cout << "ä» " << filename << " å¯¼å…¥æ‘©æ“¦åŠ›å¼ é‡" << endl;
 			for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
 				Tensor22 tensor;
 				in >> tensor[0] >> tensor[1] >> tensor[2] >> tensor[3];
@@ -710,7 +710,7 @@ void Simulator::calculate_tensor() {
 			return;
 		}
 	}
-	cout << "¼ÆËãÄ¦²ÁÁ¦ÕÅÁ¿" << endl;
+	cout << "è®¡ç®—æ‘©æ“¦åŠ›å¼ é‡" << endl;
 	int cnt = 0;
 	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
 		cnt++;
@@ -732,7 +732,7 @@ void Simulator::calculate_tensor() {
 			MyMesh::Point to_search(line[0], line[1], 0);
 			MyMesh::FaceHandle fh = index->search(m_mesh, to_search);
 			while (fh == *m_mesh.faces_end()) {
-				// Todo: ÕıÈ·²éÕÒ×î½üµÄÃæÆ¬
+				// Todo: æ­£ç¡®æŸ¥æ‰¾æœ€è¿‘çš„é¢ç‰‡
 				to_search *= 0.67f;
 				fh = index->search(m_mesh, to_search);
 			}
@@ -872,7 +872,7 @@ void Simulator::calculate_tensor() {
 		local_mesh.update_normals();
 		std::queue<MyMesh::HalfedgeHandle> que_hh;
 		std::vector<MyMesh::Point> ring_points;
-		// ¼ÆËã¶¥µã·¨ÏòÊ±£¬ÒÔÃæÆ¬Õ¼µÄ½Ç¶ÈÎªÈ¨ÖØ
+		// è®¡ç®—é¡¶ç‚¹æ³•å‘æ—¶ï¼Œä»¥é¢ç‰‡å çš„è§’åº¦ä¸ºæƒé‡
 		for (auto v_it = local_mesh.vertices_begin(); v_it != local_mesh.vertices_end(); ++v_it) {
 			ring_points.clear();
 			for (auto voh_it = local_mesh.cvoh_ccwiter(*v_it); voh_it.is_valid(); ++voh_it)
@@ -892,7 +892,7 @@ void Simulator::calculate_tensor() {
 		}
 		for (auto f_it = local_mesh.faces_begin(); f_it != local_mesh.faces_end(); ++f_it) {
 			MyMesh::FaceHandle fh_local = *f_it;
-			// Çó½âfh_local´¦µÄÄ¦²ÁÁ¦ÕÅÁ¿
+			// æ±‚è§£fh_localå¤„çš„æ‘©æ“¦åŠ›å¼ é‡
 			bool have_boundary_vertex = false;
 			for (auto fv_it = local_mesh.fv_iter(fh_local); fv_it.is_valid(); ++fv_it)
 				if (local_mesh.is_boundary(*fv_it))
@@ -908,7 +908,7 @@ void Simulator::calculate_tensor() {
 					local_mesh.property(prop_cross, fh_local) = crossed_control_volumn(a, b, c);
 				}
 
-				// fh_local´¦µÄ¾Ö²¿×ø±êÏµex, ey, n
+				// fh_localå¤„çš„å±€éƒ¨åæ ‡ç³»ex, ey, n
 				MyMesh::Point n_local(local_mesh.normal(fh_local));
 				MyMesh::Point ex_local = MyMesh::Point(1, 0, 0) % n_local;
 				if (ex_local.sqrnorm() < 0.3f)
@@ -981,7 +981,7 @@ void Simulator::calculate_tensor() {
 			}
 		}
 		if (is_first)
-			cout << "´íÎó£º¼ÆËãÄ¦²ÁÁ¦ÕÅÁ¿Ê±£¬Ã»ÓĞÓëcontrol volumnÏà½»µÄÃæÆ¬£¬»ò¶¼ÔÚÔ­meshµÄ±ßÔµÉÏ£¬ÎŞ·¨Íê³É¼ÆËã" << endl;
+			cout << "é”™è¯¯ï¼šè®¡ç®—æ‘©æ“¦åŠ›å¼ é‡æ—¶ï¼Œæ²¡æœ‰ä¸control volumnç›¸äº¤çš„é¢ç‰‡ï¼Œæˆ–éƒ½åœ¨åŸmeshçš„è¾¹ç¼˜ä¸Šï¼Œæ— æ³•å®Œæˆè®¡ç®—" << endl;
 		float min_tao;
 		{
 			float theta = result_theta + 3.1415926f / 2;
@@ -1003,7 +1003,7 @@ void Simulator::calculate_tensor() {
 		}
 		float x = cos(result_theta);
 		float y = sin(result_theta);
-		// ÉèÖÃÖ÷ÇúÂÊµÄÉÏÏŞ£¬Ê¹µÃupdate_velocityµÄÊ±ºòÄ¦²ÁÁ¦²»ÖÁÓÚÊ¹ËÙ¶È·´Ïò
+		// è®¾ç½®ä¸»æ›²ç‡çš„ä¸Šé™ï¼Œä½¿å¾—update_velocityçš„æ—¶å€™æ‘©æ“¦åŠ›ä¸è‡³äºä½¿é€Ÿåº¦åå‘
 		float max_tao_bound = 1.0f / (m_dt * m_fric_coef) * 0.5f;
 		if (max_tao > max_tao_bound) {
 			min_tao = min_tao / max_tao * max_tao_bound;
@@ -1016,10 +1016,10 @@ void Simulator::calculate_tensor() {
 	}
 	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
 		if (m_mesh.is_boundary(*v_it)) {
-			// Todo: ¹æ¶¨±ß½çÇé¿ö
+			// Todo: è§„å®šè¾¹ç•Œæƒ…å†µ
 			MyMesh::VertexHandle vh = m_mesh.data(*v_it).index->nearest_vertex(m_mesh, MyMesh::Point(0, 0, 0), [&](MyMesh::VertexHandle vh) { return !m_mesh.is_boundary(vh); });
 			if (vh == *m_mesh.vertices_end())
-				cout << "´íÎó£º¼ÆËãÄ¦²ÁÁ¦ÕÅÁ¿Ê±£¬±ß½çµãÊ¹ÓÃÁÙ½üµÄ·Ç±ß½çµãµÄÕÅÁ¿£¬µ«ÕÒ²»µ½ÁÙ½üµÄ·Ç±ß½çµã" << endl;
+				cout << "é”™è¯¯ï¼šè®¡ç®—æ‘©æ“¦åŠ›å¼ é‡æ—¶ï¼Œè¾¹ç•Œç‚¹ä½¿ç”¨ä¸´è¿‘çš„éè¾¹ç•Œç‚¹çš„å¼ é‡ï¼Œä½†æ‰¾ä¸åˆ°ä¸´è¿‘çš„éè¾¹ç•Œç‚¹" << endl;
 			m_mesh.property(m_tensor, *v_it) = m_mesh.property(m_tensor, vh);
 		}
 	}
@@ -1204,7 +1204,7 @@ void Simulator::update_midvels() {
 			MyMesh::Point p(vel * (m_dt / -2));
 			IndexOnVertex *index = m_mesh.data(*v_it).index;
 			MyMesh::FaceHandle fh = index->search(m_mesh, p);
-			if (fh == *m_mesh.faces_end()) { // ÔÚ±ß½çÍâ
+			if (fh == *m_mesh.faces_end()) { // åœ¨è¾¹ç•Œå¤–
 				midvel = vel;
 			}
 			else {
@@ -1224,7 +1224,7 @@ void Simulator::advect_filed_values() {
 		float depth_new;
 		MyMesh::Point velocity_new;
 		if (fh == *m_mesh.faces_end()) {
-			// Todo: ÕıÈ·´¦Àí±ß½çÇé¿ö
+			// Todo: æ­£ç¡®å¤„ç†è¾¹ç•Œæƒ…å†µ
 			MyMesh::VertexHandle vh = index->nearest_vertex(m_mesh, p, [](MyMesh::VertexHandle) { return true; });
 			if (vh == *m_mesh.vertices_end()) {
 				cout << "ERROR: impossible case in Simulator::advect_filed_values" << endl;
@@ -1277,16 +1277,16 @@ void Simulator::extrapolate_depth() {
 				float ex_depth = 0;
 				for (auto voh_it = m_mesh.voh_iter(*v_it); voh_it.is_valid(); ++voh_it) {
 					if (m_mesh.is_boundary(*voh_it))
-						continue; // ²»´æÔÚ´ËÈı½ÇĞÎ
+						continue; // ä¸å­˜åœ¨æ­¤ä¸‰è§’å½¢
 					MyMesh::HalfedgeHandle hh = m_mesh.next_halfedge_handle(*voh_it);
 					if (m_mesh.is_boundary(hh))
-						cout << "´íÎó£º·Ç·¨µÄÍØÆË½á¹¹" << endl;
+						cout << "é”™è¯¯ï¼šéæ³•çš„æ‹“æ‰‘ç»“æ„" << endl;
 					if (m_mesh.property(m_depth, m_mesh.from_vertex_handle(hh)) <= m_depth_threshold ||
 						m_mesh.property(m_depth, m_mesh.to_vertex_handle(hh)) <= m_depth_threshold)
-						continue; // ²»ÊÇÓĞË®µÄÃæ
+						continue; // ä¸æ˜¯æœ‰æ°´çš„é¢
 					hh = m_mesh.opposite_halfedge_handle(hh);
 					if (m_mesh.is_boundary(hh))
-						continue; // ´Ë±ß²»´æÔÚÏà¶ÔµÄÃæ
+						continue; // æ­¤è¾¹ä¸å­˜åœ¨ç›¸å¯¹çš„é¢
 					MyMesh::FaceHandle fh = m_mesh.face_handle(hh);
 					float this_ex_depth = point_interpolation(m_mesh, m_depth, MyMesh::Point(0, 0, 0), *v_it, fh);
 					cnt++;
@@ -1324,8 +1324,8 @@ void Simulator::extrapolate_depth() {
 				}
 			}
 			else {
-				// ´ËµãÎŞË®ÇÒÖÜÎ§Ò²ÎŞË®
-				// ÉèÖÃÒ»¸ö¸ºÖµ£¬·ÀÖ¹²åÖµÊ±Òò¸¡µãÊıÎó²î¶ø³ö´í
+				// æ­¤ç‚¹æ— æ°´ä¸”å‘¨å›´ä¹Ÿæ— æ°´
+				// è®¾ç½®ä¸€ä¸ªè´Ÿå€¼ï¼Œé˜²æ­¢æ’å€¼æ—¶å› æµ®ç‚¹æ•°è¯¯å·®è€Œå‡ºé”™
 				m_mesh.property(m_float_temp, *v_it) = -1e-4f;
 			}
 		}
@@ -1352,8 +1352,8 @@ void Simulator::calculate_pressure() {
 			float pg = -g_ind[2] * b;
 			m_mesh.property(m_pressure_gravity, *v_it) = pg;
 			if (m_mesh.is_boundary(*v_it)) {
-				// Ä£ĞÍ±ß½çÇÒÊÇË®µÄ±ß½çµÄµã£¬´Ó¸½½üË®µÄ±ß½çµ«·ÇÄ£ĞÍ±ß½çµÄµãÍâ²å
-				// µ«Ò²¿ÉÄÜÎŞ·¨Íâ²å£¬ĞèÒª³õÊ¼»¯£¬ÒÔÃâµÃ³ö²»¿ÉÔ¤ÁÏµÄÖµ
+				// æ¨¡å‹è¾¹ç•Œä¸”æ˜¯æ°´çš„è¾¹ç•Œçš„ç‚¹ï¼Œä»é™„è¿‘æ°´çš„è¾¹ç•Œä½†éæ¨¡å‹è¾¹ç•Œçš„ç‚¹å¤–æ’
+				// ä½†ä¹Ÿå¯èƒ½æ— æ³•å¤–æ’ï¼Œéœ€è¦åˆå§‹åŒ–ï¼Œä»¥å…å¾—å‡ºä¸å¯é¢„æ–™çš„å€¼
 				m_mesh.property(m_pressure_surface, *v_it) = 0;
 				continue;
 			}
@@ -1389,7 +1389,7 @@ void Simulator::calculate_pressure() {
 					float len = planed_bottom_point.norm();
 					planed_bottom_point = MyMesh::Point(planed_bottom_point | ex, planed_bottom_point | ey, 0).normalized() * len;
 					vertex.bottom_point = planed_bottom_point;
-					vertex.water_point = MyMesh::Point(vertex.bottom_point[0], vertex.bottom_point[1], m_mesh.property(m_depth, *vv_it)); // ¸ß¶ÈÎªÍâ²åµÄ¸º¸ß¶È£¨ÎªÁË±ÜÃâ±ßÔµÃæÆ¬ÒòÎª²ÉÑùÎÊÌâ¶ø¹ı±¡£©
+					vertex.water_point = MyMesh::Point(vertex.bottom_point[0], vertex.bottom_point[1], m_mesh.property(m_depth, *vv_it)); // é«˜åº¦ä¸ºå¤–æ’çš„è´Ÿé«˜åº¦ï¼ˆä¸ºäº†é¿å…è¾¹ç¼˜é¢ç‰‡å› ä¸ºé‡‡æ ·é—®é¢˜è€Œè¿‡è–„ï¼‰
 					ring.push_back(vertex);
 				}
 				MyMesh::Point n(0, 0, 0);
@@ -1428,7 +1428,7 @@ void Simulator::calculate_pressure() {
 					for (size_t i = 0; i < ring.size(); i++) {
 						size_t succ = (i == ring.size() - 1) ? 0 : i + 1;
 						if (ring[i].have_water || ring[succ].have_water) {
-							F += partial_area(MyMesh::Point(0, 0, extrapolate_depth), ring[i].water_point, ring[succ].water_point) * coef_LL; // ¸ß¶ÈÎªÍâ²åµÄ¸º¸ß¶È£¨ÎªÁË±ÜÃâ±ßÔµÃæÆ¬ÒòÎª²ÉÑùÎÊÌâ¶ø¹ı±¡£©
+							F += partial_area(MyMesh::Point(0, 0, extrapolate_depth), ring[i].water_point, ring[succ].water_point) * coef_LL; // é«˜åº¦ä¸ºå¤–æ’çš„è´Ÿé«˜åº¦ï¼ˆä¸ºäº†é¿å…è¾¹ç¼˜é¢ç‰‡å› ä¸ºé‡‡æ ·é—®é¢˜è€Œè¿‡è–„ï¼‰
 							F += partial_area(o, ring[i].bottom_point, ring[succ].bottom_point) * coef_LS;
 							area_from_direct_n += (((ring[i].water_point - MyMesh::Point(0, 0, extrapolate_depth)) % (ring[succ].water_point - MyMesh::Point(0, 0, extrapolate_depth))) | n) / 6;
 						}
@@ -1447,11 +1447,11 @@ void Simulator::calculate_pressure() {
 					continue;
 				}
 				else {
-					// ÖÜÎ§Ë®µÄÇé¿ö»ìÂÒ£¬°´´ËµãÓĞË®À´¼ÆËãÑ¹Ç¿ps£¬¼´²»continue
+					// å‘¨å›´æ°´çš„æƒ…å†µæ··ä¹±ï¼ŒæŒ‰æ­¤ç‚¹æœ‰æ°´æ¥è®¡ç®—å‹å¼ºpsï¼Œå³ä¸continue
 				}
 			}
 			else {
-				// ÖÜÎ§ÎŞË®£¬²»ĞèÒª¼ÆËãÑ¹Ç¿
+				// å‘¨å›´æ— æ°´ï¼Œä¸éœ€è¦è®¡ç®—å‹å¼º
 				m_mesh.property(m_pressure_surface, *v_it) = 0;
 				continue;
 			}
@@ -1505,7 +1505,7 @@ void Simulator::update_velocity() {
 	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
 		float b = m_mesh.property(m_bottom, *v_it);
 		float d = m_mesh.property(m_depth, *v_it);
-		// HACK: ¶à¼ÆËãÒ»È¦v
+		// HACK: å¤šè®¡ç®—ä¸€åœˆv
 		if (d <= m_depth_threshold && !m_mesh.property(m_on_water_boundary, *v_it)) {
 			m_mesh.property(m_vector_temp, *v_it) = m_mesh.property(m_velocity, *v_it);
 			continue;
@@ -1523,7 +1523,7 @@ void Simulator::update_velocity() {
 			float vp = vpg + vps;
 			if (vd <= m_depth_threshold) {
 #if 1
-				// HACK: Ç¿ĞĞÍâ²å
+				// HACK: å¼ºè¡Œå¤–æ’
 				vp = pg + vps;
 #else
 				if (g_ind[2] <= 0.0f)
@@ -1543,7 +1543,7 @@ void Simulator::update_velocity() {
 			// vel += vel * m_dt * -10.0f; ////Added some viscosicty
 		}
 		vel += m_dt * (-grad + MyMesh::Point(g_ind[0], g_ind[1], 0));
-		// ·çÁ¦
+		// é£åŠ›
 		if (m_wind_coef != 0) {
 			MyMesh::Point wind_vel = m_mesh.property(m_wind_velocity, *v_it);
 			wind_vel[2] = 0;
@@ -1563,7 +1563,7 @@ void Simulator::force_boundary_velocity() {
 void Simulator::velocity_fast_march() {
 	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
 		auto have_water = [&](MyMesh::VertexHandle vh) {
-			// HACK: ¶à¼ÆËãÒ»È¦v£¬´ÓÍâÎ§¿ªÊ¼Íâ²å
+			// HACK: å¤šè®¡ç®—ä¸€åœˆvï¼Œä»å¤–å›´å¼€å§‹å¤–æ’
 			return m_mesh.property(m_depth, vh) > m_depth_threshold || m_mesh.property(m_on_water_boundary, vh);
 		};
 		if (m_mesh.property(m_depth, *v_it) <= m_depth_threshold) {
@@ -1571,7 +1571,7 @@ void Simulator::velocity_fast_march() {
 			IndexOnVertex *index = m_mesh.data(*v_it).index;
 			MyMesh::VertexHandle vh = index->nearest_vertex(m_mesh, MyMesh::Point(0, 0, 0), have_water);
 			if (vh == *m_mesh.vertices_end()) {
-				vel = MyMesh::Point(0, 0, 0); // ´ËvertexÖÜÎ§¶¼ÎŞË®
+				vel = MyMesh::Point(0, 0, 0); // æ­¤vertexå‘¨å›´éƒ½æ— æ°´
 			}
 			else {
 				vel = index->index_conv(m_mesh.data(vh).index, index, m_mesh.property(m_velocity, vh));
@@ -1593,7 +1593,7 @@ void Simulator::update_depth() {
 		d *= term;
 		if (d > 0 && d <= m_depth_threshold)
 			d = 0;
-		// HACK: Ç¿ÖÆÏŞÖÆË®Ãæ¸ß¶È
+		// HACK: å¼ºåˆ¶é™åˆ¶æ°´é¢é«˜åº¦
 		if (m_situation == 9 && d > 2.0f)
 			d = 1.8f;
 		m_mesh.property(m_depth, *v_it) = d;
@@ -1646,7 +1646,7 @@ void Simulator::update_depth() {
 			continue;
 		float delta_d = m_mesh.property(m_float_temp, *v_it);
 		d += delta_d;
-		// HACK: Ç¿ÖÆÏŞÖÆË®Ãæ¸ß¶È
+		// HACK: å¼ºåˆ¶é™åˆ¶æ°´é¢é«˜åº¦
 		if (m_situation == 9 && d > 2.0f)
 			d = 1.8f;
 		m_mesh.property(m_depth, *v_it) = d;
@@ -1793,7 +1793,7 @@ void Simulator::BoundaryCondition::set_velocity(VelocityType type, Simulator *si
 						  }
 					  }
 					  vvalue0 = (in_direct + out_direct).normalized();
-					  // Todo: ´¦Àí½éÓÚÖ±½ÇÓëÆ½±ßÖ®¼äµÄÇé¿ö
+					  // Todo: å¤„ç†ä»‹äºç›´è§’ä¸å¹³è¾¹ä¹‹é—´çš„æƒ…å†µ
 					  if ((in_direct.normalized() | out_direct.normalized()) < 0.5f)
 						  vvalue0 = MyMesh::Point(0, 0, 0);
 	}
@@ -1849,7 +1849,7 @@ void Simulator::prepareData ()
 	c_height = new float[vnum];
 	c_boundary = new int[vnum];
 
-	// pull#1:Ôö¼Ó
+	// pull#1:å¢åŠ 
 	c_once_have_water = new bool[vnum];
 	c_on_water_boundary = new bool[vnum];
 	c_extrapolate_depth = new float[vnum];
@@ -1924,7 +1924,7 @@ void Simulator::prepareData ()
 		
 		
 		// myVertex
-		// pull#1: Ô¼¶¨1-ringµÄË³Ğò
+		// pull#1: çº¦å®š1-ringçš„é¡ºåº
 		IndexOnVertex *index = m_mesh.data(*v_it).index;
 		int k = 0;
 		std::vector<MyMesh::VertexHandle> const &ring_vh(index->get_ring_1_ordered());
@@ -2014,7 +2014,7 @@ void Simulator::prepareData ()
 				if (count > MAX_FACES)printf("%d --> error2\n", count);
 			}
 		}
-		// pull#1:Ôö¼Ó
+		// pull#1:å¢åŠ 
 		c_once_have_water[idx] = false;
 		Tensor22 tensor = m_mesh.property(m_tensor, *v_it);
 		c_tensor[idx].x = tensor[0];
