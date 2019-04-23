@@ -11,7 +11,7 @@ void load_field_data(std::string const file_name, std::vector<double> &field, si
 	}
 }
 void run(std::string const height,std::string const surface,std::string const vx,std::string const vy){
-  size_t x_cells;
+        size_t x_cells;
 	size_t y_cells;
 
 	std::vector<double> initial_height;
