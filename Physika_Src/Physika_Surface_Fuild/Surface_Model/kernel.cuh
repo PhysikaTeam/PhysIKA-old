@@ -4,10 +4,10 @@
 	#include <stdio.h>
 	#include <vector_types.h>
 	#include "simulator.h"
-	#include "fluid_defs.h"
+	#include "Physika_Surface_Fuild/SPHsrc/fluid_defs.h"
 #ifdef HYBRID
-	#include "fluid_system_host.cuh"
-	#include "fluid_system_kern.cuh"
+	#include "Physika_Surface_Fuild/SPHsrc/fluid_system_host.cuh"
+	#include "Physika_Surface_Fuild/SPHsrc/fluid_system_kern.cuh"
 #endif
 	
 	typedef unsigned int		uint;
@@ -44,10 +44,10 @@
 		float *sourceTerm;
 #endif
 
-		// pull#1: Ôö¼Ó
-		bool *m_on_water_boundary; // ÔÚadvectÄ©Î²¸üĞÂÕâ¸öÊôĞÔ
+		// pull#1: å¢åŠ 
+		bool *m_on_water_boundary; // åœ¨advectæœ«å°¾æ›´æ–°è¿™ä¸ªå±æ€§
 		bool *m_once_have_water;
-		float *m_extrapolate_depth; // ÔÚadvectÄ©Î²¸üĞÂÕâ¸öÊôĞÔ¡£½öÔÚwater_boundary¼ÆËã²åÖµ£¬ÆäËüµãÖ±½Ó¸´ÖÆdepth
+		float *m_extrapolate_depth; // åœ¨advectæœ«å°¾æ›´æ–°è¿™ä¸ªå±æ€§ã€‚ä»…åœ¨water_boundaryè®¡ç®—æ’å€¼ï¼Œå…¶å®ƒç‚¹ç›´æ¥å¤åˆ¶depth
 		float *m_pressure_gravity;
 		float *m_pressure_surface;
 		float4 *m_tensor;
@@ -67,7 +67,7 @@
 		float m_depth_threshold;
 		float3 m_g;
 
-		// pull#1: Ôö¼Ó
+		// pull#1: å¢åŠ 
 		bool m_have_tensor;
 		float m_fric_coef;
 		float m_gamma;
