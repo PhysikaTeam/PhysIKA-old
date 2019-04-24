@@ -1,0 +1,7 @@
+#ifndef PHYSIKA_DYNAMICS_SHALLOW_WATER_SHALLOW_WATER_MODEL_H_
+#define PHYSIKA_DYNAMICS_SHALLOW_WATER_SHALLOW_WATER_MODEL_H_
+#include<vector>
+namespace Physika{
+
+}
+#endif
