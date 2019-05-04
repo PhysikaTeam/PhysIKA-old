@@ -7,7 +7,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
+namespace Physika {
 enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
@@ -48,3 +48,4 @@ public:
 private:
 	void updateCameraVectors();
 };
+}
