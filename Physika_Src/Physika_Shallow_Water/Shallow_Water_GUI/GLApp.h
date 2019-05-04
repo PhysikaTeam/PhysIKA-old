@@ -20,7 +20,6 @@ private:
     std::vector<double> initial_velocity_x;
     std::vector<double> initial_velocity_y;
     std::vector<double> initial_surface_level;
-    VisualEngine visual_engine;
  public:
     GLApp(double time,double deltx,int width,int height);
     ~GLApp();
