@@ -22,6 +22,7 @@ void GLApp::showframe(){
 	for (size_t i = 0; i < water_height.size(); ++i) {
 		water_height[i] += surface_level[i];
 	}
+	visual_engine.update_vertex_values(&water_height, &surface_level);
 	while (1) {
 		visual_engine.render();
 		if (true) {
