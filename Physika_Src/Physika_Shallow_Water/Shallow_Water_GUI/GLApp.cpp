@@ -14,9 +14,9 @@ void GLApp::init(std::string const surface,std::string const height,std::string 
 	load_field_data(surface, initial_surface_level, x_cells, y_cells);
 	assert(x_cells * y_cells == initial_height.size());
 	solver.set(x_cells,y_cells,dt,dx);
-	VisualEngine visual_engine.set(x_cells, y_cells, dx, window_width, window_height);
 }
 void GLApp::showframe(){
+	VisualEngine visual_engine.set(x_cells, y_cells, dx, window_width, window_height);
 	std::vector<GLfloat> water_height(initial_height.begin(), initial_height.end());
 	std::vector<GLfloat> surface_level(initial_surface_level.begin(), initial_surface_level.end());
 	for (size_t i = 0; i < water_height.size(); ++i) {
