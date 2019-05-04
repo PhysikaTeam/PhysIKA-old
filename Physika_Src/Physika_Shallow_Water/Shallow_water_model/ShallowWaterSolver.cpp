@@ -1,4 +1,5 @@
 #include "ShallowWaterSolver.h"
+namespace Physika {
 ShallowWaterSolver::ShallowWaterSolver(
 	size_t x_cells,
 	size_t y_cells,
@@ -305,4 +306,5 @@ void ShallowWaterSolver::euler() {
 	update_vy(dt);
 
 	time_elapsed += dt;
+}
 }
