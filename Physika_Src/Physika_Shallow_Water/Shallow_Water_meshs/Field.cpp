@@ -2,7 +2,7 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
-
+namespace Physika {
 Field::Field(size_t x_cells, size_t y_cells) :
 	base(x_cells * y_cells, 0),
 	x_cells(x_cells),
@@ -78,4 +78,5 @@ Field Field::operator*(double multiplier) const {
 
 const std::vector<double> &Field::getBase() const {
 	return base;
+}
 }
