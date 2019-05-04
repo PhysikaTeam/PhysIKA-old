@@ -2,7 +2,9 @@
 namespace Physika {
 class ShallowWaterSolver {
 public:
+	ShallowWaterSolver();
 	ShallowWaterSolver(size_t x_cells, size_t y_cells, double time_step, double dx, double gravity = 9.8);
+	void set(size_t x_cells, size_t y_cells, double time_step, double dx, double gravity = 9.8);
 	void initialize_water_height(const std::vector<double> &input);
 	void initialize_vx(const std::vector<double> &input);
 	void initialize_vy(const std::vector<double> &input);
