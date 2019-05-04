@@ -14,7 +14,7 @@
 
 #include "Shader.h"
 #include "Physika_Shallow_Water/Shallow_Water_GUI/Camera.h"
-
+namespace Physika {
 class GLInterface {
 public:
 	GLInterface(int window_width, int window_height);
@@ -76,4 +76,5 @@ namespace ViewUtils {
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 	void do_camera_movement();
+}
 }
