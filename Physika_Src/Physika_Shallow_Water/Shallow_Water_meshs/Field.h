@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <omp.h>
 
-
+namespace Physika {
 class Field {
 public:
 
@@ -32,3 +32,4 @@ private:
 	size_t x_cells;
 	size_t y_cells;
 };
+}
