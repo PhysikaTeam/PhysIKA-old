@@ -1,0 +1,14 @@
+#version 330 core
+
+layout (location = 0) in vec2 pos_xy;
+layout (location = 1) in float pos_z;
+
+uniform mat4 view;
+uniform mat4 projection;
+
+out vec4 ourColor;
+
+void main() {
+	gl_Position = projection * view * vec4(pos_xy.x, pos_z, pos_xy.y, 1.0f);
+	ourColor = pos_z * vec4(0.7f, 0.5f, 0.0f, 1.0f);
+}
