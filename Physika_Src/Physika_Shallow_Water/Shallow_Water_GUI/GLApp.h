@@ -13,17 +13,19 @@ private:
     size_t y_cells;
     double dt;
     double dx;
+    int window_width;
+    int window_height;
     ShallowWaterSolver solver;
     std::vector<double> initial_height;
-	  std::vector<double> initial_velocity_x;
-	  std::vector<double> initial_velocity_y;
-	  std::vector<double> initial_surface_level;
+    std::vector<double> initial_velocity_x;
+    std::vector<double> initial_velocity_y;
+    std::vector<double> initial_surface_level;
     VisualEngine visual_engine;
  public:
-    GLApp(double time,double deltx);
+    GLApp(double time,double deltx,int width,int height);
     ~GLApp();
     void init(std::string const surface,std::string const height,std::string const vx,std::string const vy);
-    void run();
+    void showframe();
 }
 }
     
