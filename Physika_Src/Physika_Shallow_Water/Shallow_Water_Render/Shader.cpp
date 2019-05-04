@@ -1,5 +1,5 @@
 #include "Shader.h"
-
+namespace Physika {
 Shader::Shader(GLchar const *vertexPath, GLchar const *fragmentPath) {
 
 	std::ifstream vertexShaderFile;
@@ -76,4 +76,5 @@ void Shader::use() {
 
 GLuint Shader::getProgram() {
 	return program;
+}
 }
