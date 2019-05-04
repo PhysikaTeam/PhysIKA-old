@@ -6,5 +6,4 @@
 #include <string>
 namespace Physika {
 void load_field_data(std::string const file_name, std::vector<double> &field, size_t &x_cells, size_t &y_cells);
-void run(std::string const height,std::string const surface,std::string const vx,std::string const vy);
 }
