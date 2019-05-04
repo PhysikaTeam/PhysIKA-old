@@ -1,4 +1,5 @@
 #include "Physika_Shallow_Water/Shallow_Water_meshs/Field.h"
+namespace Physika {
 class ShallowWaterSolver {
 public:
 	ShallowWaterSolver(size_t x_cells, size_t y_cells, double time_step, double dx, double gravity = 9.8);
@@ -31,3 +32,4 @@ private:
 	Field surface_level;
 	double const gravity;
 };
+}
