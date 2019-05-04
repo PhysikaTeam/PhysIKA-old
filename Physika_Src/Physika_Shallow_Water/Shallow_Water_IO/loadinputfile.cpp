@@ -1,4 +1,5 @@
 #include "loadinputfile.h"
+namespace Physika {
 void load_field_data(std::string const file_name, std::vector<double> &field, size_t &x_cells, size_t &y_cells) {
 	std::ifstream input(file_name);
 	input.exceptions(std::istream::failbit | std::istream::badbit);
@@ -55,4 +56,5 @@ void run(std::string const height,std::string const surface,std::string const vx
 		}
 	}
 
+}
 }
