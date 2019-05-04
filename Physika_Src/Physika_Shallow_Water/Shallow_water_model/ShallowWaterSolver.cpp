@@ -1,5 +1,6 @@
 #include "ShallowWaterSolver.h"
 namespace Physika {
+ShallowWaterSolver::ShallowWaterSolver(){}
 ShallowWaterSolver::ShallowWaterSolver(
 	size_t x_cells,
 	size_t y_cells,
@@ -17,7 +18,22 @@ ShallowWaterSolver::ShallowWaterSolver(
 	vy(x_cells, y_cells + 1),
 	surface_level(x_cells, y_cells),
 	gravity(gravity) {}
-
+void ShallowWaterSolver::set(size_t x_cells,
+	size_t y_cells,
+	double time_step,
+	double dx,
+	double gravity){
+	dt=timestep;
+	this->dx=dx;
+	time_elapsed=0.0;
+	this->x_cells=x_cells;
+	this->y_cells=y_cells;
+	water_height.resize(x_cells,y_cells);
+	vx.resize(x_cells+1,y_cells);
+	vy.resize(x_cells,y_cells+1);
+	surface_level.resize(x_cells,y_cells);
+	this->gravity=gravity;
+}
 void ShallowWaterSolver::run(size_t iterations) {
 
 	for (size_t iteration = 0; iteration < iterations; ++iteration) {
