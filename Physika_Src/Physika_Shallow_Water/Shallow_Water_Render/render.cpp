@@ -1,5 +1,5 @@
 #include "render.h"
-
+namespace Physika {
 GLInterface::GLInterface(int window_width, int window_height) :
 	window(nullptr),
 	aspect_ratio(GLfloat(window_width) / (GLfloat)window_height)
@@ -254,4 +254,5 @@ namespace ViewUtils {
 
 		camera.ProcessMouseMovement(xoffset, yoffset);
 	}
+}
 }
