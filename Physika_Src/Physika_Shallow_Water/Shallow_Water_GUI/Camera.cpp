@@ -5,7 +5,7 @@ const GLfloat PITCH = 0.0f;
 const GLfloat SPEED = 3.0f;
 const GLfloat SENSITIVTY = 0.25f;
 const GLfloat ZOOM = 45.0f;
-
+namespace Physika {
 Camera::Camera(
 	glm::vec3 position,
 	glm::vec3 up,
@@ -90,4 +90,5 @@ void Camera::updateCameraVectors() {
 	Front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 	Right = glm::normalize(glm::cross(Front, WorldUp));  
 	Up = glm::normalize(glm::cross(Right, Front));
+}
 }
