@@ -8,7 +8,7 @@ pragma once
 #define GLEW_NO_GLU
 
 #include <GL/glew.h>
-
+namespace Physika {
 class Shader {
 public:
 
@@ -23,3 +23,4 @@ public:
 private:
 	GLuint program;
 };
+}
