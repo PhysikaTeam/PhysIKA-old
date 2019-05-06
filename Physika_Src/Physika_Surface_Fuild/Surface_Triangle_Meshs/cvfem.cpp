@@ -4,10 +4,10 @@
 #include <iostream>
 
 using namespace std;
-
+namespace Physika{
 template<typename T>
 static T _point_interpolation ( MyMesh const &mesh, OpenMesh::VPropHandleT<T> prop, MyMesh::Point p, MyMesh::VertexHandle vh, MyMesh::FaceHandle fh ) {
-	// PÊÇ¡°ÅÄÆ½¡±Æ½ÃæÉÏµÄµã£¬z±ØÐëÎª0
+	// Pæ˜¯â€œæ‹å¹³â€å¹³é¢ä¸Šçš„ç‚¹ï¼Œzå¿…é¡»ä¸º0
 	IndexOnVertex *pindex = mesh.data ( vh ).index;
 	auto fv_it = mesh.cfv_begin ( fh );
 	MyMesh::Point a = pindex->plane_map ( mesh.point ( *fv_it ) );
@@ -248,5 +248,6 @@ float areaGradP(std::vector<MyMesh::Point> const &points, MyMesh::Point const &i
 	else { // on boundary
 		return dot(tempresult, normali) / totalarea;
 	}
+}
 }
 /////////////////////////////// Surface tension utility functions
