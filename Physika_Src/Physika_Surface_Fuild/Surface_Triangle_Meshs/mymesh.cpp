@@ -2,6 +2,7 @@
 #include <utility>
 #include <queue>
 
+namesapce Physiak{
 CoordSystem gen_coord_system_by_z_axis(MyMesh::Point const &ez) {
 	CoordSystem cs;
 	cs[2] = ez.normalized();
@@ -71,4 +72,5 @@ void calc_vertex_nring(MyMesh const &mesh, MyMesh::VertexHandle vh, int n, std::
 			}
 		}
 	}
+}
 }
