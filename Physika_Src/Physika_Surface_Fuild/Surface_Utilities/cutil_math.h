@@ -40,8 +40,8 @@
     The syntax is modelled on the Cg standard library.
 */
 
-#ifndef CUTIL_MATH_H
-#define CUTIL_MATH_H
+#ifndef PHYSIKA_SURFACE_FUILD_SURFACE_UTILITIES_CUTIL_MATH_H_
+#define PHYSIKA_SURFACE_FUILD_SURFACE_UTILITIES_CUTIL_MATH_H_
 
 #include "cuda_runtime.h"
 
