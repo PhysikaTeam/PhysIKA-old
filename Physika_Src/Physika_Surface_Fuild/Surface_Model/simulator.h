@@ -1,8 +1,9 @@
-#ifndef SIMULATOR_H
-#define SIMULATOR_H
+#ifndef PHYSIKA_SURFACE_FUILD_SURFACE_MODEL_SIMULATOR_H_
+#define PHYSIKA_SURFACE_FUILD_SURFACE_MODEL_SIMULATOR_H_
 
 #include "Physika_Surface_Fuild/Surface_Triangle_Meshs/mymesh.h"
 
+namespace Physika{
 class Simulator {
 public:
 	Simulator();
@@ -13,6 +14,10 @@ public:
 	void output_obj_cuda(int frame);
 	void post_data ();
 	void clear();
+	void setdepththreshold(float threshold);
+	void setsituation(int situation);
+	void setinitcon(bool havetensor,float fric_coef,float gamma,float boundary_theta,float boundary_tension_multiplier,float max_p_bs);
+	void setframecon(int stepnum,int totalstep,int outstep,flaot dt);
 
 //private:
 	Simulator(Simulator const &);
@@ -140,5 +145,5 @@ public://private:
 	float3 (*c_vertex_planeMap)[MAX_FACES * 3];
 	VertexOppositeHalfedge (*c_vertex_opph)[MAX_VERTEX];
 };
-
+}
 #endif
