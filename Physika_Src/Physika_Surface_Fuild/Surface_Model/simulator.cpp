@@ -31,7 +31,7 @@ Simulator::~Simulator() { }
 void Simulator::setsituation(int situation){
 	m_situation=situation;
 }
-void Simulator::setinitcon(float threshold,bool havetensor,float fric_coef,float gamma,float boundary_theta,float boundary_tension_multiplier,float max_p_bs){
+void Simulator::setinitcon(float threshold,bool havetensor,float fric_coef,float gamma,float boundary_theta,float boundary_tension_multiplier,float max_p_bs，float wind_coef){
 	m_depth_threshold=threshold;
 	m_have_tensor=havetensor;
 	m_fric_coef=fric_coef;
@@ -39,6 +39,7 @@ void Simulator::setinitcon(float threshold,bool havetensor,float fric_coef,float
 	m_water_boundary_theta=boundary_theta;
 	m_water_boundary_tension_multiplier=boundary_tension_multiplier;
 	m_max_p_bs=max_p_bs;
+	m_wind_coef=wind_coef;
 }
 void Simulator::setframecon(int stepnum,int totalstep,int outstep,flaot dt){
 	m_stepnum=stepnum;
@@ -47,14 +48,14 @@ void Simulator::setframecon(int stepnum,int totalstep,int outstep,flaot dt){
 	m_dt=dt;
 }
 void Simulator::init(int argc, char** argv) {
-	cout << "seed: " << rand() << endl;
-	m_situation = 9;
+	//cout << "seed: " << rand() << endl;
+	//m_situation = 9;
 	set_initial_constants();
 	generate_origin();
 	generate_mesh();
 	add_properties();
-	m_depth_threshold = (avg_edge_len = calc_average_edge_length(m_mesh)) * 1e-4f;
-	m_depth_threshold = 1e-5f;
+	//m_depth_threshold = (avg_edge_len = calc_average_edge_length(m_mesh)) * 1e-4f;
+	//m_depth_threshold = 1e-5f;
 	add_index_to_vertex(3);
 	match_bottom_height();
 	calculate_tensor();
@@ -251,8 +252,8 @@ void Simulator::run() {
 		update_depth();
 		t[5] += f();
 		timer.stop();
-		printf("calculate frame %d used %f seconds\n", m_stepnum + 1, timer.get());
-		printf("%f %f %f %f %f %f\n", t[0], t[1] - t[0], t[2] - t[1], t[3] - t[2], t[4] - t[3], t[5] - t[4]);
+		//printf("calculate frame %d used %f seconds\n", m_stepnum + 1, timer.get());
+		//printf("%f %f %f %f %f %f\n", t[0], t[1] - t[0], t[2] - t[1], t[3] - t[2], t[4] - t[3], t[5] - t[4]);
 		m_stepnum++;
 	}
 }
@@ -267,27 +268,27 @@ void Simulator::set_initial_constants() {
 	m_rotate_center = MyMesh::Point(0, 0, 0);
 
 	// 摩擦力系数
-	m_have_tensor = false;
-	m_fric_coef = 1.3f;
+	//m_have_tensor = false;
+	//m_fric_coef = 1.3f;
 
 	// 表面张力的系数
-	m_gamma = 1.000f;
+	//m_gamma = 1.000f;
 	// gamma is surface tension coefficient divided by density, theoretical value for 25 degree(C) water is 7.2*10^-5 (N/m)/(kg/m^3)
 	// note: surface tension force not negligible under length scale less than about 4mm, so gamma value should be set with careful considering mesh edge length. Try using mm or cm instead of m
-	m_water_boundary_theta = (float)M_PI / 180 * 30.0f;
-	m_water_boundary_tension_multiplier = 1.0f;
-	m_max_p_bs = 10.0f;
+	//m_water_boundary_theta = (float)M_PI / 180 * 30.0f;
+	//m_water_boundary_tension_multiplier = 1.0f;
+	//m_max_p_bs = 10.0f;
 
 	// 风力
-	m_wind_coef = 0;
+	//m_wind_coef = 0;
 
 	// 模拟帧设置
-	m_stepnum = 0;
-	m_total_steps = 1000;
-	m_output_step = 10;
-	m_dt = 0.033f;
+	//m_stepnum = 0;
+	//m_total_steps = 1000;
+	//m_output_step = 10;
+	//m_dt = 0.033f;
 
-	switch (m_situation) {
+	/*switch (m_situation) {
 	case 4:
 		m_have_tensor = true;
 		m_fric_coef = 6.667f;
@@ -320,7 +321,7 @@ void Simulator::set_initial_constants() {
 		break;
 	default:
 		break;
-	}
+	}*/
 }
 
 void Simulator::generate_origin() {
