@@ -1,10 +1,11 @@
-#ifndef INDEXOFMESH_H
-#define INDEXOFMESH_H
+#ifndef PHYSIKA_SURFACE_FUILD_SURFACE_TRIANGLE_MESHS_INDEXOFMESH_H_
+#define PHYSIKA_SURFACE_FUILD_SURFACE_TRIANGLE_MESHS_INDEXOFMESH_H_
 
 #include "mymesh.h"
 #include <vector>
 #include <map>
 
+namespace Physika{
 class IndexOfMesh {
 public:
 	IndexOfMesh(MyMesh &mesh);
@@ -27,5 +28,6 @@ private:
 	int nx, ny, nz;
 	std::map<int, std::vector<MyMesh::FaceHandle> > div;
 };
+}
 
 #endif // INDEXOFMESH_H
