@@ -16,20 +16,36 @@
 #include <queue>
 #include <deque>
 #include "swe.cuh"
-
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+#include <cuda_runtime.h>
+#include <device_launch_parameters.h>
 #pragma warning(disable: 4258)
 
 using namespace std;
 
 #define COMPUTE_DIV_METHOD 2
-
+namespace Physika{
 Simulator::Simulator() { }
-
 Simulator::~Simulator() { }
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-#include <cuda_runtime.h>
-#include <device_launch_parameters.h>
+void Simulator::setsituation(int situation){
+	m_situation=situation;
+}
+void Simulator::setinitcon(float threshold,bool havetensor,float fric_coef,float gamma,float boundary_theta,float boundary_tension_multiplier,float max_p_bs){
+	m_depth_threshold=threshold;
+	m_have_tensor=havetensor;
+	m_fric_coef=fric_coef;
+	m_gamma=gamma;
+	m_water_boundary_theta=boundary_theta;
+	m_water_boundary_tension_multiplier=boundary_tension_multiplier;
+	m_max_p_bs=max_p_bs;
+}
+void Simulator::setframecon(int stepnum,int totalstep,int outstep,flaot dt){
+	m_stepnum=stepnum;
+	m_total_steps=totalstep;
+	m_output_step=outstep;
+	m_dt=dt;
+}
 void Simulator::init(int argc, char** argv) {
 	cout << "seed: " << rand() << endl;
 	m_situation = 9;
@@ -2034,4 +2050,5 @@ void Simulator::post_data ()
 	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it, ++idx) {
 		m_mesh.property(m_depth, *v_it) = c_depth[idx];
 	}
+}
 }
