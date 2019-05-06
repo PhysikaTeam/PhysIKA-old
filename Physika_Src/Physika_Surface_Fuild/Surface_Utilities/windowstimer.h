@@ -1,8 +1,9 @@
-#ifndef WINDOWSTIMER_H
-#define WINDOWSTIMER_H
+#ifndef PHYSIKA_SURFACE_FUILD_SURFACE_UTILITIES_WINDOWSTIMER_H_
+#define PHYSIKA_SURFACE_FUILD_SURFACE_UTILITIES_WINDOWSTIMER_H_
 
 #include <Windows.h>
 
+namespace Physika{
 class WindowsTimer {
 public:
 	typedef double time_t;
@@ -30,5 +31,5 @@ private:
 	__int64 start, end;
 	time_t freq;
 };
-
+}
 #endif
