@@ -4,7 +4,7 @@
 #include "GL/glut.h"
 #include "Physika_Surface_Fuild/Surface_Utilities/boundrecorder.h"
 #include "Physika_Surface_Fuild/Surface_Model/simulator.h"
-
+namespace Physika{
 static const GLfloat afAmbientWhite [] = {0.25, 0.25, 0.25, 1.00};
 static const GLfloat afAmbientRed   [] = {0.25, 0.00, 0.00, 1.00};
 static const GLfloat afAmbientGreen [] = {0.00, 0.25, 0.00, 1.00};
@@ -300,4 +300,5 @@ static GLvoid vDrawMeshFaces()
 	}
 	mesh.release_face_normals();
 	return;
+}
 }
