@@ -5,21 +5,21 @@
 
 typedef OpenMesh::VPropHandleT<float> VFloatPropHandle;
 typedef OpenMesh::VPropHandleT<MyMesh::Point> VVectorPropHandle;
-
-// ÇóvhÇĞÆ½ÃæÉÏµãPµÄ²åÖµ¡¢Ìİ¶È¡¢É¢¶È
+namespce Physiak{
+// æ±‚vhåˆ‡å¹³é¢ä¸Šç‚¹Pçš„æ’å€¼ã€æ¢¯åº¦ã€æ•£åº¦
 float point_interpolation(MyMesh const &mesh, VFloatPropHandle prop, MyMesh::Point p, MyMesh::VertexHandle vh, MyMesh::FaceHandle fh);
-// ÏòÁ¿²åÖµ£¬ÊÇ°ÑÓĞ¹ØÏòÁ¿Ğı×ªµ½vhÇĞÆ½ÃæºóÔÙ²åÖµ
+// å‘é‡æ’å€¼ï¼Œæ˜¯æŠŠæœ‰å…³å‘é‡æ—‹è½¬åˆ°vhåˆ‡å¹³é¢åå†æ’å€¼
 MyMesh::Point point_interpolation(MyMesh const &mesh, VVectorPropHandle prop, MyMesh::Point p, MyMesh::VertexHandle vh, MyMesh::FaceHandle fh);
 MyMesh::Point point_gradient(MyMesh const &mesh, VFloatPropHandle prop, MyMesh::Point p, MyMesh::VertexHandle vh, MyMesh::FaceHandle fh);
 float point_divergence(MyMesh const &mesh, VVectorPropHandle prop, MyMesh::Point p, MyMesh::VertexHandle vh, MyMesh::FaceHandle fh);
 
-// Çóvh_centerÇĞÆ½ÃæÉÏ¶¥µãvh_targetµÄÌİ¶È¡¢É¢¶È¡¢À­ÆÕÀ­Ë¹
+// æ±‚vh_centeråˆ‡å¹³é¢ä¸Šé¡¶ç‚¹vh_targetçš„æ¢¯åº¦ã€æ•£åº¦ã€æ‹‰æ™®æ‹‰æ–¯
 MyMesh::Point vertex_gradient(MyMesh const &mesh, VFloatPropHandle prop, MyMesh::VertexHandle vh_target, MyMesh::VertexHandle vh_center);
 float vertex_divergence(MyMesh const &mesh, VVectorPropHandle prop, MyMesh::VertexHandle vh_target, MyMesh::VertexHandle vh_center);
 float vertex_laplace(MyMesh const &mesh, VFloatPropHandle prop, MyMesh::VertexHandle vh_target, MyMesh::VertexHandle vh_center);
 
 // Surface tension utility functions
-MyMesh::Point computeNormali(std::vector<MyMesh::Point> const &points, MyMesh::Point const &ipoint, bool boundaryFlag); // ÒÔ½Ç¶ÈÎªÈ¨ÖØ
+MyMesh::Point computeNormali(std::vector<MyMesh::Point> const &points, MyMesh::Point const &ipoint, bool boundaryFlag); // ä»¥è§’åº¦ä¸ºæƒé‡
 float areaGradP(std::vector<MyMesh::Point> const &points, MyMesh::Point const &ipoint, MyMesh::Point const &normali, bool boundaryFlag);
-
+}
 #endif
