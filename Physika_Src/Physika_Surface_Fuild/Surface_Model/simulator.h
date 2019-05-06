@@ -80,6 +80,7 @@ public://private:
 	float m_water_boundary_theta;
 	float m_water_boundary_tension_multiplier;
 	float m_max_p_bs;
+	float m_wind_coef;
 
 	OpenMesh::VPropHandleT<float> m_bottom;
 	OpenMesh::VPropHandleT<float> m_depth;
