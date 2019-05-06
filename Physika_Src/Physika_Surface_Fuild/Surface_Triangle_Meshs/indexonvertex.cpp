@@ -8,7 +8,7 @@
 
 using std::cout;
 using std::endl;
-
+namespace Physika{
 IndexOnVertex::IndexOnVertex(MyMesh const &mesh, MyMesh::VertexHandle vh, std::set<MyMesh::FaceHandle> const &set_fh) {
 	unique_index_number = ++n_instance;
 	rebuild_from(mesh, vh, set_fh);
@@ -277,3 +277,4 @@ void IndexOnVertex::rebuild_from(MyMesh const &mesh, MyMesh::VertexHandle vh, st
 }
 
 int IndexOnVertex::n_instance = 0;
+}
