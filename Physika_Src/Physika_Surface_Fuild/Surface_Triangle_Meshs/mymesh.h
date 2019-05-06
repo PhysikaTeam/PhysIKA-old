@@ -1,5 +1,5 @@
-#ifndef MYMESH_H
-#define MYMESH_H
+#ifndef PISIKA_SURFACE_FUILD_SURFACE_TRIANGLE_MESHA_MYMESH_H_
+#define PISIKA_SURFACE_FUILD_SURFACE_TRIANGLE_MESHA_MYMESH_H_
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMeshT.hh>
@@ -9,6 +9,7 @@
 #include <map>
 #include <vector_types.h>
 
+namespace Physika{
 class IndexOnVertex;
 
 struct MyTraits: public OpenMesh::DefaultTraits {
@@ -54,5 +55,5 @@ struct VertexOppositeHalfedge {
 	int to_v;
 	int opph_oppv;
 };
-
+}
 #endif
