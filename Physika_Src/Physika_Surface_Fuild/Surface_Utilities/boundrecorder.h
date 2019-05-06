@@ -1,6 +1,7 @@
-#ifndef BOUNDRECORDER_H
-#define BOUNDRECORDER_H
+#ifndef PHYSIKA_SURFACE_FUILD_SURFACE_UTILITIES_BOUNDRECORDER_H_
+#define PHYSIKA_SURFACE_FUILD_SURFACE_UTILITIES_BOUNDRECORDER_H_
 
+namespace Physika{
 template<class T>
 class BoundRecorder {
 public:
@@ -25,5 +26,5 @@ private:
 	T _min;
 	T _max;
 };
-
+}
 #endif
