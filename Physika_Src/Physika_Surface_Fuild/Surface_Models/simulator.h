@@ -6,25 +6,25 @@ class Simulator {
 public:
 	Simulator();
 	~Simulator();
-	void init(int argc, char** argv);
-	void run();
-	void run_cuda (int frame);
-	void output_obj_cuda(int frame);
+	//void init(int argc, char** argv);
+	//void run();
+	//void run_cuda (int frame);
+	//void output_obj_cuda(int frame);
 	void post_data ();
 	void clear();
 
 //private:
 	Simulator(Simulator const &);
 	Simulator &operator=(Simulator const &);
-	void set_initial_constants();
-	void generate_origin();
-	void generate_mesh();
-	void add_properties();
-	void add_index_to_vertex(int ring);
-	void match_bottom_height();
-	void calculate_tensor();
-	void set_initial_conditions();
-	void output_obj();
+	//void set_initial_constants();
+	//void generate_origin();
+	//void generate_mesh();
+	//void add_properties();
+	//void add_index_to_vertex(int ring);
+	//void match_bottom_height();
+	//void calculate_tensor();
+	//void set_initial_conditions();
+	//void output_obj();
 	void update_midvels();
 	void advect_filed_values();
 	void extrapolate_depth();
@@ -106,7 +106,7 @@ public://private:
 	OpenMesh::VPropHandleT<Tensor22> m_tensor;
 
 	// Data for CUDA
-	void prepareData ();
+	/*void prepareData ();
 	float3* c_vel;
 	float3* c_mvel;
 	float3* c_point;
@@ -131,7 +131,7 @@ public://private:
 	int (*c_vertex_nearVert)[MAX_NEAR_V];
 	int3 (*c_vertex_nerbFace)[MAX_FACES];
 	float3 (*c_vertex_planeMap)[MAX_FACES * 3];
-	VertexOppositeHalfedge (*c_vertex_opph)[MAX_VERTEX];
+	VertexOppositeHalfedge (*c_vertex_opph)[MAX_VERTEX];*/
 };
 }
 #endif;
