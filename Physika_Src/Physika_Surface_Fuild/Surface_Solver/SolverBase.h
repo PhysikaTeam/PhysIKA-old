@@ -18,6 +18,10 @@
 #include <queue>
 #include <deque>
 #include "Physika_Surface_Fuild/Surface_Model/swe.cuh"
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+#include <cuda_runtime.h>
+#include <device_launch_parameters.h>
 namespace Physika{
 class SolverBase{
 public:
@@ -27,10 +31,10 @@ public:
     virtual void init(int argc, char** argv);
     virtual void run();
     virtual void run_cuda (int frame);
-	  virtual void output_obj_cuda(int frame);
+    virtual void output_obj_cuda(int frame);
     virtual void set_initial_constants();
-	  virtual void generate_origin();
-	  virtual void generate_mesh();
+    virtual void generate_origin();
+    virtual void generate_mesh();
     virtual void calculate_tensor();
     virtual void set_initial_conditions();
     virtual void output_obj();
