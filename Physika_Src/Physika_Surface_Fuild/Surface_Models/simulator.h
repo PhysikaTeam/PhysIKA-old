@@ -17,9 +17,9 @@ public:
 	//void set_initial_constants();
 	//void generate_origin();
 	//void generate_mesh();
-	//void add_properties();
-	//void add_index_to_vertex(int ring);
-	//void match_bottom_height();
+	void add_properties();
+	void add_index_to_vertex(int ring);
+	void match_bottom_height();
 	//void calculate_tensor();
 	//void set_initial_conditions();
 	//void output_obj();
@@ -55,7 +55,7 @@ public:
 	};
 
 public://private:
-	int m_situation;
+	//int m_situation;
 	MyMesh m_mesh;
 	float avg_edge_len;
 	float m_depth_threshold;
@@ -72,6 +72,9 @@ public://private:
 	float m_water_boundary_theta;
 	float m_water_boundary_tension_multiplier;
 	float m_max_p_bs;
+	float m_wind_coef;
+	bool m_enable_edit_mesh;
+	bool m_output_bottom_vt;
 
 	OpenMesh::VPropHandleT<float> m_bottom;
 	OpenMesh::VPropHandleT<float> m_depth;
