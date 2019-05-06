@@ -15,7 +15,7 @@ public:
 	void post_data ();
 	void clear();
 	void setsituation(int situation);
-	void setinitcon(float threshold,bool havetensor,float fric_coef,float gamma,float boundary_theta,float boundary_tension_multiplier,float max_p_bs);
+	void setinitcon(float threshold,bool havetensor,float fric_coef,float gamma,float boundary_theta,float boundary_tension_multiplier,float max_p_bs,float wind_coef);
 	void setframecon(int stepnum,int totalstep,int outstep,flaot dt);
 
 //private:
