@@ -30,8 +30,8 @@
 
 /* CUda UTility Library */
 
-#ifndef _CUTIL_H_
-#define _CUTIL_H_
+#ifndef PHYSIKA_SURFACE_FUILD_SURFACE_UTILITIES_CUTIL_H_
+#define PHYSIKA_SURFACE_FUILD_SURFACE_UTILITIES_CUTIL_H_
 
 #ifdef _WIN32
 #   pragma warning( disable : 4996 ) // disable deprecated warning 
