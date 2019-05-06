@@ -9,7 +9,7 @@
 #include "Physika_Surface_Fuild/Surface_Utilities/boundrecorder.h"
 
 using namespace std;
-
+namespace Physika{
 void jacobi_laplace_smooth(MyMesh &mesh, int smooth_times) {
 	WindowsTimer timer;
 	typedef OpenMesh::Smoother::JacobiLaplaceSmootherT<MyMesh> MySmoother;
@@ -737,4 +737,5 @@ void jacobi_laplace_smooth_and_expand(MyMesh &out, int smooth_times) {
 	out.release_vertex_normals();
 	out.release_face_normals();
 	jacobi_laplace_smooth(out, (int)(smooth_times * 0.2));
+}
 }
