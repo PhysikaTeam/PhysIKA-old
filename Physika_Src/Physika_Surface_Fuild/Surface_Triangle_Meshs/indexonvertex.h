@@ -1,12 +1,12 @@
-#ifndef INDEXONVERTEX_H
-#define INDEXONVERTEX_H
+#ifndef PHYSIKA_SURFACE_FUILD_SURFACE_TRIANGLE_MESHS_INDEXONVERTEX_H_
+#define PHYSIKA_SURFACE_FUILD_SURFACE_TRIANGLE_MESHS_INDEXONVERTEX_H_
 
 #include "mymesh.h"
 #include <set>
 #include <vector>
 #include <functional>
 #include <algorithm>
-
+namespace Physika{
 class IndexOnVertex {
 public:
 	IndexOnVertex(MyMesh const &mesh, MyMesh::VertexHandle vh, std::set<MyMesh::FaceHandle> const &set_fh);
@@ -18,13 +18,13 @@ public:
 	float to_nature_coord(float x) const { return x; }
 	MyMesh::Point from_nature_coord(MyMesh::Point const &p) const;
 	MyMesh::Point vertical_offset_point(float offet) const;
-	std::vector<MyMesh::VertexHandle> const &get_ring_1_ordered() const; // 1-ringµÄÁÚµã£¬Èç¹ûÔÚ±ß½çÉÏ£¬ÄÇÃ´boundaryµÄµã±ØÈ»ÔÚÇ°2¸öÔªËØ
+	std::vector<MyMesh::VertexHandle> const &get_ring_1_ordered() const; // 1-ringçš„é‚»ç‚¹ï¼Œå¦‚æœåœ¨è¾¹ç•Œä¸Šï¼Œé‚£ä¹ˆboundaryçš„ç‚¹å¿…ç„¶åœ¨å‰2ä¸ªå…ƒç´ 
 	size_t memory_cost() const;
 	MyMesh::Point *GetRot(){return rot;}
 public:
 	static bool on_face_2d(MyMesh::Point const &p, MyMesh::Point const &a, MyMesh::Point const &b, MyMesh::Point const &c);
 	inline static float index_conv(IndexOnVertex const *index_from, IndexOnVertex const *index_to, float value_from) { return value_from; }
-	// vec_fromÊÇÔÚindex_from×ø±êÏµÏÂXYÆ½ÃæÉÏµÄÊ¸Á¿£¬Í¨¹ı×ø±êÏµĞı×ª£¬Ğı×ªµ½index_to×ø±êÏµÏÂ£¬·µ»ØÖµÊÇĞı×ªºóµÄÊ¸Á¿ÔÚindex_to×ø±êÏµÏÂµÄ±íÊ¾¡£
+	// vec_fromæ˜¯åœ¨index_fromåæ ‡ç³»ä¸‹XYå¹³é¢ä¸Šçš„çŸ¢é‡ï¼Œé€šè¿‡åæ ‡ç³»æ—‹è½¬ï¼Œæ—‹è½¬åˆ°index_toåæ ‡ç³»ä¸‹ï¼Œè¿”å›å€¼æ˜¯æ—‹è½¬åçš„çŸ¢é‡åœ¨index_toåæ ‡ç³»ä¸‹çš„è¡¨ç¤ºã€‚
 	static MyMesh::Point index_conv(IndexOnVertex const *index_from, IndexOnVertex const *index_to, MyMesh::Point const &vec_from);
 	static MyMesh::Point coord_conv(MyMesh::Point const coord_from[3], MyMesh::Point const coord_to[3], MyMesh::Point const &vec_from);
 private:
@@ -46,5 +46,5 @@ public: //private:
 	std::vector<std::vector<OpenMesh::FaceHandle> > contain;
 	std::vector<MyMesh::FaceHandle> roundFh;
 };
-
+}
 #endif
