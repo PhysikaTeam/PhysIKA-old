@@ -12,8 +12,6 @@ public:
 	//void output_obj_cuda(int frame);
 	void post_data ();
 	void clear();
-
-//private:
 	Simulator(Simulator const &);
 	Simulator &operator=(Simulator const &);
 	//void set_initial_constants();
