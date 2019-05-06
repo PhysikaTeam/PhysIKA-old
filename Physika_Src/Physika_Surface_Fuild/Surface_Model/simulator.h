@@ -14,9 +14,8 @@ public:
 	void output_obj_cuda(int frame);
 	void post_data ();
 	void clear();
-	void setdepththreshold(float threshold);
 	void setsituation(int situation);
-	void setinitcon(bool havetensor,float fric_coef,float gamma,float boundary_theta,float boundary_tension_multiplier,float max_p_bs);
+	void setinitcon(float threshold,bool havetensor,float fric_coef,float gamma,float boundary_theta,float boundary_tension_multiplier,float max_p_bs);
 	void setframecon(int stepnum,int totalstep,int outstep,flaot dt);
 
 //private:
