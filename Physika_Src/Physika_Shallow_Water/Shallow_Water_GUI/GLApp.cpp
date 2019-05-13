@@ -24,16 +24,17 @@ void GLApp::showframe(){
 	}
 	visual_engine.update_vertex_values(&water_height, &surface_level);
 	while (1) {
-		visual_engine.render();
-		if (true) {
-			solver.run(1);
-			std::vector<double> const *wh = &solver.getWater_height().getBase();
-			water_height = std::vector<GLfloat>(wh->begin(), wh->end());
-			for (size_t i = 0; i < water_height.size(); ++i) {
-				water_height[i] += surface_level[i];
-			}
-			visual_engine.update_vertex_values(&water_height);
-		}
+	     drawoneframe(visual_engine);
 	}
+}
+void GLApp::drawoneframe(VisualEngine &visual_engine){
+		visual_engine.render();
+		solver.run(1);
+		std::vector<double> const *wh = &solver.getWater_height().getBase();
+		water_height = std::vector<GLfloat>(wh->begin(), wh->end());
+		for (size_t i = 0; i < water_height.size(); ++i) {
+			water_height[i] += surface_level[i];
+		}
+		visual_engine.update_vertex_values(&water_height);
 }
 }
