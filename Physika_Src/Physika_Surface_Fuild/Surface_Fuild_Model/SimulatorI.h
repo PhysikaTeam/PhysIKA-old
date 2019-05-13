@@ -24,7 +24,7 @@ void calculate_tensor();
 void set_initial_conditions();
 void output_obj();
 //void update_midvels();
-//void advect_filed_values();
+void advect_filed_values();
 //void extrapolate_depth();
 //void force_boundary_depth();
 //void calculate_pressure();
