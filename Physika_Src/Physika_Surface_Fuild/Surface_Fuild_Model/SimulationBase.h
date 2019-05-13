@@ -16,8 +16,8 @@ public:
 	virtual void generate_origin();
 	virtual void generate_mesh();
 	virtual void add_properties();
-	virtual void add_index_to_vertex(int ring);
-	virtual void match_bottom_height();
+	void add_index_to_vertex(int ring);
+	void match_bottom_height();
 	virtual void calculate_tensor();
 	virtual void set_initial_conditions();
 	virtual void output_obj();
@@ -27,7 +27,7 @@ public:
 	virtual void edit_mesh_update_index();
 	virtual void edit_mesh_update_tensor();
 	void update_midvels();
-	virtual void advect_filed_values();
+	void advect_filed_values();
 	void extrapolate_depth();
 	void force_boundary_depth();
 	void calculate_pressure();
