@@ -16,6 +16,32 @@
 #include <queue>
 #include <deque>
 namespace Physika{
+SimulationBase::SimulatorBase(){}
+SimulationBase::~SimulatorBase(){}
+virtual void SimulationBase::init(int argc, char** argv){}
+virtual void SimulationBase::run(){}
+virtual void SimulationBase::run_cuda (int frame){}
+virtual void SimulationBase::output_obj_cuda(int frame){}
+virtual void SimulationBase::post_data (){}
+virtual void SimulationBase::clear(){}
+virtual void SimulationBase::set_initial_constants(){}
+virtual void SimulationBase::generate_origin(){}
+virtual void SimulationBase::generate_mesh(){}
+virtual void SimulationBase::add_properties(){}
+virtual void SimulationBase::add_index_to_vertex(int ring){}
+virtual void SimulationBase::match_bottom_height(){}
+virtual void SimulationBase::calculate_tensor(){}
+virtual void SimulationBase::set_initial_conditions(){}
+virtual void SimulationBase::output_obj(){}
+virtual void SimulationBase::output_wind(){}
+virtual void SimulationBase::edit_mesh(){}
+virtual void SimulationBase::edit_mesh_update_normal(){}
+virtual void SimulationBase::edit_mesh_update_index(){}
+virtual void SimulationBase::edit_mesh_update_tensor(){}
+virtual void SimulationBase::advect_filed_values(){}
+virtual void SimulationBase::update_depth(){}
+virtual void SimulationBase::release_index(){}
+virtual void SimulationBase::release_properties(){}
 void SimulationBase::update_midvels() {
 	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
 		MyMesh::Point vel = m_mesh.property(m_velocity, *v_it);
