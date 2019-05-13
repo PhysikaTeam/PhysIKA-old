@@ -1,4 +1,4 @@
-#include "swe.cuh"
+#include "Physika_Surface_Fuild/CUDAI/swe.cuh"
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <cuda_runtime.h>
@@ -209,7 +209,36 @@ void Simulator::clear() {
 	release_properties();
 }
 void SimulatorI::set_initial_constants() {
-	
+	m_g = MyMesh::Point(0, -1, 0).normalized() * 9.80f;
+	m_rotate_center = MyMesh::Point(0, 0, 0);
+
+	// 摩擦力系数
+	m_have_tensor = false;
+	m_fric_coef = 1.3f;
+
+	// 表面张力的系数
+	m_gamma = 1.000f;
+	// gamma is surface tension coefficient divided by density, theoretical value for 25 degree(C) water is 7.2*10^-5 (N/m)/(kg/m^3)
+	// note: surface tension force not negligible under length scale less than about 4mm, so gamma value should be set with careful considering mesh edge length. Try using mm or cm instead of m
+	m_water_boundary_theta = (float)M_PI / 180 * 30.0f;
+	m_water_boundary_tension_multiplier = 1.0f;
+	m_max_p_bs = 10.0f;
+
+	// 风力
+	m_wind_coef = 0;
+
+	// 模拟帧设置
+	m_stepnum = 0;
+	m_total_steps = 1000;
+	m_output_step = 10;
+	m_dt = 0.033f;
+	m_g = MyMesh::Point(1, -2, 0).normalized() * 9.80f;
+	m_rotate_center = MyMesh::Point(25, 0, 25);
+	m_have_tensor = true;
+	m_fric_coef = 2.5f;
+	m_gamma = 5.000f;
+	m_total_steps = 1600;
+	m_dt = 0.02f;
 }
 void SimulatorI::generate_origin() {
 	m_origin.clear();
