@@ -25,6 +25,7 @@ private:
     ~GLApp();
     void init(std::string const surface,std::string const height,std::string const vx,std::string const vy);
     void showframe();
+    void drawoneframe();
 }
 }
     
