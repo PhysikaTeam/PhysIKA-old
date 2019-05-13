@@ -1,6 +1,6 @@
-#include "mymesh.h"
-#include "simulator.h"
-#include "fluid_defs.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/mymesh.h"
+#include "Surface_Fuild_Model/SimulatorI.h"
+#include "Physika_Surface_Fuild/fluid_defs.h"
 //#include "fluid_system_host.cuh"
 //#include "fluid_system_kern.cuh"
 
