@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <conio.h>
-#include "cutil.h"
-#include "cutil_math.h"
+#include "Physika_Surface_Fuild/Surface_Utilities/cutil.h"
+#include "Physika_Surface_Fuild/Surface_Utilities/cutil_math.h"
 #include "swe.cuh"
 #include "kernel.cuh"
 
@@ -131,7 +131,7 @@ void setupCuda(Simulator const &sim)
 	swcuda.dt = sim.m_dt;
 	swcuda.m_g = make_float3(sim.m_g[0], sim.m_g[1], sim.m_g[2]);
 
-	// pull#1: ‘ˆº”
+	// pull#1: Â¢ûÂä†
 	swcuda.m_have_tensor = sim.m_have_tensor;
 	swcuda.m_fric_coef = sim.m_fric_coef;
 	swcuda.m_gamma = sim.m_gamma;
@@ -173,7 +173,7 @@ void setupCuda(Simulator const &sim)
 	cudaCheck(cudaMalloc((void**)&swbuf.sourceTerm, swcuda.szPnts*sizeof(float)), "Malloc sourceTerm");
 	cudaMemset(swbuf.sourceTerm, 0, swcuda.szPnts*sizeof(float));
 #endif
-	// pull#1: ‘ˆº”
+	// pull#1: Â¢ûÂä†
 	cudaCheck(cudaMalloc((void**)&swbuf.m_on_water_boundary, swcuda.szPnts*sizeof (bool)), "Malloc m_on_water_boundary");
 	cudaCheck(cudaMalloc((void**)&swbuf.m_once_have_water, swcuda.szPnts*sizeof (bool)), "Malloc m_once_have_water");
 	cudaCheck(cudaMalloc((void**)&swbuf.m_extrapolate_depth, swcuda.szPnts*sizeof (float)), "Malloc m_extrapolate_depth");
@@ -208,7 +208,7 @@ void copyToCuda(Simulator const &sim)
 	cudaCheck(cudaMemcpy(swbuf.m_vertex_nerbFace, sim.c_vertex_nerbFace, vnum*sizeof (int3[MAX_FACES]), cudaMemcpyHostToDevice), "Memcpy vertex ToDev");
 	cudaCheck(cudaMemcpy(swbuf.m_vertex_planeMap, sim.c_vertex_planeMap, vnum*sizeof (float3[MAX_FACES * 3]), cudaMemcpyHostToDevice), "Memcpy vertex ToDev");
 	cudaCheck(cudaMemcpy(swbuf.m_vertex_opph, sim.c_vertex_opph, vnum*sizeof (VertexOppositeHalfedge[MAX_VERTEX]), cudaMemcpyHostToDevice), "Memcpy vertex ToDev");
-	// pull#1: ‘ˆº”
+	// pull#1: Â¢ûÂä†
 	cudaCheck(cudaMemcpy(swbuf.m_once_have_water, sim.c_once_have_water, vnum*sizeof (bool), cudaMemcpyHostToDevice), "Memcpy once_have_water toDev");
 	cudaCheck(cudaMemcpy(swbuf.m_extrapolate_depth, sim.c_extrapolate_depth, vnum*sizeof (float), cudaMemcpyHostToDevice), "Memcpy extrapolate_depth toDev");
 	cudaCheck(cudaMemcpy(swbuf.m_tensor, sim.c_tensor, vnum*sizeof (float4), cudaMemcpyHostToDevice), "Memcpy tensor ToDev");
@@ -224,7 +224,7 @@ void copyFromCuda(Simulator const &sim)
 	int vnum = swcuda.vertexNum;
 	//if (sim.c_bottom != 0x0) cudaCheck(cudaMemcpy(sim.c_bottom, swbuf.m_bottom, vnum*sizeof (float), cudaMemcpyDeviceToHost), "Memcpy bottom FromDev");
 	//if (sim.c_height != 0x0) cudaCheck(cudaMemcpy(sim.c_height, swbuf.m_height, vnum*sizeof (float), cudaMemcpyDeviceToHost), "Memcpy height FromDev");
-	// pull#1: ‘ˆº”
+	// pull#1: Â¢ûÂä†
 	if (sim.c_depth != 0x0) cudaCheck(cudaMemcpy(sim.c_depth, swbuf.m_depth, vnum*sizeof (float), cudaMemcpyDeviceToHost), "Memcpy depth FromDev");
 
 	cudaThreadSynchronize ();
@@ -302,7 +302,7 @@ void processCuda(Simulator &sim) {
 	}
 
 #if 0
-	// —È÷§oneRing «vv_ccwiterµƒÀ≥–Ú£¨—È÷§opphΩ·ππµƒ’˝»∑–‘
+	// È™åËØÅoneRingÊòØvv_ccwiterÁöÑÈ°∫Â∫èÔºåÈ™åËØÅopphÁªìÊûÑÁöÑÊ≠£Á°ÆÊÄß
 	int vnum = swcuda.vertexNum;
 	MyVertex *mv = new MyVertex[vnum];
 	cudaCheck(cudaMemcpy(mv, swbuf.m_vertex, vnum*sizeof(MyVertex), cudaMemcpyDeviceToHost), "vertex");
