@@ -634,6 +634,47 @@ void SimulatorI::set_initial_conditions() {
 void SimulatorI::output_obj() {
 	output_obj_cuda(m_stepnum);
 }
+void SimulatorI::advect_filed_values() {
+	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
+		MyMesh::Point p(m_mesh.property(m_midvel, *v_it) * -m_dt);
+		IndexOnVertex *index = m_mesh.data(*v_it).index;
+		MyMesh::FaceHandle fh = index->search(m_mesh, p);
+
+		float depth_new;
+		MyMesh::Point velocity_new;
+		if (fh == *m_mesh.faces_end()) {
+			// Todo: 正确处理边界情况
+			MyMesh::VertexHandle vh = index->nearest_vertex(m_mesh, p, [](MyMesh::VertexHandle) { return true; });
+			if (vh == *m_mesh.vertices_end()) {
+				cout << "ERROR: impossible case in Simulator::advect_filed_values" << endl;
+			} else {
+				depth_new = m_mesh.property(m_depth, vh);
+				velocity_new = m_mesh.property(m_velocity, vh);
+				if (m_mesh.is_boundary(vh)) {
+					auto bound = m_mesh.property(m_boundary, vh);
+					bound->apply_depth(depth_new);
+					bound->apply_velocity(velocity_new);
+				}
+				velocity_new = IndexOnVertex::index_conv(m_mesh.data(vh).index, index, velocity_new);
+			}
+		}
+		else {
+			depth_new = point_interpolation(m_mesh, m_depth, p, *v_it, fh);
+			auto fv_it = m_mesh.fv_iter(fh);
+			MyMesh::VertexHandle vh1 = *fv_it++;
+			MyMesh::VertexHandle vh2 = *fv_it++;
+			MyMesh::VertexHandle vh3 = *fv_it;
+			float face_depth_max = fmax(m_mesh.property(m_depth, vh1), fmax(m_mesh.property(m_depth, vh2), m_mesh.property(m_depth, vh3)));
+			float face_depth_min = fmin(m_mesh.property(m_depth, vh1), fmin(m_mesh.property(m_depth, vh2), m_mesh.property(m_depth, vh3)));
+			depth_new = fmin(fmax(depth_new, face_depth_min), face_depth_max);
+			velocity_new = point_interpolation(m_mesh, m_velocity, p, *v_it, fh);
+		}
+		m_mesh.property(m_float_temp, *v_it) = depth_new;
+		m_mesh.property(m_vector_temp, *v_it) = velocity_new;
+	}
+	swap(m_depth, m_float_temp);
+	swap(m_velocity, m_vector_temp);
+}
 void SimulatorI::update_depth() {
 	auto _divergence_by_area = [](MyMesh::Point const &a, MyMesh::Point const &b, MyMesh::Point const &c, MyMesh::Point fa, MyMesh::Point fb, MyMesh::Point fc) {
 		auto dx = (b[1] - c[1]) * fa[0] + (c[1] - a[1]) * fb[0] + (a[1] - b[1]) * fc[0];
