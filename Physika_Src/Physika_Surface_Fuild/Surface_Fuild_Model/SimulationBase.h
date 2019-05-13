@@ -10,9 +10,9 @@ public:
 	virtual void run();
 	virtual void run_cuda (int frame);
 	virtual void output_obj_cuda(int frame);
-	virtual void post_data ()=0;
-	virtual void clear()=0;
-	virtual void set_initial_constants()=0;
+	virtual void post_data ();
+	virtual void clear();
+	virtual void set_initial_constants();
 	virtual void generate_origin();
 	virtual void generate_mesh();
 	virtual void add_properties();
