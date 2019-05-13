@@ -28,8 +28,129 @@ virtual void SimulationBase::set_initial_constants(){}
 virtual void SimulationBase::generate_origin(){}
 virtual void SimulationBase::generate_mesh(){}
 virtual void SimulationBase::add_properties(){}
-virtual void SimulationBase::add_index_to_vertex(int ring){}
-virtual void SimulationBase::match_bottom_height(){}
+void SimulationBase::add_index_to_vertex(int ring){
+	size_t memory_cost = 0;
+	float avg_faces_per_vertex = 0;
+	WindowsTimer timer;
+	timer.restart();
+	m_mesh.request_face_normals();
+	m_mesh.request_vertex_normals();
+	m_mesh.update_face_normals();
+	m_mesh.update_vertex_normals();
+	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
+		std::set<MyMesh::FaceHandle> set_fh;
+		insert_vertex_nring(m_mesh, *v_it, ring, set_fh);
+		m_mesh.data(*v_it).index = new IndexOnVertex(m_mesh, *v_it, set_fh);
+		memory_cost += m_mesh.data(*v_it).index->memory_cost();
+		avg_faces_per_vertex += (float)set_fh.size();
+	}
+	m_mesh.release_vertex_normals();
+	m_mesh.release_face_normals();
+	timer.stop();
+	avg_faces_per_vertex /= (float)m_mesh.n_vertices();
+	cout << "create " << ring << "-ring index for " << timer.get() << " sec, " << ((float)memory_cost / 1024 / 1024) << " MB" << endl;
+	cout << "average: " << avg_faces_per_vertex << " faces per vertex (in " << ring << "-ring)" << endl;
+}
+void SimulationBase::match_bottom_height(){
+	std::map<int, std::string> cache_filename;
+	cache_filename[9] = "obj_models/trunk.bottom.txt";
+	cache_filename[16] = "obj_models/Creature.bottom.txt";
+	if (cache_filename.find(m_situation) != cache_filename.end()) {
+		std::string filename(cache_filename[m_situation]);
+		ifstream in;
+		in.open(filename);
+		if (!!in) {
+			cout << "从 " << filename << " 导入平滑网格到原网格的映射" << endl;
+			for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
+				float bottom;
+				int fidx;
+				in >> bottom >> fidx;
+				m_mesh.property(m_bottom, *v_it) = bottom;
+				m_mesh.property(m_origin_face, *v_it) = MyMesh::FaceHandle(fidx);
+			}
+			in.close();
+			return;
+		}
+	}
+	cout << "从原网格向平滑网格映射" << endl;
+	IndexOfMesh origin_index(m_origin);
+	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
+#if 0
+		// 计算2-ring平均法向
+		map<MyMesh::VertexHandle, int> m;
+		calc_vertex_nring(m_mesh, *v_it, 2, m);
+		MyMesh::Point n(0, 0, 0);
+		for (auto it = m.begin(); it != m.end(); ++it) {
+			MyMesh::VertexHandle vh = it->first;
+			n += m_mesh.normal(vh);
+		}
+		n.normalize();
+		m_mesh.property(m_normal, *v_it) = n;
+#else
+		m_mesh.property(m_normal, *v_it) = m_mesh.normal(*v_it);
+#endif
+	}
+	int cnt = 0;
+	int n_not_matched = 0;
+	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
+		if (++cnt % 1000 == 0)
+			cout << cnt << " / " << m_mesh.n_vertices() << endl;
+		MyMesh::Point base = m_mesh.point(*v_it);
+		MyMesh::Point normal = m_mesh.property(m_normal, *v_it); // m_mesh.normal(*v_it);
+		MyMesh::FaceHandle fh;
+		float dist;
+		origin_index.nearest_intersection(base, normal, fh, dist);
+		// Todo: 判断沿法向的交点是否正确（现在认为距离在2以内则正确，否则可能映射到了其它面上）
+		if (fabs(dist) > 2)
+			fh = *m_origin.faces_end();
+		m_mesh.property(m_origin_face, *v_it) = fh;
+		if (fh == *m_origin.faces_end()) {
+			// 将从附近的点外插
+			n_not_matched++;
+			m_mesh.property(m_bottom, *v_it) = 999.0; // 当未能成功外插时，让错误更明显
+		} else {
+			m_mesh.property(m_bottom, *v_it) = dist;
+		}
+	}
+	cout << n_not_matched << " 个平滑网格顶点沿法向与原网格没有交点" << endl;
+	// 法向未匹配的面片的点从附近的点取bottom
+	std::queue<MyMesh::VertexHandle> q;
+	std::set<MyMesh::VertexHandle> set_not_matched;
+	for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
+		if (m_mesh.property(m_origin_face, *v_it) == *m_origin.faces_end())
+			continue;
+		for (auto vv_it = m_mesh.vv_iter(*v_it); vv_it.is_valid(); ++vv_it) {
+			if (m_mesh.property(m_origin_face, *vv_it) == *m_origin.faces_end() &&
+				set_not_matched.find(*vv_it) == set_not_matched.end()) {
+				m_mesh.property(m_bottom, *vv_it) = m_mesh.property(m_bottom, *v_it);
+				q.push(*vv_it);
+				set_not_matched.insert(*vv_it);
+			}
+		}
+	}
+	while (!q.empty()) {
+		MyMesh::VertexHandle vh = q.front();
+		q.pop();
+		for (auto vv_it = m_mesh.vv_iter(vh); vv_it.is_valid(); ++vv_it) {
+			if (m_mesh.property(m_origin_face, *vv_it) == *m_origin.faces_end() &&
+				set_not_matched.find(*vv_it) == set_not_matched.end()) {
+				m_mesh.property(m_bottom, *vv_it) = m_mesh.property(m_bottom, vh);
+				q.push(*vv_it);
+				set_not_matched.insert(*vv_it);
+			}
+		}
+	}
+	if (n_not_matched != set_not_matched.size())
+		cout << "错误：有些法向不与原网格相交的点未能从附近点外插" << endl;
+	if (cache_filename.find(m_situation) != cache_filename.end()) {
+		std::string filename(cache_filename[m_situation]);
+		ofstream out(filename);
+		for (auto v_it = m_mesh.vertices_begin(); v_it != m_mesh.vertices_end(); ++v_it) {
+			out << m_mesh.property(m_bottom, *v_it) << ' ' << m_mesh.property(m_origin_face, *v_it).idx() << endl;
+		}
+		out.close();
+	}
+}
 virtual void SimulationBase::calculate_tensor(){}
 virtual void SimulationBase::set_initial_conditions(){}
 virtual void SimulationBase::output_obj(){}
