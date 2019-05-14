@@ -21,7 +21,6 @@
 #include "Physika_Framework/Framework/Gravity.h"
 #include "Physika_Dynamics/ParticleSystem/FixedPoints.h"
 #include "Physika_Framework/Collision/CollisionPoints.h"
-#include "Physika_Dynamics/ParticleSystem/VelocityConstraint.h"
 #include "Physika_Framework/Framework/DataFlow.h"
 #include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
 #include "Physika_Dynamics/ParticleSystem/ParticleFluid.h"
