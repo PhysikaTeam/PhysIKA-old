@@ -8,7 +8,6 @@
 using uint = unsigned int;
 using String = std::string;
 
-
 template<class T>
 using VectorPtr = std::vector< std::shared_ptr<T> >;
 

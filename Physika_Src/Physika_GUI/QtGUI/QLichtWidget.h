@@ -7,7 +7,7 @@
 
 #include <cuda_runtime_api.h>
 #include "Physika_Framework/Framework/SceneGraph.h"
-#include "Physika_Dynamics/ParticleSystem/ParticleFluid.h"
+#include "Physika_Dynamics/ParticleSystem/PositionBasedFluidModel.h"
 #include "Physika_Framework/Topology/PointSet.h"
 #include "Physika_Framework/Framework/Log.h"
 #include "Physika_Render/PointRenderModule.h"

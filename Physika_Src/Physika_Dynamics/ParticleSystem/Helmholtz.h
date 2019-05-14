@@ -1,6 +1,7 @@
 #pragma once
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "Physika_Framework/Framework/ModuleConstraint.h"
+#include "Physika_Framework/Topology/FieldNeighbor.h"
 
 namespace Physika {
 
@@ -30,9 +31,13 @@ namespace Physika {
 		void setIterationNumber(int n) { m_maxIteration = n; }
 		void setSmoothingLength(Real len) { m_smoothingLength = len; }
 
-		void computeC();
+		void computeC(DeviceArray<Real>& c, DeviceArray<Coord>& pos, NeighborList<int>& neighbors);
 		void computeGC();
-		void computeLC();
+		void computeLC(DeviceArray<Real>& lc, DeviceArray<Coord>& pos, NeighborList<int>& neighbors);
+
+		void setReferenceDensity(Real rho) {
+			m_referenceRho = rho;
+		}
 
 	protected:
 		bool initializeImpl() override;
@@ -43,12 +48,20 @@ namespace Physika {
 		FieldID m_neighborhoodID;
 
 	private:
+		bool m_bSetup;
+
 		int m_maxIteration;
 		Real m_smoothingLength;
+		Real m_referenceRho;
 
-		DeviceArray<Real> m_lamda;
-		DeviceArray<Real> m_rho;
-		DeviceArray<Coord> m_deltaPos;
+		Real m_scale;
+		Real m_lambda;
+		Real m_kappa;
+
+		DeviceArray<Real> m_c;
+		DeviceArray<Real> m_lc;
+		DeviceArray<Real> m_energy;
+		DeviceArray<Coord> m_bufPos;
 		DeviceArray<Coord> m_originPos;
 	};
 

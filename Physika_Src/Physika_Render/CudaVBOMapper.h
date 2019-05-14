@@ -56,8 +56,7 @@ public:
 		glBufferData(GL_ARRAY_BUFFER, m_size * sizeof(T), nullptr, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		cudaCheck(cudaGraphicsGLRegisterBuffer(&m_cudaGraphicsResource, m_vbo, cudaGraphicsMapFlagsWriteDiscard));
-
+		cuSafeCall(cudaGraphicsGLRegisterBuffer(&m_cudaGraphicsResource, m_vbo, cudaGraphicsMapFlagsWriteDiscard));
 	}
 
 	void release()
@@ -68,25 +67,25 @@ public:
 		}
 		if (m_cudaGraphicsResource != NULL)
 		{
-			cudaCheck(cudaGraphicsMapResources(1, &m_cudaGraphicsResource, nullptr));
+			cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
 		}
 		m_size = 0;
 	}
 
     T* cudaMap()
 	{
-		cudaCheck(cudaGraphicsMapResources(1, &m_cudaGraphicsResource, nullptr));
+		cuSafeCall(cudaGraphicsMapResources(1, &m_cudaGraphicsResource, 0));
 
 		T* dataPtr = nullptr;
 		size_t byte_size;
-		cudaCheck(cudaGraphicsResourceGetMappedPointer((void **)&dataPtr, &byte_size, m_cudaGraphicsResource));
+		cuSafeCall(cudaGraphicsResourceGetMappedPointer((void **)&dataPtr, &byte_size, m_cudaGraphicsResource));
 
 		return dataPtr;
 	}
 
     void cudaUnmap()
 	{
-		cudaCheck(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, nullptr));
+		cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
 	}
 
 	unsigned int getVBO()

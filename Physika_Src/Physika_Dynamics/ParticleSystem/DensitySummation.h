@@ -31,23 +31,24 @@ namespace Physika {
 			Real smoothingLength,
 			Real mass);
 
-		void setMassID(FieldID id) { m_massID = id; }
-		void setDensityID(FieldID id) { m_rhoID = id; }
-		void setPositionID(FieldID id) { m_posID = id; }
-		void setNeighborhoodID(FieldID id) { m_neighborID = id; }
-
 		void setCorrection(Real factor) { m_factor = factor; }
-		void setSmoothingLength(Real length) { m_smoothingLength = length; }
+		void setSmoothingLength(Real length) { m_smoothingLength.setValue(length); }
 	
 	protected:
-		FieldID m_massID;
-		FieldID m_rhoID;
-		FieldID m_posID;
-		FieldID m_neighborID;
+		bool initializeImpl() override;
+
+	public:
+		VarField<Real> m_mass;
+		VarField<Real> m_restDensity;
+		VarField<Real> m_smoothingLength;
+
+		DeviceArrayField<Coord> m_position;
+		DeviceArrayField<Real> m_density;
+
+		NeighborField<int> m_neighborhood;
 
 	private:
 		Real m_factor;
-		Real m_smoothingLength;
 	};
 
 #ifdef PRECISION_FLOAT

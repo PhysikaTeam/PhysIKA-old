@@ -17,41 +17,44 @@ typedef std::string FieldID;
 class Base : public Object
 {
 public:
-	typedef std::vector<std::shared_ptr<Field>> FieldVector;
-	typedef std::map<FieldID, std::shared_ptr<Field>> FieldMap;
+	typedef std::vector<Field*> FieldVector;
+	typedef std::map<FieldID, Field*> FieldMap;
 
 	Base() : Object() {};
 	~Base() override {};
 
-	bool addField(std::shared_ptr<Field> data);
-	bool addField(FieldID name, std::shared_ptr<Field> data);
-	bool addFieldAlias(FieldID name, std::shared_ptr<Field> data);
-	bool addFieldAlias(FieldID name, std::shared_ptr<Field> data, MapPtr<Field>& fieldAlias);
+	bool addField(Field* data);
+	bool addField(FieldID name, Field* data);
+	bool addFieldAlias(FieldID name, Field* data);
+	bool addFieldAlias(FieldID name, Field* data, FieldMap& fieldAlias);
 
-	bool findField(std::shared_ptr<Field> data);
+	bool findField(Field* data);
 	bool findFieldAlias(const FieldID name);
-	bool findFieldAlias(const FieldID name, MapPtr<Field>& fieldAlias);
+	bool findFieldAlias(const FieldID name, FieldMap& fieldAlias);
 
-	bool removeField(std::shared_ptr<Field> data);
+	bool removeField(Field* data);
 	bool removeFieldAlias(const FieldID name);
-	bool removeFieldAlias(const FieldID name, MapPtr<Field>& fieldAlias);
+	bool removeFieldAlias(const FieldID name, FieldMap& fieldAlias);
 
-	std::shared_ptr<Field>	getField(const FieldID name);
+	Field*	getField(const FieldID name);
+
+	bool initField(Field* field, std::string name, std::string desc, bool autoDestroy = true);
 
 	template<typename T>
-	std::shared_ptr< T > getField(FieldID name)
+	T* getField(FieldID name)
 	{
-		MapPtr<Field>::iterator iter = m_fieldAlias.find(name);
+		FieldMap::iterator iter = m_fieldAlias.find(name);
 		if (iter != m_fieldAlias.end())
 		{
-			return std::dynamic_pointer_cast<T>(iter->second);
+			return dynamic_cast<T*>(iter->second);
 		}
 		return nullptr;
 	}
 
+	bool isAllFieldsReady();
 
-	std::vector<FieldID>	getFieldAlias(std::shared_ptr<Field> data);
-	int				getFieldAliasCount(std::shared_ptr<Field> data);
+	std::vector<FieldID>	getFieldAlias(Field* data);
+	int				getFieldAliasCount(Field* data);
 
 private:
 	FieldVector m_field;

@@ -23,7 +23,7 @@ namespace Physika
 	template<typename TDataType>
 	bool TriangleSet<TDataType>::initializeImpl()
 	{
-		if (getPoints()->size() <= 0)
+		if (getPoints().size() <= 0)
 		{
 			std::vector<Coord> positions;
 			std::vector<Triangle> triangles;

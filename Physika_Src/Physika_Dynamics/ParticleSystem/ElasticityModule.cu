@@ -3,6 +3,7 @@
 #include "Physika_Core/Utilities/Function1Pt.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Core/Algorithm/MatrixFunc.h"
+#include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Kernel.h"
 
 namespace Physika
@@ -294,23 +295,26 @@ namespace Physika
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= velArr.size()) return;
 
-		velArr[pId] = (curPos[pId] - prePos[pId]) / dt;
+		velArr[pId] += (curPos[pId] - prePos[pId]) / dt;
 	}
 
 	template<typename TDataType>
 	ElasticityModule<TDataType>::ElasticityModule()
 		: ConstraintModule()
-		, m_neighborhoodID(MechanicalState::particle_neighbors())
-		, m_initPosID(MechanicalState::init_position())
-		, m_posPreID(MechanicalState::pre_position())
 		, m_refMatrix(NULL)
 		, m_tmpPos(NULL)
 		, m_lambdas(NULL)
 		, m_accPos(NULL)
 		, m_bulkCoef(NULL)
 		, m_needUpdate(true)
-		, m_horizon(Real(0.0125))
 	{
+		initField(&m_horizon, "horizon", "Supporting radius!", false);
+
+		initField(&m_position, "position", "Storing the particle positions!", false);
+		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		initField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
+
+		m_horizon.setValue(0.0125);
 	}
 
 	template<typename TDataType>
@@ -318,46 +322,23 @@ namespace Physika
 	{
 		Real dt = getParent()->getDt();
 
-		auto mstate = getParent()->getMechanicalState();
-		if (!mstate)
-		{
-			std::cout << "Cannot find a parent node for SummationDensity!" << std::endl;
-		}
+		int num = m_position.getElementCount();
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
-		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
-		auto velFd = mstate->getField<DeviceArrayField<Coord>>(m_velID);
-		auto posPreFd = mstate->getField<DeviceArrayField<Coord>>(m_posPreID);
-		auto neighborFd = mstate->getField<NeighborField<int>>(m_neighborhoodID);
+		auto matArr = m_refMatrix->getReference();
+		auto lambda = m_lambdas->getReference();
+		auto bulks = m_bulkCoef->getReference();
+		auto accPos = m_accPos->getReference();
+		auto tmpPos = m_tmpPos->getReference();
 
+		Function1Pt::copy(m_oldPosition, m_position.getValue());
 
-		uint pDims = cudaGridSize(posFd->size(), BLOCK_SIZE);
-
-		int num = posFd->size();
-		if (NULL == m_refMatrix)
-			m_refMatrix = DeviceArrayField<Matrix>::create(num);
-		if (NULL == m_tmpPos)
-			m_tmpPos = DeviceArrayField<Coord>::create(num);
-		if (NULL == m_lambdas)
-			m_lambdas = DeviceArrayField<Real>::create(num);
-		if (NULL == m_accPos)
-			m_accPos = DeviceArrayField<Coord>::create(num);
-		if (NULL == m_bulkCoef)
-			m_bulkCoef = DeviceArrayField<Real>::create(num);
-
-
-		DeviceArray<Matrix>* matArr = m_refMatrix->getDataPtr();
-		DeviceArray<Real>* lambda = m_lambdas->getDataPtr();
-		DeviceArray<Real>* bulks = m_bulkCoef->getDataPtr();
-		DeviceArray<Coord>* accPos = m_accPos->getDataPtr();
-		DeviceArray<Coord>* tmpPos = m_tmpPos->getDataPtr();
-
-		if (isUpdateRequired())
-		{
-			construct(neighborFd->getValue(), posFd->getValue());
-		}
-
-		Function1Pt::copy(*tmpPos, posFd->getValue());
-		EM_PrecomputeShape <Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (*matArr, m_refPos, SmoothKernel<Real>(), m_horizon);
+		Function1Pt::copy(*tmpPos, m_position.getValue());
+		EM_PrecomputeShape <Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
+			*matArr,
+			m_refPos,
+			SmoothKernel<Real>(),
+			m_horizon.getValue());
 
 		int total_itoration = 5;
 		int itor = 0;
@@ -369,18 +350,26 @@ namespace Physika
 				*accPos,
 				*lambda,
 				*bulks,
-				posFd->getValue(),
+				m_position.getValue(),
 				*matArr,
 				m_refPos,
 				SmoothKernel<Real>(),
-				m_horizon);
-			K_UpdatePosition << <pDims, BLOCK_SIZE >> > (posFd->getValue(), *tmpPos, *accPos, *lambda);
+				m_horizon.getValue());
+
+			K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
+				m_position.getValue(),
+				*tmpPos, 
+				*accPos, 
+				*lambda);
+
 			itor++;
 		}
 
-//		EM_RotateRestShape << <pDims, BLOCK_SIZE >> > (*posArr, *matArr, *restShapeArr);
-
-		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (velFd->getValue(), posPreFd->getValue(), posFd->getValue(), dt);
+		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
+			m_velocity.getValue(), 
+			m_oldPosition, 
+			m_position.getValue(), 
+			dt);
 
 		return true;
 	}
@@ -423,20 +412,49 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void ElasticityModule<TDataType>::construct(NeighborList<int>& nbr, DeviceArray<Coord>& pos)
+	void ElasticityModule<TDataType>::constructRestConfiguration(NeighborList<int>& nbr, DeviceArray<Coord>& pos)
 	{
-		m_refPos.resize(nbr.size());
 		if (nbr.isLimited())
 		{
 			m_refPos.setNeighborLimit(nbr.getNeighborLimit());
 		}
+
+		m_refPos.getIndex().resize(nbr.getIndex().size());
+		m_refPos.getElements().resize(nbr.getElements().size());
 
 		Function1Pt::copy(m_refPos.getIndex(), nbr.getIndex());
 
 		uint pDims = cudaGridSize(pos.size(), BLOCK_SIZE);
 
 		K_UpdateRestShape<< <pDims, BLOCK_SIZE >> > (m_refPos, nbr, pos);
+		cuSynchronize();
 
 		m_needUpdate = false;
+	}
+
+
+	template<typename TDataType>
+	bool ElasticityModule<TDataType>::initializeImpl()
+	{
+		if (!isAllFieldsReady())
+		{
+			std::cout << "Exception: " << std::string("ElasticityModule's fields are not fully initialized!") << "\n";
+		}
+
+		int num = m_position.getElementCount();
+		if (NULL == m_refMatrix)
+			m_refMatrix = DeviceArrayField<Matrix>::create(num);
+		if (NULL == m_tmpPos)
+			m_tmpPos = DeviceArrayField<Coord>::create(num);
+		if (NULL == m_lambdas)
+			m_lambdas = DeviceArrayField<Real>::create(num);
+		if (NULL == m_accPos)
+			m_accPos = DeviceArrayField<Coord>::create(num);
+		if (NULL == m_bulkCoef)
+			m_bulkCoef = DeviceArrayField<Real>::create(num);
+		
+		m_oldPosition.resize(num);
+
+		return true;
 	}
 }

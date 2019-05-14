@@ -4,8 +4,8 @@
 #include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Framework/Topology/PointSet.h"
-#include "Physika_Framework/Mapping/RigidToPoints.h"
-#include "Physika_Framework/Mapping/PointsToPoints.h"
+#include "Physika_Framework/Mapping/FrameToPointSet.h"
+#include "Physika_Framework/Mapping/PointSetToPointSet.h"
 #include "Physika_Core/Utilities/Reduction.h"
 
 namespace Physika
@@ -60,18 +60,18 @@ namespace Physika
 
 		auto initPoints = pSet->getPoints();
 
-		m_positions.resize(initPoints->size());
-		Function1Pt::copy(m_positions, *initPoints);
+		m_positions.resize(initPoints.size());
+		Function1Pt::copy(m_positions, initPoints);
 
-		m_velocities.resize(initPoints->size());
+		m_velocities.resize(initPoints.size());
 		m_velocities.reset();
 
 		auto mstate = getParent()->getMechanicalState();
 		auto mType = getParent()->getMechanicalState()->getMaterialType();
 
-		if (mType == MechanicalState::RIGIDBODY)
+		if (mType == MechanicalState::ParticleSystem)
 		{
-			auto mapping = std::make_shared<RigidToPoints<TDataType>>();
+			auto mapping = std::make_shared<FrameToPointSet<TDataType>>();
 			auto center = mstate->getField<HostVarField<Coord>>(MechanicalState::position())->getValue();
 			auto rotation = mstate->getField<HostVarField<Matrix>>(MechanicalState::rotation())->getValue();
 
@@ -80,7 +80,7 @@ namespace Physika
 		}
 		else
 		{
-			auto mapping = std::shared_ptr<PointsToPoints<TDataType>>();
+			auto mapping = std::shared_ptr<PointSetToPointSet<TDataType>>();
 			m_mapping = mapping;
 		}
 	}
@@ -91,27 +91,27 @@ namespace Physika
 	{
 		auto mstate = getParent()->getMechanicalState();
 		auto mType = mstate->getMaterialType();
-		if (mType == MechanicalState::RIGIDBODY)
+		if (mType == MechanicalState::ParticleSystem)
 		{
 			auto center = mstate->getField<HostVarField<Coord>>(MechanicalState::position())->getValue();
 			auto rotation = mstate->getField<HostVarField<Matrix>>(MechanicalState::rotation())->getValue();
 
 			auto pSet = TypeInfo::CastPointerDown<PointSet<TDataType>>(getParent()->getTopologyModule());
 
-			auto mp = std::dynamic_pointer_cast<RigidToPoints<TDataType>>(m_mapping);
+			auto mp = std::dynamic_pointer_cast<FrameToPointSet<TDataType>>(m_mapping);
 
 			mp->applyTransform(Rigid(center, Quaternion<Real>(rotation)), m_positions);
 		}
 		else
 		{
-			std::shared_ptr<Field> pos = mstate->getField(MechanicalState::position());
-			std::shared_ptr<DeviceArrayField<Coord>> pBuf = TypeInfo::CastPointerDown<DeviceArrayField<Coord>>(pos);
+			auto pBuf = mstate->getField<DeviceArrayField<Coord>>(MechanicalState::position());
+			//std::shared_ptr<DeviceArrayField<Coord>> pBuf = TypeInfo::CastPointerDown<DeviceArrayField<Coord>>(pos);
 
-			std::shared_ptr<Field> vel = mstate->getField(MechanicalState::velocity());
-			std::shared_ptr<DeviceArrayField<Coord>> vBuf = TypeInfo::CastPointerDown<DeviceArrayField<Coord>>(vel);
+			auto vBuf = mstate->getField<DeviceArrayField<Coord>>(MechanicalState::velocity());
+			//std::shared_ptr<DeviceArrayField<Coord>> vBuf = TypeInfo::CastPointerDown<DeviceArrayField<Coord>>(vel);
 
-			Function1Pt::copy(m_positions, *(pBuf->getDataPtr()));
-			Function1Pt::copy(m_velocities, *(vBuf->getDataPtr()));
+			Function1Pt::copy(m_positions, *(pBuf->getReference()));
+			Function1Pt::copy(m_velocities, *(vBuf->getReference()));
 		}
 	}
 
@@ -121,7 +121,7 @@ namespace Physika
 		auto mstate = getParent()->getMechanicalState();
 		auto mType = mstate->getMaterialType();
 		auto dc = getParent()->getMechanicalState();
-		if (mType == MechanicalState::RIGIDBODY)
+		if (mType == MechanicalState::ParticleSystem)
 		{
 			auto center = mstate->getField<HostVarField<Coord>>(MechanicalState::position())->getValue();
 			auto rotation = mstate->getField<HostVarField<Matrix>>(MechanicalState::rotation())->getValue();
@@ -134,7 +134,7 @@ namespace Physika
 			hInitPos.resize(m_positions.size());
 			dInitPos.resize(m_positions.size());
 
-			auto mp = std::dynamic_pointer_cast<RigidToPoints<TDataType>>(m_mapping);
+			auto mp = std::dynamic_pointer_cast<FrameToPointSet<TDataType>>(m_mapping);
 			mp->applyTransform(Rigid(center, Quaternion<Real>(rotation)), dInitPos);
 
 			Real dt = getParent()->getDt();
@@ -174,8 +174,8 @@ namespace Physika
 			auto posArr = dc->getField<DeviceArrayField<Coord>>(MechanicalState::position());
 			auto velArr = dc->getField<DeviceArrayField<Coord>>(MechanicalState::velocity());
 
-			Function1Pt::copy(*(posArr->getDataPtr()), m_positions);
-			Function1Pt::copy(*(velArr->getDataPtr()), m_velocities);
+			Function1Pt::copy(*(posArr->getReference()), m_positions);
+			Function1Pt::copy(*(velArr->getReference()), m_velocities);
 		}
 	}
 }

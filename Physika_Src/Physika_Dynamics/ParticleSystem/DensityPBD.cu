@@ -114,13 +114,17 @@ namespace Physika
 	template<typename TDataType>
 	DensityPBD<TDataType>::DensityPBD()
 		: ConstraintModule()
-		, m_massID(MechanicalState::mass())
-		, m_posID(MechanicalState::position())
-		, m_velID(MechanicalState::velocity())
-		, m_neighborhoodID(MechanicalState::particle_neighbors())
-		, m_smoothingLength(0.0125)
 		, m_maxIteration(5)
 	{
+		m_restDensity.setValue(Real(1000));
+		m_smoothingLength.setValue(Real(0.011));
+
+		initField(&m_restDensity, "rest_density", "Reference density", false);
+		initField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
+		initField(&m_position, "position", "Storing the particle positions!", false);
+		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		initField(&m_density, "density", "Storing the particle densities!", false);
+		initField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
 	}
 
 	template<typename TDataType>
@@ -134,38 +138,29 @@ namespace Physika
 	template<typename TDataType>
 	bool DensityPBD<TDataType>::initializeImpl()
 	{
-		m_densitySum = getParent()->getModule<DensitySummation<TDataType>>();
-		if (m_densitySum == nullptr)
+		if (!m_position.isEmpty() && m_density.isEmpty())
 		{
-			auto summation = std::make_shared<DensitySummation<TDataType>>();
-			summation->setSmoothingLength(m_smoothingLength);
-
-			getParent()->addModule(summation);
+			m_density.setElementCount(m_position.getElementCount());
 		}
-		return true;
-	}
 
-	template<typename TDataType>
-	bool DensityPBD<TDataType>::constrain()
-	{
-		auto mstate = getParent()->getMechanicalState();
-		if (!mstate)
+		if (!isAllFieldsReady())
 		{
-			std::cout << "Cannot find a parent node for DensityPBD!" << std::endl;
+			std::cout << "Exception: " << std::string("DensityPBD's fields are not fully initialized!") << "\n";
 			return false;
 		}
 
-		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
-		auto velFd = mstate->getField<DeviceArrayField<Coord>>(m_velID);
-		auto neighborFd = mstate->getField<NeighborField<int>>(m_neighborhoodID);
+		m_densitySum = std::make_shared<DensitySummation<TDataType>>();
 
-		if (posFd == nullptr || velFd == nullptr || neighborFd == nullptr)
-		{
-			std::cout << "Incomplete inputs for DensityPBD!" << std::endl;
-			return false;
-		}
+		m_restDensity.connect(m_densitySum->m_restDensity);
+		m_smoothingLength.connect(m_densitySum->m_smoothingLength);
+		m_position.connect(m_densitySum->m_position);
+		m_density.connect(m_densitySum->m_density);
+		m_neighborhood.connect(m_densitySum->m_neighborhood);
 
-		int num = posFd->size();
+		m_densitySum->initialize();
+
+
+		int num = m_position.getElementCount();
 
 		if (m_lamda.size() != num)
 			m_lamda.resize(num);
@@ -173,6 +168,14 @@ namespace Physika
 			m_deltaPos.resize(num);
 		if (m_rhoArr.size() != num)
 			m_rhoArr.resize(num);
+
+		return true;
+	}
+
+	template<typename TDataType>
+	bool DensityPBD<TDataType>::constrain()
+	{
+		int num = m_position.getElementCount();
 
 		Real dt = getParent()->getDt();
 
@@ -184,9 +187,24 @@ namespace Physika
 			m_deltaPos.reset();
 			m_densitySum->compute(m_rhoArr);
 
-			K_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (m_lamda, m_rhoArr, posFd->getValue(), neighborFd->getValue(), m_smoothingLength);
-			K_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (m_deltaPos, m_lamda, posFd->getValue(), neighborFd->getValue(), m_smoothingLength, dt);
-			K_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (posFd->getValue(), velFd->getValue(), m_deltaPos, dt);
+			K_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (
+				m_lamda, 
+				m_rhoArr, 
+				m_position.getValue(), 
+				m_neighborhood.getValue(), 
+				m_smoothingLength.getValue());
+			K_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (
+				m_deltaPos, 
+				m_lamda, 
+				m_position.getValue(),
+				m_neighborhood.getValue(),
+				m_smoothingLength.getValue(), 
+				dt);
+			K_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (
+				m_position.getValue(),
+				m_velocity.getValue(), 
+				m_deltaPos, 
+				dt);
 
 			it++;
 		}

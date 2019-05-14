@@ -5,6 +5,7 @@
 #include "Physika_Framework/Framework/FieldArray.h"
 #include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Framework/Node.h"
+#include "Physika_Core/Utilities/cuda_utilities.h"
 
 namespace Physika
 {
@@ -12,24 +13,18 @@ namespace Physika
 	ParticleIntegrator<TDataType>::ParticleIntegrator()
 		:NumericalIntegrator()
 	{
+		initField(&m_position, "position", "Storing the particle positions!", false);
+		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		initField(&m_forceDensity, "force", "Particle forces", false);
 	}
 
 	template<typename TDataType>
 	void ParticleIntegrator<TDataType>::begin()
 	{
-		auto mstate = getParent()->getMechanicalState();
-
-		auto forceFd = mstate->getField<DeviceArrayField<Coord>>(m_forceID);
-
-		auto velFd = mstate->getField<DeviceArrayField<Coord>>(m_velID);
-		auto velPreFd = mstate->getField<DeviceArrayField<Coord>>(m_velPreID);
-
-		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
-		auto posPreFd = mstate->getField<DeviceArrayField<Coord>>(m_posPreID);
-
-		Function1Pt::copy(velPreFd->getValue(), velFd->getValue());
-		Function1Pt::copy(posPreFd->getValue(), posFd->getValue());
-		forceFd->reset();
+		Function1Pt::copy(m_prePosition, m_position.getValue());
+		Function1Pt::copy(m_preVelocity, m_velocity.getValue());
+		
+		m_forceDensity.getReference()->reset();
 	}
 
 	template<typename TDataType>
@@ -38,18 +33,36 @@ namespace Physika
 
 	}
 
+	template<typename TDataType>
+	bool ParticleIntegrator<TDataType>::initializeImpl()
+	{
+		if (!isAllFieldsReady())
+		{
+			std::cout << "Exception: " << std::string("DensitySummation's fields are not fully initialized!") << "\n";
+			return false;
+		}
+
+		int num = m_position.getElementCount();
+
+		m_prePosition.resize(num);
+		m_preVelocity.resize(num);
+
+		return true;
+	}
+
 	template<typename Real, typename Coord>
 	__global__ void K_UpdateVelocity(
 		DeviceArray<Coord> vel,
-		DeviceArray<Coord> force,
-		Real mass,
+		DeviceArray<Coord> forceDensity,
+		Real gravity,
 		Real dt)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= force.size()) return;
+		if (pId >= forceDensity.size()) return;
 
-		vel[pId] += dt * force[pId] / mass;
+		vel[pId] += dt * (forceDensity[pId] + Coord(0, gravity, 0));
 	}
+
 
 	template<typename Real, typename Coord>
 	__global__ void K_UpdateVelocity(
@@ -67,26 +80,16 @@ namespace Physika
 	template<typename TDataType>
 	bool ParticleIntegrator<TDataType>::updateVelocity()
 	{
-		auto mstate = getParent()->getMechanicalState();
-
-		auto forceFd = mstate->getField<DeviceArrayField<Coord>>(m_forceID);
-		auto velFd = mstate->getField<DeviceArrayField<Coord>>(m_velID);
-
 		Real dt = getParent()->getDt();
-		cuint pDims = cudaGridSize(velFd->size(), BLOCK_SIZE);
+		Real gravity = getParent()->getGravity();
+		cuint pDims = cudaGridSize(m_position.getReference()->size(), BLOCK_SIZE);
 
-		auto fd = mstate->getField(m_massID);
-		if (fd->size() <= 1)
-		{
-			auto massFd = mstate->getField<HostVarField<Real>>(m_massID);
-			K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (velFd->getValue(), forceFd->getValue(), massFd->getValue(), dt);
-		}
-		else
-		{
-			auto massFd = mstate->getField<DeviceArrayField<Real>>(m_massID);
-			K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (velFd->getValue(), forceFd->getValue(), massFd->getValue(), dt);
-		}
-		
+		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
+			m_velocity.getValue(), 
+			m_forceDensity.getValue(),
+			gravity,
+			dt);
+
 		return true;
 	}
 
@@ -105,15 +108,13 @@ namespace Physika
 	template<typename TDataType>
 	bool ParticleIntegrator<TDataType>::updatePosition()
 	{
-		auto mstate = getParent()->getMechanicalState();
-
-		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
-		auto velFd = mstate->getField<DeviceArrayField<Coord>>(m_velID);
-
 		Real dt = getParent()->getDt();
-		cuint pDims = cudaGridSize(posFd->size(), BLOCK_SIZE);
+		cuint pDims = cudaGridSize(m_position.getReference()->size(), BLOCK_SIZE);
 
-		K_UpdatePosition << <pDims, BLOCK_SIZE >> > (posFd->getValue(), velFd->getValue(), dt);
+		K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
+			m_position.getValue(), 
+			m_velocity.getValue(), 
+			dt);
 
 		return true;
 	}

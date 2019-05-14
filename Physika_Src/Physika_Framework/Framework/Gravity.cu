@@ -36,7 +36,7 @@ template<typename TDataType>
 bool Gravity<TDataType>::applyForce()
 {
 	auto mstate = getParent()->getMechanicalState();
-	if (mstate->getMaterialType() == MechanicalState::RIGIDBODY)
+	if (mstate->getMaterialType() == MechanicalState::ParticleSystem)
 	{
 		auto massField = mstate->getField<HostVarField<Real>>(MechanicalState::mass());
 		auto forceField = mstate->getField<HostVarField<Coord>>(MechanicalState::force());

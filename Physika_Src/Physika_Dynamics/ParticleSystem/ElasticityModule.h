@@ -20,18 +20,26 @@ namespace Physika {
 		
 		bool constrain() override;
 
-		void construct(NeighborList<int>& nbr, DeviceArray<Coord>& pos);
+		void constructRestConfiguration(NeighborList<int>& nbr, DeviceArray<Coord>& pos);
 		bool isUpdateRequired() { return m_needUpdate; }
 
 		void setHorizon(Real len) { m_horizon = len; }
+
 	protected:
-		FieldID m_initPosID;
-		FieldID m_posPreID;
-		FieldID m_neighborhoodID;
+		bool initializeImpl() override;
+
+
+	public:
+		VarField<Real> m_horizon;
+
+		DeviceArrayField<Coord> m_position;
+		DeviceArrayField<Coord> m_velocity;
+
+		NeighborField<int> m_neighborhood;
+		NeighborField<NPair> m_referenceConfiguration;
 
 	private:
 		bool m_needUpdate;
-		Real m_horizon;
 
 		NeighborList<NPair> m_refPos;
 
@@ -40,12 +48,14 @@ namespace Physika {
 		DeviceArrayField<Coord>* m_tmpPos;
 		DeviceArrayField<Coord>* m_accPos;
 		DeviceArrayField<Matrix>* m_refMatrix;
+
+		DeviceArray<Coord> m_oldPosition;
 	};
 
 
 #ifdef PRECISION_FLOAT
 	template class ElasticityModule<DataType3f>;
 #else
-	template class DensityPBD<DataType3d>;
+	template class ElasticityModule<DataType3d>;
 #endif
 }

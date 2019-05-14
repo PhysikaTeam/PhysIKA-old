@@ -15,7 +15,7 @@ namespace Physika
 	PointRenderModule::PointRenderModule()
 		: VisualModule()
 		, m_mode(PointRenderModule::SPRITE)
-		, m_color(Vector3f(0.0f, 0.0, 1.0f))
+		, m_color(Vector3f(0.8, 0.8, 0.8))
 	{
 	}
 
@@ -46,7 +46,7 @@ namespace Physika
 
 //		point_render_util = std::make_shared<PointRenderUtil>();
 
-		DeviceArray<float3>* xyz = (DeviceArray<float3>*)pSet->getPoints();
+		DeviceArray<float3>* xyz = (DeviceArray<float3>*)&(pSet->getPoints());
 //		PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
 
 //		point_render_util->unmapPointGLCudaBuffer();
@@ -115,11 +115,13 @@ namespace Physika
 			return;
 		}
 
-		DeviceArray<float3>* xyz = (DeviceArray<float3>*)pSet->getPoints();
+		DeviceArray<float3>* xyz = (DeviceArray<float3>*)&(pSet->getPoints());
 
+
+		m_pointRender->setColor(glm::vec3(m_color[0], m_color[1], m_color[2]));
 		m_pointRender->setVertexArray(*xyz);
 
-//		m_pointRender->setColor(glm::vec3(m_color[0], m_color[1], m_color[2]));
+		
 	}
 
 	void PointRenderModule::display()

@@ -389,7 +389,7 @@ namespace Physika{
 		input.close();
 
 		gDist.Resize(nbx, nby, nbz);
-		cudaCheck(cudaMemcpy(gDist.GetDataPtr(), distances, (nbx)*(nby)*(nbz) * sizeof(Real), cudaMemcpyHostToDevice));
+		cuSafeCall(cudaMemcpy(gDist.GetDataPtr(), distances, (nbx)*(nby)*(nbz) * sizeof(Real), cudaMemcpyHostToDevice));
 
 		std::cout << "read data successful" << std::endl;
 	}

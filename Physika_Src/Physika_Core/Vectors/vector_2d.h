@@ -39,7 +39,7 @@ public:
     COMM_FUNC Vector(const Vector<Scalar,2>&);
     COMM_FUNC ~Vector();
 
-    COMM_FUNC static const int dims() {return (const int)2;}
+    COMM_FUNC static const int dims() {return 2;}
 
     COMM_FUNC Scalar& operator[] (unsigned int);
     COMM_FUNC const Scalar& operator[] (unsigned int) const;

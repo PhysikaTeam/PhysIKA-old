@@ -5,7 +5,7 @@
 
 namespace Physika
 {
-	class Mapping;
+	class TopologyMapping;
 
 	template<typename TDataType>
 	class CollidablePoints : public CollidableObject
@@ -35,7 +35,7 @@ namespace Physika
 		void updateMechanicalState() override;
 
 	private:
-		std::shared_ptr<Mapping> m_mapping;
+		std::shared_ptr<TopologyMapping> m_mapping;
 
 		bool m_bUniformRaidus;
 		Real m_radius;

@@ -14,6 +14,7 @@
 #include "ModuleVisual.h"
 #include "ControllerAnimation.h"
 #include "ControllerRender.h"
+#include "TopologyMapping.h"
 
 namespace Physika {
 class Action;
@@ -57,6 +58,9 @@ public:
 
 	void setDt(Real dt);
 
+	void setGravity(Real g);
+	Real getGravity();
+
 	template<class TNode>
 	std::shared_ptr<TNode> createChild(std::string name)
 	{
@@ -76,7 +80,7 @@ public:
 	virtual bool initialize() { return false; }
 
 	virtual void draw() {};
-	virtual void advance(float dt) {};
+	virtual void advance(Real dt);
 	virtual void takeOneFrame() {};
 
 	std::shared_ptr<DeviceContext> getContext();
@@ -150,6 +154,7 @@ public:
 	std::list<std::shared_ptr<Module>>& getModuleList() { return m_module_list; }
 
 	virtual void updateModules() {};
+	virtual void updateTopology() {};
 
 #define NODE_ADD_SPECIAL_MODULE( CLASSNAME, SEQUENCENAME ) \
 	virtual void add##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.push_back(module); addModule(module);} \
@@ -160,19 +165,21 @@ public:
 	NODE_ADD_SPECIAL_MODULE(ConstraintModule, m_constraint_list)
 	NODE_ADD_SPECIAL_MODULE(CollisionModel, m_collision_list)
 	NODE_ADD_SPECIAL_MODULE(VisualModule, m_render_list)
+	NODE_ADD_SPECIAL_MODULE(TopologyMapping, m_topology_mapping_list)
 
 private:
 	void setParent(Node* p) { m_parent = p; }
 
 private:
 	Real m_dt;
+	Real m_gravity = -9.8;
 	bool m_initalized;
 
-	HostVariablePtr<bool> m_active;
-	HostVariablePtr<bool> m_visible;
-	HostVariablePtr<Real> m_time;
+	HostVarField<bool>* m_active;
+	HostVarField<bool>* m_visible;
+	HostVarField<Real>* m_time;
 
-	HostVariablePtr<std::string> m_node_name;
+	HostVarField<std::string>* m_node_name = nullptr;
 
 	std::list<std::shared_ptr<Module>> m_module_list;
 	//std::map<std::string, Module*> m_modules;
@@ -190,6 +197,7 @@ private:
 	std::list<std::shared_ptr<ConstraintModule>> m_constraint_list;
 	std::list<std::shared_ptr<CollisionModel>> m_collision_list;
 	std::list<std::shared_ptr<VisualModule>> m_render_list;
+	std::list<std::shared_ptr<TopologyMapping>> m_topology_mapping_list;
 
 	std::shared_ptr<DeviceContext> m_context;
 

@@ -1,14 +1,15 @@
 #include "Base.h"
 #include "Physika_Framework/Framework/Field.h"
+#include "Physika_Framework/Framework/Log.h"
 
 namespace Physika {
 
-bool Base::addField(std::shared_ptr<Field> data)
+bool Base::addField(Field* data)
 {
 	return addField(data->getObjectName(), data);
 }
 
-bool Base::addField(FieldID name, std::shared_ptr<Field> data)
+bool Base::addField(FieldID name, Field* data)
 {
 	if (findField(data) == NULL)
 	{
@@ -27,7 +28,7 @@ bool Base::addField(FieldID name, std::shared_ptr<Field> data)
 	return true;
 }
 
-bool Base::addFieldAlias(FieldID name, std::shared_ptr<Field> data)
+bool Base::addFieldAlias(FieldID name, Field* data)
 {
 	if (findFieldAlias(name) == NULL)
 	{
@@ -47,7 +48,7 @@ bool Base::addFieldAlias(FieldID name, std::shared_ptr<Field> data)
 
 }
 
-bool Base::addFieldAlias(FieldID name, std::shared_ptr<Field> data, MapPtr<Field>& fieldAlias)
+bool Base::addFieldAlias(FieldID name, Field* data, FieldMap& fieldAlias)
 {
 	if (findFieldAlias(name, fieldAlias) == NULL)
 	{
@@ -66,9 +67,9 @@ bool Base::addFieldAlias(FieldID name, std::shared_ptr<Field> data, MapPtr<Field
 	}
 }
 
-bool Base::findField(std::shared_ptr<Field> data)
+bool Base::findField(Field* data)
 {
-	VectorPtr<Field>::iterator result = find(m_field.begin(), m_field.end(), data);
+	FieldVector::iterator result = find(m_field.begin(), m_field.end(), data);
 	// return false if no field is found!
 	if (result == m_field.end())
 	{
@@ -79,7 +80,7 @@ bool Base::findField(std::shared_ptr<Field> data)
 
 bool Base::findFieldAlias(const FieldID name)
 {
-	MapPtr<Field>::iterator result = m_fieldAlias.find(name);
+	FieldMap::iterator result = m_fieldAlias.find(name);
 	// return false if no alias is found!
 	if (result == m_fieldAlias.end())
 	{
@@ -88,9 +89,9 @@ bool Base::findFieldAlias(const FieldID name)
 	return true;
 }
 
-bool Base::findFieldAlias(const FieldID name, MapPtr<Field>& fieldAlias)
+bool Base::findFieldAlias(const FieldID name, FieldMap& fieldAlias)
 {
-	MapPtr<Field>::iterator result = fieldAlias.find(name);
+	FieldMap::iterator result = fieldAlias.find(name);
 	// return false if no alias is found!
 	if (result == fieldAlias.end())
 	{
@@ -99,9 +100,9 @@ bool Base::findFieldAlias(const FieldID name, MapPtr<Field>& fieldAlias)
 	return true;
 }
 
-bool Base::removeField(std::shared_ptr<Field> data)
+bool Base::removeField(Field* data)
 {
-	VectorPtr<Field>::iterator result = find(m_field.begin(), m_field.end(), data);
+	FieldVector::iterator result = find(m_field.begin(), m_field.end(), data);
 	if (result == m_field.end())
 	{
 		return false;
@@ -109,7 +110,7 @@ bool Base::removeField(std::shared_ptr<Field> data)
 
 	m_field.erase(result);
 
-	MapPtr<Field>::iterator iter;
+	FieldMap::iterator iter;
 	for (iter = m_fieldAlias.begin(); iter != m_fieldAlias.end();)
 	{
 		if (iter->second == data)
@@ -130,12 +131,12 @@ bool Base::removeFieldAlias(const FieldID name)
 	return removeFieldAlias(name, m_fieldAlias);
 }
 
-bool Base::removeFieldAlias(const FieldID name, MapPtr<Field>& fieldAlias)
+bool Base::removeFieldAlias(const FieldID name, FieldMap& fieldAlias)
 {
-	MapPtr<Field>::iterator iter = fieldAlias.find(name);
+	FieldMap::iterator iter = fieldAlias.find(name);
 	if (iter != fieldAlias.end())
 	{
-		std::shared_ptr<Field> data = iter->second;
+		Field* data = iter->second;
 
 		fieldAlias.erase(iter);
 
@@ -149,9 +150,9 @@ bool Base::removeFieldAlias(const FieldID name, MapPtr<Field>& fieldAlias)
 	return false;
 }
 
-std::shared_ptr<Physika::Field> Base::getField(const FieldID name)
+Field* Base::getField(const FieldID name)
 {
-	MapPtr<Field>::iterator iter = m_fieldAlias.find(name);
+	FieldMap::iterator iter = m_fieldAlias.find(name);
 	if (iter != m_fieldAlias.end())
 	{
 		return iter->second;
@@ -159,10 +160,25 @@ std::shared_ptr<Physika::Field> Base::getField(const FieldID name)
 	return nullptr;
 }
 
-std::vector<std::string> Base::getFieldAlias(std::shared_ptr<Field> field)
+bool Base::isAllFieldsReady()
+{
+	bool bReady = true;
+	for (int i = 0; i < m_field.size(); i++)
+	{
+		bReady = bReady & !m_field[i]->isEmpty();
+		if (!bReady)
+		{
+			break;
+		}
+	}
+	return bReady;
+}
+
+
+std::vector<std::string> Base::getFieldAlias(Field* field)
 {
 	std::vector<FieldID> names;
-	MapPtr<Field>::iterator iter;
+	FieldMap::iterator iter;
 	for (iter = m_fieldAlias.begin(); iter != m_fieldAlias.end(); iter++)
 	{
 		if (iter->second == field)
@@ -173,10 +189,10 @@ std::vector<std::string> Base::getFieldAlias(std::shared_ptr<Field> field)
 	return names;
 }
 
-int Base::getFieldAliasCount(std::shared_ptr<Field> data)
+int Base::getFieldAliasCount(Field* data)
 {
 	int num = 0;
-	MapPtr<Field>::iterator iter;
+	FieldMap::iterator iter;
 	for (iter = m_fieldAlias.begin(); iter != m_fieldAlias.end(); iter++)
 	{
 		if (iter->second == data)
@@ -187,4 +203,18 @@ int Base::getFieldAliasCount(std::shared_ptr<Field> data)
 	return num;
 }
 
+bool Base::initField(Field* field, std::string name, std::string desc, bool autoDestroy /*= true*/)
+{
+	field->setParent(this);
+	field->setObjectName(name);
+	field->setDescription(desc);
+	field->setAutoDestroy(autoDestroy);
+	bool ret = addField(field);
+
+	if (!ret)
+	{
+		Log::sendMessage(Log::Error, std::string("The field ") + name + std::string(" already exists!"));
+	}
+	return ret;
+}
 }

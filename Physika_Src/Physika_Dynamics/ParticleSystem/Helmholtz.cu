@@ -3,10 +3,10 @@
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Helmholtz.h"
 #include "Physika_Framework/Framework/Node.h"
+#include "Physika_Core/Utilities/Function1Pt.h"
 #include <string>
 #include "Kernel.h"
 #include "DensitySummation.h"
-#include "Physika_Framework/Topology/FieldNeighbor.h"
 
 namespace Physika
 {
@@ -15,8 +15,64 @@ namespace Physika
 	template<typename Real>
 	__device__ inline Real ExpWeight(const Real r, const Real h)
 	{
-		Real q = r / h;
-		return pow(Real(M_E), -q*q / 2);
+		const Real q = r / h;
+		if (q > 1.0f) return 0.0f;
+		else {
+			const Real d = 1.0 - q;
+			const Real hh = h*h;
+			return d*d*d;// (1.0 - q*q*q*q);
+		}
+
+// 		const Real q = r / h;
+// 		if (q > 1.0f) return 0.0f;
+// 		else {
+// 			const Real d = 1.0f - q;
+// 			const Real hh = h*h;
+// 			//			return 45.0f / ((float)M_PI * hh*h) *d*d;
+// 			return (1.0 - q*q*q*q)*h*h;
+// 		}
+// 		Real q = r / h;
+// 		if (q > Real(1))
+// 		{
+// 			return Real(0);
+// 		}
+// 		return pow(Real(M_E), -q*q / 2);
+	}
+
+	template<typename Real>
+	__device__ inline Real ExpWeightGradient(const Real r, const Real h)
+	{
+		const Real q = r / h;
+		if (q > 1.0f) return 0.0f;
+		else {
+			const Real d = 1.0 - q;
+			const Real hh = h*h;
+			return 3*d*d / h;// (1.0 - q*q*q*q);
+		}
+	}
+
+	template<typename Real>
+	__device__ inline Real ExpWeightLaplacian(const Real r, const Real h)
+	{
+		const Real q = r / h;
+		if (q > 1.0f) return 0.0f;
+		else {
+			const Real d = 1.0 - q;
+			const Real hh = h*h;
+			return 6 * d / hh;// (1.0 - q*q*q*q);
+		}
+	}
+
+	template<typename Real>
+	__device__ inline Real kernSpikey(const Real r, const Real h)
+	{
+		const Real q = r / h;
+		if (q > 1.0f) return 0.0f;
+		else {
+			const Real d = 1.0 - q;
+			const Real hh = h*h;
+			return d*d*d;// (1.0 - q*q*q*q);
+		}
 	}
 
 		__device__ inline float kernWeight1(const float r, const float h)
@@ -183,29 +239,193 @@ namespace Physika
 		, m_neighborhoodID(MechanicalState::particle_neighbors())
 		, m_smoothingLength(0.0125)
 		, m_maxIteration(5)
+		, m_referenceRho(1000)
+		, m_scale(1)
+		, m_lambda(0.1)
+		, m_kappa(0.0)
 	{
+		m_bSetup = false;
 	}
 
 	template<typename TDataType>
 	Helmholtz<TDataType>::~Helmholtz()
 	{
-		m_lamda.release();
-		m_deltaPos.release();
+		m_bufPos.release();
 		m_originPos.release();
 	}
 
 	template<typename TDataType>
 	bool Helmholtz<TDataType>::initializeImpl()
 	{
-// 		m_densitySum = getParent()->getModule<DensitySummation<TDataType>>();
-// 		if (m_densitySum == nullptr)
-// 		{
-// 			auto summation = std::make_shared<DensitySummation<TDataType>>();
-// 			summation->setSmoothingLength(m_smoothingLength);
-// 
-// 			getParent()->addModule(summation);
-// 		}
 		return true;
+	}
+
+	template<typename Real>
+	__device__ Real H_ComputeBulkEnergyGradient(
+		Real rho,
+		Real restRho,
+		Real lambda)
+	{
+		Real ratio = rho / restRho;
+		ratio = ratio < Real(1) ? Real(1) : ratio;
+		return lambda*(ratio*ratio - 1)*ratio / restRho;
+	}
+
+	template <typename Real, typename Coord>
+	__global__ void H_ComputeEnergy(
+		DeviceArray<Real> energy,
+		DeviceArray<Coord> curPos,
+		NeighborList<int> neighbors,
+		Real smoothingLength,
+		Real scale)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= curPos.size()) return;
+
+		Coord curPos_i = curPos[pId];
+		int nbSize = neighbors.getNeighborSize(pId);
+		Coord grad_i = Coord(0);
+		Real totalWeight = Real(0);
+		for (int ne = 0; ne < nbSize; ne++)
+		{
+			int j = neighbors.getElement(pId, ne);
+			Coord curPos_j = curPos[j];
+			Real r_ij = (curPos_i - curPos_j).norm();
+			if (r_ij > EPSILON)
+			{
+				Real sw_ij = scale*ExpWeightGradient(r_ij, smoothingLength);
+				grad_i += sw_ij*(curPos_j - curPos_i) / r_ij;
+				totalWeight += sw_ij;
+			}
+		}
+
+		if (totalWeight > EPSILON)
+		{
+			grad_i /= totalWeight;
+		}
+
+		energy[pId] = grad_i.dot(grad_i);
+	}
+
+	template <typename Real, typename Coord>
+	__global__ void H_TakeOneIteration(
+		DeviceArray<Coord> newPos,
+		DeviceArray<Coord> curPos,
+		DeviceArray<Coord> prePos,
+		DeviceArray<Real> c,
+		DeviceArray<Real> lc,
+		DeviceArray<Real> energy,
+		NeighborList<int> neighbors,
+		Real smoothingLength,
+		Real restRho,
+		Real lambda,
+		Real kappa,
+		Real scale,
+		Real dt)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= newPos.size()) return;
+
+		Real BE_i = H_ComputeBulkEnergyGradient(c[pId], restRho, lambda);
+		Real lc_i = lc[pId];
+		Coord curPos_i = curPos[pId];
+
+		Real factor = dt*dt / restRho / (smoothingLength*smoothingLength);
+
+		Real a_i = Real(0);
+		Coord accPos_j = Coord(0);
+		Coord accPos_i = Coord(0);
+		Coord accPos_ij = Coord(0);
+		Coord expPos_i = Coord(0);
+		Coord grad_i = Coord(0);
+		Real totalWeight = Real(0);
+		int nbSize = neighbors.getNeighborSize(pId);
+		for (int ne = 0; ne < nbSize; ne++)
+		{
+			int j = neighbors.getElement(pId, ne);
+			Coord curPos_j = curPos[j];
+			Real BE_j = H_ComputeBulkEnergyGradient(c[j], restRho, lambda);
+			Real lc_j = lc[j];
+			Real r_ij = (curPos_i - curPos_j).norm();
+			Real R_ij = r_ij < 0.5*smoothingLength ? 0.5*smoothingLength : r_ij;
+			if (r_ij > EPSILON)
+			{
+				Real w_ij = scale*ExpWeightGradient(r_ij, smoothingLength) / r_ij;
+
+				Real sw_ij = scale*ExpWeightGradient(r_ij, smoothingLength);
+				grad_i += sw_ij*(energy[pId])*(curPos_j - curPos_i) / r_ij;
+				totalWeight += sw_ij;
+
+				Real max_lc = 4*pow(Real(10), Real(8));
+
+				Real fe_ij = -((BE_i + BE_j) / 2 - 0.000000000001*(max_lc + max_lc))*w_ij;
+
+				accPos_ij += fe_ij*(curPos_j-curPos_i);
+				accPos_j += fe_ij*curPos_j;
+				accPos_i += fe_ij*curPos_i;
+				expPos_i += fe_ij*(curPos_j - curPos_i);
+
+				a_i += fe_ij;
+			}
+		}
+
+		
+// 		if (totalWeight > EPSILON)
+// 		{
+// 			grad_i /= totalWeight;
+// 		}
+// 
+// 		printf("%f \n", totalWeight);
+// 
+// 		Real energy_i = grad_i.dot(grad_i);
+// 		if (grad_i.norm() > EPSILON)
+// 		{
+// 			grad_i.normalize();
+// 		}
+
+
+		//newPos[pId] = curPos_i + 0.000000000005f*expPos_i;
+//		newPos[pId] = curPos_i + 0.00001*expPos_i;
+
+//		newPos[pId] = curPos_i + 0.1*factor*accPos_j - 0.1*factor*accPos_i + 0.0000000001*grad_i;
+
+		newPos[pId] = curPos_i + 0.1*factor*accPos_j - 0.1*factor*accPos_i;
+
+//		newPos[pId] = curPos_i + 0.1*factor*accPos_j - 0.1*factor*accPos_i +0.0001*(1-lc_i/(5*pow(Real(10), Real(8))))*grad_i;
+
+//		printf("%f \n", (1 - lc_i / (5 * pow(Real(10), Real(8)))));
+
+// 		Real cr = Real(1);
+// 		if (0.1*factor*a_i < - 1.0/3.0)
+// 		{
+// 			cr *= -0.1*factor*a_i / 3;
+// 		}
+
+//		newPos[pId] = (prePos[pId] + 0.1*factor*accPos_j) / (1 + 0.1*factor*a_i);
+// 
+// 		if(0.1*factor*a_i < -0.5)
+// 			printf("%f \n", 0.1*factor*a_i);
+
+//		Coord tmpCord = accPos_i / a_i;
+
+// 		if (c[pId] > 1000 && pId == 5)
+// 		{
+// 			printf("NewPos: %f %f %f CurPos: %f %f %f TmpPos: %f %f %f PrePos: %f %f %f : %f \n", newPos[pId][0], newPos[pId][1], newPos[pId][2], curPos[pId][0], curPos[pId][1], curPos[pId][2], tmpCord[0], tmpCord[1], tmpCord[2], prePos[pId][0], prePos[pId][1], prePos[pId][2], factor*a_i);
+// 		}
+		
+	}
+
+	template <typename Coord>
+	__global__ void H_UpdateVelocity(
+		DeviceArray<Coord> curVel,
+		DeviceArray<Coord> curPos,
+		DeviceArray<Coord> oriPos,
+		Real dt)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= curVel.size()) return;
+
+		curVel[pId] += (curPos[pId]-oriPos[pId])/dt;
 	}
 
 	template<typename TDataType>
@@ -228,44 +448,74 @@ namespace Physika
 			return false;
 		}
 
-		int num = posFd->size();
+		int num = posFd->getReference()->size();
 
-		if (m_lamda.size() != num)
-			m_lamda.resize(num);
-		if (m_rho.size() != num)
-			m_rho.resize(num);
-		if (m_deltaPos.size() != num)
-			m_deltaPos.resize(num);
+		if (m_bufPos.size() != num)
+			m_bufPos.resize(num);
 		if (m_originPos.size() != num)
 			m_originPos.resize(num);
+
+
+		Real max_c = 0;
+		if (!m_bSetup)
+		{
+			m_c.resize(num);
+			m_lc.resize(num);
+			m_energy.resize(num);
+
+			computeC(m_c, posFd->getValue(), neighborFd->getValue());
+			max_c = thrust::reduce(thrust::device, m_c.getDataPtr(), m_c.getDataPtr() + m_c.size(), (Real)0, thrust::maximum<Real>());
+			m_scale = m_referenceRho / max_c;
+
+			m_bSetup = true;
+		}
+		
+
+		Function1Pt::copy(m_originPos, posFd->getValue());
 
 		Real dt = getParent()->getDt();
 
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
-		float bulk = 1.0f;
-		float st = 0.6f;
-		float inertia = 0.3f;
-
 		int it = 0;
-		while (it < 30)
+		while (it < 5)
 		{
-			m_deltaPos.reset();
+			//printf("Iteration %d: \n", it);
 
-			H_ComputeGradient << <pDims, BLOCK_SIZE >> > (
-				m_deltaPos,
-				m_rho,
+			computeC(m_c, posFd->getValue(), neighborFd->getValue());
+			computeLC(m_lc, posFd->getValue(), neighborFd->getValue());
+			
+//			Real max_lc = thrust::reduce(thrust::device, m_lc.getDataPtr(), m_lc.getDataPtr() + m_lc.size(), (Real)0, thrust::maximum<Real>());
+
+//			printf("%f \n", max_lc);
+
+			Function1Pt::copy(m_bufPos, posFd->getValue());
+
+			H_ComputeEnergy << <pDims, BLOCK_SIZE >> > (
+				m_energy,
 				posFd->getValue(),
-				m_originPos,
 				neighborFd->getValue(),
-				bulk,
-				st,
-				inertia);
-			H_UpdatePosition << <pDims, BLOCK_SIZE >> > (
-				m_deltaPos,
-				posFd->getValue());
+				m_smoothingLength,
+				m_scale);
+
+			H_TakeOneIteration << <pDims, BLOCK_SIZE >> > (
+				posFd->getValue(),
+				m_bufPos,
+				m_originPos,
+				m_c,
+				m_lc,
+				m_energy,
+				neighborFd->getValue(),
+				m_smoothingLength,
+				m_referenceRho,
+				m_lambda,
+				m_kappa,
+				m_scale,
+				dt);
 			it++;
 		}
+
+		H_UpdateVelocity << <pDims, BLOCK_SIZE >> > (velFd->getValue(), posFd->getValue(), m_originPos, dt);
 
 		return true;
 	}
@@ -275,10 +525,13 @@ namespace Physika
 		DeviceArray<Real> c,
 		DeviceArray<Coord> pos,
 		NeighborList<int> neighbors,
-		Real smoothingLength)
+		Real smoothingLength,
+		Real scale)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= pos.size()) return;
+
+		SpikyKernel<Real> kern;
 
 		Real r;
 		Real c_i = Real(0);
@@ -288,14 +541,16 @@ namespace Physika
 		{
 			int j = neighbors.getElement(pId, ne);
 			r = (pos_i - pos[j]).norm();
-			c_i += kernWeight1(r, smoothingLength);
+			c_i += scale*ExpWeight(r, smoothingLength);
 		}
 		c[pId] = c_i;
 	}
 
 	template<typename TDataType>
-	void Helmholtz<TDataType>::computeC()
+	void Helmholtz<TDataType>::computeC(DeviceArray<Real>& c, DeviceArray<Coord>& pos, NeighborList<int>& neighbors)
 	{
+		uint pDims = cudaGridSize(c.size(), BLOCK_SIZE);
+		H_ComputeC << <pDims, BLOCK_SIZE >> > (c, pos, neighbors, m_smoothingLength, m_scale);
 	}
 
 	template <typename Real, typename Coord>
@@ -338,33 +593,32 @@ namespace Physika
 		DeviceArray<Real> lc,
 		DeviceArray<Coord> pos,
 		NeighborList<int> neighbors,
-		Real smoothingLength)
+		Real smoothingLength,
+		Real scale)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= pos.size()) return;
 
-		Real h2_inv = 1 / smoothingLength*smoothingLength;
-		Real h4_inv = h2_inv*h2_inv;
-
-		Real term1 = Real(0);
-		Real term2 = Real(0);
+		Real term = Real(0);
 		Coord pos_i = pos[pId];
 		int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = neighbors.getElement(pId, ne);
 			Real r = (pos_i - pos[j]).norm();
-			Real r2 = r*r;
-			Real w = ExpWeight(r, smoothingLength);
-			term1 += w*r2;
-			term2 += w;
+			if (r > EPSILON)
+			{
+				Real w = scale*ExpWeightLaplacian(r, smoothingLength);
+				term += w;
+			}
 		}
-		lc[pId] = h4_inv*term1 - 3 * term2*h2_inv;
+		lc[pId] = term;
 	}
 
 	template<typename TDataType>
-	void Helmholtz<TDataType>::computeLC()
+	void Helmholtz<TDataType>::computeLC(DeviceArray<Real>& lc, DeviceArray<Coord>& pos, NeighborList<int>& neighbors)
 	{
-
+		uint pDims = cudaGridSize(m_c.size(), BLOCK_SIZE);
+		H_ComputeLC << <pDims, BLOCK_SIZE >> > (lc, pos, neighbors, m_smoothingLength, m_scale);
 	}
 }

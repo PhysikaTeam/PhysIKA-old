@@ -37,7 +37,7 @@ namespace Physika
 
 
 		template <typename T>
-		void Plus(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
+		void plus(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
@@ -46,7 +46,7 @@ namespace Physika
 		}
 
 		template <typename T>
-		void Subtract(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
+		void subtract(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
@@ -55,7 +55,7 @@ namespace Physika
 
 
 		template <typename T>
-		void Multiply(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
+		void multiply(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
@@ -64,7 +64,7 @@ namespace Physika
 		}
 
 		template <typename T>
-		void Divide(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
+		void divide(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
@@ -74,7 +74,7 @@ namespace Physika
 
 
 		template <typename T>
-		void Saxpy(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr, T alpha)
+		void saxpy(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr, T alpha)
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);

@@ -1,47 +1,63 @@
 #pragma once
-#include <vector_types.h>
-#include <vector>
-#include "Physika_Core/DataTypes.h"
-#include "Physika_Core/Platform.h"
-#include "Physika_Framework/Framework/FieldVar.h"
-#include "Physika_Framework/Framework/NumericalModel.h"
+#include "Physika_Framework/Framework/Node.h"
 #include "Physika_Core/Quaternion/quaternion.h"
-#include "Physika_Framework/Mapping/RigidToPoints.h"
 
 namespace Physika
 {
+	template<typename TDataType> class Frame;
+	/*!
+	*	\class	RigidBody
+	*	\brief	Rigid body dynamics.
+	*
+	*	This class implements a simple rigid body.
+	*
+	*/
 	template<typename TDataType>
-	class RigidBody : public NumericalModel
+	class RigidBody : public Node
 	{
 		DECLARE_CLASS_1(RigidBody, TDataType)
-
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 		typedef typename TDataType::Matrix Matrix;
-		typedef typename TDataType::Rigid Rigid;
-		typedef typename TDataType::Rigid::RotationDOF RotateCoord;
 
-		RigidBody();
-		~RigidBody() override {};
+		RigidBody(std::string name = "default");
+		virtual ~RigidBody();
 
-		/*!
-		*	\brief	All variables should be set appropriately before Initliazed() is called.
-		*/
-		bool initializeImpl() override;
+		void setCube(Coord lo, Coord hi);
+		void setSphere(Coord center, Real radius);
+
+		void advance(Real dt) override;
+
+		void setMass(Real mass);
+		void setCenter(Coord center);
+		void setVelocity(Coord vel);
 
 		void updateTopology() override;
 
-		void step(Real dt) override;
+	public:
+		bool initialize() override;
 
 	private:
-		std::shared_ptr<RigidToPoints<TDataType>> m_mapping;
+		VarField<Real> m_mass;
+		VarField<Coord> m_center;
+		VarField<Coord> m_transVelocity;
+		VarField<Coord> m_angularVelocity;
+		VarField<Coord> m_force;
+		VarField<Coord> m_torque;
+		VarField<Matrix> m_angularMass;
+		VarField<Matrix> m_rotation;
+
 
 		Quaternion<Real> m_quaternion;
 
-		Coord m_displacement;
-		Matrix m_deltaRotation;
+		std::shared_ptr<Node> m_surfaceNode;
+		std::shared_ptr<Node> m_collisionNode;
+
+		std::shared_ptr<Frame<TDataType>> m_frame;
 	};
+
+
 
 #ifdef PRECISION_FLOAT
 	template class RigidBody<DataType3f>;

@@ -15,7 +15,7 @@ namespace Physika
 
 		SurfaceMeshRender::SurfaceMeshRender()
 		: VisualModule()
-		, m_color(Vector3f(0.0f, 0.0, 1.0f))
+		, m_color(Vector3f(0.2f, 0.3, 1.0f))
 	{
 	}
 
@@ -102,7 +102,7 @@ namespace Physika
 			return;
 		}
 
-		auto verts = (DeviceArray<float3>*)triSet->getPoints();
+		auto verts = triSet->getPoints();
 		auto triangles = triSet->getTriangles();
 
 		DeviceArray<float3> vertices;
@@ -115,7 +115,8 @@ namespace Physika
 
 		uint pDims = cudaGridSize(triangles->size(), BLOCK_SIZE);
 
-		SetupTriangles << <pDims, BLOCK_SIZE >> >(*verts, vertices, normals, colors, *triangles);
+		DeviceArray<float3>* fverts = (DeviceArray<float3>*)&vertices;
+		SetupTriangles << <pDims, BLOCK_SIZE >> >(*fverts, vertices, normals, colors, *triangles);
 
 
 		m_triangleRender->setVertexArray(vertices);

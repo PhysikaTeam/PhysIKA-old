@@ -19,10 +19,10 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-#include "vector_types.h"
-#include "vector_functions.h"
-#include "cuda_helper_math.h"
+#include <vector_types.h>
+#include <vector_functions.h>
 #include <iostream>
+#include "cuda_helper_math.h"
 
 namespace Physika{
 
@@ -32,7 +32,6 @@ namespace Physika{
 #define M_E 2.71828182845904523536
 
 	#define BLOCK_SIZE 64
-	#define cudaCheck(x) { cudaError_t err = x; if (err != cudaSuccess) { printf("Cuda error: %d in %s at %s:%d\n", err, #x, __FILE__, __LINE__); printf("Cuda status: %s\n", cudaGetErrorString( cudaGetLastError() ) ); assert(0);} }
 
 	using cuint = unsigned int;
 
@@ -56,6 +55,39 @@ namespace Physika{
 
 		return gridDims;
 	}
+
+	/** check whether cuda thinks there was an error and fail with msg, if this is the case
+	* @ingroup tools
+	*/
+	static inline void checkCudaError(const char *msg) {
+		cudaError_t err = cudaGetLastError();
+		if (cudaSuccess != err) {
+			throw std::runtime_error(std::string(msg) + ": " + cudaGetErrorString(err));
+		}
+	}
+
+	// use this macro to make sure no error occurs when cuda functions are called
+#ifdef NDEBUG
+#define cuSafeCall(X)  X
+#else
+#define cuSafeCall(X) X; Physika::checkCudaError(#X);
+#endif
+
+	// use this macro to make sure no error occurs when cuda kernels functions are launched
+#ifdef NDEBUG
+#define cuSynchronize() {}
+#else
+#define cuSynchronize()	{						\
+		char str[200];							\
+		cudaDeviceSynchronize();				\
+		cudaError_t err = cudaGetLastError();	\
+		if (err != cudaSuccess)					\
+		{										\
+			sprintf(str, "CUDA error: %d : %s at %s:%d \n", err, cudaGetErrorString(err), __FILE__, __LINE__);		\
+			throw std::runtime_error(std::string(str));																\
+		}																											\
+	}
+#endif
 
 }// end of namespace Physika
 

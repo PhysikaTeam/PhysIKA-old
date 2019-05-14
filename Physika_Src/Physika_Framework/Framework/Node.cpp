@@ -111,6 +111,16 @@ void Node::setDt(Real dt)
 	m_dt = dt;
 }
 
+void Node::setGravity(Real g)
+{
+	m_gravity = g;
+}
+
+Real Node::getGravity()
+{
+	return m_gravity;
+}
+
 void Node::removeChild(std::shared_ptr<Node> child)
 {
 	ListPtr<Node>::iterator iter = m_children.begin();
@@ -124,6 +134,19 @@ void Node::removeChild(std::shared_ptr<Node> child)
 		{
 			++iter;
 		}
+	}
+}
+
+void Node::advance(Real dt)
+{
+	auto nModel = this->getNumericalModel();
+	if (nModel == NULL)
+	{
+		Log::sendMessage(Log::Warning, this->getName() + ": No numerical model is set!");
+	}
+	else
+	{
+		nModel->step(this->getDt());
 	}
 }
 

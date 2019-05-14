@@ -2,6 +2,7 @@
 #include "Physika_Framework/Framework/ModuleCompute.h"
 #include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Framework/FieldArray.h"
+#include "Physika_Framework/Topology/FieldNeighbor.h"
 #include "Physika_Framework/Topology/GridHash.h"
 
 namespace Physika {
@@ -22,7 +23,12 @@ namespace Physika {
 
 		void queryParticleNeighbors(NeighborList<int>& nbr,  DeviceArray<Coord>& pos, Real radius);
 
-		void setRadius(Real r) { m_radius = r; }
+		void setRadius(Real r) { m_radius.setValue(r); }
+
+		void setNeighborSizeLimit(int num) { m_maxNum = num; }
+
+	protected:
+		bool initializeImpl() override;
 
 	private:
 		void queryNeighborSize(DeviceArray<int>& num, DeviceArray<Coord>& pos, Real h);
@@ -30,13 +36,21 @@ namespace Physika {
 
 		void queryNeighborFixed(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h);
 
+	public:
+		VarField<Real> m_radius;
+
+		DeviceArrayField<Coord> m_position;
+		NeighborField<int> m_neighborhood;
+
 	protected:
 		FieldID m_posID;
 		FieldID m_adaptNID;
 
 	private:
 		int m_maxNum;
-		Real m_radius;
+
+		Coord m_lowBound;
+		Coord m_highBound;
 
 		GridHash<TDataType> hash;
 	};

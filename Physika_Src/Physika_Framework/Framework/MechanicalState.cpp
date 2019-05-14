@@ -12,20 +12,35 @@ namespace Physika
 
 	}
 
-	void MechanicalState::resetForce()
+	Real MechanicalState::getTotalMass()
 	{
-		resetField(MechanicalState::force());
-		resetField(MechanicalState::torque());
+		return m_totalMass;
 	}
 
-	void MechanicalState::resetField(std::string name)
+	void MechanicalState::setTotalMass(Real mass)
 	{
-		auto field = this->getField(name);
-		if (field != nullptr)
-		{
-			field->reset();
-		}
+		m_totalMass = mass;
 	}
+
+	int MechanicalState::getDOF()
+	{
+		return 0;
+	}
+
+// 	void MechanicalState::resetForce()
+// 	{
+// 		resetField(MechanicalState::force());
+// 		resetField(MechanicalState::torque());
+// 	}
+
+// 	void MechanicalState::resetField(std::string name)
+// 	{
+// 		auto field = this->getField(name);
+// 		if (field != nullptr)
+// 		{
+// 			field->reset();
+// 		}
+// 	}
 
 	FieldID MechanicalState::addAuxiliaryID(FieldID id)
 	{

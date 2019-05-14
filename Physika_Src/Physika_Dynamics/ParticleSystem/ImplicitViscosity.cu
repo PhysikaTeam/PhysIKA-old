@@ -77,11 +77,17 @@ namespace Physika
 	template<typename TDataType>
 	ImplicitViscosity<TDataType>::ImplicitViscosity()
 		:ConstraintModule()
-		, m_neighborhoodID(MechanicalState::particle_neighbors())
 		, m_smoothingLength(0.0125)
 		, m_maxInteration(5)
 	{
-		m_viscosity = HostVarField<Real>::createField(this, "viscosity", "Viscosity", Real(0.05));
+		m_viscosity.setValue(Real(0.05));
+		m_smoothingLength.setValue(Real(0.011));
+
+		initField(&m_viscosity, "viscosity", "The viscosity of the fluid!", false);
+		initField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
+		initField(&m_position, "position", "Storing the particle positions!", false);
+		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		initField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
 	}
 
 	template<typename TDataType>
@@ -94,24 +100,39 @@ namespace Physika
 	template<typename TDataType>
 	bool ImplicitViscosity<TDataType>::constrain()
 	{
-		auto mstate = getParent()->getMechanicalState();
-		if (!mstate)
+		int num = m_position.getElementCount();
+		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
+
+		Real vis = m_viscosity.getValue();
+		Real dt = getParent()->getDt();
+		Function1Pt::copy(m_velOld, m_velocity.getValue());
+		for (int t = 0; t < m_maxInteration; t++)
 		{
-			std::cout << "Cannot find a parent node for ImplicitViscosity!" << std::endl;
+			Function1Pt::copy(m_velBuf, m_velocity.getValue());
+			K_ApplyViscosity << < pDims, BLOCK_SIZE >> > (
+				m_velocity.getValue(),
+				m_position.getValue(),
+				m_neighborhood.getValue(),
+				m_velOld, 
+				m_velBuf, 
+				vis,
+				m_smoothingLength.getValue(), 
+				dt);
+		}
+
+		return true;
+	}
+
+	template<typename TDataType>
+	bool ImplicitViscosity<TDataType>::initializeImpl()
+	{
+		if (!isAllFieldsReady())
+		{
+			throw std::runtime_error(std::string("ImplicitViscosity's fields not fully initialized!"));
 			return false;
 		}
 
-		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
-		auto velFd = mstate->getField<DeviceArrayField<Coord>>(m_velID);
-		auto neighborFd = mstate->getField<NeighborField<int>>(m_neighborhoodID);
-
-		if (posFd == nullptr || velFd == nullptr || neighborFd == nullptr)
-		{
-			std::cout << "Incomplete inputs for ImplicitViscosity!" << std::endl;
-			return false;
-		}
-
-		int num = posFd->size();
+		int num = m_position.getElementCount();
 
 		if (m_velOld.size() != num)
 		{
@@ -122,26 +143,20 @@ namespace Physika
 			m_velBuf.resize(num);
 		}
 
-		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
-
-		Real vis = m_viscosity->getValue();
-		Real dt = getParent()->getDt();
-		Function1Pt::copy(m_velOld, velFd->getValue());
-		for (int t = 0; t < m_maxInteration; t++)
-		{
-			Function1Pt::copy(m_velBuf, velFd->getValue());
-			K_ApplyViscosity << < pDims, BLOCK_SIZE >> > (
-				velFd->getValue(), 
-				posFd->getValue(),
-				neighborFd->getValue(),
-				m_velOld, 
-				m_velBuf, 
-				vis,
-				m_smoothingLength, 
-				dt);
-		}
-
 		return true;
 	}
+
+	template<typename TDataType>
+	void ImplicitViscosity<TDataType>::setIterationNumber(int n)
+	{
+		m_maxInteration = n;
+	}
+
+	template<typename TDataType>
+	void ImplicitViscosity<TDataType>::setViscosity(Real mu)
+	{
+		m_viscosity.setValue(mu);
+	}
+
 
 }

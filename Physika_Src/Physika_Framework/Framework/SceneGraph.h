@@ -41,9 +41,12 @@ public:
 	inline float getFrameInterval() { return 1.0f / m_frameRate; }
 	inline int getFrameNumber() { return m_frameNumber; }
 
+	void setGravity(float g);
+	float getGravity();
+
 private:
 	SceneGraph()
-		:m_elapsedTime(0)
+		: m_elapsedTime(0)
 		, m_maxTime(0)
 		, m_frameRate(25)
 		, m_frameNumber(0)
@@ -59,7 +62,6 @@ private:
 
 	~SceneGraph() {};
 
-
 private:
 	bool m_initialized;
 
@@ -69,6 +71,8 @@ private:
 	float m_frameCost;
 
 	int m_frameNumber;
+
+	float m_gravity = -9.8f;
 
 private:
 	std::shared_ptr<Node> m_root;

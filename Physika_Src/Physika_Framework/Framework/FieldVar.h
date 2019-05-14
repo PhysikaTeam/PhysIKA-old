@@ -2,6 +2,7 @@
 #include "Physika_Core/Typedef.h"
 #include "Field.h"
 #include "Base.h"
+#include "Physika_Framework/Framework/Log.h"
 #include "Physika_Core/Cuda_Array/MemoryManager.h"
 
 namespace Physika {
@@ -10,33 +11,35 @@ namespace Physika {
 *	\class	Variable
 *	\brief	Variables of build-in data types.
 */
-template<typename T, DeviceType deviceType = DeviceType::CPU>
+template<typename T>
 class VarField : public Field
 {
 public:
 	typedef T VarType;
+	typedef T FieldType;
 
-	VarField(std::string name, std::string description);
+	VarField();
+	VarField(T value);
+	VarField(T value, std::string name, std::string description);
 
 public:
 	~VarField() override;
 
-	size_t size() override { return 1; }
+	size_t getElementCount() override { return 1; }
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
 	const std::string getClassName() override { return std::string("Variable"); }
-	DeviceType getDeviceType() override { return deviceType; }
 		
-	T getValue();
+	T& getValue() const { return *m_data; }
 	void setValue(T val);
 
-	inline T* getDataPtr() { return m_data; }
+	inline std::shared_ptr<T> getReference() { return m_data; }
 
-	void reset() override;
+//	void reset() override;
 
-	static std::shared_ptr< VarField<T, deviceType> >
+	static VarField<T>*
 		createField(Base* module, std::string name, std::string description, T value)
 	{
-		std::shared_ptr<Field> ret = module->getField(name);
+		Field* ret = module->getField(name);
 		if (nullptr != ret)
 		{
 			std::cout << "Variable " << name
@@ -45,100 +48,89 @@ public:
 			return nullptr;
 		}
 
-		auto var = TypeInfo::New<VarField<T, deviceType>>(name, description);//Variable<T, deviceType>::create(name, description);
-		var->setValue(value);
-		module->addField(name, TypeInfo::CastPointerUp<Field>(var));
+		auto var = new VarField<T>(value, name, description);//Variable<T, deviceType>::create(name, description);
+		module->addField(name, var);
 		return var;
 	}
 
+	bool isEmpty() override {
+		return m_data == nullptr;
+	}
+
+	bool connect(VarField<T>& field2);
+
 private:
-	VarField() {};
-	T* m_data;
-	std::shared_ptr<MemoryManager<deviceType>> m_alloc;
+	std::shared_ptr<T> m_data;
 };
 
-template<typename T, DeviceType deviceType>
-VarField<T, deviceType>::VarField(std::string name, std::string description)
+template<typename T>
+VarField<T>::VarField()
+	: Field("", "")
+	, m_data(nullptr)
+{
+}
+
+template<typename T>
+Physika::VarField<T>::VarField(T value)
+	: Field("", "")
+	, m_data(nullptr)
+{
+	m_data = std::make_shared<T>(value);
+}
+
+template<typename T>
+VarField<T>::VarField(T value, std::string name, std::string description)
 	: Field(name, description)
-	, m_data(NULL)
-	, m_alloc(std::make_shared<DefaultMemoryManager<deviceType>>())
+	, m_data(nullptr)
 {
-//	m_alloc->allocMemory1D((void**)&m_data, 1, sizeof(T));
-
-	switch (deviceType)
-	{
-	case GPU:	(cudaMalloc((void**)&m_data, 1 * sizeof(T)));	break;
-	case CPU:	m_data = new T;	break;
-	default:	break;
-	}
+	m_data = std::make_shared<T>(value);
 }
 
-template<typename T, DeviceType deviceType>
-VarField<T, deviceType>::~VarField()
+template<typename T>
+VarField<T>::~VarField()
 {
-	if (m_data != NULL)
-	{
-		m_alloc->releaseMemory((void**)&m_data);
-// 		switch (deviceType)
-// 		{
-// 		case GPU:	(cudaFree(m_data));	break;
-// 		case CPU:	delete m_data;	break;
-// 		default:
-// 			break;
-// 		}
-	}
 };
 
-template<typename T, DeviceType deviceType /*= DeviceType::CPU*/>
-void Physika::VarField<T, deviceType>::reset()
-{
-	T value = T(0);
-	switch (deviceType)
-	{
-	case GPU:	(cudaMemcpy(m_data, &value, sizeof(T), cudaMemcpyHostToDevice));	break;
-	case CPU:	*m_data = value;	break;
-	default:
-		break;
-	}
-}
-
-template<typename T, DeviceType deviceType>
-void VarField<T, deviceType>::setValue(T val)
-{
-//	m_alloc->initMemory((void*)m_data, val, 1 * sizeof(T));
-
-	switch (deviceType)
-	{
-	case GPU:	(cudaMemcpy(m_data, &val, sizeof(T), cudaMemcpyHostToDevice));	break;
-	case CPU:	*m_data = val;	break;
-	default:
-		break;
-	}
-}
-
-template<typename T, DeviceType deviceType>
-T VarField<T, deviceType>::getValue()
-{
-	T val;
-	switch (deviceType)
-	{
-	case GPU:	(cudaMemcpy(&val, m_data, sizeof(T), cudaMemcpyDeviceToHost));	break;
-	case CPU:	val = *m_data;	break;
-	default:	break;
-	}
-	return val;
-}
+// template<typename T>
+// void Physika::VarField<T>::reset()
+// {
+// 	*m_data = T(0);
+// }
 
 template<typename T>
-using HostVarField = VarField<T, DeviceType::CPU>;
+void VarField<T>::setValue(T val)
+{
+	if (m_data == nullptr)
+	{
+		m_data = std::make_shared<T>(val);
+	}
+	*m_data = val;
+}
+
 
 template<typename T>
-using DeviceVarField = VarField<T, DeviceType::GPU>;
+bool VarField<T>::connect(VarField<T>& field2)
+{
+	if (this->isEmpty())
+	{
+		Log::sendMessage(Log::Warning, "The parent field " + this->getObjectName() + " is empty!");
+		return false;
+	}
+	field2.setDerived(true);
+	field2.m_data = m_data;
+	return true;
+}
+
+
+template<typename T>
+using HostVarField = VarField<T>;
+
+template<typename T>
+using DeviceVarField = VarField<T>;
 
 template<typename T>
 using HostVariablePtr = std::shared_ptr< HostVarField<T> >;
 
 template<typename T>
 using DeviceVariablePtr = std::shared_ptr< DeviceVarField<T> >;
-
 }

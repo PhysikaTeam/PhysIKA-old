@@ -1,5 +1,6 @@
 #include "GridHash.h"
 #include "Physika_Core/Utilities/cuda_helper_math.h"
+#include "Physika_Core/Utilities/cuda_utilities.h"
 
 namespace Physika{
 
@@ -34,6 +35,8 @@ namespace Physika{
 
 	template<typename TDataType>
 	GridHash<TDataType>::GridHash()
+		: counter(nullptr)
+		, ids(nullptr)
 	{
 	}
 
@@ -45,6 +48,8 @@ namespace Physika{
 	template<typename TDataType>
 	void GridHash<TDataType>::setSpace(Real _h, Coord _lo, Coord _hi)
 	{
+		release();
+
 		int padding = 2;
 		ds = _h;
 		lo = _lo- padding*ds;
@@ -60,8 +65,8 @@ namespace Physika{
 
 		npMax = 32;
 
-		cudaCheck(cudaMalloc((void**)&counter, num * sizeof(int)));
-		cudaCheck(cudaMalloc((void**)&ids, num * npMax * sizeof(int)));
+		cuSafeCall(cudaMalloc((void**)&counter, num * sizeof(int)));
+		cuSafeCall(cudaMalloc((void**)&ids, num * npMax * sizeof(int)));
 	}
 
 	template<typename TDataType>
@@ -84,18 +89,22 @@ namespace Physika{
 	{
 		dim3 pDims = int(ceil(pos.size() / BLOCK_SIZE + 0.5f));
 		K_ConstructHashTable << <pDims, BLOCK_SIZE >> > (*this, pos);
+		cuSynchronize();
 	}
 
 	template<typename TDataType>
 	void GridHash<TDataType>::clear()
 	{
-		cudaCheck(cudaMemset(counter, 0, num * sizeof(int)));
+		cuSafeCall(cudaMemset(counter, 0, num * sizeof(int)));
 	}
 
 	template<typename TDataType>
 	void GridHash<TDataType>::release()
 	{
-		cudaCheck(cudaFree(counter));
-		cudaCheck(cudaFree(ids));
+		if (counter != nullptr)
+			cuSafeCall(cudaFree(counter));
+		
+		if (ids != nullptr)
+			cuSafeCall(cudaFree(ids));
 	}
 }

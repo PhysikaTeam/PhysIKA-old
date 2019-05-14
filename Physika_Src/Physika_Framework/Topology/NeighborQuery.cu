@@ -41,12 +41,17 @@ namespace Physika
 		: ComputeModule()
 		, m_posID(MechanicalState::position())
 		, m_adaptNID(MechanicalState::particle_neighbors())
-		, m_radius(Real(0.01))
-		, m_maxNum(30)
+		, m_maxNum(0)
 	{
-		Coord lowerBound(0);
-		Coord upperBound(1.0);
-		hash.setSpace(m_radius, lowerBound, upperBound);
+		m_lowBound = Coord(0);
+		m_highBound = Coord(1);
+		m_radius.setValue(Real(0.011));
+
+		initField(&m_radius, "Radius", "Radius of the searching area", false);
+		initField(&m_position, "position", "Storing the particle positions!", false);
+		initField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
+
+		
 	}
 
 
@@ -55,21 +60,56 @@ namespace Physika
 		: ComputeModule()
 		, m_posID(MechanicalState::position())
 		, m_adaptNID(MechanicalState::particle_neighbors())
-		, m_radius(s)
-		, m_maxNum(30)
+		, m_maxNum(0)
 	{
-		hash.setSpace(m_radius, lo, hi);
+		m_radius.setValue(Real(s));
+
+		m_lowBound = lo;
+		m_highBound = hi;
+
+		initField(&m_radius, "Radius", "Radius of the searching area", false);
+		initField(&m_position, "position", "Storing the particle positions!", false);
+		initField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
 	}
 
+	template<typename TDataType>
+	bool NeighborQuery<TDataType>::initializeImpl()
+	{
+		if (!m_position.isEmpty() && m_neighborhood.isEmpty())
+		{
+			m_neighborhood.setElementCount(m_position.getElementCount(), m_maxNum);
+		}
+
+		if (!isAllFieldsReady())
+		{
+			std::cout << "Exception: " << std::string("NeighborQuery's fields are not fully initialized!") << "\n";
+			return false;
+		}
+
+		hash.setSpace(m_radius.getValue(), m_lowBound, m_highBound);
+
+		return true;
+	}
 
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::compute()
 	{
-		auto mstate = getParent()->getMechanicalState();
-		auto nbrFd = mstate->getField<NeighborField<int>>(m_adaptNID);
-		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
+// 		auto pos = m_position.getReference();
+// 		auto nbr = m_neighborhood.getReference();
+// 
+// 		int num = pos->size();
+// 
+// 		if (nbr->size() != num)
+// 			nbr->resize(num);
 
-		queryParticleNeighbors(nbrFd->getValue(), posFd->getValue(), m_radius);
+// 		auto mstate = getParent()->getMechanicalState();
+// 		auto nbrFd = mstate->getField<NeighborField<int>>(m_adaptNID);
+// 		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
+
+//		queryParticleNeighbors(*nbr, *pos, m_radius);
+
+//		queryParticleNeighbors(nbrFd->getValue(), posFd->getValue(), m_radius.getValue());
+		queryParticleNeighbors(m_neighborhood.getValue(), m_position.getValue(), m_radius.getValue());
 	}
 
 
@@ -163,11 +203,14 @@ namespace Physika
 		int sum = thrust::reduce(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr()+ nbrNum.size(), (int)0, thrust::plus<int>());
 		thrust::exclusive_scan(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr() + nbrNum.size(), nbrNum.getDataPtr());
 
-		DeviceArray<int>& elements = nbrList.getElements();
-		elements.resize(sum);
+		if (sum > 0)
+		{
+			DeviceArray<int>& elements = nbrList.getElements();
+			elements.resize(sum);
 
-		uint pDims = cudaGridSize(pos.size(), BLOCK_SIZE);
-		K_GetNeighborElements << <pDims, BLOCK_SIZE >> > (nbrList, pos, hash, h);
+			uint pDims = cudaGridSize(pos.size(), BLOCK_SIZE);
+			K_GetNeighborElements << <pDims, BLOCK_SIZE >> > (nbrList, pos, hash, h);
+		}
 	}
 
 

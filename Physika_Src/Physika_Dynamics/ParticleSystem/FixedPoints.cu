@@ -73,7 +73,7 @@ namespace Physika
 		}
 
 		auto mstate = getParent()->getMechanicalState();
-		if (mstate->getMaterialType() == MechanicalState::RIGIDBODY)
+		if (mstate->getMaterialType() == MechanicalState::ParticleSystem)
 		{
 			auto init_poss = mstate->getField<HostVarField<Coord>>(m_initPosID)->getValue();
 			mstate->getField<HostVarField<Coord>>(m_posID)->setValue(init_poss);

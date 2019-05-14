@@ -3,6 +3,7 @@
 #include "DensitySummation.h"
 #include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Framework/Framework/Node.h"
+#include "Physika_Core/Utilities/Reduction.h"
 #include "Kernel.h"
 
 namespace Physika
@@ -38,76 +39,87 @@ namespace Physika
 	template<typename TDataType>
 	DensitySummation<TDataType>::DensitySummation()
 		: ComputeModule()
-		, m_massID(MechanicalState::mass())
-		, m_posID(MechanicalState::position())
-		, m_rhoID(MechanicalState::density())
-		, m_neighborID(MechanicalState::particle_neighbors())
-		, m_smoothingLength(Real(0.0125))
 		, m_factor(Real(1))
 	{
+		m_mass.setValue(Real(1));
+		m_restDensity.setValue(Real(1000));
+		m_smoothingLength.setValue(Real(0.011));
+
+		initField(&m_mass, "mass", "particle mass", false);
+		initField(&m_restDensity, "rest_density", "Reference density", false);
+		initField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
+
+		initField(&m_position, "position", "Storing the particle positions!", false);
+		initField(&m_density, "density", "Storing the particle densities!", false);
+		initField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
 	}
 
 	template<typename TDataType>
 	void DensitySummation<TDataType>::compute()
 	{
-		auto mstate = getParent()->getMechanicalState();
-		if (!mstate)
-		{
-			std::cout << "Cannot find a parent node for SummationDensity!" << std::endl;
-		}
-
-		auto massFd = mstate->getField<HostVarField<Real>>(m_massID);
-		auto rhoFd = mstate->getField<DeviceArrayField<Real>>(m_rhoID);
-		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
-		auto neighborFd = mstate->getField<NeighborField<int>>(m_neighborID);
-
-		if (rhoFd == nullptr || posFd == nullptr || neighborFd == nullptr)
-		{
-			std::cout << "Incomplete inputs for SummationDensity!" << std::endl;
-			return;
-		}
-
-		compute(rhoFd->getValue(), posFd->getValue(), neighborFd->getValue(), m_smoothingLength, massFd->getValue());
+		compute(
+			m_density.getValue(),
+			m_position.getValue(),
+			m_neighborhood.getValue(),
+			m_smoothingLength.getValue(),
+			m_mass.getValue());
 	}
 
 
 	template<typename TDataType>
 	void DensitySummation<TDataType>::compute(DeviceArray<Real>& rho)
 	{
-		auto mstate = getParent()->getMechanicalState();
-		if (!mstate)
-		{
-			std::cout << "Cannot find a parent node for SummationDensity!" << std::endl;
-		}
-
-		auto massFd = mstate->getField<HostVarField<Real>>(m_massID);
-		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
-		auto neighborFd = mstate->getField<NeighborField<int>>(m_neighborID);
-
-		if (massFd == nullptr || posFd == nullptr || neighborFd == nullptr)
-		{
-			std::cout << "Incomplete inputs for SummationDensity!" << std::endl;
-			return;
-		}
-
-		if (rho.size() != posFd->size())
-		{
-			std::cout << "The size of density array does not match the size of the position array!" << std::endl;
-		}
-		
-		compute(rho, posFd->getValue(), neighborFd->getValue(), m_smoothingLength, massFd->getValue());
+		compute(
+			rho,
+			m_position.getValue(),
+			m_neighborhood.getValue(),
+			m_smoothingLength.getValue(),
+			m_mass.getValue());
 	}
 
 	template<typename TDataType>
 	void DensitySummation<TDataType>::compute(
 		DeviceArray<Real>& rho, 
-		DeviceArray<Coord>& pos, 
+		DeviceArray<Coord>& pos,
 		NeighborList<int>& neighbors, 
-		Real smoothingLength, 
+		Real smoothingLength,
 		Real mass)
 	{
 		cuint pDims = cudaGridSize(rho.size(), BLOCK_SIZE);
-		K_ComputeDensity <Real, Coord> << <pDims, BLOCK_SIZE >> > (rho, pos, neighbors, smoothingLength, mass);
+		K_ComputeDensity <Real, Coord> << <pDims, BLOCK_SIZE >> > (rho, pos, neighbors, smoothingLength, m_factor*mass);
 	}
 
+	template<typename TDataType>
+	bool DensitySummation<TDataType>::initializeImpl()
+	{
+		if (!m_position.isEmpty() && m_density.isEmpty())
+		{
+			m_density.setElementCount(m_position.getElementCount());
+		}
+
+		if (!isAllFieldsReady())
+		{
+			std::cout << "Exception: " << std::string("DensitySummation's fields are not fully initialized!") << "\n";
+			return false;
+		}
+
+		compute(
+			m_density.getValue(),
+			m_position.getValue(),
+			m_neighborhood.getValue(),
+			m_smoothingLength.getValue(),
+			m_mass.getValue());
+
+		auto rho = m_density.getReference();
+
+		Reduction<Real>* pReduce = Reduction<Real>::Create(rho->size());
+
+		Real maxRho = pReduce->Maximum(rho->getDataPtr(), rho->size());
+
+		m_factor = m_restDensity.getValue() / maxRho;
+		
+		delete pReduce;
+
+		return true;
+	}
 }

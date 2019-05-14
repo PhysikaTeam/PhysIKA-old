@@ -4,6 +4,7 @@
 #include "Physika_Framework/Framework/NumericalModel.h"
 #include "Physika_Framework/Framework/ControllerAnimation.h"
 #include "Physika_Framework/Framework/CollisionModel.h"
+#include "Physika_Framework/Framework/TopologyMapping.h"
 
 namespace Physika
 {
@@ -27,7 +28,10 @@ namespace Physika
 		}
 		if (node->isActive())
 		{
-			if (node->getAnimationController() != nullptr)
+			node->advance(node->getDt());
+			node->updateTopology();
+
+			/*if (node->getAnimationController() != nullptr)
 			{
 				node->getAnimationController()->execute();
 			}
@@ -48,7 +52,7 @@ namespace Physika
 				{
 					(*iter)->doCollision();
 				}
-			}
+			}*/
 			
 		}
 

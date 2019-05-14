@@ -12,6 +12,16 @@ SceneGraph& SceneGraph::getInstance()
 	return m_instance;
 }
 
+void SceneGraph::setGravity(float g)
+{
+	m_gravity = g;
+}
+
+float SceneGraph::getGravity()
+{
+	return m_gravity;
+}
+
 bool SceneGraph::initialize()
 {
 	if (m_initialized)

@@ -159,7 +159,6 @@ namespace Physika
 		SmoothKernel<Real> kernSmooth,
 		Real smoothingLength)
 	{
-
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
@@ -317,9 +316,9 @@ namespace Physika
 		auto neighborFd = mstate->getField<NeighborField<int>>(m_neighborhoodID);
 
 
-		uint pDims = cudaGridSize(posFd->size(), BLOCK_SIZE);
+		uint pDims = cudaGridSize(posFd->getReference()->size(), BLOCK_SIZE);
 
-		int num = posFd->size();
+		int num = posFd->getReference()->size();
 		if (NULL == m_refMatrix)
 			m_refMatrix = DeviceArrayField<Matrix>::create(num);
 		if (NULL == m_tmpPos)
@@ -332,11 +331,11 @@ namespace Physika
 			m_bulkCoef = DeviceArrayField<Real>::create(num);
 
 
-		DeviceArray<Matrix>* matArr = m_refMatrix->getDataPtr();
-		DeviceArray<Real>* lambda = m_lambdas->getDataPtr();
-		DeviceArray<Real>* bulks = m_bulkCoef->getDataPtr();
-		DeviceArray<Coord>* accPos = m_accPos->getDataPtr();
-		DeviceArray<Coord>* tmpPos = m_tmpPos->getDataPtr();
+		auto matArr = m_refMatrix->getReference();
+		auto lambda = m_lambdas->getReference();
+		auto bulks = m_bulkCoef->getReference();
+		auto accPos = m_accPos->getReference();
+		auto tmpPos = m_tmpPos->getReference();
 
 		if (isUpdateRequired())
 		{

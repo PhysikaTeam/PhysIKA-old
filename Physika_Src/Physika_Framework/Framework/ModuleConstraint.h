@@ -12,8 +12,8 @@ public:
 	~ConstraintModule() override;
 
 	//interface for data initialization, must be called before execution
-	virtual bool connectPosition(std::shared_ptr<Field>& pos) { return true; }
-	virtual bool connectVelocity(std::shared_ptr<Field>& vel) { return true; }
+	virtual bool connectPosition(Field*& pos) { return true; }
+	virtual bool connectVelocity(Field*& vel) { return true; }
 
 	void setPositionID(FieldID id) { m_posID = id; }
 	void setVelocityID(FieldID id) { m_velID = id; }

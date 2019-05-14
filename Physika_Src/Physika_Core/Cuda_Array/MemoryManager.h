@@ -7,26 +7,9 @@
 #include <string>
 #include <cuda_runtime.h>
 #include "Physika_Core/Platform.h"
+#include "Physika_Core/Utilities/cuda_utilities.h"
 
 namespace Physika {
-
-	/** check whether cuda thinks there was an error and fail with msg, if this is the case
-	* @ingroup tools
-	*/
-	static inline void checkCudaError(const char *msg) {
-		cudaError_t err = cudaGetLastError();
-		if (cudaSuccess != err) {
-			throw std::runtime_error(std::string(msg) + ": " + cudaGetErrorString(err));
-		}
-	}
-
-	// use this macro to make sure no error occurs when cuda functions are called
-#ifdef NDEBUG
-#  define cuSafeCall(X)  \
-      if(strcmp(#X,"cudaThreadSynchronize()")!=0){ X; Physika::checkCudaError(#X); }
-#else
-#  define cuSafeCall(X) X; Physika::checkCudaError(#X);
-#endif
 
 // 	template<typename T>
 // 	void CopyMemory(T* dst, T*src, size_t size, DeviceType dstType, DeviceType srcType)

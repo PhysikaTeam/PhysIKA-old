@@ -139,7 +139,8 @@ PointRender::~PointRender()
 void PointRender::resize(unsigned int num)
 {
 	m_vertVBO.resize(num);
-	m_vertexColor.resize(num);
+ 	m_vertexColor.resize(num);
+// 	m_normVBO.resize(num);
 }
 
 
@@ -167,14 +168,13 @@ float PointRender::pointSize() const
 
 void PointRender::setColor(glm::vec3 color)
 {
-	glm::vec3* colors = new glm::vec3(m_vertexColor.getSize());
+	glm::vec3* colors = new glm::vec3[m_vertexColor.getSize()];
 	for (size_t i = 0; i < m_vertexColor.getSize(); i++)
 	{
 		colors[i] = color;
 	}
 
-	m_vertexColor.cudaMap();
-//	cudaMemcpy(clrBuf, colors, sizeof(float3) * m_color.getSize(), cudaMemcpyHostToHost);
+	cudaMemcpy(m_vertexColor.cudaMap(), colors, sizeof(glm::vec3) * m_vertexColor.getSize(), cudaMemcpyHostToHost);
 	m_vertexColor.cudaUnmap();
 	delete[] colors;
 }
@@ -232,6 +232,10 @@ void PointRender::display()
 	{
 		glPointSize(point_size_);
 	}
+
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexColor.getVBO());
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertVBO.getVBO());
 	glEnableClientState(GL_VERTEX_ARRAY);

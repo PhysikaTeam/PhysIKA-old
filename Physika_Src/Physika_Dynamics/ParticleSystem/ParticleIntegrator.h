@@ -1,5 +1,7 @@
 #pragma once
 #include "Physika_Framework/Framework/NumericalIntegrator.h"
+#include "Physika_Framework/Framework/FieldVar.h"
+#include "Physika_Framework/Framework/FieldArray.h"
 
 namespace Physika {
 	template<typename TDataType>
@@ -20,8 +22,17 @@ namespace Physika {
 		bool updateVelocity();
 		bool updatePosition();
 
-	private:
+	protected:
+		bool initializeImpl() override;
 
+	public:
+		DeviceArrayField<Coord> m_position;
+		DeviceArrayField<Coord> m_velocity;
+		DeviceArrayField<Coord> m_forceDensity;
+
+	private:
+		DeviceArray<Coord> m_prePosition;
+		DeviceArray<Coord> m_preVelocity;
 	};
 
 #ifdef PRECISION_FLOAT

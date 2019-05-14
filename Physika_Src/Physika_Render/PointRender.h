@@ -60,6 +60,7 @@ private:
     float point_scale_ = 5.0f; //for point sprite
 
 	CudaVBOMapper<glm::vec3> m_vertVBO;
+	CudaVBOMapper<glm::vec3> m_normVBO;
 	CudaVBOMapper<glm::vec3> m_vertexColor;
 
 	ShaderProgram m_glsl;

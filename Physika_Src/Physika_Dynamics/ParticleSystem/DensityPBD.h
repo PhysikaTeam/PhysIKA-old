@@ -1,6 +1,9 @@
 #pragma once
 #include "Physika_Core/Cuda_Array/Array.h"
 #include "Physika_Framework/Framework/ModuleConstraint.h"
+#include "Physika_Framework/Framework/FieldVar.h"
+#include "Physika_Framework/Framework/FieldArray.h"
+#include "Physika_Framework/Topology/FieldNeighbor.h"
 
 namespace Physika {
 
@@ -23,26 +26,24 @@ namespace Physika {
 
 		bool constrain() override;
 
-		void setMassID(FieldID id) { m_massID = id; }
-		void setPositionID(FieldID id) { m_posID = id; }
-		void setVelocityID(FieldID id) { m_velID = id; }
-		void setNeighborhoodID(FieldID id) {m_neighborhoodID = id; }
-
 		void setIterationNumber(int n) { m_maxIteration = n; }
-		void setSmoothingLength(Real len) { m_smoothingLength = len; }
 
 	protected:
 		bool initializeImpl() override;
 
-	protected:
-		FieldID m_massID;
-		FieldID m_posID;
-		FieldID m_velID;
-		FieldID m_neighborhoodID;
+	public:
+		VarField<Real> m_restDensity;
+		VarField<Real> m_smoothingLength;
+
+		DeviceArrayField<Coord> m_position;
+		DeviceArrayField<Coord> m_velocity;
+
+		DeviceArrayField<Real> m_density;
+
+		NeighborField<int> m_neighborhood;
 
 	private:
 		int m_maxIteration;
-		Real m_smoothingLength;
 
 		DeviceArray<Real> m_rhoArr;
 		DeviceArray<Real> m_lamda;
