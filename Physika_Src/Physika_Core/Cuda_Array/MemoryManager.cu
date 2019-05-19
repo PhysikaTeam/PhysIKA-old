@@ -95,7 +95,7 @@ namespace Physika {
 			assert(*ptr != 0);
 			break;
 		case GPU:
-			DefaultMemoryManager::allocMemory1D(ptr, memsize, valueSize);
+			DefaultMemoryManager<deviceType>::allocMemory1D(ptr, memsize, valueSize);
 			break;
 		case UNDEFINED:
 			break;

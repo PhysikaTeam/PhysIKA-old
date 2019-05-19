@@ -20,7 +20,7 @@ public:
 	}
 	virtual ~ClassInfo() {}
 
-	inline bool ClassInfo::operator==(const ClassInfo &ci) const
+	inline bool operator==(const ClassInfo &ci) const
 	{
 
 		if (this->m_className == ci.m_className)

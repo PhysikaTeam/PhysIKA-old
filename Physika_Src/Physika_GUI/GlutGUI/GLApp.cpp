@@ -646,7 +646,7 @@ void GLApp::drawAxis()
 	glPopMatrix();
 }
 
-void GLApp::drawString(std::string s, Color &color, int x, int y)
+void GLApp::drawString(std::string s, const Color &color, int x, int y)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 

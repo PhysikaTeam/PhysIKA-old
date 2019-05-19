@@ -1,4 +1,5 @@
 #pragma once
+#define GLM_FORCE_PURE
 #include <vector_types.h>
 #include "Physika_Core/Vectors/vector.h"
 #include "Physika_Core/Matrices/matrix.h"

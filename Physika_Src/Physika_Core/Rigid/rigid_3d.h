@@ -10,8 +10,8 @@ namespace Physika {
 	class Rigid<Scalar, 3>
 	{
 	public:
-		typedef typename Vector<Scalar, 3> TranslationDOF;
-		typedef typename Vector<Scalar, 3> RotationDOF;
+		typedef Vector<Scalar, 3> TranslationDOF;
+		typedef Vector<Scalar, 3> RotationDOF;
 
 		COMM_FUNC Rigid()
 			: m_p(0)
@@ -25,14 +25,14 @@ namespace Physika {
 
 		COMM_FUNC ~Rigid() {};
 
-		COMM_FUNC Vector<Scalar, 3> getCenter() { return m_p; }
+		COMM_FUNC Vector<Scalar, 3> getCenter() const { return m_p; }
 
-		COMM_FUNC SquareMatrix<Scalar, 3> getRotationMatrix()
+		COMM_FUNC SquareMatrix<Scalar, 3> getRotationMatrix() const
 		{
 			return m_quat.get3x3Matrix();
 		}
 
-		COMM_FUNC Quaternion<Scalar> getOrientation() { return m_quat; }
+		COMM_FUNC Quaternion<Scalar> getOrientation() const { return m_quat; }
 
 	private:
 		Vector<Scalar, 3> m_p;

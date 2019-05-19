@@ -75,7 +75,8 @@ namespace Physika
 			auto center = mstate->getField<HostVarField<Coord>>(MechanicalState::position())->getValue();
 			auto rotation = mstate->getField<HostVarField<Matrix>>(MechanicalState::rotation())->getValue();
 
-			mapping->initialize(Rigid(center, Quaternion<Real>(rotation)), m_positions);
+			Rigid tmp_rigid(center, Quaternion<Real>(rotation));
+			mapping->initialize(tmp_rigid, m_positions);
 			m_mapping = mapping;
 		}
 		else
@@ -100,7 +101,8 @@ namespace Physika
 
 			auto mp = std::dynamic_pointer_cast<FrameToPointSet<TDataType>>(m_mapping);
 
-			mp->applyTransform(Rigid(center, Quaternion<Real>(rotation)), m_positions);
+			Rigid tmp_rigid(center, Quaternion<Real>(rotation));
+			mp->applyTransform(tmp_rigid, m_positions);
 		}
 		else
 		{

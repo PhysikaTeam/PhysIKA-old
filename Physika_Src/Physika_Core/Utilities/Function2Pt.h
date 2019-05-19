@@ -30,24 +30,7 @@ namespace Physika
 		template <typename T>
 		void saxpy(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr, T alpha);
 
-		template void plus(DeviceArray<int>&, DeviceArray<int>&, DeviceArray<int>&);
-		template void plus(DeviceArray<float>&, DeviceArray<float>&, DeviceArray<float>&);
-		template void plus(DeviceArray<double>&, DeviceArray<double>&, DeviceArray<double>&);
 
-		template void subtract(DeviceArray<int>&, DeviceArray<int>&, DeviceArray<int>&);
-		template void subtract(DeviceArray<float>&, DeviceArray<float>&, DeviceArray<float>&);
-		template void subtract(DeviceArray<double>&, DeviceArray<double>&, DeviceArray<double>&);
-
-		template void multiply(DeviceArray<int>&, DeviceArray<int>&, DeviceArray<int>&);
-		template void multiply(DeviceArray<float>&, DeviceArray<float>&, DeviceArray<float>&);
-		template void multiply(DeviceArray<double>&, DeviceArray<double>&, DeviceArray<double>&);
-
-		template void divide(DeviceArray<int>&, DeviceArray<int>&, DeviceArray<int>&);
-		template void divide(DeviceArray<float>&, DeviceArray<float>&, DeviceArray<float>&);
-		template void divide(DeviceArray<double>&, DeviceArray<double>&, DeviceArray<double>&);
-
-		template void saxpy(DeviceArray<float>&, DeviceArray<float>&, DeviceArray<float>&, float);
-		template void saxpy(DeviceArray<double>&, DeviceArray<double>&, DeviceArray<double>&, double);
 
 	};
 }

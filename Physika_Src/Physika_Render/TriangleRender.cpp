@@ -17,110 +17,97 @@
 
 namespace Physika{
 
-#define STRINGIFY(A) #A
+static const char * triangle_solid_render_vertex_shader = R"STR(
+#version 330
 
-	static const char * triangle_solid_render_vertex_shader = STRINGIFY(
+layout(location = 0) in vec3 VertexPosition;
+layout(location = 1) in vec3 VertexNormal;
+layout(location = 2) in vec3 VertexColor;
 
-	#version 330 \n
+out vec3 LightIntensity;
 
-	layout(location = 0) in vec3 VertexPosition;
-	layout(location = 1) in vec3 VertexNormal;
-	layout(location = 2) in vec3 VertexColor;
+struct LightInfo
+{
+	vec4 Position; //ligth position in eye coords
+	vec3 La; //ambient light intensity
+	vec3 Ld; //diffuse light intensity
+	vec3 Ls; // specular light intensity
+};
+uniform LightInfo Light;
 
-	out vec3 LightIntensity;
+struct MaterialInfo
+{
+	vec3 Ka; // ambient reflectivity
+	vec3 Kd; // diffuse reflectivity
+	vec3 Ks; // specular reflectivity
+	float Shininess; // specular shininess factor
+};
+uniform MaterialInfo Material;
 
-	struct LightInfo
+uniform mat4 ModelViewMatrix;
+uniform mat3 NormalMatrix;
+uniform mat4 ProjectionMatrix;
+uniform mat4 MVP;
+
+void main()
+{
+	vec3 tnorm = normalize(NormalMatrix * VertexNormal);
+	vec4 eyeCoords = ModelViewMatrix * vec4(VertexPosition, 1.0);
+	vec3 s = normalize(vec3(Light.Position - eyeCoords));
+	vec3 v = normalize(-eyeCoords.xyz);
+	vec3 r = reflect(-s, tnorm);
+	float sDotN = max(0.0, dot(s, tnorm));
+	vec3 ambient = Light.La * Material.Ka;
+	vec3 diffuse = Light.Ld * Material.Ka * sDotN;
+	vec3 spec = vec3(0.0);
+	if (sDotN > 0.0)
 	{
-		vec4 Position; //ligth position in eye coords
-		vec3 La; //ambient light intensity
-		vec3 Ld; //diffuse light intensity
-		vec3 Ls; // specular light intensity
-	};
-	uniform LightInfo Light;
-
-	struct MaterialInfo
-	{
-		vec3 Ka; // ambient reflectivity
-		vec3 Kd; // diffuse reflectivity
-		vec3 Ks; // specular reflectivity
-		float Shininess; // specular shininess factor
-	};
-	uniform MaterialInfo Material;
-
-	uniform mat4 ModelViewMatrix;
-	uniform mat3 NormalMatrix;
-	uniform mat4 ProjectionMatrix;
-	uniform mat4 MVP;
-
-	void main()
-	{
-		vec3 tnorm = normalize(NormalMatrix * VertexNormal);
-		vec4 eyeCoords = ModelViewMatrix * vec4(VertexPosition, 1.0);
-		vec3 s = normalize(vec3(Light.Position - eyeCoords));
-		vec3 v = normalize(-eyeCoords.xyz);
-		vec3 r = reflect(-s, tnorm);
-		float sDotN = max(0.0, dot(s, tnorm));
-		vec3 ambient = Light.La * Material.Ka;
-		vec3 diffuse = Light.Ld * Material.Ka * sDotN;
-		vec3 spec = vec3(0.0);
-		if (sDotN > 0.0)
-		{
-			spec = Light.Ls * Material.Ks *
-				pow(max(0.0, dot(r, v)), Material.Shininess);
-		}
-		LightIntensity = ambient + diffuse + spec;
-		gl_Position = MVP *vec4(VertexPosition, 1.0);
+		spec = Light.Ls * Material.Ks *
+			pow(max(0.0, dot(r, v)), Material.Shininess);
 	}
+	LightIntensity = ambient + diffuse + spec;
+	gl_Position = MVP *vec4(VertexPosition, 1.0);
+}
+)STR";
 
-	);
+static const char * triangle_solid_render_frag_shader = R"STR(
+#version 330 
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+in vec3 LightIntensity;
 
-	static const char * triangle_solid_render_frag_shader = STRINGIFY(
+layout(location = 0) out vec4 FragColor;
 
-	#version 330 \n
-
-	in vec3 LightIntensity;
-
-	layout(location = 0) out vec4 FragColor;
-
-	void main()
-	{
-		FragColor = vec4(LightIntensity, 1.0);
-	}
-
-
-	);
+void main()
+{
+	FragColor = vec4(LightIntensity, 1.0);
+}
+)STR";
 
 
-	static const char * triangle_wireframe_render_vertex_shader = "#version 330 compatibility\n" STRINGIFY(
+static const char * triangle_wireframe_render_vertex_shader = R"STR(
+#version 330 compatibility
+layout(location = 0) in vec3 vert_pos;
+layout(location = 3) in vec3 vert_col;
 
-	layout(location = 0) in vec3 vert_pos;
-	layout(location = 3) in vec3 vert_col;
+out vec3 frag_vert_col;
 
-	out vec3 frag_vert_col;
+void main()
+{
+	frag_vert_col = vert_col;
+	gl_Position = gl_ModelViewProjectionMatrix * vec4(vert_pos, 1.0);
+}
+)STR";
 
-	void main()
-	{
-		frag_vert_col = vert_col;
-		gl_Position = gl_ModelViewProjectionMatrix * vec4(vert_pos, 1.0);
-	}
+static const char * triangle_wireframe_render_frag_shader = R"STR(
+#version 330 compatibility
+in vec3 frag_vert_col;
+out vec4 frag_color;
 
-	);
-
-	static const char * triangle_wireframe_render_frag_shader = "#version 330 compatibility\n" STRINGIFY(
-
-	in vec3 frag_vert_col;
-	out vec4 frag_color;
-
-	void main()
-	{
-		frag_color = vec4(frag_vert_col, 1.0);
-	}
-
-	);
-
-
+void main()
+{
+	frag_color = vec4(frag_vert_col, 1.0);
+}
+)STR";
 
 TriangleRender::TriangleRender()
 {

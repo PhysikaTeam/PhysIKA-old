@@ -1,6 +1,8 @@
 #include "Base.h"
+#include <algorithm>
 #include "Physika_Framework/Framework/Field.h"
 #include "Physika_Framework/Framework/Log.h"
+using std::find;
 
 namespace Physika {
 

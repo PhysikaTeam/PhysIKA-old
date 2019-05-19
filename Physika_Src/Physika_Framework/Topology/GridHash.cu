@@ -70,7 +70,7 @@ namespace Physika{
 	}
 
 	template<typename TDataType>
-	__global__ void K_ConstructHashTable(GridHash<TDataType> hash, Array<TDataType::Coord> pos)
+	__global__ void K_ConstructHashTable(GridHash<TDataType> hash, Array<typename TDataType::Coord> pos)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= pos.size()) return;

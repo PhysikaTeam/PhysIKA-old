@@ -16,7 +16,7 @@ namespace Physika
 	template<typename TDataType>
 	void EdgeSet<TDataType>::updatePointNeighbors()
 	{
-		if (m_coords.isEmpty())
+		if (this->m_coords.isEmpty())
 			return;
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "EdgeSet.h"
+#include "Framework/ModuleTopology.h"
 
 
 namespace Physika
@@ -10,6 +11,7 @@ namespace Physika
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
+		typedef typename TopologyModule::Triangle Triangle;
 
 		TriangleSet();
 		~TriangleSet();

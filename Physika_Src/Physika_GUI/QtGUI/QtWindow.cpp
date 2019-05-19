@@ -47,11 +47,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "QLichtWidget.h"
 #include "QtWindow.h"
 #include "DockWidget.h"
-#include "toolbar.h"
+#include "ToolBar.h"
 
 #include <QAction>
 #include <QLayout>
@@ -81,7 +80,8 @@
 // #include "Node/FlowView.hpp"
 // #include "Node/FlowViewStyle.hpp"
 // #include "Node/ConnectionStyle.hpp"
-// #include "Node/DataModelRegistry.hpp"
+// #include "Node/DataModelRegistry.hpp"
+
 //#include "models.h"
 
 Q_DECLARE_METATYPE(QDockWidget::DockWidgetFeatures)
@@ -169,9 +169,12 @@ void QtWindow::setCentralView()
 // 			  "UseDataDefinedColors": false
 // 			}
 // 		  }
-// 		  )");
-// 
-// 	auto ret = std::make_shared<QtNodes::DataModelRegistry>();
+// 		  )");
+
+// 
+
+// 	auto ret = std::make_shared<QtNodes::DataModelRegistry>();
+
 // 	ret->registerModel<MyDataModel>(
 
 	QTabWidget* tabWidget = new QTabWidget();
@@ -199,15 +202,18 @@ void QtWindow::setCentralView()
 
 //	openGLWidget->initialize();
 // 	app = std::shared_ptr<App>(new App(
-// 		G3D::GApp::Settings()));
+// 		G3D::GApp::Settings()));
+
 // 	openGLWidget->pushLoopBody(app.get());
 
 
 	QGridLayout * layout_2 = new QGridLayout(tabEditor);
 	layout_2->setMargin(0);
 // 	QtNodes::FlowScene* scene = new QtNodes::FlowScene(ret);
-// 	QtNodes::FlowView* view = new QtNodes::FlowView(scene);
-// 	layout_2->addWidget(view, 0, 0, 1, 1);
+// 	QtNodes::FlowView* view = new QtNodes::FlowView(scene);
+
+// 	layout_2->addWidget(view, 0, 0, 1, 1);
+
 
 	setCentralWidget(tabWidget);
 }

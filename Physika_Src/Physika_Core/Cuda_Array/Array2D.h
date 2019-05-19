@@ -88,7 +88,7 @@ namespace Physika {
 	void Array2D<T, deviceType>::Resize(int nx, int ny)
 	{
 		if (NULL != m_data) Release();
-		m_nx = nx;	m_ny = ny;	m_totalNum = m_nx*m_nz;
+		m_nx = nx;	m_ny = ny;	m_totalNum = m_nx*m_ny;
 		AllocMemory();
 	}
 

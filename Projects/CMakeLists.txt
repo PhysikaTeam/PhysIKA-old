@@ -6,6 +6,12 @@ link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                           
 link_libraries(Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)
 link_libraries(ParticleSystem RigidBody)
 link_libraries(GlutGUI)
+
+if(Qt5_FOUND)
+    message("Find QT5")
+    link_libraries(Qt5::Widgets Qt5::Core Qt5::Gui)                                             #设置链接至QT库
+endif()
+
 if(Qt5_FOUND)
     link_libraries(QtGUI)                                                                                       #链接QtGUI库
 endif()   
@@ -24,6 +30,9 @@ foreach(PROJECT_NAME IN ITEMS ${PROJECTS_NAMES})
     list(FILTER SRC_LIST EXCLUDE REGEX .*Media/.*)                                                              #排除deprecated 文件下面的所有文件
 
     add_executable(${PROJECT_NAME} ${SRC_LIST})                                                                 #添加编译目标 可执行文件
+    target_link_libraries(${PROJECT_NAME} PUBLIC Physika_Core)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render ParticleSystem RigidBody GlutGUI)
+
     file(RELATIVE_PATH PROJECT_PATH_REL "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")                  #判断当前project在根目录下的相对路径
     set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "${PROJECT_PATH_REL}")                              #为project设定folder目录
 
@@ -35,6 +44,7 @@ foreach(PROJECT_NAME IN ITEMS ${PROJECTS_NAMES})
               "${PROJECT_SOURCE_DIR}/Extern/irrLicht/lib/Win64-visualStudio/Irrlicht.dll" 
 			  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif()
+
 
     foreach(SRC IN ITEMS ${SRC_LIST})                                                                           #为VS工程添加filter 方便查看文件结构目录
         get_filename_component(SRC_PATH "${SRC}" PATH)

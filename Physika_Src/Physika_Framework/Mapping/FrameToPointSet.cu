@@ -37,7 +37,7 @@ namespace Physika
 
 
 	template<typename TDataType>
-	void FrameToPointSet<TDataType>::initialize(Rigid& rigid, DeviceArray<Coord>& points)
+	void FrameToPointSet<TDataType>::initialize(const Rigid& rigid, DeviceArray<Coord>& points)
 	{
 		m_refRigid = rigid;
 		m_refPoints.resize(points.size());
@@ -72,7 +72,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void FrameToPointSet<TDataType>::applyTransform(Rigid& rigid, DeviceArray<Coord>& points)
+	void FrameToPointSet<TDataType>::applyTransform(const Rigid& rigid, DeviceArray<Coord>& points)
 	{
 		if (points.size() != m_refPoints.size())
 		{
