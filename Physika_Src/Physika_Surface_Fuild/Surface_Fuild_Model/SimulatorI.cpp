@@ -5,7 +5,7 @@
 #include <device_launch_parameters.h>
 namespace Physika{
 void SimulatorI::init(int argc, char** argv) {
-	set_initial_constants();
+	//set_initial_constants();
 	generate_origin();
 	generate_mesh();
 	add_properties();
