@@ -7,6 +7,7 @@ public:
 SimulatorI();
 ~SimulatorI();
 void init(int argc, char** argv);
+void set(float m_dt,float m_depth_threshold,float m_gamma,float m_water_boundary_tension_multiplier,float m_water_boundary_theta,float m_wind_coef,float m_fric_coef);
 void run();
 void run_cuda (int frame);
 void output_obj_cuda(int frame);
