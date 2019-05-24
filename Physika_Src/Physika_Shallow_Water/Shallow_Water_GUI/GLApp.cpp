@@ -1,13 +1,13 @@
-#include "GLApp.h"
+#include "ShallowWaterShow.h"
 namespace Physika{
-GLApp::GLApp(double time,double deltx,int width,int height){
+ShallowWaterShow::ShallowWaterShow(double time,double deltx,int width,int height){
 	dt=time;
 	dx=deltx;
 	window_width=width;
 	window_height=height;
 }
-GLApp::~GLApp(){}
-void GLApp::init(std::string const surface,std::string const height,std::string const vx,std::string const vy){
+ShallowWaterShow::~ShallowWaterShow(){}
+void ShallowWaterShow::init(std::string const surface,std::string const height,std::string const vx,std::string const vy){
 	load_field_data(vx, initial_velocity_x, x_cells, y_cells);
 	load_field_data(vy, initial_velocity_y, x_cells, y_cells);
 	load_field_data(height, initial_height, x_cells, y_cells);
@@ -15,7 +15,7 @@ void GLApp::init(std::string const surface,std::string const height,std::string 
 	assert(x_cells * y_cells == initial_height.size());
 	solver.set(x_cells,y_cells,dt,dx);
 }
-void GLApp::showframe(){
+void ShallowWaterShow::showframe(){
 	VisualEngine visual_engine.set(x_cells, y_cells, dx, window_width, window_height);
 	std::vector<GLfloat> water_height(initial_height.begin(), initial_height.end());
 	std::vector<GLfloat> surface_level(initial_surface_level.begin(), initial_surface_level.end());
@@ -27,7 +27,7 @@ void GLApp::showframe(){
 	     drawoneframe(visual_engine);
 	}
 }
-void GLApp::drawoneframe(VisualEngine &visual_engine){
+void ShallowWaterShow::drawoneframe(VisualEngine &visual_engine){
 		visual_engine.render();
 		solver.run(1);
 		std::vector<double> const *wh = &solver.getWater_height().getBase();
