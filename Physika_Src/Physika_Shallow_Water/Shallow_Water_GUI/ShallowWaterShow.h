@@ -21,8 +21,8 @@ private:
     std::vector<double> initial_velocity_y;
     std::vector<double> initial_surface_level;
  public:
-    GLApp(double time,double deltx,int width,int height);
-    ~GLApp();
+    ShallowWaterShow(double time,double deltx,int width,int height);
+    ~ShallowWaterShow();
     void init(std::string const surface,std::string const height,std::string const vx,std::string const vy);
     void showframe();
     void drawoneframe();
