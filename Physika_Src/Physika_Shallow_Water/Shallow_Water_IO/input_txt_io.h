@@ -1,5 +1,6 @@
 #include "Physika_Shallow_Water/Shallow_water_model/ShallowWaterSolver.h"
 //#include "Physika_Shallow_Water/Shallow_Water_Render/render.h"
+#include "Physika_Shallow_Water/Shallow_Water_meshs/Field.h"
 #include <fstream>
 #include <cassert>
 #include <vector>
