@@ -24,11 +24,7 @@ void ShallowWaterShow::showframe(){
 	}
 	visual_engine.update_vertex_values(&water_height, &surface_level);
 	while (1) {
-	     drawoneframe(visual_engine);
-	}
-}
-void ShallowWaterShow::drawoneframe(VisualEngine &visual_engine){
-		visual_engine.render();
+	        visual_engine.render();
 		solver.run(1);
 		std::vector<double> const *wh = &solver.getWater_height().getBase();
 		water_height = std::vector<GLfloat>(wh->begin(), wh->end());
@@ -36,5 +32,6 @@ void ShallowWaterShow::drawoneframe(VisualEngine &visual_engine){
 			water_height[i] += surface_level[i];
 		}
 		visual_engine.update_vertex_values(&water_height);
+	}
 }
 }
