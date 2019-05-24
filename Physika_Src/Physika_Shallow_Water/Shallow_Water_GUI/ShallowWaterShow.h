@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 namesapce Physika{
-class GLApp{
+class ShallowWaterShow{
 private:
     size_t x_cells;
     size_t y_cells;
