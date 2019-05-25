@@ -54,6 +54,91 @@ namespace Physika {
 		}
 	};
 
+
+	template<typename Real>
+	class SmoothKernel : public Kernel<Real>
+	{
+	public:
+		COMM_FUNC SmoothKernel() : Kernel<Real>() {};
+		COMM_FUNC ~SmoothKernel() {};
+
+		COMM_FUNC inline Real Weight(const Real r, const Real h) override
+		{
+			const Real q = r / h;
+			if (q > 1.0f) return 0.0f;
+			else {
+				return 1.0f - q*q;
+			}
+		}
+
+		COMM_FUNC inline Real Gradient(const Real r, const Real h) override
+		{
+			const Real q = r / h;
+			if (q > 1.0f) return 0.0f;
+			else {
+				const Real hh = h*h;
+				const Real dd = 1 - q*q;
+				const Real alpha = 1.0f;// (Real) 945.0f / (32.0f * (Real)M_PI * hh *h);
+				return -alpha * dd;
+			}
+		}
+	};
+
+
+	//spiky kernel
+	template<typename Real>
+	class CorrectedKernel : public Kernel<Real>
+	{
+	public:
+		COMM_FUNC CorrectedKernel() : Kernel<Real>() {};
+		COMM_FUNC ~CorrectedKernel() {};
+
+		COMM_FUNC inline Real Weight(const Real r, const Real h) override
+		{
+			const Real q = r / h;
+			SmoothKernel<Real> kernSmooth;
+			return q*q*q*kernSmooth.Weight(r, h);
+
+// 			const Real q = r / h;
+// 			if (q > 1.0f) return 0.0f;
+// 			else {
+// 				const Real d = 1.0f - q;
+// 				const Real hh = h*h;
+// 				return (1.0 - pow(q, Real(4)));
+// 			}
+		}
+
+		COMM_FUNC inline Real WeightR(const Real r, const Real h)
+		{
+			const Real q = r / h;
+			SmoothKernel<Real> kernSmooth;
+			return q*q*kernSmooth.Weight(r, h)/h;
+
+// 			Real w = Weight(r, h);
+// 			const Real q = r / h;
+// 			if (q < 0.4f)
+// 			{
+// 				return w / (0.4f*h);
+// 			}
+// 			return w / r;
+		}
+
+		COMM_FUNC inline Real WeightRR(const Real r, const Real h)
+		{
+			const Real q = r / h;
+			SmoothKernel<Real> kernSmooth;
+			return q*kernSmooth.Weight(r, h) / (h*h);
+
+// 			Real w = Weight(r, h);
+// 			const Real q = r / h;
+// 			if (q < 0.4f)
+// 			{
+// 				return w / (0.16f*h*h);
+// 			}
+// 			return w / r / r;
+		}
+	};
+
 	//cubic kernel
 	template<typename Real>
 	class CubicKernel : public Kernel<Real>
@@ -105,35 +190,6 @@ namespace Physika {
 				const Real qq = q*q;
 				return alpha*(-2.0f*q + 1.5f*qq);
 				//return alpha*(-0.5);
-			}
-		}
-	};
-
-	template<typename Real>
-	class SmoothKernel : public Kernel<Real>
-	{
-	public:
-		COMM_FUNC SmoothKernel() : Kernel<Real>() {};
-		COMM_FUNC ~SmoothKernel() {};
-
-		COMM_FUNC inline Real Weight(const Real r, const Real h) override
-		{
-			const Real q = r / h;
-			if (q > 1.0f) return 0.0f;
-			else {
-				return 1.0f - q*q;
-			}
-		}
-
-		COMM_FUNC inline Real Gradient(const Real r, const Real h) override
-		{
-			const Real q = r / h;
-			if (q > 1.0f) return 0.0f;
-			else {
-				const Real hh = h*h;
-				const Real dd = 1 - q*q;
-				const Real alpha = 1.0f;// (Real) 945.0f / (32.0f * (Real)M_PI * hh *h);
-				return -alpha * dd;
 			}
 		}
 	};

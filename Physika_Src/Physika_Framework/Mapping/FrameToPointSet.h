@@ -26,6 +26,9 @@ public:
 
 	bool apply() override;
 
+protected:
+	bool initializeImpl() override;
+
 private:
 	void match(std::shared_ptr<Frame<TDataType>> from, std::shared_ptr<PointSet<TDataType>> to);
 

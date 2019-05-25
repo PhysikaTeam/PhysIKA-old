@@ -8,7 +8,6 @@
 #include "Physika_Framework/Mapping/PointSetToPointSet.h"
 #include "ParticleIntegrator.h"
 #include "Physika_Framework/Topology/NeighborQuery.h"
-#include "HyperelasticForce.h"
 
 namespace Physika 
 {
@@ -18,11 +17,11 @@ namespace Physika
 	Peridynamics<TDataType>::Peridynamics()
 		: NumericalModel()
 	{
-		initField(&m_horizon, "horizon", "Supporting radius", false);
+		attachField(&m_horizon, "horizon", "Supporting radius", false);
 
-		initField(&m_position, "position", "Storing the particle positions!", false);
-		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		initField(&m_forceDensity, "force_density", "Storing the particle force densities!", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		attachField(&m_forceDensity, "force_density", "Storing the particle force densities!", false);
 
 		m_horizon.setValue(0.0125);
 	}
@@ -52,8 +51,7 @@ namespace Physika
 		m_position.connect(m_elasticity->m_position);
 		m_velocity.connect(m_elasticity->m_velocity);
 		m_horizon.connect(m_elasticity->m_horizon);
-
-		m_elasticity->constructRestConfiguration(m_nbrQuery->m_neighborhood.getValue(), m_position.getValue());
+		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
 		m_elasticity->initialize();
 
 		m_nbrQuery->setParent(getParent());

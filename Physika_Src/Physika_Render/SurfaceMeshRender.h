@@ -25,6 +25,10 @@ namespace Physika
 	private:
 		Vector3f m_color;
 
+		DeviceArray<float3> vertices;
+		DeviceArray<float3> normals;
+		DeviceArray<float3> colors;
+
 		std::shared_ptr<TriangleRender> m_triangleRender;
 	};
 

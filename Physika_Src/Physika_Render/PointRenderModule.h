@@ -4,6 +4,8 @@
 #include "Physika_Render/PointRender.h"
 #include "Physika_Render/LineRender.h"
 #include "Physika_Render/TriangleRender.h"
+#include "Physika_Framework/Framework/FieldArray.h"
+#include "Physika_Framework/Framework/FieldVar.h"
 
 namespace Physika
 {
@@ -23,6 +25,15 @@ namespace Physika
 		void setRenderMode(RenderMode mode);
 		void setColor(Vector3f color);
 
+		void setColorRange(float min, float max);
+
+	public:
+		VarField<float> m_minIndex;
+		VarField<float> m_maxIndex;
+
+		DeviceArrayField<Vector3f> m_vecIndex;
+		DeviceArrayField<Vector3f> m_scalarIndex;
+
 	protected:
 		bool  initializeImpl() override;
 
@@ -31,6 +42,8 @@ namespace Physika
 	private:
 		RenderMode m_mode;
 		Vector3f m_color;
+
+		DeviceArray<glm::vec3> m_colorArray;
 
 // 		std::shared_ptr<PointRenderUtil> point_render_util;
 // 		std::shared_ptr<PointRenderTask> point_render_task;

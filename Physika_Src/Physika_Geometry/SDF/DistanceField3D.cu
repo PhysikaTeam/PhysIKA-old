@@ -353,14 +353,23 @@ namespace Physika{
 	void DistanceField3D<TDataType>::ReadSDF(std::string filename)
 	{
 		std::ifstream input(filename.c_str(), std::ios::in);
+		if (!input.is_open())
+		{
+			std::cout << "Reading file " << filename << " error!" << std::endl;
+			exit(0);
+		}
+
 		int nbx, nby, nbz;
 		int xx, yy, zz;
+
 		input >> xx;
 		input >> yy;
 		input >> zz;
+
 		input >> left[0];
 		input >> left[1];
 		input >> left[2];
+
 		Real t_h;
 		input >> t_h;
 

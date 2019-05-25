@@ -42,6 +42,7 @@ public:
     float pointSize() const;
 
 	void setColor(glm::vec3 color);
+	void setColor(DeviceArray<glm::vec3> color);
 
     void setPointScaleForPointSprite(float point_scale);
     float pointScaleForPointSprite() const;

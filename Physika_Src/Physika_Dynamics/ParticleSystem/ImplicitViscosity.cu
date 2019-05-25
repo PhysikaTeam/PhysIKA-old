@@ -83,11 +83,11 @@ namespace Physika
 		m_viscosity.setValue(Real(0.05));
 		m_smoothingLength.setValue(Real(0.011));
 
-		initField(&m_viscosity, "viscosity", "The viscosity of the fluid!", false);
-		initField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
-		initField(&m_position, "position", "Storing the particle positions!", false);
-		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		initField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
+		attachField(&m_viscosity, "viscosity", "The viscosity of the fluid!", false);
+		attachField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
 	}
 
 	template<typename TDataType>

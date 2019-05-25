@@ -24,7 +24,10 @@ namespace Physika
 		ParticleSystem(std::string name = "default");
 		virtual ~ParticleSystem();
 
-		void translate(Coord t);
+		void loadParticles(std::string filename);
+
+		virtual bool translate(Coord t);
+		virtual bool scale(Real s);
 
 		DeviceArrayField<Coord>* getPosition()
 		{
@@ -42,12 +45,13 @@ namespace Physika
 		}
 
 		void updateTopology() override;
+		bool resetStatus() override;
 
 		std::shared_ptr<PointRenderModule> getRenderModule();
 	public:
 		bool initialize() override;
 
-	private:
+	protected:
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
 		DeviceArrayField<Coord> m_force;

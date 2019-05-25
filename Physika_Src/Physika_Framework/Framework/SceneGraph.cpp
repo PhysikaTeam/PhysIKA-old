@@ -29,7 +29,7 @@ bool SceneGraph::initialize()
 		return true;
 	}
 	//TODO: check initialization
-	m_root->traverse<InitAct>();
+	m_root->traverseBottomUp<InitAct>();
 	m_initialized = true;
 
 	return m_initialized;
@@ -37,7 +37,7 @@ bool SceneGraph::initialize()
 
 void SceneGraph::draw()
 {
-	m_root->traverse<DrawAct>();
+	m_root->traverseTopDown<DrawAct>();
 }
 
 void SceneGraph::advance(float dt)
@@ -48,7 +48,7 @@ void SceneGraph::advance(float dt)
 
 void SceneGraph::takeOneFrame()
 {
-	m_root->traverse<AnimateAct>();
+	m_root->traverseTopDown<AnimateAct>();
 }
 
 void SceneGraph::run()
@@ -66,6 +66,26 @@ bool SceneGraph::load(std::string name)
 	}
 
 	return false;
+}
+
+Vector3f SceneGraph::getLowerBound()
+{
+	return m_lowerBound;
+}
+
+Vector3f SceneGraph::getUpperBound()
+{
+	return m_upperBound;
+}
+
+void SceneGraph::setLowerBound(Vector3f lowerBound)
+{
+	m_lowerBound = lowerBound;
+}
+
+void SceneGraph::setUpperBound(Vector3f upperBound)
+{
+	m_upperBound = upperBound;
 }
 
 }

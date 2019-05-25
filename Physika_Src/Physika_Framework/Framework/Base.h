@@ -38,7 +38,7 @@ public:
 
 	Field*	getField(const FieldID name);
 
-	bool initField(Field* field, std::string name, std::string desc, bool autoDestroy = true);
+	bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true);
 
 	template<typename T>
 	T* getField(FieldID name)

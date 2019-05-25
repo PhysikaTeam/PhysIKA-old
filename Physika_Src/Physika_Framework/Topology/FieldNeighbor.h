@@ -14,7 +14,14 @@ namespace Physika {
 	public:
 		typedef typename TDataType::Coord Coord;
 
-		int j;
+		COMM_FUNC TPair() {};
+		COMM_FUNC TPair(int id, Coord p)
+		{
+			index = id;
+			p = pos;
+		}
+
+		int index;
 		Coord pos;
 	};
 
@@ -30,45 +37,26 @@ public:
 	NeighborField(std::string name, std::string description, int num = 1, int nbrSize = 0);
 	~NeighborField() override;
 
-	size_t getElementCount() override { return m_data->size(); }
+	size_t getElementCount() override { return getReference()->size(); }
 	void setElementCount(int num, int nbrSize = 0);
 //	void resize(int num);
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
 	const std::string getClassName() override { return std::string("NeighborField"); }
 //	DeviceType getDeviceType() override { return DeviceType::GPU; }
 
-	std::shared_ptr<NeighborList<T>> getReference() { return m_data; }
+	std::shared_ptr<NeighborList<T>> getReference();
 
-	NeighborList<T>& getValue() const { return *m_data; }
+	NeighborList<T>& getValue() { return *getReference(); }
 
 	bool isEmpty() override {
-		return m_data == nullptr;
+		return getReference() == nullptr;
 	}
 
 	bool connect(NeighborField<T>& field2);
 
-public:
-	static NeighborField<T>*
-		createField(Base* module, std::string name, std::string description, int num, int nbrSize = 0)
-	{
-		Field* ret = module->getField(name);
-		if (nullptr != ret)
-		{
-			std::cout << "Neighbor name " << name
-				<< " conflicts with existing fields!"
-				<< std::endl;
-			return nullptr;
-		}
-
-		auto var = new NeighborField<T>(name, description, num, nbrSize);
-		module->addField(name, var);
-		return var;
-	}
-
 private:
-	std::shared_ptr<NeighborList<T>> m_data;
+	std::shared_ptr<NeighborList<T>> m_data = nullptr;
 };
-
 
 template<typename T>
 NeighborField<T>::NeighborField()
@@ -97,17 +85,14 @@ NeighborField<T>::NeighborField(int num, int nbrSize /*= 0*/)
 template<typename T>
 void NeighborField<T>::setElementCount(int num, int nbrSize /*= 0*/)
 {
-	if (m_data == nullptr)
-		m_data = std::make_shared<NeighborList<T>>();
-	
-	m_data->resize(num);
-	if (nbrSize != 0)
+	std::shared_ptr<NeighborList<T>> data = getReference();
+	if (data == nullptr)
 	{
-		m_data->setNeighborLimit(nbrSize);
+		m_data = std::make_shared<NeighborList<T>>(num, nbrSize);
 	}
 	else
 	{
-		m_data->setDynamic();
+		data->resize(num, nbrSize);
 	}
 }
 
@@ -146,18 +131,41 @@ NeighborField<T>::~NeighborField()
 template<typename T>
 bool NeighborField<T>::connect(NeighborField<T>& field2)
 {
-	if (this->isEmpty())
-	{
-		Log::sendMessage(Log::Warning, "The parent field " + this->getObjectName() + " is empty!");
-		return false;
-	}
+// 	if (this->isEmpty())
+// 	{
+// 		Log::sendMessage(Log::Warning, "The parent field " + this->getObjectName() + " is empty!");
+// 		return false;
+// 	}
 	field2.setDerived(true);
-	if (field2.m_data.use_count() == 1)
-	{
-		field2.m_data->release();
-	}
-	field2.m_data = m_data;
+	field2.setSource(this);
+// 	if (field2.m_data.use_count() == 1)
+// 	{
+// 		field2.m_data->release();
+// 	}
+// 	field2.m_data = m_data;
 	return true;
+}
+
+template<typename T>
+std::shared_ptr<NeighborList<T>> NeighborField<T>::getReference()
+{
+	Field* source = getSource();
+	if (source == nullptr)
+	{
+		return m_data;
+	}
+	else
+	{
+		NeighborField<T>* var = dynamic_cast<NeighborField<T>*>(source);
+		if (var != nullptr)
+		{
+			return var->getReference();
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
 }
 
 }

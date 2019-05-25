@@ -27,11 +27,11 @@ namespace Physika
 	{
 		m_smoothingLength.setValue(Real(0.011));
 
-		initField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
+		attachField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
 
-		initField(&m_position, "position", "Storing the particle positions!", false);
-		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		initField(&m_forceDensity, "force_density", "Storing the particle force densities!", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		attachField(&m_forceDensity, "force_density", "Storing the particle force densities!", false);
 	}
 
 	template<typename TDataType>

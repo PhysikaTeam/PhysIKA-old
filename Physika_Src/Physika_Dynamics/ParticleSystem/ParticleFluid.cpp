@@ -19,6 +19,8 @@ namespace Physika
 		getPosition()->connect(pbf->m_position);
 		getVelocity()->connect(pbf->m_velocity);
 		getForce()->connect(pbf->m_forceDensity);
+
+		getVelocity()->connect(getRenderModule()->m_vecIndex);
 	}
 
 	template<typename TDataType>

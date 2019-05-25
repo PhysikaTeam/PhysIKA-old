@@ -114,17 +114,17 @@ namespace Physika
 	template<typename TDataType>
 	DensityPBD<TDataType>::DensityPBD()
 		: ConstraintModule()
-		, m_maxIteration(5)
+		, m_maxIteration(3)
 	{
 		m_restDensity.setValue(Real(1000));
 		m_smoothingLength.setValue(Real(0.011));
 
-		initField(&m_restDensity, "rest_density", "Reference density", false);
-		initField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
-		initField(&m_position, "position", "Storing the particle positions!", false);
-		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		initField(&m_density, "density", "Storing the particle densities!", false);
-		initField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
+		attachField(&m_restDensity, "rest_density", "Reference density", false);
+		attachField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		attachField(&m_density, "density", "Storing the particle densities!", false);
+		attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
 	}
 
 	template<typename TDataType>
@@ -175,40 +175,46 @@ namespace Physika
 	template<typename TDataType>
 	bool DensityPBD<TDataType>::constrain()
 	{
-		int num = m_position.getElementCount();
-
 		Real dt = getParent()->getDt();
-
-		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		int it = 0;
 		while (it < m_maxIteration)
 		{
-			m_deltaPos.reset();
-			m_densitySum->compute(m_rhoArr);
-
-			K_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (
-				m_lamda, 
-				m_rhoArr, 
-				m_position.getValue(), 
-				m_neighborhood.getValue(), 
-				m_smoothingLength.getValue());
-			K_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (
-				m_deltaPos, 
-				m_lamda, 
-				m_position.getValue(),
-				m_neighborhood.getValue(),
-				m_smoothingLength.getValue(), 
-				dt);
-			K_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (
-				m_position.getValue(),
-				m_velocity.getValue(), 
-				m_deltaPos, 
-				dt);
+			takeOneIteration(dt);
 
 			it++;
 		}
 
 		return true;
+	}
+
+
+	template<typename TDataType>
+	void DensityPBD<TDataType>::takeOneIteration(Real dt)
+	{
+		int num = m_position.getElementCount();
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+
+		m_deltaPos.reset();
+		m_densitySum->compute();
+
+		K_ComputeLambdas <Real, Coord> << <pDims, BLOCK_SIZE >> > (
+			m_lamda,
+			m_density.getValue(),
+			m_position.getValue(),
+			m_neighborhood.getValue(),
+			m_smoothingLength.getValue());
+		K_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (
+			m_deltaPos,
+			m_lamda,
+			m_position.getValue(),
+			m_neighborhood.getValue(),
+			m_smoothingLength.getValue(),
+			dt);
+		K_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (
+			m_position.getValue(),
+			m_velocity.getValue(),
+			m_deltaPos,
+			dt);
 	}
 }

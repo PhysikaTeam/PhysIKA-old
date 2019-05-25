@@ -5,6 +5,8 @@
 #include "Physika_Framework/Mapping/FrameToPointSet.h"
 #include "Physika_Render/SurfaceMeshRender.h"
 #include "Physika_Render/PointRenderModule.h"
+#include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
+#include "Physika_IO/Surface_Mesh_IO/ObjFileLoader.h"
 
 namespace Physika
 {
@@ -16,14 +18,14 @@ namespace Physika
 		: Node(name)
 		, m_quaternion(Quaternion<Real>(Matrix::identityMatrix()))
 	{
-		initField(&m_mass, MechanicalState::mass(), "Total mass of the rigid body!", false);
-		initField(&m_center, MechanicalState::position(), "Center of the rigid body!", false);
-		initField(&m_transVelocity, MechanicalState::velocity(), "Transitional velocity of the rigid body!", false);
-		initField(&m_angularVelocity, MechanicalState::angularVelocity(), "Angular velocity of the rigid body!", false);
-		initField(&m_force, MechanicalState::force(), "Transitional force of the rigid body!", false);
-		initField(&m_torque, MechanicalState::torque(), "Angular momentum of the rigid body!", false);
-		initField(&m_angularMass, MechanicalState::angularMass(), "Angular momentum", false);
-		initField(&m_rotation, MechanicalState::rotation(), "Orientation", false);
+		attachField(&m_mass, MechanicalState::mass(), "Total mass of the rigid body!", false);
+		attachField(&m_center, MechanicalState::position(), "Center of the rigid body!", false);
+		attachField(&m_transVelocity, MechanicalState::velocity(), "Transitional velocity of the rigid body!", false);
+		attachField(&m_angularVelocity, MechanicalState::angularVelocity(), "Angular velocity of the rigid body!", false);
+		attachField(&m_force, MechanicalState::force(), "Transitional force of the rigid body!", false);
+		attachField(&m_torque, MechanicalState::torque(), "Angular momentum of the rigid body!", false);
+		attachField(&m_angularMass, MechanicalState::angularMass(), "Angular momentum", false);
+		attachField(&m_rotation, MechanicalState::rotation(), "Orientation", false);
 
 		Coord trans(0.5, 0.2, 0.5);
 
@@ -45,12 +47,12 @@ namespace Physika
 		//create a child node for surface rendering
 		m_surfaceNode = this->createChild<Node>("Mesh");
 
-		auto triSet = std::make_shared<PointSet<TDataType>>();
+		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 		m_surfaceNode->setTopologyModule(triSet);
 		triSet->scale(0.05);
 		triSet->translate(trans);
 
-		auto render = std::make_shared<PointRenderModule>();
+		auto render = std::make_shared<SurfaceMeshRender>();
 		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
 		m_surfaceNode->addVisualModule(render);
 
@@ -84,6 +86,12 @@ namespace Physika
 		return true;
 	}
 
+	template<typename TDataType>
+	void RigidBody<TDataType>::loadShape(std::string filename)
+	{
+		std::shared_ptr<TriangleSet<TDataType>> surface = TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule());
+		surface->loadObjFile(filename);
+	}
 
 	template<typename TDataType>
 	void RigidBody<TDataType>::setMass(Real mass)
@@ -101,19 +109,6 @@ namespace Physika
 	void RigidBody<TDataType>::setVelocity(Coord vel)
 	{
 		m_transVelocity.setValue(vel);
-	}
-
-	template<typename TDataType>
-	void RigidBody<TDataType>::setCube(Coord lo, Coord hi)
-	{
-		std::shared_ptr<TriangleSet<TDataType>> surface = TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule());
-		
-	}
-
-	template<typename TDataType>
-	void RigidBody<TDataType>::setSphere(Coord center, Real radius)
-	{
-
 	}
 
 	template<typename TDataType>

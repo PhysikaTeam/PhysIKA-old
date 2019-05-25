@@ -1,5 +1,6 @@
 #include "Physika_Core/Vectors/vector.h"
 #include "Physika_Core/Matrices/matrix.h"
+#include "svd3_cuda2.h"
 
 namespace Physika
 {
@@ -38,7 +39,6 @@ namespace Physika
 		}
 	}
 
-
 	template<typename Real>
 	COMM_FUNC void EigenDecomposition(const SquareMatrix<Real, 3> &A, SquareMatrix<Real, 3> &eigenVecs, Vector<Real, 3> &eigenVals)
 	{
@@ -72,12 +72,182 @@ namespace Physika
 	}
 
 	template<typename Real>
+	COMM_FUNC void QRDecomposition(SquareMatrix<Real, 3> &A, SquareMatrix<Real, 3> &R, int p, int q)
+	{
+
+	}
+
+	template<typename Real>
+	COMM_FUNC void polarDecomposition(const SquareMatrix<Real, 3> &A, SquareMatrix<Real, 3> &R, SquareMatrix<Real, 3> &U, SquareMatrix<Real, 3> &D, SquareMatrix<Real, 3> &V)
+	{
+		// A = SR, where S is symmetric and R is orthonormal
+		// -> S = (A A^T)^(1/2)
+
+		D = SquareMatrix<Real, 3>(0);
+		svd(A(0, 0), A(0, 1), A(0, 2), A(1, 0), A(1, 1), A(1, 2), A(2, 0), A(2, 1), A(2, 2),
+			U(0, 0), U(0, 1), U(0, 2), U(1, 0), U(1, 1), U(1, 2), U(2, 0), U(2, 1), U(2, 2),
+			D(0, 0), D(1, 1), D(2, 2),
+			V(0, 0), V(0, 1), V(0, 2), V(1, 0), V(1, 1), V(1, 2), V(2, 0), V(2, 1), V(2, 2));
+
+		SquareMatrix<Real, 3> H(0);
+		H(0, 0) = 1;
+		H(1, 1) = 1;
+		H(2, 2) = (V*U.transpose()).determinant();
+
+		R = U*H*V.transpose();
+
+		// A = U D U^T R
+/*		Vector<Real, 3> eigenVals;
+		SquareMatrix<Real, 3> ATA = A.transpose()*A;
+		EigenDecomposition<Real>(ATA, V, eigenVals);
+
+		Real d0 = sqrt(eigenVals[0]);
+		Real d1 = sqrt(eigenVals[1]);
+		Real d2 = sqrt(eigenVals[2]);
+		D = SquareMatrix<Real, 3>(0);
+		D(0, 0) = d0;
+		D(1, 1) = d1;
+		D(2, 2) = d2;
+
+		const Real eps = 1e-6;
+
+		Real l0 = eigenVals[0]; if (l0 <= eps) l0 = 0.0f; else l0 = 1.0f / d0;
+		Real l1 = eigenVals[1]; if (l1 <= eps) l1 = 0.0f; else l1 = 1.0f / d1;
+		Real l2 = eigenVals[2]; if (l2 <= eps) l2 = 0.0f; else l2 = 1.0f / d2;
+
+		SquareMatrix<Real, 3> invD(0);
+		invD(0, 0) = l0;
+		invD(1, 1) = l1;
+		invD(2, 2) = l2;
+		SquareMatrix<Real, 3> S1 = V*invD*V.transpose();
+		R = A*S1;*/
+
+
+/*		SquareMatrix<Real, 3> AAT = A*A.transpose();
+
+		R = SquareMatrix<Real, 3>::identityMatrix();
+		Vector<Real, 3> eigenVals;
+		EigenDecomposition<Real>(AAT, U, eigenVals);
+
+		Real d0 = sqrt(eigenVals[0]);
+		Real d1 = sqrt(eigenVals[1]);
+		Real d2 = sqrt(eigenVals[2]);
+		D = SquareMatrix<Real, 3>(0);
+		D(0, 0) = d0;
+		D(1, 1) = d1;
+		D(2, 2) = d2;
+
+		const Real eps = 1e-6;
+
+		Real l0 = eigenVals[0]; if (l0 <= eps) l0 = 0.0f; else l0 = 1.0f / d0;
+		Real l1 = eigenVals[1]; if (l1 <= eps) l1 = 0.0f; else l1 = 1.0f / d1;
+		Real l2 = eigenVals[2]; if (l2 <= eps) l2 = 0.0f; else l2 = 1.0f / d2;
+
+		SquareMatrix<Real, 3> invD(0);
+		invD(0, 0) = l0;
+		invD(1, 1) = l1;
+		invD(2, 2) = l2;
+
+		SquareMatrix<Real, 3> S1 = U*invD*U.transpose();
+		R = S1*A;
+
+		Vector<Real, 3> c0, c1, c2;
+		c0 = R.col(0);
+		c1 = R.col(1);
+		c2 = R.col(2);
+
+		int maxCol = 0;
+		Real maxMag = c0.normSquared();
+		if (c1.normSquared() > maxMag)
+		{
+			maxCol = 1;
+			maxMag = c1.normSquared();
+		}
+		if (c2.normSquared() > maxMag)
+		{
+			maxCol = 2;
+			maxMag = c2.normSquared();
+		}
+
+		if (R.col(maxCol).normSquared() < eps)
+		{
+			R = SquareMatrix<Real, 3>::identityMatrix();
+		}
+		else
+		{
+			Vector<Real, 3> col_0 = R.col(maxCol);
+			col_0 = col_0.normalize();
+			R.setCol(maxCol, col_0);
+			if (R.col((maxCol + 1) % 3).normSquared() > R.col((maxCol + 2) % 3).normSquared())
+			{
+				Vector<Real, 3> col_1 = R.col((maxCol + 1) % 3);
+				col_1 = col_1.normalize();
+				R.setCol((maxCol + 1) % 3, col_1);
+				Vector<Real, 3> col_2 = col_0.cross(col_1);
+				R.setCol((maxCol + 2) % 3, col_2);
+			}
+			else
+			{
+				if (R.col((maxCol + 2) % 3).normSquared() > eps)
+				{
+					Vector<Real, 3> col_2 = R.col((maxCol + 2) % 3);
+					col_2 = col_2.normalize();
+					R.setCol((maxCol + 2) % 3, col_2);
+					Vector<Real, 3> col_1 = col_2.cross(col_0);
+					R.setCol((maxCol + 1) % 3, col_1);
+				}
+				else
+				{
+					SquareMatrix<Real, 3> unity = SquareMatrix<Real, 3>::identityMatrix();
+					Vector<Real, 3> col_1;
+					for (int i = 0; i < 3; i++)
+					{
+						col_1 = unity.col(i);
+						if (col_1.cross(col_0).norm() > eps)
+							break;
+					}
+					col_1 = col_0.cross(col_1).normalize();
+					col_1 = col_0.cross(col_1).normalize();
+					R.setCol((maxCol + 1) % 3, col_1);
+					R.setCol((maxCol + 2) % 3, col_0.cross(col_1).normalize());
+				}
+			}
+		}
+		*/
+
+	}
+
+
+	template<typename Real>
 	COMM_FUNC void polarDecomposition(const SquareMatrix<Real, 3> &A, SquareMatrix<Real, 3> &R, SquareMatrix<Real, 3> &U, SquareMatrix<Real, 3> &D)
 	{
 		// A = SR, where S is symmetric and R is orthonormal
 		// -> S = (A A^T)^(1/2)
 
 		// A = U D U^T R
+
+// 		float a11, a12, a13, a21, a22, a23, a31, a32, a33;
+// 		a11 = ;	a12 = ;	a13 = ;
+// 		a11 = A(0, 0);	a12 = A(0, 1);	a13 = A(0, 2);
+// 		a11 = A(0, 0);	a12 = A(0, 1);	a13 = A(0, 2);
+// 
+// 		float u11, u12, u13, u21, u22, u23, u31, u32, u33;
+// 		float s11, s12, s13, s21, s22, s23, s31, s32, s33;
+// 		float v11, v12, v13, v21, v22, v23, v31, v32, v33;
+		
+// 		SquareMatrix<Real, 3> V;
+// 		D = SquareMatrix<Real, 3>(0);
+// 		svd(A(0, 0), A(0, 1), A(0, 2), A(1, 0), A(1, 1), A(1, 2), A(2, 0), A(2, 1), A(2, 2),
+// 			U(0, 0), U(0, 1), U(0, 2), U(1, 0), U(1, 1), U(1, 2), U(2, 0), U(2, 1), U(2, 2),
+// 			D(0, 0), D(1, 1), D(2, 2),
+// 			V(0, 0), V(0, 1), V(0, 2), V(1, 0), V(1, 1), V(1, 2), V(2, 0), V(2, 1), V(2, 2));
+// 
+// 		SquareMatrix<Real, 3> H(0);
+// 		H(0, 0) = 1;
+// 		H(1, 1) = 1;
+// 		H(2, 2) = (V*U.transpose()).determinant();
+
+//		R = U*H*V.transpose();
 
 		SquareMatrix<Real, 3> AAT;
 		AAT(0, 0) = A(0, 0)*A(0, 0) + A(0, 1)*A(0, 1) + A(0, 2)*A(0, 2);

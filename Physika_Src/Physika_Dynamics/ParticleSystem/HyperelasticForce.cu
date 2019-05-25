@@ -174,7 +174,7 @@ namespace Physika
 		{
 			NPair np_j = restShapes.getElement(pId, ne);
 			Coord rest_j = np_j.pos;
-			int j = np_j.j;
+			int j = np_j.index;
 
 			Real r = (rest_j - rest_i).norm();
 
@@ -214,7 +214,7 @@ namespace Physika
 		{
 			NPair np_j = restShapes.getElement(pId, ne);
 			Coord rest_j = np_j.pos;
-			int j = np_j.j;
+			int j = np_j.index;
 			Real r = (rest_j - rest_i).norm();
 			Coord pos_j = posArr[j];
 			Real l = (pos_j - pos_i).norm();
@@ -320,15 +320,15 @@ namespace Physika
 
 		int num = posFd->getReference()->size();
 		if (NULL == m_refMatrix)
-			m_refMatrix = DeviceArrayField<Matrix>::create(num);
+			m_refMatrix = new DeviceArrayField<Matrix>(num);
 		if (NULL == m_tmpPos)
-			m_tmpPos = DeviceArrayField<Coord>::create(num);
+			m_tmpPos = new DeviceArrayField<Coord>(num);
 		if (NULL == m_lambdas)
-			m_lambdas = DeviceArrayField<Real>::create(num);
+			m_lambdas = new DeviceArrayField<Real>(num);
 		if (NULL == m_accPos)
-			m_accPos = DeviceArrayField<Coord>::create(num);
+			m_accPos = new DeviceArrayField<Coord>(num);
 		if (NULL == m_bulkCoef)
-			m_bulkCoef = DeviceArrayField<Real>::create(num);
+			m_bulkCoef = new DeviceArrayField<Real>(num);
 
 
 		auto matArr = m_refMatrix->getReference();
@@ -380,7 +380,7 @@ namespace Physika
 		for (int ne = 0; ne < nbSize; ne++)
 		{
 			int j = nbr.getElement(pId, ne);
-			np.j = j;
+			np.index = j;
 			np.pos = pos[j];
  			if (pId != j)
  			{

@@ -21,6 +21,9 @@ namespace Physika
 
 	SurfaceMeshRender::~SurfaceMeshRender()
 	{
+		vertices.release();
+		normals.release();
+		colors.release();
 	}
 
 	bool SurfaceMeshRender::initializeImpl()
@@ -39,11 +42,6 @@ namespace Physika
 			return false;
 		}
 
-		if (!triSet->isInitialized())
-		{
-			triSet->initialize();
-		}
-
 //		point_render_util = std::make_shared<PointRenderUtil>();
 
 		auto triangles = triSet->getTriangles();
@@ -52,6 +50,10 @@ namespace Physika
 
 		m_triangleRender = std::make_shared<TriangleRender>();
 		m_triangleRender->resize(triangles->size());
+
+		vertices.resize(3 * triangles->size());
+		normals.resize(3 * triangles->size());
+		colors.resize(3 * triangles->size());
 	}
 
 	__global__ void SetupTriangles(
@@ -105,17 +107,9 @@ namespace Physika
 		auto verts = triSet->getPoints();
 		auto triangles = triSet->getTriangles();
 
-		DeviceArray<float3> vertices;
-		DeviceArray<float3> normals;
-		DeviceArray<float3> colors;
-
-		vertices.resize(3 * triangles->size());
-		normals.resize(3 * triangles->size());
-		colors.resize(3 * triangles->size());
-
 		uint pDims = cudaGridSize(triangles->size(), BLOCK_SIZE);
 
-		DeviceArray<float3>* fverts = (DeviceArray<float3>*)&vertices;
+		DeviceArray<float3>* fverts = (DeviceArray<float3>*)&verts;
 		SetupTriangles << <pDims, BLOCK_SIZE >> >(*fverts, vertices, normals, colors, *triangles);
 
 

@@ -24,8 +24,7 @@ namespace Physika
 		RigidBody(std::string name = "default");
 		virtual ~RigidBody();
 
-		void setCube(Coord lo, Coord hi);
-		void setSphere(Coord center, Real radius);
+		void loadShape(std::string filename);
 
 		void advance(Real dt) override;
 

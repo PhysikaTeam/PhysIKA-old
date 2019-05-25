@@ -16,16 +16,20 @@ namespace Physika {
 		typedef typename TDataType::Coord Coord;
 
 		NeighborQuery();
+		NeighborQuery(DeviceArray<Coord>& position);
 		NeighborQuery(Real s, Coord lo, Coord hi);
-		~NeighborQuery() override {};
+		~NeighborQuery() override;
 		
 		void compute() override;
 
-		void queryParticleNeighbors(NeighborList<int>& nbr,  DeviceArray<Coord>& pos, Real radius);
-
 		void setRadius(Real r) { m_radius.setValue(r); }
+		void setBoundingBox(Coord lowerBound, Coord upperBound);
+
+		void queryParticleNeighbors(NeighborList<int>& nbr, DeviceArray<Coord>& pos, Real radius);
 
 		void setNeighborSizeLimit(int num) { m_maxNum = num; }
+
+		NeighborList<int>& getNeighborList() { return m_neighborhood.getValue(); }
 
 	protected:
 		bool initializeImpl() override;
@@ -42,17 +46,13 @@ namespace Physika {
 		DeviceArrayField<Coord> m_position;
 		NeighborField<int> m_neighborhood;
 
-	protected:
-		FieldID m_posID;
-		FieldID m_adaptNID;
-
 	private:
 		int m_maxNum;
 
 		Coord m_lowBound;
 		Coord m_highBound;
 
-		GridHash<TDataType> hash;
+		GridHash<TDataType> m_hash;
 	};
 
 #ifdef PRECISION_FLOAT

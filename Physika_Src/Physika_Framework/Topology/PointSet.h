@@ -19,10 +19,12 @@ namespace Physika
 
 		void copyFrom(PointSet<TDataType>& pointSet);
 
-		virtual void setPoints(std::vector<Coord>& pos);
+		void setPoints(std::vector<Coord>& pos);
+		void setNormals(std::vector<Coord>& normals);
 
 		DeviceArray<Coord>& getPoints() { return m_coords; }
-		DeviceArray<Coord>& getNormals() { return m_coords; }
+		DeviceArray<Coord>& getNormals() { return m_normals; }
+
 		int getPointSize() { return m_coords.size(); };
 
 		NeighborList<int>* getPointNeighbors();
@@ -30,6 +32,8 @@ namespace Physika
 
 		void scale(Real s);
 		void translate(Coord t);
+
+		void loadObjFile(std::string filename);
 
 	protected:
 		bool initializeImpl() override;

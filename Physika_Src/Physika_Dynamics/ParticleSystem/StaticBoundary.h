@@ -6,6 +6,7 @@ namespace Physika {
 	template <typename TDataType> class RigidBody;
 	template <typename TDataType> class ParticleSystem;
 	template <typename TDataType> class DistanceField3D;
+	template <typename TDataType> class BoundaryConstraint;
 
 	template<typename TDataType>
 	class StaticBoundary : public Node
@@ -23,7 +24,13 @@ namespace Physika {
 
 		void advance(Real dt) override;
 
+		void loadSDF(std::string filename, bool bOutBoundary = false);
+		void loadCube(Coord lo, Coord hi, bool bOutBoundary = false);
+		void loadShpere(Coord center, Real r, bool bOutBoundary = false);
+
 	public:
+
+		std::vector<std::shared_ptr<BoundaryConstraint<TDataType>>> m_obstacles;
 
 		std::vector<std::shared_ptr<RigidBody<TDataType>>> m_rigids;
 		std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;

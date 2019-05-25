@@ -31,7 +31,7 @@ public:
     Edge();
     ~Edge();
     Edge(const Vertex<Scalar> &vert1, const Vertex<Scalar> &vert2);
-    Edge(const Vertex<Scalar> &vert1, const Vertex<Scalar> &vert2, const Vector<Scalar,Dim> &edge_normal); 
+    Edge(const Vertex<Scalar> &vert1, const Vertex<Scalar> &vert2, const Vector<Scalar,Dim> &edge_normal);
 
     unsigned int            numVertices() const;
     const Vertex<Scalar>&   vertex(unsigned int vert_idx) const;

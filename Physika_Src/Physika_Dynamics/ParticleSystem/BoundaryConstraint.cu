@@ -97,4 +97,33 @@ namespace Physika
 		return true;
 	}
 
+
+
+	template<typename TDataType>
+	void BoundaryConstraint<TDataType>::load(std::string filename)
+	{
+		m_cSDF->ReadSDF(filename);
+	}
+
+
+	template<typename TDataType>
+	void BoundaryConstraint<TDataType>::setCube(Coord lo, Coord hi)
+	{
+		m_cSDF->SetSpace(lo - 0.025f, hi + 0.025f, 105, 105, 105);
+		m_cSDF->DistanceFieldToBox(lo, hi, false);
+	}
+
+	template<typename TDataType>
+	void BoundaryConstraint<TDataType>::setSphere(Coord center, Real r)
+	{
+		m_cSDF->SetSpace(center - r - 0.025f, center + r + 0.025f, 105, 105, 105);
+		m_cSDF->DistanceFieldToSphere(center, r, false);
+	}
+
+	template<typename TDataType>
+	void BoundaryConstraint<TDataType>::invertSDF()
+	{
+		m_cSDF->Invert();
+	}
+
 }

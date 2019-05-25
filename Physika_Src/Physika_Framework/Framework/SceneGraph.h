@@ -44,6 +44,12 @@ public:
 	void setGravity(float g);
 	float getGravity();
 
+	Vector3f getLowerBound();
+	Vector3f getUpperBound();
+
+	void setLowerBound(Vector3f lowerBound);
+	void setUpperBound(Vector3f upperBound);
+
 private:
 	SceneGraph()
 		: m_elapsedTime(0)
@@ -52,6 +58,8 @@ private:
 		, m_frameNumber(0)
 		, m_frameCost(0)
 		, m_initialized(false)
+		, m_lowerBound(0, 0, 0)
+		, m_upperBound(1, 1, 1)
 	{};
 
 	/**
@@ -73,6 +81,9 @@ private:
 	int m_frameNumber;
 
 	float m_gravity = -9.8f;
+
+	Vector3f m_lowerBound;
+	Vector3f m_upperBound;
 
 private:
 	std::shared_ptr<Node> m_root;

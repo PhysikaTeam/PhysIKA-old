@@ -21,6 +21,8 @@ namespace Physika
 
 		void updatePointNeighbors() override;
 
+		void loadObjFile(std::string filename);
+
 	protected:
 		bool initializeImpl() override;
 

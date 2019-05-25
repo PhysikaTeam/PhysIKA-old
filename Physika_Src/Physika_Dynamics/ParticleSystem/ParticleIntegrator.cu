@@ -11,11 +11,11 @@ namespace Physika
 {
 	template<typename TDataType>
 	ParticleIntegrator<TDataType>::ParticleIntegrator()
-		:NumericalIntegrator()
+		: NumericalIntegrator()
 	{
-		initField(&m_position, "position", "Storing the particle positions!", false);
-		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		initField(&m_forceDensity, "force", "Particle forces", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		attachField(&m_forceDensity, "force", "Particle forces", false);
 	}
 
 	template<typename TDataType>

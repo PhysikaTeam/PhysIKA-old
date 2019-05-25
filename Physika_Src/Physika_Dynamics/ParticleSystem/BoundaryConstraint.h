@@ -21,12 +21,18 @@ namespace Physika {
 
 		bool constrain(DeviceArray<Coord>& position, DeviceArray<Coord>& velocity, Real dt);
 
+		void load(std::string filename);
+		void setCube(Coord lo, Coord hi);
+		void setSphere(Coord center, Real r);
+
+		void invertSDF();
+
 	public:
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
 
 		Real m_normal_friction = 0.95f;
-		Real m_tangent_friction = 0.0f;
+		Real m_tangent_friction = 0.0;
 
 		std::shared_ptr<DistanceField3D<TDataType>> m_cSDF;
 	};

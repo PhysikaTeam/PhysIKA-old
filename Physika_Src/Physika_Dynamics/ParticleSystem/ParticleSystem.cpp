@@ -14,23 +14,12 @@ namespace Physika
 	ParticleSystem<TDataType>::ParticleSystem(std::string name)
 		: Node(name)
 	{
-		initField(&m_position, MechanicalState::position(), "Storing the particle positions!", false);
-		initField(&m_velocity, MechanicalState::velocity(), "Storing the particle velocities!", false);
-		initField(&m_force, MechanicalState::force(), "Storing the force densities!", false);
+		attachField(&m_position, MechanicalState::position(), "Storing the particle positions!", false);
+		attachField(&m_velocity, MechanicalState::velocity(), "Storing the particle velocities!", false);
+		attachField(&m_force, MechanicalState::force(), "Storing the force densities!", false);
 
 		m_pSet = std::make_shared<PointSet<TDataType>>();
 		this->setTopologyModule(m_pSet);
-
-		auto pts = m_pSet->getPoints();
-		m_pSet->scale(0.05);
-		m_pSet->translate(Coord(0.5, 0.2, 0.5));
-
-		m_position.setElementCount(pts.size());
-		m_velocity.setElementCount(pts.size());
-		m_force.setElementCount(pts.size());
-
-		Function1Pt::copy(m_position.getValue(), pts);
-		m_velocity.getReference()->reset();
 
 		m_pointsRender = std::make_shared<PointRenderModule>();
 		m_pointsRender->setColor(Vector3f(0.2f, 0.6, 1.0f));
@@ -43,16 +32,36 @@ namespace Physika
 		
 	}
 
-	template<typename TDataType>
-	void ParticleSystem<TDataType>::translate(Coord t)
-	{
 
+	template<typename TDataType>
+	void ParticleSystem<TDataType>::loadParticles(std::string filename)
+	{
+		m_pSet->loadObjFile(filename);
+	}
+
+	template<typename TDataType>
+	bool ParticleSystem<TDataType>::translate(Coord t)
+	{
+		m_pSet->translate(t);
+
+		return true;
+	}
+
+
+	template<typename TDataType>
+	bool ParticleSystem<TDataType>::scale(Real s)
+	{
+		m_pSet->scale(s);
+
+		return true;
 	}
 
 	template<typename TDataType>
 	bool ParticleSystem<TDataType>::initialize()
 	{
-		return true;
+
+
+		return Node::initialize();
 	}
 
 	template<typename TDataType>
@@ -60,6 +69,22 @@ namespace Physika
 	{
 		auto pts = m_pSet->getPoints();
 		Function1Pt::copy(pts, getPosition()->getValue());
+	}
+
+
+	template<typename TDataType>
+	bool ParticleSystem<TDataType>::resetStatus()
+	{
+		auto pts = m_pSet->getPoints();
+
+		m_position.setElementCount(pts.size());
+		m_velocity.setElementCount(pts.size());
+		m_force.setElementCount(pts.size());
+
+		Function1Pt::copy(m_position.getValue(), pts);
+		m_velocity.getReference()->reset();
+
+		return Node::resetStatus();
 	}
 
 	template<typename TDataType>

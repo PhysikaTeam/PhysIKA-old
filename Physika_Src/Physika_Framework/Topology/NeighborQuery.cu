@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
+#include "NeighborQuery.h"
 #include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "NeighborQuery.h"
 #include "Physika_Framework/Topology/NeighborList.h"
 #include "Physika_Framework/Topology/FieldNeighbor.h"
 
@@ -39,27 +39,43 @@ namespace Physika
 	template<typename TDataType>
 	NeighborQuery<TDataType>::NeighborQuery()
 		: ComputeModule()
-		, m_posID(MechanicalState::position())
-		, m_adaptNID(MechanicalState::particle_neighbors())
 		, m_maxNum(0)
 	{
 		m_lowBound = Coord(0);
 		m_highBound = Coord(1);
 		m_radius.setValue(Real(0.011));
 
-		initField(&m_radius, "Radius", "Radius of the searching area", false);
-		initField(&m_position, "position", "Storing the particle positions!", false);
-		initField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
-
-		
+		attachField(&m_radius, "Radius", "Radius of the searching area", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
 	}
 
 
 	template<typename TDataType>
+	NeighborQuery<TDataType>::NeighborQuery(DeviceArray<Coord>& position)
+		: ComputeModule()
+	{
+		m_lowBound = Coord(0);
+		m_highBound = Coord(1);
+		m_radius.setValue(Real(0.011));
+
+		m_position.setElementCount(position.size());
+		Function1Pt::copy(m_position.getValue(), position);
+
+		attachField(&m_radius, "Radius", "Radius of the searching area", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
+	}
+
+	template<typename TDataType>
+	NeighborQuery<TDataType>::~NeighborQuery()
+	{
+		m_hash.release();
+	}
+
+	template<typename TDataType>
 	NeighborQuery<TDataType>::NeighborQuery(Real s, Coord lo, Coord hi)
 		: ComputeModule()
-		, m_posID(MechanicalState::position())
-		, m_adaptNID(MechanicalState::particle_neighbors())
 		, m_maxNum(0)
 	{
 		m_radius.setValue(Real(s));
@@ -67,9 +83,9 @@ namespace Physika
 		m_lowBound = lo;
 		m_highBound = hi;
 
-		initField(&m_radius, "Radius", "Radius of the searching area", false);
-		initField(&m_position, "position", "Storing the particle positions!", false);
-		initField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
+		attachField(&m_radius, "Radius", "Radius of the searching area", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
 	}
 
 	template<typename TDataType>
@@ -86,7 +102,7 @@ namespace Physika
 			return false;
 		}
 
-		hash.setSpace(m_radius.getValue(), m_lowBound, m_highBound);
+		m_hash.setSpace(m_radius.getValue(), m_lowBound, m_highBound);
 
 		return true;
 	}
@@ -94,30 +110,34 @@ namespace Physika
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::compute()
 	{
-// 		auto pos = m_position.getReference();
-// 		auto nbr = m_neighborhood.getReference();
-// 
-// 		int num = pos->size();
-// 
-// 		if (nbr->size() != num)
-// 			nbr->resize(num);
+		//queryParticleNeighbors(m_neighborhood.getValue(), m_position.getValue(), m_radius.getValue());
 
-// 		auto mstate = getParent()->getMechanicalState();
-// 		auto nbrFd = mstate->getField<NeighborField<int>>(m_adaptNID);
-// 		auto posFd = mstate->getField<DeviceArrayField<Coord>>(m_posID);
+		m_hash.clear();
+		m_hash.construct(m_position.getValue());
 
-//		queryParticleNeighbors(*nbr, *pos, m_radius);
-
-//		queryParticleNeighbors(nbrFd->getValue(), posFd->getValue(), m_radius.getValue());
-		queryParticleNeighbors(m_neighborhood.getValue(), m_position.getValue(), m_radius.getValue());
+		if (!m_neighborhood.getValue().isLimited())
+		{
+			queryNeighborDynamic(m_neighborhood.getValue(), m_position.getValue(), m_radius.getValue());
+		}
+		else
+		{
+			queryNeighborFixed(m_neighborhood.getValue(), m_position.getValue(), m_radius.getValue());
+		}
 	}
 
 
 	template<typename TDataType>
+	void NeighborQuery<TDataType>::setBoundingBox(Coord lowerBound, Coord upperBound)
+	{
+		m_lowBound = lowerBound;
+		m_highBound = upperBound;
+	}
+
+	template<typename TDataType>
 	void NeighborQuery<TDataType>::queryParticleNeighbors(NeighborList<int>& nbr, DeviceArray<Coord>& pos, Real radius)
 	{
-		hash.clear();
-		hash.construct(pos);
+		m_hash.setSpace(radius, m_lowBound, m_highBound);
+		m_hash.construct(m_position.getValue());
 
 		if (!nbr.isLimited())
 		{
@@ -130,12 +150,17 @@ namespace Physika
 	}
 
 	template<typename Real, typename Coord, typename TDataType>
-	__global__ void K_CalNeighborSize(DeviceArray<int> count, DeviceArray<Coord> posArr, GridHash<TDataType> hash, Real h)
+	__global__ void K_CalNeighborSize(
+		DeviceArray<int> count,
+		DeviceArray<Coord> position_new,
+		DeviceArray<Coord> position, 
+		GridHash<TDataType> hash, 
+		Real h)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId > posArr.size()) return;
+		if (pId > position_new.size()) return;
 
-		Coord pos_ijk = posArr[pId];
+		Coord pos_ijk = position_new[pId];
 		int3 gId3 = hash.getIndex3(pos_ijk);
 
 		int counter = 0;
@@ -143,10 +168,10 @@ namespace Physika
 		{
 			int cId = hash.getIndex(gId3.x + offset1[c][0], gId3.y + offset1[c][1], gId3.z + offset1[c][2]);
 			if (cId >= 0) {
-				int totalNum = min(hash.getCounter(cId), hash.npMax);
+				int totalNum = hash.getCounter(cId);// min(hash.getCounter(cId), hash.npMax);
 				for (int i = 0; i < totalNum; i++) {
 					int nbId = hash.getParticleId(cId, i);
-					Real d_ij = (pos_ijk - posArr[nbId]).norm();
+					Real d_ij = (pos_ijk - position[nbId]).norm();
 					if (d_ij < h)
 					{
 						counter++;
@@ -159,12 +184,17 @@ namespace Physika
 	}
 
 	template<typename Real, typename Coord, typename TDataType>
-	__global__ void K_GetNeighborElements(NeighborList<int> nbr, DeviceArray<Coord> posArr, GridHash<TDataType> hash, Real h)
+	__global__ void K_GetNeighborElements(
+		NeighborList<int> nbr,
+		DeviceArray<Coord> position_new,
+		DeviceArray<Coord> position, 
+		GridHash<TDataType> hash, 
+		Real h)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId > posArr.size()) return;
+		if (pId > position_new.size()) return;
 
-		Coord pos_ijk = posArr[pId];
+		Coord pos_ijk = position_new[pId];
 		int3 gId3 = hash.getIndex3(pos_ijk);
 
 		int j = 0;
@@ -172,10 +202,10 @@ namespace Physika
 		{
 			int cId = hash.getIndex(gId3.x + offset1[c][0], gId3.y + offset1[c][1], gId3.z + offset1[c][2]);
 			if (cId >= 0) {
-				int totalNum = min(hash.getCounter(cId), hash.npMax);
+				int totalNum = hash.getCounter(cId);// min(hash.getCounter(cId), hash.npMax);
 				for (int i = 0; i < totalNum; i++) {
 					int nbId = hash.getParticleId(cId, i);
-					Real d_ij = (pos_ijk - posArr[nbId]).norm();
+					Real d_ij = (pos_ijk - position[nbId]).norm();
 					if (d_ij < h)
 					{
 						nbr.setElement(pId, j, nbId);
@@ -189,8 +219,9 @@ namespace Physika
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::queryNeighborSize(DeviceArray<int>& num, DeviceArray<Coord>& pos, Real h)
 	{
-		uint pDims = cudaGridSize(pos.size(), BLOCK_SIZE);
-		K_CalNeighborSize << <pDims, BLOCK_SIZE >> > (num, pos, hash, h);
+		uint pDims = cudaGridSize(num.size(), BLOCK_SIZE);
+		K_CalNeighborSize << <pDims, BLOCK_SIZE >> > (num, pos, m_position.getValue(), m_hash, h);
+		cuSynchronize();
 	}
 
 	template<typename TDataType>
@@ -209,126 +240,30 @@ namespace Physika
 			elements.resize(sum);
 
 			uint pDims = cudaGridSize(pos.size(), BLOCK_SIZE);
-			K_GetNeighborElements << <pDims, BLOCK_SIZE >> > (nbrList, pos, hash, h);
+			K_GetNeighborElements << <pDims, BLOCK_SIZE >> > (nbrList, pos, m_position.getValue(), m_hash, h);
+			cuSynchronize();
 		}
 	}
-
-
-/*	template<typename Real, typename Coord, typename TDataType>
-	__global__ void K_ComputeNeighbors(
-		Physika::Array<Coord> posArr,
-		Physika::Array<SPHNeighborList> neighbors,
-		Physika::GridHash<TDataType> hash,
-		Real h,
-		Real pdist,
-		int nbMaxNum)
-	{
-		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId > posArr.size()) return;
-
-		int tId = threadIdx.x;
-		int ids[BUCKETS][CAPACITY];
-		Real distance[CAPACITY];
-		int counter[BUCKETS];
-
-		for (int i = 0; i < BUCKETS; i++)
-		{
-			counter[i] = 0;
-		}
-
-		Coord pos_ijk = posArr[pId];
-		int3 gId3 = hash.getIndex3(pos_ijk);
-
-		for (int c = 0; c < 27; c++)
-		{
-			int cId = hash.getIndex(gId3.x + offset[c][0], gId3.y + offset[c][1], gId3.z + offset[c][2]);
-			if (cId >= 0) {
-				int totalNum = min(hash.getCounter(cId), hash.npMax);
-				for (int i = 0; i < totalNum; i++) {
-					int nbId = hash.getParticleId(cId, i);
-					Real d_ij = (pos_ijk - posArr[nbId]).norm();
-					if (d_ij < h)
-					{
-						int bId = floor(pow(d_ij / h, Real(3))*BUCKETS);
-						bId = clamp(bId, 0, BUCKETS - 1);
-						//						printf("exceeded %i", bId);
-						if (counter[bId] < CAPACITY)
-						{
-							ids[bId][counter[bId]] = nbId;
-							counter[bId]++;
-						}
-						// 						else
-						// 						{
-						// 							printf("exceeded");
-						// 						}
-					}
-				}
-			}
-		}
-
-		int nbSize = 0;
-		int totalNum = 0;
-		int bId;
-		for (bId = 0; bId < BUCKETS; bId++)
-		{
-			int btSize = counter[bId];
-			totalNum += btSize;
-			if (totalNum <= nbMaxNum)
-			{
-				for (int k = 0; k < btSize; k++)
-				{
-					neighbors[pId][nbSize] = ids[bId][k];
-					nbSize++;
-				}
-			}
-			else
-			{
-				for (int i = 0; i < btSize; i++)
-				{
-					distance[i] = (pos_ijk - posArr[ids[bId][i]]).norm();
-				}
-				int rN = nbMaxNum - totalNum + btSize;
-				for (int k = 0; k < rN; k++)
-				{
-					Real minDist = distance[k];
-					int id = k;
-					for (int t = k + 1; t < btSize; t++)
-					{
-						if (distance[t] < minDist)
-						{
-							minDist = distance[t];
-							id = t;
-						}
-					}
-					neighbors[pId][nbSize] = ids[bId][id];
-					nbSize++;
-					distance[id] = distance[k];
-					ids[bId][id] = ids[bId][k];
-				}
-			}
-		}
-
-		neighbors[pId].size = nbSize;
-	}*/
 
 	template<typename Real, typename Coord, typename TDataType>
 	__global__ void K_ComputeNeighborFixed(
 		NeighborList<int> neighbors, 
-		DeviceArray<Coord> posArr, 
+		DeviceArray<Coord> position_new,
+		DeviceArray<Coord> position, 
 		GridHash<TDataType> hash, 
 		Real h,
 		int* heapIDs,
 		Real* heapDistance)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId > posArr.size()) return;
+		if (pId > position_new.size()) return;
 
 		int nbrLimit = neighbors.getNeighborLimit();
 
 		int* ids(heapIDs + pId * nbrLimit);// = new int[nbrLimit];
 		Real* distance(heapDistance + pId * nbrLimit);// = new Real[nbrLimit];
 
-		Coord pos_ijk = posArr[pId];
+		Coord pos_ijk = position_new[pId];
 		int3 gId3 = hash.getIndex3(pos_ijk);
 
 		int counter = 0;
@@ -336,10 +271,10 @@ namespace Physika
 		{
 			int cId = hash.getIndex(gId3.x + offset1[c][0], gId3.y + offset1[c][1], gId3.z + offset1[c][2]);
 			if (cId >= 0) {
-				int totalNum = min(hash.getCounter(cId), hash.npMax);
+				int totalNum = hash.getCounter(cId);// min(hash.getCounter(cId), hash.npMax);
 				for (int i = 0; i < totalNum; i++) {
 					int nbId = hash.getParticleId(cId, i);
-					float d_ij = (pos_ijk - posArr[nbId]).norm();
+					float d_ij = (pos_ijk - position[nbId]).norm();
 					if (d_ij < h)
 					{
 						if (counter < nbrLimit)
@@ -371,16 +306,13 @@ namespace Physika
 			}
 		}
 
-		neighbors.setNeighborLimit(pId, counter);
+		neighbors.setNeighborSize(pId, counter);
 
 		int bId;
 		for (bId = 0; bId < counter; bId++)
 		{
 			neighbors.setElement(pId, bId, ids[bId]);
 		}
-
-// 		delete[] ids;
-// 		delete[] distance;
 	}
 
 	template<typename TDataType>
@@ -389,13 +321,21 @@ namespace Physika
 		int num = pos.size();
 		int* ids;
 		Real* distance;
-		cudaMalloc((void**)&ids, num * sizeof(int) * nbrList.getNeighborLimit());
-		cudaMalloc((void**)&distance, num * sizeof(int) * nbrList.getNeighborLimit());
+		cuSafeCall(cudaMalloc((void**)&ids, num * sizeof(int) * nbrList.getNeighborLimit()));
+		cuSafeCall(cudaMalloc((void**)&distance, num * sizeof(int) * nbrList.getNeighborLimit()));
 
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
-		K_ComputeNeighborFixed << <pDims, BLOCK_SIZE >> > (nbrList, pos, hash, h, ids, distance);
+		K_ComputeNeighborFixed << <pDims, BLOCK_SIZE >> > (
+			nbrList, 
+			pos, 
+			m_position.getValue(), 
+			m_hash, 
+			h, 
+			ids, 
+			distance);
+		cuSynchronize();
 
-		cudaFree(ids);
-		cudaFree(distance);
+		cuSafeCall(cudaFree(ids));
+		cuSafeCall(cudaFree(distance));
 	}
 }

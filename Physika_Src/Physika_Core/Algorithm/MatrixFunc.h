@@ -5,6 +5,9 @@
 namespace Physika
 {
 	template<typename Real, int Dim>
+	COMM_FUNC void polarDecomposition(const SquareMatrix<Real, Dim> &A, SquareMatrix<Real, Dim> &R, SquareMatrix<Real, Dim> &U, SquareMatrix<Real, Dim> &D, SquareMatrix<Real, Dim> &V);
+
+	template<typename Real, int Dim>
 	COMM_FUNC void polarDecomposition(const SquareMatrix<Real, Dim> &A, SquareMatrix<Real, Dim> &R, SquareMatrix<Real, Dim> &U, SquareMatrix<Real, Dim> &D);
 
 	template<typename Real, int Dim>

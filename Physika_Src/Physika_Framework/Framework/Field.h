@@ -40,12 +40,17 @@ public:
 	void setAutoDestroy(bool autoDestroy);
 	void setDerived(bool derived);
 
+protected:
+	void setSource(Field* source);
+	Field* getSource();
+
 private:
 	std::string m_name;
 	std::string m_description;
 
 	bool m_autoDestroyable = true;
 	bool m_derived = false;
+	Field* m_source = nullptr;
 	Base* m_owner = nullptr;
 };
 

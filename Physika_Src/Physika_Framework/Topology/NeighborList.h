@@ -1,6 +1,7 @@
 #pragma once
 #include "Physika_Core/Platform.h"
 #include "Physika_Core/Cuda_Array/Array.h"
+#include "Physika_Core/Utilities/Function1Pt.h"
 #include <thrust/scan.h>
 
 namespace Physika
@@ -12,6 +13,12 @@ namespace Physika
 		NeighborList()
 			: m_maxNum(0)
 		{
+		};
+
+		NeighborList(int n, int maxNbr)
+			: m_maxNum(maxNbr)
+		{
+			resize(n, maxNbr);
 		};
 
 		~NeighborList() {};
@@ -39,7 +46,7 @@ namespace Physika
 			return m_maxNum;
 		}
 
-		GPU_FUNC void setNeighborLimit(int i, int num)
+		GPU_FUNC void setNeighborSize(int i, int num)
 		{
 			if (isLimited())
 				m_index[i] = num;
@@ -64,8 +71,16 @@ namespace Physika
 			return m_maxNum > 0;
 		}
 
-		void resize(int n) {
+		void resize(int n, int maxNbr = 0) {
 			m_index.resize(n);
+			if (maxNbr != 0)
+			{
+				setNeighborLimit(maxNbr);
+			}
+			else
+			{
+				setDynamic();
+			}
 		}
 		
 		void release()
@@ -83,6 +98,21 @@ namespace Physika
 		void setDynamic()
 		{
 			m_maxNum = 0;
+		}
+
+		void copyFrom(NeighborList<ElementType>& neighborlist)
+		{
+			m_maxNum = neighborlist.m_maxNum;
+			if (m_elements.size() != neighborlist.m_elements.size())
+				m_elements.resize(neighborlist.m_elements.size());
+
+			Function1Pt::copy(m_elements, neighborlist.m_elements);
+
+			if (m_index.size() != neighborlist.m_index.size())
+				m_index.resize(neighborlist.m_index.size());
+
+			Function1Pt::copy(m_index, neighborlist.m_index);
+			
 		}
 
 		DeviceArray<int>& getIndex() { return m_index; }

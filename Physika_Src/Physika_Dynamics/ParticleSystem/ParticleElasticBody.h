@@ -5,11 +5,7 @@ namespace Physika
 {
 	/*!
 	*	\class	ParticleElasticBody
-	*	\brief	Position-based fluids.
-	*
-	*	This class implements a position-based fluid solver.
-	*	Refer to Macklin and Muller's "Position Based Fluids" for details
-	*
+	*	\brief	Peridynamics-based elastic object.
 	*/
 	template<typename TDataType>
 	class ParticleElasticBody : public ParticleSystem<TDataType>
@@ -24,10 +20,17 @@ namespace Physika
 
 		void advance(Real dt) override;
 
+		void updateTopology() override;
+
+		bool translate(Coord t);
+		bool scale(Real s);
+
+		bool initialize() override;
+
+		void loadSurface(std::string filename);
+
 	private:
-
-		
-
+		std::shared_ptr<Node> m_surfaceNode;
 	};
 
 #ifdef PRECISION_FLOAT

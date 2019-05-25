@@ -27,8 +27,7 @@ public:
 	template<class T>
 	using SPtr = std::shared_ptr<T>;
 
-	Node();
-	Node(std::string name);
+	Node(std::string name = "default");
 	virtual ~Node();
 
 	void setName(std::string name);
@@ -61,6 +60,9 @@ public:
 	void setGravity(Real g);
 	Real getGravity();
 
+	void setMass(Real mass);
+	Real getMass();
+
 	template<class TNode>
 	std::shared_ptr<TNode> createChild(std::string name)
 	{
@@ -76,12 +78,6 @@ public:
 	void removeChild(std::shared_ptr<Node> child);
 
 	ListPtr<Node> getChildren() { return m_children; }
-
-	virtual bool initialize() { return false; }
-
-	virtual void draw() {};
-	virtual void advance(Real dt);
-	virtual void takeOneFrame() {};
 
 	std::shared_ptr<DeviceContext> getContext();
 	void setContext(std::shared_ptr<DeviceContext> context);
@@ -109,12 +105,18 @@ public:
 
 	bool deleteModule(std::shared_ptr<Module> module);
 
-	virtual void doTraverse(Action* act);
-	void traverse(Action* act);
+	void traverseBottomUp(Action* act);
 	template<class Act>
-	void traverse() {
+	void traverseBottomUp() {
 		Act action;
-		doTraverse(&action);
+		doTraverseBottomUp(&action);
+	}
+
+	void traverseTopDown(Action* act);
+	template<class Act>
+	void traverseTopDown() {
+		Act action;
+		doTraverseTopDown(&action);
 	}
 
 	virtual void setAsCurrentContext();
@@ -153,9 +155,6 @@ public:
 
 	std::list<std::shared_ptr<Module>>& getModuleList() { return m_module_list; }
 
-	virtual void updateModules() {};
-	virtual void updateTopology() {};
-
 #define NODE_ADD_SPECIAL_MODULE( CLASSNAME, SEQUENCENAME ) \
 	virtual void add##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.push_back(module); addModule(module);} \
 	virtual void delete##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.remove(module); deleteModule(module); } \
@@ -167,19 +166,31 @@ public:
 	NODE_ADD_SPECIAL_MODULE(VisualModule, m_render_list)
 	NODE_ADD_SPECIAL_MODULE(TopologyMapping, m_topology_mapping_list)
 
-private:
+	virtual bool initialize() { return true; }
+	virtual void draw() {};
+	virtual void advance(Real dt);
+	virtual void takeOneFrame() {};
+	virtual void updateModules() {};
+	virtual void updateTopology() {};
+	virtual bool resetStatus() { return true; }
+
+protected:
 	void setParent(Node* p) { m_parent = p; }
+
+	virtual void doTraverseBottomUp(Action* act);
+	virtual void doTraverseTopDown(Action* act);
 
 private:
 	Real m_dt;
 	Real m_gravity = -9.8;
 	bool m_initalized;
 
-	HostVarField<bool>* m_active;
-	HostVarField<bool>* m_visible;
-	HostVarField<Real>* m_time;
+	VarField<Real> m_mass;
+	HostVarField<bool> m_active;
+	HostVarField<bool> m_visible;
+	HostVarField<Real> m_time;
 
-	HostVarField<std::string>* m_node_name = nullptr;
+	HostVarField<std::string> m_node_name;
 
 	std::list<std::shared_ptr<Module>> m_module_list;
 	//std::map<std::string, Module*> m_modules;

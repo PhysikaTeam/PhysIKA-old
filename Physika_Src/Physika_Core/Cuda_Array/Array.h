@@ -89,6 +89,7 @@ namespace Physika {
 	template<typename T, DeviceType deviceType>
 	void Array<T, deviceType>::resize(const int n)
 	{
+		assert(n >= 1);
 		if (NULL != m_data) release();
 		m_totalNum = n;
 		allocMemory();

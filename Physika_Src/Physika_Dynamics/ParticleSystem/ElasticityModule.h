@@ -3,6 +3,7 @@
 #include "Physika_Framework/Framework/FieldArray.h"
 #include "Physika_Framework/Topology/FieldNeighbor.h"
 #include "Physika_Framework/Framework/ModuleConstraint.h"
+#include "DensityPBD.h"
 
 namespace Physika {
 
@@ -20,10 +21,18 @@ namespace Physika {
 		
 		bool constrain() override;
 
-		void constructRestConfiguration(NeighborList<int>& nbr, DeviceArray<Coord>& pos);
-		bool isUpdateRequired() { return m_needUpdate; }
+		void solveElasticity();
+
+		void constructRestShape(NeighborList<int>& nbr, DeviceArray<Coord>& pos);
+
+		
 
 		void setHorizon(Real len) { m_horizon = len; }
+
+		DeviceArray<Real>& getDensity()
+		{
+			return m_pbdModule->m_density.getValue();
+		}
 
 	protected:
 		bool initializeImpl() override;
@@ -31,27 +40,33 @@ namespace Physika {
 
 	public:
 		VarField<Real> m_horizon;
+		VarField<Real> m_distance;
+
+		VarField<Real> m_mu;
+		VarField<Real> m_lambda;
 
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
 
 		NeighborField<int> m_neighborhood;
-		NeighborField<NPair> m_referenceConfiguration;
+		NeighborField<NPair> m_restShape;
+
+	protected:
+		DeviceArray<Real> m_bulkCoefs;
 
 	private:
-		bool m_needUpdate;
-
-		NeighborList<NPair> m_refPos;
-
+		DeviceArray<Real> m_stiffness;
 		DeviceArrayField<Real>* m_lambdas;
-		DeviceArrayField<Real>* m_bulkCoef;
+		
 		DeviceArrayField<Coord>* m_tmpPos;
 		DeviceArrayField<Coord>* m_accPos;
-		DeviceArrayField<Matrix>* m_refMatrix;
+		DeviceArrayField<Matrix>* m_invK;
+		DeviceArray<Matrix> m_F;
 
 		DeviceArray<Coord> m_oldPosition;
-	};
 
+		std::shared_ptr<DensityPBD<TDataType>> m_pbdModule;
+	};
 
 #ifdef PRECISION_FLOAT
 	template class ElasticityModule<DataType3f>;

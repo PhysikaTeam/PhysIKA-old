@@ -43,15 +43,62 @@ namespace Physika
 	template<typename TDataType>
 	void StaticBoundary<TDataType>::advance(Real dt)
 	{
-		BoundaryConstraint<TDataType>* boundary = new BoundaryConstraint<TDataType>();
-		for (int i = 0; i < m_particleSystems.size(); i++)
+		for (size_t t = 0; t < m_obstacles.size(); t++)
 		{
-			DeviceArrayField<Coord>* posFd = m_particleSystems[i]->getPosition();
-			DeviceArrayField<Coord>* velFd = m_particleSystems[i]->getVelocity();
-			boundary->constrain(posFd->getValue(), velFd->getValue(), dt);
+
+			for (int i = 0; i < m_particleSystems.size(); i++)
+			{
+				DeviceArrayField<Coord>* posFd = m_particleSystems[i]->getPosition();
+				DeviceArrayField<Coord>* velFd = m_particleSystems[i]->getVelocity();
+				m_obstacles[t]->constrain(posFd->getValue(), velFd->getValue(), dt);
+			}
+		}
+	}
+
+
+	template<typename TDataType>
+	void StaticBoundary<TDataType>::loadSDF(std::string filename, bool bOutBoundary)
+	{
+		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
+		boundary->load(filename);
+
+		if (bOutBoundary)
+		{
+			boundary->invertSDF();
 		}
 
-		delete boundary;
+		m_obstacles.push_back(boundary);
 	}
+
+
+	template<typename TDataType>
+	void StaticBoundary<TDataType>::loadCube(Coord lo, Coord hi, bool bOutBoundary /*= false*/)
+	{
+		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
+		boundary->setCube(lo, hi);
+
+		if (bOutBoundary)
+		{
+			boundary->invertSDF();
+		}
+
+		m_obstacles.push_back(boundary);
+	}
+
+
+	template<typename TDataType>
+	void StaticBoundary<TDataType>::loadShpere(Coord center, Real r, bool bOutBoundary /*= false*/)
+	{
+		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
+		boundary->setSphere(center, r);
+
+		if (bOutBoundary)
+		{
+			boundary->invertSDF();
+		}
+
+		m_obstacles.push_back(boundary);
+	}
+
 
 }

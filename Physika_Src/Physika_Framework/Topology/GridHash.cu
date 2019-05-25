@@ -35,8 +35,6 @@ namespace Physika{
 
 	template<typename TDataType>
 	GridHash<TDataType>::GridHash()
-		: counter(nullptr)
-		, ids(nullptr)
 	{
 	}
 
@@ -63,10 +61,22 @@ namespace Physika{
 
 		num = nx*ny*nz;
 
-		npMax = 32;
+//		npMax = 128;
 
 		cuSafeCall(cudaMalloc((void**)&counter, num * sizeof(int)));
-		cuSafeCall(cudaMalloc((void**)&ids, num * npMax * sizeof(int)));
+		cuSafeCall(cudaMalloc((void**)&index, num * sizeof(int)));
+	}
+
+	template<typename TDataType>
+	__global__ void K_CalculateParticleNumber(GridHash<TDataType> hash, Array<TDataType::Coord> pos)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= pos.size()) return;
+
+		int gId = hash.getIndex(pos[pId]);
+
+		if (gId != INVALID)
+			atomicAdd(&(hash.index[gId]), 1);
 	}
 
 	template<typename TDataType>
@@ -80,14 +90,26 @@ namespace Physika{
 		if (gId < 0) return;
 
 		int index = atomicAdd(&(hash.counter[gId]), 1);
-		index = index < hash.npMax - 1 ? index : hash.npMax - 1;
-		hash.ids[gId * hash.npMax + index] = pId;
+// 		index = index < hash.npMax - 1 ? index : hash.npMax - 1;
+// 		hash.ids[gId * hash.npMax + index] = pId;
+		hash.ids[hash.index[gId] + index] = pId;
 	}
 
 	template<typename TDataType>
 	void GridHash<TDataType>::construct(DeviceArray<Coord>& pos)
 	{
+		clear();
+
 		dim3 pDims = int(ceil(pos.size() / BLOCK_SIZE + 0.5f));
+
+		K_CalculateParticleNumber << <pDims, BLOCK_SIZE >> > (*this, pos);
+		particle_num = thrust::reduce(thrust::device, index, index + num, (int)0, thrust::plus<int>());
+		thrust::exclusive_scan(thrust::device, index, index + num, index);
+
+		cuSafeCall(cudaMalloc((void**)&ids, particle_num * sizeof(int)));
+
+//		std::cout << "Particle number: " << particle_num << std::endl;
+
 		K_ConstructHashTable << <pDims, BLOCK_SIZE >> > (*this, pos);
 		cuSynchronize();
 	}
@@ -96,6 +118,7 @@ namespace Physika{
 	void GridHash<TDataType>::clear()
 	{
 		cuSafeCall(cudaMemset(counter, 0, num * sizeof(int)));
+		cuSafeCall(cudaMemset(index, 0, num * sizeof(int)));
 	}
 
 	template<typename TDataType>
@@ -106,5 +129,8 @@ namespace Physika{
 		
 		if (ids != nullptr)
 			cuSafeCall(cudaFree(ids));
+
+		if (index != nullptr)
+			cuSafeCall(cudaFree(index));
 	}
 }

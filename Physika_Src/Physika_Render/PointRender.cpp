@@ -179,6 +179,12 @@ void PointRender::setColor(glm::vec3 color)
 	delete[] colors;
 }
 
+void PointRender::setColor(DeviceArray<glm::vec3> color)
+{
+	cudaMemcpy(m_vertexColor.cudaMap(), color.getDataPtr(), sizeof(glm::vec3) * m_vertexColor.getSize(), cudaMemcpyHostToHost);
+	m_vertexColor.cudaUnmap();
+}
+
 void PointRender::setPointScaleForPointSprite(float point_scale)
 {
     point_scale_ = point_scale;

@@ -21,8 +21,6 @@ namespace Physika
 	{
 		m_from = from;
 		m_to = to;
-
-		match(m_from, m_to);
 	}
 
 
@@ -101,4 +99,13 @@ namespace Physika
 
 		return true;
 	}
+
+
+	template<typename TDataType>
+	bool FrameToPointSet<TDataType>::initializeImpl()
+	{
+		match(m_from, m_to);
+		return true;
+	}
+
 }

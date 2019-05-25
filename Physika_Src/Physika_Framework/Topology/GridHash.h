@@ -55,23 +55,35 @@ namespace Physika{
 			return make_int3(i, j, k);
 		}
 
-		GPU_FUNC inline int getCounter(int gId) { return counter[gId]; }
+		GPU_FUNC inline int getCounter(int gId) { 
+			if (gId >= num - 1)
+			{
+				return particle_num - index[gId];
+			}
+			return index[gId + 1] - index[gId];
+			//return counter[gId]; 
+		}
 
-		GPU_FUNC inline int getParticleId(int gId, int n) { return ids[gId*npMax + n]; }
+		GPU_FUNC inline int getParticleId(int gId, int n) { 
+			return ids[index[gId] + n];
+		}
 
 	public:
 		int num;
 		int nx, ny, nz;
+
+		int particle_num = 0;
 
 		Real ds;
 
 		Coord lo;
 		Coord hi;
 
-		int npMax;		//maximum particle number for each cell
+		//int npMax;		//maximum particle number for each cell
 
-		int* ids;
-		int* counter;
+		int* ids = nullptr;
+		int* counter = nullptr;
+		int* index = nullptr;
 	};
 
 #ifdef PRECISION_FLOAT

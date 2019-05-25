@@ -45,13 +45,13 @@ namespace Physika
 		m_restDensity.setValue(Real(1000));
 		m_smoothingLength.setValue(Real(0.011));
 
-		initField(&m_mass, "mass", "particle mass", false);
-		initField(&m_restDensity, "rest_density", "Reference density", false);
-		initField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
+		attachField(&m_mass, "mass", "particle mass", false);
+		attachField(&m_restDensity, "rest_density", "Reference density", false);
+		attachField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
 
-		initField(&m_position, "position", "Storing the particle positions!", false);
-		initField(&m_density, "density", "Storing the particle densities!", false);
-		initField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
+		attachField(&m_position, "position", "Storing the particle positions!", false);
+		attachField(&m_density, "density", "Storing the particle densities!", false);
+		attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
 	}
 
 	template<typename TDataType>

@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "Physika_Core/Typedef.h"
 #include "Field.h"
 #include "Base.h"
@@ -29,51 +30,32 @@ public:
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
 	const std::string getClassName() override { return std::string("Variable"); }
 		
-	T& getValue() const { return *m_data; }
+	T& getValue();
 	void setValue(T val);
 
-	inline std::shared_ptr<T> getReference() { return m_data; }
+	inline std::shared_ptr<T> getReference();
 
 //	void reset() override;
 
-	static VarField<T>*
-		createField(Base* module, std::string name, std::string description, T value)
-	{
-		Field* ret = module->getField(name);
-		if (nullptr != ret)
-		{
-			std::cout << "Variable " << name
-				<< " conflicts with existing fields!"
-				<< std::endl;
-			return nullptr;
-		}
-
-		auto var = new VarField<T>(value, name, description);//Variable<T, deviceType>::create(name, description);
-		module->addField(name, var);
-		return var;
-	}
-
 	bool isEmpty() override {
-		return m_data == nullptr;
+		return getReference() == nullptr;
 	}
 
 	bool connect(VarField<T>& field2);
 
 private:
-	std::shared_ptr<T> m_data;
+	std::shared_ptr<T> m_data = nullptr;
 };
 
 template<typename T>
 VarField<T>::VarField()
 	: Field("", "")
-	, m_data(nullptr)
 {
 }
 
 template<typename T>
 Physika::VarField<T>::VarField(T value)
 	: Field("", "")
-	, m_data(nullptr)
 {
 	m_data = std::make_shared<T>(value);
 }
@@ -81,7 +63,6 @@ Physika::VarField<T>::VarField(T value)
 template<typename T>
 VarField<T>::VarField(T value, std::string name, std::string description)
 	: Field(name, description)
-	, m_data(nullptr)
 {
 	m_data = std::make_shared<T>(value);
 }
@@ -91,6 +72,7 @@ VarField<T>::~VarField()
 {
 };
 
+
 // template<typename T>
 // void Physika::VarField<T>::reset()
 // {
@@ -98,26 +80,59 @@ VarField<T>::~VarField()
 // }
 
 template<typename T>
-void VarField<T>::setValue(T val)
+T& VarField<T>::getValue()
 {
-	if (m_data == nullptr)
-	{
-		m_data = std::make_shared<T>(val);
-	}
-	*m_data = val;
+	return *(getReference());
 }
 
 
 template<typename T>
+void VarField<T>::setValue(T val)
+{
+	std::shared_ptr<T> data = getReference();
+	if (data == nullptr)
+	{
+		m_data = std::make_shared<T>(val);
+	}
+	else
+	{
+		*data = val;
+	}
+}
+
+template<typename T>
+std::shared_ptr<T> VarField<T>::getReference()
+{
+	Field* source = getSource();
+	if (source == nullptr)
+	{
+		return m_data;
+	}
+	else
+	{
+		VarField<T>* var = dynamic_cast<VarField<T>*>(source);
+		if (var != nullptr)
+		{
+			return var->getReference();
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+}
+
+template<typename T>
 bool VarField<T>::connect(VarField<T>& field2)
 {
-	if (this->isEmpty())
-	{
-		Log::sendMessage(Log::Warning, "The parent field " + this->getObjectName() + " is empty!");
-		return false;
-	}
+// 	if (this->isEmpty())
+// 	{
+// 		Log::sendMessage(Log::Warning, "The parent field " + this->getObjectName() + " is empty!");
+// 		return false;
+// 	}
 	field2.setDerived(true);
-	field2.m_data = m_data;
+	field2.setSource(this);
+	//field2.m_data = m_data;
 	return true;
 }
 

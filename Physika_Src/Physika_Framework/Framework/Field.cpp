@@ -12,6 +12,20 @@ namespace Physika
 		return m_owner;
 	}
 
+	void Field::setSource(Field* source)
+	{
+		m_source = source;
+		if (source != nullptr)
+		{
+			m_derived = true;
+		}
+	}
+
+	Field* Field::getSource()
+	{
+		return m_source;
+	}
+
 	bool Field::isDerived()
 	{
 		return m_derived;

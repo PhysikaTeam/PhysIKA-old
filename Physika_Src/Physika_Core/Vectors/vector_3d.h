@@ -89,7 +89,6 @@ template class Vector<double, 3>;
 //convenient typedefs 
 typedef Vector<float,3> Vector3f;
 typedef Vector<double,3> Vector3d;
-
 } //end of namespace Physika
 
 #include "vector_3d.inl"

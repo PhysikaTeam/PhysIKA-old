@@ -56,7 +56,6 @@ namespace Physika
 			
 		}
 
-
 // 		if (node->getAnimationController())
 // 		{
 // 			node->getAnimationController()->execute();

@@ -26,6 +26,8 @@ namespace Physika {
 
 		bool constrain() override;
 
+		void takeOneIteration(Real dt);
+
 		void setIterationNumber(int n) { m_maxIteration = n; }
 
 	protected:

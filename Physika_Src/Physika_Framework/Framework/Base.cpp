@@ -203,7 +203,7 @@ int Base::getFieldAliasCount(Field* data)
 	return num;
 }
 
-bool Base::initField(Field* field, std::string name, std::string desc, bool autoDestroy /*= true*/)
+bool Base::attachField(Field* field, std::string name, std::string desc, bool autoDestroy /*= true*/)
 {
 	field->setParent(this);
 	field->setObjectName(name);

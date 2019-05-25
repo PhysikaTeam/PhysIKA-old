@@ -88,7 +88,7 @@ public:
 	VarField<T>* allocVariable(std::string name, std::string description)
 	{
 		auto fd = new VarField<T>();
-		bool ret = initField(fd, name, description, true);
+		bool ret = attachField(fd, name, description, true);
 		if (!ret)
 		{
 			return nullptr;
@@ -101,7 +101,7 @@ public:
 	DeviceArrayField<T>* allocDeviceArray(std::string name, std::string description)
 	{
 		auto field = new DeviceArrayField<T>();
-		bool ret = initField(field, name, description, true);
+		bool ret = attachField(field, name, description, true);
 		if (!ret)
 		{
 			return nullptr;
@@ -114,7 +114,7 @@ public:
 	HostArrayField<T>* allocHostArray(std::string name, std::string description)
 	{
 		auto field = new HostArrayField<T>();
-		bool ret = initField(field, name, description, true);
+		bool ret = attachField(field, name, description, true);
 		if (ret = false)
 		{
 			return nullptr;
