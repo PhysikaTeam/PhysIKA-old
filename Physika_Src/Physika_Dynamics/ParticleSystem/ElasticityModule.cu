@@ -61,15 +61,15 @@ namespace Physika
 
 		Matrix R(0), U(0), D(0), V(0);
 
-		if (pId == 0)
-		{
-			printf("EM_PrecomputeShape**************************************");
-
-			printf("K: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
-				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
-				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2));
-		}
+// 		if (pId == 0)
+// 		{
+// 			printf("EM_PrecomputeShape**************************************");
+// 
+// 			printf("K: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
+// 				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
+// 				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
+// 				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2));
+// 		}
 
 		polarDecomposition(mat_i, R, U, D, V);
 
@@ -188,13 +188,13 @@ namespace Physika
 			total_weight = 1.0f;
 		}
 
-		if (pId == 0)
-		{
-			printf("F: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-				deform_i(0, 0), deform_i(0, 1), deform_i(0, 2),
-				deform_i(1, 0), deform_i(1, 1), deform_i(1, 2),
-				deform_i(2, 0), deform_i(2, 1), deform_i(2, 2));
-		}
+// 		if (pId == 0)
+// 		{
+// 			printf("F: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
+// 				deform_i(0, 0), deform_i(0, 1), deform_i(0, 2),
+// 				deform_i(1, 0), deform_i(1, 1), deform_i(1, 2),
+// 				deform_i(2, 0), deform_i(2, 1), deform_i(2, 2));
+// 		}
 
 		if ((deform_i.determinant()) < -0.001f)
 		{
@@ -444,7 +444,7 @@ namespace Physika
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= velArr.size()) return;
 
-		velArr[pId] += (curPos[pId] - prePos[pId]) / dt;
+		velArr[pId] += 0.9f*(curPos[pId] - prePos[pId]) / dt;
 	}
 
 	template<typename TDataType>
@@ -466,7 +466,7 @@ namespace Physika
 
 		m_horizon.setValue(0.0125);
 		m_distance.setValue(0.005);
- 		m_mu.setValue(0.05);
+ 		m_mu.setValue(0.1);
  		m_lambda.setValue(0.1);
 	}
 

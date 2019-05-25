@@ -17,8 +17,8 @@ namespace Physika
 		attachField(&m_B, "B", "B!", false);
 
 		const Real phi = 30.0f / 180.0f;
-		const Real A = 0.02f*cos(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
-		const Real B = 0.0f*sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
+		const Real A = 0.005f*cos(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
+		const Real B = 0.1f*sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
 
 		m_A.setValue(A);
 		m_B.setValue(B);
@@ -165,8 +165,6 @@ namespace Physika
 
 			yield_I1[i] = yield_I1_i;
 			yield_J2[i] = yield_J2_i;
-
-			bYield[i] = true;
 		}
 
 // 		invDeform[i] = Matrix::identityMatrix();
@@ -313,13 +311,13 @@ namespace Physika
 		cuSynchronize();
 // 
 
-// 		PM_ApplyPlasticity<Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
-// 			m_yiled_I1,
-// 			m_yield_J2,
-// 			m_I1,
-// 			m_position.getValue(),
-// 			m_restShape.getValue());
-// 		cuSynchronize();
+		PM_ApplyPlasticity<Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
+			m_yiled_I1,
+			m_yield_J2,
+			m_I1,
+			m_position.getValue(),
+			m_restShape.getValue());
+		cuSynchronize();
 
 		reconstructRestShape();
 
@@ -475,21 +473,26 @@ namespace Physika
 		curD(2, 2) = curD(2, 2) > threshold ? 1.0 / curD(2, 2) : 1.0 / threshold;
 		refM *= curV*curD*curU.transpose();
 
-		if (abs(refM.determinant() - 1) > 0.05f)
+// 		if (abs(refM.determinant() - 1) > 0.05f)
+// 		{
+// 			refM = Matrix::identityMatrix();
+// 		}
+
+		if (refM.determinant() < EPSILON)
 		{
 			refM = Matrix::identityMatrix();
 		}
 
-		if (i == 20)
-		{
-			printf("PM_ComputeInverseDeformation***************************** \n\n");
-
-			printf("Invserse F: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-				refM(0, 0), refM(0, 1), refM(0, 2),
-				refM(1, 0), refM(1, 1), refM(1, 2),
-				refM(2, 0), refM(2, 1), refM(2, 2),
-				refM.determinant());
-		}
+// 		if (i == 20)
+// 		{
+// 			printf("PM_ComputeInverseDeformation***************************** \n\n");
+// 
+// 			printf("Invserse F: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
+// 				refM(0, 0), refM(0, 1), refM(0, 2),
+// 				refM(1, 0), refM(1, 1), refM(1, 2),
+// 				refM(2, 0), refM(2, 1), refM(2, 2),
+// 				refM.determinant());
+// 		}
 
 
 		invF[i] = refM;
@@ -595,20 +598,20 @@ namespace Physika
 			invK_i *= (1.0f / total_weight);
 		}
 
-		if (pId == 0)
-		{
-			printf("RotateRestShape**************************************");
-
-			printf("invK: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-				invK_i(0, 0), invK_i(0, 1), invK_i(0, 2),
-				invK_i(1, 0), invK_i(1, 1), invK_i(1, 2),
-				invK_i(2, 0), invK_i(2, 1), invK_i(2, 2));
-
-			printf("mat_i: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
-				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
-				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2));
-		}
+// 		if (pId == 0)
+// 		{
+// 			printf("RotateRestShape**************************************");
+// 
+// 			printf("invK: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
+// 				invK_i(0, 0), invK_i(0, 1), invK_i(0, 2),
+// 				invK_i(1, 0), invK_i(1, 1), invK_i(1, 2),
+// 				invK_i(2, 0), invK_i(2, 1), invK_i(2, 2));
+// 
+// 			printf("mat_i: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
+// 				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
+// 				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
+// 				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2));
+// 		}
 
 		Matrix R, U, D, V;
 		polarDecomposition(invK_i, R, U, D, V);
@@ -630,42 +633,42 @@ namespace Physika
 
 //		polarDecomposition(mat_i, R, Real(EPSILON));
 
-		if (pId == 0)
-		{
-			printf("Mat: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
-				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
-				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2),
-				R.determinant());
-		}
+// 		if (pId == 0)
+// 		{
+// 			printf("Mat: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
+// 				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
+// 				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
+// 				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2),
+// 				R.determinant());
+// 		}
 		
 
 		polarDecomposition(mat_i, R, U, D, V);
 
-		if (pId == 20)
-		{
-			Matrix rMat_i = U*D*V.transpose();
-			printf("rMat: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-				rMat_i(0, 0), rMat_i(0, 1), rMat_i(0, 2),
-				rMat_i(1, 0), rMat_i(1, 1), rMat_i(1, 2),
-				rMat_i(2, 0), rMat_i(2, 1), rMat_i(2, 2),
-				R.determinant());
-
-			printf("R: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-				R(0, 0), R(0, 1), R(0, 2),
-				R(1, 0), R(1, 1), R(1, 2),
-				R(2, 0), R(2, 1), R(2, 2),
-				R.determinant());
-
-			Matrix rR;
-			polarDecomposition(rMat_i, rR, U, D);
-
-			printf("pre R: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-				rR(0, 0), rR(0, 1), rR(0, 2),
-				rR(1, 0), rR(1, 1), rR(1, 2),
-				rR(2, 0), rR(2, 1), rR(2, 2),
-				rR.determinant());
-		}
+// 		if (pId == 20)
+// 		{
+// 			Matrix rMat_i = U*D*V.transpose();
+// 			printf("rMat: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
+// 				rMat_i(0, 0), rMat_i(0, 1), rMat_i(0, 2),
+// 				rMat_i(1, 0), rMat_i(1, 1), rMat_i(1, 2),
+// 				rMat_i(2, 0), rMat_i(2, 1), rMat_i(2, 2),
+// 				R.determinant());
+// 
+// 			printf("R: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
+// 				R(0, 0), R(0, 1), R(0, 2),
+// 				R(1, 0), R(1, 1), R(1, 2),
+// 				R(2, 0), R(2, 1), R(2, 2),
+// 				R.determinant());
+// 
+// 			Matrix rR;
+// 			polarDecomposition(rMat_i, rR, U, D);
+// 
+// 			printf("pre R: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
+// 				rR(0, 0), rR(0, 1), rR(0, 2),
+// 				rR(1, 0), rR(1, 1), rR(1, 2),
+// 				rR(2, 0), rR(2, 1), rR(2, 2),
+// 				rR.determinant());
+// 		}
 
 		return;
 
