@@ -2,7 +2,6 @@
 #include "PositionBasedFluidModel.h"
 
 #include "Physika_Framework/Topology/PointSet.h"
-#include "Physika_Render/PointRenderModule.h"
 #include "Physika_Core/Utilities/Function1Pt.h"
 
 

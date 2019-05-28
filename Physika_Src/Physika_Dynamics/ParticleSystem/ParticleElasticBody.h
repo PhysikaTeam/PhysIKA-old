@@ -22,8 +22,8 @@ namespace Physika
 
 		void updateTopology() override;
 
-		bool translate(Coord t);
-		bool scale(Real s);
+		bool translate(Coord t) override;
+		bool scale(Real s) override;
 
 		bool initialize() override;
 

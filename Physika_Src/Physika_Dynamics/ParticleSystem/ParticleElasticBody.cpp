@@ -88,12 +88,9 @@ namespace Physika
 		}
 	}
 
-
 	template<typename TDataType>
 	void ParticleElasticBody<TDataType>::loadSurface(std::string filename)
 	{
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->loadObjFile(filename);
 	}
-
-
 }

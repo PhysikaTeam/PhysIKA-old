@@ -16,9 +16,9 @@ namespace Physika
 		attachField(&m_A, "A", "A!", false);
 		attachField(&m_B, "B", "B!", false);
 
-		const Real phi = 30.0f / 180.0f;
-		const Real A = 0.005f*cos(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
-		const Real B = 0.1f*sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
+		const Real phi = 60.0f / 180.0f;
+		const Real A = 0.001f*cos(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
+		const Real B = 0.5f*sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
 
 		m_A.setValue(A);
 		m_B.setValue(B);
@@ -97,7 +97,7 @@ namespace Physika
 		}
 		else
 		{
-			I1_i = 0.0f;
+			I1_i = 1.0f;
 		}
 
 		for (int ne = 1; ne < size_i; ne++)
@@ -134,7 +134,7 @@ namespace Physika
 		Real s_D1 = D1*lambda*bulk_stiffiness[i];
 
 		//Drucker-Prager yield criterion
-		if (s_J2 < s_A + B*s_D1)
+		if (s_J2 <= s_A + B*s_D1)
 		{
 			//bulk_stiffiness[i] = 10.0f;
 			//invDeform[i] = Matrix::identityMatrix();
@@ -199,7 +199,10 @@ namespace Physika
 		arrI1[i] = I1_i;
 		bulk_stiffiness[i] = Hardening(density[i]);
 
-//		bYield[i] = true;
+// 		if (yield_I1_i > EPSILON || yield_J2_i > EPSILON)
+// 		{
+// 			printf("%d: %f %f; I1: %f J2: %f \n", i, yield_I1_i, yield_J2_i, I1_i, J2_i);
+// 		}
 	}
 
 	template <typename Real, typename Coord, typename Matrix, typename NPair>
@@ -242,16 +245,25 @@ namespace Physika
 			Coord p = (position[j] - pos_i);
 			Coord q = (rest_pos_j - rest_pos_i);
 
-			Coord dir_q = q.norm() > EPSILON ? q.normalize() : Coord(0);
-
-			Coord new_q = q*I1_i;
+			//Coord new_q = q*I1_i;
+			Coord new_q = q*(I1_i + I1_j) / 2;
 			Coord D_iso = new_q - q;
+
+			Coord dir_q = q;
+			dir_q = dir_q.norm() > EPSILON ? dir_q.normalize() : Coord(0);
+
 			Coord D_dev = p.norm()*dir_q - new_q;
 			//Coord D_dev = p - new_q;
 
 			NPair new_np_j;
 
-			Coord new_rest_pos_j = rest_pos_j + yield_I1_i*D_iso + yield_J2_i*D_dev;
+			//Coord new_rest_pos_j = rest_pos_j + yield_I1_i * D_iso + yield_J2_i * D_dev;
+			Coord new_rest_pos_j = rest_pos_j + (yield_I1_i + yield_I1_j) / 2 * D_iso + (yield_J2_i + yield_J2_j) / 2 *D_dev;
+
+// 			if ((new_rest_pos_j-rest_pos_j).norm() > 0.002)
+// 			{
+// 				printf("Error---------------------------------- \n; yield_I1: %f %f %f %f; yield_J2 %f %f %f %f; %f; Norm: %f; new_q: %f %f %f; I1_i: %f \n", yield_I1_i, D_iso[0], D_iso[1], D_iso[2], yield_J2_i, D_dev[0], D_dev[1], D_dev[2], I1_i, p.norm(), new_q[0], new_q[1], new_q[2], I1_i);
+// 			}
 
 			new_np_j.pos = new_rest_pos_j;
 			new_np_j.index = j;
@@ -310,7 +322,6 @@ namespace Physika
 			m_lambda.getValue());
 		cuSynchronize();
 // 
-
 		PM_ApplyPlasticity<Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
 			m_yiled_I1,
 			m_yield_J2,
@@ -494,10 +505,8 @@ namespace Physika
 // 				refM.determinant());
 // 		}
 
-
 		invF[i] = refM;
 	}
-
 
 	template<typename TDataType>
 	void ElastoplasticityModule<TDataType>::reconstructRestShape()
@@ -669,8 +678,6 @@ namespace Physika
 // 				rR(2, 0), rR(2, 1), rR(2, 2),
 // 				rR.determinant());
 // 		}
-
-		return;
 
 // 		svd(mat_i(0, 0), mat_i(0, 1), mat_i(0, 2), mat_i(1, 0), mat_i(1, 1), mat_i(1, 2), mat_i(2, 0), mat_i(2, 1), mat_i(2, 2),
 // 			R(0, 0), R(0, 1), R(0, 2), R(1, 0), R(1, 1), R(1, 2), R(2, 0), R(2, 1), R(2, 2),

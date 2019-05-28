@@ -25,7 +25,6 @@ namespace Physika {
 
 		void constructRestShape(NeighborList<int>& nbr, DeviceArray<Coord>& pos);
 
-		
 
 		void setHorizon(Real len) { m_horizon = len; }
 

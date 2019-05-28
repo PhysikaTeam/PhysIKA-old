@@ -12,7 +12,7 @@ namespace Physika
 	template<typename TDataType> class ImplicitViscosity;
 	/*!
 	*	\class	ParticleElastoplasticBody
-	*	\brief	Peridynamics-based elastic object.
+	*	\brief	Peridynamics-based elastoplastic object.
 	*/
 	template<typename TDataType>
 	class ParticleElastoplasticBody : public ParticleSystem<TDataType>
@@ -31,6 +31,11 @@ namespace Physika
 
 		bool initialize() override;
 
+		bool translate(Coord t) override;
+		bool scale(Real s) override;
+
+		void loadSurface(std::string filename);
+
 	public:
 		VarField<Real> m_horizon;
 
@@ -44,6 +49,7 @@ namespace Physika
 		std::shared_ptr<DensityPBD<TDataType>> m_pbdModule;
 		std::shared_ptr<ImplicitViscosity<TDataType>> m_visModule;
 	};
+
 
 #ifdef PRECISION_FLOAT
 	template class ParticleElastoplasticBody<DataType3f>;

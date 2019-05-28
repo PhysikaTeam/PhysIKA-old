@@ -34,6 +34,9 @@ namespace Physika
 
 		void updateTopology() override;
 
+		void translate(Coord t);
+		void scale(Real t);
+
 	public:
 		bool initialize() override;
 

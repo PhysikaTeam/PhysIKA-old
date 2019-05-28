@@ -108,6 +108,7 @@ protected:
 
 	void drawBackground();
 	void drawAxis();
+	void drawBoundingBox(Vector3f lo, Vector3f hi);
 
 protected:
     //basic information of window

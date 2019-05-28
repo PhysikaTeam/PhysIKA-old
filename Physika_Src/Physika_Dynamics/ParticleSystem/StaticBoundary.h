@@ -28,6 +28,9 @@ namespace Physika {
 		void loadCube(Coord lo, Coord hi, bool bOutBoundary = false);
 		void loadShpere(Coord center, Real r, bool bOutBoundary = false);
 
+		void translate(Coord t);
+		void scale(Real s);
+
 	public:
 
 		std::vector<std::shared_ptr<BoundaryConstraint<TDataType>>> m_obstacles;
@@ -35,6 +38,7 @@ namespace Physika {
 		std::vector<std::shared_ptr<RigidBody<TDataType>>> m_rigids;
 		std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;
 	};
+
 
 #ifdef PRECISION_FLOAT
 template class StaticBoundary<DataType3f>;

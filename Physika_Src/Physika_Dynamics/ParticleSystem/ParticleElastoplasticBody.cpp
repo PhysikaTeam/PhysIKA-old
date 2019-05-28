@@ -31,7 +31,6 @@ namespace Physika
 		m_force.connect(m_integrator->m_forceDensity);
 		//m_integrator->initialize();
 		
-
 		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
 		m_horizon.connect(m_nbrQuery->m_radius);
 		m_position.connect(m_nbrQuery->m_position);
@@ -65,6 +64,19 @@ namespace Physika
 		this->addConstraintModule(m_plasticity);
 		this->addConstraintModule(m_pbdModule);
 		this->addConstraintModule(m_visModule);
+
+
+		m_surfaceNode = this->createChild<Node>("Mesh");
+
+		auto triSet = std::make_shared<TriangleSet<TDataType>>();
+		m_surfaceNode->setTopologyModule(triSet);
+
+		auto render = std::make_shared<SurfaceMeshRender>();
+		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
+		m_surfaceNode->addVisualModule(render);
+
+		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(m_pSet, triSet);
+		this->addTopologyMapping(surfaceMapping);
 	}
 
 	template<typename TDataType>
@@ -81,10 +93,6 @@ namespace Physika
 		m_integrator->integrate();
 
 		m_nbrQuery->compute();
-//		m_pbdModule->constrain();
-//		m_visModule->constrain();
-//		m_elasticity->constrain();
-//		m_plasticity->constrain();
 		m_plasticity->solveElasticity();
 		m_nbrQuery->compute();
 
@@ -117,4 +125,25 @@ namespace Physika
 		return ParticleSystem<TDataType>::initialize();
 	}
 
+	template<typename TDataType>
+	void ParticleElastoplasticBody<TDataType>::loadSurface(std::string filename)
+	{
+		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->loadObjFile(filename);
+	}
+
+	template<typename TDataType>
+	bool ParticleElastoplasticBody<TDataType>::translate(Coord t)
+	{
+		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
+
+		return ParticleSystem<TDataType>::translate(t);
+	}
+
+	template<typename TDataType>
+	bool ParticleElastoplasticBody<TDataType>::scale(Real s)
+	{
+		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->scale(s);
+
+		return ParticleSystem<TDataType>::scale(s);
+	}
 }

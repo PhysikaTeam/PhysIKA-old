@@ -1,10 +1,10 @@
 #pragma once
 #include "Physika_Framework/Framework/Node.h"
+#include "Physika_Render/PointRenderModule.h"
 
 namespace Physika
 {
 	template <typename TDataType> class PointSet;
-	class PointRenderModule;
 	/*!
 	*	\class	ParticleSystem
 	*	\brief	Position-based fluids.

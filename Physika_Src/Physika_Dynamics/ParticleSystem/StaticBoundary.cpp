@@ -101,4 +101,21 @@ namespace Physika
 	}
 
 
+	template<typename TDataType>
+	void StaticBoundary<TDataType>::scale(Real s)
+	{
+		for (int i = 0; i < m_obstacles.size(); i++)
+		{
+			m_obstacles[i]->m_cSDF->Scale(s);
+		}
+	}
+
+	template<typename TDataType>
+	void StaticBoundary<TDataType>::translate(Coord t)
+	{
+		for (int i = 0; i < m_obstacles.size(); i++)
+		{
+			m_obstacles[i]->m_cSDF->Translate(t);
+		}
+	}
 }

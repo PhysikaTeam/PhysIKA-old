@@ -168,15 +168,15 @@ namespace Physika
 		{
 			deform_i *= (1.0f / total_weight);
 
-			if (pId == 0)
-			{
-				printf("EM_ComputeDeformationGradient**************************************");
-
-				printf("deform_i: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-					deform_i(0, 0), deform_i(0, 1), deform_i(0, 2),
-					deform_i(1, 0), deform_i(1, 1), deform_i(1, 2),
-					deform_i(2, 0), deform_i(2, 1), deform_i(2, 2));
-			}
+// 			if (pId == 0)
+// 			{
+// 				printf("EM_ComputeDeformationGradient**************************************");
+// 
+// 				printf("deform_i: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
+// 					deform_i(0, 0), deform_i(0, 1), deform_i(0, 2),
+// 					deform_i(1, 0), deform_i(1, 1), deform_i(1, 2),
+// 					deform_i(2, 0), deform_i(2, 1), deform_i(2, 2));
+// 			}
 
 			//deform_i *= matArr[pId];
 			deform_i = deform_i * invK[pId];
@@ -196,6 +196,9 @@ namespace Physika
 // 				deform_i(2, 0), deform_i(2, 1), deform_i(2, 2));
 // 		}
 
+
+		//Check whether the reference shape is inverted, if yes, simply set K^{-1} to be an identity matrix
+		//Note other solutions are possible.
 		if ((deform_i.determinant()) < -0.001f)
 		{
 			deform_i = Matrix::identityMatrix();
@@ -466,7 +469,7 @@ namespace Physika
 
 		m_horizon.setValue(0.0125);
 		m_distance.setValue(0.005);
- 		m_mu.setValue(0.1);
+ 		m_mu.setValue(0.05);
  		m_lambda.setValue(0.1);
 	}
 

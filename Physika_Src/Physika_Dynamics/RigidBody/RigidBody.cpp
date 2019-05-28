@@ -67,6 +67,7 @@ namespace Physika
 		auto render2 = std::make_shared<PointRenderModule>();
 		render2->setColor(Vector3f(0.2f, 0.6, 0.0f));
 		m_collisionNode->addVisualModule(render2);
+		render2->setVisible(false);
 
 		auto surfaceMapping = std::make_shared<FrameToPointSet<TDataType>>(m_frame, triSet);
 		this->addTopologyMapping(surfaceMapping);
@@ -151,4 +152,21 @@ namespace Physika
 		}
 	}
 
+
+	//TODO:
+	template<typename TDataType>
+	void RigidBody<TDataType>::scale(Real t)
+	{
+
+	}
+
+	template<typename TDataType>
+	void RigidBody<TDataType>::translate(Coord t)
+	{
+		Coord center = m_center.getValue();
+		m_center.setValue(center + t);
+
+		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
+		TypeInfo::CastPointerDown<PointSet<TDataType>>(m_collisionNode->getTopologyModule())->translate(t);
+	}
 }
