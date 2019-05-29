@@ -4,6 +4,7 @@
 #include "Physika_Render/PointRender.h"
 #include "Physika_Render/LineRender.h"
 #include "Physika_Render/TriangleRender.h"
+#include "Physika_Framework/Framework/Node.h"
 
 namespace Physika
 {
@@ -22,6 +23,9 @@ namespace Physika
 		void display() override;
 		void setRenderMode(RenderMode mode);
 		void setColor(Vector3f color);
+		void setColorArray(DeviceArrayField<Vector3f> & c) {
+            m_colorArray = c.getReference();
+        }
 
 	protected:
 		bool  initializeImpl() override;
@@ -31,6 +35,7 @@ namespace Physika
 	private:
 		RenderMode m_mode;
 		Vector3f m_color;
+		std::shared_ptr<Array<Vector3f>> m_colorArray;
 
 // 		std::shared_ptr<PointRenderUtil> point_render_util;
 // 		std::shared_ptr<PointRenderTask> point_render_task;

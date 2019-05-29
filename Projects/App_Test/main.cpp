@@ -151,9 +151,9 @@ void CreateScene()
 // 	root->addParticleSystem(child2);
 // 	child2->getRenderModule()->setColor(Vector3f(0, 1, 0));
 
-	std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>();
-	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0, 0, 1));
+	// std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>();
+	// root->addParticleSystem(child3);
+	// child3->getRenderModule()->setColor(Vector3f(0, 0, 1));
 }
 #endif
 
@@ -180,8 +180,9 @@ int main()
 	window.createWindow(1024, 768);
 
 	window.mainLoop();
+    SceneGraph::getInstance().setRootNode(nullptr);
 
-	Log::sendMessage(Log::Info, "Simulation end!");
+    Log::sendMessage(Log::Info, "Simulation end!");
 	return 0;
 }
 

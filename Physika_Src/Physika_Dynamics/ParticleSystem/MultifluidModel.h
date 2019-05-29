@@ -47,6 +47,7 @@ namespace Physika
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
 		DeviceArrayField<Coord> m_forceDensity;
+		DeviceArrayField<Vector3f> m_color;
         std::vector<DeviceArrayField<Coord>> m_driftVelocity;
         std::vector<DeviceArrayField<Real>> m_volumeFraction;
 

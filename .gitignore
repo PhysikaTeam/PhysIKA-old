@@ -70,3 +70,5 @@ Build/App_QtGUI/release/moc_QLichtWidget.cpp
 Build/App_QtGUI/release/moc_DockWidget.cpp
 Build/App_QtGUI/release/moc_toolbar.cpp
 
+/docs
+/console_log.txt

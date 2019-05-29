@@ -117,8 +117,10 @@ namespace Physika
 
 		DeviceArray<float3>* xyz = (DeviceArray<float3>*)&(pSet->getPoints());
 
-
-		m_pointRender->setColor(glm::vec3(m_color[0], m_color[1], m_color[2]));
+		if (m_colorArray)
+			m_pointRender->setColorArray(*(DeviceArray<float3>*)m_colorArray.get());
+		else
+			m_pointRender->setColor(glm::vec3(m_color[0], m_color[1], m_color[2]));
 		m_pointRender->setVertexArray(*xyz);
 
 		

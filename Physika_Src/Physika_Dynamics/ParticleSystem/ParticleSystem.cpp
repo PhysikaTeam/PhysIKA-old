@@ -28,12 +28,14 @@ namespace Physika
 		m_position.setElementCount(pts.size());
 		m_velocity.setElementCount(pts.size());
 		m_force.setElementCount(pts.size());
+		m_color.setElementCount(pts.size());
 
 		Function1Pt::copy(m_position.getValue(), pts);
 		m_velocity.getReference()->reset();
 
 		m_pointsRender = std::make_shared<PointRenderModule>();
-		m_pointsRender->setColor(Vector3f(0.2f, 0.6, 1.0f));
+		//m_pointsRender->setColor(Vector3f(0.2f, 0.6, 1.0f));
+		m_pointsRender->setColorArray(m_color);
 		this->addVisualModule(m_pointsRender);
 	}
 

@@ -41,6 +41,11 @@ namespace Physika
 			return &m_force;
 		}
 
+		DeviceArrayField<Vector3f>* getColor()
+		{
+			return &m_color;
+		}
+
 		void updateTopology() override;
 
 		std::shared_ptr<PointRenderModule> getRenderModule();
@@ -50,6 +55,7 @@ namespace Physika
 	private:
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
+		DeviceArrayField<Vector3f> m_color;
 		DeviceArrayField<Coord> m_force;
 
 		std::shared_ptr<PointSet<TDataType>> m_pSet;
