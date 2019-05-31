@@ -1,5 +1,5 @@
-#include "Physika_Core/Vectors/vector.h"
-#include "Physika_Core/Matrices/matrix.h"
+#include "Physika_Core/Vector.h"
+#include "Physika_Core/Matrix.h"
 #include "svd3_cuda2.h"
 
 namespace Physika
@@ -47,7 +47,7 @@ namespace Physika
 
 		SquareMatrix<Real, 3> D = A;
 
-		// only for symmetric matrices!
+		// only for symmetric Matrix!
 		eigenVecs = SquareMatrix<Real, 3>::identityMatrix();	// unit matrix
 		int iter = 0;
 		while (iter < numJacobiIterations) {	// 3 off diagonal elements

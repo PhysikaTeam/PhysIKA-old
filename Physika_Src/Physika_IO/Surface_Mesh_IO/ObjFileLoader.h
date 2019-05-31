@@ -1,8 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
-#include "Physika_Core/Vectors/vector.h"
-#include "Physika_Core/Vectors/vector_fixed.h"
+#include "Physika_Core/Vector.h"
 
 namespace Physika{
 

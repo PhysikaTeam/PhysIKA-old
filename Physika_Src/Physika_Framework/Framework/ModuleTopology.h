@@ -1,5 +1,5 @@
 #pragma once
-#include "Physika_Core/Vectors/vector_fixed.h"
+#include "Physika_Core/Vector.h"
 #include "Physika_Framework/Framework/Module.h"
 
 namespace Physika

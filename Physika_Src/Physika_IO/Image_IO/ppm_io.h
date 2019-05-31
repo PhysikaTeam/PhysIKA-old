@@ -17,7 +17,7 @@
 
 #include <string>
 //#include "image_io.h"
-#include "Physika_Core/Image/image.h"
+#include "image.h"
 
 namespace Physika{
 

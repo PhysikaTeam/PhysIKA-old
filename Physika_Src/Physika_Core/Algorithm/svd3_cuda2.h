@@ -4,7 +4,7 @@
 **
 **  Quick singular value decomposition as described by:
 **  A. McAdams, A. Selle, R. Tamstorf, J. Teran and E. Sifakis,
-**  Computing the Singular Value Decomposition of 3x3 matrices
+**  Computing the Singular Value Decomposition of 3x3 Matrix
 **  with minimal branching and elementary floating point operations,
 **  University of Wisconsin - Madison technical report TR1690, May 2011
 **

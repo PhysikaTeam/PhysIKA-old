@@ -17,7 +17,7 @@
 #include <memory>
 #include <vector>
 #include "CudaVBOMapper.h"
-#include <Physika_Core/Cuda_Array/Array.h>
+#include <Physika_Core/Array/Array.h>
 #include "ShaderProgram.h"
 
 namespace Physika{

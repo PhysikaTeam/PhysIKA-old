@@ -1,7 +1,7 @@
 #pragma once
 #include <vector_types.h>
-#include "Physika_Core/Vectors/vector.h"
-#include "Physika_Core/Matrices/matrix.h"
+#include "Physika_Core/Vector.h"
+#include "Physika_Core/Matrix.h"
 #include "Physika_Core/Rigid/rigid.h"
 
 namespace Physika

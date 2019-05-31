@@ -1,10 +1,9 @@
 #include "BoundaryConstraint.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Framework/Log.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "Physika_Core/Utilities/CudaRand.h"
 
-#include "Physika_Geometry/SDF/DistanceField3D.h"
+#include "Physika_Framework/Topology/DistanceField3D.h"
 
 namespace Physika
 {
@@ -17,14 +16,14 @@ namespace Physika
 		Coord lo(0.0f);
 		Coord hi(1.0f);
 		m_cSDF = std::make_shared<DistanceField3D<DataType3f>>();
-		m_cSDF->SetSpace(lo - 0.025f, hi + 0.025f, 105, 105, 105);
-		m_cSDF->DistanceFieldToBox(lo, hi, true);
+		m_cSDF->setSpace(lo - 0.025f, hi + 0.025f, 105, 105, 105);
+		m_cSDF->loadBox(lo, hi, true);
 	}
 
 	template<typename TDataType>
 	BoundaryConstraint<TDataType>::~BoundaryConstraint()
 	{
-		m_cSDF->Release();
+		m_cSDF->release();
 	}
 
 	template<typename Real, typename Coord, typename TDataType>
@@ -44,7 +43,7 @@ namespace Physika
 
 		Real dist;
 		Coord normal;
-		df.GetDistance(pos, dist, normal);
+		df.getDistance(pos, dist, normal);
 		// constrain particle
 		if (dist <= 0) {
 			Real olddist = -dist;
@@ -100,30 +99,24 @@ namespace Physika
 
 
 	template<typename TDataType>
-	void BoundaryConstraint<TDataType>::load(std::string filename)
+	void BoundaryConstraint<TDataType>::load(std::string filename, bool inverted)
 	{
-		m_cSDF->ReadSDF(filename);
+		m_cSDF->loadSDF(filename, inverted);
 	}
 
 
 	template<typename TDataType>
-	void BoundaryConstraint<TDataType>::setCube(Coord lo, Coord hi)
+	void BoundaryConstraint<TDataType>::setCube(Coord lo, Coord hi, bool inverted)
 	{
-		m_cSDF->SetSpace(lo - 0.025f, hi + 0.025f, 105, 105, 105);
-		m_cSDF->DistanceFieldToBox(lo, hi, false);
+		m_cSDF->setSpace(lo - 0.025f, hi + 0.025f, 105, 105, 105);
+		m_cSDF->loadBox(lo, hi, inverted);
 	}
 
 	template<typename TDataType>
-	void BoundaryConstraint<TDataType>::setSphere(Coord center, Real r)
+	void BoundaryConstraint<TDataType>::setSphere(Coord center, Real r, bool inverted)
 	{
-		m_cSDF->SetSpace(center - r - 0.025f, center + r + 0.025f, 105, 105, 105);
-		m_cSDF->DistanceFieldToSphere(center, r, false);
-	}
-
-	template<typename TDataType>
-	void BoundaryConstraint<TDataType>::invertSDF()
-	{
-		m_cSDF->Invert();
+		m_cSDF->setSpace(center - r - 0.025f, center + r + 0.025f, 105, 105, 105);
+		m_cSDF->loadSphere(center, r, inverted);
 	}
 
 }

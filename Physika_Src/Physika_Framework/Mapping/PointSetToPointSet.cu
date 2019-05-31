@@ -1,6 +1,6 @@
 #pragma once
 #include "PointSetToPointSet.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Topology/NeighborQuery.h"
 
 namespace Physika

@@ -1,6 +1,6 @@
 #include <cuda_runtime.h>
 #include "HyperelasticForce.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Core/Algorithm/MatrixFunc.h"
 #include "Kernel.h"

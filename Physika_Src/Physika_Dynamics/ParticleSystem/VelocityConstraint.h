@@ -1,8 +1,7 @@
 #pragma once
 #include "Physika_Framework/Framework/ModuleConstraint.h"
 #include "Physika_Framework/Framework/FieldArray.h"
-#include "Physika_Core/Utilities/Reduction.h"
-#include "Physika_Core/Utilities/Arithmetic.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Topology/FieldNeighbor.h"
 

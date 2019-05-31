@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include "rigid_base.h"
-#include "Vectors/vector_2d.h"
-#include "Matrices/matrix_2x2.h"
+#include "../Vector.h"
+#include "../Matrix.h"
 
 namespace Physika {
 	template <typename Scalar>

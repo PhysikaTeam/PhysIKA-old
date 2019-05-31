@@ -18,7 +18,7 @@
 #include <sstream>
 #include "Physika_IO/Image_IO/image_io.h"
 #include "Physika_IO/Image_IO/ppm_io.h"
-#include "Physika_Core/Utilities/physika_assert.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_IO/File_Utilities/file_content_utilities.h"
 #include "Physika_IO/File_Utilities/file_path_utilities.h"
 using std::string;

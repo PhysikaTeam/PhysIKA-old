@@ -5,7 +5,6 @@
 #include "Physika_Framework/Mapping/FrameToPointSet.h"
 #include "Physika_Render/SurfaceMeshRender.h"
 #include "Physika_Render/PointRenderModule.h"
-#include "Physika_IO/Surface_Mesh_IO/obj_mesh_io.h"
 #include "Physika_IO/Surface_Mesh_IO/ObjFileLoader.h"
 
 namespace Physika

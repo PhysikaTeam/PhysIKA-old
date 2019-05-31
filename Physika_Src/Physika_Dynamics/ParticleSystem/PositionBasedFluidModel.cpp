@@ -5,15 +5,13 @@
 #include "ParticleIntegrator.h"
 #include "DensitySummation.h"
 #include "ImplicitViscosity.h"
-#include "Physika_Core/Utilities/Reduction.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
 #include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Framework/Mapping/PointSetToPointSet.h"
 #include "Physika_Framework/Topology/FieldNeighbor.h"
 #include "Physika_Framework/Topology/NeighborQuery.h"
 #include "Physika_Dynamics/ParticleSystem/Helmholtz.h"
 #include "Physika_Dynamics/ParticleSystem/Attribute.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 
 namespace Physika
 {
@@ -25,7 +23,7 @@ namespace Physika
 		, m_restRho(Real(1000))
 		, m_pNum(0)
 	{
-		m_smoothingLength.setValue(Real(0.0085));
+		m_smoothingLength.setValue(Real(0.0075));
 
 		attachField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
 

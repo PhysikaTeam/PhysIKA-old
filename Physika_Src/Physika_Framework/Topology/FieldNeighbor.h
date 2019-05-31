@@ -1,7 +1,7 @@
 #pragma once
 #include "Physika_Core/Typedef.h"
-#include "Physika_Core/Cuda_Array/Array.h"
-#include "Physika_Core/Cuda_Array/MemoryManager.h"
+#include "Physika_Core/Array/Array.h"
+#include "Physika_Core/Array/MemoryManager.h"
 #include "Physika_Framework/Framework/Field.h"
 #include "Physika_Framework/Framework/Base.h"
 #include "Physika_Framework/Topology/NeighborList.h"

@@ -1,6 +1,6 @@
 #pragma once
 #include "Physika_Framework/Framework/TopologyMapping.h"
-#include "Physika_Core/Cuda_Array/Array.h"
+#include "Physika_Core/Array/Array.h"
 #include "Physika_Framework/Topology/PointSet.h"
 
 namespace Physika

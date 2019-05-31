@@ -1,11 +1,9 @@
 #include <cuda_runtime.h>
 #include "ParticleIntegrator.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
 #include "Physika_Framework/Framework/FieldArray.h"
 #include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 
 namespace Physika
 {

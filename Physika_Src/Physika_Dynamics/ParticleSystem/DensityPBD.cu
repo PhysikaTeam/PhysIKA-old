@@ -70,6 +70,7 @@ namespace Physika
 
 		SpikyKernel<Real> kern;
 
+		Coord dP_i(0);
 		int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
@@ -78,6 +79,8 @@ namespace Physika
 			if (r > EPSILON)
 			{
 				Coord dp_ij = 1.0f*(pos_i - posArr[j])*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
+				dP_i += dp_ij;
+				
 				atomicAdd(&dPos[pId][0], dp_ij[0]);
 				atomicAdd(&dPos[j][0], -dp_ij[0]);
 
@@ -94,6 +97,8 @@ namespace Physika
 				}
 			}
 		}
+
+//		dPos[pId] = dP_i;
 	}
 
 	template <typename Real, typename Coord>

@@ -1,6 +1,6 @@
 #pragma once
 #include "Physika_Core/Platform.h"
-#include "Physika_Core/Matrices/matrix.h"
+#include "Physika_Core/Matrix.h"
 
 namespace Physika
 {

@@ -4,7 +4,7 @@
 #include "Field.h"
 #include "Base.h"
 #include "Physika_Framework/Framework/Log.h"
-#include "Physika_Core/Cuda_Array/MemoryManager.h"
+#include "Physika_Core/Array/MemoryManager.h"
 
 namespace Physika {
 

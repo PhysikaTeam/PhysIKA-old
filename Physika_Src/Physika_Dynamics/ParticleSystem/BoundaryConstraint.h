@@ -21,11 +21,9 @@ namespace Physika {
 
 		bool constrain(DeviceArray<Coord>& position, DeviceArray<Coord>& velocity, Real dt);
 
-		void load(std::string filename);
-		void setCube(Coord lo, Coord hi);
-		void setSphere(Coord center, Real r);
-
-		void invertSDF();
+		void load(std::string filename, bool inverted = false);
+		void setCube(Coord lo, Coord hi, bool inverted = false);
+		void setSphere(Coord center, Real r, bool inverted = false);
 
 	public:
 		DeviceArrayField<Coord> m_position;

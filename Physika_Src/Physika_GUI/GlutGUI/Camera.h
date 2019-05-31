@@ -1,8 +1,7 @@
 #pragma once
 #include <vector>
 #include "Physika_Core/Quaternion/quaternion.h"
-#include "Physika_Core/Vectors/vector.h"
-#include "Physika_Core/Matrices/matrix.h"
+#include "Physika_Core/Vector.h"
 
 #define M_PI 3.14159265358979323846
 

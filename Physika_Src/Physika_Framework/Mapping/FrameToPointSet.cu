@@ -1,7 +1,6 @@
 #pragma once
 #include "FrameToPointSet.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
-#include "Physika_Core/Utilities/cuda_helper_math.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Topology/Frame.h"
 #include "Physika_Framework/Topology/PointSet.h"
 

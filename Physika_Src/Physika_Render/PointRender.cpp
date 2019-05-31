@@ -28,6 +28,9 @@ layout(location = 0) in vec3 vert_pos;
 layout(location = 3) in vec3 vert_col;
 
 out vec3 frag_vert_col;
+out float radius;
+out vec4 samplepoint;
+out vec4 samplecenter;
 
 uniform mat4 proj_trans;
 uniform mat4 view_trans;
@@ -39,13 +42,23 @@ uniform float point_scale;
 
 void main()
 {
-	frag_vert_col = vert_col;
+	vec3 posEye = vec3(gl_ModelViewMatrix * vec4(vert_pos, 1.0));
+	vec3 posEye2 = posEye + vec3(point_size, 0, 0);
+	vec3 posEye3 = posEye + vec3(0, 0, point_size);
+
+	vec4 proj_pos = gl_ProjectionMatrix*vec4(posEye, 1.0);
+	vec4 proj_pos2 = gl_ProjectionMatrix*vec4(posEye2, 1.0);
+	samplepoint = gl_ProjectionMatrix*vec4(posEye3, 1.0);
+	samplecenter = gl_ModelViewProjectionMatrix * vec4(vert_pos, 1.0);
 
 	gl_Position = gl_ModelViewProjectionMatrix * vec4(vert_pos, 1.0);
 	if (use_point_sprite)
 	{
-		gl_PointSize = point_scale * point_size / gl_Position.w;
+		gl_PointSize = (length(proj_pos.xyz - proj_pos2.xyz));
+		radius = gl_PointSize;
 	}
+
+	frag_vert_col = vert_col;
 }
 
 );
@@ -53,6 +66,9 @@ void main()
 const char * fragmentSource = STRINGIFY(
 #version 330 compatibility	\n
 in vec3 frag_vert_col;
+in float radius;
+in vec4 samplepoint;
+in vec4 samplecenter;
 out vec4 frag_color;
 
 uniform bool use_point_sprite;
@@ -73,11 +89,15 @@ void main()
 		vec3 diffuse = diffuse_factor * frag_vert_col;
 
 		diffuse = vec3(normal.z) * frag_vert_col;
-		frag_color = vec4(diffuse, 1.0);
+		gl_FragColor = vec4(diffuse, 1.0);
+
+
+		gl_FragDepth = gl_FragCoord.z/* - normal.z*abs(samplepoint.z- samplecenter.z)*/;
 	}
 	else
 	{
-		frag_color = vec4(frag_vert_col, 1.0);
+		gl_FragColor = vec4(frag_vert_col, 1.0);
+		gl_FragDepth = gl_FragCoord.z;
 	}
 }
 
@@ -229,6 +249,8 @@ void PointRender::display()
 		glEnable(GL_POINT_SPRITE);
 		glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
 		glEnable(GL_PROGRAM_POINT_SIZE);
+
+		glEnable(GL_DEPTH_TEST);
 
 		m_glsl.setFloat("point_size", point_size_);
 		m_glsl.setFloat("point_scale", point_scale_);

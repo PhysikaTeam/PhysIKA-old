@@ -3,7 +3,7 @@
 set(PROJECTS_NAMES App_Test App_SingleFluid App_Elasticity App_Plasticity)
 
 link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                                                           # 设置库路径
-link_libraries(Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)
+link_libraries(Physika_Core Physika_Framework Physika_IO Physika_Render)
 link_libraries(ParticleSystem RigidBody)
 link_libraries(GlutGUI)
 if(Qt5_FOUND)

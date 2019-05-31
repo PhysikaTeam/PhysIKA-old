@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include "PointRenderModule.h"
 #include "Physika_Framework/Topology/PointSet.h"
-#include "Physika_Core/Vectors/vector.h"
+#include "Physika_Core/Vector.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "OpenGLContext.h"
 #include "Color.h"

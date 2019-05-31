@@ -1,12 +1,11 @@
 #include "CollidablePoints.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Framework/DeviceContext.h"
 #include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Framework/Topology/PointSet.h"
 #include "Physika_Framework/Mapping/FrameToPointSet.h"
 #include "Physika_Framework/Mapping/PointSetToPointSet.h"
-#include "Physika_Core/Utilities/Reduction.h"
 
 namespace Physika
 {

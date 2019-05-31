@@ -26,13 +26,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Physika_Core/Vectors/vector_2d.h"
-#include "Physika_Core/Vectors/vector_3d.h"
-#include "Physika_Core/Vectors/vector_4d.h"
-
-#include "Physika_Core/Matrices/matrix_2x2.h"
-#include "Physika_Core/Matrices/matrix_3x3.h"
-#include "Physika_Core/Matrices/matrix_4x4.h"
+#include "Physika_Core/Vector.h"
+#include "Physika_Core/Matrix.h"
 
 namespace Physika{
 inline int openGLGetCurBindShaderID()

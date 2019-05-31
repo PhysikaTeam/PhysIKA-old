@@ -14,7 +14,7 @@
 
 #pragma once
 #include <cuda_gl_interop.h> 
-#include <Physika_Core/Utilities/cuda_utilities.h>
+#include "Physika_Core/Utility.h"
 
 namespace Physika{
 

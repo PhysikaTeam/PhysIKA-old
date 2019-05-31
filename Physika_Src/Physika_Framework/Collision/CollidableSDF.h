@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "Physika_Core/Cuda_Array/Array.h"
-#include "Physika_Geometry/SDF/DistanceField3D.h"
+#include "Physika_Core/Array/Array.h"
+#include "Physika_Framework/Topology/DistanceField3D.h"
 #include "Physika_Framework/Framework/CollidableObject.h"
 
 namespace Physika {
@@ -21,7 +21,7 @@ namespace Physika {
 		{
 			if (m_sdf != nullptr)
 			{
-				m_sdf->Release();
+				m_sdf->release();
 			}
 
 			m_sdf = sdf;
@@ -29,7 +29,7 @@ namespace Physika {
 
 		std::shared_ptr<DistanceField3D<TDataType>> getSDF() { return m_sdf; }
 
-		~CollidableSDF() { m_sdf->Release(); }
+		~CollidableSDF() { m_sdf->release(); }
 
 		void updateCollidableObject() override {};
 		void updateMechanicalState() override {};

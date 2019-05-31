@@ -1,6 +1,4 @@
 #include "Peridynamics.h"
-#include "Physika_Core/Utilities/Reduction.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
 #include "Physika_Framework/Framework/DeviceContext.h"
 #include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Framework/Framework/Node.h"
@@ -8,8 +6,9 @@
 #include "Physika_Framework/Mapping/PointSetToPointSet.h"
 #include "ParticleIntegrator.h"
 #include "Physika_Framework/Topology/NeighborQuery.h"
+#include "Physika_Core/Utility.h"
 
-namespace Physika 
+namespace Physika
 {
 	IMPLEMENT_CLASS_1(Peridynamics, TDataType)
 

@@ -1,13 +1,12 @@
 #include "StaticBoundary.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Framework/Log.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "Physika_Core/Utilities/CudaRand.h"
 #include "Physika_Dynamics/RigidBody/RigidBody.h"
 #include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
 #include "Physika_Dynamics/ParticleSystem/BoundaryConstraint.h"
 
-#include "Physika_Geometry/SDF/DistanceField3D.h"
+#include "Physika_Framework/Topology/DistanceField3D.h"
 
 namespace Physika
 {
@@ -55,17 +54,11 @@ namespace Physika
 		}
 	}
 
-
 	template<typename TDataType>
 	void StaticBoundary<TDataType>::loadSDF(std::string filename, bool bOutBoundary)
 	{
 		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
-		boundary->load(filename);
-
-		if (bOutBoundary)
-		{
-			boundary->invertSDF();
-		}
+		boundary->load(filename, bOutBoundary);
 
 		m_obstacles.push_back(boundary);
 	}
@@ -75,27 +68,16 @@ namespace Physika
 	void StaticBoundary<TDataType>::loadCube(Coord lo, Coord hi, bool bOutBoundary /*= false*/)
 	{
 		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
-		boundary->setCube(lo, hi);
-
-		if (bOutBoundary)
-		{
-			boundary->invertSDF();
-		}
+		boundary->setCube(lo, hi, bOutBoundary);
 
 		m_obstacles.push_back(boundary);
 	}
-
 
 	template<typename TDataType>
 	void StaticBoundary<TDataType>::loadShpere(Coord center, Real r, bool bOutBoundary /*= false*/)
 	{
 		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
-		boundary->setSphere(center, r);
-
-		if (bOutBoundary)
-		{
-			boundary->invertSDF();
-		}
+		boundary->setSphere(center, r, bOutBoundary);
 
 		m_obstacles.push_back(boundary);
 	}
@@ -106,7 +88,7 @@ namespace Physika
 	{
 		for (int i = 0; i < m_obstacles.size(); i++)
 		{
-			m_obstacles[i]->m_cSDF->Scale(s);
+			m_obstacles[i]->m_cSDF->scale(s);
 		}
 	}
 
@@ -115,7 +97,7 @@ namespace Physika
 	{
 		for (int i = 0; i < m_obstacles.size(); i++)
 		{
-			m_obstacles[i]->m_cSDF->Translate(t);
+			m_obstacles[i]->m_cSDF->translate(t);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "Physika_Core/Cuda_Array/Array3D.h"
+#include "Physika_Core/Array/Array3D.h"
 
 namespace Physika
 {

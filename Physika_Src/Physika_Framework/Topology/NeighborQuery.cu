@@ -1,9 +1,10 @@
 #include <cuda_runtime.h>
 #include "NeighborQuery.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Framework/Topology/NeighborList.h"
 #include "Physika_Framework/Topology/FieldNeighbor.h"
+#include "Physika_Framework/Framework/SceneGraph.h"
 
 namespace Physika
 {
@@ -41,8 +42,12 @@ namespace Physika
 		: ComputeModule()
 		, m_maxNum(0)
 	{
-		m_lowBound = Coord(0);
-		m_highBound = Coord(1);
+
+		Vector3f sceneLow = SceneGraph::getInstance().getLowerBound();
+		Vector3f sceneUp = SceneGraph::getInstance().getUpperBound();
+
+		m_lowBound = Coord(sceneLow[0], sceneLow[1], sceneLow[2]);
+		m_highBound = Coord(sceneUp[0], sceneUp[1], sceneUp[2]);
 		m_radius.setValue(Real(0.011));
 
 		attachField(&m_radius, "Radius", "Radius of the searching area", false);
@@ -55,8 +60,11 @@ namespace Physika
 	NeighborQuery<TDataType>::NeighborQuery(DeviceArray<Coord>& position)
 		: ComputeModule()
 	{
-		m_lowBound = Coord(0);
-		m_highBound = Coord(1);
+		Vector3f sceneLow = SceneGraph::getInstance().getLowerBound();
+		Vector3f sceneUp = SceneGraph::getInstance().getUpperBound();
+
+		m_lowBound = Coord(sceneLow[0], sceneLow[1], sceneLow[2]);
+		m_highBound = Coord(sceneUp[0], sceneUp[1], sceneUp[2]);
 		m_radius.setValue(Real(0.011));
 
 		m_position.setElementCount(position.size());
@@ -110,8 +118,6 @@ namespace Physika
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::compute()
 	{
-		//queryParticleNeighbors(m_neighborhood.getValue(), m_position.getValue(), m_radius.getValue());
-
 		m_hash.clear();
 		m_hash.construct(m_position.getValue());
 

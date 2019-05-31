@@ -20,6 +20,8 @@ private:
 
 	~OpenGLContext() {};
 
+
+	
 	bool m_initialized;
 };
 

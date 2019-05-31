@@ -1,8 +1,8 @@
 #include "Gravity.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "Physika_Core/Utilities/cuda_helper_math.h"
 #include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Framework/FieldArray.h"
+#include "Physika_Core/Utility.h"
 
 namespace Physika
 {

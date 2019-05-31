@@ -1,13 +1,11 @@
 #pragma once
-
 #include <GL/glew.h>
 #include "SurfaceMeshRender.h"
 #include "Physika_Framework/Topology/TriangleSet.h"
-#include "Physika_Core/Vectors/vector.h"
+#include "Physika_Core/Vector.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "Physika_Core/Utilities/cuda_helper_math.h"
+#include "Physika_Core/Utility.h"
 #include "OpenGLContext.h"
-
 
 namespace Physika
 {

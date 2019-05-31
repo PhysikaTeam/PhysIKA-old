@@ -1,7 +1,7 @@
 #pragma once
 #include "Physika_Framework/Framework/ModuleTopology.h"
 #include "Physika_Framework/Topology/NeighborList.h"
-#include "Physika_Core/Vectors/vector.h"
+#include "Physika_Core/Vector.h"
 
 
 namespace Physika

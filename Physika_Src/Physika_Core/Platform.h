@@ -28,6 +28,7 @@
 #define PHYSIKA_COMPILER_CUDA
 
 #if(defined(PHYSIKA_COMPILER_CUDA))
+#include <cuda_runtime.h>
 #	define COMM_FUNC __device__ __host__ 
 #	define GPU_FUNC __device__ 
 #	define CPU_FUNC __host__ 

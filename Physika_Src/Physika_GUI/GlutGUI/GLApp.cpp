@@ -18,9 +18,8 @@
 #include <sstream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include "Physika_Core/Utilities/physika_assert.h"
-#include "Physika_Core/Utilities/physika_exception.h"
-#include "Physika_Core/Image/image.h"
+#include "Physika_Core/Utility.h"
+#include "Physika_IO/Image_IO/image.h"
 #include "Physika_IO/Image_IO/image_io.h"
 #include "GLApp.h"
 #include "Physika_Render/OpenGLContext.h"
@@ -351,6 +350,8 @@ void GLApp::displayFunction(void)
     glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glPushMatrix();
+
 	if (cur_window->isShowBackground())
 	{
 		cur_window->drawBackground();
@@ -364,6 +365,8 @@ void GLApp::displayFunction(void)
 	cur_window->drawBoundingBox(scenegraph.getLowerBound(), scenegraph.getUpperBound());
 
 	scenegraph.draw();
+
+	glPopMatrix();
 
     glutPostRedisplay();
     glutSwapBuffers();
@@ -640,7 +643,7 @@ void GLApp::drawAxis()
 
 	glPopAttrib();
 
-	// Restore viewport, projection and model-view matrices
+	// Restore viewport, projection and model-view Matrix
 	glViewport(0, 0, getWidth(), getHeight());
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();

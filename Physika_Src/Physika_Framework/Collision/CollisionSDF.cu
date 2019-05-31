@@ -1,12 +1,10 @@
 #include "CollisionSDF.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Framework/Framework/CollidableObject.h"
-#include "Physika_Geometry/SDF/DistanceField3D.h"
-#include "Physika_Core/Utilities/CudaRand.h"
+#include "Physika_Framework/Topology/DistanceField3D.h"
 #include "Physika_Framework/Collision/CollidablePoints.h"
 #include "Physika_Framework/Collision/CollidableSDF.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
 
 namespace Physika
 {
@@ -72,7 +70,7 @@ namespace Physika
 
 		Real dist;
 		Coord normal;
-		df.GetDistance(pos, dist, normal);
+		df.getDistance(pos, dist, normal);
 		// constrain particle
 		if (dist <= 0) {
 			Real olddist = -dist;

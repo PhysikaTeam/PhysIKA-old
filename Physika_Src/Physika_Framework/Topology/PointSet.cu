@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Core/Utility.h"
 
 namespace Physika
 {
@@ -93,6 +93,8 @@ namespace Physika
 		}
 
 		assert(normalList.size() == vertList.size());
+
+		std::cout << "Total number of particles: " << vertList.size() << std::endl;
 
 		setPoints(vertList);
 		setNormals(normalList);

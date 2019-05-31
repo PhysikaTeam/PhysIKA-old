@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include "rigid_base.h"
-#include "Vectors/vector_3d.h"
-#include "Matrices/matrix_3x3.h"
+#include "../Vector.h"
+#include "../Matrix.h"
 #include "Quaternion/quaternion.h"
 
 namespace Physika {

@@ -15,9 +15,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include "Physika_Core/Quaternion/quaternion.h"
-#include "Physika_Core/Utilities/math_utilities.h"
-#include "Physika_Core/Utilities/physika_exception.h"
+#include "quaternion.h"
+#include "Physika_Core/Utility.h"
 
 namespace Physika{
 

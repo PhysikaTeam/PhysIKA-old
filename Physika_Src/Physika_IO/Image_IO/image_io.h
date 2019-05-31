@@ -16,7 +16,7 @@
 #define PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_
 
 #include <string>
-#include "Physika_Core/Image/image.h"
+#include "image.h"
 
 namespace Physika{
 class ImageIO

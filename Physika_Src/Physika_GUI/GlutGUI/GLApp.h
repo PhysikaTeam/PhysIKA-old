@@ -13,8 +13,8 @@
  */
 #pragma once
 #include <glm/vec4.hpp>
+#include "../AppBase.h"
 #include "Camera.h"
-#include "Physika_GUI/AppBase.h"
 
 namespace Physika {
 

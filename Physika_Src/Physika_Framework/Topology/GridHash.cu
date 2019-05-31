@@ -1,6 +1,5 @@
 #include "GridHash.h"
-#include "Physika_Core/Utilities/cuda_helper_math.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 
 namespace Physika{
 
@@ -106,6 +105,10 @@ namespace Physika{
 		particle_num = thrust::reduce(thrust::device, index, index + num, (int)0, thrust::plus<int>());
 		thrust::exclusive_scan(thrust::device, index, index + num, index);
 
+		if (ids != nullptr)
+		{
+			cuSafeCall(cudaFree(ids));
+		}
 		cuSafeCall(cudaMalloc((void**)&ids, particle_num * sizeof(int)));
 
 //		std::cout << "Particle number: " << particle_num << std::endl;

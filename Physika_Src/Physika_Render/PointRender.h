@@ -17,7 +17,7 @@
 #include <memory>
 #include <vector>
 
-#include <Physika_Core/Cuda_Array/Array.h>
+#include <Physika_Core/Array/Array.h>
 #include "CudaVBOMapper.h"
 #include "ShaderProgram.h"
 
@@ -53,11 +53,10 @@ public:
 
 	void display();
 
-
 private:
     bool use_point_sprite_ = true;
 
-    float point_size_ = 2.0f;
+    float point_size_ = 1.0f;
     float point_scale_ = 5.0f; //for point sprite
 
 	CudaVBOMapper<glm::vec3> m_vertVBO;

@@ -1,7 +1,7 @@
 #pragma once
 #include "Physika_Core/DataTypes.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Cuda_Array/Array.h"
+#include "Physika_Core/Utility.h"
+#include "Physika_Core/Array/Array.h"
 #include "Physika_Framework/Topology/NeighborList.h"
 
 namespace Physika{

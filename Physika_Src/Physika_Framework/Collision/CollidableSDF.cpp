@@ -21,8 +21,8 @@ namespace Physika {
 			Coord lo(0.0f);
 			Coord hi(1.0f);
 			std::shared_ptr<DistanceField3D<DataType3f>> box = std::make_shared<DistanceField3D<DataType3f>>();
-			box->SetSpace(lo - 0.025f, hi + 0.025f, 105, 105, 105);
-			box->DistanceFieldToBox(lo, hi, true);
+			box->setSpace(lo - 0.025f, hi + 0.025f, 105, 105, 105);
+			box->loadBox(lo, hi, true);
 			this->setSDF(box);
 		}
 

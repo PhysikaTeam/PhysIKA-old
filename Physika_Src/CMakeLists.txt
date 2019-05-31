@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.10)
 
-set(LIB_NAMES Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render)
+set(LIB_NAMES Physika_Core Physika_Framework Physika_IO Physika_Render)
 
 foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set(LIB_SRC_DIR "${PROJECT_SOURCE_DIR}/Physika_Src/${LIB_NAME}")

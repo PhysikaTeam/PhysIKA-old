@@ -1,8 +1,7 @@
 #include <cuda_runtime.h>
 #include "VelocityConstraint.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
-#include "Physika_Core/Utilities/Function2Pt.h"
+#include "Physika_Core/Utility.h"
 #include "DensitySummation.h"
 #include "Attribute.h"
 #include "Kernel.h"

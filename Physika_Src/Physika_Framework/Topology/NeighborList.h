@@ -1,7 +1,7 @@
 #pragma once
 #include "Physika_Core/Platform.h"
-#include "Physika_Core/Cuda_Array/Array.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Core/Array/Array.h"
+#include "Physika_Core/Utility.h"
 #include <thrust/scan.h>
 
 namespace Physika

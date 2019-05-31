@@ -1,9 +1,8 @@
 #include <cuda_runtime.h>
 #include "ElastoplasticityModule.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
 #include "Physika_Framework/Framework/Node.h"
 #include "Physika_Core/Algorithm/MatrixFunc.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 #include "Kernel.h"
 //#include "svd3_cuda2.h"
 

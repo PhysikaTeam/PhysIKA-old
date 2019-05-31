@@ -1,6 +1,6 @@
 #pragma once
 #include "Physika_Core/Platform.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 
 namespace Physika {
 

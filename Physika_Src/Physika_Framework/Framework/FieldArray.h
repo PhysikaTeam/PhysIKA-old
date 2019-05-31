@@ -1,8 +1,8 @@
 #pragma once
 #include "Physika_Core/Typedef.h"
-#include "Physika_Core/Cuda_Array/Array.h"
-#include "Physika_Core/Cuda_Array/MemoryManager.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Core/Array/Array.h"
+#include "Physika_Core/Array/MemoryManager.h"
+#include "Physika_Core/Utility.h"
 #include "Field.h"
 #include "Base.h"
 
