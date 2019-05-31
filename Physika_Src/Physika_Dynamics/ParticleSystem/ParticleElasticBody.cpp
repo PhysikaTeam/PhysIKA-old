@@ -15,13 +15,13 @@ namespace Physika
 
 	template<typename TDataType>
 	ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
-		: ParticleSystem(name)
+		: ParticleSystem<TDataType>(name)
 	{
 		auto peri = std::make_shared<Peridynamics<TDataType>>();
 		this->setNumericalModel(peri);
-		getPosition()->connect(peri->m_position);
-		getVelocity()->connect(peri->m_velocity);
-		getForce()->connect(peri->m_forceDensity);
+		this->getPosition()->connect(peri->m_position);
+		this->getVelocity()->connect(peri->m_velocity);
+		this->getForce()->connect(peri->m_forceDensity);
 
 		//Create a node for surface mesh rendering
 		m_surfaceNode = this->createChild<Node>("Mesh");

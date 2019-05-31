@@ -1,6 +1,6 @@
 #include <cuda_runtime.h>
 //#include "Physika_Core/Utilities/template_functions.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 #include "DensityPBD.h"
 #include "Physika_Framework/Framework/Node.h"
 #include <string>

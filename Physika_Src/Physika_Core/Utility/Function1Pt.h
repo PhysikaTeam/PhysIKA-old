@@ -64,6 +64,5 @@ namespace Physika
 		void Length(DeviceArray<T1>& lhs, DeviceArray<T2>& rhs);
 
 
-		template void Length(DeviceArray<float>&, DeviceArray<float3>&);
 	}
 }

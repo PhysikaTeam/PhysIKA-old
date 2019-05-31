@@ -1,5 +1,5 @@
 #include <cuda_runtime.h>
-#include "Physika_Core/Utilities/cuda_utilities.h"
+#include "Physika_Core/Utility.h"
 #include "SurfaceTension.h"
 #include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Framework/Topology/NeighborList.h"

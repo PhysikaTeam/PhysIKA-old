@@ -12,7 +12,7 @@
  *
  */
 
-#include "Physika_Core/Utilities/cuda_rand_number.h"
+#include "cuda_rand_number.h"
 
 namespace Physika {
 

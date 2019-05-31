@@ -1,6 +1,5 @@
 #include <cuda_runtime.h>
-#include "Physika_Core/Utilities/cuda_utilities.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Core/Utility.h"
 #include "Physika_Framework/Framework/Log.h"
 #include "Physika_Framework/Framework/FieldVar.h"
 #include "Physika_Framework/Framework/MechanicalState.h"

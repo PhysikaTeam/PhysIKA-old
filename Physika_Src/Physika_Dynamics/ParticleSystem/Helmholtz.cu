@@ -1,12 +1,10 @@
-#include <cuda_runtime.h>
 //#include "Physika_Core/Utilities/template_functions.h"
-#include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Helmholtz.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
 #include <string>
 #include "Kernel.h"
 #include "DensitySummation.h"
+#include "Physika_Core/Utility.h"
 
 namespace Physika
 {

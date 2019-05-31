@@ -46,6 +46,8 @@ Public_Library/lib/release/cudart32_91.dll
 *.ipdb
 
 AutoBuild/*
+build/*
+.vscode/*
 
 Build/x64/Release/Physika_Core.lib
 Build/x64/Release/cudart32_91.dll

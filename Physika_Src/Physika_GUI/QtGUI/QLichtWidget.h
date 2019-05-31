@@ -2,6 +2,7 @@
 #define G3D_WIDGET_HPP
 
 #include <memory>
+#include "Physika_Render/PointRenderModule.h"
 #include <QtWidgets/QOpenGLWidget>
 #include <irrlicht.h>
 
@@ -10,7 +11,6 @@
 #include "Physika_Dynamics/ParticleSystem/PositionBasedFluidModel.h"
 #include "Physika_Framework/Topology/PointSet.h"
 #include "Physika_Framework/Framework/Log.h"
-#include "Physika_Render/PointRenderModule.h"
 
 using namespace irr;
 using namespace core;

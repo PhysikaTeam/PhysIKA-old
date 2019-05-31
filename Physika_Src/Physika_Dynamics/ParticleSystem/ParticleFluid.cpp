@@ -12,15 +12,13 @@ namespace Physika
 
 	template<typename TDataType>
 	ParticleFluid<TDataType>::ParticleFluid(std::string name)
-		: ParticleSystem(name)
+		: ParticleSystem<TDataType>(name)
 	{
 		auto pbf = std::make_shared<PositionBasedFluidModel<TDataType>>();
 		this->setNumericalModel(pbf);
-		getPosition()->connect(pbf->m_position);
-		getVelocity()->connect(pbf->m_velocity);
-		getForce()->connect(pbf->m_forceDensity);
-
-		getVelocity()->connect(getRenderModule()->m_vecIndex);
+		this->getPosition()->connect(pbf->m_position);
+		this->getVelocity()->connect(pbf->m_velocity);
+		this->getForce()->connect(pbf->m_forceDensity);
 	}
 
 	template<typename TDataType>

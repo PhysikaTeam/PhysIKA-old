@@ -1,9 +1,8 @@
 #include <cuda_runtime.h>
-#include "Physika_Core/Utilities/cuda_utilities.h"
 #include "DensitySummation.h"
 #include "Physika_Framework/Framework/MechanicalState.h"
 #include "Physika_Framework/Framework/Node.h"
-#include "Physika_Core/Utilities/Reduction.h"
+#include "Physika_Core/Utility.h"
 #include "Kernel.h"
 
 namespace Physika

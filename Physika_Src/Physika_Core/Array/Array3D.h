@@ -1,6 +1,7 @@
 #pragma once
 #include <assert.h>
 #include <cuda_runtime.h>
+#include <cstring>
 #include "Physika_Core/Platform.h"
 
 namespace Physika {

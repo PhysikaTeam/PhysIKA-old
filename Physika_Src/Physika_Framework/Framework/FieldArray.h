@@ -5,6 +5,7 @@
 #include "Physika_Core/Utility.h"
 #include "Field.h"
 #include "Base.h"
+#include "Physika_Framework/Framework/Log.h"
 
 namespace Physika {
 

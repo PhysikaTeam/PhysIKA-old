@@ -20,10 +20,8 @@
 
 namespace Physika{
 
-#define STRINGIFY(A) #A
-
-const char * vertexSource = STRINGIFY(
-#version 330 compatibility \n
+const char * vertexSource = R"STR(
+#version 330 compatibility
 layout(location = 0) in vec3 vert_pos;
 layout(location = 3) in vec3 vert_col;
 
@@ -60,11 +58,10 @@ void main()
 
 	frag_vert_col = vert_col;
 }
+)STR";
 
-);
-
-const char * fragmentSource = STRINGIFY(
-#version 330 compatibility	\n
+const char * fragmentSource = R"STR(
+#version 330 compatibility
 in vec3 frag_vert_col;
 in float radius;
 in vec4 samplepoint;
@@ -100,13 +97,11 @@ void main()
 		gl_FragDepth = gl_FragCoord.z;
 	}
 }
-
-);
-
+)STR";
 
 // vertex shader
-const char *vertexShader1 = STRINGIFY(
-	uniform float pointRadius;  // point size in world space
+const char *vertexShader1 = R"STR(
+uniform float pointRadius;  // point size in world space
 uniform float pointScale;   // scale to calculate size in pixels
 uniform float densityScale;
 uniform float densityOffset;
@@ -144,7 +139,7 @@ const char *spherePixelShader1 = STRINGIFY(
 
 	gl_FragColor = gl_Color * diffuse;
 }
-);
+)STR";
 
 PointRender::PointRender()
 {

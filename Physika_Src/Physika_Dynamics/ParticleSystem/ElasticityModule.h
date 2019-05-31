@@ -14,7 +14,7 @@ namespace Physika {
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 		typedef typename TDataType::Matrix Matrix;
-		typedef typename TPair<TDataType> NPair;
+		typedef TPair<TDataType> NPair;
 
 		ElasticityModule();
 		~ElasticityModule() override {};
