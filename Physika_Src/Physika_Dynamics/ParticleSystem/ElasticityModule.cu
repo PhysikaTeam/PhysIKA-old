@@ -4,7 +4,6 @@
 #include "Physika_Core/Algorithm/MatrixFunc.h"
 #include "Physika_Core/Utility.h"
 #include "Kernel.h"
-#include "svd3_cuda.h"
 
 namespace Physika
 {

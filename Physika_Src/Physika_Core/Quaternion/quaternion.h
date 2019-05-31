@@ -97,14 +97,6 @@ public:
     Real x_,y_,z_,w_;
 };
 
-
-template <typename Real>
-inline std::ostream& operator<< (std::ostream &s, const Quaternion<Real> &quat)
-{
-	s << quat.x() << ", " << quat.y() << ", " << quat.z() << ", " << quat.w() << std::endl;
-    return s; 
-}
-
 //make * operator commutative
 template <typename S, typename T>
 COMM_FUNC inline Quaternion<T> operator *(S scale, const Quaternion<T> &quad)

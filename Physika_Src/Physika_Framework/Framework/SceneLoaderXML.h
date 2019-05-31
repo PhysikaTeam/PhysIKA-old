@@ -2,7 +2,6 @@
 #include "Physika_Framework/Framework/Node.h"
 #include "SceneLoaderFactory.h"
 #include "tinyxml/tinyxml2.h"
-using namespace tinyxml2;
 
 namespace Physika {
 
@@ -12,8 +11,8 @@ namespace Physika {
 		std::shared_ptr<Node> load(const std::string filename) override;
 
 	private:
-		std::shared_ptr<Node> processNode(XMLElement* nodeXML);
-		std::shared_ptr<Module> processModule(XMLElement* moduleXML);
+		std::shared_ptr<Node> processNode(tinyxml2::XMLElement* nodeXML);
+		std::shared_ptr<Module> processModule(tinyxml2::XMLElement* moduleXML);
 		bool addModule(std::shared_ptr<Node> node, std::shared_ptr<Module> module);
 
 		std::vector<std::string> split(std::string str, std::string pattern);

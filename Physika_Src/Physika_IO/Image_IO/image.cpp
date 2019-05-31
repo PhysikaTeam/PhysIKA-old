@@ -119,7 +119,7 @@ Image Image::mirrorImage() const
 {
     unsigned int pixel_size = pixelSize();
     unsigned char *data = new unsigned char[pixel_size*width_*height_];
-    PHYSIKA_ASSERT(data);
+    assert(data);
     memcpy(data,raw_data_,sizeof(unsigned char)*pixel_size*width_*height_);
     Image image(width_,height_,data_format_,data);
     image.flipHorizontally();
@@ -131,7 +131,7 @@ Image Image::upsideDownImage() const
 {
     unsigned int pixel_size = pixelSize();
     unsigned char *data = new unsigned char[pixel_size*width_*height_];
-    PHYSIKA_ASSERT(data);
+	assert(data);
     memcpy(data,raw_data_,sizeof(unsigned char)*pixel_size*width_*height_);
     Image image(width_,height_,data_format_,data);
     image.flipVertically();
@@ -145,7 +145,7 @@ void Image::allocMemory()
         delete[] raw_data_;
     unsigned int data_size = pixelSize()*width_*height_;
     raw_data_ = new unsigned char[data_size];
-    PHYSIKA_ASSERT(raw_data_);
+	assert(raw_data_);
 }
 
 unsigned int Image::pixelSize() const
@@ -156,7 +156,7 @@ unsigned int Image::pixelSize() const
     else if(data_format_ == RGB)
         pixel_size = 3;
     else
-        PHYSIKA_ERROR("Invalid pixel data format.");
+		assert("Invalid pixel data format.");
     return pixel_size;
 }
 

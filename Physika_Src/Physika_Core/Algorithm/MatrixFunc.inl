@@ -1,6 +1,6 @@
 #include "Physika_Core/Vector.h"
 #include "Physika_Core/Matrix.h"
-#include "svd3_cuda2.h"
+#include "svd3_cuda.h"
 
 namespace Physika
 {

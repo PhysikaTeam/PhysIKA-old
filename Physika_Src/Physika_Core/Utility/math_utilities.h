@@ -17,7 +17,6 @@
 
 #include <limits>
 #include <cmath>
-#include "Physika_Core/Utilities/cuda_utilities.h"
 #include "Physika_Core/Platform.h"
 
 namespace Physika{

@@ -88,12 +88,6 @@ protected:
     Vector<Scalar,3> translation_;
     Quaternion<Scalar> rotation_;
     Vector<Scalar,3> scale_;
-private:
-    void compileTimeCheck()
-    {
-        PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                              "Transform<Scalar> are only defined for Scalar type of float and double");
-    }
 };
 
 using Transform3f = Transform<float, 3>;

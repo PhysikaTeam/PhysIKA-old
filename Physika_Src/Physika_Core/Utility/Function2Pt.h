@@ -29,8 +29,5 @@ namespace Physika
 		// z = a * x + y;
 		template <typename T>
 		void saxpy(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr, T alpha);
-
-
-
 	};
 }

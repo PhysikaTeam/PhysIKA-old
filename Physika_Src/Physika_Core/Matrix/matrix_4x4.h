@@ -99,35 +99,6 @@ protected:
     glm::tmat4x4<Scalar> data_; //default: zero matrix
 };
 
-//overriding << for SquareMatrix<Scalar,4>
-template <typename Scalar>
-inline std::ostream& operator<< (std::ostream &s, const SquareMatrix<Scalar,4> &mat)
-{
-    if((is_same<Scalar,unsigned char>::value)||(is_same<Scalar,signed char>::value))
-    {
-        s<<"[";
-        s<<static_cast<int>(mat(0,0))<<", "<<static_cast<int>(mat(0,1))<<", "<<static_cast<int>(mat(0,2))<<", "<<static_cast<int>(mat(0,3))<<"; ";
-        s<<static_cast<int>(mat(1,0))<<", "<<static_cast<int>(mat(1,1))<<", "<<static_cast<int>(mat(1,2))<<", "<<static_cast<int>(mat(1,3))<<"; ";
-        s<<static_cast<int>(mat(2,0))<<", "<<static_cast<int>(mat(2,1))<<", "<<static_cast<int>(mat(2,2))<<", "<<static_cast<int>(mat(2,3))<<"; ";
-        s<<static_cast<int>(mat(3,0))<<", "<<static_cast<int>(mat(3,1))<<", "<<static_cast<int>(mat(3,2))<<", "<<static_cast<int>(mat(3,3))<<"]";
-    }
-    else
-    {
-        s<<"[";
-        s<<mat(0,0)<<", "<<mat(0,1)<<", "<<mat(0,2)<<", "<<mat(0,3)<<"; ";
-        s<<mat(1,0)<<", "<<mat(1,1)<<", "<<mat(1,2)<<", "<<mat(1,3)<<"; ";
-        s<<mat(2,0)<<", "<<mat(2,1)<<", "<<mat(2,2)<<", "<<mat(2,3)<<"; ";
-        s<<mat(3,0)<<", "<<mat(3,1)<<", "<<mat(3,2)<<", "<<mat(3,3)<<"]";
-    }
-    return s;
-}
-
-//make * operator commutative
-// template <typename S, typename T>
-// COMM_FUNC  const SquareMatrix<T,4> operator* (S scale, const SquareMatrix<T,4> &mat)
-// {
-//     return mat*scale;
-// }
 
 template class SquareMatrix<float, 4>;
 template class SquareMatrix<double, 4>;

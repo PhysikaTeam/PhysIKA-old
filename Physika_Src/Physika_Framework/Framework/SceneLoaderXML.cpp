@@ -6,20 +6,20 @@ namespace Physika
 {
 	std::shared_ptr<Node> SceneLoaderXML::load(const std::string filename)
 	{
-		XMLDocument doc;
+		tinyxml2::XMLDocument doc;
 		if (doc.LoadFile(filename.c_str()))
 		{
 			doc.PrintError();
 			return nullptr;
 		}
 
-		XMLElement* scenegraph = doc.RootElement();
-		XMLElement* rootXML  = scenegraph->FirstChildElement("Node");
+		tinyxml2::XMLElement* scenegraph = doc.RootElement();
+		tinyxml2::XMLElement* rootXML  = scenegraph->FirstChildElement("Node");
 
 		return processNode(rootXML);
 	}
 
-	std::shared_ptr<Node> SceneLoaderXML::processNode(XMLElement* nodeXML)
+	std::shared_ptr<Node> SceneLoaderXML::processNode(tinyxml2::XMLElement* nodeXML)
 	{
 		const char* name = nodeXML->Attribute("class");
 		if (!name)
@@ -36,7 +36,7 @@ namespace Physika
 		if (nodeName)
 			node->setName(nodeName);
 
-		XMLElement* childNodeXML = nodeXML->FirstChildElement("Node");
+		tinyxml2::XMLElement* childNodeXML = nodeXML->FirstChildElement("Node");
 		while (childNodeXML)
 		{
 			auto cNode = processNode(childNodeXML);
@@ -47,7 +47,7 @@ namespace Physika
 			childNodeXML = childNodeXML->NextSiblingElement("Node");
 		}
 
-		XMLElement* moduleXML = nodeXML->FirstChildElement("Module");
+		tinyxml2::XMLElement* moduleXML = nodeXML->FirstChildElement("Module");
 		while (moduleXML)
 		{
 			auto module = processModule(moduleXML);
@@ -98,7 +98,7 @@ namespace Physika
 		return node;
 	}
 
-	std::shared_ptr<Module> SceneLoaderXML::processModule(XMLElement* moduleXML)
+	std::shared_ptr<Module> SceneLoaderXML::processModule(tinyxml2::XMLElement* moduleXML)
 	{
 		const char* className = moduleXML->Attribute("class");
 		if (!className)

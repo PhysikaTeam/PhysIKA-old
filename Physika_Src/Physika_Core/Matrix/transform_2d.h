@@ -90,12 +90,6 @@ protected:
     //Use radian
     Scalar rotate_angle_;
     Vector<Scalar,2> scale_;
-private:
-    void compileTimeCheck()
-    {
-        PHYSIKA_STATIC_ASSERT((is_same<Scalar,float>::value||is_same<Scalar,double>::value),
-                              "Transform<Scalar> are only defined for Scalar type of float and double");
-    }
 };
 
 

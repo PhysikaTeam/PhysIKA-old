@@ -132,7 +132,7 @@ bool GLApp::saveScreen(const std::string &file_name) const
 {
     int width = this->getWidth(), height = this->getHeight();
     unsigned char *data = new unsigned char[width*height*3];  //RGB
-    PHYSIKA_ASSERT(data);
+    assert(data);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadPixels(0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,(void*)data);
     Image image(width,height,Image::RGB,data);
@@ -178,7 +178,7 @@ void GLApp::drawFrameRate()
         }
         else  //show spf
         {
-            PHYSIKA_ASSERT(fps>0);
+            assert(fps>0);
             adaptor<< 1.0/fps;
             str = std::string("SPF: ") + adaptor.str();
         }
@@ -404,7 +404,7 @@ void GLApp::reshapeFunction(int width, int height)
 void GLApp::keyboardFunction(unsigned char key, int x, int y)
 {
     GLApp *window = static_cast<GLApp*>(glutGetWindowData());
-    PHYSIKA_ASSERT(window);
+    assert(window);
     switch(key)
     {
     case 27: //ESC: close window
@@ -481,7 +481,7 @@ void GLApp::initFunction(void)
     int width = glutGet(GLUT_WINDOW_WIDTH);
     int height = glutGet(GLUT_WINDOW_HEIGHT);
     GLApp *window = static_cast<GLApp*>(glutGetWindowData());
-    PHYSIKA_ASSERT(window);
+    assert(window);
 
     glViewport(0, 0, width, height);        									// set the viewport
     window->initDefaultLight();
