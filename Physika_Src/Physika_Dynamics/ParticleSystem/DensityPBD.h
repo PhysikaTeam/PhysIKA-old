@@ -40,6 +40,8 @@ namespace Physika {
 
 		DeviceArrayField<Real> m_density;
 
+		DeviceArrayField<Real> m_massInv; // mass^-1 as described in unified particle physics
+
 		NeighborField<int> m_neighborhood;
 
 	private:

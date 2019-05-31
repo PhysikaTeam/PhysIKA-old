@@ -11,9 +11,9 @@ namespace Physika
 		, m_samplingDistance(Real(0.1))
 	{
 		std::vector<Coord> positions;
-		for (Real x = -1.0; x < 1.0; x += m_samplingDistance) {
-			for (Real y = -1.0; y < 1.0; y += m_samplingDistance) {
-				for (Real z = -1.0; z < 1.0; z += m_samplingDistance) {
+		for (Real x = -2.0; x < 2.0; x += m_samplingDistance) {
+			for (Real y = -2.0; y < 2.0; y += m_samplingDistance) {
+				for (Real z = -2.0; z < 2.0; z += m_samplingDistance) {
 					positions.push_back(Coord(Real(x), Real(y), Real(z)));
 				}
 			}

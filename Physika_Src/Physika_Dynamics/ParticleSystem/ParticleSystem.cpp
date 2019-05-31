@@ -22,8 +22,8 @@ namespace Physika
 		this->setTopologyModule(m_pSet);
 
 		auto pts = m_pSet->getPoints();
-		m_pSet->scale(0.05);
-		m_pSet->translate(Coord(0.5, 0.2, 0.5));
+		m_pSet->scale(0.2);
+		m_pSet->translate(Coord(0.5, 0.5, 0.5));
 
 		m_position.setElementCount(pts.size());
 		m_velocity.setElementCount(pts.size());

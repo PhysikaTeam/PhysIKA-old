@@ -26,9 +26,23 @@ namespace Physika
     __global__ void UpdateColor(DeviceArray<Vector3f> colorArr,
                                 DeviceArray<Coord> posArr) {
         int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-        if (pId >= posArr.size())
-            return;
-        colorArr[pId] = posArr[pId];
+		if (pId >= posArr.size()) return;
+		colorArr[pId] = posArr[pId];
+		colorArr[pId][0] = posArr[pId][0] > Real(0.5) ? 1 : 0;
+	}
+    template <typename Real, typename Coord>
+    __global__ void Init(DeviceArray<Coord> posArr,
+						 DeviceArray<Vector3f> colorArr,
+						 DeviceArray<Real> massInvArr) {
+        int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= posArr.size()) return;
+		if (posArr[pId][0] > 0.5) {
+			colorArr[pId] = {1, 0, 0};
+			massInvArr[pId] = 1;
+		} else {
+			colorArr[pId] = {0, 1, 0};
+			massInvArr[pId] = 5;
+		}
     }
 
     template<typename TDataType>
@@ -36,15 +50,14 @@ namespace Physika
 		: NumericalModel()
 		, m_pNum(0)
 	{
-		m_smoothingLength.setValue(Real(0.011));
-        m_diffusionSigma.setValue(Real(1e-3));
-        m_inertialTau.setValue(Real(0));
+		m_smoothingLength.setValue(Real(0.044));
 
 		initField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
 
 		initField(&m_position, "position", "Storing the particle positions!", false);
 		initField(&m_velocity, "velocity", "Storing the particle velocities!", false);
 		initField(&m_forceDensity, "force_density", "Storing the particle force densities!", false);
+		initField(&m_massInv, "mass_inverse", "Storing mass inverse of particles!", false);
 	}
 
 	template<typename TDataType>
@@ -57,6 +70,13 @@ namespace Physika
 	bool MultifluidModel<TDataType>::initializeImpl()
 	{
 		this->NumericalModel::initializeImpl();
+
+		m_massInv.setElementCount(m_position.getElementCount());
+        int num = m_position.getElementCount();
+        uint pDims = cudaGridSize(num, BLOCK_SIZE);
+        Init<Real, Coord>
+            <<<pDims, BLOCK_SIZE>>>(m_position.getValue(), m_color.getValue(), m_massInv.getValue());
+
 
 		Node* parent = getParent();
 		if (parent == NULL)
@@ -88,6 +108,7 @@ namespace Physika
 		m_smoothingLength.connect(m_pbdModule->m_smoothingLength);
 		m_position.connect(m_pbdModule->m_position);
 		m_velocity.connect(m_pbdModule->m_velocity);
+		m_massInv.connect(m_pbdModule->m_massInv);
 		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
 		m_pbdModule->initialize();
 
@@ -113,8 +134,8 @@ namespace Physika
 // 		m_mapping = std::make_shared<PointSetToPointSet<TDataType>>();
 // 		m_mapping->initialize(*(m_position.getReference()), (pSet->getPoints()));
 
-        return true;
-        }
+		return true;
+    }
 
 	template<typename TDataType>
 	void MultifluidModel<TDataType>::step(Real dt)
@@ -149,10 +170,10 @@ namespace Physika
 		}
 		
 		m_integrator->end();
-		int num = m_position.getElementCount();
-		uint pDims = cudaGridSize(num, BLOCK_SIZE);
-		UpdateColor<Real, Coord><<<pDims, BLOCK_SIZE>>>(
-            m_color.getValue(), m_position.getValue());
+		// int num = m_position.getElementCount();
+		// uint pDims = cudaGridSize(num, BLOCK_SIZE);
+		// UpdateColor<Real, Coord><<<pDims, BLOCK_SIZE>>>(
+        //     m_color.getValue(), m_position.getValue());
 	}
 
 	template<typename TDataType>

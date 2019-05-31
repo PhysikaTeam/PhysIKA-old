@@ -25,6 +25,9 @@ namespace Physika
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
+        enum { PhaseCount = 2 };
+        using phaseVector = Vector<Real, PhaseCount>;
+
 
 		MultifluidModel();
 		virtual ~MultifluidModel();
@@ -32,7 +35,7 @@ namespace Physika
 		void step(Real dt) override;
 
 		void setSmoothingLength(Real len) { m_smoothingLength.setValue(len); }
-		void setRestDensity(std::vector<Real> rho) { m_restRho = std::move(rho); }
+		void setRestDensity(phaseVector rho) { m_restDensity = rho; }
 
 		void setIncompressibilitySolver(std::shared_ptr<ConstraintModule> solver);
 		void setViscositySolver(std::shared_ptr<ConstraintModule> solver);
@@ -40,16 +43,18 @@ namespace Physika
 
 	public:
 		VarField<Real> m_smoothingLength;
-        VarField<Real> m_inertialTau;
-		VarField<Real> m_diffusionSigma;
-		std::vector<Real> m_restRho;
+		VarField<phaseVector> m_restDensity;
+		VarField<Real> m_degenerateMobilityM;
+		VarField<Real> m_interfaceDiffusionEpsilon;
+		// m_helmholtzFunction;
 
 		DeviceArrayField<Coord> m_position;
-		DeviceArrayField<Coord> m_velocity;
-		DeviceArrayField<Coord> m_forceDensity;
 		DeviceArrayField<Vector3f> m_color;
-        std::vector<DeviceArrayField<Coord>> m_driftVelocity;
-        std::vector<DeviceArrayField<Real>> m_volumeFraction;
+		DeviceArrayField<Coord> m_velocity;
+		DeviceArrayField<Real> m_massInv; // for pbd constraints
+        DeviceArrayField<phaseVector> m_concentration;
+
+		DeviceArrayField<Coord> m_forceDensity;
 
 	protected:
 		bool initializeImpl() override;

@@ -17,6 +17,7 @@ namespace Physika
 		DeviceArray<Real> lambdaArr,
 		DeviceArray<Real> rhoArr,
 		DeviceArray<Coord> posArr,
+		DeviceArray<Real> massInvArr,
 		NeighborList<int> neighbors,
 		Real smoothingLength)
 	{
@@ -40,11 +41,11 @@ namespace Physika
 			{
 				Coord g = kern.Gradient(r, smoothingLength)*(pos_i - posArr[j]) * (1.0f / r);
 				grad_ci += g;
-				lamda_i += g.dot(g);
+				lamda_i += g.dot(g) * massInvArr[j];
 			}
 		}
 
-		lamda_i += grad_ci.dot(grad_ci);
+		lamda_i += grad_ci.dot(grad_ci) * massInvArr[pId];
 
 		Real rho_i = rhoArr[pId];
 
@@ -58,6 +59,7 @@ namespace Physika
 		DeviceArray<Coord> dPos, 
 		DeviceArray<Real> lambdas, 
 		DeviceArray<Coord> posArr, 
+		DeviceArray<Real> massInvArr,
 		NeighborList<int> neighbors, 
 		Real smoothingLength,
 		Real dt)
@@ -78,19 +80,21 @@ namespace Physika
 			if (r > EPSILON)
 			{
 				Coord dp_ij = 1.0f*(pos_i - posArr[j])*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
+				Coord dp_ji = - dp_ij * massInvArr[j];
+				dp_ij = dp_ij * massInvArr[pId];
 				atomicAdd(&dPos[pId][0], dp_ij[0]);
-				atomicAdd(&dPos[j][0], -dp_ij[0]);
+				atomicAdd(&dPos[j][0], dp_ji[0]);
 
 				if (Coord::dims() >= 2)
 				{
 					atomicAdd(&dPos[pId][1], dp_ij[1]);
-					atomicAdd(&dPos[j][1], -dp_ij[1]);
+					atomicAdd(&dPos[j][1], dp_ji[1]);
 				}
 				
 				if (Coord::dims() >= 3)
 				{
 					atomicAdd(&dPos[pId][2], dp_ij[2]);
-					atomicAdd(&dPos[j][2], -dp_ij[2]);
+					atomicAdd(&dPos[j][2], dp_ji[2]);
 				}
 			}
 		}
@@ -191,12 +195,14 @@ namespace Physika
 				m_lamda, 
 				m_rhoArr, 
 				m_position.getValue(), 
+				m_massInv.getValue(),
 				m_neighborhood.getValue(), 
 				m_smoothingLength.getValue());
 			K_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (
 				m_deltaPos, 
 				m_lamda, 
 				m_position.getValue(),
+				m_massInv.getValue(),
 				m_neighborhood.getValue(),
 				m_smoothingLength.getValue(), 
 				dt);
