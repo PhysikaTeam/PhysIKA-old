@@ -3,7 +3,7 @@
 
 #include "Physika_Framework/Topology/PointSet.h"
 #include "Physika_Render/PointRenderModule.h"
-#include "Physika_Core/Utilities/Function1Pt.h"
+#include "Physika_Core/Utility.h"
 
 
 namespace Physika
@@ -11,18 +11,10 @@ namespace Physika
 	IMPLEMENT_CLASS_1(SolidFluidInteraction, TDataType)
 
 	template<typename TDataType>
-	SolidFluidInteraction<TDataType>::SolidFluidInteraction()
-		: Node()
+	SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
+		: Node(name)
 	{
 		setName("default");
-		construct();
-	}
-
-	template<typename TDataType>
-	Physika::SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
-	{
-		setName(name);
-		construct();
 	}
 
 	template<typename TDataType>
@@ -48,11 +40,5 @@ namespace Physika
 	bool SolidFluidInteraction<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
 	{
 		return false;
-	}
-
-	template<typename TDataType>
-	void SolidFluidInteraction<TDataType>::construct()
-	{
-
 	}
 }

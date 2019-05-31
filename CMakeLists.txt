@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)                                                            #指定CMake的最低版本为3.10。若版本过低，请自行升级CMake
+﻿cmake_minimum_required(VERSION 3.10)                                                            #指定CMake的最低版本为3.10。若版本过低，请自行升级CMake
 
 project(Physika LANGUAGES CXX CUDA)                                                             #指定本项目的编译语言为C++、CUDA
 find_package(Qt5 COMPONENTS Core Widgets)                                                       #查找qt包,可选项
@@ -15,7 +15,7 @@ set(CMAKE_CUDA_FLAGS "-arch=sm_30")                                         #默
 include_directories("Physika_Src")                                                              #默认为本项目下各编译目标添加Physika_Src/ 目录
 
 # temporary solution to solve linux compilation problem. our header file path should begin with Physika_Core this level
-include_directories("Physika_Src/Physika_Core" "Physika_Src/Physika_Dynamic" "Physika_Src/Physika_Framework" "Physika_Src/Physika_Geometry" "Physika_Src/Physika_GUI" "Physika_Src/Physika_IO" "Physika_Src/Physika_Render")
+include_directories("Physika_Src/Physika_Core" "Physika_Src/Physika_Dynamic" "Physika_Src/Physika_Framework" "Physika_Src/Physika_GUI" "Physika_Src/Physika_IO" "Physika_Src/Physika_Render")
 
 
 include_directories("Extern")                                           #默认为本项目下各编译目标添加Physika_Src/Physika_Dependency/ 目录

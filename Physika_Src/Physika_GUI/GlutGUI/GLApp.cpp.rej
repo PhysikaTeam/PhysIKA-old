@@ -1,0 +1,14 @@
+diff a/Physika_Src/Physika_GUI/GlutGUI/GLApp.cpp b/Physika_Src/Physika_GUI/GlutGUI/GLApp.cpp	(rejected hunks)
+@@ -359,12 +359,8 @@
+ 		cur_window->drawFrameRate();
+ 	}
+ 
+-	cur_window->drawBoundingBox(scenegraph.getLowerBound(), scenegraph.getUpperBound());
+-
+ 	scenegraph.draw();
+ 
+-	glPopMatrix();
+-
+     glutPostRedisplay();
+     glutSwapBuffers();
+ }

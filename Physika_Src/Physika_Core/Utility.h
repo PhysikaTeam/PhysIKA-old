@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Utility/physika_exception.h"
-#include "Utility/physika_assert.h"
 #include "Utility/global_config.h"
 #include "Utility/physika_assert.h"
 #include "Utility/type_utilities.h"

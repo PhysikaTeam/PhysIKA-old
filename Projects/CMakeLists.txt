@@ -31,7 +31,7 @@ foreach(PROJECT_NAME IN ITEMS ${PROJECTS_NAMES})
 
     add_executable(${PROJECT_NAME} ${SRC_LIST})                                                                 #添加编译目标 可执行文件
     target_link_libraries(${PROJECT_NAME} PUBLIC Physika_Core)
-    target_link_libraries(${PROJECT_NAME} PUBLIC Physika_Core Physika_Framework Physika_Geometry Physika_IO Physika_Render ParticleSystem RigidBody GlutGUI)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Physika_Core Physika_Framework Physika_IO Physika_Render ParticleSystem RigidBody GlutGUI)
 
     file(RELATIVE_PATH PROJECT_PATH_REL "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")                  #判断当前project在根目录下的相对路径
     set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "${PROJECT_PATH_REL}")                              #为project设定folder目录

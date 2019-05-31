@@ -154,8 +154,8 @@ bool GLApp::saveScreen()
 
 void GLApp::drawFrameRate()
 {
-    if(!glutGet(GLUT_INIT_STATE))  //window is not created
-        throw PhysikaException("Cannot display frame rate before a window is created.");
+	if (!glutGet(GLUT_INIT_STATE))  //window is not created
+		exit(0);
     if(display_fps_)
     {
         static unsigned int frame = 0, time = 0, time_base = 0;
@@ -349,6 +349,14 @@ void GLApp::displayFunction(void)
     glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glPushMatrix();
+
+	glPushMatrix();
+
+	glPushMatrix();
+
+	glPushMatrix();
+
 	if (cur_window->isShowBackground())
 	{
 		cur_window->drawBackground();
@@ -359,7 +367,11 @@ void GLApp::displayFunction(void)
 		cur_window->drawFrameRate();
 	}
 
+	cur_window->drawBoundingBox(scenegraph.getLowerBound(), scenegraph.getUpperBound());
+
 	scenegraph.draw();
+
+	glPopMatrix();
 
     glutPostRedisplay();
     glutSwapBuffers();
@@ -644,7 +656,50 @@ void GLApp::drawAxis()
 	glPopMatrix();
 }
 
-void GLApp::drawString(std::string s, const Color &color, int x, int y)
+void GLApp::drawBoundingBox(Vector3f lo, Vector3f hi)
+{
+	glPushMatrix();
+
+	glColor3f(0.8, 0.8, 0.8);
+	glLineWidth(3);
+	glBegin(GL_LINES);
+	glVertex3f(lo[0], lo[1], lo[2]);
+	glVertex3f(hi[0], lo[1], lo[2]);
+	glVertex3f(lo[0], lo[1], lo[2]);
+	glVertex3f(lo[0], hi[1], lo[2]);
+	glVertex3f(lo[0], lo[1], lo[2]);
+	glVertex3f(lo[0], lo[1], hi[2]);
+
+	glVertex3f(hi[0], lo[1], lo[2]);
+	glVertex3f(hi[0], hi[1], lo[2]);
+
+	glVertex3f(hi[0], lo[1], lo[2]);
+	glVertex3f(hi[0], lo[1], hi[2]);
+
+	glVertex3f(lo[0], lo[1], hi[2]);
+	glVertex3f(hi[0], lo[1], hi[2]);
+
+	glVertex3f(lo[0], lo[1], hi[2]);
+	glVertex3f(lo[0], hi[1], hi[2]);
+
+	glVertex3f(lo[0], hi[1], hi[2]);
+	glVertex3f(lo[0], hi[1], lo[2]);
+
+	glVertex3f(lo[0], hi[1], lo[2]);
+	glVertex3f(hi[0], hi[1], lo[2]);
+
+	glVertex3f(lo[0], hi[1], hi[2]);
+	glVertex3f(hi[0], hi[1], hi[2]);
+	glVertex3f(hi[0], lo[1], hi[2]);
+	glVertex3f(hi[0], hi[1], hi[2]);
+	glVertex3f(hi[0], hi[1], lo[2]);
+	glVertex3f(hi[0], hi[1], hi[2]);
+	glEnd();
+
+	glPopMatrix();
+}
+
+void GLApp::drawString(std::string s, Color &color, int x, int y)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 

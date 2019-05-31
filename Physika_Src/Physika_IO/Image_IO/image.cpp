@@ -29,8 +29,8 @@ Image::Image()
 Image::Image(unsigned int width, unsigned int height, Image::DataFormat data_format, const unsigned char *raw_data)
     :width_(width),height_(height),data_format_(data_format),raw_data_(NULL)
 {
-    if(raw_data==NULL)
-        throw PhysikaException("Pointer to image data is NULL.");
+	if (raw_data == NULL)
+		exit(0);
     allocMemory();
     unsigned int data_size = sizeof(unsigned char)*pixelSize()*width_*height_;
     memcpy(raw_data_,raw_data,data_size);
@@ -80,8 +80,8 @@ unsigned char* Image::rawData()
 
 void Image::setRawData(unsigned int width, unsigned int height, DataFormat data_format, const unsigned char *raw_data)
 {
-    if(raw_data==NULL)
-        throw PhysikaException("Pointer to image data is NULL.");
+	if (raw_data == NULL)
+		exit(0);
     width_ = width;
     height_ = height;
     data_format_ = data_format;

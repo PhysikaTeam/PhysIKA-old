@@ -16,6 +16,7 @@ namespace Physika
 	{
 		auto pbf = std::make_shared<PositionBasedFluidModel<TDataType>>();
 		this->setNumericalModel(pbf);
+		getVelocity()->connect(getRenderModule()->m_vecIndex);
 		this->getPosition()->connect(pbf->m_position);
 		this->getVelocity()->connect(pbf->m_velocity);
 		this->getForce()->connect(pbf->m_forceDensity);
