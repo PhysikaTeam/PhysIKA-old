@@ -2,8 +2,8 @@
 
 set(PROJECTS_NAMES App_Test App_SingleFluid App_Elasticity App_Plasticity)
 
-link_directories("${PROJECT_SOURCE_DIR}/Physika_Src")                                                           # 设置库路径
-link_libraries(Physika_Core Physika_Framework Physika_IO Physika_Render)
+link_directories("${PROJECT_SOURCE_DIR}/Engine")                                                           # 设置库路径
+link_libraries(Core Framework IO Rendering)
 link_libraries(ParticleSystem RigidBody)
 link_libraries(GlutGUI)
 
@@ -30,8 +30,8 @@ foreach(PROJECT_NAME IN ITEMS ${PROJECTS_NAMES})
     list(FILTER SRC_LIST EXCLUDE REGEX .*Media/.*)                                                              #排除deprecated 文件下面的所有文件
 
     add_executable(${PROJECT_NAME} ${SRC_LIST})                                                                 #添加编译目标 可执行文件
-    target_link_libraries(${PROJECT_NAME} PUBLIC Physika_Core)
-    target_link_libraries(${PROJECT_NAME} PUBLIC Physika_Core Physika_Framework Physika_IO Physika_Render ParticleSystem RigidBody GlutGUI)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Core)
+    target_link_libraries(${PROJECT_NAME} PUBLIC Core Framework IO Rendering ParticleSystem RigidBody GlutGUI)
 
     file(RELATIVE_PATH PROJECT_PATH_REL "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")                  #判断当前project在根目录下的相对路径
     set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "${PROJECT_PATH_REL}")                              #为project设定folder目录

@@ -5,31 +5,31 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
-#include "Physika_GUI/GlutGUI/GLApp.h"
+#include "GUI/GlutGUI/GLApp.h"
 
-#include "Physika_Framework/Framework/SceneGraph.h"
-#include "Physika_Framework/Topology/PointSet.h"
-#include "Physika_Framework/Framework/Log.h"
+#include "Framework/Framework/SceneGraph.h"
+#include "Framework/Topology/PointSet.h"
+#include "Framework/Framework/Log.h"
 
-#include "Physika_Render/PointRenderModule.h"
+#include "Rendering/PointRenderModule.h"
 
-#include "Physika_Dynamics/ParticleSystem/PositionBasedFluidModel.h"
-#include "Physika_Dynamics/ParticleSystem/Peridynamics.h"
+#include "Dynamics/ParticleSystem/PositionBasedFluidModel.h"
+#include "Dynamics/ParticleSystem/Peridynamics.h"
 
-#include "Physika_Framework/Collision/CollidableSDF.h"
-#include "Physika_Framework/Collision/CollidablePoints.h"
-#include "Physika_Framework/Collision/CollisionSDF.h"
-#include "Physika_Framework/Framework/Gravity.h"
-#include "Physika_Dynamics/ParticleSystem/FixedPoints.h"
-#include "Physika_Framework/Collision/CollisionPoints.h"
-#include "Physika_Framework/Framework/DataFlow.h"
-#include "Physika_Dynamics/ParticleSystem/ParticleSystem.h"
-#include "Physika_Dynamics/ParticleSystem/ParticleFluid.h"
-#include "Physika_Dynamics/ParticleSystem/ParticleElasticBody.h"
-#include "Physika_Dynamics/ParticleSystem/ParticleElastoplasticBody.h"
-#include "Physika_Dynamics/RigidBody/RigidBody.h"
-#include "Physika_Dynamics/ParticleSystem/StaticBoundary.h"
-#include "Physika_Dynamics/ParticleSystem/SolidFluidInteraction.h"
+#include "Framework/Collision/CollidableSDF.h"
+#include "Framework/Collision/CollidablePoints.h"
+#include "Framework/Collision/CollisionSDF.h"
+#include "Framework/Framework/Gravity.h"
+#include "Dynamics/ParticleSystem/FixedPoints.h"
+#include "Framework/Collision/CollisionPoints.h"
+#include "Framework/Framework/DataFlow.h"
+#include "Dynamics/ParticleSystem/ParticleSystem.h"
+#include "Dynamics/ParticleSystem/ParticleFluid.h"
+#include "Dynamics/ParticleSystem/ParticleElasticBody.h"
+#include "Dynamics/ParticleSystem/ParticleElastoplasticBody.h"
+#include "Dynamics/RigidBody/RigidBody.h"
+#include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Dynamics/ParticleSystem/SolidFluidInteraction.h"
 
 using namespace std;
 using namespace Physika;

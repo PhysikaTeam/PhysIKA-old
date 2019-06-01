@@ -5,14 +5,14 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
-#include "Physika_GUI/GlutGUI/GLApp.h"
+#include "GUI/GlutGUI/GLApp.h"
 
-#include "Physika_Framework/Framework/SceneGraph.h"
-#include "Physika_Framework/Framework/Log.h"
+#include "Framework/Framework/SceneGraph.h"
+#include "Framework/Framework/Log.h"
 
-#include "Physika_Dynamics/ParticleSystem/ParticleFluid.h"
-#include "Physika_Dynamics/RigidBody/RigidBody.h"
-#include "Physika_Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Dynamics/ParticleSystem/ParticleFluid.h"
+#include "Dynamics/RigidBody/RigidBody.h"
+#include "Dynamics/ParticleSystem/StaticBoundary.h"
 
 using namespace std;
 using namespace Physika;
