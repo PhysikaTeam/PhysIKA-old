@@ -118,7 +118,7 @@ namespace Physika
 	template<typename TDataType>
 	DensityPBD<TDataType>::DensityPBD()
 		: ConstraintModule()
-		, m_maxIteration(5)
+		, m_maxIteration(2)
 	{
 		m_restDensity.setValue(Real(1000));
 		m_smoothingLength.setValue(Real(0.011));

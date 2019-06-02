@@ -22,26 +22,33 @@ namespace Physika
 {
 	IMPLEMENT_CLASS_1(MultifluidModel, TDataType)
 
-    template <typename Real, typename Coord>
-    __global__ void UpdateColor(DeviceArray<Vector3f> colorArr,
-                                DeviceArray<Coord> posArr) {
-        int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.size()) return;
-		colorArr[pId] = posArr[pId];
-		colorArr[pId][0] = posArr[pId][0] > Real(0.5) ? 1 : 0;
+	template <typename Real, typename Coord, typename PhaseVector>
+	__global__ void UpdateMassInv(
+		DeviceArray<Real> massInvArr,
+		DeviceArray<PhaseVector> cArr,
+		PhaseVector rho0) {
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= cArr.size()) return;
+		Real rho = rho0.dot(cArr[pId]);
+		massInvArr[pId] = Real(1)/rho;
 	}
-    template <typename Real, typename Coord>
-    __global__ void Init(DeviceArray<Coord> posArr,
-						 DeviceArray<Vector3f> colorArr,
-						 DeviceArray<Real> massInvArr) {
+	template <typename Real, typename Coord, typename PhaseVector>
+	__global__ void UpdateColor(DeviceArray<Vector3f> colorArr,
+								DeviceArray<PhaseVector> cArr) {
+        int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= cArr.size()) return;
+		auto c = cArr[pId];
+		colorArr[pId] = {c[0],c[0],c[1]};
+	}
+    template <typename Real, typename Coord, typename PhaseVector>
+    __global__ void InitConcentration(DeviceArray<Coord> posArr,
+						 DeviceArray<PhaseVector> cArr) {
         int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
-		if (posArr[pId][0] > 0.5) {
-			colorArr[pId] = {1, 0, 0};
-			massInvArr[pId] = 1;
+		if (pId % 2 == 0) {
+			cArr[pId] = {0.6, 0.4};
 		} else {
-			colorArr[pId] = {0, 1, 0};
-			massInvArr[pId] = 5;
+			cArr[pId] = {0.4, 0.6};
 		}
     }
 
@@ -51,6 +58,7 @@ namespace Physika
 		, m_pNum(0)
 	{
 		m_smoothingLength.setValue(Real(0.044));
+		m_restDensity.setValue(PhaseVector(1, 5));
 
 		initField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
 
@@ -71,11 +79,12 @@ namespace Physika
 	{
 		this->NumericalModel::initializeImpl();
 
+		m_concentration.setElementCount(m_position.getElementCount());
 		m_massInv.setElementCount(m_position.getElementCount());
         int num = m_position.getElementCount();
         uint pDims = cudaGridSize(num, BLOCK_SIZE);
-        Init<Real, Coord>
-            <<<pDims, BLOCK_SIZE>>>(m_position.getValue(), m_color.getValue(), m_massInv.getValue());
+        InitConcentration<Real, Coord, PhaseVector>
+            <<<pDims, BLOCK_SIZE>>>(m_position.getValue(), m_concentration.getValue());
 
 
 		Node* parent = getParent();
@@ -112,6 +121,14 @@ namespace Physika
 		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
 		m_pbdModule->initialize();
 
+		m_phaseSolver = std::make_shared<CahnHilliard<TDataType>>();
+		m_position.connect(m_phaseSolver->m_position);
+		m_concentration.connect(m_phaseSolver->m_concentration);
+		m_nbrQuery->m_neighborhood.connect(m_phaseSolver->m_neighborhood);
+		m_smoothingLength.connect(m_phaseSolver->m_smoothingLength);
+		m_phaseSolver->initialize();
+
+
 		m_integrator = std::make_shared<ParticleIntegrator<TDataType>>();
 		m_position.connect(m_integrator->m_position);
 		m_velocity.connect(m_integrator->m_velocity);
@@ -128,6 +145,7 @@ namespace Physika
 
 		m_nbrQuery->setParent(parent);
 		m_integrator->setParent(parent);
+		m_phaseSolver->setParent(parent);
 		m_pbdModule->setParent(parent);
 		m_visModule->setParent(parent);
 // 
@@ -146,6 +164,9 @@ namespace Physika
 			Log::sendMessage(Log::Error, "Parent not set for ParticleSystem!");
 			return;
 		}
+
+		int num = m_position.getElementCount();
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 		m_integrator->begin();
 
 		m_nbrQuery->compute();
@@ -158,7 +179,11 @@ namespace Physika
 		}
 
 		m_integrator->integrate();
+
+		m_phaseSolver->integrate();
 		
+		UpdateMassInv<Real, Coord, PhaseVector><<<pDims, BLOCK_SIZE>>>(
+            m_massInv.getValue(), m_concentration.getValue(), m_restDensity.getValue());
 		m_pbdModule->constrain();
 
 		m_visModule->constrain();
@@ -170,10 +195,9 @@ namespace Physika
 		}
 		
 		m_integrator->end();
-		// int num = m_position.getElementCount();
-		// uint pDims = cudaGridSize(num, BLOCK_SIZE);
-		// UpdateColor<Real, Coord><<<pDims, BLOCK_SIZE>>>(
-        //     m_color.getValue(), m_position.getValue());
+
+		UpdateColor<Real, Coord><<<pDims, BLOCK_SIZE>>>(
+            m_color.getValue(), m_concentration.getValue());
 	}
 
 	template<typename TDataType>

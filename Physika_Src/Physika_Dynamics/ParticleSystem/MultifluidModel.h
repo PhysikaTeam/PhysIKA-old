@@ -4,6 +4,8 @@
 #include "Physika_Framework/Framework/FieldArray.h"
 #include "Physika_Framework/Topology/FieldNeighbor.h"
 
+#include "CahnHilliard.h"
+
 namespace Physika
 {	
 	template<typename TDataType> class PointSetToPointSet;
@@ -25,8 +27,7 @@ namespace Physika
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
-        enum { PhaseCount = 2 };
-        using phaseVector = Vector<Real, PhaseCount>;
+		using PhaseVector = typename CahnHilliard<TDataType>::PhaseVector;
 
 
 		MultifluidModel();
@@ -35,7 +36,7 @@ namespace Physika
 		void step(Real dt) override;
 
 		void setSmoothingLength(Real len) { m_smoothingLength.setValue(len); }
-		void setRestDensity(phaseVector rho) { m_restDensity = rho; }
+		void setRestDensity(PhaseVector rho) { m_restDensity = rho; }
 
 		void setIncompressibilitySolver(std::shared_ptr<ConstraintModule> solver);
 		void setViscositySolver(std::shared_ptr<ConstraintModule> solver);
@@ -43,16 +44,14 @@ namespace Physika
 
 	public:
 		VarField<Real> m_smoothingLength;
-		VarField<phaseVector> m_restDensity;
-		VarField<Real> m_degenerateMobilityM;
-		VarField<Real> m_interfaceDiffusionEpsilon;
+		VarField<PhaseVector> m_restDensity;
 		// m_helmholtzFunction;
 
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Vector3f> m_color;
 		DeviceArrayField<Coord> m_velocity;
 		DeviceArrayField<Real> m_massInv; // for pbd constraints
-        DeviceArrayField<phaseVector> m_concentration;
+        DeviceArrayField<PhaseVector> m_concentration;
 
 		DeviceArrayField<Coord> m_forceDensity;
 
@@ -65,6 +64,8 @@ namespace Physika
 		std::shared_ptr<ForceModule> m_surfaceTensionSolver;
 		std::shared_ptr<ConstraintModule> m_viscositySolver;
 		std::shared_ptr<ConstraintModule> m_incompressibilitySolver;
+
+		std::shared_ptr<CahnHilliard<TDataType>> m_phaseSolver;
 
 		std::shared_ptr<DensityPBD<TDataType>> m_pbdModule;
 		std::shared_ptr<ImplicitViscosity<TDataType>> m_visModule;
