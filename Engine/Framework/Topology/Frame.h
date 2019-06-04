@@ -1,6 +1,6 @@
 #pragma once
 #include "Framework/Framework/ModuleTopology.h"
-#include "Core/vector.h"
+#include "Core/Vector.h"
 
 
 namespace Physika

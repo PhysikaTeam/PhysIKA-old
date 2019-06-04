@@ -68,7 +68,7 @@ namespace Physika
 	template<typename TDataType>
 	bool SolidFluidInteraction<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
 	{
-		return nullptr;
+		return false;
 	}
 
 	template<typename TDataType>
@@ -77,7 +77,7 @@ namespace Physika
 		this->addChild(child);
 		m_particleSystems.push_back(child);
 
-		return nullptr;
+		return false;
 	}
 
 	template<typename Real, typename Coord>
