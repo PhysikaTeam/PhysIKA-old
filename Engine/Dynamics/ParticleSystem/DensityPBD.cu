@@ -150,7 +150,7 @@ namespace Physika
 
 		if (!isAllFieldsReady())
 		{
-			std::cout << "Exception: " << std::string("DensityPBD's fields are not fully initialized!") << "\n";
+			std::cout << "Exception: " << std::string("DensityPBD's fields are not fully initialized!") << std::endl;
 			return false;
 		}
 
@@ -222,4 +222,10 @@ namespace Physika
 			m_deltaPos,
 			dt);
 	}
+
+#ifdef PRECISION_FLOAT
+	template class DensityPBD<DataType3f>;
+#else
+ 	template class DensityPBD<DataType3d>;
+#endif
 }
