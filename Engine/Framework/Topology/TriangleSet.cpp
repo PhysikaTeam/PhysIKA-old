@@ -8,7 +8,7 @@ namespace Physika
 {
 	template<typename TDataType>
 	TriangleSet<TDataType>::TriangleSet()
-		: EdgeSet()
+		: EdgeSet<TDataType>()
 	{
 		std::vector<Coord> positions;
 		std::vector<Coord> normals;
@@ -117,8 +117,8 @@ namespace Physika
 			normalList.resize(vertList.size());
 		}
 
-		setPoints(vertList);
-		setNormals(normalList);
+		this->setPoints(vertList);
+		this->setNormals(normalList);
 		setTriangles(faceList);
 	}
 

@@ -53,9 +53,5 @@ namespace Physika {
 	};
 
 
-#ifdef PRECISION_FLOAT
-	template class DensityPBD<DataType3f>;
-#else
- 	template class DensityPBD<DataType3d>;
-#endif
+
 }

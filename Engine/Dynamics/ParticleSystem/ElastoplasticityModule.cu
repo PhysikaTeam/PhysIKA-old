@@ -12,8 +12,8 @@ namespace Physika
 	ElastoplasticityModule<TDataType>::ElastoplasticityModule()
 		: ElasticityModule<TDataType>()
 	{
-		attachField(&m_c, "c", "cohesion!", false);
-		attachField(&m_phi, "phi", "friction angle!", false);
+		this->attachField(&m_c, "c", "cohesion!", false);
+		this->attachField(&m_phi, "phi", "friction angle!", false);
 
 		m_c.setValue(0.001);
 		m_phi.setValue(60.0 / 180.0);

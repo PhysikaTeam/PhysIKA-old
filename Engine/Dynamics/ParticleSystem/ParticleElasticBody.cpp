@@ -24,7 +24,7 @@ namespace Physika
 		this->getForce()->connect(peri->m_forceDensity);
 
 		//Create a node for surface mesh rendering
-		m_surfaceNode = this->createChild<Node>("Mesh");
+		m_surfaceNode = this->template createChild<Node>("Mesh");
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 		m_surfaceNode->setTopologyModule(triSet);
@@ -33,7 +33,7 @@ namespace Physika
 		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
 		m_surfaceNode->addVisualModule(render);
 
-		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(m_pSet, triSet);
+		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(this->m_pSet, triSet);
 		this->addTopologyMapping(surfaceMapping);
 	}
 
@@ -78,8 +78,8 @@ namespace Physika
 	template<typename TDataType>
 	void ParticleElasticBody<TDataType>::updateTopology()
 	{
-		auto pts = m_pSet->getPoints();
-		Function1Pt::copy(pts, getPosition()->getValue());
+		auto pts = this->m_pSet->getPoints();
+		Function1Pt::copy(pts, this->getPosition()->getValue());
 
 		auto tMappings = this->getTopologyMappingList();
 		for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)
