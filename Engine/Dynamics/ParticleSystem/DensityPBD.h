@@ -39,11 +39,9 @@ namespace Physika {
 
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
-
-		DeviceArrayField<Real> m_density;
-
 		NeighborField<int> m_neighborhood;
 
+		DeviceArrayField<Real> m_density;
 	private:
 		int m_maxIteration;
 

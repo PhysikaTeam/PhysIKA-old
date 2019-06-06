@@ -18,6 +18,7 @@ public:
 	void setPositionID(FieldID id) { m_posID = id; }
 	void setVelocityID(FieldID id) { m_velID = id; }
 
+
 	virtual bool constrain() { return true; }
 
 	std::string getModuleType() override { return "ConstraintModule"; }

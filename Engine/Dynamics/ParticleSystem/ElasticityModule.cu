@@ -445,16 +445,12 @@ namespace Physika
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= velArr.size()) return;
 
-		velArr[pId] += 0.9f*(curPos[pId] - prePos[pId]) / dt;
+		velArr[pId] += (curPos[pId] - prePos[pId]) / dt;
 	}
 
 	template<typename TDataType>
 	ElasticityModule<TDataType>::ElasticityModule()
 		: ConstraintModule()
-		, m_invK(NULL)
-		, m_tmpPos(NULL)
-		, m_lambdas(NULL)
-		, m_accPos(NULL)
 	{
 		attachField(&m_horizon, "horizon", "Supporting radius!", false);
 		attachField(&m_distance, "distance", "The sampling distance!", false);
@@ -471,6 +467,24 @@ namespace Physika
  		m_lambda.setValue(0.1);
 	}
 
+
+	template<typename TDataType>
+	ElasticityModule<TDataType>::~ElasticityModule()
+	{
+		m_lambdas.release();
+		m_accPos.release();
+		m_invK.release();
+		m_F.release();
+		m_oldPosition.release();
+	}
+
+	template<typename TDataType>
+	void ElasticityModule<TDataType>::takeOneIteration()
+	{
+
+	}
+
+
 	template<typename TDataType>
 	void ElasticityModule<TDataType>::solveElasticity()
 	{
@@ -486,14 +500,10 @@ namespace Physika
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
-		auto matArr = m_invK->getReference();
-		auto lambda = m_lambdas->getReference();
-		auto accPos = m_accPos->getReference();
-
 		Function1Pt::copy(m_oldPosition, m_position.getValue());
 
 		EM_PrecomputeShape <Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
-			m_invK->getValue(),
+			m_invK,
 			m_restShape.getValue(),
 			m_horizon.getValue());
 		cuSynchronize();
@@ -502,21 +512,21 @@ namespace Physika
 		int itor = 0;
 		while (itor < total_itoration)
 		{
-			accPos->reset();
-			lambda->reset();
+			m_accPos.reset();
+			m_lambdas.reset();
 //			Function1Pt::copy(*accPos, m_position.getValue());
 
 			EM_ComputeDeformationGradient << <pDims, BLOCK_SIZE >> > (
 				m_F,
-				m_invK->getValue(),
+				m_invK,
 				m_position.getValue(),
 				m_restShape.getValue(),
 				m_horizon.getValue());
 			cuSynchronize();
 
 			EM_EnforceElasticity << <pDims, BLOCK_SIZE >> > (
-				*accPos,
-				*lambda,
+				m_accPos,
+				m_lambdas,
 				m_bulkCoefs,
 				m_position.getValue(),
 				m_oldPosition,
@@ -531,16 +541,9 @@ namespace Physika
 			K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
 				m_position.getValue(),
 				m_oldPosition,
-				*accPos,
-				*lambda);
+				m_accPos,
+				m_lambdas);
 			cuSynchronize();
-
-// 			K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
-// 				m_position.getValue(),
-// 				*accPos,
-// 				m_restShape.getValue(),
-// 				m_horizon.getValue());
-// 			cuSynchronize();
 
 			m_pbdModule->takeOneIteration(dt);
 
@@ -612,25 +615,25 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void ElasticityModule<TDataType>::constructRestShape(NeighborList<int>& nbr, DeviceArray<Coord>& pos)
+	void ElasticityModule<TDataType>::resetRestShape()
 	{
-		m_restShape.setElementCount(nbr.size());
-		m_restShape.getValue().getIndex().resize(nbr.getIndex().size());
+		m_restShape.setElementCount(m_neighborhood.getValue().size());
+		m_restShape.getValue().getIndex().resize(m_neighborhood.getValue().getIndex().size());
 
-		if (nbr.isLimited())
+		if (m_neighborhood.getValue().isLimited())
 		{
-			m_restShape.getValue().setNeighborLimit(nbr.getNeighborLimit());
+			m_restShape.getValue().setNeighborLimit(m_neighborhood.getValue().getNeighborLimit());
 		}
 		else
 		{
-			m_restShape.getValue().getElements().resize(nbr.getElements().size());
+			m_restShape.getValue().getElements().resize(m_neighborhood.getValue().getElements().size());
 		}
 
-		Function1Pt::copy(m_restShape.getValue().getIndex(), nbr.getIndex());
+		Function1Pt::copy(m_restShape.getValue().getIndex(), m_neighborhood.getValue().getIndex());
 
-		uint pDims = cudaGridSize(pos.size(), BLOCK_SIZE);
+		uint pDims = cudaGridSize(m_position.getValue().size(), BLOCK_SIZE);
 
-		K_UpdateRestShape<< <pDims, BLOCK_SIZE >> > (m_restShape.getValue(), nbr, pos);
+		K_UpdateRestShape<< <pDims, BLOCK_SIZE >> > (m_restShape.getValue(), m_neighborhood.getValue(), m_position.getValue());
 		cuSynchronize();
 	}
 
@@ -653,21 +656,17 @@ namespace Physika
 		}
 
 		int num = m_position.getElementCount();
-		if (NULL == m_invK)
-			m_invK = new DeviceArrayField<Matrix>(num);
-		if (NULL == m_tmpPos)
-			m_tmpPos = new DeviceArrayField<Coord>(num);
-		if (NULL == m_lambdas)
-			m_lambdas = new DeviceArrayField<Real>(num);
-		if (NULL == m_accPos)
-			m_accPos = new DeviceArrayField<Coord>(num);
+		
+		m_invK.resize(num);
+		m_lambdas.resize(num);
+		m_accPos.resize(num);
 
 		m_F.resize(num);
 		
 		m_oldPosition.resize(num);
 		m_bulkCoefs.resize(num);
 
-		constructRestShape(m_neighborhood.getValue(), m_position.getValue());
+		resetRestShape();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
 		m_horizon.connect(m_pbdModule->m_smoothingLength);

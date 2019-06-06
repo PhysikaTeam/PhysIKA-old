@@ -180,7 +180,7 @@ namespace Physika
 	template<typename TDataType>
 	bool DensityPBD<TDataType>::constrain()
 	{
-		Real dt = getParent()->getDt();
+		Real dt = this->getParent()->getDt();
 
 		int it = 0;
 		while (it < m_maxIteration)

@@ -1,2 +1,2 @@
-**Physika**
-Should be rewritten!
+**PhysIKA**
+Physics-based Interactive Kinematics Architecture!

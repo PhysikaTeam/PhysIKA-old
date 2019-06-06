@@ -11,8 +11,10 @@
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Framework/Log.h"
 
-#include "Dynamics/ParticleSystem/ParticleElasticBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Dynamics/RigidBody/RigidBody.h"
+
+#include "ParticleViscoplasticBody.h"
 
 using namespace std;
 using namespace Physika;
@@ -38,16 +40,23 @@ void CreateScene()
 	SceneGraph& scene = SceneGraph::getInstance();
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
+	root->loadSDF("../Media/bar/bar.sdf", false);
+	root->translate(Vector3f(0.2f, 0.2f, 0));
 	root->loadCube(Vector3f(0), Vector3f(1), true);
 
-	std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>();
+	std::shared_ptr<ParticleViscoplasticBody<DataType3f>> child3 = std::make_shared<ParticleViscoplasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
 	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
 	child3->setMass(1.0);
   	child3->loadParticles("../Media/bunny/bunny_points.obj");
   	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
-	child3->translate(Vector3f(0.5, 0.2, 0.5));
-	child3->setVisible(false);
+	child3->translate(Vector3f(0.3, 0.4, 0.5));
+
+	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
+	root->addRigidBody(rigidbody);
+	rigidbody->loadShape("../Media/bar/bar.obj");
+	rigidbody->setActive(false);
+	rigidbody->translate(Vector3f(0.2f, 0.2f, 0));
 }
 
 

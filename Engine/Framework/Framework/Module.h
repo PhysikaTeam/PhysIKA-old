@@ -22,11 +22,11 @@ public:
 
 	bool initialize();
 
-	virtual void beforeExecution() {};
+	virtual void begin() {};
 
 	virtual bool execute() { return false; }
 
-	virtual void afterExecution() {};
+	virtual void end() {};
 
 	void setParent(Node* node) {
 		m_node = node;

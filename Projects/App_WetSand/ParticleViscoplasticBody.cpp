@@ -1,26 +1,23 @@
-#include "ParticleElastoplasticBody.h"
-#include "PositionBasedFluidModel.h"
-
+#include "ParticleViscoplasticBody.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
 #include "Rendering/SurfaceMeshRender.h"
 #include "Rendering/PointRenderModule.h"
 #include "Core/Utility.h"
-#include "Peridynamics.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
 #include "Framework/Topology/NeighborQuery.h"
-#include "ParticleIntegrator.h"
-#include "ElastoplasticityModule.h"
+#include "Dynamics/ParticleSystem/ParticleIntegrator.h"
+#include "Dynamics/ParticleSystem/ElastoplasticityModule.h"
 
-#include "DensityPBD.h"
-#include "ImplicitViscosity.h"
+#include "Dynamics/ParticleSystem/DensityPBD.h"
+#include "Dynamics/ParticleSystem/ImplicitViscosity.h"
 
 namespace Physika
 {
-	IMPLEMENT_CLASS_1(ParticleElastoplasticBody, TDataType)
+	IMPLEMENT_CLASS_1(ParticleViscoplasticBody, TDataType)
 
 	template<typename TDataType>
-	ParticleElastoplasticBody<TDataType>::ParticleElastoplasticBody(std::string name)
+	ParticleViscoplasticBody<TDataType>::ParticleViscoplasticBody(std::string name)
 		: ParticleSystem(name)
 	{
 		m_horizon.setValue(0.0085);
@@ -42,6 +39,8 @@ namespace Physika
 		m_position.connect(m_plasticity->m_position);
 		m_velocity.connect(m_plasticity->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_plasticity->m_neighborhood);
+		m_plasticity->setFrictionAngle(0);
+		m_plasticity->setCohesion(0.0);
 		//m_plasticity->initialize();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
@@ -75,18 +74,20 @@ namespace Physika
 		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
 		m_surfaceNode->addVisualModule(render);
 
+		m_surfaceNode->setVisible(false);
+
 		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(m_pSet, triSet);
 		this->addTopologyMapping(surfaceMapping);
 	}
 
 	template<typename TDataType>
-	ParticleElastoplasticBody<TDataType>::~ParticleElastoplasticBody()
+	ParticleViscoplasticBody<TDataType>::~ParticleViscoplasticBody()
 	{
 		
 	}
 
 	template<typename TDataType>
-	void ParticleElastoplasticBody<TDataType>::advance(Real dt)
+	void ParticleViscoplasticBody<TDataType>::advance(Real dt)
 	{
 		m_integrator->begin();
 
@@ -97,6 +98,7 @@ namespace Physika
 		m_nbrQuery->compute();
 
 		m_plasticity->applyPlasticity();
+		m_plasticity->resetRestShape();
 
 		m_visModule->constrain();
 
@@ -104,7 +106,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void ParticleElastoplasticBody<TDataType>::updateTopology()
+	void ParticleViscoplasticBody<TDataType>::updateTopology()
 	{
 		auto pts = m_pSet->getPoints();
 		Function1Pt::copy(pts, getPosition()->getValue());
@@ -117,7 +119,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	bool ParticleElastoplasticBody<TDataType>::initialize()
+	bool ParticleViscoplasticBody<TDataType>::initialize()
 	{
 		m_nbrQuery->initialize();
 		m_nbrQuery->compute();
@@ -126,13 +128,13 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void ParticleElastoplasticBody<TDataType>::loadSurface(std::string filename)
+	void ParticleViscoplasticBody<TDataType>::loadSurface(std::string filename)
 	{
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->loadObjFile(filename);
 	}
 
 	template<typename TDataType>
-	bool ParticleElastoplasticBody<TDataType>::translate(Coord t)
+	bool ParticleViscoplasticBody<TDataType>::translate(Coord t)
 	{
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
 
@@ -140,7 +142,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	bool ParticleElastoplasticBody<TDataType>::scale(Real s)
+	bool ParticleViscoplasticBody<TDataType>::scale(Real s)
 	{
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->scale(s);
 

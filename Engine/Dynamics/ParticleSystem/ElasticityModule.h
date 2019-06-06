@@ -17,16 +17,21 @@ namespace Physika {
 		typedef TPair<TDataType> NPair;
 
 		ElasticityModule();
-		~ElasticityModule() override {};
+		~ElasticityModule() override;
 		
 		bool constrain() override;
 
 		void solveElasticity();
 
-		void constructRestShape(NeighborList<int>& nbr, DeviceArray<Coord>& pos);
+		void takeOneIteration();
 
+		void resetRestShape();
 
-		void setHorizon(Real len) { m_horizon = len; }
+		void setMu(Real mu) { m_mu.setValue(mu); };
+		void setLambda(Real lambda) { m_lambda.setValue(lambda); }
+
+		void setHorizon(Real len) { m_horizon.setValue(len); }
+		void setIterationNumber(int num) { m_interation = num; }
 
 		DeviceArray<Real>& getDensity()
 		{
@@ -36,30 +41,53 @@ namespace Physika {
 	protected:
 		bool initializeImpl() override;
 
-
 	public:
+		/**
+		 * @brief Horizon
+		 * A positive number represents the radius of neighborhood for each point
+		 */
 		VarField<Real> m_horizon;
+		/**
+		 * @brief Sampling distance
+		 * Indicate the sampling distance when particles are created.
+		 */
 		VarField<Real> m_distance;
 
-		VarField<Real> m_mu;
-		VarField<Real> m_lambda;
-
+		/**
+		 * @brief Particle position
+		 */
 		DeviceArrayField<Coord> m_position;
+		/**
+		 * @brief Particle velocity
+		 */
 		DeviceArrayField<Coord> m_velocity;
 
+		/**
+		 * @brief Neighboring particles
+		 * 
+		 */
 		NeighborField<int> m_neighborhood;
 		NeighborField<NPair> m_restShape;
 
 	protected:
+		/**
+		* @brief Lame parameters
+		* m_lambda controls the isotropic part while mu controls the deviatoric part.
+		*/
+		VarField<Real> m_mu;
+		VarField<Real> m_lambda;
+
 		DeviceArray<Real> m_bulkCoefs;
 
 	private:
+		int m_interation = 3;
+
 		DeviceArray<Real> m_stiffness;
-		DeviceArrayField<Real>* m_lambdas;
+		DeviceArray<Real> m_lambdas;
+
+		DeviceArray<Coord> m_accPos;
+		DeviceArray<Matrix> m_invK;
 		
-		DeviceArrayField<Coord>* m_tmpPos;
-		DeviceArrayField<Coord>* m_accPos;
-		DeviceArrayField<Matrix>* m_invK;
 		DeviceArray<Matrix> m_F;
 
 		DeviceArray<Coord> m_oldPosition;

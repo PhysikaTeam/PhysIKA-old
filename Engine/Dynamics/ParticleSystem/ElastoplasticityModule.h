@@ -20,18 +20,36 @@ namespace Physika {
 		
 		bool constrain() override;
 
-		void solvePlasticity();
+		void applyPlasticity();
 
 		void reconstructRestShape();
 
-		void RotateRestShape();
+		void rotateRestShape();
+
+		void setCohesion(Real c);
+		void setFrictionAngle(Real phi);
+
+		virtual void computeStiffness();
 
 	protected:
 		bool initializeImpl() override;
 
 	private:
-		VarField<Real> m_A;
-		VarField<Real> m_B;
+		inline Real computeA()
+		{
+			Real phi = m_phi.getValue();
+			return (Real)6.0*m_c.getValue()*cos(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
+		}
+
+
+		inline Real computeB()
+		{
+			Real phi = m_phi.getValue();
+			return (Real)2.0f*sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
+		}
+
+		VarField<Real> m_c;
+		VarField<Real> m_phi;
 
 		DeviceArray<bool> m_bYield;
 		DeviceArray<Matrix> m_invF;
@@ -40,7 +58,6 @@ namespace Physika {
 		DeviceArray<Real> m_I1;
 
 	};
-
 
 #ifdef PRECISION_FLOAT
 	template class ElastoplasticityModule<DataType3f>;

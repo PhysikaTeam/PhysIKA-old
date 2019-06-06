@@ -12,15 +12,11 @@ namespace Physika
 	ElastoplasticityModule<TDataType>::ElastoplasticityModule()
 		: ElasticityModule<TDataType>()
 	{
-		attachField(&m_A, "A", "A!", false);
-		attachField(&m_B, "B", "B!", false);
+		attachField(&m_c, "c", "cohesion!", false);
+		attachField(&m_phi, "phi", "friction angle!", false);
 
-		const Real phi = 60.0f / 180.0f;
-		const Real A = 0.001f*cos(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
-		const Real B = 0.5f*sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
-
-		m_A.setValue(A);
-		m_B.setValue(B);
+		m_c.setValue(0.001);
+		m_phi.setValue(60.0 / 180.0);
 	}
 
 	__device__ Real Hardening(Real rho)
@@ -196,8 +192,6 @@ namespace Physika
 
 		
 		arrI1[i] = I1_i;
-		bulk_stiffiness[i] = Hardening(density[i]);
-
 // 		if (yield_I1_i > EPSILON || yield_J2_i > EPSILON)
 // 		{
 // 			printf("%d: %f %f; I1: %f J2: %f \n", i, yield_I1_i, yield_J2_i, I1_i, J2_i);
@@ -221,11 +215,6 @@ namespace Physika
 		Real yield_I1_i = yield_I1[i];
 		Real yield_J2_i = yield_J2[i];
 		Real I1_i = arrI1[i];
-
-		if (yield_J2[i] > 1.0f)
-		{
-			printf("Yield too large *******************");
-		}
 
 		//add permanent deformation
 		int size_i = restShape.getNeighborSize(i);
@@ -277,33 +266,23 @@ namespace Physika
 	bool ElastoplasticityModule<TDataType>::constrain()
 	{
 		solveElasticity();
+		applyPlasticity();
 
-//		constructRestShape(m_neighborhood.getValue(), m_position.getValue());
-
-//		if (iter < 250)
-		{
-			solvePlasticity();
-		}
-
-// 		if (iter < 350)
-// 		{
-// 			constructRestShape(m_neighborhood.getValue(), m_position.getValue());
-// 		}
-
-//		iter++;
-//		std::cout << "Iteraion: " << iter << std::endl;
+		reconstructRestShape();
 
 		return true;
 	}
 
-
 	template<typename TDataType>
-	void ElastoplasticityModule<TDataType>::solvePlasticity()
+	void ElastoplasticityModule<TDataType>::applyPlasticity()
 	{
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 // 
-		RotateRestShape();
+		rotateRestShape();
+
+		Real A = computeA();
+		Real B = computeB();
 
 		PM_ComputeInvariants<Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
 			m_bYield,
@@ -315,8 +294,8 @@ namespace Physika
 			m_bulkCoefs,
 			m_restShape.getValue(),
 			m_horizon.getValue(),
-			m_A.getValue(),
-			m_B.getValue(),
+			A,
+			B,
 			m_mu.getValue(),
 			m_lambda.getValue());
 		cuSynchronize();
@@ -328,11 +307,6 @@ namespace Physika
 			m_position.getValue(),
 			m_restShape.getValue());
 		cuSynchronize();
-
-		reconstructRestShape();
-
-//		constructRestShape(m_neighborhood.getValue(), m_position.getValue());
-
 	}
 
 	template <typename Real, typename Coord, typename Matrix, typename NPair>
@@ -749,7 +723,7 @@ namespace Physika
 
 
 	template<typename TDataType>
-	void ElastoplasticityModule<TDataType>::RotateRestShape()
+	void ElastoplasticityModule<TDataType>::rotateRestShape()
 	{
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
@@ -774,4 +748,50 @@ namespace Physika
 		m_bYield.reset();
 		return ElasticityModule<TDataType>::initializeImpl();
 	}
+
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::setCohesion(Real c)
+	{
+		m_c.setValue(c);
+	}
+
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::setFrictionAngle(Real phi)
+	{
+		m_phi.setValue(phi/180);
+	}
+
+
+	template <typename Real>
+	__global__ void PM_ComputeStiffness(
+		DeviceArray<Real> stiffiness,
+		DeviceArray<Real> density)
+	{
+		int i = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (i >= stiffiness.size()) return;
+
+		if (density[i] < 1000)
+		{
+			stiffiness[i] = 0;
+		}
+		else
+		{
+			stiffiness[i] = 1;
+		}
+	}
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::computeStiffness()
+	{
+		int num = m_position.getElementCount();
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+
+		PM_ComputeStiffness<< <pDims, BLOCK_SIZE >> > (
+			m_bulkCoefs,
+			this->getDensity());
+		cuSynchronize();
+	}
+
 }
