@@ -17,7 +17,7 @@ The following instructions will guide you to set up an simple elastic object.
 ### Installing
 
 - Download the source code;
-- Run cmake and set up both "Where is the source" and "Where to build the binaries";
+- Run cmake and set up both "Where is the source code" and "Where to build the binaries";
 - Click Configure;
 - If succeeded, then click Generate.
 
@@ -25,7 +25,7 @@ The following instructions will guide you to set up an simple elastic object.
 
 ## Runing an example
 
-The following example shows how to create an elastic bunny with less than 30 lines of codes.
+The following example shows how to create an elastic bunny within less than 30 lines of codes.
 
 ```
 #include <iostream>
