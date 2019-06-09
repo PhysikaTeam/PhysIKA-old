@@ -13,7 +13,6 @@ namespace Physika
 	template<typename> class ParticleIntegrator;
 	template<typename> class ElasticityModule;
 	
-
 	/*!
 	*	\class	ParticleSystem
 	*	\brief	Projective peridynamics

@@ -103,7 +103,7 @@ void VarField<T>::setValue(T val)
 template<typename T>
 std::shared_ptr<T> VarField<T>::getReference()
 {
-	Field* source = getSource();
+	Field* source = this->getSource();
 	if (source == nullptr)
 	{
 		return m_data;

@@ -13,8 +13,8 @@
 
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/RigidBody/RigidBody.h"
-
-#include "DrySand.h"
+#include "Dynamics/ParticleSystem/ParticleElastoplasticBody.h"
+#include "Dynamics/ParticleSystem/GranularModule.h"
 
 using namespace std;
 using namespace Physika;
@@ -44,7 +44,7 @@ void CreateScene()
 	root->translate(Vector3f(0.2f, 0.2f, 0));
 	root->loadCube(Vector3f(0), Vector3f(1), true);
 
-	std::shared_ptr<DrySand<DataType3f>> child3 = std::make_shared<DrySand<DataType3f>>();
+	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
 	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
 	child3->setMass(1.0);
@@ -52,6 +52,10 @@ void CreateScene()
   	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
 	child3->translate(Vector3f(0.3, 0.4, 0.5));
 	child3->setDt(0.001);
+	auto elasto = std::make_shared<GranularModule<DataType3f>>();
+	elasto->enableFullyReconstruction();
+	child3->setElastoplasticitySolver(elasto);
+	elasto->setCohesion(0);
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);

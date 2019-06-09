@@ -22,48 +22,34 @@ namespace Physika
 	{
 		m_horizon.setValue(0.0085);
 
-		m_integrator = std::make_shared<ParticleIntegrator<TDataType>>();
+		m_integrator = this->setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
 		m_position.connect(m_integrator->m_position);
 		m_velocity.connect(m_integrator->m_velocity);
 		m_force.connect(m_integrator->m_forceDensity);
-		//m_integrator->initialize();
-		
-		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
+
+		m_nbrQuery = this->addComputeModule<NeighborQuery<TDataType>>("neighborhood");
 		m_horizon.connect(m_nbrQuery->m_radius);
 		m_position.connect(m_nbrQuery->m_position);
 
-		//m_nbrQuery->initialize();
-		//m_nbrQuery->compute();
-
-		m_plasticity = std::make_shared<ElastoplasticityModule<TDataType>>();
+		m_plasticity = this->addConstraintModule<ElastoplasticityModule<TDataType>>("elastopolasticity");
 		m_position.connect(m_plasticity->m_position);
 		m_velocity.connect(m_plasticity->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_plasticity->m_neighborhood);
 		m_plasticity->setFrictionAngle(0);
 		m_plasticity->setCohesion(0.0);
-		//m_plasticity->initialize();
 
-		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
+		m_pbdModule = this->addConstraintModule<DensityPBD<TDataType>>("pbd");
 		m_horizon.connect(m_pbdModule->m_smoothingLength);
 		m_position.connect(m_pbdModule->m_position);
 		m_velocity.connect(m_pbdModule->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
-		//m_pbdModule->initialize();
 
-		m_visModule = std::make_shared<ImplicitViscosity<TDataType>>();
+		m_visModule = this->addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
 		m_visModule->setViscosity(Real(1));
 		m_horizon.connect(m_visModule->m_smoothingLength);
 		m_position.connect(m_visModule->m_position);
 		m_velocity.connect(m_visModule->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
-		//m_visModule->initialize();
-
-		this->addModule(m_integrator);
-		this->addModule(m_nbrQuery);
-		this->addConstraintModule(m_plasticity);
-		this->addConstraintModule(m_pbdModule);
-		this->addConstraintModule(m_visModule);
-
 
 		m_surfaceNode = this->createChild<Node>("Mesh");
 

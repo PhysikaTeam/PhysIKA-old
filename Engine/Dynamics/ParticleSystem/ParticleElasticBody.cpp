@@ -1,13 +1,13 @@
 #include "ParticleElasticBody.h"
-#include "PositionBasedFluidModel.h"
-
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
 #include "Rendering/SurfaceMeshRender.h"
 #include "Rendering/PointRenderModule.h"
 #include "Core/Utility.h"
-#include "Peridynamics.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
+#include "Framework/Topology/NeighborQuery.h"
+#include "ParticleIntegrator.h"
+#include "ElasticityModule.h"
 
 namespace Physika
 {
@@ -17,24 +17,36 @@ namespace Physika
 	ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
 		: ParticleSystem<TDataType>(name)
 	{
-		auto peri = std::make_shared<Peridynamics<TDataType>>();
-		this->setNumericalModel(peri);
-		this->getPosition()->connect(peri->m_position);
-		this->getVelocity()->connect(peri->m_velocity);
-		this->getForce()->connect(peri->m_forceDensity);
+		m_horizon.setValue(0.0085);
+		this->attachField(&m_horizon, "horizon", "horizon");
+
+		auto m_integrator = this->setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
+		this->getPosition()->connect(m_integrator->m_position);
+		this->getVelocity()->connect(m_integrator->m_velocity);
+		this->getForce()->connect(m_integrator->m_forceDensity);
+
+		auto m_nbrQuery = this->addComputeModule<NeighborQuery<TDataType>>("neighborhood");
+		m_horizon.connect(m_nbrQuery->m_radius);
+		m_position.connect(m_nbrQuery->m_position);
+
+		auto m_elasticity = this->addConstraintModule<ElasticityModule<TDataType>>("elasticity");
+		this->getPosition()->connect(m_elasticity->m_position);
+		this->getVelocity()->connect(m_elasticity->m_velocity);
+		m_horizon.connect(m_elasticity->m_horizon);
+		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
 
 		//Create a node for surface mesh rendering
-		m_surfaceNode = this->template createChild<Node>("Mesh");
+		m_surfaceNode = this->createChild<Node>("Mesh");
 
-		auto triSet = std::make_shared<TriangleSet<TDataType>>();
-		m_surfaceNode->setTopologyModule(triSet);
+		auto triSet = m_surfaceNode->setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
 
-		auto render = std::make_shared<SurfaceMeshRender>();
+		auto render = m_surfaceNode->addVisualModule<SurfaceMeshRender>("surface_mesh_render");
 		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
-		m_surfaceNode->addVisualModule(render);
 
-		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(this->m_pSet, triSet);
-		this->addTopologyMapping(surfaceMapping);
+		//Set the topology mapping from PointSet to TriangleSet
+		auto surfaceMapping = this->addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");
+		surfaceMapping->setFrom(this->m_pSet);
+		surfaceMapping->setTo(triSet);
 	}
 
 	template<typename TDataType>
@@ -51,7 +63,6 @@ namespace Physika
 		return ParticleSystem<TDataType>::translate(t);
 	}
 
-
 	template<typename TDataType>
 	bool ParticleElasticBody<TDataType>::scale(Real s)
 	{
@@ -67,12 +78,21 @@ namespace Physika
 		return ParticleSystem<TDataType>::initialize();
 	}
 
-
 	template<typename TDataType>
 	void ParticleElasticBody<TDataType>::advance(Real dt)
 	{
-		auto nModel = this->getNumericalModel();
-		nModel->step(this->getDt());
+		auto integrator = this->getModule<ParticleIntegrator<TDataType>>("integrator");
+
+		auto module = this->getModule<ElasticityModule<TDataType>>("elasticity");
+
+		integrator->begin();
+
+		integrator->integrate();
+
+		if (module != nullptr)
+			module->constrain();
+
+		integrator->end();
 	}
 
 	template<typename TDataType>
@@ -87,6 +107,24 @@ namespace Physika
 			(*iter)->apply();
 		}
 	}
+
+	template<typename TDataType>
+	void ParticleElasticBody<TDataType>::setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver)
+	{
+		auto nbrQuery = this->getModule<NeighborQuery<TDataType>>("neighborhood");
+		auto module = this->getModule<ElasticityModule<TDataType>>("elasticity");
+
+		this->getPosition()->connect(solver->m_position);
+		this->getVelocity()->connect(solver->m_velocity);
+		nbrQuery->m_neighborhood.connect(solver->m_neighborhood);
+		m_horizon.connect(solver->m_horizon);
+
+		this->deleteModule(module);
+		
+		solver->setName("elasticity");
+		this->addConstraintModule(solver);
+	}
+
 
 	template<typename TDataType>
 	void ParticleElasticBody<TDataType>::loadSurface(std::string filename)

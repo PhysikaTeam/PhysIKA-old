@@ -8,29 +8,4 @@
 
 namespace Physika{
 
-template<typename T>
-std::shared_ptr<NeighborList<T>> NeighborField<T>::getReference()
-{
-	Field* source = getSource();
-	if (source == nullptr)
-	{
-		return m_data;
-	}
-	else
-	{
-		NeighborField<T>* var = dynamic_cast<NeighborField<T>*>(source);
-		if (var != nullptr)
-		{
-			return var->getReference();
-			//return (*var).getReference();
-		}
-		else
-		{
-			return nullptr;
-		}
-	}
-}
-
-template class NeighborField<int>;
-template class NeighborField<TPair<DataType3f>>;
 }

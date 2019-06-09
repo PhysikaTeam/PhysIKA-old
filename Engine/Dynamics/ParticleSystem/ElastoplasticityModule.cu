@@ -61,7 +61,7 @@ namespace Physika
 
 		Coord rest_pos_i = restShape.getElement(i, 0).pos;
 		Coord cur_pos_i = position[i];
-		
+
 		Real I1_i = 0.0f;
 		Real J2_i = 0.0f;
 		//compute the first and second invariants of the deformation state, i.e., I1 and J2
@@ -162,44 +162,43 @@ namespace Physika
 			yield_J2[i] = yield_J2_i;
 		}
 
-// 		invDeform[i] = Matrix::identityMatrix();
-// 		bYield[i] = true;
+		// 		invDeform[i] = Matrix::identityMatrix();
+		// 		bYield[i] = true;
 
-//		int size_i = restShape.getNeighborSize(i);
-/*		for (int ne = 0; ne < size_i; ne++)
-		{
-			NPair np_j = restShape.getElement(i, ne);
-			Coord rest_pos_j = np_j.pos;
-			int j = np_j.index;
+		//		int size_i = restShape.getNeighborSize(i);
+		/*		for (int ne = 0; ne < size_i; ne++)
+				{
+					NPair np_j = restShape.getElement(i, ne);
+					Coord rest_pos_j = np_j.pos;
+					int j = np_j.index;
 
-			Real r = (rest_pos_i - rest_pos_j).norm();
+					Real r = (rest_pos_i - rest_pos_j).norm();
 
-			Coord p = (position[j] - pos_i);
-			Coord q = (rest_pos_j - rest_pos_i);
+					Coord p = (position[j] - pos_i);
+					Coord q = (rest_pos_j - rest_pos_i);
 
-			Coord new_q = q*I1_i;
-			Coord D_iso = new_q - q;
-			Coord D_dev = p - new_q;
+					Coord new_q = q*I1_i;
+					Coord D_iso = new_q - q;
+					Coord D_dev = p - new_q;
 
-			NPair new_np_j;
+					NPair new_np_j;
 
-			Coord new_rest_pos_j = rest_pos_j + yield_I1_i * D_iso + yield_J2_i * D_dev;
+					Coord new_rest_pos_j = rest_pos_j + yield_I1_i * D_iso + yield_J2_i * D_dev;
 
-			new_np_j.pos = new_rest_pos_j;
-			new_np_j.index = j;
-			restShape.setElement(i, ne, new_np_j);
-		}*/
+					new_np_j.pos = new_rest_pos_j;
+					new_np_j.index = j;
+					restShape.setElement(i, ne, new_np_j);
+				}*/
 
-		
 		arrI1[i] = I1_i;
-// 		if (yield_I1_i > EPSILON || yield_J2_i > EPSILON)
-// 		{
-// 			printf("%d: %f %f; I1: %f J2: %f \n", i, yield_I1_i, yield_J2_i, I1_i, J2_i);
-// 		}
+		// 		if (yield_I1_i > EPSILON || yield_J2_i > EPSILON)
+		// 		{
+		// 			printf("%d: %f %f; I1: %f J2: %f \n", i, yield_I1_i, yield_J2_i, I1_i, J2_i);
+		// 		}
 	}
 
 	template <typename Real, typename Coord, typename Matrix, typename NPair>
-	__global__ void PM_ApplyPlasticity(
+	__global__ void PM_ApplyYielding(
 		DeviceArray<Real> yield_I1,
 		DeviceArray<Real> yield_J2,
 		DeviceArray<Real> arrI1,
@@ -246,12 +245,12 @@ namespace Physika
 			NPair new_np_j;
 
 			//Coord new_rest_pos_j = rest_pos_j + yield_I1_i * D_iso + yield_J2_i * D_dev;
-			Coord new_rest_pos_j = rest_pos_j + (yield_I1_i + yield_I1_j) / 2 * D_iso + (yield_J2_i + yield_J2_j) / 2 *D_dev;
+			Coord new_rest_pos_j = rest_pos_j + (yield_I1_i + yield_I1_j) / 2 * D_iso + (yield_J2_i + yield_J2_j) / 2 * D_dev;
 
-// 			if ((new_rest_pos_j-rest_pos_j).norm() > 0.002)
-// 			{
-// 				printf("Error---------------------------------- \n; yield_I1: %f %f %f %f; yield_J2 %f %f %f %f; %f; Norm: %f; new_q: %f %f %f; I1_i: %f \n", yield_I1_i, D_iso[0], D_iso[1], D_iso[2], yield_J2_i, D_dev[0], D_dev[1], D_dev[2], I1_i, p.norm(), new_q[0], new_q[1], new_q[2], I1_i);
-// 			}
+			// 			if ((new_rest_pos_j-rest_pos_j).norm() > 0.002)
+			// 			{
+			// 				printf("Error---------------------------------- \n; yield_I1: %f %f %f %f; yield_J2 %f %f %f %f; %f; Norm: %f; new_q: %f %f %f; I1_i: %f \n", yield_I1_i, D_iso[0], D_iso[1], D_iso[2], yield_J2_i, D_dev[0], D_dev[1], D_dev[2], I1_i, p.norm(), new_q[0], new_q[1], new_q[2], I1_i);
+			// 			}
 
 			new_np_j.pos = new_rest_pos_j;
 			new_np_j.index = j;
@@ -261,25 +260,53 @@ namespace Physika
 	}
 
 
-//	int iter = 0;
+	//	int iter = 0;
 	template<typename TDataType>
 	bool ElastoplasticityModule<TDataType>::constrain()
 	{
-		solveElasticity();
-		applyPlasticity();
-
-		reconstructRestShape();
+		this->solveElasticity();
+		this->applyPlasticity();
 
 		return true;
+	}
+
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::solveElasticity()
+	{
+		Function1Pt::copy(m_position_old, m_position.getValue());
+
+		this->computeInverseK();
+
+		int iter = 0;
+		int total = this->getIterationNumber();
+		while (iter < total)
+		{
+			this->enforceElasticity();
+			m_pbdModule->takeOneIteration();
+			iter++;
+		}
+
+		this->updateVelocity();
 	}
 
 	template<typename TDataType>
 	void ElastoplasticityModule<TDataType>::applyPlasticity()
 	{
+		this->rotateRestShape();
+
+		this->computeMaterialStiffness();
+		this->applyYielding();
+
+		this->reconstructRestShape();
+	}
+
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::applyYielding()
+	{
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
-// 
-		rotateRestShape();
 
 		Real A = computeA();
 		Real B = computeB();
@@ -290,7 +317,7 @@ namespace Physika
 			m_yield_J2,
 			m_I1,
 			m_position.getValue(),
-			this->getDensity(),
+			m_pbdModule->getDensity(),
 			m_bulkCoefs,
 			m_restShape.getValue(),
 			m_horizon.getValue(),
@@ -299,8 +326,8 @@ namespace Physika
 			m_mu.getValue(),
 			m_lambda.getValue());
 		cuSynchronize();
-// 
-		PM_ApplyPlasticity<Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
+		// 
+		PM_ApplyYielding<Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
 			m_yiled_I1,
 			m_yield_J2,
 			m_I1,
@@ -308,6 +335,7 @@ namespace Physika
 			m_restShape.getValue());
 		cuSynchronize();
 	}
+
 
 	template <typename Real, typename Coord, typename Matrix, typename NPair>
 	__global__ void PM_ReconstructRestShape(
@@ -351,7 +379,7 @@ namespace Physika
 				Matrix invF_j = invF[j];
 
 				np.index = j;
-				np.pos = pos_i + 0.5*(invF_i+invF_j)*(position[j] - pos_i);
+				np.pos = pos_i + 0.5*(invF_i + invF_j)*(position[j] - pos_i);
 				if (i != j)
 				{
 					new_rest_shape.setElement(i, ne, np);
@@ -457,28 +485,37 @@ namespace Physika
 		curD(2, 2) = curD(2, 2) > threshold ? 1.0 / curD(2, 2) : 1.0 / threshold;
 		refM *= curV*curD*curU.transpose();
 
-// 		if (abs(refM.determinant() - 1) > 0.05f)
-// 		{
-// 			refM = Matrix::identityMatrix();
-// 		}
+		// 		if (abs(refM.determinant() - 1) > 0.05f)
+		// 		{
+		// 			refM = Matrix::identityMatrix();
+		// 		}
 
 		if (refM.determinant() < EPSILON)
 		{
 			refM = Matrix::identityMatrix();
 		}
 
-// 		if (i == 20)
-// 		{
-// 			printf("PM_ComputeInverseDeformation***************************** \n\n");
-// 
-// 			printf("Invserse F: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-// 				refM(0, 0), refM(0, 1), refM(0, 2),
-// 				refM(1, 0), refM(1, 1), refM(1, 2),
-// 				refM(2, 0), refM(2, 1), refM(2, 2),
-// 				refM.determinant());
-// 		}
+		// 		if (i == 20)
+		// 		{
+		// 			printf("PM_ComputeInverseDeformation***************************** \n\n");
+		// 
+		// 			printf("Invserse F: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
+		// 				refM(0, 0), refM(0, 1), refM(0, 2),
+		// 				refM(1, 0), refM(1, 1), refM(1, 2),
+		// 				refM(2, 0), refM(2, 1), refM(2, 2),
+		// 				refM.determinant());
+		// 		}
 
 		invF[i] = refM;
+	}
+
+	__global__ void PM_EnableAllReconstruction(
+		DeviceArray<bool> bYield)
+	{
+		int i = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (i >= bYield.size()) return;
+
+		bYield[i] = true;
 	}
 
 	template<typename TDataType>
@@ -487,6 +524,11 @@ namespace Physika
 		//constructRestShape(m_neighborhood.getValue(), m_position.getValue());
 
 		uint pDims = cudaGridSize(m_position.getElementCount(), BLOCK_SIZE);
+
+		if (m_reconstuct_all_neighborhood)
+		{
+			PM_EnableAllReconstruction << <pDims, BLOCK_SIZE >> > (m_bYield);
+		}
 
 		NeighborList<NPair> newNeighborList;
 		newNeighborList.resize(m_position.getElementCount());
@@ -525,6 +567,13 @@ namespace Physika
 
 		newNeighborList.release();
 		cuSynchronize();
+	}
+
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::enableFullyReconstruction()
+	{
+		m_reconstuct_all_neighborhood = true;
 	}
 
 
@@ -746,6 +795,17 @@ namespace Physika
 		m_bYield.resize(m_position.getElementCount());
 
 		m_bYield.reset();
+
+		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
+		m_horizon.connect(m_pbdModule->m_smoothingLength);
+		m_position.connect(m_pbdModule->m_position);
+		m_velocity.connect(m_pbdModule->m_velocity);
+		m_neighborhood.connect(m_pbdModule->m_neighborhood);
+		m_pbdModule->initialize();
+
+		m_pbdModule->setParent(this->getParent());
+
+
 		return ElasticityModule<TDataType>::initializeImpl();
 	}
 
@@ -762,36 +822,4 @@ namespace Physika
 	{
 		m_phi.setValue(phi/180);
 	}
-
-
-	template <typename Real>
-	__global__ void PM_ComputeStiffness(
-		DeviceArray<Real> stiffiness,
-		DeviceArray<Real> density)
-	{
-		int i = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (i >= stiffiness.size()) return;
-
-		if (density[i] < 1000)
-		{
-			stiffiness[i] = 0;
-		}
-		else
-		{
-			stiffiness[i] = 1;
-		}
-	}
-
-	template<typename TDataType>
-	void ElastoplasticityModule<TDataType>::computeStiffness()
-	{
-		int num = m_position.getElementCount();
-		uint pDims = cudaGridSize(num, BLOCK_SIZE);
-
-		PM_ComputeStiffness<< <pDims, BLOCK_SIZE >> > (
-			m_bulkCoefs,
-			this->getDensity());
-		cuSynchronize();
-	}
-
 }

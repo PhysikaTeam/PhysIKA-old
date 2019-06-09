@@ -112,6 +112,8 @@ namespace Physika
 
 		m_hash.setSpace(m_radius.getValue(), m_lowBound, m_highBound);
 
+		compute();
+
 		return true;
 	}
 

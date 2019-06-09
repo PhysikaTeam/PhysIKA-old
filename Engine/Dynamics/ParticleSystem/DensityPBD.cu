@@ -112,7 +112,6 @@ namespace Physika
 		if (pId >= posArr.size()) return;
 
 		posArr[pId] += dPos[pId];
-		velArr[pId] += dPos[pId] / dt;
 	}
 
 
@@ -138,6 +137,7 @@ namespace Physika
 		m_rhoArr.release();
 		m_lamda.release();
 		m_deltaPos.release();
+		m_position_old.release();
 	}
 
 	template<typename TDataType>
@@ -173,6 +173,8 @@ namespace Physika
 			m_deltaPos.resize(num);
 		if (m_rhoArr.size() != num)
 			m_rhoArr.resize(num);
+		
+		m_position_old.resize(num);
 
 		return true;
 	}
@@ -180,23 +182,27 @@ namespace Physika
 	template<typename TDataType>
 	bool DensityPBD<TDataType>::constrain()
 	{
-		Real dt = this->getParent()->getDt();
+		Function1Pt::copy(m_position_old, m_position.getValue());
 
 		int it = 0;
 		while (it < m_maxIteration)
 		{
-			takeOneIteration(dt);
+			takeOneIteration();
 
 			it++;
 		}
+
+		updateVelocity();
 
 		return true;
 	}
 
 
 	template<typename TDataType>
-	void DensityPBD<TDataType>::takeOneIteration(Real dt)
+	void DensityPBD<TDataType>::takeOneIteration()
 	{
+		Real dt = this->getParent()->getDt();
+
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
@@ -221,6 +227,35 @@ namespace Physika
 			m_velocity.getValue(),
 			m_deltaPos,
 			dt);
+	}
+
+	template <typename Real, typename Coord>
+	__global__ void DP_UpdateVelocity(
+		DeviceArray<Coord> velArr,
+		DeviceArray<Coord> prePos,
+		DeviceArray<Coord> curPos,
+		Real dt)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= velArr.size()) return;
+
+		velArr[pId] += (curPos[pId] - prePos[pId]) / dt;
+	}
+
+	template<typename TDataType>
+	void DensityPBD<TDataType>::updateVelocity()
+	{
+		int num = m_position.getElementCount();
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+
+		Real dt = this->getParent()->getDt();
+
+		DP_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
+			m_velocity.getValue(),
+			m_position_old,
+			m_position.getValue(),
+			dt);
+		cuSynchronize();
 	}
 
 #ifdef PRECISION_FLOAT

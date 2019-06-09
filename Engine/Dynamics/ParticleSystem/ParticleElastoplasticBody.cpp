@@ -25,48 +25,36 @@ namespace Physika
 	{
 		m_horizon.setValue(0.0085);
 
-		m_integrator = std::make_shared<ParticleIntegrator<TDataType>>();
+		m_integrator = this->setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
 		this->m_position.connect(m_integrator->m_position);
 		this->m_velocity.connect(m_integrator->m_velocity);
 		this->m_force.connect(m_integrator->m_forceDensity);
-		//m_integrator->initialize();
 		
-		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
+		m_nbrQuery = this->addComputeModule<NeighborQuery<TDataType>>("neighborhood");
 		m_horizon.connect(m_nbrQuery->m_radius);
 		this->m_position.connect(m_nbrQuery->m_position);
 
-		//m_nbrQuery->initialize();
-		//m_nbrQuery->compute();
-
-		m_plasticity = std::make_shared<ElastoplasticityModule<TDataType>>();
+		m_plasticity = this->addConstraintModule<ElastoplasticityModule<TDataType>>("elastoplasticity");
 		this->m_position.connect(m_plasticity->m_position);
 		this->m_velocity.connect(m_plasticity->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_plasticity->m_neighborhood);
-		//m_plasticity->initialize();
 
-		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
+		m_pbdModule = this->addConstraintModule<DensityPBD<TDataType>>("pbd");
 		m_horizon.connect(m_pbdModule->m_smoothingLength);
 		this->m_position.connect(m_pbdModule->m_position);
 		this->m_velocity.connect(m_pbdModule->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
-		//m_pbdModule->initialize();
 
-		m_visModule = std::make_shared<ImplicitViscosity<TDataType>>();
+		m_visModule = this->addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
 		m_visModule->setViscosity(Real(1));
 		m_horizon.connect(m_visModule->m_smoothingLength);
 		this->m_position.connect(m_visModule->m_position);
 		this->m_velocity.connect(m_visModule->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
-		//m_visModule->initialize();
-
-		this->addModule(m_integrator);
-		this->addModule(m_nbrQuery);
-		this->addConstraintModule(m_plasticity);
-		this->addConstraintModule(m_pbdModule);
-		this->addConstraintModule(m_visModule);
 
 
-		m_surfaceNode = this->template createChild<Node>("Mesh");
+		m_surfaceNode = this->createChild<Node>("Mesh");
+		m_surfaceNode->setVisible(false);
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 		m_surfaceNode->setTopologyModule(triSet);
@@ -88,15 +76,17 @@ namespace Physika
 	template<typename TDataType>
 	void ParticleElastoplasticBody<TDataType>::advance(Real dt)
 	{
+		auto module = this->getModule<ElastoplasticityModule<TDataType>>("elastoplasticity");
+
 		m_integrator->begin();
 
 		m_integrator->integrate();
 
 		m_nbrQuery->compute();
-		m_plasticity->solveElasticity();
+		module->solveElasticity();
 		m_nbrQuery->compute();
 
-		m_plasticity->applyPlasticity();
+		module->applyPlasticity();
 
 		m_visModule->constrain();
 
@@ -145,5 +135,23 @@ namespace Physika
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->scale(s);
 
 		return ParticleSystem<TDataType>::scale(s);
+	}
+
+
+	template<typename TDataType>
+	void ParticleElastoplasticBody<TDataType>::setElastoplasticitySolver(std::shared_ptr<ElastoplasticityModule<TDataType>> solver)
+	{
+		auto module = this->getModule("elastoplasticity");
+		this->deleteModule(module);
+
+		auto nbrQuery = this->getModule<NeighborQuery<TDataType>>("neighborhood");
+
+		this->getPosition()->connect(solver->m_position);
+		this->getVelocity()->connect(solver->m_velocity);
+		nbrQuery->m_neighborhood.connect(solver->m_neighborhood);
+		m_horizon.connect(solver->m_horizon);
+
+		solver->setName("elastoplasticity");
+		this->addConstraintModule(solver);
 	}
 }

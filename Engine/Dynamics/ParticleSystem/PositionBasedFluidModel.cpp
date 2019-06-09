@@ -41,62 +41,31 @@ namespace Physika
 	template<typename TDataType>
 	bool PositionBasedFluidModel<TDataType>::initializeImpl()
 	{
-		this->NumericalModel::initializeImpl();
-
-		Node* parent = getParent();
-		if (parent == NULL)
-		{
-			Log::sendMessage(Log::Error, "Should insert this module into a node!");
-			return false;
-		}
-
-		PointSet<TDataType>* pSet = dynamic_cast<PointSet<TDataType>*>(parent->getTopologyModule().get());
-		if (pSet == NULL)
-		{
-			Log::sendMessage(Log::Error, "The topology module is not supported!");
-			return false;
-		}
-
-		if (!pSet->isInitialized())
-		{
-			pSet->initialize();
-		}
-
-		// Create modules
-		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
+		m_nbrQuery = this->getParent()->addComputeModule<NeighborQuery<TDataType>>("neighborhood");
 		m_smoothingLength.connect(m_nbrQuery->m_radius);
 		m_position.connect(m_nbrQuery->m_position);
 		m_nbrQuery->initialize();
-		m_nbrQuery->compute();
 
-		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
+		m_pbdModule = this->getParent()->addConstraintModule<DensityPBD<TDataType>>("density_constraint");
 		m_smoothingLength.connect(m_pbdModule->m_smoothingLength);
 		m_position.connect(m_pbdModule->m_position);
 		m_velocity.connect(m_pbdModule->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
 		m_pbdModule->initialize();
 
-		m_integrator = std::make_shared<ParticleIntegrator<TDataType>>();
+		m_integrator = this->getParent()->setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
 		m_position.connect(m_integrator->m_position);
 		m_velocity.connect(m_integrator->m_velocity);
 		m_forceDensity.connect(m_integrator->m_forceDensity);
 		m_integrator->initialize();
 
-		m_visModule = std::make_shared<ImplicitViscosity<TDataType>>();
+		m_visModule = this->getParent()->addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
 		m_visModule->setViscosity(Real(1));
 		m_smoothingLength.connect(m_visModule->m_smoothingLength);
 		m_position.connect(m_visModule->m_position);
 		m_velocity.connect(m_visModule->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
 		m_visModule->initialize();
-
-		m_nbrQuery->setParent(parent);
-		m_integrator->setParent(parent);
-		m_pbdModule->setParent(parent);
-		m_visModule->setParent(parent);
-// 
-// 		m_mapping = std::make_shared<PointSetToPointSet<TDataType>>();
-// 		m_mapping->initialize(*(m_position.getReference()), (pSet->getPoints()));
 
 		return true;
 	}
@@ -113,25 +82,11 @@ namespace Physika
 		m_integrator->begin();
 
 		m_nbrQuery->compute();
-
-		auto& forceList = parent->getForceModuleList();
-		auto fIter = forceList.begin();
-		for (; fIter != forceList.end(); fIter++)
-		{
-			(*fIter)->applyForce();
-		}
-
 		m_integrator->integrate();
 		
 		m_pbdModule->constrain();
 
 		m_visModule->constrain();
-		auto& clist = parent->getConstraintModuleList();
-		auto cIter = clist.begin();
-		for (; cIter != clist.end(); cIter++)
-		{
-			(*cIter)->constrain();
-		}
 		
 		m_integrator->end();
 	}

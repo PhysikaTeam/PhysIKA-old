@@ -14,6 +14,7 @@
 #include "Dynamics/ParticleSystem/ParticleElastoplasticBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/RigidBody/RigidBody.h"
+#include "Dynamics/ParticleSystem/FractureModule.h"
 
 using namespace std;
 using namespace Physika;
@@ -50,6 +51,8 @@ void CreateScene()
   	child3->loadParticles("../Media/bunny/bunny_points.obj");
   	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
 	child3->translate(Vector3f(0.3, 0.4, 0.5));
+	auto fracture = std::make_shared<FractureModule<DataType3f>>();
+	child3->setElastoplasticitySolver(fracture);
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);

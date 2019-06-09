@@ -8,23 +8,6 @@
 
 namespace Physika {
 
-template<typename TDataType>
-class TPair
-{
-public:
-	typedef typename TDataType::Coord Coord;
-
-	COMM_FUNC TPair() {};
-	COMM_FUNC TPair(int id, Coord p)
-	{
-		index = id;
-		p = pos;
-	}
-
-	int index;
-	Coord pos;
-};
-
 template<typename T>
 class NeighborField : public Field
 {
@@ -144,6 +127,29 @@ bool NeighborField<T>::connect(NeighborField<T>& field2)
 // 	}
 // 	field2.m_data = m_data;
 	return true;
+}
+
+template<typename T>
+std::shared_ptr<NeighborList<T>> NeighborField<T>::getReference()
+{
+	Field* source = getSource();
+	if (source == nullptr)
+	{
+		return m_data;
+	}
+	else
+	{
+		NeighborField<T>* var = dynamic_cast<NeighborField<T>*>(source);
+		if (var != nullptr)
+		{
+			//return var->getReference();
+			return (*var).getReference();
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
 }
 
 }

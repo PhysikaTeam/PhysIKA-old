@@ -4,6 +4,7 @@
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/Node.h"
 #include "Core/Utility.h"
+#include "Framework/Framework/SceneGraph.h"
 
 namespace Physika
 {
@@ -79,7 +80,7 @@ namespace Physika
 	bool ParticleIntegrator<TDataType>::updateVelocity()
 	{
 		Real dt = getParent()->getDt();
-		Real gravity = getParent()->getGravity();
+		Real gravity = SceneGraph::getInstance().getGravity();
 		cuint pDims = cudaGridSize(m_position.getReference()->size(), BLOCK_SIZE);
 
 		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (

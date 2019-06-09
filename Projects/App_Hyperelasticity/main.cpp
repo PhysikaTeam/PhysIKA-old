@@ -13,6 +13,7 @@
 
 #include "Dynamics/ParticleSystem/ParticleElasticBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Dynamics/ParticleSystem/HyperelasticityModule.h"
 
 using namespace std;
 using namespace Physika;
@@ -48,6 +49,9 @@ void CreateScene()
   	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
 	child3->translate(Vector3f(0.5, 0.2, 0.5));
 	child3->setVisible(false);
+	auto hyper = std::make_shared<HyperelasticityModule<DataType3f>>();
+	hyper->setEnergyFunction(HyperelasticityModule<DataType3f>::Quadratic);
+	child3->setElasticitySolver(hyper);
 }
 
 

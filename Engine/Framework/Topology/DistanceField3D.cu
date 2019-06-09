@@ -259,8 +259,6 @@ namespace Physika{
 		dim3 blockSize = make_uint3(8, 8, 8);
 		dim3 gridDims = cudaGridSize3D(make_uint3(m_distance.Nx(), m_distance.Ny(), m_distance.Nz()), blockSize);
 
-		m_bInverted = !m_bInverted;
-
 		K_Invert << <gridDims, blockSize >> >(m_distance);
 	}
 
@@ -403,6 +401,7 @@ namespace Physika{
 		m_distance.Resize(nbx, nby, nbz);
 		cuSafeCall(cudaMemcpy(m_distance.GetDataPtr(), distances, (nbx)*(nby)*(nbz) * sizeof(Real), cudaMemcpyHostToDevice));
 
+		m_bInverted = inverted;
 		if (inverted)
 		{
 			invertSDF();

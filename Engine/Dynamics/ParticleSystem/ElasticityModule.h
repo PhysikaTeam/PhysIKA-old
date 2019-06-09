@@ -3,7 +3,7 @@
 #include "Framework/Framework/FieldArray.h"
 #include "Framework/Topology/FieldNeighbor.h"
 #include "Framework/Framework/ModuleConstraint.h"
-#include "DensityPBD.h"
+#include "NeighborData.h"
 
 namespace Physika {
 
@@ -21,25 +21,29 @@ namespace Physika {
 		
 		bool constrain() override;
 
-		void solveElasticity();
+		virtual void solveElasticity();
 
-		void takeOneIteration();
-
-		void resetRestShape();
-
-		void setMu(Real mu) { m_mu.setValue(mu); };
+		void setMu(Real mu) { m_mu.setValue(mu); }
 		void setLambda(Real lambda) { m_lambda.setValue(lambda); }
 
 		void setHorizon(Real len) { m_horizon.setValue(len); }
-		void setIterationNumber(int num) { m_interation = num; }
+		void setIterationNumber(int num) { m_iterNum = num; }
+		int getIterationNumber() { return m_iterNum; }
 
-		DeviceArray<Real>& getDensity()
-		{
-			return m_pbdModule->m_density.getValue();
-		}
+		void resetRestShape();
 
 	protected:
 		bool initializeImpl() override;
+
+		/**
+		 * @brief Correct the particle position with one iteration
+		 * Be sure computeInverseK() is called as long as the rest shape is changed
+		 */
+		virtual void enforceElasticity();
+		virtual void computeMaterialStiffness();
+
+		void updateVelocity();
+		void computeInverseK();
 
 	public:
 		/**
@@ -78,21 +82,16 @@ namespace Physika {
 		VarField<Real> m_lambda;
 
 		DeviceArray<Real> m_bulkCoefs;
+		DeviceArray<Coord> m_position_old;
 
+		DeviceArray<Real> m_weights;
+		DeviceArray<Coord> m_displacement;
+		DeviceArray<Matrix> m_invK;
 	private:
-		int m_interation = 3;
+		int m_iterNum = 3;
 
 		DeviceArray<Real> m_stiffness;
-		DeviceArray<Real> m_lambdas;
-
-		DeviceArray<Coord> m_accPos;
-		DeviceArray<Matrix> m_invK;
-		
 		DeviceArray<Matrix> m_F;
-
-		DeviceArray<Coord> m_oldPosition;
-
-		std::shared_ptr<DensityPBD<TDataType>> m_pbdModule;
 	};
 
 #ifdef PRECISION_FLOAT

@@ -3,6 +3,8 @@
 
 namespace Physika
 {
+	template<typename> class ElasticityModule;
+
 	/*!
 	*	\class	ParticleElasticBody
 	*	\brief	Peridynamics-based elastic object.
@@ -18,16 +20,18 @@ namespace Physika
 		ParticleElasticBody(std::string name = "default");
 		virtual ~ParticleElasticBody();
 
+		bool initialize() override;
 		void advance(Real dt) override;
-
 		void updateTopology() override;
 
 		bool translate(Coord t) override;
 		bool scale(Real s) override;
 
-		bool initialize() override;
-
+		void setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver);
 		void loadSurface(std::string filename);
+
+	public:
+		VarField<Real> m_horizon;
 
 	private:
 		std::shared_ptr<Node> m_surfaceNode;

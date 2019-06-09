@@ -36,6 +36,8 @@ namespace Physika
 
 		void loadSurface(std::string filename);
 
+		void setElastoplasticitySolver(std::shared_ptr<ElastoplasticityModule<TDataType>> solver);
+
 	public:
 		VarField<Real> m_horizon;
 

@@ -119,12 +119,17 @@ namespace Physika
 	}
 
 	template <typename Real, typename Coord, typename Matrix, typename NPair>
-	__global__ void EM_ComputeDeformationGradient(
-		DeviceArray<Matrix> deform,
+	__global__ void EM_EnforceElasticity(
+		DeviceArray<Coord> delta_position,
+		DeviceArray<Real> weights,
+		DeviceArray<Real> bulkCoefs,
 		DeviceArray<Matrix> invK,
 		DeviceArray<Coord> position,
 		NeighborList<NPair> restShapes,
-		Real smoothingLength)
+		Real horizon,
+		Real distance,
+		Real mu,
+		Real lambda)
 	{
 
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
@@ -136,7 +141,13 @@ namespace Physika
 		Coord rest_i = np_i.pos;
 		int size_i = restShapes.getNeighborSize(pId);
 
-		//			cout << i << " " << rids[shape_i.ids[shape_i.idx]] << endl;
+		Coord cur_pos_i = position[pId];
+
+		Coord accPos = Coord(0);
+		Real accA = Real(0);
+		Real bulk_i = bulkCoefs[pId];
+
+
 		Real total_weight = 0.0f;
 		Matrix deform_i = Matrix(0.0f);
 		for (int ne = 0; ne < size_i; ne++)
@@ -149,10 +160,10 @@ namespace Physika
 
 			if (r > EPSILON)
 			{
-				Real weight = g_weightKernel.Weight(r, smoothingLength);
+				Real weight = g_weightKernel.Weight(r, horizon);
 
-				Coord p = (position[j] - position[pId]) / smoothingLength;
-				Coord q = (rest_j - rest_i) / smoothingLength*weight;
+				Coord p = (position[j] - position[pId]) / horizon;
+				Coord q = (rest_j - rest_i) / horizon*weight;
 
 				deform_i(0, 0) += p[0] * q[0]; deform_i(0, 1) += p[0] * q[1]; deform_i(0, 2) += p[0] * q[2];
 				deform_i(1, 0) += p[1] * q[0]; deform_i(1, 1) += p[1] * q[1]; deform_i(1, 2) += p[1] * q[2];
@@ -165,35 +176,12 @@ namespace Physika
 		if (total_weight > EPSILON)
 		{
 			deform_i *= (1.0f / total_weight);
-
-// 			if (pId == 0)
-// 			{
-// 				printf("EM_ComputeDeformationGradient**************************************");
-// 
-// 				printf("deform_i: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-// 					deform_i(0, 0), deform_i(0, 1), deform_i(0, 2),
-// 					deform_i(1, 0), deform_i(1, 1), deform_i(1, 2),
-// 					deform_i(2, 0), deform_i(2, 1), deform_i(2, 2));
-// 			}
-
-			//deform_i *= matArr[pId];
 			deform_i = deform_i * invK[pId];
-
-			//printf("%f \n", total_weight);
 		}
 		else
 		{
 			total_weight = 1.0f;
 		}
-
-// 		if (pId == 0)
-// 		{
-// 			printf("F: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-// 				deform_i(0, 0), deform_i(0, 1), deform_i(0, 2),
-// 				deform_i(1, 0), deform_i(1, 1), deform_i(1, 2),
-// 				deform_i(2, 0), deform_i(2, 1), deform_i(2, 2));
-// 		}
-
 
 		//Check whether the reference shape is inverted, if yes, simply set K^{-1} to be an identity matrix
 		//Note other solutions are possible.
@@ -202,142 +190,21 @@ namespace Physika
 			deform_i = Matrix::identityMatrix();
 		}
 
-		deform[pId] = deform_i;// Matrix::identityMatrix();
-	}
-
-/*	template <typename Real, typename Coord, typename Matrix, typename NPair>
-	__global__ void EM_EnforceElasticity(
-		DeviceArray<Coord> delta_position,
-		DeviceArray<Real> bulkCoefs,
-		DeviceArray<Coord> position,
-		DeviceArray<Coord> old_position,
-		DeviceArray<Matrix> F,
-		NeighborList<NPair> restShapes,
-		Real horizon,
-		Real distance,
-		Real mu,
-		Real lambda)
-	{
-
-		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= position.size()) return;
-
-		CorrectedKernel<Real> g_weightKernel;
-
-		NPair np_i = restShapes.getElement(pId, 0);
-		Coord rest_i = np_i.pos;
-		int size_i = restShapes.getNeighborSize(pId);
-
-		Coord cur_pos_i = position[pId];
-		Matrix F_i = F[pId];
-
-		Coord accPos = Coord(0);
-		Real accA = Real(0);
-		Real bulk_i = bulkCoefs[pId];
 
 		for (int ne = 0; ne < size_i; ne++)
 		{
 			NPair np_j = restShapes.getElement(pId, ne);
 			Coord rest_j = np_j.pos;
 			int j = np_j.index;
-			Real r = (rest_j - rest_i).norm();
-			Matrix F_j = F[j];
-	
+
 			Coord cur_pos_j = position[j];
+			Real r = (rest_j - rest_i).norm();
 
 			if (r > 0.01f*horizon)
 			{
 				Real weight = g_weightKernel.WeightRR(r, horizon);
 
-				Coord rest_dir_ij = 0.5*(F_i + F_j)*(rest_i - rest_j);
-				Coord cur_dir_ij = cur_pos_i - cur_pos_j;
-
-				cur_dir_ij = cur_dir_ij.norm() > EPSILON ? cur_dir_ij.normalize() : Coord(0);
-				rest_dir_ij = rest_dir_ij.norm() > EPSILON ? rest_dir_ij.normalize() : Coord(0, 0, 0);
-
-				Real mu_ij = mu*bulk_i* g_weightKernel.WeightRR(r, horizon);
-				Coord mu_pos_i = position[j] + r*rest_dir_ij;
-
-				accPos += mu_ij*mu_pos_i;
-				accA += mu_ij;
-
-				Real lambda_ij = lambda*bulk_i*g_weightKernel.WeightRR(r, horizon);
-				Coord lambda_pos_i = position[j] + r*cur_dir_ij;
-
-				accPos += lambda_ij*lambda_pos_i;
-				accA += lambda_ij;
-
-//				accPos -= 0.01*mu_ij*((cur_pos_i - cur_pos_j) - r*q);
-//				accPos -= 0.0001*lambda_ij*((cur_pos_i - cur_pos_j) - r*cur_dir_ij);
-
-// 				if (r < distance)
-// 				{
-// 					Coord J_pos_i = posArr[j] + distance*q;
-// 					Real J_buk_i = 5*(1-pow(r/distance, Real(5)))*g_weightKernel.WeightRR(r, horizon);
-// 
-// 					accPos += J_buk_i*J_pos_i;
-// 					accA += J_buk_i;
-// 				}
-
-
-
-			}
-		}
-
-		delta_position[pId] = (old_position[pId] + accPos) / (1.0f + accA);// -position[pId];
-
-//		printf("%f \n", accA);
-
-//		delta_position[pId] = delta_position[pId] + accPos;
-	}*/
-
-
-	template <typename Real, typename Coord, typename Matrix, typename NPair>
-	__global__ void EM_EnforceElasticity(
-		DeviceArray<Coord> delta_position,
-		DeviceArray<Real> weights,
-		DeviceArray<Real> bulkCoefs,
-		DeviceArray<Coord> position,
-		DeviceArray<Coord> old_position,
-		DeviceArray<Matrix> F,
-		NeighborList<NPair> restShapes,
-		Real horizon,
-		Real distance,
-		Real mu,
-		Real lambda)
-	{
-
-		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= position.size()) return;
-
-		CorrectedKernel<Real> g_weightKernel;
-
-		NPair np_i = restShapes.getElement(pId, 0);
-		Coord rest_i = np_i.pos;
-		int size_i = restShapes.getNeighborSize(pId);
-
-		Coord cur_pos_i = position[pId];
-		Matrix F_i = F[pId];
-
-		Coord accPos = Coord(0);
-		Real accA = Real(0);
-		Real bulk_i = bulkCoefs[pId];
-
-		for (int ne = 0; ne < size_i; ne++)
-		{
-			NPair np_j = restShapes.getElement(pId, ne);
-			Coord rest_j = np_j.pos;
-			int j = np_j.index;
-			Real r = (rest_j - rest_i).norm();
-			Matrix F_j = F[j];
-
-			Coord cur_pos_j = position[j];
-
-			if (r > 0.01f*horizon)
-			{
-				Real weight = g_weightKernel.WeightRR(r, horizon);
-
-				Coord rest_dir_ij = 0.5*(F_i + F_j)*(rest_i - rest_j);
+				Coord rest_dir_ij = deform_i*(rest_i - rest_j);
 				Coord cur_dir_ij = cur_pos_i - cur_pos_j;
 
 				cur_dir_ij = cur_dir_ij.norm() > EPSILON ? cur_dir_ij.normalize() : Coord(0);
@@ -362,31 +229,15 @@ namespace Physika
 
 				atomicAdd(&weights[j], delta_weight_ij);
 				atomicAdd(&delta_position[j][0], delta_pos_ji[0]);
-
-				if (Coord::dims() >= 2)
-				{
-					atomicAdd(&delta_position[j][1], delta_pos_ji[1]);
-				}
-
-				if (Coord::dims() >= 3)
-				{
-					atomicAdd(&delta_position[j][2], delta_pos_ji[2]);
-				}
+				atomicAdd(&delta_position[j][1], delta_pos_ji[1]);
+				atomicAdd(&delta_position[j][2], delta_pos_ji[2]);
 			}
 		}
 
 		atomicAdd(&weights[pId], accA);
 		atomicAdd(&delta_position[pId][0], accPos[0]);
-
-		if (Coord::dims() >= 2)
-		{
-			atomicAdd(&delta_position[pId][1], accPos[1]);
-		}
-
-		if (Coord::dims() >= 3)
-		{
-			atomicAdd(&delta_position[pId][2], accPos[2]);
-		}
+		atomicAdd(&delta_position[pId][1], accPos[1]);
+		atomicAdd(&delta_position[pId][2], accPos[2]);
 	}
 
 
@@ -452,14 +303,14 @@ namespace Physika
 	ElasticityModule<TDataType>::ElasticityModule()
 		: ConstraintModule()
 	{
-		attachField(&m_horizon, "horizon", "Supporting radius!", false);
-		attachField(&m_distance, "distance", "The sampling distance!", false);
-		attachField(&m_mu, "mu", "Material stiffness!", false);
-		attachField(&m_lambda, "lambda", "Material stiffness!", false);
+		this->attachField(&m_horizon, "horizon", "Supporting radius!", false);
+		this->attachField(&m_distance, "distance", "The sampling distance!", false);
+		this->attachField(&m_mu, "mu", "Material stiffness!", false);
+		this->attachField(&m_lambda, "lambda", "Material stiffness!", false);
 
-		attachField(&m_position, "position", "Storing the particle positions!", false);
-		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
+		this->attachField(&m_position, "position", "Storing the particle positions!", false);
+		this->attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+		this->attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
 
 		m_horizon.setValue(0.0125);
 		m_distance.setValue(0.005);
@@ -471,97 +322,116 @@ namespace Physika
 	template<typename TDataType>
 	ElasticityModule<TDataType>::~ElasticityModule()
 	{
-		m_lambdas.release();
-		m_accPos.release();
+		m_weights.release();
+		m_displacement.release();
 		m_invK.release();
 		m_F.release();
-		m_oldPosition.release();
+		m_position_old.release();
 	}
 
 	template<typename TDataType>
-	void ElasticityModule<TDataType>::takeOneIteration()
+	void ElasticityModule<TDataType>::enforceElasticity()
 	{
-
-	}
-
-
-	template<typename TDataType>
-	void ElasticityModule<TDataType>::solveElasticity()
-	{
-		Node* parent = getParent();
-		if (parent == nullptr)
-		{
-			Log::sendMessage(Log::Error, "Parent is not set!");
-			exit(0);
-		}
-
-		Real dt = parent->getDt();
-
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
-		Function1Pt::copy(m_oldPosition, m_position.getValue());
+		m_displacement.reset();
+		m_weights.reset();
+
+		EM_EnforceElasticity << <pDims, BLOCK_SIZE >> > (
+			m_displacement,
+			m_weights,
+			m_bulkCoefs,
+			m_invK,
+			m_position.getValue(),
+			m_restShape.getValue(),
+			m_horizon.getValue(),
+			m_distance.getValue(),
+			m_mu.getValue(),
+			m_lambda.getValue());
+		cuSynchronize();
+
+		K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
+			m_position.getValue(),
+			m_position_old,
+			m_displacement,
+			m_weights);
+		cuSynchronize();
+	}
+
+	template<typename Real>
+	__global__ void EM_InitBulkStiffness(DeviceArray<Real> stiffness)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= stiffness.size()) return;
+
+		stiffness[pId] = Real(1);
+	}
+
+	template<typename TDataType>
+	void ElasticityModule<TDataType>::computeMaterialStiffness()
+	{
+		int num = m_position.getElementCount();
+
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+		EM_InitBulkStiffness << <pDims, BLOCK_SIZE >> > (m_bulkCoefs);
+	}
+
+
+	template<typename TDataType>
+	void ElasticityModule<TDataType>::computeInverseK()
+	{
+		int num = m_restShape.getElementCount();
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		EM_PrecomputeShape <Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
 			m_invK,
 			m_restShape.getValue(),
 			m_horizon.getValue());
 		cuSynchronize();
+	}
 
-		int total_itoration = 10;
+
+	template<typename TDataType>
+	void ElasticityModule<TDataType>::solveElasticity()
+	{
+		//Save new positions
+		Function1Pt::copy(m_position_old, m_position.getValue());
+
+		this->computeInverseK();
+
 		int itor = 0;
-		while (itor < total_itoration)
+		while (itor < m_iterNum)
 		{
-			m_accPos.reset();
-			m_lambdas.reset();
-//			Function1Pt::copy(*accPos, m_position.getValue());
-
-			EM_ComputeDeformationGradient << <pDims, BLOCK_SIZE >> > (
-				m_F,
-				m_invK,
-				m_position.getValue(),
-				m_restShape.getValue(),
-				m_horizon.getValue());
-			cuSynchronize();
-
-			EM_EnforceElasticity << <pDims, BLOCK_SIZE >> > (
-				m_accPos,
-				m_lambdas,
-				m_bulkCoefs,
-				m_position.getValue(),
-				m_oldPosition,
-				m_F,
-				m_restShape.getValue(),
-				m_horizon.getValue(),
-				m_distance.getValue(),
-				m_mu.getValue(),
-				m_lambda.getValue());
-			cuSynchronize();
-
-			K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
-				m_position.getValue(),
-				m_oldPosition,
-				m_accPos,
-				m_lambdas);
-			cuSynchronize();
-
-			m_pbdModule->takeOneIteration(dt);
+			this->enforceElasticity();
 
 			itor++;
 		}
 
+		this->updateVelocity();
+	}
+
+	template<typename TDataType>
+	void Physika::ElasticityModule<TDataType>::updateVelocity()
+	{
+		int num = m_position.getElementCount();
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+
+		Real dt = this->getParent()->getDt();
+
 		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
 			m_velocity.getValue(),
-			m_oldPosition,
+			m_position_old,
 			m_position.getValue(),
 			dt);
 		cuSynchronize();
 	}
 
+
 	template<typename TDataType>
 	bool ElasticityModule<TDataType>::constrain()
 	{
-		solveElasticity();
+		this->solveElasticity();
 
 		return true;
 	}
@@ -637,15 +507,6 @@ namespace Physika
 		cuSynchronize();
 	}
 
-	template<typename Real>
-	__global__ void EM_InitBulkStiffness(DeviceArray<Real> stiffness)
-	{
-		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= stiffness.size()) return;
-
-		stiffness[pId] = Real(1);
-	}
-
 	template<typename TDataType>
 	bool ElasticityModule<TDataType>::initializeImpl()
 	{
@@ -658,27 +519,19 @@ namespace Physika
 		int num = m_position.getElementCount();
 		
 		m_invK.resize(num);
-		m_lambdas.resize(num);
-		m_accPos.resize(num);
+		m_weights.resize(num);
+		m_displacement.resize(num);
 
 		m_F.resize(num);
 		
-		m_oldPosition.resize(num);
+		m_position_old.resize(num);
 		m_bulkCoefs.resize(num);
 
 		resetRestShape();
 
-		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
-		m_horizon.connect(m_pbdModule->m_smoothingLength);
-		m_position.connect(m_pbdModule->m_position);
-		m_velocity.connect(m_pbdModule->m_velocity);
-		m_neighborhood.connect(m_pbdModule->m_neighborhood);
-		m_pbdModule->initialize();
+		this->computeMaterialStiffness();
 
-		m_pbdModule->setParent(this->getParent());
-
-		uint pDims = cudaGridSize(num, BLOCK_SIZE);
-		EM_InitBulkStiffness << <pDims, BLOCK_SIZE >> > (m_bulkCoefs);
+		Function1Pt::copy(m_position_old, m_position.getValue());
 
 		return true;
 	}

@@ -26,9 +26,13 @@ namespace Physika {
 
 		bool constrain() override;
 
-		void takeOneIteration(Real dt);
+		void takeOneIteration();
+
+		void updateVelocity();
 
 		void setIterationNumber(int n) { m_maxIteration = n; }
+
+		DeviceArray<Real>& getDensity() { return m_density.getValue(); }
 
 	protected:
 		bool initializeImpl() override;
@@ -48,6 +52,7 @@ namespace Physika {
 		DeviceArray<Real> m_rhoArr;
 		DeviceArray<Real> m_lamda;
 		DeviceArray<Coord> m_deltaPos;
+		DeviceArray<Coord> m_position_old;
 
 		std::shared_ptr<DensitySummation<TDataType>> m_densitySum;
 	};

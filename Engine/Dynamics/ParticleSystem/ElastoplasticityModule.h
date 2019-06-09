@@ -3,6 +3,7 @@
 #include "Framework/Framework/FieldArray.h"
 #include "Framework/Topology/FieldNeighbor.h"
 #include "Dynamics/ParticleSystem/ElasticityModule.h"
+#include "DensityPBD.h"
 
 namespace Physika {
 
@@ -20,21 +21,23 @@ namespace Physika {
 		
 		bool constrain() override;
 
-		void applyPlasticity();
+		void solveElasticity() override;
 
-		void reconstructRestShape();
+		virtual void applyPlasticity();
+
+		void applyYielding();
 
 		void rotateRestShape();
+		void reconstructRestShape();
 
 		void setCohesion(Real c);
 		void setFrictionAngle(Real phi);
 
-		virtual void computeStiffness();
+		void enableFullyReconstruction();
 
 	protected:
 		bool initializeImpl() override;
 
-	private:
 		inline Real computeA()
 		{
 			Real phi = m_phi.getValue();
@@ -48,8 +51,12 @@ namespace Physika {
 			return (Real)2.0f*sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
 		}
 
+	private:
+
 		VarField<Real> m_c;
 		VarField<Real> m_phi;
+
+		bool m_reconstuct_all_neighborhood = false;
 
 		DeviceArray<bool> m_bYield;
 		DeviceArray<Matrix> m_invF;
@@ -57,6 +64,7 @@ namespace Physika {
 		DeviceArray<Real> m_yield_J2;
 		DeviceArray<Real> m_I1;
 
+		std::shared_ptr<DensityPBD<TDataType>> m_pbdModule;
 	};
 
 #ifdef PRECISION_FLOAT

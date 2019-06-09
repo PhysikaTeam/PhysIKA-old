@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Core/Typedef.h"
 #include "Core/DataTypes.h"
+#include "FieldVar.h"
 
 namespace Physika
 {
@@ -16,7 +17,7 @@ class Node;
 class Module : public Base
 {
 public:
-	Module();
+	Module(std::string name = "default");
 
 	~Module(void) override;
 
@@ -28,16 +29,18 @@ public:
 
 	virtual void end() {};
 
-	void setParent(Node* node) {
-		m_node = node;
-	}
+	void setName(std::string name);
+	void setParent(Node* node);
 
-	Node* getParent() {
+	std::string getName();
+
+	Node* getParent()
+	{
 		if (m_node == NULL)
 		{
 			Log::sendMessage(Log::Error, "Parent node is not set!");
 		}
-		return m_node; 
+		return m_node;
 	}
 
 	bool isInitialized();
@@ -49,10 +52,11 @@ protected:
 	/// 
 	/// This function is used to initialize internal variables for each module
 	/// , it is called after all fields are set.
-	virtual bool initializeImpl() { return m_initialized; }
+	virtual bool initializeImpl();
 
 private:
 	Node* m_node;
+	std::string m_module_name;
 	bool m_initialized;
 };
 }

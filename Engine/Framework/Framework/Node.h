@@ -1,3 +1,13 @@
+/**
+ * @file Node.h
+ * @author Xiaowei He (xiaowei@iscas.ac.cn)
+ * @brief A tree node, it may contain a number of different kinds of fields, modules and child nodes
+ * @version 0.1
+ * @date 2019-06-08
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #pragma once
 #include "Base.h"
 #include "Core/Typedef.h"
@@ -15,6 +25,8 @@
 #include "ControllerAnimation.h"
 #include "ControllerRender.h"
 #include "TopologyMapping.h"
+#include "NumericalIntegrator.h"
+#include "ModuleCompute.h"
 
 namespace Physika {
 class Action;
@@ -57,18 +69,28 @@ public:
 
 	void setDt(Real dt);
 
-	void setGravity(Real g);
-	Real getGravity();
-
 	void setMass(Real mass);
 	Real getMass();
 
+	/**
+	 * @brief Create a Child object
+	 * 
+	 * @tparam TNode 						Node type of the child object
+	 * @param name 							Node name
+	 * @return std::shared_ptr<TNode> 		return the created child, if name is aleady used, return nullptr.
+	 */
 	template<class TNode>
 	std::shared_ptr<TNode> createChild(std::string name)
 	{
 		return addChild(TypeInfo::New<TNode>(name));
 	}
 
+	/**
+	 * @brief Add a child
+	 * 
+	 * @param child 
+	 * @return std::shared_ptr<Node> 
+	 */
 	std::shared_ptr<Node> addChild(std::shared_ptr<Node> child) {
 		m_children.push_back(child);
 		child->setParent(this);
@@ -77,25 +99,45 @@ public:
 
 	void removeChild(std::shared_ptr<Node> child);
 
+	/**
+	 * @brief Return all children
+	 * 
+	 * @return ListPtr<Node> Children list
+	 */
 	ListPtr<Node> getChildren() { return m_children; }
+
 
 	std::shared_ptr<DeviceContext> getContext();
 	void setContext(std::shared_ptr<DeviceContext> context);
+	virtual void setAsCurrentContext();
 
 	std::shared_ptr<MechanicalState> getMechanicalState();
 	void setMechanicalState(std::shared_ptr<MechanicalState> state);
 
-	//bool addModule(std::string name, Module* module);
-
+	/**
+	 * @brief Add a module to m_module_list and other special module lists
+	 * 
+	 * @param module 	module should be created before calling this function
+	 * @return true 	return true if successfully added
+	 * @return false 	return false if module already exists
+	 */
 	bool addModule(std::shared_ptr<Module> module);
+	bool deleteModule(std::shared_ptr<Module> module);
 
+	/**
+	 * @brief Add a speical kind of module
+	 * 
+	 * @tparam TModule 	Module type
+	 * @param tModule 	Added module
+	 * @return true 
+	 * @return false 
+	 */
 	template<class TModule>
 	bool addModule(std::shared_ptr<TModule> tModule)
 	{
 		std::shared_ptr<Module> module = std::dynamic_pointer_cast<Module>(tModule);
 		return addModule(module);
 	}
-
 	template<class TModule>
 	bool deleteModule(std::shared_ptr<TModule> tModule)
 	{
@@ -103,38 +145,24 @@ public:
 		return deleteModule(module);
 	}
 
-	bool deleteModule(std::shared_ptr<Module> module);
+	std::list<std::shared_ptr<Module>>& getModuleList() { return m_module_list; }
 
-	void traverseBottomUp(Action* act);
-	template<class Act>
-	void traverseBottomUp() {
-		Act action;
-		doTraverseBottomUp(&action);
-	}
+	bool hasModule(std::string name);
 
-	void traverseTopDown(Action* act);
-	template<class Act>
-	void traverseTopDown() {
-		Act action;
-		doTraverseTopDown(&action);
-	}
+	/**
+	 * @brief Get a module by its name
+	 * 
+	 * @param name 	Module name
+	 * @return std::shared_ptr<Module>	return nullptr is no module is found, otherwise return the first found module
+	 */
+	std::shared_ptr<Module> getModule(std::string name);
 
-	virtual void setAsCurrentContext();
-
-	void setTopologyModule(std::shared_ptr<TopologyModule> topology);
-	void setNumericalModel(std::shared_ptr<NumericalModel> numerical);
-	void setCollidableObject(std::shared_ptr<CollidableObject> collidable);
-	void setRenderController(std::shared_ptr<RenderController> controller);
-	void setAnimationController(std::shared_ptr<AnimationController> controller);
-
-	std::shared_ptr<CollidableObject>		getCollidableObject() { return m_collidable_object; }
-	std::shared_ptr<NumericalModel>			getNumericalModel() { return m_numerical_model; }
-	std::shared_ptr<TopologyModule>			getTopologyModule() { return m_topology; }
-	std::shared_ptr<RenderController>		getRenderController() { return m_render_controller; }
-	std::shared_ptr<AnimationController>	getAnimationController();
-
-	//Module* getModule(std::string name);
-
+	/**
+	 * @brief Get the Module by the module class name
+	 * 
+	 * @tparam TModule 	Module class name
+	 * @return std::shared_ptr<TModule> return nullptr is no module is found, otherwise return the first found module
+	 */
 	template<class TModule>
 	std::shared_ptr<TModule> getModule()
 	{
@@ -153,18 +181,103 @@ public:
 		return TypeInfo::CastPointerDown<TModule>(base);
 	}
 
-	std::list<std::shared_ptr<Module>>& getModuleList() { return m_module_list; }
+	template<class TModule> 
+	std::shared_ptr<TModule> getModule(std::string name)
+	{
+		std::shared_ptr<Module> base = getModule(name);
+
+		return TypeInfo::CastPointerDown<TModule>(base);
+	}
+
+
+#define NODE_SET_SPECIAL_MODULE( CLASSNAME )												\
+	template<class TModule>																	\
+	std::shared_ptr<TModule> set##CLASSNAME(std::string name) {								\
+		if (hasModule(name))																					\
+		{																										\
+			Log::sendMessage(Log::Error, std::string("Module ") + name + std::string(" already exists!"));		\
+			return nullptr;																						\
+		}																										\
+																												\
+		std::shared_ptr<TModule> module = std::make_shared<TModule>();											\
+		module->setName(name);																					\
+		this->set##CLASSNAME(module);																			\
+																												\
+		return module;																							\
+	}
+	NODE_SET_SPECIAL_MODULE(TopologyModule)
+	NODE_SET_SPECIAL_MODULE(NumericalModel)
+	NODE_SET_SPECIAL_MODULE(CollidableObject)
+	NODE_SET_SPECIAL_MODULE(NumericalIntegrator)
+
+#define NODE_SET_SPECIAL_MODULE( CLASSNAME, MODULENAME )						\
+	virtual void set##CLASSNAME( std::shared_ptr<CLASSNAME> module) {			\
+		if(MODULENAME != nullptr)	deleteFromModuleList(MODULENAME);					\
+		MODULENAME = module;													\
+		addToModuleList(module);														\
+	}
+
+	NODE_SET_SPECIAL_MODULE(TopologyModule, m_topology)
+	NODE_SET_SPECIAL_MODULE(NumericalModel, m_numerical_model)
+	NODE_SET_SPECIAL_MODULE(CollidableObject, m_collidable_object)
+	NODE_SET_SPECIAL_MODULE(NumericalIntegrator, m_numerical_integrator)
+
+
+	std::shared_ptr<CollidableObject>		getCollidableObject() { return m_collidable_object; }
+	std::shared_ptr<NumericalModel>			getNumericalModel() { return m_numerical_model; }
+	std::shared_ptr<TopologyModule>			getTopologyModule() { return m_topology; }
+	std::shared_ptr<NumericalIntegrator>	getNumericalIntegrator() { return m_numerical_integrator; }
+
+
+	template<class TModule>
+	std::shared_ptr<TModule> addModule(std::string name)
+	{
+		if (hasModule(name))
+		{
+			Log::sendMessage(Log::Error, std::string("Module ") + name + std::string(" already exists!"));
+			return nullptr;
+		}
+		std::shared_ptr<TModule> module = std::make_shared<TModule>();
+		module->setName(name);
+		this->addModule(module);
+
+		return module;
+	}
+
+#define NODE_CREATE_SPECIAL_MODULE(CLASSNAME) \
+	template<class TModule>									\
+		std::shared_ptr<TModule> add##CLASSNAME(std::string name)	\
+		{																	\
+			if (hasModule(name))											\
+			{																\
+				Log::sendMessage(Log::Error, std::string("Module ") + name + std::string(" already exists!"));	\
+				return nullptr;																					\
+			}																									\
+			std::shared_ptr<TModule> module = std::make_shared<TModule>();										\
+			module->setName(name);																				\
+			this->add##CLASSNAME(module);																		\
+																												\
+			return module;																						\
+		}																										
 
 #define NODE_ADD_SPECIAL_MODULE( CLASSNAME, SEQUENCENAME ) \
-	virtual void add##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.push_back(module); addModule(module);} \
-	virtual void delete##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.remove(module); deleteModule(module); } \
+	virtual void add##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.push_back(module); addToModuleList(module);} \
+	virtual void delete##CLASSNAME( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.remove(module); deleteFromModuleList(module); } \
 	std::list<std::shared_ptr<CLASSNAME>>& get##CLASSNAME##List(){ return SEQUENCENAME;}
 
 	NODE_ADD_SPECIAL_MODULE(ForceModule, m_force_list)
-	NODE_ADD_SPECIAL_MODULE(ConstraintModule, m_constraint_list)
-	NODE_ADD_SPECIAL_MODULE(CollisionModel, m_collision_list)
-	NODE_ADD_SPECIAL_MODULE(VisualModule, m_render_list)
-	NODE_ADD_SPECIAL_MODULE(TopologyMapping, m_topology_mapping_list)
+		NODE_ADD_SPECIAL_MODULE(ConstraintModule, m_constraint_list)
+		NODE_ADD_SPECIAL_MODULE(CollisionModel, m_collision_list)
+		NODE_ADD_SPECIAL_MODULE(VisualModule, m_render_list)
+		NODE_ADD_SPECIAL_MODULE(TopologyMapping, m_topology_mapping_list)
+		NODE_ADD_SPECIAL_MODULE(ComputeModule, m_compute_list)
+
+		NODE_CREATE_SPECIAL_MODULE(ForceModule)
+		NODE_CREATE_SPECIAL_MODULE(ConstraintModule)
+		NODE_CREATE_SPECIAL_MODULE(CollisionModel)
+		NODE_CREATE_SPECIAL_MODULE(VisualModule)
+		NODE_CREATE_SPECIAL_MODULE(TopologyMapping)
+		NODE_CREATE_SPECIAL_MODULE(ComputeModule)
 
 	virtual bool initialize() { return true; }
 	virtual void draw() {};
@@ -174,6 +287,30 @@ public:
 	virtual void updateTopology() {};
 	virtual bool resetStatus() { return true; }
 
+	/**
+	 * @brief Depth-first tree traversal 
+	 * 
+	 * @param act 	Operation on the node
+	 */
+	void traverseBottomUp(Action* act);
+	template<class Act>
+	void traverseBottomUp() {
+		Act action;
+		doTraverseBottomUp(&action);
+	}
+
+	/**
+	 * @brief Breadth-first tree traversal
+	 * 
+	 * @param act 	Operation on the node
+	 */
+	void traverseTopDown(Action* act);
+	template<class Act>
+	void traverseTopDown() {
+		Act action;
+		doTraverseTopDown(&action);
+	}
+
 protected:
 	void setParent(Node* p) { m_parent = p; }
 
@@ -181,31 +318,68 @@ protected:
 	virtual void doTraverseTopDown(Action* act);
 
 private:
+	bool addToModuleList(std::shared_ptr<Module> module);
+	bool deleteFromModuleList(std::shared_ptr<Module> module);
+
+#define NODE_ADD_SPECIAL_MODULE_LIST( CLASSNAME, SEQUENCENAME ) \
+	virtual void addTo##CLASSNAME##List( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.push_back(module); } \
+	virtual void deleteFrom##CLASSNAME##List( std::shared_ptr<CLASSNAME> module) { SEQUENCENAME.remove(module); } \
+
+	NODE_ADD_SPECIAL_MODULE_LIST(ForceModule, m_force_list)
+		NODE_ADD_SPECIAL_MODULE_LIST(ConstraintModule, m_constraint_list)
+		NODE_ADD_SPECIAL_MODULE_LIST(CollisionModel, m_collision_list)
+		NODE_ADD_SPECIAL_MODULE_LIST(VisualModule, m_render_list)
+		NODE_ADD_SPECIAL_MODULE_LIST(TopologyMapping, m_topology_mapping_list)
+		NODE_ADD_SPECIAL_MODULE_LIST(ComputeModule, m_compute_list)
+
+private:
+	/**
+	 * @brief Time step size
+	 * 
+	 */
 	Real m_dt;
-	Real m_gravity = -9.8;
 	bool m_initalized;
 
 	VarField<Real> m_mass;
-	HostVarField<bool> m_active;
-	HostVarField<bool> m_visible;
-	HostVarField<Real> m_time;
+	/**
+	 * @brief Dynamics indicator
+	 * true: Dynamics is turn on
+	 * false: Dynamics is turned off
+	 */
+	VarField<bool> m_active;
+	/**
+	 * @brief Visibility
+	 * true: the node is visible
+	 * false: the node is invisible
+	 */
+	VarField<bool> m_visible;
+	VarField<Real> m_time;
 
-	HostVarField<std::string> m_node_name;
+	VarField<std::string> m_node_name;
 
+	/**
+	 * @brief A module list containing all modules
+	 * 
+	 */
 	std::list<std::shared_ptr<Module>> m_module_list;
-	//std::map<std::string, Module*> m_modules;
 
+	/**
+	 * @brief Pointer of a specific module
+	 * 
+	 */
 	std::shared_ptr<TopologyModule> m_topology;
 	std::shared_ptr<NumericalModel> m_numerical_model;
 	std::shared_ptr<MechanicalState> m_mechanical_state;
-
 	std::shared_ptr<CollidableObject> m_collidable_object;
+	std::shared_ptr<NumericalIntegrator> m_numerical_integrator;
 
-	std::shared_ptr<RenderController> m_render_controller;
-	std::shared_ptr<AnimationController> m_animation_controller;
-
+	/**
+	 * @brief A module list containg specific modules
+	 * 
+	 */
 	std::list<std::shared_ptr<ForceModule>> m_force_list;
 	std::list<std::shared_ptr<ConstraintModule>> m_constraint_list;
+	std::list<std::shared_ptr<ComputeModule>> m_compute_list;
 	std::list<std::shared_ptr<CollisionModel>> m_collision_list;
 	std::list<std::shared_ptr<VisualModule>> m_render_list;
 	std::list<std::shared_ptr<TopologyMapping>> m_topology_mapping_list;
@@ -214,6 +388,10 @@ private:
 
 	ListPtr<Node> m_children;
 
+	/**
+	 * @brief Indicating which node the current module belongs to
+	 * 
+	 */
 	Node* m_parent;
 };
 }
