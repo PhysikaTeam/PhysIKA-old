@@ -274,7 +274,7 @@ namespace Physika
 	template<typename TDataType>
 	void ElastoplasticityModule<TDataType>::solveElasticity()
 	{
-		Function1Pt::copy(m_position_old, m_position.getValue());
+		Function1Pt::copy(this->m_position_old, this->m_position.getValue());
 
 		this->computeInverseK();
 
@@ -305,7 +305,7 @@ namespace Physika
 	template<typename TDataType>
 	void ElastoplasticityModule<TDataType>::applyYielding()
 	{
-		int num = m_position.getElementCount();
+		int num = this->m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		Real A = computeA();
@@ -316,23 +316,23 @@ namespace Physika
 			m_yiled_I1,
 			m_yield_J2,
 			m_I1,
-			m_position.getValue(),
+			this->m_position.getValue(),
 			m_pbdModule->getDensity(),
-			m_bulkCoefs,
-			m_restShape.getValue(),
-			m_horizon.getValue(),
+			this->m_bulkCoefs,
+			this->m_restShape.getValue(),
+			this->m_horizon.getValue(),
 			A,
 			B,
-			m_mu.getValue(),
-			m_lambda.getValue());
+			this->m_mu.getValue(),
+			this->m_lambda.getValue());
 		cuSynchronize();
 		// 
 		PM_ApplyYielding<Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
 			m_yiled_I1,
 			m_yield_J2,
 			m_I1,
-			m_position.getValue(),
-			m_restShape.getValue());
+			this->m_position.getValue(),
+			this->m_restShape.getValue());
 		cuSynchronize();
 	}
 
@@ -523,7 +523,7 @@ namespace Physika
 	{
 		//constructRestShape(m_neighborhood.getValue(), m_position.getValue());
 
-		uint pDims = cudaGridSize(m_position.getElementCount(), BLOCK_SIZE);
+		uint pDims = cudaGridSize(this->m_position.getElementCount(), BLOCK_SIZE);
 
 		if (m_reconstuct_all_neighborhood)
 		{
@@ -531,15 +531,15 @@ namespace Physika
 		}
 
 		NeighborList<NPair> newNeighborList;
-		newNeighborList.resize(m_position.getElementCount());
+		newNeighborList.resize(this->m_position.getElementCount());
 		DeviceArray<int>& index = newNeighborList.getIndex();
 		DeviceArray<NPair>& elements = newNeighborList.getElements();
 
 		PM_ReconfigureRestShape << <pDims, BLOCK_SIZE >> > (
 			index,
 			m_bYield,
-			m_neighborhood.getValue(),
-			m_restShape.getValue());
+			this->m_neighborhood.getValue(),
+			this->m_restShape.getValue());
 
 		int total_num = thrust::reduce(thrust::device, index.getDataPtr(), index.getDataPtr() + index.size(), (int)0, thrust::plus<int>());
 		thrust::exclusive_scan(thrust::device, index.getDataPtr(), index.getDataPtr() + index.size(), index.getDataPtr());
@@ -547,23 +547,23 @@ namespace Physika
 
 		PM_ComputeInverseDeformation << <pDims, BLOCK_SIZE >> > (
 			m_invF,
-			m_position.getValue(),
-			m_restShape.getValue(),
-			m_horizon.getValue());
+			this->m_position.getValue(),
+			this->m_restShape.getValue(),
+			this->m_horizon.getValue());
 
 		PM_ReconstructRestShape<< <pDims, BLOCK_SIZE >> > (
 			newNeighborList,
 			m_bYield,
-			m_position.getValue(),
+			this->m_position.getValue(),
 			m_I1,
 			m_yiled_I1,
 			m_yield_J2,
 			m_invF,
-			m_neighborhood.getValue(),
-			m_restShape.getValue(),
-			m_horizon.getValue());
+			this->m_neighborhood.getValue(),
+			this->m_restShape.getValue(),
+			this->m_horizon.getValue());
 
-		m_restShape.getValue().copyFrom(newNeighborList);
+		this->m_restShape.getValue().copyFrom(newNeighborList);
 
 		newNeighborList.release();
 		cuSynchronize();
@@ -774,33 +774,33 @@ namespace Physika
 	template<typename TDataType>
 	void ElastoplasticityModule<TDataType>::rotateRestShape()
 	{
-		int num = m_position.getElementCount();
+		int num = this->m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		EM_RotateRestShape <Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
-			m_position.getValue(),
+			this->m_position.getValue(),
 			m_bYield,
-			m_restShape.getValue(),
-			m_horizon.getValue());
+			this->m_restShape.getValue(),
+			this->m_horizon.getValue());
 		cuSynchronize();
 	}
 
 	template<typename TDataType>
 	bool ElastoplasticityModule<TDataType>::initializeImpl()
 	{
-		m_invF.resize(m_position.getElementCount());
-		m_yiled_I1.resize(m_position.getElementCount());
-		m_yield_J2.resize(m_position.getElementCount());
-		m_I1.resize(m_position.getElementCount());
-		m_bYield.resize(m_position.getElementCount());
+		m_invF.resize(this->m_position.getElementCount());
+		m_yiled_I1.resize(this->m_position.getElementCount());
+		m_yield_J2.resize(this->m_position.getElementCount());
+		m_I1.resize(this->m_position.getElementCount());
+		m_bYield.resize(this->m_position.getElementCount());
 
 		m_bYield.reset();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
-		m_horizon.connect(m_pbdModule->m_smoothingLength);
-		m_position.connect(m_pbdModule->m_position);
-		m_velocity.connect(m_pbdModule->m_velocity);
-		m_neighborhood.connect(m_pbdModule->m_neighborhood);
+		this->m_horizon.connect(m_pbdModule->m_smoothingLength);
+		this->m_position.connect(m_pbdModule->m_position);
+		this->m_velocity.connect(m_pbdModule->m_velocity);
+		this->m_neighborhood.connect(m_pbdModule->m_neighborhood);
 		m_pbdModule->initialize();
 
 		m_pbdModule->setParent(this->getParent());

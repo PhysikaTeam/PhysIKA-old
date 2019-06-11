@@ -15,9 +15,9 @@ namespace Physika
 	{
 		m_densitySum = std::make_shared<DensitySummation<TDataType>>();
 
-		m_horizon.connect(m_densitySum->m_smoothingLength);
-		m_position.connect(m_densitySum->m_position);
-		m_neighborhood.connect(m_densitySum->m_neighborhood);
+		this->m_horizon.connect(m_densitySum->m_smoothingLength);
+		this->m_position.connect(m_densitySum->m_position);
+		this->m_neighborhood.connect(m_densitySum->m_neighborhood);
 
 		m_densitySum->initialize();
 
@@ -53,13 +53,13 @@ namespace Physika
 	template<typename TDataType>
 	void GranularModule<TDataType>::computeMaterialStiffness()
 	{
-		int num = m_position.getElementCount();
+		int num = this->m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		m_densitySum->compute();
 
 		PM_ComputeStiffness << <pDims, BLOCK_SIZE >> > (
-			m_bulkCoefs,
+			this->m_bulkCoefs,
 			m_densitySum->m_density.getValue());
 		cuSynchronize();
 	}

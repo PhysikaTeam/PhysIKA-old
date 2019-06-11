@@ -171,48 +171,49 @@ namespace Physika
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= position.size()) return;
-		position[pId] = (old_position[pId] + delta_position[pId]) / (1.0 + delta_weights[pId]);
+
+		position[pId] = (old_position[pId] + delta_position[pId]) / (1.0 + delta_weights[pId]);
 	}
 
 	template<typename TDataType>
 	void HyperelasticityModule<TDataType>::enforceElasticity()
 	{
-		int num = m_position.getElementCount();
+		int num = this->m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
-		m_displacement.reset();
-		m_weights.reset();
+		this->m_displacement.reset();
+		this->m_weights.reset();
 
 		switch (m_energyType)
 		{
 		case Linear:
 			HM_EnforceElasticity << <pDims, BLOCK_SIZE >> > (
-				m_displacement,
-				m_weights,
-				m_bulkCoefs,
-				m_invK,
-				m_position.getValue(),
-				m_restShape.getValue(),
-				m_horizon.getValue(),
-				m_distance.getValue(),
-				m_mu.getValue(),
-				m_lambda.getValue(),
+				this->m_displacement,
+				this->m_weights,
+				this->m_bulkCoefs,
+				this->m_invK,
+				this->m_position.getValue(),
+				this->m_restShape.getValue(),
+				this->m_horizon.getValue(),
+				this->m_distance.getValue(),
+				this->m_mu.getValue(),
+				this->m_lambda.getValue(),
 				ConstantFunc<Real>());
 			cuSynchronize();
 			break;
 
 		case Quadratic:
 			HM_EnforceElasticity << <pDims, BLOCK_SIZE >> > (
-				m_displacement,
-				m_weights,
-				m_bulkCoefs,
-				m_invK,
-				m_position.getValue(),
-				m_restShape.getValue(),
-				m_horizon.getValue(),
-				m_distance.getValue(),
-				m_mu.getValue(),
-				m_lambda.getValue(),
+				this->m_displacement,
+				this->m_weights,
+				this->m_bulkCoefs,
+				this->m_invK,
+				this->m_position.getValue(),
+				this->m_restShape.getValue(),
+				this->m_horizon.getValue(),
+				this->m_distance.getValue(),
+				this->m_mu.getValue(),
+				this->m_lambda.getValue(),
 				QuadraticFunc<Real>());
 			cuSynchronize();
 			break;
@@ -222,10 +223,10 @@ namespace Physika
 		}
 
 		HM_UpdatePosition << <pDims, BLOCK_SIZE >> > (
-			m_position.getValue(),
-			m_position_old,
-			m_displacement,
-			m_weights);
+			this->m_position.getValue(),
+			this->m_position_old,
+			this->m_displacement,
+			this->m_weights);
 		cuSynchronize();
 	}
 

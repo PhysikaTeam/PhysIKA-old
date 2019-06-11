@@ -20,31 +20,31 @@ namespace Physika
 		m_horizon.setValue(0.0085);
 		this->attachField(&m_horizon, "horizon", "horizon");
 
-		auto m_integrator = this->setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
+		auto m_integrator = this->template setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
 		this->getPosition()->connect(m_integrator->m_position);
 		this->getVelocity()->connect(m_integrator->m_velocity);
 		this->getForce()->connect(m_integrator->m_forceDensity);
 
-		auto m_nbrQuery = this->addComputeModule<NeighborQuery<TDataType>>("neighborhood");
+		auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
 		m_horizon.connect(m_nbrQuery->m_radius);
-		m_position.connect(m_nbrQuery->m_position);
+		this->m_position.connect(m_nbrQuery->m_position);
 
-		auto m_elasticity = this->addConstraintModule<ElasticityModule<TDataType>>("elasticity");
+		auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
 		this->getPosition()->connect(m_elasticity->m_position);
 		this->getVelocity()->connect(m_elasticity->m_velocity);
 		m_horizon.connect(m_elasticity->m_horizon);
 		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
 
 		//Create a node for surface mesh rendering
-		m_surfaceNode = this->createChild<Node>("Mesh");
+		m_surfaceNode = this->template createChild<Node>("Mesh");
 
-		auto triSet = m_surfaceNode->setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
+		auto triSet = m_surfaceNode->template setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
 
-		auto render = m_surfaceNode->addVisualModule<SurfaceMeshRender>("surface_mesh_render");
+		auto render = m_surfaceNode->template addVisualModule<SurfaceMeshRender>("surface_mesh_render");
 		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
 
 		//Set the topology mapping from PointSet to TriangleSet
-		auto surfaceMapping = this->addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");
+		auto surfaceMapping = this->template addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");
 		surfaceMapping->setFrom(this->m_pSet);
 		surfaceMapping->setTo(triSet);
 	}
@@ -81,9 +81,9 @@ namespace Physika
 	template<typename TDataType>
 	void ParticleElasticBody<TDataType>::advance(Real dt)
 	{
-		auto integrator = this->getModule<ParticleIntegrator<TDataType>>("integrator");
+		auto integrator = this->template getModule<ParticleIntegrator<TDataType>>("integrator");
 
-		auto module = this->getModule<ElasticityModule<TDataType>>("elasticity");
+		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
 
 		integrator->begin();
 
@@ -111,8 +111,8 @@ namespace Physika
 	template<typename TDataType>
 	void ParticleElasticBody<TDataType>::setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver)
 	{
-		auto nbrQuery = this->getModule<NeighborQuery<TDataType>>("neighborhood");
-		auto module = this->getModule<ElasticityModule<TDataType>>("elasticity");
+		auto nbrQuery = this->template getModule<NeighborQuery<TDataType>>("neighborhood");
+		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
 
 		this->getPosition()->connect(solver->m_position);
 		this->getVelocity()->connect(solver->m_velocity);

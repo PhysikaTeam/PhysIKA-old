@@ -110,21 +110,21 @@ namespace Physika
 	template<typename TDataType>
 	void FractureModule<TDataType>::applyPlasticity()
 	{
-		int num = m_position.getElementCount();
+		int num = this->m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
-		Real A = computeA();
-		Real B = computeB();
+		Real A = this->computeA();
+		Real B = this->computeB();
 
 		PM_ComputeInvariants<< <pDims, BLOCK_SIZE >> > (
-			m_bulkCoefs,
-			m_position.getValue(),
-			m_restShape.getValue(),
-			m_horizon.getValue(),
+			this->m_bulkCoefs,
+			this->m_position.getValue(),
+			this->m_restShape.getValue(),
+			this->m_horizon.getValue(),
 			A,
 			B,
-			m_mu.getValue(),
-			m_lambda.getValue());
+			this->m_mu.getValue(),
+			this->m_lambda.getValue());
 		cuSynchronize();
 	}
 

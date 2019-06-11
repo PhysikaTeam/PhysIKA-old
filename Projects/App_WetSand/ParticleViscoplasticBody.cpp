@@ -18,26 +18,26 @@ namespace Physika
 
 	template<typename TDataType>
 	ParticleViscoplasticBody<TDataType>::ParticleViscoplasticBody(std::string name)
-		: ParticleSystem(name)
+		: ParticleSystem<TDataType>(name)
 	{
 		m_horizon.setValue(0.0085);
 
 		m_integrator = std::make_shared<ParticleIntegrator<TDataType>>();
-		m_position.connect(m_integrator->m_position);
-		m_velocity.connect(m_integrator->m_velocity);
-		m_force.connect(m_integrator->m_forceDensity);
+		this->m_position.connect(m_integrator->m_position);
+		this->m_velocity.connect(m_integrator->m_velocity);
+		this->m_force.connect(m_integrator->m_forceDensity);
 		//m_integrator->initialize();
 		
 		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
 		m_horizon.connect(m_nbrQuery->m_radius);
-		m_position.connect(m_nbrQuery->m_position);
+		this->m_position.connect(m_nbrQuery->m_position);
 
 		//m_nbrQuery->initialize();
 		//m_nbrQuery->compute();
 
 		m_plasticity = std::make_shared<ElastoplasticityModule<TDataType>>();
-		m_position.connect(m_plasticity->m_position);
-		m_velocity.connect(m_plasticity->m_velocity);
+		this->m_position.connect(m_plasticity->m_position);
+		this->m_velocity.connect(m_plasticity->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_plasticity->m_neighborhood);
 		m_plasticity->setFrictionAngle(0);
 		m_plasticity->setCohesion(0.0);
@@ -45,16 +45,16 @@ namespace Physika
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
 		m_horizon.connect(m_pbdModule->m_smoothingLength);
-		m_position.connect(m_pbdModule->m_position);
-		m_velocity.connect(m_pbdModule->m_velocity);
+		this->m_position.connect(m_pbdModule->m_position);
+		this->m_velocity.connect(m_pbdModule->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
 		//m_pbdModule->initialize();
 
 		m_visModule = std::make_shared<ImplicitViscosity<TDataType>>();
 		m_visModule->setViscosity(Real(1));
 		m_horizon.connect(m_visModule->m_smoothingLength);
-		m_position.connect(m_visModule->m_position);
-		m_velocity.connect(m_visModule->m_velocity);
+		this->m_position.connect(m_visModule->m_position);
+		this->m_velocity.connect(m_visModule->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
 		//m_visModule->initialize();
 
@@ -65,7 +65,7 @@ namespace Physika
 		this->addConstraintModule(m_visModule);
 
 
-		m_surfaceNode = this->createChild<Node>("Mesh");
+		m_surfaceNode = this->template createChild<Node>("Mesh");
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 		m_surfaceNode->setTopologyModule(triSet);
@@ -76,7 +76,7 @@ namespace Physika
 
 		m_surfaceNode->setVisible(false);
 
-		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(m_pSet, triSet);
+		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(this->m_pSet, triSet);
 		this->addTopologyMapping(surfaceMapping);
 	}
 
@@ -108,8 +108,8 @@ namespace Physika
 	template<typename TDataType>
 	void ParticleViscoplasticBody<TDataType>::updateTopology()
 	{
-		auto pts = m_pSet->getPoints();
-		Function1Pt::copy(pts, getPosition()->getValue());
+		auto pts = this->m_pSet->getPoints();
+		Function1Pt::copy(pts, this->getPosition()->getValue());
 
 		auto tMappings = this->getTopologyMappingList();
 		for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)
