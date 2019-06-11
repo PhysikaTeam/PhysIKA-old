@@ -43,8 +43,14 @@ namespace Physika {
 
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
+<<<<<<< HEAD:Engine/Dynamics/ParticleSystem/DensityPBD.h
+=======
+
+		DeviceArrayField<Real> m_density;
+
 		DeviceArrayField<Real> m_massInv; // mass^-1 as described in unified particle physics
 
+>>>>>>> 402083eef71a19451d5b90552eb8cbe7e176b3b6:Physika_Src/Physika_Dynamics/ParticleSystem/DensityPBD.h
 		NeighborField<int> m_neighborhood;
 
 		DeviceArrayField<Real> m_density;

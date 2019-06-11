@@ -171,6 +171,18 @@ void PointRender::setVertexArray(HostArray<float3>& pos)
 	m_vertVBO.cudaUnmap();
 }
 
+void PointRender::setColorArray(DeviceArray<float3>& color)
+{
+	cudaMemcpy(m_vertexColor.cudaMap(), color.getDataPtr(), sizeof(float3) * color.size(), cudaMemcpyDeviceToDevice);
+	m_vertexColor.cudaUnmap();
+}
+
+void PointRender::setColorArray(HostArray<float3>& color)
+{
+	cudaMemcpy(m_vertexColor.cudaMap(), color.getDataPtr(), sizeof(float3) * color.size(), cudaMemcpyDeviceToHost);
+	m_vertexColor.cudaUnmap();
+}
+
 void PointRender::setPointSize(float point_size)
 {
     point_size_ = point_size;

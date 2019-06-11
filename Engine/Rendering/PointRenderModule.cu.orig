@@ -4,7 +4,6 @@
 #include "PointRenderModule.h"
 #include "Framework/Topology/PointSet.h"
 #include "Core/Vector.h"
-#include "Core/Utility.h"
 #include "Framework/Framework/Node.h"
 #include "OpenGLContext.h"
 #include "Color.h"
@@ -172,6 +171,7 @@ namespace Physika
 
 		DeviceArray<float3>* xyz = (DeviceArray<float3>*)&(pSet->getPoints());
 
+<<<<<<< HEAD:Engine/Rendering/PointRenderModule.cu
 		if (!m_vecIndex.isEmpty())
 		{
 			uint pDims = cudaGridSize(xyz->size(), BLOCK_SIZE);
@@ -180,7 +180,6 @@ namespace Physika
 				m_vecIndex.getValue(),
 				m_minIndex.getValue(),
 				m_maxIndex.getValue());
-			cuSynchronize();
 
 			m_pointRender->setColor(m_colorArray);
 		}
@@ -192,7 +191,6 @@ namespace Physika
 				m_scalarIndex.getValue(),
 				m_minIndex.getValue(),
 				m_maxIndex.getValue());
-			cuSynchronize();
 
 			m_pointRender->setColor(m_colorArray);
 		}
@@ -202,9 +200,12 @@ namespace Physika
 		}
 
 		
-		//if (m_colorArray)
-		//	m_pointRender->setColorArray(*(DeviceArray<float3>*)m_colorArray.get());
-		
+=======
+		if (m_colorArray)
+			m_pointRender->setColorArray(*(DeviceArray<float3>*)m_colorArray.get());
+		else
+			m_pointRender->setColor(glm::vec3(m_color[0], m_color[1], m_color[2]));
+>>>>>>> 402083eef71a19451d5b90552eb8cbe7e176b3b6:Physika_Src/Physika_Render/PointRenderModule.cpp
 		m_pointRender->setVertexArray(*xyz);
 
 		

@@ -1,5 +1,6 @@
 #include "ParticleFluid.h"
-#include "PositionBasedFluidModel.h"
+//#include "PositionBasedFluidModel.h"
+#include "MultifluidModel.h"
 
 #include "Framework/Topology/PointSet.h"
 #include "Rendering/PointRenderModule.h"
@@ -14,6 +15,7 @@ namespace Physika
 	ParticleFluid<TDataType>::ParticleFluid(std::string name)
 		: ParticleSystem<TDataType>(name)
 	{
+<<<<<<< HEAD:Engine/Dynamics/ParticleSystem/ParticleFluid.cpp
 		auto pbf = std::make_shared<PositionBasedFluidModel<TDataType>>();
 		this->setNumericalModel(pbf);
 
@@ -22,14 +24,15 @@ namespace Physika
 		this->getForce()->connect(pbf->m_forceDensity);
 
 		this->getVelocity()->connect(this->getRenderModule()->m_vecIndex);
-		
-				//auto fluid = std::make_shared<PositionBasedFluidModel<TDataType>>();
-//		auto fluid = std::make_shared<MultifluidModel<TDataType>>();
-//		this->setNumericalModel(fluid);
-//		this->getPosition()->connect(fluid->m_position);
-//		this->getVelocity()->connect(fluid->m_velocity);
-//		this->getForce()->connect(fluid->m_forceDensity);
-//		this->getColor()->connect(fluid->m_color);
+=======
+		//auto fluid = std::make_shared<PositionBasedFluidModel<TDataType>>();
+		auto fluid = std::make_shared<MultifluidModel<TDataType>>();
+		this->setNumericalModel(fluid);
+		this->getPosition()->connect(fluid->m_position);
+		this->getVelocity()->connect(fluid->m_velocity);
+		this->getForce()->connect(fluid->m_forceDensity);
+		this->getColor()->connect(fluid->m_color);
+>>>>>>> 402083eef71a19451d5b90552eb8cbe7e176b3b6:Physika_Src/Physika_Dynamics/ParticleSystem/ParticleFluid.cpp
 	}
 
 	template<typename TDataType>

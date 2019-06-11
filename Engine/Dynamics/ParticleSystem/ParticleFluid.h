@@ -23,7 +23,6 @@ namespace Physika
 		virtual ~ParticleFluid();
 
 		void advance(Real dt) override;
-
 	private:
 	};
 

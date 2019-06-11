@@ -69,7 +69,10 @@ Build/App_QtGUI/release/moc_QLichtWidget.cpp
 Build/App_QtGUI/release/moc_DockWidget.cpp
 Build/App_QtGUI/release/moc_toolbar.cpp
 
+<<<<<<< HEAD
 *.bin
 *.ipch
+=======
 /docs
 /console_log.txt
+>>>>>>> 402083eef71a19451d5b90552eb8cbe7e176b3b6

@@ -71,5 +71,3 @@ Build/App_QtGUI/release/moc_toolbar.cpp
 
 *.bin
 *.ipch
-/docs
-/console_log.txt

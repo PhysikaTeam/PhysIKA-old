@@ -142,20 +142,76 @@ void CreateScene()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
 
-	//std::shared_ptr<ParticleSystem<DataType3f>> root = scene.createNewScene<ParticleSystem<DataType3f>>("root");
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
+	root->loadCube(Vector3f(0), Vector3f(1), true);
+	root->loadCube(Vector3f(0), Vector3f(0.5, 0.5, 1.0), false);
+	//root->loadSDF("box.sdf", true);
 
-	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
-	root->addParticleSystem(child1);
-	child1->getRenderModule()->setColor(Vector3f(1, 0, 0));
+// 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
+// 	root->addParticleSystem(child1);
+// 	child1->getRenderModule()->setColor(Vector3f(1, 0, 0));
+// 	child1->scale(0.05);
+// 	child1->translate(Vector3f(0.5, 0.3, 0.5));
+// 	child1->setMass(100);
+// 	child1->getRenderModule()->setColorRange(0, 2);
 
-// 	std::shared_ptr<ParticleSystem<DataType3f>> child2 = std::make_shared<ParticleSystem<DataType3f>>();
-// 	root->addParticleSystem(child2);
-// 	child2->getRenderModule()->setColor(Vector3f(0, 1, 0));
+//	child1->loadParticles("D:/OpenSource/SDFGen/bowl.obj");
 
+<<<<<<< HEAD
+// 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
+// 	root->addRigidBody(rigidbody);
+// 	rigidbody->loadShape("D:/OpenSource/SDFGen/bowl.obj");
+
+	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
+	root->addParticleSystem(child3);
+	child3->getRenderModule()->setColor(Vector3f(0, 0, 1));
+	child3->setMass(1.0);
+//  	child3->loadParticles("D:/OpenSource/SDFGen/bowl.obj");
+//  	child3->loadSurface("D:/OpenSource/SDFGen/bowl.obj");
+	child3->scale(0.05);
+	child3->translate(Vector3f(0.5, 0.6, 0.5));
+
+// 	std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>();
+// 	root->addParticleSystem(child3);
+// 	child3->getRenderModule()->setColor(Vector3f(0, 0, 1));
+// 	child3->setVisible(false);
+// 	child3->setMass(1.0);
+// 	child3->loadParticles("D:/s1_asm_points.obj");
+// 	child3->loadSurface("D:/s1_asm2.obj");
+// 	child3->scale(0.00005);
+// 	child3->translate(Vector3f(0.4, 0.6, 0.5));
+
+// 	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child4 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
+// 	root->addParticleSystem(child4);
+// 	child4->getRenderModule()->setColor(Vector3f(0, 0, 1));
+// 	child4->setMass(1.0);
+// 	//  	child3->loadParticles("D:/OpenSource/SDFGen/bowl.obj");
+// 	//  	child3->loadSurface("D:/OpenSource/SDFGen/bowl.obj");
+// 	child4->scale(0.05);
+// 	child4->translate(Vector3f(0.35, 0.2, 0.5));
+
+
+// 	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
+// 	root->addParticleSystem(child3);
+// 	child3->getRenderModule()->setColor(Vector3f(0, 0, 1));
+// 	child3->setMass(1.0);
+// 	// 	child3->loadParticles("D:/OpenSource/SDFGen/bowl.obj");
+// 	// 	child3->loadSurface("D:/OpenSource/SDFGen/bowl.obj");
+// 	child3->scale(0.05);
+// 	child3->translate(Vector3f(0.2, 0.3, 0.5));
+ 
+  	std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
+  
+	root->addChild(sfi);
+
+//	sfi->addParticleSystem(child1);
+	sfi->addParticleSystem(child3);
+//	sfi->addParticleSystem(child4);
+=======
 	// std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>();
 	// root->addParticleSystem(child3);
 	// child3->getRenderModule()->setColor(Vector3f(0, 0, 1));
+>>>>>>> 402083eef71a19451d5b90552eb8cbe7e176b3b6
 }
 #endif
 
