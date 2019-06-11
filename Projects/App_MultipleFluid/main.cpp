@@ -47,7 +47,9 @@ void CreateScene()
 	child1->getRenderModule()->setColor(Vector3f(1, 0, 0));
 	child1->loadParticles("../Media/fluid/fluid_point.obj");
 	child1->setMass(100);
-	child1->getRenderModule()->setColorRange(0, 2);
+	child1->scale(2);
+	child1->translate(Vector3f(-0.6, -0.3, -0.48));
+	child1->getRenderModule()->setColorRange(0, 1);
 
 	std::shared_ptr<MultifluidModel<DataType3f>> multifluid = std::make_shared<MultifluidModel<DataType3f>>();
 	child1->getPosition()->connect(multifluid->m_position);
@@ -55,6 +57,7 @@ void CreateScene()
 	child1->getVelocity()->connect(multifluid->m_velocity);
 	child1->getForce()->connect(multifluid->m_forceDensity);
 	child1->getColor()->connect(multifluid->m_color);
+	multifluid->m_color.connect(child1->getRenderModule()->m_vecIndex);
 
 	child1->setNumericalModel(multifluid);
 }

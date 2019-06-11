@@ -21,7 +21,7 @@ namespace Physika
 		this->getVelocity()->connect(pbf->m_velocity);
 		this->getForce()->connect(pbf->m_forceDensity);
 
-		this->getVelocity()->connect(this->getRenderModule()->m_vecIndex);
+//		this->getVelocity()->connect(this->getRenderModule()->m_vecIndex);
 		
 				//auto fluid = std::make_shared<PositionBasedFluidModel<TDataType>>();
 //		auto fluid = std::make_shared<MultifluidModel<TDataType>>();

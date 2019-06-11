@@ -35,7 +35,7 @@ namespace Physika
         int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= cArr.size()) return;
 		auto c = cArr[pId];
-		colorArr[pId] = {c[0],c[0],c[1]};
+		colorArr[pId] = {c[0], c[0], c[1] };
 	}
     template <typename Real, typename Coord, typename PhaseVector>
     __global__ void InitConcentration(DeviceArray<Coord> posArr,
@@ -54,7 +54,7 @@ namespace Physika
 		: NumericalModel()
 		, m_pNum(0)
 	{
-		m_smoothingLength.setValue(Real(0.044));
+		m_smoothingLength.setValue(Real(0.02));
 		m_restDensity.setValue(PhaseVector(1, 5));
 
 		attachField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
@@ -108,7 +108,6 @@ namespace Physika
 		m_smoothingLength.connect(m_nbrQuery->m_radius);
 		m_position.connect(m_nbrQuery->m_position);
 		m_nbrQuery->initialize();
-		m_nbrQuery->compute();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
 		m_smoothingLength.connect(m_pbdModule->m_smoothingLength);
@@ -168,13 +167,6 @@ namespace Physika
 
 		m_nbrQuery->compute();
 
-		auto& forceList = parent->getForceModuleList();
-		auto fIter = forceList.begin();
-		for (; fIter != forceList.end(); fIter++)
-		{
-			(*fIter)->applyForce();
-		}
-
 		m_integrator->integrate();
 
 		m_phaseSolver->integrate();
@@ -184,13 +176,7 @@ namespace Physika
 		m_pbdModule->constrain();
 
 		m_visModule->constrain();
-		auto& clist = parent->getConstraintModuleList();
-		auto cIter = clist.begin();
-		for (; cIter != clist.end(); cIter++)
-		{
-			(*cIter)->constrain();
-		}
-		
+	
 		m_integrator->end();
 
 		UpdateColor<Real, Coord><<<pDims, BLOCK_SIZE>>>(

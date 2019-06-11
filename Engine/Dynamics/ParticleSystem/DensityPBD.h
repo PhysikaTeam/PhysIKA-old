@@ -51,7 +51,6 @@ namespace Physika {
 	private:
 		int m_maxIteration;
 
-		DeviceArray<Real> m_rhoArr;
 		DeviceArray<Real> m_lamda;
 		DeviceArray<Coord> m_deltaPos;
 		DeviceArray<Coord> m_position_old;
