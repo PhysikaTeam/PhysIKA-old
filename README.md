@@ -70,6 +70,7 @@ The following image shows an screenshot of the running example
 
 * **He Xiaowei** - *Institute of Software, CAS*
 * **Xu Liyou** - *Peking University*
+* **Chen Xiaosong** *Tsinghua University*
 
 See also the list of [contributors](https://github.com/PhysikaTeam/PhysIKA/graphs/contributors) who are currently participated in this project.
 
