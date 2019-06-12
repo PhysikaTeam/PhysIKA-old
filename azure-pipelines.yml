@@ -11,9 +11,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: 
-    mkdir build
-    cd build
-    cmake ../|
-    make
-  displayName: 'make'
+- task: CMake@1
+  inputs:
+    cmakeArgs: '../'
+
