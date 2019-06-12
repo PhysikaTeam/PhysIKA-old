@@ -7,6 +7,10 @@ trigger:
 - master
 - dev
 
+pr:
+- master
+- dev
+
 pool:
   name: 'linux-cuda-qt'
 
