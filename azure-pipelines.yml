@@ -14,4 +14,7 @@ steps:
 - task: CMake@1
   inputs:
     cmakeArgs: '../'
+- bash: |
+    cd build
+    make -j4
 
