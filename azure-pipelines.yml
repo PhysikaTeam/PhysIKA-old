@@ -8,12 +8,13 @@ trigger:
 - dev
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'linux-cuda-qt'
 
 steps:
-- script: 
-    mkdir build
+- task: CMake@1
+  inputs:
+    cmakeArgs: '../'
+- bash: |
     cd build
-    cmake ../|
-    make
-  displayName: 'make'
+    make -j4
+
