@@ -9,7 +9,8 @@ namespace Physika
     template<typename TDataType, int PhaseCount>
     CahnHilliard<TDataType, PhaseCount>::CahnHilliard() {
         m_particleVolume.setValue(Real(1e-3));
-        m_degenerateMobilityM.setValue(Real(1e-3));
+        m_degenerateMobilityM.setValue(Real(1e-4));
+        m_interfaceEpsilon.setValue(Real(1e-3));
     }
     template<typename TDataType, int PhaseCount>
     CahnHilliard<TDataType, PhaseCount>::~CahnHilliard() {}
@@ -49,7 +50,8 @@ namespace Physika
         DeviceArray<PhaseVector> muArr,
 		NeighborList<int> neighbors,
         Real smoothingLength,
-        Real particleVolume) {
+        Real particleVolume,
+        Real epsilon) {
 
         const Real eta2 = smoothingLength * smoothingLength * Real(0.01);
         
@@ -77,12 +79,11 @@ namespace Physika
         }
         lap_c_i *= 2 * particleVolume;
         //equation 17
-        const Real eplison = 0.01;
         HelmholtzEnergyFunction<TDataType> F{/*alpha*/1, /*s1*/0, /*s2*/0};
         PhaseVector mu = F.derivative(c_i);
         Real sum = 0; for(int i = 0; i < mu.dims(); i++) sum += mu[i];
         mu -= sum/mu.dims();
-        mu -= eplison * eplison * lap_c_i;
+        mu -= epsilon * epsilon * lap_c_i;
         muArr[pId] = mu;
     }
     template<typename TDataType,
@@ -110,7 +111,7 @@ namespace Physika
 
         // equation 25
 		PhaseVector rhs_i(0);
-		int nbSize = neighbors.getNeighborSize(pId);
+        int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
             int j = neighbors.getElement(pId, ne);
@@ -145,7 +146,8 @@ namespace Physika
             m_chemicalPotential.getValue(),
             m_neighborhood.getValue(),
             m_smoothingLength.getValue(),
-            m_particleVolume.getValue()
+            m_particleVolume.getValue(),
+            m_interfaceEpsilon.getValue()
         );
         updateConcentration<TDataType><<<pDims, BLOCK_SIZE>>>(
             m_position.getValue(),

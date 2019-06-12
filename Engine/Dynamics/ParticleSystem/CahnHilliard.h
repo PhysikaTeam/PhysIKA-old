@@ -36,6 +36,7 @@ namespace Physika
 		VarField<Real> m_smoothingLength;
 
 		VarField<Real> m_degenerateMobilityM;
+		VarField<Real> m_interfaceEpsilon;
 
         DeviceArrayField<Coord> m_position;
 		DeviceArrayField<PhaseVector> m_chemicalPotential;

@@ -37,24 +37,13 @@ namespace Physika
 		auto c = cArr[pId];
 		colorArr[pId] = {c[0], c[0], c[1] };
 	}
-    template <typename Real, typename Coord, typename PhaseVector>
-    __global__ void InitConcentration(DeviceArray<Coord> posArr,
-						 DeviceArray<PhaseVector> cArr) {
-        int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.size()) return;
-		if (pId % 2 == 0) {
-			cArr[pId] = {0.6, 0.4};
-		} else {
-			cArr[pId] = {0.4, 0.6};
-		}
-    }
 
     template<typename TDataType>
 	MultifluidModel<TDataType>::MultifluidModel()
 		: NumericalModel()
 		, m_pNum(0)
 	{
-		m_smoothingLength.setValue(Real(0.02));
+		m_smoothingLength.setValue(Real(0.022));
 		m_restDensity.setValue(PhaseVector(1, 5));
 
 		attachField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
@@ -79,9 +68,15 @@ namespace Physika
 		m_concentration.setElementCount(m_position.getElementCount());
 		m_massInv.setElementCount(m_position.getElementCount());
         int num = m_position.getElementCount();
-        uint pDims = cudaGridSize(num, BLOCK_SIZE);
-        InitConcentration<Real, Coord, PhaseVector>
-            <<<pDims, BLOCK_SIZE>>>(m_position.getValue(), m_concentration.getValue());
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+		
+		// initialize random concentration
+		std::vector<PhaseVector> cArr(num);
+		for (auto & c : cArr) {
+			c[0] = Real(0.5) + ((Real(rand()) / RAND_MAX) * 2 - 1) * Real(0.05);
+			c[1] = 1 - c[0];
+		}
+		Function1Pt::copy(m_concentration.getValue(), cArr);
 
 
 		Node* parent = getParent();
