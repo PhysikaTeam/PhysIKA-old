@@ -8,7 +8,7 @@ trigger:
 - dev
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'linux-cuda-qt'
 
 steps:
 - task: CMake@1
