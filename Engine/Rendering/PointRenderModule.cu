@@ -129,7 +129,7 @@ namespace Physika
 		Color hsv;
 		hsv.HSVtoRGB(240, 1-a, 1);
 
-		color[tId] = glm::vec3(index[tId][0], index[tId][1], index[tId][2]);//glm::vec3(hsv.r, hsv.g, hsv.b);
+		color[tId] = glm::vec3(hsv.r, hsv.g, hsv.b);
 	}
 
 	__global__ void PRM_MappingColor(
