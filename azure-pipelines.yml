@@ -17,7 +17,7 @@ pool:
 steps:
 - task: CMake@1
   inputs:
-    cmakeArgs: '../' '-DCMAKE_PREFIX_PATH=~/Qt/5.12.2/gcc_64' '-DCMAKE_BUILD_TYPE=Debug'
+    cmakeArgs: '../ -DCMAKE_PREFIX_PATH=~/Qt/5.12.2/gcc_64 -DCMAKE_BUILD_TYPE=Debug'
 - bash: |
     cd build
     make -j4
