@@ -1,8 +1,8 @@
-master [![Build Status](https://dev.azure.com/mikepkucs/mikepkucs/_apis/build/status/PhysikaTeam.PhysIKA?branchName=master)](https://dev.azure.com/mikepkucs/mikepkucs/_build/latest?definitionId=1&branchName=master)
-
-dev [![Build Status](https://dev.azure.com/mikepkucs/mikepkucs/_apis/build/status/PhysikaTeam.PhysIKA?branchName=dev)](https://dev.azure.com/mikepkucs/mikepkucs/_build/latest?definitionId=1&branchName=dev)
-
 ![](Media/logo.png)
+
+master: [![Build Status](https://dev.azure.com/mikepkucs/mikepkucs/_apis/build/status/PhysikaTeam.PhysIKA?branchName=master)](https://dev.azure.com/mikepkucs/mikepkucs/_build/latest?definitionId=1&branchName=master) 
+dev: [![Build Status](https://dev.azure.com/mikepkucs/mikepkucs/_apis/build/status/PhysikaTeam.PhysIKA?branchName=dev)](https://dev.azure.com/mikepkucs/mikepkucs/_build/latest?definitionId=1&branchName=dev)
+
 ## Introduction
 
 PhysIKA is an open source node-based architecture targeted at real-time simulation of versatile physical materials. Currently, it supports simulating physical phenomena ranging from fluids, elastic objects and fracture, etc.
