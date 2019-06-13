@@ -1,8 +1,5 @@
 #pragma once
-#include "Framework/Framework/FieldVar.h"
-#include "Framework/Framework/FieldArray.h"
-#include "Framework/Topology/FieldNeighbor.h"
-#include "Dynamics/ParticleSystem/ElasticityModule.h"
+#include "ElasticityModule.h"
 #include "DensityPBD.h"
 
 namespace Physika {
@@ -34,6 +31,10 @@ namespace Physika {
 		void setFrictionAngle(Real phi);
 
 		void enableFullyReconstruction();
+		void disableFullyReconstruction();
+
+		void enableIncompressibility();
+		void disableIncompressibility();
 
 	protected:
 		bool initializeImpl() override;
@@ -56,7 +57,8 @@ namespace Physika {
 		VarField<Real> m_c;
 		VarField<Real> m_phi;
 
-		bool m_reconstuct_all_neighborhood = false;
+		VarField<bool> m_reconstuct_all_neighborhood;
+		VarField<bool> m_incompressible;
 
 		DeviceArray<bool> m_bYield;
 		DeviceArray<Matrix> m_invF;

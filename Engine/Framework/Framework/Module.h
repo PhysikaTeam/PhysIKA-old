@@ -8,7 +8,7 @@
 #include "Log.h"
 #include "Core/Typedef.h"
 #include "Core/DataTypes.h"
-#include "FieldVar.h"
+#include "../FieldTypes.h"
 
 namespace Physika
 {

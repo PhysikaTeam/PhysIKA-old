@@ -1,7 +1,4 @@
 #pragma once
-#include "Framework/Framework/FieldVar.h"
-#include "Framework/Framework/FieldArray.h"
-#include "Framework/Topology/FieldNeighbor.h"
 #include "Framework/Framework/ModuleConstraint.h"
 #include "NeighborData.h"
 
