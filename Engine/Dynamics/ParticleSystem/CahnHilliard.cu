@@ -1,37 +1,49 @@
 #include "CahnHilliard.h"
+#include "Framework/Node.h"
+#include "Kernel.h"
 
 // Implement paper: Fast Multiple-fluid Simulation Using Helmholtz Free Energy
-
-#include "Kernel.h"
 
 namespace Physika
 {
     template<typename TDataType, int PhaseCount>
-    CahnHilliard<TDataType, PhaseCount>::CahnHilliard() {
+    CahnHilliard<TDataType, PhaseCount>::CahnHilliard() 
+	{
         m_particleVolume.setValue(Real(1e-3));
         m_degenerateMobilityM.setValue(Real(1e-4));
         m_interfaceEpsilon.setValue(Real(1e-3));
     }
+
+
     template<typename TDataType, int PhaseCount>
-    CahnHilliard<TDataType, PhaseCount>::~CahnHilliard() {}
+    CahnHilliard<TDataType, PhaseCount>::~CahnHilliard()
+	{
+	}
+
+
     template<typename TDataType, int PhaseCount>
-    bool CahnHilliard<TDataType, PhaseCount>::initializeImpl() {
+    bool CahnHilliard<TDataType, PhaseCount>::initializeImpl() 
+	{
         m_chemicalPotential.setElementCount(m_position.getElementCount());
         return true;
     }
+
     template<typename TDataType> 
-    struct HelmholtzEnergyFunction {
+    struct HelmholtzEnergyFunction 
+	{
         using Real = typename TDataType::Real;
         using Coord = typename TDataType::Coord;
         using PhaseVector = typename CahnHilliard<TDataType>::PhaseVector;
         // equation 21 in the paper
         Real alpha, s1, s2;
+
         __host__ __device__
         Real operator()(PhaseVector p) {
             Real d1 = p[0] - s1;
             Real d2 = p[1] - s2;
             return alpha * d1 * d1 * d2 * d2;
         }
+
         __host__ __device__
         PhaseVector derivative(PhaseVector p) {
             Real d1 = p[0] - s1;
@@ -40,6 +52,8 @@ namespace Physika
             return alpha * r;
         }
     };
+
+
     template<typename TDataType,
     typename Real=typename TDataType::Real,
     typename Coord=typename TDataType::Coord,
@@ -51,8 +65,8 @@ namespace Physika
 		NeighborList<int> neighbors,
         Real smoothingLength,
         Real particleVolume,
-        Real epsilon) {
-
+        Real epsilon)
+	{
         const Real eta2 = smoothingLength * smoothingLength * Real(0.01);
         
         int pId = threadIdx.x + (blockIdx.x * blockDim.x);
@@ -86,6 +100,7 @@ namespace Physika
         mu -= epsilon * epsilon * lap_c_i;
         muArr[pId] = mu;
     }
+
     template<typename TDataType,
     typename Real=typename TDataType::Real,
     typename Coord=typename TDataType::Coord,
@@ -98,7 +113,8 @@ namespace Physika
         Real smoothingLength,
         Real particleVolume,
         Real M,
-        Real dt) {
+        Real dt) 
+	{
         const Real eta2 = smoothingLength * smoothingLength * Real(0.01);
         
         int pId = threadIdx.x + (blockIdx.x * blockDim.x);
@@ -133,8 +149,11 @@ namespace Physika
         c_i /= sum;
         cArr[pId] = c_i;
     }
+
+
     template<typename TDataType, int PhaseCount>
-    bool CahnHilliard<TDataType, PhaseCount>::integrate() {
+    bool CahnHilliard<TDataType, PhaseCount>::integrate() 
+	{
         Real dt = getParent()->getDt();
 
         int num = m_position.getElementCount();
