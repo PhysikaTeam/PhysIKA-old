@@ -37,7 +37,7 @@ public: //private:
 	MyMesh::VertexHandle p_vh;
 	MyMesh::Point p_pos;
 	MyMesh::Point rot[3];
-	float x0, y0;
+	float x0, y0, x1, y1;
 	float dx, dy;
 	int nx, ny;
 	std::vector<MyMesh::VertexHandle> vec_vh;
