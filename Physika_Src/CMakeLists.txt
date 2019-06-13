@@ -38,6 +38,6 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
                                                                                     #但这样影响了后面其他工程对PhysLeo.lib的引用，现在还有些原因未明，暂时在编译成库之前开启dlink
 endforeach()
 
-#add_subdirectory(Physika_Dynamics)
-#add_subdirectory(Physika_GUI)
+add_subdirectory(Physika_Dynamics)
+add_subdirectory(Physika_GUI)
 add_subdirectory(Physika_Shallow_Water)
