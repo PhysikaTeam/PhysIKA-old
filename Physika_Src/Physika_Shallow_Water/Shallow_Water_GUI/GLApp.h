@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 namesapce Physika{
-class ShallowWaterShow{
+class GLApp{
 private:
     size_t x_cells;
     size_t y_cells;
@@ -21,8 +21,8 @@ private:
     std::vector<double> initial_velocity_y;
     std::vector<double> initial_surface_level;
  public:
-    ShallowWaterShow(double time,double deltx,int width,int height);
-    ~ShallowWaterShow();
+    GLApp(double time,double deltx,int width,int height);
+    ~GLApp();
     void init(std::string const surface,std::string const height,std::string const vx,std::string const vy);
     void showframe();
 }
