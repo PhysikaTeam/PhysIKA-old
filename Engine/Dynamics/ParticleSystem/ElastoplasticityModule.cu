@@ -17,6 +17,9 @@ namespace Physika
 
 		m_c.setValue(0.001);
 		m_phi.setValue(60.0 / 180.0);
+
+		m_reconstuct_all_neighborhood.setValue(false);
+		m_incompressible.setValue(true);
 	}
 
 	__device__ Real Hardening(Real rho)
@@ -161,40 +164,7 @@ namespace Physika
 			yield_I1[i] = yield_I1_i;
 			yield_J2[i] = yield_J2_i;
 		}
-
-		// 		invDeform[i] = Matrix::identityMatrix();
-		// 		bYield[i] = true;
-
-		//		int size_i = restShape.getNeighborSize(i);
-		/*		for (int ne = 0; ne < size_i; ne++)
-				{
-					NPair np_j = restShape.getElement(i, ne);
-					Coord rest_pos_j = np_j.pos;
-					int j = np_j.index;
-
-					Real r = (rest_pos_i - rest_pos_j).norm();
-
-					Coord p = (position[j] - pos_i);
-					Coord q = (rest_pos_j - rest_pos_i);
-
-					Coord new_q = q*I1_i;
-					Coord D_iso = new_q - q;
-					Coord D_dev = p - new_q;
-
-					NPair new_np_j;
-
-					Coord new_rest_pos_j = rest_pos_j + yield_I1_i * D_iso + yield_J2_i * D_dev;
-
-					new_np_j.pos = new_rest_pos_j;
-					new_np_j.index = j;
-					restShape.setElement(i, ne, new_np_j);
-				}*/
-
 		arrI1[i] = I1_i;
-		// 		if (yield_I1_i > EPSILON || yield_J2_i > EPSILON)
-		// 		{
-		// 			printf("%d: %f %f; I1: %f J2: %f \n", i, yield_I1_i, yield_J2_i, I1_i, J2_i);
-		// 		}
 	}
 
 	template <typename Real, typename Coord, typename Matrix, typename NPair>
@@ -247,11 +217,6 @@ namespace Physika
 			//Coord new_rest_pos_j = rest_pos_j + yield_I1_i * D_iso + yield_J2_i * D_dev;
 			Coord new_rest_pos_j = rest_pos_j + (yield_I1_i + yield_I1_j) / 2 * D_iso + (yield_J2_i + yield_J2_j) / 2 * D_dev;
 
-			// 			if ((new_rest_pos_j-rest_pos_j).norm() > 0.002)
-			// 			{
-			// 				printf("Error---------------------------------- \n; yield_I1: %f %f %f %f; yield_J2 %f %f %f %f; %f; Norm: %f; new_q: %f %f %f; I1_i: %f \n", yield_I1_i, D_iso[0], D_iso[1], D_iso[2], yield_J2_i, D_dev[0], D_dev[1], D_dev[2], I1_i, p.norm(), new_q[0], new_q[1], new_q[2], I1_i);
-			// 			}
-
 			new_np_j.pos = new_rest_pos_j;
 			new_np_j.index = j;
 			restShape.setElement(i, ne, new_np_j);
@@ -283,7 +248,11 @@ namespace Physika
 		while (iter < total)
 		{
 			this->enforceElasticity();
-			m_pbdModule->takeOneIteration();
+			if (m_incompressible.getValue() == true)
+			{
+				m_pbdModule->takeOneIteration();
+			}
+			
 			iter++;
 		}
 
@@ -495,17 +464,6 @@ namespace Physika
 			refM = Matrix::identityMatrix();
 		}
 
-		// 		if (i == 20)
-		// 		{
-		// 			printf("PM_ComputeInverseDeformation***************************** \n\n");
-		// 
-		// 			printf("Invserse F: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-		// 				refM(0, 0), refM(0, 1), refM(0, 2),
-		// 				refM(1, 0), refM(1, 1), refM(1, 2),
-		// 				refM(2, 0), refM(2, 1), refM(2, 2),
-		// 				refM.determinant());
-		// 		}
-
 		invF[i] = refM;
 	}
 
@@ -525,7 +483,7 @@ namespace Physika
 
 		uint pDims = cudaGridSize(this->m_position.getElementCount(), BLOCK_SIZE);
 
-		if (m_reconstuct_all_neighborhood)
+		if (m_reconstuct_all_neighborhood.getValue())
 		{
 			PM_EnableAllReconstruction << <pDims, BLOCK_SIZE >> > (m_bYield);
 		}
@@ -573,7 +531,28 @@ namespace Physika
 	template<typename TDataType>
 	void ElastoplasticityModule<TDataType>::enableFullyReconstruction()
 	{
-		m_reconstuct_all_neighborhood = true;
+		m_reconstuct_all_neighborhood.setValue(true);
+	}
+
+
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::disableFullyReconstruction()
+	{
+		m_reconstuct_all_neighborhood.setValue(false);
+	}
+
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::enableIncompressibility()
+	{
+		m_incompressible.setValue(true);
+	}
+
+	template<typename TDataType>
+	void ElastoplasticityModule<TDataType>::disableIncompressibility()
+	{
+		m_incompressible.setValue(false);
 	}
 
 
@@ -629,134 +608,19 @@ namespace Physika
 			invK_i *= (1.0f / total_weight);
 		}
 
-// 		if (pId == 0)
-// 		{
-// 			printf("RotateRestShape**************************************");
-// 
-// 			printf("invK: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-// 				invK_i(0, 0), invK_i(0, 1), invK_i(0, 2),
-// 				invK_i(1, 0), invK_i(1, 1), invK_i(1, 2),
-// 				invK_i(2, 0), invK_i(2, 1), invK_i(2, 2));
-// 
-// 			printf("mat_i: \n %f %f %f \n %f %f %f \n %f %f %f \n\n\n",
-// 				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
-// 				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
-// 				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2));
-// 		}
-
 		Matrix R, U, D, V;
 		polarDecomposition(invK_i, R, U, D, V);
-
-// 		svd(invK_i(0, 0), invK_i(0, 1), invK_i(0, 2), invK_i(1, 0), invK_i(1, 1), invK_i(1, 2), invK_i(2, 0), invK_i(2, 1), invK_i(2, 2),
-// 			R(0, 0), R(0, 1), R(0, 2), R(1, 0), R(1, 1), R(1, 2), R(2, 0), R(2, 1), R(2, 2),
-// 			D(0, 0), D(1, 1), D(2, 2),
-// 			U(0, 0), U(0, 1), U(0, 2), U(1, 0), U(1, 1), U(1, 2), U(2, 0), U(2, 1), U(2, 2));
 
 		Real threshold = 0.0001f*smoothingLength;
 		D(0, 0) = D(0, 0) > threshold ? 1.0 / D(0, 0) : 1.0;
 		D(1, 1) = D(1, 1) > threshold ? 1.0 / D(1, 1) : 1.0;
 		D(2, 2) = D(2, 2) > threshold ? 1.0 / D(2, 2) : 1.0;
 
-		//invK_i = R.transpose()*U*D*U.transpose();
 		invK_i = V*D*U.transpose();
 
 		mat_i *= invK_i;
 
-//		polarDecomposition(mat_i, R, Real(EPSILON));
-
-// 		if (pId == 0)
-// 		{
-// 			printf("Mat: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-// 				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
-// 				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
-// 				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2),
-// 				R.determinant());
-// 		}
-		
-
 		polarDecomposition(mat_i, R, U, D, V);
-
-// 		if (pId == 20)
-// 		{
-// 			Matrix rMat_i = U*D*V.transpose();
-// 			printf("rMat: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-// 				rMat_i(0, 0), rMat_i(0, 1), rMat_i(0, 2),
-// 				rMat_i(1, 0), rMat_i(1, 1), rMat_i(1, 2),
-// 				rMat_i(2, 0), rMat_i(2, 1), rMat_i(2, 2),
-// 				R.determinant());
-// 
-// 			printf("R: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-// 				R(0, 0), R(0, 1), R(0, 2),
-// 				R(1, 0), R(1, 1), R(1, 2),
-// 				R(2, 0), R(2, 1), R(2, 2),
-// 				R.determinant());
-// 
-// 			Matrix rR;
-// 			polarDecomposition(rMat_i, rR, U, D);
-// 
-// 			printf("pre R: \n %f %f %f \n %f %f %f \n %f %f %f \n	Determinant: %f \n\n",
-// 				rR(0, 0), rR(0, 1), rR(0, 2),
-// 				rR(1, 0), rR(1, 1), rR(1, 2),
-// 				rR(2, 0), rR(2, 1), rR(2, 2),
-// 				rR.determinant());
-// 		}
-
-// 		svd(mat_i(0, 0), mat_i(0, 1), mat_i(0, 2), mat_i(1, 0), mat_i(1, 1), mat_i(1, 2), mat_i(2, 0), mat_i(2, 1), mat_i(2, 2),
-// 			R(0, 0), R(0, 1), R(0, 2), R(1, 0), R(1, 1), R(1, 2), R(2, 0), R(2, 1), R(2, 2),
-// 			D(0, 0), D(1, 1), D(2, 2),
-// 			U(0, 0), U(0, 1), U(0, 2), U(1, 0), U(1, 1), U(1, 2), U(2, 0), U(2, 1), U(2, 2));
-
-// 		D(0, 0) = Real(1);
-// 		D(1, 1) = Real(1);
-// 		D(2, 2) = (R*U.transpose()).determinant();
-
-//		R = U*D*R.transpose();
-
-// 		printf("\n \n Rotation: \n %f %f %f \n %f %f %f \n %f %f %f \n", 
-// 			R(0, 0), R(0, 1), R(0, 2),
-// 			R(1, 0), R(1, 1), R(1, 2),
-// 			R(2, 0), R(2, 1), R(2, 2));
-
-// 		if (R.determinant() < 0.9)
-// 		{
-// 			bYield[pId] = true;
-// 		}
-//		bYield[pId] = true;
-		// 		mat_i(0, 0) = 0.940038; mat_i(0, 1) = 0; mat_i(0, 2) = 0;
-		// 		mat_i(1, 0) = 0.001991; mat_i(1, 1) = 0; mat_i(1, 2) = 0;
-		// 		mat_i(2, 0) = 0; mat_i(2, 1) = 0; mat_i(2, 2) = 0;
-
-		// 		mat_i(0, 0) = 0.115572; mat_i(0, 1) = 0.022244; mat_i(0, 2) = 0.188606;
-		// 		mat_i(1, 0) = -0.062891; mat_i(1, 1) = 0.012105; mat_i(1, 2) = -0.102634;
-		// 		mat_i(2, 0) = 0.120823; mat_i(2, 1) = -0.023255; mat_i(2, 2) = 0.197176;
-
-		//		polarDecomposition(mat_i, R, U, D);
-
-		// 		if (pId == 10)
-		// 		{
-		// 			printf("Mat: \n %f %f %f \n %f %f %f \n %f %f %f \n	R: \n %f %f %f \n %f %f %f \n %f %f %f \n U :\n %f %f %f \n %f %f %f \n %f %f %f \n Determinant: %f \n\n",
-		// 				mat_i(0, 0), mat_i(0, 1), mat_i(0, 2),
-		// 				mat_i(1, 0), mat_i(1, 1), mat_i(1, 2),
-		// 				mat_i(2, 0), mat_i(2, 1), mat_i(2, 2),
-		// 				R(0, 0), R(0, 1), R(0, 2),
-		// 				R(1, 0), R(1, 1), R(1, 2),
-		// 				R(2, 0), R(2, 1), R(2, 2),
-		// 				U(0, 0), U(0, 1), U(0, 2),
-		// 				U(1, 0), U(1, 1), U(1, 2),
-		// 				U(2, 0), U(2, 1), U(2, 2),
-		// 				R.determinant());
-		// 		}
-
-
-
-		//		if (R.determinant() < 0.9)
-		//		{
-
-		// 
-		// 			printf("determinant: %f \n", R.determinant());
-
-		//			R = Matrix::identityMatrix();
-		//		}
 
 		for (int ne = 0; ne < size_i; ne++)
 		{

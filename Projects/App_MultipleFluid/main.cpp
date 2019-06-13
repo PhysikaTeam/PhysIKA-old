@@ -13,7 +13,7 @@
 #include "Dynamics/ParticleSystem/ParticleFluid.h"
 #include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
-#include "Dynamics/ParticleSystem/MultifluidModel.h"
+#include "Dynamics/ParticleSystem/MultipleFluidModel.h"
 
 using namespace std;
 using namespace Physika;
@@ -51,12 +51,11 @@ void CreateScene()
 	child1->translate(Vector3f(-0.6, -0.3, -0.48));
 	child1->getRenderModule()->setColorRange(0, 1);
 
-	std::shared_ptr<MultifluidModel<DataType3f>> multifluid = std::make_shared<MultifluidModel<DataType3f>>();
+	std::shared_ptr<MultipleFluidModel<DataType3f>> multifluid = std::make_shared<MultipleFluidModel<DataType3f>>();
 	child1->getPosition()->connect(multifluid->m_position);
 	child1->getPosition()->connect(multifluid->m_position);
 	child1->getVelocity()->connect(multifluid->m_velocity);
 	child1->getForce()->connect(multifluid->m_forceDensity);
-	child1->getColor()->connect(multifluid->m_color);
 	multifluid->m_color.connect(child1->getRenderModule()->m_vecIndex);
 
 	child1->setNumericalModel(multifluid);

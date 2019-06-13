@@ -1,23 +1,15 @@
-#include "MultifluidModel.h"
+#include "MultipleFluidModel.h"
 
-#include <cuda_runtime.h>
-
-#include "Framework/Topology/PointSet.h"
-#include "Framework/Framework/Node.h"
 #include "DensityPBD.h"
 #include "ParticleIntegrator.h"
 #include "DensitySummation.h"
 #include "ImplicitViscosity.h"
-#include "Framework/Framework/MechanicalState.h"
-#include "Framework/Mapping/PointSetToPointSet.h"
-#include "Framework/Topology/FieldNeighbor.h"
-#include "Framework/Topology/NeighborQuery.h"
-#include "Dynamics/ParticleSystem/Attribute.h"
 #include "Core/Utility.h"
+#include "Framework/ModuleTypes.h"
 
 namespace Physika
 {
-	IMPLEMENT_CLASS_1(MultifluidModel, TDataType)
+	IMPLEMENT_CLASS_1(MultipleFluidModel, TDataType)
 
 	template <typename Real, typename Coord, typename PhaseVector>
 	__global__ void UpdateMassInv(
@@ -37,71 +29,43 @@ namespace Physika
 		auto c = cArr[pId];
 		colorArr[pId] = {c[0], c[0], c[1] };
 	}
-    template <typename Real, typename Coord, typename PhaseVector>
-    __global__ void InitConcentration(DeviceArray<Coord> posArr,
-						 DeviceArray<PhaseVector> cArr) {
-        int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= posArr.size()) return;
-		if (pId % 2 == 0) {
-			cArr[pId] = {0.6, 0.4};
-		} else {
-			cArr[pId] = {0.4, 0.6};
-		}
-    }
 
     template<typename TDataType>
-	MultifluidModel<TDataType>::MultifluidModel()
+	MultipleFluidModel<TDataType>::MultipleFluidModel()
 		: NumericalModel()
-		, m_pNum(0)
 	{
-		m_smoothingLength.setValue(Real(0.02));
+		m_smoothingLength.setValue(Real(0.022));
 		m_restDensity.setValue(PhaseVector(1, 5));
 
 		attachField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
 
 		attachField(&m_position, "position", "Storing the particle positions!", false);
 		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		attachField(&m_forceDensity, "force_density", "Storing the particle force densities!", false);
 		attachField(&m_massInv, "mass_inverse", "Storing mass inverse of particles!", false);
 	}
 
 	template<typename TDataType>
-	MultifluidModel<TDataType>::~MultifluidModel()
+	MultipleFluidModel<TDataType>::~MultipleFluidModel()
 	{
 		
 	}
 
 	template<typename TDataType>
-	bool MultifluidModel<TDataType>::initializeImpl()
+	bool MultipleFluidModel<TDataType>::initializeImpl()
 	{
-		this->NumericalModel::initializeImpl();
-
 		m_concentration.setElementCount(m_position.getElementCount());
 		m_massInv.setElementCount(m_position.getElementCount());
+		m_color.setElementCount(m_position.getElementCount());
         int num = m_position.getElementCount();
-        uint pDims = cudaGridSize(num, BLOCK_SIZE);
-        InitConcentration<Real, Coord, PhaseVector>
-            <<<pDims, BLOCK_SIZE>>>(m_position.getValue(), m_concentration.getValue());
-
-
-		Node* parent = getParent();
-		if (parent == NULL)
-		{
-			Log::sendMessage(Log::Error, "Should insert this module into a node!");
-			return false;
+		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+		
+		// initialize random concentration
+		std::vector<PhaseVector> cArr(num);
+		for (auto & c : cArr) {
+			c[0] = Real(0.5) + ((Real(rand()) / RAND_MAX) * 2 - 1) * Real(0.05);
+			c[1] = 1 - c[0];
 		}
-
-		PointSet<TDataType>* pSet = dynamic_cast<PointSet<TDataType>*>(parent->getTopologyModule().get());
-		if (pSet == NULL)
-		{
-			Log::sendMessage(Log::Error, "The topology module is not supported!");
-			return false;
-		}
-
-		if (!pSet->isInitialized())
-		{
-			pSet->initialize();
-		}
+		Function1Pt::copy(m_concentration.getValue(), cArr);
 
 		// Create modules
 		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
@@ -139,6 +103,7 @@ namespace Physika
 		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
 		m_visModule->initialize();
 
+		Node* parent = this->getParent();
 		m_nbrQuery->setParent(parent);
 		m_integrator->setParent(parent);
 		m_phaseSolver->setParent(parent);
@@ -148,19 +113,12 @@ namespace Physika
 // 		m_mapping = std::make_shared<PointSetToPointSet<TDataType>>();
 // 		m_mapping->initialize(*(m_position.getReference()), (pSet->getPoints()));
 
-		return true;
+		return NumericalModel::initializeImpl();
     }
 
 	template<typename TDataType>
-	void MultifluidModel<TDataType>::step(Real dt)
+	void MultipleFluidModel<TDataType>::step(Real dt)
 	{
-		Node* parent = getParent();
-		if (parent == NULL)
-		{
-			Log::sendMessage(Log::Error, "Parent not set for ParticleSystem!");
-			return;
-		}
-
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 		m_integrator->begin();
@@ -182,41 +140,4 @@ namespace Physika
 		UpdateColor<Real, Coord><<<pDims, BLOCK_SIZE>>>(
             m_color.getValue(), m_concentration.getValue());
 	}
-
-	template<typename TDataType>
-	void MultifluidModel<TDataType>::setIncompressibilitySolver(std::shared_ptr<ConstraintModule> solver)
-	{
-		if (!m_incompressibilitySolver)
-		{
-			getParent()->deleteConstraintModule(m_incompressibilitySolver);
-		}
-		m_incompressibilitySolver = solver;
-		getParent()->addConstraintModule(solver);
-	}
-
-
-	template<typename TDataType>
-	void MultifluidModel<TDataType>::setViscositySolver(std::shared_ptr<ConstraintModule> solver)
-	{
-		if (!m_viscositySolver)
-		{
-			getParent()->deleteConstraintModule(m_viscositySolver);
-		}
-		m_viscositySolver = solver;
-		getParent()->addConstraintModule(solver);
-	}
-
-
-
-	template<typename TDataType>
-	void MultifluidModel<TDataType>::setSurfaceTensionSolver(std::shared_ptr<ForceModule> solver)
-	{
-		if (!m_surfaceTensionSolver)
-		{
-			getParent()->deleteForceModule(m_surfaceTensionSolver);
-		}
-		m_surfaceTensionSolver = solver;
-		getParent()->addForceModule(m_surfaceTensionSolver);
-	}
-
 }

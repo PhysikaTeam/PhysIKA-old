@@ -1,15 +1,5 @@
 #pragma once
-
-
-#include "Core/Array/Array.h"
-
-#include "Framework/Framework/Base.h"
-#include "Framework/Framework/Node.h"
-#include "Framework/Framework/NumericalModel.h"
-#include "Framework/Framework/Module.h"
-#include "Framework/Framework/FieldVar.h"
-#include "Framework/Framework/FieldArray.h"
-#include "Framework/Topology/FieldNeighbor.h"
+#include "Framework/Module.h"
 
 namespace Physika
 {
@@ -28,16 +18,16 @@ namespace Physika
 
 		bool integrate();
 
-		std::string getModuleType() override { return "NumericalIntegrator"; }
-
-        NeighborField<int> m_neighborhood;
-
 		VarField<Real> m_particleVolume;
 		VarField<Real> m_smoothingLength;
 
 		VarField<Real> m_degenerateMobilityM;
+		VarField<Real> m_interfaceEpsilon;
 
         DeviceArrayField<Coord> m_position;
+
+		NeighborField<int> m_neighborhood;
+
 		DeviceArrayField<PhaseVector> m_chemicalPotential;
         DeviceArrayField<PhaseVector> m_concentration;
 	};

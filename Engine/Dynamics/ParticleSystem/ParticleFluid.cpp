@@ -20,16 +20,6 @@ namespace Physika
 		this->getPosition()->connect(pbf->m_position);
 		this->getVelocity()->connect(pbf->m_velocity);
 		this->getForce()->connect(pbf->m_forceDensity);
-
-//		this->getVelocity()->connect(this->getRenderModule()->m_vecIndex);
-		
-				//auto fluid = std::make_shared<PositionBasedFluidModel<TDataType>>();
-//		auto fluid = std::make_shared<MultifluidModel<TDataType>>();
-//		this->setNumericalModel(fluid);
-//		this->getPosition()->connect(fluid->m_position);
-//		this->getVelocity()->connect(fluid->m_velocity);
-//		this->getForce()->connect(fluid->m_forceDensity);
-//		this->getColor()->connect(fluid->m_color);
 	}
 
 	template<typename TDataType>

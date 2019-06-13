@@ -37,6 +37,7 @@ namespace Physika
 		m_nbrQuery->m_neighborhood.connect(m_plasticity->m_neighborhood);
 		m_plasticity->setFrictionAngle(0);
 		m_plasticity->setCohesion(0.0);
+		m_plasticity->enableFullyReconstruction();
 
 		m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("pbd");
 		m_horizon.connect(m_pbdModule->m_smoothingLength);
@@ -84,7 +85,6 @@ namespace Physika
 		m_nbrQuery->compute();
 
 		m_plasticity->applyPlasticity();
-		m_plasticity->resetRestShape();
 
 		m_visModule->constrain();
 

@@ -80,7 +80,6 @@ namespace Physika
 		m_position.setElementCount(pts.size());
 		m_velocity.setElementCount(pts.size());
 		m_force.setElementCount(pts.size());
-		m_color.setElementCount(pts.size());
 
 		Function1Pt::copy(m_position.getValue(), pts);
 		m_velocity.getReference()->reset();

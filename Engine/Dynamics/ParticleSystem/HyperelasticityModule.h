@@ -55,7 +55,7 @@ namespace Physika {
 	template<typename T>
 	struct ConstantFunc
 	{
-		/*! Function call operator. The return value is <tt>lhs + rhs</tt>.
+		/*! Function call operator. Return a constant
 		*/
 		COMM_FUNC inline T operator()(const T s) const { return T(1); }
 	}; // end LinearFunc
