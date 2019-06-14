@@ -23,9 +23,8 @@ private:
 	std::vector<float> initial_velocity;
 	GLApp(size_t x_cells, size_t z_cells, float dx, int window_width, int window_height);
 	~GLApp();
-	void set_constants(bool m_have_tensor, float m_fric_coef, float m_gamma, float m_dt, float g);
+	void set_constants(bool m_have_tensor=true, float m_fric_coef=1.3f, float m_gamma=1.000f, float m_dt=0.033f, float g=9.80f);
 	void init(std::string const surface, std::string const height, std::string const vx, std::string const vy, std::string const vz,int situation=3,int times=0);
-	void init2();
 	void showframe(int n);
 };
 }
