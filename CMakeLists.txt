@@ -40,6 +40,7 @@ elseif(UNIX)
 endif()
 
 file(COPY "Media/" DESTINATION "Media")
+file(COPY "Engine/Rendering/Shader/" DESTINATION "Shader")
 
 add_subdirectory(Engine)
 add_subdirectory(Projects)

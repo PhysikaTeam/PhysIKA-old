@@ -41,6 +41,9 @@ public:
 	void setColorArray(HostArray<float3>& colorArray);
 	void setColorArray(DeviceArray<float3>& colorArray);
 
+	void enableDoubleShading();
+	void disableDoubleShading();
+
 
     void enableUseCustomColor();
     void disableUseCustomColor();
@@ -56,6 +59,7 @@ private:
 
 	bool m_bShowWireframe = false;
 	bool m_bEnableLighting = false;
+	bool m_bEnableDoubleShading = true;
 
 	ShaderProgram m_solidShader;
 	ShaderProgram m_wireframeShader;

@@ -16,17 +16,17 @@ namespace Physika
 
 	PointRenderModule::PointRenderModule()
 		: VisualModule()
-		, m_mode(PointRenderModule::SPRITE)
+		, m_mode(PointRenderModule::Instance)
 		, m_color(Vector3f(0.8, 0.8, 0.8))
 	{
 		m_minIndex.setValue(0);
 		m_maxIndex.setValue(1);
 
-		attachField(&m_minIndex, "minIndex", "minIndex", false);
-		attachField(&m_maxIndex, "maxIndex", "maxIndex", false);
+		this->attachField(&m_minIndex, "minIndex", "minIndex", false);
+		this->attachField(&m_maxIndex, "maxIndex", "maxIndex", false);
 
-		attachField(&m_vecIndex, "vectorIndex", "vectorIndex", false);
-		attachField(&m_scalarIndex, "scalarIndex", "scalarIndex", false);
+		this->attachField(&m_vecIndex, "vectorIndex", "vectorIndex", false);
+		this->attachField(&m_scalarIndex, "scalarIndex", "scalarIndex", false);
 	}
 
 	PointRenderModule::~PointRenderModule()
@@ -54,17 +54,7 @@ namespace Physika
 			pSet->initialize();
 		}
 
-//		point_render_util = std::make_shared<PointRenderUtil>();
-
 		DeviceArray<float3>* xyz = (DeviceArray<float3>*)&(pSet->getPoints());
-//		PointGLCudaBuffer point_gl_cuda_buffer = point_render_util->mapPointGLCudaBuffer(xyz->size());
-
-//		point_render_util->unmapPointGLCudaBuffer();
-
-		//---------------------------------------------------------------------------------------------------------------------
-		//point_render_task = std::make_shared<PointRenderTask>(point_render_util);
-		//point_render_task->disableUsePointSprite();
-		//point_render_task->setPointScaleForPointSprite(3.0);
 
 		m_pointRender = std::make_shared<PointRender>();
 		m_pointRender->resize(xyz->size());
@@ -82,32 +72,6 @@ namespace Physika
 			break;
 		}
 
-// 		m_lineRender = std::make_shared<LineRender>();
-// 		m_lineRender->resize(xyz->size()/2);
-// 		m_lineRender->setLines(*xyz);
-// 
-// 		HostArray<float3> color;
-// 		HostArray<float3> normals;
-// 		color.resize(xyz->size());
-// 		normals.resize(xyz->size());
-// 
-// 		for (int i = 0; i < xyz->size(); i++)
-// 		{
-// 			color[i].x = rand() % 1000 / 1000.0;
-// 			color[i].y = rand() % 1000 / 1000.0;
-// 			color[i].z = rand() % 1000 / 1000.0;
-// 			normals[i].x = 1.0f;
-// 			normals[i].y = 0.0f;
-// 			normals[i].z = 0.0f;
-// 		}
-// 
-// 		m_lineRender->setColors(color);
-// 
-// 		m_triangleRender = std::make_shared<TriangleRender>();
-// 		m_triangleRender->resize(floor(xyz->size() / 3.0));
-// 		m_triangleRender->setVertexArray(*xyz);
-// 		m_triangleRender->setColorArray(color);
-// 		m_triangleRender->setNormalArray(normals);
 	}
 
 	__global__ void PRM_MappingColor(
@@ -171,7 +135,7 @@ namespace Physika
 		}
 
 		DeviceArray<float3>* xyz = (DeviceArray<float3>*)&(pSet->getPoints());
-
+		
 		if (!m_vecIndex.isEmpty())
 		{
 			uint pDims = cudaGridSize(xyz->size(), BLOCK_SIZE);
@@ -206,8 +170,6 @@ namespace Physika
 		//	m_pointRender->setColorArray(*(DeviceArray<float3>*)m_colorArray.get());
 		
 		m_pointRender->setVertexArray(*xyz);
-
-		
 	}
 
 	void PointRenderModule::display()
@@ -219,7 +181,21 @@ namespace Physika
 		glTranslatef(m_translation[0], m_translation[1], m_translation[2]);
 		glScalef(m_scale[0], m_scale[1], m_scale[2]);
 
- 		m_pointRender->display();
+ 		//m_pointRender->display();
+
+		switch (m_mode)
+		{
+		case PointRenderModule::POINT:
+			m_pointRender->renderPoints();
+			break;
+		case PointRenderModule::SPRITE:
+			m_pointRender->renderSprite();
+			break;
+		case PointRenderModule::Instance:
+			m_pointRender->renderInstancedSphere();
+		default:
+			break;
+		}
 
 		glPopMatrix();
 	}
