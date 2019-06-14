@@ -25,6 +25,7 @@ private:
 	~GLApp();
 	void set_constants(bool m_have_tensor, float m_fric_coef, float m_gamma, float m_dt, float g);
 	void init(std::string const surface, std::string const height, std::string const vx, std::string const vy, std::string const vz,int situation=3,int times=0);
+	void init2();
 	void showframe(int n);
 };
 }
