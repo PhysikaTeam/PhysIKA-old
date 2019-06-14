@@ -40,4 +40,3 @@ endforeach()
 
 add_subdirectory(Physika_Dynamics)
 add_subdirectory(Physika_GUI)
-add_subdirectory(Physika_Shallow_Water)
