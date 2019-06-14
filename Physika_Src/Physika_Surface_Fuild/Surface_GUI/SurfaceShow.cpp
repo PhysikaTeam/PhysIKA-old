@@ -1,5 +1,6 @@
-#include "SurfaceShow.h"
-SurfaceShow::SurfaceShow(size_t x_cells, size_t z_cells,  float dx, int window_width, int window_height) {
+#include "GLApp.h"
+namespace Physika{
+GLApp::GLApp(size_t x_cells, size_t z_cells,  float dx, int window_width, int window_height) {
 	this->x_cells = x_cells;
 	this->z_cells = z_cells;
 	this->dx = dx;
@@ -7,13 +8,13 @@ SurfaceShow::SurfaceShow(size_t x_cells, size_t z_cells,  float dx, int window_w
 	this->window_height = window_height;
 
 }
-SurfaceShow::~SurfaceShow() {
+GLApp::~GLApp() {
 
 }
-void SurfaceShow::set_constants(bool m_have_tensor, float m_fric_coef, float m_gamma, float m_dt, float g) {
+void GLApp::set_constants(bool m_have_tensor, float m_fric_coef, float m_gamma, float m_dt, float g) {
 	sim.set_initial_constants(m_have_tensor, m_fric_coef, m_gamma, m_dt, g);
 }
-void SurfaceShow::init(std::string const surface, std::string const height, std::string const vx, std::string const vy, std::string const vz, int situation = 3, int times = 0) {
+void GLApp::init(std::string const surface, std::string const height, std::string const vx, std::string const vy, std::string const vz, int situation = 3, int times = 0) {
 	load_txt_io2(surface, initial_surface_level);
 	load_txt_io2(height, initial_height);
 	load_txt_io2(vx, initial_velocity_x);
@@ -36,7 +37,7 @@ void SurfaceShow::init(std::string const surface, std::string const height, std:
 	}
 	sim.set_initial_conditions(initial_height, v);
 }
-void SurfaceShow::showframe(int n) {
+void GLApp::showframe(int n) {
 	VisualEngine visual_engine(x_cells, z_cells, dx, window_width, window_height);
 	std::vector<GLfloat> water_height(sim.height.begin(), sim.height.end());
 	std::vector<GLfloat> surface_level(sim.bottom.begin(), sim.bottom.end());
@@ -52,4 +53,5 @@ void SurfaceShow::showframe(int n) {
 		i++;
 	}
 	sim.clear();
+}
 }
