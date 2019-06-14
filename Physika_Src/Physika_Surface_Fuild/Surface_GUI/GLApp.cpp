@@ -47,7 +47,8 @@ void GLApp::showframe(int n) {
 		visual_engine.render();
 		sim.runoneframe();
 		if (true && i % 10 == 0) {
-			water_height = sim.height;
+			sim.getheight();
+			std::vector<GLfloat> water_height(sim.height.begin(), sim.height.end());
 			visual_engine.update_vertex_values(&water_height);
 		}
 		i++;
