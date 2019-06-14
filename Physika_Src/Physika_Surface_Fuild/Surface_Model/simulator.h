@@ -3,6 +3,7 @@
 
 #include "Physika_Surface_Fuild/Surface_Triangle_Meshs/mymesh.h"
 
+namespace Physika{
 class Simulator {
 public:
 	Simulator();
@@ -114,5 +115,5 @@ public://private:
 
 
 };
-
+}
 #endif
