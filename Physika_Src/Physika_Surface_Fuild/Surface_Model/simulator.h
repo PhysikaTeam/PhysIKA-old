@@ -1,7 +1,7 @@
-#ifndef SIMULATOR_H
-#define SIMULATOR_H
+#ifndef PHYSIKA_SURFACE_FUILD_SURFACE_MODEL_SIMULATOR_H_
+#define PHYSIKA_SURFACE_FUILD_SURFACE_MODEL_SIMULATOR_H_
 
-#include "mymesh.h"
+#include "Physika_Surface_Fuild/Surface_Triangle_Meshs/mymesh.h"
 
 class Simulator {
 public:
