@@ -6,6 +6,7 @@
 #include <cassert>
 #include <vector>
 #include <string>
+namespace Physika{
 class GLApp {
 private:
 	size_t x_cells;
@@ -26,4 +27,5 @@ private:
 	void init(std::string const surface, std::string const height, std::string const vx, std::string const vy, std::string const vz,int situation=3,int times=0);
 	void showframe(int n);
 };
+}
 	
