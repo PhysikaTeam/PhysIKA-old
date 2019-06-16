@@ -112,6 +112,9 @@ namespace Physika
 
 		m_hash.setSpace(m_radius.getValue(), m_lowBound, m_highBound);
 
+		m_reduce = Reduction<int>::Create(m_position.getElementCount());
+		m_scan = Scan::create(m_position.getElementCount());
+
 		compute();
 
 		return true;
@@ -239,8 +242,20 @@ namespace Physika
 
 		queryNeighborSize(nbrNum, pos, h);
 
-		int sum = thrust::reduce(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr()+ nbrNum.size(), (int)0, thrust::plus<int>());
+		//int sum = thrust::reduce(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr()+ nbrNum.size(), (int)0, thrust::plus<int>());
+		
+		int sum;
+		if (pos.size() == m_position.getElementCount())
+		{
+			sum = m_reduce->Accumulate(nbrNum.getDataPtr(), nbrNum.size());
+		}
+		else
+			sum = thrust::reduce(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr() + nbrNum.size(), (int)0, thrust::plus<int>());
+
+		//m_scan->ExclusiveScan(nbrNum.getDataPtr(), nbrNum.size());
 		thrust::exclusive_scan(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr() + nbrNum.size(), nbrNum.getDataPtr());
+		
+
 
 		if (sum > 0)
 		{

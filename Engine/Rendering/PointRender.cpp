@@ -282,7 +282,7 @@ void PointRender::renderInstancedSphere()
 	glEnableVertexAttribArray(3);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexColor.getVBO());
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glVertexAttribDivisor(2, 1);
+	glVertexAttribDivisor(3, 1);
 
 	m_instancedShader.enable();
 	m_instancedShader.setFloat("sprite_size", m_instance_size);

@@ -10,3 +10,4 @@
 #include "Utility/Arithmetic.h"
 #include "Utility/CTimer.h"
 #include "Utility/GTimer.h"
+#include "Utility/Scan.h"

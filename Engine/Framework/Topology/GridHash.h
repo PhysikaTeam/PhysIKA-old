@@ -84,6 +84,8 @@ namespace Physika{
 		int* ids = nullptr;
 		int* counter = nullptr;
 		int* index = nullptr;
+
+		Reduction<int>* m_reduce = nullptr;
 	};
 
 #ifdef PRECISION_FLOAT
