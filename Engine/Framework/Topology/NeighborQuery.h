@@ -59,7 +59,7 @@ namespace Physika {
 		Real* m_distance;
 
 		Reduction<int>* m_reduce;
-		Scan* m_scan;
+		Scan m_scan;
 	};
 
 #ifdef PRECISION_FLOAT

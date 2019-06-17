@@ -1,26 +1,38 @@
 #pragma once
+#include "Core/Array/Array.h"
 
-#define SCAN_BLOCK_SIZE 128
-
-class Scan
+namespace Physika
 {
-public:
-	static Scan* create(int buf_size, bool inOrder = true);
-	~Scan();
+#define SCAN_LEVEL 2
 
-	int ExclusiveScan(int* dst, int* src, int size);
+	class Scan
+	{
+	public:
+		Scan();
+		~Scan();
 
-	int ExclusiveScan(int* src, int size);
+		void exclusive(int* output, int* input, int length, bool bcao = true);
+		void exclusive(int* data, int length, bool bcao = true);
 
-	int getBufferSize() { return m_size; }
+		void exclusive(DeviceArray<int>& output, DeviceArray<int>& input, bool bcao = true);
+		void exclusive(DeviceArray<int>& data, bool bcao = true);
 
-private:
-	Scan();
-	void allocateBuffer(int size);
+	private:
+		void scanLargeDeviceArray(int *d_out, int *d_in, int length, bool bcao, int level);
+		void scanSmallDeviceArray(int *d_out, int *d_in, int length, bool bcao);
+		void scanLargeEvenDeviceArray(int *output, int *input, int length, bool bcao, int level);
 
-	int m_size = 0;
+		bool isPowerOfTwo(int x);
+		int nextPowerOfTwo(int x);
 
-	int* m_sum = nullptr;
-	int* m_buffer = nullptr;
-};
+
+	private:
+		DeviceArray<int> m_buffer;
+
+		DeviceArray<int> m_sums[SCAN_LEVEL];
+		DeviceArray<int> m_incr[SCAN_LEVEL];
+	};
+
+}
+
 

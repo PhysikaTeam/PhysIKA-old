@@ -109,9 +109,13 @@ namespace Physika{
 		dim3 pDims = int(ceil(pos.size() / BLOCK_SIZE + 0.5f));
 
 		K_CalculateParticleNumber << <pDims, BLOCK_SIZE >> > (*this, pos);
-		//particle_num = thrust::reduce(thrust::device, index, index + num, (int)0, thrust::plus<int>());
 		particle_num = m_reduce->Accumulate(index, num);
-		thrust::exclusive_scan(thrust::device, index, index + num, index);
+ 		
+		if (m_scan == nullptr)
+		{
+			m_scan = new Scan();
+		}
+		m_scan->exclusive(index, num);
 
 		if (ids != nullptr)
 		{
@@ -143,5 +147,10 @@ namespace Physika{
 
 		if (index != nullptr)
 			cuSafeCall(cudaFree(index));
+
+// 		if (m_scan != nullptr)
+// 		{
+// 			delete m_scan;
+// 		}
 	}
 }
