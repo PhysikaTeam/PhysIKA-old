@@ -13,7 +13,7 @@ namespace Physika
 
 		SurfaceMeshRender::SurfaceMeshRender()
 		: VisualModule()
-		, m_color(Vector3f(0.2f, 0.3, 1.0f))
+		, m_color(Vector3f(0.2f, 0.3, 0.0f))
 	{
 	}
 
@@ -43,8 +43,6 @@ namespace Physika
 //		point_render_util = std::make_shared<PointRenderUtil>();
 
 		auto triangles = triSet->getTriangles();
-// 
-//		m_lineRender->setColors(color);
 
 		m_triangleRender = std::make_shared<TriangleRender>();
 		m_triangleRender->resize(triangles->size());
@@ -81,9 +79,9 @@ namespace Physika
 		normals[3 * pId + 1] = triN;
 		normals[3 * pId + 2] = triN;
 
-		colors[3 * pId + 0] = make_float3(0.0f, 1.0f, 0.0f);
-		colors[3 * pId + 1] = make_float3(0.0f, 1.0f, 0.0f);
-		colors[3 * pId + 2] = make_float3(0.0f, 1.0f, 0.0f);
+		colors[3 * pId + 0] = make_float3(1.0f, 1.0f, 0.0f);
+		colors[3 * pId + 1] = make_float3(1.0f, 1.0f, 0.0f);
+		colors[3 * pId + 2] = make_float3(1.0f, 1.0f, 0.0f);
 	}
 
 	void SurfaceMeshRender::updateRenderingContext()

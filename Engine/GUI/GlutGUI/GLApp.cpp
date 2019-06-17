@@ -77,7 +77,7 @@ void GLApp::createWindow(int width, int height)
 	m_camera.translateToPoint(0, 0);
 
 	m_camera.zoom(3.0f);
-	m_camera.setGL(0.01f, 10.0f, (float)getWidth(), (float)getHeight());
+	m_camera.setGL(0.01f, 3.0f, (float)getWidth(), (float)getHeight());
 }
 
 void GLApp::closeWindow()

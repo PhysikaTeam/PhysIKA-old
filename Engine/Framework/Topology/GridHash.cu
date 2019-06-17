@@ -64,6 +64,13 @@ namespace Physika{
 
 		cuSafeCall(cudaMalloc((void**)&counter, num * sizeof(int)));
 		cuSafeCall(cudaMalloc((void**)&index, num * sizeof(int)));
+
+		if (m_reduce != nullptr)
+		{
+			delete m_reduce;
+		}
+
+		m_reduce = Reduction<int>::Create(num);
 	}
 
 	template<typename TDataType>
@@ -102,8 +109,13 @@ namespace Physika{
 		dim3 pDims = int(ceil(pos.size() / BLOCK_SIZE + 0.5f));
 
 		K_CalculateParticleNumber << <pDims, BLOCK_SIZE >> > (*this, pos);
-		particle_num = thrust::reduce(thrust::device, index, index + num, (int)0, thrust::plus<int>());
-		thrust::exclusive_scan(thrust::device, index, index + num, index);
+		particle_num = m_reduce->accumulate(index, num);
+ 		
+		if (m_scan == nullptr)
+		{
+			m_scan = new Scan();
+		}
+		m_scan->exclusive(index, num);
 
 		if (ids != nullptr)
 		{
@@ -135,5 +147,10 @@ namespace Physika{
 
 		if (index != nullptr)
 			cuSafeCall(cudaFree(index));
+
+// 		if (m_scan != nullptr)
+// 		{
+// 			delete m_scan;
+// 		}
 	}
 }

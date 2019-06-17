@@ -113,7 +113,7 @@ namespace Physika
 
 		Reduction<Real>* pReduce = Reduction<Real>::Create(rho->size());
 
-		Real maxRho = pReduce->Maximum(rho->getDataPtr(), rho->size());
+		Real maxRho = pReduce->maximum(rho->getDataPtr(), rho->size());
 
 		m_factor = m_restDensity.getValue() / maxRho;
 		

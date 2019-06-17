@@ -17,7 +17,7 @@
 
 namespace Physika{
 
-static const char * triangle_solid_render_vertex_shader = R"STR(
+	static const char * triangle_solid_render_vertex_shader = R"STR(
 #version 330
 
 layout(location = 0) in vec3 VertexPosition;
@@ -25,6 +25,7 @@ layout(location = 1) in vec3 VertexNormal;
 layout(location = 2) in vec3 VertexColor;
 
 out vec3 LightIntensity;
+out vec3 outVertexColor;
 
 struct LightInfo
 {
@@ -44,6 +45,7 @@ struct MaterialInfo
 };
 uniform MaterialInfo Material;
 
+uniform bool bDoubleShading;
 uniform mat4 ModelViewMatrix;
 uniform mat3 NormalMatrix;
 uniform mat4 ProjectionMatrix;
@@ -56,7 +58,11 @@ void main()
 	vec3 s = normalize(vec3(Light.Position - eyeCoords));
 	vec3 v = normalize(-eyeCoords.xyz);
 	vec3 r = reflect(-s, tnorm);
-	float sDotN = max(0.0, dot(s, tnorm));
+	float sDotN = dot(s, tnorm);	
+	if(bDoubleShading)
+		sDotN = abs(sDotN);
+	else
+		sDotN = max(0.0, dot(s, tnorm));
 	vec3 ambient = Light.La * Material.Ka;
 	vec3 diffuse = Light.Ld * Material.Ka * sDotN;
 	vec3 spec = vec3(0.0);
@@ -67,47 +73,48 @@ void main()
 	}
 	LightIntensity = ambient + diffuse + spec;
 	gl_Position = MVP *vec4(VertexPosition, 1.0);
-}
-)STR";
+	outVertexColor = VertexColor;
+})STR";
 
 static const char * triangle_solid_render_frag_shader = R"STR(
-#version 330 
+	#version 330 
 
-in vec3 LightIntensity;
+	in vec3 LightIntensity;
+	in vec3 outVertexColor;
 
-layout(location = 0) out vec4 FragColor;
+	layout(location = 0) out vec4 FragColor;
 
-void main()
-{
-	FragColor = vec4(LightIntensity, 1.0);
-}
-)STR";
+	void main()
+	{
+		FragColor = vec4(LightIntensity*outVertexColor, 1.0);
+	}
+	)STR";
 
 
 static const char * triangle_wireframe_render_vertex_shader = R"STR(
-#version 330 compatibility
-layout(location = 0) in vec3 vert_pos;
-layout(location = 3) in vec3 vert_col;
+	#version 330 compatibility
+	layout(location = 0) in vec3 vert_pos;
+	layout(location = 3) in vec3 vert_col;
 
-out vec3 frag_vert_col;
+	out vec3 frag_vert_col;
 
-void main()
-{
-	frag_vert_col = vert_col;
-	gl_Position = gl_ModelViewProjectionMatrix * vec4(vert_pos, 1.0);
-}
-)STR";
+	void main()
+	{
+		frag_vert_col = vert_col;
+		gl_Position = gl_ModelViewProjectionMatrix * vec4(vert_pos, 1.0);
+	}
+	)STR";
 
 static const char * triangle_wireframe_render_frag_shader = R"STR(
-#version 330 compatibility
-in vec3 frag_vert_col;
-out vec4 frag_color;
+	#version 330 compatibility
+	in vec3 frag_vert_col;
+	out vec4 frag_color;
 
-void main()
-{
-	frag_color = vec4(frag_vert_col, 1.0);
-}
-)STR";
+	void main()
+	{
+		frag_color = vec4(frag_vert_col, 1.0);
+	}
+	)STR";
 
 TriangleRender::TriangleRender()
 {
@@ -151,6 +158,16 @@ void TriangleRender::setColorArray(DeviceArray<float3>& colorArray)
 	m_colorVBO.cudaUnmap();
 }
 
+void TriangleRender::enableDoubleShading()
+{
+	m_bEnableDoubleShading = true;
+}
+
+void TriangleRender::disableDoubleShading()
+{
+	m_bEnableDoubleShading = false;
+}
+
 void TriangleRender::enableUseCustomColor()
 {
     use_custom_color_ = true;
@@ -192,6 +209,7 @@ void TriangleRender::display()
 		m_solidShader.setMat3("NormalMatrix", normMat);
 		m_solidShader.setMat4("ProjectionMatrix", projMat);
 		m_solidShader.setMat4("MVP", projMat * mvMat);
+		m_solidShader.setBool("bDoubleShading", m_bEnableDoubleShading);
 
 		glm::vec4  worldLight = glm::vec4(-5.0f, 5.0f, 2.0f, 1.0f);
 		m_solidShader.setVec3("Material.Kd", 0.9f, 0.5f, 0.3f);
@@ -241,5 +259,6 @@ void TriangleRender::resize(unsigned int triNum)
 	m_normVBO.resize(3 * triNum);
 	m_colorVBO.resize(3 * triNum);
 }
+
 
 }//end of namespace Physika

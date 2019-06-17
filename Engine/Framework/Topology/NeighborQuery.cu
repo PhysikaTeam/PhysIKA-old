@@ -5,6 +5,7 @@
 #include "Framework/Topology/NeighborList.h"
 #include "Framework/Topology/FieldNeighbor.h"
 #include "Framework/Framework/SceneGraph.h"
+#include "Core/Utility/Scan.h"
 
 namespace Physika
 {
@@ -111,6 +112,8 @@ namespace Physika
 		}
 
 		m_hash.setSpace(m_radius.getValue(), m_lowBound, m_highBound);
+
+//		m_reduce = Reduction<int>::Create(m_position.getElementCount());
 
 		compute();
 
@@ -239,8 +242,11 @@ namespace Physika
 
 		queryNeighborSize(nbrNum, pos, h);
 
-		int sum = thrust::reduce(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr()+ nbrNum.size(), (int)0, thrust::plus<int>());
-		thrust::exclusive_scan(thrust::device, nbrNum.getDataPtr(), nbrNum.getDataPtr() + nbrNum.size(), nbrNum.getDataPtr());
+		int sum = m_reduce.accumulate(nbrNum.getDataPtr(), nbrNum.size());
+
+		m_scan.exclusive(nbrNum, true);
+		cuSynchronize();
+
 
 		if (sum > 0)
 		{

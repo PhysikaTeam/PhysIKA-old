@@ -141,10 +141,31 @@ const char *spherePixelShader1 = STRINGIFY(
 }
 )STR";
 
+float quadVertices[] = {
+	// positions     // colors
+	-1,  1,
+	1, -1,
+	-1, -1,
+
+	-1,  1,
+	1, -1,
+	1,  1
+};
+
 PointRender::PointRender()
 {
 	m_glsl.createFromCStyleString(vertexSource, fragmentSource);
-//	nvGLSL = new GLSLProgram(vertexShader1, spherePixelShader1);
+	m_instancedShader.createFromFile("../Shader/InstancedSphere.vs.glsl", "../Shader/InstancedSphere.fs.glsl");
+
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 PointRender::~PointRender()
@@ -156,9 +177,10 @@ void PointRender::resize(unsigned int num)
 	m_vertVBO.resize(num);
  	m_vertexColor.resize(num);
 // 	m_normVBO.resize(num);
+
 }
 
-
+int id = 0;
 void PointRender::setVertexArray(DeviceArray<float3>& pos)
 {
 	cudaMemcpy(m_vertVBO.cudaMap(), pos.getDataPtr(), sizeof(float3) * pos.size(), cudaMemcpyDeviceToDevice);
@@ -186,6 +208,11 @@ void PointRender::setColorArray(HostArray<float3>& color)
 void PointRender::setPointSize(float point_size)
 {
     point_size_ = point_size;
+}
+
+void PointRender::setInstanceSize(float r)
+{
+	m_instance_size = r;
 }
 
 float PointRender::pointSize() const
@@ -237,7 +264,39 @@ bool PointRender::isUsePointSprite() const
     return use_point_sprite_;
 }
 
-void PointRender::display()
+void PointRender::renderInstancedSphere()
+{
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertVBO.getVBO());
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glVertexAttribDivisor(2, 1);
+
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexColor.getVBO());
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glVertexAttribDivisor(3, 1);
+
+	m_instancedShader.enable();
+	m_instancedShader.setFloat("sprite_size", m_instance_size);
+
+	glBindVertexArray(quadVAO);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, m_vertVBO.getSize()); // 100 triangles of 6 vertices each
+	glBindVertexArray(0);
+
+	m_instancedShader.disable();
+
+	glDisable(GL_BLEND);
+}
+
+void PointRender::renderSprite()
 {
 	m_glsl.enable();
 
@@ -251,23 +310,45 @@ void PointRender::display()
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-	if (use_point_sprite_)
-	{
-		glEnable(GL_POINT_SPRITE);
-		glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-		glEnable(GL_PROGRAM_POINT_SIZE);
+	glEnable(GL_POINT_SPRITE);
+	glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+	glEnable(GL_PROGRAM_POINT_SIZE);
 
-		glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
-		m_glsl.setFloat("point_size", point_size_);
-		m_glsl.setFloat("point_scale", point_scale_);
-		m_glsl.setBool("use_point_sprite", true);
-	}
-	else
-	{
-		glPointSize(point_size_);
-	}
+	m_glsl.setFloat("point_size", point_size_);
+	m_glsl.setFloat("point_scale", point_scale_);
+	m_glsl.setBool("use_point_sprite", true);
 
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexColor.getVBO());
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertVBO.getVBO());
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glDrawArrays(GL_POINTS, 0, m_vertVBO.getSize());
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	m_glsl.disable();
+}
+
+void PointRender::renderPoints()
+{
+	m_glsl.enable();
+
+	Matrix4f idenity = Matrix4f::identityMatrix();
+	m_glsl.setMat4("proj_trans", idenity);
+	m_glsl.setMat4("view_trans", idenity);
+	m_glsl.setMat4("model_trans", idenity);
+
+	Vector3f vec = Vector3f(0.0f);
+	m_glsl.setVec3("view_pos", vec);
+
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+	glPointSize(point_size_);
 	glEnableVertexAttribArray(3);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexColor.getVBO());
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
@@ -282,6 +363,5 @@ void PointRender::display()
 
 	m_glsl.disable();
 }
-
 
 }//end of namespace Physika

@@ -3,6 +3,7 @@
 #include "Core/Utility.h"
 #include "Core/Array/Array.h"
 #include "Framework/Topology/NeighborList.h"
+#include "Core/Utility/Scan.h"
 
 namespace Physika{
 
@@ -84,6 +85,9 @@ namespace Physika{
 		int* ids = nullptr;
 		int* counter = nullptr;
 		int* index = nullptr;
+
+		Scan* m_scan = nullptr;
+		Reduction<int>* m_reduce = nullptr;
 	};
 
 #ifdef PRECISION_FLOAT

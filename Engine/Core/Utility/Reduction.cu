@@ -8,13 +8,23 @@
 
 namespace Physika {
 
+#define REDUCTION_BLOCK 128
+
+	template<typename T>
+	Reduction<T>::Reduction()
+		: m_num(0)
+		, m_aux(NULL)
+	{
+
+	}
+
+
 	template<typename T>
 	Reduction<T>::Reduction(unsigned num)
 		: m_num(num)
 		, m_aux(NULL)
 	{
-		m_auxNum = GetAuxiliaryArraySize(num);
-		cudaMalloc((void**)&m_aux, m_auxNum * sizeof(T));
+		allocAuxiliaryArray(m_num);
 	}
 
 	template<typename T>
@@ -27,6 +37,13 @@ namespace Physika {
 	Reduction<T>* Reduction<T>::Create(int n)
 	{
 		return new Reduction<T>(n);
+	}
+
+
+	template<typename T>
+	int Reduction<T>::getAuxiliaryArraySize(int n)
+	{
+		return (n / REDUCTION_BLOCK + 1) + (n / (REDUCTION_BLOCK*REDUCTION_BLOCK) + REDUCTION_BLOCK);
 	}
 
 	/*!
@@ -100,30 +117,53 @@ namespace Physika {
 	}
 
 	template<typename T>
-	T Physika::Reduction<T>::Accumulate(T* val, int num)
+	T Physika::Reduction<T>::accumulate(T* val, int num)
 	{
-		assert(num == m_num);
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
 		return Reduce(val, num, m_aux, PlusFunc<T>(), (T)0);
 	}
 
 	template<typename T>
-	T Physika::Reduction<T>::Maximum(T* val, int num)
+	T Physika::Reduction<T>::maximum(T* val, int num)
 	{
-		assert(num == m_num);
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
 		return Reduce(val, num, m_aux, MaximumFunc<T>(), (T)-FLT_MAX);
 	}
 
 	template<typename T>
-	T Physika::Reduction<T>::Minimum(T* val, int num)
+	T Physika::Reduction<T>::minimum(T* val, int num)
 	{
-		assert(num == m_num);
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
 		return Reduce(val, num, m_aux, MinimumFunc<T>(), (T)FLT_MAX);
 	}
 
 	template<typename T>
-	T Physika::Reduction<T>::Average(T* val, int num)
+	T Physika::Reduction<T>::average(T* val, int num)
 	{
-		assert(num == m_num);
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
 		return Reduce(val, num, m_aux, PlusFunc<T>(), (T)0) / num;
 	}
+
+	template<typename T>
+	void Reduction<T>::allocAuxiliaryArray(int num)
+	{
+		if (m_aux == nullptr)
+		{
+			cudaFree(m_aux);
+		}
+
+		m_num = num;
+
+		m_auxNum = getAuxiliaryArraySize(num);
+		cudaMalloc((void**)&m_aux, m_auxNum * sizeof(T));
+	}
+
 }

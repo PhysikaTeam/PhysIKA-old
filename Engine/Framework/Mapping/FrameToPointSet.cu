@@ -6,7 +6,6 @@
 
 namespace Physika
 {
-
 	template<typename TDataType>
 	FrameToPointSet<TDataType>::FrameToPointSet()
 		: TopologyMapping()

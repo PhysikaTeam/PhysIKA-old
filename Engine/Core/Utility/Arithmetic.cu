@@ -33,7 +33,7 @@ namespace Physika {
 	T Arithmetic<T>::Dot(DeviceArray<T>& xArr, DeviceArray<T>& yArr)
 	{
 		Function2Pt::multiply(m_buf, xArr, yArr);
-		return m_reduce->Accumulate(m_buf.getDataPtr(), m_buf.size());
+		return m_reduce->accumulate(m_buf.getDataPtr(), m_buf.size());
 	}
 
 }

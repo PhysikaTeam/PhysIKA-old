@@ -20,7 +20,7 @@ int main()
 	bunny->loadParticles("../Media/bunny/bunny_points.obj");
 	bunny->loadSurface("../Media/bunny/bunny_mesh.obj");
 	bunny->translate(Vector3f(0.5, 0.2, 0.5));
-	bunny->setVisible(false);
+	bunny->setVisible(true);
 
 	GLApp window;
 	window.createWindow(1024, 768);

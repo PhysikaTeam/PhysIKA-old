@@ -47,7 +47,8 @@ void CreateScene()
 	child1->getRenderModule()->setColor(Vector3f(1, 0, 0));
 	child1->loadParticles("../Media/fluid/fluid_point.obj");
 	child1->setMass(100);
-	child1->getRenderModule()->setColorRange(0, 2);
+	child1->getRenderModule()->setColorRange(0, 1);
+	child1->getVelocity()->connect(child1->getRenderModule()->m_vecIndex);
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);

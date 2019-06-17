@@ -4,6 +4,7 @@
 #include "Framework/Framework/FieldArray.h"
 #include "Framework/Topology/FieldNeighbor.h"
 #include "Framework/Topology/GridHash.h"
+#include "Core/Utility.h"
 
 namespace Physika {
 	template<typename ElementType> class NeighborList;
@@ -53,6 +54,12 @@ namespace Physika {
 		Coord m_highBound;
 
 		GridHash<TDataType> m_hash;
+
+		int* m_ids;
+		Real* m_distance;
+
+		Reduction<int> m_reduce;
+		Scan m_scan;
 	};
 
 #ifdef PRECISION_FLOAT

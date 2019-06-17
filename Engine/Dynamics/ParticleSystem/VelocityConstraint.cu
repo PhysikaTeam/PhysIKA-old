@@ -760,7 +760,7 @@ namespace Physika
 			m_neighborhood.getValue(),
 			m_smoothingLength.getValue());
 
-		m_maxAlpha = m_reduce->Maximum(m_alpha.getDataPtr(), m_alpha.size());
+		m_maxAlpha = m_reduce->maximum(m_alpha.getDataPtr(), m_alpha.size());
 
 		VC_CorrectAlpha << <pDims, BLOCK_SIZE >> > (
 			m_alpha,
@@ -775,7 +775,7 @@ namespace Physika
 			m_neighborhood.getValue(),
 			m_smoothingLength.getValue());
 
-		m_maxA = m_reduce->Maximum(m_AiiFluid.getDataPtr(), m_AiiFluid.size());
+		m_maxA = m_reduce->maximum(m_AiiFluid.getDataPtr(), m_AiiFluid.size());
 
 		std::cout << "Max alpha: " << m_maxAlpha << std::endl;
 		std::cout << "Max A: " << m_maxA << std::endl;

@@ -30,7 +30,7 @@ namespace Physika {
 		DeviceArrayField<Coord> m_velocity;
 
 		Real m_normal_friction = 0.95f;
-		Real m_tangent_friction = 20.0;
+		Real m_tangent_friction = 0.0;
 
 		std::shared_ptr<DistanceField3D<TDataType>> m_cSDF;
 	};

@@ -18,7 +18,8 @@ namespace Physika
 
 		enum RenderMode {
 			POINT = 0,
-			SPRITE
+			SPRITE,
+			Instance
 		};
 
 		void display() override;

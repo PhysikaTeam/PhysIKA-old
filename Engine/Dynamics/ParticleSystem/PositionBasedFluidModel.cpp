@@ -23,7 +23,7 @@ namespace Physika
 		, m_restRho(Real(1000))
 		, m_pNum(0)
 	{
-		m_smoothingLength.setValue(Real(0.0075));
+		m_smoothingLength.setValue(Real(0.006));
 
 		attachField(&m_smoothingLength, "smoothingLength", "Smoothing length", false);
 
