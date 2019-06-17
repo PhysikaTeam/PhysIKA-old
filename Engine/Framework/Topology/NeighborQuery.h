@@ -58,7 +58,7 @@ namespace Physika {
 		int* m_ids;
 		Real* m_distance;
 
-		Reduction<int>* m_reduce;
+		Reduction<int> m_reduce;
 		Scan m_scan;
 	};
 

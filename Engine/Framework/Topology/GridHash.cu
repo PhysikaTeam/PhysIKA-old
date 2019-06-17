@@ -109,7 +109,7 @@ namespace Physika{
 		dim3 pDims = int(ceil(pos.size() / BLOCK_SIZE + 0.5f));
 
 		K_CalculateParticleNumber << <pDims, BLOCK_SIZE >> > (*this, pos);
-		particle_num = m_reduce->Accumulate(index, num);
+		particle_num = m_reduce->accumulate(index, num);
  		
 		if (m_scan == nullptr)
 		{
