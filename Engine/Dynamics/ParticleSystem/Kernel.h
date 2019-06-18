@@ -20,6 +20,9 @@ namespace Physika {
 		{
 			return Real(0);
 		}
+
+	public:
+		Real m_scale = Real(1);
 	};
 
 	//spiky kernel
@@ -37,7 +40,7 @@ namespace Physika {
 			else {
 				const Real d = 1.0 - q;
 				const Real hh = h*h;
-				return 15.0f / ((Real)M_PI * hh * h) * d * d * d;
+				return 15.0f / ((Real)M_PI * hh * h) * d * d * d * m_scale;
 			}
 		}
 
@@ -49,7 +52,7 @@ namespace Physika {
 			else {
 				const Real d = 1.0 - q;
 				const Real hh = h*h;
-				return -45.0f / ((Real)M_PI * hh*h) *d*d;
+				return -45.0f / ((Real)M_PI * hh*h) *d*d * m_scale;
 			}
 		}
 	};
@@ -67,7 +70,7 @@ namespace Physika {
 			const Real q = r / h;
 			if (q > 1.0f) return 0.0f;
 			else {
-				return 1.0f - q*q;
+				return (1.0f - q*q) * m_scale;
 			}
 		}
 
@@ -79,7 +82,7 @@ namespace Physika {
 				const Real hh = h*h;
 				const Real dd = 1 - q*q;
 				const Real alpha = 1.0f;// (Real) 945.0f / (32.0f * (Real)M_PI * hh *h);
-				return -alpha * dd;
+				return -alpha * dd* m_scale;
 			}
 		}
 	};

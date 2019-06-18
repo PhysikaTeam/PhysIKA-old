@@ -4,6 +4,7 @@
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/FieldArray.h"
 #include "Framework/Topology/FieldNeighbor.h"
+#include "Kernel.h"
 
 namespace Physika {
 
@@ -50,6 +51,8 @@ namespace Physika {
 		DeviceArrayField<Real> m_density;
 	private:
 		int m_maxIteration;
+
+		SpikyKernel<Real> m_kernel;
 
 		DeviceArray<Real> m_lamda;
 		DeviceArray<Coord> m_deltaPos;

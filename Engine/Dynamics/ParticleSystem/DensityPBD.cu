@@ -4,7 +4,6 @@
 #include "DensityPBD.h"
 #include "Framework/Framework/Node.h"
 #include <string>
-#include "Kernel.h"
 #include "DensitySummation.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
@@ -12,20 +11,50 @@ namespace Physika
 {
 	IMPLEMENT_CLASS_1(DensityPBD, TDataType)
 
+	template<typename Real,
+			 typename Coord>
+	__global__ void K_InitKernelFunction(
+		DeviceArray<Real> weights,
+		DeviceArray<Coord> posArr,
+		NeighborList<int> neighbors,
+		SpikyKernel<Real> kernel,
+		Real smoothingLength)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= weights.size()) return;
+
+		Coord pos_i = posArr[pId];
+
+		int nbSize = neighbors.getNeighborSize(pId);
+		Real total_weight = Real(0);
+		for (int ne = 0; ne < nbSize; ne++)
+		{
+			int j = neighbors.getElement(pId, ne);
+			Real r = (pos_i - posArr[j]).norm();
+
+			if (r > EPSILON)
+			{
+				total_weight += kernel.Weight(r, smoothingLength);
+			}
+		}
+
+		weights[pId] = total_weight;
+	}
+
+
 	template <typename Real, typename Coord>
 	__global__ void K_ComputeLambdas(
 		DeviceArray<Real> lambdaArr,
 		DeviceArray<Real> rhoArr,
 		DeviceArray<Coord> posArr,
 		NeighborList<int> neighbors,
+		SpikyKernel<Real> kern,
 		Real smoothingLength)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
 		Coord pos_i = posArr[pId];
-
-		SpikyKernel<Real> kern;
 
 		Real lamda_i = Real(0);
 		Coord grad_ci(0);
@@ -46,6 +75,11 @@ namespace Physika
 
 		lamda_i += grad_ci.dot(grad_ci);
 
+// 		if (pId < 20)
+// 		{
+// 			printf("%f \n", lamda_i);
+// 		}
+
 		Real rho_i = rhoArr[pId];
 
 		lamda_i = -(rho_i - 1000.0f) / (lamda_i + 0.1f);
@@ -60,14 +94,13 @@ namespace Physika
 		DeviceArray<Coord> posArr,
 		DeviceArray<Real> massInvArr,
 		NeighborList<int> neighbors,
+		SpikyKernel<Real> kern,
 		Real smoothingLength)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
 		Coord pos_i = posArr[pId];
-
-		SpikyKernel<Real> kern;
 
 		Real lamda_i = Real(0);
 		Coord grad_ci(0);
@@ -102,6 +135,7 @@ namespace Physika
 		DeviceArray<Real> lambdas, 
 		DeviceArray<Coord> posArr, 
 		NeighborList<int> neighbors, 
+		SpikyKernel<Real> kern,
 		Real smoothingLength,
 		Real dt)
 	{
@@ -111,8 +145,6 @@ namespace Physika
 		Coord pos_i = posArr[pId];
 		Real lamda_i = lambdas[pId];
 
-		SpikyKernel<Real> kern;
-
 		Coord dP_i(0);
 		int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
@@ -121,7 +153,7 @@ namespace Physika
 			Real r = (pos_i - posArr[j]).norm();
 			if (r > EPSILON)
 			{
-				Coord dp_ij = 1.0f*(pos_i - posArr[j])*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
+				Coord dp_ij = 10.0f*(pos_i - posArr[j])*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
 				dP_i += dp_ij;
 				
 				atomicAdd(&dPos[pId][0], dp_ij[0]);
@@ -151,6 +183,7 @@ namespace Physika
 		DeviceArray<Coord> posArr,
 		DeviceArray<Real> massInvArr,
 		NeighborList<int> neighbors,
+		SpikyKernel<Real> kern,
 		Real smoothingLength,
 		Real dt)
 	{
@@ -160,8 +193,6 @@ namespace Physika
 		Coord pos_i = posArr[pId];
 		Real lamda_i = lambdas[pId];
 
-		SpikyKernel<Real> kern;
-
 		int nbSize = neighbors.getNeighborSize(pId);
 		for (int ne = 0; ne < nbSize; ne++)
 		{
@@ -169,7 +200,7 @@ namespace Physika
 			Real r = (pos_i - posArr[j]).norm();
 			if (r > EPSILON)
 			{
-				Coord dp_ij = 1.0f*(pos_i - posArr[j])*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
+				Coord dp_ij = 10.0f*(pos_i - posArr[j])*(lamda_i + lambdas[j])*kern.Gradient(r, smoothingLength)* (1.0 / r);
 				Coord dp_ji = -dp_ij * massInvArr[j];
 				dp_ij = dp_ij * massInvArr[pId];
 				atomicAdd(&dPos[pId][0], dp_ij[0]);
@@ -252,7 +283,6 @@ namespace Physika
 
 		m_densitySum->initialize();
 
-
 		int num = m_position.getElementCount();
 
 		if (m_lamda.size() != num)
@@ -261,6 +291,18 @@ namespace Physika
 			m_deltaPos.resize(num);
 		
 		m_position_old.resize(num);
+
+// 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+// 		K_InitKernelFunction << <pDims, BLOCK_SIZE >> > (
+// 			m_lamda, 
+// 			m_position.getValue(), 
+// 			m_neighborhood.getValue(), 
+// 			m_kernel,
+// 			m_smoothingLength.getValue());
+// 
+// 		Reduction<Real> reduce;
+// 		Real max_weight = reduce.maximum(m_lamda.getDataPtr(), m_lamda.size());
+// 		m_kernel.m_scale = 1.0 / max_weight;
 
 		return true;
 	}
@@ -303,14 +345,19 @@ namespace Physika
 				m_density.getValue(),
 				m_position.getValue(),
 				m_neighborhood.getValue(),
+				m_kernel,
 				m_smoothingLength.getValue());
+			cuSynchronize();
+
 			K_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (
 				m_deltaPos,
 				m_lamda,
 				m_position.getValue(),
 				m_neighborhood.getValue(),
+				m_kernel,
 				m_smoothingLength.getValue(),
 				dt);
+			cuSynchronize();
 		}
 		else
 		{
@@ -320,15 +367,20 @@ namespace Physika
 				m_position.getValue(),
 				m_massInv.getValue(),
 				m_neighborhood.getValue(),
+				m_kernel,
 				m_smoothingLength.getValue());
+			cuSynchronize();
+
 			K_ComputeDisplacement <Real, Coord> << <pDims, BLOCK_SIZE >> > (
 				m_deltaPos,
 				m_lamda,
 				m_position.getValue(),
 				m_massInv.getValue(),
 				m_neighborhood.getValue(),
+				m_kernel,
 				m_smoothingLength.getValue(),
 				dt);
+			cuSynchronize();
 		}
 		
 		K_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (
@@ -336,6 +388,7 @@ namespace Physika
 			m_velocity.getValue(),
 			m_deltaPos,
 			dt);
+		cuSynchronize();
 	}
 
 	template <typename Real, typename Coord>
