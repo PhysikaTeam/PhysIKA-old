@@ -1,6 +1,7 @@
 #pragma once
 #include "PointSet.h"
 #include "Framework/ModuleTopology.h"
+#include "Framework/Topology/FieldNeighbor.h"
 
 namespace Physika
 {
@@ -17,18 +18,16 @@ namespace Physika
 
 		void updatePointNeighbors() override;
 
+		void loadSmeshFile(std::string filename);
+
 		DeviceArray<Edge>* getEdges() {return &m_edges;}
-		NeighborList<int>* getEdgeNeighbors() { return &m_edgeNeighbors; }
+		NeighborList<int>& getEdgeNeighbors() { return m_edgeNeighbors.getValue(); }
+
+		NeighborField<int> m_edgeNeighbors;
 
 	protected:
 		DeviceArray<Edge> m_edges;
-		NeighborList<int> m_edgeNeighbors;
 	};
 
-#ifdef PRECISION_FLOAT
-	template class EdgeSet<DataType3f>;
-#else
-	template class EdgeSet<DataType3d>;
-#endif
 }
 

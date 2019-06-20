@@ -3,6 +3,7 @@
 
 #include "Framework/Topology/PointSet.h"
 #include "Core/Utility.h"
+#include <iostream>
 
 
 namespace Physika
@@ -17,7 +18,7 @@ namespace Physika
 		attachField(&m_velocity, MechanicalState::velocity(), "Storing the particle velocities!", false);
 		attachField(&m_force, MechanicalState::force(), "Storing the force densities!", false);
 
-		m_pSet = std::make_shared<PointSet<TDataType>>();
+		m_pSet = std::make_shared<EdgeSet<TDataType>>();
 		this->setTopologyModule(m_pSet);
 
 		m_pointsRender = std::make_shared<PointRenderModule>();
@@ -36,7 +37,15 @@ namespace Physika
 	template<typename TDataType>
 	void ParticleSystem<TDataType>::loadParticles(std::string filename)
 	{
-		m_pSet->loadObjFile(filename);
+		int dot_index = filename.find_last_of('.');
+		std::string extension = filename.substr(dot_index+1);
+		if(extension == "obj") m_pSet->loadObjFile(filename);
+		else if(extension == "smesh") m_pSet->loadSmeshFile(filename);
+		else {
+			std::cout<<"don't support this kind of file format now!"<<std::endl;
+			exit(0);
+		}
+		
 	}
 
 	template<typename TDataType>

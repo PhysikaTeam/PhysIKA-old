@@ -17,7 +17,7 @@ namespace Physika
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
-		ParticleElasticBody(std::string name = "default");
+		ParticleElasticBody(std::string name = "default", bool use_edge_neighbor = false);
 		virtual ~ParticleElasticBody();
 
 		bool initialize() override;

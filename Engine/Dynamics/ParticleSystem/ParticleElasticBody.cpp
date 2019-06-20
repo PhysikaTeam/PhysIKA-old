@@ -14,7 +14,7 @@ namespace Physika
 	IMPLEMENT_CLASS_1(ParticleElasticBody, TDataType)
 
 	template<typename TDataType>
-	ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
+	ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name, bool use_edge_neighbor)
 		: ParticleSystem<TDataType>(name)
 	{
 		m_horizon.setValue(0.0085);
@@ -25,28 +25,39 @@ namespace Physika
 		this->getVelocity()->connect(m_integrator->m_velocity);
 		this->getForce()->connect(m_integrator->m_forceDensity);
 
-		auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		m_horizon.connect(m_nbrQuery->m_radius);
-		this->m_position.connect(m_nbrQuery->m_position);
-
 		auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
 		this->getPosition()->connect(m_elasticity->m_position);
 		this->getVelocity()->connect(m_elasticity->m_velocity);
 		m_horizon.connect(m_elasticity->m_horizon);
-		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
 
-		//Create a node for surface mesh rendering
-		m_surfaceNode = this->template createChild<Node>("Mesh");
+		if(!use_edge_neighbor){
+			auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
+			m_horizon.connect(m_nbrQuery->m_radius);
+			this->m_position.connect(m_nbrQuery->m_position);
+			m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
+		}
+		else{
+			this->m_pSet->m_edgeNeighbors.connect(m_elasticity->m_neighborhood);
+		}
+		
+		if(!use_edge_neighbor){
+			//Create a node for surface mesh rendering
+			m_surfaceNode = this->template createChild<Node>("Mesh");
 
-		auto triSet = m_surfaceNode->template setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
+			auto triSet = m_surfaceNode->template setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
 
-		auto render = m_surfaceNode->template addVisualModule<SurfaceMeshRender>("surface_mesh_render");
-		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
+			auto render = m_surfaceNode->template addVisualModule<SurfaceMeshRender>("surface_mesh_render");
+			render->setColor(Vector3f(0.2f, 0.6, 1.0f));
 
-		//Set the topology mapping from PointSet to TriangleSet
-		auto surfaceMapping = this->template addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");
-		surfaceMapping->setFrom(this->m_pSet);
-		surfaceMapping->setTo(triSet);
+			//Set the topology mapping from PointSet to TriangleSet
+			auto surfaceMapping = this->template addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");
+			surfaceMapping->setFrom(this->m_pSet);
+			surfaceMapping->setTo(triSet);
+		}
+		else{
+			auto render = this->template addVisualModule<PointRenderModule>("point_render");
+			render->setColor(Vector3f(0.2f, 0.6, 1.0f));
+		}
 	}
 
 	template<typename TDataType>
@@ -58,7 +69,7 @@ namespace Physika
 	template<typename TDataType>
 	bool ParticleElasticBody<TDataType>::translate(Coord t)
 	{
-		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
+		if(m_surfaceNode)TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
 
 		return ParticleSystem<TDataType>::translate(t);
 	}

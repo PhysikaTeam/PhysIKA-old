@@ -40,14 +40,13 @@ void CreateScene()
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
 	root->loadCube(Vector3f(0), Vector3f(1), true);
 
-	std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>();
+	std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>("hair demo", true);
 	root->addParticleSystem(child3);
 	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
 	child3->setMass(1.0);
-  	child3->loadParticles("../Media/bunny/bunny_points.obj");
-  	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
-	child3->translate(Vector3f(0.5, 0.2, 0.5));
-	child3->setVisible(false);
+  	child3->loadParticles("../../Media/hair/hair.smesh");
+	child3->translate(Vector3f(0.5, 0.5, 0.5));
+	//child3->setVisible(false);
 }
 
 
