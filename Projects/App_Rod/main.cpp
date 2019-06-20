@@ -44,7 +44,7 @@ void CreateScene()
 	root->addParticleSystem(child3);
 	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
 	child3->setMass(1.0);
-  	child3->loadParticles("../../Media/hair/hair.smesh");
+  	child3->loadParticles("../Media/hair/hair.smesh");
 	child3->translate(Vector3f(0.5, 0.5, 0.5));
 	//child3->setVisible(false);
 }
