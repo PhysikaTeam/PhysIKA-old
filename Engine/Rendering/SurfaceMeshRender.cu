@@ -57,7 +57,8 @@ namespace Physika
 		DeviceArray<float3> vertices,
 		DeviceArray<float3> normals,
 		DeviceArray<float3> colors,
-		DeviceArray<TopologyModule::Triangle> triangles
+		DeviceArray<TopologyModule::Triangle> triangles,
+		float3 color
 		)
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
@@ -79,9 +80,9 @@ namespace Physika
 		normals[3 * pId + 1] = triN;
 		normals[3 * pId + 2] = triN;
 
-		colors[3 * pId + 0] = make_float3(1.0f, 1.0f, 0.0f);
-		colors[3 * pId + 1] = make_float3(1.0f, 1.0f, 0.0f);
-		colors[3 * pId + 2] = make_float3(1.0f, 1.0f, 0.0f);
+		colors[3 * pId + 0] = color;
+		colors[3 * pId + 1] = color;
+		colors[3 * pId + 2] = color;
 	}
 
 	void SurfaceMeshRender::updateRenderingContext()
@@ -106,7 +107,7 @@ namespace Physika
 		uint pDims = cudaGridSize(triangles->size(), BLOCK_SIZE);
 
 		DeviceArray<float3>* fverts = (DeviceArray<float3>*)&verts;
-		SetupTriangles << <pDims, BLOCK_SIZE >> >(*fverts, vertices, normals, colors, *triangles);
+		SetupTriangles << <pDims, BLOCK_SIZE >> >(*fverts, vertices, normals, colors, *triangles, make_float3(m_color[0], m_color[1], m_color[2]));
 
 
 		m_triangleRender->setVertexArray(vertices);

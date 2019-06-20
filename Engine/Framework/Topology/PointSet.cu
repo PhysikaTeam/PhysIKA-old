@@ -172,6 +172,27 @@ namespace Physika
 	}
 
 	template <typename Coord>
+	__global__ void PS_Scale(
+		DeviceArray<Coord> vertex,
+		Coord s)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= vertex.size()) return;
+
+		Coord pos_i = vertex[pId];
+		vertex[pId] = Coord(pos_i[0] * s[0], pos_i[1] * s[1], pos_i[2] * s[2]);
+	}
+
+	template<typename TDataType>
+	void Physika::PointSet<TDataType>::scale(Coord s)
+	{
+		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
+		PS_Scale << <pDims, BLOCK_SIZE >> > (
+			m_coords,
+			s);
+	}
+
+	template <typename Coord>
 	__global__ void PS_Translate(
 		DeviceArray<Coord> vertex,
 		Coord t)

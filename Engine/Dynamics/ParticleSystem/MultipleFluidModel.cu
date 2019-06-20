@@ -27,7 +27,7 @@ namespace Physika
         int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= cArr.size()) return;
 		auto c = cArr[pId];
-		colorArr[pId] = {c[0], c[0], c[1] };
+		colorArr[pId] = {c[0], c[0], c[0] };
 	}
 
     template<typename TDataType>

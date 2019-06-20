@@ -1,3 +1,13 @@
+/**
+ * @file CahnHilliard.h
+ * @author Chen Xiaosong
+ * @brief
+ * @version 0.1
+ * @date 2019-06-18
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #pragma once
 #include "Framework/Module.h"
 

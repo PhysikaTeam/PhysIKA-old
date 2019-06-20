@@ -17,7 +17,9 @@ namespace Physika
 	Physika::SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
 		:Node(name)
 	{
-		
+		m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
+		m_nbrQuery->m_radius.setValue(0.0075);
+		m_position.connect(m_nbrQuery->m_position);
 	}
 
 	template<typename TDataType>
@@ -28,6 +30,28 @@ namespace Physika
 
 	template<typename TDataType>
 	bool SolidFluidInteraction<TDataType>::initialize()
+	{
+		return true;
+	}
+
+	template<typename TDataType>
+	bool SolidFluidInteraction<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
+	{
+		return false;
+	}
+
+	template<typename TDataType>
+	bool SolidFluidInteraction<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
+	{
+		this->addChild(child);
+		m_particleSystems.push_back(child);
+
+		return false;
+	}
+
+
+	template<typename TDataType>
+	bool SolidFluidInteraction<TDataType>::resetStatus()
 	{
 		int total_num = 0;
 		std::vector<int> ids;
@@ -45,9 +69,9 @@ namespace Physika
 		}
 
 		m_objId.resize(total_num);
-		m_position.setElementCount(total_num);
 		m_vels.resize(total_num);
 		m_mass.resize(total_num);
+		m_position.setElementCount(total_num);
 
 		posBuf.resize(total_num);
 		weights.resize(total_num);
@@ -58,26 +82,19 @@ namespace Physika
 		ids.clear();
 		mass.clear();
 
-		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
-		m_position.connect(m_nbrQuery->m_position);
-		m_nbrQuery->initialize();
-		
+		int start = 0;
+		DeviceArray<Coord>& allpoints = m_position.getValue();
+		for (int i = 0; i < m_particleSystems.size(); i++)
+		{
+			DeviceArray<Coord>& points = m_particleSystems[i]->getPosition()->getValue();
+			DeviceArray<Coord>& vels = m_particleSystems[i]->getVelocity()->getValue();
+			int num = points.size();
+			cudaMemcpy(allpoints.getDataPtr() + start, points.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+			cudaMemcpy(m_vels.getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+			start += num;
+		}
+
 		return true;
-	}
-
-	template<typename TDataType>
-	bool SolidFluidInteraction<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
-	{
-		return false;
-	}
-
-	template<typename TDataType>
-	bool SolidFluidInteraction<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
-	{
-		this->addChild(child);
-		m_particleSystems.push_back(child);
-
-		return false;
 	}
 
 	template<typename Real, typename Coord>

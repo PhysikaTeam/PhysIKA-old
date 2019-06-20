@@ -59,8 +59,6 @@ namespace Physika
 	template<typename TDataType>
 	bool ParticleSystem<TDataType>::initialize()
 	{
-
-
 		return Node::initialize();
 	}
 

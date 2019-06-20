@@ -31,6 +31,7 @@ namespace Physika
 		virtual void updatePointNeighbors();
 
 		void scale(Real s);
+		void scale(Coord s);
 		void translate(Coord t);
 
 		void loadObjFile(std::string filename);

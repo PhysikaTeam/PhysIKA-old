@@ -33,6 +33,7 @@ namespace Physika
 		bool addRigidBody(std::shared_ptr<RigidBody<TDataType>> child);
 		bool addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child);
 
+		bool resetStatus() override;
 
 		void advance(Real dt) override;
 	private:

@@ -7,6 +7,8 @@
 #include "Dynamics/ParticleSystem/BoundaryConstraint.h"
 
 #include "Framework/Topology/DistanceField3D.h"
+#include "Framework/Topology/TriangleSet.h"
+#include "Rendering/SurfaceMeshRender.h"
 
 namespace Physika
 {
@@ -65,21 +67,56 @@ namespace Physika
 
 
 	template<typename TDataType>
-	void StaticBoundary<TDataType>::loadCube(Coord lo, Coord hi, bool bOutBoundary /*= false*/)
+	void StaticBoundary<TDataType>::loadCube(Coord lo, Coord hi, bool bOutBoundary /*= false*/, bool bVisible)
 	{
 		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
 		boundary->setCube(lo, hi, bOutBoundary);
 
 		m_obstacles.push_back(boundary);
+
+		//Note: the size of standard cube is 2m*2m*2m
+		Coord scale = (hi - lo) / 2;
+		Coord center = (hi + lo) / 2;
+
+		auto m_surfaceNode = this->createChild<Node>("cube");
+
+		auto triSet = std::make_shared<TriangleSet<TDataType>>();
+		triSet->loadObjFile("../Media/standard/standard_cube.obj");
+		triSet->scale(0.99*scale);
+		triSet->translate(center);
+
+		m_surfaceNode->setTopologyModule(triSet);
+
+		auto render = std::make_shared<SurfaceMeshRender>();
+		render->setColor(Vector3f(0.8, 0.8, 0.8));
+		m_surfaceNode->addVisualModule(render);
+
+		m_surfaceNode->setVisible(bVisible);
 	}
 
 	template<typename TDataType>
-	void StaticBoundary<TDataType>::loadShpere(Coord center, Real r, bool bOutBoundary /*= false*/)
+	void StaticBoundary<TDataType>::loadShpere(Coord center, Real r, bool bOutBoundary /*= false*/, bool bVisible)
 	{
 		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
 		boundary->setSphere(center, r, bOutBoundary);
 
 		m_obstacles.push_back(boundary);
+
+		//Note: the radius of the standard sphere is 1m
+		auto m_surfaceNode = this->createChild<Node>("sphere");
+
+		auto triSet = std::make_shared<TriangleSet<TDataType>>();
+		triSet->loadObjFile("../Media/standard/standard_sphere.obj");
+		triSet->scale(0.95*r);
+		triSet->translate(center);
+
+		m_surfaceNode->setTopologyModule(triSet);
+
+		auto render = std::make_shared<SurfaceMeshRender>();
+		render->setColor(Vector3f(1, 1, 0));
+		m_surfaceNode->addVisualModule(render);
+
+		m_surfaceNode->setVisible(bVisible);
 	}
 
 

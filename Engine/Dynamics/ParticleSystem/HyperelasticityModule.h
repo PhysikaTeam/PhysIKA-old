@@ -1,3 +1,14 @@
+/**
+ * @file HyperelasticityModule.h
+ * @author Xiaowei He (xiaowei@iscas.ac.cn)
+ * @brief This is an implementation of hyperelasticity based on a set of basis functions.
+ * 		  For more details, please refer to [Xu et al. 2018] "Reformulating Hyperelastic Materials with Peridynamic Modeling"
+ * @version 0.1
+ * @date 2019-06-18
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #pragma once
 #include "ElasticityModule.h"
 
@@ -81,6 +92,10 @@ namespace Physika {
 			Quadratic
 		};
 
+		/**
+		 * @brief Set the energy function
+		 * 
+		 */
 		void setEnergyFunction(EnergyType type) { m_energyType = type; }
 
 	protected:

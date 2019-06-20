@@ -1,3 +1,14 @@
+/**
+ * @file ElastoplasticityModule.h
+ * @author Xiaowei He (xiaowei@iscas.ac.cn)
+ * @brief This is an implementation of elastoplasticity based on projective peridynamics.
+ * 		  For more details, please refer to [He et al. 2017] "Projective Peridynamics for Modeling Versatile Elastoplastic Materials"
+ * @version 0.1
+ * @date 2019-06-18
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #pragma once
 #include "ElasticityModule.h"
 #include "DensityPBD.h"

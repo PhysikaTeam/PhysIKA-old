@@ -4,6 +4,7 @@
 namespace Physika
 {
 	template<typename> class ElasticityModule;
+	class SurfaceMeshRender;
 
 	/*!
 	*	\class	ParticleElasticBody
@@ -28,13 +29,17 @@ namespace Physika
 		bool scale(Real s) override;
 
 		void setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver);
+		std::shared_ptr<ElasticityModule<TDataType>> getElasticitySolver();
 		void loadSurface(std::string filename);
+
+		std::shared_ptr<SurfaceMeshRender> getSurfaceRender() { return m_surfaceRender; }
 
 	public:
 		VarField<Real> m_horizon;
 
 	private:
 		std::shared_ptr<Node> m_surfaceNode;
+		std::shared_ptr<SurfaceMeshRender> m_surfaceRender;
 	};
 
 #ifdef PRECISION_FLOAT

@@ -41,11 +41,11 @@ void CreateScene()
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
 	root->loadCube(Vector3f(0), Vector3f(1), true);
-	root->loadShpere(Vector3f(0.5), 0.08f);
+	root->loadShpere(Vector3f(0.5), 0.08f, false, true);
 
 	std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
+	child3->getRenderModule()->setColor(Vector3f(1, 0.2, 1));
 	child3->setMass(1.0);
   	child3->loadParticles("../Media/cloth/cloth.obj");
   	child3->loadSurface("../Media/cloth/cloth.obj");
