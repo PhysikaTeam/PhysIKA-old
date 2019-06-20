@@ -1,6 +1,8 @@
 #pragma once
 #include "Framework/Framework/Node.h"
 #include "Rendering/PointRenderModule.h"
+#include "Framework/Topology/EdgeSet.h"
+#include <Framework/Framework/ModuleTopology.h>
 
 namespace Physika
 {
@@ -20,6 +22,7 @@ namespace Physika
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
+		typedef typename TopologyModule::Edge Edge;
 
 		ParticleSystem(std::string name = "default");
 		virtual ~ParticleSystem();
@@ -56,7 +59,8 @@ namespace Physika
 		DeviceArrayField<Coord> m_velocity;
 		DeviceArrayField<Coord> m_force;
 
-		std::shared_ptr<PointSet<TDataType>> m_pSet;
+		//std::shared_ptr<PointSet<TDataType>> m_pSet;
+		std::shared_ptr<EdgeSet<TDataType>> m_pSet;
 		std::shared_ptr<PointRenderModule> m_pointsRender;
 	};
 
