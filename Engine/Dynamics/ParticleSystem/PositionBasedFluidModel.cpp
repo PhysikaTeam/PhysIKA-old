@@ -1,7 +1,6 @@
 #include "PositionBasedFluidModel.h"
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Framework/Node.h"
-#include "DensityPBD.h"
 #include "ParticleIntegrator.h"
 #include "DensitySummation.h"
 #include "ImplicitViscosity.h"
@@ -126,5 +125,4 @@ namespace Physika
 		m_surfaceTensionSolver = solver;
 		getParent()->addForceModule(m_surfaceTensionSolver);
 	}
-
 }

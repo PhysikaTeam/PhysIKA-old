@@ -140,4 +140,14 @@ namespace Physika
 	{
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->loadObjFile(filename);
 	}
+
+
+	template<typename TDataType>
+	std::shared_ptr<PointSetToPointSet<TDataType>> ParticleElasticBody<TDataType>::getTopologyMapping()
+	{
+		auto mapping = this->getModule<PointSetToPointSet<TDataType>>("surface_mapping");
+
+		return mapping;
+	}
+
 }

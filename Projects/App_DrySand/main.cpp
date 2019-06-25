@@ -42,11 +42,11 @@ void CreateScene()
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
 	root->loadSDF("../Media/bar/bar.sdf", false);
 	root->translate(Vector3f(0.2f, 0.2f, 0));
-	root->loadCube(Vector3f(0), Vector3f(1), true);
+	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, true);
 
 	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
+	child3->getRenderModule()->setColor(Vector3f(0.98, 0.85, 0.40));
 	child3->setMass(1.0);
   	child3->loadParticles("../Media/bunny/bunny_points.obj");
   	child3->loadSurface("../Media/bunny/bunny_mesh.obj");

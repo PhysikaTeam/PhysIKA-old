@@ -202,6 +202,11 @@ bool GLApp::isShowFrameRate()
 	return display_fps_;
 }
 
+bool GLApp::isShowBoundingBox()
+{
+	return m_bShowBoundingbox;
+}
+
 void GLApp::enableBackground()
 {
 	m_bShowBackground = true;
@@ -210,6 +215,16 @@ void GLApp::enableBackground()
 void GLApp::disableBackground()
 {
 	m_bShowBackground = false;
+}
+
+void GLApp::enableSceneBoundary()
+{
+	m_bShowBoundingbox = true;
+}
+
+void GLApp::disableSceneBoundary()
+{
+	m_bShowBoundingbox = false;
 }
 
 bool GLApp::isShowBackground()
@@ -367,7 +382,10 @@ void GLApp::displayFunction(void)
 		cur_window->drawFrameRate();
 	}
 
-	cur_window->drawBoundingBox(scenegraph.getLowerBound(), scenegraph.getUpperBound());
+	if (cur_window->isShowBoundingBox())
+	{
+		cur_window->drawBoundingBox(scenegraph.getLowerBound(), scenegraph.getUpperBound());
+	}
 
 	scenegraph.draw();
 

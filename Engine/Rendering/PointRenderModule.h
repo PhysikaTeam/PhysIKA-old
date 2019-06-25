@@ -27,13 +27,14 @@ namespace Physika
 		void setColor(Vector3f color);
 
 		void setColorRange(float min, float max);
+		void setReferenceColor(float v);
 
 	public:
 		VarField<float> m_minIndex;
 		VarField<float> m_maxIndex;
 
 		DeviceArrayField<Vector3f> m_vecIndex;
-		DeviceArrayField<Vector3f> m_scalarIndex;
+		DeviceArrayField<float> m_scalarIndex;
 
 	protected:
 		bool  initializeImpl() override;
@@ -43,6 +44,8 @@ namespace Physika
 	private:
 		RenderMode m_mode;
 		Vector3f m_color;
+
+		float m_refV;
 
 		DeviceArray<glm::vec3> m_colorArray;
 

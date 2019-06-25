@@ -59,9 +59,9 @@ namespace Physika
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 		m_surfaceNode->setTopologyModule(triSet);
 
-		auto render = std::make_shared<SurfaceMeshRender>();
-		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
-		m_surfaceNode->addVisualModule(render);
+		m_surfaceRender = std::make_shared<SurfaceMeshRender>();
+		m_surfaceRender->setColor(Vector3f(0.2f, 0.6, 1.0f));
+		m_surfaceNode->addVisualModule(m_surfaceRender);
 
 		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(this->m_pSet, triSet);
 		this->addTopologyMapping(surfaceMapping);

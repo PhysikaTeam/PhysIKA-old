@@ -7,6 +7,8 @@
 #include "ParticleSystem.h"
 #include "Framework/Topology/NeighborQuery.h"
 #include "Kernel.h"
+#include "DensityPBD.h"
+#include "ImplicitViscosity.h"
 
 namespace Physika
 {
@@ -17,9 +19,33 @@ namespace Physika
 	Physika::SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
 		:Node(name)
 	{
+		this->attachField(&radius, "radius", "radius");
+		radius.setValue(0.0075);
+
 		m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		m_nbrQuery->m_radius.setValue(0.0075);
+		radius.connect(m_nbrQuery->m_radius);
 		m_position.connect(m_nbrQuery->m_position);
+
+		auto m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("collision");
+		radius.connect(m_pbdModule->m_smoothingLength);
+		m_position.connect(m_pbdModule->m_position);
+		m_vels.connect(m_pbdModule->m_velocity);
+		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
+		m_pbdModule->setIterationNumber(5);
+
+// 		auto m_visModule = this->template addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
+// 		m_visModule->setViscosity(Real(1));
+// 		radius.connect(m_visModule->m_smoothingLength);
+// 		m_position.connect(m_visModule->m_position);
+// 		m_vels.connect(m_visModule->m_velocity);
+// 		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
+	}
+
+
+	template<typename TDataType>
+	void SolidFluidInteraction<TDataType>::setInteractionDistance(Real d)
+	{
+		radius.setValue(d);
 	}
 
 	template<typename TDataType>
@@ -69,8 +95,8 @@ namespace Physika
 		}
 
 		m_objId.resize(total_num);
-		m_vels.resize(total_num);
-		m_mass.resize(total_num);
+		m_vels.setElementCount(total_num);
+		m_mass.setElementCount(total_num);
 		m_position.setElementCount(total_num);
 
 		posBuf.resize(total_num);
@@ -78,7 +104,7 @@ namespace Physika
 		init_pos.resize(total_num);
 
 		Function1Pt::copy(m_objId, ids);
-		Function1Pt::copy(m_mass, mass);
+		Function1Pt::copy(m_mass.getValue(), mass);
 		ids.clear();
 		mass.clear();
 
@@ -90,7 +116,7 @@ namespace Physika
 			DeviceArray<Coord>& vels = m_particleSystems[i]->getVelocity()->getValue();
 			int num = points.size();
 			cudaMemcpy(allpoints.getDataPtr() + start, points.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(m_vels.getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+			cudaMemcpy(m_vels.getValue().getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
 			start += num;
 		}
 
@@ -213,15 +239,19 @@ namespace Physika
 			DeviceArray<Coord>& vels = m_particleSystems[i]->getVelocity()->getValue();
 			int num = points.size();
 			cudaMemcpy(allpoints.getDataPtr() + start, points.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(m_vels.getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+			cudaMemcpy(m_vels.getValue().getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
 			start += num;
 		}
 
 		m_nbrQuery->compute();
 
-		Function1Pt::copy(init_pos, allpoints);
+		auto module = this->template getModule<DensityPBD<TDataType>>("collision");
+		module->constrain();
 
-		Real radius = 0.005;
+// 		auto module2 = this->template getModule<ImplicitViscosity<TDataType>>("viscosity");
+// 		module2->constrain();
+
+/*		Function1Pt::copy(init_pos, allpoints);
 
 		uint pDims = cudaGridSize(allpoints.size(), BLOCK_SIZE);
 		for (size_t it = 0; it < 5; it++)
@@ -230,12 +260,12 @@ namespace Physika
 			posBuf.reset();
 			K_Collide << <pDims, BLOCK_SIZE >> > (
 				m_objId, 
-				m_mass,
+				m_mass.getValue(),
 				allpoints,
 				posBuf, 
 				weights, 
 				m_nbrQuery->getNeighborList(),
-				radius);
+				radius.getValue());
 
 			K_ComputeTarget << <pDims, BLOCK_SIZE >> > (
 				allpoints,
@@ -245,7 +275,7 @@ namespace Physika
 			Function1Pt::copy(allpoints, posBuf);
 		}
 
-		K_ComputeVelocity << <pDims, BLOCK_SIZE >> > (init_pos, allpoints, m_vels, getParent()->getDt());
+		K_ComputeVelocity << <pDims, BLOCK_SIZE >> > (init_pos, allpoints, m_vels.getValue(), getParent()->getDt());*/
 
 		start = 0;
 		for (int i = 0; i < m_particleSystems.size(); i++)
@@ -254,7 +284,7 @@ namespace Physika
 			DeviceArray<Coord>& vels = m_particleSystems[i]->getVelocity()->getValue();
 			int num = points.size();
 			cudaMemcpy(points.getDataPtr(), allpoints.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(vels.getDataPtr(), m_vels.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+			cudaMemcpy(vels.getDataPtr(), m_vels.getValue().getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
 
 			start += num;
 		}

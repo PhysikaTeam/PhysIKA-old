@@ -38,27 +38,31 @@ void RecieveLogMessage(const Log::Message& m)
 void CreateScene()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
+	scene.setLowerBound(Vector3f(0, 0, 0));
+	scene.setUpperBound(Vector3f(1, 0.5, 0.5));
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadSDF("../Media/bar/bar.sdf", false);
-	root->translate(Vector3f(0.2f, 0.2f, 0));
-	root->loadCube(Vector3f(0), Vector3f(1), true);
+// 	root->loadSDF("../Media/bar/bar.sdf", false);
+// 	root->translate(Vector3f(0.2f, 0.2f, 0));
+	root->loadCube(Vector3f(0), Vector3f(1, 0.5, 0.5), 0.005, true);
+	root->loadCube(Vector3f(-0.1, 0, -0.1), Vector3f(0.1, 0.25, 0.6), 0.005, false, true);
 
 	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
+	child3->getRenderModule()->setColor(Vector3f(0.48, 0.31, 0.31));
 	child3->setMass(1.0);
-  	child3->loadParticles("../Media/bunny/bunny_points.obj");
-  	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
-	child3->translate(Vector3f(0.3, 0.4, 0.5));
+  	//child3->loadParticles("../Media/bunny/bunny_points.obj");
+  	//child3->loadSurface("../Media/bunny/bunny_mesh.obj");
+	child3->loadParticles(Vector3f(0, 0.25, 0.1), Vector3f(0.2f, 0.4, 0.4), 0.005f);
+	//child3->translate(Vector3f(0.3, 0.4, 0.5));
 	auto fracture = std::make_shared<FractureModule<DataType3f>>();
 	child3->setElastoplasticitySolver(fracture);
 
-	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
-	root->addRigidBody(rigidbody);
-	rigidbody->loadShape("../Media/bar/bar.obj");
-	rigidbody->setActive(false);
-	rigidbody->translate(Vector3f(0.2f, 0.2f, 0));
+// 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
+// 	root->addRigidBody(rigidbody);
+// 	rigidbody->loadShape("../Media/bar/bar.obj");
+// 	rigidbody->setActive(false);
+// 	rigidbody->translate(Vector3f(0.2f, 0.2f, 0));
 }
 
 

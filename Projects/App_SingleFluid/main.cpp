@@ -37,17 +37,20 @@ void RecieveLogMessage(const Log::Message& m)
 void CreateScene()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
+	scene.setUpperBound(Vector3f(1.5, 1, 1.5));
+	scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-//	root->loadCube(Vector3f(0), Vector3f(1), true);
+	root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(1.5, 2, 1.5), 0.02, true);
 	root->loadSDF("../Media/bowl/bowl.sdf", false);
 
 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
 	root->addParticleSystem(child1);
 	child1->getRenderModule()->setColor(Vector3f(1, 0, 0));
-	child1->loadParticles("../Media/fluid/fluid_point.obj");
+	//child1->loadParticles("../Media/fluid/fluid_point.obj");
+	child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
 	child1->setMass(100);
-	child1->getRenderModule()->setColorRange(0, 1);
+	child1->getRenderModule()->setColorRange(0, 4);
 	child1->getVelocity()->connect(child1->getRenderModule()->m_vecIndex);
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();

@@ -2,6 +2,7 @@
 #include "Framework/Framework/NumericalModel.h"
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/FieldArray.h"
+#include "DensityPBD.h"
 
 namespace Physika
 {
@@ -39,6 +40,11 @@ namespace Physika
 		void setIncompressibilitySolver(std::shared_ptr<ConstraintModule> solver);
 		void setViscositySolver(std::shared_ptr<ConstraintModule> solver);
 		void setSurfaceTensionSolver(std::shared_ptr<ForceModule> solver);
+
+		DeviceArrayField<Real>* getDensityField()
+		{
+			return &(m_pbdModule->m_density);
+		}
 
 	public:
 		VarField<Real> m_smoothingLength;

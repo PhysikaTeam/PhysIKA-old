@@ -10,6 +10,7 @@ namespace Physika
 	template<typename> class ElastoplasticityModule;
 	template<typename> class DensityPBD;
 	template<typename TDataType> class ImplicitViscosity;
+	class SurfaceMeshRender;
 	/*!
 	*	\class	ParticleElastoplasticBody
 	*	\brief	Peridynamics-based elastoplastic object.
@@ -38,11 +39,15 @@ namespace Physika
 
 		void setElastoplasticitySolver(std::shared_ptr<ElastoplasticityModule<TDataType>> solver);
 
+		std::shared_ptr<SurfaceMeshRender> getSurfaceRender() { return m_surfaceRender; }
+		std::shared_ptr<Node> getSurfaceNode() { return m_surfaceNode; }
+
 	public:
 		VarField<Real> m_horizon;
 
 	private:
 		std::shared_ptr<Node> m_surfaceNode;
+		std::shared_ptr<SurfaceMeshRender> m_surfaceRender;
 
 		std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;
 		std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;

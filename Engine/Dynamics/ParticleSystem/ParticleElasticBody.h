@@ -4,6 +4,7 @@
 namespace Physika
 {
 	template<typename> class ElasticityModule;
+	template<typename> class PointSetToPointSet;
 	class SurfaceMeshRender;
 
 	/*!
@@ -31,6 +32,8 @@ namespace Physika
 		void setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver);
 		std::shared_ptr<ElasticityModule<TDataType>> getElasticitySolver();
 		void loadSurface(std::string filename);
+
+		std::shared_ptr<PointSetToPointSet<TDataType>> getTopologyMapping();
 
 		std::shared_ptr<SurfaceMeshRender> getSurfaceRender() { return m_surfaceRender; }
 

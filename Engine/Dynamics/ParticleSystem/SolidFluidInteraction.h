@@ -36,12 +36,19 @@ namespace Physika
 		bool resetStatus() override;
 
 		void advance(Real dt) override;
-	private:
-		DeviceArrayField<Coord> m_position;
 
-		DeviceArray<Real> m_mass;
+		void setInteractionDistance(Real d);
+	private:
+		VarField<Real> radius;
+
+
+		DeviceArrayField<Coord> m_position;
+		DeviceArrayField<Real> m_mass;
+		DeviceArrayField<Coord> m_vels;
+
+
 		DeviceArray<int> m_objId;
-		DeviceArray<Coord> m_vels;
+		
 
 		DeviceArray<Coord> posBuf;
 		DeviceArray<Real> weights;

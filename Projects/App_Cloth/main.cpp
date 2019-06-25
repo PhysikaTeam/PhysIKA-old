@@ -40,8 +40,8 @@ void CreateScene()
 	SceneGraph& scene = SceneGraph::getInstance();
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0), Vector3f(1), true);
-	root->loadShpere(Vector3f(0.5), 0.08f, false, true);
+	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, true);
+	root->loadShpere(Vector3f(0.5), 0.08f, 0.005f, false, true);
 
 	std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
 	root->addParticleSystem(child3);

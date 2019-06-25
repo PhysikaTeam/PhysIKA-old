@@ -25,8 +25,8 @@ namespace Physika {
 		void advance(Real dt) override;
 
 		void loadSDF(std::string filename, bool bOutBoundary = false);
-		void loadCube(Coord lo, Coord hi, bool bOutBoundary = false, bool bVisible = false);
-		void loadShpere(Coord center, Real r, bool bOutBoundary = false, bool bVisible = false);
+		void loadCube(Coord lo, Coord hi, Real distance = 0.005f, bool bOutBoundary = false, bool bVisible = false);
+		void loadShpere(Coord center, Real r, Real distance = 0.005f, bool bOutBoundary = false, bool bVisible = false);
 
 		void translate(Coord t);
 		void scale(Real s);

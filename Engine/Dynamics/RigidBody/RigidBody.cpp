@@ -52,7 +52,7 @@ namespace Physika
 		triSet->translate(trans);
 
 		auto render = std::make_shared<SurfaceMeshRender>();
-		render->setColor(Vector3f(0.2f, 0.6, 1.0f));
+		render->setColor(Vector3f(0.988f, 0.956, 0.952f));
 		m_surfaceNode->addVisualModule(render);
 
 		//create a child node for collision
@@ -64,7 +64,7 @@ namespace Physika
 		ptSet->translate(trans);
 
 		auto render2 = std::make_shared<PointRenderModule>();
-		render2->setColor(Vector3f(0.2f, 0.6, 0.0f));
+		render2->setColor(Vector3f(0.988f, 0.956, 0.952f));
 		m_collisionNode->addVisualModule(render2);
 		render2->setVisible(false);
 

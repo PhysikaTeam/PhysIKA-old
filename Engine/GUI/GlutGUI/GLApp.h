@@ -48,9 +48,12 @@ public:
     void enableDisplayFrameRate();
     void disableDisplayFrameRate();
 	bool isShowFrameRate();
+	bool isShowBoundingBox();
 
 	void enableBackground();
 	void disableBackground();
+	void enableSceneBoundary();
+	void disableSceneBoundary();
 	bool isShowBackground();
 
     //advanced: 
@@ -135,6 +138,7 @@ protected:
 
 	bool m_bAnimate;
 	bool m_bShowBackground;
+	bool m_bShowBoundingbox = false;
     
     //current screen capture file index
     unsigned int screen_capture_file_index_;

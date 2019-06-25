@@ -4,6 +4,7 @@
 #include "Framework/Topology/PointSet.h"
 #include "Rendering/PointRenderModule.h"
 #include "Core/Utility.h"
+#include "DensitySummation.h"
 
 
 namespace Physika
@@ -14,7 +15,7 @@ namespace Physika
 	ParticleFluid<TDataType>::ParticleFluid(std::string name)
 		: ParticleSystem<TDataType>(name)
 	{
-		auto pbf = std::make_shared<PositionBasedFluidModel<TDataType>>();
+		auto pbf = this->setNumericalModel<PositionBasedFluidModel<TDataType>>("pbd");
 		this->setNumericalModel(pbf);
 
 		this->getPosition()->connect(pbf->m_position);
@@ -31,6 +32,12 @@ namespace Physika
 	template<typename TDataType>
 	void ParticleFluid<TDataType>::advance(Real dt)
 	{
+// 		auto pbf = this->getModule<PositionBasedFluidModel<TDataType>>("pbd");
+// 
+// 		pbf->getDensityField()->connect(this->getRenderModule()->m_scalarIndex);
+// 		this->getRenderModule()->setColorRange(950, 1100);
+// 		this->getRenderModule()->setReferenceColor(1000);
+
 		auto nModel = this->getNumericalModel();
 		nModel->step(this->getDt());
 	}

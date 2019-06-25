@@ -106,16 +106,22 @@ namespace Physika
 
 
 	template<typename TDataType>
-	void BoundaryConstraint<TDataType>::setCube(Coord lo, Coord hi, bool inverted)
+	void BoundaryConstraint<TDataType>::setCube(Coord lo, Coord hi, Real distance, bool inverted)
 	{
-		m_cSDF->setSpace(lo - 0.025f, hi + 0.025f, 105, 105, 105);
+		int nx = floor((hi[0] - lo[0]) / distance);
+		int ny = floor((hi[1] - lo[1]) / distance);
+		int nz = floor((hi[2] - lo[2]) / distance);
+
+		m_cSDF->setSpace(lo - 5 *distance, hi + 5 * distance, nx + 10, ny + 10, nz + 10);
 		m_cSDF->loadBox(lo, hi, inverted);
 	}
 
 	template<typename TDataType>
-	void BoundaryConstraint<TDataType>::setSphere(Coord center, Real r, bool inverted)
+	void BoundaryConstraint<TDataType>::setSphere(Coord center, Real r, Real distance, bool inverted)
 	{
-		m_cSDF->setSpace(center - r - 0.025f, center + r + 0.025f, 105, 105, 105);
+		int nx = floor(2 * r / distance);
+
+		m_cSDF->setSpace(center - r - 5 * distance, center + r + 5 * distance, nx + 10, nx + 10, nx + 10);
 		m_cSDF->loadSphere(center, r, inverted);
 	}
 

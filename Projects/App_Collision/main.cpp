@@ -30,8 +30,8 @@
 #include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/ParticleSystem/SolidFluidInteraction.h"
-#include "Rendering/SurfaceMeshRender.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
+#include "Rendering/SurfaceMeshRender.h"
 
 using namespace std;
 using namespace Physika;
@@ -39,65 +39,57 @@ using namespace Physika;
 void CreateScene()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
-//	scene.setUpperBound(Vector3f(1, 1.0, 0.5));
+	scene.setUpperBound(Vector3f(1, 2.0, 1));
+	scene.setLowerBound(Vector3f(0, 0.0, 0));
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0), Vector3f(1), 0.015f, true);
+	root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 2.0, 1), 0.015f, true);
 	//root->loadSDF("box.sdf", true);
-
-// 	std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
-// 	root->addParticleSystem(bunny);
-// 	bunny->getSurfaceRender()->setColor(Vector3f(1, 1, 0));
-// 	bunny->setMass(1.0);
-// 	bunny->loadParticles("../Media/bunny/bunny_points.obj");
-// 	bunny->loadSurface("../Media/bunny/bunny_mesh.obj");
-// 	bunny->translate(Vector3f(0.2, 0.5, 0.5));
-// 	bunny->setVisible(false);
-// 	bunny->getElasticitySolver()->setIterationNumber(10);
-// 
-// 
-// 	std::shared_ptr<ParticleElasticBody<DataType3f>> bunny2 = std::make_shared<ParticleElasticBody<DataType3f>>();
-// 	root->addParticleSystem(bunny2);
-// 	bunny2->getSurfaceRender()->setColor(Vector3f(1, 0, 1));
-// 	bunny2->setMass(1.0);
-// 	bunny2->loadParticles("../Media/bunny/bunny_points.obj");
-// 	bunny2->loadSurface("../Media/bunny/bunny_mesh.obj");
-// 	bunny2->translate(Vector3f(0.2, 0.2, 0.5));
-// 	bunny2->setVisible(false);
-// 	bunny2->getElasticitySolver()->setIterationNumber(10);
-//  
-	std::shared_ptr<ParticleFluid<DataType3f>> fluid = std::make_shared<ParticleFluid<DataType3f>>();
-	root->addParticleSystem(fluid);
-	fluid->getRenderModule()->setColor(Vector3f(0, 0, 1));
-	//fluid->loadParticles("../Media/fluid/fluid_point.obj");
-	fluid->loadParticles(Vector3f(0), Vector3f(0.5, 1.0, 1.0), 0.015f);
-	fluid->setMass(10);
-	fluid->getRenderModule()->setColorRange(0, 1);
-	//fluid->getVelocity()->connect(fluid->getRenderModule()->m_vecIndex);
-
-	std::shared_ptr<PositionBasedFluidModel<DataType3f>> pbd = std::make_shared<PositionBasedFluidModel<DataType3f>>();
-	fluid->getPosition()->connect(pbd->m_position);
-	fluid->getVelocity()->connect(pbd->m_velocity);
-	fluid->getForce()->connect(pbd->m_forceDensity);
-	pbd->setSmoothingLength(0.02);
-
-	fluid->setNumericalModel(pbd);
-
 
 	std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
 	// 
-	sfi->setInteractionDistance(0.02);
-	root->addChild(sfi);
 
-	for (int i = 0; i < 3; i++)
+	root->addChild(sfi);
+	sfi->setInteractionDistance(0.02);
+
+	for (int i = 0; i < 6; i++)
 	{
 		std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
 		root->addParticleSystem(bunny);
-		bunny->getSurfaceRender()->setColor(Vector3f(i*0.3f, 1 - i*0.3f, 1.0));
+		if (i % 2 == 0)
+		{
+			bunny->getSurfaceRender()->setColor(Vector3f(1, 1, 0));
+		}
+		else
+			bunny->getSurfaceRender()->setColor(Vector3f(1, 0, 1));
+		
 		bunny->setMass(1.0);
 		bunny->loadParticles("../Media/bunny/sparse_bunny_points.obj");
 		bunny->loadSurface("../Media/bunny/sparse_bunny_mesh.obj");
-		bunny->translate(Vector3f(0.75, 0.2, 0.4 + i * 0.3));
+		bunny->translate(Vector3f(0.4, 0.2 + i * 0.3, 0.8));
+		bunny->setVisible(false);
+		bunny->getElasticitySolver()->setIterationNumber(10);
+		bunny->getElasticitySolver()->setHorizon(0.03);
+		bunny->getTopologyMapping()->setSearchingRadius(0.05);
+
+		sfi->addParticleSystem(bunny);
+	}
+
+	for (int i = 0; i < 6; i++)
+	{
+		std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+		root->addParticleSystem(bunny);
+		if (i % 2 == 0)
+		{
+			bunny->getSurfaceRender()->setColor(Vector3f(0.2, 1, 1));
+		}
+		else
+			bunny->getSurfaceRender()->setColor(Vector3f(0.5, 0.3, 1));
+
+		bunny->setMass(1.0);
+		bunny->loadParticles("../Media/bunny/sparse_bunny_points.obj");
+		bunny->loadSurface("../Media/bunny/sparse_bunny_mesh.obj");
+		bunny->translate(Vector3f(0.7, 0.2 + i * 0.3, 0.8));
 		bunny->setVisible(false);
 		bunny->getElasticitySolver()->setIterationNumber(10);
 		bunny->getElasticitySolver()->setHorizon(0.03);
@@ -107,7 +99,21 @@ void CreateScene()
 	}
 
 
-	sfi->addParticleSystem(fluid);
+// 
+// 
+// 	std::shared_ptr<ParticleElasticBody<DataType3f>> bunny2 = std::make_shared<ParticleElasticBody<DataType3f>>();
+// 	root->addParticleSystem(bunny2);
+// 	bunny2->getSurfaceRender()->setColor(Vector3f(1, 0, 1));
+// 	bunny2->setMass(1.0);
+// 	bunny2->loadParticles("../Media/bunny/sparse_bunny_points.obj");
+// 	bunny2->loadSurface("../Media/bunny/sparse_bunny_mesh.obj");
+// 	bunny2->translate(Vector3f(0.2, 0.5, 0.5));
+// 	bunny2->setVisible(true);
+// 	bunny2->getElasticitySolver()->setIterationNumber(10);
+// 	bunny2->getElasticitySolver()->setHorizon(0.03);
+// 	bunny2->getTopologyMapping()->setSearchingRadius(0.05);
+// 
+// 	sfi->addParticleSystem(bunny2);
 }
 
 int main()

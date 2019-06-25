@@ -22,6 +22,8 @@ namespace Physika
 		m_minIndex.setValue(0);
 		m_maxIndex.setValue(1);
 
+		m_refV = m_minIndex.getValue();
+
 		this->attachField(&m_minIndex, "minIndex", "minIndex", false);
 		this->attachField(&m_maxIndex, "maxIndex", "maxIndex", false);
 
@@ -99,6 +101,7 @@ namespace Physika
 	__global__ void PRM_MappingColor(
 		DeviceArray<glm::vec3> color,
 		DeviceArray<float> index,
+		float refV,
 		float minIndex,
 		float maxIndex)
 	{
@@ -110,7 +113,7 @@ namespace Physika
 		index_i = index_i > maxIndex ? maxIndex : index_i;
 		index_i = index_i < minIndex ? minIndex : index_i;
 
-		float a = (index_i - minIndex) / (maxIndex - minIndex);
+		float a = (index_i - refV) / (maxIndex - minIndex);
 
 		Color hsv;
 		hsv.HSVtoRGB(a * 120 + 120, 1, 1);
@@ -154,6 +157,7 @@ namespace Physika
 			PRM_MappingColor << <pDims, BLOCK_SIZE >> > (
 				m_colorArray,
 				m_scalarIndex.getValue(),
+				m_refV,
 				m_minIndex.getValue(),
 				m_maxIndex.getValue());
 			cuSynchronize();
@@ -214,6 +218,11 @@ namespace Physika
 	{
 		m_minIndex.setValue(min);
 		m_maxIndex.setValue(max);
+	}
+
+	void PointRenderModule::setReferenceColor(float v)
+	{
+		m_refV = v;
 	}
 
 }

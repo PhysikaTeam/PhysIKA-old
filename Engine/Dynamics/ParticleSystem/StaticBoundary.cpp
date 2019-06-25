@@ -67,10 +67,10 @@ namespace Physika
 
 
 	template<typename TDataType>
-	void StaticBoundary<TDataType>::loadCube(Coord lo, Coord hi, bool bOutBoundary /*= false*/, bool bVisible)
+	void StaticBoundary<TDataType>::loadCube(Coord lo, Coord hi, Real distance, bool bOutBoundary /*= false*/, bool bVisible)
 	{
 		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
-		boundary->setCube(lo, hi, bOutBoundary);
+		boundary->setCube(lo, hi, distance, bOutBoundary);
 
 		m_obstacles.push_back(boundary);
 
@@ -95,10 +95,10 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void StaticBoundary<TDataType>::loadShpere(Coord center, Real r, bool bOutBoundary /*= false*/, bool bVisible)
+	void StaticBoundary<TDataType>::loadShpere(Coord center, Real r, Real distance, bool bOutBoundary /*= false*/, bool bVisible)
 	{
 		auto boundary = std::make_shared<BoundaryConstraint<TDataType>>();
-		boundary->setSphere(center, r, bOutBoundary);
+		boundary->setSphere(center, r, distance, bOutBoundary);
 
 		m_obstacles.push_back(boundary);
 
