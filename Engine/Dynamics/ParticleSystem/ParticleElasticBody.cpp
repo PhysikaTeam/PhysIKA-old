@@ -145,7 +145,7 @@ namespace Physika
 	template<typename TDataType>
 	std::shared_ptr<PointSetToPointSet<TDataType>> ParticleElasticBody<TDataType>::getTopologyMapping()
 	{
-		auto mapping = this->getModule<PointSetToPointSet<TDataType>>("surface_mapping");
+		auto mapping = this->template getModule<PointSetToPointSet<TDataType>>("surface_mapping");
 
 		return mapping;
 	}

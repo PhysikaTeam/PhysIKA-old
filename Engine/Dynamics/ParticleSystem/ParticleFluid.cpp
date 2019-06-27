@@ -15,7 +15,7 @@ namespace Physika
 	ParticleFluid<TDataType>::ParticleFluid(std::string name)
 		: ParticleSystem<TDataType>(name)
 	{
-		auto pbf = this->setNumericalModel<PositionBasedFluidModel<TDataType>>("pbd");
+		auto pbf = this->template setNumericalModel<PositionBasedFluidModel<TDataType>>("pbd");
 		this->setNumericalModel(pbf);
 
 		this->getPosition()->connect(pbf->m_position);
