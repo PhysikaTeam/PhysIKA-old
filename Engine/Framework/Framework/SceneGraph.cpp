@@ -29,6 +29,11 @@ bool SceneGraph::initialize()
 		return true;
 	}
 	//TODO: check initialization
+	if (m_root == nullptr)
+	{
+		return false;
+	}
+
 	m_root->traverseBottomUp<InitAct>();
 	m_initialized = true;
 
@@ -37,6 +42,11 @@ bool SceneGraph::initialize()
 
 void SceneGraph::draw()
 {
+	if (m_root == nullptr)
+	{
+		return;
+	}
+
 	m_root->traverseTopDown<DrawAct>();
 }
 
@@ -48,6 +58,11 @@ void SceneGraph::advance(float dt)
 
 void SceneGraph::takeOneFrame()
 {
+	if (m_root == nullptr)
+	{
+		return;
+	}
+
 	m_root->traverseTopDown<AnimateAct>();
 }
 

@@ -30,7 +30,7 @@ void QLichtWidget::setActiveCameraMaya()
 		return;
 
 	m_camera = smgr->addCameraSceneNodeMaya(0, 10.0f*m_rotationSpeed, 0.01f*m_zoomSpeed, 10.0f*m_translateSpeed);
-	m_camera->setFarValue(20000.f);
+	m_camera->setFarValue(100.f);
 	m_camera->setTarget(core::vector3df(0, 0, 0));
 
 	m_camera->setInputReceiverEnabled(true);
@@ -48,22 +48,22 @@ void QLichtWidget::autoUpdateIrrlicht(irr::IrrlichtDevice* device)
 	driver->beginScene(true, true, SColor(255, 100, 101, 140));
  	smgr->drawAll();
 // 	driver->draw2DLine(core::vector2d<s32>(10.0, 10.0f), core::vector2d<s32>(50.0, 50.0f), SColor(255, 255, 25, 255));
-// 	driver->draw3DLine(core::vector3df(10.0, 10.0f, 10.0f), core::vector3df(50.0, 50.0f, 50.0f), SColor(255, 255, 255, 255));
+ 	driver->draw3DLine(core::vector3df(10.0, 10.0f, 10.0f), core::vector3df(50.0, 50.0f, 50.0f), SColor(255, 255, 255, 255));
 
-// 	glLineWidth(4);
-// 	glBegin(GL_LINES);
-// 	glColor3f(1, 0, 0);
-// 	glVertex3f(0, 0, 0);
-// 	glVertex3f(1000, 0, 0);
-// 	glColor3f(0, 1, 0);
-// 	glVertex3f(0, 0, 0);
-// 	glVertex3f(0, 1000, 0);
-// 	glColor3f(0, 0, 1);
-// 	glVertex3f(0, 0, 0);
-// 	glVertex3f(0, 0, 1000);
-// 	glEnd();
+	glLineWidth(4);
+	glBegin(GL_LINES);
+	glColor3f(1, 0, 0);
+	glVertex3f(0, 0, 0);
+	glVertex3f(1, 0, 0);
+	glColor3f(0, 1, 0);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 1, 0);
+	glColor3f(0, 0, 1);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 0, 1);
+	glEnd();
 
-	scenegraph.draw();
+//	scenegraph.draw();
 
 	guienv->drawAll();
 

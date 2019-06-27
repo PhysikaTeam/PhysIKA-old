@@ -86,7 +86,7 @@ private:
 	Vector3f m_upperBound;
 
 private:
-	std::shared_ptr<Node> m_root;
+	std::shared_ptr<Node> m_root = nullptr;
 };
 
 }
