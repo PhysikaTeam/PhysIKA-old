@@ -85,11 +85,20 @@ namespace Physika
 
 	void Camera::rotate(Quat1f &rotquat) {
 		// set up orthogonal camera system
+
+		Quat1f currq(m_rotation, m_rotation_axis);
+		currq = rotquat * currq;
+		currq.toRotationAxis(m_rotation, m_rotation_axis);
+
+		return;
+		/*
+		// ***************************************
+		// set up orthogonal camera system
 		Quat1f q(m_rotation, m_rotation_axis);
 		//q.x = -q.x;
-		q.setX(-q.x());
+		//q.setW(-q.w());
 		Vector3f viewdir(0, 0, -1);
-		q.rotateVector(viewdir);
+		viewdir = q.rotate(viewdir);
 		// end set up orth system
 		//   q = Quat1f(angle, axis);
 		q = rotquat;
@@ -104,62 +113,70 @@ namespace Physika
 		// set up orthogonal camera system
 		Quat1f q2(m_rotation, m_rotation_axis);
 		//q2.x = -q2.x;
-		q2.setX(-q2.x());
+		//q2.setW(-q2.w());
 		Vector3f viewdir2(0, 0, -1);
-		q2.rotateVector(viewdir2);
+		viewdir2 = q2.rotate(viewdir2);
 
 		m_eye = rotcenter - 3.0f*viewdir2;
 		m_light = rotcenter2 - 3.0f*viewdir2;
+		*/
 	}
 
 	Vector3f Camera::getViewDir() const {
 		Quat1f q(m_rotation, m_rotation_axis);
 		//q.x = -q.x;
-		q.setX(-q.x());
-		Vector3f viewdir(0, 0, 1);
-		q.rotateVector(viewdir);
+		//q.setW(-q.w());
+		Vector3f viewdir(0, 0, -1);
+		viewdir = q.rotate(viewdir);
 		return viewdir;
 	}
 
 	void Camera::getCoordSystem(Vector3f &view, Vector3f &up, Vector3f &right) const {
 		Quat1f q(m_rotation, m_rotation_axis);
 		//q.x = -q.x;
-		q.setX(-q.x());
-		view = Vector3f(0, 0, 1);
-		q.rotateVector(view);
+		//q.setW(-q.w());
+		view = Vector3f(0, 0, -1);
+		view = q.rotate(view);
 		up = Vector3f(0, 1, 0);
-		q.rotateVector(up);
-		right = -view.cross(up);
+		up = q.rotate(up);
+		right = view.cross(up);
 	}
 
 	void Camera::translate(const Vector3f translation) {
 		Quat1f q(m_rotation, m_rotation_axis);
+		m_eye += q.getConjugate().rotate(translation);
+
+		//cout << "Translation:  " << translation[0] << "   " << translation[1] << "   " << translation[2] << endl;
+		//cout << "Eye pos:      " << m_eye[0] << "   " << m_eye[1] << "   " << m_eye[2] << endl << endl;
+		/*
+		Quat1f q(m_rotation, m_rotation_axis);
 		//q.x = -q.x;
-		q.setX(-q.x());
+		//q.setW(-q.w());
 		Vector3f xax(1, 0, 0);
 		Vector3f yax(0, 1, 0);
 		Vector3f zax(0, 0, 1);
 
-		q.rotateVector(xax);
-		q.rotateVector(yax);
-		q.rotateVector(zax);
+		xax = q.rotate(xax);
+		yax = q.rotate(yax);
+		zax = q.rotate(zax);
 
 		m_eye += translation[0] * xax +
 			translation[1] * yax +
 			translation[2] * zax;
+		*/
 	}
 
 	void Camera::translateLight(const Vector3f translation) {
 		Quat1f q(m_rotation, m_rotation_axis);
 		//q.x = -q.x;
-		q.setX(-q.x());
+		//q.setW(-q.w());
 		Vector3f xax(1, 0, 0);
 		Vector3f yax(0, 1, 0);
 		Vector3f zax(0, 0, 1);
 
-		q.rotateVector(xax);
-		q.rotateVector(yax);
-		q.rotateVector(zax);
+		xax = q.rotate(xax);
+		yax = q.rotate(yax);
+		zax = q.rotate(zax);
 
 		m_light += translation[0] * xax +
 			translation[1] * yax +
@@ -188,7 +205,7 @@ namespace Physika
 
 	Quat1f Camera::getQuaternion(float x1, float y1, float x2, float y2) {
 		if ((x1 == x2) && (y1 == y2)) {
-			return Quat1f(1, 0, 0, 0);
+			return Quat1f(0, 0, 0, 1);
 		}
 		Vector3f pos1 = getPosition(x1, y1);
 		Vector3f pos2 = getPosition(x2, y2);
@@ -213,6 +230,8 @@ namespace Physika
 		float dz = 0;
 		registerPoint(x, y);
 		translate(Vector3f(-dx, -dy, -dz));
+
+		
 	}
 
 	void Camera::translateLightToPoint(float x, float y) {

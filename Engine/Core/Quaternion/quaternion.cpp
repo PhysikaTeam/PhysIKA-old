@@ -55,10 +55,10 @@ Quaternion<Real>::Quaternion(Real angle_rad, const Vector<Real,3> & unit_axis)
 	Real c = cos(0.5f*angle_rad);
 	Real s = sin(0.5f*angle_rad);
 	Real t = s / unit_axis.norm();
-	x_ = c;
-	y_ = unit_axis[0]*t;
-	z_ = unit_axis[1] *t;
-	w_ = unit_axis[2] *t;
+	w_ = c;
+	x_ = unit_axis[0] *t;
+	y_ = unit_axis[1] *t;
+	z_ = unit_axis[2] *t;
 }
 
 template <typename Real>
@@ -154,20 +154,20 @@ Quaternion<Real>  Quaternion<Real>::operator * (const Real& scale) const
 template <typename Real>
 Quaternion<Real> Quaternion<Real>::operator * (const Quaternion<Real>& q) const
 {
-/*    return Quaternion(  w_ * q.x() + x_ * q.w() + y_ * q.z() - z_ * q.y(),
+    return Quaternion(  w_ * q.x() + x_ * q.w() + y_ * q.z() - z_ * q.y(),
                         w_ * q.y() + y_ * q.w() + z_ * q.x() - x_ * q.z(),
                         w_ * q.z() + z_ * q.w() + x_ * q.y() - y_ * q.x(),
-                        w_ * q.w() - x_ * q.x() - y_ * q.y() - z_ * q.z());*/
+                        w_ * q.w() - x_ * q.x() - y_ * q.y() - z_ * q.z());
 /*	return Quaternion(x_ * q.x() - y_ * q.y() - z_ * q.z() - w_ * q.w(),
 					  x_ * q.y() + y_ * q.x() + z_ * q.w() - w_ * q.z(),
 					  x_ * q.z() + z_ * q.x() + w_ * q.y() - y_ * q.w(),
 					  x_ * q.w() + w_ * q.x() + y_ * q.z() - z_ * q.z());*/
-	Quaternion result;
-	result.x_ = x_*q.x_ - y_*q.y_ - z_*q.z_ - w_*q.w_;
-	result.y_ = x_*q.y_ + y_*q.x_ + z_*q.w_ - w_*q.z_;
-	result.z_ = x_*q.z_ + z_*q.x_ + w_*q.y_ - y_*q.w_;
-	result.w_ = x_*q.w_ + w_*q.x_ + y_*q.z_ - z_*q.y_;
-	return result;
+	//Quaternion result;
+	//result.x_ = x_*q.x_ - y_*q.y_ - z_*q.z_ - w_*q.w_;
+	//result.y_ = x_*q.y_ + y_*q.x_ + z_*q.w_ - w_*q.z_;
+	//result.z_ = x_*q.z_ + z_*q.x_ + w_*q.y_ - y_*q.w_;
+	//result.w_ = x_*q.w_ + w_*q.x_ + y_*q.z_ - z_*q.y_;
+	//return result;
 }
 
 
@@ -343,22 +343,22 @@ const Vector<Real,3> Quaternion<Real>::rotate(const Vector<Real,3> v) const
         );
 }
 
-template <typename Real>
-void Quaternion<Real>::rotateVector(Vector<Real, 3>& v)
-{
-	Real xlen = v.norm();
-	if (xlen == 0.0f) return;
-
-	Quaternion p(0, v[0], v[1], v[2]);
-	Quaternion qbar(x_, -y_, -z_, -w_);
-	Quaternion qtmp;
-	qtmp = (*this)*p;
-	qtmp = qtmp*qbar;
-	qtmp.normalize();
-	v[0] = qtmp.y_; v[1] = qtmp.z_; v[2] = qtmp.w_;
-	v.normalize();
-	v *= xlen;
-}
+//template <typename Real>
+//void Quaternion<Real>::rotateVector(Vector<Real, 3>& v)
+//{
+//	Real xlen = v.norm();
+//	if (xlen == 0.0f) return;
+//
+//	Quaternion p(0, v[0], v[1], v[2]);
+//	Quaternion qbar(x_, -y_, -z_, -w_);
+//	Quaternion qtmp;
+//	qtmp = (*this)*p;
+//	qtmp = qtmp*qbar;
+//	qtmp.normalize();
+//	v[0] = qtmp.y_; v[1] = qtmp.z_; v[2] = qtmp.w_;
+//	v.normalize();
+//	v *= xlen;
+//}
 
 
 template <typename Real>
@@ -484,14 +484,14 @@ Quaternion<Real>::Quaternion(const SquareMatrix<Real,4>& matrix)
 template <typename Real>
 void Quaternion<Real>::toRotationAxis(Real& rot, Vector<Real, 3>& axis) const
 {
-	rot = 2.0f * acos(x_);
+	rot = 2.0f * acos(w_);
 	if (rot == 0) {
 		axis[0] = axis[1] = 0; axis[2] = 1;
 		return;
 	}
-	axis[0] = y_;
-	axis[1] = z_;
-	axis[2] = w_;
+	axis[0] = x_;
+	axis[1] = y_;
+	axis[2] = z_;
 	axis.normalize();
 }
 
