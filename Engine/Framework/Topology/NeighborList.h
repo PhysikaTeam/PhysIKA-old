@@ -2,7 +2,6 @@
 #include "Core/Platform.h"
 #include "Core/Array/Array.h"
 #include "Core/Utility.h"
-#include <thrust/scan.h>
 
 namespace Physika
 {

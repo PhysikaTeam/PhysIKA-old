@@ -2,6 +2,8 @@
 #include "Framework/Framework/ModuleConstraint.h"
 #include "Framework/Framework/FieldArray.h"
 
+#include <map>
+
 namespace Physika {
 
 	template<typename TDataType>
@@ -14,21 +16,43 @@ namespace Physika {
 
 		FixedPoints();
 		~FixedPoints() override;
-		
-		void addPoint(int id);
+
+		void setFixedPoint(int id, Coord pt);
 
 		void clear();
 
 		bool constrain() override;
 
-		void setInitPositionID(FieldID id) { m_initPosID = id; }
+		void constrainPositionToPlane(Coord pos, Coord dir);
+
+	public:
+		/**
+		* @brief Particle position
+		*/
+		DeviceArrayField<Coord> m_position;
+
+		/**
+		* @brief Particle velocity
+		*/
+		DeviceArrayField<Coord> m_velocity;
 
 	protected:
+		virtual bool initializeImpl() override;
+
 		FieldID m_initPosID;
 
 	private:
-		std::vector<int> m_ids;
-		DeviceArray<int> m_device_ids;
+		void updateContext();
+
+		bool bUpdateRequired = false;
+
+		std::map<int, Coord> m_fixedPts;
+
+		std::vector<int> m_bFixed_host;
+		std::vector<Coord> m_fixed_positions_host;
+
+		DeviceArray<int> m_bFixed;
+		DeviceArray<Coord> m_fixed_positions;
 	};
 
 #ifdef PRECISION_FLOAT

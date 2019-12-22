@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.10)
 
-set(PROJECTS_NAMES App_Collision App_SingleFluid App_MultipleFluid App_Elasticity App_Hyperelasticity App_Plasticity App_Cloth App_Viscoplasticity App_DrySand App_WetSand App_Fracture App_SFI)
+set(PROJECTS_NAMES App_Collision App_SingleFluid App_MultipleFluid App_Elasticity App_Hyperelasticity App_Plasticity App_Cloth App_Viscoplasticity App_DrySand App_WetSand App_Fracture App_SFI App_Rod)
 
 link_directories("${PROJECT_SOURCE_DIR}/Engine")                                                           # 设置库路径
 link_libraries(Core Framework IO Rendering)

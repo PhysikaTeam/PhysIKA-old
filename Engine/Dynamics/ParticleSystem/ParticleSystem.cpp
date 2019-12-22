@@ -20,10 +20,8 @@ namespace Physika
 		m_pSet = std::make_shared<PointSet<TDataType>>();
 		this->setTopologyModule(m_pSet);
 
-		m_pointsRender = std::make_shared<PointRenderModule>();
-		//m_pointsRender->setColor(Vector3f(0.2f, 0.6, 1.0f));
-//		m_pointsRender->setColorArray(m_color);
-		this->addVisualModule(m_pointsRender);
+// 		m_pointsRender = std::make_shared<PointRenderModule>();
+// 		this->addVisualModule(m_pointsRender);
 	}
 
 	template<typename TDataType>
@@ -122,6 +120,18 @@ namespace Physika
 		return Node::initialize();
 	}
 
+// 	template<typename TDataType>
+// 	void ParticleSystem<TDataType>::setVisible(bool visible)
+// 	{
+// 		if (m_pointsRender == nullptr)
+// 		{
+// 			m_pointsRender = std::make_shared<PointRenderModule>();
+// 			this->addVisualModule(m_pointsRender);
+// 		}
+// 
+// 		Node::setVisible(visible);
+// 	}
+
 	template<typename TDataType>
 	void ParticleSystem<TDataType>::updateTopology()
 	{
@@ -145,9 +155,15 @@ namespace Physika
 		return Node::resetStatus();
 	}
 
-	template<typename TDataType>
-	std::shared_ptr<PointRenderModule> ParticleSystem<TDataType>::getRenderModule()
-	{
-		return m_pointsRender;
-	}
+// 	template<typename TDataType>
+// 	std::shared_ptr<PointRenderModule> ParticleSystem<TDataType>::getRenderModule()
+// 	{
+// // 		if (m_pointsRender == nullptr)
+// // 		{
+// // 			m_pointsRender = std::make_shared<PointRenderModule>();
+// // 			this->addVisualModule(m_pointsRender);
+// // 		}
+// 
+// 		return m_pointsRender;
+// 	}
 }

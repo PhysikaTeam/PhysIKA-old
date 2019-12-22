@@ -1,6 +1,6 @@
 #pragma once
 #include "Framework/Framework/Node.h"
-#include "Rendering/PointRenderModule.h"
+//#include "Rendering/PointRenderModule.h"
 
 namespace Physika
 {
@@ -49,9 +49,10 @@ namespace Physika
 		void updateTopology() override;
 		bool resetStatus() override;
 
-		std::shared_ptr<PointRenderModule> getRenderModule();
+//		std::shared_ptr<PointRenderModule> getRenderModule();
 	public:
 		bool initialize() override;
+//		virtual void setVisible(bool visible) override;
 
 	protected:
 		DeviceArrayField<Coord> m_position;
@@ -59,7 +60,7 @@ namespace Physika
 		DeviceArrayField<Coord> m_force;
 
 		std::shared_ptr<PointSet<TDataType>> m_pSet;
-		std::shared_ptr<PointRenderModule> m_pointsRender;
+//		std::shared_ptr<PointRenderModule> m_pointsRender;
 	};
 
 

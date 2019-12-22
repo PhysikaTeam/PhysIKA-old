@@ -11,52 +11,70 @@
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Framework/Log.h"
 
+#include "Dynamics/ParticleSystem/ParticleRod.h"
+#include "Dynamics/ParticleSystem/StaticBoundary.h"
+
+#include "Dynamics/ParticleSystem/ParticleElastoplasticBody.h"
 #include "Dynamics/ParticleSystem/ParticleElasticBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Dynamics/ParticleSystem/ElasticityModule.h"
+#include "Dynamics/RigidBody/RigidBody.h"
+#include "Rendering/SurfaceMeshRender.h"
+#include "Rendering/PointRenderModule.h"
 
 using namespace std;
 using namespace Physika;
 
-void RecieveLogMessage(const Log::Message& m)
-{
-	switch (m.type)
-	{
-	case Log::Info:
-		cout << ">>>: " << m.text << endl; break;
-	case Log::Warning:
-		cout << "???: " << m.text << endl; break;
-	case Log::Error:
-		cout << "!!!: " << m.text << endl; break;
-	case Log::User:
-		cout << ">>>: " << m.text << endl; break;
-	default: break;
-	}
-}
-
-void CreateScene()
+int main()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0), Vector3f(1), true);
+	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, false);
 
-	std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>("hair demo", true);
+	scene.setGravity(Vector3f(9.8f, 0.0f, 0.0f));
+
+	//	std::shared_ptr<ParticleRod<DataType3f>> child3 = scene.createNewScene<ParticleRod<DataType3f>>("Rod");
+
+	std::shared_ptr<ParticleRod<DataType3f>> child3 = std::make_shared<ParticleRod<DataType3f>>("Rod");
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
+
+	Vector3f CableStart = 100.0f*(0.00001f*Vector3f(15996, -3140, -19990) + 0.2f);
+	Vector3f CableEnd = 100.0f*(0.00001f*Vector3f(15649, -6555, -19990) + 0.2f);
+
 	child3->setMass(1.0);
-  	child3->loadParticles("../Media/hair/hair.smesh");
-	child3->translate(Vector3f(0.5, 0.5, 0.5));
-	//child3->setVisible(false);
-}
 
+	int numSegment = 10;
+	int numPoint = numSegment + 1;
 
-int main()
-{
-	CreateScene();
+	Vector3f Cable = CableEnd - CableStart;
+
+	child3->m_horizon.setValue(2.0 * Cable.norm() / numSegment);
+	child3->setMaterialStiffness(1.0);
+
+	std::vector<Vector3f> particles;
+	for (int i = 0; i < numPoint; i++)
+	{
+		Vector3f pi = CableStart + Cable * (float)i / numSegment;
+		particles.push_back(pi);
+
+		if (i == 0)
+			child3->setFixedParticle(0, pi);
+
+		if (i == numSegment)
+			child3->setFixedParticle(i, pi);
+	}
+
+	child3->setParticles(particles);
+
+	auto pointsRender = std::make_shared<PointRenderModule>();
+	child3->addVisualModule(pointsRender);
+
+	child3->setVisible(true);
+
 
 	Log::setOutput("console_log.txt");
 	Log::setLevel(Log::Info);
-	Log::setUserReceiver(&RecieveLogMessage);
 	Log::sendMessage(Log::Info, "Simulation begin");
 
 	GLApp window;
@@ -65,6 +83,7 @@ int main()
 	window.mainLoop();
 
 	Log::sendMessage(Log::Info, "Simulation end!");
+
 	return 0;
 }
 

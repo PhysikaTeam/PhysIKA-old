@@ -25,7 +25,7 @@ public:
 	std::shared_ptr<TNode> createNewScene(Args&& ... args)
 	{
 		std::shared_ptr<TNode> root = TypeInfo::New<TNode>(std::forward<Args>(args)...);
-		m_root = TypeInfo::CastPointerUp<Node>(root);
+		m_root = root;
 		return root;
 	}
 
@@ -41,8 +41,8 @@ public:
 	inline float getFrameInterval() { return 1.0f / m_frameRate; }
 	inline int getFrameNumber() { return m_frameNumber; }
 
-	void setGravity(float g);
-	float getGravity();
+	void setGravity(Vector3f g);
+	Vector3f getGravity();
 
 	Vector3f getLowerBound();
 	Vector3f getUpperBound();
@@ -60,7 +60,9 @@ private:
 		, m_initialized(false)
 		, m_lowerBound(0, 0, 0)
 		, m_upperBound(1, 1, 1)
-	{};
+	{
+		m_gravity = Vector3f(0.0f, -9.8f, 0.0f);
+	};
 
 	/**
 	* To avoid erroneous operations
@@ -80,7 +82,7 @@ private:
 
 	int m_frameNumber;
 
-	float m_gravity = -9.8f;
+	Vector3f m_gravity;
 
 	Vector3f m_lowerBound;
 	Vector3f m_upperBound;

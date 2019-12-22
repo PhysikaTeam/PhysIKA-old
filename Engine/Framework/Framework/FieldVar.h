@@ -110,7 +110,7 @@ std::shared_ptr<T> VarField<T>::getReference()
 	}
 	else
 	{
-		VarField<T>* var = dynamic_cast<VarField<T>*>(source);
+		VarField<T>* var = static_cast<VarField<T>*>(source);
 		if (var != nullptr)
 		{
 			return var->getReference();

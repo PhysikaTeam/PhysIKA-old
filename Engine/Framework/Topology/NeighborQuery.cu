@@ -111,6 +111,27 @@ namespace Physika
 			return false;
 		}
 
+		int pNum = m_position.getElementCount();
+
+		HostArray<Coord> hostPos;
+		hostPos.resize(pNum);
+
+		Function1Pt::copy(hostPos, m_position.getValue());
+
+		m_lowBound = Vector3f(10000000, 10000000, 10000000);
+		m_highBound = Vector3f(-10000000, -10000000, -10000000);
+
+		for (int i = 0; i < pNum; i++)
+		{
+			m_lowBound[0] = min(hostPos[i][0], m_lowBound[0]);
+			m_lowBound[1] = min(hostPos[i][1], m_lowBound[1]);
+			m_lowBound[2] = min(hostPos[i][2], m_lowBound[2]);
+
+			m_highBound[0] = max(hostPos[i][0], m_highBound[0]);
+			m_highBound[1] = max(hostPos[i][1], m_highBound[1]);
+			m_highBound[2] = max(hostPos[i][2], m_highBound[2]);
+		}
+
 		m_hash.setSpace(m_radius.getValue(), m_lowBound, m_highBound);
 
 //		m_reduce = Reduction<int>::Create(m_position.getElementCount());
@@ -147,6 +168,25 @@ namespace Physika
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::queryParticleNeighbors(NeighborList<int>& nbr, DeviceArray<Coord>& pos, Real radius)
 	{
+		HostArray<Coord> hostPos;
+		hostPos.resize(pos.size());
+
+		Function1Pt::copy(hostPos, pos);
+
+		m_lowBound = Vector3f(10000000, 10000000, 10000000);
+		m_highBound = Vector3f(-10000000, -10000000, -10000000);
+
+		for (int i = 0; i < pos.size(); i++)
+		{
+			m_lowBound[0] = min(hostPos[i][0], m_lowBound[0]);
+			m_lowBound[1] = min(hostPos[i][1], m_lowBound[1]);
+			m_lowBound[2] = min(hostPos[i][2], m_lowBound[2]);
+
+			m_highBound[0] = max(hostPos[i][0], m_highBound[0]);
+			m_highBound[1] = max(hostPos[i][1], m_highBound[1]);
+			m_highBound[2] = max(hostPos[i][2], m_highBound[2]);
+		}
+
 		m_hash.setSpace(radius, m_lowBound, m_highBound);
 		m_hash.construct(m_position.getValue());
 

@@ -139,7 +139,7 @@ std::shared_ptr<NeighborList<T>> NeighborField<T>::getReference()
 	}
 	else
 	{
-		NeighborField<T>* var = dynamic_cast<NeighborField<T>*>(source);
+		NeighborField<T>* var = static_cast<NeighborField<T>*>(source);
 		if (var != nullptr)
 		{
 			//return var->getReference();

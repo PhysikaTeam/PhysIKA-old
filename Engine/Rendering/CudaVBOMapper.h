@@ -66,10 +66,10 @@ public:
 		{
 			glDeleteBuffers(1, &m_vbo);
 		}
-		if (m_cudaGraphicsResource != NULL)
-		{
-			cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
-		}
+// 		if (m_cudaGraphicsResource != NULL)
+// 		{
+// 			cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
+// 		}
 		m_size = 0;
 	}
 

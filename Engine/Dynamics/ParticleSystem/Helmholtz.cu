@@ -5,6 +5,7 @@
 #include "Kernel.h"
 #include "DensitySummation.h"
 #include "Core/Utility.h"
+#include <thrust/reduce.h>
 
 namespace Physika
 {

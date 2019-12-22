@@ -12,12 +12,12 @@ SceneGraph& SceneGraph::getInstance()
 	return m_instance;
 }
 
-void SceneGraph::setGravity(float g)
+void SceneGraph::setGravity(Vector3f g)
 {
 	m_gravity = g;
 }
 
-float SceneGraph::getGravity()
+Vector3f SceneGraph::getGravity()
 {
 	return m_gravity;
 }
