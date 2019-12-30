@@ -14,7 +14,9 @@
 #include "Dynamics/ParticleSystem/ParticleElasticBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/ParticleSystem/HyperelasticityModule.h"
+
 #include "Rendering/SurfaceMeshRender.h"
+#include "Rendering/PointRenderModule.h"
 
 using namespace std;
 using namespace Physika;
@@ -44,7 +46,11 @@ void CreateScene()
 
 	std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
+
+	auto ptRender1 = std::make_shared<PointRenderModule>();
+	ptRender1->setColor(Vector3f(0, 1, 1));
+	child3->addVisualModule(ptRender1);
+
 	child3->setMass(1.0);
   	child3->loadParticles("../Media/bunny/bunny_points.obj");
   	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
@@ -53,19 +59,28 @@ void CreateScene()
 	auto hyper = std::make_shared<HyperelasticityModule<DataType3f>>();
 	hyper->setEnergyFunction(HyperelasticityModule<DataType3f>::Quadratic);
 	child3->setElasticitySolver(hyper);
-	child3->getSurfaceRender()->setColor(Vector3f(1, 1, 0));
 	child3->getElasticitySolver()->setIterationNumber(10);
+
+	auto sRender = std::make_shared<SurfaceMeshRender>();
+	child3->getSurfaceNode()->addVisualModule(sRender);
+	sRender->setColor(Vector3f(1, 1, 0));
 
 
 	std::shared_ptr<ParticleElasticBody<DataType3f>> child4 = std::make_shared<ParticleElasticBody<DataType3f>>();
 	root->addParticleSystem(child4);
-	child4->getRenderModule()->setColor(Vector3f(0, 1, 1));
+	
+	auto ptRender2 = std::make_shared<PointRenderModule>();
+	ptRender2->setColor(Vector3f(0, 1, 1));
+	child4->addVisualModule(ptRender2);
+
 	child4->setMass(1.0);
 	child4->loadParticles("../Media/bunny/bunny_points.obj");
 	child4->loadSurface("../Media/bunny/bunny_mesh.obj");
 	child4->translate(Vector3f(0.7, 0.2, 0.5));
 	child4->setVisible(false);
-	child4->getSurfaceRender()->setColor(Vector3f(0, 1, 1));
+
+	auto sRender2 = std::make_shared<SurfaceMeshRender>();
+	child4->getSurfaceNode()->addVisualModule(sRender2);
 }
 
 

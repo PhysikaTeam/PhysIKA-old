@@ -56,12 +56,16 @@ void CreateScene()
 	{
 		std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
 		root->addParticleSystem(bunny);
+
+		auto sRender = std::make_shared<SurfaceMeshRender>();
+		bunny->getSurfaceNode()->addVisualModule(sRender);
+		
 		if (i % 2 == 0)
 		{
-			bunny->getSurfaceRender()->setColor(Vector3f(1, 1, 0));
+			sRender->setColor(Vector3f(1, 1, 0));
 		}
 		else
-			bunny->getSurfaceRender()->setColor(Vector3f(1, 0, 1));
+			sRender->setColor(Vector3f(1, 0, 1));
 		
 		bunny->setMass(1.0);
 		bunny->loadParticles("../Media/bunny/sparse_bunny_points.obj");
@@ -74,46 +78,6 @@ void CreateScene()
 
 		sfi->addParticleSystem(bunny);
 	}
-
-	for (int i = 0; i < 6; i++)
-	{
-		std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
-		root->addParticleSystem(bunny);
-		if (i % 2 == 0)
-		{
-			bunny->getSurfaceRender()->setColor(Vector3f(0.2, 1, 1));
-		}
-		else
-			bunny->getSurfaceRender()->setColor(Vector3f(0.5, 0.3, 1));
-
-		bunny->setMass(1.0);
-		bunny->loadParticles("../Media/bunny/sparse_bunny_points.obj");
-		bunny->loadSurface("../Media/bunny/sparse_bunny_mesh.obj");
-		bunny->translate(Vector3f(0.7, 0.2 + i * 0.3, 0.8));
-		bunny->setVisible(false);
-		bunny->getElasticitySolver()->setIterationNumber(10);
-		bunny->getElasticitySolver()->setHorizon(0.03);
-		bunny->getTopologyMapping()->setSearchingRadius(0.05);
-
-		sfi->addParticleSystem(bunny);
-	}
-
-
-// 
-// 
-// 	std::shared_ptr<ParticleElasticBody<DataType3f>> bunny2 = std::make_shared<ParticleElasticBody<DataType3f>>();
-// 	root->addParticleSystem(bunny2);
-// 	bunny2->getSurfaceRender()->setColor(Vector3f(1, 0, 1));
-// 	bunny2->setMass(1.0);
-// 	bunny2->loadParticles("../Media/bunny/sparse_bunny_points.obj");
-// 	bunny2->loadSurface("../Media/bunny/sparse_bunny_mesh.obj");
-// 	bunny2->translate(Vector3f(0.2, 0.5, 0.5));
-// 	bunny2->setVisible(true);
-// 	bunny2->getElasticitySolver()->setIterationNumber(10);
-// 	bunny2->getElasticitySolver()->setHorizon(0.03);
-// 	bunny2->getTopologyMapping()->setSearchingRadius(0.05);
-// 
-// 	sfi->addParticleSystem(bunny2);
 }
 
 int main()

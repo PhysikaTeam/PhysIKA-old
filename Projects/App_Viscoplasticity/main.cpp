@@ -14,6 +14,8 @@
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/RigidBody/RigidBody.h"
 
+#include "Rendering/PointRenderModule.h"
+
 #include "ParticleViscoplasticBody.h"
 
 using namespace std;
@@ -49,7 +51,11 @@ void CreateScene()
 
 	std::shared_ptr<ParticleViscoplasticBody<DataType3f>> child3 = std::make_shared<ParticleViscoplasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
+
+	auto ptRender = std::make_shared<PointRenderModule>();
+	ptRender->setColor(Vector3f(0, 1, 1));
+	child3->addVisualModule(ptRender);
+
 	child3->setMass(1.0);
   	child3->loadParticles("../Media/bunny/bunny_points.obj");
   	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
@@ -57,7 +63,10 @@ void CreateScene()
 
 	std::shared_ptr<ParticleViscoplasticBody<DataType3f>> child4 = std::make_shared<ParticleViscoplasticBody<DataType3f>>();
 	root->addParticleSystem(child4);
-	child4->getRenderModule()->setColor(Vector3f(1, 0, 1));
+	auto ptRender2 = std::make_shared<PointRenderModule>();
+	ptRender2->setColor(Vector3f(1, 0, 1));
+	child4->addVisualModule(ptRender2);
+
 	child4->setMass(1.0);
 	child4->loadParticles("../Media/bunny/bunny_points.obj");
 	child4->loadSurface("../Media/bunny/bunny_mesh.obj");

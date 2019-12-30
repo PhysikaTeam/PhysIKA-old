@@ -16,6 +16,8 @@
 #include "Dynamics/ParticleSystem/ParticleElastoplasticBody.h"
 #include "Dynamics/ParticleSystem/GranularModule.h"
 
+#include "Rendering/PointRenderModule.h"
+
 using namespace std;
 using namespace Physika;
 
@@ -46,7 +48,11 @@ void CreateScene()
 
 	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0.50, 0.44, 0.38));
+
+	auto ptRender = std::make_shared<PointRenderModule>();
+	ptRender->setColor(Vector3f(0.50, 0.44, 0.38));
+	child3->addVisualModule(ptRender);
+
 	child3->setMass(1.0);
 	child3->loadParticles("../Media/bunny/bunny_points.obj");
 	child3->loadSurface("../Media/bunny/bunny_mesh.obj");

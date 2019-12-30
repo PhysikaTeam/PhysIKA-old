@@ -15,6 +15,8 @@
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/ParticleSystem/MultipleFluidModel.h"
 
+#include "Rendering/PointRenderModule.h"
+
 using namespace std;
 using namespace Physika;
 
@@ -44,19 +46,23 @@ void CreateScene()
 
 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
 	root->addParticleSystem(child1);
-	child1->getRenderModule()->setColor(Vector3f(1, 0, 0));
+
+	auto ptRender1 = std::make_shared<PointRenderModule>();
+	ptRender1->setColor(Vector3f(1, 0, 0));
+	ptRender1->setColorRange(0, 1);
+	child1->addVisualModule(ptRender1);
+
 	child1->loadParticles("../Media/fluid/fluid_point.obj");
 	child1->setMass(100);
 	child1->scale(2);
 	child1->translate(Vector3f(-0.6, -0.3, -0.48));
-	child1->getRenderModule()->setColorRange(0, 1);
-
+	
 	std::shared_ptr<MultipleFluidModel<DataType3f>> multifluid = std::make_shared<MultipleFluidModel<DataType3f>>();
 	child1->getPosition()->connect(multifluid->m_position);
 	child1->getPosition()->connect(multifluid->m_position);
 	child1->getVelocity()->connect(multifluid->m_velocity);
 	child1->getForce()->connect(multifluid->m_forceDensity);
-	multifluid->m_color.connect(child1->getRenderModule()->m_vecIndex);
+	multifluid->m_color.connect(ptRender1->m_vecIndex);
 
 	child1->setNumericalModel(multifluid);
 }

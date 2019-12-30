@@ -13,6 +13,7 @@
 
 #include "Dynamics/ParticleSystem/ParticleElasticBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Rendering/PointRenderModule.h"
 #include "ParticleCloth.h"
 
 
@@ -45,7 +46,13 @@ void CreateScene()
 
 	std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(1, 0.2, 1));
+
+	auto m_pointsRender = std::make_shared<PointRenderModule>();
+
+	m_pointsRender->setColor(Vector3f(1, 0.2, 1));
+	child3->addVisualModule(m_pointsRender);
+	child3->setVisible(true);
+
 	child3->setMass(1.0);
   	child3->loadParticles("../Media/cloth/cloth.obj");
   	child3->loadSurface("../Media/cloth/cloth.obj");

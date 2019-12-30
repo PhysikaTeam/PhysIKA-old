@@ -14,6 +14,8 @@
 #include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 
+#include "Rendering/PointRenderModule.h"
+
 using namespace std;
 using namespace Physika;
 
@@ -46,12 +48,16 @@ void CreateScene()
 
 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
 	root->addParticleSystem(child1);
-	child1->getRenderModule()->setColor(Vector3f(1, 0, 0));
+
+	auto ptRender = std::make_shared<PointRenderModule>();
+	ptRender->setColor(Vector3f(1, 0, 0));
+	ptRender->setColorRange(0, 4);
+	child1->addVisualModule(ptRender);
+
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
 	child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
 	child1->setMass(100);
-	child1->getRenderModule()->setColorRange(0, 4);
-	child1->getVelocity()->connect(child1->getRenderModule()->m_vecIndex);
+	child1->getVelocity()->connect(ptRender->m_vecIndex);
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);

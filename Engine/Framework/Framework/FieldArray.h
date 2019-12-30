@@ -171,7 +171,7 @@ std::shared_ptr<Array<T, deviceType>> ArrayField<T, deviceType>::getReference()
 	}
 	else
 	{
-		ArrayField<T, deviceType>* var = static_cast<ArrayField<T, deviceType>*>(source);
+		ArrayField<T, deviceType>* var = dynamic_cast<ArrayField<T, deviceType>*>(source);
 		if (var != nullptr)
 		{
 			return var->getReference();

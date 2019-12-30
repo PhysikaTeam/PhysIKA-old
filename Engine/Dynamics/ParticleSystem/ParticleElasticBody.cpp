@@ -1,8 +1,6 @@
 #include "ParticleElasticBody.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
-#include "Rendering/SurfaceMeshRender.h"
-#include "Rendering/PointRenderModule.h"
 #include "Core/Utility.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
 #include "Framework/Topology/NeighborQuery.h"
@@ -39,9 +37,6 @@ namespace Physika
 		m_surfaceNode = this->template createChild<Node>("Mesh");
 
 		auto triSet = m_surfaceNode->template setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
-
-		m_surfaceRender = m_surfaceNode->template addVisualModule<SurfaceMeshRender>("surface_mesh_render");
-		m_surfaceRender->setColor(Vector3f(0.2f, 0.6, 1.0f));
 
 		//Set the topology mapping from PointSet to TriangleSet
 		auto surfaceMapping = this->template addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");

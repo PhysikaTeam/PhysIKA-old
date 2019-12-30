@@ -16,6 +16,8 @@
 #include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/ParticleSystem/FractureModule.h"
 
+#include "Rendering/PointRenderModule.h"
+
 using namespace std;
 using namespace Physika;
 
@@ -49,7 +51,11 @@ void CreateScene()
 
 	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0.48, 0.31, 0.31));
+	
+	auto m_pointsRender = std::make_shared<PointRenderModule>();
+	m_pointsRender->setColor(Vector3f(0, 1, 1));
+	child3->addVisualModule(m_pointsRender);
+
 	child3->setMass(1.0);
   	//child3->loadParticles("../Media/bunny/bunny_points.obj");
   	//child3->loadSurface("../Media/bunny/bunny_mesh.obj");

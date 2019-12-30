@@ -3,8 +3,7 @@
 
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
-#include "Rendering/SurfaceMeshRender.h"
-#include "Rendering/PointRenderModule.h"
+
 #include "Core/Utility.h"
 #include "Peridynamics.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
@@ -58,10 +57,6 @@ namespace Physika
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 		m_surfaceNode->setTopologyModule(triSet);
-
-		m_surfaceRender = std::make_shared<SurfaceMeshRender>();
-		m_surfaceRender->setColor(Vector3f(0.2f, 0.6, 1.0f));
-		m_surfaceNode->addVisualModule(m_surfaceRender);
 
 		std::shared_ptr<PointSetToPointSet<TDataType>> surfaceMapping = std::make_shared<PointSetToPointSet<TDataType>>(this->m_pSet, triSet);
 		this->addTopologyMapping(surfaceMapping);

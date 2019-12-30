@@ -16,7 +16,9 @@
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/ParticleSystem/ElasticityModule.h"
 #include "Dynamics/RigidBody/RigidBody.h"
+
 #include "Rendering/SurfaceMeshRender.h"
+#include "Rendering/PointRenderModule.h"
 
 using namespace std;
 using namespace Physika;
@@ -48,7 +50,11 @@ void CreateScene()
 
 	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
 	root->addParticleSystem(child3);
-	child3->getRenderModule()->setColor(Vector3f(0, 1, 1));
+
+	auto ptRender = std::make_shared<PointRenderModule>();
+	ptRender->setColor(Vector3f(0, 1, 1));
+	child3->addVisualModule(ptRender);
+
 	child3->setVisible(false);
 	child3->setMass(1.0);
   	child3->loadParticles(Vector3f(-1.1), Vector3f(1.15), 0.1);
@@ -56,11 +62,19 @@ void CreateScene()
 	child3->scale(0.05);
 	child3->translate(Vector3f(0.3, 0.2, 0.5));
 	child3->getSurfaceNode()->setVisible(true);
-	child3->getSurfaceRender()->setColor(Vector3f(1, 1, 1));
+
+	auto sRender = std::make_shared<SurfaceMeshRender>();
+	child3->getSurfaceNode()->addVisualModule(sRender);
+	sRender->setColor(Vector3f(1, 1, 1));
+
 
 	std::shared_ptr<ParticleElasticBody<DataType3f>> child2 = std::make_shared<ParticleElasticBody<DataType3f>>();
 	root->addParticleSystem(child2);
-	child2->getRenderModule()->setColor(Vector3f(0, 1, 1));
+	
+	auto ptRender2 = std::make_shared<PointRenderModule>();
+	ptRender2->setColor(Vector3f(0, 1, 1));
+	child2->addVisualModule(ptRender2);
+
 	child2->setVisible(false);
 	child2->setMass(1.0);
 	child2->loadParticles(Vector3f(-1.1), Vector3f(1.15), 0.1);
@@ -68,13 +82,10 @@ void CreateScene()
 	child2->scale(0.05);
 	child2->translate(Vector3f(0.5, 0.2, 0.5));
 	child2->getElasticitySolver()->setIterationNumber(10);
-	child3->getSurfaceRender()->setColor(Vector3f(1, 1, 0));
 
-// 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
-// 	root->addRigidBody(rigidbody);
-// 	rigidbody->loadShape("../Media/bar/bar.obj");
-// 	rigidbody->setActive(false);
-// 	rigidbody->translate(Vector3f(0.2f, 0.2f, 0));
+	auto sRender2 = std::make_shared<SurfaceMeshRender>();
+	child2->getSurfaceNode()->addVisualModule(sRender2);
+	sRender2->setColor(Vector3f(1, 1, 0));
 }
 
 
