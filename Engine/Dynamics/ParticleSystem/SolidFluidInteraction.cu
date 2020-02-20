@@ -10,13 +10,13 @@
 #include "DensityPBD.h"
 #include "ImplicitViscosity.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(SolidFluidInteraction, TDataType)
 
 
 	template<typename TDataType>
-	Physika::SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
+	PhysIKA::SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
 		:Node(name)
 	{
 		this->attachField(&radius, "radius", "radius");

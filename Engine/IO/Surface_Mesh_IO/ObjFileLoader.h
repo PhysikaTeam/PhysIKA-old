@@ -3,7 +3,7 @@
 #include <vector>
 #include "Core/Vector.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 	typedef FixedVector<int, 3>	Face;
 
@@ -25,4 +25,4 @@ private:
 	std::vector<Face> faceList;
 };
 
-} //end of namespace Physika
+} //end of namespace PhysIKA

@@ -2,7 +2,7 @@
 #include "Framework/Framework/Base.h"
 #include "Framework/Framework/Node.h"
 
-namespace Physika {
+namespace PhysIKA {
 class SceneGraph : public Base
 {
 public:

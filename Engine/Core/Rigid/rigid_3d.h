@@ -5,7 +5,7 @@
 #include "../Matrix.h"
 #include "Quaternion/quaternion.h"
 
-namespace Physika {
+namespace PhysIKA {
 	template <typename Scalar>
 	class Rigid<Scalar, 3>
 	{
@@ -44,4 +44,4 @@ namespace Physika {
 
 	typedef Rigid<float, 3> Rigid3f;
 	typedef Rigid<double, 3> Rigid3d;
-}  //end of namespace Physika
+}  //end of namespace PhysIKA

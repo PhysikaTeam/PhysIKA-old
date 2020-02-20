@@ -8,7 +8,7 @@
 #include "Rendering/SurfaceMeshRender.h"
 #include "Rendering/PointRenderModule.h"
 
-using namespace Physika;
+using namespace PhysIKA;
 
 int main()
 {

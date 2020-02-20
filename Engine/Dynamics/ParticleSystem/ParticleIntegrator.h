@@ -3,7 +3,7 @@
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/FieldArray.h"
 
-namespace Physika {
+namespace PhysIKA {
 	template<typename TDataType>
 	class ParticleIntegrator : public NumericalIntegrator
 	{

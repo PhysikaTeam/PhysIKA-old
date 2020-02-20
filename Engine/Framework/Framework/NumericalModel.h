@@ -2,7 +2,7 @@
 #include "Framework/Framework/Module.h"
 #include "Framework/Framework/Base.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	class NumericalModel : public Module
 	{

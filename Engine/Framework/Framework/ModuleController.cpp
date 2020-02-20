@@ -1,6 +1,6 @@
 #include "ModuleController.h"
 
-namespace Physika
+namespace PhysIKA
 {
 IMPLEMENT_CLASS(ControllerModule)
 

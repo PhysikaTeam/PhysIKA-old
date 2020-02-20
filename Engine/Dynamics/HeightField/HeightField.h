@@ -1,7 +1,7 @@
 #pragma once
 #include "Framework/Framework/Node.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	/*!
 	*	\class	HeightField

@@ -10,7 +10,7 @@
 #include "Color.h"
 
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS(PointRenderModule)
 

@@ -8,7 +8,7 @@
 #include "Framework/Topology/NeighborQuery.h"
 #include "Core/Utility.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(Peridynamics, TDataType)
 

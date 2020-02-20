@@ -3,8 +3,8 @@
  * @Basic render task of line
  * @author Wei Chen
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -18,7 +18,7 @@
 
 #include "PointRender.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 const char * vertexSource = R"STR(
 #version 330 compatibility
@@ -364,4 +364,4 @@ void PointRender::renderPoints()
 	m_glsl.disable();
 }
 
-}//end of namespace Physika
+}//end of namespace PhysIKA

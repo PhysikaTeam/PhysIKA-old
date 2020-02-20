@@ -1,7 +1,7 @@
 #include "GridHash.h"
 #include "Core/Utility.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 	__constant__ int offset[27][3] = { 0, 0, 0,
 		0, 0, 1,

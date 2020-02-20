@@ -11,7 +11,7 @@
 #include "Framework/Framework/FieldArray.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
-namespace Physika
+namespace PhysIKA
 {
 class MechanicalState : public Module
 {

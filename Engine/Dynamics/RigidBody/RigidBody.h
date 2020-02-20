@@ -2,7 +2,7 @@
 #include "Framework/Framework/Node.h"
 #include "Core/Quaternion/quaternion.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType> class Frame;
 	/*!

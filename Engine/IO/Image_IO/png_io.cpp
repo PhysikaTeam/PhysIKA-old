@@ -3,8 +3,8 @@
  * @Brief load/save png file
  * @author Wei Chen, Fei Zhu
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -22,7 +22,7 @@
 
 using std::string;
 
-namespace Physika{
+namespace PhysIKA{
 
 
 bool PngIO::load(const string &filename,Image *image )
@@ -123,4 +123,4 @@ bool PngIO::save(const string &filename, const Image *image)
     return true;
 }
 
-} //end of namespace Physika
+} //end of namespace PhysIKA

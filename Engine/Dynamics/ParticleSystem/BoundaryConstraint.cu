@@ -5,7 +5,7 @@
 
 #include "Framework/Topology/DistanceField3D.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(BoundaryConstraint, TDataType)
 

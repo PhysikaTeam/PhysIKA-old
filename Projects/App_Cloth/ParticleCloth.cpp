@@ -9,7 +9,7 @@
 #include "Dynamics/ParticleSystem/Peridynamics.h"
 #include "Dynamics/ParticleSystem/FixedPoints.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(ParticleCloth, TDataType)
 

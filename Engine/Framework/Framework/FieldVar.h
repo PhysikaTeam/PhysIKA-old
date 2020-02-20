@@ -6,7 +6,7 @@
 #include "Framework/Framework/Log.h"
 #include "Core/Array/MemoryManager.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 /*!
 *	\class	Variable
@@ -54,7 +54,7 @@ VarField<T>::VarField()
 }
 
 template<typename T>
-Physika::VarField<T>::VarField(T value)
+PhysIKA::VarField<T>::VarField(T value)
 	: Field("", "")
 {
 	m_data = std::make_shared<T>(value);
@@ -74,7 +74,7 @@ VarField<T>::~VarField()
 
 
 // template<typename T>
-// void Physika::VarField<T>::reset()
+// void PhysIKA::VarField<T>::reset()
 // {
 // 	*m_data = T(0);
 // }

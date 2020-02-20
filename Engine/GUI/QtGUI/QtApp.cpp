@@ -1,10 +1,10 @@
 #include <QMap>
 #include <QDebug>
 #include "QtApp.h"
-#include "QtWindow.h"
-#include "Rendering/OpenGLContext.h"
+#include "PMainWindow.h"
+//#include "Rendering/OpenGLContext.h"
 
-namespace Physika {
+namespace PhysIKA {
     QtApp::QtApp(int argc, char **argv)
     {
         m_mainWindow = nullptr;
@@ -18,14 +18,14 @@ namespace Physika {
 
     void QtApp::createWindow(int width, int height)
     {
-        m_mainWindow = std::make_shared<QtWindow>();
+        m_mainWindow = std::make_shared<PMainWindow>();
         m_mainWindow->resize(1024, 768);
     }
 
     void QtApp::mainLoop()
     {
-        OpenGLContext::getInstance().initialize();
-        SceneGraph::getInstance().initialize();
+//         OpenGLContext::getInstance().initialize();
+//         SceneGraph::getInstance().initialize();
 
         m_mainWindow->show();
         m_app->exec();

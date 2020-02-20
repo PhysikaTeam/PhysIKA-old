@@ -4,8 +4,8 @@
  *        Matrix2x2 and Matrix3x3 are implemented using template partial specialization of this class.
  * @author Fei Zhu
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -18,7 +18,7 @@
 
 #include "matrix_base.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar, int Dim>
 class SquareMatrix: public MatrixBase
@@ -30,6 +30,6 @@ public:
     virtual unsigned int cols() const;
 }; 
 
-}  //end of namespace Physika
+}  //end of namespace PhysIKA
 
 #endif //PHYSIKA_CORE_MATRICES_SQUARE_MATRIX_H_

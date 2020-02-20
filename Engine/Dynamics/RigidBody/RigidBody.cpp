@@ -7,13 +7,13 @@
 #include "Rendering/PointRenderModule.h"
 #include "IO/Surface_Mesh_IO/ObjFileLoader.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(RigidBody, TDataType)
 
 
 	template<typename TDataType>
-	Physika::RigidBody<TDataType>::RigidBody(std::string name)
+	PhysIKA::RigidBody<TDataType>::RigidBody(std::string name)
 		: Node(name)
 		, m_quaternion(Quaternion<Real>(Matrix::identityMatrix()))
 	{

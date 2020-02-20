@@ -1,7 +1,7 @@
 #include "CollisionModel.h"
 #include "Framework/Framework/Node.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 CollisionModel::CollisionModel()

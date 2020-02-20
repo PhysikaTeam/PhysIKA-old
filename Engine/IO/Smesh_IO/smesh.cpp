@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-namespace Physika
+namespace PhysIKA
 {
 
 void Smesh::loadFile(string filename)
@@ -120,4 +120,4 @@ void Smesh::loadFile(string filename)
     }
 }
 
-} // namespace Physika
+} // namespace PhysIKA

@@ -3,7 +3,7 @@
 #include "Core/Utility.h"
 #include "Framework/Topology/NeighborQuery.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	PointSetToPointSet<TDataType>::PointSetToPointSet()

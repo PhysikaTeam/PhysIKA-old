@@ -7,7 +7,7 @@
 #include "Framework/Framework/SceneGraph.h"
 #include "Core/Utility/Scan.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	__constant__ int offset1[27][3] = { 0, 0, 0,
 		0, 0, 1,

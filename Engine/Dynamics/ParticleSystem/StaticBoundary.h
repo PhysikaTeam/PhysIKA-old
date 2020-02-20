@@ -2,7 +2,7 @@
 #include "Framework/Framework/Node.h"
 #include "Framework/Framework/FieldArray.h"
 
-namespace Physika {
+namespace PhysIKA {
 	template <typename TDataType> class RigidBody;
 	template <typename TDataType> class ParticleSystem;
 	template <typename TDataType> class DistanceField3D;

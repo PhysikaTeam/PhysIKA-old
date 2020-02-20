@@ -14,7 +14,7 @@
 #include "DensityPBD.h"
 #include "ImplicitViscosity.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(ParticleElastoplasticBody, TDataType)
 

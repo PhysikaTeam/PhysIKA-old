@@ -2,7 +2,7 @@
 #include "Framework/Framework/ModuleForce.h"
 #include "Framework/Framework/FieldArray.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename TDataType>
 	class SurfaceTension : public ForceModule

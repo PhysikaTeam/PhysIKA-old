@@ -1,6 +1,6 @@
 #include "ControllerRender.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 IMPLEMENT_CLASS(RenderController)

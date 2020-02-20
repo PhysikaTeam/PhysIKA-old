@@ -1,7 +1,7 @@
 #include "Node.h"
 #include "Framework/Action/Action.h"
 
-namespace Physika
+namespace PhysIKA
 {
 IMPLEMENT_CLASS(Node)
 
@@ -333,24 +333,31 @@ bool Node::deleteModule(std::shared_ptr<Module> module)
 
 void Node::doTraverseBottomUp(Action* act)
 {
+	act->start(this);
+
 	ListPtr<Node>::iterator iter = m_children.begin();
 	for (; iter != m_children.end(); iter++)
 	{
 		(*iter)->traverseBottomUp(act);
 	}
 
-	act->Process(this);
+	act->process(this);
+
+	act->end(this);
 }
 
 void Node::doTraverseTopDown(Action* act)
 {
-	act->Process(this);
+	act->start(this);
+	act->process(this);
 
 	ListPtr<Node>::iterator iter = m_children.begin();
 	for (; iter != m_children.end(); iter++)
 	{
-		(*iter)->traverseBottomUp(act);
+		(*iter)->doTraverseTopDown(act);
 	}
+
+	act->end(this);
 }
 
 void Node::traverseBottomUp(Action* act)

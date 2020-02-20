@@ -2,7 +2,7 @@
 #include <ctime>
 #include <iostream>
 
-namespace Physika {
+namespace PhysIKA {
 
 	GTimer::GTimer()
 	{

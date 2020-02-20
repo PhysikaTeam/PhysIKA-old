@@ -12,7 +12,7 @@
 #pragma once
 #include "ElasticityModule.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	/**
 	 * @brief Basis Function

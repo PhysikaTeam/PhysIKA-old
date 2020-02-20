@@ -6,7 +6,7 @@
 #include "Framework/Framework/CollisionModel.h"
 #include "Framework/Framework/TopologyMapping.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	
 	AnimateAct::AnimateAct()
@@ -19,7 +19,7 @@ namespace Physika
 
 	}
 
-	void AnimateAct::Process(Node* node)
+	void AnimateAct::process(Node* node)
 	{
 		if (node == NULL)
 		{

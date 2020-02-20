@@ -3,8 +3,8 @@
 * @brief 3d vector.
 * @author Sheng Yang, Fei Zhu, Wei Chen
 * 
-* This file is part of Physika, a versatile physics simulation library.
-* Copyright (C) 2013- Physika Group.
+* This file is part of PhysIKA, a versatile physics simulation library.
+* Copyright (C) 2013- PhysIKA Group.
 *
 * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
 * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -19,7 +19,7 @@
 #include <glm/vec3.hpp>
 #include "vector_base.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar, int Dim> class SquareMatrix;
 
@@ -89,7 +89,7 @@ template class Vector<double, 3>;
 //convenient typedefs 
 typedef Vector<float,3> Vector3f;
 typedef Vector<double,3> Vector3d;
-} //end of namespace Physika
+} //end of namespace PhysIKA
 
 #include "vector_3d.inl"
 

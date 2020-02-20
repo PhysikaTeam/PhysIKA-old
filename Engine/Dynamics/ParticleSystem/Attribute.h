@@ -1,7 +1,7 @@
 #pragma once
 #include <cuda_runtime.h>
 #include "Core/Platform.h"
-namespace Physika 
+namespace PhysIKA 
 {
 	/*!
 	*	\class	Attribute

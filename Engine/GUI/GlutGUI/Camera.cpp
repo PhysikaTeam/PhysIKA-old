@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <math.h>
 using namespace std;
 
-namespace Physika
+namespace PhysIKA
 {
 	Camera::Camera() {
 		m_eye = Vector3f(0, 0, 3);

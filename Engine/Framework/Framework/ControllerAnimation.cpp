@@ -2,7 +2,7 @@
 #include "Node.h"
 #include "NumericalModel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 IMPLEMENT_CLASS(AnimationController)

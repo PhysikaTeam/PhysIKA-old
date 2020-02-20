@@ -1,7 +1,7 @@
 #include "DeviceContext.h"
 #include <cuda_runtime.h>
 
-namespace Physika {
+namespace PhysIKA {
 
 DeviceContext::DeviceContext()
 {

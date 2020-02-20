@@ -3,7 +3,7 @@
 #include "Function1Pt.h"
 #include "cuda_utilities.h"
 
-namespace Physika
+namespace PhysIKA
 {
 #define SCAN_SHARED_MEMORY_BANKS 32
 #define SCAN_LOG_MEM_BANKS 5

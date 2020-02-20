@@ -3,7 +3,7 @@
 
 #include "Action.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	class NodeInfoAct : public Action
 	{
@@ -12,7 +12,7 @@ namespace Physika
 		virtual ~NodeInfoAct();
 
 	private:
-		void Process(Node* node) override;
+		void process(Node* node) override;
 	};
 }
 

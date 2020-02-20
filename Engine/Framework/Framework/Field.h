@@ -5,7 +5,7 @@
 #include <cuda_runtime.h>
 #include "Core/Typedef.h"
 
-namespace Physika {
+namespace PhysIKA {
 	class Base;
 /*!
 *	\class	Variable

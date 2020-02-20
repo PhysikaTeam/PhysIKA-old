@@ -4,7 +4,7 @@
 
 #include <map>
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename TDataType>
 	class SimpleDamping : public ConstraintModule

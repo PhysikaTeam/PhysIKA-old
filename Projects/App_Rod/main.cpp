@@ -24,7 +24,7 @@
 #include "Rendering/PointRenderModule.h"
 
 using namespace std;
-using namespace Physika;
+using namespace PhysIKA;
 
 int main()
 {

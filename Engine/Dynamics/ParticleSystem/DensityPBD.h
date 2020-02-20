@@ -6,7 +6,7 @@
 #include "Framework/Topology/FieldNeighbor.h"
 #include "Kernel.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename TDataType> class DensitySummation;
 

@@ -6,7 +6,7 @@
 #include "Framework/Framework/Node.h"
 #include "SimpleDamping.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(SimpleDamping, TDataType)
 
@@ -61,7 +61,7 @@ namespace Physika
 
 
 	template<typename TDataType>
-	void Physika::SimpleDamping<TDataType>::setDampingCofficient(Real c)
+	void PhysIKA::SimpleDamping<TDataType>::setDampingCofficient(Real c)
 	{
 		m_damping.setValue(c);
 	}

@@ -2,7 +2,7 @@
 #include "Reduction.h"
 #include "Core/Array/Array.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename T>
 	class Arithmetic

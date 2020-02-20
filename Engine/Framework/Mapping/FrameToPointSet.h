@@ -2,7 +2,7 @@
 #include "Core/Array/Array.h"
 #include "Framework/Framework/TopologyMapping.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType> class Frame;
 	template<typename TDataType> class PointSet;

@@ -1,7 +1,7 @@
 #include "SceneLoaderFactory.h"
 #include "SceneLoaderXML.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	SceneLoaderFactory& SceneLoaderFactory::getInstance()
 	{

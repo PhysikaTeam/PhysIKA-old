@@ -2,10 +2,11 @@
 #include <memory>
 #include "GUI/AppBase.h"
 
-class QApplication;
-class QtWindow;
+#include <QApplication>
 
-namespace Physika {
+namespace PhysIKA {
+
+	class PMainWindow;
 
     class QtApp : public AppBase
     {
@@ -18,7 +19,7 @@ namespace Physika {
 
     private:
         std::shared_ptr<QApplication> m_app;
-        std::shared_ptr<QtWindow> m_mainWindow;
+        std::shared_ptr<PMainWindow> m_mainWindow;
     };
 
 }

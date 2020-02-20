@@ -3,7 +3,7 @@
 #include <Core/Vector/vector_3d.h>
 #include <Framework/Framework/ModuleTopology.h>
 
-namespace Physika{
+namespace PhysIKA{
 
 class Smesh{
 public:

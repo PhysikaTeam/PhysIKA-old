@@ -4,7 +4,7 @@
 #include "Core/Algorithm/MatrixFunc.h"
 #include "Kernel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	HyperelasticityModule<TDataType>::HyperelasticityModule()

@@ -5,7 +5,7 @@
 #include "Core/Utility.h"
 #include "Kernel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(DensitySummation, TDataType)
 

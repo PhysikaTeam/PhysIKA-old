@@ -1,7 +1,7 @@
 #pragma once
 #include "Action.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	class InitAct : public Action
 	{
@@ -10,6 +10,6 @@ namespace Physika
 		virtual ~InitAct();
 
 	private:
-		void Process(Node* node) override;
+		void process(Node* node) override;
 	};
 }

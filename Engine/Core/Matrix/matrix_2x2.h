@@ -3,8 +3,8 @@
  * @brief 2x2 matrix.
  * @author Fei Zhu, Wei Chen
  *
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -22,7 +22,7 @@
 // #include "Core/Utilities/type_utilities.h"
 #include "square_matrix.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar, int Dim> class Vector;
 
@@ -112,7 +112,7 @@ typedef SquareMatrix<float,2> Matrix2f;
 typedef SquareMatrix<double,2> Matrix2d;
 //typedef SquareMatrix<int, 2> Matrix2i;
 
-}  //end of namespace Physika
+}  //end of namespace PhysIKA
 
 #include "matrix_2x2.inl"
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_2X2_H_

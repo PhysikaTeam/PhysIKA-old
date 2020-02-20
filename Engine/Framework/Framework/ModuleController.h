@@ -1,7 +1,7 @@
 #pragma once
 #include "Framework/Framework/Module.h"
 
-namespace Physika
+namespace PhysIKA
 {
 class ControllerModule : public Module
 {

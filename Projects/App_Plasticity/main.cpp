@@ -21,7 +21,7 @@
 #include "Rendering/PointRenderModule.h"
 
 using namespace std;
-using namespace Physika;
+using namespace PhysIKA;
 
 void RecieveLogMessage(const Log::Message& m)
 {

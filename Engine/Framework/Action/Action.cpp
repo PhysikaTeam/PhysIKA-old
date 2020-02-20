@@ -1,6 +1,6 @@
 #include "Framework/Action/Action.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	Action::Action()
 	{
@@ -10,8 +10,18 @@ namespace Physika
 	{
 	}
 
-	void Action::Process(Node* node)
+	void Action::start(Node* node)
 	{
+
+	}
+
+	void Action::process(Node* node)
+	{
+	}
+
+	void Action::end(Node* node)
+	{
+
 	}
 
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "ParticleSystem.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	/*!
 	*	\class	ParticleFluid

@@ -2,7 +2,7 @@
 #include "Framework/Framework/ModuleConstraint.h"
 #include "Framework/Framework/FieldArray.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename TDataType> class DistanceField3D;
 

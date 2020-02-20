@@ -1,7 +1,7 @@
 #include "Framework/Framework/Node.h"
 #include "CollidableSDF.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	IMPLEMENT_CLASS_1(CollidableSDF, TDataType)
 

@@ -6,7 +6,7 @@
 #include "Core/Utility.h"
 #include "Framework/Framework/SceneGraph.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	ParticleIntegrator<TDataType>::ParticleIntegrator()

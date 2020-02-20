@@ -3,8 +3,8 @@
  * @Basic solid render task of triangle
  * @author Wei Chen
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -15,7 +15,7 @@
 #include <GL/glew.h>
 #include "TriangleRender.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 	static const char * triangle_solid_render_vertex_shader = R"STR(
 #version 330
@@ -261,4 +261,4 @@ void TriangleRender::resize(unsigned int triNum)
 }
 
 
-}//end of namespace Physika
+}//end of namespace PhysIKA

@@ -12,7 +12,7 @@
 #include "Dynamics/ParticleSystem/DensityPBD.h"
 #include "Dynamics/ParticleSystem/ImplicitViscosity.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(ParticleViscoplasticBody, TDataType)
 

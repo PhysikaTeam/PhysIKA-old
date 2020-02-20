@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Array/Array3D.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	class UniformGrid3D

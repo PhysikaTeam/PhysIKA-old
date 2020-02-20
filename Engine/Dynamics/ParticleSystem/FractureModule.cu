@@ -2,7 +2,7 @@
 #include "DensitySummation.h"
 #include "Kernel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	FractureModule<TDataType>::FractureModule()

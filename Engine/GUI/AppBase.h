@@ -5,7 +5,7 @@
 #include <memory>
 #include "Framework/Framework/SceneGraph.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	class AppBase {
 	public:

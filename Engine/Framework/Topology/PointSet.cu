@@ -4,7 +4,7 @@
 #include <sstream>
 #include "Core/Utility.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(PointSet, TDataType)
 
@@ -184,7 +184,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void Physika::PointSet<TDataType>::scale(Coord s)
+	void PhysIKA::PointSet<TDataType>::scale(Coord s)
 	{
 		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
 		PS_Scale << <pDims, BLOCK_SIZE >> > (
@@ -205,7 +205,7 @@ namespace Physika
 
 
 	template<typename TDataType>
-	void Physika::PointSet<TDataType>::translate(Coord t)
+	void PhysIKA::PointSet<TDataType>::translate(Coord t)
 	{
 		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
 

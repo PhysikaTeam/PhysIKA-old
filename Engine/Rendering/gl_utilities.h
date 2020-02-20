@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-namespace Physika {
+namespace PhysIKA {
 
 /*
 * glAssert, assert function extracted from Flex

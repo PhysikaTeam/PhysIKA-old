@@ -10,7 +10,7 @@
 #include "Core/DataTypes.h"
 #include "../FieldTypes.h"
 
-namespace Physika
+namespace PhysIKA
 {
 class Node;
 

@@ -2,7 +2,7 @@
 #include "Framework/Framework/ModuleController.h"
 #include "Core/Platform.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 class AnimationController : public ControllerModule

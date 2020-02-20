@@ -2,7 +2,7 @@
 #include "Framework/Framework/Module.h"
 #include "Framework/Framework/CollidableObject.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 class CollisionModel : public Module

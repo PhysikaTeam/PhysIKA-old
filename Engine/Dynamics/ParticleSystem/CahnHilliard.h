@@ -11,7 +11,7 @@
 #pragma once
 #include "Framework/Module.h"
 
-namespace Physika
+namespace PhysIKA
 {
     template<typename TDataType, int PhaseCount = 2>
 	class CahnHilliard : public Module

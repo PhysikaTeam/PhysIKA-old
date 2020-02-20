@@ -1,7 +1,7 @@
 #include "Framework/Framework/ModuleVisual.h"
 #include "Framework/Framework/Node.h"
 
-namespace Physika
+namespace PhysIKA
 {
 VisualModule::VisualModule()
 	: Module()

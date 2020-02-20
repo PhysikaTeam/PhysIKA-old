@@ -3,7 +3,7 @@
 
 #include "Framework/Framework/Node.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	class Action
 	{
@@ -11,7 +11,9 @@ namespace Physika
 		Action();
 		virtual ~Action();
 
-		virtual void Process(Node* node);
+		virtual void start(Node* node);
+		virtual void process(Node* node);
+		virtual void end(Node* node);
 	private:
 
 	};

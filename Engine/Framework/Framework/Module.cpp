@@ -1,7 +1,7 @@
 #include "Module.h"
 #include "Framework/Framework/Node.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 Module::Module(std::string name)

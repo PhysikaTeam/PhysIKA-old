@@ -2,7 +2,7 @@
 #include <curand_kernel.h> 
 #include "Core/Platform.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 #define DIV 10000
 

@@ -3,7 +3,7 @@
 #include "Framework/ModuleTopology.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	class EdgeSet : public PointSet<TDataType>

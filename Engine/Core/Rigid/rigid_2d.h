@@ -4,7 +4,7 @@
 #include "../Vector.h"
 #include "../Matrix.h"
 
-namespace Physika {
+namespace PhysIKA {
 	template <typename Scalar>
 	class Rigid<Scalar, 2>
 	{
@@ -39,4 +39,4 @@ namespace Physika {
 	typedef Rigid<float, 2> Rigid2f;
 	typedef Rigid<double, 2> Rigid2d;
 
-}  //end of namespace Physika
+}  //end of namespace PhysIKA

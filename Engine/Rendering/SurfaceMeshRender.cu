@@ -7,7 +7,7 @@
 #include "Core/Utility.h"
 #include "OpenGLContext.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS(SurfaceMeshRender)
 

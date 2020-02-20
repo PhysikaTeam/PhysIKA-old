@@ -12,7 +12,7 @@
 #include "Dynamics/ParticleSystem/Attribute.h"
 #include "Core/Utility.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(PositionBasedFluidModel, TDataType)
 

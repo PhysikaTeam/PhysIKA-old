@@ -1,6 +1,6 @@
 #include "OpenGLContext.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	OpenGLContext& OpenGLContext::getInstance()
 	{

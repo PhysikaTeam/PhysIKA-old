@@ -5,7 +5,7 @@
 #include "Framework/Topology/NeighborList.h"
 #include "Kernel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename Real, typename Coord>
 	__global__ void ST_ComputeSurfaceEnergy

@@ -6,7 +6,7 @@
 #include "Core/Platform.h"
 #include "MemoryManager.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	/*!
 	*	\class	Array

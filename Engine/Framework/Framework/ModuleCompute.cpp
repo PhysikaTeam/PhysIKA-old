@@ -1,7 +1,7 @@
 #include "ModuleCompute.h"
 #include "Framework/Framework/Node.h"
 
-namespace Physika
+namespace PhysIKA
 {
 ComputeModule::ComputeModule()
 {

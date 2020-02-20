@@ -6,7 +6,7 @@
 #include "Framework/Framework/Base.h"
 #include "Framework/Topology/NeighborList.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 template<typename T>
 class NeighborField : public Field

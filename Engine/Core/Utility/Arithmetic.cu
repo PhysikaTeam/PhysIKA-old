@@ -2,7 +2,7 @@
 #include "Function1Pt.h"
 #include "Function2Pt.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename T>
 	Arithmetic<T>::Arithmetic(int n)

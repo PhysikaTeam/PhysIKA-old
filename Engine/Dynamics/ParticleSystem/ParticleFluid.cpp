@@ -7,7 +7,7 @@
 #include "DensitySummation.h"
 
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(ParticleFluid, TDataType)
 

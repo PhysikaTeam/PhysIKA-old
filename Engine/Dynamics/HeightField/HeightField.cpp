@@ -5,7 +5,7 @@
 #include "Framework/Mapping/FrameToPointSet.h"
 #include "Rendering/SurfaceMeshRender.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(HeightField, TDataType)
 

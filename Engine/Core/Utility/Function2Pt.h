@@ -6,7 +6,7 @@
 *  This file implements two-point functions on device array types (DeviceArray, DeviceArray2D, DeviceArray3D, etc.)
 */
 
-namespace Physika
+namespace PhysIKA
 {
 	namespace Function2Pt
 	{

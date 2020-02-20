@@ -1,6 +1,6 @@
 #include "UnstructuredPointSet.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename Coord>
 	UnstructuredPointSet<Coord>::UnstructuredPointSet()

@@ -4,7 +4,7 @@
 #include "Framework/Framework/FieldArray.h"
 #include "DensityPBD.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType> class PointSetToPointSet;
 	template<typename TDataType> class ParticleIntegrator;

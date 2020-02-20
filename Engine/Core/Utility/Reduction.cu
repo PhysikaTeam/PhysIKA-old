@@ -6,7 +6,7 @@
 #include "sharedmem.h"
 #include "Functional.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 #define REDUCTION_BLOCK 128
 
@@ -117,7 +117,7 @@ namespace Physika {
 	}
 
 	template<typename T>
-	T Physika::Reduction<T>::accumulate(T* val, int num)
+	T PhysIKA::Reduction<T>::accumulate(T* val, int num)
 	{
 		if (num != m_num)
 			allocAuxiliaryArray(num);
@@ -126,7 +126,7 @@ namespace Physika {
 	}
 
 	template<typename T>
-	T Physika::Reduction<T>::maximum(T* val, int num)
+	T PhysIKA::Reduction<T>::maximum(T* val, int num)
 	{
 		if (num != m_num)
 			allocAuxiliaryArray(num);
@@ -135,7 +135,7 @@ namespace Physika {
 	}
 
 	template<typename T>
-	T Physika::Reduction<T>::minimum(T* val, int num)
+	T PhysIKA::Reduction<T>::minimum(T* val, int num)
 	{
 		if (num != m_num)
 			allocAuxiliaryArray(num);
@@ -144,7 +144,7 @@ namespace Physika {
 	}
 
 	template<typename T>
-	T Physika::Reduction<T>::average(T* val, int num)
+	T PhysIKA::Reduction<T>::average(T* val, int num)
 	{
 		if (num != m_num)
 			allocAuxiliaryArray(num);

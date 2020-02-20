@@ -1,7 +1,7 @@
 #include "ModuleForce.h"
 #include "Framework/Framework/Node.h"
 
-namespace Physika
+namespace PhysIKA
 {
 IMPLEMENT_CLASS(ForceModule)
 

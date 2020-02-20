@@ -4,7 +4,7 @@
 #include "Framework/Framework/Log.h"
 using std::find;
 
-namespace Physika {
+namespace PhysIKA {
 
 bool Base::addField(Field* data)
 {

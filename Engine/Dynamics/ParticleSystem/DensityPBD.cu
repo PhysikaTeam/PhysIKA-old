@@ -7,7 +7,7 @@
 #include "DensitySummation.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(DensityPBD, TDataType)
 

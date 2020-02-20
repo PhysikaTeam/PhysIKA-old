@@ -3,7 +3,7 @@
 #include "Core/Array/Array.h"
 #include "Core/Utility.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename ElementType>
 	class NeighborList

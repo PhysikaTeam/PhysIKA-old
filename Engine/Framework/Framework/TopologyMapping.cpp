@@ -1,7 +1,7 @@
 #pragma once
 #include "TopologyMapping.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 	TopologyMapping::TopologyMapping()

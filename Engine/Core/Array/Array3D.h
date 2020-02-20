@@ -4,7 +4,7 @@
 #include <cstring>
 #include "Core/Platform.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 #define INVALID -1
 

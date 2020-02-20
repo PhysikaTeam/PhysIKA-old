@@ -13,7 +13,7 @@
 #include "ElasticityModule.h"
 #include "DensityPBD.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename TDataType>
 	class ElastoplasticityModule : public ElasticityModule<TDataType>

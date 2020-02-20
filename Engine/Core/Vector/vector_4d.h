@@ -3,8 +3,8 @@
  * @brief 4d vector.
  * @author Liyou Xu, Fei Zhu, Wei Chen
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -19,7 +19,7 @@
 #include <glm/vec4.hpp>
 #include "vector_base.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar, int Dim> class SquareMatrix;
 
@@ -108,7 +108,7 @@ typedef Vector<float,4> Vector4f;
 typedef Vector<double,4> Vector4d;
 //typedef Vector<int,4> Vector4i;
 
-} //end of namespace Physika
+} //end of namespace PhysIKA
 
 #include "vector_4d.inl"
 #endif //PHYSIKA_CORE_VECTORS_VECTOR_4D_H_

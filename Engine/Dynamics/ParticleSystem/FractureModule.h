@@ -1,7 +1,7 @@
 #pragma once
 #include "Dynamics/ParticleSystem/ElastoplasticityModule.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename TDataType> class DensitySummation;
 

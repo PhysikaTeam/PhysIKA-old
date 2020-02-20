@@ -19,7 +19,7 @@
 //#include "Physika_Core/Utilities/physika_exception.h"
 //#include "Physika_Core/Matrices/matrix_2x2.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar>
 COMM_FUNC Vector<Scalar,2>::Vector()

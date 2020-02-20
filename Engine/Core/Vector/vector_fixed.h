@@ -8,7 +8,7 @@
 #include <cassert>
 #include "Core/Platform.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<class T, unsigned int N>
 	class FixedVector

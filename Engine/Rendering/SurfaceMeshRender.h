@@ -5,7 +5,7 @@
 #include "Rendering/LineRender.h"
 #include "Rendering/TriangleRender.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	class SurfaceMeshRender : public VisualModule
 	{

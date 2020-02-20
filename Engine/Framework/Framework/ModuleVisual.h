@@ -3,7 +3,7 @@
 #include "Core/Vector.h"
 #include "Core/Quaternion/quaternion.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 class VisualModule : public Module

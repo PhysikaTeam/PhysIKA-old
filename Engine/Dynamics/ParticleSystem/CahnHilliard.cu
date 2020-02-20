@@ -4,7 +4,7 @@
 
 // Implement paper: Fast Multiple-fluid Simulation Using Helmholtz Free Energy
 
-namespace Physika
+namespace PhysIKA
 {
     template<typename TDataType, int PhaseCount>
     CahnHilliard<TDataType, PhaseCount>::CahnHilliard() 

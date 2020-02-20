@@ -13,11 +13,11 @@
 #include "Framework/Framework/Field.h"
 #include "Framework/Framework/Object.h"
 
-namespace Physika {
+namespace PhysIKA {
 /**
 *  \brief Base class for modules
 *
-*  This class contains all functionality shared by every module in Physika.
+*  This class contains all functionality shared by every module in PhysIKA.
 *  It defines how to retrieve information about an class (name, type, data fields).
 *
 */

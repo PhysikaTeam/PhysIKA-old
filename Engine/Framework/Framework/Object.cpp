@@ -1,7 +1,7 @@
 #include <map>
 #include "Object.h"
 
-namespace Physika
+namespace PhysIKA
 {
 static std::map< std::string, ClassInfo*> *classInfoMap = NULL;
 

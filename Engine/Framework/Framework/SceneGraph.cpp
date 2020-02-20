@@ -4,7 +4,7 @@
 #include "Framework/Action/ActInit.h"
 #include "Framework/Framework/SceneLoaderFactory.h"
 
-namespace Physika
+namespace PhysIKA
 {
 SceneGraph& SceneGraph::getInstance()
 {

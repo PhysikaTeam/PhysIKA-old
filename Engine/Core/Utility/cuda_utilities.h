@@ -3,8 +3,8 @@
  * @Brief cuda utilities
  * @author Wei Chen
  *
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -24,7 +24,7 @@
 #include <iostream>
 #include "cuda_helper_math.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 #define INVALID -1
 #define EPSILON   1e-6
@@ -70,7 +70,7 @@ namespace Physika{
 #ifdef NDEBUG
 #define cuSafeCall(X)  X
 #else
-#define cuSafeCall(X) X; Physika::checkCudaError(#X);
+#define cuSafeCall(X) X; PhysIKA::checkCudaError(#X);
 #endif
 
 	// use this macro to make sure no error occurs when cuda kernels functions are launched
@@ -89,6 +89,6 @@ namespace Physika{
 	}
 #endif
 
-}// end of namespace Physika
+}// end of namespace PhysIKA
 
 #endif //PHYSIKA_CORE_UTILITIES_CUDA_UTILITIES_H_

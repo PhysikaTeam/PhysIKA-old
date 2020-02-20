@@ -8,7 +8,7 @@
 #include "FixedPoints.h"
 #include "SimpleDamping.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(ParticleRod, TDataType)
 
@@ -99,7 +99,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void Physika::ParticleRod<TDataType>::removeAllFixedPositions()
+	void PhysIKA::ParticleRod<TDataType>::removeAllFixedPositions()
 	{
 		m_fixed->clear();
 	}

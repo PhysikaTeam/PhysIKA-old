@@ -1,6 +1,6 @@
 #include "CollidableCube.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	CollidableCube<TDataType>::CollidableCube()

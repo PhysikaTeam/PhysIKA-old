@@ -4,7 +4,7 @@
 #include "Core/Vector.h"
 
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	class PointSet : public TopologyModule

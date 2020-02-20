@@ -1,7 +1,7 @@
 #include "GranularModule.h"
 #include "DensitySummation.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	GranularModule<TDataType>::GranularModule()

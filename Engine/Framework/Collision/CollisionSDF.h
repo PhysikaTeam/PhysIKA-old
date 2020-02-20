@@ -1,7 +1,7 @@
 #pragma once
 #include "Framework/Framework/CollisionModel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 template <typename> class CollidableSDF;
 

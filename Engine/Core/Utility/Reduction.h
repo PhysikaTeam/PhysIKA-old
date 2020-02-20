@@ -1,5 +1,5 @@
 #pragma once
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename T>
 	class Reduction

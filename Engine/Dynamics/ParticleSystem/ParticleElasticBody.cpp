@@ -7,7 +7,7 @@
 #include "ParticleIntegrator.h"
 #include "ElasticityModule.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(ParticleElasticBody, TDataType)
 

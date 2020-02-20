@@ -17,7 +17,7 @@
 
 #include "../Vector/vector_4d.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar>
 COMM_FUNC SquareMatrix<Scalar,4>::SquareMatrix()

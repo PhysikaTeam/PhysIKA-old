@@ -4,7 +4,7 @@
 #include <memory>
 #include "Framework/Framework/Module.h"
 
-namespace Physika
+namespace PhysIKA
 {
 /**
 *  \brief Base class for simulation context

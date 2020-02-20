@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <memory>
 
-namespace Physika{
+namespace PhysIKA{
 
 class OpenGLContext
 {

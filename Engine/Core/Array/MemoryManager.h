@@ -8,7 +8,7 @@
 #include <cuda_runtime.h>
 #include "Core/Platform.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 // 	template<typename T>
 // 	void CopyMemory(T* dst, T*src, size_t size, DeviceType dstType, DeviceType srcType)

@@ -6,6 +6,6 @@
 #include "FieldNeighbor.h"
 #include <Core/DataTypes.h>
 
-namespace Physika{
+namespace PhysIKA{
 
 }

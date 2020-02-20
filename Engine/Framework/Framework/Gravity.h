@@ -1,7 +1,7 @@
 #pragma once
 #include "Framework/Framework/ModuleForce.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template<typename TDataType>
 class Gravity : public ForceModule

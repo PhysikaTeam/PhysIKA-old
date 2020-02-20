@@ -3,8 +3,8 @@
  * @brief transform class, brief class representing a rigid euclidean transform as a quaternion and a vector
  * @author Sheng Yang, Fei Zhu
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -14,7 +14,7 @@
 
 #include "transform_3d.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar>
 Transform<Scalar, 3>::Transform():translation_(Vector<Scalar, 3>(0,0,0)),
@@ -191,4 +191,4 @@ Vector<Scalar,3> Transform<Scalar,3>::transform(const Vector<Scalar, 3>& input) 
 template class Transform<float, 3>;
 template class Transform<double, 3>;
 
-}  //end of namespace Physika
+}  //end of namespace PhysIKA

@@ -1,6 +1,6 @@
 #include "CollidableObject.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	CollidableObject::CollidableObject(CType ctype)
 	{

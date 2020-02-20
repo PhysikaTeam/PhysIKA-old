@@ -3,7 +3,7 @@
 #include "Framework/Framework/CollidableObject.h"
 #include "Framework/Framework/FieldArray.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	class TopologyMapping;
 

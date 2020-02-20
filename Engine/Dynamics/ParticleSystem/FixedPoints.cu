@@ -6,7 +6,7 @@
 #include "Framework/Framework/Node.h"
 #include "FixedPoints.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(FixedPoints, TDataType)
 
@@ -143,7 +143,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void Physika::FixedPoints<TDataType>::constrainPositionToPlane(Coord pos, Coord dir)
+	void PhysIKA::FixedPoints<TDataType>::constrainPositionToPlane(Coord pos, Coord dir)
 	{
 		uint pDims = cudaGridSize(m_bFixed.size(), BLOCK_SIZE);
 

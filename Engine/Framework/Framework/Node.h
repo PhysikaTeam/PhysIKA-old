@@ -28,7 +28,7 @@
 #include "NumericalIntegrator.h"
 #include "ModuleCompute.h"
 
-namespace Physika {
+namespace PhysIKA {
 class Action;
 
 class Node : public Base
@@ -293,9 +293,9 @@ public:
 	 * @param act 	Operation on the node
 	 */
 	void traverseBottomUp(Action* act);
-	template<class Act>
-	void traverseBottomUp() {
-		Act action;
+	template<class Act, class ... Args>
+	void traverseBottomUp(Args&& ... args) {
+		Act action(std::forward<Args>(args)...);
 		doTraverseBottomUp(&action);
 	}
 
@@ -305,9 +305,9 @@ public:
 	 * @param act 	Operation on the node
 	 */
 	void traverseTopDown(Action* act);
-	template<class Act>
-	void traverseTopDown() {
-		Act action;
+	template<class Act, class ... Args>
+	void traverseTopDown(Args&& ... args) {
+		Act action(std::forward<Args>(args)...);
 		doTraverseTopDown(&action);
 	}
 

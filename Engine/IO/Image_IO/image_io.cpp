@@ -3,8 +3,8 @@
  * @Brief image_io class, it is used to import/save image files such as bmp etc.
  * @author Sheng Yang, Fei Zhu
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -19,7 +19,7 @@
 #include "IO/Image_IO/ppm_io.h"
 using std::string;
 
-namespace Physika{
+namespace PhysIKA{
 
 
 bool ImageIO::load(const string & filename, Image* image)
@@ -76,4 +76,4 @@ bool ImageIO::checkFileNameAndImage(const std::string &filename, const std::stri
     return true;
 }
 
-} //end of namespace Physika
+} //end of namespace PhysIKA

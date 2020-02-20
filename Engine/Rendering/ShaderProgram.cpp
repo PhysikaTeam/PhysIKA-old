@@ -3,8 +3,8 @@
 * @Brief Class ShaderProgram used to generate openGL program from shaders
 * @author Wei Chen
 *
-* This file is part of Physika, a versatile physics simulation library.
-* Copyright (C) 2013- Physika Group.
+* This file is part of PhysIKA, a versatile physics simulation library.
+* Copyright (C) 2013- PhysIKA Group.
 *
 * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
 * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -22,7 +22,7 @@
 
 #include "ShaderProgram.h"
 
-namespace Physika {
+namespace PhysIKA {
 /*
  * glslPrintShaderLog, output error message if fail to compile shader sources
  */
@@ -360,4 +360,4 @@ unsigned int ShaderProgram::id() const
     return this->program_;
 }
 
-}// end of namespace Physika
+}// end of namespace PhysIKA

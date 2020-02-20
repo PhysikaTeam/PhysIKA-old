@@ -3,7 +3,7 @@
 #include <vector>
 #include <Core/Utility.h>
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	EdgeSet<TDataType>::EdgeSet()

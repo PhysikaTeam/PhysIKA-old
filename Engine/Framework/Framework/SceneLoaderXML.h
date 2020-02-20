@@ -3,7 +3,7 @@
 #include "SceneLoaderFactory.h"
 #include "tinyxml/tinyxml2.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	class SceneLoaderXML : public SceneLoader
 	{

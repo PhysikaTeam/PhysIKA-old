@@ -1,6 +1,6 @@
 #include "MechanicalState.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	MechanicalState::MechanicalState()
 	{

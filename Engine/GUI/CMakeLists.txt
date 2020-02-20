@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 
 set(LIB_NAMES GlutGUI QtGUI)
+
+if(NOT VTK_BINARY_DIR)
+    find_package(VTK)
+    if(NOT VTK_DIR)
+        MESSAGE(FATAL_ERROR "Please set VTK_DIR.")
+    endif(NOT VTK_DIR)
+    include(${VTK_USE_FILE})
+endif(NOT VTK_BINARY_DIR)
+
 if(NOT Qt5_FOUND)                                                                   #如果没有安装Qt5，那么不编译QtGUI模块
     list(REMOVE_ITEM LIB_NAMES QtGUI)
 endif()
@@ -44,4 +53,9 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set_target_properties(${LIB_NAME} PROPERTIES FOLDER "${PROJECT_PATH_REL}")      #为project设定folder目录
     set_target_properties(${LIB_NAME} PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)    #cmake 会自动延迟cuda dlink操作直到静态库被编译成动态库或者exe，
                                                                                     #但这样影响了后面其他工程对PhysLeo.lib的引用，现在还有些原因未明，暂时在编译成库之前开启dlink
+    
 endforeach()
+
+target_link_libraries(QtGUI
+    ${VTK_LIBRARIES}
+)

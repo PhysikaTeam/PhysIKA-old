@@ -3,7 +3,7 @@
 #include "Framework/ModuleTopology.h"
 
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	class TriangleSet : public EdgeSet<TDataType>

@@ -2,7 +2,7 @@
 #include "Core/Platform.h"
 #include "Core/Utility.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename Real>
 	class Kernel

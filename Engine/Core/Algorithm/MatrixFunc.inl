@@ -2,7 +2,7 @@
 #include "Core/Matrix.h"
 #include "svd3_cuda.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename Real>
 	COMM_FUNC void jacobiRotate(SquareMatrix<Real, 3> &A, SquareMatrix<Real, 3> &R, int p, int q)

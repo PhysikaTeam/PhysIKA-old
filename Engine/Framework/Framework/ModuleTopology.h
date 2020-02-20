@@ -2,7 +2,7 @@
 #include "Core/Vector.h"
 #include "Framework/Framework/Module.h"
 
-namespace Physika
+namespace PhysIKA
 {
 
 class TopologyModule : public Module

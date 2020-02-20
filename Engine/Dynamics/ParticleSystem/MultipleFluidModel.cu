@@ -7,7 +7,7 @@
 #include "Core/Utility.h"
 #include "Framework/ModuleTypes.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(MultipleFluidModel, TDataType)
 

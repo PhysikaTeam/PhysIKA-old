@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace Physika
+namespace PhysIKA
 {
 class Object;
 class ClassInfo;

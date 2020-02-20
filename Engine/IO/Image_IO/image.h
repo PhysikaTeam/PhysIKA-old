@@ -3,8 +3,8 @@
  * @brief Image class, support basic operations on image data.
  * @author FeiZhu
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -15,7 +15,7 @@
 #ifndef PHYSIKA_CORE_IMAGE_IMAGE_H_
 #define PHYSIKA_CORE_IMAGE_IMAGE_H_
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar, int Dim> class Range;
 
@@ -57,6 +57,6 @@ protected:
     unsigned char *raw_data_;
 };
 
-}  //end of namespace Physika
+}  //end of namespace PhysIKA
 
 #endif //PHYSIKA_CORE_IMAGE_IMAGE_H_

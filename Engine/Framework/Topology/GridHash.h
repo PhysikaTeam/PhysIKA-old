@@ -5,7 +5,7 @@
 #include "Framework/Topology/NeighborList.h"
 #include "Core/Utility/Scan.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 	#define INVALID -1
 	#define BUCKETS 8

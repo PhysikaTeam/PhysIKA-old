@@ -1,7 +1,7 @@
 #pragma once
 #include "Dynamics/ParticleSystem/ParticleSystem.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	/*!
 	*	\class	ParticleCloth

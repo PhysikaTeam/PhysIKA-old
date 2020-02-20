@@ -4,7 +4,7 @@
 #include "Framework/Topology/DistanceField3D.h"
 #include "Framework/Framework/CollidableObject.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename TDataType>
 	class CollidableSDF : public CollidableObject

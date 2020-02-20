@@ -5,7 +5,7 @@
 #include "Core/Matrix.h"
 #include "Core/Rigid/rigid.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<class TReal, class TCoord, class TMatrix, class TRigid>
 	class DataTypes

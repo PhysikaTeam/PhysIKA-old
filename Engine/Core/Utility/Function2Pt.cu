@@ -2,7 +2,7 @@
 #include <vector_types.h>
 #include "Core/Utility.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	namespace Function2Pt
 	{

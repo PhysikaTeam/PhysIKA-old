@@ -3,8 +3,8 @@
  * @brief 4x4 matrix.
  * @author Sheng Yang, Fei Zhu, Liyou Xu
  *
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -22,7 +22,7 @@
 // #include "Core/Utilities/type_utilities.h"
 #include "square_matrix.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar, int Dim> class Vector;
 
@@ -107,7 +107,7 @@ typedef SquareMatrix<float,4> Matrix4f;
 typedef SquareMatrix<double,4> Matrix4d;
 //typedef SquareMatrix<int,4> Matrix4i;
 
-}  //end of namespace Physika
+}  //end of namespace PhysIKA
 
 #include "matrix_4x4.inl"
 #endif //PHYSIKA_CORE_MATRICES_MATRIX_4X4_H_

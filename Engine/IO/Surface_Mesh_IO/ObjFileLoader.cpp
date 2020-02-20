@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace Physika{
+namespace PhysIKA{
     
 	ObjFileLoader::ObjFileLoader(std::string filename)
 	{
@@ -69,4 +69,4 @@ namespace Physika{
 		return faceList;
 	}
 
-} //end of namespace Physika
+} //end of namespace PhysIKA

@@ -7,7 +7,7 @@
 #include "Base.h"
 #include "Framework/Framework/Log.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 template<typename T, DeviceType deviceType>
 class ArrayField : public Field

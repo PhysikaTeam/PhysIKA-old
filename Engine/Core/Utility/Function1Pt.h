@@ -5,7 +5,7 @@
 /*
 *  This file implements all one-point functions on device array types (DeviceArray, DeviceArray2D, DeviceArray3D, etc.)
 */
-namespace Physika
+namespace PhysIKA
 {
 	namespace Function1Pt
 	{ 

@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "Framework/ModuleTypes.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	std::shared_ptr<Node> SceneLoaderXML::load(const std::string filename)
 	{

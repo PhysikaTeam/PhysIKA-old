@@ -4,7 +4,7 @@
 #include <fstream>
 #include <ctime>
 
-namespace Physika {
+namespace PhysIKA {
 
 	/*!
 	 *	\brief	System for logging runtime library errors, warnings, etc.

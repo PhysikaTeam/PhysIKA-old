@@ -6,7 +6,7 @@
 #include "Framework/Framework/FieldVar.h"
 
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename> class NeighborQuery;
 	template<typename> class PointSetToPointSet;

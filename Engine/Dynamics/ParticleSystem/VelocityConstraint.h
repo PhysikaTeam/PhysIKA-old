@@ -5,7 +5,7 @@
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	class Attribute;
 	template<typename TDataType> class DensitySummation;

@@ -3,7 +3,7 @@
 #include "Core/Array/Array.h"
 #include "Framework/Topology/PointSet.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType> class PointSet;
 

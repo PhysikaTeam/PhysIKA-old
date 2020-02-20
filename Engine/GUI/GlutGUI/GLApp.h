@@ -3,8 +3,8 @@
  * @Brief Glut-based window.
  * @author Fei Zhu
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -16,7 +16,7 @@
 #include "../AppBase.h"
 #include "Camera.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 typedef glm::vec4 Color;
 
@@ -145,4 +145,4 @@ protected:
 
 	Camera m_camera;
 };
-}  //end of namespace Physika
+}  //end of namespace PhysIKA

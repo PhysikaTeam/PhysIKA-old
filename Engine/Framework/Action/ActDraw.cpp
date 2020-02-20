@@ -1,7 +1,7 @@
 #include "ActDraw.h"
 #include "Framework/Framework/ModuleVisual.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	
 	DrawAct::DrawAct()
@@ -14,7 +14,7 @@ namespace Physika
 
 	}
 
-	void DrawAct::Process(Node* node)
+	void DrawAct::process(Node* node)
 	{
 		if (!node->isVisible())
 		{

@@ -6,7 +6,7 @@
 #include "Attribute.h"
 #include "Kernel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	__device__ inline float kernWeight(const float r, const float h)
 	{

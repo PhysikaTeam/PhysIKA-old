@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Array/Array.h"
 
-namespace Physika
+namespace PhysIKA
 {
 #define SCAN_LEVEL 2
 

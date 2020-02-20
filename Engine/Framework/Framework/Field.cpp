@@ -1,13 +1,13 @@
 #include "Field.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	void Field::setParent(Base* owner)
 	{
 		m_owner = owner;
 	}
 
-	Physika::Base* Field::getParent()
+	PhysIKA::Base* Field::getParent()
 	{
 		return m_owner;
 	}

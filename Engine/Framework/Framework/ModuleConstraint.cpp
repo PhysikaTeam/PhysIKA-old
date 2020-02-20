@@ -1,7 +1,7 @@
 #include "ModuleConstraint.h"
 #include "Framework/Framework/Node.h"
 
-namespace Physika
+namespace PhysIKA
 {
 ConstraintModule::ConstraintModule()
 	: Module()

@@ -4,7 +4,7 @@
 #include "Core/Vector.h"
 #include "Core/DataTypes.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 	template <typename Coord>
 	__device__  float DistanceToPlane(const Coord &p, const Coord &o, const Coord &n) {

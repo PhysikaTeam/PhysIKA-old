@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Core/Platform.h"
 
-namespace Physika {
+namespace PhysIKA {
 	template <typename Scalar, int Dim>
 	class Vector
 	{
@@ -11,5 +11,5 @@ namespace Physika {
 		COMM_FUNC ~Vector() {};
 	};
 
-}  //end of namespace Physika
+}  //end of namespace PhysIKA
 

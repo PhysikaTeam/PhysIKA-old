@@ -1,6 +1,6 @@
 #include "Function1Pt.h"
 #include "Core/Utility.h"
-namespace Physika
+namespace PhysIKA
 {
 	namespace Function1Pt
 	{

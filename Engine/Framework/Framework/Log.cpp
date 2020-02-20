@@ -1,7 +1,7 @@
 #include "Log.h"
 #include <iostream>
 
-namespace Physika
+namespace PhysIKA
 {
 	std::string Log::outputFile;
 	std::ofstream Log::outputStream;

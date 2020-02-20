@@ -3,8 +3,8 @@
  * @brief 2d vector.
  * @author Fei Zhu, Wei Chen
  *
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0.
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -19,7 +19,7 @@
 #include <glm/vec2.hpp>
 #include "vector_base.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar, int Dim> class SquareMatrix;
 
@@ -100,7 +100,7 @@ typedef Vector<float,2> Vector2f;
 typedef Vector<double,2> Vector2d;
 //typedef Vector<int,2> Vector2i;
 
-} //end of namespace Physika
+} //end of namespace PhysIKA
 
 #include "vector_2d.inl"
 

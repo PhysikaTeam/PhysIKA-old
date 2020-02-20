@@ -14,7 +14,7 @@
 #include "Core/Platform.h"
 #include "Core/Array/Array3D.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<typename TDataType>
 	class DistanceField3D {

@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Platform.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	class TPair

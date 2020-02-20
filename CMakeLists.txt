@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.10)                                                            #指定CMake的最低版本为3.10。若版本过低，请自行升级CMake
 
-project(Physika LANGUAGES CXX CUDA)                                                             #指定本项目的编译语言为C++、CUDA
+project(PhysIKA LANGUAGES CXX CUDA)                                                             #指定本项目的编译语言为C++、CUDA
 find_package(Qt5 COMPONENTS Core Widgets)                                                       #查找qt包,可选项
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)                                                    #为sln内部projects设置管理folder

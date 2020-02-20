@@ -7,7 +7,7 @@
 #include "Framework/Mapping/FrameToPointSet.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(CollidablePoints, TDataType)
 
@@ -41,7 +41,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	bool Physika::CollidablePoints<TDataType>::initializeImpl()
+	bool PhysIKA::CollidablePoints<TDataType>::initializeImpl()
 	{
 		Node* parent = getParent();
 		if (parent == NULL)

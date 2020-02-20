@@ -20,7 +20,7 @@
 //#include "Physika_Core/Matrices/matrix_4x4.h"
 //#include "Physika_Core/Vectors/vector_4d.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar>
 COMM_FUNC Vector<Scalar,4>::Vector()

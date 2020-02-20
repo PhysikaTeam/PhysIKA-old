@@ -2,7 +2,7 @@
 #include "Framework/Framework/Node.h"
 //#include "Rendering/PointRenderModule.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template <typename TDataType> class PointSet;
 	/*!

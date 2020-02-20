@@ -2,7 +2,7 @@
 #include "Framework/Framework/Module.h"
 #include "Framework/Framework/NumericalModel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	InitAct::InitAct()
 	{
@@ -14,7 +14,7 @@ namespace Physika
 
 	}
 
-	void InitAct::Process(Node* node)
+	void InitAct::process(Node* node)
 	{
 		node->resetStatus();
 		node->initialize();

@@ -8,7 +8,7 @@
 #include <thrust/reduce.h>
 //#include "svd3_cuda2.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	ElastoplasticityModule<TDataType>::ElastoplasticityModule()

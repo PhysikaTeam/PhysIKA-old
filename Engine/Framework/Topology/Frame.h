@@ -3,7 +3,7 @@
 #include "Core/Vector.h"
 
 
-namespace Physika
+namespace PhysIKA
 {
 	/*!
 	*	\class	Frame

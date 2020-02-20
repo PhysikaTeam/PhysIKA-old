@@ -3,8 +3,8 @@
  * @Brief Glut-based window.
  * @author Fei Zhu
  * 
- * This file is part of Physika, a versatile physics simulation library.
- * Copyright (C) 2013- Physika Group.
+ * This file is part of PhysIKA, a versatile physics simulation library.
+ * Copyright (C) 2013- PhysIKA Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -23,10 +23,10 @@
 #include "GLApp.h"
 #include "Rendering/OpenGLContext.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 GLApp::GLApp()
-    :m_winName(std::string("Physika 1.0")),m_winID(-1),m_width(640),m_height(480),
+    :m_winName(std::string("PhysIKA 1.0")),m_winID(-1),m_width(640),m_height(480),
      display_fps_(true),screen_capture_file_index_(0),event_mode_(false)
 	, m_bAnimate(false)
 	, m_secLineNum(10)
@@ -746,4 +746,4 @@ void GLApp::drawString(std::string s, const Color &color, int x, int y)
 	glViewport(0, 0, getWidth(), getHeight());
 }
 
-} //end of namespace Physika
+} //end of namespace PhysIKA

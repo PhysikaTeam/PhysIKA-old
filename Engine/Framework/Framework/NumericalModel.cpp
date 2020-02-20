@@ -1,6 +1,6 @@
 #include "NumericalModel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	NumericalModel::NumericalModel()
 		: Module()

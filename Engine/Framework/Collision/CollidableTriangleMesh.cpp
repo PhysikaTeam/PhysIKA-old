@@ -1,6 +1,6 @@
 #include "CollidableTriangleMesh.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	CollidableSpheres<TDataType>::CollidableSpheres()

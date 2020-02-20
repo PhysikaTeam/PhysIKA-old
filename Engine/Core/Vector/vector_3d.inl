@@ -20,7 +20,7 @@
 //#include "Physika_Core/Matrices/matrix_3x3.h"
 //#include "Physika_Core/Vectors/vector_3d.h"
 
-namespace Physika{
+namespace PhysIKA{
 
 template <typename Scalar>
 COMM_FUNC Vector<Scalar,3>::Vector()

@@ -2,7 +2,7 @@
 #include "PointSet.h"
 
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename Coord>
 	class UnstructuredPointSet : public PointSet<Coord>

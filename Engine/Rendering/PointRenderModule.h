@@ -7,7 +7,7 @@
 #include "Framework/Framework/FieldArray.h"
 #include "Framework/Framework/FieldVar.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	class PointRenderModule : public VisualModule
 	{

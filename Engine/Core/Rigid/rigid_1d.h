@@ -2,7 +2,7 @@
 #include <iostream>
 #include "rigid_base.h"
 
-namespace Physika {
+namespace PhysIKA {
 	template <typename Scalar>
 	class Rigid<Scalar, 1>
 	{
@@ -14,5 +14,5 @@ namespace Physika {
 		
 	};
 
-}  //end of namespace Physika
+}  //end of namespace PhysIKA
 

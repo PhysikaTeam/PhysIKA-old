@@ -6,7 +6,7 @@
 #include "Framework/Topology/GridHash.h"
 #include "Core/Utility.h"
 
-namespace Physika {
+namespace PhysIKA {
 	template<typename ElementType> class NeighborList;
 
 	template<typename TDataType>

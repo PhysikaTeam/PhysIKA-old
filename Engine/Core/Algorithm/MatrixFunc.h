@@ -2,7 +2,7 @@
 #include "Core/Platform.h"
 #include "Core/Matrix.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename Real, int Dim>
 	COMM_FUNC void polarDecomposition(const SquareMatrix<Real, Dim> &A, SquareMatrix<Real, Dim> &R, SquareMatrix<Real, Dim> &U, SquareMatrix<Real, Dim> &D, SquareMatrix<Real, Dim> &V);

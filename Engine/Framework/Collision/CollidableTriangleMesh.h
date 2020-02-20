@@ -2,7 +2,7 @@
 #include "Core/Array/Array.h"
 #include "Framework/Framework/CollidableObject.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	class CollidableSpheres : public CollidableObject

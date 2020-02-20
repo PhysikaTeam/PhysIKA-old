@@ -3,7 +3,7 @@
 #include "Framework/Framework/Node.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename Real>
 	__device__ Real VB_VisWeight(const Real r, const Real h)

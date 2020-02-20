@@ -2,7 +2,7 @@
 #include "Core/Array/Array.h"
 #include "Framework/Framework/CollisionModel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 template <typename> class CollidablePoints;
 template <typename> class NeighborQuery;

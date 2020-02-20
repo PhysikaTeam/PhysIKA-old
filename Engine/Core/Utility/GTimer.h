@@ -1,7 +1,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
-namespace Physika {
+namespace PhysIKA {
 
 	class GTimer
 	{

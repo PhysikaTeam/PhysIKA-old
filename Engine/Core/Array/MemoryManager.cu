@@ -8,7 +8,7 @@
 
 #include "Core/Utility.h"
 
-namespace Physika {
+namespace PhysIKA {
 
 	template<DeviceType deviceType>
 	void DefaultMemoryManager<deviceType>::allocMemory1D(void** ptr, size_t memsize, size_t valueSize)

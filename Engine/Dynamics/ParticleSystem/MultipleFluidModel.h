@@ -12,7 +12,7 @@
 #include "Framework/Framework/NumericalModel.h"
 #include "CahnHilliard.h"
 
-namespace Physika
+namespace PhysIKA
 {	
 	template<typename TDataType> class PointSetToPointSet;
 	template<typename TDataType> class ParticleIntegrator;

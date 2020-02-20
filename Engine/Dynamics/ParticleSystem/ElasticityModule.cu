@@ -5,7 +5,7 @@
 #include "Core/Utility.h"
 #include "Kernel.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename Real>
 	__device__ Real D_Weight(Real r, Real h)
@@ -268,9 +268,13 @@ namespace Physika
 			Coord delta_pos_j = delta_position[j];
 
 			new_delta_pos_i += 0.1*(delta_pos_i)*g_weightKernel.Weight(r, horizon);
-		}
-
-//		position[pId] += delta_pos_i;		position[pId] += delta_position[pId];
+		}
+
+
+
+//		position[pId] += delta_pos_i;
+		position[pId] += delta_position[pId];
+
 	}
 
 	template <typename Real, typename Coord>
@@ -282,7 +286,8 @@ namespace Physika
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= position.size()) return;
-		position[pId] = (old_position[pId] + delta_position[pId]) / (1.0+delta_weights[pId]);
+
+		position[pId] = (old_position[pId] + delta_position[pId]) / (1.0+delta_weights[pId]);
 	}
 
 
@@ -412,7 +417,7 @@ namespace Physika
 	}
 
 	template<typename TDataType>
-	void Physika::ElasticityModule<TDataType>::updateVelocity()
+	void PhysIKA::ElasticityModule<TDataType>::updateVelocity()
 	{
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);

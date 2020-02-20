@@ -3,7 +3,7 @@
 #include <cuda_runtime.h>
 #include "Core/Platform.h"
 #include "MemoryManager.h"
-namespace Physika {
+namespace PhysIKA {
 
 #define INVALID -1
 

@@ -5,7 +5,7 @@
 #include "Framework/Collision/CollidablePoints.h"
 #include "Framework/Topology/NeighborQuery.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(CollisionPoints, TDataType)
 

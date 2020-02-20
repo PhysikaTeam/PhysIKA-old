@@ -5,7 +5,7 @@
 
 #define M_PI 3.14159265358979323846
 
-namespace Physika
+namespace PhysIKA
 {
 	typedef Quaternion<float> Quat1f;
 

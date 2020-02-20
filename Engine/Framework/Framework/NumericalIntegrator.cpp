@@ -1,7 +1,7 @@
 #include "NumericalIntegrator.h"
 #include "MechanicalState.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	NumericalIntegrator::NumericalIntegrator()
 		: Module()

@@ -1,6 +1,6 @@
 #include "ActNodeInfo.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	
 	NodeInfoAct::NodeInfoAct()
@@ -13,7 +13,7 @@ namespace Physika
 
 	}
 
-	void NodeInfoAct::Process(Node* node)
+	void NodeInfoAct::process(Node* node)
 	{
 		std::cout << node->getName() << std::endl;
 	}

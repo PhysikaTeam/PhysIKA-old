@@ -4,7 +4,7 @@
 #include "Framework/Topology/Frame.h"
 #include "Framework/Topology/PointSet.h"
 
-namespace Physika
+namespace PhysIKA
 {
 	template<typename TDataType>
 	FrameToPointSet<TDataType>::FrameToPointSet()
