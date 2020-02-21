@@ -12,15 +12,15 @@ set(CMAKE_CUDA_SEPARABLE_COMPILATION ON CACHE BOOL "DEFAULT SET SEPERABLE COMPIL
 
 set(CMAKE_CUDA_FLAGS "-arch=sm_30")                                         #默认为所有cuda代码生成computability3.0下二进制代码
 
-include_directories("Engine")                                                              #默认为本项目下各编译目标添加Engine/ 目录
+include_directories("Source")                                                              #默认为本项目下各编译目标添加Source/ 目录
 
 # temporary solution to solve linux compilation problem. our header file path should begin with Core this level
-include_directories("Engine/Core" "Engine/Dynamics" "Engine/Framework" "Engine/GUI" "Engine/IO" "Engine/Rendering")
+include_directories("Source/Core" "Source/Dynamics" "Source/Framework" "Source/GUI" "Source/IO" "Source/Rendering")
 
 
-include_directories("Extern")                                           #默认为本项目下各编译目标添加Engine/Physika_Dependency/ 目录
-include_directories("Extern/OpenGL")                                    #默认为本项目下各编译目标添加Engine/Physika_Dependency/OpenGL 目录
-include_directories("Extern/irrLicht/include")                          #默认为本项目下各编译目标添加Engine/Physika_dependency/irrLicht/include 目录
+include_directories("Extern")                                           #默认为本项目下各编译目标添加Source/Physika_Dependency/ 目录
+include_directories("Extern/OpenGL")                                    #默认为本项目下各编译目标添加Source/Physika_Dependency/OpenGL 目录
+include_directories("Extern/irrLicht/include")                          #默认为本项目下各编译目标添加Source/Physika_dependency/irrLicht/include 目录
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})                                 	                #默认为本项目下各编译目标添加cuda/include 目录
 
 
@@ -40,9 +40,11 @@ elseif(UNIX)
 endif()
 
 file(COPY "Media/" DESTINATION "Media")
-file(COPY "Engine/Rendering/Shader/" DESTINATION "Shader")
+file(COPY "Source/Rendering/Shader/" DESTINATION "Shader")
 
-add_subdirectory(Engine)
-add_subdirectory(Projects)
+add_subdirectory(Source)
+add_subdirectory(Examples)
+add_subdirectory(Tests)
+add_subdirectory(Extern/gtest)
 
 
