@@ -13,6 +13,8 @@ namespace PhysIKA
 	public:
 		PModuleListItem(Module* module, QListWidget *listview = nullptr);
 
+		Module* getModule() { return m_module; }
+
 	private:
 		Module* m_module;
 	};
@@ -22,10 +24,14 @@ namespace PhysIKA
 		Q_OBJECT
 
 	public:
-		PModuleListWidget();
+		PModuleListWidget(QWidget *parent = nullptr);
+
+	Q_SIGNALS:
+		void notifyModuleSelected(Module* module);
 
 	public slots:
 		void updateModule(Node* node);
+		void moduleSelected(QListWidgetItem *item);
 	};
 }
 

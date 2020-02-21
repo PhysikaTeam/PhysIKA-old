@@ -102,7 +102,7 @@ namespace PhysIKA
 		m_statusBar(nullptr),
 		m_vtkOpenglWidget(nullptr),
 		m_scenegraphWidget(nullptr),
-		m_nodePropertyWidget(nullptr),
+		m_propertyWidget(nullptr),
 		m_animationWidget(nullptr),
 		m_moduleListWidget(nullptr)
 	{
@@ -294,13 +294,15 @@ namespace PhysIKA
 		addDockWidget(sets[2].area, rightDockWidget);
 		windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
 
-		m_nodePropertyWidget = new PPropertyWidget();
-		rightDockWidget->setWidget(m_nodePropertyWidget);
+		m_propertyWidget = new PPropertyWidget();
+		rightDockWidget->setWidget(m_propertyWidget);
 
 		setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 		setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
+		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
+		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
 	}
 
 	void PMainWindow::mousePressEvent(QMouseEvent *event)

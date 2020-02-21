@@ -120,7 +120,7 @@ namespace PhysIKA
 		PStatusBar*				m_statusBar;
 		PVTKOpenGLWidget*		m_vtkOpenglWidget;
 		PSceneGraphWidget*		m_scenegraphWidget;
-		PPropertyWidget*	m_nodePropertyWidget;
+		PPropertyWidget*		m_propertyWidget;
 		PAnimationWidget*		m_animationWidget;
 		PModuleListWidget*		m_moduleListWidget;
 	};

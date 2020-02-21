@@ -15,9 +15,12 @@ namespace PhysIKA
 	}
 
 
-	PModuleListWidget::PModuleListWidget()
+	PModuleListWidget::PModuleListWidget(QWidget *parent) :
+		QListWidget(parent)
 	{
+		setContextMenuPolicy(Qt::CustomContextMenu);
 
+		connect(this, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(moduleSelected(QListWidgetItem*)));
 	}
 
 
@@ -38,6 +41,13 @@ namespace PhysIKA
 			addItem(new PModuleListItem(m.get(), this)); 
 			
 		}
+	}
+
+	void PModuleListWidget::moduleSelected(QListWidgetItem *item)
+	{
+		PModuleListItem* nodeItem = dynamic_cast<PModuleListItem*>(item);
+		if (nodeItem != nullptr)
+			emit notifyModuleSelected(nodeItem->getModule());
 	}
 
 }

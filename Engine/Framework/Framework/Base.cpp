@@ -162,6 +162,11 @@ Field* Base::getField(const FieldID name)
 	return nullptr;
 }
 
+std::vector<Field*>& Base::getAllFields()
+{
+	return m_field;
+}
+
 bool Base::isAllFieldsReady()
 {
 	bool bReady = true;

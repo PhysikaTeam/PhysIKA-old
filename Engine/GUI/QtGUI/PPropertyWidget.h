@@ -1,20 +1,31 @@
 #ifndef QNODEPROPERTYWIDGET_H
 #define QNODEPROPERTYWIDGET_H
 
-#include <QWidget>
+#include <QToolBox>
+#include <QListWidget>
 
 namespace PhysIKA
 {
+	class Base;
+	class Node;
+	class Module;
 
-	class PPropertyWidget : public QWidget
+	class PPropertyWidget : public QListWidget
 	{
 		Q_OBJECT
 	public:
 		explicit PPropertyWidget(QWidget *parent = nullptr);
 
-	signals:
+//		void clear();
+
+	//signals:
 
 	public slots:
+		void showProperty(Module* module);
+		void showProperty(Node* node);
+
+	private:
+		void updateContext(Base* base);
 	};
 
 }

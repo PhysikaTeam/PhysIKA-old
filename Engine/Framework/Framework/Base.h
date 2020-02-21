@@ -87,6 +87,8 @@ public:
 	 */
 	Field*	getField(const FieldID name);
 
+	std::vector<Field*>& getAllFields();
+
 	/**
 	 * @brief Attach a field to Base
 	 * 
