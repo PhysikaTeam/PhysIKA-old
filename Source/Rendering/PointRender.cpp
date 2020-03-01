@@ -155,7 +155,7 @@ float quadVertices[] = {
 PointRender::PointRender()
 {
 	m_glsl.createFromCStyleString(vertexSource, fragmentSource);
-	m_instancedShader.createFromFile("../Shader/InstancedSphere.vs.glsl", "../Shader/InstancedSphere.fs.glsl");
+	m_instancedShader.createFromFile("../../Shader/InstancedSphere.vs.glsl", "../../Shader/InstancedSphere.fs.glsl");
 
 	glGenVertexArrays(1, &quadVAO);
 	glGenBuffers(1, &quadVBO);

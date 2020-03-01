@@ -57,8 +57,8 @@ void CreateScene()
 	child3->addVisualModule(ptRender);
 
 	child3->setMass(1.0);
-  	child3->loadParticles("../Media/bunny/bunny_points.obj");
-  	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
+  	child3->loadParticles("../../Media/bunny/bunny_points.obj");
+  	child3->loadSurface("../../Media/bunny/bunny_mesh.obj");
 	child3->translate(Vector3f(0.4, 0.4, 0.5));
 
 	std::shared_ptr<ParticleViscoplasticBody<DataType3f>> child4 = std::make_shared<ParticleViscoplasticBody<DataType3f>>();
@@ -68,8 +68,8 @@ void CreateScene()
 	child4->addVisualModule(ptRender2);
 
 	child4->setMass(1.0);
-	child4->loadParticles("../Media/bunny/bunny_points.obj");
-	child4->loadSurface("../Media/bunny/bunny_mesh.obj");
+	child4->loadParticles("../../Media/bunny/bunny_points.obj");
+	child4->loadSurface("../../Media/bunny/bunny_mesh.obj");
 	child4->translate(Vector3f(0.4, 0.4, 0.9));
 }
 

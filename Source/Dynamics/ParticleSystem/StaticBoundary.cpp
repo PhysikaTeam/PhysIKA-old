@@ -81,7 +81,7 @@ namespace PhysIKA
 		auto m_surfaceNode = this->createChild<Node>("cube");
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
-		triSet->loadObjFile("../Media/standard/standard_cube.obj");
+		triSet->loadObjFile("../../Media/standard/standard_cube.obj");
 		triSet->scale(0.99*scale);
 		triSet->translate(center);
 
@@ -106,7 +106,7 @@ namespace PhysIKA
 		auto m_surfaceNode = this->createChild<Node>("sphere");
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
-		triSet->loadObjFile("../Media/standard/standard_sphere.obj");
+		triSet->loadObjFile("../../Media/standard/standard_sphere.obj");
 		triSet->scale(0.95*r);
 		triSet->translate(center);
 

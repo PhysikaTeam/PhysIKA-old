@@ -52,7 +52,7 @@ void CreateScene()
 	ptRender1->setColorRange(0, 1);
 	child1->addVisualModule(ptRender1);
 
-	child1->loadParticles("../Media/fluid/fluid_point.obj");
+	child1->loadParticles("../../Media/fluid/fluid_point.obj");
 	child1->setMass(100);
 	child1->scale(2);
 	child1->translate(Vector3f(-0.6, -0.3, -0.48));

@@ -54,8 +54,8 @@ void CreateScene()
 	child3->setVisible(true);
 
 	child3->setMass(1.0);
-  	child3->loadParticles("../Media/cloth/cloth.obj");
-  	child3->loadSurface("../Media/cloth/cloth.obj");
+  	child3->loadParticles("../../Media/cloth/cloth.obj");
+  	child3->loadSurface("../../Media/cloth/cloth.obj");
 }
 
 

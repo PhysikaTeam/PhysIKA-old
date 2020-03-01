@@ -79,8 +79,8 @@ void CreateScene()
 		std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
 		root->addParticleSystem(bunny);
 		bunny->setMass(1.0);
-		bunny->loadParticles("../Media/bunny/sparse_bunny_points.obj");
-		bunny->loadSurface("../Media/bunny/sparse_bunny_mesh.obj");
+		bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+		bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
 		bunny->translate(Vector3f(0.75, 0.2, 0.4 + i * 0.3));
 		bunny->setVisible(false);
 		bunny->getElasticitySolver()->setIterationNumber(10);

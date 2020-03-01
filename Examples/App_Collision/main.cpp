@@ -68,8 +68,8 @@ void CreateScene()
 			sRender->setColor(Vector3f(1, 0, 1));
 		
 		bunny->setMass(1.0);
-		bunny->loadParticles("../Media/bunny/sparse_bunny_points.obj");
-		bunny->loadSurface("../Media/bunny/sparse_bunny_mesh.obj");
+		bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+		bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
 		bunny->translate(Vector3f(0.4, 0.2 + i * 0.3, 0.8));
 		bunny->setVisible(false);
 		bunny->getElasticitySolver()->setIterationNumber(10);

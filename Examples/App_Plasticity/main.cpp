@@ -58,7 +58,7 @@ void CreateScene()
 	child3->setVisible(false);
 	child3->setMass(1.0);
   	child3->loadParticles(Vector3f(-1.1), Vector3f(1.15), 0.1);
-  	child3->loadSurface("../Media/standard/standard_cube20.obj");
+  	child3->loadSurface("../../Media/standard/standard_cube20.obj");
 	child3->scale(0.05);
 	child3->translate(Vector3f(0.3, 0.2, 0.5));
 	child3->getSurfaceNode()->setVisible(true);
@@ -78,7 +78,7 @@ void CreateScene()
 	child2->setVisible(false);
 	child2->setMass(1.0);
 	child2->loadParticles(Vector3f(-1.1), Vector3f(1.15), 0.1);
-	child2->loadSurface("../Media/standard/standard_cube20.obj");
+	child2->loadSurface("../../Media/standard/standard_cube20.obj");
 	child2->scale(0.05);
 	child2->translate(Vector3f(0.5, 0.2, 0.5));
 	child2->getElasticitySolver()->setIterationNumber(10);

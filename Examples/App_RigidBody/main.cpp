@@ -14,7 +14,7 @@
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 
 using namespace std;
-using namespace Physika;
+using namespace PhysIKA;
 
 
 void RecieveLogMessage(const Log::Message& m)
@@ -42,7 +42,7 @@ void CreateScene()
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);
-	rigidbody->loadShape("../Media/bowl/bowl.obj");
+	rigidbody->loadShape("../../Media/bowl/bowl.obj");
 	rigidbody->setActive(true);
 }
 

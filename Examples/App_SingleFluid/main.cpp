@@ -44,7 +44,7 @@ void CreateScene()
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
 	root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(1.5, 2, 1.5), 0.02, true);
-	root->loadSDF("../Media/bowl/bowl.sdf", false);
+	root->loadSDF("../../Media/bowl/bowl.sdf", false);
 
 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
 	root->addParticleSystem(child1);
@@ -61,7 +61,7 @@ void CreateScene()
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);
-	rigidbody->loadShape("../Media/bowl/bowl.obj");
+	rigidbody->loadShape("../../Media/bowl/bowl.obj");
 	rigidbody->setActive(false);
 }
 

@@ -213,7 +213,7 @@ namespace PhysIKA
 
 	QIcon PLogWidget::getIcon(const QString& name)
 	{
-		return QIcon("../Media/icon/" + name + ".png");
+		return QIcon("../../Media/icon/" + name + ".png");
 	}
 
 	QSize PLogWidget::sizeHint() const

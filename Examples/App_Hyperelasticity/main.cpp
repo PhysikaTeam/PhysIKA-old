@@ -52,8 +52,8 @@ void CreateScene()
 	child3->addVisualModule(ptRender1);
 
 	child3->setMass(1.0);
-  	child3->loadParticles("../Media/bunny/bunny_points.obj");
-  	child3->loadSurface("../Media/bunny/bunny_mesh.obj");
+  	child3->loadParticles("../../Media/bunny/bunny_points.obj");
+  	child3->loadSurface("../../Media/bunny/bunny_mesh.obj");
 	child3->translate(Vector3f(0.3, 0.2, 0.5));
 	child3->setVisible(false);
 	auto hyper = std::make_shared<HyperelasticityModule<DataType3f>>();
@@ -74,8 +74,8 @@ void CreateScene()
 	child4->addVisualModule(ptRender2);
 
 	child4->setMass(1.0);
-	child4->loadParticles("../Media/bunny/bunny_points.obj");
-	child4->loadSurface("../Media/bunny/bunny_mesh.obj");
+	child4->loadParticles("../../Media/bunny/bunny_points.obj");
+	child4->loadSurface("../../Media/bunny/bunny_mesh.obj");
 	child4->translate(Vector3f(0.7, 0.2, 0.5));
 	child4->setVisible(false);
 

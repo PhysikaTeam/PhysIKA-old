@@ -158,7 +158,7 @@ namespace PhysIKA
 		: QToolBar(parent)
 		, spinbox(Q_NULLPTR)
 		, spinboxAction(Q_NULLPTR)
-		, m_mediaDir("../Media/icon/")
+		, m_mediaDir("../../Media/icon/")
 	{
 		setWindowTitle(title);
 		setObjectName(title);
