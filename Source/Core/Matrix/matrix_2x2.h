@@ -53,8 +53,8 @@ public:
     COMM_FUNC const Vector<Scalar,2> row(unsigned int i) const;
     COMM_FUNC const Vector<Scalar,2> col(unsigned int i) const;
 
-	COMM_FUNC void setRow(unsigned int i, Vector<Scalar, 2>& vec);
-	COMM_FUNC void setCol(unsigned int j, Vector<Scalar, 2>& vec);
+	COMM_FUNC void setRow(unsigned int i, const Vector<Scalar, 2>& vec);
+	COMM_FUNC void setCol(unsigned int j, const Vector<Scalar, 2>& vec);
 
     COMM_FUNC const SquareMatrix<Scalar,2> operator+ (const SquareMatrix<Scalar,2> &) const;
     COMM_FUNC SquareMatrix<Scalar,2>& operator+= (const SquareMatrix<Scalar,2> &);

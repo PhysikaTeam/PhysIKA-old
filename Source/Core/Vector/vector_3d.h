@@ -78,6 +78,9 @@ public:
     COMM_FUNC Scalar dot(const Vector<Scalar,3>&) const;
 //    COMM_FUNC const SquareMatrix<Scalar,3> outerProduct(const Vector<Scalar,3>&) const;
 
+	COMM_FUNC Vector<Scalar, 3> minimum(const Vector<Scalar, 3>&) const;
+	COMM_FUNC Vector<Scalar, 3> maximum(const Vector<Scalar, 3>&) const;
+
 	COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
     
 public:

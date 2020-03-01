@@ -219,7 +219,7 @@ COMM_FUNC Scalar Vector<Scalar,3>::normSquared() const
 template <typename Scalar>
 COMM_FUNC Vector<Scalar,3>& Vector<Scalar,3>::normalize()
 {
-    data_ = glm::normalize(data_);
+	data_ = glm::length(data_) > glm::epsilon<Scalar>() ? glm::normalize(data_) : glm::tvec3<Scalar>(0, 0, 0);
     return *this;
 }
 
@@ -235,6 +235,26 @@ template <typename Scalar>
 COMM_FUNC Scalar Vector<Scalar,3>::dot(const Vector<Scalar,3>& vec2) const
 {
     return glm::dot(data_, vec2.data_);
+}
+
+template <typename Scalar>
+COMM_FUNC Vector<Scalar, 3> Vector<Scalar, 3>::minimum(const Vector<Scalar, 3>& vec2) const
+{
+	Vector<Scalar, 3> res;
+	res[0] = data_[0] < vec2[0] ? data_[0] : vec2[0];
+	res[1] = data_[1] < vec2[1] ? data_[1] : vec2[1];
+	res[2] = data_[2] < vec2[2] ? data_[2] : vec2[2];
+	return res;
+}
+
+template <typename Scalar>
+COMM_FUNC Vector<Scalar, 3> Vector<Scalar, 3>::maximum(const Vector<Scalar, 3>& vec2) const
+{
+	Vector<Scalar, 3> res;
+	res[0] = data_[0] > vec2[0] ? data_[0] : vec2[0];
+	res[1] = data_[1] > vec2[1] ? data_[1] : vec2[1];
+	res[2] = data_[2] > vec2[2] ? data_[2] : vec2[2];
+	return res;
 }
 
 // template <typename Scalar>

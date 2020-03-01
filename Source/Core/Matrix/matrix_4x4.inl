@@ -109,7 +109,7 @@ COMM_FUNC const Vector<Scalar,4> SquareMatrix<Scalar,4>::col(unsigned int i) con
 }
 
 template <typename Scalar>
-COMM_FUNC void SquareMatrix<Scalar, 4>::setRow(unsigned int i, Vector<Scalar, 4>& vec)
+COMM_FUNC void SquareMatrix<Scalar, 4>::setRow(unsigned int i, const Vector<Scalar, 4>& vec)
 {
 	data_[0][i] = vec[0];
 	data_[1][i] = vec[1];
@@ -118,7 +118,7 @@ COMM_FUNC void SquareMatrix<Scalar, 4>::setRow(unsigned int i, Vector<Scalar, 4>
 }
 
 template <typename Scalar>
-COMM_FUNC void SquareMatrix<Scalar, 4>::setCol(unsigned int j, Vector<Scalar, 4>& vec)
+COMM_FUNC void SquareMatrix<Scalar, 4>::setCol(unsigned int j, const Vector<Scalar, 4>& vec)
 {
 	data_[j][0] = vec[0];
 	data_[j][1] = vec[1];
