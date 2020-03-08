@@ -1,5 +1,6 @@
 #include "Primitive3D.h"
 #include "Core/Utility/SimpleMath.h"
+#include "Core/Interval.h"
 
 namespace PhysIKA
 {
@@ -1483,6 +1484,79 @@ namespace PhysIKA
 	}
 
 
+	COMM_FUNC int Line3D::intersect(const AlignedBox3D& abox, Segment3D& interSeg) const
+	{
+		if (!isValid())
+		{
+			return 0;
+		}
+
+		Real t0 = -REAL_MAX;
+		Real t1 = REAL_MAX;
+
+		auto clip = [](Real denom, Real numer, Real& t0, Real& t1) -> bool
+		{
+			if (denom > REAL_EPSILON)
+			{
+				if (numer > denom * t1)
+				{
+					return false;
+				}
+				if (numer > denom * t0)
+				{
+					t0 = numer / denom;
+				}
+				return true;
+			}
+			else if (denom < -REAL_EPSILON)
+			{
+				if (numer > denom * t0)
+				{
+					return false;
+				}
+				if (numer > denom * t1)
+				{
+					t1 = numer / denom;
+				}
+				return true;
+			}
+			else
+			{
+				return numer <= -REAL_EPSILON;
+			}
+		};
+
+		Coord3D boxCenter = 0.5 * (abox.v0 + abox.v1);
+		Coord3D boxExtent = 0.5 * (abox.v1 - abox.v0);
+
+		Coord3D offset = origin - boxCenter;
+		Coord3D lineDir = direction;
+		lineDir.normalize();
+
+		if (clip(+lineDir[0], -offset[0] - boxExtent[0], t0, t1) &&
+			clip(-lineDir[0], +offset[0] - boxExtent[0], t0, t1) &&
+			clip(+lineDir[1], -offset[1] - boxExtent[1], t0, t1) &&
+			clip(-lineDir[1], +offset[1] - boxExtent[1], t0, t1) &&
+			clip(+lineDir[2], -offset[2] - boxExtent[2], t0, t1) &&
+			clip(-lineDir[2], +offset[2] - boxExtent[2], t0, t1))
+		{
+			if (t1 > t0)
+			{
+				interSeg.v0 = origin + t0 * lineDir;
+				interSeg.v1 = origin + t1 * lineDir;
+				return 2;
+			}
+			else
+			{
+				interSeg.v0 = origin + t0 * lineDir;
+				interSeg.v1 = interSeg.v0;
+				return 1;
+			}
+		}
+
+		return 0;
+	}
+
 	COMM_FUNC Real Line3D::parameter(const Coord3D& pos) const
 	{
 		Coord3D l = pos - origin;
@@ -1841,6 +1915,37 @@ namespace PhysIKA
 		}
 	}
 
+	COMM_FUNC int Ray3D::intersect(const AlignedBox3D& abox, Segment3D& interSeg) const
+	{
+		int interNum = Line3D(origin, direction).intersect(abox, interSeg);
+		if (interNum == 0)
+		{
+			return 0;
+		}
+
+		Real t0 = parameter(interSeg.startPoint());
+		Real t1 = parameter(interSeg.endPoint());
+
+		Interval<Real> iRay(0, REAL_MAX, false, true);
+
+		if (iRay.inside(t0))
+		{
+			interSeg.v0 = origin + iRay.leftLimit()*direction;
+			interSeg.v1 = origin + iRay.rightLimit()*direction;
+			return 2;
+		} 
+		else if (iRay.inside(t1))
+		{
+			interSeg.v0 = origin + iRay.leftLimit()*direction;
+			interSeg.v1 = interSeg.v0;
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
 	COMM_FUNC Real Ray3D::parameter(const Coord3D& pos) const
 	{
 		Coord3D l = pos - origin;
@@ -2171,6 +2276,44 @@ namespace PhysIKA
 				interSeg.startPoint() = v0 - a1 * dir;
 				return 1;
 			}
+			return 0;
+		}
+	}
+
+	COMM_FUNC int Segment3D::intersect(const AlignedBox3D& abox, Segment3D& interSeg) const
+	{
+		Coord3D lineDir = direction();
+		int interNum = Line3D(v0, lineDir).intersect(abox, interSeg);
+		if (interNum == 0)
+		{
+			return 0;
+		}
+
+		Real t0 = parameter(interSeg.startPoint());
+		Real t1 = parameter(interSeg.endPoint());
+
+		Interval<Real> iSeg(0, 1, false, false);
+
+		if (iSeg.inside(t0) && iSeg.inside(t1))
+		{
+			interSeg.v0 = v0 + t0*lineDir;
+			interSeg.v1 = v0 + t1*lineDir;
+			return 2;
+		}
+		else if (iSeg.inside(t1))
+		{
+			interSeg.v0 = v0 + t1*lineDir;
+			interSeg.v1 = interSeg.v0;
+			return 1;
+		}
+		else if (iSeg.inside(t0))
+		{
+			interSeg.v0 = v0 + t0 * lineDir;
+			interSeg.v1 = interSeg.v0;
+			return 1;
+		}
+		else
+		{
 			return 0;
 		}
 	}

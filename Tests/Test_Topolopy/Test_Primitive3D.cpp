@@ -128,6 +128,28 @@ TEST(Line3D, distance) {
 	line_inter_1.intersect(plane_inter_0, inter_1);
 	EXPECT_EQ(inter_1.origin[0], Real(-2));
 	EXPECT_EQ(inter_1.origin[2], Real(-1));
+
+	AlignedBox3D abox1;
+	Line3D line_inter_2;
+	Segment3D segTmp;
+	EXPECT_EQ(line_inter_2.intersect(abox1, segTmp), 2);
+	Line3D line_inter_3(Coord3D(0, 1, 0), Coord3D(1, 0, 0));
+	EXPECT_EQ(line_inter_3.intersect(abox1, segTmp), 0);
+
+
+	Ray3D ray_inter_1(Coord3D(-0.1, 0, 0), Coord3D(1, 0, 0));
+	Ray3D ray_inter_2(Coord3D(-0.1, 0, -0.1), Coord3D(1, 0, 1));
+	Ray3D ray_inter_3(Coord3D(-1.1, 0, -1.1), Coord3D(1, 0, 1));
+	EXPECT_EQ(ray_inter_1.intersect(abox1, segTmp), 1);
+	EXPECT_EQ(ray_inter_2.intersect(abox1, segTmp), 1);
+	EXPECT_EQ(ray_inter_3.intersect(abox1, segTmp), 2);
+
+	Segment3D seg_inter_1(Coord3D(-0.1, 0, 0), Coord3D(0.9, 0, 0));
+	Segment3D seg_inter_2(Coord3D(-0.1, 0, -0.1), Coord3D(1, 0, 1));
+	Segment3D seg_inter_3(Coord3D(-1.1, 0, -1.1), Coord3D(1, 0, 1));
+	EXPECT_EQ(seg_inter_1.intersect(abox1, segTmp), 0);
+	EXPECT_EQ(seg_inter_2.intersect(abox1, segTmp), 1);
+	EXPECT_EQ(seg_inter_3.intersect(abox1, segTmp), 2);
 }
 
 TEST(Ray3D, distance) {

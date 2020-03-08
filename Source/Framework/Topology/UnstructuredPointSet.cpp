@@ -11,5 +11,4 @@ namespace PhysIKA
 	UnstructuredPointSet<Coord>::~UnstructuredPointSet()
 	{
 	}
-
 }

@@ -1,7 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.10)                                                            #指定CMake的最低版本为3.10。若版本过低，请自行升级CMake
 
 project(PhysIKA LANGUAGES CXX CUDA)                                                             #指定本项目的编译语言为C++、CUDA
-find_package(Qt5 COMPONENTS Core Widgets)                                                       #查找qt包,可选项
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)                                                    #为sln内部projects设置管理folder
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "CXX STANDARD VERSION 11,14,17")                         #默认为本项目下各编译目标指定C++11语言特性
@@ -42,9 +41,29 @@ endif()
 file(COPY "Media/" DESTINATION "Media")
 file(COPY "Source/Rendering/Shader/" DESTINATION "Shader")
 
+
+option(PhysIKA_Python_Binding "Enable python binding with pybind11" ON)
+if(PhysIKA_Python_Binding)
+    add_subdirectory(Python)
+endif()
+
+option(PhysIKA_Tests "Enable building PhysIKA tests" ON)
+if(PhysIKA_Tests)
+    add_subdirectory(Extern/gtest)
+    add_subdirectory(Tests)
+endif()
+
+option(PhysIKA_Qt5_GUI "Enable building Qt-based applications" ON)
+if(PhysIKA_Qt5_GUI)
+    find_package(Qt5 COMPONENTS Core Widgets)                                                       #查找qt包,可选项
+endif()
+
+option(PhysIKA_Examples "Enable building examples" ON)
+if(PhysIKA_Examples)
+    add_subdirectory(Examples)
+endif()
+
 add_subdirectory(Source)
-add_subdirectory(Examples)
-add_subdirectory(Tests)
-add_subdirectory(Extern/gtest)
+
 
 

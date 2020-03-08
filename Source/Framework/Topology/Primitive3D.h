@@ -275,8 +275,8 @@ namespace PhysIKA
 		COMM_FUNC int intersect(const Triangle3D& triangle, Point3D& interPt) const;
 
 		COMM_FUNC int intersect(const Sphere3D& sphere, Segment3D& interSeg) const;
-
 		COMM_FUNC int intersect(const Tet3D& tet, Segment3D& interSeg) const;
+		COMM_FUNC int intersect(const AlignedBox3D& abox, Segment3D& interSeg) const;
 
 
 		COMM_FUNC Real parameter(const Coord3D& pos) const;
@@ -331,6 +331,8 @@ namespace PhysIKA
 
 		COMM_FUNC int intersect(const Sphere3D& sphere, Segment3D& interSeg) const;
 
+		COMM_FUNC int intersect(const AlignedBox3D& abox, Segment3D& interSeg) const;
+
 		COMM_FUNC Real parameter(const Coord3D& pos) const;
 
 		COMM_FUNC bool isValid() const;
@@ -370,6 +372,7 @@ namespace PhysIKA
 		COMM_FUNC bool intersect(const Triangle3D& triangle, Point3D& interPt) const;
 
 		COMM_FUNC int intersect(const Sphere3D& sphere, Segment3D& interSeg) const;
+		COMM_FUNC int intersect(const AlignedBox3D& abox, Segment3D& interSeg) const;
 
 		COMM_FUNC Real length() const;
 		COMM_FUNC Real lengthSquared() const;
