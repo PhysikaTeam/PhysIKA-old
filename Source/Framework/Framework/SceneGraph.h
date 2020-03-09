@@ -6,6 +6,8 @@ namespace PhysIKA {
 class SceneGraph : public Base
 {
 public:
+	~SceneGraph() {};
+
 	void setRootNode(std::shared_ptr<Node> root) { m_root = root; }
 	std::shared_ptr<Node> getRootNode() { return m_root; }
 
@@ -69,8 +71,6 @@ private:
 	*/
 	SceneGraph(const SceneGraph&) {};
 	SceneGraph& operator=(const SceneGraph&) {};
-
-	~SceneGraph() {};
 
 private:
 	bool m_initialized;
