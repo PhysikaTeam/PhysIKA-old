@@ -3,8 +3,8 @@
  * @brief quaternion.
  * @author Sheng Yang, Fei Zhu
  * 
- * This file is part of PhysIKA, a versatile physics simulation library.
- * Copyright (C) 2013- PhysIKA Group.
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -42,7 +42,7 @@ template <typename Real>
 Quaternion<Real>::Quaternion(const Vector<Real,3> & unit_axis, Real angle_rad)
 {
     const Real a = angle_rad * (Real)0.5;
-    const Real s = sin(a);
+    const Real s = sin(a) / unit_axis.norm();
     w_ = cos(a);
     x_ = unit_axis[0] * s;
     y_ = unit_axis[1] * s;
@@ -55,10 +55,10 @@ Quaternion<Real>::Quaternion(Real angle_rad, const Vector<Real,3> & unit_axis)
 	Real c = cos(0.5f*angle_rad);
 	Real s = sin(0.5f*angle_rad);
 	Real t = s / unit_axis.norm();
-	x_ = c;
-	y_ = unit_axis[0]*t;
-	z_ = unit_axis[1] *t;
-	w_ = unit_axis[2] *t;
+	w_ = c;
+	x_ = unit_axis[0] *t;
+	y_ = unit_axis[1] *t;
+	z_ = unit_axis[2] *t;
 }
 
 template <typename Real>
@@ -154,20 +154,20 @@ Quaternion<Real>  Quaternion<Real>::operator * (const Real& scale) const
 template <typename Real>
 Quaternion<Real> Quaternion<Real>::operator * (const Quaternion<Real>& q) const
 {
-/*    return Quaternion(  w_ * q.x() + x_ * q.w() + y_ * q.z() - z_ * q.y(),
+    return Quaternion(  w_ * q.x() + x_ * q.w() + y_ * q.z() - z_ * q.y(),
                         w_ * q.y() + y_ * q.w() + z_ * q.x() - x_ * q.z(),
                         w_ * q.z() + z_ * q.w() + x_ * q.y() - y_ * q.x(),
-                        w_ * q.w() - x_ * q.x() - y_ * q.y() - z_ * q.z());*/
+                        w_ * q.w() - x_ * q.x() - y_ * q.y() - z_ * q.z());
 /*	return Quaternion(x_ * q.x() - y_ * q.y() - z_ * q.z() - w_ * q.w(),
 					  x_ * q.y() + y_ * q.x() + z_ * q.w() - w_ * q.z(),
 					  x_ * q.z() + z_ * q.x() + w_ * q.y() - y_ * q.w(),
 					  x_ * q.w() + w_ * q.x() + y_ * q.z() - z_ * q.z());*/
-	Quaternion result;
-	result.x_ = x_*q.x_ - y_*q.y_ - z_*q.z_ - w_*q.w_;
-	result.y_ = x_*q.y_ + y_*q.x_ + z_*q.w_ - w_*q.z_;
-	result.z_ = x_*q.z_ + z_*q.x_ + w_*q.y_ - y_*q.w_;
-	result.w_ = x_*q.w_ + w_*q.x_ + y_*q.z_ - z_*q.y_;
-	return result;
+	//Quaternion result;
+	//result.x_ = x_*q.x_ - y_*q.y_ - z_*q.z_ - w_*q.w_;
+	//result.y_ = x_*q.y_ + y_*q.x_ + z_*q.w_ - w_*q.z_;
+	//result.z_ = x_*q.z_ + z_*q.x_ + w_*q.y_ - y_*q.w_;
+	//result.w_ = x_*q.w_ + w_*q.x_ + y_*q.z_ - z_*q.y_;
+	//return result;
 }
 
 
@@ -242,8 +242,8 @@ Quaternion<Real>& Quaternion<Real>::normalize()
 {
 	Real d = sqrt(x_*x_ + y_*y_ + z_*z_ + w_*w_);
 	if (d < 0.00001) {
-		x_ = 1.0f;
-		y_ = z_ = w_ = 0.0f;
+		w_ = 1.0f;
+		y_ = z_ = x_ = 0.0f;
 		return *this;
 	}
 	d = 1.0 / d;
@@ -324,7 +324,7 @@ Real Quaternion<Real>::dot(const Quaternion<Real> & quat) const
 template <typename Real>
 Quaternion<Real> Quaternion<Real>::getConjugate() const
 {
-    return Quaternion<Real>(x_, -y_, -z_, -w_);
+    return Quaternion<Real>(-x_, -y_, -z_, w_);
 }
 
 template <typename Real>
@@ -350,12 +350,12 @@ void Quaternion<Real>::rotateVector(Vector<Real, 3>& v)
 	if (xlen == 0.0f) return;
 
 	Quaternion p(0, v[0], v[1], v[2]);
-	Quaternion qbar(x_, -y_, -z_, -w_);
+	Quaternion qbar(-x_, -y_, -z_, w_);
 	Quaternion qtmp;
 	qtmp = (*this)*p;
 	qtmp = qtmp*qbar;
 	qtmp.normalize();
-	v[0] = qtmp.y_; v[1] = qtmp.z_; v[2] = qtmp.w_;
+	v[0] = qtmp.x_; v[1] = qtmp.y_; v[2] = qtmp.z_;
 	v.normalize();
 	v *= xlen;
 }
@@ -410,88 +410,108 @@ SquareMatrix<Real,4> Quaternion<Real>::get4x4Matrix() const
 template <typename Real>
 Quaternion<Real>::Quaternion(const SquareMatrix<Real, 3>& matrix )
 {
-    Real tr = matrix(0,0) + matrix(1,1) + matrix(2,2);
-    if(tr > 0.0)
+	Real s[3];
+	s[0] = matrix(0, 0) - matrix(1, 1) - matrix(2, 2) + Real(1.0);
+	s[1] = -matrix(0, 0) + matrix(1, 1) - matrix(2, 2) + Real(1.0);
+	s[2] = -matrix(0, 0) - matrix(1, 1) + matrix(2, 2) + Real(1.0);
+	Real tr = matrix(0, 0) + matrix(1, 1) + matrix(2, 2);
+
+	int i = 0, j, k;
+	int next[3] = { 1, 2, 0 };
+
+	if (s[1] > s[0]) i = 1;
+	if (s[2] > s[i]) i = 2;
+
+    if(tr > s[i])
     {
-        Real s = sqrt(tr + Real(1.0));
-        w_ = s * Real(0.5);
-        if(s != 0.0)
-            s = Real(0.5) / s;
-        x_ = s * (matrix(1,2) - matrix(2,1));
-        y_ = s * (matrix(2,0) - matrix(0,2));
-        z_ = s * (matrix(0,1) - matrix(1,0));
+        Real sw = sqrt(tr + Real(1.0));
+        w_ = sw * Real(0.5);
+        if(sw != 0.0)
+            sw = Real(0.5) / sw;
+        x_ = - sw * (matrix(1,2) - matrix(2,1));
+        y_ = - sw * (matrix(2,0) - matrix(0,2));
+        z_ = - sw * (matrix(0,1) - matrix(1,0));
     }
     else
     {
-        int i = 0, j, k;
-        int next[3] = { 1, 2, 0 }; 
-        Real q[4];
-        if(matrix(1,1) > matrix(0,0)) i = 1;
-        if(matrix(2,2) > matrix(i,i)) i = 2;
+        Real q[3];
+
         j = next[i];
         k = next[j];
-        Real s = sqrt(matrix(i,i) - matrix(j,j) - matrix(k,k) + Real(1.0));
-        q[i] = s * Real(0.5);
-        if(s != 0.0) 
-            s = Real(0.5)/s;
-        q[3] = s * (matrix(j,k) - matrix(k,j));
-        q[j] = s * (matrix(i,j) - matrix(j,i));
-        q[k] = s * (matrix(i,k) - matrix(k,i));
+
+		Real si = sqrt(s[i]);
+        q[i] = si * Real(0.5);
+        if(si != 0.0) 
+            si = Real(0.5)/si;
+		q[j] = si * (matrix(i, j) + matrix(j, i));
+		q[k] = si * (matrix(i, k) + matrix(k, i));
+
+		w_ = si * (matrix(k, j) - matrix(j, k));
         x_ = q[0];
         y_ = q[1];
         z_ = q[2];
-        w_ = q[3];
+        
     }
 }
 
 template <typename Real>
 Quaternion<Real>::Quaternion(const SquareMatrix<Real,4>& matrix)
 {
-    Real tr = matrix(0,0) + matrix(1,1) + matrix(2,2);
-    if(tr > 0.0)
-    {
-        Real s = sqrt(tr + Real(1.0));
-        w_ = s * Real(0.5);
-        if(s != 0.0)
-            s = Real(0.5) / s;
-        x_ = s * (matrix(1,2) - matrix(2,1));
-        y_ = s * (matrix(2,0) - matrix(0,2));
-        z_ = s * (matrix(0,1) - matrix(1,0));
-    }
-    else
-    {
-        int i = 0, j, k;
-        int next[3] = { 1, 2, 0 }; 
-        Real q[4];
-        if(matrix(1,1) > matrix(0,0)) i = 1;
-        if(matrix(2,2) > matrix(i,i)) i = 2;
-        j = next[i];
-        k = next[j];
-        Real s = sqrt(matrix(i,i) - matrix(j,j) - matrix(k,k) + Real(1.0));
-        q[i] = s * Real(0.5);
-        if(s != 0.0) 
-            s = Real(0.5)/s;
-        q[3] = s * (matrix(j,k) - matrix(k,j));
-        q[j] = s * (matrix(i,j) - matrix(j,i));
-        q[k] = s * (matrix(i,k) - matrix(k,i));
-        x_ = q[0];
-        y_ = q[1];
-        z_ = q[2];
-        w_ = q[3];
-    }
+	Real s[3];
+	s[0] = matrix(0, 0) - matrix(1, 1) - matrix(2, 2) + Real(1.0);
+	s[1] = -matrix(0, 0) + matrix(1, 1) - matrix(2, 2) + Real(1.0);
+	s[2] = -matrix(0, 0) - matrix(1, 1) + matrix(2, 2) + Real(1.0);
+	Real tr = matrix(0, 0) + matrix(1, 1) + matrix(2, 2);
+
+	int i = 0, j, k;
+	int next[3] = { 1, 2, 0 };
+
+	if (s[1] > s[0]) i = 1;
+	if (s[2] > s[i]) i = 2;
+
+	if (tr > s[i])
+	{
+		Real sw = sqrt(tr + Real(1.0));
+		w_ = sw * Real(0.5);
+		if (sw != 0.0)
+			sw = Real(0.5) / sw;
+		x_ = -sw * (matrix(1, 2) - matrix(2, 1));
+		y_ = -sw * (matrix(2, 0) - matrix(0, 2));
+		z_ = -sw * (matrix(0, 1) - matrix(1, 0));
+	}
+	else
+	{
+		Real q[3];
+
+		j = next[i];
+		k = next[j];
+
+		Real si = sqrt(s[i]);
+		q[i] = si * Real(0.5);
+		if (si != 0.0)
+			si = Real(0.5) / si;
+		q[j] = si * (matrix(i, j) + matrix(j, i));
+		q[k] = si * (matrix(i, k) + matrix(k, i));
+
+		w_ = si * (matrix(k, j) - matrix(j, k));
+		x_ = q[0];
+		y_ = q[1];
+		z_ = q[2];
+
+	}
 }
 
 template <typename Real>
 void Quaternion<Real>::toRotationAxis(Real& rot, Vector<Real, 3>& axis) const
 {
-	rot = 2.0f * acos(x_);
+	rot = 2.0f * acos(w_);
 	if (rot == 0) {
 		axis[0] = axis[1] = 0; axis[2] = 1;
 		return;
 	}
-	axis[0] = y_;
-	axis[1] = z_;
-	axis[2] = w_;
+	axis[0] = x_;
+	axis[1] = y_;
+	axis[2] = z_;
 	axis.normalize();
 }
 

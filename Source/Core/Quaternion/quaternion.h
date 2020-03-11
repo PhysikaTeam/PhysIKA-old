@@ -3,8 +3,8 @@
  * @brief quaternion class, it is used for rotation operations.
  * @author Sheng Yang, Fei Zhu
  * 
- * This file is part of PhysIKA, a versatile physics simulation library.
- * Copyright (C) 2013- PhysIKA Group.
+ * This file is part of Physika, a versatile physics simulation library.
+ * Copyright (C) 2013- Physika Group.
  *
  * This Source Code Form is subject to the terms of the GNU General Public License v2.0. 
  * If a copy of the GPL was not distributed with this file, you can obtain one at:
@@ -39,7 +39,10 @@ public:
 	COMM_FUNC Quaternion(const Quaternion<Real> &);
 	COMM_FUNC explicit Quaternion(const SquareMatrix<Real, 3> &);   //init from a 3x3matrix
 	COMM_FUNC explicit Quaternion(const SquareMatrix<Real,4> &);    //init from a 4x4matrix
-	COMM_FUNC explicit Quaternion(const Vector<Real, 3>& );         //init form roll pitch yaw/ Euler angle;
+
+	/// rotation order:
+	/// R_y(a[2]) * R_x(a[1]) * R_z(a[0])
+	COMM_FUNC explicit Quaternion(const Vector<Real, 3>& a);         //init form roll pitch yaw/ Euler angle;
     
     /* Assignment operators */
 	COMM_FUNC Quaternion<Real> &operator = (const Quaternion<Real> &);
@@ -108,6 +111,6 @@ COMM_FUNC inline Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
 typedef Quaternion<float> Quaternionf;
 typedef Quaternion<double> Quaterniond;
 
-}//end of namespace PhysIKA
+}//end of namespace Physika
 
 #endif //PHSYIKA_CORE_QUATERNION_QUATERNION_H_
