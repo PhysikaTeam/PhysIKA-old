@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.10)
 
 set(LIB_NAMES GlutGUI QtGUI)
 
-if(NOT VTK_BINARY_DIR)
-    find_package(VTK)
-    if(NOT VTK_DIR)
-        MESSAGE(FATAL_ERROR "Please set VTK_DIR.")
-    endif(NOT VTK_DIR)
-    include(${VTK_USE_FILE})
-endif(NOT VTK_BINARY_DIR)
+#if(NOT VTK_BINARY_DIR)
+#    find_package(VTK)
+#    if(NOT VTK_DIR)
+#        MESSAGE(FATAL_ERROR "Please set VTK_DIR.")
+#    endif(NOT VTK_DIR)
+#    include(${VTK_USE_FILE})
+#endif(NOT VTK_BINARY_DIR)
 
 if(NOT Qt5_FOUND)                                                                   #如果没有安装Qt5，那么不编译QtGUI模块
     list(REMOVE_ITEM LIB_NAMES QtGUI)
@@ -56,6 +56,6 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     
 endforeach()
 
-target_link_libraries(QtGUI
-    ${VTK_LIBRARIES}
-)
+#target_link_libraries(QtGUI
+#    ${VTK_LIBRARIES}
+#)

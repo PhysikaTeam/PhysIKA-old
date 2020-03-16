@@ -19,6 +19,7 @@
 #include "SemiImplicitEuler.h"
 #include "ArticulatedBodyFDSolver.h"
 
+
 namespace PhysIKA
 {
 
@@ -27,12 +28,14 @@ namespace PhysIKA
 
 		inline RigidTimeIntegrationModule::RigidTimeIntegrationModule()
 	{
+		m_fd_solver = std::make_shared<ArticulatedBodyFDSolver>();
+		m_fd_solver->setParent(this->getParent());
 	}
 
 
 	inline void RigidTimeIntegrationModule::begin()
 	{
-		m_fd_solver.setParent(this->getParent());
+		//m_fd_solver.setParent(this->getParent());
 
 		if (!m_time_init)
 		{
@@ -61,7 +64,7 @@ namespace PhysIKA
 
 		RK4Integrator rk4;
 		//*(s.m_motionState) = rk4.solve(*(s.m_motionState), dydt, m_dt);
-		rk4.solve(*(s.m_motionState), dydt, m_dt);
+		rk4.solve(*(s.m_motionState), DydtAdapter(this), m_dt);
 
 		//s = s + RigidState::dydt(s) * m_dt;
 
@@ -90,11 +93,12 @@ namespace PhysIKA
 		/// Use InertiaMatrix forward dynamics solver
 		//InertiaMatrixFDSolver fd_solver;
 		//ArticulatedBodyFDSolver& fd_solver = m_fd_solver;
-		ArticulatedBodyFDSolver fd_solver;
-		fd_solver.setParent(root);
+		//ArticulatedBodyFDSolver fd_solver;
+		//fd_solver.setParent(root);
+
 
 		/// Solve general acceleration.
-		bool solve_ok = fd_solver.solve(*system_state, s0, ds.m_dq);
+		bool solve_ok = m_fd_solver->solve(*system_state, s0, ds.m_dq);
 
 		timer_solve_FD.stop();
 		//std::cout << "  TIME * solve FD: " << timer_solve_FD.getElapsedTime() << std::endl;
@@ -168,6 +172,12 @@ namespace PhysIKA
 			//return ds;
 
 		}
+	}
+
+	void RigidTimeIntegrationModule::setFDSolver(std::shared_ptr<ForwardDynamicsSolver> fd_solver)
+	{
+		this->m_fd_solver = fd_solver;
+		this->m_fd_solver->setParent(this->getParent());
 	}
 
 }

@@ -653,11 +653,14 @@ void demo_MultiRigid()
 
 		/// ********* joint info
 		Vector3f joint_r(0, -box_sy / 2.0, 0);
+		Quaternion<float> joint_q;// (Vector3f(u1(e), u1(e), u1(e)), u1(e));
 		if (i == 0)
 		{
-			joint_r[1] = 3 * N + 3;
+			joint_r[1] = 10;// 3 * N + 3;
+			//joint_q = Quaternion<float>(Vector3f(u1(e), u1(e), u1(e)), u1(e));
+			
 		}
-		Quaternion<float> joint_q(Vector3f(u1(e), u1(e), u1(e)), u1(e));
+		
 		joint[i]->setJointInfo(-rigid_r);
 
 

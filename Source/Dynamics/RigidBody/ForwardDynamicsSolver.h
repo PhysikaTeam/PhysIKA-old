@@ -34,7 +34,7 @@ namespace PhysIKA
 		* @return Success or not
 		*	@retval Success or not
 		*/
-		virtual bool solve(const SystemState& s_system, const SystemMotionState& s, Vectornd<float>& ddq) = 0;
+		virtual bool solve(const SystemState& s_system, const SystemMotionState& s, Vectornd<float>& ddq) { return false; };
 
 	protected:
 		Node * m_parent_node = 0;

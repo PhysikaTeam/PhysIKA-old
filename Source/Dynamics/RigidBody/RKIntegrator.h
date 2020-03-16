@@ -10,7 +10,9 @@ namespace PhysIKA
 		//template<typename State, template DState>
 		//State solve(const State& s0, void(*dydt)(const State&, DState&), double dt)
 		//SystemMotionState solve(const State& s0, void(*dydt)(const State&, DState&), double dt)
-		void solve(SystemMotionState& s0, void(*dydt)(const SystemMotionState&, DSystemMotionState&), double dt)
+		//void solve(SystemMotionState& s0, void(*dydt)(const SystemMotionState&, DSystemMotionState&), double dt)
+		template<typename DYDT>
+		void solve(SystemMotionState& s0, DYDT& dydt, double dt)
 		{
 			//return s0 + dydt(s0) * dt;
 

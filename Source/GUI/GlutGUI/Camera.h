@@ -57,6 +57,9 @@ namespace PhysIKA
 		Vector3f m_eye;
 		Vector3f m_light;
 		Vector3f m_rotation_axis;
+
+		Vector3f m_updir;
+		Vector3f m_rightdir;
 	};
 
 }

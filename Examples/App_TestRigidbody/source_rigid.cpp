@@ -4,8 +4,11 @@
 #include "Dynamics/RigidBody/RigidUtil.h"
 
 
-
-
+template<typename T> 
+void out(const Quaternion<T>& q)
+{
+	std::cout << q.x() << "  " << q.y() << "  " << q.z() << "  " << q.w() << std::endl;
+}
 
 
 void out(const Vector3f& v)
@@ -69,11 +72,23 @@ int main()
 
 	//demo_SphericalJoint();
 
-	demo_MultiRigid<5>();
+	demo_MultiRigid<50>();
 
+	//Quaternion<float> qx(Vector3f(1, 0, 0), 1.57);
+	//Quaternion<float> qy(Vector3f(0, 1, 0), 1.57);
+	//Quaternion<float> qxy = qx * qy;
+	//Quaternion<float> qyx = qy * qx;
 
+	//Vector3f tmpv(1, 2, 3);
 
+	//out(qx.rotate(tmpv));
+	//out(qy.rotate(tmpv));
 
+	//out(qx.rotate(qy.rotate(tmpv)));
+	//out(qy.rotate(qx.rotate(tmpv)));
+
+	//out(qxy.rotate(tmpv));
+	//out(qyx.rotate(tmpv));
 	
 	
 

@@ -8,12 +8,15 @@
 #include "Dynamics/RigidBody/RigidState.h"
 
 #include "Dynamics/RigidBody/ArticulatedBodyFDSolver.h"
+#include "ForwardDynamicsSolver.h"
 
 #include<memory>
 #include<vector>
 
 namespace PhysIKA
 {
+
+	
 
 
 	class RigidTimeIntegrationModule:public Module
@@ -42,10 +45,12 @@ namespace PhysIKA
 		void setDt(double dt) { m_dt = dt; }
 
 
-		static void dydt(const SystemMotionState& s0, DSystemMotionState& ds);
+		void dydt(const SystemMotionState& s0, DSystemMotionState& ds);
+
+		void setFDSolver(std::shared_ptr<ForwardDynamicsSolver> fd_solver);
 		
 	private:
-		ArticulatedBodyFDSolver m_fd_solver;
+		std::shared_ptr<ForwardDynamicsSolver> m_fd_solver;
 
 		Vectornd<float> m_ddq;
 		double m_dt = 0;
@@ -55,5 +60,28 @@ namespace PhysIKA
 	};
 
 
+	class DydtAdapter
+	{
+	public:
+		DydtAdapter(RigidTimeIntegrationModule* integrator = 0) :m_integrator(integrator)
+		{}
+
+		void setIntegrator(RigidTimeIntegrationModule* integrator)
+		{
+			m_integrator = integrator;
+		}
+
+		void operator()(const SystemMotionState& s0, DSystemMotionState& ds)
+		{
+			if (m_integrator)
+			{
+				m_integrator->dydt(s0, ds);
+			}
+		}
+
+	public:
+		RigidTimeIntegrationModule* m_integrator;
+
+	};
 
 }
