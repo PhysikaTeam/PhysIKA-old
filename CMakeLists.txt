@@ -16,26 +16,9 @@ include_directories("Source")                                                   
 # temporary solution to solve linux compilation problem. our header file path should begin with Core this level
 include_directories("Source/Core" "Source/Dynamics" "Source/Framework" "Source/GUI" "Source/IO" "Source/Rendering")
 
-
 include_directories("Extern")                                           #默认为本项目下各编译目标添加Source/Physika_Dependency/ 目录
 include_directories("Extern/OpenGL")                                    #默认为本项目下各编译目标添加Source/Physika_Dependency/OpenGL 目录
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})                                 	                #默认为本项目下各编译目标添加cuda/include 目录
-
-
-if(WIN32)                                                               
-    link_directories("Extern/OpenGL/lib/Windows/X64")
-    link_libraries(freeglut glew32 glu32 opengl32)
-    link_directories("Extern/irrLicht/lib/Win64-visualStudio")              
-endif()
-
-if(APPLE)
-    link_directories("Extern/OpenGL/lib/Apple/X64")
-elseif(UNIX)
-    link_directories("Extern/OpenGL/lib/Linux/X64")
-    link_libraries(freeglut GL GLU GLEW)
-    link_directories("Extern/irrLicht/lib/linux64")              
-    link_libraries(Irrlicht libX11.so libXxf86vm.so.1)
-endif()
 
 file(COPY "Media/" DESTINATION "Media")
 file(COPY "Source/Rendering/Shader/" DESTINATION "Shader")
@@ -53,9 +36,6 @@ if(PhysIKA_Tests)
 endif()
 
 option(PhysIKA_Qt5_GUI "Enable building Qt-based applications" ON)
-if(PhysIKA_Qt5_GUI)
-    find_package(Qt5 COMPONENTS Core Widgets)                                                       #查找qt包,可选项
-endif()
 
 option(PhysIKA_Examples "Enable building examples" ON)
 if(PhysIKA_Examples)

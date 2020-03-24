@@ -8,7 +8,6 @@
 
 #include "Framework/Topology/DistanceField3D.h"
 #include "Framework/Topology/TriangleSet.h"
-#include "Rendering/SurfaceMeshRender.h"
 
 namespace PhysIKA
 {
@@ -87,10 +86,6 @@ namespace PhysIKA
 
 		m_surfaceNode->setTopologyModule(triSet);
 
-		auto render = std::make_shared<SurfaceMeshRender>();
-		render->setColor(Vector3f(0.8, 0.8, 0.8));
-		m_surfaceNode->addVisualModule(render);
-
 		m_surfaceNode->setVisible(bVisible);
 	}
 
@@ -111,10 +106,6 @@ namespace PhysIKA
 		triSet->translate(center);
 
 		m_surfaceNode->setTopologyModule(triSet);
-
-		auto render = std::make_shared<SurfaceMeshRender>();
-		render->setColor(Vector3f(1, 1, 0));
-		m_surfaceNode->addVisualModule(render);
 
 		m_surfaceNode->setVisible(bVisible);
 	}

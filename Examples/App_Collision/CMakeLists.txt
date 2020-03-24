@@ -6,6 +6,20 @@ link_libraries(Core Framework IO Rendering)
 link_libraries(ParticleSystem RigidBody)
 link_libraries(GlutGUI)
 
+if(WIN32)                                                               
+    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64")
+    link_libraries(freeglut glew32)            
+endif()
+
+if(APPLE)
+    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Apple/X64")
+elseif(UNIX)
+    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Linux/X64")
+    link_libraries(freeglut GLEW)
+    link_directories("${PROJECT_SOURCE_DIR}/Extern/irrLicht/lib/linux64")              
+    link_libraries(Irrlicht libX11.so libXxf86vm.so.1)
+endif()
+
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")
 
     file(                                                                                                       #利用glob命令读取所有源文件list
