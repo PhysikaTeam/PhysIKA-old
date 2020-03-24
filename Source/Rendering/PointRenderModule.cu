@@ -74,6 +74,7 @@ namespace PhysIKA
 			break;
 		}
 
+		Log::sendMessage(Log::Info, "PointRenderModule successfully initialized!");
 	}
 
 	__global__ void PRM_MappingColor(

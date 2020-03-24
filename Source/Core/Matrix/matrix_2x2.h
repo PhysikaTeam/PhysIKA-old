@@ -60,22 +60,22 @@ public:
     COMM_FUNC SquareMatrix<Scalar,2>& operator+= (const SquareMatrix<Scalar,2> &);
     COMM_FUNC const SquareMatrix<Scalar,2> operator- (const SquareMatrix<Scalar,2> &) const;
     COMM_FUNC SquareMatrix<Scalar,2>& operator-= (const SquareMatrix<Scalar,2> &);
+	COMM_FUNC const SquareMatrix<Scalar, 2> operator* (const SquareMatrix<Scalar, 2> &) const;
+	COMM_FUNC SquareMatrix<Scalar, 2>& operator*= (const SquareMatrix<Scalar, 2> &);
+	COMM_FUNC const SquareMatrix<Scalar, 2> operator/ (const SquareMatrix<Scalar, 2> &) const;
+	COMM_FUNC SquareMatrix<Scalar, 2>& operator/= (const SquareMatrix<Scalar, 2> &);
 
     COMM_FUNC SquareMatrix<Scalar,2>& operator= (const SquareMatrix<Scalar,2> &);
 
     COMM_FUNC bool operator== (const SquareMatrix<Scalar,2> &) const;
     COMM_FUNC bool operator!= (const SquareMatrix<Scalar,2> &) const;
 
-    COMM_FUNC const SquareMatrix<Scalar,2> operator* (Scalar) const;
-    COMM_FUNC SquareMatrix<Scalar,2>& operator*= (Scalar);
+    COMM_FUNC const SquareMatrix<Scalar,2> operator* (const Scalar&) const;
+    COMM_FUNC SquareMatrix<Scalar,2>& operator*= (const Scalar&);
+	COMM_FUNC const SquareMatrix<Scalar, 2> operator/ (const Scalar&) const;
+	COMM_FUNC SquareMatrix<Scalar, 2>& operator/= (const Scalar&);
 
     COMM_FUNC const Vector<Scalar,2> operator* (const Vector<Scalar,2> &) const;
-
-    COMM_FUNC const SquareMatrix<Scalar,2> operator* (const SquareMatrix<Scalar,2> &) const;
-    COMM_FUNC SquareMatrix<Scalar,2>& operator*= (const SquareMatrix<Scalar,2> &);
-
-    COMM_FUNC const SquareMatrix<Scalar,2> operator/ (Scalar) const;
-    COMM_FUNC SquareMatrix<Scalar,2>& operator/= (Scalar);
 
     COMM_FUNC const SquareMatrix<Scalar, 2> operator- (void) const;
 

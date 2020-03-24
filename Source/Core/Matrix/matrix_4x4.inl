@@ -174,13 +174,13 @@ COMM_FUNC bool SquareMatrix<Scalar,4>::operator!= (const SquareMatrix<Scalar,4> 
 }
 
 template <typename Scalar>
-COMM_FUNC const SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator* (Scalar scale) const
+COMM_FUNC const SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator* (const Scalar& scale) const
 {
     return SquareMatrix<Scalar, 4>(*this) *= scale;
 }
 
 template <typename Scalar>
-COMM_FUNC SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator*= (Scalar scale)
+COMM_FUNC SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator*= (const Scalar& scale)
 {
     data_ *= scale;
     return *this;
@@ -210,13 +210,26 @@ COMM_FUNC SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator*= (const Squa
 }
 
 template <typename Scalar>
-COMM_FUNC const SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator/ (Scalar scale) const
+COMM_FUNC const SquareMatrix<Scalar, 4> SquareMatrix<Scalar, 4>::operator/ (const SquareMatrix<Scalar, 4> &mat2) const
+{
+	return SquareMatrix<Scalar, 4>(*this) *= mat2.inverse();
+}
+
+template <typename Scalar>
+COMM_FUNC SquareMatrix<Scalar, 4>& SquareMatrix<Scalar, 4>::operator/= (const SquareMatrix<Scalar, 4> &mat2)
+{
+	data_ *= glm::inverse(mat2.data_);
+	return *this;
+}
+
+template <typename Scalar>
+COMM_FUNC const SquareMatrix<Scalar,4> SquareMatrix<Scalar,4>::operator/ (const Scalar& scale) const
 {
     return SquareMatrix<Scalar, 4>(*this) /= scale;
 }
 
 template <typename Scalar>
-COMM_FUNC SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator/= (Scalar scale)
+COMM_FUNC SquareMatrix<Scalar,4>& SquareMatrix<Scalar,4>::operator/= (const Scalar& scale)
 {
 // #ifndef __CUDA_ARCH__
 //     if (abs(scale) <= std::numeric_limits<Scalar>::epsilon())

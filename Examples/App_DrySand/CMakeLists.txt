@@ -25,16 +25,7 @@ set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")
     set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Examples")                              #为project设定folder目录
 #    set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_CURRENT_BINARY_DIR}/bin/)
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Examples")
-
-    if(WIN32)                                                                                                   #copy dll 文件
-        file(COPY "${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64/freeglut.dll" 
-			  "${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64/glew32.dll" 
-			  "${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64/glu32.dll" 
-			  "${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64/opengl32.dll"
-              "${PROJECT_SOURCE_DIR}/Extern/irrLicht/lib/Win64-visualStudio/Irrlicht.dll" 
-			  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 
     foreach(SRC IN ITEMS ${SRC_LIST})                                                                           #为VS工程添加filter 方便查看文件结构目录

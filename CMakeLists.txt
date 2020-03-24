@@ -19,7 +19,6 @@ include_directories("Source/Core" "Source/Dynamics" "Source/Framework" "Source/G
 
 include_directories("Extern")                                           #默认为本项目下各编译目标添加Source/Physika_Dependency/ 目录
 include_directories("Extern/OpenGL")                                    #默认为本项目下各编译目标添加Source/Physika_Dependency/OpenGL 目录
-include_directories("Extern/irrLicht/include")                          #默认为本项目下各编译目标添加Source/Physika_dependency/irrLicht/include 目录
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})                                 	                #默认为本项目下各编译目标添加cuda/include 目录
 
 
@@ -27,8 +26,8 @@ if(WIN32)
     link_directories("Extern/OpenGL/lib/Windows/X64")
     link_libraries(freeglut glew32 glu32 opengl32)
     link_directories("Extern/irrLicht/lib/Win64-visualStudio")              
-    link_libraries(Irrlicht)
 endif()
+
 if(APPLE)
     link_directories("Extern/OpenGL/lib/Apple/X64")
 elseif(UNIX)

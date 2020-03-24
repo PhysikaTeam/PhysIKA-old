@@ -12,6 +12,8 @@ using namespace PhysIKA;
 
 int main()
 {
+	Log::sendMessage(Log::Info, "Simulation start");
+
 	SceneGraph& scene = SceneGraph::getInstance();
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();

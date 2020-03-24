@@ -21,7 +21,7 @@ public:
 	void translate(float x, float y, float z);
 	void scale(float x, float y, float z);
 
-	virtual void updateRenderingContext() = 0;
+	virtual void updateRenderingContext() {};
 
 	std::string getModuleType() override { return "VisualModule"; }
 protected:

@@ -1,28 +1,21 @@
-#include <pybind11/pybind11.h>
-#include "Core/Utility/CTimer.h"
-#include "GUI/GlutGUI/GLApp.h"
-#include "Framework/Framework/SceneGraph.h"
+#include "PyPhysIKA.h"
 
-namespace py = pybind11;
+#include "PyGlutGUI.h"
+#include "PyCore.h"
+#include "PyFramework.h"
+#include "PyParticleSystem.h"
+#include "PyRendering.h"
+
+// void init_GlutGUI(py::module &);
+// void init_Core(py::module &);
 
 PYBIND11_MODULE(PyPhysIKA, m) {
-	m.doc() = "Glut GUI";
-	pybind11::class_<PhysIKA::CTimer>(m, "CTimer")
-		.def(pybind11::init())
-		.def("start", &PhysIKA::CTimer::start)
-		.def("stop", &PhysIKA::CTimer::stop)
-		.def("get_elapsed_time", &PhysIKA::CTimer::getElapsedTime);
 
-	pybind11::class_<PhysIKA::GLApp>(m, "GLApp")
-		.def(pybind11::init())
-		.def("create_window", &PhysIKA::GLApp::createWindow)
-		.def("main_loop", &PhysIKA::GLApp::mainLoop);
+	m.doc() = "Python binding of PhysIKA";
 
-	pybind11::class_<PhysIKA::Vector3f>(m, "Vector3f")
-		.def(pybind11::init())
-		.def("norm", &PhysIKA::Vector3f::norm);
-
-	py::class_<PhysIKA::SceneGraph>(m, "SceneGraph")
-		.def("is_initialized", &PhysIKA::SceneGraph::isInitialized, "Return a Python dictionary")
-		.def_static("get_instance", &PhysIKA::SceneGraph::getInstance, "Return an instance");
+	pybind_glut_gui(m);
+	pybind_core(m);
+	pybind_framework(m);
+	pybind_particle_system(m);
+	pybind_rendering(m);
 }
