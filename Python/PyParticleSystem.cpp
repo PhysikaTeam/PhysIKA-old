@@ -40,7 +40,7 @@ void declare_particle_elastic_body(py::module &m, std::string typestr) {
 		.def(py::init<>())
 		.def("set_mass", &Class::setMass)
 		.def("load_surface", &Class::loadSurface)
-		.def("load_particles", (void (Class::*)(Class::Coord lo, Class::Coord hi, Class::Real distance)) &Class::loadParticles)
+//		.def("load_particles", (void (Class::*)(Class::Coord lo, Class::Coord hi, Class::Real distance)) &Class::loadParticles)
 		.def("load_particles", (void (Class::*)(std::string)) &Class::loadParticles)
 		.def("translate", &Class::translate);
 }

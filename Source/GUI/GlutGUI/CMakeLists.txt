@@ -5,17 +5,10 @@ set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if(WIN32)                                                               
     link_directories("Extern/OpenGL/lib/Windows/X64")
-    link_libraries(freeglut glew32)
-    link_directories("Extern/irrLicht/lib/Win64-visualStudio")              
-endif()
-
-if(APPLE)
-    link_directories("Extern/OpenGL/lib/Apple/X64")
+    link_libraries(freeglut glew32)            
 elseif(UNIX)
     link_directories("Extern/OpenGL/lib/Linux/X64")
     link_libraries(freeglut GLEW)
-    link_directories("Extern/irrLicht/lib/linux64")              
-    link_libraries(Irrlicht libX11.so libXxf86vm.so.1)
 endif()
 
 file(                                                                           

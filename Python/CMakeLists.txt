@@ -18,15 +18,9 @@ link_libraries(ParticleSystem RigidBody)
 if(WIN32)                                                               
     link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64")
     link_libraries(freeglut glew32)            
-endif()
-
-if(APPLE)
-    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Apple/X64")
 elseif(UNIX)
     link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Linux/X64")
-    link_libraries(freeglut GLEW)
-    link_directories("${PROJECT_SOURCE_DIR}/Extern/irrLicht/lib/linux64")              
-    link_libraries(Irrlicht libX11.so libXxf86vm.so.1)
+    link_libraries(freeglut GLEW GL GLU)            
 endif()
 
 if(WIN32)                                                                                                   #copy dll 文件

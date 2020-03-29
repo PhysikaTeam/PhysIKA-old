@@ -61,6 +61,12 @@ void CreateScene()
 
 int main()
 {
+	int* ptr;
+	cuSafeCall(cudaMalloc((void**)&ptr, 4*1000));
+
+	DeviceArray<Vector3f> cd;
+	cd.resize(1000);
+
 	CreateScene();
 
 	Log::setOutput("console_log.txt");

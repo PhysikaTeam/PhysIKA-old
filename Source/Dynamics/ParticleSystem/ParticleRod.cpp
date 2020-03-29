@@ -52,7 +52,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleRod<TDataType>::setParticles(std::vector<Coord> particles)
 	{
-		m_pSet->setPoints(particles);
+		this->m_pSet->setPoints(particles);
 	}
 
 
@@ -113,7 +113,7 @@ namespace PhysIKA
 			pos.resize(pNum);
 		}
 
-		cudaMemcpy(&pos[0], m_position.getValue().getDataPtr(), pNum*sizeof(Coord), cudaMemcpyDeviceToHost);
+		cudaMemcpy(&pos[0], this->m_position.getValue().getDataPtr(), pNum*sizeof(Coord), cudaMemcpyDeviceToHost);
 	}
 
 	template<typename TDataType>
@@ -157,14 +157,14 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleRod<TDataType>::updateTopology()
 	{
-		auto pts = m_pSet->getPoints();
+		auto pts = this->m_pSet->getPoints();
 
 
 		HostArray<Coord> hostPts;
 		hostPts.resize(pts.size());
 
 
-		Function1Pt::copy(hostPts, getPosition()->getValue());
+		Function1Pt::copy(hostPts, this->getPosition()->getValue());
 
 		for (int i = 0; i < hostPts.size(); i++)
 		{

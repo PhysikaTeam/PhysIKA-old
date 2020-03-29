@@ -69,22 +69,8 @@ namespace PhysIKA
 	class AlignedBox3D;
 	class OrientedBox3D;
 
-	class Bool
-	{
-	public:
-		Bool(bool v = false) { val = v; }
 
-		COMM_FUNC bool operator! () { return !val; }
-		COMM_FUNC bool operator== (bool v) { return val == v; }
-		
-		COMM_FUNC bool operator= (bool v) { return val = v; }
-
-		COMM_FUNC Bool& operator&= (bool v) { val &= v;  return *this; }
-		COMM_FUNC Bool& operator|= (bool v) { val |= v;  return *this; }
-
-	private:
-		bool val = false;
-	};
+	static bool defaultBool = false;
 
 	class Point3D
 	{
@@ -124,11 +110,11 @@ namespace PhysIKA
          * @param sphere/capsule/tet/abox/obb polyhedra components
          * @return closest point
          */
-		COMM_FUNC Point3D project(const Sphere3D& sphere, Bool& bInside = Bool(false)) const;
-		COMM_FUNC Point3D project(const Capsule3D& capsule, Bool& bInside = Bool(false)) const;
-		COMM_FUNC Point3D project(const Tet3D& tet, Bool& bInside = Bool(false)) const;
-		COMM_FUNC Point3D project(const AlignedBox3D& abox, Bool& bInside = Bool(false)) const;
-		COMM_FUNC Point3D project(const OrientedBox3D& obb, Bool& bInside = Bool(false)) const;
+		COMM_FUNC Point3D project(const Sphere3D& sphere, bool& bInside = defaultBool) const;
+		COMM_FUNC Point3D project(const Capsule3D& capsule, bool& bInside = defaultBool) const;
+		COMM_FUNC Point3D project(const Tet3D& tet, bool& bInside = defaultBool) const;
+		COMM_FUNC Point3D project(const AlignedBox3D& abox, bool& bInside = defaultBool) const;
+		COMM_FUNC Point3D project(const OrientedBox3D& obb, bool& bInside = defaultBool) const;
 
 
 

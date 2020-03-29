@@ -234,7 +234,7 @@ namespace PhysIKA
 		return Point3D(q);
 	}
 
-	COMM_FUNC Point3D Point3D::project(const Sphere3D& sphere, Bool& bInside) const
+	COMM_FUNC Point3D Point3D::project(const Sphere3D& sphere, bool& bInside) const
 	{
 		Coord3D cp = origin - sphere.center;
 		Coord3D q = sphere.center + sphere.radius*cp.normalize();
@@ -244,7 +244,7 @@ namespace PhysIKA
 		return Point3D(q);
 	}
 
-	COMM_FUNC Point3D Point3D::project(const Capsule3D& capsule, Bool& bInside /*= Bool(false)*/) const
+	COMM_FUNC Point3D Point3D::project(const Capsule3D& capsule, bool& bInside /*= Bool(false)*/) const
 	{
 		Coord3D coordQ = project(capsule.segment).origin;
 		Coord3D dir = origin - coordQ;
@@ -253,7 +253,7 @@ namespace PhysIKA
 		return Point3D(coordQ + capsule.radius*dir.normalize());
 	}
 
-	COMM_FUNC Point3D Point3D::project(const Tet3D& tet, Bool& bInside) const
+	COMM_FUNC Point3D Point3D::project(const Tet3D& tet, bool& bInside) const
 	{
 		bInside = true;
 
@@ -275,7 +275,7 @@ namespace PhysIKA
 		return closestPt;
 	}
 
-	COMM_FUNC Point3D Point3D::project(const AlignedBox3D& abox, Bool& bInside) const
+	COMM_FUNC Point3D Point3D::project(const AlignedBox3D& abox, bool& bInside) const
 	{
 		bInside = inside(abox);
 
@@ -329,7 +329,7 @@ namespace PhysIKA
 		return Point3D(q);
 	}
 
-	COMM_FUNC Point3D Point3D::project(const OrientedBox3D& obb, Bool& bInside) const
+	COMM_FUNC Point3D Point3D::project(const OrientedBox3D& obb, bool& bInside) const
 	{
 		Coord3D offset = origin - obb.center;
 		Coord3D pPrime(offset.dot(obb.u), offset.dot(obb.v), offset.dot(obb.w));
@@ -401,28 +401,28 @@ namespace PhysIKA
 
 	COMM_FUNC Real Point3D::distance(const Tet3D& tet) const
 	{
-		Bool bInside;
+		bool bInside;
 		Real d = (origin - project(tet, bInside).origin).norm();
 		return bInside == true ? -d : d;
 	}
 
 	COMM_FUNC Real Point3D::distance(const AlignedBox3D& abox) const
 	{
-		Bool bInside;
+		bool bInside;
 		Real d = (origin - project(abox, bInside).origin).norm();
 		return bInside == true ? -d : d;
 	}
 
 	COMM_FUNC Real Point3D::distance(const OrientedBox3D& obb) const
 	{
-		Bool bInside;
+		bool bInside;
 		Real d = (origin - project(obb, bInside).origin).norm();
 		return bInside == true ? -d : d;
 	}
 
 	COMM_FUNC Real Point3D::distance(const Capsule3D& capsule) const
 	{
-		Bool bInside;
+		bool bInside;
 		Real d = (origin - project(capsule, bInside).origin).norm();
 		return bInside == true ? -d : d;
 	}

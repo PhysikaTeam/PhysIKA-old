@@ -80,13 +80,13 @@ namespace PhysIKA
 		auto m_surfaceNode = this->createChild<Node>("cube");
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
-		triSet->loadObjFile("../../Media/standard/standard_cube.obj");
+/* 		triSet->loadObjFile("../../Media/standard/standard_cube.obj");
 		triSet->scale(0.99*scale);
 		triSet->translate(center);
 
 		m_surfaceNode->setTopologyModule(triSet);
 
-		m_surfaceNode->setVisible(bVisible);
+		m_surfaceNode->setVisible(bVisible); */
 	}
 
 	template<typename TDataType>

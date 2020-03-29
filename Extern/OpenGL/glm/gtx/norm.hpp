@@ -1,28 +1,53 @@
+///////////////////////////////////////////////////////////////////////////////////
+/// OpenGL Mathematics (glm.g-truc.net)
+///
+/// Copyright (c) 2005 - 2015 G-Truc Creation (www.g-truc.net)
+/// Permission is hereby granted, free of charge, to any person obtaining a copy
+/// of this software and associated documentation files (the "Software"), to deal
+/// in the Software without restriction, including without limitation the rights
+/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+/// copies of the Software, and to permit persons to whom the Software is
+/// furnished to do so, subject to the following conditions:
+/// 
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+/// 
+/// Restrictions:
+///		By making use of the Software for military purposes, you choose to make
+///		a Bunny unhappy.
+/// 
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+/// THE SOFTWARE.
+///
 /// @ref gtx_norm
 /// @file glm/gtx/norm.hpp
+/// @date 2005-12-21 / 2011-06-07
+/// @author Christophe Riccio
 ///
 /// @see core (dependence)
 /// @see gtx_quaternion (dependence)
 ///
 /// @defgroup gtx_norm GLM_GTX_norm
 /// @ingroup gtx
-///
-/// Include <glm/gtx/norm.hpp> to use the features of this extension.
-///
-/// Various ways to compute vector norms.
+/// 
+/// @brief Various ways to compute vector norms.
+/// 
+/// <glm/gtx/norm.hpp> need to be included to use these functionalities.
+///////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
 // Dependency:
-#include "../geometric.hpp"
+#include "../glm.hpp"
 #include "../gtx/quaternion.hpp"
 
-#if GLM_MESSAGES == GLM_ENABLE && !defined(GLM_EXT_INCLUDED)
-#	ifndef GLM_ENABLE_EXPERIMENTAL
-#		pragma message("GLM: GLM_GTX_norm is an experimental extension and may change in the future. Use #define GLM_ENABLE_EXPERIMENTAL before including it, if you really want to use it.")
-#	else
-#		pragma message("GLM: GLM_GTX_norm extension included")
-#	endif
+#if(defined(GLM_MESSAGES) && !defined(GLM_EXT_INCLUDED))
+#	pragma message("GLM: GLM_GTX_norm extension included")
 #endif
 
 namespace glm
@@ -32,43 +57,57 @@ namespace glm
 
 	/// Returns the squared length of x.
 	/// From GLM_GTX_norm extension.
-	template<length_t L, typename T, qualifier Q>
-	GLM_FUNC_DECL T length2(vec<L, T, Q> const& x);
+	template <typename T, precision P, template <typename, precision> class vecType>
+	GLM_FUNC_DECL T length2(
+		vecType<T, P> const & x);
 
 	/// Returns the squared distance between p0 and p1, i.e., length2(p0 - p1).
 	/// From GLM_GTX_norm extension.
-	template<length_t L, typename T, qualifier Q>
-	GLM_FUNC_DECL T distance2(vec<L, T, Q> const& p0, vec<L, T, Q> const& p1);
+	template <typename T, precision P, template <typename, precision> class vecType>
+	GLM_FUNC_DECL T distance2(
+		vecType<T, P> const & p0,
+		vecType<T, P> const & p1);
 
 	//! Returns the L1 norm between x and y.
 	//! From GLM_GTX_norm extension.
-	template<typename T, qualifier Q>
-	GLM_FUNC_DECL T l1Norm(vec<3, T, Q> const& x, vec<3, T, Q> const& y);
-
+	template <typename T, precision P>
+	GLM_FUNC_DECL T l1Norm(
+		tvec3<T, P> const & x,
+		tvec3<T, P> const & y);
+		
 	//! Returns the L1 norm of v.
 	//! From GLM_GTX_norm extension.
-	template<typename T, qualifier Q>
-	GLM_FUNC_DECL T l1Norm(vec<3, T, Q> const& v);
-
+	template <typename T, precision P>
+	GLM_FUNC_DECL T l1Norm(
+		tvec3<T, P> const & v);
+		
 	//! Returns the L2 norm between x and y.
 	//! From GLM_GTX_norm extension.
-	template<typename T, qualifier Q>
-	GLM_FUNC_DECL T l2Norm(vec<3, T, Q> const& x, vec<3, T, Q> const& y);
-
+	template <typename T, precision P>
+	GLM_FUNC_DECL T l2Norm(
+		tvec3<T, P> const & x,
+		tvec3<T, P> const & y);
+		
 	//! Returns the L2 norm of v.
 	//! From GLM_GTX_norm extension.
-	template<typename T, qualifier Q>
-	GLM_FUNC_DECL T l2Norm(vec<3, T, Q> const& x);
-
+	template <typename T, precision P>
+	GLM_FUNC_DECL T l2Norm(
+		tvec3<T, P> const & x);
+		
 	//! Returns the L norm between x and y.
 	//! From GLM_GTX_norm extension.
-	template<typename T, qualifier Q>
-	GLM_FUNC_DECL T lxNorm(vec<3, T, Q> const& x, vec<3, T, Q> const& y, unsigned int Depth);
+	template <typename T, precision P>
+	GLM_FUNC_DECL T lxNorm(
+		tvec3<T, P> const & x,
+		tvec3<T, P> const & y,
+		unsigned int Depth);
 
 	//! Returns the L norm of v.
 	//! From GLM_GTX_norm extension.
-	template<typename T, qualifier Q>
-	GLM_FUNC_DECL T lxNorm(vec<3, T, Q> const& x, unsigned int Depth);
+	template <typename T, precision P>
+	GLM_FUNC_DECL T lxNorm(
+		tvec3<T, P> const & x,
+		unsigned int Depth);
 
 	/// @}
 }//namespace glm

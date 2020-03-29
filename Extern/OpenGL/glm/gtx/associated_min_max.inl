@@ -1,49 +1,79 @@
+///////////////////////////////////////////////////////////////////////////////////
+/// OpenGL Mathematics (glm.g-truc.net)
+///
+/// Copyright (c) 2005 - 2015 G-Truc Creation (www.g-truc.net)
+/// Permission is hereby granted, free of charge, to any person obtaining a copy
+/// of this software and associated documentation files (the "Software"), to deal
+/// in the Software without restriction, including without limitation the rights
+/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+/// copies of the Software, and to permit persons to whom the Software is
+/// furnished to do so, subject to the following conditions:
+/// 
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+/// 
+/// Restrictions:
+///		By making use of the Software for military purposes, you choose to make
+///		a Bunny unhappy.
+/// 
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+/// THE SOFTWARE.
+///
 /// @ref gtx_associated_min_max
+/// @file glm/gtx/associated_min_max.inl
+/// @date 2008-03-10 / 2014-10-11
+/// @author Christophe Riccio
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace glm{
 
 // Min comparison between 2 variables
-template<typename T, typename U, qualifier Q>
+template<typename T, typename U, precision P>
 GLM_FUNC_QUALIFIER U associatedMin(T x, U a, T y, U b)
 {
 	return x < y ? a : b;
 }
 
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<2, U, Q> associatedMin
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER tvec2<U, P> associatedMin
 (
-	vec<L, T, Q> const& x, vec<L, U, Q> const& a,
-	vec<L, T, Q> const& y, vec<L, U, Q> const& b
+	vecType<T, P> const & x, vecType<U, P> const & a,
+	vecType<T, P> const & y, vecType<U, P> const & b
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x[i] < y[i] ? a[i] : b[i];
 	return Result;
 }
 
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMin
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMin
 (
-	T x, const vec<L, U, Q>& a,
-	T y, const vec<L, U, Q>& b
+	T x, const vecType<U, P>& a,
+	T y, const vecType<U, P>& b
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x < y ? a[i] : b[i];
 	return Result;
 }
 
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMin
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMin
 (
-	vec<L, T, Q> const& x, U a,
-	vec<L, T, Q> const& y, U b
+	vecType<T, P> const & x, U a,
+	vecType<T, P> const & y, U b
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x[i] < y[i] ? a : b;
 	return Result;
 }
@@ -61,16 +91,16 @@ GLM_FUNC_QUALIFIER U associatedMin
 	return Result;
 }
 
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMin
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMin
 (
-	vec<L, T, Q> const& x, vec<L, U, Q> const& a,
-	vec<L, T, Q> const& y, vec<L, U, Q> const& b,
-	vec<L, T, Q> const& z, vec<L, U, Q> const& c
+	vecType<T, P> const & x, vecType<U, P> const & a,
+	vecType<T, P> const & y, vecType<U, P> const & b,
+	vecType<T, P> const & z, vecType<U, P> const & c
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x[i] < y[i] ? (x[i] < z[i] ? a[i] : c[i]) : (y[i] < z[i] ? b[i] : c[i]);
 	return Result;
 }
@@ -86,7 +116,7 @@ GLM_FUNC_QUALIFIER U associatedMin
 )
 {
 	T Test1 = min(x, y);
-	T Test2 = min(z, w);
+	T Test2 = min(z, w);;
 	U Result1 = x < y ? a : b;
 	U Result2 = z < w ? c : d;
 	U Result = Test1 < Test2 ? Result1 : Result2;
@@ -94,17 +124,17 @@ GLM_FUNC_QUALIFIER U associatedMin
 }
 
 // Min comparison between 4 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMin
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMin
 (
-	vec<L, T, Q> const& x, vec<L, U, Q> const& a,
-	vec<L, T, Q> const& y, vec<L, U, Q> const& b,
-	vec<L, T, Q> const& z, vec<L, U, Q> const& c,
-	vec<L, T, Q> const& w, vec<L, U, Q> const& d
+	vecType<T, P> const & x, vecType<U, P> const & a,
+	vecType<T, P> const & y, vecType<U, P> const & b,
+	vecType<T, P> const & z, vecType<U, P> const & c,
+	vecType<T, P> const & w, vecType<U, P> const & d
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 	{
 		T Test1 = min(x[i], y[i]);
 		T Test2 = min(z[i], w[i]);
@@ -116,20 +146,20 @@ GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMin
 }
 
 // Min comparison between 4 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMin
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMin
 (
-	T x, vec<L, U, Q> const& a,
-	T y, vec<L, U, Q> const& b,
-	T z, vec<L, U, Q> const& c,
-	T w, vec<L, U, Q> const& d
+	T x, vecType<U, P> const & a,
+	T y, vecType<U, P> const & b,
+	T z, vecType<U, P> const & c,
+	T w, vecType<U, P> const & d
 )
 {
 	T Test1 = min(x, y);
 	T Test2 = min(z, w);
 
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 	{
 		U Result1 = x < y ? a[i] : b[i];
 		U Result2 = z < w ? c[i] : d[i];
@@ -139,20 +169,20 @@ GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMin
 }
 
 // Min comparison between 4 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMin
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMin
 (
-	vec<L, T, Q> const& x, U a,
-	vec<L, T, Q> const& y, U b,
-	vec<L, T, Q> const& z, U c,
-	vec<L, T, Q> const& w, U d
+	vecType<T, P> const & x, U a,
+	vecType<T, P> const & y, U b,
+	vecType<T, P> const & z, U c,
+	vecType<T, P> const & w, U d
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 	{
 		T Test1 = min(x[i], y[i]);
-		T Test2 = min(z[i], w[i]);
+		T Test2 = min(z[i], w[i]);;
 		U Result1 = x[i] < y[i] ? a : b;
 		U Result2 = z[i] < w[i] ? c : d;
 		Result[i] = Test1 < Test2 ? Result1 : Result2;
@@ -168,43 +198,43 @@ GLM_FUNC_QUALIFIER U associatedMax(T x, U a, T y, U b)
 }
 
 // Max comparison between 2 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<2, U, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER tvec2<U, P> associatedMax
 (
-	vec<L, T, Q> const& x, vec<L, U, Q> const& a,
-	vec<L, T, Q> const& y, vec<L, U, Q> const& b
+	vecType<T, P> const & x, vecType<U, P> const & a,
+	vecType<T, P> const & y, vecType<U, P> const & b
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x[i] > y[i] ? a[i] : b[i];
 	return Result;
 }
 
 // Max comparison between 2 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, T, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<T, P> associatedMax
 (
-	T x, vec<L, U, Q> const& a,
-	T y, vec<L, U, Q> const& b
+	T x, vecType<U, P> const & a,
+	T y, vecType<U, P> const & b
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x > y ? a[i] : b[i];
 	return Result;
 }
 
 // Max comparison between 2 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMax
 (
-	vec<L, T, Q> const& x, U a,
-	vec<L, T, Q> const& y, U b
+	vecType<T, P> const & x, U a,
+	vecType<T, P> const & y, U b
 )
 {
-	vec<L, T, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<T, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x[i] > y[i] ? a : b;
 	return Result;
 }
@@ -223,46 +253,46 @@ GLM_FUNC_QUALIFIER U associatedMax
 }
 
 // Max comparison between 3 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMax
 (
-	vec<L, T, Q> const& x, vec<L, U, Q> const& a,
-	vec<L, T, Q> const& y, vec<L, U, Q> const& b,
-	vec<L, T, Q> const& z, vec<L, U, Q> const& c
+	vecType<T, P> const & x, vecType<U, P> const & a,
+	vecType<T, P> const & y, vecType<U, P> const & b,
+	vecType<T, P> const & z, vecType<U, P> const & c
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x[i] > y[i] ? (x[i] > z[i] ? a[i] : c[i]) : (y[i] > z[i] ? b[i] : c[i]);
 	return Result;
 }
 
 // Max comparison between 3 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, T, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<T, P> associatedMax
 (
-	T x, vec<L, U, Q> const& a,
-	T y, vec<L, U, Q> const& b,
-	T z, vec<L, U, Q> const& c
+	T x, vecType<U, P> const & a,
+	T y, vecType<U, P> const & b,
+	T z, vecType<U, P> const & c
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x > y ? (x > z ? a[i] : c[i]) : (y > z ? b[i] : c[i]);
 	return Result;
 }
 
 // Max comparison between 3 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMax
 (
-	vec<L, T, Q> const& x, U a,
-	vec<L, T, Q> const& y, U b,
-	vec<L, T, Q> const& z, U c
+	vecType<T, P> const & x, U a,
+	vecType<T, P> const & y, U b,
+	vecType<T, P> const & z, U c
 )
 {
-	vec<L, T, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<T, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 		Result[i] = x[i] > y[i] ? (x[i] > z[i] ? a : c) : (y[i] > z[i] ? b : c);
 	return Result;
 }
@@ -278,7 +308,7 @@ GLM_FUNC_QUALIFIER U associatedMax
 )
 {
 	T Test1 = max(x, y);
-	T Test2 = max(z, w);
+	T Test2 = max(z, w);;
 	U Result1 = x > y ? a : b;
 	U Result2 = z > w ? c : d;
 	U Result = Test1 > Test2 ? Result1 : Result2;
@@ -286,17 +316,17 @@ GLM_FUNC_QUALIFIER U associatedMax
 }
 
 // Max comparison between 4 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMax
 (
-	vec<L, T, Q> const& x, vec<L, U, Q> const& a,
-	vec<L, T, Q> const& y, vec<L, U, Q> const& b,
-	vec<L, T, Q> const& z, vec<L, U, Q> const& c,
-	vec<L, T, Q> const& w, vec<L, U, Q> const& d
+	vecType<T, P> const & x, vecType<U, P> const & a,
+	vecType<T, P> const & y, vecType<U, P> const & b,
+	vecType<T, P> const & z, vecType<U, P> const & c,
+	vecType<T, P> const & w, vecType<U, P> const & d
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 	{
 		T Test1 = max(x[i], y[i]);
 		T Test2 = max(z[i], w[i]);
@@ -308,20 +338,20 @@ GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMax
 }
 
 // Max comparison between 4 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMax
 (
-	T x, vec<L, U, Q> const& a,
-	T y, vec<L, U, Q> const& b,
-	T z, vec<L, U, Q> const& c,
-	T w, vec<L, U, Q> const& d
+	T x, vecType<U, P> const & a,
+	T y, vecType<U, P> const & b,
+	T z, vecType<U, P> const & c,
+	T w, vecType<U, P> const & d
 )
 {
 	T Test1 = max(x, y);
 	T Test2 = max(z, w);
 
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 	{
 		U Result1 = x > y ? a[i] : b[i];
 		U Result2 = z > w ? c[i] : d[i];
@@ -331,20 +361,20 @@ GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMax
 }
 
 // Max comparison between 4 variables
-template<length_t L, typename T, typename U, qualifier Q>
-GLM_FUNC_QUALIFIER vec<L, U, Q> associatedMax
+template<typename T, typename U, precision P, template <typename, precision> class vecType>
+GLM_FUNC_QUALIFIER vecType<U, P> associatedMax
 (
-	vec<L, T, Q> const& x, U a,
-	vec<L, T, Q> const& y, U b,
-	vec<L, T, Q> const& z, U c,
-	vec<L, T, Q> const& w, U d
+	vecType<T, P> const & x, U a,
+	vecType<T, P> const & y, U b,
+	vecType<T, P> const & z, U c,
+	vecType<T, P> const & w, U d
 )
 {
-	vec<L, U, Q> Result;
-	for(length_t i = 0, n = Result.length(); i < n; ++i)
+	vecType<U, P> Result(uninitialize);
+	for(detail::component_count_t i = 0; i < detail::component_count(Result); ++i)
 	{
 		T Test1 = max(x[i], y[i]);
-		T Test2 = max(z[i], w[i]);
+		T Test2 = max(z[i], w[i]);;
 		U Result1 = x[i] > y[i] ? a : b;
 		U Result2 = z[i] > w[i] ? c : d;
 		Result[i] = Test1 > Test2 ? Result1 : Result2;
