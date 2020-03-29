@@ -4,11 +4,11 @@ set(LIB_NAME GlutGUI)
 set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if(WIN32)                                                               
-    link_directories("Extern/OpenGL/lib/Windows/X64")
+    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64")
     link_libraries(freeglut glew32)            
 elseif(UNIX)
-    link_directories("Extern/OpenGL/lib/Linux/X64")
-    link_libraries(freeglut GLEW)
+#    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Linux/X64")
+    link_libraries(glut GLEW GL GLU cudart)           
 endif()
 
 file(                                                                           
@@ -21,7 +21,7 @@ file(
 
 list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 目录下面的所有文件
 
-add_library(${LIB_NAME} STATIC ${LIB_SRC})                                      #添加编译目标 静态链接库
+add_library(${LIB_NAME} SHARED ${LIB_SRC})                                      #添加编译目标 静态链接库
 
 foreach(SRC IN ITEMS ${LIB_SRC})                                                #为VS工程添加filter 方便查看文件结构目录
     get_filename_component(SRC_PATH "${SRC}" PATH)
