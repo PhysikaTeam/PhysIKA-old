@@ -35,7 +35,7 @@ if(PhysIKA_Tests)
     add_subdirectory(Tests)
 endif()
 
-option(PhysIKA_Qt5_GUI "Enable building Qt-based applications" ON)
+option(PhysIKA_Qt5_GUI "Enable building Qt-based applications" OFF)
 
 option(PhysIKA_Examples "Enable building examples" ON)
 if(PhysIKA_Examples)
