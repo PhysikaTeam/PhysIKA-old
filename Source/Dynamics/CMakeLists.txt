@@ -15,7 +15,11 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
 
     list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 目录下面的所有文件
 
-    add_library(${LIB_NAME} SHARED ${LIB_SRC})                                      #添加编译目标 静态链接库
+    if(WIN32)
+        add_library(${LIB_NAME} STATIC ${LIB_SRC})                                      #添加编译目标 静态链接库
+    elseif(UNIX)
+        add_library(${LIB_NAME} SHARED ${LIB_SRC}) 
+    endif()
 
     foreach(SRC IN ITEMS ${LIB_SRC})                                                #为VS工程添加filter 方便查看文件结构目录
         get_filename_component(SRC_PATH "${SRC}" PATH)

@@ -26,7 +26,11 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
         list(APPEND LIB_SRC "${PROJECT_SOURCE_DIR}/Extern/LodePNG/lodepng.cpp")        #为IO lib添加lodeong源文件
     endif()
 
-    add_library(${LIB_NAME} SHARED ${LIB_SRC})                                      #添加编译目标 静态链接库
+    if(WIN32)
+        add_library(${LIB_NAME} STATIC ${LIB_SRC})                                      #添加编译目标 静态链接库
+    elseif(UNIX)
+        add_library(${LIB_NAME} SHARED ${LIB_SRC}) 
+    endif()
 
     if(WIN32)
         foreach(SRC IN ITEMS ${LIB_SRC})                                                #为VS工程添加filter 方便查看文件结构目录
