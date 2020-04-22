@@ -52,3 +52,5 @@ file(COPY "Testing/" DESTINATION ${CMAKE_BINARY_DIR}/bin/Release)
 
 pybind11_add_module(${PyBind_Name} ${PY_ALL_SOURCE_FILES})
 
+set_target_properties(${PyBind_Name} PROPERTIES
+    OUTPUT_NAME "${PyBind_Name}-${PHYSIKA_LIBRARY_VERSION}")

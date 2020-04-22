@@ -35,4 +35,31 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set_target_properties(${LIB_NAME} PROPERTIES FOLDER "Engine/Dynamics")      #为project设定folder目录
     set_target_properties(${LIB_NAME} PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)    #cmake 会自动延迟cuda dlink操作直到静态库被编译成动态库或者exe，
                                                                                     #但这样影响了后面其他工程对PhysLeo.lib的引用，现在还有些原因未明，暂时在编译成库之前开启dlink
-endforeach()
+    set_target_properties(${LIB_NAME} PROPERTIES
+        OUTPUT_NAME "Pa${LIB_NAME}-${PHYSIKA_LIBRARY_VERSION}")
+
+    target_include_directories(${LIB_NAME} PUBLIC 
+        $<BUILD_INTERFACE:${PHYSIKA_INCLUDE_PATH}>
+        $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}>
+        $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics>
+        $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/${LIB_NAME}>)
+
+    install(TARGETS ${LIB_NAME}
+        EXPORT ${LIB_NAME}Targets
+        RUNTIME  DESTINATION  ${PHYSIKA_RUNTIME_INSTALL_DIR}
+        LIBRARY  DESTINATION  ${PHYSIKA_LIBRARY_INSTALL_DIR}
+        ARCHIVE  DESTINATION  ${PHYSIKA_ARCHIVE_INSTALL_DIR}
+        )
+
+    install(EXPORT ${LIB_NAME}Targets DESTINATION ${PHYSIKA_CMAKE_CONFIG_INSTALL_DIR}
+        FILE ${LIB_NAME}Targets.cmake)
+
+    #Append ${LIB_NAME}Targets.cmake to the global list, which will be include in PhysIKAConfig.cmake
+    get_property(LOCAL_CMAKES_NAMES GLOBAL PROPERTY "GLOBAL_CMAKES_NAMES")
+    list(APPEND LOCAL_CMAKES_NAMES "${LIB_NAME}Targets.cmake")    
+    set_property(GLOBAL PROPERTY GLOBAL_CMAKES_NAMES ${LOCAL_CMAKES_NAMES})
+
+    file(GLOB FILE_DYNAMICS_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/${LIB_NAME}/*.h")
+    file(COPY ${FILE_DYNAMICS_HEADER} DESTINATION "${PHYSIKA_INCLUDE_PATH}/Dynamics/${LIB_NAME}")
+    install(FILES ${FILE_DYNAMICS_HEADER}  DESTINATION ${PHYSIKA_INC_INSTALL_DIR}/Dynamics/${LIB_NAME})
+ endforeach()

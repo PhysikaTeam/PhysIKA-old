@@ -2,6 +2,12 @@
 
 project(PhysIKA LANGUAGES CXX CUDA)                                                             #指定本项目的编译语言为C++、CUDA
 
+# define library version (update: apparently you can also do it in project()!)
+set(PHYSIKA_LIBRARY_VERSION_MAJOR 2 CACHE STRING "PhysIKA major version" FORCE)
+set(PHYSIKA_LIBRARY_VERSION_MINOR 1 CACHE STRING "PhysIKA minor version" FORCE)
+set(PHYSIKA_LIBRARY_VERSION_PATCH 0 CACHE STRING "patch version of PhysIKA" FORCE)
+set(PHYSIKA_LIBRARY_VERSION "${PHYSIKA_LIBRARY_VERSION_MAJOR}.${PHYSIKA_LIBRARY_VERSION_MINOR}.${PHYSIKA_LIBRARY_VERSION_PATCH}" CACHE STRING "PhysIKA version" FORCE)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)                                                    #为sln内部projects设置管理folder
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "CXX STANDARD VERSION 11,14,17")                         #默认为本项目下各编译目标指定C++11语言特性
 
@@ -24,6 +30,36 @@ file(COPY "Media/" DESTINATION "Media")
 file(COPY "Source/Rendering/Shader/" DESTINATION "Shader")
 
 
+# installation destinations
+if(UNIX)
+    include(GNUInstallDirs)
+
+    set(PHYSIKA_INC_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/PhysIKA")
+    set(PHYSIKA_RUNTIME_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
+    set(PHYSIKA_LIBRARY_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+    set(PHYSIKA_ARCHIVE_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+    set(PHYSIKA_FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+
+    set(PHYSIKA_CMAKE_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/PhysIKA/cmake")
+    set(PHYSIKA_ADDITIONAL_FILES_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/PhysIKA")
+
+    set(PHYSIKA_RUNTIME_INSTALL_DIR "bin") # for the nodesize_dbg, just ignore version and the like
+    set(PHYSIKA_INC_INSTALL_DIR "include/PhysIKA") # header filestree
+
+elseif(WIN32)
+    set(PHYSIKA_INC_INSTALL_DIR "include/PhysIKA")
+    set(PHYSIKA_RUNTIME_INSTALL_DIR   "bin")
+    set(PHYSIKA_LIBRARY_INSTALL_DIR   "bin")
+    set(PHYSIKA_ARCHIVE_INSTALL_DIR   "lib")
+    set(PHYSIKA_FRAMEWORK_INSTALL_DIR "bin")
+
+    set(PHYSIKA_CMAKE_CONFIG_INSTALL_DIR "share/PhysIKA/cmake")
+    set(PHYSIKA_ADDITIONAL_FILES_INSTALL_DIR "share/PhysIKA")
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+else()
+    message(FATAL_ERROR "Could not set install folders for this platform!")
+endif()
+
 option(PhysIKA_Python_Binding "Enable python binding with pybind11" ON)
 if(PhysIKA_Python_Binding)
     add_subdirectory(Python)
@@ -43,6 +79,5 @@ if(PhysIKA_Examples)
 endif()
 
 add_subdirectory(Source)
-
 
 
