@@ -3,7 +3,6 @@
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Mapping/FrameToPointSet.h"
-#include "Rendering/SurfaceMeshRender.h"
 
 namespace PhysIKA
 {

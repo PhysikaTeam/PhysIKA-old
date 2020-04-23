@@ -1,6 +1,5 @@
 #include "ParticleRod.h"
 #include "Framework/Topology/PointSet.h"
-#include "Rendering/PointRenderModule.h"
 #include "Core/Utility.h"
 #include "Framework/Topology/NeighborQuery.h"
 #include "ParticleIntegrator.h"

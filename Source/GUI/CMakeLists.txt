@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 set(LIB_NAMES GlutGUI QtGUI)
 
+include_directories("${CMAKE_SOURCE_DIR}/Source")                                                              #默认为本项目下各编译目标添加Source/ 目录
+
 add_subdirectory(GlutGUI)
 
 if(PhysIKA_Qt5_GUI)

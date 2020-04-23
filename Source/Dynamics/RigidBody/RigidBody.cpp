@@ -3,8 +3,6 @@
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Mapping/FrameToPointSet.h"
-#include "Rendering/SurfaceMeshRender.h"
-#include "Rendering/PointRenderModule.h"
 #include "IO/Surface_Mesh_IO/ObjFileLoader.h"
 
 namespace PhysIKA
@@ -51,9 +49,6 @@ namespace PhysIKA
 		triSet->scale(0.05);
 		triSet->translate(trans);
 
-		auto render = std::make_shared<SurfaceMeshRender>();
-		render->setColor(Vector3f(0.988f, 0.956, 0.952f));
-		m_surfaceNode->addVisualModule(render);
 
 		//create a child node for collision
 		m_collisionNode = this->createChild<Node>("Collision");
@@ -63,10 +58,6 @@ namespace PhysIKA
 		ptSet->scale(0.05);
 		ptSet->translate(trans);
 
-		auto render2 = std::make_shared<PointRenderModule>();
-		render2->setColor(Vector3f(0.988f, 0.956, 0.952f));
-		m_collisionNode->addVisualModule(render2);
-		render2->setVisible(false);
 
 		auto surfaceMapping = std::make_shared<FrameToPointSet<TDataType>>(m_frame, triSet);
 		this->addTopologyMapping(surfaceMapping);

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Topology/Primitive3D.h"
+#include "Framework/Topology/Primitive3D.h"
 
 using namespace PhysIKA;
 

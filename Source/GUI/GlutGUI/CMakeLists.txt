@@ -3,14 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 set(LIB_NAME GlutGUI)
 set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
-if(WIN32)                                                               
-    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64")
-    link_libraries(freeglut glew32)            
-elseif(UNIX)
-#    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Linux/X64")
-    link_libraries(glut GLEW GL GLU cudart)           
-endif()
-
 file(                                                                           
     GLOB_RECURSE LIB_SRC                                                        #利用glob命令读取所有源文件list
     LIST_DIRECTORIES false
@@ -45,10 +37,12 @@ set_target_properties(${LIB_NAME} PROPERTIES
     OUTPUT_NAME "Pa${LIB_NAME}-${PHYSIKA_LIBRARY_VERSION}")
 
 target_include_directories(${LIB_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Extern/freeglut-3.2.1/include>
     $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}>
     $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/GUI>
     $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/GUI/${LIB_NAME}>)
+
+target_link_libraries(${LIB_NAME} Core Rendering Framework IO freeglut)
 
 install(TARGETS ${LIB_NAME}
     EXPORT ${LIB_NAME}Targets

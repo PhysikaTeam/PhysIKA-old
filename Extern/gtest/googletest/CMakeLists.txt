@@ -140,6 +140,9 @@ if (DEFINED CMAKE_VERSION AND NOT "${CMAKE_VERSION}" VERSION_LESS "2.8.11")
 endif()
 target_link_libraries(gtest_main PUBLIC gtest)
 
+set_target_properties(gtest PROPERTIES FOLDER "ThirdParty")
+set_target_properties(gtest_main PROPERTIES FOLDER "ThirdParty")
+
 ########################################################################
 #
 # Install rules

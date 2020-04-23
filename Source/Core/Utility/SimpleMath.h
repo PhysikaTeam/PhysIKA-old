@@ -3,8 +3,8 @@
 
 #include <cuda_runtime.h>
 
-#include "Vector.h"
-#include "Matrix.h"
+#include "Core/Vector.h"
+#include "Core/Matrix.h"
 
 namespace PhysIKA
 {

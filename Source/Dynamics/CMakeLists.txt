@@ -39,10 +39,11 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
         OUTPUT_NAME "Pa${LIB_NAME}-${PHYSIKA_LIBRARY_VERSION}")
 
     target_include_directories(${LIB_NAME} PUBLIC 
-        $<BUILD_INTERFACE:${PHYSIKA_INCLUDE_PATH}>
         $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}>
         $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics>
         $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/${LIB_NAME}>)
+
+    target_link_libraries(${LIB_NAME} PUBLIC Core Framework IO)
 
     install(TARGETS ${LIB_NAME}
         EXPORT ${LIB_NAME}Targets

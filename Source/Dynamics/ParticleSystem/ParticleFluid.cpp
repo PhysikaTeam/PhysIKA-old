@@ -2,7 +2,6 @@
 #include "PositionBasedFluidModel.h"
 
 #include "Framework/Topology/PointSet.h"
-#include "Rendering/PointRenderModule.h"
 #include "Core/Utility.h"
 #include "DensitySummation.h"
 
