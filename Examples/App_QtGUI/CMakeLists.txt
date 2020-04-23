@@ -24,7 +24,6 @@ if(PhysIKA_Qt5_GUI)
     list(FILTER SRC_LIST EXCLUDE REGEX .*Media/.*)                                                              #�ų�deprecated �ļ�����������ļ�
 
     add_executable(${PROJECT_NAME} ${SRC_LIST})                                                                 #���ӱ���Ŀ�� ��ִ���ļ�
-    target_link_libraries(${PROJECT_NAME} PUBLIC Core)
     target_link_libraries(${PROJECT_NAME} PUBLIC Core Framework IO ParticleSystem RigidBody QtGUI) 
 
     file(RELATIVE_PATH PROJECT_PATH_REL "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")                  #�жϵ�ǰproject�ڸ�Ŀ¼�µ����·��
