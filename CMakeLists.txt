@@ -17,18 +17,13 @@ set(CMAKE_CUDA_SEPARABLE_COMPILATION ON CACHE BOOL "DEFAULT SET SEPERABLE COMPIL
 
 set(CMAKE_CUDA_FLAGS "-arch=sm_30")                                         #默认为所有cuda代码生成computability3.0下二进制代码
 
-include_directories("Source")                                                              #默认为本项目下各编译目标添加Source/ 目录
-
-# temporary solution to solve linux compilation problem. our header file path should begin with Core this level
-include_directories("Source/Core" "Source/Dynamics" "Source/Framework" "Source/GUI" "Source/IO" "Source/Rendering")
-
-include_directories("Extern")                                           #默认为本项目下各编译目标添加Source/Physika_Dependency/ 目录
-include_directories("Extern/OpenGL")                                    #默认为本项目下各编译目标添加Source/Physika_Dependency/OpenGL 目录
-include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})                                 	                #默认为本项目下各编译目标添加cuda/include 目录
-
 file(COPY "Media/" DESTINATION "Media")
 file(COPY "Source/Rendering/Shader/" DESTINATION "Shader")
 
+#set output directories
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
 
 # installation destinations
 if(UNIX)
@@ -70,6 +65,9 @@ if(PhysIKA_Tests)
     add_subdirectory(Extern/gtest)
     add_subdirectory(Tests)
 endif()
+
+add_subdirectory(Extern/glew-1.10.0)
+add_subdirectory(Extern/freeglut-3.2.1)
 
 option(PhysIKA_Qt5_GUI "Enable building Qt-based applications" OFF)
 

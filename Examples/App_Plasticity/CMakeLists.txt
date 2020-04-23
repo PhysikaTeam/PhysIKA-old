@@ -1,18 +1,10 @@
 
 set(PROJECT_NAME App_Plasticity)
 
-link_directories("${PROJECT_SOURCE_DIR}/Source")                                                           # 设置库路径
 link_libraries(Core Framework IO Rendering)
 link_libraries(ParticleSystem RigidBody)
 link_libraries(GlutGUI)
 
-if(WIN32)                                                               
-    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64")
-    link_libraries(freeglut glew32)            
-elseif(UNIX)
-#    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Linux/X64")
-    link_libraries(glut GLEW GL GLU cudart)           
-endif()
 
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")
 
