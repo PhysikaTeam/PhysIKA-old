@@ -5,8 +5,8 @@ set(PHYSIKA_LIB_CMAKES "")
 set_property(GLOBAL PROPERTY GLOBAL_CMAKES_NAMES "")
 
 add_subdirectory(Core)
-add_subdirectory(IO)
 add_subdirectory(Framework)
+add_subdirectory(IO)
 add_subdirectory(Rendering)
 
 add_subdirectory(Dynamics)

@@ -39,7 +39,8 @@ set_target_properties(${LIB_NAME} PROPERTIES
 #To resolve the error: Target "..." INTERFACE_INCLUDE_DIRECTORIES property contains path: "..." which is prefixed in the build directory.
 target_include_directories(${LIB_NAME} PUBLIC 
     $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}>
-    $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/${LIB_NAME}>)
+    $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/${LIB_NAME}>
+    $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Extern/glew-1.10.0/include>)
 
 target_link_libraries(${LIB_NAME} PUBLIC Core glew freeglut)
 
@@ -58,5 +59,4 @@ list(APPEND LOCAL_CMAKES_NAMES "${LIB_NAME}Targets.cmake")
 set_property(GLOBAL PROPERTY GLOBAL_CMAKES_NAMES ${LOCAL_CMAKES_NAMES})
 
 file(GLOB RENDERING_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-file(COPY ${RENDERING_HEADER} DESTINATION "${PHYSIKA_INCLUDE_PATH}/Rendering")
 install(FILES ${RENDERING_HEADER}  DESTINATION ${PHYSIKA_INC_INSTALL_DIR}/Rendering)

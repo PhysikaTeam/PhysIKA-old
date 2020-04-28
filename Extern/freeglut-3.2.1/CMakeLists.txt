@@ -23,7 +23,7 @@ set(SO_REV 0)		# if nothing else changed increment this
 # re-declare it here so it will show up in the GUI.
 # by default, we want to build both
 OPTION(FREEGLUT_BUILD_SHARED_LIBS "Build FreeGLUT shared library." ON)
-OPTION(FREEGLUT_BUILD_STATIC_LIBS "Build FreeGLUT static library." ON)
+OPTION(FREEGLUT_BUILD_STATIC_LIBS "Build FreeGLUT static library." OFF)
 
 # option for whether warnings and errors should be printed
 OPTION(FREEGLUT_PRINT_ERRORS "Lib prints errors to stderr" ON)
@@ -470,11 +470,11 @@ IF(FREEGLUT_BUILD_STATIC_LIBS)
 ENDIF()
 
 IF(FREEGLUT_BUILD_SHARED_LIBS)
-    INSTALL(TARGETS freeglut EXPORT FreeGLUTTargets
-            RUNTIME DESTINATION bin
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            INCLUDES DESTINATION include
+    INSTALL(TARGETS freeglut EXPORT freeglutTargets
+        RUNTIME DESTINATION ${PHYSIKA_RUNTIME_INSTALL_DIR}
+        LIBRARY DESTINATION ${PHYSIKA_LIBRARY_INSTALL_DIR}
+        ARCHIVE DESTINATION ${PHYSIKA_ARCHIVE_INSTALL_DIR}
+        INCLUDES DESTINATION include
     )
     IF(INSTALL_PDB)
         IF(CMAKE_GENERATOR MATCHES "^Visual Studio")
@@ -491,14 +491,14 @@ IF(FREEGLUT_BUILD_SHARED_LIBS)
     ENDIF()
 ENDIF()
 IF(FREEGLUT_BUILD_STATIC_LIBS)
-    INSTALL(TARGETS freeglut_static EXPORT FreeGLUTTargets
-            RUNTIME DESTINATION bin
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    INSTALL(TARGETS freeglut_static EXPORT freeglutTargets
+            RUNTIME DESTINATION ${PHYSIKA_RUNTIME_INSTALL_DIR}
+            LIBRARY DESTINATION ${PHYSIKA_LIBRARY_INSTALL_DIR}
+            ARCHIVE DESTINATION ${PHYSIKA_ARCHIVE_INSTALL_DIR}
             INCLUDES DESTINATION include
     )
 ENDIF()
-INSTALL(FILES ${FREEGLUT_HEADERS} DESTINATION include/GL COMPONENT Devel)
+INSTALL(FILES ${FREEGLUT_HEADERS} DESTINATION ${PHYSIKA_INC_INSTALL_DIR}/Extern/freeglut-3.2.1/include COMPONENT Devel)
 
 
 SET(DEMO_LIBS ${OPENGL_glu_LIBRARY} ${LIBS})
@@ -548,32 +548,5 @@ INSTALL(FILES ${CMAKE_BINARY_DIR}/freeglut.pc DESTINATION ${CMAKE_INSTALL_LIBDIR
 # TODO: change the library and .pc name when building for GLES,
 # e.g. -lglut-GLES
 
-INCLUDE(CMakePackageConfigHelpers)
-WRITE_BASIC_PACKAGE_VERSION_FILE(
-    "${CMAKE_CURRENT_BINARY_DIR}/FreeGLUT/FreeGLUTConfigVersion.cmake"
-    VERSION ${VERSION}
-    COMPATIBILITY AnyNewerVersion
-)
-
-# needs cmake 3.0 (as does the "INCLUDES DIRECTORY" argument to install(TARGETS)):
-EXPORT(EXPORT FreeGLUTTargets
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/FreeGLUT/FreeGLUTTargets.cmake"
-    NAMESPACE FreeGLUT::
-)
-CONFIGURE_FILE(FreeGLUTConfig.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/FreeGLUT/FreeGLUTConfig.cmake"
-    @ONLY
-)
-SET(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/cmake/FreeGLUT)
-INSTALL(EXPORT FreeGLUTTargets
-    FILE FreeGLUTTargets.cmake
-    NAMESPACE FreeGLUT::
-    DESTINATION ${ConfigPackageLocation}
-)
-INSTALL(
-    FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/FreeGLUT/FreeGLUTConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/FreeGLUT/FreeGLUTConfigVersion.cmake"
-    DESTINATION ${ConfigPackageLocation}
-    COMPONENT Devel
-)
+install(EXPORT freeglutTargets DESTINATION ${PHYSIKA_CMAKE_CONFIG_INSTALL_DIR}
+    FILE freeglutTargets.cmake)
