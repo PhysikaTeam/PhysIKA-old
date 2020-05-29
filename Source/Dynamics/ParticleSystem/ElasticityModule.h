@@ -35,8 +35,8 @@ namespace PhysIKA {
 		void setLambda(Real lambda) { m_lambda.setValue(lambda); }
 
 		void setHorizon(Real len) { m_horizon.setValue(len); }
-		void setIterationNumber(int num) { m_iterNum = num; }
-		int getIterationNumber() { return m_iterNum; }
+		void setIterationNumber(int num) { m_iterNum.setValue(num); }
+		int getIterationNumber() { return m_iterNum.getValue(); }
 
 		void resetRestShape();
 
@@ -96,7 +96,7 @@ namespace PhysIKA {
 		DeviceArray<Coord> m_displacement;
 		DeviceArray<Matrix> m_invK;
 	private:
-		int m_iterNum = 3;
+		VarField<int> m_iterNum;
 
 		DeviceArray<Real> m_stiffness;
 		DeviceArray<Matrix> m_F;

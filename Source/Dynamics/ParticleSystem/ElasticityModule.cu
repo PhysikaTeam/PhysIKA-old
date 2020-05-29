@@ -312,6 +312,7 @@ namespace PhysIKA
 		this->attachField(&m_distance, "distance", "The sampling distance!", false);
 		this->attachField(&m_mu, "mu", "Material stiffness!", false);
 		this->attachField(&m_lambda, "lambda", "Material stiffness!", false);
+		this->attachField(&m_iterNum, "Iterations", "Iteration Number", false);
 
 		this->attachField(&m_position, "position", "Storing the particle positions!", false);
 		this->attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
@@ -406,7 +407,7 @@ namespace PhysIKA
 		this->computeInverseK();
 
 		int itor = 0;
-		while (itor < m_iterNum)
+		while (itor < m_iterNum.getValue())
 		{
 			this->enforceElasticity();
 
