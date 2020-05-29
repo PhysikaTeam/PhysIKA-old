@@ -60,6 +60,7 @@
 #include "PSceneGraphWidget.h"
 #include "PPropertyWidget.h"'
 #include "PModuleListWidget.h"
+#include "PSimulationThread.h"
 
 #include <QAction>
 #include <QLayout>
@@ -84,6 +85,8 @@
 #include <QDebug>
 #include <QtWidgets/QOpenGLWidget>
 
+#include "Core/Platform.h"
+
 // #include "Node/NodeData.hpp"
 // #include "Node/FlowScene.hpp"
 // #include "Node/FlowView.hpp"
@@ -107,7 +110,7 @@ namespace PhysIKA
 		m_moduleListWidget(nullptr)
 	{
 		setObjectName("MainWindow");
-		setWindowTitle("PhysIKA Studio");
+		setWindowTitle(QString("PhysIKA Studio ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH));
 
 		setCentralView();
 		setupToolBar();
@@ -171,6 +174,8 @@ namespace PhysIKA
 
  		mainLayout->addWidget(tabWidget, 0, 0);
  		mainLayout->addWidget(m_animationWidget, 1, 0);
+
+		connect(PSimulationThread::instance(), SIGNAL(oneFrameFinished()), m_vtkOpenglWidget, SLOT(prepareRenderingContex()));
 	}
 
 	void PMainWindow::setupToolBar()
@@ -235,7 +240,8 @@ namespace PhysIKA
 
 	void PMainWindow::showAbout()
 	{
-		QMessageBox::about(this, tr("PhysLab"), tr("PhysLab 1.0"));
+		QString versoin = QString("Version ") + QString::number(PHYSIKA_VERSION_MAJOR)+QString(".")+ QString::number(PHYSIKA_VERSION_MINOR)+QString(".")+QString::number(PHYSIKA_VERSION_PATCH);
+		QMessageBox::about(this, tr("PhysIKA Studio "), versoin);
 		return;
 	}
 

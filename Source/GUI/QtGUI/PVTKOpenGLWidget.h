@@ -20,6 +20,7 @@
 
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
 
+class vtkActor;
 class vtkRenderer;
 class vtkOrientationMarkerWidget;
 class QVTKOpenGLWidget;
@@ -34,17 +35,23 @@ namespace PhysIKA
 		explicit PVTKOpenGLWidget(QWidget *parent = nullptr);
 		~PVTKOpenGLWidget();
 
+		//void addActor(vtkActor *actor);
+
 	signals:
 
 	public slots:
 		void showAxisWidget();
+		void prepareRenderingContex();
 
 	public:
 		QGridLayout*		m_MainLayout;
 
-		vtkRenderer*		m_renderer;
 		QVTKOpenGLWidget*						m_OpenGLWidget;
 		vtkOrientationMarkerWidget*				m_axisWidget;
+
+	public:
+		static vtkRenderer* getCurrentRenderer() {	return g_current_renderer;	}
+		static vtkRenderer*		g_current_renderer;
 	};
 
 }

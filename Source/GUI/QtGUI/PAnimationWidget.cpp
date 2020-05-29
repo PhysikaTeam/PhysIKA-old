@@ -1,11 +1,14 @@
 #include "PAnimationWidget.h"
 
+#include "PSimulationThread.h"
 
 #include <QGridLayout>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QLineEdit>
 #include <QSlider>
 #include <QScrollBar>
+#include <QIntValidator>
 
 namespace PhysIKA
 {
@@ -20,14 +23,26 @@ namespace PhysIKA
 		QGridLayout* frameLayout	= new QGridLayout();
 		QLineEdit* startFrame		= new QLineEdit();
 		QLineEdit* endFrame			= new QLineEdit();
-		QScrollBar*	scrollBar		= new QScrollBar(Qt::Horizontal, this);
 
-		startFrame->setFixedSize(30, 25);
-		endFrame->setFixedSize(30, 25);
-		scrollBar->setFixedHeight(25);
-		frameLayout->addWidget(startFrame, 0, 0);
-		frameLayout->addWidget(scrollBar, 0, 1);
-		frameLayout->addWidget(endFrame, 0, 2);
+		
+
+		m_start_spinbox = new QSpinBox();
+		m_start_spinbox->setFixedSize(60, 25);
+		m_start_spinbox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+		m_end_spinbox = new QSpinBox();
+		m_end_spinbox->setFixedSize(60, 25);
+		m_end_spinbox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		m_end_spinbox->setMaximum(99999);
+		m_end_spinbox->setValue(99);
+
+		m_sim_scrollbar = new QScrollBar(Qt::Horizontal, this);
+		m_sim_scrollbar->setFixedHeight(25);
+		m_sim_scrollbar->setPageStep(99);
+
+		frameLayout->addWidget(m_start_spinbox, 0, 0);
+		frameLayout->addWidget(m_sim_scrollbar, 0, 1);
+		frameLayout->addWidget(m_end_spinbox, 0, 2);
 
 		QGridLayout* operationLayout = new QGridLayout();
 
@@ -36,8 +51,48 @@ namespace PhysIKA
 		operationLayout->addWidget(m_startSim, 0, 0);
 		operationLayout->addWidget(m_resetSim, 0, 1);
 
+		m_startSim->setCheckable(true);
+
 		layout->addLayout(frameLayout, 10);
 		layout->addLayout(operationLayout, 1);
+
+
+		connect(m_startSim, SIGNAL(released()), this, SLOT(toggleSimulation()));
+		connect(PSimulationThread::instance(), SIGNAL(finished()), this, SLOT(simulationFinished()));
+	}
+
+	PAnimationWidget::~PAnimationWidget()
+	{
+	}
+
+	void PAnimationWidget::toggleSimulation()
+	{
+		if (m_sim_started)
+		{
+			if (m_startSim->isChecked())
+			{
+				PSimulationThread::instance()->resume();
+				m_startSim->setText("Pause");
+			}
+			else
+			{
+				PSimulationThread::instance()->pause();
+				m_startSim->setText("Resume");
+			}
+		}
+		else
+		{
+			PSimulationThread::instance()->setTotalFrames(m_end_spinbox->value());
+			PSimulationThread::instance()->start();
+			m_startSim->setText("Pause");
+			m_sim_started = true;
+		}
+	}
+
+	void PAnimationWidget::simulationFinished()
+	{
+		m_startSim->setText("Finished");
+		m_startSim->setDisabled(true);
 	}
 
 }

@@ -1,5 +1,8 @@
 #include "PVTKOpenGLWidget.h"
 
+#include "Framework/Framework/SceneGraph.h"
+#include "PSimulationThread.h"
+
 //VTK
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
@@ -17,6 +20,8 @@
 
 namespace PhysIKA
 {
+	vtkRenderer* PVTKOpenGLWidget::g_current_renderer = vtkRenderer::New();
+
 	PVTKOpenGLWidget::PVTKOpenGLWidget(QWidget *parent) :
 		QWidget(parent)
 	{
@@ -26,11 +31,9 @@ namespace PhysIKA
 		m_OpenGLWidget = new QVTKOpenGLWidget();
 		m_MainLayout->addWidget(m_OpenGLWidget, 0, 0);
 
-		m_renderer = vtkRenderer::New();
+		auto renderWindow = m_OpenGLWidget->GetRenderWindow();
 
-		vtkSmartPointer<vtkRenderWindow> renderWindow = m_OpenGLWidget->GetRenderWindow();
-
-		renderWindow->AddRenderer(m_renderer);
+		renderWindow->AddRenderer(PVTKOpenGLWidget::getCurrentRenderer());
 
 		vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
 		sphereSource->SetCenter(0.0, 0.0, 0.0);
@@ -48,8 +51,8 @@ namespace PhysIKA
 		actor->SetMapper(mapper);
 
 		// Add the actors to the scene
-		m_renderer->AddActor(actor);
-		m_renderer->SetBackground(.2, .3, .4);
+//		g_renderer->AddActor(actor);
+		g_current_renderer->SetBackground(.2, .3, .4);
 
 
 		vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
@@ -57,13 +60,13 @@ namespace PhysIKA
 		m_axisWidget = vtkOrientationMarkerWidget::New();
 		m_axisWidget->SetOutlineColor(0.9300, 0.5700, 0.1300);
 		m_axisWidget->SetOrientationMarker(axes);
-		m_axisWidget->SetCurrentRenderer(m_renderer);
+		m_axisWidget->SetCurrentRenderer(PVTKOpenGLWidget::getCurrentRenderer());
 		m_axisWidget->SetInteractor(m_OpenGLWidget->GetInteractor());
 		m_axisWidget->SetViewport(0.0, 0.0, 0.2, 0.2);
 		m_axisWidget->SetEnabled(1);
 		m_axisWidget->InteractiveOn();
 
-		m_renderer->ResetCamera();
+		PVTKOpenGLWidget::getCurrentRenderer()->ResetCamera();
 	}
 
 	PVTKOpenGLWidget::~PVTKOpenGLWidget()
@@ -71,16 +74,31 @@ namespace PhysIKA
 		delete m_MainLayout;
 		m_MainLayout = nullptr;
 
-		m_renderer->Delete();
-		m_renderer = nullptr;
+// 		m_renderer->Delete();
+// 		m_renderer = nullptr;
 
 		m_axisWidget->Delete();
 		m_axisWidget = nullptr;
 	}
 
+// 	void PVTKOpenGLWidget::addActor(vtkActor *actor)
+// 	{
+// 		m_renderer->AddActor(actor);
+// 	}
+
 	void PVTKOpenGLWidget::showAxisWidget()
 	{
 
+	}
+
+	void PVTKOpenGLWidget::prepareRenderingContex()
+	{
+		PSimulationThread::instance()->startRendering();
+
+		SceneGraph::getInstance().draw();
+		m_OpenGLWidget->GetRenderWindow()->Render();
+
+		PSimulationThread::instance()->stopRendering();
 	}
 
 }

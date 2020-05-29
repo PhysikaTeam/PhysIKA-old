@@ -2,6 +2,8 @@
 #define PSIMULATIONTHREAD_H
 
 #include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
 
 namespace PhysIKA
 {
@@ -10,9 +12,33 @@ namespace PhysIKA
 		Q_OBJECT
 
 	public:
-		PSimulationThread();
+		static PSimulationThread* instance();
+		
+
+		void pause();
+		void resume();
+		void stop();
 
 		void run() override;
+
+		void startRendering();
+		void stopRendering();
+
+		void setTotalFrames(int num);
+
+	Q_SIGNALS:
+		//Note: should not be emitted from the user
+		void oneFrameFinished();
+
+	private:
+		PSimulationThread();
+
+		int max_frames;
+
+		bool m_paused = false;
+		bool m_rendering = false;
+
+		QMutex m_mutex;
 	};
 }
 
