@@ -64,6 +64,8 @@ void SceneGraph::takeOneFrame()
 	}
 
 	m_root->traverseTopDown<AnimateAct>();
+
+	std::cout << "One Frame Finished" << std::endl;
 }
 
 void SceneGraph::run()

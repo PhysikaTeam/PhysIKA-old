@@ -54,6 +54,7 @@ void pybind_framework(py::module& m)
 		.def("set_gravity", &SceneGraph::setGravity)
 		.def("get_gravity", &SceneGraph::getGravity)
 		.def("get_lower_bound", &SceneGraph::getLowerBound)
-		.def("set_upper_bound", &SceneGraph::setUpperBound);
+		.def("set_upper_bound", &SceneGraph::setUpperBound)
+		.def("take_one_frame", &SceneGraph::takeOneFrame);
 }
 
