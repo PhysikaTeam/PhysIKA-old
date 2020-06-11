@@ -10,12 +10,16 @@
 
 #include <vector>
 
+
+
 namespace PhysIKA
 {
 	class Base;
 	class Node;
 	class Module;
 	class Field;
+	class QDoubleSpinner;
+	class PVTKOpenGLWidget;
 
 	class QBoolFieldWidget : public QGroupBox
 	{
@@ -23,6 +27,9 @@ namespace PhysIKA
 	public:
 		QBoolFieldWidget(Field* field);
 		~QBoolFieldWidget() {};
+
+	Q_SIGNALS:
+		void fieldChanged();
 
 	public slots:
 		void changeValue(int status);
@@ -38,6 +45,9 @@ namespace PhysIKA
 		QIntegerFieldWidget(Field* field);
 		~QIntegerFieldWidget() {};
 
+	Q_SIGNALS:
+		void fieldChanged();
+
 	public slots:
 		void changeValue(int);
 
@@ -45,6 +55,44 @@ namespace PhysIKA
 		Field* m_field = nullptr;
 	};
 
+	class QRealFieldWidget : public QGroupBox
+	{
+		Q_OBJECT
+	public:
+		QRealFieldWidget(Field* field);
+		~QRealFieldWidget() {};
+
+	Q_SIGNALS:
+		void fieldChanged();
+
+	public slots:
+		void changeValue(double);
+
+	private:
+		Field* m_field = nullptr;
+	};
+
+
+	class QVector3FieldWidget : public QGroupBox
+	{
+		Q_OBJECT
+	public:
+		QVector3FieldWidget(Field* field);
+		~QVector3FieldWidget() {};
+
+	Q_SIGNALS:
+		void fieldChanged();
+
+	public slots:
+		void changeValue(double);
+
+	private:
+		Field* m_field = nullptr;
+
+		QDoubleSpinner* spinner1;
+		QDoubleSpinner* spinner2;
+		QDoubleSpinner* spinner3;
+	};
 
 	class PPropertyWidget : public QWidget
 	{
@@ -54,6 +102,7 @@ namespace PhysIKA
 		~PPropertyWidget();
 
 		virtual QSize sizeHint() const;
+		void setOpenGLWidget(PVTKOpenGLWidget* widget) { m_openglWidget = widget; }
 
 //		void clear();
 
@@ -65,6 +114,8 @@ namespace PhysIKA
 	public slots:
 		void showProperty(Module* module);
 		void showProperty(Node* node);
+
+		void updateDisplay();
 
 	private:
 		void updateContext(Base* base);
@@ -78,6 +129,8 @@ namespace PhysIKA
 		QGridLayout* m_scroll_layout;
 
 		std::vector<QWidget*> m_widgets;
+
+		PVTKOpenGLWidget* m_openglWidget;
 	};
 
 }

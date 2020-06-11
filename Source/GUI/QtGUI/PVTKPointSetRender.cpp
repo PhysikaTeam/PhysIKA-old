@@ -98,12 +98,12 @@ namespace PhysIKA
 		pointMapper->SetInputData(polydata);
 		pointMapper->SetSourceConnection(sphere->GetOutputPort());
 
-		auto pointActor = vtkActor::New();
-		pointActor->SetMapper(pointMapper);
-		pointActor->GetProperty()->SetColor(colors->GetColor3d("Peacock").GetData());
+		m_actor = vtkActor::New();
+		m_actor->SetMapper(pointMapper);
+		m_actor->GetProperty()->SetColor(colors->GetColor3d("Peacock").GetData());
 
 
-		PVTKOpenGLWidget::getCurrentRenderer()->AddActor(pointActor);
+		PVTKOpenGLWidget::getCurrentRenderer()->AddActor(m_actor);
 
 		return true;
 	}
@@ -113,5 +113,7 @@ namespace PhysIKA
 	{
 		pointsetSource->Update();
 		pointsetSource->Modified();
+
+		m_actor->SetVisibility(isVisible());
 	}
 }

@@ -17,6 +17,7 @@ namespace PhysIKA
 	{
 		m_horizon.setValue(0.0085);
 		this->attachField(&m_horizon, "horizon", "horizon");
+		this->attachField(&m_test, "test", "This is a test for vector3");
 
 		auto m_integrator = this->template setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
 		this->getPosition()->connect(m_integrator->m_position);

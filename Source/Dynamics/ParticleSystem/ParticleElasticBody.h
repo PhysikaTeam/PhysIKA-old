@@ -38,6 +38,7 @@ namespace PhysIKA
 
 	public:
 		VarField<Real> m_horizon;
+		VarField<Coord> m_test;
 
 	private:
 		std::shared_ptr<Node> m_surfaceNode;

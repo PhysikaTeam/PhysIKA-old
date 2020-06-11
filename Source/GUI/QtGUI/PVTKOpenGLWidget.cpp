@@ -101,4 +101,9 @@ namespace PhysIKA
 		PSimulationThread::instance()->stopRendering();
 	}
 
+	void PVTKOpenGLWidget::redisplay()
+	{
+		m_OpenGLWidget->GetRenderWindow()->Render();
+	}
+
 }

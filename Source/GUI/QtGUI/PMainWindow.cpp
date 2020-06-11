@@ -301,6 +301,7 @@ namespace PhysIKA
 		windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
 
 		m_propertyWidget = new PPropertyWidget();
+		m_propertyWidget->setOpenGLWidget(m_vtkOpenglWidget);
 		rightDockWidget->setWidget(m_propertyWidget);
 
 		setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);

@@ -74,6 +74,7 @@ namespace PhysIKA
 		polydataSource->Modified();
 
 		PVTKOpenGLWidget::getCurrentRenderer()->AddActor(m_actor);
+		this->setVisible(true);
 
 		return true;
 	}
@@ -83,5 +84,7 @@ namespace PhysIKA
 	{
 		polydataSource->Update();
 		polydataSource->Modified();
+
+		m_actor->SetVisibility(isVisible());
 	}
 }

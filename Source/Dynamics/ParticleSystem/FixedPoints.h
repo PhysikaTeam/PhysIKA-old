@@ -17,7 +17,8 @@ namespace PhysIKA {
 		FixedPoints();
 		~FixedPoints() override;
 
-		void setFixedPoint(int id, Coord pt);
+		void addFixedPoint(int id, Coord pt);
+		void removeFixedPoint(int id);
 
 		void clear();
 

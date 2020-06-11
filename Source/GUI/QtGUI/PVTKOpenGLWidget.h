@@ -42,6 +42,7 @@ namespace PhysIKA
 	public slots:
 		void showAxisWidget();
 		void prepareRenderingContex();
+		void redisplay();
 
 	public:
 		QGridLayout*		m_MainLayout;

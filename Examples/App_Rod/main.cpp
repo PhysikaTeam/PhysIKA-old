@@ -30,9 +30,12 @@ int main()
 	SceneGraph& scene = SceneGraph::getInstance();
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, false);
+//	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, false);
 
-	scene.setGravity(Vector3f(0.0f, 0.0f, 0.0f));
+	scene.setLowerBound(Vector3f(0.0f, 0.0f, 0.0f));
+	scene.setUpperBound(Vector3f(1.0f, 1.0f, 1.0f));
+
+	scene.setGravity(Vector3f(0.0f, -9.8f, 0.0f));
 
 	//	std::shared_ptr<ParticleRod<DataType3f>> child3 = scene.createNewScene<ParticleRod<DataType3f>>("Rod");
 
@@ -49,7 +52,7 @@ int main()
 
 	Vector3f Cable = CableEnd - CableStart;
 
-	child3->m_horizon.setValue(2.0 * Cable.norm() / numSegment);
+	child3->m_horizon.setValue(Cable.norm() / numSegment);
 	child3->setMaterialStiffness(1.0);
 
 	std::vector<Vector3f> particles;
@@ -59,10 +62,10 @@ int main()
 		particles.push_back(pi);
 
 		if (i == 0)
-			child3->setFixedParticle(0, pi);
+			child3->addFixedParticle(0, pi);
 
-		if (i == numSegment)
-			child3->setFixedParticle(i, pi);
+// 		if (i == numSegment)
+// 			child3->setFixedParticle(i, pi);
 	}
 
 	child3->setParticles(particles);

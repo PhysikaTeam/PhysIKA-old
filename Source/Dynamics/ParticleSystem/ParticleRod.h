@@ -1,9 +1,11 @@
 #pragma once
 #include "ParticleSystem.h"
+#include <vector>
 
 namespace PhysIKA
 {
 	template<typename> class ElasticityModule;
+	template<typename> class OneDimElasticityModule;
 	template<typename> class ParticleIntegrator;
 	template<typename> class FixedPoints;
 	template<typename> class SimpleDamping;
@@ -22,33 +24,44 @@ namespace PhysIKA
 		ParticleRod(std::string name = "default");
 		virtual ~ParticleRod();
 
-		bool initialize() override;
+		bool resetStatus() override;
 		void advance(Real dt) override;
-//		void updateTopology() override;
 
 		void setParticles(std::vector<Coord> particles);
 
 		void setLength(Real length);
 		void setMaterialStiffness(Real stiffness);
 
-		void setFixedParticle(int id, Coord pos);
+		void addFixedParticle(int id, Coord pos);
+		void removeFixedParticle(int id);
 
 		void getHostPosition(std::vector<Coord>& pos);
 
 		void removeAllFixedPositions();
 
-		bool detectCollisionPoint(int& nearParticleId, Coord preV1, Coord preV2, Coord curV1, Coord curV2);
-
 		void doCollision(Coord pos, Coord dir);
 
 		void setDamping(Real d);
-
 	public:
 		VarField<Real> m_horizon;
 
+		VarField<Real> m_length;
+
+		VarField<Real> m_stiffness;
+
+	protected:
+		DeviceArrayField<Real> m_mass;
+
 	private:
+		std::vector<int> m_fixedIds;
+
+		void resetMassField();
+
+		bool m_modifed = false;
+
 		std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;
 		std::shared_ptr<ElasticityModule<TDataType>> m_elasticity;
+		std::shared_ptr<OneDimElasticityModule<TDataType>> m_one_dim_elasticity;
 		std::shared_ptr<FixedPoints<TDataType>> m_fixed;
 		std::shared_ptr<SimpleDamping<TDataType>> m_damping;
 	};
