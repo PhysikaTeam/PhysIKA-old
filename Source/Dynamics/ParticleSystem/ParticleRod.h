@@ -24,7 +24,7 @@ namespace PhysIKA
 
 		bool initialize() override;
 		void advance(Real dt) override;
-		void updateTopology() override;
+//		void updateTopology() override;
 
 		void setParticles(std::vector<Coord> particles);
 
@@ -45,8 +45,6 @@ namespace PhysIKA
 
 	public:
 		VarField<Real> m_horizon;
-
-		VarField<Real> m_length;
 
 	private:
 		std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;

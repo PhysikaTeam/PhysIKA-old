@@ -58,7 +58,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleRod<TDataType>::setLength(Real length)
 	{
-		m_length.setValue(length);
+		m_horizon.setValue(length);
 	}
 
 	template<typename TDataType>
@@ -130,6 +130,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleRod<TDataType>::advance(Real dt)
 	{
+		return;
 		if (m_integrator != nullptr)
 			m_integrator->begin();
 
@@ -153,23 +154,24 @@ namespace PhysIKA
 
 
 	//Do nothing
-	template<typename TDataType>
-	void ParticleRod<TDataType>::updateTopology()
-	{
-		auto pts = this->m_pSet->getPoints();
-
-
-		HostArray<Coord> hostPts;
-		hostPts.resize(pts.size());
-
-
-		Function1Pt::copy(hostPts, this->getPosition()->getValue());
-
-		for (int i = 0; i < hostPts.size(); i++)
-		{
-			hostPts[i] *= 0.01;
-		}
-
-		Function1Pt::copy(pts, hostPts);
-	}
+// 	template<typename TDataType>
+// 	void ParticleRod<TDataType>::updateTopology()
+// 	{
+// 		return;
+// 		auto pts = this->m_pSet->getPoints();
+// 
+// 
+// // 		HostArray<Coord> hostPts;
+// // 		hostPts.resize(pts.size());
+// 
+// 
+// 		Function1Pt::copy(pts, this->getPosition()->getValue());
+// 
+// // 		for (int i = 0; i < hostPts.size(); i++)
+// // 		{
+// // 			hostPts[i] *= 0.01;
+// // 		}
+// 
+// //		Function1Pt::copy(pts, hostPts);
+// 	}
 }

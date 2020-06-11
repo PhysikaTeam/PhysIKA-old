@@ -322,6 +322,7 @@ namespace PhysIKA
 		m_distance.setValue(0.005);
  		m_mu.setValue(0.05);
  		m_lambda.setValue(0.1);
+		m_iterNum.setValue(10);
 	}
 
 

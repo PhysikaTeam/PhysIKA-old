@@ -32,15 +32,15 @@ int main()
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
 	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, false);
 
-	scene.setGravity(Vector3f(9.8f, 0.0f, 0.0f));
+	scene.setGravity(Vector3f(0.0f, 0.0f, 0.0f));
 
 	//	std::shared_ptr<ParticleRod<DataType3f>> child3 = scene.createNewScene<ParticleRod<DataType3f>>("Rod");
 
 	std::shared_ptr<ParticleRod<DataType3f>> child3 = std::make_shared<ParticleRod<DataType3f>>("Rod");
 	root->addParticleSystem(child3);
 
-	Vector3f CableStart = 100.0f*(0.00001f*Vector3f(15996, -3140, -19990) + 0.2f);
-	Vector3f CableEnd = 100.0f*(0.00001f*Vector3f(15649, -6555, -19990) + 0.2f);
+	Vector3f CableStart = (0.00001f*Vector3f(15996, 3140, 19990) + 0.2f);
+	Vector3f CableEnd = (0.00001f*Vector3f(15649, 6555, 19990) + 0.2f);
 
 	child3->setMass(1.0);
 
