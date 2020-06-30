@@ -1,6 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.10)
 
-set(LIB_NAMES ParticleSystem RigidBody HeightField)
+add_subdirectory(FiniteElementMethod)
+set(LIB_NAMES ParticleSystem RigidBody HeightField EmbeddedMethod)
 
 foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${LIB_NAME}")
@@ -27,7 +28,12 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
         string(REPLACE "/" "\\" GROUP_PATH "${SRC_PATH_REL}")
         source_group("${GROUP_PATH}" FILES "${SRC}")
     endforeach()
-
+    if(${LIB_NAME} STREQUAL "EmbeddedMethod")
+      set(MARVEL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod)
+	    target_include_directories(${LIB_NAME} PUBLIC ${MARVEL_DIR}/Source ${MARVEL_DIR}/Extern)
+	    target_link_libraries(${LIB_NAME} ZJU_SOLVER embedded_elas_fem_pb elas_fem_pb embedded_mass_spring_pb mass_spring_pb)
+    endif()
+    
     if(WIN32)
         target_compile_options(${LIB_NAME} PRIVATE -Xcompiler "/wd 4819")               #禁止编译时报告文件编码不是unicode的warning，由于cuda头文件都不是unicode。使编译报错更清晰
     endif()

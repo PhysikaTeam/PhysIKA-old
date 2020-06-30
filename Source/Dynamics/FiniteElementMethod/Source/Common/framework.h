@@ -1,0 +1,66 @@
+#ifndef PhysIKA_FRAMEWORK
+#define PhysIKA_FRAMEWORK
+#include "def.h"
+#include "data_str_core.h"
+#include "Geometry/embedded_interpolate.h"
+#include <memory>
+#include <iostream>
+namespace PhysIKA{
+template<typename T, size_t dim_>
+class Problem{
+ public:
+  virtual ~Problem(){}
+  Problem(const std::shared_ptr<Functional<T, dim_>>& energy,
+          const std::shared_ptr<Constraint<T>>& constraint)
+      :energy_(energy), constraint_(constraint){}
+  std::shared_ptr<Functional<T, dim_>> energy_;
+  std::shared_ptr<Constraint<T>> constraint_;
+  size_t Nx()const {return energy_->Nx();}
+ private:
+
+};
+
+template<typename T, size_t dim_>
+class problem_builder{
+ public:
+  virtual ~problem_builder(){}
+  virtual std::shared_ptr<Problem<T,dim_>> build_problem() const = 0;
+  virtual int update_problem(const T* x, const T* v = nullptr);
+};
+
+template<typename T, size_t dim_>
+class embedded_problem_builder{
+ public:
+  virtual ~embedded_problem_builder(){}
+  virtual std::shared_ptr<Problem<T,dim_>> build_problem() const = 0;
+  virtual int update_problem(const T* x, const T* v = nullptr);
+  virtual std::shared_ptr<embedded_interpolate<T>> get_embedded_interpolate() { return nullptr;}
+
+};
+
+template<typename T, size_t dim_>
+class solver{
+ public:
+  solver(const std::shared_ptr<Problem<T, dim_>>& pb, std::shared_ptr<dat_str_core<T, dim_>> dat_str = nullptr):
+      pb_(pb), dat_str_(dat_str == nullptr ? std::make_shared<dat_str_core<T, dim_>>(pb->energy_->Nx() / dim_) : dat_str){}
+  virtual int solve(T* x_star) const = 0;
+  const std::shared_ptr<Problem<T, dim_>> pb_;
+  mutable std::shared_ptr<dat_str_core<T, dim_>> dat_str_;
+
+};
+
+// template<typename T, size_t dim_>
+// class solver_builder{
+//  public:
+//   virtual
+// };
+
+
+}
+
+
+
+
+
+
+#endif

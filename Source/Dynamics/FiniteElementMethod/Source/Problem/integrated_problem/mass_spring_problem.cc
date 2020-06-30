@@ -1,0 +1,168 @@
+#include <memory>
+
+#include <boost/property_tree/ptree.hpp>
+
+#include "Common/error.h"
+
+// TODO: possible bad idea of having dependence to model in problem module
+#include "Model/fem/elas_energy.h"
+#include "Model/fem/mass_matrix.h"
+#include "Model/mass_spring/mass_spring_obj.h"
+#include "Model/mass_spring/object_creator.h"
+#include "Model/mass_spring/simulator.h"
+#include "Model/mass_spring/para.h"
+#include "Model/mass_spring/input_output.h"
+
+
+#include "Problem/energy/basic_energy.h"
+#include "Problem/constraint/naive_constraint_4_coll.h"
+#include "Io/io.h"
+#include "Geometry/extract_surface.imp"
+
+#include "mass_spring_problem.h"
+
+namespace PhysIKA{
+using namespace std;
+using namespace Eigen;
+
+template<typename T>
+using MAT = Eigen::Matrix<T, -1, -1>;
+template<typename T>
+using VEC = Eigen::Matrix<T, -1, 1>;
+
+template<typename T>
+ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree::ptree& para_tree):pt_(para_tree){
+
+  auto blender = para_tree.get_child("blender");
+  auto simulation_para = para_tree.get_child("simulation_para");
+  auto common = para_tree.get_child("common");
+  para::dt = common.get<double>("time_step",0.01);
+  para::line_search = simulation_para.get<int>("line_search",true); // todo
+  para::density = common.get<double>("density",10);
+  para::frame = common.get<int>("frame",100);
+  para::newton_fastMS = simulation_para.get<string>("newton_fastMS");
+  para::stiffness = simulation_para.get<double>("stiffness",8000);
+  para::gravity = common.get<double>("gravity", 9.8); 
+  para::object_name = blender.get<string>("surf"); 
+  para::out_dir_simulator = common.get<string>("out_dir_simulator");
+  para::simulation_type = simulation_para.get<string>("simulation","static"); 
+  para::weight_line_search =
+    simulation_para.get<double>("weight_line_search",1e-5);
+  para::input_object = common.get<string>("input_object");
+  para::force_function = simulation_para.get<string>("force_function");
+  para::intensity = simulation_para.get<double>("intensity");
+  para::coll_z = simulation_para.get<bool>("coll_z", false);
+  //TODO: need to check exception
+
+  const string filename = para::input_object;
+  Matrix<T, -1, -1> nods;
+  MatrixXi cells;
+  IF_ERR(exit, mesh_read_from_vtk<T, 4>(filename.c_str(), nods, cells));
+
+  const size_t num_nods = nods.cols();
+  if(x != nullptr)
+    nods = Map<const MAT<T>>(x, nods.rows(), nods.cols());
+
+  REST_ = nods;
+  cells_ = cells;
+  
+  //read fixed points
+  vector<size_t> cons(0);
+  if(para_tree.find("input_constraint") != para_tree.not_found())
+  {
+    const string cons_file_path = common.get<string>("input_constraint");
+    IF_ERR(exit, read_fixed_verts_from_csv(cons_file_path.c_str(), cons));
+  } 
+  cout << "constrint " << cons.size() << " points" << endl;
+
+  //calc mass vector
+  Matrix<T, -1, 1> mass_vec(num_nods);
+  calc_mass_vector<T>(nods, cells, para::density, mass_vec);
+  // mass_calculator<T, 3, 4, 1, 1, basis_func, quadrature>(nods, cells, para::density, mass_vec);
+
+  cout << "build energy" << endl;
+  enum energy_type{ELAS, GRAV, KIN, POS};
+  ebf_.resize(POS + 1);
+  ebf_[ELAS] = make_shared<mass_spring_obj<T, 3>>(para::input_object, para::dt, para::density, para::line_search, para::weight_line_search, para::stiffness, para::newton_fastMS);
+  char axis = common.get<char>("grav_axis", 'y') | 0x20;
+  if (axis > 'z' || axis < 'x') 
+    error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
+  ebf_[GRAV]=make_shared<gravity_energy<T, 3>>(num_nods, 1, para::gravity, mass_vec, axis);
+  kinetic_ = make_shared<momentum<T, 3>>(nods.data(), num_nods, mass_vec, para::dt);
+  ebf_[KIN] = kinetic_;
+  ebf_[POS] = make_shared<position_constraint<T, 3>>(nods.data(), num_nods, simulation_para.get<double>("w_pos", 1e6), cons);
+
+  //set constraint
+  enum constraint_type{COLL};
+  cbf_.resize(COLL + 1);
+  //collsion
+  if(simulation_para.get<bool>("coll_z", false))
+  {
+    //set collision
+    MatrixXi surface;
+    extract_surface(nods, cells, surface, "tet");
+    vector<VEC<unsigned>> surface_4_coll(1,VEC<unsigned>::Zero(surface.size()));
+    copy(surface.data(), surface.data() + surface.size(), &surface_4_coll[0][0]);
+    vector<VEC<T>> nods_4_coll(1, VEC<T>::Zero(nods.size()));
+    copy(nods.data(), nods.data() + nods.size(), &nods_4_coll[0][0]);
+    // to lowercase.
+    char axis = common.get<char>("grav_axis", 'y') | 0x20;
+    if (axis > 'z' || axis < 'x') 
+      error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
+    collider_ = make_shared<naive_constraint_4_coll<T>>(surface_4_coll, nods_4_coll, axis);
+  }
+  else
+    collider_ = nullptr;
+  cbf_[COLL] = collider_;
+}
+
+
+template<typename T>
+std::shared_ptr<Problem<T, 3>> ms_problem_builder<T>::build_problem() const{
+  cout << "assemble energy" << endl;
+  shared_ptr<Functional<T, 3>> energy;
+  try
+  {
+    energy = build_energy_t<T, 3>(ebf_);
+  }
+  catch (std::exception &e)
+  {
+    cerr << e.what() << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  shared_ptr<Constraint<T>> constraint;
+  cout << "assemble constraint" << endl;
+  bool all_null = true;
+  for(auto& c : cbf_)
+    if( c != nullptr) all_null = false;
+  if(all_null){
+    constraint = nullptr;
+    cout << "WARNGING: No hard constraints." << endl;
+  }else{
+    try {
+      constraint = build_constraint_t<T>(cbf_);
+    }
+    catch(std::exception &e){
+      cerr << e.what() << endl;
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  exit_if(constraint != nullptr && energy->Nx() != constraint->Nx(), "energy and constraint has different dimension.");
+  return make_shared<Problem<T, 3>>(energy, constraint);
+}
+
+template<typename T>
+int ms_problem_builder<T>::update_problem(const T* x, const T* v){
+  IF_ERR(return, kinetic_->update_location_and_velocity(x, v));
+  if(collider_ != nullptr)
+    IF_ERR(return, collider_->update(x));
+  return 0;
+}
+
+template class ms_problem_builder<double>;
+
+template class ms_problem_builder<float>;
+
+}

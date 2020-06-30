@@ -1,0 +1,272 @@
+/** -*- mode: c++ -*-
+ * @file log_macro.imp
+ * @author LamKamhang (Cool_Lam@outlook.com)
+ * @brief A Documented file.
+ * @version 1.0
+ * @date Fri Dec 6 00:22:11 CST 2019
+ *
+ * Detailed description
+ *
+ *
+ * @copyright Copyright (c) 2019
+ */
+#ifndef CHAOS_LOG_MACRO_H
+#define CHAOS_LOG_MACRO_H
+
+#define DEFAULT_PRINTER chaos::utils::log_printer::get_instance()
+
+#define log_msg_ext(printer, level, cond, format_event, ...)                   \
+  {                                                                            \
+    if (cond) {                                                                \
+      FILE *os = printer.get_os(level);                                        \
+      fprintf(                                                                 \
+          os, "[%s] @%s:%d {%s} >>> ", chaos::utils::log_level_str(level),     \
+          __FILE__, __LINE__, __PRETTY_FUNCTION__);                            \
+      fprintf(os, format_event, ##__VA_ARGS__);                                \
+      fprintf(os, "\n");                                                       \
+      fflush(os);                                                              \
+      if (level <= chaos::utils::ERROR)                                        \
+        exit(-1);                                                              \
+    }                                                                          \
+  }
+#define log_msg(printer, level, cond, format_event, ...)                       \
+  {                                                                            \
+    if (cond) {                                                                \
+      FILE *os = printer.get_os(level);                                        \
+      fprintf(os, "[%s] >>> ", chaos::utils::log_level_str(level));            \
+      fprintf(os, format_event, ##__VA_ARGS__);                                \
+      fprintf(os, "\n");                                                       \
+      fflush(os);                                                              \
+      if (level <= chaos::utils::ERROR)                                        \
+        exit(-1);                                                              \
+    }                                                                          \
+  }
+#define log_msg_only(printer, level, cond, format_event, ...)                  \
+  {                                                                            \
+    if (cond) {                                                                \
+      FILE *os = printer.get_os(level);                                        \
+      fprintf(os, format_event, ##__VA_ARGS__);                                \
+      fprintf(os, "\n");                                                       \
+      fflush(os);                                                              \
+      if (level <= chaos::utils::ERROR)                                        \
+        exit(-1);                                                              \
+    }                                                                          \
+  }
+
+#ifndef NO_EMERG_PRINT_FLAG
+#  define emerg_msg_ext_cond(cond, event, ...)                                 \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::EMERG, cond, event, ##__VA_ARGS__);
+#  define emerg_msg_cond(cond, event, ...)                                     \
+    log_msg(DEFAULT_PRINTER, chaos::utils::EMERG, cond, event, ##__VA_ARGS__);
+#  define emerg_msg_only_cond(cond, event, ...)                                \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::EMERG, cond, event, ##__VA_ARGS__);
+#  define emerg_msg_ext(event, ...)                                            \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::EMERG, true, event, ##__VA_ARGS__);
+#  define emerg_msg(event, ...)                                                \
+    log_msg(DEFAULT_PRINTER, chaos::utils::EMERG, true, event, ##__VA_ARGS__);
+#  define emerg_msg_only(event, ...)                                           \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::EMERG, true, event, ##__VA_ARGS__);
+#else
+#  define emerg_msg_ext_cond(cond, event, ...)
+#  define emerg_msg_cond(cond, event, ...)
+#  define emerg_msg_only_cond(cond, event, ...)
+#  define emerg_msg_ext(event, ...)
+#  define emerg_msg(event, ...)
+#  define emerg_msg_only(event, ...)
+#endif
+
+#ifndef NO_ALERT_PRINT_FLAG
+#  define alert_msg_ext_cond(cond, event, ...)                                 \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::ALERT, cond, event, ##__VA_ARGS__);
+#  define alert_msg_cond(cond, event, ...)                                     \
+    log_msg(DEFAULT_PRINTER, chaos::utils::ALERT, cond, event, ##__VA_ARGS__);
+#  define alert_msg_only_cond(cond, event, ...)                                \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::ALERT, cond, event, ##__VA_ARGS__);
+#  define alert_msg_ext(event, ...)                                            \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::ALERT, true, event, ##__VA_ARGS__);
+#  define alert_msg(event, ...)                                                \
+    log_msg(DEFAULT_PRINTER, chaos::utils::ALERT, true, event, ##__VA_ARGS__);
+#  define alert_msg_only(event, ...)                                           \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::ALERT, true, event, ##__VA_ARGS__);
+#else
+#  define alert_msg_ext_cond(cond, event, ...)
+#  define alert_msg_cond(cond, event, ...)
+#  define alert_msg_only_cond(cond, event, ...)
+#  define alert_msg_ext(event, ...)
+#  define alert_msg(event, ...)
+#  define alert_msg_only(event, ...)
+#endif
+
+#ifndef NO_CRITICAL_PRINT_FLAG
+#  define critical_msg_ext_cond(cond, event, ...)                              \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::CRITICAL, cond, event, ##__VA_ARGS__);
+#  define critical_msg_cond(cond, event, ...)                                  \
+    log_msg(                                                                   \
+        DEFAULT_PRINTER, chaos::utils::CRITICAL, cond, event, ##__VA_ARGS__);
+#  define critical_msg_only_cond(cond, event, ...)                             \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::CRITICAL, cond, event, ##__VA_ARGS__);
+#  define critical_msg_ext(event, ...)                                         \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::CRITICAL, true, event, ##__VA_ARGS__);
+#  define critical_msg(event, ...)                                             \
+    log_msg(                                                                   \
+        DEFAULT_PRINTER, chaos::utils::CRITICAL, true, event, ##__VA_ARGS__);
+#  define critical_msg_only(event, ...)                                        \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::CRITICAL, true, event, ##__VA_ARGS__);
+#else
+#  define critical_msg_ext_cond(cond, event, ...)
+#  define critical_msg_cond(cond, event, ...)
+#  define critical_msg_only_cond(cond, event, ...)
+#  define critical_msg_ext(event, ...)
+#  define critical_msg(event, ...)
+#  define critical_msg_only(event, ...)
+#endif
+
+#ifndef NO_ERROR_PRINT_FLAG
+#  define error_msg_ext_cond(cond, event, ...)                                 \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::ERROR, cond, event, ##__VA_ARGS__);
+#  define error_msg_cond(cond, event, ...)                                     \
+    log_msg(DEFAULT_PRINTER, chaos::utils::ERROR, cond, event, ##__VA_ARGS__);
+#  define error_msg_only_cond(cond, event, ...)                                \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::ERROR, cond, event, ##__VA_ARGS__);
+#  define error_msg_ext(event, ...)                                            \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::ERROR, true, event, ##__VA_ARGS__);
+#  define error_msg(event, ...)                                                \
+    log_msg(DEFAULT_PRINTER, chaos::utils::ERROR, true, event, ##__VA_ARGS__);
+#  define error_msg_only(event, ...)                                           \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::ERROR, true, event, ##__VA_ARGS__);
+#else
+#  define error_msg_ext_cond(cond, event, ...)
+#  define error_msg_cond(cond, event, ...)
+#  define error_msg_only_cond(cond, event, ...)
+#  define error_msg_ext(event, ...)
+#  define error_msg(event, ...)
+#  define error_msg_only(event, ...)
+#endif
+
+#ifdef WARN_PRINT_FLAG
+#  define warn_msg_ext_cond(cond, event, ...)                                  \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::WARN, cond, event, ##__VA_ARGS__);
+#  define warn_msg_cond(cond, event, ...)                                      \
+    log_msg(DEFAULT_PRINTER, chaos::utils::WARN, cond, event, ##__VA_ARGS__);
+#  define warn_msg_only_cond(cond, event, ...)                                 \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::WARN, cond, event, ##__VA_ARGS__);
+#  define warn_msg_ext(event, ...)                                             \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::WARN, true, event, ##__VA_ARGS__);
+#  define warn_msg(event, ...)                                                 \
+    log_msg(DEFAULT_PRINTER, chaos::utils::WARN, true, event, ##__VA_ARGS__);
+#  define warn_msg_only(event, ...)                                            \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::WARN, true, event, ##__VA_ARGS__);
+#else
+#  define warn_msg_ext_cond(cond, event, ...)
+#  define warn_msg_cond(cond, event, ...)
+#  define warn_msg_only_cond(cond, event, ...)
+#  define warn_msg_ext(event, ...)
+#  define warn_msg(event, ...)
+#  define warn_msg_only(event, ...)
+#endif
+
+#ifdef NOTICE_PRINT_FLAG
+#  define notice_msg_ext_cond(cond, event, ...)                                \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::NOTICE, cond, event, ##__VA_ARGS__);
+#  define notice_msg_cond(cond, event, ...)                                    \
+    log_msg(DEFAULT_PRINTER, chaos::utils::NOTICE, cond, event, ##__VA_ARGS__);
+#  define notice_msg_only_cond(cond, event, ...)                               \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::NOTICE, cond, event, ##__VA_ARGS__);
+#  define notice_msg_ext(event, ...)                                           \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::NOTICE, true, event, ##__VA_ARGS__);
+#  define notice_msg(event, ...)                                               \
+    log_msg(DEFAULT_PRINTER, chaos::utils::NOTICE, true, event, ##__VA_ARGS__);
+#  define notice_msg_only(event, ...)                                          \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::NOTICE, true, event, ##__VA_ARGS__);
+#else
+#  define notice_msg_ext_cond(cond, event, ...)
+#  define notice_msg_cond(cond, event, ...)
+#  define notice_msg_only_cond(cond, event, ...)
+#  define notice_msg_ext(event, ...)
+#  define notice_msg(event, ...)
+#  define notice_msg_only(event, ...)
+#endif
+
+#ifdef INFO_PRINT_FLAG
+#  define info_msg_ext_cond(cond, event, ...)                                  \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::INFO, cond, event, ##__VA_ARGS__);
+#  define info_msg_cond(cond, event, ...)                                      \
+    log_msg(DEFAULT_PRINTER, chaos::utils::INFO, cond, event, ##__VA_ARGS__);
+#  define info_msg_only_cond(cond, event, ...)                                 \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::INFO, cond, event, ##__VA_ARGS__);
+#  define info_msg_ext(event, ...)                                             \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::INFO, true, event, ##__VA_ARGS__);
+#  define info_msg(event, ...)                                                 \
+    log_msg(DEFAULT_PRINTER, chaos::utils::INFO, true, event, ##__VA_ARGS__);
+#  define info_msg_only(event, ...)                                            \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::INFO, true, event, ##__VA_ARGS__);
+#else
+#  define info_msg_ext_cond(cond, event, ...)
+#  define info_msg_cond(cond, event, ...)
+#  define info_msg_only_cond(cond, event, ...)
+#  define info_msg_ext(event, ...)
+#  define info_msg(event, ...)
+#  define info_msg_only(event, ...)
+#endif
+
+#ifdef DEBUG_PRINT_FLAG
+#  define debug_msg_ext_cond(cond, event, ...)                                 \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::DEBUG, cond, event, ##__VA_ARGS__);
+#  define debug_msg_cond(cond, event, ...)                                     \
+    log_msg(DEFAULT_PRINTER, chaos::utils::DEBUG, cond, event, ##__VA_ARGS__);
+#  define debug_msg_only_cond(cond, event, ...)                                \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::DEBUG, cond, event, ##__VA_ARGS__);
+#  define debug_msg_ext(event, ...)                                            \
+    log_msg_ext(                                                               \
+        DEFAULT_PRINTER, chaos::utils::DEBUG, true, event, ##__VA_ARGS__);
+#  define debug_msg(event, ...)                                                \
+    log_msg(DEFAULT_PRINTER, chaos::utils::DEBUG, true, event, ##__VA_ARGS__);
+#  define debug_msg_only(event, ...)                                           \
+    log_msg_only(                                                              \
+        DEFAULT_PRINTER, chaos::utils::DEBUG, true, event, ##__VA_ARGS__);
+#else
+#  define debug_msg_ext_cond(cond, event, ...)
+#  define debug_msg_cond(cond, event, ...)
+#  define debug_msg_only_cond(cond, event, ...)
+#  define debug_msg_ext(event, ...)
+#  define debug_msg(event, ...)
+#  define debug_msg_only(event, ...)
+#endif
+
+#ifdef TRACE_FUNC_FLAG
+#  define trace_func() debug_msg(__PRETTY_FUNCTION__);
+#else
+#  define trace_func()
+#endif
+
+#endif /* CHAOS_LOG_MACRO_H */
