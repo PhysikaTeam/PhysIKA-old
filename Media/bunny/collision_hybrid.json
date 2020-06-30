@@ -1,6 +1,6 @@
 {
     "filename": "../../Media/bunny/sparse_bunny_points.obj",
-    "filename_coarse" : "../../Media/bunny/sparse_bunny_mesh.vtk",
+    "filename_coarse" : "../../Media/bunny/sparse_bunny_mesh_simp.vtk",
     "type": "tet",
     "cons": "../../Media/bunny/sparse_bunny.csv",
     "tol":1e-3,
@@ -11,7 +11,7 @@
         "rho": 0.01,
         "csttt":"corotated",
         "dt":0.001,
-        "Young":20
+        "Young":2
     },
     "cg_tol": 1e-4,
     "grav_axis":"y",
@@ -28,7 +28,7 @@
         "input_format": "vtk"
     },
     "simulation_para": {
-        "stiffness":10,
+        "stiffness":50,
         "weight_line_search":1e-5,
         "line_search":true,
         "intensity":0,
@@ -42,11 +42,11 @@
     "common": {
         "time_step": 0.001,
         "frame_rate": 1000,
-        "density": 1,
+        "density": 1000,
         "gravity": 9.8,
         "grav_axis":"y",
         "out_dir_simulator":"../../Media/bunny",
         "embedded_object":"../../Media/bunny/sparse_bunny_points.obj",
-        "input_object":"../../Media/bunny/sparse_bunny_mesh.vtk"
+        "input_object":"../../Media/bunny/sparse_bunny_mesh_simp.vtk"
     }
 }

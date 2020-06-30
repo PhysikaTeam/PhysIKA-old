@@ -110,8 +110,8 @@ namespace PhysIKA
 		}
 
     //So we just copy the points. WARNING: the surface should have the same points as pointsSets.
-    auto triSet = m_surfaceNode->template getModule<TriangleSet<TDataType>>("surface_mesh");
-    Function1Pt::copy(triSet->getPoints(), pts);
+    // auto triSet = m_surfaceNode->template getModule<TriangleSet<TDataType>>("surface_mesh");
+    // Function1Pt::copy(triSet->getPoints(), pts);
 	}
 
 

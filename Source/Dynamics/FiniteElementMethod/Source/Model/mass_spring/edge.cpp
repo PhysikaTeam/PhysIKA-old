@@ -56,7 +56,7 @@ bool edge<T,dim>::checkInversion(std::vector< vertex<T,dim > > &myvertexs,Eigen:
         len_sq_d+=(vec_x_d[i]*vec_x_d[i]);
       }
       DScalar len_d=sqrt(len_sq_d);
-      energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5;
+      energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5 / rest_length;
     }
     else if(newton_fastMS=="fastMS_original"||newton_fastMS=="fastMS_ChebyshevSIM")
     {
@@ -130,7 +130,7 @@ bool edge<T,dim>::checkInversion(std::vector< vertex<T,dim > > &myvertexs,T stif
         len_sq_d+=(vec_x_d[i]*vec_x_d[i]);
       }
       DScalar len_d=sqrt(len_sq_d);
-      energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5;
+      energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5 /rest_length;
     }
     else if(newton_fastMS=="fastMS_original"||newton_fastMS=="fastMS_ChebyshevSIM")
     {
@@ -193,7 +193,7 @@ int edge<T,dim>::calJacobian(vector< vertex<T,dim> > &myvertexs,Eigen::VectorXd 
         len_sq_d+=(vec_x_d[i]*vec_x_d[i]);
       }
       DScalar len_d=sqrt(len_sq_d);
-      energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5;
+      energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5 /rest_length;
     }
     else if(newton_fastMS=="fastMS_original"||newton_fastMS=="fastMS_ChebyshevSIM")
     {
@@ -267,7 +267,7 @@ int edge<T,dim>::calJacobianAndHessian(vector< vertex<T,dim> > &myvertexs,std::v
         len_sq_d+=(vec_x_d[i]*vec_x_d[i]);
       }
       DScalar len_d=sqrt(len_sq_d);
-      energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5;
+      energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5 /rest_length;
     }
     else if(newton_fastMS=="fastMS_original"||newton_fastMS=="fastMS_ChebyshevSIM")
     {
@@ -350,7 +350,7 @@ int edge<T, dim>::calHessian(std::vector< vertex<T,dim > > &myvertexs,std::vecto
       len_sq_d+=(vec_x_d[i]*vec_x_d[i]);
     }
     DScalar len_d=sqrt(len_sq_d);
-    energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5;
+    energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5 /rest_length;
   }
   else if(newton_fastMS=="fastMS_original"||newton_fastMS=="fastMS_ChebyshevSIM")
   {
@@ -432,7 +432,7 @@ int edge<T, dim>::calValue(std::vector< vertex<T,dim > > &myvertexs, const T sti
       len_sq_d+=(vec_x_d[i]*vec_x_d[i]);
     }
     DScalar len_d=sqrt(len_sq_d);
-    energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5;
+    energy_d=(len_d-rest_length)*(len_d-rest_length)*stiffness*0.5 / rest_length;
   }
   else if(newton_fastMS=="fastMS_original"||newton_fastMS=="fastMS_ChebyshevSIM")
   {
