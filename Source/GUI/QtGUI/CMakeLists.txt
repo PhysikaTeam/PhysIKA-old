@@ -14,7 +14,15 @@ if(NOT VTK_BINARY_DIR)
     include(${VTK_USE_FILE})
 endif(NOT VTK_BINARY_DIR)
 
-link_libraries(Qt5::Widgets Qt5::Core Qt5::Gui
+find_package(Qt5 COMPONENTS
+             Core
+             Widgets
+             Gui
+             OpenGL)
+
+qt5_add_resources(RESOURCES ./Resources/resources.qrc)
+
+link_libraries(Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL
     ${VTK_LIBRARIES}
 )   
 
@@ -24,11 +32,15 @@ file(
     CONFIGURE_DEPENDS
     "${LIB_SRC_DIR}/*.c*"
     "${LIB_SRC_DIR}/*.h*"
+	"${LIB_SRC_DIR}/Nodes/*.h*"
+	"${LIB_SRC_DIR}/Nodes/*.c*"
 )
 
 list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 目录下面的所有文件
 
-add_library(${LIB_NAME} STATIC ${LIB_SRC})                                      #添加编译目标 静态链接库
+add_library(${LIB_NAME} STATIC 
+	${LIB_SRC} 
+	${RESOURCES})                                      #添加编译目标 静态链接库
 
 foreach(SRC IN ITEMS ${LIB_SRC})                                                #为VS工程添加filter 方便查看文件结构目录
     get_filename_component(SRC_PATH "${SRC}" PATH)

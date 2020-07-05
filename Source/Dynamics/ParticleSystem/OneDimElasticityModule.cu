@@ -28,7 +28,16 @@ namespace PhysIKA
 
 			Coord d12 = p1 - p2;
 			Real d12_norm = d12.norm();
-			Coord n_12 = d12_norm > EPSILON ? d12.normalize() : Coord(1, 0, 0);
+			Coord n_12 = d12;
+			if (d12_norm > EPSILON)
+			{
+				n_12.normalize();
+			}
+			else
+			{
+				n_12 = Coord(1, 0, 0);;
+			}
+			//Coord n_12 = d12_norm > EPSILON ? d12.normalize() : Coord(1, 0, 0);
 
 			delta_p += -w1 / (w1 + w2)*(d12_norm - distance)*n_12;
 			//Coord delta_p2 = w2 / (w1 + w2)*(d12_norm - distance)*n_12;
@@ -44,7 +53,16 @@ namespace PhysIKA
 
 			Coord d01 = p0 - p1;
 			Real d01_norm = d01.norm();
-			Coord n_01 = d01_norm > EPSILON ? d01.normalize() : Coord(1, 0, 0);
+			Coord n_01 = d01;
+			if (d01_norm > EPSILON)
+			{
+				n_01.normalize();
+			}
+			else
+			{
+				n_01 = Coord(1, 0, 0);
+			}
+			//Coord n_01 = d01_norm > EPSILON ? d01.normalize() : Coord(1, 0, 0);
 
 			//Coord delta_p0 = -w0 / (w0 + w1)*(d01_norm - distance)*n_01;
 			delta_p += w1 / (w0 + w1)*(d01_norm - distance)*n_01;

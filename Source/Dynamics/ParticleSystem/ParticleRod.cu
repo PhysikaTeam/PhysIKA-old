@@ -31,19 +31,19 @@ namespace PhysIKA
 		m_horizon.connect(m_nbrQuery->m_radius);
 		this->m_position.connect(m_nbrQuery->m_position);
 
-		m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
-		this->getPosition()->connect(m_elasticity->m_position);
-		this->getVelocity()->connect(m_elasticity->m_velocity);
-		m_horizon.connect(m_elasticity->m_horizon);
-		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
-		m_elasticity->setIterationNumber(10);
+// 		m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
+// 		this->getPosition()->connect(m_elasticity->m_position);
+// 		this->getVelocity()->connect(m_elasticity->m_velocity);
+// 		m_horizon.connect(m_elasticity->m_horizon);
+// 		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
+// 		m_elasticity->setIterationNumber(10);
 
-// 		m_one_dim_elasticity = this->template addConstraintModule<OneDimElasticityModule<TDataType>>("elasticity module");
-// 		this->getPosition()->connect(m_one_dim_elasticity->m_position);
-// 		this->getVelocity()->connect(m_one_dim_elasticity->m_velocity);
-// 		m_horizon.connect(m_one_dim_elasticity->m_distance);
-// 		m_mass.connect(m_one_dim_elasticity->m_mass);
-// 		m_one_dim_elasticity->setIterationNumber(10);
+		m_one_dim_elasticity = this->template addConstraintModule<OneDimElasticityModule<TDataType>>("elasticity module");
+		this->getPosition()->connect(m_one_dim_elasticity->m_position);
+		this->getVelocity()->connect(m_one_dim_elasticity->m_velocity);
+		m_horizon.connect(m_one_dim_elasticity->m_distance);
+		m_mass.connect(m_one_dim_elasticity->m_mass);
+		m_one_dim_elasticity->setIterationNumber(10);
 
 		m_fixed = this->template addConstraintModule<FixedPoints<TDataType>>("fixed");
 		this->getPosition()->connect(m_fixed->m_position);
@@ -80,6 +80,21 @@ namespace PhysIKA
 		m_one_dim_elasticity->setMaterialStiffness(stiffness);
 	}
 
+
+	template<typename TDataType>
+	bool ParticleRod<TDataType>::initialize()
+	{
+		ParticleSystem<TDataType>::initialize();
+
+		auto& list = this->getModuleList();
+		std::list<std::shared_ptr<Module>>::iterator iter = list.begin();
+		for (; iter != list.end(); iter++)
+		{
+			(*iter)->initialize();
+		}
+
+		return true;
+	}
 
 	template<typename TDataType>
 	bool ParticleRod<TDataType>::resetStatus()
@@ -187,8 +202,8 @@ namespace PhysIKA
 
 		m_integrator->integrate();
  	
-		//m_one_dim_elasticity->constrain();
-		m_elasticity->constrain();
+		m_one_dim_elasticity->constrain();
+		//m_elasticity->constrain();
 
 		if (m_damping != nullptr)
 			m_damping->constrain();

@@ -24,6 +24,7 @@ namespace PhysIKA
 		ParticleRod(std::string name = "default");
 		virtual ~ParticleRod();
 
+		bool initialize() override;
 		bool resetStatus() override;
 		void advance(Real dt) override;
 

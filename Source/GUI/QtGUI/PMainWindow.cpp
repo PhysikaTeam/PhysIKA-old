@@ -85,6 +85,9 @@
 #include <QDebug>
 #include <QtWidgets/QOpenGLWidget>
 
+#include "Nodes/FlowView.hpp"
+#include "Nodes/FlowScene.hpp"
+
 #include "Core/Platform.h"
 
 // #include "Node/NodeData.hpp"
@@ -163,6 +166,13 @@ namespace PhysIKA
 		QWidget* tabEditor = new QWidget();
 		tabEditor->setObjectName(QStringLiteral("tabEditor"));
 		tabWidget->addTab(tabEditor, QString());
+
+		QVBoxLayout *l = new QVBoxLayout(tabEditor);
+
+		auto scene = new QtNodes::FlowScene(tabEditor);
+		l->addWidget(new QtNodes::FlowView(scene));
+		l->setContentsMargins(0, 0, 0, 0);
+		l->setSpacing(0);
 
 		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
 		tabWidget->setTabText(tabWidget->indexOf(tabEditor), QApplication::translate("MainWindow", "Node Editor", Q_NULLPTR));
