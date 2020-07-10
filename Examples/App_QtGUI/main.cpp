@@ -11,6 +11,7 @@
 #include "Dynamics/ParticleSystem/ParticleElasticBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/ParticleSystem/ElasticityModule.h"
+#include "Framework/ControllerAnimation.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -47,6 +48,13 @@ int main()
 
 	QtApp window;
 	window.createWindow(1024, 768);
+
+	auto classMap = Object::getClassMap();
+
+	for (auto const c : *classMap)
+		std::cout << "Class Name: " << c.first << std::endl;
+
+	
 
 	window.mainLoop();
     SceneGraph::getInstance().setRootNode(nullptr);

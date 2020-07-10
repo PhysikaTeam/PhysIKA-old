@@ -24,7 +24,43 @@ if(PhysIKA_Qt5_GUI)
     list(FILTER SRC_LIST EXCLUDE REGEX .*Media/.*)                                                              #�ų�deprecated �ļ�����������ļ�
 
     add_executable(${PROJECT_NAME} ${SRC_LIST})                                                                 #���ӱ���Ŀ�� ��ִ���ļ�
-    target_link_libraries(${PROJECT_NAME} PUBLIC Core Framework IO ParticleSystem RigidBody QtGUI) 
+    
+    if(UNIX)
+        target_link_libraries(${PROJECT_NAME} PUBLIC                                   #the option "-Wl,--whole-archive" is an equivalance to /WHOLEARCHIVE
+            -Wl,--whole-archive
+            Core 
+            Framework 
+            IO 
+            ParticleSystem 
+            RigidBody 
+            QtGUI
+            -Wl,--no-whole-archive) 
+
+    elseif(WIN32)
+        target_link_libraries(${PROJECT_NAME} PUBLIC
+            Core 
+            Framework 
+            IO 
+            ParticleSystem 
+            RigidBody 
+            QtGUI) 
+
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG           #/WHOLEARCHIVE is used to link unused static variables for visual studio, which is necessary for auto class registration.
+           "/WHOLEARCHIVE:PaFramework-${PHYSIKA_LIBRARY_VERSION}d.lib 
+            /WHOLEARCHIVE:PaParticleSystem-${PHYSIKA_LIBRARY_VERSION}d.lib
+            /WHOLEARCHIVE:PaIO-${PHYSIKA_LIBRARY_VERSION}d.lib
+            /WHOLEARCHIVE:PaQtGUI-${PHYSIKA_LIBRARY_VERSION}d.lib
+            /WHOLEARCHIVE:PaRigidBody-${PHYSIKA_LIBRARY_VERSION}d.lib")
+
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE 
+           "/WHOLEARCHIVE:PaFramework-${PHYSIKA_LIBRARY_VERSION}.lib 
+            /WHOLEARCHIVE:PaParticleSystem-${PHYSIKA_LIBRARY_VERSION}.lib
+            /WHOLEARCHIVE:PaIO-${PHYSIKA_LIBRARY_VERSION}.lib
+            /WHOLEARCHIVE:PaQtGUI-${PHYSIKA_LIBRARY_VERSION}.lib
+            /WHOLEARCHIVE:PaRigidBody-${PHYSIKA_LIBRARY_VERSION}.lib")
+    else()
+        message(FATAL_ERROR "Could not set install folders for this platform!")
+    endif()
 
     file(RELATIVE_PATH PROJECT_PATH_REL "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")                  #�жϵ�ǰproject�ڸ�Ŀ¼�µ����·��
     set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Examples")                              #Ϊproject�趨folderĿ¼

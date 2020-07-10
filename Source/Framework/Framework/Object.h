@@ -47,17 +47,17 @@ public:
 
 #define DECLARE_CLASS(name) \
 public: \
-    static const ClassInfo ms_classinfo; \
+    static const ClassInfo* ms_classinfo; \
 public:  \
     virtual const ClassInfo* getClassInfo() const; \
     static Object* createObject();
 
+
 #define IMPLEMENT_CLASS_COMMON(name,func) \
-const ClassInfo name::ms_classinfo((#name), \
-            (ObjectConstructorFn) func); \
+const ClassInfo* name::ms_classinfo = new ClassInfo((#name), (ObjectConstructorFn) func); \
                         \
 const ClassInfo* name::getClassInfo() const \
-    {return &name::ms_classinfo;}
+    {return name::ms_classinfo;}
 
 #define IMPLEMENT_CLASS(name)            \
 IMPLEMENT_CLASS_COMMON(name,name::createObject) \
