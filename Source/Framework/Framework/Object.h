@@ -47,16 +47,16 @@ public:
 
 #define DECLARE_CLASS(name) \
 public: \
-    static ClassInfo ms_classinfo; \
+    static const ClassInfo ms_classinfo; \
 public:  \
-    virtual ClassInfo* getClassInfo() const; \
+    virtual const ClassInfo* getClassInfo() const; \
     static Object* createObject();
 
 #define IMPLEMENT_CLASS_COMMON(name,func) \
-ClassInfo name::ms_classinfo((#name), \
+const ClassInfo name::ms_classinfo((#name), \
             (ObjectConstructorFn) func); \
                         \
-ClassInfo* name::getClassInfo() const \
+const ClassInfo* name::getClassInfo() const \
     {return &name::ms_classinfo;}
 
 #define IMPLEMENT_CLASS(name)            \
@@ -69,18 +69,18 @@ Object* name::createObject()                   \
 
 #define DECLARE_CLASS_1(name, T1) \
 public: \
-    static ClassInfo ms_classinfo; \
+    static const ClassInfo ms_classinfo; \
 public:  \
-    virtual ClassInfo* getClassInfo() const; \
+    virtual const ClassInfo* getClassInfo() const; \
     static Object* createObject();
 
 #define IMPLEMENT_CLASS_COMMON_1(name, T1, func) \
 template<typename T1>		\
-ClassInfo name<T1>::ms_classinfo(std::string(_STR(name))+std::string("<")+std::string(T1::getName())+std::string(">"), \
+const ClassInfo name<T1>::ms_classinfo(std::string(_STR(name))+std::string("<")+std::string(T1::getName())+std::string(">"), \
             (ObjectConstructorFn) func); \
 							\
 template<typename T1>		\
-ClassInfo* name<T1>::getClassInfo() const \
+const ClassInfo* name<T1>::getClassInfo() const \
     {return &name<T1>::ms_classinfo;}
 
 #define IMPLEMENT_CLASS_1(name, T1)            \
@@ -98,6 +98,7 @@ public:
 	virtual ~Object() {};
 	static bool registerClass(ClassInfo* ci);
 	static Object* createObject(std::string name);
+	static std::map< std::string, ClassInfo*>* getClassMap();
 };
 
 
