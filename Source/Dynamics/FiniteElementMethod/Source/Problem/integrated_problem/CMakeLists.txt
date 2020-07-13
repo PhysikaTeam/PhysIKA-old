@@ -25,7 +25,7 @@ target_link_libraries(mass_spring_pb
   ZJU_FEM
   ZJU_IO
   ZJU_ENERGY
-  fast_mass_spring)
+  ms_hg)
 TARGET_INCLUDE_DIRECTORIES(mass_spring_pb PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
 
@@ -35,7 +35,7 @@ target_link_libraries(embedded_mass_spring_pb
   ZJU_FEM
   ZJU_IO
   ZJU_ENERGY
-  fast_mass_spring)
+  ms_hg)
 TARGET_INCLUDE_DIRECTORIES(embedded_mass_spring_pb PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
 

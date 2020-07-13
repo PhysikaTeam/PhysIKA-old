@@ -8,10 +8,7 @@
 #include "Model/fem/elas_energy.h"
 #include "Model/fem/mass_matrix.h"
 #include "Model/mass_spring/mass_spring_obj.h"
-#include "Model/mass_spring/object_creator.h"
-#include "Model/mass_spring/simulator.h"
 #include "Model/mass_spring/para.h"
-#include "Model/mass_spring/input_output.h"
 
 
 #include "Problem/energy/basic_energy.h"
@@ -83,7 +80,7 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
   cout << "build energy" << endl;
   enum energy_type{ELAS, GRAV, KIN, POS};
   ebf_.resize(POS + 1);
-  ebf_[ELAS] = make_shared<mass_spring_obj<T, 3>>(para::input_object, para::dt, para::density, para::line_search, para::weight_line_search, para::stiffness, para::newton_fastMS);
+  ebf_[ELAS] = make_shared<MassSpringObj<T>>(para::input_object.c_str(), para::stiffness);
   char axis = common.get<char>("grav_axis", 'y') | 0x20;
   if (axis > 'z' || axis < 'x') 
     error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");

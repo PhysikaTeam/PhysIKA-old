@@ -1,8 +1,10 @@
 ﻿#ifndef _PARA_
 #define _PARA_
 
-#include "head.h"
+// #include "head.h"
 // hardcode the test parameter for mass spring testing demo 
+
+#include <string>
 class para
 {
  public:
