@@ -26,10 +26,10 @@ enum class constuctor_type {
   DeviceArray = cudaMemcpyDeviceToDevice
 };
 
-#ifndef SPM
-template<typename T>
-using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;
-#endif
+// #ifndef SPM
+// template<typename T>
+// using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;
+// #endif
 
 template<typename T>
 class GPU_PCG {
@@ -70,7 +70,7 @@ class CUDA_PCG : public unconstrainted_linear_solver<T>{
  public:
   using VEC = Eigen::Matrix<T, -1, 1>;
   CUDA_PCG(const bool hes_is_constant) :hes_is_constant_(hes_is_constant) {}
-  int solve(const SPM<T>& A, const T* b, const SPM<T>& J, const T* c, T* solution) const;
+  int solve(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A, const T* b, const Eigen::SparseMatrix<T, Eigen::RowMajor>& J, const T* c, T* solution) const;
 
 };
 }

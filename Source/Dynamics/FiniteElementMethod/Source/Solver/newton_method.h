@@ -13,9 +13,9 @@ using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;
 
 
 template<typename T>
-using linear_solver_type = std::function<int(const SPM<T>& A,
+using linear_solver_type = std::function<int(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A,
                                              const T* b,
-                                             const SPM<T>& J,
+                                             const Eigen::SparseMatrix<T, Eigen::RowMajor>& J,
                                              const T* c,
                                              T* solution)>;
 
@@ -30,7 +30,7 @@ class newton_base: public solver<T, dim_>{
 
   virtual int solve(T* x_star) const;
  protected:
-  virtual int solve_linear_eq(const SPM<T>& A, const T* b, const SPM<T>& J, const T* c, const T* x0, T* solution)const;
+  virtual int solve_linear_eq(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A, const T* b, const Eigen::SparseMatrix<T, Eigen::RowMajor>& J, const T* c, const T* x0, T* solution)const;
   mutable linear_solver_type<T> linear_solver_;
 
   const bool line_search_;
@@ -45,7 +45,7 @@ class newton_base: public solver<T, dim_>{
   decltype(solver<T,dim_>::dat_str_)& dat_str_ = solver<T,dim_>::dat_str_;
   decltype(solver<T,dim_>::pb_)& pb_ = solver<T,dim_>::pb_;
 
-  void get_J_C(const T* x, SPM<T>& J, VEC<T>& C) const;
+  void get_J_C(const T* x, Eigen::SparseMatrix<T, Eigen::RowMajor>& J, VEC<T>& C) const;
       
 };
 

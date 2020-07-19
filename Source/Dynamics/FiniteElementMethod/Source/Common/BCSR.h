@@ -8,7 +8,6 @@
 #include <Eigen/Sparse>
 
 #include "error.h"
-#include "logger/log_utils.h"
 #include "DEFINE_TYPE.h"
 
 
@@ -133,9 +132,9 @@ namespace PhysIKA {
   // TODO: optimize for eigen 
   template <typename T, const size_t block_size>
   Eigen::Matrix<T, -1, 1> BCSR<T, block_size>::operator*(const VEC &rhs) const {
-    error_msg_ext_cond(
-        rhs.rows() != cols_, "BCSR<%lu, %lu>. rhs<%lu>. dim does not match. ",
-        rows_, cols_, rhs.rows());
+    // error_msg_ext_cond(
+    //     rhs.rows() != cols_, "BCSR<%lu, %lu>. rhs<%lu>. dim does not match. ",
+    //     rows_, cols_, rhs.rows());
     VEC res(rows_);
     res.setZero();
 

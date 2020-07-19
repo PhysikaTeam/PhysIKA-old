@@ -1,6 +1,5 @@
 #ifndef PhysIKA_SOLVER_LIST
 #define PhysIKA_SOLVER_LIST
-#include "Solver/newton_method_4_coll.h"
 #include "Solver/linear_solver/pcg.h"
 #include "Solver/linear_solver/gpu_pcg.cuh"
 #include "coro_solver.h"

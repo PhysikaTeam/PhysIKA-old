@@ -19,12 +19,12 @@ newton_base<T, dim_>::newton_base(
     :solver<T, dim_>(pb, dat_str), max_iter_(max_iter), tol_(tol), line_search_(line_search), hes_is_constant_(hes_is_constant), linear_solver_(linear_solver), total_dim_(pb->Nx()){}
 
 template<typename T, size_t dim_>
-int newton_base<T,dim_>::solve_linear_eq(const SPM<T>& A, const T* b, const SPM<T>& J, const T* c, const T* x0, T* solution)const{
+int newton_base<T,dim_>::solve_linear_eq(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A, const T* b, const Eigen::SparseMatrix<T, Eigen::RowMajor>& J, const T* c, const T* x0, T* solution)const{
   return linear_solver_(A, b, J, c, solution);
 }
 
 template<typename T, size_t dim_>
-void newton_base<T, dim_>::get_J_C(const T* x, SPM<T>& J, VEC<T>& C) const{
+void newton_base<T, dim_>::get_J_C(const T* x, Eigen::SparseMatrix<T, Eigen::RowMajor>& J, VEC<T>& C) const{
   if(pb_->constraint_ == nullptr || pb_->constraint_->Nf() == 0){
     J.resize(0, 0);
     return;
@@ -78,7 +78,7 @@ int newton_base<T, dim_>::solve(T* x_star)const{
     res_last_iter = res_value;
 
     const auto A = dat_str_->get_hes();
-    SPM<T> J;
+    Eigen::SparseMatrix<T, Eigen::RowMajor> J;
     Matrix<T, -1, 1> C;
     get_J_C(x_star, J, C);
     __TIME_BEGIN__;
@@ -132,7 +132,7 @@ int newton_base<T, dim_>::solve(T* x_star)const{
 
       const auto A = dat_str_->get_hes();
       cout << "norm of A is " << std::setprecision(20) << A.norm() << endl;
-      SPM<T> J;
+      Eigen::SparseMatrix<T, Eigen::RowMajor> J;
       Matrix<T, -1, 1> C;
       get_J_C(x_coarse.data(), J, C);
       __TIME_BEGIN__;

@@ -2,7 +2,7 @@
 # file(GLOB source *.cc *.c *.cpp *.cu)
 
 # if (${APPLE})
-#     add_library(ZJU_GEOMETRY SHARED ${source})
+#     add_library(ZJU_GEOMETRY STATIC ${source})
 # else ()
-#     cuda_add_library(ZJU_GEOMETRY SHARED ${source})
+#     cuda_add_library(ZJU_GEOMETRY STATIC ${source})
 # endif(${APPLE})

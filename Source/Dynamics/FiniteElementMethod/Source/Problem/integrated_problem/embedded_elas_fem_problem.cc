@@ -9,7 +9,6 @@
 #include "Model/fem/mass_matrix.h"
 
 #include "Problem/energy/basic_energy.h"
-#include "Problem/constraint/naive_constraint_4_coll.h"
 #include "Io/io.h"
 #include "Geometry/extract_surface.imp"
 #include "Geometry/interpolate.h"
@@ -50,7 +49,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
     exit_if(mesh_read_from_vtk<T, 8>(filename_coarse.c_str(), nods_coarse, cells_coarse));
   }
   else {
-    error_msg("type:<%s> is not supported.", type.c_str());
+    // error_msg("type:<%s> is not supported.", type.c_str());
   }
 
   if (filename.rfind(".obj") != string::npos)
@@ -70,7 +69,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
       exit_if(mesh_read_from_vtk<T, 8>(filename.c_str(), nods, cells));
     }
     else {
-      error_msg("type:<%s> is not supported.", type.c_str());
+      // error_msg("type:<%s> is not supported.", type.c_str());
     }
   }
 
@@ -135,9 +134,6 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
     nods_coarse = nods_temp;
     // to lowercase.
     char axis = pt.get<char>("grav_axis", 'y') | 0x20;
-    if (axis > 'z' || axis < 'x') {
-      error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
-    }
     ebf_[GRAV] = make_shared<gravity_energy<T, 3>>(num_nods, 1, gravity, mass_vec, axis);
     kinetic_ = make_shared<momentum<T, 3>>(nods_coarse.data(), num_nods, mass_vec, dt);
     ebf_[KIN] = kinetic_;
@@ -154,29 +150,9 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
 
 
   enum constraint_type{COLL};
-  cbf_.resize(COLL + 1);{
-    //collsion
-    if(pt.get<bool>("coll_z", true)){
-      //set collision
-      MatrixXi surface;
-      extract_surface(nods, cells, surface, type);
-      vector<VEC<unsigned>> surface_4_coll(1,VEC<unsigned>::Zero(surface.size()));{
-        copy(surface.data(), surface.data() + surface.size(), &surface_4_coll[0][0]);
-      }
-      vector<VEC<T>> nods_4_coll(1, VEC<T>::Zero(nods.size()));{
-        copy(nods.data(), nods.data() + nods.size(), &nods_4_coll[0][0]);
-      }
-      // to lowercase.
-      char axis = pt.get<char>("grav_axis", 'y') | 0x20;
-      if (axis > 'z' || axis < 'x') {
-        error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
-      }
-      collider_ = make_shared<naive_constraint_4_coll<T>>(surface_4_coll, nods_4_coll, axis);
-    }else
-      collider_ = nullptr;
-    cbf_[COLL] = collider_;
-
-  }
+  cbf_.resize(COLL + 1);
+  collider_ = nullptr;
+  cbf_[COLL] = collider_;
 
   shared_ptr<Problem<T, 3>> pb = make_shared<Problem<T, 3>>(ebf_[0], nullptr);
   auto dat_str = make_shared<dat_str_core<T, 3>>(pb->Nx() / 3, pt.get<bool>("hes_is_const", false));

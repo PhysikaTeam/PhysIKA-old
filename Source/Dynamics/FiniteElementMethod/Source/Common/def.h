@@ -88,10 +88,7 @@ class energy_t : public Functional<T, dim>
 public:
   energy_t(const std::vector<std::shared_ptr<Functional<T, dim>>> &buffer, const size_t total_dim): buffer_(buffer), dim_(total_dim) {}
   
-  template<typename T2, size_t dim2>
-  friend std::shared_ptr<energy_t> build_energy_t(const std::vector<std::shared_ptr<Functional<T2, dim2>>>& buffer);
-  
- public:
+public:
   size_t Nx() const {
     return dim_;
   }
@@ -123,7 +120,7 @@ public:
     return 0;
   }
 
-protected:
+public:
   const std::vector<std::shared_ptr<Functional<T,dim>>> &buffer_;
   size_t dim_;
 };

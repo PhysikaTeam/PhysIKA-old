@@ -10,7 +10,6 @@
 #include "Model/fem/mass_matrix.h"
 
 #include "Problem/energy/basic_energy.h"
-#include "Problem/constraint/naive_constraint_4_coll.h"
 #include "Io/io.h"
 #include "Geometry/extract_surface.imp"
 
@@ -59,7 +58,7 @@ elas_problem_builder<T>::elas_problem_builder(const T* x, const boost::property_
   else if(type == "hex")
     exit_if(mesh_read_from_vtk<T, 8>(filename.c_str(), nods, cells));
   else {
-    error_msg("type:<%s> is not supported.", type.c_str());
+    // error_msg("type:<%s> is not supported.", type.c_str());
   }
 
   const size_t num_nods = nods.cols(), num_cells = cells.cols();
@@ -126,7 +125,7 @@ elas_problem_builder<T>::elas_problem_builder(const T* x, const boost::property_
     // to lowercase.
     char axis = pt.get<char>("grav_axis", 'y') | 0x20;
     if (axis > 'z' || axis < 'x') {
-      error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
+      // error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
     }
     ebf_[GRAV] = make_shared<gravity_energy<T, 3>>(num_nods, 1, gravity, mass_vec, axis);
 
@@ -142,29 +141,9 @@ elas_problem_builder<T>::elas_problem_builder(const T* x, const boost::property_
 
 
   enum constraint_type{COLL};
-  cbf_.resize(COLL + 1);{
-    //collsion
-    if(pt.get<bool>("coll_z", true)){
-      //set collision
-      MatrixXi surface;
-      extract_surface(nods, cells, surface, type);
-      vector<VEC<unsigned>> surface_4_coll(1,VEC<unsigned>::Zero(surface.size()));{
-        copy(surface.data(), surface.data() + surface.size(), &surface_4_coll[0][0]);
-      }
-      vector<VEC<T>> nods_4_coll(1, VEC<T>::Zero(nods.size()));{
-        copy(nods.data(), nods.data() + nods.size(), &nods_4_coll[0][0]);
-      }
-      // to lowercase.
-      char axis = pt.get<char>("grav_axis", 'y') | 0x20;
-      if (axis > 'z' || axis < 'x') {
-        error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
-      }
-      collider_ = make_shared<naive_constraint_4_coll<T>>(surface_4_coll, nods_4_coll, axis);
-    }else
-      collider_ = nullptr;
-    cbf_[COLL] = collider_;
-
-  }
+  cbf_.resize(COLL + 1);
+  collider_ = nullptr;
+  cbf_[COLL] = collider_;
 
 
 }

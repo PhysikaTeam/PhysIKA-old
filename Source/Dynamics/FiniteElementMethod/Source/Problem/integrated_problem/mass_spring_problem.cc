@@ -12,7 +12,6 @@
 
 
 #include "Problem/energy/basic_energy.h"
-#include "Problem/constraint/naive_constraint_4_coll.h"
 #include "Io/io.h"
 #include "Geometry/extract_surface.imp"
 
@@ -82,8 +81,7 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
   ebf_.resize(POS + 1);
   ebf_[ELAS] = make_shared<MassSpringObj<T>>(para::input_object.c_str(), para::stiffness);
   char axis = common.get<char>("grav_axis", 'y') | 0x20;
-  if (axis > 'z' || axis < 'x') 
-    error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
+
   ebf_[GRAV]=make_shared<gravity_energy<T, 3>>(num_nods, 1, para::gravity, mass_vec, axis);
   kinetic_ = make_shared<momentum<T, 3>>(nods.data(), num_nods, mass_vec, para::dt);
   ebf_[KIN] = kinetic_;
@@ -92,24 +90,7 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
   //set constraint
   enum constraint_type{COLL};
   cbf_.resize(COLL + 1);
-  //collsion
-  if(simulation_para.get<bool>("coll_z", false))
-  {
-    //set collision
-    MatrixXi surface;
-    extract_surface(nods, cells, surface, "tet");
-    vector<VEC<unsigned>> surface_4_coll(1,VEC<unsigned>::Zero(surface.size()));
-    copy(surface.data(), surface.data() + surface.size(), &surface_4_coll[0][0]);
-    vector<VEC<T>> nods_4_coll(1, VEC<T>::Zero(nods.size()));
-    copy(nods.data(), nods.data() + nods.size(), &nods_4_coll[0][0]);
-    // to lowercase.
-    char axis = common.get<char>("grav_axis", 'y') | 0x20;
-    if (axis > 'z' || axis < 'x') 
-      error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
-    collider_ = make_shared<naive_constraint_4_coll<T>>(surface_4_coll, nods_4_coll, axis);
-  }
-  else
-    collider_ = nullptr;
+  collider_ = nullptr;
   cbf_[COLL] = collider_;
 }
 

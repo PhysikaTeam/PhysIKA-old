@@ -89,12 +89,12 @@ namespace PhysIKA {
           v44.block(0, j, 3, 1) = v.col(neigh_vert_idx[j]);
         if (fabs(v44.determinant()) > 1e-7)
           break;
-        std::swap<size_t>(neigh_vert_idx[further_v_idx], neigh_vert_idx[near_v_idx]);
+        std::swap(neigh_vert_idx[further_v_idx], neigh_vert_idx[near_v_idx]);
         ++further_v_idx;
         if (further_v_idx == neigh_vert_num)
         {
           further_v_idx = 4;
-          std::swap<size_t>(neigh_vert_idx[near_v_idx], neigh_vert_idx[further_v_idx]);
+          std::swap(neigh_vert_idx[near_v_idx], neigh_vert_idx[further_v_idx]);
           ++near_v_idx;
         }
         if (near_v_idx == 4)

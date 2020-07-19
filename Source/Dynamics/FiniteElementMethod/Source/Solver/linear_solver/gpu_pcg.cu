@@ -360,7 +360,7 @@ __global__ void print(int* a) {
 
 
 template<typename T>
-int CUDA_PCG<T>::solve(const SPM<T>& A, const T* b, const SPM<T>& J, const T* c, T* solution) const{
+int CUDA_PCG<T>::solve(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A, const T* b, const Eigen::SparseMatrix<T, Eigen::RowMajor>& J, const T* c, T* solution) const{
   using namespace Eigen;
   using namespace std;
   using VEC = Eigen::Matrix<T, -1, 1>;

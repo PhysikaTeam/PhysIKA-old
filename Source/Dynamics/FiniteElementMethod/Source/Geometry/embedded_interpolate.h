@@ -46,6 +46,7 @@ public:
       Eigen::Map<Eigen::Matrix<T, -1, -1>> s_vec(s.data(), 3, s.size()/3);
 
       verts_ += s_vec;
+      return 0;
     }
 
   const Eigen::SparseMatrix<T>& get_coarse_to_fine_coeff() const {

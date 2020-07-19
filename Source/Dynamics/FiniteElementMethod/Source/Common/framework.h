@@ -33,7 +33,7 @@ class embedded_problem_builder{
  public:
   virtual ~embedded_problem_builder(){}
   virtual std::shared_ptr<Problem<T,dim_>> build_problem() const = 0;
-  virtual int update_problem(const T* x, const T* v = nullptr);
+  virtual int update_problem(const T* x, const T* v = nullptr) { return 0; }
   virtual std::shared_ptr<embedded_interpolate<T>> get_embedded_interpolate() { return nullptr;}
 
 };
@@ -48,13 +48,6 @@ class solver{
   mutable std::shared_ptr<dat_str_core<T, dim_>> dat_str_;
 
 };
-
-// template<typename T, size_t dim_>
-// class solver_builder{
-//  public:
-//   virtual
-// };
-
 
 }
 

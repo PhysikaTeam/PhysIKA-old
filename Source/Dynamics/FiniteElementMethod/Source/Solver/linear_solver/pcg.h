@@ -17,14 +17,14 @@ class EIGEN_PCG : public unconstrainted_linear_solver<T>{
  public:
   EIGEN_PCG(const bool hes_is_constant, const T tol = 1e-3):hes_is_constant_(hes_is_constant), tol_(tol){}
 
-  int solve(const SPM<T>& A, const T* b, const SPM<T>& J, const T* c, T* solution) const{
+  int solve(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A, const T* b, const Eigen::SparseMatrix<T, Eigen::RowMajor>& J, const T* c, T* solution) const{
     using namespace std;
     assert(J.rows() == 0);
     const size_t total_dim = A.cols();
-    Eigen::Map<const VEC<T>> rhs(b, total_dim);
-    Eigen::Map<VEC<T>> sol(solution, total_dim);
+    Eigen::Map<const Eigen::Matrix<T, -1, 1>> rhs(b, total_dim);
+    Eigen::Map<Eigen::Matrix<T, -1, 1>> sol(solution, total_dim);
 
-    Eigen::ConjugateGradient<SPM<T>, Eigen::Lower|Eigen::Upper, Eigen::DiagonalPreconditioner<T> > cg;
+    Eigen::ConjugateGradient<Eigen::SparseMatrix<T, Eigen::RowMajor>, Eigen::Lower|Eigen::Upper, Eigen::DiagonalPreconditioner<T> > cg;
     //    cg.setMaxIterations(sqrt(double(total_dim))/4);
     cg.setTolerance(tol_);
     cg.compute(A);

@@ -26,20 +26,20 @@ file(COPY "Source/Rendering/Shader/" DESTINATION "Shader")
 
 option(PhysIKA_Python_Binding "Enable python binding with pybind11" ON)
 if(PhysIKA_Python_Binding)
-    add_subdirectory(Python)
+  add_subdirectory(Python)
 endif()
 
 option(PhysIKA_Tests "Enable building PhysIKA tests" ON)
 if(PhysIKA_Tests)
-    add_subdirectory(Extern/gtest)
-    add_subdirectory(Tests)
+  add_subdirectory(Extern/gtest)
+  add_subdirectory(Tests)
 endif()
 
 option(PhysIKA_Qt5_GUI "Enable building Qt-based applications" OFF)
 
 option(PhysIKA_Examples "Enable building examples" ON)
 if(PhysIKA_Examples)
-    add_subdirectory(Examples)
+  add_subdirectory(Examples)
 endif()
 
 add_subdirectory(Source)

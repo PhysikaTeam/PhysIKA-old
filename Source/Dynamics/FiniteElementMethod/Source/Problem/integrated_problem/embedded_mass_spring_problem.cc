@@ -14,7 +14,6 @@
 
 
 #include "Problem/energy/basic_energy.h"
-#include "Problem/constraint/naive_constraint_4_coll.h"
 #include "Io/io.h"
 #include "Geometry/extract_surface.imp"
 #include "libigl/include/igl/readOBJ.h"
@@ -119,8 +118,6 @@ embedded_ms_problem_builder<T>::embedded_ms_problem_builder(const T* x, const bo
   ebf_.resize(POS + 1);
   ebf_[ELAS] = make_shared<MassSpringObj<T>>(para::input_object.c_str(), para::stiffness);
   char axis = common.get<char>("grav_axis", 'y') | 0x20;
-  if (axis > 'z' || axis < 'x') 
-    error_msg("grav_axis should be one of x(X), y(Y) or z(Z).");
   ebf_[GRAV]=make_shared<gravity_energy<T, 3>>(num_nods, 1, para::gravity, mass_vec, axis);
   kinetic_ = make_shared<momentum<T, 3>>(nods_coarse.data(), num_nods, mass_vec, para::dt);
   ebf_[KIN] = kinetic_;

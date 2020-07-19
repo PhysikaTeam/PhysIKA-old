@@ -1,9 +1,9 @@
 file(GLOB header *.h)
 file(GLOB source *.cc *.c)
 if (${APPLE})
-  add_library(ZJU_FEM SHARED ${source})
+  add_library(ZJU_FEM STATIC ${source})
 else ()
-  cuda_add_library(ZJU_FEM SHARED ${source})
+  cuda_add_library(ZJU_FEM STATIC ${source})
 endif (${APPLE})
 
 target_link_libraries(ZJU_FEM

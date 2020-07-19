@@ -63,7 +63,7 @@ namespace PhysIKA {
       T lam = mtr(0), mu = mtr(1);
       Eigen::Matrix<T, dim_, dim_> R;
       int res = polar_decomposition<T, Eigen::Matrix<T, dim_, dim_>, 3>(F, R);
-      error_msg_cond(res != 0, "polar_decomposition failed.");
+      // error_msg_cond(res != 0, "polar_decomposition failed.");
       return lam / 2 * (F - R).squaredNorm();
     }
 
@@ -73,7 +73,7 @@ namespace PhysIKA {
       T lam = mtr(0), mu = mtr(1);
       Eigen::Matrix<T, dim_, dim_> R;
       int res = polar_decomposition<T, Eigen::Matrix<T, dim_, dim_>, 3>(F, R);
-      error_msg_cond(res != 0, "polar_decomposition failed.");
+      // error_msg_cond(res != 0, "polar_decomposition failed.");
       Eigen::Matrix<T, dim_ * dim_, 1> gra_vec;
       Eigen::Map<Eigen::Matrix<T, dim_, dim_>>(gra_vec.data()) = lam * (F - R);
       return std::move(gra_vec);
@@ -253,7 +253,7 @@ namespace PhysIKA {
       Eigen::Matrix<T, dim_, dim_> R;
       {
         int res = polar_decomposition<T, Eigen::Matrix<T, dim_, dim_>, 3>(F, R);
-        error_msg_cond(res != 0, "polar_decomposition failed.");
+        // error_msg_cond(res != 0, "polar_decomposition failed.");
       }
       Eigen::JacobiSVD<Eigen::Matrix<T, field_, dim_>> svd(
         F, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -280,7 +280,7 @@ namespace PhysIKA {
       Eigen::Matrix<T, dim_, dim_> R;
       {
         int res = polar_decomposition<T, Eigen::Matrix<T, dim_, dim_>, 3>(F, R);
-        error_msg_cond(res != 0, "polar_decomposition failed.");
+        // error_msg_cond(res != 0, "polar_decomposition failed.");
       }
       // convert the R matrix to a vector. (column major)
       Eigen::Map<const Eigen::Matrix<T, dim_ * dim_, 1>> R_vec(

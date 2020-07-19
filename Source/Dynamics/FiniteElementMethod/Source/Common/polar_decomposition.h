@@ -18,8 +18,6 @@
 #include <Eigen/Sparse>
 
 #include "Common/DEFINE_TYPE.h"
-#include "Common/logger/assert_utils.h"
-#include "Common/logger/log_utils.h"
 
 namespace PhysIKA {
   /**
@@ -29,15 +27,15 @@ namespace PhysIKA {
   template <typename T, typename Mat, size_t dim_ = 3>
   int polar_decomposition(
       const Mat &A, Mat &R, size_t max_it = 5, T tol = scalar_eps<T>()) {
-    error_msg_ext_cond(
-        A.cols() != dim_ || A.rows() != dim_,
-        "A is a %lux%lu matrix, not a 3x3", dim_, dim_);
+    // error_msg_ext_cond(
+    //     A.cols() != dim_ || A.rows() != dim_,
+    //     "A is a %lux%lu matrix, not a 3x3", dim_, dim_);
 
-    // current version only supports dim == 3.
-    error_msg_ext_cond(
-        dim_ != 3,
-        "current polar decomposition does not support other dim<%lu>, only 3",
-        dim_);
+    // // current version only supports dim == 3.
+    // error_msg_ext_cond(
+    //     dim_ != 3,
+    //     "current polar decomposition does not support other dim<%lu>, only 3",
+    //     dim_);
 
     // simply copy the origin polar decomposition.
     Eigen::Quaternion<T> q(A);
