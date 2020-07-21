@@ -19,7 +19,6 @@ include_directories("Source/Core" "Source/Dynamics" "Source/Framework" "Source/G
 include_directories("Extern")                                           #默认为本项目下各编译目标添加Source/Physika_Dependency/ 目录
 include_directories("Extern/OpenGL")                                    #默认为本项目下各编译目标添加Source/Physika_Dependency/OpenGL 目录
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})                                 	                #默认为本项目下各编译目标添加cuda/include 目录
-link_directories(/usr/local/cuda/lib)
 file(COPY "Media/" DESTINATION "Media")
 file(COPY "Source/Rendering/Shader/" DESTINATION "Shader")
 
