@@ -22,11 +22,13 @@ include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})                  
 file(COPY "Media/" DESTINATION "Media")
 file(COPY "Source/Rendering/Shader/" DESTINATION "Shader")
 
+# link_directories(/usr/local/cuda-10.0/lib64)
 
 option(PhysIKA_Python_Binding "Enable python binding with pybind11" ON)
 if(PhysIKA_Python_Binding)
   add_subdirectory(Python)
 endif()
+
 
 option(PhysIKA_Tests "Enable building PhysIKA tests" ON)
 if(PhysIKA_Tests)
