@@ -87,8 +87,11 @@
 
 #include "Nodes/FlowView.hpp"
 #include "Nodes/FlowScene.hpp"
+#include "Nodes/DataModelRegistry.hpp"
+#include "Nodes/AdditionModel.hpp"
 
 #include "Core/Platform.h"
+
 
 // #include "Node/NodeData.hpp"
 // #include "Node/FlowScene.hpp"
@@ -168,6 +171,27 @@ namespace PhysIKA
 		tabWidget->addTab(tabEditor, QString());
 
 		QVBoxLayout *l = new QVBoxLayout(tabEditor);
+
+//		auto classMap = Object::getClassMap();
+
+// 		auto ret = std::make_shared<QtNodes::DataModelRegistry>();
+// 		int id = 0;
+// 		for (auto const c : *classMap)
+// 		{
+// 			id++;
+// 
+// 			QString str = QString::fromStdString(c.first);
+// 			QtNodes::DataModelRegistry::RegistryItemCreator creator = [str]() {
+// 				auto dat = std::make_unique<FieldDataModel>();
+// 				dat->setName(str);
+// 				return dat; };
+// 
+// 			QString string = QString::number(id);
+// 			ret->registerModel<FieldDataModel>("Modules", creator);
+// 		}
+
+		
+//		ret->registerModel<FieldDataModel>("Operators");
 
 		auto scene = new QtNodes::FlowScene(tabEditor);
 		l->addWidget(new QtNodes::FlowView(scene));

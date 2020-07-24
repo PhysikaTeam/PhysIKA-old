@@ -24,6 +24,9 @@
 
 #include "Connection.hpp"
 
+#include "Framework/Object.h"
+#include "ModuleWidget.h"
+
 #include "FlowView.hpp"
 #include "DataModelRegistry.hpp"
 
@@ -38,8 +41,7 @@ using QtNodes::PortIndex;
 using QtNodes::TypeConverter;
 
 
-FlowScene::
-FlowScene(std::shared_ptr<DataModelRegistry> registry,
+FlowScene::FlowScene(std::shared_ptr<DataModelRegistry> registry,
           QObject * parent)
   : QGraphicsScene(parent)
   , _registry(std::move(registry))
@@ -52,15 +54,40 @@ FlowScene(std::shared_ptr<DataModelRegistry> registry,
   connect(this, &FlowScene::connectionDeleted, this, &FlowScene::sendConnectionDeletedToNodes);
 }
 
-FlowScene::
-FlowScene(QObject * parent)
+FlowScene::FlowScene(QObject * parent)
   : FlowScene(std::make_shared<DataModelRegistry>(),
               parent)
-{}
+{
+
+	auto classMap = PhysIKA::Object::getClassMap();
+
+	auto ret = std::make_shared<QtNodes::DataModelRegistry>();
+	int id = 0;
+	for (auto const c : *classMap)
+	{
+		id++;
+
+		QString str = QString::fromStdString(c.first);
+		PhysIKA::Object* obj = PhysIKA::Object::createObject(str.toStdString());
+		PhysIKA::Module* module = dynamic_cast<PhysIKA::Module*>(obj);
+
+		if (module != nullptr)
+		{
+			QtNodes::DataModelRegistry::RegistryItemCreator creator = [str, module]() {
+				auto dat = std::make_unique<ModuleWidget>(module);
+				dat->setName(str);
+			return dat; };
+
+			QString string = QString::number(id);
+			ret->registerModel<ModuleWidget>("Modules", creator);
+		}
+	}
+
+	_registry = std::move(ret);
+}
 
 
-FlowScene::
-~FlowScene()
+FlowScene::~FlowScene()
 {
   clearScene();
 }
@@ -69,8 +96,7 @@ FlowScene::
 //------------------------------------------------------------------------------
 
 std::shared_ptr<Connection>
-FlowScene::
-createConnection(PortType connectedPort,
+FlowScene::createConnection(PortType connectedPort,
                  Node& node,
                  PortIndex portIndex)
 {
