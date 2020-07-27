@@ -29,6 +29,7 @@ namespace PhysIKA
 		bool initializeImpl() override;
 
 	protected:
+
 		DeviceArray<Triangle> m_triangls;
 		NeighborList<int> m_triangleNeighbors;
 	};

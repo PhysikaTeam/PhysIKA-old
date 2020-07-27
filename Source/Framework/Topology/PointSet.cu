@@ -57,26 +57,89 @@ namespace PhysIKA
 		std::string line;
 		std::vector<Coord> vertList;
 		std::vector<Coord> normalList;
-		while (!infile.eof()) {
+		
+		int maxNum = 20;
+		std::vector<int>  index;
+		std::vector<int>  neighborCount;
+		std::vector<int>  elements;
+		int count = 0;
+
+		while (!infile.eof()) 
+		{
 			std::getline(infile, line);
 
 			//.obj files sometimes contain vertex normals indicated by "vn"
-			if (line.substr(0, 1) == std::string("v") && line.substr(0, 2) != std::string("vn")) {
+			if (line.substr(0, 1) == std::string("v") && line.substr(0, 2) != std::string("vn")) 
+			{
 				std::stringstream data(line);
 				char c;
 				Coord point;
 				data >> c >> point[0] >> point[1] >> point[2];
 				vertList.push_back(point);
+				index.push_back(count++);
+				neighborCount.push_back(0);
 			}
-			else if (line.substr(0, 2) == std::string("vn")) {
+			else if (line.substr(0, 2) == std::string("vn")) 
+			{
 				std::stringstream data(line);
 				char c;
 				Coord normal;
 				data >> c >> normal[0] >> normal[1] >> normal[2];
 				normalList.push_back(normal);
 			}
-			else {
-				++ignored_lines;
+			else 
+			{
+				//vertex read over,init elements capacity
+				if (count != 0)
+				{
+					elements.resize(maxNum*index.size());
+					count = 0;
+				}
+				if(line.substr(0, 1) == std::string("f"))
+				{
+					//f v1 v2 v3 (v4)
+					std::vector<std::string> verStr;
+					std::vector<int> verIndex;
+					line = line.substr(2, line.size());
+					while(line.find_first_of(' ') != std::string::npos)
+					{
+						verStr.push_back(line.substr(0, line.find_first_of(' ')));
+						line = line.substr(line.find_first_of(' '), line.size());
+					}
+					verStr.push_back(line);
+					for (int i = 0; i < verStr.size();++i)
+					{
+						if (verStr[i].find_first_of('/') == std::string::npos)
+							verIndex.push_back(std::stoi(verStr[i]));
+						else
+							verIndex.push_back(std::stoi(verStr[i].substr(0, verStr[i].find_first_of('/'))));
+					}
+					//push vertex j into i's neighborList
+					for (int i = 0; i < verIndex.size();++i)
+					{
+						for(int j = 0; j < verIndex.size();++j)
+						{
+							if (i == j)
+								continue;
+							bool record = false;
+							int aindex = verIndex[i], jndex = verIndex[j];
+							for(int t = 0; t < neighborCount[aindex];++t)
+								if (elements[aindex*maxNum + t] == jndex)
+								{
+									record = true;
+									break;
+								}
+							if (!record)
+							{
+								elements[aindex*maxNum + neighborCount[aindex]] = jndex;
+								neighborCount[aindex]++;
+								elements[aindex*maxNum + neighborCount[aindex]] = -1;
+							}
+						}
+					}
+				}
+				else
+					++ignored_lines;
 			}
 		}
 		infile.close();
@@ -98,7 +161,8 @@ namespace PhysIKA
 
 		setPoints(vertList);
 		setNormals(normalList);
-
+		setNeighbors(maxNum, elements, index);
+		
 		vertList.clear();
 		normalList.clear();
 	}
@@ -113,6 +177,12 @@ namespace PhysIKA
 		}
 		Function1Pt::copy(m_coords, pointSet.getPoints());
 		Function1Pt::copy(m_normals, pointSet.getNormals());
+	}
+
+	template<typename TDataType>
+	void PointSet<TDataType>::setNeighbors(int maxNum, std::vector<int>& elements, std::vector<int>& index)
+	{
+		m_pointNeighbors.copyFrom(maxNum, elements, index);
 	}
 
 	template<typename TDataType>
