@@ -6,6 +6,9 @@
 #include <iostream>
 #include <Eigen/SparseLU>
 #include <unsupported/Eigen/KroneckerProduct>
+#include <Eigen/SparseQR>
+
+
 
 template<typename T>
 class embedded_interpolate
@@ -23,6 +26,15 @@ public:
       c2f_ = Eigen::kroneckerProduct(coarse_to_fine_coeff_, Id);
       c2f_ = c2f_.transpose().eval();
 
+#ifdef NULLEMBEDDED
+      Eigen::Matrix<T, -1, -1> dense_c2f(c2f_);
+      c2f_kernel_ = dense_c2f.fullPivLu().kernel().eval();
+      kernel_gradient_ = (c2f_kernel_.transpose() * energy_hessian_).sparseView().eval();
+      kernel_coeff_ = (kernel_gradient_ * c2f_kernel_).sparseView().eval();
+      if (kernel_coeff_.rows() > 1 || kernel_coeff_.norm() > 1e-4)
+        kernel_solver_.compute(kernel_coeff_);
+      qr_.compute(c2f_);
+#endif
       Eigen::SparseMatrix<T> cffc = c2f_.transpose() * c2f_;
       Eigen::SparseMatrix<T> A = alpha * cffc + energy_hessian_;
       
@@ -40,12 +52,29 @@ public:
       Eigen::Matrix<T, -1, -1> X_fine_delta = fine_verts - verts_ * coarse_to_fine_coeff_;
       Eigen::Map<Eigen::Matrix<T, -1, -1>>
         x_fine_delta_vec(X_fine_delta.data(), 3*v_num, 1);
-      
+
+#ifdef NULLEMBEDDED
+      Eigen::Matrix<T, -1, -1> sp_delta_x_coarse = qr_.solve(x_fine_delta_vec);
+      if (kernel_coeff_.rows() > 1 || kernel_coeff_.norm() > 1e-4)
+      {
+        Eigen::Matrix<T, -1, -1> z = kernel_solver_.solve(
+          kernel_gradient_ * sp_delta_x_coarse);
+        Eigen::Matrix<T, -1, -1> delta_c = c2f_kernel_ * z + sp_delta_x_coarse;
+        Eigen::Map<Eigen::Matrix<T, -1, -1>> delta_c_vec(delta_c.data(), 3, delta_c.size()/3);
+        verts_ += delta_c_vec;
+      }
+      else
+      {
+        Eigen::Map<Eigen::Matrix<T, -1, -1>> delta_c_vec(
+          sp_delta_x_coarse.data(), 3, sp_delta_x_coarse.size()/3);
+        verts_ += delta_c_vec;
+      }
+#else
       Eigen::Matrix<T, -1, -1> b = alpha_ * c2f_.transpose() * x_fine_delta_vec;
       Eigen::Matrix<T, -1, -1> s = ldlt_solver_.solve(b);
       Eigen::Map<Eigen::Matrix<T, -1, -1>> s_vec(s.data(), 3, s.size()/3);
-
       verts_ += s_vec;
+#endif
       return 0;
     }
 
@@ -60,6 +89,15 @@ private:
   Eigen::SparseMatrix<T> fine_to_coarse_coeff_;
   Eigen::SparseMatrix<T> energy_hessian_;
   Eigen::SparseLU<Eigen::SparseMatrix<T>> ldlt_solver_;
+
+#ifdef NULLEMBEDDED
+  Eigen::SparseLU<Eigen::SparseMatrix<T>> kernel_solver_;
+  Eigen::Matrix<T, -1, -1> c2f_kernel_;
+  Eigen::SparseMatrix<T> kernel_gradient_;
+  Eigen::SparseMatrix<T> kernel_coeff_;
+  Eigen::SparseQR<Eigen::SparseMatrix<T>, Eigen::COLAMDOrdering<int>> qr_;
+#endif
+  
   T alpha_;
 };
 

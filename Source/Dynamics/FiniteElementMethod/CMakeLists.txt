@@ -18,6 +18,7 @@ endif ()
 
 # find_package(OpenMP REQUIRED)
 # link_libraries(OpenMP::OpenMP_CXX)
+# add_definitions(-DNULLEMBEDDED)
 
 # BOOST
 # set(Boost_USE_STATIC_LIBS ON)
