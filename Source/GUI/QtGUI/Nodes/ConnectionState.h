@@ -2,14 +2,14 @@
 
 #include <QtCore/QUuid>
 
-#include "PortType.hpp"
+#include "PortType.h"
 
 class QPointF;
 
 namespace QtNodes
 {
 
-class Node;
+class QtNode;
 
 /// Stores currently draggind end.
 /// Remembers last hovered Node.
@@ -42,11 +42,11 @@ public:
 
 public:
 
-  void interactWithNode(Node* node);
+  void interactWithNode(QtNode* node);
 
-  void setLastHoveredNode(Node* node);
+  void setLastHoveredNode(QtNode* node);
 
-  Node*
+  QtNode*
   lastHoveredNode() const
   { return _lastHoveredNode; }
 
@@ -56,6 +56,6 @@ private:
 
   PortType _requiredPort;
 
-  Node* _lastHoveredNode{nullptr};
+  QtNode* _lastHoveredNode{nullptr};
 };
 }

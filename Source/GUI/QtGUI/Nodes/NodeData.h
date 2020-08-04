@@ -2,7 +2,7 @@
 
 #include <QtCore/QString>
 
-#include "Export.hpp"
+#include "Export.h"
 
 namespace QtNodes
 {

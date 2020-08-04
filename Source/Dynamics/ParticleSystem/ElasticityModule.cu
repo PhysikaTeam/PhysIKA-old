@@ -7,6 +7,8 @@
 
 namespace PhysIKA
 {
+	IMPLEMENT_CLASS_1(ElasticityModule, TDataType)
+
 	template<typename Real>
 	__device__ Real D_Weight(Real r, Real h)
 	{
@@ -317,6 +319,9 @@ namespace PhysIKA
 		this->attachField(&m_position, "position", "Storing the particle positions!", false);
 		this->attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
 		this->attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
+
+//		this->attachField(&testing, "testing", "For testing", false);
+//		this->attachField(&TetOut, "TetOut", "For testing", false);
 
 		m_horizon.setValue(0.0125);
 		m_distance.setValue(0.005);

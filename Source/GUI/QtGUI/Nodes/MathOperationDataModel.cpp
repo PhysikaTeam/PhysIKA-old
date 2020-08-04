@@ -1,6 +1,6 @@
-#include "MathOperationDataModel.hpp"
+#include "MathOperationDataModel.h"
 
-#include "DecimalData.hpp"
+#include "DecimalData.h"
 
 unsigned int
 MathOperationDataModel::

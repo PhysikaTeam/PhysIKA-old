@@ -4,23 +4,23 @@
 #include <QtCore/QUuid>
 #include <QtCore/QVariant>
 
-#include "PortType.hpp"
-#include "NodeData.hpp"
+#include "PortType.h"
+#include "NodeData.h"
 
-#include "Serializable.hpp"
-#include "ConnectionState.hpp"
-#include "ConnectionGeometry.hpp"
-#include "TypeConverter.hpp"
-#include "QUuidStdHash.hpp"
-#include "Export.hpp"
-#include "memory.hpp"
+#include "Serializable.h"
+#include "ConnectionState.h"
+#include "ConnectionGeometry.h"
+#include "TypeConverter.h"
+#include "QUuidStdHash.h"
+#include "Export.h"
+#include "memory.h"
 
 class QPointF;
 
 namespace QtNodes
 {
 
-class Node;
+class QtNode;
 class NodeData;
 class ConnectionGraphicsObject;
 
@@ -38,12 +38,12 @@ public:
   /// The port has parameters (portType, portIndex).
   /// The opposite connection end will require anothre port.
   Connection(PortType portType,
-             Node& node,
+             QtNode& node,
              PortIndex portIndex);
 
-  Connection(Node& nodeIn,
+  Connection(QtNode& nodeIn,
              PortIndex portIndexIn,
-             Node& nodeOut,
+             QtNode& nodeOut,
              PortIndex portIndexOut,
              TypeConverter converter =
                TypeConverter{});
@@ -77,7 +77,7 @@ public:
   /// Assigns a node to the required port.
   /// It is assumed that there is a required port, no extra checks
   void
-  setNodeToPort(Node& node,
+  setNodeToPort(QtNode& node,
                 PortType portType,
                 PortIndex portIndex);
 
@@ -100,10 +100,10 @@ public:
   ConnectionGeometry const&
   connectionGeometry() const;
 
-  Node*
+  QtNode*
   getNode(PortType portType) const;
 
-  Node*&
+  QtNode*&
   getNode(PortType portType);
 
   PortIndex
@@ -143,8 +143,8 @@ private:
 
 private:
 
-  Node* _outNode = nullptr;
-  Node* _inNode  = nullptr;
+  QtNode* _outNode = nullptr;
+  QtNode* _inNode  = nullptr;
 
   PortIndex _outPortIndex;
   PortIndex _inPortIndex;

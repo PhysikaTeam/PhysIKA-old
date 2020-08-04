@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Compiler.hpp"
-#include "OperatingSystem.hpp"
+#include "Compiler.h"
+#include "OperatingSystem.h"
 
 #ifdef NODE_EDITOR_PLATFORM_WINDOWS
 #  define NODE_EDITOR_EXPORT __declspec(dllexport)

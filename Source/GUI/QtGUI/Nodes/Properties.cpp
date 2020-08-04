@@ -1,4 +1,4 @@
-#include "Properties.hpp"
+#include "Properties.h"
 
 using QtNodes::Properties;
 

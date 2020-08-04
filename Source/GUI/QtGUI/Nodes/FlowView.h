@@ -2,12 +2,12 @@
 
 #include <QtWidgets/QGraphicsView>
 
-#include "Export.hpp"
+#include "Export.h"
 
 namespace QtNodes
 {
 
-class FlowScene;
+class ModuleFlowScene;
 
 class NODE_EDITOR_PUBLIC FlowView
   : public QGraphicsView
@@ -16,7 +16,7 @@ class NODE_EDITOR_PUBLIC FlowView
 public:
 
   FlowView(QWidget *parent = Q_NULLPTR);
-  FlowView(FlowScene *scene, QWidget *parent = Q_NULLPTR);
+  FlowView(ModuleFlowScene *scene, QWidget *parent = Q_NULLPTR);
 
   FlowView(const FlowView&) = delete;
   FlowView operator=(const FlowView&) = delete;
@@ -25,7 +25,7 @@ public:
 
   QAction* deleteSelectionAction() const;
 
-  void setScene(FlowScene *scene);
+  void setScene(ModuleFlowScene *scene);
 
 public Q_SLOTS:
 
@@ -55,7 +55,7 @@ protected:
 
 protected:
 
-  FlowScene * scene();
+  ModuleFlowScene * scene();
 
 private:
 
@@ -64,6 +64,6 @@ private:
 
   QPointF _clickPos;
 
-  FlowScene* _scene;
+  ModuleFlowScene* _scene;
 };
 }

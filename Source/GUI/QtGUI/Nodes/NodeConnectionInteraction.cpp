@@ -1,23 +1,23 @@
-#include "NodeConnectionInteraction.hpp"
+#include "NodeConnectionInteraction.h"
 
-#include "ConnectionGraphicsObject.hpp"
-#include "NodeGraphicsObject.hpp"
-#include "NodeDataModel.hpp"
-#include "DataModelRegistry.hpp"
-#include "FlowScene.hpp"
+#include "ConnectionGraphicsObject.h"
+#include "NodeGraphicsObject.h"
+#include "NodeDataModel.h"
+#include "DataModelRegistry.h"
+#include "ModuleFlowScene.h"
 
 using QtNodes::NodeConnectionInteraction;
 using QtNodes::PortType;
 using QtNodes::PortIndex;
-using QtNodes::FlowScene;
-using QtNodes::Node;
+using QtNodes::ModuleFlowScene;
+using QtNodes::QtNode;
 using QtNodes::Connection;
 using QtNodes::NodeDataModel;
 using QtNodes::TypeConverter;
 
 
 NodeConnectionInteraction::
-NodeConnectionInteraction(Node& node, Connection& connection, FlowScene& scene)
+NodeConnectionInteraction(QtNode& node, Connection& connection, ModuleFlowScene& scene)
   : _node(&node)
   , _connection(&connection)
   , _scene(&scene)
@@ -39,7 +39,7 @@ canConnect(PortIndex &portIndex, TypeConverter & converter) const
   }
 
   // 1.5) Forbid connecting the node to itself
-  Node* node = _connection->getNode(oppositePort(requiredPort));
+  QtNode* node = _connection->getNode(oppositePort(requiredPort));
 
   if (node == _node)
     return false;

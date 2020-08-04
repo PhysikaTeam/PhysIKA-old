@@ -1,31 +1,31 @@
-#include "NodePainter.hpp"
+#include "NodePainter.h"
 
 #include <cmath>
 
 #include <QtCore/QMargins>
 
-#include "StyleCollection.hpp"
-#include "PortType.hpp"
-#include "NodeGraphicsObject.hpp"
-#include "NodeGeometry.hpp"
-#include "NodeState.hpp"
-#include "NodeDataModel.hpp"
-#include "Node.hpp"
-#include "FlowScene.hpp"
+#include "StyleCollection.h"
+#include "PortType.h"
+#include "NodeGraphicsObject.h"
+#include "NodeGeometry.h"
+#include "NodeState.h"
+#include "NodeDataModel.h"
+#include "QtNode.h"
+#include "ModuleFlowScene.h"
 
 using QtNodes::NodePainter;
 using QtNodes::NodeGeometry;
 using QtNodes::NodeGraphicsObject;
-using QtNodes::Node;
+using QtNodes::QtNode;
 using QtNodes::NodeState;
 using QtNodes::NodeDataModel;
-using QtNodes::FlowScene;
+using QtNodes::ModuleFlowScene;
 
 void
 NodePainter::
 paint(QPainter* painter,
-      Node & node,
-      FlowScene const& scene)
+      QtNode & node,
+      ModuleFlowScene const& scene)
 {
   NodeGeometry const& geom = node.nodeGeometry();
 
@@ -110,7 +110,7 @@ drawConnectionPoints(QPainter* painter,
                      NodeGeometry const& geom,
                      NodeState const& state,
                      NodeDataModel const * model,
-                     FlowScene const & scene)
+                     ModuleFlowScene const & scene)
 {
   NodeStyle const& nodeStyle      = model->nodeStyle();
   auto const     &connectionStyle = StyleCollection::connectionStyle();

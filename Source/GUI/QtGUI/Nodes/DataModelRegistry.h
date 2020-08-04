@@ -8,11 +8,11 @@
 
 #include <QtCore/QString>
 
-#include "NodeDataModel.hpp"
-#include "TypeConverter.hpp"
-#include "Export.hpp"
-#include "QStringStdHash.hpp"
-#include "memory.hpp"
+#include "NodeDataModel.h"
+#include "TypeConverter.h"
+#include "Export.h"
+#include "QStringStdHash.h"
+#include "memory.h"
 
 namespace QtNodes
 {

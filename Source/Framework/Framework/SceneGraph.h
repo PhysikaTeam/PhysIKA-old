@@ -13,6 +13,7 @@ public:
 
 	virtual bool initialize();
 	bool isInitialized() { return m_initialized; }
+	void invalid();
 
 	virtual void draw();
 	virtual void advance(float dt);

@@ -61,6 +61,7 @@
 #include "PPropertyWidget.h"'
 #include "PModuleListWidget.h"
 #include "PSimulationThread.h"
+#include "PFlowSceneWidget.h"
 
 #include <QAction>
 #include <QLayout>
@@ -85,10 +86,10 @@
 #include <QDebug>
 #include <QtWidgets/QOpenGLWidget>
 
-#include "Nodes/FlowView.hpp"
-#include "Nodes/FlowScene.hpp"
-#include "Nodes/DataModelRegistry.hpp"
-#include "Nodes/AdditionModel.hpp"
+#include "Nodes/FlowView.h"
+#include "Nodes/ModuleFlowScene.h"
+#include "Nodes/DataModelRegistry.h"
+#include "Nodes/AdditionModel.h"
 
 #include "Core/Platform.h"
 
@@ -166,40 +167,13 @@ namespace PhysIKA
 		m_vtkOpenglWidget->layout()->setMargin(0);
 		tabWidget->addTab(m_vtkOpenglWidget, QString());
 
-		QWidget* tabEditor = new QWidget();
+		PFlowSceneWidget* tabEditor = new PFlowSceneWidget();
 		tabEditor->setObjectName(QStringLiteral("tabEditor"));
 		tabWidget->addTab(tabEditor, QString());
 
-		QVBoxLayout *l = new QVBoxLayout(tabEditor);
-
-//		auto classMap = Object::getClassMap();
-
-// 		auto ret = std::make_shared<QtNodes::DataModelRegistry>();
-// 		int id = 0;
-// 		for (auto const c : *classMap)
-// 		{
-// 			id++;
-// 
-// 			QString str = QString::fromStdString(c.first);
-// 			QtNodes::DataModelRegistry::RegistryItemCreator creator = [str]() {
-// 				auto dat = std::make_unique<FieldDataModel>();
-// 				dat->setName(str);
-// 				return dat; };
-// 
-// 			QString string = QString::number(id);
-// 			ret->registerModel<FieldDataModel>("Modules", creator);
-// 		}
-
-		
-//		ret->registerModel<FieldDataModel>("Operators");
-
-		auto scene = new QtNodes::FlowScene(tabEditor);
-		l->addWidget(new QtNodes::FlowView(scene));
-		l->setContentsMargins(0, 0, 0, 0);
-		l->setSpacing(0);
 
 		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
-		tabWidget->setTabText(tabWidget->indexOf(tabEditor), QApplication::translate("MainWindow", "Node Editor", Q_NULLPTR));
+		tabWidget->setTabText(tabWidget->indexOf(tabEditor), QApplication::translate("MainWindow", "Editor", Q_NULLPTR));
 
 
 		//Setup animation widget

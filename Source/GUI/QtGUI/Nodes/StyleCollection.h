@@ -1,8 +1,8 @@
 #pragma once
 
-#include "NodeStyle.hpp"
-#include "ConnectionStyle.hpp"
-#include "FlowViewStyle.hpp"
+#include "NodeStyle.h"
+#include "ConnectionStyle.h"
+#include "FlowViewStyle.h"
 
 namespace QtNodes
 {

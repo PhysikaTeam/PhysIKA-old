@@ -5,16 +5,16 @@
 #include <QtGui/QTransform>
 #include <QtGui/QFontMetrics>
 
-#include "PortType.hpp"
-#include "Export.hpp"
-#include "memory.hpp"
+#include "PortType.h"
+#include "Export.h"
+#include "memory.h"
 
 namespace QtNodes
 {
 
 class NodeState;
 class NodeDataModel;
-class Node;
+class QtNode;
 
 class NODE_EDITOR_PUBLIC NodeGeometry
 {
@@ -118,9 +118,9 @@ public:
   
   static 
   QPointF 
-  calculateNodePositionBetweenNodePorts(PortIndex targetPortIndex, PortType targetPort, Node* targetNode,
-                                        PortIndex sourcePortIndex, PortType sourcePort, Node* sourceNode,
-                                        Node& newNode);
+  calculateNodePositionBetweenNodePorts(PortIndex targetPortIndex, PortType targetPort, QtNode* targetNode,
+                                        PortIndex sourcePortIndex, PortType sourcePort, QtNode* sourceNode,
+                                        QtNode& newNode);
 private:
 
   unsigned int

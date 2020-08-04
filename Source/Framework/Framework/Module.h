@@ -47,6 +47,30 @@ public:
 
 	virtual std::string getModuleType() { return "Module"; }
 
+	bool findInputField(Field* field);
+	bool addInputField(Field* field);
+	bool removeInputField(Field* field);
+
+	std::vector<Field*>& getInputFields() { return fields_input; }
+
+	bool findOutputField(Field* field);
+	bool addOutputField(Field* field);
+	bool removeOutputField(Field* field);
+
+	std::vector<Field*>& getOutputFields() { return fields_output; }
+
+	bool findParameter(Field* field);
+	bool addParameter(Field* field);
+	bool removeParameter(Field* field);
+
+	std::vector<Field*>& getParameters() { return fields_param; }
+
+	virtual std::weak_ptr<Module> next() { return m_module_next; }
+
+	void setNext(std::weak_ptr<Module> next_module) { m_module_next = next_module; }
+
+	bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true) override;
+
 protected:
 	/// \brief Initialization function for each module
 	/// 
@@ -54,9 +78,15 @@ protected:
 	/// , it is called after all fields are set.
 	virtual bool initializeImpl();
 
+	std::weak_ptr<Module> m_module_next;
+
 private:
 	Node* m_node;
 	std::string m_module_name;
 	bool m_initialized;
+
+	std::vector<Field*> fields_input;
+	std::vector<Field*> fields_output;
+	std::vector<Field*> fields_param;
 };
 }

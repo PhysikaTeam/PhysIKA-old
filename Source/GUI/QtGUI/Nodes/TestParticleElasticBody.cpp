@@ -1,18 +1,18 @@
-#include "ParticleElasticBody.h"
+#include "TestParticleElasticBody.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
 #include "Core/Utility.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
 #include "Framework/Topology/NeighborQuery.h"
-#include "ParticleIntegrator.h"
-#include "ElasticityModule.h"
+#include "Dynamics/ParticleSystem/ParticleIntegrator.h"
+#include "Dynamics/ParticleSystem/ElasticityModule.h"
 
 namespace PhysIKA
 {
-	IMPLEMENT_CLASS_1(ParticleElasticBody, TDataType)
+	IMPLEMENT_CLASS_1(TestParticleElasticBody, TDataType)
 
 	template<typename TDataType>
-	ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
+	TestParticleElasticBody<TDataType>::TestParticleElasticBody(std::string name)
 		: ParticleSystem<TDataType>(name)
 	{
 		m_horizon.setValue(0.0085);
@@ -24,14 +24,23 @@ namespace PhysIKA
 		this->getVelocity()->connect(m_integrator->m_velocity);
 		this->getForce()->connect(m_integrator->m_forceDensity);
 
+		this->getAnimationPipeline()->push_back(m_integrator);
+
 		auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
 		m_horizon.connect(m_nbrQuery->m_radius);
 		this->m_position.connect(m_nbrQuery->m_position);
+
+		this->getAnimationPipeline()->push_back(m_nbrQuery);
+
 
 		auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
 		this->getPosition()->connect(m_elasticity->m_position);
 		this->getVelocity()->connect(m_elasticity->m_velocity);
 		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
+
+		m_nbrQuery->getTestOut().connect(m_elasticity->getTestIn());
+
+		this->getAnimationPipeline()->push_back(m_elasticity);
 
 		//Create a node for surface mesh rendering
 		m_surfaceNode = this->template createChild<Node>("Mesh");
@@ -45,13 +54,13 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	ParticleElasticBody<TDataType>::~ParticleElasticBody()
+	TestParticleElasticBody<TDataType>::~TestParticleElasticBody()
 	{
 		
 	}
 
 	template<typename TDataType>
-	bool ParticleElasticBody<TDataType>::translate(Coord t)
+	bool TestParticleElasticBody<TDataType>::translate(Coord t)
 	{
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
 
@@ -59,7 +68,7 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	bool ParticleElasticBody<TDataType>::scale(Real s)
+	bool TestParticleElasticBody<TDataType>::scale(Real s)
 	{
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->scale(s);
 
@@ -68,13 +77,13 @@ namespace PhysIKA
 
 
 	template<typename TDataType>
-	bool ParticleElasticBody<TDataType>::initialize()
+	bool TestParticleElasticBody<TDataType>::initialize()
 	{
 		return ParticleSystem<TDataType>::initialize();
 	}
 
 	template<typename TDataType>
-	void ParticleElasticBody<TDataType>::advance(Real dt)
+	void TestParticleElasticBody<TDataType>::advance(Real dt)
 	{
 		auto integrator = this->template getModule<ParticleIntegrator<TDataType>>("integrator");
 
@@ -91,7 +100,7 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void ParticleElasticBody<TDataType>::updateTopology()
+	void TestParticleElasticBody<TDataType>::updateTopology()
 	{
 		auto pts = this->m_pSet->getPoints();
 		Function1Pt::copy(pts, this->getPosition()->getValue());
@@ -105,7 +114,7 @@ namespace PhysIKA
 
 
 	template<typename TDataType>
-	std::shared_ptr<ElasticityModule<TDataType>> ParticleElasticBody<TDataType>::getElasticitySolver()
+	std::shared_ptr<ElasticityModule<TDataType>> TestParticleElasticBody<TDataType>::getElasticitySolver()
 	{
 		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
 		return module;
@@ -113,7 +122,7 @@ namespace PhysIKA
 
 
 	template<typename TDataType>
-	void ParticleElasticBody<TDataType>::setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver)
+	void TestParticleElasticBody<TDataType>::setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver)
 	{
 		auto nbrQuery = this->template getModule<NeighborQuery<TDataType>>("neighborhood");
 		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
@@ -131,14 +140,14 @@ namespace PhysIKA
 
 
 	template<typename TDataType>
-	void ParticleElasticBody<TDataType>::loadSurface(std::string filename)
+	void TestParticleElasticBody<TDataType>::loadSurface(std::string filename)
 	{
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->loadObjFile(filename);
 	}
 
 
 	template<typename TDataType>
-	std::shared_ptr<PointSetToPointSet<TDataType>> ParticleElasticBody<TDataType>::getTopologyMapping()
+	std::shared_ptr<PointSetToPointSet<TDataType>> TestParticleElasticBody<TDataType>::getTopologyMapping()
 	{
 		auto mapping = this->template getModule<PointSetToPointSet<TDataType>>("surface_mapping");
 

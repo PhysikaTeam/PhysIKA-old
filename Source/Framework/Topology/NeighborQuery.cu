@@ -38,6 +38,8 @@ namespace PhysIKA
 		-1, -1, -1
 	};
 
+	IMPLEMENT_CLASS_1(NeighborQuery, TDataType)
+
 	template<typename TDataType>
 	NeighborQuery<TDataType>::NeighborQuery()
 		: ComputeModule()

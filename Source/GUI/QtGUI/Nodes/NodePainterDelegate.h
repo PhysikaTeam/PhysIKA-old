@@ -2,9 +2,9 @@
 
 #include <QPainter>
 
-#include "NodeGeometry.hpp"
-#include "NodeDataModel.hpp"
-#include "Export.hpp"
+#include "NodeGeometry.h"
+#include "NodeDataModel.h"
+#include "Export.h"
 
 namespace QtNodes {
 

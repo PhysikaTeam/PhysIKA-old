@@ -3,17 +3,17 @@
 #include <QtCore/QUuid>
 #include <QtWidgets/QGraphicsObject>
 
-#include "Connection.hpp"
+#include "Connection.h"
 
-#include "NodeGeometry.hpp"
-#include "NodeState.hpp"
+#include "NodeGeometry.h"
+#include "NodeState.h"
 
 class QGraphicsProxyWidget;
 
 namespace QtNodes
 {
 
-class FlowScene;
+class ModuleFlowScene;
 class FlowItemEntry;
 
 /// Class reacts on GUI events, mouse clicks and
@@ -23,16 +23,16 @@ class NodeGraphicsObject : public QGraphicsObject
   Q_OBJECT
 
 public:
-  NodeGraphicsObject(FlowScene &scene,
-                     Node& node);
+  NodeGraphicsObject(ModuleFlowScene &scene,
+                     QtNode& node);
 
   virtual
   ~NodeGraphicsObject();
 
-  Node&
+  QtNode&
   node();
 
-  Node const&
+  QtNode const&
   node() const;
 
   QRectF
@@ -93,9 +93,9 @@ private:
 
 private:
 
-  FlowScene & _scene;
+  ModuleFlowScene & _scene;
 
-  Node& _node;
+  QtNode& _node;
 
   bool _locked;
 

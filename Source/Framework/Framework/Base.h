@@ -97,9 +97,9 @@ public:
 	 * @param desc Field description
 	 * @param autoDestroy The field will be destroyed by Base if true, otherwise, the field should be explicitly destroyed by its creator.
 	 * 
-	 * @return Return false if the name confilicts with exists fields' names
+	 * @return Return false if the name conflicts with exists fields' names
 	 */
-	bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true);
+	virtual bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true);
 
 	template<typename T>
 	T* getField(FieldID name)

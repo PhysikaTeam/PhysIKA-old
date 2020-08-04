@@ -1,19 +1,19 @@
-#include "Node.hpp"
+#include "QtNode.h"
 
 #include <QtCore/QObject>
 
 #include <utility>
 #include <iostream>
 
-#include "FlowScene.hpp"
+#include "ModuleFlowScene.h"
 
-#include "NodeGraphicsObject.hpp"
-#include "NodeDataModel.hpp"
+#include "NodeGraphicsObject.h"
+#include "NodeDataModel.h"
 
-#include "ConnectionGraphicsObject.hpp"
-#include "ConnectionState.hpp"
+#include "ConnectionGraphicsObject.h"
+#include "ConnectionState.h"
 
-using QtNodes::Node;
+using QtNodes::QtNode;
 using QtNodes::NodeGeometry;
 using QtNodes::NodeState;
 using QtNodes::NodeData;
@@ -23,8 +23,8 @@ using QtNodes::NodeGraphicsObject;
 using QtNodes::PortIndex;
 using QtNodes::PortType;
 
-Node::
-Node(std::unique_ptr<NodeDataModel> && dataModel)
+QtNode::
+QtNode(std::unique_ptr<NodeDataModel> && dataModel)
   : _uid(QUuid::createUuid())
   , _nodeDataModel(std::move(dataModel))
   , _nodeState(_nodeDataModel)
@@ -35,18 +35,18 @@ Node(std::unique_ptr<NodeDataModel> && dataModel)
 
   // propagate data: model => node
   connect(_nodeDataModel.get(), &NodeDataModel::dataUpdated,
-          this, &Node::onDataUpdated);
+          this, &QtNode::onDataUpdated);
 
   connect(_nodeDataModel.get(), &NodeDataModel::embeddedWidgetSizeUpdated,
-          this, &Node::onNodeSizeUpdated );
+          this, &QtNode::onNodeSizeUpdated );
 }
 
 
-Node::
-~Node() = default;
+QtNode::
+~QtNode() = default;
 
 QJsonObject
-Node::
+QtNode::
 save() const
 {
   QJsonObject nodeJson;
@@ -65,7 +65,7 @@ save() const
 
 
 void
-Node::
+QtNode::
 restore(QJsonObject const& json)
 {
   _uid = QUuid(json["id"].toString());
@@ -80,7 +80,7 @@ restore(QJsonObject const& json)
 
 
 QUuid
-Node::
+QtNode::
 id() const
 {
   return _uid;
@@ -88,7 +88,7 @@ id() const
 
 
 void
-Node::
+QtNode::
 reactToPossibleConnection(PortType reactingPortType,
                           NodeDataType const &reactingDataType,
                           QPointF const &scenePoint)
@@ -108,7 +108,7 @@ reactToPossibleConnection(PortType reactingPortType,
 
 
 void
-Node::
+QtNode::
 resetReactionToConnection()
 {
   _nodeState.setReaction(NodeState::NOT_REACTING);
@@ -117,7 +117,7 @@ resetReactionToConnection()
 
 
 NodeGraphicsObject const &
-Node::
+QtNode::
 nodeGraphicsObject() const
 {
   return *_nodeGraphicsObject.get();
@@ -125,7 +125,7 @@ nodeGraphicsObject() const
 
 
 NodeGraphicsObject &
-Node::
+QtNode::
 nodeGraphicsObject()
 {
   return *_nodeGraphicsObject.get();
@@ -133,7 +133,7 @@ nodeGraphicsObject()
 
 
 void
-Node::
+QtNode::
 setGraphicsObject(std::unique_ptr<NodeGraphicsObject>&& graphics)
 {
   _nodeGraphicsObject = std::move(graphics);
@@ -143,7 +143,7 @@ setGraphicsObject(std::unique_ptr<NodeGraphicsObject>&& graphics)
 
 
 NodeGeometry&
-Node::
+QtNode::
 nodeGeometry()
 {
   return _nodeGeometry;
@@ -151,7 +151,7 @@ nodeGeometry()
 
 
 NodeGeometry const&
-Node::
+QtNode::
 nodeGeometry() const
 {
   return _nodeGeometry;
@@ -159,7 +159,7 @@ nodeGeometry() const
 
 
 NodeState const &
-Node::
+QtNode::
 nodeState() const
 {
   return _nodeState;
@@ -167,7 +167,7 @@ nodeState() const
 
 
 NodeState &
-Node::
+QtNode::
 nodeState()
 {
   return _nodeState;
@@ -175,7 +175,7 @@ nodeState()
 
 
 NodeDataModel*
-Node::
+QtNode::
 nodeDataModel() const
 {
   return _nodeDataModel.get();
@@ -183,7 +183,7 @@ nodeDataModel() const
 
 
 void
-Node::
+QtNode::
 propagateData(std::shared_ptr<NodeData> nodeData,
               PortIndex inPortIndex) const
 {
@@ -198,7 +198,7 @@ propagateData(std::shared_ptr<NodeData> nodeData,
 
 
 void
-Node::
+QtNode::
 onDataUpdated(PortIndex index)
 {
   auto nodeData = _nodeDataModel->outData(index);
@@ -211,7 +211,7 @@ onDataUpdated(PortIndex index)
 }
 
 void
-Node::
+QtNode::
 onNodeSizeUpdated()
 {
     if( nodeDataModel()->embeddedWidget() )

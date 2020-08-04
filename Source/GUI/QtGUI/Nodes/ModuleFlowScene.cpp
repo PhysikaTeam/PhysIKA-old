@@ -1,4 +1,4 @@
-#include "FlowScene.hpp"
+#include "ModuleFlowScene.h"
 
 #include <stdexcept>
 #include <utility>
@@ -16,22 +16,31 @@
 #include <QtCore/QtGlobal>
 #include <QtCore/QDebug>
 
-#include "Node.hpp"
-#include "NodeGraphicsObject.hpp"
+#include "QtNode.h"
+#include "NodeGraphicsObject.h"
 
-#include "NodeGraphicsObject.hpp"
-#include "ConnectionGraphicsObject.hpp"
+#include "NodeGraphicsObject.h"
+#include "ConnectionGraphicsObject.h"
 
-#include "Connection.hpp"
+#include "Connection.h"
 
 #include "Framework/Object.h"
+#include "Framework/SceneGraph.h"
 #include "ModuleWidget.h"
 
-#include "FlowView.hpp"
-#include "DataModelRegistry.hpp"
+#include "GUI/QtGUI/PVTKSurfaceMeshRender.h"
+#include "GUI/QtGUI/PVTKPointSetRender.h"
 
-using QtNodes::FlowScene;
-using QtNodes::Node;
+#include "Framework/Framework/SceneGraph.h"
+#include "TestParticleElasticBody.h"
+
+
+
+#include "FlowView.h"
+#include "DataModelRegistry.h"
+
+using QtNodes::ModuleFlowScene;
+using QtNodes::QtNode;
 using QtNodes::NodeGraphicsObject;
 using QtNodes::Connection;
 using QtNodes::DataModelRegistry;
@@ -41,7 +50,7 @@ using QtNodes::PortIndex;
 using QtNodes::TypeConverter;
 
 
-FlowScene::FlowScene(std::shared_ptr<DataModelRegistry> registry,
+ModuleFlowScene::ModuleFlowScene(std::shared_ptr<DataModelRegistry> registry,
           QObject * parent)
   : QGraphicsScene(parent)
   , _registry(std::move(registry))
@@ -49,16 +58,14 @@ FlowScene::FlowScene(std::shared_ptr<DataModelRegistry> registry,
   setItemIndexMethod(QGraphicsScene::NoIndex);
 
   // This connection should come first
-  connect(this, &FlowScene::connectionCreated, this, &FlowScene::setupConnectionSignals);
-  connect(this, &FlowScene::connectionCreated, this, &FlowScene::sendConnectionCreatedToNodes);
-  connect(this, &FlowScene::connectionDeleted, this, &FlowScene::sendConnectionDeletedToNodes);
+  connect(this, &ModuleFlowScene::connectionCreated, this, &ModuleFlowScene::setupConnectionSignals);
+  connect(this, &ModuleFlowScene::connectionCreated, this, &ModuleFlowScene::sendConnectionCreatedToNodes);
+  connect(this, &ModuleFlowScene::connectionDeleted, this, &ModuleFlowScene::sendConnectionDeletedToNodes);
 }
 
-FlowScene::FlowScene(QObject * parent)
-  : FlowScene(std::make_shared<DataModelRegistry>(),
-              parent)
+ModuleFlowScene::ModuleFlowScene(QObject * parent)
+	: ModuleFlowScene(std::make_shared<DataModelRegistry>(), parent)
 {
-
 	auto classMap = PhysIKA::Object::getClassMap();
 
 	auto ret = std::make_shared<QtNodes::DataModelRegistry>();
@@ -78,8 +85,8 @@ FlowScene::FlowScene(QObject * parent)
 				dat->setName(str);
 			return dat; };
 
-			QString string = QString::number(id);
-			ret->registerModel<ModuleWidget>("Modules", creator);
+			QString category = QString::fromStdString(module->getModuleType());
+			ret->registerModel<ModuleWidget>(category, creator);
 		}
 	}
 
@@ -87,7 +94,7 @@ FlowScene::FlowScene(QObject * parent)
 }
 
 
-FlowScene::~FlowScene()
+ModuleFlowScene::~ModuleFlowScene()
 {
   clearScene();
 }
@@ -96,8 +103,8 @@ FlowScene::~FlowScene()
 //------------------------------------------------------------------------------
 
 std::shared_ptr<Connection>
-FlowScene::createConnection(PortType connectedPort,
-                 Node& node,
+ModuleFlowScene::createConnection(PortType connectedPort,
+                 QtNode& node,
                  PortIndex portIndex)
 {
   auto connection = std::make_shared<Connection>(connectedPort, node, portIndex);
@@ -124,12 +131,11 @@ FlowScene::createConnection(PortType connectedPort,
 
 
 std::shared_ptr<Connection>
-FlowScene::
-createConnection(Node& nodeIn,
-                 PortIndex portIndexIn,
-                 Node& nodeOut,
-                 PortIndex portIndexOut,
-                 TypeConverter const &converter)
+ModuleFlowScene::createConnection(QtNode& nodeIn,
+									 PortIndex portIndexIn,
+									 QtNode& nodeOut,
+									 PortIndex portIndexOut,
+									 TypeConverter const &converter)
 {
   auto connection =
     std::make_shared<Connection>(nodeIn,
@@ -158,7 +164,7 @@ createConnection(Node& nodeIn,
 
 
 std::shared_ptr<Connection>
-FlowScene::
+ModuleFlowScene::
 restoreConnection(QJsonObject const &connectionJson)
 {
   QUuid nodeInId  = QUuid(connectionJson["in_id"].toString());
@@ -207,7 +213,7 @@ restoreConnection(QJsonObject const &connectionJson)
 
 
 void
-FlowScene::
+ModuleFlowScene::
 deleteConnection(Connection& connection)
 {
   auto it = _connections.find(connection.id());
@@ -218,11 +224,11 @@ deleteConnection(Connection& connection)
 }
 
 
-Node&
-FlowScene::
+QtNode&
+ModuleFlowScene::
 createNode(std::unique_ptr<NodeDataModel> && dataModel)
 {
-  auto node = detail::make_unique<Node>(std::move(dataModel));
+  auto node = detail::make_unique<QtNode>(std::move(dataModel));
   auto ngo  = detail::make_unique<NodeGraphicsObject>(*this, *node);
 
   node->setGraphicsObject(std::move(ngo));
@@ -235,8 +241,8 @@ createNode(std::unique_ptr<NodeDataModel> && dataModel)
 }
 
 
-Node&
-FlowScene::
+QtNode&
+ModuleFlowScene::
 restoreNode(QJsonObject const& nodeJson)
 {
   QString modelName = nodeJson["model"].toObject()["name"].toString();
@@ -247,7 +253,7 @@ restoreNode(QJsonObject const& nodeJson)
     throw std::logic_error(std::string("No registered model with name ") +
                            modelName.toLocal8Bit().data());
 
-  auto node = detail::make_unique<Node>(std::move(dataModel));
+  auto node = detail::make_unique<QtNode>(std::move(dataModel));
   auto ngo  = detail::make_unique<NodeGraphicsObject>(*this, *node);
   node->setGraphicsObject(std::move(ngo));
 
@@ -263,8 +269,8 @@ restoreNode(QJsonObject const& nodeJson)
 
 
 void
-FlowScene::
-removeNode(Node& node)
+ModuleFlowScene::
+removeNode(QtNode& node)
 {
   // call signal
   nodeDeleted(node);
@@ -286,7 +292,7 @@ removeNode(Node& node)
 
 
 DataModelRegistry&
-FlowScene::
+ModuleFlowScene::
 registry() const
 {
   return *_registry;
@@ -294,7 +300,7 @@ registry() const
 
 
 void
-FlowScene::
+ModuleFlowScene::
 setRegistry(std::shared_ptr<DataModelRegistry> registry)
 {
   _registry = std::move(registry);
@@ -302,8 +308,8 @@ setRegistry(std::shared_ptr<DataModelRegistry> registry)
 
 
 void
-FlowScene::
-iterateOverNodes(std::function<void(Node*)> const & visitor)
+ModuleFlowScene::
+iterateOverNodes(std::function<void(QtNode*)> const & visitor)
 {
   for (const auto& _node : _nodes)
   {
@@ -313,7 +319,7 @@ iterateOverNodes(std::function<void(Node*)> const & visitor)
 
 
 void
-FlowScene::
+ModuleFlowScene::
 iterateOverNodeData(std::function<void(NodeDataModel*)> const & visitor)
 {
   for (const auto& _node : _nodes)
@@ -324,14 +330,14 @@ iterateOverNodeData(std::function<void(NodeDataModel*)> const & visitor)
 
 
 void
-FlowScene::
+ModuleFlowScene::
 iterateOverNodeDataDependentOrder(std::function<void(NodeDataModel*)> const & visitor)
 {
   std::set<QUuid> visitedNodesSet;
 
   //A leaf node is a node with no input ports, or all possible input ports empty
   auto isNodeLeaf =
-    [](Node const &node, NodeDataModel const &model)
+    [](QtNode const &node, NodeDataModel const &model)
     {
       for (unsigned int i = 0; i < model.nPorts(PortType::In); ++i)
       {
@@ -359,7 +365,7 @@ iterateOverNodeDataDependentOrder(std::function<void(NodeDataModel*)> const & vi
   }
 
   auto areNodeInputsVisitedBefore =
-    [&](Node const &node, NodeDataModel const &model)
+    [&](QtNode const &node, NodeDataModel const &model)
     {
       for (size_t i = 0; i < model.nPorts(PortType::In); ++i)
       {
@@ -399,16 +405,16 @@ iterateOverNodeDataDependentOrder(std::function<void(NodeDataModel*)> const & vi
 
 
 QPointF
-FlowScene::
-getNodePosition(const Node& node) const
+ModuleFlowScene::
+getNodePosition(const QtNode& node) const
 {
   return node.nodeGraphicsObject().pos();
 }
 
 
 void
-FlowScene::
-setNodePosition(Node& node, const QPointF& pos) const
+ModuleFlowScene::
+setNodePosition(QtNode& node, const QPointF& pos) const
 {
   node.nodeGraphicsObject().setPos(pos);
   node.nodeGraphicsObject().moveConnections();
@@ -416,15 +422,15 @@ setNodePosition(Node& node, const QPointF& pos) const
 
 
 QSizeF
-FlowScene::
-getNodeSize(const Node& node) const
+ModuleFlowScene::
+getNodeSize(const QtNode& node) const
 {
   return QSizeF(node.nodeGeometry().width(), node.nodeGeometry().height());
 }
 
 
-std::unordered_map<QUuid, std::unique_ptr<Node> > const &
-FlowScene::
+std::unordered_map<QUuid, std::unique_ptr<QtNode> > const &
+ModuleFlowScene::
 nodes() const
 {
   return _nodes;
@@ -432,35 +438,35 @@ nodes() const
 
 
 std::unordered_map<QUuid, std::shared_ptr<Connection> > const &
-FlowScene::
+ModuleFlowScene::
 connections() const
 {
   return _connections;
 }
 
 
-std::vector<Node*>
-FlowScene::
+std::vector<QtNode*>
+ModuleFlowScene::
 allNodes() const
 {
-  std::vector<Node*> nodes;
+  std::vector<QtNode*> nodes;
 
   std::transform(_nodes.begin(),
                  _nodes.end(),
                  std::back_inserter(nodes),
-                 [](std::pair<QUuid const, std::unique_ptr<Node>> const & p) { return p.second.get(); });
+                 [](std::pair<QUuid const, std::unique_ptr<QtNode>> const & p) { return p.second.get(); });
 
   return nodes;
 }
 
 
-std::vector<Node*>
-FlowScene::
+std::vector<QtNode*>
+ModuleFlowScene::
 selectedNodes() const
 {
   QList<QGraphicsItem*> graphicsItems = selectedItems();
 
-  std::vector<Node*> ret;
+  std::vector<QtNode*> ret;
   ret.reserve(graphicsItems.size());
 
   for (QGraphicsItem* item : graphicsItems)
@@ -480,7 +486,7 @@ selectedNodes() const
 //------------------------------------------------------------------------------
 
 void
-FlowScene::
+ModuleFlowScene::
 clearScene()
 {
   //Manual node cleanup. Simply clearing the holding datastructures doesn't work, the code crashes when
@@ -499,7 +505,7 @@ clearScene()
 
 
 void
-FlowScene::
+ModuleFlowScene::
 save() const
 {
   QString fileName =
@@ -523,7 +529,7 @@ save() const
 
 
 void
-FlowScene::
+ModuleFlowScene::
 load()
 {
   clearScene();
@@ -551,7 +557,7 @@ load()
 
 
 QByteArray
-FlowScene::
+ModuleFlowScene::
 saveToMemory() const
 {
   QJsonObject sceneJson;
@@ -587,7 +593,7 @@ saveToMemory() const
 
 
 void
-FlowScene::
+ModuleFlowScene::
 loadFromMemory(const QByteArray& data)
 {
   QJsonObject const jsonDocument = QJsonDocument::fromJson(data).object();
@@ -609,23 +615,23 @@ loadFromMemory(const QByteArray& data)
 
 
 void
-FlowScene::
+ModuleFlowScene::
 setupConnectionSignals(Connection const& c)
 {
   connect(&c,
           &Connection::connectionMadeIncomplete,
           this,
-          &FlowScene::connectionDeleted,
+          &ModuleFlowScene::connectionDeleted,
           Qt::UniqueConnection);
 }
 
 
 void
-FlowScene::
+ModuleFlowScene::
 sendConnectionCreatedToNodes(Connection const& c)
 {
-  Node* from = c.getNode(PortType::Out);
-  Node* to   = c.getNode(PortType::In);
+  QtNode* from = c.getNode(PortType::Out);
+  QtNode* to   = c.getNode(PortType::In);
 
   Q_ASSERT(from != nullptr);
   Q_ASSERT(to != nullptr);
@@ -636,11 +642,11 @@ sendConnectionCreatedToNodes(Connection const& c)
 
 
 void
-FlowScene::
+ModuleFlowScene::
 sendConnectionDeletedToNodes(Connection const& c)
 {
-  Node* from = c.getNode(PortType::Out);
-  Node* to   = c.getNode(PortType::In);
+  QtNode* from = c.getNode(PortType::Out);
+  QtNode* to   = c.getNode(PortType::In);
 
   Q_ASSERT(from != nullptr);
   Q_ASSERT(to != nullptr);
@@ -654,8 +660,8 @@ sendConnectionDeletedToNodes(Connection const& c)
 namespace QtNodes
 {
 
-Node*
-locateNodeAt(QPointF scenePoint, FlowScene &scene,
+QtNode*
+locateNodeAt(QPointF scenePoint, ModuleFlowScene &scene,
              QTransform const & viewTransform)
 {
   // items under cursor
@@ -676,7 +682,7 @@ locateNodeAt(QPointF scenePoint, FlowScene &scene,
       return (dynamic_cast<NodeGraphicsObject*>(item) != nullptr);
     });
 
-  Node* resultNode = nullptr;
+  QtNode* resultNode = nullptr;
 
   if (!filteredItems.empty())
   {
@@ -688,4 +694,99 @@ locateNodeAt(QPointF scenePoint, FlowScene &scene,
 
   return resultNode;
 }
+
+
+void ModuleFlowScene::newNode()
+{
+ 	PhysIKA::SceneGraph& scene = PhysIKA::SceneGraph::getInstance();
+	auto root = scene.getRootNode();
+
+	root->removeAllChildren();
+
+	std::shared_ptr<PhysIKA::TestParticleElasticBody<PhysIKA::DataType3f>> bunny = std::make_shared<PhysIKA::TestParticleElasticBody<PhysIKA::DataType3f>>();
+	root->addChild(bunny);
+	//	bunny->getRenderModule()->setColor(Vector3f(0, 1, 1));
+	bunny->setMass(1.0);
+	bunny->loadParticles("../../Media/bunny/bunny_points.obj");
+	bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+	bunny->translate(PhysIKA::Vector3f(0.5, 0.2, 0.5));
+	bunny->setVisible(true);
+
+// 	auto renderer = std::make_shared<PhysIKA::PVTKSurfaceMeshRender>();
+// 	renderer->setName("VTK Mesh Renderer");
+// 	bunny->getSurfaceNode()->addVisualModule(renderer);
+
+	auto pRenderer = std::make_shared<PhysIKA::PVTKPointSetRender>();
+	pRenderer->setName("VTK Point Renderer");
+	bunny->addVisualModule(pRenderer);
+
+	scene.invalid();
+	scene.initialize();
+
+	auto mlist = bunny->getModuleList();
+
+	auto c = bunny->getAnimationPipeline()->entry();
+
+	std::map<std::string, QtNode*> moduleMap;
+
+	int mSize = bunny->getAnimationPipeline()->size();
+
+	for (; c != bunny->getAnimationPipeline()->finished(); c++)
+	{
+		auto module_name = c->getName();
+
+		auto type = std::make_unique<ModuleWidget>(c.get());
+
+		auto& node = this->createNode(std::move(type));
+
+		moduleMap[module_name] = &node;
+
+//		QPoint pos = event->pos();
+
+		QPointF posView;
+
+		node.nodeGraphicsObject().setPos(posView);
+
+		this->nodePlaced(node);
+	}
+
+	c = bunny->getAnimationPipeline()->entry();
+	for (; c != bunny->getAnimationPipeline()->finished(); c++)
+	{
+		auto out_node = moduleMap[c->getName()];
+
+		auto fields = c->getOutputFields();
+
+		for (int i = 0; i < fields.size(); i++)
+		{
+			auto sink_fields = fields[i]->getSinkFields();
+			for (int j = 0; j < sink_fields.size(); j++)
+			{
+				auto in_module = dynamic_cast<Module*>(sink_fields[j]->getParent());
+				if (in_module != nullptr)
+				{
+					auto in_fields = in_module->getInputFields();
+
+					int in_port = -1;
+					for (int t = 0; t < in_fields.size(); t++)
+					{
+						if (sink_fields[j] == in_fields[t])
+						{
+							in_port = t;
+							break;
+						}
+					}
+
+					if (in_port != -1)
+					{
+						auto in_node = moduleMap[in_module->getName()];
+
+						createConnection(*in_node, in_port, *out_node, i);
+					}
+				}
+			}
+		}
+	}
+}
+
 }

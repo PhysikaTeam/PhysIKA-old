@@ -1,7 +1,7 @@
 #pragma once
 
-#include "NodeData.hpp"
-#include "memory.hpp"
+#include "NodeData.h"
+#include "memory.h"
 
 #include <functional>
 

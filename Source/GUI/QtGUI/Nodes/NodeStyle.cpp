@@ -1,4 +1,4 @@
-#include "NodeStyle.hpp"
+#include "NodeStyle.h"
 
 #include <iostream>
 
@@ -10,7 +10,7 @@
 
 #include <QDebug>
 
-#include "StyleCollection.hpp"
+#include "StyleCollection.h"
 
 using QtNodes::NodeStyle;
 

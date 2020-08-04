@@ -1,4 +1,4 @@
-#include "FlowView.hpp"
+#include "FlowView.h"
 
 #include <QtWidgets/QGraphicsScene>
 
@@ -16,15 +16,15 @@
 #include <iostream>
 #include <cmath>
 
-#include "FlowScene.hpp"
-#include "DataModelRegistry.hpp"
-#include "Node.hpp"
-#include "NodeGraphicsObject.hpp"
-#include "ConnectionGraphicsObject.hpp"
-#include "StyleCollection.hpp"
+#include "ModuleFlowScene.h"
+#include "DataModelRegistry.h"
+#include "QtNode.h"
+#include "NodeGraphicsObject.h"
+#include "ConnectionGraphicsObject.h"
+#include "StyleCollection.h"
 
 using QtNodes::FlowView;
-using QtNodes::FlowScene;
+using QtNodes::ModuleFlowScene;
 
 FlowView::
 FlowView(QWidget *parent)
@@ -54,7 +54,7 @@ FlowView(QWidget *parent)
 
 
 FlowView::
-FlowView(FlowScene *scene, QWidget *parent)
+FlowView(ModuleFlowScene *scene, QWidget *parent)
   : FlowView(parent)
 {
   setScene(scene);
@@ -78,7 +78,7 @@ deleteSelectionAction() const
 
 
 void
-FlowView::setScene(FlowScene *scene)
+FlowView::setScene(ModuleFlowScene *scene)
 {
   _scene = scene;
   QGraphicsView::setScene(_scene);
@@ -402,7 +402,7 @@ showEvent(QShowEvent *event)
 }
 
 
-FlowScene *
+ModuleFlowScene *
 FlowView::
 scene()
 {

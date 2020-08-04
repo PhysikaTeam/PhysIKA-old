@@ -1,15 +1,15 @@
-#include "ConnectionPainter.hpp"
+#include "ConnectionPainter.h"
 
 #include <QtGui/QIcon>
 
-#include "ConnectionGeometry.hpp"
-#include "ConnectionState.hpp"
-#include "ConnectionGraphicsObject.hpp"
-#include "Connection.hpp"
+#include "ConnectionGeometry.h"
+#include "ConnectionState.h"
+#include "ConnectionGraphicsObject.h"
+#include "Connection.h"
 
-#include "NodeData.hpp"
+#include "NodeData.h"
 
-#include "StyleCollection.hpp"
+#include "StyleCollection.h"
 
 
 using QtNodes::ConnectionPainter;

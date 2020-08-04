@@ -9,10 +9,10 @@ class QGraphicsSceneMouseEvent;
 namespace QtNodes
 {
 
-class FlowScene;
+class ModuleFlowScene;
 class Connection;
 class ConnectionGeometry;
-class Node;
+class QtNode;
 
 /// Graphic Object for connection. Adds itself to scene
 class ConnectionGraphicsObject
@@ -22,7 +22,7 @@ class ConnectionGraphicsObject
 
 public:
 
-  ConnectionGraphicsObject(FlowScene &scene,
+  ConnectionGraphicsObject(ModuleFlowScene &scene,
                            Connection &connection);
 
   virtual
@@ -82,7 +82,7 @@ private:
 
 private:
 
-  FlowScene & _scene;
+  ModuleFlowScene & _scene;
 
   Connection& _connection;
 };

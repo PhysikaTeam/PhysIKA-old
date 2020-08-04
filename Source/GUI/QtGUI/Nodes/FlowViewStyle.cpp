@@ -1,4 +1,4 @@
-#include "FlowViewStyle.hpp"
+#include "FlowViewStyle.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
@@ -8,7 +8,7 @@
 
 #include <QDebug>
 
-#include "StyleCollection.hpp"
+#include "StyleCollection.h"
 
 using QtNodes::FlowViewStyle;
 

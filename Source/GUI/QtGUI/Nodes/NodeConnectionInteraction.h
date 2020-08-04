@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Node.hpp"
-#include "Connection.hpp"
+#include "QtNode.h"
+#include "Connection.h"
 
 namespace QtNodes
 {
 
 class DataModelRegistry;
-class FlowScene;
+class ModuleFlowScene;
 class NodeDataModel;
 
 /// Class performs various operations on the Node and Connection pair.
@@ -16,9 +16,9 @@ class NodeDataModel;
 class NodeConnectionInteraction
 {
 public:
-  NodeConnectionInteraction(Node& node,
+  NodeConnectionInteraction(QtNode& node,
                             Connection& connection,
-                            FlowScene& scene);
+                            ModuleFlowScene& scene);
 
   /// Can connect when following conditions are met:
   /// 1) Connection 'requires' a port
@@ -59,10 +59,10 @@ private:
 
 private:
 
-  Node* _node;
+  QtNode* _node;
 
   Connection* _connection;
 
-  FlowScene* _scene;
+  ModuleFlowScene* _scene;
 };
 }

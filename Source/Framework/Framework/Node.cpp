@@ -129,6 +129,15 @@ void Node::removeChild(std::shared_ptr<Node> child)
 	}
 }
 
+void Node::removeAllChildren()
+{
+	ListPtr<Node>::iterator iter = m_children.begin();
+	for (; iter != m_children.end(); )
+	{
+		m_children.erase(iter++);
+	}
+}
+
 void Node::advance(Real dt)
 {
 	auto nModel = this->getNumericalModel();
@@ -184,6 +193,24 @@ void Node::setMechanicalState(std::shared_ptr<MechanicalState> state)
 
 	m_mechanical_state = state; 
 	addModule(state);
+}
+
+std::unique_ptr<AnimationController>& Node::getAnimationPipeline()
+{
+	if (m_animation_pipeline == nullptr)
+	{
+		m_animation_pipeline = std::make_unique<AnimationController>();
+	}
+	return m_animation_pipeline;
+}
+
+std::unique_ptr<RenderController>& Node::getRenderPipeline()
+{
+	if (m_render_pipeline == nullptr)
+	{
+		m_render_pipeline = std::make_unique<RenderController>();
+	}
+	return m_render_pipeline;
 }
 
 /*

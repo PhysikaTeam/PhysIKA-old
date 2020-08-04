@@ -1,8 +1,8 @@
-#include "NodeState.hpp"
+#include "NodeState.h"
 
-#include "NodeDataModel.hpp"
+#include "NodeDataModel.h"
 
-#include "Connection.hpp"
+#include "Connection.h"
 
 using QtNodes::NodeState;
 using QtNodes::NodeDataType;

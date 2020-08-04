@@ -1,4 +1,4 @@
-#include "ConnectionGraphicsObject.hpp"
+#include "ConnectionGraphicsObject.h"
 
 #include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QtWidgets/QGraphicsDropShadowEffect>
@@ -6,26 +6,26 @@
 #include <QtWidgets/QStyleOptionGraphicsItem>
 #include <QtWidgets/QGraphicsView>
 
-#include "FlowScene.hpp"
+#include "ModuleFlowScene.h"
 
-#include "Connection.hpp"
-#include "ConnectionGeometry.hpp"
-#include "ConnectionPainter.hpp"
-#include "ConnectionState.hpp"
-#include "ConnectionBlurEffect.hpp"
+#include "Connection.h"
+#include "ConnectionGeometry.h"
+#include "ConnectionPainter.h"
+#include "ConnectionState.h"
+#include "ConnectionBlurEffect.h"
 
-#include "NodeGraphicsObject.hpp"
+#include "NodeGraphicsObject.h"
 
-#include "NodeConnectionInteraction.hpp"
+#include "NodeConnectionInteraction.h"
 
-#include "Node.hpp"
+#include "QtNode.h"
 
 using QtNodes::ConnectionGraphicsObject;
 using QtNodes::Connection;
-using QtNodes::FlowScene;
+using QtNodes::ModuleFlowScene;
 
 ConnectionGraphicsObject::
-ConnectionGraphicsObject(FlowScene &scene,
+ConnectionGraphicsObject(ModuleFlowScene &scene,
                          Connection &connection)
   : _scene(scene)
   , _connection(connection)

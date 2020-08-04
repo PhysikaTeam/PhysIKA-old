@@ -1,7 +1,7 @@
-#include "ConnectionBlurEffect.hpp"
+#include "ConnectionBlurEffect.h"
 
-#include "ConnectionGraphicsObject.hpp"
-#include "ConnectionPainter.hpp"
+#include "ConnectionGraphicsObject.h"
+#include "ConnectionPainter.h"
 
 using QtNodes::ConnectionBlurEffect;
 using QtNodes::ConnectionGraphicsObject;

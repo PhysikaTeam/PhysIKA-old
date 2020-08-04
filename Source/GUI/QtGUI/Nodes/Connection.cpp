@@ -1,4 +1,4 @@
-#include "Connection.hpp"
+#include "Connection.h"
 
 #include <cmath>
 #include <utility>
@@ -6,23 +6,23 @@
 #include <QtWidgets/QtWidgets>
 #include <QtGlobal>
 
-#include "Node.hpp"
-#include "FlowScene.hpp"
-#include "FlowView.hpp"
+#include "QtNode.h"
+#include "ModuleFlowScene.h"
+#include "FlowView.h"
 
-#include "NodeGeometry.hpp"
-#include "NodeGraphicsObject.hpp"
-#include "NodeDataModel.hpp"
+#include "NodeGeometry.h"
+#include "NodeGraphicsObject.h"
+#include "NodeDataModel.h"
 
-#include "ConnectionState.hpp"
-#include "ConnectionGeometry.hpp"
-#include "ConnectionGraphicsObject.hpp"
+#include "ConnectionState.h"
+#include "ConnectionGeometry.h"
+#include "ConnectionGraphicsObject.h"
 
 using QtNodes::Connection;
 using QtNodes::PortType;
 using QtNodes::PortIndex;
 using QtNodes::ConnectionState;
-using QtNodes::Node;
+using QtNodes::QtNode;
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
 using QtNodes::ConnectionGraphicsObject;
@@ -31,7 +31,7 @@ using QtNodes::TypeConverter;
 
 Connection::
 Connection(PortType portType,
-           Node& node,
+           QtNode& node,
            PortIndex portIndex)
   : _uid(QUuid::createUuid())
   , _outPortIndex(INVALID)
@@ -45,9 +45,9 @@ Connection(PortType portType,
 
 
 Connection::
-Connection(Node& nodeIn,
+Connection(QtNode& nodeIn,
            PortIndex portIndexIn,
-           Node& nodeOut,
+           QtNode& nodeOut,
            PortIndex portIndexOut,
            TypeConverter typeConverter)
   : _uid(QUuid::createUuid())
@@ -232,7 +232,7 @@ getPortIndex(PortType portType) const
 
 void
 Connection::
-setNodeToPort(Node& node,
+setNodeToPort(QtNode& node,
               PortType portType,
               PortIndex portIndex)
 {
@@ -308,7 +308,7 @@ connectionGeometry() const
 }
 
 
-Node*
+QtNode*
 Connection::
 getNode(PortType portType) const
 {
@@ -330,7 +330,7 @@ getNode(PortType portType) const
 }
 
 
-Node*&
+QtNode*&
 Connection::
 getNode(PortType portType)
 {
@@ -386,7 +386,7 @@ dataType(PortType portType) const
   }
   else 
   {
-    Node* validNode;
+    QtNode* validNode;
     PortIndex index = INVALID;
 
     if ((validNode = _inNode))

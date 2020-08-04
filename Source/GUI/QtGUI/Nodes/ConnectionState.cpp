@@ -1,14 +1,14 @@
-#include "ConnectionState.hpp"
+#include "ConnectionState.h"
 
 #include <iostream>
 
 #include <QtCore/QPointF>
 
-#include "FlowScene.hpp"
-#include "Node.hpp"
+#include "ModuleFlowScene.h"
+#include "QtNode.h"
 
 using QtNodes::ConnectionState;
-using QtNodes::Node;
+using QtNodes::QtNode;
 
 ConnectionState::
 ~ConnectionState()
@@ -19,7 +19,7 @@ ConnectionState::
 
 void
 ConnectionState::
-interactWithNode(Node* node)
+interactWithNode(QtNode* node)
 {
   if (node)
   {
@@ -34,7 +34,7 @@ interactWithNode(Node* node)
 
 void
 ConnectionState::
-setLastHoveredNode(Node* node)
+setLastHoveredNode(QtNode* node)
 {
   _lastHoveredNode = node;
 }

@@ -40,6 +40,11 @@ bool SceneGraph::initialize()
 	return m_initialized;
 }
 
+void SceneGraph::invalid()
+{
+	m_initialized = false;
+}
+
 void SceneGraph::draw()
 {
 	if (m_root == nullptr)

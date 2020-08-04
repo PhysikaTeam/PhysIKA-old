@@ -5,11 +5,11 @@
 
 #include <QtCore/QUuid>
 
-#include "Export.hpp"
+#include "Export.h"
 
-#include "PortType.hpp"
-#include "NodeData.hpp"
-#include "memory.hpp"
+#include "PortType.h"
+#include "NodeData.h"
+#include "memory.h"
 
 namespace QtNodes
 {

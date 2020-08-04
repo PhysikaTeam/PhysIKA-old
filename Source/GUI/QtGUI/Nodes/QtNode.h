@@ -6,16 +6,16 @@
 
 #include <QtCore/QJsonObject>
 
-#include "PortType.hpp"
+#include "PortType.h"
 
-#include "Export.hpp"
-#include "NodeState.hpp"
-#include "NodeGeometry.hpp"
-#include "NodeData.hpp"
-#include "NodeGraphicsObject.hpp"
-#include "ConnectionGraphicsObject.hpp"
-#include "Serializable.hpp"
-#include "memory.hpp"
+#include "Export.h"
+#include "NodeState.h"
+#include "NodeGeometry.h"
+#include "NodeData.h"
+#include "NodeGraphicsObject.h"
+#include "ConnectionGraphicsObject.h"
+#include "Serializable.h"
+#include "memory.h"
 
 namespace QtNodes
 {
@@ -25,7 +25,7 @@ class ConnectionState;
 class NodeGraphicsObject;
 class NodeDataModel;
 
-class NODE_EDITOR_PUBLIC Node
+class NODE_EDITOR_PUBLIC QtNode
   : public QObject
   , public Serializable
 {
@@ -34,10 +34,10 @@ class NODE_EDITOR_PUBLIC Node
 public:
 
   /// NodeDataModel should be an rvalue and is moved into the Node
-  Node(std::unique_ptr<NodeDataModel> && dataModel);
+  QtNode(std::unique_ptr<NodeDataModel> && dataModel);
 
   virtual
-  ~Node();
+  ~QtNode();
 
 public:
 

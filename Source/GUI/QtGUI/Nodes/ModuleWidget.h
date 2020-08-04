@@ -4,12 +4,16 @@
 #include <QtCore/QJsonObject>
 #include <QtWidgets/QLabel>
 
-#include "NodeDataModel.hpp"
+#include "NodeDataModel.h"
 #include "Framework/Module.h"
 
 #include <iostream>
 
 class DecimalData;
+class FieldData;
+
+using PhysIKA::Module;
+using PhysIKA::Field;
 
 using QtNodes::PortType;
 using QtNodes::PortIndex;
@@ -25,54 +29,61 @@ class ModuleWidget : public NodeDataModel
 	Q_OBJECT
 
 public:
-	ModuleWidget(PhysIKA::Module* base = nullptr);
+	ModuleWidget(Module* base = nullptr);
 
 	virtual	~ModuleWidget() {}
 
 public:
 
-	void setName(QString name) { _name = name; }
+	QString caption() const override;
+
+	QString name() const override;
+	void setName(QString name) { m_name = name; }
+	
+	QString	portCaption(PortType portType, PortIndex portIndex) const override;
+
+	QString	validationMessage() const override;
+
 
 	unsigned int nPorts(PortType portType) const override;
 
-	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+	
+	bool portCaptionVisible(PortType portType, PortIndex portIndex) const override;
 
 	std::shared_ptr<NodeData> outData(PortIndex port) override;
 
-	QString caption() const override
-	{
-		return _name;
-	}
-
-	QString name() const override
-	{
-		return _name;
-	}
-
 	void setInData(std::shared_ptr<NodeData> data, PortIndex portIndex) override;
+
+	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+
 
 	QWidget* embeddedWidget() override { return nullptr; }
 
 	NodeValidationState validationState() const override;
 
-	QString	validationMessage() const override;
+protected:
+	virtual void updateModule();
 
 protected:
 
-	virtual void compute() {};
+	using OutFieldPtr = std::vector<std::shared_ptr<FieldData>>;
+	using InFieldPtr = std::vector<std::weak_ptr<FieldData>>;
 
-protected:
+	InFieldPtr input_fields;
+	OutFieldPtr output_fields;
+	
+	QString m_name;
 
-	std::weak_ptr<DecimalData> _number1;
-	std::weak_ptr<DecimalData> _number2;
-
-	std::shared_ptr<DecimalData> _result;
-
-	QString _name;
-
-	PhysIKA::Module* m_module = nullptr;
+	Module* m_module = nullptr;
 
 	NodeValidationState modelValidationState = NodeValidationState::Warning;
 	QString modelValidationError = QString("Missing or incorrect inputs");
+
+private:
+
+	Field* getField(PortType portType, PortIndex portIndex) const;
+
+	std::vector<Field*>& getOutputFields();
+	std::vector<Field*>& getInputFields();
 };
 

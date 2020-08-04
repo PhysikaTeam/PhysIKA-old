@@ -4,7 +4,7 @@
 
 #include <QtCore/QVariantMap>
 
-#include "Export.hpp"
+#include "Export.h"
 
 namespace QtNodes
 {

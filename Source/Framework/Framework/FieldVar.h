@@ -17,11 +17,10 @@ class VarField : public Field
 {
 public:
 	typedef T VarType;
-	typedef T FieldType;
 
 	VarField();
 	VarField(T value);
-	VarField(T value, std::string name, std::string description);
+	VarField(T value, std::string name, std::string description, FieldType fieldType, Base* parent);
 
 public:
 	~VarField() override;
@@ -29,7 +28,7 @@ public:
 	size_t getElementCount() override { return 1; }
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
 	const std::string getClassName() override { return std::string("Variable"); }
-		
+
 	T& getValue();
 	void setValue(T val);
 
@@ -47,6 +46,7 @@ private:
 	std::shared_ptr<T> m_data = nullptr;
 };
 
+
 template<typename T>
 VarField<T>::VarField()
 	: Field("", "")
@@ -54,15 +54,15 @@ VarField<T>::VarField()
 }
 
 template<typename T>
-PhysIKA::VarField<T>::VarField(T value)
+VarField<T>::VarField(T value)
 	: Field("", "")
 {
 	m_data = std::make_shared<T>(value);
 }
 
 template<typename T>
-VarField<T>::VarField(T value, std::string name, std::string description)
-	: Field(name, description)
+VarField<T>::VarField(T value, std::string name, std::string description, FieldType fieldType, Base* parent)
+	: Field(name, description, fieldType, parent)
 {
 	m_data = std::make_shared<T>(value);
 }
@@ -125,13 +125,16 @@ std::shared_ptr<T> VarField<T>::getReference()
 template<typename T>
 bool VarField<T>::connect(VarField<T>& field2)
 {
+	auto f = field2.fieldPtr();
+	this->connectPtr(f);
+
 // 	if (this->isEmpty())
 // 	{
 // 		Log::sendMessage(Log::Warning, "The parent field " + this->getObjectName() + " is empty!");
 // 		return false;
 // 	}
-	field2.setDerived(true);
-	field2.setSource(this);
+// 	field2.setDerived(true);
+// 	field2.setSource(this);
 	//field2.m_data = m_data;
 	return true;
 }

@@ -26,25 +26,25 @@ int main()
 	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, true);
 	root->setName("Root");
 
-	std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
-	root->addParticleSystem(bunny);
-//	bunny->getRenderModule()->setColor(Vector3f(0, 1, 1));
-	bunny->setMass(1.0);
-	bunny->loadParticles("../../Media/bunny/bunny_points.obj");
-	bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
-	bunny->translate(Vector3f(0.5, 0.2, 0.5));
-	bunny->setVisible(true);
-//	bunny->getSurfaceRender()->setColor(Vector3f(1, 1, 0));
-	bunny->getElasticitySolver()->setIterationNumber(10);
-
-	auto renderer = std::make_shared<PVTKSurfaceMeshRender>();
-	renderer->setName("VTK Mesh Renderer");
-	bunny->getSurfaceNode()->addVisualModule(renderer);
-
-
-	auto pRenderer = std::make_shared<PVTKPointSetRender>();
-	pRenderer->setName("VTK Point Renderer");
-	bunny->addVisualModule(pRenderer);
+// 	std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+// 	root->addParticleSystem(bunny);
+// //	bunny->getRenderModule()->setColor(Vector3f(0, 1, 1));
+// 	bunny->setMass(1.0);
+// 	bunny->loadParticles("../../Media/bunny/bunny_points.obj");
+// 	bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+// 	bunny->translate(Vector3f(0.5, 0.2, 0.5));
+// 	bunny->setVisible(true);
+// //	bunny->getSurfaceRender()->setColor(Vector3f(1, 1, 0));
+// 	bunny->getElasticitySolver()->setIterationNumber(10);
+// 
+// 	auto renderer = std::make_shared<PVTKSurfaceMeshRender>();
+// 	renderer->setName("VTK Mesh Renderer");
+// 	bunny->getSurfaceNode()->addVisualModule(renderer);
+// 
+// 
+// 	auto pRenderer = std::make_shared<PVTKPointSetRender>();
+// 	pRenderer->setName("VTK Point Renderer");
+// 	bunny->addVisualModule(pRenderer);
 
 	QtApp window;
 	window.createWindow(1024, 768);
@@ -54,9 +54,7 @@ int main()
 	for (auto const c : *classMap)
 		std::cout << "Class Name: " << c.first << std::endl;
 
-	
-
 	window.mainLoop();
-    SceneGraph::getInstance().setRootNode(nullptr);
+
 	return 0;
 }

@@ -12,12 +12,15 @@
 #pragma once
 #include "Framework/Framework/ModuleConstraint.h"
 #include "NeighborData.h"
+#include "Framework/Framework/FieldDeclare.h"
 
 namespace PhysIKA {
 
 	template<typename TDataType>
 	class ElasticityModule : public ConstraintModule
 	{
+		DECLARE_CLASS_1(ElasticityModule, TDataType)
+
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
@@ -54,6 +57,10 @@ namespace PhysIKA {
 		void computeInverseK();
 
 	public:
+		DEF_VAR(TestIn, float, 1.0, FieldType::In, "Testing in")
+
+		DEF_VAR(TestOut, float, 1.0, FieldType::Out, "Testing out")
+
 		/**
 		 * @brief Horizon
 		 * A positive number represents the radius of neighborhood for each point

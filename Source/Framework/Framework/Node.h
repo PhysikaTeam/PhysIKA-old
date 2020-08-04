@@ -99,6 +99,8 @@ public:
 
 	void removeChild(std::shared_ptr<Node> child);
 
+	void removeAllChildren();
+
 	/**
 	 * @brief Return all children
 	 * 
@@ -228,6 +230,9 @@ public:
 	std::shared_ptr<TopologyModule>			getTopologyModule() { return m_topology; }
 	std::shared_ptr<NumericalIntegrator>	getNumericalIntegrator() { return m_numerical_integrator; }
 
+
+	std::unique_ptr<AnimationController>&	getAnimationPipeline();
+	std::unique_ptr<RenderController>&		getRenderPipeline();
 
 	template<class TModule>
 	std::shared_ptr<TModule> addModule(std::string name)
@@ -373,6 +378,9 @@ private:
 	std::shared_ptr<CollidableObject> m_collidable_object;
 	std::shared_ptr<NumericalIntegrator> m_numerical_integrator;
 
+	std::unique_ptr<AnimationController> m_animation_pipeline;
+	std::unique_ptr<RenderController> m_render_pipeline;
+
 	/**
 	 * @brief A module list containg specific modules
 	 * 
@@ -387,6 +395,7 @@ private:
 	std::shared_ptr<DeviceContext> m_context;
 
 	ListPtr<Node> m_children;
+
 
 	/**
 	 * @brief Indicating which node the current module belongs to

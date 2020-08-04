@@ -1,4 +1,4 @@
-#include "StyleCollection.hpp"
+#include "StyleCollection.h"
 
 using QtNodes::StyleCollection;
 using QtNodes::NodeStyle;

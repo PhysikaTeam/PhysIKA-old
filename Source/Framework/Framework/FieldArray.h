@@ -121,14 +121,17 @@ void ArrayField<T, deviceType>::setElementCount(size_t num)
 template<typename T, DeviceType deviceType>
 bool ArrayField<T, deviceType>::connect(ArrayField<T, deviceType>& field2)
 {
+	auto f = field2.fieldPtr();
+	this->connectPtr(f);
+
 // 	if (this->isEmpty())
 // 	{
 // 		Log::sendMessage(Log::Error, "The parent field " + this->getObjectName() + " is empty!");
 // 		return false;
 // 	}
 
-	field2.setDerived(true);
-	field2.setSource(this);
+// 	field2.setDerived(true);
+// 	field2.setSource(this);
 // 	if (field2.m_data.use_count() == 1)
 // 	{
 // 		field2.m_data->release();

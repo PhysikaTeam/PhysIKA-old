@@ -5,6 +5,7 @@
 #include "Framework/Topology/FieldNeighbor.h"
 #include "Framework/Topology/GridHash.h"
 #include "Core/Utility.h"
+#include "Framework/Framework/FieldDeclare.h"
 
 namespace PhysIKA {
 	template<typename ElementType> class NeighborList;
@@ -12,6 +13,8 @@ namespace PhysIKA {
 	template<typename TDataType>
 	class NeighborQuery : public ComputeModule
 	{
+		DECLARE_CLASS_1(NeighborQuery, TDataType)
+
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
@@ -46,6 +49,8 @@ namespace PhysIKA {
 
 		DeviceArrayField<Coord> m_position;
 		NeighborField<int> m_neighborhood;
+
+		DEF_VAR(TestOut, float, 0, FieldType::Out, "Test")
 
 	private:
 		int m_maxNum;

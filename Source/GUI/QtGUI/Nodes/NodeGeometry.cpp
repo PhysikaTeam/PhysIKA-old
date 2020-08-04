@@ -1,21 +1,21 @@
-#include "NodeGeometry.hpp"
+#include "NodeGeometry.h"
 
 #include <iostream>
 #include <cmath>
 
-#include "PortType.hpp"
-#include "NodeState.hpp"
-#include "NodeDataModel.hpp"
-#include "Node.hpp"
-#include "NodeGraphicsObject.hpp"
+#include "PortType.h"
+#include "NodeState.h"
+#include "NodeDataModel.h"
+#include "QtNode.h"
+#include "NodeGraphicsObject.h"
 
-#include "StyleCollection.hpp"
+#include "StyleCollection.h"
 
 using QtNodes::NodeGeometry;
 using QtNodes::NodeDataModel;
 using QtNodes::PortIndex;
 using QtNodes::PortType;
-using QtNodes::Node;
+using QtNodes::QtNode;
 
 NodeGeometry::
 NodeGeometry(std::unique_ptr<NodeDataModel> const &dataModel)
@@ -321,9 +321,9 @@ validationWidth() const
 
 QPointF
 NodeGeometry::
-calculateNodePositionBetweenNodePorts(PortIndex targetPortIndex, PortType targetPort, Node* targetNode, 
-                                      PortIndex sourcePortIndex, PortType sourcePort, Node* sourceNode, 
-                                      Node& newNode)
+calculateNodePositionBetweenNodePorts(PortIndex targetPortIndex, PortType targetPort, QtNode* targetNode, 
+                                      PortIndex sourcePortIndex, PortType sourcePort, QtNode* sourceNode, 
+                                      QtNode& newNode)
 {
   //Calculating the nodes position in the scene. It'll be positioned half way between the two ports that it "connects". 
   //The first line calculates the halfway point between the ports (node position + port position on the node for both nodes averaged).

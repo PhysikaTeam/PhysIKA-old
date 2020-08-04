@@ -1,4 +1,4 @@
-#include "NodeGraphicsObject.hpp"
+#include "NodeGraphicsObject.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -6,25 +6,25 @@
 #include <QtWidgets/QtWidgets>
 #include <QtWidgets/QGraphicsEffect>
 
-#include "ConnectionGraphicsObject.hpp"
-#include "ConnectionState.hpp"
+#include "ConnectionGraphicsObject.h"
+#include "ConnectionState.h"
 
-#include "FlowScene.hpp"
-#include "NodePainter.hpp"
+#include "ModuleFlowScene.h"
+#include "NodePainter.h"
 
-#include "Node.hpp"
-#include "NodeDataModel.hpp"
-#include "NodeConnectionInteraction.hpp"
+#include "QtNode.h"
+#include "NodeDataModel.h"
+#include "NodeConnectionInteraction.h"
 
-#include "StyleCollection.hpp"
+#include "StyleCollection.h"
 
 using QtNodes::NodeGraphicsObject;
-using QtNodes::Node;
-using QtNodes::FlowScene;
+using QtNodes::QtNode;
+using QtNodes::ModuleFlowScene;
 
 NodeGraphicsObject::
-NodeGraphicsObject(FlowScene &scene,
-                   Node& node)
+NodeGraphicsObject(ModuleFlowScene &scene,
+                   QtNode& node)
   : _scene(scene)
   , _node(node)
   , _locked(false)
@@ -75,7 +75,7 @@ NodeGraphicsObject::
 }
 
 
-Node&
+QtNode&
 NodeGraphicsObject::
 node()
 {
@@ -83,7 +83,7 @@ node()
 }
 
 
-Node const&
+QtNode const&
 NodeGraphicsObject::
 node() const
 {

@@ -5,13 +5,13 @@
 namespace QtNodes
 {
 
-class Node;
+class QtNode;
 class NodeState;
 class NodeGeometry;
 class NodeGraphicsObject;
 class NodeDataModel;
 class FlowItemEntry;
-class FlowScene;
+class ModuleFlowScene;
 
 class NodePainter
 {
@@ -24,8 +24,8 @@ public:
   static
   void
   paint(QPainter* painter,
-        Node& node,
-        FlowScene const& scene);
+        QtNode& node,
+        ModuleFlowScene const& scene);
 
   static
   void
@@ -54,7 +54,7 @@ public:
                        NodeGeometry const& geom,
                        NodeState const& state,
                        NodeDataModel const * model,
-                       FlowScene const & scene);
+                       ModuleFlowScene const & scene);
 
   static
   void

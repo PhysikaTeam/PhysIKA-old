@@ -114,13 +114,16 @@ NeighborField<T>::~NeighborField()
 template<typename T>
 bool NeighborField<T>::connect(NeighborField<T>& field2)
 {
+
+	auto f = field2.fieldPtr();
+	this->connectPtr(f);
 // 	if (this->isEmpty())
 // 	{
 // 		Log::sendMessage(Log::Warning, "The parent field " + this->getObjectName() + " is empty!");
 // 		return false;
 // 	}
-	field2.setDerived(true);
-	field2.setSource(this);
+// 	field2.setDerived(true);
+// 	field2.setSource(this);
 // 	if (field2.m_data.use_count() == 1)
 // 	{
 // 		field2.m_data->release();

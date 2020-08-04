@@ -4,10 +4,10 @@
 
 #include <QtWidgets/QLabel>
 
-#include "NodeDataModel.hpp"
+#include "NodeDataModel.h"
 
-#include "MathOperationDataModel.hpp"
-#include "DecimalData.hpp"
+#include "MathOperationDataModel.h"
+#include "DecimalData.h"
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
