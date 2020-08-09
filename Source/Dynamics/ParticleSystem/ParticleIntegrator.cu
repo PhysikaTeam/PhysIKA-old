@@ -8,22 +8,21 @@
 
 namespace PhysIKA
 {
+	IMPLEMENT_CLASS_1(ParticleIntegrator, TDataType)
+
 	template<typename TDataType>
 	ParticleIntegrator<TDataType>::ParticleIntegrator()
 		: NumericalIntegrator()
 	{
-		attachField(&m_position, "position", "Storing the particle positions!", false);
-		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		attachField(&m_forceDensity, "force", "Particle forces", false);
 	}
 
 	template<typename TDataType>
 	void ParticleIntegrator<TDataType>::begin()
 	{
-		Function1Pt::copy(m_prePosition, m_position.getValue());
-		Function1Pt::copy(m_preVelocity, m_velocity.getValue());
+		Function1Pt::copy(m_prePosition, this->inPosition()->getValue());
+		Function1Pt::copy(m_preVelocity, this->inVelocity()->getValue());
 		
-		m_forceDensity.getReference()->reset();
+		this->inForceDensity()->getReference()->reset();
 	}
 
 	template<typename TDataType>
@@ -41,7 +40,7 @@ namespace PhysIKA
 			return false;
 		}
 
-		int num = m_position.getElementCount();
+		int num = this->inPosition()->getElementCount();
 
 		m_prePosition.resize(num);
 		m_preVelocity.resize(num);
@@ -81,11 +80,11 @@ namespace PhysIKA
 	{
 		Real dt = getParent()->getDt();
 		Coord gravity = SceneGraph::getInstance().getGravity();
-		cuint pDims = cudaGridSize(m_position.getReference()->size(), BLOCK_SIZE);
+		cuint pDims = cudaGridSize(this->inPosition()->getReference()->size(), BLOCK_SIZE);
 
 		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
-			m_velocity.getValue(), 
-			m_forceDensity.getValue(),
+			this->inVelocity()->getValue(), 
+			this->inForceDensity()->getValue(),
 			gravity,
 			dt);
 
@@ -108,11 +107,11 @@ namespace PhysIKA
 	bool ParticleIntegrator<TDataType>::updatePosition()
 	{
 		Real dt = getParent()->getDt();
-		cuint pDims = cudaGridSize(m_position.getReference()->size(), BLOCK_SIZE);
+		cuint pDims = cudaGridSize(this->inPosition()->getReference()->size(), BLOCK_SIZE);
 
 		K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
-			m_position.getValue(), 
-			m_velocity.getValue(), 
+			this->inPosition()->getValue(), 
+			this->inVelocity()->getValue(), 
 			dt);
 
 		return true;

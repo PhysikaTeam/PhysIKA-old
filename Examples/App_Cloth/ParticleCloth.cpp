@@ -19,9 +19,9 @@ namespace PhysIKA
 	{
 		auto peri = std::make_shared<Peridynamics<TDataType>>();
 		this->setNumericalModel(peri);
-		this->getPosition()->connect(peri->m_position);
-		this->getVelocity()->connect(peri->m_velocity);
-		this->getForce()->connect(peri->m_forceDensity);
+		this->currentPosition()->connect(&peri->m_position);
+		this->currentVelocity()->connect(&peri->m_velocity);
+		this->currentForce()->connect(&peri->m_forceDensity);
 
 		auto fixed = std::make_shared<FixedPoints<TDataType>>();
 
@@ -84,7 +84,7 @@ namespace PhysIKA
 	void ParticleCloth<TDataType>::updateTopology()
 	{
 		auto pts = this->m_pSet->getPoints();
-		Function1Pt::copy(pts, this->getPosition()->getValue());
+		Function1Pt::copy(pts, this->currentPosition()->getValue());
 
 		auto tMappings = this->getTopologyMappingList();
 		for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)

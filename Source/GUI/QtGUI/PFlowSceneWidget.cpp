@@ -7,11 +7,8 @@
 
 //Qt Nodes
 #include "Nodes/FlowView.h"
-#include "Nodes/ModuleFlowScene.h"
 #include "Nodes/DataModelRegistry.h"
 #include "Nodes/AdditionModel.h"
-
-using QtNodes::ModuleFlowScene;
 
 namespace PhysIKA
 {
@@ -27,7 +24,7 @@ namespace PhysIKA
 		QVBoxLayout *l = new QVBoxLayout(this);
 
 		l->addWidget(menuBar);
-		auto scene = new QtNodes::ModuleFlowScene(this);
+		scene = new ModuleFlowScene(this);
 		l->addWidget(new QtNodes::FlowView(scene));
 		l->setContentsMargins(0, 0, 0, 0);
 		l->setSpacing(0);

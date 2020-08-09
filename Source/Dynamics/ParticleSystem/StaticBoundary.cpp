@@ -48,8 +48,8 @@ namespace PhysIKA
 
 			for (int i = 0; i < m_particleSystems.size(); i++)
 			{
-				DeviceArrayField<Coord>* posFd = m_particleSystems[i]->getPosition();
-				DeviceArrayField<Coord>* velFd = m_particleSystems[i]->getVelocity();
+				DeviceArrayField<Coord>* posFd = m_particleSystems[i]->currentPosition();
+				DeviceArrayField<Coord>* velFd = m_particleSystems[i]->currentVelocity();
 				m_obstacles[t]->constrain(posFd->getValue(), velFd->getValue(), dt);
 			}
 		}

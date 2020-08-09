@@ -13,11 +13,12 @@ class NeighborField : public Field
 {
 public:
 	typedef T VarType;
-	typedef NeighborList<T> FieldType;
+	typedef NeighborList<T> DataType;
 
 	NeighborField();
 	NeighborField(int num, int nbrSize = 0);
 	NeighborField(std::string name, std::string description, int num = 1, int nbrSize = 0);
+	NeighborField(std::string name, std::string description, FieldType fieldType, Base* parent, int num, int nbrSize);
 	~NeighborField() override;
 
 	size_t getElementCount() override { return getReference()->size(); }
@@ -35,7 +36,7 @@ public:
 		return getReference() == nullptr;
 	}
 
-	bool connect(NeighborField<T>& field2);
+	bool connect(NeighborField<T>* field2);
 
 private:
 	std::shared_ptr<NeighborList<T>> m_data = nullptr;
@@ -96,6 +97,14 @@ NeighborField<T>::NeighborField(std::string name, std::string description, int n
 }
 
 
+template<typename T>
+NeighborField<T>::NeighborField(std::string name, std::string description, FieldType fieldType, Base* parent, int num, int nbrSize)
+	: Field(name, description, fieldType, parent)
+{
+	m_data = num <= 0 ? nullptr : std::make_shared<NeighborList<T>>(num, nbrSize);
+}
+
+
 // template<typename T>
 // void NeighborField<T>::resize(int num)
 // {
@@ -112,10 +121,10 @@ NeighborField<T>::~NeighborField()
 }
 
 template<typename T>
-bool NeighborField<T>::connect(NeighborField<T>& field2)
+bool NeighborField<T>::connect(NeighborField<T>* field2)
 {
 
-	auto f = field2.fieldPtr();
+	auto f = field2->fieldPtr();
 	this->connectPtr(f);
 // 	if (this->isEmpty())
 // 	{

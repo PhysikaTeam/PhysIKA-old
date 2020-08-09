@@ -112,6 +112,11 @@ NodeValidationState ModuleWidget::validationState() const
 	return modelValidationState;
 }
 
+Module* ModuleWidget::getModule()
+{
+	return m_module;
+}
+
 QString ModuleWidget::validationMessage() const
 {
 	return modelValidationError;

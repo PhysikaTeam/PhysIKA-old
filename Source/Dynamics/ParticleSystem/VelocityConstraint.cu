@@ -725,9 +725,9 @@ namespace PhysIKA
 		}
 
 		m_densitySum = std::make_shared<DensitySummation<TDataType>>();
-		m_smoothingLength.connect(m_densitySum->m_smoothingLength);
-		m_position.connect(m_densitySum->m_position);
-		m_neighborhood.connect(m_densitySum->m_neighborhood);
+		m_smoothingLength.connect(&m_densitySum->m_smoothingLength);
+		m_position.connect(&m_densitySum->m_position);
+		m_neighborhood.connect(&m_densitySum->m_neighborhood);
 		m_densitySum->initialize();
 
 		int num = m_position.getElementCount();

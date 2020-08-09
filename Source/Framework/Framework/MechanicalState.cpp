@@ -2,6 +2,8 @@
 
 namespace PhysIKA
 {
+	IMPLEMENT_CLASS(MechanicalState)
+
 	MechanicalState::MechanicalState()
 	{
 

@@ -27,12 +27,18 @@ namespace PhysIKA
 	public:
 		PSceneGraphWidget(QWidget *parent = nullptr);
 
+	protected:
+		
+
 	Q_SIGNALS:
 		void notifyNodeSelected(Node* node);
+
+		void notifyNodeDoubleClicked(Node* node);
 
 	public slots:
 		void updateTree();
 		void nodeClicked(QTreeWidgetItem* item, int index);
+		void nodeDoubleClicked(QTreeWidgetItem* item, int index);
 		void popMenu(const QPoint& pos);
 
 		void nodeSelected(QTreeWidgetItem *item, int column);

@@ -12,7 +12,6 @@
 #pragma once
 #include "Framework/Framework/ModuleConstraint.h"
 #include "NeighborData.h"
-#include "Framework/Framework/FieldDeclare.h"
 
 namespace PhysIKA {
 
@@ -37,7 +36,7 @@ namespace PhysIKA {
 		void setMu(Real mu) { m_mu.setValue(mu); }
 		void setLambda(Real lambda) { m_lambda.setValue(lambda); }
 
-		void setHorizon(Real len) { m_horizon.setValue(len); }
+//		void setHorizon(Real len) { m_horizon.setValue(len); }
 		void setIterationNumber(int num) { m_iterNum.setValue(num); }
 		int getIterationNumber() { return m_iterNum.getValue(); }
 
@@ -57,35 +56,33 @@ namespace PhysIKA {
 		void computeInverseK();
 
 	public:
-		DEF_VAR(TestIn, float, 1.0, FieldType::In, "Testing in")
-
-		DEF_VAR(TestOut, float, 1.0, FieldType::Out, "Testing out")
-
 		/**
-		 * @brief Horizon
-		 * A positive number represents the radius of neighborhood for each point
-		 */
-		VarField<Real> m_horizon;
-		/**
-		 * @brief Sampling distance
-		 * Indicate the sampling distance when particles are created.
-		 */
-		VarField<Real> m_distance;
+			* @brief Horizon
+			* A positive number represents the radius of neighborhood for each point
+			*/
+		DEF_EMPTY_IN_VAR(Horizon, Real, "");
+		//VarField<Real> m_horizon;
 
 		/**
 		 * @brief Particle position
 		 */
-		DeviceArrayField<Coord> m_position;
+		DEF_EMPTY_IN_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
+		//DeviceArrayField<Coord> m_position;
+
 		/**
-		 * @brief Particle velocity
-		 */
-		DeviceArrayField<Coord> m_velocity;
+			* @brief Particle velocity
+			*/
+		DEF_EMPTY_IN_ARRAY(Velocity, Coord, DeviceType::GPU, "Particle velocity");
+		//DeviceArrayField<Coord> m_velocity;
 
 		/**
 		 * @brief Neighboring particles
 		 * 
 		 */
-		NeighborField<int> m_neighborhood;
+		DEF_EMPTY_IN_NEIGHBOR_LIST(Neighborhood, int, "Neighboring particles' ids");
+		//NeighborField<int> m_neighborhood;
+
+
 		NeighborField<NPair> m_restShape;
 
 	protected:

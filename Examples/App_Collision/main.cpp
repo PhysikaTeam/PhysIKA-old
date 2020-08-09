@@ -73,7 +73,7 @@ void CreateScene()
 		bunny->translate(Vector3f(0.4, 0.2 + i * 0.3, 0.8));
 		bunny->setVisible(false);
 		bunny->getElasticitySolver()->setIterationNumber(10);
-		bunny->getElasticitySolver()->setHorizon(0.03);
+		bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
 		bunny->getTopologyMapping()->setSearchingRadius(0.05);
 
 		sfi->addParticleSystem(bunny);

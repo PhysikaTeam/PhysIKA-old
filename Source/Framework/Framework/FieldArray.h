@@ -14,11 +14,12 @@ class ArrayField : public Field
 {
 public:
 	typedef T VarType;
-	typedef Array<T, deviceType> FieldType;
+	typedef Array<T, deviceType> DataType;
 
 	ArrayField();
 	ArrayField(int num);
 	ArrayField(std::string name, std::string description, int num = 1);
+	ArrayField(int num, std::string name, std::string description, FieldType fieldType, Base* parent);
 	~ArrayField() override;
 
 	size_t getElementCount() override { return getReference()->size(); }
@@ -39,11 +40,12 @@ public:
 		return getReference() == nullptr;
 	}
 
-	bool connect(ArrayField<T, deviceType>& field2);
+	bool connect(ArrayField<T, deviceType>* field2);
 
 private:
 	std::shared_ptr<Array<T, deviceType>> m_data = nullptr;
 };
+
 
 template<typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::ArrayField()
@@ -66,11 +68,7 @@ template<typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::ArrayField(int num)
 	: Field("", "")
 {
-	if (num < 1)
-	{
-		std::runtime_error(std::string("Array size should be larger than 1"));
-	}
-	m_data = std::make_shared<Array<T, deviceType>>(num);
+	m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
 }
 
 
@@ -78,13 +76,15 @@ template<typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::ArrayField(std::string name, std::string description, int num)
 	: Field(name, description)
 {
-	if (num < 1)
-	{
-		std::runtime_error(std::string("Array size should be larger than 1"));
-	}
-	m_data = std::make_shared<Array<T, deviceType>>(num);
+	m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
 }
 
+template<typename T, DeviceType deviceType>
+ArrayField<T, deviceType>::ArrayField(int num, std::string name, std::string description, FieldType fieldType, Base* parent)
+	: Field(name, description, fieldType, parent)
+{
+	m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);	
+}
 
 // template<typename T, DeviceType deviceType>
 // void ArrayField<T, deviceType>::resize(int num)
@@ -119,9 +119,9 @@ void ArrayField<T, deviceType>::setElementCount(size_t num)
 }
 
 template<typename T, DeviceType deviceType>
-bool ArrayField<T, deviceType>::connect(ArrayField<T, deviceType>& field2)
+bool ArrayField<T, deviceType>::connect(ArrayField<T, deviceType>* field2)
 {
-	auto f = field2.fieldPtr();
+	auto f = field2->fieldPtr();
 	this->connectPtr(f);
 
 // 	if (this->isEmpty())

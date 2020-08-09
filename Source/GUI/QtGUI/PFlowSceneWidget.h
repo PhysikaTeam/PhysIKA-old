@@ -15,8 +15,11 @@
 
 #include <QWidget>
 
+#include "Nodes/ModuleFlowScene.h"
 
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
+
+using QtNodes::ModuleFlowScene;
 
 namespace PhysIKA
 {
@@ -29,12 +32,14 @@ namespace PhysIKA
 		~PFlowSceneWidget();
 
 		//void addActor(vtkActor *actor);
+		ModuleFlowScene* getModuleFlowScene() { return scene; }
 
 	signals:
 
 	public:
 		QGridLayout*		m_MainLayout;
 
+		ModuleFlowScene* scene = nullptr;
 	};
 
 }

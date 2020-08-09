@@ -57,7 +57,7 @@ void CreateScene()
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
 	child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
 	child1->setMass(100);
-	child1->getVelocity()->connect(ptRender->m_vecIndex);
+	child1->currentVelocity()->connect(&ptRender->m_vecIndex);
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);

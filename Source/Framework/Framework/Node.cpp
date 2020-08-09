@@ -397,6 +397,34 @@ void Node::traverseTopDown(Action* act)
 	doTraverseTopDown(act);
 }
 
+bool Node::attachField(Field* field, std::string name, std::string desc, bool autoDestroy /*= true*/)
+{
+	field->setParent(this);
+	field->setObjectName(name);
+	field->setDescription(desc);
+	field->setAutoDestroy(autoDestroy);
+
+	bool ret = false;
+	
+	auto fType = field->getFieldType();
+	switch (field->getFieldType())
+	{
+	case FieldType::Current:
+		ret = this->getMechanicalState()->addOutputField(field);
+		break;
+
+	default:
+		break;
+	}
+	
+
+	if (!ret)
+	{
+		Log::sendMessage(Log::Error, std::string("The field ") + name + std::string(" already exists!"));
+	}
+	return ret;
+}
+
 void Node::setAsCurrentContext()
 {
 	getContext()->enable();

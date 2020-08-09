@@ -17,9 +17,9 @@ namespace PhysIKA
 		auto pbf = this->template setNumericalModel<PositionBasedFluidModel<TDataType>>("pbd");
 		this->setNumericalModel(pbf);
 
-		this->getPosition()->connect(pbf->m_position);
-		this->getVelocity()->connect(pbf->m_velocity);
-		this->getForce()->connect(pbf->m_forceDensity);
+		this->currentPosition()->connect(&pbf->m_position);
+		this->currentVelocity()->connect(&pbf->m_velocity);
+		this->currentForce()->connect(&pbf->m_forceDensity);
 	}
 
 	template<typename TDataType>

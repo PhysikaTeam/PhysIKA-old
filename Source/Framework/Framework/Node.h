@@ -27,6 +27,7 @@
 #include "TopologyMapping.h"
 #include "NumericalIntegrator.h"
 #include "ModuleCompute.h"
+#include "DeclareNodeField.h"
 
 namespace PhysIKA {
 class Action;
@@ -315,6 +316,18 @@ public:
 		Act action(std::forward<Args>(args)...);
 		doTraverseTopDown(&action);
 	}
+
+	/**
+	 * @brief Attach a field to Node
+	 *
+	 * @param field Field pointer
+	 * @param name Field name
+	 * @param desc Field description
+	 * @param autoDestroy The field will be destroyed by Base if true, otherwise, the field should be explicitly destroyed by its creator.
+	 *
+	 * @return Return false if the name conflicts with exists fields' names
+	 */
+	bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true) override;
 
 protected:
 	void setParent(Node* p) { m_parent = p; }

@@ -5,7 +5,6 @@
 #include "Framework/Topology/FieldNeighbor.h"
 #include "Framework/Topology/GridHash.h"
 #include "Core/Utility.h"
-#include "Framework/Framework/FieldDeclare.h"
 
 namespace PhysIKA {
 	template<typename ElementType> class NeighborList;
@@ -26,14 +25,14 @@ namespace PhysIKA {
 		
 		void compute() override;
 
-		void setRadius(Real r) { m_radius.setValue(r); }
+//		void setRadius(Real r) { m_radius.setValue(r); }
 		void setBoundingBox(Coord lowerBound, Coord upperBound);
 
 		void queryParticleNeighbors(NeighborList<int>& nbr, DeviceArray<Coord>& pos, Real radius);
 
 		void setNeighborSizeLimit(int num) { m_maxNum = num; }
 
-		NeighborList<int>& getNeighborList() { return m_neighborhood.getValue(); }
+//		NeighborList<int>& getNeighborList() { return m_neighborhood.getValue(); }
 
 	protected:
 		bool initializeImpl() override;
@@ -45,12 +44,23 @@ namespace PhysIKA {
 		void queryNeighborFixed(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h);
 
 	public:
-		VarField<Real> m_radius;
+		/**
+		* @brief Search radius
+		* A positive value representing the radius of neighborhood for each point
+		*/
+		DEF_EMPTY_IN_VAR(Radius, Real, "Search radius");
 
-		DeviceArrayField<Coord> m_position;
-		NeighborField<int> m_neighborhood;
+		/**
+		 * @brief Particle position
+		 */
+		DEF_EMPTY_IN_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
 
-		DEF_VAR(TestOut, float, 0, FieldType::Out, "Test")
+		/**
+		 * @brief Ids of neighboring particles
+		 */
+		DEF_EMPTY_OUT_NEIGHBOR_LIST(Neighborhood, int, "Neighboring particles' ids");
+		//NeighborField<int> m_neighborhood;
+ 
 
 	private:
 		int m_maxNum;

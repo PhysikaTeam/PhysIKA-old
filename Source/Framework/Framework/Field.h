@@ -13,7 +13,9 @@ namespace PhysIKA {
 	{
 		In,
 		Out,
-		Param
+		Param,
+		Current,
+		Next
 	};
 
 /*!

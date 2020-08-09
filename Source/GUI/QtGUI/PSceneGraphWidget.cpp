@@ -36,12 +36,16 @@ namespace PhysIKA
 	PSceneGraphWidget::PSceneGraphWidget(QWidget *parent) :
 		QTreeWidget(parent)
 	{
-		setMinimumWidth(100);
-		setHeaderLabel("Tree Nodes:");
+		this->setMinimumWidth(100);
+		this->setHeaderLabel("Tree Nodes:");
 
-		setContextMenuPolicy(Qt::CustomContextMenu);
+		this->setContextMenuPolicy(Qt::CustomContextMenu);
+
+		this->setExpandsOnDoubleClick(false);
+
 
 		connect(this, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(nodeSelected(QTreeWidgetItem*, int)));
+		connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(nodeDoubleClicked(QTreeWidgetItem*, int)));
 		connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(popMenu(const QPoint&)));
 
 		emit updateTree();
@@ -61,6 +65,17 @@ namespace PhysIKA
 
 	void PSceneGraphWidget::nodeClicked(QTreeWidgetItem* item, int index)
 	{
+	}
+
+	void PSceneGraphWidget::nodeDoubleClicked(QTreeWidgetItem* item, int index)
+	{
+		PSceneGraphWidgetItem* nodeItem = dynamic_cast<PSceneGraphWidgetItem*>(item);
+		if (nodeItem != nullptr)
+		{
+			emit notifyNodeDoubleClicked(nodeItem->getNode());
+		}
+
+		qDebug("sss");
 	}
 
 	void PSceneGraphWidget::popMenu(const QPoint& pos)

@@ -26,6 +26,8 @@ class Connection;
 class ConnectionGraphicsObject;
 class NodeStyle;
 
+using PhysIKA::Node;
+
 /// Scene holds connections and nodes.
 class NODE_EDITOR_PUBLIC ModuleFlowScene
   : public QGraphicsScene
@@ -106,37 +108,41 @@ public:
 
 Q_SIGNALS:
 
-  /**
-   * @brief Node has been created but not on the scene yet.
-   * @see nodePlaced()
-   */
-  void nodeCreated(QtNode &n);
+	/**
+	* @brief Node has been created but not on the scene yet.
+	* @see nodePlaced()
+	*/
+	void nodeCreated(QtNode &n);
 
-  /**
-   * @brief Node has been added to the scene.
-   * @details Connect to this signal if need a correct position of node.
-   * @see nodeCreated()
-   */
-  void nodePlaced(QtNode &n);
+	/**
+	* @brief Node has been added to the scene.
+	* @details Connect to this signal if need a correct position of node.
+	* @see nodeCreated()
+	*/
+	void nodePlaced(QtNode &n);
 
-  void nodeDeleted(QtNode &n);
+	void nodeDeleted(QtNode &n);
 
-  void connectionCreated(Connection const &c);
-  void connectionDeleted(Connection const &c);
+	void connectionCreated(Connection const &c);
+	void connectionDeleted(Connection const &c);
 
-  void nodeMoved(QtNode& n, const QPointF& newLocation);
+	void nodeMoved(QtNode& n, const QPointF& newLocation);
 
-  void nodeDoubleClicked(QtNode& n);
+	void nodeDoubleClicked(QtNode& n);
 
-  void connectionHovered(Connection& c, QPoint screenPos);
+	void connectionHovered(Connection& c, QPoint screenPos);
 
-  void nodeHovered(QtNode& n, QPoint screenPos);
+	void nodeHovered(QtNode& n, QPoint screenPos);
 
-  void connectionHoverLeft(Connection& c);
+	void connectionHoverLeft(Connection& c);
 
-  void nodeHoverLeft(QtNode& n);
+	void nodeHoverLeft(QtNode& n);
 
-  void nodeContextMenu(QtNode& n, const QPointF& pos);
+	void nodeContextMenu(QtNode& n, const QPointF& pos);
+
+ public Q_SLOTS:
+	  void showNodeFlow(Node* node);
+	  void moveModulePosition(QtNode& n, const QPointF& newLocation);
 
 private:
 
@@ -155,6 +161,7 @@ private Q_SLOTS:
 
   void sendConnectionCreatedToNodes(Connection const& c);
   void sendConnectionDeletedToNodes(Connection const& c);
+
 
 };
 

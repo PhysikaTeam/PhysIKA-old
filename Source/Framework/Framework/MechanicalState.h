@@ -15,6 +15,8 @@ namespace PhysIKA
 {
 class MechanicalState : public Module
 {
+	DECLARE_CLASS(MechanicalState)
+
 public:
 	enum MaterialType {
 		ParticleSystem = 0,

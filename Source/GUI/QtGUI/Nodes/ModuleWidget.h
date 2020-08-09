@@ -61,6 +61,8 @@ public:
 
 	NodeValidationState validationState() const override;
 
+	Module* getModule();
+
 protected:
 	virtual void updateModule();
 

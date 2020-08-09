@@ -23,13 +23,13 @@ namespace PhysIKA
 		this->attachField(&m_stiffness, "stiffness", "stiffness");
 
 		m_integrator = this->template setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
-		this->getPosition()->connect(m_integrator->m_position);
-		this->getVelocity()->connect(m_integrator->m_velocity);
-		this->getForce()->connect(m_integrator->m_forceDensity);
+		this->currentPosition()->connect(m_integrator->inPosition());
+		this->currentVelocity()->connect(m_integrator->inVelocity());
+		this->currentForce()->connect(m_integrator->inForceDensity());
 
 		auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		m_horizon.connect(m_nbrQuery->m_radius);
-		this->m_position.connect(m_nbrQuery->m_position);
+		m_horizon.connect(m_nbrQuery->inRadius());
+		this->currentPosition()->connect(m_nbrQuery->inPosition());
 
 // 		m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
 // 		this->getPosition()->connect(m_elasticity->m_position);
@@ -39,18 +39,18 @@ namespace PhysIKA
 // 		m_elasticity->setIterationNumber(10);
 
 		m_one_dim_elasticity = this->template addConstraintModule<OneDimElasticityModule<TDataType>>("elasticity module");
-		this->getPosition()->connect(m_one_dim_elasticity->m_position);
-		this->getVelocity()->connect(m_one_dim_elasticity->m_velocity);
-		m_horizon.connect(m_one_dim_elasticity->m_distance);
-		m_mass.connect(m_one_dim_elasticity->m_mass);
+		this->currentPosition()->connect(&m_one_dim_elasticity->m_position);
+		this->currentVelocity()->connect(&m_one_dim_elasticity->m_velocity);
+		m_horizon.connect(&m_one_dim_elasticity->m_distance);
+		m_mass.connect(&m_one_dim_elasticity->m_mass);
 		m_one_dim_elasticity->setIterationNumber(10);
 
 		m_fixed = this->template addConstraintModule<FixedPoints<TDataType>>("fixed");
-		this->getPosition()->connect(m_fixed->m_position);
-		this->getVelocity()->connect(m_fixed->m_velocity);
+		this->currentPosition()->connect(&m_fixed->m_position);
+		this->currentVelocity()->connect(&m_fixed->m_velocity);
 
 		m_damping = this->template addConstraintModule<SimpleDamping<TDataType>>("damping");
-		this->getVelocity()->connect(m_damping->m_velocity);
+		this->currentVelocity()->connect(&m_damping->m_velocity);
 	}
 
 	template<typename TDataType>
@@ -109,7 +109,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleRod<TDataType>::resetMassField()
 	{
-		int num = m_position.getElementCount();
+		int num = this->currentPosition()->getElementCount();
 		m_mass.setElementCount(num);
 
 		std::vector<Real> host_mass;
@@ -171,13 +171,13 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleRod<TDataType>::getHostPosition(std::vector<Coord>& pos)
 	{
-		int pNum = this->m_position.getValue().size();
+		int pNum = this->currentPosition()->getValue().size();
 		if (pos.size() != pNum)
 		{
 			pos.resize(pNum);
 		}
 
-		cudaMemcpy(&pos[0], m_position.getValue().getDataPtr(), pNum*sizeof(Coord), cudaMemcpyDeviceToHost);
+		cudaMemcpy(&pos[0], this->currentPosition()->getValue().getDataPtr(), pNum*sizeof(Coord), cudaMemcpyDeviceToHost);
 	}
 
 	template<typename TDataType>

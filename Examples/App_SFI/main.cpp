@@ -61,9 +61,9 @@ void CreateScene()
 	//fluid->getVelocity()->connect(fluid->getRenderModule()->m_vecIndex);
 
 	std::shared_ptr<PositionBasedFluidModel<DataType3f>> pbd = std::make_shared<PositionBasedFluidModel<DataType3f>>();
-	fluid->getPosition()->connect(pbd->m_position);
-	fluid->getVelocity()->connect(pbd->m_velocity);
-	fluid->getForce()->connect(pbd->m_forceDensity);
+	fluid->currentPosition()->connect(&pbd->m_position);
+	fluid->currentVelocity()->connect(&pbd->m_velocity);
+	fluid->currentForce()->connect(&pbd->m_forceDensity);
 	pbd->setSmoothingLength(0.02);
 
 	fluid->setNumericalModel(pbd);
@@ -84,7 +84,7 @@ void CreateScene()
 		bunny->translate(Vector3f(0.75, 0.2, 0.4 + i * 0.3));
 		bunny->setVisible(false);
 		bunny->getElasticitySolver()->setIterationNumber(10);
-		bunny->getElasticitySolver()->setHorizon(0.03);
+		bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
 		bunny->getTopologyMapping()->setSearchingRadius(0.05);
 
 		auto sRender = std::make_shared<SurfaceMeshRender>();

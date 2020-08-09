@@ -51,11 +51,11 @@ namespace PhysIKA
 
 		m_lowBound = Coord(sceneLow[0], sceneLow[1], sceneLow[2]);
 		m_highBound = Coord(sceneUp[0], sceneUp[1], sceneUp[2]);
-		m_radius.setValue(Real(0.011));
+		this->inRadius()->setValue(Real(0.011));
 
-		attachField(&m_radius, "Radius", "Radius of the searching area", false);
-		attachField(&m_position, "position", "Storing the particle positions!", false);
-		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
+//		attachField(&m_radius, "Radius", "Radius of the searching area", false);
+//		attachField(&m_position, "position", "Storing the particle positions!", false);
+//		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
 	}
 
 
@@ -68,14 +68,14 @@ namespace PhysIKA
 
 		m_lowBound = Coord(sceneLow[0], sceneLow[1], sceneLow[2]);
 		m_highBound = Coord(sceneUp[0], sceneUp[1], sceneUp[2]);
-		m_radius.setValue(Real(0.011));
+		this->inRadius()->setValue(Real(0.011));
 
-		m_position.setElementCount(position.size());
-		Function1Pt::copy(m_position.getValue(), position);
+		this->inPosition()->setElementCount(position.size());
+		Function1Pt::copy(this->inPosition()->getValue(), position);
 
-		attachField(&m_radius, "Radius", "Radius of the searching area", false);
-		attachField(&m_position, "position", "Storing the particle positions!", false);
-		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
+//		attachField(&m_radius, "Radius", "Radius of the searching area", false);
+//		attachField(&m_position, "position", "Storing the particle positions!", false);
+//		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
 	}
 
 	template<typename TDataType>
@@ -89,31 +89,31 @@ namespace PhysIKA
 		: ComputeModule()
 		, m_maxNum(0)
 	{
-		m_radius.setValue(Real(s));
+		this->inRadius()->setValue(Real(s));
 
 		m_lowBound = lo;
 		m_highBound = hi;
 
-		attachField(&m_radius, "Radius", "Radius of the searching area", false);
-		attachField(&m_position, "position", "Storing the particle positions!", false);
-		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
+//		attachField(&m_radius, "Radius", "Radius of the searching area", false);
+//		attachField(&m_position, "position", "Storing the particle positions!", false);
+//		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
 	}
 
 	template<typename TDataType>
 	bool NeighborQuery<TDataType>::initializeImpl()
 	{
-		if (!m_position.isEmpty() && m_neighborhood.isEmpty())
+		if (!this->inPosition()->isEmpty() && this->outNeighborhood()->isEmpty())
 		{
-			m_neighborhood.setElementCount(m_position.getElementCount(), m_maxNum);
+			this->outNeighborhood()->setElementCount(this->inPosition()->getElementCount(), m_maxNum);
 		}
 
-		if (!isAllFieldsReady())
+		if (this->inPosition()->isEmpty() || this->inRadius()->isEmpty())
 		{
 			std::cout << "Exception: " << std::string("NeighborQuery's fields are not fully initialized!") << "\n";
 			return false;
 		}
 
-		int pNum = m_position.getElementCount();
+		int pNum = this->inPosition()->getElementCount();
 
 		HostArray<Coord> hostPos;
 		hostPos.resize(pNum);
@@ -134,7 +134,7 @@ namespace PhysIKA
 // 			m_highBound[2] = max(hostPos[i][2], m_highBound[2]);
 // 		}
 
-		m_hash.setSpace(m_radius.getValue(), m_lowBound, m_highBound);
+		m_hash.setSpace(this->inRadius()->getValue(), m_lowBound, m_highBound);
 
 //		m_reduce = Reduction<int>::Create(m_position.getElementCount());
 
@@ -147,15 +147,15 @@ namespace PhysIKA
 	void NeighborQuery<TDataType>::compute()
 	{
 		m_hash.clear();
-		m_hash.construct(m_position.getValue());
+		m_hash.construct(this->inPosition()->getValue());
 
-		if (!m_neighborhood.getValue().isLimited())
+		if (!this->outNeighborhood()->getValue().isLimited())
 		{
-			queryNeighborDynamic(m_neighborhood.getValue(), m_position.getValue(), m_radius.getValue());
+			queryNeighborDynamic(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inRadius()->getValue());
 		}
 		else
 		{
-			queryNeighborFixed(m_neighborhood.getValue(), m_position.getValue(), m_radius.getValue());
+			queryNeighborFixed(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inRadius()->getValue());
 		}
 	}
 
@@ -190,7 +190,7 @@ namespace PhysIKA
 // 		}
 
 		m_hash.setSpace(radius, m_lowBound, m_highBound);
-		m_hash.construct(m_position.getValue());
+		m_hash.construct(this->inPosition()->getValue());
 
 		if (!nbr.isLimited())
 		{
@@ -273,7 +273,7 @@ namespace PhysIKA
 	void NeighborQuery<TDataType>::queryNeighborSize(DeviceArray<int>& num, DeviceArray<Coord>& pos, Real h)
 	{
 		uint pDims = cudaGridSize(num.size(), BLOCK_SIZE);
-		K_CalNeighborSize << <pDims, BLOCK_SIZE >> > (num, pos, m_position.getValue(), m_hash, h);
+		K_CalNeighborSize << <pDims, BLOCK_SIZE >> > (num, pos, this->inPosition()->getValue(), m_hash, h);
 		cuSynchronize();
 	}
 
@@ -296,7 +296,7 @@ namespace PhysIKA
 			elements.resize(sum);
 
 			uint pDims = cudaGridSize(pos.size(), BLOCK_SIZE);
-			K_GetNeighborElements << <pDims, BLOCK_SIZE >> > (nbrList, pos, m_position.getValue(), m_hash, h);
+			K_GetNeighborElements << <pDims, BLOCK_SIZE >> > (nbrList, pos, this->inPosition()->getValue(), m_hash, h);
 			cuSynchronize();
 		}
 	}
@@ -384,7 +384,7 @@ namespace PhysIKA
 		K_ComputeNeighborFixed << <pDims, BLOCK_SIZE >> > (
 			nbrList, 
 			pos, 
-			m_position.getValue(), 
+			this->inPosition()->getValue(), 
 			m_hash, 
 			h, 
 			ids, 

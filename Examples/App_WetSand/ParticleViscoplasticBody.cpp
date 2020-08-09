@@ -23,39 +23,39 @@ namespace PhysIKA
 		m_horizon.setValue(0.0085);
 
 		m_integrator = std::make_shared<ParticleIntegrator<TDataType>>();
-		this->m_position.connect(m_integrator->m_position);
-		this->m_velocity.connect(m_integrator->m_velocity);
-		this->m_force.connect(m_integrator->m_forceDensity);
+		this->currentPosition()->connect(m_integrator->inPosition());
+		this->currentVelocity()->connect(m_integrator->inVelocity());
+		this->currentForce()->connect(m_integrator->inForceDensity());
 		//m_integrator->initialize();
 		
 		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
-		m_horizon.connect(m_nbrQuery->m_radius);
-		this->m_position.connect(m_nbrQuery->m_position);
+		m_horizon.connect(m_nbrQuery->inRadius());
+		this->currentPosition()->connect(m_nbrQuery->inPosition());
 
 		//m_nbrQuery->initialize();
 		//m_nbrQuery->compute();
 
 		m_plasticity = std::make_shared<ElastoplasticityModule<TDataType>>();
-		this->m_position.connect(m_plasticity->m_position);
-		this->m_velocity.connect(m_plasticity->m_velocity);
-		m_nbrQuery->m_neighborhood.connect(m_plasticity->m_neighborhood);
+		this->currentPosition()->connect(m_plasticity->inPosition());
+		this->currentVelocity()->connect(m_plasticity->inVelocity());
+		m_nbrQuery->outNeighborhood()->connect(m_plasticity->inNeighborhood());
 		m_plasticity->setFrictionAngle(0);
 		m_plasticity->setCohesion(0.0);
 		//m_plasticity->initialize();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
-		m_horizon.connect(m_pbdModule->m_smoothingLength);
-		this->m_position.connect(m_pbdModule->m_position);
-		this->m_velocity.connect(m_pbdModule->m_velocity);
-		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
+		m_horizon.connect(&m_pbdModule->m_smoothingLength);
+		this->currentPosition()->connect(&m_pbdModule->m_position);
+		this->currentVelocity()->connect(&m_pbdModule->m_velocity);
+		m_nbrQuery->outNeighborhood()->connect(&m_pbdModule->m_neighborhood);
 		//m_pbdModule->initialize();
 
 		m_visModule = std::make_shared<ImplicitViscosity<TDataType>>();
 		m_visModule->setViscosity(Real(1));
-		m_horizon.connect(m_visModule->m_smoothingLength);
-		this->m_position.connect(m_visModule->m_position);
-		this->m_velocity.connect(m_visModule->m_velocity);
-		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
+		m_horizon.connect(&m_visModule->m_smoothingLength);
+		this->currentPosition()->connect(&m_visModule->m_position);
+		this->currentVelocity()->connect(&m_visModule->m_velocity);
+		m_nbrQuery->outNeighborhood()->connect(&m_visModule->m_neighborhood);
 		//m_visModule->initialize();
 
 		this->addModule(m_integrator);
@@ -109,7 +109,7 @@ namespace PhysIKA
 	void ParticleViscoplasticBody<TDataType>::updateTopology()
 	{
 		auto pts = this->m_pSet->getPoints();
-		Function1Pt::copy(pts, this->getPosition()->getValue());
+		Function1Pt::copy(pts, this->currentPosition()->getValue());
 
 		auto tMappings = this->getTopologyMappingList();
 		for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)

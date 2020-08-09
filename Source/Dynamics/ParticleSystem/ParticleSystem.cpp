@@ -13,9 +13,8 @@ namespace PhysIKA
 	ParticleSystem<TDataType>::ParticleSystem(std::string name)
 		: Node(name)
 	{
-		attachField(&m_position, MechanicalState::position(), "Storing the particle positions!", false);
-		attachField(&m_velocity, MechanicalState::velocity(), "Storing the particle velocities!", false);
-		attachField(&m_force, MechanicalState::force(), "Storing the force densities!", false);
+//		attachField(&m_velocity, MechanicalState::velocity(), "Storing the particle velocities!", false);
+//		attachField(&m_force, MechanicalState::force(), "Storing the force densities!", false);
 
 		m_pSet = std::make_shared<PointSet<TDataType>>();
 		this->setTopologyModule(m_pSet);
@@ -136,7 +135,7 @@ namespace PhysIKA
 	void ParticleSystem<TDataType>::updateTopology()
 	{
 		auto pts = m_pSet->getPoints();
-		Function1Pt::copy(pts, getPosition()->getValue());
+		Function1Pt::copy(pts, this->currentPosition()->getValue());
 	}
 
 
@@ -145,12 +144,12 @@ namespace PhysIKA
 	{
 		auto pts = m_pSet->getPoints();
 
-		m_position.setElementCount(pts.size());
-		m_velocity.setElementCount(pts.size());
-		m_force.setElementCount(pts.size());
+		this->currentPosition()->setElementCount(pts.size());
+		this->currentVelocity()->setElementCount(pts.size());
+		this->currentForce()->setElementCount(pts.size());
 
-		Function1Pt::copy(m_position.getValue(), pts);
-		m_velocity.getReference()->reset();
+		Function1Pt::copy(this->currentPosition()->getValue(), pts);
+		this->currentVelocity()->getReference()->reset();
 
 		return Node::resetStatus();
 	}

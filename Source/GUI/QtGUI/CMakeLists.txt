@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
+add_definitions(-DTT_BUILDING_DLL)
+
 set(LIB_NAME QtGUI)
 set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -18,11 +20,14 @@ find_package(Qt5 COMPONENTS
              Core
              Widgets
              Gui
-             OpenGL)
+             OpenGL
+			 Svg)
 
-qt5_add_resources(RESOURCES ./Resources/resources.qrc)
+qt5_add_resources(RESOURCES 
+    ./Resources/resources.qrc
+    ./Resources/StyleTemplate.qrc)
 
-link_libraries(Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL
+link_libraries(Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Svg
     ${VTK_LIBRARIES}
 )   
 
@@ -33,7 +38,9 @@ file(
     "${LIB_SRC_DIR}/*.c*"
     "${LIB_SRC_DIR}/*.h*"
 	"${LIB_SRC_DIR}/Nodes/*.h*"
-	"${LIB_SRC_DIR}/Nodes/*.c*"
+    "${LIB_SRC_DIR}/Nodes/*.c*"
+    "${LIB_SRC_DIR}/ToolBar/*.h*"
+	"${LIB_SRC_DIR}/ToolBar/*.c*"
 )
 
 list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 目录下面的所有文件

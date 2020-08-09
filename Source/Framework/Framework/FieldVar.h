@@ -20,6 +20,7 @@ public:
 
 	VarField();
 	VarField(T value);
+	VarField(std::string name, std::string description, FieldType fieldType, Base* parent);
 	VarField(T value, std::string name, std::string description, FieldType fieldType, Base* parent);
 
 public:
@@ -40,7 +41,7 @@ public:
 		return getReference() == nullptr;
 	}
 
-	bool connect(VarField<T>& field2);
+	bool connect(VarField<T>* field2);
 
 private:
 	std::shared_ptr<T> m_data = nullptr;
@@ -58,6 +59,13 @@ VarField<T>::VarField(T value)
 	: Field("", "")
 {
 	m_data = std::make_shared<T>(value);
+}
+
+template<typename T>
+VarField<T>::VarField(std::string name, std::string description, FieldType fieldType, Base* parent)
+	: Field(name, description, fieldType, parent)
+	, m_data(nullptr)
+{
 }
 
 template<typename T>
@@ -123,9 +131,9 @@ std::shared_ptr<T> VarField<T>::getReference()
 }
 
 template<typename T>
-bool VarField<T>::connect(VarField<T>& field2)
+bool VarField<T>::connect(VarField<T>* field2)
 {
-	auto f = field2.fieldPtr();
+	auto f = field2->fieldPtr();
 	this->connectPtr(f);
 
 // 	if (this->isEmpty())
