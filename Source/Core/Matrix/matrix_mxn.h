@@ -1,11 +1,11 @@
 #pragma once
 
-
-#include "Matrix/matrix_base.h"
-#include "Platform.h"
-#include "Array/MemoryManager.h"
 #include <memory>
-#include "Vector/vector_nd.h"
+
+#include "Core/Platform.h"
+#include "Core/Matrix/matrix_base.h"
+#include "Core/Array/MemoryManager.h"
+#include "Core/Vector/vector_nd.h"
 
 namespace PhysIKA
 {

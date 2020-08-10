@@ -7,8 +7,8 @@
 
 #include <iostream>
 //#include "Core/Array/Array.h"
-#include "Platform.h"
-#include "Array/MemoryManager.h"
+#include "Core/Platform.h"
+#include "Core/Array/MemoryManager.h"
 #include <glm/gtx/norm.hpp>
 
 

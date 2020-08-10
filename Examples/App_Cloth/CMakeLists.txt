@@ -2,7 +2,7 @@
 set(PROJECT_NAME App_Cloth)
 
 link_libraries(Core Framework IO Rendering)
-link_libraries(ParticleSystem RigidBody)
+link_libraries(ParticleSystem)
 link_libraries(GlutGUI)
 
 
