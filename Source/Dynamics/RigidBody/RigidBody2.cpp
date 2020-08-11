@@ -5,8 +5,8 @@
 #include <random>
 #include <ctime>
 #include "Dynamics/RigidBody/RigidTimeIntegrationModule.h"
-#include "Rendering/RigidMeshRender.h"
-#include "Rendering/SurfaceMeshRender.h"
+//#include "Rendering/RigidMeshRender.h"
+//#include "Rendering/SurfaceMeshRender.h"
 
 namespace PhysIKA
 {
@@ -21,7 +21,7 @@ namespace PhysIKA
 		m_parent_joint = 0;
 		m_triSet = 0;
 		m_frame = 0;
-		m_render = 0;
+		//m_render = 0;
 		m_surfaceMapping = 0;
 
 
@@ -157,23 +157,23 @@ namespace PhysIKA
 	//	}
 	//}
 
-	template<typename TDataType>
-	void RigidBody2<TDataType>::updateTopology()
-	{
-		//m_frame->setCenter(m_global_r * m_global_scale);
-		//m_frame->setOrientation(m_global_q.get3x3Matrix());
-		//m_surfaceMapping->apply();
+	//template<typename TDataType>
+	//void RigidBody2<TDataType>::updateTopology()
+	//{
+	//	//m_frame->setCenter(m_global_r * m_global_scale);
+	//	//m_frame->setOrientation(m_global_q.get3x3Matrix());
+	//	//m_surfaceMapping->apply();
 
-		//float rad;
-		//Vector3f rotate_axis;
-		//m_global_q.toRotationAxis(rad, rotate_axis);
-		//Quaternion<float> rotation(rad, rotate_axis[0], rotate_axis[1], rotate_axis[2]);
-		//m_render->setRotation(rotation);
-		//m_render->setTranslatioin(m_global_r * m_global_scale);
+	//	//float rad;
+	//	//Vector3f rotate_axis;
+	//	//m_global_q.toRotationAxis(rad, rotate_axis);
+	//	//Quaternion<float> rotation(rad, rotate_axis[0], rotate_axis[1], rotate_axis[2]);
+	//	//m_render->setRotation(rotation);
+	//	//m_render->setTranslatioin(m_global_r * m_global_scale);
 
-		m_render->setTriangleRotation(m_global_q);
-		m_render->setTriangleTranslation(m_global_r * m_global_scale);
-	}
+	//	m_render->setTriangleRotation(m_global_q);
+	//	m_render->setTriangleTranslation(m_global_r * m_global_scale);
+	//}
 
 	template<typename TDataType>
 	bool RigidBody2<TDataType>::initialize()
@@ -187,10 +187,10 @@ namespace PhysIKA
 		//m_triSet->setIsRigid(true);
 		this->setTopologyModule(m_triSet);
 
-		m_render = std::make_shared<RigidMeshRender>();
+		//m_render = std::make_shared<RigidMeshRender>();
 		
-		m_render->setColor(Vector3f(0.8, std::rand()%1000  / (double)1000, 0.8));
-		this->addVisualModule(m_render);
+		//m_render->setColor(Vector3f(0.8, std::rand()%1000  / (double)1000, 0.8));
+		//this->addVisualModule(m_render);
 
 		m_frame = std::make_shared<Frame<TDataType>>();
 

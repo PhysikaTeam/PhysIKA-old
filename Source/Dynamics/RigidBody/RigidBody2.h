@@ -5,11 +5,11 @@
 #include "Core/Vector/vector_nd.h"
 #include "Core/Quaternion/quaternion.h"
 #include "Framework/Topology/Frame.h"
-#include "Rendering/SurfaceMeshRender.h"
+//#include "Rendering/SurfaceMeshRender.h"
 #include "Framework/Mapping/FrameToPointSet.h"
 #include "Framework/Topology/TriangleSet.h"
-#include "Rendering/RigidMeshRender.h"
-#include "Rendering/SurfaceMeshRender.h"
+//#include "Rendering/RigidMeshRender.h"
+//#include "Rendering/SurfaceMeshRender.h"
 #include "Inertia.h"
 
 #include <string>
@@ -81,7 +81,7 @@ namespace PhysIKA
 
 	
 		void advance(Real dt) override;
-		void updateTopology() override;
+		//void updateTopology() override;
 
 		int getId()const { return m_id; }
 		void setId(int id) { m_id = id; }
@@ -113,7 +113,7 @@ namespace PhysIKA
 		// others
 		std::shared_ptr<TriangleSet<TDataType>> m_triSet;
 		std::shared_ptr<Frame<TDataType>> m_frame;
-		std::shared_ptr<RigidMeshRender> m_render;
+		//std::shared_ptr<RigidMeshRender> m_render;
 		std::shared_ptr<FrameToPointSet<TDataType>> m_surfaceMapping;
 
 	};
