@@ -2,7 +2,7 @@
 set(PROJECT_NAME App_DrySand)
 
 link_libraries(Core Framework IO Rendering)
-link_libraries(ParticleSystem)
+link_libraries(ParticleSystem RigidBody)
 link_libraries(GlutGUI)
 
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")
