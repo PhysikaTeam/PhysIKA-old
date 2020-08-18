@@ -8,7 +8,7 @@
 
 #include <QtCore/QString>
 
-#include "NodeDataModel.h"
+#include "QtBlockDataModel.h"
 #include "TypeConverter.h"
 #include "Export.h"
 #include "QStringStdHash.h"
@@ -19,8 +19,8 @@ namespace QtNodes
 
 inline
 bool
-operator<(QtNodes::NodeDataType const & d1,
-          QtNodes::NodeDataType const & d2)
+operator<(QtNodes::BlockDataType const & d1,
+          QtNodes::BlockDataType const & d2)
 {
   return d1.id < d2.id;
 }
@@ -32,7 +32,7 @@ class NODE_EDITOR_PUBLIC DataModelRegistry
 
 public:
 
-  using RegistryItemPtr     = std::unique_ptr<NodeDataModel>;
+  using RegistryItemPtr     = std::unique_ptr<QtBlockDataModel>;
   using RegistryItemCreator = std::function<RegistryItemPtr()>;
   using RegisteredModelCreatorsMap = std::unordered_map<QString, RegistryItemCreator>;
   using RegisteredModelsCategoryMap = std::unordered_map<QString, QString>;
@@ -78,7 +78,7 @@ public:
     _registeredTypeConverters[id] = std::move(typeConverter);
   }
 
-  std::unique_ptr<NodeDataModel>create(QString const &modelName);
+  std::unique_ptr<QtBlockDataModel>create(QString const &modelName);
 
   RegisteredModelCreatorsMap const &registeredModelCreators() const;
 
@@ -86,8 +86,8 @@ public:
 
   CategoriesSet const &categories() const;
 
-  TypeConverter getTypeConverter(NodeDataType const & d1,
-                                 NodeDataType const & d2) const;
+  TypeConverter getTypeConverter(BlockDataType const & d1,
+                                 BlockDataType const & d2) const;
 
 private:
 

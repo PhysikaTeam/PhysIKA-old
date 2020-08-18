@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NodeData.h"
+#include "BlockData.h"
 #include "memory.h"
 
 #include <functional>
@@ -8,7 +8,7 @@
 namespace QtNodes
 {
 
-using SharedNodeData = std::shared_ptr<NodeData>;
+using SharedNodeData = std::shared_ptr<BlockData>;
 
 // a function taking in NodeData and returning NodeData
 using TypeConverter =
@@ -16,6 +16,6 @@ using TypeConverter =
 
 // data-type-in, data-type-out
 using TypeConverterId =
-  std::pair<NodeDataType, NodeDataType>;
+  std::pair<BlockDataType, BlockDataType>;
 
 }

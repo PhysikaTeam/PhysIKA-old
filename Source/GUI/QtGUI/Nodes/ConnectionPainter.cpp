@@ -4,17 +4,17 @@
 
 #include "ConnectionGeometry.h"
 #include "ConnectionState.h"
-#include "ConnectionGraphicsObject.h"
-#include "Connection.h"
+#include "QtConnectionGraphicsObject.h"
+#include "QtConnection.h"
 
-#include "NodeData.h"
+#include "BlockData.h"
 
 #include "StyleCollection.h"
 
 
 using QtNodes::ConnectionPainter;
 using QtNodes::ConnectionGeometry;
-using QtNodes::Connection;
+using QtNodes::QtConnection;
 
 
 static
@@ -62,7 +62,7 @@ getPainterStroke(ConnectionGeometry const& geom)
 static
 void
 debugDrawing(QPainter * painter,
-             Connection const & connection)
+             QtConnection const & connection)
 {
   Q_UNUSED(painter);
   Q_UNUSED(connection);
@@ -100,7 +100,7 @@ debugDrawing(QPainter * painter,
 static
 void
 drawSketchLine(QPainter * painter,
-               Connection const & connection)
+               QtConnection const & connection)
 {
   using QtNodes::ConnectionState;
 
@@ -132,7 +132,7 @@ drawSketchLine(QPainter * painter,
 static
 void
 drawHoveredOrSelected(QPainter * painter,
-                      Connection const & connection)
+                      QtConnection const & connection)
 {
   using QtNodes::ConnectionGeometry;
 
@@ -171,7 +171,7 @@ drawHoveredOrSelected(QPainter * painter,
 static
 void
 drawNormalLine(QPainter * painter,
-               Connection const & connection)
+               QtConnection const & connection)
 {
   using QtNodes::ConnectionState;
 
@@ -282,7 +282,7 @@ drawNormalLine(QPainter * painter,
 void
 ConnectionPainter::
 paint(QPainter* painter,
-      Connection const &connection)
+      QtConnection const &connection)
 {
   drawHoveredOrSelected(painter, connection);
 

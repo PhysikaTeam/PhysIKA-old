@@ -61,7 +61,7 @@
 #include "PPropertyWidget.h"'
 #include "PModuleListWidget.h"
 #include "PSimulationThread.h"
-#include "PFlowSceneWidget.h"
+#include "PSceneFlowWidget.h"
 
 #include <QAction>
 #include <QLayout>
@@ -87,10 +87,9 @@
 #include <QtWidgets/QOpenGLWidget>
 #include <QtSvg/QSvgRenderer>
 
-#include "Nodes/FlowView.h"
-#include "Nodes/ModuleFlowScene.h"
+#include "Nodes/QtFlowView.h"
+#include "Nodes/QtModuleFlowScene.h"
 #include "Nodes/DataModelRegistry.h"
-#include "Nodes/AdditionModel.h"
 
 #include "Toolbar/TabToolbar.h"
 #include "Toolbar/Page.h"
@@ -134,7 +133,7 @@ namespace PhysIKA
 //		setupMenuBar();
 		setupAllWidgets();
 
-		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, tabEditor->getModuleFlowScene(), &QtNodes::ModuleFlowScene::showNodeFlow);
+		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, tabEditor->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
 
 		statusBar()->showMessage(tr("Status Bar"));
 	}
@@ -178,7 +177,7 @@ namespace PhysIKA
 		m_vtkOpenglWidget->layout()->setMargin(0);
 		tabWidget->addTab(m_vtkOpenglWidget, QString());
 
-		tabEditor = new PFlowSceneWidget();
+		tabEditor = new PSceneFlowWidget();
 		tabEditor->setObjectName(QStringLiteral("tabEditor"));
 		tabWidget->addTab(tabEditor, QString());
 

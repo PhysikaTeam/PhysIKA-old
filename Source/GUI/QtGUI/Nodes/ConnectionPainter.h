@@ -7,7 +7,7 @@ namespace QtNodes
 
 class ConnectionGeometry;
 class ConnectionState;
-class Connection;
+class QtConnection;
 
 class ConnectionPainter
 {
@@ -16,7 +16,7 @@ public:
   static
   void
   paint(QPainter* painter,
-        Connection const& connection);
+        QtConnection const& connection);
 
   static
   QPainterPath
