@@ -9,7 +9,6 @@
 
 #include <iostream>
 
-class DecimalData;
 
 using PhysIKA::Node;
 
@@ -19,6 +18,9 @@ using QtNodes::BlockData;
 using QtNodes::BlockDataType;
 using QtNodes::QtBlockDataModel;
 using QtNodes::ValidationState;
+
+
+class NodeData;
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
@@ -65,9 +67,16 @@ protected:
 	virtual void updateModule();
 
 protected:
+	using OutNodePtr = std::vector<std::shared_ptr<NodeData>>;
+	using InNodePtr = std::vector<std::weak_ptr<NodeData>>;
+
+	InNodePtr input_nodes;
+	OutNodePtr output_nodes;
+
+
 	QString m_name;
 
-	Node* m_module = nullptr;
+	Node* m_node = nullptr;
 
 	ValidationState modelValidationState = ValidationState::Warning;
 	QString modelValidationError = QString("Missing or incorrect inputs");

@@ -118,7 +118,7 @@ namespace PhysIKA
 
 //		QLichtWidget*	openGLWidget;
 
-		PSceneFlowWidget*		tabEditor;
+		PSceneFlowWidget*		m_flowView;
 		PStatusBar*				m_statusBar;
 		PVTKOpenGLWidget*		m_vtkOpenglWidget;
 		PSceneGraphWidget*		m_scenegraphWidget;

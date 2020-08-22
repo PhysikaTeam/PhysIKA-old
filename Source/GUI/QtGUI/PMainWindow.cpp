@@ -86,6 +86,7 @@
 #include <QDebug>
 #include <QtWidgets/QOpenGLWidget>
 #include <QtSvg/QSvgRenderer>
+#include <QHBoxLayout>
 
 #include "Nodes/QtFlowView.h"
 #include "Nodes/QtModuleFlowScene.h"
@@ -133,7 +134,7 @@ namespace PhysIKA
 //		setupMenuBar();
 		setupAllWidgets();
 
-		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, tabEditor->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
+		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_flowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
 
 		statusBar()->showMessage(tr("Status Bar"));
 	}
@@ -167,30 +168,38 @@ namespace PhysIKA
 		centralWidget->setLayout(mainLayout);
 
 
+		m_vtkOpenglWidget = new PVTKOpenGLWidget();
+		m_vtkOpenglWidget->setObjectName(QStringLiteral("tabView"));
+		m_vtkOpenglWidget->layout()->setMargin(0);
+
+		m_flowView = new PSceneFlowWidget();
+		m_flowView->setObjectName(QStringLiteral("tabEditor"));
+
+
 		//Setup views
 		QTabWidget* tabWidget = new QTabWidget();
 		tabWidget->setObjectName(QStringLiteral("tabWidget"));
 		tabWidget->setGeometry(QRect(140, 60, 361, 241));
 
-		m_vtkOpenglWidget = new PVTKOpenGLWidget();
-		m_vtkOpenglWidget->setObjectName(QStringLiteral("tabView"));
-		m_vtkOpenglWidget->layout()->setMargin(0);
 		tabWidget->addTab(m_vtkOpenglWidget, QString());
-
-		tabEditor = new PSceneFlowWidget();
-		tabEditor->setObjectName(QStringLiteral("tabEditor"));
-		tabWidget->addTab(tabEditor, QString());
-
+		tabWidget->addTab(m_flowView, QString());
 
 		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
-		tabWidget->setTabText(tabWidget->indexOf(tabEditor), QApplication::translate("MainWindow", "Editor", Q_NULLPTR));
+		tabWidget->setTabText(tabWidget->indexOf(m_flowView), QApplication::translate("MainWindow", "Editor", Q_NULLPTR));
 
 
 		//Setup animation widget
 		m_animationWidget = new PAnimationWidget(this);
 		m_animationWidget->layout()->setMargin(0);
 
- 		mainLayout->addWidget(tabWidget, 0, 0);
+
+// 		QWidget* viewWidget = new QWidget();
+// 		QHBoxLayout* hLayout = new QHBoxLayout();
+// 		viewWidget->setLayout(hLayout);
+// 		hLayout->addWidget(m_vtkOpenglWidget, 1);
+// 		hLayout->addWidget(m_flowView, 1);
+
+		mainLayout->addWidget(tabWidget, 0, 0);
  		mainLayout->addWidget(m_animationWidget, 1, 0);
 
 		connect(PSimulationThread::instance(), SIGNAL(oneFrameFinished()), m_vtkOpenglWidget, SLOT(prepareRenderingContex()));

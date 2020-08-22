@@ -1,5 +1,8 @@
 #include "Node.h"
+#include "NodeIterator.h"
+
 #include "Framework/Action/Action.h"
+
 
 namespace PhysIKA
 {
@@ -111,6 +114,16 @@ void Node::setMass(Real mass)
 Real Node::getMass()
 {
 	return m_mass.getValue();
+}
+
+NodeIterator Node::begin()
+{
+	return NodeIterator(this);
+}
+
+NodeIterator Node::end()
+{
+	return NodeIterator();
 }
 
 void Node::removeChild(std::shared_ptr<Node> child)
@@ -423,6 +436,13 @@ bool Node::attachField(Field* field, std::string name, std::string desc, bool au
 		Log::sendMessage(Log::Error, std::string("The field ") + name + std::string(" already exists!"));
 	}
 	return ret;
+}
+
+bool Node::addNodePort(NodePort* port)
+{
+	m_node_ports.push_back(port);
+
+	return true;
 }
 
 void Node::setAsCurrentContext()

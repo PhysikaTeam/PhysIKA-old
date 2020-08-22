@@ -37,6 +37,8 @@ namespace PhysIKA {
 
 		std::vector<std::shared_ptr<RigidBody<TDataType>>> m_rigids;
 		std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;
+
+		DEF_NODE_PORTS(ParticleSystems, ParticleSystem<TDataType>, "Particle Systemes");
 	};
 
 

@@ -28,14 +28,17 @@
 #include "NumericalIntegrator.h"
 #include "ModuleCompute.h"
 #include "DeclareNodeField.h"
+#include "NodePort.h"
 
 namespace PhysIKA {
 class Action;
+class NodeIterator;
 
 class Node : public Base
 {
 	DECLARE_CLASS(Node)
 public:
+	typedef NodeIterator Iterator;
 
 	template<class T>
 	using SPtr = std::shared_ptr<T>;
@@ -72,6 +75,9 @@ public:
 
 	void setMass(Real mass);
 	Real getMass();
+
+	Iterator begin();
+	Iterator end();
 
 	/**
 	 * @brief Create a Child object
@@ -329,6 +335,11 @@ public:
 	 */
 	bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true) override;
 
+
+	bool addNodePort(NodePort* port);
+
+	std::vector<NodePort*>& getAllNodePorts() { return m_node_ports; }
+
 protected:
 	void setParent(Node* p) { m_parent = p; }
 
@@ -409,6 +420,7 @@ private:
 
 	ListPtr<Node> m_children;
 
+	std::vector<NodePort*> m_node_ports;
 
 	/**
 	 * @brief Indicating which node the current module belongs to

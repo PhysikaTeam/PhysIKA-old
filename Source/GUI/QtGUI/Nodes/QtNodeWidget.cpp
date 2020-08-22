@@ -1,11 +1,31 @@
 #include "QtNodeWidget.h"
 
 #include "Framework/Node.h"
+#include "Framework/NodePort.h"
 
+#include "NodeData.h"
 
 QtNodeWidget::QtNodeWidget(Node* base)
 {
-	m_module = base;
+	m_node = base;
+
+	if (m_node != nullptr)
+	{
+		//initialize in node ports
+		int input_num = m_node->getAllNodePorts().size();
+
+		input_nodes.resize(input_num);
+		auto inputs = m_node->getAllNodePorts();
+		for (int i = 0; i < inputs.size(); i++)
+		{
+			input_nodes[i] = std::make_shared<NodeData>(inputs[i]);
+		}
+
+		//initialize out node ports
+		output_nodes.resize(1);
+		output_nodes[0]  = std::make_shared<NodeData>(nullptr);
+	}
+
 }
 
 unsigned int
@@ -15,11 +35,11 @@ QtNodeWidget::nPorts(PortType portType) const
 
 	if (portType == PortType::In)
 	{
-		result = 0;
+		result = m_node->getAllNodePorts().size();
 	}
 	else
 	{
-		result = 0;
+		result = 1;
 	}
 
 	return result;
@@ -35,18 +55,18 @@ BlockDataType QtNodeWidget::dataType(PortType portType, PortIndex portIndex) con
 std::shared_ptr<BlockData>
 QtNodeWidget::outData(PortIndex port)
 {
-	return nullptr;
+	return std::static_pointer_cast<BlockData>(output_nodes[0]);;
 }
 
 
 QString QtNodeWidget::caption() const
 {
-	return QString::fromStdString(m_module->getClassInfo()->getClassName());
+	return QString::fromStdString(m_node->getClassInfo()->getClassName());
 }
 
 QString QtNodeWidget::name() const
 {
-	return QString::fromStdString(m_module->getClassInfo()->getClassName());
+	return QString::fromStdString(m_node->getClassInfo()->getClassName());
 }
 
 bool QtNodeWidget::portCaptionVisible(PortType portType, PortIndex portIndex) const
@@ -57,8 +77,14 @@ bool QtNodeWidget::portCaptionVisible(PortType portType, PortIndex portIndex) co
 
 QString QtNodeWidget::portCaption(PortType portType, PortIndex portIndex) const
 {
-
-	return QString::fromStdString("");
+	if (portType == PortType::In)
+	{
+		return QString::fromStdString(m_node->getAllNodePorts()[portIndex]->getPortName());
+	}
+	else
+	{
+		return QString::fromStdString(m_node->getClassInfo()->getClassName());
+	}
 }
 
 void QtNodeWidget::setInData(std::shared_ptr<BlockData> data, PortIndex portIndex)
@@ -75,7 +101,7 @@ ValidationState QtNodeWidget::validationState() const
 
 Node* QtNodeWidget::getNode()
 {
-	return m_module;
+	return m_node;
 }
 
 QString QtNodeWidget::validationMessage() const

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "QtBlockDataModel.h"
-#include "Framework/Node.h"
+#include "Framework/NodePort.h"
 
 using QtNodes::BlockDataType;
 using QtNodes::BlockData;
 
-using PhysIKA::Node;
+using PhysIKA::NodePort;
 
 /// The class can potentially incapsulate any user data which
 /// need to be transferred within the Node Editor graph
@@ -17,21 +17,21 @@ public:
 	NodeData()
 	{}
 
-	NodeData(Node* n)
-		: node(n)
+	NodeData(NodePort* n)
+		: node_port(n)
 	{}
 
 	BlockDataType type() const override
 	{
-		return BlockDataType{ "node",
-							 "Node" };
+		return BlockDataType{ "nodeport",
+							 "NodePort" };
 	}
 
-	Node* getNode() { return node; }
+	NodePort* getNode() { return node_port; }
 
-	bool isEmpty() { return node == nullptr; }
+	bool isEmpty() { return node_port == nullptr; }
 
 private:
 
-	Node* node = nullptr;
+	NodePort* node_port = nullptr;
 };

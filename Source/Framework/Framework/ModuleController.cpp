@@ -67,13 +67,9 @@ ModuleIterator& ModuleIterator::operator++()
 	return *this;
 }
 
-ModuleIterator ModuleIterator::operator++(int)
+ModuleIterator& ModuleIterator::operator++(int)
 {
-	ModuleIterator iter;
-	iter.module = module.lock()->next();
-
-	module = iter.module;
-	return iter;
+	return operator++();
 }
 
 Module* ModuleIterator::operator->()

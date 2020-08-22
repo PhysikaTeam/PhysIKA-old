@@ -20,8 +20,7 @@ namespace PhysIKA
 		bool operator!= (const ModuleIterator &iterator) const;
 
 		ModuleIterator& operator++ ();
-
-		ModuleIterator operator++ (int);
+		ModuleIterator& operator++ (int);
 
 		std::shared_ptr<Module> operator *();
 

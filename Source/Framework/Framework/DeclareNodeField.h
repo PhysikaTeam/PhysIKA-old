@@ -90,3 +90,16 @@ private:									\
 public:									\
 	inline NeighborField<T>* next##name() {return &next_##name;}
 }
+
+
+#define DEF_NODE_PORT(name, T, desc)				\
+private:									\
+	SingleNodePort<T> single_##name = SingleNodePort<T>(std::string(#name), desc, this);					\
+public:									\
+	inline SingleNodePort<T>* get##name() {	return &single_##name; }
+
+#define DEF_NODE_PORTS(name, T, desc)				\
+private:									\
+	MultipleNodePort<T> multiple_##name = MultipleNodePort<T>(std::string(#name), desc, this);					\
+public:									\
+	inline MultipleNodePort<T>* get##name() {	return &multiple_##name; }
