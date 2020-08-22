@@ -25,6 +25,7 @@
 #include "StyleTools.h"
 #include "SubGroup.h"
 #include "TabToolbar.h"
+#include <stdexcept>
 
 using namespace tt;
 
