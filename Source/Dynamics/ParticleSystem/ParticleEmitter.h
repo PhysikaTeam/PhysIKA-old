@@ -1,6 +1,5 @@
 #pragma once
 #include "ParticleSystem.h"
-#include "ParticleEmitter.h"
 
 namespace PhysIKA
 {
@@ -13,27 +12,23 @@ namespace PhysIKA
 	*
 	*/
 	template<typename TDataType>
-	class ParticleFluid : public ParticleSystem<TDataType>
+	class ParticleEmitter : public ParticleSystem<TDataType>
 	{
-		DECLARE_CLASS_1(ParticleFluid, TDataType)
+		DECLARE_CLASS_1(ParticleEmitter, TDataType)
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
-		ParticleFluid(std::string name = "default");
-		virtual ~ParticleFluid();
+		ParticleEmitter(std::string name = "particle emitter");
+		virtual ~ParticleEmitter();
 
 		void advance(Real dt) override;
-
-
-		DEF_NODE_PORTS(ParticleEmitters, ParticleEmitter<TDataType>, "Particle Emitters");
-
 	private:
 	};
 
 #ifdef PRECISION_FLOAT
-	template class ParticleFluid<DataType3f>;
+	template class ParticleEmitter<DataType3f>;
 #else
-	template class ParticleFluid<DataType3d>;
+	template class ParticleEmitter<DataType3d>;
 #endif
 }

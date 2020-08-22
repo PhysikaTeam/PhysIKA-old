@@ -91,6 +91,7 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 
 	auto createNodeConnections = [&](Node* nd) -> void
 	{
+		auto in_name = nd->getName();
 		auto in_block = nodeMap[nd->getName()];
 
 		auto ports = nd->getAllNodePorts();
@@ -110,10 +111,11 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 			else if(PhysIKA::Multiple == pType)
 			{
 				auto nodes = ports[i]->getNodes();
-				for (int j = 0; j < 1; j++)
+				for (int j = 0; j < nodes.size(); j++)
 				{
 					if (nodes[j] != nullptr)
 					{
+						auto out_name = nodes[j]->getName();
 						auto out_block = nodeMap[nodes[j]->getName()];
 						createConnection(*in_block, i, *out_block, 0);
 					}
