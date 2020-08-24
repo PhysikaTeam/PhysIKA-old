@@ -1,11 +1,11 @@
 #include "StyleCollection.h"
 
 using QtNodes::StyleCollection;
-using QtNodes::NodeStyle;
+using QtNodes::BlockStyle;
 using QtNodes::ConnectionStyle;
 using QtNodes::FlowViewStyle;
 
-NodeStyle const&
+BlockStyle const&
 StyleCollection::
 nodeStyle()
 {
@@ -31,7 +31,7 @@ flowViewStyle()
 
 void
 StyleCollection::
-setNodeStyle(NodeStyle nodeStyle)
+setNodeStyle(BlockStyle nodeStyle)
 {
   instance()._nodeStyle = nodeStyle;
 }

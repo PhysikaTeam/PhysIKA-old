@@ -9,7 +9,7 @@ class QPointF;
 namespace QtNodes
 {
 
-class QtNode;
+class QtBlock;
 
 /// Stores currently draggind end.
 /// Remembers last hovered Node.
@@ -42,11 +42,11 @@ public:
 
 public:
 
-  void interactWithNode(QtNode* node);
+  void interactWithNode(QtBlock* node);
 
-  void setLastHoveredNode(QtNode* node);
+  void setLastHoveredNode(QtBlock* node);
 
-  QtNode*
+  QtBlock*
   lastHoveredNode() const
   { return _lastHoveredNode; }
 
@@ -56,6 +56,6 @@ private:
 
   PortType _requiredPort;
 
-  QtNode* _lastHoveredNode{nullptr};
+  QtBlock* _lastHoveredNode{nullptr};
 };
 }

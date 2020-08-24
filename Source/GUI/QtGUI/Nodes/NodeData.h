@@ -1,33 +1,37 @@
 #pragma once
 
-#include <QtCore/QString>
+#include "QtBlockDataModel.h"
+#include "Framework/NodePort.h"
 
-#include "Export.h"
+using QtNodes::BlockDataType;
+using QtNodes::BlockData;
 
-namespace QtNodes
-{
+using PhysIKA::NodePort;
 
-struct NodeDataType
-{
-  QString id;
-  QString name;
-};
-
-/// Class represents data transferred between nodes.
-/// @param type is used for comparing the types
-/// The actual data is stored in subtypes
-class NODE_EDITOR_PUBLIC NodeData
+/// The class can potentially incapsulate any user data which
+/// need to be transferred within the Node Editor graph
+class NodeData : public BlockData
 {
 public:
 
-  virtual ~NodeData() = default;
+	NodeData()
+	{}
 
-  virtual bool sameType(NodeData const &nodeData) const
-  {
-    return (this->type().id == nodeData.type().id);
-  }
+	NodeData(NodePort* n)
+		: node_port(n)
+	{}
 
-  /// Type for inner use
-  virtual NodeDataType type() const = 0;
+	BlockDataType type() const override
+	{
+		return BlockDataType{ "nodeport",
+							 "NodePort" };
+	}
+
+	NodePort* getNode() { return node_port; }
+
+	bool isEmpty() { return node_port == nullptr; }
+
+private:
+
+	NodePort* node_port = nullptr;
 };
-}

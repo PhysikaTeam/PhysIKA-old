@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NodeStyle.h"
+#include "BlockStyle.h"
 #include "ConnectionStyle.h"
 #include "FlowViewStyle.h"
 
@@ -12,7 +12,7 @@ class StyleCollection
 public:
 
   static
-  NodeStyle const&
+  BlockStyle const&
   nodeStyle();
 
   static
@@ -27,7 +27,7 @@ public:
 
   static
   void
-  setNodeStyle(NodeStyle);
+  setNodeStyle(BlockStyle);
 
   static
   void
@@ -52,7 +52,7 @@ private:
 
 private:
 
-  NodeStyle _nodeStyle;
+  BlockStyle _nodeStyle;
 
   ConnectionStyle _connectionStyle;
 

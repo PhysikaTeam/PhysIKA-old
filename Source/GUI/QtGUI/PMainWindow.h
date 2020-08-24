@@ -66,7 +66,7 @@ namespace PhysIKA
 	class PPropertyWidget;
 	class PAnimationWidget;
 	class PModuleListWidget;
-	class PFlowSceneWidget;
+	class PSceneFlowWidget;
 
 
 //	QT_FORWARD_DECLARE_CLASS(QLichtWidget)
@@ -118,7 +118,7 @@ namespace PhysIKA
 
 //		QLichtWidget*	openGLWidget;
 
-		PFlowSceneWidget*		tabEditor;
+		PSceneFlowWidget*		m_flowView;
 		PStatusBar*				m_statusBar;
 		PVTKOpenGLWidget*		m_vtkOpenglWidget;
 		PSceneGraphWidget*		m_scenegraphWidget;

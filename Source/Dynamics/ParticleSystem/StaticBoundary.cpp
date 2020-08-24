@@ -37,6 +37,9 @@ namespace PhysIKA
 	{
 		this->addChild(child);
 		m_particleSystems.push_back(child);
+
+		this->getParticleSystems()->addNode(child.get());
+
 		return true;
 	}
 

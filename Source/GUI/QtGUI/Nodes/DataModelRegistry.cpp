@@ -4,11 +4,11 @@
 #include <QtWidgets/QMessageBox>
 
 using QtNodes::DataModelRegistry;
-using QtNodes::NodeDataModel;
-using QtNodes::NodeDataType;
+using QtNodes::QtBlockDataModel;
+using QtNodes::BlockDataType;
 using QtNodes::TypeConverter;
 
-std::unique_ptr<NodeDataModel>
+std::unique_ptr<QtBlockDataModel>
 DataModelRegistry::
 create(QString const &modelName)
 {
@@ -49,8 +49,8 @@ categories() const
 
 TypeConverter
 DataModelRegistry::
-getTypeConverter(NodeDataType const & d1,
-                 NodeDataType const & d2) const
+getTypeConverter(BlockDataType const & d1,
+                 BlockDataType const & d2) const
 {
   TypeConverterId converterId = std::make_pair(d1, d2);
 

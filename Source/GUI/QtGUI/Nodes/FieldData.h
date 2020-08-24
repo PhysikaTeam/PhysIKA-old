@@ -1,16 +1,16 @@
 #pragma once
 
-#include "NodeDataModel.h"
+#include "QtBlockDataModel.h"
 #include "Framework/Field.h"
 
-using QtNodes::NodeDataType;
-using QtNodes::NodeData;
+using QtNodes::BlockDataType;
+using QtNodes::BlockData;
 
 using PhysIKA::Field;
 
 /// The class can potentially incapsulate any user data which
 /// need to be transferred within the Node Editor graph
-class FieldData : public NodeData
+class FieldData : public BlockData
 {
 public:
 
@@ -21,10 +21,10 @@ public:
 		: field(f)
 	{}
 
-	NodeDataType type() const override
+	BlockDataType type() const override
 	{
-		return NodeDataType{ "decimal",
-							 "Decimal" };
+		return BlockDataType{ "field",
+							 "Field" };
 	}
 
 	Field* getField() { return field; }
