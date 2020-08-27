@@ -102,4 +102,4 @@ public:									\
 private:									\
 	MultipleNodePort<T> multiple_##name = MultipleNodePort<T>(std::string(#name), desc, this);					\
 public:									\
-	inline MultipleNodePort<T>* get##name() {	return &multiple_##name; }
+	inline MultipleNodePort<T>* get##name##s() { return &multiple_##name; }			\
