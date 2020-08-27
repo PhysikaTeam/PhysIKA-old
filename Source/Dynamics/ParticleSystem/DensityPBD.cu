@@ -54,6 +54,8 @@ namespace PhysIKA
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
+		
+
 		Coord pos_i = posArr[pId];
 
 		Real lamda_i = Real(0);
@@ -231,6 +233,9 @@ namespace PhysIKA
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
+		if (pId == 5)
+			printf("%d update position\n", posArr.size());
+
 		posArr[pId] += dPos[pId];
 	}
 
@@ -310,7 +315,21 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool DensityPBD<TDataType>::constrain()
 	{
+		printf("neighbor query inside density PBD : %d\n", m_neighborhood.getElementCount());
+
+		if (m_position_old.size() != m_position.getElementCount())
+			m_position_old.resize(m_position.getElementCount());
+
 		Function1Pt::copy(m_position_old, m_position.getValue());
+
+		if (m_density.getElementCount() != m_position.getElementCount())
+			m_density.setElementCount(m_position.getElementCount());
+
+		if (m_deltaPos.size() != m_position.getElementCount())
+			m_deltaPos.resize(m_position.getElementCount());
+
+		if (m_lamda.size() != m_position.getElementCount())
+			m_lamda.resize(m_position.getElementCount());
 
 		int it = 0;
 		while (it < m_maxIteration)
@@ -333,6 +352,8 @@ namespace PhysIKA
 
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
+
+		
 
 		m_deltaPos.reset();
 		m_densitySum->compute();
@@ -382,7 +403,7 @@ namespace PhysIKA
 				dt);
 			cuSynchronize();
 		}
-		
+		printf("Yes %d %d %d\n", m_position.getElementCount(), m_velocity.getElementCount(), m_deltaPos.size());
 		K_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (
 			m_position.getValue(),
 			m_velocity.getValue(),

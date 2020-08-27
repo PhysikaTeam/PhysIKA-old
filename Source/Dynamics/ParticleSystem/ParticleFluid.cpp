@@ -39,5 +39,6 @@ namespace PhysIKA
 
 		auto nModel = this->getNumericalModel();
 		nModel->step(this->getDt());
+		printf("%d\n", this->currentPosition()->getElementCount());
 	}
 }

@@ -281,6 +281,8 @@ namespace PhysIKA
 	void NeighborQuery<TDataType>::queryNeighborDynamic(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h)
 	{
 		DeviceArray<int>& nbrNum = nbrList.getIndex();
+		if (nbrNum.size() != pos.size())
+			nbrList.resize(pos.size());
 
 		queryNeighborSize(nbrNum, pos, h);
 

@@ -14,6 +14,8 @@
 #include "Framework/ControllerAnimation.h"
 
 #include "Dynamics/ParticleSystem/ParticleFluid.h"
+#include "Dynamics/ParticleSystem/ParticleEmitter.h"
+#include "Dynamics/ParticleSystem/ParticleEmitterRound.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -58,16 +60,25 @@ int main()
 	root->loadSDF("../../Media/bowl/bowl.sdf", false);
 	root->setName("static");
 
+	
+
 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
 	root->addParticleSystem(child1);
 	child1->setName("fluid");
 
-
+	std::shared_ptr<ParticleEmitterRound<DataType3f>> child2 = std::make_shared<ParticleEmitterRound<DataType3f>>();
+	root->addParticleSystem(child2);
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
-	child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
+	//child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
 	child1->setMass(100);
 
+	
 
+	child2->currentForce()->connect(child1->currentForce());
+	child2->currentPosition()->connect(child1->currentPosition());
+	child2->currentVelocity()->connect(child1->currentVelocity());
+
+	child2->setInfo(Vector3f(0.5,0.5,0.5), Vector3f(0.0, 0.0, 0.0), 0.1, 0.005);
 
 	auto pRenderer = std::make_shared<PVTKPointSetRender>();
 	pRenderer->setName("VTK Point Renderer");
