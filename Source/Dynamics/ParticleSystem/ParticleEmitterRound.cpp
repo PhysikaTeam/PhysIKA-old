@@ -1,6 +1,12 @@
 #include "ParticleEmitterRound.h"
 #include <time.h>
 
+#include <Eigen/Dense>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+#include <Eigen/StdVector>
+#include <stdlib.h>
+
 namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(ParticleEmitterRound, TDataType)
@@ -20,7 +26,7 @@ namespace PhysIKA
 	{
 		gen_pos.release();
 	}
-
+	
 	template<typename TDataType>
 	void ParticleEmitterRound<TDataType>::setInfo(Coord pos, Coord direction, Real r, Real distance)
 	{
@@ -29,6 +35,8 @@ namespace PhysIKA
 		sampling_distance = distance;
 		centre = pos;
 		dir = direction;
+
+		getRotMat(dir / dir.norm());
 
 		std::vector<Coord> pos_list;
 		std::vector<Coord> vel_list;
@@ -40,10 +48,11 @@ namespace PhysIKA
 		{
 			for (Real y = lo; y <= hi; y += sampling_distance)
 			{
-				Coord p = Coord(x, y, 0);
+				Coord p = Coord(x, 0, y);
 				if ((p - Coord(0)).norm() < radius)
 				{
-					pos_list.push_back(Coord(x, 0, y) + centre);
+					Coord q = cos(angle) * p + (1 - cos(angle))*(p.dot(axis))*axis + sin(angle) * axis.cross(p);
+					pos_list.push_back(q + centre);
 					vel_list.push_back(direction);
 				}
 			}
@@ -89,9 +98,9 @@ namespace PhysIKA
 			{
 				for (Real y = lo; y <= hi; y += sampling_distance)
 				{
-					Coord p = Coord(x, y, 0);
+					Coord p = Coord(x, 0, y);
 					if ((p - Coord(0)).norm() < radius && rand() % 4 == 0)
-					{
+					{/*
 						Real aa, bb, cc;
 						do
 						{
@@ -99,8 +108,10 @@ namespace PhysIKA
 							bb = Real(rand() % 2000 - 1000) / 1000.0;
 							cc = Real(rand() % 2000 - 1000) / 1000.0;
 						} while (aa * aa + bb * bb + cc * cc < 1.0);
-						pos_list.push_back(Coord(x, 0, y) + centre);
-						vel_list.push_back(Coord(aa, bb, cc));
+						*/
+						Coord q = cos(angle) * p + (1 - cos(angle)) * (p.dot(axis)) * axis + sin(angle) * axis.cross(p);
+						pos_list.push_back(q + centre);
+						vel_list.push_back(direction);
 					}
 				}
 			}
@@ -147,19 +158,20 @@ namespace PhysIKA
 		{
 			for (Real y = lo; y <= hi; y += sampling_distance)
 			{
-				Coord p = Coord(x, y, 0);
-				if ((p - Coord(0)).norm() < radius && rand() % 400 == 0)
-				{
+				Coord p = Coord(x, 0, y);
+				if ((p - Coord(0)).norm() < radius && rand() % 40 == 0)
+				{/*
 					Real aa, bb, cc;
 					do
 					{
 						aa = Real(rand() % 2000 - 1000) / 1000.0;
 						bb = Real(rand() % 2000 - 1000) / 1000.0;
 						cc = Real(rand() % 2000 - 1000) / 1000.0;
-					} 
-					while (aa * aa + bb * bb + cc * cc < 1.0);
-					pos_list.push_back(Coord(x, 0, y) + centre);
-					vel_list.push_back(Coord(aa ,bb,cc));
+					} while (aa * aa + bb * bb + cc * cc < 1.0);
+					*/
+					Coord q = cos(angle) * p + (1 - cos(angle)) * (p.dot(axis)) * axis + sin(angle) * axis.cross(p);
+					pos_list.push_back(q + centre);
+					vel_list.push_back(dir);
 				}
 			}
 		}
@@ -180,58 +192,5 @@ namespace PhysIKA
 		vel_list.clear();
 	}
 
-	template<typename TDataType>
-	void ParticleEmitterRound<TDataType>::advance(Real dt)
-	{
-		sum++;
-		bool random_gen = true;
-		if(! random_gen)
-		{ 
-			if (sum % 40 != 0) return;
-		}
-		else
-		{
-			gen_random();
-		}
-		DeviceArray<Coord>& cur_points0 = this->currentPosition()->getValue();
-		DeviceArray<Coord>& cur_vels0 = this->currentVelocity()->getValue();
-		DeviceArray<Coord>& cur_forces0 = this->currentForce()->getValue();
 
-
-
-		int cur_size = this->currentPosition()->getElementCount();
-
-		pos_buf.resize(cur_size);
-		vel_buf.resize(cur_size);
-		force_buf.resize(cur_size);
-
-		Function1Pt::copy(pos_buf, cur_points0);
-		Function1Pt::copy(vel_buf, cur_vels0);
-		Function1Pt::copy(force_buf, cur_forces0);
-
-
-		this->currentPosition()->setElementCount(cur_size + gen_pos.size());
-		this->currentVelocity()->setElementCount(cur_size + gen_pos.size());
-		this->currentForce()->setElementCount(cur_size + gen_pos.size());
-
-		printf("%d %d %d\n", cur_size, gen_pos.size(), this->currentPosition()->getElementCount());
-
-		DeviceArray<Coord>& cur_points = this->currentPosition()->getValue();
-		DeviceArray<Coord>& cur_vels = this->currentVelocity()->getValue();
-		DeviceArray<Coord>& cur_forces = this->currentForce()->getValue();
-
-		cur_points.reset();
-		cur_vels.reset();
-		cur_forces.reset();
-
-		cudaMemcpy(cur_points.getDataPtr(), pos_buf.getDataPtr(), cur_size * sizeof(Coord), cudaMemcpyDeviceToDevice);
-		cudaMemcpy(cur_points.getDataPtr() + cur_size, gen_pos.getDataPtr(), gen_pos.size() * sizeof(Coord), cudaMemcpyDeviceToDevice);
-
-		cudaMemcpy(cur_vels.getDataPtr(), vel_buf.getDataPtr(), cur_size * sizeof(Coord), cudaMemcpyDeviceToDevice);
-		cudaMemcpy(cur_vels.getDataPtr() + cur_size, gen_vel.getDataPtr(), gen_pos.size() * sizeof(Coord), cudaMemcpyDeviceToDevice);
-
-		cudaMemcpy(cur_forces.getDataPtr(), force_buf.getDataPtr(), cur_size * sizeof(Coord), cudaMemcpyDeviceToDevice);
-		cudaMemcpy(cur_forces.getDataPtr() + cur_size, gen_pos.getDataPtr(), gen_pos.size() * sizeof(Coord), cudaMemcpyDeviceToDevice);
-
-	}
 }

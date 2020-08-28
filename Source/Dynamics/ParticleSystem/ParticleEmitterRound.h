@@ -25,23 +25,14 @@ namespace PhysIKA
 
 		void setInfo(Coord pos, Coord dir, Real r ,Real distance);
 		
-		void gen_random();
+		void gen_random() override;
 		
-		void advance(Real dt) override;
+		
+		//void advance(Real dt) override;
 	private:
-		Real radius;
-		Real sampling_distance;
-		Coord centre;
-		Coord dir;
-
-		DeviceArray<Coord> gen_pos;
-		DeviceArray<Coord> gen_vel;
 		
-		DeviceArray<Coord> pos_buf;
-		DeviceArray<Coord> vel_buf;
-		DeviceArray<Coord> force_buf;
-		int sum = 0;
 
+		//DEF_NODE_PORTS(ParticleSystems, ParticleSystem<TDataType>, "Particle Systems");
 	};
 
 #ifdef PRECISION_FLOAT
