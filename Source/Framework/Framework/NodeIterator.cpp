@@ -10,14 +10,17 @@ NodeIterator::NodeIterator()
 }
 
 
-NodeIterator::NodeIterator(Node* node)
+NodeIterator::NodeIterator(std::shared_ptr<Node> node)
 {
 	node_current = node;
 
-	auto children = node_current->getChildren();
-	for each (auto c in children)
+	if (node_current != nullptr)
 	{
-		node_stack.push(c.get());
+		auto children = node_current->getChildren();
+		for each (auto c in children)
+		{
+			node_stack.push(c);
+		}
 	}
 }
 
@@ -39,7 +42,7 @@ NodeIterator& NodeIterator::operator++()
 		auto children = node_current->getChildren();
 		for each (auto c in children)
 		{
-			node_stack.push(c.get());
+			node_stack.push(c);
 		}
 	}
 
@@ -52,12 +55,12 @@ NodeIterator& NodeIterator::operator++(int)
 	return operator++();
 }
 
-Node* NodeIterator::operator->() const
+std::shared_ptr<Node> NodeIterator::operator->() const
 {
 	return node_current;
 }
 
-Node* NodeIterator::get() const
+std::shared_ptr<Node> NodeIterator::get() const
 {
 	return node_current;
 }

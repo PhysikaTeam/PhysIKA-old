@@ -20,7 +20,8 @@ using QtNodes::QtBlockDataModel;
 using QtNodes::ValidationState;
 
 
-class NodeData;
+class NodeImportData;
+class NodeExportData;
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
@@ -29,7 +30,7 @@ class QtNodeWidget : public QtBlockDataModel
 	Q_OBJECT
 
 public:
-	QtNodeWidget(Node* base = nullptr);
+	QtNodeWidget(std::shared_ptr<Node> base = nullptr);
 
 	virtual	~QtNodeWidget() {}
 
@@ -61,22 +62,22 @@ public:
 
 	ValidationState validationState() const override;
 
-	Node* getNode();
+	std::shared_ptr<Node> getNode();
 
 protected:
 	virtual void updateModule();
 
 protected:
-	using OutNodePtr = std::vector<std::shared_ptr<NodeData>>;
-	using InNodePtr = std::vector<std::weak_ptr<NodeData>>;
+	using ExportNodePtr = std::shared_ptr<NodeExportData>;
+	using ImportNodePtr = std::vector<std::shared_ptr<NodeImportData>>;
 
-	InNodePtr input_nodes;
-	OutNodePtr output_nodes;
+	ImportNodePtr im_nodes;
+	ExportNodePtr ex_node;
 
 
 	QString m_name;
 
-	Node* m_node = nullptr;
+	std::shared_ptr<Node> m_node = nullptr;
 
 	ValidationState modelValidationState = ValidationState::Warning;
 	QString modelValidationError = QString("Missing or incorrect inputs");

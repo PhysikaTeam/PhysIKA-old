@@ -10,14 +10,14 @@ using PhysIKA::NodePort;
 
 /// The class can potentially incapsulate any user data which
 /// need to be transferred within the Node Editor graph
-class NodeData : public BlockData
+class NodeImportData : public BlockData
 {
 public:
 
-	NodeData()
+	NodeImportData()
 	{}
 
-	NodeData(NodePort* n)
+	NodeImportData(NodePort* n)
 		: node_port(n)
 	{}
 
@@ -27,11 +27,38 @@ public:
 							 "NodePort" };
 	}
 
-	NodePort* getNode() { return node_port; }
+	NodePort* getNodePort() { return node_port; }
 
 	bool isEmpty() { return node_port == nullptr; }
 
 private:
 
 	NodePort* node_port = nullptr;
+};
+
+
+class NodeExportData : public BlockData
+{
+public:
+
+	NodeExportData()
+	{}
+
+	NodeExportData(std::shared_ptr<Node> n)
+		: export_node(n)
+	{}
+
+	BlockDataType type() const override
+	{
+		return BlockDataType{ "nodeexport",
+							 "NodeExport" };
+	}
+
+	std::shared_ptr<Node> getNode() { return export_node; }
+
+	bool isEmpty() { return export_node == nullptr; }
+
+private:
+
+	std::shared_ptr<Node> export_node = nullptr;
 };

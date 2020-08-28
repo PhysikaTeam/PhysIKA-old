@@ -35,10 +35,14 @@ public:
 
 	virtual void addNode(std::weak_ptr<Node> node) = 0;
 
+	inline Node* getParent() { return m_parent; }
+
 protected:
 	std::vector<std::weak_ptr<Node>> m_nodes;
 
 private:
+
+	Node* m_parent = nullptr;
 
 	std::string m_name;
 	std::string m_description;

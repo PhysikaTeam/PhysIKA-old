@@ -4,6 +4,7 @@
 #include "Framework/Action/ActInit.h"
 #include "Framework/Framework/SceneLoaderFactory.h"
 
+
 namespace PhysIKA
 {
 SceneGraph& SceneGraph::getInstance()
@@ -107,5 +108,6 @@ void SceneGraph::setUpperBound(Vector3f upperBound)
 {
 	m_upperBound = upperBound;
 }
+
 
 }

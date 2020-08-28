@@ -5,25 +5,24 @@
 
 #include "NodeData.h"
 
-QtNodeWidget::QtNodeWidget(Node* base)
+QtNodeWidget::QtNodeWidget(std::shared_ptr<Node> base)
 {
 	m_node = base;
 
 	if (m_node != nullptr)
 	{
 		//initialize in node ports
-		int input_num = m_node->getAllNodePorts().size();
-
-		input_nodes.resize(input_num);
 		auto inputs = m_node->getAllNodePorts();
+		int input_num = inputs.size();
+
+		im_nodes.resize(input_num);
 		for (int i = 0; i < inputs.size(); i++)
 		{
-			input_nodes[i] = std::make_shared<NodeData>(inputs[i]);
+			im_nodes[i] = std::make_shared<NodeImportData>(inputs[i]);
 		}
 
 		//initialize out node ports
-		output_nodes.resize(1);
-		output_nodes[0]  = std::make_shared<NodeData>(nullptr);
+		ex_node  = std::make_shared<NodeExportData>(base);
 	}
 
 }
@@ -55,7 +54,7 @@ BlockDataType QtNodeWidget::dataType(PortType portType, PortIndex portIndex) con
 std::shared_ptr<BlockData>
 QtNodeWidget::outData(PortIndex port)
 {
-	return std::static_pointer_cast<BlockData>(output_nodes[0]);;
+	return std::static_pointer_cast<BlockData>(ex_node);
 }
 
 
@@ -89,7 +88,14 @@ QString QtNodeWidget::portCaption(PortType portType, PortIndex portIndex) const
 
 void QtNodeWidget::setInData(std::shared_ptr<BlockData> data, PortIndex portIndex)
 {
-	
+	auto node_port = std::dynamic_pointer_cast<NodeExportData>(data);
+
+	if (node_port != nullptr)
+	{
+		auto nd = node_port->getNode();
+		im_nodes[portIndex]->getNodePort()->addNode(nd);
+	}
+
 	updateModule();
 }
 
@@ -99,7 +105,7 @@ ValidationState QtNodeWidget::validationState() const
 	return modelValidationState;
 }
 
-Node* QtNodeWidget::getNode()
+std::shared_ptr<Node> QtNodeWidget::getNode()
 {
 	return m_node;
 }

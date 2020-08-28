@@ -116,15 +116,15 @@ Real Node::getMass()
 	return m_mass.getValue();
 }
 
-NodeIterator Node::begin()
-{
-	return NodeIterator(this);
-}
-
-NodeIterator Node::end()
-{
-	return NodeIterator();
-}
+// NodeIterator Node::begin()
+// {
+// 	return NodeIterator(this);
+// }
+// 
+// NodeIterator Node::end()
+// {
+// 	return NodeIterator();
+// }
 
 void Node::removeChild(std::shared_ptr<Node> child)
 {
