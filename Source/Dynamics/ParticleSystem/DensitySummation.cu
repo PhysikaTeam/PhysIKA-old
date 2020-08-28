@@ -101,23 +101,44 @@ namespace PhysIKA
 			std::cout << "Exception: " << std::string("DensitySummation's fields are not fully initialized!") << "\n";
 			return false;
 		}
-
+		
 		compute(
 			m_density.getValue(),
 			m_position.getValue(),
 			m_neighborhood.getValue(),
 			m_smoothingLength.getValue(),
 			m_mass.getValue());
+		
 
+		Real sampling_distance = 0.005;
+		int sum = m_smoothingLength.getValue() / sampling_distance;
+		sum += 2;
+
+		SpikyKernel<Real> kern;
+		Real rho_i(0);
+		for(int i = -sum; i <= sum; i ++)
+			for (int j = -sum; j <= sum; j++)
+				for (int k = -sum; k <= sum; k++)
+				{
+					Real x = i * sampling_distance;
+					Real y = j * sampling_distance;
+					Real z = k * sampling_distance;
+					Real r = sqrt(x * x + y * y + z * z);
+					rho_i += m_mass.getValue() * kern.Weight(r, m_smoothingLength.getValue());
+				}	
+
+	//	printf("RHO:          %.10lf\n", rho_i);
 		auto rho = m_density.getReference();
 
 		Reduction<Real>* pReduce = Reduction<Real>::Create(rho->size());
 
-		Real maxRho = pReduce->maximum(rho->getDataPtr(), rho->size());
-
+		//Real maxRho = pReduce->maximum(rho->getDataPtr(), rho->size());
+		
+		Real maxRho = rho_i;
+		//printf("RHO2:          %.10lf\n", maxRho);
 		m_factor = m_restDensity.getValue() / maxRho;
 		
-		delete pReduce;
+//		delete pReduce;
 
 		return true;
 	}

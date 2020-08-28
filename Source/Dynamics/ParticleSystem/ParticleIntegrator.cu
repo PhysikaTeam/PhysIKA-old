@@ -19,6 +19,11 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleIntegrator<TDataType>::begin()
 	{
+		int num = this->inPosition()->getElementCount();
+
+		m_prePosition.resize(num);
+		m_preVelocity.resize(num);
+
 		Function1Pt::copy(m_prePosition, this->inPosition()->getValue());
 		Function1Pt::copy(m_preVelocity, this->inVelocity()->getValue());
 		

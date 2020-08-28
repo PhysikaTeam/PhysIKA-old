@@ -26,6 +26,7 @@
 #include "TabToolbar.h"
 #include "Page.h"
 #include "Group.h"
+#include <stdexcept>
 
 using namespace tt;
 

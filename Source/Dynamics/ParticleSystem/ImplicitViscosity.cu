@@ -100,7 +100,10 @@ namespace PhysIKA
 	{
 		int num = m_position.getElementCount();
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
-
+		
+		m_velOld.resize(num);
+		m_velBuf.resize(num);
+		
 		Real vis = m_viscosity.getValue();
 		Real dt = getParent()->getDt();
 		Function1Pt::copy(m_velOld, m_velocity.getValue());

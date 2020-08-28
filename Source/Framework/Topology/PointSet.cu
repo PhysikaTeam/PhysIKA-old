@@ -123,7 +123,12 @@ namespace PhysIKA
 
 		tagAsChanged();
 	}
-
+	template<typename TDataType>
+	void PointSet<TDataType>::setSize(int size)
+	{
+		m_coords.resize(size);
+		m_coords.reset();
+	}
 
 	template<typename TDataType>
 	void PointSet<TDataType>::setNormals(std::vector<Coord>& normals)

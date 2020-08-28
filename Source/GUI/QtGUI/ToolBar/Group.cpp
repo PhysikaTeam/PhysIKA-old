@@ -36,6 +36,7 @@
 #include "TabToolbar.h"
 #include "CompactToolButton.h"
 #include "ToolButtonStyle.h"
+#include <stdexcept>
 
 using namespace tt;
 
