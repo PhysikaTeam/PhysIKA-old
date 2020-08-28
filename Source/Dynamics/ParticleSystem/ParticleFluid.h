@@ -26,7 +26,7 @@ namespace PhysIKA
 		void advance(Real dt) override;
 
 
-		DEF_NODE_PORTS(ParticleEmitters, ParticleEmitter<TDataType>, "Particle Emitters");
+		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
 
 	private:
 	};

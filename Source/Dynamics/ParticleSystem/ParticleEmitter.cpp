@@ -87,11 +87,12 @@ namespace PhysIKA
 
 	}
 	template<typename TDataType>
-	bool ParticleEmitter<TDataType>::addOutput(std::shared_ptr<ParticleFluid<TDataType>> child, std::shared_ptr<ParticleSystem<TDataType>> self)
+	bool ParticleEmitter<TDataType>::addOutput(std::shared_ptr<ParticleFluid<TDataType>> child, std::shared_ptr<ParticleEmitter<TDataType>> self)
 	{
 		
-		child->addChild(self);
-		child->getParticleEmitters()->addNode(self.get());
+//		child->addChild(self);
+		child->addParticleEmitter(self);
+//		child->getParticleEmitters()->addNode(self.get());
 
 		self->currentForce()->connect(child->currentForce());
 		self->currentPosition()->connect(child->currentPosition());
