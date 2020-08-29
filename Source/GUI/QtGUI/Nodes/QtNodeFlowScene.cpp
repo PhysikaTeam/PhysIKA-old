@@ -77,7 +77,7 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 
 		nodeMap[module_name] = &node;
 
-		QPointF posView;
+		QPointF posView(m->bx(), m->by());
 
 		node.nodeGraphicsObject().setPos(posView);
 

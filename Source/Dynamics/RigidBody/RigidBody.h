@@ -37,6 +37,8 @@ namespace PhysIKA
 		void translate(Coord t);
 		void scale(Real t);
 
+		std::shared_ptr<Node> getSurface() { return m_surfaceNode; }
+
 	public:
 		bool initialize() override;
 

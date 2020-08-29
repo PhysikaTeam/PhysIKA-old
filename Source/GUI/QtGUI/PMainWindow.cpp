@@ -61,7 +61,8 @@
 #include "PPropertyWidget.h"'
 #include "PModuleListWidget.h"
 #include "PSimulationThread.h"
-#include "PSceneFlowWidget.h"
+#include "PNodeFlowWidget.h"
+#include "PModuleFlowWidget.h"
 
 #include <QAction>
 #include <QLayout>
@@ -134,7 +135,7 @@ namespace PhysIKA
 //		setupMenuBar();
 		setupAllWidgets();
 
-		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_flowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
+		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_moduleFlowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
 
 		statusBar()->showMessage(tr("Status Bar"));
 	}
@@ -167,25 +168,23 @@ namespace PhysIKA
 		mainLayout->setSpacing(0);
 		centralWidget->setLayout(mainLayout);
 
-
-		m_vtkOpenglWidget = new PVTKOpenGLWidget();
-		m_vtkOpenglWidget->setObjectName(QStringLiteral("tabView"));
-		m_vtkOpenglWidget->layout()->setMargin(0);
-
-		m_flowView = new PSceneFlowWidget();
-		m_flowView->setObjectName(QStringLiteral("tabEditor"));
-
-
 		//Setup views
 		QTabWidget* tabWidget = new QTabWidget();
 		tabWidget->setObjectName(QStringLiteral("tabWidget"));
 		tabWidget->setGeometry(QRect(140, 60, 361, 241));
 
+		m_vtkOpenglWidget = new PVTKOpenGLWidget();
+		m_vtkOpenglWidget->setObjectName(QStringLiteral("tabView"));
+		m_vtkOpenglWidget->layout()->setMargin(0);
 		tabWidget->addTab(m_vtkOpenglWidget, QString());
-		tabWidget->addTab(m_flowView, QString());
+
+		m_moduleFlowView = new PModuleFlowWidget();
+		m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
+		tabWidget->addTab(m_moduleFlowView, QString());
+
 
 		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
-		tabWidget->setTabText(tabWidget->indexOf(m_flowView), QApplication::translate("MainWindow", "Editor", Q_NULLPTR));
+		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
 
 
 		//Setup animation widget
@@ -390,52 +389,59 @@ namespace PhysIKA
 			uint flags;
 			Qt::DockWidgetArea area;
 		} sets[] = {
-			{ "White", 0, Qt::LeftDockWidgetArea },
-			{ "Blue", 0, Qt::BottomDockWidgetArea },
-			{ "Yellow", 0, Qt::RightDockWidgetArea }
+			{ "SceneGraph", 0, Qt::RightDockWidgetArea },
+			{ "Console", 0, Qt::BottomDockWidgetArea },
+			{ "Property", 0, Qt::LeftDockWidgetArea },
+			{ "NodeEditor", 0, Qt::LeftDockWidgetArea },
+			{ "Module", 0, Qt::RightDockWidgetArea }
 		};
 		const int setCount = sizeof(sets) / sizeof(Set);
 
 		const QIcon qtIcon(QPixmap(":/res/qt.png"));
 
-		PDockWidget *leftDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
-		leftDockWidget->setWindowTitle("Scene Browser");
-		leftDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[0].area, leftDockWidget);
+
+		PDockWidget *nodeEditorDockWidget = new PDockWidget(tr(sets[3].name), this, Qt::WindowFlags(sets[3].flags));
+		nodeEditorDockWidget->setWindowTitle("Node Editor");
+		nodeEditorDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[3].area, nodeEditorDockWidget);
+		m_flowView = new PNodeFlowWidget();
+		m_flowView->setObjectName(QStringLiteral("tabEditor"));
+		nodeEditorDockWidget->setWidget(m_flowView);
+
+		PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
+		sceneDockWidget->setWindowTitle("Scene Browser");
+		sceneDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[0].area, sceneDockWidget);
 		//windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
-
 		m_scenegraphWidget = new PSceneGraphWidget();
-		leftDockWidget->setWidget(m_scenegraphWidget);
+		sceneDockWidget->setWidget(m_scenegraphWidget);
 
-		PDockWidget *propertyDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
+
+		//Set up property dock widget
+		PDockWidget *propertyDockWidget = new PDockWidget(tr(sets[2].name), this, Qt::WindowFlags(sets[2].flags));
 		propertyDockWidget->setWindowTitle("Property Editor");
 		propertyDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[0].area, propertyDockWidget);
+		addDockWidget(sets[2].area, propertyDockWidget);
 		//windowMenu->addMenu(moduleListDockWidget->colorSwatchMenu());
+		m_propertyWidget = new PPropertyWidget();
+//		m_propertyWidget->setOpenGLWidget(m_vtkOpenglWidget);
+		propertyDockWidget->setWidget(m_propertyWidget);
 
-		
 
-
-		PIODockWidget *bottomDockWidget = new PIODockWidget(this, Qt::WindowFlags(sets[1].flags));
-		bottomDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[1].area, bottomDockWidget);
+		PIODockWidget *consoleDockWidget = new PIODockWidget(this, Qt::WindowFlags(sets[1].flags));
+		consoleDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[1].area, consoleDockWidget);
 		//windowMenu->addMenu(bottomDockWidget->colorSwatchMenu());
 
-
-		PDockWidget *rightDockWidget = new PDockWidget(tr(sets[2].name), this, Qt::WindowFlags(sets[2].flags));
-		rightDockWidget->setWindowTitle("Module List");
-		rightDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[2].area, rightDockWidget);
+		//Set up module widget
+		PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
+		moduleDockWidget->setWindowTitle("Module List");
+		moduleDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[4].area, moduleDockWidget);
 		//windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
-
-		m_propertyWidget = new PPropertyWidget();
-		m_propertyWidget->setOpenGLWidget(m_vtkOpenglWidget);
-
 		m_moduleListWidget = new PModuleListWidget();
+		moduleDockWidget->setWidget(m_moduleListWidget);
 
-		rightDockWidget->setWidget(m_moduleListWidget);
-
-		propertyDockWidget->setWidget(m_propertyWidget);
 
 		setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 		setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);

@@ -10,29 +10,26 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notice for more information.
 =========================================================================*/
-#ifndef PFLOWSCENEWIDGET_H
-#define PFLOWSCENEWIDGET_H
+#pragma once
 
 #include <QWidget>
 
 #include "Nodes/QtModuleFlowScene.h"
-#include "Nodes/QtNodeFlowScene.h"
 
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
 
 
 using QtNodes::QtModuleFlowScene;
-using QtNodes::QtNodeFlowScene;
 
 namespace PhysIKA
 {
-	class PSceneFlowWidget : public QWidget
+	class PModuleFlowWidget : public QWidget
 	{
 		Q_OBJECT
 
 	public:
-		explicit PSceneFlowWidget(QWidget *parent = nullptr);
-		~PSceneFlowWidget();
+		explicit PModuleFlowWidget(QWidget *parent = nullptr);
+		~PModuleFlowWidget();
 
 		//void addActor(vtkActor *actor);
 		QtModuleFlowScene* getModuleFlowScene() { return module_scene; }
@@ -43,9 +40,6 @@ namespace PhysIKA
 		QGridLayout*		m_MainLayout;
 
 		QtModuleFlowScene* module_scene = nullptr;
-		QtNodeFlowScene* node_scene = nullptr;
 	};
 
 }
-
-#endif // VTKOPENGLWIDGET_H

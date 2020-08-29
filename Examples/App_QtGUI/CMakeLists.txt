@@ -33,6 +33,7 @@ if(PhysIKA_Qt5_GUI)
             IO 
             ParticleSystem  
             QtGUI
+			RigidBody
             -Wl,--no-whole-archive) 
 
     elseif(WIN32)
@@ -41,6 +42,7 @@ if(PhysIKA_Qt5_GUI)
             Framework 
             IO 
             ParticleSystem  
+			RigidBody
             QtGUI) 
 
         set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG           #/WHOLEARCHIVE is used to link unused static variables for visual studio, which is necessary for auto class registration.
