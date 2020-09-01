@@ -129,6 +129,8 @@ public: // data propagation
   void
   propagateEmptyData() const;
 
+  void propagateDeletedData() const;
+
 Q_SIGNALS:
 
   void

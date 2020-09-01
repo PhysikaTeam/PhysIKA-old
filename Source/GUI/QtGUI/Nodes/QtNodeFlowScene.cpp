@@ -94,32 +94,40 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 	auto createNodeConnections = [&](std::shared_ptr<Node> nd) -> void
 	{
 		auto in_name = nd->getName();
-		auto in_block = nodeMap[nd->getName()];
-
-		auto ports = nd->getAllNodePorts();
-
-		for (int i = 0; i < ports.size(); i++)
+		
+		if (nodeMap.find(in_name) != nodeMap.end())
 		{
-			PhysIKA::NodePortType pType = ports[i]->getPortType();
-			if (PhysIKA::Single == pType)
+			auto in_block = nodeMap[nd->getName()];
+
+			auto ports = nd->getAllNodePorts();
+
+			for (int i = 0; i < ports.size(); i++)
 			{
-				auto node = ports[i]->getNodes()[0];
-				if (node.lock() != nullptr)
+				PhysIKA::NodePortType pType = ports[i]->getPortType();
+				if (PhysIKA::Single == pType)
 				{
-					auto in_block = nodeMap[node.lock()->getName()];
-					createConnection(*in_block, 0, *in_block, i);
-				}
-			}
-			else if(PhysIKA::Multiple == pType)
-			{
-				auto nodes = ports[i]->getNodes();
-				for (int j = 0; j < nodes.size(); j++)
-				{
-					if (nodes[j].lock() != nullptr)
+					auto node = ports[i]->getNodes()[0];
+					if (node != nullptr)
 					{
-						auto out_name = nodes[j].lock()->getName();
-						auto out_block = nodeMap[nodes[j].lock()->getName()];
-						createConnection(*in_block, i, *out_block, 0);
+						auto in_block = nodeMap[node->getName()];
+						createConnection(*in_block, 0, *in_block, i);
+					}
+				}
+				else if (PhysIKA::Multiple == pType)
+				{
+					auto nodes = ports[i]->getNodes();
+					for (int j = 0; j < nodes.size(); j++)
+					{
+						if (nodes[j] != nullptr)
+						{
+							auto out_name = nodes[j]->getName();
+							if (nodeMap.find(out_name) != nodeMap.end())
+							{
+								auto out_block = nodeMap[nodes[j]->getName()];
+								createConnection(*in_block, i, *out_block, 0);
+							}
+							
+						}
 					}
 				}
 			}

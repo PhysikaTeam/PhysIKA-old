@@ -43,6 +43,7 @@ namespace PhysIKA
 
 		//create a child node for surface rendering
 		m_surfaceNode = this->createChild<Node>("Mesh");
+		m_surfaceNode->setActive(false);
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 		m_surfaceNode->setTopologyModule(triSet);
@@ -52,6 +53,7 @@ namespace PhysIKA
 
 		//create a child node for collision
 		m_collisionNode = this->createChild<Node>("Collision");
+		m_collisionNode->setActive(false);
 
 		auto ptSet = std::make_shared<PointSet<TDataType>>();
 		m_collisionNode->setTopologyModule(ptSet);

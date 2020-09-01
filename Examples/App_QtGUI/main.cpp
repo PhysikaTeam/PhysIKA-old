@@ -72,29 +72,25 @@ int main()
 	std::shared_ptr<ParticleEmitterSquare<DataType3f>> child2 = std::make_shared<ParticleEmitterSquare<DataType3f>>();
 	root->addParticleSystem(child1);
 
-	child2->addOutput(child1,child2);
+//	child2->addOutput(child1,child2);
 	//child1->addChild(child2);
-	//child1->getParticleEmitters()->addNode(child2.get());
+	child1->addParticleEmitter(child2);
 
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
 	//child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
 	child1->setMass(100);
 
 	
-
-	
-
 	child2->setInfo(Vector3f(0.3,0.5,0.3), Vector3f(1.0, 1.0, 1.0), 0.1, 0.005);
 
 	auto pRenderer = std::make_shared<PVTKPointSetRender>();
 	pRenderer->setName("VTK Point Renderer");
-	child1->addVisualModule(pRenderer);
+	child2->addVisualModule(pRenderer);
 
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);
 	rigidbody->loadShape("../../Media/bowl/bowl.obj");
-	rigidbody->setActive(false);
 
 	auto sRenderer = std::make_shared<PVTKSurfaceMeshRender>();
 	sRenderer->setName("VTK Surface Renderer");

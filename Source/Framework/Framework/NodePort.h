@@ -31,14 +31,20 @@ public:
 
 	void setPortType(NodePortType portType);
 
-	virtual std::vector<std::weak_ptr<Node>>& getNodes() { return m_nodes; }
+	virtual std::vector<std::shared_ptr<Node>>& getNodes() { return m_nodes; }
 
-	virtual void addNode(std::weak_ptr<Node> node) = 0;
+	virtual bool addNode(std::shared_ptr<Node> node) = 0;
+
+	virtual bool removeNode(std::shared_ptr<Node> node) = 0;
 
 	inline Node* getParent() { return m_parent; }
 
 protected:
-	std::vector<std::weak_ptr<Node>> m_nodes;
+	bool addNodeToParent(std::shared_ptr<Node> node);
+
+	bool removeNodeFromParent(std::shared_ptr<Node> node);
+
+	std::vector<std::shared_ptr<Node>> m_nodes;
 
 private:
 
@@ -62,7 +68,50 @@ public:
 	};
 	~SingleNodePort() {};
 
-	void addNode(std::weak_ptr<Node> node) override { m_nodes[0] = node; }
+	bool addNode(std::shared_ptr<Node> node) override
+	{ 
+		auto d_node = std::dynamic_pointer_cast<T>(node);
+		if (d_node != nullptr)
+		{
+			if (m_nodes[0] != node)
+			{
+				if (m_nodes[0] != nullptr)
+				{
+					this->removeNodeFromParent(m_nodes[0]);
+				}
+				
+				this->addNodeToParent(node);
+				m_nodes[0] = node;
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool removeNode(std::shared_ptr<Node> node)
+	{
+		m_nodes[0] = nullptr;
+
+		return true;
+	}
+
+	std::vector<std::shared_ptr<Node>>& getNodes() override
+	{
+		m_nodes.resize(1);
+		m_nodes[0] = std::dynamic_pointer_cast<Node>(m_derived_node);
+
+		return m_nodes;
+	}
+
+	inline std::shared_ptr<T>& getDerivedNode()
+	{
+		return m_derived_node;
+	}
+
+private:
+	std::shared_ptr<T> m_derived_node;
 };
 
 
@@ -78,30 +127,79 @@ public:
 
 	~MultipleNodePort() {};
 
-	void addNode(std::weak_ptr<Node> node) override { 
-		auto d_node = std::dynamic_pointer_cast<T>(node.lock());
+	bool addNode(std::shared_ptr<Node> node) override {
+		auto d_node = std::dynamic_pointer_cast<T>(node);
 		if (d_node != nullptr)
 		{
-			m_derived_nodes.push_back(d_node);
+			auto it = find(m_derived_nodes.begin(), m_derived_nodes.end(), d_node);
+
+			if (it == m_derived_nodes.end())
+			{
+				m_derived_nodes.push_back(d_node);
+
+				this->addNodeToParent(node);
+
+				return true;
+			}
 		}
+
+		return false;
 	}
 
-	std::vector<std::weak_ptr<Node>>& getNodes() override
+	bool addDerivedNode(std::shared_ptr<T> d_node) {
+		if (d_node != nullptr)
+		{
+			auto it = find(m_derived_nodes.begin(), m_derived_nodes.end(), d_node);
+
+			if (it == m_derived_nodes.end())
+			{
+				m_derived_nodes.push_back(d_node);
+
+				this->addNodeToParent(std::dynamic_pointer_cast<Node>(d_node));
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool removeNode(std::shared_ptr<Node> node)  override
+	{
+		auto d_node = std::dynamic_pointer_cast<T>(node);
+
+		if (d_node != nullptr)
+		{
+			auto it = find(m_derived_nodes.begin(), m_derived_nodes.end(), d_node);
+
+			if (it != m_derived_nodes.end())
+			{
+				m_derived_nodes.erase(it);
+				this->removeNodeFromParent(node);
+
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	std::vector<std::shared_ptr<Node>>& getNodes() override
 	{
 		m_nodes.resize(m_derived_nodes.size());
 		for (int i = 0; i < m_nodes.size(); i++)
 		{
-			m_nodes[i] = std::dynamic_pointer_cast<Node>(m_derived_nodes[i].lock());
+			m_nodes[i] = std::dynamic_pointer_cast<Node>(m_derived_nodes[i]);
 		}
 		return m_nodes;
 	}
 
-	inline std::vector<std::weak_ptr<T>>& getDerivedNodes()
+	inline std::vector<std::shared_ptr<T>>& getDerivedNodes()
 	{
 		return m_derived_nodes;
 	}
 private:
-	std::vector<std::weak_ptr<T>> m_derived_nodes;
+	std::vector<std::shared_ptr<T>> m_derived_nodes;
 };
 
 

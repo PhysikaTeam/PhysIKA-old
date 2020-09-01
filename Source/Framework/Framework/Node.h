@@ -102,6 +102,8 @@ public:
 		return child;
 	}
 
+	bool hasChild(std::shared_ptr<Node> child);
+
 	void removeChild(std::shared_ptr<Node> child);
 
 	void removeAllChildren();
@@ -111,7 +113,7 @@ public:
 	 * 
 	 * @return ListPtr<Node> Children list
 	 */
-	ListPtr<Node> getChildren() { return m_children; }
+	ListPtr<Node>& getChildren() { return m_children; }
 
 
 	std::shared_ptr<DeviceContext> getContext();

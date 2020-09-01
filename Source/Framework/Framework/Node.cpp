@@ -116,6 +116,13 @@ Real Node::getMass()
 	return m_mass.getValue();
 }
 
+bool Node::hasChild(std::shared_ptr<Node> child)
+{
+	auto it = find(m_children.begin(), m_children.end(), child);
+
+	return it == m_children.end() ? false : true;
+}
+
 // NodeIterator Node::begin()
 // {
 // 	return NodeIterator(this);
