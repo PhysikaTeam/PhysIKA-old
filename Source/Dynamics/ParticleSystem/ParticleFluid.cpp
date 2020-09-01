@@ -49,16 +49,18 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool ParticleFluid<TDataType>::addEmitter(std::shared_ptr<ParticleEmitter<TDataType>> child)
 	{
-
-		this->addChild(child);
+		
+		
 		//m_ParticleEmitter = child;
 		
-	    this->getParticleEmitters()->addNode(child.get());
+	    //this->getParticleEmitters()->addNode(child.get());
+		this->addParticleEmitter(child);
+		//this->addChild(child);
 
 		child->currentForce()->connect(this->currentForce());
 		child->currentPosition()->connect(this->currentPosition());
 		child->currentVelocity()->connect(this->currentVelocity());
-
+		
 		return true;
 	}
 }
