@@ -93,7 +93,15 @@ void QtNodeWidget::setInData(std::shared_ptr<BlockData> data, PortIndex portInde
 	if (node_port != nullptr)
 	{
 		auto nd = node_port->getNode();
-		im_nodes[portIndex]->getNodePort()->addNode(nd);
+
+		if (node_port->isToDisconnected())
+		{
+			im_nodes[portIndex]->getNodePort()->removeNode(nd);
+		}
+		else
+		{
+			im_nodes[portIndex]->getNodePort()->addNode(nd);
+		}
 	}
 
 	updateModule();

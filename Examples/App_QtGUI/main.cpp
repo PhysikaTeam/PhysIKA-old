@@ -16,6 +16,7 @@
 #include "Dynamics/ParticleSystem/ParticleFluid.h"
 #include "Dynamics/ParticleSystem/ParticleEmitter.h"
 #include "Dynamics/ParticleSystem/ParticleEmitterRound.h"
+#include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/ParticleSystem/ParticleEmitterSquare.h"
 using namespace std;
 using namespace PhysIKA;
@@ -56,38 +57,44 @@ int main()
 	scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(1.5, 2, 1.5), 0.02, true);
+//	root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(1.5, 2, 1.5), 0.02, true);
 	root->loadSDF("../../Media/bowl/bowl.sdf", false);
 	root->setName("static");
+//	root->setBlockCoord(900, 0);
 
 	
 
 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
 	//root->addParticleSystem(child1);
 	child1->setName("fluid");
+//	child1->setBlockCoord(400, 50);
 
 	std::shared_ptr<ParticleEmitterSquare<DataType3f>> child2 = std::make_shared<ParticleEmitterSquare<DataType3f>>();
 	root->addParticleSystem(child1);
 
-	//child2->addOutput(child1,child2);
-	child1->addEmitter(child2);
-	
+//	child2->addOutput(child1,child2);
+	//child1->addChild(child2);
+	child1->addParticleEmitter(child2);
+
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
 	//child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
 	child1->setMass(100);
 
 	
-
-	
-
 	child2->setInfo(Vector3f(0.3,0.5,0.3), Vector3f(1.0, 1.0, 1.0), 0.1, 0.005);
 
 	auto pRenderer = std::make_shared<PVTKPointSetRender>();
 	pRenderer->setName("VTK Point Renderer");
-	child1->addVisualModule(pRenderer);
+	child2->addVisualModule(pRenderer);
 
 
+	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
+	root->addRigidBody(rigidbody);
+	rigidbody->loadShape("../../Media/bowl/bowl.obj");
 
+	auto sRenderer = std::make_shared<PVTKSurfaceMeshRender>();
+	sRenderer->setName("VTK Surface Renderer");
+	rigidbody->getSurface()->addVisualModule(sRenderer);
 
 	QtApp window;
 	window.createWindow(1024, 768);

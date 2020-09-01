@@ -8,6 +8,7 @@ namespace PhysIKA
 		: m_name(name)
 		, m_description(description)
 		, m_portType(NodePortType::Unknown)
+		, m_parent(parent)
 	{
 		parent->addNodePort(this);
 	}
@@ -20,6 +21,28 @@ namespace PhysIKA
 	void NodePort::setPortType(NodePortType portType)
 	{
 		m_portType = portType;
+	}
+
+	bool NodePort::addNodeToParent(std::shared_ptr<Node> node)
+	{
+		if (!m_parent->hasChild(node))
+		{
+			m_parent->addChild(node);
+			return true;
+		}
+
+		return false;
+	}
+
+	bool NodePort::removeNodeFromParent(std::shared_ptr<Node> node)
+	{
+		if (m_parent->hasChild(node))
+		{
+			m_parent->removeChild(node);
+			return true;
+		}
+
+		return false;
 	}
 
 }

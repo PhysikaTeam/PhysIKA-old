@@ -86,9 +86,7 @@ void QtModuleFlowScene::showNodeFlow(Node* node)
 
 		moduleMap[module_name] = &node;
 
-		auto pos = m->getPos();
-
-		QPointF posView(pos[0], pos[1]);
+		QPointF posView(m->bx(), m->by());
 
 		node.nodeGraphicsObject().setPos(posView);
 
@@ -156,7 +154,7 @@ void QtModuleFlowScene::moveModulePosition(QtBlock& n, const QPointF& newLocatio
 
 	if (m != nullptr)
 	{
-		m->setPos(PhysIKA::Vector2f(newLocation.x(), newLocation.y()));
+		m->setBlockCoord(newLocation.x(), newLocation.y());
 	}
 }
 

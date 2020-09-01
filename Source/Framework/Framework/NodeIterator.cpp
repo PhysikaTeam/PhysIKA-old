@@ -19,7 +19,10 @@ NodeIterator::NodeIterator(std::shared_ptr<Node> node)
 		auto children = node_current->getChildren();
 		for each (auto c in children)
 		{
-			node_stack.push(c);
+			if (c->isActive())
+			{
+				node_stack.push(c);
+			}
 		}
 	}
 }
@@ -42,7 +45,10 @@ NodeIterator& NodeIterator::operator++()
 		auto children = node_current->getChildren();
 		for each (auto c in children)
 		{
-			node_stack.push(c);
+			if (c->isActive())
+			{
+				node_stack.push(c);
+			}
 		}
 	}
 

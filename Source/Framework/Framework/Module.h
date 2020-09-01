@@ -72,8 +72,6 @@ public:
 
 	bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true) override;
 
-	void setPos(Vector2f& pos) { m_pos = pos; }
-	Vector2f getPos() { return m_pos; }
 
 protected:
 	/// \brief Initialization function for each module
@@ -88,8 +86,6 @@ private:
 	Node* m_node;
 	std::string m_module_name;
 	bool m_initialized;
-
-	Vector2f m_pos;
 
 	std::vector<Field*> fields_input;
 	std::vector<Field*> fields_output;

@@ -99,14 +99,13 @@ public:									\
 
 #define DEF_NODE_PORTS(name, T, desc)				\
 private:									\
-	MultipleNodePort<T> multiple_##name = MultipleNodePort<T>(std::string(#name), desc, this);					\
+	MultipleNodePort<T> multiple_##name = MultipleNodePort<T>(std::string(#name)+std::string("(s)"), desc, this);					\
 public:									\
 	inline MultipleNodePort<T>* inport##name##s() { return &multiple_##name; }			\
-	inline std::vector<std::weak_ptr<T>>& get##name##s(){return multiple_##name.getDerivedNodes();}				\
+	inline std::vector<std::shared_ptr<T>>& get##name##s(){return multiple_##name.getDerivedNodes();}				\
 												\
 	bool add##name(std::shared_ptr<T> c){		\
-		this->addChild(c);						\
-		multiple_##name.addNode(c);				\
+		multiple_##name.addDerivedNode(c);				\
 		return true;							\
 	}
 }

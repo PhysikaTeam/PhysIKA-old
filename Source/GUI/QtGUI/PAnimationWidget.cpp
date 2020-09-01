@@ -34,11 +34,11 @@ namespace PhysIKA
 		m_end_spinbox->setFixedSize(60, 25);
 		m_end_spinbox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 		m_end_spinbox->setMaximum(99999);
-		m_end_spinbox->setValue(99);
+		m_end_spinbox->setValue(999);
 
 		m_sim_scrollbar = new QScrollBar(Qt::Horizontal, this);
 		m_sim_scrollbar->setFixedHeight(25);
-		m_sim_scrollbar->setPageStep(99);
+		m_sim_scrollbar->setPageStep(999);
 
 		frameLayout->addWidget(m_start_spinbox, 0, 0);
 		frameLayout->addWidget(m_sim_scrollbar, 0, 1);

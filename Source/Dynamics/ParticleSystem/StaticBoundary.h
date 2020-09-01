@@ -2,9 +2,12 @@
 #include "Framework/Framework/Node.h"
 #include "Framework/Framework/FieldArray.h"
 
+#include "Dynamics/RigidBody/RigidBody.h"
+#include "Dynamics/ParticleSystem/ParticleSystem.h"
+
 namespace PhysIKA {
-	template <typename TDataType> class RigidBody;
-	template <typename TDataType> class ParticleSystem;
+// 	template <typename TDataType> class RigidBody;
+// 	template <typename TDataType> class ParticleSystem;
 	template <typename TDataType> class DistanceField3D;
 	template <typename TDataType> class BoundaryConstraint;
 
@@ -19,7 +22,7 @@ namespace PhysIKA {
 		StaticBoundary();
 		~StaticBoundary() override;
 
-		bool addRigidBody(std::shared_ptr<RigidBody<TDataType>> child);
+//		bool addRigidBody(std::shared_ptr<RigidBody<TDataType>> child);
 //		bool addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child);
 
 		void advance(Real dt) override;
@@ -38,6 +41,7 @@ namespace PhysIKA {
 		std::vector<std::shared_ptr<RigidBody<TDataType>>> m_rigids;
 		std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;
 
+		DEF_NODE_PORTS(RigidBody, RigidBody<TDataType>, "A rigid body");
 		DEF_NODE_PORTS(ParticleSystem, ParticleSystem<TDataType>, "Particle Systems");
 	};
 

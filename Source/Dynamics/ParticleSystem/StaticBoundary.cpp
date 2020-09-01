@@ -2,8 +2,6 @@
 #include "Core/Utility.h"
 #include "Framework/Framework/Log.h"
 #include "Framework/Framework/Node.h"
-#include "Dynamics/RigidBody/RigidBody.h"
-#include "Dynamics/ParticleSystem/ParticleSystem.h"
 #include "Dynamics/ParticleSystem/BoundaryConstraint.h"
 
 #include "Framework/Topology/DistanceField3D.h"
@@ -24,13 +22,13 @@ namespace PhysIKA
 	{
 	}
 
-	template<typename TDataType>
-	bool StaticBoundary<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
-	{
-		this->addChild(child);
-		m_rigids.push_back(child);
-		return true;
-	}
+// 	template<typename TDataType>
+// 	bool StaticBoundary<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
+// 	{
+// 		this->addChild(child);
+// 		m_rigids.push_back(child);
+// 		return true;
+// 	}
 
 // 	template<typename TDataType>
 // 	bool StaticBoundary<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
@@ -53,8 +51,8 @@ namespace PhysIKA
 
 			for (int i = 0; i < pSys.size(); i++)
 			{
-				DeviceArrayField<Coord>* posFd = pSys[i].lock()->currentPosition();
-				DeviceArrayField<Coord>* velFd = pSys[i].lock()->currentVelocity();
+				DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
+				DeviceArrayField<Coord>* velFd = pSys[i]->currentVelocity();
 				m_obstacles[t]->constrain(posFd->getValue(), velFd->getValue(), dt);
 			}
 		}

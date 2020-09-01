@@ -1,4 +1,4 @@
-#include "PSceneFlowWidget.h"
+#include "PModuleFlowWidget.h"
 
 //QT
 #include <QGridLayout>
@@ -11,7 +11,7 @@
 
 namespace PhysIKA
 {
-	PSceneFlowWidget::PSceneFlowWidget(QWidget *parent) :
+	PModuleFlowWidget::PModuleFlowWidget(QWidget *parent) :
 		QWidget(parent)
 	{
 		auto menuBar = new QMenuBar();
@@ -24,8 +24,7 @@ namespace PhysIKA
 
 		l->addWidget(menuBar);
 		module_scene = new QtModuleFlowScene(this);
-		node_scene = new QtNodeFlowScene(this);
-		l->addWidget(new QtNodes::QtFlowView(node_scene));
+		l->addWidget(new QtNodes::QtFlowView(module_scene));
 		l->setContentsMargins(0, 0, 0, 0);
 		l->setSpacing(0);
 
@@ -39,7 +38,7 @@ namespace PhysIKA
 			module_scene, &QtModuleFlowScene::clearScene);
 	}
 
-	PSceneFlowWidget::~PSceneFlowWidget()
+	PModuleFlowWidget::~PModuleFlowWidget()
 	{
 	}
 }

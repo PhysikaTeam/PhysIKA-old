@@ -252,7 +252,6 @@ namespace PhysIKA
 	PPropertyWidget::PPropertyWidget(QWidget *parent)
 		: QWidget(parent)
 		, m_main_layout()
-		, m_openglWidget(nullptr)
 	{
 		m_main_layout = new QVBoxLayout;
 		m_scroll_area = new QScrollArea;

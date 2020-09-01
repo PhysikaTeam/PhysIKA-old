@@ -67,7 +67,8 @@ QtConnection::
 ~QtConnection()
 {
   if (complete()) connectionMadeIncomplete(*this);
-  propagateEmptyData();
+
+  this->propagateDeletedData();
 
   if (_inNode)
   {
@@ -443,4 +444,16 @@ propagateEmptyData() const
   std::shared_ptr<BlockData> emptyData;
 
   propagateData(emptyData);
+}
+
+void QtNodes::QtConnection::propagateDeletedData() const
+{
+	std::shared_ptr<BlockData> deletedData;
+	if (_outNode)
+	{
+		deletedData = _outNode->nodeDataModel()->outData(_outPortIndex);
+		deletedData->setDisconnected(true);
+	}
+
+	propagateData(deletedData);
 }

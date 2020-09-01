@@ -102,7 +102,6 @@ namespace PhysIKA
 		~PPropertyWidget();
 
 		virtual QSize sizeHint() const;
-		void setOpenGLWidget(PVTKOpenGLWidget* widget) { m_openglWidget = widget; }
 
 //		void clear();
 
@@ -129,8 +128,6 @@ namespace PhysIKA
 		QGridLayout* m_scroll_layout;
 
 		std::vector<QWidget*> m_widgets;
-
-		PVTKOpenGLWidget* m_openglWidget;
 	};
 
 }
