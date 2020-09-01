@@ -1,5 +1,6 @@
 #pragma once
 #include <stack>
+#include <memory>
 
 namespace PhysIKA
 {
@@ -10,7 +11,7 @@ namespace PhysIKA
 	{
 	public:
 		NodeIterator();
-		NodeIterator(Node* node);
+		NodeIterator(std::shared_ptr<Node> node);
 
 		~NodeIterator();
 		
@@ -20,14 +21,14 @@ namespace PhysIKA
 		NodeIterator& operator++();
 		NodeIterator& operator++(int);
 
-		Node* operator->() const;
+		std::shared_ptr<Node> operator->() const;
 
-		Node* get() const;
+		std::shared_ptr<Node> get() const;
 
 	protected:
-		Node* node_current;
+		std::shared_ptr<Node> node_current;
 
-		std::stack<Node*> node_stack;
+		std::stack<std::shared_ptr<Node>> node_stack;
 
 		friend class Node;
 	};

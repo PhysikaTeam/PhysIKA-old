@@ -34,12 +34,12 @@ QtNodeFlowScene::QtNodeFlowScene(QObject * parent)
 
 		QString str = QString::fromStdString(c.first);
 		auto obj = PhysIKA::Object::createObject(str.toStdString());
-		auto node = dynamic_cast<PhysIKA::Node*>(obj);
+		std::shared_ptr<Node> node(dynamic_cast<PhysIKA::Node*>(obj));
 
 		if (node != nullptr)
 		{
 			QtNodes::DataModelRegistry::RegistryItemCreator creator = [str, node]() {
-				auto dat = std::make_unique<QtNodeWidget>(node);
+				auto dat = std::make_unique<QtNodeWidget>(std::move(node));
 				dat->setName(str);
 				return dat; };
 
@@ -67,7 +67,7 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 
 	auto root = scn->getRootNode();
 
-	auto addNodeWidget = [&](Node* m) -> void
+	auto addNodeWidget = [&](std::shared_ptr<Node> m) -> void
 	{
 		auto module_name = m->getName();
 
@@ -84,12 +84,14 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 		this->nodePlaced(node);
 	};
 
-	for (auto it = root->begin(); it != root->end(); it++)
+	SceneGraph::Iterator it_end(nullptr);
+
+	for (auto it = scn->begin(); it != it_end; it++)
 	{
 		addNodeWidget(it.get());
 	}
 
-	auto createNodeConnections = [&](Node* nd) -> void
+	auto createNodeConnections = [&](std::shared_ptr<Node> nd) -> void
 	{
 		auto in_name = nd->getName();
 		auto in_block = nodeMap[nd->getName()];
@@ -102,9 +104,9 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 			if (PhysIKA::Single == pType)
 			{
 				auto node = ports[i]->getNodes()[0];
-				if (node != nullptr)
+				if (node.lock() != nullptr)
 				{
-					auto in_block = nodeMap[node->getName()];
+					auto in_block = nodeMap[node.lock()->getName()];
 					createConnection(*in_block, 0, *in_block, i);
 				}
 			}
@@ -113,10 +115,10 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 				auto nodes = ports[i]->getNodes();
 				for (int j = 0; j < nodes.size(); j++)
 				{
-					if (nodes[j] != nullptr)
+					if (nodes[j].lock() != nullptr)
 					{
-						auto out_name = nodes[j]->getName();
-						auto out_block = nodeMap[nodes[j]->getName()];
+						auto out_name = nodes[j].lock()->getName();
+						auto out_block = nodeMap[nodes[j].lock()->getName()];
 						createConnection(*in_block, i, *out_block, 0);
 					}
 				}
@@ -124,7 +126,7 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 		}
 	};
 
-	for (auto it = root->begin(); it != root->end(); it++)
+	for (auto it = scn->begin(); it != it_end; it++)
 	{
 		createNodeConnections(it.get());
 	}

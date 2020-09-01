@@ -32,27 +32,29 @@ namespace PhysIKA
 		return true;
 	}
 
-	template<typename TDataType>
-	bool StaticBoundary<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
-	{
-		this->addChild(child);
-		m_particleSystems.push_back(child);
-
-		this->getParticleSystems()->addNode(child.get());
-
-		return true;
-	}
+// 	template<typename TDataType>
+// 	bool StaticBoundary<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
+// 	{
+// 		this->addChild(child);
+// 		m_particleSystems.push_back(child);
+// 
+// 		this->inportParticleSystems()->addNode(child);
+// 
+// 		return true;
+// 	}
 
 	template<typename TDataType>
 	void StaticBoundary<TDataType>::advance(Real dt)
 	{
+		auto pSys = this->getParticleSystems();
+
 		for (size_t t = 0; t < m_obstacles.size(); t++)
 		{
 
-			for (int i = 0; i < m_particleSystems.size(); i++)
+			for (int i = 0; i < pSys.size(); i++)
 			{
-				DeviceArrayField<Coord>* posFd = m_particleSystems[i]->currentPosition();
-				DeviceArrayField<Coord>* velFd = m_particleSystems[i]->currentVelocity();
+				DeviceArrayField<Coord>* posFd = pSys[i].lock()->currentPosition();
+				DeviceArrayField<Coord>* velFd = pSys[i].lock()->currentVelocity();
 				m_obstacles[t]->constrain(posFd->getValue(), velFd->getValue(), dt);
 			}
 		}

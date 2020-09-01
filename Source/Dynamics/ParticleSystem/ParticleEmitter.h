@@ -4,25 +4,24 @@
 namespace PhysIKA
 {
 	/*!
-	*	\class	ParticleFluid
-	*	\brief	Position-based fluids.
+	*	\class	ParticleEimitter
+	*	\brief	
 	*
-	*	This class implements a position-based fluid solver.
-	*	Refer to Macklin and Muller's "Position Based Fluids" for details
+	*	
+	*	
 	*
 	*/
 	template <typename T> class ParticleFluid;
 	template<typename TDataType>
 	class ParticleEmitter : public ParticleSystem<TDataType>
 	{
-		DECLARE_CLASS_1(ParticleEmitter, TDataType)
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
 		ParticleEmitter(std::string name = "particle emitter");
 		virtual ~ParticleEmitter();
-		bool addOutput(std::shared_ptr<ParticleFluid<TDataType>> child, std::shared_ptr<ParticleSystem<TDataType>> self);
+		bool addOutput(std::shared_ptr<ParticleFluid<TDataType>> child, std::shared_ptr<ParticleEmitter<TDataType>> self);
 		void getRotMat(Coord rot);
 		void advance(Real dt) override;
 		virtual void gen_random();

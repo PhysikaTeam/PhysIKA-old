@@ -7,6 +7,7 @@
 //#include "Dynamics/RigidBody/RigidBody2.h"
 //#include "Dynamics/RigidBody/Joint.h"
 #include "Framework/Framework/SceneGraph.h"
+#include "Dynamics/ParticleSystem/ParticleSystem.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "GUI/GlutGUI/GLApp.h"
 #include <string>

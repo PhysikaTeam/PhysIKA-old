@@ -32,13 +32,11 @@
 
 namespace PhysIKA {
 class Action;
-class NodeIterator;
 
 class Node : public Base
 {
 	DECLARE_CLASS(Node)
 public:
-	typedef NodeIterator Iterator;
 
 	template<class T>
 	using SPtr = std::shared_ptr<T>;
@@ -76,8 +74,8 @@ public:
 	void setMass(Real mass);
 	Real getMass();
 
-	Iterator begin();
-	Iterator end();
+// 	Iterator begin();
+// 	Iterator end();
 
 	/**
 	 * @brief Create a Child object

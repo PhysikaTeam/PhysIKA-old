@@ -4,7 +4,7 @@
 #include "Dynamics/RigidBody/RigidUtil.h"
 
 
-template<typename T> 
+template<typename T>
 void out(const Quaternion<T>& q)
 {
 	std::cout << q.x() << "  " << q.y() << "  " << q.z() << "  " << q.w() << std::endl;
@@ -64,7 +64,7 @@ int main()
 	//testMatInverse();
 
 	//demoLoadFile();
-	
+
 	//demo_PrismaticJoint();
 	//demo_PlanarJoint();
 
@@ -89,8 +89,8 @@ int main()
 
 	//out(qxy.rotate(tmpv));
 	//out(qyx.rotate(tmpv));
-	
-	
+
+
 
 
 

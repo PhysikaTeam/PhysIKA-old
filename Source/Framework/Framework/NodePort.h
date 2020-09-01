@@ -31,14 +31,18 @@ public:
 
 	void setPortType(NodePortType portType);
 
-	std::vector<Node*>& getNodes() { return m_nodes; }
+	virtual std::vector<std::weak_ptr<Node>>& getNodes() { return m_nodes; }
 
-	virtual void addNode(Node* node) = 0;
+	virtual void addNode(std::weak_ptr<Node> node) = 0;
+
+	inline Node* getParent() { return m_parent; }
 
 protected:
-	std::vector<Node*> m_nodes;
+	std::vector<std::weak_ptr<Node>> m_nodes;
 
 private:
+
+	Node* m_parent = nullptr;
 
 	std::string m_name;
 	std::string m_description;
@@ -58,7 +62,7 @@ public:
 	};
 	~SingleNodePort() {};
 
-	void addNode(Node* node) override { m_nodes[0] = node; }
+	void addNode(std::weak_ptr<Node> node) override { m_nodes[0] = node; }
 };
 
 
@@ -74,7 +78,30 @@ public:
 
 	~MultipleNodePort() {};
 
-	void addNode(Node* node) override { m_nodes.push_back(node); }
+	void addNode(std::weak_ptr<Node> node) override { 
+		auto d_node = std::dynamic_pointer_cast<T>(node.lock());
+		if (d_node != nullptr)
+		{
+			m_derived_nodes.push_back(d_node);
+		}
+	}
+
+	std::vector<std::weak_ptr<Node>>& getNodes() override
+	{
+		m_nodes.resize(m_derived_nodes.size());
+		for (int i = 0; i < m_nodes.size(); i++)
+		{
+			m_nodes[i] = std::dynamic_pointer_cast<Node>(m_derived_nodes[i].lock());
+		}
+		return m_nodes;
+	}
+
+	inline std::vector<std::weak_ptr<T>>& getDerivedNodes()
+	{
+		return m_derived_nodes;
+	}
+private:
+	std::vector<std::weak_ptr<T>> m_derived_nodes;
 };
 
 

@@ -89,7 +89,6 @@ private:									\
 	NeighborField<T> next_##name = NeighborField<T>(std::string(#name), desc, FieldType::Next, this, size, nbr);	\
 public:									\
 	inline NeighborField<T>* next##name() {return &next_##name;}
-}
 
 
 #define DEF_NODE_PORT(name, T, desc)				\
@@ -102,4 +101,12 @@ public:									\
 private:									\
 	MultipleNodePort<T> multiple_##name = MultipleNodePort<T>(std::string(#name), desc, this);					\
 public:									\
-	inline MultipleNodePort<T>* get##name() {	return &multiple_##name; }
+	inline MultipleNodePort<T>* inport##name##s() { return &multiple_##name; }			\
+	inline std::vector<std::weak_ptr<T>>& get##name##s(){return multiple_##name.getDerivedNodes();}				\
+												\
+	bool add##name(std::shared_ptr<T> c){		\
+		this->addChild(c);						\
+		multiple_##name.addNode(c);				\
+		return true;							\
+	}
+}

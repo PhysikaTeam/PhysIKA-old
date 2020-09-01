@@ -27,7 +27,7 @@ namespace PhysIKA
 
 		bool addEmitter(std::shared_ptr<ParticleEmitter<TDataType>> child);
 
-		DEF_NODE_PORTS(ParticleEmitters, ParticleEmitter<TDataType>, "Particle Emitters");
+		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
 
 	private:
 		std::shared_ptr<ParticleEmitter<TDataType>> m_ParticleEmitter = NULL;
