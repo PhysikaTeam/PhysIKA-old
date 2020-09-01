@@ -157,11 +157,12 @@ namespace PhysIKA
 			printf("resetStatus1 %s %d\n", this->getName(), 0);
 			auto pts = m_pSet->getPoints();
 
-			this->currentPosition()->setElementCount(pts.size());
-			this->currentVelocity()->setElementCount(pts.size());
-			this->currentForce()->setElementCount(pts.size());
+			this->currentPosition()->setElementCount(0);
+			this->currentVelocity()->setElementCount(0);
+			this->currentForce()->setElementCount(0);
 
-			Function1Pt::copy(this->currentPosition()->getValue(), pts);
+			//Function1Pt::copy(this->currentPosition()->getValue(), pts);
+			m_pSet->setSize(0);
 			this->currentVelocity()->getReference()->reset();
 		}
 		else

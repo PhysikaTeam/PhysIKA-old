@@ -99,7 +99,7 @@ namespace PhysIKA
 				for (Real y = lo; y <= hi; y += sampling_distance)
 				{
 					Coord p = Coord(x, 0, y);
-					if ( rand() % 4 == 0)
+					if ( rand() % 40 == 0)
 					{/*
 						Real aa, bb, cc;
 						do
