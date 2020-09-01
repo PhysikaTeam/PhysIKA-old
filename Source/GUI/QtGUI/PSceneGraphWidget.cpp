@@ -58,7 +58,8 @@ namespace PhysIKA
 		SceneGraph& scenegraph = SceneGraph::getInstance();
 		std::shared_ptr<Node> root = scenegraph.getRootNode();
 
-		root->traverseTopDown<PInsertTreeNodeAction>(this);
+		if(root != nullptr)
+			root->traverseTopDown<PInsertTreeNodeAction>(this);
 
 //		PSceneGraphNode* root = new PSceneGraphNode(scenegraph.getRootNode(), this);
 	}

@@ -36,9 +36,31 @@ namespace PhysIKA
 // 		pbf->getDensityField()->connect(this->getRenderModule()->m_scalarIndex);
 // 		this->getRenderModule()->setColorRange(950, 1100);
 // 		this->getRenderModule()->setReferenceColor(1000);
+		
 
 		auto nModel = this->getNumericalModel();
 		nModel->step(this->getDt());
 		printf("%d\n", this->currentPosition()->getElementCount());
+
+		//if (m_ParticleEmitter != NULL)
+		//	m_ParticleEmitter->advance(this->getDt());
+	}
+
+	template<typename TDataType>
+	bool ParticleFluid<TDataType>::addEmitter(std::shared_ptr<ParticleEmitter<TDataType>> child)
+	{
+		
+		
+		//m_ParticleEmitter = child;
+		
+	    //this->getParticleEmitters()->addNode(child.get());
+		this->addParticleEmitter(child);
+		//this->addChild(child);
+
+		child->currentForce()->connect(this->currentForce());
+		child->currentPosition()->connect(this->currentPosition());
+		child->currentVelocity()->connect(this->currentVelocity());
+		
+		return true;
 	}
 }
