@@ -69,10 +69,9 @@ int main()
 	std::shared_ptr<ParticleEmitterSquare<DataType3f>> child2 = std::make_shared<ParticleEmitterSquare<DataType3f>>();
 	root->addParticleSystem(child1);
 
-	child2->addOutput(child1,child2);
-	//child1->addChild(child2);
-	//child1->getParticleEmitters()->addNode(child2.get());
-
+	//child2->addOutput(child1,child2);
+	child1->addEmitter(child2);
+	
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
 	//child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
 	child1->setMass(100);
