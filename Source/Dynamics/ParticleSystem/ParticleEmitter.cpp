@@ -19,9 +19,13 @@ namespace PhysIKA
 	{
 
 	}
-
 	template<typename TDataType>
 	void ParticleEmitter<TDataType>::advance(Real dt)
+	{
+		//return;
+	}
+	template<typename TDataType>
+	void ParticleEmitter<TDataType>::advance2(Real dt)
 	{
 		gen_random();
 		DeviceArray<Coord>& cur_points0 = this->currentPosition()->getValue();
@@ -45,7 +49,7 @@ namespace PhysIKA
 		this->currentVelocity()->setElementCount(cur_size + gen_pos.size());
 		this->currentForce()->setElementCount(cur_size + gen_pos.size());
 
-		printf("%d %d %d\n", cur_size, gen_pos.size(), this->currentPosition()->getElementCount());
+		//printf("%d %d %d\n", cur_size, gen_pos.size(), this->currentPosition()->getElementCount());
 
 		DeviceArray<Coord>& cur_points = this->currentPosition()->getValue();
 		DeviceArray<Coord>& cur_vels = this->currentVelocity()->getValue();

@@ -4,6 +4,9 @@
 #include "Core/Array/Array.h"
 #include "Framework/Topology/NeighborList.h"
 #include "Core/Utility/Scan.h"
+#include "EdgeSet.h"
+#include "Framework/Framework/ModuleTopology.h"
+#include "Framework/Topology/Primitive3D.h"
 
 namespace PhysIKA{
 
@@ -17,6 +20,7 @@ namespace PhysIKA{
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
+		typedef typename TopologyModule::Triangle Triangle;
 
 		GridHash();
 		~GridHash();
@@ -24,6 +28,7 @@ namespace PhysIKA{
 		void setSpace(Real _h, Coord _lo, Coord _hi);
 
 		void construct(DeviceArray<Coord>& pos);
+		void construct(DeviceArray<Coord>& pos, DeviceArray<Triangle>& tri, DeviceArray<Coord>& Tri_pos);
 
 		void clear();
 

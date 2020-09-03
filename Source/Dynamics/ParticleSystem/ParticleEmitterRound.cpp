@@ -16,7 +16,7 @@ namespace PhysIKA
 		: ParticleEmitter<TDataType>(name)
 	{
 
-		
+		srand(time(0));
 	}
 
 	

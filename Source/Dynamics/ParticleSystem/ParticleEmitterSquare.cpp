@@ -15,7 +15,7 @@ namespace PhysIKA
 	ParticleEmitterSquare<TDataType>::ParticleEmitterSquare(std::string name)
 		: ParticleEmitter<TDataType>(name)
 	{
-
+		srand(time(0));
 
 	}
 
