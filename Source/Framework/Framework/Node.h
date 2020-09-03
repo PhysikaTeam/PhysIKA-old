@@ -51,6 +51,11 @@ public:
 	Node* getParent();
 	Node* getRoot();
 
+	bool isControllable();
+
+	void setControllable(bool con);
+
+
 	/// Check the state of dynamics
 	virtual bool isActive();
 
@@ -362,6 +367,8 @@ private:
 		NODE_ADD_SPECIAL_MODULE_LIST(ComputeModule, m_compute_list)
 
 private:
+	bool m_controllable = true;
+
 	/**
 	 * @brief Time step size
 	 * 
@@ -383,6 +390,7 @@ private:
 	 */
 	VarField<bool> m_visible;
 	VarField<Real> m_time;
+
 
 	VarField<std::string> m_node_name;
 

@@ -19,7 +19,7 @@ NodeIterator::NodeIterator(std::shared_ptr<Node> node)
 		auto children = node_current->getChildren();
 		for each (auto c in children)
 		{
-			if (c->isActive())
+			if (c->isControllable())
 			{
 				node_stack.push(c);
 			}

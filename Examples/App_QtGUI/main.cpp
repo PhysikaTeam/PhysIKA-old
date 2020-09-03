@@ -57,8 +57,8 @@ int main()
 	scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-//	root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(1.5, 2, 1.5), 0.02, true);
-	root->loadSDF("../../Media/bowl/bowl.sdf", false);
+	root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(0.5, 1, 0.5), 0.01, true);
+	root->loadSDF("../../Media/fluid/b2.sdf", false);
 	root->setName("static");
 //	root->setBlockCoord(900, 0);
 
@@ -74,10 +74,10 @@ int main()
 
 //	child2->addOutput(child1,child2);
 	//child1->addChild(child2);
-	child1->addParticleEmitter(child2);
+//	child1->addParticleEmitter(child2);
 
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
-	//child1->loadParticles(Vector3f(0.5, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6), 0.005);
+	child1->loadParticles(Vector3f(-0.5, 0.005, -0.5), Vector3f(-0.4, 0.4, 0.5), 0.005);
 	child1->setMass(100);
 
 	
@@ -85,16 +85,17 @@ int main()
 
 	auto pRenderer = std::make_shared<PVTKPointSetRender>();
 	pRenderer->setName("VTK Point Renderer");
-	child2->addVisualModule(pRenderer);
+	child1->addVisualModule(pRenderer);
 
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);
-	rigidbody->loadShape("../../Media/bowl/bowl.obj");
+	rigidbody->loadShape("../../Media/fluid/b2.obj");
 
 	auto sRenderer = std::make_shared<PVTKSurfaceMeshRender>();
 	sRenderer->setName("VTK Surface Renderer");
 	rigidbody->getSurface()->addVisualModule(sRenderer);
+	rigidbody->setActive(false);
 
 	QtApp window;
 	window.createWindow(1024, 768);

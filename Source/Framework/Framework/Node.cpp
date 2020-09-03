@@ -71,6 +71,16 @@ Node* Node::getRoot()
 	return root;
 }
 
+bool Node::isControllable()
+{
+	return m_controllable;
+}
+
+void Node::setControllable(bool con)
+{
+	m_controllable = con;
+}
+
 bool Node::isActive()
 {
 	return m_active.getValue();

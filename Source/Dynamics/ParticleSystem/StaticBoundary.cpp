@@ -81,6 +81,7 @@ namespace PhysIKA
 		Coord center = (hi + lo) / 2;
 
 		auto m_surfaceNode = this->createChild<Node>("cube");
+		m_surfaceNode->setControllable(false);
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 /* 		triSet->loadObjFile("../../Media/standard/standard_cube.obj");
