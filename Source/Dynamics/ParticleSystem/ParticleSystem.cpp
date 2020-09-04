@@ -134,45 +134,23 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleSystem<TDataType>::updateTopology()
 	{
-		printf("updateTopo %d\n", this->currentPosition()->getElementCount());
-		m_pSet->setSize(this->currentPosition()->getElementCount());
-
-
 		auto pts = m_pSet->getPoints();
-		printf("setSizeTopoFinished %d\n", pts.size());
-
 		Function1Pt::copy(pts, this->currentPosition()->getValue());
-		
-
-		printf("outsideTopo\n");
 	}
 
 
 	template<typename TDataType>
 	bool ParticleSystem<TDataType>::resetStatus()
 	{
-		printf("RESET STATUS\n");
-		if(this->currentPosition()->isEmpty())
-		{ 
-			printf("resetStatus1 %s %d\n", this->getName(), 0);
-			auto pts = m_pSet->getPoints();
+		auto pts = m_pSet->getPoints();
 
-			this->currentPosition()->setElementCount(pts.size());
-			this->currentVelocity()->setElementCount(pts.size());
-			this->currentForce()->setElementCount(pts.size());
+		this->currentPosition()->setElementCount(pts.size());
+		this->currentVelocity()->setElementCount(pts.size());
+		this->currentForce()->setElementCount(pts.size());
 
-			//Function1Pt::copy(this->currentPosition()->getValue(), pts);
-			//m_pSet->setSize(0);
-			this->currentVelocity()->getReference()->reset();
-		}
-		else
-		{
-			printf("resetStatus2 %d %s\n", this->currentPosition()->getElementCount(),this->getName());
-			m_pSet->setSize(this->currentPosition()->getElementCount());
+		Function1Pt::copy(this->currentPosition()->getValue(), pts);
+		this->currentVelocity()->getReference()->reset();
 
-			auto pts = m_pSet->getPoints();
-			Function1Pt::copy(pts, this->currentPosition()->getValue());
-		}
 		return Node::resetStatus();
 	}
 
