@@ -25,13 +25,8 @@ namespace PhysIKA
 
 		void advance(Real dt) override;
 
-		bool addEmitter(std::shared_ptr<ParticleEmitter<TDataType>> child);
-
-		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
-
 	private:
-		//std::shared_ptr<ParticleEmitter<TDataType>> m_ParticleEmitter = NULL;
-		std::vector<std::shared_ptr<ParticleEmitter<TDataType>>> m_particleEmitters;
+		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
 	};
 
 #ifdef PRECISION_FLOAT

@@ -11,20 +11,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	PointSet<TDataType>::PointSet()
 		: TopologyModule()
-		, m_samplingDistance(Real(0.1))
 	{
-		std::vector<Coord> positions;
-		for (Real x = -2.0; x < 2.0; x += m_samplingDistance) {
-			for (Real y = -2.0; y < 2.0; y += m_samplingDistance) {
-				for (Real z = -2.0; z < 2.0; z += m_samplingDistance) {
-					positions.push_back(Coord(Real(x), Real(y), Real(z)));
-				}
-			}
-		}
-		this->setPoints(positions);
-
-		m_normals.resize(positions.size());
-		m_normals.reset();
 	}
 
 	template<typename TDataType>

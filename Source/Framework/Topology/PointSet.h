@@ -40,8 +40,6 @@ namespace PhysIKA
 	protected:
 		bool initializeImpl() override;
 
-		Real m_samplingDistance;
-
 		DeviceArray<Coord> m_coords;
 		DeviceArray<Coord> m_normals;
 		NeighborList<int> m_pointNeighbors;
