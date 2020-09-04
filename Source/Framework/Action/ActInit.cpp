@@ -25,6 +25,7 @@ namespace PhysIKA
 		{
 			(*iter)->initialize();
 		}
+		cuSynchronize();
 	}
 
 }

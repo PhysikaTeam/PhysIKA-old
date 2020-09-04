@@ -432,6 +432,11 @@ namespace PhysIKA
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::queryNeighborDynamic(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h)
 	{
+		if (pos.size() <= 0)
+		{
+			return;
+		}
+
 		DeviceArray<int>& nbrNum = nbrList.getIndex();
 		if (nbrNum.size() != pos.size())
 			nbrList.resize(pos.size());
@@ -457,6 +462,11 @@ namespace PhysIKA
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::queryNeighborTriDynamic(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, DeviceArray<Coord>& posT, DeviceArray<Triangle>& Tris, Real h)
 	{
+		if (pos.size() <= 0)
+		{
+			return;
+		}
+
 		DeviceArray<int>& nbrNum = nbrList.getIndex();
 		if (nbrNum.size() != pos.size())
 			nbrList.resize(pos.size());

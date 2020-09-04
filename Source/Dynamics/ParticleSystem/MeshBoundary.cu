@@ -127,6 +127,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool MeshBoundary<TDataType>::resetStatus()
 	{
+		cuSynchronize();
 	//	printf("RESET1\n");
 		int sum_tri_index = 0;
 		int sum_tri_pos = 0;
@@ -140,6 +141,8 @@ namespace PhysIKA
 	//	printf("RESET2\n");
 		triangle_index.setElementCount(sum_tri_index);
 		triangle_positions.setElementCount(sum_tri_pos);
+
+		cuSynchronize();
 
 		int start_pos = 0;
 		int start_tri = 0;
@@ -155,6 +158,8 @@ namespace PhysIKA
 			start_pos += num_p;
 			start_tri += num_i;
 		}
+
+		cuSynchronize();
 
 		//printf("RESET4\n");
 		auto pSys = this->getParticleSystems();
@@ -188,6 +193,8 @@ namespace PhysIKA
 		triangle_index.connect(m_nbrQuery->inTriangleIndex());
 		m_nbrQuery->initialize();
 		m_nbrQuery->compute();
+
+		cuSynchronize();
 
 		//printf("RESET7\n");
 		return Node::resetStatus();

@@ -40,10 +40,14 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool PositionBasedFluidModel<TDataType>::initializeImpl()
 	{
+		cuSynchronize();
+
 		m_nbrQuery = this->getParent()->addComputeModule<NeighborQuery<TDataType>>("neighborhood");
 		m_smoothingLength.connect(m_nbrQuery->inRadius());
 		m_position.connect(m_nbrQuery->inPosition());
 		m_nbrQuery->initialize();
+
+		cuSynchronize();
 
 		m_pbdModule = this->getParent()->addConstraintModule<DensityPBD<TDataType>>("density_constraint");
 		m_smoothingLength.connect(&m_pbdModule->m_smoothingLength);
@@ -52,11 +56,15 @@ namespace PhysIKA
 		m_nbrQuery->outNeighborhood()->connect(&m_pbdModule->m_neighborhood);
 		m_pbdModule->initialize();
 
+		cuSynchronize();
+
 		m_integrator = this->getParent()->setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
 		m_position.connect(m_integrator->inPosition());
 		m_velocity.connect(m_integrator->inVelocity());
 		m_forceDensity.connect(m_integrator->inForceDensity());
 		m_integrator->initialize();
+
+		cuSynchronize();
 
 		m_visModule = this->getParent()->addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
 		m_visModule->setViscosity(Real(1));
@@ -65,6 +73,8 @@ namespace PhysIKA
 		m_velocity.connect(&m_visModule->m_velocity);
 		m_nbrQuery->outNeighborhood()->connect(&m_visModule->m_neighborhood);
 		m_visModule->initialize();
+
+		cuSynchronize();
 
 		return true;
 	}

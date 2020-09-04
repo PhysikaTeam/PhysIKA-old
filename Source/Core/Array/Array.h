@@ -89,10 +89,17 @@ namespace PhysIKA {
 	template<typename T, DeviceType deviceType>
 	void Array<T, deviceType>::resize(const int n)
 	{
-		assert(n >= 1);
+//		assert(n >= 1);
 		if (NULL != m_data) release();
-		m_totalNum = n;
-		allocMemory();
+		if (n <= 0)
+		{
+			m_totalNum = 0;
+		}
+		else
+		{
+			m_totalNum = n;
+			allocMemory();
+		}
 	}
 
 	template<typename T, DeviceType deviceType>

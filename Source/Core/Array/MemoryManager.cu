@@ -16,14 +16,14 @@ namespace PhysIKA {
 		switch (deviceType)
 		{
 		case CPU:
-			assert(*ptr == 0);
+			//assert(*ptr == 0);
 			*ptr = malloc(memsize * valueSize);
-			assert(*ptr);
+			//assert(*ptr);
 			break;
 		case GPU:
-			assert(*ptr == 0);
+			//assert(*ptr == 0);
 			cuSafeCall(cudaMalloc(ptr, memsize * valueSize));
-			assert(*ptr);
+			//assert(*ptr);
 			break;
 		default:
 			break;
