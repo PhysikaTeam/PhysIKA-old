@@ -15,7 +15,7 @@ namespace PhysIKA
 	ParticleEmitterSquare<TDataType>::ParticleEmitterSquare(std::string name)
 		: ParticleEmitter<TDataType>(name)
 	{
-
+		srand(time(0));
 
 	}
 
@@ -37,7 +37,7 @@ namespace PhysIKA
 		dir = direction;
 
 		getRotMat(dir / dir.norm());
-
+		return;
 		std::vector<Coord> pos_list;
 		std::vector<Coord> vel_list;
 
@@ -99,7 +99,7 @@ namespace PhysIKA
 				for (Real y = lo; y <= hi; y += sampling_distance)
 				{
 					Coord p = Coord(x, 0, y);
-					if ( rand() % 4 == 0)
+					if ( rand() % 40 == 0)
 					{/*
 						Real aa, bb, cc;
 						do

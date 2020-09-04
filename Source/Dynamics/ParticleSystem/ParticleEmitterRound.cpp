@@ -16,7 +16,7 @@ namespace PhysIKA
 		: ParticleEmitter<TDataType>(name)
 	{
 
-		
+		srand(time(0));
 	}
 
 	
@@ -37,7 +37,7 @@ namespace PhysIKA
 		dir = direction;
 
 		getRotMat(dir / dir.norm());
-
+		return;
 		std::vector<Coord> pos_list;
 		std::vector<Coord> vel_list;
 

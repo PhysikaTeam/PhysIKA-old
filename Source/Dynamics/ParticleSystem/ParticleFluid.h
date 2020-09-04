@@ -30,7 +30,8 @@ namespace PhysIKA
 		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
 
 	private:
-		std::shared_ptr<ParticleEmitter<TDataType>> m_ParticleEmitter = NULL;
+		//std::shared_ptr<ParticleEmitter<TDataType>> m_ParticleEmitter = NULL;
+		std::vector<std::shared_ptr<ParticleEmitter<TDataType>>> m_particleEmitters;
 	};
 
 #ifdef PRECISION_FLOAT

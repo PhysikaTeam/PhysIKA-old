@@ -5,7 +5,7 @@
 #include "Framework/Topology/FieldNeighbor.h"
 #include "Framework/Topology/GridHash.h"
 #include "Core/Utility.h"
-
+#include "Framework/Framework/ModuleTopology.h"
 namespace PhysIKA {
 	template<typename ElementType> class NeighborList;
 
@@ -17,6 +17,7 @@ namespace PhysIKA {
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
+		typedef typename TopologyModule::Triangle Triangle;
 
 		NeighborQuery();
 		NeighborQuery(DeviceArray<Coord>& position);
@@ -43,6 +44,11 @@ namespace PhysIKA {
 
 		void queryNeighborFixed(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h);
 
+
+		void queryNeighborTriDynamic(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, DeviceArray<Coord>& posT, DeviceArray<Triangle>& Tris, Real h);
+		void queryNeighborSizeTri(DeviceArray<int>& num, DeviceArray<Coord>& pos, DeviceArray<Triangle>& Tris, DeviceArray<Coord>& posT, Real h);
+
+
 	public:
 		/**
 		* @brief Search radius
@@ -54,6 +60,15 @@ namespace PhysIKA {
 		 * @brief Particle position
 		 */
 		DEF_EMPTY_IN_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
+		
+		/**
+		* @brief Triangle position
+		*/
+		DEF_EMPTY_IN_ARRAY(TrianglePosition, Coord, DeviceType::GPU, "Particle position");
+		/**
+		* @brief Triangle index
+		*/
+		DEF_EMPTY_IN_ARRAY(TriangleIndex, Triangle, DeviceType::GPU, "Particle position");
 
 		/**
 		 * @brief Ids of neighboring particles
@@ -75,6 +90,8 @@ namespace PhysIKA {
 
 		Reduction<int> m_reduce;
 		Scan m_scan;
+
+		bool triangle_first = true;
 	};
 
 #ifdef PRECISION_FLOAT
