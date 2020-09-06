@@ -37,6 +37,8 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
                                                                                     #但这样影响了后面其他工程对PhysLeo.lib的引用，现在还有些原因未明，暂时在编译成库之前开启dlink
     set_target_properties(${LIB_NAME} PROPERTIES
         OUTPUT_NAME "Pa${LIB_NAME}-${PHYSIKA_LIBRARY_VERSION}")
+    set_target_properties(${LIB_NAME} PROPERTIES
+        CUDA_SEPARABLE_COMPILATION OFF)
 
     target_include_directories(${LIB_NAME} PUBLIC 
         $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}>
