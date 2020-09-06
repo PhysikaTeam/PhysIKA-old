@@ -137,13 +137,13 @@ namespace PhysIKA
 		if (!this->currentPosition()->isEmpty())
 		{
 			int num = this->currentPosition()->getElementCount();
-			auto pts = m_pSet->getPointsRef();
-			if (num != pts->size())
+			auto& pts = m_pSet->getPoints();
+			if (num != pts.size())
 			{
-				pts->resize(num);
+				pts.resize(num);
 			}
 
-			Function1Pt::copy(*pts, this->currentPosition()->getValue());
+			Function1Pt::copy(pts, this->currentPosition()->getValue());
 		}
 	}
 

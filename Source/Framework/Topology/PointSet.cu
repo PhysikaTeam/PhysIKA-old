@@ -121,6 +121,7 @@ namespace PhysIKA
 	void PointSet<TDataType>::setNormals(std::vector<Coord>& normals)
 	{
 		m_normals.resize(normals.size());
+
 		Function1Pt::copy(m_normals, normals);
 	}
 

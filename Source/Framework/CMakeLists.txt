@@ -49,7 +49,7 @@ set_target_properties(${LIB_NAME} PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)    
 set_target_properties(${LIB_NAME} PROPERTIES
     OUTPUT_NAME "Pa${LIB_NAME}-${PHYSIKA_LIBRARY_VERSION}")
 set_target_properties(${LIB_NAME} PROPERTIES
-    CUDA_SEPARABLE_COMPILATION OFF)
+    CUDA_SEPARABLE_COMPILATION ON)
 
 #To resolve the error: Target "..." INTERFACE_INCLUDE_DIRECTORIES property contains path: "..." which is prefixed in the build directory.
 #    target_include_directories(${LIB_NAME} PUBLIC ${PHYSIKA_INCLUDE_PATH}) # for generated files

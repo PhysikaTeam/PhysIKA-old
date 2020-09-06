@@ -72,6 +72,10 @@ namespace PhysIKA
 				}
 			}
 		}
+		else
+		{
+			total_num = this->currentPosition()->getElementCount();
+		}
 
 		std::cout << "Total number: " << total_num << std::endl;
 

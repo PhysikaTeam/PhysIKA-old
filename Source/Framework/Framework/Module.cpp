@@ -32,6 +32,12 @@ bool Module::initialize()
 
 void Module::update()
 {
+	if (!isInputComplete())
+	{
+		Log::sendMessage(Log::Error, std::string("Input for ") + this->getName() + std::string(" with class name of ") + this->getClassInfo()->getClassName() + std::string(" should be appropriately set"));
+		return;
+	}
+
 	bool modified = false;
 	//check whether any input field is modified
 	for each (auto f_in in fields_input)
@@ -56,6 +62,20 @@ void Module::update()
 			f_out->tagModified(true);
 		}
 	}
+}
+
+bool Module::isInputComplete()
+{
+	//If any input field is empty, return false;
+	for each (auto f_in in fields_input)
+	{
+		if (f_in->isEmpty())
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool Module::execute()

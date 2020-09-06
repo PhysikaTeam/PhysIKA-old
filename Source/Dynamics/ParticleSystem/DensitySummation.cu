@@ -38,7 +38,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	DensitySummation<TDataType>::DensitySummation()
 		: ComputeModule()
-		, m_factor(Real(1))
+		, m_factor(Real(0.000044))
 	{
 		m_mass.setValue(Real(1));
 		m_restDensity.setValue(Real(1000));

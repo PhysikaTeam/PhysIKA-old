@@ -81,7 +81,7 @@ private:
 	Field* m_source = nullptr;
 	Base* m_owner = nullptr;
 
-	bool m_modified = true;
+	bool m_modified = false;
 
 	std::vector<Field*> m_field_sink;
 };

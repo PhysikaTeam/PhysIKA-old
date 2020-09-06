@@ -358,6 +358,18 @@ namespace PhysIKA
 		
 
 		m_deltaPos.reset();
+
+		if (m_densitySum == nullptr)
+		{
+			m_densitySum = std::make_shared<DensitySummation<TDataType>>();
+
+			m_restDensity.connect(&m_densitySum->m_restDensity);
+			m_smoothingLength.connect(&m_densitySum->m_smoothingLength);
+			m_position.connect(&m_densitySum->m_position);
+			m_density.connect(&m_densitySum->m_density);
+			m_neighborhood.connect(&m_densitySum->m_neighborhood);
+		}
+
 		m_densitySum->compute();
 
 

@@ -24,7 +24,6 @@ public:
 
 	inline size_t getElementCount() override {
 		auto ref = this->getReference();
-		
 		return ref == nullptr ? 0 : ref->size();
 	}
 

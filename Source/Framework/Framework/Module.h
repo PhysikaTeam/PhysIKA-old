@@ -26,6 +26,14 @@ public:
 
 	void update();
 
+	/**
+	 * @brief Check the completeness of input fields
+	 * 
+	 * @return true, if all input fields are appropriately set.
+	 * @return false, if any of the input field is empty.
+	 */
+	bool isInputComplete();
+
 	virtual void begin() {};
 
 	virtual bool execute();

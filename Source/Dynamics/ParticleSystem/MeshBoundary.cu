@@ -205,8 +205,6 @@ namespace PhysIKA
 	template<typename TDataType>
 	void MeshBoundary<TDataType>::advance(Real dt)
 	{
-		return;
-
 		auto triangle_index		= this->currentTriangleIndex();
 		auto triangle_vertex	= this->currentTriangleVertex();
 

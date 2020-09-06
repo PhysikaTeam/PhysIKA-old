@@ -55,6 +55,8 @@ namespace PhysIKA
 		m_highBound = Coord(sceneUp[0], sceneUp[1], sceneUp[2]);
 		this->inRadius()->setValue(Real(0.011));
 
+		m_hash.setSpace(this->inRadius()->getValue(), m_lowBound, m_highBound);
+
 //		attachField(&m_radius, "Radius", "Radius of the searching area", false);
 //		attachField(&m_position, "position", "Storing the particle positions!", false);
 //		attachField(&m_neighborhood, "ParticleNeighbor", "Storing particle neighbors!", false);
@@ -149,17 +151,16 @@ namespace PhysIKA
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::compute()
 	{
-		static bool hashGridInit = false;
-		if (hashGridInit == false)
-		{
-			m_hash.setSpace(this->inRadius()->getValue(), m_lowBound, m_highBound);
-			hashGridInit = true;
-		}
-
 		if(this->inTriangleIndex()->isEmpty())
 		{ 
 			if (!this->inPosition()->isEmpty())
 			{
+				int p_num = this->inPosition()->getElementCount();
+				if (this->outNeighborhood()->getElementCount() != p_num)
+				{
+					this->outNeighborhood()->setElementCount(p_num);
+				}
+
 				m_hash.clear();
 				m_hash.construct(this->inPosition()->getValue());
 
@@ -177,9 +178,12 @@ namespace PhysIKA
 		{
 			if (!this->inPosition()->isEmpty())
 			{
-				//printf("in radius new %.5lf\n", this->inRadius()->getValue());
+				int p_num = this->inPosition()->getElementCount();
+				if (this->outNeighborhood()->getElementCount() != p_num)
+				{
+					this->outNeighborhood()->setElementCount(p_num);
+				}
 
-			//printf("inside triangle\n");
 				if (triangle_first)
 					m_hash.clear();
 				//printf("hash clear\n");
@@ -190,7 +194,6 @@ namespace PhysIKA
 				//printf("hash constract\n");
 				triangle_first = false;
 				queryNeighborTriDynamic(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inTrianglePosition()->getValue(), this->inTriangleIndex()->getValue(), this->inRadius()->getValue());
-
 			}
 		}
 	}

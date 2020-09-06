@@ -21,7 +21,10 @@ public:
 	NeighborField(std::string name, std::string description, FieldType fieldType, Base* parent, int num, int nbrSize);
 	~NeighborField() override;
 
-	size_t getElementCount() override { return getReference()->size(); }
+	size_t getElementCount() override {
+		auto ref = this->getReference();
+		return ref == nullptr ? 0 : ref->size();;
+	}
 	void setElementCount(int num, int nbrSize = 0);
 //	void resize(int num);
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
@@ -37,6 +40,8 @@ public:
 	}
 
 	bool connect(NeighborField<T>* field2);
+
+	NeighborField<T>* getSourceNeighborField();
 
 private:
 	std::shared_ptr<NeighborList<T>> m_data = nullptr;
@@ -69,14 +74,15 @@ NeighborField<T>::NeighborField(int num, int nbrSize /*= 0*/)
 template<typename T>
 void NeighborField<T>::setElementCount(int num, int nbrSize /*= 0*/)
 {
-	std::shared_ptr<NeighborList<T>> data = getReference();
-	if (data == nullptr)
+	auto arr = this->getSourceNeighborField();
+	//std::shared_ptr<NeighborList<T>> data = getReference();
+	if (arr == nullptr)
 	{
-		m_data = std::make_shared<NeighborList<T>>(num, nbrSize);
+		m_data = num <= 0 ? nullptr : std::make_shared<NeighborList<T>>(num, nbrSize);
 	}
 	else
 	{
-		data->resize(num, nbrSize);
+		arr->m_data = num <= 0 ? nullptr : std::make_shared<NeighborList<T>>(num, nbrSize);
 	}
 }
 
@@ -161,6 +167,24 @@ std::shared_ptr<NeighborList<T>> NeighborField<T>::getReference()
 		{
 			return nullptr;
 		}
+	}
+}
+
+template<typename T>
+NeighborField<T>* PhysIKA::NeighborField<T>::getSourceNeighborField()
+{
+	Field* source = getSource();
+	if (source == nullptr)
+	{
+		return this;
+	}
+	else
+	{
+		NeighborField<T>* var = dynamic_cast<NeighborField<T>*>(source);
+		if (var == nullptr)
+			return nullptr;
+		else
+			return var->getSourceNeighborField();
 	}
 }
 
