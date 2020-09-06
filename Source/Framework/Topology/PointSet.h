@@ -26,6 +26,8 @@ namespace PhysIKA
 		DeviceArray<Coord>& getPoints() { return m_coords; }
 		DeviceArray<Coord>& getNormals() { return m_normals; }
 
+		DeviceArray<Coord>* getPointsRef() { return &m_coords; }
+
 		int getPointSize() { return m_coords.size(); };
 
 		NeighborList<int>* getPointNeighbors();

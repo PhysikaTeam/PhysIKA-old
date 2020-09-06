@@ -315,31 +315,33 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool DensityPBD<TDataType>::constrain()
 	{
-		printf("neighbor query inside density PBD : %d\n", m_neighborhood.getElementCount());
-
-		if (m_position_old.size() != m_position.getElementCount())
-			m_position_old.resize(m_position.getElementCount());
-
-		Function1Pt::copy(m_position_old, m_position.getValue());
-
-		if (m_density.getElementCount() != m_position.getElementCount())
-			m_density.setElementCount(m_position.getElementCount());
-
-		if (m_deltaPos.size() != m_position.getElementCount())
-			m_deltaPos.resize(m_position.getElementCount());
-
-		if (m_lamda.size() != m_position.getElementCount())
-			m_lamda.resize(m_position.getElementCount());
-
-		int it = 0;
-		while (it < m_maxIteration)
+		int num = m_position.getElementCount();
+		if (num > 0)
 		{
-			takeOneIteration();
+			if (m_position_old.size() != m_position.getElementCount())
+				m_position_old.resize(m_position.getElementCount());
 
-			it++;
+			Function1Pt::copy(m_position_old, m_position.getValue());
+
+			if (m_density.getElementCount() != m_position.getElementCount())
+				m_density.setElementCount(m_position.getElementCount());
+
+			if (m_deltaPos.size() != m_position.getElementCount())
+				m_deltaPos.resize(m_position.getElementCount());
+
+			if (m_lamda.size() != m_position.getElementCount())
+				m_lamda.resize(m_position.getElementCount());
+
+			int it = 0;
+			while (it < m_maxIteration)
+			{
+				takeOneIteration();
+
+				it++;
+			}
+
+			updateVelocity();
 		}
-
-		updateVelocity();
 
 		return true;
 	}

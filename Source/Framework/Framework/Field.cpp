@@ -89,6 +89,16 @@ namespace PhysIKA
 		return this;
 	}
 
+	bool Field::isModified()
+	{
+		return m_modified;
+	}
+
+	void Field::tagModified(bool modifed)
+	{
+		m_modified = modifed;
+	}
+
 	Field::Field(std::string name, std::string description, FieldType type, Base* parent)
 	{
 		m_name = name; m_description = description;

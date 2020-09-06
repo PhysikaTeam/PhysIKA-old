@@ -40,12 +40,30 @@ namespace PhysIKA {
 		DEF_NODE_PORTS(RigidBody, RigidBody<TDataType>, "A rigid body");
 		DEF_NODE_PORTS(ParticleSystem, ParticleSystem<TDataType>, "Particle Systems");
 
+	public:
+		/**
+		 * @brief Particle position
+		 */
+		DEF_EMPTY_CURRENT_ARRAY(ParticlePosition, Coord, DeviceType::GPU, "Particle position");
+
+
+		/**
+		 * @brief Particle velocity
+		 */
+		DEF_EMPTY_CURRENT_ARRAY(ParticleVelocity, Coord, DeviceType::GPU, "Particle velocity");
+
+		/**
+		 * @brief Triangle vertex
+		 */
+		DEF_EMPTY_CURRENT_ARRAY(TriangleVertex, Coord, DeviceType::GPU, "Particle position");
+
+		/**
+		 * @brief Particle velocity
+		 */
+		DEF_EMPTY_CURRENT_ARRAY(TriangleIndex, Triangle, DeviceType::GPU, "Particle velocity");
+
 	private:
 		std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
-		DeviceArrayField<Coord> point_positions;
-		DeviceArrayField<Coord> point_velocities;
-		DeviceArrayField<Coord> triangle_positions;
-		DeviceArrayField<Triangle> triangle_index;
 		VarField<Real> radius;
 
 	};

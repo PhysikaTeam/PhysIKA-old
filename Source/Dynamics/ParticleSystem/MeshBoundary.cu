@@ -127,8 +127,12 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool MeshBoundary<TDataType>::resetStatus()
 	{
-		cuSynchronize();
-	//	printf("RESET1\n");
+		auto triangle_index		= this->currentTriangleIndex();
+		auto triangle_vertex	= this->currentTriangleVertex();
+
+		auto particle_position	= this->currentParticlePosition();
+		auto particle_velocity	= this->currentParticleVelocity();
+
 		int sum_tri_index = 0;
 		int sum_tri_pos = 0;
 		int sum_poi_pos = 0;
@@ -138,137 +142,133 @@ namespace PhysIKA
 			sum_tri_index += m_obstacles[t]->getTriangles()->size();
 			sum_tri_pos += m_obstacles[t]->getPoints().size();
 		}
-	//	printf("RESET2\n");
-		triangle_index.setElementCount(sum_tri_index);
-		triangle_positions.setElementCount(sum_tri_pos);
-
-		cuSynchronize();
+		triangle_index->setElementCount(sum_tri_index);
+		triangle_vertex->setElementCount(sum_tri_pos);
 
 		int start_pos = 0;
 		int start_tri = 0;
-	//	printf("RESET3\n");
 		for (size_t t = 0; t < m_obstacles.size(); t++)
 		{
 			DeviceArray<Coord> posTri = m_obstacles[t]->getPoints();
 			DeviceArray<Triangle>* idxTri = m_obstacles[t]->getTriangles();
 			int num_p = posTri.size();
 			int num_i = idxTri->size();
-			cudaMemcpy(triangle_positions.getValue().getDataPtr() + start_pos, posTri.getDataPtr(), num_p * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(triangle_index.getValue().getDataPtr() + start_tri, idxTri->getDataPtr(), num_i * sizeof(Triangle), cudaMemcpyDeviceToDevice);
-			start_pos += num_p;
-			start_tri += num_i;
+			if (num_p > 0)
+			{
+				cudaMemcpy(triangle_vertex->getReference()->getDataPtr() + start_pos, posTri.getDataPtr(), num_p * sizeof(Coord), cudaMemcpyDeviceToDevice);
+				start_pos += num_p;
+			}
+			if(num_i > 0)
+			{
+				cudaMemcpy(triangle_index->getReference()->getDataPtr() + start_tri, idxTri->getDataPtr(), num_i * sizeof(Triangle), cudaMemcpyDeviceToDevice);
+				start_tri += num_i;
+			}
+			
 		}
-
 		cuSynchronize();
 
-		//printf("RESET4\n");
 		auto pSys = this->getParticleSystems();
 		for (int i = 0; i < pSys.size(); i++)
 		{
 			DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
 			sum_poi_pos += posFd->getElementCount();
 		}
-		point_positions.setElementCount(sum_poi_pos);
-		point_velocities.setElementCount(sum_poi_pos);
-		//printf("RESET5\n");
+		particle_position->setElementCount(sum_poi_pos);
+		particle_velocity->setElementCount(sum_poi_pos);
 		int start_point = 0;
 		for (int i = 0; i < pSys.size(); i++)
 		{
 			DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
 			DeviceArrayField<Coord>* velFd = pSys[i]->currentVelocity();
 			int num = posFd->getElementCount();
-			cudaMemcpy(point_positions.getValue().getDataPtr() + start_point, posFd->getValue().getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(point_velocities.getValue().getDataPtr() + start_point, velFd->getValue().getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			start_point += num;
+			if (num > 0)
+			{
+				cudaMemcpy(particle_position->getReference()->getDataPtr() + start_point, posFd->getValue().getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+				cudaMemcpy(particle_velocity->getReference()->getDataPtr() + start_point, velFd->getValue().getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+				start_point += num;
+			}
 		}
-	//	printf("RESET6\n");
+
 		radius.setValue(0.005);
 		m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
 		radius.connect(m_nbrQuery->inRadius());
-		point_positions.connect(m_nbrQuery->inPosition());
-		triangle_positions.connect(m_nbrQuery->inTrianglePosition());
-		printf("tri pos size: %d\n", triangle_positions.getElementCount());
-		printf("tri idx size: %d\n", triangle_index.getElementCount());
+		this->currentParticlePosition()->connect(m_nbrQuery->inPosition());
+		this->currentTriangleVertex()->connect(m_nbrQuery->inTrianglePosition());
 
-		triangle_index.connect(m_nbrQuery->inTriangleIndex());
+		this->currentTriangleIndex()->connect(m_nbrQuery->inTriangleIndex());
 		m_nbrQuery->initialize();
 		m_nbrQuery->compute();
 
-		cuSynchronize();
-
-		//printf("RESET7\n");
 		return Node::resetStatus();
 	}
 
 	template<typename TDataType>
 	void MeshBoundary<TDataType>::advance(Real dt)
 	{
-		
-		int sum_poi_pos = 0;
+		return;
+
+		auto triangle_index		= this->currentTriangleIndex();
+		auto triangle_vertex	= this->currentTriangleVertex();
+
+		auto particle_position	= this->currentParticlePosition();
+		auto particle_velocity	= this->currentParticleVelocity();
+
+		int total_num = 0;
 		auto pSys = this->getParticleSystems();
 		for (int i = 0; i < pSys.size(); i++)
 		{
-			DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
-			sum_poi_pos += posFd->getElementCount();
+			total_num += pSys[i]->currentPosition()->getElementCount();
 		}
-		point_positions.setElementCount(sum_poi_pos);
-		point_velocities.setElementCount(sum_poi_pos);
 
-		int start_point = 0;
-		for (int i = 0; i < pSys.size(); i++)
+		if (total_num > 0)
 		{
-			DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
-			DeviceArrayField<Coord>* velFd = pSys[i]->currentVelocity();
-			int num = posFd->getElementCount();
-			cudaMemcpy(point_positions.getValue().getDataPtr() + start_point, posFd->getValue().getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(point_velocities.getValue().getDataPtr() + start_point, velFd->getValue().getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			start_point += num;
+			particle_position->setElementCount(total_num);
+			particle_velocity->setElementCount(total_num);
+
+			int start_point = 0;
+			for (int i = 0; i < pSys.size(); i++)
+			{
+				DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
+				DeviceArrayField<Coord>* velFd = pSys[i]->currentVelocity();
+				int num = posFd->getElementCount();
+				if (num > 0)
+				{
+					cudaMemcpy(particle_position->getReference()->getDataPtr() + start_point, posFd->getValue().getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+					cudaMemcpy(particle_velocity->getReference()->getDataPtr() + start_point, velFd->getValue().getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+					start_point += num;
+				}
+			}
+
+			m_nbrQuery->compute();
+
+			DeviceArray<Coord>& posRef = particle_position->getValue();
+			DeviceArray<Coord>& velRef = particle_velocity->getValue();
+
+			cuExecute(total_num, K_CD_mesh,
+				posRef,
+				triangle_vertex->getValue(),
+				triangle_index->getValue(),
+				velRef,
+				m_nbrQuery->outNeighborhood()->getValue(),
+				radius.getValue(),
+				dt);
+
+
+			start_point = 0;
+			for (int i = 0; i < pSys.size(); i++)
+			{
+				DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
+				DeviceArrayField<Coord>* velFd = pSys[i]->currentVelocity();
+
+				int num = posFd->getElementCount();
+				if (num > 0)
+				{
+					cudaMemcpy(posFd->getValue().getDataPtr(), posRef.getDataPtr() + start_point, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+					cudaMemcpy(velFd->getValue().getDataPtr(), velRef.getDataPtr() + start_point, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+					start_point += num;
+				}
+			}
 		}
-	//	printf("compute nbr\n");
-		m_nbrQuery->compute();
-		cuSynchronize();
-		cuSynchronize();
-
-		DeviceArray<Coord>& poss = point_positions.getValue();
-		DeviceArray<Coord>& vels = point_velocities.getValue();
-
-		uint pDims = cudaGridSize(point_positions.getValue().size(), BLOCK_SIZE);
-		K_CD_mesh << <pDims, BLOCK_SIZE >> > (
-						poss,
-						triangle_positions.getValue(),
-						triangle_index.getValue(),
-						vels,
-						m_nbrQuery->outNeighborhood()->getValue(),
-			 			radius.getValue(),
-			 			dt
-			 			);
-
-		cuSynchronize();
-
-		//TEST_mesh << <pDims, BLOCK_SIZE >> > (
-		//	poss,
-		//	vels
-		//	);
-
-		cuSynchronize();
-
-		start_point = 0;
-		//point_positions.getValue().reset();
-		//poss.reset();
-
-		for (int i = 0; i < pSys.size(); i++)
-		{
-			DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
-			DeviceArrayField<Coord>* velFd = pSys[i]->currentVelocity();
-			
-			int num = posFd->getElementCount();
-			//printf("%d\n", num);
-
-			cudaMemcpy(posFd->getValue().getDataPtr(), poss.getDataPtr() + start_point, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(velFd->getValue().getDataPtr(), vels.getDataPtr() + start_point, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			start_point += num;
-		}
-
 	}
 
 	

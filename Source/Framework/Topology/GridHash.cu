@@ -350,8 +350,11 @@ namespace PhysIKA {
 	template<typename TDataType>
 	void GridHash<TDataType>::clear()
 	{
-		cuSafeCall(cudaMemset(counter, 0, num * sizeof(int)));
-		cuSafeCall(cudaMemset(index, 0, num * sizeof(int)));
+		if (counter != nullptr)
+			cuSafeCall(cudaMemset(counter, 0, num * sizeof(int)));
+		
+		if (index != nullptr)
+			cuSafeCall(cudaMemset(index, 0, num * sizeof(int)));
 	}
 
 	template<typename TDataType>

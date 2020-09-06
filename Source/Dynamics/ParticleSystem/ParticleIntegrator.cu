@@ -19,15 +19,18 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleIntegrator<TDataType>::begin()
 	{
-		int num = this->inPosition()->getElementCount();
+		if (!this->inPosition()->isEmpty())
+		{
+			int num = this->inPosition()->getElementCount();
+			
+			m_prePosition.resize(num);
+			m_preVelocity.resize(num);
 
-		m_prePosition.resize(num);
-		m_preVelocity.resize(num);
+			Function1Pt::copy(m_prePosition, this->inPosition()->getValue());
+			Function1Pt::copy(m_preVelocity, this->inVelocity()->getValue());
 
-		Function1Pt::copy(m_prePosition, this->inPosition()->getValue());
-		Function1Pt::copy(m_preVelocity, this->inVelocity()->getValue());
-		
-		this->inForceDensity()->getReference()->reset();
+			this->inForceDensity()->getReference()->reset();
+		}
 	}
 
 	template<typename TDataType>
@@ -39,16 +42,16 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool ParticleIntegrator<TDataType>::initializeImpl()
 	{
-		if (!isAllFieldsReady())
-		{
-			std::cout << "Exception: " << std::string("DensitySummation's fields are not fully initialized!") << "\n";
-			return false;
-		}
-
-		int num = this->inPosition()->getElementCount();
-
-		m_prePosition.resize(num);
-		m_preVelocity.resize(num);
+// 		if (!isAllFieldsReady())
+// 		{
+// 			std::cout << "Exception: " << std::string("DensitySummation's fields are not fully initialized!") << "\n";
+// 			return false;
+// 		}
+// 
+// 		int num = this->inPosition()->getElementCount();
+// 
+// 		m_prePosition.resize(num);
+// 		m_preVelocity.resize(num);
 
 		return true;
 	}
@@ -85,10 +88,10 @@ namespace PhysIKA
 	{
 		Real dt = getParent()->getDt();
 		Coord gravity = SceneGraph::getInstance().getGravity();
-		cuint pDims = cudaGridSize(this->inPosition()->getReference()->size(), BLOCK_SIZE);
 
-		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
-			this->inVelocity()->getValue(), 
+		int total_num = this->inPosition()->getElementCount();
+		cuExecute(total_num, K_UpdateVelocity,
+			this->inVelocity()->getValue(),
 			this->inForceDensity()->getValue(),
 			gravity,
 			dt);
@@ -112,11 +115,11 @@ namespace PhysIKA
 	bool ParticleIntegrator<TDataType>::updatePosition()
 	{
 		Real dt = getParent()->getDt();
-		cuint pDims = cudaGridSize(this->inPosition()->getReference()->size(), BLOCK_SIZE);
 
-		K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
-			this->inPosition()->getValue(), 
-			this->inVelocity()->getValue(), 
+		int total_num = this->inPosition()->getReference()->size();
+		cuExecute(total_num, K_UpdatePosition,
+			this->inPosition()->getValue(),
+			this->inVelocity()->getValue(),
 			dt);
 
 		return true;
@@ -125,8 +128,11 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool ParticleIntegrator<TDataType>::integrate()
 	{
-		updateVelocity();
-		updatePosition();
+		if (!this->inPosition()->isEmpty())
+		{
+			updateVelocity();
+			updatePosition();
+		}
 
 		return true;
 	}

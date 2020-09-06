@@ -30,6 +30,39 @@ bool Module::initialize()
 	return m_initialized;
 }
 
+void Module::update()
+{
+	bool modified = false;
+	//check whether any input field is modified
+	for each (auto f_in in fields_input)
+	{
+		modified |= f_in->isModified();
+	}
+
+	if (modified)
+	{
+		//do execution if any field is modified
+		this->execute();
+
+		//reset input fields
+		for each (auto f_in in fields_input)
+		{
+			f_in->tagModified(false);
+		}
+
+		//tag all output fields as modifed
+		for each (auto f_out in fields_output)
+		{
+			f_out->tagModified(true);
+		}
+	}
+}
+
+bool Module::execute()
+{
+	return true;
+}
+
 void Module::setName(std::string name)
 {
 	//m_module_name.setValue(name);

@@ -59,6 +59,10 @@ public:
 
 	std::vector<Field*>& getSinkFields() { return m_field_sink; }
 
+	bool isModified();
+	void tagModified(bool modifed);
+
+
 protected:
 	void setSource(Field* source);
 	Field* getSource();
@@ -76,6 +80,8 @@ private:
 	bool m_derived = false;
 	Field* m_source = nullptr;
 	Base* m_owner = nullptr;
+
+	bool m_modified = true;
 
 	std::vector<Field*> m_field_sink;
 };

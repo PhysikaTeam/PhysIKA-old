@@ -24,9 +24,11 @@ public:
 
 	bool initialize();
 
+	void update();
+
 	virtual void begin() {};
 
-	virtual bool execute() { return false; }
+	virtual bool execute();
 
 	virtual void end() {};
 

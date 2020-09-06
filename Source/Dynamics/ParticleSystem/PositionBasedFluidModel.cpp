@@ -90,12 +90,12 @@ namespace PhysIKA
 		}
 		m_integrator->begin();
 
-		m_nbrQuery->compute();
-		m_integrator->integrate();
-		
-		m_pbdModule->constrain();
-
-		m_visModule->constrain();
+// 		m_nbrQuery->compute();
+ 		m_integrator->integrate();
+// 		
+// 		m_pbdModule->constrain();
+// 
+// 		m_visModule->constrain();
 		
 		m_integrator->end();
 	}

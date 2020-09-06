@@ -49,7 +49,7 @@ namespace PhysIKA
 		DEF_EMPTY_CURRENT_ARRAY(Velocity, Coord, DeviceType::GPU, "Particle velocity");
 
 		/**
-		 * @brief Particle velocity
+		 * @brief Particle force
 		 */
 		DEF_EMPTY_CURRENT_ARRAY(Force, Coord, DeviceType::GPU, "Force on each particle");
 	public:

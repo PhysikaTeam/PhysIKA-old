@@ -149,35 +149,49 @@ namespace PhysIKA
 	template<typename TDataType>
 	void NeighborQuery<TDataType>::compute()
 	{
+		static bool hashGridInit = false;
+		if (hashGridInit == false)
+		{
+			m_hash.setSpace(this->inRadius()->getValue(), m_lowBound, m_highBound);
+			hashGridInit = true;
+		}
+
 		if(this->inTriangleIndex()->isEmpty())
 		{ 
-			m_hash.clear();
-			m_hash.construct(this->inPosition()->getValue());
+			if (!this->inPosition()->isEmpty())
+			{
+				m_hash.clear();
+				m_hash.construct(this->inPosition()->getValue());
 
-			if (!this->outNeighborhood()->getValue().isLimited())
-			{
-				queryNeighborDynamic(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inRadius()->getValue());
-			}
-			else
-			{
-				queryNeighborFixed(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inRadius()->getValue());
+				if (!this->outNeighborhood()->getValue().isLimited())
+				{
+					queryNeighborDynamic(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inRadius()->getValue());
+				}
+				else
+				{
+					queryNeighborFixed(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inRadius()->getValue());
+				}
 			}
 		}
 		else
 		{
-			//printf("in radius new %.5lf\n", this->inRadius()->getValue());
+			if (!this->inPosition()->isEmpty())
+			{
+				//printf("in radius new %.5lf\n", this->inRadius()->getValue());
 
 			//printf("inside triangle\n");
-			if (triangle_first)
-				m_hash.clear();
-			//printf("hash clear\n");
-			
-			if (triangle_first)
-				m_hash.construct(this->inPosition()->getValue(), this->inTriangleIndex()->getValue(), this->inTrianglePosition()->getValue());
-			
-			//printf("hash constract\n");
-			triangle_first = false;
-			queryNeighborTriDynamic(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inTrianglePosition()->getValue(), this->inTriangleIndex()->getValue(), this->inRadius()->getValue());
+				if (triangle_first)
+					m_hash.clear();
+				//printf("hash clear\n");
+
+				if (triangle_first)
+					m_hash.construct(this->inPosition()->getValue(), this->inTriangleIndex()->getValue(), this->inTrianglePosition()->getValue());
+
+				//printf("hash constract\n");
+				triangle_first = false;
+				queryNeighborTriDynamic(this->outNeighborhood()->getValue(), this->inPosition()->getValue(), this->inTrianglePosition()->getValue(), this->inTriangleIndex()->getValue(), this->inRadius()->getValue());
+
+			}
 		}
 	}
 

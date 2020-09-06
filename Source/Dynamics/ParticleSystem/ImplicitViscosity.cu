@@ -99,51 +99,37 @@ namespace PhysIKA
 	bool ImplicitViscosity<TDataType>::constrain()
 	{
 		int num = m_position.getElementCount();
-		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
-		
-		m_velOld.resize(num);
-		m_velBuf.resize(num);
-		
-		Real vis = m_viscosity.getValue();
-		Real dt = getParent()->getDt();
-		Function1Pt::copy(m_velOld, m_velocity.getValue());
-		for (int t = 0; t < m_maxInteration; t++)
+		if (num > 0)
 		{
-			Function1Pt::copy(m_velBuf, m_velocity.getValue());
-			K_ApplyViscosity << < pDims, BLOCK_SIZE >> > (
-				m_velocity.getValue(),
-				m_position.getValue(),
-				m_neighborhood.getValue(),
-				m_velOld, 
-				m_velBuf, 
-				vis,
-				m_smoothingLength.getValue(), 
-				dt);
-		}
+			cuint pDims = cudaGridSize(num, BLOCK_SIZE);
 
-		return true;
+			m_velOld.resize(num);
+			m_velBuf.resize(num);
+
+			Real vis = m_viscosity.getValue();
+			Real dt = getParent()->getDt();
+			Function1Pt::copy(m_velOld, m_velocity.getValue());
+			for (int t = 0; t < m_maxInteration; t++)
+			{
+				Function1Pt::copy(m_velBuf, m_velocity.getValue());
+				cuExecute(num, K_ApplyViscosity,
+					m_velocity.getValue(),
+					m_position.getValue(),
+					m_neighborhood.getValue(),
+					m_velOld,
+					m_velBuf,
+					vis,
+					m_smoothingLength.getValue(),
+					dt);
+			}
+
+			return true;
+		}
 	}
 
 	template<typename TDataType>
 	bool ImplicitViscosity<TDataType>::initializeImpl()
 	{
-		if (!isAllFieldsReady())
-		{
-			throw std::runtime_error(std::string("ImplicitViscosity's fields not fully initialized!"));
-			return false;
-		}
-
-		int num = m_position.getElementCount();
-
-		if (m_velOld.size() != num)
-		{
-			m_velOld.resize(num);
-		}
-		if (m_velBuf.size() != num)
-		{
-			m_velBuf.resize(num);
-		}
-
 		return true;
 	}
 

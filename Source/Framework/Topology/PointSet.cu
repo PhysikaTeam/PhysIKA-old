@@ -156,11 +156,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PointSet<TDataType>::scale(Real s)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
-
-		PS_Scale<< <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			s);
+		cuExecute(m_coords.size(), PS_Scale, m_coords, s);
 	}
 
 	template <typename Coord>
@@ -178,10 +174,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PhysIKA::PointSet<TDataType>::scale(Coord s)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
-		PS_Scale << <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			s);
+		cuExecute(m_coords.size(), PS_Scale, m_coords, s);
 	}
 
 	template <typename Coord>
@@ -199,10 +192,13 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PhysIKA::PointSet<TDataType>::translate(Coord t)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
+		cuExecute(m_coords.size(), PS_Translate, m_coords, t);
 
-		PS_Translate << <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			t);
+// 		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
+// 
+// 		PS_Translate << <pDims, BLOCK_SIZE >> > (
+// 			m_coords,
+// 			t);
+// 		cuSynchronize();
 	}
 }

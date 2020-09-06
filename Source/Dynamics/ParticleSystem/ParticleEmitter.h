@@ -27,6 +27,8 @@ namespace PhysIKA
 		void advance(Real dt) override;
 		virtual void gen_random();
 
+		void updateTopology() override;
+
 		Real radius;
 		Real sampling_distance;
 		Coord centre;

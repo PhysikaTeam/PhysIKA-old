@@ -22,30 +22,42 @@ public:
 	ArrayField(int num, std::string name, std::string description, FieldType fieldType, Base* parent);
 	~ArrayField() override;
 
-	size_t getElementCount() override { return getReference()->size(); }
+	inline size_t getElementCount() override {
+		auto ref = this->getReference();
+		
+		return ref == nullptr ? 0 : ref->size();
+	}
+
 	void setElementCount(size_t num);
 //	void resize(int num);
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
 	const std::string getClassName() override { return std::string("ArrayBuffer"); }
 //	DeviceType getDeviceType() override { return deviceType; }
 
+	/**
+	 * @brief Get the shared pointer of the contained array, it will return the its own pointer if no Field is driven this object.
+	 * Otherwise, it will return the pointer its source contains.
+	 * 
+	 * @return std::shared_ptr<Array<T, deviceType>> 
+	 */
 	std::shared_ptr<Array<T, deviceType>> getReference();
 
-	Array<T, deviceType>& getValue() { return *(getReference());; }
+	Array<T, deviceType>& getValue() { return *(getReference()); }
 	void setValue(std::vector<T>& vals);
 
 //	void reset() override { m_data->reset(); }
 
-	bool isEmpty() override {
+	inline bool isEmpty() override {
 		return getReference() == nullptr;
 	}
 
 	bool connect(ArrayField<T, deviceType>* field2);
 
+	ArrayField<T, deviceType>* getSourceArrayField();
+
 private:
 	std::shared_ptr<Array<T, deviceType>> m_data = nullptr;
 };
-
 
 template<typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::ArrayField()
@@ -86,15 +98,6 @@ ArrayField<T, deviceType>::ArrayField(int num, std::string name, std::string des
 	m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);	
 }
 
-// template<typename T, DeviceType deviceType>
-// void ArrayField<T, deviceType>::resize(int num)
-// {
-// 	if (m_data == nullptr)
-// 		m_data = std::make_shared<Array<T, deviceType>>();
-// 
-// 	m_data->resize(num);
-// }
-
 template<typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::~ArrayField()
 {
@@ -107,14 +110,14 @@ ArrayField<T, deviceType>::~ArrayField()
 template<typename T, DeviceType deviceType>
 void ArrayField<T, deviceType>::setElementCount(size_t num)
 {
-	std::shared_ptr<Array<T, deviceType>> data = getReference();
-	if (data != nullptr)
+	auto arr = this->getSourceArrayField();
+	if (arr == nullptr)
 	{
-		data->resize(num);
+		m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
 	}
 	else
 	{
-		m_data = std::make_shared<Array<T, deviceType>>(num);
+		arr->m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
 	}
 }
 
@@ -124,19 +127,6 @@ bool ArrayField<T, deviceType>::connect(ArrayField<T, deviceType>* field2)
 	auto f = field2->fieldPtr();
 	this->connectPtr(f);
 
-// 	if (this->isEmpty())
-// 	{
-// 		Log::sendMessage(Log::Error, "The parent field " + this->getObjectName() + " is empty!");
-// 		return false;
-// 	}
-
-// 	field2.setDerived(true);
-// 	field2.setSource(this);
-// 	if (field2.m_data.use_count() == 1)
-// 	{
-// 		field2.m_data->release();
-// 	}
-//	field2.m_data = m_data;
 	return true;
 }
 
@@ -183,6 +173,24 @@ std::shared_ptr<Array<T, deviceType>> ArrayField<T, deviceType>::getReference()
 		{
 			return nullptr;
 		}
+	}
+}
+
+template<typename T, DeviceType deviceType>
+ArrayField<T, deviceType>* ArrayField<T, deviceType>::getSourceArrayField()
+{
+	Field* source = getSource();
+	if (source == nullptr)
+	{
+		return this;
+	}
+	else
+	{
+		ArrayField<T, deviceType>* var = dynamic_cast<ArrayField<T, deviceType>*>(source);
+		if (var == nullptr)
+			return nullptr;
+		else
+			return var->getSourceArrayField();
 	}
 }
 

@@ -51,22 +51,11 @@ namespace PhysIKA
 		triSet->scale(0.05);
 		triSet->translate(trans);
 
-
-		//create a child node for collision
-		m_collisionNode = this->createChild<Node>("Collision");
-		m_collisionNode->setActive(false);
-		m_surfaceNode->setControllable(false);
-
-		auto ptSet = std::make_shared<PointSet<TDataType>>();
-		m_collisionNode->setTopologyModule(ptSet);
-		ptSet->scale(0.05);
-		ptSet->translate(trans);
-
+		cuSynchronize();
 
 		auto surfaceMapping = std::make_shared<FrameToPointSet<TDataType>>(m_frame, triSet);
 		this->addTopologyMapping(surfaceMapping);
-		auto collisionMapping = std::make_shared<FrameToPointSet<TDataType>>(m_frame, ptSet);
-		this->addTopologyMapping(collisionMapping);
+		cuSynchronize();
 	}
 
 	template<typename TDataType>
@@ -161,6 +150,6 @@ namespace PhysIKA
 		m_center.setValue(center + t);
 
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
-		TypeInfo::CastPointerDown<PointSet<TDataType>>(m_collisionNode->getTopologyModule())->translate(t);
+		//TypeInfo::CastPointerDown<PointSet<TDataType>>(m_collisionNode->getTopologyModule())->translate(t);
 	}
 }

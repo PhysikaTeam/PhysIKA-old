@@ -134,8 +134,17 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleSystem<TDataType>::updateTopology()
 	{
-		auto pts = m_pSet->getPoints();
-		Function1Pt::copy(pts, this->currentPosition()->getValue());
+		if (!this->currentPosition()->isEmpty())
+		{
+			int num = this->currentPosition()->getElementCount();
+			auto pts = m_pSet->getPointsRef();
+			if (num != pts->size())
+			{
+				pts->resize(num);
+			}
+
+			Function1Pt::copy(*pts, this->currentPosition()->getValue());
+		}
 	}
 
 
@@ -144,12 +153,15 @@ namespace PhysIKA
 	{
 		auto pts = m_pSet->getPoints();
 
-		this->currentPosition()->setElementCount(pts.size());
-		this->currentVelocity()->setElementCount(pts.size());
-		this->currentForce()->setElementCount(pts.size());
+		if (pts.size() > 0)
+		{
+			this->currentPosition()->setElementCount(pts.size());
+			this->currentVelocity()->setElementCount(pts.size());
+			this->currentForce()->setElementCount(pts.size());
 
-		Function1Pt::copy(this->currentPosition()->getValue(), pts);
-		this->currentVelocity()->getReference()->reset();
+			Function1Pt::copy(this->currentPosition()->getValue(), pts);
+			this->currentVelocity()->getReference()->reset();
+		}
 
 		return Node::resetStatus();
 	}
