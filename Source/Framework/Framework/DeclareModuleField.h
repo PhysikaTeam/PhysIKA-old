@@ -12,6 +12,12 @@
 namespace PhysIKA
 {
 
+#define DEF_PARAM_VAR(name, T, value, desc) \
+private:									\
+	VarField<T> param_##name = VarField<T>(T(value), std::string(#name), desc, FieldType::Param, this);			\
+public:										\
+	inline VarField<T>* get##name() {return &param_##name;}
+
 #define DEF_IN_VAR(name, T, value, desc) \
 private:									\
 	VarField<T> in_##name = VarField<T>(T(value), std::string(#name), desc, FieldType::In, this);			\
@@ -24,6 +30,12 @@ private:									\
 public:										\
 	inline VarField<T>* out##name() {return &out_##name;}
 
+#define DEF_EMPTY_PARAM_VAR(name, T, desc) \
+private:									\
+	VarField<T> param_##name = VarField<T>(std::string(#name), desc, FieldType::Param, this);			\
+public:										\
+	inline VarField<T>* get##name() {return &param_##name;}
+
 #define DEF_EMPTY_IN_VAR(name, T, desc) \
 private:									\
 	VarField<T> in_##name = VarField<T>(std::string(#name), desc, FieldType::In, this);			\
@@ -35,7 +47,6 @@ private:									\
 	VarField<T> out_##name = VarField<T>(std::string(#name), desc, FieldType::Out, this);			\
 public:									\
 	inline VarField<T>* out##name() {return &out_##name;}
-
 
 
 #define DEF_IN_ARRAY(name, T, size, device, desc) \

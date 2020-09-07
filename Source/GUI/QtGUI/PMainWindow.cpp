@@ -427,28 +427,28 @@ namespace PhysIKA
 		//windowMenu->addMenu(bottomDockWidget->colorSwatchMenu());
 
 		//Set up module widget
-// 		PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
-// 		moduleDockWidget->setWindowTitle("Module List");
-// 		moduleDockWidget->setWindowIcon(qtIcon);
-// 		addDockWidget(sets[4].area, moduleDockWidget);
-// 		//windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
-// 		m_moduleListWidget = new PModuleListWidget();
-// 		moduleDockWidget->setWidget(m_moduleListWidget);
-// 
-// 		PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
-// 		sceneDockWidget->setWindowTitle("Scene Browser");
-// 		sceneDockWidget->setWindowIcon(qtIcon);
-// 		addDockWidget(sets[0].area, sceneDockWidget);
-// 		//windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
-// 		m_scenegraphWidget = new PSceneGraphWidget();
-// 		sceneDockWidget->setWidget(m_scenegraphWidget);
+		PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
+		moduleDockWidget->setWindowTitle("Module List");
+		moduleDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[4].area, moduleDockWidget);
+		//windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
+		m_moduleListWidget = new PModuleListWidget();
+		moduleDockWidget->setWidget(m_moduleListWidget);
+
+		PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
+		sceneDockWidget->setWindowTitle("Scene Browser");
+		sceneDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[0].area, sceneDockWidget);
+		//windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
+		m_scenegraphWidget = new PSceneGraphWidget();
+		sceneDockWidget->setWidget(m_scenegraphWidget);
 
 		setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 		setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
-// 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
-// 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
-// 		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
+		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
+		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
+		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
 	}
 
 	void PMainWindow::mousePressEvent(QMouseEvent *event)

@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <functional>
 #include "Core/Typedef.h"
 #include "Field.h"
 #include "Base.h"
@@ -15,6 +16,7 @@ namespace PhysIKA {
 template<typename T>
 class VarField : public Field
 {
+	using CallBackFunc = std::function<void()>;
 public:
 	typedef T VarType;
 
@@ -33,6 +35,14 @@ public:
 	T& getValue();
 	void setValue(T val);
 
+	/**
+	 * @brief Call the call back function if set
+	 * 
+	 */
+	void update();
+
+	void setCallBackFunc(CallBackFunc func) { callbackFunc = func; }
+
 	inline std::shared_ptr<T> getReference();
 
 //	void reset() override;
@@ -44,9 +54,11 @@ public:
 	bool connect(VarField<T>* field2);
 
 private:
+	CallBackFunc callbackFunc;
+	
 	std::shared_ptr<T> m_data = nullptr;
-};
 
+};
 
 template<typename T>
 VarField<T>::VarField()
@@ -72,7 +84,7 @@ template<typename T>
 VarField<T>::VarField(T value, std::string name, std::string description, FieldType fieldType, Base* parent)
 	: Field(name, description, fieldType, parent)
 {
-	m_data = std::make_shared<T>(value);
+	this->setValue(value);
 }
 
 template<typename T>
@@ -108,6 +120,27 @@ void VarField<T>::setValue(T val)
 	}
 }
 
+
+template<typename T>
+void VarField<T>::update()
+{
+	if (m_data != nullptr && callbackFunc != nullptr)
+	{
+		callbackFunc();
+	}
+
+	auto& sinks = this->getSinkFields();
+	
+	for each (auto fs in sinks)
+	{
+		VarField<T>* var = dynamic_cast<VarField<T>*>(fs);
+		if (var != nullptr)
+		{
+			var->update();
+		}
+	}
+}
+
 template<typename T>
 std::shared_ptr<T> VarField<T>::getReference()
 {
@@ -135,6 +168,7 @@ bool VarField<T>::connect(VarField<T>* field2)
 {
 	auto f = field2->fieldPtr();
 	this->connectPtr(f);
+	field2->update();
 
 // 	if (this->isEmpty())
 // 	{

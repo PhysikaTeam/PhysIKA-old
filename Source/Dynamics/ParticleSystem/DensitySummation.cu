@@ -42,11 +42,22 @@ namespace PhysIKA
 	{
 		m_mass.setValue(Real(1));
 		m_restDensity.setValue(Real(1000));
-		m_smoothingLength.setValue(Real(0.011));
+
+		this->getSmoothingLength()->setValue(Real(0.011));
+		this->getSamplingDistance()->setValue(Real(0.005));
+
+
+		std::function<void()> callback = std::bind(&DensitySummation<TDataType>::calculateScalingFactor, this);
+
+		this->getSmoothingLength()->setCallBackFunc(callback);
+		this->getSamplingDistance()->setCallBackFunc(callback);
+
+
+		calculateScalingFactor();
 
 		attachField(&m_mass, "mass", "particle mass", false);
 		attachField(&m_restDensity, "rest_density", "Reference density", false);
-		attachField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
+		//attachField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
 
 		attachField(&m_position, "position", "Storing the particle positions!", false);
 		attachField(&m_density, "density", "Storing the particle densities!", false);
@@ -60,7 +71,7 @@ namespace PhysIKA
 			m_density.getValue(),
 			m_position.getValue(),
 			m_neighborhood.getValue(),
-			m_smoothingLength.getValue(),
+			this->getSmoothingLength()->getValue(),
 			m_mass.getValue());
 	}
 
@@ -72,7 +83,7 @@ namespace PhysIKA
 			rho,
 			m_position.getValue(),
 			m_neighborhood.getValue(),
-			m_smoothingLength.getValue(),
+			this->getSmoothingLength()->getValue(),
 			m_mass.getValue());
 	}
 
@@ -102,44 +113,35 @@ namespace PhysIKA
 			return false;
 		}
 		
-		compute(
-			m_density.getValue(),
-			m_position.getValue(),
-			m_neighborhood.getValue(),
-			m_smoothingLength.getValue(),
-			m_mass.getValue());
-		
-
-		Real sampling_distance = 0.005;
-		int sum = m_smoothingLength.getValue() / sampling_distance;
-		sum += 2;
-
-		SpikyKernel<Real> kern;
-		Real rho_i(0);
-		for(int i = -sum; i <= sum; i ++)
-			for (int j = -sum; j <= sum; j++)
-				for (int k = -sum; k <= sum; k++)
-				{
-					Real x = i * sampling_distance;
-					Real y = j * sampling_distance;
-					Real z = k * sampling_distance;
-					Real r = sqrt(x * x + y * y + z * z);
-					rho_i += m_mass.getValue() * kern.Weight(r, m_smoothingLength.getValue());
-				}	
-
-	//	printf("RHO:          %.10lf\n", rho_i);
-		auto rho = m_density.getReference();
-
-		Reduction<Real>* pReduce = Reduction<Real>::Create(rho->size());
-
-		//Real maxRho = pReduce->maximum(rho->getDataPtr(), rho->size());
-		
-		Real maxRho = rho_i;
-		//printf("RHO2:          %.10lf\n", maxRho);
-		m_factor = m_restDensity.getValue() / maxRho;
-		
-//		delete pReduce;
+//		calculateScalingFactor();
 
 		return true;
 	}
+
+	template<typename TDataType>
+	void DensitySummation<TDataType>::calculateScalingFactor()
+	{
+		Real d = this->getSamplingDistance()->getValue();
+		Real H = this->getSmoothingLength()->getValue();
+		Real rho_0 = m_restDensity.getValue();
+		Real m = m_mass.getValue();
+
+		SpikyKernel<Real> kern;
+
+		Real rho_e(0);
+		int half_res = H / d + 1;
+		for (int i = -half_res; i <= half_res; i++)
+			for (int j = -half_res; j <= half_res; j++)
+				for (int k = -half_res; k <= half_res; k++)
+				{
+					Real x = i * d;
+					Real y = j * d;
+					Real z = k * d;
+					Real r = sqrt(x * x + y * y + z * z);
+					rho_e += m * kern.Weight(r, H);
+				}
+
+		m_factor = rho_0 / rho_e;
+	}
+
 }

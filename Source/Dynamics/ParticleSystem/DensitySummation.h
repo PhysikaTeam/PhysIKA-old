@@ -32,15 +32,18 @@ namespace PhysIKA {
 			Real mass);
 
 		void setCorrection(Real factor) { m_factor = factor; }
-		void setSmoothingLength(Real length) { m_smoothingLength.setValue(length); }
 	
 	protected:
 		bool initializeImpl() override;
 
+		void calculateScalingFactor();
+
 	public:
 		VarField<Real> m_mass;
 		VarField<Real> m_restDensity;
-		VarField<Real> m_smoothingLength;
+		
+		DEF_EMPTY_PARAM_VAR(SmoothingLength, Real, "Indicating the smoothing length");
+		DEF_EMPTY_PARAM_VAR(SamplingDistance, Real, "Indicating the initial sampling distance");
 
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Real> m_density;

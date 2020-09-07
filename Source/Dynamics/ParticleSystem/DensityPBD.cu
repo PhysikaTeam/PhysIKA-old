@@ -248,6 +248,14 @@ namespace PhysIKA
 		m_restDensity.setValue(Real(1000));
 		m_smoothingLength.setValue(Real(0.011));
 
+		m_densitySum = std::make_shared<DensitySummation<TDataType>>();
+
+		m_restDensity.connect(&m_densitySum->m_restDensity);
+		m_smoothingLength.connect(m_densitySum->getSmoothingLength());
+		m_position.connect(&m_densitySum->m_position);
+		m_density.connect(&m_densitySum->m_density);
+		m_neighborhood.connect(&m_densitySum->m_neighborhood);
+
 		attachField(&m_restDensity, "rest_density", "Reference density", false);
 		attachField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
 		attachField(&m_position, "position", "Storing the particle positions!", false);
@@ -277,16 +285,6 @@ namespace PhysIKA
 			std::cout << "Exception: " << std::string("DensityPBD's fields are not fully initialized!") << std::endl;
 			return false;
 		}
-
-		m_densitySum = std::make_shared<DensitySummation<TDataType>>();
-
-		m_restDensity.connect(&m_densitySum->m_restDensity);
-		m_smoothingLength.connect(&m_densitySum->m_smoothingLength);
-		m_position.connect(&m_densitySum->m_position);
-		m_density.connect(&m_densitySum->m_density);
-		m_neighborhood.connect(&m_densitySum->m_neighborhood);
-
-		m_densitySum->initialize();
 
 		int num = m_position.getElementCount();
 
@@ -364,7 +362,7 @@ namespace PhysIKA
 			m_densitySum = std::make_shared<DensitySummation<TDataType>>();
 
 			m_restDensity.connect(&m_densitySum->m_restDensity);
-			m_smoothingLength.connect(&m_densitySum->m_smoothingLength);
+			m_smoothingLength.connect(m_densitySum->getSmoothingLength());
 			m_position.connect(&m_densitySum->m_position);
 			m_density.connect(&m_densitySum->m_density);
 			m_neighborhood.connect(&m_densitySum->m_neighborhood);
