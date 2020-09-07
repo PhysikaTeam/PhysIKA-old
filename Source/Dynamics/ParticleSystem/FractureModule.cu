@@ -1,5 +1,5 @@
 #include "FractureModule.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "Kernel.h"
 
 namespace PhysIKA

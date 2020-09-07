@@ -2,7 +2,7 @@
 
 #include "DensityPBD.h"
 #include "ParticleIntegrator.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "ImplicitViscosity.h"
 #include "Core/Utility.h"
 #include "Framework/ModuleTypes.h"

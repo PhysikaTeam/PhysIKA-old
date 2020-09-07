@@ -2,7 +2,7 @@
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Framework/Node.h"
 #include "ParticleIntegrator.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "ImplicitViscosity.h"
 #include "Framework/Framework/MechanicalState.h"
 #include "Framework/Mapping/PointSetToPointSet.h"

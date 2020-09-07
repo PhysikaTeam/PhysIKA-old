@@ -3,7 +3,7 @@
 
 namespace PhysIKA {
 
-	template<typename TDataType> class DensitySummation;
+	template<typename TDataType> class SummationDensity;
 
 	template<typename TDataType>
 	class FractureModule : public ElastoplasticityModule<TDataType>

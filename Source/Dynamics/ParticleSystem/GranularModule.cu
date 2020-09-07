@@ -1,5 +1,5 @@
 #include "GranularModule.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 
 namespace PhysIKA
 {
@@ -13,11 +13,11 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool GranularModule<TDataType>::initializeImpl()
 	{
-		m_densitySum = std::make_shared<DensitySummation<TDataType>>();
+		m_densitySum = std::make_shared<SummationDensity<TDataType>>();
 
-		this->inHorizon()->connect(m_densitySum->getSmoothingLength());
-		this->inPosition()->connect(&m_densitySum->m_position);
-		this->inNeighborhood()->connect(&m_densitySum->m_neighborhood);
+		this->inHorizon()->connect(m_densitySum->varSmoothingLength());
+		this->inPosition()->connect(m_densitySum->inPosition());
+		this->inNeighborhood()->connect(m_densitySum->inNeighborIndex());
 
 		m_densitySum->initialize();
 
@@ -60,7 +60,7 @@ namespace PhysIKA
 
 		PM_ComputeStiffness << <pDims, BLOCK_SIZE >> > (
 			this->m_bulkCoefs,
-			m_densitySum->m_density.getValue());
+			m_densitySum->outDensity()->getValue());
 		cuSynchronize();
 	}
 }

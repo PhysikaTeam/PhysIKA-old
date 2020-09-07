@@ -12,11 +12,11 @@
 namespace PhysIKA
 {
 
-#define DEF_PARAM_VAR(name, T, value, desc) \
+#define DEF_VAR(name, T, value, desc) \
 private:									\
-	VarField<T> param_##name = VarField<T>(T(value), std::string(#name), desc, FieldType::Param, this);			\
+	VarField<T> var_##name = VarField<T>(T(value), std::string(#name), desc, FieldType::Param, this);			\
 public:										\
-	inline VarField<T>* get##name() {return &param_##name;}
+	inline VarField<T>* arg##name() {return &var_##name;}
 
 #define DEF_IN_VAR(name, T, value, desc) \
 private:									\
@@ -30,11 +30,11 @@ private:									\
 public:										\
 	inline VarField<T>* out##name() {return &out_##name;}
 
-#define DEF_EMPTY_PARAM_VAR(name, T, desc) \
+#define DEF_EMPTY_VAR(name, T, desc) \
 private:									\
-	VarField<T> param_##name = VarField<T>(std::string(#name), desc, FieldType::Param, this);			\
+	VarField<T> var_##name = VarField<T>(std::string(#name), desc, FieldType::Param, this);			\
 public:										\
-	inline VarField<T>* get##name() {return &param_##name;}
+	inline VarField<T>* var##name() {return &var_##name;}
 
 #define DEF_EMPTY_IN_VAR(name, T, desc) \
 private:									\

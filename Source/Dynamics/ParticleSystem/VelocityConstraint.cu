@@ -2,7 +2,7 @@
 #include "VelocityConstraint.h"
 #include "Framework/Framework/Node.h"
 #include "Core/Utility.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "Attribute.h"
 #include "Kernel.h"
 
@@ -724,10 +724,10 @@ namespace PhysIKA
 			return false;
 		}
 
-		m_densitySum = std::make_shared<DensitySummation<TDataType>>();
-		m_smoothingLength.connect(m_densitySum->getSmoothingLength());
-		m_position.connect(&m_densitySum->m_position);
-		m_neighborhood.connect(&m_densitySum->m_neighborhood);
+		m_densitySum = std::make_shared<SummationDensity<TDataType>>();
+		m_smoothingLength.connect(m_densitySum->varSmoothingLength());
+		m_position.connect(m_densitySum->inPosition());
+		m_neighborhood.connect(m_densitySum->inNeighborIndex());
 		m_densitySum->initialize();
 
 		int num = m_position.getElementCount();

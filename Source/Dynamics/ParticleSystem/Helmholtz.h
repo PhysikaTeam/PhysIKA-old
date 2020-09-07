@@ -5,7 +5,7 @@
 
 namespace PhysIKA {
 
-	template<typename TDataType> class DensitySummation;
+	template<typename TDataType> class SummationDensity;
 
 	/*!
 	*	\class	Helmholtz

@@ -3,7 +3,7 @@
 
 #include "Framework/Topology/PointSet.h"
 #include "Core/Utility.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 
 #include <time.h>
 

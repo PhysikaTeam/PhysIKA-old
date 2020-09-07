@@ -8,7 +8,7 @@
 
 namespace PhysIKA {
 
-	template<typename TDataType> class DensitySummation;
+	template<typename TDataType> class SummationDensity;
 
 	/*!
 	*	\class	DensityPBD
@@ -58,7 +58,7 @@ namespace PhysIKA {
 		DeviceArray<Coord> m_deltaPos;
 		DeviceArray<Coord> m_position_old;
 
-		std::shared_ptr<DensitySummation<TDataType>> m_densitySum;
+		std::shared_ptr<SummationDensity<TDataType>> m_densitySum;
 	};
 
 
