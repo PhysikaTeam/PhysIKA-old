@@ -6,6 +6,11 @@
 
 namespace PhysIKA {
 
+	/**
+	 * @brief The standard summation density
+	 * 
+	 * @tparam TDataType 
+	 */
 	template<typename TDataType>
 	class SummationDensity : public ComputeModule
 	{
@@ -19,6 +24,9 @@ namespace PhysIKA {
 		~SummationDensity() override {};
 
 		void compute() override;
+	
+	protected:
+		void calculateScalingFactor();
 
 		void compute(DeviceArray<Real>& rho);
 
@@ -28,12 +36,11 @@ namespace PhysIKA {
 			NeighborList<int>& neighbors,
 			Real smoothingLength,
 			Real mass);
-	
-	protected:
-		void calculateScalingFactor();
 
 	public:
-		DEF_EMPTY_VAR(RestDensity, Real, "Particle mass, note that this module only support a constant mass for all particles.");
+		DEF_EMPTY_VAR(RestDensity, Real, 
+			"Particle mass, note that this module only support a constant mass for all particles.");
+
 		DEF_EMPTY_VAR(Mass, Real, "Particle mass, note that this module only support a constant mass for all particles.");
 		DEF_EMPTY_VAR(SmoothingLength, Real, "Indicating the smoothing length");
 		DEF_EMPTY_VAR(SamplingDistance, Real, "Indicating the initial sampling distance");

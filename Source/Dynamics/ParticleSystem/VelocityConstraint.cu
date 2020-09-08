@@ -622,12 +622,12 @@ namespace PhysIKA
 		int itor = 0;
 
 		//compute the source term
-		m_densitySum->compute(m_density);
+		m_densitySum->compute();
 		m_divergence.reset();
 		VC_ComputeDivergence << <pDims, BLOCK_SIZE >> > (
 			m_divergence, 
 			m_alpha, 
-			m_density, 
+			m_densitySum->outDensity()->getValue(),
 			m_position.getValue(), 
 			m_velocity.getValue(), 
 			m_bSurface, 

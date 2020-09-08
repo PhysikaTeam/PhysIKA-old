@@ -5,6 +5,8 @@
 
 #include "PVTKOpenGLWidget.h"
 #include "PCustomWidgets.h"
+#include "Nodes/QtNodeWidget.h"
+#include "Nodes/QtModuleWidget.h"
 
 #include "vtkRenderer.h"
 #include <vtkRenderWindow.h>
@@ -15,6 +17,7 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QSpinBox>
+#include <QMessageBox>
 
 namespace PhysIKA
 {
@@ -318,6 +321,25 @@ namespace PhysIKA
 //		clear();
 
 		updateContext(node);
+	}
+
+	void PPropertyWidget::showBlockProperty(QtNodes::QtBlock& block)
+	{
+		auto dataModel = block.nodeDataModel();
+
+		auto node = dynamic_cast<QtNodeWidget*>(dataModel);
+		if (node != nullptr)
+		{
+			this->showProperty(node->getNode().get());
+		}
+		else
+		{
+			auto module = dynamic_cast<QtModuleWidget*>(dataModel);
+			if (module != nullptr)
+			{
+				this->showProperty(module->getModule());
+			}
+		}
 	}
 
 	void PPropertyWidget::updateDisplay()

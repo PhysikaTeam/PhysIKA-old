@@ -75,8 +75,6 @@ namespace PhysIKA
 		{
 			emit notifyNodeDoubleClicked(nodeItem->getNode());
 		}
-
-		qDebug("sss");
 	}
 
 	void PSceneGraphWidget::popMenu(const QPoint& pos)

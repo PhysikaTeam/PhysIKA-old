@@ -8,6 +8,8 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 
+#include "Nodes/QtBlock.h"
+
 #include <vector>
 
 
@@ -113,6 +115,8 @@ namespace PhysIKA
 	public slots:
 		void showProperty(Module* module);
 		void showProperty(Node* node);
+
+		void showBlockProperty(QtNodes::QtBlock& block);
 
 		void updateDisplay();
 

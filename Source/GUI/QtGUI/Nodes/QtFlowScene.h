@@ -128,6 +128,8 @@ Q_SIGNALS:
 
 	void nodeMoved(QtBlock& n, const QPointF& newLocation);
 
+	void nodeSelected(QtBlock& n);
+
 	void nodeDoubleClicked(QtBlock& n);
 
 	void connectionHovered(QtConnection& c, QPoint screenPos);

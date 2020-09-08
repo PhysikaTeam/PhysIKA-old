@@ -271,6 +271,7 @@ mousePressEvent(QGraphicsSceneMouseEvent * event)
   {
     state.setResizing(true);
   }
+
 }
 
 
@@ -334,6 +335,11 @@ mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
   state.setResizing(false);
 
   QGraphicsObject::mouseReleaseEvent(event);
+
+  if (isSelected())
+  {
+	  _scene.nodeSelected(node());
+  }
 
   // position connections precisely after fast node move
   moveConnections();

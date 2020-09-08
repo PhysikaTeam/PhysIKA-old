@@ -11,6 +11,7 @@
 
 #include "DataModelRegistry.h"
 
+#include <QtWidgets/QMessageBox>
 
 namespace QtNodes
 {
@@ -18,7 +19,7 @@ namespace QtNodes
 QtNodeFlowScene::QtNodeFlowScene(std::shared_ptr<DataModelRegistry> registry, QObject * parent)
   : QtFlowScene(registry, parent)
 {
-	connect(this, &QtFlowScene::nodeMoved, this, &QtNodeFlowScene::moveModulePosition);
+
 }
 
 QtNodeFlowScene::QtNodeFlowScene(QObject * parent)
@@ -52,6 +53,8 @@ QtNodeFlowScene::QtNodeFlowScene(QObject * parent)
 
 	PhysIKA::SceneGraph& scn = PhysIKA::SceneGraph::getInstance();
 	showSceneGraph(&scn);
+
+	connect(this, &QtFlowScene::nodeMoved, this, &QtNodeFlowScene::moveModulePosition);
 }
 
 

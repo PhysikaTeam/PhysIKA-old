@@ -27,8 +27,6 @@ public:
 public Q_SLOTS:
 	void showSceneGraph(SceneGraph* scn);
 	void moveModulePosition(QtBlock& n, const QPointF& newLocation);
-
-
 private:
 	SceneGraph* m_scene = nullptr;
 };

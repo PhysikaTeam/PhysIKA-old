@@ -765,6 +765,4 @@ void QtFlowScene::newNode()
 		createModuleConnections(c.get());
 	}*/
 }
-
-
 }

@@ -449,6 +449,9 @@ namespace PhysIKA
 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
 		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
+
+		connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeDoubleClicked, m_propertyWidget, &PPropertyWidget::showBlockProperty);
+		connect(m_moduleFlowView->module_scene, &QtNodes::QtModuleFlowScene::nodeDoubleClicked, m_propertyWidget, &PPropertyWidget::showBlockProperty);
 	}
 
 	void PMainWindow::mousePressEvent(QMouseEvent *event)
