@@ -17,10 +17,28 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QSpinBox>
+#include <QRegularExpression>
 #include <QMessageBox>
 
 namespace PhysIKA
 {
+	QString genFieldWidgetName(std::string name)
+	{
+		QString fName = QString::fromStdString(name);
+
+		QRegularExpression regexp("[A-Z][^A-Z]*");
+		QRegularExpressionMatchIterator match = regexp.globalMatch(fName);
+		QVector<QString> vec;
+
+		QString ret;
+		while (match.hasNext())
+		{
+			ret += match.next().captured() + " ";
+		}
+			
+		return ret;
+	}
+
 	QBoolFieldWidget::QBoolFieldWidget(Field* field)
 		: QGroupBox()
 	{
@@ -40,11 +58,11 @@ namespace PhysIKA
 
 		QLabel* name = new QLabel();
 		name->setFixedSize(160, 18);
-		name->setText(QString::fromStdString(field->getObjectName()));
+		name->setText(genFieldWidgetName(field->getObjectName()));
 		QCheckBox* checkbox = new QCheckBox();
-		checkbox->setFixedSize(40, 18);
+		//checkbox->setFixedSize(40, 18);
 		layout->addWidget(name, 0, 0);
-		layout->addWidget(checkbox, 0, 1, Qt::AlignRight);
+		layout->addWidget(checkbox, 0, 1);
 
 		connect(checkbox, SIGNAL(stateChanged(int)), this, SLOT(changeValue(int)));
 
@@ -95,8 +113,8 @@ namespace PhysIKA
 		this->setLayout(layout);
 
 		QLabel* name = new QLabel();
-		name->setFixedSize(100, 18);
-		name->setText(QString::fromStdString(field->getObjectName()));
+		name->setFixedSize(160, 18);
+		name->setText(genFieldWidgetName(field->getObjectName()));
 
 		QSpinBox* spinner = new QSpinBox;
 		spinner->setFixedSize(120, 18);
@@ -127,20 +145,24 @@ namespace PhysIKA
 		this->setLayout(layout);
 
 		QLabel* name = new QLabel();
-		name->setFixedSize(80, 18);
-		name->setText(QString::fromStdString(field->getObjectName()));
+		name->setFixedSize(160, 18);
+		name->setText(genFieldWidgetName(field->getObjectName()));
 
 		QDoubleSlider* slider = new QDoubleSlider;
-		slider->setFixedSize(80,18);
+		//slider->setFixedSize(80,18);
 		slider->setRange(0.0, 1.0);
 
+		QLabel* spc = new QLabel();
+		spc->setFixedSize(10, 18);
+
 		QDoubleSpinner* spinner = new QDoubleSpinner;
-		spinner->setFixedSize(60, 18);
+		spinner->setFixedSize(100, 18);
 		spinner->setRange(0.0, 1.0);
 
 		layout->addWidget(name, 0, 0);
 		layout->addWidget(slider, 0, 1);
-		layout->addWidget(spinner, 0, 2, Qt::AlignRight);
+		layout->addWidget(spc, 0, 2);
+		layout->addWidget(spinner, 0, 3, Qt::AlignRight);
 
 		QObject::connect(slider, SIGNAL(valueChanged(double)), spinner, SLOT(setValue(double)));
 		QObject::connect(spinner, SIGNAL(valueChanged(double)), slider, SLOT(setValue(double)));
@@ -157,6 +179,8 @@ namespace PhysIKA
 			VarField<double>* f = TypeInfo::CastPointerDown<VarField<double>>(m_field);
 			slider->setValue(f->getValue());
 		}
+
+		genFieldWidgetName(field->getObjectName());
 	}
 
 	void QRealFieldWidget::changeValue(double value)
@@ -191,19 +215,19 @@ namespace PhysIKA
 		this->setLayout(layout);
 
 		QLabel* name = new QLabel();
-		name->setFixedSize(80, 18);
-		name->setText(QString::fromStdString(field->getObjectName()));
+		name->setFixedSize(160, 18);
+		name->setText(genFieldWidgetName(field->getObjectName()));
 
 		spinner1 = new QDoubleSpinner;
-		spinner1->setFixedSize(60, 18);
+		//spinner1->setFixedSize(60, 18);
 		spinner1->setRange(0.0, 1.0);
 
 		spinner2 = new QDoubleSpinner;
-		spinner2->setFixedSize(60, 18);
+		//spinner2->setFixedSize(60, 18);
 		spinner2->setRange(0.0, 1.0);
 
 		spinner3 = new QDoubleSpinner;
-		spinner3->setFixedSize(60, 18);
+		//spinner3->setFixedSize(60, 18);
 		spinner3->setRange(0.0, 1.0);
 
 		layout->addWidget(name, 0, 0);
@@ -366,7 +390,7 @@ namespace PhysIKA
 			{
 				if (var->getClassName() == std::string("Variable"))
 				{
-					addScalarFieldWidget(var);
+					this->addScalarFieldWidget(var);
 				}
 				else if (var->getClassName() == std::string("ArrayBuffer"))
 				{

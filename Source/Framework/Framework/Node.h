@@ -68,9 +68,6 @@ public:
 	/// Set the visibility of context
 	virtual void setVisible(bool visible);
 
-	/// Simulation time
-	virtual Real getTime();
-
 	/// Simulation timestep
 	virtual Real getDt();
 
@@ -376,23 +373,28 @@ private:
 	Real m_dt;
 	bool m_initalized;
 
-	VarField<Real> m_mass;
+	Real m_mass;
+
+	DEF_VAR(Location, Vector3f, 0, "Node location");
+	DEF_VAR(Rotation, Vector3f, 0, "Node rotation");
+	DEF_VAR(Scale, Vector3f, 0, "Node scale");
+
+	std::string m_node_name;
+
 	/**
 	 * @brief Dynamics indicator
 	 * true: Dynamics is turn on
 	 * false: Dynamics is turned off
 	 */
-	VarField<bool> m_active;
+	DEF_VAR(Active, bool, true, "Indicating whether the simulation is on for this node!");
+
+
 	/**
 	 * @brief Visibility
 	 * true: the node is visible
 	 * false: the node is invisible
 	 */
-	VarField<bool> m_visible;
-	VarField<Real> m_time;
-
-
-	VarField<std::string> m_node_name;
+	DEF_VAR(Visible, bool, true, "Indicating whether the node is visible!");
 
 	/**
 	 * @brief A module list containing all modules

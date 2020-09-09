@@ -11,23 +11,10 @@ IMPLEMENT_CLASS(Node)
 Node::Node(std::string name)
 	: Base()
 	, m_parent(NULL)
+	, m_node_name(name)
+	, m_dt(0.001f)
+	, m_mass(1.0f)
 {
-	attachField(&m_active, "active", "this is a variable!", false);
-	attachField(&m_visible, "visible", "this is a variable!", false);
-	attachField(&m_time, "time", "this is a variable!", false);
-	attachField(&m_node_name, "node_name", "Node name", false);
-
-	m_active.setValue(true);
-	m_visible.setValue(true);
-	m_time.setValue(0.0f);
-	m_node_name.setValue(name);
-
-// 	m_active = HostVarField<bool>::createField(this, "active", "this is a variable!", true);
-// 	m_visible = HostVarField<bool>::createField(this, "visible", "this is a variable!", true);
-// 	m_time = HostVarField<float>::createField(this, "time", "this is a variable!", 0.0f);
-
-	m_mass.setValue(1.0);
-	m_dt = 0.001f;
 }
 
 
@@ -37,12 +24,12 @@ Node::~Node()
 
 void Node::setName(std::string name)
 {
-	m_node_name.setValue(name);
+	m_node_name = name;
 }
 
 std::string Node::getName()
 {
-	return m_node_name.getValue();
+	return m_node_name;
 }
 
 
@@ -83,27 +70,22 @@ void Node::setControllable(bool con)
 
 bool Node::isActive()
 {
-	return m_active.getValue();
+	return this->varActive()->getValue();
 }
 
 void Node::setActive(bool active)
 {
-	m_active.setValue(active);
+	this->varActive()->setValue(active);
 }
 
 bool Node::isVisible()
 {
-	return m_visible.getValue();
+	return this->varVisible()->getValue();
 }
 
 void Node::setVisible(bool visible)
 {
-	m_visible.setValue(visible);
-}
-
-float Node::getTime()
-{
-	return m_time.getValue();
+	this->varVisible()->setValue(visible);
 }
 
 float Node::getDt()
@@ -118,12 +100,12 @@ void Node::setDt(Real dt)
 
 void Node::setMass(Real mass)
 {
-	m_mass.setValue(mass);
+	m_mass = mass;
 }
 
 Real Node::getMass()
 {
-	return m_mass.getValue();
+	return m_mass;
 }
 
 bool Node::hasChild(std::shared_ptr<Node> child)
@@ -442,6 +424,9 @@ bool Node::attachField(Field* field, std::string name, std::string desc, bool au
 	case FieldType::Current:
 		ret = this->getMechanicalState()->addOutputField(field);
 		break;
+
+	case FieldType::Param:
+		ret = this->addField(field);
 
 	default:
 		break;

@@ -16,7 +16,7 @@ namespace PhysIKA
 private:									\
 	VarField<T> var_##name = VarField<T>(T(value), std::string(#name), desc, FieldType::Param, this);			\
 public:										\
-	inline VarField<T>* arg##name() {return &var_##name;}
+	inline VarField<T>* var##name() {return &var_##name;}
 
 #define DEF_IN_VAR(name, T, value, desc) \
 private:									\
