@@ -67,6 +67,7 @@ namespace PhysIKA{
 	static inline void checkCudaError(const char *msg) {
 		cudaError_t err = cudaGetLastError();
 		if (cudaSuccess != err) {
+			//printf( "CUDA error: %d : %s at %s:%d \n", err, cudaGetErrorString(err), __FILE__, __LINE__);
 			throw std::runtime_error(std::string(msg) + ": " + cudaGetErrorString(err));
 		}
 	}

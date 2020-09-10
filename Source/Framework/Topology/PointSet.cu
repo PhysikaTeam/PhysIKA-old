@@ -105,6 +105,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PointSet<TDataType>::setPoints(std::vector<Coord>& pos)
 	{
+		//printf("%d\n", pos.size());
 		m_coords.resize(pos.size());
 		Function1Pt::copy(m_coords, pos);
 
@@ -150,7 +151,7 @@ namespace PhysIKA
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= vertex.size()) return;
-
+		//return;
 		vertex[pId] = vertex[pId] * s;
 	}
 

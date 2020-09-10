@@ -67,7 +67,7 @@ int main()
 	auto pRenderer = std::make_shared<PVTKPointSetRender>();
 	pRenderer->setName("VTK Point Renderer");
 	child1->addVisualModule(pRenderer);
-// 
+    printf("outside visual\n");
 // 	printf("outside 1\n");
 // 	
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();

@@ -143,6 +143,7 @@ namespace PhysIKA {
 // 			break;
 // 		}
 
+		printf("%d %d\n", m_totalNum, sizeof(T));
 		m_alloc->allocMemory1D((void**)&m_data, m_totalNum, sizeof(T));
 
 		reset();

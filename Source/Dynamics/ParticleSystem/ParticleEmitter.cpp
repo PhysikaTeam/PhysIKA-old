@@ -22,6 +22,13 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleEmitter<TDataType>::advance(Real dt)
 	{
+		radius = this->varRadius()->getValue();
+		sampling_distance = this->varSamplingDistance()->getValue();
+		centre = this->varCentre()->getValue();
+		dir = this->varDir()->getValue();
+
+		getRotMat(dir / dir.norm());
+
 		gen_random();
 
 		int cur_size = this->currentPosition()->getElementCount();

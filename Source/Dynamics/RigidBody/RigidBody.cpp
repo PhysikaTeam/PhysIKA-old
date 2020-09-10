@@ -73,6 +73,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void RigidBody<TDataType>::loadShape(std::string filename)
 	{
+		printf("surface\n");
 		std::shared_ptr<TriangleSet<TDataType>> surface = TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule());
 		surface->loadObjFile(filename);
 	}
