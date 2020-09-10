@@ -452,7 +452,10 @@ void QtNodes::QtConnection::propagateDeletedData() const
 	if (_outNode)
 	{
 		deletedData = _outNode->nodeDataModel()->outData(_outPortIndex);
-		deletedData->setDisconnected(true);
+		if (_inNode)
+		{
+			deletedData->setDisconnected(true);
+		}
 	}
 
 	propagateData(deletedData);

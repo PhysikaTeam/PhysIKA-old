@@ -97,6 +97,7 @@ void QtNodeWidget::setInData(std::shared_ptr<BlockData> data, PortIndex portInde
 		if (node_port->isToDisconnected())
 		{
 			im_nodes[portIndex]->getNodePort()->removeNode(nd);
+			data->setDisconnected(false);
 		}
 		else
 		{

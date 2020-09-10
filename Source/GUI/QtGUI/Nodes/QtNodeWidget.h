@@ -39,7 +39,6 @@ public:
 	QString caption() const override;
 
 	QString name() const override;
-	void setName(QString name) { m_name = name; }
 	
 	QString	portCaption(PortType portType, PortIndex portIndex) const override;
 
@@ -73,9 +72,6 @@ protected:
 
 	ImportNodePtr im_nodes;
 	ExportNodePtr ex_node;
-
-
-	QString m_name;
 
 	std::shared_ptr<Node> m_node = nullptr;
 

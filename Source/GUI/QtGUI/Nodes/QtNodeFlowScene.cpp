@@ -13,6 +13,8 @@
 
 #include <QtWidgets/QMessageBox>
 
+PhysIKA::Node;
+
 namespace QtNodes
 {
 
@@ -35,14 +37,16 @@ QtNodeFlowScene::QtNodeFlowScene(QObject * parent)
 
 		QString str = QString::fromStdString(c.first);
 		auto obj = PhysIKA::Object::createObject(str.toStdString());
-		std::shared_ptr<Node> node(dynamic_cast<PhysIKA::Node*>(obj));
+		std::shared_ptr<Node> node(dynamic_cast<Node*>(obj));
 
 		if (node != nullptr)
 		{
-			QtNodes::DataModelRegistry::RegistryItemCreator creator = [str, node]() {
-				auto dat = std::make_unique<QtNodeWidget>(std::move(node));
-				dat->setName(str);
-				return dat; };
+			QtNodes::DataModelRegistry::RegistryItemCreator creator = [str]() {
+				auto node_obj = PhysIKA::Object::createObject(str.toStdString());
+				std::shared_ptr<Node> new_node(dynamic_cast<Node*>(node_obj));
+				auto dat = std::make_unique<QtNodeWidget>(std::move(new_node));
+				return dat; 
+			};
 
 			QString category = "Default";// QString::fromStdString(module->getModuleType());
 			ret->registerModel<QtNodeWidget>(category, creator);
