@@ -114,6 +114,11 @@ ValidationState QtNodeWidget::validationState() const
 	return modelValidationState;
 }
 
+QtBlockDataModel::ConnectionPolicy QtNodeWidget::portInConnectionPolicy(PortIndex portIndex) const
+{
+	return ConnectionPolicy::Many;
+}
+
 std::shared_ptr<Node> QtNodeWidget::getNode()
 {
 	return m_node;
@@ -126,6 +131,7 @@ QString QtNodeWidget::validationMessage() const
 
 void QtNodeWidget::updateModule()
 {
+	modelValidationState = ValidationState::Valid;
 }
 
 

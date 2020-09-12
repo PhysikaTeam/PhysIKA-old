@@ -80,11 +80,14 @@ public:
     Many,
   };
 
-  virtual
-  ConnectionPolicy
-  portOutConnectionPolicy(PortIndex) const
+  virtual ConnectionPolicy portOutConnectionPolicy(PortIndex) const
   {
     return ConnectionPolicy::Many;
+  }
+
+  virtual ConnectionPolicy portInConnectionPolicy(PortIndex) const
+  {
+	  return ConnectionPolicy::One;
   }
 
   BlockStyle const&

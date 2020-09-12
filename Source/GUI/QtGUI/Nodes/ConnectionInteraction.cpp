@@ -59,7 +59,7 @@ canConnect(PortIndex &portIndex, TypeConverter & converter) const
   // 3) Node port is vacant
 
   // port should be empty
-  if (!nodePortIsEmpty(requiredPort, portIndex))
+  if (!isNodePortAccesible(requiredPort, portIndex))
     return false;
 
   // 4) Connection type equals node port type, or there is a registered type conversion that can translate between the two
@@ -123,7 +123,7 @@ tryConnect() const
 
   _node->nodeGraphicsObject().moveConnections();
 
-  // 5) Poke model to intiate data transfer
+  // 5) Poke model to initiate data transfer
 
   auto outNode = _connection->getNode(PortType::Out);
   if (outNode)
@@ -225,7 +225,7 @@ nodePortIndexUnderScenePoint(PortType portType,
 
 bool
 ConnectionInteraction::
-nodePortIsEmpty(PortType portType, PortIndex portIndex) const
+isNodePortAccesible(PortType portType, PortIndex portIndex) const
 {
   BlockState const & nodeState = _node->nodeState();
 
@@ -233,6 +233,16 @@ nodePortIsEmpty(PortType portType, PortIndex portIndex) const
 
   if (entries[portIndex].empty()) return true;
 
-  const auto outPolicy = _node->nodeDataModel()->portOutConnectionPolicy(portIndex);
-  return ( portType == PortType::Out && outPolicy == QtBlockDataModel::ConnectionPolicy::Many);
+  if (portType == PortType::Out)
+  {
+	  const auto outPolicy = _node->nodeDataModel()->portOutConnectionPolicy(portIndex);
+	  return outPolicy == QtBlockDataModel::ConnectionPolicy::Many;
+  }
+  else
+  {
+	  const auto inPolicy = _node->nodeDataModel()->portInConnectionPolicy(portIndex);
+	  return inPolicy == QtBlockDataModel::ConnectionPolicy::Many;
+  }
+  
+  
 }

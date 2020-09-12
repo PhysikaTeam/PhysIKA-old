@@ -55,14 +55,13 @@ private:
   PortIndex nodePortIndexUnderScenePoint(PortType portType,
                                          QPointF const &p) const;
 
-  bool nodePortIsEmpty(PortType portType, PortIndex portIndex) const;
-
 private:
+	bool isNodePortAccesible(PortType portType, PortIndex portIndex) const;
 
-  QtBlock* _node;
+	QtBlock* _node;
 
-  QtConnection* _connection;
+	QtConnection* _connection;
 
-  QtFlowScene* _scene;
+	QtFlowScene* _scene;
 };
 }

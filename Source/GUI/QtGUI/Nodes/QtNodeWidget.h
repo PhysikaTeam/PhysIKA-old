@@ -61,6 +61,8 @@ public:
 
 	ValidationState validationState() const override;
 
+	ConnectionPolicy portInConnectionPolicy(PortIndex portIndex) const override;
+
 	std::shared_ptr<Node> getNode();
 
 protected:
@@ -75,7 +77,7 @@ protected:
 
 	std::shared_ptr<Node> m_node = nullptr;
 
-	ValidationState modelValidationState = ValidationState::Warning;
+	ValidationState modelValidationState = ValidationState::Valid;
 	QString modelValidationError = QString("Missing or incorrect inputs");
 
 private:
