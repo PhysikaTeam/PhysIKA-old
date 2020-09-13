@@ -51,6 +51,7 @@ public:
 	bool portCaptionVisible(PortType portType, PortIndex portIndex) const override;
 
 	std::shared_ptr<BlockData> outData(PortIndex port) override;
+	std::shared_ptr<BlockData> inData(PortIndex port) override;
 
 	void setInData(std::shared_ptr<BlockData> data, PortIndex portIndex) override;
 

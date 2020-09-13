@@ -58,12 +58,16 @@ BlockDataType QtModuleWidget::dataType(PortType portType, PortIndex portIndex) c
 }
 
 
-std::shared_ptr<BlockData>
-QtModuleWidget::outData(PortIndex port)
+std::shared_ptr<BlockData> QtModuleWidget::outData(PortIndex port)
 {
-	return std::static_pointer_cast<BlockData>(output_fields[port]);
+	return std::dynamic_pointer_cast<BlockData>(output_fields[port]);
 }
 
+
+std::shared_ptr<BlockData> QtModuleWidget::inData(PortIndex port)
+{
+	return std::dynamic_pointer_cast<BlockData>(input_fields[port].lock());
+}
 
 QString QtModuleWidget::caption() const
 {

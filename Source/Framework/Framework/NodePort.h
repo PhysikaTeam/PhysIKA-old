@@ -37,6 +37,8 @@ public:
 
 	virtual bool removeNode(std::shared_ptr<Node> node) = 0;
 
+	virtual bool isKindOf(std::shared_ptr<Node> node) = 0;
+
 	inline Node* getParent() { return m_parent; }
 
 protected:
@@ -95,6 +97,11 @@ public:
 		m_nodes[0] = nullptr;
 
 		return true;
+	}
+
+	bool isKindOf(std::shared_ptr<Node> node)
+	{
+		return nullptr != std::dynamic_pointer_cast<T>(node);
 	}
 
 	std::vector<std::shared_ptr<Node>>& getNodes() override
@@ -182,6 +189,11 @@ public:
 		}
 		
 		return false;
+	}
+
+	bool isKindOf(std::shared_ptr<Node> node)
+	{
+		return nullptr != std::dynamic_pointer_cast<T>(node);
 	}
 
 	std::vector<std::shared_ptr<Node>>& getNodes() override

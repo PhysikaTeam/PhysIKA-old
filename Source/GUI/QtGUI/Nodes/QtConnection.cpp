@@ -189,7 +189,7 @@ setGraphicsObject(std::unique_ptr<QtConnectionGraphicsObject>&& graphics)
 
     PortIndex attachedPortIndex = getPortIndex(attachedPort);
 
-    auto node = getNode(attachedPort);
+    auto node = getBlock(attachedPort);
 
     QTransform nodeSceneTransform =
       node->nodeGraphicsObject().sceneTransform();
@@ -239,7 +239,7 @@ setNodeToPort(QtBlock& node,
 {
   bool wasIncomplete = !complete();
 
-  auto& nodeWeak = getNode(portType);
+  auto& nodeWeak = getBlock(portType);
 
   nodeWeak = &node;
 
@@ -311,7 +311,7 @@ connectionGeometry() const
 
 QtBlock*
 QtConnection::
-getNode(PortType portType) const
+getBlock(PortType portType) const
 {
   switch (portType)
   {
@@ -333,7 +333,7 @@ getNode(PortType portType) const
 
 QtBlock*&
 QtConnection::
-getNode(PortType portType)
+getBlock(PortType portType)
 {
   switch (portType)
   {
@@ -361,7 +361,7 @@ clearNode(PortType portType)
     connectionMadeIncomplete(*this);
   }
 
-  getNode(portType) = nullptr;
+  getBlock(portType) = nullptr;
 
   if (portType == PortType::In)
     _inPortIndex = INVALID;

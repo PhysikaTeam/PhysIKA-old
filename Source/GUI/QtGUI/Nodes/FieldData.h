@@ -31,6 +31,11 @@ public:
 
 	bool isEmpty() { return field == nullptr; }
 
+	bool isKindOf(BlockData &nodedata) const override
+	{
+		return true;
+	}
+
 private:
 
 	Field* field = nullptr;

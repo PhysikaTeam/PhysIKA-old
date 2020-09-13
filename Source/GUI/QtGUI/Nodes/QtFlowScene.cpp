@@ -337,7 +337,7 @@ iterateOverNodeDataDependentOrder(std::function<void(QtBlockDataModel*)> const &
 
         for (auto& conn : connections)
         {
-          if (visitedNodesSet.find(conn.second->getNode(PortType::Out)->id()) == visitedNodesSet.end())
+          if (visitedNodesSet.find(conn.second->getBlock(PortType::Out)->id()) == visitedNodesSet.end())
           {
             return false;
           }
@@ -594,8 +594,8 @@ void
 QtFlowScene::
 sendConnectionCreatedToNodes(QtConnection const& c)
 {
-  QtBlock* from = c.getNode(PortType::Out);
-  QtBlock* to   = c.getNode(PortType::In);
+  QtBlock* from = c.getBlock(PortType::Out);
+  QtBlock* to   = c.getBlock(PortType::In);
 
   Q_ASSERT(from != nullptr);
   Q_ASSERT(to != nullptr);
@@ -609,8 +609,8 @@ void
 QtFlowScene::
 sendConnectionDeletedToNodes(QtConnection const& c)
 {
-  QtBlock* from = c.getNode(PortType::Out);
-  QtBlock* to   = c.getNode(PortType::In);
+  QtBlock* from = c.getBlock(PortType::Out);
+  QtBlock* to   = c.getBlock(PortType::In);
 
   Q_ASSERT(from != nullptr);
   Q_ASSERT(to != nullptr);

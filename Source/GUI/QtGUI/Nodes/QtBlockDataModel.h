@@ -72,6 +72,8 @@ public:
   virtual
   BlockDataType dataType(PortType portType, PortIndex portIndex) const = 0;
 
+	std::shared_ptr<BlockData> portData(PortType portType, PortIndex portIndex);
+
 public:
 
   enum class ConnectionPolicy
@@ -107,6 +109,8 @@ public:
   virtual
   std::shared_ptr<BlockData>
   outData(PortIndex port) = 0;
+
+  virtual std::shared_ptr<BlockData> inData(PortIndex port) = 0;
 
   virtual
   QWidget *

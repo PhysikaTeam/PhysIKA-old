@@ -7,6 +7,7 @@ using QtNodes::BlockDataType;
 using QtNodes::BlockData;
 
 using PhysIKA::NodePort;
+using PhysIKA::Node;
 
 /// The class can potentially incapsulate any user data which
 /// need to be transferred within the Node Editor graph
@@ -30,6 +31,8 @@ public:
 	NodePort* getNodePort() { return node_port; }
 
 	bool isEmpty() { return node_port == nullptr; }
+
+	bool isKindOf(BlockData &nodedata) const override;
 
 private:
 
@@ -57,6 +60,8 @@ public:
 	std::shared_ptr<Node> getNode() { return export_node; }
 
 	bool isEmpty() { return export_node == nullptr; }
+
+	bool isKindOf(BlockData &nodedata) const override;
 
 private:
 

@@ -58,6 +58,11 @@ QtNodeWidget::outData(PortIndex port)
 }
 
 
+std::shared_ptr<BlockData> QtNodeWidget::inData(PortIndex port)
+{
+	return std::static_pointer_cast<BlockData>(im_nodes[port]);
+}
+
 QString QtNodeWidget::caption() const
 {
 	return QString::fromStdString(m_node->getClassInfo()->getClassName());

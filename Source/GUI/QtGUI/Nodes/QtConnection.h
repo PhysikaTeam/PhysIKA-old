@@ -101,10 +101,10 @@ public:
   connectionGeometry() const;
 
   QtBlock*
-  getNode(PortType portType) const;
+  getBlock(PortType portType) const;
 
   QtBlock*&
-  getNode(PortType portType);
+  getBlock(PortType portType);
 
   PortIndex
   getPortIndex(PortType portType) const;

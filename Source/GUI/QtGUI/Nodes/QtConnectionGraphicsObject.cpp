@@ -102,7 +102,7 @@ move()
 {
   for(PortType portType: { PortType::In, PortType::Out } )
   {
-    if (auto node = _connection.getNode(portType))
+    if (auto node = _connection.getBlock(portType))
     {
       auto const &nodeGraphics = node->nodeGraphicsObject();
 

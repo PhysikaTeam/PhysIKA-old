@@ -18,7 +18,7 @@ using QtNodes::TypeConverter;
 
 ConnectionInteraction::
 ConnectionInteraction(QtBlock& node, QtConnection& connection, QtFlowScene& scene)
-  : _node(&node)
+  : _block(&node)
   , _connection(&connection)
   , _scene(&scene)
 {}
@@ -28,63 +28,74 @@ bool
 ConnectionInteraction::
 canConnect(PortIndex &portIndex, TypeConverter & converter) const
 {
-  // 1) Connection requires a port
+	// 1) Connection requires a port
+	PortType requiredPort = connectionRequiredPort();
 
-  PortType requiredPort = connectionRequiredPort();
+	if (requiredPort == PortType::None)
+	{
+		return false;
+	}
+
+	// 1.5) Forbid connecting the node to itself
+	PortType start_porttype = oppositePort(requiredPort);
+	QtBlock* start_block = _connection->getBlock(oppositePort(requiredPort));
+
+	if (start_block == _block)
+		return false;
+
+	// 2) connection point is on top of the node port
+
+	QPointF connectionPoint = connectionEndScenePosition(requiredPort);
+
+	portIndex = nodePortIndexUnderScenePoint(requiredPort,
+		connectionPoint);
+
+	if (portIndex == INVALID)
+	{
+		return false;
+	}
+
+	// Check whether the output data can be accepted by the input block
+	auto start_portIndex =  _connection->getPortIndex(oppositePort(requiredPort));
+	auto start_data = start_block->nodeDataModel()->portData(start_porttype, start_portIndex);
+
+	auto target_data = _block->nodeDataModel()->portData(requiredPort, portIndex);
+
+	if (!target_data->isKindOf(*start_data))
+	{
+		return false;
+	}
 
 
-  if (requiredPort == PortType::None)
-  {
-    return false;
-  }
+	// 3) Node port is vacant
 
-  // 1.5) Forbid connecting the node to itself
-  QtBlock* node = _connection->getNode(oppositePort(requiredPort));
+	// port should be empty
+	if (!isNodePortAccesible(requiredPort, portIndex))
+		return false;
 
-  if (node == _node)
-    return false;
+	// 4) Connection type equals node port type, or there is a registered type conversion that can translate between the two
 
-  // 2) connection point is on top of the node port
+	auto connectionDataType =
+		_connection->dataType(oppositePort(requiredPort));
 
-  QPointF connectionPoint = connectionEndScenePosition(requiredPort);
+	auto const   &modelTarget = _block->nodeDataModel();
+	BlockDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
 
-  portIndex = nodePortIndexUnderScenePoint(requiredPort,
-                                           connectionPoint);
+	if (connectionDataType.id != candidateNodeDataType.id)
+	{
+		if (requiredPort == PortType::In)
+		{
+			converter = _scene->registry().getTypeConverter(connectionDataType, candidateNodeDataType);
+		}
+		else if (requiredPort == PortType::Out)
+		{
+			converter = _scene->registry().getTypeConverter(candidateNodeDataType, connectionDataType);
+		}
 
-  if (portIndex == INVALID)
-  {
-    return false;
-  }
+		return (converter != nullptr);
+	}
 
-  // 3) Node port is vacant
-
-  // port should be empty
-  if (!isNodePortAccesible(requiredPort, portIndex))
-    return false;
-
-  // 4) Connection type equals node port type, or there is a registered type conversion that can translate between the two
-
-  auto connectionDataType =
-    _connection->dataType(oppositePort(requiredPort));
-
-  auto const   &modelTarget = _node->nodeDataModel();
-  BlockDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
-
-  if (connectionDataType.id != candidateNodeDataType.id)
-  {
-    if (requiredPort == PortType::In)
-    {
-      converter = _scene->registry().getTypeConverter(connectionDataType, candidateNodeDataType);
-    }
-    else if (requiredPort == PortType::Out)
-    {
-      converter = _scene->registry().getTypeConverter(candidateNodeDataType , connectionDataType);
-    }
-
-    return (converter != nullptr);
-  }
-
-  return true;
+	return true;
 }
 
 
@@ -111,21 +122,21 @@ tryConnect() const
 
   // 2) Assign node to required port in Connection
   PortType requiredPort = connectionRequiredPort();
-  _node->nodeState().setConnection(requiredPort,
+  _block->nodeState().setConnection(requiredPort,
                                    portIndex,
                                    *_connection);
 
   // 3) Assign Connection to empty port in NodeState
   // The port is not longer required after this function
-  _connection->setNodeToPort(*_node, requiredPort, portIndex);
+  _connection->setNodeToPort(*_block, requiredPort, portIndex);
 
   // 4) Adjust Connection geometry
 
-  _node->nodeGraphicsObject().moveConnections();
+  _block->nodeGraphicsObject().moveConnections();
 
   // 5) Poke model to initiate data transfer
 
-  auto outNode = _connection->getNode(PortType::Out);
+  auto outNode = _connection->getBlock(PortType::Out);
   if (outNode)
   {
     PortIndex outPortIndex = _connection->getPortIndex(PortType::Out);
@@ -146,7 +157,7 @@ disconnect(PortType portToDisconnect) const
   PortIndex portIndex =
     _connection->getPortIndex(portToDisconnect);
 
-  BlockState &state = _node->nodeState();
+  BlockState &state = _block->nodeState();
 
   // clear pointer to Connection in the NodeState
   state.getEntries(portToDisconnect)[portIndex].clear();
@@ -196,11 +207,11 @@ QPointF
 ConnectionInteraction::
 nodePortScenePosition(PortType portType, PortIndex portIndex) const
 {
-  BlockGeometry const &geom = _node->nodeGeometry();
+  BlockGeometry const &geom = _block->nodeGeometry();
 
   QPointF p = geom.portScenePosition(portIndex, portType);
 
-  QtBlockGraphicsObject& ngo = _node->nodeGraphicsObject();
+  QtBlockGraphicsObject& ngo = _block->nodeGraphicsObject();
 
   return ngo.sceneTransform().map(p);
 }
@@ -211,10 +222,10 @@ ConnectionInteraction::
 nodePortIndexUnderScenePoint(PortType portType,
                              QPointF const & scenePoint) const
 {
-  BlockGeometry const &nodeGeom = _node->nodeGeometry();
+  BlockGeometry const &nodeGeom = _block->nodeGeometry();
 
   QTransform sceneTransform =
-    _node->nodeGraphicsObject().sceneTransform();
+    _block->nodeGraphicsObject().sceneTransform();
 
   PortIndex portIndex = nodeGeom.checkHitScenePoint(portType,
                                                     scenePoint,
@@ -227,7 +238,7 @@ bool
 ConnectionInteraction::
 isNodePortAccesible(PortType portType, PortIndex portIndex) const
 {
-  BlockState const & nodeState = _node->nodeState();
+  BlockState const & nodeState = _block->nodeState();
 
   auto const & entries = nodeState.getEntries(portType);
 
@@ -235,12 +246,12 @@ isNodePortAccesible(PortType portType, PortIndex portIndex) const
 
   if (portType == PortType::Out)
   {
-	  const auto outPolicy = _node->nodeDataModel()->portOutConnectionPolicy(portIndex);
+	  const auto outPolicy = _block->nodeDataModel()->portOutConnectionPolicy(portIndex);
 	  return outPolicy == QtBlockDataModel::ConnectionPolicy::Many;
   }
   else
   {
-	  const auto inPolicy = _node->nodeDataModel()->portInConnectionPolicy(portIndex);
+	  const auto inPolicy = _block->nodeDataModel()->portInConnectionPolicy(portIndex);
 	  return inPolicy == QtBlockDataModel::ConnectionPolicy::Many;
   }
   

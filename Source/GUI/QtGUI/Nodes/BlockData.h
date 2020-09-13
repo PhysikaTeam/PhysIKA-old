@@ -27,6 +27,8 @@ public:
     return (this->type().id == nodeData.type().id);
   }
 
+  virtual bool isKindOf(BlockData &nodedata) const = 0;
+
   /// Type for inner use
   virtual BlockDataType type() const = 0;
 

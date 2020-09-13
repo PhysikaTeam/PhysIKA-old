@@ -58,7 +58,7 @@ private:
 private:
 	bool isNodePortAccesible(PortType portType, PortIndex portIndex) const;
 
-	QtBlock* _node;
+	QtBlock* _block;
 
 	QtConnection* _connection;
 
