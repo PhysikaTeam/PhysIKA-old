@@ -54,7 +54,7 @@ namespace PhysIKA
 				Point3D nearest_point = p3d.project(t3d);
 
 				Real r = (p3d.distance(t3d));
-
+				r = abs(r);
 				Coord n = t3d.normal();
 				if (n.norm() > EPSILON)
 				{

@@ -35,6 +35,44 @@ namespace PhysIKA
 		std::vector<std::shared_ptr<ParticleEmitter<TDataType>>> m_particleEmitters = this->getParticleEmitters();
 
 		int total_num = 0;
+		
+		if (m_particleEmitters.size() > 0)
+		{
+			int total_num = this->currentPosition()->getElementCount();
+			if (total_num > 0)
+			{
+				DeviceArray<Coord>& position = this->currentPosition()->getValue();
+				DeviceArray<Coord>& velocity = this->currentVelocity()->getValue();
+				DeviceArray<Coord>& force = this->currentForce()->getValue();
+
+				int start = 0;
+				for (int i = 0; i < m_particleEmitters.size(); i++)
+				{
+					int num = m_particleEmitters[i]->currentPosition()->getElementCount();
+					if (num > 0)
+					{
+						auto points = m_particleEmitters[i]->currentPosition()->getValue();
+						auto vels = m_particleEmitters[i]->currentVelocity()->getValue();
+						auto fors = m_particleEmitters[i]->currentForce()->getValue();
+
+						cudaMemcpy(points.getDataPtr(), position.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+						cudaMemcpy(vels.getDataPtr(), velocity.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+						cudaMemcpy(fors.getDataPtr(), force.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+						start += num;
+						// 						if (rand() % 1 == 0)
+						// 							m_particleEmitters[i]->advance2(this->getDt());
+					}
+				}
+			}
+		}
+
+
+		for (int i = 0; i < m_particleEmitters.size(); i++)
+		{
+			m_particleEmitters[i]->advance2(this->getDt());
+		}
+
+		total_num = 0;
 		if (m_particleEmitters.size() > 0)
 		{
 			for (int i = 0; i < m_particleEmitters.size(); i++)
@@ -87,34 +125,6 @@ namespace PhysIKA
 
 		//printf("%d\n", this->currentPosition()->getElementCount());
 
-		if (m_particleEmitters.size() > 0)
-		{
-			int total_num = this->currentPosition()->getElementCount();
-			if (total_num > 0)
-			{
-				DeviceArray<Coord>& position = this->currentPosition()->getValue();
-				DeviceArray<Coord>& velocity = this->currentVelocity()->getValue();
-				DeviceArray<Coord>& force = this->currentForce()->getValue();
-
-				int start = 0;
-				for (int i = 0; i < m_particleEmitters.size(); i++)
-				{
-					int num = m_particleEmitters[i]->currentPosition()->getElementCount();
-					if (num > 0)
-					{
-						auto points = m_particleEmitters[i]->currentPosition()->getValue();
-						auto vels = m_particleEmitters[i]->currentVelocity()->getValue();
-						auto fors = m_particleEmitters[i]->currentForce()->getValue();
-
-						cudaMemcpy(points.getDataPtr(), position.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-						cudaMemcpy(vels.getDataPtr(), velocity.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-						cudaMemcpy(fors.getDataPtr(), force.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-						start += num;
-// 						if (rand() % 1 == 0)
-// 							m_particleEmitters[i]->advance2(this->getDt());
-					}
-				}
-			}
-		}
+		
 	}
 }

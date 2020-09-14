@@ -30,9 +30,9 @@ namespace PhysIKA
 		void updateTopology() override;
 
 
-		DEF_VAR(Centre, Vector3f, 0, "Emitter location");
-		DEF_VAR(Radius, Real, 0.1, "Emitter scale");
-		DEF_VAR(Dir, Vector3f, Coord(1,1,1), "Emitter Direction");
+		//DEF_VAR(Centre, Vector3f, 0, "Emitter location");
+		//DEF_VAR(Radius, Real, 0.1, "Emitter scale");
+		DEF_VAR(Velocity, Real, 1, "Emitter Velocity");
 		DEF_VAR(SamplingDistance, Real, 0.005, "Emitter Sampling Distance");
 
 		Real radius;

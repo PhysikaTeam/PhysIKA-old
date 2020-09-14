@@ -122,6 +122,9 @@ namespace PhysIKA {
 		int kmax = k0 > k1 ? k0 : k1;
 		kmax = k2 > kmax ? k2 : kmax;
 
+		imin--; jmin--; kmin--;
+		imax++; jmax++; kmax++;
+
 		int addi, addj, addk;
 		addi = int(sqrt((Real)imax - (Real)imin + 1));
 		addj = int(sqrt((Real)jmax - (Real)jmin + 1));
@@ -229,6 +232,9 @@ namespace PhysIKA {
 		kmin = k2 < kmin ? k2 : kmin;
 		int kmax = k0 > k1 ? k0 : k1;
 		kmax = k2 > kmax ? k2 : kmax;
+
+		imin--; jmin--; kmin--;
+		imax++; jmax++; kmax++;
 
 		int addi, addj, addk;
 		addi = int(sqrt((Real)imax - (Real)imin + 1));

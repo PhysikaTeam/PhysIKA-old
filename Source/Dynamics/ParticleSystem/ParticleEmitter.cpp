@@ -20,12 +20,25 @@ namespace PhysIKA
 
 	}
 	template<typename TDataType>
-	void ParticleEmitter<TDataType>::advance(Real dt)
+	void ParticleEmitter<TDataType>::advance2(Real dt)
 	{
-		radius = this->varRadius()->getValue();
+		radius = this->varScale()->getValue().norm();
 		sampling_distance = this->varSamplingDistance()->getValue();
-		centre = this->varCentre()->getValue();
-		dir = this->varDir()->getValue();
+		if (sampling_distance < EPSILON)
+			sampling_distance = 0.005;
+		centre = this->varLocation()->getValue();
+		dir = this->varRotation()->getValue();
+		if (dir.norm() > EPSILON)
+			dir = dir.normalize();
+		else
+			dir = Coord(1, 1, 1).normalize();
+		dir *= this->varVelocity()->getValue();
+
+		/*
+			DEF_VAR(Location, Vector3f, 0, "Node location");
+			DEF_VAR(Rotation, Vector3f, 0, "Node rotation");
+			DEF_VAR(Scale, Vector3f, 0, "Node scale");
+		*/
 
 		getRotMat(dir / dir.norm());
 
@@ -80,8 +93,9 @@ namespace PhysIKA
 		//return;
 	}
 	template<typename TDataType>
-	void ParticleEmitter<TDataType>::advance2(Real dt)
+	void ParticleEmitter<TDataType>::advance(Real dt)
 	{
+		return;
 		gen_random();
 		DeviceArray<Coord>& cur_points0 = this->currentPosition()->getValue();
 		DeviceArray<Coord>& cur_vels0 = this->currentVelocity()->getValue();
