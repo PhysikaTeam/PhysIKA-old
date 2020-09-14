@@ -62,7 +62,7 @@ int main()
 
 	
 // 	//child2->setInfo(Vector3f(0.3,0.5,0.3), Vector3f(1.0, 1.0, 1.0), 0.1, 0.005);
- 	child2->setInfo(Vector3f(0.0, 0.5, 0.0), Vector3f(-1.0, -1.0, -1.0), 0.1, 0.005);
+ //	child2->setInfo(Vector3f(0.0, 0.5, 0.0), Vector3f(-1.0, -1.0, -1.0), 0.1, 0.005);
 // 
 	auto pRenderer = std::make_shared<PVTKPointSetRender>();
 	pRenderer->setName("VTK Point Renderer");
