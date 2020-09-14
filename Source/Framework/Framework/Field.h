@@ -62,6 +62,11 @@ public:
 	bool isModified();
 	void tagModified(bool modifed);
 
+	inline float getMin() { return m_min; }
+	inline void setMin(float min_val) { m_min = min_val; }
+
+	inline float getMax() { return m_max; }
+	inline void setMax(float max_val) { m_max = max_val; }
 
 protected:
 	void setSource(Field* source);
@@ -80,6 +85,9 @@ private:
 	bool m_derived = false;
 	Field* m_source = nullptr;
 	Base* m_owner = nullptr;
+
+	float m_min = -FLT_MAX;
+	float m_max = FLT_MAX;
 
 	bool m_modified = false;
 

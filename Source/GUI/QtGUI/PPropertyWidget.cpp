@@ -81,6 +81,7 @@ namespace PhysIKA
 		if (status == Qt::Checked)
 		{
 			f->setValue(true);
+			f->update();
 		}
 		else if (status == Qt::PartiallyChecked)
 		{
@@ -89,7 +90,7 @@ namespace PhysIKA
 		else
 		{
 			f->setValue(false);
-			//m_pLabel->setText("Unchecked");
+			f->update();
 		}
 
 		emit fieldChanged();
@@ -128,6 +129,15 @@ namespace PhysIKA
 
 	void QIntegerFieldWidget::changeValue(int value)
 	{
+		VarField<int>* f = TypeInfo::CastPointerDown<VarField<int>>(m_field);
+		if (f == nullptr)
+		{
+			return;
+		}
+
+		f->setValue(value);
+		f->update();
+
 		emit fieldChanged();
 	}
 
@@ -191,11 +201,13 @@ namespace PhysIKA
 		{
 			VarField<float>* f = TypeInfo::CastPointerDown<VarField<float>>(m_field);
 			f->setValue((float)value);
+			f->update();
 		}
 		else if (template_name == std::string(typeid(double).name()))
 		{
 			VarField<double>* f = TypeInfo::CastPointerDown<VarField<double>>(m_field);
 			f->setValue(value);
+			f->update();
 		}
 
 		emit fieldChanged();
@@ -219,37 +231,51 @@ namespace PhysIKA
 		name->setText(genFieldWidgetName(field->getObjectName()));
 
 		spinner1 = new QDoubleSpinner;
-		//spinner1->setFixedSize(60, 18);
-		spinner1->setRange(0.0, 1.0);
+		spinner1->setRange(m_field->getMin(), m_field->getMax());
 
 		spinner2 = new QDoubleSpinner;
-		//spinner2->setFixedSize(60, 18);
-		spinner2->setRange(0.0, 1.0);
+		spinner2->setRange(m_field->getMin(), m_field->getMax());
 
 		spinner3 = new QDoubleSpinner;
-		//spinner3->setFixedSize(60, 18);
-		spinner3->setRange(0.0, 1.0);
+		spinner3->setRange(m_field->getMin(), m_field->getMax());
 
 		layout->addWidget(name, 0, 0);
 		layout->addWidget(spinner1, 0, 1);
 		layout->addWidget(spinner2, 0, 2);
 		layout->addWidget(spinner3, 0, 3);
 
+
+		std::string template_name = m_field->getTemplateName();
+
+		double v1 = 0;
+		double v2 = 0;
+		double v3 = 0;
+
+		if (template_name == std::string(typeid(Vector3f).name()))
+		{
+			VarField<Vector3f>* f = TypeInfo::CastPointerDown<VarField<Vector3f>>(m_field);
+			auto v = f->getValue();
+			v1 = v[0];
+			v2 = v[1];
+			v3 = v[2];
+		}
+		else if (template_name == std::string(typeid(Vector3d).name()))
+		{
+			VarField<Vector3d>* f = TypeInfo::CastPointerDown<VarField<Vector3d>>(m_field);
+			auto v = f->getValue();
+
+			v1 = v[0];
+			v2 = v[1];
+			v3 = v[2];
+		}
+
+		spinner1->setValue(v1);
+		spinner2->setValue(v2);
+		spinner3->setValue(v3);
+
 		QObject::connect(spinner1, SIGNAL(valueChanged(double)), this, SLOT(changeValue(double)));
 		QObject::connect(spinner2, SIGNAL(valueChanged(double)), this, SLOT(changeValue(double)));
 		QObject::connect(spinner3, SIGNAL(valueChanged(double)), this, SLOT(changeValue(double)));
-
-		//std::string template_name = field->getTemplateName();
-		//if (template_name == std::string(typeid(float).name()))
-		//{
-		//	VarField<float>* f = TypeInfo::CastPointerDown<VarField<float>>(m_field);
-		//	slider->setValue((double)f->getValue());
-		//}
-		//else if (template_name == std::string(typeid(double).name()))
-		//{
-		//	VarField<double>* f = TypeInfo::CastPointerDown<VarField<double>>(m_field);
-		//	slider->setValue(f->getValue());
-		//}
 	}
 
 
@@ -264,12 +290,14 @@ namespace PhysIKA
 		if (template_name == std::string(typeid(Vector3f).name()))
 		{
 			VarField<Vector3f>* f = TypeInfo::CastPointerDown<VarField<Vector3f>>(m_field);
-			f->setValue(Vector3f((double)v1, (double)v2, (double)v3));
+			f->setValue(Vector3f((float)v1, (float)v2, (float)v3));
+			f->update();
 		}
 		else if (template_name == std::string(typeid(Vector3d).name()))
 		{
 			VarField<Vector3d>* f = TypeInfo::CastPointerDown<VarField<Vector3d>>(m_field);
 			f->setValue(Vector3d(v1, v2, v3));
+			f->update();
 		}
 
 		emit fieldChanged();
@@ -392,10 +420,6 @@ namespace PhysIKA
 				{
 					this->addScalarFieldWidget(var);
 				}
-				else if (var->getClassName() == std::string("ArrayBuffer"))
-				{
-				}
-				//addItem(new QListWidgetItem(var->getObjectName().c_str(), this));
 			}
 		}
 	}
