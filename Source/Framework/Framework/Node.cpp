@@ -23,6 +23,8 @@ Node::Node(std::string name)
 
 Node::~Node()
 {
+	m_render_list.clear();
+	m_module_list.clear();
 }
 
 void Node::setName(std::string name)

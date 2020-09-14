@@ -21,27 +21,18 @@ namespace PhysIKA
 
 		ParticleEmitter(std::string name = "particle emitter");
 		virtual ~ParticleEmitter();
-		bool addOutput(std::shared_ptr<ParticleFluid<TDataType>> child, std::shared_ptr<ParticleEmitter<TDataType>> self);
-		void getRotMat(Coord rot);
+
 		void advance2(Real dt);
 		void advance(Real dt) override;
-		virtual void gen_random();
+		virtual void generateParticles();
 
 		void updateTopology() override;
 
 
 		//DEF_VAR(Centre, Vector3f, 0, "Emitter location");
 		//DEF_VAR(Radius, Real, 0.1, "Emitter scale");
-		DEF_VAR(Velocity, Real, 1, "Emitter Velocity");
+		DEF_VAR(VelocityMagnitude, Real, 1, "Emitter Velocity");
 		DEF_VAR(SamplingDistance, Real, 0.005, "Emitter Sampling Distance");
-
-		Real radius;
-		Real sampling_distance;
-		Coord centre;
-		Coord dir;
-
-		Coord axis;
-		Real angle;
 
 		DeviceArray<Coord> gen_pos;
 		DeviceArray<Coord> gen_vel;

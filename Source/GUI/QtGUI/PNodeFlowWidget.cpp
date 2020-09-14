@@ -22,7 +22,7 @@ namespace PhysIKA
 
 		QVBoxLayout *l = new QVBoxLayout(this);
 
-		l->addWidget(menuBar);
+		//l->addWidget(menuBar);
 		node_scene = new QtNodeFlowScene(this);
 		l->addWidget(new QtNodes::QtFlowView(node_scene));
 		l->setContentsMargins(0, 0, 0, 0);

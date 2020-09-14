@@ -27,166 +27,61 @@ namespace PhysIKA
 		gen_pos.release();
 	}
 	
-	template<typename TDataType>
-	void ParticleEmitterRound<TDataType>::setInfo(Coord pos, Coord direction, Real r, Real distance)
-	{
-		printf("setInfo inside\n");
-		radius = r;
-		sampling_distance = distance;
-		centre = pos;
-		dir = direction;
 
-		getRotMat(dir / dir.norm());
-		return;
+	template<typename TDataType>
+	void ParticleEmitterRound<TDataType>::generateParticles()
+	{
+		auto sampling_distance = this->varSamplingDistance()->getValue();
+		if (sampling_distance < EPSILON)
+			sampling_distance = 0.005;
+		auto center = this->varLocation()->getValue();
+
 		std::vector<Coord> pos_list;
 		std::vector<Coord> vel_list;
 
-		Real lo = -radius;
-		Real hi = +radius;
+
+		auto rot_vec = this->varRotation()->getValue();
+
+		Quaternion<Real> quat = Quaternion<float>::Identity();
+		float x_rad = rot_vec[0] / 180.0f * M_PI;
+		float y_rad = rot_vec[1] / 180.0f * M_PI;
+		float z_rad = rot_vec[2] / 180.0f * M_PI;
+
+		quat = quat * Quaternion<Real>(x_rad, Coord(1, 0, 0));
+		quat = quat * Quaternion<Real>(y_rad, Coord(0, 1, 0));
+		quat = quat * Quaternion<Real>(z_rad, Coord(0, 0, 1));
+
+		auto rot_mat = quat.get3x3Matrix();
+
+		Coord v0 = this->varVelocityMagnitude()->getValue()*rot_mat*Vector3f(0, -1, 0);
+
+		auto r = this->varRadius()->getValue();
+		Real lo = -r;
+		Real hi = r;
 
 		for (Real x = lo; x <= hi; x += sampling_distance)
 		{
 			for (Real y = lo; y <= hi; y += sampling_distance)
 			{
 				Coord p = Coord(x, 0, y);
-				if ((p - Coord(0)).norm() < radius)
+				if ((p - Coord(0)).norm() < r && rand() % 40 == 0)
 				{
-					Coord q = cos(angle) * p + (1 - cos(angle))*(p.dot(axis))*axis + sin(angle) * axis.cross(p);
-					pos_list.push_back(q + centre);
-					vel_list.push_back(direction);
+					//Coord q = cos(angle) * p + (1 - cos(angle)) * (p.dot(axis)) * axis + sin(angle) * axis.cross(p);
+					Coord q = rot_mat * p;
+					pos_list.push_back(q + center);
+					vel_list.push_back(v0);
 				}
 			}
 		}
 
-		gen_pos.resize(pos_list.size());
-		gen_vel.resize(pos_list.size());
-
-		Function1Pt::copy(gen_pos, pos_list);
-		Function1Pt::copy(gen_vel, vel_list);
-
-
-		
-
-		printf("setInfo outside 0\n");
-
-		this->currentPosition()->setElementCount(pos_list.size());
-		this->currentVelocity()->setElementCount(pos_list.size());
-		this->currentForce()->setElementCount(pos_list.size());
-
-		//printf("setInfo outside 1 %d\n", this->currentPosition()->getElementCount());
-		
-		Function1Pt::copy(this->currentPosition()->getValue(), gen_pos);
-		Function1Pt::copy(this->currentVelocity()->getValue(), gen_vel);
-
-		this->currentForce()->getReference()->reset();
-
-		//printf("setInfo outside %d~~\n", this->currentPosition()->getElementCount());
-		//this->advance(0.001);
-		//printf("setInfo outside 1\n");
-		pos_list.clear();
-		vel_list.clear();
-
-		if (true)
-		{
-			std::vector<Coord> pos_list;
-			std::vector<Coord> vel_list;
-
-			Real lo = -radius;
-			Real hi = +radius;
-
-			for (Real x = lo; x <= hi; x += sampling_distance)
-			{
-				for (Real y = lo; y <= hi; y += sampling_distance)
-				{
-					Coord p = Coord(x, 0, y);
-					if ((p - Coord(0)).norm() < radius && rand() % 4 == 0)
-					{/*
-						Real aa, bb, cc;
-						do
-						{
-							aa = Real(rand() % 2000 - 1000) / 1000.0;
-							bb = Real(rand() % 2000 - 1000) / 1000.0;
-							cc = Real(rand() % 2000 - 1000) / 1000.0;
-						} while (aa * aa + bb * bb + cc * cc < 1.0);
-						*/
-						Coord q = cos(angle) * p + (1 - cos(angle)) * (p.dot(axis)) * axis + sin(angle) * axis.cross(p);
-						pos_list.push_back(q + centre);
-						vel_list.push_back(direction);
-					}
-				}
-			}
-
+		if (pos_list.size() > 0) {
 			gen_pos.resize(pos_list.size());
 			gen_vel.resize(pos_list.size());
 
 			Function1Pt::copy(gen_pos, pos_list);
 			Function1Pt::copy(gen_vel, vel_list);
-
-
-
-
-			printf("setInfo outside 0\n");
-
-			this->currentPosition()->setElementCount(pos_list.size());
-			this->currentVelocity()->setElementCount(pos_list.size());
-			this->currentForce()->setElementCount(pos_list.size());
-
-			Function1Pt::copy(this->currentPosition()->getValue(), gen_pos);
-			Function1Pt::copy(this->currentVelocity()->getValue(), gen_vel);
-
-			this->currentForce()->getReference()->reset();
-
-			printf("setInfo outside %d~~\n", this->currentPosition()->getElementCount());
-			//this->advance(0.001);
-			//printf("setInfo outside 1\n");
-			pos_list.clear();
-			vel_list.clear();
 		}
-	}
-
-	template<typename TDataType>
-	void ParticleEmitterRound<TDataType>::gen_random()
-	{
-
-		std::vector<Coord> pos_list;
-		std::vector<Coord> vel_list;
-
-		Real lo = -radius;
-		Real hi = +radius;
-
-		for (Real x = lo; x <= hi; x += sampling_distance)
-		{
-			for (Real y = lo; y <= hi; y += sampling_distance)
-			{
-				Coord p = Coord(x, 0, y);
-				if ((p - Coord(0)).norm() < radius && rand() % 40 == 0)
-				{/*
-					Real aa, bb, cc;
-					do
-					{
-						aa = Real(rand() % 2000 - 1000) / 1000.0;
-						bb = Real(rand() % 2000 - 1000) / 1000.0;
-						cc = Real(rand() % 2000 - 1000) / 1000.0;
-					} while (aa * aa + bb * bb + cc * cc < 1.0);
-					*/
-					Coord q = cos(angle) * p + (1 - cos(angle)) * (p.dot(axis)) * axis + sin(angle) * axis.cross(p);
-					pos_list.push_back(q + centre);
-					vel_list.push_back(dir);
-				}
-			}
-		}
-
-		gen_pos.resize(pos_list.size());
-		gen_vel.resize(pos_list.size());
-
-		Function1Pt::copy(gen_pos, pos_list);
-		Function1Pt::copy(gen_vel, vel_list);
-
-
-
-
-		printf("setInfo outside 0\n");
-
+	
 		
 		pos_list.clear();
 		vel_list.clear();

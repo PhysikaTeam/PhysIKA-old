@@ -177,14 +177,12 @@ namespace PhysIKA
 		m_vtkOpenglWidget->setObjectName(QStringLiteral("tabView"));
 		m_vtkOpenglWidget->layout()->setMargin(0);
 		tabWidget->addTab(m_vtkOpenglWidget, QString());
+		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
 
 		m_moduleFlowView = new PModuleFlowWidget();
 		m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
-		tabWidget->addTab(m_moduleFlowView, QString());
-
-
-		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
-		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
+// 		tabWidget->addTab(m_moduleFlowView, QString());
+// 		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
 
 
 		//Setup animation widget

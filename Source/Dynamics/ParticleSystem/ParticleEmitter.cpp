@@ -15,34 +15,15 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void ParticleEmitter<TDataType>::gen_random()
+	void ParticleEmitter<TDataType>::generateParticles()
 	{
 
 	}
+
 	template<typename TDataType>
 	void ParticleEmitter<TDataType>::advance2(Real dt)
 	{
-		radius = this->varScale()->getValue().norm();
-		sampling_distance = this->varSamplingDistance()->getValue();
-		if (sampling_distance < EPSILON)
-			sampling_distance = 0.005;
-		centre = this->varLocation()->getValue();
-		dir = this->varRotation()->getValue();
-		if (dir.norm() > EPSILON)
-			dir = dir.normalize();
-		else
-			dir = Coord(1, 1, 1).normalize();
-		dir *= this->varVelocity()->getValue();
-
-		/*
-			DEF_VAR(Location, Vector3f, 0, "Node location");
-			DEF_VAR(Rotation, Vector3f, 0, "Node rotation");
-			DEF_VAR(Scale, Vector3f, 0, "Node scale");
-		*/
-
-		getRotMat(dir / dir.norm());
-
-		gen_random();
+		generateParticles();
 
 		int cur_size = this->currentPosition()->getElementCount();
 
@@ -96,7 +77,7 @@ namespace PhysIKA
 	void ParticleEmitter<TDataType>::advance(Real dt)
 	{
 		return;
-		gen_random();
+		generateParticles();
 		DeviceArray<Coord>& cur_points0 = this->currentPosition()->getValue();
 		DeviceArray<Coord>& cur_vels0 = this->currentVelocity()->getValue();
 		DeviceArray<Coord>& cur_forces0 = this->currentForce()->getValue();
@@ -135,41 +116,6 @@ namespace PhysIKA
 		cudaMemcpy(cur_forces.getDataPtr(), force_buf.getDataPtr(), cur_size * sizeof(Coord), cudaMemcpyDeviceToDevice);
 		cudaMemcpy(cur_forces.getDataPtr() + cur_size, gen_pos.getDataPtr(), gen_pos.size() * sizeof(Coord), cudaMemcpyDeviceToDevice);
 
-	}
-	template<typename TDataType>
-	void ParticleEmitter<TDataType>::getRotMat(Coord direction)
-	{
-		Vector3f vecbefore(Vector3f(0, 1, 0));
-		Vector3f vecafter(Vector3f(direction[0], direction[1], direction[2]));
-
-		double tem = vecbefore.dot(vecafter);
-		double tep = sqrt(vecbefore.dot(vecbefore) * vecafter.dot(vecafter));
-		double angle_tmp = acos(tem / tep);
-		if (isnan(angle_tmp))
-		{
-			angle_tmp = acos(tep / tem);
-		}
-		Vector3f axis1 = vecbefore.cross(vecafter);
-		Vector3f axis2 = vecafter.cross(vecbefore);
-
-		axis2 = axis1.normalize();
-
-		axis = axis2; angle = angle_tmp;
-
-	}
-	template<typename TDataType>
-	bool ParticleEmitter<TDataType>::addOutput(std::shared_ptr<ParticleFluid<TDataType>> child, std::shared_ptr<ParticleEmitter<TDataType>> self)
-	{
-		
-//		child->addChild(self);
-		child->addParticleEmitter(self);
-//		child->getParticleEmitters()->addNode(self.get());
-
-		self->currentForce()->connect(child->currentForce());
-		self->currentPosition()->connect(child->currentPosition());
-		self->currentVelocity()->connect(child->currentVelocity());
-
-		return true;
 	}
 
 	template<typename TDataType>

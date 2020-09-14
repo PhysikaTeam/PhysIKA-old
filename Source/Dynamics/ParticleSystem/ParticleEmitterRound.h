@@ -23,14 +23,12 @@ namespace PhysIKA
 		ParticleEmitterRound(std::string name = "particleEmitter");
 		virtual ~ParticleEmitterRound();
 
-		void setInfo(Coord pos, Coord dir, Real r ,Real distance);
-		
-		void gen_random() override;
+		void generateParticles() override;
 		
 		
 		//void advance(Real dt) override;
-	private:
-		
+	public:
+		DEF_VAR(Radius, Real, 0.05, "Emitter radius");
 
 		//DEF_NODE_PORTS(ParticleSystems, ParticleSystem<TDataType>, "Particle Systems");
 	};

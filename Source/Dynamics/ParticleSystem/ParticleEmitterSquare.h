@@ -23,15 +23,12 @@ namespace PhysIKA
 		ParticleEmitterSquare(std::string name = "particleEmitter");
 		virtual ~ParticleEmitterSquare();
 
-		void setInfo(Coord pos, Coord dir, Real r, Real distance);
-
-		
-		void gen_random() override;
+		void generateParticles() override;
 
 		//void advance(Real dt) override;
 	private:
-		
-		//DEF_NODE_PORTS(ParticleSystems, ParticleSystem<TDataType>, "Particle Systems");
+		DEF_VAR(Width, Real, 0.05, "Emitter width");
+		DEF_VAR(Height, Real, 0.05, "Emitter height");
 	};
 
 #ifdef PRECISION_FLOAT
