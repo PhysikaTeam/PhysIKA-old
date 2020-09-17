@@ -162,7 +162,7 @@ void create_scene_semianylitical()
 
 int main()
 {
-	//creat_scene_init();
-	create_scene_semianylitical();
+	creare_scene_init();
+	//create_scene_semianylitical();
 	return 0;
 }
