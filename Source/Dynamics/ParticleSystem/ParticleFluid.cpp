@@ -117,7 +117,7 @@ namespace PhysIKA
 
 		std::cout << "Total number: " << total_num << std::endl;
 
-		if (total_num > 0)
+		if (total_num > 0 && this->self_update)
 		{
 			auto nModel = this->getNumericalModel();
 			nModel->step(this->getDt());

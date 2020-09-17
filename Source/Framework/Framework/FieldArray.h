@@ -112,11 +112,20 @@ void ArrayField<T, deviceType>::setElementCount(size_t num)
 	auto arr = this->getSourceArrayField();
 	if (arr == nullptr)
 	{
-		m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
+		if (m_data != nullptr)
+			m_data->resize(num);
+		else
+			m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
 	}
 	else
 	{
-		arr->m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
+		//if (arr->m_data != nullptr && arr->m_data->size() == num)
+		//	return;
+		if(arr->m_data != nullptr)
+			arr->m_data->resize(num);
+		else
+			arr->m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
+		
 	}
 }
 

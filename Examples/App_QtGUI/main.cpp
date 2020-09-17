@@ -21,11 +21,18 @@
 
 #include "Dynamics/ParticleSystem/MeshBoundary.h"
 
+
+#include "Dynamics/ParticleSystem/MeshBoundary.h"
+#include "Framework/Topology/TriangleSet.h"
+
+#include "Dynamics/ParticleSystem/SemiAnalyticalSFINode.h"
+#include "Dynamics/ParticleSystem/TriangularSurfaceMeshNode.h"
+
 using namespace std;
 using namespace PhysIKA;
 
 
-int main()
+void creare_scene_init()
 {
 	float* a = nullptr;
 	float& b = *a;
@@ -92,5 +99,70 @@ int main()
 
 	window.mainLoop();
 
+	//return 0;
+}
+
+void create_scene_semianylitical()
+{
+
+	float* a = nullptr;
+	float& b = *a;
+
+	SceneGraph& scene = SceneGraph::getInstance();
+	scene.setUpperBound(Vector3f(1.2));
+	scene.setLowerBound(Vector3f(-0.2));
+
+
+
+	std::shared_ptr<SemiAnalyticalSFINode<DataType3f>> root = scene.createNewScene<SemiAnalyticalSFINode<DataType3f>>();
+	root->setName("SemiAnalyticalSFI");
+	//root->loadMesh();
+
+
+
+	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
+	root->addParticleSystem(child1);
+	child1->setName("fluid");
+	child1->loadParticles(Vector3f(0.75, 0.05, 0.75), Vector3f(0.85, 0.35, 0.85), 0.005);
+	child1->setMass(1);
+
+	//std::shared_ptr<ParticleEmitterSquare<DataType3f>> child3 = std::make_shared<ParticleEmitterSquare<DataType3f>>();
+	//child1->addParticleEmitter(child3);
+
+
+	auto pRenderer = std::make_shared<PVTKPointSetRender>();
+	pRenderer->setName("VTK Point Renderer");
+
+
+	//auto pRenderer = std::make_shared<PointRenderModule>();
+	//pRenderer->setColor(Vector3f(0, 0, 1));
+
+	child1->addVisualModule(pRenderer);
+
+
+	std::shared_ptr <TriangularSurfaceMeshNode<DataType3f>> child2 = std::make_shared<TriangularSurfaceMeshNode<DataType3f>>("boundary");
+	child2->getTriangleSet()->loadObjFile("../../Media/standard/standard_cube_01.obj");
+
+	root->addTriangularSurfaceMeshNode(child2);
+
+
+	QtApp window;
+	window.createWindow(1024, 768);
+	//printf("outside 4\n");
+	auto classMap = Object::getClassMap();
+
+	for (auto const c : *classMap)
+		std::cout << "Class Name: " << c.first << std::endl;
+
+	window.mainLoop();
+
+
+
+}
+
+int main()
+{
+	//creat_scene_init();
+	create_scene_semianylitical();
 	return 0;
 }
