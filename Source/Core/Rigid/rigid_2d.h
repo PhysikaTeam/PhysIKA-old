@@ -26,8 +26,10 @@ namespace PhysIKA {
 
 		COMM_FUNC Scalar getOrientation() const { return m_angle; }
 		COMM_FUNC Vector<Scalar, 2> getCenter() const { return m_p; }
-		COMM_FUNC SquareMatrix<Scalar, 2> getRotationMatrix() const { return SquareMatrix<Scalar, 2>(cos(m_angle), -sin(m_angle),
-																		  sin(m_angle),  cos(m_angle)); }
+		COMM_FUNC SquareMatrix<Scalar, 2> getRotationMatrix() const {
+			return SquareMatrix<Scalar, 2>(glm::cos(m_angle), -glm::sin(m_angle),
+				glm::sin(m_angle), glm::cos(m_angle));
+		}
 	private:
 		Vector<Scalar, 2> m_p;
 		Scalar m_angle;

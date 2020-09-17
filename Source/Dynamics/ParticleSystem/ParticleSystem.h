@@ -18,6 +18,8 @@ namespace PhysIKA
 	{
 		DECLARE_CLASS_1(ParticleSystem, TDataType)
 	public:
+
+		bool self_update = true;
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
@@ -52,6 +54,8 @@ namespace PhysIKA
 		 * @brief Particle force
 		 */
 		DEF_EMPTY_CURRENT_ARRAY(Force, Coord, DeviceType::GPU, "Force on each particle");
+
+		
 	public:
 		bool initialize() override;
 //		virtual void setVisible(bool visible) override;
