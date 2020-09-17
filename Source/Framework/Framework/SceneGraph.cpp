@@ -2,6 +2,7 @@
 #include "Framework/Action/ActAnimate.h"
 #include "Framework/Action/ActDraw.h"
 #include "Framework/Action/ActInit.h"
+#include "Framework/Action/ActReset.h"
 #include "Framework/Framework/SceneLoaderFactory.h"
 
 
@@ -75,6 +76,18 @@ void SceneGraph::takeOneFrame()
 void SceneGraph::run()
 {
 
+}
+
+void SceneGraph::reset()
+{
+	if (m_root == nullptr)
+	{
+		return;
+	}
+
+	m_root->traverseBottomUp<ResetAct>();
+
+	//m_root->traverseBottomUp();
 }
 
 bool SceneGraph::load(std::string name)

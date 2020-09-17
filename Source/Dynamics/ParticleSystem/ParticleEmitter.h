@@ -27,6 +27,7 @@ namespace PhysIKA
 		virtual void generateParticles();
 
 		void updateTopology() override;
+		bool resetStatus() override;
 
 
 		//DEF_VAR(Centre, Vector3f, 0, "Emitter location");

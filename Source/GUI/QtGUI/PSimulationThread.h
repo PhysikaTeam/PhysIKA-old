@@ -21,6 +21,8 @@ namespace PhysIKA
 
 		void run() override;
 
+		void reset();
+
 		void startRendering();
 		void stopRendering();
 

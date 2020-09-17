@@ -60,6 +60,11 @@ namespace PhysIKA
 		this->stop();
 	}
 
+	void PSimulationThread::reset()
+	{
+		SceneGraph::getInstance().reset();
+	}
+
 	void PSimulationThread::startRendering()
 	{
 		m_rendering = true;

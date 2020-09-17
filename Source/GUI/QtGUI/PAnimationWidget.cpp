@@ -58,6 +58,7 @@ namespace PhysIKA
 
 
 		connect(m_startSim, SIGNAL(released()), this, SLOT(toggleSimulation()));
+		connect(m_resetSim, SIGNAL(released()), this, SLOT(resetSimulation()));
 		connect(PSimulationThread::instance(), SIGNAL(finished()), this, SLOT(simulationFinished()));
 	}
 
@@ -73,11 +74,13 @@ namespace PhysIKA
 			{
 				PSimulationThread::instance()->resume();
 				m_startSim->setText("Pause");
+				m_resetSim->setDisabled(true);
 			}
 			else
 			{
 				PSimulationThread::instance()->pause();
 				m_startSim->setText("Resume");
+				m_resetSim->setDisabled(false);
 			}
 		}
 		else
@@ -86,7 +89,14 @@ namespace PhysIKA
 			PSimulationThread::instance()->start();
 			m_startSim->setText("Pause");
 			m_sim_started = true;
+
+			m_resetSim->setDisabled(true);
 		}
+	}
+
+	void PAnimationWidget::resetSimulation()
+	{
+		PSimulationThread::instance()->reset();
 	}
 
 	void PAnimationWidget::simulationFinished()

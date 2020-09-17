@@ -23,6 +23,7 @@ namespace PhysIKA
 
 	public slots:
 		void toggleSimulation();
+		void resetSimulation();
 
 		void simulationFinished();
 

@@ -24,6 +24,7 @@ namespace PhysIKA
 		virtual ~ParticleFluid();
 
 		void advance(Real dt) override;
+		bool resetStatus() override;
 
 	private:
 		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");

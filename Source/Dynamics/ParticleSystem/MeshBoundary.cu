@@ -101,6 +101,13 @@ namespace PhysIKA
 	MeshBoundary<TDataType>::MeshBoundary()
 		: Node()
 	{
+		radius.setValue(0.005);
+		m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
+		radius.connect(m_nbrQuery->inRadius());
+		this->currentParticlePosition()->connect(m_nbrQuery->inPosition());
+		this->currentTriangleVertex()->connect(m_nbrQuery->inTrianglePosition());
+
+		this->currentTriangleIndex()->connect(m_nbrQuery->inTriangleIndex());
 	}
 
 	template<typename TDataType>
@@ -189,13 +196,7 @@ namespace PhysIKA
 			}
 		}
 
-		radius.setValue(0.005);
-		m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		radius.connect(m_nbrQuery->inRadius());
-		this->currentParticlePosition()->connect(m_nbrQuery->inPosition());
-		this->currentTriangleVertex()->connect(m_nbrQuery->inTrianglePosition());
-
-		this->currentTriangleIndex()->connect(m_nbrQuery->inTriangleIndex());
+		
 		m_nbrQuery->initialize();
 		m_nbrQuery->compute();
 

@@ -124,4 +124,14 @@ namespace PhysIKA
 
 	}
 
+	template<typename TDataType>
+	bool PhysIKA::ParticleEmitter<TDataType>::resetStatus()
+	{
+		this->currentPosition()->setElementCount(0);
+		this->currentVelocity()->setElementCount(0);
+		this->currentForce()->setElementCount(0);
+
+		return true;
+	}
+
 }
