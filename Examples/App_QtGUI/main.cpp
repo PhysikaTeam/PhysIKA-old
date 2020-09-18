@@ -21,6 +21,7 @@
 
 #include "Dynamics/ParticleSystem/MeshBoundary.h"
 
+#include "Dynamics/ParticleSystem/ParticleWriter.h"
 
 #include "Dynamics/ParticleSystem/MeshBoundary.h"
 #include "Framework/Topology/TriangleSet.h"
@@ -112,12 +113,17 @@ void create_scene_semianylitical()
 	scene.setUpperBound(Vector3f(1.2));
 	scene.setLowerBound(Vector3f(-0.2));
 
-
+	scene.setFrameRate(1000);
 
 	std::shared_ptr<SemiAnalyticalSFINode<DataType3f>> root = scene.createNewScene<SemiAnalyticalSFINode<DataType3f>>();
 	root->setName("SemiAnalyticalSFI");
 	//root->loadMesh();
 
+	auto writer = std::make_shared<ParticleWriter<DataType3f>>();
+	writer->setNamePrefix("particles_");
+	root->getParticlePosition()->connect(&writer->m_position);
+	root->getParticleMass()->connect(&writer->m_color_mapping);
+	root->addModule(writer);
 
 
 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
@@ -126,7 +132,7 @@ void create_scene_semianylitical()
 	child1->loadParticles(Vector3f(0.75, 0.05, 0.75), Vector3f(0.85, 0.35, 0.85), 0.005);
 	child1->setMass(1);
 
-	//std::shared_ptr<ParticleEmitterSquare<DataType3f>> child3 = std::make_shared<ParticleEmitterSquare<DataType3f>>();
+	std::shared_ptr<ParticleEmitterSquare<DataType3f>> child3 = std::make_shared<ParticleEmitterSquare<DataType3f>>();
 	//child1->addParticleEmitter(child3);
 
 
@@ -162,7 +168,7 @@ void create_scene_semianylitical()
 
 int main()
 {
-	creare_scene_init();
-	//create_scene_semianylitical();
+	//creare_scene_init();
+	create_scene_semianylitical();
 	return 0;
 }
