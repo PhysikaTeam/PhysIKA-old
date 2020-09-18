@@ -109,24 +109,16 @@ namespace PhysIKA
 		{
 			for (Real z = lo[2]; z <= hi[2]; z += distance)
 			{
-				////bound cell
-				//if (z + distance > hi[2] || x + distance > hi[0] || x == lo[0] || z ==lo[2])
-				//{
-				//	vertList.push_back(Coord(1000, 1000, 1000));
-				//	normalList.push_back(Coord(0, 1, 0));
-				//	continue;
-				//}
-				//	break;
-
-				if (pow(x - xcenter, 2) + pow(z - zcenter, 2) > 400*distance*distance)
-					height = slope * pow(e, -400*distance*distance*100);
-				else
-					height = slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2))*100);
-				//height = slope*(x + z - lo[0] - lo[2]);
+				//if (pow(x - xcenter, 2) + pow(z - zcenter, 2) > 400*distance*distance)
+					//height = slope * pow(e, -400*distance*distance*100);
+				//	height = slope * pow(e, -400 * distance*distance * 10);
+				//else
+					height = 0.3+slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2))*100);
+				//height = slope * pow(e, -(pow(x, 2) + pow(z, 2)) * 5);
+				//height = 3*slope*(x + z - lo[0] - lo[2]);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
-				
 			}
 		}
 		m_pSet->setPoints(vertList);

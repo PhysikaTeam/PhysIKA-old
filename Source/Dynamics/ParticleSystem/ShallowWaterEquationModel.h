@@ -27,6 +27,7 @@ namespace PhysIKA
 		void step(Real dt) override;
 
 		void setDistance(Real distance) { this->distance = distance; }
+		void setRelax(Real relax) { this->relax = relax; }
 	public:
 		
 		DeviceArrayField<Coord> m_position;
@@ -46,6 +47,7 @@ namespace PhysIKA
 	private:
 		int m_pNum;
 		Real distance;
+		Real relax;
 	};
 
 #ifdef PRECISION_FLOAT

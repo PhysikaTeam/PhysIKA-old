@@ -18,7 +18,7 @@ namespace PhysIKA
 		HeightField(std::string name = "default");
 		virtual ~HeightField();
 
-		void loadParticles(Coord lo, Coord hi, Real distance, Real slope);
+		void loadParticles(Coord lo, Coord hi, Real distance, Real slope, Real relax);
 
 		DeviceArrayField<Coord>* getPosition()
 		{
@@ -37,6 +37,7 @@ namespace PhysIKA
 		void SWEconnect();
 	private:
 		Real distance;
+		Real relax;
 		DeviceArrayField<Coord> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;

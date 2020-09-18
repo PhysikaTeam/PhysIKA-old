@@ -106,8 +106,15 @@ namespace PhysIKA
 				count2++;
 			}
 		}
-		m_accel[i][0] = -(gravity * hx + m_velocity[i][0] * ux) / count2 - m_velocity[i][2] * uz / count1;
-		m_accel[i][2] = -(gravity * hz + m_velocity[i][2] * wz) / count1 - m_velocity[i][0] * wx / count2;
+		
+		//m_accel[i][0] = -(gravity * hx + m_velocity[i][0] * ux) / count2 - m_velocity[i][2] * uz / count1;
+		//m_accel[i][2] = -(gravity * hz + m_velocity[i][2] * wz) / count1 - m_velocity[i][0] * wx / count2;
+		//m_accel[i][0] = -gravity * hx / count2;
+		//m_accel[i][2] = -gravity * hz / count1;
+
+		m_accel[i][0] = -(gravity * hx + m_velocity[i][0] * ux) / 2 - m_velocity[i][2] * uz / 2;
+		m_accel[i][2] = -(gravity * hz + m_velocity[i][2] * wz) / 2 - m_velocity[i][0] * wx / 2;
+		
 
 	}
 
@@ -120,6 +127,7 @@ namespace PhysIKA
 		DeviceArray<Coord> m_position,
 		DeviceArray<int> isBound,
 		Real distance,
+		Real relax,
 		Real gravity,
 		Real dt)
 	{
@@ -149,24 +157,19 @@ namespace PhysIKA
 				count2++;
 			}
 		}
-		Real maxVel = sqrt(distance*gravity), vel;
-		m_velocity[i][1] = ((hz / count1 + hx / count2)*gravity*distance)*dt+ m_velocity[i][1];
-
-		m_velocity[i][0] = 0.99*m_velocity[i][0] + dt * m_accel[i][0];
-		m_velocity[i][2] = 0.99*m_velocity[i][2] + dt * m_accel[i][2];
+		
+		Real maxVel = 2*sqrt(distance*gravity), vel;
+		//m_velocity[i][1] = ((hz / count1 + hx / count2)*gravity*distance)*dt+ m_velocity[i][1];
+		m_velocity[i][1] = ((hz / 2 + hx / 2)*gravity*distance)*dt + m_velocity[i][1];
+		m_velocity[i][0] = relax * m_velocity[i][0] + dt * m_accel[i][0];
+		m_velocity[i][2] = relax * m_velocity[i][2] + dt * m_accel[i][2];
 
 		vel = sqrt(pow(m_velocity[i][0], 2) + pow(m_velocity[i][2], 2));
-		if(vel > maxVel)
+		if (vel > maxVel)
 		{
 			m_velocity[i][0] *= maxVel / vel;
 			m_velocity[i][2] *= maxVel / vel;
 		}
-		//if (abs(m_velocity[i][1]) > maxVel)
-		//	m_velocity[i][1] = maxVel * m_velocity[i][1] / abs(m_velocity[i][1]);
-		//if (count1 == 1 && count2 == 1)
-		//	printf("%d's partial h is (%f,%f)\n", i, hx / count2, hz / count1);
-		//m_velocity[i][0] = hx / count2;
-		//m_velocity[i][2] = hz / count1;
 	}
 
 	template<typename Real, typename Coord>
@@ -196,16 +199,24 @@ namespace PhysIKA
 				switch(j)
 				{
 				case 0:
-					m_velocity[i][2] = 0;
+					//if (m_velocity[i][2] < 0)
+						m_velocity[i][2] *= 0;
+						//m_velocity[i][2] = -0.1*m_velocity[i][2];
 					break;
 				case 1:
-					m_velocity[i][2] = 0;
+					//if (m_velocity[i][2] > 0)
+						m_velocity[i][2] *= 0;
+						//m_velocity[i][2] = -0.1*m_velocity[i][2];
 					break;
 				case 2:
-					m_velocity[i][0] = 0;
+					//if (m_velocity[i][0] < 0)
+						m_velocity[i][0] *= 0;
+						//m_velocity[i][0] = -0.1*m_velocity[i][0];
 					break;
 				case 3:
-					m_velocity[i][0] = 0;
+					//if (m_velocity[i][0] > 0)
+						m_velocity[i][0] *= 0;
+						//m_velocity[i][0] = -0.1*m_velocity[i][0];
 					break;
 				}
 			}
@@ -251,11 +262,10 @@ namespace PhysIKA
 				count2++;
 			}
 		}
-
-		//h[i] += m_velocity[i][1] * dt;
-		h[i] += -(uhx / count2 + whz / count1)*dt;
-		if (h[i] < 0) h[i] = 0;
-		if (h[i] > 5) h[i] = 5;
+		
+		h[i] += -(uhx / 2 + whz / 2)*dt;
+		//if (h[i] < 0) h[i] = 0;
+		//if (h[i] > 5) h[i] = 5;
 		m_position[i][1] = solid[i][1] + h[i];
 	}
 	template<typename TDataType>
@@ -270,6 +280,19 @@ namespace PhysIKA
 		
 		int num = m_position.getElementCount();
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
+
+		computeBoundConstrant <Real, Coord> << < pDims, BLOCK_SIZE >> > (
+			h.getValue(),
+			neighborIndex.getValue(),
+			m_accel.getValue(),
+			m_velocity.getValue(),
+			m_position.getValue(),
+			isBound.getValue(),
+			distance,
+			9.8,
+			dt
+			);
+		cuSynchronize();
 
 		computeAccel <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			h.getValue(),
@@ -291,23 +314,13 @@ namespace PhysIKA
 			m_position.getValue(),
 			isBound.getValue(),
 			distance,
+			relax,
 			9.8,
 			dt
 			);
 		cuSynchronize();
 
-		computeBoundConstrant <Real, Coord> << < pDims, BLOCK_SIZE >> > (
-			h.getValue(),
-			neighborIndex.getValue(),
-			m_accel.getValue(),
-			m_velocity.getValue(),
-			m_position.getValue(),
-			isBound.getValue(),
-			distance,
-			9.8,
-			dt
-			);
-		cuSynchronize();
+
 
 		computeHeight <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			h.getValue(),

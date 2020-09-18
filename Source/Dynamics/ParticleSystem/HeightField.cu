@@ -33,6 +33,7 @@ namespace PhysIKA
 		this->solid.connect(swe->solid);
 
 		swe->setDistance(distance);
+		swe->setRelax(relax);
 	}
 
 	template<typename TDataType>
@@ -64,11 +65,12 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void HeightField<TDataType>::loadParticles(Coord lo, Coord hi, Real distance,Real slope)
+	void HeightField<TDataType>::loadParticles(Coord lo, Coord hi, Real distance,Real slope, Real relax)
 	{
 		loadHeightFieldParticles(lo, hi, distance, slope);
 		
 		this->distance = distance;
+		this->relax = relax;
 		std::vector<Coord> solidList;
 		std::vector<Coord> normals;
 		std::vector<int>  isbound;

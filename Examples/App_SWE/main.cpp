@@ -55,7 +55,7 @@ void CreateScene()
 	child1->addVisualModule(ptRender);
 
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
-	child1->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 0.01, 0.1);
+	child1->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 0.005, 0.3, 0.998);
 	child1->setMass(100);
 	child1->getVelocity()->connect(ptRender->m_vecIndex);
 
