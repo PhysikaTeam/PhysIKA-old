@@ -24,9 +24,9 @@ namespace PhysIKA
 		auto& list = node->getVisualModuleList();
 		for (std::list<std::shared_ptr<VisualModule>>::iterator iter = list.begin(); iter != list.end(); iter++)
 		{
-			(*iter)->updateRenderingContext();
 			if ((*iter)->isVisible())
 			{
+				(*iter)->updateRenderingContext();
 				(*iter)->display();
 			}
 		}

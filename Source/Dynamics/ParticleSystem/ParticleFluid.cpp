@@ -132,10 +132,16 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool PhysIKA::ParticleFluid<TDataType>::resetStatus()
 	{
-		this->currentPosition()->setElementCount(0);
-		this->currentVelocity()->setElementCount(0);
-		this->currentForce()->setElementCount(0);
-
+		//printf("reset fluid\n");
+		std::vector<std::shared_ptr<ParticleEmitter<TDataType>>> m_particleEmitters = this->getParticleEmitters();
+		if(m_particleEmitters.size() > 0)
+		{ 
+			this->currentPosition()->setElementCount(0);
+			this->currentVelocity()->setElementCount(0);
+			this->currentForce()->setElementCount(0);
+		}
+		else 
+			return ParticleSystem<TDataType>::resetStatus();
 		return true;
 	}
 

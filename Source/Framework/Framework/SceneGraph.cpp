@@ -3,6 +3,8 @@
 #include "Framework/Action/ActDraw.h"
 #include "Framework/Action/ActInit.h"
 #include "Framework/Action/ActReset.h"
+#include "Framework/Action/ActQueryTimestep.h"
+#include "Framework/Action/ActPostProcessing.h"
 #include "Framework/Framework/SceneLoaderFactory.h"
 
 
@@ -65,12 +67,46 @@ void SceneGraph::advance(float dt)
 
 void SceneGraph::takeOneFrame()
 {
+	/*
+	if (m_root == nullptr)
+	{
+		return;
+	}
+	m_root->traverseTopDown<AnimateAct>();*/
+	std::cout << "****************Frame " << m_frameNumber << " Started" << std::endl;
+
 	if (m_root == nullptr)
 	{
 		return;
 	}
 
-	m_root->traverseTopDown<AnimateAct>();
+	float interval = 1.0f / m_frameRate;
+
+	float t = 0.0f;
+	float dt = 0.0f;
+
+	QueryTimeStep time;
+
+	time.reset();
+	m_root->traverseTopDown(&time);
+	dt = time.getTimeStep();
+	while (t + dt < interval)
+	{
+		m_root->traverseTopDown<AnimateAct>(dt);
+
+		t += dt;
+		time.reset();
+		m_root->traverseTopDown(&time);
+		dt = time.getTimeStep();
+	}
+
+	m_root->traverseTopDown<AnimateAct>(interval - t);
+
+	m_root->traverseTopDown<PostProcessing>();
+
+	std::cout << "****************Frame " << m_frameNumber << " Ended" << std::endl << std::endl;
+
+	m_frameNumber++;
 }
 
 void SceneGraph::run()
