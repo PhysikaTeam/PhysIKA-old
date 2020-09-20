@@ -19,10 +19,10 @@
 #include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/ParticleSystem/ParticleEmitterSquare.h"
 
-#include "Dynamics/ParticleSystem/MeshBoundary.h"
+#include "Dynamics/ParticleSystem/StaticMeshBoundary.h"
 
 
-#include "Dynamics/ParticleSystem/MeshBoundary.h"
+#include "Dynamics/ParticleSystem/StaticMeshBoundary.h"
 #include "Framework/Topology/TriangleSet.h"
 
 #include "Dynamics/ParticleSystem/SemiAnalyticalSFINode.h"
@@ -43,7 +43,7 @@ void creare_scene_init()
 
 
 
-	std::shared_ptr<MeshBoundary<DataType3f>> root = scene.createNewScene<MeshBoundary<DataType3f>>();
+	std::shared_ptr<StaticMeshBoundary<DataType3f>> root = scene.createNewScene<StaticMeshBoundary<DataType3f>>();
 	root->loadMesh("../../Media/bowl/b3.obj");
 	root->setName("StaticMesh");
 	//root->loadMesh();

@@ -1,4 +1,4 @@
-#include "MeshBoundary.h"
+#include "StaticMeshBoundary.h"
 #include "Core/Utility.h"
 #include "Framework/Framework/Log.h"
 #include "Framework/Framework/Node.h"
@@ -10,7 +10,7 @@
 
 namespace PhysIKA
 {
-	IMPLEMENT_CLASS_1(MeshBoundary, TDataType)
+	IMPLEMENT_CLASS_1(StaticMeshBoundary, TDataType)
 
 
 
@@ -98,7 +98,7 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	MeshBoundary<TDataType>::MeshBoundary()
+	StaticMeshBoundary<TDataType>::StaticMeshBoundary()
 		: Node()
 	{
 		radius.setValue(0.005);
@@ -111,12 +111,12 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	MeshBoundary<TDataType>::~MeshBoundary()
+	StaticMeshBoundary<TDataType>::~StaticMeshBoundary()
 	{
 	}
 
 	template<typename TDataType>
-	void MeshBoundary<TDataType>::loadMesh(std::string filename)
+	void StaticMeshBoundary<TDataType>::loadMesh(std::string filename)
 	{
 		printf("inside load\n");
 		auto boundary = std::make_shared<TriangleSet<TDataType>>();
@@ -126,13 +126,13 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	bool MeshBoundary<TDataType>::initialize()
+	bool StaticMeshBoundary<TDataType>::initialize()
 	{
 		return true;
 	}
 
 	template<typename TDataType>
-	bool MeshBoundary<TDataType>::resetStatus()
+	bool StaticMeshBoundary<TDataType>::resetStatus()
 	{
 		auto triangle_index		= this->currentTriangleIndex();
 		auto triangle_vertex	= this->currentTriangleVertex();
@@ -204,7 +204,7 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void MeshBoundary<TDataType>::advance(Real dt)
+	void StaticMeshBoundary<TDataType>::advance(Real dt)
 	{
 		auto triangle_index		= this->currentTriangleIndex();
 		auto triangle_vertex	= this->currentTriangleVertex();

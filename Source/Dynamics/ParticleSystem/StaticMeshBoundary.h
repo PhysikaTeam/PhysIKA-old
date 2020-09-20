@@ -11,16 +11,16 @@ namespace PhysIKA {
 	template <typename T> class NeighborQuery;
 
 	template<typename TDataType>
-	class MeshBoundary : public Node
+	class StaticMeshBoundary : public Node
 	{
-		DECLARE_CLASS_1(MeshBoundary, TDataType)
+		DECLARE_CLASS_1(StaticMeshBoundary, TDataType)
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 		typedef typename TopologyModule::Triangle Triangle;
 
-		MeshBoundary();
-		~MeshBoundary() override;
+		StaticMeshBoundary();
+		~StaticMeshBoundary() override;
 
 
 		void loadMesh(std::string filename);
@@ -28,17 +28,13 @@ namespace PhysIKA {
 		void advance(Real dt) override;
 
 		bool initialize() override;
+
 		bool resetStatus() override;
 
 	public:
-
-		std::vector<std::shared_ptr<TriangleSet<TDataType>>> m_obstacles;
-
-		std::vector<std::shared_ptr<RigidBody<TDataType>>> m_rigids;
-		std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;
-
 		DEF_NODE_PORTS(RigidBody, RigidBody<TDataType>, "A rigid body");
 		DEF_NODE_PORTS(ParticleSystem, ParticleSystem<TDataType>, "Particle Systems");
+
 
 	public:
 		/**
@@ -66,13 +62,14 @@ namespace PhysIKA {
 		std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
 		VarField<Real> radius;
 
+		std::vector<std::shared_ptr<TriangleSet<TDataType>>> m_obstacles;
 	};
 
 
 #ifdef PRECISION_FLOAT
-template class MeshBoundary<DataType3f>;
+template class StaticMeshBoundary<DataType3f>;
 #else
-template class MeshBoundary<DataType3d>;
+template class StaticMeshBoundary<DataType3d>;
 #endif
 
 }

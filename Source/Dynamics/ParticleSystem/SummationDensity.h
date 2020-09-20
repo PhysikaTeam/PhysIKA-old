@@ -38,9 +38,7 @@ namespace PhysIKA {
 			Real mass);
 
 	public:
-		DEF_EMPTY_VAR(RestDensity, Real, 
-			"Particle mass, note that this module only support a constant mass for all particles.");
-
+		DEF_EMPTY_VAR(RestDensity, Real, "Rest Density");
 		DEF_EMPTY_VAR(Mass, Real, "Particle mass, note that this module only support a constant mass for all particles.");
 		DEF_EMPTY_VAR(SmoothingLength, Real, "Indicating the smoothing length");
 		DEF_EMPTY_VAR(SamplingDistance, Real, "Indicating the initial sampling distance");
