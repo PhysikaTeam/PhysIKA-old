@@ -18,6 +18,8 @@ namespace PhysIKA
 	{
 		DECLARE_CLASS_1(ParticleSystem, TDataType)
 	public:
+
+		bool self_update = true;
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
@@ -31,34 +33,34 @@ namespace PhysIKA
 		virtual bool translate(Coord t);
 		virtual bool scale(Real s);
 
-		DeviceArrayField<Coord>* getPosition()
-		{
-			return &m_position;
-		}
-
-		DeviceArrayField<Coord>* getVelocity()
-		{
-			return &m_velocity;
-		}
-
-		DeviceArrayField<Coord>* getForce()
-		{
-			return &m_force;
-		}
 
 		void updateTopology() override;
 		bool resetStatus() override;
 
 //		std::shared_ptr<PointRenderModule> getRenderModule();
+
+		/**
+		 * @brief Particle position
+		 */
+		DEF_EMPTY_CURRENT_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
+
+
+		/**
+		 * @brief Particle velocity
+		 */
+		DEF_EMPTY_CURRENT_ARRAY(Velocity, Coord, DeviceType::GPU, "Particle velocity");
+
+		/**
+		 * @brief Particle force
+		 */
+		DEF_EMPTY_CURRENT_ARRAY(Force, Coord, DeviceType::GPU, "Force on each particle");
+
+		
 	public:
 		bool initialize() override;
 //		virtual void setVisible(bool visible) override;
 
 	protected:
-		DeviceArrayField<Coord> m_position;
-		DeviceArrayField<Coord> m_velocity;
-		DeviceArrayField<Coord> m_force;
-
 		std::shared_ptr<PointSet<TDataType>> m_pSet;
 //		std::shared_ptr<PointRenderModule> m_pointsRender;
 	};

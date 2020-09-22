@@ -15,7 +15,7 @@
 #ifndef INTERVAL_H
 #define INTERVAL_H
 
-#include "Platform.h"
+#include "Core/Platform.h"
 
 namespace PhysIKA {
 

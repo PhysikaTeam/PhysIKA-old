@@ -11,20 +11,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	PointSet<TDataType>::PointSet()
 		: TopologyModule()
-		, m_samplingDistance(Real(0.1))
 	{
-		std::vector<Coord> positions;
-		for (Real x = -2.0; x < 2.0; x += m_samplingDistance) {
-			for (Real y = -2.0; y < 2.0; y += m_samplingDistance) {
-				for (Real z = -2.0; z < 2.0; z += m_samplingDistance) {
-					positions.push_back(Coord(Real(x), Real(y), Real(z)));
-				}
-			}
-		}
-		this->setPoints(positions);
-
-		m_normals.resize(positions.size());
-		m_normals.reset();
 	}
 
 	template<typename TDataType>
@@ -118,17 +105,24 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PointSet<TDataType>::setPoints(std::vector<Coord>& pos)
 	{
+		//printf("%d\n", pos.size());
 		m_coords.resize(pos.size());
 		Function1Pt::copy(m_coords, pos);
 
 		tagAsChanged();
 	}
-
+	template<typename TDataType>
+	void PointSet<TDataType>::setSize(int size)
+	{
+		m_coords.resize(size);
+		m_coords.reset();
+	}
 
 	template<typename TDataType>
 	void PointSet<TDataType>::setNormals(std::vector<Coord>& normals)
 	{
 		m_normals.resize(normals.size());
+
 		Function1Pt::copy(m_normals, normals);
 	}
 
@@ -157,18 +151,14 @@ namespace PhysIKA
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= vertex.size()) return;
-
+		//return;
 		vertex[pId] = vertex[pId] * s;
 	}
 
 	template<typename TDataType>
 	void PointSet<TDataType>::scale(Real s)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
-
-		PS_Scale<< <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			s);
+		cuExecute(m_coords.size(), PS_Scale, m_coords, s);
 	}
 
 	template <typename Coord>
@@ -186,10 +176,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PhysIKA::PointSet<TDataType>::scale(Coord s)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
-		PS_Scale << <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			s);
+		cuExecute(m_coords.size(), PS_Scale, m_coords, s);
 	}
 
 	template <typename Coord>
@@ -207,10 +194,13 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PhysIKA::PointSet<TDataType>::translate(Coord t)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
+		cuExecute(m_coords.size(), PS_Translate, m_coords, t);
 
-		PS_Translate << <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			t);
+// 		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
+// 
+// 		PS_Translate << <pDims, BLOCK_SIZE >> > (
+// 			m_coords,
+// 			t);
+// 		cuSynchronize();
 	}
 }

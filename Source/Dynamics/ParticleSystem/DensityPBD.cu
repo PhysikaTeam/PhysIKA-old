@@ -4,7 +4,7 @@
 #include "DensityPBD.h"
 #include "Framework/Framework/Node.h"
 #include <string>
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
 namespace PhysIKA
@@ -53,6 +53,8 @@ namespace PhysIKA
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
+
+		
 
 		Coord pos_i = posArr[pId];
 
@@ -231,6 +233,9 @@ namespace PhysIKA
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
+		if (pId == 5)
+			printf("%d update position\n", posArr.size());
+
 		posArr[pId] += dPos[pId];
 	}
 
@@ -242,6 +247,14 @@ namespace PhysIKA
 	{
 		m_restDensity.setValue(Real(1000));
 		m_smoothingLength.setValue(Real(0.011));
+
+		m_densitySum = std::make_shared<SummationDensity<TDataType>>();
+
+		m_restDensity.connect(m_densitySum->varRestDensity());
+		m_smoothingLength.connect(m_densitySum->varSmoothingLength());
+		m_position.connect(m_densitySum->inPosition());
+		m_density.connect(m_densitySum->outDensity());
+		m_neighborhood.connect(m_densitySum->inNeighborIndex());
 
 		attachField(&m_restDensity, "rest_density", "Reference density", false);
 		attachField(&m_smoothingLength, "smoothing_length", "The smoothing length in SPH!", false);
@@ -273,16 +286,6 @@ namespace PhysIKA
 			return false;
 		}
 
-		m_densitySum = std::make_shared<DensitySummation<TDataType>>();
-
-		m_restDensity.connect(m_densitySum->m_restDensity);
-		m_smoothingLength.connect(m_densitySum->m_smoothingLength);
-		m_position.connect(m_densitySum->m_position);
-		m_density.connect(m_densitySum->m_density);
-		m_neighborhood.connect(m_densitySum->m_neighborhood);
-
-		m_densitySum->initialize();
-
 		int num = m_position.getElementCount();
 
 		if (m_lamda.size() != num)
@@ -310,17 +313,33 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool DensityPBD<TDataType>::constrain()
 	{
-		Function1Pt::copy(m_position_old, m_position.getValue());
-
-		int it = 0;
-		while (it < m_maxIteration)
+		int num = m_position.getElementCount();
+		if (num > 0)
 		{
-			takeOneIteration();
+			if (m_position_old.size() != m_position.getElementCount())
+				m_position_old.resize(m_position.getElementCount());
 
-			it++;
+			Function1Pt::copy(m_position_old, m_position.getValue());
+
+			if (m_density.getElementCount() != m_position.getElementCount())
+				m_density.setElementCount(m_position.getElementCount());
+
+			if (m_deltaPos.size() != m_position.getElementCount())
+				m_deltaPos.resize(m_position.getElementCount());
+
+			if (m_lamda.size() != m_position.getElementCount())
+				m_lamda.resize(m_position.getElementCount());
+
+			int it = 0;
+			while (it < m_maxIteration)
+			{
+				takeOneIteration();
+
+				it++;
+			}
+
+			updateVelocity();
 		}
-
-		updateVelocity();
 
 		return true;
 	}
@@ -334,7 +353,21 @@ namespace PhysIKA
 		int num = m_position.getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
+		
+
 		m_deltaPos.reset();
+
+		if (m_densitySum == nullptr)
+		{
+			m_densitySum = std::make_shared<SummationDensity<TDataType>>();
+
+			m_restDensity.connect(m_densitySum->varRestDensity());
+			m_smoothingLength.connect(m_densitySum->varSmoothingLength());
+			m_position.connect(m_densitySum->inPosition());
+			m_density.connect(m_densitySum->outDensity());
+			m_neighborhood.connect(m_densitySum->inNeighborIndex());
+		}
+
 		m_densitySum->compute();
 
 
@@ -382,7 +415,7 @@ namespace PhysIKA
 				dt);
 			cuSynchronize();
 		}
-		
+		printf("Yes %d %d %d\n", m_position.getElementCount(), m_velocity.getElementCount(), m_deltaPos.size());
 		K_UpdatePosition <Real, Coord> << <pDims, BLOCK_SIZE >> > (
 			m_position.getValue(),
 			m_velocity.getValue(),

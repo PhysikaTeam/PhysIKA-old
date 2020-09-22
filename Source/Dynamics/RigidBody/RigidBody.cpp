@@ -3,8 +3,6 @@
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Mapping/FrameToPointSet.h"
-#include "Rendering/SurfaceMeshRender.h"
-#include "Rendering/PointRenderModule.h"
 #include "IO/Surface_Mesh_IO/ObjFileLoader.h"
 
 namespace PhysIKA
@@ -45,33 +43,19 @@ namespace PhysIKA
 
 		//create a child node for surface rendering
 		m_surfaceNode = this->createChild<Node>("Mesh");
+		m_surfaceNode->setActive(false);
+		m_surfaceNode->setControllable(false);
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 		m_surfaceNode->setTopologyModule(triSet);
 		triSet->scale(0.05);
 		triSet->translate(trans);
 
-		auto render = std::make_shared<SurfaceMeshRender>();
-		render->setColor(Vector3f(0.988f, 0.956, 0.952f));
-		m_surfaceNode->addVisualModule(render);
-
-		//create a child node for collision
-		m_collisionNode = this->createChild<Node>("Collision");
-
-		auto ptSet = std::make_shared<PointSet<TDataType>>();
-		m_collisionNode->setTopologyModule(ptSet);
-		ptSet->scale(0.05);
-		ptSet->translate(trans);
-
-		auto render2 = std::make_shared<PointRenderModule>();
-		render2->setColor(Vector3f(0.988f, 0.956, 0.952f));
-		m_collisionNode->addVisualModule(render2);
-		render2->setVisible(false);
+		cuSynchronize();
 
 		auto surfaceMapping = std::make_shared<FrameToPointSet<TDataType>>(m_frame, triSet);
 		this->addTopologyMapping(surfaceMapping);
-		auto collisionMapping = std::make_shared<FrameToPointSet<TDataType>>(m_frame, ptSet);
-		this->addTopologyMapping(collisionMapping);
+		cuSynchronize();
 	}
 
 	template<typename TDataType>
@@ -89,6 +73,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void RigidBody<TDataType>::loadShape(std::string filename)
 	{
+		printf("surface\n");
 		std::shared_ptr<TriangleSet<TDataType>> surface = TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule());
 		surface->loadObjFile(filename);
 	}
@@ -166,6 +151,6 @@ namespace PhysIKA
 		m_center.setValue(center + t);
 
 		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
-		TypeInfo::CastPointerDown<PointSet<TDataType>>(m_collisionNode->getTopologyModule())->translate(t);
+		//TypeInfo::CastPointerDown<PointSet<TDataType>>(m_collisionNode->getTopologyModule())->translate(t);
 	}
 }

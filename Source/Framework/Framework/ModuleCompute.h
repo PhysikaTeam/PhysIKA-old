@@ -9,6 +9,8 @@ public:
 	ComputeModule();
 	~ComputeModule() override;
 
+	bool execute() override;
+
 	virtual void compute() {};
 
 	std::string getModuleType() override { return "ComputeModule"; }

@@ -60,6 +60,9 @@
 #include "PSceneGraphWidget.h"
 #include "PPropertyWidget.h"'
 #include "PModuleListWidget.h"
+#include "PSimulationThread.h"
+#include "PNodeFlowWidget.h"
+#include "PModuleFlowWidget.h"
 
 #include <QAction>
 #include <QLayout>
@@ -83,6 +86,22 @@
 #include <QTextEdit>
 #include <QDebug>
 #include <QtWidgets/QOpenGLWidget>
+#include <QtSvg/QSvgRenderer>
+#include <QHBoxLayout>
+
+#include "Nodes/QtFlowView.h"
+#include "Nodes/QtModuleFlowScene.h"
+#include "Nodes/DataModelRegistry.h"
+
+#include "Toolbar/TabToolbar.h"
+#include "Toolbar/Page.h"
+#include "Toolbar/Group.h"
+#include "Toolbar/SubGroup.h"
+#include "Toolbar/StyleTools.h"
+#include "Toolbar/Builder.h"
+
+#include "Core/Platform.h"
+
 
 // #include "Node/NodeData.hpp"
 // #include "Node/FlowScene.hpp"
@@ -107,13 +126,16 @@ namespace PhysIKA
 		m_moduleListWidget(nullptr)
 	{
 		setObjectName("MainWindow");
-		setWindowTitle("PhysIKA Studio");
+		setWindowTitle(QString("PhysIKA Studio ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH));
+		setWindowIcon(QPixmap("../../Media/logo3.png"));
 
 		setCentralView();
 		setupToolBar();
 		setupStatusBar();
-		setupMenuBar();
+//		setupMenuBar();
 		setupAllWidgets();
+
+		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_moduleFlowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
 
 		statusBar()->showMessage(tr("Status Bar"));
 	}
@@ -146,7 +168,6 @@ namespace PhysIKA
 		mainLayout->setSpacing(0);
 		centralWidget->setLayout(mainLayout);
 
-
 		//Setup views
 		QTabWidget* tabWidget = new QTabWidget();
 		tabWidget->setObjectName(QStringLiteral("tabWidget"));
@@ -156,28 +177,138 @@ namespace PhysIKA
 		m_vtkOpenglWidget->setObjectName(QStringLiteral("tabView"));
 		m_vtkOpenglWidget->layout()->setMargin(0);
 		tabWidget->addTab(m_vtkOpenglWidget, QString());
-
-		QWidget* tabEditor = new QWidget();
-		tabEditor->setObjectName(QStringLiteral("tabEditor"));
-		tabWidget->addTab(tabEditor, QString());
-
 		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
-		tabWidget->setTabText(tabWidget->indexOf(tabEditor), QApplication::translate("MainWindow", "Node Editor", Q_NULLPTR));
+
+		m_moduleFlowView = new PModuleFlowWidget();
+		m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
+// 		tabWidget->addTab(m_moduleFlowView, QString());
+// 		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
 
 
 		//Setup animation widget
 		m_animationWidget = new PAnimationWidget(this);
 		m_animationWidget->layout()->setMargin(0);
 
- 		mainLayout->addWidget(tabWidget, 0, 0);
+
+// 		QWidget* viewWidget = new QWidget();
+// 		QHBoxLayout* hLayout = new QHBoxLayout();
+// 		viewWidget->setLayout(hLayout);
+// 		hLayout->addWidget(m_vtkOpenglWidget, 1);
+// 		hLayout->addWidget(m_flowView, 1);
+
+		mainLayout->addWidget(tabWidget, 0, 0);
  		mainLayout->addWidget(m_animationWidget, 1, 0);
+
+		connect(PSimulationThread::instance(), SIGNAL(oneFrameFinished()), m_vtkOpenglWidget, SLOT(prepareRenderingContex()));
 	}
 
 	void PMainWindow::setupToolBar()
 	{
-		PToolBar *tb = new PToolBar(tr("Tool Bar"), this);
-		toolBars.append(tb);
-		addToolBar(tb);
+		tt::TabToolbar* tt = new tt::TabToolbar(this, 55, 3);
+		addToolBar(Qt::TopToolBarArea, tt);
+
+		QString mediaDir = "../../Media/icon/";
+
+		auto convertIcon = [&](QString path) -> QIcon
+		{
+			QSvgRenderer svg_render(path);
+			QPixmap pixmap(48, 48);
+			pixmap.fill(Qt::transparent);
+			QPainter painter(&pixmap);
+			svg_render.render(&painter);
+			QIcon ico(pixmap);
+
+			return ico;
+		};
+
+
+		tt::Page* filePage = tt->AddPage(QPixmap(mediaDir + "48px-Document-open.png"), "File");
+	
+		auto fg1 = filePage->AddGroup("");
+		//New action
+		QAction *actionNew = new QAction(QPixmap(mediaDir + "48px-Document-new.png"), "New...");
+		fg1->AddAction(QToolButton::DelayedPopup, actionNew);
+			
+		//Open action
+		QAction *actionOpen = new QAction(QPixmap(mediaDir + "48px-Document-open.png"), "Open");
+		fg1->AddAction(QToolButton::DelayedPopup, actionOpen);
+		//Save action
+		QAction *actionSave = new QAction(QPixmap(mediaDir + "48px-Document-save.png"), "Save");
+		fg1->AddAction(QToolButton::DelayedPopup, actionSave);
+		//Save as action
+		QAction *actionSaveAs = new QAction(QPixmap(mediaDir + "48px-Document-save-as.png"), "Save As");
+		fg1->AddAction(QToolButton::DelayedPopup, actionSaveAs);
+
+		tt::Page* editPage = tt->AddPage(QPixmap(mediaDir + "48px-Preferences-system.png"), "Edit");
+		tt::Group* e1 = editPage->AddGroup("Group 1");
+		QAction *actionSetting = new QAction(QPixmap(mediaDir + "48px-Preferences-system.png"), "Settings");
+		e1->AddAction(QToolButton::DelayedPopup, actionSetting);
+
+// 		PToolBar *tb = new PToolBar(tr("Tool Bar"), this);
+// 		toolBars.append(tb);
+// 		addToolBar(tb);
+
+		tt::Page* particlePage = tt->AddPage(convertIcon(mediaDir + "dyverso/icon-emi-fill.svg"), "Particle System ");
+		auto pg1 = particlePage->AddGroup("");
+		QAction *particle1 = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-fill.svg"), "Particle 1");
+		pg1->AddAction(QToolButton::DelayedPopup, particle1);
+
+		QAction *particle2 = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-bitmap.svg"), "Particle 2");
+		pg1->AddAction(QToolButton::DelayedPopup, particle2);
+
+		QAction *particle3 = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-circle.svg"), "Particle 3");
+		pg1->AddAction(QToolButton::DelayedPopup, particle3);
+
+
+		tt::Page* heightPage = tt->AddPage(convertIcon(mediaDir + "icon-realwave.svg"), "Height Field ");
+		auto hg1 = heightPage->AddGroup("");
+		QAction *wave1 = new QAction(convertIcon(mediaDir + "icon-realwave.svg"), "Wave 1");
+		hg1->AddAction(QToolButton::DelayedPopup, wave1);
+
+		QAction *wave2 = new QAction(convertIcon(mediaDir + "icon-realwave-cresplash.svg"), "Wave 2");
+		hg1->AddAction(QToolButton::DelayedPopup, wave2);
+
+		QAction *wave3 = new QAction(convertIcon(mediaDir + "icon-realwave-objspash.svg"), "Wave 3");
+		hg1->AddAction(QToolButton::DelayedPopup, wave3);
+
+
+		//Finite element
+		tt::Page* femPage = tt->AddPage(convertIcon(mediaDir + "daemon/icon-demon-vortex.svg"), "Finite Element ");
+		auto femg1 = femPage->AddGroup("");
+		QAction *soft1 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-vortex.svg"), "Soft Body 1");
+		femg1->AddAction(QToolButton::DelayedPopup, soft1);
+
+		QAction *soft2 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-heater.svg"), "Soft Body 2");
+		femg1->AddAction(QToolButton::DelayedPopup, soft2);
+
+		QAction *soft3 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-ellipsoid.svg"), "Soft Body 3");
+		femg1->AddAction(QToolButton::DelayedPopup, soft3);
+
+		QAction *soft4 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-stension.svg"), "Soft Body 4");
+		femg1->AddAction(QToolButton::DelayedPopup, soft4);
+
+
+
+		//Articulated rigids
+		tt::Page* artPage = tt->AddPage(convertIcon(mediaDir + "geometry/icon-geometry-cube.svg"), "Rigid Body ");
+		auto rigidg1 = artPage->AddGroup("");
+		QAction *art1 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-cube.svg"), "Rigid 1");
+		rigidg1->AddAction(QToolButton::DelayedPopup, art1);
+
+		QAction *art2 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-cylinder.svg"), "Rigid 2");
+		rigidg1->AddAction(QToolButton::DelayedPopup, art2);
+
+		QAction *art3 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-rocket.svg"), "Rigid 3");
+		rigidg1->AddAction(QToolButton::DelayedPopup, art3);
+
+		QAction *art4 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-multibody.svg"), "Rigid 4");
+		rigidg1->AddAction(QToolButton::DelayedPopup, art4);
+
+
+		tt::Page* helpPage = tt->AddPage(QPixmap(mediaDir + "Help-browser.png"), "Help");
+		auto helpg1 = helpPage->AddGroup("");
+		QAction *help1 = new QAction(QPixmap(mediaDir + "Help-browser.png"), "Help");
+		helpg1->AddAction(QToolButton::DelayedPopup, help1);
 	}
 
 	void PMainWindow::setupStatusBar()
@@ -186,7 +317,7 @@ namespace PhysIKA
 		setStatusBar(m_statusBar);
 	}
 
-	void PMainWindow::setupMenuBar()
+/*	void PMainWindow::setupMenuBar()
 	{
 		QMenu *menu = menuBar()->addMenu(tr("&File"));
 
@@ -216,7 +347,7 @@ namespace PhysIKA
 		aboutMenu = menuBar()->addMenu(tr("&Help"));
 		aboutMenu->addAction(tr("Show Help ..."), this, &PMainWindow::showHelp);
 		aboutMenu->addAction(tr("About ..."), this, &PMainWindow::showAbout);
-	}
+	}*/
 
 	void PMainWindow::saveScene()
 	{
@@ -235,7 +366,8 @@ namespace PhysIKA
 
 	void PMainWindow::showAbout()
 	{
-		QMessageBox::about(this, tr("PhysLab"), tr("PhysLab 1.0"));
+		QString versoin = QString("Version ") + QString::number(PHYSIKA_VERSION_MAJOR)+QString(".")+ QString::number(PHYSIKA_VERSION_MINOR)+QString(".")+QString::number(PHYSIKA_VERSION_PATCH);
+		QMessageBox::about(this, tr("PhysIKA Studio "), versoin);
 		return;
 	}
 
@@ -248,54 +380,66 @@ namespace PhysIKA
 	{
 		qRegisterMetaType<QDockWidget::DockWidgetFeatures>();
 
-		windowMenu->addSeparator();
+		//windowMenu->addSeparator();
 
 		static const struct Set {
 			const char * name;
 			uint flags;
 			Qt::DockWidgetArea area;
 		} sets[] = {
-			{ "White", 0, Qt::LeftDockWidgetArea },
-			{ "Blue", 0, Qt::BottomDockWidgetArea },
-			{ "Yellow", 0, Qt::RightDockWidgetArea }
+			{ "SceneGraph", 0, Qt::RightDockWidgetArea },
+			{ "Console", 0, Qt::BottomDockWidgetArea },
+			{ "Property", 0, Qt::LeftDockWidgetArea },
+			{ "NodeEditor", 0, Qt::LeftDockWidgetArea },
+			{ "Module", 0, Qt::RightDockWidgetArea }
 		};
 		const int setCount = sizeof(sets) / sizeof(Set);
 
 		const QIcon qtIcon(QPixmap(":/res/qt.png"));
 
-		PDockWidget *leftDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
-		leftDockWidget->setWindowTitle("Scene Browser");
-		leftDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[0].area, leftDockWidget);
-		windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
 
-		m_scenegraphWidget = new PSceneGraphWidget();
-		leftDockWidget->setWidget(m_scenegraphWidget);
-
-		PDockWidget *moduleListDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
-		moduleListDockWidget->setWindowTitle("Module Editor");
-		moduleListDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[0].area, moduleListDockWidget);
-		windowMenu->addMenu(moduleListDockWidget->colorSwatchMenu());
-
-		m_moduleListWidget = new PModuleListWidget();
-		moduleListDockWidget->setWidget(m_moduleListWidget);
+		PDockWidget *nodeEditorDockWidget = new PDockWidget(tr(sets[3].name), this, Qt::WindowFlags(sets[3].flags));
+		nodeEditorDockWidget->setWindowTitle("Node Editor");
+		nodeEditorDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[3].area, nodeEditorDockWidget);
+		m_flowView = new PNodeFlowWidget();
+		m_flowView->setObjectName(QStringLiteral("tabEditor"));
+		nodeEditorDockWidget->setWidget(m_flowView);
 
 
-		PIODockWidget *bottomDockWidget = new PIODockWidget(this, Qt::WindowFlags(sets[1].flags));
-		bottomDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[1].area, bottomDockWidget);
-		windowMenu->addMenu(bottomDockWidget->colorSwatchMenu());
 
-
-		PDockWidget *rightDockWidget = new PDockWidget(tr(sets[2].name), this, Qt::WindowFlags(sets[2].flags));
-		rightDockWidget->setWindowTitle("Property Editor");
-		rightDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[2].area, rightDockWidget);
-		windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
-
+		//Set up property dock widget
+		PDockWidget *propertyDockWidget = new PDockWidget(tr(sets[2].name), this, Qt::WindowFlags(sets[2].flags));
+		propertyDockWidget->setWindowTitle("Property Editor");
+		propertyDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[2].area, propertyDockWidget);
+		//windowMenu->addMenu(moduleListDockWidget->colorSwatchMenu());
 		m_propertyWidget = new PPropertyWidget();
-		rightDockWidget->setWidget(m_propertyWidget);
+//		m_propertyWidget->setOpenGLWidget(m_vtkOpenglWidget);
+		propertyDockWidget->setWidget(m_propertyWidget);
+
+
+		PIODockWidget *consoleDockWidget = new PIODockWidget(this, Qt::WindowFlags(sets[1].flags));
+		consoleDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[1].area, consoleDockWidget);
+		//windowMenu->addMenu(bottomDockWidget->colorSwatchMenu());
+
+// 		//Set up module widget
+// 		PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
+// 		moduleDockWidget->setWindowTitle("Module List");
+// 		moduleDockWidget->setWindowIcon(qtIcon);
+// 		addDockWidget(sets[4].area, moduleDockWidget);
+// 		//windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
+// 		m_moduleListWidget = new PModuleListWidget();
+// 		moduleDockWidget->setWidget(m_moduleListWidget);
+// 
+// 		PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
+// 		sceneDockWidget->setWindowTitle("Scene Browser");
+// 		sceneDockWidget->setWindowIcon(qtIcon);
+// 		addDockWidget(sets[0].area, sceneDockWidget);
+// 		//windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
+// 		m_scenegraphWidget = new PSceneGraphWidget();
+// 		sceneDockWidget->setWidget(m_scenegraphWidget);
 
 		setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 		setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
@@ -303,6 +447,9 @@ namespace PhysIKA
 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
 		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
+
+		connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
+		connect(m_moduleFlowView->module_scene, &QtNodes::QtModuleFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
 	}
 
 	void PMainWindow::mousePressEvent(QMouseEvent *event)

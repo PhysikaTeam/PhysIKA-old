@@ -27,6 +27,8 @@
 #include "TopologyMapping.h"
 #include "NumericalIntegrator.h"
 #include "ModuleCompute.h"
+#include "DeclareNodeField.h"
+#include "NodePort.h"
 
 namespace PhysIKA {
 class Action;
@@ -49,6 +51,11 @@ public:
 	Node* getParent();
 	Node* getRoot();
 
+	bool isControllable();
+
+	void setControllable(bool con);
+
+
 	/// Check the state of dynamics
 	virtual bool isActive();
 
@@ -61,9 +68,6 @@ public:
 	/// Set the visibility of context
 	virtual void setVisible(bool visible);
 
-	/// Simulation time
-	virtual Real getTime();
-
 	/// Simulation timestep
 	virtual Real getDt();
 
@@ -71,6 +75,9 @@ public:
 
 	void setMass(Real mass);
 	Real getMass();
+
+// 	Iterator begin();
+// 	Iterator end();
 
 	/**
 	 * @brief Create a Child object
@@ -97,14 +104,18 @@ public:
 		return child;
 	}
 
+	bool hasChild(std::shared_ptr<Node> child);
+
 	void removeChild(std::shared_ptr<Node> child);
+
+	void removeAllChildren();
 
 	/**
 	 * @brief Return all children
 	 * 
 	 * @return ListPtr<Node> Children list
 	 */
-	ListPtr<Node> getChildren() { return m_children; }
+	ListPtr<Node>& getChildren() { return m_children; }
 
 
 	std::shared_ptr<DeviceContext> getContext();
@@ -229,6 +240,9 @@ public:
 	std::shared_ptr<NumericalIntegrator>	getNumericalIntegrator() { return m_numerical_integrator; }
 
 
+	std::unique_ptr<AnimationController>&	getAnimationPipeline();
+	std::unique_ptr<RenderController>&		getRenderPipeline();
+
 	template<class TModule>
 	std::shared_ptr<TModule> addModule(std::string name)
 	{
@@ -311,6 +325,23 @@ public:
 		doTraverseTopDown(&action);
 	}
 
+	/**
+	 * @brief Attach a field to Node
+	 *
+	 * @param field Field pointer
+	 * @param name Field name
+	 * @param desc Field description
+	 * @param autoDestroy The field will be destroyed by Base if true, otherwise, the field should be explicitly destroyed by its creator.
+	 *
+	 * @return Return false if the name conflicts with exists fields' names
+	 */
+	bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true) override;
+
+
+	bool addNodePort(NodePort* port);
+
+	std::vector<NodePort*>& getAllNodePorts() { return m_node_ports; }
+
 protected:
 	void setParent(Node* p) { m_parent = p; }
 
@@ -333,6 +364,8 @@ private:
 		NODE_ADD_SPECIAL_MODULE_LIST(ComputeModule, m_compute_list)
 
 private:
+	bool m_controllable = true;
+
 	/**
 	 * @brief Time step size
 	 * 
@@ -340,22 +373,28 @@ private:
 	Real m_dt;
 	bool m_initalized;
 
-	VarField<Real> m_mass;
+	Real m_mass;
+
+	DEF_VAR(Location, Vector3f, 0, "Node location");
+	DEF_VAR(Rotation, Vector3f, 0, "Node rotation");
+	DEF_VAR(Scale, Vector3f, 0, "Node scale");
+
+	std::string m_node_name;
+
 	/**
 	 * @brief Dynamics indicator
 	 * true: Dynamics is turn on
 	 * false: Dynamics is turned off
 	 */
-	VarField<bool> m_active;
+	DEF_VAR(Active, bool, true, "Indicating whether the simulation is on for this node!");
+
+
 	/**
 	 * @brief Visibility
 	 * true: the node is visible
 	 * false: the node is invisible
 	 */
-	VarField<bool> m_visible;
-	VarField<Real> m_time;
-
-	VarField<std::string> m_node_name;
+	DEF_VAR(Visible, bool, true, "Indicating whether the node is visible!");
 
 	/**
 	 * @brief A module list containing all modules
@@ -373,6 +412,9 @@ private:
 	std::shared_ptr<CollidableObject> m_collidable_object;
 	std::shared_ptr<NumericalIntegrator> m_numerical_integrator;
 
+	std::unique_ptr<AnimationController> m_animation_pipeline;
+	std::unique_ptr<RenderController> m_render_pipeline;
+
 	/**
 	 * @brief A module list containg specific modules
 	 * 
@@ -387,6 +429,8 @@ private:
 	std::shared_ptr<DeviceContext> m_context;
 
 	ListPtr<Node> m_children;
+
+	std::vector<NodePort*> m_node_ports;
 
 	/**
 	 * @brief Indicating which node the current module belongs to

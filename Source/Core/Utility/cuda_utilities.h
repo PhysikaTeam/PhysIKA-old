@@ -43,7 +43,8 @@ namespace PhysIKA{
 	// compute grid and thread block size for a given number of elements
 	static cuint cudaGridSize(cuint totalSize, cuint blockSize)
 	{
-		return iDivUp(totalSize, blockSize);
+		int dim = iDivUp(totalSize, blockSize);
+		return dim == 0 ? 1 : dim;
 	}
 
 	static dim3 cudaGridSize3D(uint3 totalSize, uint3 blockSize)
@@ -52,6 +53,10 @@ namespace PhysIKA{
 		gridDims.x = iDivUp(totalSize.x, blockSize.x);
 		gridDims.y = iDivUp(totalSize.y, blockSize.y);
 		gridDims.z = iDivUp(totalSize.z, blockSize.z);
+
+		gridDims.x = gridDims.x == 0 ? 1 : gridDims.x;
+		gridDims.y = gridDims.y == 0 ? 1 : gridDims.y;
+		gridDims.z = gridDims.z == 0 ? 1 : gridDims.z;
 
 		return gridDims;
 	}
@@ -62,6 +67,7 @@ namespace PhysIKA{
 	static inline void checkCudaError(const char *msg) {
 		cudaError_t err = cudaGetLastError();
 		if (cudaSuccess != err) {
+			//printf( "CUDA error: %d : %s at %s:%d \n", err, cudaGetErrorString(err), __FILE__, __LINE__);
 			throw std::runtime_error(std::string(msg) + ": " + cudaGetErrorString(err));
 		}
 	}
@@ -73,7 +79,10 @@ namespace PhysIKA{
 #define cuSafeCall(X) X; PhysIKA::checkCudaError(#X);
 #endif
 
-	// use this macro to make sure no error occurs when cuda kernels functions are launched
+/**
+ * @brief Macro to check cuda errors
+ * 
+ */
 #ifdef NDEBUG
 #define cuSynchronize() {}
 #else
@@ -88,6 +97,26 @@ namespace PhysIKA{
 		}																											\
 	}
 #endif
+
+/**
+ * @brief Macro definition for execuation of cuda kernels, note that at lease one block will be executed.
+ * 
+ * size: indicate how many threads are required in total.
+ * Func: kernel function
+ */
+#define cuExecute(size, Func, ...){						\
+		uint pDims = cudaGridSize(size, BLOCK_SIZE);	\
+		Func << <pDims, BLOCK_SIZE >> > (				\
+		__VA_ARGS__);									\
+		cuSynchronize();								\
+	}
+
+#define cuExecute3D(size, Func, ...){						\
+		uint3 pDims = cudaGridSize(size, BLOCK_SIZE);	\
+		Func << <pDims, BLOCK_SIZE >> > (				\
+		__VA_ARGS__);									\
+		cuSynchronize();								\
+	}
 
 }// end of namespace PhysIKA
 

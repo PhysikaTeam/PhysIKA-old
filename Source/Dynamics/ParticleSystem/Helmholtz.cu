@@ -3,7 +3,7 @@
 #include "Framework/Framework/Node.h"
 #include <string>
 #include "Kernel.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "Core/Utility.h"
 #include <thrust/reduce.h>
 

@@ -103,6 +103,10 @@ else()
   cxx_library(gmock_main "${cxx_strict}" src/gmock_main.cc)
   target_link_libraries(gmock_main PUBLIC gmock)
 endif()
+
+set_target_properties(gmock PROPERTIES FOLDER "ThirdParty")
+set_target_properties(gmock_main PROPERTIES FOLDER "ThirdParty")
+
 # If the CMake version supports it, attach header directory information
 # to the targets for when we are part of a parent build (ie being pulled
 # in via add_subdirectory() rather than being a standalone build).

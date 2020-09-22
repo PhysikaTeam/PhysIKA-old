@@ -1,11 +1,16 @@
 #pragma once
-#include "Framework/Framework/Base.h"
-#include "Framework/Framework/Node.h"
+#include "Base.h"
+#include "Node.h"
+#include "NodeIterator.h"
 
 namespace PhysIKA {
+
+
 class SceneGraph : public Base
 {
 public:
+	typedef NodeIterator Iterator;
+
 	~SceneGraph() {};
 
 	void setRootNode(std::shared_ptr<Node> root) { m_root = root; }
@@ -13,11 +18,14 @@ public:
 
 	virtual bool initialize();
 	bool isInitialized() { return m_initialized; }
+	void invalid();
 
 	virtual void draw();
 	virtual void advance(float dt);
 	virtual void takeOneFrame();
 	virtual void run();
+
+	void reset();
 
 	virtual bool load(std::string name);
 
@@ -51,6 +59,9 @@ public:
 
 	void setLowerBound(Vector3f lowerBound);
 	void setUpperBound(Vector3f upperBound);
+
+	inline Iterator begin() { return NodeIterator(m_root); }
+	inline Iterator end() {return NodeIterator(nullptr);	}
 
 private:
 	SceneGraph()

@@ -66,6 +66,8 @@ namespace PhysIKA
 	class PPropertyWidget;
 	class PAnimationWidget;
 	class PModuleListWidget;
+	class PNodeFlowWidget;
+	class PModuleFlowWidget;
 
 
 //	QT_FORWARD_DECLARE_CLASS(QLichtWidget)
@@ -100,7 +102,7 @@ namespace PhysIKA
 		void setCentralView();
 		void setupToolBar();
 		void setupStatusBar();
-		void setupMenuBar();
+//		void setupMenuBar();
 		void setupAllWidgets();
 
 	protected:
@@ -109,14 +111,16 @@ namespace PhysIKA
 		QApplication* application;
 
 		QList<PToolBar*> toolBars;
-		QMenu *aboutMenu;
-		QMenu *windowMenu;
-		QMenu *mainWindowMenu;
+// 		QMenu *aboutMenu;
+// 		QMenu *windowMenu;
+// 		QMenu *mainWindowMenu;
 		QList<QDockWidget *> extraDockWidgets;
 		QMenu *destroyDockWidgetMenu;
 
 //		QLichtWidget*	openGLWidget;
 
+		PNodeFlowWidget*		m_flowView;
+		PModuleFlowWidget*		m_moduleFlowView;
 		PStatusBar*				m_statusBar;
 		PVTKOpenGLWidget*		m_vtkOpenglWidget;
 		PSceneGraphWidget*		m_scenegraphWidget;

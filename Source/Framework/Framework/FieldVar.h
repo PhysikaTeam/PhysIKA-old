@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <functional>
 #include "Core/Typedef.h"
 #include "Field.h"
 #include "Base.h"
@@ -15,13 +16,14 @@ namespace PhysIKA {
 template<typename T>
 class VarField : public Field
 {
+	using CallBackFunc = std::function<void()>;
 public:
 	typedef T VarType;
-	typedef T FieldType;
 
 	VarField();
 	VarField(T value);
-	VarField(T value, std::string name, std::string description);
+	VarField(std::string name, std::string description, FieldType fieldType, Base* parent);
+	VarField(T value, std::string name, std::string description, FieldType fieldType, Base* parent);
 
 public:
 	~VarField() override;
@@ -29,9 +31,17 @@ public:
 	size_t getElementCount() override { return 1; }
 	const std::string getTemplateName() override { return std::string(typeid(T).name()); }
 	const std::string getClassName() override { return std::string("Variable"); }
-		
+
 	T& getValue();
 	void setValue(T val);
+
+	/**
+	 * @brief Call the call back function if set
+	 * 
+	 */
+	void update();
+
+	void setCallBackFunc(CallBackFunc func) { callbackFunc = func; }
 
 	inline std::shared_ptr<T> getReference();
 
@@ -41,10 +51,13 @@ public:
 		return getReference() == nullptr;
 	}
 
-	bool connect(VarField<T>& field2);
+	bool connect(VarField<T>* field2);
 
 private:
+	CallBackFunc callbackFunc;
+	
 	std::shared_ptr<T> m_data = nullptr;
+
 };
 
 template<typename T>
@@ -54,17 +67,24 @@ VarField<T>::VarField()
 }
 
 template<typename T>
-PhysIKA::VarField<T>::VarField(T value)
+VarField<T>::VarField(T value)
 	: Field("", "")
 {
 	m_data = std::make_shared<T>(value);
 }
 
 template<typename T>
-VarField<T>::VarField(T value, std::string name, std::string description)
-	: Field(name, description)
+VarField<T>::VarField(std::string name, std::string description, FieldType fieldType, Base* parent)
+	: Field(name, description, fieldType, parent)
+	, m_data(nullptr)
 {
-	m_data = std::make_shared<T>(value);
+}
+
+template<typename T>
+VarField<T>::VarField(T value, std::string name, std::string description, FieldType fieldType, Base* parent)
+	: Field(name, description, fieldType, parent)
+{
+	this->setValue(value);
 }
 
 template<typename T>
@@ -100,6 +120,27 @@ void VarField<T>::setValue(T val)
 	}
 }
 
+
+template<typename T>
+void VarField<T>::update()
+{
+	if (m_data != nullptr && callbackFunc != nullptr)
+	{
+		callbackFunc();
+	}
+
+	auto& sinks = this->getSinkFields();
+	
+	for each (auto fs in sinks)
+	{
+		VarField<T>* var = dynamic_cast<VarField<T>*>(fs);
+		if (var != nullptr)
+		{
+			var->update();
+		}
+	}
+}
+
 template<typename T>
 std::shared_ptr<T> VarField<T>::getReference()
 {
@@ -123,15 +164,19 @@ std::shared_ptr<T> VarField<T>::getReference()
 }
 
 template<typename T>
-bool VarField<T>::connect(VarField<T>& field2)
+bool VarField<T>::connect(VarField<T>* field2)
 {
+	auto f = field2->fieldPtr();
+	this->connectPtr(f);
+	field2->update();
+
 // 	if (this->isEmpty())
 // 	{
 // 		Log::sendMessage(Log::Warning, "The parent field " + this->getObjectName() + " is empty!");
 // 		return false;
 // 	}
-	field2.setDerived(true);
-	field2.setSource(this);
+// 	field2.setDerived(true);
+// 	field2.setSource(this);
 	//field2.m_data = m_data;
 	return true;
 }
