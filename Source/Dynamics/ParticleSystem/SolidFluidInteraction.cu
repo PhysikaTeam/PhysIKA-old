@@ -13,7 +13,6 @@ namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(SolidFluidInteraction, TDataType)
 
-
 	template<typename TDataType>
 	PhysIKA::SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
 		:Node(name)
@@ -26,18 +25,11 @@ namespace PhysIKA
 		m_position.connect(m_nbrQuery->inPosition());
 
 		auto m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("collision");
-		radius.connect(&m_pbdModule->m_smoothingLength);
-		m_position.connect(&m_pbdModule->m_position);
-		m_vels.connect(&m_pbdModule->m_velocity);
-		m_nbrQuery->outNeighborhood()->connect(&m_pbdModule->m_neighborhood);
-		m_pbdModule->setIterationNumber(5);
-
-// 		auto m_visModule = this->template addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
-// 		m_visModule->setViscosity(Real(1));
-// 		radius.connect(m_visModule->m_smoothingLength);
-// 		m_position.connect(m_visModule->m_position);
-// 		m_vels.connect(m_visModule->m_velocity);
-// 		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
+		radius.connect(m_pbdModule->varSmoothingLength());
+		m_position.connect(m_pbdModule->inPosition());
+		m_vels.connect(m_pbdModule->inVelocity());
+		m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
+		m_pbdModule->varIterationNumber()->setValue(5);
 	}
 
 

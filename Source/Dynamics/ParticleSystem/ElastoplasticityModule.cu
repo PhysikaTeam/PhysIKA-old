@@ -288,7 +288,7 @@ namespace PhysIKA
 			m_yield_J2,
 			m_I1,
 			this->inPosition()->getValue(),
-			m_pbdModule->getDensity(),
+			m_pbdModule->outDensity()->getValue(),
 			this->m_bulkCoefs,
 			this->m_restShape.getValue(),
 			this->inHorizon()->getValue(),
@@ -663,10 +663,10 @@ namespace PhysIKA
 		m_bYield.reset();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
-		this->inHorizon()->connect(&m_pbdModule->m_smoothingLength);
-		this->inPosition()->connect(&m_pbdModule->m_position);
-		this->inVelocity()->connect(&m_pbdModule->m_velocity);
-		this->inNeighborhood()->connect(&m_pbdModule->m_neighborhood);
+		this->inHorizon()->connect(m_pbdModule->varSmoothingLength());
+		this->inPosition()->connect(m_pbdModule->inPosition());
+		this->inVelocity()->connect(m_pbdModule->inVelocity());
+		this->inNeighborhood()->connect(m_pbdModule->inNeighborIndex());
 		m_pbdModule->initialize();
 
 		m_pbdModule->setParent(this->getParent());

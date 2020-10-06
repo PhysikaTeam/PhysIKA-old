@@ -27,6 +27,7 @@ namespace PhysIKA {
 	
 	protected:
 		void calculateScalingFactor();
+		void calculateParticleMass();
 
 		void compute(DeviceArray<Real>& rho);
 
@@ -39,7 +40,6 @@ namespace PhysIKA {
 
 	public:
 		DEF_EMPTY_VAR(RestDensity, Real, "Rest Density");
-		DEF_EMPTY_VAR(Mass, Real, "Particle mass, note that this module only support a constant mass for all particles.");
 		DEF_EMPTY_VAR(SmoothingLength, Real, "Indicating the smoothing length");
 		DEF_EMPTY_VAR(SamplingDistance, Real, "Indicating the initial sampling distance");
 
@@ -62,6 +62,7 @@ namespace PhysIKA {
 		DEF_EMPTY_OUT_ARRAY(Density, Real, DeviceType::GPU, "Particle position");
 
 	private:
+		Real m_particle_mass;
 		Real m_factor;
 	};
 

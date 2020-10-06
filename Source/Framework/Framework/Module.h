@@ -97,6 +97,8 @@ private:
 	std::string m_module_name;
 	bool m_initialized;
 
+	bool m_update_required = true;
+
 	std::vector<Field*> fields_input;
 	std::vector<Field*> fields_output;
 	std::vector<Field*> fields_param;

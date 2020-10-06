@@ -40,10 +40,10 @@ namespace PhysIKA
 		m_plasticity->enableFullyReconstruction();
 
 		m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("pbd");
-		m_horizon.connect(&m_pbdModule->m_smoothingLength);
-		this->currentPosition()->connect(&m_pbdModule->m_position);
-		this->currentVelocity()->connect(&m_pbdModule->m_velocity);
-		m_nbrQuery->outNeighborhood()->connect(&m_pbdModule->m_neighborhood);
+		m_horizon.connect(m_pbdModule->varSmoothingLength());
+		this->currentPosition()->connect(m_pbdModule->inPosition());
+		this->currentVelocity()->connect(m_pbdModule->inVelocity());
+		m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
 
 		m_visModule = this->template addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
 		m_visModule->setViscosity(Real(1));

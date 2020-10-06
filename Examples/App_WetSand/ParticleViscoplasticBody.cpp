@@ -44,10 +44,10 @@ namespace PhysIKA
 		//m_plasticity->initialize();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
-		m_horizon.connect(&m_pbdModule->m_smoothingLength);
-		this->currentPosition()->connect(&m_pbdModule->m_position);
-		this->currentVelocity()->connect(&m_pbdModule->m_velocity);
-		m_nbrQuery->outNeighborhood()->connect(&m_pbdModule->m_neighborhood);
+		m_horizon.connect(m_pbdModule->varSmoothingLength());
+		this->currentPosition()->connect(m_pbdModule->inPosition());
+		this->currentVelocity()->connect(m_pbdModule->inVelocity());
+		m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
 		//m_pbdModule->initialize();
 
 		m_visModule = std::make_shared<ImplicitViscosity<TDataType>>();

@@ -39,6 +39,7 @@ using namespace PhysIKA;
 void CreateScene()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
+	scene.setFrameRate(500);
 	scene.setUpperBound(Vector3f(1, 2.0, 1));
 	scene.setLowerBound(Vector3f(0, 0.0, 0));
 
@@ -50,7 +51,7 @@ void CreateScene()
 	// 
 
 	root->addChild(sfi);
-	sfi->setInteractionDistance(0.02);
+	sfi->setInteractionDistance(0.03);
 
 	for (int i = 0; i < 6; i++)
 	{
@@ -67,13 +68,14 @@ void CreateScene()
 		else
 			sRender->setColor(Vector3f(1, 0, 1));
 		
+		bunny->varHorizon()->setValue(0.03f);
 		bunny->setMass(1.0);
 		bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
 		bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
 		bunny->translate(Vector3f(0.4, 0.2 + i * 0.3, 0.8));
 		bunny->setVisible(false);
 		bunny->getElasticitySolver()->setIterationNumber(10);
-		bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
+		//bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
 		bunny->getTopologyMapping()->setSearchingRadius(0.05);
 
 		sfi->addParticleSystem(bunny);

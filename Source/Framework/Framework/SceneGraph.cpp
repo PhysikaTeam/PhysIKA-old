@@ -16,6 +16,16 @@ SceneGraph& SceneGraph::getInstance()
 	return m_instance;
 }
 
+bool SceneGraph::isIntervalAdaptive()
+{
+	return m_advative_interval;
+}
+
+void SceneGraph::setAdaptiveInterval(bool adaptive)
+{
+	m_advative_interval = adaptive;
+}
+
 void SceneGraph::setGravity(Vector3f g)
 {
 	m_gravity = g;
@@ -80,7 +90,7 @@ void SceneGraph::takeOneFrame()
 		return;
 	}
 
-	float interval = 1.0f / m_frameRate;
+	
 
 	float t = 0.0f;
 	float dt = 0.0f;
@@ -90,18 +100,30 @@ void SceneGraph::takeOneFrame()
 	time.reset();
 	m_root->traverseTopDown(&time);
 	dt = time.getTimeStep();
-	while (t + dt < interval)
+
+	if (m_advative_interval)
 	{
 		m_root->traverseTopDown<AnimateAct>(dt);
-
-		t += dt;
-		time.reset();
-		m_root->traverseTopDown(&time);
-		dt = time.getTimeStep();
+		m_elapsedTime += dt;
 	}
+	else
+	{
+		float interval = 1.0f / m_frameRate;
+		while (t + dt < interval)
+		{
+			m_root->traverseTopDown<AnimateAct>(dt);
 
-	m_root->traverseTopDown<AnimateAct>(interval - t);
+			t += dt;
+			time.reset();
+			m_root->traverseTopDown(&time);
+			dt = time.getTimeStep();
+		}
 
+		m_root->traverseTopDown<AnimateAct>(interval - t);
+
+		m_elapsedTime += interval;
+	}
+	
 	m_root->traverseTopDown<PostProcessing>();
 
 	std::cout << "****************Frame " << m_frameNumber << " Ended" << std::endl << std::endl;

@@ -181,8 +181,8 @@ namespace PhysIKA
 
 		m_moduleFlowView = new PModuleFlowWidget();
 		m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
-// 		tabWidget->addTab(m_moduleFlowView, QString());
-// 		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
+		tabWidget->addTab(m_moduleFlowView, QString());
+		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
 
 
 		//Setup animation widget
@@ -424,22 +424,22 @@ namespace PhysIKA
 		addDockWidget(sets[1].area, consoleDockWidget);
 		//windowMenu->addMenu(bottomDockWidget->colorSwatchMenu());
 
-// 		//Set up module widget
-// 		PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
-// 		moduleDockWidget->setWindowTitle("Module List");
-// 		moduleDockWidget->setWindowIcon(qtIcon);
-// 		addDockWidget(sets[4].area, moduleDockWidget);
-// 		//windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
-// 		m_moduleListWidget = new PModuleListWidget();
-// 		moduleDockWidget->setWidget(m_moduleListWidget);
-// 
-// 		PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
-// 		sceneDockWidget->setWindowTitle("Scene Browser");
-// 		sceneDockWidget->setWindowIcon(qtIcon);
-// 		addDockWidget(sets[0].area, sceneDockWidget);
-// 		//windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
-// 		m_scenegraphWidget = new PSceneGraphWidget();
-// 		sceneDockWidget->setWidget(m_scenegraphWidget);
+		//Set up module widget
+		PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
+		moduleDockWidget->setWindowTitle("Module List");
+		moduleDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[4].area, moduleDockWidget);
+		//windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
+		m_moduleListWidget = new PModuleListWidget();
+		moduleDockWidget->setWidget(m_moduleListWidget);
+
+		PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
+		sceneDockWidget->setWindowTitle("Scene Browser");
+		sceneDockWidget->setWindowIcon(qtIcon);
+		addDockWidget(sets[0].area, sceneDockWidget);
+		//windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
+		m_scenegraphWidget = new PSceneGraphWidget();
+		sceneDockWidget->setWidget(m_scenegraphWidget);
 
 		setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 		setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);

@@ -74,11 +74,11 @@ namespace PhysIKA
 		m_nbrQuery->initialize();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
-		m_smoothingLength.connect(&m_pbdModule->m_smoothingLength);
-		m_position.connect(&m_pbdModule->m_position);
-		m_velocity.connect(&m_pbdModule->m_velocity);
+		m_smoothingLength.connect(m_pbdModule->varSmoothingLength());
+		m_position.connect(m_pbdModule->inPosition());
+		m_velocity.connect(m_pbdModule->inVelocity());
 		m_massInv.connect(&m_pbdModule->m_massInv);
-		m_nbrQuery->outNeighborhood()->connect(&m_pbdModule->m_neighborhood);
+		m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
 		m_pbdModule->initialize();
 
 		m_phaseSolver = std::make_shared<CahnHilliard<TDataType>>();

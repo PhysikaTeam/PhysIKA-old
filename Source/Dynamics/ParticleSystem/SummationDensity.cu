@@ -40,19 +40,18 @@ namespace PhysIKA
 		: ComputeModule()
 		, m_factor(Real(1))
 	{
-		this->varMass()->setValue(Real(1));
 		this->varRestDensity()->setValue(Real(1000));
 		this->varSmoothingLength()->setValue(Real(0.011));
 		this->varSamplingDistance()->setValue(Real(0.005));
 
 		std::function<void()> callback = std::bind(&SummationDensity<TDataType>::calculateScalingFactor, this);
 
-		this->varMass()->setCallBackFunc(callback);
 		this->varRestDensity()->setCallBackFunc(callback);
 		this->varSmoothingLength()->setCallBackFunc(callback);
 		this->varSamplingDistance()->setCallBackFunc(callback);
 
 		//Should be called after above four parameters are all set, this function will recalculate m_factor
+		calculateParticleMass();
 		calculateScalingFactor();
 	}
 
@@ -77,7 +76,9 @@ namespace PhysIKA
 			this->inPosition()->getValue(),
 			this->inNeighborIndex()->getValue(),
 			this->varSmoothingLength()->getValue(),
-			this->varMass()->getValue());
+			m_particle_mass);
+
+		this->outDensity()->tagModified(true);
 	}
 
 
@@ -89,7 +90,7 @@ namespace PhysIKA
 			this->inPosition()->getValue(),
 			this->inNeighborIndex()->getValue(),
 			this->varSmoothingLength()->getValue(),
-			this->varMass()->getValue());
+			m_particle_mass);
 	}
 
 	template<typename TDataType>
@@ -114,11 +115,12 @@ namespace PhysIKA
 		Real d = this->varSamplingDistance()->getValue();
 		Real H = this->varSmoothingLength()->getValue();
 		Real rho_0 = this->varRestDensity()->getValue();
-		Real m = this->varMass()->getValue();
+		
+		Real V = d * d*d;
 
 		SpikyKernel<Real> kern;
 
-		Real rho_e(0);
+		Real total_weight(0);
 		int half_res = H / d + 1;
 		for (int i = -half_res; i <= half_res; i++)
 			for (int j = -half_res; j <= half_res; j++)
@@ -128,10 +130,21 @@ namespace PhysIKA
 					Real y = j * d;
 					Real z = k * d;
 					Real r = sqrt(x * x + y * y + z * z);
-					rho_e += m * kern.Weight(r, H);
+					total_weight += V * kern.Weight(r, H);
 				}
 
-		m_factor = rho_0 / rho_e;
+		m_factor = 1.0 / total_weight;
+		m_particle_mass = rho_0 * V;
+	}
+
+
+	template<typename TDataType>
+	void SummationDensity<TDataType>::calculateParticleMass()
+	{
+		Real rho_0 = this->varRestDensity()->getValue();
+		Real d = this->varSamplingDistance()->getValue();
+
+		m_particle_mass = d*d*d*rho_0;
 	}
 
 }

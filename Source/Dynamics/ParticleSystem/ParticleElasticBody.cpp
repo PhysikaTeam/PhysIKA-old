@@ -15,7 +15,7 @@ namespace PhysIKA
 	ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
 		: ParticleSystem<TDataType>(name)
 	{
-		this->currentHorizon()->setValue(0.0085);
+		this->varHorizon()->setValue(0.0085);
 		//		this->attachField(&m_horizon, "horizon", "horizon");
 
 		auto m_integrator = this->template setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
@@ -26,13 +26,14 @@ namespace PhysIKA
 		this->getAnimationPipeline()->push_back(m_integrator);
 
 		auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		this->currentHorizon()->connect(m_nbrQuery->inRadius());
+		this->varHorizon()->connect(m_nbrQuery->inRadius());
 		this->currentPosition()->connect(m_nbrQuery->inPosition());
 
 		this->getAnimationPipeline()->push_back(m_nbrQuery);
 
 
 		auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
+		this->varHorizon()->connect(m_elasticity->inHorizon());
 		this->currentPosition()->connect(m_elasticity->inPosition());
 		this->currentVelocity()->connect(m_elasticity->inVelocity());
 		m_nbrQuery->outNeighborhood()->connect(m_elasticity->inNeighborhood());
@@ -127,7 +128,7 @@ namespace PhysIKA
 		this->currentPosition()->connect(solver->inPosition());
 		this->currentVelocity()->connect(solver->inVelocity());
 		nbrQuery->outNeighborhood()->connect(solver->inNeighborhood());
-		this->currentHorizon()->connect(solver->inHorizon());
+		this->varHorizon()->connect(solver->inHorizon());
 
 		this->deleteModule(module);
 		

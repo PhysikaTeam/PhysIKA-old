@@ -50,10 +50,10 @@ namespace PhysIKA
 		cuSynchronize();
 
 		m_pbdModule = this->getParent()->addConstraintModule<DensityPBD<TDataType>>("density_constraint");
-		m_smoothingLength.connect(&m_pbdModule->m_smoothingLength);
-		m_position.connect(&m_pbdModule->m_position);
-		m_velocity.connect(&m_pbdModule->m_velocity);
-		m_nbrQuery->outNeighborhood()->connect(&m_pbdModule->m_neighborhood);
+		m_smoothingLength.connect(m_pbdModule->varSmoothingLength());
+		m_position.connect(m_pbdModule->inPosition());
+		m_velocity.connect(m_pbdModule->inVelocity());
+		m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
 		m_pbdModule->initialize();
 
 		cuSynchronize();

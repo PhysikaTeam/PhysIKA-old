@@ -51,6 +51,9 @@ public:
 	inline float getFrameInterval() { return 1.0f / m_frameRate; }
 	inline int getFrameNumber() { return m_frameNumber; }
 
+	bool isIntervalAdaptive();
+	void setAdaptiveInterval(bool adaptive);
+
 	void setGravity(Vector3f g);
 	Vector3f getGravity();
 
@@ -85,6 +88,7 @@ private:
 
 private:
 	bool m_initialized;
+	bool m_advative_interval = true;
 
 	float m_elapsedTime;
 	float m_maxTime;

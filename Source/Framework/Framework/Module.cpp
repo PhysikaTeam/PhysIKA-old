@@ -38,14 +38,7 @@ void Module::update()
 		return;
 	}
 
-	bool modified = false;
-	//check whether any input field is modified
-	for each (auto f_in in fields_input)
-	{
-		modified |= f_in->isModified();
-	}
-
-	if (modified)
+	if (m_update_required)
 	{
 		//do execution if any field is modified
 		this->execute();

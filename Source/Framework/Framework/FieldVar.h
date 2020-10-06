@@ -118,6 +118,8 @@ void VarField<T>::setValue(T val)
 	{
 		*data = val;
 	}
+
+	this->update();
 }
 
 
