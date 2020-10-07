@@ -3,6 +3,8 @@
 #include "FieldData.h"
 #include "Framework/Module.h"
 
+#include "../Common.h"
+
 
 QtModuleWidget::QtModuleWidget(Module* base)
 {
@@ -91,7 +93,7 @@ QString QtModuleWidget::portCaption(PortType portType, PortIndex portIndex) cons
 	PhysIKA::Field* f = this->getField(portType, portIndex);
 	std::string name = f->getObjectName();
 
-	return QString::fromStdString(name);
+	return PhysIKA::FormatBlockPortName(name);
 }
 
 void QtModuleWidget::setInData(std::shared_ptr<BlockData> data, PortIndex portIndex)

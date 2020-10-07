@@ -84,7 +84,7 @@ namespace PhysIKA {
 		DeviceArray<Coord> m_position_old;
 
 	private:
-		std::shared_ptr<SummationDensity<TDataType>> m_densitySum;
+		std::shared_ptr<SummationDensity<TDataType>> m_summation;
 	};
 
 

@@ -233,9 +233,6 @@ namespace PhysIKA
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= posArr.size()) return;
 
-		if (pId == 5)
-			printf("%d update position\n", posArr.size());
-
 		posArr[pId] += dPos[pId];
 	}
 
@@ -250,19 +247,16 @@ namespace PhysIKA
 		this->varSmoothingLength()->setValue(Real(0.011));
 		this->varRestDensity()->setValue(Real(1000));
 
-		m_densitySum = std::make_shared<SummationDensity<TDataType>>();
+		m_summation = std::make_shared<SummationDensity<TDataType>>();
 
-		this->varRestDensity()->connect(m_densitySum->varRestDensity());
-		this->varSmoothingLength()->connect(m_densitySum->varSmoothingLength());
+		this->varRestDensity()->connect(m_summation->varRestDensity());
+		this->varSmoothingLength()->connect(m_summation->varSmoothingLength());
+		this->varSamplingDistance()->connect(m_summation->varSamplingDistance());
 
-		this->inPosition()->connect(m_densitySum->inPosition());
-		this->inNeighborIndex()->connect(m_densitySum->inNeighborIndex());
+		this->inPosition()->connect(m_summation->inPosition());
+		this->inNeighborIndex()->connect(m_summation->inNeighborIndex());
 
-		m_densitySum->outDensity()->connect(this->outDensity());
-
-//		attachField(&m_position, "position", "Storing the particle positions!", false);
-//		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-//		attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
+		m_summation->outDensity()->connect(this->outDensity());
 	}
 
 	template<typename TDataType>
@@ -320,14 +314,13 @@ namespace PhysIKA
 
 		m_deltaPos.reset();
 
-		m_densitySum->update();
-
+		m_summation->update();
 
 		if (m_massInv.isEmpty())
 		{
 			cuExecute(num, K_ComputeLambdas,
 				m_lamda,
-				m_densitySum->outDensity()->getValue(),
+				m_summation->outDensity()->getValue(),
 				this->inPosition()->getValue(),
 				this->inNeighborIndex()->getValue(),
 				m_kernel,
@@ -346,7 +339,7 @@ namespace PhysIKA
 		{
 			cuExecute(num, K_ComputeLambdas,
 				m_lamda,
-				m_densitySum->outDensity()->getValue(),
+				m_summation->outDensity()->getValue(),
 				this->inPosition()->getValue(),
 				m_massInv.getValue(),
 				this->inNeighborIndex()->getValue(),

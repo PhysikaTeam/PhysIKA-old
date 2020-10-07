@@ -8,6 +8,8 @@
 #include "Nodes/QtNodeWidget.h"
 #include "Nodes/QtModuleWidget.h"
 
+#include "Common.h"
+
 #include "vtkRenderer.h"
 #include <vtkRenderWindow.h>
 
@@ -22,23 +24,6 @@
 
 namespace PhysIKA
 {
-	QString genFieldWidgetName(std::string name)
-	{
-		QString fName = QString::fromStdString(name);
-
-		QRegularExpression regexp("[A-Z][^A-Z]*");
-		QRegularExpressionMatchIterator match = regexp.globalMatch(fName);
-		QVector<QString> vec;
-
-		QString ret;
-		while (match.hasNext())
-		{
-			ret += match.next().captured() + " ";
-		}
-			
-		return ret;
-	}
-
 	QBoolFieldWidget::QBoolFieldWidget(Field* field)
 		: QGroupBox()
 	{
@@ -58,7 +43,7 @@ namespace PhysIKA
 
 		QLabel* name = new QLabel();
 		name->setFixedSize(160, 18);
-		name->setText(genFieldWidgetName(field->getObjectName()));
+		name->setText(FormatFieldWidgetName(field->getObjectName()));
 		QCheckBox* checkbox = new QCheckBox();
 		//checkbox->setFixedSize(40, 18);
 		layout->addWidget(name, 0, 0);
@@ -115,10 +100,9 @@ namespace PhysIKA
 
 		QLabel* name = new QLabel();
 		name->setFixedSize(160, 18);
-		name->setText(genFieldWidgetName(field->getObjectName()));
+		name->setText(FormatFieldWidgetName(field->getObjectName()));
 
 		QSpinBox* spinner = new QSpinBox;
-		spinner->setFixedSize(120, 18);
 		spinner->setValue(f->getValue());
 
 		layout->addWidget(name, 0, 0);
@@ -156,7 +140,7 @@ namespace PhysIKA
 
 		QLabel* name = new QLabel();
 		name->setFixedSize(160, 18);
-		name->setText(genFieldWidgetName(field->getObjectName()));
+		name->setText(FormatFieldWidgetName(field->getObjectName()));
 
 		QDoubleSlider* slider = new QDoubleSlider;
 		//slider->setFixedSize(80,18);
@@ -192,7 +176,7 @@ namespace PhysIKA
 			slider->setValue(f->getValue());
 		}
 
-		genFieldWidgetName(field->getObjectName());
+		FormatFieldWidgetName(field->getObjectName());
 	}
 
 	void QRealFieldWidget::changeValue(double value)
@@ -230,7 +214,7 @@ namespace PhysIKA
 
 		QLabel* name = new QLabel();
 		name->setFixedSize(160, 18);
-		name->setText(genFieldWidgetName(field->getObjectName()));
+		name->setText(FormatFieldWidgetName(field->getObjectName()));
 
 		spinner1 = new QDoubleSpinner;
 		spinner1->setRange(m_field->getMin(), m_field->getMax());

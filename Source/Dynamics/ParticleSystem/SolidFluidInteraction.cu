@@ -24,7 +24,7 @@ namespace PhysIKA
 		radius.connect(m_nbrQuery->inRadius());
 		m_position.connect(m_nbrQuery->inPosition());
 
-		auto m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("collision");
+		m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("collision");
 		radius.connect(m_pbdModule->varSmoothingLength());
 		m_position.connect(m_pbdModule->inPosition());
 		m_vels.connect(m_pbdModule->inVelocity());
@@ -37,6 +37,7 @@ namespace PhysIKA
 	void SolidFluidInteraction<TDataType>::setInteractionDistance(Real d)
 	{
 		radius.setValue(d);
+		m_pbdModule->varSamplingDistance()->setValue(d / 2);
 	}
 
 	template<typename TDataType>
