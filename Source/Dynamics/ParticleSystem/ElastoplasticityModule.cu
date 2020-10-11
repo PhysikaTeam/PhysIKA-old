@@ -245,6 +245,8 @@ namespace PhysIKA
 
 		this->computeInverseK();
 
+		m_pbdModule->varIterationNumber()->setValue(1);
+
 		int iter = 0;
 		int total = this->getIterationNumber();
 		while (iter < total)
@@ -252,7 +254,7 @@ namespace PhysIKA
 			this->enforceElasticity();
 			if (m_incompressible.getValue() == true)
 			{
-				m_pbdModule->takeOneIteration();
+				m_pbdModule->constrain();
 			}
 			
 			iter++;

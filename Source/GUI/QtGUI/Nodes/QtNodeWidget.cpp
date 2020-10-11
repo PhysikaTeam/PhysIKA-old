@@ -3,6 +3,8 @@
 #include "Framework/Node.h"
 #include "Framework/NodePort.h"
 
+#include "../Common.h"
+
 #include "NodeData.h"
 
 QtNodeWidget::QtNodeWidget(std::shared_ptr<Node> base)
@@ -83,7 +85,7 @@ QString QtNodeWidget::portCaption(PortType portType, PortIndex portIndex) const
 {
 	if (portType == PortType::In)
 	{
-		return QString::fromStdString(m_node->getAllNodePorts()[portIndex]->getPortName());
+		return PhysIKA::FormatBlockPortName(m_node->getAllNodePorts()[portIndex]->getPortName());
 	}
 	else
 	{
