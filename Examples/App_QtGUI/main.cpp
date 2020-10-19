@@ -35,9 +35,6 @@ using namespace PhysIKA;
 
 void creare_scene_init()
 {
-	float* a = nullptr;
-	float& b = *a;
-
 	SceneGraph& scene = SceneGraph::getInstance();
 	scene.setUpperBound(Vector3f(1.5, 1.5, 1.5));
 	scene.setLowerBound(Vector3f(-1.5, -0.5, -1.5));
@@ -105,10 +102,6 @@ void creare_scene_init()
 
 void create_scene_semianylitical()
 {
-
-	float* a = nullptr;
-	float& b = *a;
-
 	SceneGraph& scene = SceneGraph::getInstance();
 	scene.setUpperBound(Vector3f(1.2));
 	scene.setLowerBound(Vector3f(-0.2));

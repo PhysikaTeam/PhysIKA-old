@@ -63,6 +63,7 @@
 #include "PSimulationThread.h"
 #include "PNodeFlowWidget.h"
 #include "PModuleFlowWidget.h"
+#include "PNodeEditor.h"
 
 #include <QAction>
 #include <QLayout>
@@ -88,6 +89,7 @@
 #include <QtWidgets/QOpenGLWidget>
 #include <QtSvg/QSvgRenderer>
 #include <QHBoxLayout>
+#include <QDialog>
 
 #include "Nodes/QtFlowView.h"
 #include "Nodes/QtModuleFlowScene.h"
@@ -120,10 +122,10 @@ namespace PhysIKA
 		: QMainWindow(parent, flags),
 		m_statusBar(nullptr),
 		m_vtkOpenglWidget(nullptr),
-		m_scenegraphWidget(nullptr),
 		m_propertyWidget(nullptr),
-		m_animationWidget(nullptr),
-		m_moduleListWidget(nullptr)
+		m_animationWidget(nullptr)
+// 		m_scenegraphWidget(nullptr),
+// 		m_moduleListWidget(nullptr)
 	{
 		setObjectName("MainWindow");
 		setWindowTitle(QString("PhysIKA Studio ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH));
@@ -135,7 +137,7 @@ namespace PhysIKA
 //		setupMenuBar();
 		setupAllWidgets();
 
-		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_moduleFlowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
+//		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_moduleFlowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
 
 		statusBar()->showMessage(tr("Status Bar"));
 	}
@@ -179,10 +181,10 @@ namespace PhysIKA
 		tabWidget->addTab(m_vtkOpenglWidget, QString());
 		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
 
-		m_moduleFlowView = new PModuleFlowWidget();
-		m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
-		tabWidget->addTab(m_moduleFlowView, QString());
-		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
+// 		m_moduleFlowView = new PModuleFlowWidget();
+// 		m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
+// 		tabWidget->addTab(m_moduleFlowView, QString());
+// 		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
 
 
 		//Setup animation widget
@@ -371,6 +373,19 @@ namespace PhysIKA
 		return;
 	}
 
+	void PMainWindow::showNodeEditor()
+	{
+		PNodeEditor* node_editor = new PNodeEditor(0);
+		node_editor->setWindowTitle("Node Editor");
+		node_editor->resize(1024, 600);
+		node_editor->setMinimumSize(512, 360);
+
+		node_editor->setWindowModality(Qt::ApplicationModal);
+		node_editor->setAttribute(Qt::WA_ShowModal, true);
+		node_editor->setAttribute(Qt::WA_DeleteOnClose, true);
+		node_editor->show();
+	}
+
 	void PMainWindow::loadScene()
 	{
 		return;
@@ -425,31 +440,33 @@ namespace PhysIKA
 		//windowMenu->addMenu(bottomDockWidget->colorSwatchMenu());
 
 		//Set up module widget
-		PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
-		moduleDockWidget->setWindowTitle("Module List");
-		moduleDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[4].area, moduleDockWidget);
-		//windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
-		m_moduleListWidget = new PModuleListWidget();
-		moduleDockWidget->setWidget(m_moduleListWidget);
-
-		PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
-		sceneDockWidget->setWindowTitle("Scene Browser");
-		sceneDockWidget->setWindowIcon(qtIcon);
-		addDockWidget(sets[0].area, sceneDockWidget);
-		//windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
-		m_scenegraphWidget = new PSceneGraphWidget();
-		sceneDockWidget->setWidget(m_scenegraphWidget);
+// 		PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
+// 		moduleDockWidget->setWindowTitle("Module List");
+// 		moduleDockWidget->setWindowIcon(qtIcon);
+// 		addDockWidget(sets[4].area, moduleDockWidget);
+// 		//windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
+// 		m_moduleListWidget = new PModuleListWidget();
+// 		moduleDockWidget->setWidget(m_moduleListWidget);
+// 
+// 		PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
+// 		sceneDockWidget->setWindowTitle("Scene Browser");
+// 		sceneDockWidget->setWindowIcon(qtIcon);
+// 		addDockWidget(sets[0].area, sceneDockWidget);
+// 		//windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
+// 		m_scenegraphWidget = new PSceneGraphWidget();
+// 		sceneDockWidget->setWidget(m_scenegraphWidget);
 
 		setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 		setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
-		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
-		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
-		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
+// 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
+// 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
+// 		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
 
 		connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
-		connect(m_moduleFlowView->module_scene, &QtNodes::QtModuleFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
+//		connect(m_moduleFlowView->module_scene, &QtNodes::QtModuleFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
+
+		connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeDoubleClicked, this, &PMainWindow::showNodeEditor);
 	}
 
 	void PMainWindow::mousePressEvent(QMouseEvent *event)
