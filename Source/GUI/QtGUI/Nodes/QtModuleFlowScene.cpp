@@ -44,12 +44,12 @@ QtModuleFlowScene::QtModuleFlowScene(QObject * parent)
 		if (module != nullptr)
 		{
 			QtNodes::DataModelRegistry::RegistryItemCreator creator = [str, module]() {
-				auto dat = std::make_unique<QtModuleWidget>(module);
+				auto dat = std::make_unique<QtNodes::QtModuleWidget>(module);
 				dat->setName(str);
 				return dat; };
 
 			QString category = QString::fromStdString(module->getModuleType());
-			ret->registerModel<QtModuleWidget>(category, creator);
+			ret->registerModel<QtNodes::QtModuleWidget>(category, creator);
 		}
 	}
 
@@ -80,7 +80,7 @@ void QtModuleFlowScene::showNodeFlow(Node* node)
 	{
 		auto module_name = m->getName();
 
-		auto type = std::make_unique<QtModuleWidget>(m);
+		auto type = std::make_unique<QtNodes::QtModuleWidget>(m);
 
 		auto& node = this->createNode(std::move(type));
 
@@ -148,7 +148,7 @@ void QtModuleFlowScene::showNodeFlow(Node* node)
 
 void QtModuleFlowScene::moveModulePosition(QtBlock& n, const QPointF& newLocation)
 {
-	QtModuleWidget* mw = dynamic_cast<QtModuleWidget*>(n.nodeDataModel());
+	QtNodes::QtModuleWidget* mw = dynamic_cast<QtNodes::QtModuleWidget*>(n.nodeDataModel());
 
 	Module* m = mw == nullptr ? nullptr : mw->getModule();
 

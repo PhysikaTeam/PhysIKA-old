@@ -64,7 +64,7 @@ QtNodeFlowScene::QtNodeFlowScene(QObject * parent)
 
 QtNodeFlowScene::~QtNodeFlowScene()
 {
-
+	clearScene();
 }
 
 
@@ -73,6 +73,8 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 	std::map<std::string, QtBlock*> nodeMap;
 
 	auto root = scn->getRootNode();
+
+	SceneGraph::Iterator it_end(nullptr);
 
 	auto addNodeWidget = [&](std::shared_ptr<Node> m) -> void
 	{
@@ -90,8 +92,6 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 
 		this->nodePlaced(node);
 	};
-
-	SceneGraph::Iterator it_end(nullptr);
 
 	for (auto it = scn->begin(); it != it_end; it++)
 	{
@@ -122,7 +122,10 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 				}
 				else if (PhysIKA::Multiple == pType)
 				{
+					//TODO: a weird problem exist here, if the expression "auto& nodes = ports[i]->getNodes()" is used,
+					//we still have to call clear to avoid memory leak.
 					auto nodes = ports[i]->getNodes();
+					ports[i]->clear();
 					for (int j = 0; j < nodes.size(); j++)
 					{
 						if (nodes[j] != nullptr)
@@ -133,9 +136,9 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 								auto out_block = nodeMap[nodes[j]->getName()];
 								createConnection(*in_block, i, *out_block, 0);
 							}
-							
 						}
 					}
+					nodes.clear();
 				}
 			}
 		}
@@ -146,6 +149,14 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 		createNodeConnections(it.get());
 	}
 
+// 	clearScene();
+// 
+	for (auto it = scn->begin(); it != it_end; it++)
+	{
+		auto node_ptr = it.get();
+		std::cout << node_ptr->getClassInfo()->getClassName() << ": " << node_ptr.use_count() << std::endl;
+	}
+	nodeMap.clear();
 }
 
 void QtNodeFlowScene::moveModulePosition(QtBlock& n, const QPointF& newLocation)

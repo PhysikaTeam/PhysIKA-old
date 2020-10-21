@@ -23,7 +23,7 @@ class NodePort
 {
 public:
 	NodePort(std::string name, std::string description, Node* parent = nullptr);
-	virtual ~NodePort() {};
+	virtual ~NodePort() { m_nodes.clear(); };
 
 	virtual std::string getPortName() { return m_name; };
 
@@ -40,6 +40,8 @@ public:
 	virtual bool isKindOf(std::shared_ptr<Node> node) = 0;
 
 	inline Node* getParent() { return m_parent; }
+
+	virtual void clear();
 
 protected:
 	bool addNodeToParent(std::shared_ptr<Node> node);
@@ -68,7 +70,7 @@ public:
 		this->setPortType(NodePortType::Single);
 		this->getNodes().resize(1);
 	};
-	~SingleNodePort() {};
+	~SingleNodePort() override { m_nodes[0] = nullptr; }
 
 	bool addNode(std::shared_ptr<Node> node) override
 	{ 
@@ -132,7 +134,14 @@ public:
 		this->setPortType(NodePortType::Multiple);
 	};
 
-	~MultipleNodePort() {};
+	~MultipleNodePort() { m_derived_nodes.clear(); }
+
+	void clear() override
+	{
+		m_derived_nodes.clear();
+
+		NodePort::clear();
+	}
 
 	bool addNode(std::shared_ptr<Node> node) override {
 		auto d_node = std::dynamic_pointer_cast<T>(node);
@@ -188,6 +197,24 @@ public:
 			}
 		}
 		
+		return false;
+	}
+
+	bool removeDerivedNode(std::shared_ptr<T> d_node)
+	{
+		if (d_node != nullptr)
+		{
+			auto it = find(m_derived_nodes.begin(), m_derived_nodes.end(), d_node);
+
+			if (it != m_derived_nodes.end())
+			{
+				m_derived_nodes.erase(it);
+				this->removeNodeFromParent(std::dynamic_pointer_cast<Node>(d_node));
+
+				return true;
+			}
+		}
+
 		return false;
 	}
 

@@ -23,6 +23,11 @@ namespace PhysIKA
 		m_portType = portType;
 	}
 
+	void NodePort::clear()
+	{
+		m_nodes.clear();
+	}
+
 	bool NodePort::addNodeToParent(std::shared_ptr<Node> node)
 	{
 		if (!m_parent->hasChild(node))

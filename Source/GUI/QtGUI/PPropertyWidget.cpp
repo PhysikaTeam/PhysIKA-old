@@ -365,14 +365,14 @@ namespace PhysIKA
 	{
 		auto dataModel = block.nodeDataModel();
 
-		auto node = dynamic_cast<QtNodeWidget*>(dataModel);
+		auto node = dynamic_cast<QtNodes::QtNodeWidget*>(dataModel);
 		if (node != nullptr)
 		{
 			this->showProperty(node->getNode().get());
 		}
 		else
 		{
-			auto module = dynamic_cast<QtModuleWidget*>(dataModel);
+			auto module = dynamic_cast<QtNodes::QtModuleWidget*>(dataModel);
 			if (module != nullptr)
 			{
 				this->showProperty(module->getModule());

@@ -105,7 +105,13 @@ public:									\
 	inline std::vector<std::shared_ptr<T>>& get##name##s(){return multiple_##name.getDerivedNodes();}				\
 												\
 	bool add##name(std::shared_ptr<T> c){		\
-		multiple_##name.addDerivedNode(c);				\
+		multiple_##name.addDerivedNode(c);		\
+		c->setParent(this);						\
+		return true;							\
+	}											\
+												\
+	bool remove##name(std::shared_ptr<T> c) {	\
+		multiple_##name.removeDerivedNode(c);		\
 		return true;							\
 	}
 }

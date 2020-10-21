@@ -375,8 +375,15 @@ namespace PhysIKA
 
 	void PMainWindow::showNodeEditor()
 	{
-		PNodeEditor* node_editor = new PNodeEditor(0);
-		node_editor->setWindowTitle("Node Editor");
+		auto nodes = m_flowView->node_scene->selectedNodes();
+		QtNodes::QtNodeWidget* clickedBlock = nullptr;
+		if (nodes.size() > 0)
+		{
+			clickedBlock = dynamic_cast<QtNodes::QtNodeWidget*>(nodes[0]->nodeDataModel());
+		}
+		
+		PNodeEditor* node_editor = new PNodeEditor(clickedBlock);
+		node_editor->setWindowTitle("Module Flow Editor");
 		node_editor->resize(1024, 600);
 		node_editor->setMinimumSize(512, 360);
 
@@ -384,6 +391,11 @@ namespace PhysIKA
 		node_editor->setAttribute(Qt::WA_ShowModal, true);
 		node_editor->setAttribute(Qt::WA_DeleteOnClose, true);
 		node_editor->show();
+	}
+
+	void PMainWindow::showMessage()
+	{
+		std::cout << "ShowMessage" << std::endl;
 	}
 
 	void PMainWindow::loadScene()

@@ -16,6 +16,7 @@
 #include <vtkGlyph3DMapper.h>
 #include <vtkNamedColors.h>
 #include <vtkProperty.h>
+#include <vtkRenderWindow.h>
 
 namespace PhysIKA
 {
@@ -34,6 +35,7 @@ namespace PhysIKA
 		if (m_actor != nullptr)
 		{
 			PVTKOpenGLWidget::getCurrentRenderer()->RemoveActor(m_actor);
+			PVTKOpenGLWidget::getCurrentRenderer()->GetRenderWindow()->Render();
 		}
 	}
 

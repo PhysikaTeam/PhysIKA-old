@@ -12,6 +12,7 @@
 #include <vtkRenderer.h>
 #include <vtkSphereSource.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkRenderWindow.h>
 
 namespace PhysIKA
 {
@@ -30,6 +31,7 @@ namespace PhysIKA
 		if (m_actor != nullptr)
 		{
 			PVTKOpenGLWidget::getCurrentRenderer()->RemoveActor(m_actor);
+			PVTKOpenGLWidget::getCurrentRenderer()->GetRenderWindow()->Render();
 		}
 	}
 

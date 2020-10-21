@@ -57,7 +57,7 @@ public:
 							 "NodeExport" };
 	}
 
-	std::shared_ptr<Node> getNode() { return export_node; }
+	inline std::shared_ptr<Node> getNode() { return export_node; }
 
 	bool isEmpty() { return export_node == nullptr; }
 

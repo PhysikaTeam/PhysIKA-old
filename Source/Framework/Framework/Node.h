@@ -342,8 +342,9 @@ public:
 
 	std::vector<NodePort*>& getAllNodePorts() { return m_node_ports; }
 
-protected:
 	void setParent(Node* p) { m_parent = p; }
+
+protected:
 
 	virtual void doTraverseBottomUp(Action* act);
 	virtual void doTraverseTopDown(Action* act);

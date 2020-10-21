@@ -101,6 +101,8 @@ namespace PhysIKA
 
 		void showNodeEditor();
 
+		void showMessage();
+
 	private:
 		void setCentralView();
 		void setupToolBar();
@@ -125,7 +127,7 @@ namespace PhysIKA
 		PPropertyWidget*		m_propertyWidget;
 		PAnimationWidget*		m_animationWidget;
 // 
-//		PModuleFlowWidget*		m_moduleFlowView;
+// 		PModuleFlowWidget*		m_moduleFlowView;
 // 		PModuleListWidget*		m_moduleListWidget;
 // 		PSceneGraphWidget*		m_scenegraphWidget;
 	};

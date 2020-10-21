@@ -21,71 +21,74 @@ using QtNodes::BlockDataType;
 using QtNodes::QtBlockDataModel;
 using QtNodes::ValidationState;
 
-/// The model dictates the number of inputs and outputs for the Node.
-/// In this example it has no logic.
-class QtModuleWidget : public QtBlockDataModel
+namespace QtNodes
 {
-	Q_OBJECT
 
-public:
-	QtModuleWidget(Module* base = nullptr);
+	/// The model dictates the number of inputs and outputs for the Node.
+	/// In this example it has no logic.
+	class QtModuleWidget : public QtBlockDataModel
+	{
+		Q_OBJECT
 
-	virtual	~QtModuleWidget() {}
+	public:
+		QtModuleWidget(Module* base = nullptr);
 
-public:
+		virtual	~QtModuleWidget() {}
 
-	QString caption() const override;
+	public:
 
-	QString name() const override;
-	void setName(QString name) { m_name = name; }
-	
-	QString	portCaption(PortType portType, PortIndex portIndex) const override;
+		QString caption() const override;
 
-	QString	validationMessage() const override;
+		QString name() const override;
+		void setName(QString name) { m_name = name; }
 
+		QString	portCaption(PortType portType, PortIndex portIndex) const override;
 
-	unsigned int nPorts(PortType portType) const override;
-
-	
-	bool portCaptionVisible(PortType portType, PortIndex portIndex) const override;
-
-	std::shared_ptr<BlockData> outData(PortIndex port) override;
-	std::shared_ptr<BlockData> inData(PortIndex port) override;
-
-	void setInData(std::shared_ptr<BlockData> data, PortIndex portIndex) override;
-
-	BlockDataType dataType(PortType portType, PortIndex portIndex) const override;
+		QString	validationMessage() const override;
 
 
-	QWidget* embeddedWidget() override { return nullptr; }
+		unsigned int nPorts(PortType portType) const override;
 
-	ValidationState validationState() const override;
 
-	Module* getModule();
+		bool portCaptionVisible(PortType portType, PortIndex portIndex) const override;
 
-protected:
-	virtual void updateModule();
+		std::shared_ptr<BlockData> outData(PortIndex port) override;
+		std::shared_ptr<BlockData> inData(PortIndex port) override;
 
-protected:
+		void setInData(std::shared_ptr<BlockData> data, PortIndex portIndex) override;
 
-	using OutFieldPtr = std::vector<std::shared_ptr<FieldData>>;
-	using InFieldPtr = std::vector<std::weak_ptr<FieldData>>;
+		BlockDataType dataType(PortType portType, PortIndex portIndex) const override;
 
-	InFieldPtr input_fields;
-	OutFieldPtr output_fields;
-	
-	QString m_name;
 
-	Module* m_module = nullptr;
+		QWidget* embeddedWidget() override { return nullptr; }
 
-	ValidationState modelValidationState = ValidationState::Warning;
-	QString modelValidationError = QString("Missing or incorrect inputs");
+		ValidationState validationState() const override;
 
-private:
+		Module* getModule();
 
-	Field* getField(PortType portType, PortIndex portIndex) const;
+	protected:
+		virtual void updateModule();
 
-	std::vector<Field*>& getOutputFields();
-	std::vector<Field*>& getInputFields();
-};
+	protected:
 
+		using OutFieldPtr = std::vector<std::shared_ptr<FieldData>>;
+		using InFieldPtr = std::vector<std::weak_ptr<FieldData>>;
+
+		InFieldPtr input_fields;
+		OutFieldPtr output_fields;
+
+		QString m_name;
+
+		Module* m_module = nullptr;
+
+		ValidationState modelValidationState = ValidationState::Warning;
+		QString modelValidationError = QString("Missing or incorrect inputs");
+
+	private:
+
+		Field* getField(PortType portType, PortIndex portIndex) const;
+
+		std::vector<Field*>& getOutputFields();
+		std::vector<Field*>& getInputFields();
+	};
+}

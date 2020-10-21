@@ -61,7 +61,6 @@ namespace PhysIKA
 	template<typename TDataType>
 	RigidBody<TDataType>::~RigidBody()
 	{
-		
 	}
 
 	template<typename TDataType>

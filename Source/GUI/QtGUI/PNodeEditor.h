@@ -1,22 +1,19 @@
 #pragma once
 
-#include <QWidget>
+#include <QMainWindow>
+
+#include "Nodes/QtNodeWidget.h"
 
 namespace PhysIKA
 {
-	class QtNodeWidget;
-
 	class PNodeEditor :
-		public QWidget
+		public QMainWindow
 	{
 		Q_OBJECT
 	public:
-		PNodeEditor(QtNodeWidget* node_widget);
-
+		PNodeEditor(QtNodes::QtNodeWidget* node_widget);
 
 	private:
-		QtNodeWidget* node_widget = nullptr;
 	};
-
 }
 

@@ -5,169 +5,171 @@
 
 #include "../Common.h"
 
-
-QtModuleWidget::QtModuleWidget(Module* base)
+namespace QtNodes
 {
-	m_module = base;
 
-	if (m_module != nullptr)
+	QtModuleWidget::QtModuleWidget(Module* base)
 	{
-		//initialize out ports
-		int output_num = getOutputFields().size();
-		output_fields.resize(output_num);
-		auto outputs = getOutputFields();
-		for (int i = 0; i < outputs.size(); i++)
+		m_module = base;
+
+		if (m_module != nullptr)
 		{
-			output_fields[i] = std::make_shared<FieldData>(outputs[i]);
+			//initialize out ports
+			int output_num = getOutputFields().size();
+			output_fields.resize(output_num);
+			auto outputs = getOutputFields();
+			for (int i = 0; i < outputs.size(); i++)
+			{
+				output_fields[i] = std::make_shared<FieldData>(outputs[i]);
+			}
+
+			//initialize in ports
+			int input_num = getInputFields().size();
+			input_fields.resize(input_num);
+			// 		auto inputs = getInputFields();
+			// 		for (int i = 0; i < outputs.size(); i++)
+			// 		{
+			// 			input_fields[i] = std::make_shared<FieldData>(inputs[i]);
+			// 		}
+		}
+	}
+
+	unsigned int
+		QtModuleWidget::nPorts(PortType portType) const
+	{
+		unsigned int result;
+
+		if (portType == PortType::In)
+		{
+			result = input_fields.size();
+		}
+		else
+		{
+			result = output_fields.size();
 		}
 
-		//initialize in ports
-		int input_num = getInputFields().size();
-		input_fields.resize(input_num);
-// 		auto inputs = getInputFields();
-// 		for (int i = 0; i < outputs.size(); i++)
-// 		{
-// 			input_fields[i] = std::make_shared<FieldData>(inputs[i]);
-// 		}
+		return result;
 	}
-}
 
-unsigned int
-QtModuleWidget::nPorts(PortType portType) const
-{
-	unsigned int result;
 
-	if (portType == PortType::In)
+	BlockDataType QtModuleWidget::dataType(PortType portType, PortIndex portIndex) const
 	{
-		result = input_fields.size();
+		PhysIKA::Field* f = this->getField(portType, portIndex);
+
+		std::string name = f->getClassName();
+
+		return BlockDataType{ name.c_str(), name.c_str() };
 	}
-	else
+
+
+	std::shared_ptr<BlockData> QtModuleWidget::outData(PortIndex port)
 	{
-		result = output_fields.size();
+		return std::dynamic_pointer_cast<BlockData>(output_fields[port]);
 	}
 
-	return result;
-}
 
-
-BlockDataType QtModuleWidget::dataType(PortType portType, PortIndex portIndex) const
-{
-	PhysIKA::Field* f = this->getField(portType, portIndex);
-
-	std::string name = f->getClassName();
-
-	return BlockDataType{ name.c_str(), name.c_str() };
-}
-
-
-std::shared_ptr<BlockData> QtModuleWidget::outData(PortIndex port)
-{
-	return std::dynamic_pointer_cast<BlockData>(output_fields[port]);
-}
-
-
-std::shared_ptr<BlockData> QtModuleWidget::inData(PortIndex port)
-{
-	return std::dynamic_pointer_cast<BlockData>(input_fields[port].lock());
-}
-
-QString QtModuleWidget::caption() const
-{
-	return QString::fromStdString(m_module->getClassInfo()->getClassName());
-//	return m_name;
-}
-
-QString QtModuleWidget::name() const
-{
-	return QString::fromStdString(m_module->getClassInfo()->getClassName());
-}
-
-bool QtModuleWidget::portCaptionVisible(PortType portType, PortIndex portIndex) const
-{
-	Q_UNUSED(portType); Q_UNUSED(portIndex);
-	return true;
-}
-
-QString QtModuleWidget::portCaption(PortType portType, PortIndex portIndex) const
-{
-	PhysIKA::Field* f = this->getField(portType, portIndex);
-	std::string name = f->getObjectName();
-
-	return PhysIKA::FormatBlockPortName(name);
-}
-
-void QtModuleWidget::setInData(std::shared_ptr<BlockData> data, PortIndex portIndex)
-{
-	auto field_port = std::dynamic_pointer_cast<FieldData>(data);
-
-	input_fields[portIndex] = field_port;
-
-	if (field_port != nullptr)
+	std::shared_ptr<BlockData> QtModuleWidget::inData(PortIndex port)
 	{
-		auto in_fields = getInputFields();
-		field_port->getField()->connectPtr(in_fields[portIndex]);
+		return std::dynamic_pointer_cast<BlockData>(input_fields[port].lock());
 	}
-	
-	updateModule();
-}
 
-
-ValidationState QtModuleWidget::validationState() const
-{
-	return modelValidationState;
-}
-
-Module* QtModuleWidget::getModule()
-{
-	return m_module;
-}
-
-QString QtModuleWidget::validationMessage() const
-{
-	return modelValidationError;
-}
-
-void QtModuleWidget::updateModule()
-{
-	bool hasAllInputs = true;
-
-	for(int i = 0; i < input_fields.size(); i++)
+	QString QtModuleWidget::caption() const
 	{
-
-		auto p = input_fields[i].lock();
-
-		hasAllInputs &= (p != nullptr);
+		return QString::fromStdString(m_module->getClassInfo()->getClassName());
+		//	return m_name;
 	}
 
-	if (hasAllInputs)
+	QString QtModuleWidget::name() const
 	{
-		modelValidationState = ValidationState::Valid;
-		modelValidationError = QString();
+		return QString::fromStdString(m_module->getClassInfo()->getClassName());
 	}
-	else
+
+	bool QtModuleWidget::portCaptionVisible(PortType portType, PortIndex portIndex) const
 	{
-		modelValidationState = ValidationState::Warning;
-		modelValidationError = QStringLiteral("Missing or incorrect inputs");
+		Q_UNUSED(portType); Q_UNUSED(portIndex);
+		return true;
 	}
 
-	for (int i = 0; i < output_fields.size(); i++)
+	QString QtModuleWidget::portCaption(PortType portType, PortIndex portIndex) const
 	{
-		Q_EMIT dataUpdated(i);
+		PhysIKA::Field* f = this->getField(portType, portIndex);
+		std::string name = f->getObjectName();
+
+		return PhysIKA::FormatBlockPortName(name);
+	}
+
+	void QtModuleWidget::setInData(std::shared_ptr<BlockData> data, PortIndex portIndex)
+	{
+		auto field_port = std::dynamic_pointer_cast<FieldData>(data);
+
+		input_fields[portIndex] = field_port;
+
+		if (field_port != nullptr)
+		{
+			auto in_fields = getInputFields();
+			field_port->getField()->connectPtr(in_fields[portIndex]);
+		}
+
+		updateModule();
+	}
+
+
+	ValidationState QtModuleWidget::validationState() const
+	{
+		return modelValidationState;
+	}
+
+	Module* QtModuleWidget::getModule()
+	{
+		return m_module;
+	}
+
+	QString QtModuleWidget::validationMessage() const
+	{
+		return modelValidationError;
+	}
+
+	void QtModuleWidget::updateModule()
+	{
+		bool hasAllInputs = true;
+
+		for (int i = 0; i < input_fields.size(); i++)
+		{
+
+			auto p = input_fields[i].lock();
+
+			hasAllInputs &= (p != nullptr);
+		}
+
+		if (hasAllInputs)
+		{
+			modelValidationState = ValidationState::Valid;
+			modelValidationError = QString();
+		}
+		else
+		{
+			modelValidationState = ValidationState::Warning;
+			modelValidationError = QStringLiteral("Missing or incorrect inputs");
+		}
+
+		for (int i = 0; i < output_fields.size(); i++)
+		{
+			Q_EMIT dataUpdated(i);
+		}
+	}
+
+	Field* QtModuleWidget::getField(PortType portType, PortIndex portIndex) const
+	{
+		return portType == PortType::In ? m_module->getInputFields()[portIndex] : m_module->getOutputFields()[portIndex];
+	}
+
+	std::vector<Field*>& QtModuleWidget::getOutputFields()
+	{
+		return m_module->getOutputFields();
+	}
+
+	std::vector<Field*>& QtModuleWidget::getInputFields()
+	{
+		return m_module->getInputFields();
 	}
 }
-
-Field* QtModuleWidget::getField(PortType portType, PortIndex portIndex) const
-{
-	return portType == PortType::In ? m_module->getInputFields()[portIndex] : m_module->getOutputFields()[portIndex];
-}
-
-std::vector<Field*>& QtModuleWidget::getOutputFields()
-{
-	return m_module->getOutputFields();
-}
-
-std::vector<Field*>& QtModuleWidget::getInputFields()
-{
-	return m_module->getInputFields();
-}
-

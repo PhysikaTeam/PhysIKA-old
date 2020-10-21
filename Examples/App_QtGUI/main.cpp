@@ -32,14 +32,13 @@
 using namespace std;
 using namespace PhysIKA;
 
+std::vector<float> test_vector;
 
-void creare_scene_init()
+std::vector<float>& creare_scene_init()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
 	scene.setUpperBound(Vector3f(1.5, 1.5, 1.5));
 	scene.setLowerBound(Vector3f(-1.5, -0.5, -1.5));
-
-
 
 	std::shared_ptr<StaticMeshBoundary<DataType3f>> root = scene.createNewScene<StaticMeshBoundary<DataType3f>>();
 	root->loadMesh("../../Media/bowl/b3.obj");
@@ -50,25 +49,11 @@ void creare_scene_init()
 	std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
 	root->addParticleSystem(child1);
 	child1->setName("fluid");
-//	root->addParticleSystem(child1);
-//	child1->setBlockCoord(400, 50);
 
  	std::shared_ptr<ParticleEmitterSquare<DataType3f>> child2 = std::make_shared<ParticleEmitterSquare<DataType3f>>();
-// 	root->addParticleSystem(child1);
-	//child2->setActive(false);
-
-//	child2->addOutput(child1,child2);
-//	child1->addChild(child2);
 	child1->addParticleEmitter(child2);
-
-	//child1->loadParticles("../Media/fluid/fluid_point.obj");
-//	child1->loadParticles(Vector3f(0, 0.5, -0.5), Vector3f(0.01, 0.51, 0.5), 0.005);
 	child1->setMass(100);
 
-	
-// 	//child2->setInfo(Vector3f(0.3,0.5,0.3), Vector3f(1.0, 1.0, 1.0), 0.1, 0.005);
- //	child2->setInfo(Vector3f(0.0, 0.5, 0.0), Vector3f(-1.0, -1.0, -1.0), 0.1, 0.005);
-// 
 	auto pRenderer = std::make_shared<PVTKPointSetRender>();
 	pRenderer->setName("VTK Point Renderer");
 	child1->addVisualModule(pRenderer);
@@ -76,28 +61,30 @@ void creare_scene_init()
 // 	printf("outside 1\n");
 // 	
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
-	root->addRigidBody(rigidbody);
+	
 	rigidbody->loadShape("../../Media/bowl/b3.obj");
 	printf("outside 2\n");
 	auto sRenderer = std::make_shared<PVTKSurfaceMeshRender>();
 	sRenderer->setName("VTK Surface Renderer");
 	rigidbody->getSurface()->addVisualModule(sRenderer);
 	rigidbody->setActive(false);
-	
-	
-	
-	printf("outside 3\n");
-	QtApp window;
-	window.createWindow(1024, 768);
-	printf("outside 4\n");
-	auto classMap = Object::getClassMap();
 
-	for (auto const c : *classMap)
-		std::cout << "Class Name: " << c.first << std::endl;
+	root->addRigidBody(rigidbody);
 
-	window.mainLoop();
+	SceneGraph::Iterator it_end(nullptr);
+	for (auto it = scene.begin(); it != it_end; it++)
+	{
+		auto node_ptr = it.get();
+		std::cout << node_ptr->getClassInfo()->getClassName() << ": " << node_ptr.use_count() << std::endl;
+	}
 
-	//return 0;
+
+
+	std::cout << "Rigidbody use count: " << rigidbody.use_count() << std::endl;
+
+//	std::cout << "Rigidbody use count: " << rigidbody.use_count() << std::endl;
+	test_vector.resize(10);
+	return test_vector;
 }
 
 void create_scene_semianylitical()
@@ -154,14 +141,26 @@ void create_scene_semianylitical()
 		std::cout << "Class Name: " << c.first << std::endl;
 
 	window.mainLoop();
-
-
-
 }
 
 int main()
 {
-	creare_scene_init();
+	auto& v = creare_scene_init();
+	v.resize(5);
+
+	printf("outside 3\n");
+	QtApp window;
+	window.createWindow(1024, 768);
+	printf("outside 4\n");
+	auto classMap = Object::getClassMap();
+
+	// 	for (auto const c : *classMap)
+	// 		std::cout << "Class Name: " << c.first << std::endl;
+
+	window.mainLoop();
+
+//	std::cout << "Rigidbody use count: " << SceneGraph::getInstance().getRootNode()->getChildren().front().use_count() << std::endl;
+
 	//create_scene_semianylitical();
 	return 0;
 }
