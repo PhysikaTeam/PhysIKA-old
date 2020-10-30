@@ -123,10 +123,10 @@ namespace PhysIKA
 		m_pSet->setPoints(vertList);
 		m_pSet->setNormals(normalList);
 
-		m_position.setElementCount(vertList.size());
-		Function1Pt::copy(m_position.getValue(), vertList);
+		this->currentPosition()->setElementCount(vertList.size());
+		Function1Pt::copy(this->currentPosition()->getValue(), vertList);
 
-		m_velocity.setElementCount(vertList.size());
+		this->currentVelocity()->setElementCount(vertList.size());
 
 		vertList.clear();
 		normalList.clear();
