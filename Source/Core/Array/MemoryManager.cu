@@ -13,17 +13,18 @@ namespace PhysIKA {
 	template<DeviceType deviceType>
 	void DefaultMemoryManager<deviceType>::allocMemory1D(void** ptr, size_t memsize, size_t valueSize)
 	{
+		printf("%d %d %d %d\n", deviceType, memsize, valueSize, memsize * valueSize);
 		switch (deviceType)
 		{
 		case CPU:
-			assert(*ptr == 0);
+			//assert(*ptr == 0);
 			*ptr = malloc(memsize * valueSize);
-			assert(*ptr);
+			//assert(*ptr);
 			break;
 		case GPU:
-			assert(*ptr == 0);
+			//assert(*ptr == 0);
 			cuSafeCall(cudaMalloc(ptr, memsize * valueSize));
-			assert(*ptr);
+			//assert(*ptr);
 			break;
 		default:
 			break;

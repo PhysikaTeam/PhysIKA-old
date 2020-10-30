@@ -2,7 +2,7 @@
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Framework/Node.h"
 #include "ParticleIntegrator.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "ImplicitViscosity.h"
 #include "Framework/Framework/MechanicalState.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
@@ -40,31 +40,41 @@ namespace PhysIKA
 	template<typename TDataType>
 	bool PositionBasedFluidModel<TDataType>::initializeImpl()
 	{
+		cuSynchronize();
+
 		m_nbrQuery = this->getParent()->addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		m_smoothingLength.connect(m_nbrQuery->m_radius);
-		m_position.connect(m_nbrQuery->m_position);
+		m_smoothingLength.connect(m_nbrQuery->inRadius());
+		m_position.connect(m_nbrQuery->inPosition());
 		m_nbrQuery->initialize();
 
+		cuSynchronize();
+
 		m_pbdModule = this->getParent()->addConstraintModule<DensityPBD<TDataType>>("density_constraint");
-		m_smoothingLength.connect(m_pbdModule->m_smoothingLength);
-		m_position.connect(m_pbdModule->m_position);
-		m_velocity.connect(m_pbdModule->m_velocity);
-		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
+		m_smoothingLength.connect(m_pbdModule->varSmoothingLength());
+		m_position.connect(m_pbdModule->inPosition());
+		m_velocity.connect(m_pbdModule->inVelocity());
+		m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
 		m_pbdModule->initialize();
 
+		cuSynchronize();
+
 		m_integrator = this->getParent()->setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
-		m_position.connect(m_integrator->m_position);
-		m_velocity.connect(m_integrator->m_velocity);
-		m_forceDensity.connect(m_integrator->m_forceDensity);
+		m_position.connect(m_integrator->inPosition());
+		m_velocity.connect(m_integrator->inVelocity());
+		m_forceDensity.connect(m_integrator->inForceDensity());
 		m_integrator->initialize();
+
+		cuSynchronize();
 
 		m_visModule = this->getParent()->addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
 		m_visModule->setViscosity(Real(1));
-		m_smoothingLength.connect(m_visModule->m_smoothingLength);
-		m_position.connect(m_visModule->m_position);
-		m_velocity.connect(m_visModule->m_velocity);
-		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
+		m_smoothingLength.connect(&m_visModule->m_smoothingLength);
+		m_position.connect(&m_visModule->m_position);
+		m_velocity.connect(&m_visModule->m_velocity);
+		m_nbrQuery->outNeighborhood()->connect(&m_visModule->m_neighborhood);
 		m_visModule->initialize();
+
+		cuSynchronize();
 
 		return true;
 	}
@@ -80,12 +90,12 @@ namespace PhysIKA
 		}
 		m_integrator->begin();
 
-		m_nbrQuery->compute();
-		m_integrator->integrate();
+ 		m_nbrQuery->compute();
+ 		m_integrator->integrate();
 		
 		m_pbdModule->constrain();
 
-		m_visModule->constrain();
+ 		m_visModule->constrain();
 		
 		m_integrator->end();
 	}

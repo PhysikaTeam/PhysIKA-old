@@ -13,7 +13,7 @@
 option(
   gtest_force_shared_crt
   "Use shared (DLL) run-time lib even when Google Test is built as static lib."
-  OFF)
+  ON)
 
 option(gtest_build_tests "Build all of gtest's own tests." OFF)
 
@@ -139,6 +139,9 @@ if (DEFINED CMAKE_VERSION AND NOT "${CMAKE_VERSION}" VERSION_LESS "2.8.11")
     "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 endif()
 target_link_libraries(gtest_main PUBLIC gtest)
+
+set_target_properties(gtest PROPERTIES FOLDER "ThirdParty")
+set_target_properties(gtest_main PROPERTIES FOLDER "ThirdParty")
 
 ########################################################################
 #

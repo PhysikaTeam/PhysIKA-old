@@ -22,7 +22,6 @@ namespace PhysIKA
 		DeviceArray<Coord> position,
 		NeighborList<NPair> restShapes,
 		Real horizon,
-		Real distance,
 		Real mu,
 		Real lambda,
 		Function func)
@@ -178,7 +177,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void HyperelasticityModule<TDataType>::enforceElasticity()
 	{
-		int num = this->m_position.getElementCount();
+		int num = this->inPosition()->getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		this->m_displacement.reset();
@@ -192,10 +191,9 @@ namespace PhysIKA
 				this->m_weights,
 				this->m_bulkCoefs,
 				this->m_invK,
-				this->m_position.getValue(),
+				this->inPosition()->getValue(),
 				this->m_restShape.getValue(),
-				this->m_horizon.getValue(),
-				this->m_distance.getValue(),
+				this->inHorizon()->getValue(),
 				this->m_mu.getValue(),
 				this->m_lambda.getValue(),
 				ConstantFunc<Real>());
@@ -208,10 +206,9 @@ namespace PhysIKA
 				this->m_weights,
 				this->m_bulkCoefs,
 				this->m_invK,
-				this->m_position.getValue(),
+				this->inPosition()->getValue(),
 				this->m_restShape.getValue(),
-				this->m_horizon.getValue(),
-				this->m_distance.getValue(),
+				this->inHorizon()->getValue(),
 				this->m_mu.getValue(),
 				this->m_lambda.getValue(),
 				QuadraticFunc<Real>());
@@ -223,7 +220,7 @@ namespace PhysIKA
 		}
 
 		HM_UpdatePosition << <pDims, BLOCK_SIZE >> > (
-			this->m_position.getValue(),
+			this->inPosition()->getValue(),
 			this->m_position_old,
 			this->m_displacement,
 			this->m_weights);

@@ -22,6 +22,7 @@ namespace PhysIKA
 		void setPoints(std::vector<Coord>& pos);
 		void setNormals(std::vector<Coord>& normals);
 		void setNeighbors(int maxNum, std::vector<int>& elements, std::vector<int>& index);
+		void setSize(int size);
 
 		DeviceArray<Coord>& getPoints() { return m_coords; }
 		DeviceArray<Coord>& getNormals() { return m_normals; }
@@ -39,8 +40,6 @@ namespace PhysIKA
 
 	protected:
 		bool initializeImpl() override;
-
-		Real m_samplingDistance;
 
 		DeviceArray<Coord> m_coords;
 		DeviceArray<Coord> m_normals;

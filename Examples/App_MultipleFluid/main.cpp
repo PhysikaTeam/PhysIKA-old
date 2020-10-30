@@ -58,11 +58,10 @@ void CreateScene()
 	child1->translate(Vector3f(-0.6, -0.3, -0.48));
 	
 	std::shared_ptr<MultipleFluidModel<DataType3f>> multifluid = std::make_shared<MultipleFluidModel<DataType3f>>();
-	child1->getPosition()->connect(multifluid->m_position);
-	child1->getPosition()->connect(multifluid->m_position);
-	child1->getVelocity()->connect(multifluid->m_velocity);
-	child1->getForce()->connect(multifluid->m_forceDensity);
-	multifluid->m_color.connect(ptRender1->m_vecIndex);
+	child1->currentPosition()->connect(&multifluid->m_position);
+	child1->currentVelocity()->connect(&multifluid->m_velocity);
+	child1->currentForce()->connect(&multifluid->m_forceDensity);
+	multifluid->m_color.connect(&ptRender1->m_vecIndex);
 
 	child1->setNumericalModel(multifluid);
 }

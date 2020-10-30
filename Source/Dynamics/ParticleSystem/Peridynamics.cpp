@@ -35,22 +35,22 @@ namespace PhysIKA
 		}
 
 		m_integrator = std::make_shared<ParticleIntegrator<TDataType>>();
-		m_position.connect(m_integrator->m_position);
-		m_velocity.connect(m_integrator->m_velocity);
-		m_forceDensity.connect(m_integrator->m_forceDensity);
+		m_position.connect(m_integrator->inPosition());
+		m_velocity.connect(m_integrator->inVelocity());
+		m_forceDensity.connect(m_integrator->inForceDensity());
 		m_integrator->initialize();
 
 		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
-		m_horizon.connect(m_nbrQuery->m_radius);
-		m_position.connect(m_nbrQuery->m_position);
+		m_horizon.connect(m_nbrQuery->inRadius());
+		m_position.connect(m_nbrQuery->inPosition());
 		m_nbrQuery->initialize();
 		m_nbrQuery->compute();
 
 		m_elasticity = std::make_shared<ElasticityModule<TDataType>>();
-		m_position.connect(m_elasticity->m_position);
-		m_velocity.connect(m_elasticity->m_velocity);
-		m_horizon.connect(m_elasticity->m_horizon);
-		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
+		m_position.connect(m_elasticity->inPosition());
+		m_velocity.connect(m_elasticity->inVelocity());
+		m_horizon.connect(m_elasticity->inHorizon());
+		m_nbrQuery->outNeighborhood()->connect(m_elasticity->inNeighborhood());
 		m_elasticity->initialize();
 
 		m_nbrQuery->setParent(getParent());

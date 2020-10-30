@@ -6,6 +6,7 @@ namespace PhysIKA
 	template <typename T> class RigidBody;
 	template <typename T> class ParticleSystem;
 	template <typename T> class NeighborQuery;
+	template <typename T> class DensityPBD;
 
 	/*!
 	*	\class	SolidFluidInteraction
@@ -56,6 +57,8 @@ namespace PhysIKA
 
 		std::shared_ptr<NeighborList<int>> m_nList;
 		std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
+
+		std::shared_ptr<DensityPBD<TDataType>> m_pbdModule;;
 
 		std::vector<std::shared_ptr<RigidBody<TDataType>>> m_rigids;
 		std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;

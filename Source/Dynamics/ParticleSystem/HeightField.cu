@@ -22,15 +22,15 @@ namespace PhysIKA
 		//auto swe = this->template setNumericalModel<ShallowWaterEquationModel<TDataType>>("swe2");
 		//this->setNumericalModel(swe);
 		//std::shared_ptr<ShallowWaterEquationModel<TDataType>> swe = this->getNumericalModel();
-		this->getPosition()->connect(swe->m_position);
+		this->currentPosition()->connect(&(swe->m_position));
 		
-		this->getVelocity()->connect(swe->m_velocity);
+		this->currentVelocity()->connect(&(swe->m_velocity));
 		//this->h.connect(swe->h);
-		this->normal.connect(swe->normal);
+		this->normal.connect(&(swe->normal));
 
-		this->neighbors.connect(swe->neighborIndex);
-		this->isBound.connect(swe->isBound);
-		this->solid.connect(swe->solid);
+		this->neighbors.connect(&(swe->neighborIndex));
+		this->isBound.connect(&(swe->isBound));
+		this->solid.connect(&(swe->solid));
 
 		swe->setDistance(distance);
 		swe->setRelax(relax);
@@ -119,7 +119,7 @@ namespace PhysIKA
 		isbound.clear();
 		normals.clear();
 
-		DeviceArrayField<Coord> pos = *(this->getPosition());
+		DeviceArrayField<Coord> pos = *(this->currentPosition());
 		SWEconnect();
 	}
 

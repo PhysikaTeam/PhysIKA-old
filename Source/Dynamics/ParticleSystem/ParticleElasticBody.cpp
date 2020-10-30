@@ -15,23 +15,30 @@ namespace PhysIKA
 	ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
 		: ParticleSystem<TDataType>(name)
 	{
-		m_horizon.setValue(0.0085);
-		this->attachField(&m_horizon, "horizon", "horizon");
+		this->varHorizon()->setValue(0.0085);
+		//		this->attachField(&m_horizon, "horizon", "horizon");
 
 		auto m_integrator = this->template setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
-		this->getPosition()->connect(m_integrator->m_position);
-		this->getVelocity()->connect(m_integrator->m_velocity);
-		this->getForce()->connect(m_integrator->m_forceDensity);
+		this->currentPosition()->connect(m_integrator->inPosition());
+		this->currentVelocity()->connect(m_integrator->inVelocity());
+		this->currentForce()->connect(m_integrator->inForceDensity());
+
+		this->getAnimationPipeline()->push_back(m_integrator);
 
 		auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		m_horizon.connect(m_nbrQuery->m_radius);
-		this->m_position.connect(m_nbrQuery->m_position);
+		this->varHorizon()->connect(m_nbrQuery->inRadius());
+		this->currentPosition()->connect(m_nbrQuery->inPosition());
+
+		this->getAnimationPipeline()->push_back(m_nbrQuery);
+
 
 		auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
-		this->getPosition()->connect(m_elasticity->m_position);
-		this->getVelocity()->connect(m_elasticity->m_velocity);
-		m_horizon.connect(m_elasticity->m_horizon);
-		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
+		this->varHorizon()->connect(m_elasticity->inHorizon());
+		this->currentPosition()->connect(m_elasticity->inPosition());
+		this->currentVelocity()->connect(m_elasticity->inVelocity());
+		m_nbrQuery->outNeighborhood()->connect(m_elasticity->inNeighborhood());
+
+		this->getAnimationPipeline()->push_back(m_elasticity);
 
 		//Create a node for surface mesh rendering
 		m_surfaceNode = this->template createChild<Node>("Mesh");
@@ -94,7 +101,7 @@ namespace PhysIKA
 	void ParticleElasticBody<TDataType>::updateTopology()
 	{
 		auto pts = this->m_pSet->getPoints();
-		Function1Pt::copy(pts, this->getPosition()->getValue());
+		Function1Pt::copy(pts, this->currentPosition()->getValue());
 
 		auto tMappings = this->getTopologyMappingList();
 		for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)
@@ -118,10 +125,10 @@ namespace PhysIKA
 		auto nbrQuery = this->template getModule<NeighborQuery<TDataType>>("neighborhood");
 		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
 
-		this->getPosition()->connect(solver->m_position);
-		this->getVelocity()->connect(solver->m_velocity);
-		nbrQuery->m_neighborhood.connect(solver->m_neighborhood);
-		m_horizon.connect(solver->m_horizon);
+		this->currentPosition()->connect(solver->inPosition());
+		this->currentVelocity()->connect(solver->inVelocity());
+		nbrQuery->outNeighborhood()->connect(solver->inNeighborhood());
+		this->varHorizon()->connect(solver->inHorizon());
 
 		this->deleteModule(module);
 		

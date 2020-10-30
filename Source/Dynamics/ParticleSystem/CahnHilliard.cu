@@ -1,5 +1,5 @@
 #include "CahnHilliard.h"
-#include "Framework/Node.h"
+#include "Framework/Framework/Node.h"
 #include "Kernel.h"
 
 // Implement paper: Fast Multiple-fluid Simulation Using Helmholtz Free Energy

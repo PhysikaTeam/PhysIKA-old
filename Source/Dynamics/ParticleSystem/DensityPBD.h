@@ -8,7 +8,7 @@
 
 namespace PhysIKA {
 
-	template<typename TDataType> class DensitySummation;
+	template<typename TDataType> class SummationDensity;
 
 	/*!
 	*	\class	DensityPBD
@@ -31,34 +31,60 @@ namespace PhysIKA {
 
 		void updateVelocity();
 
-		void setIterationNumber(int n) { m_maxIteration = n; }
-
-		DeviceArray<Real>& getDensity() { return m_density.getValue(); }
-
-	protected:
-		bool initializeImpl() override;
-
 	public:
-		VarField<Real> m_restDensity;
-		VarField<Real> m_smoothingLength;
-
-		DeviceArrayField<Coord> m_position;
-		DeviceArrayField<Coord> m_velocity;
 		DeviceArrayField<Real> m_massInv; // mass^-1 as described in unified particle physics
 
-		NeighborField<int> m_neighborhood;
+	public:
+		DEF_EMPTY_VAR(IterationNumber, int, "Iteration number of the PBD solver");
 
-		DeviceArrayField<Real> m_density;
+		DEF_EMPTY_VAR(RestDensity, Real, "Reference density");
+
+		DEF_EMPTY_VAR(SamplingDistance, Real, "");
+
+		DEF_EMPTY_VAR(SmoothingLength, Real, "");
+
+
+		/**
+		 * @brief Particle positions
+		 */
+		DEF_EMPTY_IN_ARRAY(Position, Coord, DeviceType::GPU, "Input particle position");
+
+		/**
+		 * @brief Particle velocities
+		 */
+		DEF_EMPTY_IN_ARRAY(Velocity, Coord, DeviceType::GPU, "Input particle velocity");
+
+
+		/**
+		 * @brief Neighboring particles' ids
+		 *
+		 */
+		DEF_EMPTY_IN_NEIGHBOR_LIST(NeighborIndex, int, "Neighboring particles' ids");
+
+		/**
+		 * @brief New particle positions
+		 */
+		DEF_EMPTY_OUT_ARRAY(Position, Coord, DeviceType::GPU, "Output particle position");
+
+		/**
+		 * @brief New particle velocities
+		 */
+		DEF_EMPTY_OUT_ARRAY(Velocity, Coord, DeviceType::GPU, "Output particle velocity");
+
+		/**
+		 * @brief Final particle densities
+		 */
+		DEF_EMPTY_OUT_ARRAY(Density, Real, DeviceType::GPU, "Final particle density");
+
 	private:
-		int m_maxIteration;
-
 		SpikyKernel<Real> m_kernel;
 
 		DeviceArray<Real> m_lamda;
 		DeviceArray<Coord> m_deltaPos;
 		DeviceArray<Coord> m_position_old;
 
-		std::shared_ptr<DensitySummation<TDataType>> m_densitySum;
+	private:
+		std::shared_ptr<SummationDensity<TDataType>> m_summation;
 	};
 
 

@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <algorithm>
 
 using uint = unsigned int;
 using String = std::string;

@@ -28,6 +28,11 @@ Object* Object::createObject(std::string name)
 	return NULL;
 }
 
+std::map< std::string, ClassInfo*>* Object::getClassMap()
+{
+	return classInfoMap;
+}
+
 bool Register(ClassInfo* ci)
 {
 	return Object::registerClass(ci);

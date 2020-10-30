@@ -2,6 +2,7 @@
 #include <QDebug>
 #include "QtApp.h"
 #include "PMainWindow.h"
+#include "Framework/Log.h"
 //#include "Rendering/OpenGLContext.h"
 
 namespace PhysIKA {
@@ -9,6 +10,9 @@ namespace PhysIKA {
     {
         m_mainWindow = nullptr;
         m_app = std::make_shared<QApplication>(argc, argv);
+
+		//To resolver the error "Cannot queue arguments of type of Log::Message" for multi-thread applications
+		qRegisterMetaType<Log::Message>("Log::Message");
     }
 
     QtApp::~QtApp()
@@ -25,7 +29,7 @@ namespace PhysIKA {
     void QtApp::mainLoop()
     {
 //         OpenGLContext::getInstance().initialize();
-//         SceneGraph::getInstance().initialize();
+        SceneGraph::getInstance().initialize();
 
         m_mainWindow->show();
         m_app->exec();

@@ -2,6 +2,7 @@
 #include "Framework/Framework/Module.h"
 #include "Core/Vector.h"
 #include "Core/Quaternion/quaternion.h"
+#include "FieldVar.h"
 
 namespace PhysIKA
 {
@@ -15,7 +16,7 @@ public:
 	virtual void display() {};
 
 	void setVisible(bool bVisible);
-	bool isVisible() { return m_visible; }
+	bool isVisible() { return m_visible.getValue(); }
 
 	void rotate(float angle, float x, float y, float z);
 	void translate(float x, float y, float z);
@@ -25,7 +26,7 @@ public:
 
 	std::string getModuleType() override { return "VisualModule"; }
 protected:
-	bool m_visible;
+	VarField<bool> m_visible;
 
 	Quaternion<float> m_rotation;
 	Vector3f m_scale;

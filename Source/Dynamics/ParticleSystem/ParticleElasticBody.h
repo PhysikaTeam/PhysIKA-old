@@ -37,7 +37,7 @@ namespace PhysIKA
 		std::shared_ptr<Node> getSurfaceNode() { return m_surfaceNode; }
 
 	public:
-		VarField<Real> m_horizon;
+		DEF_EMPTY_VAR(Horizon, Real, "Horizon");
 
 	private:
 		std::shared_ptr<Node> m_surfaceNode;

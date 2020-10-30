@@ -43,7 +43,7 @@ namespace PhysIKA
 
 		DeviceArrayField<Real>* getDensityField()
 		{
-			return &(m_pbdModule->m_density);
+			return m_pbdModule->outDensity();
 		}
 
 	public:

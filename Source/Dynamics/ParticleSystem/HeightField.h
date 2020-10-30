@@ -20,15 +20,15 @@ namespace PhysIKA
 
 		void loadParticles(Coord lo, Coord hi, Real distance, Real slope, Real relax);
 
-		DeviceArrayField<Coord>* getPosition()
-		{
-			return &m_position;
-		}
-
-		DeviceArrayField<Coord>* getVelocity()
-		{
-			return &m_velocity;
-		}
+// 		DeviceArrayField<Coord>* getPosition()
+// 		{
+// 			return &m_position;
+// 		}
+// 
+// 		DeviceArrayField<Coord>* getVelocity()
+// 		{
+// 			return &m_velocity;
+// 		}
 
 		void loadObjFile(std::string filename);
 

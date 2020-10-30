@@ -3,14 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 set(LIB_NAME GlutGUI)
 set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
-if(WIN32)                                                               
-    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Windows/X64")
-    link_libraries(freeglut glew32)            
-elseif(UNIX)
-#    link_directories("${PROJECT_SOURCE_DIR}/Extern/OpenGL/lib/Linux/X64")
-    link_libraries(glut GLEW GL GLU cudart)           
-endif()
-
 file(                                                                           
     GLOB_RECURSE LIB_SRC                                                        #利用glob命令读取所有源文件list
     LIST_DIRECTORIES false
@@ -41,3 +33,31 @@ file(RELATIVE_PATH PROJECT_PATH_REL "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOU
 set_target_properties(${LIB_NAME} PROPERTIES FOLDER "Engine/GUI")      #为project设定folder目录
 set_target_properties(${LIB_NAME} PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)    #cmake 会自动延迟cuda dlink操作直到静态库被编译成动态库或者exe，
                                                                                 #但这样影响了后面其他工程对PhysLeo.lib的引用，现在还有些原因未明，暂时在编译成库之前开启dlink
+set_target_properties(${LIB_NAME} PROPERTIES
+    OUTPUT_NAME "Pa${LIB_NAME}-${PHYSIKA_LIBRARY_VERSION}")
+
+target_include_directories(${LIB_NAME} PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Extern/freeglut-3.2.1/include>
+    $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}>
+    $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/GUI>
+    $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/GUI/${LIB_NAME}>
+    $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Extern/freeglut-3.2.1/include>)
+
+target_link_libraries(${LIB_NAME} Core Rendering Framework IO freeglut)
+
+install(TARGETS ${LIB_NAME}
+    EXPORT ${LIB_NAME}Targets
+    RUNTIME  DESTINATION  ${PHYSIKA_RUNTIME_INSTALL_DIR}
+    LIBRARY  DESTINATION  ${PHYSIKA_LIBRARY_INSTALL_DIR}
+    ARCHIVE  DESTINATION  ${PHYSIKA_ARCHIVE_INSTALL_DIR}
+    )
+
+install(EXPORT ${LIB_NAME}Targets DESTINATION ${PHYSIKA_CMAKE_CONFIG_INSTALL_DIR}
+    FILE ${LIB_NAME}Targets.cmake)
+
+get_property(LOCAL_CMAKES_NAMES GLOBAL PROPERTY "GLOBAL_CMAKES_NAMES")
+list(APPEND LOCAL_CMAKES_NAMES "${LIB_NAME}Targets.cmake")    
+set_property(GLOBAL PROPERTY GLOBAL_CMAKES_NAMES ${LOCAL_CMAKES_NAMES})
+
+file(GLOB FILE_GLUTGUI_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES ${FILE_GLUTGUI_HEADER}  DESTINATION ${PHYSIKA_INC_INSTALL_DIR}/GUI/GlutGUI)
