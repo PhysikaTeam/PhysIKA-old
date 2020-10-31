@@ -10,11 +10,10 @@
 #include "Framework/Framework/SceneGraph.h"
 #include "Framework/Framework/Log.h"
 
-#include "Dynamics/ParticleSystem/HeightField.h"
 #include "Dynamics/RigidBody/RigidBody.h"
-#include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Dynamics/HeightField/HeightFieldNode.h"
 
-#include "Rendering/PointRenderModule.h"
+#include "Rendering/HeightFieldRender.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -42,22 +41,17 @@ void CreateScene()
 	scene.setUpperBound(Vector3f(1.5, 1, 1.5));
 	scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
-	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
+	std::shared_ptr<HeightFieldNode<DataType3f>> root = scene.createNewScene<HeightFieldNode<DataType3f>>();
 	//root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(1.5, 2, 1.5), 0.02, true);
 	//root->loadSDF("../../Media/bowl/bowl.sdf", false);
 
-	std::shared_ptr<HeightField<DataType3f>> child1 = std::make_shared<HeightField<DataType3f>>();
-	root->addParticleSystem(child1);
-
-	auto ptRender = std::make_shared<PointRenderModule>();
+	auto ptRender = std::make_shared<HeightFieldRenderModule>();
 	ptRender->setColor(Vector3f(1, 0, 0));
-	ptRender->setColorRange(0, 4);
-	child1->addVisualModule(ptRender);
+	root->addVisualModule(ptRender);
 
 	//child1->loadParticles("../Media/fluid/fluid_point.obj");
-	child1->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 0.005, 0.3, 0.998);
-	child1->setMass(100);
-	child1->currentVelocity()->connect(&(ptRender->m_vecIndex));
+	root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 0.005, 0.3, 0.998);
+	root->setMass(100);
 
 	//std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	//root->addRigidBody(rigidbody);

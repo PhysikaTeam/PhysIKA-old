@@ -52,8 +52,11 @@ public:
     void display();
 
 	void resize(unsigned int triNum);
+	int numberOfTrianlges() { return t_num; }
 
 private:
+	int t_num = 0;
+
     bool use_custom_color_ = true;
 	int m_lineWidth = 2;
 

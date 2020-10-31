@@ -47,6 +47,20 @@ namespace PhysIKA{
 		return dim == 0 ? 1 : dim;
 	}
 
+	static dim3 cudaGridSize3D(uint3 totalSize, uint blockSize)
+	{
+		dim3 gridDims;
+		gridDims.x = iDivUp(totalSize.x, blockSize);
+		gridDims.y = iDivUp(totalSize.y, blockSize);
+		gridDims.z = iDivUp(totalSize.z, blockSize);
+
+		gridDims.x = gridDims.x == 0 ? 1 : gridDims.x;
+		gridDims.y = gridDims.y == 0 ? 1 : gridDims.y;
+		gridDims.z = gridDims.z == 0 ? 1 : gridDims.z;
+
+		return gridDims;
+	}
+
 	static dim3 cudaGridSize3D(uint3 totalSize, uint3 blockSize)
 	{
 		dim3 gridDims;
@@ -112,10 +126,11 @@ namespace PhysIKA{
 	}
 
 #define cuExecute3D(size, Func, ...){						\
-		uint3 pDims = cudaGridSize(size, BLOCK_SIZE);	\
-		Func << <pDims, BLOCK_SIZE >> > (				\
-		__VA_ARGS__);									\
-		cuSynchronize();								\
+		uint3 pDims = cudaGridSize3D(size, 8);		\
+		dim3 threadsPerBlock(8, 8, 8);		\
+		Func << <pDims, threadsPerBlock >> > (				\
+		__VA_ARGS__);										\
+		cuSynchronize();									\
 	}
 
 }// end of namespace PhysIKA

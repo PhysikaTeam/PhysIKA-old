@@ -28,6 +28,8 @@ public:
 		m_vbo = 0;
 		m_size = 0;
 		m_cudaGraphicsResource = NULL;
+
+		glGenBuffers(1, &m_vbo);
 	}
 
 
@@ -46,13 +48,13 @@ public:
 	
 	void resize(unsigned int num)
 	{
-		if (m_size != 0)
-		{
-			release();
-		}
+// 		if (m_size != 0)
+// 		{
+// 			release();
+// 		}
 
 		m_size = num;
-		glGenBuffers(1, &m_vbo);
+		
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 		glBufferData(GL_ARRAY_BUFFER, m_size * sizeof(T), nullptr, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

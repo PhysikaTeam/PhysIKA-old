@@ -255,6 +255,8 @@ void TriangleRender::display()
 
 void TriangleRender::resize(unsigned int triNum)
 {
+	t_num = triNum;
+
 	m_vertVBO.resize(3 * triNum);
 	m_normVBO.resize(3 * triNum);
 	m_colorVBO.resize(3 * triNum);

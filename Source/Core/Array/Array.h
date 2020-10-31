@@ -105,20 +105,6 @@ namespace PhysIKA {
 	template<typename T, DeviceType deviceType>
 	void Array<T, deviceType>::release()
 	{
-// 		if (m_data != NULL)
-// 		{
-// 			switch (deviceType)
-// 			{
-// 			case CPU:
-// 				delete[]m_data;
-// 				break;
-// 			case GPU:
-// 				(cudaFree(m_data));
-// 				break;
-// 			default:
-// 				break;
-// 			}
-// 		}
 		if (m_data != NULL)
 		{
 			m_alloc->releaseMemory((void**)&m_data);
@@ -131,19 +117,6 @@ namespace PhysIKA {
 	template<typename T, DeviceType deviceType>
 	void Array<T, deviceType>::allocMemory()
 	{
-// 		switch (deviceType)
-// 		{
-// 		case CPU:
-// 			m_data = new T[m_totalNum];
-// 			break;
-// 		case GPU:
-// 			(cudaMalloc((void**)&m_data, m_totalNum * sizeof(T)));
-// 			break;
-// 		default:
-// 			break;
-// 		}
-
-		printf("%d %d\n", m_totalNum, sizeof(T));
 		m_alloc->allocMemory1D((void**)&m_data, m_totalNum, sizeof(T));
 
 		reset();
@@ -152,18 +125,6 @@ namespace PhysIKA {
 	template<typename T, DeviceType deviceType>
 	void Array<T, deviceType>::reset()
 	{
-// 		switch (deviceType)
-// 		{
-// 		case CPU:
-// 			memset((void*)m_data, 0, m_totalNum*sizeof(T));
-// 			break;
-// 		case GPU:
-// 			cudaMemset(m_data, 0, m_totalNum * sizeof(T));
-// 			break;
-// 		default:
-// 			break;
-// 		}
-
 		m_alloc->initMemory((void*)m_data, 0, m_totalNum*sizeof(T));
 	}
 

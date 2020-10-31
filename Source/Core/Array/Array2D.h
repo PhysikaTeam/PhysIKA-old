@@ -14,13 +14,16 @@ namespace PhysIKA {
 		Array2D(const std::shared_ptr<MemoryManager<deviceType>> alloc = std::make_shared<DefaultMemoryManager<deviceType>>())
 			: m_nx(0)
 			, m_ny(0)
+			, m_pitch(0)
 			, m_totalNum(0)
 			, m_data(NULL)
+			, m_alloc(alloc)
 		{};
 
 		Array2D(int nx, int ny, const std::shared_ptr<MemoryManager<deviceType>> alloc = std::make_shared<DefaultMemoryManager<deviceType>>())
 			: m_nx(nx)
 			, m_ny(ny)
+			, m_pitch(0)
 			, m_totalNum(nx*ny)
 			, m_data(NULL)
 			, m_alloc(alloc)
@@ -33,7 +36,7 @@ namespace PhysIKA {
 		*/
 		~Array2D() { };
 
-		void Resize(int nx, int ny);
+		void resize(int nx, int ny);
 
 		void Reset();
 
@@ -47,17 +50,17 @@ namespace PhysIKA {
 
 		COMM_FUNC inline T operator () (const int i, const int j) const
 		{
-			return m_data[i + j*m_nx];
+			return m_data[i + j* m_pitch];
 		}
 
 		COMM_FUNC inline T& operator () (const int i, const int j)
 		{
-			return m_data[i + j*m_nx];
+			return m_data[i + j* m_pitch];
 		}
 
 		COMM_FUNC inline int Index(const int i, const int j)
 		{
-			return i + j*m_nx;
+			return i + j * m_pitch;
 		}
 
 		COMM_FUNC inline T operator [] (const int id) const
@@ -80,13 +83,14 @@ namespace PhysIKA {
 	private:
 		int m_nx;
 		int m_ny;
+		size_t m_pitch;
 		int m_totalNum;
 		T*	m_data;
 		std::shared_ptr<MemoryManager<deviceType>> m_alloc;
 	};
 
 	template<typename T, DeviceType deviceType>
-	void Array2D<T, deviceType>::Resize(int nx, int ny)
+	void Array2D<T, deviceType>::resize(int nx, int ny)
 	{
 		if (NULL != m_data) Release();
 		m_nx = nx;	m_ny = ny;	m_totalNum = m_nx*m_ny;
@@ -96,19 +100,7 @@ namespace PhysIKA {
 	template<typename T, DeviceType deviceType>
 	void Array2D<T, deviceType>::Reset()
 	{
-// 		switch (deviceType)
-// 		{
-// 		case CPU:
-// 			memset((void*)m_data, 0, m_totalNum * sizeof(T));
-// 			break;
-// 		case GPU:
-// 			cudaMemset(m_data, 0, m_totalNum * sizeof(T));
-// 			break;
-// 		default:
-// 			break;
-// 		}
-
-		m_alloc->initMemory((void*)m_data, 0, m_totalNum * sizeof(T));
+		m_alloc->initMemory((void*)m_data, 0, m_pitch * m_ny * sizeof(T));
 	}
 
 	template<typename T, DeviceType deviceType>
@@ -116,44 +108,21 @@ namespace PhysIKA {
 	{
 		if (m_data != NULL)
 		{
-// 			switch (deviceType)
-// 			{
-// 			case CPU:
-// 				delete[]m_data;
-// 				break;
-// 			case GPU:
-// 				(cudaFree(m_data));
-// 				break;
-// 			default:
-// 				break;
-// 			}
-
 			m_alloc->releaseMemory((void**)&m_data);
 		}
 
 		m_data = NULL;
 		m_nx = 0;
 		m_ny = 0;
+		m_pitch = 0;
 		m_totalNum = 0;
 	}
 
 	template<typename T, DeviceType deviceType>
 	void Array2D<T, deviceType>::AllocMemory()
 	{
-// 		switch (deviceType)
-// 		{
-// 		case CPU:
-// 			m_data = new T[m_totalNum];
-// 			break;
-// 		case GPU:
-// 			(cudaMalloc((void**)&m_data, m_totalNum * sizeof(T)));
-// 			break;
-// 		default:
-// 			break;
-// 		}
-		size_t pitch;
-
-		m_alloc->allocMemory2D((void**)&m_data, pitch, m_nx, m_ny, sizeof(T));
+		m_alloc->allocMemory2D((void**)&m_data, m_pitch, m_nx, m_ny, sizeof(T));
+		m_pitch /= sizeof(T);
 
 		Reset();
 	}

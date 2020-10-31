@@ -26,7 +26,6 @@ namespace PhysIKA
 		ParticleSystem(std::string name = "default");
 		virtual ~ParticleSystem();
 
-		void loadHeightFieldParticles(Coord lo, Coord hi, Real distance, Real slope);
 		void loadParticles(Coord lo, Coord hi, Real distance);
 		void loadParticles(Coord center, Real r, Real distance);
 		void loadParticles(std::string filename);

@@ -97,41 +97,6 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void ParticleSystem<TDataType>::loadHeightFieldParticles(Coord lo, Coord hi, Real distance, Real slope)
-	{
-		std::vector<Coord> vertList;
-		std::vector<Coord> normalList;
-		
-		float height,e = 2.71828;
-		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
-		for (Real x = lo[0]; x <= hi[0]; x += distance)
-		{
-			for (Real z = lo[2]; z <= hi[2]; z += distance)
-			{
-				//if (pow(x - xcenter, 2) + pow(z - zcenter, 2) > 400*distance*distance)
-					//height = slope * pow(e, -400*distance*distance*100);
-				//	height = slope * pow(e, -400 * distance*distance * 10);
-				//else
-					height = 0.3+slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2))*100);
-				//height = slope * pow(e, -(pow(x, 2) + pow(z, 2)) * 5);
-				//height = 3*slope*(x + z - lo[0] - lo[2]);
-				Coord p = Coord(x, 0, z);
-				vertList.push_back(Coord(x, height + lo[1], z));
-				normalList.push_back(Coord(0, 1, 0));
-			}
-		}
-		m_pSet->setPoints(vertList);
-		m_pSet->setNormals(normalList);
-
-		this->currentPosition()->setElementCount(vertList.size());
-		Function1Pt::copy(this->currentPosition()->getValue(), vertList);
-
-		this->currentVelocity()->setElementCount(vertList.size());
-
-		vertList.clear();
-		normalList.clear();
-	}
-	template<typename TDataType>
 	bool ParticleSystem<TDataType>::translate(Coord t)
 	{
 		m_pSet->translate(t);

@@ -3,7 +3,7 @@ set(PROJECT_NAME App_SWE)
 
 link_directories("${PROJECT_SOURCE_DIR}/Source")                                                           # 设置库路径
 link_libraries(Core Framework IO Rendering)
-link_libraries(ParticleSystem RigidBody)
+link_libraries(HeightField RigidBody)
 link_libraries(GlutGUI)
 
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")

@@ -264,10 +264,14 @@ namespace PhysIKA
 		}
 		
 		h[i] += -(uhx / 2 + whz / 2)*dt;
-		//if (h[i] < 0) h[i] = 0;
-		//if (h[i] > 5) h[i] = 5;
 		m_position[i][1] = solid[i][1] + h[i];
+
+		if (i == 0)
+		{
+			printf("Height: %f \n", m_position[i][1]);
+		}
 	}
+
 	template<typename TDataType>
 	void ShallowWaterEquationModel<TDataType>::step(Real dt)
 	{
