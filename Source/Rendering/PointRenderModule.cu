@@ -16,7 +16,6 @@ namespace PhysIKA
 
 	PointRenderModule::PointRenderModule()
 		: VisualModule()
-		, m_mode(PointRenderModule::Instance)
 		, m_color(Vector3f(0.8, 0.8, 0.8))
 	{
 		m_minIndex.setValue(0);
@@ -62,12 +61,12 @@ namespace PhysIKA
 		m_pointRender->resize(xyz->size());
 		m_colorArray.resize(xyz->size());
 
-		switch (m_mode)
+		switch (this->varRenderMode()->getReference()->currentKey())
 		{
-		case PointRenderModule::POINT:
+		case RenderModeEnum::POINT:
 			m_pointRender->disableUsePointSprite();
 			break;
-		case PointRenderModule::SPRITE:
+		case RenderModeEnum::SPRITE:
 			m_pointRender->enableUsePointSprite();
 			break;
 		default:
@@ -188,26 +187,21 @@ namespace PhysIKA
 
  		//m_pointRender->display();
 
-		switch (m_mode)
+		switch (this->varRenderMode()->getReference()->currentKey())
 		{
-		case PointRenderModule::POINT:
+		case RenderModeEnum::POINT:
 			m_pointRender->renderPoints();
 			break;
-		case PointRenderModule::SPRITE:
+		case RenderModeEnum::SPRITE:
 			m_pointRender->renderSprite();
 			break;
-		case PointRenderModule::Instance:
+		case RenderModeEnum::INSTANCE:
 			m_pointRender->renderInstancedSphere();
 		default:
 			break;
 		}
 
 		glPopMatrix();
-	}
-
-	void PointRenderModule::setRenderMode(RenderMode mode)
-	{
-		m_mode = mode;
 	}
 
 	void PointRenderModule::setColor(Vector3f color)
