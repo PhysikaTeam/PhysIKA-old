@@ -175,8 +175,8 @@ namespace PhysIKA {
         int outside_cnt = 0;
 
         for(int pi = 0; pi < pn; ++pi) {
-            if((pi%1000) == 0)
-            std::cerr << "process " << pi << std::endl;
+            // if((pi%1000) == 0)
+            // std::cerr << "process " << pi << std::endl;
 
             pt = pts.col(pi);
             std::pair<int, double> best_t(-1, -10);
