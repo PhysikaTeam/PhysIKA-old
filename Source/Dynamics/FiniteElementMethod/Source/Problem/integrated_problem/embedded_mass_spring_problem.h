@@ -19,6 +19,8 @@ class embedded_ms_problem_builder : public ms_problem_builder<T>
   virtual int update_problem(const T* x, const T* v = nullptr);
   
   std::shared_ptr<embedded_interpolate<T>> get_embedded_interpolate() { return embedded_interp_;}
+  virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const { return semi_implicit_;}
+
   using ms_problem_builder<T>::REST_;
   using ms_problem_builder<T>::cells_;
   using ms_problem_builder<T>::collider_;
@@ -30,6 +32,7 @@ class embedded_ms_problem_builder : public ms_problem_builder<T>
   using ms_problem_builder<T>::get_cells;
   using ms_problem_builder<T>::get_nods;
   using ms_problem_builder<T>::build_problem;
+  using ms_problem_builder<T>::semi_implicit_;
 
 private:
   int fine_verts_num_;

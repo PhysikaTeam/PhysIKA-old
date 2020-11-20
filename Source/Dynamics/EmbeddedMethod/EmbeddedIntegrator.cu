@@ -144,7 +144,20 @@ namespace PhysIKA
 	bool EmbeddedIntegrator<TDataType>::updatePosition()
 	{
     auto pb = epb_fac_->build_problem();
-    solver_ = newton_with_pcg_and_embedded<Real,3>(pb, pt_, dat_str_, pos_.size(), epb_fac_->get_embedded_interpolate());
+    
+    if (solver_type_ == "explicit")
+    {
+      for (int i = 0; i < 100; ++i)
+      {
+        pb = epb_fac_->build_problem();
+        solver_ = newton_with_pcg_and_embedded<Real,3>(pb, pt_, dat_str_, pos_.size(), epb_fac_->get_embedded_interpolate(), semi_implicit_);
+        solver_->solve(&pos_[0]);
+        epb_fac_->update_problem(&pos_[0]);
+      }
+    }
+    else
+      solver_ = newton_with_pcg_and_embedded<Real,3>(pb, pt_, dat_str_, pos_.size(), epb_fac_->get_embedded_interpolate());
+
     solver_->solve(&pos_[0]);
                 
     const size_t num = m_position.getElementCount();
@@ -169,6 +182,18 @@ namespace PhysIKA
   template<typename TDataType>
   void EmbeddedIntegrator<TDataType>::bind_problem(const std::shared_ptr<embedded_problem_builder<Real, 3>>& epb_fac, const boost::property_tree::ptree& pt)
   {
+    solver_type_ = pt.get<string>("solver_type", "implicit");
+    if (solver_type_ == "explicit")
+    {
+      embedded_interp_ = epb_fac->get_embedded_interpolate();
+      semi_implicit_ = epb_fac->get_semi_implicit();
+
+      Eigen::Matrix<Real, -1, -1> nods = epb_fac->get_nods();
+      Eigen::Matrix<Real, -1, -1> nods_coarse = nods * embedded_interp_->get_fine_to_coarse_coefficient();
+      Eigen::Map<Eigen::Matrix<Real, -1, 1>> init_nods_coarse(nods_coarse.data(), nods_coarse.size());
+      semi_implicit_->update_status(init_nods_coarse);
+    }
+
     auto pb = epb_fac->build_problem();
     dat_str_ = make_shared<dat_str_core<Real, 3>>(pb->Nx() / 3, pt.get<bool>("hes_is_const", false));
     exit_if(compute_hes_pattern(pb->energy_, dat_str_), "compute hes pattern fail");

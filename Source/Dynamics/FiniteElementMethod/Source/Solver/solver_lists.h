@@ -23,12 +23,13 @@ std::shared_ptr<newton_base<T, dim>> newton_with_pcg_and_embedded(
     const boost::property_tree::ptree& pt,
     std::shared_ptr<dat_str_core<T, dim>> dat_str,
     size_t dof_of_nods,
-    std::shared_ptr<embedded_interpolate<T>> embedded_interp){
+    std::shared_ptr<embedded_interpolate<T>> embedded_interp,
+    std::shared_ptr<semi_implicit<T>> semi = nullptr){
 
   EIGEN_PCG<T> pcg(true, pt.get<T>("cg_tol", 1e-3));
   linear_solver_type<T> LS = std::bind(&EIGEN_PCG<T>::solve, pcg,std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5);
 
-  return std::make_shared<newton_base_with_embedded<T, dim>>(pb, pt.get<size_t>("newton_MaxIter", 20), pt.get<T>("newton_tol", 1e-4), pt.get<bool>("line_search", false), pt.get<bool>("hes_is_const", false), LS, dat_str, dof_of_nods, embedded_interp);
+  return std::make_shared<newton_base_with_embedded<T, dim>>(pb, pt.get<size_t>("newton_MaxIter", 20), pt.get<T>("newton_tol", 1e-4), pt.get<bool>("line_search", false), pt.get<bool>("hes_is_const", false), LS, dat_str, dof_of_nods, embedded_interp, semi);
 }
 
 template<typename T, size_t dim>

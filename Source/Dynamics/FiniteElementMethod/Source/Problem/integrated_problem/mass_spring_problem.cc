@@ -28,7 +28,6 @@ using VEC = Eigen::Matrix<T, -1, 1>;
 
 template<typename T>
 ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree::ptree& para_tree):pt_(para_tree){
-
   auto blender = para_tree.get_child("blender");
   auto simulation_para = para_tree.get_child("simulation_para");
   auto common = para_tree.get_child("common");
@@ -77,14 +76,23 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
   // mass_calculator<T, 3, 4, 1, 1, basis_func, quadrature>(nods, cells, para::density, mass_vec);
 
   cout << "build energy" << endl;
-  enum energy_type{ELAS, GRAV, KIN, POS};
+  int ELAS = 0;
+  int GRAV = 1;
+  int KIN = 2;
+  int POS = 3;
+  if (pt_.get<string>("solver_type") == "explicit")
+    POS = 2;
+  
+  
   ebf_.resize(POS + 1);
   ebf_[ELAS] = make_shared<MassSpringObj<T>>(para::input_object.c_str(), para::stiffness);
   char axis = common.get<char>("grav_axis", 'y') | 0x20;
 
   ebf_[GRAV]=make_shared<gravity_energy<T, 3>>(num_nods, 1, para::gravity, mass_vec, axis);
   kinetic_ = make_shared<momentum<T, 3>>(nods.data(), num_nods, mass_vec, para::dt);
-  ebf_[KIN] = kinetic_;
+  
+  if (pt_.get<string>("solver_type") == "implicit")
+    ebf_[KIN] = kinetic_;
   ebf_[POS] = make_shared<position_constraint<T, 3>>(nods.data(), num_nods, simulation_para.get<double>("w_pos", 1e6), cons);
 
   //set constraint
@@ -92,6 +100,13 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
   cbf_.resize(COLL + 1);
   collider_ = nullptr;
   cbf_[COLL] = collider_;
+
+  
+  if (pt_.get<string>("solver_type") == "explicit")
+  {
+    Map<Matrix<T, -1, 1>> position(REST_.data(), REST_.size());
+    semi_implicit_ = make_shared<semi_implicit<T>>(para::dt, mass_vec, position);
+  }
 }
 
 

@@ -2,6 +2,7 @@
   "filename": "../../Media/bunny/sparse_bunny_points.obj",
   "filename_coarse" : "../../Media/bunny/sparse_bunny_mesh_simp.vtk",
   "type": "tet",
+    "solver_type":"implicit",
   "cons": "../../Media/bunny/sparse_bunny.csv",
   "tol":1e-4,
   "hes_is_const":false,

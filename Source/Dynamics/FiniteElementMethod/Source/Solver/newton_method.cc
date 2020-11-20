@@ -15,8 +15,9 @@ newton_base<T, dim_>::newton_base(
     const size_t max_iter, const T tol,
     const bool line_search, const bool hes_is_constant,
     linear_solver_type<T> linear_solver,
-    std::shared_ptr<dat_str_core<T, dim_>> dat_str)
-    :solver<T, dim_>(pb, dat_str), max_iter_(max_iter), tol_(tol), line_search_(line_search), hes_is_constant_(hes_is_constant), linear_solver_(linear_solver), total_dim_(pb->Nx()){}
+    std::shared_ptr<dat_str_core<T, dim_>> dat_str,
+    std::shared_ptr<semi_implicit<T>> semi)
+  :solver<T, dim_>(pb, dat_str), max_iter_(max_iter), tol_(tol), line_search_(line_search), hes_is_constant_(hes_is_constant), linear_solver_(linear_solver), total_dim_(pb->Nx()), semi_implicit_(semi) { }
 
 template<typename T, size_t dim_>
 int newton_base<T,dim_>::solve_linear_eq(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A, const T* b, const Eigen::SparseMatrix<T, Eigen::RowMajor>& J, const T* c, const T* x0, T* solution)const{
@@ -101,6 +102,22 @@ int newton_base<T, dim_>::solve(T* x_star)const{
 
     Matrix<T, -1, -1> X_coarse = embedded_interp_->get_verts();
     Map<VEC<T>> x_coarse(X_coarse.data(), total_dim_);
+
+    if (semi_implicit_ != nullptr)
+    {
+      dat_str_->set_zero();
+      IF_ERR(return,pb_->energy_->Val(x_coarse.data(), dat_str_));
+      IF_ERR(return,pb_->energy_->Gra(x_coarse.data(), dat_str_));
+      Matrix<T, -1, 1> jaccobi = -dat_str_->get_gra();
+      x_coarse = semi_implicit_->solve(jaccobi);
+      const SparseMatrix<T> &c2f_coeff = embedded_interp_->get_coarse_to_fine_coeff();
+      X_star = X_coarse * c2f_coeff;
+      embedded_interp_->set_verts(X_coarse);
+      cerr << "[  \033[1;31merror\033[0m  ] " << "norm of X_star:" << X_star.norm() << endl;
+      return 0;
+    }
+
+
     VEC<T> res = VEC<T>::Zero(total_dim_);
     VEC<T> solution = VEC<T>::Zero(total_dim_);
     T res_last_iter = 9999999;

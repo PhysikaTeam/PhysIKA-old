@@ -54,6 +54,9 @@ namespace PhysIKA {
     std::shared_ptr<newton_base<Real, 3>> solver_;
     std::shared_ptr<dat_str_core<Real, 3>> dat_str_;
     boost::property_tree::ptree pt_;
+    std::shared_ptr<semi_implicit<Real>> semi_implicit_;
+    std::shared_ptr<embedded_interpolate<Real>> embedded_interp_;
+    std::string solver_type_;
 	};
 
 #ifdef PRECISION_FLOAT

@@ -2,6 +2,7 @@
     "hes_is_const" : false,
     "newton_MaxIter": 2,
     "newton_tol": 1e-2,
+    "solver_type":"implicit",
     "line_search": false,
     "blender": {
         "surf": "sparse_bunny",

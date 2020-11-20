@@ -30,7 +30,6 @@ using VEC = Eigen::Matrix<T, -1, 1>;
 
 template<typename T>
 embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, const boost::property_tree::ptree& pt):pt_(pt){
-
   //TODO: need to check exception
   const string filename = pt.get<string>("filename");
   const string filename_coarse = pt.get<string>("filename_coarse");
@@ -125,7 +124,13 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
     mass_calculator<T, 3, 8, 1, 2, basis_func, quadrature>(nods_coarse, cells_coarse, rho, mass_vec);
 
   cout << "build energy" << endl;
-  enum energy_type{ELAS, GRAV, KIN, POS};
+  int ELAS = 0;
+  int GRAV = 1;
+  int KIN = 2;
+  int POS = 3;
+  if (pt_.get<string>("solver_type") == "explicit")
+    POS = 2;
+
   ebf_.resize(POS + 1);{
     const string csttt_type = phy_paras.get<string>("csttt", "linear");
     if(pt.get<bool>("rotate", false))
@@ -136,10 +141,13 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
     char axis = pt.get<char>("grav_axis", 'y') | 0x20;
     ebf_[GRAV] = make_shared<gravity_energy<T, 3>>(num_nods, 1, gravity, mass_vec, axis);
     kinetic_ = make_shared<momentum<T, 3>>(nods_coarse.data(), num_nods, mass_vec, dt);
-    ebf_[KIN] = kinetic_;
+
+    if (pt_.get<string>("solver_type") == "implicit")
+      ebf_[KIN] = kinetic_;
+
     ebf_[POS] = make_shared<position_constraint<T, 3>>(nods_coarse.data(), num_nods, w_pos, cons);
 
-    }
+  }
 
 
 
@@ -161,6 +169,13 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   SparseMatrix<T> K = dat_str->get_hes();
 
   embedded_interp_ = make_shared<embedded_interpolate<T>>(nods_coarse, coarse_to_fine_coef_, fine_to_coarse_coef_, K, 0.586803 / 2);
+
+
+  if (pt_.get<string>("solver_type") == "explicit")
+  {
+    Map<Matrix<T, -1, 1>> position(nods_coarse.data(), nods_coarse.size());
+    semi_implicit_ = make_shared<semi_implicit<T>>(dt, mass_vec, position);
+  }
 }
 
 template<typename T>

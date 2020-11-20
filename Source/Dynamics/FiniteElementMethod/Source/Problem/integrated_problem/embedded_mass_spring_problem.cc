@@ -1,5 +1,5 @@
 #include <memory>
-
+#include <string>
 #include <boost/property_tree/ptree.hpp>
 
 #include "Common/error.h"
@@ -114,13 +114,23 @@ embedded_ms_problem_builder<T>::embedded_ms_problem_builder(const T* x, const bo
   // mass_calculator<T, 3, 4, 1, 1, basis_func, quadrature>(nods_coarse, cells_coarse, para::density, mass_vec);
 
   cout << "build energy" << endl;
-  enum energy_type{ELAS, GRAV, KIN, POS};
+  int ELAS = 0;
+  int GRAV = 1;
+  int KIN = 2;
+  int POS = 3;
+  if (para_tree.get<std::string>("solver_type") == "explicit")
+    POS = 2;
+  
+  
   ebf_.resize(POS + 1);
   ebf_[ELAS] = make_shared<MassSpringObj<T>>(para::input_object.c_str(), para::stiffness);
   char axis = common.get<char>("grav_axis", 'y') | 0x20;
   ebf_[GRAV]=make_shared<gravity_energy<T, 3>>(num_nods, 1, para::gravity, mass_vec, axis);
   kinetic_ = make_shared<momentum<T, 3>>(nods_coarse.data(), num_nods, mass_vec, para::dt);
-  ebf_[KIN] = kinetic_;
+  
+  if (para_tree.get<string>("solver_type") == "implicit")
+    ebf_[KIN] = kinetic_;
+
   ebf_[POS] = make_shared<position_constraint<T, 3>>(nods_coarse.data(), num_nods, simulation_para.get<double>("w_pos", 1e6), cons);
 
   //set constraint
@@ -136,6 +146,13 @@ embedded_ms_problem_builder<T>::embedded_ms_problem_builder(const T* x, const bo
   SparseMatrix<T> K = dat_str->get_hes();
 
   embedded_interp_ = make_shared<embedded_interpolate<T>>(nods_coarse, coarse_to_fine_coef_, fine_to_coarse_coef_, K, 5868.03 / 2);
+
+  
+  if (para_tree.get<string>("solver_type") == "explicit")
+  {
+    Map<Matrix<T, -1, 1>> position(nods_coarse.data(), nods_coarse.size());
+    semi_implicit_ = make_shared<semi_implicit<T>>(para::dt, mass_vec, position);
+  }
 }
 
 

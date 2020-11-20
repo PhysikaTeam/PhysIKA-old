@@ -3,8 +3,10 @@
 #include "def.h"
 #include "data_str_core.h"
 #include "Geometry/embedded_interpolate.h"
+#include "Solver/semi_implicit_euler.h"
 #include <memory>
 #include <iostream>
+
 namespace PhysIKA{
 template<typename T, size_t dim_>
 class Problem{
@@ -35,6 +37,8 @@ class embedded_problem_builder{
   virtual std::shared_ptr<Problem<T,dim_>> build_problem() const = 0;
   virtual int update_problem(const T* x, const T* v = nullptr) { return 0; }
   virtual std::shared_ptr<embedded_interpolate<T>> get_embedded_interpolate() { return nullptr;}
+  virtual Eigen::Matrix<T, -1, -1> get_nods()const {return Eigen::Matrix<T, -1, -1>::Zero(0, 0);}
+  virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const { return nullptr;}
 
 };
 

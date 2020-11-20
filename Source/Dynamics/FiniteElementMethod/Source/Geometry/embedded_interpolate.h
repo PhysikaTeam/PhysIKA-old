@@ -80,6 +80,8 @@ public:
 
   const Eigen::SparseMatrix<T>& get_coarse_to_fine_coeff() const {
     return coarse_to_fine_coeff_;}
+  const Eigen::SparseMatrix<T>& get_fine_to_coarse_coefficient() const {
+    return fine_to_coarse_coeff_;}
   const Eigen::Matrix<T, -1, -1>& get_verts() const { return verts_; }
   void set_verts(const Eigen::Matrix<T, -1, -1> &v) { verts_ = v; }
 private:

@@ -7,11 +7,12 @@
 #include "Problem/energy/basic_energy.h"
 #include "Model/fem/elas_energy.h"
 #include "Geometry/embedded_interpolate.h"
+#include "semi_wrapper.h"
 
 namespace PhysIKA{
 
 template<typename T>
-class embedded_elas_problem_builder : public embedded_problem_builder<T, 3>{
+class embedded_elas_problem_builder : public embedded_problem_builder<T, 3>, public semi_wrapper<T>{
  public:
   embedded_elas_problem_builder(const T*x, const boost::property_tree::ptree& pt); 
   std::shared_ptr<Problem<T, 3>> build_problem() const;
@@ -29,7 +30,10 @@ class embedded_elas_problem_builder : public embedded_problem_builder<T, 3>{
   }
 
   std::shared_ptr<embedded_interpolate<T>> get_embedded_interpolate() { return embedded_interp_;}
+  virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const { return semi_implicit_;}
 
+  using semi_wrapper<T>::semi_implicit_;
+  
 private:
   Eigen::Matrix<T, -1, -1> REST_;
   Eigen::MatrixXi cells_;

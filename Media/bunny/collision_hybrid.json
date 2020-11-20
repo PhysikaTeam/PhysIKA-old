@@ -3,6 +3,7 @@
     "filename_coarse" : "../../Media/bunny/sparse_bunny_mesh_simp.vtk",
     "type": "tet",
     "cons": "../../Media/bunny/sparse_bunny.csv",
+    "solver_type":"implicit",
     "tol":1e-3,
     "hes_is_const":false,
     "physics":

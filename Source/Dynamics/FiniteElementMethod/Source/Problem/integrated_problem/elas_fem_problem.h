@@ -6,12 +6,13 @@
 #include "Problem/constraint/constraints.h"
 #include "Problem/energy/basic_energy.h"
 #include "Model/fem/elas_energy.h"
+#include "semi_wrapper.h"
 
 
 namespace PhysIKA{
 
 template<typename T>
-class elas_problem_builder : public problem_builder<T, 3>{
+class elas_problem_builder : public problem_builder<T, 3>, public semi_wrapper<T>{
  public:
   elas_problem_builder(const T*x, const boost::property_tree::ptree& pt); 
   std::shared_ptr<Problem<T, 3>> build_problem() const;
@@ -22,6 +23,7 @@ class elas_problem_builder : public problem_builder<T, 3>{
   Eigen::MatrixXi get_cells()const {return cells_;}
   std::shared_ptr<constraint_4_coll<T>> get_collider() const {return collider_;}
 
+  using semi_wrapper<T>::semi_implicit_;
 
   std::shared_ptr<elas_intf<T, 3>> get_elas_energy()const{
     return elas_intf_;

@@ -5,13 +5,14 @@
 #include "Common/framework.h"
 #include "Problem/constraint/constraints.h"
 #include "Problem/energy/basic_energy.h"
+#include "semi_wrapper.h"
 
 
 
 namespace PhysIKA{
 
 template<typename T>
-class ms_problem_builder : public embedded_problem_builder<T, 3>{
+class ms_problem_builder : public embedded_problem_builder<T, 3>, public semi_wrapper<T>{
  public:
   ms_problem_builder(const T*x, const boost::property_tree::ptree& pt); 
   ms_problem_builder() { }
@@ -22,7 +23,9 @@ class ms_problem_builder : public embedded_problem_builder<T, 3>{
   Eigen::Matrix<T, -1, -1> get_nods()const {return REST_;}
   Eigen::MatrixXi get_cells()const {return cells_;}
   std::shared_ptr<constraint_4_coll<T>> get_collider() const {return collider_;}
-  
+  virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const { return semi_implicit_;}
+
+  using semi_wrapper<T>::semi_implicit_;
   protected:
   Eigen::Matrix<T, -1, -1> REST_;
   Eigen::MatrixXi cells_;
