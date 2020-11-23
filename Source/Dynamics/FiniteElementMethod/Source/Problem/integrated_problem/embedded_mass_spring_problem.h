@@ -34,7 +34,7 @@ class embedded_ms_problem_builder : public ms_problem_builder<T>
   using ms_problem_builder<T>::build_problem;
   using ms_problem_builder<T>::semi_implicit_;
 
-private:
+protected:
   int fine_verts_num_;
   std::shared_ptr<embedded_interpolate<T>> embedded_interp_;
 

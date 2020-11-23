@@ -6,6 +6,7 @@
 #include "Framework/Framework/Node.h"
 #include "Framework/Framework/SceneGraph.h"
 #include "Problem/integrated_problem/embedded_elas_fem_problem.h"
+#include "Problem/integrated_problem/fast_ms_problem.h"
 #include "Common/data_str_core.h"
 #include "Solver/solver_lists.h"
 #include "EmbeddedIntegrator.h"
@@ -155,6 +156,10 @@ namespace PhysIKA
         epb_fac_->update_problem(&pos_[0]);
       }
     }
+    else if (solver_type_ == "fast_ms")
+    {
+      solver_ = newton_with_fast_ms_and_embedded<Real,3>(pb, pt_, dat_str_, pos_.size(), epb_fac_->get_embedded_interpolate(), semi_implicit_, fast_ms_solver_info_);
+    } 
     else
       solver_ = newton_with_pcg_and_embedded<Real,3>(pb, pt_, dat_str_, pos_.size(), epb_fac_->get_embedded_interpolate());
 
@@ -193,7 +198,11 @@ namespace PhysIKA
       Eigen::Map<Eigen::Matrix<Real, -1, 1>> init_nods_coarse(nods_coarse.data(), nods_coarse.size());
       semi_implicit_->update_status(init_nods_coarse);
     }
-
+    else if (solver_type_ == "fast_ms")
+    {
+      shared_ptr<fast_ms_builder<Real>> fast_ms_epb_fac = dynamic_pointer_cast<fast_ms_builder<Real>>(epb_fac);
+      fast_ms_solver_info_ = fast_ms_epb_fac->get_fast_ms_solver_info();  
+    }
     auto pb = epb_fac->build_problem();
     dat_str_ = make_shared<dat_str_core<Real, 3>>(pb->Nx() / 3, pt.get<bool>("hes_is_const", false));
     exit_if(compute_hes_pattern(pb->energy_, dat_str_), "compute hes pattern fail");
