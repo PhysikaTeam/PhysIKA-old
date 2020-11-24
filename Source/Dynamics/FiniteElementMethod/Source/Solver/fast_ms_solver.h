@@ -60,8 +60,8 @@ public:
   
 protected:
   std::shared_ptr<fast_ms_info<T>> solver_info_;
-  mutable Eigen::Matrix<T, -1, 1> q_n1_;
-  mutable Eigen::Matrix<T, -1, 1> q_n_;
+  static Eigen::Matrix<T, -1, 1> q_n1_;
+  static Eigen::Matrix<T, -1, 1> q_n_;
   mutable Eigen::Matrix<T, -1, 1> y_;
 };
 }

@@ -15,6 +15,7 @@ class embedded_ms_problem_builder : public ms_problem_builder<T>
 {
  public:
   embedded_ms_problem_builder(const T*x, const boost::property_tree::ptree& pt); 
+  embedded_ms_problem_builder() { }
 
   virtual int update_problem(const T* x, const T* v = nullptr);
   

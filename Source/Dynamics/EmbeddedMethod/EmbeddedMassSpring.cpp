@@ -6,6 +6,7 @@
 #include "Framework/Topology/NeighborQuery.h"
 #include "EmbeddedIntegrator.h"
 #include "Problem/integrated_problem/embedded_mass_spring_problem.h"
+#include "Problem/integrated_problem/fast_ms_problem.h"
 #include "Solver/newton_method.h"
 #include "Dynamics/ParticleSystem/ElasticityModule.h"
 #include <iostream>
@@ -42,8 +43,11 @@ namespace PhysIKA
       for(size_t j = 0; j < 3; ++j)
         nods[j + 3 * i] = pts[i][j];
 
-    epb_fac_ = std::make_shared<embedded_ms_problem_builder<Real>>(&nods[0], pt);
-
+    if (pt.get<string>("solver_type") == "fast_ms")
+      epb_fac_ = std::make_shared<fast_ms_builder<Real>>(&nods[0], pt);
+    else
+      epb_fac_ = std::make_shared<embedded_ms_problem_builder<Real>>(&nods[0], pt);
+      
     auto integrator = this->template getModule<EmbeddedIntegrator<TDataType>>("integrator");
     integrator->bind_problem(epb_fac_, pt);
   }

@@ -2,6 +2,7 @@
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <unsupported/Eigen/KroneckerProduct>
+#include <Eigen/Sparse>
 
 #include "Common/error.h"
 
@@ -19,7 +20,6 @@
 #include "Geometry/extract_surface.imp"
 #include "Geometry/construct_mesh.h"
 #include "libigl/include/igl/readOBJ.h"
-
 #include "fast_ms_problem.h"
 
 namespace PhysIKA{
@@ -130,7 +130,7 @@ fast_ms_builder<T>::fast_ms_builder(const T* x, const boost::property_tree::ptre
   ebf_[GRAV]=make_shared<gravity_energy<T, 3>>(num_nods, 1, para::gravity, mass_vec, axis);
   kinetic_ = make_shared<momentum<T, 3>>(nods_coarse.data(), num_nods, mass_vec, para::dt);
   
-  if (para_tree.get<string>("solver_type") == "implicit")
+  if (para_tree.get<string>("solver_type") == "implicit" || para_tree.get<string>("solver_type") == "fast_ms")
     ebf_[KIN] = kinetic_;
 
   ebf_[POS] = make_shared<position_constraint<T, 3>>(nods_coarse.data(), num_nods, simulation_para.get<double>("w_pos", 1e6), cons);
@@ -150,37 +150,36 @@ fast_ms_builder<T>::fast_ms_builder(const T* x, const boost::property_tree::ptre
   embedded_interp_ = make_shared<embedded_interpolate<T>>(nods_coarse, coarse_to_fine_coef_, fine_to_coarse_coef_, K, 5868.03 / 2);
 
   
-  if (para_tree.get<string>("solver_type") == "explicit")
+  if (para_tree.get<std::string>("solver_type") == "explicit")
   {
-    Map<Matrix<T, -1, 1>> position(nods_coarse.data(), nods_coarse.size());
+    Eigen::Map<Eigen::Matrix<T, -1, 1>> position(nods_coarse.data(), nods_coarse.size());
     semi_implicit_ = make_shared<semi_implicit<T>>(para::dt, mass_vec, position);
   }
 
   // -------------------------------------------------------
   // get info for fast ms solver, include optL, optJ and optM
-  solver_info_ = make_shared<std::shared_ptr<fast_ms_info<T>>>();
-  DiagonalMatrix<T, Dynamic> diagM(mass_vec);
+  solver_info_ = make_shared<fast_ms_info<T>>();
+  Eigen::DiagonalMatrix<T, Dynamic> diagM(mass_vec);
   solver_info_->optM_ = SparseMatrix<T> (diagM);
-  solver_info_->optM_ = Eigen::kroneckerProduct(solver_info_->optM_, Eigen::Matrix<T, 3, 3>::Ones()).eval();
+  solver_info_->optM_ = Eigen::kroneckerProduct(solver_info_->optM_, Eigen::Matrix<T, 3, 3>::Identity()).eval();
 
   GetMeshEdgeConnection(cells_coarse, solver_info_->optL_, solver_info_->optJ_, solver_info_->edge_num_);
 
-  solver_info_->optL_ = Eigen::kroneckerProduct(solver_info_->optL_, Eigen::Matrix<T, 3, 3>::Ones()).eval();
-  solver_info_->optJ_ = Eigen::kroneckerProduct(solver_info_->optJ_, Eigen::Matrix<T, 3, 3>::Ones()).eval();
+  solver_info_->optL_ = Eigen::kroneckerProduct(solver_info_->optL_, Eigen::Matrix<T, 3, 3>::Identity()).eval();
+  solver_info_->optJ_ = Eigen::kroneckerProduct(solver_info_->optJ_, Eigen::Matrix<T, 3, 3>::Identity()).eval();
   solver_info_->optL_ = para::stiffness * solver_info_->optL_;
   solver_info_->optJ_ = para::stiffness * solver_info_->optJ_;
-  solver_info_->optX_ = solver_info_->optM_ + para::dt * para::dt * solver_info_->optJ_;
+  solver_info_->optX_ = solver_info_->optM_ + para::dt * para::dt * solver_info_->optL_;
 
 
   solver_info_->f_ext_ = para::gravity * mass_vec;
-  solver_info_->f_ext_ = Eigen::kroneckerProduct(solver_info_->f_ext_, Eigen::Matrix<T, 3, 1>::Ones()).eval();
+  Eigen::Matrix<T, 3, 1> f_ext_coeff(3);
+  f_ext_coeff << 0, -1, 0;
+  solver_info_->f_ext_ = Eigen::kroneckerProduct(solver_info_->f_ext_, f_ext_coeff).eval();
   solver_info_->h_ = para::dt;
   solver_info_->origin_length_ = GetEdgeOriginLength(nods_coarse, cells_coarse);
   // info got
   // -------------------------------------------------------
-
-  
-
 }
 
 

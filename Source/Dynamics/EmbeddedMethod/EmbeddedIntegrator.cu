@@ -203,6 +203,7 @@ namespace PhysIKA
       shared_ptr<fast_ms_builder<Real>> fast_ms_epb_fac = dynamic_pointer_cast<fast_ms_builder<Real>>(epb_fac);
       fast_ms_solver_info_ = fast_ms_epb_fac->get_fast_ms_solver_info();  
     }
+
     auto pb = epb_fac->build_problem();
     dat_str_ = make_shared<dat_str_core<Real, 3>>(pb->Nx() / 3, pt.get<bool>("hes_is_const", false));
     exit_if(compute_hes_pattern(pb->energy_, dat_str_), "compute hes pattern fail");

@@ -25,7 +25,7 @@ target_link_libraries(mass_spring_pb
 TARGET_INCLUDE_DIRECTORIES(mass_spring_pb PUBLIC ${Boost_INCLUDE_DIRS})
 
 
-add_library(embedded_mass_spring_pb embedded_mass_spring_problem.cc)
+add_library(embedded_mass_spring_pb embedded_mass_spring_problem.cc fast_ms_problem.cc)
 target_link_libraries(embedded_mass_spring_pb
   ZJU_CORE
   ZJU_FEM
