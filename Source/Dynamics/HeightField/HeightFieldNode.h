@@ -26,6 +26,7 @@ namespace PhysIKA
 		void SWEconnect();
 
 		void loadHeightFieldParticles(Coord lo, Coord hi, Real distance, Real slope);
+		void loadParticlesFromImage(std::string &filename, Real distance, Real relax);
 
 		void updateTopology() override;
 
@@ -49,6 +50,9 @@ namespace PhysIKA
 		DeviceArrayField<int>  isBound;
 		DeviceArrayField<Real> h;//water surface height
 		NeighborField<int> neighbors;
+		int zcount = 0;
+		int xcount = 0;
+
 
 		int nx = 0;
 		int nz = 0;

@@ -40,7 +40,7 @@ namespace PhysIKA
 		DeviceArrayField<Real> h;//solid_pos + h*Normal = m_position
 		
 		NeighborField<int>	neighborIndex;
-
+		
 	protected:
 		bool initializeImpl() override;
 

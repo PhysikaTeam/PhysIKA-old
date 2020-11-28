@@ -1,7 +1,8 @@
 #include "HeightFieldNode.h"
 #include "Framework/Topology/HeightField.h"
 #include "ShallowWaterEquationModel.h"
-
+#include "IO\Image_IO\image.h"
+#include "IO\Image_IO\image_io.h"
 namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(HeightFieldNode, TDataType)
@@ -22,13 +23,9 @@ namespace PhysIKA
 	void HeightFieldNode<TDataType>::SWEconnect()
 	{
 		auto swe = this->getModule<ShallowWaterEquationModel<TDataType>>("swe");
-		//auto swe = this->template setNumericalModel<ShallowWaterEquationModel<TDataType>>("swe2");
-		//this->setNumericalModel(swe);
-		//std::shared_ptr<ShallowWaterEquationModel<TDataType>> swe = this->getNumericalModel();
 		this->currentPosition()->connect(&(swe->m_position));
 		
 		this->currentVelocity()->connect(&(swe->m_velocity));
-		//this->h.connect(swe->h);
 		this->normal.connect(&(swe->normal));
 
 		this->neighbors.connect(&(swe->neighborIndex));
@@ -81,13 +78,7 @@ namespace PhysIKA
 		{
 			for (Real z = lo[2]; z <= hi[2]; z += distance)
 			{
-				//if (pow(x - xcenter, 2) + pow(z - zcenter, 2) > 400*distance*distance)
-					//height = slope * pow(e, -400*distance*distance*100);
-				//	height = slope * pow(e, -400 * distance*distance * 10);
-				//else
 				height = 0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
-				//height = slope * pow(e, -(pow(x, 2) + pow(z, 2)) * 5);
-				//height = 3*slope*(x + z - lo[0] - lo[2]);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
@@ -112,12 +103,14 @@ namespace PhysIKA
 		this->relax = relax;
 		std::vector<Coord> solidList;
 		std::vector<Coord> normals;
+		std::vector<int> index;
 		std::vector<int>  isbound;
 		float height;
-		int xcount = 0;
+		xcount = 0;
 		for (Real x = lo[0]; x <= hi[0]; x += distance)
 		{
 			xcount++;
+			zcount = 0;
 			for (Real z = lo[2]; z <= hi[2]; z += distance)
 			{
 				height = 20 * (x + z - lo[0] - lo[2]);
@@ -125,45 +118,42 @@ namespace PhysIKA
 					isbound.push_back(1);
 				else
 					isbound.push_back(0);
-				//	height = 
 				solidList.push_back(Coord(x, lo[1], z));
-				//wh.push_back(height - lo[1]);
 				normals.push_back(Coord(0, 1, 0));
+				index.push_back(xcount, zcount);
+				zcount++;
 			}
 		}
 
 		solid.setElementCount(solidList.size());
 		Function1Pt::copy(solid.getValue(), solidList);
 
-		//h.setElementCount(solidList.size());
-		//Function1Pt::copy(h.getValue(), wh);
-
 		isBound.setElementCount(solidList.size());
 		Function1Pt::copy(isBound.getValue(), isbound);
 
 		normal.setElementCount(solidList.size());
 		Function1Pt::copy(normal.getValue(), normals);
-		//m_velocity.setElementCount(solidList.size());
-		//neighbors.resize(solidList.size(), 4);
-		neighbors.setElementCount(solidList.size(), 4);
-		//add four neighbors:up down left right
-		int zcount = solidList.size() / xcount;
-		int num = solidList.size();
-		printf("zcount is %d, xcount is %d\n", zcount, xcount);
-		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
-		InitNeighbor << < pDims, BLOCK_SIZE >> > (neighbors.getValue(), zcount, xcount);
-		cuSynchronize();
-		solidList.clear();
 		
+		neighbors.setElementCount(solidList.size(), 4);
+		zcount = solidList.size() / xcount;
+		
+		solidList.clear();
 		isbound.clear();
 		normals.clear();
-
 		DeviceArrayField<Coord> pos = *(this->currentPosition());
 		SWEconnect();
 
 		this->updateTopology();
 	}
 
+	template<typename TDataType>
+	void HeightFieldNode<TDataType>::loadParticlesFromImage(std::string &filename, Real distance, Real relax)
+	{
+		Image image;
+		if (ImageIO::load(filename, image) == false)
+			return;
+
+	}
 	template<typename TDataType>
 	HeightFieldNode<TDataType>::~HeightFieldNode()
 	{
@@ -219,11 +209,5 @@ namespace PhysIKA
 				pts);
 		}
 	}
-
-	//template<typename TDataType>
-	//void HeightField<TDataType>::loadObjFile(std::string filename)
-	//{
-	//	
-	//}
 
 }

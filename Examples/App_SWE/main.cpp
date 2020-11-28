@@ -42,14 +42,11 @@ void CreateScene()
 	scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
 	std::shared_ptr<HeightFieldNode<DataType3f>> root = scene.createNewScene<HeightFieldNode<DataType3f>>();
-	//root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(1.5, 2, 1.5), 0.02, true);
-	//root->loadSDF("../../Media/bowl/bowl.sdf", false);
 
 	auto ptRender = std::make_shared<HeightFieldRenderModule>();
 	ptRender->setColor(Vector3f(1, 0, 0));
 	root->addVisualModule(ptRender);
 
-	//child1->loadParticles("../Media/fluid/fluid_point.obj");
 	root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 0.005, 0.3, 0.998);
 	root->setMass(100);
 
