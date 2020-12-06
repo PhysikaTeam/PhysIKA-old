@@ -28,12 +28,14 @@ namespace PhysIKA
 		this->currentVelocity()->connect(&(swe->m_velocity));
 		this->normal.connect(&(swe->normal));
 
-		this->neighbors.connect(&(swe->neighborIndex));
 		this->isBound.connect(&(swe->isBound));
 		this->solid.connect(&(swe->solid));
+		this->xindex.connect(&(swe->xindex));
+		this->zindex.connect(&(swe->zindex));
 
 		swe->setDistance(distance);
 		swe->setRelax(relax);
+		swe->setZcount(zcount);
 	}
 
 	template<typename TDataType>
@@ -72,7 +74,7 @@ namespace PhysIKA
 
 		float height, e = 2.71828;
 		nx = (hi[0] - lo[0]) / distance;
-		nz = (hi[2] - lo[0]) / distance;
+		nz = (hi[2] - lo[2]) / distance;
 		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		for (Real x = lo[0]; x <= hi[0]; x += distance)
 		{
@@ -103,13 +105,12 @@ namespace PhysIKA
 		this->relax = relax;
 		std::vector<Coord> solidList;
 		std::vector<Coord> normals;
-		std::vector<int> index;
+		std::vector<int> xIndex;
+		std::vector<int> zIndex;
 		std::vector<int>  isbound;
 		float height;
-		xcount = 0;
 		for (Real x = lo[0]; x <= hi[0]; x += distance)
 		{
-			xcount++;
 			zcount = 0;
 			for (Real z = lo[2]; z <= hi[2]; z += distance)
 			{
@@ -120,9 +121,11 @@ namespace PhysIKA
 					isbound.push_back(0);
 				solidList.push_back(Coord(x, lo[1], z));
 				normals.push_back(Coord(0, 1, 0));
-				index.push_back(xcount, zcount);
+				xIndex.push_back(xcount);
+				zIndex.push_back(zcount);
 				zcount++;
 			}
+			xcount++;
 		}
 
 		solid.setElementCount(solidList.size());
@@ -133,27 +136,39 @@ namespace PhysIKA
 
 		normal.setElementCount(solidList.size());
 		Function1Pt::copy(normal.getValue(), normals);
+
+		//************************
+		xindex.setElementCount(solidList.size());
+		Function1Pt::copy(xindex.getValue(), xIndex);		
 		
+		zindex.setElementCount(solidList.size());
+		Function1Pt::copy(zindex.getValue(), zIndex);
+		//**************************
+
 		neighbors.setElementCount(solidList.size(), 4);
 		zcount = solidList.size() / xcount;
-		
+
+		printf("zcount is %d, xcount is %d\n", zcount, xcount);
+
 		solidList.clear();
 		isbound.clear();
 		normals.clear();
+		xIndex.clear();
+		zIndex.clear();
 		DeviceArrayField<Coord> pos = *(this->currentPosition());
 		SWEconnect();
 
 		this->updateTopology();
 	}
 
-	template<typename TDataType>
-	void HeightFieldNode<TDataType>::loadParticlesFromImage(std::string &filename, Real distance, Real relax)
-	{
-		Image image;
-		if (ImageIO::load(filename, image) == false)
-			return;
+	//template<typename TDataType>
+	//void HeightFieldNode<TDataType>::loadParticlesFromImage(std::string &filename, Real distance, Real relax)
+	//{
+	//	Image image;
+	//	if (ImageIO::load(filename, image) == false)
+	//		return;
 
-	}
+	//}
 	template<typename TDataType>
 	HeightFieldNode<TDataType>::~HeightFieldNode()
 	{

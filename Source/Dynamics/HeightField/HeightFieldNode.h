@@ -48,6 +48,9 @@ namespace PhysIKA
 		DeviceArrayField<Coord> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;
+		DeviceArrayField<int>  xindex;
+		DeviceArrayField<int>  zindex;
+		
 		DeviceArrayField<Real> h;//water surface height
 		NeighborField<int> neighbors;
 		int zcount = 0;

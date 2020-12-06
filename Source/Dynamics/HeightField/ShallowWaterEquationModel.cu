@@ -58,34 +58,57 @@ namespace PhysIKA
 		m_accel.setElementCount(num);
 		h.setElementCount(num);
 		
-		printf("neighbor limit is %d, index count is %d\n", neighborIndex.getReference()->getNeighborLimit(), neighborIndex.getElementCount());
+		printf("neighbor limit is 4, index count is %d\n", solid.getElementCount());
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
 		Init <Real, Coord> << < pDims, BLOCK_SIZE >> > (m_position.getValue(), solid.getValue(), h.getValue(), isBound.getValue(), m_velocity.getValue());
 		cuSynchronize();
 		return true;
 	}
 
+	__device__ int neighborFind(int ix, int iz, int j, int zcount) {
+		if (j == 0) {
+			if (iz == 0)return -1;
+			else return ix * zcount + iz - 1;
+		}
+		else if (j == 1) {
+			if (iz + 1 == zcount)return -1;
+			else return ix * zcount + iz + 1;
+		}
+		else if (j == 2) {
+			return (ix - 1)*zcount + iz;
+		}
+		else if (j == 3) {
+			return (ix + 1)*zcount + iz;
+		}
+	}
+
 	template<typename Real, typename Coord>
 	__global__ void computeAccel(
 		DeviceArray<Real> h,
-		NeighborList<int>	neighborIndex,
+		//NeighborList<int>	neighborIndex,
+		DeviceArray<int> xindex,
+		DeviceArray<int> zindex,
 		DeviceArray<Coord> m_accel,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_position,
 		DeviceArray<int> isBound,
+		int zcount,
 		Real distance,
 		Real gravity)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
-		int maxNei = neighborIndex.getNeighborLimit();
+		int maxNei = 4;
 		
+		int ix = xindex[i];
+		int iz = zindex[i];
+
 		int count1 = 0, count2 = 0;
 		Real hx = 0, hz = 0;
 		Real ux = 0, uz = 0, wx = 0, wz = 0;
 		for (int j = 0; j < maxNei; ++j)
 		{
-			int nei = neighborIndex.getElement(i, j);
+			int nei = neighborFind(ix, iz, j, zcount);
 			if (nei >= h.size() || nei < 0)
 			{
 				continue;
@@ -121,11 +144,14 @@ namespace PhysIKA
 	template<typename Real, typename Coord>
 	__global__ void computeVelocity(
 		DeviceArray<Real> h,
-		NeighborList<int>	neighborIndex,
+		//NeighborList<int>	neighborIndex,
+		DeviceArray<int> xindex,
+		DeviceArray<int> zindex,
 		DeviceArray<Coord> m_accel,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_position,
 		DeviceArray<int> isBound,
+		int zcount,
 		Real distance,
 		Real relax,
 		Real gravity,
@@ -134,13 +160,16 @@ namespace PhysIKA
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 		//if (isBound[i])return;
-		int maxNei = neighborIndex.getNeighborLimit();
+		int maxNei = 4;
 		
+		int ix = xindex[i];
+		int iz = zindex[i];
+
 		int count1 = 0, count2 = 0;
 		Real hx = 0, hz = 0;
 		for (int j = 0; j < maxNei; ++j)
 		{
-			int nei = neighborIndex.getElement(i, j);
+			int nei = neighborFind(ix, iz, j, zcount);
 			//bound cell
 			if (nei >= h.size() || nei < 0)
 			{
@@ -175,11 +204,14 @@ namespace PhysIKA
 	template<typename Real, typename Coord>
 	__global__ void computeBoundConstrant(
 		DeviceArray<Real> h,
-		NeighborList<int>	neighborIndex,
+		//NeighborList<int>	neighborIndex,
+		DeviceArray<int> xindex,
+		DeviceArray<int> zindex,
 		DeviceArray<Coord> m_accel,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_position,
 		DeviceArray<int> isBound,
+		int zcount,
 		Real distance,
 		Real gravity,
 		Real dt)
@@ -187,13 +219,17 @@ namespace PhysIKA
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 		if (isBound[i] == 0)return;
-		int maxNei = neighborIndex.getNeighborLimit();
+		int maxNei = 4;
+
+		int ix = xindex[i];
+		int iz = zindex[i];
+
 		int count1 = 0, count2 = 0;
 		Real hx = 0, hz = 0;
 		int znei, xnei;
 		for (int j = 0; j < maxNei; ++j)
 		{
-			int nei = neighborIndex.getElement(i, j);
+			int nei = neighborFind(ix, iz, j, zcount);
 			if (nei >= h.size() || nei < 0)
 			{
 				switch(j)
@@ -227,25 +263,31 @@ namespace PhysIKA
 	template<typename Real, typename Coord>
 	__global__ void computeHeight(
 		DeviceArray<Real> h,
-		NeighborList<int>	neighborIndex,
+		//NeighborList<int>	neighborIndex,
+		DeviceArray<int> xindex,
+		DeviceArray<int> zindex,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_accel,
 		DeviceArray<int> isBound,
 		DeviceArray<Coord> m_position,
 		DeviceArray<Coord> solid,
 		DeviceArray<Coord> normal,
+		int zcount,
 		Real distance,
 		Real dt)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
-		int maxNei = neighborIndex.getNeighborLimit();
+		int maxNei = 4;
+
+		int ix = xindex[i];
+		int iz = zindex[i];
 
 		int count1 = 0, count2 = 0;
 		Real uhx = 0, whz = 0;
 		for (int j = 0; j < maxNei; ++j)
 		{
-			int nei = neighborIndex.getElement(i, j);
+			int nei = neighborFind(ix, iz, j, zcount);;
 			//bound cell
 			if (nei >= h.size() || nei < 0)
 			{
@@ -275,6 +317,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ShallowWaterEquationModel<TDataType>::step(Real dt)
 	{
+
 		Node* parent = getParent();
 		if (parent == NULL)
 		{
@@ -285,13 +328,22 @@ namespace PhysIKA
 		int num = m_position.getElementCount();
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
 
+		//计时开始
+		cudaEvent_t start, stop;
+		cudaEventCreate(&start);
+		cudaEventCreate(&stop);
+		cudaEventRecord(start);
+
 		computeBoundConstrant <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			h.getValue(),
-			neighborIndex.getValue(),
+			//neighborIndex.getValue(),
+			xindex.getValue(),
+			zindex.getValue(),
 			m_accel.getValue(),
 			m_velocity.getValue(),
 			m_position.getValue(),
 			isBound.getValue(),
+			zcount,
 			distance,
 			9.8,
 			dt
@@ -300,11 +352,14 @@ namespace PhysIKA
 
 		computeAccel <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			h.getValue(),
-			neighborIndex.getValue(),
+			//neighborIndex.getValue(),
+			xindex.getValue(),
+			zindex.getValue(),
 			m_accel.getValue(),
 			m_velocity.getValue(),
 			m_position.getValue(),
 			isBound.getValue(),
+			zcount,
 			distance,
 			9.8
 			);
@@ -312,11 +367,14 @@ namespace PhysIKA
 
 		computeVelocity <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			h.getValue(),
-			neighborIndex.getValue(),
+			//neighborIndex.getValue(),
+			xindex.getValue(),
+			zindex.getValue(),
 			m_accel.getValue(),
 			m_velocity.getValue(),
 			m_position.getValue(),
 			isBound.getValue(),
+			zcount,
 			distance,
 			relax,
 			9.8,
@@ -328,18 +386,44 @@ namespace PhysIKA
 
 		computeHeight <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			h.getValue(),
-			neighborIndex.getValue(),
+			//neighborIndex.getValue(),
+			xindex.getValue(),
+			zindex.getValue(),
 			m_velocity.getValue(),
 			m_accel.getValue(),
 			isBound.getValue(),
 			m_position.getValue(),
 			solid.getValue(),
 			normal.getValue(),
+			zcount,
 			distance,
 			dt
 			);
 		cuSynchronize();
 
+		cudaEventRecord(stop);
+
+		cudaEventSynchronize(stop);
+		float milliseconds = 0;
+		cudaEventElapsedTime(&milliseconds, start, stop);
+
+		sumtimes += milliseconds;
+		sumnum++;
+		printf("Time: %f \n", sumtimes / sumnum);
+		/*
+		//输出看看
+		if (sumnum == 1000) {
+			std::string s = "C:\\temp.txt";
+			std::ofstream myout;
+			myout.open(s, std::ios::out | std::ios::app);
+			if (!myout) {
+				std::ofstream newout(s);
+				newout << sumtimes / sumnum << std::endl;
+			}
+			myout << sumtimes / sumnum << std::endl;
+			myout.close();
+		}
+		*/
 	/*	cublasHandle_t handle;
 		float sum;
 		cublasCreate(&handle);

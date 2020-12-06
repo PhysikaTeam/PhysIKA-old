@@ -28,6 +28,7 @@ namespace PhysIKA
 
 		void setDistance(Real distance) { this->distance = distance; }
 		void setRelax(Real relax) { this->relax = relax; }
+		void setZcount(int zcount) { this->zcount = zcount; }
 	public:
 		
 		DeviceArrayField<Coord> m_position;
@@ -37,9 +38,10 @@ namespace PhysIKA
 		DeviceArrayField<Coord> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;
+		DeviceArrayField<int>  xindex;
+		DeviceArrayField<int>  zindex;
 		DeviceArrayField<Real> h;//solid_pos + h*Normal = m_position
 		
-		NeighborField<int>	neighborIndex;
 		
 	protected:
 		bool initializeImpl() override;
@@ -48,6 +50,11 @@ namespace PhysIKA
 		int m_pNum;
 		Real distance;
 		Real relax;
+		int zcount;
+
+		//µ÷ÊÔÊ±¼ä
+		float sumtimes = 0;
+		int sumnum = 0;
 	};
 
 #ifdef PRECISION_FLOAT
