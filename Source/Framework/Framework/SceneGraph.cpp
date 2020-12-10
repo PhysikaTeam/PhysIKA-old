@@ -83,7 +83,7 @@ void SceneGraph::takeOneFrame()
 		return;
 	}
 	m_root->traverseTopDown<AnimateAct>();*/
-	std::cout << "****************Frame " << m_frameNumber << " Started" << std::endl;
+	//std::cout << "****************Frame " << m_frameNumber << " Started" << std::endl;
 
 	if (m_root == nullptr)
 	{
@@ -126,7 +126,7 @@ void SceneGraph::takeOneFrame()
 	
 	m_root->traverseTopDown<PostProcessing>();
 
-	std::cout << "****************Frame " << m_frameNumber << " Ended" << std::endl << std::endl;
+	//std::cout << "****************Frame " << m_frameNumber << " Ended" << std::endl << std::endl;
 
 	m_frameNumber++;
 }

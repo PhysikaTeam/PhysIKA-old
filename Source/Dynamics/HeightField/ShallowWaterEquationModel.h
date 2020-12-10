@@ -5,14 +5,6 @@
 
 namespace PhysIKA
 {
-	/*!
-	*	\class	ParticleSystem
-	*	\brief	Position-based fluids.
-	*
-	*	This class implements a position-based fluid solver.
-	*	Refer to Macklin and Muller's "Position Based Fluids" for details
-	*
-	*/
 	template<typename TDataType>
 	class ShallowWaterEquationModel : public NumericalModel
 	{
@@ -41,7 +33,7 @@ namespace PhysIKA
 		DeviceArrayField<int>  xindex;
 		DeviceArrayField<int>  zindex;
 		DeviceArrayField<Real> h;//solid_pos + h*Normal = m_position
-		
+		DeviceArrayField<Real> h_buffer;
 		
 	protected:
 		bool initializeImpl() override;

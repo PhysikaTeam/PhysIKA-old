@@ -63,7 +63,6 @@ namespace PhysIKA
 
 		neighbors.setElement(i, 2, i - zcount);
 		neighbors.setElement(i, 3, i + zcount);
-
 	}
 
 	template<typename TDataType>
@@ -108,18 +107,20 @@ namespace PhysIKA
 		std::vector<int> xIndex;
 		std::vector<int> zIndex;
 		std::vector<int>  isbound;
-		float height;
+		float height, e = 2.71828;
+		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		for (Real x = lo[0]; x <= hi[0]; x += distance)
 		{
 			zcount = 0;
 			for (Real z = lo[2]; z <= hi[2]; z += distance)
 			{
-				height = 20 * (x + z - lo[0] - lo[2]);
+				height = 0.2+slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
 				if (z + distance > hi[2] || x + distance > hi[0] || x == lo[0] || z == lo[2])
 					isbound.push_back(1);
 				else
 					isbound.push_back(0);
-				solidList.push_back(Coord(x, lo[1], z));
+				solidList.push_back(Coord(x, lo[1] + height, z));
+				//solidList.push_back(Coord(x, lo[1], z));
 				normals.push_back(Coord(0, 1, 0));
 				xIndex.push_back(xcount);
 				zIndex.push_back(zcount);
