@@ -82,6 +82,7 @@ namespace PhysIKA
 				height = 0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
+				//vertList.push_back(Coord(x, lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
 			}
 		}

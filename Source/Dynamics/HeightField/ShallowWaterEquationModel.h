@@ -26,6 +26,12 @@ namespace PhysIKA
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
 		DeviceArrayField<Coord> m_accel;
+		//staggered grid
+		DeviceArrayField<Real> grid_vel_x;
+		DeviceArrayField<Real> grid_vel_z;
+		DeviceArrayField<Real> grid_accel_x;
+		DeviceArrayField<Real> grid_accel_z;
+
 		
 		DeviceArrayField<Coord> solid;
 		DeviceArrayField<Coord> normal;
@@ -43,7 +49,7 @@ namespace PhysIKA
 		Real distance;
 		Real relax;
 		int zcount;
-
+		int xcount;
 		//µ÷ÊÔÊ±¼ä
 		float sumtimes = 0;
 		int sumnum = 0;
