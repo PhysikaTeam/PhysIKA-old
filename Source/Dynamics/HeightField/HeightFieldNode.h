@@ -52,7 +52,6 @@ namespace PhysIKA
 		DeviceArrayField<int>  zindex;
 		
 		DeviceArrayField<Real> h;//water surface height
-		NeighborField<int> neighbors;
 		int zcount = 0;
 		int xcount = 0;
 

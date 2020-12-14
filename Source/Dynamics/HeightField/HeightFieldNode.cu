@@ -75,12 +75,13 @@ namespace PhysIKA
 		float height, e = 2.71828;
 		nx = (hi[0] - lo[0]) / distance;
 		nz = (hi[2] - lo[2]) / distance;
-		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		//float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		float xcenter = 0.3, zcenter = 0.3;
 		for (Real x = lo[0]; x <= hi[0]; x += distance)
 		{
 			for (Real z = lo[2]; z <= hi[2]; z += distance)
 			{
-				height = 0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				//vertList.push_back(Coord(x, lo[1], z));
@@ -99,6 +100,7 @@ namespace PhysIKA
 		
 		this->currentVelocity()->setElementCount(vertList.size());
 		Function1Pt::copy(this->currentVelocity()->getValue(), vertList);
+		//猜想：currentPosition录值时录错了
 
 		vertList.clear();
 		normalList.clear();
@@ -107,7 +109,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, Real distance,Real slope, Real relax)
 	{
-
+		distance = 0.005;
 		loadHeightFieldParticles(lo, hi, distance, slope);
 		
 		this->distance = distance;
@@ -156,7 +158,6 @@ namespace PhysIKA
 		Function1Pt::copy(zindex.getValue(), zIndex);
 		//**************************
 
-		neighbors.setElementCount(solidList.size(), 4);
 		zcount = solidList.size() / xcount;
 
 		printf("zcount is %d, xcount is %d\n", zcount, xcount);

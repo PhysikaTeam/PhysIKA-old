@@ -591,6 +591,7 @@ namespace PhysIKA
 			myout.close();
 		}
 		*/
+		printf("height is %f\n", h[0]); 
 	/*	cublasHandle_t handle;
 		float sum;
 		cublasCreate(&handle);
