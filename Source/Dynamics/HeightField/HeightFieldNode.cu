@@ -2,7 +2,8 @@
 #include "Framework/Topology/HeightField.h"
 #include "ShallowWaterEquationModel.h"
 #include "IO\Image_IO\image.h"
-#include "IO\Image_IO\image_io.h"
+#include "IO\Image_IO\png_io.h"
+
 namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(HeightFieldNode, TDataType)
@@ -90,7 +91,14 @@ namespace PhysIKA
 		this->currentPosition()->setElementCount(vertList.size());
 		Function1Pt::copy(this->currentPosition()->getValue(), vertList);
 
+		Image *image = new Image;
+		std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\1.png";
+		PngIO::load(filename1, image);
+		//string filename2 = "F:\\新建文件夹\\大四第一学期\\swe\\2.png";
+		//PngIO::save(filename2, image);
+		
 		this->currentVelocity()->setElementCount(vertList.size());
+		Function1Pt::copy(this->currentVelocity()->getValue(), vertList);
 
 		vertList.clear();
 		normalList.clear();
@@ -99,6 +107,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, Real distance,Real slope, Real relax)
 	{
+
 		loadHeightFieldParticles(lo, hi, distance, slope);
 		
 		this->distance = distance;
@@ -120,8 +129,8 @@ namespace PhysIKA
 					isbound.push_back(1);
 				else
 					isbound.push_back(0);
-				solidList.push_back(Coord(x, lo[1] + height, z));
-				//solidList.push_back(Coord(x, lo[1], z));
+				//solidList.push_back(Coord(x, lo[1] + height, z));
+				solidList.push_back(Coord(x, lo[1], z));
 				normals.push_back(Coord(0, 1, 0));
 				xIndex.push_back(xcount);
 				zIndex.push_back(zcount);

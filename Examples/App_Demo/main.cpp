@@ -15,9 +15,6 @@
 
 #include "Rendering/HeightFieldRender.h"
 
-#include "IO\Image_IO\image.h"
-#include "IO\Image_IO\png_io.h"
-
 using namespace std;
 using namespace PhysIKA;
 

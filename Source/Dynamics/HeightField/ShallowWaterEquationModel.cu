@@ -135,6 +135,25 @@ namespace PhysIKA
 				switch (j)
 				{
 				case 0:
+					m_velocity[i][2] = 0;
+					h[i] = h[ix*zcount + iz + 1];
+					break;
+				case 1:
+					m_velocity[i][2] = 0;
+					h[i] = h[ix*zcount + iz - 1];
+					break;
+				case 2:
+					m_velocity[i][0] = 0;
+					h[i] = h[(ix + 1)*zcount + iz];
+					break;
+				case 3:
+					m_velocity[i][0] = 0;
+					h[i] = h[(ix - 1)*zcount + iz];
+					break;
+				}
+				/*switch (j)
+				{
+				case 0:
 				case 1:
 					m_velocity[i][2] = 0;
 					break;
@@ -142,7 +161,7 @@ namespace PhysIKA
 				case 3:
 					m_velocity[i][0] = 0;
 					break;
-				}
+				}*/
 			}
 
 		}
@@ -461,6 +480,22 @@ namespace PhysIKA
 		//cudaEventCreate(&start);
 		//cudaEventCreate(&stop);
 		//cudaEventRecord(start);
+
+		computeBoundConstrant <Real, Coord> << < pDims, BLOCK_SIZE >> > (
+			h.getValue(),
+			xindex.getValue(),
+			zindex.getValue(),
+			m_accel.getValue(),
+			m_velocity.getValue(),
+			m_position.getValue(),
+			isBound.getValue(),
+			zcount,
+			distance,
+			9.8,
+			dt
+			);
+		cuSynchronize();
+		cudaDeviceSynchronize();
 
 		computeGridAccel <Real, Coord> << < pDims2, BLOCK_SIZE >> > (
 			grid_vel_x.getValue(),
