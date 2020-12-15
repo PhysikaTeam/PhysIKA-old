@@ -166,9 +166,10 @@ namespace PhysIKA
 		SWEconnect();
 
 		this->updateTopology();
-		//Coord ori = lo;
-		//ori[2] = 0.5 * (lo[2] + hi[2]);
-		//m_height_field->setOrigin(ori);
+		Coord ori = Coord(0,0,0);
+		ori[2] = -0.5 * (lo[2] + hi[2]);
+		ori[0] = -0.5 * (lo[0] + hi[0]);
+		m_height_field->setOrigin(ori);
 	}
 
 	//template<typename TDataType>

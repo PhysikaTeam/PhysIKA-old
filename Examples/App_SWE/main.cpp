@@ -48,7 +48,7 @@ void CreateScene()
 	root->addVisualModule(ptRender);
 
 	//root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 0.005, 0.15, 1);
-	root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(20, 1.5, 20), 0.05, 0.15, 1);
+	root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(3, 1.5, 3), 0.005, 0.15, 1);
 	root->setMass(100);
 
 
