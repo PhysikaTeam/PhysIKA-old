@@ -29,7 +29,7 @@ namespace PhysIKA
 		Real getDz() { return m_dz; }
 
 		Coord getOrigin() { return origin; }
-		
+		void setOrigin(Coord o) { origin = o; }
 
 		DeviceArray2D<Real>& getHeights() { return m_height; }
 

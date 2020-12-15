@@ -105,22 +105,22 @@ namespace PhysIKA
 
 		if (i < heights.Nx() - 1 && j < heights.Ny() - 1)
 		{
-			int id = i + j * heights.Nx();
+			int id = i + j * (heights.Nx() - 1);
 
 			//if (j == 2)
 // 			{
 // 				printf("%d \n", j);
 // 			}
-
+			//printf("dx is %f, dz is %f\n", dx, dz);
 			float3 v1 = origin + make_float3(i*dx, heights(i, j), j*dz);
 			float3 v2 = origin + make_float3((i + 1)*dx, heights(i + 1, j), j*dz);
 			float3 v3 = origin + make_float3(i*dx, heights(i, j+1), (j+1)*dz);
 			float3 v4 = origin + make_float3((i+1)*dx, heights(i+1, j+1), (j+1)*dz);
 
-// 			float3 v1 = origin + make_float3(i*dx, 0.5f, j*dz);
-// 			float3 v2 = origin + make_float3((i + 1)*dx, 0.5f, ((j + 1))*dz);
-// 			float3 v3 = origin + make_float3(i*dx, 0.5f, (j + 1)*dz);
-// 			float3 v4 = origin + make_float3((i + 1)*dx, 0.5f, (j + 1)*dz);
+ 			//float3 v1 = origin + make_float3(i*dx, 0.5f, j*dz);
+ 			//float3 v2 = origin + make_float3((i + 1)*dx, 0.5f, ((j + 1))*dz);
+ 			//float3 v3 = origin + make_float3(i*dx, 0.5f, (j + 1)*dz);
+ 			//float3 v4 = origin + make_float3((i + 1)*dx, 0.5f, (j + 1)*dz);
 
 			vertices[3 * (2 * id) + 0] = v1;
 			vertices[3 * (2 * id) + 1] = v2;
@@ -176,18 +176,18 @@ namespace PhysIKA
 
 		auto heights = hf->getHeights();
 		int numOfTriangles = (heights.Nx() - 1)*(heights.Ny() - 1) * 2;
-
+		//printf("heights nx is %d, ny is %d\n", heights.Nx(), heights.Ny());
 		vertices.resize(3 * numOfTriangles);
 		normals.resize(3 * numOfTriangles);
 		colors.resize(3 * numOfTriangles);
-
+		
 		uint3 total_size;
 		total_size.x = heights.Nx() - 1;
 		total_size.y = heights.Ny() - 1;
 		total_size.z = 1;
 
 		auto ori = hf->getOrigin();
-
+		
 		cuExecute3D(total_size, SetupTriangles,
 			vertices,
 			normals,
@@ -197,6 +197,16 @@ namespace PhysIKA
 			hf->getDz(),
 			make_float3(ori[0], ori[1], ori[2]),
 			make_float3(1.0, 0.0, 0.0));
+		char str[200];							
+		cudaDeviceSynchronize();				
+		cudaError_t err = cudaGetLastError();	
+		if (err != cudaSuccess)					
+		{										
+			//sprintf(str, "CUDA error: %d : %s at %s:%d \n", err, cudaGetErrorString(err), __FILE__, __LINE__);		
+			std::string str = cudaGetErrorString(err);
+			sprintf("CUDA error:  %s \n", str.c_str());
+			throw std::runtime_error(std::string(str));																
+		}
 
 		if (m_triangleRender == nullptr)
 		{

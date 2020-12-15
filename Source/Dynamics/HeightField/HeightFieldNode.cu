@@ -74,6 +74,7 @@ namespace PhysIKA
 		float height, e = 2.71828;
 		nx = (hi[0] - lo[0]) / distance;
 		nz = (hi[2] - lo[2]) / distance;
+
 		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		for (Real x = lo[0]; x <= hi[0]; x += distance)
 		{
@@ -110,6 +111,7 @@ namespace PhysIKA
 		std::vector<int>  isbound;
 		float height, e = 2.71828;
 		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		xcount = 0;
 		for (Real x = lo[0]; x <= hi[0]; x += distance)
 		{
 			zcount = 0;
@@ -120,8 +122,8 @@ namespace PhysIKA
 					isbound.push_back(1);
 				else
 					isbound.push_back(0);
-				solidList.push_back(Coord(x, lo[1] + height, z));
-				//solidList.push_back(Coord(x, lo[1], z));
+				//solidList.push_back(Coord(x, lo[1] + height, z));
+				solidList.push_back(Coord(x, lo[1], z));
 				normals.push_back(Coord(0, 1, 0));
 				xIndex.push_back(xcount);
 				zIndex.push_back(zcount);
@@ -151,6 +153,9 @@ namespace PhysIKA
 		zcount = solidList.size() / xcount;
 
 		printf("zcount is %d, xcount is %d\n", zcount, xcount);
+		nx = xcount;
+		nz = zcount;
+		//printf("nx is %d, nz is %d\n", nx, nz);
 
 		solidList.clear();
 		isbound.clear();
@@ -161,6 +166,9 @@ namespace PhysIKA
 		SWEconnect();
 
 		this->updateTopology();
+		//Coord ori = lo;
+		//ori[2] = 0.5 * (lo[2] + hi[2]);
+		//m_height_field->setOrigin(ori);
 	}
 
 	//template<typename TDataType>
@@ -192,7 +200,8 @@ namespace PhysIKA
 
 		if (i < height.Nx() && j < height.Ny())
 		{
-			int id = i + j * (height.Nx() + 1);
+			//int id = i + j * (height.Nx() + 1);
+			int id = i + j * (height.Nx());
 
 			height(i, j) = pts[id][1];
 		}
@@ -207,6 +216,7 @@ namespace PhysIKA
 			auto& pts = this->currentPosition()->getValue();
 
 			m_height_field->setSpace(0.005, 0.005);
+			
 			auto& heights = m_height_field->getHeights();
 
 			if (nx != heights.Nx() || nz != heights.Ny())
