@@ -36,8 +36,6 @@ namespace PhysIKA
 		DeviceArrayField<Coord> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;
-		DeviceArrayField<int>  xindex;
-		DeviceArrayField<int>  zindex;
 		DeviceArrayField<Real> h;//solid_pos + h*Normal = m_position
 		DeviceArrayField<Real> h_buffer;
 		

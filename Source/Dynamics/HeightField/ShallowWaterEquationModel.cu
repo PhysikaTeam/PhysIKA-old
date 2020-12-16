@@ -106,8 +106,6 @@ namespace PhysIKA
 	template<typename Real, typename Coord>
 	__global__ void computeBoundConstrant(
 		DeviceArray<Real> h,
-		DeviceArray<int> xindex,
-		DeviceArray<int> zindex,
 		DeviceArray<Coord> m_accel,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_position,
@@ -124,8 +122,8 @@ namespace PhysIKA
 			return;
 		int maxNei = 4;
 
-		int ix = xindex[i];
-		int iz = zindex[i];
+		int ix = i/zcount;
+		int iz = i%zcount;
 
 		for (int j = 0; j < maxNei; ++j)
 		{
@@ -170,8 +168,6 @@ namespace PhysIKA
 	template<typename Real, typename Coord>
 	__global__ void computeAccel(
 		DeviceArray<Real> h,
-		DeviceArray<int> xindex,
-		DeviceArray<int> zindex,
 		DeviceArray<Coord> m_accel,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_position,
@@ -186,8 +182,8 @@ namespace PhysIKA
 		if (i >= h.size())  return;
 		int maxNei = 4;
 		
-		int ix = xindex[i];
-		int iz = zindex[i];
+		int ix = i / zcount;
+		int iz = i % zcount;
 		Real hx = 0, hz = 0;
 		Real p1, p2;
 		Real ux = 0, uz = 0, wx = 0, wz = 0;
@@ -257,6 +253,7 @@ namespace PhysIKA
 		{
 			ix = i / (zcount + 2);
 			iz = i % (zcount + 2);
+			//控制边界处加速度是0
 			if (iz == 0 || iz == zcount + 1 || ix == 0 || ix == xcount)
 				grid_accel_x[i] = 0;
 			else 
@@ -277,9 +274,9 @@ namespace PhysIKA
 				ux = (grid_vel_x[nei2] - grid_vel_x[nei1]) / distance * 0.5;
 				//compute velocity z
 				//Real u = grid_vel_x[i], w = 0;
-				Real u = grid_vel_x[i] * 0.5 + 
-					0.25 * (grid_vel_x[(ix-1)*(zcount+2)+iz] + grid_vel_x[(ix + 1) * (zcount + 2) + iz]),
-					w = 0;
+				Real u = grid_vel_x[i] 
+					* 0.5 + 0.25 * (grid_vel_x[(ix-1)*(zcount+2)+iz] + grid_vel_x[(ix + 1) * (zcount + 2) + iz])
+					,w = 0;
 				w += grid_vel_z[ix * (zcount + 1) + iz - 1]; w += grid_vel_z[ix * (zcount + 1) + iz];
 				w += grid_vel_z[(ix + 1) * (zcount + 1) + iz - 1]; w += grid_vel_z[(ix + 1) * (zcount + 1) + iz];
 				w *= 0.25;
@@ -312,8 +309,9 @@ namespace PhysIKA
 				wx = (grid_vel_z[nei2] - grid_vel_z[nei1]) / distance * 0.5;
 				//compute velocity z
 				//Real u = 0, w = grid_vel_z[i];
-				Real u = 0,
-					w = 0.5 * grid_vel_z[i] + 0.25 * (grid_vel_z[i - 1] + grid_vel_z[i + 1]);
+				Real w = grid_vel_z[i]
+					* 0.5 + 0.25 * (grid_vel_z[i - 1] + grid_vel_z[i + 1])
+					, u = 0;
 				u += grid_vel_x[(ix - 1) * (zcount + 2) + iz]; u += grid_vel_x[(ix - 1) * (zcount + 2) + iz + 1];
 				u += grid_vel_x[ix * (zcount + 2) + iz]; u += grid_vel_x[ix * (zcount + 2) + iz + 1];
 				u *= 0.25;
@@ -339,14 +337,15 @@ namespace PhysIKA
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		int ix, iz;
 		int xcount = grid_vel_x.size() / (zcount + 2) - 1;
-		//if (i == 0)
-		//	printf("xcount is %d, zcount is %d\n", xcount, zcount);
+		
+		//利用grid_accel_x更新grid_vel_x
 		if (i < grid_vel_x.size())
 		{
 			ix = i / (zcount + 2);
 			iz = i % (zcount + 2);
 			//if (iz == 0 || iz == zcount + 1 || ix == 0 || ix == xcount)
 			//	grid_vel_x[i] = 0;
+			//边界处本身是0，加速度又是0，自动就是0
 			grid_vel_x[i] = grid_vel_x[i] * relax + grid_accel_x[i] * dt;
 		}
 		if (i < grid_vel_z.size())
@@ -357,6 +356,7 @@ namespace PhysIKA
 			//	grid_vel_z[i] = 0;
 			grid_vel_z[i] = grid_vel_z[i] * relax + grid_accel_z[i] * dt;
 		}
+		//限制最大速度
 		Real maxVel = 2*sqrt(distance * gravity), vel;
 		//vel = sqrt(pow(m_velocity[i][0], 2) + pow(m_velocity[i][2], 2));
 		vel = abs(grid_vel_x[i]);
@@ -388,9 +388,10 @@ namespace PhysIKA
 		int xcount = h.size() / zcount;
 		int ix = i / zcount;
 		int iz = i % zcount;
-		
+		//根据MAC网格求中心的速度
 		m_velocity[i][0] = 0.5 * (grid_vel_x[ix * (zcount + 2) + iz + 1] + grid_vel_x[(ix + 1) * (zcount + 2) + iz + 1]);
 		m_velocity[i][2] = 0.5 * (grid_vel_z[(ix + 1) * (zcount + 1) + iz] + grid_vel_z[(ix + 1) * (zcount + 1) + iz + 1]);
+		//其实是一个边界条件
 		if (ix == 0 || ix == xcount - 1)
 			m_velocity[i][0] = 0;
 		if (iz == 0 || iz == zcount - 1)
@@ -402,8 +403,6 @@ namespace PhysIKA
 	__global__ void computeHeight(
 		DeviceArray<Real> h,
 		DeviceArray<Real> h_buffer,
-		DeviceArray<int> xindex,
-		DeviceArray<int> zindex,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_accel,
 		DeviceArray<int> isBound,
@@ -414,11 +413,12 @@ namespace PhysIKA
 		Real distance,
 		Real dt)
 	{
+		//计算深度h的导数
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 		int maxNei = 4;
-		int ix = xindex[i];
-		int iz = zindex[i];
+		int ix = i / zcount;
+		int iz = i % zcount;
 
 		Real uhx = 0, whz = 0;
 		for (int j = 0; j < maxNei; ++j)
@@ -439,6 +439,14 @@ namespace PhysIKA
 			}
 		}
 		h_buffer[i] = -(uhx / 2 + whz / 2)*dt;
+		//if (i == 0)
+		//{
+		//	printf("Heightxminzmin: %f \n", m_position[i][1]);
+		//	printf("Heightxminzmax: %f \n", m_position[zcount-1][1]);
+		//	printf("Heightxmaxzmin: %f \n", m_position[m_position.size()-zcount][1]);
+		//	printf("Heightxmaxzmax: %f \n", m_position[m_position.size()-1][1]);
+		//	printf("***************************************************\n");
+		//}
 	}
 
 	template<typename Real, typename Coord>
@@ -450,6 +458,7 @@ namespace PhysIKA
 		DeviceArray<Coord> m_velocity
 	)
 	{
+		//限制水深不能为负数，利用深度h的导数更新h，利用h更新position
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 		h[i] += h_buffer[i];
@@ -481,21 +490,6 @@ namespace PhysIKA
 		//cudaEventCreate(&stop);
 		//cudaEventRecord(start);
 
-		computeBoundConstrant <Real, Coord> << < pDims, BLOCK_SIZE >> > (
-			h.getValue(),
-			xindex.getValue(),
-			zindex.getValue(),
-			m_accel.getValue(),
-			m_velocity.getValue(),
-			m_position.getValue(),
-			isBound.getValue(),
-			zcount,
-			distance,
-			9.8,
-			dt
-			);
-		cuSynchronize();
-		cudaDeviceSynchronize();
 
 		computeGridAccel <Real, Coord> << < pDims2, BLOCK_SIZE >> > (
 			grid_vel_x.getValue(),
@@ -543,8 +537,6 @@ namespace PhysIKA
 		computeHeight <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			h.getValue(),
 			h_buffer.getValue(),
-			xindex.getValue(),
-			zindex.getValue(),
 			m_velocity.getValue(),
 			m_accel.getValue(),
 			isBound.getValue(),
@@ -591,7 +583,6 @@ namespace PhysIKA
 			myout.close();
 		}
 		*/
-		printf("height is %f\n", h[0]); 
 	/*	cublasHandle_t handle;
 		float sum;
 		cublasCreate(&handle);

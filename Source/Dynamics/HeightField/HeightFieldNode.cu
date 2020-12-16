@@ -31,8 +31,6 @@ namespace PhysIKA
 
 		this->isBound.connect(&(swe->isBound));
 		this->solid.connect(&(swe->solid));
-		this->xindex.connect(&(swe->xindex));
-		this->zindex.connect(&(swe->zindex));
 
 		swe->setDistance(distance);
 		swe->setRelax(relax);
@@ -67,29 +65,45 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void HeightFieldNode<TDataType>::loadHeightFieldParticles(Coord lo, Coord hi, Real distance, Real slope)
+	void HeightFieldNode<TDataType>::loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope)
 	{
 		std::vector<Coord> vertList;
 		std::vector<Coord> normalList;
 
 		float height, e = 2.71828;
+		Real distance = (hi[2] - lo[2]) / (pixels - 1);
 		nx = (hi[0] - lo[0]) / distance;
 		nz = (hi[2] - lo[2]) / distance;
-		//float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
-		float xcenter = 0.3, zcenter = 0.3;
-		for (Real x = lo[0]; x <= hi[0]; x += distance)
+		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		//float xcenter = 0.1, zcenter = 0.8;
+		Real x = lo[0];
+		for (int i = 0; i < pixels; i++)
 		{
-			for (Real z = lo[2]; z <= hi[2]; z += distance)
+			Real z = lo[2];
+			for (int j = 0; j < pixels; j++)
 			{
 				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				//vertList.push_back(Coord(x, lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
+				z += distance;
 			}
+			x += distance;
 		}
+		//int zcount = int((hi[2] - lo[2]) / distance) + 1;
+		/*vertList[vertList.size()-1][1] = 1;
+		vertList[vertList.size()-zcount*2][1] = 1;
+		vertList[0][1] = 1;
+		vertList[zcount-2][1] = 1;		
+		*/
+		/*vertList[vertList.size()-1][1] = 1;
+		vertList[vertList.size()-zcount][1] = 1;
+		vertList[0][1] = 1;
+		vertList[zcount-1][1] = 1;*/
 
 		this->currentPosition()->setElementCount(vertList.size());
+		//printf("vertList size is %d\n", vertList.size());
 		Function1Pt::copy(this->currentPosition()->getValue(), vertList);
 
 		Image *image = new Image;
@@ -100,33 +114,33 @@ namespace PhysIKA
 		
 		this->currentVelocity()->setElementCount(vertList.size());
 		Function1Pt::copy(this->currentVelocity()->getValue(), vertList);
-		//猜想：currentPosition录值时录错了
 
 		vertList.clear();
 		normalList.clear();
 	}
 
 	template<typename TDataType>
-	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, Real distance,Real slope, Real relax)
+	//void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, Real distance,Real slope, Real relax)
+	//用顶点数表示更直观一些
+	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, int pixels,Real slope, Real relax)
 	{
-		distance = 0.005;
-		loadHeightFieldParticles(lo, hi, distance, slope);
-		
+		Real distance = (hi[2] - lo[2]) / (pixels-1);
+		loadHeightFieldParticles(lo, hi, pixels, slope);
 		this->distance = distance;
 		this->relax = relax;
 		std::vector<Coord> solidList;
 		std::vector<Coord> normals;
-		std::vector<int> xIndex;
-		std::vector<int> zIndex;
 		std::vector<int>  isbound;
 		float height, e = 2.71828;
 		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
-		for (Real x = lo[0]; x <= hi[0]; x += distance)
+		Real x = lo[0], z = lo[2];
+		for (int i = 0; i < pixels; i++) 
 		{
-			zcount = 0;
-			for (Real z = lo[2]; z <= hi[2]; z += distance)
+			Real z = lo[2];
+			for (int j = 0;j < pixels; j++)
 			{
 				height = 0.2+slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				//height = z*0.2;
 				if (z + distance > hi[2] || x + distance > hi[0] || x == lo[0] || z == lo[2])
 					isbound.push_back(1);
 				else
@@ -134,12 +148,13 @@ namespace PhysIKA
 				//solidList.push_back(Coord(x, lo[1] + height, z));
 				solidList.push_back(Coord(x, lo[1], z));
 				normals.push_back(Coord(0, 1, 0));
-				xIndex.push_back(xcount);
-				zIndex.push_back(zcount);
-				zcount++;
+				z += distance;
 			}
-			xcount++;
+			//printf("%f,\n", x);
+			x += distance;
 		}
+		xcount = pixels;
+		zcount = pixels;
 
 		solid.setElementCount(solidList.size());
 		Function1Pt::copy(solid.getValue(), solidList);
@@ -150,23 +165,12 @@ namespace PhysIKA
 		normal.setElementCount(solidList.size());
 		Function1Pt::copy(normal.getValue(), normals);
 
-		//************************
-		xindex.setElementCount(solidList.size());
-		Function1Pt::copy(xindex.getValue(), xIndex);		
-		
-		zindex.setElementCount(solidList.size());
-		Function1Pt::copy(zindex.getValue(), zIndex);
-		//**************************
-
 		zcount = solidList.size() / xcount;
 
-		printf("zcount is %d, xcount is %d\n", zcount, xcount);
-
+		printf("distance si %f ,zcount is %d, xcount is %d\n",distance, zcount, xcount);
 		solidList.clear();
 		isbound.clear();
 		normals.clear();
-		xIndex.clear();
-		zIndex.clear();
 		DeviceArrayField<Coord> pos = *(this->currentPosition());
 		SWEconnect();
 

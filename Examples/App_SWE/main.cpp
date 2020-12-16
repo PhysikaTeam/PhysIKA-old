@@ -50,7 +50,8 @@ void CreateScene()
 	ptRender->setColor(Vector3f(1, 0, 0));
 	root->addVisualModule(ptRender);
 
-	root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 0.005, 0.2, 0.998);
+	//root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(5, 1.5, 5), 0.005, 0.1, 0.998);
+	root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(0.95, 1.5, 0.95), 203, 0.15, 0.998);
 	root->setMass(100);
 
 	//std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();

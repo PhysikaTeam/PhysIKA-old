@@ -19,13 +19,13 @@ namespace PhysIKA
 		HeightFieldNode(std::string name = "default");
 		virtual ~HeightFieldNode();
 
-		void loadParticles(Coord lo, Coord hi, Real distance, Real slope, Real relax);
+		void loadParticles(Coord lo, Coord hi, int pixels, Real slope, Real relax);
 
 		bool initialize() override;
 		void advance(Real dt) override;
 		void SWEconnect();
 
-		void loadHeightFieldParticles(Coord lo, Coord hi, Real distance, Real slope);
+		void loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope);
 		void loadParticlesFromImage(std::string &filename, Real distance, Real relax);
 
 		void updateTopology() override;
@@ -48,8 +48,6 @@ namespace PhysIKA
 		DeviceArrayField<Coord> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;
-		DeviceArrayField<int>  xindex;
-		DeviceArrayField<int>  zindex;
 		
 		DeviceArrayField<Real> h;//water surface height
 		int zcount = 0;
