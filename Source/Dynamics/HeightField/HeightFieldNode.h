@@ -25,8 +25,10 @@ namespace PhysIKA
 		void advance(Real dt) override;
 		void SWEconnect();
 
-		void loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope);
-		void loadParticlesFromImage(std::string &filename, Real distance, Real relax);
+		void loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord> &vertList);
+		void loadParticlesFromImage(Coord lo, Coord hi, int pixels, Real slope, Real relax);
+
+		//Real trans2
 
 		void updateTopology() override;
 

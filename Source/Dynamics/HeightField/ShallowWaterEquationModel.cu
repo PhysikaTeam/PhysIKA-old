@@ -37,7 +37,6 @@ namespace PhysIKA
 		DeviceArray<Coord> pos,
 		DeviceArray<Coord> solid,
 		DeviceArray<Real> h,
-		DeviceArray<int> isBound,
 		DeviceArray<Coord> m_velocity
 		)
 	{
@@ -80,7 +79,7 @@ namespace PhysIKA
 		printf("neighbor limit is 4, index count is %d\n", solid.getElementCount());
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
 		cuint pDims2 = cudaGridSize((xcount + 2) * (zcount + 2), BLOCK_SIZE);
-		Init <Real, Coord> << < pDims, BLOCK_SIZE >> > (m_position.getValue(), solid.getValue(), h.getValue(), isBound.getValue(), m_velocity.getValue());
+		Init <Real, Coord> << < pDims, BLOCK_SIZE >> > (m_position.getValue(), solid.getValue(), h.getValue(), m_velocity.getValue());
 		Init_gridVel <Real, Coord> << < pDims2, BLOCK_SIZE >> > (grid_vel_x.getValue(), grid_vel_z.getValue());
 		cuSynchronize();
 		return true;
@@ -109,7 +108,6 @@ namespace PhysIKA
 		DeviceArray<Coord> m_accel,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_position,
-		DeviceArray<int> isBound,
 		int zcount,
 		Real distance,
 		Real gravity,
@@ -118,8 +116,6 @@ namespace PhysIKA
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 
-		if (isBound[i] == 0)
-			return;
 		int maxNei = 4;
 
 		int ix = i/zcount;
@@ -172,7 +168,6 @@ namespace PhysIKA
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_position,
 		DeviceArray<Coord> solid,
-		DeviceArray<int> isBound,
 		int zcount,
 		Real distance,
 		Real gravity,
@@ -405,7 +400,6 @@ namespace PhysIKA
 		DeviceArray<Real> h_buffer,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_accel,
-		DeviceArray<int> isBound,
 		DeviceArray<Coord> m_position,
 		DeviceArray<Coord> solid,
 		DeviceArray<Coord> normal,
@@ -439,14 +433,14 @@ namespace PhysIKA
 			}
 		}
 		h_buffer[i] = -(uhx / 2 + whz / 2)*dt;
-		//if (i == 0)
-		//{
-		//	printf("Heightxminzmin: %f \n", m_position[i][1]);
-		//	printf("Heightxminzmax: %f \n", m_position[zcount-1][1]);
-		//	printf("Heightxmaxzmin: %f \n", m_position[m_position.size()-zcount][1]);
-		//	printf("Heightxmaxzmax: %f \n", m_position[m_position.size()-1][1]);
-		//	printf("***************************************************\n");
-		//}
+		if (i == 0)
+		{
+			printf("Heightxminzmin: %f,%f,%f \n", m_position[i][0], m_position[i][1], m_position[i][2]);
+			printf("Heightxminzmax: %f,%f,%f \n", m_position[zcount-1][0], m_position[zcount - 1][1], m_position[zcount - 1][2]);
+			printf("Heightxmaxzmin: %f,%f,%f \n", m_position[m_position.size()-zcount][0], m_position[m_position.size() - zcount][1], m_position[m_position.size() - zcount][2]);
+			printf("Heightxmaxzmax: %f,%f,%f \n", m_position[m_position.size()-1][0], m_position[m_position.size() - 1][1], m_position[m_position.size() - 1][2]);
+			printf("***************************************************\n");
+		}
 	}
 
 	template<typename Real, typename Coord>
@@ -489,6 +483,7 @@ namespace PhysIKA
 		//cudaEventCreate(&start);
 		//cudaEventCreate(&stop);
 		//cudaEventRecord(start);
+
 
 
 		computeGridAccel <Real, Coord> << < pDims2, BLOCK_SIZE >> > (
@@ -539,7 +534,6 @@ namespace PhysIKA
 			h_buffer.getValue(),
 			m_velocity.getValue(),
 			m_accel.getValue(),
-			isBound.getValue(),
 			m_position.getValue(),
 			solid.getValue(),
 			normal.getValue(),
@@ -559,6 +553,18 @@ namespace PhysIKA
 			);
 		cuSynchronize();
 		cudaDeviceSynchronize();
+
+		//computeBoundConstrant<Real, Coord> << < pDims2, BLOCK_SIZE >> > (
+		//	h.getValue(),
+		//	m_accel.getValue(),
+		//	m_velocity.getValue(),
+		//	m_position.getValue(),
+		//	zcount,
+		//	distance,
+		//	9.8,
+		//	dt);
+		//cuSynchronize();
+		//cudaDeviceSynchronize();
 
 		//cudaEventRecord(stop);
 

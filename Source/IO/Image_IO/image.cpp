@@ -115,6 +115,32 @@ void Image::flipVertically()
         } 
 }
 
+void Image::mergeImage(int h_impressed, int w_impressed)
+{
+	int pixel_size = pixelSize();
+	unsigned int height = height_ / h_impressed;//一个像素由h_impressed*w_impressed个像素计算
+	unsigned int width = width_ / w_impressed;
+	
+	unsigned char *d = new unsigned char[width*height*pixel_size];
+	for (unsigned int i = 0; i < height; ++i)
+		for (unsigned int j = 0; j < width; ++j)
+			for (unsigned int k = 0; k < pixel_size; ++k)
+			{
+				float temp = 0;
+				for (int p = 0;p<h_impressed;p++)
+					for (int q = 0; q < w_impressed; q++) {
+						temp += raw_data_[(j*w_impressed+q + width_ * (i*h_impressed+p))*pixel_size + k];
+					}
+				//d[(j + width * i)*pixel_size + k] = raw_data_[(j*w_impressed + width_ * i*h_impressed)*pixel_size + k];
+				d[(j + width * i)*pixel_size + k] = temp/(h_impressed*w_impressed);
+			}
+	height_ = height;
+	width_ = width;
+	//memcpy(d, raw_data_, sizeof(unsigned char)*pixel_size*height_*width_);
+	allocMemory();
+	memcpy(raw_data_ ,d, sizeof(unsigned char)*pixel_size*height_*width_);
+}
+
 Image Image::mirrorImage() const
 {
     unsigned int pixel_size = pixelSize();
