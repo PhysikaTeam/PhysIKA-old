@@ -69,21 +69,18 @@ namespace PhysIKA
 	{
 		//vertList返回给loadParticles，这样在初始化时能够根据solidList的情况更新
 		std::vector<Coord> normalList;
-
-		float height = 0, e = 2.71828;
+		Real height = 0, e = 2.71828;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
-		//nx = (hi[0] - lo[0]) / distance;
-		//nz = (hi[2] - lo[2]) / distance;
-		//****************************************************
-		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		//float xcenter = 0.5, zcenter = 0.8;
+
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++)
 		{
 			Real z = lo[2];
 			for (int j = 0; j < pixels; j++)
 			{
-				//height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
@@ -91,6 +88,7 @@ namespace PhysIKA
 			}
 			x += distance;
 		}
+
 		//标记四角
 		/*int zcount = pixels;
 		vertList[vertList.size()-1][1] = 1;
@@ -100,7 +98,7 @@ namespace PhysIKA
 
 		this->currentVelocity()->setElementCount(vertList.size());
 		Function1Pt::copy(this->currentVelocity()->getValue(), vertList);
-		velocityList.clear();
+
 		normalList.clear();
 	}
 
@@ -110,15 +108,14 @@ namespace PhysIKA
 	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, int pixels,Real slope, Real relax)
 	{
 		std::vector<Coord> vertList;
-		Real distance = (hi[2] - lo[2]) / (pixels-1);
 		loadHeightFieldParticles(lo, hi, pixels, slope, vertList);
-		this->distance = distance;
-		this->relax = relax;
+
 		std::vector<Coord> solidList;
 		std::vector<Coord> normals;
 		std::vector<int>  isbound;
-		float height =  0, e = 2.71828;
-		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		Real distance = (hi[2] - lo[2]) / (pixels-1);
+		Real height =  0, e = 2.71828;
+		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++) 
 		{
@@ -131,7 +128,7 @@ namespace PhysIKA
 					isbound.push_back(1);
 				else
 					isbound.push_back(0);
-				//*******************判断当前position和solid哪个高
+				//*******************判断当前vertList和solidList哪个高
 				if (lo[1] + height > vertList[j + i * pixels][1]) {
 					vertList[j + i * pixels][1] = lo[1] + height;
 				}
@@ -142,14 +139,16 @@ namespace PhysIKA
 			}
 			x += distance;
 		}
-		xcount = pixels;
-		zcount = pixels;
+		
+		this->xcount = pixels;
+		this->zcount = pixels;
 
-		nx = xcount;
-		nz = zcount;
+		this->nx = xcount;
+		this->nz = zcount;
+		this->distance = distance;
+		this->relax = relax;
 
 		this->currentPosition()->setElementCount(vertList.size());
-		printf("%d", vertList.size());
 		Function1Pt::copy(this->currentPosition()->getValue(), vertList);
 
 		solid.setElementCount(solidList.size());
@@ -161,19 +160,18 @@ namespace PhysIKA
 		normal.setElementCount(solidList.size());
 		Function1Pt::copy(normal.getValue(), normals);
 
+		this->SWEconnect();
+		this->updateTopology();
+		Coord ori = Coord(0, 0, 0);
+		ori[2] = -0.5 * (lo[2] + hi[2]);
+		ori[0] = -0.5 * (lo[0] + hi[0]);
+		this->m_height_field->setOrigin(ori);
+
 		printf("distance si %f ,zcount is %d, xcount is %d\n",distance, zcount, xcount);
 		vertList.clear();
 		solidList.clear();
 		isbound.clear();
 		normals.clear();
-		SWEconnect();
-
-		this->updateTopology();
-
-		Coord ori = Coord(0, 0, 0);
-		ori[2] = -0.5 * (lo[2] + hi[2]);
-		ori[0] = -0.5 * (lo[0] + hi[0]);
-		m_height_field->setOrigin(ori);
 	}
 
 	template<typename TDataType>
@@ -185,9 +183,8 @@ namespace PhysIKA
 		//std::string filename2 = "F:\\新建文件夹\\大四第一学期\\swe\\river4-4.png";//像素为1024
 		//std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\16-16.png";//像素为256
 		//std::string filename2 = "F:\\新建文件夹\\大四第一学期\\swe\\river16-16.png";//像素为256
-		std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\16-16.png";//像素为256
-		std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river16-16.png";//像素为256
-
+		std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\8-8.png";//像素为512
+		std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";//像素为512
 		ImageIO::load(filename1, image1);
 		ImageIO::load(filename2, image2);
 		assert(image2->height() == image2->width());
@@ -196,15 +193,14 @@ namespace PhysIKA
 		assert(image1->height() == image1->width());
 
 		std::vector<Coord> vertList;
-		Real distance = (hi[2] - lo[2]) / (pixels - 1);
 		loadHeightFieldParticles(lo, hi, pixels, slope, vertList);
-		this->distance = distance;
-		this->relax = relax;
+
 		std::vector<Coord> solidList;
 		std::vector<Coord> normals;
 		std::vector<int>  isbound;
-		float height = 0, e = 2.71828;
-		float xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		Real distance = (hi[2] - lo[2]) / (pixels - 1);
+		Real height = 0, e = 2.71828;
+		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		Real x = lo[0];
 
 		for (int i = 0; i < pixels; i++)
@@ -216,36 +212,38 @@ namespace PhysIKA
 					isbound.push_back(1);
 				else
 					isbound.push_back(0);
-				//*******************读入地形数据
+				//********************************读入地形数据
 				int temp_index = (i*pixels + j)*image1->pixelSize();
 				unsigned short temp_height = (image1->rawData()[temp_index + 1] << 8) | image1->rawData()[temp_index];
 				height =  temp_height * 0.3 //系数
 					* (hi[1] - lo[1]) / 65535;
-				//*******************************
-				//*******************读入初始河流位置
+				//********************************************
+				//*******************读入初始河流位置，设置深度
 				if (image2->rawData()[temp_index] == 255) {
 					vertList[j + i * pixels][1] = lo[1] + height;
 					height = 0;//假设河流最低点是0
 				}
+				//********************************************
 				solidList.push_back(Coord(x, lo[1] + height, z));
 				normals.push_back(Coord(0, 1, 0));
 				z += distance;
-				//*******************判断当前position和solid哪个高
+				//************判断当前vertList和solidList哪个高
 				if (lo[1] + height > vertList[j + i * pixels][1]) {
 					vertList[j + i * pixels][1] = solidList[j + i * pixels][1];
 				}
-				//***********************************************
+				//********************************************
 			}
 			x += distance;
 		}
-		xcount = pixels;
-		zcount = pixels;
+		this->xcount = pixels;
+		this->zcount = pixels;
 
-		nx = xcount;
-		nz = zcount;
+		this->nx = xcount;
+		this->nz = zcount;
+		this->distance = distance;
+		this->relax = relax;
 
 		this->currentPosition()->setElementCount(vertList.size());
-		printf("%d", vertList.size());
 		Function1Pt::copy(this->currentPosition()->getValue(), vertList);
 
 		solid.setElementCount(solidList.size());
@@ -257,20 +255,18 @@ namespace PhysIKA
 		normal.setElementCount(solidList.size());
 		Function1Pt::copy(normal.getValue(), normals);
 
+		this->SWEconnect();
+		this->updateTopology();
+		Coord ori = Coord(0, 0, 0);
+		ori[2] = -0.5 * (lo[2] + hi[2]);
+		ori[0] = -0.5 * (lo[0] + hi[0]);
+		this->m_height_field->setOrigin(ori);
+
 		printf("distance si %f ,zcount is %d, xcount is %d\n", distance, zcount, xcount);
 		vertList.clear();
 		solidList.clear();
 		isbound.clear();
 		normals.clear();
-		//delete[] image1;做不到，因为外界无法访问（删除）他的私有元素，其实也不需要做
-		SWEconnect();
-
-		this->updateTopology();
-
-		Coord ori = Coord(0,0,0);
-		ori[2] = -0.5 * (lo[2] + hi[2]);
-		ori[0] = -0.5 * (lo[0] + hi[0]);
-		m_height_field->setOrigin(ori);
 
 	}
 	template<typename TDataType>
@@ -310,11 +306,9 @@ namespace PhysIKA
 			m_height_field->setSpace(distance,distance);
 			//m_height_field->setSpace(0.005, 0.005);
 			auto& heights = m_height_field->getHeights();
-			printf("heights.Nx and heights.Nz is %d,%d\n", heights.Nx(), heights.Ny());
 			if (nx != heights.Nx() || nz != heights.Ny())
 			{
 				heights.resize(nx, nz);
-				printf("heights.Nx and heights.Nz is %d,%d\n", heights.Nx(), heights.Ny());
 			}
 
 			uint3 total_size;

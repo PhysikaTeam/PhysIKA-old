@@ -51,8 +51,8 @@ void CreateScene()
 	ptRender->setColor(Vector3f(1, 0, 0));
 	root->addVisualModule(ptRender);
 
-	//root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 256, 0, 0.998);
-	root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 256, 0, 0.998);
+	root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.998);
+	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 512, 0, 0.998);
 	//root->loadParticlesFromImage(Vector3f(0, 0.5, 0), Vector3f(1, 1, 1), 1024, 0.2, 0.998);
 
 	root->setMass(100);
@@ -81,15 +81,15 @@ int main()
 	Log::sendMessage(Log::Info, "Simulation end!");
 			//初始化输出测试
 
-	//读取文件进行压缩
+	/*读取文件进行压缩*/
 	//Image *image = new Image();
 	////std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\river.png";
-	//std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\1.png";
+	//std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\river.png";
 	//ImageIO::load(filename1, image);
 
 	//
-	//image->mergeImage(16,16);
-	//string filename2 = "..\\..\\..\\Examples\\App_SWE\\16-16.png";
+	//image->mergeImage(8,8);
+	//string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";
 	//ImageIO::save(filename2, image);
 	return 0;
 }
