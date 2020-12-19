@@ -57,6 +57,7 @@ void CreateScene()
 
 	root->setMass(100);
 
+
 	//std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	//root->addRigidBody(rigidbody);
 	//rigidbody->loadShape("../../Media/bowl/bowl.obj");
@@ -80,37 +81,15 @@ int main()
 	Log::sendMessage(Log::Info, "Simulation end!");
 			//初始化输出测试
 
+	//读取文件进行压缩
 	//Image *image = new Image();
 	////std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\river.png";
-	//std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\river.png";
+	//std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\1.png";
 	//ImageIO::load(filename1, image);
 
 	//
 	//image->mergeImage(16,16);
-	//string filename2 = "F:\\新建文件夹\\大四第一学期\\swe\\river16-16.png";
+	//string filename2 = "..\\..\\..\\Examples\\App_SWE\\16-16.png";
 	//ImageIO::save(filename2, image);
-
-	//int a[4];
-	//for (int i = 0; i < 4; i++) {
-	//	a[i] = 0;
-	//}
-	//int width = image->width();
-	//int height = image->height();
-	//int pixel_size = image->pixelSize();
-	//for(int i = height /2; i< height /2+1;i++)
-	//	for (int j = 0; j < width; j++) {
-	//		for (int k = 0; k < pixel_size; k++) {//注意image的pixelSize函数是protected的，外界访问不了要不要改？？？？？？
-	//			if (image->rawData()[(j + i * image->width())*pixel_size + k] > a[k])
-	//				a[k] = image->rawData()[(j + i * width)*pixel_size + k];
-	//			printf("%d ", image->rawData()[(j + i * width)*pixel_size + k]);
-	//		}
-	//		printf("\n");
-	//	}
-	//printf("%d", image->height());
-
-	//printf("%d", image->width());
-	//for (int i = 0; i < 4; i++) {
-	//	printf("%d ", a[i]);
-	//}
 	return 0;
 }
