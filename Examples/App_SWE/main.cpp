@@ -51,8 +51,8 @@ void CreateScene()
 	ptRender->setColor(Vector3f(1, 0, 0));
 	root->addVisualModule(ptRender);
 
-	root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.998);
-	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 512, 0, 0.998);
+	//root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.998);
+	root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 512, 0, 0.998);
 	//root->loadParticlesFromImage(Vector3f(0, 0.5, 0), Vector3f(1, 1, 1), 1024, 0.2, 0.998);
 
 	root->setMass(100);

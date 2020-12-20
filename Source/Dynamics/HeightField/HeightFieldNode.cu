@@ -80,7 +80,7 @@ namespace PhysIKA
 			Real z = lo[2];
 			for (int j = 0; j < pixels; j++)
 			{
-				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				//height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
@@ -179,10 +179,6 @@ namespace PhysIKA
 	{
 		Image *image1 = new Image;
 		Image *image2 = new Image;
-		//std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\4-4.png";//像素为1024
-		//std::string filename2 = "F:\\新建文件夹\\大四第一学期\\swe\\river4-4.png";//像素为1024
-		//std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\16-16.png";//像素为256
-		//std::string filename2 = "F:\\新建文件夹\\大四第一学期\\swe\\river16-16.png";//像素为256
 		std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\8-8.png";//像素为512
 		std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";//像素为512
 		ImageIO::load(filename1, image1);
@@ -257,10 +253,10 @@ namespace PhysIKA
 
 		this->SWEconnect();
 		this->updateTopology();
-		Coord ori = Coord(0, 0, 0);
-		ori[2] = -0.5 * (lo[2] + hi[2]);
-		ori[0] = -0.5 * (lo[0] + hi[0]);
-		this->m_height_field->setOrigin(ori);
+		//Coord ori = Coord(0, 0, 0);
+		//ori[2] = -0.5 * (lo[2] + hi[2]);
+		//ori[0] = -0.5 * (lo[0] + hi[0]);
+		//this->m_height_field->setOrigin(ori);
 
 		printf("distance si %f ,zcount is %d, xcount is %d\n", distance, zcount, xcount);
 		vertList.clear();
@@ -283,7 +279,9 @@ namespace PhysIKA
 	template<typename Real, typename Coord>
 	__global__ void SetupHeights(
 		DeviceArray2D<Real> height, 
-		DeviceArray<Coord> pts)
+		DeviceArray2D<Real> terrain,
+		DeviceArray<Coord> pts,
+		DeviceArray<Coord> solid)
 	{
 		int i = threadIdx.x + blockIdx.x * blockDim.x;
 		int j = threadIdx.y + blockIdx.y * blockDim.y;
@@ -292,6 +290,7 @@ namespace PhysIKA
 		{
 			int id = j + i * (height.Nx());
 			height(i, j) = pts[id][1];
+			terrain(i, j) = solid[id][1];
 		}
 	}
 
@@ -302,13 +301,15 @@ namespace PhysIKA
 		{
 			int num = this->currentPosition()->getElementCount();
 			auto& pts = this->currentPosition()->getValue();
-
 			m_height_field->setSpace(distance,distance);
 			//m_height_field->setSpace(0.005, 0.005);
 			auto& heights = m_height_field->getHeights();
+			auto& terrain = m_height_field->getTerrain();
+
 			if (nx != heights.Nx() || nz != heights.Ny())
 			{
 				heights.resize(nx, nz);
+				terrain.resize(nx, nz);
 			}
 
 			uint3 total_size;
@@ -320,7 +321,9 @@ namespace PhysIKA
 
 			cuExecute3D(total_size, SetupHeights,
 				heights,
-				pts);
+				terrain,
+				pts,
+				solid.getValue());
 		}
 	}
 

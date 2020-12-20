@@ -37,13 +37,14 @@ namespace PhysIKA
 		DeviceArray<Coord> pos,
 		DeviceArray<Coord> solid,
 		DeviceArray<Real> h,
+		DeviceArray<Real> h_buffer,
 		DeviceArray<Coord> m_velocity
 		)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= pos.size()) return;
 	
-		h[i] = pos[i][1] - solid[i][1];
+		h_buffer[i] = h[i] = pos[i][1] - solid[i][1];
 		m_velocity[i] = Coord(0, 0, 0);
 	}
 
@@ -79,7 +80,7 @@ namespace PhysIKA
 		printf("neighbor limit is 4, index count is %d\n", solid.getElementCount());
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
 		cuint pDims2 = cudaGridSize((xcount + 2) * (zcount + 2), BLOCK_SIZE);
-		Init <Real, Coord> << < pDims, BLOCK_SIZE >> > (m_position.getValue(), solid.getValue(), h.getValue(), m_velocity.getValue());
+		Init <Real, Coord> << < pDims, BLOCK_SIZE >> > (m_position.getValue(), solid.getValue(), h.getValue(), h_buffer.getValue(), m_velocity.getValue());
 		Init_gridVel <Real, Coord> << < pDims2, BLOCK_SIZE >> > (grid_vel_x.getValue(), grid_vel_z.getValue());
 		cuSynchronize();
 		return true;
@@ -260,6 +261,7 @@ namespace PhysIKA
 					p1 = p2 = 0;
 				if (solid[nei2][1] >= m_position[nei1][1] && h[nei2] == 0)
 					p1 = p2 = 0;
+				
 				hx = (p1 - p2) / (m_position[nei1][0] - m_position[nei2][0]);
 
 				//grid
@@ -276,8 +278,8 @@ namespace PhysIKA
 				w += grid_vel_z[(ix + 1) * (zcount + 1) + iz - 1]; w += grid_vel_z[(ix + 1) * (zcount + 1) + iz];
 				w *= 0.25;
 
-				grid_accel_x[i] = -(u * ux + w * uz + gravity * hx);
-				//grid_accel_x[i] = -(gravity * hx);
+				//grid_accel_x[i] = -(u * ux + w * uz + gravity * hx);
+				grid_accel_x[i] = -(gravity * hx);
 			}
 		}
 		if (i < grid_vel_z.size())
@@ -295,6 +297,7 @@ namespace PhysIKA
 					p1 = p2 = 0;
 				if (solid[nei2][1] >= m_position[nei1][1] && h[nei2] == 0)
 					p1 = p2 = 0;
+				
 				hz = (p1 - p2) / (m_position[nei1][2] - m_position[nei2][2]);
 
 				//grid
@@ -311,8 +314,8 @@ namespace PhysIKA
 				u += grid_vel_x[ix * (zcount + 2) + iz]; u += grid_vel_x[ix * (zcount + 2) + iz + 1];
 				u *= 0.25;
 
-				grid_accel_z[i] = -(u * wx + w * wz + gravity * hz);
-				//grid_accel_z[i] = -gravity * hz;
+				//grid_accel_z[i] = -(u * wx + w * wz + gravity * hz);
+				grid_accel_z[i] = -gravity * hz;
 			}
 		}
 	}
@@ -352,7 +355,7 @@ namespace PhysIKA
 			grid_vel_z[i] = grid_vel_z[i] * relax + grid_accel_z[i] * dt;
 		}
 		//限制最大速度
-		Real maxVel = 2*sqrt(distance * gravity), vel;
+		Real maxVel = sqrt(distance * gravity), vel;
 		//vel = sqrt(pow(m_velocity[i][0], 2) + pow(m_velocity[i][2], 2));
 		vel = abs(grid_vel_x[i]);
 		if (vel > maxVel)
@@ -433,14 +436,14 @@ namespace PhysIKA
 			}
 		}
 		h_buffer[i] = -(uhx / 2 + whz / 2)*dt;
-		if (i == 0)
-		{
-			printf("Heightxminzmin: %f,%f,%f \n", m_position[i][0], m_position[i][1], m_position[i][2]);
-			printf("Heightxminzmax: %f,%f,%f \n", m_position[zcount-1][0], m_position[zcount - 1][1], m_position[zcount - 1][2]);
-			printf("Heightxmaxzmin: %f,%f,%f \n", m_position[m_position.size()-zcount][0], m_position[m_position.size() - zcount][1], m_position[m_position.size() - zcount][2]);
-			printf("Heightxmaxzmax: %f,%f,%f \n", m_position[m_position.size()-1][0], m_position[m_position.size() - 1][1], m_position[m_position.size() - 1][2]);
-			printf("***************************************************\n");
-		}
+		//if (i == 0)
+		//{
+		//	printf("Heightxminzmin: %f,%f,%f \n", m_position[i][0], m_position[i][1], m_position[i][2]);
+		//	printf("Heightxminzmax: %f,%f,%f \n", m_position[zcount-1][0], m_position[zcount - 1][1], m_position[zcount - 1][2]);
+		//	printf("Heightxmaxzmin: %f,%f,%f \n", m_position[m_position.size()-zcount][0], m_position[m_position.size() - zcount][1], m_position[m_position.size() - zcount][2]);
+		//	printf("Heightxmaxzmax: %f,%f,%f \n", m_position[m_position.size()-1][0], m_position[m_position.size() - 1][1], m_position[m_position.size() - 1][2]);
+		//	printf("***************************************************\n");
+		//}
 	}
 
 	template<typename Real, typename Coord>
@@ -456,10 +459,9 @@ namespace PhysIKA
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 		h[i] += h_buffer[i];
-		if (h[i] < 0)
+		if (h[i] < 1e-4)
 		{
 			h[i] = 0;
-			//m_velocity[i][0] = m_velocity[i][2] = 0;
 			m_velocity[i][1] = max(0.0, m_velocity[i][1]);
 		}
 		m_position[i][1] = solid[i][1] + h[i];
@@ -483,8 +485,6 @@ namespace PhysIKA
 		//cudaEventCreate(&start);
 		//cudaEventCreate(&stop);
 		//cudaEventRecord(start);
-
-
 
 		computeGridAccel <Real, Coord> << < pDims2, BLOCK_SIZE >> > (
 			grid_vel_x.getValue(),
@@ -589,11 +589,11 @@ namespace PhysIKA
 			myout.close();
 		}
 		*/
-	/*	cublasHandle_t handle;
+		cublasHandle_t handle;
 		float sum;
 		cublasCreate(&handle);
-		cublasSasum(handle, solid.getElementCount(), h.getValue().getDataPtr(), 1, &sum);
+		cublasSasum(handle, solid.getElementCount(), h_buffer.getValue().getDataPtr(), 1, &sum);
 		cublasDestroy(handle);
-		printf("total height is %f\n", sum);*/
+		printf("total height is %f\n", sum);
 	}
 }

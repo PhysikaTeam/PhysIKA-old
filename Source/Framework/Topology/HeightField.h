@@ -32,6 +32,7 @@ namespace PhysIKA
 		void setOrigin(Coord o) { origin = o; }
 
 		DeviceArray2D<Real>& getHeights() { return m_height; }
+		DeviceArray2D<Real>& getTerrain() { return m_terrain; }
 
 	protected:
 // 		DeviceArray<Coord> m_coords;
@@ -44,6 +45,7 @@ namespace PhysIKA
 		Real m_dz;
 
 		DeviceArray2D<Real> m_height;
+		DeviceArray2D<Real> m_terrain;
 	};
 
 
