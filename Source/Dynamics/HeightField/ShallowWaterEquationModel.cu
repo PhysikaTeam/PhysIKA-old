@@ -35,7 +35,7 @@ namespace PhysIKA
 	template<typename Real, typename Coord>
 	__global__ void Init(
 		DeviceArray<Coord> pos,
-		DeviceArray<Coord> solid,
+		DeviceArray<Real> solid,
 		DeviceArray<Real> h,
 		DeviceArray<Real> h_buffer,
 		DeviceArray<Coord> m_velocity
@@ -44,8 +44,7 @@ namespace PhysIKA
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= pos.size()) return;
 	
-		h_buffer[i] = h[i] = pos[i][1] - solid[i][1];
-		m_velocity[i] = Coord(0, 0, 0);
+		h_buffer[i] = h[i] = pos[i][1] - solid[i];
 	}
 
 	template<typename Real, typename Coord>
@@ -168,7 +167,7 @@ namespace PhysIKA
 		DeviceArray<Coord> m_accel,
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_position,
-		DeviceArray<Coord> solid,
+		DeviceArray<Real> solid,
 		int zcount,
 		Real distance,
 		Real gravity,
@@ -191,9 +190,9 @@ namespace PhysIKA
 				continue;
 			}
 			p1 = m_position[nei][1]; p2 = m_position[i][1];
-			if (solid[nei][1] >= m_position[i][1] && h[nei] == 0)
+			if (solid[nei] >= m_position[i][1] && h[nei] == 0)
 				p1 = p2 = 0;
-			if (solid[i][1] >= m_position[nei][1] && h[i] == 0)
+			if (solid[i] >= m_position[nei][1] && h[i] == 0)
 				p1 = p2 = 0;
 
 			if(j < maxNei/2)//gradient along z
@@ -233,7 +232,7 @@ namespace PhysIKA
 		DeviceArray<Real> grid_accel_z,
 		DeviceArray<Real> h,
 		DeviceArray<Coord> m_position,
-		DeviceArray<Coord> solid,
+		DeviceArray<Real> solid,
 		int zcount,
 		Real gravity,
 		Real distance
@@ -249,7 +248,6 @@ namespace PhysIKA
 		{
 			ix = i / (zcount + 2);
 			iz = i % (zcount + 2);
-			//控制边界处加速度是0
 			if (iz == 0 || iz == zcount + 1 || ix == 0 || ix == xcount)
 				grid_accel_x[i] = 0;
 			else 
@@ -257,9 +255,9 @@ namespace PhysIKA
 				//particles
 				int nei1 = (ix - 1) * zcount + iz - 1, nei2 = ix * zcount + iz - 1;
 				p1 = m_position[nei1][1]; p2 = m_position[nei2][1];
-				if (solid[nei1][1] >= m_position[nei2][1] && h[nei1] == 0)
+				if (solid[nei1] >= m_position[nei2][1] && h[nei1] == 0)
 					p1 = p2 = 0;
-				if (solid[nei2][1] >= m_position[nei1][1] && h[nei2] == 0)
+				if (solid[nei2] >= m_position[nei1][1] && h[nei2] == 0)
 					p1 = p2 = 0;
 				
 				hx = (p1 - p2) / (m_position[nei1][0] - m_position[nei2][0]);
@@ -293,9 +291,9 @@ namespace PhysIKA
 				//particles
 				int nei1 = (ix - 1) * zcount + iz - 1, nei2 = (ix - 1) * zcount + iz;
 				p1 = m_position[nei1][1]; p2 = m_position[nei2][1];
-				if (solid[nei1][1] >= m_position[nei2][1] && h[nei1] == 0)
+				if (solid[nei1] >= m_position[nei2][1] && h[nei1] == 0)
 					p1 = p2 = 0;
-				if (solid[nei2][1] >= m_position[nei1][1] && h[nei2] == 0)
+				if (solid[nei2] >= m_position[nei1][1] && h[nei2] == 0)
 					p1 = p2 = 0;
 				
 				hz = (p1 - p2) / (m_position[nei1][2] - m_position[nei2][2]);
@@ -336,14 +334,14 @@ namespace PhysIKA
 		int ix, iz;
 		int xcount = grid_vel_x.size() / (zcount + 2) - 1;
 		
-		//利用grid_accel_x更新grid_vel_x
+		//update grid_vel_x
 		if (i < grid_vel_x.size())
 		{
 			ix = i / (zcount + 2);
 			iz = i % (zcount + 2);
 			//if (iz == 0 || iz == zcount + 1 || ix == 0 || ix == xcount)
 			//	grid_vel_x[i] = 0;
-			//边界处本身是0，加速度又是0，自动就是0
+			//grid_vel_x and grid_accel_x are both 0 on the boundary
 			grid_vel_x[i] = grid_vel_x[i] * relax + grid_accel_x[i] * dt;
 		}
 		if (i < grid_vel_z.size())
@@ -354,7 +352,7 @@ namespace PhysIKA
 			//	grid_vel_z[i] = 0;
 			grid_vel_z[i] = grid_vel_z[i] * relax + grid_accel_z[i] * dt;
 		}
-		//限制最大速度
+		//restrict maxVelocity 
 		Real maxVel = sqrt(distance * gravity), vel;
 		//vel = sqrt(pow(m_velocity[i][0], 2) + pow(m_velocity[i][2], 2));
 		vel = abs(grid_vel_x[i]);
@@ -386,10 +384,10 @@ namespace PhysIKA
 		int xcount = h.size() / zcount;
 		int ix = i / zcount;
 		int iz = i % zcount;
-		//根据MAC网格求中心的速度
+		//calculate center velocity by MAC grid
 		m_velocity[i][0] = 0.5 * (grid_vel_x[ix * (zcount + 2) + iz + 1] + grid_vel_x[(ix + 1) * (zcount + 2) + iz + 1]);
 		m_velocity[i][2] = 0.5 * (grid_vel_z[(ix + 1) * (zcount + 1) + iz] + grid_vel_z[(ix + 1) * (zcount + 1) + iz + 1]);
-		//其实是一个边界条件
+		//boundary condition
 		if (ix == 0 || ix == xcount - 1)
 			m_velocity[i][0] = 0;
 		if (iz == 0 || iz == zcount - 1)
@@ -404,13 +402,11 @@ namespace PhysIKA
 		DeviceArray<Coord> m_velocity,
 		DeviceArray<Coord> m_accel,
 		DeviceArray<Coord> m_position,
-		DeviceArray<Coord> solid,
 		DeviceArray<Coord> normal,
 		int zcount,
 		Real distance,
 		Real dt)
 	{
-		//计算深度h的导数
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 		int maxNei = 4;
@@ -451,11 +447,11 @@ namespace PhysIKA
 		DeviceArray<Real> h,
 		DeviceArray<Real> h_buffer,
 		DeviceArray<Coord> m_position,
-		DeviceArray<Coord> solid,
+		DeviceArray<Real> solid,
 		DeviceArray<Coord> m_velocity
 	)
 	{
-		//限制水深不能为负数，利用深度h的导数更新h，利用h更新position
+		//limit h to be positive，update h by derivative of h，update position by h
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 		h[i] += h_buffer[i];
@@ -464,7 +460,7 @@ namespace PhysIKA
 			h[i] = 0;
 			m_velocity[i][1] = max(0.0, m_velocity[i][1]);
 		}
-		m_position[i][1] = solid[i][1] + h[i];
+		m_position[i][1] = solid[i] + h[i];
 	}
 	template<typename TDataType>
 	void ShallowWaterEquationModel<TDataType>::step(Real dt)
@@ -480,7 +476,6 @@ namespace PhysIKA
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
 		cuint pDims2 = cudaGridSize(max((zcount+1)*(xcount+2), (zcount+2)*(xcount+1)), BLOCK_SIZE);
 
-		////计时开始
 		//cudaEvent_t start, stop;
 		//cudaEventCreate(&start);
 		//cudaEventCreate(&stop);
@@ -535,7 +530,6 @@ namespace PhysIKA
 			m_velocity.getValue(),
 			m_accel.getValue(),
 			m_position.getValue(),
-			solid.getValue(),
 			normal.getValue(),
 			zcount,
 			distance,
@@ -575,25 +569,12 @@ namespace PhysIKA
 		//sumtimes += milliseconds;
 		//sumnum++;
 		//printf("Time: %f \n", sumtimes / sumnum);
-		/*
-		//输出看看
-		if (sumnum == 1000) {
-			std::string s = "C:\\temp.txt";
-			std::ofstream myout;
-			myout.open(s, std::ios::out | std::ios::app);
-			if (!myout) {
-				std::ofstream newout(s);
-				newout << sumtimes / sumnum << std::endl;
-			}
-			myout << sumtimes / sumnum << std::endl;
-			myout.close();
-		}
-		*/
-		cublasHandle_t handle;
-		float sum;
-		cublasCreate(&handle);
-		cublasSasum(handle, solid.getElementCount(), h_buffer.getValue().getDataPtr(), 1, &sum);
-		cublasDestroy(handle);
-		printf("total height is %f\n", sum);
+
+		//cublasHandle_t handle;
+		//float sum;
+		//cublasCreate(&handle);
+		//cublasSasum(handle, solid.getElementCount(), h_buffer.getValue().getDataPtr(), 1, &sum);
+		//cublasDestroy(handle);
+		//printf("total height is %f\n", sum);
 	}
 }

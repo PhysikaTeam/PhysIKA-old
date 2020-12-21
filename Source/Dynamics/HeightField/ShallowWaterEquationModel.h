@@ -33,7 +33,7 @@ namespace PhysIKA
 		DeviceArrayField<Real> grid_accel_z;
 
 		
-		DeviceArrayField<Coord> solid;
+		DeviceArrayField<Real> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;
 		DeviceArrayField<Real> h;//solid_pos + h*Normal = m_position

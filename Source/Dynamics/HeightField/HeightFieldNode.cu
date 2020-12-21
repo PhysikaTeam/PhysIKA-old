@@ -67,8 +67,8 @@ namespace PhysIKA
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList)
 	{
-		//vertList返回给loadParticles，这样在初始化时能够根据solidList的情况更新
 		std::vector<Coord> normalList;
+		std::vector<Coord> velList;
 		Real height = 0, e = 2.71828;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
 		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
@@ -84,33 +84,34 @@ namespace PhysIKA
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
+				velList.push_back(Coord(0, 0, 0));
 				z += distance;
 			}
 			x += distance;
 		}
 
-		//标记四角
+		//sign on four corners
 		/*int zcount = pixels;
 		vertList[vertList.size()-1][1] = 1;
 		vertList[vertList.size()-zcount][1] = 1;
 		vertList[0][1] = 1;
 		vertList[zcount-1][1] = 1;*/
 
-		this->currentVelocity()->setElementCount(vertList.size());
-		Function1Pt::copy(this->currentVelocity()->getValue(), vertList);
+		this->currentVelocity()->setElementCount(velList.size());
+		Function1Pt::copy(this->currentVelocity()->getValue(), velList);
 
 		normalList.clear();
+		velList.clear();
+
 	}
 
 	template<typename TDataType>
-	//void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, Real distance,Real slope, Real relax)
-	//用顶点数表示更直观一些
 	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, int pixels,Real slope, Real relax)
 	{
 		std::vector<Coord> vertList;
 		loadHeightFieldParticles(lo, hi, pixels, slope, vertList);
 
-		std::vector<Coord> solidList;
+		std::vector<Real> solidList;
 		std::vector<Coord> normals;
 		std::vector<int>  isbound;
 		Real distance = (hi[2] - lo[2]) / (pixels-1);
@@ -128,12 +129,11 @@ namespace PhysIKA
 					isbound.push_back(1);
 				else
 					isbound.push_back(0);
-				//*******************判断当前vertList和solidList哪个高
+				//judge which one is higher
 				if (lo[1] + height > vertList[j + i * pixels][1]) {
 					vertList[j + i * pixels][1] = lo[1] + height;
 				}
-				//************************************************
-				solidList.push_back(Coord(x, lo[1] + height, z));
+				solidList.push_back( lo[1] + height);
 				normals.push_back(Coord(0, 1, 0));
 				z += distance;
 			}
@@ -175,12 +175,14 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void HeightFieldNode<TDataType>::loadParticlesFromImage(Coord lo, Coord hi, int pixels, Real slope, Real relax)
+	void HeightFieldNode<TDataType>::loadParticlesFromImage(Coord lo, Coord hi, int pixels, Real proportion, Real relax)
 	{
 		Image *image1 = new Image;
 		Image *image2 = new Image;
-		std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\8-8.png";//像素为512
-		std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";//像素为512
+		std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\8-8.png";//The pixel count is 512 by 512
+		std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";
+		//std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\1.png";//The pixel count is 4096*4096
+		//std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river.png";		
 		ImageIO::load(filename1, image1);
 		ImageIO::load(filename2, image2);
 		assert(image2->height() == image2->width());
@@ -189,9 +191,9 @@ namespace PhysIKA
 		assert(image1->height() == image1->width());
 
 		std::vector<Coord> vertList;
-		loadHeightFieldParticles(lo, hi, pixels, slope, vertList);
+		loadHeightFieldParticles(lo, hi, pixels, 0, vertList);
 
-		std::vector<Coord> solidList;
+		std::vector<Real> solidList;
 		std::vector<Coord> normals;
 		std::vector<int>  isbound;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
@@ -208,26 +210,21 @@ namespace PhysIKA
 					isbound.push_back(1);
 				else
 					isbound.push_back(0);
-				//********************************读入地形数据
+				//init terrain and river location
 				int temp_index = (i*pixels + j)*image1->pixelSize();
 				unsigned short temp_height = (image1->rawData()[temp_index + 1] << 8) | image1->rawData()[temp_index];
-				height =  temp_height * 0.3 //系数
-					* (hi[1] - lo[1]) / 65535;
-				//********************************************
-				//*******************读入初始河流位置，设置深度
+				height =  temp_height * proportion * (hi[1] - lo[1]) / 65535;
 				if (image2->rawData()[temp_index] == 255) {
 					vertList[j + i * pixels][1] = lo[1] + height;
-					height = 0;//假设河流最低点是0
+					height = 0;//suppose the bottom of the river is 0
 				}
-				//********************************************
-				solidList.push_back(Coord(x, lo[1] + height, z));
+				solidList.push_back(lo[1] + height);
 				normals.push_back(Coord(0, 1, 0));
 				z += distance;
-				//************判断当前vertList和solidList哪个高
+				//judge which one is higher
 				if (lo[1] + height > vertList[j + i * pixels][1]) {
-					vertList[j + i * pixels][1] = solidList[j + i * pixels][1];
+					vertList[j + i * pixels][1] = solidList[j + i * pixels];
 				}
-				//********************************************
 			}
 			x += distance;
 		}
@@ -264,7 +261,73 @@ namespace PhysIKA
 		isbound.clear();
 		normals.clear();
 
+		//int a[4] = { 1,2,3,4 };
+
+		//std::vector<int> st(a, a + 3);
+
 	}
+
+	template<typename TDataType>
+	std::vector<TDataType::Real>  HeightFieldNode<TDataType>::outputSolid() {
+		
+		HostArrayField<Real> solidArrayField;
+		int Size = this->solid.getValue().size();
+		solidArrayField.setElementCount(Size);
+		HostArray<Real> solidArray = solidArrayField.getValue();
+		Function1Pt::copy(solidArray, this->solid.getValue());
+		std::vector<Real> solid(solidArray.getDataPtr(), solidArray.getDataPtr() + Size);
+		return solid;
+	}
+
+	template<typename TDataType>
+	std::vector<TDataType::Real> HeightFieldNode<TDataType>::outputDepth() {
+		std::vector<Real> depth;
+		HostArrayField<Real> solidArrayField;
+		HostArrayField<Coord> heightArrayField;
+		int Size = this->solid.getValue().size();
+		heightArrayField.setElementCount(Size);
+		solidArrayField.setElementCount(Size);
+		auto solidArray = solidArrayField.getValue();
+		auto heightArray = heightArrayField.getValue();
+		Function1Pt::copy(heightArray, this->currentPosition()->getValue());
+		Function1Pt::copy(solidArray, this->solid.getValue());
+		for (int i = 0; i < Size; i++) {
+			depth.push_back(heightArray[i][1] - solidArray[i]);
+		}
+		return depth;
+	}
+
+	template<typename TDataType>
+	std::vector<TDataType::Real>  HeightFieldNode<TDataType>::outputUVel() {
+		
+		std::vector<Real> Vel;
+		HostArrayField<Coord> VelArrayField;
+		int Size = this->solid.getValue().size();
+		VelArrayField.setElementCount(Size);
+		HostArray<Coord> VelArray = VelArrayField.getValue();
+		Function1Pt::copy(VelArray, this->currentVelocity()->getValue());
+		for (int i = 0; i < Size; i++) {
+			Vel.push_back(VelArray[i][0]);
+		}
+		return Vel;
+	}	
+	
+	template<typename TDataType>
+	std::vector<TDataType::Real>  HeightFieldNode<TDataType>::outputWVel() {
+		
+		std::vector<Real> Vel;
+		HostArrayField<Coord> VelArrayField;
+		int Size = this->solid.getValue().size();
+		VelArrayField.setElementCount(Size);
+		HostArray<Coord> VelArray = VelArrayField.getValue();
+		Function1Pt::copy(VelArray, this->currentVelocity()->getValue());
+		for (int i = 0; i < Size; i++) {
+			Vel.push_back(VelArray[i][2]);
+		}
+		return Vel;
+	}
+
+
 	template<typename TDataType>
 	HeightFieldNode<TDataType>::~HeightFieldNode()
 	{
@@ -281,7 +344,7 @@ namespace PhysIKA
 		DeviceArray2D<Real> height, 
 		DeviceArray2D<Real> terrain,
 		DeviceArray<Coord> pts,
-		DeviceArray<Coord> solid)
+		DeviceArray<Real> solid)
 	{
 		int i = threadIdx.x + blockIdx.x * blockDim.x;
 		int j = threadIdx.y + blockIdx.y * blockDim.y;
@@ -290,7 +353,7 @@ namespace PhysIKA
 		{
 			int id = j + i * (height.Nx());
 			height(i, j) = pts[id][1];
-			terrain(i, j) = solid[id][1];
+			terrain(i, j) = solid[id];
 		}
 	}
 

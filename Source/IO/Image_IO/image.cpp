@@ -115,11 +115,11 @@ void Image::flipVertically()
         } 
 }
 
-void Image::mergeImage(int h_impressed, int w_impressed)
+void Image::mergeImage(int h_compressed, int w_compressed)
 {
 	int pixel_size = pixelSize();
-	unsigned int height = height_ / h_impressed;//一个像素由h_impressed*w_impressed个像素计算
-	unsigned int width = width_ / w_impressed;
+	unsigned int height = height_ / h_compressed;//a new pixel is calculate by h_compressed*w_compressed pixels
+	unsigned int width = width_ / w_compressed;
 	
 	unsigned char *d = new unsigned char[width*height*pixel_size];
 	for (unsigned int i = 0; i < height; ++i)
@@ -127,16 +127,15 @@ void Image::mergeImage(int h_impressed, int w_impressed)
 			for (unsigned int k = 0; k < pixel_size; ++k)
 			{
 				float temp = 0;
-				for (int p = 0;p<h_impressed;p++)
-					for (int q = 0; q < w_impressed; q++) {
-						temp += raw_data_[(j*w_impressed+q + width_ * (i*h_impressed+p))*pixel_size + k];
+				for (int p = 0;p<h_compressed;p++)
+					for (int q = 0; q < w_compressed; q++) {
+						temp += raw_data_[(j*w_compressed+q + width_ * (i*h_compressed+p))*pixel_size + k];
 					}
-				//d[(j + width * i)*pixel_size + k] = raw_data_[(j*w_impressed + width_ * i*h_impressed)*pixel_size + k];
-				d[(j + width * i)*pixel_size + k] = temp/(h_impressed*w_impressed);
+				//d[(j + width * i)*pixel_size + k] = raw_data_[(j*w_compressed + width_ * i*h_compressed)*pixel_size + k];
+				d[(j + width * i)*pixel_size + k] = temp/(h_compressed*w_compressed);
 			}
 	height_ = height;
 	width_ = width;
-	//memcpy(d, raw_data_, sizeof(unsigned char)*pixel_size*height_*width_);
 	allocMemory();
 	memcpy(raw_data_ ,d, sizeof(unsigned char)*pixel_size*height_*width_);
 }

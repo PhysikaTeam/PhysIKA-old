@@ -19,16 +19,20 @@ namespace PhysIKA
 		HeightFieldNode(std::string name = "default");
 		virtual ~HeightFieldNode();
 
-		void loadParticles(Coord lo, Coord hi, int pixels, Real slope, Real relax);
 
 		bool initialize() override;
 		void advance(Real dt) override;
 		void SWEconnect();
 
 		void loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord> &vertList);
-		void loadParticlesFromImage(Coord lo, Coord hi, int pixels, Real slope, Real relax);
+		void loadParticles(Coord lo, Coord hi, int pixels, Real slope, Real relax);
+		void loadParticlesFromImage(Coord lo, Coord hi, int pixels, Real proportion, Real relax);
+		//proportion :control the height
 
-		//Real trans2
+		std::vector<Real> outputDepth();
+		std::vector<Real> outputSolid();
+		std::vector<Real> outputUVel();
+		std::vector<Real> outputWVel();
 
 		void updateTopology() override;
 
@@ -47,7 +51,7 @@ namespace PhysIKA
 	private:
 		Real distance;
 		Real relax;
-		DeviceArrayField<Coord> solid;
+		DeviceArrayField<Real> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;
 		

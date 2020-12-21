@@ -52,11 +52,12 @@ void CreateScene()
 	root->addVisualModule(ptRender);
 
 	//root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.998);
-	root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 512, 0, 0.998);
-	//root->loadParticlesFromImage(Vector3f(0, 0.5, 0), Vector3f(1, 1, 1), 1024, 0.2, 0.998);
+
+	root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 512, 0.3, 0.998);
+	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(6, 1, 6), 4096, 0.3, 0.998);
+	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 1024, 0.2, 0.998);
 
 	root->setMass(100);
-
 
 	//std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	//root->addRigidBody(rigidbody);
@@ -79,12 +80,11 @@ int main()
 	window.mainLoop();
 
 	Log::sendMessage(Log::Info, "Simulation end!");
-			//初始化输出测试
 
-	/*读取文件进行压缩*/
+	/*picture compress */
 	//Image *image = new Image();
-	////std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\river.png";
-	//std::string filename1 = "F:\\新建文件夹\\大四第一学期\\swe\\river.png";
+	////std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\1.png";
+	//std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\river.png";
 	//ImageIO::load(filename1, image);
 
 	//
