@@ -26,8 +26,12 @@ namespace PhysIKA
 
 		void loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord> &vertList);
 		void loadParticles(Coord lo, Coord hi, int pixels, Real slope, Real relax);
-		void loadParticlesFromImage(Coord lo, Coord hi, int pixels, Real proportion, Real relax);
-		//proportion :control the height
+
+		void loadParticlesFromImage( std::string filename1, std::string filename2, Real proportion, Real relax);
+		//proportion :Controls the relative height of a building
+
+		void run(int stepNum, float timestep);
+		void init();
 
 		std::vector<Real> outputDepth();
 		std::vector<Real> outputSolid();

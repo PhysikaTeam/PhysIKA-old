@@ -12,9 +12,10 @@ namespace PhysIKA
 	HeightFieldNode<TDataType>::HeightFieldNode(std::string name = "default")
 		: Node(name)
 	{
-		auto swe = this->template setNumericalModel<ShallowWaterEquationModel<TDataType>>("swe");
-		this->setNumericalModel(swe);
-		SWEconnect();
+		auto swe = this->setNumericalModel<ShallowWaterEquationModel<TDataType>>("swe");
+		//¿‡–Õ «std::shared_ptr<Module>
+		//this->setNumericalModel(swe);
+		this->SWEconnect();
 		
 		m_height_field = std::make_shared<HeightField<TDataType>>();
 		this->setTopologyModule(m_height_field);
@@ -24,6 +25,7 @@ namespace PhysIKA
 	void HeightFieldNode<TDataType>::SWEconnect()
 	{
 		auto swe = this->getModule<ShallowWaterEquationModel<TDataType>>("swe");
+		//auto swe = this->getNumericalModel();
 		this->currentPosition()->connect(&(swe->m_position));
 		
 		this->currentVelocity()->connect(&(swe->m_velocity));
@@ -175,20 +177,20 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void HeightFieldNode<TDataType>::loadParticlesFromImage(Coord lo, Coord hi, int pixels, Real proportion, Real relax)
+	void HeightFieldNode<TDataType>::loadParticlesFromImage( std::string filename1, std::string filename2, Real proportion, Real relax)
 	{
 		Image *image1 = new Image;
 		Image *image2 = new Image;
-		std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\8-8.png";//The pixel count is 512 by 512
-		std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";
-		//std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\1.png";//The pixel count is 4096*4096
-		//std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river.png";		
-		ImageIO::load(filename1, image1);
+
+ 		ImageIO::load(filename1, image1);
 		ImageIO::load(filename2, image2);
 		assert(image2->height() == image2->width());
 		assert(image2->width() == image1->height());
-		assert(image1->height() == pixels);
 		assert(image1->height() == image1->width());
+		int pixels = image1->height();
+		this->distance = 0.003;
+		Coord lo(0, 0, 0);
+		Coord hi(distance * (pixels - 1), distance * (pixels - 1)*0.5, distance * (pixels - 1));
 
 		std::vector<Coord> vertList;
 		loadHeightFieldParticles(lo, hi, pixels, 0, vertList);
@@ -196,7 +198,7 @@ namespace PhysIKA
 		std::vector<Real> solidList;
 		std::vector<Coord> normals;
 		std::vector<int>  isbound;
-		Real distance = (hi[2] - lo[2]) / (pixels - 1);
+		
 		Real height = 0, e = 2.71828;
 		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		Real x = lo[0];
@@ -250,6 +252,7 @@ namespace PhysIKA
 
 		this->SWEconnect();
 		this->updateTopology();
+		this->init();
 		//Coord ori = Coord(0, 0, 0);
 		//ori[2] = -0.5 * (lo[2] + hi[2]);
 		//ori[0] = -0.5 * (lo[0] + hi[0]);
@@ -260,10 +263,6 @@ namespace PhysIKA
 		solidList.clear();
 		isbound.clear();
 		normals.clear();
-
-		//int a[4] = { 1,2,3,4 };
-
-		//std::vector<int> st(a, a + 3);
 
 	}
 
@@ -326,7 +325,19 @@ namespace PhysIKA
 		}
 		return Vel;
 	}
+	template<typename TDataType>
+	void HeightFieldNode<TDataType>::init() {
+		auto nModel = this->getNumericalModel();
+		nModel->initialize();
+	}
 
+	template<typename TDataType>
+	void HeightFieldNode<TDataType>::run(int stepNum, float timestep) {
+		auto nModel = this->getNumericalModel();
+		for (int i = 0; i < stepNum; i++) {
+			nModel->step(timestep);
+		}
+	}
 
 	template<typename TDataType>
 	HeightFieldNode<TDataType>::~HeightFieldNode()

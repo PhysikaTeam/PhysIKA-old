@@ -52,12 +52,18 @@ void CreateScene()
 	root->addVisualModule(ptRender);
 
 	//root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.998);
+	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
+	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
 
-	root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 512, 0.3, 0.998);
+	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
 	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(6, 1, 6), 4096, 0.3, 0.998);
 	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 1024, 0.2, 0.998);
 
 	root->setMass(100);
+
+	//root->run(1,0.03);
+	//auto result = root->outputSolid();
+	//std::cout << result[0];
 
 	//std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	//root->addRigidBody(rigidbody);
@@ -65,8 +71,32 @@ void CreateScene()
 	//rigidbody->setActive(false);
 }
 
+void executeOnce() {
+
+	std::shared_ptr<HeightFieldNode<DataType3f>> root(new HeightFieldNode<DataType3f>);
+
+	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
+	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
+
+	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
+
+	float dt = 1.0 / 60;
+	std::vector<Real> vec1 = root->outputDepth();
+	root->run(1, dt);
+	std::vector<Real> vec2 = root->outputDepth();
+	std::cout << "the depth difference:" << std::endl;
+	for (int i = 0; i < vec1.size(); i++) {
+		if (vec1[i] != vec2[i]) {
+			std::cout << i << std::endl;
+		}
+	}
+}
+
 int main()
 {
+#if 0
+	executeOnce();
+#else
 	CreateScene();
 
 	Log::setOutput("console_log.txt");
@@ -80,7 +110,7 @@ int main()
 	window.mainLoop();
 
 	Log::sendMessage(Log::Info, "Simulation end!");
-
+#endif
 	/*picture compress */
 	//Image *image = new Image();
 	////std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\1.png";
