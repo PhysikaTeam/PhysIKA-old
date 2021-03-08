@@ -68,22 +68,6 @@ The following image shows an screenshot of the running example
 
  ![](Media/screenshot.png)
 
-## Contributers
-
-### Current developers:
-
-* **He Xiaowei** - *Institute of Software, CAS*
-* **Xu Liyou** - *Peking University*
-* **Chen Xiaosong** *Tsinghua University*
-
-See also the list of [contributors](https://github.com/PhysikaTeam/PhysIKA/graphs/contributors) who are currently participated in this project.
-
-### Former developers:
-* **Chen Wei**
-* **Zhu Fei**
-* **Yang Sheng**
-* **Zhang Tianxiang**
-
 ## License
 
 This project is licensed under the GNU License - see the [LICENSE](LICENSE) file for details
