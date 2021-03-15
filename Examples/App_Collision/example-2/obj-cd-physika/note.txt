@@ -1,0 +1,158 @@
+12/25/2017
+
+First version: CPU-version
+
+Data:
+e:\etemp\andy-tshirt 0
+
+Check: '3'
+void key3()
+{
+	printf("Checking CCD ...\n");
+	checkSelfCPU();
+}
+
+Display: 't' to highlight self-colliding areas
+
+Find at frame-19:
+
+loading e:\etemp\andy-tshirt\0019_12.obj ...
+loading e:\etemp\andy-tshirt\0019_13.obj ...
+loading e:\etemp\andy-tshirt\0019_14.obj ...
+loading e:\etemp\andy-tshirt\0019_15.obj ...
+loading e:\etemp\andy-tshirt\0019_ob.obj ...
+Checking CCD ...
+start checking self...
+self contact found at (584, 4704)
+self contact found at (2312, 4753)
+self contact found at (2312, 4859)
+self contact found at (2822, 4753)
+self contact found at (2822, 7191)
+self contact found at (3805, 7191)
+self contact found at (4146, 4704)
+end checking: 2.30673 seconds
+
+12/26/2017
+
+USE_DOUBLE only ...
+
+12/27/2017
+
+release stable but not the same as CPU version
+debug unstable ...
+
+12/28/2017
+
+tri_contact(REAL3 &P1, REAL3 &P2, REAL3 &P3,
+	REAL3 &Q1, REAL3 &Q2, REAL3 &Q3, bool find)
+{
+	REAL3 p1 = zero3f();
+
+	========================
+
+	if (!project3(n1, q1, q2, q3)) return false;
+	if (!project3(m1, -q1, p2 - q1, p3 - q1)) return false;
+
+
+E:\tools\objCD-data\data-andy 103
+E:\etemp\qman 310
+
+BVH visualization added!
+
+2018/10/24
+
+c:\work-cd\data\flag-no-cd 108
+c:\work-cd\data\br-16k-data 220
+
+2018/11/10
+
+added Spatial Hashing based Self-collision detection.
+C:\work-tuka\skirt
+C:\work-netease\current-qunzi
+
+
+2019/10/17
+
+C:\work\cuda-test\scenes\hpg-tests\twisting-data
+
+回到：
+c:\work-cd\data\br-16k-data 220
+c:\work-cd\data\flag-no-cd 108
+
+C:\work\clothSample\benchmarks\clo3
+
+2020/04/09
+E:\cloth-avatr-data\clo-skirt-continue 140
+
+
+2020/04/17
+
+C:\work-momo\momo-release-2\momo-x3 0
+$(ProjectDir)
+
+switch to handel matching (NO_UI), could be further optimized with BVH query.
+
+cloth_tpose.obj body_tpose.obj nodes.txt out.txt
+C:\work-momo\momo-release-2\momo-x4\test-nodes
+
+data\cloth.obj data\body.obj input\nodes.txt data\nodes.txt
+C:\work-momo\momo-release-3
+
+switch to UI mode for self-collision checking, input an obj file.
+
+
+2020/05/03
+
+save\cloth.obj pose009.obj
+E:\桌面整理\项目\MOMO-布料仿真\0502-ztx\裙子像牛仔
+
+square-tm.obj sphere-coarse.obj
+C:\Users\tangm\Desktop\data
+
+square-tm.obj cube.obj
+square-30976.obj sphere-coarse.obj
+
+2020/07/05
+
+projectOutside revised!
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+def remove_interpenetration_fast(mesh, base, L=None):
+    """Deforms `mesh` to remove its interpenetration from `base`.
+    This is posed as least square optimization problem which can be solved
+    faster with sparse solver.
+    """
+
+    eps = 0.001
+    ww = 2.0
+    nverts = mesh.v.shape[0]
+
+    if L is None:
+        L = laplacian(mesh.v, mesh.f)
+
+    nearest_points, nearest_normals = get_nearest_points_and_normals(mesh.v, base.v, base.f)
+    direction = np.sign(np.sum((mesh.v - nearest_points) * nearest_normals, axis=-1))
+
+    indices = np.where(direction < 0)[0]
+
+    pentgt_points = nearest_points[indices] - mesh.v[indices]
+    pentgt_points = nearest_points[indices] \
+                    + eps * pentgt_points / np.expand_dims(0.0001 + np.linalg.norm(pentgt_points, axis=1), 1)
+    tgt_points = mesh.v.copy()
+    tgt_points[indices] = ww * pentgt_points
+
+    rc = np.arange(nverts)
+    data = np.ones(nverts)
+    data[indices] *= ww
+    I = csr_matrix((data, (rc, rc)), shape=(nverts, nverts))
+
+    A = vstack([L, I])
+    b = np.vstack((
+        L.dot(mesh.v),
+        tgt_points
+    ))
+
+    res = spsolve(A.T.dot(A), A.T.dot(b))
+    mres = Mesh(v=res, f=mesh.f)
+    return mres
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

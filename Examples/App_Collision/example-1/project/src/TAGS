@@ -1,0 +1,351 @@
+
+ccd.cpp,1419
+#define     ccdTimeResolution 6,103
+#define zeroRes 8,158
+#define IsZero(9,190
+	vec3f ad,12,278
+	vec3f ad, bd,12,278
+	vec3f ad, bd, cd,12,278
+	vec3f ad, bd, cd, pd;12,278
+	vec3f a0,13,302
+	vec3f a0, b0,13,302
+	vec3f a0, b0, c0,13,302
+	vec3f a0, b0, c0, p0;13,302
+} NewtonCheckData;14,326
+static inline bool _insideTriangle(19,447
+static inline bool _insideLnSeg(42,1036
+static inline bool checkRootValidity_VE(47,1153
+static inline bool checkRootValidity_VF(56,1335
+inline bool LineLineIntersect(75,1869
+static inline bool checkRootValidity_EE(116,2880
+inline void _equateCubic_VF(137,3346
+inline void _equateCubic_VE(164,4193
+inline void _equateCubic_EE(189,4801
+Intersect_VF(214,5572
+const double flat_tol 267,6972
+const double one_div_tree 268,7002
+class bezier_info 270,7040
+	double a,272,7070
+	double a, b,272,7070
+	double a, b, c,272,7070
+	double a, b, c, d;272,7070
+	double t0,273,7091
+	double t0, t1;273,7091
+	bezier_info(276,7119
+	void set(280,7177
+	bool isFlat(285,7322
+	double linearRoot(294,7499
+	void split(300,7574
+#define STACK_DEPTH 315,7980
+#define EMPTY(316,8004
+#define PUSH_PAIR(318,8037
+#define POP_PAIR(326,8185
+#define NEXT(335,8303
+bool findRoots(339,8371
+inline vec3f norm(391,9576
+void find_coplanarity_times(396,9685
+extern "C" void find_coplanarity_times_export(435,10582
+Intersect_VF2(453,11140
+Intersect_EE1(493,12083
+Intersect_EE(541,13314
+
+cmesh.cpp,1422
+#define WIN32_LEAN_AND_MEAN2,20
+inline vec3f update(20,300
+update(27,422
+void mesh::update(update36,587
+void mesh::updateNrms(updateNrms48,815
+bool mesh::load(load66,1191
+void initRedMat(76,1361
+void initBlueMat(87,1708
+void initYellowMat(98,2055
+void initGrayMat(109,2404
+vec3f areaColor(120,2751
+void setMat(137,3153
+	int e1,146,3412
+	int e1, e2;146,3412
+} my_pair;147,3426
+void mesh::display(display153,3503
+static char s_path[s_path357,7950
+static bool s_first;358,7976
+static void pr_head(360,8000
+static void pr_tail(367,8174
+static void mesh_head(374,8281
+static void mesh_tail(379,8350
+static void vertex_part(389,8538
+static void normal_part(400,8827
+static void face_part(411,9116
+mesh::povray(povray486,11084
+static const float scale 524,11817
+static const float kScale 525,11850
+void mesh::exportObj(exportObj527,11886
+void generateTex(560,12632
+void mesh::setFFlags(setFFlags566,12798
+mesh::mesh(mesh571,12855
+mesh::~mesh(~mesh592,13274
+#define CLAMP(606,13565
+inline float projectPointOntoLine(608,13638
+inline void calculateEENormal(615,13797
+inline void findClosestPointsEE(632,14255
+inline float edgeEdgeDistance(650,14714
+#define DRAW_TRI(779,18140
+void drawDebugVF(787,18283
+void drawVFs(860,19778
+void drawEdges(1023,23593
+void beginDraw(1098,24844
+void endDraw(1112,25118
+aabb::visualize(visualize1121,25191
+bvh::visualize(visualize1146,25556
+
+cmodel.cpp,1504
+# define	TIMING_BEGIN 20,325
+# define	TIMING_END(23,398
+#define OBJ_DIR 30,645
+mesh *cloths[cloths36,747
+mesh *lions[lions37,766
+vector<int> vtx_set;39,786
+vector<int> dummy_vtx;40,808
+set<int> cloth_set;42,834
+set<int> lion_set;43,855
+set<int> dummy_set;44,875
+BOX g_box;46,898
+static int sidx=47,910
+double ww,50,960
+double ww, hh,50,960
+double ww, hh, dd;50,960
+	int e1,53,1000
+	int e1, e2;53,1000
+} my_pair;54,1014
+int ee_num=56,1028
+my_pair ees[ees57,1043
+void initEEs(59,1065
+int Nx 73,1303
+int Nz 74,1318
+double xmin 75,1333
+double zmin 76,1367
+int Nx 78,1408
+int Nz 79,1423
+double xmin 80,1438
+double zmin 81,1472
+bool readtrfile(92,1653
+bool readobjfile_Vtx(121,2231
+bool readobjfile(150,2840
+bool read_transf(250,5233
+bool readobjdir(310,7056
+void initObjs(394,9110
+void readfflags(445,10562
+void initObj(470,11010
+void initAnimation(499,11714
+inline unsigned int IDX(503,11744
+void initCloths(510,11892
+void initCloth(550,12961
+void initModel(577,13732
+void initModel(583,13832
+void initModel(588,13895
+void quitModel(617,14413
+int fixed_nodes[fixed_nodes661,15653
+int fixed_num 671,16109
+int find_nodes[find_nodes673,16131
+int find_num=674,16153
+void drawModel(689,16849
+void dumpModel(714,17386
+void loadModel(718,17412
+void FindMatch(722,17438
+void findMatch(755,18244
+static int objIdx 760,18304
+static bool first 761,18327
+bool loadVtx(763,18356
+bool dynamicModel(780,18772
+#define FIXED_RES806,19259
+exportCloth(896,21980
+
+collid.cpp,1196
+#define MAX_CD_PAIRS 11,163
+static bvh *bvhCloth bvhCloth19,334
+bool findd;21,366
+# define	TIMING_BEGIN 25,401
+# define	TIMING_END(28,474
+#define OBJ_DIR 35,721
+inline double fmax(41,823
+inline double fmin(49,953
+inline int project3(57,1083
+inline int project6(72,1403
+vf_test 96,1916
+ccd_contact 107,2157
+tri_contact 132,2853
+void checkCCD(193,4774
+void checkModel(265,6720
+bool checkSelfIJ(326,8174
+bool checkSelfIJ(354,8834
+void findMatchNodes(421,10721
+void findMatchNodes2(486,12030
+void projectOutside(525,12795
+inline REAL stp 562,13449
+inline REAL signed_vf_distance(567,13551
+REAL distance(600,14207
+bool projectOutside(628,14765
+void projectOutside(657,15343
+void findMatchByInputID(677,15755
+void findMatchNodes(713,16382
+void checkOverlapNodes(747,17059
+void checkSelfCPU_Naive(800,18044
+void colliding_pairs(829,18674
+void checkSelfCPU_Rebuild(869,19421
+void checkSelfCPU_Refit(915,20319
+static tri3f *s_faces;s_faces977,21743
+static vec3f *s_nodes;s_nodes978,21767
+static int s_numFace 979,21791
+void updateMesh2GPU(981,21835
+void pushMesh2GPU(995,22114
+void checkSelfGPU(1032,23003
+void checkSelfGPU_SH(1096,24333
+void drawBVH(1149,25353
+
+cubic.cpp,396
+#define NEW_SOLVER1,0
+int solveCubic(11,278
+template <typename T> T sgn 16,377
+inline void swap(18,444
+int solve_quadratic 24,525
+int solve_cubic 44,1066
+double newtons_method 68,1956
+#define EQN_EPS 100,2959
+#define M_PI 102,3003
+#define ONE_DIV_3 105,3058
+double cbrt(110,3169
+static int isZero(122,3540
+int solveLinear(127,3615
+int solveQuadric(150,4234
+int solveCubic(199,5240
+
+obj-viewer.cpp,1321
+#define WIN32_LEAN_AND_MEAN2,20
+bool b[b9,131
+int win_w 10,145
+glut_simple_mouse_interactor object;13,200
+float DISP_SCALE 16,271
+char *dataPath;dataPath17,299
+int stFrame 18,316
+float p[p19,334
+float p[3], q[q19,334
+float gDepOff 21,355
+static int level 52,1249
+float lightpos[lightpos54,1274
+void checkGLError(57,1345
+void initSetting(67,1552
+void initOpengl(72,1598
+void updateFPS(97,2387
+void begin_window_coords(101,2413
+void end_window_coords(111,2632
+void drawGround(118,2753
+void drawOther(138,3169
+void draw(146,3250
+static bool ret 173,3659
+void display(175,3687
+void idle(255,5319
+void key1(268,5516
+void key2(274,5601
+void key6(282,5718
+void key4(291,5848
+void key5(297,5935
+void key3(303,6016
+void keyQ(316,6344
+void key9(326,6536
+void quit(333,6648
+void printLight(339,6695
+void updateLight(344,6811
+void endCapture(349,6890
+void key_self_cd(353,6917
+void key(368,7108
+void resize(469,8317
+void mouse(487,8652
+void motion(492,8749
+void main_menu(497,8810
+void initMenu(502,8876
+void usage_self_cd(522,9703
+void usage(534,10019
+#define NO_UI545,10451
+int main(549,10517
+int main_self_cd_cmd(567,10822
+int main_self_cd(581,11116
+int main_cd_cmd(623,11926
+int main_off_cmd(635,12146
+int main(655,12538
+int main1(696,13362
+void CaptureScreen(739,14215
+
+real.hpp,62
+#define USE_DOUBLE3,14
+#define REAL 6,54
+#define REAL 8,80
+
+tmbvh.cpp,1019
+static vector<mesh *>  *ptCloth;ptCloth17,230
+void self_mesh(19,266
+class aap 24,335
+	char _xyz;26,355
+	float _p;27,367
+	FORCEINLINE aap(29,379
+	FORCEINLINE bool inside(44,698
+bvh::bvh(bvh49,779
+static vec3f *s_fcenters;s_fcenters59,937
+static BOX *s_fboxes;s_fboxes60,963
+static unsigned int *s_idx_buffer;s_idx_buffer61,985
+static bvh_node *s_current;s_current62,1020
+void bvh::construct(construct64,1049
+void bvh::refit(refit138,2597
+void bvh::resetParents(resetParents162,3028
+void bvh::refit(refit167,3089
+void bvh::reorder(reorder175,3169
+bvh_node::refit(refit226,4137
+bvh_node::resetParents(resetParents240,4316
+bvh_node::construct(construct257,4572
+bvh_node::construct(construct264,4661
+bvh_node::sprouting(sprouting311,5578
+void mesh_id(340,6225
+bool covertex(357,6519
+front_list::propogate(propogate382,6969
+void front_node::update(update395,7225
+void bvh::push2GPU(push2GPU429,8176
+front_list::push2GPU(push2GPU483,9412
+bvh_node::visualize(visualize513,9979
+
+tmbvh.hpp,1056
+#define MAX(13,181
+#define MIN(14,223
+class tri_pair 21,319
+	unsigned int _id[_id22,337
+	tri_pair(25,371
+	void get(37,540
+	bool operator < operator <43,633
+class front_node 52,802
+	bvh_node *_left,_left54,831
+	bvh_node *_left, *_right;_right54,831
+	unsigned int _flag;55,859
+	unsigned int _ptr;56,898
+	FORCEINLINE front_node(58,946
+class front_list 71,1218
+class bvh_node 77,1393
+	BOX _box;78,1411
+	int _child;79,1423
+	int _parent;80,1478
+	void setParent(82,1495
+	bvh_node(85,1547
+	~bvh_node(90,1599
+	void collide(94,1630
+	void self_collide(117,2203
+	FORCEINLINE BOX &box(box133,2580
+	FORCEINLINE bvh_node *left(left134,2622
+	FORCEINLINE bvh_node *right(right135,2679
+	FORCEINLINE int triID(136,2741
+	FORCEINLINE int isLeaf(137,2786
+	FORCEINLINE int parentID(138,2837
+	FORCEINLINE void getLevel(140,2888
+	FORCEINLINE void getLevelIdx(149,3120
+class bvh 164,3439
+	int _num;165,3452
+	bvh_node *_nodes;_nodes166,3480
+	~bvh(176,3669
+	bvh_node *root(root181,3724
+	void collide(187,3829
+	void self_collide(197,3996

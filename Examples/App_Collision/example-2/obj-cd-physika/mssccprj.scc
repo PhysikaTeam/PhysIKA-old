@@ -1,0 +1,13 @@
+SCC = This is a Source Code Control file
+
+[objViewer.sln]
+SCC_Aux_Path = "e:\vss"
+SCC_Project_Name = "$/objViewer.root/objViewer", GSAAAAAA
+
+[objViewer.vcproj]
+SCC_Aux_Path = "e:\vss"
+SCC_Project_Name = "$/objViewer.root/objViewer", GSAAAAAA
+
+[objCD.sln]
+SCC_Aux_Path = "J:\vss"
+SCC_Project_Name = "$/objCD.root/objCD", CKGAAAAA
