@@ -46,12 +46,18 @@ void SetupModel(T &bunny, int i, std::string model = "")
   auto sRender = std::make_shared<SurfaceMeshRender>();
   bunny->getSurfaceNode()->addVisualModule(sRender);
 		
-  if (model == "mass_spring")
+  if (i == 0)
     sRender->setColor(Vector3f(1, 1, 0));
-  else if (model == "fem")
+  else if (i == 1)
     sRender->setColor(Vector3f(1, 0, 1));
-  else
+  else if (i == 2)
     sRender->setColor(Vector3f(0, 1, 1));
+  else if (i == 3)
+    sRender->setColor(Vector3f(0, 0, 1));
+  else if (i == 4)
+    sRender->setColor(Vector3f(0, 1, 0));
+  else
+    sRender->setColor(Vector3f(1, 0, 0));
 
   bunny->setMass(1.0);
   bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
@@ -116,7 +122,9 @@ void CreateScene()
 
 	for (int i = 0; i < 3; i++)
 	{
-    string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
+    // string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
+    // string model = (i%4 == 0) ? "mass_spring" : "";
+          string model;
     AddSimulationModel(root, sfi, i, model);
 	}
 

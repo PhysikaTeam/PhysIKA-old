@@ -128,16 +128,15 @@ void CreateScene()
     }
     else
     {
-      continue;
-      std::shared_ptr<EmbeddedMassSpring<DataType3f>> bunny = std::make_shared<EmbeddedMassSpring<DataType3f>>();
+      std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
       root->addParticleSystem(bunny);
       bunny->setMass(1.0);
+
       bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
       bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
-
-
       bunny->translate(Vector3f(0.75, 0.2, 0.4 + i * 0.3));
       bunny->setVisible(false);
+      bunny->getElasticitySolver()->setIterationNumber(10);
       bunny->getElasticitySolver()->setHorizon(0.03);
       bunny->getTopologyMapping()->setSearchingRadius(0.05);
 
@@ -145,12 +144,29 @@ void CreateScene()
       bunny->getSurfaceNode()->addVisualModule(sRender);
       sRender->setColor(Vector3f(0, 1, 1));
 
-      boost::property_tree::ptree pt;
-      const std::string jsonfile_path = "../../Media/bunny/embedded_mass_spring_sparse.json";
-      read_json(jsonfile_path, pt);
-      bunny->init_problem_and_solver(pt);
-
       sfi->addParticleSystem(bunny);
+       // std::shared_ptr<EmbeddedMassSpring<DataType3f>> bunny = std::make_shared<EmbeddedMassSpring<DataType3f>>();
+      // root->addParticleSystem(bunny);
+      // bunny->setMass(1.0);
+      // bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+      // bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
+
+
+      // bunny->translate(Vector3f(0.75, 0.2, 0.4 + i * 0.3));
+      // bunny->setVisible(false);
+      // bunny->getElasticitySolver()->setHorizon(0.03);
+      // bunny->getTopologyMapping()->setSearchingRadius(0.05);
+
+      // auto sRender = std::make_shared<SurfaceMeshRender>();
+      // bunny->getSurfaceNode()->addVisualModule(sRender);
+      // sRender->setColor(Vector3f(0, 1, 1));
+
+      // boost::property_tree::ptree pt;
+      // const std::string jsonfile_path = "../../Media/bunny/embedded_mass_spring_sparse.json";
+      // read_json(jsonfile_path, pt);
+      // bunny->init_problem_and_solver(pt);
+
+      // sfi->addParticleSystem(bunny);
     }
 	}
 

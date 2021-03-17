@@ -122,8 +122,8 @@ void CreateScene()
 
 	for (int i = 0; i < 6; i++)
 	{
-    string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
-    // string model = (i%4 == 0) ? "mass_spring" : "";
+    // string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
+    string model = (i%4 == 0) ? "mass_spring" : "";
     AddSimulationModel(root, sfi, i, model);
 	}
 
