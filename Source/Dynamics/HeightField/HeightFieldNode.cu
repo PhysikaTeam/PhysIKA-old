@@ -82,7 +82,7 @@ namespace PhysIKA
 			Real z = lo[2];
 			for (int j = 0; j < pixels; j++)
 			{
-				//height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
@@ -106,7 +106,45 @@ namespace PhysIKA
 		velList.clear();
 
 	}
+	template<typename TDataType>
+	void HeightFieldNode<TDataType>::loadHeightFieldFromImage(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList)
+	{
+		std::vector<Coord> normalList;
+		std::vector<Coord> velList;
+		Real height = 0, e = 2.71828;
+		Real distance = (hi[2] - lo[2]) / (pixels - 1);
+		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		//float xcenter = 0.5, zcenter = 0.8;
 
+		Real x = lo[0];
+		for (int i = 0; i < pixels; i++)
+		{
+			Real z = lo[2];
+			for (int j = 0; j < pixels; j++)
+			{
+				Coord p = Coord(x, 0, z);
+				vertList.push_back(Coord(x, height + lo[1], z));
+				normalList.push_back(Coord(0, 1, 0));
+				velList.push_back(Coord(0, 0, 0));
+				z += distance;
+			}
+			x += distance;
+		}
+
+		//sign on four corners
+		/*int zcount = pixels;
+		vertList[vertList.size()-1][1] = 1;
+		vertList[vertList.size()-zcount][1] = 1;
+		vertList[0][1] = 1;
+		vertList[zcount-1][1] = 1;*/
+
+		this->currentVelocity()->setElementCount(velList.size());
+		Function1Pt::copy(this->currentVelocity()->getValue(), velList);
+
+		normalList.clear();
+		velList.clear();
+
+	}
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, int pixels,Real slope, Real relax)
 	{
@@ -169,7 +207,7 @@ namespace PhysIKA
 		ori[0] = -0.5 * (lo[0] + hi[0]);
 		this->m_height_field->setOrigin(ori);
 
-		printf("distance si %f ,zcount is %d, xcount is %d\n",distance, zcount, xcount);
+		printf("distance is %f ,zcount is %d, xcount is %d\n",distance, zcount, xcount);
 		vertList.clear();
 		solidList.clear();
 		isbound.clear();
@@ -193,7 +231,7 @@ namespace PhysIKA
 		Coord hi(distance * (pixels - 1), distance * (pixels - 1)*0.5, distance * (pixels - 1));
 
 		std::vector<Coord> vertList;
-		loadHeightFieldParticles(lo, hi, pixels, 0, vertList);
+		loadHeightFieldFromImage(lo, hi, pixels, 0, vertList);
 
 		std::vector<Real> solidList;
 		std::vector<Coord> normals;

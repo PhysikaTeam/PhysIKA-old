@@ -39,7 +39,7 @@ void RecieveLogMessage(const Log::Message& m)
 	}
 }
 
-void CreateScene()
+void CreateScene(int mode)
 {
 	SceneGraph& scene = SceneGraph::getInstance();
 	scene.setUpperBound(Vector3f(1.5, 1, 1.5));
@@ -51,24 +51,20 @@ void CreateScene()
 	ptRender->setColor(Vector3f(1, 0, 0));
 	root->addVisualModule(ptRender);
 
-	//root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.998);
-	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
-	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
-
-	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
-	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(6, 1, 6), 4096, 0.3, 0.998);
-	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 1024, 0.2, 0.998);
-
+	if(mode == 1)
+		root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.999);
+	else
+	{
+		std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
+		std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
+		root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
+	}
 	root->setMass(100);
 
 	//root->run(1,0.03);
 	//auto result = root->outputSolid();
 	//std::cout << result[0];
 
-	//std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
-	//root->addRigidBody(rigidbody);
-	//rigidbody->loadShape("../../Media/bowl/bowl.obj");
-	//rigidbody->setActive(false);
 }
 
 void executeOnce() {
@@ -97,7 +93,7 @@ int main()
 #if 0
 	executeOnce();
 #else
-	CreateScene();
+	CreateScene(1);
 
 	Log::setOutput("console_log.txt");
 	Log::setLevel(Log::Info);
