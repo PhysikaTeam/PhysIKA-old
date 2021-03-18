@@ -52,10 +52,10 @@ void CreateScene()
 	root->addVisualModule(ptRender);
 
 	//root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.998);
-	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
-	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
+	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain8-8.png";//The pixel count is 512*512
+	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";
 
-	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
+	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.995);
 	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(6, 1, 6), 4096, 0.3, 0.998);
 	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 1024, 0.2, 0.998);
 
@@ -75,8 +75,11 @@ void executeOnce() {
 
 	std::shared_ptr<HeightFieldNode<DataType3f>> root(new HeightFieldNode<DataType3f>);
 
-	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
-	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
+	//std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
+	//std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
+	//
+	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain.png";//The pixel count is 4096*4096
+	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river.png";
 
 	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
 
@@ -114,12 +117,14 @@ int main()
 	/*picture compress */
 	//Image *image = new Image();
 	////std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\1.png";
-	//std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\river.png";
+	////std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\river.png";
+	//std::string filename1 = "F:\\Git_Repository\\PhysIKABenXu\\Examples\\App_SWE\\river.png";
 	//ImageIO::load(filename1, image);
 
 	//
 	//image->mergeImage(8,8);
-	//string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";
+	////string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";
+	//string filename2 = "..\\..\\..\\riverceshi.png";
 	//ImageIO::save(filename2, image);
 	return 0;
 }
