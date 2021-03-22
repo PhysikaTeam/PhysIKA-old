@@ -58,4 +58,4 @@ namespace PhysIKA
 #else
 	template class ShallowWaterEquationModel<DataType3d>;
 #endif
-}
+};

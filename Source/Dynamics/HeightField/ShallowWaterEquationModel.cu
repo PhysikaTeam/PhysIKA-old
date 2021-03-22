@@ -54,8 +54,8 @@ namespace PhysIKA
 	)
 	{
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (i < grid_vel_x.size()) grid_vel_x[i] = 0;
-		if (i < grid_vel_z.size()) grid_vel_z[i] = 0;
+		grid_vel_x[i] = i < grid_vel_x.size()? 0 : grid_vel_x[i];
+		grid_vel_z[i] = i < grid_vel_z.size()? 0 : grid_vel_z[i];
 
 	}
 	template<typename TDataType>
@@ -79,27 +79,32 @@ namespace PhysIKA
 		printf("neighbor limit is 4, index count is %d\n", m_solid.getElementCount());
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
 		cuint pDims2 = cudaGridSize((xcount + 2) * (zcount + 2), BLOCK_SIZE);
-		Init <Real, Coord> << < pDims, BLOCK_SIZE >> > (m_position.getValue(), solid.getValue(), h.getValue(), h_buffer.getValue(), m_velocity.getValue());
+		Init <Real, Coord> << < pDims, BLOCK_SIZE >> > (m_position.getValue(), m_solid.getValue(), m_height.getValue(), m_height_buffer.getValue(), m_velocity.getValue());
 		Init_gridVel <Real, Coord> << < pDims2, BLOCK_SIZE >> > (grid_vel_x.getValue(), grid_vel_z.getValue());
 		cuSynchronize();
 		return true;
 	}
 
 	__device__ int neighborFind(int ix, int iz, int j, int zcount) {
-		if (j == 0) {
-			if (iz == 0)return -1;
-			else return ix * zcount + iz - 1;
-		}
-		else if (j == 1) {
-			if (iz + 1 == zcount)return -1;
-			else return ix * zcount + iz + 1;
-		}
-		else if (j == 2) {
-			return (ix - 1)*zcount + iz;
-		}
-		else if (j == 3) {
-			return (ix + 1)*zcount + iz;
-		}
+		bool status = j == 0 && iz == 0 || j == 1 && iz + 1 == zcount;
+		int x_offset, z_offset;
+		x_offset = j < 2 ? 0 : (j % 2 ? -1 : 1);
+		z_offset = j < 2 ? (j ? 1 : -1) : 0;
+		return status ? -1 : (ix + x_offset) * zcount + iz + z_offset;
+		//if (j == 0) {
+		//	if (iz == 0)return -1;
+		//	else return ix * zcount + iz - 1;
+		//}
+		//else if (j == 1) {
+		//	if (iz + 1 == zcount)return -1;
+		//	else return ix * zcount + iz + 1;
+		//}
+		//else if (j == 2) {
+		//	return (ix - 1)*zcount + iz;
+		//}
+		//else if (j == 3) {
+		//	return (ix + 1)*zcount + iz;
+		//}
 	}
 
 	template<typename Real, typename Coord>
@@ -121,30 +126,17 @@ namespace PhysIKA
 		int ix = i/zcount;
 		int iz = i%zcount;
 
+		int ix_offset, iz_offset, voffset;
 		for (int j = 0; j < maxNei; ++j)
 		{
 			int nei = neighborFind(ix, iz, j, zcount);
 			if (nei >= h.size() || nei < 0)
 			{
-				switch (j)
-				{
-				case 0:
-					m_velocity[i][2] = 0;
-					h[i] = h[ix*zcount + iz + 1];
-					break;
-				case 1:
-					m_velocity[i][2] = 0;
-					h[i] = h[ix*zcount + iz - 1];
-					break;
-				case 2:
-					m_velocity[i][0] = 0;
-					h[i] = h[(ix + 1)*zcount + iz];
-					break;
-				case 3:
-					m_velocity[i][0] = 0;
-					h[i] = h[(ix - 1)*zcount + iz];
-					break;
-				}
+				voffset = j < 2 ? 2 : 0;
+				m_velocity[i][voffset] = 0;
+				ix_offset = j < 2 ? 0 : (j % 2 ? 1 : -1);
+				iz_offset = j < 2 ? (j == 1 ? -1 : 1) : 0;
+				h[i] = h[(ix + ix_offset) * zcount + iz + iz_offset];
 			}
 
 		}
@@ -168,6 +160,7 @@ namespace PhysIKA
 		
 		int ix = i / zcount;
 		int iz = i % zcount;
+		bool status;
 		Real hx = 0, hz = 0;
 		Real p1, p2;
 		Real ux = 0, uz = 0, wx = 0, wz = 0;
@@ -178,39 +171,22 @@ namespace PhysIKA
 			{
 				continue;
 			}
-			p1 = m_position[nei][1]; p2 = m_position[i][1];
-			if (solid[nei] >= m_position[i][1] && h[nei] == 0)
-				p1 = p2 = 0;
-			if (solid[i] >= m_position[nei][1] && h[i] == 0)
-				p1 = p2 = 0;
+			status = solid[nei] >= m_position[i][1] && h[nei] == 0 || solid[i] >= m_position[nei][1] && h[i] == 0;
+			p1 = status ? 0 : m_position[nei][1];
+			p2 = status ? 0 : m_position[i][1];
+			status = j < maxNei / 2 ? true : false;
+			
+			hz += status ? (p1 - p2) / (m_position[nei][2] - m_position[i][2]) : 0;
+			uz += status ? (m_velocity[nei][0] - m_velocity[i][0]) / (m_position[nei][2] - m_position[i][2]) : 0;
+			wz += status ? (m_velocity[nei][2] - m_velocity[i][2]) / (m_position[nei][2] - m_position[i][2]) : 0;
+			hx += status ? 0 : (p1 - p2) / (m_position[nei][0] - m_position[i][0]);
+			ux += status ? 0 : (m_velocity[nei][0] - m_velocity[i][0]) / (m_position[nei][0] - m_position[i][0]);
+			wx += status ? 0 : (m_velocity[nei][2] - m_velocity[i][2]) / (m_position[nei][0] - m_position[i][0]);
 
-			if(j < maxNei/2)//gradient along z
-			{
-				hz += (p1 - p2) / (m_position[nei][2] - m_position[i][2]);
-				uz += (m_velocity[nei][0] - m_velocity[i][0]) / (m_position[nei][2] - m_position[i][2]);
-				wz += (m_velocity[nei][2] - m_velocity[i][2]) / (m_position[nei][2] - m_position[i][2]);
-			}
-			else
-			{
-				hx += (p1 - p2) / (m_position[nei][0] - m_position[i][0]);
-				ux += (m_velocity[nei][0] - m_velocity[i][0]) / (m_position[nei][0] - m_position[i][0]);
-				wx += (m_velocity[nei][2] - m_velocity[i][2]) / (m_position[nei][0] - m_position[i][0]);
-			}
 		}
 		m_accel[i][0] = -gravity * hx / 2;
 		m_accel[i][2] = -gravity * hz / 2;
 
-		//m_accel[i][0] = -(gravity * hx + m_velocity[i][0] * ux) / 2 - m_velocity[i][2] * uz / 2;
-		//m_accel[i][2] = -(gravity * hz + m_velocity[i][2] * wz) / 2 - m_velocity[i][0] * wx / 2;
-
-		//Real maxAccel = 2 * distance / (dt*dt);
-		//Real accel = sqrt(pow(m_accel[i][0], 2) + pow(m_accel[i][2], 2));
-		//if(accel > maxAccel)
-		//{
-		//	printf("%d exceed max accel \n", i);
-		//	m_accel[i][0] *= maxAccel / accel;
-		//	m_accel[i][2] *= maxAccel / accel;
-		//}
 	}
 
 	template<typename Real, typename Coord>
@@ -233,6 +209,7 @@ namespace PhysIKA
 		Real ux = 0, uz = 0, wx = 0, wz = 0;
 		int ix, iz;
 		int xcount = m_position.size() / zcount;
+		bool status;
 		if (i < grid_vel_x.size())
 		{
 			ix = i / (zcount + 2);
@@ -243,11 +220,9 @@ namespace PhysIKA
 			{
 				//particles
 				int nei1 = (ix - 1) * zcount + iz - 1, nei2 = ix * zcount + iz - 1;
-				p1 = m_position[nei1][1]; p2 = m_position[nei2][1];
-				if (solid[nei1] >= m_position[nei2][1] && h[nei1] == 0)
-					p1 = p2 = 0;
-				if (solid[nei2] >= m_position[nei1][1] && h[nei2] == 0)
-					p1 = p2 = 0;
+				status = solid[nei1] >= m_position[nei2][1] && h[nei1] == 0 || solid[nei2] >= m_position[nei1][1] && h[nei2] == 0;
+				p1 = status ? 0 : m_position[nei1][1];
+				p2 = status ? 0 : m_position[nei2][1];
 				
 				hx = (p1 - p2) / (m_position[nei1][0] - m_position[nei2][0]);
 
@@ -279,11 +254,9 @@ namespace PhysIKA
 			{
 				//particles
 				int nei1 = (ix - 1) * zcount + iz - 1, nei2 = (ix - 1) * zcount + iz;
-				p1 = m_position[nei1][1]; p2 = m_position[nei2][1];
-				if (solid[nei1] >= m_position[nei2][1] && h[nei1] == 0)
-					p1 = p2 = 0;
-				if (solid[nei2] >= m_position[nei1][1] && h[nei2] == 0)
-					p1 = p2 = 0;
+				status = solid[nei1] >= m_position[nei2][1] && h[nei1] == 0 || solid[nei2] >= m_position[nei1][1] && h[nei2] == 0;
+				p1 = status ? 0 : m_position[nei1][1];
+				p2 = status ? 0 : m_position[nei2][1];
 				
 				hz = (p1 - p2) / (m_position[nei1][2] - m_position[nei2][2]);
 
@@ -328,8 +301,6 @@ namespace PhysIKA
 		{
 			ix = i / (zcount + 2);
 			iz = i % (zcount + 2);
-			//if (iz == 0 || iz == zcount + 1 || ix == 0 || ix == xcount)
-			//	grid_vel_x[i] = 0;
 			//grid_vel_x and grid_accel_x are both 0 on the boundary
 			grid_vel_x[i] = grid_vel_x[i] * relax + grid_accel_x[i] * dt;
 		}
@@ -337,23 +308,16 @@ namespace PhysIKA
 		{
 			ix = i / (zcount + 1);
 			iz = i % (zcount + 1);
-			//if (iz == 0 || iz == zcount || ix == 0 || ix == xcount + 1)
-			//	grid_vel_z[i] = 0;
 			grid_vel_z[i] = grid_vel_z[i] * relax + grid_accel_z[i] * dt;
 		}
 		//restrict maxVelocity 
 		Real maxVel = sqrt(distance * gravity), vel;
 		//vel = sqrt(pow(m_velocity[i][0], 2) + pow(m_velocity[i][2], 2));
 		vel = abs(grid_vel_x[i]);
-		if (vel > maxVel)
-		{
-			grid_vel_x[i] *= maxVel / vel;
-		}
+		grid_vel_x[i] *= vel > maxVel ? maxVel / vel : 1;
+
 		vel = abs(grid_vel_z[i]);
-		if (vel > maxVel)
-		{
-			grid_vel_z[i] *= maxVel / vel;
-		}
+		grid_vel_z[i] *= vel > maxVel ? maxVel / vel : 1;
 	}
 
 	template<typename Real, typename Coord>
@@ -377,11 +341,8 @@ namespace PhysIKA
 		m_velocity[i][0] = 0.5 * (grid_vel_x[ix * (zcount + 2) + iz + 1] + grid_vel_x[(ix + 1) * (zcount + 2) + iz + 1]);
 		m_velocity[i][2] = 0.5 * (grid_vel_z[(ix + 1) * (zcount + 1) + iz] + grid_vel_z[(ix + 1) * (zcount + 1) + iz + 1]);
 		//boundary condition
-		if (ix == 0 || ix == xcount - 1)
-			m_velocity[i][0] = 0;
-		if (iz == 0 || iz == zcount - 1)
-			m_velocity[i][2] = 0;
-
+		m_velocity[i][0] = (ix == 0 || ix == xcount - 1) ? 0 : m_velocity[i][0];
+		m_velocity[i][2] = (iz == 0 || iz == zcount - 1) ? 0 : m_velocity[i][2];
 	}
 
 	template<typename Real, typename Coord>
@@ -411,24 +372,10 @@ namespace PhysIKA
 			{
 				continue;
 			}
-			if (j < maxNei / 2)//gradient along z
-			{
-				whz += (h[nei] * m_velocity[nei][2] - h[i] * m_velocity[i][2]) / (m_position[nei][2] - m_position[i][2]);
-			}
-			else
-			{
-				uhx += (h[nei] * m_velocity[nei][0] - h[i] * m_velocity[i][0]) / (m_position[nei][0] - m_position[i][0]);
-			}
+			whz += j < maxNei / 2 ? (h[nei] * m_velocity[nei][2] - h[i] * m_velocity[i][2]) / (m_position[nei][2] - m_position[i][2]) : 0;
+			uhx += j < maxNei / 2 ? 0 : (h[nei] * m_velocity[nei][0] - h[i] * m_velocity[i][0]) / (m_position[nei][0] - m_position[i][0]);
 		}
 		h_buffer[i] = -(uhx / 2 + whz / 2)*dt;
-		//if (i == 0)
-		//{
-		//	printf("Heightxminzmin: %f,%f,%f \n", m_position[i][0], m_position[i][1], m_position[i][2]);
-		//	printf("Heightxminzmax: %f,%f,%f \n", m_position[zcount-1][0], m_position[zcount - 1][1], m_position[zcount - 1][2]);
-		//	printf("Heightxmaxzmin: %f,%f,%f \n", m_position[m_position.size()-zcount][0], m_position[m_position.size() - zcount][1], m_position[m_position.size() - zcount][2]);
-		//	printf("Heightxmaxzmax: %f,%f,%f \n", m_position[m_position.size()-1][0], m_position[m_position.size() - 1][1], m_position[m_position.size() - 1][2]);
-		//	printf("***************************************************\n");
-		//}
 	}
 
 	template<typename Real, typename Coord>
@@ -444,6 +391,7 @@ namespace PhysIKA
 		int i = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (i >= h.size())  return;
 		h[i] += h_buffer[i];
+		
 		if (h[i] < 1e-4)
 		{
 			h[i] = 0;
@@ -475,9 +423,9 @@ namespace PhysIKA
 			grid_vel_z.getValue(),
 			grid_accel_x.getValue(),
 			grid_accel_z.getValue(),
-			h.getValue(),
+			m_height.getValue(),
 			m_position.getValue(),
-			solid.getValue(),
+			m_solid.getValue(),
 			zcount,
 			9.8,
 			distance
@@ -502,7 +450,7 @@ namespace PhysIKA
 		computeVelocity <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			grid_vel_x.getValue(),
 			grid_vel_z.getValue(),
-			h.getValue(),
+			m_height.getValue(),
 			m_position.getValue(),
 			m_velocity.getValue(),
 			zcount,
@@ -514,12 +462,12 @@ namespace PhysIKA
 		cudaDeviceSynchronize();
 
 		computeHeight <Real, Coord> << < pDims, BLOCK_SIZE >> > (
-			h.getValue(),
-			h_buffer.getValue(),
+			m_height.getValue(),
+			m_height_buffer.getValue(),
 			m_velocity.getValue(),
 			m_accel.getValue(),
 			m_position.getValue(),
-			normal.getValue(),
+			m_normal.getValue(),
 			zcount,
 			distance,
 			dt
@@ -528,10 +476,10 @@ namespace PhysIKA
 		cudaDeviceSynchronize();
 
 		applyHeight <Real, Coord> << < pDims, BLOCK_SIZE >> > (
-			h.getValue(),
-			h_buffer.getValue(),
+			m_height.getValue(),
+			m_height_buffer.getValue(),
 			m_position.getValue(),
-			solid.getValue(),
+			m_solid.getValue(),
 			m_velocity.getValue()
 			);
 		cuSynchronize();

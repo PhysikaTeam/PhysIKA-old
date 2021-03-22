@@ -26,10 +26,10 @@ namespace PhysIKA
 		this->currentPosition()->connect(&(swe->m_position));
 		
 		this->currentVelocity()->connect(&(swe->m_velocity));
-		this->normal.connect(&(swe->normal));
+		this->normal.connect(&(swe->m_normal));
 
-		this->isBound.connect(&(swe->isBound));
-		this->solid.connect(&(swe->solid));
+		this->isBound.connect(&(swe->m_isBound));
+		this->solid.connect(&(swe->m_solid));
 
 		swe->setDistance(distance);
 		swe->setRelax(relax);
