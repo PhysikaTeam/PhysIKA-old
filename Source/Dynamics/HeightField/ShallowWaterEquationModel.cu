@@ -26,10 +26,10 @@ namespace PhysIKA
 
 		//attachField(&m_force, "force", "Storing the particle force densities!", false);
 
-		attachField(&solid, "solid", "Storing the solid grid!", false);
-		attachField(&normal, "solidnormal", "Storing the solid normal!", false);
-		attachField(&isBound, "isBound", "Storing the solid isBound!", false);
-		attachField(&h, "h", "Storing the water height!", false);
+		attachField(&m_solid, "solid", "Storing the solid grid!", false);
+		attachField(&m_normal, "solidnormal", "Storing the solid normal!", false);
+		attachField(&m_isBound, "isBound", "Storing the solid isBound!", false);
+		attachField(&m_height, "h", "Storing the water height!", false);
 	}
 
 	template<typename Real, typename Coord>
@@ -68,15 +68,15 @@ namespace PhysIKA
 	{
 		int num = m_position.getElementCount();
 		m_accel.setElementCount(num);
-		h.setElementCount(num);
-		h_buffer.setElementCount(num);
+		m_height.setElementCount(num);
+		m_height_buffer.setElementCount(num);
 		xcount = num / zcount;
 		grid_vel_x.setElementCount((xcount + 1) * (zcount + 2));
 		grid_vel_z.setElementCount((xcount + 2) * (zcount + 1));
 		grid_accel_x.setElementCount((xcount + 1) * (zcount + 2));
 		grid_accel_z.setElementCount((xcount + 2) * (zcount + 1));
 
-		printf("neighbor limit is 4, index count is %d\n", solid.getElementCount());
+		printf("neighbor limit is 4, index count is %d\n", m_solid.getElementCount());
 		cuint pDims = cudaGridSize(num, BLOCK_SIZE);
 		cuint pDims2 = cudaGridSize((xcount + 2) * (zcount + 2), BLOCK_SIZE);
 		Init <Real, Coord> << < pDims, BLOCK_SIZE >> > (m_position.getValue(), solid.getValue(), h.getValue(), h_buffer.getValue(), m_velocity.getValue());
@@ -145,17 +145,6 @@ namespace PhysIKA
 					h[i] = h[(ix - 1)*zcount + iz];
 					break;
 				}
-				/*switch (j)
-				{
-				case 0:
-				case 1:
-					m_velocity[i][2] = 0;
-					break;
-				case 2:
-				case 3:
-					m_velocity[i][0] = 0;
-					break;
-				}*/
 			}
 
 		}

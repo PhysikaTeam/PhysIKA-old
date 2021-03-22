@@ -25,13 +25,13 @@ using std::string;
 namespace PhysIKA{
 
 
-bool PngIO::load(const string &filename,Image *image )//即默认图片格式为RGBA
+bool PngIO::load(const string &filename,Image *image )
 {
     return PngIO::load(filename, image, Image::RGBA);
 }
 
 bool PngIO::load(const std::string &filename, Image * image, Image::DataFormat data_format)
-{//其中DataFormat是一个枚举值，整个类中都恒定。像static一样是个常量，用类作用域方式::访问
+{
     if(ImageIO::checkFileNameAndImage(filename,string(".png"),image) == false)
         return false;
 
@@ -40,7 +40,7 @@ bool PngIO::load(const std::string &filename, Image * image, Image::DataFormat d
     std::vector<unsigned char> image_vec;
 
     if(data_format == Image::RGBA) //RGBA format
-    {//一个专门的png解码函数
+    {
         error = lodepng::decode(image_vec, width, height, filename);   //decode png file to image
     }
     else //RGB format

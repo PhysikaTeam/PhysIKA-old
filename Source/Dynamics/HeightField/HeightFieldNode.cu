@@ -1,8 +1,8 @@
 #include "HeightFieldNode.h"
 #include "Framework/Topology/HeightField.h"
 #include "ShallowWaterEquationModel.h"
-#include "IO\Image_IO\image.h"
-#include "IO\Image_IO\image_io.h"
+#include "IO/Image_IO/image.h"
+#include "IO/Image_IO/image_io.h"
 
 namespace PhysIKA
 {
@@ -13,8 +13,6 @@ namespace PhysIKA
 		: Node(name)
 	{
 		auto swe = this->setNumericalModel<ShallowWaterEquationModel<TDataType>>("swe");
-		//¿‡–Õ «std::shared_ptr<Module>
-		//this->setNumericalModel(swe);
 		this->SWEconnect();
 		
 		m_height_field = std::make_shared<HeightField<TDataType>>();
@@ -25,7 +23,6 @@ namespace PhysIKA
 	void HeightFieldNode<TDataType>::SWEconnect()
 	{
 		auto swe = this->getModule<ShallowWaterEquationModel<TDataType>>("swe");
-		//auto swe = this->getNumericalModel();
 		this->currentPosition()->connect(&(swe->m_position));
 		
 		this->currentVelocity()->connect(&(swe->m_velocity));
@@ -45,7 +42,6 @@ namespace PhysIKA
 		return Node::initialize();
 	}
 
-	//template<typename Real, typename Coord>
 	__global__ void InitNeighbor(
 		NeighborList<int> neighbors,
 		int zcount,
@@ -74,8 +70,7 @@ namespace PhysIKA
 		Real height = 0, e = 2.71828;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
 		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
-		//float xcenter = 0.5, zcenter = 0.8;
-
+		
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++)
 		{
@@ -92,13 +87,6 @@ namespace PhysIKA
 			x += distance;
 		}
 
-		//sign on four corners
-		/*int zcount = pixels;
-		vertList[vertList.size()-1][1] = 1;
-		vertList[vertList.size()-zcount][1] = 1;
-		vertList[0][1] = 1;
-		vertList[zcount-1][1] = 1;*/
-
 		this->currentVelocity()->setElementCount(velList.size());
 		Function1Pt::copy(this->currentVelocity()->getValue(), velList);
 
@@ -114,7 +102,6 @@ namespace PhysIKA
 		Real height = 0, e = 2.71828;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
 		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
-		//float xcenter = 0.5, zcenter = 0.8;
 
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++)
@@ -130,13 +117,6 @@ namespace PhysIKA
 			}
 			x += distance;
 		}
-
-		//sign on four corners
-		/*int zcount = pixels;
-		vertList[vertList.size()-1][1] = 1;
-		vertList[vertList.size()-zcount][1] = 1;
-		vertList[0][1] = 1;
-		vertList[zcount-1][1] = 1;*/
 
 		this->currentVelocity()->setElementCount(velList.size());
 		Function1Pt::copy(this->currentVelocity()->getValue(), velList);
@@ -291,10 +271,6 @@ namespace PhysIKA
 		this->SWEconnect();
 		this->updateTopology();
 		this->init();
-		//Coord ori = Coord(0, 0, 0);
-		//ori[2] = -0.5 * (lo[2] + hi[2]);
-		//ori[0] = -0.5 * (lo[0] + hi[0]);
-		//this->m_height_field->setOrigin(ori);
 
 		printf("distance si %f ,zcount is %d, xcount is %d\n", distance, zcount, xcount);
 		vertList.clear();
@@ -305,7 +281,7 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	std::vector<TDataType::Real>  HeightFieldNode<TDataType>::outputSolid() {
+	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputSolid() {
 		
 		HostArrayField<Real> solidArrayField;
 		int Size = this->solid.getValue().size();
@@ -317,7 +293,7 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	std::vector<TDataType::Real> HeightFieldNode<TDataType>::outputDepth() {
+	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputDepth() {
 		std::vector<Real> depth;
 		HostArrayField<Real> solidArrayField;
 		HostArrayField<Coord> heightArrayField;
@@ -335,7 +311,7 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	std::vector<TDataType::Real>  HeightFieldNode<TDataType>::outputUVel() {
+	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputUVel() {
 		
 		std::vector<Real> Vel;
 		HostArrayField<Coord> VelArrayField;
@@ -350,7 +326,7 @@ namespace PhysIKA
 	}	
 	
 	template<typename TDataType>
-	std::vector<TDataType::Real>  HeightFieldNode<TDataType>::outputWVel() {
+	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputWVel() {
 		
 		std::vector<Real> Vel;
 		HostArrayField<Coord> VelArrayField;
@@ -414,7 +390,6 @@ namespace PhysIKA
 			int num = this->currentPosition()->getElementCount();
 			auto& pts = this->currentPosition()->getValue();
 			m_height_field->setSpace(distance,distance);
-			//m_height_field->setSpace(0.005, 0.005);
 			auto& heights = m_height_field->getHeights();
 			auto& terrain = m_height_field->getTerrain();
 
@@ -428,8 +403,6 @@ namespace PhysIKA
 			total_size.x = nx;
 			total_size.y = nz;
 			total_size.z = 1;
-
-			//ti++;
 
 			cuExecute3D(total_size, SetupHeights,
 				heights,

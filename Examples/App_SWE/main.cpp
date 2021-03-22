@@ -15,9 +15,9 @@
 
 #include "Rendering/HeightFieldRender.h"
 
-#include "IO\Image_IO\image.h"
-#include "IO\Image_IO\png_io.h"
-#include "IO\Image_IO\image_io.h"
+#include "IO/Image_IO/image.h"
+#include "IO/Image_IO/png_io.h"
+#include "IO/Image_IO/image_io.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -39,7 +39,8 @@ void RecieveLogMessage(const Log::Message& m)
 	}
 }
 
-void CreateScene(int mode)
+//mode: choose which scene to create. mode=1 creates the basic scene, otherwise creates city scene.
+void CreateScene(int mode = 1)
 {
 	SceneGraph& scene = SceneGraph::getInstance();
 	scene.setUpperBound(Vector3f(1.5, 1, 1.5));
@@ -55,8 +56,8 @@ void CreateScene(int mode)
 		root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.999);
 	else
 	{
-		std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
-		std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
+		std::string filename1 = "../../../Examples/App_SWE/terrain4-4.png";//The pixel count is 1024*1024
+		std::string filename2 = "../../../Examples/App_SWE/river4-4.png";
 		root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
 	}
 	root->setMass(100);
@@ -67,12 +68,12 @@ void CreateScene(int mode)
 
 }
 
-void executeOnce() {
-
+void executeOnce() 
+{
 	std::shared_ptr<HeightFieldNode<DataType3f>> root(new HeightFieldNode<DataType3f>);
 
-	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain4-4.png";//The pixel count is 1024*1024
-	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river4-4.png";
+	std::string filename1 = "../../../Examples/App_SWE/terrain4-4.png";//The pixel count is 1024*1024
+	std::string filename2 = "../../../Examples/App_SWE/river4-4.png";
 
 	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
 
@@ -81,8 +82,10 @@ void executeOnce() {
 	root->run(1, dt);
 	std::vector<Real> vec2 = root->outputDepth();
 	std::cout << "the depth difference:" << std::endl;
-	for (int i = 0; i < vec1.size(); i++) {
-		if (vec1[i] != vec2[i]) {
+	for (int i = 0; i < vec1.size(); i++) 
+	{
+		if (vec1[i] != vec2[i]) 
+		{
 			std::cout << i << std::endl;
 		}
 	}
@@ -107,15 +110,6 @@ int main()
 
 	Log::sendMessage(Log::Info, "Simulation end!");
 #endif
-	/*picture compress */
-	//Image *image = new Image();
-	////std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\1.png";
-	//std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\river.png";
-	//ImageIO::load(filename1, image);
 
-	//
-	//image->mergeImage(8,8);
-	//string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";
-	//ImageIO::save(filename2, image);
 	return 0;
 }

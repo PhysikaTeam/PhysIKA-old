@@ -109,11 +109,6 @@ namespace PhysIKA
 		{
 			int id = i + j * (heights.Nx() - 1);
 
-			//if (j == 2)
-// 			{
-// 				printf("%d \n", j);
-// 			}
-			//printf("dx is %f, dz is %f\n", dx, dz);
 			float3 v1 = origin + make_float3(i*dx, heights(i, j), j*dz);
 			float3 v2 = origin + make_float3((i + 1)*dx, heights(i + 1, j), j*dz);
 			float3 v3 = origin + make_float3(i*dx, heights(i, j+1), (j+1)*dz);

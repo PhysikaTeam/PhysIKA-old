@@ -29,15 +29,14 @@ namespace PhysIKA
 
 		void loadParticlesFromImage( std::string filename1, std::string filename2, Real proportion, Real relax);
 		void loadHeightFieldFromImage(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList);
-		//proportion :Controls the relative height of a building
-
+		
 		void run(int stepNum, float timestep);
 		void init();
 
-		std::vector<Real> outputDepth();
-		std::vector<Real> outputSolid();
-		std::vector<Real> outputUVel();
-		std::vector<Real> outputWVel();
+		std::vector<Real>& outputDepth();
+		std::vector<Real>& outputSolid();
+		std::vector<Real>& outputUVel();
+		std::vector<Real>& outputWVel();
 
 		void updateTopology() override;
 
