@@ -281,17 +281,16 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputSolid() {
-		
+	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputSolid() 
+	{
 		HostArrayField<Real> solidArrayField;
 		int Size = this->solid.getValue().size();
 		if (Solid.size() != Size)
 			Solid.resize(Size);
 		solidArrayField.setElementCount(Size);
 		HostArray<Real> solidArray = solidArrayField.getValue();
-		Function1Pt::copy(solidArray, this->solid.getValue());
-		for (int i = 0; i < Size; ++i)
-			Solid[i] = solidArray[i];
+		cudaMemcpy(Solid.data(), this->solid.getValue().getDataPtr(), Size * sizeof(Real), cudaMemcpyDeviceToHost);
+
 		return Solid;
 	}
 
@@ -368,6 +367,7 @@ namespace PhysIKA
 	{
 		auto nModel = this->getNumericalModel();
 		nModel->step(dt);
+		//outputSolid();
 	}
 
 	template<typename Real, typename Coord>
