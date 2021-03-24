@@ -486,7 +486,7 @@ namespace PhysIKA
 		cudaDeviceSynchronize();
 
 		//computeBoundConstrant<Real, Coord> << < pDims2, BLOCK_SIZE >> > (
-		//	h.getValue(),
+		//	m_height.getValue(),
 		//	m_accel.getValue(),
 		//	m_velocity.getValue(),
 		//	m_position.getValue(),

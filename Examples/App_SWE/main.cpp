@@ -30,7 +30,7 @@ void RecieveLogMessage(const Log::Message& m)
 	case Log::Info:
 		cout << ">>>: " << m.text << endl; break;
 	case Log::Warning:
-		cout << "???: " << m.text << endl; break;
+		cout << "???: " << m.text << endl; break; 
 	case Log::Error:
 		cout << "!!!: " << m.text << endl; break;
 	case Log::User:
@@ -47,13 +47,14 @@ void CreateScene(int mode = 1)
 	scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
 	std::shared_ptr<HeightFieldNode<DataType3f>> root = scene.createNewScene<HeightFieldNode<DataType3f>>();
+	
 
 	auto ptRender = std::make_shared<HeightFieldRenderModule>();
 	ptRender->setColor(Vector3f(1, 0, 0));
 	root->addVisualModule(ptRender);
 
 	if(mode == 1)
-		root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 512, 0.2, 0.999);
+		root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 1024, 0.2, 0.999);
 	else
 	{
 		std::string filename1 = "../../../Examples/App_SWE/terrain4-4.png";//The pixel count is 1024*1024

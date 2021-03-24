@@ -69,7 +69,8 @@ namespace PhysIKA
 		std::vector<Coord> velList;
 		Real height = 0, e = 2.71828;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
-		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		Real xcenter = 0.1, zcenter = 0.1;
+		//Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++)
@@ -77,7 +78,7 @@ namespace PhysIKA
 			Real z = lo[2];
 			for (int j = 0; j < pixels; j++)
 			{
-				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 30);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
@@ -97,7 +98,6 @@ namespace PhysIKA
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadHeightFieldFromImage(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList)
 	{
-		std::vector<Coord> normalList;
 		std::vector<Coord> velList;
 		Real height = 0, e = 2.71828;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
@@ -111,7 +111,6 @@ namespace PhysIKA
 			{
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
-				normalList.push_back(Coord(0, 1, 0));
 				velList.push_back(Coord(0, 0, 0));
 				z += distance;
 			}
@@ -121,21 +120,20 @@ namespace PhysIKA
 		this->currentVelocity()->setElementCount(velList.size());
 		Function1Pt::copy(this->currentVelocity()->getValue(), velList);
 
-		normalList.clear();
 		velList.clear();
 
 	}
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, int pixels,Real slope, Real relax)
 	{
-		std::vector<Coord> vertList;
+		std::vector<Coord> vertList;//means the height of a pixels whether it is a solid or a fluid
 		loadHeightFieldParticles(lo, hi, pixels, slope, vertList);
 
 		std::vector<Real> solidList;
 		std::vector<Coord> normals;
 		std::vector<int>  isbound;
 		Real distance = (hi[2] - lo[2]) / (pixels-1);
-		Real height =  0, e = 2.71828;
+		Real height = 0, e = 2.71828;
 		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++) 
@@ -143,7 +141,9 @@ namespace PhysIKA
 			Real z = lo[2];
 			for (int j = 0;j < pixels; j++)
 			{
-				//height = 0.2+slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				height = -1 + 1.5 * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 2);
+				height = height < 0 ? 0 : height;
+				//height = 0.4 - pow( (pow(x - xcenter, 2) + pow(z - zcenter, 2)) ,1);
 				//height = z*0.45;
 				if (z + distance > hi[2] || x + distance > hi[0] || x == lo[0] || z == lo[2])
 					isbound.push_back(1);
@@ -194,6 +194,7 @@ namespace PhysIKA
 		normals.clear();
 	}
 
+	
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadParticlesFromImage( std::string filename1, std::string filename2, Real proportion, Real relax)
 	{
@@ -234,17 +235,17 @@ namespace PhysIKA
 				int temp_index = (i*pixels + j)*image1->pixelSize();
 				unsigned short temp_height = (image1->rawData()[temp_index + 1] << 8) | image1->rawData()[temp_index];
 				height =  temp_height * proportion * (hi[1] - lo[1]) / 65535;
+				vertList[j + i * pixels][1] = lo[1] + height;
 				if (image2->rawData()[temp_index] == 255) {
-					vertList[j + i * pixels][1] = lo[1] + height;
 					height = 0;//suppose the bottom of the river is 0
+					solidList.push_back(lo[1] + height);
 				}
-				solidList.push_back(lo[1] + height);
+				else {	
+					solidList.push_back(lo[1] + height);
+				}
 				normals.push_back(Coord(0, 1, 0));
 				z += distance;
-				//judge which one is higher
-				if (lo[1] + height > vertList[j + i * pixels][1]) {
-					vertList[j + i * pixels][1] = solidList[j + i * pixels];
-				}
+
 			}
 			x += distance;
 		}
