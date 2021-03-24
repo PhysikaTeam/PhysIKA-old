@@ -58,11 +58,15 @@ namespace PhysIKA
 		DeviceArrayField<Real> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;
-		
 		DeviceArrayField<Real> h;//water surface height
+
+		std::vector<Real> Solid;
+		std::vector<Real> Depth;
+		std::vector<Real> UVel;
+		std::vector<Real> WVel;
+
 		int zcount = 0;
 		int xcount = 0;
-
 
 		int nx = 0;
 		int nz = 0;

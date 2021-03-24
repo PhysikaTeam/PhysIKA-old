@@ -122,7 +122,7 @@ void Image::mergeImage(int h_compressed, int w_compressed)
 	unsigned int height = height_ / h_compressed;//a new pixel is calculate by h_compressed*w_compressed pixels and abandon the remainder
 	unsigned int width = width_ / w_compressed;
 	
-    std::vector<unsigned char> d(width * height * pixel_size);
+    unsigned char* d = new unsigned char[width * height * pixel_size];
 	for (unsigned int i = 0; i < height; ++i)
 		for (unsigned int j = 0; j < width; ++j)
 			for (unsigned int k = 0; k < pixel_size; ++k)
@@ -139,7 +139,7 @@ void Image::mergeImage(int h_compressed, int w_compressed)
 	width_ = width;
     if (raw_data_)
         delete[] raw_data_;
-    raw_data_ = d.data();
+    raw_data_ = d;
 }
 
 Image Image::mirrorImage() const

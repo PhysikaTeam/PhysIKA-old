@@ -282,23 +282,27 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputSolid() {
-		
+	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputSolid() 
+	{
 		HostArrayField<Real> solidArrayField;
 		int Size = this->solid.getValue().size();
+		if (Solid.size() != Size)
+			Solid.resize(Size);
 		solidArrayField.setElementCount(Size);
 		HostArray<Real> solidArray = solidArrayField.getValue();
-		Function1Pt::copy(solidArray, this->solid.getValue());
-		std::vector<Real> solid(solidArray.getDataPtr(), solidArray.getDataPtr() + Size);
-		return solid;
+		cudaMemcpy(Solid.data(), this->solid.getValue().getDataPtr(), Size * sizeof(Real), cudaMemcpyDeviceToHost);
+
+		return Solid;
 	}
 
 	template<typename TDataType>
-	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputDepth() {
-		std::vector<Real> depth;
+	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputDepth() 
+	{
 		HostArrayField<Real> solidArrayField;
 		HostArrayField<Coord> heightArrayField;
 		int Size = this->solid.getValue().size();
+		if (Depth.size() != Size)
+			Depth.resize(Size);
 		heightArrayField.setElementCount(Size);
 		solidArrayField.setElementCount(Size);
 		auto solidArray = solidArrayField.getValue();
@@ -306,39 +310,40 @@ namespace PhysIKA
 		Function1Pt::copy(heightArray, this->currentPosition()->getValue());
 		Function1Pt::copy(solidArray, this->solid.getValue());
 		for (int i = 0; i < Size; i++) {
-			depth.push_back(heightArray[i][1] - solidArray[i]);
+			Depth[i] = (heightArray[i][1] - solidArray[i]);
 		}
-		return depth;
+		return Depth;
 	}
 
 	template<typename TDataType>
 	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputUVel() {
-		
-		std::vector<Real> Vel;
 		HostArrayField<Coord> VelArrayField;
 		int Size = this->solid.getValue().size();
 		VelArrayField.setElementCount(Size);
 		HostArray<Coord> VelArray = VelArrayField.getValue();
 		Function1Pt::copy(VelArray, this->currentVelocity()->getValue());
+		if (UVel.size() != Size)
+			UVel.resize(Size);
 		for (int i = 0; i < Size; i++) {
-			Vel.push_back(VelArray[i][0]);
+			UVel[i] = VelArray[i][0];
 		}
-		return Vel;
+		return UVel;
 	}	
 	
 	template<typename TDataType>
 	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputWVel() {
 		
-		std::vector<Real> Vel;
 		HostArrayField<Coord> VelArrayField;
 		int Size = this->solid.getValue().size();
 		VelArrayField.setElementCount(Size);
 		HostArray<Coord> VelArray = VelArrayField.getValue();
 		Function1Pt::copy(VelArray, this->currentVelocity()->getValue());
+		if (WVel.size() != Size)
+			WVel.resize(Size);
 		for (int i = 0; i < Size; i++) {
-			Vel.push_back(VelArray[i][2]);
+			WVel[i] = VelArray[i][2];
 		}
-		return Vel;
+		return WVel;
 	}
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::init() {
@@ -363,6 +368,7 @@ namespace PhysIKA
 	{
 		auto nModel = this->getNumericalModel();
 		nModel->step(dt);
+		//outputSolid();
 	}
 
 	template<typename Real, typename Coord>
