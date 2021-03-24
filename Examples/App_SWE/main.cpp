@@ -47,9 +47,6 @@ void CreateScene(int mode)
 
 	std::shared_ptr<HeightFieldNode<DataType3f>> root = scene.createNewScene<HeightFieldNode<DataType3f>>();
 	
-	void* p;
-	HeightFieldNode<DataType3f>* root = (HeightFieldNode<DataType3f>*)p;
-
 
 	auto ptRender = std::make_shared<HeightFieldRenderModule>();
 	ptRender->setColor(Vector3f(1, 0, 0));
