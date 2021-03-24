@@ -69,7 +69,8 @@ namespace PhysIKA
 		std::vector<Coord> velList;
 		Real height = 0, e = 2.71828;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
-		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
+		Real xcenter = 0.1, zcenter = 0.1;
+		//Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++)
@@ -77,7 +78,7 @@ namespace PhysIKA
 			Real z = lo[2];
 			for (int j = 0; j < pixels; j++)
 			{
-				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 30);
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
@@ -110,7 +111,7 @@ namespace PhysIKA
 			{
 				Coord p = Coord(x, 0, z);
 				vertList.push_back(Coord(x, height + lo[1], z));
-				velList.push_back(Coord(0, 0, 0));//在后面重新初始化了
+				velList.push_back(Coord(0, 0, 0));
 				z += distance;
 			}
 			x += distance;
@@ -125,14 +126,14 @@ namespace PhysIKA
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadParticles(Coord lo, Coord hi, int pixels,Real slope, Real relax)
 	{
-		std::vector<Coord> vertList;
+		std::vector<Coord> vertList;//means the height of a pixels whether it is a solid or a fluid
 		loadHeightFieldParticles(lo, hi, pixels, slope, vertList);
 
 		std::vector<Real> solidList;
 		std::vector<Coord> normals;
 		std::vector<int>  isbound;
 		Real distance = (hi[2] - lo[2]) / (pixels-1);
-		Real height =  0, e = 2.71828;
+		Real height = 0, e = 2.71828;
 		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++) 
@@ -140,7 +141,9 @@ namespace PhysIKA
 			Real z = lo[2];
 			for (int j = 0;j < pixels; j++)
 			{
-				//height = 0.2+slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 100);
+				height = -1 + 1.5 * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 2);
+				height = height < 0 ? 0 : height;
+				//height = 0.4 - pow( (pow(x - xcenter, 2) + pow(z - zcenter, 2)) ,1);
 				//height = z*0.45;
 				if (z + distance > hi[2] || x + distance > hi[0] || x == lo[0] || z == lo[2])
 					isbound.push_back(1);
@@ -191,122 +194,6 @@ namespace PhysIKA
 		normals.clear();
 	}
 
-	template<typename TDataType>
-	void HeightFieldNode<TDataType>::loadInfFromImage(float*& solidList, float*& depthList,int& pixels, std::string filename1, std::string filename2, Real proportion)
-	{
-		Image* image1 = new Image;
-		Image* image2 = new Image;
-
-		ImageIO::load(filename1, image1);
-		ImageIO::load(filename2, image2);
-		assert(image2->height() == image2->width());
-		assert(image2->width() == image1->height());
-		assert(image1->height() == image1->width());
-		pixels = image1->height();
-		this->distance = 0.003;//TODO:coupled to loadParticlesFromMemory
-		Coord lo(0, 0, 0);
-		Coord hi(distance * (pixels - 1), distance * (pixels - 1) * 0.5, distance * (pixels - 1));
-	
-		solidList = new float[pixels * pixels];
-		depthList = new float[pixels * pixels];
-
-		Real height = 0, e = 2.71828;
-
-		for (int i = 0; i < pixels; i++)
-		{
-			for (int j = 0; j < pixels; j++)
-			{
-				//init terrain and river height
-				int temp_index = (i * pixels + j) * image1->pixelSize();
-				unsigned short temp_height = (image1->rawData()[temp_index + 1] << 8) | image1->rawData()[temp_index];
-				height = temp_height * proportion * (hi[1] - lo[1]) / 65535;
-				if (image2->rawData()[temp_index] == 255) {
-					depthList[j + i * pixels] = height;
-					solidList[j + i * pixels] =  0;
-				}
-				else {
-					depthList[j + i * pixels] = 0;
-					solidList[j + i * pixels] = height;
-				}
-				//
-			}
-		}
-	}
-	
-	template<typename TDataType>
-	void HeightFieldNode<TDataType>::loadParticlesFromMemory(float* solidPointer, float* depthPointer, float* UVelPointer, float* VVelPointer, int pixels,float relax)
-	{
-		this->distance = 0.003;
-		Coord lo(0, 0, 0);
-		Coord hi(distance * (pixels - 1), distance * (pixels - 1) * 0.5, distance * (pixels - 1));
-
-		std::vector<Coord> vertList;
-		loadHeightFieldFromImage(lo, hi, pixels, 0, vertList);
-
-		std::vector<Real> solidList;
-		std::vector<Coord> normals;
-		std::vector<int>  isbound;
-
-		Real height = 0, e = 2.71828;
-		Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
-		Real x = lo[0];
-
-		for (int i = 0; i < pixels; i++)
-		{
-			Real z = lo[2];
-			for (int j = 0; j < pixels; j++)
-			{
-				if (z + distance > hi[2] || x + distance > hi[0] || x == lo[0] || z == lo[2])
-					isbound.push_back(1);
-				else
-					isbound.push_back(0);
-				//init terrain and river location
-				int index = j + i * pixels;
-				height = solidPointer[index] + depthPointer[index];
-				vertList[j + i * pixels][1] = lo[1] + height;
-				if (depthPointer[index]>1e-4) {
-					//suppose the bottom of the river is 0
-					solidList.push_back(lo[1]);
-				}
-				else {
-					solidList.push_back(lo[1] + height);
-				}
-				normals.push_back(Coord(0, 1, 0));
-				z += distance;
-
-			}
-			x += distance;
-		}
-		this->xcount = pixels;
-		this->zcount = pixels;
-		this->nx = xcount;
-		this->nz = zcount;
-		this->distance = distance;
-		this->relax = relax;
-
-		this->currentPosition()->setElementCount(vertList.size());
-		Function1Pt::copy(this->currentPosition()->getValue(), vertList);
-
-		solid.setElementCount(solidList.size());
-		Function1Pt::copy(solid.getValue(), solidList);
-
-		isBound.setElementCount(solidList.size());
-		Function1Pt::copy(isBound.getValue(), isbound);
-
-		normal.setElementCount(solidList.size());
-		Function1Pt::copy(normal.getValue(), normals);
-
-		this->SWEconnect();
-		this->updateTopology();
-		this->init();
-
-		printf("distance si %f ,zcount is %d, xcount is %d\n", distance, zcount, xcount);
-		vertList.clear();
-		solidList.clear();
-		isbound.clear();
-		normals.clear();
-
-	}
 	
 	template<typename TDataType>
 	void HeightFieldNode<TDataType>::loadParticlesFromImage( std::string filename1, std::string filename2, Real proportion, Real relax)
