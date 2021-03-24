@@ -60,6 +60,8 @@ namespace PhysIKA
 		DeviceArrayField<int>  isBound;
 		DeviceArrayField<Real> h;//water surface height
 
+		DeviceArrayField<Real> buffer;
+
 		std::vector<Real> Solid;
 		std::vector<Real> Depth;
 		std::vector<Real> UVel;

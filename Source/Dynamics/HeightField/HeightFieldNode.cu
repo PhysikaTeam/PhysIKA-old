@@ -281,79 +281,18 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputSolid() 
+	void HeightFieldNode<TDataType>::init() 
 	{
-		HostArrayField<Real> solidArrayField;
-		int Size = this->solid.getValue().size();
-		if (Solid.size() != Size)
-			Solid.resize(Size);
-		solidArrayField.setElementCount(Size);
-		HostArray<Real> solidArray = solidArrayField.getValue();
-		cudaMemcpy(Solid.data(), this->solid.getValue().getDataPtr(), Size * sizeof(Real), cudaMemcpyDeviceToHost);
-
-		return Solid;
-	}
-
-	template<typename TDataType>
-	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputDepth() 
-	{
-		HostArrayField<Real> solidArrayField;
-		HostArrayField<Coord> heightArrayField;
-		int Size = this->solid.getValue().size();
-		if (Depth.size() != Size)
-			Depth.resize(Size);
-		heightArrayField.setElementCount(Size);
-		solidArrayField.setElementCount(Size);
-		auto solidArray = solidArrayField.getValue();
-		auto heightArray = heightArrayField.getValue();
-		Function1Pt::copy(heightArray, this->currentPosition()->getValue());
-		Function1Pt::copy(solidArray, this->solid.getValue());
-		for (int i = 0; i < Size; i++) {
-			Depth[i] = (heightArray[i][1] - solidArray[i]);
-		}
-		return Depth;
-	}
-
-	template<typename TDataType>
-	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputUVel() {
-		HostArrayField<Coord> VelArrayField;
-		int Size = this->solid.getValue().size();
-		VelArrayField.setElementCount(Size);
-		HostArray<Coord> VelArray = VelArrayField.getValue();
-		Function1Pt::copy(VelArray, this->currentVelocity()->getValue());
-		if (UVel.size() != Size)
-			UVel.resize(Size);
-		for (int i = 0; i < Size; i++) {
-			UVel[i] = VelArray[i][0];
-		}
-		return UVel;
-	}	
-	
-	template<typename TDataType>
-	std::vector<TDataType::Real>&  HeightFieldNode<TDataType>::outputWVel() {
-		
-		HostArrayField<Coord> VelArrayField;
-		int Size = this->solid.getValue().size();
-		VelArrayField.setElementCount(Size);
-		HostArray<Coord> VelArray = VelArrayField.getValue();
-		Function1Pt::copy(VelArray, this->currentVelocity()->getValue());
-		if (WVel.size() != Size)
-			WVel.resize(Size);
-		for (int i = 0; i < Size; i++) {
-			WVel[i] = VelArray[i][2];
-		}
-		return WVel;
-	}
-	template<typename TDataType>
-	void HeightFieldNode<TDataType>::init() {
 		auto nModel = this->getNumericalModel();
 		nModel->initialize();
 	}
 
 	template<typename TDataType>
-	void HeightFieldNode<TDataType>::run(int stepNum, float timestep) {
+	void HeightFieldNode<TDataType>::run(int stepNum, float timestep) 
+	{
 		auto nModel = this->getNumericalModel();
-		for (int i = 0; i < stepNum; i++) {
+		for (int i = 0; i < stepNum; i++) 
+		{
 			nModel->step(timestep);
 		}
 	}
@@ -418,4 +357,90 @@ namespace PhysIKA
 		}
 	}
 
+	template<typename Real, typename Coord>
+	__global__ void computeDepth(
+		DeviceArray<Coord> position,
+		DeviceArray<Real> terrain,
+		DeviceArray<Real> Depth)
+	{
+		int i = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (i >= position.size())  return;
+		Depth[i] = position[i][1] - terrain[i];
+		
+	}
+
+	template<typename Real, typename Coord>
+	__global__ void computeUVel(
+		DeviceArray<Coord> velocity,
+		DeviceArray<Real> UVel)
+	{
+		int i = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (i >= velocity.size())  return;
+		UVel[i] = velocity[i][0];
+	}
+
+	template<typename Real, typename Coord>
+	__global__ void computeWVel(
+		DeviceArray<Coord> velocity,
+		DeviceArray<Real> WVel)
+	{
+		int i = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (i >= velocity.size())  return;
+		WVel[i] = velocity[i][2];
+	}
+
+	template<typename TDataType>
+	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputSolid()
+	{
+		HostArrayField<Real> solidArrayField;
+		int Size = this->solid.getValue().size();
+		if (Solid.size() != Size)
+			Solid.resize(Size);
+		solidArrayField.setElementCount(Size);
+		HostArray<Real> solidArray = solidArrayField.getValue();
+		cudaMemcpy(Solid.data(), this->solid.getValue().getDataPtr(), Size * sizeof(Real), cudaMemcpyDeviceToHost);
+		return Solid;
+	}
+
+	template<typename TDataType>
+	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputDepth()
+	{
+		int Size = this->solid.getValue().size();
+		if (buffer.getValue().size() != this->solid.getElementCount())
+			buffer.setElementCount(Size);
+		cuExecute(Size, computeDepth, this->currentPosition()->getValue(), this->solid.getValue(), buffer.getValue());
+		if (Depth.size() != Size)
+			Depth.resize(Size);
+		cudaDeviceSynchronize();
+		cudaMemcpy(Depth.data(), buffer.getValue().getDataPtr(), Size * sizeof(Real), cudaMemcpyDeviceToHost);
+		return Depth;
+	}
+
+	template<typename TDataType>
+	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputUVel() 
+	{
+		int Size = this->solid.getValue().size();
+		if (buffer.getValue().size() != this->solid.getElementCount())
+			buffer.setElementCount(Size);
+		cuExecute(Size, computeUVel, this->currentVelocity()->getValue(), buffer.getValue());
+		if (UVel.size() != Size)
+			UVel.resize(Size);
+		cudaDeviceSynchronize();
+		cudaMemcpy(UVel.data(), buffer.getValue().getDataPtr(), Size * sizeof(Real), cudaMemcpyDeviceToHost);
+		return UVel;
+	}
+
+	template<typename TDataType>
+	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputWVel() 
+	{
+		int Size = this->solid.getValue().size();
+		if (buffer.getValue().size() != this->solid.getElementCount())
+			buffer.setElementCount(Size);
+		cuExecute(Size, computeWVel, this->currentVelocity()->getValue(), buffer.getValue());
+		if (WVel.size() != Size)
+			WVel.resize(Size);
+		cudaDeviceSynchronize();
+		cudaMemcpy(WVel.data(), buffer.getValue().getDataPtr(), Size * sizeof(Real), cudaMemcpyDeviceToHost);
+		return WVel;
+	}
 }
