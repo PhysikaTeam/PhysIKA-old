@@ -30,7 +30,7 @@ void RecieveLogMessage(const Log::Message& m)
 	case Log::Info:
 		cout << ">>>: " << m.text << endl; break;
 	case Log::Warning:
-		cout << "???: " << m.text << endl; break;
+		cout << "???: " << m.text << endl; break; 
 	case Log::Error:
 		cout << "!!!: " << m.text << endl; break;
 	case Log::User:
@@ -39,13 +39,17 @@ void RecieveLogMessage(const Log::Message& m)
 	}
 }
 
-void CreateScene()
+void CreateScene(int mode)
 {
 	SceneGraph& scene = SceneGraph::getInstance();
 	scene.setUpperBound(Vector3f(1.5, 1, 1.5));
 	scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
 	std::shared_ptr<HeightFieldNode<DataType3f>> root = scene.createNewScene<HeightFieldNode<DataType3f>>();
+	
+	void* p;
+	HeightFieldNode<DataType3f>* root = (HeightFieldNode<DataType3f>*)p;
+
 
 	auto ptRender = std::make_shared<HeightFieldRenderModule>();
 	ptRender->setColor(Vector3f(1, 0, 0));
@@ -55,9 +59,13 @@ void CreateScene()
 	std::string filename1 = "..\\..\\..\\Examples\\App_SWE\\terrain8-8.png";//The pixel count is 512*512
 	std::string filename2 = "..\\..\\..\\Examples\\App_SWE\\river8-8.png";
 
-	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.995);
-	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(6, 1, 6), 4096, 0.3, 0.998);
-	//root->loadParticlesFromImage(Vector3f(0, 0, 0), Vector3f(2, 1, 2), 1024, 0.2, 0.998);
+	//root->loadParticlesFromImage(filename1, filename2, 0.1, 0.995);
+	
+	float* solidList = NULL;
+	float* depthList = NULL;
+	int pixels;
+	root->loadInfFromImage(solidList,depthList,pixels,filename1, filename2, 0.2);
+	root->loadParticlesFromMemory(solidList, depthList, NULL, NULL,  pixels, 0.995);
 
 	root->setMass(100);
 
@@ -65,10 +73,6 @@ void CreateScene()
 	//auto result = root->outputSolid();
 	//std::cout << result[0];
 
-	//std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
-	//root->addRigidBody(rigidbody);
-	//rigidbody->loadShape("../../Media/bowl/bowl.obj");
-	//rigidbody->setActive(false);
 }
 
 void executeOnce() {
@@ -100,7 +104,7 @@ int main()
 #if 0
 	executeOnce();
 #else
-	CreateScene();
+	CreateScene(1);
 
 	Log::setOutput("console_log.txt");
 	Log::setLevel(Log::Info);
