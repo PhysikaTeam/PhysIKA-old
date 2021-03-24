@@ -69,17 +69,22 @@ namespace PhysIKA
 		std::vector<Coord> velList;
 		Real height = 0, e = 2.71828;
 		Real distance = (hi[2] - lo[2]) / (pixels - 1);
-		Real xcenter = 0.1, zcenter = 0.1;
+		//Real xcenter = 0.1, zcenter = 0.1;
 		//Real xcenter = (hi[0] - lo[0]) / 2, zcenter = (hi[2] - lo[2]) / 2;
-		
+		Real xcenter[2], zcenter[2];
+		xcenter[0] = zcenter[0] = lo[0] + pixels / 8 * distance;
+		xcenter[1] = zcenter[1] = hi[0] - pixels / 8 * distance;
 		Real x = lo[0];
 		for (int i = 0; i < pixels; i++)
 		{
 			Real z = lo[2];
 			for (int j = 0; j < pixels; j++)
 			{
-				height =  0.3 + slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 30);
-				Coord p = Coord(x, 0, z);
+				height = 0.3;// +slope * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 30);
+				for(int m=0;m<2;++m)
+					for(int n=0;n<2;++n)
+						height += slope * pow(e, -(pow(x - xcenter[m], 2) + pow(z - zcenter[n], 2)) * 30);
+
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
 				velList.push_back(Coord(0, 0, 0));
@@ -141,7 +146,7 @@ namespace PhysIKA
 			Real z = lo[2];
 			for (int j = 0;j < pixels; j++)
 			{
-				height = -1 + 1.5 * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 2);
+				height = -1 + 1.6 * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 2);
 				height = height < 0 ? 0 : height;
 				//height = 0.4 - pow( (pow(x - xcenter, 2) + pow(z - zcenter, 2)) ,1);
 				//height = z*0.45;

@@ -91,20 +91,6 @@ namespace PhysIKA
 		x_offset = j < 2 ? 0 : (j % 2 ? -1 : 1);
 		z_offset = j < 2 ? (j ? 1 : -1) : 0;
 		return status ? -1 : (ix + x_offset) * zcount + iz + z_offset;
-		//if (j == 0) {
-		//	if (iz == 0)return -1;
-		//	else return ix * zcount + iz - 1;
-		//}
-		//else if (j == 1) {
-		//	if (iz + 1 == zcount)return -1;
-		//	else return ix * zcount + iz + 1;
-		//}
-		//else if (j == 2) {
-		//	return (ix - 1)*zcount + iz;
-		//}
-		//else if (j == 3) {
-		//	return (ix + 1)*zcount + iz;
-		//}
 	}
 
 	template<typename Real, typename Coord>
