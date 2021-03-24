@@ -33,22 +33,22 @@ namespace PhysIKA
 		DeviceArrayField<Real> grid_accel_z;
 
 		
-		DeviceArrayField<Real> solid;
-		DeviceArrayField<Coord> normal;
-		DeviceArrayField<int>  isBound;
-		DeviceArrayField<Real> h;//solid_pos + h*Normal = m_position
-		DeviceArrayField<Real> h_buffer;
+		DeviceArrayField<Real>	m_solid;
+		DeviceArrayField<Coord> m_normal;
+		DeviceArrayField<int>	m_isBound;
+		DeviceArrayField<Real>	m_height;//solid_pos + h*Normal = m_position
+		DeviceArrayField<Real>	m_height_buffer;
 		
 	protected:
 		bool initializeImpl() override;
 
 	private:
-		int m_pNum;
-		Real distance;
-		Real relax;
-		int zcount;
-		int xcount;
-		//µ÷ÊÔÊ±¼ä
+		int m_pNum;//grid point numbers
+		Real distance;//the distance between two neighbor grid points
+		Real relax;//System damping coefficient, should always be less than or equal to 1
+		int zcount;//grid point number along z direction
+		int xcount;//grid point number along x direction
+		
 		float sumtimes = 0;
 		int sumnum = 0;
 	};
@@ -58,4 +58,4 @@ namespace PhysIKA
 #else
 	template class ShallowWaterEquationModel<DataType3d>;
 #endif
-}
+};

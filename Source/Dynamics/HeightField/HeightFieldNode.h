@@ -27,20 +27,16 @@ namespace PhysIKA
 		void loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord> &vertList);
 		void loadParticles(Coord lo, Coord hi, int pixels, Real slope, Real relax);
 
-		void loadInfFromImage(float*& solidList, float*& depthList, int& pixels, std::string filename1, std::string filename2, Real proportion);
-		void loadParticlesFromMemory(float* solid, float* depth, float* UVel, float* VVel, int pixels,float relax);
 		void loadParticlesFromImage( std::string filename1, std::string filename2, Real proportion, Real relax);
 		void loadHeightFieldFromImage(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList);
 		
-		//proportion :Controls the relative height of a building
-
 		void run(int stepNum, float timestep);
 		void init();
 
-		std::vector<Real> outputDepth();
-		std::vector<Real> outputSolid();
-		std::vector<Real> outputUVel();
-		std::vector<Real> outputWVel();
+		std::vector<Real>& outputDepth();
+		std::vector<Real>& outputSolid();
+		std::vector<Real>& outputUVel();
+		std::vector<Real>& outputWVel();
 
 		void updateTopology() override;
 
@@ -57,7 +53,7 @@ namespace PhysIKA
 		DEF_EMPTY_CURRENT_ARRAY(Velocity, Coord, DeviceType::GPU, "Particle velocity");
 
 	private:
-		Real distance;//specified the land to be occupied
+		Real distance;
 		Real relax;
 		DeviceArrayField<Real> solid;
 		DeviceArrayField<Coord> normal;
