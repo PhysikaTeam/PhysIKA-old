@@ -54,12 +54,12 @@ void CreateScene(int mode = 1)
 	root->addVisualModule(ptRender);
 
 	if(mode == 1)
-		root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 1024, 0.7, 0.998);
+		root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 1024, 0.7, 1);
 	else
 	{
 		std::string filename1 = "../../../Examples/App_SWE/terrain4-4.png";//The pixel count is 1024*1024
 		std::string filename2 = "../../../Examples/App_SWE/river4-4.png";
-		root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
+		root->loadParticlesFromImage(filename1, filename2, 0.1, 0.999);
 	}
 	root->setMass(100);
 

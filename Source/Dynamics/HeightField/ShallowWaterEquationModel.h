@@ -37,7 +37,7 @@ namespace PhysIKA
 		DeviceArrayField<Coord> m_normal;
 		DeviceArrayField<int>	m_isBound;
 		DeviceArrayField<Real>	m_height;//solid_pos + h*Normal = m_position
-		DeviceArrayField<Real>	m_height_buffer;
+		DeviceArrayField<Coord>	buffer;
 		
 	protected:
 		bool initializeImpl() override;

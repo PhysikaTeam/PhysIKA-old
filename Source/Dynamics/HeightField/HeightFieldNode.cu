@@ -78,11 +78,11 @@ namespace PhysIKA
 			for (int j = 0; j < pixels; j++)
 			{
 				if (sqrt(pow(x - xcenter, 2) + pow(z - zcenter, 2)) < (hi[0] - lo[0]) / 6)
-					height = 0.2 + 0.4 * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 20);
+					height = 0.1 + 0.4 * pow(e, -(pow(x - xcenter, 2) + pow(z - zcenter, 2)) * 20);
 				else
-					height = 0.2 + 0.4 * pow(e, -pow(hi[0] - lo[0], 2) * 0.5555);
-				//height = height < 0 ? 0 : height;
-
+					height = 0.1 + 0.4 * pow(e, -pow(hi[0] - lo[0], 2) * 0.5555);
+				height = height < 0 ? 0 : height;
+				
 				vertList.push_back(Coord(x, height + lo[1], z));
 				normalList.push_back(Coord(0, 1, 0));
 				velList.push_back(Coord(0, 0, 0));
@@ -137,12 +137,12 @@ namespace PhysIKA
 		std::vector<int>  isbound;
 		Real distance = (hi[2] - lo[2]) / (pixels-1);
 		Real height = 0, e = 2.71828;
-		Real d;
+		Real d, r = pow((hi[2] - lo[2]) / 6, 2);
 		Real x = lo[0];
 
 		Real xcenter[2], zcenter[2];
-		xcenter[0] = zcenter[0] = lo[0] + pixels / 6 * distance;
-		xcenter[1] = zcenter[1] = hi[0] - pixels / 6 * distance;
+		xcenter[0] = zcenter[0] = lo[0] + pixels / 4 * distance;
+		xcenter[1] = zcenter[1] = hi[0] - pixels / 4 * distance;
 
 		for (int i = 0; i < pixels; i++) 
 		{
@@ -154,12 +154,11 @@ namespace PhysIKA
 				for (int m = 0; m < 2; ++m)
 					for (int n = 0; n < 2; ++n)
 						d = min(d, pow(x - xcenter[m], 2) + pow(z - zcenter[n], 2));
-				d = sqrt(d);
-				if(d < (hi[2] - lo[2]) / 6)
+				if(d < r)
 					for (int m = 0; m < 2; ++m)
 						for (int n = 0; n < 2; ++n)
-							height += slope * pow(e, -(pow(x - xcenter[m], 2) + pow(z - zcenter[n], 2)) * 30);
-
+							height += slope * (pow(e, -(pow(x - xcenter[m], 2) + pow(z - zcenter[n], 2)) * 30) - pow(e, -r*30));
+				height = height < 0 ? 0 : height;
 				//height = 0.4 - pow( (pow(x - xcenter, 2) + pow(z - zcenter, 2)) ,1);
 				//height = z*0.45;
 				if (z + distance > hi[2] || x + distance > hi[0] || x == lo[0] || z == lo[2])
