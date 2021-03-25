@@ -15,6 +15,10 @@
 
 #include "Rendering/HeightFieldRender.h"
 
+#include "IO/Image_IO/image.h"
+#include "IO/Image_IO/png_io.h"
+#include "IO/Image_IO/image_io.h"
+
 using namespace std;
 using namespace PhysIKA;
 
@@ -26,7 +30,7 @@ void RecieveLogMessage(const Log::Message& m)
 	case Log::Info:
 		cout << ">>>: " << m.text << endl; break;
 	case Log::Warning:
-		cout << "???: " << m.text << endl; break;
+		cout << "???: " << m.text << endl; break; 
 	case Log::Error:
 		cout << "!!!: " << m.text << endl; break;
 	case Log::User:
@@ -35,33 +39,65 @@ void RecieveLogMessage(const Log::Message& m)
 	}
 }
 
-void CreateScene()
+//mode: choose which scene to create. mode=1 creates the basic scene, otherwise creates city scene.
+void CreateScene(int mode = 1)
 {
 	SceneGraph& scene = SceneGraph::getInstance();
 	scene.setUpperBound(Vector3f(1.5, 1, 1.5));
 	scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
 	std::shared_ptr<HeightFieldNode<DataType3f>> root = scene.createNewScene<HeightFieldNode<DataType3f>>();
-	//root->loadCube(Vector3f(-0.5, 0, -0.5), Vector3f(1.5, 2, 1.5), 0.02, true);
-	//root->loadSDF("../../Media/bowl/bowl.sdf", false);
+	
 
 	auto ptRender = std::make_shared<HeightFieldRenderModule>();
 	ptRender->setColor(Vector3f(1, 0, 0));
 	root->addVisualModule(ptRender);
 
-	//child1->loadParticles("../Media/fluid/fluid_point.obj");
-	root->loadParticles(Vector3f(0, 0.2, 0), Vector3f(1, 1.5, 1), 0.005, 0.3, 0.998);
+	if(mode == 1)
+		root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 1024, 0.7, 0.998);
+	else
+	{
+		std::string filename1 = "../../../Examples/App_SWE/terrain4-4.png";//The pixel count is 1024*1024
+		std::string filename2 = "../../../Examples/App_SWE/river4-4.png";
+		root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
+	}
 	root->setMass(100);
 
-	//std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
-	//root->addRigidBody(rigidbody);
-	//rigidbody->loadShape("../../Media/bowl/bowl.obj");
-	//rigidbody->setActive(false);
+	//root->run(1,0.03);
+	//auto result = root->outputSolid();
+	//std::cout << result[0];
+
+}
+
+void executeOnce() 
+{
+	std::shared_ptr<HeightFieldNode<DataType3f>> root(new HeightFieldNode<DataType3f>);
+
+	std::string filename1 = "../../../Examples/App_SWE/terrain4-4.png";//The pixel count is 1024*1024
+	std::string filename2 = "../../../Examples/App_SWE/river4-4.png";
+
+	root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
+
+	float dt = 1.0 / 60;
+	std::vector<Real> vec1 = root->outputDepth();
+	root->run(1, dt);
+	std::vector<Real> vec2 = root->outputDepth();
+	std::cout << "the depth difference:" << std::endl;
+	for (int i = 0; i < vec1.size(); i++) 
+	{
+		if (vec1[i] != vec2[i]) 
+		{
+			std::cout << i << std::endl;
+		}
+	}
 }
 
 int main()
 {
-	CreateScene();
+#if 0
+	executeOnce();
+#else
+	CreateScene(1);
 
 	Log::setOutput("console_log.txt");
 	Log::setLevel(Log::Info);
@@ -74,5 +110,7 @@ int main()
 	window.mainLoop();
 
 	Log::sendMessage(Log::Info, "Simulation end!");
+#endif
+
 	return 0;
 }

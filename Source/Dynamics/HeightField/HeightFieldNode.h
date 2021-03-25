@@ -19,13 +19,24 @@ namespace PhysIKA
 		HeightFieldNode(std::string name = "default");
 		virtual ~HeightFieldNode();
 
-		void loadParticles(Coord lo, Coord hi, Real distance, Real slope, Real relax);
 
 		bool initialize() override;
 		void advance(Real dt) override;
 		void SWEconnect();
 
-		void loadHeightFieldParticles(Coord lo, Coord hi, Real distance, Real slope);
+		void loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord> &vertList);
+		void loadParticles(Coord lo, Coord hi, int pixels, Real slope, Real relax);
+
+		void loadParticlesFromImage( std::string filename1, std::string filename2, Real proportion, Real relax);
+		void loadHeightFieldFromImage(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList);
+		
+		void run(int stepNum, float timestep);
+		void init();
+
+		std::vector<Real>& outputDepth();
+		std::vector<Real>& outputSolid();
+		std::vector<Real>& outputUVel();
+		std::vector<Real>& outputWVel();
 
 		void updateTopology() override;
 
@@ -44,11 +55,20 @@ namespace PhysIKA
 	private:
 		Real distance;
 		Real relax;
-		DeviceArrayField<Coord> solid;
+		DeviceArrayField<Real> solid;
 		DeviceArrayField<Coord> normal;
 		DeviceArrayField<int>  isBound;
 		DeviceArrayField<Real> h;//water surface height
-		NeighborField<int> neighbors;
+
+		DeviceArrayField<Real> buffer;
+
+		std::vector<Real> Solid;
+		std::vector<Real> Depth;
+		std::vector<Real> UVel;
+		std::vector<Real> WVel;
+
+		int zcount = 0;
+		int xcount = 0;
 
 		int nx = 0;
 		int nz = 0;

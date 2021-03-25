@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-
+#include <string>
 typedef std::map<int, std::string> enum_map;
 //typedef std::map<std::string, enum_map>	enum_map_list;
 

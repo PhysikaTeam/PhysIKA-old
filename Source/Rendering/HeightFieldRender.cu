@@ -95,32 +95,29 @@ namespace PhysIKA
 		DeviceArray<float3> normals,
 		DeviceArray<float3> colors,
 		DeviceArray2D<float> heights,
+		DeviceArray2D<float> terrain,
 		float dx,
 		float dz,
 		float3 origin,
-		float3 color)
+		float3 colorWater,
+		float3 colorTerrain)
 	{
 		int i = threadIdx.x + blockIdx.x * blockDim.x;
 		int j = threadIdx.y + blockIdx.y * blockDim.y;
 
 		if (i < heights.Nx() - 1 && j < heights.Ny() - 1)
 		{
-			int id = i + j * heights.Nx();
-
-			//if (j == 2)
-// 			{
-// 				printf("%d \n", j);
-// 			}
+			int id = i + j * (heights.Nx() - 1);
 
 			float3 v1 = origin + make_float3(i*dx, heights(i, j), j*dz);
 			float3 v2 = origin + make_float3((i + 1)*dx, heights(i + 1, j), j*dz);
 			float3 v3 = origin + make_float3(i*dx, heights(i, j+1), (j+1)*dz);
 			float3 v4 = origin + make_float3((i+1)*dx, heights(i+1, j+1), (j+1)*dz);
 
-// 			float3 v1 = origin + make_float3(i*dx, 0.5f, j*dz);
-// 			float3 v2 = origin + make_float3((i + 1)*dx, 0.5f, ((j + 1))*dz);
-// 			float3 v3 = origin + make_float3(i*dx, 0.5f, (j + 1)*dz);
-// 			float3 v4 = origin + make_float3((i + 1)*dx, 0.5f, (j + 1)*dz);
+ 			//float3 v1 = origin + make_float3(i*dx, 0.5f, j*dz);
+ 			//float3 v2 = origin + make_float3((i + 1)*dx, 0.5f, ((j + 1))*dz);
+ 			//float3 v3 = origin + make_float3(i*dx, 0.5f, (j + 1)*dz);
+ 			//float3 v4 = origin + make_float3((i + 1)*dx, 0.5f, (j + 1)*dz);
 
 			vertices[3 * (2 * id) + 0] = v1;
 			vertices[3 * (2 * id) + 1] = v2;
@@ -133,9 +130,9 @@ namespace PhysIKA
 			normals[3 * (2 * id) + 1] = triN1;
 			normals[3 * (2 * id) + 2] = triN1;
 
-			colors[3 * (2 * id) + 0] = color;
-			colors[3 * (2 * id) + 1] = color;
-			colors[3 * (2 * id) + 2] = color;
+			colors[3 * (2 * id) + 0] = heights(i, j)> terrain(i, j)? colorWater : colorTerrain;
+			colors[3 * (2 * id) + 1] = heights(i + 1, j) > terrain(i + 1, j) ? colorWater : colorTerrain;
+			colors[3 * (2 * id) + 2] = heights(i, j + 1) > terrain(i, j + 1) ? colorWater : colorTerrain;
 
 
 			vertices[3 * (2 * id) + 3] = v3;
@@ -149,9 +146,9 @@ namespace PhysIKA
 			normals[3 * (2 * id) + 4] = triN2;
 			normals[3 * (2 * id) + 5] = triN2;
 
-			colors[3 * (2 * id) + 3] = color;
-			colors[3 * (2 * id) + 4] = color;
-			colors[3 * (2 * id) + 5] = color;
+			colors[3 * (2 * id) + 3] = heights(i, j + 1) > terrain(i, j + 1) ? colorWater : colorTerrain;
+			colors[3 * (2 * id) + 4] = heights(i + 1, j) > terrain(i + 1, j) ? colorWater : colorTerrain;
+			colors[3 * (2 * id) + 5] = heights(i + 1, j + 1) > terrain(i + 1, j + 1) ? colorWater : colorTerrain;
 		}
 
 		
@@ -175,28 +172,41 @@ namespace PhysIKA
 
 
 		auto heights = hf->getHeights();
+		auto terrain = hf->getTerrain();
 		int numOfTriangles = (heights.Nx() - 1)*(heights.Ny() - 1) * 2;
-
+		//printf("heights nx is %d, ny is %d\n", heights.Nx(), heights.Ny());
 		vertices.resize(3 * numOfTriangles);
 		normals.resize(3 * numOfTriangles);
 		colors.resize(3 * numOfTriangles);
-
+		
 		uint3 total_size;
 		total_size.x = heights.Nx() - 1;
 		total_size.y = heights.Ny() - 1;
 		total_size.z = 1;
 
 		auto ori = hf->getOrigin();
-
+		
 		cuExecute3D(total_size, SetupTriangles,
 			vertices,
 			normals,
 			colors,
 			heights,
+			terrain,
 			hf->getDx(),
 			hf->getDz(),
 			make_float3(ori[0], ori[1], ori[2]),
+			make_float3(0.0, 0.2, 1),
 			make_float3(1.0, 0.0, 0.0));
+		char str[200];							
+		cudaDeviceSynchronize();				
+		cudaError_t err = cudaGetLastError();	
+		if (err != cudaSuccess)					
+		{										
+			//sprintf(str, "CUDA error: %d : %s at %s:%d \n", err, cudaGetErrorString(err), __FILE__, __LINE__);		
+			std::string str = cudaGetErrorString(err);
+			sprintf("CUDA error:  %s \n", str.c_str());
+			throw std::runtime_error(std::string(str));																
+		}
 
 		if (m_triangleRender == nullptr)
 		{

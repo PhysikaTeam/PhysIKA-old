@@ -5,14 +5,6 @@
 
 namespace PhysIKA
 {
-	/*!
-	*	\class	ParticleSystem
-	*	\brief	Position-based fluids.
-	*
-	*	This class implements a position-based fluid solver.
-	*	Refer to Macklin and Muller's "Position Based Fluids" for details
-	*
-	*/
 	template<typename TDataType>
 	class ShallowWaterEquationModel : public NumericalModel
 	{
@@ -28,26 +20,37 @@ namespace PhysIKA
 
 		void setDistance(Real distance) { this->distance = distance; }
 		void setRelax(Real relax) { this->relax = relax; }
+		void setZcount(int zcount) { this->zcount = zcount; }
 	public:
 		
 		DeviceArrayField<Coord> m_position;
 		DeviceArrayField<Coord> m_velocity;
 		DeviceArrayField<Coord> m_accel;
-		
-		DeviceArrayField<Coord> solid;
-		DeviceArrayField<Coord> normal;
-		DeviceArrayField<int>  isBound;
-		DeviceArrayField<Real> h;//solid_pos + h*Normal = m_position
-		
-		NeighborField<int>	neighborIndex;
+		//staggered grid
+		DeviceArrayField<Real> grid_vel_x;
+		DeviceArrayField<Real> grid_vel_z;
+		DeviceArrayField<Real> grid_accel_x;
+		DeviceArrayField<Real> grid_accel_z;
 
+		
+		DeviceArrayField<Real>	m_solid;
+		DeviceArrayField<Coord> m_normal;
+		DeviceArrayField<int>	m_isBound;
+		DeviceArrayField<Real>	m_height;//solid_pos + h*Normal = m_position
+		DeviceArrayField<Real>	m_height_buffer;
+		
 	protected:
 		bool initializeImpl() override;
 
 	private:
-		int m_pNum;
-		Real distance;
-		Real relax;
+		int m_pNum;//grid point numbers
+		Real distance;//the distance between two neighbor grid points
+		Real relax;//System damping coefficient, should always be less than or equal to 1
+		int zcount;//grid point number along z direction
+		int xcount;//grid point number along x direction
+		
+		float sumtimes = 0;
+		int sumnum = 0;
 	};
 
 #ifdef PRECISION_FLOAT
@@ -55,4 +58,4 @@ namespace PhysIKA
 #else
 	template class ShallowWaterEquationModel<DataType3d>;
 #endif
-}
+};
