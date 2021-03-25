@@ -49,16 +49,16 @@ void CreateScene()
 	//std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
 	//root->addParticleSystem(child1);
 
-	//auto ptRender1 = std::make_shared<PointRenderModule>();
-	//ptRender1->setColor(Vector3f(1, 0, 0));
-	//ptRender1->setColorRange(0, 1);
-	//child1->addVisualModule(ptRender1);
+	auto ptRender1 = std::make_shared<PointRenderModule>();
+	ptRender1->setColor(Vector3f(1, 0, 0));
+	ptRender1->setColorRange(0, 1);
+	root->addVisualModule(ptRender1);
 
-	//child1->loadParticles("../../Media/fluid/fluid_point.obj");
-	//child1->setMass(100);
-	//child1->scale(2);
-	//child1->translate(Vector3f(-0.6, -0.3, -0.48));
-	//
+	root->loadParticles("../../Media/fluid/fluid_point.obj");
+	root->setMass(100);
+	root->scale(2);
+	root->translate(Vector3f(-0.6, -0.3, -0.48));
+
 	//std::shared_ptr<MultipleFluidModel<DataType3f>> multifluid = std::make_shared<MultipleFluidModel<DataType3f>>();
 	//child1->currentPosition()->connect(&multifluid->m_position);
 	//child1->currentVelocity()->connect(&multifluid->m_velocity);
