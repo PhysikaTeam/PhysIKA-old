@@ -161,6 +161,7 @@ namespace PhysIKA
 				height = height < 0 ? 0 : height;
 				//height = 0.4 - pow( (pow(x - xcenter, 2) + pow(z - zcenter, 2)) ,1);
 				//height = z*0.45;
+				//height = 0;
 				if (z + distance > hi[2] || x + distance > hi[0] || x == lo[0] || z == lo[2])
 					isbound.push_back(1);
 				else
@@ -420,7 +421,7 @@ namespace PhysIKA
 	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputDepth()
 	{
 		int Size = this->solid.getValue().size();
-		if (buffer.getValue().size() != this->solid.getElementCount())
+		if (buffer.getElementCount() != this->solid.getElementCount())
 			buffer.setElementCount(Size);
 		cuExecute(Size, computeDepth, this->currentPosition()->getValue(), this->solid.getValue(), buffer.getValue());
 		if (Depth.size() != Size)
@@ -434,7 +435,7 @@ namespace PhysIKA
 	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputUVel() 
 	{
 		int Size = this->solid.getValue().size();
-		if (buffer.getValue().size() != this->solid.getElementCount())
+		if (buffer.getElementCount() != this->solid.getElementCount())
 			buffer.setElementCount(Size);
 		cuExecute(Size, computeUVel, this->currentVelocity()->getValue(), buffer.getValue());
 		if (UVel.size() != Size)
@@ -448,7 +449,7 @@ namespace PhysIKA
 	std::vector<TDataType::Real>& HeightFieldNode<TDataType>::outputWVel() 
 	{
 		int Size = this->solid.getValue().size();
-		if (buffer.getValue().size() != this->solid.getElementCount())
+		if (buffer.getElementCount() != this->solid.getElementCount())
 			buffer.setElementCount(Size);
 		cuExecute(Size, computeWVel, this->currentVelocity()->getValue(), buffer.getValue());
 		if (WVel.size() != Size)
