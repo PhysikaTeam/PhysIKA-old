@@ -549,17 +549,17 @@ namespace PhysIKA
 		cuSynchronize();
 		cudaDeviceSynchronize();
 
-		//computeBoundConstrant<Real, Coord> << < pDims2, BLOCK_SIZE >> > (
-		//	m_height.getValue(),
-		//	m_accel.getValue(),
-		//	m_velocity.getValue(),
-		//	m_position.getValue(),
-		//	zcount,
-		//	distance,
-		//	9.8,
-		//	dt);
-		//cuSynchronize();
-		//cudaDeviceSynchronize();
+		computeBoundConstrant<Real, Coord> << < pDims2, BLOCK_SIZE >> > (
+			m_height.getValue(),
+			m_accel.getValue(),
+			m_velocity.getValue(),
+			m_position.getValue(),
+			zcount,
+			distance,
+			9.8,
+			dt);
+		cuSynchronize();
+		cudaDeviceSynchronize();
 
 		//cudaEventRecord(stop);
 
