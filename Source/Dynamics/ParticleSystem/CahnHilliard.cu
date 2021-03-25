@@ -10,8 +10,8 @@ namespace PhysIKA
     CahnHilliard<TDataType, PhaseCount>::CahnHilliard() 
 	{
         m_particleVolume.setValue(Real(1e-3));
-        m_degenerateMobilityM.setValue(Real(1e-4));
-        m_interfaceEpsilon.setValue(Real(1e-3));
+        m_degenerateMobilityM.setValue(Real(1e-6));
+        m_interfaceEpsilon.setValue(Real(1e-6));
     }
 
 
