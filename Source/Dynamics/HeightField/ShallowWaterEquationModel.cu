@@ -297,8 +297,7 @@ namespace PhysIKA
 			grid_vel_z[i] = grid_vel_z[i] * relax + grid_accel_z[i] * dt;
 		}
 		//restrict maxVelocity 
-		Real maxVel = sqrt(distance * gravity), vel;
-		//vel = sqrt(pow(m_velocity[i][0], 2) + pow(m_velocity[i][2], 2));
+		Real maxVel = sqrt(6 * distance * gravity), vel;
 		vel = abs(grid_vel_x[i]);
 		grid_vel_x[i] *= vel > maxVel ? maxVel / vel : 1;
 
@@ -326,11 +325,44 @@ namespace PhysIKA
 		//calculate center velocity by MAC grid
 		m_velocity[i][0] = 0.5 * (grid_vel_x[ix * (zcount + 2) + iz + 1] + grid_vel_x[(ix + 1) * (zcount + 2) + iz + 1]);
 		m_velocity[i][2] = 0.5 * (grid_vel_z[(ix + 1) * (zcount + 1) + iz] + grid_vel_z[(ix + 1) * (zcount + 1) + iz + 1]);
-		//boundary condition
+		////boundary condition
 		m_velocity[i][0] = (ix == 0 || ix == xcount - 1) ? 0 : m_velocity[i][0];
 		m_velocity[i][2] = (iz == 0 || iz == zcount - 1) ? 0 : m_velocity[i][2];
 	}
-
+	template<typename Real, typename Coord>
+	__global__ void avgVelocity(
+		DeviceArray<Real> grid_vel_x,
+		DeviceArray<Real> grid_vel_z,
+		DeviceArray<Real> h,
+		DeviceArray<Coord> m_position,
+		DeviceArray<Coord> m_velocity,
+		int zcount,
+		Real distance,
+		Real gravity,
+		Real dt)
+	{
+		int i = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (i >= h.size())  return;
+		int xcount = h.size() / zcount;
+		int ix = i / zcount;
+		int iz = i % zcount;
+		int maxNei = 4;
+		Real uvel, wvel;
+		for (int j = 0; j < maxNei; ++j)
+		{
+			int nei = neighborFind(ix, iz, j, zcount);
+			if (nei >= h.size() || nei < 0)
+			{
+				continue;
+			}
+			//whz += j < maxNei / 2 ? (m_velocity[nei][2] - h[i] * m_velocity[i][2]) / (m_position[nei][2] - m_position[i][2]) : 0;
+			//uhx += j < maxNei / 2 ? 0 : (h[nei] * m_velocity[nei][0] - h[i] * m_velocity[i][0]) / (m_position[nei][0] - m_position[i][0]);
+		}
+		//calculate center velocity by MAC grid
+		m_velocity[i][0] = 0.5 * (grid_vel_x[ix * (zcount + 2) + iz + 1] + grid_vel_x[(ix + 1) * (zcount + 2) + iz + 1]);
+		m_velocity[i][2] = 0.5 * (grid_vel_z[(ix + 1) * (zcount + 1) + iz] + grid_vel_z[(ix + 1) * (zcount + 1) + iz + 1]);
+		
+	}
 	template<typename Real, typename Coord>
 	__global__ void computeHeight(
 		DeviceArray<Real> h,
@@ -446,6 +478,7 @@ namespace PhysIKA
 			);
 		cuSynchronize();
 		cudaDeviceSynchronize();
+
 
 		computeHeight <Real, Coord> << < pDims, BLOCK_SIZE >> > (
 			m_height.getValue(),
