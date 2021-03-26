@@ -21,7 +21,10 @@ namespace PhysIKA
 		m_pSet = std::make_shared<PointSet<TDataType>>();
 		this->setTopologyModule(m_pSet);
 
-		this->updateTopology();
+		int num = m_msph->num_particles;
+		std::vector<Coord> buffer(num);
+		m_pSet->setPoints(buffer);
+		m_pSet->setNormals(buffer);
 
 		// 		m_pointsRender = std::make_shared<PointRenderModule>();
 		// 		this->addVisualModule(m_pointsRender);
@@ -157,12 +160,9 @@ namespace PhysIKA
 		//	Function1Pt::copy(pts, this->currentPosition()->getValue());
 		//}
 		int num = m_msph->num_particles;
+		cfloat3 * d_pos = m_msph->simdata.pos;
 		auto pts = m_pSet->getPoints();
-		auto norm = m_pSet->getNormals();
-		if (num != pts.size()) {
-			//pts.resize(num);
-			//norm.resize(num);
-		}
+		cudaMemcpy(pts.getDataPtr(), d_pos, sizeof(Coord) * num, cudaMemcpyDeviceToDevice);
 	}
 
 

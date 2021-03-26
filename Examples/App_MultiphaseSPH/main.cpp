@@ -54,10 +54,10 @@ void CreateScene()
 	ptRender1->setColorRange(0, 1);
 	root->addVisualModule(ptRender1);
 
-	root->loadParticles("../../Media/fluid/fluid_point.obj");
-	root->setMass(100);
-	root->scale(2);
-	root->translate(Vector3f(-0.6, -0.3, -0.48));
+	//root->loadParticles("../../Media/fluid/fluid_point.obj");
+	//root->setMass(100);
+	//root->scale(2);
+	//root->translate(Vector3f(-0.6, -0.3, -0.48));
 
 	//std::shared_ptr<MultipleFluidModel<DataType3f>> multifluid = std::make_shared<MultipleFluidModel<DataType3f>>();
 	//child1->currentPosition()->connect(&multifluid->m_position);
