@@ -1,6 +1,7 @@
 #pragma once
 #include "Framework/Framework/Node.h"
 //#include "Rendering/PointRenderModule.h"
+#include "solver/Multiphase/wcsph/MultiphaseSPHSolver.h"
 
 namespace PhysIKA
 {
@@ -33,6 +34,8 @@ namespace PhysIKA
 		virtual bool translate(Coord t);
 		virtual bool scale(Real s);
 
+		virtual void advance(Real dt) override;
+
 		void updateTopology() override;
 		bool resetStatus() override;
 
@@ -60,8 +63,9 @@ namespace PhysIKA
 		//		virtual void setVisible(bool visible) override;
 
 	protected:
+		std::shared_ptr<msph::MultiphaseSPHSolver> m_msph; // float only
 		std::shared_ptr<PointSet<TDataType>> m_pSet;
-		//		std::shared_ptr<PointRenderModule> m_pointsRender;
+		//std::shared_ptr<PointRenderModule> m_pointsRender;
 	};
 
 

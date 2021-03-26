@@ -15,8 +15,13 @@ namespace PhysIKA
 		//		attachField(&m_velocity, MechanicalState::velocity(), "Storing the particle velocities!", false);
 		//		attachField(&m_force, MechanicalState::force(), "Storing the force densities!", false);
 
+		m_msph = std::make_shared<msph::MultiphaseSPHSolver>();
+		m_msph->init();
+
 		m_pSet = std::make_shared<PointSet<TDataType>>();
 		this->setTopologyModule(m_pSet);
+
+		this->updateTopology();
 
 		// 		m_pointsRender = std::make_shared<PointRenderModule>();
 		// 		this->addVisualModule(m_pointsRender);
@@ -26,6 +31,13 @@ namespace PhysIKA
 	FastMultiphaseSPH<TDataType>::~FastMultiphaseSPH()
 	{
 
+	}
+
+	template<typename TDataType>
+	void FastMultiphaseSPH<TDataType>::advance(Real dt)
+	{
+		// FIXME: dt not used here...
+		m_msph->step();
 	}
 
 
@@ -133,16 +145,23 @@ namespace PhysIKA
 	template<typename TDataType>
 	void FastMultiphaseSPH<TDataType>::updateTopology()
 	{
-		if (!this->currentPosition()->isEmpty())
-		{
-			int num = this->currentPosition()->getElementCount();
-			auto& pts = m_pSet->getPoints();
-			if (num != pts.size())
-			{
-				pts.resize(num);
-			}
+		//if (!this->currentPosition()->isEmpty())
+		//{
+		//	int num = this->currentPosition()->getElementCount();
+		//	auto& pts = m_pSet->getPoints();
+		//	if (num != pts.size())
+		//	{
+		//		pts.resize(num);
+		//	}
 
-			Function1Pt::copy(pts, this->currentPosition()->getValue());
+		//	Function1Pt::copy(pts, this->currentPosition()->getValue());
+		//}
+		int num = m_msph->num_particles;
+		auto pts = m_pSet->getPoints();
+		auto norm = m_pSet->getNormals();
+		if (num != pts.size()) {
+			//pts.resize(num);
+			//norm.resize(num);
 		}
 	}
 

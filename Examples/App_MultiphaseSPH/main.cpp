@@ -50,7 +50,7 @@ void CreateScene()
 	//root->addParticleSystem(child1);
 
 	auto ptRender1 = std::make_shared<PointRenderModule>();
-	ptRender1->setColor(Vector3f(1, 0, 0));
+	ptRender1->setColor(Vector3f(0, 1, 0));
 	ptRender1->setColorRange(0, 1);
 	root->addVisualModule(ptRender1);
 
