@@ -50,9 +50,11 @@ void CreateScene()
 	//root->addParticleSystem(child1);
 
 	auto ptRender1 = std::make_shared<PointRenderModule>();
-	ptRender1->setColor(Vector3f(0, 1, 0));
+	ptRender1->setColor(Vector3f(1, 0, 1));
 	ptRender1->setColorRange(0, 1);
 	root->addVisualModule(ptRender1);
+
+	root->m_phase_concentration.connect(&ptRender1->m_vecIndex);
 
 	//root->loadParticles("../../Media/fluid/fluid_point.obj");
 	//root->setMass(100);

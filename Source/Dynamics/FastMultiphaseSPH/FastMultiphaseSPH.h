@@ -8,10 +8,9 @@ namespace PhysIKA
 	template <typename TDataType> class PointSet;
 	/*!
 	*	\class	FastMultiphaseSPH
-	*	\brief	Position-based fluids.
+	*	\brief	Mostly copied from ParticleSystem which is designed for Position-based fluids.
 	*
-	*	This class implements a position-based fluid solver.
-	*	Refer to Macklin and Muller's "Position Based Fluids" for details
+	*	This class implements a fast Multiphase SPH solver
 	*
 	*/
 	template<typename TDataType>
@@ -56,6 +55,9 @@ namespace PhysIKA
 		 * @brief Particle force
 		 */
 		DEF_EMPTY_CURRENT_ARRAY(Force, Coord, DeviceType::GPU, "Force on each particle");
+
+
+		DeviceArrayField<Vector3f> m_phase_concentration;
 
 
 	public:

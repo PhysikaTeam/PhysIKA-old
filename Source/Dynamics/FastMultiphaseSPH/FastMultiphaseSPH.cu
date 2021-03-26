@@ -3,6 +3,9 @@
 #include "Framework/Topology/PointSet.h"
 #include "Core/Utility.h"
 
+#include <thrust/transform.h>
+#include <thrust/functional.h>
+#include <thrust/execution_policy.h>
 
 namespace PhysIKA
 {
@@ -15,16 +18,17 @@ namespace PhysIKA
 		//		attachField(&m_velocity, MechanicalState::velocity(), "Storing the particle velocities!", false);
 		//		attachField(&m_force, MechanicalState::force(), "Storing the force densities!", false);
 
-		m_msph = std::make_shared<msph::MultiphaseSPHSolver>();
-		m_msph->init();
-
 		m_pSet = std::make_shared<PointSet<TDataType>>();
 		this->setTopologyModule(m_pSet);
+
+		m_msph = std::make_shared<msph::MultiphaseSPHSolver>();
+		m_msph->init();
 
 		int num = m_msph->num_particles;
 		std::vector<Coord> buffer(num);
 		m_pSet->setPoints(buffer);
 		m_pSet->setNormals(buffer);
+		m_phase_concentration.setElementCount(num);
 
 		// 		m_pointsRender = std::make_shared<PointRenderModule>();
 		// 		this->addVisualModule(m_pointsRender);
@@ -145,6 +149,13 @@ namespace PhysIKA
 	// 		Node::setVisible(visible);
 	// 	}
 
+	struct ColorOp {
+		__host__ __device__
+			Vector3f operator()(cfloat4 color) {
+			return Vector3f(1 - color[0], 1 - color[0], 1 - color[0]);
+		}
+	};
+
 	template<typename TDataType>
 	void FastMultiphaseSPH<TDataType>::updateTopology()
 	{
@@ -156,13 +167,15 @@ namespace PhysIKA
 		//	{
 		//		pts.resize(num);
 		//	}
-
 		//	Function1Pt::copy(pts, this->currentPosition()->getValue());
 		//}
 		int num = m_msph->num_particles;
 		cfloat3 * d_pos = m_msph->simdata.pos;
+		cfloat4 * d_color = m_msph->simdata.color;
 		auto pts = m_pSet->getPoints();
 		cudaMemcpy(pts.getDataPtr(), d_pos, sizeof(Coord) * num, cudaMemcpyDeviceToDevice);
+		Vector3f* color_idx = m_phase_concentration.getValue().getDataPtr();
+		thrust::transform(thrust::device, d_color, d_color + num, color_idx, ColorOp());
 	}
 
 
