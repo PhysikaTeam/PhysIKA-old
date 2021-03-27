@@ -210,7 +210,7 @@ namespace msph {
 	
 	void MultiphaseSPHSolver::SetupFluidScene()
 	{
-		parseConfig("config/multiphase.xml");
+		SetParameter();
 		updateSimulationParam();
 
 		cudaMallocManaged(&pParam, sizeof(MultiphaseParam));
@@ -237,7 +237,7 @@ namespace msph {
 	
 
 	void MultiphaseSPHSolver::loadSceneFromFile(char* filePath) {
-		parseConfig("config/multiphase.xml");
+		SetParameter();
 		updateSimulationParam();
 		printf("time step: %f ms\n", h_param.dt);
 
@@ -297,7 +297,7 @@ namespace msph {
 
 
 
-	void MultiphaseSPHSolver::parseConfig(char* filePath) {
+	void MultiphaseSPHSolver::SetParameter() {
 		
 		h_param.gravity.set(0.0f, -9.8f, 0.0f);
 		h_param.gridxmin.set(-2.5f, -0.5f, -1.5f);
@@ -326,8 +326,12 @@ namespace msph {
 
 		float width = 0.5;
 		auto fv = std::make_shared<fluidvol>();
+		// SCENE1
 		fv->xmin.set(-1.2 + padding, 0.015, -0.5);
 		fv->xmax.set(-1.2 + padding + width, 1., 0.5);
+		// SCENE2
+		//fv->xmin.set(-1.2 + padding, 0.0, -0.5);
+		//fv->xmax.set(0, 0.6, 0.5);
 		fv->group = 0;
 		fv->type = TYPE_FLUID;
 		fv->volfrac[0] = 1;
@@ -335,8 +339,12 @@ namespace msph {
 		fluid_volumes.push_back(fv);
 
 		fv = std::make_shared<fluidvol>();
+		// SCENE1
 		fv->xmin.set(1.2 - padding - width, 0.015, -0.5);
 		fv->xmax.set(1.2 - padding, 1., 0.5);
+		// SCENE2
+		//fv->xmin.set(0.2, 0., -0.2);
+		//fv->xmax.set(0.8, 0.45, 0.2);
 		fv->group = 0;
 		fv->type = TYPE_GRANULAR;
 		fv->volfrac[0] = 0;

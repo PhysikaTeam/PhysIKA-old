@@ -79,7 +79,7 @@ namespace msph{
 	
 		void SetupFluidScene();
 		void loadSceneFromFile(char* filePath);
-		void parseConfig(char* filePath);
+		void SetParameter();
 		void updateSimulationParam();
 		int  addDefaultParticle();
 		void addFluidVolumes();
