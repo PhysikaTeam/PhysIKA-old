@@ -1,0 +1,48 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab
+ *
+ * This application is open source and may be redistributed and/or modified
+ * freely and without restriction, both in commercial and non commercial
+ * applications, as long as this copyright notice is maintained.
+ *
+ * This application is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+*/
+
+#ifndef DETACH_PRIMITIVE_VISITOR
+#define DETACH_PRIMITIVE_VISITOR
+
+#include <osg/ValueObject>
+#include "GeometryUniqueVisitor"
+
+class DetachPrimitiveVisitor : public GeometryUniqueVisitor {
+public:
+    DetachPrimitiveVisitor(std::string const& userValue, bool keepGeometryAttributes=false, bool inlined=true):
+        GeometryUniqueVisitor("DetachPrimitiveVisitor"),
+        _userValue(userValue), _keepGeometryAttributes(keepGeometryAttributes), _inlined(inlined)
+    {}
+
+    void reparentDuplicatedGeometry(osg::Geometry&, osg::Geometry&);
+    void process(osg::Geometry&);
+    void process(osgAnimation::RigGeometry&);
+
+protected:
+    bool shouldDetach(const osg::Geometry&) const;
+
+    osg::Geometry* detachGeometry(osg::Geometry&);
+    osg::Geometry* makeDetachedGeometry(osg::Geometry&);
+    osg::Geometry* createDetachedGeometry(osg::Geometry&);
+
+    osg::Geometry::PrimitiveSetList createDetachedPrimitives(osg::Geometry&);
+    osgAnimation::MorphGeometry* createDetachedGeometry(osgAnimation::MorphGeometry&);
+    osg::Geometry* createDetachedGeometry(osgAnimation::RigGeometry&);
+
+
+protected:
+    std::string _userValue;
+    bool _keepGeometryAttributes;
+    bool _inlined;
+};
+
+#endif

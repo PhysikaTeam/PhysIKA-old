@@ -1,0 +1,4 @@
+SET(TARGET_SRC ReaderWriterLWS.cpp SceneLoader.cpp )
+SET(TARGET_H SceneLoader.h )
+#### end var setup  ###
+SETUP_PLUGIN(lws)

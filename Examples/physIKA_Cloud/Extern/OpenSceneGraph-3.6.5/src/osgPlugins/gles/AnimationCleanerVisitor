@@ -1,0 +1,130 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab */
+
+#ifndef ANIMATION_CLEANER_VISITOR
+#define ANIMATION_CLEANER_VISITOR
+
+#include <utility>
+#include <map>
+#include <vector>
+#include <set>
+#include <algorithm>
+#include <sstream>
+
+#include <osg/ref_ptr>
+#include <osg/NodeVisitor>
+#include <osg/Geode>
+
+#include <osgAnimation/UpdateMatrixTransform>
+#include <osgAnimation/BasicAnimationManager>
+#include <osgAnimation/RigGeometry>
+#include <osgAnimation/MorphGeometry>
+#include <osgAnimation/Bone>
+#include <osgAnimation/Skeleton>
+#include <osgAnimation/UpdateBone>
+#include <osgAnimation/Sampler>
+#include <osgAnimation/StackedTransform>
+#include <osgAnimation/StackedTranslateElement>
+#include <osgAnimation/StackedScaleElement>
+#include <osgAnimation/StackedQuaternionElement>
+#include <osgAnimation/RigTransformSoftware>
+
+#include "StatLogger"
+#include "glesUtil"
+
+
+class HasGeometryVisitor : public osg::NodeVisitor {
+public:
+    HasGeometryVisitor():
+        osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN),
+        geometry(false)
+    {}
+
+    void apply(osg::Geometry& /*object*/) {
+        geometry = true;
+    }
+
+    bool geometry;
+};
+
+
+class AnimationCleanerVisitor : public osg::NodeVisitor
+{
+public:
+    typedef std::map< osg::ref_ptr<osgAnimation::BasicAnimationManager>, osg::ref_ptr<osg::Node> > BasicAnimationManagerMap;
+    typedef osgAnimation::AnimationUpdateCallback<osg::NodeCallback> BaseAnimationUpdateCallback;
+    typedef std::map< osg::ref_ptr<BaseAnimationUpdateCallback>, osg::ref_ptr<osg::Node> > AnimationUpdateCallBackMap;
+    typedef std::vector< osg::ref_ptr<osg::MatrixTransform> > MatrixTransformList;
+    typedef std::vector< osg::ref_ptr<osgAnimation::RigGeometry> > RigGeometryList;
+    typedef std::map< osg::ref_ptr<osgAnimation::MorphGeometry>, osgAnimation::RigGeometry* > MorphGeometryMap;
+    typedef std::map< std::string, osgAnimation::MorphGeometry* > NameMorphMap;
+    typedef std::set< std::string > NameSet;
+    typedef std::vector< std::pair<std::string, osgAnimation::Channel*> > TargetChannelList;
+
+
+    AnimationCleanerVisitor(std::string name="AnimationCleanerVisitor"):
+        osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN),
+        _logger(name + "::apply(..)")
+    {}
+
+
+    void apply(osg::Node&);
+    void apply(osg::MatrixTransform&);
+    void apply(osg::Geometry&);
+
+    void collectUpdateCallback(osg::Node&);
+    void collectAnimationChannels(osgAnimation::BasicAnimationManager&);
+
+    virtual void clean();
+    void removeAnimation();
+
+    void cleanInvalidMorphGeometries();
+    void cleanInvalidRigGeometries();
+    void cleanUnusedMorphTarget();
+
+    void cleanInvalidUpdateMorph();
+
+protected:
+    void warn(const std::string&, const std::string&, const osgAnimation::Channel&, const std::string&) const;
+
+    template<typename T>
+    T* getCallbackType(osg::Callback*);
+
+    void cleanAnimations(osgAnimation::BasicAnimationManager&);
+    void cleanAnimation(osgAnimation::Animation&);
+    void cleanChannel(osgAnimation::Channel&);
+    bool isValidAnimationManager(const osgAnimation::BasicAnimationManager&) const;
+    bool isValidAnimation(const osgAnimation::Animation&) const;
+    bool isValidChannel(const osgAnimation::Channel&) const;
+
+    const osgAnimation::StackedTransformElement* getStackedElement(const osgAnimation::StackedTransform&, const std::string&) const;
+    bool isChannelEqualToStackedTransform(const osgAnimation::Channel&, const osgAnimation::UpdateMatrixTransform*) const;
+
+    template<typename T, typename V>
+    bool isChannelEqualToStackedTransform(const T*, const V&) const;
+
+    void removeAnimationUpdateCallbacks();
+    template<typename C, typename T>
+    void removeUpdateCallbacksTemplate(C&);
+
+    void removeAnimationTransforms();
+    void removeAnimatedGeometries();
+    void removeFromParents(osg::Node*);
+
+    void replaceRigGeometryBySource(osgAnimation::RigGeometry&) const;
+    void replaceMorphGeometryByGeometry(osgAnimation::MorphGeometry&, osgAnimation::RigGeometry* /*rigGeometry*/=0) const;
+    void replaceAnimatedGeometryByStaticGeometry(osg::Geometry*, osg::Geometry*) const;
+
+    void bakeRigInitialPose();
+
+protected:
+    BasicAnimationManagerMap _managers;
+    AnimationUpdateCallBackMap _updates;
+    MatrixTransformList _transforms;
+    RigGeometryList _rigGeometries;
+    MorphGeometryMap _morphGeometries;
+    NameMorphMap _morphTargets;
+    TargetChannelList _channels;
+    StatLogger _logger;
+};
+
+#endif

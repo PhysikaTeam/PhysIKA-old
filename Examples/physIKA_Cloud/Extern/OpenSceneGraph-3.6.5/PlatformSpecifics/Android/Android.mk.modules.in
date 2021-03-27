@@ -1,0 +1,36 @@
+#ANDROID makefile         ${MODULE_NAME}
+
+LOCAL_PATH :=             ${MODULE_DIR}
+
+include $(CLEAR_VARS)
+
+ifeq (${ANDROID_OPTIM_NEON},true)
+    ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+        LOCAL_ARM_NEON := true
+    endif
+endif
+
+ifeq (${ANDROID_OPTIM_ARM32},true)
+    LOCAL_ARM_MODE := arm
+endif
+
+
+LOCAL_CPP_EXTENSION :=    ${CPP_EXTENSION}
+
+LOCAL_LDLIBS :=           ${MODULE_LIBS_FLAGS}
+
+LOCAL_MODULE :=           ${MODULE_NAME}
+
+LOCAL_SRC_FILES :=        ${MODULE_SOURCES}
+
+LOCAL_C_INCLUDES :=       ${MODULE_INCLUDES}
+
+LOCAL_CFLAGS :=           ${MODULE_FLAGS_C}
+
+LOCAL_CPPFLAGS :=         ${MODULE_FLAGS_CPP}
+
+LOCAL_SHARED_LIBRARIES := ${MODULE_LIBS_SHARED}
+LOCAL_STATIC_LIBRARIES := ${MODULE_LIBS_STATIC}
+
+include ${MODULE_BUILD_TYPE}
+

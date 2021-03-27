@@ -10,6 +10,8 @@ Physika_Test/**/*_test
 Physika_Test/google_test/src/*.obj
 Physika_Test/**/*.dll
 
+.vscode/
+
 _CL_*
 
 *.sln

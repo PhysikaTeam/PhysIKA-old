@@ -1,0 +1,50 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Cedric Pinson
+ *
+ * This application is open source and may be redistributed and/or modified
+ * freely and without restriction, both in commercial and non commercial
+ * applications, as long as this copyright notice is maintained.
+ *
+ * This application is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+*/
+
+#ifndef GEOMETRY_SPLITTER_VISITOR
+#define GEOMETRY_SPLITTER_VISITOR
+
+#include <map>
+
+#include <osg/ref_ptr>
+#include <osg/Geometry>
+#include <osgAnimation/RigGeometry>
+
+#include "GeometryUniqueVisitor"
+
+
+class GeometrySplitterVisitor : public GeometryUniqueVisitor {
+public:
+    typedef std::vector< osg::ref_ptr<osg::Geometry> > GeometryList;
+    typedef std::vector< osg::ref_ptr<osg::Drawable> > DrawableList;
+    typedef std::map<osg::Geometry*, GeometryList> SplitMap;
+
+    GeometrySplitterVisitor(unsigned int maxAllowedIndex=65535, bool exportNonGeometryDrawables=false):
+        GeometryUniqueVisitor("GeometrySplitterVisitor"),
+        _maxAllowedIndex(maxAllowedIndex),
+        _exportNonGeometryDrawables(exportNonGeometryDrawables)
+    {}
+
+    void apply(osg::Geode&);
+    void process(osg::Geometry&);
+
+protected:
+    bool isProcessed(osg::Geometry*);
+    void setProcessed(osg::Geometry*, const GeometryList&);
+
+protected:
+    unsigned int _maxAllowedIndex;
+    std::map<osg::Geometry*, GeometryList> _split;
+    bool _exportNonGeometryDrawables;
+};
+
+#endif

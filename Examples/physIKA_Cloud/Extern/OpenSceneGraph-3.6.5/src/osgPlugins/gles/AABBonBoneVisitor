@@ -1,0 +1,87 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab
+ *
+ * This application is open source and may be redistributed and/or modified
+ * freely and without restriction, both in commercial and non commercial
+ * applications, as long as this copyright notice is maintained.
+ *
+ * This application is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
+
+#ifndef AABBONEVISITOR_H
+#define AABBONEVISITOR_H
+
+#include <iostream>
+#include <osg/Geode>
+#include <osgAnimation/Bone>
+#include <osg/NodeVisitor>
+#include <osgAnimation/RigGeometry>
+#include <osg/ref_ptr>
+#include <osg/Array>
+#include <osgUtil/UpdateVisitor>
+#include <osgAnimation/UpdateBone>
+#include <osg/PolygonMode>
+#include <osg/ShapeDrawable>
+#include <osg/Shape>
+
+
+// Here the idea is to compute AABB by bone for a skeleton
+// You just need to call this visitor on a skeleton and after call computeBoundingBoxOnBones
+// If you have more than one skeleton you should crete a visitor by skeleton
+class ComputeAABBOnBoneVisitor : public osg::NodeVisitor {
+public:
+    typedef std::vector<osgAnimation::Bone*> BoneList;
+    typedef std::vector<osgAnimation::RigGeometry*> RigGeometryList;
+
+    ComputeAABBOnBoneVisitor(bool createGeometry):
+        osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN),
+        _root(0),
+        _createGeometry(createGeometry)
+    {}
+
+    void apply(osg::Transform&);
+    void apply(osg::Geometry&);
+    void apply(osgAnimation::Bone &);
+    void apply(osgAnimation::RigGeometry &);
+    void computeBoundingBoxOnBones();
+
+protected:
+    osg::Geometry* createBox(const osg::BoundingBox &,
+                             const osg::Matrix &,
+                             float /*ratio*/=1.0,
+                             osg::Vec4 /*color*/=osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+    void serializeBoundingBox(const osg::BoundingBox &,
+                              const osg::Matrix &,
+                              osgAnimation::Bone &,
+                              float /*ratio*/=1.0);
+
+    void updateBones();
+    void updateRigGeometries();
+
+protected:
+    BoneList _bones;
+    RigGeometryList _rigGeometries;
+    osgAnimation::Skeleton *_root;
+    bool _createGeometry;
+};
+
+
+struct FindSkeletons : public osg::NodeVisitor
+{
+    FindSkeletons():
+        osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+    {}
+
+    void apply(osg::Transform& node) {
+        osgAnimation::Skeleton *skl = dynamic_cast<osgAnimation::Skeleton*>(&node);
+        if(skl) _skls.push_back(skl);
+        traverse(node);
+    }
+
+    std::vector<osgAnimation::Skeleton*> _skls;
+};
+
+#endif // AABBONEVISITOR_H

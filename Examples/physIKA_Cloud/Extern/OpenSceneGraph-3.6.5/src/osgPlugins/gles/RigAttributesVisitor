@@ -1,0 +1,24 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab */
+
+#ifndef RIG_ATTRIBUTES_VISITOR
+#define RIG_ATTRIBUTES_VISITOR
+
+#include "GeometryUniqueVisitor"
+
+
+class RigAttributesVisitor : public GeometryUniqueVisitor {
+public:
+    RigAttributesVisitor():
+        GeometryUniqueVisitor("RigAttributesVisitor")
+    {}
+
+    void process(osgAnimation::RigGeometry& rigGeometry);
+    void process(osg::Geometry& /*geometry*/) {
+        return;
+    }
+
+protected:
+    int getPropertyIndex(const osg::Geometry& geometry, const std::string& property);
+};
+
+#endif

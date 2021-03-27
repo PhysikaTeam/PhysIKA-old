@@ -1,0 +1,241 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab
+ *
+ * This application is open source and may be redistributed and/or modified
+ * freely and without restriction, both in commercial and non commercial
+ * applications, as long as this copyright notice is maintained.
+ *
+ * This application is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+*/
+
+#ifndef OPENGLES_GEOMETRY_OPTIMIZER
+#define OPENGLES_GEOMETRY_OPTIMIZER
+
+#include <osg/Node>
+#include <algorithm> //std::max
+
+//animation:
+#include "AABBonBoneVisitor"
+#include "AnimationCleanerVisitor"
+#include "DisableAnimationVisitor"
+#include "LimitMorphTargetCount"
+#include "MostInfluencedGeometryByBone"
+#include "RigAnimationVisitor"
+#include "RigAttributesVisitor"
+
+// geometry:
+#include "BindPerVertexVisitor"
+#include "DetachPrimitiveVisitor"
+#include "DrawArrayVisitor"
+#include "IndexMeshVisitor"
+#include "PreTransformVisitor"
+#include "RemapGeometryVisitor"
+#include "SmoothNormalVisitor"
+#include "TangentSpaceVisitor"
+#include "UnIndexMeshVisitor"
+#include "WireframeVisitor"
+
+#include "GeometryIndexSplitter"
+#include "GeometryCleaner"
+
+// debug
+#include "GeometryInspector"
+
+
+class OpenGLESGeometryOptimizer
+{
+public:
+    OpenGLESGeometryOptimizer() :
+        _mode("all"),
+        _useDrawArray(false),
+        _disableMeshOptimization(false),
+        _disableMergeTriStrip(false),
+        _disablePreTransform(false),
+        _disableAnimation(false),
+        _disableAnimationCleaning(false),
+        _enableAABBonBone(false),
+        _generateTangentSpace(false),
+        _tangentUnit(0),
+        _maxIndexValue(65535),
+        _wireframe(""),
+        _maxMorphTarget(0),
+        _exportNonGeometryDrawables(false)
+    {}
+
+    // run the optimizer
+    osg::Node* optimize(osg::Node& node);
+
+    // handle options
+    void setMode(const std::string& mode) { _mode = mode; }
+    void setUseDrawArray(bool s) { _useDrawArray = s; }
+
+    void setDisableMeshOptimization(bool s) { _disableMeshOptimization = s; }
+    void setDisableMergeTriStrip(bool s) { _disableMergeTriStrip = s; }
+    void setDisablePreTransform(bool s) { _disablePreTransform = s; }
+    void setDisableAnimation(bool s) { _disableAnimation = s; }
+    void setDisableAnimationCleaning(bool s) { _disableAnimationCleaning = s; }
+    void setEnableAABBonBone(bool s)  { _enableAABBonBone = s; }
+    void setExportNonGeometryDrawables(bool value) { _exportNonGeometryDrawables = value; }
+    void setTexCoordChannelForTangentSpace(int uv) {
+        _tangentUnit = uv;
+        _generateTangentSpace = true;
+    }
+
+    void setMaxIndexValue(unsigned int s) { _maxIndexValue = s; }
+    void setWireframe(const std::string& s) {
+        _wireframe = s;
+        if(_wireframe == std::string("outline")) {
+            // no use to build strip if we only want wireframe
+            setDisableMeshOptimization(true);
+        }
+    }
+    void setMaxMorphTarget(unsigned int maxMorphTarget) {
+        _maxMorphTarget = maxMorphTarget;
+    }
+
+protected:
+    void makeAnimation(osg::Node* node) {
+        makeRigAnimation(node);
+        if(_disableAnimation) {
+            makeDisableAnimation(node);
+        }
+        else {
+            if(!_disableAnimationCleaning) {
+                makeCleanAnimation(node);
+            }
+            makeLimitMorphTargetCount(node);
+            makeAABBonBone(node, _enableAABBonBone);
+            makeMostInfluencedGeometryByBone(node);
+        }
+    }
+
+    void makeDisableAnimation(osg::Node* node) {
+        DisableAnimationVisitor disabler;
+        node->accept(disabler);
+    }
+
+    void makeCleanAnimation(osg::Node* node) {
+        AnimationCleanerVisitor cleaner;
+        node->accept(cleaner);
+        cleaner.clean();
+    }
+
+    void makeRigAnimation(osg::Node* node) {
+        RigAnimationVisitor anim;
+        node->accept(anim);
+    }
+
+    void makeAABBonBone(osg::Node* node, bool enableAABBonBone) {
+        FindSkeletons fs;
+        node->accept(fs);
+
+       for(unsigned int i = 0; i < fs._skls.size(); i++) {
+           osgAnimation::Skeleton * skl = fs._skls[i];
+           ComputeAABBOnBoneVisitor cabv(enableAABBonBone);
+           skl->accept(cabv);
+           cabv.computeBoundingBoxOnBones();
+       }
+    }
+
+    void makeMostInfluencedGeometryByBone(osg::Node *node) {
+        CollectBonesAndRigGeometriesVisitor collector;
+        node->accept(collector);
+        ComputeMostInfluencedGeometryByBone computor(collector.getRigGeometrySet(), collector.getBoneSet());
+        computor.compute();
+    }
+
+    void makeLimitMorphTargetCount(osg::Node* node) {
+        LimitMorphTargetCount limit(_maxMorphTarget);
+        node->accept(limit);
+    }
+
+    void makeWireframe(osg::Node* node) {
+        WireframeVisitor wireframe(_wireframe == std::string("inline"));
+        node->accept(wireframe);
+    }
+
+    void makeBindPerVertex(osg::Node* node) {
+        BindPerVertexVisitor bindpervertex;
+        node->accept(bindpervertex);
+    }
+
+    void makeIndexMesh(osg::Node* node) {
+        IndexMeshVisitor indexer;
+        node->accept(indexer);
+    }
+
+    void makeCleanGeometry(osg::Node* node) {
+        GeometryCleaner cleaner;
+        RemapGeometryVisitor remapper(cleaner, _exportNonGeometryDrawables);
+        node->accept(remapper);
+    }
+
+    void makeSmoothNormal(osg::Node* node) {
+        SmoothNormalVisitor smoother(osg::PI / 4.f, true);
+        node->accept(smoother);
+    }
+
+    void makeTangentSpace(osg::Node* node) {
+        TangentSpaceVisitor tangent(_tangentUnit);
+        node->accept(tangent);
+    }
+
+    void makeSplit(osg::Node* node) {
+        GeometryIndexSplitter splitter(_maxIndexValue);
+        RemapGeometryVisitor remapper(splitter, _exportNonGeometryDrawables);
+        node->accept(remapper);
+    }
+
+    void makeOptimizeMesh(osg::Node* node) {
+        osgUtil::optimizeMesh(node);
+    }
+
+    void makeDrawArray(osg::Node* node) {
+        DrawArrayVisitor drawarray;
+        node->accept(drawarray);
+    }
+
+    void makePreTransform(osg::Node* node) {
+        PreTransformVisitor preTransform;
+        node->accept(preTransform);
+    }
+
+    void makeDetach(osg::Node* node) {
+        DetachPrimitiveVisitor detacher("wireframe", false, _wireframe == std::string("inline"));
+        node->accept(detacher);
+    }
+
+    void makeBonesAndWeightOnRigGeometry(osg::Node* node) {
+        RigAttributesVisitor rigger;
+        node->accept(rigger);
+    }
+
+    void makeInspectGeometry(osg::Node* node) {
+        GeometryInspector inspector;
+        node->accept(inspector);
+    }
+
+
+    std::string _mode;
+    bool _useDrawArray;
+    bool _disableMeshOptimization;
+    bool _disableMergeTriStrip;
+    bool _disablePreTransform;
+    bool _disableAnimation;
+    bool _disableAnimationCleaning;
+    bool _enableAABBonBone;
+
+    bool _generateTangentSpace;
+    int _tangentUnit;
+
+    unsigned int _maxIndexValue;
+    std::string _wireframe;
+
+    unsigned int _maxMorphTarget;
+
+    bool _exportNonGeometryDrawables;
+};
+
+#endif

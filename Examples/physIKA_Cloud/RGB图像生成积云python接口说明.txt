@@ -1,0 +1,15 @@
+win10上操作过程：
+    在.\xml文件夹下运行python sim_run.py 上传的xml路径 图像所在文件夹 时间戳文件夹 生成的模拟数据存放的文件夹
+如：
+python sim_run.py 
+D:\Code\PhysIKA_Cloud\Python\ImageCumulus\xml\2021\upload_config_file.xml 
+D:\Code\PhysIKA_Cloud\Python\ImageCumulus\natural_img\ （图像的文件名要写在上面的xml中）
+D:\Code\PhysIKA_Cloud\Python\ImageCumulus\xml\2021\  
+D:\Code\PhysIKA_Cloud\Python\ImageCumulus\xml\2021\sim_data\
+
+
+
+注：
+1. 代码运行时会在C++工程的上级目录中的output文件夹（../output/xxxxx）里存放临时文件，如果output文件夹不存在则无法正常运行。
+2. natural_img文件夹中的6张图片经过测试能跑出正常效果。
+3. python代码运行后，会生成一个.obj文件和一个新的xml文件。obj文件存放在“生成的模拟数据存放的文件夹”下，命名为cloud.obj；生成的新xml文件存放在“时间戳文件夹”下，命名为sim_config_file.xml。

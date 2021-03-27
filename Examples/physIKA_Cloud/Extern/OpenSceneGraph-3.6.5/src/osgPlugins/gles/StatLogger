@@ -1,0 +1,41 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab */
+
+#ifndef STAT_LOGGER
+#define STAT_LOGGER
+
+#include <osg/Timer>
+#include <osg/Notify>
+
+
+class StatLogger
+{
+public:
+    StatLogger(const std::string& label):
+        _label(label)
+    {
+        _start = _stop = getTick();
+    }
+
+
+    ~StatLogger() {
+        _stop = getTick();
+
+        OSG_INFO << std::endl
+                 << "Info: " << _label << " timing: " << getElapsedSeconds() << "s"
+                 << std::endl;
+    }
+
+protected:
+    osg::Timer_t _start, _stop;
+    std::string _label;
+
+    inline osg::Timer_t getTick() const {
+        return osg::Timer::instance()->tick();
+    }
+
+    inline double getElapsedSeconds() const {
+        return osg::Timer::instance()->delta_s(_start, _stop);
+    }
+};
+
+#endif

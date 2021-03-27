@@ -1,0 +1,71 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab
+ *
+ * This application is open source and may be redistributed and/or modified
+ * freely and without restriction, both in commercial and non commercial
+ * applications, as long as this copyright notice is maintained.
+ *
+ * This application is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
+
+#ifndef RIG_ANIMATION_VISITOR
+#define RIG_ANIMATION_VISITOR
+
+#include <osgUtil/UpdateVisitor>
+#include <osgAnimation/RigTransformHardware>
+#include <osgAnimation/RigGeometry>
+#include <osgAnimation/MorphGeometry>
+
+#include <osg/ValueObject>
+#include <osg/Array>
+
+#include <algorithm>
+#include <utility>
+#include <set>
+#include <map>
+#include <sstream>
+
+#include "StatLogger"
+
+
+// the idea is to create true Geometry if skeleton with RigGeometry
+class RigAnimationVisitor : public osgUtil::UpdateVisitor
+{
+public:
+    typedef std::map<unsigned int, unsigned short> boneIndices;
+
+    RigAnimationVisitor():
+        _logger("RigAnimationVisitor::apply(..)")
+    {
+        setFrameStamp(new osg::FrameStamp());
+    }
+
+    void apply(osg::Drawable&);
+    void apply(osg::Geometry*);
+    void apply(osgAnimation::RigGeometry&);
+
+protected:
+    inline void normalizeWeight(osg::Vec4f &v) const {
+        // do not consider positive weights only
+        float sum = std::abs(v[0]) + std::abs(v[1]) + std::abs(v[2]) + std::abs(v[3]);
+        if (sum > 0) v /= sum;
+    }
+
+    boneIndices remapGeometryBones(const osg::Vec4usArray&);
+    void applyBoneIndicesRemap(osg::Vec4usArray&, const boneIndices&);
+
+    void serializeBonesUserValues(osg::Vec4usArray&,
+                                  const std::map<unsigned int, unsigned short>&,
+                                  const osgAnimation::RigTransformHardware::BoneNamePaletteIndex&);
+
+    bool isProcessed(osg::Drawable&);
+    void setProcessed(osg::Drawable&);
+
+protected:
+    std::set<osg::Drawable*> _processed;
+    StatLogger _logger;
+};
+
+#endif

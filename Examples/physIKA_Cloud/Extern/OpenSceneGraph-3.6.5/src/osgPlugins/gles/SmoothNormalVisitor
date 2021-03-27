@@ -1,0 +1,66 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab */
+
+#include <osg/Geometry>
+#include <osgAnimation/MorphGeometry>
+
+#include "GeometryUniqueVisitor"
+#include "TriangleMeshSmoother"
+#include "glesUtil"
+
+
+class SmoothNormalVisitor : public GeometryUniqueVisitor {
+public:
+    SmoothNormalVisitor(float creaseAngle, bool comparePosition=false):
+        GeometryUniqueVisitor("SmoothNormalVisitor"),
+        _creaseAngle(creaseAngle),
+        _comparePosition(comparePosition)
+    {}
+
+    void process(osg::Geometry& geometry) {
+        if(!geometry.getNormalArray()) {
+            TriangleMeshSmoother(geometry, _creaseAngle, _comparePosition, TriangleMeshSmoother::recompute);
+        }
+        else {
+            TriangleMeshSmoother(geometry, _creaseAngle, _comparePosition, TriangleMeshSmoother::diagnose);
+        }
+    }
+
+    void process(osgAnimation::MorphGeometry& morphGeometry) {
+        bool needSmoothing = needMorphGeometrySmoothing(morphGeometry);
+
+        if(needSmoothing) {
+            TriangleMeshSmoother(morphGeometry, 0, true, TriangleMeshSmoother::smooth_all);
+
+            osgAnimation::MorphGeometry::MorphTargetList targets = morphGeometry.getMorphTargetList();
+            for(osgAnimation::MorphGeometry::MorphTargetList::iterator target = targets.begin() ; target != targets.end() ; ++ target) {
+                // check normal orientation using the same primitives as parent geometry
+                glesUtil::TargetGeometry geometry(*target, morphGeometry);
+                if(geometry && !geometry->getNormalArray()) {
+                    TriangleMeshSmoother(*geometry, 0, true, TriangleMeshSmoother::smooth_all);
+                }
+            }
+        }
+    }
+
+protected:
+    bool needMorphGeometrySmoothing(osgAnimation::MorphGeometry& morphGeometry) {
+        if(!morphGeometry.getNormalArray()) {
+            return true;
+        }
+
+        osgAnimation::MorphGeometry::MorphTargetList targets = morphGeometry.getMorphTargetList();
+
+        for(osgAnimation::MorphGeometry::MorphTargetList::iterator target = targets.begin() ; target != targets.end() ; ++ target) {
+            osg::Geometry* geometry = target->getGeometry();
+            if(geometry && !geometry->getNormalArray()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    float _creaseAngle;
+    bool _comparePosition;
+};

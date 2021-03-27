@@ -1,0 +1,491 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab */
+
+#ifndef GLES_UTIL
+#define GLES_UTIL
+
+#include <cassert>
+#include <map>
+#include <vector>
+#include <algorithm>
+
+#include <osg/Array>
+#include <osg/ValueObject>
+#include <osg/ref_ptr>
+#include <osgUtil/MeshOptimizers>
+#include <osg/TriangleIndexFunctor>
+#include <osg/TriangleLinePointIndexFunctor>
+
+#include <osgAnimation/MorphGeometry>
+#include <osgAnimation/RigGeometry>
+
+#include "StatLogger"
+
+
+namespace glesUtil {
+    using namespace std;
+    using namespace osg;
+    typedef std::vector<unsigned int> IndexList;
+    typedef osgAnimation::MorphGeometry::MorphTargetList MorphTargetList;
+
+    inline bool hasPositiveWeights(const osg::Geometry* geometry) {
+        const osg::Vec4Array* weights = 0;
+
+        for(unsigned int i = 0 ; i < geometry->getNumVertexAttribArrays() ; ++ i) {
+            const osg::Array* attribute = geometry->getVertexAttribArray(i);
+            bool isWeights = false;
+            if(attribute && attribute->getUserValue("weights", isWeights) && isWeights) {
+                weights = dynamic_cast<const osg::Vec4Array*>(attribute);
+                break;
+            }
+        }
+
+        if(weights) {
+            for(osg::Vec4Array::const_iterator weight = weights->begin() ; weight != weights->end() ; ++ weight) {
+                const osg::Vec4& value = *weight;
+                // weights are sorted in decreasing order
+                if(value[0] != 0.f) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    class TargetGeometry {
+        public:
+            TargetGeometry(osgAnimation::MorphGeometry::MorphTarget& target,
+                           osgAnimation::MorphGeometry& morph):
+                _geometry(0)
+            {
+                _geometry = target.getGeometry();
+                _geometry->setPrimitiveSetList(morph.getPrimitiveSetList());
+
+                _hasTexCoord = !_geometry->getTexCoordArrayList().empty();
+                if(_hasTexCoord)
+                {
+                    _geometry->setTexCoordArrayList(morph.getTexCoordArrayList());
+                }
+            }
+
+            osg::Geometry* operator->() {
+                return _geometry;
+            }
+
+            operator osg::Geometry*() {
+                return _geometry;
+            }
+
+            operator osg::Geometry&() {
+                return *_geometry;
+            }
+
+            operator bool() {
+                return _geometry != 0;
+            }
+
+            ~TargetGeometry() {
+                if(!_hasTexCoord) {
+                    // drop parent tex coords after tangent space computation
+                    _geometry->setTexCoordArrayList(osg::Geometry::ArrayList());
+                }
+                _geometry->setPrimitiveSetList(osg::Geometry::PrimitiveSetList());
+            }
+
+        protected:
+            osg::Geometry* _geometry;
+            bool _hasTexCoord;
+    };
+
+
+
+    // A helper class that gathers up all the attribute arrays of an
+    // osg::Geometry object that are BIND_PER_VERTEX and runs an
+    // ArrayVisitor on them.
+    struct GeometryArrayGatherer
+    {
+        typedef std::vector<osg::Array*> ArrayList;
+
+        GeometryArrayGatherer(osg::Geometry& geometry) {
+            addGeometryVertexAttributes(geometry);
+            _targetAttributesIndex = _arrayList.size();
+
+            if(osgAnimation::MorphGeometry* morphGeometry = dynamic_cast<osgAnimation::MorphGeometry*>(&geometry)) {
+                MorphTargetList targets = morphGeometry->getMorphTargetList();
+                for (MorphTargetList::iterator iterator = targets.begin(); iterator != targets.end(); ++ iterator)  {
+                    if(iterator->getGeometry()) {
+                        addTargetVertexAttributes(*iterator->getGeometry());
+                    }
+                }
+            }
+        }
+
+        void addGeometryVertexAttributes(osg::Geometry& geometry) {
+            add(geometry.getVertexArray());
+            add(geometry.getNormalArray());
+            add(geometry.getColorArray());
+            add(geometry.getSecondaryColorArray());
+            add(geometry.getFogCoordArray());
+            for(unsigned int i = 0 ; i < geometry.getNumTexCoordArrays() ; ++ i) {
+                add(geometry.getTexCoordArray(i));
+            }
+            for(unsigned int i = 0 ; i < geometry.getNumVertexAttribArrays() ; ++ i) {
+                add(geometry.getVertexAttribArray(i));
+            }
+        }
+
+        void addTargetVertexAttributes(osg::Geometry& target) {
+            add(target.getVertexArray());
+        }
+
+        void add(osg::Array* array) {
+            if (array) {
+                _arrayList.push_back(array);
+            }
+        }
+
+        void accept(osg::ArrayVisitor& av) {
+            unsigned int geometryAttributesIndex = 0;
+            for(ArrayList::iterator itr = _arrayList.begin() ;
+                geometryAttributesIndex < _targetAttributesIndex && itr != _arrayList.end();
+                ++ geometryAttributesIndex, ++ itr) {
+                (*itr)->accept(av);
+            }
+        }
+
+        ArrayList _arrayList;
+        unsigned int _targetAttributesIndex;
+    };
+
+
+    // Compact the vertex attribute arrays.
+    class RemapArray : public osg::ArrayVisitor
+    {
+    public:
+        RemapArray(const IndexList& remapping) : _remapping(remapping)
+        {}
+
+        const IndexList& _remapping;
+
+        template<class T>
+        inline void remap(T& array) {
+            for(unsigned int i = 0 ; i < _remapping.size() ; ++ i) {
+                if(i != _remapping[i]) {
+                    array[i] = array[_remapping[i]];
+                }
+            }
+            array.erase(array.begin() + _remapping.size(),
+                        array.end());
+        }
+
+        virtual void apply(osg::Array&) {}
+        virtual void apply(osg::ByteArray& array)   { remap(array); }
+        virtual void apply(osg::ShortArray& array)  { remap(array); }
+        virtual void apply(osg::IntArray& array)    { remap(array); }
+        virtual void apply(osg::UByteArray& array)  { remap(array); }
+        virtual void apply(osg::UShortArray& array) { remap(array); }
+        virtual void apply(osg::UIntArray& array)   { remap(array); }
+        virtual void apply(osg::FloatArray& array)  { remap(array); }
+        virtual void apply(osg::DoubleArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2dArray& array) { remap(array); }
+        virtual void apply(osg::Vec3dArray& array) { remap(array); }
+        virtual void apply(osg::Vec4dArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2Array& array) { remap(array); }
+        virtual void apply(osg::Vec3Array& array) { remap(array); }
+        virtual void apply(osg::Vec4Array& array) { remap(array); }
+
+        virtual void apply(osg::Vec2iArray& array) { remap(array); }
+        virtual void apply(osg::Vec3iArray& array) { remap(array); }
+        virtual void apply(osg::Vec4iArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2uiArray& array) { remap(array); }
+        virtual void apply(osg::Vec3uiArray& array) { remap(array); }
+        virtual void apply(osg::Vec4uiArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2sArray& array) { remap(array); }
+        virtual void apply(osg::Vec3sArray& array) { remap(array); }
+        virtual void apply(osg::Vec4sArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2usArray& array) { remap(array); }
+        virtual void apply(osg::Vec3usArray& array) { remap(array); }
+        virtual void apply(osg::Vec4usArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2bArray& array) { remap(array); }
+        virtual void apply(osg::Vec3bArray& array) { remap(array); }
+        virtual void apply(osg::Vec4bArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec4ubArray& array) { remap(array); }
+        virtual void apply(osg::Vec3ubArray& array) { remap(array); }
+        virtual void apply(osg::Vec2ubArray& array) { remap(array); }
+
+        virtual void apply(osg::MatrixfArray& array) { remap(array); }
+
+    protected:
+        RemapArray& operator= (const RemapArray&) { return *this; }
+    };
+
+
+    // Compare vertices in a mesh using all their attributes. The vertices
+    // are identified by their index.
+    struct VertexAttribComparitor : public GeometryArrayGatherer
+    {
+        VertexAttribComparitor(osg::Geometry& geometry) : GeometryArrayGatherer(geometry)
+        {}
+
+        bool operator() (unsigned int lhs, unsigned int rhs) const {
+            for(ArrayList::const_iterator itr = _arrayList.begin(); itr != _arrayList.end(); ++ itr) {
+                int compare = (*itr)->compare(lhs, rhs);
+                if (compare == -1) { return true; }
+                if (compare == 1)  { return false; }
+            }
+            return false;
+        }
+
+        int compare(unsigned int lhs, unsigned int rhs) {
+            for(ArrayList::iterator itr = _arrayList.begin(); itr != _arrayList.end(); ++ itr) {
+                int compare = (*itr)->compare(lhs, rhs);
+                if (compare == -1) { return -1; }
+                if (compare == 1)  { return 1; }
+            }
+            return 0;
+        }
+
+        protected:
+            VertexAttribComparitor& operator= (const VertexAttribComparitor&) { return *this; }
+    };
+
+    // Move the values in an array to new positions, based on the
+    // remapping table. remapping[i] contains element i's new position, if
+    // any.
+    class Remapper : public osg::ArrayVisitor
+    {
+    public:
+        static const unsigned invalidIndex;
+        Remapper(const vector<unsigned>& remapping)
+            : _remapping(remapping), _newsize(0)
+        {
+            for (vector<unsigned>::const_iterator itr = _remapping.begin(),
+                     end = _remapping.end();
+                 itr != end;
+                 ++itr)
+                if (*itr != invalidIndex)
+                    ++_newsize;
+        }
+
+        const vector<unsigned>& _remapping;
+        size_t _newsize;
+
+        template<class T>
+        inline void remap(T& array)
+        {
+            ref_ptr<T> newarray = new T(_newsize);
+            T* newptr = newarray.get();
+
+            for (size_t i = 0; i < _remapping.size(); ++i) {
+                if (_remapping[i] != invalidIndex) {
+                    (*newptr)[_remapping[i]] = array[i];
+                }
+            }
+            array.swap(*newptr);
+        }
+
+        virtual void apply(osg::Array&) {}
+        virtual void apply(osg::ByteArray& array) { remap(array); }
+        virtual void apply(osg::ShortArray& array) { remap(array); }
+        virtual void apply(osg::IntArray& array) { remap(array); }
+        virtual void apply(osg::UByteArray& array) { remap(array); }
+        virtual void apply(osg::UShortArray& array) { remap(array); }
+        virtual void apply(osg::UIntArray& array) { remap(array); }
+        virtual void apply(osg::FloatArray& array) { remap(array); }
+        virtual void apply(osg::DoubleArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2Array& array) { remap(array); }
+        virtual void apply(osg::Vec3Array& array) { remap(array); }
+        virtual void apply(osg::Vec4Array& array) { remap(array); }
+
+        virtual void apply(osg::Vec2bArray& array) { remap(array); }
+        virtual void apply(osg::Vec3bArray& array) { remap(array); }
+        virtual void apply(osg::Vec4bArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2sArray& array) { remap(array); }
+        virtual void apply(osg::Vec3sArray& array) { remap(array); }
+        virtual void apply(osg::Vec4sArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2iArray& array) { remap(array); }
+        virtual void apply(osg::Vec3iArray& array) { remap(array); }
+        virtual void apply(osg::Vec4iArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2dArray& array) { remap(array); }
+        virtual void apply(osg::Vec3dArray& array) { remap(array); }
+        virtual void apply(osg::Vec4dArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2ubArray& array) { remap(array); }
+        virtual void apply(osg::Vec3ubArray& array) { remap(array); }
+        virtual void apply(osg::Vec4ubArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2usArray& array) { remap(array); }
+        virtual void apply(osg::Vec3usArray& array) { remap(array); }
+        virtual void apply(osg::Vec4usArray& array) { remap(array); }
+
+        virtual void apply(osg::Vec2uiArray& array) { remap(array); }
+        virtual void apply(osg::Vec3uiArray& array) { remap(array); }
+        virtual void apply(osg::Vec4uiArray& array) { remap(array); }
+
+        virtual void apply(osg::MatrixfArray& array) { remap(array); }
+        virtual void apply(osg::MatrixdArray& array) { remap(array); }
+    };
+
+
+    // Record the order in which vertices in a Geometry are used.
+    struct VertexReorderOperator
+    {
+        unsigned seq;
+        std::vector<unsigned int> remap;
+
+        VertexReorderOperator() : seq(0)
+        {
+        }
+
+        void inline doVertex(unsigned v)
+        {
+            if (remap[v] == glesUtil::Remapper::invalidIndex) {
+                remap[v] = seq ++;
+            }
+        }
+
+        void operator()(unsigned p1, unsigned p2, unsigned p3)
+        {
+            doVertex(p1);
+            doVertex(p2);
+            doVertex(p3);
+        }
+
+        void operator()(unsigned p1, unsigned p2)
+        {
+            doVertex(p1);
+            doVertex(p2);
+        }
+
+        void operator()(unsigned p1)
+        {
+            doVertex(p1);
+        }
+    };
+
+
+    struct VertexReorder : public TriangleLinePointIndexFunctor<glesUtil::VertexReorderOperator>
+    {
+        VertexReorder(unsigned numVerts)
+        {
+            remap.resize(numVerts, glesUtil::Remapper::invalidIndex);
+        }
+    };
+
+
+    inline osg::DrawElementsUInt* reorderDrawElements(PrimitiveSet* primitive,
+                                                      const vector<unsigned>& reorder)
+    {
+        osg::DrawElementsUInt* newElements = new osg::DrawElementsUInt(primitive->getMode());
+        for (unsigned int i = 0 ; i < primitive->getNumIndices() ; ++ i) {
+            newElements->addElement(static_cast<unsigned>(reorder[primitive->index(i)]));
+        }
+        newElements->setUserDataContainer(primitive->getUserDataContainer());
+        return newElements;
+    }
+
+
+    class VertexAccessOrderVisitor : osgUtil::VertexAccessOrderVisitor
+    {
+        struct OrderByPrimitiveMode
+        {
+            inline bool operator() (const osg::ref_ptr<osg::PrimitiveSet> prim1, const osg::ref_ptr<osg::PrimitiveSet> prim2)
+            {
+                if(prim1.get() && prim2.get()) {
+                    return prim1->getMode() > prim2->getMode();
+                }
+                else if(prim1.get()) {
+                    return true;
+                }
+                return false;
+            }
+        } order_by_primitive_mode;
+
+    public:
+        void remapTargetVertices(Remapper remapper, Geometry& geom)
+        {
+            if(osgAnimation::MorphGeometry *morphGeometry = dynamic_cast<osgAnimation::MorphGeometry*>(&geom)) {
+                MorphTargetList targetList = morphGeometry->getMorphTargetList();
+                for (MorphTargetList::iterator ti = targetList.begin(); ti != targetList.end(); ++ti)  {
+                    osgAnimation::MorphGeometry::MorphTarget *morphTarget = &(*ti);
+                    osg::Geometry *target = morphTarget->getGeometry();
+                    GeometryArrayGatherer gatherer(*target);
+                    gatherer.accept(remapper);
+                }
+            }
+        }
+
+        void optimizeOrder(Geometry& geom)
+        {
+            StatLogger logger("glesUtil::VertexAccessOrderVisitor::optimizeOrder(" + geom.getName() + ")");
+
+            Array* vertArray = geom.getVertexArray();
+            if (!vertArray || !vertArray->getNumElements())
+                return;
+            Geometry::PrimitiveSetList& primSets = geom.getPrimitiveSetList();
+
+            // sort primitives: first triangles, then lines and finally points
+            std::sort(primSets.begin(), primSets.end(), order_by_primitive_mode);
+
+            glesUtil::VertexReorder vr(vertArray->getNumElements());
+            for (Geometry::PrimitiveSetList::iterator itr = primSets.begin(),
+                     end = primSets.end();
+                 itr != end;
+                 ++itr)
+            {
+                PrimitiveSet* ps = itr->get();
+                PrimitiveSet::Type type = ps->getType();
+                if (type != PrimitiveSet::DrawElementsUBytePrimitiveType
+                    && type != PrimitiveSet::DrawElementsUShortPrimitiveType
+                    && type != PrimitiveSet::DrawElementsUIntPrimitiveType)
+                    return;
+                ps->accept(vr);
+            }
+
+            // search for UVs array shared only within the geometry
+            osgUtil::SharedArrayOptimizer deduplicator;
+            deduplicator.findDuplicatedUVs(geom);
+
+            // duplicate shared arrays as it isn't safe to rearrange vertices when arrays are shared.
+            if (geom.containsSharedArrays()) geom.duplicateSharedArrays();
+            GeometryArrayGatherer gatherer(geom);
+
+            Remapper remapper(vr.remap);
+            gatherer.accept(remapper);
+
+            //Remap morphGeometry target
+            remapTargetVertices(remapper, geom);
+
+            Geometry::PrimitiveSetList newPrimitives;
+            for (Geometry::PrimitiveSetList::iterator itr = primSets.begin(),
+                     end = primSets.end();
+                 itr != end;
+                 ++itr)
+            {
+                PrimitiveSet* ps = itr->get();
+                newPrimitives.push_back(reorderDrawElements(ps, vr.remap));
+            }
+            geom.setPrimitiveSetList(newPrimitives);
+
+
+            // deduplicate UVs array that were only shared within the geometry
+            deduplicator.deduplicateUVs(geom);
+
+            geom.dirtyGLObjects();
+        }
+    };
+} // glesUtil namespace
+
+#endif

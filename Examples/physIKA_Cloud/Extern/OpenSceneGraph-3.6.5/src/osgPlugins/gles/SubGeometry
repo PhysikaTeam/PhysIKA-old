@@ -1,0 +1,59 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Sketchfab */
+
+#ifndef SUB_GEOMETRY
+#define SUB_GEOMETRY
+
+#include <map>
+
+#include <osg/Object>
+#include <osg/Array>
+#include <osg/Geometry>
+#include <osg/StateSet>
+#include <osg/ref_ptr>
+
+#include <osgAnimation/MorphGeometry>
+
+
+class SubGeometry {
+public:
+    typedef std::map<osg::Array*, const osg::Array*>::iterator BufferIterator;
+    typedef std::map<unsigned int, unsigned int> IndexMapping;
+
+    SubGeometry(const osg::Geometry&,
+                const std::vector<unsigned int>&,
+                const std::vector<unsigned int>&,
+                const std::vector<unsigned int>&,
+                const std::vector<unsigned int>&);
+
+    osg::Geometry* geometry() const {
+        return _geometry.get();
+    }
+
+protected:
+    osg::Array* makeVertexBuffer(const osg::Array*, bool /*copyUserData*/=true);
+
+    void addSourceBuffers(osg::Geometry*, const osg::Geometry&);
+    const osg::Array* vertexArray(const osg::Array* array);
+    unsigned int mapVertex(unsigned int);
+
+    void copyTriangle(unsigned int, unsigned int, unsigned int);
+    void copyEdge(unsigned int, unsigned int, bool);
+    void copyPoint(unsigned int);
+
+    void copyFrom(const osg::Array&, osg::Array&);
+    template<typename C>
+    void copyValues(const C& src, C& dst);
+
+    osg::DrawElements* getOrCreateTriangles();
+    osg::DrawElements* getOrCreateLines(bool);
+    osg::DrawElements* getOrCreatePoints();
+
+protected:
+    osg::ref_ptr<osg::Geometry> _geometry;
+    std::map<osg::Array*, const osg::Array*> _bufferMap;
+    std::map<unsigned int, unsigned int> _indexMap;
+    std::map<std::string, osg::DrawElements*> _primitives;
+};
+
+
+#endif

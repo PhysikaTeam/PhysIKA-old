@@ -1,0 +1,38 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Cedric Pinson
+ *
+ * This application is open source and may be redistributed and/or modified
+ * freely and without restriction, both in commercial and non commercial
+ * applications, as long as this copyright notice is maintained.
+ *
+ * This application is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
+
+#ifndef BIND_PER_VERTEX_VISITOR
+#define BIND_PER_VERTEX_VISITOR
+
+#include "GeometryUniqueVisitor"
+
+
+// TODO: deprecated
+class BindPerVertexVisitor : public GeometryUniqueVisitor {
+public:
+    BindPerVertexVisitor():
+        GeometryUniqueVisitor("BindPerVertexVisitor")
+    {}
+
+    void process(osg::Geometry&);
+
+protected:
+    void bindPerVertex(osg::Array*, osg::Geometry::AttributeBinding, osg::Geometry::PrimitiveSetList&);
+
+    template <class T>
+    bool doConvert(osg::Array*, osg::Geometry::AttributeBinding, osg::Geometry::PrimitiveSetList&);
+
+    template <class T>
+    void convert(T&, osg::Geometry::AttributeBinding, osg::Geometry::PrimitiveSetList&);
+};
+
+#endif

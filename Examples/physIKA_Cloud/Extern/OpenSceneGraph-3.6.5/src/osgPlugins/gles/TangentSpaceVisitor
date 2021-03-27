@@ -1,0 +1,43 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) Cedric Pinson
+ *
+ * This application is open source and may be redistributed and/or modified
+ * freely and without restriction, both in commercial and non commercial
+ * applications, as long as this copyright notice is maintained.
+ *
+ * This application is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+*/
+
+#ifndef TANGENT_SPACE_VISITOR
+#define TANGENT_SPACE_VISITOR
+
+#define TANGENT_ATTRIBUTE_INDEX 20
+
+#include <osgUtil/TangentSpaceGenerator>
+#include <osg/ValueObject> // {get,set}UserValue
+#include <osg/Array>
+
+#include "GeometryUniqueVisitor"
+
+
+// we will store only tangent and rebuilt tangent2 in the vertex shader
+// http://www.terathon.com/code/tangent.html
+
+class TangentSpaceVisitor : public GeometryUniqueVisitor
+{
+public:
+    TangentSpaceVisitor(int textureUnit=0):
+        GeometryUniqueVisitor("TangentSpaceVisitor"),
+        _textureUnit(textureUnit)
+    {}
+
+    void process(osgAnimation::MorphGeometry&);
+    void process(osg::Geometry&);
+
+protected:
+    int _textureUnit;
+};
+
+#endif
