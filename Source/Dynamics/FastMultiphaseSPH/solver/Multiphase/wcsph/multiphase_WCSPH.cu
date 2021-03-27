@@ -105,7 +105,7 @@ namespace msph {
 		volf update;
 		cfloat3 vi = d_data.vel[index];
 
-		//float diffusionFac = 2.0f * param->drift_dynamic_diffusion * vol0;
+		float diffusionFac = 2.0f * param->drift_dynamic_diffusion * vol0;
 
 		for (int k = 0; k < param->numTypes; k++)
 		{
@@ -140,10 +140,10 @@ namespace msph {
 				//}
 				
 
-				//float diffFactor = diffusionFac * dot(xij, nablaw) / (d * d + 0.01f);
-				//for (int k = 0; k < param->numTypes; k++) {
-				//	update.data[k] += diffFactor * (volfi.data[k] - volfj.data[k]);
-				//}
+				float diffFactor = diffusionFac * dot(xij, nablaw) / (d * d + 0.01f);
+				for (int k = 0; k < param->numTypes; k++) {
+					update.data[k] += diffFactor * (volfi.data[k] - volfj.data[k]);
+				}
 			}
 			else if (d_data.type[j] == TYPE_RIGID)
 			{
@@ -153,10 +153,10 @@ namespace msph {
 
 
 
-		//for (int k = 0; k < param->numTypes; k++)
-		//{
-		//	d_data.vfrac_change[index].data[k] = update.data[k];
-		//}
+		for (int k = 0; k < param->numTypes; k++)
+		{
+			d_data.vfrac_change[index].data[k] = update.data[k];
+		}
 		density *= d_data.mass[index];
 		d_data.density[index] = density;
 		d_data.pressure[index] = param->pressureK * (powf(density / d_data.restDensity[index], 7.0f) - 1.0f) * d_data.restDensity[index];
@@ -341,14 +341,14 @@ namespace msph {
 		d_data.pos[index] += d_data.vel[index] * param->dt;
 		d_data.drift_accel[index] = param->gravity - d_data.force[index];
 		
-		//for (int k = 0; k < param->numTypes; k++) {
-		//	d_data.vFrac[index].data[k] += d_data.vfrac_change[index].data[k] * param->dt;
-		//}
-		//d_data.mass[index] = 0;
-		//for (int k = 0; k < param->numTypes; k++) {
-		//	d_data.mass[index] += d_data.vFrac[index].data[k] * param->densArr[k] * param->vol0;
-			//d_data.color[index][k] = d_data.vFrac[index].data[k];
-		//}
+		for (int k = 0; k < param->numTypes; k++) {
+			d_data.vFrac[index].data[k] += d_data.vfrac_change[index].data[k] * param->dt;
+		}
+		d_data.mass[index] = 0;
+		for (int k = 0; k < param->numTypes; k++) {
+			d_data.mass[index] += d_data.vFrac[index].data[k] * param->densArr[k] * param->vol0;
+			d_data.color[index][k] = d_data.vFrac[index].data[k];
+		}
 	}
 
 	void advectParticles_host(int num_p) {

@@ -327,11 +327,11 @@ namespace msph {
 		float width = 0.5;
 		auto fv = std::make_shared<fluidvol>();
 		// SCENE1
-		fv->xmin.set(-1.2 + padding, 0.015, -0.5);
-		fv->xmax.set(-1.2 + padding + width, 1., 0.5);
+		//fv->xmin.set(-1.2 + padding, 0.015, -0.5);
+		//fv->xmax.set(-1.2 + padding + width, 1., 0.5);
 		// SCENE2
-		//fv->xmin.set(-1.2 + padding, 0.0, -0.5);
-		//fv->xmax.set(0, 0.6, 0.5);
+		fv->xmin.set(-1.2 + padding, 0.0, -0.5);
+		fv->xmax.set(0, 0.6, 0.5);
 		fv->group = 0;
 		fv->type = TYPE_FLUID;
 		fv->volfrac[0] = 1;
@@ -340,11 +340,11 @@ namespace msph {
 
 		fv = std::make_shared<fluidvol>();
 		// SCENE1
-		fv->xmin.set(1.2 - padding - width, 0.015, -0.5);
-		fv->xmax.set(1.2 - padding, 1., 0.5);
+		//fv->xmin.set(1.2 - padding - width, 0.015, -0.5);
+		//fv->xmax.set(1.2 - padding, 1., 0.5);
 		// SCENE2
-		//fv->xmin.set(0.2, 0., -0.2);
-		//fv->xmax.set(0.8, 0.45, 0.2);
+		fv->xmin.set(0.2, 0., -0.2);
+		fv->xmax.set(0.8, 0.45, 0.2);
 		fv->group = 0;
 		fv->type = TYPE_GRANULAR;
 		fv->volfrac[0] = 0;
