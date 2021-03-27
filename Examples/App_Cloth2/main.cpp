@@ -1,0 +1,122 @@
+#include <iostream>
+#include <memory>
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+
+#include "GUI/GlutGUI/GLApp.h"
+
+#include "Framework/Framework/SceneGraph.h"
+#include "Framework/Topology/PointSet.h"
+#include "Framework/Framework/Log.h"
+
+#include "Dynamics/ParticleSystem/ParticleElasticBody.h"
+#include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Rendering/PointRenderModule.h"
+#include "Rendering/SurfaceMeshRender.h"
+#include "ParticleCloth.h"
+
+
+using namespace std;
+using namespace PhysIKA;
+
+void RecieveLogMessage(const Log::Message& m)
+{
+	switch (m.type)
+	{
+	case Log::Info:
+		cout << ">>>: " << m.text << endl; break;
+	case Log::Warning:
+		cout << "???: " << m.text << endl; break;
+	case Log::Error:
+		cout << "!!!: " << m.text << endl; break;
+	case Log::User:
+		cout << ">>>: " << m.text << endl; break;
+	default: break;
+	}
+}
+
+void CreateScene(std::string objFile, std::string objSavePath)
+{
+	SceneGraph& scene = SceneGraph::getInstance();
+
+	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
+	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, true);
+	root->loadShpere(Vector3f(0.5), 0.08f, 0.005f, false, true);
+
+	std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>(objSavePath);
+	root->addParticleSystem(child3);
+
+	//auto m_pointsRender = std::make_shared<PointRenderModule>();
+	//m_pointsRender->setColor(Vector3f(1, 0.2, 1));
+	//child3->addVisualModule(m_pointsRender);
+	//child3->setVisible(true);
+
+	child3->setMass(1.0);
+  	child3->loadParticles(objFile);
+  	child3->loadSurface(objFile);
+
+	std::cout << "create secne :" << std::endl;
+}
+
+void AppCloth(std::string objFile, std::string objSavePath)
+{
+	int* ptr;
+	cuSafeCall(cudaMalloc((void**)&ptr, 4 * 1000));
+
+	DeviceArray<Vector3f> cd;
+	cd.resize(1000);
+
+	CreateScene(objFile, objSavePath);
+
+	//Log::setOutput("console_log.txt");
+	//Log::setLevel(Log::Info);
+	//Log::setUserReceiver(&RecieveLogMessage);
+	//Log::sendMessage(Log::Info, "Simulation begin");
+	
+	//GLApp window;
+	//window.createWindow(1024, 768);
+
+	//window.mainLoop();
+	
+	SceneGraph& scenegraph = SceneGraph::getInstance();
+	SceneGraph::getInstance().initialize();
+	int count = 0;
+	while (count < 710) {
+		std::cout << "count :" << count << std::endl;
+		scenegraph.takeOneFrame();
+		++count;
+	}
+	
+	//Log::sendMessage(Log::Info, "Simulation end!");
+}
+
+//int main()
+//{
+//	
+//	int* ptr;
+//	cuSafeCall(cudaMalloc((void**)&ptr, 4 * 1000));
+//
+//	DeviceArray<Vector3f> cd;
+//	cd.resize(1000);
+//
+//	//CreateScene("../../Media/cloth/cloth.obj", "D:\\Code\\PhysIKA-master\\build\\OBJTest\\");
+//	CreateScene("../../Media/cloth/cloth.obj", "D:\\cloth\\");
+//
+//	//Log::setOutput("console_log.txt");
+//	//Log::setLevel(Log::Info);
+//	//Log::setUserReceiver(&RecieveLogMessage);
+//	//Log::sendMessage(Log::Info, "Simulation begin");
+//
+//	//GLApp window;
+//	//window.createWindow(1024, 768);
+//
+//	//window.mainLoop();
+//	
+//	//Log::sendMessage(Log::Info, "Simulation end!");
+//
+//	return 0;
+//}
+
+

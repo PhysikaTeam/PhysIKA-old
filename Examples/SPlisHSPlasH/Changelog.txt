@@ -1,0 +1,128 @@
+2.9.0 
+	- added new surface tension model (thanks to Fernando Zorilla and Marcel Ritter)
+	- added a test for reading and writing the state of a simulation
+	- updated to Eigen 3.3.8
+	- added a hotkey (m) to rescale the range of the current color map
+	- color maps range is determined automatically
+	- all particle fields can now be used for rendering
+	- improved stability of implicit boundary handling
+	- improved documentation
+	- added DebugTools class which generates additional particle data for debugging
+	- added Python example to add a particle field, this can be used for visual debugging or to export additional data per particle
+	- updated pybind
+	- improved warmstart
+	- added build instructions
+	- added more colormaps
+	- improved documentation
+	- added version file
+
+2.8.0
+	- performance improvements
+	- added GUI based on the imgui library
+	- added GLFW
+	- removed dependency on glew
+	- removed dependency on freeglut
+	- bugfixes
+
+2.7.0
+	- added Python binding using pybind (thanks to Stefan Jeske)
+	- added Python examples
+	- performance improvements: Elasticity_Peer2018
+	- bugfixes
+	- new command line parameter to overwrite scene settings
+
+2.6.0
+	- performance improvement: added AVX support for TimeStepDFSPH, DragForce_Gissler2017, Viscosity_Standard, Viscosity_Weiler2018, MicropolarModel_Bender2017
+	- added AVX support for 2D simulations 
+	- added VTk export of rigid bodies
+	- added parameter to control min CFL step size
+	- cleaned up classes of graphical user interface
+	- exchanged Static/DynamicBoundarySimulator by SPHSimulator which can handle dynamic and static scenes
+	- added regular surface sampling
+	- updated to Eigen 3.3.7
+	- bugfixes
+
+2.5.0 
+	- added the boundary handling method "Volume Maps: An Implicit Boundary Representation for SPH"
+	- added the boundary handling method "Density Maps for Improved SPH Boundary Handling"
+	- added regular particle sampling
+	- PartioViewer can play sequences
+	- PartioViewer can write sequences as jpg files
+	- PartioViewer can generate movies using ffmpeg
+	- PartioViewer can render rigid body data	
+	- PartioViewer supports multiphase data
+	- user can now save/load the complete state of the simulation 
+	- bugfixes
+
+2.4.0
+	- added rigid body export
+	- added VTK file export (enables the data import in ParaView)
+	- added file dialog for Windows
+	- added a Python plugin for Maya to model scenes in Maya and export them to SPlisHSPlasH
+	- added animation fields to animate particles in an area using a math script
+	- improved fluid emitters	
+	- added option to simulate without GUI
+	- added GPU neighborhood search (cuNSearch) which can be selected in CMake
+
+2.3.0	
+	- added the Implicit SPH Formulation for Incompressible Linearly Elastic Solids of Peer et al. 2017
+	- added Corotated SPH for deformable solids of Becker et al. 2009
+	- SPlisHSPlasH now supports 2D simulations
+	- SPlisHSPlasH now has enhanced particle coloring
+	- partio export of arbitrary particle attributes is now supported
+	- renamed Static/DynamicBoundaryDemo to Static/DynamicBoundarySimulator
+	- added documentation of file format
+	- added colormaps
+	- fixed race condition
+	- fixed single precision build
+	- updated PositionBasedDynamics
+
+2.2.0
+	- added support for multi-phase simulations
+
+2.1.0	
+	- added implicit viscosity computation of Weiler et al. 2018
+	- added implicit viscosity computation of Takahashi et al. 2015
+	- significantly improved performance of Projective Fluids
+	- added counting class
+
+2.0.0
+	- the parameters of all methods are now handled by the library GenericParameters
+	- the GUI is automatically generated using the information of the generic parameters
+	- updated PositionBasedDynamics library which now supports arbitrary rigid body collisions
+	- added Logger
+	
+
+1.3.1	
+	- added implicit viscosity computation of Peer and Teschner 2016
+	- fixed drag force computation of Gissler et al. 2017
+
+1.3.0	
+	- added implicit viscosity computation of Peer et al. 2015
+	- SPlisHSPlasH now uses MD5 hashes to verify that cache files are valid
+	- added volume sampling tool
+	- cleanup fluid model
+	- added drag force computation of Gissler et al. 2017
+	- added drag force computation of Macklin et al. 2014
+	- bugfixes
+
+1.2.0
+	- added micropolar model for turbulent fluids (Bender et al., "A Micropolar Material Model for Turbulent SPH Fluids", ACM SIGGRAPH/EUROGRAPHICS Symposium on Computer Animation, 2017)
+	- added vorticity confinement method
+	- added fluid emitters
+	- added partio export for fluid simulations
+	- updated to Eigen 3.3.4
+	- bugfixes
+
+1.1.0
+	- added new scenes
+	- added implicit viscosity (Bender and Koschier, "Divergence-free SPH for incompressible and viscous fluids", IEEE Transactions on Visualization and Computer Graphics, 2017)
+	- added Projective Fluids implementation (Weiler et al., "Projective Fluids", Proceedings of Motion in Games, ACM, 2016)
+	- updated CompactNSearch
+	- updated PositionBasedDynamics
+	- optimized DFSPH
+	- updated to Eigen 3.3
+
+1.0.0
+
+	- Initial release

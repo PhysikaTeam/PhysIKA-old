@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Scene class="" name="场景">
+    <SimulationRun name="模拟运行结果">
+        <FrameSum name="帧总数">100</FrameSum>
+        <Animation name="是否支持动画">true</Animation>
+    </SimulationRun>
+</Scene>

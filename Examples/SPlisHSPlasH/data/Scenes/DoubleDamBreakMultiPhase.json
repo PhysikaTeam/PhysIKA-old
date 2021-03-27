@@ -1,0 +1,96 @@
+{
+	"Configuration": 
+	{
+		"timeStepSize": 0.001,
+		"numberOfStepsPerRenderUpdate": 2,
+		"particleRadius": 0.025, 
+		"simulationMethod": 4,
+		"gravitation": [0.0,-9.81,0], 
+		"cflMethod": 1, 
+		"cflFactor": 1,
+		"cflMaxTimeStepSize": 0.005,
+		"maxIterations": 100,
+		"maxError": 0.05,
+		"maxIterationsV": 100,
+		"maxErrorV": 0.1,		
+		"stiffness": 5000,
+		"exponent": 1,
+		"velocityUpdateMethod": 0,
+		"enableDivergenceSolver": true,
+		"boundaryHandlingMethod": 2
+	},
+	"Materials": [
+		{
+			"id": "first_fluid",
+			"density0": 1000, 
+			"viscosity": 0.02,
+			"viscosityMethod": 1,
+			"viscoMaxIter": 200, 
+			"viscoMaxError": 0.05,
+			"maxEmitterParticles": 6000,
+			"colorMapType": 0
+		},
+		{
+			"id": "second_fluid",
+			"density0": 500, 
+			"viscosity": 0.02,
+			"viscosityMethod": 1,
+			"colorMapType": 0
+		},
+		{
+			"id": "third_fluid",
+			"density0": 250, 
+			"viscosity": 0.02,
+			"maxEmitterParticles": 1000,
+			"emitterReuseParticles": false,
+			"emitterBoxMin": [-4.0,-1.0,-4.0],
+			"emitterBoxMax": [0.0,4,4.0],
+			"colorMapType": 0
+		}
+	],
+	"RigidBodies": [
+		{
+			"geometryFile": "../models/UnitBox.obj",
+			"translation": [0,2,0],
+			"rotationAxis": [1, 0, 0],
+			"rotationAngle": 0,
+			"scale": [2.1, 4, 2.1],
+			"color": [0.1, 0.4, 0.6, 1.0], 
+			"isDynamic": false,
+			"isWall": true,
+			"restitution" : 0.6,
+			"friction" : 0.0,
+			"collisionObjectType": 2,
+			"collisionObjectScale": [2.1, 4, 2.1],	
+			"invertSDF": true,
+			"mapInvert": true, 
+			"mapThickness": 0.0,
+			"mapResolution": [25,40,25]
+		}
+	],
+	"FluidBlocks": [
+		{
+			"id": "first_fluid",
+			"denseMode": 0,
+			"start": [-1.0, 0.0, -1.0],
+			"end": [-0.3, 0.75, -0.3]
+		}, 
+		{
+			"id": "second_fluid",
+			"denseMode": 0,
+			"start": [0.3, 0.0, 0.3],
+			"end": [1.0, 1.75, 1.0]
+		}
+	],
+	"Emitters": [
+		{
+			"id": "third_fluid",
+			"width": 8, 
+			"height": 3, 
+			"translation": [-0.2,0.75,0.0],
+			"velocity": 2,
+			"type": 0,
+			"emitEndTime": 2
+		}
+	]
+}
