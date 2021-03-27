@@ -37,6 +37,7 @@ namespace PhysIKA
 
 		void updateTopology() override;
 		bool resetStatus() override;
+		void prepareData();
 
 		//		std::shared_ptr<PointRenderModule> getRenderModule();
 
@@ -56,6 +57,9 @@ namespace PhysIKA
 		 */
 		DEF_EMPTY_CURRENT_ARRAY(Force, Coord, DeviceType::GPU, "Force on each particle");
 
+		int num_o; // num of opaque particles
+		DeviceArray<Vector3f> m_pos; // store all particles
+		DeviceArray<Vector4f> m_color;
 
 		DeviceArrayField<Vector3f> m_phase_concentration;
 

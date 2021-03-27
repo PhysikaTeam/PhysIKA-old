@@ -23,15 +23,41 @@ namespace PhysIKA
 
 		m_msph = std::make_shared<msph::MultiphaseSPHSolver>();
 		m_msph->init();
-
-		int num = m_msph->num_particles;
-		std::vector<Coord> buffer(num);
+		
+		prepareData();
+		
+		std::vector<Coord> buffer(num_o);
 		m_pSet->setPoints(buffer);
 		m_pSet->setNormals(buffer);
-		m_phase_concentration.setElementCount(num);
+		m_phase_concentration.setElementCount(num_o);
 
+		updateTopology();
 		// 		m_pointsRender = std::make_shared<PointRenderModule>();
 		// 		this->addVisualModule(m_pointsRender);
+	}
+	struct OpaquePred {
+		__host__ __device__
+		bool operator()(Vector4f v) {
+			return v[3] != 0;
+		}
+	};
+	template<typename TDataType>
+	void FastMultiphaseSPH<TDataType>::prepareData()
+	{
+		// get all particles
+		int num = m_msph->num_particles;
+		if (num != m_pos.size()) {
+			m_pos.resize(num);
+			m_color.resize(num);
+		}
+		m_msph->prepareRenderData((cfloat3*)m_pos.getDataPtr(), (cfloat4*)m_color.getDataPtr());
+		num_o = num;
+		// then filter transparent particles
+		Vector3f* d_pos = m_pos.getDataPtr();
+		Vector4f* d_color = m_color.getDataPtr();
+		thrust::copy_if(thrust::device, d_pos, d_pos + num, d_color, d_pos, OpaquePred());
+		auto oe = thrust::copy_if(thrust::device, d_color, d_color + num, d_color, OpaquePred());
+		num_o = oe - d_color;
 	}
 
 	template<typename TDataType>
@@ -43,7 +69,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void FastMultiphaseSPH<TDataType>::advance(Real dt)
 	{
-		// FIXME: dt not used here...
+		// dt not used here as its managed by external solver ...
 		m_msph->step();
 	}
 
@@ -151,7 +177,7 @@ namespace PhysIKA
 
 	struct ColorOp {
 		__host__ __device__
-			Vector3f operator()(cfloat4 color) {
+			Vector3f operator()(Vector4f color) {
 			return Vector3f(1 - color[0], 1 - color[0], 1 - color[0]);
 		}
 	};
@@ -169,13 +195,11 @@ namespace PhysIKA
 		//	}
 		//	Function1Pt::copy(pts, this->currentPosition()->getValue());
 		//}
-		int num = m_msph->num_particles;
-		cfloat3 * d_pos = m_msph->simdata.pos;
-		cfloat4 * d_color = m_msph->simdata.color;
+		prepareData();
 		auto pts = m_pSet->getPoints();
-		cudaMemcpy(pts.getDataPtr(), d_pos, sizeof(Coord) * num, cudaMemcpyDeviceToDevice);
+		cudaMemcpy(pts.getDataPtr(), m_pos.getDataPtr(), sizeof(Coord) * num_o, cudaMemcpyDeviceToDevice);
 		Vector3f* color_idx = m_phase_concentration.getValue().getDataPtr();
-		thrust::transform(thrust::device, d_color, d_color + num, color_idx, ColorOp());
+		thrust::transform(thrust::device, m_color.getDataPtr(), m_color.getDataPtr() + num_o, color_idx, ColorOp());
 	}
 
 
