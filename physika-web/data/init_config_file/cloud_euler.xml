@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Scene class="" name="场景">
+    <Fluid class="" name="流体">
+        <!--<Start class="Vector3f" name="起始位置" disabled="false">30 30 0</Start>-->
+        <Start class="Vector2u" name="起始位置" disabled="false">30 30</Start>
+        <End class="Vector2u" name="结束位置" disabled="false">34 34</End>
+        <Vortex class="Real" name="涡旋抑制系数" disabled="false">0.7</Vortex>
+        <Noise class="Enum" enum="无噪声 高斯噪声" name="源噪声" disabled="true">0</Noise>
+    </Fluid>
+    <Boundary class="" name="边界">
+        <!--设置与流体交互对象-->
+        <Domain class="" name="模拟域">
+            <!--<Scale class="Vector3f" name="大小">64 64 64</Scale>-->
+            <Scale class="Real" name="大小" disabled="false">64</Scale>
+            <IsStatic class="Bool" name="是否静止" disabled="true">true</IsStatic>
+        </Domain>
+    </Boundary>
+    <Simulation class="" name="模拟">
+        <SimulationMethod class="Enum" enum="烟 云" name="仿真类型" disabled="false">0</SimulationMethod>
+        <Gravity class="Vector3f" name="重力" disabled="true">0.0 -9.8 0.0</Gravity>
+        <CFLMethod class="Bool" name="使用CFL条件" disabled="true">true</CFLMethod>
+        <Frame class="Unsigned" name="模拟帧数" disabled="false">5</Frame>
+    </Simulation>
+</Scene>

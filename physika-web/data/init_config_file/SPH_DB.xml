@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Scene name="场景">
+    <Configuration name="参数配置">
+        <particleRadius class="Real" name="粒子半径" disabled="true">0.025</particleRadius>
+        <density0 class="Real" name="静止密度" disabled="true">1000</density0>
+        <simulationMethod class="Enum" enum="WCSPH PCISPH PBF IISPH DFSPH PF DFSPH_K" name="仿真方法" disabled="false">6</simulationMethod>
+        <gravitation class="Vector3f" name="重力" disabled="true">0 -9.81 0</gravitation>
+        <timeStepSize class="Real" name="时间步长" disabled="false">0.005</timeStepSize>
+        <cflMethod class="Enum" enum="None CFL CFL-iterations" name="CFL方法" disabled="false">1</cflMethod>
+        <cflFactor class="Real" name="CFL因子" disabled="true">1</cflFactor>
+        <cflMaxTimeStepSize class="Real" name="CFL最大时间步长" disabled="true">0.005</cflMaxTimeStepSize>
+        <maxIterations class="Unsigned" name="压力最大迭代次数" disabled="true">100</maxIterations>
+        <maxError class="Real" name="压力最大误差" disabled="true">0.05</maxError>
+        <maxIterationsV class="Unsigned" name="散度最大迭代次数" disabled="true">100</maxIterationsV>
+        <maxErrorV class="Real" name="散度最大误差" disabled="true">0.1</maxErrorV>
+        <enableDivergenceSolver class="Bool" name="开启散度求解器" disabled="true">true</enableDivergenceSolver>
+        <particleAttributes class="Check" check="density velocity" name="粒子导出属性" disabled="false">density</particleAttributes>
+        <boundaryHandlingMethod class="Enum" enum="基于粒子边界 密度映射 体积映射" name="边界处理方法" disabled="true">2</boundaryHandlingMethod>
+        <enableVTIExport class="Bool" name="VTI格式导出" disabled="true">true</enableVTIExport>
+        <stopAt class="Real" name="模拟时长" disabled="false">1</stopAt>
+        <!-- <velocityUpdateMethod class="Enum" enum="一阶 二阶">0</velocityUpdateMethod>
+        <stiffness class="Real" name="刚性">50000</stiffness>
+        <exponent class="Real" name="指数">7</exponent>
+        <numberOfStepsPerRenderUpdate class="Unsigned" name="">4</numberOfStepsPerRenderUpdate> -->
+    </Configuration>
+    <Materials name="材质">
+        <Materials_0 name="材质0">
+            <id class="String" name="类型" disabled="true">Fluid</id>
+            <surfaceTension class="Real" name="表面张力" disabled="true">0</surfaceTension>
+            <surfaceTensionMethod class="Enum" enum="None B-2007 A-2013 He-2014" name="表面张力方法" disabled="true">0</surfaceTensionMethod>
+            <viscosity class="Real" name="粘性" disabled="false">0.01</viscosity>
+            <viscosityMethod class="Enum" enum="None Standard" name="粘性方法" disabled="false">1</viscosityMethod>
+        </Materials_0>
+    </Materials>
+    <RigidBodies name="刚体">
+        <RigidBodies_0 name="刚体0">
+            <geometryFile class="File" accept=".obj" name="几何文件" disabled="false">null</geometryFile>
+            <translation class="Vector3f" name="平移向量" disabled="false">0 3 0</translation>
+            <rotationAxis class="Vector3f" name="旋转向量" disabled="false">1 0 0</rotationAxis>
+            <rotationAngle class="Real" name="旋转角度" disabled="false">0</rotationAngle>
+            <scale class="Vector3f" name="规模" disabled="false">8 6 8</scale>
+            <isDynamic class="Bool" name="是否运动" disabled="true">false</isDynamic>
+            <isWall class="Bool" name="是否为包围盒" disabled="true">true</isWall>
+            <mapInvert class="Bool" name="映射反转" disabled="true">true</mapInvert>
+            <mapResolution class="Vector3f" name="映射分辨率" disabled="false">40 30 15</mapResolution>
+        </RigidBodies_0>
+    </RigidBodies>
+    <FluidBlocks name="流体块">
+        <FluidBlocks_0 name="流体块0">
+            <denseMode class="Enum" enum="常规采样 大密集采样 密集采样" name="采样方式" disabled="true">0</denseMode>
+            <start class="Vector3f" name="起始坐标" disabled="false">-1.0 0.0 -1.0</start>
+            <end class="Vector3f" name="终止坐标" disabled="false">1.0 4.0 1.0</end>
+            <translation class="Vector3f" name="平移向量" disabled="false">-1.45 0.0 0.0</translation>
+            <scale class="Vector3f" name="规模" disabled="false">1 1 1</scale>
+        </FluidBlocks_0>
+    </FluidBlocks>
+</Scene>

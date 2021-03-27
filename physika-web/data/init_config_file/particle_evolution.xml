@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Scene class=" " name="场景">
+    <InitialState class="" name="初始状态">
+        <Particle class="File" accept=".dat" name="粒子对象" disabled="false">null</Particle>
+        <CDF class="File" accept=".cdf" name="CDF" disabled="false">null</CDF>
+    </InitialState>
+    <GoalState class="" name="目标状态">
+        <Particle class="File" accept=".dat" name="粒子对象" disabled="false">null</Particle>
+        <CDF class="File" accept=".cdf" name="CDF" disabled="false">null</CDF>
+    </GoalState>
+    <Frame class="Unsigned" name="生成帧数" disabled="false">100</Frame>
+</Scene>

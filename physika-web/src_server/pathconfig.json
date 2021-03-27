@@ -1,0 +1,39 @@
+{
+    "userPath":"C:/Users/Administrator/AppData/Roaming/nvm/v14.16.0/Physika-web/data/user_file",
+    "CloudEuler":{
+        "simType":"CloudEuler",
+        "initConfigFileName":"./data/init_config_file/cloud_euler.xml",
+        "callPythonFileName":""
+    },
+    "CloudNature":{
+        "simType":"CloudNature",
+        "initConfigFileName":"./data/init_config_file/cloud_nature.xml",
+        "callPythonFileName":"D:/PhysIKA_merge_build_python/Examples/physIKA_Cloud/Python/ImageCumulus/xml/sim_run.py"
+    },
+    "CloudSatellite":{
+        "simType":"CloudSatellite",
+        "initConfigFileName":"./data/init_config_file/cloud_satellite.xml",
+        "callPythonFileName":"D:/PhysIKA_merge_build_python/Examples/physIKA_Cloud/Python/Typhoon/xml/typhoon_run.py"
+    },
+    "CloudWRF":{
+        "simType":"CloudWRF",
+        "initConfigFileName":"./data/init_config_file/cloud_WRF.xml",
+        "callPythonFileName":"D:/PhysIKA_merge_build_python/Examples/physIKA_Cloud/Python/TCDSM/xml/tcdsm_run.py"
+    },
+    "SPH":{
+        "simType":"SPH",
+        "initConfigFileName":"./data/init_config_file/SPH.xml",
+        "callPythonFileName":"D:/SPlisHSPlasH-2.9.0/build/lib.win-amd64-3.8/sph_run.py"
+    },
+    "Cloth":{
+        "simType":"Cloth",
+        "initConfigFileName":"./data/init_config_file/cloth.xml",
+        "callPythonFileName":"D:/PhysIKA_merge_build_python/lib/Release/cloth_run.py"
+    },
+    "ParticleEvolution":{
+        "simType":"ParticleEvolution",
+        "initConfigFileName":"./data/init_config_file/particle_evolution.xml",
+        "callPythonFileName":"D:/PhysIKA_merge_build_python/bin/Release/fluid_run.py"
+    }
+    
+}

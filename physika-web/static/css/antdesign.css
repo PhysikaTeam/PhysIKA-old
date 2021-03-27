@@ -1,0 +1,22 @@
+@import '~antd/dist/antd.css';
+
+.header {
+  padding: 0 15px;
+}
+
+.logo {
+    float: left;
+    width: 140px;
+    height: 54px;
+    margin: 5px 5px 5px 0;
+    background: #fff;
+  }
+  
+  /* .ant-row-rtl .logo {
+    float: right;
+    margin: 16px 0 16px 24px;
+  } */
+  
+  .site-layout-background {
+    background: #C8C8C8;
+  }

@@ -1,0 +1,9 @@
+node_modules/
+
+dist/
+
+.vscode/
+
+data/visualize_data
+
+data/test_case

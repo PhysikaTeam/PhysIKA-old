@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Scene class="" name="场景">
+	<Cloths name="布料">
+		<Cloth_0 name="默认">
+			<geometryFile class="File" accept=".obj" name="几何文件" disabled="false">null</geometryFile>
+		</Cloth_0>
+		<AddNode name="+"></AddNode>
+	</Cloths>
+</Scene>

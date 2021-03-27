@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/tt">
-        <file>StyleTemplate.qss</file>
-    </qresource>
-</RCC>

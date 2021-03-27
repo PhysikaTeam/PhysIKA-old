@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Scene class="" name="场景">
+    <WRF class="" name="WRF数据">
+        <Upload class="" name="用户上传">
+            <NetCDF class="File" accept=".nc" name="网络通用数据格式" disabled="false">null</NetCDF>
+        </Upload>
+    </WRF>
+</Scene>
