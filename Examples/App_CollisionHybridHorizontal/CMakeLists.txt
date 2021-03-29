@@ -1,5 +1,5 @@
 
-set(PROJECT_NAME App_CollisionHybridOne)
+set(PROJECT_NAME App_CollisionHybridHorizontal)
 
 link_directories("${PROJECT_SOURCE_DIR}/Source")                                                           # 设置库路径
 link_libraries(Core Framework IO Rendering)

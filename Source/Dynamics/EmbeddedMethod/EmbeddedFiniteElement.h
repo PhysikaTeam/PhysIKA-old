@@ -39,7 +39,7 @@ namespace PhysIKA
 		std::shared_ptr<PointSetToPointSet<TDataType>> getTopologyMapping();
 
 		std::shared_ptr<Node> getSurfaceNode() { return m_surfaceNode; }
-    virtual void init_problem_and_solver(const boost::property_tree::ptree& pt);
+                virtual void init_problem_and_solver(const boost::property_tree::ptree& pt);
 
 	public:
 		VarField<Real> m_horizon;

@@ -44,20 +44,20 @@ namespace PhysIKA {
 	private:
 		DeviceArray<Coord> m_prePosition;
 		DeviceArray<Coord> m_preVelocity;
-    std::vector<Real> pos_;
-    std::vector<Real> vel_;          
-    HostArray<Coord> m_position_host;
-    HostArray<Coord> m_velocity_host;          
+                std::vector<Real> pos_;
+                std::vector<Real> vel_;          
+                HostArray<Coord> m_position_host;
+                HostArray<Coord> m_velocity_host;          
 
 
-    std::shared_ptr<embedded_problem_builder<Real, 3>> epb_fac_;
-    std::shared_ptr<newton_base<Real, 3>> solver_;
-    std::shared_ptr<dat_str_core<Real, 3>> dat_str_;
-    boost::property_tree::ptree pt_;
-    std::shared_ptr<semi_implicit<Real>> semi_implicit_;
-    std::shared_ptr<fast_ms_info<Real>> fast_ms_solver_info_;
-    std::shared_ptr<embedded_interpolate<Real>> embedded_interp_;
-    std::string solver_type_;
+                std::shared_ptr<embedded_problem_builder<Real, 3>> epb_fac_;
+                std::shared_ptr<newton_base<Real, 3>> solver_;
+                std::shared_ptr<dat_str_core<Real, 3>> dat_str_;
+                boost::property_tree::ptree pt_;
+                std::shared_ptr<semi_implicit<Real>> semi_implicit_;
+                std::shared_ptr<fast_ms_info<Real>> fast_ms_solver_info_;
+                std::shared_ptr<embedded_interpolate<Real>> embedded_interp_;
+                std::string solver_type_;
 	};
 
 #ifdef PRECISION_FLOAT

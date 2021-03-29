@@ -23,8 +23,8 @@ namespace PhysIKA
 		m_horizon.setValue(0.0085);
 		this->attachField(&m_horizon, "horizon", "horizon");
 
-    auto m_integrator = this->template setNumericalIntegrator<EmbeddedIntegrator<TDataType>>("integrator");
-    this->getPosition()->connect(m_integrator->m_position);
+                auto m_integrator = this->template setNumericalIntegrator<EmbeddedIntegrator<TDataType>>("integrator");
+                this->getPosition()->connect(m_integrator->m_position);
 		this->getVelocity()->connect(m_integrator->m_velocity);
 		this->getForce()->connect(m_integrator->m_forceDensity);
 
@@ -82,14 +82,14 @@ namespace PhysIKA
 	void EmbeddedFiniteElement<TDataType>::advance(Real dt)
 	{
 		auto integrator = this->template getModule<EmbeddedIntegrator<TDataType>>("integrator");
-    auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
+                auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
 
 		integrator->begin();
 
 		integrator->integrate();
 
-    // if (module != nullptr)
-    //   module->constrain();
+                // if (module != nullptr)
+                //   module->constrain();
 
 		integrator->end();
 	}
@@ -101,17 +101,17 @@ namespace PhysIKA
 		auto pts = this->m_pSet->getPoints();
 		Function1Pt::copy(pts, this->getPosition()->getValue());
 
-    /*TODO:fix bug:
-      apply() will not update points in triSet because points in triSet has no neighbours */
+                /*TODO:fix bug:
+                  apply() will not update points in triSet because points in triSet has no neighbours */
 		auto tMappings = this->getTopologyMappingList();
 		for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)
 		{
 			(*iter)->apply();
 		}
 
-    //So we just copy the points. WARNING: the surface should have the same points as pointsSets.
-    // auto triSet = m_surfaceNode->template getModule<TriangleSet<TDataType>>("surface_mesh");
-    // Function1Pt::copy(triSet->getPoints(), pts);
+                //So we just copy the points. WARNING: the surface should have the same points as pointsSets.
+                // auto triSet = m_surfaceNode->template getModule<TriangleSet<TDataType>>("surface_mesh");
+                // Function1Pt::copy(triSet->getPoints(), pts);
 	}
 
 
@@ -159,20 +159,20 @@ namespace PhysIKA
   template<typename TDataType>
   void EmbeddedFiniteElement<TDataType>::init_problem_and_solver(const boost::property_tree::ptree& pt)
   {
-    auto& m_coords = ParticleSystem<TDataType>::m_pSet->getPoints();
-    HostArray<Coord> pts(m_coords.size());
-    Function1Pt::copy(pts, m_coords);
-    const size_t num = pts.size();
-    std::vector<Real> nods(3 * num);
+                auto& m_coords = ParticleSystem<TDataType>::m_pSet->getPoints();
+                HostArray<Coord> pts(m_coords.size());
+                Function1Pt::copy(pts, m_coords);
+                const size_t num = pts.size();
+                std::vector<Real> nods(3 * num);
 #pragma omp parallel for
-    for(size_t i = 0; i < num; ++i)
-      for(size_t j = 0; j < 3; ++j)
-        nods[j + 3 * i] = pts[i][j];
+                for(size_t i = 0; i < num; ++i)
+                  for(size_t j = 0; j < 3; ++j)
+                    nods[j + 3 * i] = pts[i][j];
 
-    epb_fac  = std::make_shared<embedded_elas_problem_builder<Real>>(&nods[0], pt);
+                epb_fac  = std::make_shared<embedded_elas_problem_builder<Real>>(&nods[0], pt);
 
-    auto integrator = this->template getModule<EmbeddedIntegrator<TDataType>>("integrator");
-    integrator->bind_problem(epb_fac, pt);
+                auto integrator = this->template getModule<EmbeddedIntegrator<TDataType>>("integrator");
+                integrator->bind_problem(epb_fac, pt);
 
   }
 }
