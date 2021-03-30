@@ -54,7 +54,6 @@ void CreateScene()
 	
 	auto m_pointsRender = std::make_shared<PointRenderModule>();
 	m_pointsRender->setColor(Vector3f(0, 1, 1));
-	m_pointsRender->setRenderMode(PointRenderModule::POINT);
 	child3->addVisualModule(m_pointsRender);
 
 	child3->setMass(1.0);

@@ -1,4 +1,7 @@
 #include "Field.h"
+#include <algorithm>
+
+#include "Module.h"
 
 namespace PhysIKA
 {
@@ -14,16 +17,39 @@ namespace PhysIKA
 
 	void Field::setSource(Field* source)
 	{
+		m_derived = source == nullptr ? false : true;
 		m_source = source;
-		if (source != nullptr)
-		{
-			m_derived = true;
-		}
 	}
 
 	Field* Field::getSource()
 	{
 		return m_source;
+	}
+
+	void Field::addSink(Field* f)
+	{
+		auto it = std::find(m_field_sink.begin(), m_field_sink.end(), f);
+
+		if (it == m_field_sink.end())
+		{
+			m_field_sink.push_back(f);
+
+//			f->setDerived(true);
+			f->setSource(this);
+		}
+	}
+
+	void Field::removeSink(Field* f)
+	{
+		auto it = std::find(m_field_sink.begin(), m_field_sink.end(), f);
+		
+		if (it != m_field_sink.end())
+		{
+			m_field_sink.erase(it);
+
+//			f->setDerived(false);
+			f->setSource(nullptr);
+		}
 	}
 
 	bool Field::isDerived()
@@ -44,6 +70,48 @@ namespace PhysIKA
 	void Field::setDerived(bool derived)
 	{
 		m_derived = derived;
+	}
+
+	bool Field::connectPtr(Field* field2)
+	{
+		if (field2->getSource() != nullptr && field2->getSource() != this)
+		{
+			field2->getSource()->removeSink(field2);
+		}
+
+		this->addSink(field2);
+
+		return true;
+	}
+
+	Field* Field::fieldPtr()
+	{
+		return this;
+	}
+
+	bool Field::isModified()
+	{
+		return m_modified;
+	}
+
+	void Field::tagModified(bool modifed)
+	{
+		m_modified = modifed;
+	}
+
+	Field::Field(std::string name, std::string description, FieldType type, Base* parent)
+	{
+		m_name = name; m_description = description;
+		m_fType = type;
+		if (parent != nullptr)
+		{
+			parent->attachField(this, name, description, false);
+		}
+	}
+
+	FieldType Field::getFieldType()
+	{
+		return m_fType;
 	}
 
 }

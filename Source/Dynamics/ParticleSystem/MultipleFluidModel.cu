@@ -2,7 +2,7 @@
 
 #include "DensityPBD.h"
 #include "ParticleIntegrator.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "ImplicitViscosity.h"
 #include "Core/Utility.h"
 #include "Framework/ModuleTypes.h"
@@ -69,38 +69,38 @@ namespace PhysIKA
 
 		// Create modules
 		m_nbrQuery = std::make_shared<NeighborQuery<TDataType>>();
-		m_smoothingLength.connect(m_nbrQuery->m_radius);
-		m_position.connect(m_nbrQuery->m_position);
+		m_smoothingLength.connect(m_nbrQuery->inRadius());
+		m_position.connect(m_nbrQuery->inPosition());
 		m_nbrQuery->initialize();
 
 		m_pbdModule = std::make_shared<DensityPBD<TDataType>>();
-		m_smoothingLength.connect(m_pbdModule->m_smoothingLength);
-		m_position.connect(m_pbdModule->m_position);
-		m_velocity.connect(m_pbdModule->m_velocity);
-		m_massInv.connect(m_pbdModule->m_massInv);
-		m_nbrQuery->m_neighborhood.connect(m_pbdModule->m_neighborhood);
+		m_smoothingLength.connect(m_pbdModule->varSmoothingLength());
+		m_position.connect(m_pbdModule->inPosition());
+		m_velocity.connect(m_pbdModule->inVelocity());
+		m_massInv.connect(&m_pbdModule->m_massInv);
+		m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
 		m_pbdModule->initialize();
 
 		m_phaseSolver = std::make_shared<CahnHilliard<TDataType>>();
-		m_position.connect(m_phaseSolver->m_position);
-		m_concentration.connect(m_phaseSolver->m_concentration);
-		m_nbrQuery->m_neighborhood.connect(m_phaseSolver->m_neighborhood);
-		m_smoothingLength.connect(m_phaseSolver->m_smoothingLength);
+		m_position.connect(&m_phaseSolver->m_position);
+		m_concentration.connect(&m_phaseSolver->m_concentration);
+		m_nbrQuery->outNeighborhood()->connect(&m_phaseSolver->m_neighborhood);
+		m_smoothingLength.connect(&m_phaseSolver->m_smoothingLength);
 		m_phaseSolver->initialize();
 
 
 		m_integrator = std::make_shared<ParticleIntegrator<TDataType>>();
-		m_position.connect(m_integrator->m_position);
-		m_velocity.connect(m_integrator->m_velocity);
-		m_forceDensity.connect(m_integrator->m_forceDensity);
+		m_position.connect(m_integrator->inPosition());
+		m_velocity.connect(m_integrator->inVelocity());
+		m_forceDensity.connect(m_integrator->inForceDensity());
 		m_integrator->initialize();
 
 		m_visModule = std::make_shared<ImplicitViscosity<TDataType>>();
 		m_visModule->setViscosity(Real(1));
-		m_smoothingLength.connect(m_visModule->m_smoothingLength);
-		m_position.connect(m_visModule->m_position);
-		m_velocity.connect(m_visModule->m_velocity);
-		m_nbrQuery->m_neighborhood.connect(m_visModule->m_neighborhood);
+		m_smoothingLength.connect(&m_visModule->m_smoothingLength);
+		m_position.connect(&m_visModule->m_position);
+		m_velocity.connect(&m_visModule->m_velocity);
+		m_nbrQuery->outNeighborhood()->connect(&m_visModule->m_neighborhood);
 		m_visModule->initialize();
 
 		Node* parent = this->getParent();

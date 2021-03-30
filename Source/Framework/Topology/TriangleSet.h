@@ -1,6 +1,6 @@
 #pragma once
 #include "EdgeSet.h"
-#include "Framework/ModuleTopology.h"
+#include "Framework/Framework/ModuleTopology.h"
 
 
 namespace PhysIKA
@@ -29,6 +29,7 @@ namespace PhysIKA
 		bool initializeImpl() override;
 
 	protected:
+
 		DeviceArray<Triangle> m_triangls;
 		NeighborList<int> m_triangleNeighbors;
 	};

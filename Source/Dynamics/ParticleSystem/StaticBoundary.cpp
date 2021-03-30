@@ -2,8 +2,6 @@
 #include "Core/Utility.h"
 #include "Framework/Framework/Log.h"
 #include "Framework/Framework/Node.h"
-#include "Dynamics/RigidBody/RigidBody.h"
-#include "Dynamics/ParticleSystem/ParticleSystem.h"
 #include "Dynamics/ParticleSystem/BoundaryConstraint.h"
 
 #include "Framework/Topology/DistanceField3D.h"
@@ -24,32 +22,37 @@ namespace PhysIKA
 	{
 	}
 
-	template<typename TDataType>
-	bool StaticBoundary<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
-	{
-		this->addChild(child);
-		m_rigids.push_back(child);
-		return true;
-	}
+// 	template<typename TDataType>
+// 	bool StaticBoundary<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
+// 	{
+// 		this->addChild(child);
+// 		m_rigids.push_back(child);
+// 		return true;
+// 	}
 
-	template<typename TDataType>
-	bool StaticBoundary<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
-	{
-		this->addChild(child);
-		m_particleSystems.push_back(child);
-		return true;
-	}
+// 	template<typename TDataType>
+// 	bool StaticBoundary<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
+// 	{
+// 		this->addChild(child);
+// 		m_particleSystems.push_back(child);
+// 
+// 		this->inportParticleSystems()->addNode(child);
+// 
+// 		return true;
+// 	}
 
 	template<typename TDataType>
 	void StaticBoundary<TDataType>::advance(Real dt)
 	{
+		auto pSys = this->getParticleSystems();
+
 		for (size_t t = 0; t < m_obstacles.size(); t++)
 		{
 
-			for (int i = 0; i < m_particleSystems.size(); i++)
+			for (int i = 0; i < pSys.size(); i++)
 			{
-				DeviceArrayField<Coord>* posFd = m_particleSystems[i]->getPosition();
-				DeviceArrayField<Coord>* velFd = m_particleSystems[i]->getVelocity();
+				DeviceArrayField<Coord>* posFd = pSys[i]->currentPosition();
+				DeviceArrayField<Coord>* velFd = pSys[i]->currentVelocity();
 				m_obstacles[t]->constrain(posFd->getValue(), velFd->getValue(), dt);
 			}
 		}
@@ -78,6 +81,7 @@ namespace PhysIKA
 		Coord center = (hi + lo) / 2;
 
 		auto m_surfaceNode = this->createChild<Node>("cube");
+		m_surfaceNode->setControllable(false);
 
 		auto triSet = std::make_shared<TriangleSet<TDataType>>();
 /* 		triSet->loadObjFile("../../Media/standard/standard_cube.obj");

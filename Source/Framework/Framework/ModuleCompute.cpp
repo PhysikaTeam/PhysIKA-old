@@ -11,4 +11,11 @@ ComputeModule::~ComputeModule()
 {
 }
 
+bool ComputeModule::execute()
+{
+	this->compute();
+
+	return true;
+}
+
 }

@@ -1,5 +1,5 @@
 #include "FractureModule.h"
-#include "DensitySummation.h"
+#include "SummationDensity.h"
 #include "Kernel.h"
 
 namespace PhysIKA
@@ -110,7 +110,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void FractureModule<TDataType>::applyPlasticity()
 	{
-		int num = this->m_position.getElementCount();
+		int num = this->inPosition()->getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		Real A = this->computeA();
@@ -118,9 +118,9 @@ namespace PhysIKA
 
 		PM_ComputeInvariants<< <pDims, BLOCK_SIZE >> > (
 			this->m_bulkCoefs,
-			this->m_position.getValue(),
+			this->inPosition()->getValue(),
 			this->m_restShape.getValue(),
-			this->m_horizon.getValue(),
+			this->inHorizon()->getValue(),
 			A,
 			B,
 			this->m_mu.getValue(),

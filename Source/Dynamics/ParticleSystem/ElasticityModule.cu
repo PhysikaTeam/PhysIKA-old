@@ -7,6 +7,8 @@
 
 namespace PhysIKA
 {
+	IMPLEMENT_CLASS_1(ElasticityModule, TDataType)
+
 	template<typename Real>
 	__device__ Real D_Weight(Real r, Real h)
 	{
@@ -127,7 +129,6 @@ namespace PhysIKA
 		DeviceArray<Coord> position,
 		NeighborList<NPair> restShapes,
 		Real horizon,
-		Real distance,
 		Real mu,
 		Real lambda)
 	{
@@ -308,19 +309,23 @@ namespace PhysIKA
 	ElasticityModule<TDataType>::ElasticityModule()
 		: ConstraintModule()
 	{
-		this->attachField(&m_horizon, "horizon", "Supporting radius!", false);
-		this->attachField(&m_distance, "distance", "The sampling distance!", false);
+//		this->attachField(&m_horizon, "horizon", "Supporting radius!", false);
+//		this->attachField(&m_distance, "distance", "The sampling distance!", false);
 		this->attachField(&m_mu, "mu", "Material stiffness!", false);
 		this->attachField(&m_lambda, "lambda", "Material stiffness!", false);
+		this->attachField(&m_iterNum, "Iterations", "Iteration Number", false);
 
-		this->attachField(&m_position, "position", "Storing the particle positions!", false);
-		this->attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		this->attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
+//		this->attachField(&m_position, "position", "Storing the particle positions!", false);
+//		this->attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
+//		this->attachField(&m_neighborhood, "neighborhood", "Storing neighboring particles' ids!", false);
 
-		m_horizon.setValue(0.0125);
-		m_distance.setValue(0.005);
+//		this->attachField(&testing, "testing", "For testing", false);
+//		this->attachField(&TetOut, "TetOut", "For testing", false);
+
+		this->inHorizon()->setValue(0.0125);
  		m_mu.setValue(0.05);
  		m_lambda.setValue(0.1);
+		m_iterNum.setValue(10);
 	}
 
 
@@ -337,7 +342,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ElasticityModule<TDataType>::enforceElasticity()
 	{
-		int num = m_position.getElementCount();
+		int num = this->inPosition()->getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		m_displacement.reset();
@@ -348,16 +353,15 @@ namespace PhysIKA
 			m_weights,
 			m_bulkCoefs,
 			m_invK,
-			m_position.getValue(),
+			this->inPosition()->getValue(),
 			m_restShape.getValue(),
-			m_horizon.getValue(),
-			m_distance.getValue(),
+			this->inHorizon()->getValue(),
 			m_mu.getValue(),
 			m_lambda.getValue());
 		cuSynchronize();
 
 		K_UpdatePosition << <pDims, BLOCK_SIZE >> > (
-			m_position.getValue(),
+			this->inPosition()->getValue(),
 			m_position_old,
 			m_displacement,
 			m_weights);
@@ -376,7 +380,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ElasticityModule<TDataType>::computeMaterialStiffness()
 	{
-		int num = m_position.getElementCount();
+		int num = this->inPosition()->getElementCount();
 
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 		EM_InitBulkStiffness << <pDims, BLOCK_SIZE >> > (m_bulkCoefs);
@@ -392,7 +396,7 @@ namespace PhysIKA
 		EM_PrecomputeShape <Real, Coord, Matrix, NPair> << <pDims, BLOCK_SIZE >> > (
 			m_invK,
 			m_restShape.getValue(),
-			m_horizon.getValue());
+			this->inHorizon()->getValue());
 		cuSynchronize();
 	}
 
@@ -401,12 +405,12 @@ namespace PhysIKA
 	void ElasticityModule<TDataType>::solveElasticity()
 	{
 		//Save new positions
-		Function1Pt::copy(m_position_old, m_position.getValue());
+		Function1Pt::copy(m_position_old, this->inPosition()->getValue());
 
 		this->computeInverseK();
 
 		int itor = 0;
-		while (itor < m_iterNum)
+		while (itor < m_iterNum.getValue())
 		{
 			this->enforceElasticity();
 
@@ -417,17 +421,17 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void PhysIKA::ElasticityModule<TDataType>::updateVelocity()
+	void ElasticityModule<TDataType>::updateVelocity()
 	{
-		int num = m_position.getElementCount();
+		int num = this->inPosition()->getElementCount();
 		uint pDims = cudaGridSize(num, BLOCK_SIZE);
 
 		Real dt = this->getParent()->getDt();
 
 		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
-			m_velocity.getValue(),
+			this->inVelocity()->getValue(),
 			m_position_old,
-			m_position.getValue(),
+			this->inPosition()->getValue(),
 			dt);
 		cuSynchronize();
 	}
@@ -492,36 +496,36 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ElasticityModule<TDataType>::resetRestShape()
 	{
-		m_restShape.setElementCount(m_neighborhood.getValue().size());
-		m_restShape.getValue().getIndex().resize(m_neighborhood.getValue().getIndex().size());
+		m_restShape.setElementCount(this->inNeighborhood()->getValue().size());
+		m_restShape.getValue().getIndex().resize(this->inNeighborhood()->getValue().getIndex().size());
 
-		if (m_neighborhood.getValue().isLimited())
+		if (this->inNeighborhood()->getValue().isLimited())
 		{
-			m_restShape.getValue().setNeighborLimit(m_neighborhood.getValue().getNeighborLimit());
+			m_restShape.getValue().setNeighborLimit(this->inNeighborhood()->getValue().getNeighborLimit());
 		}
 		else
 		{
-			m_restShape.getValue().getElements().resize(m_neighborhood.getValue().getElements().size());
+			m_restShape.getValue().getElements().resize(this->inNeighborhood()->getValue().getElements().size());
 		}
 
-		Function1Pt::copy(m_restShape.getValue().getIndex(), m_neighborhood.getValue().getIndex());
+		Function1Pt::copy(m_restShape.getValue().getIndex(), this->inNeighborhood()->getValue().getIndex());
 
-		uint pDims = cudaGridSize(m_position.getValue().size(), BLOCK_SIZE);
+		uint pDims = cudaGridSize(this->inPosition()->getValue().size(), BLOCK_SIZE);
 
-		K_UpdateRestShape<< <pDims, BLOCK_SIZE >> > (m_restShape.getValue(), m_neighborhood.getValue(), m_position.getValue());
+		K_UpdateRestShape<< <pDims, BLOCK_SIZE >> > (m_restShape.getValue(), this->inNeighborhood()->getValue(), this->inPosition()->getValue());
 		cuSynchronize();
 	}
 
 	template<typename TDataType>
 	bool ElasticityModule<TDataType>::initializeImpl()
 	{
-		if (m_horizon.isEmpty() || m_position.isEmpty() || m_velocity.isEmpty() || m_neighborhood.isEmpty())
+		if (this->inHorizon()->isEmpty() || this->inPosition()->isEmpty() || this->inVelocity()->isEmpty() || this->inNeighborhood()->isEmpty())
 		{
 			std::cout << "Exception: " << std::string("ElasticityModule's fields are not fully initialized!") << "\n";
 			return false;
 		}
 
-		int num = m_position.getElementCount();
+		int num = this->inPosition()->getElementCount();
 		
 		m_invK.resize(num);
 		m_weights.resize(num);
@@ -536,7 +540,7 @@ namespace PhysIKA
 
 		this->computeMaterialStiffness();
 
-		Function1Pt::copy(m_position_old, m_position.getValue());
+		Function1Pt::copy(m_position_old, this->inPosition()->getValue());
 
 		return true;
 	}

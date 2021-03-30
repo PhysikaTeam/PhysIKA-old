@@ -18,6 +18,8 @@ namespace PhysIKA {
 	template<typename TDataType>
 	class ElasticityModule : public ConstraintModule
 	{
+		DECLARE_CLASS_1(ElasticityModule, TDataType)
+
 	public:
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
@@ -34,9 +36,9 @@ namespace PhysIKA {
 		void setMu(Real mu) { m_mu.setValue(mu); }
 		void setLambda(Real lambda) { m_lambda.setValue(lambda); }
 
-		void setHorizon(Real len) { m_horizon.setValue(len); }
-		void setIterationNumber(int num) { m_iterNum = num; }
-		int getIterationNumber() { return m_iterNum; }
+//		void setHorizon(Real len) { m_horizon.setValue(len); }
+		void setIterationNumber(int num) { m_iterNum.setValue(num); }
+		int getIterationNumber() { return m_iterNum.getValue(); }
 
 		void resetRestShape();
 
@@ -55,30 +57,32 @@ namespace PhysIKA {
 
 	public:
 		/**
-		 * @brief Horizon
-		 * A positive number represents the radius of neighborhood for each point
-		 */
-		VarField<Real> m_horizon;
-		/**
-		 * @brief Sampling distance
-		 * Indicate the sampling distance when particles are created.
-		 */
-		VarField<Real> m_distance;
+			* @brief Horizon
+			* A positive number represents the radius of neighborhood for each point
+			*/
+		DEF_EMPTY_IN_VAR(Horizon, Real, "");
+		//VarField<Real> m_horizon;
 
 		/**
 		 * @brief Particle position
 		 */
-		DeviceArrayField<Coord> m_position;
+		DEF_EMPTY_IN_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
+		//DeviceArrayField<Coord> m_position;
+
 		/**
-		 * @brief Particle velocity
-		 */
-		DeviceArrayField<Coord> m_velocity;
+			* @brief Particle velocity
+			*/
+		DEF_EMPTY_IN_ARRAY(Velocity, Coord, DeviceType::GPU, "Particle velocity");
+		//DeviceArrayField<Coord> m_velocity;
 
 		/**
 		 * @brief Neighboring particles
 		 * 
 		 */
-		NeighborField<int> m_neighborhood;
+		DEF_EMPTY_IN_NEIGHBOR_LIST(Neighborhood, int, "Neighboring particles' ids");
+		//NeighborField<int> m_neighborhood;
+
+
 		NeighborField<NPair> m_restShape;
 
 	protected:
@@ -96,7 +100,7 @@ namespace PhysIKA {
 		DeviceArray<Coord> m_displacement;
 		DeviceArray<Matrix> m_invK;
 	private:
-		int m_iterNum = 3;
+		VarField<int> m_iterNum;
 
 		DeviceArray<Real> m_stiffness;
 		DeviceArray<Matrix> m_F;

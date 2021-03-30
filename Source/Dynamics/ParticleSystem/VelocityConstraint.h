@@ -8,7 +8,7 @@
 namespace PhysIKA {
 
 	class Attribute;
-	template<typename TDataType> class DensitySummation;
+	template<typename TDataType> class SummationDensity;
 
 	template<typename TDataType>
 	class VelocityConstraint : public ConstraintModule
@@ -66,7 +66,7 @@ namespace PhysIKA {
 		Reduction<Real>* m_reduce;
 		Arithmetic<Real>* m_arithmetic;
 
-		std::shared_ptr<DensitySummation<TDataType>> m_densitySum;
+		std::shared_ptr<SummationDensity<TDataType>> m_densitySum;
 	};
 
 

@@ -39,6 +39,7 @@ namespace PhysIKA
 		return true;
 	}
 
+
 	template<typename TDataType>
 	void FixedPoints<TDataType>::updateContext()
 	{
@@ -71,12 +72,31 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
-	void FixedPoints<TDataType>::setFixedPoint(int id, Coord pt)
+	void FixedPoints<TDataType>::addFixedPoint(int id, Coord pt)
 	{
 		m_fixedPts[id] = pt;
 
 		bUpdateRequired = true;
 	}
+
+
+	template<typename TDataType>
+	void FixedPoints<TDataType>::removeFixedPoint(int id)
+	{
+		auto it = m_fixedPts.begin();
+		while (it != m_fixedPts.end())
+		{
+			if (it->first == id)
+			{
+				m_fixedPts.erase(it++);
+			}
+			else
+				it++;
+		}
+
+		bUpdateRequired = true;
+	}
+
 
 	template<typename TDataType>
 	void FixedPoints<TDataType>::clear()
@@ -100,8 +120,6 @@ namespace PhysIKA
 		{
 			curPos[pId] = fixedPts[pId];
 			curVel[pId] = Coord(0);
-
-			printf("%d \n", pId);
 		}
 
 	}

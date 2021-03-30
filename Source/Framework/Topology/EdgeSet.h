@@ -1,6 +1,6 @@
 #pragma once
 #include "PointSet.h"
-#include "Framework/ModuleTopology.h"
+#include "Framework/Framework/ModuleTopology.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
 namespace PhysIKA

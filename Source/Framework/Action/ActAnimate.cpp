@@ -9,9 +9,9 @@
 namespace PhysIKA
 {
 	
-	AnimateAct::AnimateAct()
+	AnimateAct::AnimateAct(float dt)
 	{
-
+		m_dt = dt;
 	}
 
 	AnimateAct::~AnimateAct()

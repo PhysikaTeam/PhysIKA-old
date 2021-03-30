@@ -6,6 +6,7 @@
 #include "Rendering/TriangleRender.h"
 #include "Framework/Framework/FieldArray.h"
 #include "Framework/Framework/FieldVar.h"
+#include "Framework/Framework/DeclareEnum.h"
 
 namespace PhysIKA
 {
@@ -16,14 +17,12 @@ namespace PhysIKA
 		PointRenderModule();
 		~PointRenderModule();
 
-		enum RenderMode {
+		DECLARE_ENUM(RenderModeEnum,
 			POINT = 0,
-			SPRITE,
-			Instance
-		};
+			SPRITE = 1,
+			INSTANCE = 2);
 
 		void display() override;
-		void setRenderMode(RenderMode mode);
 		void setColor(Vector3f color);
 
 		void setColorRange(float min, float max);
@@ -32,6 +31,8 @@ namespace PhysIKA
 	public:
 		VarField<float> m_minIndex;
 		VarField<float> m_maxIndex;
+
+		DEF_ENUM(RenderMode, RenderModeEnum, RenderModeEnum::INSTANCE, "Rendering mode");
 
 		DeviceArrayField<Vector3f> m_vecIndex;
 		DeviceArrayField<float> m_scalarIndex;
@@ -42,7 +43,6 @@ namespace PhysIKA
 		void updateRenderingContext() override;
 
 	private:
-		RenderMode m_mode;
 		Vector3f m_color;
 
 		float m_refV;

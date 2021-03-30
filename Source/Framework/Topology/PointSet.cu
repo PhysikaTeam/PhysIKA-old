@@ -11,20 +11,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	PointSet<TDataType>::PointSet()
 		: TopologyModule()
-		, m_samplingDistance(Real(0.1))
 	{
-		std::vector<Coord> positions;
-		for (Real x = -2.0; x < 2.0; x += m_samplingDistance) {
-			for (Real y = -2.0; y < 2.0; y += m_samplingDistance) {
-				for (Real z = -2.0; z < 2.0; z += m_samplingDistance) {
-					positions.push_back(Coord(Real(x), Real(y), Real(z)));
-				}
-			}
-		}
-		this->setPoints(positions);
-
-		m_normals.resize(positions.size());
-		m_normals.reset();
 	}
 
 	template<typename TDataType>
@@ -57,26 +44,89 @@ namespace PhysIKA
 		std::string line;
 		std::vector<Coord> vertList;
 		std::vector<Coord> normalList;
-		while (!infile.eof()) {
+		
+		int maxNum = 20;
+		std::vector<int>  index;
+		std::vector<int>  neighborCount;
+		std::vector<int>  elements;
+		int count = 0;
+
+		while (!infile.eof()) 
+		{
 			std::getline(infile, line);
 
 			//.obj files sometimes contain vertex normals indicated by "vn"
-			if (line.substr(0, 1) == std::string("v") && line.substr(0, 2) != std::string("vn")) {
+			if (line.substr(0, 1) == std::string("v") && line.substr(0, 2) != std::string("vn")) 
+			{
 				std::stringstream data(line);
 				char c;
 				Coord point;
 				data >> c >> point[0] >> point[1] >> point[2];
 				vertList.push_back(point);
+				index.push_back(count++);
+				neighborCount.push_back(0);
 			}
-			else if (line.substr(0, 2) == std::string("vn")) {
+			else if (line.substr(0, 2) == std::string("vn")) 
+			{
 				std::stringstream data(line);
 				char c;
 				Coord normal;
 				data >> c >> normal[0] >> normal[1] >> normal[2];
 				normalList.push_back(normal);
 			}
-			else {
-				++ignored_lines;
+			else 
+			{
+				//vertex read over,init elements capacity
+				if (count != 0)
+				{
+					elements.resize(maxNum*index.size());
+					count = 0;
+				}
+				if(line.substr(0, 1) == std::string("f"))
+				{
+					//f v1 v2 v3 (v4)
+					std::vector<std::string> verStr;
+					std::vector<int> verIndex;
+					line = line.substr(2, line.size());
+					while(line.find_first_of(' ') != std::string::npos)
+					{
+						verStr.push_back(line.substr(0, line.find_first_of(' ')));
+						line = line.substr(line.find_first_of(' '), line.size());
+					}
+					verStr.push_back(line);
+					for (int i = 0; i < verStr.size();++i)
+					{
+						if (verStr[i].find_first_of('/') == std::string::npos)
+							verIndex.push_back(std::stoi(verStr[i]));
+						else
+							verIndex.push_back(std::stoi(verStr[i].substr(0, verStr[i].find_first_of('/'))));
+					}
+					//push vertex j into i's neighborList
+					for (int i = 0; i < verIndex.size();++i)
+					{
+						for(int j = 0; j < verIndex.size();++j)
+						{
+							if (i == j)
+								continue;
+							bool record = false;
+							int aindex = verIndex[i], jndex = verIndex[j];
+							for(int t = 0; t < neighborCount[aindex];++t)
+								if (elements[aindex*maxNum + t] == jndex)
+								{
+									record = true;
+									break;
+								}
+							if (!record)
+							{
+								elements[aindex*maxNum + neighborCount[aindex]] = jndex;
+								neighborCount[aindex]++;
+								elements[aindex*maxNum + neighborCount[aindex]] = -1;
+							}
+						}
+					}
+				}
+				else
+					++ignored_lines;
 			}
 		}
 		infile.close();
@@ -98,7 +148,8 @@ namespace PhysIKA
 
 		setPoints(vertList);
 		setNormals(normalList);
-
+		setNeighbors(maxNum, elements, index);
+		
 		vertList.clear();
 		normalList.clear();
 	}
@@ -116,19 +167,32 @@ namespace PhysIKA
 	}
 
 	template<typename TDataType>
+	void PointSet<TDataType>::setNeighbors(int maxNum, std::vector<int>& elements, std::vector<int>& index)
+	{
+		m_pointNeighbors.copyFrom(maxNum, elements, index);
+	}
+
+	template<typename TDataType>
 	void PointSet<TDataType>::setPoints(std::vector<Coord>& pos)
 	{
+		//printf("%d\n", pos.size());
 		m_coords.resize(pos.size());
 		Function1Pt::copy(m_coords, pos);
 
 		tagAsChanged();
 	}
-
+	template<typename TDataType>
+	void PointSet<TDataType>::setSize(int size)
+	{
+		m_coords.resize(size);
+		m_coords.reset();
+	}
 
 	template<typename TDataType>
 	void PointSet<TDataType>::setNormals(std::vector<Coord>& normals)
 	{
 		m_normals.resize(normals.size());
+
 		Function1Pt::copy(m_normals, normals);
 	}
 
@@ -157,18 +221,14 @@ namespace PhysIKA
 	{
 		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 		if (pId >= vertex.size()) return;
-
+		//return;
 		vertex[pId] = vertex[pId] * s;
 	}
 
 	template<typename TDataType>
 	void PointSet<TDataType>::scale(Real s)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
-
-		PS_Scale<< <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			s);
+		cuExecute(m_coords.size(), PS_Scale, m_coords, s);
 	}
 
 	template <typename Coord>
@@ -186,10 +246,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PhysIKA::PointSet<TDataType>::scale(Coord s)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
-		PS_Scale << <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			s);
+		cuExecute(m_coords.size(), PS_Scale, m_coords, s);
 	}
 
 	template <typename Coord>
@@ -207,10 +264,13 @@ namespace PhysIKA
 	template<typename TDataType>
 	void PhysIKA::PointSet<TDataType>::translate(Coord t)
 	{
-		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
+		cuExecute(m_coords.size(), PS_Translate, m_coords, t);
 
-		PS_Translate << <pDims, BLOCK_SIZE >> > (
-			m_coords,
-			t);
+// 		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
+// 
+// 		PS_Translate << <pDims, BLOCK_SIZE >> > (
+// 			m_coords,
+// 			t);
+// 		cuSynchronize();
 	}
 }

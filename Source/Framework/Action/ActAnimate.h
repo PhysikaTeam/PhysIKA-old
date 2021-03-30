@@ -1,6 +1,4 @@
-#ifndef FRAMEWORK_ANIMATE_H
-#define FRAMEWORK_ANIMATE_H
-
+#pragma once
 #include "Action.h"
 
 namespace PhysIKA
@@ -8,12 +6,13 @@ namespace PhysIKA
 	class AnimateAct : public Action
 	{
 	public:
-		AnimateAct();
+		AnimateAct(float dt);
 		virtual ~AnimateAct();
 
 	private:
 		void process(Node* node) override;
+
+		float m_dt;
 	};
 }
 
-#endif

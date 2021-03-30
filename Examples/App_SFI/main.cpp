@@ -40,35 +40,39 @@ using namespace PhysIKA;
 
 void CreateScene()
 {
+	printf("0\n");
 	SceneGraph& scene = SceneGraph::getInstance();
 //	scene.setUpperBound(Vector3f(1, 1.0, 0.5));
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0), Vector3f(1), 0.015f, true);
 
+	printf("0.1\n");
+
+	root->loadCube(Vector3f(0), Vector3f(1), 0.015f, true);
+	printf("1\n");
 //  
 	std::shared_ptr<ParticleFluid<DataType3f>> fluid = std::make_shared<ParticleFluid<DataType3f>>();
 	root->addParticleSystem(fluid);
-
+	printf("11\n");
 	auto ptRender = std::make_shared<PointRenderModule>();
 	ptRender->setColor(Vector3f(0, 0, 1));
 	ptRender->setColorRange(0, 1);
 	fluid->addVisualModule(ptRender);
-
+	printf("111\n");
 	//fluid->loadParticles("../Media/fluid/fluid_point.obj");
 	fluid->loadParticles(Vector3f(0), Vector3f(0.5, 1.0, 1.0), 0.015f);
 	fluid->setMass(10);
 	//fluid->getVelocity()->connect(fluid->getRenderModule()->m_vecIndex);
-
+	printf("1111\n");
 	std::shared_ptr<PositionBasedFluidModel<DataType3f>> pbd = std::make_shared<PositionBasedFluidModel<DataType3f>>();
-	fluid->getPosition()->connect(pbd->m_position);
-	fluid->getVelocity()->connect(pbd->m_velocity);
-	fluid->getForce()->connect(pbd->m_forceDensity);
+	fluid->currentPosition()->connect(&pbd->m_position);
+	fluid->currentVelocity()->connect(&pbd->m_velocity);
+	fluid->currentForce()->connect(&pbd->m_forceDensity);
 	pbd->setSmoothingLength(0.02);
 
 	fluid->setNumericalModel(pbd);
 
-
+	printf("111111\n");
 	std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
 	// 
 	sfi->setInteractionDistance(0.02);
@@ -76,6 +80,7 @@ void CreateScene()
 
 	for (int i = 0; i < 3; i++)
 	{
+		printf("%d\n", i);
 		std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
 		root->addParticleSystem(bunny);
 		bunny->setMass(1.0);
@@ -84,7 +89,7 @@ void CreateScene()
 		bunny->translate(Vector3f(0.75, 0.2, 0.4 + i * 0.3));
 		bunny->setVisible(false);
 		bunny->getElasticitySolver()->setIterationNumber(10);
-		bunny->getElasticitySolver()->setHorizon(0.03);
+		bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
 		bunny->getTopologyMapping()->setSearchingRadius(0.05);
 
 		auto sRender = std::make_shared<SurfaceMeshRender>();

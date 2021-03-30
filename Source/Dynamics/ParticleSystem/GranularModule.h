@@ -3,7 +3,7 @@
 
 namespace PhysIKA {
 
-	template<typename TDataType> class DensitySummation;
+	template<typename TDataType> class SummationDensity;
 
 	template<typename TDataType>
 	class GranularModule : public ElastoplasticityModule<TDataType>
@@ -22,7 +22,7 @@ namespace PhysIKA {
 		void computeMaterialStiffness() override;
 
 	private:
-		std::shared_ptr<DensitySummation<TDataType>> m_densitySum;
+		std::shared_ptr<SummationDensity<TDataType>> m_densitySum;
 	};
 
 #ifdef PRECISION_FLOAT
