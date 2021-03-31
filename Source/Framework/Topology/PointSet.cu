@@ -13,6 +13,26 @@ namespace PhysIKA
 		: TopologyModule()
 	{
 	}
+	template<typename TDataType>
+	PointSet<TDataType>::PointSet(PointSet<TDataType>& pointset) {
+		setPoints(pointset.h_coords);
+
+		/*
+		if (m_coords.size() != pointset.m_coords.size())
+		{
+			m_coords.resize(pointset.getPointSize());
+			m_normals.resize(pointset.getPointSize());
+		}
+		Function1Pt::copy(m_coords, pointset.getPoints());
+		Function1Pt::copy(m_normals, pointset.getNormals());
+		*/
+		
+	}
+	template<typename TDataType>
+	PointSet<TDataType>& PointSet<TDataType>::operator= (PointSet<TDataType>& pointset) {
+		setPoints(pointset.h_coords);
+		return *this;
+	}
 
 	template<typename TDataType>
 	PointSet<TDataType>::~PointSet()
@@ -176,6 +196,7 @@ namespace PhysIKA
 	void PointSet<TDataType>::setPoints(std::vector<Coord>& pos)
 	{
 		//printf("%d\n", pos.size());
+		h_coords = pos;
 		m_coords.resize(pos.size());
 		Function1Pt::copy(m_coords, pos);
 
@@ -260,6 +281,21 @@ namespace PhysIKA
 		vertex[pId] = vertex[pId] + t;
 	}
 
+	template <typename Coord, typename Matrix>
+	__global__ void PS_Rotate(
+		DeviceArray<Coord> vertex, Matrix m)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= vertex.size()) return;
+
+		//vertex[pId] = vertex[pId] * m;
+	}
+
+	template<typename TDataType>
+	void PhysIKA::PointSet<TDataType>::rotate(Matrix m)
+	{
+		cuExecute(m_coords.size(), PS_Rotate, m_coords, m);
+	}
 
 	template<typename TDataType>
 	void PhysIKA::PointSet<TDataType>::translate(Coord t)

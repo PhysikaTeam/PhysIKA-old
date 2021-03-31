@@ -3357,8 +3357,9 @@ namespace PhysIKA
 	template<typename Real>
 	COMM_FUNC TAlignedBox3D<Real>::TAlignedBox3D()
 	{
-		v0 = Coord3D(Real(-1));
-		v1 = Coord3D(Real(1));
+		// invalid box
+		v0 = Coord3D(Real(1));
+		v1 = Coord3D(Real(-1));
 	}
 
 	template<typename Real>
@@ -3367,7 +3368,10 @@ namespace PhysIKA
 		v0 = p0;
 		v1 = p1;
 	}
-
+	template<typename Real>
+	COMM_FUNC TAlignedBox3D<Real>::TAlignedBox3D(const Coord3D& p0) {
+		v0 = v1 = p0;
+	}
 	template<typename Real>
 	COMM_FUNC TAlignedBox3D<Real>::TAlignedBox3D(const TAlignedBox3D& box)
 	{
@@ -3412,7 +3416,40 @@ namespace PhysIKA
 
 		return true;
 	}
+	template<typename Real>
+	COMM_FUNC  TAlignedBox3D<Real>&TAlignedBox3D<Real>::operator += (const Vector<Real, 3> &p)
+	{
+		v0 = v0.minimum(p);
+		v1 = v1.maximum(p);
+		return *this;
+	}
+	template<typename Real>
+	COMM_FUNC  TAlignedBox3D<Real>&TAlignedBox3D<Real>::operator += (const TAlignedBox3D<Real> &p) {
+		v0 = v0.minimum(p.v0);
+		v1 = v1.maximum(p.v1);
+		//v0 = { fmin(v0[0], v1[0]), fmin(v0[1], v1[1]), fmin(v0[2], v1[2]) };
+		//v1 = { fmax(v0[0], v1[0]), fmax(v0[1], v1[1]), fmax(v0[2], v1[2]) };
+		return *this;
+	}
+	template<typename Real>
+	COMM_FUNC  TAlignedBox3D<Real> TAlignedBox3D<Real>::operator + (const TAlignedBox3D<Real> &v) const
+	{
+		TAlignedBox3D<Real> rt(*this); 
+		return rt += v;
+	}
+	template<typename Real>
+	COMM_FUNC 	bool TAlignedBox3D<Real>::overlaps(const TAlignedBox3D<Real>& box) const
+	{
+		if (v0[0] > box.v1[0]) return false;
+		if (v0[1] > box.v1[1]) return false;
+		if (v0[2] > box.v1[2]) return false;
 
+		if (v1[0] < box.v0[0]) return false;
+		if (v1[1] < box.v0[1]) return false;
+		if (v1[2] < box.v0[2]) return false;
+
+		return true;
+	}
 	template<typename Real>
 	COMM_FUNC bool TAlignedBox3D<Real>::meshInsert(const TTriangle3D<Real>& tri) const
 	{
@@ -3556,4 +3593,11 @@ namespace PhysIKA
 
 		return bValid;
 	}
+
+	template<typename Real>
+	COMM_FUNC Real TAlignedBox3D<Real>::width()  const { return v1[0] - v0[0]; }
+	template<typename Real>
+	COMM_FUNC Real TAlignedBox3D<Real>::height() const { return v1[1] - v0[1]; }
+	template<typename Real>
+	COMM_FUNC Real TAlignedBox3D<Real>::depth()  const { return v1[2] - v0[2]; }
 }

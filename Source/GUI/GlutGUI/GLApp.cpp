@@ -268,15 +268,18 @@ void GLApp::setReshapeFunction(void (*func)(int width, int height))
         reshape_function_ = func;
 }
 
-void GLApp::setKeyboardFunction(void (*func)(unsigned char key, int x, int y))
+void GLApp::setKeyboardFunction(void(*func)(unsigned char key, int x, int y))
 {
-    if(func==NULL)
-    {
-        std::cerr<<"NULL callback function provided, use default instead.\n";
-        keyboard_function_ = GLApp::keyboardFunction;
-    }
-    else
-        keyboard_function_ = func;
+	if (func == NULL)
+	{
+		std::cerr << "NULL callback function provided, use default instead.\n";
+		keyboard_function_ = GLApp::keyboardFunction;
+	}
+	else
+	{
+		keyboard_function_ = func;
+		glutKeyboardFunc(keyboard_function_);
+	}
 }
 
 void GLApp::setSpecialFunction(void (*func)(int key, int x, int y))
