@@ -1,0 +1,15 @@
+# This file lists the versions of Physika dependencies
+# Please update this file if any update is made to the versions of dependency
+
+1.Eigen 3.2.3
+Physika specific changes:
+*Eigen/src/Core/Functors.h: issue with abs()
+
+2.GLUI v2.3
+
+3.LodePNG v20131222
+
+4.freeglut 3.0.0
+* freeglut_std.h: unify names in pragma comment
+
+5.StackWalkder 2014.12.28
