@@ -1,0 +1,24 @@
+# C/C++ with GCC
+# Build your C/C++ project with GCC using make.
+# Add steps that publish test results, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/c-cpp/gcc
+
+trigger:
+- master
+- dev
+
+pr:
+- master
+- dev
+
+pool:
+  name: 'linux-cuda-qt'
+
+steps:
+- task: CMake@1
+  inputs:
+    cmakeArgs: '../ -DCMAKE_PREFIX_PATH=~/Qt/5.12.2/gcc_64 -DCMAKE_BUILD_TYPE=Debug'
+- bash: |
+    cd build
+    make -j4
+

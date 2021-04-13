@@ -1,0 +1,66 @@
+#################################################################
+# Scons script for LodePNG
+# called by Scons script of Physika
+# @author: Fei Zhu, 05/02/2014  
+#          Wei Chen,04/07/2016      
+#################################################################
+
+######################CONFIGURATIONS#############################
+# IMPORT FROM PARENT SCONS SCRIPT
+Import('release_env os_name os_architecture compiler')
+#################################################################
+
+#IMPORTS
+import os
+from os.path import basename
+from glob import glob
+
+#PHYSIKA ROOT PATH
+physika_root_path = '../../../'
+
+#SRC PATH
+src_root_path = './'
+
+#####################SPECIFIED BY USER###########################
+#LIB NAME
+lib_name = 'LIB_NAME_BY_USER'
+#################################################################
+
+#LIB PREFIX AND SUFFIX 
+if os_name == 'Windows':
+    obj_suffix = '.obj'
+    lib_suffix = '.lib'
+elif os_name in ('Linux','Darwin'):
+    lib_preffix = 'lib'
+    obj_suffix = '.o'
+    lib_suffix = '.a'
+
+#COMPILE SRC FILES AND ARCHIVE INTO LIB
+lib_target = []
+target_root_path = physika_root_path+'Public_Library/'
+lib_obj_files = []
+lib_src_files    = glob(os.path.join(src_root_path, '*.cpp'))
+lib_header_files = glob(os.path.join(src_root_path, '*.h'))
+
+lib_file = lib_name+lib_suffix
+if os_name in ('Linux', 'Darwin'):
+   lib_file = lib_preffix+lib_file
+release_lib_file = target_root_path+'lib/release/'+os.path.basename(lib_file)
+debug_lib_file   = target_root_path+'lib/debug/'+os.path.basename(lib_file)
+
+release_env.StaticLibrary(target = release_lib_file, source = lib_src_files)
+release_env.StaticLibrary(target = debug_lib_file, source = lib_src_files)
+
+#COPY HEADERS TO TARGET DIRECTORY, LIBS ARE ALREADY THERE
+header_target = []
+for header_file in lib_header_files:
+    if header_file.find(src_root_path) == 0:
+       target_file = header_file.replace(src_root_path, target_root_path+'include/Physika_Dependency/'+lib_name+'/')
+       header_target = Command(target_file, header_file, Copy("$TARGET", "$SOURCE"))
+
+#CUSTOMIZE CLEAN OPTION
+lib_delete_files = glob(os.path.join(src_root_path, '*.pdb'))
+header_delete_files = [os.path.join(target_root_path+'include/', name) for name in os.listdir(target_root_path+'include/')
+                      if os.path.isdir(os.path.join(target_root_path+'include/', name))]
+Clean(lib_target, lib_delete_files)
+Clean(header_target, header_delete_files)
