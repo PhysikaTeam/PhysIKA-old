@@ -987,7 +987,6 @@ namespace PhysIKA
 		layout->addWidget(checkbox, 0, 1);
 
 		connect(checkbox, SIGNAL(stateChanged(int)), this, SLOT(changeValue(int)));
-
 		checkbox->setChecked(f->getValue());
 	}
 

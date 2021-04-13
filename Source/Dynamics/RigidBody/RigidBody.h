@@ -39,6 +39,8 @@ namespace PhysIKA
 
 		std::shared_ptr<Node> getSurface() { return m_surfaceNode; }
 
+		DEF_VAR(ImportFile, std::string, "", "outputView");
+
 	public:
 		bool initialize() override;
 
