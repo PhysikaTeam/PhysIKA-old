@@ -287,16 +287,6 @@ bool SimpleModeler::GenerateVolumeFile(TCDSM::Model::NetCDFSet *netCDFSet, int t
 	int height = density->r();
 	size_t dataSize = length * height * width;
 
-	/* 输出密度部分
-	std::vector<float> data(dataSize, 0);
-
-	float *tmp = (float*)(density->data());
-	for (size_t i = 0; i < dataSize; i++) 
-	{
-		data[i] = tmp[i];
-	}
-	*/
-
 	std::vector<float> extinction(dataSize, 0);
 
 	float *dd = (float*)(density->data());
@@ -315,58 +305,3 @@ bool SimpleModeler::GenerateVolumeFile(TCDSM::Model::NetCDFSet *netCDFSet, int t
 	std::cout << "准备写入vti文件……" << std::endl;
 	return WriteVTI(length-1, width-1, height-1, extinction, (_modelPath + "/frame" + Util::toString(time) + ".vti"));
 }
-
-/*
-bool SimpleModeler::WriteVTI(int length, int width, int height, const std::vector<float>& data, std::string& path) {
-	std::ofstream file(path, std::ios::out | std::ios::trunc);
-	if (file) {
-		file << "<VTKFile type=\"ImageData\" version=\"1.0\" byte_order=\"";
-		// 判断大小端
-		int a = 1;
-		char* p = reinterpret_cast<char*>(&a);
-		if (*p == 1) {
-			file << "LittleEndian";
-		}
-		else {
-			file << "BigEndian";
-		}
-		file << "\" header_type=\"UInt64\">" << std::endl;
-
-		file << "<ImageData WholeExtent=\"" << "0 " << length << " 0 " << width << " 0 " << height
-			<< "\" Origin=\"0 0 0\" Spacing=\"1.0 1.0 1.0\">" << std::endl;
-		file << "<Piece Extent=\"" << "0 " << length << " 0 " << width << " 0 " << height << "\">" << std::endl;
-		file << "<PointData Scalars=\"Scalars_\">" << std::endl;
-		float rangeMin = 1.0f;
-		float rangeMax = 0.0f;
-		for (float value : data) {
-			if (value < rangeMin) {
-				rangeMin = value;
-			}
-			if (value > rangeMax) {
-				rangeMax = value;
-			}
-		}
-		file << "<DataArray type=\"Float32\" Name=\"Scalars_\" format=\"ascii\" RangeMin=\""
-			<< rangeMin << "\" RangeMax=\"" << rangeMax << "\">" << std::endl;
-
-		for (float value : data) {
-			file << value << " ";
-		}
-
-		file << "</DataArray>" << std::endl;
-		file << "</PointData>" << std::endl;
-		file << "<CellData>" << std::endl;
-		file << "</CellData>" << std::endl;
-		file << "</Piece>" << std::endl;
-		file << "</ImageData>" << std::endl;
-		file << "</VTKFile>" << std::endl;
-		file.close();
-
-	}
-	else {
-		printf("Fail to save vti file: %s!\n", path.c_str());
-		return false;
-	}
-	return true;
-}
-*/

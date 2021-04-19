@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(EvolutionBasedPhysics)
+project(App_EBP)
 
 set(PROJECT_PATH ${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_PATH})

@@ -67,34 +67,7 @@ void addParticleForControl(std::vector<Vector3r> &fluidParticles, unsigned int f
 
 FluidModel model;
 TimeStepFluidModel simulation;
-SDFGradientField sdfGraField; //����ȫ�ֱ���sdfGraField�洢�����Ƴ�
-//����ȫ�ֵ�SDF
-//std::string cdfName = "clouds\\bunny_10k.cdf";
-//std::string iniShapeName = "clouds\\cloud69.dat";
-
-//-------------------zzl-------2019-1-13-----------start---------------------
-
-//generate data for learning
-//std::string cdfName = "cloud4learning\\tran-scale-bunny.cdf"; //Ŀ����״�ķ��ž��볡
-//std::string tarShapeName = "cloud4learning\\tran-scale-bunny.dat"; //Ŀ����״����������
-//
-//std::string iniShapeName = "cloud4learning\\cloud64-high.dat"; //Դ��״����������
-//std::string oriCdfName = "cloud4learning\\cloud64.cdf"; //Դ��״�ķ��ž��볡
-
-//----------------------69-bunny---------------------------------------------------
-//std::string cdfName = "cloud4learning\\tran-scale-bunny.cdf"; //Ŀ����״�ķ��ž��볡
-//std::string tarShapeName = "cloud4learning\\tran-scale-bunny.dat"; //Ŀ����״����������
-//
-//std::string iniShapeName = "cloud4learning\\cloud69.dat"; //Դ��״����������
-//std::string oriCdfName = "cloud4learning\\cloud69.cdf"; //Դ��״�ķ��ž��볡
-
-
-//----------------------69-64---------------------------------------------------
-//std::string cdfName = "cloud4learning\\cloud64.cdf"; //Ŀ����״�ķ��ž��볡
-//std::string tarShapeName = "cloud4learning\\cloud64.dat"; //Ŀ����״����������
-//
-//std::string iniShapeName = "cloud4learning\\cloud69.dat"; //Դ��״����������
-//std::string oriCdfName = "cloud4learning\\cloud69.cdf"; //Դ��״�ķ��ž��볡
+SDFGradientField sdfGraField;
 
 //----------------------dragon-bunny---------------------------------------------------
 std::string cdfName = "D:\\Code\\PositionBasedDynamics-master\\cloud4learning\\tran-scale-bunny.cdf"; //Ŀ����״�ķ��ž��볡

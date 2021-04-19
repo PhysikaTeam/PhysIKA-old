@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 include(ExternalProject)
 
-project(Physika_Cloud)
+project(App_Cloud)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON) 
 
