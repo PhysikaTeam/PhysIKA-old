@@ -119,19 +119,6 @@ class CloudNature extends React.Component {
         this.renderWindow.render();
     }
 
-    /*
-    //改变actor的可见性
-    changeVisible = (item) => {
-        const actor = this.curScene[item._attributes.name].actor;
-        const visibility = actor.getVisibility();
-        actor.setVisibility(!visibility);
-        //因为actor可见性的变化不会触发组件的render，
-        //所以这里强制触发render，使得BiShow控件变为BiHide控件
-        this.forceUpdate();
-        this.renderWindow.render();
-    }
-    */
-
     //递归渲染每个树节点（这里必须用map遍历！可能因为需要返回的数组？）
     renderTreeNodes = (data) => data.map((item, index) => {
         item.title = (

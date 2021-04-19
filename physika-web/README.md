@@ -21,7 +21,7 @@ npm run build
 ```
 运行项目
 ```shell script
-node .\src_server\app.js
+node .\src_server\websocket.js
 ```
 在浏览器访问http://localhost:8888 即可
 
@@ -38,3 +38,5 @@ src_server目录下的pathconfig.json文件用于配置数据存放路径和pyth
 其中"simType"为仿真类型名，"initConfigFileName"为初始化配置文件的路径，"callPythonFileName"为调用对应仿真方法接口文件的路径。
 
 src_server目录下的websocket.js文件中的queryCountMax参数为预取缓存机制中轮询的次数，每次间隔1秒钟，超出设定的最大次数后会产生预取超时的响应，可根据电脑性能和仿真时间进行调整。
+
+测试用例在 ./data/test_case/ 中。

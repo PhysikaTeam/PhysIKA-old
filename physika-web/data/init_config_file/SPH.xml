@@ -3,7 +3,7 @@
     <Configuration name="参数配置">
         <particleRadius class="Real" name="粒子半径" disabled="true">0.025</particleRadius>
         <density0 class="Real" name="静止密度" disabled="true">1000</density0>
-        <simulationMethod class="Enum" enum="WCSPH PCISPH PBF IISPH DFSPH PF DFSPH_K" name="仿真方法" disabled="false">4</simulationMethod>
+        <simulationMethod class="Enum" enum="WCSPH PCISPH PBF IISPH DFSPH PF" name="仿真方法" disabled="false">4</simulationMethod>
         <gravitation class="Vector3f" name="重力" disabled="true">0 -9.81 0</gravitation>
         <timeStepSize class="Real" name="时间步长" disabled="false">0.005</timeStepSize>
         <cflMethod class="Enum" enum="None CFL CFL-iterations" name="CFL方法" disabled="false">1</cflMethod>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Dropdown, Button, Row, Col, Avatar } from 'antd';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import '../../static/css/antdesign.css';
-import { PhysikaCloudEuler } from './CloudEuler';
 import { PhysikaCloudNature } from './CloudNature';
 import { PhysikaCloudSatellite } from './CloudSatellite';
 import { PhysikaCloudWRF } from './CloudWRF';
@@ -25,7 +24,6 @@ function PhysikaWeb() {
 
     const simTypeMenu = (
         <Menu onClick={auth}>
-            {/* <Menu.Item key='0'>云欧拉仿真</Menu.Item> */}
             <Menu.Item key='1'>自然云图像建模</Menu.Item>
             <Menu.Item key='2'>卫星云图像建模</Menu.Item>
             <Menu.Item key='3'>WRF数据建模</Menu.Item>
@@ -86,12 +84,12 @@ function PhysikaWeb() {
         <Layout>
             <Header className="header" style={{ backgroundColor: "lavender" }}>
                 <Row>
-                    <Col span={3} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Col span={4} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <div className="logo" style={{ textAlign: "center", fontSize: "20px", background: "inherit", width: "200px" }}>
-                            云建模/流体仿真平台
+                            云建模/物理仿真平台
                         </div>
                     </Col>
-                    <Col span={17}></Col>
+                    <Col span={16}></Col>
                     <Col span={3} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <Dropdown overlay={simTypeMenu} placement="bottomCenter">
                             <Button>选择仿真类型<DownOutlined /></Button>
@@ -110,10 +108,6 @@ function PhysikaWeb() {
             </Header>
             <Layout style={{ height: "93vh" }}>
                 <Sider width={270} className="site-layout-background" style={{ overflow: 'scroll' }}>
-                    {
-                        userStatus && (simType === "0") &&
-                        <PhysikaCloudEuler></PhysikaCloudEuler>
-                    }
                     {
                         userStatus && (simType === "1") &&
                         <PhysikaCloudNature></PhysikaCloudNature>

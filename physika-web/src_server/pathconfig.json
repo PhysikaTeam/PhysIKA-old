@@ -1,10 +1,5 @@
 {
     "userPath":"C:/Users/Administrator/AppData/Roaming/nvm/v14.16.0/Physika-web/data/user_file",
-    "CloudEuler":{
-        "simType":"CloudEuler",
-        "initConfigFileName":"./data/init_config_file/cloud_euler.xml",
-        "callPythonFileName":""
-    },
     "CloudNature":{
         "simType":"CloudNature",
         "initConfigFileName":"./data/init_config_file/cloud_nature.xml",

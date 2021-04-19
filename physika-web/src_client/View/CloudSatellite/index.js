@@ -246,6 +246,11 @@ class CloudSatellite extends React.Component {
                 })
                 .then(res => {
                     this.updateScene(res);
+                    const dimensions = this.curScene.source.getDimensions();
+                    this.state.description.push({
+                        name: "体素数",
+                        content: dimensions[0] * dimensions[1] * dimensions[2]
+                    });
                     this.initVolumeController();
                     this.orientationMarkerWidget.setEnabled(true);
                     this.initFPS();

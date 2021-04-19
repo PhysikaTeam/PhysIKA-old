@@ -364,6 +364,8 @@ class ParticleEvolution extends React.Component {
                 this.updateScene([res]);
                 //初始化体素显示控制控件
                 this.initVolumeController();
+                this.initFPS();
+                //显示方向标记部件
                 this.orientationMarkerWidget.setEnabled(true);
                 this.setState({
                     isSliderShow: true
@@ -378,17 +380,6 @@ class ParticleEvolution extends React.Component {
                 }
             });
     }
-
-    // writeModel = (frameIndex, arrayBuffer) => {
-    //     db.table('model').add({
-    //         userID: window.localStorage.userID, uploadDate: this.uploadDate, frameIndex: frameIndex, arrayBuffer: arrayBuffer
-    //     }).then(id => {
-    //         this.frameStateArray[frameIndex] = 1;
-    //         console.log(id, '成功存入第' + frameIndex + '帧！', this.frameStateArray);
-    //     }).catch(err => {
-    //         console.log(err);
-    //     })
-    // }
 
     readModel = (uploadDate, frameIndex) => {
         db.table('model').where('[uploadDate+frameIndex]').equals([uploadDate, frameIndex]).toArray()
