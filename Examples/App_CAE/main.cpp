@@ -34,8 +34,11 @@
 #include <GUI/QtGUI/PMainWindow.h>
 #include <GUI/QtGUI/PVTKOpenGLWidget.h>
 
+
 using namespace std;
 using namespace PhysIKA;
+
+
 
 std::vector<float> test_vector;
 
@@ -100,7 +103,6 @@ std::vector<float>& creare_scene_init()
 
 #endif // DEBUG
 
-
 void create_scene_semianylitical()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
@@ -156,6 +158,8 @@ void create_scene_semianylitical()
 
 	window.mainLoop();
 }
+
+
 
 int main()
 {
