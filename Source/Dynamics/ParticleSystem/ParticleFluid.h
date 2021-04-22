@@ -28,6 +28,9 @@ namespace PhysIKA
 
 	private:
 		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
+
+		// add by HNU
+		DEF_VAR(ImportFile, std::string, "", "ImportFile");
 	};
 
 #ifdef PRECISION_FLOAT

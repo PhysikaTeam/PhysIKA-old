@@ -195,7 +195,7 @@ checkHitScenePoint(PortType portType,
 {
   auto const &nodeStyle = StyleCollection::nodeStyle();
 
-  PortIndex result = INVALID;
+  PortIndex result = INVALID_;
 
   if (portType == PortType::None)
     return result;
