@@ -50,15 +50,14 @@ void GLApp::createWindow(int width, int height)
 	const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
 	char *argv[1];
 	char name_str[max_length];
-	std::string win_title = std::string("PhysIKA ") + std::to_string(PHYSIKA_VERSION_MAJOR) + std::string(".") + std::to_string(PHYSIKA_VERSION_MINOR) + std::string(".") + std::to_string(PHYSIKA_VERSION_PATCH);
-	strcpy(name_str, win_title.c_str());
+	strcpy(name_str, m_winName.c_str());
 	argv[0] = name_str;
 
 	glutInit(&argc, argv);
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);  //this option allows leaving the glut loop without exit program
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA);
 	glutInitWindowSize(m_width, m_height);
-	m_winID = glutCreateWindow(win_title.c_str());
+	m_winID = glutCreateWindow(m_winName.c_str());
 	glutHideWindow();
 
     glutShowWindow();
