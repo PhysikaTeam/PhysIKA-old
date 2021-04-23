@@ -35,11 +35,11 @@ else()
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
     string(REGEX REPLACE "//" "" CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-    set(FOLDER_PREFIX "Examples/Cloud/")
+    set(FOLDER_PREFIX "Examples/App_Cloud/")
 
     set(PhysIKA_Source_DIR ${CMAKE_SOURCE_DIR}/Source)
 
-    add_definitions(-DPhysIKA)
+    add_definitions(-DUnderPhysika)
 endif()
 
 
@@ -259,7 +259,7 @@ include_directories(
 add_library(COPY_DEPENDENCE ${CLOUD_SOURCE_DIR}/Extern/copy_file_dependence.cpp)
 set_target_properties(COPY_DEPENDENCE PROPERTIES FOLDER "${FOLDER_PREFIX}ExternalProjectTargets")
 
-option(CLOUD_PYTHON "option for python interface" ON)
+option(CLOUD_PYTHON "option for python interface" OFF)
 if(CLOUD_PYTHON)
     add_custom_command(
         TARGET COPY_DEPENDENCE
