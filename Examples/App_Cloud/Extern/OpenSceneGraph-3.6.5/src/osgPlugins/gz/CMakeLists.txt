@@ -1,0 +1,11 @@
+INCLUDE_DIRECTORIES( ${ZLIB_INCLUDE_DIR} )
+
+SET(TARGET_SRC 
+    ReaderWriterGZ.cpp
+)
+
+SET(TARGET_LIBRARIES_VARS ZLIB_LIBRARIES )
+
+
+#### end var setup  ###
+SETUP_PLUGIN(gz)

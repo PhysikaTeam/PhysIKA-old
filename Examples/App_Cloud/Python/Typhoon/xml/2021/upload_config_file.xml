@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Scene class=" " name="场景">
+    <MultiBand class="" name="多波段数据">
+        <Upload class="" name="用户上传">
+            <VIS class="File" accept=".awx" name="可见光波" disabled="false">FY2E_SEC_VIS_MLS_20130625_0000</VIS>
+            <IR1 class="File" accept=".awx" name="长波红外光1" disabled="false">FY2E_SEC_IR1_MLS_20130625_0000</IR1>
+            <IR2 class="File" accept=".awx" name="长波红外光2" disabled="false">FY2E_SEC_IR2_MLS_20130625_0000</IR2>
+            <WV class="File" accept=".awx" name="水汽红外" disabled="false">FY2E_SEC_IR3_MLS_20130625_0000</WV>
+            <SWIR class="File" accept=".awx" name="短波红外" disabled="false">FY2E_SEC_IR4_MLS_20130625_0000</SWIR>
+        </Upload>
+    </MultiBand>
+    <Display class="" name="显示控制">
+        <Range class="Vector2u" name="显示区域大小" disabled="false">200 200</Range>
+    </Display>
+</Scene>
