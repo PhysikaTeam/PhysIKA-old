@@ -1,5 +1,6 @@
 include_directories(
     ./
+    ${PhysIKA_Source_DIR}
 )
 
 add_subdirectory(./WRF)

@@ -12,7 +12,6 @@ int main(int argc,char ** argv)
 {
     SimpleModeler modeler;
 
-    //modeler.setNetCDFFile("D:\\Code\\LiYang\\TCDSM-MY\\NCData\\TC_07.nc");  // 输入的WRF数据
 	modeler.setNetCDFFile("D:\\Code\\get-libnames-vs\\format_convert.nc");
     modeler.setModelSavePath("./");                                         // 输出路径
 

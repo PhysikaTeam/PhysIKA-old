@@ -9,11 +9,10 @@
 #include <iostream>
 #include "Vector.h"
 #include <Vector>
+#include <PhysIKA_Head.h>
 using namespace std;
-//GL
-//#include "GL/glut.h"
 
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Polygon_2.h>
@@ -23,7 +22,7 @@ using namespace std;
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
 //opencv
-#include<opencv/cxcore.h>
+#include <opencv/cxcore.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
@@ -35,54 +34,20 @@ using namespace std;
 #define RANDCOUNT  10000  
 
 #define  CloudINTERIOR_RES  350
-#define   INT_RES   50
+#define  INT_RES   50
 #define  CONSTANT_ATTEN  0.35
 #define  SUN_INTENSITY (35) 
 #define  AMBIENT 0
 #define  SOLID_ANGLE   ((10*M_PI)/180.0)
 
-
-//1
-//#define  SUN_INTENSITY (40) 
 #define  CLOUD_FILE   "input\\test.jpg"
 #define  PIXELTYPEFILE "input/pixelifo_test.txt"
-
-//2
-//#define  SUN_INTENSITY (30) 
-//#define  CLOUD_FILE   "input\\test3.jpg"
-//#define  PIXELTYPEFILE "input\\pixelifo_test3.txt"
-
-//3
-//#define  SUN_INTENSITY (40) 
-//#define  CLOUD_FILE   "cloudimg\\test0.jpg"
-
-//4
-//#define  SUN_INTENSITY (30) 
-//#define  CLOUD_FILE   "cloudimg\\cloud14.jpg"
-
-////5
-//#define  SUN_INTENSITY (25) 
-//#define  CLOUD_FILE   "cloudimg\\shuyun.jpg"
-
-
-
-//#define  CLOUD_FILE   "input\\64.jpg"
-//#define  CLOUD_FILE   "input\\65.jpg"
-//#define  CLOUD_FILE   "input\\61.jpg"
-//#define  CLOUD_FILE   "input\\69.jpg"
-
-
-//#define  CLOUD_FILE   "cloudimg\\test5.jpg"
-//#define  CLOUD_FILE   "input\\test1.jpg"
-//#define  PIXELTYPEFILE "input\\pixelifo1.txt"
-//#define  CLOUD_FILE   "cloudimg\\evaluation.jpg"  
-
 
 #ifndef   __CYLINDER__
 #define  __CYLINDER__
 
 //The cloud volume is the union of cylinders
-struct Cylinder//Ô²ÖùÌåÄÚµã
+struct Cylinder//Ô²ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
 {
 	Vector3 center;
 	float   radius;
@@ -120,6 +85,6 @@ struct Cylinder//Ô²ÖùÌåÄÚµã
 
 };
 
-typedef  vector<Cylinder>   CloudVolume;
+typedef vector<Cylinder> CloudVolume;
 
 #endif

@@ -6,6 +6,7 @@
 #include <osg/Vec4>
 #include <sstream>
 #include <tcdsmUtil/export.h>
+#include <PhysIKA_Head.h>
 
 namespace TCDSM {
     namespace Util {
