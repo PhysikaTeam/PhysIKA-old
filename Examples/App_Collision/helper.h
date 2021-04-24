@@ -1,9 +1,11 @@
+#ifndef HELPER_H
+#define HELPER_H
 #include "Dynamics/RigidBody/RigidCollisionBody.h"
 
 using namespace PhysIKA;
 extern std::shared_ptr<RigidCollisionBody<DataType3f>> bunny;
 void checkCollision();
-void keyfunc(unsigned char key, int x, int y)
+inline void keyfunc(unsigned char key, int x, int y)
 {
 	GLApp *window = static_cast<GLApp*>(glutGetWindowData());
 	assert(window);
@@ -39,3 +41,4 @@ void keyfunc(unsigned char key, int x, int y)
 	}
 	checkCollision();
 }
+#endif

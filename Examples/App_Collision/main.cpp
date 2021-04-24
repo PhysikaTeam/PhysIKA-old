@@ -83,7 +83,7 @@ void CreateScene()
 		auto nbunny = std::make_shared<RigidCollisionBody<DataType3f>>();
 		root->addRigidBody(nbunny);
 		nbunny->getmeshPtr()->loadFromSet(TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(bunny->getSurfaceNode()->getTopologyModule()));
-#define gap 0.4
+		double gap = 0.4;
 		nbunny->translate(Vector3f(i * gap - gap, j * gap - gap,k  * gap - gap));
 		nbunny->postprocess();
 		auto sRender = std::make_shared<SurfaceMeshRender>();

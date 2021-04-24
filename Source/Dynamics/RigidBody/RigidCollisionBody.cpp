@@ -1,8 +1,9 @@
-#include "Dynamics/RigidBody/RigidCollisionBody.h"
-
-#include "Core/Vector/vector_3d.h"
 #include <vector>
 #include <string>
+
+#include "Core/Vector/vector_3d.h"
+#include "Dynamics/RigidBody/RigidCollisionBody.h"
+
 using namespace std;
 namespace PhysIKA
 {
