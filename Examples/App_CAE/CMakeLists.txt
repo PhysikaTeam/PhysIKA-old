@@ -25,18 +25,7 @@ if(PhysIKA_Qt5_GUI)
 
     add_executable(${PROJECT_NAME} ${SRC_LIST})                                                                 #prepare for building
     
-    if(UNIX)
-        target_link_libraries(${PROJECT_NAME} PUBLIC                                   #the option "-Wl,--whole-archive" is an equivalance to /WHOLEARCHIVE
-            -Wl,--whole-archive
-            Core 
-            Framework 
-            IO 
-            ParticleSystem  
-            QtGUI
-			RigidBody
-            -Wl,--no-whole-archive) 
-
-    elseif(WIN32)
+    if(WIN32)
         target_link_libraries(${PROJECT_NAME} PUBLIC
             Core 
             Framework 
