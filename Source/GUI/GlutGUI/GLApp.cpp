@@ -52,6 +52,7 @@ void GLApp::createWindow(int width, int height)
 	char name_str[max_length];
 	std::string win_title = std::string("PhysIKA ") + std::to_string(PHYSIKA_VERSION_MAJOR) + std::string(".") + std::to_string(PHYSIKA_VERSION_MINOR) + std::string(".") + std::to_string(PHYSIKA_VERSION_PATCH);
 	strcpy(name_str, win_title.c_str());
+	//strcpy(name_str, m_winName.c_str());
 	argv[0] = name_str;
 
 	glutInit(&argc, argv);

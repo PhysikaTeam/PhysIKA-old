@@ -110,6 +110,12 @@ namespace PhysIKA
 //		void setupMenuBar();
 		void setupAllWidgets();
 
+	public:
+		// adjust by HNU
+		PPropertyWidget * getProperty();
+			
+		PVTKOpenGLWidget* getVTKOpenGL();
+
 	protected:
 		void mousePressEvent(QMouseEvent *event) override;
 
@@ -122,9 +128,10 @@ namespace PhysIKA
 		PNodeFlowWidget*		m_flowView;
 		
 		PStatusBar*				m_statusBar;
-		PVTKOpenGLWidget*		m_vtkOpenglWidget;
-		
-		PPropertyWidget*		m_propertyWidget;
+
+		PPropertyWidget * m_propertyWidget;
+		PVTKOpenGLWidget* m_vtkOpenglWidget;
+
 		PAnimationWidget*		m_animationWidget;
 // 
 // 		PModuleFlowWidget*		m_moduleFlowView;

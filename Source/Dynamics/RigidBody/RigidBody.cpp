@@ -15,23 +15,24 @@ namespace PhysIKA
 		: Node(name)
 		, m_quaternion(Quaternion<Real>(Matrix::identityMatrix()))
 	{
-		attachField(&m_mass, MechanicalState::mass(), "Total mass of the rigid body!", false);
-		attachField(&m_center, MechanicalState::position(), "Center of the rigid body!", false);
-		attachField(&m_transVelocity, MechanicalState::velocity(), "Transitional velocity of the rigid body!", false);
-		attachField(&m_angularVelocity, MechanicalState::angularVelocity(), "Angular velocity of the rigid body!", false);
-		attachField(&m_force, MechanicalState::force(), "Transitional force of the rigid body!", false);
-		attachField(&m_torque, MechanicalState::torque(), "Angular momentum of the rigid body!", false);
+		/*************************** adjust by HNU ***********************/
+	//  attachField(&m_mass, MechanicalState::mass(), "Total mass of the rigid body!", false);
+	//	attachField(&m_center, MechanicalState::position(), "Center of the rigid body!", false);
+	//	attachField(&m_transVelocity, MechanicalState::velocity(), "Transitional velocity of the rigid body!", false);
+	//	attachField(&m_angularVelocity, MechanicalState::angularVelocity(), "Angular velocity of the rigid body!", false);
+	//	attachField(&m_force, MechanicalState::force(), "Transitional force of the rigid body!", false);
+	//	attachField(&m_torque, MechanicalState::torque(), "Angular momentum of the rigid body!", false);
 		attachField(&m_angularMass, MechanicalState::angularMass(), "Angular momentum", false);
 		attachField(&m_rotation, MechanicalState::rotation(), "Orientation", false);
 
 		Coord trans(0.5, 0.2, 0.5);
 
-		m_mass.setValue(Real(1));
-		m_center.setValue(trans);
-		m_transVelocity.setValue(Coord(0));
-		m_angularVelocity.setValue(Coord(0, 0, 0));
-		m_force.setValue(Coord(0));
-		m_torque.setValue(Coord(0));
+	//	m_mass.setValue(Real(1));
+	//	m_center.setValue(trans);
+	//	m_transVelocity.setValue(Coord(0));
+	//	m_angularVelocity.setValue(Coord(0, 0, 0));
+	//	m_force.setValue(Coord(0));
+	//	m_torque.setValue(Coord(0));
 		m_angularMass.setValue(Matrix::identityMatrix());
 		m_rotation.setValue(Matrix::identityMatrix());
 
@@ -40,6 +41,7 @@ namespace PhysIKA
 
 		m_frame->setCenter(trans);
 		m_frame->setOrientation(m_quaternion.get3x3Matrix());
+		/*************************** adjust by HNU ***********************/
 
 		//create a child node for surface rendering
 		m_surfaceNode = this->createChild<Node>("Mesh");
