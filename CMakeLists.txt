@@ -5,7 +5,7 @@ project(PhysIKA LANGUAGES CXX CUDA)                                             
 # define library version (update: apparently you can also do it in project()!)
 set(PHYSIKA_LIBRARY_VERSION_MAJOR 2 CACHE STRING "PhysIKA major version" FORCE)
 set(PHYSIKA_LIBRARY_VERSION_MINOR 2 CACHE STRING "PhysIKA minor version" FORCE)
-set(PHYSIKA_LIBRARY_VERSION_PATCH 0 CACHE STRING "patch version of PhysIKA" FORCE)
+set(PHYSIKA_LIBRARY_VERSION_PATCH 1 CACHE STRING "patch version of PhysIKA" FORCE)
 set(PHYSIKA_LIBRARY_VERSION "${PHYSIKA_LIBRARY_VERSION_MAJOR}.${PHYSIKA_LIBRARY_VERSION_MINOR}.${PHYSIKA_LIBRARY_VERSION_PATCH}" CACHE STRING "PhysIKA version" FORCE)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)                                                    #为sln内部projects设置管理folder

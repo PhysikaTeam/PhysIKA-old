@@ -1,7 +1,7 @@
-﻿cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10)
 
 add_subdirectory(FiniteElementMethod)
-set(LIB_NAMES ParticleSystem RigidBody HeightField EmbeddedMethod)
+set(LIB_NAMES ParticleSystem RigidBody HeightField EmbeddedMethod FastMultiphaseSPH)
 
 foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${LIB_NAME}")

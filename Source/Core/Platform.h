@@ -4,7 +4,6 @@
 #define PHYSIKA_VERSION_MINOR 2
 #define PHYSIKA_VERSION_PATCH 0
 
-
 #if ((defined _WIN32) || (defined(__MINGW32__) || defined(__CYGWIN__))) && defined(_DLL)
 #if !defined(PHYSIKA_DLL) && !defined(PHYSIKA_STATIC)
 #define PHYSIKA_DLL
