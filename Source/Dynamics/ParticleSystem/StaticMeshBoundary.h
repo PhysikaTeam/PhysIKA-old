@@ -15,6 +15,8 @@ namespace PhysIKA {
 	{
 		DECLARE_CLASS_1(StaticMeshBoundary, TDataType)
 	public:
+
+		// typename =>  to tell compiler that this is a type 
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 		typedef typename TopologyModule::Triangle Triangle;
@@ -34,6 +36,9 @@ namespace PhysIKA {
 	public:
 		DEF_NODE_PORTS(RigidBody, RigidBody<TDataType>, "A rigid body");
 		DEF_NODE_PORTS(ParticleSystem, ParticleSystem<TDataType>, "Particle Systems");
+
+		// add by HNU
+		DEF_VAR(ImportFile, std::string, "", "Solver");
 
 
 	public:

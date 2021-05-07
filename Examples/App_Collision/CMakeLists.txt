@@ -3,10 +3,12 @@ set(PROJECT_NAME App_Collision)
 
 link_libraries(Core Framework IO Rendering)
 link_libraries(ParticleSystem)
+link_libraries(RigidBody)
 link_libraries(GlutGUI)
 
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")
 
+include_directories(${SRC_DIR})
 file(                                                                                                       #利用glob命令读取所有源文件list
     GLOB_RECURSE SRC_LIST 
     LIST_DIRECTORIES false

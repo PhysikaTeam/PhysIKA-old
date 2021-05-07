@@ -118,14 +118,14 @@ namespace PhysIKA
 {
 	Q_DECLARE_METATYPE(QDockWidget::DockWidgetFeatures)
 
-	PMainWindow::PMainWindow(QWidget *parent, Qt::WindowFlags flags)
+		PMainWindow::PMainWindow(QWidget *parent, Qt::WindowFlags flags)
 		: QMainWindow(parent, flags),
 		m_statusBar(nullptr),
 		m_vtkOpenglWidget(nullptr),
 		m_propertyWidget(nullptr),
 		m_animationWidget(nullptr)
-// 		m_scenegraphWidget(nullptr),
-// 		m_moduleListWidget(nullptr)
+		// 		m_scenegraphWidget(nullptr),
+		// 		m_moduleListWidget(nullptr)
 	{
 		setObjectName("MainWindow");
 		setWindowTitle(QString("PhysIKA Studio ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH));
@@ -134,10 +134,10 @@ namespace PhysIKA
 		setCentralView();
 		setupToolBar();
 		setupStatusBar();
-//		setupMenuBar();
+		//		setupMenuBar();
 		setupAllWidgets();
 
-//		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_moduleFlowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
+		//		connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_moduleFlowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
 
 		statusBar()->showMessage(tr("Status Bar"));
 	}
@@ -181,25 +181,25 @@ namespace PhysIKA
 		tabWidget->addTab(m_vtkOpenglWidget, QString());
 		tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
 
-// 		m_moduleFlowView = new PModuleFlowWidget();
-// 		m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
-// 		tabWidget->addTab(m_moduleFlowView, QString());
-// 		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
+		// 		m_moduleFlowView = new PModuleFlowWidget();
+		// 		m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
+		// 		tabWidget->addTab(m_moduleFlowView, QString());
+		// 		tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
 
 
-		//Setup animation widget
+				//Setup animation widget
 		m_animationWidget = new PAnimationWidget(this);
 		m_animationWidget->layout()->setMargin(0);
 
 
-// 		QWidget* viewWidget = new QWidget();
-// 		QHBoxLayout* hLayout = new QHBoxLayout();
-// 		viewWidget->setLayout(hLayout);
-// 		hLayout->addWidget(m_vtkOpenglWidget, 1);
-// 		hLayout->addWidget(m_flowView, 1);
+		// 		QWidget* viewWidget = new QWidget();
+		// 		QHBoxLayout* hLayout = new QHBoxLayout();
+		// 		viewWidget->setLayout(hLayout);
+		// 		hLayout->addWidget(m_vtkOpenglWidget, 1);
+		// 		hLayout->addWidget(m_flowView, 1);
 
 		mainLayout->addWidget(tabWidget, 0, 0);
- 		mainLayout->addWidget(m_animationWidget, 1, 0);
+		mainLayout->addWidget(m_animationWidget, 1, 0);
 
 		connect(PSimulationThread::instance(), SIGNAL(oneFrameFinished()), m_vtkOpenglWidget, SLOT(prepareRenderingContex()));
 	}
@@ -225,12 +225,12 @@ namespace PhysIKA
 
 
 		tt::Page* filePage = tt->AddPage(QPixmap(mediaDir + "48px-Document-open.png"), "File");
-	
+
 		auto fg1 = filePage->AddGroup("");
 		//New action
 		QAction *actionNew = new QAction(QPixmap(mediaDir + "48px-Document-new.png"), "New...");
 		fg1->AddAction(QToolButton::DelayedPopup, actionNew);
-			
+
 		//Open action
 		QAction *actionOpen = new QAction(QPixmap(mediaDir + "48px-Document-open.png"), "Open");
 		fg1->AddAction(QToolButton::DelayedPopup, actionOpen);
@@ -246,9 +246,9 @@ namespace PhysIKA
 		QAction *actionSetting = new QAction(QPixmap(mediaDir + "48px-Preferences-system.png"), "Settings");
 		e1->AddAction(QToolButton::DelayedPopup, actionSetting);
 
-// 		PToolBar *tb = new PToolBar(tr("Tool Bar"), this);
-// 		toolBars.append(tb);
-// 		addToolBar(tb);
+		// 		PToolBar *tb = new PToolBar(tr("Tool Bar"), this);
+		// 		toolBars.append(tb);
+		// 		addToolBar(tb);
 
 		tt::Page* particlePage = tt->AddPage(convertIcon(mediaDir + "dyverso/icon-emi-fill.svg"), "Particle System ");
 		auto pg1 = particlePage->AddGroup("");
@@ -319,37 +319,37 @@ namespace PhysIKA
 		setStatusBar(m_statusBar);
 	}
 
-/*	void PMainWindow::setupMenuBar()
-	{
-		QMenu *menu = menuBar()->addMenu(tr("&File"));
+	/*	void PMainWindow::setupMenuBar()
+		{
+			QMenu *menu = menuBar()->addMenu(tr("&File"));
 
-		menu->addAction(tr("New ..."), this, &PMainWindow::newScene);
-		menu->addAction(tr("Load ..."), this, &PMainWindow::loadScene);
-		menu->addAction(tr("Save ..."), this, &PMainWindow::saveScene);
+			menu->addAction(tr("New ..."), this, &PMainWindow::newScene);
+			menu->addAction(tr("Load ..."), this, &PMainWindow::loadScene);
+			menu->addAction(tr("Save ..."), this, &PMainWindow::saveScene);
 
-		menu->addSeparator();
-		menu->addAction(tr("&Quit"), this, &QWidget::close);
+			menu->addSeparator();
+			menu->addAction(tr("&Quit"), this, &QWidget::close);
 
-		mainWindowMenu = menuBar()->addMenu(tr("&View"));
-		mainWindowMenu->addAction(tr("FullScreen"), this, &PMainWindow::fullScreen);
+			mainWindowMenu = menuBar()->addMenu(tr("&View"));
+			mainWindowMenu->addAction(tr("FullScreen"), this, &PMainWindow::fullScreen);
 
-#ifdef Q_OS_OSX
-		toolBarMenu->addSeparator();
+	#ifdef Q_OS_OSX
+			toolBarMenu->addSeparator();
 
-		action = toolBarMenu->addAction(tr("Unified"));
-		action->setCheckable(true);
-		action->setChecked(unifiedTitleAndToolBarOnMac());
-		connect(action, &QAction::toggled, this, &QMainWindow::setUnifiedTitleAndToolBarOnMac);
-#endif
+			action = toolBarMenu->addAction(tr("Unified"));
+			action->setCheckable(true);
+			action->setChecked(unifiedTitleAndToolBarOnMac());
+			connect(action, &QAction::toggled, this, &QMainWindow::setUnifiedTitleAndToolBarOnMac);
+	#endif
 
-		windowMenu = menuBar()->addMenu(tr("&Window"));
-		for (int i = 0; i < toolBars.count(); ++i)
-			windowMenu->addMenu(toolBars.at(i)->toolbarMenu());
+			windowMenu = menuBar()->addMenu(tr("&Window"));
+			for (int i = 0; i < toolBars.count(); ++i)
+				windowMenu->addMenu(toolBars.at(i)->toolbarMenu());
 
-		aboutMenu = menuBar()->addMenu(tr("&Help"));
-		aboutMenu->addAction(tr("Show Help ..."), this, &PMainWindow::showHelp);
-		aboutMenu->addAction(tr("About ..."), this, &PMainWindow::showAbout);
-	}*/
+			aboutMenu = menuBar()->addMenu(tr("&Help"));
+			aboutMenu->addAction(tr("Show Help ..."), this, &PMainWindow::showHelp);
+			aboutMenu->addAction(tr("About ..."), this, &PMainWindow::showAbout);
+		}*/
 
 	void PMainWindow::saveScene()
 	{
@@ -368,7 +368,7 @@ namespace PhysIKA
 
 	void PMainWindow::showAbout()
 	{
-		QString versoin = QString("Version ") + QString::number(PHYSIKA_VERSION_MAJOR)+QString(".")+ QString::number(PHYSIKA_VERSION_MINOR)+QString(".")+QString::number(PHYSIKA_VERSION_PATCH);
+		QString versoin = QString("Version ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH);
 		QMessageBox::about(this, tr("PhysIKA Studio "), versoin);
 		return;
 	}
@@ -381,7 +381,7 @@ namespace PhysIKA
 		{
 			clickedBlock = dynamic_cast<QtNodes::QtNodeWidget*>(nodes[0]->nodeDataModel());
 		}
-		
+
 		PNodeEditor* node_editor = new PNodeEditor(clickedBlock);
 		node_editor->setWindowTitle("Module Flow Editor");
 		node_editor->resize(1024, 600);
@@ -442,7 +442,7 @@ namespace PhysIKA
 		addDockWidget(sets[2].area, propertyDockWidget);
 		//windowMenu->addMenu(moduleListDockWidget->colorSwatchMenu());
 		m_propertyWidget = new PPropertyWidget();
-//		m_propertyWidget->setOpenGLWidget(m_vtkOpenglWidget);
+		//		m_propertyWidget->setOpenGLWidget(m_vtkOpenglWidget);
 		propertyDockWidget->setWidget(m_propertyWidget);
 
 
@@ -471,14 +471,20 @@ namespace PhysIKA
 		setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 		setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
-// 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
-// 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
-// 		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
+		// 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
+		// 		connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
+		// 		connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
 
 		connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
-//		connect(m_moduleFlowView->module_scene, &QtNodes::QtModuleFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
+		//		connect(m_moduleFlowView->module_scene, &QtNodes::QtModuleFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
 
 		connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeDoubleClicked, this, &PMainWindow::showNodeEditor);
+
+
+		connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeSelected, [=]() {
+			//	qDebug() << "cout" << m_propertyWidget->getTextFieldWidget();
+			m_propertyWidget->sendQTextFieldInitSignal();
+		});
 	}
 
 	void PMainWindow::mousePressEvent(QMouseEvent *event)
@@ -487,4 +493,15 @@ namespace PhysIKA
 		// 	m_thread->start();
 	}
 
+
+	// add by HNU
+	PPropertyWidget * PMainWindow::getProperty()
+	{
+		return m_propertyWidget;
+	}
+
+	PVTKOpenGLWidget* PMainWindow::getVTKOpenGL()
+	{
+		return m_vtkOpenglWidget;
+	}
 }

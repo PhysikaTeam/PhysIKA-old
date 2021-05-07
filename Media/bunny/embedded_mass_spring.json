@@ -1,0 +1,34 @@
+{
+    "hes_is_const" : false,
+    "newton_MaxIter": 2,
+    "newton_tol": 1e-2,
+    "solver_type":"implicit",
+    "line_search": false,
+    "blender": {
+        "surf": "sparse_bunny",
+        "input_format": "vtk"
+    },
+    "simulation_para": {
+        "stiffness":50,
+        "weight_line_search":1e-5,
+        "line_search":true,
+        "intensity":0,
+        "newton_fastMS":"newton",
+        "simulation":"dynamic",
+        "force_function":"gravity",
+        "weight_line_search":1e-5,
+        "w_pos":1e6,
+        "coll_z":false
+    },
+    "common": {
+        "time_step": 0.001,
+        "frame_rate": 1000,
+        "frame":100,
+        "density": 1000,
+        "gravity": 9.8,
+        "grav_axis":"y",
+        "out_dir_simulator":"../../Media/bunny",
+        "embedded_object":"../../Media/bunny/bunny_points.obj",
+        "input_object":"../../Media/bunny/sparse_bunny_mesh_simp.vtk"
+    }
+}
