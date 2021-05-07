@@ -576,13 +576,24 @@ namespace PhysIKA
 	{
 	public:
 		COMM_FUNC TAlignedBox3D();
+		COMM_FUNC TAlignedBox3D(const Coord3D& p0);
 		COMM_FUNC TAlignedBox3D(const Coord3D& p0, const Coord3D& p1);
 		COMM_FUNC TAlignedBox3D(const TAlignedBox3D<Real>& box);
 
 		COMM_FUNC bool intersect(const TAlignedBox3D<Real>& abox, TAlignedBox3D<Real>& interBox) const;
 		COMM_FUNC bool meshInsert(const TTriangle3D<Real>& tri) const;
+		COMM_FUNC 	bool overlaps(const TAlignedBox3D<Real>& box) const;
 		COMM_FUNC bool isValid();
-
+		COMM_FUNC TAlignedBox3D<Real>&operator += (const Vector<Real, 3> &p);
+		COMM_FUNC TAlignedBox3D<Real>&operator += (const TAlignedBox3D<Real> &p);
+		COMM_FUNC Vector3f center() const { return (v0 + v1) * double(0.5); }
+		COMM_FUNC  TAlignedBox3D<Real> operator + (const TAlignedBox3D<Real> &v) const;
+		
+		COMM_FUNC Real width()  const;
+		COMM_FUNC Real height() const;
+		COMM_FUNC Real depth()  const;
+		
+		// v0 min, v1 max
 		Coord3D v0;
 		Coord3D v1;
 	};

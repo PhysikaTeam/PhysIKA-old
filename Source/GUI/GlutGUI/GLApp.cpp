@@ -243,8 +243,10 @@ void GLApp::setDisplayFunction(void (*func)(void))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         display_function_ = GLApp::displayFunction;
     }
-    else
+    else{
         display_function_ = func;
+		glutDisplayFunc(display_function_);
+	}
 }
 
 void GLApp::setIdleFunction(void (*func)(void))
@@ -254,8 +256,10 @@ void GLApp::setIdleFunction(void (*func)(void))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         idle_function_ = GLApp::idleFunction;
     }
-    else
+    else{
         idle_function_ = func;
+		glutIdleFunc(idle_function_);
+	}
 }
 
 void GLApp::setReshapeFunction(void (*func)(int width, int height))
@@ -265,19 +269,24 @@ void GLApp::setReshapeFunction(void (*func)(int width, int height))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         reshape_function_ = GLApp::reshapeFunction;
     }
-    else
-        reshape_function_ = func;
+    else{
+	    reshape_function_ = func;
+		glutReshapeFunc(reshape_function_);
+	}
 }
 
-void GLApp::setKeyboardFunction(void (*func)(unsigned char key, int x, int y))
+void GLApp::setKeyboardFunction(void(*func)(unsigned char key, int x, int y))
 {
-    if(func==NULL)
-    {
-        std::cerr<<"NULL callback function provided, use default instead.\n";
-        keyboard_function_ = GLApp::keyboardFunction;
-    }
-    else
-        keyboard_function_ = func;
+	if (func == NULL)
+	{
+		std::cerr << "NULL callback function provided, use default instead.\n";
+		keyboard_function_ = GLApp::keyboardFunction;
+	}
+	else
+	{
+		keyboard_function_ = func;
+		glutKeyboardFunc(keyboard_function_);
+	}
 }
 
 void GLApp::setSpecialFunction(void (*func)(int key, int x, int y))
@@ -287,8 +296,10 @@ void GLApp::setSpecialFunction(void (*func)(int key, int x, int y))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         special_function_ = GLApp::specialFunction;
     }
-    else
+    else{
         special_function_ = func;
+		glutSpecialFunc(special_function_);
+	}
 }
 
 void GLApp::setMotionFunction(void (*func)(int x, int y))
@@ -298,8 +309,10 @@ void GLApp::setMotionFunction(void (*func)(int x, int y))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         motion_function_ = GLApp::motionFunction;
     }
-    else
+    else{
         motion_function_ = func;
+		glutMotionFunc(motion_function_);
+	}
 }
 
 void GLApp::setMouseFunction(void (*func)(int button, int state, int x, int y))
@@ -309,8 +322,10 @@ void GLApp::setMouseFunction(void (*func)(int button, int state, int x, int y))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         mouse_function_ = GLApp::mouseFunction;
     }
-    else
+    else{
         mouse_function_ = func;
+		glutMouseFunc(mouse_function_);
+	}
 }
 
 void GLApp::setMouseWheelFunction(void(*func)(int wheel, int direction, int x, int y))
@@ -320,8 +335,10 @@ void GLApp::setMouseWheelFunction(void(*func)(int wheel, int direction, int x, i
         std::cerr << "NULL callback function provided, use default instead.\n";
         mouse_wheel_function_ = GLApp::mouseWheelFunction;
     }
-    else
+    else{
         mouse_wheel_function_ = func;
+		glutMouseWheelFunc(mouse_wheel_function_);
+	}
 }
 
 void GLApp::setInitFunction(void (*func)(void))
@@ -331,8 +348,10 @@ void GLApp::setInitFunction(void (*func)(void))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         init_function_ = GLApp::initFunction;
     }
-    else
+    else{
         init_function_ = func;
+		(*init_function_)(); //call the init function before entering main loop
+	}
 }
 
 void GLApp::bindDefaultKeys(unsigned char key, int x, int y)

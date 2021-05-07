@@ -329,7 +329,17 @@ COMM_FUNC const SquareMatrix<Scalar,3> SquareMatrix<Scalar,3>::identityMatrix()
                                    0.0, 1.0, 0.0, 
                                    0.0, 0.0, 1.0);
 }
-
+static Matrix3f rotation(const Vector3f& axis, double theta) {
+	const double s = sin(theta);
+	const double c = cos(theta);
+	const double t = 1 - c;
+	const double x = axis.data_.x, y = axis.data_.y, z = axis.data_.z;
+	return Matrix3f(
+		t*x*x + c, t*x*y - s * z, t*x*z + s * y,
+		t*x*y + s * z, t*y*y + c, t*y*z - s * x,
+		t*x*z - s * y, t*y*z + s * x, t*z*z + c
+	);
+}
 //explicit instantiation of template so that it could be compiled into a lib
 // template class SquareMatrix<unsigned char, 3>;
 // template class SquareMatrix<unsigned short, 3>;
