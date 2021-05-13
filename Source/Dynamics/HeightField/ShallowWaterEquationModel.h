@@ -1,3 +1,9 @@
+/**
+ * @author     : Ben Xu (xuben@mail.nankai.edu.cn)
+ * @date       : 2021-02-01
+ * @description: swe model library
+ * @version    : 1.0
+ */
 #pragma once
 #include "Framework/Framework/NumericalModel.h"
 #include "Framework/Framework/FieldVar.h"
@@ -5,6 +11,10 @@
 
 namespace PhysIKA
 {
+	/*!
+*	\class	ShallowWaterEquationModel
+*	\brief	SWE model. This class can only be called by class HeightFieldNode's member function.
+	*/
 	template<typename TDataType>
 	class ShallowWaterEquationModel : public NumericalModel
 	{
@@ -43,11 +53,11 @@ namespace PhysIKA
 		bool initializeImpl() override;
 
 	private:
-		int m_pNum;//grid point numbers
-		Real distance;//the distance between two neighbor grid points
-		Real relax;//System damping coefficient, should always be less than or equal to 1
-		int zcount;//grid point number along z direction
-		int xcount;//grid point number along x direction
+		int m_pNum;		//grid point numbers
+		Real distance;	//the distance between two neighbor grid points
+		Real relax;		//System damping coefficient, should always be less than or equal to 1
+		int zcount;		//grid point number along z direction
+		int xcount;		//grid point number along x direction
 		
 		float sumtimes = 0;
 		int sumnum = 0;

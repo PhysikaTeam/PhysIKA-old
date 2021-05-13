@@ -295,7 +295,6 @@ namespace PhysIKA
 		solidList.clear();
 		isbound.clear();
 		normals.clear();
-
 	}
 
 	template<typename TDataType>
