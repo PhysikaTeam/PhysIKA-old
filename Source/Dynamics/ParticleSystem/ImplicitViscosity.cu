@@ -121,6 +121,7 @@ namespace PhysIKA
 					vis,
 					m_smoothingLength.getValue(),
 					dt);
+				cuSynchronize();
 			}
 
 			return true;

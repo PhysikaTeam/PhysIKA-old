@@ -138,13 +138,13 @@ namespace  PhysIKA
 		
 		
 
-		printf("vis finished\n");
+		//printf("vis finished\n");
 		m_meshCollision->doCollision();
 
 		m_visModule->constrain();
 		m_pbdModule2->constrain();
 		//cudaMemcpy(m_position.getValue().getDataPtr(), m_position_all.getValue().getDataPtr(), m_position.getValue().size() * sizeof(Coord), cudaMemcpyDeviceToDevice);
-		printf("pbd finished\n");
+		//printf("pbd finished\n");
 		//m_meshCollision->doCollision();
 
 		

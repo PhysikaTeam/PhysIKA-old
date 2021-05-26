@@ -343,6 +343,8 @@ namespace PhysIKA
 				pos_i = new_pos / weight;
 			}
 		}
+		if (pos_i[1] < 0.005)
+			pos_i[1] = 0.005;
 		points[pId] = pos_i;
 		vels[pId] += (pos_i - old_pos) / dt;
 	}
@@ -522,7 +524,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void MeshCollision<TDataType>::doCollision()
 	{
-		Real radius = 0.005;
+		Real radius = 0.0075;
 
 
 		if (m_position.getElementCount() == 0) return;
@@ -565,7 +567,7 @@ namespace PhysIKA
 		//VC_Sort_Neighbors_Collide <Real, Coord> << <pDims, BLOCK_SIZE >> > (
 		/**/
 
-		cuSynchronize();
+		
 
 		cuExecute(total_num, VC_Sort_Neighbors_Collide,
 			m_position.getValue(),
@@ -573,10 +575,11 @@ namespace PhysIKA
 			m_triangle_vertex.getValue(),
 			m_neighborhood_tri.getValue()
 			);
+		cuSynchronize();
 		
 		//K_CCD_MESH <Real, Coord> << <pDims, BLOCK_SIZE >> > (
 		
-		cuExecute(total_num, K_CCD_MESH,
+		/*cuExecute(total_num, K_CCD_MESH,
 			m_position.getValue(),
 			m_velocity.getValue(),
 			m_position_previous,
@@ -586,24 +589,26 @@ namespace PhysIKA
 			m_neighborhood_tri.getValue(),
 			radius,
 			getParent()->getDt()
-			);
+			);*/
 		
 		
 
-// 		K_CD_mesh2 << <pDims, BLOCK_SIZE >> > (
-// 			m_position.getValue(),
-// 			m_triangle_vertex.getValue(),
-// 			m_triangle_index.getValue(),
-// 			m_velocity.getValue(),
-// 			m_flip.getValue(),
-// 			m_neighborhood_tri.getValue(),
-// 			radius,
-// 			getParent()->getDt()
-// 			);
+ 		K_CD_mesh2 << <total_num, BLOCK_SIZE >> > (
+ 			m_position.getValue(),
+ 			m_triangle_vertex.getValue(),
+ 			m_triangle_index.getValue(),
+ 			m_velocity.getValue(),
+ 			m_flip.getValue(),
+ 			m_neighborhood_tri.getValue(),
+ 			radius,
+ 			getParent()->getDt()
+ 			);
 
 		Function1Pt::copy(m_triangle_vertex_previous, m_triangle_vertex.getValue());
 		Function1Pt::copy(m_position_previous, m_position.getValue());
+		cuSynchronize();
 
+		return;
 	}
 
 	
