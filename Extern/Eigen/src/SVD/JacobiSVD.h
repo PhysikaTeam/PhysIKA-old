@@ -355,7 +355,7 @@ struct svd_precondition_2x2_block_to_be_real<MatrixType, QRPreconditioner, false
 {
   typedef JacobiSVD<MatrixType, QRPreconditioner> SVD;
   typedef typename MatrixType::RealScalar RealScalar;
-  static bool run(typename SVD::WorkMatrixType&, SVD&, Eigen::Index, Eigen::Index, RealScalar&) { return true; }
+  static bool run(typename SVD::WorkMatrixType&, SVD&, Index, Index, RealScalar&) { return true; }
 };
 
 template<typename MatrixType, int QRPreconditioner>
@@ -364,7 +364,7 @@ struct svd_precondition_2x2_block_to_be_real<MatrixType, QRPreconditioner, true>
   typedef JacobiSVD<MatrixType, QRPreconditioner> SVD;
   typedef typename MatrixType::Scalar Scalar;
   typedef typename MatrixType::RealScalar RealScalar;
-  static bool run(typename SVD::WorkMatrixType& work_matrix, SVD& svd, Eigen::Index p, Eigen::Index q, RealScalar& maxDiagEntry)
+  static bool run(typename SVD::WorkMatrixType& work_matrix, SVD& svd, Index p, Index q, RealScalar& maxDiagEntry)
   {
     using std::sqrt;
     using std::abs;
@@ -425,6 +425,7 @@ struct svd_precondition_2x2_block_to_be_real<MatrixType, QRPreconditioner, true>
 
 template<typename _MatrixType, int QRPreconditioner> 
 struct traits<JacobiSVD<_MatrixType,QRPreconditioner> >
+        : traits<_MatrixType>
 {
   typedef _MatrixType MatrixType;
 };
@@ -528,7 +529,7 @@ template<typename _MatrixType, int QRPreconditioner> class JacobiSVD
       * according to the specified problem size.
       * \sa JacobiSVD()
       */
-    JacobiSVD(Eigen::Index rows, Eigen::Index cols, unsigned int computationOptions = 0)
+    JacobiSVD(Index rows, Index cols, unsigned int computationOptions = 0)
     {
       allocate(rows, cols, computationOptions);
     }
@@ -578,12 +579,13 @@ template<typename _MatrixType, int QRPreconditioner> class JacobiSVD
     using Base::rank;
 
   private:
-    void allocate(Eigen::Index rows, Eigen::Index cols, unsigned int computationOptions);
+    void allocate(Index rows, Index cols, unsigned int computationOptions);
 
   protected:
     using Base::m_matrixU;
     using Base::m_matrixV;
     using Base::m_singularValues;
+    using Base::m_info;
     using Base::m_isInitialized;
     using Base::m_isAllocated;
     using Base::m_usePrescribedThreshold;
@@ -624,6 +626,7 @@ void JacobiSVD<MatrixType, QRPreconditioner>::allocate(Eigen::Index rows, Eigen:
 
   m_rows = rows;
   m_cols = cols;
+  m_info = Success;
   m_isInitialized = false;
   m_isAllocated = true;
   m_computationOptions = computationOptions;
@@ -673,7 +676,12 @@ JacobiSVD<MatrixType, QRPreconditioner>::compute(const MatrixType& matrix, unsig
   const RealScalar considerAsZero = (std::numeric_limits<RealScalar>::min)();
 
   // Scaling factor to reduce over/under-flows
-  RealScalar scale = matrix.cwiseAbs().maxCoeff();
+  RealScalar scale = matrix.cwiseAbs().template maxCoeff<PropagateNaN>();
+  if (!(numext::isfinite)(scale)) {
+    m_isInitialized = true;
+    m_info = InvalidInput;
+    return *this;
+  }
   if(scale==RealScalar(0)) scale = RealScalar(1);
   
   /*** step 1. The R-SVD step: we use a QR decomposition to reduce to the case of a square matrix */
@@ -703,9 +711,9 @@ JacobiSVD<MatrixType, QRPreconditioner>::compute(const MatrixType& matrix, unsig
 
     // do a sweep: for all index pairs (p,q), perform SVD of the corresponding 2x2 sub-matrix
 
-    for(Eigen::Index p = 1; p < m_diagSize; ++p)
+    for(Index p = 1; p < m_diagSize; ++p)
     {
-      for(Eigen::Index q = 0; q < p; ++q)
+      for(Index q = 0; q < p; ++q)
       {
         // if this 2x2 sub-matrix is not diagonal already...
         // notice that this comparison will evaluate to false if any NaN is involved, ensuring that NaN's don't
@@ -738,7 +746,7 @@ JacobiSVD<MatrixType, QRPreconditioner>::compute(const MatrixType& matrix, unsig
 
   /*** step 3. The work matrix is now diagonal, so ensure it's positive so its diagonal entries are the singular values ***/
 
-  for(Eigen::Index i = 0; i < m_diagSize; ++i)
+  for(Index i = 0; i < m_diagSize; ++i)
   {
     // For a complex matrix, some diagonal coefficients might note have been
     // treated by svd_precondition_2x2_block_to_be_real, and the imaginary part
@@ -763,9 +771,9 @@ JacobiSVD<MatrixType, QRPreconditioner>::compute(const MatrixType& matrix, unsig
   /*** step 4. Sort singular values in descending order and compute the number of nonzero singular values ***/
 
   m_nonzeroSingularValues = m_diagSize;
-  for(Eigen::Index i = 0; i < m_diagSize; i++)
+  for(Index i = 0; i < m_diagSize; i++)
   {
-    Eigen::Index pos;
+    Index pos;
     RealScalar maxRemainingSingularValue = m_singularValues.tail(m_diagSize-i).maxCoeff(&pos);
     if(maxRemainingSingularValue == RealScalar(0))
     {

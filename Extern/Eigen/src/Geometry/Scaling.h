@@ -14,7 +14,7 @@ namespace Eigen {
 
 /** \geometry_module \ingroup Geometry_Module
   *
-  * \class Scaling
+  * \class UniformScaling
   *
   * \brief Represents a generic uniform scaling transformation
   *
@@ -77,13 +77,13 @@ public:
   /** Concatenates a uniform scaling and an affine transformation */
   template<int Dim, int Mode, int Options>
   inline typename
-	internal::uniformscaling_times_affine_returntype <Scalar,Dim,Mode>::type
+	internal::uniformscaling_times_affine_returntype<Scalar,Dim,Mode>::type
 	operator* (const Transform<Scalar, Dim, Mode, Options>& t) const
-    {
-      typename internal::uniformscaling_times_affine_returntype <Scalar,Dim,Mode> res = t;
-      res.prescale(factor());
-      return res;
-    }
+  {
+    typename internal::uniformscaling_times_affine_returntype<Scalar,Dim,Mode>::type res = t;
+    res.prescale(factor());
+    return res;
+  }
 
   /** Concatenates a uniform scaling and a linear transformation matrix */
   // TODO returns an expression
@@ -128,7 +128,7 @@ public:
 /** Concatenates a linear transformation matrix and a uniform scaling
   * \relates UniformScaling
   */
-// NOTE this operator is defiend in MatrixBase and not as a friend function
+// NOTE this operator is defined in MatrixBase and not as a friend function
 // of UniformScaling to fix an internal crash of Intel's ICC
 template<typename Derived,typename Scalar>
 EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(Derived,Scalar,product)
