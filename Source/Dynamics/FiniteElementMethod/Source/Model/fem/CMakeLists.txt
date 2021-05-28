@@ -11,4 +11,4 @@ target_link_libraries(ZJU_FEM
  )
 
 
-
+install_as_LIB(ZJU_FEM)

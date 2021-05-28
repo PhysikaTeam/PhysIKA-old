@@ -24,19 +24,19 @@ namespace PhysIKA
 		this->attachField(&m_horizon, "horizon", "horizon");
 
                 auto m_integrator = this->template setNumericalIntegrator<EmbeddedIntegrator<TDataType>>("integrator");
-                this->getPosition()->connect(m_integrator->m_position);
-		this->getVelocity()->connect(m_integrator->m_velocity);
-		this->getForce()->connect(m_integrator->m_forceDensity);
+                this->currentPosition()->connect(&m_integrator->m_position);
+		this->currentVelocity()->connect(&m_integrator->m_velocity);
+		this->currentForce()->connect(&m_integrator->m_forceDensity);
 
 		auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		m_horizon.connect(m_nbrQuery->m_radius);
-		this->m_position.connect(m_nbrQuery->m_position);
+		m_horizon.connect(m_nbrQuery->inRadius());
+		this->currentPosition()->connect(m_nbrQuery->inPosition());
 
 		auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
-		this->getPosition()->connect(m_elasticity->m_position);
-		this->getVelocity()->connect(m_elasticity->m_velocity);
-		m_horizon.connect(m_elasticity->m_horizon);
-		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
+		this->currentPosition()->connect(m_elasticity->inPosition());
+		this->currentVelocity()->connect(m_elasticity->inVelocity());
+		m_horizon.connect(m_elasticity->inHorizon());
+		m_nbrQuery->outNeighborhood()->connect(m_elasticity->inNeighborhood());
 
 		//Create a node for surface mesh rendering
 		m_surfaceNode = this->template createChild<Node>("Mesh");
@@ -99,7 +99,7 @@ namespace PhysIKA
 	{
 
 		auto pts = this->m_pSet->getPoints();
-		Function1Pt::copy(pts, this->getPosition()->getValue());
+		Function1Pt::copy(pts, this->currentPosition()->getValue());
 
                 /*TODO:fix bug:
                   apply() will not update points in triSet because points in triSet has no neighbours */
@@ -129,10 +129,10 @@ namespace PhysIKA
 		auto nbrQuery = this->template getModule<NeighborQuery<TDataType>>("neighborhood");
 		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
 
-		this->getPosition()->connect(solver->m_position);
-		this->getVelocity()->connect(solver->m_velocity);
-		nbrQuery->m_neighborhood.connect(solver->m_neighborhood);
-		m_horizon.connect(solver->m_horizon);
+		this->currentPosition()->connect(solver->inPosition());
+		this->currentVelocity()->connect(solver->inVelocity());
+		nbrQuery->outNeighborhood()->connect(solver->inNeighborhood());
+		m_horizon.connect(solver->inHorizon());
 
 		this->deleteModule(module);
 

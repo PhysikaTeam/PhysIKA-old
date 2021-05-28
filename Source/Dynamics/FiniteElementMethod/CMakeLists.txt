@@ -1,4 +1,5 @@
-project(MarvalPhysics)
+project(MarvalPhysics CXX)
+set(ZJU_ROOT_DIR ${CMAKE_SOURCE_DIR}/Source/Dynamics/FiniteElementMethod/Source)
 cmake_minimum_required(VERSION 3.10)
 # The project version number.
 set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
@@ -10,6 +11,22 @@ if (${APPLE})
 else ()
   list(APPEND CMAKE_CXX_FLAGS " -std=c++11 -fPIC")
 endif (${APPLE})
+
+function(install_as_LIB LIB_NAME)
+install(TARGETS ${LIB_NAME}
+    EXPORT ${LIB_NAME}Targets
+    RUNTIME  DESTINATION  ${PHYSIKA_RUNTIME_INSTALL_DIR}
+    LIBRARY  DESTINATION  ${PHYSIKA_LIBRARY_INSTALL_DIR}
+    ARCHIVE  DESTINATION  ${PHYSIKA_ARCHIVE_INSTALL_DIR}
+    )
+
+install(EXPORT ${LIB_NAME}Targets DESTINATION ${PHYSIKA_CMAKE_CONFIG_INSTALL_DIR}
+    FILE ${LIB_NAME}Targets.cmake)
+
+get_property(LOCAL_CMAKES_NAMES GLOBAL PROPERTY "GLOBAL_CMAKES_NAMES")
+list(APPEND LOCAL_CMAKES_NAMES "${LIB_NAME}Targets.cmake")    
+set_property(GLOBAL PROPERTY GLOBAL_CMAKES_NAMES ${LOCAL_CMAKES_NAMES})
+endfunction()
 
 set(CMAKE_CXX_STANDARD 14)
 if (WIN32)
@@ -26,13 +43,13 @@ endif ()
 # set(Boost_USE_STATIC_RUNTIME OFF)
 # find_package(Boost COMPONENTS filesystem system program_options REQUIRED)
 # set(Boost_INCLUDE_DIRS C:/Boost/include/boost-1_73)
-set(Boost_INCLUDE_DIRS ../../../Extern)
+set(Boost_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/Extern)
 include_directories(${Boost_INCLUDE_DIRS})
 
 
 # EIGEN3
 # find_package(Eigen3 REQUIRED)
-set(EIGEN3_INCLUDE_DIR ../../../Extern/)
+set(EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/Extern)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 if (${APPLE})
@@ -49,7 +66,7 @@ else ()
 endif (${APPLE})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Extern)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Source)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 add_subdirectory(Source)
 # add_subdirectory(Docs EXCLUDE_FROM_ALL)

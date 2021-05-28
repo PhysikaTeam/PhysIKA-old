@@ -8,7 +8,11 @@ else ()
   cuda_add_library(ZJU_SOLVER STATIC ${source})
 endif(${APPLE})
 
-target_include_directories(ZJU_SOLVER PUBLIC ${CUDA_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
+target_include_directories(ZJU_SOLVER PUBLIC 
+$<BUILD_INTERFACE:${CUDA_INCLUDE_DIR}>
+$<BUILD_INTERFACE:${Boost_INCLUDE_DIRS}>
+ )
+
 target_link_libraries(ZJU_SOLVER
   ZJU_CORE)
 TARGET_LINK_LIBRARIES(ZJU_SOLVER
@@ -16,3 +20,6 @@ TARGET_LINK_LIBRARIES(ZJU_SOLVER
   ${LAPACK_LIBRARIES})
 
 add_subdirectory(linear_solver)
+
+
+install_as_LIB(ZJU_SOLVER)
