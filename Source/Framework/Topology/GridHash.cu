@@ -95,17 +95,17 @@ namespace PhysIKA {
 		
 		Real ds = hash.ds;
 	//	printf("%.3lf\n", ds);
-		int i0 = floor((pos[tri[pId][0]][0] - hash.lo[0]) / hash.ds);
-		int j0 = floor((pos[tri[pId][0]][1] - hash.lo[1]) / hash.ds);
-		int k0 = floor((pos[tri[pId][0]][2] - hash.lo[2]) / hash.ds);
+		int i0 = floorf((pos[tri[pId][0]][0] - hash.lo[0]) / hash.ds);
+		int j0 = floorf((pos[tri[pId][0]][1] - hash.lo[1]) / hash.ds);
+		int k0 = floorf((pos[tri[pId][0]][2] - hash.lo[2]) / hash.ds);
 
-		int i1 = floor((pos[tri[pId][1]][0] - hash.lo[0]) / hash.ds);
-		int j1 = floor((pos[tri[pId][1]][1] - hash.lo[1]) / hash.ds);
-		int k1 = floor((pos[tri[pId][1]][2] - hash.lo[2]) / hash.ds);
+		int i1 = floorf((pos[tri[pId][1]][0] - hash.lo[0]) / hash.ds);
+		int j1 = floorf((pos[tri[pId][1]][1] - hash.lo[1]) / hash.ds);
+		int k1 = floorf((pos[tri[pId][1]][2] - hash.lo[2]) / hash.ds);
 
-		int i2 = floor((pos[tri[pId][2]][0] - hash.lo[0]) / hash.ds);
-		int j2 = floor((pos[tri[pId][2]][1] - hash.lo[1]) / hash.ds);
-		int k2 = floor((pos[tri[pId][2]][2] - hash.lo[2]) / hash.ds);
+		int i2 = floorf((pos[tri[pId][2]][0] - hash.lo[0]) / hash.ds);
+		int j2 = floorf((pos[tri[pId][2]][1] - hash.lo[1]) / hash.ds);
+		int k2 = floorf((pos[tri[pId][2]][2] - hash.lo[2]) / hash.ds);
 
 		int imin = i0 < i1 ? i0 : i1;
 		imin = i2 < imin ? i2 : imin;
@@ -206,17 +206,17 @@ namespace PhysIKA {
 		Real ds = hash.ds;
 		//Coord3D lo = hash.lo;
 		//Coord3D hi = hash.hi;
-		int i0 = floor((pos[tri[pId][0]][0] - hash.lo[0]) / hash.ds);
-		int j0 = floor((pos[tri[pId][0]][1] - hash.lo[1]) / hash.ds);
-		int k0 = floor((pos[tri[pId][0]][2] - hash.lo[2]) / hash.ds);
+		int i0 = floorf((pos[tri[pId][0]][0] - hash.lo[0]) / hash.ds);
+		int j0 = floorf((pos[tri[pId][0]][1] - hash.lo[1]) / hash.ds);
+		int k0 = floorf((pos[tri[pId][0]][2] - hash.lo[2]) / hash.ds);
 
-		int i1 = floor((pos[tri[pId][1]][0] - hash.lo[0]) / hash.ds);
-		int j1 = floor((pos[tri[pId][1]][1] - hash.lo[1]) / hash.ds);
-		int k1 = floor((pos[tri[pId][1]][2] - hash.lo[2]) / hash.ds);
+		int i1 = floorf((pos[tri[pId][1]][0] - hash.lo[0]) / hash.ds);
+		int j1 = floorf((pos[tri[pId][1]][1] - hash.lo[1]) / hash.ds);
+		int k1 = floorf((pos[tri[pId][1]][2] - hash.lo[2]) / hash.ds);
 
-		int i2 = floor((pos[tri[pId][2]][0] - hash.lo[0]) / hash.ds);
-		int j2 = floor((pos[tri[pId][2]][1] - hash.lo[1]) / hash.ds);
-		int k2 = floor((pos[tri[pId][2]][2] - hash.lo[2]) / hash.ds);
+		int i2 = floorf((pos[tri[pId][2]][0] - hash.lo[0]) / hash.ds);
+		int j2 = floorf((pos[tri[pId][2]][1] - hash.lo[1]) / hash.ds);
+		int k2 = floorf((pos[tri[pId][2]][2] - hash.lo[2]) / hash.ds);
 
 		int imin = i0 < i1 ? i0 : i1;
 		imin = i2 < imin ? i2 : imin;

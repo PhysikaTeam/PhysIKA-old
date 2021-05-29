@@ -8,6 +8,9 @@ namespace PhysIKA
 		unsigned int _id[2];
 
 	public:
+		unsigned int id0() const { return _id[0]; }
+		unsigned int id1() const { return _id[1]; }
+
 		TrianglePair(unsigned int id1, unsigned int id2)
 		{
 			if (id1 < id2) {

@@ -6,270 +6,21 @@
 #include "Framework/Collision/CollidableTriangle.h"
 #include "Framework/Collision/CollidableTriangleMesh.h"
 #include "Framework/Framework/ModuleTopology.h"
+#include "CollisionMesh.h"
+
 namespace PhysIKA {
-	
-	class vec3f {
-	public:
-		union {
-			struct {
-				double x, y, z;
-			};
-			struct {
-				double v[3];
-			};
-		};
-
-		FORCEINLINE vec3f()
-		{
-			x = 0; y = 0; z = 0;
-		}
-
-		FORCEINLINE vec3f(const vec3f &v)
-		{
-			x = v.x;
-			y = v.y;
-			z = v.z;
-		}
-
-		FORCEINLINE vec3f(const double *v)
-		{
-			x = v[0];
-			y = v[1];
-			z = v[2];
-		}
-		FORCEINLINE vec3f(float *v)
-		{
-			x = v[0];
-			y = v[1];
-			z = v[2];
-		}
-
-		FORCEINLINE vec3f(double x, double y, double z)
-		{
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
-
-		FORCEINLINE double operator [] (int i) const { return v[i]; }
-		FORCEINLINE double &operator [] (int i) { return v[i]; }
-
-		FORCEINLINE vec3f &operator += (const vec3f &v) {
-			x += v.x;
-			y += v.y;
-			z += v.z;
-			return *this;
-		}
-
-		FORCEINLINE vec3f &operator -= (const vec3f &v) {
-			x -= v.x;
-			y -= v.y;
-			z -= v.z;
-			return *this;
-		}
-
-		FORCEINLINE vec3f &operator *= (double t) {
-			x *= t;
-			y *= t;
-			z *= t;
-			return *this;
-		}
-
-		FORCEINLINE vec3f &operator /= (double t) {
-			x /= t;
-			y /= t;
-			z /= t;
-			return *this;
-		}
-
-		FORCEINLINE void negate() {
-			x = -x;
-			y = -y;
-			z = -z;
-		}
-
-		FORCEINLINE vec3f operator - () const {
-			return vec3f(-x, -y, -z);
-		}
-
-		FORCEINLINE vec3f operator+ (const vec3f &v) const
-		{
-			return vec3f(x + v.x, y + v.y, z + v.z);
-		}
-
-		FORCEINLINE vec3f operator- (const vec3f &v) const
-		{
-			return vec3f(x - v.x, y - v.y, z - v.z);
-		}
-
-		FORCEINLINE vec3f operator *(double t) const
-		{
-			return vec3f(x*t, y*t, z*t);
-		}
-
-		FORCEINLINE vec3f operator /(double t) const
-		{
-			return vec3f(x / t, y / t, z / t);
-		}
-
-		// cross product
-		FORCEINLINE const vec3f cross(const vec3f &vec) const
-		{
-			return vec3f(y*vec.z - z * vec.y, z*vec.x - x * vec.z, x*vec.y - y * vec.x);
-		}
-
-		FORCEINLINE double dot(const vec3f &vec) const {
-			return x * vec.x + y * vec.y + z * vec.z;
-		}
-
-		FORCEINLINE void normalize()
-		{
-			double sum = x * x + y * y + z * z;
-			if (sum > double(10e-12)) {
-				double base = double(1.0 / sqrt(sum));
-				x *= base;
-				y *= base;
-				z *= base;
-			}
-		}
-
-		FORCEINLINE double length() const {
-			return double(sqrt(x*x + y * y + z * z));
-		}
-
-		FORCEINLINE vec3f getUnit() const {
-			return (*this) / length();
-		}
-		inline bool isEqual(double a, double b, double tol = double(10e-6)) const
-		{
-			return fabs(a - b) < tol;
-		}
-		FORCEINLINE bool isUnit() const {
-			return isEqual(squareLength(), 1.f);
-		}
-
-		//! max(|x|,|y|,|z|)
-		FORCEINLINE double infinityNorm() const
-		{
-			return fmax(fmax(fabs(x), fabs(y)), fabs(z));
-		}
-
-		FORCEINLINE vec3f & set_value(const double &vx, const double &vy, const double &vz)
-		{
-			x = vx; y = vy; z = vz; return *this;
-		}
-
-		FORCEINLINE bool equal_abs(const vec3f &other) {
-			return x == other.x && y == other.y && z == other.z;
-		}
-
-		FORCEINLINE double squareLength() const {
-			return x * x + y * y + z * z;
-		}
-
-		static vec3f zero() {
-			return vec3f(0.f, 0.f, 0.f);
-		}
-
-		//! Named constructor: retrieve vector for nth axis
-		static vec3f axis(int n) {
-			assert(n < 3);
-			switch (n) {
-			case 0: {
-				return xAxis();
-			}
-			case 1: {
-				return yAxis();
-			}
-			case 2: {
-				return zAxis();
-			}
-			}
-			return vec3f();
-		}
-
-		//! Named constructor: retrieve vector for x axis
-		static vec3f xAxis() { return vec3f(1.f, 0.f, 0.f); }
-		//! Named constructor: retrieve vector for y axis
-		static vec3f yAxis() { return vec3f(0.f, 1.f, 0.f); }
-		//! Named constructor: retrieve vector for z axis
-		static vec3f zAxis() { return vec3f(0.f, 0.f, 1.f); }
-
-	};
-
-	inline vec3f operator * (double t, const vec3f &v) {
-		return vec3f(v.x*t, v.y*t, v.z*t);
-	}
-
-	inline vec3f interp(const vec3f &a, const vec3f &b, double t)
-	{
-		return a * (1 - t) + b * t;
-	}
-
-	inline vec3f vinterp(const vec3f &a, const vec3f &b, double t)
-	{
-		return a * t + b * (1 - t);
-	}
-
-	inline vec3f interp(const vec3f &a, const vec3f &b, const vec3f &c, double u, double v, double w)
-	{
-		return a * u + b * v + c * w;
-	}
-
-	inline double clamp(double f, double a, double b)
-	{
-		return fmax(a, fmin(f, b));
-	}
-
-	inline double vdistance(const vec3f &a, const vec3f &b)
-	{
-		return (a - b).length();
-	}
-
-
-	inline std::ostream& operator<<(std::ostream&os, const vec3f &v) {
-		os << "(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
-		return os;
-	}
-
-#define CLAMP(a, b, c)		if((a)<(b)) (a)=(b); else if((a)>(c)) (a)=(c)
-
-
-	FORCEINLINE void
-		vmin(vec3f &a, const vec3f &b)
-	{
-		a.set_value(
-			fmin(a[0], b[0]),
-			fmin(a[1], b[1]),
-			fmin(a[2], b[2]));
-	}
-
-	FORCEINLINE void
-		vmax(vec3f &a, const vec3f &b)
-	{
-		a.set_value(
-			fmax(a[0], b[0]),
-			fmax(a[1], b[1]),
-			fmax(a[2], b[2]));
-	}
-
-	FORCEINLINE vec3f lerp(const vec3f &a, const vec3f &b, float t)
-	{
-		return a + t * (b - a);
-	}
 	class front_node;
 	class bvh_node;
 	
 	static vec3f *s_fcenters;
 	class front_list : public std::vector<front_node> {
 	public:
-		void propogate(std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &c, vector<TrianglePair> &ret);
 		void push2GPU(bvh_node *r1, bvh_node *r2 = NULL);
 	};
 
 	class bvh_node {
 		TAlignedBox3D<float> _box;
-		static bvh_node* s_current;
+		static bvh_node* s_current; // hyx
 		int _child; // >=0 leaf with tri_id, <0 left & right
 		int _parent;
 
@@ -280,19 +31,22 @@ namespace PhysIKA {
 
 		~bvh_node();
 
-		void collide(bvh_node *other, std::vector<TrianglePair> &ret);
+		void collide(bvh_node *other, std::vector<TrianglePair> &ret); // hyx
 
 		void collide(bvh_node *other, front_list &f, int level, int ptr);
 
 		void self_collide(front_list &lst, bvh_node *r);
-		void
-			construct(unsigned int id, TAlignedBox3D<float>*s_fboxes);
-		void
-			construct(unsigned int *lst, unsigned int num, vec3f *s_fcenters, TAlignedBox3D<float>*s_fboxes,
-				bvh_node*& s_current);
+		
+		void construct(unsigned int id, TAlignedBox3D<float>* s_fboxes);
+		
+		void construct(
+			unsigned int *lst, 
+			unsigned int num, vec3f *s_fcenters, 
+			TAlignedBox3D<float>* s_fboxes,
+			bvh_node*& s_current);
 
-		void visualize(int level);
-		void refit(TAlignedBox3D<float>*s_fboxes);
+		void refit(TAlignedBox3D<float> *s_fboxes);
+
 		void resetParents(bvh_node *root);
 
 		FORCEINLINE TAlignedBox3D<float> &box() { return _box; }
@@ -301,14 +55,15 @@ namespace PhysIKA {
 		FORCEINLINE int triID() { return _child; }
 		FORCEINLINE int isLeaf() { return _child >= 0; }
 		FORCEINLINE int parentID() { return _parent; }
-
 		FORCEINLINE void getLevel(int current, int &max_level);
-
 		FORCEINLINE void getLevelIdx(int current, unsigned int *idx);
-		void sprouting(bvh_node *other, front_list &append, std::vector < TrianglePair > &ret);
+
+		void sprouting(bvh_node* other, front_list& append, std::vector<TrianglePair>& ret);
+		void sprouting2(bvh_node* other, front_list& append, std::vector<TrianglePair>& ret); // hyx
 
 		friend class bvh;
 	};
+
 	class front_node {
 	public:
 		bvh_node *_left, *_right;
@@ -316,10 +71,7 @@ namespace PhysIKA {
 		unsigned int _ptr; // self-coliding parent;
 
 		front_node(bvh_node *l, bvh_node *r, unsigned int ptr);
-
-		void update(front_list &appended, std::vector<TrianglePair> &ret);
 	};
-
 	
 	class aap {
 	public:
@@ -348,14 +100,17 @@ namespace PhysIKA {
 	};
 	
 	class bvh {
-		int _num; // all face num
-		bvh_node *_nodes;
-		TAlignedBox3D<float>*s_fboxes;
+		int _num = 0; // all face num
+		bvh_node *_nodes = nullptr;
+		TAlignedBox3D<float>* s_fboxes = nullptr;
 
-		unsigned int *s_idx_buffer;
+		unsigned int *s_idx_buffer = nullptr;
+
+		//static vec3f* s_fcenters;
 
 	public:
 		bvh() {};
+		
 		template<typename T>
 		bvh(std::vector<std::shared_ptr<TriangleMesh<T>>> &ms) {
 			_num = 0;
@@ -364,8 +119,12 @@ namespace PhysIKA {
 			construct<T>(ms);
 			reorder();
 			resetParents(); //update the parents after reorder ...
-		}
+		} // hxl
+		
+		bvh(const std::vector<CollisionMesh*>& ms);
+		
 		void refit(TAlignedBox3D<float>*s_fboxes);
+
 		template<typename T>
 		void construct(std::vector<std::shared_ptr<TriangleMesh<T>>> &ms) {
 			TAlignedBox3D<float> total;
@@ -399,7 +158,7 @@ namespace PhysIKA {
 					auto _s = p1 + p2 + p3;
 					auto sum = _s.getDataPtr();
 					s_fcenters[tri_idx] = vec3f(sum);
-					s_fcenters[tri_idx] /= double(3.0);
+					s_fcenters[tri_idx] /= 3.0;
 					//s_fcenters[tri_idx] = (p1 + p2 + p3) / double(3.0);
 					tri_idx++;
 				}
@@ -437,16 +196,18 @@ namespace PhysIKA {
 			}
 
 			delete[] s_idx_buffer;
+			s_idx_buffer = nullptr;
 			delete[] s_fcenters;
+			s_fcenters = nullptr;
 
 			refit(s_fboxes);
 			//delete[] s_fboxes;
 		}
 
 		void reorder(); // for breath-first refit
+
 		void resetParents();
 		
-
 		~bvh() {
 			if (_nodes)
 				delete[] _nodes;
@@ -462,10 +223,8 @@ namespace PhysIKA {
 
 		void collide(bvh *other, std::vector<TrianglePair> &ret);
 
-		void self_collide(front_list &f, std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &c);
+		void self_collide(front_list &f, std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &c); // hxl
 
-		void visualize(int);
+		void self_collide(front_list& f, std::vector<CollisionMesh*>& c);
 	};
-
-	
 }

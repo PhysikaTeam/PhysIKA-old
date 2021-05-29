@@ -32,6 +32,7 @@ namespace PhysIKA
 		DeviceArray<Coord>& getNormals() { return m_normals; }
 
 		std::vector<Coord>& gethPoints() { return h_coords; }
+		std::vector<Coord>& gethNormals() { return h_normals; }
 
 		const int getPointSize(){ return m_coords.size(); };
 

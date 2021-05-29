@@ -265,7 +265,7 @@ namespace PhysIKA
 				grid_accel_z[i] = -0.95 * gravity * hz + 0.05 * grid_accel_z[i];
 			}
 		}
-		Real maxAccel = 2 * distance / pow(dt, 2);
+		Real maxAccel = 2 * distance / powf(dt, 2);
 		grid_accel_z[i] *= abs(grid_accel_z[i]) > maxAccel ? maxAccel / abs(grid_accel_z[i]) : 1;
 		grid_accel_x[i] *= abs(grid_accel_x[i]) > maxAccel ? maxAccel / abs(grid_accel_x[i]) : 1;
 	}
@@ -389,7 +389,7 @@ namespace PhysIKA
 		m_velocity[i][2] = (iz == 0 || iz == zcount - 1) ? 0 : m_velocity[i][2];
 
 		Real maxVel =4 * sqrt(distance * gravity), vel;
-		vel = sqrt(pow(m_velocity[i][0], 2) + pow(m_velocity[i][2], 2));
+		vel = sqrt(powf(m_velocity[i][0], 2) + powf(m_velocity[i][2], 2));
 		m_velocity[i][0] *= vel > maxVel ? maxVel / vel : 1;
 		m_velocity[i][2] *= vel > maxVel ? maxVel / vel : 1;
 	}
