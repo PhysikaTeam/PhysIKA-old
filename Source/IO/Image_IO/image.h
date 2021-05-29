@@ -45,11 +45,12 @@ public:
     //image operations
     void flipHorizontally();
     void flipVertically();
+    void mergeImage(int h_compressed, int w_compressed);//Compress the picture h_compressed times along the h direction and w_compressed times along the w direction.
     Image mirrorImage() const;
     Image upsideDownImage() const;
+    unsigned int pixelSize() const;
 protected:
     void allocMemory();
-    unsigned int pixelSize() const;
 protected:
     unsigned int width_;
     unsigned int height_;

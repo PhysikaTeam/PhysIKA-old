@@ -1,5 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.10)
 
+add_subdirectory(FiniteElementMethod)
+#set(LIB_NAMES ParticleSystem RigidBody HeightField EmbeddedMethod)
 set(LIB_NAMES ParticleSystem RigidBody HeightField)
 
 foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
@@ -27,7 +29,14 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
         string(REPLACE "/" "\\" GROUP_PATH "${SRC_PATH_REL}")
         source_group("${GROUP_PATH}" FILES "${SRC}")
     endforeach()
-
+    if(${LIB_NAME} STREQUAL "EmbeddedMethod")
+      set(MARVEL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod)
+	    target_include_directories(${LIB_NAME} PUBLIC ${MARVEL_DIR}/Source ${MARVEL_DIR}/Extern)
+	    target_link_libraries(${LIB_NAME} ZJU_SOLVER embedded_elas_fem_pb elas_fem_pb embedded_mass_spring_pb mass_spring_pb)
+    else()
+        target_link_libraries(${LIB_NAME} PUBLIC Core Framework IO)
+    endif()
+    
     if(WIN32)
         target_compile_options(${LIB_NAME} PRIVATE -Xcompiler "/wd 4819")               #禁止编译时报告文件编码不是unicode的warning，由于cuda头文件都不是unicode。使编译报错更清晰
     endif()
@@ -35,6 +44,7 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set_target_properties(${LIB_NAME} PROPERTIES FOLDER "Engine/Dynamics")      #为project设定folder目录
     set_target_properties(${LIB_NAME} PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)    #cmake 会自动延迟cuda dlink操作直到静态库被编译成动态库或者exe，
                                                                                     #但这样影响了后面其他工程对PhysLeo.lib的引用，现在还有些原因未明，暂时在编译成库之前开启dlink
+
     set_target_properties(${LIB_NAME} PROPERTIES
         OUTPUT_NAME "Pa${LIB_NAME}-${PHYSIKA_LIBRARY_VERSION}")
     set_target_properties(${LIB_NAME} PROPERTIES
@@ -45,7 +55,7 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
         $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics>
         $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/${LIB_NAME}>)
 
-    target_link_libraries(${LIB_NAME} PUBLIC Core Framework IO)
+
 
     install(TARGETS ${LIB_NAME}
         EXPORT ${LIB_NAME}Targets

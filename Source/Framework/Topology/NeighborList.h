@@ -114,6 +114,19 @@ namespace PhysIKA
 			
 		}
 
+		void copyFrom(int maxNum, std::vector<ElementType>& elements, std::vector<int> index)
+		{
+			m_maxNum = maxNum;
+			if (m_elements.size() != elements.size())
+				m_elements.resize(elements.size());
+
+			Function1Pt::copy(m_elements, elements);
+
+			if (m_index.size() != index.size())
+				m_index.resize(index.size());
+
+			Function1Pt::copy(m_index, index);
+		}
 		DeviceArray<int>& getIndex() { return m_index; }
 		DeviceArray<ElementType>& getElements() { return m_elements; }
 

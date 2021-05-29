@@ -15,8 +15,11 @@ namespace PhysIKA
 
 		TriangleSet();
 		~TriangleSet();
+		TriangleSet(TriangleSet<TDataType>& triangleset);
+		TriangleSet&operator= (TriangleSet<TDataType>& triangleset);
 
 		DeviceArray<Triangle>* getTriangles() { return &m_triangls; }
+		std::vector<Triangle> &getHTriangles() { return h_triangles; }
 		void setTriangles(std::vector<Triangle>& triangles);
 
 		NeighborList<int>* getTriangleNeighbors() { return &m_triangleNeighbors; }
@@ -25,10 +28,13 @@ namespace PhysIKA
 
 		void loadObjFile(std::string filename);
 
+		template<typename TDataType>
+		friend class TriangleMesh;
 	protected:
 		bool initializeImpl() override;
 
 	protected:
+		std::vector<Triangle> h_triangles;
 		DeviceArray<Triangle> m_triangls;
 		NeighborList<int> m_triangleNeighbors;
 	};

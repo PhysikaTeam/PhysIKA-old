@@ -13,7 +13,6 @@ namespace PhysIKA {
 	template<DeviceType deviceType>
 	void DefaultMemoryManager<deviceType>::allocMemory1D(void** ptr, size_t memsize, size_t valueSize)
 	{
-		printf("%d %d %d %d\n", deviceType, memsize, valueSize, memsize * valueSize);
 		switch (deviceType)
 		{
 		case CPU:

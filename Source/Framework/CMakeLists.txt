@@ -6,7 +6,7 @@ file(                                                                           
     LIST_DIRECTORIES false
     CONFIGURE_DEPENDS
     "${LIB_SRC_DIR}/*.c*"
-    "${LIB_SRC_DIR}/*.h*"
+    "${LIB_SRC_DIR}/*.*h*"                                                   # add additional cuh
 )
 
 list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 目录下面的所有文件
@@ -82,7 +82,7 @@ install(FILES ${FRAMEWORK_HEADER}  DESTINATION ${PHYSIKA_INC_INSTALL_DIR}/Framew
 file(GLOB ACTION_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/Action/*.h")
 install(FILES ${ACTION_HEADER}  DESTINATION ${PHYSIKA_INC_INSTALL_DIR}/Framework/Action)
 
-file(GLOB COLLISION_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/Collision/*.h")
+file(GLOB COLLISION_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/Collision/*.*h")
 install(FILES ${COLLISION_HEADER}  DESTINATION ${PHYSIKA_INC_INSTALL_DIR}/Framework/Collision)
 
 file(GLOB FRAMEWORK_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/Framework/*.h")

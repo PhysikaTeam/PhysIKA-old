@@ -34,7 +34,21 @@ namespace PhysIKA
 		this->setNormals(normals);
 		this->setTriangles(triangles);
 	}
-
+	template<typename TDataType>
+	TriangleSet<TDataType>::TriangleSet(TriangleSet<TDataType>& triangleset) {
+		setTriangles(triangleset.h_triangles);
+		setPoints(triangleset.h_coords);
+		setNormals(triangleset.h_normals);
+		m_triangleNeighbors = triangleset.m_triangleNeighbors;
+	}
+	template<typename TDataType>
+	TriangleSet<TDataType>&TriangleSet<TDataType>::operator= (TriangleSet<TDataType>& triangleset) {
+		setTriangles(triangleset.h_triangles);
+		setPoints(triangleset.h_coords);
+		setNormals(triangleset.h_normals);
+		m_triangleNeighbors = triangleset.m_triangleNeighbors;
+		return *this;
+	}
 	template<typename TDataType>
 	TriangleSet<TDataType>::~TriangleSet()
 	{
@@ -58,6 +72,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void TriangleSet<TDataType>::setTriangles(std::vector<Triangle>& triangles)
 	{
+		h_triangles = triangles;
 		m_triangls.resize(triangles.size());
 		Function1Pt::copy(m_triangls, triangles);
 	}
@@ -120,6 +135,10 @@ namespace PhysIKA
 		this->setPoints(vertList);
 		this->setNormals(normalList);
 		setTriangles(faceList);
+
+		h_normals = normalList;
+		h_coords = vertList;
+		h_triangles = faceList;
 	}
 
 }

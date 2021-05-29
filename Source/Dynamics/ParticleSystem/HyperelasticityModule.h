@@ -25,20 +25,20 @@ namespace PhysIKA {
 	{
 	public:
 		static COMM_FUNC T A(T s) {
-			return ((pow(s, n + 1) - 1) / (n + 1) + (pow(s, 1 - n) - 1) / (n - 1)) / n;
+			return ((powf(s, n + 1) - 1) / (n + 1) + (powf(s, 1 - n) - 1) / (n - 1)) / n;
 		}
 		
 		static COMM_FUNC T B(T s) {
-			return 2 * ((pow(s, n + 1) - 1) / (n + 1) - s + 1) / n;
+			return 2 * ((powf(s, n + 1) - 1) / (n + 1) - s + 1) / n;
 		}
 
 		static COMM_FUNC T dA(T s) {
-			Real sn = pow(s, n);
+			Real sn = powf(s, n);
 			return (sn - 1 / sn) / 2;
 		}
 
 		static COMM_FUNC T dB(T s) {
-			return 2 * (pow(s, n) - 1);
+			return 2 * (powf(s, n) - 1);
 		}
 	};
 

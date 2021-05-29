@@ -31,7 +31,8 @@ namespace PhysIKA
 		{
 			float ratio = rho / restRho;
 			//ratio = ratio > 1.1f ? 1.1f : ratio;
-			return pow(Real(M_E), Real(ratio - 1.0f));
+			//return pow(Real(M_E), Real(ratio - 1.0f));
+			return 0.f;
 		}
 		else
 		{

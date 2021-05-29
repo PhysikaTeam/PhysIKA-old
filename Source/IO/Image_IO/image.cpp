@@ -115,6 +115,33 @@ void Image::flipVertically()
         } 
 }
 
+
+void Image::mergeImage(int h_compressed, int w_compressed)
+{
+	int pixel_size = pixelSize();
+	unsigned int height = height_ / h_compressed;//a new pixel is calculate by h_compressed*w_compressed pixels and abandon the remainder
+	unsigned int width = width_ / w_compressed;
+	
+    unsigned char* d = new unsigned char[width * height * pixel_size];
+	for (unsigned int i = 0; i < height; ++i)
+		for (unsigned int j = 0; j < width; ++j)
+			for (unsigned int k = 0; k < pixel_size; ++k)
+			{
+				float temp = 0;
+				for (int p = 0;p<h_compressed;p++)
+					for (int q = 0; q < w_compressed; q++) {
+						temp += raw_data_[(j*w_compressed+q + width_ * (i*h_compressed+p))*pixel_size + k];
+					}
+				//d[(j + width * i)*pixel_size + k] = raw_data_[(j*w_compressed + width_ * i*h_compressed)*pixel_size + k];
+				d[(j + width * i)*pixel_size + k] = temp/(h_compressed*w_compressed);
+			}
+	height_ = height;
+	width_ = width;
+    if (raw_data_)
+        delete[] raw_data_;
+    raw_data_ = d;
+}
+
 Image Image::mirrorImage() const
 {
     unsigned int pixel_size = pixelSize();

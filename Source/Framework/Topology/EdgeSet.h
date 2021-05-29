@@ -16,6 +16,9 @@ namespace PhysIKA
 		EdgeSet();
 		~EdgeSet() override;
 
+		EdgeSet(EdgeSet& edgeset);
+		EdgeSet &operator=(EdgeSet& edgeset);
+
 		void updatePointNeighbors() override;
 
 		void loadSmeshFile(std::string filename);
@@ -26,6 +29,7 @@ namespace PhysIKA
 		NeighborField<int> m_edgeNeighbors;
 
 	protected:
+		std::vector<Edge> h_edges;
 		DeviceArray<Edge> m_edges;
 	};
 

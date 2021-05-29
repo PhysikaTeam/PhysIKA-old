@@ -16,6 +16,18 @@ namespace PhysIKA
 		
 	}
 
+	template<typename TDataType>
+	EdgeSet<TDataType>::EdgeSet(EdgeSet<TDataType>& edgeset) {
+		m_edgeNeighbors = edgeset.m_edgeNeighbors;
+		m_edges = edgeset.m_edges;
+	}
+	template<typename TDataType>
+	EdgeSet<TDataType> &EdgeSet<TDataType>::operator = ( EdgeSet<TDataType>& edgeset) {
+		m_edgeNeighbors = edgeset.m_edgeNeighbors;
+		m_edges = edgeset.m_edges;
+		return *this;
+	}
+
 __global__ void K_updatePointNeighborsInEdges(NeighborList<int> nbl, DeviceArray<TopologyModule::Edge> edges){
 	int pId = threadIdx.x + (blockIdx.x * blockDim.x);
 	if (pId >= nbl.size()) return;

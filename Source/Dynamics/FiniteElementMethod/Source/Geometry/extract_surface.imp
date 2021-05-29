@@ -1,0 +1,113 @@
+#ifndef EXTRACT_SURFACE_JJ_H
+#define EXTRACT_SURFACE_JJ_H
+
+#include "extract_surface.h"
+#include <unordered_map>
+#include <algorithm>
+#include <array>
+#include <iostream>
+
+template <class T>
+inline void hash_combine(std::size_t &seed, const T &v) {
+    std::hash<T> hasher;
+    seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+
+template<typename T, size_t d>
+struct CellHashFunc
+{
+  size_t operator()(const T &key) const
+  {
+    T k = key;
+    std::sort(k.begin(), k.end());
+    size_t value = 0;
+    for (size_t i = 0; i < d; ++i)
+      hash_combine(value, k[i]);
+    return value;
+  }
+};
+
+template<typename T>
+struct CellEqualFunc
+{
+  bool operator()(const T &l, const T &r) const
+    {
+      return std::is_permutation(l.begin(), l.end(), r.begin());
+    }
+};
+
+
+template<typename T>
+int extract_surface(const Eigen::Matrix<T, -1, -1> &nods, const Eigen::MatrixXi &cells, Eigen::MatrixXi &surface, const std::string &type)
+{
+  if (type == "tet")
+  {
+    constexpr int face_vert_num = 3;
+    using cell_ele = std::array<int, face_vert_num>;
+    std::unordered_map<cell_ele, int,
+                       CellHashFunc<cell_ele, face_vert_num>,
+                       CellEqualFunc<cell_ele>> cell_face;
+    const int N = cells.cols();
+    for (int c = 0; c < N; ++c)
+    {
+      cell_face[{cells(2, c), cells(1, c), cells(0, c)}]++;
+      cell_face[{cells(3, c), cells(2, c), cells(0, c)}]++;
+      cell_face[{cells(1, c), cells(3, c), cells(0, c)}]++;
+      cell_face[{cells(3, c), cells(1, c), cells(2, c)}]++;
+    }
+    surface.resize(0, 1);
+    for (const auto &f : cell_face)
+    {
+      if (f.second != 1)
+        continue;
+      surface.conservativeResize(surface.rows()+3, Eigen::NoChange);
+      surface.block<3, 1>(surface.rows()-3, 0) <<
+        f.first[0], f.first[1], f.first[2];
+    }
+  }
+  else if (type == "hex")
+  {
+    constexpr int face_vert_num = 4;
+    using cell_ele = std::array<int, face_vert_num>;
+    std::unordered_map<cell_ele, int,
+                       CellHashFunc<cell_ele, face_vert_num>,
+                       CellEqualFunc<cell_ele>> cell_face;
+    const int N = cells.cols();
+    for (int c = 0; c < N; ++c)
+    {
+      cell_face[{cells(0, c), cells(3, c), cells(2, c), cells(1, c)}]++;
+      cell_face[{cells(4, c), cells(5, c), cells(6, c), cells(7, c)}]++;
+      cell_face[{cells(4, c), cells(7, c), cells(3, c), cells(0, c)}]++;
+      cell_face[{cells(6, c), cells(5, c), cells(1, c), cells(2, c)}]++;
+      cell_face[{cells(5, c), cells(4, c), cells(0, c), cells(1, c)}]++;
+      cell_face[{cells(7, c), cells(6, c), cells(2, c), cells(3, c)}]++;
+    }
+    surface.resize(0, 1);
+    for (const auto &f : cell_face)
+    {
+      if (f.second != 1)
+        continue;
+      surface.conservativeResize(surface.rows()+6, Eigen::NoChange);
+      surface.block<6, 1>(surface.rows()-6, 0) <<
+        f.first[0], f.first[1], f.first[3], f.first[1], f.first[2], f.first[3];
+    }
+  }
+  else if (type == "ps")
+  {
+    
+  }
+  else if (type == "ms")
+  {
+    
+  }
+  else
+  {
+    std::cerr << "unsupported in model type" << std::endl;
+    exit(1);
+  }
+  return 0;
+}
+
+
+
+#endif // EXTRACT_SURFACE_JJ_H
