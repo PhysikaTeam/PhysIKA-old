@@ -126,7 +126,6 @@ void checkCollision(bool update) {
 			const auto triset = cloth->getmeshPtr()->getTriangleSet();
 			auto faceIndices = triset->getHTriangles()[index];
 			for (int j = 0; j < 3; ++j) {
-				std::cout << faceIndices[j] << std::endl;
 				points.push_back(triset->gethPoints()[faceIndices[j]]);
 				normals.push_back(triset->gethNormals()[faceIndices[j]]);
 			}
@@ -143,8 +142,6 @@ void checkCollision(bool update) {
 		triSet->setTriangles(triangles);
 
 		clothCollisionTriangles->getmeshPtr()->loadFromSet(triSet);
-		std::cout << "  + " << clothCollisionTriangles->getmeshPtr()->_num_vtx << std::endl;
-		std::cout << "  + " << clothCollisionTriangles->getmeshPtr()->_num_tri << std::endl;
 
 		auto shader = std::make_shared<SurfaceMeshRender>();
 		clothCollisionTriangles->getSurfaceNode()->addVisualModule(shader);
@@ -162,7 +159,6 @@ void checkCollision(bool update) {
 			const auto triset = human->getmeshPtr()->getTriangleSet();
 			auto faceIndices = triset->getHTriangles()[index];
 			for (int j = 0; j < 3; ++j) {
-				std::cout << faceIndices[j] << std::endl;
 				points.push_back(triset->gethPoints()[faceIndices[j]]);
 				normals.push_back(triset->gethNormals()[faceIndices[j]]);
 			}
