@@ -10,3 +10,5 @@ endif(${APPLE})
 
 target_link_libraries(ZJU_ENERGY
   ZJU_CORE)
+
+install_as_LIB(ZJU_ENERGY)

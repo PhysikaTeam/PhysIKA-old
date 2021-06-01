@@ -30,8 +30,18 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     endforeach()
     if(${LIB_NAME} STREQUAL "EmbeddedMethod")
       set(MARVEL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod)
-	    target_include_directories(${LIB_NAME} PUBLIC ${MARVEL_DIR}/Source ${MARVEL_DIR}/Extern)
-	    target_link_libraries(${LIB_NAME} ZJU_SOLVER embedded_elas_fem_pb elas_fem_pb embedded_mass_spring_pb mass_spring_pb)
+	    #target_include_directories(${LIB_NAME} PUBLIC ${MARVEL_DIR}/Source ${MARVEL_DIR}/Extern)
+		target_include_directories(${LIB_NAME} PUBLIC
+		$<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Source>
+		$<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Extern>
+		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Extern/glm-0.9.9.7>
+		$<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Extern/glm-0.9.9.7>
+		)
+		#target_link_libraries(${LIB_NAME}
+		#$<INSTALL_INTERFACE:ZJU_SOLVER>)
+		#target_link_libraries(${LIB_NAME} ${ZJU_LIBRARIES})
+		target_link_libraries(${LIB_NAME} ZJU_SOLVER embedded_elas_fem_pb elas_fem_pb embedded_mass_spring_pb mass_spring_pb)
+	    #starget_link_libraries(${LIB_NAME} ZJU_SOLVER embedded_elas_fem_pb elas_fem_pb embedded_mass_spring_pb mass_spring_pb)
     else()
         target_link_libraries(${LIB_NAME} PUBLIC Core Framework IO)
     endif()

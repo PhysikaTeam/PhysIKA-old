@@ -11,7 +11,7 @@
 #ifndef EIGEN_MAP_H
 #define EIGEN_MAP_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 template<typename PlainObjectType, int MapOptions, typename StrideType>
@@ -104,19 +104,19 @@ template<typename PlainObjectType, int MapOptions, typename StrideType> class Ma
     EIGEN_DEVICE_FUNC
     inline PointerType cast_to_pointer_type(PointerArgType ptr) { return ptr; }
 
-    EIGEN_DEVICE_FUNC
+    EIGEN_DEVICE_FUNC EIGEN_CONSTEXPR
     inline Index innerStride() const
     {
       return StrideType::InnerStrideAtCompileTime != 0 ? m_stride.inner() : 1;
     }
 
-    EIGEN_DEVICE_FUNC
+    EIGEN_DEVICE_FUNC EIGEN_CONSTEXPR
     inline Index outerStride() const
     {
-      return int(StrideType::OuterStrideAtCompileTime) != 0 ? m_stride.outer()
-           : int(internal::traits<Map>::OuterStrideAtCompileTime) != Dynamic ? Index(internal::traits<Map>::OuterStrideAtCompileTime)
+      return StrideType::OuterStrideAtCompileTime != 0 ? m_stride.outer()
+           : internal::traits<Map>::OuterStrideAtCompileTime != Dynamic ? Index(internal::traits<Map>::OuterStrideAtCompileTime)
            : IsVectorAtCompileTime ? (this->size() * innerStride())
-           : (int(Flags)&RowMajorBit) ? (this->cols() * innerStride())
+           : int(Flags)&RowMajorBit ? (this->cols() * innerStride())
            : (this->rows() * innerStride());
     }
 
