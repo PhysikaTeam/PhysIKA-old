@@ -1,4 +1,13 @@
 #pragma once
+
+/**
+ * @author     : Xiaosong Chen
+ * @date       : 2021-05-31
+ * @description: wrapper for a fast multiphase SPH solver
+ * @version    : 1.0
+ */
+
+
 #include "Framework/Framework/Node.h"
 //#include "Rendering/PointRenderModule.h"
 #include "solver/Multiphase/wcsph/MultiphaseSPHSolver.h"
@@ -10,7 +19,10 @@ namespace PhysIKA
 	*	\class	FastMultiphaseSPH
 	*	\brief	Mostly copied from ParticleSystem which is designed for Position-based fluids.
 	*
-	*	This class implements a fast Multiphase SPH solver
+	*	This class wraps a fast Multiphase SPH solver
+	*	
+	*	Sample usage:
+	* 		auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
 	*
 	*/
 	template<typename TDataType>
@@ -39,11 +51,11 @@ namespace PhysIKA
 		bool resetStatus() override;
 		void prepareData();
 
-		//		std::shared_ptr<PointRenderModule> getRenderModule();
+		// std::shared_ptr<PointRenderModule> getRenderModule();
 
-				/**
-				 * @brief Particle position
-				 */
+		/**
+		* @brief Particle position
+		*/
 		DEF_EMPTY_CURRENT_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
 
 
@@ -69,7 +81,8 @@ namespace PhysIKA
 		//		virtual void setVisible(bool visible) override;
 
 	protected:
-		std::shared_ptr<msph::MultiphaseSPHSolver> m_msph; // float only
+		std::shared_ptr<msph::MultiphaseSPHSolver> m_msph; //!< the wrapped solver
+
 		std::shared_ptr<PointSet<TDataType>> m_pSet;
 		//std::shared_ptr<PointRenderModule> m_pointsRender;
 	};
