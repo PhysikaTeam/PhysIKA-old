@@ -17,7 +17,10 @@ namespace PhysIKA{
 template<typename T>
 using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;
 
-
+/**
+ * eigen-impl preconditioner conjugate gradient
+ *
+ */
 template<typename T>
 class EIGEN_PCG : public unconstrainted_linear_solver<T>{
  public:
@@ -36,7 +39,7 @@ class EIGEN_PCG : public unconstrainted_linear_solver<T>{
     cg.compute(A);
     sol = cg.solve(rhs);
     std::cout << "norm of residual of linear equation: "<< (A * sol - rhs).norm() << std::endl << "iteratoin: " << cg.iterations() << std::endl;
-    
+
     if(cg.info() == Eigen::Success)
       return 0;
     else if(cg.info() == Eigen::NoConvergence)
@@ -46,7 +49,7 @@ class EIGEN_PCG : public unconstrainted_linear_solver<T>{
     else
       std::cout << "Solve linear equation fail: The inputs are invalid, or the algorithm has been improperly called. When assertions are enabled, such errors trigger an assert." << std::endl;
     return __LINE__;
-          
+
   }
  private:
   const bool hes_is_constant_;

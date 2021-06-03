@@ -8,9 +8,13 @@
 #define _PARA_
 
 // #include "head.h"
-// hardcode the test parameter for mass spring testing demo 
+// hardcode the test parameter for mass spring testing demo
 
 #include <string>
+/**
+ * parameters for mass spring class
+ *
+ */
 class para
 {
  public:
@@ -20,7 +24,7 @@ class para
   static double dmetric;
   static int lc,wc,hc,dim_simplex;
 
-  // hardcoded parameter for simulator 
+  // hardcoded parameter for simulator
   static std::string out_dir_simulator,simulation_type,newton_fastMS;
   static double dt;
   static double gravity,density,stiffness;

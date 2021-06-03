@@ -18,6 +18,10 @@
 #include "Common/tensor.h"
 
 namespace PhysIKA {
+/**
+ * consitutive energy for finite element method.
+ *
+ */
   template <typename T, size_t dim_, size_t field_> class constitutive {
   public:
     static T

@@ -9,7 +9,11 @@
 
 #include "linear_solver.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
+/**
+ * range based KKT solver.
+ *
+ */
   template<typename T>
   class range_based_KKT: public KKT<T>{
     using SPM = Eigen::SparseMatrix<double, Eigen::RowMajor>;
@@ -20,6 +24,10 @@ namespace PhysIKA{
     const bool hes_is_constant_;
   };
 
+/**
+ * null space KKT solver.
+ *
+ */
   template<typename T>
   class null_space_KKT: public KKT<T>{
     using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;

@@ -21,6 +21,15 @@ namespace PhysIKA{
 template<typename T, int row, int col>
 using vec_vec_mat = std::vector<std::vector<Eigen::Matrix<T, row, col>, Eigen::aligned_allocator<Eigen::Matrix<T, row, col>>>>;
 
+/**
+ * finite element class definition.
+ *
+ * Sample usage:
+ * finite_element energy = new finite_element(nods, cells);
+ * energy->Val(x, data);
+ * energy->Gra(x, data);
+ * energy->Hes(x, data);
+ */
 template<typename T, size_t dim_, size_t field_, size_t num_per_cell_, size_t bas_order_, size_t qdrt_axis_,
          template<typename, size_t, size_t> class CSTTT,  // constituitive function
          template<typename, size_t, size_t, size_t, size_t > class BASIS, //  basis

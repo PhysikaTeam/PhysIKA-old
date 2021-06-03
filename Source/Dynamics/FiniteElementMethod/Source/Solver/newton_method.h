@@ -7,7 +7,7 @@
 #ifndef PhysIKA_NEWTON_METHOD
 #define PhysIKA_NEWTON_METHOD
 #include <memory>
-#include<Eigen/SparseCholesky>	
+#include<Eigen/SparseCholesky>
 #include <Eigen/SparseLU>
 #include "Geometry/embedded_interpolate.h"
 #include "Common/framework.h"
@@ -27,6 +27,10 @@ using linear_solver_type = std::function<int(const Eigen::SparseMatrix<T, Eigen:
                                              const T* c,
                                              T* solution)>;
 
+/**
+ * newton base solver interface.
+ *
+ */
 template<typename T, size_t dim_>
 class newton_base: public solver<T, dim_>{
  public:
@@ -49,17 +53,20 @@ class newton_base: public solver<T, dim_>{
   const T tol_;
   const size_t total_dim_;
   const size_t max_iter_;
-  
+
  protected:
   decltype(solver<T,dim_>::dat_str_)& dat_str_ = solver<T,dim_>::dat_str_;
   decltype(solver<T,dim_>::pb_)& pb_ = solver<T,dim_>::pb_;
   std::shared_ptr<semi_implicit<T>> semi_implicit_;
 
   void get_J_C(const T* x, Eigen::SparseMatrix<T, Eigen::RowMajor>& J, VEC<T>& C) const;
-      
+
 };
 
-
+/**
+ * newton based method with embedded strategy.
+ *
+ */
 template<typename T, size_t dim_>
 class newton_base_with_embedded: public newton_base<T, dim_>{
  public:

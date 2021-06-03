@@ -11,7 +11,11 @@
 #include <unordered_map>
 #include "key_comparison.h"
 
-template<typename T>
+template <typename T>
+/**
+ * mass spring energy class.
+ *
+ */
 class MassSpringObj : public PhysIKA::Functional<T, 3>
 {
 public:

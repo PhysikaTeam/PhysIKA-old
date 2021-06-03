@@ -14,7 +14,11 @@
 
 #include "preconditioner.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
+/**
+ * precondition conjugate gradient method.
+ *
+ */
 template<typename T, typename SPM_TYPE>
 class PCG{
  public:

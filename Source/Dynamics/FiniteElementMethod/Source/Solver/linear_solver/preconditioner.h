@@ -9,7 +9,11 @@
 #include <iostream>
 #include "Common/DEFINE_TYPE.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
+/**
+ * preconditioner interface class
+ *
+ */
 template<typename T>
 class preconditioner{
  public:
@@ -20,6 +24,10 @@ class preconditioner{
 template<typename T>
 using precond_type = std::shared_ptr<preconditioner<T>>;
 
+/**
+ * diagonal preconditioner class.
+ *
+ */
 //Use diag(A) to approximate A
 template<typename T>
 class diag_preconditioner: public  preconditioner<T>{

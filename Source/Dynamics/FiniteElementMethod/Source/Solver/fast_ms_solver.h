@@ -7,7 +7,7 @@
 #ifndef PhysIKA_FAST_MS_SOLVER_JJ_H
 #define PhysIKA_FAST_MS_SOLVER_JJ_H
 #include <memory>
-#include<Eigen/SparseCholesky>	
+#include<Eigen/SparseCholesky>
 #include <Eigen/SparseLU>
 #include "Geometry/embedded_interpolate.h"
 #include "Common/framework.h"
@@ -18,6 +18,10 @@
 
 namespace PhysIKA{
 
+/**
+ * fast mass spring method infos.
+ *
+ */
 template<typename T = float>
 class fast_ms_info
 {
@@ -32,7 +36,10 @@ public:
   int edge_num_;
 };
 
-  
+/**
+ * fast mass spring solver.
+ *
+ */
 template<typename T, size_t dim_>
 class fast_ms_solver: public newton_base_with_embedded<T, dim_>{
 public:
@@ -63,7 +70,7 @@ public:
   using newton_base_with_embedded<T, dim_>::get_J_C;
   using newton_base_with_embedded<T, dim_>::dof_of_nods_;
   using newton_base_with_embedded<T, dim_>::embedded_interp_;
-  
+
 protected:
   std::shared_ptr<fast_ms_info<T>> solver_info_;
   static Eigen::Matrix<T, -1, 1> q_n1_;
