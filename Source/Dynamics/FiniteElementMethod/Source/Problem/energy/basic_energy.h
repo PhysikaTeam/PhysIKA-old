@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: some basic energy function.
+ * @version    : 1.0
+ */
 #ifndef BASIC_ENERGY_H
 #define BASIC_ENERGY_H
 #include <vector>
@@ -18,7 +24,7 @@ class position_constraint : public Functional<T, dim_>{
 
   //used for position based
   position_constraint(const T *rest, const size_t dof, const T &w, const std::vector<size_t> &cons);
-  int Val(const T *x, data_ptr<T, dim_> &data) const;  
+  int Val(const T *x, data_ptr<T, dim_> &data) const;
   int Gra(const T *x, data_ptr<T, dim_> &data) const ;
   int Hes(const T *x, data_ptr<T, dim_> &data) const ;
   size_t Nx() const;
@@ -69,7 +75,7 @@ class collision : public Functional<T, dim_>{
 template<typename T, size_t dim_>
 class momentum : public  Functional<T, dim_>{
  public:
-  //used for displacement based 
+  //used for displacement based
   momentum(const size_t dof,const Eigen::Matrix<T, -1, 1>& mass_vec, const T& dt);
 
   //used for position based

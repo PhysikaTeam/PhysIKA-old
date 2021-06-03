@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: eigen extern.
+ * @version    : 1.0
+ */
 #ifndef EIGEN_EXT
 #define EIGEN_EXT
 #include <Eigen/Dense>

@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: constraint interface
+ * @version    : 1.0
+ */
 #ifndef BIGBANG_CONSTRAINTS
 #define BIGBANG_CONSTRAINTS
 #include <unordered_map>

@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: fast searching some partial eigenvalues
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_SEARCH_EIGENVALUES
 #define PhysIKA_SEARCH_EIGENVALUES
 // #define EIGEN_USE_LAPACK
@@ -31,7 +37,7 @@ int get_spectrum(const SPM_R<T>&A, const size_t band, const size_t num_band, MAT
 template<typename MAT_TYPE, typename VEC_TYPE>
 int get_dominant_eigenvec(const MAT_TYPE& A, VEC_TYPE& dom_eig_vec, const size_t max_itrs = 1000){
     VEC_TYPE v = VEC_TYPE::Random(A.cols());
-    
+
     double last_lambda = 1e40, new_lambda = 0;
     VEC_TYPE w(v.size());
     for(size_t i = 0; i < max_itrs; ++i){

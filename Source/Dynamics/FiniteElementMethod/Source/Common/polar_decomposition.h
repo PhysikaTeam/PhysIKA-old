@@ -1,14 +1,8 @@
-/** -*- mode: c++ -*-
- * @file polar_decomposition.h
- * @author LamKamhang (Cool_Lam@outlook.com)
- * @brief A Documented file.
- * @version 1.0
- * @date Tue Apr 28 12:00:39 CST 2020
- *
- * Detailed description
- *
- *
- * @copyright Copyright (c) 2020
+/**
+ * @author     : LamKamhang (Cool_Lam@outlook.com)
+ * @date       : 2021-04-30
+ * @description: polar decomposition.
+ * @version    : 1.0
  */
 #ifndef PhysIKA_POLAR_DECOMPOSITION_H
 #define PhysIKA_POLAR_DECOMPOSITION_H

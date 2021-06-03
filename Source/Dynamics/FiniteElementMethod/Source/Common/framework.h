@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: framework for problem and solver building.
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_FRAMEWORK
 #define PhysIKA_FRAMEWORK
 #include "def.h"

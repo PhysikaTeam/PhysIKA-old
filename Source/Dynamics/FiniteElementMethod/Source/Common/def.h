@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: functional and constraint definition
+ * @version    : 1.0
+ */
 #ifndef NUMERIC_DEF_H
 #define NUMERIC_DEF_H
 
@@ -28,7 +34,7 @@ public:
     IF_ERR(return, Hes(x, data));
     return 0;
   }
-  
+
 };
 
 template <typename T>
@@ -87,7 +93,7 @@ class energy_t : public Functional<T, dim>
 {
 public:
   energy_t(const std::vector<std::shared_ptr<Functional<T, dim>>> &buffer, const size_t total_dim): buffer_(buffer), dim_(total_dim) {}
-  
+
 public:
   size_t Nx() const {
     return dim_;
@@ -140,7 +146,7 @@ std::shared_ptr<constraint_t<T>> build_constraint_t(const std::vector<std::share
   }
   if ( xdim == -1 )
     throw null_input_exception();
-  
+
   bool compatible = true;
   for (auto &c : buffer) {
     if ( c.get() ) {
@@ -152,7 +158,7 @@ std::shared_ptr<constraint_t<T>> build_constraint_t(const std::vector<std::share
     throw compatibility_exception();
 
   return std::make_shared<constraint_t<T>>(buffer, xdim);
-  
+
 }
 
 template <typename T>
@@ -162,7 +168,7 @@ class constraint_t : public Constraint<T>
  public:
   template<typename T2>
   friend std::shared_ptr<constraint_t<T2>> build_constraint_t(const std::vector<std::shared_ptr<Constraint<T2>>> &buffer);
-  
+
   constraint_t(const std::vector<std::shared_ptr<Constraint<T>>> &buffer, const size_t xdim): buffer_(buffer), xdim_(xdim){}
  public:
   size_t Nx() const {
@@ -255,7 +261,7 @@ int compute_hes_pattern(const std::shared_ptr<Functional<T, field>>& energy,
     return 0;
 
   }
-  
+
 }
 
 

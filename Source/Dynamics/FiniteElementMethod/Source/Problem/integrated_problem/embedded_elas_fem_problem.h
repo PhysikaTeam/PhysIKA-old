@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: embedded elasticity finite element method problem
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_GEN_EMBEDDED_ELAS_PROBLEM
 #define PhysIKA_GEN_EMBEDDED_ELAS_PROBLEM
 #include <boost/property_tree/ptree.hpp>
@@ -14,11 +20,11 @@ namespace PhysIKA{
 template<typename T>
 class embedded_elas_problem_builder : public embedded_problem_builder<T, 3>, public semi_wrapper<T>{
  public:
-  embedded_elas_problem_builder(const T*x, const boost::property_tree::ptree& pt); 
+  embedded_elas_problem_builder(const T*x, const boost::property_tree::ptree& pt);
   std::shared_ptr<Problem<T, 3>> build_problem() const;
 
   int update_problem(const T* x, const T* v = nullptr);
-  
+
   Eigen::Matrix<T, -1, -1> get_nods()const {return REST_;}
   Eigen::MatrixXi get_cells()const {return cells_;}
   std::shared_ptr<constraint_4_coll<T>> get_collider() const {return collider_;}
@@ -33,14 +39,14 @@ class embedded_elas_problem_builder : public embedded_problem_builder<T, 3>, pub
   virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const { return semi_implicit_;}
 
   using semi_wrapper<T>::semi_implicit_;
-  
+
 private:
   Eigen::Matrix<T, -1, -1> REST_;
   Eigen::MatrixXi cells_;
   int fine_verts_num_;
   std::shared_ptr<embedded_interpolate<T>> embedded_interp_;
 
-  
+
   Eigen::SparseMatrix<T> coarse_to_fine_coef_; // coarse * coef = fine
   Eigen::SparseMatrix<T> fine_to_coarse_coef_; // fine * coef = coarse
 
@@ -51,9 +57,9 @@ private:
   std::shared_ptr<elas_intf<T, 3>> elas_intf_;
 
   const boost::property_tree::ptree pt_;
-  
 
-  
+
+
 };
 
 

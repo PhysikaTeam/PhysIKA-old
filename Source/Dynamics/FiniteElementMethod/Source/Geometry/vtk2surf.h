@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: vtk to surface.
+ * @version    : 1.0
+ */
 #ifndef VTK2SURF_H
 #define VTK2SURF_H
 #include <Eigen/Core>
@@ -43,7 +49,7 @@ int vtk2surf(const MatrixXi &tets, MatrixXi &surf){
   //bool is false if it has opposite tet
   auto faces = map<Vector3i, bool, decltype(comp)>(comp);
   vector<Vector3i> surfs_vec;
-  
+
   auto insert = [&](const size_t &p, const size_t &q, const size_t &r)->bool{
     Vector3i one_face;
     one_face << p, q, r;
@@ -51,7 +57,7 @@ int vtk2surf(const MatrixXi &tets, MatrixXi &surf){
      if(!not_has_oppo.second)
        not_has_oppo.first->second = false;
   };
-  
+
   for(size_t i = 0; i < tets.cols(); ++i){
     insert(0, 1, 2);
     insert(1, 0, 3);
@@ -64,7 +70,7 @@ int vtk2surf(const MatrixXi &tets, MatrixXi &surf){
       surfs_vec.push_back(f_iter->first);
   }
   surf.resize(3, surf.size());
-  
+
   for(size_t i = 0; i < surf.size(); ++i){
     surf.col(i) = surfs_vec[i];
   }

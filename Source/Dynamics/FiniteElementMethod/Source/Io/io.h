@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: io utility
+ * @version    : 1.0
+ */
 #ifndef IO_H
 
 #define IO_H
@@ -37,7 +43,7 @@ int mesh_read_from_vtk(const char* filename,  Eigen::Matrix<T, -1, -1>& nods, Ei
 
   std::string str;
   int point_num = 0,cell_num = 0;
-  
+
   while(!ifs.eof()){
     ifs >> str;
     if(str == "POINTS"){
@@ -48,7 +54,7 @@ int mesh_read_from_vtk(const char* filename,  Eigen::Matrix<T, -1, -1>& nods, Ei
         for(size_t j = 0;j < dim; ++j){
           ifs >> nods(j, i);
         }
-          
+
       }
       continue;
     }
@@ -68,8 +74,8 @@ int mesh_read_from_vtk(const char* filename,  Eigen::Matrix<T, -1, -1>& nods, Ei
             ifs >> p;
             cells(i, true_cell_num) = p;
           }
-            
-            
+
+
           ++true_cell_num;
         }
       }
@@ -84,7 +90,7 @@ int mesh_read_from_vtk(const char* filename,  Eigen::Matrix<T, -1, -1>& nods, Ei
   std::vector<T> tmp;
   T mtrval;
   if ( mtr != nullptr ) {
-    
+
     while ( !ifs.eof() ) {
       ifs >> str;
       if ( str == "LOOKUP_TABLE" ) {
@@ -103,7 +109,7 @@ int mesh_read_from_vtk(const char* filename,  Eigen::Matrix<T, -1, -1>& nods, Ei
       mtr_mat.transposeInPlace();
     }
   }
-  
+
   ifs.close();
 
   return 0;
@@ -111,7 +117,7 @@ int mesh_read_from_vtk(const char* filename,  Eigen::Matrix<T, -1, -1>& nods, Ei
 template<typename FLOAT, size_t num_vert>
 int mesh_write_to_vtk(const char *path, const Eigen::Ref<Eigen::Matrix<FLOAT, -1, -1>> nods, const Eigen::Ref<Eigen::MatrixXi> cells, const Eigen::Matrix<FLOAT, -1,-1> *mtr=nullptr, size_t dim = 3){
   assert(cells.rows() == num_vert);
-  
+
   std::ofstream ofs(path);
   if ( ofs.fail() )
     return __LINE__;
@@ -125,7 +131,7 @@ int mesh_write_to_vtk(const char *path, const Eigen::Ref<Eigen::Matrix<FLOAT, -1
     quad2vtk(ofs, nods.data(), nods.cols(), cells.data(), cells.cols());
   else if (dim == 2 && num_vert == 3)
     tri2vtk(ofs, nods.data(), nods.cols(), cells.data(), cells.cols());
-  
+
   if ( mtr != nullptr ) {
     for (int i = 0; i < mtr->rows(); ++i) {
       const std::string mtr_name = "theta_"+std::to_string(i);
