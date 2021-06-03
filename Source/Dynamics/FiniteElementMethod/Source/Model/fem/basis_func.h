@@ -1,3 +1,10 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: basis function for finite element method.
+ * @version    : 1.0
+ */
+
 #ifndef FEM_BASIS
 #define FEM_BASIS
 #include <Eigen/Dense>

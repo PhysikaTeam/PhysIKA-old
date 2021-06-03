@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: GPU-based precondition conjugate gradient method
+ * @version    : 1.0
+ */
 #ifndef GPU_PCG_CUH_PhysIKA
 #define GPU_PCG_CUH_PhysIKA
 #include <iostream>

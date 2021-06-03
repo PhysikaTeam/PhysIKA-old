@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: co-rotation solver.
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_CORO_SOLVER
 #define PhysIKA_CORO_SOLVER
 

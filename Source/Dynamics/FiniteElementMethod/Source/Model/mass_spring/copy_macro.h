@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: copy helper for mass spring method.
+ * @version    : 1.0
+ */
 #ifndef COPY_MACRO_JJ_H
 #define COPY_MACRO_JJ_H
 

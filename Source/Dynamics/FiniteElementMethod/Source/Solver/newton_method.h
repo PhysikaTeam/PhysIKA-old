@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: newton method for optimization problem.
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_NEWTON_METHOD
 #define PhysIKA_NEWTON_METHOD
 #include <memory>

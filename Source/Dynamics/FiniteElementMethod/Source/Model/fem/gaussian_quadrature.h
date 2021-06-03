@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: gaussian quadratures for finite element method.
+ * @version    : 1.0
+ */
 #ifndef FEM_QUADRATURE
 #define FEM_QUADRATURE
 #include <array>

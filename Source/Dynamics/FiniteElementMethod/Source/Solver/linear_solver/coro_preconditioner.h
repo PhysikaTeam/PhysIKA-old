@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: precoditioner for co-rotational solver
+ * @version    : 1.0
+ */
 #ifndef CORO_PRECONDITIONER
 #define CORO_PRECONDITIONER
 
