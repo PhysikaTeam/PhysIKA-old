@@ -21,6 +21,10 @@ template<typename mat_type>
 using VEC_MAT = std::vector<mat_type, Eigen::aligned_allocator<mat_type>>;
 
 namespace PhysIKA {
+/**
+ * block compressed row format for sparse matrix, for more effective computing.
+ *
+ */
   template <typename T, const size_t block_size> class BCSR {
   public:
     using ele_type = Eigen::Matrix<T, block_size, block_size>;

@@ -16,7 +16,10 @@
 #include "semi_wrapper.h"
 
 namespace PhysIKA{
-
+/**
+ * embedded elasticity problem builder, build the embeded elasticity problem
+ *
+ */
 template<typename T>
 class embedded_elas_problem_builder : public embedded_problem_builder<T, 3>, public semi_wrapper<T>{
  public:

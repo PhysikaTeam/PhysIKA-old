@@ -17,7 +17,10 @@
 #include "Solver/fast_ms_solver.h"
 
 namespace PhysIKA{
-
+/**
+ * fast mass spring problem builder, build the fast mass spring problem
+ *
+ */
 template<typename T>
 class fast_ms_builder : public embedded_ms_problem_builder<T>
 {

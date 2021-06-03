@@ -27,7 +27,10 @@ using namespace Eigen;
 using namespace Spectra;
 
 namespace PhysIKA{
-
+/**
+ * customize shift solver for spectra, more effective to compute some eigenvalues.
+ *
+ */
 template<typename T>
 class MyShitSolve{
  private:

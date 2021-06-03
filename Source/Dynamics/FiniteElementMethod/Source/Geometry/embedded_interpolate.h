@@ -15,7 +15,10 @@
 #include <Eigen/SparseQR>
 
 
-
+/**
+ * embedded interpolate class, interpolate coarse mesh to find mesh.
+ *
+ */
 template<typename T>
 class embedded_interpolate
 {

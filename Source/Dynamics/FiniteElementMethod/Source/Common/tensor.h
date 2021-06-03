@@ -13,6 +13,10 @@ namespace PhysIKA{
 using namespace std;
 
 
+/**
+ * a simple 4th tensor class.
+ *
+ */
 template<typename T, size_t i, size_t j, int k, int l>
 class fourth_tensor{
   using tensor_type = std::array<std::array<Eigen::Matrix<T, k, l> , j> , i>;

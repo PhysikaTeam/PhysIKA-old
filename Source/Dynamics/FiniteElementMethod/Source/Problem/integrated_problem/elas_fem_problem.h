@@ -16,7 +16,10 @@
 
 
 namespace PhysIKA{
-
+/**
+ * elasticity problem builder, build the elasticity problem.
+ *
+ */
 template<typename T>
 class elas_problem_builder : public problem_builder<T, 3>, public semi_wrapper<T>{
  public:

@@ -16,6 +16,10 @@
 
 namespace PhysIKA{
 
+/**
+ * embedded mass spring problem builder, build the embeded mass spring problem.
+ *
+ */
 template<typename T>
 class embedded_ms_problem_builder : public ms_problem_builder<T>
 {

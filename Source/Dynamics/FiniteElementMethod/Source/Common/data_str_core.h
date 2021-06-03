@@ -10,6 +10,10 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 namespace PhysIKA{
+/**
+ * data stream core class, store some data related to the optimization problem
+ *
+ */
 template <typename T, size_t dim_>
 class dat_str_core{
  public:

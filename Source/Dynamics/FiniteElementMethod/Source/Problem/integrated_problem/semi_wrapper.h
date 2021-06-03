@@ -9,6 +9,10 @@
 
 #include "Solver/semi_implicit_euler.h"
 
+/**
+ * semi implicit method wrapper.
+ *
+ */
 template<typename T>
 class semi_wrapper
 {

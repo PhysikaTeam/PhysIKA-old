@@ -16,6 +16,10 @@ namespace PhysIKA{
 template<typename T, size_t dim_>
 using data_ptr = std::shared_ptr<dat_str_core<T, dim_>>;
 
+/**
+ * Position constraint class, turn the position constraint to soft energy term.
+ *
+ */
 template<typename T, size_t dim_>
 class position_constraint : public Functional<T, dim_>{
  public:
@@ -28,7 +32,7 @@ class position_constraint : public Functional<T, dim_>{
   int Gra(const T *x, data_ptr<T, dim_> &data) const ;
   int Hes(const T *x, data_ptr<T, dim_> &data) const ;
   size_t Nx() const;
- private:
+ private :
   Eigen::Matrix<T, -1, -1> rest_;
   const size_t dof_;
   const T w_;
@@ -36,7 +40,10 @@ class position_constraint : public Functional<T, dim_>{
 };
 
 
-
+/**
+ * gravity energy term, Gravitational potential energy
+ *
+ */
 template<typename T, size_t dim_>
 class gravity_energy : public Functional<T, dim_>{
  public:
@@ -53,7 +60,10 @@ class gravity_energy : public Functional<T, dim_>{
   const Eigen::Matrix<T, -1, 1> mass_;
 };
 
-//simple collision with ground
+/**
+ * turn collision term to soft energy term.
+ *
+ */
 template<typename T, size_t dim_>
 class collision : public Functional<T, dim_>{
  public:
@@ -72,6 +82,10 @@ class collision : public Functional<T, dim_>{
 
 };
 
+/**
+ * momentum energy term.
+ *
+ */
 template<typename T, size_t dim_>
 class momentum : public  Functional<T, dim_>{
  public:

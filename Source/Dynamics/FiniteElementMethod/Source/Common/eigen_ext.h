@@ -10,6 +10,10 @@
 
 namespace PhysIKA{
 
+/**
+ * indexing functor, for easizer access.
+ *
+ */
   template<class ArgType, class RowIndexType, class ColIndexType>
   class indexing_functor {
 

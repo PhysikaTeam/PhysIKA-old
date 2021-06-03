@@ -19,6 +19,15 @@ namespace PhysIKA {
 template<typename T, size_t dim>
 using data_ptr = std::shared_ptr<dat_str_core<T, dim>>;
 
+/**
+ * Functional interface.
+ *
+ * sample usage:
+ * Functional->Val(x, data); // to get value.
+ * Functional->Gra(x, data); // to get gradient.
+ * Functional->Hes(x, data); // to get hessian.
+ *
+ */
 template <typename T, size_t dim>
 class Functional
 {
@@ -37,6 +46,15 @@ public:
 
 };
 
+/**
+ * Constraint
+ *
+ * sample usage:
+ * Functional->Val(x, data); // to get value.
+ * Functional->Jac(x, data); // to get Jacobian
+ * Functional->Hes(x, data); // to get hessian.
+ *
+ */
 template <typename T>
 class Constraint
 {
@@ -51,12 +69,20 @@ public:
   }
 };
 
+/**
+ * null input exception, if no input, then throw this exception.
+ *
+ */
 class null_input_exception : public std::exception {
   public :
   const char* what() const throw() {
     return "null input exception";
   }
   };
+/**
+ * compatibility exception, if not compatible, then throw this exception.
+ *
+ */
 class compatibility_exception : public std::exception {
  public :
   const char* what() const throw() {
@@ -86,8 +112,10 @@ std::shared_ptr<energy_t<T, dim>> build_energy_t(const std::vector<std::shared_p
   return std::make_shared<energy_t<T, dim>>(buffer, total_dim);
 }
 
-
-
+/**
+ * energy class. the collection for some functionals.
+ *
+ */
 template <typename T, size_t dim>
 class energy_t : public Functional<T, dim>
 {
@@ -95,7 +123,7 @@ public:
   energy_t(const std::vector<std::shared_ptr<Functional<T, dim>>> &buffer, const size_t total_dim): buffer_(buffer), dim_(total_dim) {}
 
 public:
-  size_t Nx() const {
+  size_t Nx() const override {
     return dim_;
   }
   int Val(const T *x, std::shared_ptr<dat_str_core<T,dim>>& data) const {
@@ -161,6 +189,10 @@ std::shared_ptr<constraint_t<T>> build_constraint_t(const std::vector<std::share
 
 }
 
+/**
+ * constraint type class, collection of some constraint.
+ *
+ */
 template <typename T>
 class constraint_t : public Constraint<T>
 {
