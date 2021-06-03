@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: customized precondition conjugate gradient method
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_PCG
 #define PhysIKA_PCG
 
@@ -8,7 +14,11 @@
 
 #include "preconditioner.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
+/**
+ * precondition conjugate gradient method.
+ *
+ */
 template<typename T, typename SPM_TYPE>
 class PCG{
  public:

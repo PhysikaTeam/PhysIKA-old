@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: linear solver list
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_LINEAR_SOLVER
 #define PhysIKA_LINEAR_SOLVER
 #include <Eigen/Sparse>
@@ -11,7 +17,10 @@ namespace PhysIKA{
   //   const T* c,
   //   T* solution)>;
 
-
+/**
+ * linear solver class
+ *
+ */
   template<typename T>
   class linear_solver{
   public:
@@ -21,7 +30,10 @@ namespace PhysIKA{
     virtual int solve(const SPM& A, const T* b, const SPM& J, const T* c, T* solution) const = 0;
   };
 
-
+/**
+ * unconstrainted linear solver class
+ *
+ */
   template<typename T>
   class unconstrainted_linear_solver : public linear_solver<T>{
     using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;
@@ -30,6 +42,10 @@ namespace PhysIKA{
     virtual int solve(const SPM& A, const T* b, const SPM& J, const T* c, T* solution) const = 0;
   };
 
+/**
+ * constrainted linear solver, KKT solver.
+ *
+ */
   template<typename T>
   class KKT : public linear_solver<T>{
     using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;

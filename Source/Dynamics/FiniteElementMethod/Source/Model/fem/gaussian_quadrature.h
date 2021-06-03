@@ -1,10 +1,19 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: gaussian quadratures for finite element method.
+ * @version    : 1.0
+ */
 #ifndef FEM_QUADRATURE
 #define FEM_QUADRATURE
 #include <array>
 #include <Eigen/Core>
 
 namespace PhysIKA{
-
+/**
+ * gauss base interface
+ *
+ */
 template<typename T, size_t num_qdrt_per_axis>
 struct gauss_base{
   static std::array<T, num_qdrt_per_axis> P_;
@@ -34,8 +43,11 @@ std::array<T, 2> gauss_base<T, 2>::P_ = {-0.5773502691896258, 0.5773502691896258
 template<typename T>
 std::array<T, 2> gauss_base<T, 2>::W_ = {1.0, 1.0};
 
-  
 
+/**
+ * gaussian quadratures
+ *
+ */
 template<typename T, size_t dim_, size_t qdrt_axis_, size_t verts_cell_>
 class quadrature{
  public:

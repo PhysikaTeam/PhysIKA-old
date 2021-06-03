@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: read model for mass spring method.
+ * @version    : 1.0
+ */
 #ifndef READ_MODEL_JJ_H
 #define READ_MODEL_JJ_H
 

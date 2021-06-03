@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: GPU-based precondition conjugate gradient method
+ * @version    : 1.0
+ */
 #ifndef GPU_PCG_CUH_PhysIKA
 #define GPU_PCG_CUH_PhysIKA
 #include <iostream>
@@ -20,7 +26,10 @@
 #define N_MAX 400000
 #define NNZ_MAX 15248000
 namespace PhysIKA {
-
+/**
+ * constructor type enumeration.
+ *
+ */
 enum class constuctor_type {
   HostArray = cudaMemcpyHostToDevice,
   DeviceArray = cudaMemcpyDeviceToDevice
@@ -30,7 +39,10 @@ enum class constuctor_type {
 // template<typename T>
 // using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;
 // #endif
-
+/**
+ * GPU-based preconditioner conjugate gradient class.
+ *
+ */
 template<typename T>
 class GPU_PCG {
  private:
@@ -61,12 +73,15 @@ class GPU_PCG {
 };
 
 
-
+/**
+ * cuda-impl conjugate gradient method class.
+ *
+ */
 template<typename T>
 class CUDA_PCG : public unconstrainted_linear_solver<T>{
  private:
   bool  hes_is_constant_;
-		
+
  public:
   using VEC = Eigen::Matrix<T, -1, 1>;
   CUDA_PCG(const bool hes_is_constant) :hes_is_constant_(hes_is_constant) {}

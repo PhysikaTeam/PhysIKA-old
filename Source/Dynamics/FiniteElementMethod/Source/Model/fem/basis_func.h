@@ -1,13 +1,27 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: basis function for finite element method.
+ * @version    : 1.0
+ */
+
 #ifndef FEM_BASIS
 #define FEM_BASIS
 #include <Eigen/Dense>
 #include <iostream>
 
 namespace PhysIKA{
-
+/**
+ * shape function definition for finite element.
+ *
+ * Sample usage: 
+ * auto v = shape_func::calc_basis_value(PNT, X);
+ * shape_func::calc_Dhpi_Dxi(PNT, X, Dphi_Dxi);
+ * double v = shape_func::volume();
+ */ 
 template<typename T, size_t dim_, size_t order_, size_t num_per_cell_>
 struct shape_func{
-  static Eigen::Matrix<T, num_per_cell_, 1> clac_basis_value(const Eigen::Matrix<T, dim_, 1>& PNT, const T* X){
+  static Eigen::Matrix<T, num_per_cell_, 1> calc_basis_value(const Eigen::Matrix<T, dim_, 1>& PNT, const T* X){
     assert(0);
     return Eigen::Matrix<T, num_per_cell_, 1>::Zero();
   }
@@ -22,6 +36,13 @@ struct shape_func{
   }
 };
 
+/**
+ * shape function definition for finite element.
+ *
+ * Sample usage: 
+ * shape_func::calc_Dhpi_Dxi(PNT, X, Dphi_Dxi);
+ * double v = shape_func::volume();
+ */ 
 template<typename T>
 struct shape_func<T, 3, 1, 4>{
   static void calc_Dphi_Dxi(const Eigen::Matrix<T, 3, 1>& PNT, const T* X,  Eigen::Matrix<T, 4, 3>& Dphi_Dxi){
@@ -35,9 +56,14 @@ struct shape_func<T, 3, 1, 4>{
   }
 };
 
-
-
-
+/**
+ * shape function definition for finite element.
+ *
+ * Sample usage: 
+ * auto v = shape_func::calc_basis_value(PNT, X);
+ * shape_func::calc_Dhpi_Dxi(PNT, X, Dphi_Dxi);
+ * double v = shape_func::volume();
+ */ 
 template<typename T>
 struct shape_func<T, 3, 1, 8>{
   static double volume() {
@@ -96,7 +122,11 @@ struct shape_func<T, 3, 1, 8>{
   }
 };
 
-
+/**
+ * basis function definition for finite element.
+ *
+ * Sample usage: 
+ */ 
 template<typename T, size_t dim_, size_t field_, size_t order_, size_t num_per_cell_>
 
 class basis_func{
