@@ -66,6 +66,7 @@ namespace PhysIKA
 		int nbSizeTri = neighborsTri.getNeighborSize(pId);
 		int nbSize = neighbors.getNeighborSize(pId);
 
+		//printf("%d\n", nbSizeTri);
 		if (use_mesh && pId < Start)
 			for (int ne = 0; ne < nbSizeTri; ne++)
 			{
@@ -74,6 +75,7 @@ namespace PhysIKA
 				j *= -1;
 				j--;
 				
+				//printf("j = %d\n", j);
 				Triangle3D t3d(positionTri[Tri[j][0]], positionTri[Tri[j][1]], positionTri[Tri[j][2]]);
 				Plane3D PL(positionTri[Tri[j][0]], t3d.normal());
 				Point3D p3d(pos_i);
@@ -92,7 +94,8 @@ namespace PhysIKA
 					do
 					{
 						jn = neighborsTri.getElement(pId, ne + 1);
-						if (jn > 0) break;
+						//printf("jn = %d\n", jn);
+						if (jn >= 0) break;
 						jn *= -1; jn--;
 
 						Triangle3D t3d_n(positionTri[Tri[jn][0]], positionTri[Tri[jn][1]], positionTri[Tri[jn][2]]);
@@ -106,12 +109,12 @@ namespace PhysIKA
 							Min_Pt = (p3d.project(t3d_n)).origin - pos_i;
 							Min_Pos = (p3d.project(t3d_n)).origin;
 						}
-						//printf("%d %d\n", j, jn);
+						//printf("%d %d %d\n", j, jn, ne);
 						ne++;
 					} while (ne < nbSizeTri - 1);
 				}
 				Min_Pt /= (-Min_Pt.norm());
-
+				//printf("OK\n");
 				float d = p3d.distance(PL);
 				d = abs(d);
 				if (smoothingLength - d > EPSILON&& smoothingLength * smoothingLength - d * d > EPSILON&& d > EPSILON)
@@ -127,14 +130,15 @@ namespace PhysIKA
 						(sampling_distance * sampling_distance * sampling_distance) * kern.m_scale;
 					rho_i += 1.0 * mass * a_ij;
 
-				//	printf("%.3lf %.3lf %.3lf\n", r, a_ij, kern.Weight(r, smoothingLength));
+					//printf("%.3lf %.3lf %.3lf  %.3lf  %.3lf, %.3lf\n",
+					//	r, a_ij, kern.Weight(r, smoothingLength), r, smoothingLength, kern.m_scale);
 					
 				}
 			}
 		if (rho_i < 0) rho_i *= -1;
 		rho_tmp = rho_i;
 		
-
+		//printf("????????\n");
 		bool tmp = false;
 		
 		for (int ne = 0; ne < nbSize; ne++)
@@ -253,6 +257,7 @@ namespace PhysIKA
 			use_ghost,
 			Start
 			);
+		cuSynchronize();
 	}
 
 	template<typename TDataType>

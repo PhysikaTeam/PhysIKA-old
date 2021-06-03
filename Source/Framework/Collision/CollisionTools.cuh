@@ -1,7 +1,12 @@
+/**
+ * @author     : Tang Min (tang_m@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: cuda utilities for error handling and debug usage
+ * @version    : 1.0
+ */
+
 #pragma once
 #include <cuda_runtime.h>
-//#include <helper_cuda.h>
-//#include <helper_math.h>
 
 #include <assert.h>
 #include <omp.h>
@@ -18,7 +23,7 @@ void check(T result, char const* const func, const char* const file,
 		exit(EXIT_FAILURE);
 	}
 }
-
+//// error handler
 #define getLastCudaError(msg) __getLastCudaError(msg, __FILE__, __LINE__)
 inline void __getLastCudaError(const char* errorMessage, const char* file,
 	const int line) {
@@ -34,23 +39,31 @@ inline void __getLastCudaError(const char* errorMessage, const char* file,
 	}
 }
 
-
+/// vlst begin
 #define VLST_BEGIN(lstIdx, lstData, idd) \
 	{int vst = (idd == 0) ? 0 : lstIdx[idd-1];\
 	int vnum = lstIdx[idd] - vst;\
 	for (int vi=0; vi<vnum; vi++) {\
 		int vid = lstData[vi+vst];\
 
+/// vlst end
 #define VLST_END }}
 
+/// flst begin
 #define FLST_BEGIN(lstIdx, lstData, idd) \
 	{int fst = (idd == 0) ? 0 : lstIdx[idd-1];\
 	int fnum = lstIdx[idd] - fst;\
 	for (int fi=0; fi<fnum; fi++) {\
 		int fid = lstData[fi+fst];\
 
+/// flst end
 #define FLST_END }}
 
+/**
+ * print memory usage
+ *
+ * @param[in] tag tag of the gpu
+ */
 void  reportMemory(char*);
 
 ///////////////////////////////////////////////////////
@@ -58,6 +71,14 @@ void  reportMemory(char*);
 
 #define BLOCK_DIM 64
 
+/**
+ * eval optimal block size
+ *
+ * @param[in] attribs         cuda function attributes
+ * @param[in] cachePreference cuda function cache preference
+ * @param[in] smemBytes       shared memory bytes
+ * @return the optimal block size
+ */
 inline int BPG(int N, int TPB)
 {
 	int blocksPerGrid = (N + TPB - 1) / (TPB);
@@ -69,6 +90,14 @@ inline int BPG(int N, int TPB)
 	return blocksPerGrid;
 }
 
+/**
+ * eval optimal block size
+ *
+ * @param[in] attribs         cuda function attributes
+ * @param[in] cachePreference cuda function cache preference
+ * @param[in] smemBytes       shared memory bytes
+ * @return the optimal block size
+ */
 inline int BPG(int N, int TPB, int& stride)
 {
 	int blocksPerGrid = 0;
@@ -86,8 +115,16 @@ inline int BPG(int N, int TPB, int& stride)
 }
 
 #include "cuda_occupancy.h"
-extern cudaDeviceProp deviceProp;
+extern cudaDeviceProp deviceProp; //!< cuda device properties
 
+/**
+ * eval optimal block size
+ *
+ * @param[in] attribs         cuda function attributes
+ * @param[in] cachePreference cuda function cache preference
+ * @param[in] smemBytes       shared memory bytes
+ * @return the optimal block size
+ */
 inline int evalOptimalBlockSize(cudaFuncAttributes attribs, cudaFuncCache cachePreference, size_t smemBytes) {
 	cudaOccDeviceProp prop = deviceProp;
 	cudaOccFuncAttributes occAttribs = attribs;
@@ -116,18 +153,22 @@ inline int evalOptimalBlockSize(cudaFuncAttributes attribs, cudaFuncCache cacheP
 	return blockSize;
 }
 
+// check len
 #define LEN_CHK(l) \
     int idx = blockDim.x * blockIdx.x + threadIdx.x;\
 	if (idx >= l) return;
 
+// set block per grid
 #define BLK_PAR(l) \
    int T = BLOCK_DIM; \
     int B = BPG(l, T);
 
+// set block per grid 2
 #define BLK_PAR2(l, s) \
    int T = BLOCK_DIM; \
     int B = BPG(l, T, s);
 
+// set block per grid 3
 #define BLK_PAR3(l, s, n) \
    int T = n; \
     int B = BPG(l, T, s);
@@ -142,6 +183,11 @@ inline int evalOptimalBlockSize(cudaFuncAttributes attribs, cudaFuncCache cacheP
 typedef std::map<void*, int> FUNC_INT_MAP;
 static  FUNC_INT_MAP blkSizeTable;
 
+/**
+ * get block size of the given function
+ *
+ * @param[in] f cuda function
+ */
 inline int getBlkSize(void* func)
 {
 	FUNC_INT_MAP::iterator it;

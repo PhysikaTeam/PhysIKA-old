@@ -1,11 +1,17 @@
+/**
+ * @author     : Tang Min (tang_m@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: very robust triangle intersection test uses no divisions and 
+ *               works on coplanar triangles, this is an internal header and 
+ *               should not be used directly
+ * @version    : 1.0
+ */
+
 #pragma once
 
 #include "CollisionTools.cuh"
 #include "CollisionVec3.cuh"
 
-// very robust triangle intersection test
-// uses no divisions
-// works on coplanar triangles
 
 inline __device__ int project3(const float3& ax,
 	const float3& p1, const float3& p2, const float3& p3)

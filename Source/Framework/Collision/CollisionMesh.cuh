@@ -1,3 +1,10 @@
+/**
+ * @author     : Tang Min (tang_m@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: device collision mesh class, should not be used directly
+ * @version    : 1.0
+ */
+
 #pragma once
 
 #include "CollisionTools.cuh"

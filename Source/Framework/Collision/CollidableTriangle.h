@@ -1,16 +1,50 @@
+/**
+ * @author     : Tang Min (tang_m@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: collision detection api entry point
+ * @version    : 1.0
+ */
+
 #pragma once
+
 #include "Framework/Framework/CollidableObject.h"
 #include "Dynamics/RigidBody/TriangleMesh.h"
 #include "Framework/Framework/ModuleTopology.h"
+
 namespace PhysIKA
 {
+	/**
+	 * Data structure to store collision results.
+	 *
+	 * Sample usage:
+	 * TrianglePair result = ...
+	 * auto meshID = result.id0();
+	 * auto triangleID = result.id1();
+	 */
 	class TrianglePair {
-		unsigned int _id[2];
+		unsigned int _id[2]; //< ! mesh index - triangle index pair
 
 	public:
+		/**
+		 * get mesh index
+		 *
+		 * @return mesh index
+		 */
 		unsigned int id0() const { return _id[0]; }
+
+		/**
+		 * get triangle index
+		 *
+		 * @return triangle index
+		 */
 		unsigned int id1() const { return _id[1]; }
 
+		/**
+		 * constructor
+		 *
+		 * @param[in] id1 mesh id
+		 * @param[in] id2 triangle id
+		 */
 		TrianglePair(unsigned int id1, unsigned int id2)
 		{
 			if (id1 < id2) {
@@ -22,20 +56,32 @@ namespace PhysIKA
 				_id[1] = id1;
 			}
 		}
-
-		void get(unsigned int &id1, unsigned int &id2)
+		/**
+		 * get mesh index and triangle index
+		 *
+		 * @param[out] id1 mesh index
+		 * @param[out] id2 triangle index
+		 */
+		void get(unsigned int& id1, unsigned int& id2)
 		{
 			id1 = _id[0];
 			id2 = _id[1];
 		}
 
-		bool operator < (const TrianglePair &other) const {
+		/**
+		 * operator < to define partial order of TrianglePair
+		 *
+		 * @param[in] other the TrianglePair to be compared with
+		 */
+		bool operator < (const TrianglePair& other) const {
 			if (_id[0] == other._id[0])
 				return _id[1] < other._id[1];
 			else
 				return _id[0] < other._id[0];
 		}
 	};
+
+
 	template<typename TDataType>
 	class CollidableTriangle : public CollidableObject {
 	public:
@@ -63,8 +109,8 @@ namespace PhysIKA
 			if (c < t) t = c;
 			return t;
 		}
-		static inline int project3(const Vector3f &ax,
-			const Vector3f &p1, const Vector3f &p2, const Vector3f &p3)
+		static inline int project3(const Vector3f& ax,
+			const Vector3f& p1, const Vector3f& p2, const Vector3f& p3)
 		{
 			double P1 = ax.dot(p1);
 			double P2 = ax.dot(p2);
@@ -77,9 +123,9 @@ namespace PhysIKA
 			if (0 > mx1) return 0;
 			return 1;
 		}
-		static inline int project6(Vector3f &ax,
-			Vector3f &p1, Vector3f &p2, Vector3f &p3,
-			Vector3f &q1, Vector3f &q2, Vector3f &q3)
+		static inline int project6(Vector3f& ax,
+			Vector3f& p1, Vector3f& p2, Vector3f& p3,
+			Vector3f& q1, Vector3f& q2, Vector3f& q3)
 		{
 			double P1 = ax.dot(p1);
 			double P2 = ax.dot(p2);
@@ -98,7 +144,7 @@ namespace PhysIKA
 			return 1;
 		}
 		static bool
-			tri_contact(Vector3f &P1, Vector3f &P2, Vector3f &P3, Vector3f &Q1, Vector3f &Q2, Vector3f &Q3)
+			tri_contact(Vector3f& P1, Vector3f& P2, Vector3f& P3, Vector3f& Q1, Vector3f& Q2, Vector3f& Q3)
 		{
 			Vector3f p1;
 			Vector3f p2 = P2 - P1;
@@ -158,10 +204,12 @@ namespace PhysIKA
 
 			return true;
 		}
+
+
 		static bool checkSelfIJ(TriangleMesh<DataType3f>* ma, int fa, TriangleMesh<DataType3f>* mb, int fb)
 		{
-			Triangle &a = ma->triangleSet->getHTriangles()[fa];
-			Triangle &b = mb->triangleSet->getHTriangles()[fb];
+			Triangle& a = ma->triangleSet->getHTriangles()[fa];
+			Triangle& b = mb->triangleSet->getHTriangles()[fb];
 
 			if (ma == mb)
 				for (int k = 0; k < 3; k++)

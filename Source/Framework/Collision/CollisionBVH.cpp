@@ -352,12 +352,12 @@ namespace PhysIKA {
 		}
 
 		if (isLeaf()) {
-			sprouting(other->left(), append, ret);
-			sprouting(other->right(), append, ret);
+			sprouting2(other->left(), append, ret);
+			sprouting2(other->right(), append, ret);
 		}
 		else {
-			left()->sprouting(other, append, ret);
-			right()->sprouting(other, append, ret);
+			left()->sprouting2(other, append, ret);
+			right()->sprouting2(other, append, ret);
 		}
 	}
 
@@ -381,12 +381,12 @@ namespace PhysIKA {
 		}
 
 		if (isLeaf()) {
-			sprouting2(other->left(), append, ret);
-			sprouting2(other->right(), append, ret);
+			sprouting(other->left(), append, ret);
+			sprouting(other->right(), append, ret);
 		}
 		else {
-			left()->sprouting2(other, append, ret);
-			right()->sprouting2(other, append, ret);
+			left()->sprouting(other, append, ret);
+			right()->sprouting(other, append, ret);
 		}
 	}
 

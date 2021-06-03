@@ -22,6 +22,11 @@
 // #define EIGEN_BDCSVD_DEBUG_VERBOSE
 // #define EIGEN_BDCSVD_SANITY_CHECKS
 
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+#undef eigen_internal_assert
+#define eigen_internal_assert(X) assert(X);
+#endif
+
 namespace Eigen {
 
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
@@ -34,6 +39,7 @@ namespace internal {
 
 template<typename _MatrixType> 
 struct traits<BDCSVD<_MatrixType> >
+        : traits<_MatrixType>
 {
   typedef _MatrixType MatrixType;
 };  
@@ -57,7 +63,7 @@ struct traits<BDCSVD<_MatrixType> >
  * recommended and can several order of magnitude faster.
  *
  * \warning this algorithm is unlikely to provide accurate result when compiled with unsafe math optimizations.
- * For instance, this concerns Intel's compiler (ICC), which perfroms such optimization by default unless
+ * For instance, this concerns Intel's compiler (ICC), which performs such optimization by default unless
  * you compile with the \c -fp-model \c precise option. Likewise, the \c -ffast-math option of GCC or clang will
  * significantly degrade the accuracy.
  *
@@ -105,7 +111,7 @@ public:
    * The default constructor is useful in cases in which the user intends to
    * perform decompositions via BDCSVD::compute(const MatrixType&).
    */
-  BDCSVD() : m_algoswap(16), m_numIters(0)
+  BDCSVD() : m_algoswap(16), m_isTranspose(false), m_compU(false), m_compV(false), m_numIters(0)
   {}
 
 
@@ -202,6 +208,7 @@ protected:
   using Base::m_computeThinV;
   using Base::m_matrixU;
   using Base::m_matrixV;
+  using Base::m_info;
   using Base::m_isInitialized;
   using Base::m_nonzeroSingularValues;
 
@@ -250,16 +257,25 @@ BDCSVD<MatrixType>& BDCSVD<MatrixType>::compute(const MatrixType& matrix, unsign
   {
     // FIXME this line involves temporaries
     JacobiSVD<MatrixType> jsvd(matrix,computationOptions);
-    if(computeU()) m_matrixU = jsvd.matrixU();
-    if(computeV()) m_matrixV = jsvd.matrixV();
-    m_singularValues = jsvd.singularValues();
-    m_nonzeroSingularValues = jsvd.nonzeroSingularValues();
     m_isInitialized = true;
+    m_info = jsvd.info();
+    if (m_info == Success || m_info == NoConvergence) {
+      if(computeU()) m_matrixU = jsvd.matrixU();
+      if(computeV()) m_matrixV = jsvd.matrixV();
+      m_singularValues = jsvd.singularValues();
+      m_nonzeroSingularValues = jsvd.nonzeroSingularValues();
+    }
     return *this;
   }
   
   //**** step 0 - Copy the input matrix and apply scaling to reduce over/under-flows
-  RealScalar scale = matrix.cwiseAbs().maxCoeff();
+  RealScalar scale = matrix.cwiseAbs().template maxCoeff<PropagateNaN>();
+  if (!(numext::isfinite)(scale)) {
+    m_isInitialized = true;
+    m_info = InvalidInput;
+    return *this;
+  }
+
   if(scale==Literal(0)) scale = Literal(1);
   MatrixX copy;
   if (m_isTranspose) copy = matrix.adjoint()/scale;
@@ -276,7 +292,11 @@ BDCSVD<MatrixType>& BDCSVD<MatrixType>::compute(const MatrixType& matrix, unsign
   m_computed.topRows(m_diagSize) = bid.bidiagonal().toDenseMatrix().transpose();
   m_computed.template bottomRows<1>().setZero();
   divide(0, m_diagSize - 1, 0, 0, 0);
-
+  if (m_info != Success && m_info != NoConvergence) {
+    m_isInitialized = true;
+    return *this;
+  }
+    
   //**** step 3 - Copy singular values and vectors
   for (int i=0; i<m_diagSize; i++)
   {
@@ -314,14 +334,14 @@ void BDCSVD<MatrixType>::copyUV(const HouseholderU &householderU, const Househol
   // Note exchange of U and V: m_matrixU is set from m_naiveV and vice versa
   if (computeU())
   {
-    Eigen::Index Ucols = m_computeThinU ? m_diagSize : householderU.cols();
+    Index Ucols = m_computeThinU ? m_diagSize : householderU.cols();
     m_matrixU = MatrixX::Identity(householderU.cols(), Ucols);
     m_matrixU.topLeftCorner(m_diagSize, m_diagSize) = naiveV.template cast<Scalar>().topLeftCorner(m_diagSize, m_diagSize);
     householderU.applyThisOnTheLeft(m_matrixU); // FIXME this line involves a temporary buffer
   }
   if (computeV())
   {
-    Eigen::Index Vcols = m_computeThinV ? m_diagSize : householderV.cols();
+    Index Vcols = m_computeThinV ? m_diagSize : householderV.cols();
     m_matrixV = MatrixX::Identity(householderV.cols(), Vcols);
     m_matrixV.topLeftCorner(m_diagSize, m_diagSize) = naiveU.template cast<Scalar>().topLeftCorner(m_diagSize, m_diagSize);
     householderV.applyThisOnTheLeft(m_matrixV); // FIXME this line involves a temporary buffer
@@ -337,20 +357,20 @@ void BDCSVD<MatrixType>::copyUV(const HouseholderU &householderU, const Househol
   * enough.
   */
 template<typename MatrixType>
-void BDCSVD<MatrixType>::structured_update(Block<MatrixXr,Dynamic,Dynamic> A, const MatrixXr &B, Eigen::Index n1)
+void BDCSVD<MatrixType>::structured_update(Block<MatrixXr,Dynamic,Dynamic> A, const MatrixXr &B, Index n1)
 {
-  Eigen::Index n = A.rows();
+  Index n = A.rows();
   if(n>100)
   {
     // If the matrices are large enough, let's exploit the sparse structure of A by
     // splitting it in half (wrt n1), and packing the non-zero columns.
-    Eigen::Index n2 = n - n1;
+    Index n2 = n - n1;
     Map<MatrixXr> A1(m_workspace.data()      , n1, n);
     Map<MatrixXr> A2(m_workspace.data()+ n1*n, n2, n);
     Map<MatrixXr> B1(m_workspace.data()+  n*n, n,  n);
     Map<MatrixXr> B2(m_workspace.data()+2*n*n, n,  n);
-    Eigen::Index k1=0, k2=0;
-    for(Eigen::Index j=0; j<n; ++j)
+    Index k1=0, k2=0;
+    for(Index j=0; j<n; ++j)
     {
       if( (A.col(j).head(n1).array()!=Literal(0)).any() )
       {
@@ -380,22 +400,22 @@ void BDCSVD<MatrixType>::structured_update(Block<MatrixXr,Dynamic,Dynamic> A, co
 // The divide algorithm is done "in place", we are always working on subsets of the same matrix. The divide methods takes as argument the 
 // place of the submatrix we are currently working on.
 
-//@param firstCol : The Eigen::Index of the first column of the submatrix of m_computed and for m_naiveU;
-//@param lastCol : The Eigen::Index of the last column of the submatrix of m_computed and for m_naiveU; 
+//@param firstCol : The Index of the first column of the submatrix of m_computed and for m_naiveU;
+//@param lastCol : The Index of the last column of the submatrix of m_computed and for m_naiveU; 
 // lastCol + 1 - firstCol is the size of the submatrix.
-//@param firstRowW : The Eigen::Index of the first row of the matrix W that we are to change. (see the reference paper section 1 for more information on W)
+//@param firstRowW : The Index of the first row of the matrix W that we are to change. (see the reference paper section 1 for more information on W)
 //@param firstRowW : Same as firstRowW with the column.
 //@param shift : Each time one takes the left submatrix, one must add 1 to the shift. Why? Because! We actually want the last column of the U submatrix 
 // to become the first column (*coeff) and to shift all the other columns to the right. There are more details on the reference paper.
 template<typename MatrixType>
-void BDCSVD<MatrixType>::divide (Eigen::Index firstCol, Eigen::Index lastCol, Eigen::Index firstRowW, Eigen::Index firstColW, Eigen::Index shift)
+void BDCSVD<MatrixType>::divide(Eigen::Index firstCol, Eigen::Index lastCol, Eigen::Index firstRowW, Eigen::Index firstColW, Eigen::Index shift)
 {
   // requires rows = cols + 1;
   using std::pow;
   using std::sqrt;
   using std::abs;
-  const Eigen::Index n = lastCol - firstCol + 1;
-  const Eigen::Index k = n/2;
+  const Index n = lastCol - firstCol + 1;
+  const Index k = n/2;
   const RealScalar considerZero = (std::numeric_limits<RealScalar>::min)();
   RealScalar alphaK;
   RealScalar betaK; 
@@ -408,6 +428,8 @@ void BDCSVD<MatrixType>::divide (Eigen::Index firstCol, Eigen::Index lastCol, Ei
   {
     // FIXME this line involves temporaries
     JacobiSVD<MatrixXr> b(m_computed.block(firstCol, firstCol, n + 1, n), ComputeFullU | (m_compV ? ComputeFullV : 0));
+    m_info = b.info();
+    if (m_info != Success && m_info != NoConvergence) return;
     if (m_compU)
       m_naiveU.block(firstCol, firstCol, n + 1, n + 1).real() = b.matrixU();
     else 
@@ -427,7 +449,9 @@ void BDCSVD<MatrixType>::divide (Eigen::Index firstCol, Eigen::Index lastCol, Ei
   // and the divide of the right submatrice reads one column of the left submatrice. That's why we need to treat the 
   // right submatrix before the left one. 
   divide(k + 1 + firstCol, lastCol, k + 1 + firstRowW, k + 1 + firstColW, shift);
+  if (m_info != Success && m_info != NoConvergence) return;
   divide(firstCol, k - 1 + firstCol, firstRowW, firstColW + 1, shift + 1);
+  if (m_info != Success && m_info != NoConvergence) return;
 
   if (m_compU)
   {
@@ -472,7 +496,7 @@ void BDCSVD<MatrixType>::divide (Eigen::Index firstCol, Eigen::Index lastCol, Ei
   {
     MatrixXr q1 (m_naiveU.col(firstCol + k).segment(firstCol, k + 1));     
     // we shiftW Q1 to the right
-    for (Eigen::Index i = firstCol + k - 1; i >= firstCol; i--) 
+    for (Index i = firstCol + k - 1; i >= firstCol; i--) 
       m_naiveU.col(i + 1).segment(firstCol, k + 1) = m_naiveU.col(i).segment(firstCol, k + 1);
     // we shift q1 at the left with a factor c0
     m_naiveU.col(firstCol).segment( firstCol, k + 1) = (q1 * c0);
@@ -487,7 +511,7 @@ void BDCSVD<MatrixType>::divide (Eigen::Index firstCol, Eigen::Index lastCol, Ei
   {
     RealScalar q1 = m_naiveU(0, firstCol + k);
     // we shift Q1 to the right
-    for (Eigen::Index i = firstCol + k - 1; i >= firstCol; i--) 
+    for (Index i = firstCol + k - 1; i >= firstCol; i--) 
       m_naiveU(0, i + 1) = m_naiveU(0, i);
     // we shift q1 at the left with a factor c0
     m_naiveU(0, firstCol) = (q1 * c0);
@@ -590,10 +614,10 @@ void BDCSVD<MatrixType>::computeSVDofM(Eigen::Index firstCol, Eigen::Index n, Ma
   // Many singular values might have been deflated, the zero ones have been moved to the end,
   // but others are interleaved and we must ignore them at this stage.
   // To this end, let's compute a permutation skipping them:
-  Eigen::Index actual_n = n;
-  while(actual_n>1 && diag(actual_n-1)==Literal(0)) --actual_n;
-  Eigen::Index m = 0; // size of the deflated problem
-  for(Eigen::Index k=0;k<actual_n;++k)
+  Index actual_n = n;
+  while(actual_n>1 && diag(actual_n-1)==Literal(0)) {--actual_n; eigen_internal_assert(col0(actual_n)==Literal(0)); }
+  Index m = 0; // size of the deflated problem
+  for(Index k=0;k<actual_n;++k)
     if(abs(col0(k))>considerZero)
       m_workspaceI(m++) = k;
   Map<ArrayXi> perm(m_workspaceI.data(),m);
@@ -618,13 +642,11 @@ void BDCSVD<MatrixType>::computeSVDofM(Eigen::Index firstCol, Eigen::Index n, Ma
   std::cout << "  shift:    " << shifts.transpose() << "\n";
   
   {
-    Eigen::Index actual_n = n;
-    while(actual_n>1 && abs(col0(actual_n-1))<considerZero) --actual_n;
     std::cout << "\n\n    mus:    " << mus.head(actual_n).transpose() << "\n\n";
     std::cout << "    check1 (expect0) : " << ((singVals.array()-(shifts+mus)) / singVals.array()).head(actual_n).transpose() << "\n\n";
+    assert((((singVals.array()-(shifts+mus)) / singVals.array()).head(actual_n) >= 0).all());
     std::cout << "    check2 (>0)      : " << ((singVals.array()-diag) / singVals.array()).head(actual_n).transpose() << "\n\n";
-    std::cout << "    check3 (>0)      : " << ((diag.segment(1,actual_n-1)-singVals.head(actual_n-1).array()) / singVals.head(actual_n-1).array()).transpose() << "\n\n\n";
-    std::cout << "    check4 (>0)      : " << ((singVals.segment(1,actual_n-1)-singVals.head(actual_n-1))).transpose() << "\n\n\n";
+    assert((((singVals.array()-diag) / singVals.array()).head(actual_n) >= 0).all());
   }
 #endif
   
@@ -652,18 +674,18 @@ void BDCSVD<MatrixType>::computeSVDofM(Eigen::Index firstCol, Eigen::Index n, Ma
 #endif
   
 #ifdef EIGEN_BDCSVD_SANITY_CHECKS
-  assert(U.allFinite());
-  assert(V.allFinite());
-  assert((U.transpose() * U - MatrixXr(MatrixXr::Identity(U.cols(),U.cols()))).norm() < 1e-14 * n);
-  assert((V.transpose() * V - MatrixXr(MatrixXr::Identity(V.cols(),V.cols()))).norm() < 1e-14 * n);
   assert(m_naiveU.allFinite());
   assert(m_naiveV.allFinite());
   assert(m_computed.allFinite());
+  assert(U.allFinite());
+  assert(V.allFinite());
+//   assert((U.transpose() * U - MatrixXr(MatrixXr::Identity(U.cols(),U.cols()))).norm() < 100*NumTraits<RealScalar>::epsilon() * n);
+//   assert((V.transpose() * V - MatrixXr(MatrixXr::Identity(V.cols(),V.cols()))).norm() < 100*NumTraits<RealScalar>::epsilon() * n);
 #endif
   
   // Because of deflation, the singular values might not be completely sorted.
   // Fortunately, reordering them is a O(n) problem
-  for(Eigen::Index i=0; i<actual_n-1; ++i)
+  for(Index i=0; i<actual_n-1; ++i)
   {
     if(singVals(i)>singVals(i+1))
     {
@@ -673,6 +695,15 @@ void BDCSVD<MatrixType>::computeSVDofM(Eigen::Index firstCol, Eigen::Index n, Ma
       if(m_compV) V.col(i).swap(V.col(i+1));
     }
   }
+
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+  {
+    bool singular_values_sorted = (((singVals.segment(1,actual_n-1)-singVals.head(actual_n-1))).array() >= 0).all();
+    if(!singular_values_sorted)
+      std::cout << "Singular values are not sorted: " << singVals.segment(1,actual_n).transpose() << "\n";
+    assert(singular_values_sorted);
+  }
+#endif
   
   // Reverse order so that singular values in increased order
   // Because of deflation, the zeros singular-values are already at the end
@@ -691,11 +722,11 @@ void BDCSVD<MatrixType>::computeSVDofM(Eigen::Index firstCol, Eigen::Index n, Ma
 template <typename MatrixType>
 typename BDCSVD<MatrixType>::RealScalar BDCSVD<MatrixType>::secularEq(RealScalar mu, const ArrayRef& col0, const ArrayRef& diag, const IndicesRef &perm, const ArrayRef& diagShifted, RealScalar shift)
 {
-  Eigen::Index m = perm.size();
+  Index m = perm.size();
   RealScalar res = Literal(1);
-  for(Eigen::Index i=0; i<m; ++i)
+  for(Index i=0; i<m; ++i)
   {
-    Eigen::Index j = perm(i);
+    Index j = perm(i);
     // The following expression could be rewritten to involve only a single division,
     // but this would make the expression more sensitive to overflow.
     res += (col0(j) / (diagShifted(j) - mu)) * (col0(j) / (diag(j) + shift + mu));
@@ -712,13 +743,13 @@ void BDCSVD<MatrixType>::computeSingVals(const ArrayRef& col0, const ArrayRef& d
   using std::swap;
   using std::sqrt;
 
-  Eigen::Index n = col0.size();
-  Eigen::Index actual_n = n;
+  Index n = col0.size();
+  Index actual_n = n;
   // Note that here actual_n is computed based on col0(i)==0 instead of diag(i)==0 as above
   // because 1) we have diag(i)==0 => col0(i)==0 and 2) if col0(i)==0, then diag(i) is already a singular value.
   while(actual_n>1 && col0(actual_n-1)==Literal(0)) --actual_n;
 
-  for (Eigen::Index k = 0; k < n; ++k)
+  for (Index k = 0; k < n; ++k)
   {
     if (col0(k) == Literal(0) || actual_n==1)
     {
@@ -740,7 +771,7 @@ void BDCSVD<MatrixType>::computeSingVals(const ArrayRef& col0, const ArrayRef& d
       // Skip deflated singular values,
       // recall that at this stage we assume that z[j]!=0 and all entries for which z[j]==0 have been put aside.
       // This should be equivalent to using perm[]
-      Eigen::Index l = k+1;
+      Index l = k+1;
       while(col0(l)==Literal(0)) { ++l; eigen_internal_assert(l<actual_n); }
       right = diag(l);
     }
@@ -749,25 +780,43 @@ void BDCSVD<MatrixType>::computeSingVals(const ArrayRef& col0, const ArrayRef& d
     RealScalar mid = left + (right-left) / Literal(2);
     RealScalar fMid = secularEq(mid, col0, diag, perm, diag, Literal(0));
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
-    std::cout << right-left << "\n";
-    std::cout << "fMid = " << fMid << " " << secularEq(mid-left, col0, diag, perm, diag-left, left) << " " << secularEq(mid-right, col0, diag, perm, diag-right, right)   << "\n";
-    std::cout << "     = " << secularEq(0.1*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.2*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.3*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.4*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.49*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.5*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.51*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.6*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.7*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.8*(left+right), col0, diag, perm, diag, 0)
-              << " "       << secularEq(0.9*(left+right), col0, diag, perm, diag, 0) << "\n";
+    std::cout << "right-left = " << right-left << "\n";
+//     std::cout << "fMid = " << fMid << " " << secularEq(mid-left, col0, diag, perm, ArrayXr(diag-left), left)
+//                            << " " << secularEq(mid-right, col0, diag, perm, ArrayXr(diag-right), right)   << "\n";
+    std::cout << "     = " << secularEq(left+RealScalar(0.000001)*(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.1)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.2)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.3)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.4)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.49)    *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.5)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.51)    *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.6)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.7)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.8)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.9)     *(right-left), col0, diag, perm, diag, 0)
+              << " "       << secularEq(left+RealScalar(0.999999)*(right-left), col0, diag, perm, diag, 0) << "\n";
 #endif
     RealScalar shift = (k == actual_n-1 || fMid > Literal(0)) ? left : right;
     
     // measure everything relative to shift
     Map<ArrayXr> diagShifted(m_workspace.data()+4*n, n);
     diagShifted = diag - shift;
+
+    if(k!=actual_n-1)
+    {
+      // check that after the shift, f(mid) is still negative:
+      RealScalar midShifted = (right - left) / RealScalar(2);
+      if(shift==right)
+        midShifted = -midShifted;
+      RealScalar fMidShifted = secularEq(midShifted, col0, diag, perm, diagShifted, shift);
+      if(fMidShifted>0)
+      {
+        // fMid was erroneous, fix it:
+        shift =  fMidShifted > Literal(0) ? left : right;
+        diagShifted = diag - shift;
+      }
+    }
     
     // initial guess
     RealScalar muPrev, muCur;
@@ -804,12 +853,15 @@ void BDCSVD<MatrixType>::computeSingVals(const ArrayRef& col0, const ArrayRef& d
       // And find mu such that f(mu)==0:
       RealScalar muZero = -a/b;
       RealScalar fZero = secularEq(muZero, col0, diag, perm, diagShifted, shift);
+
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+      assert((numext::isfinite)(fZero));
+#endif
       
       muPrev = muCur;
       fPrev = fCur;
       muCur = muZero;
       fCur = fZero;
-      
       
       if (shift == left  && (muCur < Literal(0) || muCur > right - left)) useBisection = true;
       if (shift == right && (muCur < -(right - left) || muCur > Literal(0))) useBisection = true;
@@ -843,43 +895,81 @@ void BDCSVD<MatrixType>::computeSingVals(const ArrayRef& col0, const ArrayRef& d
         else
           rightShifted = -(std::numeric_limits<RealScalar>::min)();
       }
-      
-      RealScalar fLeft = secularEq(leftShifted, col0, diag, perm, diagShifted, shift);
 
-#if defined EIGEN_INTERNAL_DEBUGGING || defined EIGEN_BDCSVD_DEBUG_VERBOSE
+      RealScalar fLeft = secularEq(leftShifted, col0, diag, perm, diagShifted, shift);
+      eigen_internal_assert(fLeft<Literal(0));
+
+#if defined EIGEN_INTERNAL_DEBUGGING || defined EIGEN_BDCSVD_SANITY_CHECKS
       RealScalar fRight = secularEq(rightShifted, col0, diag, perm, diagShifted, shift);
 #endif
 
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+      if(!(numext::isfinite)(fLeft))
+        std::cout << "f(" << leftShifted << ") =" << fLeft << " ; " << left << " " << shift << " " << right << "\n";
+      assert((numext::isfinite)(fLeft));
+
+      if(!(numext::isfinite)(fRight))
+        std::cout << "f(" << rightShifted << ") =" << fRight << " ; " << left << " " << shift << " " << right << "\n";
+      // assert((numext::isfinite)(fRight));
+#endif
+    
 #ifdef  EIGEN_BDCSVD_DEBUG_VERBOSE
       if(!(fLeft * fRight<0))
       {
-        std::cout << "fLeft: " << leftShifted << " - " << diagShifted.head(10).transpose()  << "\n ; " << bool(left==shift) << " " << (left-shift) << "\n";
-        std::cout << k << " : " <<  fLeft << " * " << fRight << " == " << fLeft * fRight << "  ;  " << left << " - " << right << " -> " <<  leftShifted << " " << rightShifted << "   shift=" << shift << "\n";
+        std::cout << "f(leftShifted) using  leftShifted=" << leftShifted << " ;  diagShifted(1:10):" << diagShifted.head(10).transpose()  << "\n ; "
+                  << "left==shift=" << bool(left==shift) << " ; left-shift = " << (left-shift) << "\n";
+        std::cout << "k=" << k << ", " <<  fLeft << " * " << fRight << " == " << fLeft * fRight << "  ;  "
+                  << "[" << left << " .. " << right << "] -> [" << leftShifted << " " << rightShifted << "], shift=" << shift
+                  << " ,  f(right)=" << secularEq(0,     col0, diag, perm, diagShifted, shift)
+                           << " == " << secularEq(right, col0, diag, perm, diag, 0) << " == " << fRight << "\n";
       }
 #endif
       eigen_internal_assert(fLeft * fRight < Literal(0));
-      
-      while (rightShifted - leftShifted > Literal(2) * NumTraits<RealScalar>::epsilon() * numext::maxi<RealScalar>(abs(leftShifted), abs(rightShifted)))
-      {
-        RealScalar midShifted = (leftShifted + rightShifted) / Literal(2);
-        fMid = secularEq(midShifted, col0, diag, perm, diagShifted, shift);
-        if (fLeft * fMid < Literal(0))
-        {
-          rightShifted = midShifted;
-        }
-        else
-        {
-          leftShifted = midShifted;
-          fLeft = fMid;
-        }
-      }
 
-      muCur = (leftShifted + rightShifted) / Literal(2);
+      if(fLeft<Literal(0))
+      {
+        while (rightShifted - leftShifted > Literal(2) * NumTraits<RealScalar>::epsilon() * numext::maxi<RealScalar>(abs(leftShifted), abs(rightShifted)))
+        {
+          RealScalar midShifted = (leftShifted + rightShifted) / Literal(2);
+          fMid = secularEq(midShifted, col0, diag, perm, diagShifted, shift);
+          eigen_internal_assert((numext::isfinite)(fMid));
+
+          if (fLeft * fMid < Literal(0))
+          {
+            rightShifted = midShifted;
+          }
+          else
+          {
+            leftShifted = midShifted;
+            fLeft = fMid;
+          }
+        }
+        muCur = (leftShifted + rightShifted) / Literal(2);
+      }
+      else 
+      {
+        // We have a problem as shifting on the left or right give either a positive or negative value
+        // at the middle of [left,right]...
+        // Instead fo abbording or entering an infinite loop,
+        // let's just use the middle as the estimated zero-crossing:
+        muCur = (right - left) * RealScalar(0.5);
+        if(shift == right)
+          muCur = -muCur;
+      }
     }
       
     singVals[k] = shift + muCur;
     shifts[k] = shift;
     mus[k] = muCur;
+
+#ifdef  EIGEN_BDCSVD_DEBUG_VERBOSE
+    if(k+1<n)
+      std::cout << "found " << singVals[k] << " == " << shift << " + " << muCur << " from " << diag(k) << " .. "  << diag(k+1) << "\n";
+#endif
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+    assert(k==0 || singVals[k]>=singVals[k-1]);
+    assert(singVals[k]>=diag(k));
+#endif
 
     // perturb singular value slightly if it equals diagonal entry to avoid division by zero later
     // (deflation is supposed to avoid this from happening)
@@ -897,16 +987,16 @@ void BDCSVD<MatrixType>::perturbCol0
     const ArrayRef& shifts, const ArrayRef& mus, ArrayRef zhat)
 {
   using std::sqrt;
-  Eigen::Index n = col0.size();
-  Eigen::Index m = perm.size();
+  Index n = col0.size();
+  Index m = perm.size();
   if(m==0)
   {
     zhat.setZero();
     return;
   }
-  Eigen::Index last = perm(m-1);
+  Index lastIdx = perm(m-1);
   // The offset permits to skip deflated entries while computing zhat
-  for (Eigen::Index k = 0; k < n; ++k)
+  for (Index k = 0; k < n; ++k)
   {
     if (col0(k) == Literal(0)) // deflated
       zhat(k) = Literal(0);
@@ -914,27 +1004,58 @@ void BDCSVD<MatrixType>::perturbCol0
     {
       // see equation (3.6)
       RealScalar dk = diag(k);
-      RealScalar prod = (singVals(last) + dk) * (mus(last) + (shifts(last) - dk));
+      RealScalar prod = (singVals(lastIdx) + dk) * (mus(lastIdx) + (shifts(lastIdx) - dk));
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+      if(prod<0) {
+        std::cout << "k = " << k << " ;  z(k)=" << col0(k) << ", diag(k)=" << dk << "\n";
+        std::cout << "prod = " << "(" << singVals(lastIdx) << " + " << dk << ") * (" << mus(lastIdx) << " + (" << shifts(lastIdx) << " - " << dk << "))" << "\n";
+        std::cout << "     = " << singVals(lastIdx) + dk << " * " << mus(lastIdx) + (shifts(lastIdx) - dk) <<  "\n";
+      }
+      assert(prod>=0);
+#endif
 
-      for(Eigen::Index l = 0; l<m; ++l)
+      for(Index l = 0; l<m; ++l)
       {
-        Eigen::Index i = perm(l);
+        Index i = perm(l);
         if(i!=k)
         {
-          Eigen::Index j = i<k ? i : perm(l-1);
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+          if(i>=k && (l==0 || l-1>=m))
+          {
+            std::cout << "Error in perturbCol0\n";
+            std::cout << "  " << k << "/" << n << " "  << l << "/" << m << " " << i << "/" << n << " ; " << col0(k) << " " << diag(k) << " "  <<  "\n";
+            std::cout << "  " <<diag(i) << "\n";
+            Index j = (i<k /*|| l==0*/) ? i : perm(l-1);
+            std::cout << "  " << "j=" << j << "\n";
+          }
+#endif
+          Index j = i<k ? i : perm(l-1);
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+          if(!(dk!=Literal(0) || diag(i)!=Literal(0)))
+          {
+            std::cout << "k=" << k << ", i=" << i << ", l=" << l << ", perm.size()=" << perm.size() << "\n";
+          }
+          assert(dk!=Literal(0) || diag(i)!=Literal(0));
+#endif
           prod *= ((singVals(j)+dk) / ((diag(i)+dk))) * ((mus(j)+(shifts(j)-dk)) / ((diag(i)-dk)));
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+          assert(prod>=0);
+#endif
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
-          if(i!=k && std::abs(((singVals(j)+dk)*(mus(j)+(shifts(j)-dk)))/((diag(i)+dk)*(diag(i)-dk)) - 1) > 0.9 )
+          if(i!=k && numext::abs(((singVals(j)+dk)*(mus(j)+(shifts(j)-dk)))/((diag(i)+dk)*(diag(i)-dk)) - 1) > 0.9 )
             std::cout << "     " << ((singVals(j)+dk)*(mus(j)+(shifts(j)-dk)))/((diag(i)+dk)*(diag(i)-dk)) << " == (" << (singVals(j)+dk) << " * " << (mus(j)+(shifts(j)-dk))
                        << ") / (" << (diag(i)+dk) << " * " << (diag(i)-dk) << ")\n";
 #endif
         }
       }
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
-      std::cout << "zhat(" << k << ") =  sqrt( " << prod << ")  ;  " << (singVals(last) + dk) << " * " << mus(last) + shifts(last) << " - " << dk << "\n";
+      std::cout << "zhat(" << k << ") =  sqrt( " << prod << ")  ;  " << (singVals(lastIdx) + dk) << " * " << mus(lastIdx) + shifts(lastIdx) << " - " << dk << "\n";
 #endif
       RealScalar tmp = sqrt(prod);
-      zhat(k) = col0(k) > Literal(0) ? tmp : -tmp;
+#ifdef EIGEN_BDCSVD_SANITY_CHECKS
+      assert((numext::isfinite)(tmp));
+#endif
+      zhat(k) = col0(k) > Literal(0) ? RealScalar(tmp) : RealScalar(-tmp);
     }
   }
 }
@@ -945,10 +1066,10 @@ void BDCSVD<MatrixType>::computeSingVecs
    (const ArrayRef& zhat, const ArrayRef& diag, const IndicesRef &perm, const VectorType& singVals,
     const ArrayRef& shifts, const ArrayRef& mus, MatrixXr& U, MatrixXr& V)
 {
-  Eigen::Index n = zhat.size();
-  Eigen::Index m = perm.size();
+  Index n = zhat.size();
+  Index m = perm.size();
   
-  for (Eigen::Index k = 0; k < n; ++k)
+  for (Index k = 0; k < n; ++k)
   {
     if (zhat(k) == Literal(0))
     {
@@ -958,9 +1079,9 @@ void BDCSVD<MatrixType>::computeSingVecs
     else
     {
       U.col(k).setZero();
-      for(Eigen::Index l=0;l<m;++l)
+      for(Index l=0;l<m;++l)
       {
-        Eigen::Index i = perm(l);
+        Index i = perm(l);
         U(i,k) = zhat(i)/(((diag(i) - shifts(k)) - mus(k)) )/( (diag(i) + singVals[k]));
       }
       U(n,k) = Literal(0);
@@ -969,9 +1090,9 @@ void BDCSVD<MatrixType>::computeSingVecs
       if (m_compV)
       {
         V.col(k).setZero();
-        for(Eigen::Index l=1;l<m;++l)
+        for(Index l=1;l<m;++l)
         {
-          Eigen::Index i = perm(l);
+          Index i = perm(l);
           V(i,k) = diag(i) * zhat(i) / (((diag(i) - shifts(k)) - mus(k)) )/( (diag(i) + singVals[k]));
         }
         V(0,k) = Literal(-1);
@@ -992,7 +1113,7 @@ void BDCSVD<MatrixType>::deflation43(Eigen::Index firstCol, Eigen::Index shift, 
   using std::abs;
   using std::sqrt;
   using std::pow;
-  Eigen::Index start = firstCol + shift;
+  Index start = firstCol + shift;
   RealScalar c = m_computed(start, start);
   RealScalar s = m_computed(start+i, start);
   RealScalar r = numext::hypot(c,s);
@@ -1043,7 +1164,7 @@ void BDCSVD<MatrixType>::deflation44(Eigen::Index firstColu , Eigen::Index first
   }
   c/=r;
   s/=r;
-  m_computed(firstColm + i, firstColm) = r;  
+  m_computed(firstColm + i, firstColm) = r;
   m_computed(firstColm + j, firstColm + j) = m_computed(firstColm + i, firstColm + i);
   m_computed(firstColm + j, firstColm) = Literal(0);
 
@@ -1060,14 +1181,14 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
 {
   using std::sqrt;
   using std::abs;
-  const Eigen::Index length = lastCol + 1 - firstCol;
+  const Index length = lastCol + 1 - firstCol;
   
   Block<MatrixXr,Dynamic,1> col0(m_computed, firstCol+shift, firstCol+shift, length, 1);
   Diagonal<MatrixXr> fulldiag(m_computed);
   VectorBlock<Diagonal<MatrixXr>,Dynamic> diag(fulldiag, firstCol+shift, length);
   
   const RealScalar considerZero = (std::numeric_limits<RealScalar>::min)();
-  RealScalar maxDiag = diag.tail((std::max)(Eigen::Index(1),length-1)).cwiseAbs().maxCoeff();
+  RealScalar maxDiag = diag.tail((std::max)(Index(1),length-1)).cwiseAbs().maxCoeff();
   RealScalar epsilon_strict = numext::maxi<RealScalar>(considerZero,NumTraits<RealScalar>::epsilon() * maxDiag);
   RealScalar epsilon_coarse = Literal(8) * NumTraits<RealScalar>::epsilon() * numext::maxi<RealScalar>(col0.cwiseAbs().maxCoeff(), maxDiag);
   
@@ -1091,7 +1212,7 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
   }
 
   //condition 4.2
-  for (Eigen::Index i=1;i<length;++i)
+  for (Index i=1;i<length;++i)
     if (abs(col0(i)) < epsilon_strict)
     {
 #ifdef  EIGEN_BDCSVD_DEBUG_VERBOSE
@@ -1101,7 +1222,7 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
     }
 
   //condition 4.3
-  for (Eigen::Index i=1;i<length; i++)
+  for (Index i=1;i<length; i++)
     if (diag(i) < epsilon_coarse)
     {
 #ifdef  EIGEN_BDCSVD_DEBUG_VERBOSE
@@ -1117,6 +1238,7 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
 #endif
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
   std::cout << "to be sorted: " << diag.transpose() << "\n\n";
+  std::cout << "            : " << col0.transpose() << "\n\n";
 #endif
   {
     // Check for total deflation
@@ -1125,17 +1247,17 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
     
     // Sort the diagonal entries, since diag(1:k-1) and diag(k:length) are already sorted, let's do a sorted merge.
     // First, compute the respective permutation.
-    Eigen::Index *permutation = m_workspaceI.data();
+    Index *permutation = m_workspaceI.data();
     {
       permutation[0] = 0;
-      Eigen::Index p = 1;
+      Index p = 1;
       
       // Move deflated diagonal entries at the end.
-      for(Eigen::Index i=1; i<length; ++i)
+      for(Index i=1; i<length; ++i)
         if(abs(diag(i))<considerZero)
           permutation[p++] = i;
         
-      Eigen::Index i=1, j=k+1;
+      Index i=1, j=k+1;
       for( ; p < length; ++p)
       {
              if (i > k)             permutation[p] = j++;
@@ -1148,9 +1270,9 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
     // If we have a total deflation, then we have to insert diag(0) at the right place
     if(total_deflation)
     {
-      for(Eigen::Index i=1; i<length; ++i)
+      for(Index i=1; i<length; ++i)
       {
-        Eigen::Index pi = permutation[i];
+        Index pi = permutation[i];
         if(abs(diag(pi))<considerZero || diag(0)<diag(pi))
           permutation[i-1] = permutation[i];
         else
@@ -1162,8 +1284,8 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
     }
     
     // Current index of each col, and current column of each index
-    Eigen::Index *realInd = m_workspaceI.data()+length;
-    Eigen::Index *realCol = m_workspaceI.data()+2*length;
+    Index *realInd = m_workspaceI.data()+length;
+    Index *realCol = m_workspaceI.data()+2*length;
     
     for(int pos = 0; pos< length; pos++)
     {
@@ -1171,10 +1293,10 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
       realInd[pos] = pos;
     }
     
-    for(Eigen::Index i = total_deflation?0:1; i < length; i++)
+    for(Index i = total_deflation?0:1; i < length; i++)
     {
-      const Eigen::Index pi = permutation[length - (total_deflation ? i+1 : i)];
-      const Eigen::Index J = realCol[pi];
+      const Index pi = permutation[length - (total_deflation ? i+1 : i)];
+      const Index J = realCol[pi];
       
       using std::swap;
       // swap diagonal and first column entries:
@@ -1187,7 +1309,7 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
       if (m_compV) m_naiveV.col(firstColW + i).segment(firstRowW, length).swap(m_naiveV.col(firstColW + J).segment(firstRowW, length));
 
       //update real pos
-      const Eigen::Index realI = realInd[i];
+      const Index realI = realInd[i];
       realCol[realI] = J;
       realCol[pi] = i;
       realInd[J] = realI;
@@ -1201,13 +1323,13 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
     
   //condition 4.4
   {
-    Eigen::Index i = length-1;
+    Index i = length-1;
     while(i>0 && (abs(diag(i))<considerZero || abs(col0(i))<considerZero)) --i;
     for(; i>1;--i)
        if( (diag(i) - diag(i-1)) < NumTraits<RealScalar>::epsilon()*maxDiag )
       {
 #ifdef EIGEN_BDCSVD_DEBUG_VERBOSE
-        std::cout << "deflation 4.4 with i = " << i << " because " << (diag(i) - diag(i-1)) << " < " << NumTraits<RealScalar>::epsilon()*diag(i) << "\n";
+        std::cout << "deflation 4.4 with i = " << i << " because " << diag(i) << " - " << diag(i-1) << " == " << (diag(i) - diag(i-1)) << " < " << NumTraits<RealScalar>::epsilon()*/*diag(i)*/maxDiag << "\n";
 #endif
         eigen_internal_assert(abs(diag(i) - diag(i-1))<epsilon_coarse && " diagonal entries are not properly sorted");
         deflation44(firstCol, firstCol + shift, firstRowW, firstColW, i-1, i, length);
@@ -1215,7 +1337,7 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
   }
   
 #ifdef EIGEN_BDCSVD_SANITY_CHECKS
-  for(Eigen::Index j=2;j<length;++j)
+  for(Index j=2;j<length;++j)
     assert(diag(j-1)<=diag(j) || abs(diag(j))<considerZero);
 #endif
   
@@ -1226,7 +1348,6 @@ void BDCSVD<MatrixType>::deflation(Eigen::Index firstCol, Eigen::Index lastCol, 
 #endif
 }//end deflation
 
-#ifndef __CUDACC__
 /** \svd_module
   *
   * \return the singular value decomposition of \c *this computed by Divide & Conquer algorithm
@@ -1239,7 +1360,6 @@ MatrixBase<Derived>::bdcSvd(unsigned int computationOptions) const
 {
   return BDCSVD<PlainObject>(*this, computationOptions);
 }
-#endif
 
 } // end namespace Eigen
 

@@ -1,3 +1,11 @@
+/**
+ * @author     : Tang Min (tang_m@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: internal data structure for collision detection, should not be used directly
+ * @version    : 1.0
+ */
+
+
 #include "CollisionTools.cuh"
 
 typedef struct _g_pair {
@@ -65,11 +73,11 @@ typedef struct _g_pair {
 
 
 typedef struct _g_pairCCD {
-	int2* _dPairs;  //id of face pair
-	int* _dVF_EE;//VF OR EE
-	int4* _dv;  //vertexs
-	float* dist;   //dist of vf or ee
-	int* CCD_res;   //CCD result
+	int2* _dPairs;  //!< id of face pair
+	int* _dVF_EE;   //!< VF OR EE
+	int4* _dv;      //!< vertexs
+	float* dist;    //!< dist of vf or ee
+	int* CCD_res;   //!< CCD result
 
 	uint* _dIdx;
 	int _offset;

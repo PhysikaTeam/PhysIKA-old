@@ -98,6 +98,7 @@ namespace PhysIKA
 		Real sum_aij;
 		Real dis_n = 10000.0;
 		int nearest_T = 1;
+		//printf("!!!!! %d %d %d\n", positionTri.size(), Tri.size(), nbSizeTri);
 
 		if (use_mesh && pId < Start)
 			for (int ne = 0; ne < nbSizeTri; ne++)
@@ -125,7 +126,7 @@ namespace PhysIKA
 					do
 					{
 						jn = neighborsTri.getElement(pId, ne + 1);
-						if (jn > 0) break;
+						if (jn >= 0) break;
 						jn *= -1; jn--;
 
 						Triangle3D t3d_n(positionTri[Tri[jn][0]], positionTri[Tri[jn][1]], positionTri[Tri[jn][2]]);
@@ -320,7 +321,7 @@ namespace PhysIKA
 					do
 					{
 						jn = neighborsTri.getElement(pId, ne + 1);
-						if (jn > 0) break;
+						if (jn >= 0) break;
 						jn *= -1; jn--;
 
 						Triangle3D t3d_n(positionTri[Tri[jn][0]], positionTri[Tri[jn][1]], positionTri[Tri[jn][2]]);
@@ -475,6 +476,8 @@ namespace PhysIKA
 		if (pId >= posArr.size()) return;
 
 		posArr[pId] += dPos[pId];
+		/*if (dPos[pId].norm() > 0.002)
+			printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Yes\n");*/
 	}
 
 
@@ -692,6 +695,8 @@ namespace PhysIKA
 		if (pId >= velArr.size()) return;
 		//printf("%d %d\n", curPos.size(), velArr.size());
 		velArr[pId] += (curPos[pId] - prePos[pId]) / dt;
+		if (velArr[pId].norm() > 2.50f)
+			velArr[pId] *= (2.50f / velArr[pId].norm());
 	}
 
 	template <typename Real, typename Coord>

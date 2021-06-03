@@ -26,7 +26,7 @@ namespace  PhysIKA
 		this->attachField(&radius, "radius", "radius");
 		radius.setValue(0.0085);
 
-		
+		/*
 		auto pbd = std::make_shared<SemiAnalyticalIncompressibleFluidModel<DataType3f>>();
 
 		m_particle_position.connect(&pbd->m_particle_position);
@@ -42,9 +42,9 @@ namespace  PhysIKA
 		m_triangle_vertex.connect(&pbd->m_triangle_vertex);
 		m_triangle_vertex_old.connect(&pbd->m_triangle_vertex_old);
 		pbd->setSmoothingLength(0.0125);
+		*/
 		
 		
-		/*
 		std::shared_ptr<PositionBasedFluidModelMesh<DataType3f>> pbd = std::make_shared<PositionBasedFluidModelMesh<DataType3f>>();
 		m_particle_position.connect(&pbd->m_position);
 		m_particle_velocity.connect(&pbd->m_velocity);
@@ -54,7 +54,7 @@ namespace  PhysIKA
 		m_triangle_vertex_old.connect(&pbd->TriPointOld);
 		m_triangle_index.connect(&pbd->Tri);
 		pbd->setSmoothingLength(0.0085);
-		*/
+		
 
 		//
 		//pbd->setSmoothingLength(0.141421);
@@ -277,7 +277,7 @@ namespace  PhysIKA
 		//return;
 		std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems = this->getParticleSystems();
 		std::vector<std::shared_ptr<TriangularSurfaceMeshNode<TDataType>>> m_surfaces = this->getTriangularSurfaceMeshNodes();
-		bool emitter = true;//false;
+		bool emitter = false;
 		if(emitter)
 		{
 
