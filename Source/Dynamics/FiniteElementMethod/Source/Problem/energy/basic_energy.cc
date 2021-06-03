@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: some basic energy function.
+ * @version    : 1.0
+ */
 #include <iostream>
 
 #include <Eigen/SparseCore>
@@ -30,7 +36,7 @@ momentum<T, dim_>::momentum(const size_t dof, const Matrix<T, -1, 1>& mass_vec, 
 
 template<typename T, size_t dim_>
 momentum<T, dim_>::momentum(const T* rest, const size_t dof, const Matrix<T, -1, 1>& mass_vec, const T& dt):dof_(dof), vk_(Matrix<T, -1, 1>::Zero(dim_ *dof)), dt_(dt), d1dt_(1 / dt), d1dtdt_(1 / dt /dt), mass_vec_(dim_ * dof){
-  
+
   dispk_ = Eigen::Map<const Matrix<T, -1, 1>>(rest, dim_ * dof);
 #pragma omp parallel for
   for(size_t i = 0; i < dof; ++i){
@@ -52,7 +58,7 @@ int momentum<T, dim_>::Val(const T *x, data_ptr<T, dim_> &data) const{
 template<typename T, size_t dim_>
 int momentum<T, dim_>::Gra(const T *x, data_ptr<T, dim_> &data) const{
   Eigen::Map<const Matrix<T, -1, 1>> _x(x, dim_ * dof_);
-  
+
   const Matrix<T, -1, 1> acce = (_x  - dispk_) * d1dtdt_  - vk_ * d1dt_;
   data->save_gra(mass_vec_.cwiseProduct(acce));
 
@@ -75,11 +81,11 @@ int momentum<T, dim_>::update_location_and_velocity(const T *new_dispk_ptr, cons
     vk_ = (new_dispk - dispk_) * d1dt_;
   else
     vk_ = Map<const Matrix<T, -1, 1>>(new_velo_ptr, dim_ * dof_);
-  
+
   dispk_ = new_dispk;
   return 0;
 }
-    
+
 
 template<typename T, size_t dim_>
 int momentum<T, dim_>:: set_initial_velocity(const Matrix<T, dim_, 1>& velo){
@@ -121,7 +127,7 @@ template<typename T, size_t dim_>
 int position_constraint<T, dim_>::Gra(const T *x, data_ptr<T, dim_> &data)const {
   Eigen::Map<const Matrix<T, -1, -1>> deformed(x, dim_, dof_);
   Matrix<T, -1, -1> _x = deformed - rest_;
-  
+
   for(auto iter_c = cons_.begin(); iter_c != cons_.end(); ++iter_c)
     data->save_gra(*iter_c, 2.0 * w_ * _x.col(*iter_c));
   return 0;
@@ -187,14 +193,14 @@ collision<T, dim_>::collision(const size_t dof_, const T &w_coll, const char &gr
 template<typename T, size_t dim_>
 int collision<T, dim_>::Val(const T *x, data_ptr<T, dim_> &data) const{
   const size_t which_axis = size_t(ground_axis_ - 'x');
-  
+
   Eigen::Map<const Matrix<T, -1, -1>> _x(x, dim_, dof_);
   #pragma omp parallel for
   for(size_t i = 0; i < dof_; ++i){
     const T position_now = _x(which_axis, i) + (*init_points_ptr_)(which_axis, i);
     if (( position_now - ground_pos_) < 0){
 
-      data->save_val(w_coll_ * pow((ground_pos_ - position_now), 2));      
+      data->save_val(w_coll_ * pow((ground_pos_ - position_now), 2));
     }
 
   }
@@ -203,13 +209,13 @@ int collision<T, dim_>::Val(const T *x, data_ptr<T, dim_> &data) const{
 template<typename T, size_t dim_>
 int collision<T, dim_>::Gra(const T *x, data_ptr<T, dim_> &data) const {
   const size_t which_axis = size_t(ground_axis_ - 'x');
-  
+
   Eigen::Map<const Matrix<T, -1, -1>> _x(x, dim_, dof_);
 #pragma omp parallel for
   for(size_t i = 0; i < dof_; ++i){
     const T position_now = _x(which_axis, i) + (*init_points_ptr_)(which_axis, i);
     if (( position_now - ground_pos_) < 0){
-      data->save_gra(i * dim_ + which_axis, 2 * w_coll_ * (position_now - ground_pos_));  
+      data->save_gra(i * dim_ + which_axis, 2 * w_coll_ * (position_now - ground_pos_));
     }
 
   }
@@ -228,7 +234,7 @@ int collision<T, dim_>::Hes(const T *x, data_ptr<T, dim_> &data) const{
         data->save_hes(i * dim_ + j, i * dim_ + j, 2 * w_coll_);
       }
     }
-    
+
   }
 
   return 0;

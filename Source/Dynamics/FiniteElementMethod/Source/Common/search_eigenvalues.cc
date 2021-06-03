@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: fast searching some partial eigenvalues
+ * @version    : 1.0
+ */
 #include <iostream>
 
 
@@ -21,7 +27,10 @@ using namespace Eigen;
 using namespace Spectra;
 
 namespace PhysIKA{
-
+/**
+ * customize shift solver for spectra, more effective to compute some eigenvalues.
+ *
+ */
 template<typename T>
 class MyShitSolve{
  private:
@@ -47,13 +56,13 @@ template<typename T>
 int get_spectrum(const SPM_R<T>& A, const size_t band, const size_t num_band, MAT<T>& eig_vec, VEC<T>& eig_val){
   if(band == 0 || num_band <= 1)
     return 0;
-  
+
   const size_t dim = A.rows(), num_eig = band * num_band;
   if(num_eig > dim){
     cout << "band size * num_band is larger than the matrix size.\n";
     return __LINE__;
   }
-  
+
   eig_vec = MAT<T>::Zero(dim, num_eig);
   eig_val = VEC<T>::Zero(num_eig);
 
@@ -67,7 +76,7 @@ int get_spectrum(const SPM_R<T>& A, const size_t band, const size_t num_band, MA
       printf("Spectra eigen solver: Used in Cholesky decomposition, indicating that the matrix is not positive definite.\n");
     return __LINE__;
   };
-  
+
   Map<const SPM_C<T>> transA(A.rows(), A.cols(), A.nonZeros(), A.outerIndexPtr(), A.innerIndexPtr(), A.valuePtr(), 0);
   SparseSymShiftSolve<T> shift_op(transA);
   // MyShitSolve<T> shift_op(A);
@@ -98,7 +107,7 @@ int get_spectrum(const SPM_R<T>& A, const size_t band, const size_t num_band, MA
     min_eig_value = eig_val(0);
   }
   interval = (max_eig_value - min_eig_value) / (num_band - 1);
-  
+
   {//solve middle eigvalue
     for(size_t i = 0; i < num_band - 2; ++i){
       T val = min_eig_value + interval * (i + 1);
@@ -140,7 +149,7 @@ int eig(const SPM_R<T>& A, MAT<T>& eig_vec, VEC<T>& eig_val){
       printf("Spectra eigen solver not converge. The number of converged eigenvalues are %d\n", nconv);
     else
       printf("Spectra eigen solver: Used in Cholesky decomposition, indicating that the matrix is not positive definite.\n");
-    return __LINE__; 
+    return __LINE__;
   }
 }
 
@@ -274,7 +283,7 @@ int eig_jac(const SPM_R<T>& mat_A, MAT<T>&eig_vec, VEC<T>& eig_val){
     Q.reserve(dim + 2);
     Q.setFromTriplets(trips.begin(), trips.end());
   }
-  
+
   auto get_max_off_diag = [](const SPM_R<T>& A, size_t& m, size_t& n, T& A_mn, T& A_mm, T& A_nn)->T{
     __TIME_BEGIN__;
     T max_value = 0;
@@ -298,7 +307,7 @@ int eig_jac(const SPM_R<T>& mat_A, MAT<T>&eig_vec, VEC<T>& eig_val){
     __TIME_END__("get max value");
     return max_value;
   };
-  
+
 
   //Here we only change the lower triangle part of A.
   auto RTAR = [](const size_t& m, const size_t& n, const T& cos_theta, const T& sin_theta, SPM_R<T>&A)->void{
@@ -310,7 +319,7 @@ int eig_jac(const SPM_R<T>& mat_A, MAT<T>&eig_vec, VEC<T>& eig_val){
     A.row(m) = new_row_m;
     A.row(n) = new_row_n;
     __TIME_END__("RT A");
-    
+
     //calculate C = B * R
     //This transpose should be fast if Eigen library is coded well
     //TODO: confirm this by comparing the cost with just copying three pointers to construct BT.
@@ -376,7 +385,7 @@ int eig_jac(const mat3<T>& mat_A, mat3<T>& eig_vec, Eigen::Matrix<T, 3, 1>& eig_
     std::cerr<< "mat_A is not sysmetic." << std::endl;
     return __LINE__;
   }
-  
+
   auto get_max_off_diag = [](const mat3<T>& A, size_t& m, size_t& n)->T{
     T val_01 = fabs(A(0,1)), val_02 = fabs(A(0, 2)), val_12 = fabs(A(1, 2));
 
@@ -385,10 +394,10 @@ int eig_jac(const mat3<T>& mat_A, mat3<T>& eig_vec, Eigen::Matrix<T, 3, 1>& eig_
       m = 0; n = 1; value = A(0, 1);
     }
     else if(val_02 >= val_01 && val_02 >= val_12){
-      m = 0; n = 2; value = A(0, 2);      
+      m = 0; n = 2; value = A(0, 2);
     }
     else if(val_12 >= val_01 && val_12 >= val_02){
-      m = 1; n = 2; value = A(1, 2);      
+      m = 1; n = 2; value = A(1, 2);
     }
     return value;
   };
@@ -402,7 +411,7 @@ int eig_jac(const mat3<T>& mat_A, mat3<T>& eig_vec, Eigen::Matrix<T, 3, 1>& eig_
     return Q;
   };
   auto get_Q_tan = [](const size_t& m, const size_t& n, const T& tan_theta)->mat3<T>{
-    
+
     mat3<T> Q = mat3<T>::Identity();
     T cos_theta = 1.0 / sqrt(1 + tan_theta * tan_theta);
     Q(m, m) = cos_theta;
@@ -412,7 +421,7 @@ int eig_jac(const mat3<T>& mat_A, mat3<T>& eig_vec, Eigen::Matrix<T, 3, 1>& eig_
   };
 
   eig_vec.setIdentity();
-  
+
   size_t m, n;
   mat3<T> An = mat_A;
   mat3<T> Q;
@@ -431,10 +440,10 @@ int eig_jac(const mat3<T>& mat_A, mat3<T>& eig_vec, Eigen::Matrix<T, 3, 1>& eig_
     eig_vec = eig_vec * Q;
   };
   eig_val = An.diagonal();
-  
+
   // cout << "check \n";
   // cout << eig_vec.transpose() * eig_val.asDiagonal() * eig_vec << endl;
-  
+
   return 0;
 }
 

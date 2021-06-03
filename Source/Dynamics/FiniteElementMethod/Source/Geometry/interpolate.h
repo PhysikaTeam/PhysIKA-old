@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: some useful interpolation.
+ * @version    : 1.0
+ */
 #ifndef INTERPOLATE_H
 #define INTERPOLATE_H
 
@@ -64,12 +70,12 @@ namespace PhysIKA {
       PointCloud<T>,
       dim_ /* dim */
       > my_kd_tree_t;
-    
+
     std::unique_ptr<my_kd_tree_t> kdt(new my_kd_tree_t(dim_, pv, nanoflann::KDTreeSingleIndexAdaptorParams(32 /* max leaf */)));
     kdt->buildIndex();
 
     const int pt_num = pts.cols();
-    Eigen::Matrix<T, -1, 1> pt, weights;      
+    Eigen::Matrix<T, -1, 1> pt, weights;
     const int neigh_vert_num = 30;
     std::vector<T> neigh_vert_dis(neigh_vert_num);
     std::vector<size_t> neigh_vert_idx(neigh_vert_num);
@@ -115,13 +121,13 @@ namespace PhysIKA {
     coef.setFromTriplets(trips.begin(), trips.end());
     return 0;
   }
-  
+
     template<typename T, size_t dim_>
     int interp_pts_in_tets(const Eigen::Matrix<T, dim_, -1> &v, const Eigen::Matrix<int, 4, -1> &tet, const Eigen::Matrix<T, dim_, -1> &pts, Eigen::SparseMatrix<T> &coef)
     {
       if (tet.size() == 0)
         return interp_pts_in_point_cloud<T, dim_>(v, pts, coef);
-      
+
       const size_t tn = tet.cols(), pn = pts.cols();
 
       Eigen::Matrix<int, dim_, 1> all_rows_ = Eigen::Matrix<int, dim_, 1>::LinSpaced(dim_, 0, dim_ -1);

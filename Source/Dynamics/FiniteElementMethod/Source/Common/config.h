@@ -1,10 +1,16 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: timing helper
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_CONFIG_H
 #define PhysIKA_CONFIG_H
 #include <chrono>
 #include <iostream>
 #include <list>
 #include <string>
-#include <assert.h> 
+#include <assert.h>
 
 namespace PhysIKA{
 
@@ -16,7 +22,7 @@ class TIMING{
   }
   static double end(const std::string& info, const bool if_print = true){
     assert(!starts_.empty());
-      
+
     auto end = std::chrono::system_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - starts_.back());
     double res = double(duration.count()) *std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
@@ -27,7 +33,7 @@ class TIMING{
   }
  private:
   static std::list<std::chrono::system_clock::time_point> starts_;
-  
+
 };
 
 #define __TIME_BEGIN__\

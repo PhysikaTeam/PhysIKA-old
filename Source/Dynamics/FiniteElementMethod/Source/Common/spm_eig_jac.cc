@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: eigenvalues for sparse matrix jacobian
+ * @version    : 1.0
+ */
 #include "Common/config.h"
 #include "spm_eig_jac.h"
 using namespace std;
@@ -39,7 +45,7 @@ int jac_rotate(const size_t& m, const size_t& n,  const T& cos_theta, const T& s
     A.row(m) = new_row_m;
     A.row(n) = new_row_n;
     __TIME_END__("RT A", false);
-    
+
     //calculate C = B * R
     //This transpose should be fast if Eigen library is coded well
     //TODO: confirm this by comparing the cost with just copying three pointers to construct BT.
@@ -140,4 +146,3 @@ int eig_jac(const SPM_R<T>& mat_A, MAT<T>&eig_vec, VEC<T>& eig_val){
 template int eig_jac<double>(const SPM_R<double>& mat_A, MAT<double>& eig_vec, VEC<double>& eig_val);
 template int eig_jac<float>(const SPM_R<float>& mat_A, MAT<float>& eig_vec, VEC<float>& eig_val);
 }
-

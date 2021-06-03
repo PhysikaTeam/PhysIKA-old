@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: construct mesh
+ * @version    : 1.0
+ */
 #ifndef CONSTRUCT_MESH_JJ_H
 #define CONSTRUCT_MESH_JJ_H
 
@@ -40,7 +46,7 @@ void GetMeshEdgeConnection(const Eigen::Matrix<D, -1, -1> &cells, Eigen::SparseM
 {
   std::set<std::array<int, 2>> all_edges = GetAllEdges(cells);
   edge_num = all_edges.size();
-  
+
   std::map<std::array<int, 2>, T> laplacian_ele;
   std::vector<Eigen::Triplet<T>> connect_ele;
   int edge_count = 0;
@@ -49,12 +55,12 @@ void GetMeshEdgeConnection(const Eigen::Matrix<D, -1, -1> &cells, Eigen::SparseM
   {
     vert_num = std::max(e[0]+1, vert_num);
     vert_num = std::max(e[1]+1, vert_num);
-      
+
     laplacian_ele[{e[0], e[0]}] = laplacian_ele[{e[0], e[0]}] + 1;
     laplacian_ele[{e[0], e[1]}] = -1;
     laplacian_ele[{e[1], e[0]}] = -1;
     laplacian_ele[{e[1], e[1]}] = laplacian_ele[{e[1], e[1]}] + 1;
-      
+
     connect_ele.push_back(Eigen::Triplet<T>(e[0], edge_count, 1));
     connect_ele.push_back(Eigen::Triplet<T>(e[1], edge_count, -1));
     edge_count += 1;
@@ -91,5 +97,5 @@ Eigen::Matrix<T, -1, 1> GetEdgeOriginLength(const Eigen::Matrix<T, -1, -1> &nods
 }
 
 
-    
+
 #endif // CONSTRUCT_MESH_JJ_H

@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: interpolation for embedded simulation.
+ * @version    : 1.0
+ */
 #ifndef EMBEDDED_INTERPOLATE_JJ_H
 #define EMBEDDED_INTERPOLATE_JJ_H
 
@@ -9,7 +15,10 @@
 #include <Eigen/SparseQR>
 
 
-
+/**
+ * embedded interpolate class, interpolate coarse mesh to find mesh.
+ *
+ */
 template<typename T>
 class embedded_interpolate
 {
@@ -37,7 +46,7 @@ public:
 #endif
       Eigen::SparseMatrix<T> cffc = c2f_.transpose() * c2f_;
       Eigen::SparseMatrix<T> A = alpha * cffc + energy_hessian_;
-      
+
       ldlt_solver_.compute(A);
       if (ldlt_solver_.info() != Eigen::Success)
       {
@@ -99,7 +108,7 @@ private:
   Eigen::SparseMatrix<T> kernel_coeff_;
   Eigen::SparseQR<Eigen::SparseMatrix<T>, Eigen::COLAMDOrdering<int>> qr_;
 #endif
-  
+
   T alpha_;
 };
 
