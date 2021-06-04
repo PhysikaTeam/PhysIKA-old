@@ -1,3 +1,9 @@
+/**
+ * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: data stream source for physika libraries
+ * @version    : 2.0.1
+ */
 #include "data_str_core.h"
 #include <iostream>
 using namespace std;

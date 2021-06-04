@@ -1,3 +1,9 @@
+/**
+ * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: timing util header for physika library
+ * @version    : 2.0.1
+ */
 #ifndef PhysIKA_CONFIG_H
 #define PhysIKA_CONFIG_H
 #include <chrono>

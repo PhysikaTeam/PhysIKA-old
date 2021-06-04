@@ -1,3 +1,9 @@
+/**
+ * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: data stream header for physika libraries
+ * @version    : 2.0.1
+ */
 #ifndef DATA_STR_H
 #define DATA_STR_H
 #include <unordered_map>

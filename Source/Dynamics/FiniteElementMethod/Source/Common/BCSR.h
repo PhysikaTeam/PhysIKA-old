@@ -1,3 +1,10 @@
+/**
+ * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: BCSR format for sparse storage for physika library
+ * @version    : 1.0
+ */
+
 #ifndef PhysIKA_BCSR
 #define PhysIKA_BCSR
 #include <map>
