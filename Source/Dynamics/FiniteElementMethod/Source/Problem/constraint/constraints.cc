@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: constraint implementation
+ * @version    : 1.0
+ */
 #include "constraints.h"
 namespace PhysIKA{
 using namespace std;
@@ -39,7 +45,7 @@ int hard_position_constraint::Val(const double *x, double *val) const {
     }
     return 0;
   }
-  
+
   return __LINE__;
 }
 
@@ -55,8 +61,8 @@ int hard_position_constraint::Jac(const double *x, const size_t off, vector<Trip
     }
     return 0;
   }
-  
-  if ( rd_ == 2 ) {    
+
+  if ( rd_ == 2 ) {
     size_t i = 0;
     for (auto &elem : fixed2d_) {
       const size_t pid = elem.first;
@@ -66,7 +72,7 @@ int hard_position_constraint::Jac(const double *x, const size_t off, vector<Trip
     }
     return 0;
   }
-  
+
   return __LINE__;
 }
 
@@ -75,6 +81,3 @@ int hard_position_constraint::Hes(const double *x, const size_t off, vector<vect
 }
 
 }
-
-
-

@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: io utility
+ * @version    : 1.0
+ */
 #include "io.h"
 
 #include <iostream>
@@ -50,20 +56,20 @@ int write_SPM(const char* path, const Eigen::SparseMatrix<double>& A){
   cout << "rows "<< rows << " cols "<< cols << " nnz "<< nnz << endl;
   ofs.write(reinterpret_cast<const char*>(&rows), sizeof(rows));
   ofs.write(reinterpret_cast<const char*>(&cols), sizeof(cols));
-  ofs.write(reinterpret_cast<const char*>(&nnz), sizeof(nnz)); 
+  ofs.write(reinterpret_cast<const char*>(&nnz), sizeof(nnz));
 
   const auto& outer = A. outerIndexPtr();
   for(size_t i = 0; i < cols + 1; ++i){
     const int32_t id = static_cast<int32_t>(outer[i]);
     ofs.write(reinterpret_cast<const char*>(&id), sizeof(id));
   }
-  
+
   const auto& inner = A.innerIndexPtr();
   for(size_t i = 0; i < nnz; ++i){
     const int32_t id = static_cast<int32_t>(inner[i]);
     ofs.write(reinterpret_cast<const char*>(&id), sizeof(id));
   }
-    
+
 
   const auto& value = A.valuePtr();
   for(size_t i = 0; i < nnz; ++i)
@@ -78,13 +84,13 @@ int read_fixed_verts_from_csv(const char *filename, std::vector<size_t> &fixed, 
     cerr << "[WARN] can not open " << filename << endl;
     return __LINE__;
   }
-  
+
   vector<double> coords;
-  
+
   string line;
   getline(ifs, line);
   cout << "# csv title: " << line << endl;
-  
+
   while ( std::getline(ifs, line) ) {
     stringstream linestream(line);
     string cell;
@@ -94,7 +100,7 @@ int read_fixed_verts_from_csv(const char *filename, std::vector<size_t> &fixed, 
 
     while ( getline(linestream, cell, ',') ) {
       coords.push_back(std::stod(cell));
-    }    
+    }
   }
   assert(coords.size() == 3*fixed.size());
 
@@ -214,7 +220,7 @@ int hex_mesh_read_from_vtk(const char *path, matd_t *node, mati_t *hex, matd_t *
       *mtr = trans(tmp_mtr);
     }
   }
-  
+
   ifs.close();
 
   return 0;
@@ -223,11 +229,11 @@ int hex_mesh_read_from_vtk(const char *path, matd_t *node, mati_t *hex, matd_t *
 int hex_mesh_write_to_vtk(const char *path, const matd_t &nods,
                           const mati_t &hexs, const matd_t *mtr, const char *type) {
   ASSERT(hexs.size(1) == 8);
-  
+
   ofstream ofs(path);
   if ( ofs.fail() )
     return __LINE__;
-  
+
   ofs << setprecision(15);
   hex2vtk(ofs, &nods[0], nods.size()/3, &hexs[0], hexs.size(2));
 
@@ -257,7 +263,7 @@ int tri_mesh_write_to_vtk(const char *path, const MatrixXd &nods,
   if ( nods.rows() == 2 ) {
     MatrixXd tmp_nods = MatrixXd::Zero(3, nods.cols());
     tmp_nods.row(0) = nods.row(0);
-    tmp_nods.row(1) = nods.row(1);    
+    tmp_nods.row(1) = nods.row(1);
     tri2vtk(ofs, tmp_nods.data(), tmp_nods.cols(), tris.data(), tris.cols());
   } else if ( nods.rows() == 3) {
     tri2vtk(ofs, nods.data(), nods.cols(), tris.data(), tris.cols());
@@ -290,13 +296,13 @@ int point_scalar_append2vtk(const bool is_append, const char* path, const Vector
   if ( ofs.fail() )
     return __LINE__;
   point_data_scalar(is_append, ofs, scalars.data(), scalars.rows(), scalar_name);
-  return 0;  
+  return 0;
 }
 /*
 int quad_mesh_write_to_vtk(const char *path, const matd_t &nods,
                            const mati_t &quad, const matd_t *mtr, const char *type) {
   ASSERT(quad.size(1) == 4);
-  
+
   ofstream ofs(path);
   if ( ofs.fail() )
     return __LINE__;
@@ -308,9 +314,9 @@ int quad_mesh_write_to_vtk(const char *path, const matd_t &nods,
     tmp_nods(colon(0, 1), colon()) = nods;
     quad2vtk(ofs, &tmp_nods[0], tmp_nods.size(2), &quad[0], quad.size(2));
   } else if ( nods.size(1) == 3 ) {
-    quad2vtk(ofs, &nods[0], nods.size()/3, &quad[0], quad.size(2));    
+    quad2vtk(ofs, &nods[0], nods.size()/3, &quad[0], quad.size(2));
   }
-  
+
   if ( mtr != nullptr ) {
     for (int i = 0; i < mtr->size(1); ++i) {
       const string mtr_name = "theta_"+to_string(i);
@@ -357,7 +363,7 @@ int point_write_to_vtk(const char *path, const double *nods, const size_t num_po
     }
 
  }
-  
+
   point2vtk(ofs, nods, num_points, cell.data(), cell.size());
   ofs.close();
   return 0;
@@ -368,7 +374,7 @@ int point_write_to_vtk(const char *path, const matd_t &nods) {
   if ( ofs.fail() )
     return __LINE__;
 
-  matd_t nods_to_write = zeros<double>(3, nods.size(2));  
+  matd_t nods_to_write = zeros<double>(3, nods.size(2));
   if ( nods.size(1) == 2 )
     nods_to_write(colon(0, 1), colon()) = nods;
   else if ( nods.size(1) == 3 )
@@ -377,7 +383,7 @@ int point_write_to_vtk(const char *path, const matd_t &nods) {
   const mati_t cell = colon(0, nods.size(2)-1);
   point2vtk(ofs, &nods_to_write[0], nods_to_write.size(2), &cell[0], cell.size());
   ofs.close();
-        
+
   return 0;
 }
 
@@ -473,7 +479,7 @@ int write_surf_vec_field(const char *path, const mati_t &surf, const matd_t &nod
 
   const size_t node_dim = nods.size(1);
   const size_t elem_num = surf.size(2);
-  
+
   matd_t bc = zeros<double>(node_dim, elem_num);
   for (size_t i = 0; i < elem_num; ++i)
     bc(colon(), i) = nods(colon(), surf(colon(), i))*ones<double>(surf.size(1), 1)/surf.size(1);
@@ -493,7 +499,7 @@ int write_surf_vec_field(const char *path, const mati_t &surf, const matd_t &nod
   }
   line2vtk(ofs, &vec_nods[0], vec_nods.size(2), &vec_cell[0], vec_cell.size(2));
   ofs.close();
-  
+
   return 0;
 }
 */

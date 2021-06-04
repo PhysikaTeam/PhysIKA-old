@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: solver list helper
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_SOLVER_LIST
 #define PhysIKA_SOLVER_LIST
 #include "Solver/linear_solver/pcg.h"

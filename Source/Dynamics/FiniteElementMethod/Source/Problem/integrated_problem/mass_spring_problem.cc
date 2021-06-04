@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: simple mass spring problem
+ * @version    : 1.0
+ */
 #include <memory>
 
 #include <boost/property_tree/ptree.hpp>
@@ -37,10 +43,10 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
   para::frame = common.get<int>("frame",100);
   para::newton_fastMS = simulation_para.get<string>("newton_fastMS");
   para::stiffness = simulation_para.get<double>("stiffness",8000);
-  para::gravity = common.get<double>("gravity", 9.8); 
-  para::object_name = blender.get<string>("surf"); 
+  para::gravity = common.get<double>("gravity", 9.8);
+  para::object_name = blender.get<string>("surf");
   para::out_dir_simulator = common.get<string>("out_dir_simulator");
-  para::simulation_type = simulation_para.get<string>("simulation","static"); 
+  para::simulation_type = simulation_para.get<string>("simulation","static");
   para::weight_line_search =
     simulation_para.get<double>("weight_line_search",1e-5);
   para::input_object = common.get<string>("input_object");
@@ -60,14 +66,14 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
 
   REST_ = nods;
   cells_ = cells;
-  
+
   //read fixed points
   vector<size_t> cons(0);
   if(para_tree.find("input_constraint") != para_tree.not_found())
   {
     const string cons_file_path = common.get<string>("input_constraint");
     IF_ERR(exit, read_fixed_verts_from_csv(cons_file_path.c_str(), cons));
-  } 
+  }
   cout << "constrint " << cons.size() << " points" << endl;
 
   //calc mass vector
@@ -82,15 +88,15 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
   int POS = 3;
   if (pt_.get<string>("solver_type") == "explicit")
     POS = 2;
-  
-  
+
+
   ebf_.resize(POS + 1);
   ebf_[ELAS] = make_shared<MassSpringObj<T>>(para::input_object.c_str(), para::stiffness);
   char axis = common.get<char>("grav_axis", 'y') | 0x20;
 
   ebf_[GRAV]=make_shared<gravity_energy<T, 3>>(num_nods, 1, para::gravity, mass_vec, axis);
   kinetic_ = make_shared<momentum<T, 3>>(nods.data(), num_nods, mass_vec, para::dt);
-  
+
   if (pt_.get<string>("solver_type") == "implicit")
     ebf_[KIN] = kinetic_;
   ebf_[POS] = make_shared<position_constraint<T, 3>>(nods.data(), num_nods, simulation_para.get<double>("w_pos", 1e6), cons);
@@ -101,7 +107,7 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
   collider_ = nullptr;
   cbf_[COLL] = collider_;
 
-  
+
   if (pt_.get<string>("solver_type") == "explicit")
   {
     Map<Matrix<T, -1, 1>> position(REST_.data(), REST_.size());

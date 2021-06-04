@@ -1,8 +1,14 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: edge energy for mass spring method.
+ * @version    : 1.0
+ */
 #ifndef EDGE_ENERGY_JJ_H
 #define EDGE_ENERGY_JJ_H
 
 
-/* edge_energe.f -- translated by f2c (version 20160102).
+/* edge_energy.f -- translated by f2c (version 20160102).
    You must link the resulting object file with libf2c:
 	on Microsoft Windows system, link with libf2c.lib;
 	on Linux or Unix systems, link with .../path/to/libf2c.a -lm

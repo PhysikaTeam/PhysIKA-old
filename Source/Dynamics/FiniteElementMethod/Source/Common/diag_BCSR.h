@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: diagnoal BSCR implementation.
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_DIAG_BCSR_H
 #define PhysIKA_DIAG_BCSR_H
 #include <iostream>
@@ -20,7 +26,7 @@ class diag_BCSR : public BCSR<T, block_size>{
     }
     return this->value_[i];
   }
-  
+
   void setFromDiagMat(const std::vector<ele_type, Eigen::aligned_allocator<ele_type>>&  diag_eles){
     this->rowsb_ = this->colsb_ = diag_eles.size();
     this->rows_ = this->cols_ = this->rowsb_ * block_size;
@@ -61,7 +67,7 @@ class diag_BCSR : public BCSR<T, block_size>{
   VEC operator*(const VEC &rhs) const{
     return BCSR<T, block_size>::operator *(rhs);
   }
-  
+
 };
 
 }

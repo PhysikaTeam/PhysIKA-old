@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: embedded elasticity mass spring method problem
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_EMBEDDED_MS_PROBLEM
 #define PhysIKA_EMBEDDED_MS_PROBLEM
 #include <boost/property_tree/ptree.hpp>
@@ -10,15 +16,19 @@
 
 namespace PhysIKA{
 
+/**
+ * embedded mass spring problem builder, build the embeded mass spring problem.
+ *
+ */
 template<typename T>
 class embedded_ms_problem_builder : public ms_problem_builder<T>
 {
  public:
-  embedded_ms_problem_builder(const T*x, const boost::property_tree::ptree& pt); 
+  embedded_ms_problem_builder(const T*x, const boost::property_tree::ptree& pt);
   embedded_ms_problem_builder() { }
 
   virtual int update_problem(const T* x, const T* v = nullptr);
-  
+
   std::shared_ptr<embedded_interpolate<T>> get_embedded_interpolate() { return embedded_interp_;}
   virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const { return semi_implicit_;}
 

@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: simple mass spring problem
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_GEN_MS_PROBLEM
 #define PhysIKA_GEN_MS_PROBLEM
 #include <boost/property_tree/ptree.hpp>
@@ -10,16 +16,19 @@
 
 
 namespace PhysIKA{
-
+/**
+ * mass spring problem builder, build the mass spring problem
+ *
+ */
 template<typename T>
 class ms_problem_builder : public embedded_problem_builder<T, 3>, public semi_wrapper<T>{
  public:
-  ms_problem_builder(const T*x, const boost::property_tree::ptree& pt); 
+  ms_problem_builder(const T*x, const boost::property_tree::ptree& pt);
   ms_problem_builder() { }
   std::shared_ptr<Problem<T, 3>> build_problem() const;
 
   virtual int update_problem(const T* x, const T* v = nullptr);
-  
+
   Eigen::Matrix<T, -1, -1> get_nods()const {return REST_;}
   Eigen::MatrixXi get_cells()const {return cells_;}
   std::shared_ptr<constraint_4_coll<T>> get_collider() const {return collider_;}

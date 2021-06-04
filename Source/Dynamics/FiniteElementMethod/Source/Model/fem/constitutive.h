@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: constitutive equation for finite element method.
+ * @version    : 1.0
+ */
 #ifndef FEM_CONSTITUTIVE
 #define FEM_CONSTITUTIVE
 
@@ -12,6 +18,10 @@
 #include "Common/tensor.h"
 
 namespace PhysIKA {
+/**
+ * consitutive energy for finite element method.
+ *
+ */
   template <typename T, size_t dim_, size_t field_> class constitutive {
   public:
     static T

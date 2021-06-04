@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: linesearch method for optimization problem.
+ * @version    : 1.0
+ */
 #include "line_search.h"
 #include <iostream>
 

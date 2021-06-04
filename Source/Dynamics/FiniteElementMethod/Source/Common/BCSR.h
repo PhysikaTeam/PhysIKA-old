@@ -1,10 +1,9 @@
 /**
- * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
- * @date       : 2021-05-30
- * @description: BCSR format for sparse storage for physika library
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: Block Compressed Row Format (BCSR) for sparse matrix.
  * @version    : 1.0
  */
-
 #ifndef PhysIKA_BCSR
 #define PhysIKA_BCSR
 #include <map>
@@ -22,6 +21,10 @@ template<typename mat_type>
 using VEC_MAT = std::vector<mat_type, Eigen::aligned_allocator<mat_type>>;
 
 namespace PhysIKA {
+/**
+ * block compressed row format for sparse matrix, for more effective computing.
+ *
+ */
   template <typename T, const size_t block_size> class BCSR {
   public:
     using ele_type = Eigen::Matrix<T, block_size, block_size>;
@@ -136,7 +139,7 @@ namespace PhysIKA {
 
   // operators override.
   // explicit name VEC
-  // TODO: optimize for eigen 
+  // TODO: optimize for eigen
   template <typename T, const size_t block_size>
   Eigen::Matrix<T, -1, 1> BCSR<T, block_size>::operator*(const VEC &rhs) const {
     // error_msg_ext_cond(
@@ -199,7 +202,7 @@ template<typename T>
 VEC_MAT<MAT3<T>> get_block_diagonal(const SPM_R<T>& A){
   exit_if(A.rows() != A.cols(), "A should be sysmetric.");
   VEC_MAT<MAT3<T>> diag_A(A.rows() / 3, MAT3<T>::Zero());
-  
+
   auto fill_one_dim  = [&](const size_t offset)->void{
     #pragma omp parallel for
     for(size_t i = offset; i < A.outerSize(); i += 3){
@@ -236,7 +239,7 @@ VEC_MAT<MAT3<T>> get_block_diagonal(const SPM_R<T>& A){
     }
   };
   fill_one_dim(0);
-  fill_one_dim(1);  
+  fill_one_dim(1);
   fill_one_dim(2);
   return diag_A;
 }
