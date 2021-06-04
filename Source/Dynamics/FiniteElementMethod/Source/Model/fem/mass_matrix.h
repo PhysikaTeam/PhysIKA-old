@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: mass matrix for finite element method.
+ * @version    : 1.0
+ */
 #ifndef MASS_MATRIX_H
 #define MASS_MATRIX_H
 
@@ -59,11 +65,11 @@ template<typename T, size_t dim_, size_t num_per_cell_, size_t bas_order_, size_
 int mass_calculator(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<int, num_per_cell_, -1>& cells, const T& rho, Eigen::Matrix<T, -1, 1>& mass_vector){
   using basis = BASIS<T, dim_, 1, bas_order_, num_per_cell_>;
   using qdrt = QDRT<T, dim_, num_qdrt_, num_per_cell_>;
-  
+
   const size_t num_cells = cells.cols(), num_nods = nods.cols();
   const Eigen::Matrix<int, dim_, 1> all_rows_ = Eigen::Matrix<int, dim_, 1>::LinSpaced(dim_, 0, dim_ -1);
 
-  
+
   const qdrt quadrature_ = qdrt();
 
   mass_vector = Eigen::Matrix<T, -1, 1>(num_nods);
@@ -85,7 +91,7 @@ int mass_calculator(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<
 
     }
     mass *= rho / num_per_cell_;
-    for (size_t p = 0; p < cells.rows(); ++p) 
+    for (size_t p = 0; p < cells.rows(); ++p)
       for (size_t q = p; q < cells.rows(); ++q) {
         #pragma omp critical
         {

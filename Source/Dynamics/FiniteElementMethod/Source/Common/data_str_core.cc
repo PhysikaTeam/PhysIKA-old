@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: data stream core helper.
+ * @version    : 1.0
+ */
 #include "data_str_core.h"
 #include <iostream>
 using namespace std;
@@ -55,7 +61,7 @@ int dat_str_core<T, dim_>::setFromTriplets(){
   hes_.setZero();
   hes_.setFromTriplets(trips.begin(), trips.end());
   cout << "setfrom triples" << endl;
-  return 0;  
+  return 0;
 }
 
 
@@ -69,7 +75,7 @@ template <typename T, size_t dim_>
 int dat_str_core<T, dim_>::save_gra(const size_t& pos, const Eigen::Matrix<T, dim_, 1>& point_gra){
   for(size_t d = 0; d < dim_; ++d){
     #pragma omp atomic
-    gra_(dim_ * pos + d) += point_gra(d);      
+    gra_(dim_ * pos + d) += point_gra(d);
   }
   return 0;
 }
@@ -77,8 +83,8 @@ int dat_str_core<T, dim_>::save_gra(const size_t& pos, const Eigen::Matrix<T, di
 template <typename T, size_t dim_>
 int dat_str_core<T, dim_>::save_gra(const size_t& pos, const T& one_gra){
   #pragma omp atomic
-  gra_(pos) += one_gra;      
-  
+  gra_(pos) += one_gra;
+
   return 0;
 }
 
@@ -117,7 +123,7 @@ int dat_str_core<T, dim_>::save_hes(const size_t&m, const size_t& n, const Eigen
             // hes_.coeffRef(m * dim_ + row, n * dim_ + col) += loc_hes(row, col);
             trips.push_back(Triplet<T>(m * dim_ + row, n * dim_ + col, loc_hes(row, col)));
           }
-                     
+
         }
       }
     }
@@ -130,14 +136,14 @@ int dat_str_core<T, dim_>::save_hes(const size_t&m, const size_t& n, const Eigen
             #pragma omp atomic
             hes_.coeffRef(m * dim_ + row, m * dim_ + col) += loc_hes(row, col);
           }
-                     
+
         }
       }
     }
   }
   return 0;
 }
-    
+
 template <typename T, size_t dim_>
 int dat_str_core<T, dim_>::save_hes(const size_t& row, const size_t& col, const T& value){
   if(!has_pre_compute_hes_){
@@ -152,7 +158,7 @@ int dat_str_core<T, dim_>::save_hes(const size_t& row, const size_t& col, const 
       // T& val = *hes_ref_[id];
       #pragma omp atomic
       // val += value;
-      hes_.coeffRef(row, col) += value;          
+      hes_.coeffRef(row, col) += value;
     }
   }
 
@@ -189,4 +195,3 @@ template class dat_str_core<float, 3>;
 template class dat_str_core<float, 2>;
 template class dat_str_core<float, 1>;
 }//namespace
-

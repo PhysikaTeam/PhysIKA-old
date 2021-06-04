@@ -64,7 +64,7 @@ void SetupModel(T &bunny, int i, std::string model = "")
   bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
   bunny->translate(Vector3f(-0.3+0.3*i, 0.2, 0.8));
   bunny->setVisible(true);
-  // bunny->getElasticitySolver()->setIterationNumber(10);
+  bunny->getElasticitySolver()->setIterationNumber(10);
   //bunny->getElasticitySolver()->setHorizon(0.03);
   bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
   bunny->getTopologyMapping()->setSearchingRadius(0.05);
@@ -123,8 +123,8 @@ void CreateScene()
 
 	for (int i = 0; i < 6; i++)
 	{
-    // string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
-    string model = (i%4 == 0) ? "mass_spring" : "";
+    string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
+    //string model = (i%4 == 0) ? "mass_spring" : "";
     AddSimulationModel(root, sfi, i, model);
 	}
 

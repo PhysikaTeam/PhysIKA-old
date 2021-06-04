@@ -1,4 +1,10 @@
-﻿#include "para.h"
+﻿/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: parameters setting for mass spring method.
+ * @version    : 1.0
+ */
+#include "para.h"
 
 using namespace std;
 

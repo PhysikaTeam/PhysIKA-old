@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: tensor class definition
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_TENSOR
 #define PhysIKA_TENSOR
 #include <Eigen/Dense>
@@ -7,6 +13,10 @@ namespace PhysIKA{
 using namespace std;
 
 
+/**
+ * a simple 4th tensor class.
+ *
+ */
 template<typename T, size_t i, size_t j, int k, int l>
 class fourth_tensor{
   using tensor_type = std::array<std::array<Eigen::Matrix<T, k, l> , j> , i>;
@@ -18,14 +28,14 @@ class fourth_tensor{
       }
     }
   }
-  
+
   const Eigen::Matrix<T, k, l>& operator()(const size_t& row, const size_t& col) const  {
     return tensor_[row][col];
   }
-  
+
   Eigen::Matrix<T, k, l>& operator()(const size_t& row, const size_t& col)  {
     return tensor_[row][col];
-  }  
+  }
 
 
   void Flatten(Eigen::Matrix<T, i * j, k * l>& flatted){
@@ -41,7 +51,7 @@ class fourth_tensor{
 
 
   tensor_type tensor_;
-  
+
 };
 
 template<typename T, size_t i, size_t j, int k, int l>

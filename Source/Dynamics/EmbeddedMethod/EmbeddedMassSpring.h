@@ -1,3 +1,10 @@
+/**
+ * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: embeded mass spring interface header for physika library
+ * @version    : 2.2.1
+ */
+
 #pragma once
 #include "ParticleSystem/ParticleSystem.h"
 #include "Common/framework.h"
@@ -35,8 +42,8 @@ namespace PhysIKA
     using EmbeddedFiniteElement<TDataType>::loadSurface;
 		using EmbeddedFiniteElement<TDataType>::getTopologyMapping;
     using EmbeddedFiniteElement<TDataType>::getSurfaceNode;
-		using EmbeddedFiniteElement<TDataType>::m_horizon;
-		using EmbeddedFiniteElement<TDataType>::m_surfaceNode;
+//		using EmbeddedFiniteElement<TDataType>::m_horizon;
+//		using EmbeddedFiniteElement<TDataType>::m_surfaceNode;
 
                 virtual void init_problem_and_solver(const boost::property_tree::ptree& pt);
   private:

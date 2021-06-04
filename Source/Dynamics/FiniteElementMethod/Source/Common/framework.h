@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: framework for problem and solver building.
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_FRAMEWORK
 #define PhysIKA_FRAMEWORK
 #include "def.h"
@@ -8,6 +14,10 @@
 #include <iostream>
 
 namespace PhysIKA{
+/**
+ * the problem interface. A common problem interface for unifying access.
+ *
+ */
 template<typename T, size_t dim_>
 class Problem{
  public:
@@ -22,6 +32,10 @@ class Problem{
 
 };
 
+/**
+ * the problem builder interface. A common problem interface for unifying access.
+ *
+ */
 template<typename T, size_t dim_>
 class problem_builder{
  public:
@@ -30,6 +44,10 @@ class problem_builder{
   virtual int update_problem(const T* x, const T* v = nullptr);
 };
 
+/**
+ * embedded problem builder interface.
+ *
+ */
 template<typename T, size_t dim_>
 class embedded_problem_builder{
  public:
@@ -42,6 +60,10 @@ class embedded_problem_builder{
 
 };
 
+/**
+ * solver interface, to unifying the calling interface.
+ *
+ */
 template<typename T, size_t dim_>
 class solver{
  public:

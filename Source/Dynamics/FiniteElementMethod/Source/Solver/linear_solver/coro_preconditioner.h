@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: precoditioner for co-rotational solver
+ * @version    : 1.0
+ */
 #ifndef CORO_PRECONDITIONER
 #define CORO_PRECONDITIONER
 
@@ -18,7 +24,11 @@ using ldlt_ptr = std::shared_ptr<ldlt_type<T>>;
 template<typename T>
 using elas_intf_ptr = std::shared_ptr<PhysIKA::elas_intf<T, 3>>;
 
-namespace PhysIKA{
+namespace PhysIKA {
+/**
+ * corotated preconditioner class
+ *
+ */
 template<typename T>
 class coro_preconditioner: public preconditioner<T>{
  public:
@@ -40,14 +50,17 @@ class coro_preconditioner: public preconditioner<T>{
   const diag_BCSR<T, 3> RT_;
 };
 
-
+/**
+ * factory for generating coro preconditioner
+ *
+ */
 template<typename T>
 class coro_precond_fac{
  public:
   coro_precond_fac(const ldlt_ptr<T>& fac_hes_rest):fac_hes_rest_(fac_hes_rest), R_(std::make_shared<diag_BCSR<T, 3>>()){
     exit_if(fac_hes_rest_->info() != Eigen::Success, "Rest hessian can not perform LDLT.");
   }
-  
+
   std::shared_ptr<coro_preconditioner<T>> build_preconditioner()const{
     exit_if(R_->size() == 0 || fac_hes_rest_ == nullptr);
     return std::make_shared<coro_preconditioner<T>>(fac_hes_rest_, R_);
@@ -59,8 +72,12 @@ class coro_precond_fac{
   std::shared_ptr<diag_BCSR<T, 3>> R_;
   VEC_MAT<MAT3<T>> R_per_nod_;
 };
-  
 
+
+/**
+ * geometry multigrid based coro preconditioner factory.
+ *
+ */
 template<typename T>
 class gmg_coro_precond_fac: public coro_precond_fac<T>{
  public:
@@ -74,9 +91,13 @@ class gmg_coro_precond_fac: public coro_precond_fac<T>{
  private:
   const elas_intf_ptr<T> elas_;
 
-  
+
 };
 
+/**
+ * algebraic multigrid based coro preconditioner factory.
+ *
+ */
 template<typename T>
 class amg_coro_precond_fac: public coro_precond_fac<T>{
  public:
@@ -88,11 +109,11 @@ class amg_coro_precond_fac: public coro_precond_fac<T>{
     this->R_->setFromDiagMat(this->R_per_nod_);
     return 0;
   }
-  
+
  private:
-  VEC_MAT<MAT3<T>> A_diag_; 
+  VEC_MAT<MAT3<T>> A_diag_;
   const VEC_MAT<MAT3<T>> A_bar_diag_;
-  
+
   int minimize_norm_of_diff(const SPM_R<T>& A){
     A_diag_ = get_block_diagonal(A);
     this->R_per_nod_.resize(A_diag_.size());
@@ -101,11 +122,11 @@ class amg_coro_precond_fac: public coro_precond_fac<T>{
     for(size_t i = 0; i < size; ++i){
       MAT3<T> A_i = A_diag_[i];
       MAT3<T> A_bar_i = A_bar_diag_[i];
-  
+
       MAT3<T> U_i = A_i;
       VEC3<T> E_i = VEC3<T>::Zero();
       eig_jac(A_bar_i, U_i, E_i);
-    
+
       MAT3<T> U_bar_i;
       VEC3<T> E_bar_i;
       eig_jac(A_bar_i, U_bar_i, E_bar_i);

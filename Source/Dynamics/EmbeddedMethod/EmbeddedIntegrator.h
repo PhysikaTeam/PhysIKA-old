@@ -1,3 +1,10 @@
+/**
+ * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: A implicit integrator header for physika library
+ * @version    : 2.2.1
+ */
+
 #pragma once
 #include <boost/property_tree/ptree.hpp>
 
@@ -37,9 +44,28 @@ namespace PhysIKA {
 		bool initializeImpl() override;
 
 	public:
-		DeviceArrayField<Coord> m_position;
-		DeviceArrayField<Coord> m_velocity;
-		DeviceArrayField<Coord> m_forceDensity;
+		//DeviceArrayField<Coord> m_position;
+		//DeviceArrayField<Coord> m_velocity;
+		//DeviceArrayField<Coord> m_forceDensity;
+
+				/**
+		* @brief Position
+		* Particle position
+		*/
+		DEF_EMPTY_IN_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
+
+		/**
+		* @brief Velocity
+		* Particle velocity
+		*/
+		DEF_EMPTY_IN_ARRAY(Velocity, Coord, DeviceType::GPU, "Particle velocity");
+
+		/**
+		* @brief Force density
+		* Force density on each particle
+		*/
+		DEF_EMPTY_IN_ARRAY(ForceDensity, Coord, DeviceType::GPU, "Force density on each particle");
+
 
 	private:
 		DeviceArray<Coord> m_prePosition;

@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: main body for mass spring method.
+ * @version    : 1.0
+ */
 #ifndef MASS_SPRING_OBJ_JJ_H
 #define MASS_SPRING_OBJ_JJ_H
 
@@ -5,7 +11,11 @@
 #include <unordered_map>
 #include "key_comparison.h"
 
-template<typename T>
+template <typename T>
+/**
+ * mass spring energy class.
+ *
+ */
 class MassSpringObj : public PhysIKA::Functional<T, 3>
 {
 public:

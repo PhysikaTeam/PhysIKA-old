@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: embedded elasticity finite element method problem
+ * @version    : 1.0
+ */
 #include <memory>
 #include <iomanip>
 #include <boost/property_tree/ptree.hpp>
@@ -85,7 +91,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   {
     nods = Map<const MAT<T>>(x, nods.rows(), nods.cols());
     nods_coarse = nods * fine_to_coarse_coef_;
-  } 
+  }
 
   cout << "Boundary Box :\n" << nods_coarse.rowwise().minCoeff() << endl << nods_coarse.rowwise().maxCoeff() << endl;
 
@@ -93,7 +99,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   cells_ = cells;
   Matrix<T, -1, -1> nods_temp = nods_coarse;
   fine_verts_num_ = REST_.cols();
-  
+
   Matrix<T, 3, 3> rot;
   rot << 0, 0, 1, 0, 1, 0, -1, 0, 0;
   cout << "rotatoin matrix is " << rot << endl;

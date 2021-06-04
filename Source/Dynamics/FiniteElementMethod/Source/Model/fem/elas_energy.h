@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: elasticity energy for finite element method.
+ * @version    : 1.0
+ */
 #ifndef ELAS_ENERGY
 #define ELAS_ENERGY
 
@@ -23,6 +29,10 @@ inline void compute_lame_coeffs(const T Ym, const T Pr,
   lambda = Ym*Pr/((1+Pr)*(1-2*Pr));
 }
 
+/**
+ * elasticity interface
+ *
+ */
 template<typename T, size_t dim_>
 class elas_intf{
  public:
@@ -31,6 +41,10 @@ class elas_intf{
   virtual int aver_ele_R(const T* x, vec_mat& vec_R)const = 0;
 };
 
+/**
+ * base elasticity energy class.
+ *
+ */
 template<typename T, size_t dim_, size_t num_per_cell_, size_t bas_order_, size_t qdrt_axis_,
          template<typename, size_t, size_t> class CSTTT,  // constituitive function
          template<typename, size_t, size_t, size_t, size_t > class BASIS, //  basis
@@ -41,9 +55,9 @@ class BaseElas : public elas_intf<T, dim_>, public finite_element<T, dim_, dim_,
   using base_class = finite_element<T, dim_, dim_, num_per_cell_, bas_order_, qdrt_axis_, CSTTT, BASIS, QDRT>;
   BaseElas(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<int, num_per_cell_, -1>& cells, const T& ym, const T&poi);
   BaseElas(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<int, num_per_cell_, -1>& cells, const VEC<T>& ym, const VEC<T>&poi);
-  
+
   int aver_ele_R(const T* x, vec_mat& vec_R)const;
-  
+
 };
 
 #define ELAS_CLASS BaseElas<T, dim_, num_per_cell_, bas_order_, qdrt_axis_, CSTTT, BASIS, QDRT>

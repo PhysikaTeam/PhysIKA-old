@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: main body for mass spring method.
+ * @version    : 1.0
+ */
 #include "mass_spring_obj.h"
 #include "edge_gradient_and_hessian.h"
 #include "read_model.h"

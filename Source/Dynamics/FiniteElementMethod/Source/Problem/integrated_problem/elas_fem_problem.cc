@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: elasticity finite element method problem
+ * @version    : 1.0
+ */
 #include <memory>
 #include <iomanip>
 #include <boost/property_tree/ptree.hpp>
@@ -37,7 +43,7 @@ int read_elas_mtr(const char* file, VEC<T>& Young, VEC<T>&Poi, const size_t num_
     ++cell_id;
   }
   ifs.close();
-  return 0; 
+  return 0;
 }
 
 
@@ -46,7 +52,7 @@ template<typename T>
 elas_problem_builder<T>::elas_problem_builder(const T* x, const boost::property_tree::ptree& pt):pt_(pt){
   if (pt.get<string>("solver_type") == "explicit")
   {
-#define SEMI_IMPLICIT    
+#define SEMI_IMPLICIT
   }
 
   //TODO: need to check exception
@@ -75,9 +81,9 @@ elas_problem_builder<T>::elas_problem_builder(const T* x, const boost::property_
   cells_ = cells;
 
 
- 
 
-  
+
+
   Matrix<T, 3, 3> rot;
   rot << 0, 0, 1, 0, 1, 0, -1, 0, 0;
   cout << "rotatoin matrix is " << rot << endl;
@@ -96,10 +102,10 @@ elas_problem_builder<T>::elas_problem_builder(const T* x, const boost::property_
 
   //set mtr
   VEC<T> Young_vec(num_cells), Poi_vec(num_cells);
-  const string mtr_file = pt.get<string>("mtr_file", ""); 
+  const string mtr_file = pt.get<string>("mtr_file", "");
   if(mtr_file != "")
     read_elas_mtr(mtr_file.c_str(), Young_vec, Poi_vec, num_cells);
-  
+
   //read fixed points
   vector<size_t> cons(0);
   const string cons_file_path = pt.get<string>("cons", "");
@@ -142,12 +148,12 @@ elas_problem_builder<T>::elas_problem_builder(const T* x, const boost::property_
     kinetic_ = pt.get<bool>("dynamics", true) ?
         make_shared<momentum<T, 3>>(nods.data(), num_nods, mass_vec, dt)
         :nullptr;
-    
+
     if (pt_.get<string>("solver_type") == "implicit")
       ebf_[KIN] = kinetic_;
 
     ebf_[POS] = make_shared<position_constraint<T, 3>>(nods.data(), num_nods, w_pos, cons);
-  }  
+  }
 
   //set constraint
 
@@ -161,7 +167,7 @@ elas_problem_builder<T>::elas_problem_builder(const T* x, const boost::property_
   {
     Map<Matrix<T, -1, 1>> position(REST_.data(), REST_.size());
     semi_implicit_ = make_shared<semi_implicit<T>>(dt, mass_vec, position);
-  } 
+  }
 }
 
 template<typename T>

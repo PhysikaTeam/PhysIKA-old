@@ -1,3 +1,9 @@
+/**
+ * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: A implicit integrator source for physika library
+ * @version    : 2.2.1
+ */
 #include <iostream>
 #include <cuda_runtime.h>
 
@@ -19,23 +25,23 @@ namespace PhysIKA
 	EmbeddedIntegrator<TDataType>::EmbeddedIntegrator()
 		: NumericalIntegrator()
 	{
-		attachField(&m_position, "position", "Storing the particle positions!", false);
-		attachField(&m_velocity, "velocity", "Storing the particle velocities!", false);
-		attachField(&m_forceDensity, "force", "Particle forces", false);
+	/*	attachField(&inPosition, "position", "Storing the particle positions!", false);
+		attachField(&inVelocity, "velocity", "Storing the particle velocities!", false);
+		attachField(&inForceDensity, "force", "Particle forces", false);*/
 	}
 
 	template<typename TDataType>
 	void EmbeddedIntegrator<TDataType>::begin()
 	{
-		Function1Pt::copy(m_prePosition, m_position.getValue());
-		Function1Pt::copy(m_preVelocity, m_velocity.getValue());
-		m_forceDensity.getReference()->reset();
+		Function1Pt::copy(m_prePosition, this->inPosition()->getValue());
+		Function1Pt::copy(m_preVelocity, this->inVelocity()->getValue());
+		this->inForceDensity()->getReference()->reset();
 
                 //========see velo=====//
                 // static size_t  cnt = 0;
                 
-                // HostArray<Coord> m_velo_host(m_velocity.getElementCount());
-                // Function1Pt::copy(m_velo_host, m_velocity.getValue());
+                // HostArray<Coord> m_velo_host(this->inVelocity()->getElementCount());
+                // Function1Pt::copy(m_velo_host, this->inVelocity()->getValue());
                 // std::cout << m_velo_host[0][1] << std::endl;
                 // ++cnt;
                 // if(cnt == 2)
@@ -44,10 +50,10 @@ namespace PhysIKA
                 
                 //========see velo=====//
 
-                const size_t num = m_position.getElementCount();
+                const size_t num = this->inPosition()->getElementCount();
 
                 m_position_host.resize(num);
-                Function1Pt::copy(m_position_host, m_position.getValue());
+                Function1Pt::copy(m_position_host, this->inPosition()->getValue());
                 pos_.resize(num* 3);
 #pragma omp parallel for
                 for(size_t i = 0; i < num; ++i)
@@ -55,7 +61,7 @@ namespace PhysIKA
                     pos_[i * 3 + j] = m_position_host[i][j];
 
                 m_velocity_host.resize(num);
-                Function1Pt::copy(m_velocity_host, m_velocity.getValue());
+                Function1Pt::copy(m_velocity_host, this->inVelocity()->getValue());
                 vel_.resize(num * 3);
 #pragma omp parallel for
                 for(size_t i = 0; i < num; ++i)
@@ -80,7 +86,7 @@ namespace PhysIKA
 			return false;
 		}
 
-		int num = m_position.getElementCount();
+		int num = this->inPosition()->getElementCount();
 
 		m_prePosition.resize(num);
 		m_preVelocity.resize(num);
@@ -131,10 +137,10 @@ namespace PhysIKA
 	bool EmbeddedIntegrator<TDataType>::updateVelocity()
 	{
                 Real dt = getParent()->getDt();
-		cuint pDims = cudaGridSize(m_position.getReference()->size(), BLOCK_SIZE);
+		cuint pDims = cudaGridSize(this->inPosition()->getReference()->size(), BLOCK_SIZE);
 		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
-			m_velocity.getValue(),
-			m_position.getValue(),
+			this->inVelocity()->getValue(),
+			this->inPosition()->getValue(),
 			m_prePosition,
 			dt);
 
@@ -165,12 +171,12 @@ namespace PhysIKA
 
                 solver_->solve(&pos_[0]);
                 
-                const size_t num = m_position.getElementCount();
+                const size_t num = this->inPosition()->getElementCount();
 #pragma omp parallel for
                 for(size_t i = 0; i < num; ++i)
                   for(size_t j = 0; j < 3; ++j)
                     m_position_host[i][j] = pos_[i * 3 + j];
-                Function1Pt::copy(m_position.getValue(), m_position_host);
+                Function1Pt::copy(this->inPosition()->getValue(), m_position_host);
 
 		return true;
 	}

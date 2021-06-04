@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: vtk format io utility
+ * @version    : 1.0
+ */
 #ifndef VTK_H
 #define VTK_H
 
@@ -150,7 +156,7 @@ void vtk_vector(OS &os, Iterator first, INT size, const char *vector_name){
     os << "\n";
   }
 }
-    
+
 
 template <typename OS, typename Iterator, typename INT>
 void vtk_data_rgba(OS &os, Iterator first, INT size, const char *value_name,

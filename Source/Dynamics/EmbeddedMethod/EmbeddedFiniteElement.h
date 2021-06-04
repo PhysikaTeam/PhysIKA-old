@@ -1,3 +1,9 @@
+/**
+ * @author     : ZHAO CHONGYAO (cyzhao@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: Finite Element method header for physika library
+ * @version    : 2.2.1
+ */
 #pragma once
 #include "ParticleSystem/ParticleSystem.h"
 #include "Common/framework.h"
@@ -42,7 +48,8 @@ namespace PhysIKA
                 virtual void init_problem_and_solver(const boost::property_tree::ptree& pt);
 
 	public:
-		VarField<Real> m_horizon;
+		/*VarField<Real> m_horizon;*/
+		DEF_EMPTY_VAR(Horizon, Real, "Horizon");
 
 	protected:
 		std::shared_ptr<Node> m_surfaceNode;

@@ -61,10 +61,11 @@ void SetupModel(T &bunny, int i, std::string model = "")
 
   bunny->setMass(1.0);
   bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+
   bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
   bunny->translate(Vector3f(0.4, 0.2 + i * 0.2, 0.8));
   bunny->setVisible(true);
-  // bunny->getElasticitySolver()->setIterationNumber(10);
+   bunny->getElasticitySolver()->setIterationNumber(10);
   //bunny->getElasticitySolver()->setHorizon(0.03);
   bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
   bunny->getTopologyMapping()->setSearchingRadius(0.05);

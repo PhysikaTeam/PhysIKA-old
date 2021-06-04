@@ -45,7 +45,7 @@ void SetupModel(T &bunny, int i, std::string model = "")
 {
   auto sRender = std::make_shared<SurfaceMeshRender>();
   bunny->getSurfaceNode()->addVisualModule(sRender);
-		
+		//
   if (model == "mass_spring")
     sRender->setColor(Vector3f(1, 1, 0));
   else if (model == "fem")
@@ -55,13 +55,17 @@ void SetupModel(T &bunny, int i, std::string model = "")
 
   bunny->setMass(1.0);
   bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
-  bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
-  bunny->translate(Vector3f(0.4, 0.2 + i * 0.3, 0.8));
-  bunny->setVisible(true);
-  // bunny->getElasticitySolver()->setIterationNumber(10);
-  //bunny->getElasticitySolver()->setHorizon(0.03);
-  bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
-  bunny->getTopologyMapping()->setSearchingRadius(0.05);
+
+  //bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+
+
+	bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+	bunny->translate(Vector3f(0.2 , 0.2 + 0.3*i, 0.8));
+	bunny->setVisible(true);
+	bunny->getElasticitySolver()->setIterationNumber(10);
+	//bunny->getElasticitySolver()->setHorizon(0.03);
+	bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
+	bunny->getTopologyMapping()->setSearchingRadius(0.05);
 }
 
 void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::shared_ptr<SolidFluidInteraction<DataType3f>> &sfi, int i, std::string model = "")
@@ -91,7 +95,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
   else
   {
     std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
-		root->addParticleSystem(bunny);
+	root->addParticleSystem(bunny);
     SetupModel(bunny, i, model);
     sfi->addParticleSystem(bunny);
   }    
@@ -117,7 +121,8 @@ void CreateScene()
 
 	for (int i = 0; i < 3; i++)
 	{
-    string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
+    //string model = (i%3 == 0) ? "" : (i%3 == 1) ? "fem" : "mass_spring";
+		string model;
     AddSimulationModel(root, sfi, i, model);
 	}
 

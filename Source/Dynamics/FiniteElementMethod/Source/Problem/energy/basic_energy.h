@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: some basic energy function.
+ * @version    : 1.0
+ */
 #ifndef BASIC_ENERGY_H
 #define BASIC_ENERGY_H
 #include <vector>
@@ -10,6 +16,10 @@ namespace PhysIKA{
 template<typename T, size_t dim_>
 using data_ptr = std::shared_ptr<dat_str_core<T, dim_>>;
 
+/**
+ * Position constraint class, turn the position constraint to soft energy term.
+ *
+ */
 template<typename T, size_t dim_>
 class position_constraint : public Functional<T, dim_>{
  public:
@@ -18,11 +28,11 @@ class position_constraint : public Functional<T, dim_>{
 
   //used for position based
   position_constraint(const T *rest, const size_t dof, const T &w, const std::vector<size_t> &cons);
-  int Val(const T *x, data_ptr<T, dim_> &data) const;  
+  int Val(const T *x, data_ptr<T, dim_> &data) const;
   int Gra(const T *x, data_ptr<T, dim_> &data) const ;
   int Hes(const T *x, data_ptr<T, dim_> &data) const ;
   size_t Nx() const;
- private:
+ private :
   Eigen::Matrix<T, -1, -1> rest_;
   const size_t dof_;
   const T w_;
@@ -30,7 +40,10 @@ class position_constraint : public Functional<T, dim_>{
 };
 
 
-
+/**
+ * gravity energy term, Gravitational potential energy
+ *
+ */
 template<typename T, size_t dim_>
 class gravity_energy : public Functional<T, dim_>{
  public:
@@ -47,7 +60,10 @@ class gravity_energy : public Functional<T, dim_>{
   const Eigen::Matrix<T, -1, 1> mass_;
 };
 
-//simple collision with ground
+/**
+ * turn collision term to soft energy term.
+ *
+ */
 template<typename T, size_t dim_>
 class collision : public Functional<T, dim_>{
  public:
@@ -66,10 +82,14 @@ class collision : public Functional<T, dim_>{
 
 };
 
+/**
+ * momentum energy term.
+ *
+ */
 template<typename T, size_t dim_>
 class momentum : public  Functional<T, dim_>{
  public:
-  //used for displacement based 
+  //used for displacement based
   momentum(const size_t dof,const Eigen::Matrix<T, -1, 1>& mass_vec, const T& dt);
 
   //used for position based

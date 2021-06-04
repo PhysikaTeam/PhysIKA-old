@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: posisson equation for finite element method.
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_POISSON_FEM
 #define PhysIKA_POISSON_FEM
 
@@ -9,7 +15,10 @@
 
 namespace PhysIKA{
 
-
+/**
+ * poisson equation class
+ *
+ */
 template<typename T, size_t dim_, size_t num_per_cell_, size_t qdrt_axis_,
          template<typename, size_t, size_t> class CSTTT,  // constituitive function
          template<typename, size_t, size_t, size_t, size_t > class BASIS, //  basis
@@ -28,5 +37,3 @@ using QUAD_POISSON = POISSON<double, 2, 4, 2, quadratic_csttt, basis_func, quadr
 
 }
 #endif
-
-

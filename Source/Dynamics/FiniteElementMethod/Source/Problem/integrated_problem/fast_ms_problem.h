@@ -1,3 +1,9 @@
+/**
+ * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
+ * @date       : 2021-04-30
+ * @description: fast mass spring problem
+ * @version    : 1.0
+ */
 #ifndef PhysIKA_FAST_MS_PROBLEM
 #define PhysIKA_FAST_MS_PROBLEM
 #include <boost/property_tree/ptree.hpp>
@@ -11,16 +17,19 @@
 #include "Solver/fast_ms_solver.h"
 
 namespace PhysIKA{
-
+/**
+ * fast mass spring problem builder, build the fast mass spring problem
+ *
+ */
 template<typename T>
 class fast_ms_builder : public embedded_ms_problem_builder<T>
 {
  public:
-  fast_ms_builder(const T*x, const boost::property_tree::ptree& pt); 
+  fast_ms_builder(const T*x, const boost::property_tree::ptree& pt);
 
   std::shared_ptr<fast_ms_info<T>> get_fast_ms_solver_info() const { return solver_info_;}
   virtual int update_problem(const T* x, const T* v = nullptr);
-  
+
   using embedded_ms_problem_builder<T>::REST_;
   using embedded_ms_problem_builder<T>::cells_;
   using embedded_ms_problem_builder<T>::collider_;
