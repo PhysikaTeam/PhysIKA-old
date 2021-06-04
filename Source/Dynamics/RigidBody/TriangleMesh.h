@@ -48,7 +48,7 @@ namespace PhysIKA
 		friend class	CollidatableTriangleMesh;
 		friend class bvh;
 		friend void mesh_id(int id, std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &m, int &mid, int &fid);
-	private:
+	public:
 
 		std::shared_ptr<Node> m_surfaceNode;
 		std::shared_ptr<TriangleSet<TDataType>> triangleSet;
@@ -57,7 +57,7 @@ namespace PhysIKA
 		unsigned int _num_tri;
 		TAlignedBox3D<Real> *_bxs;
 		TAlignedBox3D<Real>_bx;
-		double *_areas;
+		Real *_areas;
 
 		// used by time integration
 		//Vector3f *_vtxs;

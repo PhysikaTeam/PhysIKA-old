@@ -27,7 +27,7 @@ namespace PhysIKA
 			}
 
 			h /= 60;       // sector 0 to 5
-			i = (int)floor(h);
+			i = (int)floorf(h);
 			f = h - i;        // factorial part of h
 			p = v * (1 - s);
 			q = v * (1 - s * f);

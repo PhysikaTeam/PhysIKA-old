@@ -1,4 +1,12 @@
+/**
+ * @author     : Tang Min (tang_m@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: collision detection api entry point
+ * @version    : 1.0
+ */
+
 #pragma once
+
 #include "Core/Array/Array.h"
 #include "Framework/Framework/CollidableObject.h"
 #include "Framework/Collision/CollisionBVH.h"
@@ -7,11 +15,17 @@
 #include "Core/DataTypes.h"
 #include "Dynamics/RigidBody/TriangleMesh.h"
 #include<time.h>
+
 namespace PhysIKA
 {
 	class TrianglePair;
-
 	class bvh;
+	/**
+	 * Simple collision detection class
+	 *
+	 * Sample usage:
+	 * bool collid = DCD->checkCollision(mesh1, mesh2);
+	 */
 	template<typename TDataType>
 	class CollidatableTriangleMesh :public CollidableObject {
 		DECLARE_CLASS_1(CollidatableTriangleMesh, TDataType)
@@ -19,12 +33,26 @@ namespace PhysIKA
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
 
+		/**
+		 * constructor
+		 */
 		CollidatableTriangleMesh();
+
+		/**
+		 * destructor
+		 */
 		virtual ~CollidatableTriangleMesh();
-		//static bvh *bvh1;
-		static std::shared_ptr<bvh> bvh1;
-		//static bvh *bvh2;
-		static std::shared_ptr<bvh> bvh2;
+
+		static std::shared_ptr<bvh> bvh1; // static bvh *bvh1;
+		static std::shared_ptr<bvh> bvh2; // static bvh *bvh2;
+		
+		/**
+		 * check whether two mesh is collided
+		 * 
+		 * @param[in] b1 triangle mesh 1 to be tested
+		 * @param[in] b2 triangle mesh 2 to be tested
+		 * @return whether two mesh is collided
+		 */
 		static bool checkCollision(std::shared_ptr<TriangleMesh<TDataType>> b1, std::shared_ptr<TriangleMesh<TDataType>> b2) {
 			
 			if (bvh1.get()== nullptr) {
@@ -64,17 +92,51 @@ namespace PhysIKA
 			return false;
 		}
 
+		/**
+		 * override function for initialization
+		 */
 		bool initializeImpl() override;
+		
+		/**
+		 * update colliable objects
+		 */
 		void updateCollidableObject() override;
+		
+		/**
+		 * update mechanical state
+		 */
 		void updateMechanicalState() override;
 	private:
 
 	};
+
+
+	/**
+	 * manager of the meshes in the scene, used to save and load data 
+	 *
+  	 * Sample usage:
+	 * // storage data
+	 * auto obj = std::make_shared<RigidCollisionBody<DataType3f>>();
+	 * // after some initialiation of obj
+	 * // ...
+	 * CollisionManager::Meshes.push_back(obj->getmeshPtr());
+	 * 
+	 * // load data
+	 * CollisionManager::Meshes[i]
+	 */
 	class CollisionManager{
 	public:
 		CollisionManager() {};
-		static std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> Meshes;
+		static std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> Meshes; //!< storage for input mesh
 
+		/**
+		 * get the id of the mesh
+		 * 
+		 * @param[in]  id  id 
+		 * @param[in]  m   mesh
+		 * @param[out] mid mesh id
+		 * @param[out] fid face id
+		 */
 		static void mesh_id(int id, std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &m, int &mid, int &fid) {
 			fid = id;
 			for (mid = 0; mid < m.size(); mid++)
@@ -91,6 +153,14 @@ namespace PhysIKA
 			printf("mesh_id error!!!!\n");
 			abort();
 		}
+
+		/**
+		 * check whether two mesh specified by ids is covertex
+		 *
+		 * @param[in] id1 mesh id1
+		 * @param[in] id2 mesh id2
+		 * @return whether two mesh specified by ids is covertex
+		 */
 		static bool covertex(int id1, int id2) {
 			if (Meshes.empty())
 				return false;
@@ -113,11 +183,15 @@ namespace PhysIKA
 
 			return false;
 		}
+
+		/**
+		 * storage mesh
+		 *
+		 * @param[in] meshes meshes to be storaged
+		 */
 		static void self_mesh(std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &meshes)
 		{
 			Meshes = meshes;
 		}
-		
 	};
-
 }

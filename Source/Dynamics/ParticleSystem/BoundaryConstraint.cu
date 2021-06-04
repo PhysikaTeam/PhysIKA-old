@@ -108,9 +108,9 @@ namespace PhysIKA
 	template<typename TDataType>
 	void BoundaryConstraint<TDataType>::setCube(Coord lo, Coord hi, Real distance, bool inverted)
 	{
-		int nx = floor((hi[0] - lo[0]) / distance);
-		int ny = floor((hi[1] - lo[1]) / distance);
-		int nz = floor((hi[2] - lo[2]) / distance);
+		int nx = floorf((hi[0] - lo[0]) / distance);
+		int ny = floorf((hi[1] - lo[1]) / distance);
+		int nz = floorf((hi[2] - lo[2]) / distance);
 
 		m_cSDF->setSpace(lo - 5 *distance, hi + 5 * distance, nx + 10, ny + 10, nz + 10);
 		m_cSDF->loadBox(lo, hi, inverted);
@@ -119,7 +119,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	void BoundaryConstraint<TDataType>::setSphere(Coord center, Real r, Real distance, bool inverted)
 	{
-		int nx = floor(2 * r / distance);
+		int nx = floorf(2 * r / distance);
 
 		m_cSDF->setSpace(center - r - 5 * distance, center + r + 5 * distance, nx + 10, nx + 10, nx + 10);
 		m_cSDF->loadSphere(center, r, inverted);

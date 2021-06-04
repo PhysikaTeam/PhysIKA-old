@@ -13,6 +13,7 @@
 #include <string>
 #include "Core/Platform.h"
 #include "Core/Array/Array3D.h"
+#include <cuda_runtime.h>
 
 namespace PhysIKA {
 
@@ -114,9 +115,9 @@ namespace PhysIKA {
 	{
 		// get cell and lerp values
 		Coord fp = (p - m_left)*Coord(1.0 / m_h[0], 1.0 / m_h[1], 1.0 / m_h[2]);
-		const int i = (int)floor(fp[0]);
-		const int j = (int)floor(fp[1]);
-		const int k = (int)floor(fp[2]);
+		const int i = (int)floorf(fp[0]);
+		const int j = (int)floorf(fp[1]);
+		const int k = (int)floorf(fp[2]);
 		if (i < 0 || i >= m_distance.Nx() - 1 || j < 0 || j >= m_distance.Ny() - 1 || k < 0 || k >= m_distance.Nz() - 1) {
 			if (m_bInverted) d = -100000.0f;
 			else d = 100000.0f;

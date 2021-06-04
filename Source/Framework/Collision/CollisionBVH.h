@@ -1,3 +1,10 @@
+/**
+ * @author     : Tang Min (tang_m@zju.edu.cn)
+ * @date       : 2021-05-30
+ * @description: bvh data structure
+ * @version    : 1.0
+ */
+
 #pragma once
 
 #include <vector>
@@ -6,326 +13,225 @@
 #include "Framework/Collision/CollidableTriangle.h"
 #include "Framework/Collision/CollidableTriangleMesh.h"
 #include "Framework/Framework/ModuleTopology.h"
+#include "CollisionMesh.h"
+
 namespace PhysIKA {
-	
-	class vec3f {
-	public:
-		union {
-			struct {
-				double x, y, z;
-			};
-			struct {
-				double v[3];
-			};
-		};
-
-		FORCEINLINE vec3f()
-		{
-			x = 0; y = 0; z = 0;
-		}
-
-		FORCEINLINE vec3f(const vec3f &v)
-		{
-			x = v.x;
-			y = v.y;
-			z = v.z;
-		}
-
-		FORCEINLINE vec3f(const double *v)
-		{
-			x = v[0];
-			y = v[1];
-			z = v[2];
-		}
-		FORCEINLINE vec3f(float *v)
-		{
-			x = v[0];
-			y = v[1];
-			z = v[2];
-		}
-
-		FORCEINLINE vec3f(double x, double y, double z)
-		{
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
-
-		FORCEINLINE double operator [] (int i) const { return v[i]; }
-		FORCEINLINE double &operator [] (int i) { return v[i]; }
-
-		FORCEINLINE vec3f &operator += (const vec3f &v) {
-			x += v.x;
-			y += v.y;
-			z += v.z;
-			return *this;
-		}
-
-		FORCEINLINE vec3f &operator -= (const vec3f &v) {
-			x -= v.x;
-			y -= v.y;
-			z -= v.z;
-			return *this;
-		}
-
-		FORCEINLINE vec3f &operator *= (double t) {
-			x *= t;
-			y *= t;
-			z *= t;
-			return *this;
-		}
-
-		FORCEINLINE vec3f &operator /= (double t) {
-			x /= t;
-			y /= t;
-			z /= t;
-			return *this;
-		}
-
-		FORCEINLINE void negate() {
-			x = -x;
-			y = -y;
-			z = -z;
-		}
-
-		FORCEINLINE vec3f operator - () const {
-			return vec3f(-x, -y, -z);
-		}
-
-		FORCEINLINE vec3f operator+ (const vec3f &v) const
-		{
-			return vec3f(x + v.x, y + v.y, z + v.z);
-		}
-
-		FORCEINLINE vec3f operator- (const vec3f &v) const
-		{
-			return vec3f(x - v.x, y - v.y, z - v.z);
-		}
-
-		FORCEINLINE vec3f operator *(double t) const
-		{
-			return vec3f(x*t, y*t, z*t);
-		}
-
-		FORCEINLINE vec3f operator /(double t) const
-		{
-			return vec3f(x / t, y / t, z / t);
-		}
-
-		// cross product
-		FORCEINLINE const vec3f cross(const vec3f &vec) const
-		{
-			return vec3f(y*vec.z - z * vec.y, z*vec.x - x * vec.z, x*vec.y - y * vec.x);
-		}
-
-		FORCEINLINE double dot(const vec3f &vec) const {
-			return x * vec.x + y * vec.y + z * vec.z;
-		}
-
-		FORCEINLINE void normalize()
-		{
-			double sum = x * x + y * y + z * z;
-			if (sum > double(10e-12)) {
-				double base = double(1.0 / sqrt(sum));
-				x *= base;
-				y *= base;
-				z *= base;
-			}
-		}
-
-		FORCEINLINE double length() const {
-			return double(sqrt(x*x + y * y + z * z));
-		}
-
-		FORCEINLINE vec3f getUnit() const {
-			return (*this) / length();
-		}
-		inline bool isEqual(double a, double b, double tol = double(10e-6)) const
-		{
-			return fabs(a - b) < tol;
-		}
-		FORCEINLINE bool isUnit() const {
-			return isEqual(squareLength(), 1.f);
-		}
-
-		//! max(|x|,|y|,|z|)
-		FORCEINLINE double infinityNorm() const
-		{
-			return fmax(fmax(fabs(x), fabs(y)), fabs(z));
-		}
-
-		FORCEINLINE vec3f & set_value(const double &vx, const double &vy, const double &vz)
-		{
-			x = vx; y = vy; z = vz; return *this;
-		}
-
-		FORCEINLINE bool equal_abs(const vec3f &other) {
-			return x == other.x && y == other.y && z == other.z;
-		}
-
-		FORCEINLINE double squareLength() const {
-			return x * x + y * y + z * z;
-		}
-
-		static vec3f zero() {
-			return vec3f(0.f, 0.f, 0.f);
-		}
-
-		//! Named constructor: retrieve vector for nth axis
-		static vec3f axis(int n) {
-			assert(n < 3);
-			switch (n) {
-			case 0: {
-				return xAxis();
-			}
-			case 1: {
-				return yAxis();
-			}
-			case 2: {
-				return zAxis();
-			}
-			}
-			return vec3f();
-		}
-
-		//! Named constructor: retrieve vector for x axis
-		static vec3f xAxis() { return vec3f(1.f, 0.f, 0.f); }
-		//! Named constructor: retrieve vector for y axis
-		static vec3f yAxis() { return vec3f(0.f, 1.f, 0.f); }
-		//! Named constructor: retrieve vector for z axis
-		static vec3f zAxis() { return vec3f(0.f, 0.f, 1.f); }
-
-	};
-
-	inline vec3f operator * (double t, const vec3f &v) {
-		return vec3f(v.x*t, v.y*t, v.z*t);
-	}
-
-	inline vec3f interp(const vec3f &a, const vec3f &b, double t)
-	{
-		return a * (1 - t) + b * t;
-	}
-
-	inline vec3f vinterp(const vec3f &a, const vec3f &b, double t)
-	{
-		return a * t + b * (1 - t);
-	}
-
-	inline vec3f interp(const vec3f &a, const vec3f &b, const vec3f &c, double u, double v, double w)
-	{
-		return a * u + b * v + c * w;
-	}
-
-	inline double clamp(double f, double a, double b)
-	{
-		return fmax(a, fmin(f, b));
-	}
-
-	inline double vdistance(const vec3f &a, const vec3f &b)
-	{
-		return (a - b).length();
-	}
-
-
-	inline std::ostream& operator<<(std::ostream&os, const vec3f &v) {
-		os << "(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
-		return os;
-	}
-
-#define CLAMP(a, b, c)		if((a)<(b)) (a)=(b); else if((a)>(c)) (a)=(c)
-
-
-	FORCEINLINE void
-		vmin(vec3f &a, const vec3f &b)
-	{
-		a.set_value(
-			fmin(a[0], b[0]),
-			fmin(a[1], b[1]),
-			fmin(a[2], b[2]));
-	}
-
-	FORCEINLINE void
-		vmax(vec3f &a, const vec3f &b)
-	{
-		a.set_value(
-			fmax(a[0], b[0]),
-			fmax(a[1], b[1]),
-			fmax(a[2], b[2]));
-	}
-
-	FORCEINLINE vec3f lerp(const vec3f &a, const vec3f &b, float t)
-	{
-		return a + t * (b - a);
-	}
 	class front_node;
 	class bvh_node;
 	
-	static vec3f *s_fcenters;
+	static vec3f *s_fcenters; //!< used to store temporary data
+
+	/**
+	 * front list of the front node
+	 */
 	class front_list : public std::vector<front_node> {
 	public:
-		void propogate(std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &c, vector<TrianglePair> &ret);
+		/**
+		 * push the data structure to gpu
+		 * 
+		 * @param[in] r1 bvh node 1
+		 * @param[in] r2 bvh node 2
+		 */
 		void push2GPU(bvh_node *r1, bvh_node *r2 = NULL);
 	};
 
+	/**
+	 * bvh node
+	 */
 	class bvh_node {
-		TAlignedBox3D<float> _box;
-		static bvh_node* s_current;
-		int _child; // >=0 leaf with tri_id, <0 left & right
-		int _parent;
+		TAlignedBox3D<float> _box;  //!< aabb box
+		static bvh_node* s_current; //!< store temporary data
+		int _child;                 //!< child >=0 leaf with tri_id, <0 left & right
+		int _parent;                //!< parent
 
 		void setParent(int p);
 
 	public:
+		/**
+		 * constructor
+		 */
 		bvh_node();
-
+		
+		/**
+		 * destructor
+		 */
 		~bvh_node();
 
+		/**
+		 * check collision with the other bvh node
+		 * 
+		 * @param[in]  other another bvh node
+		 * @param[out] ret   triangle pair to store the result
+         */
 		void collide(bvh_node *other, std::vector<TrianglePair> &ret);
 
+		/**
+		 * check collision with the bvtt front
+		 *
+		 * @param[in]  other another bvh node
+		 * @param[out] f     bvtt front that stores the collision
+		 * @param[in]  level level
+		 * @param[in]  ptr   parent
+		 */
 		void collide(bvh_node *other, front_list &f, int level, int ptr);
 
+		/**
+		 * check self collision within a bvtt front and a node 
+		 *
+		 * @param[out] lst front list
+		 * @param[in]  r   node
+		 */
 		void self_collide(front_list &lst, bvh_node *r);
-		void
-			construct(unsigned int id, TAlignedBox3D<float>*s_fboxes);
-		void
-			construct(unsigned int *lst, unsigned int num, vec3f *s_fcenters, TAlignedBox3D<float>*s_fboxes,
-				bvh_node*& s_current);
+		
+		/**
+		 * construct the bvh node
+		 *
+		 * @param[in] id        index
+		 * @param[in] s_fboxes  boxes
+		 */
+		void construct(unsigned int id, TAlignedBox3D<float>* s_fboxes);
+		
+		/**
+		 * construct the bvh node
+		 *
+		 * @param[in] lst        list
+		 * @param[in] num        list item number
+		 * @param[in] s_fcenters centers
+		 * @param[in] s_fboxes   boxes
+		 * @param[in] s_current  current node
+		 */
+		void construct(
+			unsigned int *lst, 
+			unsigned int num, vec3f *s_fcenters, 
+			TAlignedBox3D<float>* s_fboxes,
+			bvh_node*& s_current);
 
-		void visualize(int level);
-		void refit(TAlignedBox3D<float>*s_fboxes);
+		/**
+		 * refit algorithm, internal
+		 *
+		 * @param[in] s_fboxes boxes
+		 */
+		void refit(TAlignedBox3D<float> *s_fboxes);
+
+		/**
+		 * reset parents of the tree, internal
+		 *
+		 * @param[in] root       tree node
+		 */
 		void resetParents(bvh_node *root);
 
+		/**
+		 * get boxes
+		 *
+		 * @return boxes
+		 */
 		FORCEINLINE TAlignedBox3D<float> &box() { return _box; }
+
+		/**
+		 * get left child
+		 *
+		 * @return left child
+		 */
 		FORCEINLINE bvh_node *left() { return this - _child; }
+
+		/**
+		 * get right child
+		 *
+		 * @return right child
+		 */
 		FORCEINLINE bvh_node *right() { return this - _child + 1; }
+
+		/**
+		 * get triangle id
+		 *
+		 * @return triangle id
+		 */
 		FORCEINLINE int triID() { return _child; }
+
+		/**
+		 * check leaf node
+		 *
+		 * @return whether current node is a leaf node
+		 */
 		FORCEINLINE int isLeaf() { return _child >= 0; }
+
+		/**
+		 * get parent
+		 *
+		 * @return parent id
+		 */
 		FORCEINLINE int parentID() { return _parent; }
 
+		/**
+		 * get current level
+		 * 
+		 * @param[in]  current   current index
+		 * @param[out] max_level max level
+		 */
 		FORCEINLINE void getLevel(int current, int &max_level);
 
+		/**
+		 * get level index
+		 *
+		 * @param[in]  current current index
+		 * @param[in] idx      index
+		 */
 		FORCEINLINE void getLevelIdx(int current, unsigned int *idx);
-		void sprouting(bvh_node *other, front_list &append, std::vector < TrianglePair > &ret);
+
+		/**
+		 * sprout algorithm
+		 *
+		 * @param[in]  other   another bvh node
+		 * @param[out] append  front list
+		 * @param[out] ret     result in triangle pairs
+		 */
+		void sprouting(bvh_node* other, front_list& append, std::vector<TrianglePair>& ret);
+
+		/**
+		 * sprout algorithm second version
+		 *
+		 * @param[in]  other   another bvh node
+		 * @param[out] append  front list
+		 * @param[out] ret     result in triangle pairs
+		 */
+		void sprouting2(bvh_node* other, front_list& append, std::vector<TrianglePair>& ret);
 
 		friend class bvh;
 	};
+
+	/**
+	 * front node in the bvtt front list
+	 */
 	class front_node {
 	public:
-		bvh_node *_left, *_right;
-		unsigned int _flag; // vailid or not
-		unsigned int _ptr; // self-coliding parent;
+		bvh_node* _left;          //!< left child
+		bvh_node* _right;         //!< right child
+		unsigned int _flag;       //!< vailid or not
+		unsigned int _ptr;        //!< self-coliding parent;
 
+		/**
+		 * constructor
+		 * 
+		 * @param[in] l   left child
+		 * @param[in] r   right child
+		 * @param[in] ptr parant
+		 */
 		front_node(bvh_node *l, bvh_node *r, unsigned int ptr);
-
-		void update(front_list &appended, std::vector<TrianglePair> &ret);
 	};
-
 	
+	/**
+	 * internal class for bvh construction
+	 */
 	class aap {
 	public:
-		int _xyz;
-		float _p;
+		int _xyz;     //!< type
+		float _p;     //!< center
 
+		/**
+		 * constructor
+		 * 
+		 * @param[in] total box in whole
+		 */
 		FORCEINLINE aap(const TAlignedBox3D<float> &total) {
 			vec3f center =vec3f( total.center().getDataPtr());
 			int xyz = 2;
@@ -342,20 +248,37 @@ namespace PhysIKA {
 			_p = center[xyz];
 		}
 
+		/**
+		 * check if center is inside
+		 * 
+		 * @param[in] mid mid point
+		 * @return whether inside
+		 */
 		inline bool inside(const vec3f &mid) const {
 			return mid[_xyz] > _p;
 		}
 	};
 	
+
+	/**
+	 * bvh class for acceleration
+	 */
 	class bvh {
-		int _num; // all face num
-		bvh_node *_nodes;
-		TAlignedBox3D<float>*s_fboxes;
-
-		unsigned int *s_idx_buffer;
-
+		int _num = 0;                                 //!< node number
+		bvh_node *_nodes = nullptr;                   //!< node array pointer
+		TAlignedBox3D<float>* s_fboxes = nullptr;     //!< boxes
+		unsigned int *s_idx_buffer = nullptr;         //!< index buffeer
 	public:
+		/**
+		 * default constuctor
+		 */
 		bvh() {};
+
+		/**
+		 * constuctor
+		 * 
+		 * @param ms triangle meshes for bvh construction
+         */
 		template<typename T>
 		bvh(std::vector<std::shared_ptr<TriangleMesh<T>>> &ms) {
 			_num = 0;
@@ -365,7 +288,26 @@ namespace PhysIKA {
 			reorder();
 			resetParents(); //update the parents after reorder ...
 		}
+		
+		/**
+		 * constuctor
+		 *
+		 * @param[in] ms collision mesh for construction
+		 */
+		bvh(const std::vector<CollisionMesh*>& ms);
+		
+		/**
+		 * refit algorithm, used for bvh construction
+		 *
+		 * @param s_fboxes aabb boxes
+		 */
 		void refit(TAlignedBox3D<float>*s_fboxes);
+
+		/**
+		 * construct algorithm
+		 *
+		 * @param[in] ms triangle meshes
+		 */
 		template<typename T>
 		void construct(std::vector<std::shared_ptr<TriangleMesh<T>>> &ms) {
 			TAlignedBox3D<float> total;
@@ -399,7 +341,7 @@ namespace PhysIKA {
 					auto _s = p1 + p2 + p3;
 					auto sum = _s.getDataPtr();
 					s_fcenters[tri_idx] = vec3f(sum);
-					s_fcenters[tri_idx] /= double(3.0);
+					s_fcenters[tri_idx] /= 3.0;
 					//s_fcenters[tri_idx] = (p1 + p2 + p3) / double(3.0);
 					tri_idx++;
 				}
@@ -437,35 +379,86 @@ namespace PhysIKA {
 			}
 
 			delete[] s_idx_buffer;
+			s_idx_buffer = nullptr;
 			delete[] s_fcenters;
+			s_fcenters = nullptr;
 
 			refit(s_fboxes);
 			//delete[] s_fboxes;
 		}
 
+		/**
+		 *reorder algorithm, used for construction
+		 */
 		void reorder(); // for breath-first refit
-		void resetParents();
-		
 
+		/**
+		 *reset parent algorithm
+		 */
+		void resetParents();
+
+		/**
+		 *destructor
+		 */
 		~bvh() {
 			if (_nodes)
 				delete[] _nodes;
 		}
 
+		/**
+		 * get root node
+		 * 
+		 * @return root node
+		 */
 		bvh_node *root() { return _nodes; }
 
+
+		/**
+		 * refit algorithm
+		 *
+		 * @param[in] ms triangle mesh
+		 */
 		void refit(std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &ms);
 
+		/**
+		 * push the host bvh structure to device bvh structure
+		 *
+		 * @param[in] isCloth is cloth
+		 */
 		void push2GPU(bool);
 
+		/**
+		 * collide with other bvh structure
+		 *
+		 * @param[in]  other another bvh structure
+		 * @param[out] f     bvtt front
+		 * 
+		 */
 		void collide(bvh *other, front_list &f);
 
+		/**
+		 * collide with other bvh structure
+		 *
+		 * @param[in]  other another bvh structure
+		 * @param[out] ret   triangle pair as result
+		 */
 		void collide(bvh *other, std::vector<TrianglePair> &ret);
 
-		void self_collide(front_list &f, std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &c);
+		/**
+		 * self collision detection
+		 *
+		 * @param[out] f bvtt front
+		 * @param[in]  c triangle mesh
+		 */
+		void self_collide(front_list &f, std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> &c); // hxl
 
-		void visualize(int);
+
+		/**
+		 * self collision detection
+		 *
+		 * @param[out] f bvtt front
+		 * @param[in]  c collision mesh
+		 */
+		void self_collide(front_list& f, std::vector<CollisionMesh*>& c);
 	};
-
-	
 }

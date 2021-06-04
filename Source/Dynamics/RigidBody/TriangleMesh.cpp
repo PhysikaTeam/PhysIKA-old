@@ -2,6 +2,9 @@
 #include "Framework/Framework/Node.h"
 #include "Framework/Collision/CollisionBVH.h"
 #include <vector>
+
+#define _CRT_SECURE_NO_WARNINGS
+
 using namespace std;
 namespace PhysIKA
 {
@@ -29,6 +32,7 @@ namespace PhysIKA
 	
 	template<typename TDataType>
 	TriangleMesh<TDataType>::~TriangleMesh() {
+
 	}
 	template<typename TDataType>
 	void TriangleMesh<TDataType>::updataBxs() {
@@ -65,7 +69,7 @@ namespace PhysIKA
 		_num_vtx = triangleSet->h_coords.size();
 		_num_tri = triangleSet->h_triangles.size();
 		_bxs = new TAlignedBox3D<Real>[_num_tri];
-		_areas = new double[_num_tri];
+		_areas = new Real[_num_tri];
 		//calcAreas(texs, ttris);
 		updataBxs();
 	}
@@ -185,7 +189,7 @@ namespace PhysIKA
 		_ovtxs = new Vector3f[_num_vtx];
 		//_nrms = new Vector3f[_num_vtx];
 		_bxs = new TAlignedBox3D<Real>[_num_tri];
-		_areas = new double[_num_tri];
+		_areas = new Real[_num_tri];
 		//calcAreas(texs, ttris);
 		updataBxs();
 		return true;
