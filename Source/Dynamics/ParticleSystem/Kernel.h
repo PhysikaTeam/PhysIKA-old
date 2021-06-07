@@ -57,6 +57,24 @@ namespace PhysIKA {
 		}
 	};
 
+	template<typename Real>
+	class ConstantKernel : public Kernel<Real>
+	{
+	public:
+		COMM_FUNC ConstantKernel() : Kernel<Real>() {};
+		COMM_FUNC ~ConstantKernel() {};
+
+		COMM_FUNC inline Real Weight(const Real r, const Real h) override
+		{
+			return Real(1);
+		}
+
+		COMM_FUNC inline Real Gradient(const Real r, const Real h) override
+		{
+			return Real(0);
+		}
+	};
+
 
 	template<typename Real>
 	class SmoothKernel : public Kernel<Real>
@@ -258,6 +276,40 @@ namespace PhysIKA {
 				const Real t = 1.5f - q;
 				const Real w = 0.5f - q;
 				return -0.102f*(d*d*d - 5.0f*t*t*t + 10.0f*w*w*w) / hh;
+			}
+		}
+	};
+
+
+
+
+	template<typename TReal>
+	class SpikyKernel2D : public Kernel<TReal>
+	{
+	public:
+		COMM_FUNC SpikyKernel2D() : Kernel<TReal>() {};
+		COMM_FUNC ~SpikyKernel2D() {};
+
+		COMM_FUNC inline TReal Weight(const TReal r, const TReal h) override
+		{
+			const TReal q = r / h;
+			if (q > 1.0f) return 0.0f;
+			else {
+				const TReal d = 1.0 - q;
+				//const TReal hh = h * h;
+				return 10.0f / ((TReal)M_PI * h * h) * d * d * d * this->m_scale;
+			}
+		}
+
+		COMM_FUNC inline TReal Gradient(const TReal r, const TReal h) override
+		{
+			const TReal q = r / h;
+			if (q > 1.0f) return 0.0;
+			//else if (r==0.0f) return 0.0f;
+			else {
+				const TReal d = 1.0 - q;
+				//const TReal hh = h * h;
+				return -30.0f / ((TReal)M_PI * h*h*h) *d*d * this->m_scale;
 			}
 		}
 	};

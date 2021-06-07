@@ -4,6 +4,8 @@
 #include "Rendering/PointRender.h"
 #include "Rendering/LineRender.h"
 #include "Rendering/RigidTriangleRender.h"
+#include "Framework/Topology/Frame.h"
+#include "Core/DataTypes.h"
 
 namespace PhysIKA
 {
@@ -11,8 +13,10 @@ namespace PhysIKA
 	{
 		DECLARE_CLASS(RigidMeshRender)
 	public:
-		RigidMeshRender();
+		RigidMeshRender(std::shared_ptr<Frame<DataType3f>> frame=0);
 		~RigidMeshRender();
+
+		inline void setMeshFrame(std::shared_ptr<Frame<DataType3f>> frame) { this->m_meshFrame = frame; }
 
 		void display() override;
 		void setColor(Vector3f color);
@@ -35,6 +39,7 @@ namespace PhysIKA
 		DeviceArray<float3> colors;
 
 		std::shared_ptr<RigidTriangleRender> m_triangleRender;
+		std::shared_ptr<Frame<DataType3f>> m_meshFrame;
 	};
 
 }

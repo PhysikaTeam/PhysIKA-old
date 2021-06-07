@@ -2,64 +2,40 @@
 
 
 #include "Dynamics/RigidBody/RigidUtil.h"
+#include "demoCar.h"
+#include "demoPBD.h"
 
 
-template<typename T>
-void out(const Quaternion<T>& q)
-{
-	std::cout << q.x() << "  " << q.y() << "  " << q.z() << "  " << q.w() << std::endl;
-}
-
-
-void out(const Vector3f& v)
-{
-	std::cout << v[0] << "  " << v[1] << "  " << v[2] << std::endl;
-}
-
-void out(const MatrixMN<float>& m)
-{
-	for (int i = 0; i < m.rows(); ++i)
-	{
-		for (int j = 0; j < m.cols(); ++j)
-		{
-			std::cout << m(i, j) << "  ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-}
-
-void testMatInverse()
-{
-	std::default_random_engine e(time(0));
-	std::uniform_real_distribution<float> u(-2.0, 2.0);
-
-	int n = 10;
-	for (int casei = 0; casei < n; ++casei)
-	{
-		int dim = 6;
-		MatrixMN<float> mat(dim, dim);
-		for (int i = 0; i < dim; ++i)
-		{
-			for (int j = 0; j < dim; ++j)
-			{
-				mat(i, j) = u(e);
-			}
-		}
-
-		MatrixMN<float> inv = RigidUtil::inverse(mat, dim);
-
-		MatrixMN<float> iden = inv * mat;
-
-		out(iden);
-	}
-
-}
 
 
 
 int main()
 {
+	std::cout << "Input to choose a simulation scene: " << std::endl;
+	std::cout << "   0:  Normal 4 wheels car." << std::endl;
+	std::cout << "   1:  Tank car." << std::endl;
+
+
+	int examp = 0;
+	std::cin >> examp;
+
+	switch (examp)
+	{
+	case 1:
+	{
+		// Tank car.
+		DemoTankCar* demo1 = DemoTankCar::getInstance();
+		demo1->build(true);
+		break;
+	}
+	default:
+	{
+		// Normal 4 wheel car.
+		DemoCar2* demo0 = DemoCar2::getInstance();
+		demo0->build(false);
+		break;
+	}
+	}
 
 	//testMatInverse();
 
@@ -72,25 +48,51 @@ int main()
 
 	//demo_SphericalJoint();
 
-	demo_MultiRigid<50>();
-
-	//Quaternion<float> qx(Vector3f(1, 0, 0), 1.57);
-	//Quaternion<float> qy(Vector3f(0, 1, 0), 1.57);
-	//Quaternion<float> qxy = qx * qy;
-	//Quaternion<float> qyx = qy * qx;
-
-	//Vector3f tmpv(1, 2, 3);
-
-	//out(qx.rotate(tmpv));
-	//out(qy.rotate(tmpv));
-
-	//out(qx.rotate(qy.rotate(tmpv)));
-	//out(qy.rotate(qx.rotate(tmpv)));
-
-	//out(qxy.rotate(tmpv));
-	//out(qyx.rotate(tmpv));
+	//demo_MultiRigid<1>();
 
 
+	//DemoPBDPositionConstraint demo(100, true);
+	//demo.run();
+
+	//DemoPBDRotationConstraint demo(10, true);
+	//demo.run();
+
+	//DemoPBDCommonRigid demo(3, true);
+	//demo.run();
+
+	//DemoCar2* demo = DemoCar2::getInstance();
+	////root->addChild(demo);
+	//demo->build();
+
+	//DemoPBDCar* demo = DemoPBDCar::getInstance();
+	//demo->build(false);
+
+
+	
+
+
+
+	//DemoSlope* demo = DemoSlope::getInstance();
+	//demo->build(true);
+
+	//DemoPBDSingleHFCollide* demo = DemoPBDSingleHFCollide::getInstance();
+	//demo->createScene();
+	//demo->run();
+	
+
+	//DemoCollisionTest* demo = DemoCollisionTest::getInstance();
+	//demo->build(false);
+
+	//DemoPendulumTest* demo = DemoPendulumTest::getInstance();
+	//demo->build(false);
+
+	//DemoContactTest* demo = DemoContactTest::getInstance();
+	//demo->build(true);
+
+
+	/*GLApp window;
+	window.createWindow(1024, 768);
+	window.mainLoop();*/
 
 
 

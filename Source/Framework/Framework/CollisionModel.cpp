@@ -12,4 +12,11 @@ CollisionModel::~CollisionModel()
 {
 }
 
+bool CollisionModel::execute()
+{
+	this->doCollision();
+
+	return true;
+}
+
 }

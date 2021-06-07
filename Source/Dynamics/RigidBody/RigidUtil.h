@@ -16,10 +16,36 @@
 
 namespace PhysIKA
 {
+
+	namespace RigidUitlCOMM
+	{
+		COMM_FUNC inline int maxi(int a, int b)
+		{
+			return a > b ? a : b;
+		}
+		COMM_FUNC inline int mini(int a, int b)
+		{
+			return a < b ? a : b;
+		}
+		COMM_FUNC inline int maxi(int a, int b, int c)
+		{
+			int res = a > b ? a : b;
+			return res > c ? res : c;
+		}
+		COMM_FUNC inline int mini(int a, int b, int c)
+		{
+			int res = a < b ? a : b;
+			return res < c ? res : c;
+		}
+
+	}
+
 	//namespace RigidUtil
 	class RigidUtil
 	{
 	public:
+
+		
 
 		template<typename MAT>
 		static void SwapRow(MAT& A, int i, int j)
@@ -72,12 +98,41 @@ namespace PhysIKA
 			}
 		}
 
+		template<typename T>
+		static void setStxS(const SpatialVector<T>* S1, int dof1, const SpatialVector<T>& S2, T*  V)
+		{
+			for (int i = 0; i < dof1; ++i)
+			{
+				V[i] = S1[i] * S2;
+			}
+		}
+
+
+		template<typename T>
+		static SpatialVector<T> setSxq(const SpatialVector<T>* S1, T*  V, int dof1 )
+		{
+			SpatialVector<T> res;
+			for (int i = 0; i < dof1; ++i)
+			{
+				res += S1[i] * V[i];
+			}
+			return res;
+		}
+
 		template<typename T> 
 		static const void vecSub(const T* v1, const T* v2, int dof, T* res)
 		{
 			for (int i = 0; i < dof; ++i)
 			{
 				res[i] = v1[i] - v2[i];
+			}
+		}
+		template<typename T>
+		static const void vecAdd(const T* v1, const T* v2, int dof, T* res)
+		{
+			for (int i = 0; i < dof; ++i)
+			{
+				res[i] = v1[i] + v2[i];
 			}
 		}
 
@@ -615,6 +670,34 @@ namespace PhysIKA
 			//	Vectornd<float> res = S*q;
 
 			//	return res;
+		}
+
+		static Vector3f calculateCubeLocalInertia(float mass, const Vector3f& geoSize)
+		{
+			Vector3f iner;
+			iner[0] = mass / 12.0f * (geoSize[1] * geoSize[1] + geoSize[2] * geoSize[2]);
+			iner[1] = mass / 12.0f * (geoSize[0] * geoSize[0] + geoSize[2] * geoSize[2]);
+			iner[2] = mass / 12.0f * (geoSize[0] * geoSize[0] + geoSize[1] * geoSize[1]);
+			return iner;
+		}
+
+		static Vector3f calculateCylinderLocalInertia(float mass, float radius, float height, int axis=0)
+		{
+			Vector3f iner;
+			for (int i = 0; i < 3; ++i)
+			{
+				if (i == axis)
+					iner[i] = 0.5f * mass * radius;
+				else
+					iner[i] = 1.0f / 12.0f * mass * (3.0f*radius*radius + height * height);
+			}
+			return iner;
+		}
+
+		static Vector3f calculateSphereLocalInertia(float mass, float radius)
+		{
+			float inertia = 2.0 / 5.0 * mass * radius * radius;
+			return Vector3f(inertia, inertia, inertia);
 		}
 	};
 }

@@ -196,6 +196,7 @@ namespace PhysIKA
 			m_pointRender->renderSprite();
 			break;
 		case RenderModeEnum::INSTANCE:
+			m_pointRender->setInstanceSize(m_sphereInstanceSize);
 			m_pointRender->renderInstancedSphere();
 		default:
 			break;

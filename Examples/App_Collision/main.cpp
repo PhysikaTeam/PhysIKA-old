@@ -63,6 +63,7 @@ void CreateScene()
 	
 	bunny=
 		std::make_shared<RigidCollisionBody<DataType3f>>();
+	bunny->setMass(1.0);
 	root->addRigidBody(bunny);
 	bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
 	auto sRender = std::make_shared<SurfaceMeshRender>();
@@ -81,6 +82,7 @@ void CreateScene()
 		//_REAL theta = randDegree<_REAL>(); // 30.0;
 
 		auto nbunny = std::make_shared<RigidCollisionBody<DataType3f>>();
+		nbunny->setMass(1.0);
 		root->addRigidBody(nbunny);
 		nbunny->getmeshPtr()->loadFromSet(TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(bunny->getSurfaceNode()->getTopologyModule()));
 		double gap = 0.4;
@@ -124,8 +126,8 @@ int main()
 	Log::sendMessage(Log::DebugInfo, "Simulation begin");
 
 	GLApp window;
-	window.createWindow(1024, 768);
 	window.setKeyboardFunction(keyfunc);
+	window.createWindow(1024, 768);
 
 	window.mainLoop();
 

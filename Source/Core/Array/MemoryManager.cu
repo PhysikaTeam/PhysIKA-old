@@ -88,6 +88,22 @@ namespace PhysIKA {
 	}
 
 	template<DeviceType deviceType>
+	void DefaultMemoryManager<deviceType>::copyMemory1D(void * ptr1, void * ptr2, size_t memsize, size_t valuesize)
+	{
+		switch (deviceType)
+		{
+		case CPU:
+			memcpy(ptr1, ptr2, memsize*valuesize);
+			break;
+		case GPU:
+			cuSafeCall(cudaMemcpy(ptr1, ptr2, memsize * valuesize, cudaMemcpyDeviceToDevice));
+			break;
+		default:
+			break;
+		}
+	}
+
+	template<DeviceType deviceType>
 	void CudaMemoryManager<deviceType>::allocMemory1D(void** ptr, size_t memsize, size_t valueSize)
 	{
 		switch (deviceType)
@@ -145,6 +161,24 @@ namespace PhysIKA {
 			break;
 		case GPU:
 			DefaultMemoryManager<deviceType>::releaseMemory(ptr);
+			break;
+		case UNDEFINED:
+			break;
+		default:
+			break;
+		}
+	}
+
+	template<DeviceType deviceType>
+	void CudaMemoryManager<deviceType>::copyMemory1D(void * ptr1, void * ptr2, size_t memsize, size_t valuesize)
+	{
+		switch (deviceType)
+		{
+		case CPU:
+			cuSafeCall(cudaMemcpy(ptr1, ptr2, memsize * valuesize, cudaMemcpyHostToHost));
+			break;
+		case GPU:
+			cuSafeCall(cudaMemcpy(ptr1, ptr2, memsize * valuesize, cudaMemcpyDeviceToDevice));
 			break;
 		case UNDEFINED:
 			break;

@@ -24,6 +24,11 @@ namespace PhysIKA
 	protected:
 		void allocMemory()
 		{
+			if (m_n <= 0)
+			{
+				m_data = nullptr;
+				return;
+			}
 			m_alloc->allocMemory1D((void**)&m_data, m_n, sizeof(T));
 			//reset();
 			this->setZeros();
@@ -116,7 +121,7 @@ namespace PhysIKA
 		void release();
 	private:
 		
-		T* m_data;
+		T* m_data=0;
 		int m_n = 0;
 		std::shared_ptr<MemoryManager<deviceType>> m_alloc;
 
@@ -135,7 +140,7 @@ namespace PhysIKA
 	template<typename T, DeviceType deviceType>
 	inline Vectornd<T, deviceType>::~Vectornd()
 	{
-		if (m_data != NULL)
+		if (m_data != NULL && m_n !=0)
 		{
 			m_alloc->releaseMemory((void**)&m_data);
 		}
@@ -225,7 +230,7 @@ namespace PhysIKA
 	inline Vectornd<T, deviceType> Vectornd<T, deviceType>::operator+(const Vectornd<T, deviceType>& v) const
 	{
 		Vectornd<T, deviceType> res(m_n);
-		for (int i = 0; i < n; ++i)
+		for (int i = 0; i < m_n; ++i)
 		{
 			res.m_data[i] = this->m_data[i] + v.m_data[i];
 		}
@@ -353,6 +358,8 @@ namespace PhysIKA
 	template<typename T, DeviceType deviceType>
 	inline void Vectornd<T, deviceType>::setZeros()
 	{
+		if (m_n <= 0)
+			return;
 		m_alloc->initMemory((void*)m_data, 0, m_n * sizeof(T));
 	}
 

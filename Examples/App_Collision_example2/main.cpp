@@ -218,8 +218,8 @@ int main()
 	Log::sendMessage(Log::DebugInfo, "Simulation begin");
 
 	GLApp window;
-	window.createWindow(1024, 768);
 	window.setKeyboardFunction(keyboardFunc);
+	window.createWindow(1024, 768);
 
 	window.mainLoop();
 

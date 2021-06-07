@@ -37,7 +37,8 @@ namespace PhysIKA{
 
 	static cuint iDivUp(cuint a, cuint b)
 	{
-		return (a % b != 0) ? (a / b + 1) : (a / b);
+		return (a + b - 1) / b;
+		//return (a % b != 0) ? (a / b + 1) : (a / b);
 	}
 
 	// compute grid and thread block size for a given number of elements
@@ -46,6 +47,8 @@ namespace PhysIKA{
 		int dim = iDivUp(totalSize, blockSize);
 		return dim == 0 ? 1 : dim;
 	}
+
+	
 
 	static dim3 cudaGridSize3D(uint3 totalSize, uint blockSize)
 	{
@@ -125,9 +128,22 @@ namespace PhysIKA{
 		cuSynchronize();								\
 	}
 
+
+
+
 #define cuExecute3D(size, Func, ...){						\
 		uint3 pDims = cudaGridSize3D(size, 8);		\
 		dim3 threadsPerBlock(8, 8, 8);		\
+		Func << <pDims, threadsPerBlock >> > (				\
+		__VA_ARGS__);										\
+		cuSynchronize();									\
+	}
+
+
+#define cuExecute2D(size, Func, ...){						\
+		uint3 bDims = {16,16,1};						\
+		uint3 pDims = cudaGridSize3D(size, bDims);		\
+		dim3 threadsPerBlock(16, 16, 1);		\
 		Func << <pDims, threadsPerBlock >> > (				\
 		__VA_ARGS__);										\
 		cuSynchronize();									\

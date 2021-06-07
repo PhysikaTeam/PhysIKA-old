@@ -4,6 +4,7 @@
 //#include "Core/Vector/vector_nd.h"
 #include "Dynamics/RigidBody/JointSpace.h"
 #include "Dynamics/RigidBody/Transform3d.h"
+#include "Core/Vector/vector_3d.h"
 
 #include<memory>
 
@@ -50,7 +51,7 @@ namespace PhysIKA
 		const Transform3d<float>& getXJ()const { return m_XJ; }
 		void setXJ(const Transform3d<float>& xj) { this->m_XJ = xj; }
 
-		const Transform3d<float> getX()const{ return m_XJ * m_XT;}
+		const Transform3d<float> getX()const{ return m_XT*m_XJ;}
 
 		// Get degree of freedom of joint
 		// Should be overwritten
@@ -67,6 +68,53 @@ namespace PhysIKA
 
 		virtual void update(double dt) {}
 
+		/**
+		* @brief Calculate relative position 
+		*/
+		virtual void getRelativePostion(float* generalq, Vector3f& p, Quaternion<float>& qua)const {}
+
+		virtual void getRelativeTransform(float* generalq, Transform3d<float>& trans)const {};
+
+		virtual int violateConstraint(int i, float val)
+		{
+			if (!m_beConstraint[i] || (val >= m_lowerBound[i] && val <= m_upperBound[i]))
+				return 0;
+			else if (val < m_lowerBound[i])
+				return -1;
+			else
+				return 1;
+		}
+	
+		virtual void setConstraint(int i, float lower, float upper)
+		{
+			m_beConstraint[i] = true;
+			m_lowerBound[i] = lower;
+			m_upperBound[i] = upper;
+		}
+
+		/**
+		* @brief Set relative joint positon (relative to predecessor)
+		* @param 
+		*/
+		virtual void setJointPosition(const Vector3f& relp, const Quaternion<float>& relqua)
+		{
+			m_relPos = relp;
+			m_relQua = relqua;
+			m_XT.set(-relqua.rotate(relp), m_relQua);
+		}
+
+		virtual float* getInitGeneralPos() { return m_initGeneralPos; }
+		virtual const float* getInitGeneralPos()const { return m_initGeneralPos; }
+
+		virtual inline void setMotorForce(float* force)
+		{
+			for (int i = 0; i < getJointDOF(); ++i)
+				m_motorForce[i] = force[i];
+		}
+		inline const float* getMotorForce()const { return m_motorForce; }
+		inline float* getMotorForce() { return m_motorForce; }
+
+
 	protected:
 		//void _updateT();
 
@@ -77,12 +125,26 @@ namespace PhysIKA
 		Node* m_predecessor=0;
 		Node* m_successor=0;
 
-		Transform3d<float> m_XT;					// tree transformation. transformation from predecessor frame to tree joint. 
-		Transform3d<float> m_XJ;					// transformation from joint position to successor frame. 
+		Vector3f m_relPos;					// Joint postion relative to predecessor, in predecessor frame.
+		Quaternion<float> m_relQua;			// Joint rotation relative to redecessor.
+
+		// tree transformation. transformation from joint frame to predecessor frame. 
+		Transform3d<float> m_XT;					
+
+		// transformation from successor frame to joint frame.
+		Transform3d<float> m_XJ;					 
 
 		// we let the child class to define JointSpace matrix
 		// as we don't know the Dof of the joint.
 		//JointSpace<float, Dof> m_S;					// constrained space matrix. defined in successor coordinate. 6*Dof
+
+		bool m_beConstraint[6] = { false , false , false , false , false , false };
+		float m_lowerBound[6] = { 0 };
+		float m_upperBound[6] = { 0 };
+
+		float m_initGeneralPos[6] = { 0 };
+
+		float m_motorForce[6] = { 0 };
 
 	};
 

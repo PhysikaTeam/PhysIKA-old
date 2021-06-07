@@ -22,8 +22,8 @@ class MatrixBase
 public:
     MatrixBase(){}
     virtual ~MatrixBase(){}
-    virtual unsigned int rows() const=0;
-    virtual unsigned int cols() const=0;
+	COMM_FUNC virtual unsigned int rows() const=0;
+	COMM_FUNC virtual unsigned int cols() const=0;
 protected:
 };
 

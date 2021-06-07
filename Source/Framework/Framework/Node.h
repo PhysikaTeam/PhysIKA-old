@@ -19,6 +19,7 @@
 #include "MechanicalState.h"
 #include "ModuleForce.h"
 #include "ModuleConstraint.h"
+#include "ModuleCustom.h"
 #include "CollisionModel.h"
 #include "CollidableObject.h"
 #include "ModuleVisual.h"
@@ -189,7 +190,7 @@ public:
 			}
 		}
 		delete tmp;
-		return TypeInfo::CastPointerDown<TModule>(base);
+		return TypeInfo::cast<TModule>(base);
 	}
 
 	template<class TModule> 
@@ -197,7 +198,7 @@ public:
 	{
 		std::shared_ptr<Module> base = getModule(name);
 
-		return TypeInfo::CastPointerDown<TModule>(base);
+		return TypeInfo::cast<TModule>(base);
 	}
 
 
@@ -285,6 +286,7 @@ public:
 		NODE_ADD_SPECIAL_MODULE(VisualModule, m_render_list)
 		NODE_ADD_SPECIAL_MODULE(TopologyMapping, m_topology_mapping_list)
 		NODE_ADD_SPECIAL_MODULE(ComputeModule, m_compute_list)
+		NODE_ADD_SPECIAL_MODULE(CustomModule, m_custom_list)
 
 		NODE_CREATE_SPECIAL_MODULE(ForceModule)
 		NODE_CREATE_SPECIAL_MODULE(ConstraintModule)
@@ -292,14 +294,17 @@ public:
 		NODE_CREATE_SPECIAL_MODULE(VisualModule)
 		NODE_CREATE_SPECIAL_MODULE(TopologyMapping)
 		NODE_CREATE_SPECIAL_MODULE(ComputeModule)
+		NODE_CREATE_SPECIAL_MODULE(CustomModule)
 
 	virtual bool initialize() { return true; }
 	virtual void draw() {};
 	virtual void advance(Real dt);
 	virtual void takeOneFrame() {};
 	virtual void updateModules() {};
-	virtual void updateTopology() {};
+	virtual void updateTopology();
 	virtual bool resetStatus() { return true; }
+	virtual void updateStatus();
+	virtual void applyTopologyMappings();
 
 	/**
 	 * @brief Depth-first tree traversal 
@@ -363,6 +368,7 @@ private:
 		NODE_ADD_SPECIAL_MODULE_LIST(VisualModule, m_render_list)
 		NODE_ADD_SPECIAL_MODULE_LIST(TopologyMapping, m_topology_mapping_list)
 		NODE_ADD_SPECIAL_MODULE_LIST(ComputeModule, m_compute_list)
+		NODE_ADD_SPECIAL_MODULE_LIST(CustomModule, m_custom_list)
 
 private:
 	bool m_controllable = true;
@@ -426,6 +432,7 @@ private:
 	std::list<std::shared_ptr<CollisionModel>> m_collision_list;
 	std::list<std::shared_ptr<VisualModule>> m_render_list;
 	std::list<std::shared_ptr<TopologyMapping>> m_topology_mapping_list;
+	std::list<std::shared_ptr<CustomModule>> m_custom_list;
 
 	std::shared_ptr<DeviceContext> m_context;
 

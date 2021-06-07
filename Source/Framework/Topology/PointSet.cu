@@ -310,4 +310,37 @@ namespace PhysIKA
 // 			t);
 // 		cuSynchronize();
 	}
+
+	template <typename Real, typename Coord>
+	__global__ void PS_pointDis(
+		DeviceArray<Real> dis,
+		DeviceArray<Coord> vertex,
+		Coord origin
+	)
+	{
+		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (pId >= vertex.size()) return;
+		//return;
+		dis[pId] = (vertex[pId] - origin).norm();
+	}
+
+	template<typename TDataType>
+	TDataType::Real PhysIKA::PointSet<TDataType>::computeBoundingRadius()
+	{
+		DeviceArray<Real> dis;
+		dis.resize(m_coords.size());
+		dis.reset();
+
+		typename TDataType::Coord origin(0, 0, 0);
+		cuExecute(m_coords.size(), PS_pointDis,
+			dis, m_coords, origin
+		);
+
+		std::shared_ptr<Reduction<Real>> redu(Reduction<Real>::Create(m_coords.size()));
+		Real radius = redu->maximum(dis.begin(), dis.size());
+
+		dis.release();
+		return radius;
+	}
+
 }

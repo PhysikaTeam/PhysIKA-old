@@ -18,7 +18,7 @@ namespace PhysIKA
 		{
 			assert(lhs.size() == rhs.size());
 			unsigned pDim = cudaGridSize(rhs.size(), BLOCK_SIZE);
-			KerLength << <pDim, BLOCK_SIZE >> > (lhs.getDataPtr(), rhs.getDataPtr(), lhs.size());
+			KerLength << <pDim, BLOCK_SIZE >> > (lhs.begin(), rhs.begin(), lhs.size());
 		}
 
 		template void Length(DeviceArray<float>&, DeviceArray<float3>&);

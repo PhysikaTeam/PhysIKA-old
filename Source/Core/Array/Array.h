@@ -49,6 +49,7 @@ namespace PhysIKA {
 		void release();
 
 		inline T*		getDataPtr() { return m_data; }
+		COMM_FUNC inline T*		begin() { return m_data; }
 
 		DeviceType		getDeviceType() { return deviceType; }
 

@@ -5,20 +5,31 @@
 namespace PhysIKA
 {
 
-class CollisionModel : public Module
-{
-public:
-	CollisionModel();
-	virtual ~CollisionModel();
+	class ContactPair
+	{
+	public:
+		int id[2];
 
-	virtual bool isSupport(std::shared_ptr<CollidableObject> obj) = 0;
+		Real m_stiffness;
+		Real m_friction;
+	};
 
-	virtual void doCollision() = 0;
+	class CollisionModel : public Module
+	{
+	public:
+		CollisionModel();
+		virtual ~CollisionModel();
+
+		virtual bool isSupport(std::shared_ptr<CollidableObject> obj) = 0;
+
+		bool execute() override;
+
+		virtual void doCollision() = 0;
 	
-	std::string getModuleType() override { return "CollisionModel"; }
+		std::string getModuleType() override { return "CollisionModel"; }
 
-	virtual void addCollidableObject(std::shared_ptr<CollidableObject> obj) {};
-protected:
-};
+		virtual void addCollidableObject(std::shared_ptr<CollidableObject> obj) {};
+	protected:
+	};
 
 }

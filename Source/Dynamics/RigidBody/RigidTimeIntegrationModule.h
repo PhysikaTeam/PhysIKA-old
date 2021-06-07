@@ -5,7 +5,7 @@
 #include "Core/Vector/vector_nd.h"
 #include "Dynamics/RigidBody/ForwardDynamicsSolver.h"
 #include "Dynamics/RigidBody/RigidBodyRoot.h"
-#include "Dynamics/RigidBody/RigidState.h"
+//#include "Dynamics/RigidBody/RigidState.h"
 
 #include "Dynamics/RigidBody/ArticulatedBodyFDSolver.h"
 #include "ForwardDynamicsSolver.h"
@@ -47,7 +47,11 @@ namespace PhysIKA
 
 		void dydt(const SystemMotionState& s0, DSystemMotionState& ds);
 
+		void dydt(const SystemState& s0, const SystemMotionState& motionState, DSystemMotionState& ds);
+
 		void setFDSolver(std::shared_ptr<ForwardDynamicsSolver> fd_solver);
+
+		std::shared_ptr<ForwardDynamicsSolver> getFDSolver() { return m_fd_solver; }
 		
 	private:
 		std::shared_ptr<ForwardDynamicsSolver> m_fd_solver;

@@ -33,6 +33,9 @@ namespace PhysIKA {
 		virtual void initMemory(void* ptr, int value, size_t count) = 0;
 
 		virtual void releaseMemory(void** ptr) = 0;
+
+		virtual void copyMemory1D(void* ptr1, void* ptr2, size_t memsize, size_t valuesize)=0;
+
 	};
 
 	/**
@@ -57,6 +60,8 @@ namespace PhysIKA {
 
 		void releaseMemory(void** ptr) override;
 
+		void copyMemory1D(void* ptr1, void* ptr2, size_t memsize, size_t valuesize);
+
 	};
 
 
@@ -79,6 +84,8 @@ namespace PhysIKA {
 		void initMemory(void* ptr, int value, size_t count) override;
 
 		void releaseMemory(void** ptr) override;
+
+		void copyMemory1D(void* ptr1, void* ptr2, size_t memsize, size_t valuesize);
 
 	};
 

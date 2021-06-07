@@ -24,7 +24,7 @@ void VisualModule::setVisible(bool bVisible)
 
 void VisualModule::rotate(float angle, float x, float y, float z)
 {
-	m_rotation += Quaternion<float>(angle, x, y, z);
+	m_rotation = Quaternion<float>(angle, Vector3f(x, y, z)) * m_rotation;
 }
 
 void VisualModule::translate(float x, float y, float z)
@@ -34,7 +34,7 @@ void VisualModule::translate(float x, float y, float z)
 
 void VisualModule::scale(float x, float y, float z)
 {
-	m_scale += Vector3f(x, y, z);
+	m_scale *= Vector3f(x, y, z);
 }
 
 }

@@ -35,6 +35,23 @@ namespace PhysIKA
 		void getTensor(MatrixMN<T>& m) const;
 
 
+		Inertia<T> getInverse()const
+		{
+			Inertia<T> inv;
+			inv.m_mass = m_mass == 0 ? 0 : 1.0 / m_mass;
+			inv.m_inertiaDiagonal[0] = m_inertiaDiagonal[0] == 0.0f ? 0 : 1.0 / m_inertiaDiagonal[0];
+			inv.m_inertiaDiagonal[1] = m_inertiaDiagonal[1] == 0.0f ? 0 : 1.0 / m_inertiaDiagonal[1];
+			inv.m_inertiaDiagonal[2] = m_inertiaDiagonal[2] == 0.0f ? 0 : 1.0 / m_inertiaDiagonal[2];
+			return inv;
+		}
+		void getInverse(Inertia<T>& inv)const
+		{
+			inv.m_mass = m_mass == 0 ? 0 : 1.0 / m_mass;
+			inv.m_inertiaDiagonal[0] = m_inertiaDiagonal[0] == 0.0f ? 0 : 1.0 / m_inertiaDiagonal[0];
+			inv.m_inertiaDiagonal[1] = m_inertiaDiagonal[1] == 0.0f ? 0 : 1.0 / m_inertiaDiagonal[1];
+			inv.m_inertiaDiagonal[2] = m_inertiaDiagonal[2] == 0.0f ? 0 : 1.0 / m_inertiaDiagonal[2];
+		}
+
 	public:
 		Vector<T, 3> m_inertiaDiagonal;
 		T m_mass;

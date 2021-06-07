@@ -8,9 +8,9 @@ namespace PhysIKA {
 	class VectorBase
 	{
 	public:
-		virtual int size()const = 0;
-		virtual Scalar& operator[] (unsigned int) = 0;
-		virtual const Scalar& operator[] (unsigned int) const = 0;
+		COMM_FUNC virtual int size()const = 0;
+		COMM_FUNC virtual Scalar& operator[] (unsigned int) = 0;
+		COMM_FUNC virtual const Scalar& operator[] (unsigned int) const = 0;
 	};
 
 

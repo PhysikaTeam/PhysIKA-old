@@ -69,10 +69,20 @@ namespace PhysIKA
 		void setSystemState(std::shared_ptr<SystemState> state) { m_state = state; }
 		//cosnt SystemState& getSystemState() const { return m_state; }
 
+		//void applyExternalForce()
+		void collectForceState();
+
 	private:
 		void _updateTreeGlobalInfo();
 
+		void _collectMotionState();
+
+		void _collectRelativeMotionState();
+
 		
+
+		void _clearRIgidForce();
+
 		int _calculateDof();
 
 		//void _getAccelerationQ(std::vector<Vectornd<float>>& ddq);

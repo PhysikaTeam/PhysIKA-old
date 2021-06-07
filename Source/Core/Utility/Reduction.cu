@@ -30,7 +30,8 @@ namespace PhysIKA {
 	template<typename T>
 	Reduction<T>::~Reduction()
 	{
-		cudaFree(m_aux);
+		if(m_aux != nullptr)
+			cudaFree(m_aux);
 	}
 
 	template<typename T>
@@ -155,7 +156,7 @@ namespace PhysIKA {
 	template<typename T>
 	void Reduction<T>::allocAuxiliaryArray(int num)
 	{
-		if (m_aux == nullptr)
+		if (m_aux != nullptr)
 		{
 			cudaFree(m_aux);
 		}
@@ -166,4 +167,388 @@ namespace PhysIKA {
 		cudaMalloc((void**)&m_aux, m_auxNum * sizeof(T));
 	}
 
+	Reduction<Vector3f>::Reduction()
+		: m_num(0)
+		, m_aux(NULL)
+	{
+
+	}
+
+	Reduction<Vector3f>::Reduction(unsigned num)
+		: m_num(num)
+		, m_aux(NULL)
+	{
+		allocAuxiliaryArray(m_num);
+	}
+
+	Reduction<Vector3f>::~Reduction()
+	{
+		if (m_aux != nullptr)
+			cudaFree(m_aux);
+	}
+
+	Reduction<Vector3f>* Reduction<Vector3f>::Create(int n)
+	{
+		return new Reduction<Vector3f>(n);
+	}
+
+	__global__ void R_SetupComponent(float* comp, Vector3f* raw, int num, int comp_id)
+	{
+		int tId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (tId >= num) return;
+
+		comp[tId] = raw[tId][comp_id];
+	}
+
+	Vector3f Reduction<Vector3f>::accumulate(Vector3f * val, int num)
+	{
+		Vector3f ret;
+
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			0);
+
+		ret[0] = m_reduce_float.accumulate(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			1);
+
+		ret[1] = m_reduce_float.accumulate(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			2);
+
+		ret[2] = m_reduce_float.accumulate(m_aux, num);
+
+		return ret;
+	}
+
+
+	Vector3f Reduction<Vector3f>::maximum(Vector3f* val, int num)
+	{
+		Vector3f ret;
+
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			0);
+
+		ret[0] = m_reduce_float.maximum(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			1);
+
+		ret[1] = m_reduce_float.maximum(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			2);
+
+		ret[2] = m_reduce_float.maximum(m_aux, num);
+
+		return ret;
+	}
+
+	Vector3f Reduction<Vector3f>::minimum(Vector3f* val, int num)
+	{
+		Vector3f ret;
+
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			0);
+
+		ret[0] = m_reduce_float.minimum(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			1);
+
+		ret[1] = m_reduce_float.minimum(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			2);
+
+		ret[2] = m_reduce_float.minimum(m_aux, num);
+
+		return ret;
+	}
+
+
+	Vector3f Reduction<Vector3f>::average(Vector3f* val, int num)
+	{
+		Vector3f ret;
+
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			0);
+
+		ret[0] = m_reduce_float.average(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			1);
+
+		ret[1] = m_reduce_float.average(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			2);
+
+		ret[2] = m_reduce_float.average(m_aux, num);
+
+
+		return ret;
+	}
+
+	void Reduction<Vector3f>::allocAuxiliaryArray(int num)
+	{
+		if (m_aux == nullptr)
+		{
+			cudaFree(m_aux);
+		}
+
+		m_num = num;
+		cudaMalloc((void**)&m_aux, m_num * sizeof(float));
+	}
+
+
+	Reduction<Vector3d>::Reduction()
+		: m_num(0)
+		, m_aux(NULL)
+	{
+
+	}
+
+	Reduction<Vector3d>::Reduction(unsigned num)
+		: m_num(num)
+		, m_aux(NULL)
+	{
+		allocAuxiliaryArray(m_num);
+	}
+
+	Reduction<Vector3d>::~Reduction()
+	{
+		if (m_aux != nullptr)
+			cudaFree(m_aux);
+	}
+
+	Reduction<Vector3d>* Reduction<Vector3d>::Create(int n)
+	{
+		return new Reduction<Vector3d>(n);
+	}
+
+	__global__ void R_SetupComponent(double* comp, Vector3d* raw, int num, int comp_id)
+	{
+		int tId = threadIdx.x + (blockIdx.x * blockDim.x);
+		if (tId >= num) return;
+
+		comp[tId] = raw[tId][comp_id];
+	}
+
+	Vector3d Reduction<Vector3d>::accumulate(Vector3d * val, int num)
+	{
+		Vector3d ret;
+
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			0);
+
+		ret[0] = m_reduce_double.accumulate(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			1);
+
+		ret[1] = m_reduce_double.accumulate(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			2);
+
+		ret[2] = m_reduce_double.accumulate(m_aux, num);
+
+		return ret;
+	}
+
+
+	Vector3d Reduction<Vector3d>::maximum(Vector3d* val, int num)
+	{
+		Vector3d ret;
+
+		if (num != m_num)
+			allocAuxiliaryArray(num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			0);
+
+		ret[0] = m_reduce_double.maximum(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			1);
+
+		ret[1] = m_reduce_double.maximum(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			2);
+
+		ret[2] = m_reduce_double.maximum(m_aux, num);
+
+		return ret;
+	}
+
+	Vector3d Reduction<Vector3d>::minimum(Vector3d* val, int num)
+	{
+		Vector3d ret;
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			0);
+
+		ret[0] = m_reduce_double.minimum(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			1);
+
+		ret[1] = m_reduce_double.minimum(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			2);
+
+		ret[2] = m_reduce_double.minimum(m_aux, num);
+
+		return ret;
+	}
+
+
+	Vector3d Reduction<Vector3d>::average(Vector3d* val, int num)
+	{
+		Vector3d ret;
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			0);
+
+		ret[0] = m_reduce_double.average(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			1);
+
+		ret[1] = m_reduce_double.average(m_aux, num);
+
+		cuExecute(num,
+			R_SetupComponent,
+			m_aux,
+			val,
+			num,
+			2);
+
+		ret[2] = m_reduce_double.average(m_aux, num);
+
+
+		return ret;
+	}
+
+	void Reduction<Vector3d>::allocAuxiliaryArray(int num)
+	{
+		if (m_aux == nullptr)
+		{
+			cudaFree(m_aux);
+		}
+
+		m_num = num;
+		cudaMalloc((void**)&m_aux, m_num * sizeof(double));
+	}
 }

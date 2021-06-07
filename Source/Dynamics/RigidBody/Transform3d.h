@@ -19,7 +19,7 @@ namespace PhysIKA
 	* 
 	* @note
 	* A, B are frames with origins at O and P.
-	* Rotation matrix and relative position r = OP  are both expressed in A frame.
+	* That is: r is Op vector in A frame. q rotate a vector from A frame to B frame.
 	*/
 
 	template <typename T>
@@ -55,7 +55,7 @@ namespace PhysIKA
 		const Transform3d<T> inverseTransform()const;
 
 		const Matrix3f& getRotationMatrix()const { return m_rotation; }
-		const Quaternion<float> getRotation()const { return Quaternion<float>(m_rotation); }
+		const Quaternion<float>& getRotation()const { return m_rotation_q; }
 		const Vector3f& getTranslation()const { return m_translation; }
 
 	private:

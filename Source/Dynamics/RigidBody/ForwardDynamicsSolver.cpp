@@ -189,7 +189,7 @@ namespace PhysIKA
 				const JointSpaceBase<float>& Si = cur_joint->getJointSpace();
 
 				/// Relative velocity, expressed in successor frame.
-				vJ = Si.mul(&(motion_state.m_dq[idx_map[i]]));
+				vJ = Si.mul(&(motion_state.generalVelocity[idx_map[i]]));
 			}
 			else
 			{
@@ -200,7 +200,7 @@ namespace PhysIKA
 			{
 				v[i] = (vJ);
 
-				Transform3d<float> toNode(Vector3f(), motion_state.m_global_q[i].getConjugate());
+				Transform3d<float> toNode(Vector3f(), motion_state.globalRotation[i].getConjugate());
 				SpatialVector<float> a0(Vector3f(), -(root->getGravity()));
 				a0 = toNode.transformM(a0);
 				
@@ -225,7 +225,7 @@ namespace PhysIKA
 
 			/// Transformation from world to node.
 			/// Suspect the origin of the external_force is the same as the origin of node frame.
-			Transform3d<float> Xo(Vector3f(0, 0, 0), motion_state.m_global_q[i].getConjugate());
+			Transform3d<float> Xo(Vector3f(0, 0, 0), motion_state.globalRotation[i].getConjugate());
 
 			fvp[i] = fvp[i] - Xo.transformF(s_system.m_externalForce[i]);
 		}

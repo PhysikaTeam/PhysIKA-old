@@ -25,6 +25,11 @@ namespace PhysIKA
 		void display() override;
 		void setColor(Vector3f color);
 
+		std::shared_ptr<PointRender> getPointRender() { return m_pointRender; }
+		void setPointRender(std::shared_ptr<PointRender> pointRender) { m_pointRender = pointRender; }
+
+		void setSphereInstaceSize(float sphereSize) { m_sphereInstanceSize = sphereSize; }
+
 		void setColorRange(float min, float max);
 		void setReferenceColor(float v);
 
@@ -44,6 +49,7 @@ namespace PhysIKA
 
 	private:
 		Vector3f m_color;
+		float m_sphereInstanceSize = 0.0025f;
 
 		float m_refV;
 

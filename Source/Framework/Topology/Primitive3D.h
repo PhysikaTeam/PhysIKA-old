@@ -86,7 +86,7 @@ namespace PhysIKA
 	class Bool
 	{
 	public:
-		Bool(bool v = false) { val = v; }
+		COMM_FUNC Bool(bool v = false) { val = v; }
 
 		COMM_FUNC bool operator! () { return !val; }
 		COMM_FUNC bool operator== (bool v) { return val == v; }
@@ -399,6 +399,7 @@ namespace PhysIKA
 
 		COMM_FUNC int intersect(const TSphere3D<Real>& sphere, TSegment3D<Real>& interSeg) const;
 		COMM_FUNC int intersect(const TAlignedBox3D<Real>& abox, TSegment3D<Real>& interSeg) const;
+		COMM_FUNC int intersect(const TOrientedBox3D<Real>& obb, TSegment3D<Real>& interSeg) const;
 
 		COMM_FUNC Real length() const;
 		COMM_FUNC Real lengthSquared() const;
@@ -463,6 +464,8 @@ namespace PhysIKA
 		COMM_FUNC Real maximumEdgeLength() const;
 
 		COMM_FUNC bool isValid() const;
+
+		COMM_FUNC TAlignedBox3D<Real> aabb();
 
 		Coord3D v[3];
 	};
@@ -530,6 +533,8 @@ namespace PhysIKA
 
 		COMM_FUNC bool isValid();
 
+		COMM_FUNC TAlignedBox3D<Real> aabb();
+
 		Real radius;
 		Coord3D center;
 	};
@@ -568,6 +573,10 @@ namespace PhysIKA
 
 		COMM_FUNC bool isValid();
 
+		COMM_FUNC bool intersect(const TTet3D<Real>& tet, Coord3D& interNorm, Real& interDist, Coord3D& p1, Coord3D& p2, int need_distance = 1) const;
+
+		COMM_FUNC TAlignedBox3D<Real> aabb();
+
 		Coord3D v[4];
 	};
 
@@ -588,11 +597,15 @@ namespace PhysIKA
 		COMM_FUNC TAlignedBox3D<Real>&operator += (const TAlignedBox3D<Real> &p);
 		COMM_FUNC Vector3f center() const { return (v0 + v1) * double(0.5); }
 		COMM_FUNC  TAlignedBox3D<Real> operator + (const TAlignedBox3D<Real> &v) const;
-		
+
 		COMM_FUNC Real width()  const;
 		COMM_FUNC Real height() const;
 		COMM_FUNC Real depth()  const;
-		
+
+		COMM_FUNC TOrientedBox3D<Real> rotate(const Matrix3D& mat);
+
+		COMM_FUNC inline Real length(unsigned int i) const { return v1[i] - v0[i]; }
+
 		// v0 min, v1 max
 		Coord3D v0;
 		Coord3D v1;
@@ -622,6 +635,12 @@ namespace PhysIKA
 
 		COMM_FUNC bool isValid();
 
+		COMM_FUNC TOrientedBox3D<Real> rotate(const Matrix3D& mat);
+
+		COMM_FUNC TAlignedBox3D<Real> aabb();
+
+		COMM_FUNC bool point_intersect(const TOrientedBox3D<Real>& OBB, Coord3D& interNorm, Real& interDist, Coord3D& p1, Coord3D& p2) const;
+		//COMM_FUNC bool triangle_intersect(const TTriangle3D<Real>& Tri) const;
 		/**
 		 * @brief centerpoint
 		 *

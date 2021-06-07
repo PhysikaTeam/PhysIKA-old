@@ -8,6 +8,7 @@
 #include"Core/Vector/vector_nd.h"
 
 #include "RigidDebugInfoModule.h"
+#include "Dynamics/RigidBody/RigidUtil.h"
 
 namespace PhysIKA
 {
@@ -45,9 +46,15 @@ namespace PhysIKA
 		CTimer timer2;
 		timer2.start();
 
+		// Prepare system force state.
+		this->collectForceState();
+		//this->_collectMotionState();
+		this->_collectRelativeMotionState();
+
 		// update simulation variables
 		auto time_integrator = this->getModule<RigidTimeIntegrationModule>();
 
+		time_integrator->setDt(dt);
 		//time_integrator->set
 		time_integrator->begin();
 		//time_integrator->setDt(dt);
@@ -58,12 +65,15 @@ namespace PhysIKA
 		//std::cout << ":TIME * execute:  " << timer2.getElapsedTime() << std::endl;
 
 		this->_updateTreeGlobalInfo();
+		this->_clearRIgidForce();
 
+#ifdef _DEBUG
 		auto debugInfo = this->getModule<RigidDebugInfoModule>();
 		debugInfo->begin();
 		//debugInfo->execute();
 		debugInfo->end();
 
+#endif // _DEBUG
 
 		//CTimer timer3;
 		//timer3.start();
@@ -116,6 +126,9 @@ namespace PhysIKA
 
 		this->updateTree();
 
+		
+		this->_collectRelativeMotionState();
+		//this->_collectMotionState();
 		this->_updateTreeGlobalInfo();
 
 		return true;
@@ -134,10 +147,171 @@ namespace PhysIKA
 		for (int i = 0; i < all_nodes.size(); ++i)
 		{
 			std::shared_ptr<RigidBody2<DataType3f>> cur_node = all_nodes[i];
+
+			Transform3d<float> movetobody(s.globalPosition[i], Quaternion<float>(0, 0, 0, 1));
+			SpatialVector<float> glov = movetobody.transformM(s.globalVelocity[i]);
+			cur_node->setLinearVelocity(Vector3f(glov[3], glov[4], glov[5]));
+			cur_node->setAngularVelocity(Vector3f(glov[0], glov[1], glov[1]));
+
 			
-			cur_node->setGlobalR(s.m_global_r[i]);
-			cur_node->setGlobalQ(s.m_global_q[i]);
+			cur_node->setGlobalR(s.globalPosition[i]);
+			cur_node->setGlobalQ(s.globalRotation[i]);
+
+			cur_node->setRelativeQ(s.m_rel_q[i]);
+			cur_node->setRelativeR(s.m_rel_r[i]);
+
 			cur_node->updateTopology();
+		}
+
+	}
+
+	template<typename TDataType>
+	void RigidBodyRoot<TDataType>::_collectMotionState()
+	{
+		std::vector<std::shared_ptr<RigidBody2<DataType3f>>>& all_nodes = this->m_all_childs_nodes;
+		std::vector< std::pair<int, std::shared_ptr<RigidBody2<TDataType>>>>& node_pairs =  m_all_childs_node_pairs;
+		SystemMotionState& s = *(this->m_state->m_motionState);
+		s.setNum(all_nodes.size(), this->getJointDof());
+
+		
+
+		for (int i = 0; i < all_nodes.size(); ++i)
+		{
+			int parentid = node_pairs[i].first;
+			std::shared_ptr<RigidBody2<DataType3f>> cur_node = all_nodes[i];
+			auto pjoint = cur_node->getParentJoint();
+			//auto S = cur_node->getParentJoint()->getJointSpace();
+			int curdof = pjoint->getJointDOF();
+			int idx0 = m_joint_idx_map[i];
+
+			s.globalPosition[i] = cur_node->getGlobalR();
+			s.globalRotation[i] = cur_node->getGlobalQ();
+
+			if (parentid >= 0)
+			{
+				s.m_rel_q[i] = s.globalRotation[parentid].getConjugate() * s.globalRotation[i];
+				s.m_rel_r[i] = s.globalRotation[parentid].getConjugate().rotate(s.globalPosition[i] - s.globalPosition[parentid]);
+			}
+			else
+			{
+				s.m_rel_q[i] = s.globalRotation[i];
+				s.m_rel_r[i] = s.globalPosition[i];
+			}
+			s.m_X[i] = Transform3d<float>(s.m_rel_r[i], s.m_rel_q[i].getConjugate());
+
+			//s.globalVelocity[i] = SpatialVector<float> (cur_node->getAngularVelocity(), cur_node->getLinearVelocity());
+			//SpatialVector<float> relv = s.globalVelocity[i] - s.globalVelocity[parentid];
+			//
+			//RigidUtil::setStxS(S.getBases(), curdof, 
+			//	s.m_rel_q[i].getConjugate().rotate(s.globalVelocity[i] - s.globalVelocity[parentid]), 
+			//	)
+			//s.m_v[i] = RigidUtil::setSxq(S.getBases(), )
+
+			//
+
+			//S.transposeMul(s.m_v[i],
+			//	&(s.generalVelocity[m_joint_idx_map[i]]));
+			
+			for (int j = 0; j < curdof; ++j)
+			{
+				s.generalPosition[idx0 + j] = pjoint->getInitGeneralPos()[j];
+			}
+		}
+	}
+
+	template<typename TDataType>
+	void RigidBodyRoot<TDataType>::_collectRelativeMotionState()
+	{
+		std::vector<std::shared_ptr<RigidBody2<DataType3f>>>& all_nodes = this->m_all_childs_nodes;
+		std::vector< std::pair<int, std::shared_ptr<RigidBody2<TDataType>>>>& node_pairs = m_all_childs_node_pairs;
+		SystemMotionState& s = *(this->m_state->m_motionState);
+		s.setNum(all_nodes.size(), this->getJointDof());
+
+
+
+		for (int i = 0; i < all_nodes.size(); ++i)
+		{
+			int parentid = node_pairs[i].first;
+			std::shared_ptr<RigidBody2<DataType3f>> cur_node = all_nodes[i];
+			auto pjoint = cur_node->getParentJoint();
+			//auto S = cur_node->getParentJoint()->getJointSpace();
+			int curdof = pjoint->getJointDOF();
+			int idx0 = m_joint_idx_map[i];
+
+			s.m_rel_q[i] = cur_node->getRelativeQ();
+			s.m_rel_r[i] = cur_node->getRelativeR();
+
+			if (parentid >= 0)
+			{
+				s.globalRotation[i] = s.globalRotation[parentid] * s.m_rel_q[i];
+				s.globalPosition[i] = s.globalPosition[parentid] + s.globalRotation[parentid].rotate(s.m_rel_r[i]);
+
+				//s.m_rel_q[i] = s.globalRotation[parentid].getConjugate() * s.globalRotation[i];
+				//s.m_rel_r[i] = s.globalRotation[parentid].getConjugate().rotate(s.globalPosition[i] - s.globalPosition[parentid]);
+			}
+			else
+			{
+				s.globalRotation[i] = s.m_rel_q[i];
+				s.globalPosition[i] = s.m_rel_r[i];
+				//s.m_rel_q[i] = s.globalRotation[i];
+				//s.m_rel_r[i] = s.globalPosition[i];
+			}
+			s.m_X[i] = Transform3d<float>(s.m_rel_r[i], s.m_rel_q[i].getConjugate());
+
+
+			for (int j = 0; j < curdof; ++j)
+			{
+				s.generalPosition[idx0 + j] = pjoint->getInitGeneralPos()[j];
+			}
+		}
+	}
+
+	template<typename TDataType>
+	void RigidBodyRoot<TDataType>::collectForceState()
+	{
+		std::vector<std::shared_ptr<RigidBody2<DataType3f>>>& all_nodes = this->m_all_childs_nodes;
+		std::vector< std::pair<int, std::shared_ptr<RigidBody2<TDataType>>>>& node_pairs = m_all_childs_node_pairs;
+		SystemMotionState& s = *(this->m_state->m_motionState);
+		s.setNum(all_nodes.size(), this->getJointDof());
+		std::vector<SpatialVector<float>>& externalForce = m_state->m_externalForce;
+		Vectornd<float>& activeForce = m_state->m_activeForce;
+
+		for (int i = 0; i < all_nodes.size(); ++i)
+		{
+			int parentid = node_pairs[i].first;
+			std::shared_ptr<RigidBody2<DataType3f>> prigid = all_nodes[i];
+			auto pjoint = prigid->getParentJoint();
+			int curdof = pjoint->getJointDOF();
+			int idx0 = m_joint_idx_map[i];
+
+			// External force and torque that applied to rigid body.
+			externalForce[i] = SpatialVector<float>(prigid->getExternalTorque(),
+				prigid->getExternalForce());
+
+
+			// Joint active force. (Motor force)
+			const float* curMotor = pjoint->getMotorForce();
+			for (int di = 0; di < curdof; ++di)
+			{
+				activeForce[idx0 + di] = curMotor[di];
+			}
+		}
+
+	}
+
+	template<typename TDataType>
+	void RigidBodyRoot<TDataType>::_clearRIgidForce()
+	{
+		std::vector<std::shared_ptr<RigidBody2<DataType3f>>>& all_nodes = this->m_all_childs_nodes;
+		
+
+		for (int i = 0; i < all_nodes.size(); ++i)
+		{
+			std::shared_ptr<RigidBody2<DataType3f>> prigid = all_nodes[i];
+			
+			prigid->setExternalForce(Vector3f(0, 0, 0));
+			prigid->setExternalTorque(Vector3f(0, 0, 0));
+
 		}
 
 	}

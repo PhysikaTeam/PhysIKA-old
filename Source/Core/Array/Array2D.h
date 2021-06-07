@@ -45,8 +45,9 @@ namespace PhysIKA {
 		inline T*		GetDataPtr() { return m_data; }
 		void			SetDataPtr(T* _data) { m_data = _data; }
 
-		COMM_FUNC inline int Nx() { return m_nx; }
-		COMM_FUNC inline int Ny() { return m_ny; }
+		COMM_FUNC inline int Nx()const { return m_nx; }
+		COMM_FUNC inline int Ny()const { return m_ny; }
+		COMM_FUNC inline int Pitch() { return m_pitch; }
 
 		COMM_FUNC inline T operator () (const int i, const int j) const
 		{
@@ -74,8 +75,8 @@ namespace PhysIKA {
 		}
 
 		COMM_FUNC inline int Size() { return m_totalNum; }
-		COMM_FUNC inline bool IsCPU() { return deviceType; }
-		COMM_FUNC inline bool IsGPU() { return deviceType; }
+		COMM_FUNC inline bool IsCPU() { return deviceType == DeviceType::CPU; }
+		COMM_FUNC inline bool IsGPU() { return deviceType == DeviceType::GPU; }
 
 	public:
 		void AllocMemory();
@@ -121,7 +122,7 @@ namespace PhysIKA {
 	template<typename T, DeviceType deviceType>
 	void Array2D<T, deviceType>::AllocMemory()
 	{
-		m_alloc->allocMemory2D((void**)&m_data, m_pitch, m_nx, m_ny, sizeof(T));
+		m_alloc->allocMemory2D((void**)&m_data, m_pitch, m_ny, m_nx, sizeof(T));
 		m_pitch /= sizeof(T);
 
 		Reset();

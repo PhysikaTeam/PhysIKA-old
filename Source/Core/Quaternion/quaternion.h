@@ -59,15 +59,21 @@ public:
 
     //rotate
 	COMM_FUNC const Vector<Real, 3> rotate(const Vector<Real, 3>) const;    // rotates passed vec by this.
-	COMM_FUNC void rotateVector(Vector<Real, 3>& v);
-	COMM_FUNC void toRotationAxis(Real &rot, Vector<Real, 3> &axis) const;
+	COMM_FUNC void rotateVector(Vector<Real, 3>& v)const;
 
-    /* Special functions */
+	COMM_FUNC void getRotation(Real &rot, Vector<Real, 3> &axis) const;
+	COMM_FUNC void setRotation(const Vector<Real, 3>& axis, const Real& radAng);
+
+
+	COMM_FUNC Vector<Real, 3> getEulerAngle() const;
+	COMM_FUNC void setEulerAngle(const Vector<Real, 3>& euler_angle);
+	
+	/* Special functions */
 	COMM_FUNC Real norm();
 	COMM_FUNC Quaternion<Real>& normalize();
 
-	COMM_FUNC void set(const Vector<Real,3>&, Real );
-	COMM_FUNC void set(Real , const Vector<Real,3>& );
+	COMM_FUNC void setValue(const Vector<Real,3>&, Real );
+	COMM_FUNC void setValue(Real , const Vector<Real,3>& );
 	COMM_FUNC void set(const Vector<Real,3>& );                              //set from a euler angle.
 
 	COMM_FUNC Real getAngle() const;                                         // return the angle between this quat and the identity quaternion.
@@ -76,7 +82,9 @@ public:
     
 	COMM_FUNC SquareMatrix<Real, 3> get3x3Matrix() const;                    //return 3x3matrix format
 	COMM_FUNC SquareMatrix<Real, 4> get4x4Matrix() const;                    //return 4x4matrix with a identity transform.
-	COMM_FUNC Vector<Real, 3> getEulerAngle() const;
+	
+
+	COMM_FUNC Quaternion<Real> multiply_q(const Quaternion<Real>&);
 
     /* Operator overloading */
 	COMM_FUNC Quaternion<Real> operator - (const Quaternion<Real>& ) const;
@@ -104,10 +112,12 @@ COMM_FUNC inline Quaternion<T> operator *(S scale, const Quaternion<T> &quad)
     return quad * scale;
 }
 
+template class Quaternion<float>;
+template class Quaternion<double>;
 //convenient typedefs
 typedef Quaternion<float> Quaternionf;
 typedef Quaternion<double> Quaterniond;
 
 }//end of namespace PhysIKA
-
+#include "quaternion.inl"
 #endif //PHSYIKA_CORE_QUATERNION_QUATERNION_H_
