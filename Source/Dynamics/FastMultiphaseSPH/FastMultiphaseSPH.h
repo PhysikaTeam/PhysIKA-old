@@ -23,6 +23,7 @@ namespace PhysIKA
 	*	
 	*	Sample usage:
 	* 		auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
+	*		root->init();
 	*
 	*/
 	template<typename TDataType>
@@ -37,6 +38,8 @@ namespace PhysIKA
 
 		FastMultiphaseSPH(std::string name = "default");
 		virtual ~FastMultiphaseSPH();
+
+		void init(); // initialize the scene
 
 		void loadParticles(Coord lo, Coord hi, Real distance);
 		void loadParticles(Coord center, Real r, Real distance);

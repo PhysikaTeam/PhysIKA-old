@@ -139,10 +139,11 @@ namespace msph {
 					res[2][0] += a.z * b.x; res[2][1] += a.z * b.y; res[2][2] += a.z * b.z;
 				//}
 				
-
-				float diffFactor = diffusionFac * dot(xij, nablaw) / (d * d + 0.01f);
-				for (int k = 0; k < param->numTypes; k++) {
-					update.data[k] += diffFactor * (volfi.data[k] - volfj.data[k]);
+				if (param->dissolution) {
+					float diffFactor = diffusionFac * dot(xij, nablaw) / (d * d + 0.01f);
+					for (int k = 0; k < param->numTypes; k++) {
+						update.data[k] += diffFactor * (volfi.data[k] - volfj.data[k]);
+					}
 				}
 			}
 			else if (d_data.type[j] == TYPE_RIGID)
@@ -152,10 +153,11 @@ namespace msph {
 		});
 
 
-
-		for (int k = 0; k < param->numTypes; k++)
-		{
-			d_data.vfrac_change[index].data[k] = update.data[k];
+		if (param->dissolution) {
+			for (int k = 0; k < param->numTypes; k++)
+			{
+				d_data.vfrac_change[index].data[k] = update.data[k];
+			}
 		}
 		density *= d_data.mass[index];
 		d_data.density[index] = density;
@@ -341,13 +343,15 @@ namespace msph {
 		d_data.pos[index] += d_data.vel[index] * param->dt;
 		d_data.drift_accel[index] = param->gravity - d_data.force[index];
 		
-		for (int k = 0; k < param->numTypes; k++) {
-			d_data.vFrac[index].data[k] += d_data.vfrac_change[index].data[k] * param->dt;
-		}
-		d_data.mass[index] = 0;
-		for (int k = 0; k < param->numTypes; k++) {
-			d_data.mass[index] += d_data.vFrac[index].data[k] * param->densArr[k] * param->vol0;
-			d_data.color[index][k] = d_data.vFrac[index].data[k];
+		if (param->dissolution) {
+			for (int k = 0; k < param->numTypes; k++) {
+				d_data.vFrac[index].data[k] += d_data.vfrac_change[index].data[k] * param->dt;
+			}
+			d_data.mass[index] = 0;
+			for (int k = 0; k < param->numTypes; k++) {
+				d_data.mass[index] += d_data.vFrac[index].data[k] * param->densArr[k] * param->vol0;
+				d_data.color[index][k] = d_data.vFrac[index].data[k];
+			}
 		}
 	}
 

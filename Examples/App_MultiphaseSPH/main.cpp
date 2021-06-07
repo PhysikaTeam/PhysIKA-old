@@ -42,6 +42,7 @@ void CreateScene()
 	SceneGraph& scene = SceneGraph::getInstance();
 
 	auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
+	root->init();
 
 	//std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
 	//root->loadCube(Vector3f(0), Vector3f(1), 0.02f, true);

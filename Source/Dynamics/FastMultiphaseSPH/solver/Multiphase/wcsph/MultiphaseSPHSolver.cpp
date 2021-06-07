@@ -219,12 +219,13 @@ namespace msph {
 
 		addFluidVolumes();
 
-		ParticleObject *po = new ParticleObject();
-		LoadBox(po, cfloat3(-1.2, -0.015, -0.515),
+		std::unique_ptr<ParticleObject> po = std::make_unique<ParticleObject>();
+		LoadBox(po.get(), cfloat3(-1.2, -0.015, -0.515),
 			cfloat3(1.2, 2.0, 0.515),
 			h_param.spacing);
-		LoadBoundaryParticles(po);
+		LoadBoundaryParticles(po.get());
 		printf("%d boundary particles loaded.\n\n", po->pos.size());
+		
 
 		/*ParticleObject* duck = new ParticleObject();
 		loadPoints(duck, "../resource/gear_test.obj");
@@ -246,55 +247,54 @@ namespace msph {
 	}
 
 	void MultiphaseSPHSolver::addFluidVolumes() {
-		float pad = h_param.spacing * 0.5f;
 		for (int i = 0; i < fluid_volumes.size(); i++) {
-			cfloat3 xmin = fluid_volumes[i]->xmin;
-			cfloat3 xmax = fluid_volumes[i]->xmax;
-			xmax += cfloat3(pad, pad, pad);
-			int addcount = 0;
-			float* vf = fluid_volumes[i]->volfrac;
-			int typeTmp = fluid_volumes[i]->type;
-			int groupTmp = fluid_volumes[i]->group;
-			float spacing = h_param.spacing;
-			float vfgas[3] = { 0,0,1 };
-			cfloat3 lb(-0.05, 0.1, -0.05);
-			cfloat3 ub(0.051, 0.21, 0.05);
-
-			for (float x = xmin.x; x < xmax.x; x += spacing)
-				for (float y = xmin.y; y < xmax.y; y += spacing)
-					for (float z = xmin.z; z < xmax.z; z += spacing) {
-
-						int pid = addDefaultParticle();
-						if (pid < 0) {
-							printf("error: reaching particle number limit\n");
-							return;
-						}
-
-						pos[pid] = cfloat3(x, y, z);
-						color[pid] = cfloat4(vf[0], vf[1], vf[2], 0.2);
-						for (int t = 0; t < h_param.numTypes; t++)
-							vol_frac[pid * h_param.numTypes + t] = vf[t];
-
-						type[pid] = typeTmp;
-						group[pid] = groupTmp;
-						addcount += 1;
-					}
-
-			if (typeTmp == TYPE_FLUID) {
-				printf("Block No. %d, type: fluid, particle num: %d\n", i, addcount);
-				h_param.numFluidParticles += addcount;
-			}
-			else if (typeTmp == TYPE_DEFORMABLE) {
-				printf("Block No. %d, type: deformable, particle num: %d\n", i, addcount);
-				h_param.numSolidParticles += addcount;
-			}
-			else if (typeTmp == TYPE_GRANULAR) {
-				printf("Block No. %d, type: granular, particle num: %d\n", i, addcount);
-			}
+			addFluidVolume(*fluid_volumes[i]);
 		}
 	}
 
+	void MultiphaseSPHSolver::addFluidVolume(const fluidvol & fv) {
+		float pad = h_param.spacing * 0.5f;
+		cfloat3 xmin = fv.xmin;
+		cfloat3 xmax = fv.xmax;
+		xmax += cfloat3(pad, pad, pad);
+		int addcount = 0;
+		const float* vf = fv.volfrac;
+		int typeTmp = fv.type;
+		int groupTmp = fv.group;
+		float spacing = h_param.spacing;
 
+		for (float x = xmin.x; x < xmax.x; x += spacing)
+			for (float y = xmin.y; y < xmax.y; y += spacing)
+				for (float z = xmin.z; z < xmax.z; z += spacing) {
+
+					int pid = addDefaultParticle();
+					if (pid < 0) {
+						printf("error: reaching particle number limit\n");
+						return;
+					}
+
+					pos[pid] = cfloat3(x, y, z);
+					color[pid] = cfloat4(vf[0], vf[1], vf[2], 0.2);
+					for (int t = 0; t < h_param.numTypes; t++)
+						vol_frac[pid * h_param.numTypes + t] = vf[t];
+
+					type[pid] = typeTmp;
+					group[pid] = groupTmp;
+					addcount += 1;
+				}
+
+		if (typeTmp == TYPE_FLUID) {
+			printf("Block type: fluid, particle num: %d\n", addcount);
+			h_param.numFluidParticles += addcount;
+		}
+		else if (typeTmp == TYPE_DEFORMABLE) {
+			printf("Block type: deformable, particle num: %d\n", addcount);
+			h_param.numSolidParticles += addcount;
+		}
+		else if (typeTmp == TYPE_GRANULAR) {
+			printf("Block type: granular, particle num: %d\n", addcount);
+		}
+	}
 
 
 	void MultiphaseSPHSolver::SetParameter() {

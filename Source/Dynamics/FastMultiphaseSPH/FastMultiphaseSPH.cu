@@ -22,10 +22,13 @@ namespace PhysIKA
 		this->setTopologyModule(m_pSet);
 
 		m_msph = std::make_shared<msph::MultiphaseSPHSolver>();
+	}
+	template<typename TDataType>
+	void FastMultiphaseSPH<TDataType>::init() {
 		m_msph->init();
-		
+
 		prepareData();
-		
+
 		std::vector<Coord> buffer(num_o);
 		m_pSet->setPoints(buffer);
 		m_pSet->setNormals(buffer);
