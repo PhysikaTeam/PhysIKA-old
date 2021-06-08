@@ -33,7 +33,8 @@ namespace PhysIKA {
 
 		void setNeighborSizeLimit(int num) { m_maxNum = num; }
 
-//		NeighborList<int>& getNeighborList() { return m_neighborhood.getValue(); }
+		GridHash<TDataType>& getHash() { return m_hash; }
+		const GridHash<TDataType>& getHash()const { return m_hash; }
 
 	protected:
 		bool initializeImpl() override;

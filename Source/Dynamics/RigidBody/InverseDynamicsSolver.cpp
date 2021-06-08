@@ -53,7 +53,7 @@ namespace PhysIKA
 				//MatrixMN<float> Si = cur_joint->getS();
 				const JointSpaceBase<float>& Si = cur_joint->getJointSpace();
 
-				SpatialVector<float> vJ = Si.mul(&(s.m_dq[idx_map[i]]));
+				SpatialVector<float> vJ = Si.mul(&(s.generalVelocity[idx_map[i]]));
 
 				if (parent_id < 0)
 				{

@@ -274,47 +274,47 @@ bool Node::addModule(std::shared_ptr<Module> module)
 	std::string mType = module->getModuleType();
 	if (std::string("TopologyModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<TopologyModule>(module);
+		auto downModule = TypeInfo::cast<TopologyModule>(module);
 		m_topology = downModule;
 	}
 	else if (std::string("NumericalModel").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<NumericalModel>(module);
+		auto downModule = TypeInfo::cast<NumericalModel>(module);
 		m_numerical_model = downModule;
 	}
 	else if (std::string("NumericalIntegrator").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<NumericalIntegrator>(module);
+		auto downModule = TypeInfo::cast<NumericalIntegrator>(module);
 		m_numerical_integrator = downModule;
 	}
 	else if (std::string("ForceModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<ForceModule>(module);
+		auto downModule = TypeInfo::cast<ForceModule>(module);
 		this->addToForceModuleList(downModule);
 	}
 	else if (std::string("ConstraintModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<ConstraintModule>(module);
+		auto downModule = TypeInfo::cast<ConstraintModule>(module);
 		this->addToConstraintModuleList(downModule);
 	}
 	else if (std::string("ComputeModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<ComputeModule>(module);
+		auto downModule = TypeInfo::cast<ComputeModule>(module);
 		this->addToComputeModuleList(downModule);
 	}
 	else if (std::string("CollisionModel").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<CollisionModel>(module);
+		auto downModule = TypeInfo::cast<CollisionModel>(module);
 		this->addToCollisionModelList(downModule);
 	}
 	else if (std::string("VisualModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<VisualModule>(module);
+		auto downModule = TypeInfo::cast<VisualModule>(module);
 		this->addToVisualModuleList(downModule);
 	}
 	else if (std::string("TopologyMapping").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<TopologyMapping>(module);
+		auto downModule = TypeInfo::cast<TopologyMapping>(module);
 		this->addToTopologyMappingList(downModule);
 	}
 
@@ -343,32 +343,32 @@ bool Node::deleteModule(std::shared_ptr<Module> module)
 	}
 	else if (std::string("ForceModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<ForceModule>(module);
+		auto downModule = TypeInfo::cast<ForceModule>(module);
 		this->deleteFromForceModuleList(downModule);
 	}
 	else if (std::string("ConstraintModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<ConstraintModule>(module);
+		auto downModule = TypeInfo::cast<ConstraintModule>(module);
 		this->deleteFromConstraintModuleList(downModule);
 	}
 	else if (std::string("ComputeModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<ComputeModule>(module);
+		auto downModule = TypeInfo::cast<ComputeModule>(module);
 		this->deleteFromComputeModuleList(downModule);
 	}
 	else if (std::string("CollisionModel").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<CollisionModel>(module);
+		auto downModule = TypeInfo::cast<CollisionModel>(module);
 		this->deleteFromCollisionModelList(downModule);
 	}
 	else if (std::string("VisualModule").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<VisualModule>(module);
+		auto downModule = TypeInfo::cast<VisualModule>(module);
 		this->deleteFromVisualModuleList(downModule);
 	}
 	else if (std::string("TopologyMapping").compare(mType) == 0)
 	{
-		auto downModule = TypeInfo::CastPointerDown<TopologyMapping>(module);
+		auto downModule = TypeInfo::cast<TopologyMapping>(module);
 		this->deleteFromTopologyMappingList(downModule);
 	}
 		
@@ -402,6 +402,25 @@ void Node::doTraverseTopDown(Action* act)
 	}
 
 	act->end(this);
+}
+
+void Node::updateTopology()
+{
+
+}
+
+void Node::updateStatus()
+{
+
+}
+
+void Node::applyTopologyMappings()
+{
+	auto tMappings = this->getTopologyMappingList();
+	for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)
+	{
+		(*iter)->apply();
+	}
 }
 
 void Node::traverseBottomUp(Action* act)

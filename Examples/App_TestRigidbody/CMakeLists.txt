@@ -2,7 +2,7 @@
 set(PROJECT_NAME App_TestRigidBody)
 
 link_libraries(Core Framework IO Rendering)
-link_libraries(ParticleSystem RigidBody)
+link_libraries(ParticleSystem RigidBody HeightField)
 link_libraries(GlutGUI)
 
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")

@@ -16,10 +16,7 @@ namespace PhysIKA
 		{
 			//return s0 + dydt(s0) * dt;
 
-			//State k1 = dydt(s0);
-			//State k2 = dydt(s0 + k1*(dt * 0.5));
-			//State k3 = dydt(s0 + k2*(dt*0.5));
-			//State k4 = dydt(s0 + k3 * dt);
+
 
 			SystemMotionState s;
 			//DSystemMotionState k;

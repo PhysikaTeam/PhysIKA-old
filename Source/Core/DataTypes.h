@@ -42,6 +42,10 @@ namespace PhysIKA
 	/// 3d DOF, double precision
 	typedef DataTypes<double, Vector3d, Matrix3d, Rigid3d> DataType3d;
 	template<> inline const char* DataType3d::getName() { return "DataType3d"; }
+
+
+#define EMPTY -1
+
 }
 
 

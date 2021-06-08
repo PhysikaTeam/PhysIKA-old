@@ -27,7 +27,7 @@ namespace PhysIKA
 			Joint* cur_joint = cur_node->getParentJoint();
 
 			/// Transformation from world to node.
-			Transform3d<float> Xo(state.m_global_r[i] - Vector3f(0, 12, 0), state.m_global_q[i].getConjugate());
+			Transform3d<float> Xo(state.globalPosition[i] - Vector3f(0, 12, 0), state.globalRotation[i].getConjugate());
 
 			/// Transformation from predecessor to successor.
 			Transform3d<float>& Xup = state.m_X[i];
@@ -52,7 +52,7 @@ namespace PhysIKA
 
 			/// Potential energy of current node.
 			float cur_pot;
-			cur_pot = root->getGravity().dot(state.m_global_r[i]) * (cur_node->getI().getMass() * (-1));
+			cur_pot = root->getGravity().dot(state.globalPosition[i]) * (cur_node->getI().getMass() * (-1));
 
 			/// Total momemtum
 			mom = mom + cur_mom;

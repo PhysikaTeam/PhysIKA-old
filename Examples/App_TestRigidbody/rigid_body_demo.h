@@ -29,6 +29,9 @@
 #include "Dynamics/RigidBody/FreeJoint.h"
 #include "Dynamics/RigidBody/SphericalJoint.h"
 
+#include "Rendering/RigidMeshRender.h"
+
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <algorithm>
@@ -95,10 +98,10 @@ void demoLoadFile()
 
 		if (parent_id >= 0)
 		{
-			state.m_dq[idx_map[i]] =  1.5;
+			state.generalVelocity[idx_map[i]] =  1.5;
 
 			auto cur_node = all_rigid[i].second;
-			state.m_v[i] = (cur_node->getParentJoint()->getJointSpace().mul(&(state.m_dq[idx_map[i]])));
+			state.m_v[i] = (cur_node->getParentJoint()->getJointSpace().mul(&(state.generalVelocity[idx_map[i]])));
 		}
 	}
 
@@ -228,8 +231,8 @@ void demo_PlanarJoint()
 
 		/// set velocity
 		SpatialVector<float> relv(1, 1, 1, -5, 0, 5);												///< relative velocity, in successor frame.
-		planar_joint->getJointSpace().transposeMul(relv, &(motion_state->m_dq[0]));					///< map relative velocity into joint space vector.
-		motion_state->m_v[id3] = (planar_joint->getJointSpace().mul(&(motion_state->m_dq[0])));		///< 
+		planar_joint->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[0]));					///< map relative velocity into joint space vector.
+		motion_state->m_v[id3] = (planar_joint->getJointSpace().mul(&(motion_state->generalVelocity[0])));		///< 
 
 		//motion_state->m_dq[0] = -15;
 		//motion_state->m_dq[1] = -0;
@@ -329,8 +332,8 @@ void demo_PrismaticJoint()
 
 		/// set velocity
 		SpatialVector<float> relv(1, 1, 1, -5, 5, 5);												///< relative velocity, in successor frame.
-		joint2->getJointSpace().transposeMul(relv, &(motion_state->m_dq[0]));				///< map relative velocity into joint space vector.
-		motion_state->m_v[id2] = (joint2->getJointSpace().mul(&(motion_state->m_dq[0])));	///< set 
+		joint2->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[0]));				///< map relative velocity into joint space vector.
+		motion_state->m_v[id2] = (joint2->getJointSpace().mul(&(motion_state->generalVelocity[0])));	///< set 
 
 		motion_state->updateGlobalInfo();
 	}
@@ -452,8 +455,8 @@ void demo_middleAxis()
 		//Vector3f center = rigid_r[i] + rigid_r2 *(1.0 / 3.0);
 		Transform3d<float> trans_center(-rigid_r2 *(1.0 / 3.0), rigid_q1.getConjugate());
 		SpatialVector<float> relv = trans_center.transformM(rigid_v[i]);										///< relative velocity, in successor frame.
-		joint1[i]->getJointSpace().transposeMul(relv, &(motion_state->m_dq[idx_map[id1]]));				///< map relative velocity into joint space vector.
-		motion_state->m_v[id1] = (joint1[i]->getJointSpace().mul(&(motion_state->m_dq[idx_map[id1]])));	///< set 
+		joint1[i]->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[idx_map[id1]]));				///< map relative velocity into joint space vector.
+		motion_state->m_v[id1] = (joint1[i]->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id1]])));	///< set 
 
 	}
 
@@ -575,16 +578,16 @@ void demo_SphericalJoint()
 
 		/// set velocity
 		SpatialVector<float> relv1(u(e), u(e), u(e), 0, 0, 0);												///< relative velocity, in successor frame.
-		joint1->getJointSpace().transposeMul(relv1, &(motion_state->m_dq[idx_map[id1]]));				///< map relative velocity into joint space vector.
-		motion_state->m_v[id1] = (joint1->getJointSpace().mul(&(motion_state->m_dq[idx_map[id1]])));	///< set 
+		joint1->getJointSpace().transposeMul(relv1, &(motion_state->generalVelocity[idx_map[id1]]));				///< map relative velocity into joint space vector.
+		motion_state->m_v[id1] = (joint1->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id1]])));	///< set 
 
 		SpatialVector<float> relv2(u(e), u(e), u(e), 0, 0, 0);												///< relative velocity, in successor frame.
-		joint2->getJointSpace().transposeMul(relv2, &(motion_state->m_dq[idx_map[id2]]));				///< map relative velocity into joint space vector.
-		motion_state->m_v[id2] = (joint2->getJointSpace().mul(&(motion_state->m_dq[idx_map[id2]])));	///< set 
+		joint2->getJointSpace().transposeMul(relv2, &(motion_state->generalVelocity[idx_map[id2]]));				///< map relative velocity into joint space vector.
+		motion_state->m_v[id2] = (joint2->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id2]])));	///< set 
 
 		SpatialVector<float> relv3(u(e), u(e), u(e), 0, 0, 0);												///< relative velocity, in successor frame.
-		joint3->getJointSpace().transposeMul(relv3, &(motion_state->m_dq[idx_map[id3]]));				///< map relative velocity into joint space vector.
-		motion_state->m_v[id3] = (joint3->getJointSpace().mul(&(motion_state->m_dq[idx_map[id3]])));	///< set 
+		joint3->getJointSpace().transposeMul(relv3, &(motion_state->generalVelocity[idx_map[id3]]));				///< map relative velocity into joint space vector.
+		motion_state->m_v[id3] = (joint3->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id3]])));	///< set 
 
 		motion_state->updateGlobalInfo();
 	}
@@ -632,6 +635,10 @@ void demo_MultiRigid()
 		last_rigid->addChildJoint(joint[i]);
 		rigid[i]->setParentJoint(joint[i].get());
 
+		auto renderModule = std::make_shared<RigidMeshRender>(rigid[i]->getTransformationFrame());
+		renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+		rigid[i]->addVisualModule(renderModule);
+
 		last_rigid = rigid[i];
 	}
 
@@ -647,8 +654,13 @@ void demo_MultiRigid()
 	for (int i = 0; i < N; ++i)
 	{
 		float box_sx = 1.0, box_sy = 3.0, box_sz = 1.0;
+		box_sx *= 0.1; box_sy *= 0.1; box_sz *= 0.1;
 		float rigid_mass = 12;
-		float ixx = 10.0, ixy = 0.0, ixz = 0.0, iyy = 1.0, iyz = 0.0, izz = 10.0;
+		float ixy = 0.0, ixz = 0.0, iyz = 0.0;
+		float ixx = (box_sy*box_sy + box_sz * box_sz);
+		float iyy = (box_sx*box_sx + box_sz * box_sz);
+		float izz = (box_sx*box_sx + box_sy * box_sy);
+
 
 		Vector3f rigid_r(0, -box_sy / 2.0, 0);
 
@@ -657,7 +669,7 @@ void demo_MultiRigid()
 		Quaternion<float> joint_q;// (Vector3f(u1(e), u1(e), u1(e)), u1(e));
 		if (i == 0)
 		{
-			joint_r[1] = 10;// 3 * N + 3;
+			joint_r[1] = box_sy *( N + 1);
 			//joint_q = Quaternion<float>(Vector3f(u1(e), u1(e), u1(e)), u1(e));
 			
 		}
@@ -677,13 +689,16 @@ void demo_MultiRigid()
 		{
 			/// set velocity
 			SpatialVector<float> relv(u(e), u(e), u(e), 0, 0, 0);												///< relative velocity, in successor frame.
-			joint[i]->getJointSpace().transposeMul(relv, &(motion_state->m_dq[idx_map[id]]));				///< map relative velocity into joint space vector.
-			motion_state->m_v[id] = (joint[i]->getJointSpace().mul(&(motion_state->m_dq[idx_map[id]])));	///< set 
+			joint[i]->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[idx_map[id]]));				///< map relative velocity into joint space vector.
+			motion_state->m_v[id] = (joint[i]->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id]])));	///< set 
 		}
 	}
 
 	
 	motion_state->updateGlobalInfo();
+
+	rigid_root->updateTree();
+	system_state->m_activeForce[2] = 10.0;
 	
 	GLApp window;
 	window.createWindow(1024, 768);

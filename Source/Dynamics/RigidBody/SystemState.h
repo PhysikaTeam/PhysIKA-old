@@ -34,6 +34,7 @@ namespace PhysIKA
 		void setNum(int n, int dof)
 		{
 			this->m_externalForce.resize(n);
+			this->m_activeForce.resize(dof);
 			if (m_motionState)
 			{
 				m_motionState->setNum(n, dof);
@@ -45,8 +46,10 @@ namespace PhysIKA
 
 		std::shared_ptr<SystemMotionState> m_motionState=0;
 
-		std::vector<SpatialVector<float>> m_externalForce;				// The origin of the external force is the center of rigid body.
+		std::vector<SpatialVector<float>> m_externalForce;			// The origin of the external force is the center of rigid body.
 	
+		Vectornd<float> m_activeForce;								// 
+
 		Vector3f m_gravity;
 	};
 }

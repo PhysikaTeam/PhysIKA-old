@@ -35,6 +35,21 @@ namespace TypeInfo
 	template<class T, class ... Args>
 	std::shared_ptr<T> New(Args&& ... args) { std::shared_ptr<T> p(new T(std::forward<Args>(args)...)); return p; }
 
+	template<class TA, class TB>
+	inline TA* cast(TB* b)
+	{
+		TA* ptr = dynamic_cast<TA*>(b);
+		return ptr;
+	}
+
+	template<class TA, class TB>
+	inline std::shared_ptr<TA> cast(std::shared_ptr<TB> b)
+	{
+		std::shared_ptr<TA> ptr = std::dynamic_pointer_cast<TA>(b);
+		return ptr;
+	}
+
+
 	template<class Derived, class Base>
 	Derived* CastPointerDown(Base* b)
 	{

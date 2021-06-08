@@ -39,7 +39,7 @@ namespace PhysIKA
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
-			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.size(), PlusFunc<T>());
+			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.begin(), xArr.begin(), yArr.begin(), zArr.size(), PlusFunc<T>());
 
 		}
 
@@ -48,7 +48,7 @@ namespace PhysIKA
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
-			KerTwoPointFunc <<<pDim, BLOCK_SIZE >>> (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.size(), MinusFunc<T>());
+			KerTwoPointFunc <<<pDim, BLOCK_SIZE >>> (zArr.begin(), xArr.begin(), yArr.begin(), zArr.size(), MinusFunc<T>());
 		}
 
 
@@ -57,7 +57,7 @@ namespace PhysIKA
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
-			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.size(), MultiplyFunc<T>());
+			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.begin(), xArr.begin(), yArr.begin(), zArr.size(), MultiplyFunc<T>());
 
 		}
 
@@ -66,7 +66,7 @@ namespace PhysIKA
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
-			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), zArr.size(), DivideFunc<T>());
+			KerTwoPointFunc << <pDim, BLOCK_SIZE >> > (zArr.begin(), xArr.begin(), yArr.begin(), zArr.size(), DivideFunc<T>());
 
 		}
 
@@ -76,7 +76,7 @@ namespace PhysIKA
 		{
 			assert(zArr.size() == xArr.size() && zArr.size() == yArr.size());
 			unsigned pDim = cudaGridSize(zArr.size(), BLOCK_SIZE);
-			KerSaxpy << <pDim, BLOCK_SIZE >> > (zArr.getDataPtr(), xArr.getDataPtr(), yArr.getDataPtr(), alpha, zArr.size());
+			KerSaxpy << <pDim, BLOCK_SIZE >> > (zArr.begin(), xArr.begin(), yArr.begin(), alpha, zArr.size());
 		}
 
 		template void plus(DeviceArray<int>&, DeviceArray<int>&, DeviceArray<int>&);

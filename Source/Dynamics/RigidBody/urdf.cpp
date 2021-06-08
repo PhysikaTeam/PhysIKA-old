@@ -287,7 +287,7 @@ namespace PhysIKA {
 				//// ---------------------------------------------------
 				//Vector3f axis;
 				//float ran;
-				//all_q_r2j[joint_id].toRotationAxis(ran, axis);
+				//all_q_r2j[joint_id].getRotation(ran, axis);
 				//Vector3f new_rel_r = all_q_r2j[joint_id].rotate(all_r_j2r[cur_id]);
 
 				//Quaternion<float> tmp_q = all_q_r2j[joint_id];
@@ -306,33 +306,33 @@ namespace PhysIKA {
 				//// ---------------------
 				//Vector3f axis2;
 				//float ran2;
-				//rel_q.toRotationAxis(ran2, axis2);
+				//rel_q.getRotation(ran2, axis2);
 				//
 				//Vector3f axis3;
 				//float ran3;
-				//all_q_r2j[joint_id].toRotationAxis(ran3, axis3);
+				//all_q_r2j[joint_id].getRotation(ran3, axis3);
 
 				//Vector3f axis4;
 				//float ran4;
-				//all_q_j2r[cur_id].toRotationAxis(ran4, axis4);
+				//all_q_j2r[cur_id].getRotation(ran4, axis4);
 				
 				if (parent_id >= 0)
 				{
 					// global translation
 					//Transform3d<float> parent_trans(motion_state->m_global_r[parent_id],
 					//	motion_state->m_global_q[parent_id].getConjugate());
-					Vector3f global_r = motion_state->m_global_r[parent_id] + motion_state->m_global_q[parent_id].rotate(rel_r);
-					motion_state->m_global_r[cur_id] = global_r;
+					Vector3f global_r = motion_state->globalPosition[parent_id] + motion_state->globalRotation[parent_id].rotate(rel_r);
+					motion_state->globalPosition[cur_id] = global_r;
 
 					//Vector3f tmp_rel_r = motion_state->m_global_q[parent_id].rotate(rel_r);
 					//Vector3f axis;
 					//float ran;
-					//motion_state->m_global_q[parent_id].toRotationAxis(ran, axis);
+					//motion_state->m_global_q[parent_id].getRotation(ran, axis);
 
 
 					// global rotation
-					Quaternion<float> global_q = motion_state->m_global_q[parent_id] * rel_q;
-					motion_state->m_global_q[cur_id] = global_q;
+					Quaternion<float> global_q = motion_state->globalRotation[parent_id] * rel_q;
+					motion_state->globalRotation[cur_id] = global_q;
 
 					// joint space matrix info		
 					Quaternion<float> q_j2r_conj = all_q_j2r[cur_id].getConjugate();
@@ -340,8 +340,8 @@ namespace PhysIKA {
 				}
 				else
 				{
-					motion_state->m_global_r[cur_id] = motion_state->m_rel_r[cur_id];
-					motion_state->m_global_q[cur_id] = motion_state->m_rel_q[cur_id];
+					motion_state->globalPosition[cur_id] = motion_state->m_rel_r[cur_id];
+					motion_state->globalRotation[cur_id] = motion_state->m_rel_q[cur_id];
 				}
 
 				//} while (!to_be_handle.empty());

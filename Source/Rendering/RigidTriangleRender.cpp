@@ -212,7 +212,8 @@ void RigidTriangleRender::display()
 		//glm::mat4 model_mat = glm::translate(model_rotate, glm::vec3(m_translation[0], m_translation[1], m_translation[2]));
 		float ran;
 		Vector3f axis;
-		m_rotation.toRotationAxis(ran, axis);
+		//m_rotation.toRotationAxis(ran, axis);
+		m_rotation.getRotation(ran, axis);
 		glm::mat4 model_mat(1.0);
 		model_mat = glm::translate(model_mat, glm::vec3(m_translation[0], m_translation[1], m_translation[2]));
 		model_mat = glm::rotate(model_mat, ran, glm::vec3(axis[0], axis[1], axis[2]));

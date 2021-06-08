@@ -30,8 +30,9 @@ namespace PhysIKA
 		_addDvec(this->m_rel_r, ds.m_rel_r, dt);
 		_addDvec(this->m_rel_q, ds.m_rel_q, dt);
 		_addDvec(this->m_v, ds.m_v, dt);
-		_addDvec(this->m_dq, ds.m_dq, dt);
+		_addDvec(this->generalVelocity, ds.m_dq, dt);
 
+		_addDvec(this->generalPosition, ds.m_generalq, dt);
 
 		// /
 		if (this->m_root)
@@ -48,15 +49,24 @@ namespace PhysIKA
 
 				if (parent_id >= 0)
 				{
-					this->m_global_r[i] = this->m_global_r[parent_id] + this->m_global_q[parent_id].rotate(this->m_rel_r[i]);
-					this->m_global_q[i] = this->m_global_q[parent_id] * this->m_rel_q[i];
+					this->globalPosition[i] = this->globalPosition[parent_id] + this->globalRotation[parent_id].rotate(this->m_rel_r[i]);
+					this->globalRotation[i] = this->globalRotation[parent_id] * this->m_rel_q[i];
+
+					//Vector3f linv = this->globalVelocity[parent_id]
+					Transform3d<float> local2Glo(globalRotation[i].getConjugate().rotate(-globalPosition[i]),
+						globalRotation[i]);
+					this->globalVelocity[i] = this->globalVelocity[parent_id] + local2Glo.transformM(this->m_v[i]);
 				}
 				else
 				{
-					this->m_global_r[i] = this->m_rel_r[i];
-					this->m_global_q[i] = this->m_rel_q[i];
+					this->globalPosition[i] = this->m_rel_r[i];
+					this->globalRotation[i] = this->m_rel_q[i];
+
+					Transform3d<float> local2Glo(globalRotation[i].getConjugate().rotate(-globalPosition[i]),
+						globalRotation[i]);
+					this->globalVelocity[i] = local2Glo.transformM(this->m_v[i]);
 				}
-				this->m_global_q[i].normalize();
+				this->globalRotation[i].normalize();
 			}
 		}
 
@@ -79,13 +89,13 @@ namespace PhysIKA
 
 			if (parent_id >= 0)
 			{
-				m_global_r[cur_id] = m_global_r[parent_id] + m_global_q[parent_id].rotate(m_rel_r[cur_id]);
-				m_global_q[cur_id] = m_global_q[parent_id] * m_rel_q[cur_id];
+				globalPosition[cur_id] = globalPosition[parent_id] + globalRotation[parent_id].rotate(m_rel_r[cur_id]);
+				globalRotation[cur_id] = globalRotation[parent_id] * m_rel_q[cur_id];
 			}
 			else
 			{
-				m_global_r[cur_id] = m_rel_r[cur_id];
-				m_global_q[cur_id] = m_rel_q[cur_id];
+				globalPosition[cur_id] = m_rel_r[cur_id];
+				globalRotation[cur_id] = m_rel_q[cur_id];
 			}
 		}
 	}

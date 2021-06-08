@@ -47,8 +47,12 @@ public:
     void drawFrameRate();  
     void enableDisplayFrameRate();
     void disableDisplayFrameRate();
+	void enableDisplayFrame();
+	void disableDisplayFrame();
 	bool isShowFrameRate();
 	bool isShowBoundingBox();
+
+	void increaseFrameNum() { ++m_totalFrame; }
 
 	void enableBackground();
 	void disableBackground();
@@ -113,6 +117,8 @@ protected:
 	void drawAxis();
 	void drawBoundingBox(Vector3f lo, Vector3f hi);
 
+	void registerMousePos(float x, float y);
+
 protected:
     //basic information of window
     std::string m_winName;
@@ -132,6 +138,8 @@ protected:
 
     //fps display
     bool display_fps_;
+	bool display_frame_=false;
+	int m_totalFrame = 0;
 
     //event mode
     bool event_mode_;
@@ -144,5 +152,14 @@ protected:
     unsigned int screen_capture_file_index_;
 
 	Camera m_camera;
+	float m_mousex;
+	float m_mousey;
+	float m_rotationSensitivity=2.0;
+	float m_translationSensitivity = 2.0;
+
+	bool m_cameraMode = true;
+
+
+
 };
 }  //end of namespace PhysIKA

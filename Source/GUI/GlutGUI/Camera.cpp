@@ -32,11 +32,19 @@ using namespace std;
 namespace PhysIKA
 {
 	Camera::Camera() {
-		m_eye = Vector3f(0, 0, 3);
+		m_worldUp = Vector3f(0, 1, 0);
+		m_localView = Vector3f(0, 0, -1);
+		m_localRight = Vector3f(1, 0, 0);
+		m_localUp = Vector3f(0, 1, 0);
+
 		m_light = Vector3f(0, 0, 3);
-		m_rotation = 0;
-		m_rotation_axis = Vector3f(0, 1, 0);
+		
 		m_fov = 0.90f;
+		m_focus = 3.0f;
+
+		m_eye = Vector3f(0, 1.5, 3);
+		this->lookAt(m_eye, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
+
 	}
 
 
@@ -47,14 +55,17 @@ namespace PhysIKA
 		float right = width / diag* 0.5f*m_fov*neardist;
 		float left = -right;
 
+		m_cameraRot.getRotation(m_rotation, m_rotation_axis);
+
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glFrustum(left, right, bottom, top, neardist, fardist);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glRotatef(180.0f / M_PI*m_rotation, m_rotation_axis[0], m_rotation_axis[1], m_rotation_axis[2]);
+		glRotatef(-180.0f / M_PI * m_rotation, m_rotation_axis[0], m_rotation_axis[1], m_rotation_axis[2]);
 		glTranslatef(-m_eye[0], -m_eye[1], -m_eye[2]);
+		
 
 		GLfloat pos[] = { m_light[0], m_light[1], m_light[2],1 };
 		glLightfv(GL_LIGHT0, GL_POSITION, pos);
@@ -64,7 +75,6 @@ namespace PhysIKA
 		m_pixelarea = 4 * right*top / (width*height);
 		m_near = neardist;
 		m_far = fardist;
-		m_right = right;
 	}
 
 	int Camera::width() const {
@@ -83,144 +93,154 @@ namespace PhysIKA
 		return m_eye;
 	}
 
-	void Camera::rotate(Quat1f &rotquat) {
-		// set up orthogonal camera system
-		Quat1f q(m_rotation, m_rotation_axis);
-		//q.x = -q.x;
-		q.setX(-q.x());
-		Vector3f viewdir(0, 0, -1);
-		q.rotateVector(viewdir);
-		// end set up orth system
-		//   q = Quat1f(angle, axis);
-		q = rotquat;
-		Quat1f currq(m_rotation, m_rotation_axis);
-		Vector3f rotcenter = m_eye + 3.0f*viewdir;
-		Vector3f rotcenter2 = m_light + 3.0f*viewdir;
-// 		currq = q.ComposeWith(currq);
-// 		currq.ToRotAxis(m_rotation, m_rotation_axis);
-		currq = q * currq;
-		q.normalize();
-		currq.toRotationAxis(m_rotation, m_rotation_axis);
-		// set up orthogonal camera system
-		Quat1f q2(m_rotation, m_rotation_axis);
-		//q2.x = -q2.x;
-		q2.setX(-q2.x());
-		Vector3f viewdir2(0, 0, -1);
-		q2.rotateVector(viewdir2);
+	void Camera::setEyePostion(const Vector3f & pos)
+	{
+		m_eye = pos;
+	}
 
-		m_eye = rotcenter - 3.0f*viewdir2;
-		m_light = rotcenter2 - 3.0f*viewdir2;
+	void Camera::setFocus(float focus)
+	{
+		m_focus = focus;
+	}
+
+	float Camera::getFocus() const
+	{
+		return m_focus;
+	}
+
+	void Camera::lookAt(const Vector3f & camPos, const Vector3f & center, const Vector3f & updir_)
+	{
+		Quaternionf curQ;
+		//Vector3f rightdir(1, 0, 0);
+		//Vector3f updir(0, 1, 0);
+
+
+		Vector3f viewdir = center - camPos;
+		viewdir.normalize();
+		m_view = viewdir;
+		
+		if (abs(viewdir[0]) > 1e-3 || abs(viewdir[2])>1e-3)
+		{
+			Vector3f viewxz = viewdir;
+			viewxz[1] = 0;
+			viewxz.normalize();
+
+			Vector3f right0(-viewxz[2], 0, viewxz[0]);
+			Vector3f right1(viewxz[2], 0, -viewxz[0]);
+
+			Vector3f targetRight = viewdir.cross(updir_).normalize();
+			if (targetRight.dot(right0) > 0)
+			{
+				m_right = right0;
+			}
+			else
+				m_right = right1;
+
+			m_up = m_right.cross(viewdir).normalize();
+		}
+		
+		SquareMatrix<float, 3> mat{
+			m_right[0],	m_up[0],	-m_view[0],
+			m_right[1],	m_up[1],	-m_view[1],
+			m_right[2],	m_up[2],	-m_view[2]
+		};
+
+		Quat1f q(mat);
+		//q.getRotation(m_rotation, m_rotation_axis);
+		m_cameraRot = q;
+
+		m_eye = camPos;
+		m_focus = (center - camPos).norm();
+	}
+
+	void Camera::rotate(Quat1f &rotquat) {
+		m_cameraRot = rotquat * m_cameraRot;
 	}
 
 	Vector3f Camera::getViewDir() const {
-		Quat1f q(m_rotation, m_rotation_axis);
-		//q.x = -q.x;
-		q.setX(-q.x());
-		Vector3f viewdir(0, 0, 1);
-		q.rotateVector(viewdir);
-		return viewdir;
+		return m_view;
 	}
 
 	void Camera::getCoordSystem(Vector3f &view, Vector3f &up, Vector3f &right) const {
-		Quat1f q(m_rotation, m_rotation_axis);
-		//q.x = -q.x;
-		q.setX(-q.x());
-		view = Vector3f(0, 0, 1);
-		q.rotateVector(view);
-		up = Vector3f(0, 1, 0);
-		q.rotateVector(up);
-		right = -view.cross(up);
+		view = m_view;
+		up = m_up;
+		right = m_right;
 	}
 
-	void Camera::translate(const Vector3f translation) {
-		Quat1f q(m_rotation, m_rotation_axis);
-		//q.x = -q.x;
-		q.setX(-q.x());
-		Vector3f xax(1, 0, 0);
-		Vector3f yax(0, 1, 0);
-		Vector3f zax(0, 0, 1);
+	void Camera::localTranslate(const Vector3f translation) {
+		
+		m_eye += translation[0] * m_right +
+			translation[1] * m_up -
+			translation[2] * m_view;
+	}
 
-		q.rotateVector(xax);
-		q.rotateVector(yax);
-		q.rotateVector(zax);
+	void Camera::translate(const Vector3f translation)
+	{
+		m_eye += translation;
+	}
 
-		m_eye += translation[0] * xax +
-			translation[1] * yax +
-			translation[2] * zax;
+	void Camera::yawAroundFocus(float radian)
+	{
+		Vector3f focus2eye = m_view * (-m_focus);
+		Vector3f focusP = m_eye - focus2eye;
+		Quaternionf rot(m_worldUp, radian);
+
+		m_eye = focusP + rot.rotate(focus2eye);
+		m_cameraRot = m_cameraRot * Quaternionf(m_cameraRot.getConjugate().rotate(m_worldUp), radian);
+		m_cameraRot.normalize();
+
+		this->updateDir();
+	}
+
+	void Camera::pitchAroundFocus(float radian)
+	{
+		Vector3f focus2eye = m_view * (-m_focus);
+		Vector3f focusP = m_eye - focus2eye;
+		Quaternionf rot(m_right, radian);
+
+		m_eye = focusP + rot.rotate(focus2eye);
+		m_cameraRot = m_cameraRot * Quaternionf(m_localRight, radian);
+		//m_cameraRot = m_cameraRot * Quaternionf(m_cameraRot.getConjugate().rotate(m_right), radian);
+		m_cameraRot.normalize();
+
+		this->updateDir();
+	}
+
+	void Camera::yaw(float radian)
+	{
+		Quaternionf rot(m_worldUp, radian);
+		m_cameraRot = m_cameraRot * Quaternionf(m_cameraRot.getConjugate().rotate(m_worldUp), radian);
+		m_cameraRot.normalize();
+
+		this->updateDir();
+	}
+
+	void Camera::pitch(float radian)
+	{
+		Quaternionf rot(m_right, radian);
+		m_cameraRot = m_cameraRot * Quaternionf(m_localRight, radian);
+		m_cameraRot.normalize();
+
+		this->updateDir();
+	}
+
+	void Camera::updateDir()
+	{
+		m_right = m_cameraRot.rotate(m_localRight);
+		m_up = m_cameraRot.rotate(m_localUp);
+		m_view = m_cameraRot.rotate(m_localView);
 	}
 
 	void Camera::translateLight(const Vector3f translation) {
-		Quat1f q(m_rotation, m_rotation_axis);
-		//q.x = -q.x;
-		q.setX(-q.x());
-		Vector3f xax(1, 0, 0);
-		Vector3f yax(0, 1, 0);
-		Vector3f zax(0, 0, 1);
 
-		q.rotateVector(xax);
-		q.rotateVector(yax);
-		q.rotateVector(zax);
-
-		m_light += translation[0] * xax +
-			translation[1] * yax +
-			translation[2] * zax;
+		m_light += translation[0] * m_right +
+			translation[1] * m_up +
+			(-translation[2]) * m_view;
 	}
 
 	void Camera::zoom(float amount) {
 		m_fov += amount / 10;
 		m_fov = max(m_fov, 0.01f);
-	}
-
-	Vector3f Camera::getPosition(float x, float y) {
-		float r = x*x + y*y;
-		float t = 0.5f * 1 * 1;
-		if (r < t) {
-			Vector3f result(x, y, sqrt(2.0f*t - r));
-			result.normalize();
-			return result;
-		}
-		else {
-			Vector3f result(x, y, t / sqrt(r));
-			result.normalize();
-			return result;
-		}
-	}
-
-	Quat1f Camera::getQuaternion(float x1, float y1, float x2, float y2) {
-		if ((x1 == x2) && (y1 == y2)) {
-			return Quat1f(1, 0, 0, 0);
-		}
-		Vector3f pos1 = getPosition(x1, y1);
-		Vector3f pos2 = getPosition(x2, y2);
-		Vector3f rotaxis = pos1.cross(pos2);
-		rotaxis.normalize();
-		float rotangle = 2 * sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
-		return Quat1f(rotangle, rotaxis);
-	}
-
-	void Camera::registerPoint(float x, float y) {
-		m_x = x;
-		m_y = y;
-	}
-	void Camera::rotateToPoint(float x, float y) {
-		Quat1f q = getQuaternion(m_x, m_y, x, y);
-		registerPoint(x, y);
-		rotate(q);
-	}
-	void Camera::translateToPoint(float x, float y) {
-		float dx = x - m_x;
-		float dy = y - m_y;
-		float dz = 0;
-		registerPoint(x, y);
-		translate(Vector3f(-dx, -dy, -dz));
-	}
-
-	void Camera::translateLightToPoint(float x, float y) {
-		float dx = x - m_x;
-		float dy = y - m_y;
-		float dz = 0;
-		registerPoint(x, y);
-		translateLight(Vector3f(3 * dx, 3 * dy, 3 * dz));
 	}
 
 }

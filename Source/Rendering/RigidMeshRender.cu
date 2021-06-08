@@ -12,9 +12,10 @@ namespace PhysIKA
 {
 	IMPLEMENT_CLASS(RigidMeshRender)
 
-		RigidMeshRender::RigidMeshRender()
+		RigidMeshRender::RigidMeshRender(std::shared_ptr<Frame<DataType3f>> frame)
 		: VisualModule()
 		, m_color(Vector3f(0.2f, 0.3, 0.0f))
+		, m_meshFrame(frame)
 	{
 	}
 
@@ -67,7 +68,7 @@ namespace PhysIKA
 			return false;
 		}
 
-		auto triSet = TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(parent->getTopologyModule());
+		auto triSet = TypeInfo::cast<TriangleSet<DataType3f>>(parent->getTopologyModule());
 		if (triSet == nullptr)
 		{
 			Log::sendMessage(Log::Error, "TriangleModule: The topology module is not supported!");
@@ -106,13 +107,27 @@ namespace PhysIKA
 
 	void RigidMeshRender::display()
 	{
+
+
+		
+
 		glMatrixMode(GL_MODELVIEW_MATRIX);
 		glPushMatrix();
 
-		glRotatef(m_rotation.x(), m_rotation.y(), m_rotation.z(), m_rotation.w());
+		// Set uniform global transformation.
+		Vector3f rotateAxis;
+		float rotateRadian;
+		m_rotation.getRotation(rotateRadian, rotateAxis);
+		glRotatef(rotateRadian, rotateAxis[0], rotateAxis[1], rotateAxis[2]);
+		//glRotatef(m_rotation.x(), m_rotation.y(), m_rotation.z(), m_rotation.w());
 		glTranslatef(m_translation[0], m_translation[1], m_translation[2]);
 		glScalef(m_scale[0], m_scale[1], m_scale[2]);
 
+		// Update triangle mesh transformation
+		m_triangleRender->setRotation(Quaternion<float>(m_meshFrame->getOrientation()));
+		m_triangleRender->setTranslatioin(m_meshFrame->getCenter());
+
+		// Display triangle mesh.
 		m_triangleRender->display();
 
 		glPopMatrix();

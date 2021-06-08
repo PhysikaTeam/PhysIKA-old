@@ -23,10 +23,10 @@
 namespace PhysIKA
 {
 
-	IMPLEMENT_CLASS(RigidTimeIntegrationModule)
+	IMPLEMENT_CLASS(RigidTimeIntegrationModule);
 
 
-		inline RigidTimeIntegrationModule::RigidTimeIntegrationModule()
+	RigidTimeIntegrationModule::RigidTimeIntegrationModule()
 	{
 		m_fd_solver = std::make_shared<ArticulatedBodyFDSolver>();
 		m_fd_solver->setParent(this->getParent());
@@ -37,18 +37,18 @@ namespace PhysIKA
 	{
 		//m_fd_solver.setParent(this->getParent());
 
-		if (!m_time_init)
-		{
-			m_dt = 0.001;
-			m_last_time = clock() / 1000.0;
-			m_time_init = true;
-		}
-		else
-		{
-			double cur_time = clock() / 1000.0;
-			m_dt = cur_time - m_last_time;
-			m_last_time = cur_time;
-		}
+		//if (!m_time_init)
+		//{
+		//	m_dt = 0.001;
+		//	m_last_time = clock() / 1000.0;
+		//	m_time_init = true;
+		//}
+		//else
+		//{
+		//	double cur_time = clock() / 1000.0;
+		//	m_dt = cur_time - m_last_time;
+		//	m_last_time = cur_time;
+		//}
 	}
 
 
@@ -57,7 +57,7 @@ namespace PhysIKA
 
 		//return true;
 
-		m_dt = 1.0 / 60;
+		//m_dt = 1.0 / 60;
 		//RigidState s(static_cast<RigidBodyRoot<DataType3f>*>(this->getParent()));
 		RigidBodyRoot<DataType3f>* root = static_cast<RigidBodyRoot<DataType3f>*>(this->getParent());
 		SystemState& s = *(static_cast<RigidBodyRoot<DataType3f>*>(this->getParent())->getSystemState());
@@ -80,13 +80,19 @@ namespace PhysIKA
 
 	void RigidTimeIntegrationModule::dydt(const SystemMotionState & s0, DSystemMotionState & ds)
 	{
+		RigidBodyRoot<DataType3f>* root = static_cast<RigidBodyRoot<DataType3f>*>(s0.m_root);
+		this->dydt(*(root->getSystemState()), s0, ds);
+	}
+
+	void RigidTimeIntegrationModule::dydt(const SystemState & sysState, const SystemMotionState & s0, DSystemMotionState & ds)
+	{
 		CTimer timer;
 		timer.start();
 
 		RigidBodyRoot<DataType3f>* root = static_cast<RigidBodyRoot<DataType3f>*>(s0.m_root);
-		std::shared_ptr<SystemState> system_state = root->getSystemState();
+		//std::shared_ptr<SystemState> system_state = root->getSystemState();
 
-		
+
 		CTimer timer_solve_FD;
 		timer_solve_FD.start();
 
@@ -98,19 +104,13 @@ namespace PhysIKA
 
 
 		/// Solve general acceleration.
-		bool solve_ok = m_fd_solver->solve(*system_state, s0, ds.m_dq);
+		bool solve_ok = m_fd_solver->solve(sysState, s0, ds.m_dq);
 
 		timer_solve_FD.stop();
 		//std::cout << "  TIME * solve FD: " << timer_solve_FD.getElapsedTime() << std::endl;
 
 
-		/// ********************** debug
-		//for (int i = 0; i < ds.m_dq.size(); ++i)
-		//{
-		//	ds.m_dq[i] = 1.0;
-		//}
 
-		//if (H.linearSolve(C.negative(), ddq))
 		if (solve_ok)
 		{
 
@@ -122,7 +122,9 @@ namespace PhysIKA
 			/// joint index map
 			const std::vector<int>& idx_map = root->getJointIdxMap();
 
+
 			ds.setRigidNum(all_nodes.size());
+			ds.setDof(root->getJointDof());
 
 			for (int i = 0; i < all_nodes.size(); ++i)
 			{
@@ -130,7 +132,26 @@ namespace PhysIKA
 				std::shared_ptr<RigidBody2<DataType3f>> cur_node = all_nodes[i].second;
 				Joint* cur_joint = cur_node->getParentJoint();
 
+				Vectornd<float>& generalq = ds.getGeneralFreedom();
 				int dof = cur_joint->getJointDOF();
+				for (int di = 0; di < dof; ++di)
+				{
+					int idx0 = idx_map[i];
+					int violateC = cur_joint->violateConstraint(di, s0.getGeneralPosition()[idx0 + di]);
+					if (violateC < 0)
+					{
+						generalq[idx0 + di] = max(0, s0.generalVelocity[idx0 + di]);
+						ds.m_dq[idx0 + di] = max(0, ds.m_dq[idx0 + di]);
+					}
+					else if (violateC > 0)
+					{
+						generalq[idx0 + di] = min(0, s0.generalVelocity[idx0 + di]);
+						ds.m_dq[idx0 + di] = min(0, ds.m_dq[idx0 + di]);
+					}
+					else
+						generalq[idx0 + di] = s0.generalVelocity[idx0 + di];
+				}
+
 				if (dof > 0)
 				{
 					const Transform3d<float>& Xup = s0.m_X[i];
@@ -153,7 +174,6 @@ namespace PhysIKA
 				}
 				else
 				{
-				
 					/// d_vJ
 					ds.m_v[i] = SpatialVector<float>();					// d_vJ, expressed in node frame
 
@@ -162,6 +182,9 @@ namespace PhysIKA
 					ds.m_rel_r[i] = Vector3f();
 				}
 			}
+
+
+
 
 			timer_dy.stop();
 			//std::cout << "  TIME * ddq to dr&dQ: " << timer_dy.getElapsedTime() << std::endl;

@@ -118,6 +118,9 @@ namespace PhysIKA
 		ddq.resize(root->getJointDof());
 
 
+		// *** Pass 1 :  *******************
+		// Calculate rigid global velocity and bias forces.
+
 		std::vector<SpatialVector<float>> vi(n_rigid);
 		std::vector<SpatialVector<float>> ci(n_rigid);
 		//std::vector<Transform3d<float>> X0(n_rigid);
@@ -143,11 +146,14 @@ namespace PhysIKA
 
 			cur_node->getI().getTensor(m_IA[cur_id]);
 
-			Transform3d<float> X0(Vector3f(0, 0, 0), s.m_global_q[cur_id].getConjugate());
+			Transform3d<float> X0(Vector3f(0, 0, 0), s.globalRotation[cur_id].getConjugate());
 			m_pA[cur_id] = vi[cur_id].crossF(cur_node->getI()*vi[cur_id]);
 			m_pA[cur_id] -= X0.transformF(s_system.m_externalForce[cur_id]);
 		}
 
+
+		// *** Pass 2 :  *******************
+		// Calculate articulated body inertia.
 
 		MatrixMN<float> D(6, 6);
 		//Vectornd<float> ui(6);
@@ -169,24 +175,32 @@ namespace PhysIKA
 			//if (!m_isValid)
 			if (cur_dof > 0)
 			{
+				// U = IA * S
 				RigidUtil::IxS(m_IA[cur_id], parent_joint->getJointSpace(), U);
+
+				// D = S^T * U = S^T * IA * S
 				RigidUtil::setStxS(parent_joint->getJointSpace().getBases(), cur_dof, U, cur_dof, D, 0, 0);
 
-				/// ui
-				/// at presetn, taw is not taken into consideration
-				RigidUtil::setStxS(parent_joint->getJointSpace().getBases(), cur_dof, -m_pA[cur_id], m_ui, idx_map[cur_id]);
+				// ui = t - S^T * pA
+				RigidUtil::setStxS(parent_joint->getJointSpace().getBases(), cur_dof, m_pA[cur_id], m_ui, idx_map[cur_id]);
+				RigidUtil::vecSub(&(s_system.m_activeForce[idx_map[cur_id]]), &(m_ui[idx_map[cur_id]]), cur_dof, &(m_ui[idx_map[cur_id]]));
 
+				// D^-1 = (S^T *IA * S)^-1
 				this->m_D_inv[cur_id] = RigidUtil::inverse(D, cur_dof);
 			}
 
 			if (parent_id >= 0)
 			{
-				
 				MatrixMN<float>& D_inv = this->m_D_inv[cur_id];
 
 				if (cur_dof > 0)
 				{
+					// Ia = IA - IA * S * (S^T * IA *S)^-1 * S^T * IA
+					// => Ia = IA - U * D^-1 * U^T
 					Ia = m_IA[cur_id] - UxDxUT(U, cur_dof, D_inv);
+
+					// pa = pA + Ia * c + IA * S * (S^T * IA * S)^-1 * (t - S^T * pA)
+					// => pa = pA + Ia * c + U * D^-1 * ui
 					pa = m_pA[cur_id] + UxDxui(U, D_inv, &(m_ui[idx_map[cur_id]]), cur_dof) + _Ixs(Ia, ci[cur_id]);
 
 					m_IA[parent_id] += s.m_X[cur_id].inverseTransform().transformI(Ia);
@@ -197,12 +211,12 @@ namespace PhysIKA
 					m_IA[parent_id] += s.m_X[cur_id].inverseTransform().transformI(m_IA[cur_id]);
 					m_pA[parent_id] += s.m_X[cur_id].inverseTransform().transformF(m_pA[cur_id]);
 				}
-
-
-
 			}
-
 		}
+
+
+		// *** Pass 3 :  *******************
+		// Calculate accelerations.
 
 		for (int i = 0; i < n_rigid; ++i)
 		{
@@ -217,13 +231,13 @@ namespace PhysIKA
 			SpatialVector<float> a_p;
 			if (parent_id < 0)
 			{
-				Transform3d<float> toNode(Vector3f(), s.m_global_q[i].getConjugate());
+				Transform3d<float> toNode(Vector3f(), s.globalRotation[i].getConjugate());
 				a_p = SpatialVector<float>(Vector3f(), -(root->getGravity()));
 				a_p = toNode.transformM(a_p) + ci[cur_id];
-
 			}
 			else
 			{
+				// ap = a[parent] + c
 				a_p = s.m_X[cur_id].transformM(m_a[parent_id]) + ci[cur_id];
 			}
 
@@ -231,13 +245,14 @@ namespace PhysIKA
 			{
 				float a_[6];
 
+				// a_ = S^T * IA * (a[parent] + c)
 				m_U[cur_id].transposeMul(a_p, a_);
 
-				RigidUtil::vecSub(&(m_ui[start_idx]),
-					a_,
-					cur_dof,
-					a_);
+				// ui - a_ = t - S^T * pA -  S^T * IA * (a[parent] + c)
+				RigidUtil::vecSub(&(m_ui[start_idx]), a_, cur_dof, a_);
 
+				// ddq = D^-1 * (ui - a_)
+				// ddq = (S^T * IA * S)^-1 * (t - S^T * pA -  S^T * IA * (a[parent] + c))
 				RigidUtil::setMul(m_D_inv[cur_id], cur_dof, cur_dof,
 					a_,
 					&(ddq[start_idx]));

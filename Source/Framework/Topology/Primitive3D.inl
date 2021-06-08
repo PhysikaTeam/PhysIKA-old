@@ -2043,6 +2043,28 @@ namespace PhysIKA
 	template<typename Real>
 	COMM_FUNC int TLine3D<Real>::intersect(const TTet3D<Real>& tet, TSegment3D<Real>& interSeg) const
 	{
+		Point3D p1, p2;
+		bool tmp1 = false;
+		bool tmp2 = false;
+
+		//printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+
+		for (int i = 0; i < 4; i++)
+			if (tmp1 == false)
+			{
+				if (intersect(tet.face(i), p1))
+					tmp1 = true;
+			}
+			else if (intersect(tet.face(i), p2))
+			{
+
+				if (p2.distance(p1) > EPSILON)
+				{
+					interSeg = Segment3D(p1.origin, p2.origin);
+					return true;
+				}
+			}
+
 		return 0;
 	}
 
@@ -2895,21 +2917,21 @@ namespace PhysIKA
 		Real t0 = parameter(interSeg.startPoint());
 		Real t1 = parameter(interSeg.endPoint());
 
-		Interval<Real> iSeg(0, 1, false, false);
+		//Interval<Real> iSeg(0, 1, false, false);
 
-		if (iSeg.inside(t0) && iSeg.inside(t1))
+		if ((0.0f <= t0 && t0 <= 1.0f) && (0.0f <= t1 && t1 <= 1.0f))
 		{
 			interSeg.v0 = v0 + t0 * lineDir;
 			interSeg.v1 = v0 + t1 * lineDir;
 			return 2;
 		}
-		else if (iSeg.inside(t1))
+		else if ((0.0f <= t1 && t1 <= 1.0f))
 		{
 			interSeg.v0 = v0 + t1 * lineDir;
 			interSeg.v1 = interSeg.v0;
 			return 1;
 		}
-		else if (iSeg.inside(t0))
+		else if ((0.0f <= t0 && t0 <= 1.0f))
 		{
 			interSeg.v0 = v0 + t0 * lineDir;
 			interSeg.v1 = interSeg.v0;
@@ -2919,6 +2941,31 @@ namespace PhysIKA
 		{
 			return 0;
 		}
+	}
+
+	template<typename Real>
+	COMM_FUNC int TSegment3D<Real>::intersect(const TOrientedBox3D<Real>& obb, TSegment3D<Real>& interSeg) const
+	{
+		//transform to the local coordinate system of obb
+		Coord3D diff0 = v0 - obb.center;
+		Coord3D diff1 = v1 - obb.center;
+		Coord3D v0Prime = Coord3D(diff0.dot(obb.u), diff0.dot(obb.v), diff0.dot(obb.w));
+		Coord3D v1Prime = Coord3D(diff1.dot(obb.u), diff1.dot(obb.v), diff1.dot(obb.w));
+
+		TSegment3D<Real> tmp = TSegment3D<Real>(v0Prime, v1Prime);
+
+		int ret = tmp.intersect(TAlignedBox3D<Real>(-obb.extent, obb.extent), interSeg);
+
+		Coord3D pPrime = interSeg.startPoint();
+		Coord3D qPrime = interSeg.endPoint();
+
+		//transform back to the global coordinate system
+		Coord3D p = pPrime[0] * obb.u + pPrime[1] * obb.v + pPrime[2] * obb.w + obb.center;
+		Coord3D q = qPrime[0] * obb.u + qPrime[1] * obb.v + qPrime[2] * obb.w + obb.center;
+
+		interSeg = TSegment3D<Real>(p, q);
+
+		return ret;
 	}
 
 	template<typename Real>
@@ -3079,6 +3126,17 @@ namespace PhysIKA
 	COMM_FUNC bool TTriangle3D<Real>::isValid() const
 	{
 		return abs(area()) > REAL_EPSILON_SQUARED;
+	}
+
+
+	template<typename Real>
+	COMM_FUNC TAlignedBox3D<Real> TTriangle3D<Real>::aabb()
+	{
+		TAlignedBox3D<Real> abox;
+		abox.v0 = minimum(v[0], minimum(v[1], v[2]));
+		abox.v1 = maximum(v[0], maximum(v[1], v[2]));
+
+		return abox;
 	}
 
 	template<typename Real>
@@ -3250,6 +3308,18 @@ namespace PhysIKA
 		return radius >= REAL_EPSILON;
 	}
 
+
+	template<typename Real>
+	COMM_FUNC TAlignedBox3D<Real> TSphere3D<Real>::aabb()
+	{
+		TAlignedBox3D<Real> abox;
+		abox.v0 = center - radius;
+		abox.v1 = center + radius;
+
+		return abox;
+	}
+
+
 	template<typename Real>
 	COMM_FUNC TCapsule3D<Real>::TCapsule3D()
 	{
@@ -3353,6 +3423,150 @@ namespace PhysIKA
 	{
 		return volume() >= REAL_EPSILON;
 	}
+
+	template<typename Real>
+	COMM_FUNC bool TTet3D<Real>::intersect(const TTet3D<Real>& tet2, Coord3D& interNorm, Real& interDist, Coord3D& p1, Coord3D& p2, int need_distance = 1) const
+	{
+
+
+	//	printf("VVVVVVVVVVVVVVVVVVVVVVv\n");
+
+		Coord3D mid = (tet2.v[0] + tet2.v[1] + tet2.v[2] + tet2.v[3]) / 4.0f;
+		Coord3D v11 = mid + (tet2.v[0] - mid) /(tet2.v[0] - mid).norm() * ((tet2.v[0] - mid).norm());
+		Coord3D v22 = mid + (tet2.v[1] - mid) / (tet2.v[1] - mid).norm() * ((tet2.v[1] - mid).norm());
+		Coord3D v33 = mid + (tet2.v[2] - mid) / (tet2.v[2] - mid).norm() * ((tet2.v[2] - mid).norm());
+		Coord3D v44 = mid + (tet2.v[3] - mid) / (tet2.v[3] - mid).norm() * ((tet2.v[3] - mid).norm());
+		TTet3D<Real> tet(v11, v22, v33, v44);
+
+		Real inter_dist_0 = 0.0f;
+		Coord3D p11, p22, interNorm_0;
+
+		Segment3D s[18];
+		s[0] = Segment3D(v[0], v[1]);
+		s[1] = Segment3D(v[0], v[2]);
+		s[2] = Segment3D(v[0], v[3]);
+		s[3] = Segment3D(v[1], v[2]);
+		s[4] = Segment3D(v[1], v[3]);
+		s[5] = Segment3D(v[2], v[3]);
+
+		s[6] = Segment3D(v[0], (v[1] + v[2]) / 2.0f);
+		s[7] = Segment3D(v[0], (v[1] + v[3]) / 2.0f);
+		s[8] = Segment3D(v[0], (v[3] + v[2]) / 2.0f);
+		s[9] = Segment3D(v[1], (v[3] + v[2]) / 2.0f);
+		s[10] = Segment3D(v[1], (v[0] + v[2]) / 2.0f);
+		s[11] = Segment3D(v[1], (v[0] + v[3]) / 2.0f);
+
+		s[12] = Segment3D(v[2], (v[1] + v[0]) / 2.0f);
+		s[13] = Segment3D(v[2], (v[1] + v[3]) / 2.0f);
+		s[14] = Segment3D(v[2], (v[0] + v[3]) / 2.0f);
+		s[15] = Segment3D(v[3], (v[1] + v[2]) / 2.0f);
+		s[16] = Segment3D(v[3], (v[0] + v[2]) / 2.0f);
+		s[17] = Segment3D(v[3], (v[1] + v[0]) / 2.0f);
+
+		
+
+		int point_tag[4];
+		point_tag[0] = 3; point_tag[1] = 1; point_tag[2] = 2; point_tag[3] = 0;
+
+		for (int i = 0; i < 18; i++)
+		{
+			if (i >= 6 && !(inter_dist_0 < -0.000f))
+				break;
+			Line3D l_i = Line3D(s[i].v0, s[i].direction());
+			Segment3D tmp_seg;
+			
+			if (l_i.intersect(tet, tmp_seg))
+			{
+
+				Real left = (tmp_seg.v0 - s[i].v0).dot(s[i].direction().normalize());
+				Real right = (tmp_seg.v1 - s[i].v0).dot(s[i].direction().normalize());
+				if (right < left)
+				{
+					Real tmp = left;
+					left = right;
+					right = tmp;
+				}
+				Real maxx = (s[i].v1 - s[i].v0).dot(s[i].direction().normalize());
+				if (right < 0 || left > maxx)
+					continue;
+				left = max(left, 0.0f);
+				right = min(right, maxx);
+
+				p1 = s[i].v0 + ((left + right) / 2.0f * s[i].direction().normalize());
+				Bool tmp_bool;
+				p2 = Point3D(p1).project(tet, tmp_bool).origin;//
+				interDist = -(p1 - p2).norm();
+				
+				if(need_distance)
+				{ 
+					Coord3D p11 = s[i].v0 + left * s[i].direction().normalize();
+					Coord3D p22 = Point3D(p11).project(tet, tmp_bool).origin;
+					if ((p11 - p22).norm() > abs(interDist))
+					{
+						p1 = p11; p2 = p22;
+						interDist = -(p1 - p2).norm();
+					}
+
+					p11 = s[i].v0 + right * s[i].direction().normalize();
+					p22 = Point3D(p11).project(tet, tmp_bool).origin;
+					if ((p11 - p22).norm() > abs(interDist))
+					{
+						p1 = p11; p2 = p22;
+						interDist = -(p1 - p2).norm();
+					}
+				}	
+				Coord3D dir = -(p1 - p2) / interDist;
+				interNorm = dir;
+				//dir *= -1;
+				
+				if (interDist < inter_dist_0)
+				{
+					inter_dist_0 = interDist;
+					p11 = p1;
+					p22 = p2;
+					interNorm_0 = interNorm;
+				}
+				
+				if(need_distance == 0)
+					if (inter_dist_0 < -0.000f)
+					{
+						interDist = inter_dist_0;
+						p1 = p11;
+						p2 = p22;
+						interNorm = interNorm_0;
+						interDist += 0.0000f;
+						return true;
+					}
+					
+			}
+		}
+
+		if (inter_dist_0 < -0.000f)
+		{
+			interDist = inter_dist_0;
+			p1 = p11;
+			p2 = p22;
+			interNorm = interNorm_0;
+			interDist += 0.0000f;
+			return true;
+		}
+		return false;
+	}
+	template<typename Real>
+	COMM_FUNC TAlignedBox3D<Real> TTet3D<Real>::aabb()
+	{
+		TAlignedBox3D<Real> abox;
+		abox.v0[0] = min(min(v[0][0], v[1][0]), min(v[2][0], v[3][0]));
+		abox.v0[1] = min(min(v[0][1], v[1][1]), min(v[2][1], v[3][1]));
+		abox.v0[2] = min(min(v[0][2], v[1][2]), min(v[2][2], v[3][2]));
+
+		abox.v1[0] = max(max(v[0][0], v[1][0]), max(v[2][0], v[3][0]));
+		abox.v1[1] = max(max(v[0][1], v[1][1]), max(v[2][1], v[3][1]));
+		abox.v1[2] = max(max(v[0][2], v[1][2]), max(v[2][2], v[3][2]));
+
+		return abox;
+	}
+
 
 	template<typename Real>
 	COMM_FUNC TAlignedBox3D<Real>::TAlignedBox3D()
@@ -3532,6 +3746,20 @@ namespace PhysIKA
 	}
 
 	template<typename Real>
+	COMM_FUNC TOrientedBox3D<Real> TAlignedBox3D<Real>::rotate(const Matrix3D& mat)
+	{
+		TOrientedBox3D<Real> obox;
+		obox.u = mat * Coord3D(1, 0, 0);
+		obox.v = mat * Coord3D(0, 1, 0);
+		obox.w = mat * Coord3D(0, 0, 1);
+		obox.center = 0.5f * (v0 + v1);
+		obox.extent = 0.5f * (v1 - v0);
+
+		return obox;
+	}
+
+
+	template<typename Real>
 	COMM_FUNC bool TAlignedBox3D<Real>::isValid()
 	{
 		return v1[0] > v0[0] && v1[1] > v0[1] && v1[2] > v0[2];
@@ -3593,6 +3821,196 @@ namespace PhysIKA
 
 		return bValid;
 	}
+
+
+	template<typename Real>
+	COMM_FUNC TOrientedBox3D<Real> TOrientedBox3D<Real>::rotate(const Matrix3D& mat)
+	{
+		TOrientedBox3D<Real> obox;
+		obox.center = center;
+		obox.extent = extent;
+		obox.u = mat * obox.u;
+		obox.v = mat * obox.v;
+		obox.w = mat * obox.w;
+
+		return obox;
+	}
+
+
+	template<typename Real>
+	COMM_FUNC TAlignedBox3D<Real> TOrientedBox3D<Real>::aabb()
+	{
+		TAlignedBox3D<Real> abox;
+
+		Coord3D r_ext;
+		r_ext[0] = abs(extent[0] * u[0]) + abs(extent[1] * v[0]) + abs(extent[2] * w[0]);
+		r_ext[1] = abs(extent[0] * u[1]) + abs(extent[1] * v[1]) + abs(extent[2] * w[1]);
+		r_ext[2] = abs(extent[0] * u[2]) + abs(extent[1] * v[2]) + abs(extent[2] * w[2]);
+
+		abox.v0 = center - r_ext;
+		abox.v1 = center + r_ext;
+
+		return abox;
+	}
+
+
+
+	template<typename Real>
+	COMM_FUNC bool TOrientedBox3D<Real>::point_intersect(const TOrientedBox3D<Real>& OBB, Coord3D& interNorm, Real& interDist, Coord3D& p1, Coord3D& p2) const
+	{
+		Point3D p[8];
+		p[0] = Point3D(center - u * extent[0] - v * extent[1] - w * extent[2]);
+		p[1] = Point3D(center - u * extent[0] - v * extent[1] + w * extent[2]);
+		p[2] = Point3D(center - u * extent[0] + v * extent[1] - w * extent[2]);
+		p[3] = Point3D(center - u * extent[0] + v * extent[1] + w * extent[2]);
+		p[4] = Point3D(center + u * extent[0] - v * extent[1] - w * extent[2]);
+		p[5] = Point3D(center + u * extent[0] - v * extent[1] + w * extent[2]);
+		p[6] = Point3D(center + u * extent[0] + v * extent[1] - w * extent[2]);
+		p[7] = Point3D(center + u * extent[0] + v * extent[1] + w * extent[2]);
+
+		Segment3D s[12];
+		s[0] = Segment3D(p[0].origin, p[1].origin); s[1] = Segment3D(p[0].origin, p[2].origin); s[2] = Segment3D(p[0].origin, p[4].origin);
+		s[3] = Segment3D(p[3].origin, p[1].origin); s[4] = Segment3D(p[3].origin, p[2].origin); s[5] = Segment3D(p[3].origin, p[7].origin);
+		s[6] = Segment3D(p[6].origin, p[7].origin); s[7] = Segment3D(p[6].origin, p[2].origin); s[8] = Segment3D(p[6].origin, p[4].origin);
+		s[9] = Segment3D(p[5].origin, p[7].origin); s[10] = Segment3D(p[5].origin, p[1].origin); s[11] = Segment3D(p[5].origin, p[4].origin);
+
+		int min_idx1 = -1;
+		int min_idx2 = -1;
+		Real distance = 1.0f;
+
+		Plane3D plane1, plane2;
+		Coord3D axis;
+		Real inter;
+
+		//check u axis
+		Real min_u, max_u;
+		for (int i = 0; i < 8; i++)
+		{
+			Coord3D offset_self = p[i].origin - OBB.center;
+			Real tmp = offset_self.dot(OBB.u);
+			if (i == 0) min_u = max_u = tmp;
+			else
+			{
+				min_u = min(min_u, tmp);
+				max_u = max(max_u, tmp);
+			}
+		}
+		if (max_u < -OBB.extent[0] || min_u > OBB.extent[0]) return false;
+		Real inter_u = min(min(max_u + OBB.extent[0], OBB.extent[0] - min_u), min(2 * OBB.extent[0], max_u - min_u));
+		axis = OBB.u;
+		inter = inter_u;
+		plane1 = Plane3D((OBB.center + OBB.u * OBB.extent[0]), OBB.u);
+		plane2 = Plane3D((OBB.center - OBB.u * OBB.extent[0]), -OBB.u);
+
+		//check v axis
+		Real min_v, max_v;
+		for (int i = 0; i < 8; i++)
+		{
+			Coord3D offset_self = p[i].origin - OBB.center;
+			Real tmp = offset_self.dot(OBB.v);
+			if (i == 0) min_v = max_v = tmp;
+			else
+			{
+				min_v = min(min_v, tmp);
+				max_v = max(max_v, tmp);
+			}
+		}
+		if (max_v < -OBB.extent[1] || min_v > OBB.extent[1]) return false;
+		Real inter_v = min(min(max_v + OBB.extent[1], OBB.extent[1] - min_v), min(2 * OBB.extent[1], max_v - min_v));
+		if (inter_v < inter)
+		{
+			axis = OBB.v;
+			inter = inter_v;
+			plane1 = Plane3D((OBB.center + OBB.v * OBB.extent[1]), OBB.v);
+			plane2 = Plane3D((OBB.center - OBB.v * OBB.extent[1]), -OBB.v);
+		}
+
+		//check w axis
+		Real min_w, max_w;
+		for (int i = 0; i < 8; i++)
+		{
+			Coord3D offset_self = p[i].origin - OBB.center;
+			Real tmp = offset_self.dot(OBB.w);
+			if (i == 0) min_w = max_w = tmp;
+			else
+			{
+				min_w = min(min_w, tmp);
+				max_w = max(max_w, tmp);
+			}
+		}
+		if (max_w < -OBB.extent[2] || min_w > OBB.extent[2]) { return false; }
+		Real inter_w = min(min(max_w + OBB.extent[2], OBB.extent[2] - min_w), min(2 * OBB.extent[2], max_w - min_w));
+		if (inter_w < inter)
+		{
+			axis = OBB.w;
+			inter = inter_w;
+			plane1 = Plane3D((OBB.center + OBB.w * OBB.extent[2]), OBB.w);
+			plane2 = Plane3D((OBB.center - OBB.w * OBB.extent[2]), -OBB.w);
+		}
+
+		//printf("$$$$$$$$$$$$$$$$$$$$ INSIDE CHECKPOINT\n");
+
+		for (int i = 0; i < 8; i++)
+		{
+			Real tmp = -min(abs(p[i].distance(plane1)), abs(p[i].distance(plane2)));
+			if (tmp < distance && p[i].distance(OBB) < EPSILON)
+			{
+				distance = tmp;
+				min_idx1 = i;
+			}
+		}
+
+		for (int i = 0; i < 12; i++)
+		{
+			Segment3D tmp;
+			if (s[i].intersect(OBB, tmp))
+			{
+				Point3D inp((tmp.startPoint() + tmp.endPoint()) / 2.0f);
+				Real tmp_distance = -min(abs(inp.distance(plane1)), abs(inp.distance(plane2)));
+				if (tmp_distance < distance)
+				{
+
+					//printf(" ---------------------------------- interSegStart: %.3lf %.3lf %.3lf interSegEnd: %.3lf %.3lf %.3lf \n", 
+					//	tmp.startPoint()[0], tmp.startPoint()[1], tmp.startPoint()[2],
+					//	tmp.endPoint()[0], tmp.endPoint()[1], tmp.endPoint()[2]);
+					distance = tmp_distance;
+					min_idx2 = i;
+					min_idx1 = -1;
+				}
+
+			}
+		}
+		//printf("distance = %.10lf\n", distance);
+		if (distance > EPSILON) return false;
+		interDist = distance;
+
+		Point3D pt;
+		if (min_idx1 != -1)
+			pt = p[min_idx1];
+		else
+		{
+			Segment3D tmp;
+			s[min_idx2].intersect(OBB, tmp);
+			pt = Point3D((tmp.startPoint() + tmp.endPoint()) / 2.0f);
+		}
+
+
+		p1 = pt.origin;
+
+		if (abs(pt.distance(plane1)) < abs(pt.distance(plane2)))
+		{
+			p2 = pt.project(plane1).origin;
+			interNorm = axis;
+		}
+		else
+		{
+			p2 = pt.project(plane2).origin;
+			interNorm = -axis;
+		}
+
+		return true;
+	}
+
 
 	template<typename Real>
 	COMM_FUNC Real TAlignedBox3D<Real>::width()  const { return v1[0] - v0[0]; }

@@ -46,6 +46,8 @@ namespace PhysIKA
 
 		void loadObjFile(std::string filename);
 
+		Real computeBoundingRadius();
+
 	protected:
 		bool initializeImpl() override;
 

@@ -34,6 +34,7 @@ GLApp::GLApp()
 {
     background_color_ = Color(0.6, 0.6, 0.6, 1.0);
     text_color_ = Color(1.0f, 1.0f, 1.0f, 1.0f);
+	initCallbacks();
 }
 
 GLApp::~GLApp()
@@ -44,7 +45,7 @@ void GLApp::createWindow(int width, int height)
 {
 	m_width = width;
 	m_height = height;
-	initCallbacks();
+	
 	
 	int argc = 1;
 	const int max_length = 1024; //assume length of the window name does not exceed 1024 characters
@@ -52,7 +53,6 @@ void GLApp::createWindow(int width, int height)
 	char name_str[max_length];
 	std::string win_title = std::string("PhysIKA ") + std::to_string(PHYSIKA_VERSION_MAJOR) + std::string(".") + std::to_string(PHYSIKA_VERSION_MINOR) + std::string(".") + std::to_string(PHYSIKA_VERSION_PATCH);
 	strcpy(name_str, win_title.c_str());
-	//strcpy(name_str, m_winName.c_str());
 	argv[0] = name_str;
 
 	glutInit(&argc, argv);
@@ -75,11 +75,11 @@ void GLApp::createWindow(int width, int height)
 
     (*init_function_)(); //call the init function before entering main loop
 
-	m_camera.registerPoint(0.5f, 0.5f);
-	m_camera.translateToPoint(0, 0);
+	//m_camera.registerPoint(0.5f, 0.5f);
+	//m_camera.translateToPoint(0, 0);
 
 	m_camera.zoom(3.0f);
-	m_camera.setGL(0.01f, 3.0f, (float)getWidth(), (float)getHeight());
+	m_camera.setGL(0.01f, 100.0f, (float)getWidth(), (float)getHeight());
 }
 
 void GLApp::closeWindow()
@@ -158,35 +158,54 @@ void GLApp::drawFrameRate()
 {
 	if (!glutGet(GLUT_INIT_STATE))  //window is not created
 		exit(0);
+
+	static unsigned int frame = 0, time = 0, time_base = 0;
+	double fps = 60.0;
+	++frame;
+	time = glutGet(GLUT_ELAPSED_TIME); //millisecond
+	if (time - time_base > 10) // compute every 10 milliseconds
+	{
+		fps = frame * 1000.0 / (time - time_base);
+		time_base = time;
+		frame = 0;
+	}
+
+	std::string outstr;
     if(display_fps_)
     {
-        static unsigned int frame = 0, time = 0, time_base = 0;
-        double fps = 60.0;
-        ++frame;
-        time = glutGet(GLUT_ELAPSED_TIME); //millisecond
-        if(time - time_base > 10) // compute every 10 milliseconds
-        {
-            fps = frame*1000.0/(time-time_base);
-            time_base = time;
-            frame = 0;
-        }
         std::stringstream adaptor;
         adaptor.precision(2);
         std::string str;
         if(fps>1.0)  //show fps
         {
             adaptor<<fps;
-            str = std::string(" Frame rate: ") + adaptor.str();
+            str = std::string(" Frame rate : ") + adaptor.str();
         }
         else  //show spf
         {
             assert(fps>0);
             adaptor<< 1.0/fps;
-            str = std::string("SPF: ") + adaptor.str();
+            str = std::string("SPF: ") + adaptor.str() + std::string("\n");
         }
        
-		drawString(str, Color(1.0f, 1.0f, 1.0f, 1.0f), 0, getHeight()-25);
+		//drawString(str, Color(1.0f, 1.0f, 1.0f, 1.0f), 0, getHeight()-25);
+		outstr += str;
     }
+
+	if (display_frame_)
+	{
+		std::stringstream adaptor;
+		std::string str;
+		
+		adaptor << m_totalFrame;
+		str = std::string(" Total Frame: ") + adaptor.str();
+		
+		outstr += str;
+	}
+
+	if(outstr!=std::string())
+		drawString(outstr, Color(1.0f, 1.0f, 1.0f, 1.0f), 0, getHeight()-25);
+
 }
 
 void GLApp::enableDisplayFrameRate()
@@ -197,6 +216,16 @@ void GLApp::enableDisplayFrameRate()
 void GLApp::disableDisplayFrameRate()
 {
     display_fps_ = false;
+}
+
+void GLApp::enableDisplayFrame()
+{
+	display_frame_ = true;
+}
+
+void GLApp::disableDisplayFrame()
+{
+	display_frame_ = false;
 }
 
 bool GLApp::isShowFrameRate()
@@ -243,10 +272,8 @@ void GLApp::setDisplayFunction(void (*func)(void))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         display_function_ = GLApp::displayFunction;
     }
-    else{
+    else
         display_function_ = func;
-		glutDisplayFunc(display_function_);
-	}
 }
 
 void GLApp::setIdleFunction(void (*func)(void))
@@ -256,10 +283,8 @@ void GLApp::setIdleFunction(void (*func)(void))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         idle_function_ = GLApp::idleFunction;
     }
-    else{
+    else
         idle_function_ = func;
-		glutIdleFunc(idle_function_);
-	}
 }
 
 void GLApp::setReshapeFunction(void (*func)(int width, int height))
@@ -269,24 +294,19 @@ void GLApp::setReshapeFunction(void (*func)(int width, int height))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         reshape_function_ = GLApp::reshapeFunction;
     }
-    else{
-	    reshape_function_ = func;
-		glutReshapeFunc(reshape_function_);
-	}
+    else
+        reshape_function_ = func;
 }
 
-void GLApp::setKeyboardFunction(void(*func)(unsigned char key, int x, int y))
+void GLApp::setKeyboardFunction(void (*func)(unsigned char key, int x, int y))
 {
-	if (func == NULL)
-	{
-		std::cerr << "NULL callback function provided, use default instead.\n";
-		keyboard_function_ = GLApp::keyboardFunction;
-	}
-	else
-	{
-		keyboard_function_ = func;
-		glutKeyboardFunc(keyboard_function_);
-	}
+    if(func==NULL)
+    {
+        std::cerr<<"NULL callback function provided, use default instead.\n";
+        keyboard_function_ = GLApp::keyboardFunction;
+    }
+    else
+        keyboard_function_ = func;
 }
 
 void GLApp::setSpecialFunction(void (*func)(int key, int x, int y))
@@ -296,10 +316,8 @@ void GLApp::setSpecialFunction(void (*func)(int key, int x, int y))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         special_function_ = GLApp::specialFunction;
     }
-    else{
+    else
         special_function_ = func;
-		glutSpecialFunc(special_function_);
-	}
 }
 
 void GLApp::setMotionFunction(void (*func)(int x, int y))
@@ -309,10 +327,8 @@ void GLApp::setMotionFunction(void (*func)(int x, int y))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         motion_function_ = GLApp::motionFunction;
     }
-    else{
+    else
         motion_function_ = func;
-		glutMotionFunc(motion_function_);
-	}
 }
 
 void GLApp::setMouseFunction(void (*func)(int button, int state, int x, int y))
@@ -322,10 +338,8 @@ void GLApp::setMouseFunction(void (*func)(int button, int state, int x, int y))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         mouse_function_ = GLApp::mouseFunction;
     }
-    else{
+    else
         mouse_function_ = func;
-		glutMouseFunc(mouse_function_);
-	}
 }
 
 void GLApp::setMouseWheelFunction(void(*func)(int wheel, int direction, int x, int y))
@@ -335,10 +349,8 @@ void GLApp::setMouseWheelFunction(void(*func)(int wheel, int direction, int x, i
         std::cerr << "NULL callback function provided, use default instead.\n";
         mouse_wheel_function_ = GLApp::mouseWheelFunction;
     }
-    else{
+    else
         mouse_wheel_function_ = func;
-		glutMouseWheelFunc(mouse_wheel_function_);
-	}
 }
 
 void GLApp::setInitFunction(void (*func)(void))
@@ -348,10 +360,8 @@ void GLApp::setInitFunction(void (*func)(void))
         std::cerr<<"NULL callback function provided, use default instead.\n";
         init_function_ = GLApp::initFunction;
     }
-    else{
+    else
         init_function_ = func;
-		(*init_function_)(); //call the init function before entering main loop
-	}
 }
 
 void GLApp::bindDefaultKeys(unsigned char key, int x, int y)
@@ -398,7 +408,7 @@ void GLApp::displayFunction(void)
 		cur_window->drawBackground();
 	}
 	
-	if (cur_window->isShowFrameRate())
+	//if (cur_window->isShowFrameRate())
 	{
 		cur_window->drawFrameRate();
 	}
@@ -422,8 +432,12 @@ void GLApp::idleFunction(void)
 
 	GLApp * cur_window = (GLApp*)glutGetWindowData();
 	if(cur_window->isActive())
+	{ 
 		scenegraph.takeOneFrame();
-
+		//cur_window->saveScreen();
+		cur_window->increaseFrameNum();
+	}
+	
     glutPostRedisplay();
 }
 
@@ -433,7 +447,7 @@ void GLApp::reshapeFunction(int width, int height)
 
 	glViewport(0, 0, width, height);
 
- 	window->activeCamera().setGL(0.01f, 10.0f, (float)width, (float)height);
+ 	window->activeCamera().setGL(0.01f, 100.0f, (float)width, (float)height);
  	window->setWidth(width);
  	window->setHeight(height);
 
@@ -457,6 +471,15 @@ void GLApp::keyboardFunction(unsigned char key, int x, int y)
         break;
 	case ' ':
 		window->m_bAnimate = !(window->m_bAnimate);
+		break;
+	case 'j':
+		SceneGraph::getInstance().takeOneFrame();
+		window->increaseFrameNum();
+		break;
+
+	case 'q':
+		window->m_cameraMode = !(window->m_cameraMode);
+		break;
     default:
         break;
     }
@@ -471,16 +494,44 @@ void GLApp::motionFunction(int x, int y)
 	GLApp *window = static_cast<GLApp*>(glutGetWindowData());
 	Camera& activeCamera = window->activeCamera();
 
+	float x_ = float(x) / float(window->getWidth()) - 0.5f;
+	float y_ = float(window->getHeight() - y) / float(window->getHeight()) - 0.5f;
+	float dx_ = x_ - window->m_mousex;
+	float dy_ = y_ - window->m_mousey;
 	if (window->getButtonType() == GLUT_LEFT_BUTTON) {
-		activeCamera.rotateToPoint(float(x) / float(window->getWidth()) - 0.5f, float(window->getHeight() - y) / float(window->getHeight()) - 0.5f);
+		float radianx = dx_ * window->m_rotationSensitivity;
+		float radiany = dy_ * window->m_rotationSensitivity;
+		
+		// Rotate camera around focus point.
+		activeCamera.yawAroundFocus(radianx);
+		activeCamera.pitchAroundFocus(radiany);
 	}
 	else if (window->getButtonType() == GLUT_RIGHT_BUTTON) {
-		activeCamera.translateToPoint(float(x) / float(window->getWidth()) - 0.5f, float(window->getHeight() - y) / float(window->getHeight()) - 0.5f);
+		float movex = -dx_ * window->m_translationSensitivity;
+		float movey = -dy_ * window->m_translationSensitivity;
+		if (window->m_cameraMode)
+		{
+			// Move camera.
+			activeCamera.localTranslate(Vector3f(movex, movey, 0));
+		}
+		else
+		{
+			// Fix camera focus .
+			// And move camera forward or backward.
+			activeCamera.localTranslate(Vector3f(0, 0, movey));
+			activeCamera.setFocus(activeCamera.getFocus() + movey);
+		}
 	}
 	else if (window->getButtonType() == GLUT_MIDDLE_BUTTON) {
-		activeCamera.translateLightToPoint(float(x) / float(window->getWidth()) - 0.5f, float(window->getHeight() - y) / float(window->getHeight()) - 0.5f);
+		float radianx = dx_ * window->m_rotationSensitivity;
+		float radiany = dy_ * window->m_rotationSensitivity;
+
+		// Rotate camera as FPS style.
+		activeCamera.yaw(radianx);
+		activeCamera.pitch(radiany);
 	}
-	activeCamera.setGL(0.01f, 10.0f, (float)window->getWidth(), (float)window->getHeight());
+	window->registerMousePos(x_, y_);
+	activeCamera.setGL(0.01f, 100.0f, (float)window->getWidth(), (float)window->getHeight());
 	glutPostRedisplay();
 }
 
@@ -492,7 +543,8 @@ void GLApp::mouseFunction(int button, int state, int x, int y)
 	 window->setButtonState(state);
 
 	if (state == GLUT_DOWN) {
-		activeCamera.registerPoint(float(x) / float(window->getWidth()) - 0.5f, float(window->getHeight() - y) / float(window->getHeight()) - 0.5f);
+		//activeCamera.registerPoint(float(x) / float(window->getWidth()) - 0.5f, float(window->getHeight() - y) / float(window->getHeight()) - 0.5f);
+		window->registerMousePos(float(x) / float(window->getWidth()) - 0.5f, float(window->getHeight() - y) / float(window->getHeight()) - 0.5f);
 	}
 }
 
@@ -505,11 +557,11 @@ void GLApp::mouseWheelFunction(int wheel, int direction, int x, int y)
 	{
 	case 1:
 		activeCamera.zoom(-0.3f);
-		activeCamera.setGL(0.01f, 10.0f, (float)window->getWidth(), (float)window->getHeight());
+		activeCamera.setGL(0.01f, 100.0f, (float)window->getWidth(), (float)window->getHeight());
 		break;
 	case -1:
 		activeCamera.zoom(0.3f);
-		activeCamera.setGL(0.01f, 10.0f, (float)window->getWidth(), (float)window->getHeight());
+		activeCamera.setGL(0.01f, 100.0f, (float)window->getWidth(), (float)window->getHeight());
 	default:
 		break;
 	}
@@ -736,6 +788,12 @@ void GLApp::drawBoundingBox(Vector3f lo, Vector3f hi)
 	glEnd();
 
 	glPopMatrix();
+}
+
+void GLApp::registerMousePos(float x, float y)
+{
+	m_mousex = x;
+	m_mousey = y;
 }
 
 void GLApp::drawString(std::string s, const Color &color, int x, int y)
