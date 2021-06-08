@@ -27,12 +27,12 @@ namespace PhysIKA
 
 		Coord trans(0.5, 0.2, 0.5);
 
-	//	m_mass.setValue(Real(1));
-	//	m_center.setValue(trans);
-	//	m_transVelocity.setValue(Coord(0));
-	//	m_angularVelocity.setValue(Coord(0, 0, 0));
-	//	m_force.setValue(Coord(0));
-	//	m_torque.setValue(Coord(0));
+		m_mass.setValue(Real(1));
+		m_center.setValue(trans);
+		m_transVelocity.setValue(Coord(0));
+		m_angularVelocity.setValue(Coord(0, 0, 0));
+		m_force.setValue(Coord(0));
+		m_torque.setValue(Coord(0));
 		m_angularMass.setValue(Matrix::identityMatrix());
 		m_rotation.setValue(Matrix::identityMatrix());
 
