@@ -119,7 +119,7 @@ void CreateScene()
 	// 
 
 	root->addChild(sfi);
-	sfi->setInteractionDistance(0.02); // 0.02 is an very important parameter
+	sfi->setInteractionDistance(0.03); // 0.02 is an very important parameter
 
 	for (int i = 0; i < 3; i++)
 	{

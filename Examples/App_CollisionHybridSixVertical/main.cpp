@@ -120,12 +120,12 @@ void CreateScene()
 	// 
 
 	root->addChild(sfi);
-	sfi->setInteractionDistance(0.02); // 0.02 is an very important parameter
+	sfi->setInteractionDistance(0.03); // 0.02 is an very important parameter
 
 	for (int i = 0; i < 6; i++)
 	{
-    // string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
-    string model = (i%4 == 0) ? "mass_spring" : "";
+     string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
+    //string model = (i%4 == 0) ? "mass_spring" : "";
     AddSimulationModel(root, sfi, i, model);
 	}
 
