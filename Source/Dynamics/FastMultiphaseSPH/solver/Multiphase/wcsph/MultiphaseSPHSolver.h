@@ -75,7 +75,8 @@ namespace msph{
 
 		
 
-		void init();
+		void preinit();
+		void postinit();
 	
 		void SetupFluidScene();
 		void loadSceneFromFile(char* filePath);
@@ -83,7 +84,7 @@ namespace msph{
 		void updateSimulationParam();
 		int  addDefaultParticle();
 		void addFluidVolumes();
-		void addFluidVolume(const fluidvol& fv);
+		void addParticles(int addcount, const cfloat3 pos[], const float volfrac[], int group, int type);
 		void LoadBoundaryParticles(ParticleObject* po);
 		void LoadRigidParticles(ParticleObject* po, int groupId);
 		void LoadPO(ParticleObject* po,

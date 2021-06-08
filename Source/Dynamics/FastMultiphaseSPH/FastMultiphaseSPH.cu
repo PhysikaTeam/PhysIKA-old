@@ -22,10 +22,17 @@ namespace PhysIKA
 		this->setTopologyModule(m_pSet);
 
 		m_msph = std::make_shared<msph::MultiphaseSPHSolver>();
+		m_msph->preinit();
 	}
 	template<typename TDataType>
-	void FastMultiphaseSPH<TDataType>::init() {
-		m_msph->init();
+	void FastMultiphaseSPH<TDataType>::initSync() {
+
+		//loadParticles(Coord(0, 0.8, 0), 0.2, m_msph->h_param.spacing, particle_t::SAND);
+
+		loadParticles(Coord(-1.0, 0.0, -0.5), Coord(0, 0.8, 0.5), m_msph->h_param.spacing, particle_t::FLUID);
+		loadParticles(Coord(0.2, 0., -0.2), Coord(0.8, 0.45, 0.2), m_msph->h_param.spacing, particle_t::SAND);
+
+		m_msph->postinit();
 
 		prepareData();
 
@@ -78,13 +85,15 @@ namespace PhysIKA
 
 
 	template<typename TDataType>
-	void FastMultiphaseSPH<TDataType>::loadParticles(std::string filename)
+	void FastMultiphaseSPH<TDataType>::loadParticles(std::string filename, particle_t type)
 	{
 		m_pSet->loadObjFile(filename);
+		// TODO: somehow copy the loaded to external solver
+		throw std::runtime_error("not implemented");
 	}
 
 	template<typename TDataType>
-	void FastMultiphaseSPH<TDataType>::loadParticles(Coord center, Real r, Real distance)
+	void FastMultiphaseSPH<TDataType>::loadParticles(Coord center, Real r, Real distance, particle_t type)
 	{
 		std::vector<Coord> vertList;
 		std::vector<Coord> normalList;
@@ -111,12 +120,15 @@ namespace PhysIKA
 		m_pSet->setPoints(vertList);
 		m_pSet->setNormals(normalList);
 
+
+		addParticles(vertList, type);
+
 		vertList.clear();
 		normalList.clear();
 	}
 
 	template<typename TDataType>
-	void FastMultiphaseSPH<TDataType>::loadParticles(Coord lo, Coord hi, Real distance)
+	void FastMultiphaseSPH<TDataType>::loadParticles(Coord lo, Coord hi, Real distance, particle_t type)
 	{
 		std::vector<Coord> vertList;
 		std::vector<Coord> normalList;
@@ -139,25 +151,26 @@ namespace PhysIKA
 
 		std::cout << "particle number: " << vertList.size() << std::endl;
 
+		addParticles(vertList, type);
+
 		vertList.clear();
 		normalList.clear();
 	}
 
 	template<typename TDataType>
-	bool FastMultiphaseSPH<TDataType>::translate(Coord t)
-	{
-		m_pSet->translate(t);
-
-		return true;
-	}
-
-
-	template<typename TDataType>
-	bool FastMultiphaseSPH<TDataType>::scale(Real s)
-	{
-		m_pSet->scale(s);
-
-		return true;
+	void FastMultiphaseSPH<TDataType>::addParticles(const std::vector<Coord>& points, particle_t type) {
+		if (type == particle_t::SAND) {
+			float volfrac[] = { 0,1,0 };
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, 0, TYPE_GRANULAR);
+		}
+		else if (type == particle_t::FLUID) {
+			float volfrac[] = { 1,0,0 };
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, 0, TYPE_FLUID);
+		}
+		else if (type == particle_t::BOUDARY) {
+			float volfrac[] = { 1,0,0 };
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, GROUP_FIXED, TYPE_RIGID);
+		}
 	}
 
 	template<typename TDataType>

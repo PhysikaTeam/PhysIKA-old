@@ -166,38 +166,37 @@ namespace msph {
 			d_data.pressure[index] = 0;
 
 		
+		cmat3 D, Omega;
+		cmat3 tmp1, tmp2;
 		cmat3 sigma = d_data.stress[index];
-		cmat3 vgT, D;
-		mat3transpose(vGradient, vgT);
+		mat3transpose(vGradient, tmp1);
 	
-		cmat3 Omega, OmegaT, tmp1, tmp2;
 		for (int k = 0; k < 9; k++) {
-			D.data[k] = (vGradient.data[k] + vgT.data[k]) * 0.5f;
-			Omega.data[k] = (vGradient.data[k] - vgT.data[k]) * 0.5f;
+			D.data[k] = (vGradient.data[k] + tmp1.data[k]) * 0.5f;
+			Omega.data[k] = (vGradient.data[k] - tmp1.data[k]) * 0.5f;
 		}
-		mat3transpose(Omega, OmegaT);
-		mat3prod(sigma, OmegaT, tmp1);
+		mat3prod(sigma, Omega, tmp1);
 		mat3prod(Omega, sigma, tmp2);
-		mat3add(tmp1, tmp2, tmp1);
-
+		for (int k = 0; k < 9; k++)
+			tmp1.data[k] = -tmp1.data[k] + tmp2.data[k];
 		//shear part
 		auto trace = (D[0][0] + D[1][1] + D[2][2]) / 3.0f;
-		tmp2 = D;
-		tmp2[0][0] -= trace;
-		tmp2[1][1] -= trace;
-		tmp2[2][2] -= trace;
-		tmp2.Multiply(param->solidG * 2.0f);
+		D[0][0] -= trace;
+		D[1][1] -= trace;
+		D[2][2] -= trace;
+		for(int k=0; k<9; k++)
+			tmp2.data[k] = D.data[k] * (param->solidG * 2.0f);
 		//bulk part
-		float pressure = trace * 3.0f * d_param.solidK; //minus pressure
-		tmp2[0][0] += pressure;
-		tmp2[1][1] += pressure;
-		tmp2[2][2] += pressure;
+		trace *= 3.0f * d_param.solidK; //minus pressure
+		tmp2[0][0] += trace;
+		tmp2[1][1] += trace;
+		tmp2[2][2] += trace;
 
 		for (int k = 0; k < 9; k++)
 			sigma.data[k] += (tmp1.data[k] + tmp2.data[k]) * param->dt;
 		
 		cmat3 shearStress = sigma;
-		pressure = -(shearStress[0][0] + shearStress[1][1] + shearStress[2][2]) / 3.0f;
+		float pressure = -(shearStress[0][0] + shearStress[1][1] + shearStress[2][2]) / 3.0f;
 		shearStress[0][0] += pressure;
 		shearStress[1][1] += pressure;
 		shearStress[2][2] += pressure;

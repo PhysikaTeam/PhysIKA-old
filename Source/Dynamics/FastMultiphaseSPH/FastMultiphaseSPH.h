@@ -32,6 +32,9 @@ namespace PhysIKA
 		DECLARE_CLASS_1(FastMultiphaseSPH, TDataType)
 	public:
 
+
+		enum class particle_t { BOUDARY, FLUID, SAND };
+
 		bool self_update = true;
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
@@ -39,14 +42,15 @@ namespace PhysIKA
 		FastMultiphaseSPH(std::string name = "default");
 		virtual ~FastMultiphaseSPH();
 
-		void init(); // initialize the scene
+		void initSync(); // initialize the scene
 
-		void loadParticles(Coord lo, Coord hi, Real distance);
-		void loadParticles(Coord center, Real r, Real distance);
-		void loadParticles(std::string filename);
+		void loadParticles(Coord lo, Coord hi, Real distance, particle_t type);
+		void loadParticles(Coord center, Real r, Real distance, particle_t type);
+		void loadParticles(std::string filename, particle_t type);
 
-		virtual bool translate(Coord t);
-		virtual bool scale(Real s);
+
+		void addParticles(const std::vector<Coord>& points, particle_t type);
+
 
 		virtual void advance(Real dt) override;
 
