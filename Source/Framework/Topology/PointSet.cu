@@ -111,15 +111,15 @@ namespace PhysIKA
 					while(line.find_first_of(' ') != std::string::npos)
 					{
 						verStr.push_back(line.substr(0, line.find_first_of(' ')));
-						line = line.substr(line.find_first_of(' '), line.size());
+						line = line.substr(line.find_first_of(' ') + 1, line.size());
 					}
 					verStr.push_back(line);
 					for (int i = 0; i < verStr.size();++i)
 					{
 						if (verStr[i].find_first_of('/') == std::string::npos)
-							verIndex.push_back(std::stoi(verStr[i]));
+							verIndex.push_back(std::stoi(verStr[i]) - 1);
 						else
-							verIndex.push_back(std::stoi(verStr[i].substr(0, verStr[i].find_first_of('/'))));
+							verIndex.push_back(std::stoi(verStr[i].substr(0, verStr[i].find_first_of('/'))) - 1);
 					}
 					//push vertex j into i's neighborList
 					for (int i = 0; i < verIndex.size();++i)
