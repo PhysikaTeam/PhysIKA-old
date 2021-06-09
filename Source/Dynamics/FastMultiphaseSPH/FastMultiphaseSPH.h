@@ -23,7 +23,11 @@ namespace PhysIKA
 	*	
 	*	Sample usage:
 	* 		auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
-	*		root->init();
+	* 		using particle_t = FastMultiphaseSPH<DataType3f>::particle_t;
+	* 		root->loadParticlesAABBSurface(Vector3f(-1.1, -0.02, -1.1), Vector3f(1.1, 1, 1.1), root->getSpacing(), particle_t::BOUDARY);
+	*       root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -0.5), Vector3f(0, 0.8, 0.5), root->getSpacing(), particle_t::FLUID);
+	*       root->loadParticlesAABBVolume(Vector3f(0.2, 0., -0.2), Vector3f(0.8, 0.6, 0.2), root->getSpacing(), particle_t::SAND);
+	*       root->initSync();
 	*
 	*/
 	template<typename TDataType>
@@ -49,7 +53,7 @@ namespace PhysIKA
 		void loadParticlesBallVolume(Coord center, Real r, Real distance, particle_t type);
 		void loadParticlesFromFile(std::string filename, particle_t type);
 		Real getSpacing() { return m_msph->h_param.spacing; }
-		void setDissolutionFlag(int flag = 1) { m_msph->h_param.dissolution = flag; }
+		void setDissolutionFlag(int dissolution) { m_msph->h_param.dissolution = dissolution; }
 
 
 		void addParticles(const std::vector<Coord>& points, particle_t type);

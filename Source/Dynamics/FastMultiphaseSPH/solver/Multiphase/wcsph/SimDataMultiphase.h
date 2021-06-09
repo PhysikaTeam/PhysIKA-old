@@ -51,7 +51,7 @@ namespace msph{
 		float granularFriction;
 		float cohesion; //cohesion
 	
-		float dissolution;
+		int dissolution;
 		float max_alpha[10]; //max volume fraction of each single phase
 	
 		float heat_flow_rate;

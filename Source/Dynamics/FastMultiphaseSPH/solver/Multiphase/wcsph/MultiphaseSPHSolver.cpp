@@ -21,6 +21,9 @@ namespace msph {
 
 	}
 	void MultiphaseSPHSolver::postinit() {
+		cudaMallocManaged(&pParam, sizeof(MultiphaseParam));
+		memcpy(pParam, &h_param, sizeof(MultiphaseParam));
+		pParamStatic = pParam;
 
 		setupDeviceData();
 		sortParticles(sortFlagsWithReorder);
@@ -215,10 +218,6 @@ namespace msph {
 	{
 		SetParameter();
 		updateSimulationParam();
-
-		cudaMallocManaged(&pParam, sizeof(MultiphaseParam));
-		memcpy(pParam, &h_param, sizeof(MultiphaseParam));
-		pParamStatic = pParam;
 
 		//addFluidVolumes();
 
