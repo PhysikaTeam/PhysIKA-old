@@ -222,12 +222,14 @@ namespace msph {
 
 		//addFluidVolumes();
 
-		std::unique_ptr<ParticleObject> po = std::make_unique<ParticleObject>();
-		LoadBox(po.get(), cfloat3(-1.1, -0.015, -1.1),
-			cfloat3(1.1, 1.1, 1.1),
-			h_param.spacing);
-		LoadBoundaryParticles(po.get());
-		printf("%d boundary particles loaded.\n\n", po->pos.size());
+		//std::unique_ptr<ParticleObject> po = std::make_unique<ParticleObject>();
+		//LoadBox(po.get(), cfloat3(-1.1, -0.015, -1.1),
+		//	cfloat3(1.1, 1.1, 1.1),
+		//	h_param.spacing);
+		////LoadBoundaryParticles(po.get());
+		//float volfrac[] = { 0,0,0 };
+		//addParticles(po->pos.size(), po->pos.data(), volfrac, GROUP_FIXED, TYPE_RIGID);
+		//printf("%d boundary particles loaded.\n\n", po->pos.size());
 		
 
 		/*ParticleObject* duck = new ParticleObject();
@@ -295,7 +297,7 @@ namespace msph {
 			}
 
 			pos[pid] = add_pos[ix];
-			color[pid] = cfloat4(volfrac[0], volfrac[1], volfrac[2], 1);
+			color[pid] = cfloat4(volfrac[0], volfrac[1], volfrac[2], GROUP_FIXED==group_?0:1);
 			for (int t = 0; t < h_param.numTypes; t++)
 				vol_frac[pid * h_param.numTypes + t] = volfrac[t];
 
@@ -334,7 +336,7 @@ namespace msph {
 		float padding = h_param.spacing * 1.5f;
 
 		float width = 0.5;
-		auto fv = std::make_shared<fluidvol>();
+		//auto fv = std::make_shared<fluidvol>();
 		// SCENE1
 		//fv->xmin.set(-1.2 + padding, 0.015, -0.5);
 		//fv->xmax.set(-1.2 + padding + width, 1., 0.5);
@@ -347,7 +349,7 @@ namespace msph {
 		//fv->volfrac[1] = 0;
 		//fluid_volumes.push_back(fv);
 
-		fv = std::make_shared<fluidvol>();
+		//fv = std::make_shared<fluidvol>();
 		// SCENE1
 		//fv->xmin.set(1.2 - padding - width, 0.015, -0.5);
 		//fv->xmax.set(1.2 - padding, 1., 0.5);

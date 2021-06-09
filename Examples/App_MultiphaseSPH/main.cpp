@@ -42,6 +42,13 @@ void CreateScene()
 	SceneGraph& scene = SceneGraph::getInstance();
 
 	auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
+
+	using particle_t = FastMultiphaseSPH<DataType3f>::particle_t;
+
+	root->loadParticlesAABBSurface(Vector3f(-1.1, -0.02, -1.1), Vector3f(1.1, 1, 1.1), root->getSpacing(), particle_t::BOUDARY);
+	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -0.5), Vector3f(0, 0.8, 0.5), root->getSpacing(), particle_t::FLUID);
+	root->loadParticlesAABBVolume(Vector3f(0.2, 0., -0.2), Vector3f(0.8, 0.6, 0.2), root->getSpacing(), particle_t::SAND);
+
 	root->initSync();
 
 	//std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();

@@ -44,9 +44,12 @@ namespace PhysIKA
 
 		void initSync(); // initialize the scene
 
-		void loadParticles(Coord lo, Coord hi, Real distance, particle_t type);
-		void loadParticles(Coord center, Real r, Real distance, particle_t type);
-		void loadParticles(std::string filename, particle_t type);
+		void loadParticlesAABBVolume(Coord lo, Coord hi, Real distance, particle_t type);
+		void loadParticlesAABBSurface(Coord lo, Coord hi, Real distance, particle_t type);
+		void loadParticlesBallVolume(Coord center, Real r, Real distance, particle_t type);
+		void loadParticlesFromFile(std::string filename, particle_t type);
+		Real getSpacing() { return m_msph->h_param.spacing; }
+		void setDissolutionFlag(int flag = 1) { m_msph->h_param.dissolution = flag; }
 
 
 		void addParticles(const std::vector<Coord>& points, particle_t type);
