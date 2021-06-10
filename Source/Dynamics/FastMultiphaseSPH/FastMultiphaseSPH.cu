@@ -51,6 +51,7 @@ namespace PhysIKA
 	{
 		// get all particles
 		int num = m_msph->num_particles;
+		printf("%d particles in total\n", num);
 		if (num != m_pos.size()) {
 			m_pos.resize(num);
 			m_color.resize(num);
@@ -82,9 +83,18 @@ namespace PhysIKA
 	template<typename TDataType>
 	void FastMultiphaseSPH<TDataType>::loadParticlesFromFile(std::string filename, particle_t type)
 	{
-		m_pSet->loadObjFile(filename);
-		// TODO: somehow copy the loaded to external solver
-		throw std::runtime_error("not implemented");
+		std::vector<Coord> vertList;
+		std::ifstream ifs(filename, std::ios::binary);
+		if (!ifs) printf("cannot open file %s\n", filename.c_str());
+		std::string line;
+		while (getline(ifs, line)) {
+			auto s1p = line.find(' ');
+			if (s1p != std::string::npos && line.substr(0, s1p) == "v") {
+				Coord c; sscanf(line.c_str() + s1p, "%f %f %f", &c[0], &c[1], &c[2]);
+				vertList.push_back(c);
+			}
+		}
+		addParticles(vertList, type);
 	}
 
 	template<typename TDataType>
@@ -199,15 +209,15 @@ namespace PhysIKA
 	void FastMultiphaseSPH<TDataType>::addParticles(const std::vector<Coord>& points, particle_t type) {
 		if (type == particle_t::SAND) {
 			float volfrac[] = { 0,1,0 };
-			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, 0, TYPE_GRANULAR);
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, 0, TYPE_GRANULAR, 1);
 		}
 		else if (type == particle_t::FLUID) {
 			float volfrac[] = { 1,0,0 };
-			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, 0, TYPE_FLUID);
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, 0, TYPE_FLUID, 1);
 		}
 		else if (type == particle_t::BOUDARY) {
 			float volfrac[] = { 0,0,0 };
-			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, GROUP_FIXED, TYPE_RIGID);
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, GROUP_FIXED, TYPE_RIGID, 0);
 		}
 	}
 

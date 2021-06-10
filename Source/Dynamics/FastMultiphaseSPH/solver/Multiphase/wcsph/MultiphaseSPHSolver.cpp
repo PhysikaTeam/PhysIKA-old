@@ -271,11 +271,11 @@ namespace msph {
 					for (float z = xmin.z; z < xmax.z; z += spacing) {
 						p.push_back(cfloat3(x, y, z));
 					}
-			addParticles(p.size(), p.data(), vf, group, type);
+			addParticles(p.size(), p.data(), vf, group, type, 1);
 		}
 	}
 
-	void MultiphaseSPHSolver::addParticles(int addcount, const cfloat3 add_pos[], const float volfrac[], int group_, int type_) {
+	void MultiphaseSPHSolver::addParticles(int addcount, const cfloat3 add_pos[], const float volfrac[], int group_, int type_, int visible) {
 		if (type_ == TYPE_FLUID) {
 			printf("Block type: fluid, particle num: %d\n", addcount);
 			h_param.numFluidParticles += addcount;
@@ -296,7 +296,7 @@ namespace msph {
 			}
 
 			pos[pid] = add_pos[ix];
-			color[pid] = cfloat4(volfrac[0], volfrac[1], volfrac[2], GROUP_FIXED==group_?0:1);
+			color[pid] = cfloat4(volfrac[0], volfrac[1], volfrac[2], visible);
 			for (int t = 0; t < h_param.numTypes; t++)
 				vol_frac[pid * h_param.numTypes + t] = volfrac[t];
 
@@ -311,7 +311,7 @@ namespace msph {
 		
 		h_param.gravity.set(0.0f, -9.8f, 0.0f);
 		h_param.gridxmin.set(-1.2f, -0.5f, -1.2f);
-		h_param.gridxmax.set(1.2f, 1.2f, 1.2f);
+		h_param.gridxmax.set(1.2f, 2.7f, 1.2f);
 
 		h_param.dt = 0.0005f;
 		h_param.spacing = 0.01f;

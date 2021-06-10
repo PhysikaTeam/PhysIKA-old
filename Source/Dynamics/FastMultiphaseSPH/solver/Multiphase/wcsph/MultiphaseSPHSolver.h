@@ -84,7 +84,7 @@ namespace msph{
 		void updateSimulationParam();
 		int  addDefaultParticle();
 		void addFluidVolumes();
-		void addParticles(int addcount, const cfloat3 pos[], const float volfrac[], int group, int type);
+		void addParticles(int addcount, const cfloat3 pos[], const float volfrac[], int group, int type, int visible);
 		void LoadBoundaryParticles(ParticleObject* po);
 		void LoadRigidParticles(ParticleObject* po, int groupId);
 		void LoadPO(ParticleObject* po,

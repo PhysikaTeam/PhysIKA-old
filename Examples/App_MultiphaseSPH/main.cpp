@@ -45,9 +45,15 @@ void CreateScene()
 
 	using particle_t = FastMultiphaseSPH<DataType3f>::particle_t;
 
-	root->loadParticlesAABBSurface(Vector3f(-1.1, -0.02, -1.1), Vector3f(1.1, 1, 1.1), root->getSpacing(), particle_t::BOUDARY);
-	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -0.5), Vector3f(0, 0.8, 0.5), root->getSpacing(), particle_t::FLUID);
-	root->loadParticlesAABBVolume(Vector3f(0.2, 0., -0.2), Vector3f(0.8, 0.6, 0.2), root->getSpacing(), particle_t::SAND);
+	root->loadParticlesAABBSurface(Vector3f(-1.02, -0.02, -1.02), Vector3f(1.02, 2.5, 1.02), root->getSpacing(), particle_t::BOUDARY);
+	
+
+	//root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -0.5), Vector3f(0, 0.8, 0.5), root->getSpacing(), particle_t::FLUID);
+	//root->loadParticlesAABBVolume(Vector3f(0.2, 0., -0.2), Vector3f(0.8, 0.6, 0.2), root->getSpacing(), particle_t::SAND);
+
+	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -1.0), Vector3f(1.0, 0.2, 1.0), root->getSpacing(), particle_t::FLUID);
+	//root->loadParticlesFromFile("../../../Media/toy.obj", particle_t::SAND);
+	root->loadParticlesFromFile("../../../Media/crag.obj", particle_t::SAND);
 
 	root->setDissolutionFlag(1);
 	root->initSync();
@@ -79,9 +85,95 @@ void CreateScene()
 	//child1->setNumericalModel(multifluid);
 }
 
-int main()
+void CreateSceneBlock(int dissolution)
 {
-	CreateScene();
+	SceneGraph& scene = SceneGraph::getInstance();
+
+	auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
+
+	using particle_t = FastMultiphaseSPH<DataType3f>::particle_t;
+
+	root->loadParticlesAABBSurface(Vector3f(-1.02, -0.02, -1.02), Vector3f(1.02, 2.5, 1.02), root->getSpacing(), particle_t::BOUDARY);
+
+	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -0.5), Vector3f(0, 0.8, 0.5), root->getSpacing(), particle_t::FLUID);
+	root->loadParticlesAABBVolume(Vector3f(0.2, 0., -0.2), Vector3f(0.8, 0.6, 0.2), root->getSpacing(), particle_t::SAND);
+
+	root->setDissolutionFlag(dissolution);
+	root->initSync();
+
+	auto ptRender1 = std::make_shared<PointRenderModule>();
+	ptRender1->setColor(Vector3f(1, 0, 1));
+	ptRender1->setColorRange(0, 1);
+	root->addVisualModule(ptRender1);
+
+	root->m_phase_concentration.connect(&ptRender1->m_vecIndex);
+}
+
+void CreateSceneToy(int dissolution)
+{
+	SceneGraph& scene = SceneGraph::getInstance();
+
+	auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
+
+	using particle_t = FastMultiphaseSPH<DataType3f>::particle_t;
+
+	root->loadParticlesAABBSurface(Vector3f(-1.02, -0.02, -1.02), Vector3f(1.02, 2.5, 1.02), root->getSpacing(), particle_t::BOUDARY);
+
+	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -1.0), Vector3f(1.0, 0.2, 1.0), root->getSpacing(), particle_t::FLUID);
+	root->loadParticlesFromFile("../../../Media/toy.obj", particle_t::SAND);
+
+	root->setDissolutionFlag(dissolution);
+	root->initSync();
+
+	auto ptRender1 = std::make_shared<PointRenderModule>();
+	ptRender1->setColor(Vector3f(1, 0, 1));
+	ptRender1->setColorRange(0, 1);
+	root->addVisualModule(ptRender1);
+
+	root->m_phase_concentration.connect(&ptRender1->m_vecIndex);
+}
+
+void CreateSceneCrag(int dissolution)
+{
+	SceneGraph& scene = SceneGraph::getInstance();
+
+	auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
+
+	using particle_t = FastMultiphaseSPH<DataType3f>::particle_t;
+
+	root->loadParticlesAABBSurface(Vector3f(-1.02, -0.02, -1.02), Vector3f(1.02, 2.5, 1.02), root->getSpacing(), particle_t::BOUDARY);
+
+	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -1.0), Vector3f(1.0, 0.2, 1.0), root->getSpacing(), particle_t::FLUID);
+	root->loadParticlesFromFile("../../../Media/crag.obj", particle_t::SAND);
+
+	root->setDissolutionFlag(dissolution);
+	root->initSync();
+
+	auto ptRender1 = std::make_shared<PointRenderModule>();
+	ptRender1->setColor(Vector3f(1, 0, 1));
+	ptRender1->setColorRange(0, 1);
+	root->addVisualModule(ptRender1);
+
+	root->m_phase_concentration.connect(&ptRender1->m_vecIndex);
+}
+
+int main(int argc, char ** argv)
+{
+	std::string scene = "block";
+	int dissolution = 1;
+	if (argc >= 2) scene = argv[1];
+	if (argc >= 3) dissolution = atoi(argv[2]);
+
+	if (scene == "block")
+		CreateSceneBlock(dissolution);
+	else if (scene == "toy")
+		CreateSceneToy(dissolution);
+	else if (scene == "crag")
+		CreateSceneCrag(dissolution);
+	else {
+		printf("unknown scene name");
+		exit(1);
+	}
 
 	Log::setOutput("console_log.txt");
 	Log::setLevel(Log::Info);
