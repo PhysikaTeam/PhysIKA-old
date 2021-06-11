@@ -153,7 +153,7 @@ void DemoCar2::build(bool useGPU)
 	//hfloader.setRange(0, 0.5);
 	//hfloader.load(height, "../../Media/HeightFieldImg/terrain3.png");
 
-	std::string infilename("D:\\Projects\\ForViwo\\TestSln\\dem_w1057_h1057.txt");
+	std::string infilename("../../Media/HeightFieldImg/dem_w1057_h1057.txt");
 	std::ifstream infile(infilename);
 	if (infile.is_open())
 	{
@@ -539,7 +539,7 @@ void DemoTankCar::build(bool useGPU)
 	//hfloader.setRange(0, 0.5);
 	//hfloader.load(height, "../../Media/HeightFieldImg/terrain3.png");
 
-	std::string infilename("D:\\Projects\\ForViwo\\TestSln\\dem_w1057_h1057.txt");
+	std::string infilename("../../Media/HeightFieldImg/dem_w1057_h1057.txt");
 	std::ifstream infile(infilename);
 	if (infile.is_open())
 	{
