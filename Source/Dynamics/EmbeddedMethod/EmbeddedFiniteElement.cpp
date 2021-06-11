@@ -107,8 +107,8 @@ namespace PhysIKA
 
 		integrator->integrate();
 
-		 if (module != nullptr)
-		   module->constrain();
+	/*	 if (module != nullptr)
+		   module->constrain();*/
 
 		integrator->end();
 	}

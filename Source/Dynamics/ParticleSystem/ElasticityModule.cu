@@ -293,7 +293,7 @@ namespace PhysIKA
 
 
 	template <typename Real, typename Coord>
-	__global__ void K_UpdateVelocity(
+	__global__ void K_UpdateVelocity_ELAS(
 		DeviceArray<Coord> velArr,
 		DeviceArray<Coord> prePos,
 		DeviceArray<Coord> curPos,
@@ -428,7 +428,7 @@ namespace PhysIKA
 
 		Real dt = this->getParent()->getDt();
 
-		K_UpdateVelocity << <pDims, BLOCK_SIZE >> > (
+		K_UpdateVelocity_ELAS << <pDims, BLOCK_SIZE >> > (
 			this->inVelocity()->getValue(),
 			m_position_old,
 			this->inPosition()->getValue(),
