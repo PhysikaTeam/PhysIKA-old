@@ -14,10 +14,16 @@ namespace msph {
 	extern MultiphaseParam* pParamStatic;
 	
 	
-	void MultiphaseSPHSolver::init() {
+	void MultiphaseSPHSolver::preinit() {
 		setOutputDir(std::string("../data/"));
 		
 		SetupFluidScene();
+
+	}
+	void MultiphaseSPHSolver::postinit() {
+		cudaMallocManaged(&pParam, sizeof(MultiphaseParam));
+		memcpy(pParam, &h_param, sizeof(MultiphaseParam));
+		pParamStatic = pParam;
 
 		setupDeviceData();
 		sortParticles(sortFlagsWithReorder);
@@ -213,18 +219,17 @@ namespace msph {
 		SetParameter();
 		updateSimulationParam();
 
-		cudaMallocManaged(&pParam, sizeof(MultiphaseParam));
-		memcpy(pParam, &h_param, sizeof(MultiphaseParam));
-		pParamStatic = pParam;
+		//addFluidVolumes();
 
-		addFluidVolumes();
-
-		ParticleObject *po = new ParticleObject();
-		LoadBox(po, cfloat3(-1.2, -0.015, -0.515),
-			cfloat3(1.2, 2.0, 0.515),
-			h_param.spacing);
-		LoadBoundaryParticles(po);
-		printf("%d boundary particles loaded.\n\n", po->pos.size());
+		//std::unique_ptr<ParticleObject> po = std::make_unique<ParticleObject>();
+		//LoadBox(po.get(), cfloat3(-1.1, -0.015, -1.1),
+		//	cfloat3(1.1, 1.1, 1.1),
+		//	h_param.spacing);
+		////LoadBoundaryParticles(po.get());
+		//float volfrac[] = { 0,0,0 };
+		//addParticles(po->pos.size(), po->pos.data(), volfrac, GROUP_FIXED, TYPE_RIGID);
+		//printf("%d boundary particles loaded.\n\n", po->pos.size());
+		
 
 		/*ParticleObject* duck = new ParticleObject();
 		loadPoints(duck, "../resource/gear_test.obj");
@@ -246,62 +251,67 @@ namespace msph {
 	}
 
 	void MultiphaseSPHSolver::addFluidVolumes() {
-		float pad = h_param.spacing * 0.5f;
 		for (int i = 0; i < fluid_volumes.size(); i++) {
-			cfloat3 xmin = fluid_volumes[i]->xmin;
-			cfloat3 xmax = fluid_volumes[i]->xmax;
-			xmax += cfloat3(pad, pad, pad);
-			int addcount = 0;
-			float* vf = fluid_volumes[i]->volfrac;
-			int typeTmp = fluid_volumes[i]->type;
-			int groupTmp = fluid_volumes[i]->group;
-			float spacing = h_param.spacing;
-			float vfgas[3] = { 0,0,1 };
-			cfloat3 lb(-0.05, 0.1, -0.05);
-			cfloat3 ub(0.051, 0.21, 0.05);
+			auto& fv = *fluid_volumes[i];
+			float pad = h_param.spacing * 0.5f;
 
+			float spacing = h_param.spacing;
+
+			cfloat3 xmin = fv.xmin;
+			cfloat3 xmax = fv.xmax;
+			const float* vf = fv.volfrac;
+			int type = fv.type;
+			int group = fv.group;
+
+			xmax += cfloat3(pad, pad, pad);
+
+			std::vector<cfloat3> p;
 			for (float x = xmin.x; x < xmax.x; x += spacing)
 				for (float y = xmin.y; y < xmax.y; y += spacing)
 					for (float z = xmin.z; z < xmax.z; z += spacing) {
-
-						int pid = addDefaultParticle();
-						if (pid < 0) {
-							printf("error: reaching particle number limit\n");
-							return;
-						}
-
-						pos[pid] = cfloat3(x, y, z);
-						color[pid] = cfloat4(vf[0], vf[1], vf[2], 0.2);
-						for (int t = 0; t < h_param.numTypes; t++)
-							vol_frac[pid * h_param.numTypes + t] = vf[t];
-
-						type[pid] = typeTmp;
-						group[pid] = groupTmp;
-						addcount += 1;
+						p.push_back(cfloat3(x, y, z));
 					}
-
-			if (typeTmp == TYPE_FLUID) {
-				printf("Block No. %d, type: fluid, particle num: %d\n", i, addcount);
-				h_param.numFluidParticles += addcount;
-			}
-			else if (typeTmp == TYPE_DEFORMABLE) {
-				printf("Block No. %d, type: deformable, particle num: %d\n", i, addcount);
-				h_param.numSolidParticles += addcount;
-			}
-			else if (typeTmp == TYPE_GRANULAR) {
-				printf("Block No. %d, type: granular, particle num: %d\n", i, addcount);
-			}
+			addParticles(p.size(), p.data(), vf, group, type, 1);
 		}
 	}
 
+	void MultiphaseSPHSolver::addParticles(int addcount, const cfloat3 add_pos[], const float volfrac[], int group_, int type_, int visible) {
+		if (type_ == TYPE_FLUID) {
+			printf("Block type: fluid, particle num: %d\n", addcount);
+			h_param.numFluidParticles += addcount;
+		}
+		else if (type_ == TYPE_DEFORMABLE) {
+			printf("Block type: deformable, particle num: %d\n", addcount);
+			h_param.numSolidParticles += addcount;
+		}
+		else if (type_ == TYPE_GRANULAR) {
+			printf("Block type: granular, particle num: %d\n", addcount);
+		}
 
+		for (int ix = 0; ix < addcount; ix++) {
+			int pid = addDefaultParticle();
+			if (pid < 0) {
+				printf("error: reaching particle number limit\n");
+				return;
+			}
+
+			pos[pid] = add_pos[ix];
+			color[pid] = cfloat4(volfrac[0], volfrac[1], volfrac[2], visible);
+			for (int t = 0; t < h_param.numTypes; t++)
+				vol_frac[pid * h_param.numTypes + t] = volfrac[t];
+
+			type[pid] = type_;
+			group[pid] = group_;
+		}
+		num_particles = pos.size();
+	}
 
 
 	void MultiphaseSPHSolver::SetParameter() {
 		
 		h_param.gravity.set(0.0f, -9.8f, 0.0f);
-		h_param.gridxmin.set(-2.5f, -0.5f, -1.5f);
-		h_param.gridxmax.set(2.5f, 3.0f, 1.5f);
+		h_param.gridxmin.set(-1.2f, -0.5f, -1.2f);
+		h_param.gridxmax.set(1.2f, 2.7f, 1.2f);
 
 		h_param.dt = 0.0005f;
 		h_param.spacing = 0.01f;
@@ -325,31 +335,31 @@ namespace msph {
 		float padding = h_param.spacing * 1.5f;
 
 		float width = 0.5;
-		auto fv = std::make_shared<fluidvol>();
+		//auto fv = std::make_shared<fluidvol>();
 		// SCENE1
 		//fv->xmin.set(-1.2 + padding, 0.015, -0.5);
 		//fv->xmax.set(-1.2 + padding + width, 1., 0.5);
 		// SCENE2
-		fv->xmin.set(-1.2 + padding, 0.0, -0.5);
-		fv->xmax.set(0, 0.6, 0.5);
-		fv->group = 0;
-		fv->type = TYPE_FLUID;
-		fv->volfrac[0] = 1;
-		fv->volfrac[1] = 0;
-		fluid_volumes.push_back(fv);
+		//fv->xmin.set(-1.2 + padding, 0.0, -0.5);
+		//fv->xmax.set(0, 0.6, 0.5);
+		//fv->group = 0;
+		//fv->type = TYPE_FLUID;
+		//fv->volfrac[0] = 1;
+		//fv->volfrac[1] = 0;
+		//fluid_volumes.push_back(fv);
 
-		fv = std::make_shared<fluidvol>();
+		//fv = std::make_shared<fluidvol>();
 		// SCENE1
 		//fv->xmin.set(1.2 - padding - width, 0.015, -0.5);
 		//fv->xmax.set(1.2 - padding, 1., 0.5);
 		// SCENE2
-		fv->xmin.set(0.2, 0., -0.2);
-		fv->xmax.set(0.8, 0.45, 0.2);
-		fv->group = 0;
-		fv->type = TYPE_GRANULAR;
-		fv->volfrac[0] = 0;
-		fv->volfrac[1] = 1;
-		fluid_volumes.push_back(fv);
+		//fv->xmin.set(0.2, 0., -0.2);
+		//fv->xmax.set(0.8, 0.45, 0.2);
+		//fv->group = 0;
+		//fv->type = TYPE_GRANULAR;
+		//fv->volfrac[0] = 0;
+		//fv->volfrac[1] = 1;
+		//fluid_volumes.push_back(fv);
 
 		h_param.solidG = 100000;
 		h_param.solidK = 100000;
@@ -528,12 +538,12 @@ namespace msph {
 		for (int i = 0; i < po->pos.size(); i++) {
 			int pid = addDefaultParticle();
 			pos[pid] = po->pos[i];
-			if(pos[pid].y < 0.2 && pos[pid].z < 0)
+			/*if(pos[pid].y < 0.2 && pos[pid].z < 0)
 				color[pid] = cfloat4(1, 1, 1, 0.2);
-			else
-				color[pid] = cfloat4(1, 1, 1, 0.0);
+			else*/
+			color[pid] = cfloat4(1, 1, 1, 0.0);
 			type[pid] = TYPE_RIGID;
-			normal[pid] = po->normal[i];
+			//normal[pid] = po->normal[i];
 			group[pid] = GROUP_FIXED;
 		}
 	}
@@ -579,10 +589,7 @@ namespace msph {
 		for (int i = 0; i < po->pos.size(); i++) {
 			int pid = addDefaultParticle();
 			pos[pid] = po->pos[i];
-			//pos[pid] *= 0.005 * relax;
-			//pos[pid].y += 0.16;
 			type[pid] = objectType;
-			group[pid] = 4;
 			for (int t = 0; t < h_param.numTypes; t++)
 				vol_frac[pid * h_param.numTypes + t] = vf[t];
 			addcount++;

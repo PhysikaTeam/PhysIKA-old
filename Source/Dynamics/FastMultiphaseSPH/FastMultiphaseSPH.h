@@ -23,6 +23,11 @@ namespace PhysIKA
 	*	
 	*	Sample usage:
 	* 		auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
+	* 		using particle_t = FastMultiphaseSPH<DataType3f>::particle_t;
+	* 		root->loadParticlesAABBSurface(Vector3f(-1.1, -0.02, -1.1), Vector3f(1.1, 1, 1.1), root->getSpacing(), particle_t::BOUDARY);
+	*       root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -0.5), Vector3f(0, 0.8, 0.5), root->getSpacing(), particle_t::FLUID);
+	*       root->loadParticlesAABBVolume(Vector3f(0.2, 0., -0.2), Vector3f(0.8, 0.6, 0.2), root->getSpacing(), particle_t::SAND);
+	*       root->initSync();
 	*
 	*/
 	template<typename TDataType>
@@ -31,6 +36,9 @@ namespace PhysIKA
 		DECLARE_CLASS_1(FastMultiphaseSPH, TDataType)
 	public:
 
+
+		enum class particle_t { BOUDARY, FLUID, SAND };
+
 		bool self_update = true;
 		typedef typename TDataType::Real Real;
 		typedef typename TDataType::Coord Coord;
@@ -38,12 +46,18 @@ namespace PhysIKA
 		FastMultiphaseSPH(std::string name = "default");
 		virtual ~FastMultiphaseSPH();
 
-		void loadParticles(Coord lo, Coord hi, Real distance);
-		void loadParticles(Coord center, Real r, Real distance);
-		void loadParticles(std::string filename);
+		void initSync(); // initialize the scene
 
-		virtual bool translate(Coord t);
-		virtual bool scale(Real s);
+		void loadParticlesAABBVolume(Coord lo, Coord hi, Real distance, particle_t type);
+		void loadParticlesAABBSurface(Coord lo, Coord hi, Real distance, particle_t type);
+		void loadParticlesBallVolume(Coord center, Real r, Real distance, particle_t type);
+		void loadParticlesFromFile(std::string filename, particle_t type);
+		Real getSpacing() { return m_msph->h_param.spacing; }
+		void setDissolutionFlag(int dissolution) { m_msph->h_param.dissolution = dissolution; }
+
+
+		void addParticles(const std::vector<Coord>& points, particle_t type);
+
 
 		virtual void advance(Real dt) override;
 

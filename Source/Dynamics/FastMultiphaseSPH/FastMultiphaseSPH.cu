@@ -22,10 +22,15 @@ namespace PhysIKA
 		this->setTopologyModule(m_pSet);
 
 		m_msph = std::make_shared<msph::MultiphaseSPHSolver>();
-		m_msph->init();
-		
+		m_msph->preinit();
+	}
+	template<typename TDataType>
+	void FastMultiphaseSPH<TDataType>::initSync() {
+
+		m_msph->postinit();
+
 		prepareData();
-		
+
 		std::vector<Coord> buffer(num_o);
 		m_pSet->setPoints(buffer);
 		m_pSet->setNormals(buffer);
@@ -46,6 +51,7 @@ namespace PhysIKA
 	{
 		// get all particles
 		int num = m_msph->num_particles;
+		printf("%d particles in total\n", num);
 		if (num != m_pos.size()) {
 			m_pos.resize(num);
 			m_color.resize(num);
@@ -75,13 +81,24 @@ namespace PhysIKA
 
 
 	template<typename TDataType>
-	void FastMultiphaseSPH<TDataType>::loadParticles(std::string filename)
+	void FastMultiphaseSPH<TDataType>::loadParticlesFromFile(std::string filename, particle_t type)
 	{
-		m_pSet->loadObjFile(filename);
+		std::vector<Coord> vertList;
+		std::ifstream ifs(filename, std::ios::binary);
+		if (!ifs) printf("cannot open file %s\n", filename.c_str());
+		std::string line;
+		while (getline(ifs, line)) {
+			auto s1p = line.find(' ');
+			if (s1p != std::string::npos && line.substr(0, s1p) == "v") {
+				Coord c; sscanf(line.c_str() + s1p, "%f %f %f", &c[0], &c[1], &c[2]);
+				vertList.push_back(c);
+			}
+		}
+		addParticles(vertList, type);
 	}
 
 	template<typename TDataType>
-	void FastMultiphaseSPH<TDataType>::loadParticles(Coord center, Real r, Real distance)
+	void FastMultiphaseSPH<TDataType>::loadParticlesBallVolume(Coord center, Real r, Real distance, particle_t type)
 	{
 		std::vector<Coord> vertList;
 		std::vector<Coord> normalList;
@@ -108,12 +125,15 @@ namespace PhysIKA
 		m_pSet->setPoints(vertList);
 		m_pSet->setNormals(normalList);
 
+
+		addParticles(vertList, type);
+
 		vertList.clear();
 		normalList.clear();
 	}
 
 	template<typename TDataType>
-	void FastMultiphaseSPH<TDataType>::loadParticles(Coord lo, Coord hi, Real distance)
+	void FastMultiphaseSPH<TDataType>::loadParticlesAABBVolume(Coord lo, Coord hi, Real distance, particle_t type)
 	{
 		std::vector<Coord> vertList;
 		std::vector<Coord> normalList;
@@ -136,25 +156,69 @@ namespace PhysIKA
 
 		std::cout << "particle number: " << vertList.size() << std::endl;
 
+		addParticles(vertList, type);
+
 		vertList.clear();
 		normalList.clear();
 	}
 
 	template<typename TDataType>
-	bool FastMultiphaseSPH<TDataType>::translate(Coord t)
+	void FastMultiphaseSPH<TDataType>::loadParticlesAABBSurface(Coord lo, Coord hi, Real distance, particle_t type)
 	{
-		m_pSet->translate(t);
+		std::vector<Coord> vertList;
+		std::vector<Coord> normalList;
 
-		return true;
+		for (Real x = lo[0]; x <= hi[0]; x += distance)
+		{
+			for (Real y = lo[1]; y <= hi[1]; y += distance)
+			{
+				vertList.push_back(Coord(x, y, lo[2]));
+				vertList.push_back(Coord(x, y, hi[2]));
+			}
+		}
+		for (Real x = lo[0]; x <= hi[0]; x += distance)
+		{
+			for (Real z = lo[2]; z <= hi[2]; z += distance)
+			{
+				vertList.push_back(Coord(x, lo[1], z));
+				vertList.push_back(Coord(x, hi[1], z));
+			}
+		}
+		for (Real y = lo[1]; y <= hi[1]; y += distance)
+		{
+			for (Real z = lo[2]; z <= hi[2]; z += distance)
+			{
+				vertList.push_back(Coord(lo[0], y, z));
+				vertList.push_back(Coord(hi[0], y, z));
+			}
+		}
+		normalList.resize(vertList.size());
+
+		m_pSet->setPoints(vertList);
+		m_pSet->setNormals(normalList);
+
+		std::cout << "particle number: " << vertList.size() << std::endl;
+
+		addParticles(vertList, type);
+
+		vertList.clear();
+		normalList.clear();
 	}
 
-
 	template<typename TDataType>
-	bool FastMultiphaseSPH<TDataType>::scale(Real s)
-	{
-		m_pSet->scale(s);
-
-		return true;
+	void FastMultiphaseSPH<TDataType>::addParticles(const std::vector<Coord>& points, particle_t type) {
+		if (type == particle_t::SAND) {
+			float volfrac[] = { 0,1,0 };
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, 0, TYPE_GRANULAR, 1);
+		}
+		else if (type == particle_t::FLUID) {
+			float volfrac[] = { 1,0,0 };
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, 0, TYPE_FLUID, 1);
+		}
+		else if (type == particle_t::BOUDARY) {
+			float volfrac[] = { 0,0,0 };
+			m_msph->addParticles(points.size(), (cfloat3*)points.data(), volfrac, GROUP_FIXED, TYPE_RIGID, 0);
+		}
 	}
 
 	template<typename TDataType>

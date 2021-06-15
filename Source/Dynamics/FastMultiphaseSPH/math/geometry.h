@@ -320,11 +320,10 @@ HDFUNC __inline__ void  mat3prod(cmat3& a, cmat3& b, cmat3& c) {
 }
 
 HDFUNC __inline__ void mat3transpose(cmat3& a, cmat3& b) {
-	cmat3 tmp;
+	cmat3& tmp = b;
 	tmp[0][0]=a[0][0]; tmp[0][1]=a[1][0]; tmp[0][2]=a[2][0];
 	tmp[1][0]=a[0][1]; tmp[1][1]=a[1][1]; tmp[1][2]=a[2][1];
-	tmp[2][0]=a[0][2]; tmp[2][1]=a[1][2]; tmp[2][2]=a[2][2];
-	b=tmp;
+	tmp[2][0] = a[0][2]; tmp[2][1] = a[1][2]; tmp[2][2] = a[2][2];
 }
 
 HDFUNC inline void make_identity(cmat3& mat) {

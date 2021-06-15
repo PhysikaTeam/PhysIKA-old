@@ -139,10 +139,11 @@ namespace msph {
 					res[2][0] += a.z * b.x; res[2][1] += a.z * b.y; res[2][2] += a.z * b.z;
 				//}
 				
-
-				float diffFactor = diffusionFac * dot(xij, nablaw) / (d * d + 0.01f);
-				for (int k = 0; k < param->numTypes; k++) {
-					update.data[k] += diffFactor * (volfi.data[k] - volfj.data[k]);
+				if (param->dissolution) {
+					float diffFactor = diffusionFac * dot(xij, nablaw) / (d * d + 0.01f);
+					for (int k = 0; k < param->numTypes; k++) {
+						update.data[k] += diffFactor * (volfi.data[k] - volfj.data[k]);
+					}
 				}
 			}
 			else if (d_data.type[j] == TYPE_RIGID)
@@ -152,10 +153,11 @@ namespace msph {
 		});
 
 
-
-		for (int k = 0; k < param->numTypes; k++)
-		{
-			d_data.vfrac_change[index].data[k] = update.data[k];
+		if (param->dissolution) {
+			for (int k = 0; k < param->numTypes; k++)
+			{
+				d_data.vfrac_change[index].data[k] = update.data[k];
+			}
 		}
 		density *= d_data.mass[index];
 		d_data.density[index] = density;
@@ -164,38 +166,37 @@ namespace msph {
 			d_data.pressure[index] = 0;
 
 		
+		cmat3 D, Omega;
+		cmat3 tmp1, tmp2;
 		cmat3 sigma = d_data.stress[index];
-		cmat3 vgT, D;
-		mat3transpose(vGradient, vgT);
+		mat3transpose(vGradient, tmp1);
 	
-		cmat3 Omega, OmegaT, tmp1, tmp2;
 		for (int k = 0; k < 9; k++) {
-			D.data[k] = (vGradient.data[k] + vgT.data[k]) * 0.5f;
-			Omega.data[k] = (vGradient.data[k] - vgT.data[k]) * 0.5f;
+			D.data[k] = (vGradient.data[k] + tmp1.data[k]) * 0.5f;
+			Omega.data[k] = (vGradient.data[k] - tmp1.data[k]) * 0.5f;
 		}
-		mat3transpose(Omega, OmegaT);
-		mat3prod(sigma, OmegaT, tmp1);
+		mat3prod(sigma, Omega, tmp1);
 		mat3prod(Omega, sigma, tmp2);
-		mat3add(tmp1, tmp2, tmp1);
-
+		for (int k = 0; k < 9; k++)
+			tmp1.data[k] = -tmp1.data[k] + tmp2.data[k];
 		//shear part
 		auto trace = (D[0][0] + D[1][1] + D[2][2]) / 3.0f;
-		tmp2 = D;
-		tmp2[0][0] -= trace;
-		tmp2[1][1] -= trace;
-		tmp2[2][2] -= trace;
-		tmp2.Multiply(param->solidG * 2.0f);
+		D[0][0] -= trace;
+		D[1][1] -= trace;
+		D[2][2] -= trace;
+		for(int k=0; k<9; k++)
+			tmp2.data[k] = D.data[k] * (param->solidG * 2.0f);
 		//bulk part
-		float pressure = trace * 3.0f * d_param.solidK; //minus pressure
-		tmp2[0][0] += pressure;
-		tmp2[1][1] += pressure;
-		tmp2[2][2] += pressure;
+		trace *= 3.0f * d_param.solidK; //minus pressure
+		tmp2[0][0] += trace;
+		tmp2[1][1] += trace;
+		tmp2[2][2] += trace;
 
 		for (int k = 0; k < 9; k++)
 			sigma.data[k] += (tmp1.data[k] + tmp2.data[k]) * param->dt;
 		
 		cmat3 shearStress = sigma;
-		pressure = -(shearStress[0][0] + shearStress[1][1] + shearStress[2][2]) / 3.0f;
+		float pressure = -(shearStress[0][0] + shearStress[1][1] + shearStress[2][2]) / 3.0f;
 		shearStress[0][0] += pressure;
 		shearStress[1][1] += pressure;
 		shearStress[2][2] += pressure;
@@ -341,13 +342,15 @@ namespace msph {
 		d_data.pos[index] += d_data.vel[index] * param->dt;
 		d_data.drift_accel[index] = param->gravity - d_data.force[index];
 		
-		for (int k = 0; k < param->numTypes; k++) {
-			d_data.vFrac[index].data[k] += d_data.vfrac_change[index].data[k] * param->dt;
-		}
-		d_data.mass[index] = 0;
-		for (int k = 0; k < param->numTypes; k++) {
-			d_data.mass[index] += d_data.vFrac[index].data[k] * param->densArr[k] * param->vol0;
-			d_data.color[index][k] = d_data.vFrac[index].data[k];
+		if (param->dissolution) {
+			for (int k = 0; k < param->numTypes; k++) {
+				d_data.vFrac[index].data[k] += d_data.vfrac_change[index].data[k] * param->dt;
+			}
+			d_data.mass[index] = 0;
+			for (int k = 0; k < param->numTypes; k++) {
+				d_data.mass[index] += d_data.vFrac[index].data[k] * param->densArr[k] * param->vol0;
+				d_data.color[index][k] = d_data.vFrac[index].data[k];
+			}
 		}
 	}
 
