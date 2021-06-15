@@ -25,7 +25,7 @@ namespace PhysIKA
 		attachField(&m_angularMass, MechanicalState::angularMass(), "Angular momentum", false);
 		attachField(&m_rotation, MechanicalState::rotation(), "Orientation", false);
 
-		Coord trans(0.5, 0.2, 0.5);
+		Coord trans(0., 0., 0.);
 
 		m_mass.setValue(Real(1));
 		m_center.setValue(trans);

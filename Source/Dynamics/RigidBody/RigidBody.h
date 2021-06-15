@@ -39,6 +39,8 @@ namespace PhysIKA
 
 		std::shared_ptr<Node> getSurface() { return m_surfaceNode; }
 
+		std::shared_ptr<Frame<TDataType>> getTransformationFrame() { return m_frame; }
+
 		DEF_VAR(ImportFile, std::string, "", "outputView");
 
 	public:

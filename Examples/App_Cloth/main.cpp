@@ -17,6 +17,10 @@
 #include "ParticleCloth.h"
 
 
+#include "Framework/Topology/TriangleSet.h"
+#include "Rendering/RigidMeshRender.h"
+
+
 using namespace std;
 using namespace PhysIKA;
 
@@ -43,7 +47,19 @@ void CreateScene()
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
 	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, true);
 	root->loadShpere(Vector3f(0.5), 0.08f, 0.005f, false, true);
+	{
+		std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
+		root->addRigidBody(rigidbody);
+		rigidbody->loadShape("../../Media/standard/standard_sphere.obj");
+		rigidbody->setActive(false);
+		auto rigidTri = TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(rigidbody->getSurface()->getTopologyModule());
+		rigidTri->scale(0.08f);
+		rigidTri->translate(Vector3f(0.5));
 
+		auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
+		renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+		rigidbody->getSurface()->addVisualModule(renderModule);
+	}
 	std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
 	root->addParticleSystem(child3);
 

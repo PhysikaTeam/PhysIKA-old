@@ -18,6 +18,12 @@
 
 #include "ParticleViscoplasticBody.h"
 
+#include "Rendering/PointRenderModule.h"
+
+#include "Framework/Topology/TriangleSet.h"
+#include "Rendering/RigidMeshRender.h"
+
+
 using namespace std;
 using namespace PhysIKA;
 
@@ -41,12 +47,47 @@ void CreateScene()
 {
 	SceneGraph& scene = SceneGraph::getInstance();
 
+	Vector3f lo0 = Vector3f(0);
+	Vector3f hi0 = Vector3f(1);
+
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0), Vector3f(1), 0.005, true);
+	root->loadCube(lo0, hi0, 0.005, true);
+
+	//Vector3f scale = (hi0 - lo0) / 2;
+	//Vector3f center = (hi0 + lo0) / 2;
+	//std::shared_ptr<RigidBody<DataType3f>> rigidbody0 = std::make_shared<RigidBody<DataType3f>>();
+	//root->addRigidBody(rigidbody0);
+	//rigidbody0->loadShape("../../Media/standard/standard_cube.obj");
+	//rigidbody0->setActive(false);
+	//auto rigidTri0 = TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(rigidbody0->getSurface()->getTopologyModule());
+	//rigidTri0->scale(scale);
+	//rigidTri0->translate(center);
+
+	//auto renderModule = std::make_shared<RigidMeshRender>(rigidbody0->getTransformationFrame());
+	//renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+	//rigidbody0->getSurface()->addVisualModule(renderModule);
 
 	for (size_t i = 0; i < 5; i++)
 	{
-		root->loadCube(Vector3f(0.2 + i * 0.08, 0.2, 0), Vector3f(0.25 + i * 0.08, 0.25, 1), 0.005, false, true);
+		Vector3f lo = Vector3f(0.2 + i * 0.08, 0.2, 0);
+		Vector3f hi = Vector3f(0.25 + i * 0.08, 0.25, 1);
+		Vector3f scale = (hi - lo) / 2;
+		Vector3f center = (hi + lo) / 2;
+
+		root->loadCube(lo, hi, 0.005, false, true);
+
+		std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
+		root->addRigidBody(rigidbody);
+		rigidbody->loadShape("../../Media/standard/standard_cube.obj");
+		rigidbody->setActive(false);
+		auto rigidTri = TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(rigidbody->getSurface()->getTopologyModule());
+		rigidTri->scale(scale);
+		rigidTri->translate(center);
+
+		auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
+		renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+		rigidbody->getSurface()->addVisualModule(renderModule);
+
 	}
 
 	std::shared_ptr<ParticleViscoplasticBody<DataType3f>> child3 = std::make_shared<ParticleViscoplasticBody<DataType3f>>();
