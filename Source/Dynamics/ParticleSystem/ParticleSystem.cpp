@@ -34,6 +34,7 @@ namespace PhysIKA
 	void ParticleSystem<TDataType>::loadParticles(std::string filename)
 	{
 		m_pSet->loadObjFile(filename);
+		printf("ParticleNum:  %d\n", m_pSet->getPointSize());
 	}
 
 	template<typename TDataType>

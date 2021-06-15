@@ -13,6 +13,8 @@
 #include "Dynamics/ParticleSystem/ParticleFluid.h"
 #include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Rendering/RigidMeshRender.h"
+
 
 #include "Rendering/PointRenderModule.h"
 
@@ -63,6 +65,10 @@ void CreateScene()
 	root->addRigidBody(rigidbody);
 	rigidbody->loadShape("../../Media/bowl/bowl.obj");
 	rigidbody->setActive(false);
+
+	auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
+	renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+	rigidbody->getSurface()->addVisualModule(renderModule);
 }
 
 int main()

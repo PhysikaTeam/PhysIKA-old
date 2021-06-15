@@ -46,7 +46,7 @@ void CreateScene()
 	root->translate(Vector3f(0.2f, 0.2f, 0));
 	root->loadCube(Vector3f(0), Vector3f(1), 0.005, true);
 
-	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody<DataType3f>>();
+	std::shared_ptr<ParticleElastoplasticBody<DataType3f>> child3 = std::make_shared<ParticleElastoplasticBody	<DataType3f>>();
 	root->addParticleSystem(child3);
 
 	auto ptRender = std::make_shared<PointRenderModule>();

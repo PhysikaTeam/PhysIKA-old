@@ -1,7 +1,7 @@
 
 set(PROJECT_NAME App_Viscoplasticity)
 
-link_libraries(Core Framework IO Rendering)
+link_libraries(Core Framework IO Rendering RigidBody)
 link_libraries(ParticleSystem)
 link_libraries(GlutGUI)
 

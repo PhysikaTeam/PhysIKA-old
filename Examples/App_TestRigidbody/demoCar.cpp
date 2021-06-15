@@ -513,16 +513,16 @@ void DemoTankCar::build(bool useGPU)
 	//int ny = 509, nx = 266;
 	int ny = 1057, nx = 1057;
 
-	float hScale = 0.1;
+	float hScale = 0.4;
 
 	float dl = 0.22 * hScale;
-	float hOffset = -25;
+	float hOffset = -26;
 
 	m_groundRigidInteractor = std::make_shared<HeightFieldPBDInteractionNode>();
 	//m_groundRigidInteractor->setRigidBodySystem(m_car->m_rigidSystem);
 	m_groundRigidInteractor->setSize(nx, ny, dl, dl);
-	m_groundRigidInteractor->getSolver()->m_numSubstep = 5;
-	m_groundRigidInteractor->getSolver()->m_numContactSolveIter = 20;
+	m_groundRigidInteractor->getSolver()->m_numSubstep = 4;
+	m_groundRigidInteractor->getSolver()->m_numContactSolveIter = 30;
 
 	m_groundRigidInteractor->getSolver()->setUseGPU(useGPU);
 
@@ -800,6 +800,7 @@ void DemoTankCar::addCar(std::shared_ptr<MultiWheelCar<4>> car, Vector3f pos,
 
 		float wheelm = 50;
 		Vector3f wheelI = RigidUtil::calculateCylinderLocalInertia(wheelm, 0.1f, 0.03f, 0);
+		printf("%f  %f  %f\n", wheelI[0], wheelI[1], wheelI[2]);
 		car->wheelMass[lr][0] = wheelm;
 		car->wheelInertia[lr][0] = wheelI;
 		car->wheelMass[lr][1] = wheelm;
@@ -815,7 +816,7 @@ void DemoTankCar::addCar(std::shared_ptr<MultiWheelCar<4>> car, Vector3f pos,
 	car->rightDirection = Vector3f(1, 0, 0);
 
 
-	car->forwardForceAcc = 300;
+	car->forwardForceAcc = 1000;
 	car->maxVel = 2.5;
 
 	car->chassisCollisionGroup = chassisGroup;
