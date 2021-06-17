@@ -90,14 +90,14 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 		HostArray<Vector3f> hpoints(points.size());
 		Function1Pt::copy(hpoints, points);
 
-		std::ofstream outf("Particles.txt", i==0?(ios::out):(ios::app));
+		std::ofstream outf("Particles.obj", i==0?(ios::out):(ios::app));
 		if (outf.is_open())
 		{
 			outf << std::endl;
 			for (int i = 0; i < hpoints.size(); ++i)
 			{
 				Vector3f curp = hpoints[i];
-				outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
 			}
 			outf.close();
 
@@ -123,14 +123,14 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 		HostArray<Vector3f> hpoints(points.size());
 		Function1Pt::copy(hpoints, points);
 
-		std::ofstream outf("Particles.txt", i == 0 ? (ios::out) : (ios::app));
+		std::ofstream outf("Particles.obj", i == 0 ? (ios::out) : (ios::app));
 		if (outf.is_open())
 		{
 			outf << std::endl;
 			for (int i = 0; i < hpoints.size(); ++i)
 			{
 				Vector3f curp = hpoints[i];
-				outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
 			}
 			outf.close();
 
@@ -152,14 +152,14 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 		HostArray<Vector3f> hpoints(points.size());
 		Function1Pt::copy(hpoints, points);
 
-		std::ofstream outf("Particles.txt", i == 0 ? (ios::out) : (ios::app));
+		std::ofstream outf("Particles.obj", i == 0 ? (ios::out) : (ios::app));
 		if (outf.is_open())
 		{
 			outf << std::endl;
 			for (int i = 0; i < hpoints.size(); ++i)
 			{
 				Vector3f curp = hpoints[i];
-				outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
 			}
 			outf.close();
 

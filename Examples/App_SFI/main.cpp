@@ -79,13 +79,13 @@ void CreateScene()
 		HostArray<Vector3f> hpoints(points.size());
 		Function1Pt::copy(hpoints, points);
 
-		std::ofstream outf("Particles.txt");
+		std::ofstream outf("Particles.obj");
 		if (outf.is_open())
 		{
 			for (int i = 0; i < hpoints.size(); ++i)
 			{
 				Vector3f curp = hpoints[i];
-				outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
 			}
 			outf.close();
 
@@ -126,14 +126,14 @@ void CreateScene()
 			HostArray<Vector3f> hpoints(points.size());
 			Function1Pt::copy(hpoints, points);
 
-			std::ofstream outf("Particles.txt", ios::app);
+			std::ofstream outf("Particles.obj", ios::app);
 			if (outf.is_open())
 			{
 				outf << std::endl;
 				for (int i = 0; i < hpoints.size(); ++i)
 				{
 					Vector3f curp = hpoints[i];
-					outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+					outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
 				}
 				outf.close();
 
