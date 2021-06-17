@@ -102,6 +102,27 @@ void CreateScene()
   	child3->loadSurface("../../Media/bunny/bunny_mesh.obj");
 	child3->translate(Vector3f(0.4, 0.4, 0.5));
 
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		ofstream outf("Particles.txt");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
+
 	std::shared_ptr<ParticleViscoplasticBody<DataType3f>> child4 = std::make_shared<ParticleViscoplasticBody<DataType3f>>();
 	root->addParticleSystem(child4);
 	auto ptRender2 = std::make_shared<PointRenderModule>();
@@ -112,6 +133,27 @@ void CreateScene()
 	child4->loadParticles("../../Media/bunny/bunny_points.obj");
 	child4->loadSurface("../../Media/bunny/bunny_mesh.obj");
 	child4->translate(Vector3f(0.4, 0.4, 0.9));
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		ofstream outf("Particles.txt", ios::app);
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
 }
 
 

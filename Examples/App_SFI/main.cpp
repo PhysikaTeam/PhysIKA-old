@@ -72,6 +72,27 @@ void CreateScene()
 
 	fluid->setNumericalModel(pbd);
 
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(fluid->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.txt");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
+
 	printf("111111\n");
 	std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
 	// 
@@ -97,6 +118,28 @@ void CreateScene()
 		sRender->setColor(Vector3f(i*0.3f, 1 - i*0.3f, 1.0));
 
 		sfi->addParticleSystem(bunny);
+
+		// Output all particles to .txt file.
+		{
+			auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+			auto& points = pSet->getPoints();
+			HostArray<Vector3f> hpoints(points.size());
+			Function1Pt::copy(hpoints, points);
+
+			std::ofstream outf("Particles.txt", ios::app);
+			if (outf.is_open())
+			{
+				outf << std::endl;
+				for (int i = 0; i < hpoints.size(); ++i)
+				{
+					Vector3f curp = hpoints[i];
+					outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+				}
+				outf.close();
+
+				std::cout << " Particle output:  FINISHED." << std::endl;
+			}
+		}
 	}
 
 

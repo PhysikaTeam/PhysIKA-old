@@ -43,6 +43,27 @@ int main()
 	bunny->getSurfaceNode()->addVisualModule(sRender);
 	sRender->setColor(Vector3f(1, 1, 0));
 
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.txt");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
+
 	// bunny->getElasticitySolver()->setIterationNumber(10);
   boost::property_tree::ptree pt;
   const std::string jsonfile_path = "../../Media/bunny/embedded_mass_spring.json";
