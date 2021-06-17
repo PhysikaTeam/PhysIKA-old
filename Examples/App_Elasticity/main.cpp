@@ -7,6 +7,8 @@
 
 #include "Rendering/SurfaceMeshRender.h"
 #include "Rendering/PointRenderModule.h"
+#include "Framework/Topology/TriangleSet.h"
+
 
 using namespace PhysIKA;
 
@@ -22,9 +24,9 @@ int main()
 	std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
 	root->addParticleSystem(bunny);
 
-	auto m_pointsRender = std::make_shared<PointRenderModule>();
-	m_pointsRender->setColor(Vector3f(0, 1, 1));
-	bunny->addVisualModule(m_pointsRender);
+	//auto m_pointsRender = std::make_shared<PointRenderModule>();
+	//m_pointsRender->setColor(Vector3f(0, 1, 1));
+	//bunny->addVisualModule(m_pointsRender);
 
 	bunny->setMass(1.0);
 	bunny->loadParticles("../../Media/bunny/bunny_points.obj");
