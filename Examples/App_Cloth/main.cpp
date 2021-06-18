@@ -45,8 +45,8 @@ void CreateScene()
 	SceneGraph& scene = SceneGraph::getInstance();
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0), Vector3f(1), 0.005f, true);
-	root->loadShpere(Vector3f(0.5), 0.08f, 0.005f, false, true);
+	root->loadCube(Vector3f(-0.1f, 0.0f, -1.0f), Vector3f(1.1f, 2.0f, 1.1f), 0.02f, true);
+	root->loadShpere(Vector3f(0.5), 0.2f, 0.01f, false, true);
 	{
 		std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 		root->addRigidBody(rigidbody);
@@ -60,6 +60,25 @@ void CreateScene()
 		renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
 		rigidbody->getSurface()->addVisualModule(renderModule);
 	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
+		root->addParticleSystem(child3);
+
+		auto m_pointsRender = std::make_shared<PointRenderModule>();
+
+		m_pointsRender->setColor(Vector3f(1-0.2*i, 0.2*i, 1));
+		child3->addVisualModule(m_pointsRender);
+		child3->setVisible(true);
+
+		child3->setMass(1.0);
+		child3->loadParticles("../../Media/cloth/clothLarge.obj");
+		child3->loadSurface("../../Media/cloth/clothLarge.obj");
+
+		child3->translate(Vector3f(0.0f, 0.8f + 0.02*i, 0.0f));
+	}
+
 	std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
 	root->addParticleSystem(child3);
 
@@ -70,8 +89,10 @@ void CreateScene()
 	child3->setVisible(true);
 
 	child3->setMass(1.0);
-  	child3->loadParticles("../../Media/cloth/cloth.obj");
-  	child3->loadSurface("../../Media/cloth/cloth.obj");
+  child3->loadParticles("../../Media/cloth/clothLarge.obj");
+  child3->loadSurface("../../Media/cloth/clothLarge.obj");
+
+	child3->translate(Vector3f(0.0f, 0.8f, 0.0f));
 
 	// Output all particles to .txt file.
 	{
