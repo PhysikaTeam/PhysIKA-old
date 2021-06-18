@@ -16,7 +16,12 @@
 #include "Dynamics/ParticleSystem/ParticleElastoplasticBody.h"
 #include "Dynamics/ParticleSystem/GranularModule.h"
 
+#include "Framework/Topology/TriangleSet.h"
+#include "Rendering/RigidMeshRender.h"
 #include "Rendering/PointRenderModule.h"
+
+
+
 
 using namespace std;
 using namespace PhysIKA;
@@ -63,11 +68,39 @@ void CreateScene()
 	child3->setElastoplasticitySolver(elasto);
 	elasto->setCohesion(0.001);
 
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.obj");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
+
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);
 	rigidbody->loadShape("../../Media/bar/bar.obj");
 	rigidbody->setActive(false);
 	rigidbody->translate(Vector3f(0.2f, 0.2f, 0));
+
+	{
+		auto rigidTri = TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(rigidbody->getSurface()->getTopologyModule());
+		auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
+		renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+		rigidbody->getSurface()->addVisualModule(renderModule);
+	}
 }
 
 

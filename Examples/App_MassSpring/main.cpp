@@ -9,6 +9,9 @@
 #include "Rendering/PointRenderModule.h"
 #include <boost/property_tree/json_parser.hpp>
 
+#include "Framework/Topology/TriangleSet.h"
+
+
 using namespace PhysIKA;
 using namespace std;
 
@@ -24,9 +27,9 @@ int main()
 
 	root->addParticleSystem(bunny);
 
-	auto m_pointsRender = std::make_shared<PointRenderModule>();
-	m_pointsRender->setColor(Vector3f(0, 1, 1));
-	bunny->addVisualModule(m_pointsRender);
+	//auto m_pointsRender = std::make_shared<PointRenderModule>();
+	//m_pointsRender->setColor(Vector3f(0, 1, 1));
+	//bunny->addVisualModule(m_pointsRender);
 
 	bunny->setMass(1.0);
 	bunny->loadParticles("../../Media/bunny/bunny_points.obj");
@@ -39,6 +42,27 @@ int main()
 	auto sRender = std::make_shared<SurfaceMeshRender>();
 	bunny->getSurfaceNode()->addVisualModule(sRender);
 	sRender->setColor(Vector3f(1, 1, 0));
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.obj");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
 
 	// bunny->getElasticitySolver()->setIterationNumber(10);
   boost::property_tree::ptree pt;

@@ -82,6 +82,28 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
     read_json("../../Media/bunny/collision_hybrid.json", pt);
     bunny->init_problem_and_solver(pt);
     sfi->addParticleSystem(bunny);
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.obj", i==0?(ios::out):(ios::app));
+		if (outf.is_open())
+		{
+			outf << std::endl;
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED.  "<< i << std::endl;
+		}
+	}
   }
   else if (model == "fem")
   {
@@ -93,6 +115,28 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
     read_json("../../Media/bunny/collision_hybrid.json", pt);
     bunny->init_problem_and_solver(pt);
     sfi->addParticleSystem(bunny);
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.obj", i == 0 ? (ios::out) : (ios::app));
+		if (outf.is_open())
+		{
+			outf << std::endl;
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED.  " << i << std::endl;
+		}
+	}
   }    
   else
   {
@@ -100,6 +144,28 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 		root->addParticleSystem(bunny);
     SetupModel(bunny, i, model);
     sfi->addParticleSystem(bunny);
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.obj", i == 0 ? (ios::out) : (ios::app));
+		if (outf.is_open())
+		{
+			outf << std::endl;
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED.  " << i << std::endl;
+		}
+	}
   }    
 
 }

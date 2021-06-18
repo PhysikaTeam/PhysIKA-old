@@ -17,6 +17,8 @@
 
 #include "Rendering/PointRenderModule.h"
 
+#include "Framework/Topology/PointSet.h"
+
 using namespace std;
 using namespace PhysIKA;
 
@@ -83,6 +85,27 @@ void CreateScene()
 	//multifluid->m_color.connect(&ptRender1->m_vecIndex);
 
 	//child1->setNumericalModel(multifluid);
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		ofstream outf("Particles.obj");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
 }
 
 void CreateSceneBlock(int dissolution)
@@ -107,6 +130,27 @@ void CreateSceneBlock(int dissolution)
 	root->addVisualModule(ptRender1);
 
 	root->m_phase_concentration.connect(&ptRender1->m_vecIndex);
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		ofstream outf("Particles.obj");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
 }
 
 void CreateSceneToy(int dissolution)
@@ -131,6 +175,27 @@ void CreateSceneToy(int dissolution)
 	root->addVisualModule(ptRender1);
 
 	root->m_phase_concentration.connect(&ptRender1->m_vecIndex);
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		ofstream outf("Particles.obj");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
 }
 
 void CreateSceneCrag(int dissolution)
@@ -155,6 +220,27 @@ void CreateSceneCrag(int dissolution)
 	root->addVisualModule(ptRender1);
 
 	root->m_phase_concentration.connect(&ptRender1->m_vecIndex);
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		ofstream outf("Particles.obj");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
 }
 
 int main(int argc, char ** argv)
