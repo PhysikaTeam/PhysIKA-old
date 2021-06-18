@@ -43,6 +43,28 @@ void creatscene_ca()
 	auto mf_pointsRender = std::make_shared<PointRenderModule>();
 	fluid->addVisualModule(mf_pointsRender);
 	fluid->loadParticles(Vector3f(-0.985, 0.015, 0.015), Vector3f(-0.585f, 0.6f, 0.985), 0.005); // sphere
+
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(fluid->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.obj");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
 	
 	//fluid->loadParticles(Vector3f(0.25, 0.85, 0.25), Vector3f(0.75f, 0.9f, 0.75), 0.005); // sphere
 
