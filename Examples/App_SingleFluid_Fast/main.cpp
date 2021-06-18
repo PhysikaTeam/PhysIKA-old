@@ -18,6 +18,8 @@
 
 #include "Dynamics/ParticleSystem/ParticleFluidFast.h"
 
+#include "Framework/Topology/PointSet.h"
+
 using namespace std;
 using namespace PhysIKA;
 
@@ -60,6 +62,27 @@ void CreateScene()
 	child1->loadParticles(Vector3f(0.3, 0.2, 0.4), Vector3f(0.7, 1.5, 0.6475), 0.005);
 	child1->setMass(100);
 	child1->currentVelocity()->connect(&ptRender->m_vecIndex);
+
+	// Output all particles to .txt file.
+	{
+		auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child1->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+		Function1Pt::copy(hpoints, points);
+
+		std::ofstream outf("Particles.obj");
+		if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+			outf.close();
+
+			std::cout << " Particle output:  FINISHED." << std::endl;
+		}
+	}
 
 	std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
 	root->addRigidBody(rigidbody);
