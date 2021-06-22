@@ -54,8 +54,8 @@ void CreateScene()
 	//root->loadParticlesAABBVolume(Vector3f(0.2, 0., -0.2), Vector3f(0.8, 0.6, 0.2), root->getSpacing(), particle_t::SAND);
 
 	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -1.0), Vector3f(1.0, 0.2, 1.0), root->getSpacing(), particle_t::FLUID);
-	//root->loadParticlesFromFile("../../../Media/toy.obj", particle_t::SAND);
-	root->loadParticlesFromFile("../../../Media/crag.obj", particle_t::SAND);
+	//root->loadParticlesFromFile("../../Media/toy.obj", particle_t::SAND);
+	root->loadParticlesFromFile("../../Media/crag.obj", particle_t::SAND);
 
 	root->setDissolutionFlag(1);
 	root->initSync();
@@ -164,7 +164,7 @@ void CreateSceneToy(int dissolution)
 	root->loadParticlesAABBSurface(Vector3f(-1.02, -0.02, -1.02), Vector3f(1.02, 2.5, 1.02), root->getSpacing(), particle_t::BOUDARY);
 
 	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -1.0), Vector3f(1.0, 0.2, 1.0), root->getSpacing(), particle_t::FLUID);
-	root->loadParticlesFromFile("../../../Media/toy.obj", particle_t::SAND);
+	root->loadParticlesFromFile("../../Media/toy.obj", particle_t::SAND);
 
 	root->setDissolutionFlag(dissolution);
 	root->initSync();
@@ -209,7 +209,7 @@ void CreateSceneCrag(int dissolution)
 	root->loadParticlesAABBSurface(Vector3f(-1.02, -0.02, -1.02), Vector3f(1.02, 2.5, 1.02), root->getSpacing(), particle_t::BOUDARY);
 
 	root->loadParticlesAABBVolume(Vector3f(-1.0, 0.0, -1.0), Vector3f(1.0, 0.2, 1.0), root->getSpacing(), particle_t::FLUID);
-	root->loadParticlesFromFile("../../../Media/crag.obj", particle_t::SAND);
+	root->loadParticlesFromFile("../../Media/crag.obj", particle_t::SAND);
 
 	root->setDissolutionFlag(dissolution);
 	root->initSync();
