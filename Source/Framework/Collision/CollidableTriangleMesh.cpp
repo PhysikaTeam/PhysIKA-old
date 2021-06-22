@@ -24,5 +24,7 @@ namespace PhysIKA
 	void CollidatableTriangleMesh<TDataType>::updateMechanicalState() {
 	
 	}
-	
+
+	// add by HNU
+	std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> CollisionManager::Meshes; //!< storage for input mesh
 }

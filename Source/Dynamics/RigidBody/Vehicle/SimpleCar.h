@@ -59,7 +59,9 @@ public:
 
 	float chassisMass = 1.0;
 	Vector3f chassisInertia;
-	float wheelMass[4] = {0.1,0.1,0.1,0.1};
+	// adjust by HNU
+	// C2397	从“double”转换到“float”需要收缩转换		
+	float wheelMass[4] = {0.1f,0.1f,0.1f,0.1f};
 	Vector3f wheelInertia[4];
 
 	float wheelRadius[4] = { 1.0,1.0,1.0,1.0 };
