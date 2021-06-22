@@ -500,50 +500,50 @@ void DemoParticleSandRigid_Sphere::createScene()
 
 	
 
-	//{
-	//	double scale1d = 0.2;
-	//	Vector3f scale(scale1d, scale1d, scale1d);
-	//	double rhorigid = 5000;
-	//	float radius = 1.0;
-	//	radius *= scale1d;
-	//	float rigid_mass = rhorigid * 4.0 /3.0*std::_Pi * radius * radius*radius;
-	//	Vector3f rigidI = RigidUtil::calculateSphereLocalInertia(
-	//		rigid_mass, radius);
+	{
+		double scale1d = 0.2;
+		Vector3f scale(scale1d, scale1d, scale1d);
+		double rhorigid = 5000;
+		float radius = 1.0;
+		radius *= scale1d;
+		float rigid_mass = rhorigid * 4.0 /3.0*std::_Pi * radius * radius*radius;
+		Vector3f rigidI = RigidUtil::calculateSphereLocalInertia(
+			rigid_mass, radius);
 
-	//	/// rigids body
-	//	auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
-	//	int id = rigidSim->addRigid(prigid);
+		/// rigids body
+		auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
+		int id = rigidSim->addRigid(prigid);
 
-	//	auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-	//	renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
-	//	prigid->addVisualModule(renderModule);
-	//	m_rigids.push_back(prigid);
-	//	m_rigidRenders.push_back(renderModule);
-
-
-	//	prigid->loadShape("../../Media/standard/standard_sphere.obj");
-	//	auto triset = TypeInfo::cast<TriangleSet<DataType3f>>(prigid->getTopologyModule());
-	//	//triset->translate(Vector3f(0, 0, -0.5));
-	//	triset->scale(scale);
+		auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
+		renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+		prigid->addVisualModule(renderModule);
+		m_rigids.push_back(prigid);
+		m_rigidRenders.push_back(renderModule);
 
 
-	//	//prigid->setGeometrySize(scale[0], scale[1], scale[2]);
-	//	//prigid->setAngularVelocity(Vector3f(0., 0.0, -1.0));
+		prigid->loadShape("../../Media/standard/standard_sphere.obj");
+		auto triset = TypeInfo::cast<TriangleSet<DataType3f>>(prigid->getTopologyModule());
+		//triset->translate(Vector3f(0, 0, -0.5));
+		triset->scale(scale);
 
-	//	//prigid->setLinearVelocity(Vector3f(-1, 0.0, 0));
-	//	prigid->setAngularVelocity(Vector3f(0.0, 0.0, 50.0));
-	//	prigid->setGlobalR(Vector3f(0.5, 0.4, 0));
-	//	prigid->setGlobalQ(Quaternionf(0, 0, 0, 1).normalize());
-	//	prigid->setExternalForce(Vector3f(0, -5 * rigid_mass, 0));
-	//	prigid->setI(Inertia<float>(rigid_mass, rigidI));
 
-	//	DistanceField3D<DataType3f> sdf;
-	//	sdf.loadSDF("../../Media/standard/standard_sphere.sdf");
-	//	//sdf.translate(Vector3f(0, 0, -0.5) );
-	//	sdf.scale(scale1d);
-	//	interactionSolver->addSDF(sdf, id);
+		//prigid->setGeometrySize(scale[0], scale[1], scale[2]);
+		//prigid->setAngularVelocity(Vector3f(0., 0.0, -1.0));
 
-	//}
+		//prigid->setLinearVelocity(Vector3f(-1, 0.0, 0));
+		prigid->setAngularVelocity(Vector3f(0.0, 0.0, 50.0));
+		prigid->setGlobalR(Vector3f(0.5, 0.4, 0+0.5));
+		prigid->setGlobalQ(Quaternionf(0, 0, 0, 1).normalize());
+		prigid->setExternalForce(Vector3f(0, -5 * rigid_mass, 0));
+		prigid->setI(Inertia<float>(rigid_mass, rigidI));
+
+		DistanceField3D<DataType3f> sdf;
+		sdf.loadSDF("../../Media/standard/standard_sphere.sdf");
+		//sdf.translate(Vector3f(0, 0, -0.5) );
+		sdf.scale(scale1d);
+		interactionSolver->addSDF(sdf, id);
+
+	}
 
 	{
 
@@ -573,7 +573,7 @@ void DemoParticleSandRigid_Sphere::createScene()
 
 		prigid->setLinearVelocity(Vector3f(-1, 0.0, 0));
 
-		prigid->setGlobalR(Vector3f(+0.55, 0.5, 0));
+		prigid->setGlobalR(Vector3f(+0.55, 0.5, -0.5));
 		prigid->setGlobalQ(Quaternionf(0, 0, 0, 1).normalize());
 		prigid->setExternalForce(Vector3f(0, -5 * rigid_mass, 0));
 		prigid->setI(Inertia<float>(rigid_mass, rigidI));

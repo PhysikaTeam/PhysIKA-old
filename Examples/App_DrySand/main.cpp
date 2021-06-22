@@ -17,6 +17,7 @@
 #include "Dynamics/ParticleSystem/GranularModule.h"
 
 #include "Rendering/PointRenderModule.h"
+#include "Rendering/RigidMeshRender.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -69,6 +70,10 @@ void CreateScene()
 	rigidbody->loadShape("../../Media/bar/bar.obj");
 	rigidbody->setActive(false);
 	rigidbody->translate(Vector3f(0.2f, 0.2f, 0));
+
+	auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
+	renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+	rigidbody->getSurface()->addVisualModule(renderModule);
 }
 
 

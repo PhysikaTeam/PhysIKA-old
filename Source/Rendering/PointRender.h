@@ -58,6 +58,9 @@ public:
 	void renderSprite();
 	void renderPoints();
 
+	int numOfPoints() {
+		return m_vertVBO.getSize();
+	}				
 private:
 	bool use_point_sprite_ = true;
 

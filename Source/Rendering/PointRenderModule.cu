@@ -139,6 +139,11 @@ namespace PhysIKA
 
 		DeviceArray<float3>* xyz = (DeviceArray<float3>*)&(pSet->getPoints());
 		
+		if (xyz->size() != m_pointRender->numOfPoints())
+		{
+			m_pointRender->resize(xyz->size());
+			m_colorArray.resize(xyz->size());
+		}										  
 		if (!m_vecIndex.isEmpty())
 		{
 			uint pDims = cudaGridSize(xyz->size(), BLOCK_SIZE);
