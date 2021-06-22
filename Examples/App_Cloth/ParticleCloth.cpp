@@ -17,11 +17,11 @@ namespace PhysIKA
 	ParticleCloth<TDataType>::ParticleCloth(std::string name)
 		: ParticleSystem<TDataType>(name)
 	{
-		auto peri = std::make_shared<Peridynamics<TDataType>>();
-		this->setNumericalModel(peri);
-		this->currentPosition()->connect(&peri->m_position);
-		this->currentVelocity()->connect(&peri->m_velocity);
-		this->currentForce()->connect(&peri->m_forceDensity);
+		m_peri = std::make_shared<Peridynamics<TDataType>>();
+		this->setNumericalModel(m_peri);
+		this->currentPosition()->connect(&m_peri->m_position);
+		this->currentVelocity()->connect(&m_peri->m_velocity);
+		this->currentForce()->connect(&m_peri->m_forceDensity);
 
 		auto fixed = std::make_shared<FixedPoints<TDataType>>();
 
@@ -76,8 +76,10 @@ namespace PhysIKA
 	template<typename TDataType>
 	void ParticleCloth<TDataType>::advance(Real dt)
 	{
-		auto nModel = this->getNumericalModel();
-		nModel->step(this->getDt());
+		m_peri->m_elasticity->setIterationNumber(3);
+		m_peri->step(this->getDt());
+// 		auto nModel = this->getNumericalModel();
+// 		nModel->step(this->getDt());
 	}
 
 	template<typename TDataType>

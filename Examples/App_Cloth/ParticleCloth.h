@@ -3,6 +3,7 @@
 
 namespace PhysIKA
 {
+	template<typename TDataType> class Peridynamics;
 	/*!
 	*	\class	ParticleCloth
 	*	\brief	Peridynamics-based elastic object.
@@ -31,6 +32,8 @@ namespace PhysIKA
 
 	private:
 		std::shared_ptr<Node> m_surfaceNode;
+		std::shared_ptr<Peridynamics<TDataType>> m_peri;
+
 	};
 
 #ifdef PRECISION_FLOAT

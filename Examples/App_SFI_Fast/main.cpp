@@ -65,6 +65,7 @@ void CreateScene()
 	fluid->currentVelocity()->connect(&ptRender->m_vecIndex);
 
 	fluid->setActive(true);
+	fluid->self_update = false;
 
 	std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
 	//root->addParticleSystem(bunny);
