@@ -19,6 +19,7 @@
 
 #include "Nodes/QtBlock.h"
 
+#include <vector>
 // add by HNU
 #include <QtConcurrent\qtconcurrentrun.h>
 
