@@ -32,8 +32,11 @@ int main()
 	//bunny->addVisualModule(m_pointsRender);
 
 	bunny->setMass(1.0);
-	bunny->loadParticles("../../Media/bunny/bunny_points.obj");
-	bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+	//bunny->loadParticles("../../Media/bunny/bunny_points.obj");
+	//bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+	const string particles_file = "../../Media/dragon/dragon_points_20890.obj";
+	bunny->loadParticles(particles_file);
+	bunny->loadSurface("../../Media/dragon/dragon.obj");
 
   // bunny->scale(1.0 / 6);
 	bunny->translate(Vector3f(0.5, 0.2, 0.5));
@@ -68,6 +71,11 @@ int main()
   boost::property_tree::ptree pt;
   const std::string jsonfile_path = "../../Media/bunny/embedded_finite_element.json";
   read_json(jsonfile_path, pt);
+  pt.put("filename", particles_file);
+  pt.put("filename_coarse", "../../Media/dragon/dragon-tet.vtk");
+  pt.put("type", "tet");
+  pt.put("type_coarse", "tet");
+
   bunny->init_problem_and_solver(pt);
 	GLApp window;
 	window.createWindow(1024, 768);

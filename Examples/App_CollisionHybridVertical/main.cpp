@@ -83,8 +83,9 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
   }
   else if (model == "fem")
   {
-    std::shared_ptr<EmbeddedFiniteElement<DataType3f>> bunny = std::make_shared<EmbeddedFiniteElement<DataType3f>>();
-		root->addParticleSystem(bunny);
+    std::shared_ptr<EmbeddedFiniteElement<DataType3f>> bunny 
+		= std::make_shared<EmbeddedFiniteElement<DataType3f>>();
+	root->addParticleSystem(bunny);
     SetupModel(bunny, i, model);
 
     boost::property_tree::ptree pt;

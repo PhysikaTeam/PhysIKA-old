@@ -39,24 +39,30 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   //TODO: need to check exception
   const string filename = pt.get<string>("filename");
   const string filename_coarse = pt.get<string>("filename_coarse");
+  cout << "filename " << filename << "\n filename_coarse " << filename_coarse << endl;
   MAT<T> nods;
   MatrixXi cells;
 
   MAT<T> nods_coarse;
   MatrixXi cells_coarse;
 
-  const string type = pt.get<string>("type", "tet");
-  if(type  == "tet") {
+  string type = pt.get<string>("type", "tet");
+  if (type == "vox")
+	  type = "hex";
+  const string type_coarse = pt.get<string>("type_coarse", type);
+  cout << "mesh type is " << type << endl;
+  cout << "coarse type is " << type_coarse << endl;
+  if(type_coarse  == "tet") {
     IF_ERR(exit, mesh_read_from_vtk<T, 4>(filename_coarse.c_str(), nods_coarse, cells_coarse));
   }
-  else if(type == "hex")
+  else if(type_coarse == "hex")
   {
     exit_if(mesh_read_from_vtk<T, 8>(filename_coarse.c_str(), nods_coarse, cells_coarse));
   }
   else {
     // error_msg("type:<%s> is not supported.", type.c_str());
   }
-
+  cout << "number of cells is " << cells_coarse.cols() << endl;
   if (filename.rfind(".obj") != string::npos)
   {
     readOBJ(filename.c_str(), nods, cells);
@@ -73,6 +79,12 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
     {
       exit_if(mesh_read_from_vtk<T, 8>(filename.c_str(), nods, cells));
     }
+	else if (type == "hybrid") {
+		cout << "read hybrid mesh " << filename << endl;
+		exit_if(mesh_read_from_vtk<T, 8>(filename.c_str(), nods));
+		cells.resize(4, 0);
+
+	}
     else {
       // error_msg("type:<%s> is not supported.", type.c_str());
     }
@@ -83,7 +95,14 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   if (cells_coarse.size() == 0)
     cells_coarse.resize(4, 0);
   interp_pts_in_tets<T, 3>(nods, cells, nods_coarse, fine_to_coarse_coef_);
-  interp_pts_in_tets<T, 3>(nods_coarse, cells_coarse, nods, coarse_to_fine_coef_);
+  if (type_coarse == "tet")
+	  interp_pts_in_tets<T, 3>(nods_coarse, cells_coarse, nods, coarse_to_fine_coef_);
+  else {
+	  Eigen::MatrixXi hexs2tets = hex_2_tet(cells_coarse);
+	  cout << "size of hexs2tets " << hexs2tets.rows() << " " << hexs2tets.cols() << endl;
+	  interp_pts_in_tets<T, 3>(nods_coarse, hexs2tets, nods, coarse_to_fine_coef_);
+  }
+	  
 
   const size_t num_nods = nods_coarse.cols();
   cout <<"V"<< nods_coarse.rows() << " " << nods_coarse.cols() << endl << "T " << cells_coarse.rows() << " "<< cells_coarse.cols() << endl;
@@ -124,9 +143,9 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   //calc mass vector
   Matrix<T, -1, 1> mass_vec(num_nods);
   // calc_mass_vector<T>(nods, cells, rho, mass_vec);
-  if(type == "tet")
+  if(type_coarse == "tet")
     mass_calculator<T, 3, 4, 1, 1, basis_func, quadrature>(nods_coarse, cells_coarse, rho, mass_vec);
-  else if (type == "hex")
+  else if (type_coarse == "hex")
     mass_calculator<T, 3, 8, 1, 2, basis_func, quadrature>(nods_coarse, cells_coarse, rho, mass_vec);
 
   cout << "build energy" << endl;
@@ -141,7 +160,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
     const string csttt_type = phy_paras.get<string>("csttt", "linear");
     if(pt.get<bool>("rotate", false))
       nods_coarse = rotated_nods;
-    gen_elas_energy_intf<T>(type, csttt_type, nods_coarse, cells_coarse, Young, poi, ebf_[ELAS], &elas_intf_);
+    gen_elas_energy_intf<T>(type_coarse, csttt_type, nods_coarse, cells_coarse, Young, poi, ebf_[ELAS], &elas_intf_);
     nods_coarse = nods_temp;
     // to lowercase.
     char axis = pt.get<char>("grav_axis", 'y') | 0x20;
@@ -154,7 +173,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
     ebf_[POS] = make_shared<position_constraint<T, 3>>(nods_coarse.data(), num_nods, w_pos, cons);
 
   }
-
+  cout << "set up energy done." << endl;
 
 
 
@@ -182,6 +201,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
     Map<Matrix<T, -1, 1>> position(nods_coarse.data(), nods_coarse.size());
     semi_implicit_ = make_shared<semi_implicit<T>>(dt, mass_vec, position);
   }
+  cout << "init problem done." << endl;
 }
 
 template<typename T>
