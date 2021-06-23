@@ -20,6 +20,8 @@
 #include "Nodes/QtBlock.h"
 
 #include <vector>
+// add by HNU
+#include <QtConcurrent\qtconcurrentrun.h>
 
 namespace PhysIKA
 {
@@ -29,18 +31,6 @@ namespace PhysIKA
 	class Field;
 	class QDoubleSpinner;
 	class PVTKOpenGLWidget;
-
-	// add by HNU
-	class vtk2ObjThread :public QObject
-	{
-		Q_OBJECT
-
-	public:
-		void doWork(QString);
-
-	Q_SIGNALS:
-		void resultReady(QString);
-	};
 
 	// 20210315 add by HNU
 	class QTextFieldWidget:public QGroupBox
@@ -53,14 +43,11 @@ namespace PhysIKA
 		// files conversion *.k => *.obj
 		static QString k2Obj(const QString);
 		static QString vtk2Obj(const QString);
-
-		int multiK2Obj(QString);
+		void multiVTK2Obj(QString);
 		int startAnimating(QString);
 
 	Q_SIGNALS:
 		void loadFileSignal(const QString);
-
-		void multiThread(QString);
 
 	public slots :
 		void initSolverUi(QGridLayout*);

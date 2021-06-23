@@ -61,6 +61,9 @@ void CreateScene()
 		rigidbody->getSurface()->addVisualModule(renderModule);
 	}
 
+  // Output all particles to this .obj file.
+  ofstream outf("Particles.obj", ios::app);
+  
 	for (int i = 0; i < 24; i++)
 	{
 		std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
@@ -75,9 +78,27 @@ void CreateScene()
 		child3->setMass(1.0);
 		child3->loadParticles("../../Media/cloth/clothLarge.obj");
 		child3->loadSurface("../../Media/cloth/clothLarge.obj");
-
+    
 		child3->translate(Vector3f(0.0f, 0.3f + 0.02*i, 0.0f));
+    
+    // Output
+    auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+		auto& points = pSet->getPoints();
+		HostArray<Vector3f> hpoints(points.size());
+    if (outf.is_open())
+		{
+			for (int i = 0; i < hpoints.size(); ++i)
+			{
+				Vector3f curp = hpoints[i];
+				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+			}
+		}
+    
 	}
+  
+  // Output all particles, finished
+  outf.close();
+	std::cout << " Particle output:  FINISHED." << std::endl;
 
 // 	std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
 // 	root->addParticleSystem(child3);
@@ -92,7 +113,8 @@ void CreateScene()
 //   	child3->loadParticles("../../Media/cloth/clothLarge.obj");
 //   	child3->loadSurface("../../Media/cloth/clothLarge.obj");
 // 
-// 	child3->translate(Vector3f(0.0f, 0.8f, 0.0f));
+// 	child3->translate(Vector3f(0.0f, 0.8f, 0.0f))
+
 }
 
 
