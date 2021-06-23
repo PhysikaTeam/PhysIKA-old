@@ -46,7 +46,7 @@ if(PhysIKA_Qt5_GUI)
             /WHOLEARCHIVE:PaIO-${PHYSIKA_LIBRARY_VERSION}.lib
             /WHOLEARCHIVE:PaQtGUI-${PHYSIKA_LIBRARY_VERSION}.lib")
     else()
-        message(FATAL_ERROR "Could not set install folders for this platform!")
+        message(WARNING "Could not set install folders for this platform!")
     endif()
 
     file(RELATIVE_PATH PROJECT_PATH_REL "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")                  #get relative path
