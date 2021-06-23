@@ -38,8 +38,6 @@ namespace PhysIKA
 		bool initializeImpl() override;
 
 		void step(Real dt) override;
-
-
 	public:
 		VarField<Real> m_horizon;
 
@@ -47,6 +45,7 @@ namespace PhysIKA
 		DeviceArrayField<Coord> m_velocity;
 		DeviceArrayField<Coord> m_forceDensity;
 
+		std::shared_ptr<ElasticityModule<TDataType>> m_elasticity;
 	private:
 		HostVarField<int>* m_num;
 		HostVarField<Real>* m_mass;
@@ -57,7 +56,6 @@ namespace PhysIKA
 		std::shared_ptr<PointSetToPointSet<TDataType>> m_mapping;
 		std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;
 		std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
-		std::shared_ptr<ElasticityModule<TDataType>> m_elasticity;
 	};
 
 #ifdef PRECISION_FLOAT

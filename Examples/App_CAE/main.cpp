@@ -32,6 +32,7 @@
 #include "GUI/QtGUI/PPropertyWidget.h"
 #include <GUI/QtGUI/PMainWindow.h>
 #include <GUI/QtGUI/PVTKOpenGLWidget.h>
+#include <QtConcurrent\qtconcurrentrun.h>
 
 using namespace std;
 using namespace PhysIKA;
@@ -210,6 +211,7 @@ int main()
 			//root->loadMesh("C:/Users/Stone/Desktop/Release_subdomainscale0.5/output/result_15.obj");
 			//rigidbody->loadShape("C:/Users/Stone/Desktop/Release_subdomainscale0.5/output/result_15.obj");
 
+			
 			root->loadMesh(str.toStdString());
 
 			rigidbody->loadShape(str.toStdString());
