@@ -65,6 +65,7 @@ void CreateScene()
 	fluid->currentVelocity()->connect(&ptRender->m_vecIndex);
 
 	fluid->setActive(true);
+	fluid->self_update = false;
 
 	// Output all particles to .txt file.
 	{
