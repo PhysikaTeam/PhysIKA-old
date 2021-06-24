@@ -1,4 +1,4 @@
-#include "Dynamics/Sand/swe/SandVisualPointSampleModule.h"
+#include "Dynamics/Sand/SandVisualPointSampleModule.h"
 
 #include <thrust/execution_policy.h>
 #include <thrust/reduce.h>
@@ -9,11 +9,11 @@
 
 #include "Dynamics/HeightField/HeightFieldGrid.h"
 
-#include "Dynamics/Sand/swe/types.h"
+#include "Dynamics/Sand/types.h"
 
 #include "Framework/Framework/Node.h"
 #include "Core/Utility/cuda_utilities.h"
-//#include "Dynamics/Sand/swe/SSEUtil.h"
+//#include "Dynamics/Sand/SSEUtil.h"
 
 //#include <cuda_runtime.h>
 //#ifndef __CUDACC__  

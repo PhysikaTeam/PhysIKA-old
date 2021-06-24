@@ -1,6 +1,6 @@
 #include "SandSimulator.h"
 
-#include "Dynamics/Sand/swe/SSEUtil.h"
+#include "Dynamics/Sand/SSEUtil.h"
 #include "SSESandSolver.h"
 #include <iostream>
 

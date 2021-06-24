@@ -2,7 +2,7 @@
 #ifndef _PBDSANDSOLVER_H
 #define _PBDSANDSOLVER_H
 
-#include "Dynamics/Sand/swe/SandSolverInterface.h"
+#include "Dynamics/Sand/SandSolverInterface.h"
 
 #include "Dynamics/RigidBody/PBDRigid/PBDSolver.h"
 #include "Dynamics/HeightField/HeightFieldGrid.h"

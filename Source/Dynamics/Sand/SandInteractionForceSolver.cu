@@ -1,4 +1,4 @@
-#include "Dynamics/Sand/swe/SandInteractionForceSolver.h"
+#include "Dynamics/Sand/SandInteractionForceSolver.h"
 
 #include <thrust/execution_policy.h>
 #include <thrust/reduce.h>

@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "Dynamics/Sand/swe/ParticleSandRigidInteraction.h"
+#include "Dynamics/Sand/ParticleSandRigidInteraction.h"
 #include <curand.h>
 
 #include "Framework/Framework/ModuleCustom.h"

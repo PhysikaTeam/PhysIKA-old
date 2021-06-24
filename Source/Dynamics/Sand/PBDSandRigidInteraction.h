@@ -3,7 +3,7 @@
 #ifndef PBDSANDRIGIDINTERACTION_H
 #define PBDSANDRIGIDINTERACTION_H
 
-#include "Dynamics/Sand/swe/PBDSandSolver.h"
+#include "Dynamics/Sand/PBDSandSolver.h"
 #include "Dynamics/RigidBody/PBDRigid/PBDSolver.h"
 #include "Dynamics/RigidBody/PBDRigid/PointSDFContactDetector.h"
 #include "Framework/Framework/Node.h"

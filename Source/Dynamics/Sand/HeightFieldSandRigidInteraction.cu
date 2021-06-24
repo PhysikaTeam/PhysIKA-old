@@ -1,6 +1,6 @@
 
-#include "Dynamics/Sand/swe/HeightFieldSandRigidInteraction.h"
-#include "Dynamics/Sand/swe/SSEUtil.h"
+#include "Dynamics/Sand/HeightFieldSandRigidInteraction.h"
+#include "Dynamics/Sand/SSEUtil.h"
 #include <functional>
 
 namespace PhysIKA
