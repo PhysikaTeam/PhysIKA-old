@@ -97,6 +97,8 @@ namespace PhysIKA
 
 		m_lowBound = lo;
 		m_highBound = hi;
+		
+		m_hash.setSpace(this->inRadius()->getValue(), m_lowBound, m_highBound);
 
 //		attachField(&m_radius, "Radius", "Radius of the searching area", false);
 //		attachField(&m_position, "position", "Storing the particle positions!", false);

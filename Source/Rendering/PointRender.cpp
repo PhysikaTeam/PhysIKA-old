@@ -183,7 +183,12 @@ void PointRender::resize(unsigned int num)
 int id = 0;
 void PointRender::setVertexArray(DeviceArray<float3>& pos)
 {
+	cudaError_t err = cudaGetLastError();
+
+
 	cudaMemcpy(m_vertVBO.cudaMap(), pos.getDataPtr(), sizeof(float3) * pos.size(), cudaMemcpyDeviceToDevice);
+
+	err = cudaGetLastError();
 	m_vertVBO.cudaUnmap();
 }
 

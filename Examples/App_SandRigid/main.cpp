@@ -24,8 +24,33 @@ int main()
 	//demo.createScene();
 	//demo.run();
 
+	std::cout << "Input to choose a simulation scene: " << std::endl;
+	std::cout << "   0:  Car running on sand." << std::endl;
+	std::cout << "   1:  Sand-rigid coupling." << std::endl;
 
+	int caseid = 0;
+	std::cin >> caseid;
 
+	switch (caseid)
+	{
+	case 0:
+	{
+		DemoParticleSandMultiRigid* demo = DemoParticleSandMultiRigid::getInstance();
+		demo->createScene();
+		demo->run();
+		break;
+	}
+	case 1:
+	{
+		DemoParticleSandRigid_Sphere* demo = DemoParticleSandRigid_Sphere::getInstance();
+		demo->createScene();
+		demo->run();
+		break;
+	}
+
+	default:
+		break;
+	}
 
 
 	//DemoParticleSand* demo = DemoParticleSand::getInstance();
@@ -71,9 +96,9 @@ int main()
 	//demo->run();
 
 
-	DemoParticleRiver* demo = DemoParticleRiver::getInstance();
-	demo->createScene();
-	demo->run();
+	//DemoParticleRiver* demo = DemoParticleRiver::getInstance();
+	//demo->createScene();
+	//demo->run();
 
 
 	// **********************

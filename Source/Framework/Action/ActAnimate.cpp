@@ -5,6 +5,7 @@
 #include "Framework/Framework/ControllerAnimation.h"
 #include "Framework/Framework/CollisionModel.h"
 #include "Framework/Framework/TopologyMapping.h"
+#include "Framework/Framework/ModuleCustom.h"
 
 namespace PhysIKA
 {
@@ -28,8 +29,17 @@ namespace PhysIKA
 		}
 		if (node->isActive())
 		{
+			node->updateStatus();
+
+			auto customModules = node->getCustomModuleList();
+			for (std::list<std::shared_ptr<CustomModule>>::iterator iter = customModules.begin(); iter != customModules.end(); iter++)
+			{
+				(*iter)->update();
+			}
+
 			node->advance(node->getDt());
 			node->updateTopology();
+
 
 			/*if (node->getAnimationController() != nullptr)
 			{

@@ -43,10 +43,10 @@ namespace PhysIKA{
 				data >> c >> v0 >> v1 >> v2;
 				faceList.push_back(Face(v0 - 1, v1 - 1, v2 - 1));
 			}
-			else if (line.substr(0, 2) == std::string("vn")) {
-				std::cerr << "Obj-loader is not able to parse vertex normals, please strip them from the input file. \n";
-				exit(-2);
-			}
+			//else if (line.substr(0, 2) == std::string("vn")) {
+			//	std::cerr << "Obj-loader is not able to parse vertex normals, please strip them from the input file. \n";
+			//	exit(-2);
+			//}
 			else {
 				++ignored_lines;
 			}
