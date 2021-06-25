@@ -60,7 +60,7 @@ int newton_base<T, dim_>::solve(T* x_star)const{
   T res_last_iter = 9999999;
 
   for(size_t newton_i = 0; newton_i < max_iter_; ++newton_i){
-    cout << "[INFO]>>>>>>>>>>>>>>>newton iter is " << newton_i << endl;
+    //cout << "[INFO]>>>>>>>>>>>>>>>newton iter is " << newton_i << endl;
     dat_str_->set_zero();
     IF_ERR(return,pb_->energy_->Val(x_star, dat_str_));
     IF_ERR(return,pb_->energy_->Gra(x_star, dat_str_));
@@ -71,8 +71,8 @@ int newton_base<T, dim_>::solve(T* x_star)const{
     }
 
     const T res_value = res.array().abs().sum();
-    cout << "[INFO]: energy gradient " << res_value << endl;
-    cout << "[INFO]: energy value: " << dat_str_->get_val() << endl;
+    //cout << "[INFO]: energy gradient " << res_value << endl;
+    //cout << "[INFO]: energy value: " << dat_str_->get_val() << endl;
 
     if(res_value < tol_){
       cout << endl;
@@ -129,7 +129,7 @@ int newton_base<T, dim_>::solve(T* x_star)const{
     T res_last_iter = 9999999;
                                                        
     for(size_t newton_i = 0; newton_i < max_iter_; ++newton_i){
-      cout << "[INFO]>>>>>>>>>>>>>>>newton iter is " << newton_i << endl;
+      //cout << "[INFO]>>>>>>>>>>>>>>>newton iter is " << newton_i << endl;
       dat_str_->set_zero();
       IF_ERR(return,pb_->energy_->Val(x_coarse.data(), dat_str_));
       IF_ERR(return,pb_->energy_->Gra(x_coarse.data(), dat_str_));
@@ -140,8 +140,8 @@ int newton_base<T, dim_>::solve(T* x_star)const{
       }
 
       const T res_value = res.array().abs().sum();
-      cout << "[INFO]: energy gradient " << res_value << endl;
-      cout << "[INFO]: energy value: " << dat_str_->get_val() << endl;
+      //cout << "[INFO]: energy gradient " << res_value << endl;
+      //cout << "[INFO]: energy value: " << dat_str_->get_val() << endl;
 
       if(res_value < tol_){
         cout << endl;
@@ -154,20 +154,20 @@ int newton_base<T, dim_>::solve(T* x_star)const{
       res_last_iter = res_value;
 
       const auto A = dat_str_->get_hes();
-      cout << "norm of A is " << std::setprecision(20) << A.norm() << endl;
+      //cout << "norm of A is " << std::setprecision(20) << A.norm() << endl;
       Eigen::SparseMatrix<T, Eigen::RowMajor> J;
       Matrix<T, -1, 1> C;
       get_J_C(x_coarse.data(), J, C);
       __TIME_BEGIN__;
       IF_ERR(return, solve_linear_eq(A, res.data(), J, C.data(), x_coarse.data(), solution.data()));
-      __TIME_END__("solve eq", true);
+      __TIME_END__("solve eq", false);
       if(line_search_)
         x_coarse += line_search<T, dim_>(dat_str_->get_val(), static_cast<T>(res.dot(solution)), pb_->energy_, dat_str_, x_coarse.data(), solution.data()) * solution;
       else
         x_coarse +=  solution;
     }
 
-    cerr << "[   \033[1;37mlog\033[0m   ] " << "len of pos:" << solution.norm() << endl;
+    //cerr << "[   \033[1;37mlog\033[0m   ] " << "len of pos:" << solution.norm() << endl;
     const SparseMatrix<T> &c2f_coeff = embedded_interp_->get_coarse_to_fine_coeff();
 
     X_star = X_coarse * c2f_coeff;

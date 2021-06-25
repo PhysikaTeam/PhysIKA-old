@@ -7,7 +7,6 @@
 #ifndef PhysIKA_PCG_NEW
 #define PhysIKA_PCG_NEW
 #include <Eigen/Sparse>
-
 #include <iostream>
 #include "Common/DEFINE_TYPE.h"
 #include "linear_solver.h"
@@ -38,7 +37,7 @@ class EIGEN_PCG : public unconstrainted_linear_solver<T>{
     cg.setTolerance(tol_);
     cg.compute(A);
     sol = cg.solve(rhs);
-    std::cout << "norm of residual of linear equation: "<< (A * sol - rhs).norm() << std::endl << "iteratoin: " << cg.iterations() << std::endl;
+    //std::cout << "norm of residual of linear equation: "<< (A * sol - rhs).norm() << std::endl << "iteratoin: " << cg.iterations() << std::endl;
 
     if(cg.info() == Eigen::Success)
       return 0;

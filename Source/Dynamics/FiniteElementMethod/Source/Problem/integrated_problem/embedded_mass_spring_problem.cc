@@ -112,14 +112,14 @@ embedded_ms_problem_builder<T>::embedded_ms_problem_builder(const T* x, const bo
     const string cons_file_path = common.get<string>("input_constraint");
   /*  IF_ERR(exit, read_fixed_verts_from_csv(cons_file_path.c_str(), cons));*/
   }
-  cout << "constrint " << cons.size() << " points" << endl;
+ // cout << "constrint " << cons.size() << " points" << endl;
 
   //calc mass vector
   Matrix<T, -1, 1> mass_vec(num_nods);
   calc_mass_vector<T>(nods_coarse, cells_coarse, para::density, mass_vec);
   // mass_calculator<T, 3, 4, 1, 1, basis_func, quadrature>(nods_coarse, cells_coarse, para::density, mass_vec);
 
-  cout << "build energy" << endl;
+  //cout << "build energy" << endl;
   int ELAS = 0;
   int GRAV = 1;
   int KIN = 2;

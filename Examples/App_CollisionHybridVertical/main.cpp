@@ -41,7 +41,7 @@ using namespace std;
 using namespace PhysIKA;
 
 template<typename T>
-void SetupModel(T &bunny, int i, Vector3f color)
+void SetupModel(T &bunny, int i, Vector3f color, const float offset_dis )
 {
   auto sRender = std::make_shared<SurfaceMeshRender>();
   bunny->getSurfaceNode()->addVisualModule(sRender);
@@ -56,7 +56,7 @@ void SetupModel(T &bunny, int i, Vector3f color)
 
   bunny->setMass(1000.0);
   
-	bunny->translate(Vector3f(0.5 , 0.2 + 0.4*i, 0.8));
+	bunny->translate(Vector3f(0.5 , 0.2 + offset_dis, 0.8));
 	bunny->setVisible(true);
 	bunny->getElasticitySolver()->setIterationNumber(10);
 	//bunny->getElasticitySolver()->setMu(1e20);
@@ -67,7 +67,7 @@ void SetupModel(T &bunny, int i, Vector3f color)
 	bunny->getTopologyMapping()->setSearchingRadius(0.05);
 }
 
-void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::shared_ptr<SolidFluidInteraction<DataType3f>> &sfi, int i, std::string phy_model, std::string geo_model)
+void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::shared_ptr<SolidFluidInteraction<DataType3f>> &sfi, int i, std::string phy_model, std::string geo_model, const float offset_dis)
 {
 	const string path = "../../Media/zju/" + geo_model + "/";
 	Eigen::Vector3f color_eigen = Eigen::Vector3f::Random();
@@ -88,7 +88,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 		bunny->loadSurface(path + geo_model + ".obj");
 		
 		//Vector3f color(1, 1, 0);
-        SetupModel(bunny, i, color);
+        SetupModel(bunny, i, color, offset_dis);
 
         boost::property_tree::ptree pt;
 	    read_json(jsonfile_path, pt);
@@ -110,7 +110,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 	bunny->loadParticles(particles_file);
 	bunny->loadSurface(path + geo_model+".obj");
 	
-    SetupModel(bunny, i, color);
+    SetupModel(bunny, i, color, offset_dis);
 
     boost::property_tree::ptree pt;
     /*read_json("../../Media/dragon/collision_hybrid.json", pt);*/
@@ -131,7 +131,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 	bunny->loadParticles(particles_file);
 	bunny->loadSurface(path + geo_model + ".obj");
 	//Vector3f color(0, 1, 1);
-    SetupModel(bunny, i, color);
+    SetupModel(bunny, i, color, offset_dis);
     sfi->addParticleSystem(bunny);
   }    
 
@@ -157,12 +157,12 @@ void CreateScene()
 	//bunny 0.03
 
 
-	AddSimulationModel(root, sfi, 0, "fem_hex", "david");
-	AddSimulationModel(root, sfi, 1, "mass_spring", "bunny");
-	AddSimulationModel(root, sfi, 2, "fem_hybrid", "duck");
-	AddSimulationModel(root, sfi, 3, "meshless", "woodenfish");
-	AddSimulationModel(root, sfi, 4, "fem_vox", "homer");
-	AddSimulationModel(root, sfi, 5, "fem_tet", "armadillo");
+	AddSimulationModel(root, sfi, 0, "fem_hex", "david", 0);
+	AddSimulationModel(root, sfi, 1, "mass_spring", "bunny", 0.4);
+	AddSimulationModel(root, sfi, 2, "fem_hybrid", "duck", 0.6);
+	AddSimulationModel(root, sfi, 3, "meshless", "woodenfish", 1.0);
+	AddSimulationModel(root, sfi, 4, "fem_vox", "homer",1.4);
+	AddSimulationModel(root, sfi, 5, "fem_tet", "armadillo",1.7);
 
 	/*	AddSimulationModel(root, sfi, 2, "meshless", "duck");
 	AddSimulationModel(root, sfi, 3, "meshless", "duck");

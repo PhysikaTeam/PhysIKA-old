@@ -207,7 +207,7 @@ void CreateScene()
 
 		printf("%d\n", i);
 		cout << __LINE__ << endl;
-		std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+		std::shared_ptr<EmbeddedMassSpring<DataType3f>> bunny = std::make_shared<EmbeddedMassSpring<DataType3f>>();
 		root->addParticleSystem(bunny);
 		bunny->setMass(1.0);
 		bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
@@ -221,6 +221,12 @@ void CreateScene()
 		auto sRender = std::make_shared<SurfaceMeshRender>();
 		bunny->getSurfaceNode()->addVisualModule(sRender);
 		sRender->setColor(Vector3f(1, 0, 1));
+
+
+		boost::property_tree::ptree pt;
+		const std::string jsonfile_path = "../../Media/bunny/collision_hybrid.json";
+		read_json(jsonfile_path, pt);
+		bunny->init_problem_and_solver(pt);
 
 		sfi->addParticleSystem(bunny);
 
