@@ -52,7 +52,7 @@ namespace PhysIKA {
     };
 
   template<typename FLOAT, size_t dim_>
-  Eigen::Vector4i get_noncoplanar_tet(const Eigen::Matrix<FLOAT, dim_, -1>&v, const std::vector<size_t>& neigh_vert_idx);
+  Eigen::Vector4i get_noncoplanar_tet(const Eigen::Matrix<FLOAT, dim_, -1>&v, const std::vector<size_t>& neigh_vert_idx, const Eigen::Matrix<FLOAT, dim_, 1>& p);
   template<typename T, size_t dim_>
   int interp_pts_in_point_cloud(const Eigen::Matrix<T, dim_, -1> &v, const Eigen::Matrix<T, dim_, -1> &pts, Eigen::SparseMatrix<T> &coef);
   

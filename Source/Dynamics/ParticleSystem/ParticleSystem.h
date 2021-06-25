@@ -29,6 +29,7 @@ namespace PhysIKA
 		void loadParticles(Coord lo, Coord hi, Real distance);
 		void loadParticles(Coord center, Real r, Real distance);
 		void loadParticles(std::string filename);
+		void getBoundingBox(Coord& min, Coord& max);
 
 		virtual bool translate(Coord t);
 		virtual bool scale(Real s);
