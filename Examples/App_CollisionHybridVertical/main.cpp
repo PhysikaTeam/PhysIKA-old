@@ -56,11 +56,11 @@ void SetupModel(T &bunny, int i, Vector3f color)
 
   bunny->setMass(1000.0);
   
-	bunny->translate(Vector3f(0.2 , 0.2 + 0.35*i, 0.8));
+	bunny->translate(Vector3f(0.5 , 0.2 + 0.4*i, 0.8));
 	bunny->setVisible(true);
 	bunny->getElasticitySolver()->setIterationNumber(10);
-	//bunny->getElasticitySolver()->setMu(0.01);
-	//bunny->getElasticitySolver()->setLambda(0.01);
+	//bunny->getElasticitySolver()->setMu(1e20);
+	//bunny->getElasticitySolver()->setLambda(1e20);
 
 	//bunny->getElasticitySolver()->setHorizon(0.03);
 	bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
@@ -141,11 +141,11 @@ void CreateScene()
 {
   
   SceneGraph& scene = SceneGraph::getInstance();
-	scene.setUpperBound(Vector3f(1, 2.0, 1));
+	scene.setUpperBound(Vector3f(1, 10.0, 1));
 	scene.setLowerBound(Vector3f(0, 0.0, 0));
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 2.0, 1), 0.015f, true);
+	root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 10.0, 1), 0.015f, true);
 	//root->loadSDF("box.sdf", true);
 
 	std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
@@ -157,12 +157,12 @@ void CreateScene()
 	//bunny 0.03
 
 
-	AddSimulationModel(root, sfi, 0, "meshless", "david");
+	AddSimulationModel(root, sfi, 0, "fem_hex", "david");
 	AddSimulationModel(root, sfi, 1, "mass_spring", "bunny");
-	AddSimulationModel(root, sfi, 2, "fem_tet", "duck");
-	AddSimulationModel(root, sfi, 3, "meshless", "armadillo");
+	AddSimulationModel(root, sfi, 2, "fem_hybrid", "duck");
+	AddSimulationModel(root, sfi, 3, "meshless", "woodenfish");
 	AddSimulationModel(root, sfi, 4, "fem_vox", "homer");
-	AddSimulationModel(root, sfi, 5, "fem_hybrid", "homer");
+	AddSimulationModel(root, sfi, 5, "fem_tet", "armadillo");
 
 	/*	AddSimulationModel(root, sfi, 2, "meshless", "duck");
 	AddSimulationModel(root, sfi, 3, "meshless", "duck");

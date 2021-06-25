@@ -28,20 +28,7 @@ namespace PhysIKA
 	{
 		
 	}
-	template<typename TDataType>
-	void ParticleSystem<TDataType>::getBoundingBox(Coord& min, Coord& max) {
-		auto& coords = m_pSet->gethPoints();
-		min = coords[0];
-		max = coords[0];
-		for (auto& c : coords) {
-			for (int i = 0; i < 3; ++i) {
-				if (c[i] < min[i])
-					min[i] = c[i];
-				if (c[i] > max[i])
-					max[i] = c[i];
-			}
-		}
-	}
+
 
 	template<typename TDataType>
 	void ParticleSystem<TDataType>::loadParticles(std::string filename)

@@ -64,46 +64,14 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
 	}
 	else if (type_coarse == "hybrid") {
 		cout << "read hybrid mesh " << filename << endl;
-		exit_if(mesh_read_from_vtk<T, 8>(filename.c_str(), nods_coarse));
-		Vector3T nods_min = nods_coarse.col(0);
-		Vector3T nods_max = nods_coarse.col(1);
-		for (size_t i = 0; i < 3; ++i) {
-			nods_min(i) = nods_coarse.row(i).minCoeff();
-			nods_max(i) = nods_coarse.row(i).maxCoeff();
-		}
-		Matrix<T, 3, 8> nods_coarsest = Matrix<T, 3, 8>::Ones();
-		//set z
-		nods_coarsest.block<1, 4>(2, 0) *= nods_min(2);
-		nods_coarsest.block<1, 4>(2, 4) *= nods_max(2);
-		//set y
-		Vector4i y_min{ {2, 3, 6, 7} };
-		Vector4i y_max{ {0, 1, 4, 5} };
-		nods_coarsest(1, y_min) *= nods_min(1);
-		nods_coarsest(1, y_max) *= nods_max(1);
-		//set x
-		Vector4i x_min{ {0, 3, 4, 7} };
-		Vector4i x_max{ {1, 2, 5, 6} };
-		nods_coarsest(0, x_min) *= nods_min(0);
-		nods_coarsest(0, x_max) *= nods_max(0);
-
-		nods_coarse = nods_coarsest;
-
-		cout << nods_coarse << endl;
-		cells_coarse.resize(8, 1);
-		cells_coarse.col(0).setLinSpaced(8, 0, 7);
-		Eigen::MatrixXi hexs2tets = hex_2_tet(cells_coarse);
-		cells_coarse = hexs2tets;
-
-		cout << cells_coarse << endl;
-		type_coarse = "tet";
-
+		exit_if(mesh_read_from_vtk<T, 8>(filename_coarse.c_str(), nods_coarse));
 	}else
 	{
     // error_msg("type:<%s> is not supported.", type.c_str());
   }
   cout << "number of cells is " << cells_coarse.cols() << endl;
-#if 0
-  {
+#if 1
+  if(type_coarse == "hybrid"){
 	  Vector3T nods_min = nods_coarse.col(0);
 	  Vector3T nods_max = nods_coarse.col(1);
     for(size_t i = 0; i < 3; ++i){
@@ -172,15 +140,13 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   interp_pts_in_tets<T, 3>(nods, cells, nods_coarse, fine_to_coarse_coef_);
   //interp_pts_in_point_cloud<T, 3>(nods_coarse, nods, coarse_to_fine_coef_);
 
- 
-	  
   if (type_coarse == "tet")
 	  interp_pts_in_tets<T, 3>(nods_coarse, cells_coarse, nods, coarse_to_fine_coef_);
   else {
-	  interp_pts_in_point_cloud<T, 3>(nods_coarse, nods, coarse_to_fine_coef_);
-	/*  Eigen::MatrixXi hexs2tets = hex_2_tet(cells_coarse);
+	  //interp_pts_in_point_cloud<T, 3>(nods_coarse, nods, coarse_to_fine_coef_);
+	  Eigen::MatrixXi hexs2tets = hex_2_tet(cells_coarse);
 	  cout << "size of hexs2tets " << hexs2tets.rows() << " " << hexs2tets.cols() << endl;
-	  interp_pts_in_tets<T, 3>(nods_coarse, hexs2tets, nods, coarse_to_fine_coef_);*/
+	  interp_pts_in_tets<T, 3>(nods_coarse, hexs2tets, nods, coarse_to_fine_coef_);
   }
 	  
 

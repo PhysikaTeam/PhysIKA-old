@@ -4,10 +4,10 @@
 #include "Framework/Topology/PointSet.h"
 #include "Core/Utility.h"
 #include "SummationDensity.h"
-#include <fstream>
+
 #include <time.h>
 
-using namespace std;
+
 
 namespace PhysIKA
 {
