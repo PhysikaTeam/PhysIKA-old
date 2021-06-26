@@ -18,6 +18,7 @@
 #include "Io/io.h"
 #include "Geometry/extract_surface.imp"
 #include "Geometry/interpolate.h"
+#include "Geometry/subdivid.h"
 #include "libigl/include/igl/readOBJ.h"
 
 #include "embedded_elas_fem_problem.h"
@@ -71,13 +72,14 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   }
   cout << "number of cells is " << cells_coarse.cols() << endl;
 #if 1
-  if(type_coarse == "hybrid" ){
+  if(type_coarse == "hybrid"  ){
 	  Vector3T nods_min = nods_coarse.col(0);
 	  Vector3T nods_max = nods_coarse.col(1);
     for(size_t i = 0; i < 3; ++i){
       nods_min(i) = nods_coarse.row(i).minCoeff();
       nods_max(i) = nods_coarse.row(i).maxCoeff();
     }
+	cout << nods_min << endl << nods_max << endl;
     Matrix<T, 3, 8> nods_coarsest = Matrix<T, 3, 8>::Ones();
     //set z
     nods_coarsest.block<1,4>(2,0) *= nods_min(2);
@@ -95,14 +97,27 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
 
     nods_coarse = nods_coarsest;
 
-    cout << nods_coarse << endl;
-    cells_coarse.resize(8, 1);
+  /*  cells_coarse.resize(8, 1);
     cells_coarse.col(0).setLinSpaced(8, 0, 7);
-    Eigen::MatrixXi hexs2tets = hex_2_tet(cells_coarse);
-    cells_coarse = hexs2tets;
+	Eigen::MatrixXi hexs2tets = hex_2_tet(cells_coarse);
+	cells_coarse = hexs2tets;
+	type_coarse = "tet";*/
 
-    cout << cells_coarse << endl;
-    type_coarse = "tet";
+
+	Matrix<T, 3, 125> nods_125;
+	Matrix<int, 8, 64> cells_64;
+	HexDiv1To64<T>(nods_coarsest, nods_125, cells_64);
+	nods_coarse = nods_125;
+	cells_coarse = cells_64;
+	type_coarse = "hex";
+	/*cout << nods_125 << endl << cells_64 << endl;*/
+
+	Eigen::MatrixXi hexs2tets = hex_2_tet(cells_coarse);
+	cells_coarse = hexs2tets;
+	type_coarse = "tet"; 
+
+	
+
 
   }
 #endif
@@ -169,7 +184,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
 
   auto phy_paras = pt.get_child("physics");
   const  T rho = phy_paras.get<T>("rho",20);
-  const  T Young = phy_paras.get<T>("Young", 2000.0);
+  const  T Young = 10  *phy_paras.get<T>("Young", 2000.0);
   const  T poi = phy_paras.get<T>("poi", 0.3);
   const  T gravity = phy_paras.get<T>("gravity", 9.8);
   const  T dt = phy_paras.get<T>("dt", 0.01);

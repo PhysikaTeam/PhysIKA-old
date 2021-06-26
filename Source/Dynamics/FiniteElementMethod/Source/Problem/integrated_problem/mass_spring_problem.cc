@@ -118,7 +118,7 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
 
 template<typename T>
 std::shared_ptr<Problem<T, 3>> ms_problem_builder<T>::build_problem() const{
-  cout << "assemble energy" << endl;
+  //cout << "assemble energy" << endl;
   shared_ptr<Functional<T, 3>> energy;
   try
   {
@@ -131,13 +131,13 @@ std::shared_ptr<Problem<T, 3>> ms_problem_builder<T>::build_problem() const{
   }
 
   shared_ptr<Constraint<T>> constraint;
-  cout << "assemble constraint" << endl;
+  //cout << "assemble constraint" << endl;
   bool all_null = true;
   for(auto& c : cbf_)
     if( c != nullptr) all_null = false;
   if(all_null){
     constraint = nullptr;
-    cout << "WARNGING: No hard constraints." << endl;
+    //cout << "WARNGING: No hard constraints." << endl;
   }else{
     try {
       constraint = build_constraint_t<T>(cbf_);
