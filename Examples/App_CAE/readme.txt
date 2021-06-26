@@ -2,7 +2,7 @@ This project has some necessary dependencies:
 -------------------------------------------------------------
 1. metis.lib (debug/release mode)
 (../Extern/CAESolver/metis)
-2. contact_impact_parallel.lib  (debug/release mode) and the corresponding header file
+2. contact_impact_parallel.lib  (debug/release mode) and the corresponding header files
 (../Extern/CAESolver/CAE_h)
 
 Not necessary but sometimes may be helpful
