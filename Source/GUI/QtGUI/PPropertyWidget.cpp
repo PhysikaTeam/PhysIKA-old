@@ -29,7 +29,8 @@ namespace PhysIKA
 {
 	// add by HNU
 	QString* QTextFieldWidget::m_InputPathSaver = nullptr;
-	QString* QTextFieldWidget::m_solverPathSaver = nullptr;
+	// disable for using lib
+	//QString* QTextFieldWidget::m_solverPathSaver = nullptr;
 	QString* QTextFieldWidget::m_workDirPathSaver = nullptr;
 	QString* QTextFieldWidget::m_previewSaver = nullptr;
 
@@ -56,9 +57,9 @@ namespace PhysIKA
 		m_btnManager[0]->setObjectName("inputBtn");
 		btnAddPicHelper(m_btnManager[0]);
 
-		layout->addWidget(name, 0, 0);
-		layout->addWidget(m_inputCombo, 0, 1);
-		layout->addWidget(m_btnManager[0], 0, 2);
+		layout->addWidget(name, 1, 0);
+		layout->addWidget(m_inputCombo, 1, 1);
+		layout->addWidget(m_btnManager[0], 1, 2);
 
 		connect(m_btnManager[0], &QPushButton::clicked, this, &QTextFieldWidget::btnClicked);
 		//connect(m_inputCombo, &QComboBox::currentTextChanged, this, &QTextFieldWidget::emitLoadFileSignal);
@@ -107,15 +108,17 @@ namespace PhysIKA
 		layout->addWidget(IDLabel, 0, 5);
 
 		// row 2
-		QLabel* solverLabel = new QLabel("Solver");
-		m_solverCombo->setFixedWidth(360);
-		m_solverCombo->insertItem(0, *QTextFieldWidget::getSolverPathSaver());
-		m_solverCombo->setCurrentIndex(0);
+		// disable for using lib
+		//QLabel* solverLabel = new QLabel("Solver");
+		//m_solverCombo->setFixedWidth(360);
+		//m_solverCombo->insertItem(0, *QTextFieldWidget::getSolverPathSaver());
+		//m_solverCombo->setCurrentIndex(0);
 
 
-		m_btnManager[1] = new QPushButton;
-		m_btnManager[1]->setObjectName("solverBtn");
-		btnAddPicHelper(m_btnManager[1]);
+		// disable for using lib
+		//m_btnManager[1] = new QPushButton;
+		//m_btnManager[1]->setObjectName("solverBtn");
+		//btnAddPicHelper(m_btnManager[1]);
 
 		QComboBox* cgCombo = new QComboBox;
 		cgCombo->insertItem(0, "GPU");
@@ -125,14 +128,14 @@ namespace PhysIKA
 		m_numLineedit->setFixedWidth(20);
 		m_IDLineedit->setFixedWidth(20);
 
-		layout->addWidget(solverLabel, 1, 0);
-		layout->addWidget(m_solverCombo, 1, 1);
-		layout->addWidget(m_btnManager[1], 1, 2);
+		// disable for using lib
+		//layout->addWidget(solverLabel, 1, 0);
+		//layout->addWidget(m_solverCombo, 1, 1);
+		//layout->addWidget(m_btnManager[1], 1, 2);
 		layout->addWidget(cgCombo, 1, 3);
 		layout->addWidget(m_numLineedit, 1, 4);
 		layout->addWidget(m_IDLineedit, 1, 5);
-
-		connect(m_btnManager[1], &QPushButton::clicked, this, &QTextFieldWidget::btnClicked);
+		//connect(m_btnManager[1], &QPushButton::clicked, this, &QTextFieldWidget::btnClicked);
 
 		// row 3
 		QLabel* workDirLabel = new QLabel("WorkDir");
@@ -219,10 +222,10 @@ namespace PhysIKA
 		m_btnManager[5]->setIcon(buttonIcon);
 		m_btnManager[5]->setIconSize(pixmap.rect().size());
 
-		layout->addWidget(outputLabel, 1, 0);
-		layout->addWidget(m_outputCombo, 1, 1);
-		layout->addWidget(m_btnManager[4], 1, 2);
-		layout->addWidget(m_btnManager[5], 1, 3);
+		layout->addWidget(outputLabel, 2, 0);
+		layout->addWidget(m_outputCombo, 2, 1);
+		layout->addWidget(m_btnManager[4], 2, 2);
+		layout->addWidget(m_btnManager[5], 2, 3);
 
 		connect(m_btnManager[4], &QPushButton::clicked, this, &QTextFieldWidget::btnClicked);
 		connect(m_btnManager[5], &QPushButton::clicked, this, &QTextFieldWidget::btnClicked);
@@ -257,24 +260,25 @@ namespace PhysIKA
 		}
 		else if (btnName == "solverBtn")
 		{
-			QString fileName = QFileDialog::getOpenFileName(
-				this,
-				tr("open import file"),
-				".",
-				tr("executable(*.exe);;All Files(*.*)"));
-			if (fileName.isEmpty())
-			{
-				QMessageBox::warning(this, "Warning", "Failed to choose an solver", QMessageBox::Ok);
-				return;
-			}
-			else
-			{
-				*QTextFieldWidget::getSolverPathSaver() = QDir::toNativeSeparators(fileName);
-				m_solverCombo->setEditable(false);
-				m_solverCombo->insertItem(0, QDir::toNativeSeparators(fileName));
-				m_solverCombo->setCurrentIndex(0);
-				updatePreview();
-			}
+			// disable for using lib
+			//QString fileName = QFileDialog::getOpenFileName(
+			//	this,
+			//	tr("open import file"),
+			//	".",
+			//	tr("executable(*.exe);;All Files(*.*)"));
+			//if (fileName.isEmpty())
+			//{
+			//	QMessageBox::warning(this, "Warning", "Failed to choose an solver", QMessageBox::Ok);
+			//	return;
+			//}
+			//else
+			//{
+			//	*QTextFieldWidget::getSolverPathSaver() = QDir::toNativeSeparators(fileName);
+			//	m_solverCombo->setEditable(false);
+			//	m_solverCombo->insertItem(0, QDir::toNativeSeparators(fileName));
+			//	m_solverCombo->setCurrentIndex(0);
+			//	updatePreview();
+			//}
 
 		}
 		else if (btnName == "workdirBtn")
@@ -308,7 +312,8 @@ namespace PhysIKA
 				objFileFolder.mkdir("objFile");
 			
 			//proCmd->startDetached("cmd.exe", QStringList() << "/k" << m_Preview);
-			proCmd->start("cmd.exe", QStringList() << "/c" << m_Preview);
+			//proCmd->start("cmd.exe", QStringList() << "/c" << m_Preview);
+			emit startCalculate(m_Preview);
 		}
 		else if (btnName == "outputBtn")
 		{
@@ -361,7 +366,9 @@ namespace PhysIKA
 
 	QString QTextFieldWidget::updatePreview()
 	{
-		QString solver = m_solverCombo->currentText();
+		// disable for using lib
+		//QString solver = m_solverCombo->currentText();
+		QString solver = " ";
 		QString inp = m_inputCombo->currentText();
 		//¹¤×÷Â·¾¶
 		QString WD = m_workdirCombo->currentText();
@@ -757,13 +764,11 @@ namespace PhysIKA
 			return;
 		}
 
-		//for (int i = 0; i < vtkList.size(); i++)
-		//{
-		//	vtk2Obj(showFileUrl + "/" + vtkList[i]);
-		//}
 
 		for (int i = 0; i < vtkList.size(); i++)
 		{
+			// multiThread
+			//vtk2Obj(showFileUrl + "/" + vtkList[i]);
 			QtConcurrent::run(vtk2Obj, showFileUrl + "/" + vtkList[i]);
 		}
 
@@ -814,8 +819,16 @@ namespace PhysIKA
 		// adjust 20210621
 		for (int i = 0; i < objList.size();)
 		{
+			//QtConcurrent::run([=]() {
+			//	emit loadFileSignal(showFileUrl + "/objFile/" + objList[i]);
+			//});
+			//QThread::msleep(30000);
+			//if (i + 9 > objList.size())
+			//	emit loadFileSignal(showFileUrl + "/objFile/" + objList[objList.size() - 1]);
+			//i = i + 9;
+
 			emit loadFileSignal(showFileUrl + "/objFile/" + objList[i]);
-			if (i + 9 > objList.size())
+			if (i + 9 >= objList.size())
 				emit loadFileSignal(showFileUrl + "/objFile/" + objList[objList.size() - 1]);
 				
 			i = i + 9;

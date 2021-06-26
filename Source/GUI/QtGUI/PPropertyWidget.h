@@ -48,6 +48,7 @@ namespace PhysIKA
 
 	Q_SIGNALS:
 		void loadFileSignal(const QString);
+		void startCalculate(QString);
 
 	public slots :
 		void initSolverUi(QGridLayout*);
@@ -65,12 +66,13 @@ namespace PhysIKA
 			return m_InputPathSaver;
 		}
 
-		static QString* getSolverPathSaver()
-		{
-			if (m_solverPathSaver == nullptr)
-				m_solverPathSaver   = new QString;
-			return m_solverPathSaver;
-		}
+		// disable for using lib
+		//static QString* getSolverPathSaver()
+		//{
+		//	if (m_solverPathSaver == nullptr)
+		//		m_solverPathSaver   = new QString;
+		//	return m_solverPathSaver;
+		//}
 
 		static QString* getWorkDirPathSaver()
 		{
@@ -99,7 +101,8 @@ namespace PhysIKA
 		QPushButton* m_btnManager[6];
 
 		QComboBox* m_inputCombo = new QComboBox;
-		QComboBox* m_solverCombo= new QComboBox;
+		// disable for using lib
+		//QComboBox* m_solverCombo= new QComboBox;
 		QComboBox* m_workdirCombo = new QComboBox;
 		QComboBox* m_outputCombo = new QComboBox;
 
@@ -115,12 +118,14 @@ namespace PhysIKA
 		QString m_Preview;
 
 
-		QProcess* proCmd = new QProcess(this);
+		// disable for using lib
+		//QProcess* proCmd = new QProcess(this);
 		
 		void btnAddPicHelper(QPushButton*);
 
 		static QString* m_InputPathSaver;
-		static QString* m_solverPathSaver;
+		// disable for using lib
+		//static QString* m_solverPathSaver;
 		static QString* m_workDirPathSaver;
 		static QString* m_previewSaver;
 	};
