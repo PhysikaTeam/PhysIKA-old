@@ -10,6 +10,6 @@ Not necessary but sometimes may be helpful
 (../Extern/CAESolver)
 
 
-Turn off other cuda project Generate Relocatable Device Code
+Turn off dependent projects that contain the cuda program "Generate Relocatable Device Code"
 -------------------------------------------------------------
 Project properties -> CUDA C/C++ -> Generate Relocatable Device Code -> false
