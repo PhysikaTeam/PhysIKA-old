@@ -7,7 +7,7 @@
 #include "Core/Utility/Reduction.h"
 #include "Core/Array/DynamicArray.h"
 
-#include "Dynamics/Sand/swe/SandGrid.h"
+#include "Dynamics/Sand/SandGrid.h"
 
 #include "Dynamics/HeightField/HeightFieldGrid.h"
 

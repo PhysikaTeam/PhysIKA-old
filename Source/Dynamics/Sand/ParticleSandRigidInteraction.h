@@ -3,11 +3,11 @@
 #ifndef PARTICLESANDRIGIDINTERACTION_H
 #define PARTICLESANDRIGIDINTERACTION_H
 
-#include "Dynamics/Sand/swe/PBDSandSolver.h"
+#include "Dynamics/Sand/PBDSandSolver.h"
 #include "Dynamics/RigidBody/PBDRigid/PBDSolver.h"
 #include "Dynamics/RigidBody/PBDRigid/PointSDFContactDetector.h"
 #include "Framework/Framework/Node.h"
-#include "Dynamics/Sand/swe/SandInteractionForceSolver.h"
+#include "Dynamics/Sand/SandInteractionForceSolver.h"
 
 //#include "Dynamics/RigidBody/PBDRigid/B.h"
 #include "Dynamics/RigidBody/PBDRigid/BodyContactDetector.h"

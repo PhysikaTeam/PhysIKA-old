@@ -38,7 +38,7 @@ typedef unsigned short ushort;
 
 #ifndef __CUDACC__
 #include <math.h>
-#include "Dynamics/Sand/swe/types.h"
+#include "Dynamics/Sand/types.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////

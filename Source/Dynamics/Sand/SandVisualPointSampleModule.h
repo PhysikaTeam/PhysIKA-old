@@ -11,7 +11,7 @@
 #include "Framework/Framework/ModuleCustom.h"
 
 #include "Framework/Framework/DeclareModuleField.h"
-#include "Dynamics/Sand/swe/PBDSandSolver.h"
+#include "Dynamics/Sand/PBDSandSolver.h"
 
 namespace PhysIKA
 {

@@ -6,11 +6,11 @@
 
 
 
-#include "Dynamics/Sand/swe/types.h"
+#include "Dynamics/Sand/types.h"
 
 
 
-#include "Dynamics/Sand/swe/SandGrid.h"
+#include "Dynamics/Sand/SandGrid.h"
 
 
 

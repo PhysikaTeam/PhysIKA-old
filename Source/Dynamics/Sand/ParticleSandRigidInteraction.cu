@@ -1,6 +1,6 @@
-#include "Dynamics/Sand/swe/ParticleSandRigidInteraction.h"
+#include "Dynamics/Sand/ParticleSandRigidInteraction.h"
 
-#include "Dynamics/Sand/swe/SSEUtil.h"
+#include "Dynamics/Sand/SSEUtil.h"
 
 #include "Core/Utility/CTimer.h"
 

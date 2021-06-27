@@ -1,4 +1,4 @@
-#include "Dynamics/Sand/swe/HeightFieldDensitySolver.h"
+#include "Dynamics/Sand/HeightFieldDensitySolver.h"
 
 namespace PhysIKA
 {

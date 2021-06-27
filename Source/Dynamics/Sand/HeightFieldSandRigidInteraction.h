@@ -3,15 +3,15 @@
 #ifndef HEIGHTFIELDSANDRIGIDINTERACTION_H
 #define HEIGHTFIELDSANDRIGIDINTERACTION_H
 
-#include "Dynamics/Sand/swe/SSESandSolver.h"
-//#include "Dynamics/Sand/swe/PBDSandSolver.h"
+#include "Dynamics/Sand/SSESandSolver.h"
+//#include "Dynamics/Sand/PBDSandSolver.h"
 #include "Dynamics/RigidBody/PBDRigid/PBDSolver.h"
 #include "Dynamics/RigidBody/PBDRigid/PointSDFContactDetector.h"
 #include "Framework/Framework/Node.h"
-#include "Dynamics/Sand/swe/SandInteractionForceSolver.h"
+#include "Dynamics/Sand/SandInteractionForceSolver.h"
 
 #include "Dynamics/HeightField/HeightFieldGrid.h"
-#include "Dynamics/Sand/swe/HeightFieldDensitySolver.h"
+#include "Dynamics/Sand/HeightFieldDensitySolver.h"
 
 #include "Dynamics/RigidBody/PBDRigid/BodyContactDetector.h"
 

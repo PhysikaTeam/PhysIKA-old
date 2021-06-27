@@ -1,9 +1,9 @@
 
 
 
-#include "Dynamics/Sand/swe/PBDSandSolver.h"
+#include "Dynamics/Sand/PBDSandSolver.h"
 #include <cuda_runtime.h>
-#include "Dynamics/Sand/swe/SSEUtil.h"
+#include "Dynamics/Sand/SSEUtil.h"
 #include "Core/Utility/cuda_utilities.h"
 
 #include "Core/Utility/CTimer.h"
