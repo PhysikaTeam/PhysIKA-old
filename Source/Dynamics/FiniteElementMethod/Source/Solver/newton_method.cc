@@ -169,6 +169,7 @@ int newton_base<T, dim_>::solve(T* x_star)const{
 
     cerr << "[   \033[1;37mlog\033[0m   ] " << "len of pos:" << solution.norm() << endl;
     const SparseMatrix<T> &c2f_coeff = embedded_interp_->get_coarse_to_fine_coeff();
+
     X_star = X_coarse * c2f_coeff;
     embedded_interp_->set_verts(X_coarse);
 

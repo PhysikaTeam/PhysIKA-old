@@ -1,0 +1,22 @@
+{
+  "filename": "../../Media/bunny/bunny_points.obj",
+  "filename_coarse" : "../../Media/bunny/bunny/sparse_bunny_mesh_vox/bunny_vox_16.vtk",
+  "type": "hex",
+    "solver_type":"implicit",
+  "cons": "../../Media/bunny/sparse_bunny.csv",
+  "tol":1e-4,
+  "hes_is_const":false,
+  "physics":
+  {
+    "gravity": 9.8,
+    "rho": 0.1,
+    "csttt":"corotated",
+    "dt":0.001,
+    "Young":20
+  },
+  "cg_tol": 1e-5,
+  "grav_axis":"y",
+  "coll_z":false,
+  "newton_tol":1e-2,
+  "newton_MaxIter":1
+}
