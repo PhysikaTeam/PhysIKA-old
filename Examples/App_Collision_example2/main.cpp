@@ -1,4 +1,7 @@
 #include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
 #include <memory>
 #include <cuda.h>
 #include <cuda_runtime_api.h>
@@ -7,46 +10,25 @@
 
 #include "GUI/GlutGUI/GLApp.h"
 
+#include "Core/Vector/vector_3d.h"
 #include "Framework/Framework/SceneGraph.h"
-#include "Framework/Topology/PointSet.h"
-#include "Framework/Framework/Log.h"
-
-#include "Rendering/PointRenderModule.h"
-
-#include "Dynamics/ParticleSystem/PositionBasedFluidModel.h"
-#include "Dynamics/ParticleSystem/Peridynamics.h"
-#include "Dynamics/RigidBody/RigidCollisionBody.h"
-
-#include "Framework/Collision/CollidableSDF.h"
-#include "Framework/Collision/CollidablePoints.h"
-#include "Framework/Collision/CollisionSDF.h"
 #include "Framework/Collision/CollidableTriangleMesh.h"
 #include "Framework/Collision/Collision.h"
-#include "Framework/Framework/Gravity.h"
-#include "Dynamics/ParticleSystem/FixedPoints.h"
 #include "Framework/Collision/CollisionPoints.h"
-#include "Dynamics/ParticleSystem/ParticleSystem.h"
-#include "Dynamics/ParticleSystem/ParticleFluid.h"
-#include "Dynamics/ParticleSystem/ParticleElasticBody.h"
-#include "Dynamics/ParticleSystem/ElasticityModule.h"
-#include "Dynamics/ParticleSystem/ParticleElastoplasticBody.h"
-#include "Dynamics/RigidBody/RigidBody.h"
-#include "Dynamics/ParticleSystem/StaticBoundary.h"
-#include "Dynamics/ParticleSystem/SolidFluidInteraction.h"
-#include "Framework/Mapping/PointSetToPointSet.h"
-#include "Rendering/SurfaceMeshRender.h"
-#include "Core/Vector/vector_3d.h"
 #include "Framework/Topology/Primitive3D.h"
-#include "Dynamics/RigidBody/TriangleMesh.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Dynamics/RigidBody/RigidCollisionBody.h"
+#include "Dynamics/RigidBody/RigidBody.h"
+#include "Dynamics/RigidBody/TriangleMesh.h"
+#include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Rendering/SurfaceMeshRender.h"
+
+#include "SurfaceLineRender.h"
 
 using namespace std;
 using namespace PhysIKA;
 
-
 std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> CollisionManager::Meshes = {};
-std::vector<std::shared_ptr<SurfaceMeshRender>> SFRender = {};
 
 std::shared_ptr<RigidCollisionBody<DataType3f>> human;
 std::shared_ptr<RigidCollisionBody<DataType3f>> cloth;
@@ -56,37 +38,43 @@ std::shared_ptr<RigidCollisionBody<DataType3f>> clothCollisionTriangles;
 
 std::shared_ptr<StaticBoundary<DataType3f>> root;
 
+enum class ExampleMode { Static, Dynamic }; 
+ExampleMode mode = ExampleMode::Static;
+
+bool pause = true;
+
 auto instance = Collision::getInstance();
 
-void checkCollision(bool update = false);
+void checkCollision();
 
-void CreateScene()
-{
+void CreateScene(const std::string& clothPath, const std::string& humanPath) {
 	SceneGraph& scene = SceneGraph::getInstance();
+	scene.invalid();
 	scene.setFrameRate(500);
 	root = scene.createNewScene<StaticBoundary<DataType3f>>();
 
 	cloth = std::make_shared<RigidCollisionBody<DataType3f>>();
 	root->addRigidBody(cloth);
-	cloth->loadSurface("../../Media/character/cloth.obj");
-	auto clothShader = std::make_shared<SurfaceMeshRender>();
+	cloth->loadSurface(clothPath);
+	auto clothShader = std::make_shared<SurfaceLineRender>();
 	cloth->getSurfaceNode()->addVisualModule(clothShader);
 	clothShader->setColor(Vector3f(1.0f, 0.1f, 0.2f));
-	
+
 	human = std::make_shared<RigidCollisionBody<DataType3f>>();
 	root->addRigidBody(human);
-	human->loadSurface("../../Media/character/body.obj");
-	auto humanShader = std::make_shared<SurfaceMeshRender>();
+	human->loadSurface(humanPath);
+	auto humanShader = std::make_shared<SurfaceLineRender>();
 	human->getSurfaceNode()->addVisualModule(humanShader);
 	humanShader->setColor(Vector3f(0.8f, 0.8f, 0.8f));
 
 	instance->transformMesh(*cloth->getmeshPtr(), 0);
 	instance->transformMesh(*human->getmeshPtr(), 1);
 
-	checkCollision(true);
+	checkCollision();
+	scene.initialize();
 }
 
-void checkCollision(bool update) {
+void checkCollision() {
 	instance->collid();
 	auto pairs = instance->getContactPairs();
 
@@ -110,9 +98,6 @@ void checkCollision(bool update) {
 	}
 
 	printf("Found %d inter-object contacts...\n", count);
-
-	if (!update)
-		return;
 
 	// assemble result for display, a really silly way for displaying...
 	// cloth 
@@ -145,7 +130,7 @@ void checkCollision(bool update) {
 
 		auto shader = std::make_shared<SurfaceMeshRender>();
 		clothCollisionTriangles->getSurfaceNode()->addVisualModule(shader);
-		shader->setColor(Vector3f(0.8f, 0.8f, 0.8f));
+		shader->setColor(Vector3f(0.0f, 1.0f, 0.0f));
 	}
 
 	// human
@@ -178,51 +163,58 @@ void checkCollision(bool update) {
 
 		auto shader = std::make_shared<SurfaceMeshRender>();
 		humanCollisionTriangles->getSurfaceNode()->addVisualModule(shader);
-		shader->setColor(Vector3f(1.0f, 0.1f, 0.2f));
-	}
-}
-
-void display(bool showResult) {
-	cloth->getSurfaceNode()->setVisible(!showResult);
-	human->getSurfaceNode()->setVisible(!showResult);
-
-	if (!instance->getContactPairs().empty()) {
-		clothCollisionTriangles->getSurfaceNode()->setVisible(showResult);
-		humanCollisionTriangles->getSurfaceNode()->setVisible(showResult);
+		shader->setColor(Vector3f(0.0f, 1.0f, 0.0f));
 	}
 }
 
 void keyboardFunc(unsigned char key, int x, int y) {
 	GLApp* window = static_cast<GLApp*>(glutGetWindowData());
-	static bool tPressed = false;
 	
 	switch (key) {
 	case 27: glutLeaveMainLoop(); return;
 	case 's': window->saveScreen(); break;
-	case 't':
-		tPressed = !tPressed;
-		display(tPressed);
-		break;
-	case '2':
-		checkCollision();
-		break;
+	case ' ': pause = !pause; break;
 	}
 }
 
-int main()
-{
-	CreateScene();
+void idleFunction() {
+	static int index = 0;
+	if (index > 93) return;
 
-	Log::setOutput("console_log.txt");
-	Log::setLevel(Log::DebugInfo);
-	Log::sendMessage(Log::DebugInfo, "Simulation begin");
+	if (mode == ExampleMode::Static) {
+		CreateScene("../../Media/character/cloth000-uv.obj", "../../Media/character/pose000.obj");
+		index = 94;
+		return;
+	}
+
+	if ((pause && index > 0)|| index > 93) return;
+
+	std::stringstream clothPath, humanPath;
+	clothPath << "../../Media/bishop/cloth" << setw(3) << setfill('0') << index << "-uv.obj";
+	humanPath << "../../Media/bishop/pose" << setw(3) << setfill('0') << index << ".obj";
+
+	CreateScene(clothPath.str(), humanPath.str());
+
+	index++;
+}
+
+int main(int argc, char* argv[]) {
+	if (argc == 2) {
+		if (std::string(argv[1]) == "-s") {
+			mode = ExampleMode::Static;
+		} else if (std::string(argv[1]) == "-d") {
+			mode = ExampleMode::Dynamic;
+		}
+	}
 
 	GLApp window;
-	window.setKeyboardFunction(keyboardFunc);
-	window.createWindow(1024, 768);
+	window.setIdleFunction(idleFunction);
+	if (mode == ExampleMode::Dynamic) {
+		window.setKeyboardFunction(keyboardFunc);
+	}
 
+	window.createWindow(1024, 768);
 	window.mainLoop();
 
-	Log::sendMessage(Log::DebugInfo, "Simulation end!");
 	return 0;
 }
