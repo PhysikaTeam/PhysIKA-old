@@ -34,6 +34,161 @@
 #include <GUI/QtGUI/PVTKOpenGLWidget.h>
 #include <QtConcurrent\qtconcurrentrun.h>
 
+/********************** add by HNU **************/
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<time.h>
+#include"cuda_runtime.h"
+#include<stdio.h>
+#include"femdynamic.h"
+#include<io.h>
+#include <direct.h>
+
+int readKFile(FEMDynamic *femAnalysis, string inFile);
+int readINPFile(FEMDynamic *femAnalysis, string inFile);
+void readCommand(int argc, char* argv[], string &inFile, string &outFile, FEMDynamic *dy);
+void history_record_start(string fin, string fout,char exeFile[]);
+void history_record_end(double calculae_time, double contact_time, double fileTime, int calFlag, int iterNum, int gpuNum);
+void copyrightStatement();
+void AISIMExplicitCopyrightStatement();
+int connection_for_fem(FEMDynamic *femAnalysis);
+
+extern ofstream f_record;
+
+void calculateMX(int argcmx,char* argvmx[])
+{
+	double t_start, t_end, contact_time, fileTime;
+	FEMDynamic *fem_analysis;
+	cudaError_t cudaStatus;
+	string inFile, outFile, inpFileType;
+	ofstream fout;
+	MultiGpuManager mulGpuMag;
+
+	/*AISIMExplicitCopyrightStatement();*/
+
+	/*copyrightStatement();*/
+
+	//string line = argvmx[2];
+	//inFile = line.substr(line.find("INP=") + 1);
+	//string line2 = argvmx[3];
+	//outFile = line2.substr(line.find("WD=") + 1);
+
+
+	fem_analysis = new FEMDynamic[1];
+
+	fem_analysis->femAllocateCpu();
+	if (argcmx > 1)
+	{
+		readCommand(argcmx, argvmx, inFile, outFile, fem_analysis);
+		std::cout << inFile << std::endl;
+		std::cout << outFile << std::endl;
+	}
+	else
+	{
+		std::cout << "please input calculation file" << std::endl;
+		cin >> inFile;
+		std::cout << "please input work path" << std::endl;
+		cin >> outFile;
+	}
+
+	if (inFile == outFile)
+	{
+		std::cout << "输入文件有误" << std::endl;
+		system("pause");
+	}
+
+	fem_analysis->multiGpuManager->judgeGpuNum();
+
+	/**
+	Choose which GPU to run on, change this on a multi-GPU system.
+	*/
+	cudaStatus = cudaSetDevice(fem_analysis->multiGpuManager->gpu_id_array[0]);
+	if (cudaStatus != cudaSuccess)
+	{
+		fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
+	}
+
+	fem_analysis->intFilePath_ = inFile;
+	fem_analysis->outputFilePath_ = outFile;
+
+	if (0 != _access(fem_analysis->outputFilePath_.c_str(), 0))
+	{
+		_mkdir(fem_analysis->outputFilePath_.c_str());
+	}
+
+	string folderPath = outFile;
+
+	folderPath += "\\history";
+	if (0 != _access(folderPath.c_str(), 0))
+	{
+		_mkdir(folderPath.c_str());
+	}
+	f_record.open(folderPath + "\\history_record.txt", ios::app | ios::out);
+
+	if (!f_record.is_open())
+	{
+		printf("\n记录文件打开错误\n");
+	}
+
+//	history_record_start(inFile, outFile, argv[0]);
+
+	/*fem_analysis->multiGpuManager->verP2PForMultiGpu();*/
+	cudaStatus = cudaSetDevice(fem_analysis->multiGpuManager->gpu_id_array[0]);
+
+	/**
+	判断输入文件类型
+	*/
+	inpFileType = inFile.substr(inFile.rfind(".") + 1);
+
+	readKFile(fem_analysis, inFile);
+
+	connection_for_fem(fem_analysis);
+
+	/**
+	记录开始时间
+	*/
+	t_start = clock();
+
+	/**
+	开始计算
+	*/
+	contact_time = 0;
+
+	if (fem_analysis->multiGpuManager->gpu_id_array.size() >= 1)
+	{
+		fem_analysis->calDevice_ = SingleGpu;
+		fem_analysis->DynamicAnalysisParallel(fout, contact_time, fileTime);
+	}
+	else
+	{
+		fem_analysis->calDevice_ = Cpu;
+		fem_analysis->DynamicAnalysis(fout, contact_time, fileTime);
+	}
+
+	mulGpuMag = *fem_analysis->multiGpuManager;
+
+	/**
+	记录结束时间
+	*/
+	t_end = clock();
+	printf("Total calculate time: %lf\n\n", (t_end - t_start) / CLOCKS_PER_SEC);
+	std::cout << "Calculation completed" << std::endl;
+
+	/**
+	记录
+	*/
+	history_record_end((t_end - t_start) / CLOCKS_PER_SEC, contact_time / CLOCKS_PER_SEC, fileTime / CLOCKS_PER_SEC, 1, fem_analysis->cyc_num, mulGpuMag.num_gpu);
+
+	f_record.close();
+
+	delete[] fem_analysis;
+
+	mulGpuMag.resetDevice();
+}
+
+/********************** add by HNU**************/
+
 using namespace std;
 using namespace PhysIKA;
 
@@ -206,14 +361,19 @@ int main()
 		QTextFieldWidget* core = window.getMainWindow()->getProperty()->getTextFieldWidget();
 		//qDebug() << core;
 		QObject::connect(core, &QTextFieldWidget::loadFileSignal, [&](const QString str) {
-			std::cout << "receive Output File success " << str.toStdString() << std::endl;
+			//std::cout << "receive Output File success " << str.toStdString() << std::endl;
 
-			//root->loadMesh("C:/Users/Stone/Desktop/Release_subdomainscale0.5/output/result_15.obj");
-			//rigidbody->loadShape("C:/Users/Stone/Desktop/Release_subdomainscale0.5/output/result_15.obj");
-
+			//root->loadMesh("C:/Users/Desktop/Release_subdomainscale0.5/output/result_15.obj");
+			//rigidbody->loadShape("C:/Users/Desktop/Release_subdomainscale0.5/output/result_15.obj");
+			
+			//QtConcurrent::run(root, &StaticMeshBoundary<DataType3f>::loadMesh, str.toStdString());
+			//QtConcurrent::run([&]() {
+			//	qDebug() << QThread::currentThreadId;
+			//	root->loadMesh(str.toStdString());
+			//	//rigidbody->loadShape(str.toStdString());
+			//});
 			
 			root->loadMesh(str.toStdString());
-
 			rigidbody->loadShape(str.toStdString());
 
 			rigidbody->getSurface()->addVisualModule(sRenderer);
@@ -221,6 +381,27 @@ int main()
 
 			// refresh view
 			window.getMainWindow()->getVTKOpenGL()->prepareRenderingContex();
+		});
+
+		QObject::connect(core, &QTextFieldWidget::startCalculate, [&](QString Qstr) {
+			//qDebug() << "receive calculate signal!";
+			QStringList strList = Qstr.split(" ");
+			vector<string> ret;
+			for (auto x : strList)
+			{
+				ret.push_back(x.toStdString());
+				//qDebug() << x;
+			}
+			vector<char*> cstrings;
+			cstrings.reserve(ret.size());
+			for (size_t i = 0; i < ret.size(); ++i)
+				cstrings.push_back(const_cast<char*>(ret[i].c_str()));
+			
+			if (!cstrings.empty())
+			{
+				//QtConcurrent::run(calculateMX, ret.size(), &cstrings[0]);
+				calculateMX(ret.size(), &cstrings[0]);
+			}
 		});
 	});
 

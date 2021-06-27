@@ -1,4 +1,4 @@
-This CAE solver is dedicated to the project App_CAE and its theoretical basis is mainly based on the following papers:
+This CAE libs and corresponding header files is dedicated to project App_CAE and its theoretical basis is mainly based on the following papers:
 
 [1] Hu XB, Cui XY, Feng H, Li GY. Stochastic analysis using the generalized perturbation stable node-based smoothed finite element method. Eng Anal Bound Elem 2016;70:40–55. https://doi.org/10.1016/j.enganabound.2016.06.002.
 [2] Bie YH, Cui XY, Li ZC. A coupling approach of state-based peridynamics with node-based smoothed finite element method. Comput Methods Appl Mech Eng 2018;331:675–700. https://doi.org/10.1016/j.cma.2017.11.022.
