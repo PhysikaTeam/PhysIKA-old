@@ -475,6 +475,14 @@ namespace PhysIKA
 		QFile verticeFile(urlSplit.join("/"));
 		urlSplit.replace(urlSplit.size() - 1, "faceFile.txt");
 		QFile faceFile(urlSplit.join("/"));
+
+		QStringList tempList = urlSplit;
+		tempList.replace(urlSplit.size() - 1, "");
+		//qDebug() << tempList.join("/");
+		QDir tempFileFolder(tempList.join("/"));
+		//system("pause");
+		if (!tempFileFolder.exists("temp"))
+			tempFileFolder.mkdir("temp");
 		urlSplit.replace(urlSplit.size() - 1, "temp");
 		urlSplit.append(cropedName + ".obj");
 		QFile outputFile(urlSplit.join("/"));
