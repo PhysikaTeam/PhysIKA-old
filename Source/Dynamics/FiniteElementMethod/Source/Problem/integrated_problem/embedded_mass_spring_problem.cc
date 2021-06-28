@@ -110,7 +110,7 @@ embedded_ms_problem_builder<T>::embedded_ms_problem_builder(const T* x, const bo
   if(para_tree.find("input_constraint") != para_tree.not_found())
   {
     const string cons_file_path = common.get<string>("input_constraint");
-    IF_ERR(exit, read_fixed_verts_from_csv(cons_file_path.c_str(), cons));
+  /*  IF_ERR(exit, read_fixed_verts_from_csv(cons_file_path.c_str(), cons));*/
   }
   cout << "constrint " << cons.size() << " points" << endl;
 

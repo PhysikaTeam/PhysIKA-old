@@ -1,0 +1,2 @@
+please download the resource from http://give.zju.edu.cn/research/sample/data/bishop.7z
+unpack the resource after downloading.

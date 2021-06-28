@@ -3,7 +3,7 @@
 //#include <cuda_runtime.h>
 //#include <curand_kernel.h> 
 #include "Framework/Framework/ModuleTopology.h"
-#include "Dynamics/Sand/swe/types.h"
+#include "Dynamics/Sand/types.h"
 #include "Dynamics/RigidBody/RigidUtil.h"
 #include "Dynamics/RigidBody/RigidTimeIntegrationModule.h"
 #include "Dynamics/RigidBody/RKIntegrator.h"

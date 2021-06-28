@@ -30,6 +30,7 @@ namespace PhysIKA
 		void loadParticles(Coord center, Real r, Real distance);
 		void loadParticles(std::string filename);
 
+
 		virtual bool translate(Coord t);
 		virtual bool scale(Real s);
 

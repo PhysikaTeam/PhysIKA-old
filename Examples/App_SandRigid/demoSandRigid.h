@@ -6,8 +6,8 @@
 
 #include "Dynamics/RigidBody/Vehicle/PBDCar.h"
 
-#include "Dynamics/Sand/swe/SSESandSolver.h"
-#include "Dynamics/Sand/swe/SandVisualPointSampleModule.h"
+#include "Dynamics/Sand/SSESandSolver.h"
+#include "Dynamics/Sand/SandVisualPointSampleModule.h"
 
 using namespace PhysIKA;
 

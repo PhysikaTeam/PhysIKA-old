@@ -1,0 +1,23 @@
+{
+  "filename": "../../Media/zju/homer/homer_points.obj",
+  "filename_coarse" : "../../Media/zju/homer/homer-hybrid.vtk",
+  "type": "hybrid",
+  "type_coarse": "vox",
+    "solver_type":"implicit",
+  "cons": "../../Media/bunny/sparse_bunny.csv",
+  "tol":1e-4,
+  "hes_is_const":false,
+  "physics":
+  {
+    "gravity": 9.8,
+    "rho": 0.1,
+    "csttt":"corotated",
+    "dt":0.001,
+    "Young":200
+  },
+  "cg_tol": 1e-5,
+  "grav_axis":"y",
+  "coll_z":false,
+  "newton_tol":1e-2,
+  "newton_MaxIter":1
+}

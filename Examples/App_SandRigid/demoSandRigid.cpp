@@ -1,24 +1,24 @@
 #include "demoSandRigid.h"
 
 #include "sandRigidCommon.h"
-#include "Dynamics/Sand/swe/SandSimulator.h"
+#include "Dynamics/Sand/SandSimulator.h"
 #include "Framework/Framework/SceneGraph.h"
 #include "Rendering/PointRenderModule.h"
-#include "Dynamics/Sand/swe/PBDSandSolver.h"
-#include "Dynamics/Sand/swe/PBDSandRigidInteraction.h"
+#include "Dynamics/Sand/PBDSandSolver.h"
+#include "Dynamics/Sand/PBDSandRigidInteraction.h"
 #include "Dynamics/RigidBody/PBDRigid/PBDSolverNode.h"
 #include "Rendering/RigidMeshRender.h"
 #include "Dynamics/RigidBody/RigidUtil.h"
-#include "Dynamics/Sand/swe/ParticleSandRigidInteraction.h"
-#include "Dynamics/Sand/swe/HeightFieldSandRigidInteraction.h"
+#include "Dynamics/Sand/ParticleSandRigidInteraction.h"
+#include "Dynamics/Sand/HeightFieldSandRigidInteraction.h"
 #include "Dynamics/HeightField/HeightFieldMesh.h"
 #include "IO/Surface_Mesh_IO/ObjFileLoader.h"
 
-#include "Dynamics/Sand/swe/SandVisualPointSampleModule.h"
+#include "Dynamics/Sand/SandVisualPointSampleModule.h"
 
 #include "IO/Image_IO/HeightFieldLoader.h"
-#include "Dynamics/Sand/swe/SSESandSolver.h"
-#include "Dynamics/Sand/swe/SandSimulator.h"
+#include "Dynamics/Sand/SSESandSolver.h"
+#include "Dynamics/Sand/SandSimulator.h"
 
 #include"sandRigidCommon.h"
 #include <random>

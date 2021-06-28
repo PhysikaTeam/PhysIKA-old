@@ -7,7 +7,7 @@
 
 #include "GUI/GlutGUI/GLApp.h"
 
-//#include "Dynamics/Sand/swe/SandSimulator.h"
+//#include "Dynamics/Sand/SandSimulator.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 
 #include "demoParticleSand.h"
