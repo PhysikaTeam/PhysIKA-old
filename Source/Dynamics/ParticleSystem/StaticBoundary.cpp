@@ -76,14 +76,14 @@ namespace PhysIKA
 
 		m_obstacles.push_back(boundary);
 
-		//Note: the size of standard cube is 2m*2m*2m
-		Coord scale = (hi - lo) / 2;
-		Coord center = (hi + lo) / 2;
+		// //Note: the size of standard cube is 2m*2m*2m
+		// Coord scale = (hi - lo) / 2;
+		// Coord center = (hi + lo) / 2;
 
-		auto m_surfaceNode = this->createChild<Node>("cube");
-		m_surfaceNode->setControllable(false);
+		// auto m_surfaceNode = this->createChild<Node>("cube");
+		// m_surfaceNode->setControllable(false);
 
-		auto triSet = std::make_shared<TriangleSet<TDataType>>();
+		// auto triSet = std::make_shared<TriangleSet<TDataType>>();
 /* 		triSet->loadObjFile("../../Media/standard/standard_cube.obj");
 		triSet->scale(0.99*scale);
 		triSet->translate(center);
@@ -101,17 +101,17 @@ namespace PhysIKA
 
 		m_obstacles.push_back(boundary);
 
-		//Note: the radius of the standard sphere is 1m
-		auto m_surfaceNode = this->createChild<Node>("sphere");
+		// //Note: the radius of the standard sphere is 1m
+		// auto m_surfaceNode = this->createChild<Node>("sphere");
 
-		auto triSet = std::make_shared<TriangleSet<TDataType>>();
-		triSet->loadObjFile("../../Media/standard/standard_sphere.obj");
-		triSet->scale(0.95*r);
-		triSet->translate(center);
+		// auto triSet = std::make_shared<TriangleSet<TDataType>>();
+		// triSet->loadObjFile("../../Media/standard/standard_sphere.obj");
+		// triSet->scale(0.95*r);
+		// triSet->translate(center);
 
-		m_surfaceNode->setTopologyModule(triSet);
+		// m_surfaceNode->setTopologyModule(triSet);
 
-		m_surfaceNode->setVisible(bVisible);
+		// m_surfaceNode->setVisible(bVisible);
 	}
 
 
