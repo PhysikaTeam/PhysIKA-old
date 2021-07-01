@@ -1,11 +1,13 @@
 #include "FastMultiphaseSPH.h"
 
-#include "Framework/Topology/PointSet.h"
-#include "Core/Utility.h"
-
 #include <thrust/transform.h>
 #include <thrust/functional.h>
 #include <thrust/execution_policy.h>
+
+#include "Core/Utility.h"
+#include "Framework/Topology/PointSet.h"
+#include "solver/Multiphase/wcsph/MultiphaseSPHSolver.h"
+
 
 namespace PhysIKA
 {
@@ -204,6 +206,18 @@ namespace PhysIKA
 		vertList.clear();
 		normalList.clear();
 	}
+
+
+    template<typename TDataType>
+    TDataType::Real FastMultiphaseSPH<TDataType>::getSpacing()
+    {
+        return m_msph->h_param.spacing;
+    }
+    template<typename TDataType>
+    void FastMultiphaseSPH<TDataType>::setDissolutionFlag(int dissolution)
+    {
+        m_msph->h_param.dissolution = dissolution; 
+    }
 
 	template<typename TDataType>
 	void FastMultiphaseSPH<TDataType>::addParticles(const std::vector<Coord>& points, particle_t type) {

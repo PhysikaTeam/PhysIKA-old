@@ -10,7 +10,10 @@
 
 #include "Framework/Framework/Node.h"
 //#include "Rendering/PointRenderModule.h"
-#include "solver/Multiphase/wcsph/MultiphaseSPHSolver.h"
+
+namespace msph {
+    class MultiphaseSPHSolver;
+}
 
 namespace PhysIKA
 {
@@ -52,8 +55,8 @@ namespace PhysIKA
 		void loadParticlesAABBSurface(Coord lo, Coord hi, Real distance, particle_t type);
 		void loadParticlesBallVolume(Coord center, Real r, Real distance, particle_t type);
 		void loadParticlesFromFile(std::string filename, particle_t type);
-		Real getSpacing() { return m_msph->h_param.spacing; }
-		void setDissolutionFlag(int dissolution) { m_msph->h_param.dissolution = dissolution; }
+        Real getSpacing();
+        void setDissolutionFlag(int dissolution);
 
 
 		void addParticles(const std::vector<Coord>& points, particle_t type);
