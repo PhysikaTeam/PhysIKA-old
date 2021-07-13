@@ -54,7 +54,7 @@ template <typename T>
 struct SharedMemory
 {
     // Ensure that we won't compile any un-specialized types
-    __device__ T *getPointer()
+    __device__ T* getPointer()
     {
         extern __device__ void error(void);
         error();
@@ -67,9 +67,9 @@ struct SharedMemory
 // One could also specialize it for user-defined types.
 
 template <>
-struct SharedMemory <int>
+struct SharedMemory<int>
 {
-    __device__ int *getPointer()
+    __device__ int* getPointer()
     {
         extern __shared__ int s_int[];
         return s_int;
@@ -77,9 +77,9 @@ struct SharedMemory <int>
 };
 
 template <>
-struct SharedMemory <unsigned int>
+struct SharedMemory<unsigned int>
 {
-    __device__ unsigned int *getPointer()
+    __device__ unsigned int* getPointer()
     {
         extern __shared__ unsigned int s_uint[];
         return s_uint;
@@ -87,9 +87,9 @@ struct SharedMemory <unsigned int>
 };
 
 template <>
-struct SharedMemory <char>
+struct SharedMemory<char>
 {
-    __device__ char *getPointer()
+    __device__ char* getPointer()
     {
         extern __shared__ char s_char[];
         return s_char;
@@ -97,9 +97,9 @@ struct SharedMemory <char>
 };
 
 template <>
-struct SharedMemory <unsigned char>
+struct SharedMemory<unsigned char>
 {
-    __device__ unsigned char *getPointer()
+    __device__ unsigned char* getPointer()
     {
         extern __shared__ unsigned char s_uchar[];
         return s_uchar;
@@ -107,9 +107,9 @@ struct SharedMemory <unsigned char>
 };
 
 template <>
-struct SharedMemory <short>
+struct SharedMemory<short>
 {
-    __device__ short *getPointer()
+    __device__ short* getPointer()
     {
         extern __shared__ short s_short[];
         return s_short;
@@ -117,9 +117,9 @@ struct SharedMemory <short>
 };
 
 template <>
-struct SharedMemory <unsigned short>
+struct SharedMemory<unsigned short>
 {
-    __device__ unsigned short *getPointer()
+    __device__ unsigned short* getPointer()
     {
         extern __shared__ unsigned short s_ushort[];
         return s_ushort;
@@ -127,9 +127,9 @@ struct SharedMemory <unsigned short>
 };
 
 template <>
-struct SharedMemory <long>
+struct SharedMemory<long>
 {
-    __device__ long *getPointer()
+    __device__ long* getPointer()
     {
         extern __shared__ long s_long[];
         return s_long;
@@ -137,9 +137,9 @@ struct SharedMemory <long>
 };
 
 template <>
-struct SharedMemory <unsigned long>
+struct SharedMemory<unsigned long>
 {
-    __device__ unsigned long *getPointer()
+    __device__ unsigned long* getPointer()
     {
         extern __shared__ unsigned long s_ulong[];
         return s_ulong;
@@ -147,9 +147,9 @@ struct SharedMemory <unsigned long>
 };
 
 template <>
-struct SharedMemory <bool>
+struct SharedMemory<bool>
 {
-    __device__ bool *getPointer()
+    __device__ bool* getPointer()
     {
         extern __shared__ bool s_bool[];
         return s_bool;
@@ -157,9 +157,9 @@ struct SharedMemory <bool>
 };
 
 template <>
-struct SharedMemory <float>
+struct SharedMemory<float>
 {
-    __device__ float *getPointer()
+    __device__ float* getPointer()
     {
         extern __shared__ float s_float[];
         return s_float;
@@ -167,14 +167,13 @@ struct SharedMemory <float>
 };
 
 template <>
-struct SharedMemory <double>
+struct SharedMemory<double>
 {
-    __device__ double *getPointer()
+    __device__ double* getPointer()
     {
         extern __shared__ double s_double[];
         return s_double;
     }
 };
 
-
-#endif //_SHAREDMEM_H_
+#endif  //_SHAREDMEM_H_

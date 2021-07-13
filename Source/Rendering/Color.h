@@ -5,35 +5,46 @@
 #include <iostream>
 #include "Core/Platform.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+class Color
 {
-    class Color
+public:
+    COMM_FUNC Color()
     {
-    public:
-        COMM_FUNC Color() { r = 0.0f; g = 0.0f; b = 0.0f; }
-        COMM_FUNC Color(float _r, float _g, float _b) { r = _r; g = _g; b = _b; }
+        r = 0.0f;
+        g = 0.0f;
+        b = 0.0f;
+    }
+    COMM_FUNC Color(float _r, float _g, float _b)
+    {
+        r = _r;
+        g = _g;
+        b = _b;
+    }
 
-        COMM_FUNC ~Color() {};
+    COMM_FUNC ~Color(){};
 
-        COMM_FUNC void HSVtoRGB(float h, float s, float v)
+    COMM_FUNC void HSVtoRGB(float h, float s, float v)
+    {
+        int   i;
+        float f, p, q, t;
+
+        if (s == 0)
         {
-            int i;
-            float f, p, q, t;
+            // achromatic (grey)
+            r = g = b = v;
+            return;
+        }
 
-            if (s == 0) {
-                // achromatic (grey)
-                r = g = b = v;
-                return;
-            }
+        h /= 60;  // sector 0 to 5
+        i = ( int )floorf(h);
+        f = h - i;  // factorial part of h
+        p = v * (1 - s);
+        q = v * (1 - s * f);
+        t = v * (1 - s * (1 - f));
 
-            h /= 60;       // sector 0 to 5
-            i = (int)floorf(h);
-            f = h - i;        // factorial part of h
-            p = v * (1 - s);
-            q = v * (1 - s * f);
-            t = v * (1 - s * (1 - f));
-
-            switch (i) {
+        switch (i)
+        {
             case 0:
                 r = v;
                 g = t;
@@ -59,18 +70,18 @@ namespace PhysIKA
                 g = p;
                 b = v;
                 break;
-            default:    // case 5:
+            default:  // case 5:
                 r = v;
                 g = p;
                 b = q;
                 break;
-            }
         }
+    }
 
-        float r;
-        float g;
-        float b;
-    };
-}
+    float r;
+    float g;
+    float b;
+};
+}  // namespace PhysIKA
 
 #endif

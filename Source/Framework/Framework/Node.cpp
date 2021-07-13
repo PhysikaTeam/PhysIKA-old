@@ -3,9 +3,7 @@
 
 #include "Framework/Action/Action.h"
 
-
-namespace PhysIKA
-{
+namespace PhysIKA {
 IMPLEMENT_CLASS(Node)
 
 Node::Node(std::string name)
@@ -19,7 +17,6 @@ Node::Node(std::string name)
     this->varScale()->setMin(0.01);
     this->varScale()->setMax(100.0f);
 }
-
 
 Node::~Node()
 {
@@ -36,7 +33,6 @@ std::string Node::getName()
 {
     return m_node_name;
 }
-
 
 Node* Node::getChild(std::string name)
 {
@@ -124,7 +120,7 @@ bool Node::hasChild(std::shared_ptr<Node> child)
 // {
 //     return NodeIterator(this);
 // }
-// 
+//
 // NodeIterator Node::end()
 // {
 //     return NodeIterator();
@@ -133,7 +129,7 @@ bool Node::hasChild(std::shared_ptr<Node> child)
 void Node::removeChild(std::shared_ptr<Node> child)
 {
     ListPtr<Node>::iterator iter = m_children.begin();
-    for (; iter != m_children.end(); )
+    for (; iter != m_children.end();)
     {
         if (*iter == child)
         {
@@ -149,7 +145,7 @@ void Node::removeChild(std::shared_ptr<Node> child)
 void Node::removeAllChildren()
 {
     ListPtr<Node>::iterator iter = m_children.begin();
-    for (; iter != m_children.end(); )
+    for (; iter != m_children.end();)
     {
         m_children.erase(iter++);
     }
@@ -186,7 +182,7 @@ void Node::setContext(std::shared_ptr<DeviceContext> context)
         deleteModule(m_context);
     }
 
-    m_context = context; 
+    m_context = context;
     addModule(m_context);
 }
 
@@ -208,7 +204,7 @@ void Node::setMechanicalState(std::shared_ptr<MechanicalState> state)
         deleteModule(m_mechanical_state);
     }
 
-    m_mechanical_state = state; 
+    m_mechanical_state = state;
     addModule(state);
 }
 
@@ -275,16 +271,16 @@ bool Node::addModule(std::shared_ptr<Module> module)
     if (std::string("TopologyModule").compare(mType) == 0)
     {
         auto downModule = TypeInfo::cast<TopologyModule>(module);
-        m_topology = downModule;
+        m_topology      = downModule;
     }
     else if (std::string("NumericalModel").compare(mType) == 0)
     {
-        auto downModule = TypeInfo::cast<NumericalModel>(module);
+        auto downModule   = TypeInfo::cast<NumericalModel>(module);
         m_numerical_model = downModule;
     }
     else if (std::string("NumericalIntegrator").compare(mType) == 0)
     {
-        auto downModule = TypeInfo::cast<NumericalIntegrator>(module);
+        auto downModule        = TypeInfo::cast<NumericalIntegrator>(module);
         m_numerical_integrator = downModule;
     }
     else if (std::string("ForceModule").compare(mType) == 0)
@@ -371,7 +367,7 @@ bool Node::deleteModule(std::shared_ptr<Module> module)
         auto downModule = TypeInfo::cast<TopologyMapping>(module);
         this->deleteFromTopologyMappingList(downModule);
     }
-        
+
     return ret;
 }
 
@@ -406,12 +402,10 @@ void Node::doTraverseTopDown(Action* act)
 
 void Node::updateTopology()
 {
-
 }
 
 void Node::updateStatus()
 {
-
 }
 
 void Node::applyTopologyMappings()
@@ -441,21 +435,20 @@ bool Node::attachField(Field* field, std::string name, std::string desc, bool au
     field->setAutoDestroy(autoDestroy);
 
     bool ret = false;
-    
+
     auto fType = field->getFieldType();
     switch (field->getFieldType())
     {
-    case FieldType::Current:
-        ret = this->getMechanicalState()->addOutputField(field);
-        break;
+        case FieldType::Current:
+            ret = this->getMechanicalState()->addOutputField(field);
+            break;
 
-    case FieldType::Param:
-        ret = this->addField(field);
+        case FieldType::Param:
+            ret = this->addField(field);
 
-    default:
-        break;
+        default:
+            break;
     }
-    
 
     if (!ret)
     {
@@ -485,7 +478,7 @@ void Node::setAsCurrentContext()
 //     m_topology = topology;
 //     addModule(topology);
 // }
-// 
+//
 // void Node::setNumericalModel(std::shared_ptr<NumericalModel> numerical)
 // {
 //     if (m_numerical_model != nullptr)
@@ -495,7 +488,7 @@ void Node::setAsCurrentContext()
 //     m_numerical_model = numerical;
 //     addModule(numerical);
 // }
-// 
+//
 // void Node::setCollidableObject(std::shared_ptr<CollidableObject> collidable)
 // {
 //     if (m_collidable_object != nullptr)
@@ -508,7 +501,7 @@ void Node::setAsCurrentContext()
 
 std::shared_ptr<Module> Node::getModule(std::string name)
 {
-    std::shared_ptr<Module> base = nullptr;
+    std::shared_ptr<Module>                      base = nullptr;
     std::list<std::shared_ptr<Module>>::iterator iter;
     for (iter = m_module_list.begin(); iter != m_module_list.end(); iter++)
     {
@@ -540,7 +533,6 @@ bool Node::hasModule(std::string name)
     return result->second;
 }*/
 
-
 bool Node::addToModuleList(std::shared_ptr<Module> module)
 {
     auto found = std::find(m_module_list.begin(), m_module_list.end(), module);
@@ -566,4 +558,4 @@ bool Node::deleteFromModuleList(std::shared_ptr<Module> module)
     return true;
 }
 
-}
+}  // namespace PhysIKA

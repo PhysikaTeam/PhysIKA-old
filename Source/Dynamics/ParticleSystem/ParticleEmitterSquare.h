@@ -2,9 +2,8 @@
 #include "ParticleSystem.h"
 #include "ParticleEmitter.h"
 
-namespace PhysIKA
-{
-    /*!
+namespace PhysIKA {
+/*!
     *    \class    ParticleFluid
     *    \brief    Position-based fluids.
     *
@@ -12,28 +11,28 @@ namespace PhysIKA
     *    Refer to Macklin and Muller's "Position Based Fluids" for details
     *
     */
-    template<typename TDataType>
-    class ParticleEmitterSquare : public ParticleEmitter<TDataType>
-    {
-        DECLARE_CLASS_1(ParticleEmitterSquare, TDataType)
-    public:
-        typedef typename TDataType::Real Real;
-        typedef typename TDataType::Coord Coord;
+template <typename TDataType>
+class ParticleEmitterSquare : public ParticleEmitter<TDataType>
+{
+    DECLARE_CLASS_1(ParticleEmitterSquare, TDataType)
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
 
-        ParticleEmitterSquare(std::string name = "particleEmitter");
-        virtual ~ParticleEmitterSquare();
+    ParticleEmitterSquare(std::string name = "particleEmitter");
+    virtual ~ParticleEmitterSquare();
 
-        void generateParticles() override;
+    void generateParticles() override;
 
-        //void advance(Real dt) override;
-    private:
-        DEF_VAR(Width, Real, 0.05, "Emitter width");
-        DEF_VAR(Height, Real, 0.05, "Emitter height");
-    };
+    //void advance(Real dt) override;
+private:
+    DEF_VAR(Width, Real, 0.05, "Emitter width");
+    DEF_VAR(Height, Real, 0.05, "Emitter height");
+};
 
 #ifdef PRECISION_FLOAT
-    template class ParticleEmitterSquare<DataType3f>;
+template class ParticleEmitterSquare<DataType3f>;
 #else
-    template class ParticleEmitterSquare<DataType3d>;
+template class ParticleEmitterSquare<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

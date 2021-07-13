@@ -3,33 +3,32 @@
 #include "Dynamics/RigidBody/RigidBody2.h"
 #include "Rendering/RigidMeshRender.h"
 
-bool computeBoundingBox(PhysIKA::Vector3f &center, PhysIKA::Vector3f &boxsize, const std::vector<PhysIKA::Vector3f> &vertices)
+bool computeBoundingBox(PhysIKA::Vector3f& center, PhysIKA::Vector3f& boxsize, const std::vector<PhysIKA::Vector3f>& vertices)
 {
     if (vertices.size() <= 0)
         return false;
 
-    boxsize = PhysIKA::Vector3f();
+    boxsize                = PhysIKA::Vector3f();
     PhysIKA::Vector3f bmin = vertices[0];
     PhysIKA::Vector3f bmax = vertices[0];
     for (int i = 0; i < vertices.size(); ++i)
     {
-        const PhysIKA::Vector3f &ver = vertices[i];
-        bmin[0] = min(bmin[0], ver[0]);
-        bmin[1] = min(bmin[1], ver[1]);
-        bmin[2] = min(bmin[2], ver[2]);
+        const PhysIKA::Vector3f& ver = vertices[i];
+        bmin[0]                      = min(bmin[0], ver[0]);
+        bmin[1]                      = min(bmin[1], ver[1]);
+        bmin[2]                      = min(bmin[2], ver[2]);
 
         bmax[0] = max(bmax[0], ver[0]);
         bmax[1] = max(bmax[1], ver[1]);
         bmax[2] = max(bmax[2], ver[2]);
     }
 
-    center = (bmin + bmax) * 0.5;
+    center  = (bmin + bmax) * 0.5;
     boxsize = bmax - bmin;
     return true;
 }
 
-void PkAddBoundaryRigid(std::shared_ptr<Node> root, Vector3f origin, float sizex, float sizez,
-                        float boundarysize, float boundaryheight)
+void PkAddBoundaryRigid(std::shared_ptr<Node> root, Vector3f origin, float sizex, float sizez, float boundarysize, float boundaryheight)
 {
     float bsizeXlr = boundarysize;
     float bsizeZlr = (2.0 * boundarysize + sizez) / 2.0;

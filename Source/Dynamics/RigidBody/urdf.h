@@ -7,13 +7,12 @@
 #include <Core/Vector/vector_3d.h>
 //#include <Framework/Framework/ModuleTopology.h>
 
-namespace PhysIKA{
+namespace PhysIKA {
 
-class Urdf{
+class Urdf
+{
 public:
-RigidBodyRoot_ptr loadFile(std::string filename);
-
-
+    RigidBodyRoot_ptr loadFile(std::string filename);
 };
 
-}
+}  // namespace PhysIKA

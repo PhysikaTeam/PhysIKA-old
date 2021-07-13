@@ -31,23 +31,23 @@ int main()
 
     switch (caseid)
     {
-    case 0:
-    {
-        DemoParticleSandMultiRigid *demo = DemoParticleSandMultiRigid::getInstance();
-        demo->createScene();
-        demo->run();
-        break;
-    }
-    case 1:
-    {
-        DemoParticleSandRigid_Sphere *demo = DemoParticleSandRigid_Sphere::getInstance();
-        demo->createScene();
-        demo->run();
-        break;
-    }
+        case 0:
+        {
+            DemoParticleSandMultiRigid* demo = DemoParticleSandMultiRigid::getInstance();
+            demo->createScene();
+            demo->run();
+            break;
+        }
+        case 1:
+        {
+            DemoParticleSandRigid_Sphere* demo = DemoParticleSandRigid_Sphere::getInstance();
+            demo->createScene();
+            demo->run();
+            break;
+        }
 
-    default:
-        break;
+        default:
+            break;
     }
 
     //DemoParticleSand* demo = DemoParticleSand::getInstance();

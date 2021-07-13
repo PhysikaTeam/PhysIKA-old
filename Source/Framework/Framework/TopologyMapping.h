@@ -1,8 +1,7 @@
 #pragma once
 #include "Framework/Framework/Module.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 class TopologyMapping : public Module
 {
 public:
@@ -10,8 +9,8 @@ public:
     virtual ~TopologyMapping();
 
     virtual bool apply() = 0;
-private:
 
+private:
 };
 
-}
+}  // namespace PhysIKA

@@ -14,65 +14,74 @@
 
 namespace PhysIKA {
 
-    template<typename TDataType>
-    class OneDimElasticityModule : public ConstraintModule
+template <typename TDataType>
+class OneDimElasticityModule : public ConstraintModule
+{
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
+
+    OneDimElasticityModule();
+    ~OneDimElasticityModule() override;
+
+    bool constrain() override;
+
+    void solveElasticity();
+
+    void setIterationNumber(int num)
     {
-    public:
-        typedef typename TDataType::Real Real;
-        typedef typename TDataType::Coord Coord;
+        m_iterNum.setValue(num);
+    }
+    int getIterationNumber()
+    {
+        return m_iterNum.getValue();
+    }
 
-        OneDimElasticityModule();
-        ~OneDimElasticityModule() override;
-        
-        bool constrain() override;
+    void setMaterialStiffness(Real stiff)
+    {
+        m_lambda.setValue(stiff);
+    }
 
-        void solveElasticity();
+protected:
+    bool initializeImpl() override;
 
-        void setIterationNumber(int num) { m_iterNum.setValue(num); }
-        int getIterationNumber() { return m_iterNum.getValue(); }
+    void updateVelocity();
 
-        void setMaterialStiffness(Real stiff) { m_lambda.setValue(stiff); }
-
-    protected:
-        bool initializeImpl() override;
-
-        void updateVelocity();
-
-    public:
-        /**
+public:
+    /**
          * @brief Horizon
          * A positive number represents the radius of neighborhood for each point
          */
-        VarField<Real> m_distance;
+    VarField<Real> m_distance;
 
-        /**
+    /**
          * @brief Particle position
          */
-        DeviceArrayField<Coord> m_position;
-        /**
+    DeviceArrayField<Coord> m_position;
+    /**
          * @brief Particle velocity
          */
-        DeviceArrayField<Coord> m_velocity;
+    DeviceArrayField<Coord> m_velocity;
 
-        DeviceArrayField<Real> m_mass;
+    DeviceArrayField<Real> m_mass;
 
-    protected:
-        /**
+protected:
+    /**
         * @brief Lame parameters
         * m_lambda controls the isotropic part while mu controls the deviatoric part.
         */
-        VarField<Real> m_lambda;
+    VarField<Real> m_lambda;
 
-        DeviceArray<Coord> m_position_old;
-        DeviceArray<Coord> m_position_buf;
+    DeviceArray<Coord> m_position_old;
+    DeviceArray<Coord> m_position_buf;
 
-    private:
-        VarField<int> m_iterNum;
-    };
+private:
+    VarField<int> m_iterNum;
+};
 
 #ifdef PRECISION_FLOAT
-    template class OneDimElasticityModule<DataType3f>;
+template class OneDimElasticityModule<DataType3f>;
 #else
-    template class OneDimElasticityModule<DataType3d>;
+template class OneDimElasticityModule<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

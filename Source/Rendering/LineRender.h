@@ -20,7 +20,7 @@
 #include "ShaderProgram.h"
 #include <Core/Array/Array.h>
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 class LineRender
 {
@@ -29,8 +29,8 @@ public:
     ~LineRender();
 
     //disable copy
-    LineRender(const LineRender &) = delete;
-    LineRender & operator = (const LineRender &) = delete;
+    LineRender(const LineRender&) = delete;
+    LineRender& operator=(const LineRender&) = delete;
 
     void resize(unsigned int num);
 
@@ -39,7 +39,7 @@ public:
 
     void setColors(HostArray<float3>& color);
 
-    void setLineWidth(float line_width);
+    void  setLineWidth(float line_width);
     float getLineWidth() const;
 
     void display();  //Note: we design renderTaskImpl to be "protected" as the same reason for "TriangleCustomColor::renderTaskImpl".
@@ -52,5 +52,5 @@ private:
     CudaVBOMapper<glm::vec3> m_vertex;
     CudaVBOMapper<glm::vec3> m_vertexColor;
 };
-    
-}
+
+}  // namespace PhysIKA

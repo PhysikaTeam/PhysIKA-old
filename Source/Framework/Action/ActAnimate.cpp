@@ -7,41 +7,38 @@
 #include "Framework/Framework/TopologyMapping.h"
 #include "Framework/Framework/ModuleCustom.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+
+AnimateAct::AnimateAct(float dt)
 {
-    
-    AnimateAct::AnimateAct(float dt)
+    m_dt = dt;
+}
+
+AnimateAct::~AnimateAct()
+{
+}
+
+void AnimateAct::process(Node* node)
+{
+    if (node == NULL)
     {
-        m_dt = dt;
+        Log::sendMessage(Log::Error, "Node is invalid!");
+        return;
     }
-
-    AnimateAct::~AnimateAct()
+    if (node->isActive())
     {
+        node->updateStatus();
 
-    }
-
-    void AnimateAct::process(Node* node)
-    {
-        if (node == NULL)
+        auto customModules = node->getCustomModuleList();
+        for (std::list<std::shared_ptr<CustomModule>>::iterator iter = customModules.begin(); iter != customModules.end(); iter++)
         {
-            Log::sendMessage(Log::Error, "Node is invalid!");
-            return;
+            (*iter)->update();
         }
-        if (node->isActive())
-        {
-            node->updateStatus();
 
-            auto customModules = node->getCustomModuleList();
-            for (std::list<std::shared_ptr<CustomModule>>::iterator iter = customModules.begin(); iter != customModules.end(); iter++)
-            {
-                (*iter)->update();
-            }
+        node->advance(node->getDt());
+        node->updateTopology();
 
-            node->advance(node->getDt());
-            node->updateTopology();
-
-
-            /*if (node->getAnimationController() != nullptr)
+        /*if (node->getAnimationController() != nullptr)
             {
                 node->getAnimationController()->execute();
             }
@@ -63,13 +60,12 @@ namespace PhysIKA
                     (*iter)->doCollision();
                 }
             }*/
-            
-        }
-
-//         if (node->getAnimationController())
-//         {
-//             node->getAnimationController()->execute();
-//         }
     }
 
+    //         if (node->getAnimationController())
+    //         {
+    //             node->getAnimationController()->execute();
+    //         }
 }
+
+}  // namespace PhysIKA

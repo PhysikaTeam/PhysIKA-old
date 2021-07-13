@@ -5,19 +5,27 @@
 
 namespace PhysIKA {
 
-
 class SceneGraph : public Base
 {
 public:
     typedef NodeIterator Iterator;
 
-    ~SceneGraph() {};
+    ~SceneGraph(){};
 
-    void setRootNode(std::shared_ptr<Node> root) { m_root = root; }
-    std::shared_ptr<Node> getRootNode() { return m_root; }
+    void setRootNode(std::shared_ptr<Node> root)
+    {
+        m_root = root;
+    }
+    std::shared_ptr<Node> getRootNode()
+    {
+        return m_root;
+    }
 
     virtual bool initialize();
-    bool isInitialized() { return m_initialized; }
+    bool         isInitialized()
+    {
+        return m_initialized;
+    }
     void invalid();
 
     virtual void draw();
@@ -29,32 +37,53 @@ public:
 
     virtual bool load(std::string name);
 
-    virtual void invoke(unsigned char type, unsigned char key, int x, int y) {};
+    virtual void invoke(unsigned char type, unsigned char key, int x, int y){};
 
-    template<class TNode, class ...Args>
-    std::shared_ptr<TNode> createNewScene(Args&& ... args)
+    template <class TNode, class... Args>
+    std::shared_ptr<TNode> createNewScene(Args&&... args)
     {
         std::shared_ptr<TNode> root = TypeInfo::New<TNode>(std::forward<Args>(args)...);
-        m_root = root;
+        m_root                      = root;
         return root;
     }
 
 public:
     static SceneGraph& getInstance();
 
-    inline void setTotalTime(float t) { m_maxTime = t; }
-    inline float getTotalTime() { return m_maxTime; }
+    inline void setTotalTime(float t)
+    {
+        m_maxTime = t;
+    }
+    inline float getTotalTime()
+    {
+        return m_maxTime;
+    }
 
-    inline void setFrameRate(float frameRate) { m_frameRate = frameRate; }
-    inline float getFrameRate() { return m_frameRate; }
-    inline float getTimeCostPerFrame() { return m_frameCost; }
-    inline float getFrameInterval() { return 1.0f / m_frameRate; }
-    inline int getFrameNumber() { return m_frameNumber; }
+    inline void setFrameRate(float frameRate)
+    {
+        m_frameRate = frameRate;
+    }
+    inline float getFrameRate()
+    {
+        return m_frameRate;
+    }
+    inline float getTimeCostPerFrame()
+    {
+        return m_frameCost;
+    }
+    inline float getFrameInterval()
+    {
+        return 1.0f / m_frameRate;
+    }
+    inline int getFrameNumber()
+    {
+        return m_frameNumber;
+    }
 
     bool isIntervalAdaptive();
     void setAdaptiveInterval(bool adaptive);
 
-    void setGravity(Vector3f g);
+    void     setGravity(Vector3f g);
     Vector3f getGravity();
 
     Vector3f getLowerBound();
@@ -63,8 +92,14 @@ public:
     void setLowerBound(Vector3f lowerBound);
     void setUpperBound(Vector3f upperBound);
 
-    inline Iterator begin() { return NodeIterator(m_root); }
-    inline Iterator end() {return NodeIterator(nullptr);    }
+    inline Iterator begin()
+    {
+        return NodeIterator(m_root);
+    }
+    inline Iterator end()
+    {
+        return NodeIterator(nullptr);
+    }
 
 private:
     SceneGraph()
@@ -83,8 +118,8 @@ private:
     /**
     * To avoid erroneous operations
     */
-    SceneGraph(const SceneGraph&) {};
-    SceneGraph& operator=(const SceneGraph&) {};
+    SceneGraph(const SceneGraph&){};
+    SceneGraph& operator=(const SceneGraph&){};
 
 private:
     bool m_initialized;
@@ -106,4 +141,4 @@ private:
     std::shared_ptr<Node> m_root = nullptr;
 };
 
-}
+}  // namespace PhysIKA

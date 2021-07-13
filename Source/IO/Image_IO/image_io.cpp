@@ -19,61 +19,60 @@
 #include "IO/Image_IO/ppm_io.h"
 using std::string;
 
-namespace PhysIKA{
+namespace PhysIKA {
 
-
-bool ImageIO::load(const string & filename, Image* image)
+bool ImageIO::load(const string& filename, Image* image)
 {
     return ImageIO::load(filename, image, Image::RGBA);
 }
 
-bool ImageIO::load(const string &filename, Image * image, Image::DataFormat data_format)
+bool ImageIO::load(const string& filename, Image* image, Image::DataFormat data_format)
 {
     string suffix = FileUtilities::fileExtension(filename);
-    if(suffix==string(".png"))
+    if (suffix == string(".png"))
         return PngIO::load(filename, image, data_format);
-    else  if(suffix==string(".ppm"))
+    else if (suffix == string(".ppm"))
         return PPMIO::load(filename, image, data_format);
     else
     {
-        std::cerr<<"Unknown image file format!\n";
+        std::cerr << "Unknown image file format!\n";
         return false;
     }
 }
 
-bool ImageIO::save(const string &filename, const Image * image)
+bool ImageIO::save(const string& filename, const Image* image)
 {
     string suffix = FileUtilities::fileExtension(filename);
-    if(suffix==string(".png"))
-            return PngIO::save(filename, image);
-    else if(suffix==string(".ppm"))
-            return PPMIO::save(filename, image);
+    if (suffix == string(".png"))
+        return PngIO::save(filename, image);
+    else if (suffix == string(".ppm"))
+        return PPMIO::save(filename, image);
     else
     {
-        std::cerr<<"Unknown image file format specified!\n";
+        std::cerr << "Unknown image file format specified!\n";
         return false;
     }
 }
 
-bool ImageIO::checkFileNameAndImage(const std::string &filename, const std::string &expected_extension, const Image *image)
+bool ImageIO::checkFileNameAndImage(const std::string& filename, const std::string& expected_extension, const Image* image)
 {
     std::string file_extension = FileUtilities::fileExtension(filename);
-    if(file_extension.size() == 0)
+    if (file_extension.size() == 0)
     {
-        std::cerr<<"No file extension found for the image file:"<<filename<<std::endl;
+        std::cerr << "No file extension found for the image file:" << filename << std::endl;
         return false;
     }
-    if(file_extension != expected_extension)
+    if (file_extension != expected_extension)
     {
-        std::cerr<<"Unknown file format:"<<file_extension<<std::endl;
+        std::cerr << "Unknown file format:" << file_extension << std::endl;
         return false;
     }
-    if(image == NULL)
+    if (image == NULL)
     {
-        std::cerr<<"NULL image passed to ImageIO"<<std::endl;
+        std::cerr << "NULL image passed to ImageIO" << std::endl;
         return false;
     }
     return true;
 }
 
-} //end of namespace PhysIKA
+}  //end of namespace PhysIKA

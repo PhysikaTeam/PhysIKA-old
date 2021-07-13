@@ -1,27 +1,24 @@
 #include "Framework/Action/Action.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+Action::Action()
 {
-    Action::Action()
-    {
-    }
-
-    Action::~Action()
-    {
-    }
-
-    void Action::start(Node* node)
-    {
-
-    }
-
-    void Action::process(Node* node)
-    {
-    }
-
-    void Action::end(Node* node)
-    {
-
-    }
-
 }
+
+Action::~Action()
+{
+}
+
+void Action::start(Node* node)
+{
+}
+
+void Action::process(Node* node)
+{
+}
+
+void Action::end(Node* node)
+{
+}
+
+}  // namespace PhysIKA

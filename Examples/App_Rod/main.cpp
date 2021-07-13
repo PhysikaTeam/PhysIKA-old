@@ -27,7 +27,7 @@ using namespace PhysIKA;
 
 int main()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     //    root->loadCube(Vector3f(0), Vector3f(1), 0.005f, false);
@@ -43,12 +43,12 @@ int main()
     root->addParticleSystem(child3);
 
     Vector3f CableStart = (0.00001f * Vector3f(15996, 3140, 19990) + 0.2f);
-    Vector3f CableEnd = (0.00001f * Vector3f(15649, 6555, 19990) + 0.2f);
+    Vector3f CableEnd   = (0.00001f * Vector3f(15649, 6555, 19990) + 0.2f);
 
     child3->setMass(1.0);
 
     int numSegment = 10;
-    int numPoint = numSegment + 1;
+    int numPoint   = numSegment + 1;
 
     Vector3f Cable = CableEnd - CableStart;
 
@@ -58,7 +58,7 @@ int main()
     std::vector<Vector3f> particles;
     for (int i = 0; i < numPoint; i++)
     {
-        Vector3f pi = CableStart + Cable * (float)i / numSegment;
+        Vector3f pi = CableStart + Cable * ( float )i / numSegment;
         particles.push_back(pi);
 
         if (i == 0)

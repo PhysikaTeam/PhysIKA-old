@@ -56,7 +56,7 @@ void outTree(shared_ptr<RigidBody2<DataType3f>> node)
         cout << "Child:  " << (*iter)->getChild()->getName().c_str() << endl;
     }
 
-    ListPtr<Node> &children = node->getChildren();
+    ListPtr<Node>& children = node->getChildren();
     for (auto iter = children.begin(); iter != children.end(); ++iter)
     {
         outTree(dynamic_pointer_cast<RigidBody2<DataType3f>>(*iter));
@@ -66,25 +66,25 @@ void outTree(shared_ptr<RigidBody2<DataType3f>> node)
 void demoLoadFile()
 {
     //srand(time(0));
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadSDF("../Media/bar/bar.sdf", false);
     root->translate(Vector3f(0.2f, 0.2f, 0));
 
-    string filename("D:\\Projects\\Physika\\PhysiKA_Rigid\\Media\\urdf\\test_robot2.urdf");
-    Urdf urdf;
+    string                                filename("D:\\Projects\\Physika\\PhysiKA_Rigid\\Media\\urdf\\test_robot2.urdf");
+    Urdf                                  urdf;
     shared_ptr<RigidBodyRoot<DataType3f>> rigid_root(urdf.loadFile(filename.c_str()));
     root->addChild(rigid_root);
 
-    Vector3f g(0, -0, 0); //g[4] = -5;
+    Vector3f g(0, -0, 0);  //g[4] = -5;
     rigid_root->setGravity(g);
 
-    auto all_rigid = rigid_root->getAllParentidNodePair();
+    auto                              all_rigid = rigid_root->getAllParentidNodePair();
     std::vector<SpatialVector<float>> v(all_rigid.size(), SpatialVector<float>());
 
-    SystemMotionState &state = *(rigid_root->getSystemState()->m_motionState);
-    const std::vector<int> &idx_map = rigid_root->getJointIdxMap();
+    SystemMotionState&      state   = *(rigid_root->getSystemState()->m_motionState);
+    const std::vector<int>& idx_map = rigid_root->getJointIdxMap();
 
     for (int i = 0; i < all_rigid.size(); ++i)
     {
@@ -95,7 +95,7 @@ void demoLoadFile()
             state.generalVelocity[idx_map[i]] = 1.5;
 
             auto cur_node = all_rigid[i].second;
-            state.m_v[i] = (cur_node->getParentJoint()->getJointSpace().mul(&(state.generalVelocity[idx_map[i]])));
+            state.m_v[i]  = (cur_node->getParentJoint()->getJointSpace().mul(&(state.generalVelocity[idx_map[i]])));
         }
     }
 
@@ -109,7 +109,7 @@ void demoLoadFile()
 
 void demo_PlanarJoint()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadSDF("../Media/bar/bar.sdf", false);
@@ -121,7 +121,7 @@ void demo_PlanarJoint()
     //rigid_root->setGravity(Vector3f(0, -9, 5));
 
     /// system state
-    std::shared_ptr<SystemState> system_state = rigid_root->getSystemState();
+    std::shared_ptr<SystemState>       system_state = rigid_root->getSystemState();
     std::shared_ptr<SystemMotionState> motion_state = system_state->m_motionState;
 
     /// rigid body 1
@@ -159,16 +159,16 @@ void demo_PlanarJoint()
 
     /// setup rigid bodies and joints properties.
     {
-        float box_sx = 1.0, box_sy = 3.0, box_sz = 1.0;
-        float rigid_mass = 12;
-        float ixx = 10.0, iyy = 1.0, izz = 10.0;
-        Vector3f ixyz(10.0, 1.0, 10.0);
+        float          box_sx = 1.0, box_sy = 3.0, box_sz = 1.0;
+        float          rigid_mass = 12;
+        float          ixx = 10.0, iyy = 1.0, izz = 10.0;
+        Vector3f       ixyz(10.0, 1.0, 10.0);
         Inertia<float> rigid_inertia(rigid_mass, ixyz);
 
         /// **************** joint 3
         Vector3f joint_r3;
         joint_r3[1] = 1.0;
-        Quaternion<float> joint_q3;
+        Quaternion<float>  joint_q3;
         Transform3d<float> joint_X3(joint_r3, joint_q3.getConjugate());
 
         Vector3f axis_norm;
@@ -181,11 +181,11 @@ void demo_PlanarJoint()
         /// position and rotaion of rigid1
         Vector3f rigid_r1;
         rigid_r1[1] = 2;
-        Quaternion<float> rigid_q1(-0.5, Vector3f(0, 0, 1));
+        Quaternion<float>  rigid_q1(-0.5, Vector3f(0, 0, 1));
         Transform3d<float> rigid_X1(rigid_r1, rigid_q1.getConjugate());
         motion_state->m_rel_r[id1] = rigid_r1;
         motion_state->m_rel_q[id1] = rigid_q1;
-        motion_state->m_X[id1] = rigid_X1;
+        motion_state->m_X[id1]     = rigid_X1;
 
         rigid1->setGeometrySize(15, 1, 5);
 
@@ -197,11 +197,11 @@ void demo_PlanarJoint()
 
         Vector3f rigid_r2;
         rigid_r2[1] = 4;
-        Quaternion<float> rigid_q2(-0.5, Vector3f(0, 0, 1));
+        Quaternion<float>  rigid_q2(-0.5, Vector3f(0, 0, 1));
         Transform3d<float> rigid_X2(rigid_r2, rigid_q2.getConjugate());
         motion_state->m_rel_r[id2] = rigid_r2;
         motion_state->m_rel_q[id2] = rigid_q2;
-        motion_state->m_X[id2] = rigid_X2;
+        motion_state->m_X[id2]     = rigid_X2;
 
         rigid2->setGeometrySize(15, 1, 5);
         rigid2->setMass(rigid_mass);
@@ -210,21 +210,21 @@ void demo_PlanarJoint()
         /// *************** rigid 3, dynamic
         int id3 = rigid3->getId();
 
-        Vector3f rigid_r3;
+        Vector3f          rigid_r3;
         Quaternion<float> rigid_q3;
         //Transform3d<float> rigid_X3(rigid_r3, rigid_q3.getConjugate());
         motion_state->m_rel_r[id3] = joint_r3 + joint_q3.rotate(rigid_r3);
         motion_state->m_rel_q[id3] = joint_q3 * rigid_q3;
-        motion_state->m_X[id3] = Transform3d<float>(motion_state->m_rel_r[id3], motion_state->m_rel_q[id3].getConjugate());
+        motion_state->m_X[id3]     = Transform3d<float>(motion_state->m_rel_r[id3], motion_state->m_rel_q[id3].getConjugate());
 
         rigid3->setGeometrySize(1, 1, 1);
         rigid3->setMass(rigid_mass);
         rigid3->setI(Inertia<float>(rigid_mass, Vector3f(2, 2, 2)));
 
         /// set velocity
-        SpatialVector<float> relv(1, 1, 1, -5, 0, 5);                                                      ///< relative velocity, in successor frame.
-        planar_joint->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[0]));             ///< map relative velocity into joint space vector.
-        motion_state->m_v[id3] = (planar_joint->getJointSpace().mul(&(motion_state->generalVelocity[0]))); ///<
+        SpatialVector<float> relv(1, 1, 1, -5, 0, 5);                                                       ///< relative velocity, in successor frame.
+        planar_joint->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[0]));              ///< map relative velocity into joint space vector.
+        motion_state->m_v[id3] = (planar_joint->getJointSpace().mul(&(motion_state->generalVelocity[0])));  ///<
 
         //motion_state->m_dq[0] = -15;
         //motion_state->m_dq[1] = -0;
@@ -244,7 +244,7 @@ void demo_PlanarJoint()
 
 void demo_PrismaticJoint()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadSDF("../Media/bar/bar.sdf", false);
@@ -256,7 +256,7 @@ void demo_PrismaticJoint()
     //rigid_root->setGravity(Vector3f(0, -9, 5));
 
     /// system state
-    std::shared_ptr<SystemState> system_state = rigid_root->getSystemState();
+    std::shared_ptr<SystemState>       system_state = rigid_root->getSystemState();
     std::shared_ptr<SystemMotionState> motion_state = system_state->m_motionState;
 
     /// rigid body 1
@@ -288,9 +288,9 @@ void demo_PrismaticJoint()
         float ixx = 10.0, ixy = 0.0, ixz = 0.0, iyy = 1.0, iyz = 0.0, izz = 10.0;
 
         /// ********* prismatic joint info
-        Vector3f joint_r2; //joint_r2[1] = 1.0;
+        Vector3f          joint_r2;  //joint_r2[1] = 1.0;
         Quaternion<float> joint_q2;
-        Vector3f axis_norm;
+        Vector3f          axis_norm;
         axis_norm[1] = 1.0;
         joint2->setJointInfo(axis_norm);
 
@@ -310,7 +310,7 @@ void demo_PrismaticJoint()
         /// ************** rigid 2
         int id2 = rigid2->getId();
 
-        Vector3f rigid_r2;
+        Vector3f          rigid_r2;
         Quaternion<float> rigid_q2;
         motion_state->m_rel_r[id2] = joint_r2 + joint_q2.rotate(rigid_r2);
         motion_state->m_rel_q[id2] = joint_q2 * rigid_q2;
@@ -318,9 +318,9 @@ void demo_PrismaticJoint()
         rigid2->setI(Inertia<float>(rigid_mass, Vector3f(50, 2, 50)));
 
         /// set velocity
-        SpatialVector<float> relv(1, 1, 1, -5, 5, 5);                                                ///< relative velocity, in successor frame.
-        joint2->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[0]));             ///< map relative velocity into joint space vector.
-        motion_state->m_v[id2] = (joint2->getJointSpace().mul(&(motion_state->generalVelocity[0]))); ///< set
+        SpatialVector<float> relv(1, 1, 1, -5, 5, 5);                                                 ///< relative velocity, in successor frame.
+        joint2->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[0]));              ///< map relative velocity into joint space vector.
+        motion_state->m_v[id2] = (joint2->getJointSpace().mul(&(motion_state->generalVelocity[0])));  ///< set
 
         motion_state->updateGlobalInfo();
     }
@@ -332,7 +332,7 @@ void demo_PrismaticJoint()
 
 void demo_middleAxis()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadSDF("../Media/bar/bar.sdf", false);
@@ -344,7 +344,7 @@ void demo_middleAxis()
     rigid_root->setGravity(Vector3f(0, -0, 0));
 
     /// system state
-    std::shared_ptr<SystemState> system_state = rigid_root->getSystemState();
+    std::shared_ptr<SystemState>       system_state = rigid_root->getSystemState();
     std::shared_ptr<SystemMotionState> motion_state = system_state->m_motionState;
 
     Vector3f rigid_r[3];
@@ -361,9 +361,9 @@ void demo_middleAxis()
     //rigid_w[0] = Vector3f(5, 0, 0.1);
     //rigid_w[0] = Vector3f(0, 0.1, 5);
 
-    RigidBody2_ptr rigid1[3];
-    RigidBody2_ptr rigid2[3];
-    std::shared_ptr<FreeJoint> joint1[3];
+    RigidBody2_ptr              rigid1[3];
+    RigidBody2_ptr              rigid2[3];
+    std::shared_ptr<FreeJoint>  joint1[3];
     std::shared_ptr<FixedJoint> fixed_joint[3];
 
     for (int i = 0; i < 3; ++i)
@@ -403,7 +403,7 @@ void demo_middleAxis()
         //Vector3f joint_r1
 
         /// ********* fixed joint info
-        Vector3f joint_r2(0.25, 0, 0);
+        Vector3f          joint_r2(0.25, 0, 0);
         Quaternion<float> joint_q2;
 
         /// ********** rigid 1
@@ -411,7 +411,7 @@ void demo_middleAxis()
 
         //Vector3f rigid_r1;
         //rigid_r1[1] = 6;
-        Quaternion<float> rigid_q1; //rigid_q1.set(Vector3f(-0.5, -0.0, 0));
+        Quaternion<float> rigid_q1;  //rigid_q1.set(Vector3f(-0.5, -0.0, 0));
         motion_state->m_rel_r[id1] = rigid_r[i];
         motion_state->m_rel_q[id1] = rigid_q1;
         rigid1[i]->setGeometrySize(0.5, 2, 0.5);
@@ -430,10 +430,10 @@ void demo_middleAxis()
 
         /// set velocity
         //Vector3f center = rigid_r[i] + rigid_r2 *(1.0 / 3.0);
-        Transform3d<float> trans_center(-rigid_r2 * (1.0 / 3.0), rigid_q1.getConjugate());
-        SpatialVector<float> relv = trans_center.transformM(rigid_v[i]);                                           ///< relative velocity, in successor frame.
-        joint1[i]->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[idx_map[id1]]));             ///< map relative velocity into joint space vector.
-        motion_state->m_v[id1] = (joint1[i]->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id1]]))); ///< set
+        Transform3d<float>   trans_center(-rigid_r2 * (1.0 / 3.0), rigid_q1.getConjugate());
+        SpatialVector<float> relv = trans_center.transformM(rigid_v[i]);                                            ///< relative velocity, in successor frame.
+        joint1[i]->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[idx_map[id1]]));              ///< map relative velocity into joint space vector.
+        motion_state->m_v[id1] = (joint1[i]->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id1]])));  ///< set
     }
 
     motion_state->updateGlobalInfo();
@@ -445,7 +445,7 @@ void demo_middleAxis()
 
 void demo_SphericalJoint()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadSDF("../Media/bar/bar.sdf", false);
@@ -457,7 +457,7 @@ void demo_SphericalJoint()
     //rigid_root->setGravity(Vector3f(0, 0, 0));
 
     /// system state
-    std::shared_ptr<SystemState> system_state = rigid_root->getSystemState();
+    std::shared_ptr<SystemState>       system_state = rigid_root->getSystemState();
     std::shared_ptr<SystemMotionState> motion_state = system_state->m_motionState;
 
     /// rigid body 1
@@ -505,22 +505,22 @@ void demo_SphericalJoint()
         Vector3f rigid_r3(0, -box_sy / 2.0, 0);
 
         /// ********* joint1 info
-        Vector3f joint_r1(0, 9, 0);
+        Vector3f          joint_r1(0, 9, 0);
         Quaternion<float> joint_q1(Vector3f(1, 1, 1), 1);
         joint1->setJointInfo(-rigid_r1);
 
         /// ********* joint2 info
-        Vector3f joint_r2(0, -box_sy / 2.0, 0);
+        Vector3f          joint_r2(0, -box_sy / 2.0, 0);
         Quaternion<float> joint_q2;
         joint2->setJointInfo(-rigid_r2);
 
         /// ********* joint1 info
-        Vector3f joint_r3(0, -box_sy / 2.0, 0);
+        Vector3f          joint_r3(0, -box_sy / 2.0, 0);
         Quaternion<float> joint_q3;
         joint3->setJointInfo(-rigid_r3);
 
         /// ********** rigid 1
-        int id1 = rigid1->getId();
+        int               id1 = rigid1->getId();
         Quaternion<float> rigid_q1;
         motion_state->m_rel_r[id1] = joint_r1 + joint_q1.rotate(rigid_r1);
         motion_state->m_rel_q[id1] = joint_q1 * rigid_q1;
@@ -528,7 +528,7 @@ void demo_SphericalJoint()
         rigid1->setI(Inertia<float>(rigid_mass, Vector3f(ixx, iyy, izz)));
 
         /// ********** rigid 2
-        int id2 = rigid2->getId();
+        int               id2 = rigid2->getId();
         Quaternion<float> rigid_q2;
         motion_state->m_rel_r[id2] = joint_r2 + joint_q2.rotate(rigid_r2);
         motion_state->m_rel_q[id2] = joint_q2 * rigid_q2;
@@ -536,28 +536,28 @@ void demo_SphericalJoint()
         rigid2->setI(Inertia<float>(rigid_mass, Vector3f(ixx, iyy, izz)));
 
         /// ********** rigid 2
-        int id3 = rigid3->getId();
+        int               id3 = rigid3->getId();
         Quaternion<float> rigid_q3;
         motion_state->m_rel_r[id3] = joint_r3 + joint_q3.rotate(rigid_r3);
         motion_state->m_rel_q[id3] = joint_q3 * rigid_q3;
         rigid3->setGeometrySize(box_sx, box_sy, box_sz);
         rigid3->setI(Inertia<float>(rigid_mass, Vector3f(ixx, iyy, izz)));
 
-        std::default_random_engine e(time(0));
+        std::default_random_engine            e(time(0));
         std::uniform_real_distribution<float> u(-2.0, 2.0);
 
         /// set velocity
-        SpatialVector<float> relv1(u(e), u(e), u(e), 0, 0, 0);                                                  ///< relative velocity, in successor frame.
-        joint1->getJointSpace().transposeMul(relv1, &(motion_state->generalVelocity[idx_map[id1]]));            ///< map relative velocity into joint space vector.
-        motion_state->m_v[id1] = (joint1->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id1]]))); ///< set
+        SpatialVector<float> relv1(u(e), u(e), u(e), 0, 0, 0);                                                   ///< relative velocity, in successor frame.
+        joint1->getJointSpace().transposeMul(relv1, &(motion_state->generalVelocity[idx_map[id1]]));             ///< map relative velocity into joint space vector.
+        motion_state->m_v[id1] = (joint1->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id1]])));  ///< set
 
-        SpatialVector<float> relv2(u(e), u(e), u(e), 0, 0, 0);                                                  ///< relative velocity, in successor frame.
-        joint2->getJointSpace().transposeMul(relv2, &(motion_state->generalVelocity[idx_map[id2]]));            ///< map relative velocity into joint space vector.
-        motion_state->m_v[id2] = (joint2->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id2]]))); ///< set
+        SpatialVector<float> relv2(u(e), u(e), u(e), 0, 0, 0);                                                   ///< relative velocity, in successor frame.
+        joint2->getJointSpace().transposeMul(relv2, &(motion_state->generalVelocity[idx_map[id2]]));             ///< map relative velocity into joint space vector.
+        motion_state->m_v[id2] = (joint2->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id2]])));  ///< set
 
-        SpatialVector<float> relv3(u(e), u(e), u(e), 0, 0, 0);                                                  ///< relative velocity, in successor frame.
-        joint3->getJointSpace().transposeMul(relv3, &(motion_state->generalVelocity[idx_map[id3]]));            ///< map relative velocity into joint space vector.
-        motion_state->m_v[id3] = (joint3->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id3]]))); ///< set
+        SpatialVector<float> relv3(u(e), u(e), u(e), 0, 0, 0);                                                   ///< relative velocity, in successor frame.
+        joint3->getJointSpace().transposeMul(relv3, &(motion_state->generalVelocity[idx_map[id3]]));             ///< map relative velocity into joint space vector.
+        motion_state->m_v[id3] = (joint3->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id3]])));  ///< set
 
         motion_state->updateGlobalInfo();
     }
@@ -570,7 +570,7 @@ void demo_SphericalJoint()
 template <int N = 10>
 void demo_MultiRigid()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadSDF("../../Media/bar/bar.sdf", false);
@@ -578,7 +578,7 @@ void demo_MultiRigid()
 
     //int n = 10;
 
-    RigidBody2_ptr rigid[N];
+    RigidBody2_ptr                  rigid[N];
     std::shared_ptr<SphericalJoint> joint[N];
 
     /// root
@@ -587,7 +587,7 @@ void demo_MultiRigid()
     //rigid_root->setGravity(Vector3f(0, 0, 0));
 
     /// system state
-    std::shared_ptr<SystemState> system_state = rigid_root->getSystemState();
+    std::shared_ptr<SystemState>       system_state = rigid_root->getSystemState();
     std::shared_ptr<SystemMotionState> motion_state = system_state->m_motionState;
 
     RigidBody2_ptr last_rigid = rigid_root;
@@ -604,7 +604,7 @@ void demo_MultiRigid()
         rigid[i]->setParentJoint(joint[i].get());
 
         auto renderModule = std::make_shared<RigidMeshRender>(rigid[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         rigid[i]->addVisualModule(renderModule);
 
         last_rigid = rigid[i];
@@ -615,7 +615,7 @@ void demo_MultiRigid()
 
     auto idx_map = rigid_root->getJointIdxMap();
 
-    std::default_random_engine e(time(0));
+    std::default_random_engine            e(time(0));
     std::uniform_real_distribution<float> u(-2.0, 2.0);
     std::uniform_real_distribution<float> u1(-1, 1);
 
@@ -634,8 +634,8 @@ void demo_MultiRigid()
         Vector3f rigid_r(0, -box_sy / 2.0, 0);
 
         /// ********* joint info
-        Vector3f joint_r(0, -box_sy / 2.0, 0);
-        Quaternion<float> joint_q; // (Vector3f(u1(e), u1(e), u1(e)), u1(e));
+        Vector3f          joint_r(0, -box_sy / 2.0, 0);
+        Quaternion<float> joint_q;  // (Vector3f(u1(e), u1(e), u1(e)), u1(e));
         if (i == 0)
         {
             joint_r[1] = box_sy * (N + 1);
@@ -645,7 +645,7 @@ void demo_MultiRigid()
         joint[i]->setJointInfo(-rigid_r);
 
         /// ********** rigid 1
-        int id = rigid[i]->getId();
+        int               id = rigid[i]->getId();
         Quaternion<float> rigid_q;
         motion_state->m_rel_r[id] = joint_r + joint_q.rotate(rigid_r);
         motion_state->m_rel_q[id] = joint_q * rigid_q;
@@ -655,9 +655,9 @@ void demo_MultiRigid()
         if (false)
         {
             /// set velocity
-            SpatialVector<float> relv(u(e), u(e), u(e), 0, 0, 0);                                                   ///< relative velocity, in successor frame.
-            joint[i]->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[idx_map[id]]));            ///< map relative velocity into joint space vector.
-            motion_state->m_v[id] = (joint[i]->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id]]))); ///< set
+            SpatialVector<float> relv(u(e), u(e), u(e), 0, 0, 0);                                                    ///< relative velocity, in successor frame.
+            joint[i]->getJointSpace().transposeMul(relv, &(motion_state->generalVelocity[idx_map[id]]));             ///< map relative velocity into joint space vector.
+            motion_state->m_v[id] = (joint[i]->getJointSpace().mul(&(motion_state->generalVelocity[idx_map[id]])));  ///< set
         }
     }
 

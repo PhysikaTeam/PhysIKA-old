@@ -10,73 +10,66 @@
 #include "Framework/Topology/PointSet.h"
 #include "Core/DataTypes.h"
 
-
 #include <memory>
 
-
-
-namespace PhysIKA
+namespace PhysIKA {
+class SandSimulator : public Node
 {
-    class SandSimulator :public Node
-    {
-    public:
-        SandSimulator();
+public:
+    SandSimulator();
 
-        virtual ~SandSimulator();
-        
-        bool initialize() override;
+    virtual ~SandSimulator();
 
-        void updateTopology() override;
+    bool initialize() override;
 
-        void advance(Real dt) override;
+    void updateTopology() override;
 
-        /**
+    void advance(Real dt) override;
+
+    /**
         *@brief Set simulation solver of sand.
         */
-        void setSandSolver(std::shared_ptr<SandSolverInterface> sandSolver);
+    void setSandSolver(std::shared_ptr<SandSolverInterface> sandSolver);
 
-        /**
+    /**
         *@brief Set rendering particles sampler.
         */
-        //void setRenderParticleSampler(std::shared_ptr<RenderParticleSampler> sampler);
+    //void setRenderParticleSampler(std::shared_ptr<RenderParticleSampler> sampler);
 
-        /**
+    /**
         *@brief Set render particle sampler and particle point set for rendering preparation.
         */
-        //void prepareRenderData(std::shared_ptr<RenderParticleSampler> sampler = std::make_shared<RenderParticleSampler>(),
-        //    std::shared_ptr<PointSet<DataType3f>> particleSet = std::make_shared<PointSet<DataType3f>>());
+    //void prepareRenderData(std::shared_ptr<RenderParticleSampler> sampler = std::make_shared<RenderParticleSampler>(),
+    //    std::shared_ptr<PointSet<DataType3f>> particleSet = std::make_shared<PointSet<DataType3f>>());
 
-        //SandGrid& getSandGrid() { return m_sandData; }
+    //SandGrid& getSandGrid() { return m_sandData; }
 
-        //void setHeightFieldSample(bool useSample = true) { m_useHeightFieldSample = useSample; }
+    //void setHeightFieldSample(bool useSample = true) { m_useHeightFieldSample = useSample; }
 
-        void needForward(bool needforward) { m_needForward = needforward; }
+    void needForward(bool needforward)
+    {
+        m_needForward = needforward;
+    }
 
+public:
+    // sand grid data.
+    //SandGrid m_sandData;
+    //SandGridInfo m_sandinfo;
 
+    // sand simulation solver, such as: SSE solver.
+    std::shared_ptr<SandSolverInterface> m_psandSolver;
 
-    public:
-        // sand grid data.
-        //SandGrid m_sandData;
-        //SandGridInfo m_sandinfo;
-        
+    // Sampler will be used for the sampling of rendering particles.
+    //std::shared_ptr<RenderParticleSampler> m_renderParticleSampler;
 
+    // Topology module of sand.
+    std::shared_ptr<PointSet<DataType3f>> m_renderParticleSet;
 
-        
-        // sand simulation solver, such as: SSE solver.
-        std::shared_ptr<SandSolverInterface> m_psandSolver;
+    //bool m_useHeightFieldSample = true;
+    //int m_userParticleCount = 1;
 
-        // Sampler will be used for the sampling of rendering particles.
-        //std::shared_ptr<RenderParticleSampler> m_renderParticleSampler;
+    bool m_needForward = true;
+};
 
-        // Topology module of sand.
-        std::shared_ptr<PointSet<DataType3f>> m_renderParticleSet;
-
-
-        //bool m_useHeightFieldSample = true;
-        //int m_userParticleCount = 1;
-
-        bool m_needForward = true;
-    };
-
-}
-#endif // _SANDSIMULATOR_H
+}  // namespace PhysIKA
+#endif  // _SANDSIMULATOR_H

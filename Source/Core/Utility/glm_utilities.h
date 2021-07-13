@@ -18,7 +18,7 @@
 #include "Core/Vectors/vector_3d.h"
 //#include "Rendering/Color/color.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 // inline glm::vec3 convertCol3(const Color4f & col)
 // {
@@ -26,9 +26,9 @@ namespace PhysIKA{
 // }
 
 template <typename Scalar>
-inline glm::vec3 convert(const Vector<Scalar, 3> & val)
+inline glm::vec3 convert(const Vector<Scalar, 3>& val)
 {
     return glm::vec3(val[0], val[1], val[2]);
 }
-    
-}//end of namespace PhysIKA
+
+}  //end of namespace PhysIKA

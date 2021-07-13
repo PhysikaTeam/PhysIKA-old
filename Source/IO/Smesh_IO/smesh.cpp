@@ -4,8 +4,7 @@
 #include <iostream>
 using namespace std;
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 void Smesh::loadFile(string filename)
 {
@@ -46,7 +45,7 @@ void Smesh::loadFile(string filename)
     while (!filein.eof())
     {
         string ele_type = "";
-        int num_eles = 0, ele_dim = 0;
+        int    num_eles = 0, ele_dim = 0;
         filein >> ele_type >> num_eles >> ele_dim;
         if (ele_type == "LINE")
         {
@@ -120,4 +119,4 @@ void Smesh::loadFile(string filename)
     }
 }
 
-} // namespace PhysIKA
+}  // namespace PhysIKA

@@ -59,7 +59,7 @@
 //
 //    protected:
 //
-//        
+//
 //
 //        std::vector<ArrayField<Vector3f, DeviceType::GPU>> m_localMeshPoints;
 //        //std::vector<ArrayField<Vector3f, DeviceType::GPU>> m_rigidPoints;
@@ -68,11 +68,11 @@
 //        ArrayField<Vector3f, DeviceType::GPU> m_globalMeshPoints;
 //        ArrayField< TopologyModule::Triangle, DeviceType::GPU> m_triVerIndices;
 //
-//        ArrayField<int, DeviceType::GPU> m_meshBelongTo;            
+//        ArrayField<int, DeviceType::GPU> m_meshBelongTo;
 //        ArrayField<int, DeviceType::GPU> m_pointIndexOffset;
 //
 //        // Point position, should be update before every detection.
-//        ArrayField<Vector3f, DeviceType::GPU> m_inPoints;        
+//        ArrayField<Vector3f, DeviceType::GPU> m_inPoints;
 //
 //        std::shared_ptr<NeighborTriangleQuery<DataType3f>> m_triQuery;
 //

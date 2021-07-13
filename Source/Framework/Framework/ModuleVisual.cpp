@@ -1,8 +1,7 @@
 #include "Framework/Framework/ModuleVisual.h"
 #include "Framework/Framework/Node.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 VisualModule::VisualModule()
     : Module()
     , m_scale(1.0f)
@@ -37,4 +36,4 @@ void VisualModule::scale(float x, float y, float z)
     m_scale *= Vector3f(x, y, z);
 }
 
-}
+}  // namespace PhysIKA

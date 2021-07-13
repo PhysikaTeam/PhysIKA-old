@@ -12,22 +12,24 @@ using namespace PhysIKA;
 class DemoPBDPositionConstraint
 {
 public:
-    DemoPBDPositionConstraint(int n = 10, bool usegpu = true) : N(n), useGPU(usegpu) {}
+    DemoPBDPositionConstraint(int n = 10, bool usegpu = true)
+        : N(n), useGPU(usegpu) {}
     void run();
 
 public:
-    int N = 10;
+    int  N = 10;
     bool useGPU;
 };
 
 class DemoPBDRotationConstraint
 {
 public:
-    DemoPBDRotationConstraint(int n = 10, bool usegpu = true) : N(n), useGPU(usegpu) {}
+    DemoPBDRotationConstraint(int n = 10, bool usegpu = true)
+        : N(n), useGPU(usegpu) {}
     void run();
 
 public:
-    int N = 10;
+    int  N = 10;
     bool useGPU;
 };
 
@@ -50,10 +52,10 @@ private:
     {
         createWindow(1024, 768);
     }
-    static DemoPBDSingleHFCollide *m_instance;
+    static DemoPBDSingleHFCollide* m_instance;
 
 public:
-    static DemoPBDSingleHFCollide *getInstance()
+    static DemoPBDSingleHFCollide* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoPBDSingleHFCollide;
@@ -78,10 +80,10 @@ class DemoCollisionTest : public GLApp
 {
 private:
     DemoCollisionTest() {}
-    static DemoCollisionTest *m_instance;
+    static DemoCollisionTest* m_instance;
 
 public:
-    static DemoCollisionTest *getInstance()
+    static DemoCollisionTest* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoCollisionTest;
@@ -108,10 +110,10 @@ class DemoPendulumTest : public GLApp
 {
 private:
     DemoPendulumTest() {}
-    static DemoPendulumTest *m_instance;
+    static DemoPendulumTest* m_instance;
 
 public:
-    static DemoPendulumTest *getInstance()
+    static DemoPendulumTest* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoPendulumTest;
@@ -134,10 +136,10 @@ class DemoContactTest : public GLApp
 {
 private:
     DemoContactTest() {}
-    static DemoContactTest *m_instance;
+    static DemoContactTest* m_instance;
 
 public:
-    static DemoContactTest *getInstance()
+    static DemoContactTest* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoContactTest;

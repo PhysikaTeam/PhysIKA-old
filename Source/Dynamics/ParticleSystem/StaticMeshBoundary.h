@@ -7,69 +7,66 @@
 
 namespace PhysIKA {
 
-    template <typename T> class TriangleSet;
-    template <typename T> class NeighborQuery;
+template <typename T>
+class TriangleSet;
+template <typename T>
+class NeighborQuery;
 
-    template<typename TDataType>
-    class StaticMeshBoundary : public Node
-    {
-        DECLARE_CLASS_1(StaticMeshBoundary, TDataType)
-    public:
+template <typename TDataType>
+class StaticMeshBoundary : public Node
+{
+    DECLARE_CLASS_1(StaticMeshBoundary, TDataType)
+public:
+    // typename =>  to tell compiler that this is a type
+    typedef typename TDataType::Real          Real;
+    typedef typename TDataType::Coord         Coord;
+    typedef typename TopologyModule::Triangle Triangle;
 
-        // typename =>  to tell compiler that this is a type 
-        typedef typename TDataType::Real Real;
-        typedef typename TDataType::Coord Coord;
-        typedef typename TopologyModule::Triangle Triangle;
+    StaticMeshBoundary();
+    ~StaticMeshBoundary() override;
 
-        StaticMeshBoundary();
-        ~StaticMeshBoundary() override;
+    void loadMesh(std::string filename);
 
+    void advance(Real dt) override;
 
-        void loadMesh(std::string filename);
+    bool initialize() override;
 
-        void advance(Real dt) override;
+    bool resetStatus() override;
 
-        bool initialize() override;
+public:
+    DEF_NODE_PORTS(RigidBody, RigidBody<TDataType>, "A rigid body");
+    DEF_NODE_PORTS(ParticleSystem, ParticleSystem<TDataType>, "Particle Systems");
 
-        bool resetStatus() override;
+    // add by HNU
+    DEF_VAR(ImportFile, std::string, "", "Solver");
 
-    public:
-        DEF_NODE_PORTS(RigidBody, RigidBody<TDataType>, "A rigid body");
-        DEF_NODE_PORTS(ParticleSystem, ParticleSystem<TDataType>, "Particle Systems");
-
-        // add by HNU
-        DEF_VAR(ImportFile, std::string, "", "Solver");
-
-
-    public:
-        /**
+public:
+    /**
          * @brief Particle position
          */
-        DEF_EMPTY_CURRENT_ARRAY(ParticlePosition, Coord, DeviceType::GPU, "Particle position");
+    DEF_EMPTY_CURRENT_ARRAY(ParticlePosition, Coord, DeviceType::GPU, "Particle position");
 
-
-        /**
+    /**
          * @brief Particle velocity
          */
-        DEF_EMPTY_CURRENT_ARRAY(ParticleVelocity, Coord, DeviceType::GPU, "Particle velocity");
+    DEF_EMPTY_CURRENT_ARRAY(ParticleVelocity, Coord, DeviceType::GPU, "Particle velocity");
 
-        /**
+    /**
          * @brief Triangle vertex
          */
-        DEF_EMPTY_CURRENT_ARRAY(TriangleVertex, Coord, DeviceType::GPU, "Particle position");
+    DEF_EMPTY_CURRENT_ARRAY(TriangleVertex, Coord, DeviceType::GPU, "Particle position");
 
-        /**
+    /**
          * @brief Particle velocity
          */
-        DEF_EMPTY_CURRENT_ARRAY(TriangleIndex, Triangle, DeviceType::GPU, "Particle velocity");
+    DEF_EMPTY_CURRENT_ARRAY(TriangleIndex, Triangle, DeviceType::GPU, "Particle velocity");
 
-    private:
-        std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
-        VarField<Real> radius;
+private:
+    std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
+    VarField<Real>                            radius;
 
-        std::vector<std::shared_ptr<TriangleSet<TDataType>>> m_obstacles;
-    };
-
+    std::vector<std::shared_ptr<TriangleSet<TDataType>>> m_obstacles;
+};
 
 #ifdef PRECISION_FLOAT
 template class StaticMeshBoundary<DataType3f>;
@@ -77,4 +74,4 @@ template class StaticMeshBoundary<DataType3f>;
 template class StaticMeshBoundary<DataType3d>;
 #endif
 
-}
+}  // namespace PhysIKA

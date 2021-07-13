@@ -2,23 +2,23 @@
 #include "Framework/Framework/Module.h"
 #include "Framework/Framework/Base.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+class NumericalModel : public Module
 {
-    class NumericalModel : public Module
+public:
+    NumericalModel();
+    ~NumericalModel() override;
+
+    virtual void step(Real dt){};
+
+    virtual void updateTopology(){};
+
+    std::string getModuleType() override
     {
-    public:
-        NumericalModel();
-        ~NumericalModel() override;
+        return "NumericalModel";
+    }
 
-        virtual void step(Real dt) {};
-
-        virtual void updateTopology() {};
-
-        std::string getModuleType() override { return "NumericalModel"; }
-    protected:
-        
-    private:
-
-    };
-}
-
+protected:
+private:
+};
+}  // namespace PhysIKA

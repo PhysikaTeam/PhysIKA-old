@@ -44,7 +44,7 @@ using namespace PhysIKA;
 void CreateScene2()
 {
     printf("0\n");
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     //    scene.setUpperBound(Vector3f(1, 1.0, 0.5));
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
@@ -104,7 +104,7 @@ void CreateScene2()
             sRender->setColor(Vector3f(1, 1, 0));
 
             boost::property_tree::ptree pt;
-            const std::string jsonfile_path = "../../Media/bunny/embedded_finite_element_sparse.json";
+            const std::string           jsonfile_path = "../../Media/bunny/embedded_finite_element_sparse.json";
             read_json(jsonfile_path, pt);
             bunny->init_problem_and_solver(pt);
 
@@ -137,7 +137,7 @@ void CreateScene2()
 }
 void CreateScene()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     //       scene.setUpperBound(Vector3f(1, 1.0, 0.5));
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
@@ -192,7 +192,7 @@ void CreateScene()
             sRender->setColor(Vector3f(1, 1, 0));
 
             boost::property_tree::ptree pt;
-            const std::string jsonfile_path = "../../Media/bunny/embedded_finite_element_sparse.json";
+            const std::string           jsonfile_path = "../../Media/bunny/embedded_finite_element_sparse.json";
             read_json(jsonfile_path, pt);
             bunny->init_problem_and_solver(pt);
 

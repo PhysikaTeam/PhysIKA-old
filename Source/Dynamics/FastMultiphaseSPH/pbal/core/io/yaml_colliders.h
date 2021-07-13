@@ -12,34 +12,42 @@
 
 namespace YAML {
 
-    template <>
-    struct convert<pbal::ColliderPolygon2> {
-        static Node encode(const pbal::ColliderPolygon2& rhs) {
-            Node node;
-            return node;
-        }
+template <>
+struct convert<pbal::ColliderPolygon2>
+{
+    static Node encode(const pbal::ColliderPolygon2& rhs)
+    {
+        Node node;
+        return node;
+    }
 
-        static bool decode(const Node& node, pbal::ColliderPolygon2& collider) {
-            if (!node.IsMap() || node.size() < 2) {
-                return false;
-            }
-            collider.type = "polygon";
-
-            auto vertices = node["vertices"];
-            for (auto v : vertices) {
-                collider.polygon.push_back(v.as<pbal::Vec2d>());
-            }
-            if (node["w"].IsDefined()) {
-                collider.w = node["w"].as<double>();
-            }
-            if (node["vel"].IsDefined()) {
-                collider.vel = node["vel"].as<pbal::Vec2d>();
-            }
-            if (node["center"].IsDefined()) {
-                collider.center = node["center"].as<pbal::Vec2d>();
-            }
-            return true;
+    static bool decode(const Node& node, pbal::ColliderPolygon2& collider)
+    {
+        if (!node.IsMap() || node.size() < 2)
+        {
+            return false;
         }
-    };
-    
-}
+        collider.type = "polygon";
+
+        auto vertices = node["vertices"];
+        for (auto v : vertices)
+        {
+            collider.polygon.push_back(v.as<pbal::Vec2d>());
+        }
+        if (node["w"].IsDefined())
+        {
+            collider.w = node["w"].as<double>();
+        }
+        if (node["vel"].IsDefined())
+        {
+            collider.vel = node["vel"].as<pbal::Vec2d>();
+        }
+        if (node["center"].IsDefined())
+        {
+            collider.center = node["center"].as<pbal::Vec2d>();
+        }
+        return true;
+    }
+};
+
+}  // namespace YAML

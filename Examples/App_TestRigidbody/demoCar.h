@@ -14,7 +14,7 @@
 
 using namespace PhysIKA;
 
-class DemoCar // :public Node
+class DemoCar  // :public Node
 {
 public:
     DemoCar();
@@ -39,14 +39,14 @@ class DemoCar2 : public GLApp
 {
 private:
     DemoCar2() {}
-    static DemoCar2 *m_instance;
+    static DemoCar2* m_instance;
 
 public:
-    static DemoCar2 *getInstance()
+    static DemoCar2* getInstance()
     {
-    if (m_instance == 0)
-        m_instance = new DemoCar2;
-    return m_instance;
+        if (m_instance == 0)
+            m_instance = new DemoCar2;
+        return m_instance;
     }
 
     void build(bool useGPU = true);
@@ -57,10 +57,9 @@ public:
 
     static void demoKeyboardFunction(unsigned char key, int x, int y);
 
-    void addCar(std::shared_ptr<PBDCar> car, Vector3f pos,
-        int chassisGroup = 1, int chassisMask = 1, int wheelGroup = 2, int wheelMask = 4);
+    void addCar(std::shared_ptr<PBDCar> car, Vector3f pos, int chassisGroup = 1, int chassisMask = 1, int wheelGroup = 2, int wheelMask = 4);
 
-    void computeAABB(std::shared_ptr<PointSet<DataType3f>> points, Vector3f &center, Vector3f &halfSize);
+    void computeAABB(std::shared_ptr<PointSet<DataType3f>> points, Vector3f& center, Vector3f& halfSize);
 
 private:
     std::shared_ptr<PBDCar> m_car;
@@ -81,14 +80,14 @@ class DemoTankCar : public GLApp
 {
 private:
     DemoTankCar() {}
-    static DemoTankCar *m_instance;
+    static DemoTankCar* m_instance;
 
 public:
-    static DemoTankCar *getInstance()
+    static DemoTankCar* getInstance()
     {
-    if (m_instance == 0)
-        m_instance = new DemoTankCar();
-    return m_instance;
+        if (m_instance == 0)
+            m_instance = new DemoTankCar();
+        return m_instance;
     }
 
     void build(bool useGPU = true);
@@ -99,10 +98,9 @@ public:
 
     static void demoKeyboardFunction(unsigned char key, int x, int y);
 
-    void addCar(std::shared_ptr<MultiWheelCar<4>> car, Vector3f pos,
-        int chassisGroup = 1, int chassisMask = 1, int wheelGroup = 2, int wheelMask = 4);
+    void addCar(std::shared_ptr<MultiWheelCar<4>> car, Vector3f pos, int chassisGroup = 1, int chassisMask = 1, int wheelGroup = 2, int wheelMask = 4);
 
-    void computeAABB(std::shared_ptr<PointSet<DataType3f>> points, Vector3f &center, Vector3f &halfSize);
+    void computeAABB(std::shared_ptr<PointSet<DataType3f>> points, Vector3f& center, Vector3f& halfSize);
 
 private:
     std::shared_ptr<MultiWheelCar<4>> m_car;
@@ -123,14 +121,14 @@ class DemoPBDCar : public GLApp
 {
 private:
     DemoPBDCar() {}
-    static DemoPBDCar *m_instance;
+    static DemoPBDCar* m_instance;
 
 public:
-    static DemoPBDCar *getInstance()
+    static DemoPBDCar* getInstance()
     {
-    if (m_instance == 0)
-        m_instance = new DemoPBDCar;
-    return m_instance;
+        if (m_instance == 0)
+            m_instance = new DemoPBDCar;
+        return m_instance;
     }
 
     void build(bool useGPU = true);
@@ -142,7 +140,7 @@ public:
     static void demoKeyboardFunction(unsigned char key, int x, int y);
 
 private:
-    std::shared_ptr<PBDCar> m_car;
+    std::shared_ptr<PBDCar>                        m_car;
     std::shared_ptr<HeightFieldPBDInteractionNode> m_groundRigidInteractor;
 
     std::shared_ptr<RigidBodyRoot<DataType3f>> m_rigidSystem;
@@ -170,14 +168,14 @@ class DemoSlope : public GLApp
 {
 private:
     DemoSlope() {}
-    static DemoSlope *m_instance;
+    static DemoSlope* m_instance;
 
 public:
-    static DemoSlope *getInstance()
+    static DemoSlope* getInstance()
     {
-    if (m_instance == 0)
-        m_instance = new DemoSlope;
-    return m_instance;
+        if (m_instance == 0)
+            m_instance = new DemoSlope;
+        return m_instance;
     }
 
     void build(bool useGPU = true);

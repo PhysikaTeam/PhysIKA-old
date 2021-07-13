@@ -7,62 +7,67 @@
 #include "Core/Vector/vector_base.h"
 #include <glm/gtx/norm.hpp>
 
-
-namespace PhysIKA{
-
+namespace PhysIKA {
 
 template <typename T>
-class SpatialVector: public VectorBase<T>
+class SpatialVector : public VectorBase<T>
 {
 public:
-    COMM_FUNC SpatialVector() :m_angular(0, 0, 0), m_linear(0, 0, 0) {}
+    COMM_FUNC SpatialVector()
+        : m_angular(0, 0, 0), m_linear(0, 0, 0) {}
 
-    COMM_FUNC SpatialVector(const T& ang1, const T& ang2, const T& ang3, const T& lin1, const T& lin2, const T& lin3) :m_angular(ang1, ang2, ang3), m_linear(lin1, lin2, lin3) {}
+    COMM_FUNC SpatialVector(const T& ang1, const T& ang2, const T& ang3, const T& lin1, const T& lin2, const T& lin3)
+        : m_angular(ang1, ang2, ang3), m_linear(lin1, lin2, lin3) {}
 
-    COMM_FUNC SpatialVector(const glm::tvec3<T> & angular, const glm::tvec3<T>& linear) :m_angular(angular), m_linear(linear) {}
+    COMM_FUNC SpatialVector(const glm::tvec3<T>& angular, const glm::tvec3<T>& linear)
+        : m_angular(angular), m_linear(linear) {}
 
-    COMM_FUNC SpatialVector(const Vector3f & angular, const Vector3f& linear) : m_angular(angular[0], angular[1], angular[2]), m_linear(linear[0], linear[1], linear[2]) {}
+    COMM_FUNC SpatialVector(const Vector3f& angular, const Vector3f& linear)
+        : m_angular(angular[0], angular[1], angular[2]), m_linear(linear[0], linear[1], linear[2]) {}
 
-    COMM_FUNC SpatialVector(const SpatialVector<T>& v) : m_angular(v.m_angular), m_linear(v.m_linear) {}
-
+    COMM_FUNC SpatialVector(const SpatialVector<T>& v)
+        : m_angular(v.m_angular), m_linear(v.m_linear) {}
 
     COMM_FUNC void set(const T& ang1, const T& ang2, const T& ang3, const T& lin1, const T& lin2, const T& lin3);
 
-    COMM_FUNC int size()const { return 6; }
-    
-    COMM_FUNC T& operator[](unsigned int i);
-    COMM_FUNC const T& operator[](unsigned int i)const;
+    COMM_FUNC int size() const
+    {
+        return 6;
+    }
 
-    COMM_FUNC const SpatialVector<T> operator+ (const SpatialVector<T> & v) const;
-    COMM_FUNC SpatialVector<T>& operator+= (const SpatialVector<T> & v);
-    COMM_FUNC const SpatialVector<T> operator- (const SpatialVector<T> & v) const;
-    COMM_FUNC SpatialVector<T>& operator-= (const SpatialVector<T> & v);
+    COMM_FUNC T&    operator[](unsigned int i);
+    COMM_FUNC const T& operator[](unsigned int i) const;
 
-    COMM_FUNC const SpatialVector<T> operator-(void)const;
+    COMM_FUNC const SpatialVector<T> operator+(const SpatialVector<T>& v) const;
+    COMM_FUNC SpatialVector<T>& operator+=(const SpatialVector<T>& v);
+    COMM_FUNC const SpatialVector<T> operator-(const SpatialVector<T>& v) const;
+    COMM_FUNC SpatialVector<T>& operator-=(const SpatialVector<T>& v);
+
+    COMM_FUNC const SpatialVector<T> operator-(void) const;
 
     //COMM_FUNC const SpatialVector<T> operator* (const SpatialVector<T> & v) const;
     //COMM_FUNC SpatialVector<T>& operator*= (const SpatialVector<T> & v);
     //COMM_FUNC const SpatialVector<T> operator/ (const SpatialVector<T> & v) const;
     //COMM_FUNC SpatialVector<T>& operator/= (const SpatialVector<T> & v);
 
-    COMM_FUNC SpatialVector<T>& operator= (const SpatialVector<T> & v);
+    COMM_FUNC SpatialVector<T>& operator=(const SpatialVector<T>& v);
 
-    COMM_FUNC bool operator== (const SpatialVector<T> & v) const;
-    COMM_FUNC bool operator!= (const SpatialVector<T> & v) const;
+    COMM_FUNC bool operator==(const SpatialVector<T>& v) const;
+    COMM_FUNC bool operator!=(const SpatialVector<T>& v) const;
 
-    COMM_FUNC const SpatialVector<T> operator* (T v) const;
-    COMM_FUNC const SpatialVector<T> operator- (T v) const;
-    COMM_FUNC const SpatialVector<T> operator+ (T v) const;
-    COMM_FUNC const SpatialVector<T> operator/ (T v) const;
+    COMM_FUNC const SpatialVector<T> operator*(T v) const;
+    COMM_FUNC const SpatialVector<T> operator-(T v) const;
+    COMM_FUNC const SpatialVector<T> operator+(T v) const;
+    COMM_FUNC const SpatialVector<T> operator/(T v) const;
 
-    COMM_FUNC SpatialVector<T>& operator+= (T v);
-    COMM_FUNC SpatialVector<T>& operator-= (T v);
-    COMM_FUNC SpatialVector<T>& operator*= (T v);
-    COMM_FUNC SpatialVector<T>& operator/= (T v);
+    COMM_FUNC SpatialVector<T>& operator+=(T v);
+    COMM_FUNC SpatialVector<T>& operator-=(T v);
+    COMM_FUNC SpatialVector<T>& operator*=(T v);
+    COMM_FUNC SpatialVector<T>& operator/=(T v);
 
     // Product between MOTION vector and  FORCE vector
     // Usage: power of a force.
-    COMM_FUNC T operator*(const SpatialVector<T>& v)const;
+    COMM_FUNC T operator*(const SpatialVector<T>& v) const;
 
     COMM_FUNC T norm() const;
     COMM_FUNC T normSquared() const;
@@ -70,17 +75,16 @@ public:
     //COMM_FUNC SpatialVector<T> cross(const SpatialVector<T> &) const;
     //COMM_FUNC T dot(const SpatialVector<T>&) const;
 
-    COMM_FUNC const SpatialVector<T> crossM(const SpatialVector<T>& vec) const ;
-    COMM_FUNC const SpatialVector<T> crossF(const SpatialVector<T>& vec) const ;
+    COMM_FUNC const SpatialVector<T> crossM(const SpatialVector<T>& vec) const;
+    COMM_FUNC const SpatialVector<T> crossF(const SpatialVector<T>& vec) const;
 
-    public:
-        glm::tvec3<T> m_angular;
-        glm::tvec3<T> m_linear;
-    };
+public:
+    glm::tvec3<T> m_angular;
+    glm::tvec3<T> m_linear;
+};
 
-
-template<typename T>
-inline COMM_FUNC void SpatialVector<T>::set(const T & ang1, const T & ang2, const T & ang3, const T & lin1, const T & lin2, const T & lin3)
+template <typename T>
+inline COMM_FUNC void SpatialVector<T>::set(const T& ang1, const T& ang2, const T& ang3, const T& lin1, const T& lin2, const T& lin3)
 {
     m_angular[0] = ang1;
     m_angular[1] = ang2;
@@ -91,8 +95,8 @@ inline COMM_FUNC void SpatialVector<T>::set(const T & ang1, const T & ang2, cons
     m_linear[2] = lin3;
 }
 
-template<typename T>
-inline COMM_FUNC T & SpatialVector<T>::operator[](unsigned  int i)
+template <typename T>
+inline COMM_FUNC T& SpatialVector<T>::operator[](unsigned int i)
 {
     if (i < 3)
     {
@@ -104,8 +108,8 @@ inline COMM_FUNC T & SpatialVector<T>::operator[](unsigned  int i)
     }
 }
 
-template<typename T>
-inline COMM_FUNC const T & SpatialVector<T>::operator[](unsigned int i) const
+template <typename T>
+inline COMM_FUNC const T& SpatialVector<T>::operator[](unsigned int i) const
 {
     if (i < 3)
     {
@@ -117,8 +121,7 @@ inline COMM_FUNC const T & SpatialVector<T>::operator[](unsigned int i) const
     }
 }
 
-
-template<typename T>
+template <typename T>
 inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator+(const SpatialVector<T>& v) const
 {
     SpatialVector<T> res(*this);
@@ -127,7 +130,7 @@ inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator+(const Spatia
     return res;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator+=(const SpatialVector<T>& v)
 {
     this->m_angular += v.m_angular;
@@ -135,7 +138,7 @@ inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator+=(const SpatialVec
     return *this;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator-(const SpatialVector<T>& v) const
 {
     SpatialVector<T> res(*this);
@@ -145,7 +148,7 @@ inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator-(const Spatia
     return res;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator-=(const SpatialVector<T>& v)
 {
     this->m_angular -= v.m_angular;
@@ -153,36 +156,36 @@ inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator-=(const SpatialVec
     return *this;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator-(void) const
 {
     SpatialVector<T> res;
     res.m_angular = -this->m_angular;
-    res.m_linear = -this->m_linear;
+    res.m_linear  = -this->m_linear;
     return res;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator=(const SpatialVector<T>& v)
 {
     this->m_angular = v.m_angular;
-    this->m_linear = v.m_linear;
+    this->m_linear  = v.m_linear;
     return *this;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC bool SpatialVector<T>::operator==(const SpatialVector<T>& v) const
 {
     return (this->m_angular == v.m_angular) && (this->m_linear == v.m_linear);
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC bool SpatialVector<T>::operator!=(const SpatialVector<T>& v) const
 {
     return (this->m_angular != v.m_angular) || (this->m_linear != v.m_linear);
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator*(T v) const
 {
     SpatialVector<T> res(*this);
@@ -191,7 +194,7 @@ inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator*(T v) const
     return res;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator-(T v) const
 {
     SpatialVector<T> res(*this);
@@ -200,7 +203,7 @@ inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator-(T v) const
     return res;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator+(T v) const
 {
     SpatialVector<T> res(*this);
@@ -209,7 +212,7 @@ inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator+(T v) const
     return res;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator/(T v) const
 {
     assert(v != 0);
@@ -219,7 +222,7 @@ inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::operator/(T v) const
     return res;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator+=(T v)
 {
     this->m_angular += v;
@@ -227,7 +230,7 @@ inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator+=(T v)
     return *this;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator-=(T v)
 {
     this->m_angular -= v;
@@ -235,7 +238,7 @@ inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator-=(T v)
     return *this;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator*=(T v)
 {
     this->m_angular *= v;
@@ -243,7 +246,7 @@ inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator*=(T v)
     return *this;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator/=(T v)
 {
     assert(v != 0);
@@ -252,25 +255,25 @@ inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::operator/=(T v)
     return *this;
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC T SpatialVector<T>::operator*(const SpatialVector<T>& v) const
 {
     return glm::dot(this->m_angular, v.m_angular) + glm::dot(this->m_linear, v.m_linear);
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC T SpatialVector<T>::norm() const
 {
     return glm::sqrt(glm::length2(this->m_angular) + glm::length2(this->m_linear));
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC T SpatialVector<T>::normSquared() const
 {
     return glm::length2(this->m_angular) + glm::length2(this->m_linear);
 }
 
-template<typename T>
+template <typename T>
 inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::normalize()
 {
     T norm_ = this->norm();
@@ -282,27 +285,26 @@ inline COMM_FUNC SpatialVector<T>& SpatialVector<T>::normalize()
     return *this;
 }
 
-template<typename T>
-inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::crossM(const SpatialVector<T>& vec)const 
+template <typename T>
+inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::crossM(const SpatialVector<T>& vec) const
 {
     SpatialVector<T> res;
     res.m_angular = glm::cross(this->m_angular, vec.m_angular);
-    res.m_linear = glm::cross(this->m_angular, vec.m_linear) + glm::cross(this->m_linear, vec.m_angular);
+    res.m_linear  = glm::cross(this->m_angular, vec.m_linear) + glm::cross(this->m_linear, vec.m_angular);
 
     return res;
 }
 
-template<typename T>
-inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::crossF(const SpatialVector<T>& vec)const 
+template <typename T>
+inline COMM_FUNC const SpatialVector<T> SpatialVector<T>::crossF(const SpatialVector<T>& vec) const
 {
     SpatialVector<T> res;
     res.m_angular = glm::cross(this->m_angular, vec.m_angular) + glm::cross(this->m_linear, vec.m_linear);
-    res.m_linear = glm::cross(this->m_angular, vec.m_linear);
+    res.m_linear  = glm::cross(this->m_angular, vec.m_linear);
 
     return res;
 }
 
-
-}
+}  // namespace PhysIKA
 
 //#include "SpatialVector.inl"

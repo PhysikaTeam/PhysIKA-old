@@ -4,16 +4,13 @@
 
 #include "Nodes/QtNodeWidget.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+class PNodeEditor : public QMainWindow
 {
-    class PNodeEditor :
-        public QMainWindow
-    {
-        Q_OBJECT
-    public:
-        PNodeEditor(QtNodes::QtNodeWidget* node_widget);
+    Q_OBJECT
+public:
+    PNodeEditor(QtNodes::QtNodeWidget* node_widget);
 
-    private:
-    };
-}
-
+private:
+};
+}  // namespace PhysIKA

@@ -14,10 +14,10 @@
 
 #pragma once
 #include <GL/glew.h>
-#include <cuda_gl_interop.h> 
+#include <cuda_gl_interop.h>
 #include "Core/Utility.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 template <typename T>
 class CudaVBOMapper
@@ -25,36 +25,35 @@ class CudaVBOMapper
 public:
     CudaVBOMapper()
     {
-        m_vbo = 0;
-        m_size = 0;
+        m_vbo                  = 0;
+        m_size                 = 0;
         m_cudaGraphicsResource = NULL;
 
         glGenBuffers(1, &m_vbo);
     }
-
 
     CudaVBOMapper(unsigned int num)
     {
         resize(num);
     }
 
-    CudaVBOMapper(const CudaVBOMapper &) = delete;
-    CudaVBOMapper & operator = (const CudaVBOMapper &) = delete;
+    CudaVBOMapper(const CudaVBOMapper&) = delete;
+    CudaVBOMapper& operator=(const CudaVBOMapper&) = delete;
 
     ~CudaVBOMapper()
     {
         release();
     }
-    
+
     void resize(unsigned int num)
     {
-//         if (m_size != 0)
-//         {
-//             release();
-//         }
+        //         if (m_size != 0)
+        //         {
+        //             release();
+        //         }
 
         m_size = num;
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         glBufferData(GL_ARRAY_BUFFER, m_size * sizeof(T), nullptr, GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -68,10 +67,10 @@ public:
         {
             glDeleteBuffers(1, &m_vbo);
         }
-//         if (m_cudaGraphicsResource != NULL)
-//         {
-//             cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
-//         }
+        //         if (m_cudaGraphicsResource != NULL)
+        //         {
+        //             cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
+        //         }
         m_size = 0;
     }
 
@@ -79,9 +78,9 @@ public:
     {
         cuSafeCall(cudaGraphicsMapResources(1, &m_cudaGraphicsResource, 0));
 
-        T* dataPtr = nullptr;
+        T*     dataPtr = nullptr;
         size_t byte_size;
-        cuSafeCall(cudaGraphicsResourceGetMappedPointer((void **)&dataPtr, &byte_size, m_cudaGraphicsResource));
+        cuSafeCall(cudaGraphicsResourceGetMappedPointer(( void** )&dataPtr, &byte_size, m_cudaGraphicsResource));
 
         return dataPtr;
     }
@@ -102,11 +101,9 @@ public:
     }
 
 private:
-    int m_size;
-    unsigned int m_vbo;
-    cudaGraphicsResource * m_cudaGraphicsResource;
+    int                   m_size;
+    unsigned int          m_vbo;
+    cudaGraphicsResource* m_cudaGraphicsResource;
 };
 
-
-
-}//end of namespace PhysIKA
+}  //end of namespace PhysIKA

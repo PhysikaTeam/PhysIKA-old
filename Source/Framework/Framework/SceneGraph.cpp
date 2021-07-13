@@ -7,9 +7,7 @@
 #include "Framework/Action/ActPostProcessing.h"
 #include "Framework/Framework/SceneLoaderFactory.h"
 
-
-namespace PhysIKA
-{
+namespace PhysIKA {
 SceneGraph& SceneGraph::getInstance()
 {
     static SceneGraph m_instance;
@@ -71,7 +69,7 @@ void SceneGraph::draw()
 
 void SceneGraph::advance(float dt)
 {
-//    AnimationController*  aController = m_root->getAnimationController();
+    //    AnimationController*  aController = m_root->getAnimationController();
     //    aController->
 }
 
@@ -90,9 +88,7 @@ void SceneGraph::takeOneFrame()
         return;
     }
 
-    
-
-    float t = 0.0f;
+    float t  = 0.0f;
     float dt = 0.0f;
 
     QueryTimeStep time;
@@ -123,17 +119,17 @@ void SceneGraph::takeOneFrame()
 
         m_elapsedTime += interval;
     }
-    
+
     m_root->traverseTopDown<PostProcessing>();
 
-    std::cout << "****************Frame " << m_frameNumber << " Ended" << std::endl << std::endl;
+    std::cout << "****************Frame " << m_frameNumber << " Ended" << std::endl
+              << std::endl;
 
     m_frameNumber++;
 }
 
 void SceneGraph::run()
 {
-
 }
 
 void SceneGraph::reset()
@@ -180,5 +176,4 @@ void SceneGraph::setUpperBound(Vector3f upperBound)
     m_upperBound = upperBound;
 }
 
-
-}
+}  // namespace PhysIKA

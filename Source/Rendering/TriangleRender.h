@@ -20,7 +20,7 @@
 #include <Core/Array/Array.h>
 #include "ShaderProgram.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 class TriangleRender
 {
@@ -29,8 +29,8 @@ public:
     ~TriangleRender() = default;
 
     //disable copy
-    TriangleRender(const TriangleRender &) = delete;
-    TriangleRender & operator = (const TriangleRender &) = delete;
+    TriangleRender(const TriangleRender&) = delete;
+    TriangleRender& operator=(const TriangleRender&) = delete;
 
     void setVertexArray(HostArray<float3>& vertArray);
     void setVertexArray(DeviceArray<float3>& vertArray);
@@ -44,7 +44,6 @@ public:
     void enableDoubleShading();
     void disableDoubleShading();
 
-
     void enableUseCustomColor();
     void disableUseCustomColor();
     bool isUseCustomColor() const;
@@ -52,16 +51,19 @@ public:
     void display();
 
     void resize(unsigned int triNum);
-    int numberOfTrianlges() { return t_num; }
+    int  numberOfTrianlges()
+    {
+        return t_num;
+    }
 
 private:
     int t_num = 0;
 
     bool use_custom_color_ = true;
-    int m_lineWidth = 2;
+    int  m_lineWidth       = 2;
 
-    bool m_bShowWireframe = false;
-    bool m_bEnableLighting = false;
+    bool m_bShowWireframe       = false;
+    bool m_bEnableLighting      = false;
     bool m_bEnableDoubleShading = true;
 
     ShaderProgram m_solidShader;
@@ -71,5 +73,5 @@ private:
     CudaVBOMapper<glm::vec3> m_normVBO;
     CudaVBOMapper<glm::vec3> m_colorVBO;
 };
-    
-}
+
+}  // namespace PhysIKA

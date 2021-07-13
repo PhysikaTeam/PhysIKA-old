@@ -9,11 +9,11 @@
 
 namespace PhysIKA {
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 class ArrayField : public Field
 {
 public:
-    typedef T VarType;
+    typedef T                    VarType;
     typedef Array<T, deviceType> DataType;
 
     ArrayField();
@@ -22,16 +22,23 @@ public:
     ArrayField(int num, std::string name, std::string description, FieldType fieldType, Base* parent);
     ~ArrayField() override;
 
-    inline size_t getElementCount() override {
+    inline size_t getElementCount() override
+    {
         auto ref = this->getReference();
         return ref == nullptr ? 0 : ref->size();
     }
 
     void setElementCount(size_t num);
-//    void resize(int num);
-    const std::string getTemplateName() override { return std::string(typeid(T).name()); }
-    const std::string getClassName() override { return std::string("ArrayBuffer"); }
-//    DeviceType getDeviceType() override { return deviceType; }
+    //    void resize(int num);
+    const std::string getTemplateName() override
+    {
+        return std::string(typeid(T).name());
+    }
+    const std::string getClassName() override
+    {
+        return std::string("ArrayBuffer");
+    }
+    //    DeviceType getDeviceType() override { return deviceType; }
 
     /**
      * @brief Get the shared pointer of the contained array, it will return the its own pointer if no Field is driven this object.
@@ -41,13 +48,17 @@ public:
      */
     std::shared_ptr<Array<T, deviceType>> getReference();
 
-    Array<T, deviceType>& getValue() { return *(getReference()); }
+    Array<T, deviceType>& getValue()
+    {
+        return *(getReference());
+    }
     void setValue(std::vector<T>& vals);
     void setValue(DeviceArray<T>& vals);
 
-//    void reset() override { m_data->reset(); }
+    //    void reset() override { m_data->reset(); }
 
-    inline bool isEmpty() override {
+    inline bool isEmpty() override
+    {
         return getReference() == nullptr;
     }
 
@@ -59,12 +70,12 @@ private:
     std::shared_ptr<Array<T, deviceType>> m_data = nullptr;
 };
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::ArrayField()
     : Field("", "")
     , m_data(nullptr)
 {
-//    m_data = std::make_shared<Array<T, deviceType>>();
+    //    m_data = std::make_shared<Array<T, deviceType>>();
 }
 
 // template<typename T, DeviceType deviceType>
@@ -75,30 +86,28 @@ ArrayField<T, deviceType>::ArrayField()
 //     m_data = new Array<T, deviceType>(num);
 // }
 
-
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::ArrayField(int num)
     : Field("", "")
 {
     m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
 }
 
-
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::ArrayField(std::string name, std::string description, int num)
     : Field(name, description)
 {
     m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
 }
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::ArrayField(int num, std::string name, std::string description, FieldType fieldType, Base* parent)
     : Field(name, description, fieldType, parent)
 {
-    m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);    
+    m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
 }
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 ArrayField<T, deviceType>::~ArrayField()
 {
     if (m_data.use_count() == 1)
@@ -107,7 +116,7 @@ ArrayField<T, deviceType>::~ArrayField()
     }
 }
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 void ArrayField<T, deviceType>::setElementCount(size_t num)
 {
     auto arr = this->getSourceArrayField();
@@ -122,15 +131,14 @@ void ArrayField<T, deviceType>::setElementCount(size_t num)
     {
         //if (arr->m_data != nullptr && arr->m_data->size() == num)
         //    return;
-        if(arr->m_data != nullptr)
+        if (arr->m_data != nullptr)
             arr->m_data->resize(num);
         else
             arr->m_data = num <= 0 ? nullptr : std::make_shared<Array<T, deviceType>>(num);
-        
     }
 }
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 bool ArrayField<T, deviceType>::connect(ArrayField<T, deviceType>* field2)
 {
     auto f = field2->fieldPtr();
@@ -139,7 +147,7 @@ bool ArrayField<T, deviceType>::connect(ArrayField<T, deviceType>* field2)
     return true;
 }
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 void ArrayField<T, deviceType>::setValue(std::vector<T>& vals)
 {
     std::shared_ptr<Array<T, deviceType>> data = getReference();
@@ -163,7 +171,7 @@ void ArrayField<T, deviceType>::setValue(std::vector<T>& vals)
     }
 }
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 void ArrayField<T, deviceType>::setValue(DeviceArray<T>& vals)
 {
     std::shared_ptr<Array<T, deviceType>> data = getReference();
@@ -185,7 +193,7 @@ void ArrayField<T, deviceType>::setValue(DeviceArray<T>& vals)
     }
 }
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 std::shared_ptr<Array<T, deviceType>> ArrayField<T, deviceType>::getReference()
 {
     Field* source = getSource();
@@ -207,7 +215,7 @@ std::shared_ptr<Array<T, deviceType>> ArrayField<T, deviceType>::getReference()
     }
 }
 
-template<typename T, DeviceType deviceType>
+template <typename T, DeviceType deviceType>
 ArrayField<T, deviceType>* ArrayField<T, deviceType>::getSourceArrayField()
 {
     Field* source = getSource();
@@ -225,9 +233,9 @@ ArrayField<T, deviceType>* ArrayField<T, deviceType>::getSourceArrayField()
     }
 }
 
-template<typename T>
+template <typename T>
 using HostArrayField = ArrayField<T, DeviceType::CPU>;
 
-template<typename T>
+template <typename T>
 using DeviceArrayField = ArrayField<T, DeviceType::GPU>;
-}
+}  // namespace PhysIKA

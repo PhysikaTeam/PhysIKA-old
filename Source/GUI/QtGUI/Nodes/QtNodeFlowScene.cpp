@@ -15,40 +15,38 @@
 
 PhysIKA::Node;
 
-namespace QtNodes
-{
+namespace QtNodes {
 
-QtNodeFlowScene::QtNodeFlowScene(std::shared_ptr<DataModelRegistry> registry, QObject * parent)
-  : QtFlowScene(registry, parent)
+QtNodeFlowScene::QtNodeFlowScene(std::shared_ptr<DataModelRegistry> registry, QObject* parent)
+    : QtFlowScene(registry, parent)
 {
-
 }
 
-QtNodeFlowScene::QtNodeFlowScene(QObject * parent)
+QtNodeFlowScene::QtNodeFlowScene(QObject* parent)
     : QtFlowScene(parent)
 {
     auto classMap = PhysIKA::Object::getClassMap();
 
     auto ret = std::make_shared<QtNodes::DataModelRegistry>();
-    int id = 0;
+    int  id  = 0;
     for (auto const c : *classMap)
     {
         id++;
 
-        QString str = QString::fromStdString(c.first);
-        auto obj = PhysIKA::Object::createObject(str.toStdString());
+        QString               str = QString::fromStdString(c.first);
+        auto                  obj = PhysIKA::Object::createObject(str.toStdString());
         std::shared_ptr<Node> node(dynamic_cast<Node*>(obj));
 
         if (node != nullptr)
         {
             QtNodes::DataModelRegistry::RegistryItemCreator creator = [str]() {
-                auto node_obj = PhysIKA::Object::createObject(str.toStdString());
+                auto                  node_obj = PhysIKA::Object::createObject(str.toStdString());
                 std::shared_ptr<Node> new_node(dynamic_cast<Node*>(node_obj));
-                auto dat = std::make_unique<QtNodeWidget>(std::move(new_node));
-                return dat; 
+                auto                  dat = std::make_unique<QtNodeWidget>(std::move(new_node));
+                return dat;
             };
 
-            QString category = "Default";// QString::fromStdString(module->getModuleType());
+            QString category = "Default";  // QString::fromStdString(module->getModuleType());
             ret->registerModel<QtNodeWidget>(category, creator);
         }
     }
@@ -61,12 +59,10 @@ QtNodeFlowScene::QtNodeFlowScene(QObject * parent)
     connect(this, &QtFlowScene::nodeMoved, this, &QtNodeFlowScene::moveModulePosition);
 }
 
-
 QtNodeFlowScene::~QtNodeFlowScene()
 {
     clearScene();
 }
-
 
 void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 {
@@ -76,8 +72,7 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 
     SceneGraph::Iterator it_end(nullptr);
 
-    auto addNodeWidget = [&](std::shared_ptr<Node> m) -> void
-    {
+    auto addNodeWidget = [&](std::shared_ptr<Node> m) -> void {
         auto module_name = m->getName();
 
         auto type = std::make_unique<QtNodeWidget>(m);
@@ -98,10 +93,9 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
         addNodeWidget(it.get());
     }
 
-    auto createNodeConnections = [&](std::shared_ptr<Node> nd) -> void
-    {
+    auto createNodeConnections = [&](std::shared_ptr<Node> nd) -> void {
         auto in_name = nd->getName();
-        
+
         if (nodeMap.find(in_name) != nodeMap.end())
         {
             auto in_block = nodeMap[nd->getName()];
@@ -149,8 +143,8 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
         createNodeConnections(it.get());
     }
 
-//     clearScene();
-// 
+    //     clearScene();
+    //
     for (auto it = scn->begin(); it != it_end; it++)
     {
         auto node_ptr = it.get();
@@ -161,7 +155,6 @@ void QtNodeFlowScene::showSceneGraph(SceneGraph* scn)
 
 void QtNodeFlowScene::moveModulePosition(QtBlock& n, const QPointF& newLocation)
 {
-
 }
 
-}
+}  // namespace QtNodes

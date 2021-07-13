@@ -22,30 +22,30 @@
 using namespace std;
 using namespace PhysIKA;
 
-void RecieveLogMessage(const Log::Message &m)
+void RecieveLogMessage(const Log::Message& m)
 {
     switch (m.type)
     {
-    case Log::Info:
-        cout << ">>>: " << m.text << endl;
-        break;
-    case Log::Warning:
-        cout << "???: " << m.text << endl;
-        break;
-    case Log::Error:
-        cout << "!!!: " << m.text << endl;
-        break;
-    case Log::User:
-        cout << ">>>: " << m.text << endl;
-        break;
-    default:
-        break;
+        case Log::Info:
+            cout << ">>>: " << m.text << endl;
+            break;
+        case Log::Warning:
+            cout << "???: " << m.text << endl;
+            break;
+        case Log::Error:
+            cout << "!!!: " << m.text << endl;
+            break;
+        case Log::User:
+            cout << ">>>: " << m.text << endl;
+            break;
+        default:
+            break;
     }
 }
 
 void CreateScene()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
 
@@ -91,8 +91,8 @@ void CreateScene()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 
@@ -113,7 +113,7 @@ void CreateScene()
 
 void CreateSceneBlock(int dissolution)
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
 
@@ -136,8 +136,8 @@ void CreateSceneBlock(int dissolution)
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 
@@ -158,7 +158,7 @@ void CreateSceneBlock(int dissolution)
 
 void CreateSceneToy(int dissolution)
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
 
@@ -181,8 +181,8 @@ void CreateSceneToy(int dissolution)
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 
@@ -203,7 +203,7 @@ void CreateSceneToy(int dissolution)
 
 void CreateSceneCrag(int dissolution)
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     auto root = scene.createNewScene<FastMultiphaseSPH<DataType3f>>();
 
@@ -226,8 +226,8 @@ void CreateSceneCrag(int dissolution)
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(root->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 
@@ -246,10 +246,10 @@ void CreateSceneCrag(int dissolution)
     }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-    std::string scene = "block";
-    int dissolution = 1;
+    std::string scene       = "block";
+    int         dissolution = 1;
     if (argc >= 2)
         scene = argv[1];
     if (argc >= 3)

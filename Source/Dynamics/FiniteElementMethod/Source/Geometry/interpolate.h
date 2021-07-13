@@ -20,65 +20,73 @@
 #include "get_nn.h"
 
 namespace PhysIKA {
-    template <typename T>
-    struct PointCloud
+template <typename T>
+struct PointCloud
+{
+    struct Point
     {
-        struct Point
-        {
-            T  x,y,z;
-        };
-
-        std::vector<Point>  pts;
-
-        // Must return the number of data points
-        inline size_t kdtree_get_point_count() const { return pts.size(); }
-
-        // Returns the dim'th component of the idx'th point in the class:
-        // Since this is inlined and the "dim" argument is typically an immediate value, the
-        //  "if/else's" are actually solved at compile time.
-        inline T kdtree_get_pt(const size_t idx, const size_t dim) const
-        {
-            if (dim == 0) return pts[idx].x;
-            else if (dim == 1) return pts[idx].y;
-            else return pts[idx].z;
-        }
-
-        // Optional bounding-box computation: return false to default to a standard bbox computation loop.
-        //   Return true if the BBOX was already computed by the class and returned in "bb" so it can be avoided to redo it again.
-        //   Look at bb.size() to find out the expected dimensionality (e.g. 2 or 3 for point clouds)
-        template <class BBOX>
-        bool kdtree_get_bbox(BBOX& /* bb */) const { return false; }
-
+        T x, y, z;
     };
 
-  template<typename FLOAT, size_t dim_>
-  Eigen::Vector4i get_noncoplanar_tet(const Eigen::Matrix<FLOAT, dim_, -1>&v, const std::vector<size_t>& neigh_vert_idx, const Eigen::Matrix<FLOAT, dim_, 1>& p);
-  template<typename T, size_t dim_>
-  int interp_pts_in_point_cloud(const Eigen::Matrix<T, dim_, -1> &v, const Eigen::Matrix<T, dim_, -1> &pts, Eigen::SparseMatrix<T> &coef);
-  
-    
-    inline Eigen::MatrixXi hex_2_tet(const Eigen::Matrix<int, 8, -1>& hexs) {
-        Eigen::MatrixXi tets = Eigen::MatrixXi::Zero(4, 5 * hexs.cols());
-        for (size_t hex_id = 0; hex_id < hexs.cols(); ++hex_id) {
-            const Eigen::VectorXi one_hex = hexs.col(hex_id);
-            Eigen::Vector4i tet0{ {one_hex(0), one_hex(1), one_hex(3), one_hex(4)} };
-            Eigen::Vector4i tet1{ {one_hex(1), one_hex(2), one_hex(3),one_hex(6)} };
-            Eigen::Vector4i tet2{ {one_hex(4), one_hex(5), one_hex(6), one_hex(1)} };
-            Eigen::Vector4i tet3{ {one_hex(4), one_hex(6), one_hex(7), one_hex(3)} };
-            Eigen::Vector4i tet4{ {one_hex(1), one_hex(3), one_hex(4), one_hex(6)} };
-            tets.col(hex_id * 5) = tet0;
-            tets.col(hex_id * 5 + 1) = tet1;
-            tets.col(hex_id * 5 + 2) = tet2;
-            tets.col(hex_id * 5 + 3) = tet3;
-            tets.col(hex_id * 5 + 4) = tet4;
+    std::vector<Point> pts;
 
-        }
-        return tets;
+    // Must return the number of data points
+    inline size_t kdtree_get_point_count() const
+    {
+        return pts.size();
     }
-    template<typename T, size_t dim_>
-    int interp_pts_in_tets(const Eigen::Matrix<T, dim_, -1> &v, const Eigen::Matrix<int, 4, -1> &tet, const Eigen::Matrix<T, dim_, -1> &pts, Eigen::SparseMatrix<T> &coef);
-    
+
+    // Returns the dim'th component of the idx'th point in the class:
+    // Since this is inlined and the "dim" argument is typically an immediate value, the
+    //  "if/else's" are actually solved at compile time.
+    inline T kdtree_get_pt(const size_t idx, const size_t dim) const
+    {
+        if (dim == 0)
+            return pts[idx].x;
+        else if (dim == 1)
+            return pts[idx].y;
+        else
+            return pts[idx].z;
+    }
+
+    // Optional bounding-box computation: return false to default to a standard bbox computation loop.
+    //   Return true if the BBOX was already computed by the class and returned in "bb" so it can be avoided to redo it again.
+    //   Look at bb.size() to find out the expected dimensionality (e.g. 2 or 3 for point clouds)
+    template <class BBOX>
+    bool kdtree_get_bbox(BBOX& /* bb */) const
+    {
+        return false;
+    }
+};
+
+template <typename FLOAT, size_t dim_>
+Eigen::Vector4i get_noncoplanar_tet(const Eigen::Matrix<FLOAT, dim_, -1>& v, const std::vector<size_t>& neigh_vert_idx, const Eigen::Matrix<FLOAT, dim_, 1>& p);
+template <typename T, size_t dim_>
+int interp_pts_in_point_cloud(const Eigen::Matrix<T, dim_, -1>& v, const Eigen::Matrix<T, dim_, -1>& pts, Eigen::SparseMatrix<T>& coef);
+
+inline Eigen::MatrixXi hex_2_tet(const Eigen::Matrix<int, 8, -1>& hexs)
+{
+    Eigen::MatrixXi tets = Eigen::MatrixXi::Zero(4, 5 * hexs.cols());
+    for (size_t hex_id = 0; hex_id < hexs.cols(); ++hex_id)
+    {
+        const Eigen::VectorXi one_hex = hexs.col(hex_id);
+        Eigen::Vector4i       tet0{ { one_hex(0), one_hex(1), one_hex(3), one_hex(4) } };
+        Eigen::Vector4i       tet1{ { one_hex(1), one_hex(2), one_hex(3), one_hex(6) } };
+        Eigen::Vector4i       tet2{ { one_hex(4), one_hex(5), one_hex(6), one_hex(1) } };
+        Eigen::Vector4i       tet3{ { one_hex(4), one_hex(6), one_hex(7), one_hex(3) } };
+        Eigen::Vector4i       tet4{ { one_hex(1), one_hex(3), one_hex(4), one_hex(6) } };
+        tets.col(hex_id * 5)     = tet0;
+        tets.col(hex_id * 5 + 1) = tet1;
+        tets.col(hex_id * 5 + 2) = tet2;
+        tets.col(hex_id * 5 + 3) = tet3;
+        tets.col(hex_id * 5 + 4) = tet4;
+    }
+    return tets;
 }
+template <typename T, size_t dim_>
+int interp_pts_in_tets(const Eigen::Matrix<T, dim_, -1>& v, const Eigen::Matrix<int, 4, -1>& tet, const Eigen::Matrix<T, dim_, -1>& pts, Eigen::SparseMatrix<T>& coef);
+
+}  // namespace PhysIKA
 
 #endif
 

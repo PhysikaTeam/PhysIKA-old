@@ -1,14 +1,12 @@
 #include "NodeIterator.h"
 #include "Node.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 NodeIterator::NodeIterator()
 {
     node_current = nullptr;
 }
-
 
 NodeIterator::NodeIterator(std::shared_ptr<Node> node)
 {
@@ -17,20 +15,19 @@ NodeIterator::NodeIterator(std::shared_ptr<Node> node)
     if (node_current != nullptr)
     {
         auto children = node_current->getChildren();
-        for each (auto c in children)
-        {
-            if (c->isControllable())
+        for
+            each(auto c in children)
             {
-                node_stack.push(c);
+                if (c->isControllable())
+                {
+                    node_stack.push(c);
+                }
             }
-        }
     }
 }
 
-
 NodeIterator::~NodeIterator()
 {
-
 }
 
 NodeIterator& NodeIterator::operator++()
@@ -43,18 +40,18 @@ NodeIterator& NodeIterator::operator++()
         node_stack.pop();
 
         auto children = node_current->getChildren();
-        for each (auto c in children)
-        {
-            if (c->isActive())
+        for
+            each(auto c in children)
             {
-                node_stack.push(c);
+                if (c->isActive())
+                {
+                    node_stack.push(c);
+                }
             }
-        }
     }
 
     return *this;
 }
-
 
 NodeIterator& NodeIterator::operator++(int)
 {
@@ -71,15 +68,14 @@ std::shared_ptr<Node> NodeIterator::get() const
     return node_current;
 }
 
-bool NodeIterator::operator!=(const NodeIterator &iterator) const
+bool NodeIterator::operator!=(const NodeIterator& iterator) const
 {
     return node_current != iterator.get();
 }
 
-bool NodeIterator::operator==(const NodeIterator &iterator) const
+bool NodeIterator::operator==(const NodeIterator& iterator) const
 {
     return node_current == iterator.get();
 }
 
-
-}
+}  // namespace PhysIKA

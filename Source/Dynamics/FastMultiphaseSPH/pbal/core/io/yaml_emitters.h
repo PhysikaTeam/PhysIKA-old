@@ -13,46 +13,54 @@
 
 namespace YAML {
 
-    template <>
-    struct convert<pbal::ParticleEmitterBox2> {
-        static Node encode(const pbal::ParticleEmitterBox2& rhs) {
-            Node node;
-            return node;
+template <>
+struct convert<pbal::ParticleEmitterBox2>
+{
+    static Node encode(const pbal::ParticleEmitterBox2& rhs)
+    {
+        Node node;
+        return node;
+    }
+
+    static bool decode(const Node& node, pbal::ParticleEmitterBox2& emitter)
+    {
+        if (!node.IsMap() || node.size() < 3)
+        {
+            return false;
         }
+        emitter.type = "box";
 
-        static bool decode(const Node& node, pbal::ParticleEmitterBox2& emitter) {
-            if (!node.IsMap() || node.size() < 3) {
-                return false;
-            }
-            emitter.type = "box";
+        emitter.center   = node["center"].as<pbal::Vec2d>();
+        emitter.distance = node["distance"].as<pbal::Vec2d>();
+        emitter.r        = node["r"].as<double>();
 
-            emitter.center = node["center"].as<pbal::Vec2d>();
-            emitter.distance = node["distance"].as<pbal::Vec2d>();
-            emitter.r = node["r"].as<double>();
+        return true;
+    }
+};
 
-            return true;
+template <>
+struct convert<pbal::EmitterSphere2>
+{
+    static Node encode(const pbal::EmitterSphere2& rhs)
+    {
+        Node node;
+        return node;
+    }
+
+    static bool decode(const Node& node, pbal::EmitterSphere2& emitter)
+    {
+        if (!node.IsMap() || node.size() < 3)
+        {
+            return false;
         }
-    };
+        emitter.type = "sphere";
 
-    template <>
-    struct convert<pbal::EmitterSphere2> {
-        static Node encode(const pbal::EmitterSphere2& rhs) {
-            Node node;
-            return node;
-        }
+        emitter.center = node["center"].as<pbal::Vec2d>();
+        emitter.radius = node["radius"].as<double>();
+        emitter.r      = node["r"].as<double>();
 
-        static bool decode(const Node& node, pbal::EmitterSphere2& emitter) {
-            if (!node.IsMap() || node.size() < 3) {
-                return false;
-            }
-            emitter.type = "sphere";
+        return true;
+    }
+};
 
-            emitter.center = node["center"].as<pbal::Vec2d>();
-            emitter.radius = node["radius"].as<double>();
-            emitter.r = node["r"].as<double>();
-
-            return true;
-        }
-    };
-    
-}
+}  // namespace YAML

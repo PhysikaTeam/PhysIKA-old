@@ -9,48 +9,57 @@
 #include <vector>
 #include <memory>
 
-namespace PhysIKA
+namespace PhysIKA {
+//template<typename TReal>
+//template<typename TDataType>
+class PBDSolverNode : public Node
 {
-    //template<typename TReal>
-    //template<typename TDataType>
-    class PBDSolverNode :public Node
+    //DECLARE_CLASS_1(PBDSolverNode, TReal)
+
+public:
+    PBDSolverNode();
+    //void setUseGPU(bool usegpu = true) { m_useGPU = usegpu; }
+
+    virtual bool initialize() override;
+
+    virtual void advance(Real dt) override;
+
+    int addRigid(RigidBody2_ptr prigid);
+
+    bool setBodyDirty()
     {
-        //DECLARE_CLASS_1(PBDSolverNode, TReal)
+        m_solver->setBodyDirty();
+    }
 
+    int  addPBDJoint(const PBDJoint<double>& pbdjoint, int bodyid0, int bodyid1);
+    bool setJointDirty()
+    {
+        m_solver->setJointDirty();
+    }
 
-    public:
-        PBDSolverNode();
-        //void setUseGPU(bool usegpu = true) { m_useGPU = usegpu; }
+    std::shared_ptr<PBDSolver> getSolver()
+    {
+        return m_solver;
+    }
+    void setSolver(std::shared_ptr<PBDSolver> solver)
+    {
+        m_solver = solver;
+    }
 
-        virtual bool initialize()override;
+    void needForward(bool needForward)
+    {
+        m_needForward = needForward;
+    }
 
-        virtual void advance(Real dt)override;
+protected:
+    std::shared_ptr<PBDSolver> m_solver;
 
-        int addRigid(RigidBody2_ptr prigid);
+    bool m_needForward = true;
+};
 
-        bool setBodyDirty() { m_solver->setBodyDirty(); }
+//template class PBDSolverNode<float>;
+//template class PBDSolverNode<double>;
 
-        int addPBDJoint(const PBDJoint<double>& pbdjoint, int bodyid0, int bodyid1);
-        bool setJointDirty() {m_solver->setJointDirty(); }
+}  // namespace PhysIKA
 
-        std::shared_ptr<PBDSolver> getSolver() { return m_solver; }
-        void setSolver(std::shared_ptr<PBDSolver> solver) { m_solver = solver; }
-
-        void needForward(bool needForward) { m_needForward = needForward; }
-
-    protected:
-        std::shared_ptr<PBDSolver> m_solver;
-
-        bool m_needForward = true;
-
-    };
-
-
-    //template class PBDSolverNode<float>;
-    //template class PBDSolverNode<double>;
-
-}
-
-
-
-#endif // PHYSIKA_PBDSOLVERNODE_H
+#endif  // PHYSIKA_PBDSOLVERNODE_H

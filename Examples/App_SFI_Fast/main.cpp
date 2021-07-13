@@ -44,7 +44,7 @@ using namespace PhysIKA;
 
 void CreateScene()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     //       scene.setUpperBound(Vector3f(1, 1.0, 0.5));
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
@@ -68,8 +68,8 @@ void CreateScene()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(fluid->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(fluid->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 
@@ -107,8 +107,8 @@ void CreateScene()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 

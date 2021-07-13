@@ -26,7 +26,7 @@ using namespace PhysIKA;
 void creatscene_ca()
 {
     //freopen("backup.txt", "w", stdout);
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setTotalTime(3.0f);
     scene.setGravity(Vector3f(0.0f, -9.8f, 0.0f));
     scene.setLowerBound(Vector3f(-1.0f, 0.0f, 0.0f));
@@ -39,8 +39,8 @@ void creatscene_ca()
     sfi->setInteractionDistance(0.016);
 
     //Particle fluid node
-    std::shared_ptr<ParticleFluid<DataType3f>> fluid = std::make_shared<ParticleFluid<DataType3f>>("fluid");
-    auto mf_pointsRender = std::make_shared<PointRenderModule>();
+    std::shared_ptr<ParticleFluid<DataType3f>> fluid           = std::make_shared<ParticleFluid<DataType3f>>("fluid");
+    auto                                       mf_pointsRender = std::make_shared<PointRenderModule>();
     fluid->addVisualModule(mf_pointsRender);
     //fluid->loadParticles(Vector3f(-0.985, 0.015, 0.015), Vector3f(-0.585f, 0.6f, 0.985), 0.005); // sphere
 
@@ -48,8 +48,8 @@ void creatscene_ca()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(fluid->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(fluid->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 

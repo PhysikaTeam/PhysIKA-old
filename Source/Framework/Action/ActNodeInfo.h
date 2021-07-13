@@ -3,17 +3,16 @@
 
 #include "Action.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+class NodeInfoAct : public Action
 {
-    class NodeInfoAct : public Action
-    {
-    public:
-        NodeInfoAct();
-        virtual ~NodeInfoAct();
+public:
+    NodeInfoAct();
+    virtual ~NodeInfoAct();
 
-    private:
-        void process(Node* node) override;
-    };
-}
+private:
+    void process(Node* node) override;
+};
+}  // namespace PhysIKA
 
 #endif

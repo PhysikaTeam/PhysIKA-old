@@ -3,26 +3,22 @@
 
 namespace PhysIKA {
 
-    class GTimer
-    {
-    private:
-        cudaEvent_t m_start, m_stop;
+class GTimer
+{
+private:
+    cudaEvent_t m_start, m_stop;
 
-        float milliseconds;
+    float milliseconds;
 
-    public:
-        GTimer();
-        ~GTimer();
+public:
+    GTimer();
+    ~GTimer();
 
-        void start();
-        void stop();
+    void start();
+    void stop();
 
-        float getEclipsedTime();
+    float getEclipsedTime();
 
-        void outputString(char* str);
-    };
-}
-
-
-
-
+    void outputString(char* str);
+};
+}  // namespace PhysIKA

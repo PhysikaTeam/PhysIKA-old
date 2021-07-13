@@ -18,29 +18,28 @@
 #include <string>
 #include "image.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 class ImageIO
 {
 public:
-    ImageIO(){}
-    ~ImageIO(){}
- 
-    static bool load(const std::string &filename, Image * image);  //data_format = RGBA
-    static bool load(const std::string &filename, Image * image, Image::DataFormat data_format);
+    ImageIO() {}
+    ~ImageIO() {}
+
+    static bool load(const std::string& filename, Image* image);  //data_format = RGBA
+    static bool load(const std::string& filename, Image* image, Image::DataFormat data_format);
 
     /* save image data to file, the image data is in row order
      * return true if succeed, otherwise return false
      */
-    static bool save(const std::string &filename, const Image* image);
+    static bool save(const std::string& filename, const Image* image);
 
     //check if the input filename and image is valid, called in load and save of specific IO classes
     //return true if check succeeds
-    static bool checkFileNameAndImage(const std::string &filename, const std::string &expected_extension,
-                                      const Image *image);
+    static bool checkFileNameAndImage(const std::string& filename, const std::string& expected_extension, const Image* image);
 
 protected:
 };
 
-} //end of namespace PhysIKA
+}  //end of namespace PhysIKA
 
-#endif //PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_
+#endif  //PHYSIKA_IO_IMAGE_IO_IMAGE_IO_H_

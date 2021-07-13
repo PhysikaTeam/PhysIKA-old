@@ -9,7 +9,7 @@
 //        {
 //            m.resize(6, 6);
 //            m.setZeros();
-//            
+//
 //            // rotation part
 //            SquareMatrix<float, 3> rot = q.get3x3Matrix();
 //            for (int i = 0; i < 3; ++i)

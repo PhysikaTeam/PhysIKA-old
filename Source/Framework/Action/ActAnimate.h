@@ -1,18 +1,16 @@
 #pragma once
 #include "Action.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+class AnimateAct : public Action
 {
-    class AnimateAct : public Action
-    {
-    public:
-        AnimateAct(float dt);
-        virtual ~AnimateAct();
+public:
+    AnimateAct(float dt);
+    virtual ~AnimateAct();
 
-    private:
-        void process(Node* node) override;
+private:
+    void process(Node* node) override;
 
-        float m_dt;
-    };
-}
-
+    float m_dt;
+};
+}  // namespace PhysIKA

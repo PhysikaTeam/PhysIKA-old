@@ -7,10 +7,10 @@
 #pragma once
 #include "Framework/Framework/Node.h"
 #include "ShallowWaterEquationModel.h"
-namespace PhysIKA
-{
-    template <typename TDataType> class HeightField;
-    /*!
+namespace PhysIKA {
+template <typename TDataType>
+class HeightField;
+/*!
     *    \class    HeightFieldNode
     *    \brief    A height field node.
     * 
@@ -20,21 +20,21 @@ namespace PhysIKA
     * float dt = 1.0 / 60;
     * root->run(1, dt);
     */
-    template<typename TDataType>
-    class HeightFieldNode : public Node
-    {
-        DECLARE_CLASS_1(HeightFieldNode, TDataType)
-    public:
-        typedef typename TDataType::Real Real;
-        typedef typename TDataType::Coord Coord;
+template <typename TDataType>
+class HeightFieldNode : public Node
+{
+    DECLARE_CLASS_1(HeightFieldNode, TDataType)
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
 
-        HeightFieldNode(std::string name = "default");
-        virtual ~HeightFieldNode();
+    HeightFieldNode(std::string name = "default");
+    virtual ~HeightFieldNode();
 
-        bool initialize() override;
-        void advance(Real dt) override;
-        void SWEconnect();
-        /**
+    bool initialize() override;
+    void advance(Real dt) override;
+    void SWEconnect();
+    /**
              * implementation of init square height field scene
              *
              * @param[in]    lo        the minimum coord of the scene
@@ -43,9 +43,9 @@ namespace PhysIKA
              * @param[in]    slope   control the steepness of the mountain
              * @param[in]    relax    energy dissipation coefficient, between (0,1]
          */
-        void loadParticles(Coord lo, Coord hi, int pixels, Real slope, Real relax);
+    void loadParticles(Coord lo, Coord hi, int pixels, Real slope, Real relax);
 
-        /**
+    /**
              * implementation of init square height field scene
              *
              * @param[in]    filename1        the file path of terrain image 
@@ -53,65 +53,65 @@ namespace PhysIKA
              * @param[in]    proportion        parameter mapping the terrain height from picture to scene, which is always greater than zero
              * @param[in]    relax            energy dissipation coefficient, between (0,1]
          */
-        void loadParticlesFromImage( std::string filename1, std::string filename2, Real proportion, Real relax);
-        /**
+    void loadParticlesFromImage(std::string filename1, std::string filename2, Real proportion, Real relax);
+    /**
          * run swe model
          *
          * @param[in]   stepNum     the number of timesteps need to run
          * @param[in]    timestep    the length of a timestep
          */
-        void run(int stepNum, float timestep);
-        void init();
-        /**
+    void run(int stepNum, float timestep);
+    void init();
+    /**
              * implementation of output the result
         */
-        std::vector<Real>& outputDepth();
-        std::vector<Real>& outputSolid();
-        std::vector<Real>& outputUVel();
-        std::vector<Real>& outputWVel();
+    std::vector<Real>& outputDepth();
+    std::vector<Real>& outputSolid();
+    std::vector<Real>& outputUVel();
+    std::vector<Real>& outputWVel();
 
-        void updateTopology() override;
+    void updateTopology() override;
 
-    public:
-        /**
+public:
+    /**
          * @brief Particle position
          */
-        DEF_EMPTY_CURRENT_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
+    DEF_EMPTY_CURRENT_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
 
-        /**
+    /**
          * @brief Particle velocity
          */
-        DEF_EMPTY_CURRENT_ARRAY(Velocity, Coord, DeviceType::GPU, "Particle velocity");
+    DEF_EMPTY_CURRENT_ARRAY(Velocity, Coord, DeviceType::GPU, "Particle velocity");
 
-    private:
-        void loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList);
-        void loadHeightFieldFromImage(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList);
-        Real distance;                    //!< distance between each neighbor grid point
-        Real relax;                        //!< energy dissipation coefficient, between(0, 1]
-        DeviceArrayField<Real> solid;    //!< solid terrain stored on GPU
-        DeviceArrayField<Coord> normal; //!< the normal direction stored on GPU
-        DeviceArrayField<int>  isBound; //!< mark whether the  node is a boundary node stored on GPU
-        DeviceArrayField<Real> h;        //!< the fluid height stored on GPU
+private:
+    void                    loadHeightFieldParticles(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList);
+    void                    loadHeightFieldFromImage(Coord lo, Coord hi, int pixels, Real slope, std::vector<Coord>& vertList);
+    Real                    distance;  //!< distance between each neighbor grid point
+    Real                    relax;     //!< energy dissipation coefficient, between(0, 1]
+    DeviceArrayField<Real>  solid;     //!< solid terrain stored on GPU
+    DeviceArrayField<Coord> normal;    //!< the normal direction stored on GPU
+    DeviceArrayField<int>   isBound;   //!< mark whether the  node is a boundary node stored on GPU
+    DeviceArrayField<Real>  h;         //!< the fluid height stored on GPU
 
-        DeviceArrayField<Real> buffer;
+    DeviceArrayField<Real> buffer;
 
-        std::vector<Real> Solid;    //!< solid terrain stored on CPU
-        std::vector<Real> Depth;    //!< the fluid depth stored on CPU
-        std::vector<Real> UVel;        //!< fluid velocity along U direction stored on CPU
-        std::vector<Real> WVel;        //!< fluid velocity along W direction stored on CPU
+    std::vector<Real> Solid;  //!< solid terrain stored on CPU
+    std::vector<Real> Depth;  //!< the fluid depth stored on CPU
+    std::vector<Real> UVel;   //!< fluid velocity along U direction stored on CPU
+    std::vector<Real> WVel;   //!< fluid velocity along W direction stored on CPU
 
-        int zcount = 0;
-        int xcount = 0;
+    int zcount = 0;
+    int xcount = 0;
 
-        int nx = 0;
-        int nz = 0;
+    int nx = 0;
+    int nz = 0;
 
-        std::shared_ptr<HeightField<TDataType>> m_height_field;
-    };
+    std::shared_ptr<HeightField<TDataType>> m_height_field;
+};
 
 #ifdef PRECISION_FLOAT
-    template class HeightFieldNode<DataType3f>;
+template class HeightFieldNode<DataType3f>;
 #else
-    template class HeightFieldNode<DataType3d>;
+template class HeightFieldNode<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

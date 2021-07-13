@@ -2,10 +2,10 @@
 #include "Framework/Framework/Node.h"
 //#include "Rendering/PointRenderModule.h"
 
-namespace PhysIKA
-{
-    template <typename TDataType> class TriangleSet;
-    /*!
+namespace PhysIKA {
+template <typename TDataType>
+class TriangleSet;
+/*!
     *    \class    ParticleSystem
     *    \brief    Position-based fluids.
     *
@@ -13,65 +13,66 @@ namespace PhysIKA
     *    Refer to Macklin and Muller's "Position Based Fluids" for details
     *
     */
-    template<typename TDataType>
-    class TriangularSurfaceMeshNode : public Node
+template <typename TDataType>
+class TriangularSurfaceMeshNode : public Node
+{
+    DECLARE_CLASS_1(ParticleSystem, TDataType)
+public:
+    typedef typename TDataType::Real          Real;
+    typedef typename TDataType::Coord         Coord;
+    typedef typename TopologyModule::Triangle Triangle;
+
+    TriangularSurfaceMeshNode(std::string name = "TriangularSurfaceMeshNode");
+    virtual ~TriangularSurfaceMeshNode();
+
+    virtual bool translate(Coord t);
+    virtual bool scale(Real s);
+
+    DeviceArrayField<Coord>* getVertexPosition()
     {
-        DECLARE_CLASS_1(ParticleSystem, TDataType)
-    public:
-        typedef typename TDataType::Real Real;
-        typedef typename TDataType::Coord Coord;
-        typedef typename TopologyModule::Triangle Triangle;
+        return &m_vertex_position;
+    }
 
-        TriangularSurfaceMeshNode(std::string name = "TriangularSurfaceMeshNode");
-        virtual ~TriangularSurfaceMeshNode();
+    DeviceArrayField<Coord>* getVertexVelocity()
+    {
+        return &m_vertex_velocity;
+    }
 
+    DeviceArrayField<Coord>* getVertexForce()
+    {
+        return &m_vertex_force;
+    }
 
-        virtual bool translate(Coord t);
-        virtual bool scale(Real s);
+    DeviceArrayField<Triangle>* getTriangleIndex()
+    {
+        return &m_triangle_index;
+    }
 
-        DeviceArrayField<Coord>* getVertexPosition()
-        {
-            return &m_vertex_position;
-        }
+    std::shared_ptr<TriangleSet<TDataType>> getTriangleSet()
+    {
+        return m_triSet;
+    }
 
-        DeviceArrayField<Coord>* getVertexVelocity()
-        {
-            return &m_vertex_velocity;
-        }
+    void updateTopology() override;
+    bool resetStatus() override;
 
-        DeviceArrayField<Coord>* getVertexForce()
-        {
-            return &m_vertex_force;
-        }
+    //        std::shared_ptr<PointRenderModule> getRenderModule();
+public:
+    bool initialize() override;
+    //        virtual void setVisible(bool visible) override;
 
-        DeviceArrayField<Triangle>* getTriangleIndex()
-        {
-            return &m_triangle_index;
-        }
+protected:
+    DeviceArrayField<Coord>    m_vertex_position;
+    DeviceArrayField<Coord>    m_vertex_velocity;
+    DeviceArrayField<Coord>    m_vertex_force;
+    DeviceArrayField<Triangle> m_triangle_index;
 
-        std::shared_ptr<TriangleSet<TDataType>> getTriangleSet() { return m_triSet; }
-
-        void updateTopology() override;
-        bool resetStatus() override;
-
-//        std::shared_ptr<PointRenderModule> getRenderModule();
-    public:
-        bool initialize() override;
-//        virtual void setVisible(bool visible) override;
-
-    protected:
-        DeviceArrayField<Coord> m_vertex_position;
-        DeviceArrayField<Coord> m_vertex_velocity;
-        DeviceArrayField<Coord> m_vertex_force;
-        DeviceArrayField<Triangle> m_triangle_index;
-
-        std::shared_ptr<TriangleSet<TDataType>> m_triSet;
-    };
-
+    std::shared_ptr<TriangleSet<TDataType>> m_triSet;
+};
 
 #ifdef PRECISION_FLOAT
-    template class TriangularSurfaceMeshNode<DataType3f>;
+template class TriangularSurfaceMeshNode<DataType3f>;
 #else
-    template class TriangularSurfaceMeshNode<DataType3d>;
+template class TriangularSurfaceMeshNode<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

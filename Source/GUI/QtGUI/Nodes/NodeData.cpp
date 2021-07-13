@@ -1,6 +1,6 @@
 #include "NodeData.h"
 
-bool NodeImportData::isKindOf(BlockData &nodedata) const
+bool NodeImportData::isKindOf(BlockData& nodedata) const
 {
     try
     {
@@ -15,7 +15,7 @@ bool NodeImportData::isKindOf(BlockData &nodedata) const
     return node_port->isKindOf(out_data.getNode());
 }
 
-bool NodeExportData::isKindOf(BlockData &nodedata) const
+bool NodeExportData::isKindOf(BlockData& nodedata) const
 {
     try
     {

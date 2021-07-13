@@ -7,97 +7,104 @@
 #include "Core/Utility.h"
 #include "Framework/Framework/ModuleTopology.h"
 namespace PhysIKA {
-    template<typename ElementType> class NeighborList;
+template <typename ElementType>
+class NeighborList;
 
-    template<typename TDataType>
-    class NeighborQuery : public ComputeModule
+template <typename TDataType>
+class NeighborQuery : public ComputeModule
+{
+    DECLARE_CLASS_1(NeighborQuery, TDataType)
+
+public:
+    typedef typename TDataType::Real          Real;
+    typedef typename TDataType::Coord         Coord;
+    typedef typename TopologyModule::Triangle Triangle;
+
+    NeighborQuery();
+    NeighborQuery(DeviceArray<Coord>& position);
+    NeighborQuery(Real s, Coord lo, Coord hi);
+    ~NeighborQuery() override;
+
+    void compute() override;
+
+    //        void setRadius(Real r) { m_radius.setValue(r); }
+    void setBoundingBox(Coord lowerBound, Coord upperBound);
+
+    void queryParticleNeighbors(NeighborList<int>& nbr, DeviceArray<Coord>& pos, Real radius);
+
+    void setNeighborSizeLimit(int num)
     {
-        DECLARE_CLASS_1(NeighborQuery, TDataType)
+        m_maxNum = num;
+    }
 
-    public:
-        typedef typename TDataType::Real Real;
-        typedef typename TDataType::Coord Coord;
-        typedef typename TopologyModule::Triangle Triangle;
+    GridHash<TDataType>& getHash()
+    {
+        return m_hash;
+    }
+    const GridHash<TDataType>& getHash() const
+    {
+        return m_hash;
+    }
 
-        NeighborQuery();
-        NeighborQuery(DeviceArray<Coord>& position);
-        NeighborQuery(Real s, Coord lo, Coord hi);
-        ~NeighborQuery() override;
-        
-        void compute() override;
+protected:
+    bool initializeImpl() override;
 
-//        void setRadius(Real r) { m_radius.setValue(r); }
-        void setBoundingBox(Coord lowerBound, Coord upperBound);
+private:
+    void queryNeighborSize(DeviceArray<int>& num, DeviceArray<Coord>& pos, Real h);
+    void queryNeighborDynamic(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h);
 
-        void queryParticleNeighbors(NeighborList<int>& nbr, DeviceArray<Coord>& pos, Real radius);
+    void queryNeighborFixed(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h);
 
-        void setNeighborSizeLimit(int num) { m_maxNum = num; }
+    void queryNeighborTriDynamic(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, DeviceArray<Coord>& posT, DeviceArray<Triangle>& Tris, Real h);
+    void queryNeighborSizeTri(DeviceArray<int>& num, DeviceArray<Coord>& pos, DeviceArray<Triangle>& Tris, DeviceArray<Coord>& posT, Real h);
 
-        GridHash<TDataType>& getHash() { return m_hash; }
-        const GridHash<TDataType>& getHash()const { return m_hash; }
-
-    protected:
-        bool initializeImpl() override;
-
-    private:
-        void queryNeighborSize(DeviceArray<int>& num, DeviceArray<Coord>& pos, Real h);
-        void queryNeighborDynamic(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h);
-
-        void queryNeighborFixed(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, Real h);
-
-
-        void queryNeighborTriDynamic(NeighborList<int>& nbrList, DeviceArray<Coord>& pos, DeviceArray<Coord>& posT, DeviceArray<Triangle>& Tris, Real h);
-        void queryNeighborSizeTri(DeviceArray<int>& num, DeviceArray<Coord>& pos, DeviceArray<Triangle>& Tris, DeviceArray<Coord>& posT, Real h);
-
-
-    public:
-        /**
+public:
+    /**
         * @brief Search radius
         * A positive value representing the radius of neighborhood for each point
         */
-        DEF_EMPTY_IN_VAR(Radius, Real, "Search radius");
+    DEF_EMPTY_IN_VAR(Radius, Real, "Search radius");
 
-        /**
+    /**
          * @brief Particle position
          */
-        DEF_EMPTY_IN_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
-        
-        /**
+    DEF_EMPTY_IN_ARRAY(Position, Coord, DeviceType::GPU, "Particle position");
+
+    /**
         * @brief Triangle position
         */
-        DEF_EMPTY_IN_ARRAY(TrianglePosition, Coord, DeviceType::GPU, "Particle position");
-        /**
+    DEF_EMPTY_IN_ARRAY(TrianglePosition, Coord, DeviceType::GPU, "Particle position");
+    /**
         * @brief Triangle index
         */
-        DEF_EMPTY_IN_ARRAY(TriangleIndex, Triangle, DeviceType::GPU, "Particle position");
+    DEF_EMPTY_IN_ARRAY(TriangleIndex, Triangle, DeviceType::GPU, "Particle position");
 
-        /**
+    /**
          * @brief Ids of neighboring particles
          */
-        DEF_EMPTY_OUT_NEIGHBOR_LIST(Neighborhood, int, "Neighboring particles' ids");
-        //NeighborField<int> m_neighborhood;
- 
+    DEF_EMPTY_OUT_NEIGHBOR_LIST(Neighborhood, int, "Neighboring particles' ids");
+    //NeighborField<int> m_neighborhood;
 
-    private:
-        int m_maxNum;
+private:
+    int m_maxNum;
 
-        Coord m_lowBound;
-        Coord m_highBound;
+    Coord m_lowBound;
+    Coord m_highBound;
 
-        GridHash<TDataType> m_hash;
+    GridHash<TDataType> m_hash;
 
-        int* m_ids;
-        Real* m_distance;
+    int*  m_ids;
+    Real* m_distance;
 
-        Reduction<int> m_reduce;
-        Scan m_scan;
+    Reduction<int> m_reduce;
+    Scan           m_scan;
 
-        bool triangle_first = true;
-    };
+    bool triangle_first = true;
+};
 
 #ifdef PRECISION_FLOAT
-    template class NeighborQuery<DataType3f>;
+template class NeighborQuery<DataType3f>;
 #else
-    template class NeighborQuery<DataType3d>;
+template class NeighborQuery<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

@@ -14,47 +14,42 @@
 #include <GL/glew.h>
 #include "LineRender.h"
 
-
-namespace PhysIKA{
-
+namespace PhysIKA {
 
 #define STRINGIFY(A) #A
 
-    const char * line_render_vertex_shader = "#version 330 compatibility \n" STRINGIFY(
+const char* line_render_vertex_shader = "#version 330 compatibility \n" STRINGIFY(
 
     layout(location = 0) in vec3 vert_pos;
     layout(location = 3) in vec3 vert_col;
 
     out vec3 frag_vert_col;
 
-    void main()
-    {
+    void main() {
         frag_vert_col = vert_col;
-        gl_Position = gl_ModelViewProjectionMatrix * vec4(vert_pos, 1.0);
+        gl_Position   = gl_ModelViewProjectionMatrix * vec4(vert_pos, 1.0);
     }
 
-    );
+);
 
-    const char * line_render_frag_shader = "#version 330 compatibility \n" STRINGIFY(
+const char* line_render_frag_shader = "#version 330 compatibility \n" STRINGIFY(
 
-        in vec3 frag_vert_col;
+    in vec3 frag_vert_col;
     out vec4 frag_color;
 
-    void main()
-    {
+    void main() {
         frag_color = vec4(frag_vert_col, 1.0);
     }
 
-    );
+);
 
 LineRender::LineRender()
 {
     m_shader.createFromCStyleString(line_render_vertex_shader, line_render_frag_shader);
-}    
+}
 
 LineRender::~LineRender()
 {
-
 }
 
 void LineRender::resize(unsigned int num)
@@ -80,7 +75,6 @@ void LineRender::setColors(HostArray<float3>& color)
     cudaMemcpy(m_vertexColor.cudaMap(), color.getDataPtr(), sizeof(float3) * m_vertexColor.getSize(), cudaMemcpyHostToDevice);
     m_vertexColor.cudaUnmap();
 }
-
 
 void LineRender::setLineWidth(float line_width)
 {
@@ -115,4 +109,4 @@ void LineRender::display()
     m_shader.disable();
 }
 
-}//end of namespace PhysIKA
+}  //end of namespace PhysIKA

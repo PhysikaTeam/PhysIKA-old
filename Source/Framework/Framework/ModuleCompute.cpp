@@ -1,8 +1,7 @@
 #include "ModuleCompute.h"
 #include "Framework/Framework/Node.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 ComputeModule::ComputeModule()
 {
 }
@@ -18,4 +17,4 @@ bool ComputeModule::execute()
     return true;
 }
 
-}
+}  // namespace PhysIKA

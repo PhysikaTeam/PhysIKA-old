@@ -6,8 +6,7 @@
 
 class QGraphicsSceneMouseEvent;
 
-namespace QtNodes
-{
+namespace QtNodes {
 
 class QtFlowScene;
 class QtConnection;
@@ -16,74 +15,74 @@ class QtBlock;
 
 /// Graphic Object for connection. Adds itself to scene
 class QtConnectionGraphicsObject
-  : public QGraphicsObject
+    : public QGraphicsObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
+    QtConnectionGraphicsObject(QtFlowScene&  scene,
+                               QtConnection& connection);
 
-  QtConnectionGraphicsObject(QtFlowScene &scene,
-                           QtConnection &connection);
+    virtual ~QtConnectionGraphicsObject();
 
-  virtual
-  ~QtConnectionGraphicsObject();
-
-  enum { Type = UserType + 2 };
-  int
-  type() const override { return Type; }
+    enum
+    {
+        Type = UserType + 2
+    };
+    int
+    type() const override
+    {
+        return Type;
+    }
 
 public:
+    QtConnection&
+    connection();
 
-  QtConnection&
-  connection();
+    QRectF
+    boundingRect() const override;
 
-  QRectF
-  boundingRect() const override;
+    QPainterPath
+    shape() const override;
 
-  QPainterPath
-  shape() const override;
+    void
+    setGeometryChanged();
 
-  void
-  setGeometryChanged();
+    /// Updates the position of both ends
+    void
+    move();
 
-  /// Updates the position of both ends
-  void
-  move();
-
-  void
-  lock(bool locked);
+    void
+    lock(bool locked);
 
 protected:
+    void
+    paint(QPainter*                       painter,
+          QStyleOptionGraphicsItem const* option,
+          QWidget*                        widget = 0) override;
 
-  void
-  paint(QPainter* painter,
-        QStyleOptionGraphicsItem const* option,
-        QWidget* widget = 0) override;
+    void
+    mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
-  void
-  mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void
+    mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
 
-  void
-  mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    void
+    mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
-  void
-  mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+    void
+    hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
 
-  void
-  hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
-
-  void
-  hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
-
-private:
-
-  void
-  addGraphicsEffect();
+    void
+    hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
 private:
+    void
+    addGraphicsEffect();
 
-  QtFlowScene & _scene;
+private:
+    QtFlowScene& _scene;
 
-  QtConnection& _connection;
+    QtConnection& _connection;
 };
-}
+}  // namespace QtNodes

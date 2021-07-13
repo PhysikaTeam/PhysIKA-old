@@ -18,7 +18,7 @@
 using namespace PhysIKA;
 
 template <typename T>
-void fillGrid2D(T *grid, int nx, int ny, T value)
+void fillGrid2D(T* grid, int nx, int ny, T value)
 {
     for (int i = 0; i < nx; ++i)
     {
@@ -30,7 +30,7 @@ void fillGrid2D(T *grid, int nx, int ny, T value)
 }
 
 template <typename T>
-void fillGrid2D(T *grid, int nx, int ny, const std::vector<int> &block, T value)
+void fillGrid2D(T* grid, int nx, int ny, const std::vector<int>& block, T value)
 {
     assert(block.size() >= 4);
 
@@ -44,7 +44,7 @@ void fillGrid2D(T *grid, int nx, int ny, const std::vector<int> &block, T value)
 }
 
 template <typename T>
-void fillGrid2D(PhysIKA::HeightFieldGrid<T, T, DeviceType::CPU> &grid, const std::vector<int> &block, T value)
+void fillGrid2D(PhysIKA::HeightFieldGrid<T, T, DeviceType::CPU>& grid, const std::vector<int>& block, T value)
 {
     assert(block.size() >= 4);
 
@@ -59,7 +59,7 @@ void fillGrid2D(PhysIKA::HeightFieldGrid<T, T, DeviceType::CPU> &grid, const std
 }
 
 template <typename T>
-void fillGrid2D(PhysIKA::HeightFieldGrid<T, T, DeviceType::CPU> &grid, T value)
+void fillGrid2D(PhysIKA::HeightFieldGrid<T, T, DeviceType::CPU>& grid, T value)
 {
     int nx = grid.Nx(), ny = grid.Ny();
     for (int i = 0; i < nx; ++i)
@@ -71,9 +71,8 @@ void fillGrid2D(PhysIKA::HeightFieldGrid<T, T, DeviceType::CPU> &grid, T value)
     }
 }
 
-bool computeBoundingBox(PhysIKA::Vector3f &center, PhysIKA::Vector3f &boxsize, const std::vector<PhysIKA::Vector3f> &vertices);
+bool computeBoundingBox(PhysIKA::Vector3f& center, PhysIKA::Vector3f& boxsize, const std::vector<PhysIKA::Vector3f>& vertices);
 
-void PkAddBoundaryRigid(std::shared_ptr<Node> root, Vector3f origin, float sizex, float sizez,
-                        float boundarysize, float boundaryheight);
+void PkAddBoundaryRigid(std::shared_ptr<Node> root, Vector3f origin, float sizex, float sizez, float boundarysize, float boundaryheight);
 
-#endif // DEMO_SANDRIGIDCOMMON_H
+#endif  // DEMO_SANDRIGIDCOMMON_H

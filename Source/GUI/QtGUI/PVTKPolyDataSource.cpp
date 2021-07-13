@@ -19,9 +19,9 @@ PVTKPolyDataSource::PVTKPolyDataSource()
 PVTKPolyDataSource::~PVTKPolyDataSource() = default;
 
 int PVTKPolyDataSource::RequestData(
-    vtkInformation* vtkNotUsed(request),
+    vtkInformation*        vtkNotUsed(request),
     vtkInformationVector** vtkNotUsed(inputVector),
-    vtkInformationVector* outputVector)
+    vtkInformationVector*  outputVector)
 {
 
     if (m_tri_set == nullptr)
@@ -30,37 +30,36 @@ int PVTKPolyDataSource::RequestData(
     }
 
     // get the info object
-    vtkInformation *outInfo = outputVector->GetInformationObject(0);
+    vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
     // get the output
-    vtkPolyData *output = vtkPolyData::SafeDownCast(
+    vtkPolyData* output = vtkPolyData::SafeDownCast(
         outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     vtkPoints* pts = vtkPoints::New();
 
     auto device_pts = m_tri_set->getPoints();
 
-    int num_of_points = device_pts.size();
+    int                                   num_of_points = device_pts.size();
     PhysIKA::HostArray<PhysIKA::Vector3f> host_pts;
     host_pts.resize(num_of_points);
     PhysIKA::Function1Pt::copy(host_pts, device_pts);
 
     pts->Allocate(num_of_points);
 
-    for(int i = 0; i < num_of_points; i++)
+    for (int i = 0; i < num_of_points; i++)
     {
         pts->InsertPoint(i, host_pts[i][0], host_pts[i][1], host_pts[i][2]);
     }
 
     auto device_triangles = m_tri_set->getTriangles();
-    int num_of_triangles = device_triangles->size();
+    int  num_of_triangles = device_triangles->size();
 
     PhysIKA::HostArray<PhysIKA::TopologyModule::Triangle> host_triangles;
     host_triangles.resize(num_of_triangles);
     PhysIKA::Function1Pt::copy(host_triangles, *device_triangles);
 
-
-    vtkCellArray *polys;
+    vtkCellArray* polys;
     polys = vtkCellArray::New();
     polys->Allocate(num_of_triangles, 3);
     vtkIdType ids[3];
@@ -87,15 +86,14 @@ int PVTKPolyDataSource::RequestData(
 
 //----------------------------------------------------------------------------
 int PVTKPolyDataSource::RequestInformation(
-    vtkInformation *vtkNotUsed(request),
-    vtkInformationVector **vtkNotUsed(inputVector),
-    vtkInformationVector *outputVector)
+    vtkInformation*        vtkNotUsed(request),
+    vtkInformationVector** vtkNotUsed(inputVector),
+    vtkInformationVector*  outputVector)
 {
     // get the info object
-    vtkInformation *outInfo = outputVector->GetInformationObject(0);
+    vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
     outInfo->Set(CAN_HANDLE_PIECE_REQUEST(), 1);
 
     return 1;
 }
-

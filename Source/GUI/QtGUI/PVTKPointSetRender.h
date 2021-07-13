@@ -6,27 +6,25 @@ class vtkActor;
 class vtkPolyDataMapper;
 class PVTKPointSetSource;
 
-namespace PhysIKA
+namespace PhysIKA {
+class PVTKPointSetRender : public VisualModule
 {
-    class PVTKPointSetRender : public VisualModule
-    {
-        DECLARE_CLASS(PVTKPointSetRender)
-    public:
-        PVTKPointSetRender();
-        virtual ~PVTKPointSetRender();
+    DECLARE_CLASS(PVTKPointSetRender)
+public:
+    PVTKPointSetRender();
+    virtual ~PVTKPointSetRender();
 
+    vtkActor* getVTKActor();
 
-        vtkActor* getVTKActor();
+protected:
+    bool initializeImpl() override;
 
-    protected:
-        bool  initializeImpl() override;
+    void updateRenderingContext() override;
 
-        void updateRenderingContext() override;
+private:
+    vtkActor*           m_actor;
+    vtkPolyDataMapper*  mapper;
+    PVTKPointSetSource* pointsetSource;
+};
 
-    private:
-        vtkActor* m_actor;
-        vtkPolyDataMapper* mapper;
-        PVTKPointSetSource* pointsetSource;
-    };
-
-}
+}  // namespace PhysIKA

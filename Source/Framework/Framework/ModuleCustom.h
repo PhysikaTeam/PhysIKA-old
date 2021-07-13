@@ -1,7 +1,7 @@
 #pragma once
 #include "Framework/Framework/Module.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 class CustomModule : public Module
 {
@@ -12,11 +12,12 @@ public:
 
     bool execute() override;
 
-    std::string getModuleType() override { return "CustomModule"; }
+    std::string getModuleType() override
+    {
+        return "CustomModule";
+    }
 
 protected:
     virtual void applyCustomBehavior();
-
 };
-}
-
+}  // namespace PhysIKA

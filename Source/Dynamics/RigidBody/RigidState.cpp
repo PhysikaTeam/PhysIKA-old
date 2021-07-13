@@ -2,9 +2,7 @@
 #include "Dynamics/RigidBody/RigidUtil.h"
 #include "Dynamics/RigidBody/RigidBodyRoot.h"
 
-
-namespace PhysIKA
-{
+namespace PhysIKA {
 //    RigidState RigidState::operator*(float t) const
 //    {
 //        RigidState s(this->m_root);
@@ -113,7 +111,7 @@ namespace PhysIKA
 //        timer.start();
 //
 //        //const RigidState& s0 = static_cast<const RigidState&>(s0_);
-//        
+//
 //        //Vectornd<float> ddq;
 //        //RigidBodyRoot<DataType3f>* root = s0.m_root;
 //        RigidBodyRoot<DataType3f>* root = static_cast<RigidBodyRoot<DataType3f>*>(s0.m_root);

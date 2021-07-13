@@ -41,7 +41,7 @@ using namespace std;
 using namespace PhysIKA;
 
 template <typename T>
-void SetupModel(T &bunny, int i, Vector3f color)
+void SetupModel(T& bunny, int i, Vector3f color)
 {
     auto sRender = std::make_shared<SurfaceMeshRender>();
     bunny->getSurfaceNode()->addVisualModule(sRender);
@@ -67,23 +67,23 @@ void SetupModel(T &bunny, int i, Vector3f color)
     bunny->getTopologyMapping()->setSearchingRadius(0.05);
 }
 
-void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::shared_ptr<SolidFluidInteraction<DataType3f>> &sfi, int i, std::string phy_model, std::string geo_model)
+void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, int i, std::string phy_model, std::string geo_model)
 {
-    const string path = "../../Media/zju/" + geo_model + "/";
+    const string    path        = "../../Media/zju/" + geo_model + "/";
     Eigen::Vector3f color_eigen = Eigen::Vector3f::Random();
-    double HI = 1; // set HI and LO according to your problem.
-    double LO = 0;
-    double range = HI - LO;
-    color_eigen = (color_eigen + Eigen::Vector3f::Ones()) * range / 2.; // add 1 to the matrix to have values between 0 and 2; multiply with range/2
-    color_eigen = (color_eigen + Eigen::Vector3f::Constant(LO));        //set LO as the lower bound (offset)
+    double          HI          = 1;  // set HI and LO according to your problem.
+    double          LO          = 0;
+    double          range       = HI - LO;
+    color_eigen                 = (color_eigen + Eigen::Vector3f::Ones()) * range / 2.;  // add 1 to the matrix to have values between 0 and 2; multiply with range/2
+    color_eigen                 = (color_eigen + Eigen::Vector3f::Constant(LO));         //set LO as the lower bound (offset)
 
     Vector3f color(color_eigen(0), color_eigen(1), color_eigen(2));
     if (phy_model == "mass_spring")
     {
         std::shared_ptr<EmbeddedMassSpring<DataType3f>> bunny = std::make_shared<EmbeddedMassSpring<DataType3f>>();
         root->addParticleSystem(bunny);
-        const std::string jsonfile_path = path + phy_model + ".json";
-        const string particles_file = path + geo_model + "_points.obj";
+        const std::string jsonfile_path  = path + phy_model + ".json";
+        const string      particles_file = path + geo_model + "_points.obj";
         bunny->loadParticles(particles_file);
         bunny->loadSurface(path + geo_model + ".obj");
 
@@ -134,7 +134,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 void CreateScene()
 {
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(1, 10.0, 1));
     scene.setLowerBound(Vector3f(0, 0.0, 0));
 
@@ -146,7 +146,7 @@ void CreateScene()
     //
 
     root->addChild(sfi);
-    sfi->setInteractionDistance(0.03); // 0.02 is an very important parameter
+    sfi->setInteractionDistance(0.03);  // 0.02 is an very important parameter
     //dragon 0.014
     //bunny 0.03
 

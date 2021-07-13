@@ -1,5 +1,5 @@
 #pragma once
-#include "vtkPolyDataAlgorithm.h" // For export macro
+#include "vtkPolyDataAlgorithm.h"  // For export macro
 #include "Framework/Topology/TriangleSet.h"
 
 class vtkDataSet;
@@ -8,24 +8,27 @@ class vtkPolyData;
 class PHYSIKA_EXPORT PVTKPolyDataSource : public vtkPolyDataAlgorithm
 {
 public:
-    static PVTKPolyDataSource *New();
+    static PVTKPolyDataSource* New();
     vtkTypeMacro(PVTKPolyDataSource, vtkPolyDataAlgorithm);
- 
-    void setData(std::shared_ptr<PhysIKA::TriangleSet<PhysIKA::DataType3f>> data) { m_tri_set = data; }
+
+    void setData(std::shared_ptr<PhysIKA::TriangleSet<PhysIKA::DataType3f>> data)
+    {
+        m_tri_set = data;
+    }
 
 protected:
     PVTKPolyDataSource();
-     ~PVTKPolyDataSource() override;
+    ~PVTKPolyDataSource() override;
 
     /**
     * This is called by the superclass.
     * This is the method you should override.
     */
-    int RequestData(vtkInformation* request,
+    int RequestData(vtkInformation*        request,
                     vtkInformationVector** inputVector,
-                    vtkInformationVector* outputVector) override;
+                    vtkInformationVector*  outputVector) override;
 
-    int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+    int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
     PVTKPolyDataSource(const PVTKPolyDataSource&) = delete;

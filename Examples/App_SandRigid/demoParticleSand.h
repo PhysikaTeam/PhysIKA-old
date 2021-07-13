@@ -19,10 +19,10 @@ private:
         setKeyboardFunction(DemoParticleSand::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSand *m_instance;
+    static DemoParticleSand* m_instance;
 
 public:
-    static DemoParticleSand *getInstance()
+    static DemoParticleSand* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSand;
@@ -50,20 +50,20 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
+                    break;
 
-            case 'f':
-                if (m_instance->pheightSaver)
-                {
-                    m_instance->pheightSaver->handle(0);
-                }
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                case 'f':
+                    if (m_instance->pheightSaver)
+                    {
+                        m_instance->pheightSaver->handle(0);
+                    }
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -91,7 +91,7 @@ private:
 public:
     std::shared_ptr<ParticleHeightOnZ> pheightSaver;
 
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -106,10 +106,10 @@ private:
         setKeyboardFunction(DemoParticleSandRigid_Sphere::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSandRigid_Sphere *m_instance;
+    static DemoParticleSandRigid_Sphere* m_instance;
 
 public:
-    static DemoParticleSandRigid_Sphere *getInstance()
+    static DemoParticleSandRigid_Sphere* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSandRigid_Sphere;
@@ -137,13 +137,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -169,7 +169,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -267,10 +267,10 @@ private:
         setKeyboardFunction(DemoParticleSandSlop::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSandSlop *m_instance;
+    static DemoParticleSandSlop* m_instance;
 
 public:
-    static DemoParticleSandSlop *getInstance()
+    static DemoParticleSandSlop* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSandSlop;
@@ -298,13 +298,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -330,7 +330,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -345,10 +345,10 @@ private:
         setKeyboardFunction(DemoParticleSandLand::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSandLand *m_instance;
+    static DemoParticleSandLand* m_instance;
 
 public:
-    static DemoParticleSandLand *getInstance()
+    static DemoParticleSandLand* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSandLand;
@@ -376,13 +376,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -408,7 +408,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -423,10 +423,10 @@ private:
         setKeyboardFunction(DemoParticleSandLand2::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSandLand2 *m_instance;
+    static DemoParticleSandLand2* m_instance;
 
 public:
-    static DemoParticleSandLand2 *getInstance()
+    static DemoParticleSandLand2* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSandLand2;
@@ -454,13 +454,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -486,7 +486,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -501,10 +501,10 @@ private:
         setKeyboardFunction(DemoParticleSandSlide::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSandSlide *m_instance;
+    static DemoParticleSandSlide* m_instance;
 
 public:
-    static DemoParticleSandSlide *getInstance()
+    static DemoParticleSandSlide* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSandSlide;
@@ -532,13 +532,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -564,7 +564,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -579,10 +579,10 @@ private:
         setKeyboardFunction(DemoParticleSandSlide2::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSandSlide2 *m_instance;
+    static DemoParticleSandSlide2* m_instance;
 
 public:
-    static DemoParticleSandSlide2 *getInstance()
+    static DemoParticleSandSlide2* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSandSlide2;
@@ -610,13 +610,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -642,7 +642,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     std::shared_ptr<ParticleGenerationCallback> m_particleGenerator;
@@ -659,10 +659,10 @@ private:
         setKeyboardFunction(DemoParticleSandMultiRigid::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSandMultiRigid *m_instance;
+    static DemoParticleSandMultiRigid* m_instance;
 
 public:
-    static DemoParticleSandMultiRigid *getInstance()
+    static DemoParticleSandMultiRigid* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSandMultiRigid;
@@ -689,25 +689,25 @@ public:
             return;
         switch (key)
         {
-        case 'a':
-            m_instance->m_car->goLeft(0.016);
-            break;
-        case 'd':
-            m_instance->m_car->goRight(0.016);
-            break;
-        case 'w':
-            m_instance->m_car->forward(0.016);
-            break;
-        case 's':
-            m_instance->m_car->backward(0.016);
-            break;
-        case 'v':
-            m_instance->_changeVisibility();
+            case 'a':
+                m_instance->m_car->goLeft(0.016);
+                break;
+            case 'd':
+                m_instance->m_car->goRight(0.016);
+                break;
+            case 'w':
+                m_instance->m_car->forward(0.016);
+                break;
+            case 's':
+                m_instance->m_car->backward(0.016);
+                break;
+            case 'v':
+                m_instance->_changeVisibility();
 
-            break;
-        default:
-            GLApp::keyboardFunction(key, x, y);
-            break;
+                break;
+            default:
+                GLApp::keyboardFunction(key, x, y);
+                break;
         }
     }
 
@@ -732,8 +732,8 @@ private:
     }
 
 public:
-    std::shared_ptr<PBDCar> m_car;
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::shared_ptr<PBDCar>                       m_car;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -748,10 +748,10 @@ private:
         setKeyboardFunction(DemoParticleSandPile::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleSandPile *m_instance;
+    static DemoParticleSandPile* m_instance;
 
 public:
-    static DemoParticleSandPile *getInstance()
+    static DemoParticleSandPile* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleSandPile;
@@ -779,13 +779,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -811,10 +811,10 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
-    bool m_rigidVisible = true;
+    bool                                        m_rigidVisible = true;
     std::shared_ptr<ParticleGenerationCallback> m_particleGenerator;
 };
 
@@ -827,10 +827,10 @@ private:
         setKeyboardFunction(DemoParticleAvalanche::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleAvalanche *m_instance;
+    static DemoParticleAvalanche* m_instance;
 
 public:
-    static DemoParticleAvalanche *getInstance()
+    static DemoParticleAvalanche* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleAvalanche;
@@ -858,13 +858,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -890,7 +890,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -905,10 +905,10 @@ private:
         setKeyboardFunction(DemoParticleRiver::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoParticleRiver *m_instance;
+    static DemoParticleRiver* m_instance;
 
 public:
-    static DemoParticleRiver *getInstance()
+    static DemoParticleRiver* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoParticleRiver;
@@ -936,13 +936,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -968,7 +968,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;

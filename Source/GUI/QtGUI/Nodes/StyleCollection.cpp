@@ -1,64 +1,54 @@
 #include "StyleCollection.h"
 
-using QtNodes::StyleCollection;
 using QtNodes::BlockStyle;
 using QtNodes::ConnectionStyle;
 using QtNodes::FlowViewStyle;
+using QtNodes::StyleCollection;
 
 BlockStyle const&
 StyleCollection::
-nodeStyle()
+    nodeStyle()
 {
-  return instance()._nodeStyle;
+    return instance()._nodeStyle;
 }
-
 
 ConnectionStyle const&
 StyleCollection::
-connectionStyle()
+    connectionStyle()
 {
-  return instance()._connectionStyle;
+    return instance()._connectionStyle;
 }
-
 
 FlowViewStyle const&
 StyleCollection::
-flowViewStyle()
+    flowViewStyle()
 {
-  return instance()._flowViewStyle;
+    return instance()._flowViewStyle;
 }
 
-
-void
-StyleCollection::
-setNodeStyle(BlockStyle nodeStyle)
+void StyleCollection::
+    setNodeStyle(BlockStyle nodeStyle)
 {
-  instance()._nodeStyle = nodeStyle;
+    instance()._nodeStyle = nodeStyle;
 }
 
-
-void
-StyleCollection::
-setConnectionStyle(ConnectionStyle connectionStyle)
+void StyleCollection::
+    setConnectionStyle(ConnectionStyle connectionStyle)
 {
-  instance()._connectionStyle = connectionStyle;
+    instance()._connectionStyle = connectionStyle;
 }
 
-
-void
-StyleCollection::
-setFlowViewStyle(FlowViewStyle flowViewStyle)
+void StyleCollection::
+    setFlowViewStyle(FlowViewStyle flowViewStyle)
 {
-  instance()._flowViewStyle = flowViewStyle;
+    instance()._flowViewStyle = flowViewStyle;
 }
-
-
 
 StyleCollection&
 StyleCollection::
-instance()
+    instance()
 {
-  static StyleCollection collection;
+    static StyleCollection collection;
 
-  return collection;
+    return collection;
 }

@@ -21,30 +21,30 @@
 using namespace std;
 using namespace PhysIKA;
 
-void RecieveLogMessage(const Log::Message &m)
+void RecieveLogMessage(const Log::Message& m)
 {
     switch (m.type)
     {
-    case Log::Info:
-        cout << ">>>: " << m.text << endl;
-        break;
-    case Log::Warning:
-        cout << "???: " << m.text << endl;
-        break;
-    case Log::Error:
-        cout << "!!!: " << m.text << endl;
-        break;
-    case Log::User:
-        cout << ">>>: " << m.text << endl;
-        break;
-    default:
-        break;
+        case Log::Info:
+            cout << ">>>: " << m.text << endl;
+            break;
+        case Log::Warning:
+            cout << "???: " << m.text << endl;
+            break;
+        case Log::Error:
+            cout << "!!!: " << m.text << endl;
+            break;
+        case Log::User:
+            cout << ">>>: " << m.text << endl;
+            break;
+        default:
+            break;
     }
 }
 
 void CreateScene()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadCube(Vector3f(0), Vector3f(1), 0.005, true);
@@ -72,8 +72,8 @@ void CreateScene()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 
@@ -106,8 +106,8 @@ void CreateScene()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child4->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child4->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 

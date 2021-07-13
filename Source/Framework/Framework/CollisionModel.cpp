@@ -1,8 +1,7 @@
 #include "CollisionModel.h"
 #include "Framework/Framework/Node.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 CollisionModel::CollisionModel()
 {
@@ -19,4 +18,4 @@ bool CollisionModel::execute()
     return true;
 }
 
-}
+}  // namespace PhysIKA

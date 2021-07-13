@@ -2,28 +2,23 @@
 
 #include "Framework/Framework/Module.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+
+class RigidDebugInfoModule : public Module
 {
+    DECLARE_CLASS(RigidDebugInfoModule)
 
+public:
+public:
+    RigidDebugInfoModule() {}
 
-    class RigidDebugInfoModule:public Module
-    {
-        DECLARE_CLASS(RigidDebugInfoModule)
+    bool initialize() {}
 
-    public:
-        
-    public:
+    virtual void begin() {}
 
-        RigidDebugInfoModule() {}
+    virtual bool execute();
 
-        bool initialize() {}
+    virtual void end() {}
+};
 
-        virtual void begin() {}
-
-        virtual bool execute();
-
-        virtual void end() {}
-    };
-
-
-}
+}  // namespace PhysIKA
