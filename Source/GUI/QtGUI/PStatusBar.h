@@ -8,15 +8,15 @@ class QLabel;
 
 namespace PhysIKA
 {
-	class PStatusBar : public QStatusBar
-	{
-	public:
-		PStatusBar(QWidget *parent = Q_NULLPTR);
+    class PStatusBar : public QStatusBar
+    {
+    public:
+        PStatusBar(QWidget *parent = Q_NULLPTR);
 
-	private:
-		QProgressBar*	m_progressBar;
-		QLabel*			m_progressLabel;
-	};
+    private:
+        QProgressBar*    m_progressBar;
+        QLabel*            m_progressLabel;
+    };
 }
 
 #endif // PSTATUSBAR_H

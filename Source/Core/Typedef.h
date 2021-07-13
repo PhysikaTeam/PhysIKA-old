@@ -32,51 +32,51 @@ using MultiMapPtr = std::multimap< std::string, std::shared_ptr<T> >;
 
 namespace TypeInfo
 {
-	template<class T, class ... Args>
-	std::shared_ptr<T> New(Args&& ... args) { std::shared_ptr<T> p(new T(std::forward<Args>(args)...)); return p; }
+    template<class T, class ... Args>
+    std::shared_ptr<T> New(Args&& ... args) { std::shared_ptr<T> p(new T(std::forward<Args>(args)...)); return p; }
 
-	template<class TA, class TB>
-	inline TA* cast(TB* b)
-	{
-		TA* ptr = dynamic_cast<TA*>(b);
-		return ptr;
-	}
+    template<class TA, class TB>
+    inline TA* cast(TB* b)
+    {
+        TA* ptr = dynamic_cast<TA*>(b);
+        return ptr;
+    }
 
-	template<class TA, class TB>
-	inline std::shared_ptr<TA> cast(std::shared_ptr<TB> b)
-	{
-		std::shared_ptr<TA> ptr = std::dynamic_pointer_cast<TA>(b);
-		return ptr;
-	}
+    template<class TA, class TB>
+    inline std::shared_ptr<TA> cast(std::shared_ptr<TB> b)
+    {
+        std::shared_ptr<TA> ptr = std::dynamic_pointer_cast<TA>(b);
+        return ptr;
+    }
 
 
-	template<class Derived, class Base>
-	Derived* CastPointerDown(Base* b)
-	{
-		Derived* ptr = dynamic_cast<Derived*>(b);
-		return ptr;
-	}
+    template<class Derived, class Base>
+    Derived* CastPointerDown(Base* b)
+    {
+        Derived* ptr = dynamic_cast<Derived*>(b);
+        return ptr;
+    }
 
-	template<class Base, class Derived>
-	Base* CastPointerUp(Derived* b)
-	{
-		Base* ptr = dynamic_cast<Base*>(b);
-		return ptr;
-	}
+    template<class Base, class Derived>
+    Base* CastPointerUp(Derived* b)
+    {
+        Base* ptr = dynamic_cast<Base*>(b);
+        return ptr;
+    }
 
-	template<class Derived, class Base>
-	std::shared_ptr<Derived> CastPointerDown(std::shared_ptr<Base> b)
-	{
-		std::shared_ptr<Derived> ptr = std::dynamic_pointer_cast<Derived>(b);
-		return ptr;
-	}
+    template<class Derived, class Base>
+    std::shared_ptr<Derived> CastPointerDown(std::shared_ptr<Base> b)
+    {
+        std::shared_ptr<Derived> ptr = std::dynamic_pointer_cast<Derived>(b);
+        return ptr;
+    }
 
-	template<class Base, class Derived>
-	std::shared_ptr<Base> CastPointerUp(std::shared_ptr<Derived> b)
-	{
-		std::shared_ptr<Base> ptr = std::dynamic_pointer_cast<Base>(b);
-		return ptr;
-	}
+    template<class Base, class Derived>
+    std::shared_ptr<Base> CastPointerUp(std::shared_ptr<Derived> b)
+    {
+        std::shared_ptr<Base> ptr = std::dynamic_pointer_cast<Base>(b);
+        return ptr;
+    }
 
 }
 

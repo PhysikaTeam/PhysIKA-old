@@ -27,33 +27,33 @@ class QVTKOpenGLWidget;
 
 namespace PhysIKA
 {
-	class PVTKOpenGLWidget : public QWidget
-	{
-		Q_OBJECT
+    class PVTKOpenGLWidget : public QWidget
+    {
+        Q_OBJECT
 
-	public:
-		explicit PVTKOpenGLWidget(QWidget *parent = nullptr);
-		~PVTKOpenGLWidget();
+    public:
+        explicit PVTKOpenGLWidget(QWidget *parent = nullptr);
+        ~PVTKOpenGLWidget();
 
-		//void addActor(vtkActor *actor);
+        //void addActor(vtkActor *actor);
 
-	signals:
+    signals:
 
-	public slots:
-		void showAxisWidget();
-		void prepareRenderingContex();
-		void redisplay();
+    public slots:
+        void showAxisWidget();
+        void prepareRenderingContex();
+        void redisplay();
 
-	public:
-		QGridLayout*		m_MainLayout;
+    public:
+        QGridLayout*        m_MainLayout;
 
-		QVTKOpenGLWidget*						m_OpenGLWidget;
-		vtkOrientationMarkerWidget*				m_axisWidget;
+        QVTKOpenGLWidget*                        m_OpenGLWidget;
+        vtkOrientationMarkerWidget*                m_axisWidget;
 
-	public:
-		static vtkRenderer* getCurrentRenderer() {	return g_current_renderer;	}
-		static vtkRenderer*		g_current_renderer;
-	};
+    public:
+        static vtkRenderer* getCurrentRenderer() {    return g_current_renderer;    }
+        static vtkRenderer*        g_current_renderer;
+    };
 
 }
 

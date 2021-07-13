@@ -31,7 +31,7 @@ template <typename Scalar>
 class Vector<Scalar,4>
 {
 public:
-	typedef Scalar VarType;
+    typedef Scalar VarType;
 
     COMM_FUNC Vector();
     COMM_FUNC explicit Vector(Scalar);
@@ -39,7 +39,7 @@ public:
     COMM_FUNC Vector(const Vector<Scalar,4>&);
     COMM_FUNC ~Vector();
 
-	COMM_FUNC  static const int dims() { return (const int)4; }
+    COMM_FUNC  static const int dims() { return (const int)4; }
 
     COMM_FUNC Scalar& operator[] (unsigned int);
     COMM_FUNC const Scalar& operator[] (unsigned int) const;
@@ -48,10 +48,10 @@ public:
     COMM_FUNC Vector<Scalar,4>& operator+= (const Vector<Scalar,4> &);
     COMM_FUNC const Vector<Scalar,4> operator- (const Vector<Scalar,4> &) const;
     COMM_FUNC Vector<Scalar,4>& operator-= (const Vector<Scalar,4> &);
-	COMM_FUNC const Vector<Scalar, 4> operator* (const Vector<Scalar, 4> &) const;
-	COMM_FUNC Vector<Scalar, 4>& operator*= (const Vector<Scalar, 4> &);
-	COMM_FUNC const Vector<Scalar, 4> operator/ (const Vector<Scalar, 4> &) const;
-	COMM_FUNC Vector<Scalar, 4>& operator/= (const Vector<Scalar, 4> &);
+    COMM_FUNC const Vector<Scalar, 4> operator* (const Vector<Scalar, 4> &) const;
+    COMM_FUNC Vector<Scalar, 4>& operator*= (const Vector<Scalar, 4> &);
+    COMM_FUNC const Vector<Scalar, 4> operator/ (const Vector<Scalar, 4> &) const;
+    COMM_FUNC Vector<Scalar, 4>& operator/= (const Vector<Scalar, 4> &);
 
     COMM_FUNC Vector<Scalar,4>& operator= (const Vector<Scalar,4> &);
 
@@ -76,12 +76,12 @@ public:
     COMM_FUNC Scalar dot(const Vector<Scalar,4>&) const;
 //    COMM_FUNC const SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
 
-	COMM_FUNC Vector<Scalar, 4> minimum(const Vector<Scalar, 4> &) const;
-	COMM_FUNC Vector<Scalar, 4> maximum(const Vector<Scalar, 4> &) const;
+    COMM_FUNC Vector<Scalar, 4> minimum(const Vector<Scalar, 4> &) const;
+    COMM_FUNC Vector<Scalar, 4> maximum(const Vector<Scalar, 4> &) const;
 
-	COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
+    COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
 public:
-	glm::tvec4<Scalar> data_; //default: zero vector
+    glm::tvec4<Scalar> data_; //default: zero vector
 };
 
 

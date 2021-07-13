@@ -5,15 +5,15 @@
 
 namespace PhysIKA
 {
-	class ResetAct : public Action
-	{
-	public:
-		ResetAct();
-		virtual ~ResetAct();
+    class ResetAct : public Action
+    {
+    public:
+        ResetAct();
+        virtual ~ResetAct();
 
-	private:
-		void process(Node* node) override;
-	};
+    private:
+        void process(Node* node) override;
+    };
 }
 
 #endif

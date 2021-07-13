@@ -5,15 +5,15 @@
 
 namespace PhysIKA
 {
-	class NodeInfoAct : public Action
-	{
-	public:
-		NodeInfoAct();
-		virtual ~NodeInfoAct();
+    class NodeInfoAct : public Action
+    {
+    public:
+        NodeInfoAct();
+        virtual ~NodeInfoAct();
 
-	private:
-		void process(Node* node) override;
-	};
+    private:
+        void process(Node* node) override;
+    };
 }
 
 #endif

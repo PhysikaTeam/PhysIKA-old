@@ -4,13 +4,13 @@
 
 namespace PhysIKA {
 
-	template <typename Scalar, int Dim>
-	class Rigid
-	{
-	public:
-		COMM_FUNC Rigid() {};
-		COMM_FUNC ~Rigid() {};
-	};
+    template <typename Scalar, int Dim>
+    class Rigid
+    {
+    public:
+        COMM_FUNC Rigid() {};
+        COMM_FUNC ~Rigid() {};
+    };
 
 }  //end of namespace PhysIKA
 

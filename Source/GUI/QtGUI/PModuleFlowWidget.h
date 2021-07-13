@@ -23,23 +23,23 @@ using QtNodes::QtModuleFlowScene;
 
 namespace PhysIKA
 {
-	class PModuleFlowWidget : public QWidget
-	{
-		Q_OBJECT
+    class PModuleFlowWidget : public QWidget
+    {
+        Q_OBJECT
 
-	public:
-		explicit PModuleFlowWidget(QWidget *parent = nullptr);
-		~PModuleFlowWidget();
+    public:
+        explicit PModuleFlowWidget(QWidget *parent = nullptr);
+        ~PModuleFlowWidget();
 
-		//void addActor(vtkActor *actor);
-		QtModuleFlowScene* getModuleFlowScene() { return module_scene; }
+        //void addActor(vtkActor *actor);
+        QtModuleFlowScene* getModuleFlowScene() { return module_scene; }
 
-	signals:
+    signals:
 
-	public:
-		QGridLayout*		m_MainLayout;
+    public:
+        QGridLayout*        m_MainLayout;
 
-		QtModuleFlowScene* module_scene = nullptr;
-	};
+        QtModuleFlowScene* module_scene = nullptr;
+    };
 
 }

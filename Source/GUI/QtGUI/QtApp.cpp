@@ -6,38 +6,38 @@
 //#include "Rendering/OpenGLContext.h"
 
 namespace PhysIKA {
-	QtApp::QtApp(int argc, char **argv)
-	{
-		m_mainWindow = nullptr;
-		m_app = std::make_shared<QApplication>(argc, argv);
+    QtApp::QtApp(int argc, char **argv)
+    {
+        m_mainWindow = nullptr;
+        m_app = std::make_shared<QApplication>(argc, argv);
 
-		//To resolver the error "Cannot queue arguments of type of Log::Message" for multi-thread applications
-		qRegisterMetaType<Log::Message>("Log::Message");
-	}
+        //To resolver the error "Cannot queue arguments of type of Log::Message" for multi-thread applications
+        qRegisterMetaType<Log::Message>("Log::Message");
+    }
 
-	QtApp::~QtApp()
-	{
+    QtApp::~QtApp()
+    {
 
-	}
+    }
 
-	void QtApp::createWindow(int width, int height)
-	{
-		m_mainWindow = std::make_shared<PMainWindow>();
-		m_mainWindow->resize(1024, 768);
-	}
+    void QtApp::createWindow(int width, int height)
+    {
+        m_mainWindow = std::make_shared<PMainWindow>();
+        m_mainWindow->resize(1024, 768);
+    }
 
-	void QtApp::mainLoop()
-	{
-		//         OpenGLContext::getInstance().initialize();
-		SceneGraph::getInstance().initialize();
+    void QtApp::mainLoop()
+    {
+        //         OpenGLContext::getInstance().initialize();
+        SceneGraph::getInstance().initialize();
 
-		m_mainWindow->show();
-		m_app->exec();
-	}
+        m_mainWindow->show();
+        m_app->exec();
+    }
 
-	// add by HNU
-	std::shared_ptr<PMainWindow> QtApp::getMainWindow() const
-	{
-		return m_mainWindow;
-	}
+    // add by HNU
+    std::shared_ptr<PMainWindow> QtApp::getMainWindow() const
+    {
+        return m_mainWindow;
+    }
 }

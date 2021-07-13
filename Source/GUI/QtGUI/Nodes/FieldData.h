@@ -14,29 +14,29 @@ class FieldData : public BlockData
 {
 public:
 
-	FieldData()
-	{}
+    FieldData()
+    {}
 
-	FieldData(Field* f)
-		: field(f)
-	{}
+    FieldData(Field* f)
+        : field(f)
+    {}
 
-	BlockDataType type() const override
-	{
-		return BlockDataType{ "field",
-							 "Field" };
-	}
+    BlockDataType type() const override
+    {
+        return BlockDataType{ "field",
+                             "Field" };
+    }
 
-	Field* getField() { return field; }
+    Field* getField() { return field; }
 
-	bool isEmpty() { return field == nullptr; }
+    bool isEmpty() { return field == nullptr; }
 
-	bool isKindOf(BlockData &nodedata) const override
-	{
-		return true;
-	}
+    bool isKindOf(BlockData &nodedata) const override
+    {
+        return true;
+    }
 
 private:
 
-	Field* field = nullptr;
+    Field* field = nullptr;
 };

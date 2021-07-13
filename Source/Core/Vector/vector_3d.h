@@ -31,7 +31,7 @@ template <typename Scalar>
 class Vector<Scalar,3>
 {
 public:
-	typedef Scalar VarType;
+    typedef Scalar VarType;
 
     COMM_FUNC Vector();
     COMM_FUNC explicit Vector(Scalar);
@@ -39,7 +39,7 @@ public:
     COMM_FUNC Vector(const Vector<Scalar,3>&);
     COMM_FUNC ~Vector();
 
-	COMM_FUNC static int dims() { return 3; }
+    COMM_FUNC static int dims() { return 3; }
 
     COMM_FUNC Scalar& operator[] (unsigned int);
     COMM_FUNC const Scalar& operator[] (unsigned int) const;
@@ -48,10 +48,10 @@ public:
     COMM_FUNC Vector<Scalar,3>& operator+= (const Vector<Scalar,3> &);
     COMM_FUNC const Vector<Scalar,3> operator- (const Vector<Scalar,3> &) const;
     COMM_FUNC Vector<Scalar,3>& operator-= (const Vector<Scalar,3> &);
-	COMM_FUNC const Vector<Scalar, 3> operator* (const Vector<Scalar, 3> &) const;
-	COMM_FUNC Vector<Scalar, 3>& operator*= (const Vector<Scalar, 3> &);
-	COMM_FUNC const Vector<Scalar, 3> operator/ (const Vector<Scalar, 3> &) const;
-	COMM_FUNC Vector<Scalar, 3>& operator/= (const Vector<Scalar, 3> &);
+    COMM_FUNC const Vector<Scalar, 3> operator* (const Vector<Scalar, 3> &) const;
+    COMM_FUNC Vector<Scalar, 3>& operator*= (const Vector<Scalar, 3> &);
+    COMM_FUNC const Vector<Scalar, 3> operator/ (const Vector<Scalar, 3> &) const;
+    COMM_FUNC Vector<Scalar, 3>& operator/= (const Vector<Scalar, 3> &);
 
 
     COMM_FUNC Vector<Scalar,3>& operator= (const Vector<Scalar,3> &);
@@ -78,13 +78,13 @@ public:
     COMM_FUNC Scalar dot(const Vector<Scalar,3>&) const;
 //    COMM_FUNC const SquareMatrix<Scalar,3> outerProduct(const Vector<Scalar,3>&) const;
 
-	COMM_FUNC Vector<Scalar, 3> minimum(const Vector<Scalar, 3>&) const;
-	COMM_FUNC Vector<Scalar, 3> maximum(const Vector<Scalar, 3>&) const;
+    COMM_FUNC Vector<Scalar, 3> minimum(const Vector<Scalar, 3>&) const;
+    COMM_FUNC Vector<Scalar, 3> maximum(const Vector<Scalar, 3>&) const;
 
-	COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
+    COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
     
 public:
-	glm::tvec3<Scalar> data_; //default: zero vector
+    glm::tvec3<Scalar> data_; //default: zero vector
 };
 
 template class Vector<float, 3>;

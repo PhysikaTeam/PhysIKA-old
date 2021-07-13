@@ -56,12 +56,12 @@ private:
                                          QPointF const &p) const;
 
 private:
-	bool isNodePortAccesible(PortType portType, PortIndex portIndex) const;
+    bool isNodePortAccesible(PortType portType, PortIndex portIndex) const;
 
-	QtBlock* _block;
+    QtBlock* _block;
 
-	QtConnection* _connection;
+    QtConnection* _connection;
 
-	QtFlowScene* _scene;
+    QtFlowScene* _scene;
 };
 }

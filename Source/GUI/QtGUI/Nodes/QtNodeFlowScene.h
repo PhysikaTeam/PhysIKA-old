@@ -13,22 +13,22 @@ using PhysIKA::SceneGraph;
 class NODE_EDITOR_PUBLIC QtNodeFlowScene
   : public QtFlowScene
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
 
-	QtNodeFlowScene(std::shared_ptr<DataModelRegistry> registry,
-			QObject * parent = Q_NULLPTR);
+    QtNodeFlowScene(std::shared_ptr<DataModelRegistry> registry,
+            QObject * parent = Q_NULLPTR);
 
-	QtNodeFlowScene(QObject * parent = Q_NULLPTR);
+    QtNodeFlowScene(QObject * parent = Q_NULLPTR);
 
-	~QtNodeFlowScene();
+    ~QtNodeFlowScene();
 
 
 public Q_SLOTS:
-	void showSceneGraph(SceneGraph* scn);
-	void moveModulePosition(QtBlock& n, const QPointF& newLocation);
+    void showSceneGraph(SceneGraph* scn);
+    void moveModulePosition(QtBlock& n, const QPointF& newLocation);
 private:
-	SceneGraph* m_scene = nullptr;
+    SceneGraph* m_scene = nullptr;
 };
 
 }

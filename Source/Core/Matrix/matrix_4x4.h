@@ -34,7 +34,7 @@ template <typename Scalar>
 class SquareMatrix<Scalar,4>
 {
 public:
-	typedef Scalar VarType;
+    typedef Scalar VarType;
 
     COMM_FUNC SquareMatrix();
     COMM_FUNC explicit SquareMatrix(Scalar);
@@ -56,17 +56,17 @@ public:
     COMM_FUNC const Vector<Scalar,4> row(unsigned int i) const;
     COMM_FUNC const Vector<Scalar,4> col(unsigned int i) const;
 
-	COMM_FUNC void setRow(unsigned int i, const Vector<Scalar, 4>& vec);
-	COMM_FUNC void setCol(unsigned int j, const Vector<Scalar, 4>& vec);
+    COMM_FUNC void setRow(unsigned int i, const Vector<Scalar, 4>& vec);
+    COMM_FUNC void setCol(unsigned int j, const Vector<Scalar, 4>& vec);
 
     COMM_FUNC const SquareMatrix<Scalar,4> operator+ (const SquareMatrix<Scalar,4> &) const;
     COMM_FUNC SquareMatrix<Scalar,4>& operator+= (const SquareMatrix<Scalar,4> &);
     COMM_FUNC const SquareMatrix<Scalar,4> operator- (const SquareMatrix<Scalar,4> &) const;
     COMM_FUNC SquareMatrix<Scalar,4>& operator-= (const SquareMatrix<Scalar,4> &);
-	COMM_FUNC const SquareMatrix<Scalar, 4> operator* (const SquareMatrix<Scalar, 4> &) const;
-	COMM_FUNC SquareMatrix<Scalar, 4>& operator*= (const SquareMatrix<Scalar, 4> &);
-	COMM_FUNC const SquareMatrix<Scalar, 4> operator/ (const SquareMatrix<Scalar, 4> &) const;
-	COMM_FUNC SquareMatrix<Scalar, 4>& operator/= (const SquareMatrix<Scalar, 4> &);
+    COMM_FUNC const SquareMatrix<Scalar, 4> operator* (const SquareMatrix<Scalar, 4> &) const;
+    COMM_FUNC SquareMatrix<Scalar, 4>& operator*= (const SquareMatrix<Scalar, 4> &);
+    COMM_FUNC const SquareMatrix<Scalar, 4> operator/ (const SquareMatrix<Scalar, 4> &) const;
+    COMM_FUNC SquareMatrix<Scalar, 4>& operator/= (const SquareMatrix<Scalar, 4> &);
 
     COMM_FUNC SquareMatrix<Scalar,4>& operator= (const SquareMatrix<Scalar,4> &);
 
@@ -75,8 +75,8 @@ public:
 
     COMM_FUNC const SquareMatrix<Scalar,4> operator* (const Scalar&) const;
     COMM_FUNC SquareMatrix<Scalar,4>& operator*= (const Scalar&);
-	COMM_FUNC const SquareMatrix<Scalar, 4> operator/ (const Scalar&) const;
-	COMM_FUNC SquareMatrix<Scalar, 4>& operator/= (const Scalar&);
+    COMM_FUNC const SquareMatrix<Scalar, 4> operator/ (const Scalar&) const;
+    COMM_FUNC SquareMatrix<Scalar, 4>& operator/= (const Scalar&);
 
     COMM_FUNC const Vector<Scalar,4> operator* (const Vector<Scalar,4> &) const;
 
@@ -89,12 +89,12 @@ public:
     COMM_FUNC Scalar trace() const;
     COMM_FUNC Scalar doubleContraction(const SquareMatrix<Scalar,4> &) const;//double contraction
     COMM_FUNC Scalar frobeniusNorm() const;
-	COMM_FUNC Scalar oneNorm() const;
-	COMM_FUNC Scalar infNorm() const;
+    COMM_FUNC Scalar oneNorm() const;
+    COMM_FUNC Scalar infNorm() const;
 
     COMM_FUNC static const SquareMatrix<Scalar,4> identityMatrix();
 
-	COMM_FUNC Scalar* getDataPtr() { return &data_[0].x; }
+    COMM_FUNC Scalar* getDataPtr() { return &data_[0].x; }
 
 protected:
     glm::tmat4x4<Scalar> data_; //default: zero matrix

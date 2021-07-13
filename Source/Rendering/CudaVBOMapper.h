@@ -23,87 +23,87 @@ template <typename T>
 class CudaVBOMapper
 {
 public:
-	CudaVBOMapper()
-	{
-		m_vbo = 0;
-		m_size = 0;
-		m_cudaGraphicsResource = NULL;
+    CudaVBOMapper()
+    {
+        m_vbo = 0;
+        m_size = 0;
+        m_cudaGraphicsResource = NULL;
 
-		glGenBuffers(1, &m_vbo);
-	}
+        glGenBuffers(1, &m_vbo);
+    }
 
 
-	CudaVBOMapper(unsigned int num)
-	{
-		resize(num);
-	}
+    CudaVBOMapper(unsigned int num)
+    {
+        resize(num);
+    }
 
-	CudaVBOMapper(const CudaVBOMapper &) = delete;
-	CudaVBOMapper & operator = (const CudaVBOMapper &) = delete;
+    CudaVBOMapper(const CudaVBOMapper &) = delete;
+    CudaVBOMapper & operator = (const CudaVBOMapper &) = delete;
 
     ~CudaVBOMapper()
-	{
-		release();
-	}
-	
-	void resize(unsigned int num)
-	{
-// 		if (m_size != 0)
-// 		{
-// 			release();
-// 		}
+    {
+        release();
+    }
+    
+    void resize(unsigned int num)
+    {
+//         if (m_size != 0)
+//         {
+//             release();
+//         }
 
-		m_size = num;
-		
-		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-		glBufferData(GL_ARRAY_BUFFER, m_size * sizeof(T), nullptr, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+        m_size = num;
+        
+        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        glBufferData(GL_ARRAY_BUFFER, m_size * sizeof(T), nullptr, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		cuSafeCall(cudaGraphicsGLRegisterBuffer(&m_cudaGraphicsResource, m_vbo, cudaGraphicsMapFlagsWriteDiscard));
-	}
+        cuSafeCall(cudaGraphicsGLRegisterBuffer(&m_cudaGraphicsResource, m_vbo, cudaGraphicsMapFlagsWriteDiscard));
+    }
 
-	void release()
-	{
-		if (m_vbo != 0)
-		{
-			glDeleteBuffers(1, &m_vbo);
-		}
-// 		if (m_cudaGraphicsResource != NULL)
-// 		{
-// 			cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
-// 		}
-		m_size = 0;
-	}
+    void release()
+    {
+        if (m_vbo != 0)
+        {
+            glDeleteBuffers(1, &m_vbo);
+        }
+//         if (m_cudaGraphicsResource != NULL)
+//         {
+//             cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
+//         }
+        m_size = 0;
+    }
 
     T* cudaMap()
-	{
-		cuSafeCall(cudaGraphicsMapResources(1, &m_cudaGraphicsResource, 0));
+    {
+        cuSafeCall(cudaGraphicsMapResources(1, &m_cudaGraphicsResource, 0));
 
-		T* dataPtr = nullptr;
-		size_t byte_size;
-		cuSafeCall(cudaGraphicsResourceGetMappedPointer((void **)&dataPtr, &byte_size, m_cudaGraphicsResource));
+        T* dataPtr = nullptr;
+        size_t byte_size;
+        cuSafeCall(cudaGraphicsResourceGetMappedPointer((void **)&dataPtr, &byte_size, m_cudaGraphicsResource));
 
-		return dataPtr;
-	}
+        return dataPtr;
+    }
 
     void cudaUnmap()
-	{
-		cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
-	}
+    {
+        cuSafeCall(cudaGraphicsUnmapResources(1, &m_cudaGraphicsResource, 0));
+    }
 
-	unsigned int getVBO()
-	{
-		return m_vbo;
-	}
+    unsigned int getVBO()
+    {
+        return m_vbo;
+    }
 
-	unsigned int getSize()
-	{
-		return m_size;
-	}
+    unsigned int getSize()
+    {
+        return m_size;
+    }
 
 private:
-	int m_size;
-	unsigned int m_vbo;
+    int m_size;
+    unsigned int m_vbo;
     cudaGraphicsResource * m_cudaGraphicsResource;
 };
 

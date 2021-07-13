@@ -19,48 +19,48 @@
 
 namespace PhysIKA {
 
-	/*
-	 * Interval class is defined for C++ floating-point types.
-	 */
+    /*
+     * Interval class is defined for C++ floating-point types.
+     */
 
-	template <typename Real>
-	class Interval
-	{
-	public:
-		COMM_FUNC Interval();
-		COMM_FUNC Interval(Real min_val, Real max_val, bool lOpen = false, bool rOpen = false);
-		COMM_FUNC Interval(const Interval<Real> &interval);
-		COMM_FUNC Interval<Real>& operator= (const Interval<Real> &interval);
-		COMM_FUNC bool operator== (const Interval<Real> &interval);
-		COMM_FUNC bool operator!= (const Interval<Real> &interval);
-		COMM_FUNC ~Interval();
+    template <typename Real>
+    class Interval
+    {
+    public:
+        COMM_FUNC Interval();
+        COMM_FUNC Interval(Real min_val, Real max_val, bool lOpen = false, bool rOpen = false);
+        COMM_FUNC Interval(const Interval<Real> &interval);
+        COMM_FUNC Interval<Real>& operator= (const Interval<Real> &interval);
+        COMM_FUNC bool operator== (const Interval<Real> &interval);
+        COMM_FUNC bool operator!= (const Interval<Real> &interval);
+        COMM_FUNC ~Interval();
 
-		COMM_FUNC Real size() const;
+        COMM_FUNC Real size() const;
 
-		inline COMM_FUNC Real leftLimit() const;
-		inline COMM_FUNC Real rightLimit() const;
+        inline COMM_FUNC Real leftLimit() const;
+        inline COMM_FUNC Real rightLimit() const;
 
-		COMM_FUNC bool isLeftOpen() const;
-		COMM_FUNC bool isRightOpen() const;
+        COMM_FUNC bool isLeftOpen() const;
+        COMM_FUNC bool isRightOpen() const;
 
-		COMM_FUNC void setLeftLimit(Real val, bool bOpen = false);
-		COMM_FUNC void setRightLimit(Real val, bool bOpen = false);
+        COMM_FUNC void setLeftLimit(Real val, bool bOpen = false);
+        COMM_FUNC void setRightLimit(Real val, bool bOpen = false);
 
-		COMM_FUNC bool inside(Real val) const;
-		COMM_FUNC bool outside(Real val) const;
+        COMM_FUNC bool inside(Real val) const;
+        COMM_FUNC bool outside(Real val) const;
 
-		COMM_FUNC Interval<Real> intersect(const Interval<Real>& itv) const;
+        COMM_FUNC Interval<Real> intersect(const Interval<Real>& itv) const;
 
-		COMM_FUNC bool isEmpty() const;
+        COMM_FUNC bool isEmpty() const;
 
-		COMM_FUNC static Interval<Real> unitInterval(); //[0,1]
-	private:
-		Real v0, v1;
-		bool leftOpen, rightOpen;
-	};
+        COMM_FUNC static Interval<Real> unitInterval(); //[0,1]
+    private:
+        Real v0, v1;
+        bool leftOpen, rightOpen;
+    };
 
-	template class Interval<float>;
-	template class Interval<double>;
+    template class Interval<float>;
+    template class Interval<double>;
 
 }  //end of namespace PhysIKA
 

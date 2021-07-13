@@ -4,9 +4,9 @@
 namespace PhysIKA
 {
 ConstraintModule::ConstraintModule()
-	: Module()
-	, m_posID(MechanicalState::position())
-	, m_velID(MechanicalState::velocity())
+    : Module()
+    , m_posID(MechanicalState::position())
+    , m_velID(MechanicalState::velocity())
 {
 }
 

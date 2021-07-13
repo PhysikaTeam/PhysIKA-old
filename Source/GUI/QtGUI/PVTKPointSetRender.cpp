@@ -20,102 +20,102 @@
 
 namespace PhysIKA
 {
-	IMPLEMENT_CLASS(PVTKPointSetRender)
+    IMPLEMENT_CLASS(PVTKPointSetRender)
 
-	PVTKPointSetRender::PVTKPointSetRender()
-		: VisualModule()
-		, m_actor(nullptr)
-		, mapper(nullptr)
-		, pointsetSource(nullptr)
-	{
-	}
+    PVTKPointSetRender::PVTKPointSetRender()
+        : VisualModule()
+        , m_actor(nullptr)
+        , mapper(nullptr)
+        , pointsetSource(nullptr)
+    {
+    }
 
-	PVTKPointSetRender::~PVTKPointSetRender()
-	{
-		if (m_actor != nullptr)
-		{
-			PVTKOpenGLWidget::getCurrentRenderer()->RemoveActor(m_actor);
-			PVTKOpenGLWidget::getCurrentRenderer()->GetRenderWindow()->Render();
-		}
-	}
+    PVTKPointSetRender::~PVTKPointSetRender()
+    {
+        if (m_actor != nullptr)
+        {
+            PVTKOpenGLWidget::getCurrentRenderer()->RemoveActor(m_actor);
+            PVTKOpenGLWidget::getCurrentRenderer()->GetRenderWindow()->Render();
+        }
+    }
 
-	vtkActor* PVTKPointSetRender::getVTKActor()
-	{
-		return m_actor;
-	}
+    vtkActor* PVTKPointSetRender::getVTKActor()
+    {
+        return m_actor;
+    }
 
-	bool PVTKPointSetRender::initializeImpl()
-	{
-		Node* parent = getParent();
-		if (parent == NULL)
-		{
-			Log::sendMessage(Log::Error, "Should insert this module into a node!");
-			return false;
-		}
+    bool PVTKPointSetRender::initializeImpl()
+    {
+        Node* parent = getParent();
+        if (parent == NULL)
+        {
+            Log::sendMessage(Log::Error, "Should insert this module into a node!");
+            return false;
+        }
 
-		auto triSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(parent->getTopologyModule());
-		if (triSet == nullptr)
-		{
-			Log::sendMessage(Log::Error, "TriangleModule: The topology module is not supported!");
-			return false;
-		}
+        auto triSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(parent->getTopologyModule());
+        if (triSet == nullptr)
+        {
+            Log::sendMessage(Log::Error, "TriangleModule: The topology module is not supported!");
+            return false;
+        }
 
-		auto colors = vtkSmartPointer<vtkNamedColors>::New();
+        auto colors = vtkSmartPointer<vtkNamedColors>::New();
 
-		auto points = vtkSmartPointer<vtkPoints>::New();
-		points->InsertNextPoint(0, 0, 0);
-		points->InsertNextPoint(1, 0, 0);
-		points->InsertNextPoint(1, 1, 0);
-		points->InsertNextPoint(0, 1, 0);
-		points->InsertNextPoint(0, 0, 1);
-		points->InsertNextPoint(1, 0, 1);
-		points->InsertNextPoint(1, 1, 1);
-		points->InsertNextPoint(0, 1, 1);
-		points->InsertNextPoint(0.5, 0, 0);
-		points->InsertNextPoint(1, 0.5, 0);
-		points->InsertNextPoint(0.5, 1, 0);
-		points->InsertNextPoint(0, 0.5, 0);
-		points->InsertNextPoint(0.5, 0.5, 0);
+        auto points = vtkSmartPointer<vtkPoints>::New();
+        points->InsertNextPoint(0, 0, 0);
+        points->InsertNextPoint(1, 0, 0);
+        points->InsertNextPoint(1, 1, 0);
+        points->InsertNextPoint(0, 1, 0);
+        points->InsertNextPoint(0, 0, 1);
+        points->InsertNextPoint(1, 0, 1);
+        points->InsertNextPoint(1, 1, 1);
+        points->InsertNextPoint(0, 1, 1);
+        points->InsertNextPoint(0.5, 0, 0);
+        points->InsertNextPoint(1, 0.5, 0);
+        points->InsertNextPoint(0.5, 1, 0);
+        points->InsertNextPoint(0, 0.5, 0);
+        points->InsertNextPoint(0.5, 0.5, 0);
 
-		auto sphere = vtkSmartPointer<vtkSphereSource>::New();
-		sphere->SetPhiResolution(21);
-		sphere->SetThetaResolution(21);
-		sphere->SetRadius(.0025);
-
-
-		pointsetSource = PVTKPointSetSource::New();
-		//polydataSource->SetInputData(spheredata);
-		pointsetSource->setData(triSet);
-
-		pointsetSource->Update();
-
-		vtkPointSet* polydata = pointsetSource->GetOutput();
-
-// 		// vtkPolyData
-// 		auto polyData = vtkSmartPointer<vtkPolyData>::New();
-// 		polyData->SetPoints(points);
-
-		// vtkGlyph3DMapper: Rendering each vertex as a sphere
-		auto pointMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
-		pointMapper->SetInputData(polydata);
-		pointMapper->SetSourceConnection(sphere->GetOutputPort());
-
-		m_actor = vtkActor::New();
-		m_actor->SetMapper(pointMapper);
-		m_actor->GetProperty()->SetColor(colors->GetColor3d("Peacock").GetData());
+        auto sphere = vtkSmartPointer<vtkSphereSource>::New();
+        sphere->SetPhiResolution(21);
+        sphere->SetThetaResolution(21);
+        sphere->SetRadius(.0025);
 
 
-		PVTKOpenGLWidget::getCurrentRenderer()->AddActor(m_actor);
+        pointsetSource = PVTKPointSetSource::New();
+        //polydataSource->SetInputData(spheredata);
+        pointsetSource->setData(triSet);
 
-		return true;
-	}
+        pointsetSource->Update();
+
+        vtkPointSet* polydata = pointsetSource->GetOutput();
+
+//         // vtkPolyData
+//         auto polyData = vtkSmartPointer<vtkPolyData>::New();
+//         polyData->SetPoints(points);
+
+        // vtkGlyph3DMapper: Rendering each vertex as a sphere
+        auto pointMapper = vtkSmartPointer<vtkGlyph3DMapper>::New();
+        pointMapper->SetInputData(polydata);
+        pointMapper->SetSourceConnection(sphere->GetOutputPort());
+
+        m_actor = vtkActor::New();
+        m_actor->SetMapper(pointMapper);
+        m_actor->GetProperty()->SetColor(colors->GetColor3d("Peacock").GetData());
 
 
-	void PVTKPointSetRender::updateRenderingContext()
-	{
-		pointsetSource->Update();
-		pointsetSource->Modified();
+        PVTKOpenGLWidget::getCurrentRenderer()->AddActor(m_actor);
 
-		m_actor->SetVisibility(isVisible());
-	}
+        return true;
+    }
+
+
+    void PVTKPointSetRender::updateRenderingContext()
+    {
+        pointsetSource->Update();
+        pointsetSource->Modified();
+
+        m_actor->SetVisibility(isVisible());
+    }
 }

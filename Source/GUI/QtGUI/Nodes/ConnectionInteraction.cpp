@@ -28,74 +28,74 @@ bool
 ConnectionInteraction::
 canConnect(PortIndex &portIndex, TypeConverter & converter) const
 {
-	// 1) Connection requires a port
-	PortType requiredPort = connectionRequiredPort();
+    // 1) Connection requires a port
+    PortType requiredPort = connectionRequiredPort();
 
-	if (requiredPort == PortType::None)
-	{
-		return false;
-	}
+    if (requiredPort == PortType::None)
+    {
+        return false;
+    }
 
-	// 1.5) Forbid connecting the node to itself
-	PortType start_porttype = oppositePort(requiredPort);
-	QtBlock* start_block = _connection->getBlock(oppositePort(requiredPort));
+    // 1.5) Forbid connecting the node to itself
+    PortType start_porttype = oppositePort(requiredPort);
+    QtBlock* start_block = _connection->getBlock(oppositePort(requiredPort));
 
-	if (start_block == _block)
-		return false;
+    if (start_block == _block)
+        return false;
 
-	// 2) connection point is on top of the node port
+    // 2) connection point is on top of the node port
 
-	QPointF connectionPoint = connectionEndScenePosition(requiredPort);
+    QPointF connectionPoint = connectionEndScenePosition(requiredPort);
 
-	portIndex = nodePortIndexUnderScenePoint(requiredPort,
-		connectionPoint);
+    portIndex = nodePortIndexUnderScenePoint(requiredPort,
+        connectionPoint);
 
-	if (portIndex == INVALID)
-	{
-		return false;
-	}
+    if (portIndex == INVALID)
+    {
+        return false;
+    }
 
-	// Check whether the output data can be accepted by the input block
-	auto start_portIndex =  _connection->getPortIndex(oppositePort(requiredPort));
-	auto start_data = start_block->nodeDataModel()->portData(start_porttype, start_portIndex);
+    // Check whether the output data can be accepted by the input block
+    auto start_portIndex =  _connection->getPortIndex(oppositePort(requiredPort));
+    auto start_data = start_block->nodeDataModel()->portData(start_porttype, start_portIndex);
 
-	auto target_data = _block->nodeDataModel()->portData(requiredPort, portIndex);
+    auto target_data = _block->nodeDataModel()->portData(requiredPort, portIndex);
 
-	if (!target_data->isKindOf(*start_data))
-	{
-		return false;
-	}
+    if (!target_data->isKindOf(*start_data))
+    {
+        return false;
+    }
 
 
-	// 3) Node port is vacant
+    // 3) Node port is vacant
 
-	// port should be empty
-	if (!isNodePortAccesible(requiredPort, portIndex))
-		return false;
+    // port should be empty
+    if (!isNodePortAccesible(requiredPort, portIndex))
+        return false;
 
-	// 4) Connection type equals node port type, or there is a registered type conversion that can translate between the two
+    // 4) Connection type equals node port type, or there is a registered type conversion that can translate between the two
 
-	auto connectionDataType =
-		_connection->dataType(oppositePort(requiredPort));
+    auto connectionDataType =
+        _connection->dataType(oppositePort(requiredPort));
 
-	auto const   &modelTarget = _block->nodeDataModel();
-	BlockDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
+    auto const   &modelTarget = _block->nodeDataModel();
+    BlockDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
 
-	if (connectionDataType.id != candidateNodeDataType.id)
-	{
-		if (requiredPort == PortType::In)
-		{
-			converter = _scene->registry().getTypeConverter(connectionDataType, candidateNodeDataType);
-		}
-		else if (requiredPort == PortType::Out)
-		{
-			converter = _scene->registry().getTypeConverter(candidateNodeDataType, connectionDataType);
-		}
+    if (connectionDataType.id != candidateNodeDataType.id)
+    {
+        if (requiredPort == PortType::In)
+        {
+            converter = _scene->registry().getTypeConverter(connectionDataType, candidateNodeDataType);
+        }
+        else if (requiredPort == PortType::Out)
+        {
+            converter = _scene->registry().getTypeConverter(candidateNodeDataType, connectionDataType);
+        }
 
-		return (converter != nullptr);
-	}
+        return (converter != nullptr);
+    }
 
-	return true;
+    return true;
 }
 
 
@@ -246,13 +246,13 @@ isNodePortAccesible(PortType portType, PortIndex portIndex) const
 
   if (portType == PortType::Out)
   {
-	  const auto outPolicy = _block->nodeDataModel()->portOutConnectionPolicy(portIndex);
-	  return outPolicy == QtBlockDataModel::ConnectionPolicy::Many;
+      const auto outPolicy = _block->nodeDataModel()->portOutConnectionPolicy(portIndex);
+      return outPolicy == QtBlockDataModel::ConnectionPolicy::Many;
   }
   else
   {
-	  const auto inPolicy = _block->nodeDataModel()->portInConnectionPolicy(portIndex);
-	  return inPolicy == QtBlockDataModel::ConnectionPolicy::Many;
+      const auto inPolicy = _block->nodeDataModel()->portInConnectionPolicy(portIndex);
+      return inPolicy == QtBlockDataModel::ConnectionPolicy::Many;
   }
   
   

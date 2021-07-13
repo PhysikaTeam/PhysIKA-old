@@ -3,16 +3,16 @@
 
 namespace PhysIKA
 {
-	class AnimateAct : public Action
-	{
-	public:
-		AnimateAct(float dt);
-		virtual ~AnimateAct();
+    class AnimateAct : public Action
+    {
+    public:
+        AnimateAct(float dt);
+        virtual ~AnimateAct();
 
-	private:
-		void process(Node* node) override;
+    private:
+        void process(Node* node) override;
 
-		float m_dt;
-	};
+        float m_dt;
+    };
 }
 

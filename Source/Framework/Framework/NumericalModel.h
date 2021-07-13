@@ -4,21 +4,21 @@
 
 namespace PhysIKA
 {
-	class NumericalModel : public Module
-	{
-	public:
-		NumericalModel();
-		~NumericalModel() override;
+    class NumericalModel : public Module
+    {
+    public:
+        NumericalModel();
+        ~NumericalModel() override;
 
-		virtual void step(Real dt) {};
+        virtual void step(Real dt) {};
 
-		virtual void updateTopology() {};
+        virtual void updateTopology() {};
 
-		std::string getModuleType() override { return "NumericalModel"; }
-	protected:
-		
-	private:
+        std::string getModuleType() override { return "NumericalModel"; }
+    protected:
+        
+    private:
 
-	};
+    };
 }
 

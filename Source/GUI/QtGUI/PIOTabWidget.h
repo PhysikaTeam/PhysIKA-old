@@ -5,13 +5,13 @@
 
 namespace PhysIKA
 {
-	class PIOTabWidget : public QTabWidget
-	{
-		Q_OBJECT
+    class PIOTabWidget : public QTabWidget
+    {
+        Q_OBJECT
 
-	public:
-		PIOTabWidget();
-	};
+    public:
+        PIOTabWidget();
+    };
 
 }
 

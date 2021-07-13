@@ -23,20 +23,20 @@ using QtNodes::QtNodeFlowScene;
 
 namespace PhysIKA
 {
-	class PNodeFlowWidget : public QWidget
-	{
-		Q_OBJECT
+    class PNodeFlowWidget : public QWidget
+    {
+        Q_OBJECT
 
-	public:
-		explicit PNodeFlowWidget(QWidget *parent = nullptr);
-		~PNodeFlowWidget();
+    public:
+        explicit PNodeFlowWidget(QWidget *parent = nullptr);
+        ~PNodeFlowWidget();
 
-	signals:
+    signals:
 
-	public:
-		QGridLayout*		m_MainLayout;
+    public:
+        QGridLayout*        m_MainLayout;
 
-		QtNodeFlowScene* node_scene = nullptr;
-	};
+        QtNodeFlowScene* node_scene = nullptr;
+    };
 
 }

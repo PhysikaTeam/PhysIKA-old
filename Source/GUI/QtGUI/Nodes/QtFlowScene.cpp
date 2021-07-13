@@ -53,7 +53,7 @@ QtFlowScene::QtFlowScene(std::shared_ptr<DataModelRegistry> registry,
 }
 
 QtFlowScene::QtFlowScene(QObject * parent)
-	: QtFlowScene(std::make_shared<DataModelRegistry>(), parent)
+    : QtFlowScene(std::make_shared<DataModelRegistry>(), parent)
 {
 }
 
@@ -96,10 +96,10 @@ QtFlowScene::createConnection(PortType connectedPort,
 
 std::shared_ptr<QtConnection>
 QtFlowScene::createConnection(QtBlock& nodeIn,
-									 PortIndex portIndexIn,
-									 QtBlock& nodeOut,
-									 PortIndex portIndexOut,
-									 TypeConverter const &converter)
+                                     PortIndex portIndexIn,
+                                     QtBlock& nodeOut,
+                                     PortIndex portIndexOut,
+                                     TypeConverter const &converter)
 {
   auto connection =
     std::make_shared<QtConnection>(nodeIn,
@@ -662,107 +662,107 @@ locateNodeAt(QPointF scenePoint, QtFlowScene &scene,
 
 void QtFlowScene::newNode()
 {
-/* 	PhysIKA::SceneGraph& scene = PhysIKA::SceneGraph::getInstance();
-	auto root = scene.getRootNode();
+/*     PhysIKA::SceneGraph& scene = PhysIKA::SceneGraph::getInstance();
+    auto root = scene.getRootNode();
 
-	root->removeAllChildren();
+    root->removeAllChildren();
 
-	std::shared_ptr<PhysIKA::ParticleElasticBody<PhysIKA::DataType3f>> bunny = std::make_shared<PhysIKA::ParticleElasticBody<PhysIKA::DataType3f>>();
-	root->addChild(bunny);
-	//	bunny->getRenderModule()->setColor(Vector3f(0, 1, 1));
-	bunny->setMass(1.0);
-	bunny->loadParticles("../../Media/bunny/bunny_points.obj");
-	bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
-	bunny->translate(PhysIKA::Vector3f(0.5, 0.2, 0.5));
-	bunny->setVisible(true);
+    std::shared_ptr<PhysIKA::ParticleElasticBody<PhysIKA::DataType3f>> bunny = std::make_shared<PhysIKA::ParticleElasticBody<PhysIKA::DataType3f>>();
+    root->addChild(bunny);
+    //    bunny->getRenderModule()->setColor(Vector3f(0, 1, 1));
+    bunny->setMass(1.0);
+    bunny->loadParticles("../../Media/bunny/bunny_points.obj");
+    bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+    bunny->translate(PhysIKA::Vector3f(0.5, 0.2, 0.5));
+    bunny->setVisible(true);
 
-// 	auto renderer = std::make_shared<PhysIKA::PVTKSurfaceMeshRender>();
-// 	renderer->setName("VTK Mesh Renderer");
-// 	bunny->getSurfaceNode()->addVisualModule(renderer);
+//     auto renderer = std::make_shared<PhysIKA::PVTKSurfaceMeshRender>();
+//     renderer->setName("VTK Mesh Renderer");
+//     bunny->getSurfaceNode()->addVisualModule(renderer);
 
-	auto pRenderer = std::make_shared<PhysIKA::PVTKPointSetRender>();
-	pRenderer->setName("VTK Point Renderer");
-	bunny->addVisualModule(pRenderer);
+    auto pRenderer = std::make_shared<PhysIKA::PVTKPointSetRender>();
+    pRenderer->setName("VTK Point Renderer");
+    bunny->addVisualModule(pRenderer);
 
-	scene.invalid();
-	scene.initialize();
+    scene.invalid();
+    scene.initialize();
 
-	auto mlist = bunny->getModuleList();
+    auto mlist = bunny->getModuleList();
 
-	auto c = bunny->getAnimationPipeline()->entry();
+    auto c = bunny->getAnimationPipeline()->entry();
 
-	std::map<std::string, QtBlock*> moduleMap;
+    std::map<std::string, QtBlock*> moduleMap;
 
-	int mSize = bunny->getAnimationPipeline()->size();
-
-
-	auto addModuleWidget = [&](Module* m) -> void
-	{
-		auto module_name = m->getName();
-
-		auto type = std::make_unique<QtModuleWidget>(m);
-
-		auto& node = this->createNode(std::move(type));
-
-		moduleMap[module_name] = &node;
-
-		QPointF posView;
-
-		node.nodeGraphicsObject().setPos(posView);
-
-		this->nodePlaced(node);
-	};
-
-	addModuleWidget(bunny->getMechanicalState().get());
-
-	for (; c != bunny->getAnimationPipeline()->finished(); c++)
-	{
-		addModuleWidget(c.get());
-	}
-
-	auto createModuleConnections = [&](Module* m) -> void
-	{
-		auto out_node = moduleMap[m->getName()];
-
-		auto fields = m->getOutputFields();
-
-		for (int i = 0; i < fields.size(); i++)
-		{
-			auto sink_fields = fields[i]->getSinkFields();
-			for (int j = 0; j < sink_fields.size(); j++)
-			{
-				auto in_module = dynamic_cast<Module*>(sink_fields[j]->getParent());
-				if (in_module != nullptr)
-				{
-					auto in_fields = in_module->getInputFields();
-
-					int in_port = -1;
-					for (int t = 0; t < in_fields.size(); t++)
-					{
-						if (sink_fields[j] == in_fields[t])
-						{
-							in_port = t;
-							break;
-						}
-					}
-
-					if (in_port != -1)
-					{
-						auto in_node = moduleMap[in_module->getName()];
-
-						createConnection(*in_node, in_port, *out_node, i);
-					}
-				}
-			}
-		}
-	};
+    int mSize = bunny->getAnimationPipeline()->size();
 
 
-	createModuleConnections(bunny->getMechanicalState().get());
-	c = bunny->getAnimationPipeline()->entry();
-	for (; c != bunny->getAnimationPipeline()->finished(); c++)
-	{
-		createModuleConnections(c.get());
-	}*/
+    auto addModuleWidget = [&](Module* m) -> void
+    {
+        auto module_name = m->getName();
+
+        auto type = std::make_unique<QtModuleWidget>(m);
+
+        auto& node = this->createNode(std::move(type));
+
+        moduleMap[module_name] = &node;
+
+        QPointF posView;
+
+        node.nodeGraphicsObject().setPos(posView);
+
+        this->nodePlaced(node);
+    };
+
+    addModuleWidget(bunny->getMechanicalState().get());
+
+    for (; c != bunny->getAnimationPipeline()->finished(); c++)
+    {
+        addModuleWidget(c.get());
+    }
+
+    auto createModuleConnections = [&](Module* m) -> void
+    {
+        auto out_node = moduleMap[m->getName()];
+
+        auto fields = m->getOutputFields();
+
+        for (int i = 0; i < fields.size(); i++)
+        {
+            auto sink_fields = fields[i]->getSinkFields();
+            for (int j = 0; j < sink_fields.size(); j++)
+            {
+                auto in_module = dynamic_cast<Module*>(sink_fields[j]->getParent());
+                if (in_module != nullptr)
+                {
+                    auto in_fields = in_module->getInputFields();
+
+                    int in_port = -1;
+                    for (int t = 0; t < in_fields.size(); t++)
+                    {
+                        if (sink_fields[j] == in_fields[t])
+                        {
+                            in_port = t;
+                            break;
+                        }
+                    }
+
+                    if (in_port != -1)
+                    {
+                        auto in_node = moduleMap[in_module->getName()];
+
+                        createConnection(*in_node, in_port, *out_node, i);
+                    }
+                }
+            }
+        }
+    };
+
+
+    createModuleConnections(bunny->getMechanicalState().get());
+    c = bunny->getAnimationPipeline()->entry();
+    for (; c != bunny->getAnimationPipeline()->finished(); c++)
+    {
+        createModuleConnections(c.get());
+    }*/
 }
 }

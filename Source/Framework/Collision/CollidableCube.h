@@ -4,20 +4,20 @@
 
 namespace PhysIKA
 {
-	template<typename TDataType>
-	class CollidableCube : public CollidableObject
-	{
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+    template<typename TDataType>
+    class CollidableCube : public CollidableObject
+    {
+    public:
+        typedef typename TDataType::Real Real;
+        typedef typename TDataType::Coord Coord;
 
-		CollidableCube();
-		virtual ~CollidableCube();
+        CollidableCube();
+        virtual ~CollidableCube();
 
-	private:
-		Coord m_length;
-		Coord m_center;
-	};
+    private:
+        Coord m_length;
+        Coord m_center;
+    };
 
 
 

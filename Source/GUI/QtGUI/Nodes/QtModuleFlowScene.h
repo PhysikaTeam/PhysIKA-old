@@ -13,26 +13,26 @@ using PhysIKA::Node;
 class NODE_EDITOR_PUBLIC QtModuleFlowScene
   : public QtFlowScene
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
 
-	QtModuleFlowScene(std::shared_ptr<DataModelRegistry> registry,
-			QObject * parent = Q_NULLPTR);
+    QtModuleFlowScene(std::shared_ptr<DataModelRegistry> registry,
+            QObject * parent = Q_NULLPTR);
 
-	QtModuleFlowScene(QObject * parent = Q_NULLPTR);
+    QtModuleFlowScene(QObject * parent = Q_NULLPTR);
 
 
-	~QtModuleFlowScene();
+    ~QtModuleFlowScene();
 
 
 
 public Q_SLOTS:
-	void showNodeFlow(Node* node);
-	void moveModulePosition(QtBlock& n, const QPointF& newLocation);
+    void showNodeFlow(Node* node);
+    void moveModulePosition(QtBlock& n, const QPointF& newLocation);
 
 
 private:
-	std::weak_ptr<PhysIKA::Node> m_node;
+    std::weak_ptr<PhysIKA::Node> m_node;
 };
 
 }

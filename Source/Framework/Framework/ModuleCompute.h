@@ -6,14 +6,14 @@ namespace PhysIKA{
 class ComputeModule : public Module
 {
 public:
-	ComputeModule();
-	~ComputeModule() override;
+    ComputeModule();
+    ~ComputeModule() override;
 
-	bool execute() override;
+    bool execute() override;
 
-	virtual void compute() {};
+    virtual void compute() {};
 
-	std::string getModuleType() override { return "ComputeModule"; }
+    std::string getModuleType() override { return "ComputeModule"; }
 private:
 
 };

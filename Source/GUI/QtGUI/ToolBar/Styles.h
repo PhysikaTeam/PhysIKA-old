@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -27,7 +27,7 @@
 
 namespace tt
 {
-	
+    
 struct TT_API Color
 {
     bool operator==(const Color& o) const { return o.coefficient == coefficient && o.value == value; }

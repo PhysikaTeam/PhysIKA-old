@@ -31,7 +31,7 @@ template <typename Scalar>
 class Vector<Scalar,2>
 {
 public:
-	typedef Scalar VarType;
+    typedef Scalar VarType;
 
     COMM_FUNC Vector();
     COMM_FUNC explicit Vector(Scalar);
@@ -48,10 +48,10 @@ public:
     COMM_FUNC Vector<Scalar,2>& operator+= (const Vector<Scalar,2> &);
     COMM_FUNC const Vector<Scalar,2> operator- (const Vector<Scalar,2> &) const;
     COMM_FUNC Vector<Scalar,2>& operator-= (const Vector<Scalar,2> &);
-	COMM_FUNC const Vector<Scalar, 2> operator* (const Vector<Scalar, 2> &) const;
-	COMM_FUNC Vector<Scalar, 2>& operator*= (const Vector<Scalar, 2> &);
-	COMM_FUNC const Vector<Scalar, 2> operator/ (const Vector<Scalar, 2> &) const;
-	COMM_FUNC Vector<Scalar, 2>& operator/= (const Vector<Scalar, 2> &);
+    COMM_FUNC const Vector<Scalar, 2> operator* (const Vector<Scalar, 2> &) const;
+    COMM_FUNC Vector<Scalar, 2>& operator*= (const Vector<Scalar, 2> &);
+    COMM_FUNC const Vector<Scalar, 2> operator/ (const Vector<Scalar, 2> &) const;
+    COMM_FUNC Vector<Scalar, 2>& operator/= (const Vector<Scalar, 2> &);
 
     COMM_FUNC Vector<Scalar,2>& operator= (const Vector<Scalar,2> &);
 
@@ -75,13 +75,13 @@ public:
     COMM_FUNC Vector<Scalar,2>& normalize();
     COMM_FUNC Scalar cross(const Vector<Scalar,2> &)const;
     COMM_FUNC Scalar dot(const Vector<Scalar,2>&) const;
-	COMM_FUNC Vector<Scalar, 2> minimum(const Vector<Scalar, 2> & ) const;
-	COMM_FUNC Vector<Scalar, 2> maximum(const Vector<Scalar, 2> & ) const;
+    COMM_FUNC Vector<Scalar, 2> minimum(const Vector<Scalar, 2> & ) const;
+    COMM_FUNC Vector<Scalar, 2> maximum(const Vector<Scalar, 2> & ) const;
 //    COMM_FUNC const SquareMatrix<Scalar,2> outerProduct(const Vector<Scalar,2>&) const;
-	COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
+    COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
 
 public:
-	glm::tvec2<Scalar> data_;
+    glm::tvec2<Scalar> data_;
 };
 
 //overriding << for vector2D

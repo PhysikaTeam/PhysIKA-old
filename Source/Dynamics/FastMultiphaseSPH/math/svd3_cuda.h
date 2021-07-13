@@ -8,8 +8,8 @@
 ** with minimal branching and elementary floating point operations,
 **  University of Wisconsin - Madison technical report TR1690, May 2011
 **
-**	OPTIMIZED GPU VERSION
-** 	Implementation by: Eric Jang
+**    OPTIMIZED GPU VERSION
+**     Implementation by: Eric Jang
 **
 **  13 Apr 2014
 **
@@ -156,8 +156,8 @@ void jacobiConjugation( const int x, const int y, const int z,
     // perform conjugation S = Q'*S*Q
     // Q already implicitly solved from a, b
     s11 =a*(a*_s11 + b*_s21) + b*(a*_s21 + b*_s22);
-    s21 =a*(-b*_s11 + a*_s21) + b*(-b*_s21 + a*_s22);	s22=-b*(-b*_s11 + a*_s21) + a*(-b*_s21 + a*_s22);
-    s31 =a*_s31 + b*_s32;								s32=-b*_s31 + a*_s32; s33=_s33;
+    s21 =a*(-b*_s11 + a*_s21) + b*(-b*_s21 + a*_s22);    s22=-b*(-b*_s11 + a*_s21) + a*(-b*_s21 + a*_s22);
+    s31 =a*_s31 + b*_s32;                                s32=-b*_s31 + a*_s32; s33=_s33;
 
     // update cumulative rotation qV
     float tmp[3];

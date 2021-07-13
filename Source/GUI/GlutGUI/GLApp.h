@@ -31,8 +31,8 @@ public:
     const std::string& name() const;
     int getWidth() const;
     int getHeight() const;
-	void setWidth(int width);
-	void setHeight(int height);
+    void setWidth(int width);
+    void setHeight(int height);
 
     void enableEventMode();
     void disableEventMode();
@@ -40,25 +40,25 @@ public:
     //save screenshot to file
     bool saveScreen(const std::string &file_name) const;  //save to file with given name
     bool saveScreen();                                    //save to file with default name "screen_capture_XXX.png"
-	bool isActive() { return m_bAnimate; }
-	void drawString(std::string s, const Color &color, int x, int y);
+    bool isActive() { return m_bAnimate; }
+    void drawString(std::string s, const Color &color, int x, int y);
 
     //display frame-rate
     void drawFrameRate();  
     void enableDisplayFrameRate();
     void disableDisplayFrameRate();
-	void enableDisplayFrame();
-	void disableDisplayFrame();
-	bool isShowFrameRate();
-	bool isShowBoundingBox();
+    void enableDisplayFrame();
+    void disableDisplayFrame();
+    bool isShowFrameRate();
+    bool isShowBoundingBox();
 
-	void increaseFrameNum() { ++m_totalFrame; }
+    void increaseFrameNum() { ++m_totalFrame; }
 
-	void enableBackground();
-	void disableBackground();
-	void enableSceneBoundary();
-	void disableSceneBoundary();
-	bool isShowBackground();
+    void enableBackground();
+    void disableBackground();
+    void enableSceneBoundary();
+    void disableSceneBoundary();
+    bool isShowBackground();
 
     //advanced: 
     //set custom callback functions
@@ -72,18 +72,18 @@ public:
     void setMouseWheelFunction(void(*func)(int wheel, int direction, int x, int y));
     void setInitFunction(void (*func)(void)); //the init function before entering mainloop
 
-	void setButtonType(int button) { m_buttonType = button; }
-	void setButtonState(int status) { m_buttonStatus = status; }
+    void setButtonType(int button) { m_buttonType = button; }
+    void setButtonState(int status) { m_buttonStatus = status; }
 
-	int getButtonType() { return m_buttonType; }
-	int getButtonStatus() { return m_buttonStatus; }
+    int getButtonType() { return m_buttonType; }
+    int getButtonStatus() { return m_buttonStatus; }
 
-	Camera& activeCamera() { return m_camera; }
+    Camera& activeCamera() { return m_camera; }
 
     static void bindDefaultKeys(unsigned char key, int x, int y);  //bind the default keyboard behaviors
     
-	void mainLoop() override;
-	void setSecondaryLineNumber(int num);
+    void mainLoop() override;
+    void setSecondaryLineNumber(int num);
 
 protected:
     //default callback functions
@@ -113,11 +113,11 @@ protected:
     void(*mouse_wheel_function_)(int wheel, int direction, int x, int y);
     void(*init_function_)(void);
 
-	void drawBackground();
-	void drawAxis();
-	void drawBoundingBox(Vector3f lo, Vector3f hi);
+    void drawBackground();
+    void drawAxis();
+    void drawBoundingBox(Vector3f lo, Vector3f hi);
 
-	void registerMousePos(float x, float y);
+    void registerMousePos(float x, float y);
 
 protected:
     //basic information of window
@@ -127,37 +127,37 @@ protected:
     unsigned int m_width;
     unsigned int m_height;
 
-	int m_secLineNum;
+    int m_secLineNum;
 
-	Color background_color_; //use double type in order not to make GlutWindow template
-	Color text_color_;       //the color to display text, e.g. fps
+    Color background_color_; //use double type in order not to make GlutWindow template
+    Color text_color_;       //the color to display text, e.g. fps
 
     //state of the mouse
-	int m_buttonType;
-	int m_buttonStatus;
+    int m_buttonType;
+    int m_buttonStatus;
 
     //fps display
     bool display_fps_;
-	bool display_frame_=false;
-	int m_totalFrame = 0;
+    bool display_frame_=false;
+    int m_totalFrame = 0;
 
     //event mode
     bool event_mode_;
 
-	bool m_bAnimate;
-	bool m_bShowBackground;
-	bool m_bShowBoundingbox = false;
+    bool m_bAnimate;
+    bool m_bShowBackground;
+    bool m_bShowBoundingbox = false;
     
     //current screen capture file index
     unsigned int screen_capture_file_index_;
 
-	Camera m_camera;
-	float m_mousex;
-	float m_mousey;
-	float m_rotationSensitivity=2.0;
-	float m_translationSensitivity = 2.0;
+    Camera m_camera;
+    float m_mousex;
+    float m_mousey;
+    float m_rotationSensitivity=2.0;
+    float m_translationSensitivity = 2.0;
 
-	bool m_cameraMode = true;
+    bool m_cameraMode = true;
 
 
 

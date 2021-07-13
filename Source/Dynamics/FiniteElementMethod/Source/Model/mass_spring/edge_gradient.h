@@ -9,14 +9,14 @@
 
 /* edge_gradient.f -- translated by f2c (version 20160102).
    You must link the resulting object file with libf2c:
-	on Microsoft Windows system, link with libf2c.lib;
-	on Linux or Unix systems, link with .../path/to/libf2c.a -lm
-	or, if you install libf2c.a in a standard place, with -lf2c -lm
-	-- in that order, at the end of the command line, as in
-		cc *.o -lf2c -lm
-	Source for libf2c is in /netlib/f2c/libf2c.zip, e.g.,
+    on Microsoft Windows system, link with libf2c.lib;
+    on Linux or Unix systems, link with .../path/to/libf2c.a -lm
+    or, if you install libf2c.a in a standard place, with -lf2c -lm
+    -- in that order, at the end of the command line, as in
+        cc *.o -lf2c -lm
+    Source for libf2c is in /netlib/f2c/libf2c.zip, e.g.,
 
-		http://www.netlib.org/f2c/libf2c.zip
+        http://www.netlib.org/f2c/libf2c.zip
 */
 
 // #include "f2c.h"
@@ -49,8 +49,8 @@ template<typename T>
 /* Computing 2nd power */
     r__6 = x[4] - x[1];
     g[1] = -((x[4] - x[1]) * *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * 
-	    r__3) - *l0)) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *
-	    l0);
+        r__3) - *l0)) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *
+        l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -64,8 +64,8 @@ template<typename T>
 /* Computing 2nd power */
     r__6 = x[4] - x[1];
     g[2] = -((x[5] - x[2]) * *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * 
-	    r__3) - *l0)) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *
-	    l0);
+        r__3) - *l0)) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *
+        l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -79,8 +79,8 @@ template<typename T>
 /* Computing 2nd power */
     r__6 = x[4] - x[1];
     g[3] = -((x[6] - x[3]) * *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * 
-	    r__3) - *l0)) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *
-	    l0);
+        r__3) - *l0)) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *
+        l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -94,7 +94,7 @@ template<typename T>
 /* Computing 2nd power */
     r__6 = x[4] - x[1];
     g[4] = (x[4] - x[1]) * *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3)
-	     - *l0) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0);
+         - *l0) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -108,7 +108,7 @@ template<typename T>
 /* Computing 2nd power */
     r__6 = x[4] - x[1];
     g[5] = (x[5] - x[2]) * *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3)
-	     - *l0) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0);
+         - *l0) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -122,7 +122,7 @@ template<typename T>
 /* Computing 2nd power */
     r__6 = x[4] - x[1];
     g[6] = (x[6] - x[3]) * *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3)
-	     - *l0) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0);
+         - *l0) / (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0);
     return 0;
 } /* edge_gradient__ */
 

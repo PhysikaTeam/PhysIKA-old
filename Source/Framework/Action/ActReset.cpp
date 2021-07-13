@@ -4,26 +4,26 @@
 
 namespace PhysIKA
 {
-	
-	ResetAct::ResetAct()
-	{
+    
+    ResetAct::ResetAct()
+    {
 
-	}
+    }
 
-	ResetAct::~ResetAct()
-	{
+    ResetAct::~ResetAct()
+    {
 
-	}
+    }
 
-	void ResetAct::process(Node* node)
-	{
-		if (node == NULL)
-		{
-			Log::sendMessage(Log::Error, "Node is invalid!");
-			return;
-		}
+    void ResetAct::process(Node* node)
+    {
+        if (node == NULL)
+        {
+            Log::sendMessage(Log::Error, "Node is invalid!");
+            return;
+        }
 
-		node->resetStatus();
-	}
+        node->resetStatus();
+    }
 
 }

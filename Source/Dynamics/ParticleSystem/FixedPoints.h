@@ -6,55 +6,55 @@
 
 namespace PhysIKA {
 
-	template<typename TDataType>
-	class FixedPoints : public ConstraintModule
-	{
-		DECLARE_CLASS_1(FixedPoints, TDataType)
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+    template<typename TDataType>
+    class FixedPoints : public ConstraintModule
+    {
+        DECLARE_CLASS_1(FixedPoints, TDataType)
+    public:
+        typedef typename TDataType::Real Real;
+        typedef typename TDataType::Coord Coord;
 
-		FixedPoints();
-		~FixedPoints() override;
+        FixedPoints();
+        ~FixedPoints() override;
 
-		void addFixedPoint(int id, Coord pt);
-		void removeFixedPoint(int id);
+        void addFixedPoint(int id, Coord pt);
+        void removeFixedPoint(int id);
 
-		void clear();
+        void clear();
 
-		bool constrain() override;
+        bool constrain() override;
 
-		void constrainPositionToPlane(Coord pos, Coord dir);
+        void constrainPositionToPlane(Coord pos, Coord dir);
 
-	public:
-		/**
-		* @brief Particle position
-		*/
-		DeviceArrayField<Coord> m_position;
+    public:
+        /**
+        * @brief Particle position
+        */
+        DeviceArrayField<Coord> m_position;
 
-		/**
-		* @brief Particle velocity
-		*/
-		DeviceArrayField<Coord> m_velocity;
+        /**
+        * @brief Particle velocity
+        */
+        DeviceArrayField<Coord> m_velocity;
 
-	protected:
-		virtual bool initializeImpl() override;
+    protected:
+        virtual bool initializeImpl() override;
 
-		FieldID m_initPosID;
+        FieldID m_initPosID;
 
-	private:
-		void updateContext();
+    private:
+        void updateContext();
 
-		bool bUpdateRequired = false;
+        bool bUpdateRequired = false;
 
-		std::map<int, Coord> m_fixedPts;
+        std::map<int, Coord> m_fixedPts;
 
-		std::vector<int> m_bFixed_host;
-		std::vector<Coord> m_fixed_positions_host;
+        std::vector<int> m_bFixed_host;
+        std::vector<Coord> m_fixed_positions_host;
 
-		DeviceArray<int> m_bFixed;
-		DeviceArray<Coord> m_fixed_positions;
-	};
+        DeviceArray<int> m_bFixed;
+        DeviceArray<Coord> m_fixed_positions;
+    };
 
 #ifdef PRECISION_FLOAT
 template class FixedPoints<DataType3f>;

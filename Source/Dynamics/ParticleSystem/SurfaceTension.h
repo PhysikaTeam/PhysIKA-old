@@ -4,42 +4,42 @@
 
 namespace PhysIKA {
 
-	template<typename TDataType>
-	class SurfaceTension : public ForceModule
-	{
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+    template<typename TDataType>
+    class SurfaceTension : public ForceModule
+    {
+    public:
+        typedef typename TDataType::Real Real;
+        typedef typename TDataType::Coord Coord;
 
-		SurfaceTension();
-		~SurfaceTension() override {};
-		
-		bool execute() override;
+        SurfaceTension();
+        ~SurfaceTension() override {};
+        
+        bool execute() override;
 
-		bool applyForce() override;
+        bool applyForce() override;
 
-		void setPositionID(FieldID id) { m_posID = id; }
-		void setVelocityID(FieldID id) { m_velID = id; }
-		void setNeighborhoodID(FieldID id) { m_neighborhoodID = id; }
+        void setPositionID(FieldID id) { m_posID = id; }
+        void setVelocityID(FieldID id) { m_velID = id; }
+        void setNeighborhoodID(FieldID id) { m_neighborhoodID = id; }
 
-		void setIntensity(Real intensity) { m_intensity = intensity; }
-		void setSmoothingLength(Real len) { m_soothingLength = len; }
+        void setIntensity(Real intensity) { m_intensity = intensity; }
+        void setSmoothingLength(Real len) { m_soothingLength = len; }
 
-	protected:
-		FieldID m_posID;
-		FieldID m_velID;
-		FieldID m_neighborhoodID;
+    protected:
+        FieldID m_posID;
+        FieldID m_velID;
+        FieldID m_neighborhoodID;
 
-	private:
-		Real m_intensity;
-		Real m_soothingLength;
+    private:
+        Real m_intensity;
+        Real m_soothingLength;
 
-		DeviceArrayField<Real>* m_energy;
-	};
+        DeviceArrayField<Real>* m_energy;
+    };
 
 #ifdef PRECISION_FLOAT
-	template class SurfaceTension<DataType3f>;
+    template class SurfaceTension<DataType3f>;
 #else
-	template class SurfaceTension<DataType3d>;
+    template class SurfaceTension<DataType3d>;
 #endif
 }

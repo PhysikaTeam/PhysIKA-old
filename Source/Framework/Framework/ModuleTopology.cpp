@@ -6,8 +6,8 @@ namespace PhysIKA
 IMPLEMENT_CLASS(TopologyModule)
 
 TopologyModule::TopologyModule()
-	: Module()
-	, m_topologyChanged(true)
+    : Module()
+    , m_topologyChanged(true)
 {
 
 }

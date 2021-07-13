@@ -20,75 +20,75 @@
 
 namespace PhysIKA
 {
-	class HeightFieldPBDInteractionNode :public PBDSolverNode
-	{
-	public:
-		enum HFDETECTION
-		{
-			POINTVISE,
-			FACEVISE
-		};
+    class HeightFieldPBDInteractionNode :public PBDSolverNode
+    {
+    public:
+        enum HFDETECTION
+        {
+            POINTVISE,
+            FACEVISE
+        };
 
 
-		HeightFieldPBDInteractionNode() {
-			detectionMethod = HFDETECTION::POINTVISE;
-			m_solver = std::make_shared<PBDSolver>();
-			
-			m_solver->setNarrowDetectionFun(
-				std::bind(&HeightFieldPBDInteractionNode::contactDetection,
-					this, std::placeholders::_1, std::placeholders::_2)
-			);
+        HeightFieldPBDInteractionNode() {
+            detectionMethod = HFDETECTION::POINTVISE;
+            m_solver = std::make_shared<PBDSolver>();
+            
+            m_solver->setNarrowDetectionFun(
+                std::bind(&HeightFieldPBDInteractionNode::contactDetection,
+                    this, std::placeholders::_1, std::placeholders::_2)
+            );
 
-			m_rigidContactDetector = std::make_shared<OrientedBodyDetector>();
+            m_rigidContactDetector = std::make_shared<OrientedBodyDetector>();
 
-			m_solver->setUseGPU(false);
-		}
+            m_solver->setUseGPU(false);
+        }
 
-		~HeightFieldPBDInteractionNode();
+        ~HeightFieldPBDInteractionNode();
 
-		virtual bool initialize() override;
-
-
-		virtual void advance(Real dt)override;
-
-		void setSize(int nx, int ny);
-		void setSize(int nx, int ny, float dx, float dy);
-
-		const DeviceHeightField1d& getHeightField()const { return m_heightField; }
-		DeviceHeightField1d& getHeightField() { return m_heightField; }
-
-		void setDetectionMethod(HFDETECTION method) { detectionMethod = method; }
-
-		void setRigidDataDirty(bool datadirty = true) { m_rigidDataDirty = datadirty; }
-
-		void contactDetection(PBDSolver* solver, Real dt);
+        virtual bool initialize() override;
 
 
-		std::shared_ptr<OrientedBodyDetector> getRigidContactDetector() { return m_rigidContactDetector; }
-	private:
+        virtual void advance(Real dt)override;
+
+        void setSize(int nx, int ny);
+        void setSize(int nx, int ny, float dx, float dy);
+
+        const DeviceHeightField1d& getHeightField()const { return m_heightField; }
+        DeviceHeightField1d& getHeightField() { return m_heightField; }
+
+        void setDetectionMethod(HFDETECTION method) { detectionMethod = method; }
+
+        void setRigidDataDirty(bool datadirty = true) { m_rigidDataDirty = datadirty; }
+
+        void contactDetection(PBDSolver* solver, Real dt);
 
 
-	private:
-		int m_nx = 0, m_ny = 0;
-
-		DeviceDArray<ContactInfo<double>> m_contacts;
-		DeviceHeightField1d m_heightField;
-
-		DeviceArray<int> nContactsi;
-		int m_nContacts = 0;
+        std::shared_ptr<OrientedBodyDetector> getRigidContactDetector() { return m_rigidContactDetector; }
+    private:
 
 
-		bool m_rigidDataDirty = true;
+    private:
+        int m_nx = 0, m_ny = 0;
+
+        DeviceDArray<ContactInfo<double>> m_contacts;
+        DeviceHeightField1d m_heightField;
+
+        DeviceArray<int> nContactsi;
+        int m_nContacts = 0;
 
 
-		float mu = 0.9;
-		int m_nPermanentJoint = 0;
+        bool m_rigidDataDirty = true;
 
-		HFDETECTION detectionMethod;
 
-		std::shared_ptr<OrientedBodyDetector> m_rigidContactDetector;
+        float mu = 0.9;
+        int m_nPermanentJoint = 0;
 
-	};
+        HFDETECTION detectionMethod;
+
+        std::shared_ptr<OrientedBodyDetector> m_rigidContactDetector;
+
+    };
 }
 
 

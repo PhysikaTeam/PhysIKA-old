@@ -6,16 +6,16 @@
 namespace PhysIKA
 {
 
-	class PConsoleWidget : public QWidget
-	{
-		Q_OBJECT
-	public:
-		explicit PConsoleWidget(QWidget *parent = nullptr);
+    class PConsoleWidget : public QWidget
+    {
+        Q_OBJECT
+    public:
+        explicit PConsoleWidget(QWidget *parent = nullptr);
 
-	signals:
+    signals:
 
-	public slots:
-	};
+    public slots:
+    };
 
 }
 

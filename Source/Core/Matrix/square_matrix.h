@@ -26,8 +26,8 @@ class SquareMatrix: public MatrixBase
 public:
     SquareMatrix(){}
     ~SquareMatrix(){}
-	COMM_FUNC virtual unsigned int rows() const;
-	COMM_FUNC virtual unsigned int cols() const;
+    COMM_FUNC virtual unsigned int rows() const;
+    COMM_FUNC virtual unsigned int cols() const;
 }; 
 
 }  //end of namespace PhysIKA

@@ -1,5 +1,5 @@
 #pragma once
-#ifndef	HEIGHTFIELDMESH_H
+#ifndef    HEIGHTFIELDMESH_H
 #define HEIGHTFIELDMESH_H
 
 #include "Framework/Topology/TriangleSet.h"
@@ -10,21 +10,21 @@
 namespace PhysIKA
 {
 
-	/**
-	* @brief Height field mesh generation.
-	*/
-	class HeightFieldMesh
-	{
+    /**
+    * @brief Height field mesh generation.
+    */
+    class HeightFieldMesh
+    {
 
-	public:
+    public:
 
-		/**
-		* @brief Generate height field mesh, including mesh TRIANGLES and mesh VERTICES.
-		*/
-		void generate(std::shared_ptr<TriangleSet<DataType3f>> triset, DeviceHeightField1d& hfield);
+        /**
+        * @brief Generate height field mesh, including mesh TRIANGLES and mesh VERTICES.
+        */
+        void generate(std::shared_ptr<TriangleSet<DataType3f>> triset, DeviceHeightField1d& hfield);
 
 
-	};
+    };
 
 }
 

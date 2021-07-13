@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -53,7 +53,7 @@ TabToolbar::TabToolbar(QWidget* parent, unsigned _groupMaxHeight, unsigned _grou
     tabBar = new QTabWidget(this);
     tabBar->setProperty("TTWidget", QVariant(true));
     tabBar->tabBar()->setProperty("TTTab", QVariant(true));
-	
+    
     tabBarHandle = addWidget(tabBar);
     tabBar->setUsesScrollButtons(true);
 
@@ -270,7 +270,7 @@ void TabToolbar::AdjustVerticalSize(unsigned vSize)
 {
     QTimer::singleShot(0, this, [this, vSize]()
     {
-		maxHeight = vSize + tabBar->tabBar()->height() + 6;
+        maxHeight = vSize + tabBar->tabBar()->height() + 6;
         setMaximumHeight(maxHeight);
         setMinimumHeight(maxHeight);
     });
@@ -296,12 +296,12 @@ Page* TabToolbar::AddPage(const QString& pageName)
 
 tt::Page* tt::TabToolbar::AddPage(const QIcon& icon, const QString &pageName)
 {
-	Page* page = new Page(tabBar->count(), pageName);
-	QSignalBlocker blocker(page);
-	QObject::connect(page, &Page::Hiding, this, &TabToolbar::HideTab);
-	QObject::connect(page, &Page::Showing, this, &TabToolbar::ShowTab);
-	tabBar->addTab(page, icon, pageName);
-	return page;
+    Page* page = new Page(tabBar->count(), pageName);
+    QSignalBlocker blocker(page);
+    QObject::connect(page, &Page::Hiding, this, &TabToolbar::HideTab);
+    QObject::connect(page, &Page::Showing, this, &TabToolbar::ShowTab);
+    tabBar->addTab(page, icon, pageName);
+    return page;
 }
 
 TabToolbar* tt::_FindTabToolbarParent(QWidget& startingWidget)

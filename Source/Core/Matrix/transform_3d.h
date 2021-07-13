@@ -38,7 +38,7 @@ public:
     explicit Transform(const Quaternion<Scalar> &rotation);
     Transform(const Vector<Scalar, 3> &translation, const Quaternion<Scalar> &rotation);
     Transform(const Vector<Scalar, 3> &translation, const Quaternion<Scalar> &rotation, const Vector<Scalar, 3> &scale);
-    Transform(const SquareMatrix<Scalar, 4> &);		//now it's not all right.Suggest not use this construction.
+    Transform(const SquareMatrix<Scalar, 4> &);        //now it's not all right.Suggest not use this construction.
     Transform(const SquareMatrix<Scalar, 3> &);
     Transform(const Transform<Scalar, 3> &);
 

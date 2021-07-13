@@ -59,85 +59,85 @@ QT_FORWARD_DECLARE_CLASS(QMenu)
 
 namespace PhysIKA
 {
-	class PToolBar;
-	class PStatusBar;
-	class PVTKOpenGLWidget;
-	class PSceneGraphWidget;
-	class PPropertyWidget;
-	class PAnimationWidget;
-	class PModuleListWidget;
-	class PNodeFlowWidget;
-	class PModuleFlowWidget;
-	class PNodeEditor;
+    class PToolBar;
+    class PStatusBar;
+    class PVTKOpenGLWidget;
+    class PSceneGraphWidget;
+    class PPropertyWidget;
+    class PAnimationWidget;
+    class PModuleListWidget;
+    class PNodeFlowWidget;
+    class PModuleFlowWidget;
+    class PNodeEditor;
 
 
-//	QT_FORWARD_DECLARE_CLASS(QLichtWidget)
+//    QT_FORWARD_DECLARE_CLASS(QLichtWidget)
 
-	class PMainWindow : public QMainWindow
-	{
-		Q_OBJECT
+    class PMainWindow : public QMainWindow
+    {
+        Q_OBJECT
 
-	public:
-		typedef QMap<QString, QSize> CustomSizeHintMap;
+    public:
+        typedef QMap<QString, QSize> CustomSizeHintMap;
 
-		explicit PMainWindow(QWidget *parent = Q_NULLPTR,
-			Qt::WindowFlags flags = 0);
+        explicit PMainWindow(QWidget *parent = Q_NULLPTR,
+            Qt::WindowFlags flags = 0);
 
-		void mainLoop();
-		void createWindow(int width, int height);
+        void mainLoop();
+        void createWindow(int width, int height);
 
-	public slots:
-		//File menu
-		void newScene();
-		void loadScene();
-		void saveScene();
+    public slots:
+        //File menu
+        void newScene();
+        void loadScene();
+        void saveScene();
 
-		//View menu
-		void fullScreen();
+        //View menu
+        void fullScreen();
 
-		//Help menu
-		void showHelp();
-		void showAbout();
+        //Help menu
+        void showHelp();
+        void showAbout();
 
-		void showNodeEditor();
+        void showNodeEditor();
 
-		void showMessage();
+        void showMessage();
 
-	private:
-		void setCentralView();
-		void setupToolBar();
-		void setupStatusBar();
-//		void setupMenuBar();
-		void setupAllWidgets();
+    private:
+        void setCentralView();
+        void setupToolBar();
+        void setupStatusBar();
+//        void setupMenuBar();
+        void setupAllWidgets();
 
-	public:
-		// adjust by HNU
-		PPropertyWidget * getProperty();
-			
-		PVTKOpenGLWidget* getVTKOpenGL();
+    public:
+        // adjust by HNU
+        PPropertyWidget * getProperty();
+            
+        PVTKOpenGLWidget* getVTKOpenGL();
 
-	protected:
-		void mousePressEvent(QMouseEvent *event) override;
+    protected:
+        void mousePressEvent(QMouseEvent *event) override;
 
-		QApplication* application;
+        QApplication* application;
 
-		QList<PToolBar*> toolBars;
-		QList<QDockWidget *> extraDockWidgets;
-		QMenu *destroyDockWidgetMenu;
+        QList<PToolBar*> toolBars;
+        QList<QDockWidget *> extraDockWidgets;
+        QMenu *destroyDockWidgetMenu;
 
-		PNodeFlowWidget*		m_flowView;
-		
-		PStatusBar*				m_statusBar;
+        PNodeFlowWidget*        m_flowView;
+        
+        PStatusBar*                m_statusBar;
 
-		PPropertyWidget * m_propertyWidget;
-		PVTKOpenGLWidget* m_vtkOpenglWidget;
+        PPropertyWidget * m_propertyWidget;
+        PVTKOpenGLWidget* m_vtkOpenglWidget;
 
-		PAnimationWidget*		m_animationWidget;
+        PAnimationWidget*        m_animationWidget;
 // 
-// 		PModuleFlowWidget*		m_moduleFlowView;
-// 		PModuleListWidget*		m_moduleListWidget;
-// 		PSceneGraphWidget*		m_scenegraphWidget;
-	};
+//         PModuleFlowWidget*        m_moduleFlowView;
+//         PModuleListWidget*        m_moduleListWidget;
+//         PSceneGraphWidget*        m_scenegraphWidget;
+    };
 
 }
 

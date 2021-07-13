@@ -2,28 +2,28 @@
 
 namespace PhysIKA
 {
-	OpenGLContext& OpenGLContext::getInstance()
-	{
-		static OpenGLContext m_openglContext;
+    OpenGLContext& OpenGLContext::getInstance()
+    {
+        static OpenGLContext m_openglContext;
 
-		return m_openglContext;
-	}
+        return m_openglContext;
+    }
 
-	bool OpenGLContext::initialize()
-	{
-		if (m_initialized)
-		{
-			return true;
-		}
+    bool OpenGLContext::initialize()
+    {
+        if (m_initialized)
+        {
+            return true;
+        }
 
-		if (glewInit() != GLEW_OK)
-		{
-			return false;
-		}
+        if (glewInit() != GLEW_OK)
+        {
+            return false;
+        }
 
-		m_initialized = true;
-		return m_initialized;
-	}
+        m_initialized = true;
+        return m_initialized;
+    }
 }
 
 

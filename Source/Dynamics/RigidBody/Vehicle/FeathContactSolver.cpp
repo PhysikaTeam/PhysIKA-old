@@ -2,6 +2,6 @@
 //
 //namespace PhysIKA
 //{
-//	template class Reduction<ContactPointX>;
+//    template class Reduction<ContactPointX>;
 //
 //}

@@ -10,14 +10,14 @@
 
 /* edge_hessian.f -- translated by f2c (version 20160102).
    You must link the resulting object file with libf2c:
-	on Microsoft Windows system, link with libf2c.lib;
-	on Linux or Unix systems, link with .../path/to/libf2c.a -lm
-	or, if you install libf2c.a in a standard place, with -lf2c -lm
-	-- in that order, at the end of the command line, as in
-		cc *.o -lf2c -lm
-	Source for libf2c is in /netlib/f2c/libf2c.zip, e.g.,
+    on Microsoft Windows system, link with libf2c.lib;
+    on Linux or Unix systems, link with .../path/to/libf2c.a -lm
+    or, if you install libf2c.a in a standard place, with -lf2c -lm
+    -- in that order, at the end of the command line, as in
+        cc *.o -lf2c -lm
+    Source for libf2c is in /netlib/f2c/libf2c.zip, e.g.,
 
-		http://www.netlib.org/f2c/libf2c.zip
+        http://www.netlib.org/f2c/libf2c.zip
 */
 
 // #include "f2c.h"
@@ -40,7 +40,7 @@ template<typename T>
   
   /* System generated locals */
     T r__1, r__2, r__3, r__4, r__5, r__6, r__7, r__8, r__9, r__10, r__11, 
-	    r__12, r__13, r__14, r__15, r__16, r__17;
+        r__12, r__13, r__14, r__15, r__16, r__17;
     T d__1;
 
     /* Builtin functions */
@@ -86,10 +86,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[7] = *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0) / (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -110,9 +110,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[13] = (x[4] - x[1]) * (x[5] - x[2]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[5] - x[2]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[5] - x[2]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -133,9 +133,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[19] = (x[4] - x[1]) * (x[6] - x[3]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[6] - x[3]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[6] - x[3]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -172,10 +172,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[25] = -(*k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0)) / 
-	    (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -196,9 +196,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[31] = (x[4] - x[1]) * (x[5] - x[2]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
-	     - x[1]) * (x[5] - x[2]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
+         - x[1]) * (x[5] - x[2]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -219,9 +219,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[37] = (x[4] - x[1]) * (x[6] - x[3]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
-	     - x[1]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
+         - x[1]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -242,9 +242,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[8] = (x[4] - x[1]) * (x[5] - x[2]) * *k / ((r__1 * r__1 + r__2 * r__2 
-	    + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[5] - x[2]) * pow_dd(&
-	    d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + r__9 * r__9)
-	     - *l0) / *l0;
+        + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[5] - x[2]) * pow_dd(&
+        d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + r__9 * r__9)
+         - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -281,10 +281,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[14] = *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0) / (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -305,9 +305,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[20] = (x[5] - x[2]) * (x[6] - x[3]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[5] - x[2]) * (x[6] - x[3]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[5] - x[2]) * (x[6] - x[3]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -328,9 +328,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[26] = (x[4] - x[1]) * (x[5] - x[2]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
-	     - x[1]) * (x[5] - x[2]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
+         - x[1]) * (x[5] - x[2]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -367,10 +367,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[32] = -(*k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0)) / 
-	    (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -391,9 +391,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[38] = (x[5] - x[2]) * (x[6] - x[3]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[5]
-	     - x[2]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[5]
+         - x[2]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -414,9 +414,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[9] = (x[4] - x[1]) * (x[6] - x[3]) * *k / ((r__1 * r__1 + r__2 * r__2 
-	    + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[6] - x[3]) * pow_dd(&
-	    d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + r__9 * r__9)
-	     - *l0) / *l0;
+        + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[6] - x[3]) * pow_dd(&
+        d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + r__9 * r__9)
+         - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -437,9 +437,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[15] = (x[5] - x[2]) * (x[6] - x[3]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[5] - x[2]) * (x[6] - x[3]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[5] - x[2]) * (x[6] - x[3]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -476,10 +476,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[21] = *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0) / (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -500,9 +500,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[27] = (x[4] - x[1]) * (x[6] - x[3]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
-	     - x[1]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
+         - x[1]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -523,9 +523,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[33] = (x[5] - x[2]) * (x[6] - x[3]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[5]
-	     - x[2]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[5]
+         - x[2]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -562,10 +562,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[39] = -(*k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0)) / 
-	    (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -602,10 +602,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[10] = -(*k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0)) / 
-	    (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -626,9 +626,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[16] = (x[4] - x[1]) * (x[5] - x[2]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
-	     - x[1]) * (x[5] - x[2]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
+         - x[1]) * (x[5] - x[2]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -649,9 +649,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[22] = (x[4] - x[1]) * (x[6] - x[3]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
-	     - x[1]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
+         - x[1]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -688,10 +688,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[28] = *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0) / (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -712,9 +712,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[34] = (x[4] - x[1]) * (x[5] - x[2]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[5] - x[2]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[5] - x[2]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -735,9 +735,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[40] = (x[4] - x[1]) * (x[6] - x[3]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[6] - x[3]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[6] - x[3]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -758,9 +758,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[11] = (x[4] - x[1]) * (x[5] - x[2]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
-	     - x[1]) * (x[5] - x[2]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
+         - x[1]) * (x[5] - x[2]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -797,10 +797,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[17] = -(*k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0)) / 
-	    (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -821,9 +821,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[23] = (x[5] - x[2]) * (x[6] - x[3]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[5]
-	     - x[2]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[5]
+         - x[2]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -844,9 +844,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[29] = (x[4] - x[1]) * (x[5] - x[2]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[5] - x[2]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[5] - x[2]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -883,10 +883,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[35] = *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0) / (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -907,9 +907,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[41] = (x[5] - x[2]) * (x[6] - x[3]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[5] - x[2]) * (x[6] - x[3]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[5] - x[2]) * (x[6] - x[3]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -930,9 +930,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[12] = (x[4] - x[1]) * (x[6] - x[3]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
-	     - x[1]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[4]
+         - x[1]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -953,9 +953,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[18] = (x[5] - x[2]) * (x[6] - x[3]) * pow_dd(&d__1, &c_b2) * *k * (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[5]
-	     - x[2]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) - *l0) / *l0 - (x[5]
+         - x[2]) * (x[6] - x[3]) * *k / ((r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -992,10 +992,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[24] = -(*k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0)) / 
-	    (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        (sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) + r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 - r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -1016,9 +1016,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[30] = (x[4] - x[1]) * (x[6] - x[3]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[6] - x[3]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[4] - x[1]) * (x[6] - x[3]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -1039,9 +1039,9 @@ template<typename T>
 /* Computing 2nd power */
     r__9 = x[4] - x[1];
     h__[36] = (x[5] - x[2]) * (x[6] - x[3]) * *k / ((r__1 * r__1 + r__2 * 
-	    r__2 + r__3 * r__3) * *l0) - (x[5] - x[2]) * (x[6] - x[3]) * 
-	    pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
-	    r__9 * r__9) - *l0) / *l0;
+        r__2 + r__3 * r__3) * *l0) - (x[5] - x[2]) * (x[6] - x[3]) * 
+        pow_dd(&d__1, &c_b2) * *k * (sqrt(r__7 * r__7 + r__8 * r__8 + 
+        r__9 * r__9) - *l0) / *l0;
 /* Computing 2nd power */
     r__1 = x[6] - x[3];
 /* Computing 2nd power */
@@ -1078,10 +1078,10 @@ template<typename T>
 /* Computing 2nd power */
     r__17 = x[4] - x[1];
     h__[42] = *k * (sqrt(r__1 * r__1 + r__2 * r__2 + r__3 * r__3) - *l0) / (
-	    sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
-	    r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
-	    r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
-	    r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
+        sqrt(r__4 * r__4 + r__5 * r__5 + r__6 * r__6) * *l0) - r__7 * 
+        r__7 * pow_dd(&d__1, &c_b2) * *k * (sqrt(r__11 * r__11 + r__12 * 
+        r__12 + r__13 * r__13) - *l0) / *l0 + r__14 * r__14 * *k / ((
+        r__15 * r__15 + r__16 * r__16 + r__17 * r__17) * *l0);
     return 0;
 } /* edge_hessian__ */
 

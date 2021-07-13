@@ -27,7 +27,7 @@ public:
     ~PngIO(){}
 
     /// warning: this function only read color data(IDAT chunk) from png file
-    ///	(i.e. it ignores all other data chunks ,such as ancillary chunks)
+    ///    (i.e. it ignores all other data chunks ,such as ancillary chunks)
     /// since only IDAT chunk makes sense for our texture.Thus if you load data from a png file and
     ///  resave image data to another png file,the file size will be smaller than the origin one.
     static bool load(const std::string &filename, Image * image);  //data_format = RGBA

@@ -3,18 +3,18 @@
 
 namespace PhysIKA
 {
-	class QueryTimeStep : public Action
-	{
-	public:
-		QueryTimeStep();
-		virtual ~QueryTimeStep();
+    class QueryTimeStep : public Action
+    {
+    public:
+        QueryTimeStep();
+        virtual ~QueryTimeStep();
 
-		float getTimeStep();
-		void reset();
+        float getTimeStep();
+        void reset();
 
-	private:
-		void process(Node* node) override;
+    private:
+        void process(Node* node) override;
 
-		float m_timestep;
-	};
+        float m_timestep;
+    };
 }

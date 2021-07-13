@@ -72,7 +72,7 @@ public:
   virtual
   BlockDataType dataType(PortType portType, PortIndex portIndex) const = 0;
 
-	std::shared_ptr<BlockData> portData(PortType portType, PortIndex portIndex);
+    std::shared_ptr<BlockData> portData(PortType portType, PortIndex portIndex);
 
 public:
 
@@ -89,7 +89,7 @@ public:
 
   virtual ConnectionPolicy portInConnectionPolicy(PortIndex) const
   {
-	  return ConnectionPolicy::One;
+      return ConnectionPolicy::One;
   }
 
   BlockStyle const&

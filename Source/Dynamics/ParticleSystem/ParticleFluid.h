@@ -4,38 +4,38 @@
 
 namespace PhysIKA
 {
-	/*!
-	*	\class	ParticleFluid
-	*	\brief	Position-based fluids.
-	*
-	*	This class implements a position-based fluid solver.
-	*	Refer to Macklin and Muller's "Position Based Fluids" for details
-	*
-	*/
-	template<typename TDataType>
-	class ParticleFluid : public ParticleSystem<TDataType>
-	{
-		DECLARE_CLASS_1(ParticleFluid, TDataType)
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+    /*!
+    *    \class    ParticleFluid
+    *    \brief    Position-based fluids.
+    *
+    *    This class implements a position-based fluid solver.
+    *    Refer to Macklin and Muller's "Position Based Fluids" for details
+    *
+    */
+    template<typename TDataType>
+    class ParticleFluid : public ParticleSystem<TDataType>
+    {
+        DECLARE_CLASS_1(ParticleFluid, TDataType)
+    public:
+        typedef typename TDataType::Real Real;
+        typedef typename TDataType::Coord Coord;
 
-		ParticleFluid(std::string name = "default");
-		virtual ~ParticleFluid();
+        ParticleFluid(std::string name = "default");
+        virtual ~ParticleFluid();
 
-		void advance(Real dt) override;
-		bool resetStatus() override;
+        void advance(Real dt) override;
+        bool resetStatus() override;
 
-	private:
-		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
+    private:
+        DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
 
-		// add by HNU
-		DEF_VAR(ImportFile, std::string, "", "ImportFile");
-	};
+        // add by HNU
+        DEF_VAR(ImportFile, std::string, "", "ImportFile");
+    };
 
 #ifdef PRECISION_FLOAT
-	template class ParticleFluid<DataType3f>;
+    template class ParticleFluid<DataType3f>;
 #else
-	template class ParticleFluid<DataType3d>;
+    template class ParticleFluid<DataType3d>;
 #endif
 }

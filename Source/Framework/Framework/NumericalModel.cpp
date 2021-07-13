@@ -2,15 +2,15 @@
 
 namespace PhysIKA
 {
-	NumericalModel::NumericalModel()
-		: Module()
-	{
+    NumericalModel::NumericalModel()
+        : Module()
+    {
 
-	}
+    }
 
-	NumericalModel::~NumericalModel()
-	{
+    NumericalModel::~NumericalModel()
+    {
 
-	}
+    }
 
 }

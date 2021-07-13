@@ -1188,8 +1188,8 @@ inline int gpuGetMaxGflopsDeviceId()
 
     if (devices_prohibited == device_count)
     {
-    	fprintf(stderr, "gpuGetMaxGflopsDeviceId() CUDA error: all devices have compute mode prohibited.\n");
-    	exit(EXIT_FAILURE);
+        fprintf(stderr, "gpuGetMaxGflopsDeviceId() CUDA error: all devices have compute mode prohibited.\n");
+        exit(EXIT_FAILURE);
     }
 
     // Find the best CUDA capable GPU device

@@ -19,9 +19,9 @@
 
 given (A,b,lo,hi), solve the LCP problem: A*x = b+w, where each x(i),w(i)
 satisfies one of
-	(1) x = lo, w >= 0
-	(2) x = hi, w <= 0
-	(3) lo < x < hi, w = 0
+    (1) x = lo, w >= 0
+    (2) x = hi, w <= 0
+    (3) lo < x < hi, w = 0
 A is a matrix of dimension n*n, everything else is a vector of size n*1.
 lo and hi can be +/- dInfinity as needed. the first `nub' variables are
 unbounded, i.e. hi and lo are assumed to be +/- dInfinity.
@@ -62,56 +62,56 @@ static int btInfinityMask = 0x7F800000;
 #define BT_INFINITY (*(float *)&btInfinityMask)
 inline int btGetInfinityMask()  //suppress stupid compiler warning
 {
-	return btInfinityMask;
+    return btInfinityMask;
 }
 #endif
 
 namespace PhysIKA
 {
 
-	struct DantzigScratchMemory
-	{
-		HostArray<float> m_scratch;
-		HostArray<float> L;
-		HostArray<float> d;
-		HostArray<float> delta_w;
-		HostArray<float> delta_x;
-		HostArray<float> Dell;
-		HostArray<float> ell;
-		HostArray<float *> Arows;
-		HostArray<int> p;
-		HostArray<int> C;
-		HostArray<bool> state;
-	};
+    struct DantzigScratchMemory
+    {
+        HostArray<float> m_scratch;
+        HostArray<float> L;
+        HostArray<float> d;
+        HostArray<float> delta_w;
+        HostArray<float> delta_x;
+        HostArray<float> Dell;
+        HostArray<float> ell;
+        HostArray<float *> Arows;
+        HostArray<int> p;
+        HostArray<int> C;
+        HostArray<bool> state;
+    };
 
-	struct DantzigInputMemory
-	{
-		HostArray<float> A;
-		HostArray<float> x;
-		HostArray<float> b;
-		HostArray<float> w;
-		HostArray<float> lo;
-		HostArray<float> hi;
-		HostArray<int> findex;
+    struct DantzigInputMemory
+    {
+        HostArray<float> A;
+        HostArray<float> x;
+        HostArray<float> b;
+        HostArray<float> w;
+        HostArray<float> lo;
+        HostArray<float> hi;
+        HostArray<int> findex;
 
-		void resize(int n)
-		{
+        void resize(int n)
+        {
 
-			std::cout << " In DantzigInputMemory:  OK" << std::endl;
-			A.resize(n*n);
-			x.resize(n);
-			b.resize(n);
-			w.resize(n);
-			lo.resize(n);
-			hi.resize(n);
-			findex.resize(n);
-		}
+            std::cout << " In DantzigInputMemory:  OK" << std::endl;
+            A.resize(n*n);
+            x.resize(n);
+            b.resize(n);
+            w.resize(n);
+            lo.resize(n);
+            hi.resize(n);
+            findex.resize(n);
+        }
 
-	};
+    };
 
-	//return false if solving failed
-	bool btSolveDantzigLCP(int n, float *A, float *x, float *b, float *w,
-		int nub, float *lo, float *hi, int *findex, DantzigScratchMemory &scratch);
+    //return false if solving failed
+    bool btSolveDantzigLCP(int n, float *A, float *x, float *b, float *w,
+        int nub, float *lo, float *hi, int *findex, DantzigScratchMemory &scratch);
 }
 
 #endif  //_DANTZIGLCP_H_

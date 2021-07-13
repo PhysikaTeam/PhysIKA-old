@@ -9,13 +9,13 @@ class SPHHelper{
     float _laplacianFactor;
 
     public:
-	HDFUNC void SetupCubic(float smoothRadius){
+    HDFUNC void SetupCubic(float smoothRadius){
         _smoothRadius = smoothRadius;
         _factor = 1.0f / 3.141593f / pow(smoothRadius, 3.0f);
         _gradientFactor = 1.5f / 3.141593f / pow(smoothRadius, 4.0f);
     }
 
-	HDFUNC float Cubic(float d){
+    HDFUNC float Cubic(float d){
         float q = d / _smoothRadius;
         float func;
         if(q >= 2) 

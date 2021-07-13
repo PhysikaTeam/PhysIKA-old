@@ -32,12 +32,12 @@ public:
     LineRender(const LineRender &) = delete;
     LineRender & operator = (const LineRender &) = delete;
 
-	void resize(unsigned int num);
+    void resize(unsigned int num);
 
-	void setLines(DeviceArray<float3>& pos);
-	void setLines(HostArray<float3>& pos);
+    void setLines(DeviceArray<float3>& pos);
+    void setLines(HostArray<float3>& pos);
 
-	void setColors(HostArray<float3>& color);
+    void setColors(HostArray<float3>& color);
 
     void setLineWidth(float line_width);
     float getLineWidth() const;
@@ -47,10 +47,10 @@ public:
 private:
     float m_lineWidth = 2.0;
 
-	ShaderProgram m_shader;
+    ShaderProgram m_shader;
 
-	CudaVBOMapper<glm::vec3> m_vertex;
-	CudaVBOMapper<glm::vec3> m_vertexColor;
+    CudaVBOMapper<glm::vec3> m_vertex;
+    CudaVBOMapper<glm::vec3> m_vertexColor;
 };
     
 }

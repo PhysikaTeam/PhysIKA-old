@@ -4,8 +4,8 @@
 
 namespace PhysIKA
 {
-	QString FormatFieldWidgetName(std::string name);
+    QString FormatFieldWidgetName(std::string name);
 
-	QString FormatBlockPortName(std::string name);
+    QString FormatBlockPortName(std::string name);
 }
 

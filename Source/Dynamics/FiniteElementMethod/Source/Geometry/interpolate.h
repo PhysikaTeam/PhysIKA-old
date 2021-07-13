@@ -56,25 +56,25 @@ namespace PhysIKA {
   template<typename T, size_t dim_>
   int interp_pts_in_point_cloud(const Eigen::Matrix<T, dim_, -1> &v, const Eigen::Matrix<T, dim_, -1> &pts, Eigen::SparseMatrix<T> &coef);
   
-	
-	inline Eigen::MatrixXi hex_2_tet(const Eigen::Matrix<int, 8, -1>& hexs) {
-		Eigen::MatrixXi tets = Eigen::MatrixXi::Zero(4, 5 * hexs.cols());
-		for (size_t hex_id = 0; hex_id < hexs.cols(); ++hex_id) {
-			const Eigen::VectorXi one_hex = hexs.col(hex_id);
-			Eigen::Vector4i tet0{ {one_hex(0), one_hex(1), one_hex(3), one_hex(4)} };
-			Eigen::Vector4i tet1{ {one_hex(1), one_hex(2), one_hex(3),one_hex(6)} };
-			Eigen::Vector4i tet2{ {one_hex(4), one_hex(5), one_hex(6), one_hex(1)} };
-			Eigen::Vector4i tet3{ {one_hex(4), one_hex(6), one_hex(7), one_hex(3)} };
-			Eigen::Vector4i tet4{ {one_hex(1), one_hex(3), one_hex(4), one_hex(6)} };
-			tets.col(hex_id * 5) = tet0;
-			tets.col(hex_id * 5 + 1) = tet1;
-			tets.col(hex_id * 5 + 2) = tet2;
-			tets.col(hex_id * 5 + 3) = tet3;
-			tets.col(hex_id * 5 + 4) = tet4;
+    
+    inline Eigen::MatrixXi hex_2_tet(const Eigen::Matrix<int, 8, -1>& hexs) {
+        Eigen::MatrixXi tets = Eigen::MatrixXi::Zero(4, 5 * hexs.cols());
+        for (size_t hex_id = 0; hex_id < hexs.cols(); ++hex_id) {
+            const Eigen::VectorXi one_hex = hexs.col(hex_id);
+            Eigen::Vector4i tet0{ {one_hex(0), one_hex(1), one_hex(3), one_hex(4)} };
+            Eigen::Vector4i tet1{ {one_hex(1), one_hex(2), one_hex(3),one_hex(6)} };
+            Eigen::Vector4i tet2{ {one_hex(4), one_hex(5), one_hex(6), one_hex(1)} };
+            Eigen::Vector4i tet3{ {one_hex(4), one_hex(6), one_hex(7), one_hex(3)} };
+            Eigen::Vector4i tet4{ {one_hex(1), one_hex(3), one_hex(4), one_hex(6)} };
+            tets.col(hex_id * 5) = tet0;
+            tets.col(hex_id * 5 + 1) = tet1;
+            tets.col(hex_id * 5 + 2) = tet2;
+            tets.col(hex_id * 5 + 3) = tet3;
+            tets.col(hex_id * 5 + 4) = tet4;
 
-		}
-		return tets;
-	}
+        }
+        return tets;
+    }
     template<typename T, size_t dim_>
     int interp_pts_in_tets(const Eigen::Matrix<T, dim_, -1> &v, const Eigen::Matrix<int, 4, -1> &tet, const Eigen::Matrix<T, dim_, -1> &pts, Eigen::SparseMatrix<T> &coef);
     

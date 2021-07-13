@@ -14,37 +14,37 @@
 namespace PhysIKA
 {
     template<typename TDataType, int PhaseCount = 2>
-	class CahnHilliard : public Module
+    class CahnHilliard : public Module
     {
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+    public:
+        typedef typename TDataType::Real Real;
+        typedef typename TDataType::Coord Coord;
         using PhaseVector = Vector<Real, PhaseCount>;
 
-		CahnHilliard();
-		~CahnHilliard() override;
+        CahnHilliard();
+        ~CahnHilliard() override;
 
-		bool initializeImpl() override;
+        bool initializeImpl() override;
 
-		bool integrate();
+        bool integrate();
 
-		VarField<Real> m_particleVolume;
-		VarField<Real> m_smoothingLength;
+        VarField<Real> m_particleVolume;
+        VarField<Real> m_smoothingLength;
 
-		VarField<Real> m_degenerateMobilityM;
-		VarField<Real> m_interfaceEpsilon;
+        VarField<Real> m_degenerateMobilityM;
+        VarField<Real> m_interfaceEpsilon;
 
         DeviceArrayField<Coord> m_position;
 
-		NeighborField<int> m_neighborhood;
+        NeighborField<int> m_neighborhood;
 
-		DeviceArrayField<PhaseVector> m_chemicalPotential;
+        DeviceArrayField<PhaseVector> m_chemicalPotential;
         DeviceArrayField<PhaseVector> m_concentration;
-	};
+    };
 #ifdef PRECISION_FLOAT
-	template class CahnHilliard<DataType3f>;
+    template class CahnHilliard<DataType3f>;
 #else
-	template class CahnHilliard<DataType3d>;
+    template class CahnHilliard<DataType3d>;
 #endif
 }
 

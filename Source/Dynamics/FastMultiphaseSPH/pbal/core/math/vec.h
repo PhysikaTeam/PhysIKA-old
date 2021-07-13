@@ -69,10 +69,10 @@ struct Vec : __vecbase<T, size> {
   }
 
   FLUID_CUDA_HOST_DEVICE T prod() {
-	  T res = 1;
-	  for (int i = 0; i < size; i++)
-		  res *= (*this)[i];
-	  return res;
+      T res = 1;
+      for (int i = 0; i < size; i++)
+          res *= (*this)[i];
+      return res;
   }
 
   FLUID_CUDA_HOST_DEVICE T& operator[](size_t i) {
@@ -107,7 +107,7 @@ struct Vec : __vecbase<T, size> {
   }
 
   FLUID_CUDA_HOST_DEVICE T square() const {
-	  return dot(*this);
+      return dot(*this);
   }
 
   FLUID_CUDA_HOST_DEVICE T length() const {
