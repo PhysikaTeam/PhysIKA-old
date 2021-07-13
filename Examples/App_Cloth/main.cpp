@@ -16,130 +16,128 @@
 #include "Rendering/PointRenderModule.h"
 #include "ParticleCloth.h"
 
-
 #include "Framework/Topology/TriangleSet.h"
 #include "Rendering/RigidMeshRender.h"
-
 
 using namespace std;
 using namespace PhysIKA;
 
-void RecieveLogMessage(const Log::Message& m)
+void RecieveLogMessage(const Log::Message &m)
 {
-	switch (m.type)
-	{
-	case Log::Info:
-		cout << ">>>: " << m.text << endl; break;
-	case Log::Warning:
-		cout << "???: " << m.text << endl; break;
-	case Log::Error:
-		cout << "!!!: " << m.text << endl; break;
-	case Log::User:
-		cout << ">>>: " << m.text << endl; break;
-	default: break;
-	}
+    switch (m.type)
+    {
+    case Log::Info:
+        cout << ">>>: " << m.text << endl;
+        break;
+    case Log::Warning:
+        cout << "???: " << m.text << endl;
+        break;
+    case Log::Error:
+        cout << "!!!: " << m.text << endl;
+        break;
+    case Log::User:
+        cout << ">>>: " << m.text << endl;
+        break;
+    default:
+        break;
+    }
 }
 
 void CreateScene()
 {
-	SceneGraph& scene = SceneGraph::getInstance();
+    SceneGraph &scene = SceneGraph::getInstance();
 
-	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(-0.1f, 0.0f, -1.0f), Vector3f(1.1f, 2.0f, 1.1f), 0.02f, true);
-	root->loadShpere(Vector3f(0.5, 0.2f, 0.5f), 0.2f, 0.01f, false, true);
-	{
-		std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
-		root->addRigidBody(rigidbody);
-		rigidbody->loadShape("../../Media/standard/standard_sphere.obj");
-		rigidbody->setActive(false);
-		auto rigidTri = TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(rigidbody->getSurface()->getTopologyModule());
-		rigidTri->scale(0.2f);
-		rigidTri->translate(Vector3f(0.5, 0.2, 0.5));
+    std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
+    root->loadCube(Vector3f(-0.1f, 0.0f, -1.0f), Vector3f(1.1f, 2.0f, 1.1f), 0.02f, true);
+    root->loadShpere(Vector3f(0.5, 0.2f, 0.5f), 0.2f, 0.01f, false, true);
+    {
+        std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
+        root->addRigidBody(rigidbody);
+        rigidbody->loadShape("../../Media/standard/standard_sphere.obj");
+        rigidbody->setActive(false);
+        auto rigidTri = TypeInfo::CastPointerDown<TriangleSet<DataType3f>>(rigidbody->getSurface()->getTopologyModule());
+        rigidTri->scale(0.2f);
+        rigidTri->translate(Vector3f(0.5, 0.2, 0.5));
 
-		auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
-		renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
-		rigidbody->getSurface()->addVisualModule(renderModule);
-	}
+        auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        rigidbody->getSurface()->addVisualModule(renderModule);
+    }
 
-  // Output all particles to this .obj file.
-  ofstream outf("Particles.obj", ios::app);
-  
-	for (int i = 0; i < 24; i++)
-	{
-		std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
-		root->addParticleSystem(child3);
+    // Output all particles to this .obj file.
+    ofstream outf("Particles.obj", ios::app);
 
-		auto m_pointsRender = std::make_shared<PointRenderModule>();
+    for (int i = 0; i < 24; i++)
+    {
+        std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
+        root->addParticleSystem(child3);
 
-		m_pointsRender->setColor(Vector3f(1-0.04*i, 0.04*i, 1));
-		child3->addVisualModule(m_pointsRender);
-		child3->setVisible(true);
+        auto m_pointsRender = std::make_shared<PointRenderModule>();
 
-		child3->setMass(1.0);
-		child3->loadParticles("../../Media/cloth/clothLarge.obj");
-		child3->loadSurface("../../Media/cloth/clothLarge.obj");
-    
-		child3->translate(Vector3f(0.0f, 0.3f + 0.02*i, 0.0f));
-    
-    // Output
-    auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
-		auto& points = pSet->getPoints();
-		HostArray<Vector3f> hpoints(points.size());
-    if (outf.is_open())
-		{
-			for (int i = 0; i < hpoints.size(); ++i)
-			{
-				Vector3f curp = hpoints[i];
-				outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
-			}
-		}
-    
-	}
-  
-  // Output all particles, finished
-  outf.close();
-	std::cout << " Particle output:  FINISHED." << std::endl;
+        m_pointsRender->setColor(Vector3f(1 - 0.04 * i, 0.04 * i, 1));
+        child3->addVisualModule(m_pointsRender);
+        child3->setVisible(true);
 
-// 	std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
-// 	root->addParticleSystem(child3);
-// 
-// 	auto m_pointsRender = std::make_shared<PointRenderModule>();
-// 
-// 	m_pointsRender->setColor(Vector3f(1, 0.2, 1));
-// 	child3->addVisualModule(m_pointsRender);
-// 	child3->setVisible(true);
-// 
-// 	child3->setMass(1.0);
-//   	child3->loadParticles("../../Media/cloth/clothLarge.obj");
-//   	child3->loadSurface("../../Media/cloth/clothLarge.obj");
-// 
-// 	child3->translate(Vector3f(0.0f, 0.8f, 0.0f))
+        child3->setMass(1.0);
+        child3->loadParticles("../../Media/cloth/clothLarge.obj");
+        child3->loadSurface("../../Media/cloth/clothLarge.obj");
 
+        child3->translate(Vector3f(0.0f, 0.3f + 0.02 * i, 0.0f));
+
+        // Output
+        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+        auto &points = pSet->getPoints();
+        HostArray<Vector3f> hpoints(points.size());
+        if (outf.is_open())
+        {
+            for (int i = 0; i < hpoints.size(); ++i)
+            {
+                Vector3f curp = hpoints[i];
+                outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+            }
+        }
+    }
+
+    // Output all particles, finished
+    outf.close();
+    std::cout << " Particle output:  FINISHED." << std::endl;
+
+    //     std::shared_ptr<ParticleCloth<DataType3f>> child3 = std::make_shared<ParticleCloth<DataType3f>>();
+    //     root->addParticleSystem(child3);
+    //
+    //     auto m_pointsRender = std::make_shared<PointRenderModule>();
+    //
+    //     m_pointsRender->setColor(Vector3f(1, 0.2, 1));
+    //     child3->addVisualModule(m_pointsRender);
+    //     child3->setVisible(true);
+    //
+    //     child3->setMass(1.0);
+    //       child3->loadParticles("../../Media/cloth/clothLarge.obj");
+    //       child3->loadSurface("../../Media/cloth/clothLarge.obj");
+    //
+    //     child3->translate(Vector3f(0.0f, 0.8f, 0.0f))
 }
-
 
 int main()
 {
-	int* ptr;
-	cuSafeCall(cudaMalloc((void**)&ptr, 4 * 1000));
+    int *ptr;
+    cuSafeCall(cudaMalloc((void **)&ptr, 4 * 1000));
 
-	DeviceArray<Vector3f> cd;
-	cd.resize(1000);
+    DeviceArray<Vector3f> cd;
+    cd.resize(1000);
 
-	CreateScene();
+    CreateScene();
 
-// 	Log::setOutput("console_log.txt");
-// 	Log::setLevel(Log::Info);
-// 	Log::setUserReceiver(&RecieveLogMessage);
-// 	Log::sendMessage(Log::Info, "Simulation begin");
+    //     Log::setOutput("console_log.txt");
+    //     Log::setLevel(Log::Info);
+    //     Log::setUserReceiver(&RecieveLogMessage);
+    //     Log::sendMessage(Log::Info, "Simulation begin");
 
-	GLApp window;
-	window.createWindow(1024, 768);
+    GLApp window;
+    window.createWindow(1024, 768);
 
-	window.mainLoop();
+    window.mainLoop();
 
-//	Log::sendMessage(Log::Info, "Simulation end!");
-	return 0;
+    //    Log::sendMessage(Log::Info, "Simulation end!");
+    return 0;
 }
-
-

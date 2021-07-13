@@ -33,15 +33,15 @@ public:
   virtual BlockDataType type() const = 0;
 
   bool isToDisconnected() {
-	  return m_isToDisconnected;
+      return m_isToDisconnected;
   }
 
   void setDisconnected(bool connected)
   {
-	  m_isToDisconnected = connected;
+      m_isToDisconnected = connected;
   }
 
 private:
-	bool m_isToDisconnected = false;
+    bool m_isToDisconnected = false;
 };
 }

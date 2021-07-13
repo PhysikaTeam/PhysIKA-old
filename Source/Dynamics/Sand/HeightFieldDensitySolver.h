@@ -8,20 +8,20 @@
 
 namespace PhysIKA
 {
-	class HeightFieldDensitySolver
-	{
-	public:
+    class HeightFieldDensitySolver
+    {
+    public:
 
-		void initialize();
+        void initialize();
 
-		void compute(Real dt);
+        void compute(Real dt);
 
-	public:
-		DeviceDArray<Vector3d>* m_gridVel=0;
+    public:
+        DeviceDArray<Vector3d>* m_gridVel=0;
 
-		DeviceHeightField1d* m_sandHeight=0;
-		DeviceHeightField1d* m_landHeight=0;
-	};
+        DeviceHeightField1d* m_sandHeight=0;
+        DeviceHeightField1d* m_landHeight=0;
+    };
 }
 
 #endif //HEIGHTFIELDDENSITYSOLVER_H

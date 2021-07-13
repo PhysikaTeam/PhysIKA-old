@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 if(PhysIKA_Qt5_GUI)
-    
+
     set(PROJECT_NAME App_CAE)
 
     link_directories("${PROJECT_SOURCE_DIR}/Source")                                                           # establish link dir to Source
@@ -14,7 +14,7 @@ if(PhysIKA_Qt5_GUI)
     set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")
 
     file(                                                                                                       #get src files by glob
-        GLOB_RECURSE SRC_LIST 
+        GLOB_RECURSE SRC_LIST
         LIST_DIRECTORIES false
         CONFIGURE_DEPENDS
         "${SRC_DIR}/*.c*"
@@ -24,24 +24,25 @@ if(PhysIKA_Qt5_GUI)
     list(FILTER SRC_LIST EXCLUDE REGEX .*Media/.*)                                                              #Exclude resource files
 
     add_executable(${PROJECT_NAME} ${SRC_LIST})                                                                 #prepare for building
-    
+
     if(WIN32)
         target_link_libraries(${PROJECT_NAME} PUBLIC
-            Core 
-            Framework 
-            IO 
-            ParticleSystem  
-			RigidBody
-            QtGUI) 
+            Core
+            Framework
+            IO
+            ParticleSystem
+            RigidBody
+            QtGUI)
+
 
         set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG           #/WHOLEARCHIVE is used to link unused static variables for visual studio, which is necessary for auto class registration.
-           "/WHOLEARCHIVE:PaFramework-${PHYSIKA_LIBRARY_VERSION}d.lib 
+           "/WHOLEARCHIVE:PaFramework-${PHYSIKA_LIBRARY_VERSION}d.lib
             /WHOLEARCHIVE:PaParticleSystem-${PHYSIKA_LIBRARY_VERSION}d.lib
             /WHOLEARCHIVE:PaIO-${PHYSIKA_LIBRARY_VERSION}d.lib
             /WHOLEARCHIVE:PaQtGUI-${PHYSIKA_LIBRARY_VERSION}d.lib")
 
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE 
-           "/WHOLEARCHIVE:PaFramework-${PHYSIKA_LIBRARY_VERSION}.lib 
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE
+           "/WHOLEARCHIVE:PaFramework-${PHYSIKA_LIBRARY_VERSION}.lib
             /WHOLEARCHIVE:PaParticleSystem-${PHYSIKA_LIBRARY_VERSION}.lib
             /WHOLEARCHIVE:PaIO-${PHYSIKA_LIBRARY_VERSION}.lib
             /WHOLEARCHIVE:PaQtGUI-${PHYSIKA_LIBRARY_VERSION}.lib")

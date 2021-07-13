@@ -7,8 +7,8 @@
 
 namespace PhysIKA
 {
-	/**
-	* @brief Joint of vehicle rear wheels.
-	*/
-	typedef RevoluteJoint VehicleRearJoint;
+    /**
+    * @brief Joint of vehicle rear wheels.
+    */
+    typedef RevoluteJoint VehicleRearJoint;
 }

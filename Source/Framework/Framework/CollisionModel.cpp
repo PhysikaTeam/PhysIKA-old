@@ -14,9 +14,9 @@ CollisionModel::~CollisionModel()
 
 bool CollisionModel::execute()
 {
-	this->doCollision();
+    this->doCollision();
 
-	return true;
+    return true;
 }
 
 }

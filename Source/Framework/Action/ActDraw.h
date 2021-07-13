@@ -5,15 +5,15 @@
 
 namespace PhysIKA
 {
-	class DrawAct : public Action
-	{
-	public:
-		DrawAct();
-		virtual ~DrawAct();
+    class DrawAct : public Action
+    {
+    public:
+        DrawAct();
+        virtual ~DrawAct();
 
-	private:
-		void process(Node* node) override;
-	};
+    private:
+        void process(Node* node) override;
+    };
 }
 
 #endif

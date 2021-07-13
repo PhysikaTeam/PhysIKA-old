@@ -13,71 +13,71 @@
 namespace PhysIKA
 {
 
-	class HeightFieldBodyDetector:public CollisionModel
-	{
-	public:
+    class HeightFieldBodyDetector:public CollisionModel
+    {
+    public:
 
 
-		virtual bool isSupport(std::shared_ptr<CollidableObject> obj) { return true; };
+        virtual bool isSupport(std::shared_ptr<CollidableObject> obj) { return true; };
 
 
-		virtual void doCollision();
+        virtual void doCollision();
 
-		virtual void addCollidableObject(RigidBody2_ptr obj) { m_allBodies.push_back(obj); }
-
-
-		DEF_EMPTY_VAR(Contacts, DeviceDArray<ContactInfo<double>>, "Contact information");
-
-		DEF_EMPTY_VAR(Threshold, double, "Detection threshold");
-
-	public:
-		
-
-	public:
-		
-		DeviceHeightField1d* m_land = 0;
-		
-		std::vector<RigidBody2_ptr> m_allBodies;
-
-		DeviceDArray<int> m_counter;
-
-	};
+        virtual void addCollidableObject(RigidBody2_ptr obj) { m_allBodies.push_back(obj); }
 
 
-	class OrientedBodyDetector :public CollisionModel
-	{
-	public:
+        DEF_EMPTY_VAR(Contacts, DeviceDArray<ContactInfo<double>>, "Contact information");
+
+        DEF_EMPTY_VAR(Threshold, double, "Detection threshold");
+
+    public:
+        
+
+    public:
+        
+        DeviceHeightField1d* m_land = 0;
+        
+        std::vector<RigidBody2_ptr> m_allBodies;
+
+        DeviceDArray<int> m_counter;
+
+    };
 
 
-		virtual bool isSupport(std::shared_ptr<CollidableObject> obj) { return true; };
+    class OrientedBodyDetector :public CollisionModel
+    {
+    public:
 
 
-		virtual void doCollision();
-
-		virtual void addCollidableObject(RigidBody2_ptr obj, std::shared_ptr<TOrientedBox3D<float>> obb) { 
-			m_allBodies.push_back(obj); 
-			m_obbs.push_back(obb);
-		}
+        virtual bool isSupport(std::shared_ptr<CollidableObject> obj) { return true; };
 
 
-		DEF_EMPTY_VAR(Contacts, DeviceDArray<ContactInfo<double>>, "Contact information");
+        virtual void doCollision();
 
-		DEF_EMPTY_VAR(Threshold, double, "Detection threshold");
-
-	public:
-
-
-	public:
-		std::vector<std::shared_ptr<TOrientedBox3D<float>>> m_obbs;			// initial oriented bounding box.
-		std::vector<std::shared_ptr<TOrientedBox3D<float>>> m_transformedObbs;
+        virtual void addCollidableObject(RigidBody2_ptr obj, std::shared_ptr<TOrientedBox3D<float>> obb) { 
+            m_allBodies.push_back(obj); 
+            m_obbs.push_back(obb);
+        }
 
 
-		std::vector<RigidBody2_ptr> m_allBodies;
+        DEF_EMPTY_VAR(Contacts, DeviceDArray<ContactInfo<double>>, "Contact information");
 
-		DeviceDArray<int> m_counter;
+        DEF_EMPTY_VAR(Threshold, double, "Detection threshold");
 
-		HostDArray<ContactInfo<double>> m_hostContacts;
-	};
+    public:
+
+
+    public:
+        std::vector<std::shared_ptr<TOrientedBox3D<float>>> m_obbs;            // initial oriented bounding box.
+        std::vector<std::shared_ptr<TOrientedBox3D<float>>> m_transformedObbs;
+
+
+        std::vector<RigidBody2_ptr> m_allBodies;
+
+        DeviceDArray<int> m_counter;
+
+        HostDArray<ContactInfo<double>> m_hostContacts;
+    };
 
 }
 

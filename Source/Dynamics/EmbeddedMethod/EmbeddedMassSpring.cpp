@@ -21,20 +21,20 @@ using namespace std;
 
 namespace PhysIKA
 {
-	IMPLEMENT_CLASS_1(EmbeddedMassSpring, TDataType)
+    IMPLEMENT_CLASS_1(EmbeddedMassSpring, TDataType)
 
-	template<typename TDataType>
-	EmbeddedMassSpring<TDataType>::EmbeddedMassSpring(std::string name)
+    template<typename TDataType>
+    EmbeddedMassSpring<TDataType>::EmbeddedMassSpring(std::string name)
   : EmbeddedFiniteElement<TDataType>(name)
-	{
+    {
     
-	}
+    }
 
-	template<typename TDataType>
-	EmbeddedMassSpring<TDataType>::~EmbeddedMassSpring()
-	{
+    template<typename TDataType>
+    EmbeddedMassSpring<TDataType>::~EmbeddedMassSpring()
+    {
 
-	}
+    }
 
   template<typename TDataType>
   void EmbeddedMassSpring<TDataType>::init_problem_and_solver(const boost::property_tree::ptree& pt)

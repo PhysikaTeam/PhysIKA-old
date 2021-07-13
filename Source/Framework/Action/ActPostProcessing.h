@@ -3,13 +3,13 @@
 
 namespace PhysIKA
 {
-	class PostProcessing : public Action
-	{
-	public:
-		PostProcessing();
-		virtual ~PostProcessing();
+    class PostProcessing : public Action
+    {
+    public:
+        PostProcessing();
+        virtual ~PostProcessing();
 
-	private:
-		void process(Node* node) override;
-	};
+    private:
+        void process(Node* node) override;
+    };
 }

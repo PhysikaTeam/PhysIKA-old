@@ -5,43 +5,43 @@
 
 namespace PhysIKA
 {
-	class Node;
+    class Node;
 
-	class PSceneGraphWidgetItem : public QTreeWidgetItem
-	{
-	public:
-		explicit PSceneGraphWidgetItem(Node* node, QTreeWidget *treeview);
-		explicit PSceneGraphWidgetItem(Node* node, QTreeWidgetItem *parent);
+    class PSceneGraphWidgetItem : public QTreeWidgetItem
+    {
+    public:
+        explicit PSceneGraphWidgetItem(Node* node, QTreeWidget *treeview);
+        explicit PSceneGraphWidgetItem(Node* node, QTreeWidgetItem *parent);
 
-		inline Node* getNode() { return m_node; }
+        inline Node* getNode() { return m_node; }
 
-	private:
-		Node* m_node;
-	};
+    private:
+        Node* m_node;
+    };
 
 
-	class PSceneGraphWidget : public QTreeWidget
-	{
-		Q_OBJECT
+    class PSceneGraphWidget : public QTreeWidget
+    {
+        Q_OBJECT
 
-	public:
-		PSceneGraphWidget(QWidget *parent = nullptr);
+    public:
+        PSceneGraphWidget(QWidget *parent = nullptr);
 
-	protected:
-		
+    protected:
+        
 
-	Q_SIGNALS:
-		void notifyNodeSelected(Node* node);
+    Q_SIGNALS:
+        void notifyNodeSelected(Node* node);
 
-		void notifyNodeDoubleClicked(Node* node);
+        void notifyNodeDoubleClicked(Node* node);
 
-	public slots:
-		void updateTree();
-		void nodeClicked(QTreeWidgetItem* item, int index);
-		void nodeDoubleClicked(QTreeWidgetItem* item, int index);
-		void popMenu(const QPoint& pos);
+    public slots:
+        void updateTree();
+        void nodeClicked(QTreeWidgetItem* item, int index);
+        void nodeDoubleClicked(QTreeWidgetItem* item, int index);
+        void popMenu(const QPoint& pos);
 
-		void nodeSelected(QTreeWidgetItem *item, int column);
-	};
+        void nodeSelected(QTreeWidgetItem *item, int column);
+    };
 }
 #endif // QSCENEGRAPHWIDGET_H

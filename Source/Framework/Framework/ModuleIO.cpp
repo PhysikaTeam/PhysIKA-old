@@ -4,8 +4,8 @@
 namespace PhysIKA
 {
 IOModule::IOModule()
-	: Module()
-	, m_enabled(true)
+    : Module()
+    , m_enabled(true)
 {
 
 }

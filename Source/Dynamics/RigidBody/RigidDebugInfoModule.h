@@ -6,24 +6,24 @@ namespace PhysIKA
 {
 
 
-	class RigidDebugInfoModule:public Module
-	{
-		DECLARE_CLASS(RigidDebugInfoModule)
+    class RigidDebugInfoModule:public Module
+    {
+        DECLARE_CLASS(RigidDebugInfoModule)
 
-	public:
-		
-	public:
+    public:
+        
+    public:
 
-		RigidDebugInfoModule() {}
+        RigidDebugInfoModule() {}
 
-		bool initialize() {}
+        bool initialize() {}
 
-		virtual void begin() {}
+        virtual void begin() {}
 
-		virtual bool execute();
+        virtual bool execute();
 
-		virtual void end() {}
-	};
+        virtual void end() {}
+    };
 
 
 }

@@ -42,18 +42,18 @@ setNodeStyle(BlockStyle const& style)
 
 std::shared_ptr<QtNodes::BlockData> QtNodes::QtBlockDataModel::portData(PortType portType, PortIndex portIndex)
 {
-	std::shared_ptr<QtNodes::BlockData> ret = nullptr;
-	switch (portType)
-	{
-	case QtNodes::PortType::In:
-		ret = this->inData(portIndex);
-		break;
-	case QtNodes::PortType::Out:
-		ret = this->outData(portIndex);
-		break;
-	default:
-		break;
-	}
+    std::shared_ptr<QtNodes::BlockData> ret = nullptr;
+    switch (portType)
+    {
+    case QtNodes::PortType::In:
+        ret = this->inData(portIndex);
+        break;
+    case QtNodes::PortType::Out:
+        ret = this->outData(portIndex);
+        break;
+    default:
+        break;
+    }
 
-	return ret;
+    return ret;
 }

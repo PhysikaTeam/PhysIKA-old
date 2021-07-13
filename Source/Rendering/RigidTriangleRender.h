@@ -33,17 +33,17 @@ public:
     RigidTriangleRender(const RigidTriangleRender &) = delete;
     RigidTriangleRender & operator = (const RigidTriangleRender &) = delete;
 
-	void setVertexArray(HostArray<float3>& vertArray);
-	void setVertexArray(DeviceArray<float3>& vertArray);
+    void setVertexArray(HostArray<float3>& vertArray);
+    void setVertexArray(DeviceArray<float3>& vertArray);
 
-	void setNormalArray(HostArray<float3>& normArray);
-	void setNormalArray(DeviceArray<float3>& normArray);
+    void setNormalArray(HostArray<float3>& normArray);
+    void setNormalArray(DeviceArray<float3>& normArray);
 
-	void setColorArray(HostArray<float3>& colorArray);
-	void setColorArray(DeviceArray<float3>& colorArray);
+    void setColorArray(HostArray<float3>& colorArray);
+    void setColorArray(DeviceArray<float3>& colorArray);
 
-	void enableDoubleShading();
-	void disableDoubleShading();
+    void enableDoubleShading();
+    void disableDoubleShading();
 
 
     void enableUseCustomColor();
@@ -52,7 +52,7 @@ public:
 
     void display();
 
-	void resize(unsigned int triNum);
+    void resize(unsigned int triNum);
 
     void setRotation(const Quaternion<float>& q) { m_rotation = q; }
     void setTranslatioin(const Vector3f& t) { m_translation = t; }
@@ -60,18 +60,18 @@ public:
 
 private:
     bool use_custom_color_ = true;
-	int m_lineWidth = 2;
+    int m_lineWidth = 2;
 
-	bool m_bShowWireframe = false;
-	bool m_bEnableLighting = false;
-	bool m_bEnableDoubleShading = true;
+    bool m_bShowWireframe = false;
+    bool m_bEnableLighting = false;
+    bool m_bEnableDoubleShading = true;
 
-	ShaderProgram m_solidShader;
-	ShaderProgram m_wireframeShader;
+    ShaderProgram m_solidShader;
+    ShaderProgram m_wireframeShader;
 
-	CudaVBOMapper<glm::vec3> m_vertVBO;
-	CudaVBOMapper<glm::vec3> m_normVBO;
-	CudaVBOMapper<glm::vec3> m_colorVBO;
+    CudaVBOMapper<glm::vec3> m_vertVBO;
+    CudaVBOMapper<glm::vec3> m_normVBO;
+    CudaVBOMapper<glm::vec3> m_colorVBO;
 
     Quaternion<float> m_rotation;
     Vector3f m_scale;

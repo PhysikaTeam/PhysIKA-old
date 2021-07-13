@@ -4,15 +4,15 @@
 namespace PhysIKA
 {
 
-	TopologyMapping::TopologyMapping()
-		: Module()
-	{
+    TopologyMapping::TopologyMapping()
+        : Module()
+    {
 
-	}
+    }
 
-	TopologyMapping::~TopologyMapping()
-	{
+    TopologyMapping::~TopologyMapping()
+    {
 
-	}
+    }
 
 }

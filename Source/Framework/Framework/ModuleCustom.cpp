@@ -6,7 +6,7 @@ namespace PhysIKA
 IMPLEMENT_CLASS(CustomModule)
 
 CustomModule::CustomModule()
-	: Module()
+    : Module()
 {
 }
 
@@ -16,8 +16,8 @@ CustomModule::~CustomModule()
 
 bool CustomModule::execute()
 {
-	this->applyCustomBehavior();
-	return true;
+    this->applyCustomBehavior();
+    return true;
 }
 
 void CustomModule::applyCustomBehavior()

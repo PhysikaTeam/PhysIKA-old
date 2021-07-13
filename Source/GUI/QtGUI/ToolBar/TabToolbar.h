@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -43,7 +43,7 @@ public:
 
     void     SetSpecialTabEnabled(bool enabled);
     Page*    AddPage(const QString& pageName);
-	Page*	AddPage(const QIcon& icon, const QString &pageName);
+    Page*    AddPage(const QIcon& icon, const QString &pageName);
     QAction* HideAction();
     void     AddCornerAction(QAction* action);
     void     SetStyle(const QString& styleName);

@@ -7,13 +7,13 @@
 
 namespace PhysIKA
 {
-	class AppBase {
-	public:
-		AppBase(void) {};
-		~AppBase() {};
+    class AppBase {
+    public:
+        AppBase(void) {};
+        ~AppBase() {};
 
-		virtual void createWindow(int width, int height) {};
-		virtual void mainLoop() = 0;
-	};
+        virtual void createWindow(int width, int height) {};
+        virtual void mainLoop() = 0;
+    };
 
 }

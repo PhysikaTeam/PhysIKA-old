@@ -38,7 +38,7 @@ public:
     ~Transform();
     explicit Transform(const Vector<Scalar, 2> &translation);
     explicit Transform(Scalar rotate_angle);
-    explicit Transform(const SquareMatrix<Scalar, 2> &rotation);	   //rotation is represented by a matrix;
+    explicit Transform(const SquareMatrix<Scalar, 2> &rotation);       //rotation is represented by a matrix;
     Transform(const Vector<Scalar, 2> &translation, const SquareMatrix<Scalar, 2> &rotation);
     Transform(const Vector<Scalar, 2> &translation, Scalar rotate_angle);
     Transform(const Vector<Scalar, 2> &translation, const SquareMatrix<Scalar, 2> &rotation, const Vector<Scalar, 2> &scale);
@@ -77,7 +77,7 @@ public:
     /* Functions */
     Vector<Scalar, 2> transform(const Vector<Scalar, 2> &input) const;
 
-    Vector<Scalar, 2> rotate(const Vector<Scalar, 2> &input) const;	 //there is no class writed for rotate2D, if you want rotate, use this. or use matrix yourself!
+    Vector<Scalar, 2> rotate(const Vector<Scalar, 2> &input) const;     //there is no class writed for rotate2D, if you want rotate, use this. or use matrix yourself!
     Vector<Scalar, 2> translate(const Vector<Scalar, 2> &input) const; 
     Vector<Scalar, 2> scaling(const Vector<Scalar, 2> &input) const;
 

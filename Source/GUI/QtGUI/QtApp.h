@@ -6,7 +6,7 @@
 
 namespace PhysIKA {
 
-	class PMainWindow;
+    class PMainWindow;
 
     class QtApp : public AppBase
     {
@@ -18,8 +18,8 @@ namespace PhysIKA {
         void mainLoop() override;
 
 
-		// add by HNU
-		std::shared_ptr<PMainWindow> getMainWindow() const;
+        // add by HNU
+        std::shared_ptr<PMainWindow> getMainWindow() const;
 
     private:
         std::shared_ptr<QApplication> m_app;

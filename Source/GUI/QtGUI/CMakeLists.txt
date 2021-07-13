@@ -21,7 +21,7 @@ find_package(Qt5 COMPONENTS
              Widgets
              Gui
              OpenGL
-			 Svg)
+             Svg)
 
 qt5_add_resources(RESOURCES 
     ./Resources/resources.qrc
@@ -37,17 +37,17 @@ file(
     CONFIGURE_DEPENDS
     "${LIB_SRC_DIR}/*.c*"
     "${LIB_SRC_DIR}/*.h*"
-	"${LIB_SRC_DIR}/Nodes/*.h*"
+    "${LIB_SRC_DIR}/Nodes/*.h*"
     "${LIB_SRC_DIR}/Nodes/*.c*"
     "${LIB_SRC_DIR}/ToolBar/*.h*"
-	"${LIB_SRC_DIR}/ToolBar/*.c*"
+    "${LIB_SRC_DIR}/ToolBar/*.c*"
 )
 
 list(FILTER LIB_SRC EXCLUDE REGEX .*deprecated/.*)                              #排除deprecated 目录下面的所有文件
 
 add_library(${LIB_NAME} STATIC 
-	${LIB_SRC} 
-	${RESOURCES})                                      #添加编译目标 静态链接库
+    ${LIB_SRC} 
+    ${RESOURCES})                                      #添加编译目标 静态链接库
 
 foreach(SRC IN ITEMS ${LIB_SRC})                                                #为VS工程添加filter 方便查看文件结构目录
     get_filename_component(SRC_PATH "${SRC}" PATH)
@@ -68,7 +68,7 @@ set_target_properties(${LIB_NAME} PROPERTIES
     
 target_include_directories(${LIB_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Source/Framework>
-	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Extern/glm-0.9.9.7>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Extern/glm-0.9.9.7>
     $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}>
     $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/GUI>
     $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/GUI/${LIB_NAME}>)

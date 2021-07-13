@@ -126,14 +126,14 @@ bool Transform<Scalar, 2>::operator != (const Transform<Scalar, 2> &trans) const
 template<typename Scalar>
 SquareMatrix<Scalar, 2> Transform<Scalar, 2>::rotation2x2Matrix() const
 {
-    return SquareMatrix<Scalar, 2>(	cos(this->rotate_angle_), -sin(this->rotate_angle_),
+    return SquareMatrix<Scalar, 2>(    cos(this->rotate_angle_), -sin(this->rotate_angle_),
                                     sin(this->rotate_angle_), cos(this->rotate_angle_));
 }
 
 template<typename Scalar>
 SquareMatrix<Scalar, 3> Transform<Scalar, 2>::rotation3x3Matrix() const
 {
-    return SquareMatrix<Scalar, 3>(	cos(this->rotate_angle_), -sin(this->rotate_angle_), 0,
+    return SquareMatrix<Scalar, 3>(    cos(this->rotate_angle_), -sin(this->rotate_angle_), 0,
                                     sin(this->rotate_angle_), cos(this->rotate_angle_), 0,
                                     0,0,1);
 }
@@ -142,7 +142,7 @@ SquareMatrix<Scalar, 3> Transform<Scalar, 2>::rotation3x3Matrix() const
 template<typename Scalar>
 SquareMatrix<Scalar, 3> Transform<Scalar, 2>::scale3x3Matrix() const
 {
-    return SquareMatrix<Scalar, 3>(	this->scale_[0], 0, 0,
+    return SquareMatrix<Scalar, 3>(    this->scale_[0], 0, 0,
                                     0,this->scale_[1], 0,
                                     0, 0, 1);
 }
@@ -160,7 +160,7 @@ SquareMatrix<Scalar, 3> Transform<Scalar, 2>::transformMatrix() const
 template<typename Scalar>
 SquareMatrix<Scalar, 3> Transform<Scalar, 2>::translation3x3Matrix() const
 {
-    return SquareMatrix<Scalar, 3>(	1, 0, this->translation_[0],
+    return SquareMatrix<Scalar, 3>(    1, 0, this->translation_[0],
         0,1, this->translation_[1],
         0, 0, 1);
 

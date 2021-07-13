@@ -6,14 +6,14 @@
 
 namespace PhysIKA
 {
-	class PNodeEditor :
-		public QMainWindow
-	{
-		Q_OBJECT
-	public:
-		PNodeEditor(QtNodes::QtNodeWidget* node_widget);
+    class PNodeEditor :
+        public QMainWindow
+    {
+        Q_OBJECT
+    public:
+        PNodeEditor(QtNodes::QtNodeWidget* node_widget);
 
-	private:
-	};
+    private:
+    };
 }
 

@@ -1,41 +1,42 @@
 #include "Common.h"
 
 #include <QRegularExpression>
+#include <QVector>
 
 namespace PhysIKA
 {
-	QString FormatFieldWidgetName(std::string name)
-	{
-		QString fName = QString::fromStdString(name);
+    QString FormatFieldWidgetName(std::string name)
+    {
+        QString fName = QString::fromStdString(name);
 
-		QRegularExpression regexp("[A-Z][^A-Z]*");
-		QRegularExpressionMatchIterator match = regexp.globalMatch(fName);
-		QVector<QString> vec;
+        QRegularExpression regexp("[A-Z][^A-Z]*");
+        QRegularExpressionMatchIterator match = regexp.globalMatch(fName);
+        QVector<QString> vec;
 
-		QString ret;
-		while (match.hasNext())
-		{
-			ret += match.next().captured() + " ";
-		}
+        QString ret;
+        while (match.hasNext())
+        {
+            ret += match.next().captured() + " ";
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	QString FormatBlockPortName(std::string name)
-	{
-		QString fName = QString::fromStdString(name);
+    QString FormatBlockPortName(std::string name)
+    {
+        QString fName = QString::fromStdString(name);
 
-		QRegularExpression regexp("[A-Z][^A-Z]*");
-		QRegularExpressionMatchIterator match = regexp.globalMatch(fName);
-		QVector<QString> vec;
+        QRegularExpression regexp("[A-Z][^A-Z]*");
+        QRegularExpressionMatchIterator match = regexp.globalMatch(fName);
+        QVector<QString> vec;
 
-		QString ret;
-		while (match.hasNext())
-		{
-			ret += match.next().captured() + " ";
-		}
+        QString ret;
+        while (match.hasNext())
+        {
+            ret += match.next().captured() + " ";
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
 }

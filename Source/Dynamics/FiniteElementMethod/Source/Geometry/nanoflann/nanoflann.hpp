@@ -602,7 +602,7 @@ class PooledAllocator {
   /* We maintain memory alignment to word boundaries by requiring that all
       allocations be in multiples of the machine wordsize.  */
   /* Size of machine word in bytes.  Must be power of 2. */
-  /* Minimum number of bytes requested at a time from	the system.  Must be
+  /* Minimum number of bytes requested at a time from    the system.  Must be
    * multiple of WORDSIZE. */
 
   size_t remaining; /* Number of bytes left in current block of storage. */
@@ -1937,10 +1937,10 @@ public:
  *
  *  Example of usage:
  * \code
- * 	Eigen::Matrix<num_t,Dynamic,Dynamic>  mat;
- * 	// Fill out "mat"...
+ *     Eigen::Matrix<num_t,Dynamic,Dynamic>  mat;
+ *     // Fill out "mat"...
  *
- * 	typedef KDTreeEigenMatrixAdaptor< Eigen::Matrix<num_t,Dynamic,Dynamic> >
+ *     typedef KDTreeEigenMatrixAdaptor< Eigen::Matrix<num_t,Dynamic,Dynamic> >
  * my_kd_tree_t; const int max_leaf = 10; my_kd_tree_t   mat_index(mat, max_leaf
  * ); mat_index.index->buildIndex(); mat_index.index->... \endcode
  *

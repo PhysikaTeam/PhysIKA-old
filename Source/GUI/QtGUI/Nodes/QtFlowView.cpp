@@ -397,8 +397,8 @@ void
 QtFlowView::
 showEvent(QShowEvent *event)
 {
-	_scene->setSceneRect(this->rect());
-	QGraphicsView::showEvent(event);
+    _scene->setSceneRect(this->rect());
+    QGraphicsView::showEvent(event);
 }
 
 
@@ -406,5 +406,5 @@ QtFlowScene *
 QtFlowView::
 scene()
 {
-	return _scene;
+    return _scene;
 }

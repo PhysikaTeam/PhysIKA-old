@@ -8,26 +8,26 @@
 
 namespace PhysIKA
 {
-	namespace Function2Pt
-	{
-		// z = x + y;
-		template <typename T>
-		void plus(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr);
+    namespace Function2Pt
+    {
+        // z = x + y;
+        template <typename T>
+        void plus(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr);
 
-		// z = x - y;
-		template <typename T>
-		void subtract(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr);
+        // z = x - y;
+        template <typename T>
+        void subtract(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr);
 
-		// z = x * y;
-		template <typename T>
-		void multiply(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr);
+        // z = x * y;
+        template <typename T>
+        void multiply(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr);
 
-		// z = x / y;
-		template <typename T>
-		void divide(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr);
+        // z = x / y;
+        template <typename T>
+        void divide(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr);
 
-		// z = a * x + y;
-		template <typename T>
-		void saxpy(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr, T alpha);
-	};
+        // z = a * x + y;
+        template <typename T>
+        void saxpy(DeviceArray<T>& zArr, DeviceArray<T>& xArr, DeviceArray<T>& yArr, T alpha);
+    };
 }

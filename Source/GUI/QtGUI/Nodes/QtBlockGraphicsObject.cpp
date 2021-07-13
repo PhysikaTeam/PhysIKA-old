@@ -200,94 +200,94 @@ void
 QtBlockGraphicsObject::
 mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
-	if (_locked)
-		return;
+    if (_locked)
+        return;
 
-	// deselect all other items after this one is selected
-	if (!isSelected() &&
-		!(event->modifiers() & Qt::ControlModifier))
-	{
-		_scene.clearSelection();
-	}
+    // deselect all other items after this one is selected
+    if (!isSelected() &&
+        !(event->modifiers() & Qt::ControlModifier))
+    {
+        _scene.clearSelection();
+    }
 
-	for (PortType portToCheck : {PortType::In, PortType::Out})
-	{
-		BlockGeometry const & nodeGeometry = _node.nodeGeometry();
+    for (PortType portToCheck : {PortType::In, PortType::Out})
+    {
+        BlockGeometry const & nodeGeometry = _node.nodeGeometry();
 
-		// TODO do not pass sceneTransform
-		int const portIndex = nodeGeometry.checkHitScenePoint(portToCheck,
-			event->scenePos(),
-			sceneTransform());
+        // TODO do not pass sceneTransform
+        int const portIndex = nodeGeometry.checkHitScenePoint(portToCheck,
+            event->scenePos(),
+            sceneTransform());
 
-		if (portIndex != INVALID)
-		{
-			BlockState const & nodeState = _node.nodeState();
+        if (portIndex != INVALID)
+        {
+            BlockState const & nodeState = _node.nodeState();
 
-			std::unordered_map<QUuid, QtConnection*> connections =
-				nodeState.connections(portToCheck, portIndex);
+            std::unordered_map<QUuid, QtConnection*> connections =
+                nodeState.connections(portToCheck, portIndex);
 
-			// dragging connection for the in port
-			if (portToCheck == PortType::In)
-			{
-				auto const inPolicy = _node.nodeDataModel()->portInConnectionPolicy(portIndex);
+            // dragging connection for the in port
+            if (portToCheck == PortType::In)
+            {
+                auto const inPolicy = _node.nodeDataModel()->portInConnectionPolicy(portIndex);
 
-				//If only one input is required, disconnect the previous connection first
-				if (!connections.empty() && 
-					inPolicy == QtBlockDataModel::ConnectionPolicy::One)
-				{
-					auto con = connections.begin()->second;
+                //If only one input is required, disconnect the previous connection first
+                if (!connections.empty() && 
+                    inPolicy == QtBlockDataModel::ConnectionPolicy::One)
+                {
+                    auto con = connections.begin()->second;
 
-					ConnectionInteraction interaction(_node, *con, _scene);
+                    ConnectionInteraction interaction(_node, *con, _scene);
 
-					interaction.disconnect(portToCheck);
-				}
-				else
-				{
-					//Create a new connection starting from a input port
-					auto connection = _scene.createConnection(portToCheck,
-						_node,
-						portIndex);
+                    interaction.disconnect(portToCheck);
+                }
+                else
+                {
+                    //Create a new connection starting from a input port
+                    auto connection = _scene.createConnection(portToCheck,
+                        _node,
+                        portIndex);
 
-					_node.nodeState().setConnection(portToCheck,
-						portIndex,
-						*connection);
+                    _node.nodeState().setConnection(portToCheck,
+                        portIndex,
+                        *connection);
 
-					connection->getConnectionGraphicsObject().grabMouse();
-				}
-			}
-			else // initialize new Connection
-			{
-				auto const outPolicy = _node.nodeDataModel()->portOutConnectionPolicy(portIndex);
-				if (!connections.empty() &&
-					outPolicy == QtBlockDataModel::ConnectionPolicy::One)
-				{
-					_scene.deleteConnection(*connections.begin()->second);
-				}
+                    connection->getConnectionGraphicsObject().grabMouse();
+                }
+            }
+            else // initialize new Connection
+            {
+                auto const outPolicy = _node.nodeDataModel()->portOutConnectionPolicy(portIndex);
+                if (!connections.empty() &&
+                    outPolicy == QtBlockDataModel::ConnectionPolicy::One)
+                {
+                    _scene.deleteConnection(*connections.begin()->second);
+                }
 
-				////Create a new connection starting from a output port
-				auto connection = _scene.createConnection(portToCheck,
-					_node,
-					portIndex);
+                ////Create a new connection starting from a output port
+                auto connection = _scene.createConnection(portToCheck,
+                    _node,
+                    portIndex);
 
-				_node.nodeState().setConnection(portToCheck,
-					portIndex,
-					*connection);
+                _node.nodeState().setConnection(portToCheck,
+                    portIndex,
+                    *connection);
 
-				connection->getConnectionGraphicsObject().grabMouse();
-			}
-		}
-	}
+                connection->getConnectionGraphicsObject().grabMouse();
+            }
+        }
+    }
 
-	auto pos = event->pos();
-	auto & geom = _node.nodeGeometry();
-	auto & state = _node.nodeState();
+    auto pos = event->pos();
+    auto & geom = _node.nodeGeometry();
+    auto & state = _node.nodeState();
 
-	if (_node.nodeDataModel()->resizable() &&
-		geom.resizeRect().contains(QPoint(pos.x(),
-			pos.y())))
-	{
-		state.setResizing(true);
-	}
+    if (_node.nodeDataModel()->resizable() &&
+        geom.resizeRect().contains(QPoint(pos.x(),
+            pos.y())))
+    {
+        state.setResizing(true);
+    }
 
 }
 
@@ -355,7 +355,7 @@ mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
   if (isSelected())
   {
-	  _scene.nodeSelected(node());
+      _scene.nodeSelected(node());
   }
 
   // position connections precisely after fast node move

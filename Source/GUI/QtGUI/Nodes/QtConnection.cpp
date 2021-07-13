@@ -448,15 +448,15 @@ propagateEmptyData() const
 
 void QtNodes::QtConnection::propagateDeletedData() const
 {
-	std::shared_ptr<BlockData> deletedData;
-	if (_outNode)
-	{
-		deletedData = _outNode->nodeDataModel()->outData(_outPortIndex);
-		if (_inNode)
-		{
-			deletedData->setDisconnected(true);
-		}
-	}
+    std::shared_ptr<BlockData> deletedData;
+    if (_outNode)
+    {
+        deletedData = _outNode->nodeDataModel()->outData(_outPortIndex);
+        if (_inNode)
+        {
+            deletedData->setDisconnected(true);
+        }
+    }
 
-	propagateData(deletedData);
+    propagateData(deletedData);
 }

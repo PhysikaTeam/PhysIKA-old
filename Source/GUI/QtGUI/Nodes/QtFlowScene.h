@@ -108,48 +108,48 @@ public:
 
 Q_SIGNALS:
 
-	/**
-	* @brief Node has been created but not on the scene yet.
-	* @see nodePlaced()
-	*/
-	void nodeCreated(QtBlock &n);
+    /**
+    * @brief Node has been created but not on the scene yet.
+    * @see nodePlaced()
+    */
+    void nodeCreated(QtBlock &n);
 
-	/**
-	* @brief Node has been added to the scene.
-	* @details Connect to this signal if need a correct position of node.
-	* @see nodeCreated()
-	*/
-	void nodePlaced(QtBlock &n);
+    /**
+    * @brief Node has been added to the scene.
+    * @details Connect to this signal if need a correct position of node.
+    * @see nodeCreated()
+    */
+    void nodePlaced(QtBlock &n);
 
-	void nodeDeleted(QtBlock &n);
+    void nodeDeleted(QtBlock &n);
 
-	void connectionCreated(QtConnection const &c);
-	void connectionDeleted(QtConnection const &c);
+    void connectionCreated(QtConnection const &c);
+    void connectionDeleted(QtConnection const &c);
 
-	void nodeMoved(QtBlock& n, const QPointF& newLocation);
+    void nodeMoved(QtBlock& n, const QPointF& newLocation);
 
-	void nodeSelected(QtBlock& n);
+    void nodeSelected(QtBlock& n);
 
-	void nodeDoubleClicked(QtBlock& n);
+    void nodeDoubleClicked(QtBlock& n);
 
-	void connectionHovered(QtConnection& c, QPoint screenPos);
+    void connectionHovered(QtConnection& c, QPoint screenPos);
 
-	void nodeHovered(QtBlock& n, QPoint screenPos);
+    void nodeHovered(QtBlock& n, QPoint screenPos);
 
-	void connectionHoverLeft(QtConnection& c);
+    void connectionHoverLeft(QtConnection& c);
 
-	void nodeHoverLeft(QtBlock& n);
+    void nodeHoverLeft(QtBlock& n);
 
-	void nodeContextMenu(QtBlock& n, const QPointF& pos);
+    void nodeContextMenu(QtBlock& n, const QPointF& pos);
 
 private:
 
-	using SharedConnection = std::shared_ptr<QtConnection>;
-	using UniqueBlock = std::unique_ptr<QtBlock>;
+    using SharedConnection = std::shared_ptr<QtConnection>;
+    using UniqueBlock = std::unique_ptr<QtBlock>;
 
-	std::unordered_map<QUuid, SharedConnection> _connections;
-	std::unordered_map<QUuid, UniqueBlock>       _nodes;
-	std::shared_ptr<DataModelRegistry>          _registry;
+    std::unordered_map<QUuid, SharedConnection> _connections;
+    std::unordered_map<QUuid, UniqueBlock>       _nodes;
+    std::shared_ptr<DataModelRegistry>          _registry;
 
 
 private Q_SLOTS:

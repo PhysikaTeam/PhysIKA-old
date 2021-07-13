@@ -5,21 +5,21 @@ namespace PhysIKA{
 
 class ForceModule : public Module
 {
-	DECLARE_CLASS(ForceModule)
+    DECLARE_CLASS(ForceModule)
 public:
-	ForceModule();
-	virtual ~ForceModule();
+    ForceModule();
+    virtual ~ForceModule();
 
-	virtual bool applyForce() { return true; }
+    virtual bool applyForce() { return true; }
 
-	void setForceID(FieldID id) { m_forceID = id; }
-	void setTorqueID(FieldID id) { m_torqueID = id; }
+    void setForceID(FieldID id) { m_forceID = id; }
+    void setTorqueID(FieldID id) { m_torqueID = id; }
 
-	std::string getModuleType() override { return "ForceModule"; }
+    std::string getModuleType() override { return "ForceModule"; }
 
 protected:
-	FieldID m_forceID;
-	FieldID m_torqueID;
+    FieldID m_forceID;
+    FieldID m_torqueID;
 };
 }
 

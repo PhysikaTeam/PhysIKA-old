@@ -35,33 +35,33 @@ int point_scalar_append2vtk(const bool is_append, const char* path, const Eigen:
 
 template<typename T, size_t num_vert, size_t dim = 3>
 int mesh_read_from_vtk(const char* filename, Eigen::Matrix<T, -1, -1>& nods) {
-	std::ifstream ifs(filename);
-	if (ifs.fail()) {
-		std::cerr << "[info] " << "can not open file" << filename << std::endl;
-		return __LINE__;
-	}
+    std::ifstream ifs(filename);
+    if (ifs.fail()) {
+        std::cerr << "[info] " << "can not open file" << filename << std::endl;
+        return __LINE__;
+    }
 
-	std::string str;
-	int point_num = 0, cell_num = 0;
+    std::string str;
+    int point_num = 0, cell_num = 0;
 
-	while (!ifs.eof()) {
-		ifs >> str;
-		if (str == "POINTS") {
-			ifs >> point_num >> str;
-			nods = Eigen::Matrix<T, -1, -1>(dim, point_num);
-			T item;
-			for (size_t i = 0; i < point_num; ++i) {
-				for (size_t j = 0; j < dim; ++j) {
-					ifs >> nods(j, i);
-				}
+    while (!ifs.eof()) {
+        ifs >> str;
+        if (str == "POINTS") {
+            ifs >> point_num >> str;
+            nods = Eigen::Matrix<T, -1, -1>(dim, point_num);
+            T item;
+            for (size_t i = 0; i < point_num; ++i) {
+                for (size_t j = 0; j < dim; ++j) {
+                    ifs >> nods(j, i);
+                }
 
-			}
-			continue;
-		}
-	}
-	ifs.close();
+            }
+            continue;
+        }
+    }
+    ifs.close();
 
-	return 0;
+    return 0;
 }
 
 template<typename T, size_t num_vert, size_t dim = 3>

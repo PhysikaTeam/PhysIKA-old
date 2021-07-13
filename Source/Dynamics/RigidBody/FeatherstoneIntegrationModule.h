@@ -6,34 +6,34 @@
 #include <memory>
 namespace PhysIKA
 {
-	class FeatherstoneIntegrationModule:public Module
-	{
-	public:
+    class FeatherstoneIntegrationModule:public Module
+    {
+    public:
 
-		FeatherstoneIntegrationModule();
+        FeatherstoneIntegrationModule();
 
-		bool initialize() {};
+        bool initialize() {};
 
-		virtual void begin();
+        virtual void begin();
 
-		virtual bool execute();
+        virtual bool execute();
 
-		virtual void end() {};
+        virtual void end() {};
 
-		//virtual void updateSystemState(double dt);
+        //virtual void updateSystemState(double dt);
 
-		//virtual void updateSystemState(const RigidState& s);
+        //virtual void updateSystemState(const RigidState& s);
 
-		void setDt(double dt) { m_dt = dt; }
+        void setDt(double dt) { m_dt = dt; }
 
 
-	private:
-		std::shared_ptr<ForwardDynamicsSolver> m_fd_solver;
+    private:
+        std::shared_ptr<ForwardDynamicsSolver> m_fd_solver;
 
-		Vectornd<float> m_ddq;
-		double m_dt = 0;
+        Vectornd<float> m_ddq;
+        double m_dt = 0;
 
-		double m_last_time = 0;
-		bool m_time_init = false;
-	};
+        double m_last_time = 0;
+        bool m_time_init = false;
+    };
 }
