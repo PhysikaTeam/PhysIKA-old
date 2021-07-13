@@ -1,5 +1,5 @@
 name: clang-format Check
-on: [push, PR]
+on: [push, pull_request]
 jobs:
   formatting-check:
     name: Formatting Check
@@ -7,10 +7,9 @@ jobs:
     strategy:
       matrix:
         path:
-          - 'include'
-          - 'src'
-          - 'examples'
-          - 'tests'
+          - 'Source'
+          - 'Examples'
+          - 'Tests'
     steps:
     - uses: actions/checkout@v2
     - name: Run clang-format style check for C/C++ programs.
