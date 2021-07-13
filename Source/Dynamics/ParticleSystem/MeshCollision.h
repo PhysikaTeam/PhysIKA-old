@@ -5,22 +5,27 @@
 #include "Framework/Framework/Node.h"
 #include "Framework/Framework/FieldArray.h"
 
-namespace PhysIKA
-{
-template <typename> class CollidablePoints;
-template <typename> class NeighborQuery;
-template <typename> class NeighborList;
-template <typename> class GridHash;
-template <typename TDataType> class PointSet;
-template <typename TDataType> class TriangleSet;
+namespace PhysIKA {
+template <typename>
+class CollidablePoints;
+template <typename>
+class NeighborQuery;
+template <typename>
+class NeighborList;
+template <typename>
+class GridHash;
+template <typename TDataType>
+class PointSet;
+template <typename TDataType>
+class TriangleSet;
 
-template<typename TDataType>
+template <typename TDataType>
 class MeshCollision : public CollisionModel
 {
     DECLARE_CLASS_1(MeshCollision, TDataType)
 public:
-    typedef typename TDataType::Real Real;
-    typedef typename TDataType::Coord Coord;
+    typedef typename TDataType::Real          Real;
+    typedef typename TDataType::Coord         Coord;
     typedef typename TopologyModule::Triangle Triangle;
 
     MeshCollision();
@@ -34,24 +39,21 @@ public:
 
     void doCollision() override;
 
-
-    DeviceArrayField<Coord> m_position;
-    DeviceArrayField<Coord> m_velocity;
-    DeviceArrayField<Real> m_triangle_vertex_mass;
-    DeviceArrayField<Coord> m_triangle_vertex;
-    DeviceArrayField<Coord> m_triangle_vertex_old;
+    DeviceArrayField<Coord>    m_position;
+    DeviceArrayField<Coord>    m_velocity;
+    DeviceArrayField<Real>     m_triangle_vertex_mass;
+    DeviceArrayField<Coord>    m_triangle_vertex;
+    DeviceArrayField<Coord>    m_triangle_vertex_old;
     DeviceArrayField<Triangle> m_triangle_index;
-    DeviceArrayField<int> m_flip;
-    NeighborField<int> m_neighborhood_tri;
+    DeviceArrayField<int>      m_flip;
+    NeighborField<int>         m_neighborhood_tri;
 
     DeviceArrayField<Coord> m_velocity_mod;
 
-
-    
 protected:
     DeviceArray<int> m_objId;
-    
-    DeviceArray<Real> weights;
+
+    DeviceArray<Real>  weights;
     DeviceArray<Coord> init_pos;
     DeviceArray<Coord> posBuf;
 
@@ -59,10 +61,9 @@ protected:
     DeviceArray<Coord> m_triangle_vertex_previous;
 
     std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
-    std::shared_ptr<NeighborList<int>> m_nList;
+    std::shared_ptr<NeighborList<int>>        m_nList;
 
     std::vector<std::shared_ptr<CollidablePoints<TDataType>>> m_collidableObjects;
-    
 };
 
 #ifdef PRECISION_FLOAT
@@ -71,4 +72,4 @@ template class MeshCollision<DataType3f>;
 template class MeshCollision<DataType3d>;
 #endif
 
-}
+}  // namespace PhysIKA

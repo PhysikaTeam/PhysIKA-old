@@ -1,7 +1,6 @@
 #include "ModuleController.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 IMPLEMENT_CLASS(ControllerModule)
 
 ControllerModule::ControllerModule()
@@ -37,7 +36,7 @@ void ControllerModule::push_back(std::weak_ptr<Module> m)
 {
     if (start_module.lock() == nullptr)
     {
-        start_module = m;
+        start_module   = m;
         current_module = m;
     }
     else
@@ -51,11 +50,9 @@ void ControllerModule::push_back(std::weak_ptr<Module> m)
 
 ModuleIterator::ModuleIterator()
 {
-
 }
 
-
-ModuleIterator::ModuleIterator(const ModuleIterator &iterator)
+ModuleIterator::ModuleIterator(const ModuleIterator& iterator)
 {
     module = iterator.module;
 }
@@ -88,17 +85,17 @@ std::shared_ptr<Module> ModuleIterator::operator*()
     return m;
 }
 
-bool ModuleIterator::operator!=(const ModuleIterator &iterator) const
+bool ModuleIterator::operator!=(const ModuleIterator& iterator) const
 {
     return module.lock() != iterator.module.lock();
 }
 
-bool ModuleIterator::operator==(const ModuleIterator &iterator) const
+bool ModuleIterator::operator==(const ModuleIterator& iterator) const
 {
     return module.lock() == iterator.module.lock();
 }
 
-ModuleIterator& ModuleIterator::operator=(const ModuleIterator &iterator)
+ModuleIterator& ModuleIterator::operator=(const ModuleIterator& iterator)
 {
     module = iterator.module;
     return *this;
@@ -106,7 +103,6 @@ ModuleIterator& ModuleIterator::operator=(const ModuleIterator &iterator)
 
 ModuleIterator::~ModuleIterator()
 {
-
 }
 
-}
+}  // namespace PhysIKA

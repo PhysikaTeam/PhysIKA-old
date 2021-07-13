@@ -34,9 +34,9 @@ using namespace PhysIKA;
 
 std::vector<float> test_vector;
 
-std::vector<float> &creare_scene_init()
+std::vector<float>& creare_scene_init()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(1.5, 1.5, 1.5));
     scene.setLowerBound(Vector3f(-1.5, -0.5, -1.5));
 
@@ -86,7 +86,7 @@ std::vector<float> &creare_scene_init()
 
 void create_scene_semianylitical()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(1.2));
     scene.setLowerBound(Vector3f(-0.2));
 
@@ -137,7 +137,7 @@ void create_scene_semianylitical()
 
 int main()
 {
-    auto &v = creare_scene_init();
+    auto& v = creare_scene_init();
     v.resize(5);
 
     printf("outside 3\n");

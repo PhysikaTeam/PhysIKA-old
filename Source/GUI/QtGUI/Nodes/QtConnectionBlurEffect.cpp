@@ -7,21 +7,19 @@ using QtNodes::QtConnectionBlurEffect;
 using QtNodes::QtConnectionGraphicsObject;
 
 QtConnectionBlurEffect::
-QtConnectionBlurEffect(QtConnectionGraphicsObject*)
+    QtConnectionBlurEffect(QtConnectionGraphicsObject*)
 {
-  //
+    //
 }
 
-
-void
-QtConnectionBlurEffect::
-draw(QPainter* painter)
+void QtConnectionBlurEffect::
+    draw(QPainter* painter)
 {
-  QGraphicsBlurEffect::draw(painter);
+    QGraphicsBlurEffect::draw(painter);
 
-  //ConnectionPainter::paint(painter,
-  //_object->connectionGeometry(),
-  //_object->connectionState());
+    //ConnectionPainter::paint(painter,
+    //_object->connectionGeometry(),
+    //_object->connectionState());
 
-  //_item->paint(painter, nullptr, nullptr);
+    //_item->paint(painter, nullptr, nullptr);
 }

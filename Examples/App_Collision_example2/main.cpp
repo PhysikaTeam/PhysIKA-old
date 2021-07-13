@@ -51,9 +51,9 @@ auto instance = Collision::getInstance();
 
 void checkCollision();
 
-void CreateScene(const std::string &clothPath, const std::string &humanPath)
+void CreateScene(const std::string& clothPath, const std::string& humanPath)
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.invalid();
     scene.setFrameRate(500);
     root = scene.createNewScene<StaticBoundary<DataType3f>>();
@@ -90,10 +90,10 @@ void checkCollision()
     int count = 0;
     for (int i = 0; i < pairs.size(); i++)
     {
-        const auto &t1 = pairs[i][0];
-        const auto &t2 = pairs[i][1];
+        const auto& t1 = pairs[i][0];
+        const auto& t2 = pairs[i][1];
 
-        if (t1.id0() == t2.id0()) //self cd
+        if (t1.id0() == t2.id0())  //self cd
             continue;
 
         printf("%d: (%d, %d) - (%d, %d)\n", count + 1, t1.id0(), t1.id1(), t2.id0(), t2.id1());
@@ -116,8 +116,8 @@ void checkCollision()
         std::vector<DataType3f::Coord> normals;
         for (const auto index : clothCollisionTriangleIndex)
         {
-            const auto triset = cloth->getmeshPtr()->getTriangleSet();
-            auto faceIndices = triset->getHTriangles()[index];
+            const auto triset      = cloth->getmeshPtr()->getTriangleSet();
+            auto       faceIndices = triset->getHTriangles()[index];
             for (int j = 0; j < 3; ++j)
             {
                 points.push_back(triset->gethPoints()[faceIndices[j]]);
@@ -152,8 +152,8 @@ void checkCollision()
         std::vector<DataType3f::Coord> normals;
         for (const auto index : humanCollisionTriangleIndex)
         {
-            const auto triset = human->getmeshPtr()->getTriangleSet();
-            auto faceIndices = triset->getHTriangles()[index];
+            const auto triset      = human->getmeshPtr()->getTriangleSet();
+            auto       faceIndices = triset->getHTriangles()[index];
             for (int j = 0; j < 3; ++j)
             {
                 points.push_back(triset->gethPoints()[faceIndices[j]]);
@@ -182,19 +182,19 @@ void checkCollision()
 
 void keyboardFunc(unsigned char key, int x, int y)
 {
-    GLApp *window = static_cast<GLApp *>(glutGetWindowData());
+    GLApp* window = static_cast<GLApp*>(glutGetWindowData());
 
     switch (key)
     {
-    case 27:
-        glutLeaveMainLoop();
-        return;
-    case 's':
-        window->saveScreen();
-        break;
-    case ' ':
-        pause = !pause;
-        break;
+        case 27:
+            glutLeaveMainLoop();
+            return;
+        case 's':
+            window->saveScreen();
+            break;
+        case ' ':
+            pause = !pause;
+            break;
     }
 }
 
@@ -223,7 +223,7 @@ void idleFunction()
     index++;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     if (argc == 2)
     {

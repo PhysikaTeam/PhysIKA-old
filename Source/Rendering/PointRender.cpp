@@ -18,9 +18,9 @@
 
 #include "PointRender.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
-const char * vertexSource = R"STR(
+const char* vertexSource = R"STR(
 #version 330 compatibility
 layout(location = 0) in vec3 vert_pos;
 layout(location = 3) in vec3 vert_col;
@@ -60,7 +60,7 @@ void main()
 }
 )STR";
 
-const char * fragmentSource = R"STR(
+const char* fragmentSource = R"STR(
 #version 330 compatibility
 in vec3 frag_vert_col;
 in float radius;
@@ -100,7 +100,7 @@ void main()
 )STR";
 
 // vertex shader
-const char *vertexShader1 = R"STR(
+const char* vertexShader1 = R"STR(
 uniform float pointRadius;  // point size in world space
 uniform float pointScale;   // scale to calculate size in pixels
 uniform float densityScale;
@@ -143,13 +143,19 @@ const char *spherePixelShader1 = STRINGIFY(
 
 float quadVertices[] = {
     // positions     // colors
-    -1,  1,
-    1, -1,
-    -1, -1,
+    -1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
 
-    -1,  1,
-    1, -1,
-    1,  1
+    -1,
+    1,
+    1,
+    -1,
+    1,
+    1
 };
 
 PointRender::PointRender()
@@ -163,7 +169,7 @@ PointRender::PointRender()
     glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), ( void* )0);
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -175,16 +181,14 @@ PointRender::~PointRender()
 void PointRender::resize(unsigned int num)
 {
     m_vertVBO.resize(num);
-     m_vertexColor.resize(num);
-//     m_normVBO.resize(num);
-
+    m_vertexColor.resize(num);
+    //     m_normVBO.resize(num);
 }
 
-int id = 0;
+int  id = 0;
 void PointRender::setVertexArray(DeviceArray<float3>& pos)
 {
     cudaError_t err = cudaGetLastError();
-
 
     cudaMemcpy(m_vertVBO.cudaMap(), pos.getDataPtr(), sizeof(float3) * pos.size(), cudaMemcpyDeviceToDevice);
 
@@ -277,7 +281,7 @@ void PointRender::renderInstancedSphere()
     glBindVertexArray(quadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), ( void* )0);
 
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, m_vertVBO.getVBO());
@@ -293,7 +297,7 @@ void PointRender::renderInstancedSphere()
     m_instancedShader.setFloat("sprite_size", m_instance_size);
 
     glBindVertexArray(quadVAO);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, m_vertVBO.getSize()); // 100 triangles of 6 vertices each
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, m_vertVBO.getSize());  // 100 triangles of 6 vertices each
     glBindVertexArray(0);
 
     m_instancedShader.disable();
@@ -365,8 +369,7 @@ void PointRender::renderPoints()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glDisableClientState(GL_VERTEX_ARRAY);
 
-
     m_glsl.disable();
 }
 
-}//end of namespace PhysIKA
+}  //end of namespace PhysIKA

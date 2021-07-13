@@ -13,29 +13,27 @@
  *
  */
 
-
 #include "IO/File_Utilities/file_content_utilities.h"
 using std::string;
 
-namespace PhysIKA{
+namespace PhysIKA {
 
-namespace FileUtilities{
+namespace FileUtilities {
 
-string removeWhitespaces(const string &line, unsigned int num_retained_spaces)
+string removeWhitespaces(const string& line, unsigned int num_retained_spaces)
 {
     string::size_type pos;
-    string new_line = line;
-    string whitespace(" "), retained_whitespaces(" ");
-    for(unsigned int i = 0; i < num_retained_spaces; ++i)
+    string            new_line = line;
+    string            whitespace(" "), retained_whitespaces(" ");
+    for (unsigned int i = 0; i < num_retained_spaces; ++i)
         retained_whitespaces += whitespace;
-    while(new_line[0] == ' ')
+    while (new_line[0] == ' ')
         new_line = new_line.substr(1);
-    while((pos=new_line.find(retained_whitespaces)) != string::npos)
-        new_line.erase(pos,1);
+    while ((pos = new_line.find(retained_whitespaces)) != string::npos)
+        new_line.erase(pos, 1);
     return new_line;
 }
 
-} //end of namespace FileUtilities
+}  //end of namespace FileUtilities
 
-} //end of namespace PhysIKA
-
+}  //end of namespace PhysIKA

@@ -4,43 +4,47 @@
 //#include "utility/cpXMLHelper.h"
 #include "sph_common.h"
 
-struct fluidvol {
+struct fluidvol
+{
     cfloat3 xmin;
     cfloat3 xmax;
-    float volfrac[10];
-    int group;
-    int type;
+    float   volfrac[10];
+    int     group;
+    int     type;
 };
 
-struct FluidSrc {
+struct FluidSrc
+{
     cfloat3 srcpos;
     cfloat3 norm;
-    float radius;
-    float speed;
-    char type;//geometry type
-    int interval;
+    float   radius;
+    float   speed;
+    char    type;  //geometry type
+    int     interval;
 };
 
 //void loadFluidVolume(tinyxml2::XMLElement* sceneEle, int typenum, std::vector<fluidvol>& fvs);
 
-struct Particle {
+struct Particle
+{
     cfloat3 pos;
-    int type;
+    int     type;
 };
 
-class ParticleContainer {
+class ParticleContainer
+{
 public:
     std::vector<Particle> particles;
 };
 
-
-class ParticleObject {
+class ParticleObject
+{
 public:
     vecf3 pos;
     vecf3 normal;
-    vecf volfrac;
-    veci type;
-    veci id;
+    vecf  volfrac;
+    veci  type;
+    veci  id;
 };
 //
 //class BoundaryGenerator {
@@ -48,7 +52,7 @@ public:
 //    ParticleObject* particleObject  = nullptr;
 //    Tinyxml_Reader reader;
 //public:
-//    ~BoundaryGenerator() 
+//    ~BoundaryGenerator()
 //    {
 //        if (particleObject)
 //            delete particleObject;

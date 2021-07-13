@@ -33,79 +33,76 @@
 #include "CompactToolButton.h"
 #include "ToolButtonStyle.h"
 
-namespace
-{
+namespace {
 class TTOverlayToolButton : public QToolButton
 {
 public:
-   TTOverlayToolButton(QWidget* parent) : QToolButton(parent)
+    TTOverlayToolButton(QWidget* parent)
+        : QToolButton(parent)
     {
-       setAttribute(Qt::WA_NoSystemBackground);
-       setAttribute(Qt::WA_TranslucentBackground);
-       setAttribute(Qt::WA_TransparentForMouseEvents);
-       parent->installEventFilter(this);
-       lower();
-   }
+        setAttribute(Qt::WA_NoSystemBackground);
+        setAttribute(Qt::WA_TranslucentBackground);
+        setAttribute(Qt::WA_TransparentForMouseEvents);
+        parent->installEventFilter(this);
+        lower();
+    }
 
-   bool paint = false;
+    bool paint = false;
 
 protected:
-   bool eventFilter(QObject* obj, QEvent* ev) override
-   {
-      if (obj == parent())
-      {
-         if (ev->type() == QEvent::Resize)
-            resize(static_cast<QResizeEvent*>(ev)->size());
-         else if (ev->type() == QEvent::ChildAdded)
-            lower();
-      }
-      return QWidget::eventFilter(obj, ev);
-   }
+    bool eventFilter(QObject* obj, QEvent* ev) override
+    {
+        if (obj == parent())
+        {
+            if (ev->type() == QEvent::Resize)
+                resize(static_cast<QResizeEvent*>(ev)->size());
+            else if (ev->type() == QEvent::ChildAdded)
+                lower();
+        }
+        return QWidget::eventFilter(obj, ev);
+    }
 
-   void paintEvent(QPaintEvent*) override
-   {
-       if(!paint)
-           return;
+    void paintEvent(QPaintEvent*) override
+    {
+        if (!paint)
+            return;
 
-       QStylePainter sp(this);
-       QStyleOptionToolButton opt;
-       initStyleOption(&opt);
-       opt.state |= QStyle::State_MouseOver | QStyle::State_AutoRaise | QStyle::State_Raised;
-       opt.activeSubControls |= QStyle::SC_ToolButton;
-       sp.drawComplexControl(QStyle::CC_ToolButton, opt);
-   }
+        QStylePainter          sp(this);
+        QStyleOptionToolButton opt;
+        initStyleOption(&opt);
+        opt.state |= QStyle::State_MouseOver | QStyle::State_AutoRaise | QStyle::State_Raised;
+        opt.activeSubControls |= QStyle::SC_ToolButton;
+        sp.drawComplexControl(QStyle::CC_ToolButton, opt);
+    }
 };
 
 class TTHover : public QObject
 {
 public:
-    TTHover(tt::CompactToolButton* parent, QToolButton* up, QToolButton* down) :
-        QObject(parent),
-        toolButton(parent),
-        upButton(up),
-        downButton(down)
+    TTHover(tt::CompactToolButton* parent, QToolButton* up, QToolButton* down)
+        : QObject(parent), toolButton(parent), upButton(up), downButton(down)
     {
     }
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override
     {
-        if(event->type() == QEvent::HoverLeave)
+        if (event->type() == QEvent::HoverLeave)
         {
             toolButton->SetHover(false);
         }
-        else if(event->type() == QEvent::HoverEnter)
+        else if (event->type() == QEvent::HoverEnter)
         {
-            if(watched == upButton || watched == downButton)
+            if (watched == upButton || watched == downButton)
                 toolButton->SetHover(upButton->isEnabled());
         }
-        if(watched == upButton)
+        if (watched == upButton)
         {
-            if(event->type() == QEvent::Hide)
+            if (event->type() == QEvent::Hide)
                 downButton->hide();
-            else if(event->type() == QEvent::Show)
+            else if (event->type() == QEvent::Show)
                 downButton->show();
-            else if(event->type() == QEvent::EnabledChange)
+            else if (event->type() == QEvent::EnabledChange)
             {
                 downButton->setEnabled(upButton->isEnabled());
                 toolButton->SetHover(upButton->isEnabled() && upButton->underMouse());
@@ -119,18 +116,17 @@ private:
     QToolButton*           upButton;
     QToolButton*           downButton;
 };
-}
+}  // namespace
 
-namespace tt
-{
+namespace tt {
 
-CompactToolButton::CompactToolButton(QAction* action, QMenu* menu, QWidget* parent) :
-    QFrame(parent)
+CompactToolButton::CompactToolButton(QAction* action, QMenu* menu, QWidget* parent)
+    : QFrame(parent)
 {
     overlay = new TTOverlayToolButton(this);
 
     const int iconSize = GetPixelMetric(QStyle::PM_LargeIconSize) * GetScaleFactor(*this);
-    upButton = new QToolButton(this);
+    upButton           = new QToolButton(this);
     upButton->setProperty("TTInternal", QVariant(true));
     upButton->setAutoRaise(true);
     upButton->setDefaultAction(action);
@@ -160,10 +156,10 @@ CompactToolButton::CompactToolButton(QAction* action, QMenu* menu, QWidget* pare
     downButton->setToolTip(action->toolTip());
     downButton->setStyle(new TTToolButtonStyle());
 
-    if(menu)
+    if (menu)
     {
         downButton->setMenu(menu);
-        QObject::connect(menu, &QMenu::aboutToHide, this, [this]{ SetHover(false); });
+        QObject::connect(menu, &QMenu::aboutToHide, this, [this] { SetHover(false); });
     }
     l->addWidget(downButton);
     setLayout(l);
@@ -179,4 +175,4 @@ void CompactToolButton::SetHover(bool hover)
     update();
 }
 
-}
+}  // namespace tt

@@ -1,8 +1,7 @@
 #pragma once
 #include "Framework/Framework/ModuleController.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 class RenderController : public ControllerModule
 {
@@ -13,7 +12,6 @@ public:
     virtual ~RenderController();
 
 private:
-
 };
 
-}
+}  // namespace PhysIKA

@@ -14,107 +14,120 @@
 
 #include <functional>
 
-namespace PhysIKA
+namespace PhysIKA {
+class ParticleSandRigidInteraction : public Node
 {
-    class ParticleSandRigidInteraction:public Node
+public:
+    typedef std::function<void(ParticleSandRigidInteraction*, Real)> CallbackFun;
+
+public:
+    ParticleSandRigidInteraction();
+    ~ParticleSandRigidInteraction() {}
+
+    virtual bool initialize() override;
+
+    virtual void advance(Real dt) override;
+    //void advect(Real dt);
+
+    //void addSandChild()
+
+    void setLandHeight(DeviceHeightField1d* landHeight)
     {
-    public:
-        typedef std::function<void(ParticleSandRigidInteraction*, Real)> CallbackFun;
+        m_landHeight = landHeight;
+    }
+    DeviceHeightField1d& getLandHeight()
+    {
+        return *m_landHeight;
+    }
 
-    public:
-        ParticleSandRigidInteraction();
-        ~ParticleSandRigidInteraction() {}
+    void advectSubStep(Real dt);
 
+    std::shared_ptr<PBDSandSolver> getSandSolver() const
+    {
+        return m_sandSolver;
+    }
+    void setSandSolver(std::shared_ptr<PBDSandSolver> sandSolver)
+    {
+        m_sandSolver = sandSolver;
+    }
 
+    std::shared_ptr<PBDSolver> getRigidSolver() const
+    {
+        return m_rigidSolver;
+    }
+    void setRigidSolver(std::shared_ptr<PBDSolver> rigidSolver)
+    {
+        m_rigidSolver = rigidSolver;
+    }
 
+    std::shared_ptr<SandInteractionForceSolver> getInteractionSolver() const
+    {
+        return m_interactSolver;
+    }
 
-        virtual bool initialize()override;
+    std::shared_ptr<PBDDensitySolver2D> getDensitySolver() const
+    {
+        return m_densitySolver;
+    }
 
-        virtual void advance(Real dt)override;
-        //void advect(Real dt);
+    void detectLandRigidContacts(PBDSolver*, Real);
 
-        //void addSandChild()
+    void setCallbackFunction(CallbackFun fun)
+    {
+        m_callback = fun;
+    }
 
-        void setLandHeight(DeviceHeightField1d* landHeight) { m_landHeight = landHeight; }
-        DeviceHeightField1d& getLandHeight() { return *m_landHeight; }
+private:
+    void _setRigidForceAsGravity();
+    void _setRigidForceEmpty();
 
-        void advectSubStep(Real dt);
+    //void _updateLandHeightField();
 
+public:
+    DEF_EMPTY_VAR(InteractionStepPerFrame, int, "Interaction steps per frame.");
 
-        std::shared_ptr<PBDSandSolver> getSandSolver()const { return m_sandSolver; }
-        void setSandSolver(std::shared_ptr<PBDSandSolver> sandSolver) { m_sandSolver = sandSolver; }
+    DEF_EMPTY_VAR(RigidStepPerInteraction, int, "Rigid body simulation step per interaction.");
 
-        std::shared_ptr< PBDSolver> getRigidSolver()const { return m_rigidSolver; }
-        void setRigidSolver(std::shared_ptr< PBDSolver> rigidSolver) { m_rigidSolver = rigidSolver; }
+    DEF_EMPTY_VAR(Contacts, DeviceDArray<ContactInfo<double>>, "Contact information");
 
-        std::shared_ptr<SandInteractionForceSolver> getInteractionSolver()const { return m_interactSolver; }
+    DEF_EMPTY_VAR(DetectThreshold, double, "Land Rigid Contact Detection threshold");
 
-        std::shared_ptr< PBDDensitySolver2D> getDensitySolver()const { return m_densitySolver; }
+    DEF_EMPTY_VAR(BouyancyFactor, double, "Buoyancy Force Parameter");
 
+    DEF_EMPTY_VAR(DragFactor, double, "Drag Force Paremeter");
 
-        void detectLandRigidContacts(PBDSolver*, Real);
+    DEF_EMPTY_VAR(CHorizontal, double, "Horizontal Velocity Coupling Paremeter");
 
-        void setCallbackFunction(CallbackFun fun) { m_callback = fun; }
+    DEF_EMPTY_VAR(CVertical, double, "Horizontal Velocity Coupling Paremeter");
 
-    private:
+    DEF_EMPTY_VAR(Cprobability, double, "Particle couple probability factor");
 
-        void _setRigidForceAsGravity();
-        void _setRigidForceEmpty();
+private:
+    std::shared_ptr<PBDSandSolver> m_sandSolver;
 
-        //void _updateLandHeightField();
+    std::shared_ptr<PBDSolver> m_rigidSolver;
 
-    public:
-        DEF_EMPTY_VAR(InteractionStepPerFrame, int, "Interaction steps per frame.");
-        
-        DEF_EMPTY_VAR(RigidStepPerInteraction, int, "Rigid body simulation step per interaction.");
+    std::shared_ptr<SandInteractionForceSolver> m_interactSolver;
 
-        DEF_EMPTY_VAR(Contacts, DeviceDArray<ContactInfo<double>>, "Contact information");
+    std::shared_ptr<PBDDensitySolver2D> m_densitySolver;
 
-        DEF_EMPTY_VAR(DetectThreshold, double, "Land Rigid Contact Detection threshold");
+    std::shared_ptr<HeightFieldBodyDetector> m_landRigidContactDetector;
 
-        DEF_EMPTY_VAR(BouyancyFactor, double, "Buoyancy Force Parameter");
+    //DeviceDArray<ContactInfo<double>> m_contacts;
+    DeviceArray<PBDBodyInfo<double>> m_rigidBody;
+    DeviceArray<PBDBodyInfo<double>> m_particleBody;
+    //DeviceDArray<PBDJoint<double>> m_contactJoints;
 
-        DEF_EMPTY_VAR(DragFactor, double, "Drag Force Paremeter");
+    DeviceHeightField1d* m_landHeight;
 
-        DEF_EMPTY_VAR(CHorizontal, double, "Horizontal Velocity Coupling Paremeter");
+    double m_gravity = 9.8;
 
-        DEF_EMPTY_VAR(CVertical, double, "Horizontal Velocity Coupling Paremeter");
+    CallbackFun m_callback;
 
-        DEF_EMPTY_VAR(Cprobability, double, "Particle couple probability factor");
+private:
+    double m_totalTime  = 0.0;
+    int    m_totalFrame = 0.0;
+};
+}  // namespace PhysIKA
 
-
-    private:
-        std::shared_ptr<PBDSandSolver> m_sandSolver;
-
-        std::shared_ptr<PBDSolver> m_rigidSolver;
-
-        std::shared_ptr<SandInteractionForceSolver> m_interactSolver;
-
-        std::shared_ptr< PBDDensitySolver2D> m_densitySolver;
-
-        std::shared_ptr<HeightFieldBodyDetector> m_landRigidContactDetector;
-
-        //DeviceDArray<ContactInfo<double>> m_contacts;
-        DeviceArray<PBDBodyInfo<double>> m_rigidBody;
-        DeviceArray<PBDBodyInfo<double>> m_particleBody;
-        //DeviceDArray<PBDJoint<double>> m_contactJoints;
-
-        DeviceHeightField1d* m_landHeight;
-
-
-
-
-
-        double m_gravity = 9.8;
-
-
-        CallbackFun m_callback;
-
-        
-    private:
-        double m_totalTime = 0.0;
-        int m_totalFrame = 0.0;
-    };
-}
-
-#endif // PARTICLESANDRIGIDINTERACTION_H
+#endif  // PARTICLESANDRIGIDINTERACTION_H

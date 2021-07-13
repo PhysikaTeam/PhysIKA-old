@@ -3,51 +3,58 @@
 #include "Framework/Framework/CollidableObject.h"
 #include "Framework/Framework/FieldArray.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+class TopologyMapping;
+
+template <typename TDataType>
+class CollidablePoints : public CollidableObject
 {
-    class TopologyMapping;
+    DECLARE_CLASS_1(CollidablePoints, TDataType)
+public:
+    typedef typename TDataType::Real   Real;
+    typedef typename TDataType::Coord  Coord;
+    typedef typename TDataType::Rigid  Rigid;
+    typedef typename TDataType::Matrix Matrix;
 
-    template<typename TDataType>
-    class CollidablePoints : public CollidableObject
+    CollidablePoints();
+    virtual ~CollidablePoints();
+
+    void setRadius(Real radius)
     {
-        DECLARE_CLASS_1(CollidablePoints, TDataType)
-    public:
-        typedef typename TDataType::Real Real;
-        typedef typename TDataType::Coord Coord;
-        typedef typename TDataType::Rigid Rigid;
-        typedef typename TDataType::Matrix Matrix;
+        m_radius = radius;
+    }
+    void setRadii(DeviceArray<Coord>& radii);
 
-        CollidablePoints();
-        virtual ~CollidablePoints();
+    void setPositions(DeviceArray<Coord>& centers);
+    void setVelocities(DeviceArray<Coord>& vel);
 
-        void setRadius(Real radius) { m_radius = radius; }
-        void setRadii(DeviceArray<Coord>& radii);
+    DeviceArray<Coord>& getPositions()
+    {
+        return m_positions;
+    }
+    DeviceArray<Coord>& getVelocities()
+    {
+        return m_velocities;
+    }
 
-        void setPositions(DeviceArray<Coord>& centers);
-        void setVelocities(DeviceArray<Coord>& vel);
+    bool initializeImpl() override;
 
-        DeviceArray<Coord>& getPositions() { return m_positions; }
-        DeviceArray<Coord>& getVelocities() { return m_velocities; }
+    void updateCollidableObject() override;
+    void updateMechanicalState() override;
 
-        bool initializeImpl() override;
+private:
+    std::shared_ptr<TopologyMapping> m_mapping;
 
-        void updateCollidableObject() override;
-        void updateMechanicalState() override;
+    bool m_bUniformRaidus;
+    Real m_radius;
 
-    private:
-        std::shared_ptr<TopologyMapping> m_mapping;
-
-        bool m_bUniformRaidus;
-        Real m_radius;
-        
-        DeviceArray<Coord> m_positions;
-        DeviceArray<Coord> m_velocities;
-    };
-
+    DeviceArray<Coord> m_positions;
+    DeviceArray<Coord> m_velocities;
+};
 
 #ifdef PRECISION_FLOAT
-    template class CollidablePoints<DataType3f>;
+template class CollidablePoints<DataType3f>;
 #else
-    template class CollidablePoints<DataType3d>;
+template class CollidablePoints<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

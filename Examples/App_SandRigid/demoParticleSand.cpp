@@ -23,22 +23,22 @@
 #include <random>
 #include <iostream>
 
-DemoParticleSand *DemoParticleSand::m_instance = 0;
-void DemoParticleSand::createScene()
+DemoParticleSand* DemoParticleSand::m_instance = 0;
+void              DemoParticleSand::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64 * 2;
-    sandinfo.ny = 64 * 2;
+    sandinfo.nx     = 64 * 2;
+    sandinfo.ny     = 64 * 2;
     sandinfo.griddl = 0.05;
     //sandinfo.mu = tan(40 / 180.0*3.14159);
     sandinfo.mu = tan(20 / 180.0 * 3.14159);
 
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 2650.0;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 2650.0;
     double sandParticleHeight = 0.1;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -49,7 +49,7 @@ void DemoParticleSand::createScene()
     auto interactionSolver = root->getInteractionSolver();
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     psandSolver->setFlowingLayerHeight(10.3);
@@ -63,7 +63,9 @@ void DemoParticleSand::createScene()
                                                        &(psandSolver->getParticlePosition()),
                                                        &(psandSolver->getParticleRho2D()),
                                                        std::string("D:\\Projects\\physiKA\\PostProcess\\sandheight.txt"),
-                                                       0, sandinfo.griddl * 5, sandinfo.sandRho);
+                                                       0,
+                                                       sandinfo.griddl * 5,
+                                                       sandinfo.sandRho);
 
     // land
     HostHeightField1d landHeight;
@@ -81,7 +83,7 @@ void DemoParticleSand::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -92,7 +94,7 @@ void DemoParticleSand::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {0, sandinfo.nx, 0, sandinfo.ny};
+    std::vector<int> humpBlock = { 0, sandinfo.nx, 0, sandinfo.ny };
     //std::vector<int> humpBlock = { sandinfo.nx /2-8, sandinfo.nx / 2 +8, sandinfo.ny / 2 -8, sandinfo.ny / 2 +8 };
 
     HostHeightField1d sandHeight;
@@ -103,16 +105,16 @@ void DemoParticleSand::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     //// Sand plane.
     //for (int i = 0; i < sandinfo.nx; ++i)
@@ -140,7 +142,7 @@ void DemoParticleSand::createScene()
     //}
 
     // Sand hump.
-    double spacing2 = spacing / 2.0;
+    double spacing2    = spacing / 2.0;
     double pile_radius = 0.3;
 
     for (int i = 0; i < sandinfo.nx; ++i)
@@ -150,8 +152,7 @@ void DemoParticleSand::createScene()
             //double lx = (i - sandinfo.nx / 2) * sandinfo.griddl;
             //double ly = ()
 
-            if (i >= humpBlock[0] && i < humpBlock[1] &&
-                j >= humpBlock[2] && j < humpBlock[3])
+            if (i >= humpBlock[0] && i < humpBlock[1] && j >= humpBlock[2] && j < humpBlock[3])
             {
                 Vector3d centerij = landHeight.gridCenterPosition(i, j);
                 for (int ii = 0; ii < 4; ++ii)
@@ -200,10 +201,7 @@ void DemoParticleSand::createScene()
 
     std::cout << "PARTICLE NUM: " << particlePos.size() << std::endl;
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 2.0,
-                              sandinfo.mu, sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 2.0, sandinfo.mu, sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
 
@@ -280,27 +278,27 @@ void DemoParticleSand::createScene()
     this->disableDisplayFrame();
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(-0, 1.2, 3);
     camera_.lookAt(camPos, Vector3f(-0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleSandRigid_Sphere *DemoParticleSandRigid_Sphere::m_instance = 0;
-void DemoParticleSandRigid_Sphere::createScene()
+DemoParticleSandRigid_Sphere* DemoParticleSandRigid_Sphere::m_instance = 0;
+void                          DemoParticleSandRigid_Sphere::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64;
-    sandinfo.ny = 64;
-    sandinfo.griddl = 0.04;
-    sandinfo.mu = 1.0;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64;
+    sandinfo.ny               = 64;
+    sandinfo.griddl           = 0.04;
+    sandinfo.mu               = 1.0;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.05;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -318,7 +316,7 @@ void DemoParticleSandRigid_Sphere::createScene()
     root->varCprobability()->setValue(1000);
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     sandSim->needForward(false);
@@ -326,8 +324,7 @@ void DemoParticleSandRigid_Sphere::createScene()
     root->setSandSolver(psandSolver);
     root->addChild(sandSim);
 
-    auto sandinitfun = [](PBDSandSolver *solver)
-    { solver->freeFlow(100); };
+    auto sandinitfun = [](PBDSandSolver* solver) { solver->freeFlow(100); };
     psandSolver->setPostInitializeFun(std::bind(sandinitfun, std::placeholders::_1));
     //psandSolver->m_CFL = 1000;
 
@@ -359,7 +356,7 @@ void DemoParticleSandRigid_Sphere::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -371,7 +368,7 @@ void DemoParticleSandRigid_Sphere::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {31 - 10, 31 + 9, 31 - 8, 31 + 8};
+    std::vector<int>  humpBlock = { 31 - 10, 31 + 9, 31 - 8, 31 + 8 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -380,19 +377,19 @@ void DemoParticleSandRigid_Sphere::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     // Sand plane.
-    double spacing2 = spacing; // / 2.0;
+    double spacing2 = spacing;  // / 2.0;
 
     for (int i = 0; i < sandinfo.nx; ++i)
     {
@@ -443,10 +440,7 @@ void DemoParticleSandRigid_Sphere::createScene()
 
     std::vector<Vector3d> particleVel(particlePos.size());
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 1.0,
-                              0.85, sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 1.0, 0.85, sandParticleHeight * 0.5);
 
     printf("TOTAL PARTICLE NUMBER:  %d\n", particlePos.size());
 
@@ -481,21 +475,21 @@ void DemoParticleSandRigid_Sphere::createScene()
     root->addChild(rigidSim);
 
     {
-        double scale1d = 0.2;
+        double   scale1d = 0.2;
         Vector3f scale(scale1d, scale1d, scale1d);
-        double rhorigid = 5000;
-        float radius = 1.0;
+        double   rhorigid = 5000;
+        float    radius   = 1.0;
         radius *= scale1d;
-        float rigid_mass = rhorigid * 4.0 / 3.0 * std::_Pi * radius * radius * radius;
-        Vector3f rigidI = RigidUtil::calculateSphereLocalInertia(
+        float    rigid_mass = rhorigid * 4.0 / 3.0 * std::_Pi * radius * radius * radius;
+        Vector3f rigidI     = RigidUtil::calculateSphereLocalInertia(
             rigid_mass, radius);
 
         /// rigids body
         auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
-        int id = rigidSim->addRigid(prigid);
+        int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -524,20 +518,20 @@ void DemoParticleSandRigid_Sphere::createScene()
 
     {
 
-        double scale1d = 0.15;
+        double   scale1d = 0.15;
         Vector3f scale(scale1d, scale1d, scale1d);
-        double rhorigid = 5000;
-        float radius = 1.0;
+        double   rhorigid = 5000;
+        float    radius   = 1.0;
         radius *= scale1d * 2;
-        float rigid_mass = rhorigid * scale1d * scale1d * scale1d * 8;
-        Vector3f rigidI = RigidUtil::calculateCubeLocalInertia(rigid_mass, scale * 2.0);
+        float    rigid_mass = rhorigid * scale1d * scale1d * scale1d * 8;
+        Vector3f rigidI     = RigidUtil::calculateCubeLocalInertia(rigid_mass, scale * 2.0);
 
         /// rigids body
         auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
-        int id = rigidSim->addRigid(prigid);
+        int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -563,34 +557,33 @@ void DemoParticleSandRigid_Sphere::createScene()
     }
 
     // Add boundary rigid.
-    PkAddBoundaryRigid(root, Vector3f(), sandinfo.nx * sandinfo.griddl, sandinfo.ny * sandinfo.griddl,
-                       0.05, 0.1);
+    PkAddBoundaryRigid(root, Vector3f(), sandinfo.nx * sandinfo.griddl, sandinfo.ny * sandinfo.griddl, 0.05, 0.1);
 
     this->disableDisplayFrameRate();
     this->disableDisplayFrame();
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 3, 2.5);
     camera_.lookAt(camPos, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleSandSlop *DemoParticleSandSlop::m_instance = 0;
-void DemoParticleSandSlop::createScene()
+DemoParticleSandSlop* DemoParticleSandSlop::m_instance = 0;
+void                  DemoParticleSandSlop::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64;
-    sandinfo.ny = 64;
-    sandinfo.griddl = 0.05;
-    sandinfo.mu = 0.7;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64;
+    sandinfo.ny               = 64;
+    sandinfo.griddl           = 0.05;
+    sandinfo.mu               = 0.7;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.1;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -608,7 +601,7 @@ void DemoParticleSandSlop::createScene()
     root->varCVertical()->setValue(0.1);
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     sandSim->needForward(false);
@@ -621,7 +614,7 @@ void DemoParticleSandSlop::createScene()
     landHeight.resize(sandinfo.nx, sandinfo.ny);
     landHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
 
-    float lhLand = 0.8; // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
+    float lhLand = 0.8;  // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
     float dhLand = lhLand / sandinfo.nx * 2;
     for (int i = 0; i < sandinfo.nx; ++i)
     {
@@ -646,7 +639,7 @@ void DemoParticleSandSlop::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -657,7 +650,7 @@ void DemoParticleSandSlop::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {40 - 10 / 2, 40 + 10, 31 - 8, 31 + 8};
+    std::vector<int>  humpBlock = { 40 - 10 / 2, 40 + 10, 31 - 8, 31 + 8 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -666,19 +659,19 @@ void DemoParticleSandSlop::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     // Sand plane.
-    double spacing2 = spacing; // / 2.0;
+    double spacing2 = spacing;  // / 2.0;
 
     for (int i = 0; i < sandinfo.nx; ++i)
     {
@@ -730,10 +723,7 @@ void DemoParticleSandSlop::createScene()
 
     std::vector<Vector3d> particleVel(particlePos.size());
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 1.0,
-                              0.85, sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 1.0, 0.85, sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
 
@@ -763,13 +753,13 @@ void DemoParticleSandSlop::createScene()
     root->setRigidSolver(rigidSolver);
     root->addChild(rigidSim);
 
-    double scale1d = 0.2;
+    double   scale1d = 0.2;
     Vector3f scale(scale1d, scale1d, scale1d);
-    double rhorigid = 2000;
-    float radius = 1.0;
+    double   rhorigid = 2000;
+    float    radius   = 1.0;
     radius *= scale1d;
-    float rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
-    Vector3f rigidI = RigidUtil::calculateSphereLocalInertia(
+    float    rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
+    Vector3f rigidI     = RigidUtil::calculateSphereLocalInertia(
         rigid_mass, radius);
 
     int N = 1;
@@ -778,10 +768,10 @@ void DemoParticleSandSlop::createScene()
 
         /// rigids body
         auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
-        int id = rigidSim->addRigid(prigid);
+        int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -808,27 +798,27 @@ void DemoParticleSandSlop::createScene()
     }
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);
     camera_.lookAt(camPos, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleSandPile *DemoParticleSandPile::m_instance = 0;
-void DemoParticleSandPile::createScene()
+DemoParticleSandPile* DemoParticleSandPile::m_instance = 0;
+void                  DemoParticleSandPile::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64;
-    sandinfo.ny = 64;
-    sandinfo.griddl = 0.05;
-    sandinfo.mu = 0.7;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64;
+    sandinfo.ny               = 64;
+    sandinfo.griddl           = 0.05;
+    sandinfo.mu               = 0.7;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.1;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -839,7 +829,7 @@ void DemoParticleSandPile::createScene()
     auto interactionSolver = root->getInteractionSolver();
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     sandSim->needForward(false);
@@ -852,13 +842,13 @@ void DemoParticleSandPile::createScene()
     landHeight.resize(sandinfo.nx, sandinfo.ny);
     landHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
 
-    float lhLand = 1.0; // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
+    float lhLand = 1.0;  // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
     float dhLand = lhLand / sandinfo.nx * 2;
     for (int i = 0; i < sandinfo.nx; ++i)
     {
         for (int j = 0; j < sandinfo.ny; ++j)
         {
-            landHeight[i * sandinfo.ny + j] = 0; // lhLand - dhLand * j;
+            landHeight[i * sandinfo.ny + j] = 0;  // lhLand - dhLand * j;
             if (landHeight[i * sandinfo.ny + j] < 0)
                 landHeight[i * sandinfo.ny + j] = 0.0f;
         }
@@ -876,7 +866,7 @@ void DemoParticleSandPile::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -887,7 +877,7 @@ void DemoParticleSandPile::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {20 - 10 / 2, 20 + 10, 31 - 8 / 2, 31 + 8};
+    std::vector<int>  humpBlock = { 20 - 10 / 2, 20 + 10, 31 - 8 / 2, 31 + 8 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -896,16 +886,16 @@ void DemoParticleSandPile::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     //// Sand hump.
     //double spacing2 = spacing / 2.0;
@@ -959,17 +949,15 @@ void DemoParticleSandPile::createScene()
 
     std::vector<Vector3d> particleVel(particlePos.size());
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 2.0,
-                              1., sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 2.0, 1., sandParticleHeight * 0.5);
 
-    Vector3d corner; // = psandSolver->getLand().gridCenterPosition(0, 0);
+    Vector3d corner;  // = psandSolver->getLand().gridCenterPosition(0, 0);
     m_particleGenerator = std::make_shared<ParticleGenerationCallback>();
-    m_particleGenerator->init(corner[0] - 0.0001, corner[0] + 0.0001, corner[2] - 0.0001, corner[2] + 0.0001,
-                              m0, 100.0f, 500);
+    m_particleGenerator->init(corner[0] - 0.0001, corner[0] + 0.0001, corner[2] - 0.0001, corner[2] + 0.0001, m0, 100.0f, 500);
     root->setCallbackFunction(std::bind(&ParticleGenerationCallback::handle,
-                                        m_particleGenerator, std::placeholders::_1, std::placeholders::_2));
+                                        m_particleGenerator,
+                                        std::placeholders::_1,
+                                        std::placeholders::_2));
 
     // Rendering module of simulator.
     auto pRenderModule = std::make_shared<PointRenderModule>();
@@ -989,27 +977,27 @@ void DemoParticleSandPile::createScene()
     sandSim->addCustomModule(psampler);
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);
     camera_.lookAt(camPos, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleSandLand2 *DemoParticleSandLand2::m_instance = 0;
-void DemoParticleSandLand2::createScene()
+DemoParticleSandLand2* DemoParticleSandLand2::m_instance = 0;
+void                   DemoParticleSandLand2::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64;
-    sandinfo.ny = 64;
-    sandinfo.griddl = 0.05;
-    sandinfo.mu = 0.7;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64;
+    sandinfo.ny               = 64;
+    sandinfo.griddl           = 0.05;
+    sandinfo.mu               = 0.7;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.1;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -1020,7 +1008,7 @@ void DemoParticleSandLand2::createScene()
     auto interactionSolver = root->getInteractionSolver();
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     sandSim->needForward(false);
@@ -1049,7 +1037,7 @@ void DemoParticleSandLand2::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -1060,7 +1048,7 @@ void DemoParticleSandLand2::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {20 - 10 / 2, 20 + 10, 31 - 8 / 2, 31 + 8};
+    std::vector<int>  humpBlock = { 20 - 10 / 2, 20 + 10, 31 - 8 / 2, 31 + 8 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -1069,16 +1057,16 @@ void DemoParticleSandLand2::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     //// Sand plane.
     //for (int i = 0; i < sandinfo.nx; ++i)
@@ -1112,8 +1100,7 @@ void DemoParticleSandLand2::createScene()
     {
         for (int j = 0; j < sandinfo.ny; ++j)
         {
-            if (i >= humpBlock[0] && i < humpBlock[1] &&
-                j >= humpBlock[2] && j < humpBlock[3])
+            if (i >= humpBlock[0] && i < humpBlock[1] && j >= humpBlock[2] && j < humpBlock[3])
             {
                 Vector3d centerij = landHeight.gridCenterPosition(i, j);
                 for (int ii = 0; ii < 4; ++ii)
@@ -1157,10 +1144,7 @@ void DemoParticleSandLand2::createScene()
 
     std::vector<Vector3d> particleVel(particlePos.size());
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 2.0,
-                              1., sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 2.0, 1., sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
 
@@ -1182,27 +1166,27 @@ void DemoParticleSandLand2::createScene()
     sandSim->addCustomModule(psampler);
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);
     camera_.lookAt(camPos, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleSandSlide *DemoParticleSandSlide::m_instance = 0;
-void DemoParticleSandSlide::createScene()
+DemoParticleSandSlide* DemoParticleSandSlide::m_instance = 0;
+void                   DemoParticleSandSlide::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64;
-    sandinfo.ny = 64;
-    sandinfo.griddl = 0.05;
-    sandinfo.mu = 1.0;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64;
+    sandinfo.ny               = 64;
+    sandinfo.griddl           = 0.05;
+    sandinfo.mu               = 1.0;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.05;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -1215,7 +1199,7 @@ void DemoParticleSandSlide::createScene()
     root->varRigidStepPerInteraction()->setValue(5);
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     sandSim->needForward(false);
@@ -1228,7 +1212,7 @@ void DemoParticleSandSlide::createScene()
     landHeight.resize(sandinfo.nx, sandinfo.ny);
     landHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
 
-    float lhLand = 0.8; // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
+    float lhLand = 0.8;  // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
     float dhLand = lhLand / sandinfo.nx * 2;
     for (int i = 0; i < sandinfo.nx; ++i)
     {
@@ -1253,7 +1237,7 @@ void DemoParticleSandSlide::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -1264,7 +1248,7 @@ void DemoParticleSandSlide::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {16 - 10 / 2, 16 + 10 / 2, 31 - 8, 31 + 8};
+    std::vector<int>  humpBlock = { 16 - 10 / 2, 16 + 10 / 2, 31 - 8, 31 + 8 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -1273,16 +1257,16 @@ void DemoParticleSandSlide::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     // Sand plane.
     double spacing2 = spacing / 2.0;
@@ -1291,8 +1275,7 @@ void DemoParticleSandSlide::createScene()
     {
         for (int j = 0; j < sandinfo.ny; ++j)
         {
-            if (i >= humpBlock[0] && i < humpBlock[1] &&
-                j >= humpBlock[2] && j < humpBlock[3])
+            if (i >= humpBlock[0] && i < humpBlock[1] && j >= humpBlock[2] && j < humpBlock[3])
             //if (i >= sandinfo.nx / 2 - 5)
             {
                 Vector3d centerij = landHeight.gridCenterPosition(i, j);
@@ -1337,10 +1320,7 @@ void DemoParticleSandSlide::createScene()
 
     std::vector<Vector3d> particleVel(particlePos.size());
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 1.0,
-                              sandinfo.mu, sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 1.0, sandinfo.mu, sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
 
@@ -1370,27 +1350,27 @@ void DemoParticleSandSlide::createScene()
     root->setRigidSolver(rigidSolver);
     root->addChild(rigidSim);
 
-    double scale1d = 0.15;
+    double   scale1d = 0.15;
     Vector3f scale(scale1d, scale1d, scale1d);
-    double rhorigid = 2000;
-    float radius = 1.0;
+    double   rhorigid = 2000;
+    float    radius   = 1.0;
     radius *= scale1d;
-    float rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
-    Vector3f rigidI = RigidUtil::calculateSphereLocalInertia(
+    float    rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
+    Vector3f rigidI     = RigidUtil::calculateSphereLocalInertia(
         rigid_mass, radius);
 
-    double rotRad = atan(dhLand / sandinfo.griddl);
+    double      rotRad = atan(dhLand / sandinfo.griddl);
     Quaternionf cubeRot(Vector3f(0, 0, -1), rotRad);
-    int N = 1;
+    int         N = 1;
     for (int i = 0; i < N; ++i)
     {
 
         /// rigids body
         auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
-        int id = rigidSim->addRigid(prigid);
+        int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -1417,27 +1397,27 @@ void DemoParticleSandSlide::createScene()
     }
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);
     camera_.lookAt(camPos, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleSandMultiRigid *DemoParticleSandMultiRigid::m_instance = 0;
-void DemoParticleSandMultiRigid::createScene()
+DemoParticleSandMultiRigid* DemoParticleSandMultiRigid::m_instance = 0;
+void                        DemoParticleSandMultiRigid::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64 * 4;
-    sandinfo.ny = 64 * 4;
-    sandinfo.griddl = 0.03;
-    sandinfo.mu = 0.7;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64 * 4;
+    sandinfo.ny               = 64 * 4;
+    sandinfo.griddl           = 0.03;
+    sandinfo.mu               = 0.7;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.05;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -1454,7 +1434,7 @@ void DemoParticleSandMultiRigid::createScene()
     root->varCprobability()->setValue(100);
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     sandSim->needForward(false);
@@ -1462,8 +1442,7 @@ void DemoParticleSandMultiRigid::createScene()
     root->setSandSolver(psandSolver);
     root->addChild(sandSim);
 
-    auto sandinitfun = [](PBDSandSolver *solver)
-    { solver->freeFlow(1); };
+    auto sandinitfun = [](PBDSandSolver* solver) { solver->freeFlow(1); };
     psandSolver->setPostInitializeFun(std::bind(sandinitfun, std::placeholders::_1));
 
     // land
@@ -1472,7 +1451,7 @@ void DemoParticleSandMultiRigid::createScene()
     landHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
 
     HeightFieldLoader hfloader;
-    double maxh = 1;
+    double            maxh = 1;
     hfloader.setRange(0, maxh);
     hfloader.load(landHeight, "../../Media/HeightFieldImg/terrain_lying2.png");
 
@@ -1508,7 +1487,7 @@ void DemoParticleSandMultiRigid::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -1519,7 +1498,7 @@ void DemoParticleSandMultiRigid::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {31 - 10, 31 + 9, 31 - 8, 31 + 8};
+    std::vector<int>  humpBlock = { 31 - 10, 31 + 9, 31 - 8, 31 + 8 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -1528,19 +1507,19 @@ void DemoParticleSandMultiRigid::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     // Sand plane.
-    double spacing2 = spacing; // / 2.0;
+    double spacing2 = spacing;  // / 2.0;
 
     for (int i = 0; i < sandinfo.nx; ++i)
     {
@@ -1592,10 +1571,7 @@ void DemoParticleSandMultiRigid::createScene()
 
     std::vector<Vector3d> particleVel(particlePos.size());
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 1.0,
-                              0.85, sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 1.0, 0.85, sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
     std::cout << "Particle number:   " << particlePos.size() << std::endl;
@@ -1627,7 +1603,7 @@ void DemoParticleSandMultiRigid::createScene()
     root->addChild(rigidSim);
 
     // Car.
-    double scale1d = 1.;
+    double   scale1d = 1.;
     Vector3d scale3d(scale1d, scale1d, scale1d);
     Vector3f scale3f(scale1d, scale1d, scale1d);
 
@@ -1679,7 +1655,7 @@ void DemoParticleSandMultiRigid::createScene()
             wheelTri[i]->translate(-wheelCenter[i]);
 
             // Wheel sdf.
-            DistanceField3D<DataType3f> &sdf = wheelSDF[i];
+            DistanceField3D<DataType3f>& sdf = wheelSDF[i];
             sdf.loadSDF(sdffile);
             sdf.scale(scale1d);
             sdf.translate(-wheelCenter[i]);
@@ -1691,7 +1667,7 @@ void DemoParticleSandMultiRigid::createScene()
     rigidSim->addChild(m_car);
     m_car->m_rigidSolver = rigidSolver;
 
-    m_car->suspensionLength = 0.02;
+    m_car->suspensionLength   = 0.02;
     m_car->suspensionStrength = 1000000;
 
     //m_car->carPosition = Vector3f(0.3, 0.5, 0.5) + chassisCenter;
@@ -1706,28 +1682,30 @@ void DemoParticleSandMultiRigid::createScene()
     m_car->wheelRelPosition[1] = Vector3f(+0.3f /*+0.01*/, -0.2, -0.4f /* +0.02*/) * scale1d + wheelCenter[1] - chassisCenter;
     m_car->wheelRelPosition[2] = Vector3f(-0.3f, -0.2, 0.4f) * scale1d + wheelCenter[2] - chassisCenter;
     m_car->wheelRelPosition[3] = Vector3f(+0.3f, -0.2, 0.4f) * scale1d + wheelCenter[3] - chassisCenter;
-    m_car->wheelRelRotation[0] = Quaternion<float>(0, 0, 0, 1); // (0, 0.5, 0, 0.5).normalize();
-    m_car->wheelRelRotation[1] = Quaternion<float>(0, 0, 0, 1); //(0, 0.5, 0, 0.5).normalize();
-    m_car->wheelRelRotation[2] = Quaternion<float>(0, 0, 0, 1); //(0, 0.5, 0, 0.5).normalize();
-    m_car->wheelRelRotation[3] = Quaternion<float>(0, 0, 0, 1); //(0, 0.5, 0, 0.5).normalize();
+    m_car->wheelRelRotation[0] = Quaternion<float>(0, 0, 0, 1);  // (0, 0.5, 0, 0.5).normalize();
+    m_car->wheelRelRotation[1] = Quaternion<float>(0, 0, 0, 1);  //(0, 0.5, 0, 0.5).normalize();
+    m_car->wheelRelRotation[2] = Quaternion<float>(0, 0, 0, 1);  //(0, 0.5, 0, 0.5).normalize();
+    m_car->wheelRelRotation[3] = Quaternion<float>(0, 0, 0, 1);  //(0, 0.5, 0, 0.5).normalize();
 
-    m_car->wheelupDirection = Vector3f(0, 1, 0);
+    m_car->wheelupDirection    = Vector3f(0, 1, 0);
     m_car->wheelRightDirection = Vector3f(1, 0, 0);
 
-    m_car->chassisMass = 1500; // 00;
+    m_car->chassisMass    = 1500;  // 00;
     m_car->chassisInertia = RigidUtil::calculateCubeLocalInertia(m_car->chassisMass, chassisSize);
 
     float wheelm = 50;
     //float wheelRad = wheelTri[0][1]
-    Vector3f wheelI = RigidUtil::calculateCylinderLocalInertia(wheelm,
-                                                               (wheelSize[0][1] + wheelSize[0][2]) / 2.0, wheelSize[0][0], 0);
-    m_car->wheelMass[0] = wheelm;
+    Vector3f wheelI        = RigidUtil::calculateCylinderLocalInertia(wheelm,
+                                                               (wheelSize[0][1] + wheelSize[0][2]) / 2.0,
+                                                               wheelSize[0][0],
+                                                               0);
+    m_car->wheelMass[0]    = wheelm;
     m_car->wheelInertia[0] = wheelI;
-    m_car->wheelMass[1] = wheelm;
+    m_car->wheelMass[1]    = wheelm;
     m_car->wheelInertia[1] = wheelI;
-    m_car->wheelMass[2] = wheelm;
+    m_car->wheelMass[2]    = wheelm;
     m_car->wheelInertia[2] = wheelI;
-    m_car->wheelMass[3] = wheelm;
+    m_car->wheelMass[3]    = wheelm;
     m_car->wheelInertia[3] = wheelI;
 
     m_car->steeringLowerBound = -0.5;
@@ -1736,7 +1714,7 @@ void DemoParticleSandMultiRigid::createScene()
     m_car->forwardForceAcc = 1000;
     //m_car->breakForceAcc ;
     m_car->steeringSpeed = 1.0;
-    m_car->maxVel = 2.5;
+    m_car->maxVel        = 2.5;
 
     // Build.
     m_car->build();
@@ -1744,7 +1722,7 @@ void DemoParticleSandMultiRigid::createScene()
     // Add visualization module and topology module.
     m_car->m_chassis->setTopologyModule(chassisTri);
     auto chassisRender = std::make_shared<RigidMeshRender>(m_car->m_chassis->getTransformationFrame());
-    chassisRender->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+    chassisRender->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
     m_car->m_chassis->addVisualModule(chassisRender);
     interactionSolver->addSDF(chassisSDF, m_car->m_chassis->getId());
 
@@ -1759,7 +1737,7 @@ void DemoParticleSandMultiRigid::createScene()
     {
         m_car->m_wheels[i]->setTopologyModule(wheelTri[i]);
         auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_wheels[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         m_car->m_wheels[i]->addVisualModule(renderModule);
         interactionSolver->addSDF(wheelSDF[i], m_car->m_wheels[i]->getId());
 
@@ -1775,27 +1753,27 @@ void DemoParticleSandMultiRigid::createScene()
     this->disableDisplayFrameRate();
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);
     camera_.lookAt(camPos, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleSandLand *DemoParticleSandLand::m_instance = 0;
-void DemoParticleSandLand::createScene()
+DemoParticleSandLand* DemoParticleSandLand::m_instance = 0;
+void                  DemoParticleSandLand::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64;
-    sandinfo.ny = 64;
-    sandinfo.griddl = 0.05;
-    sandinfo.mu = 0.7;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64;
+    sandinfo.ny               = 64;
+    sandinfo.griddl           = 0.05;
+    sandinfo.mu               = 0.7;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.1;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -1806,7 +1784,7 @@ void DemoParticleSandLand::createScene()
     auto interactionSolver = root->getInteractionSolver();
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     sandSim->needForward(false);
@@ -1819,7 +1797,7 @@ void DemoParticleSandLand::createScene()
     landHeight.resize(sandinfo.nx, sandinfo.ny);
     landHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
 
-    float lhLand = 1.0; // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
+    float lhLand = 1.0;  // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
     float dhLand = lhLand / sandinfo.nx * 2;
     for (int i = 0; i < sandinfo.nx; ++i)
     {
@@ -1843,7 +1821,7 @@ void DemoParticleSandLand::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -1854,7 +1832,7 @@ void DemoParticleSandLand::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {20 - 10 / 2, 20 + 10, 31 - 8 / 2, 31 + 8};
+    std::vector<int>  humpBlock = { 20 - 10 / 2, 20 + 10, 31 - 8 / 2, 31 + 8 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -1863,16 +1841,16 @@ void DemoParticleSandLand::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     //// Sand plane.
     //for (int i = 0; i < sandinfo.nx; ++i)
@@ -1906,8 +1884,7 @@ void DemoParticleSandLand::createScene()
     {
         for (int j = 0; j < sandinfo.ny; ++j)
         {
-            if (i >= humpBlock[0] && i < humpBlock[1] &&
-                j >= humpBlock[2] && j < humpBlock[3])
+            if (i >= humpBlock[0] && i < humpBlock[1] && j >= humpBlock[2] && j < humpBlock[3])
             {
                 Vector3d centerij = landHeight.gridCenterPosition(i, j);
                 for (int ii = 0; ii < 4; ++ii)
@@ -1951,10 +1928,7 @@ void DemoParticleSandLand::createScene()
 
     std::vector<Vector3d> particleVel(particlePos.size());
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 2.0,
-                              1., sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 2.0, 1., sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
 
@@ -1976,27 +1950,27 @@ void DemoParticleSandLand::createScene()
     sandSim->addCustomModule(psampler);
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);
     camera_.lookAt(camPos, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleSandSlide2 *DemoParticleSandSlide2::m_instance = 0;
-void DemoParticleSandSlide2::createScene()
+DemoParticleSandSlide2* DemoParticleSandSlide2::m_instance = 0;
+void                    DemoParticleSandSlide2::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64;
-    sandinfo.ny = 64;
-    sandinfo.griddl = 0.05;
-    sandinfo.mu = 1.0;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64;
+    sandinfo.ny               = 64;
+    sandinfo.griddl           = 0.05;
+    sandinfo.mu               = 1.0;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.1;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -2009,7 +1983,7 @@ void DemoParticleSandSlide2::createScene()
     root->varRigidStepPerInteraction()->setValue(5);
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     sandSim->needForward(false);
@@ -2022,7 +1996,7 @@ void DemoParticleSandSlide2::createScene()
     landHeight.resize(sandinfo.nx, sandinfo.ny);
     landHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
 
-    float lhLand = 0.8; // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
+    float lhLand = 0.8;  // sandinfo.nx * sandinfo.griddl / 2.0 + 0.1;
     float dhLand = lhLand / sandinfo.nx * 2;
     for (int i = 0; i < sandinfo.nx; ++i)
     {
@@ -2047,7 +2021,7 @@ void DemoParticleSandSlide2::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -2058,7 +2032,7 @@ void DemoParticleSandSlide2::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {16 - 2, 16 + 2, 31 - 4, 31 + 4};
+    std::vector<int>  humpBlock = { 16 - 2, 16 + 2, 31 - 4, 31 + 4 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -2067,16 +2041,16 @@ void DemoParticleSandSlide2::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.3, 0.3);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     //// Sand plane.
     //double spacing2 = spacing / 2.0;
@@ -2110,11 +2084,11 @@ void DemoParticleSandSlide2::createScene()
     Vector3d cornerMax = psandSolver->getLand().gridCenterPosition(humpBlock[1], humpBlock[3]);
 
     m_particleGenerator = std::make_shared<ParticleGenerationCallback>();
-    m_particleGenerator->init(cornerMin[0] - 0.0001, cornerMax[0] + 0.0001,
-                              cornerMin[2] - 0.0001, cornerMax[2] + 0.0001,
-                              m0, 1000.0f, 500);
+    m_particleGenerator->init(cornerMin[0] - 0.0001, cornerMax[0] + 0.0001, cornerMin[2] - 0.0001, cornerMax[2] + 0.0001, m0, 1000.0f, 500);
     root->setCallbackFunction(std::bind(&ParticleGenerationCallback::handle,
-                                        m_particleGenerator, std::placeholders::_1, std::placeholders::_2));
+                                        m_particleGenerator,
+                                        std::placeholders::_1,
+                                        std::placeholders::_2));
 
     // Boundary particle.
     for (int i = -5; i < sandinfo.nx + 5; ++i)
@@ -2141,10 +2115,7 @@ void DemoParticleSandSlide2::createScene()
 
     std::vector<Vector3d> particleVel(particlePos.size());
 
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 1.0,
-                              sandinfo.mu, sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 1.0, sandinfo.mu, sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
 
@@ -2174,27 +2145,27 @@ void DemoParticleSandSlide2::createScene()
     root->setRigidSolver(rigidSolver);
     root->addChild(rigidSim);
 
-    double scale1d = 0.15;
+    double   scale1d = 0.15;
     Vector3f scale(scale1d, scale1d, scale1d);
-    double rhorigid = 200000;
-    float radius = 1.0;
+    double   rhorigid = 200000;
+    float    radius   = 1.0;
     radius *= scale1d;
-    float rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
-    Vector3f rigidI = RigidUtil::calculateSphereLocalInertia(
+    float    rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
+    Vector3f rigidI     = RigidUtil::calculateSphereLocalInertia(
         rigid_mass, radius);
 
-    double rotRad = atan(dhLand / sandinfo.griddl);
+    double      rotRad = atan(dhLand / sandinfo.griddl);
     Quaternionf cubeRot(Vector3f(0, 0, -1), rotRad);
-    int N = 1;
+    int         N = 1;
     for (int i = 0; i < N; ++i)
     {
 
         /// rigids body
         auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
-        int id = rigidSim->addRigid(prigid);
+        int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -2221,27 +2192,27 @@ void DemoParticleSandSlide2::createScene()
     }
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);
     camera_.lookAt(camPos, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 }
 
-DemoParticleAvalanche *DemoParticleAvalanche::m_instance = 0;
-void DemoParticleAvalanche::createScene()
+DemoParticleAvalanche* DemoParticleAvalanche::m_instance = 0;
+void                   DemoParticleAvalanche::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64 * 10;
-    sandinfo.ny = 64 * 10;
-    sandinfo.griddl = 0.01;
-    sandinfo.mu = 0.4;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64 * 10;
+    sandinfo.ny               = 64 * 10;
+    sandinfo.griddl           = 0.01;
+    sandinfo.mu               = 0.4;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.02;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -2254,7 +2225,7 @@ void DemoParticleAvalanche::createScene()
     root->varRigidStepPerInteraction()->setValue(5);
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     psandSolver->m_CFL = 0.1;
@@ -2284,7 +2255,7 @@ void DemoParticleAvalanche::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -2295,7 +2266,7 @@ void DemoParticleAvalanche::createScene()
     }
 
     // height
-    std::vector<int> humpBlock = {16 - 10 / 2, 16 + 10 / 2, 31 - 8, 31 + 8};
+    std::vector<int>  humpBlock = { 16 - 10 / 2, 16 + 10 / 2, 31 - 8, 31 + 8 };
     HostHeightField1d sandHeight;
     sandHeight.resize(sandinfo.nx, sandinfo.ny);
     sandHeight.setSpace(sandinfo.griddl, sandinfo.griddl);
@@ -2304,25 +2275,25 @@ void DemoParticleAvalanche::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.5, 0.5);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     double hThreshold = 0.4;
-    double hTarget = 0.8;
+    double hTarget    = 0.8;
     for (int i = 0; i < sandinfo.nx; ++i)
     {
         for (int j = 0; j < sandinfo.ny; ++j)
         {
             Vector3d centerij = landHeight.gridCenterPosition(i, j);
-            double curh = landHeight.get(centerij[0], centerij[2]);
+            double   curh     = landHeight.get(centerij[0], centerij[2]);
             if (curh < hThreshold || curh >= hTarget)
                 continue;
             int numPerGrid = (hTarget - curh) / sandParticleHeight;
@@ -2366,10 +2337,7 @@ void DemoParticleAvalanche::createScene()
     std::cout << "Particle number:   " << particlePos.size() << std::endl;
 
     std::vector<Vector3d> particleVel(particlePos.size());
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 1.0,
-                              sandinfo.mu, sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 1.0, sandinfo.mu, sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
 
@@ -2399,27 +2367,27 @@ void DemoParticleAvalanche::createScene()
     root->setRigidSolver(rigidSolver);
     root->addChild(rigidSim);
 
-    double scale1d = 0.015;
+    double   scale1d = 0.015;
     Vector3f scale(scale1d, scale1d, scale1d);
-    double rhorigid = 200000;
-    float radius = 1.0;
+    double   rhorigid = 200000;
+    float    radius   = 1.0;
     radius *= scale1d;
-    float rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
-    Vector3f rigidI = RigidUtil::calculateSphereLocalInertia(
+    float    rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
+    Vector3f rigidI     = RigidUtil::calculateSphereLocalInertia(
         rigid_mass, radius);
 
-    double rotRad = atan(/*dhLand*/ 0 / sandinfo.griddl);
+    double      rotRad = atan(/*dhLand*/ 0 / sandinfo.griddl);
     Quaternionf cubeRot(Vector3f(0, 0, -1), rotRad);
-    int N = 0;
+    int         N = 0;
     for (int i = 0; i < N; ++i)
     {
 
         /// rigids body
         auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
-        int id = rigidSim->addRigid(prigid);
+        int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -2448,7 +2416,7 @@ void DemoParticleAvalanche::createScene()
     this->disableDisplayFrameRate();
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);
@@ -2457,22 +2425,22 @@ void DemoParticleAvalanche::createScene()
     landHeight.Release();
 }
 
-DemoParticleRiver *DemoParticleRiver::m_instance = 0;
-void DemoParticleRiver::createScene()
+DemoParticleRiver* DemoParticleRiver::m_instance = 0;
+void               DemoParticleRiver::createScene()
 {
     SandGridInfo sandinfo;
-    sandinfo.nx = 64 * 5;
-    sandinfo.ny = 64 * 5;
-    sandinfo.griddl = 0.01;
-    sandinfo.mu = 0.4;
-    sandinfo.drag = 0.95;
-    sandinfo.slide = 10 * sandinfo.griddl;
-    sandinfo.sandRho = 1000.0;
+    sandinfo.nx               = 64 * 5;
+    sandinfo.ny               = 64 * 5;
+    sandinfo.griddl           = 0.01;
+    sandinfo.mu               = 0.4;
+    sandinfo.drag             = 0.95;
+    sandinfo.slide            = 10 * sandinfo.griddl;
+    sandinfo.sandRho          = 1000.0;
     double sandParticleHeight = 0.03;
 
     float tanSlope = 0.5;
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(10, 10, 10));
     scene.setLowerBound(Vector3f(-10, -5, -10));
 
@@ -2485,7 +2453,7 @@ void DemoParticleRiver::createScene()
     root->varRigidStepPerInteraction()->setValue(10);
 
     // Sand simulator.
-    std::shared_ptr<SandSimulator> sandSim = std::make_shared<SandSimulator>();
+    std::shared_ptr<SandSimulator> sandSim     = std::make_shared<SandSimulator>();
     std::shared_ptr<PBDSandSolver> psandSolver = std::make_shared<PBDSandSolver>();
     psandSolver->setSandGridInfo(sandinfo);
     psandSolver->m_CFL = 0.1;
@@ -2524,7 +2492,7 @@ void DemoParticleRiver::createScene()
         landrigid->setTopologyModule(triset);
 
         // Generate mesh.
-        auto &hfland = psandSolver->getLand();
+        auto&           hfland = psandSolver->getLand();
         HeightFieldMesh hfmesh;
         hfmesh.generate(triset, hfland);
 
@@ -2534,8 +2502,8 @@ void DemoParticleRiver::createScene()
         landrigid->addVisualModule(renderModule);
     }
 
-    float normalizeC[2] = {0.1, 0.68};
-    float normalizeS[2] = {0.04, 0.03};
+    float            normalizeC[2] = { 0.1, 0.68 };
+    float            normalizeS[2] = { 0.04, 0.03 };
     std::vector<int> humpBlock(4);
 
     humpBlock[0] = sandinfo.nx * (normalizeC[0] - normalizeS[0]);
@@ -2552,19 +2520,19 @@ void DemoParticleRiver::createScene()
     psandSolver->setHeight(sandHeight);
 
     // Sand particles.
-    std::vector<Vector3d> particlePos;
-    std::vector<ParticleType> particleType;
-    std::vector<double> particleMass;
-    std::default_random_engine e(31);
+    std::vector<Vector3d>                 particlePos;
+    std::vector<ParticleType>             particleType;
+    std::vector<double>                   particleMass;
+    std::default_random_engine            e(31);
     std::uniform_real_distribution<float> u(-0.5, 0.5);
 
     // Sand plane.
     double spacing = sandinfo.griddl / 2.0;
-    double m0 = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
-    double mb = m0 * 5;
+    double m0      = sandParticleHeight * sandinfo.sandRho * spacing * spacing;
+    double mb      = m0 * 5;
 
     double hThreshold = 0.4;
-    double hTarget = 0.8;
+    double hTarget    = 0.8;
     //for (int i = 0; i < sandinfo.nx; ++i)
     //{
     //    for (int j = 0; j < sandinfo.ny; ++j)
@@ -2588,7 +2556,7 @@ void DemoParticleRiver::createScene()
     //}
 
     // Sand hump.
-    double spacing2 = spacing / 2.0;
+    double spacing2    = spacing / 2.0;
     double pile_radius = 0.3;
 
     for (int i = 0; i < sandinfo.nx; ++i)
@@ -2598,8 +2566,7 @@ void DemoParticleRiver::createScene()
             //double lx = (i - sandinfo.nx / 2) * sandinfo.griddl;
             //double ly = ()
 
-            if (i >= humpBlock[0] && i < humpBlock[1] &&
-                j >= humpBlock[2] && j < humpBlock[3])
+            if (i >= humpBlock[0] && i < humpBlock[1] && j >= humpBlock[2] && j < humpBlock[3])
             {
                 Vector3d centerij = landHeight.gridCenterPosition(i, j);
                 for (int ii = 0; ii < 4; ++ii)
@@ -2648,10 +2615,7 @@ void DemoParticleRiver::createScene()
     std::cout << "Particle number:   " << particlePos.size() << std::endl;
 
     std::vector<Vector3d> particleVel(particlePos.size());
-    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0],
-                              particlePos.size(),
-                              sandinfo.sandRho, m0, sandinfo.griddl * 1.0,
-                              sandinfo.mu, sandParticleHeight * 0.5);
+    psandSolver->setParticles(&particlePos[0], &particleVel[0], &particleMass[0], &particleType[0], particlePos.size(), sandinfo.sandRho, m0, sandinfo.griddl * 1.0, sandinfo.mu, sandParticleHeight * 0.5);
 
     //sandSim->setHeightFieldSample(false);
 
@@ -2683,27 +2647,27 @@ void DemoParticleRiver::createScene()
     root->setRigidSolver(rigidSolver);
     root->addChild(rigidSim);
 
-    double scale1d = 0.015;
+    double   scale1d = 0.015;
     Vector3f scale(scale1d, scale1d, scale1d);
-    double rhorigid = 200000;
-    float radius = 1.0;
+    double   rhorigid = 200000;
+    float    radius   = 1.0;
     radius *= scale1d;
-    float rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
-    Vector3f rigidI = RigidUtil::calculateSphereLocalInertia(
+    float    rigid_mass = rhorigid * 4.0 * std::_Pi * radius * radius * radius;
+    Vector3f rigidI     = RigidUtil::calculateSphereLocalInertia(
         rigid_mass, radius);
 
-    double rotRad = atan(/*dhLand*/ 0 / sandinfo.griddl);
+    double      rotRad = atan(/*dhLand*/ 0 / sandinfo.griddl);
     Quaternionf cubeRot(Vector3f(0, 0, -1), rotRad);
-    int N = 0;
+    int         N = 0;
     for (int i = 0; i < N; ++i)
     {
 
         /// rigids body
         auto prigid = std::make_shared<RigidBody2<DataType3f>>("rigid");
-        int id = rigidSim->addRigid(prigid);
+        int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -2732,7 +2696,7 @@ void DemoParticleRiver::createScene()
     //this->disableDisplayFrameRate();
 
     // Translate camera position
-    auto &camera_ = this->activeCamera();
+    auto& camera_ = this->activeCamera();
     //camera_.translate(Vector3f(0, 1.5, 3));
     //camera_.setEyePostion(Vector3f(1.5, 1.5, 6));
     Vector3f camPos(0, 1.5, 5);

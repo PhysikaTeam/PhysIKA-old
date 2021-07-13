@@ -25,12 +25,14 @@
 
 #include "API.h"
 
-namespace tt
-{
-    
+namespace tt {
+
 struct TT_API Color
 {
-    bool operator==(const Color& o) const { return o.coefficient == coefficient && o.value == value; }
+    bool operator==(const Color& o) const
+    {
+        return o.coefficient == coefficient && o.value == value;
+    }
     float  coefficient;
     QColor value;
 };
@@ -42,25 +44,25 @@ private:
 public:
     Colors() = default;
     Colors(const Qt::GlobalColor& c)
-        : m_colors(TVectorType({{1.0f, c}})) {}
+        : m_colors(TVectorType({ { 1.0f, c } })) {}
     Colors(const QColor& c)
-        : m_colors(TVectorType({{1.0f, c}})) {}
+        : m_colors(TVectorType({ { 1.0f, c } })) {}
     Colors(const std::initializer_list<Color>& c)
         : m_colors(TVectorType(c)) {}
 
-    operator QColor () const
+    operator QColor() const
     {
         return m_colors.at(0).value;
     }
-    bool operator != (const Colors& c) const
+    bool operator!=(const Colors& c) const
     {
         return m_colors != c.m_colors;
     }
-    Color& operator [] (std::size_t i)
+    Color& operator[](std::size_t i)
     {
         return m_colors[i];
     }
-    const Color& operator [] (std::size_t i) const
+    const Color& operator[](std::size_t i) const
     {
         return m_colors[i];
     }
@@ -89,8 +91,8 @@ private:
     TVectorType m_colors;
 };
 
-#define TT_PROPERTY(type, name)\
-    Q_PROPERTY(type name MEMBER name)\
+#define TT_PROPERTY(type, name)       \
+    Q_PROPERTY(type name MEMBER name) \
     type name
 class TT_API StyleParams : public QObject
 {
@@ -98,34 +100,34 @@ class TT_API StyleParams : public QObject
 public:
     virtual ~StyleParams() = default;
 
-    TT_PROPERTY(tt::Colors,   SeparatorColor);
-    TT_PROPERTY(tt::Colors,   TabSelectedColor);
-    TT_PROPERTY(tt::Colors,   TabUnselectedColor);
-    TT_PROPERTY(tt::Colors,   PaneColor);
-    TT_PROPERTY(tt::Colors,   TabHoverBorderColorSide);
-    TT_PROPERTY(tt::Colors,   TabUnselectedHoverBorderColorSide);
-    TT_PROPERTY(tt::Colors,   TabSpecialBorderColorSide);
-    TT_PROPERTY(tt::Colors,   TabSpecialHoverBorderColorSide);
-    TT_PROPERTY(tt::Colors,   TabSpecialHoverColor);
-    TT_PROPERTY(tt::Colors,   TabSpecialColor);
-    TT_PROPERTY(tt::Colors,   HorizontalFrameBackgroundColor);
-    TT_PROPERTY(tt::Colors,   HorizontalFrameBorderColor);
-    TT_PROPERTY(int,          HorizontalFrameBorderSize);
-    TT_PROPERTY(tt::Colors,   HideArrowColor);
-    TT_PROPERTY(tt::Colors,   TabUnselectedHoverBorderColorTop);
-    TT_PROPERTY(tt::Colors,   TabHoverBorderColorTop);
-    TT_PROPERTY(tt::Colors,   TabSpecialBorderColor);
-    TT_PROPERTY(tt::Colors,   TabSpecialHoverBorderColor);
-    TT_PROPERTY(tt::Colors,   TabSpecialFontColor);
-    TT_PROPERTY(tt::Colors,   TabFontColor);
-    TT_PROPERTY(tt::Colors,   ToolbarBackgroundColor);
-    TT_PROPERTY(tt::Colors,   BorderColor);
-    TT_PROPERTY(tt::Colors,   GroupNameColor);
-    TT_PROPERTY(int,          TabBorderRadius);
-    TT_PROPERTY(int,          TabSpacing);
+    TT_PROPERTY(tt::Colors, SeparatorColor);
+    TT_PROPERTY(tt::Colors, TabSelectedColor);
+    TT_PROPERTY(tt::Colors, TabUnselectedColor);
+    TT_PROPERTY(tt::Colors, PaneColor);
+    TT_PROPERTY(tt::Colors, TabHoverBorderColorSide);
+    TT_PROPERTY(tt::Colors, TabUnselectedHoverBorderColorSide);
+    TT_PROPERTY(tt::Colors, TabSpecialBorderColorSide);
+    TT_PROPERTY(tt::Colors, TabSpecialHoverBorderColorSide);
+    TT_PROPERTY(tt::Colors, TabSpecialHoverColor);
+    TT_PROPERTY(tt::Colors, TabSpecialColor);
+    TT_PROPERTY(tt::Colors, HorizontalFrameBackgroundColor);
+    TT_PROPERTY(tt::Colors, HorizontalFrameBorderColor);
+    TT_PROPERTY(int, HorizontalFrameBorderSize);
+    TT_PROPERTY(tt::Colors, HideArrowColor);
+    TT_PROPERTY(tt::Colors, TabUnselectedHoverBorderColorTop);
+    TT_PROPERTY(tt::Colors, TabHoverBorderColorTop);
+    TT_PROPERTY(tt::Colors, TabSpecialBorderColor);
+    TT_PROPERTY(tt::Colors, TabSpecialHoverBorderColor);
+    TT_PROPERTY(tt::Colors, TabSpecialFontColor);
+    TT_PROPERTY(tt::Colors, TabFontColor);
+    TT_PROPERTY(tt::Colors, ToolbarBackgroundColor);
+    TT_PROPERTY(tt::Colors, BorderColor);
+    TT_PROPERTY(tt::Colors, GroupNameColor);
+    TT_PROPERTY(int, TabBorderRadius);
+    TT_PROPERTY(int, TabSpacing);
 
-    bool                      UseTemplateSheet;
-    QString                   AdditionalStyleSheet;
+    bool    UseTemplateSheet;
+    QString AdditionalStyleSheet;
 };
 #undef TT_PROPERTY
 
@@ -133,6 +135,6 @@ extern TT_API const QString g_styleKool;
 extern TT_API const QString g_styleVienna;
 extern TT_API const QString g_styleThreshold;
 
-}
+}  // namespace tt
 Q_DECLARE_METATYPE(tt::Colors)
 #endif

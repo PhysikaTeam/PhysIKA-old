@@ -25,8 +25,7 @@
 
 class QHBoxLayout;
 
-namespace tt
-{
+namespace tt {
 class TabToolbar;
 class Group;
 
@@ -37,13 +36,13 @@ public:
     explicit Page(int index, const QString& pageName, QWidget* parent = nullptr);
     virtual ~Page() = default;
 
-    Group*   AddGroup(const QString& name);
-    void     hide();
-    void     show();
+    Group* AddGroup(const QString& name);
+    void   hide();
+    void   show();
 
 signals:
-    void     Hiding(int index);
-    void     Showing(int index);
+    void Hiding(int index);
+    void Showing(int index);
 
 private:
     const int    myIndex;
@@ -51,5 +50,5 @@ private:
     QWidget*     innerArea;
 };
 
-}
+}  // namespace tt
 #endif

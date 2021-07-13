@@ -16,12 +16,12 @@
 //	int tid = threadIdx.x + blockIdx.x * blockDim.x;
 //	int nthread = blockIdx.x * blockDim.x;
 //	__shared__ float sharedData[1024];
-//	
+//
 //	for (int gi = 0; gi < groupsize;++gi)
 //	{
 //		int i = tid;
 //		sharedData[threadIdx.x] = 0;
-//		
+//
 //		while (i < ngroup)
 //		{
 //			sharedData[threadIdx.x] += vdata[i*groupsize + gi];
@@ -49,7 +49,7 @@
 //		}
 //		__syncthreads();
 //	}
-//	
+//
 //}
 //
 //__global__ void gpuSimpleMul(float * resv, float * mat1, float * mat2, int n, int k, int m)

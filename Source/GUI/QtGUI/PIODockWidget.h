@@ -57,82 +57,84 @@ QT_FORWARD_DECLARE_CLASS(QAction)
 QT_FORWARD_DECLARE_CLASS(QActionGroup)
 QT_FORWARD_DECLARE_CLASS(QMenu)
 
-namespace PhysIKA
+namespace PhysIKA {
+class PIOTabWidget;
+
+class PIODockWidget : public QDockWidget
 {
-    class PIOTabWidget;
+    Q_OBJECT
 
-    class PIODockWidget : public QDockWidget
+public:
+    explicit PIODockWidget(QMainWindow* parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
+
+    void   setCustomSizeHint(const QSize& size);
+    QMenu* colorSwatchMenu() const
     {
-        Q_OBJECT
+        return menu;
+    }
 
-    public:
-        explicit PIODockWidget(QMainWindow *parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
-
-        void setCustomSizeHint(const QSize &size);
-        QMenu *colorSwatchMenu() const { return menu; }
-
-    protected:
+protected:
 #ifndef QT_NO_CONTEXTMENU
-        void contextMenuEvent(QContextMenuEvent *event) override;
-#endif // QT_NO_CONTEXTMENU
+    void contextMenuEvent(QContextMenuEvent* event) override;
+#endif  // QT_NO_CONTEXTMENU
 
-    private slots:
-        void changeClosable(bool on);
-        void changeMovable(bool on);
-        void changeFloatable(bool on);
-        void changeFloating(bool on);
-        void changeVerticalTitleBar(bool on);
-        void updateContextMenu();
+private slots:
+    void changeClosable(bool on);
+    void changeMovable(bool on);
+    void changeFloatable(bool on);
+    void changeFloating(bool on);
+    void changeVerticalTitleBar(bool on);
+    void updateContextMenu();
 
-        void allowLeft(bool a);
-        void allowRight(bool a);
-        void allowTop(bool a);
-        void allowBottom(bool a);
+    void allowLeft(bool a);
+    void allowRight(bool a);
+    void allowTop(bool a);
+    void allowBottom(bool a);
 
-        void placeLeft(bool p);
-        void placeRight(bool p);
-        void placeTop(bool p);
-        void placeBottom(bool p);
+    void placeLeft(bool p);
+    void placeRight(bool p);
+    void placeTop(bool p);
+    void placeBottom(bool p);
 
-        void splitInto(QAction *action);
-        void tabInto(QAction *action);
+    void splitInto(QAction* action);
+    void tabInto(QAction* action);
 
-        void changeTab(int index);
+    void changeTab(int index);
 
-    private:
-        void allow(Qt::DockWidgetArea area, bool allow);
-        void place(Qt::DockWidgetArea area, bool place);
+private:
+    void allow(Qt::DockWidgetArea area, bool allow);
+    void place(Qt::DockWidgetArea area, bool place);
 
-        void setupActions();
-        void setupMenu();
-        void setupWidgets();
+    void setupActions();
+    void setupMenu();
+    void setupWidgets();
 
-        QAction *closableAction;
-        QAction *movableAction;
-        QAction *floatableAction;
-        QAction *floatingAction;
-        QAction *verticalTitleBarAction;
+    QAction* closableAction;
+    QAction* movableAction;
+    QAction* floatableAction;
+    QAction* floatingAction;
+    QAction* verticalTitleBarAction;
 
-        QActionGroup *allowedAreasActions;
-        QAction *allowLeftAction;
-        QAction *allowRightAction;
-        QAction *allowTopAction;
-        QAction *allowBottomAction;
+    QActionGroup* allowedAreasActions;
+    QAction*      allowLeftAction;
+    QAction*      allowRightAction;
+    QAction*      allowTopAction;
+    QAction*      allowBottomAction;
 
-        QActionGroup *areaActions;
-        QAction *leftAction;
-        QAction *rightAction;
-        QAction *topAction;
-        QAction *bottomAction;
+    QActionGroup* areaActions;
+    QAction*      leftAction;
+    QAction*      rightAction;
+    QAction*      topAction;
+    QAction*      bottomAction;
 
-        QMenu *tabMenu;
-        QMenu *splitHMenu;
-        QMenu *splitVMenu;
-        QMenu *menu;
+    QMenu* tabMenu;
+    QMenu* splitHMenu;
+    QMenu* splitVMenu;
+    QMenu* menu;
 
-        QMainWindow *mainWindow;
-        PIOTabWidget* m_ioTabWidget;
-    };
-}
+    QMainWindow*  mainWindow;
+    PIOTabWidget* m_ioTabWidget;
+};
+}  // namespace PhysIKA
 
-#endif // PIODockWidget_H
+#endif  // PIODockWidget_H

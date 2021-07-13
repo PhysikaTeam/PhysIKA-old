@@ -27,11 +27,12 @@ typedef std::string FieldID;
 class Base : public Object
 {
 public:
-    typedef std::vector<Field*> FieldVector;
+    typedef std::vector<Field*>       FieldVector;
     typedef std::map<FieldID, Field*> FieldMap;
 
-    Base() : Object() {};
-    ~Base() override {};
+    Base()
+        : Object(){};
+    ~Base() override{};
 
     /**
      * @brief Add a field to Base
@@ -85,7 +86,7 @@ public:
      * @brief Return a field by its name
      * 
      */
-    Field*    getField(const FieldID name);
+    Field* getField(const FieldID name);
 
     std::vector<Field*>& getAllFields();
 
@@ -101,7 +102,7 @@ public:
      */
     virtual bool attachField(Field* field, std::string name, std::string desc, bool autoDestroy = true);
 
-    template<typename T>
+    template <typename T>
     T* getField(FieldID name)
     {
         FieldMap::iterator iter = m_fieldAlias.find(name);
@@ -117,21 +118,30 @@ public:
      */
     bool isAllFieldsReady();
 
-    std::vector<FieldID>    getFieldAlias(Field* data);
-    int                getFieldAliasCount(Field* data);
+    std::vector<FieldID> getFieldAlias(Field* data);
+    int                  getFieldAliasCount(Field* data);
 
+    inline void setBlockCoord(float x, float y)
+    {
+        block_x = x;
+        block_y = y;
+    }
 
-    inline void setBlockCoord(float x, float y) { block_x = x; block_y = y; }
-
-    inline float bx() { return block_x; }
-    inline float by() { return block_y; }
+    inline float bx()
+    {
+        return block_x;
+    }
+    inline float by()
+    {
+        return block_y;
+    }
 
 private:
     float block_x = 0.0f;
     float block_y = 0.0f;
 
     FieldVector m_field;
-    FieldMap m_fieldAlias;
+    FieldMap    m_fieldAlias;
 };
 
-}
+}  // namespace PhysIKA

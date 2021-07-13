@@ -14,28 +14,34 @@ namespace PhysIKA {
  * range based KKT solver.
  *
  */
-  template<typename T>
-  class range_based_KKT: public KKT<T>{
+template <typename T>
+class range_based_KKT : public KKT<T>
+{
     using SPM = Eigen::SparseMatrix<double, Eigen::RowMajor>;
-  public:
+
+public:
     range_based_KKT(const bool hes_is_constant);
     int solve(const SPM& A, const T* b, const SPM& J, const T* c, double* solution) const;
-  private:
+
+private:
     const bool hes_is_constant_;
-  };
+};
 
 /**
  * null space KKT solver.
  *
  */
-  template<typename T>
-  class null_space_KKT: public KKT<T>{
+template <typename T>
+class null_space_KKT : public KKT<T>
+{
     using SPM = Eigen::SparseMatrix<T, Eigen::RowMajor>;
-  public:
+
+public:
     null_space_KKT(const bool hes_is_constant);
     int solve(const SPM& A, const T* b, const SPM& J, const T* c, double* solution) const;
-  private:
+
+private:
     const bool hes_is_constant_;
-  };
-}
+};
+}  // namespace PhysIKA
 #endif

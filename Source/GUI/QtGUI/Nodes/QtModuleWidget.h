@@ -11,84 +11,83 @@
 
 class FieldData;
 
-using PhysIKA::Module;
 using PhysIKA::Field;
+using PhysIKA::Module;
 
-using QtNodes::PortType;
-using QtNodes::PortIndex;
 using QtNodes::BlockData;
 using QtNodes::BlockDataType;
+using QtNodes::PortIndex;
+using QtNodes::PortType;
 using QtNodes::QtBlockDataModel;
 using QtNodes::ValidationState;
 
-namespace QtNodes
+namespace QtNodes {
+
+/// The model dictates the number of inputs and outputs for the Node.
+/// In this example it has no logic.
+class QtModuleWidget : public QtBlockDataModel
 {
+    Q_OBJECT
 
-    /// The model dictates the number of inputs and outputs for the Node.
-    /// In this example it has no logic.
-    class QtModuleWidget : public QtBlockDataModel
+public:
+    QtModuleWidget(Module* base = nullptr);
+
+    virtual ~QtModuleWidget() {}
+
+public:
+    QString caption() const override;
+
+    QString name() const override;
+    void    setName(QString name)
     {
-        Q_OBJECT
+        m_name = name;
+    }
 
-    public:
-        QtModuleWidget(Module* base = nullptr);
+    QString portCaption(PortType portType, PortIndex portIndex) const override;
 
-        virtual    ~QtModuleWidget() {}
+    QString validationMessage() const override;
 
-    public:
+    unsigned int nPorts(PortType portType) const override;
 
-        QString caption() const override;
+    bool portCaptionVisible(PortType portType, PortIndex portIndex) const override;
 
-        QString name() const override;
-        void setName(QString name) { m_name = name; }
+    std::shared_ptr<BlockData> outData(PortIndex port) override;
+    std::shared_ptr<BlockData> inData(PortIndex port) override;
 
-        QString    portCaption(PortType portType, PortIndex portIndex) const override;
+    void setInData(std::shared_ptr<BlockData> data, PortIndex portIndex) override;
 
-        QString    validationMessage() const override;
+    BlockDataType dataType(PortType portType, PortIndex portIndex) const override;
 
+    QWidget* embeddedWidget() override
+    {
+        return nullptr;
+    }
 
-        unsigned int nPorts(PortType portType) const override;
+    ValidationState validationState() const override;
 
+    Module* getModule();
 
-        bool portCaptionVisible(PortType portType, PortIndex portIndex) const override;
+protected:
+    virtual void updateModule();
 
-        std::shared_ptr<BlockData> outData(PortIndex port) override;
-        std::shared_ptr<BlockData> inData(PortIndex port) override;
+protected:
+    using OutFieldPtr = std::vector<std::shared_ptr<FieldData>>;
+    using InFieldPtr  = std::vector<std::weak_ptr<FieldData>>;
 
-        void setInData(std::shared_ptr<BlockData> data, PortIndex portIndex) override;
+    InFieldPtr  input_fields;
+    OutFieldPtr output_fields;
 
-        BlockDataType dataType(PortType portType, PortIndex portIndex) const override;
+    QString m_name;
 
+    Module* m_module = nullptr;
 
-        QWidget* embeddedWidget() override { return nullptr; }
+    ValidationState modelValidationState = ValidationState::Warning;
+    QString         modelValidationError = QString("Missing or incorrect inputs");
 
-        ValidationState validationState() const override;
+private:
+    Field* getField(PortType portType, PortIndex portIndex) const;
 
-        Module* getModule();
-
-    protected:
-        virtual void updateModule();
-
-    protected:
-
-        using OutFieldPtr = std::vector<std::shared_ptr<FieldData>>;
-        using InFieldPtr = std::vector<std::weak_ptr<FieldData>>;
-
-        InFieldPtr input_fields;
-        OutFieldPtr output_fields;
-
-        QString m_name;
-
-        Module* m_module = nullptr;
-
-        ValidationState modelValidationState = ValidationState::Warning;
-        QString modelValidationError = QString("Missing or incorrect inputs");
-
-    private:
-
-        Field* getField(PortType portType, PortIndex portIndex) const;
-
-        std::vector<Field*>& getOutputFields();
-        std::vector<Field*>& getInputFields();
-    };
-}
+    std::vector<Field*>& getOutputFields();
+    std::vector<Field*>& getInputFields();
+};
+}  // namespace QtNodes

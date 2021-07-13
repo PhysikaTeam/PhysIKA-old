@@ -4,28 +4,28 @@
 
 namespace PhysIKA {
 
-    template<typename T>
-    class Arithmetic
-    {
-    public:
-        Arithmetic(const Arithmetic &) = delete;
-        Arithmetic& operator=(const Arithmetic &) = delete;
+template <typename T>
+class Arithmetic
+{
+public:
+    Arithmetic(const Arithmetic&) = delete;
+    Arithmetic& operator=(const Arithmetic&) = delete;
 
-        static Arithmetic* Create(int n);
-        
+    static Arithmetic* Create(int n);
 
-        //
-        T Dot(DeviceArray<T>& xArr, DeviceArray<T>& yArr);
-        
-        ~Arithmetic();
-    private:
-        Arithmetic(int n);
+    //
+    T Dot(DeviceArray<T>& xArr, DeviceArray<T>& yArr);
 
-        Reduction<T>* m_reduce;
-        DeviceArray<T> m_buf;
-    };
+    ~Arithmetic();
 
-    template class Arithmetic<int>;
-    template class Arithmetic<float>;
-    template class Arithmetic<double>;
-}
+private:
+    Arithmetic(int n);
+
+    Reduction<T>*  m_reduce;
+    DeviceArray<T> m_buf;
+};
+
+template class Arithmetic<int>;
+template class Arithmetic<float>;
+template class Arithmetic<double>;
+}  // namespace PhysIKA

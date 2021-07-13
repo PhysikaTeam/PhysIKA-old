@@ -24,27 +24,30 @@ class GLApp : public AppBase
 {
 public:
     GLApp();
-   ~GLApp();
+    ~GLApp();
 
-    void createWindow(int width, int height) override; //create window with the parameters set
-    void closeWindow();  //close window
+    void               createWindow(int width, int height) override;  //create window with the parameters set
+    void               closeWindow();                                 //close window
     const std::string& name() const;
-    int getWidth() const;
-    int getHeight() const;
-    void setWidth(int width);
-    void setHeight(int height);
+    int                getWidth() const;
+    int                getHeight() const;
+    void               setWidth(int width);
+    void               setHeight(int height);
 
     void enableEventMode();
     void disableEventMode();
 
     //save screenshot to file
-    bool saveScreen(const std::string &file_name) const;  //save to file with given name
+    bool saveScreen(const std::string& file_name) const;  //save to file with given name
     bool saveScreen();                                    //save to file with default name "screen_capture_XXX.png"
-    bool isActive() { return m_bAnimate; }
-    void drawString(std::string s, const Color &color, int x, int y);
+    bool isActive()
+    {
+        return m_bAnimate;
+    }
+    void drawString(std::string s, const Color& color, int x, int y);
 
     //display frame-rate
-    void drawFrameRate();  
+    void drawFrameRate();
     void enableDisplayFrameRate();
     void disableDisplayFrameRate();
     void enableDisplayFrame();
@@ -52,7 +55,10 @@ public:
     bool isShowFrameRate();
     bool isShowBoundingBox();
 
-    void increaseFrameNum() { ++m_totalFrame; }
+    void increaseFrameNum()
+    {
+        ++m_totalFrame;
+    }
 
     void enableBackground();
     void disableBackground();
@@ -60,28 +66,43 @@ public:
     void disableSceneBoundary();
     bool isShowBackground();
 
-    //advanced: 
+    //advanced:
     //set custom callback functions
-    void setDisplayFunction(void (*func)(void));  
-    void setIdleFunction(void (*func)(void));  
+    void setDisplayFunction(void (*func)(void));
+    void setIdleFunction(void (*func)(void));
     void setReshapeFunction(void (*func)(int width, int height));
     void setKeyboardFunction(void (*func)(unsigned char key, int x, int y));
     void setSpecialFunction(void (*func)(int key, int x, int y));
     void setMotionFunction(void (*func)(int x, int y));
     void setMouseFunction(void (*func)(int button, int state, int x, int y));
-    void setMouseWheelFunction(void(*func)(int wheel, int direction, int x, int y));
-    void setInitFunction(void (*func)(void)); //the init function before entering mainloop
+    void setMouseWheelFunction(void (*func)(int wheel, int direction, int x, int y));
+    void setInitFunction(void (*func)(void));  //the init function before entering mainloop
 
-    void setButtonType(int button) { m_buttonType = button; }
-    void setButtonState(int status) { m_buttonStatus = status; }
+    void setButtonType(int button)
+    {
+        m_buttonType = button;
+    }
+    void setButtonState(int status)
+    {
+        m_buttonStatus = status;
+    }
 
-    int getButtonType() { return m_buttonType; }
-    int getButtonStatus() { return m_buttonStatus; }
+    int getButtonType()
+    {
+        return m_buttonType;
+    }
+    int getButtonStatus()
+    {
+        return m_buttonStatus;
+    }
 
-    Camera& activeCamera() { return m_camera; }
+    Camera& activeCamera()
+    {
+        return m_camera;
+    }
 
     static void bindDefaultKeys(unsigned char key, int x, int y);  //bind the default keyboard behaviors
-    
+
     void mainLoop() override;
     void setSecondaryLineNumber(int num);
 
@@ -98,20 +119,20 @@ protected:
     static void initFunction(void);                                          //init viewport and background color
 
     void initOpenGLContext();
-    void initCallbacks();    //init default callbacks
-    void initDefaultLight(); //init a default light
+    void initCallbacks();     //init default callbacks
+    void initDefaultLight();  //init a default light
 
 protected:
     //pointers to callback methods
-    void(*display_function_)(void);
-    void(*idle_function_)(void);
-    void(*reshape_function_)(int width, int height);
-    void(*keyboard_function_)(unsigned char key, int x, int y);
-    void(*special_function_)(int key, int x, int y);
-    void(*motion_function_)(int x, int y);
-    void(*mouse_function_)(int button, int state, int x, int y);
-    void(*mouse_wheel_function_)(int wheel, int direction, int x, int y);
-    void(*init_function_)(void);
+    void (*display_function_)(void);
+    void (*idle_function_)(void);
+    void (*reshape_function_)(int width, int height);
+    void (*keyboard_function_)(unsigned char key, int x, int y);
+    void (*special_function_)(int key, int x, int y);
+    void (*motion_function_)(int x, int y);
+    void (*mouse_function_)(int button, int state, int x, int y);
+    void (*mouse_wheel_function_)(int wheel, int direction, int x, int y);
+    void (*init_function_)(void);
 
     void drawBackground();
     void drawAxis();
@@ -122,15 +143,15 @@ protected:
 protected:
     //basic information of window
     std::string m_winName;
-    int m_winID;
+    int         m_winID;
 
     unsigned int m_width;
     unsigned int m_height;
 
     int m_secLineNum;
 
-    Color background_color_; //use double type in order not to make GlutWindow template
-    Color text_color_;       //the color to display text, e.g. fps
+    Color background_color_;  //use double type in order not to make GlutWindow template
+    Color text_color_;        //the color to display text, e.g. fps
 
     //state of the mouse
     int m_buttonType;
@@ -138,8 +159,8 @@ protected:
 
     //fps display
     bool display_fps_;
-    bool display_frame_=false;
-    int m_totalFrame = 0;
+    bool display_frame_ = false;
+    int  m_totalFrame   = 0;
 
     //event mode
     bool event_mode_;
@@ -147,19 +168,16 @@ protected:
     bool m_bAnimate;
     bool m_bShowBackground;
     bool m_bShowBoundingbox = false;
-    
+
     //current screen capture file index
     unsigned int screen_capture_file_index_;
 
     Camera m_camera;
-    float m_mousex;
-    float m_mousey;
-    float m_rotationSensitivity=2.0;
-    float m_translationSensitivity = 2.0;
+    float  m_mousex;
+    float  m_mousey;
+    float  m_rotationSensitivity    = 2.0;
+    float  m_translationSensitivity = 2.0;
 
     bool m_cameraMode = true;
-
-
-
 };
 }  //end of namespace PhysIKA

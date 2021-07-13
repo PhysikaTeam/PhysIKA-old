@@ -22,30 +22,30 @@
 using namespace std;
 using namespace PhysIKA;
 
-void RecieveLogMessage(const Log::Message &m)
+void RecieveLogMessage(const Log::Message& m)
 {
     switch (m.type)
     {
-    case Log::Info:
-        cout << ">>>: " << m.text << endl;
-        break;
-    case Log::Warning:
-        cout << "???: " << m.text << endl;
-        break;
-    case Log::Error:
-        cout << "!!!: " << m.text << endl;
-        break;
-    case Log::User:
-        cout << ">>>: " << m.text << endl;
-        break;
-    default:
-        break;
+        case Log::Info:
+            cout << ">>>: " << m.text << endl;
+            break;
+        case Log::Warning:
+            cout << "???: " << m.text << endl;
+            break;
+        case Log::Error:
+            cout << "!!!: " << m.text << endl;
+            break;
+        case Log::User:
+            cout << ">>>: " << m.text << endl;
+            break;
+        default:
+            break;
     }
 }
 
 void CreateScene()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadCube(Vector3f(-0.1f, 0.0f, -1.0f), Vector3f(1.1f, 2.0f, 1.1f), 0.02f, true);
@@ -60,7 +60,7 @@ void CreateScene()
         rigidTri->translate(Vector3f(0.5, 0.2, 0.5));
 
         auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         rigidbody->getSurface()->addVisualModule(renderModule);
     }
 
@@ -85,8 +85,8 @@ void CreateScene()
         child3->translate(Vector3f(0.0f, 0.3f + 0.02 * i, 0.0f));
 
         // Output
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         if (outf.is_open())
         {
@@ -120,8 +120,8 @@ void CreateScene()
 
 int main()
 {
-    int *ptr;
-    cuSafeCall(cudaMalloc((void **)&ptr, 4 * 1000));
+    int* ptr;
+    cuSafeCall(cudaMalloc(( void** )&ptr, 4 * 1000));
 
     DeviceArray<Vector3f> cd;
     cd.resize(1000);

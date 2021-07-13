@@ -21,7 +21,7 @@
 //		m_ny = ny;
 //		m_sampleLayer = layer;
 //		m_gridLength = gridLength;
-//		
+//
 //		m_normalizePosition.Resize(m_nx, m_ny, m_sampleLayer);
 //	}
 //
@@ -190,7 +190,7 @@
 //	//	// // 		{
 //	//	// // 			printf("%i %i \n", g_ix, g_iy);
 //	//	// // 		}
-//	//	// 
+//	//	//
 //	//	// 		vel_ijk.x = 0.0f;
 //	//	// 		vel_ijk.y = 0.0f;
 //	//	// 	}

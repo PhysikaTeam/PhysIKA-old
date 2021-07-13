@@ -15,7 +15,6 @@
 #define GROUP_FIXED -1
 #define GROUP_MOVABLE 0
 
-
 /* Yield criterion for elasto-plastic solids.
 */
 #define VON_MISES 1

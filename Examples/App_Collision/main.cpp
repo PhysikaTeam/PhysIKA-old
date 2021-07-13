@@ -45,18 +45,18 @@ using namespace std;
 using namespace PhysIKA;
 
 std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> CollisionManager::Meshes = {};
-std::vector<std::shared_ptr<SurfaceMeshRender>> SFRender = {};
+std::vector<std::shared_ptr<SurfaceMeshRender>>        SFRender                 = {};
 
 std::shared_ptr<RigidCollisionBody<DataType3f>> bunny;
 
 //DCD
-std::shared_ptr<CollidatableTriangleMesh<DataType3f>> DCD = {};
-std::shared_ptr<bvh> CollidatableTriangleMesh<DataType3f>::bvh1 = nullptr;
-std::shared_ptr<bvh> CollidatableTriangleMesh<DataType3f>::bvh2 = nullptr;
+std::shared_ptr<CollidatableTriangleMesh<DataType3f>> DCD                                        = {};
+std::shared_ptr<bvh>                                  CollidatableTriangleMesh<DataType3f>::bvh1 = nullptr;
+std::shared_ptr<bvh>                                  CollidatableTriangleMesh<DataType3f>::bvh2 = nullptr;
 
 void CreateScene()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setFrameRate(500);
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
 
@@ -69,7 +69,7 @@ void CreateScene()
     bunny->getSurfaceNode()->addVisualModule(sRender);
     sRender->setColor(Vector3f(0, 1, 0));
 
-    int idx = 0;
+    int    idx = 0;
     double dx = 0, dy = 0, dz = 0;
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
@@ -98,7 +98,7 @@ void CreateScene()
 }
 
 std::vector<int> collisionset;
-void checkCollision()
+void             checkCollision()
 {
     collisionset.clear();
     for (int i = 0; i < CollisionManager::Meshes.size(); ++i)
@@ -111,12 +111,12 @@ void checkCollision()
         }
         else
         {
-            SFRender[i]->setColor({1, 1, 1});
+            SFRender[i]->setColor({ 1, 1, 1 });
         }
     }
     for (int i = 0; i < collisionset.size(); ++i)
     {
-        SFRender[collisionset[i]]->setColor({1, 0, 0});
+        SFRender[collisionset[i]]->setColor({ 1, 0, 0 });
     }
 }
 

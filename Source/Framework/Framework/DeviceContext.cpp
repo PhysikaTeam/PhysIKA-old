@@ -5,8 +5,8 @@ namespace PhysIKA {
 
 DeviceContext::DeviceContext()
 {
-    m_deviceNum = -1;
-    m_deviceID = -1;
+    m_deviceNum  = -1;
+    m_deviceID   = -1;
     m_deviceType = DeviceType::GPU;
 
     cudaGetDeviceCount(&m_deviceNum);
@@ -22,7 +22,6 @@ DeviceContext::DeviceContext()
 
 DeviceContext::~DeviceContext()
 {
-
 }
 
 void DeviceContext::enable()
@@ -32,7 +31,8 @@ void DeviceContext::enable()
 
 bool DeviceContext::setDevice(int i)
 {
-    if (i >= m_deviceNum) return false;
+    if (i >= m_deviceNum)
+        return false;
 
     m_deviceID = i;
     cudaSetDevice(m_deviceID);
@@ -44,4 +44,4 @@ int DeviceContext::getDevice()
     return m_deviceID;
 }
 
-}
+}  // namespace PhysIKA

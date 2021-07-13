@@ -1,10 +1,12 @@
 #include "utility.h"
 
 #ifdef WIN32
-void check_dir(std::string& path) {
+void check_dir(std::string& path)
+{
 
     struct stat info;
-    if (stat(path.c_str(), &info) != 0) {
+    if (stat(path.c_str(), &info) != 0)
+    {
         std::cout << "cannot access " << path << std::endl;
         std::cout << "mkdir: " << path << std::endl;
         std::cout << "mkdir: " << path << "screenshots" << std::endl;
@@ -18,10 +20,12 @@ void check_dir(std::string& path) {
 }
 
 #elif __APPLE__
-void check_dir(std::string& path) {
+void check_dir(std::string& path)
+{
 
     struct stat info;
-    if (stat(path.c_str(), &info) != 0) {
+    if (stat(path.c_str(), &info) != 0)
+    {
         std::cout << "cannot access " << path << std::endl;
         std::cout << "mkdir: " << path << std::endl;
         std::cout << "mkdir: " << path << "screenshots" << std::endl;
@@ -32,8 +36,6 @@ void check_dir(std::string& path) {
     }
     else if (info.st_mode & S_IFDIR)
         std::cout << path << " is a directory" << std::endl;
-
 }
-
 
 #endif

@@ -2,8 +2,7 @@
 #include "Node.h"
 #include "NumericalModel.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 IMPLEMENT_CLASS(AnimationController)
 
@@ -40,4 +39,4 @@ bool AnimationController::execute()
     return true;
 }
 
-}
+}  // namespace PhysIKA

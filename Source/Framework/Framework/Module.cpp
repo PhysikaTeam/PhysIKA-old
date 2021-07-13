@@ -1,22 +1,20 @@
 #include "Module.h"
 #include "Framework/Framework/Node.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 Module::Module(std::string name)
     : m_node(nullptr)
     , m_initialized(false)
 {
-//    attachField(&m_module_name, "module_name", "Module name", false);
+    //    attachField(&m_module_name, "module_name", "Module name", false);
 
-//    m_module_name.setValue(name);
+    //    m_module_name.setValue(name);
     m_module_name = name;
 }
 
 Module::~Module(void)
 {
-
 }
 
 bool Module::initialize()
@@ -44,29 +42,32 @@ void Module::update()
         this->execute();
 
         //reset input fields
-        for each (auto f_in in fields_input)
-        {
-            f_in->tagModified(false);
-        }
+        for
+            each(auto f_in in fields_input)
+            {
+                f_in->tagModified(false);
+            }
 
         //tag all output fields as modifed
-        for each (auto f_out in fields_output)
-        {
-            f_out->tagModified(true);
-        }
+        for
+            each(auto f_out in fields_output)
+            {
+                f_out->tagModified(true);
+            }
     }
 }
 
 bool Module::isInputComplete()
 {
     //If any input field is empty, return false;
-    for each (auto f_in in fields_input)
-    {
-        if (f_in->isEmpty())
+    for
+        each(auto f_in in fields_input)
         {
-            return false;
+            if (f_in->isEmpty())
+            {
+                return false;
+            }
         }
-    }
 
     return true;
 }
@@ -244,25 +245,24 @@ bool Module::attachField(Field* field, std::string name, std::string desc, bool 
     field->setDescription(desc);
     field->setAutoDestroy(autoDestroy);
 
-
-    bool ret = false;
+    bool ret   = false;
     auto fType = field->getFieldType();
     switch (field->getFieldType())
     {
-    case FieldType::In:
-        ret = addInputField(field);
-        break;
+        case FieldType::In:
+            ret = addInputField(field);
+            break;
 
-    case FieldType::Out:
-        ret = addOutputField(field);
-        break;
+        case FieldType::Out:
+            ret = addOutputField(field);
+            break;
 
-    case FieldType::Param:
-        ret = addParameter(field);
-        break;
+        case FieldType::Param:
+            ret = addParameter(field);
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     if (!ret)
@@ -272,4 +272,4 @@ bool Module::attachField(Field* field, std::string name, std::string desc, bool 
     return ret;
 }
 
-}
+}  // namespace PhysIKA

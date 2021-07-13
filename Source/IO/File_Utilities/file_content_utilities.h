@@ -16,18 +16,18 @@
 #ifndef PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_CONTENT_UTILITIES_H_
 #define PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_CONTENT_UTILITIES_H_
 
-#include<string>
+#include <string>
 
-namespace PhysIKA{
+namespace PhysIKA {
 
-namespace FileUtilities{
+namespace FileUtilities {
 
 //remove abundant whitespaces
-//replace each whitespace squence with a squence of fixed number of white spaces 
-std::string removeWhitespaces(const std::string &line, unsigned int num_retained_spaces = 0);
+//replace each whitespace squence with a squence of fixed number of white spaces
+std::string removeWhitespaces(const std::string& line, unsigned int num_retained_spaces = 0);
 
-} //end of namespace FileUtilities
+}  //end of namespace FileUtilities
 
-} //end of namespace PhysIKA
+}  //end of namespace PhysIKA
 
-#endif //PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_CONTENT_UTILITIES_H_
+#endif  //PHYSIKA_CORE_UTILITIES_FILE_UTILITIES_FILE_CONTENT_UTILITIES_H_

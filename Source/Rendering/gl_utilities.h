@@ -12,7 +12,7 @@ inline void glAssert(const char* msg, long line, const char* file)
 {
     struct glError
     {
-        GLenum code;
+        GLenum      code;
         const char* name;
     };
 
@@ -50,7 +50,7 @@ inline void glAssert(const char* msg, long line, const char* file)
 #if defined(NDEBUG)
 #define glVerify(x) x
 #else
-#define glVerify(x) x//{x; glAssert(#x, __LINE__, __FILE__);}
+#define glVerify(x) x  //{x; glAssert(#x, __LINE__, __FILE__);}
 #endif
 
-}
+}  // namespace PhysIKA

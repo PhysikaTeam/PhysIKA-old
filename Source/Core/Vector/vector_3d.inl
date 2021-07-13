@@ -20,31 +20,30 @@
 //#include "Physika_Core/Matrices/matrix_3x3.h"
 //#include "Physika_Core/Vectors/vector_3d.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar,3>::Vector()
-    :Vector(0) //delegating ctor
+COMM_FUNC Vector<Scalar, 3>::Vector()
+    : Vector(0)  //delegating ctor
 {
 }
 
 template <typename Scalar>
 COMM_FUNC Vector<Scalar, 3>::Vector(Scalar x)
-    :Vector(x, x, x) //delegating ctor
+    : Vector(x, x, x)  //delegating ctor
 {
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar,3>::Vector(Scalar x, Scalar y, Scalar z)
-    :data_(x, y, z)
+COMM_FUNC Vector<Scalar, 3>::Vector(Scalar x, Scalar y, Scalar z)
+    : data_(x, y, z)
 {
 }
 
 template <typename Scalar>
 COMM_FUNC Vector<Scalar, 3>::Vector(const Vector<Scalar, 3>& vec)
-	:data_(vec.data_)
+    : data_(vec.data_)
 {
-
 }
 
 template <typename Scalar>
@@ -53,91 +52,94 @@ COMM_FUNC Vector<Scalar, 3>::~Vector()
 }
 
 template <typename Scalar>
-COMM_FUNC Scalar& Vector<Scalar,3>::operator[] (unsigned int idx)
+COMM_FUNC Scalar& Vector<Scalar, 3>::operator[](unsigned int idx)
 {
-    return const_cast<Scalar &> (static_cast<const Vector<Scalar, 3> &>(*this)[idx]);
+    return const_cast<Scalar&>(static_cast<const Vector<Scalar, 3>&>(*this)[idx]);
 }
 
 template <typename Scalar>
-COMM_FUNC const Scalar& Vector<Scalar,3>::operator[] (unsigned int idx) const
+COMM_FUNC const Scalar& Vector<Scalar, 3>::operator[](unsigned int idx) const
 {
-// #ifndef __CUDA_ARCH__
-//     if(idx>=3)
-//         throw PhysikaException("Vector index out of range!");
-// #endif
+    // #ifndef __CUDA_ARCH__
+    //     if(idx>=3)
+    //         throw PhysikaException("Vector index out of range!");
+    // #endif
     return data_[idx];
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar,3> Vector<Scalar,3>::operator+ (const Vector<Scalar,3> &vec2) const
+COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator+(const Vector<Scalar, 3>& vec2) const
 {
     return Vector<Scalar, 3>(*this) += vec2;
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar,3>& Vector<Scalar,3>::operator+= (const Vector<Scalar,3> &vec2)
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator+=(const Vector<Scalar, 3>& vec2)
 {
     data_ += vec2.data_;
     return *this;
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar,3> Vector<Scalar,3>::operator- (const Vector<Scalar,3> &vec2) const
+COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator-(const Vector<Scalar, 3>& vec2) const
 {
     return Vector<Scalar, 3>(*this) -= vec2;
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar,3>& Vector<Scalar,3>::operator-= (const Vector<Scalar,3> &vec2)
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator-=(const Vector<Scalar, 3>& vec2)
 {
     data_ -= vec2.data_;
     return *this;
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator*(const Vector<Scalar, 3> &vec2) const
+COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator*(const Vector<Scalar, 3>& vec2) const
 {
-	return Vector<Scalar, 3>(data_[0]*vec2[0], data_[1] * vec2[1], data_[2] * vec2[2]);
+    return Vector<Scalar, 3>(data_[0] * vec2[0], data_[1] * vec2[1], data_[2] * vec2[2]);
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator*=(const Vector<Scalar, 3> &vec2)
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator*=(const Vector<Scalar, 3>& vec2)
 {
-	data_[0] *= vec2.data_[0];	data_[1] *= vec2.data_[1];	data_[2] *= vec2.data_[2];
-	return *this;
+    data_[0] *= vec2.data_[0];
+    data_[1] *= vec2.data_[1];
+    data_[2] *= vec2.data_[2];
+    return *this;
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator/(const Vector<Scalar, 3> &vec2) const
+COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator/(const Vector<Scalar, 3>& vec2) const
 {
-	return Vector<Scalar, 3>(data_[0] / vec2[0], data_[1] / vec2[1], data_[2] / vec2[2]);
+    return Vector<Scalar, 3>(data_[0] / vec2[0], data_[1] / vec2[1], data_[2] / vec2[2]);
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator/=(const Vector<Scalar, 3> &vec2)
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator/=(const Vector<Scalar, 3>& vec2)
 {
-	data_[0] /= vec2.data_[0];	data_[1] /= vec2.data_[1];	data_[2] /= vec2.data_[2];
-	return *this;
+    data_[0] /= vec2.data_[0];
+    data_[1] /= vec2.data_[1];
+    data_[2] /= vec2.data_[2];
+    return *this;
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator=(const Vector<Scalar, 3> &vec2)
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator=(const Vector<Scalar, 3>& vec2)
 {
-	data_ = vec2.data_;
-	return *this;
+    data_ = vec2.data_;
+    return *this;
 }
 
-
 template <typename Scalar>
-COMM_FUNC bool Vector<Scalar,3>::operator== (const Vector<Scalar,3> &vec2) const
+COMM_FUNC bool Vector<Scalar, 3>::operator==(const Vector<Scalar, 3>& vec2) const
 {
     return data_ == vec2.data_;
 }
 
 template <typename Scalar>
-COMM_FUNC bool Vector<Scalar,3>::operator!= (const Vector<Scalar,3> &vec2) const
+COMM_FUNC bool Vector<Scalar, 3>::operator!=(const Vector<Scalar, 3>& vec2) const
 {
-    return !((*this)==vec2);
+    return !((*this) == vec2);
 }
 
 template <typename Scalar>
@@ -147,7 +149,7 @@ COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator+(Scalar value) con
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator+= (Scalar value)
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator+=(Scalar value)
 {
     data_ += value;
     return *this;
@@ -160,38 +162,38 @@ COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator-(Scalar value) con
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator-= (Scalar value)
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator-=(Scalar value)
 {
     data_ -= value;
     return *this;
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar,3> Vector<Scalar,3>::operator* (Scalar scale) const
+COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator*(Scalar scale) const
 {
     return Vector<Scalar, 3>(*this) *= scale;
 }
 
 template <typename Scalar>
-Vector<Scalar,3>& Vector<Scalar,3>::operator*= (Scalar scale)
+Vector<Scalar, 3>& Vector<Scalar, 3>::operator*=(Scalar scale)
 {
     data_ *= scale;
     return *this;
 }
 
 template <typename Scalar>
-COMM_FUNC const Vector<Scalar,3> Vector<Scalar,3>::operator/ (Scalar scale) const
+COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator/(Scalar scale) const
 {
     return Vector<Scalar, 3>(*this) /= scale;
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar,3>& Vector<Scalar,3>::operator/= (Scalar scale)
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::operator/=(Scalar scale)
 {
-// #ifndef __CUDA_ARCH__
-//     if (abs(scale) <= std::numeric_limits<Scalar>::epsilon())
-//         throw PhysikaException("Vector Divide by zero error!");
-// #endif
+    // #ifndef __CUDA_ARCH__
+    //     if (abs(scale) <= std::numeric_limits<Scalar>::epsilon())
+    //         throw PhysikaException("Vector Divide by zero error!");
+    // #endif
     data_ /= scale;
     return *this;
 }
@@ -205,26 +207,26 @@ COMM_FUNC const Vector<Scalar, 3> Vector<Scalar, 3>::operator-(void) const
 }
 
 template <typename Scalar>
-COMM_FUNC Scalar Vector<Scalar,3>::norm() const
+COMM_FUNC Scalar Vector<Scalar, 3>::norm() const
 {
     return glm::length(data_);
 }
 
 template <typename Scalar>
-COMM_FUNC Scalar Vector<Scalar,3>::normSquared() const
+COMM_FUNC Scalar Vector<Scalar, 3>::normSquared() const
 {
     return glm::length2(data_);
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar,3>& Vector<Scalar,3>::normalize()
+COMM_FUNC Vector<Scalar, 3>& Vector<Scalar, 3>::normalize()
 {
-	data_ = glm::length(data_) > glm::epsilon<Scalar>() ? glm::normalize(data_) : glm::tvec3<Scalar>(0, 0, 0);
+    data_ = glm::length(data_) > glm::epsilon<Scalar>() ? glm::normalize(data_) : glm::tvec3<Scalar>(0, 0, 0);
     return *this;
 }
 
 template <typename Scalar>
-COMM_FUNC Vector<Scalar,3> Vector<Scalar,3>::cross(const Vector<Scalar,3>& vec2) const
+COMM_FUNC Vector<Scalar, 3> Vector<Scalar, 3>::cross(const Vector<Scalar, 3>& vec2) const
 {
     Vector<Scalar, 3> res;
     res.data_ = glm::cross(data_, vec2.data_);
@@ -232,7 +234,7 @@ COMM_FUNC Vector<Scalar,3> Vector<Scalar,3>::cross(const Vector<Scalar,3>& vec2)
 }
 
 template <typename Scalar>
-COMM_FUNC Scalar Vector<Scalar,3>::dot(const Vector<Scalar,3>& vec2) const
+COMM_FUNC Scalar Vector<Scalar, 3>::dot(const Vector<Scalar, 3>& vec2) const
 {
     return glm::dot(data_, vec2.data_);
 }
@@ -240,21 +242,21 @@ COMM_FUNC Scalar Vector<Scalar,3>::dot(const Vector<Scalar,3>& vec2) const
 template <typename Scalar>
 COMM_FUNC Vector<Scalar, 3> Vector<Scalar, 3>::minimum(const Vector<Scalar, 3>& vec2) const
 {
-	Vector<Scalar, 3> res;
-	res[0] = data_[0] < vec2[0] ? data_[0] : vec2[0];
-	res[1] = data_[1] < vec2[1] ? data_[1] : vec2[1];
-	res[2] = data_[2] < vec2[2] ? data_[2] : vec2[2];
-	return res;
+    Vector<Scalar, 3> res;
+    res[0] = data_[0] < vec2[0] ? data_[0] : vec2[0];
+    res[1] = data_[1] < vec2[1] ? data_[1] : vec2[1];
+    res[2] = data_[2] < vec2[2] ? data_[2] : vec2[2];
+    return res;
 }
 
 template <typename Scalar>
 COMM_FUNC Vector<Scalar, 3> Vector<Scalar, 3>::maximum(const Vector<Scalar, 3>& vec2) const
 {
-	Vector<Scalar, 3> res;
-	res[0] = data_[0] > vec2[0] ? data_[0] : vec2[0];
-	res[1] = data_[1] > vec2[1] ? data_[1] : vec2[1];
-	res[2] = data_[2] > vec2[2] ? data_[2] : vec2[2];
-	return res;
+    Vector<Scalar, 3> res;
+    res[0] = data_[0] > vec2[0] ? data_[0] : vec2[0];
+    res[1] = data_[1] > vec2[1] ? data_[1] : vec2[1];
+    res[2] = data_[2] > vec2[2] ? data_[2] : vec2[2];
+    return res;
 }
 
 // template <typename Scalar>
@@ -280,9 +282,9 @@ COMM_FUNC Vector<Scalar, 3> Vector<Scalar, 3>::maximum(const Vector<Scalar, 3>& 
 
 //make * operator commutative
 template <typename S, typename T>
-COMM_FUNC const Vector<T, 3> operator *(S scale, const Vector<T, 3> &vec)
+COMM_FUNC const Vector<T, 3> operator*(S scale, const Vector<T, 3>& vec)
 {
-	return vec * (T)scale;
+    return vec * ( T )scale;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib
@@ -300,4 +302,4 @@ COMM_FUNC const Vector<T, 3> operator *(S scale, const Vector<T, 3> &vec)
 // template class Vector<double,3>;
 //template class Vector<long double,3>;
 
-} //end of namespace Physika
+}  // namespace PhysIKA

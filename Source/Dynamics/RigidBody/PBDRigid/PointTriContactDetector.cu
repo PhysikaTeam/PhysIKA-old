@@ -39,7 +39,7 @@
 //
 //	__global__ void _PTCD_computeContact(
 //		ContactInfo<double>* contacts,
-//		DeviceArray<Vector3f> points, 
+//		DeviceArray<Vector3f> points,
 //		DeviceArray<Vector3f> triPoints,
 //		DeviceArray<TopologyModule::Triangle> tri,
 //		NeighborList<int> nbList,
@@ -70,7 +70,7 @@
 //			if (d < 0 || d>maxdis)
 //				continue;
 //
-//			
+//
 //			pTri = p + n * d;
 //
 //			if (!_PTCD_PointinTriangle(triPoints[curTri[0]], triPoints[curTri[1]], triPoints[curTri[2]], pTri))
@@ -103,7 +103,7 @@
 //	{
 //		int pid = threadIdx.x + blockIdx.x * blockDim.x;
 //		if (pid >= condidates.size()) return;
-//		
+//
 //		PointTriContact<float>& ptc = condidates[pid];
 //		int id0 = ptc.id0;
 //		int id1 = ptc.id1;
@@ -304,7 +304,7 @@
 //		RigidBody2_ptr body0 = (*m_pRigids)[i];
 //		RigidBody2_ptr body1 = (*m_pRigids)[j];
 //
-//		
+//
 //		auto triangleset1 = TypeInfo::cast<TriangleSet<DataType3f>>(body1->getTopologyModule());
 //		if (!triangleset1)
 //			return 0;
@@ -411,7 +411,7 @@
 //
 //		this->_updateRigidPosInfo();
 //		this->_updateRigidRotInfo();
-//		
+//
 //		float radius = m_detectionExt;
 //
 //		contacts.reserve(maxCon);
@@ -530,5 +530,5 @@
 //		Function1Pt::copy(m_triPos, m_triPosHost);
 //	}
 //
-//	
+//
 //}

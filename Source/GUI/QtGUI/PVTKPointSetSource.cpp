@@ -21,9 +21,9 @@ PVTKPointSetSource::PVTKPointSetSource()
 PVTKPointSetSource::~PVTKPointSetSource() = default;
 
 int PVTKPointSetSource::RequestData(
-    vtkInformation* vtkNotUsed(request),
+    vtkInformation*        vtkNotUsed(request),
     vtkInformationVector** vtkNotUsed(inputVector),
-    vtkInformationVector* outputVector)
+    vtkInformationVector*  outputVector)
 {
     printf("RequesData\n");
     if (m_point_set == nullptr)
@@ -33,10 +33,10 @@ int PVTKPointSetSource::RequestData(
     }
 
     // get the info object
-    vtkInformation *outInfo = outputVector->GetInformationObject(0);
+    vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
     // get the output
-    vtkPointSet *output = vtkPointSet::SafeDownCast(
+    vtkPointSet* output = vtkPointSet::SafeDownCast(
         outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     vtkPoints* pts = vtkPoints::New();
@@ -57,11 +57,11 @@ int PVTKPointSetSource::RequestData(
     pts->Allocate(num_of_points);
 
     printf("Allocate Finished\n");
-    
-    for(int i = 0; i < num_of_points; i++)
+
+    for (int i = 0; i < num_of_points; i++)
     {
         //if (num_of_points > 2000)
-            //printf("%.3lf %.3lf %.3lf\n", host_pts[i][0], host_pts[i][1], host_pts[i][2]);
+        //printf("%.3lf %.3lf %.3lf\n", host_pts[i][0], host_pts[i][1], host_pts[i][2]);
         pts->InsertPoint(i, host_pts[i][0], host_pts[i][1], host_pts[i][2]);
     }
 
@@ -73,5 +73,3 @@ int PVTKPointSetSource::RequestData(
 
     return 1;
 }
-
-

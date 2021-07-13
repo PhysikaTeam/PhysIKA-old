@@ -29,8 +29,7 @@
 
 class QJsonObject;
 
-namespace tt
-{
+namespace tt {
 
 class TabToolbar;
 
@@ -44,12 +43,12 @@ public:
     void        SetCustomWidgetCreator(const QString& name, const std::function<QWidget*()>& creator);
     void        SetCustomWidgetCreator(const QString& name, const std::function<QWidget*(const QJsonObject&)>& creator);
 
-    QWidget*    operator[](const QString& widgetName) const;
+    QWidget* operator[](const QString& widgetName) const;
 
 private:
-    QMap<QString, QWidget*> guiWidgets;
+    QMap<QString, QWidget*>                                    guiWidgets;
     QMap<QString, std::function<QWidget*(const QJsonObject&)>> customWidgetCreators;
 };
 
-}
+}  // namespace tt
 #endif

@@ -1,8 +1,7 @@
 #include "ModuleConstraint.h"
 #include "Framework/Framework/Node.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 ConstraintModule::ConstraintModule()
     : Module()
     , m_posID(MechanicalState::position())
@@ -14,4 +13,4 @@ ConstraintModule::~ConstraintModule()
 {
 }
 
-}
+}  // namespace PhysIKA

@@ -1,18 +1,15 @@
 #pragma once
 #include "PointSet.h"
 
-
-namespace PhysIKA
+namespace PhysIKA {
+template <typename Coord>
+class UnstructuredPointSet : public PointSet<Coord>
 {
-    template<typename Coord>
-    class UnstructuredPointSet : public PointSet<Coord>
-    {
-    public:
-        UnstructuredPointSet();
-        ~UnstructuredPointSet();
+public:
+    UnstructuredPointSet();
+    ~UnstructuredPointSet();
 
-    private:
-    };
+private:
+};
 
-}
-
+}  // namespace PhysIKA

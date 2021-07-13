@@ -41,7 +41,7 @@ using namespace PhysIKA;
 void CreateScene()
 {
     printf("0\n");
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     //       scene.setUpperBound(Vector3f(1, 1.0, 0.5));
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
@@ -74,23 +74,23 @@ void CreateScene()
 
     // Output all particles to .txt file.
     {
-    auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(fluid->getTopologyModule());
-    auto &points = pSet->getPoints();
-    HostArray<Vector3f> hpoints(points.size());
-    Function1Pt::copy(hpoints, points);
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(fluid->getTopologyModule());
+        auto&               points = pSet->getPoints();
+        HostArray<Vector3f> hpoints(points.size());
+        Function1Pt::copy(hpoints, points);
 
-    std::ofstream outf("Particles.obj");
-    if (outf.is_open())
-    {
-        for (int i = 0; i < hpoints.size(); ++i)
+        std::ofstream outf("Particles.obj");
+        if (outf.is_open())
         {
-        Vector3f curp = hpoints[i];
-        outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
-        }
-        outf.close();
+            for (int i = 0; i < hpoints.size(); ++i)
+            {
+                Vector3f curp = hpoints[i];
+                outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+            }
+            outf.close();
 
-        std::cout << " Particle output:  FINISHED." << std::endl;
-    }
+            std::cout << " Particle output:  FINISHED." << std::endl;
+        }
     }
 
     printf("111111\n");
@@ -101,45 +101,45 @@ void CreateScene()
 
     for (int i = 0; i < 3; i++)
     {
-    printf("%d\n", i);
-    std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
-    root->addParticleSystem(bunny);
-    bunny->setMass(1.0);
-    bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
-    bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
-    bunny->translate(Vector3f(0.75, 0.2, 0.4 + i * 0.3));
-    bunny->setVisible(false);
-    bunny->getElasticitySolver()->setIterationNumber(10);
-    bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
-    bunny->getTopologyMapping()->setSearchingRadius(0.05);
+        printf("%d\n", i);
+        std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+        root->addParticleSystem(bunny);
+        bunny->setMass(1.0);
+        bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+        bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
+        bunny->translate(Vector3f(0.75, 0.2, 0.4 + i * 0.3));
+        bunny->setVisible(false);
+        bunny->getElasticitySolver()->setIterationNumber(10);
+        bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
+        bunny->getTopologyMapping()->setSearchingRadius(0.05);
 
-    auto sRender = std::make_shared<SurfaceMeshRender>();
-    bunny->getSurfaceNode()->addVisualModule(sRender);
-    sRender->setColor(Vector3f(i * 0.3f, 1 - i * 0.3f, 1.0));
+        auto sRender = std::make_shared<SurfaceMeshRender>();
+        bunny->getSurfaceNode()->addVisualModule(sRender);
+        sRender->setColor(Vector3f(i * 0.3f, 1 - i * 0.3f, 1.0));
 
-    sfi->addParticleSystem(bunny);
+        sfi->addParticleSystem(bunny);
 
-    // Output all particles to .txt file.
-    {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
-        auto &points = pSet->getPoints();
-        HostArray<Vector3f> hpoints(points.size());
-        Function1Pt::copy(hpoints, points);
-
-        std::ofstream outf("Particles.obj", ios::app);
-        if (outf.is_open())
+        // Output all particles to .txt file.
         {
-        outf << std::endl;
-        for (int i = 0; i < hpoints.size(); ++i)
-        {
-            Vector3f curp = hpoints[i];
-            outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
-        }
-        outf.close();
+            auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+            auto&               points = pSet->getPoints();
+            HostArray<Vector3f> hpoints(points.size());
+            Function1Pt::copy(hpoints, points);
 
-        std::cout << " Particle output:  FINISHED." << std::endl;
+            std::ofstream outf("Particles.obj", ios::app);
+            if (outf.is_open())
+            {
+                outf << std::endl;
+                for (int i = 0; i < hpoints.size(); ++i)
+                {
+                    Vector3f curp = hpoints[i];
+                    outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
+                }
+                outf.close();
+
+                std::cout << " Particle output:  FINISHED." << std::endl;
+            }
         }
-    }
     }
 
     sfi->addParticleSystem(fluid);

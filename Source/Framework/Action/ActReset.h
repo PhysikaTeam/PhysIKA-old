@@ -3,17 +3,16 @@
 
 #include "Action.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+class ResetAct : public Action
 {
-    class ResetAct : public Action
-    {
-    public:
-        ResetAct();
-        virtual ~ResetAct();
+public:
+    ResetAct();
+    virtual ~ResetAct();
 
-    private:
-        void process(Node* node) override;
-    };
-}
+private:
+    void process(Node* node) override;
+};
+}  // namespace PhysIKA
 
 #endif

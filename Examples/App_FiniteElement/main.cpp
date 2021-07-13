@@ -18,7 +18,7 @@ int main()
 {
     Log::sendMessage(Log::Info, "Simulation start");
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadCube(Vector3f(0), Vector3f(1), 0.005f, true);
@@ -49,8 +49,8 @@ int main()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 

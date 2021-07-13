@@ -9,241 +9,239 @@
 #include "DensityPBD.h"
 #include "ImplicitViscosity.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+IMPLEMENT_CLASS_1(SolidFluidInteraction, TDataType)
+
+template <typename TDataType>
+PhysIKA::SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
+    : Node(name)
 {
-	IMPLEMENT_CLASS_1(SolidFluidInteraction, TDataType)
+    this->attachField(&radius, "radius", "radius");
+    radius.setValue(0.0075);
 
-	template<typename TDataType>
-	PhysIKA::SolidFluidInteraction<TDataType>::SolidFluidInteraction(std::string name)
-		:Node(name)
-	{
-		this->attachField(&radius, "radius", "radius");
-		radius.setValue(0.0075);
+    m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
+    radius.connect(m_nbrQuery->inRadius());
+    m_position.connect(m_nbrQuery->inPosition());
 
-		m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		radius.connect(m_nbrQuery->inRadius());
-		m_position.connect(m_nbrQuery->inPosition());
+    m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("collision");
+    radius.connect(m_pbdModule->varSmoothingLength());
+    m_position.connect(m_pbdModule->inPosition());
+    m_vels.connect(m_pbdModule->inVelocity());
+    m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
+    m_pbdModule->varIterationNumber()->setValue(5);
+}
 
-		m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("collision");
-		radius.connect(m_pbdModule->varSmoothingLength());
-		m_position.connect(m_pbdModule->inPosition());
-		m_vels.connect(m_pbdModule->inVelocity());
-		m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
-		m_pbdModule->varIterationNumber()->setValue(5);
-	}
+template <typename TDataType>
+void SolidFluidInteraction<TDataType>::setInteractionDistance(Real d)
+{
+    radius.setValue(d);
+    m_pbdModule->varSamplingDistance()->setValue(d / 2);
+}
 
+template <typename TDataType>
+SolidFluidInteraction<TDataType>::~SolidFluidInteraction()
+{
+}
 
-	template<typename TDataType>
-	void SolidFluidInteraction<TDataType>::setInteractionDistance(Real d)
-	{
-		radius.setValue(d);
-		m_pbdModule->varSamplingDistance()->setValue(d / 2);
-	}
+template <typename TDataType>
+bool SolidFluidInteraction<TDataType>::initialize()
+{
+    return true;
+}
 
-	template<typename TDataType>
-	SolidFluidInteraction<TDataType>::~SolidFluidInteraction()
-	{
-		
-	}
+template <typename TDataType>
+bool SolidFluidInteraction<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
+{
+    return false;
+}
 
-	template<typename TDataType>
-	bool SolidFluidInteraction<TDataType>::initialize()
-	{
-		return true;
-	}
+template <typename TDataType>
+bool SolidFluidInteraction<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
+{
+    this->addChild(child);
+    m_particleSystems.push_back(child);
 
-	template<typename TDataType>
-	bool SolidFluidInteraction<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
-	{
-		return false;
-	}
+    return false;
+}
 
-	template<typename TDataType>
-	bool SolidFluidInteraction<TDataType>::addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child)
-	{
-		this->addChild(child);
-		m_particleSystems.push_back(child);
+template <typename TDataType>
+bool SolidFluidInteraction<TDataType>::resetStatus()
+{
+    int               total_num = 0;
+    std::vector<int>  ids;
+    std::vector<Real> mass;
+    for (int i = 0; i < m_particleSystems.size(); i++)
+    {
+        auto points = m_particleSystems[i]->currentPosition()->getValue();
+        total_num += points.size();
+        Real m = m_particleSystems[i]->getMass() / points.size();
+        for (int j = 0; j < points.size(); j++)
+        {
+            ids.push_back(i);
+            mass.push_back(m);
+        }
+    }
 
-		return false;
-	}
+    m_objId.resize(total_num);
+    m_vels.setElementCount(total_num);
+    m_mass.setElementCount(total_num);
+    m_position.setElementCount(total_num);
 
+    posBuf.resize(total_num);
+    weights.resize(total_num);
+    init_pos.resize(total_num);
 
-	template<typename TDataType>
-	bool SolidFluidInteraction<TDataType>::resetStatus()
-	{
-		int total_num = 0;
-		std::vector<int> ids;
-		std::vector<Real> mass;
-		for (int i = 0; i < m_particleSystems.size(); i++)
-		{
-			auto points = m_particleSystems[i]->currentPosition()->getValue();
-			total_num += points.size();
-			Real m = m_particleSystems[i]->getMass() / points.size();
-			for (int j = 0; j < points.size(); j++)
-			{
-				ids.push_back(i);
-				mass.push_back(m);
-			}
-		}
+    Function1Pt::copy(m_objId, ids);
+    Function1Pt::copy(m_mass.getValue(), mass);
+    ids.clear();
+    mass.clear();
 
-		m_objId.resize(total_num);
-		m_vels.setElementCount(total_num);
-		m_mass.setElementCount(total_num);
-		m_position.setElementCount(total_num);
+    int                 start     = 0;
+    DeviceArray<Coord>& allpoints = m_position.getValue();
+    for (int i = 0; i < m_particleSystems.size(); i++)
+    {
+        DeviceArray<Coord>& points = m_particleSystems[i]->currentPosition()->getValue();
+        DeviceArray<Coord>& vels   = m_particleSystems[i]->currentVelocity()->getValue();
+        int                 num    = points.size();
+        cudaMemcpy(allpoints.getDataPtr() + start, points.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+        cudaMemcpy(m_vels.getValue().getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+        start += num;
+    }
 
-		posBuf.resize(total_num);
-		weights.resize(total_num);
-		init_pos.resize(total_num);
+    return true;
+}
 
-		Function1Pt::copy(m_objId, ids);
-		Function1Pt::copy(m_mass.getValue(), mass);
-		ids.clear();
-		mass.clear();
+template <typename Real, typename Coord>
+__global__ void K_Collide(
+    DeviceArray<int>   objIds,
+    DeviceArray<Real>  mass,
+    DeviceArray<Coord> points,
+    DeviceArray<Coord> newPoints,
+    DeviceArray<Real>  weights,
+    NeighborList<int>  neighbors,
+    Real               radius)
+{
+    int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+    if (pId >= points.size())
+        return;
 
-		int start = 0;
-		DeviceArray<Coord>& allpoints = m_position.getValue();
-		for (int i = 0; i < m_particleSystems.size(); i++)
-		{
-			DeviceArray<Coord>& points = m_particleSystems[i]->currentPosition()->getValue();
-			DeviceArray<Coord>& vels = m_particleSystems[i]->currentVelocity()->getValue();
-			int num = points.size();
-			cudaMemcpy(allpoints.getDataPtr() + start, points.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(m_vels.getValue().getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			start += num;
-		}
+    SpikyKernel<Real> kernel;
 
-		return true;
-	}
+    Real  r;
+    Coord pos_i   = points[pId];
+    int   id_i    = objIds[pId];
+    Real  mass_i  = mass[pId];
+    int   nbSize  = neighbors.getNeighborSize(pId);
+    int   col_num = 0;
+    Coord pos_num = Coord(0);
+    for (int ne = 0; ne < nbSize; ne++)
+    {
+        int   j     = neighbors.getElement(pId, ne);
+        Coord pos_j = points[j];
 
-	template<typename Real, typename Coord>
-	__global__ void K_Collide(
-		DeviceArray<int> objIds,
-		DeviceArray<Real> mass,
-		DeviceArray<Coord> points,
-		DeviceArray<Coord> newPoints,
-		DeviceArray<Real> weights,
-		NeighborList<int> neighbors,
-		Real radius
-	)
-	{
-		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= points.size()) return;
+        r = (pos_i - pos_j).norm();
+        if (r < radius && objIds[j] != id_i)
+        {
+            col_num++;
+            Real  mass_j = mass[j];
+            Coord center = (pos_i + pos_j) / 2;
+            Coord n      = pos_i - pos_j;
+            n            = n.norm() < EPSILON ? Coord(0, 0, 0) : n.normalize();
 
-		SpikyKernel<Real> kernel;
+            Real a = mass_i / (mass_i + mass_j);
 
-		Real r;
-		Coord pos_i = points[pId];
-		int id_i = objIds[pId];
-		Real mass_i = mass[pId];
-		int nbSize = neighbors.getNeighborSize(pId);
-		int col_num = 0;
-		Coord pos_num = Coord(0);
-		for (int ne = 0; ne < nbSize; ne++)
-		{
-			int j = neighbors.getElement(pId, ne);
-			Coord pos_j = points[j];
+            Real d = radius - r;
 
-			r = (pos_i - pos_j).norm();
-			if (r < radius && objIds[j] != id_i)
-			{
-				col_num++;
-				Real mass_j = mass[j];
-				Coord center = (pos_i + pos_j) / 2;
-				Coord n = pos_i - pos_j;
-				n = n.norm() < EPSILON ? Coord(0, 0, 0) : n.normalize();
+            Coord target_i = pos_i + (1 - a) * d * n;  // (center + 0.5*radius*n);
+            Coord target_j = pos_j - a * d * n;        // (center - 0.5*radius*n);
+            //				pos_num += (center + 0.4*radius*n);
 
-				Real a = mass_i / (mass_i + mass_j);
+            Real weight = kernel.Weight(r, 2 * radius);
 
-				Real d = radius - r;
+            atomicAdd(&newPoints[pId][0], weight * target_i[0]);
+            atomicAdd(&newPoints[j][0], weight * target_j[0]);
 
-				Coord target_i = pos_i + (1 - a)*d*n;// (center + 0.5*radius*n);
-				Coord target_j = pos_j - a*d*n;// (center - 0.5*radius*n);
-				//				pos_num += (center + 0.4*radius*n);
+            atomicAdd(&weights[pId], weight);
+            atomicAdd(&weights[j], weight);
 
-				Real weight = kernel.Weight(r, 2 * radius);
+            if (Coord::dims() >= 2)
+            {
+                atomicAdd(&newPoints[pId][1], weight * target_i[1]);
+                atomicAdd(&newPoints[j][1], weight * target_j[1]);
+            }
 
-				atomicAdd(&newPoints[pId][0], weight*target_i[0]);
-				atomicAdd(&newPoints[j][0], weight*target_j[0]);
+            if (Coord::dims() >= 3)
+            {
+                atomicAdd(&newPoints[pId][2], weight * target_i[2]);
+                atomicAdd(&newPoints[j][2], weight * target_j[2]);
+            }
+        }
+    }
 
-				atomicAdd(&weights[pId], weight);
-				atomicAdd(&weights[j], weight);
+    //		if (col_num != 0)
+    //			pos_num /= col_num;
+    //		else
+    //			pos_num = pos_i;
+    //
+    //		newPoints[pId] = pos_num;
+}
 
-				if (Coord::dims() >= 2)
-				{
-					atomicAdd(&newPoints[pId][1], weight*target_i[1]);
-					atomicAdd(&newPoints[j][1], weight*target_j[1]);
-				}
+template <typename Real, typename Coord>
+__global__ void K_ComputeTarget(
+    DeviceArray<Coord> oldPoints,
+    DeviceArray<Coord> newPoints,
+    DeviceArray<Real>  weights)
+{
+    int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+    if (pId >= oldPoints.size())
+        return;
 
-				if (Coord::dims() >= 3)
-				{
-					atomicAdd(&newPoints[pId][2], weight*target_i[2]);
-					atomicAdd(&newPoints[j][2], weight*target_j[2]);
-				}
-			}
-		}
+    if (weights[pId] > EPSILON)
+    {
+        newPoints[pId] /= weights[pId];
+    }
+    else
+        newPoints[pId] = oldPoints[pId];
+}
 
-		//		if (col_num != 0)
-		//			pos_num /= col_num;
-		//		else
-		//			pos_num = pos_i;
-		//
-		//		newPoints[pId] = pos_num;
-	}
+template <typename Real, typename Coord>
+__global__ void K_ComputeVelocity(
+    DeviceArray<Coord> initPoints,
+    DeviceArray<Coord> curPoints,
+    DeviceArray<Coord> velocites,
+    Real               dt)
+{
+    int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+    if (pId >= velocites.size())
+        return;
 
-	template<typename Real, typename Coord>
-	__global__ void K_ComputeTarget(
-		DeviceArray<Coord> oldPoints,
-		DeviceArray<Coord> newPoints,
-		DeviceArray<Real> weights)
-	{
-		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= oldPoints.size()) return;
+    velocites[pId] += 0.5 * (curPoints[pId] - initPoints[pId]) / dt;
+}
 
-		if (weights[pId] > EPSILON)
-		{
-			newPoints[pId] /= weights[pId];
-		}
-		else
-			newPoints[pId] = oldPoints[pId];
-	}
+template <typename TDataType>
+void SolidFluidInteraction<TDataType>::advance(Real dt)
+{
+    int                 start     = 0;
+    DeviceArray<Coord>& allpoints = m_position.getValue();
+    for (int i = 0; i < m_particleSystems.size(); i++)
+    {
+        DeviceArray<Coord>& points = m_particleSystems[i]->currentPosition()->getValue();
+        DeviceArray<Coord>& vels   = m_particleSystems[i]->currentVelocity()->getValue();
+        int                 num    = points.size();
+        cudaMemcpy(allpoints.getDataPtr() + start, points.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+        cudaMemcpy(m_vels.getValue().getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+        start += num;
+    }
 
-	template<typename Real, typename Coord>
-	__global__ void K_ComputeVelocity(
-		DeviceArray<Coord> initPoints,
-		DeviceArray<Coord> curPoints,
-		DeviceArray<Coord> velocites,
-		Real dt)
-	{
-		int pId = threadIdx.x + (blockIdx.x * blockDim.x);
-		if (pId >= velocites.size()) return;
+    m_nbrQuery->compute();
 
-		velocites[pId] += 0.5*(curPoints[pId] - initPoints[pId]) / dt;
-	}
+    auto module = this->template getModule<DensityPBD<TDataType>>("collision");
+    module->constrain();
 
-	template<typename TDataType>
-	void SolidFluidInteraction<TDataType>::advance(Real dt)
-	{
-		int start = 0;
-		DeviceArray<Coord>& allpoints = m_position.getValue();
-		for (int i = 0; i < m_particleSystems.size(); i++)
-		{
-			DeviceArray<Coord>& points = m_particleSystems[i]->currentPosition()->getValue();
-			DeviceArray<Coord>& vels = m_particleSystems[i]->currentVelocity()->getValue();
-			int num = points.size();
-			cudaMemcpy(allpoints.getDataPtr() + start, points.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(m_vels.getValue().getDataPtr() + start, vels.getDataPtr(), num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			start += num;
-		}
+    // 		auto module2 = this->template getModule<ImplicitViscosity<TDataType>>("viscosity");
+    // 		module2->constrain();
 
-		m_nbrQuery->compute();
-
-		auto module = this->template getModule<DensityPBD<TDataType>>("collision");
-		module->constrain();
-
-// 		auto module2 = this->template getModule<ImplicitViscosity<TDataType>>("viscosity");
-// 		module2->constrain();
-
-/*		Function1Pt::copy(init_pos, allpoints);
+    /*		Function1Pt::copy(init_pos, allpoints);
 
 		uint pDims = cudaGridSize(allpoints.size(), BLOCK_SIZE);
 		for (size_t it = 0; it < 5; it++)
@@ -269,17 +267,16 @@ namespace PhysIKA
 
 		K_ComputeVelocity << <pDims, BLOCK_SIZE >> > (init_pos, allpoints, m_vels.getValue(), getParent()->getDt());*/
 
-		start = 0;
-		for (int i = 0; i < m_particleSystems.size(); i++)
-		{
-			DeviceArray<Coord>& points = m_particleSystems[i]->currentPosition()->getValue();
-			DeviceArray<Coord>& vels = m_particleSystems[i]->currentVelocity()->getValue();
-			int num = points.size();
-			cudaMemcpy(points.getDataPtr(), allpoints.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
-			cudaMemcpy(vels.getDataPtr(), m_vels.getValue().getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+    start = 0;
+    for (int i = 0; i < m_particleSystems.size(); i++)
+    {
+        DeviceArray<Coord>& points = m_particleSystems[i]->currentPosition()->getValue();
+        DeviceArray<Coord>& vels   = m_particleSystems[i]->currentVelocity()->getValue();
+        int                 num    = points.size();
+        cudaMemcpy(points.getDataPtr(), allpoints.getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
+        cudaMemcpy(vels.getDataPtr(), m_vels.getValue().getDataPtr() + start, num * sizeof(Coord), cudaMemcpyDeviceToDevice);
 
-			start += num;
-		}
-
-	}
+        start += num;
+    }
 }
+}  // namespace PhysIKA

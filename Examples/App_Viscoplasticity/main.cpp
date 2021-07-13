@@ -26,30 +26,30 @@
 using namespace std;
 using namespace PhysIKA;
 
-void RecieveLogMessage(const Log::Message &m)
+void RecieveLogMessage(const Log::Message& m)
 {
     switch (m.type)
     {
-    case Log::Info:
-        cout << ">>>: " << m.text << endl;
-        break;
-    case Log::Warning:
-        cout << "???: " << m.text << endl;
-        break;
-    case Log::Error:
-        cout << "!!!: " << m.text << endl;
-        break;
-    case Log::User:
-        cout << ">>>: " << m.text << endl;
-        break;
-    default:
-        break;
+        case Log::Info:
+            cout << ">>>: " << m.text << endl;
+            break;
+        case Log::Warning:
+            cout << "???: " << m.text << endl;
+            break;
+        case Log::Error:
+            cout << "!!!: " << m.text << endl;
+            break;
+        case Log::User:
+            cout << ">>>: " << m.text << endl;
+            break;
+        default:
+            break;
     }
 }
 
 void CreateScene()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
 
     Vector3f lo0 = Vector3f(0);
     Vector3f hi0 = Vector3f(1);
@@ -73,9 +73,9 @@ void CreateScene()
 
     for (size_t i = 0; i < 5; i++)
     {
-        Vector3f lo = Vector3f(0.2 + i * 0.08, 0.2, 0);
-        Vector3f hi = Vector3f(0.25 + i * 0.08, 0.25, 1);
-        Vector3f scale = (hi - lo) / 2;
+        Vector3f lo     = Vector3f(0.2 + i * 0.08, 0.2, 0);
+        Vector3f hi     = Vector3f(0.25 + i * 0.08, 0.25, 1);
+        Vector3f scale  = (hi - lo) / 2;
         Vector3f center = (hi + lo) / 2;
 
         root->loadCube(lo, hi, 0.005, false, true);
@@ -89,7 +89,7 @@ void CreateScene()
         rigidTri->translate(center);
 
         auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         rigidbody->getSurface()->addVisualModule(renderModule);
     }
 
@@ -107,8 +107,8 @@ void CreateScene()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 
@@ -139,8 +139,8 @@ void CreateScene()
 
     // Output all particles to .txt file.
     {
-        auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
-        auto &points = pSet->getPoints();
+        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
+        auto&               points = pSet->getPoints();
         HostArray<Vector3f> hpoints(points.size());
         Function1Pt::copy(hpoints, points);
 

@@ -3,50 +3,59 @@
 
 namespace PhysIKA {
 
-    class SceneLoader
+class SceneLoader
+{
+public:
+    virtual std::shared_ptr<Node> load(const std::string filename)
     {
-    public:
-        virtual std::shared_ptr<Node> load(const std::string filename) { return nullptr; }
+        return nullptr;
+    }
 
-        virtual bool canLoadFileByName(const std::string filename) {
-            std::string str = filename;
-            std::string::size_type pos = str.find_last_of('.');
-            if (pos == std::string::npos)
-                return false; // no extension
-
-            return canLoadFileByExtension(str.substr(pos + 1));
-        }
-
-        virtual bool canLoadFileByExtension(const std::string extension) { return false; }
-    };
-
-    class SceneLoaderFactory
+    virtual bool canLoadFileByName(const std::string filename)
     {
-    public:
-        typedef std::vector<SceneLoader*> SceneLoaderList;
+        std::string            str = filename;
+        std::string::size_type pos = str.find_last_of('.');
+        if (pos == std::string::npos)
+            return false;  // no extension
 
-        /// Get the ObjectFactory singleton instance
-        static SceneLoaderFactory& getInstance();
+        return canLoadFileByExtension(str.substr(pos + 1));
+    }
 
-    public:
-        /// Get an entry given a file extension
-        SceneLoader* getEntryByFileExtension(std::string extension);
+    virtual bool canLoadFileByExtension(const std::string extension)
+    {
+        return false;
+    }
+};
 
-        /// Get an entry given a file name
-        SceneLoader* getEntryByFileName(std::string filename);
+class SceneLoaderFactory
+{
+public:
+    typedef std::vector<SceneLoader*> SceneLoaderList;
 
-        /// Add a scene loader
-        SceneLoader* addEntry(SceneLoader *loader);
+    /// Get the ObjectFactory singleton instance
+    static SceneLoaderFactory& getInstance();
 
-        /// Get the list of loaders
-        SceneLoaderList* getEntryList() { return &m_loaders; }
+public:
+    /// Get an entry given a file extension
+    SceneLoader* getEntryByFileExtension(std::string extension);
 
-    private:
-        SceneLoaderFactory();
+    /// Get an entry given a file name
+    SceneLoader* getEntryByFileName(std::string filename);
 
-        /// Main class registry
-        SceneLoaderList m_loaders;
-    };
+    /// Add a scene loader
+    SceneLoader* addEntry(SceneLoader* loader);
 
+    /// Get the list of loaders
+    SceneLoaderList* getEntryList()
+    {
+        return &m_loaders;
+    }
 
-}
+private:
+    SceneLoaderFactory();
+
+    /// Main class registry
+    SceneLoaderList m_loaders;
+};
+
+}  // namespace PhysIKA

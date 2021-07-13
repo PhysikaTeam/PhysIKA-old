@@ -1,7 +1,7 @@
 #pragma once
 #include "Framework/Framework/Module.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 class ForceModule : public Module
 {
@@ -10,16 +10,27 @@ public:
     ForceModule();
     virtual ~ForceModule();
 
-    virtual bool applyForce() { return true; }
+    virtual bool applyForce()
+    {
+        return true;
+    }
 
-    void setForceID(FieldID id) { m_forceID = id; }
-    void setTorqueID(FieldID id) { m_torqueID = id; }
+    void setForceID(FieldID id)
+    {
+        m_forceID = id;
+    }
+    void setTorqueID(FieldID id)
+    {
+        m_torqueID = id;
+    }
 
-    std::string getModuleType() override { return "ForceModule"; }
+    std::string getModuleType() override
+    {
+        return "ForceModule";
+    }
 
 protected:
     FieldID m_forceID;
     FieldID m_torqueID;
 };
-}
-
+}  // namespace PhysIKA

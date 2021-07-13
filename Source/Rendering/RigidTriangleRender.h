@@ -30,8 +30,8 @@ public:
     ~RigidTriangleRender() = default;
 
     //disable copy
-    RigidTriangleRender(const RigidTriangleRender &) = delete;
-    RigidTriangleRender & operator = (const RigidTriangleRender &) = delete;
+    RigidTriangleRender(const RigidTriangleRender&) = delete;
+    RigidTriangleRender& operator=(const RigidTriangleRender&) = delete;
 
     void setVertexArray(HostArray<float3>& vertArray);
     void setVertexArray(DeviceArray<float3>& vertArray);
@@ -45,7 +45,6 @@ public:
     void enableDoubleShading();
     void disableDoubleShading();
 
-
     void enableUseCustomColor();
     void disableUseCustomColor();
     bool isUseCustomColor() const;
@@ -54,16 +53,25 @@ public:
 
     void resize(unsigned int triNum);
 
-    void setRotation(const Quaternion<float>& q) { m_rotation = q; }
-    void setTranslatioin(const Vector3f& t) { m_translation = t; }
-    void setScale(const Vector3f& s) { m_scale = s; }
+    void setRotation(const Quaternion<float>& q)
+    {
+        m_rotation = q;
+    }
+    void setTranslatioin(const Vector3f& t)
+    {
+        m_translation = t;
+    }
+    void setScale(const Vector3f& s)
+    {
+        m_scale = s;
+    }
 
 private:
     bool use_custom_color_ = true;
-    int m_lineWidth = 2;
+    int  m_lineWidth       = 2;
 
-    bool m_bShowWireframe = false;
-    bool m_bEnableLighting = false;
+    bool m_bShowWireframe       = false;
+    bool m_bEnableLighting      = false;
     bool m_bEnableDoubleShading = true;
 
     ShaderProgram m_solidShader;
@@ -74,8 +82,8 @@ private:
     CudaVBOMapper<glm::vec3> m_colorVBO;
 
     Quaternion<float> m_rotation;
-    Vector3f m_scale;
-    Vector3f m_translation;
+    Vector3f          m_scale;
+    Vector3f          m_translation;
 };
-    
-}
+
+}  // namespace PhysIKA

@@ -121,7 +121,7 @@ bool s_error = false;
 
 // option 1 : matrix row pointers (less data copying)
 #define BTROWPTRS
-#define BTATYPE float **
+#define BTATYPE float**
 #define BTAROW(i) (m_A[i])
 
 // option 2 : no matrix row pointers (slightly faster inner loops)
@@ -131,10 +131,7 @@ bool s_error = false;
 
 #define BTNUB_OPTIMIZATIONS
 
-
-
 #define SIMDSQRT12 0.7071067811865475244008443621048490
-
 
 #include <iostream>
 
@@ -148,22 +145,21 @@ bool s_error = false;
  * if this is in the factorizer source file, n must be a multiple of 2.
  */
 
-namespace PhysIKA
+namespace PhysIKA {
+
+template <typename T>
+static void setZero(T* x, int n)
 {
+    for (int i = 0; i < n; ++i)
+        x[i] = 0;
+}
 
-    template<typename T>
-    static void setZero(T* x, int n)
-    {
-        for (int i = 0; i < n; ++i)
-            x[i] = 0;
-    }
-
-static void btSolveL1_1(const float *L, float *B, int n, int lskip1)
+static void btSolveL1_1(const float* L, float* B, int n, int lskip1)
 {
     /* declare variables - Z matrix, p and q vectors, etc */
-    float Z11, m11, Z21, m21, p1, q1, p2, *ex;
-    const float *ell;
-    int i, j;
+    float        Z11, m11, Z21, m21, p1, q1, p2, *ex;
+    const float* ell;
+    int          i, j;
     /* compute all 2 x 1 blocks of X */
     for (i = 0; i < n; i += 2)
     {
@@ -172,23 +168,23 @@ static void btSolveL1_1(const float *L, float *B, int n, int lskip1)
         Z11 = 0;
         Z21 = 0;
         ell = L + i * lskip1;
-        ex = B;
+        ex  = B;
         /* the inner loop that computes outer products and adds them to Z */
         for (j = i - 2; j >= 0; j -= 2)
         {
             /* compute outer product and add it to the Z matrix */
-            p1 = ell[0];
-            q1 = ex[0];
+            p1  = ell[0];
+            q1  = ex[0];
             m11 = p1 * q1;
-            p2 = ell[lskip1];
+            p2  = ell[lskip1];
             m21 = p2 * q1;
             Z11 += m11;
             Z21 += m21;
             /* compute outer product and add it to the Z matrix */
-            p1 = ell[1];
-            q1 = ex[1];
+            p1  = ell[1];
+            q1  = ex[1];
             m11 = p1 * q1;
-            p2 = ell[1 + lskip1];
+            p2  = ell[1 + lskip1];
             m21 = p2 * q1;
             /* advance pointers */
             ell += 2;
@@ -202,10 +198,10 @@ static void btSolveL1_1(const float *L, float *B, int n, int lskip1)
         for (; j > 0; j--)
         {
             /* compute outer product and add it to the Z matrix */
-            p1 = ell[0];
-            q1 = ex[0];
+            p1  = ell[0];
+            q1  = ex[0];
             m11 = p1 * q1;
-            p2 = ell[lskip1];
+            p2  = ell[lskip1];
             m21 = p2 * q1;
             /* advance pointers */
             ell += 1;
@@ -214,10 +210,10 @@ static void btSolveL1_1(const float *L, float *B, int n, int lskip1)
             Z21 += m21;
         }
         /* finish computing the X(i) block */
-        Z11 = ex[0] - Z11;
+        Z11   = ex[0] - Z11;
         ex[0] = Z11;
-        p1 = ell[lskip1];
-        Z21 = ex[1] - Z21 - p1 * Z11;
+        p1    = ell[lskip1];
+        Z21   = ex[1] - Z21 - p1 * Z11;
         ex[1] = Z21;
         /* end of outer loop */
     }
@@ -233,12 +229,12 @@ static void btSolveL1_1(const float *L, float *B, int n, int lskip1)
  * if this is in the factorizer source file, n must be a multiple of 2.
  */
 
-static void btSolveL1_2(const float *L, float *B, int n, int lskip1)
+static void btSolveL1_2(const float* L, float* B, int n, int lskip1)
 {
     /* declare variables - Z matrix, p and q vectors, etc */
-    float Z11, m11, Z12, m12, Z21, m21, Z22, m22, p1, q1, p2, q2, *ex;
-    const float *ell;
-    int i, j;
+    float        Z11, m11, Z12, m12, Z21, m21, Z22, m22, p1, q1, p2, q2, *ex;
+    const float* ell;
+    int          i, j;
     /* compute all 2 x 2 blocks of X */
     for (i = 0; i < n; i += 2)
     {
@@ -249,17 +245,17 @@ static void btSolveL1_2(const float *L, float *B, int n, int lskip1)
         Z21 = 0;
         Z22 = 0;
         ell = L + i * lskip1;
-        ex = B;
+        ex  = B;
         /* the inner loop that computes outer products and adds them to Z */
         for (j = i - 2; j >= 0; j -= 2)
         {
             /* compute outer product and add it to the Z matrix */
-            p1 = ell[0];
-            q1 = ex[0];
+            p1  = ell[0];
+            q1  = ex[0];
             m11 = p1 * q1;
-            q2 = ex[lskip1];
+            q2  = ex[lskip1];
             m12 = p1 * q2;
-            p2 = ell[lskip1];
+            p2  = ell[lskip1];
             m21 = p2 * q1;
             m22 = p2 * q2;
             Z11 += m11;
@@ -267,12 +263,12 @@ static void btSolveL1_2(const float *L, float *B, int n, int lskip1)
             Z21 += m21;
             Z22 += m22;
             /* compute outer product and add it to the Z matrix */
-            p1 = ell[1];
-            q1 = ex[1];
+            p1  = ell[1];
+            q1  = ex[1];
             m11 = p1 * q1;
-            q2 = ex[1 + lskip1];
+            q2  = ex[1 + lskip1];
             m12 = p1 * q2;
-            p2 = ell[1 + lskip1];
+            p2  = ell[1 + lskip1];
             m21 = p2 * q1;
             m22 = p2 * q2;
             /* advance pointers */
@@ -289,12 +285,12 @@ static void btSolveL1_2(const float *L, float *B, int n, int lskip1)
         for (; j > 0; j--)
         {
             /* compute outer product and add it to the Z matrix */
-            p1 = ell[0];
-            q1 = ex[0];
+            p1  = ell[0];
+            q1  = ex[0];
             m11 = p1 * q1;
-            q2 = ex[lskip1];
+            q2  = ex[lskip1];
             m12 = p1 * q2;
-            p2 = ell[lskip1];
+            p2  = ell[lskip1];
             m21 = p2 * q1;
             m22 = p2 * q2;
             /* advance pointers */
@@ -306,24 +302,25 @@ static void btSolveL1_2(const float *L, float *B, int n, int lskip1)
             Z22 += m22;
         }
         /* finish computing the X(i) block */
-        Z11 = ex[0] - Z11;
-        ex[0] = Z11;
-        Z12 = ex[lskip1] - Z12;
-        ex[lskip1] = Z12;
-        p1 = ell[lskip1];
-        Z21 = ex[1] - Z21 - p1 * Z11;
-        ex[1] = Z21;
-        Z22 = ex[1 + lskip1] - Z22 - p1 * Z12;
+        Z11            = ex[0] - Z11;
+        ex[0]          = Z11;
+        Z12            = ex[lskip1] - Z12;
+        ex[lskip1]     = Z12;
+        p1             = ell[lskip1];
+        Z21            = ex[1] - Z21 - p1 * Z11;
+        ex[1]          = Z21;
+        Z22            = ex[1 + lskip1] - Z22 - p1 * Z12;
         ex[1 + lskip1] = Z22;
         /* end of outer loop */
     }
 }
 
-void btFactorLDLT(float *A, float *d, int n, int nskip1)
+void btFactorLDLT(float* A, float* d, int n, int nskip1)
 {
-    int i, j;
+    int   i, j;
     float sum, *ell, *dee, dd, p1, p2, q1, q2, Z11, m11, Z21, m21, Z22, m22;
-    if (n < 1) return;
+    if (n < 1)
+        return;
 
     for (i = 0; i <= n - 2; i += 2)
     {
@@ -338,81 +335,81 @@ void btFactorLDLT(float *A, float *d, int n, int nskip1)
         dee = d;
         for (j = i - 6; j >= 0; j -= 6)
         {
-            p1 = ell[0];
-            p2 = ell[nskip1];
-            dd = dee[0];
-            q1 = p1 * dd;
-            q2 = p2 * dd;
-            ell[0] = q1;
+            p1          = ell[0];
+            p2          = ell[nskip1];
+            dd          = dee[0];
+            q1          = p1 * dd;
+            q2          = p2 * dd;
+            ell[0]      = q1;
             ell[nskip1] = q2;
-            m11 = p1 * q1;
-            m21 = p2 * q1;
-            m22 = p2 * q2;
+            m11         = p1 * q1;
+            m21         = p2 * q1;
+            m22         = p2 * q2;
             Z11 += m11;
             Z21 += m21;
             Z22 += m22;
-            p1 = ell[1];
-            p2 = ell[1 + nskip1];
-            dd = dee[1];
-            q1 = p1 * dd;
-            q2 = p2 * dd;
-            ell[1] = q1;
+            p1              = ell[1];
+            p2              = ell[1 + nskip1];
+            dd              = dee[1];
+            q1              = p1 * dd;
+            q2              = p2 * dd;
+            ell[1]          = q1;
             ell[1 + nskip1] = q2;
-            m11 = p1 * q1;
-            m21 = p2 * q1;
-            m22 = p2 * q2;
+            m11             = p1 * q1;
+            m21             = p2 * q1;
+            m22             = p2 * q2;
             Z11 += m11;
             Z21 += m21;
             Z22 += m22;
-            p1 = ell[2];
-            p2 = ell[2 + nskip1];
-            dd = dee[2];
-            q1 = p1 * dd;
-            q2 = p2 * dd;
-            ell[2] = q1;
+            p1              = ell[2];
+            p2              = ell[2 + nskip1];
+            dd              = dee[2];
+            q1              = p1 * dd;
+            q2              = p2 * dd;
+            ell[2]          = q1;
             ell[2 + nskip1] = q2;
-            m11 = p1 * q1;
-            m21 = p2 * q1;
-            m22 = p2 * q2;
+            m11             = p1 * q1;
+            m21             = p2 * q1;
+            m22             = p2 * q2;
             Z11 += m11;
             Z21 += m21;
             Z22 += m22;
-            p1 = ell[3];
-            p2 = ell[3 + nskip1];
-            dd = dee[3];
-            q1 = p1 * dd;
-            q2 = p2 * dd;
-            ell[3] = q1;
+            p1              = ell[3];
+            p2              = ell[3 + nskip1];
+            dd              = dee[3];
+            q1              = p1 * dd;
+            q2              = p2 * dd;
+            ell[3]          = q1;
             ell[3 + nskip1] = q2;
-            m11 = p1 * q1;
-            m21 = p2 * q1;
-            m22 = p2 * q2;
+            m11             = p1 * q1;
+            m21             = p2 * q1;
+            m22             = p2 * q2;
             Z11 += m11;
             Z21 += m21;
             Z22 += m22;
-            p1 = ell[4];
-            p2 = ell[4 + nskip1];
-            dd = dee[4];
-            q1 = p1 * dd;
-            q2 = p2 * dd;
-            ell[4] = q1;
+            p1              = ell[4];
+            p2              = ell[4 + nskip1];
+            dd              = dee[4];
+            q1              = p1 * dd;
+            q2              = p2 * dd;
+            ell[4]          = q1;
             ell[4 + nskip1] = q2;
-            m11 = p1 * q1;
-            m21 = p2 * q1;
-            m22 = p2 * q2;
+            m11             = p1 * q1;
+            m21             = p2 * q1;
+            m22             = p2 * q2;
             Z11 += m11;
             Z21 += m21;
             Z22 += m22;
-            p1 = ell[5];
-            p2 = ell[5 + nskip1];
-            dd = dee[5];
-            q1 = p1 * dd;
-            q2 = p2 * dd;
-            ell[5] = q1;
+            p1              = ell[5];
+            p2              = ell[5 + nskip1];
+            dd              = dee[5];
+            q1              = p1 * dd;
+            q2              = p2 * dd;
+            ell[5]          = q1;
             ell[5 + nskip1] = q2;
-            m11 = p1 * q1;
-            m21 = p2 * q1;
-            m22 = p2 * q2;
+            m11             = p1 * q1;
+            m21             = p2 * q1;
+            m22             = p2 * q2;
             Z11 += m11;
             Z21 += m21;
             Z22 += m22;
@@ -423,16 +420,16 @@ void btFactorLDLT(float *A, float *d, int n, int nskip1)
         j += 6;
         for (; j > 0; j--)
         {
-            p1 = ell[0];
-            p2 = ell[nskip1];
-            dd = dee[0];
-            q1 = p1 * dd;
-            q2 = p2 * dd;
-            ell[0] = q1;
+            p1          = ell[0];
+            p2          = ell[nskip1];
+            dd          = dee[0];
+            q1          = p1 * dd;
+            q2          = p2 * dd;
+            ell[0]      = q1;
             ell[nskip1] = q2;
-            m11 = p1 * q1;
-            m21 = p2 * q1;
-            m22 = p2 * q2;
+            m11         = p1 * q1;
+            m21         = p2 * q1;
+            m22         = p2 * q2;
             Z11 += m11;
             Z21 += m21;
             Z22 += m22;
@@ -449,11 +446,11 @@ void btFactorLDLT(float *A, float *d, int n, int nskip1)
         dee[0] = 1.0f / (Z11);
         /* factorize row 2 */
         sum = 0;
-        q1 = Z21;
-        q2 = q1 * dee[0];
+        q1  = Z21;
+        q2  = q1 * dee[0];
         Z21 = q2;
         sum += q1 * q2;
-        dee[1] = 1.0f/ (Z22 - sum);
+        dee[1] = 1.0f / (Z22 - sum);
         /* done factorizing 2 x 2 block */
         ell[nskip1] = Z21;
     }
@@ -472,41 +469,41 @@ void btFactorLDLT(float *A, float *d, int n, int nskip1)
             dee = d;
             for (j = i - 6; j >= 0; j -= 6)
             {
-                p1 = ell[0];
-                dd = dee[0];
-                q1 = p1 * dd;
+                p1     = ell[0];
+                dd     = dee[0];
+                q1     = p1 * dd;
                 ell[0] = q1;
-                m11 = p1 * q1;
+                m11    = p1 * q1;
                 Z11 += m11;
-                p1 = ell[1];
-                dd = dee[1];
-                q1 = p1 * dd;
+                p1     = ell[1];
+                dd     = dee[1];
+                q1     = p1 * dd;
                 ell[1] = q1;
-                m11 = p1 * q1;
+                m11    = p1 * q1;
                 Z11 += m11;
-                p1 = ell[2];
-                dd = dee[2];
-                q1 = p1 * dd;
+                p1     = ell[2];
+                dd     = dee[2];
+                q1     = p1 * dd;
                 ell[2] = q1;
-                m11 = p1 * q1;
+                m11    = p1 * q1;
                 Z11 += m11;
-                p1 = ell[3];
-                dd = dee[3];
-                q1 = p1 * dd;
+                p1     = ell[3];
+                dd     = dee[3];
+                q1     = p1 * dd;
                 ell[3] = q1;
-                m11 = p1 * q1;
+                m11    = p1 * q1;
                 Z11 += m11;
-                p1 = ell[4];
-                dd = dee[4];
-                q1 = p1 * dd;
+                p1     = ell[4];
+                dd     = dee[4];
+                q1     = p1 * dd;
                 ell[4] = q1;
-                m11 = p1 * q1;
+                m11    = p1 * q1;
                 Z11 += m11;
-                p1 = ell[5];
-                dd = dee[5];
-                q1 = p1 * dd;
+                p1     = ell[5];
+                dd     = dee[5];
+                q1     = p1 * dd;
                 ell[5] = q1;
-                m11 = p1 * q1;
+                m11    = p1 * q1;
                 Z11 += m11;
                 ell += 6;
                 dee += 6;
@@ -515,11 +512,11 @@ void btFactorLDLT(float *A, float *d, int n, int nskip1)
             j += 6;
             for (; j > 0; j--)
             {
-                p1 = ell[0];
-                dd = dee[0];
-                q1 = p1 * dd;
+                p1     = ell[0];
+                dd     = dee[0];
+                q1     = p1 * dd;
                 ell[0] = q1;
-                m11 = p1 * q1;
+                m11    = p1 * q1;
                 Z11 += m11;
                 ell++;
                 dee++;
@@ -547,12 +544,12 @@ void btFactorLDLT(float *A, float *d, int n, int nskip1)
  * if this is in the factorizer source file, n must be a multiple of 4.
  */
 
-void btSolveL1(const float *L, float *B, int n, int lskip1)
+void btSolveL1(const float* L, float* B, int n, int lskip1)
 {
     /* declare variables - Z matrix, p and q vectors, etc */
-    float Z11, Z21, Z31, Z41, p1, q1, p2, p3, p4, *ex;
-    const float *ell;
-    int lskip2, lskip3, i, j;
+    float        Z11, Z21, Z31, Z41, p1, q1, p2, p3, p4, *ex;
+    const float* ell;
+    int          lskip2, lskip3, i, j;
     /* compute lskip values */
     lskip2 = 2 * lskip1;
     lskip3 = 3 * lskip1;
@@ -566,7 +563,7 @@ void btSolveL1(const float *L, float *B, int n, int lskip1)
         Z31 = 0;
         Z41 = 0;
         ell = L + i * lskip1;
-        ex = B;
+        ex  = B;
         /* the inner loop that computes outer products and adds them to Z */
         for (j = i - 12; j >= 0; j -= 12)
         {
@@ -727,19 +724,19 @@ void btSolveL1(const float *L, float *B, int n, int lskip1)
             ex += 1;
         }
         /* finish computing the X(i) block */
-        Z11 = ex[0] - Z11;
+        Z11   = ex[0] - Z11;
         ex[0] = Z11;
-        p1 = ell[lskip1];
-        Z21 = ex[1] - Z21 - p1 * Z11;
+        p1    = ell[lskip1];
+        Z21   = ex[1] - Z21 - p1 * Z11;
         ex[1] = Z21;
-        p1 = ell[lskip2];
-        p2 = ell[1 + lskip2];
-        Z31 = ex[2] - Z31 - p1 * Z11 - p2 * Z21;
+        p1    = ell[lskip2];
+        p2    = ell[1 + lskip2];
+        Z31   = ex[2] - Z31 - p1 * Z11 - p2 * Z21;
         ex[2] = Z31;
-        p1 = ell[lskip3];
-        p2 = ell[1 + lskip3];
-        p3 = ell[2 + lskip3];
-        Z41 = ex[3] - Z41 - p1 * Z11 - p2 * Z21 - p3 * Z31;
+        p1    = ell[lskip3];
+        p2    = ell[1 + lskip3];
+        p3    = ell[2 + lskip3];
+        Z41   = ex[3] - Z41 - p1 * Z11 - p2 * Z21 - p3 * Z31;
         ex[3] = Z41;
         /* end of outer loop */
     }
@@ -750,7 +747,7 @@ void btSolveL1(const float *L, float *B, int n, int lskip1)
         /* set the Z matrix to 0 */
         Z11 = 0;
         ell = L + i * lskip1;
-        ex = B;
+        ex  = B;
         /* the inner loop that computes outer products and adds them to Z */
         for (j = i - 12; j >= 0; j -= 12)
         {
@@ -833,7 +830,7 @@ void btSolveL1(const float *L, float *B, int n, int lskip1)
             ex += 1;
         }
         /* finish computing the X(i) block */
-        Z11 = ex[0] - Z11;
+        Z11   = ex[0] - Z11;
         ex[0] = Z11;
     }
 }
@@ -846,16 +843,16 @@ void btSolveL1(const float *L, float *B, int n, int lskip1)
  * this processes blocks of 4.
  */
 
-void btSolveL1T(const float *L, float *B, int n, int lskip1)
+void btSolveL1T(const float* L, float* B, int n, int lskip1)
 {
     /* declare variables - Z matrix, p and q vectors, etc */
-    float Z11, m11, Z21, m21, Z31, m31, Z41, m41, p1, q1, p2, p3, p4, *ex;
-    const float *ell;
-    int lskip2, i, j;
+    float        Z11, m11, Z21, m21, Z31, m31, Z41, m41, p1, q1, p2, p3, p4, *ex;
+    const float* ell;
+    int          lskip2, i, j;
     //  int lskip3;
     /* special handling for L and B because we're solving L1 *transpose* */
-    L = L + (n - 1) * (lskip1 + 1);
-    B = B + n - 1;
+    L      = L + (n - 1) * (lskip1 + 1);
+    B      = B + n - 1;
     lskip1 = -lskip1;
     /* compute lskip values */
     lskip2 = 2 * lskip1;
@@ -870,7 +867,7 @@ void btSolveL1T(const float *L, float *B, int n, int lskip1)
         Z31 = 0;
         Z41 = 0;
         ell = L - i;
-        ex = B;
+        ex  = B;
         /* the inner loop that computes outer products and adds them to Z */
         for (j = i - 4; j >= 0; j -= 4)
         {
@@ -964,19 +961,19 @@ void btSolveL1T(const float *L, float *B, int n, int lskip1)
             Z41 += m41;
         }
         /* finish computing the X(i) block */
-        Z11 = ex[0] - Z11;
-        ex[0] = Z11;
-        p1 = ell[-1];
-        Z21 = ex[-1] - Z21 - p1 * Z11;
+        Z11    = ex[0] - Z11;
+        ex[0]  = Z11;
+        p1     = ell[-1];
+        Z21    = ex[-1] - Z21 - p1 * Z11;
         ex[-1] = Z21;
-        p1 = ell[-2];
-        p2 = ell[-2 + lskip1];
-        Z31 = ex[-2] - Z31 - p1 * Z11 - p2 * Z21;
+        p1     = ell[-2];
+        p2     = ell[-2 + lskip1];
+        Z31    = ex[-2] - Z31 - p1 * Z11 - p2 * Z21;
         ex[-2] = Z31;
-        p1 = ell[-3];
-        p2 = ell[-3 + lskip1];
-        p3 = ell[-3 + lskip2];
-        Z41 = ex[-3] - Z41 - p1 * Z11 - p2 * Z21 - p3 * Z31;
+        p1     = ell[-3];
+        p2     = ell[-3 + lskip1];
+        p3     = ell[-3 + lskip2];
+        Z41    = ex[-3] - Z41 - p1 * Z11 - p2 * Z21 - p3 * Z31;
         ex[-3] = Z41;
         /* end of outer loop */
     }
@@ -987,7 +984,7 @@ void btSolveL1T(const float *L, float *B, int n, int lskip1)
         /* set the Z matrix to 0 */
         Z11 = 0;
         ell = L - i;
-        ex = B;
+        ex  = B;
         /* the inner loop that computes outer products and adds them to Z */
         for (j = i - 4; j >= 0; j -= 4)
         {
@@ -1036,12 +1033,12 @@ void btSolveL1T(const float *L, float *B, int n, int lskip1)
             Z11 += m11;
         }
         /* finish computing the X(i) block */
-        Z11 = ex[0] - Z11;
+        Z11   = ex[0] - Z11;
         ex[0] = Z11;
     }
 }
 
-void btVectorScale(float *a, const float *d, int n)
+void btVectorScale(float* a, const float* d, int n)
 {
     assert(a && d && n >= 0);
     for (int i = 0; i < n; i++)
@@ -1050,7 +1047,7 @@ void btVectorScale(float *a, const float *d, int n)
     }
 }
 
-void btSolveLDLT(const float *L, const float *d, float *b, int n, int nskip)
+void btSolveLDLT(const float* L, const float* d, float* b, int n, int nskip)
 {
     assert(L && d && b && n > 0 && nskip >= n);
     btSolveL1(L, b, n, nskip);
@@ -1066,20 +1063,18 @@ void btSolveLDLT(const float *L, const float *d, float *b, int n, int nskip)
 // rows will be swapped by exchanging row pointers. otherwise the data will
 // be copied.
 
-static void btSwapRowsAndCols(BTATYPE A, int n, int i1, int i2, int nskip,
-                              int do_fast_row_swaps)
+static void btSwapRowsAndCols(BTATYPE A, int n, int i1, int i2, int nskip, int do_fast_row_swaps)
 {
-    assert(A && n > 0 && i1 >= 0 && i2 >= 0 && i1 < n && i2 < n &&
-             nskip >= n && i1 < i2);
+    assert(A && n > 0 && i1 >= 0 && i2 >= 0 && i1 < n && i2 < n && nskip >= n && i1 < i2);
 
 #ifdef BTROWPTRS
-    float *A_i1 = A[i1];
-    float *A_i2 = A[i2];
+    float* A_i1 = A[i1];
+    float* A_i2 = A[i2];
     for (int i = i1 + 1; i < i2; ++i)
     {
-        float *A_i_i1 = A[i] + i1;
-        A_i1[i] = *A_i_i1;
-        *A_i_i1 = A_i2[i];
+        float* A_i_i1 = A[i] + i1;
+        A_i1[i]       = *A_i_i1;
+        *A_i_i1       = A_i2[i];
     }
     A_i1[i2] = A_i1[i1];
     A_i1[i1] = A_i2[i1];
@@ -1096,102 +1091,99 @@ static void btSwapRowsAndCols(BTATYPE A, int n, int i1, int i2, int nskip,
         for (int k = 0; k <= i2; ++k)
         {
             float tmp = A_i1[k];
-            A_i1[k] = A_i2[k];
-            A_i2[k] = tmp;
+            A_i1[k]   = A_i2[k];
+            A_i2[k]   = tmp;
         }
     }
     // swap columns the hard way
     for (int j = i2 + 1; j < n; ++j)
     {
-        float *A_j = A[j];
-        float tmp = A_j[i1];
-        A_j[i1] = A_j[i2];
-        A_j[i2] = tmp;
+        float* A_j = A[j];
+        float  tmp = A_j[i1];
+        A_j[i1]    = A_j[i2];
+        A_j[i2]    = tmp;
     }
 #else
-    float *A_i1 = A + i1 * nskip;
-    float *A_i2 = A + i2 * nskip;
+    float* A_i1 = A + i1 * nskip;
+    float* A_i2 = A + i2 * nskip;
     for (int k = 0; k < i1; ++k)
     {
         float tmp = A_i1[k];
-        A_i1[k] = A_i2[k];
-        A_i2[k] = tmp;
+        A_i1[k]   = A_i2[k];
+        A_i2[k]   = tmp;
     }
-    float *A_i = A_i1 + nskip;
+    float* A_i = A_i1 + nskip;
     for (int i = i1 + 1; i < i2; A_i += nskip, ++i)
     {
         float tmp = A_i2[i];
-        A_i2[i] = A_i[i1];
-        A_i[i1] = tmp;
+        A_i2[i]   = A_i[i1];
+        A_i[i1]   = tmp;
     }
     {
         float tmp = A_i1[i1];
-        A_i1[i1] = A_i2[i2];
-        A_i2[i2] = tmp;
+        A_i1[i1]  = A_i2[i2];
+        A_i2[i2]  = tmp;
     }
-    float *A_j = A_i2 + nskip;
+    float* A_j = A_i2 + nskip;
     for (int j = i2 + 1; j < n; A_j += nskip, ++j)
     {
         float tmp = A_j[i1];
-        A_j[i1] = A_j[i2];
-        A_j[i2] = tmp;
+        A_j[i1]   = A_j[i2];
+        A_j[i2]   = tmp;
     }
 #endif
 }
 
 // swap two indexes in the n*n LCP problem. i1 must be <= i2.
 
-static void btSwapProblem(BTATYPE A, float *x, float *b, float *w, float *lo,
-                          float *hi, int *p, bool *state, int *findex,
-                          int n, int i1, int i2, int nskip,
-                          int do_fast_row_swaps)
+static void btSwapProblem(BTATYPE A, float* x, float* b, float* w, float* lo, float* hi, int* p, bool* state, int* findex, int n, int i1, int i2, int nskip, int do_fast_row_swaps)
 {
     float tmpr;
-    int tmpi;
-    bool tmpb;
+    int   tmpi;
+    bool  tmpb;
     assert(n > 0 && i1 >= 0 && i2 >= 0 && i1 < n && i2 < n && nskip >= n && i1 <= i2);
-    if (i1 == i2) return;
+    if (i1 == i2)
+        return;
 
     btSwapRowsAndCols(A, n, i1, i2, nskip, do_fast_row_swaps);
 
-    tmpr = x[i1];
+    tmpr  = x[i1];
     x[i1] = x[i2];
     x[i2] = tmpr;
 
-    tmpr = b[i1];
+    tmpr  = b[i1];
     b[i1] = b[i2];
     b[i2] = tmpr;
 
-    tmpr = w[i1];
+    tmpr  = w[i1];
     w[i1] = w[i2];
     w[i2] = tmpr;
 
-    tmpr = lo[i1];
+    tmpr   = lo[i1];
     lo[i1] = lo[i2];
     lo[i2] = tmpr;
 
-    tmpr = hi[i1];
+    tmpr   = hi[i1];
     hi[i1] = hi[i2];
     hi[i2] = tmpr;
 
-    tmpi = p[i1];
+    tmpi  = p[i1];
     p[i1] = p[i2];
     p[i2] = tmpi;
 
-    tmpb = state[i1];
+    tmpb      = state[i1];
     state[i1] = state[i2];
     state[i2] = tmpb;
 
     if (findex)
     {
-        tmpi = findex[i1];
+        tmpi       = findex[i1];
         findex[i1] = findex[i2];
         findex[i2] = tmpi;
     }
 }
 
-
-float btLargeDot(const float *a, const float *b, int n)
+float btLargeDot(const float* a, const float* b, int n)
 {
     float p0, q0, m0, p1, q1, m1, sum;
     sum = 0;
@@ -1257,64 +1249,88 @@ float btLargeDot(const float *a, const float *b, int n)
 
 struct btLCP
 {
-    const int m_n;
-    const int m_nskip;
-    int m_nub;
-    int m_nC, m_nN;                                                         // size of each index set
-    BTATYPE const m_A;                                                      // A rows
+    const int     m_n;
+    const int     m_nskip;
+    int           m_nub;
+    int           m_nC, m_nN;                                            // size of each index set
+    BTATYPE const m_A;                                                   // A rows
     float *const m_x, *const m_b, *const m_w, *const m_lo, *const m_hi;  // permuted LCP problem data
     float *const m_L, *const m_d;                                        // L*D*L' factorization of set C
     float *const m_Dell, *const m_ell, *const m_tmp;
-    bool *const m_state;
+    bool* const m_state;
     int *const m_findex, *const m_p, *const m_C;
 
-    btLCP(int _n, int _nskip, int _nub, float *_Adata, float *_x, float *_b, float *_w,
-          float *_lo, float *_hi, float *l, float *_d,
-          float *_Dell, float *_ell, float *_tmp,
-          bool *_state, int *_findex, int *p, int *c, float **Arows);
-    int getNub() const { return m_nub; }
+    btLCP(int _n, int _nskip, int _nub, float* _Adata, float* _x, float* _b, float* _w, float* _lo, float* _hi, float* l, float* _d, float* _Dell, float* _ell, float* _tmp, bool* _state, int* _findex, int* p, int* c, float** Arows);
+    int getNub() const
+    {
+        return m_nub;
+    }
     void transfer_i_to_C(int i);
-    void transfer_i_to_N(int i) { m_nN++; }  // because we can assume C and N span 1:i-1
+    void transfer_i_to_N(int i)
+    {
+        m_nN++;
+    }  // because we can assume C and N span 1:i-1
     void transfer_i_from_N_to_C(int i);
-    void transfer_i_from_C_to_N(int i, HostArray<float> &scratch);
-    int numC() const { return m_nC; }
-    int numN() const { return m_nN; }
-    int indexC(int i) const { return i; }
-    int indexN(int i) const { return i + m_nC; }
-    float Aii(int i) const { return BTAROW(i)[i]; }
-    float AiC_times_qC(int i, float *q) const { return btLargeDot(BTAROW(i), q, m_nC); }
-    float AiN_times_qN(int i, float *q) const { return btLargeDot(BTAROW(i) + m_nC, q + m_nC, m_nN); }
-    void pN_equals_ANC_times_qC(float *p, float *q);
-    void pN_plusequals_ANi(float *p, int i, int sign = 1);
-    void pC_plusequals_s_times_qC(float *p, float s, float *q);
-    void pN_plusequals_s_times_qN(float *p, float s, float *q);
-    void solve1(float *a, int i, int dir = 1, int only_transfer = 0);
+    void transfer_i_from_C_to_N(int i, HostArray<float>& scratch);
+    int  numC() const
+    {
+        return m_nC;
+    }
+    int numN() const
+    {
+        return m_nN;
+    }
+    int indexC(int i) const
+    {
+        return i;
+    }
+    int indexN(int i) const
+    {
+        return i + m_nC;
+    }
+    float Aii(int i) const
+    {
+        return BTAROW(i)[i];
+    }
+    float AiC_times_qC(int i, float* q) const
+    {
+        return btLargeDot(BTAROW(i), q, m_nC);
+    }
+    float AiN_times_qN(int i, float* q) const
+    {
+        return btLargeDot(BTAROW(i) + m_nC, q + m_nC, m_nN);
+    }
+    void pN_equals_ANC_times_qC(float* p, float* q);
+    void pN_plusequals_ANi(float* p, int i, int sign = 1);
+    void pC_plusequals_s_times_qC(float* p, float s, float* q);
+    void pN_plusequals_s_times_qN(float* p, float s, float* q);
+    void solve1(float* a, int i, int dir = 1, int only_transfer = 0);
     void unpermute();
 };
 
-btLCP::btLCP(int _n, int _nskip, int _nub, float *_Adata, float *_x, float *_b, float *_w,
-             float *_lo, float *_hi, float *l, float *_d,
-             float *_Dell, float *_ell, float *_tmp,
-             bool *_state, int *_findex, int *p, int *c, float **Arows) : m_n(_n), m_nskip(_nskip), m_nub(_nub), m_nC(0), m_nN(0),
+btLCP::btLCP(int _n, int _nskip, int _nub, float* _Adata, float* _x, float* _b, float* _w, float* _lo, float* _hi, float* l, float* _d, float* _Dell, float* _ell, float* _tmp, bool* _state, int* _findex, int* p, int* c, float** Arows)
+    : m_n(_n), m_nskip(_nskip), m_nub(_nub), m_nC(0), m_nN(0),
 #ifdef BTROWPTRS
-                                                                             m_A(Arows),
+    m_A(Arows)
+    ,
 #else
-                                                                             m_A(_Adata),
+    m_A(_Adata)
+    ,
 #endif
-                                                                             m_x(_x),
-                                                                             m_b(_b),
-                                                                             m_w(_w),
-                                                                             m_lo(_lo),
-                                                                             m_hi(_hi),
-                                                                             m_L(l),
-                                                                             m_d(_d),
-                                                                             m_Dell(_Dell),
-                                                                             m_ell(_ell),
-                                                                             m_tmp(_tmp),
-                                                                             m_state(_state),
-                                                                             m_findex(_findex),
-                                                                             m_p(p),
-                                                                             m_C(c)
+    m_x(_x)
+    , m_b(_b)
+    , m_w(_w)
+    , m_lo(_lo)
+    , m_hi(_hi)
+    , m_L(l)
+    , m_d(_d)
+    , m_Dell(_Dell)
+    , m_ell(_ell)
+    , m_tmp(_tmp)
+    , m_state(_state)
+    , m_findex(_findex)
+    , m_p(p)
+    , m_C(c)
 {
     {
         for (int i = 0; i < m_n; ++i)
@@ -1324,17 +1340,19 @@ btLCP::btLCP(int _n, int _nskip, int _nub, float *_Adata, float *_x, float *_b, 
     {
 #ifdef BTROWPTRS
         // make matrix row pointers
-        float *aptr = _Adata;
-        BTATYPE A = m_A;
+        float*    aptr = _Adata;
+        BTATYPE   A    = m_A;
         const int n = m_n, nskip = m_nskip;
-        for (int k = 0; k < n; aptr += nskip, ++k) A[k] = aptr;
+        for (int k = 0; k < n; aptr += nskip, ++k)
+            A[k] = aptr;
 #endif
     }
 
     {
-        int *p = m_p;
+        int*      p = m_p;
         const int n = m_n;
-        for (int k = 0; k < n; ++k) p[k] = k;  // initially unpermuted
+        for (int k = 0; k < n; ++k)
+            p[k] = k;  // initially unpermuted
     }
 
     /*
@@ -1366,12 +1384,13 @@ btLCP::btLCP(int _n, int _nskip, int _nub, float *_Adata, float *_x, float *_b, 
     // solution process.
 
     {
-        int *findex = m_findex;
-        float *lo = m_lo, *hi = m_hi;
+        int*      findex = m_findex;
+        float *   lo = m_lo, *hi = m_hi;
         const int n = m_n;
         for (int k = m_nub; k < n; ++k)
         {
-            if (findex && findex[k] >= 0) continue;
+            if (findex && findex[k] >= 0)
+                continue;
             if (lo[k] == -BT_INFINITY && hi[k] == BT_INFINITY)
             {
                 btSwapProblem(m_A, m_x, m_b, m_w, lo, hi, m_p, m_state, findex, n, m_nub, k, m_nskip, 0);
@@ -1386,17 +1405,19 @@ btLCP::btLCP(int _n, int _nskip, int _nub, float *_Adata, float *_x, float *_b, 
     {
         const int nub = m_nub;
         {
-            float *Lrow = m_L;
+            float*    Lrow  = m_L;
             const int nskip = m_nskip;
-            for (int j = 0; j < nub; Lrow += nskip, ++j) memcpy(Lrow, BTAROW(j), (j + 1) * sizeof(float));
+            for (int j = 0; j < nub; Lrow += nskip, ++j)
+                memcpy(Lrow, BTAROW(j), (j + 1) * sizeof(float));
         }
         btFactorLDLT(m_L, m_d, nub, m_nskip);
         memcpy(m_x, m_b, nub * sizeof(float));
         btSolveLDLT(m_L, m_d, m_x, nub, m_nskip);
         setZero(m_w, nub);
         {
-            int *C = m_C;
-            for (int k = 0; k < nub; ++k) C[k] = k;
+            int* C = m_C;
+            for (int k = 0; k < nub; ++k)
+                C[k] = k;
         }
         m_nC = nub;
     }
@@ -1404,9 +1425,9 @@ btLCP::btLCP(int _n, int _nskip, int _nub, float *_Adata, float *_x, float *_b, 
     // permute the indexes > nub such that all findex variables are at the end
     if (m_findex)
     {
-        const int nub = m_nub;
-        int *findex = m_findex;
-        int num_at_end = 0;
+        const int nub        = m_nub;
+        int*      findex     = m_findex;
+        int       num_at_end = 0;
         for (int k = m_n - 1; k >= nub; k--)
         {
             if (findex[k] >= 0)
@@ -1439,12 +1460,13 @@ void btLCP::transfer_i_to_C(int i)
         {
             // ell,Dell were computed by solve1(). note, ell = D \ L1solve (L,A(i,C))
             {
-                const int nC = m_nC;
+                const int    nC   = m_nC;
                 float *const Ltgt = m_L + nC * m_nskip, *ell = m_ell;
-                for (int j = 0; j < nC; ++j) Ltgt[j] = ell[j];
+                for (int j = 0; j < nC; ++j)
+                    Ltgt[j] = ell[j];
             }
             const int nC = m_nC;
-            m_d[nC] = 1.0f/(BTAROW(i)[i] - btLargeDot(m_ell, m_Dell, nC));
+            m_d[nC]      = 1.0f / (BTAROW(i)[i] - btLargeDot(m_ell, m_Dell, nC));
         }
         else
         {
@@ -1454,8 +1476,8 @@ void btLCP::transfer_i_to_C(int i)
         btSwapProblem(m_A, m_x, m_b, m_w, m_lo, m_hi, m_p, m_state, m_findex, m_n, m_nC, i, m_nskip, 1);
 
         const int nC = m_nC;
-        m_C[nC] = nC;
-        m_nC = nC + 1;  // nC value is outdated after this line
+        m_C[nC]      = nC;
+        m_nC         = nC + 1;  // nC value is outdated after this line
     }
 }
 
@@ -1465,40 +1487,44 @@ void btLCP::transfer_i_from_N_to_C(int i)
         if (m_nC > 0)
         {
             {
-                float *const aptr = BTAROW(i);
-                float *Dell = m_Dell;
-                const int *C = m_C;
+                float* const aptr = BTAROW(i);
+                float*       Dell = m_Dell;
+                const int*   C    = m_C;
 #ifdef BTNUB_OPTIMIZATIONS
                 // if nub>0, initial part of aptr unpermuted
                 const int nub = m_nub;
-                int j = 0;
-                for (; j < nub; ++j) Dell[j] = aptr[j];
+                int       j   = 0;
+                for (; j < nub; ++j)
+                    Dell[j] = aptr[j];
                 const int nC = m_nC;
-                for (; j < nC; ++j) Dell[j] = aptr[C[j]];
+                for (; j < nC; ++j)
+                    Dell[j] = aptr[C[j]];
 #else
                 const int nC = m_nC;
-                for (int j = 0; j < nC; ++j) Dell[j] = aptr[C[j]];
+                for (int j = 0; j < nC; ++j)
+                    Dell[j] = aptr[C[j]];
 #endif
             }
             btSolveL1(m_L, m_Dell, m_nC, m_nskip);
             {
-                const int nC = m_nC;
-                float *const Ltgt = m_L + nC * m_nskip;
-                float *ell = m_ell, *Dell = m_Dell, *d = m_d;
-                for (int j = 0; j < nC; ++j) Ltgt[j] = ell[j] = Dell[j] * d[j];
+                const int    nC   = m_nC;
+                float* const Ltgt = m_L + nC * m_nskip;
+                float *      ell = m_ell, *Dell = m_Dell, *d = m_d;
+                for (int j = 0; j < nC; ++j)
+                    Ltgt[j] = ell[j] = Dell[j] * d[j];
             }
             const int nC = m_nC;
-            m_d[nC] = 1.0f/(BTAROW(i)[i] - btLargeDot(m_ell, m_Dell, nC));
+            m_d[nC]      = 1.0f / (BTAROW(i)[i] - btLargeDot(m_ell, m_Dell, nC));
         }
         else
         {
-            m_d[0] = 1.0f/(BTAROW(i)[i]);
+            m_d[0] = 1.0f / (BTAROW(i)[i]);
         }
 
         btSwapProblem(m_A, m_x, m_b, m_w, m_lo, m_hi, m_p, m_state, m_findex, m_n, m_nC, i, m_nskip, 1);
 
         const int nC = m_nC;
-        m_C[nC] = nC;
+        m_C[nC]      = nC;
         m_nN--;
         m_nC = nC + 1;  // nC value is outdated after this line
     }
@@ -1510,27 +1536,28 @@ void btLCP::transfer_i_from_N_to_C(int i)
     // to use in updating the factorization later.
 }
 
-void btRemoveRowCol(float *A, int n, int nskip, int r)
+void btRemoveRowCol(float* A, int n, int nskip, int r)
 {
     assert(A && n > 0 && nskip >= n && r >= 0 && r < n);
-    if (r >= n - 1) return;
+    if (r >= n - 1)
+        return;
     if (r > 0)
     {
         {
             const size_t move_size = (n - r - 1) * sizeof(float);
-            float *Adst = A + r;
+            float*       Adst      = A + r;
             for (int i = 0; i < r; Adst += nskip, ++i)
             {
-                float *Asrc = Adst + 1;
+                float* Asrc = Adst + 1;
                 memmove(Adst, Asrc, move_size);
             }
         }
         {
             const size_t cpy_size = r * sizeof(float);
-            float *Adst = A + r * nskip;
+            float*       Adst     = A + r * nskip;
             for (int i = r; i < (n - 1); ++i)
             {
-                float *Asrc = Adst + nskip;
+                float* Asrc = Adst + nskip;
                 memcpy(Adst, Asrc, cpy_size);
                 Adst = Asrc;
             }
@@ -1538,93 +1565,94 @@ void btRemoveRowCol(float *A, int n, int nskip, int r)
     }
     {
         const size_t cpy_size = (n - r - 1) * sizeof(float);
-        float *Adst = A + r * (nskip + 1);
+        float*       Adst     = A + r * (nskip + 1);
         for (int i = r; i < (n - 1); ++i)
         {
-            float *Asrc = Adst + (nskip + 1);
+            float* Asrc = Adst + (nskip + 1);
             memcpy(Adst, Asrc, cpy_size);
             Adst = Asrc - 1;
         }
     }
 }
 
-void btLDLTAddTL(float *L, float *d, const float *a, int n, int nskip, HostArray<float> &scratch)
+void btLDLTAddTL(float* L, float* d, const float* a, int n, int nskip, HostArray<float>& scratch)
 {
     assert(L && d && a && n > 0 && nskip >= n);
 
-    if (n < 2) return;
+    if (n < 2)
+        return;
     //scratch.resize(2 * nskip);
-    float *W1 = &scratch[0];
+    float* W1 = &scratch[0];
 
-    float *W2 = W1 + nskip;
+    float* W2 = W1 + nskip;
 
     W1[0] = float(0.0);
     W2[0] = float(0.0);
     for (int j = 1; j < n; ++j)
     {
-        W1[j] = W2[j] = (float)(a[j] * SIMDSQRT12);
+        W1[j] = W2[j] = ( float )(a[j] * SIMDSQRT12);
     }
-    float W11 = (float)((float(0.5) * a[0] + 1) * SIMDSQRT12);
-    float W21 = (float)((float(0.5) * a[0] - 1) * SIMDSQRT12);
+    float W11 = ( float )((float(0.5) * a[0] + 1) * SIMDSQRT12);
+    float W21 = ( float )((float(0.5) * a[0] - 1) * SIMDSQRT12);
 
     float alpha1 = float(1.0);
     float alpha2 = float(1.0);
 
     {
-        float dee = d[0];
+        float dee      = d[0];
         float alphanew = alpha1 + (W11 * W11) * dee;
         assert(alphanew != float(0.0));
         dee /= alphanew;
         float gamma1 = W11 * dee;
         dee *= alpha1;
-        alpha1 = alphanew;
+        alpha1   = alphanew;
         alphanew = alpha2 - (W21 * W21) * dee;
         dee /= alphanew;
         //float gamma2 = W21 * dee;
-        alpha2 = alphanew;
-        float k1 = float(1.0) - W21 * gamma1;
-        float k2 = W21 * gamma1 * W11 - W21;
-        float *ll = L + nskip;
+        alpha2    = alphanew;
+        float  k1 = float(1.0) - W21 * gamma1;
+        float  k2 = W21 * gamma1 * W11 - W21;
+        float* ll = L + nskip;
         for (int p = 1; p < n; ll += nskip, ++p)
         {
-            float Wp = W1[p];
+            float Wp  = W1[p];
             float ell = *ll;
-            W1[p] = Wp - W11 * ell;
-            W2[p] = k1 * Wp + k2 * ell;
+            W1[p]     = Wp - W11 * ell;
+            W2[p]     = k1 * Wp + k2 * ell;
         }
     }
 
-    float *ll = L + (nskip + 1);
+    float* ll = L + (nskip + 1);
     for (int j = 1; j < n; ll += nskip + 1, ++j)
     {
         float k1 = W1[j];
         float k2 = W2[j];
 
-        float dee = d[j];
+        float dee      = d[j];
         float alphanew = alpha1 + (k1 * k1) * dee;
         assert(alphanew != float(0.0));
         dee /= alphanew;
         float gamma1 = k1 * dee;
         dee *= alpha1;
-        alpha1 = alphanew;
+        alpha1   = alphanew;
         alphanew = alpha2 - (k2 * k2) * dee;
         dee /= alphanew;
         float gamma2 = k2 * dee;
         dee *= alpha2;
-        d[j] = dee;
+        d[j]   = dee;
         alpha2 = alphanew;
 
-        float *l = ll + nskip;
+        float* l = ll + nskip;
         for (int p = j + 1; p < n; l += nskip, ++p)
         {
             float ell = *l;
-            float Wp = W1[p] - k1 * ell;
+            float Wp  = W1[p] - k1 * ell;
             ell += gamma1 * Wp;
             W1[p] = Wp;
-            Wp = W2[p] - k2 * ell;
+            Wp    = W2[p] - k2 * ell;
             ell -= gamma2 * Wp;
             W2[p] = Wp;
-            *l = ell;
+            *l    = ell;
         }
     }
 }
@@ -1638,11 +1666,9 @@ inline size_t btEstimateLDLTAddTLTmpbufSize(int nskip)
     return nskip * 2 * sizeof(float);
 }
 
-void btLDLTRemove(float **A, const int *p, float *L, float *d,
-                  int n1, int n2, int r, int nskip, HostArray<float> &scratch)
+void btLDLTRemove(float** A, const int* p, float* L, float* d, int n1, int n2, int r, int nskip, HostArray<float>& scratch)
 {
-    assert(A && p && L && d && n1 > 0 && n2 > 0 && r >= 0 && r < n2 &&
-             n1 >= n2 && nskip >= n1);
+    assert(A && p && L && d && n1 > 0 && n2 > 0 && r >= 0 && r < n2 && n1 >= n2 && nskip >= n1);
 #ifdef BT_DEBUG
     for (int i = 0; i < n2; ++i)
         assert(p[i] >= 0 && p[i] < n1);
@@ -1657,10 +1683,10 @@ void btLDLTRemove(float **A, const int *p, float *L, float *d,
         size_t LDLTAddTL_size = btEstimateLDLTAddTLTmpbufSize(nskip);
         assert(LDLTAddTL_size % sizeof(float) == 0);
         scratch.resize(nskip * 2 + n2);
-        float *tmp = &scratch[0];
+        float* tmp = &scratch[0];
         if (r == 0)
         {
-            float *a = (float *)((char *)tmp + LDLTAddTL_size);
+            float*    a   = ( float* )(( char* )tmp + LDLTAddTL_size);
             const int p_0 = p[0];
             for (int i = 0; i < n2; ++i)
             {
@@ -1671,20 +1697,20 @@ void btLDLTRemove(float **A, const int *p, float *L, float *d,
         }
         else
         {
-            float *t = (float *)((char *)tmp + LDLTAddTL_size);
+            float* t = ( float* )(( char* )tmp + LDLTAddTL_size);
             {
-                float *Lcurr = L + r * nskip;
+                float* Lcurr = L + r * nskip;
                 for (int i = 0; i < r; ++Lcurr, ++i)
                 {
                     assert(d[i] != float(0.0));
                     t[i] = *Lcurr / d[i];
                 }
             }
-            float *a = t + r;
+            float* a = t + r;
             {
-                float *Lcurr = L + r * nskip;
+                float*     Lcurr = L + r * nskip;
                 const int *pp_r = p + r, p_r = *pp_r;
-                const int n2_minus_r = n2 - r;
+                const int  n2_minus_r = n2 - r;
                 for (int i = 0; i < n2_minus_r; Lcurr += nskip, ++i)
                 {
                     a[i] = btLargeDot(Lcurr, t, r) - BTGETA(pp_r[i], p_r);
@@ -1697,18 +1723,19 @@ void btLDLTRemove(float **A, const int *p, float *L, float *d,
 
     // snip out row/column r from L and d
     btRemoveRowCol(L, n2, nskip, r);
-    if (r < (n2 - 1)) memmove(d + r, d + r + 1, (n2 - r - 1) * sizeof(float));
+    if (r < (n2 - 1))
+        memmove(d + r, d + r + 1, (n2 - r - 1) * sizeof(float));
 }
 
-void btLCP::transfer_i_from_C_to_N(int i, HostArray<float> &scratch)
+void btLCP::transfer_i_from_C_to_N(int i, HostArray<float>& scratch)
 {
     {
-        int *C = m_C;
+        int* C = m_C;
         // remove a row/column from the factorization, and adjust the
         // indexes (black magic!)
-        int last_idx = -1;
-        const int nC = m_nC;
-        int j = 0;
+        int       last_idx = -1;
+        const int nC       = m_nC;
+        int       j        = 0;
         for (; j < nC; ++j)
         {
             if (C[j] == nC - 1)
@@ -1735,7 +1762,8 @@ void btLCP::transfer_i_from_C_to_N(int i, HostArray<float> &scratch)
                     k = last_idx;
                 }
                 C[k] = C[j];
-                if (j < (nC - 1)) memmove(C + j, C + j + 1, (nC - j - 1) * sizeof(int));
+                if (j < (nC - 1))
+                    memmove(C + j, C + j + 1, (nC - j - 1) * sizeof(int));
                 break;
             }
         }
@@ -1748,40 +1776,42 @@ void btLCP::transfer_i_from_C_to_N(int i, HostArray<float> &scratch)
     }
 }
 
-void btLCP::pN_equals_ANC_times_qC(float *p, float *q)
+void btLCP::pN_equals_ANC_times_qC(float* p, float* q)
 {
     // we could try to make this matrix-vector multiplication faster using
     // outer product matrix tricks, e.g. with the dMultidotX() functions.
     // but i tried it and it actually made things slower on random 100x100
     // problems because of the overhead involved. so we'll stick with the
     // simple method for now.
-    const int nC = m_nC;
-    float *ptgt = p + nC;
-    const int nN = m_nN;
+    const int nC   = m_nC;
+    float*    ptgt = p + nC;
+    const int nN   = m_nN;
     for (int i = 0; i < nN; ++i)
     {
         ptgt[i] = btLargeDot(BTAROW(i + nC), q, nC);
     }
 }
 
-void btLCP::pN_plusequals_ANi(float *p, int i, int sign)
+void btLCP::pN_plusequals_ANi(float* p, int i, int sign)
 {
-    const int nC = m_nC;
-    float *aptr = BTAROW(i) + nC;
-    float *ptgt = p + nC;
+    const int nC   = m_nC;
+    float*    aptr = BTAROW(i) + nC;
+    float*    ptgt = p + nC;
     if (sign > 0)
     {
         const int nN = m_nN;
-        for (int j = 0; j < nN; ++j) ptgt[j] += aptr[j];
+        for (int j = 0; j < nN; ++j)
+            ptgt[j] += aptr[j];
     }
     else
     {
         const int nN = m_nN;
-        for (int j = 0; j < nN; ++j) ptgt[j] -= aptr[j];
+        for (int j = 0; j < nN; ++j)
+            ptgt[j] -= aptr[j];
     }
 }
 
-void btLCP::pC_plusequals_s_times_qC(float *p, float s, float *q)
+void btLCP::pC_plusequals_s_times_qC(float* p, float s, float* q)
 {
     const int nC = m_nC;
     for (int i = 0; i < nC; ++i)
@@ -1790,10 +1820,10 @@ void btLCP::pC_plusequals_s_times_qC(float *p, float s, float *q)
     }
 }
 
-void btLCP::pN_plusequals_s_times_qN(float *p, float s, float *q)
+void btLCP::pN_plusequals_s_times_qN(float* p, float s, float* q)
 {
-    const int nC = m_nC;
-    float *ptgt = p + nC, *qsrc = q + nC;
+    const int nC   = m_nC;
+    float *   ptgt = p + nC, *qsrc = q + nC;
     const int nN = m_nN;
     for (int i = 0; i < nN; ++i)
     {
@@ -1801,7 +1831,7 @@ void btLCP::pN_plusequals_s_times_qN(float *p, float s, float *q)
     }
 }
 
-void btLCP::solve1(float *a, int i, int dir, int only_transfer)
+void btLCP::solve1(float* a, int i, int dir, int only_transfer)
 {
     // the `Dell' and `ell' that are computed here are saved. if index i is
     // later added to the factorization then they can be reused.
@@ -1812,26 +1842,30 @@ void btLCP::solve1(float *a, int i, int dir, int only_transfer)
     if (m_nC > 0)
     {
         {
-            float *Dell = m_Dell;
-            int *C = m_C;
-            float *aptr = BTAROW(i);
+            float* Dell = m_Dell;
+            int*   C    = m_C;
+            float* aptr = BTAROW(i);
 #ifdef BTNUB_OPTIMIZATIONS
             // if nub>0, initial part of aptr[] is guaranteed unpermuted
             const int nub = m_nub;
-            int j = 0;
-            for (; j < nub; ++j) Dell[j] = aptr[j];
+            int       j   = 0;
+            for (; j < nub; ++j)
+                Dell[j] = aptr[j];
             const int nC = m_nC;
-            for (; j < nC; ++j) Dell[j] = aptr[C[j]];
+            for (; j < nC; ++j)
+                Dell[j] = aptr[C[j]];
 #else
             const int nC = m_nC;
-            for (int j = 0; j < nC; ++j) Dell[j] = aptr[C[j]];
+            for (int j = 0; j < nC; ++j)
+                Dell[j] = aptr[C[j]];
 #endif
         }
         btSolveL1(m_L, m_Dell, m_nC, m_nskip);
         {
-            float *ell = m_ell, *Dell = m_Dell, *d = m_d;
+            float *   ell = m_ell, *Dell = m_Dell, *d = m_d;
             const int nC = m_nC;
-            for (int j = 0; j < nC; ++j) ell[j] = Dell[j] * d[j];
+            for (int j = 0; j < nC; ++j)
+                ell[j] = Dell[j] * d[j];
         }
 
         if (!only_transfer)
@@ -1839,22 +1873,25 @@ void btLCP::solve1(float *a, int i, int dir, int only_transfer)
             float *tmp = m_tmp, *ell = m_ell;
             {
                 const int nC = m_nC;
-                for (int j = 0; j < nC; ++j) tmp[j] = ell[j];
+                for (int j = 0; j < nC; ++j)
+                    tmp[j] = ell[j];
             }
             btSolveL1T(m_L, tmp, m_nC, m_nskip);
             if (dir > 0)
             {
-                int *C = m_C;
-                float *tmp = m_tmp;
-                const int nC = m_nC;
-                for (int j = 0; j < nC; ++j) a[C[j]] = -tmp[j];
+                int*      C   = m_C;
+                float*    tmp = m_tmp;
+                const int nC  = m_nC;
+                for (int j = 0; j < nC; ++j)
+                    a[C[j]] = -tmp[j];
             }
             else
             {
-                int *C = m_C;
-                float *tmp = m_tmp;
-                const int nC = m_nC;
-                for (int j = 0; j < nC; ++j) a[C[j]] = tmp[j];
+                int*      C   = m_C;
+                float*    tmp = m_tmp;
+                const int nC  = m_nC;
+                for (int j = 0; j < nC; ++j)
+                    a[C[j]] = tmp[j];
             }
         }
     }
@@ -1865,17 +1902,19 @@ void btLCP::unpermute()
     // now we have to un-permute x and w
     {
         memcpy(m_tmp, m_x, m_n * sizeof(float));
-        float *x = m_x, *tmp = m_tmp;
-        const int *p = m_p;
-        const int n = m_n;
-        for (int j = 0; j < n; ++j) x[p[j]] = tmp[j];
+        float *    x = m_x, *tmp = m_tmp;
+        const int* p = m_p;
+        const int  n = m_n;
+        for (int j = 0; j < n; ++j)
+            x[p[j]] = tmp[j];
     }
     {
         memcpy(m_tmp, m_w, m_n * sizeof(float));
-        float *w = m_w, *tmp = m_tmp;
-        const int *p = m_p;
-        const int n = m_n;
-        for (int j = 0; j < n; ++j) w[p[j]] = tmp[j];
+        float *    w = m_w, *tmp = m_tmp;
+        const int* p = m_p;
+        const int  n = m_n;
+        for (int j = 0; j < n; ++j)
+            w[p[j]] = tmp[j];
     }
 }
 
@@ -1884,8 +1923,7 @@ void btLCP::unpermute()
 //***************************************************************************
 // an optimized Dantzig LCP driver routine for the lo-hi LCP problem.
 
-bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
-                       float *outer_w, int nub, float *lo, float *hi, int *findex, DantzigScratchMemory &scratchMem)
+bool btSolveDantzigLCP(int n, float* A, float* x, float* b, float* outer_w, int nub, float* lo, float* hi, int* findex, DantzigScratchMemory& scratchMem)
 {
     s_error = false;
 
@@ -1918,7 +1956,7 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
 
     scratchMem.d.resize(n);
 
-    float *w = outer_w;
+    float* w = outer_w;
     scratchMem.delta_w.resize(n);
     scratchMem.delta_x.resize(n);
     scratchMem.Dell.resize(n);
@@ -1933,7 +1971,7 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
     // create LCP object. note that tmp is set to delta_w to save space, this
     // optimization relies on knowledge of how tmp is used, so be careful!
     btLCP lcp(n, nskip, nub, A, x, b, w, lo, hi, &scratchMem.L[0], &scratchMem.d[0], &scratchMem.Dell[0], &scratchMem.ell[0], &scratchMem.delta_w[0], &scratchMem.state[0], findex, &scratchMem.p[0], &scratchMem.C[0], &scratchMem.Arows[0]);
-    int adj_nub = lcp.getNub();
+    int   adj_nub = lcp.getNub();
 
     // loop over all indexes adj_nub..n-1. for index i, if x(i),w(i) satisfy the
     // LCP conditions then i is added to the appropriate index set. otherwise
@@ -1964,7 +2002,8 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
         if (!hit_first_friction_index && findex && findex[i] >= 0)
         {
             // un-permute x into delta_w, which is not being used at the moment
-            for (int j = 0; j < n; ++j) scratchMem.delta_w[scratchMem.p[j]] = x[j];
+            for (int j = 0; j < n; ++j)
+                scratchMem.delta_w[scratchMem.p[j]] = x[j];
 
             // set lo and hi values
             for (int k = i; k < n; ++k)
@@ -2026,17 +2065,17 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
             // we must push x(i) and w(i)
             for (;;)
             {
-                int dir;
+                int   dir;
                 float dirf;
                 // find direction to push on x(i)
                 if (w[i] <= 0)
                 {
-                    dir = 1;
+                    dir  = 1;
                     dirf = float(1.0);
                 }
                 else
                 {
-                    dir = -1;
+                    dir  = -1;
                     dirf = float(-1.0);
                 }
 
@@ -2055,9 +2094,9 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                 // to the valid LCP region or to drive an already-valid variable
                 // outside the valid region.
 
-                int cmd = 1;  // index switching command
-                int si = 0;   // si = index to switch if cmd>3
-                float s = -w[i] / scratchMem.delta_w[i];
+                int   cmd = 1;  // index switching command
+                int   si  = 0;  // si = index to switch if cmd>3
+                float s   = -w[i] / scratchMem.delta_w[i];
                 if (dir > 0)
                 {
                     if (hi[i] < BT_INFINITY)
@@ -2065,7 +2104,7 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                         float s2 = (hi[i] - x[i]) * dirf;  // was (hi[i]-x[i])/dirf    // step to x(i)=hi(i)
                         if (s2 < s)
                         {
-                            s = s2;
+                            s   = s2;
                             cmd = 3;
                         }
                     }
@@ -2077,7 +2116,7 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                         float s2 = (lo[i] - x[i]) * dirf;  // was (lo[i]-x[i])/dirf    // step to x(i)=lo(i)
                         if (s2 < s)
                         {
-                            s = s2;
+                            s   = s2;
                             cmd = 2;
                         }
                     }
@@ -2091,13 +2130,14 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                         if (!scratchMem.state[indexN_k] ? scratchMem.delta_w[indexN_k] < 0 : scratchMem.delta_w[indexN_k] > 0)
                         {
                             // don't bother checking if lo=hi=0
-                            if (lo[indexN_k] == 0 && hi[indexN_k] == 0) continue;
+                            if (lo[indexN_k] == 0 && hi[indexN_k] == 0)
+                                continue;
                             float s2 = -w[indexN_k] / scratchMem.delta_w[indexN_k];
                             if (s2 < s)
                             {
-                                s = s2;
+                                s   = s2;
                                 cmd = 4;
-                                si = indexN_k;
+                                si  = indexN_k;
                             }
                         }
                     }
@@ -2113,9 +2153,9 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                             float s2 = (lo[indexC_k] - x[indexC_k]) / scratchMem.delta_x[indexC_k];
                             if (s2 < s)
                             {
-                                s = s2;
+                                s   = s2;
                                 cmd = 5;
-                                si = indexC_k;
+                                si  = indexC_k;
                             }
                         }
                         if (scratchMem.delta_x[indexC_k] > 0 && hi[indexC_k] < BT_INFINITY)
@@ -2123,9 +2163,9 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                             float s2 = (hi[indexC_k] - x[indexC_k]) / scratchMem.delta_x[indexC_k];
                             if (s2 < s)
                             {
-                                s = s2;
+                                s   = s2;
                                 cmd = 6;
-                                si = indexC_k;
+                                si  = indexC_k;
                             }
                         }
                     }
@@ -2148,8 +2188,8 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                         setZero(w + i, n - i);
                     }
                     s_error = true;
-                    std::cout << "   LCP Solver:  Error type:  " << cmd <<  "   " << scratchMem.delta_w[i]  
-                        << "   " << lcp.m_nC << std::endl;
+                    std::cout << "   LCP Solver:  Error type:  " << cmd << "   " << scratchMem.delta_w[i]
+                              << "   " << lcp.m_nC << std::endl;
                     break;
                 }
 
@@ -2170,12 +2210,12 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                         lcp.transfer_i_to_C(i);
                         break;
                     case 2:  // done
-                        x[i] = lo[i];
+                        x[i]                = lo[i];
                         scratchMem.state[i] = false;
                         lcp.transfer_i_to_N(i);
                         break;
                     case 3:  // done
-                        x[i] = hi[i];
+                        x[i]                = hi[i];
                         scratchMem.state[i] = true;
                         lcp.transfer_i_to_N(i);
                         break;
@@ -2184,18 +2224,19 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
                         lcp.transfer_i_from_N_to_C(si);
                         break;
                     case 5:  // keep going
-                        x[si] = lo[si];
+                        x[si]                = lo[si];
                         scratchMem.state[si] = false;
                         lcp.transfer_i_from_C_to_N(si, scratchMem.m_scratch);
                         break;
                     case 6:  // keep going
-                        x[si] = hi[si];
+                        x[si]                = hi[si];
                         scratchMem.state[si] = true;
                         lcp.transfer_i_from_C_to_N(si, scratchMem.m_scratch);
                         break;
                 }
 
-                if (cmd <= 3) break;
+                if (cmd <= 3)
+                    break;
             }  // for (;;)
         }      // else
 
@@ -2209,4 +2250,4 @@ bool btSolveDantzigLCP(int n, float *A, float *x, float *b,
 
     return !s_error;
 }
-}
+}  // namespace PhysIKA

@@ -18,25 +18,23 @@
 
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
 
-
 using QtNodes::QtNodeFlowScene;
 
-namespace PhysIKA
+namespace PhysIKA {
+class PNodeFlowWidget : public QWidget
 {
-    class PNodeFlowWidget : public QWidget
-    {
-        Q_OBJECT
+    Q_OBJECT
 
-    public:
-        explicit PNodeFlowWidget(QWidget *parent = nullptr);
-        ~PNodeFlowWidget();
+public:
+    explicit PNodeFlowWidget(QWidget* parent = nullptr);
+    ~PNodeFlowWidget();
 
-    signals:
+signals:
 
-    public:
-        QGridLayout*        m_MainLayout;
+public:
+    QGridLayout* m_MainLayout;
 
-        QtNodeFlowScene* node_scene = nullptr;
-    };
+    QtNodeFlowScene* node_scene = nullptr;
+};
 
-}
+}  // namespace PhysIKA

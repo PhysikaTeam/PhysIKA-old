@@ -15,30 +15,28 @@
 #include "QtFlowView.h"
 #include "DataModelRegistry.h"
 
-
-namespace QtNodes
-{
+namespace QtNodes {
 
 QtModuleFlowScene::QtModuleFlowScene(std::shared_ptr<DataModelRegistry> registry,
-          QObject * parent)
-  : QtFlowScene(registry, parent)
+                                     QObject*                           parent)
+    : QtFlowScene(registry, parent)
 {
     connect(this, &QtFlowScene::nodeMoved, this, &QtModuleFlowScene::moveModulePosition);
 }
 
-QtModuleFlowScene::QtModuleFlowScene(QObject * parent)
+QtModuleFlowScene::QtModuleFlowScene(QObject* parent)
     : QtFlowScene(parent)
 {
     auto classMap = PhysIKA::Object::getClassMap();
 
     auto ret = std::make_shared<QtNodes::DataModelRegistry>();
-    int id = 0;
+    int  id  = 0;
     for (auto const c : *classMap)
     {
         id++;
 
-        QString str = QString::fromStdString(c.first);
-        PhysIKA::Object* obj = PhysIKA::Object::createObject(str.toStdString());
+        QString          str    = QString::fromStdString(c.first);
+        PhysIKA::Object* obj    = PhysIKA::Object::createObject(str.toStdString());
         PhysIKA::Module* module = dynamic_cast<PhysIKA::Module*>(obj);
 
         if (module != nullptr)
@@ -56,12 +54,9 @@ QtModuleFlowScene::QtModuleFlowScene(QObject * parent)
     this->setRegistry(ret);
 }
 
-
 QtModuleFlowScene::~QtModuleFlowScene()
 {
-
 }
-
 
 void QtModuleFlowScene::showNodeFlow(Node* node)
 {
@@ -75,9 +70,7 @@ void QtModuleFlowScene::showNodeFlow(Node* node)
 
     int mSize = node->getAnimationPipeline()->size();
 
-
-    auto addModuleWidget = [&](Module* m) -> void
-    {
+    auto addModuleWidget = [&](Module* m) -> void {
         auto module_name = m->getName();
 
         auto type = std::make_unique<QtNodes::QtModuleWidget>(m);
@@ -100,8 +93,7 @@ void QtModuleFlowScene::showNodeFlow(Node* node)
         addModuleWidget(c.get());
     }
 
-    auto createModuleConnections = [&](Module* m) -> void
-    {
+    auto createModuleConnections = [&](Module* m) -> void {
         auto out_node = moduleMap[m->getName()];
 
         auto fields = m->getOutputFields();
@@ -137,7 +129,6 @@ void QtModuleFlowScene::showNodeFlow(Node* node)
         }
     };
 
-
     createModuleConnections(node->getMechanicalState().get());
     c = node->getAnimationPipeline()->entry();
     for (; c != node->getAnimationPipeline()->finished(); c++)
@@ -158,4 +149,4 @@ void QtModuleFlowScene::moveModulePosition(QtBlock& n, const QPointF& newLocatio
     }
 }
 
-}
+}  // namespace QtNodes

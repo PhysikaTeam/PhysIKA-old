@@ -22,7 +22,7 @@
 
 namespace PhysIKA {
 
-    static const char * triangle_rigid_render_vertex_shader = R"STR(
+static const char* triangle_rigid_render_vertex_shader = R"STR(
 #version 330
 
 layout(location = 0) in vec3 VertexPosition;
@@ -84,7 +84,7 @@ void main()
     outVertexColor = VertexColor;
 })STR";
 
-static const char * triangle_rigid_render_frag_shader = R"STR(
+static const char* triangle_rigid_render_frag_shader = R"STR(
     #version 330 
 
     in vec3 LightIntensity;
@@ -98,8 +98,7 @@ static const char * triangle_rigid_render_frag_shader = R"STR(
     }
     )STR";
 
-
-static const char * triangle_rigid_wireframe_render_vertex_shader = R"STR(
+static const char* triangle_rigid_wireframe_render_vertex_shader = R"STR(
     #version 330 compatibility
     layout(location = 0) in vec3 vert_pos;
     layout(location = 3) in vec3 vert_col;
@@ -113,7 +112,7 @@ static const char * triangle_rigid_wireframe_render_vertex_shader = R"STR(
     }
     )STR";
 
-static const char * triangle_wireframe_render_frag_shader = R"STR(
+static const char* triangle_wireframe_render_frag_shader = R"STR(
     #version 330 compatibility
     in vec3 frag_vert_col;
     out vec4 frag_color;
@@ -191,7 +190,6 @@ bool RigidTriangleRender::isUseCustomColor() const
     return use_custom_color_;
 }
 
-
 void RigidTriangleRender::display()
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -206,11 +204,10 @@ void RigidTriangleRender::display()
     {
         m_solidShader.enable();
 
-
         //glm::mat4 model_rotate=glm::make_mat4(m_rotation.get4x4Matrix().getDataPtr());// = m_rotation.getGlm4x4Matrix();
         //glm::vec3 model_translate(m_translation[0], m_translation[1], m_translation[2]);
         //glm::mat4 model_mat = glm::translate(model_rotate, glm::vec3(m_translation[0], m_translation[1], m_translation[2]));
-        float ran;
+        float    ran;
         Vector3f axis;
         //m_rotation.toRotationAxis(ran, axis);
         m_rotation.getRotation(ran, axis);
@@ -231,7 +228,6 @@ void RigidTriangleRender::display()
         m_solidShader.setMat4("MVP", projMat * mvMat);
         m_solidShader.setBool("bDoubleShading", m_bEnableDoubleShading);
 
-
         //model_rotate = glm::identity<glm::mat4>();
         //model_rotate = glm::make_mat4(Quaternion<float>(Vector3f(0,0,1), 1.57).get4x4Matrix().getDataPtr());
         //model_translate[0] = 1; model_translate[1] = 0; model_translate[2] = 0;
@@ -240,10 +236,10 @@ void RigidTriangleRender::display()
         //m_solidShader.setVec3("ModelTranslate", model_translate);
         m_solidShader.setMat4("ModelMat", model_mat);
 
-        glm::vec4  worldLight = glm::vec4(-5.0f, 5.0f, 2.0f, 1.0f);
+        glm::vec4 worldLight = glm::vec4(-5.0f, 5.0f, 2.0f, 1.0f);
         m_solidShader.setVec3("Material.Kd", 0.9f, 0.5f, 0.3f);
         m_solidShader.setVec3("Light.Ld", 1.0f, 1.0f, 1.0f);
-        m_solidShader.setVec4("Light.Position", mvMat*worldLight);
+        m_solidShader.setVec4("Light.Position", mvMat * worldLight);
         m_solidShader.setVec3("Material.Ka", 0.9f, 0.5f, 0.3f);
         m_solidShader.setVec3("Light.La", 0.4f, 0.4f, 0.4f);
         m_solidShader.setVec3("Material.Ks", 0.8f, 0.8f, 0.8f);
@@ -254,7 +250,7 @@ void RigidTriangleRender::display()
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, m_normVBO.getVBO());
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    
+
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, m_colorVBO.getVBO());
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
@@ -278,7 +274,6 @@ void RigidTriangleRender::display()
         m_solidShader.disable();
     }
 
-
     glPopAttrib();
 }
 
@@ -289,5 +284,4 @@ void RigidTriangleRender::resize(unsigned int triNum)
     m_colorVBO.resize(3 * triNum);
 }
 
-
-}//end of namespace Physika
+}  // namespace PhysIKA

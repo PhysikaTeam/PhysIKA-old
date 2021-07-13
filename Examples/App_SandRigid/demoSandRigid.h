@@ -25,10 +25,10 @@ private:
         setKeyboardFunction(DemoHeightFieldSand::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoHeightFieldSand *m_instance;
+    static DemoHeightFieldSand* m_instance;
 
 public:
-    static DemoHeightFieldSand *getInstance()
+    static DemoHeightFieldSand* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoHeightFieldSand;
@@ -56,13 +56,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -84,7 +84,7 @@ private:
     }
 
 public:
-    std::shared_ptr<SSESandSolver> m_sandsolver;
+    std::shared_ptr<SSESandSolver>                   m_sandsolver;
     std::shared_ptr<SandHeightRenderParticleSampler> m_sampler;
 
     //std::vector<RigidBody2_ptr> m_rigids;
@@ -102,10 +102,10 @@ private:
         setKeyboardFunction(DemoHeightFieldSandRigid_Sphere::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoHeightFieldSandRigid_Sphere *m_instance;
+    static DemoHeightFieldSandRigid_Sphere* m_instance;
 
 public:
-    static DemoHeightFieldSandRigid_Sphere *getInstance()
+    static DemoHeightFieldSandRigid_Sphere* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoHeightFieldSandRigid_Sphere;
@@ -133,13 +133,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -165,7 +165,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -180,10 +180,10 @@ private:
         setKeyboardFunction(DemoHeightFieldSandLandRigid::demoKeyboardFunction);
         createWindow(1024, 400);
     }
-    static DemoHeightFieldSandLandRigid *m_instance;
+    static DemoHeightFieldSandLandRigid* m_instance;
 
 public:
-    static DemoHeightFieldSandLandRigid *getInstance()
+    static DemoHeightFieldSandLandRigid* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoHeightFieldSandLandRigid;
@@ -211,13 +211,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -243,7 +243,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -258,10 +258,10 @@ private:
         setKeyboardFunction(DemoHeightFieldSandSlide::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoHeightFieldSandSlide *m_instance;
+    static DemoHeightFieldSandSlide* m_instance;
 
 public:
-    static DemoHeightFieldSandSlide *getInstance()
+    static DemoHeightFieldSandSlide* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoHeightFieldSandSlide;
@@ -289,13 +289,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -321,7 +321,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     bool m_rigidVisible = true;
@@ -336,10 +336,10 @@ private:
         setKeyboardFunction(DemoHeightFieldSandLandMultiRigid::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoHeightFieldSandLandMultiRigid *m_instance;
+    static DemoHeightFieldSandLandMultiRigid* m_instance;
 
 public:
-    static DemoHeightFieldSandLandMultiRigid *getInstance()
+    static DemoHeightFieldSandLandMultiRigid* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoHeightFieldSandLandMultiRigid;
@@ -366,25 +366,25 @@ public:
             return;
         switch (key)
         {
-        case 'a':
-            m_instance->m_car->goLeft(0.016);
-            break;
-        case 'd':
-            m_instance->m_car->goRight(0.016);
-            break;
-        case 'w':
-            m_instance->m_car->forward(0.016);
-            break;
-        case 's':
-            m_instance->m_car->backward(0.016);
-            break;
-        case 'v':
-            m_instance->_changeVisibility();
+            case 'a':
+                m_instance->m_car->goLeft(0.016);
+                break;
+            case 'd':
+                m_instance->m_car->goRight(0.016);
+                break;
+            case 'w':
+                m_instance->m_car->forward(0.016);
+                break;
+            case 's':
+                m_instance->m_car->backward(0.016);
+                break;
+            case 'v':
+                m_instance->_changeVisibility();
 
-            break;
-        default:
-            GLApp::keyboardFunction(key, x, y);
-            break;
+                break;
+            default:
+                GLApp::keyboardFunction(key, x, y);
+                break;
         }
     }
 
@@ -409,7 +409,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     std::shared_ptr<PBDCar> m_car;
@@ -426,10 +426,10 @@ private:
         setKeyboardFunction(DemoHeightFieldSandLandMultiRigid2::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoHeightFieldSandLandMultiRigid2 *m_instance;
+    static DemoHeightFieldSandLandMultiRigid2* m_instance;
 
 public:
-    static DemoHeightFieldSandLandMultiRigid2 *getInstance()
+    static DemoHeightFieldSandLandMultiRigid2* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoHeightFieldSandLandMultiRigid2;
@@ -456,29 +456,29 @@ public:
             return;
         switch (key)
         {
-        case 'a':
-            m_instance->m_car->goLeft(0.016);
-            break;
-        case 'd':
-            m_instance->m_car->goRight(0.016);
-            break;
-        case 'w':
-            m_instance->m_car->forward(0.016);
-            break;
-        case 's':
-            m_instance->m_car->backward(0.016);
-            break;
-        case 'v':
-            m_instance->_changeVisibility();
+            case 'a':
+                m_instance->m_car->goLeft(0.016);
+                break;
+            case 'd':
+                m_instance->m_car->goRight(0.016);
+                break;
+            case 'w':
+                m_instance->m_car->forward(0.016);
+                break;
+            case 's':
+                m_instance->m_car->backward(0.016);
+                break;
+            case 'v':
+                m_instance->_changeVisibility();
 
-            break;
+                break;
 
-        case 'o':
-            m_instance->_setSandHeightTo(0.1);
-            break;
-        default:
-            GLApp::keyboardFunction(key, x, y);
-            break;
+            case 'o':
+                m_instance->_setSandHeightTo(0.1);
+                break;
+            default:
+                GLApp::keyboardFunction(key, x, y);
+                break;
         }
     }
 
@@ -505,7 +505,7 @@ private:
     void _setSandHeightTo(float h);
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     std::shared_ptr<PBDCar> m_car;
@@ -524,10 +524,10 @@ private:
         setKeyboardFunction(DemoHeightFieldSandLandMultiRigidTest::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoHeightFieldSandLandMultiRigidTest *m_instance;
+    static DemoHeightFieldSandLandMultiRigidTest* m_instance;
 
 public:
-    static DemoHeightFieldSandLandMultiRigidTest *getInstance()
+    static DemoHeightFieldSandLandMultiRigidTest* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoHeightFieldSandLandMultiRigidTest;
@@ -555,13 +555,13 @@ public:
                 return;
             switch (key)
             {
-            case 'v':
-                m_instance->_changeVisibility();
+                case 'v':
+                    m_instance->_changeVisibility();
 
-                break;
-            default:
-                GLApp::keyboardFunction(key, x, y);
-                break;
+                    break;
+                default:
+                    GLApp::keyboardFunction(key, x, y);
+                    break;
             }
         }
     }
@@ -587,7 +587,7 @@ private:
     }
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     //std::shared_ptr<PBDCar> m_car;
@@ -604,10 +604,10 @@ private:
         setKeyboardFunction(DemoHeightFieldSandValley::demoKeyboardFunction);
         createWindow(1024, 768);
     }
-    static DemoHeightFieldSandValley *m_instance;
+    static DemoHeightFieldSandValley* m_instance;
 
 public:
-    static DemoHeightFieldSandValley *getInstance()
+    static DemoHeightFieldSandValley* getInstance()
     {
         if (m_instance == 0)
             m_instance = new DemoHeightFieldSandValley;
@@ -635,12 +635,12 @@ public:
         switch (key)
         {
 
-        case 'o':
-            m_instance->_setSandHeightTo(0.1);
-            break;
-        default:
-            GLApp::keyboardFunction(key, x, y);
-            break;
+            case 'o':
+                m_instance->_setSandHeightTo(0.1);
+                break;
+            default:
+                GLApp::keyboardFunction(key, x, y);
+                break;
         }
     }
 
@@ -667,7 +667,7 @@ private:
     void _setSandHeightTo(float h);
 
 public:
-    std::vector<RigidBody2_ptr> m_rigids;
+    std::vector<RigidBody2_ptr>                   m_rigids;
     std::vector<std::shared_ptr<RigidMeshRender>> m_rigidRenders;
 
     std::shared_ptr<PBDCar> m_car;

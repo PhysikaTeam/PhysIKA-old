@@ -2,8 +2,7 @@
 #include "Framework/Framework/ModuleController.h"
 #include "Core/Platform.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 class AnimationController : public ControllerModule
 {
@@ -14,7 +13,7 @@ public:
     virtual ~AnimationController();
 
     bool execute() override;
-private:
 
+private:
 };
-}
+}  // namespace PhysIKA

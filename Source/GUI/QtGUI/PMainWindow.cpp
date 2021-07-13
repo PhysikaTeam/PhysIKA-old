@@ -104,7 +104,6 @@
 
 #include "Core/Platform.h"
 
-
 // #include "Node/NodeData.hpp"
 // #include "Node/FlowScene.hpp"
 // #include "Node/FlowView.hpp"
@@ -114,212 +113,196 @@
 
 //#include "models.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+Q_DECLARE_METATYPE(QDockWidget::DockWidgetFeatures)
+
+PMainWindow::PMainWindow(QWidget* parent, Qt::WindowFlags flags)
+    : QMainWindow(parent, flags), m_statusBar(nullptr), m_vtkOpenglWidget(nullptr), m_propertyWidget(nullptr), m_animationWidget(nullptr)
+//         m_scenegraphWidget(nullptr),
+//         m_moduleListWidget(nullptr)
 {
-    Q_DECLARE_METATYPE(QDockWidget::DockWidgetFeatures)
+    setObjectName("MainWindow");
+    setWindowTitle(QString("PhysIKA Studio ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH));
+    setWindowIcon(QPixmap("../../Media/logo3.png"));
 
-        PMainWindow::PMainWindow(QWidget *parent, Qt::WindowFlags flags)
-        : QMainWindow(parent, flags),
-        m_statusBar(nullptr),
-        m_vtkOpenglWidget(nullptr),
-        m_propertyWidget(nullptr),
-        m_animationWidget(nullptr)
-        //         m_scenegraphWidget(nullptr),
-        //         m_moduleListWidget(nullptr)
-    {
-        setObjectName("MainWindow");
-        setWindowTitle(QString("PhysIKA Studio ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH));
-        setWindowIcon(QPixmap("../../Media/logo3.png"));
+    setCentralView();
+    setupToolBar();
+    setupStatusBar();
+    //        setupMenuBar();
+    setupAllWidgets();
 
-        setCentralView();
-        setupToolBar();
-        setupStatusBar();
-        //        setupMenuBar();
-        setupAllWidgets();
+    //        connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_moduleFlowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
 
-        //        connect(m_scenegraphWidget, &PSceneGraphWidget::notifyNodeDoubleClicked, m_moduleFlowView->getModuleFlowScene(), &QtNodes::QtModuleFlowScene::showNodeFlow);
+    statusBar()->showMessage(tr("Status Bar"));
+}
 
-        statusBar()->showMessage(tr("Status Bar"));
-    }
+void PMainWindow::mainLoop()
+{
+}
 
-    void PMainWindow::mainLoop()
-    {
-    }
+void PMainWindow::createWindow(int width, int height)
+{
+}
 
-    void PMainWindow::createWindow(int width, int height)
-    {
+void PMainWindow::newScene()
+{
+    QMessageBox::StandardButton reply;
 
-    }
+    reply = QMessageBox::question(this, "Save", "Do you want to save your changes?", QMessageBox::Ok | QMessageBox::Cancel);
+}
 
-    void PMainWindow::newScene()
-    {
-        QMessageBox::StandardButton reply;
+void PMainWindow::setCentralView()
+{
+    QWidget* centralWidget = new QWidget();
+    setCentralWidget(centralWidget);
 
-        reply = QMessageBox::question(this, "Save", "Do you want to save your changes?",
-            QMessageBox::Ok | QMessageBox::Cancel);
-    }
+    centralWidget->setContentsMargins(0, 0, 0, 0);
+    QGridLayout* mainLayout = new QGridLayout();
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
+    centralWidget->setLayout(mainLayout);
 
-    void PMainWindow::setCentralView()
-    {
-        QWidget* centralWidget = new QWidget();
-        setCentralWidget(centralWidget);
+    //Setup views
+    QTabWidget* tabWidget = new QTabWidget();
+    tabWidget->setObjectName(QStringLiteral("tabWidget"));
+    tabWidget->setGeometry(QRect(140, 60, 361, 241));
 
-        centralWidget->setContentsMargins(0, 0, 0, 0);
-        QGridLayout* mainLayout = new QGridLayout();
-        mainLayout->setContentsMargins(0, 0, 0, 0);
-        mainLayout->setSpacing(0);
-        centralWidget->setLayout(mainLayout);
+    m_vtkOpenglWidget = new PVTKOpenGLWidget();
+    m_vtkOpenglWidget->setObjectName(QStringLiteral("tabView"));
+    m_vtkOpenglWidget->layout()->setMargin(0);
+    tabWidget->addTab(m_vtkOpenglWidget, QString());
+    tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
 
-        //Setup views
-        QTabWidget* tabWidget = new QTabWidget();
-        tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        tabWidget->setGeometry(QRect(140, 60, 361, 241));
+    //         m_moduleFlowView = new PModuleFlowWidget();
+    //         m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
+    //         tabWidget->addTab(m_moduleFlowView, QString());
+    //         tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
 
-        m_vtkOpenglWidget = new PVTKOpenGLWidget();
-        m_vtkOpenglWidget->setObjectName(QStringLiteral("tabView"));
-        m_vtkOpenglWidget->layout()->setMargin(0);
-        tabWidget->addTab(m_vtkOpenglWidget, QString());
-        tabWidget->setTabText(tabWidget->indexOf(m_vtkOpenglWidget), QApplication::translate("MainWindow", "View", Q_NULLPTR));
+    //Setup animation widget
+    m_animationWidget = new PAnimationWidget(this);
+    m_animationWidget->layout()->setMargin(0);
 
-        //         m_moduleFlowView = new PModuleFlowWidget();
-        //         m_moduleFlowView->setObjectName(QStringLiteral("tabEditor"));
-        //         tabWidget->addTab(m_moduleFlowView, QString());
-        //         tabWidget->setTabText(tabWidget->indexOf(m_moduleFlowView), QApplication::translate("MainWindow", "Module Editor", Q_NULLPTR));
+    //         QWidget* viewWidget = new QWidget();
+    //         QHBoxLayout* hLayout = new QHBoxLayout();
+    //         viewWidget->setLayout(hLayout);
+    //         hLayout->addWidget(m_vtkOpenglWidget, 1);
+    //         hLayout->addWidget(m_flowView, 1);
 
+    mainLayout->addWidget(tabWidget, 0, 0);
+    mainLayout->addWidget(m_animationWidget, 1, 0);
 
-                //Setup animation widget
-        m_animationWidget = new PAnimationWidget(this);
-        m_animationWidget->layout()->setMargin(0);
+    connect(PSimulationThread::instance(), SIGNAL(oneFrameFinished()), m_vtkOpenglWidget, SLOT(prepareRenderingContex()));
+}
 
+void PMainWindow::setupToolBar()
+{
+    tt::TabToolbar* tt = new tt::TabToolbar(this, 55, 3);
+    addToolBar(Qt::TopToolBarArea, tt);
 
-        //         QWidget* viewWidget = new QWidget();
-        //         QHBoxLayout* hLayout = new QHBoxLayout();
-        //         viewWidget->setLayout(hLayout);
-        //         hLayout->addWidget(m_vtkOpenglWidget, 1);
-        //         hLayout->addWidget(m_flowView, 1);
+    QString mediaDir = "../../Media/icon/";
 
-        mainLayout->addWidget(tabWidget, 0, 0);
-        mainLayout->addWidget(m_animationWidget, 1, 0);
+    auto convertIcon = [&](QString path) -> QIcon {
+        QSvgRenderer svg_render(path);
+        QPixmap      pixmap(48, 48);
+        pixmap.fill(Qt::transparent);
+        QPainter painter(&pixmap);
+        svg_render.render(&painter);
+        QIcon ico(pixmap);
 
-        connect(PSimulationThread::instance(), SIGNAL(oneFrameFinished()), m_vtkOpenglWidget, SLOT(prepareRenderingContex()));
-    }
+        return ico;
+    };
 
-    void PMainWindow::setupToolBar()
-    {
-        tt::TabToolbar* tt = new tt::TabToolbar(this, 55, 3);
-        addToolBar(Qt::TopToolBarArea, tt);
+    tt::Page* filePage = tt->AddPage(QPixmap(mediaDir + "48px-Document-open.png"), "File");
 
-        QString mediaDir = "../../Media/icon/";
+    auto fg1 = filePage->AddGroup("");
+    //New action
+    QAction* actionNew = new QAction(QPixmap(mediaDir + "48px-Document-new.png"), "New...");
+    fg1->AddAction(QToolButton::DelayedPopup, actionNew);
 
-        auto convertIcon = [&](QString path) -> QIcon
-        {
-            QSvgRenderer svg_render(path);
-            QPixmap pixmap(48, 48);
-            pixmap.fill(Qt::transparent);
-            QPainter painter(&pixmap);
-            svg_render.render(&painter);
-            QIcon ico(pixmap);
+    //Open action
+    QAction* actionOpen = new QAction(QPixmap(mediaDir + "48px-Document-open.png"), "Open");
+    fg1->AddAction(QToolButton::DelayedPopup, actionOpen);
+    //Save action
+    QAction* actionSave = new QAction(QPixmap(mediaDir + "48px-Document-save.png"), "Save");
+    fg1->AddAction(QToolButton::DelayedPopup, actionSave);
+    //Save as action
+    QAction* actionSaveAs = new QAction(QPixmap(mediaDir + "48px-Document-save-as.png"), "Save As");
+    fg1->AddAction(QToolButton::DelayedPopup, actionSaveAs);
 
-            return ico;
-        };
+    tt::Page*  editPage      = tt->AddPage(QPixmap(mediaDir + "48px-Preferences-system.png"), "Edit");
+    tt::Group* e1            = editPage->AddGroup("Group 1");
+    QAction*   actionSetting = new QAction(QPixmap(mediaDir + "48px-Preferences-system.png"), "Settings");
+    e1->AddAction(QToolButton::DelayedPopup, actionSetting);
 
+    //         PToolBar *tb = new PToolBar(tr("Tool Bar"), this);
+    //         toolBars.append(tb);
+    //         addToolBar(tb);
 
-        tt::Page* filePage = tt->AddPage(QPixmap(mediaDir + "48px-Document-open.png"), "File");
+    tt::Page* particlePage = tt->AddPage(convertIcon(mediaDir + "dyverso/icon-emi-fill.svg"), "Particle System ");
+    auto      pg1          = particlePage->AddGroup("");
+    QAction*  particle1    = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-fill.svg"), "Particle 1");
+    pg1->AddAction(QToolButton::DelayedPopup, particle1);
 
-        auto fg1 = filePage->AddGroup("");
-        //New action
-        QAction *actionNew = new QAction(QPixmap(mediaDir + "48px-Document-new.png"), "New...");
-        fg1->AddAction(QToolButton::DelayedPopup, actionNew);
+    QAction* particle2 = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-bitmap.svg"), "Particle 2");
+    pg1->AddAction(QToolButton::DelayedPopup, particle2);
 
-        //Open action
-        QAction *actionOpen = new QAction(QPixmap(mediaDir + "48px-Document-open.png"), "Open");
-        fg1->AddAction(QToolButton::DelayedPopup, actionOpen);
-        //Save action
-        QAction *actionSave = new QAction(QPixmap(mediaDir + "48px-Document-save.png"), "Save");
-        fg1->AddAction(QToolButton::DelayedPopup, actionSave);
-        //Save as action
-        QAction *actionSaveAs = new QAction(QPixmap(mediaDir + "48px-Document-save-as.png"), "Save As");
-        fg1->AddAction(QToolButton::DelayedPopup, actionSaveAs);
+    QAction* particle3 = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-circle.svg"), "Particle 3");
+    pg1->AddAction(QToolButton::DelayedPopup, particle3);
 
-        tt::Page* editPage = tt->AddPage(QPixmap(mediaDir + "48px-Preferences-system.png"), "Edit");
-        tt::Group* e1 = editPage->AddGroup("Group 1");
-        QAction *actionSetting = new QAction(QPixmap(mediaDir + "48px-Preferences-system.png"), "Settings");
-        e1->AddAction(QToolButton::DelayedPopup, actionSetting);
+    tt::Page* heightPage = tt->AddPage(convertIcon(mediaDir + "icon-realwave.svg"), "Height Field ");
+    auto      hg1        = heightPage->AddGroup("");
+    QAction*  wave1      = new QAction(convertIcon(mediaDir + "icon-realwave.svg"), "Wave 1");
+    hg1->AddAction(QToolButton::DelayedPopup, wave1);
 
-        //         PToolBar *tb = new PToolBar(tr("Tool Bar"), this);
-        //         toolBars.append(tb);
-        //         addToolBar(tb);
+    QAction* wave2 = new QAction(convertIcon(mediaDir + "icon-realwave-cresplash.svg"), "Wave 2");
+    hg1->AddAction(QToolButton::DelayedPopup, wave2);
 
-        tt::Page* particlePage = tt->AddPage(convertIcon(mediaDir + "dyverso/icon-emi-fill.svg"), "Particle System ");
-        auto pg1 = particlePage->AddGroup("");
-        QAction *particle1 = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-fill.svg"), "Particle 1");
-        pg1->AddAction(QToolButton::DelayedPopup, particle1);
+    QAction* wave3 = new QAction(convertIcon(mediaDir + "icon-realwave-objspash.svg"), "Wave 3");
+    hg1->AddAction(QToolButton::DelayedPopup, wave3);
 
-        QAction *particle2 = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-bitmap.svg"), "Particle 2");
-        pg1->AddAction(QToolButton::DelayedPopup, particle2);
+    //Finite element
+    tt::Page* femPage = tt->AddPage(convertIcon(mediaDir + "daemon/icon-demon-vortex.svg"), "Finite Element ");
+    auto      femg1   = femPage->AddGroup("");
+    QAction*  soft1   = new QAction(convertIcon(mediaDir + "daemon/icon-demon-vortex.svg"), "Soft Body 1");
+    femg1->AddAction(QToolButton::DelayedPopup, soft1);
 
-        QAction *particle3 = new QAction(convertIcon(mediaDir + "dyverso/icon-emi-circle.svg"), "Particle 3");
-        pg1->AddAction(QToolButton::DelayedPopup, particle3);
+    QAction* soft2 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-heater.svg"), "Soft Body 2");
+    femg1->AddAction(QToolButton::DelayedPopup, soft2);
 
+    QAction* soft3 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-ellipsoid.svg"), "Soft Body 3");
+    femg1->AddAction(QToolButton::DelayedPopup, soft3);
 
-        tt::Page* heightPage = tt->AddPage(convertIcon(mediaDir + "icon-realwave.svg"), "Height Field ");
-        auto hg1 = heightPage->AddGroup("");
-        QAction *wave1 = new QAction(convertIcon(mediaDir + "icon-realwave.svg"), "Wave 1");
-        hg1->AddAction(QToolButton::DelayedPopup, wave1);
+    QAction* soft4 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-stension.svg"), "Soft Body 4");
+    femg1->AddAction(QToolButton::DelayedPopup, soft4);
 
-        QAction *wave2 = new QAction(convertIcon(mediaDir + "icon-realwave-cresplash.svg"), "Wave 2");
-        hg1->AddAction(QToolButton::DelayedPopup, wave2);
+    //Articulated rigids
+    tt::Page* artPage = tt->AddPage(convertIcon(mediaDir + "geometry/icon-geometry-cube.svg"), "Rigid Body ");
+    auto      rigidg1 = artPage->AddGroup("");
+    QAction*  art1    = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-cube.svg"), "Rigid 1");
+    rigidg1->AddAction(QToolButton::DelayedPopup, art1);
 
-        QAction *wave3 = new QAction(convertIcon(mediaDir + "icon-realwave-objspash.svg"), "Wave 3");
-        hg1->AddAction(QToolButton::DelayedPopup, wave3);
+    QAction* art2 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-cylinder.svg"), "Rigid 2");
+    rigidg1->AddAction(QToolButton::DelayedPopup, art2);
 
+    QAction* art3 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-rocket.svg"), "Rigid 3");
+    rigidg1->AddAction(QToolButton::DelayedPopup, art3);
 
-        //Finite element
-        tt::Page* femPage = tt->AddPage(convertIcon(mediaDir + "daemon/icon-demon-vortex.svg"), "Finite Element ");
-        auto femg1 = femPage->AddGroup("");
-        QAction *soft1 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-vortex.svg"), "Soft Body 1");
-        femg1->AddAction(QToolButton::DelayedPopup, soft1);
+    QAction* art4 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-multibody.svg"), "Rigid 4");
+    rigidg1->AddAction(QToolButton::DelayedPopup, art4);
 
-        QAction *soft2 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-heater.svg"), "Soft Body 2");
-        femg1->AddAction(QToolButton::DelayedPopup, soft2);
+    tt::Page* helpPage = tt->AddPage(QPixmap(mediaDir + "Help-browser.png"), "Help");
+    auto      helpg1   = helpPage->AddGroup("");
+    QAction*  help1    = new QAction(QPixmap(mediaDir + "Help-browser.png"), "Help");
+    helpg1->AddAction(QToolButton::DelayedPopup, help1);
+}
 
-        QAction *soft3 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-ellipsoid.svg"), "Soft Body 3");
-        femg1->AddAction(QToolButton::DelayedPopup, soft3);
+void PMainWindow::setupStatusBar()
+{
+    m_statusBar = new PStatusBar(this);
+    setStatusBar(m_statusBar);
+}
 
-        QAction *soft4 = new QAction(convertIcon(mediaDir + "daemon/icon-demon-stension.svg"), "Soft Body 4");
-        femg1->AddAction(QToolButton::DelayedPopup, soft4);
-
-
-
-        //Articulated rigids
-        tt::Page* artPage = tt->AddPage(convertIcon(mediaDir + "geometry/icon-geometry-cube.svg"), "Rigid Body ");
-        auto rigidg1 = artPage->AddGroup("");
-        QAction *art1 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-cube.svg"), "Rigid 1");
-        rigidg1->AddAction(QToolButton::DelayedPopup, art1);
-
-        QAction *art2 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-cylinder.svg"), "Rigid 2");
-        rigidg1->AddAction(QToolButton::DelayedPopup, art2);
-
-        QAction *art3 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-rocket.svg"), "Rigid 3");
-        rigidg1->AddAction(QToolButton::DelayedPopup, art3);
-
-        QAction *art4 = new QAction(convertIcon(mediaDir + "geometry/icon-geometry-multibody.svg"), "Rigid 4");
-        rigidg1->AddAction(QToolButton::DelayedPopup, art4);
-
-
-        tt::Page* helpPage = tt->AddPage(QPixmap(mediaDir + "Help-browser.png"), "Help");
-        auto helpg1 = helpPage->AddGroup("");
-        QAction *help1 = new QAction(QPixmap(mediaDir + "Help-browser.png"), "Help");
-        helpg1->AddAction(QToolButton::DelayedPopup, help1);
-    }
-
-    void PMainWindow::setupStatusBar()
-    {
-        m_statusBar = new PStatusBar(this);
-        setStatusBar(m_statusBar);
-    }
-
-    /*    void PMainWindow::setupMenuBar()
+/*    void PMainWindow::setupMenuBar()
         {
             QMenu *menu = menuBar()->addMenu(tr("&File"));
 
@@ -351,157 +334,152 @@ namespace PhysIKA
             aboutMenu->addAction(tr("About ..."), this, &PMainWindow::showAbout);
         }*/
 
-    void PMainWindow::saveScene()
-    {
-        return;
-    }
-
-    void PMainWindow::fullScreen()
-    {
-        return;
-    }
-
-    void PMainWindow::showHelp()
-    {
-        return;
-    }
-
-    void PMainWindow::showAbout()
-    {
-        QString versoin = QString("Version ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH);
-        QMessageBox::about(this, tr("PhysIKA Studio "), versoin);
-        return;
-    }
-
-    void PMainWindow::showNodeEditor()
-    {
-        auto nodes = m_flowView->node_scene->selectedNodes();
-        QtNodes::QtNodeWidget* clickedBlock = nullptr;
-        if (nodes.size() > 0)
-        {
-            clickedBlock = dynamic_cast<QtNodes::QtNodeWidget*>(nodes[0]->nodeDataModel());
-        }
-
-        PNodeEditor* node_editor = new PNodeEditor(clickedBlock);
-        node_editor->setWindowTitle("Module Flow Editor");
-        node_editor->resize(1024, 600);
-        node_editor->setMinimumSize(512, 360);
-
-        node_editor->setWindowModality(Qt::ApplicationModal);
-        node_editor->setAttribute(Qt::WA_ShowModal, true);
-        node_editor->setAttribute(Qt::WA_DeleteOnClose, true);
-        node_editor->show();
-    }
-
-    void PMainWindow::showMessage()
-    {
-        std::cout << "ShowMessage" << std::endl;
-    }
-
-    void PMainWindow::loadScene()
-    {
-        return;
-    }
-
-    void PMainWindow::setupAllWidgets()
-    {
-        qRegisterMetaType<QDockWidget::DockWidgetFeatures>();
-
-        //windowMenu->addSeparator();
-
-        static const struct Set {
-            const char * name;
-            uint flags;
-            Qt::DockWidgetArea area;
-        } sets[] = {
-            { "SceneGraph", 0, Qt::RightDockWidgetArea },
-            { "Console", 0, Qt::BottomDockWidgetArea },
-            { "Property", 0, Qt::LeftDockWidgetArea },
-            { "NodeEditor", 0, Qt::LeftDockWidgetArea },
-            { "Module", 0, Qt::RightDockWidgetArea }
-        };
-        const int setCount = sizeof(sets) / sizeof(Set);
-
-        const QIcon qtIcon(QPixmap(":/res/qt.png"));
-
-
-        PDockWidget *nodeEditorDockWidget = new PDockWidget(tr(sets[3].name), this, Qt::WindowFlags(sets[3].flags));
-        nodeEditorDockWidget->setWindowTitle("Node Editor");
-        nodeEditorDockWidget->setWindowIcon(qtIcon);
-        addDockWidget(sets[3].area, nodeEditorDockWidget);
-        m_flowView = new PNodeFlowWidget();
-        m_flowView->setObjectName(QStringLiteral("tabEditor"));
-        nodeEditorDockWidget->setWidget(m_flowView);
-
-
-
-        //Set up property dock widget
-        PDockWidget *propertyDockWidget = new PDockWidget(tr(sets[2].name), this, Qt::WindowFlags(sets[2].flags));
-        propertyDockWidget->setWindowTitle("Property Editor");
-        propertyDockWidget->setWindowIcon(qtIcon);
-        addDockWidget(sets[2].area, propertyDockWidget);
-        //windowMenu->addMenu(moduleListDockWidget->colorSwatchMenu());
-        m_propertyWidget = new PPropertyWidget();
-        //        m_propertyWidget->setOpenGLWidget(m_vtkOpenglWidget);
-        propertyDockWidget->setWidget(m_propertyWidget);
-
-
-        PIODockWidget *consoleDockWidget = new PIODockWidget(this, Qt::WindowFlags(sets[1].flags));
-        consoleDockWidget->setWindowIcon(qtIcon);
-        addDockWidget(sets[1].area, consoleDockWidget);
-        //windowMenu->addMenu(bottomDockWidget->colorSwatchMenu());
-
-        //Set up module widget
-//         PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
-//         moduleDockWidget->setWindowTitle("Module List");
-//         moduleDockWidget->setWindowIcon(qtIcon);
-//         addDockWidget(sets[4].area, moduleDockWidget);
-//         //windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
-//         m_moduleListWidget = new PModuleListWidget();
-//         moduleDockWidget->setWidget(m_moduleListWidget);
-// 
-//         PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
-//         sceneDockWidget->setWindowTitle("Scene Browser");
-//         sceneDockWidget->setWindowIcon(qtIcon);
-//         addDockWidget(sets[0].area, sceneDockWidget);
-//         //windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
-//         m_scenegraphWidget = new PSceneGraphWidget();
-//         sceneDockWidget->setWidget(m_scenegraphWidget);
-
-        setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
-        setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
-
-        //         connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
-        //         connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
-        //         connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
-
-        connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
-        //        connect(m_moduleFlowView->module_scene, &QtNodes::QtModuleFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
-
-        connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeDoubleClicked, this, &PMainWindow::showNodeEditor);
-
-
-        connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeSelected, [=]() {
-            //    qDebug() << "cout" << m_propertyWidget->getTextFieldWidget();
-            m_propertyWidget->sendQTextFieldInitSignal();
-        });
-    }
-
-    void PMainWindow::mousePressEvent(QMouseEvent *event)
-    {
-        //     QLichtThread* m_thread = new QLichtThread(openGLWidget->winId());
-        //     m_thread->start();
-    }
-
-
-    // add by HNU
-    PPropertyWidget * PMainWindow::getProperty()
-    {
-        return m_propertyWidget;
-    }
-
-    PVTKOpenGLWidget* PMainWindow::getVTKOpenGL()
-    {
-        return m_vtkOpenglWidget;
-    }
+void PMainWindow::saveScene()
+{
+    return;
 }
+
+void PMainWindow::fullScreen()
+{
+    return;
+}
+
+void PMainWindow::showHelp()
+{
+    return;
+}
+
+void PMainWindow::showAbout()
+{
+    QString versoin = QString("Version ") + QString::number(PHYSIKA_VERSION_MAJOR) + QString(".") + QString::number(PHYSIKA_VERSION_MINOR) + QString(".") + QString::number(PHYSIKA_VERSION_PATCH);
+    QMessageBox::about(this, tr("PhysIKA Studio "), versoin);
+    return;
+}
+
+void PMainWindow::showNodeEditor()
+{
+    auto                   nodes        = m_flowView->node_scene->selectedNodes();
+    QtNodes::QtNodeWidget* clickedBlock = nullptr;
+    if (nodes.size() > 0)
+    {
+        clickedBlock = dynamic_cast<QtNodes::QtNodeWidget*>(nodes[0]->nodeDataModel());
+    }
+
+    PNodeEditor* node_editor = new PNodeEditor(clickedBlock);
+    node_editor->setWindowTitle("Module Flow Editor");
+    node_editor->resize(1024, 600);
+    node_editor->setMinimumSize(512, 360);
+
+    node_editor->setWindowModality(Qt::ApplicationModal);
+    node_editor->setAttribute(Qt::WA_ShowModal, true);
+    node_editor->setAttribute(Qt::WA_DeleteOnClose, true);
+    node_editor->show();
+}
+
+void PMainWindow::showMessage()
+{
+    std::cout << "ShowMessage" << std::endl;
+}
+
+void PMainWindow::loadScene()
+{
+    return;
+}
+
+void PMainWindow::setupAllWidgets()
+{
+    qRegisterMetaType<QDockWidget::DockWidgetFeatures>();
+
+    //windowMenu->addSeparator();
+
+    static const struct Set
+    {
+        const char*        name;
+        uint               flags;
+        Qt::DockWidgetArea area;
+    } sets[] = {
+        { "SceneGraph", 0, Qt::RightDockWidgetArea },
+        { "Console", 0, Qt::BottomDockWidgetArea },
+        { "Property", 0, Qt::LeftDockWidgetArea },
+        { "NodeEditor", 0, Qt::LeftDockWidgetArea },
+        { "Module", 0, Qt::RightDockWidgetArea }
+    };
+    const int setCount = sizeof(sets) / sizeof(Set);
+
+    const QIcon qtIcon(QPixmap(":/res/qt.png"));
+
+    PDockWidget* nodeEditorDockWidget = new PDockWidget(tr(sets[3].name), this, Qt::WindowFlags(sets[3].flags));
+    nodeEditorDockWidget->setWindowTitle("Node Editor");
+    nodeEditorDockWidget->setWindowIcon(qtIcon);
+    addDockWidget(sets[3].area, nodeEditorDockWidget);
+    m_flowView = new PNodeFlowWidget();
+    m_flowView->setObjectName(QStringLiteral("tabEditor"));
+    nodeEditorDockWidget->setWidget(m_flowView);
+
+    //Set up property dock widget
+    PDockWidget* propertyDockWidget = new PDockWidget(tr(sets[2].name), this, Qt::WindowFlags(sets[2].flags));
+    propertyDockWidget->setWindowTitle("Property Editor");
+    propertyDockWidget->setWindowIcon(qtIcon);
+    addDockWidget(sets[2].area, propertyDockWidget);
+    //windowMenu->addMenu(moduleListDockWidget->colorSwatchMenu());
+    m_propertyWidget = new PPropertyWidget();
+    //        m_propertyWidget->setOpenGLWidget(m_vtkOpenglWidget);
+    propertyDockWidget->setWidget(m_propertyWidget);
+
+    PIODockWidget* consoleDockWidget = new PIODockWidget(this, Qt::WindowFlags(sets[1].flags));
+    consoleDockWidget->setWindowIcon(qtIcon);
+    addDockWidget(sets[1].area, consoleDockWidget);
+    //windowMenu->addMenu(bottomDockWidget->colorSwatchMenu());
+
+    //Set up module widget
+    //         PDockWidget *moduleDockWidget = new PDockWidget(tr(sets[4].name), this, Qt::WindowFlags(sets[4].flags));
+    //         moduleDockWidget->setWindowTitle("Module List");
+    //         moduleDockWidget->setWindowIcon(qtIcon);
+    //         addDockWidget(sets[4].area, moduleDockWidget);
+    //         //windowMenu->addMenu(rightDockWidget->colorSwatchMenu());
+    //         m_moduleListWidget = new PModuleListWidget();
+    //         moduleDockWidget->setWidget(m_moduleListWidget);
+    //
+    //         PDockWidget *sceneDockWidget = new PDockWidget(tr(sets[0].name), this, Qt::WindowFlags(sets[0].flags));
+    //         sceneDockWidget->setWindowTitle("Scene Browser");
+    //         sceneDockWidget->setWindowIcon(qtIcon);
+    //         addDockWidget(sets[0].area, sceneDockWidget);
+    //         //windowMenu->addMenu(leftDockWidget->colorSwatchMenu());
+    //         m_scenegraphWidget = new PSceneGraphWidget();
+    //         sceneDockWidget->setWidget(m_scenegraphWidget);
+
+    setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+    setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+
+    //         connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_moduleListWidget, SLOT(updateModule(Node*)));
+    //         connect(m_scenegraphWidget, SIGNAL(notifyNodeSelected(Node*)), m_propertyWidget, SLOT(showProperty(Node*)));
+    //         connect(m_moduleListWidget, SIGNAL(notifyModuleSelected(Module*)), m_propertyWidget, SLOT(showProperty(Module*)));
+
+    connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
+    //        connect(m_moduleFlowView->module_scene, &QtNodes::QtModuleFlowScene::nodeSelected, m_propertyWidget, &PPropertyWidget::showBlockProperty);
+
+    connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeDoubleClicked, this, &PMainWindow::showNodeEditor);
+
+    connect(m_flowView->node_scene, &QtNodes::QtNodeFlowScene::nodeSelected, [=]() {
+        //    qDebug() << "cout" << m_propertyWidget->getTextFieldWidget();
+        m_propertyWidget->sendQTextFieldInitSignal();
+    });
+}
+
+void PMainWindow::mousePressEvent(QMouseEvent* event)
+{
+    //     QLichtThread* m_thread = new QLichtThread(openGLWidget->winId());
+    //     m_thread->start();
+}
+
+// add by HNU
+PPropertyWidget* PMainWindow::getProperty()
+{
+    return m_propertyWidget;
+}
+
+PVTKOpenGLWidget* PMainWindow::getVTKOpenGL()
+{
+    return m_vtkOpenglWidget;
+}
+}  // namespace PhysIKA

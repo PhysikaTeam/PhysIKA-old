@@ -9,16 +9,18 @@
 
 namespace pbal {
 
-    struct EmitterParticles2 : Emitter2 {
-        bool emitOnce = true;
+struct EmitterParticles2 : Emitter2
+{
+    bool emitOnce = true;
 
-        void update(double dt) override {
-            static bool hasEmit = false;
-            if (emitOnce && hasEmit) { return; } 
-
-
-
+    void update(double dt) override
+    {
+        static bool hasEmit = false;
+        if (emitOnce && hasEmit)
+        {
+            return;
         }
-    };
+    }
+};
 
-}
+}  // namespace pbal

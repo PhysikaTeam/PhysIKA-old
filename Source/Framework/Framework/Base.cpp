@@ -20,8 +20,8 @@ bool Base::addField(FieldID name, Field* data)
     else
     {
         std::cout << "Data field " << name
-            << " already exists in this class !"
-            << std::endl;
+                  << " already exists in this class !"
+                  << std::endl;
         return false;
     }
 
@@ -41,13 +41,11 @@ bool Base::addFieldAlias(FieldID name, Field* data)
         if (data != getField(name))
         {
             std::cout << "Field name " << name
-                << " conflicts with existing fields!"
-                << std::endl;
+                      << " conflicts with existing fields!"
+                      << std::endl;
             return false;
         }
-
     }
-
 }
 
 bool Base::addFieldAlias(FieldID name, Field* data, FieldMap& fieldAlias)
@@ -61,11 +59,10 @@ bool Base::addFieldAlias(FieldID name, Field* data, FieldMap& fieldAlias)
         if (data != getField(name))
         {
             std::cout << "Field name " << name
-                << " conflicts with existing fields!"
-                << std::endl;
+                      << " conflicts with existing fields!"
+                      << std::endl;
             return false;
         }
-
     }
 }
 
@@ -181,11 +178,10 @@ bool Base::isAllFieldsReady()
     return bReady;
 }
 
-
 std::vector<std::string> Base::getFieldAlias(Field* field)
 {
     std::vector<FieldID> names;
-    FieldMap::iterator iter;
+    FieldMap::iterator   iter;
     for (iter = m_fieldAlias.begin(); iter != m_fieldAlias.end(); iter++)
     {
         if (iter->second == field)
@@ -198,7 +194,7 @@ std::vector<std::string> Base::getFieldAlias(Field* field)
 
 int Base::getFieldAliasCount(Field* data)
 {
-    int num = 0;
+    int                num = 0;
     FieldMap::iterator iter;
     for (iter = m_fieldAlias.begin(); iter != m_fieldAlias.end(); iter++)
     {
@@ -224,4 +220,4 @@ bool Base::attachField(Field* field, std::string name, std::string desc, bool au
     }
     return ret;
 }
-}
+}  // namespace PhysIKA

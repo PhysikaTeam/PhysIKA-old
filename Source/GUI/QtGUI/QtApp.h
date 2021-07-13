@@ -6,25 +6,24 @@
 
 namespace PhysIKA {
 
-    class PMainWindow;
+class PMainWindow;
 
-    class QtApp : public AppBase
-    {
-    public:
-        QtApp(int argc = 0, char **argv = NULL);
-        ~QtApp();
+class QtApp : public AppBase
+{
+public:
+    QtApp(int argc = 0, char** argv = NULL);
+    ~QtApp();
 
-        void createWindow(int width, int height) override;
-        void mainLoop() override;
+    void createWindow(int width, int height) override;
+    void mainLoop() override;
 
+    // add by HNU
+    std::shared_ptr<PMainWindow> getMainWindow() const;
 
-        // add by HNU
-        std::shared_ptr<PMainWindow> getMainWindow() const;
+private:
+    std::shared_ptr<QApplication> m_app;
 
-    private:
-        std::shared_ptr<QApplication> m_app;
+    std::shared_ptr<PMainWindow> m_mainWindow;
+};
 
-        std::shared_ptr<PMainWindow> m_mainWindow;
-    };
-
-}
+}  // namespace PhysIKA

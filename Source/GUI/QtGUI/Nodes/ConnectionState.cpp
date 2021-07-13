@@ -11,41 +11,35 @@ using QtNodes::ConnectionState;
 using QtNodes::QtBlock;
 
 ConnectionState::
-~ConnectionState()
+    ~ConnectionState()
 {
-  resetLastHoveredNode();
-}
-
-
-void
-ConnectionState::
-interactWithNode(QtBlock* node)
-{
-  if (node)
-  {
-    _lastHoveredNode = node;
-  }
-  else
-  {
     resetLastHoveredNode();
-  }
 }
 
-
-void
-ConnectionState::
-setLastHoveredNode(QtBlock* node)
+void ConnectionState::
+    interactWithNode(QtBlock* node)
 {
-  _lastHoveredNode = node;
+    if (node)
+    {
+        _lastHoveredNode = node;
+    }
+    else
+    {
+        resetLastHoveredNode();
+    }
 }
 
-
-void
-ConnectionState::
-resetLastHoveredNode()
+void ConnectionState::
+    setLastHoveredNode(QtBlock* node)
 {
-  if (_lastHoveredNode)
-    _lastHoveredNode->resetReactionToConnection();
+    _lastHoveredNode = node;
+}
 
-  _lastHoveredNode = nullptr;
+void ConnectionState::
+    resetLastHoveredNode()
+{
+    if (_lastHoveredNode)
+        _lastHoveredNode->resetReactionToConnection();
+
+    _lastHoveredNode = nullptr;
 }

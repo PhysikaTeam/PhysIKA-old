@@ -6,8 +6,7 @@
 
 class QPointF;
 
-namespace QtNodes
-{
+namespace QtNodes {
 
 class QtBlock;
 
@@ -16,46 +15,53 @@ class QtBlock;
 class ConnectionState
 {
 public:
+    ConnectionState(PortType port = PortType::None)
+        : _requiredPort(port)
+    {
+    }
 
-  ConnectionState(PortType port = PortType::None)
-    : _requiredPort(port)
-  {}
+    ConnectionState(const ConnectionState&) = delete;
+    ConnectionState operator=(const ConnectionState&) = delete;
 
-  ConnectionState(const ConnectionState&) = delete;
-  ConnectionState operator=(const ConnectionState&) = delete;
-
-  ~ConnectionState();
-
-public:
-
-  void setRequiredPort(PortType end)
-  { _requiredPort = end; }
-
-  PortType requiredPort() const
-  { return _requiredPort; }
-
-  bool requiresPort() const
-  { return _requiredPort != PortType::None; }
-
-  void setNoRequiredPort()
-  { _requiredPort = PortType::None; }
+    ~ConnectionState();
 
 public:
+    void setRequiredPort(PortType end)
+    {
+        _requiredPort = end;
+    }
 
-  void interactWithNode(QtBlock* node);
+    PortType requiredPort() const
+    {
+        return _requiredPort;
+    }
 
-  void setLastHoveredNode(QtBlock* node);
+    bool requiresPort() const
+    {
+        return _requiredPort != PortType::None;
+    }
 
-  QtBlock*
-  lastHoveredNode() const
-  { return _lastHoveredNode; }
+    void setNoRequiredPort()
+    {
+        _requiredPort = PortType::None;
+    }
 
-  void resetLastHoveredNode();
+public:
+    void interactWithNode(QtBlock* node);
+
+    void setLastHoveredNode(QtBlock* node);
+
+    QtBlock*
+    lastHoveredNode() const
+    {
+        return _lastHoveredNode;
+    }
+
+    void resetLastHoveredNode();
 
 private:
+    PortType _requiredPort;
 
-  PortType _requiredPort;
-
-  QtBlock* _lastHoveredNode{nullptr};
+    QtBlock* _lastHoveredNode{ nullptr };
 };
-}
+}  // namespace QtNodes

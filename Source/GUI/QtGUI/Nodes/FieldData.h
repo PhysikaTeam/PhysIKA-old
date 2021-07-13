@@ -3,8 +3,8 @@
 #include "QtBlockDataModel.h"
 #include "Framework/Field.h"
 
-using QtNodes::BlockDataType;
 using QtNodes::BlockData;
+using QtNodes::BlockDataType;
 
 using PhysIKA::Field;
 
@@ -13,30 +13,36 @@ using PhysIKA::Field;
 class FieldData : public BlockData
 {
 public:
-
     FieldData()
-    {}
+    {
+    }
 
     FieldData(Field* f)
         : field(f)
-    {}
+    {
+    }
 
     BlockDataType type() const override
     {
         return BlockDataType{ "field",
-                             "Field" };
+                              "Field" };
     }
 
-    Field* getField() { return field; }
+    Field* getField()
+    {
+        return field;
+    }
 
-    bool isEmpty() { return field == nullptr; }
+    bool isEmpty()
+    {
+        return field == nullptr;
+    }
 
-    bool isKindOf(BlockData &nodedata) const override
+    bool isKindOf(BlockData& nodedata) const override
     {
         return true;
     }
 
 private:
-
     Field* field = nullptr;
 };

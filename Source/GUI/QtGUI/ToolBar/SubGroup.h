@@ -32,8 +32,7 @@
 class QAction;
 class QMenu;
 
-namespace tt
-{
+namespace tt {
 
 class TT_API SubGroup : public QFrame
 {
@@ -48,21 +47,21 @@ public:
     struct ActionParams
     {
         QToolButton::ToolButtonPopupMode type;
-        QAction* action;
-        QMenu* menu;
+        QAction*                         action;
+        QMenu*                           menu;
     };
 
     SubGroup(Align align, QWidget* parent = nullptr);
 
-    void       AddAction(QToolButton::ToolButtonPopupMode type, QAction* action, QMenu* menu = nullptr);
-    void       AddHorizontalButtons(const std::vector<ActionParams>& params);
-    void       AddWidget(QWidget* widget);
+    void AddAction(QToolButton::ToolButtonPopupMode type, QAction* action, QMenu* menu = nullptr);
+    void AddHorizontalButtons(const std::vector<ActionParams>& params);
+    void AddWidget(QWidget* widget);
 
 private:
-    QFrame*    ConstructInnerFrame(int spacing);
+    QFrame* ConstructInnerFrame(int spacing);
 
     QVBoxLayout* innerLayout;
 };
 
-}
+}  // namespace tt
 #endif

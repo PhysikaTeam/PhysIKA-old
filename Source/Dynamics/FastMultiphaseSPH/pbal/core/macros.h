@@ -6,14 +6,14 @@
 #include <limits.h>
 
 #if defined(_WIN32) || defined(_WIN64)
-#   define FLUID_WINDOWS
+#define FLUID_WINDOWS
 #elif defined(__APPLE__)
-#   define FLUID_APPLE
-#   ifndef FLUID_IOS
-#       define FLUID_MACOSX
-#   endif
+#define FLUID_APPLE
+#ifndef FLUID_IOS
+#define FLUID_MACOSX
+#endif
 #elif defined(linux) || defined(__linux__)
-#   define FLUID_LINUX
+#define FLUID_LINUX
 #endif
 
 // Host vs. device
@@ -38,13 +38,12 @@
 #endif  // __CUDACC__
 
 // Exception
-#define _FLUID_CUDA_CHECK(result, msg, file, line)                            \
-    if (result != cudaSuccess) {                                            \
-        fprintf(stderr, "CUDA error at %s:%d code=%d (%s) \"%s\" \n", file, \
-                line, static_cast<unsigned int>(result),                    \
-                cudaGetErrorString(result), msg);                           \
-        cudaDeviceReset();                                                  \
-        exit(EXIT_FAILURE);                                                 \
+#define _FLUID_CUDA_CHECK(result, msg, file, line)                                                                                                     \
+    if (result != cudaSuccess)                                                                                                                         \
+    {                                                                                                                                                  \
+        fprintf(stderr, "CUDA error at %s:%d code=%d (%s) \"%s\" \n", file, line, static_cast<unsigned int>(result), cudaGetErrorString(result), msg); \
+        cudaDeviceReset();                                                                                                                             \
+        exit(EXIT_FAILURE);                                                                                                                            \
     }
 
 #define FLUID_CUDA_CHECK(expression) \

@@ -45,24 +45,24 @@
 #include <io.h>
 #include <direct.h>
 
-int readKFile(FEMDynamic *femAnalysis, string inFile);
-int readINPFile(FEMDynamic *femAnalysis, string inFile);
-void readCommand(int argc, char *argv[], string &inFile, string &outFile, FEMDynamic *dy);
+int  readKFile(FEMDynamic* femAnalysis, string inFile);
+int  readINPFile(FEMDynamic* femAnalysis, string inFile);
+void readCommand(int argc, char* argv[], string& inFile, string& outFile, FEMDynamic* dy);
 void history_record_start(string fin, string fout, char exeFile[]);
 void history_record_end(double calculae_time, double contact_time, double fileTime, int calFlag, int iterNum, int gpuNum);
 void copyrightStatement();
 void AISIMExplicitCopyrightStatement();
-int connection_for_fem(FEMDynamic *femAnalysis);
+int  connection_for_fem(FEMDynamic* femAnalysis);
 
 extern ofstream f_record;
 
-void calculateMX(int argcmx, char *argvmx[])
+void calculateMX(int argcmx, char* argvmx[])
 {
-    double t_start, t_end, contact_time, fileTime;
-    FEMDynamic *fem_analysis;
-    cudaError_t cudaStatus;
-    string inFile, outFile, inpFileType;
-    ofstream fout;
+    double          t_start, t_end, contact_time, fileTime;
+    FEMDynamic*     fem_analysis;
+    cudaError_t     cudaStatus;
+    string          inFile, outFile, inpFileType;
+    ofstream        fout;
     MultiGpuManager mulGpuMag;
 
     /*AISIMExplicitCopyrightStatement();*/
@@ -108,7 +108,7 @@ void calculateMX(int argcmx, char *argvmx[])
         fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
     }
 
-    fem_analysis->intFilePath_ = inFile;
+    fem_analysis->intFilePath_    = inFile;
     fem_analysis->outputFilePath_ = outFile;
 
     if (0 != _access(fem_analysis->outputFilePath_.c_str(), 0))
@@ -195,9 +195,9 @@ std::vector<float> test_vector;
 
 #ifdef DEBUG
 
-std::vector<float> &creare_scene_init()
+std::vector<float>& creare_scene_init()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(1.5, 1.5, 1.5));
     scene.setLowerBound(Vector3f(-1.5, -0.5, -1.5));
 
@@ -249,11 +249,11 @@ std::vector<float> &creare_scene_init()
     return test_vector;
 }
 
-#endif // DEBUG
+#endif  // DEBUG
 
 void create_scene_semianylitical()
 {
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(1.2));
     scene.setLowerBound(Vector3f(-0.2));
 
@@ -305,7 +305,7 @@ void create_scene_semianylitical()
 int main()
 {
     //adjust by HUN
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(1.5, 1.5, 1.5));
     scene.setLowerBound(Vector3f(-1.5, -0.5, -1.5));
 
@@ -334,7 +334,7 @@ int main()
 
     root->addRigidBody(rigidbody);
 
-    auto &v = test_vector;
+    auto& v = test_vector;
     v.resize(5);
 
     QtApp window;
@@ -343,56 +343,53 @@ int main()
     auto classMap = Object::getClassMap();
 
     // add By HNU
-    QObject::connect(window.getMainWindow()->getProperty(), &PPropertyWidget::QTextFieldInitSignal, [=]()
-                     {
-                         QTextFieldWidget *core = window.getMainWindow()->getProperty()->getTextFieldWidget();
-                         //qDebug() << core;
-                         QObject::connect(core, &QTextFieldWidget::loadFileSignal, [&](const QString str)
-                                          {
-                                              //std::cout << "receive Output File success " << str.toStdString() << std::endl;
+    QObject::connect(window.getMainWindow()->getProperty(), &PPropertyWidget::QTextFieldInitSignal, [=]() {
+        QTextFieldWidget* core = window.getMainWindow()->getProperty()->getTextFieldWidget();
+        //qDebug() << core;
+        QObject::connect(core, &QTextFieldWidget::loadFileSignal, [&](const QString str) {
+            //std::cout << "receive Output File success " << str.toStdString() << std::endl;
 
-                                              //root->loadMesh("C:/Users/Desktop/Release_subdomainscale0.5/output/result_15.obj");
-                                              //rigidbody->loadShape("C:/Users/Desktop/Release_subdomainscale0.5/output/result_15.obj");
+            //root->loadMesh("C:/Users/Desktop/Release_subdomainscale0.5/output/result_15.obj");
+            //rigidbody->loadShape("C:/Users/Desktop/Release_subdomainscale0.5/output/result_15.obj");
 
-                                              //QtConcurrent::run(root, &StaticMeshBoundary<DataType3f>::loadMesh, str.toStdString());
-                                              //QtConcurrent::run([&]() {
-                                              //    qDebug() << QThread::currentThreadId;
-                                              //    root->loadMesh(str.toStdString());
-                                              //    //rigidbody->loadShape(str.toStdString());
-                                              //});
+            //QtConcurrent::run(root, &StaticMeshBoundary<DataType3f>::loadMesh, str.toStdString());
+            //QtConcurrent::run([&]() {
+            //    qDebug() << QThread::currentThreadId;
+            //    root->loadMesh(str.toStdString());
+            //    //rigidbody->loadShape(str.toStdString());
+            //});
 
-                                              root->loadMesh(str.toStdString());
-                                              rigidbody->loadShape(str.toStdString());
+            root->loadMesh(str.toStdString());
+            rigidbody->loadShape(str.toStdString());
 
-                                              rigidbody->getSurface()->addVisualModule(sRenderer);
-                                              rigidbody->setActive(false);
+            rigidbody->getSurface()->addVisualModule(sRenderer);
+            rigidbody->setActive(false);
 
-                                              // refresh view
-                                              window.getMainWindow()->getVTKOpenGL()->prepareRenderingContex();
-                                          });
+            // refresh view
+            window.getMainWindow()->getVTKOpenGL()->prepareRenderingContex();
+        });
 
-                         QObject::connect(core, &QTextFieldWidget::startCalculate, [&](QString Qstr)
-                                          {
-                                              //qDebug() << "receive calculate signal!";
-                                              QStringList strList = Qstr.split(" ");
-                                              vector<string> ret;
-                                              for (auto x : strList)
-                                              {
-                                                  ret.push_back(x.toStdString());
-                                                  //qDebug() << x;
-                                              }
-                                              vector<char *> cstrings;
-                                              cstrings.reserve(ret.size());
-                                              for (size_t i = 0; i < ret.size(); ++i)
-                                                  cstrings.push_back(const_cast<char *>(ret[i].c_str()));
+        QObject::connect(core, &QTextFieldWidget::startCalculate, [&](QString Qstr) {
+            //qDebug() << "receive calculate signal!";
+            QStringList    strList = Qstr.split(" ");
+            vector<string> ret;
+            for (auto x : strList)
+            {
+                ret.push_back(x.toStdString());
+                //qDebug() << x;
+            }
+            vector<char*> cstrings;
+            cstrings.reserve(ret.size());
+            for (size_t i = 0; i < ret.size(); ++i)
+                cstrings.push_back(const_cast<char*>(ret[i].c_str()));
 
-                                              if (!cstrings.empty())
-                                              {
-                                                  //QtConcurrent::run(calculateMX, ret.size(), &cstrings[0]);
-                                                  calculateMX(ret.size(), &cstrings[0]);
-                                              }
-                                          });
-                     });
+            if (!cstrings.empty())
+            {
+                //QtConcurrent::run(calculateMX, ret.size(), &cstrings[0]);
+                calculateMX(ret.size(), &cstrings[0]);
+            }
+        });
+    });
 
     //     for (auto const c : *classMap)
     //     std::cout << "Class Name: " << c.first << std::endl;

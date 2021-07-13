@@ -1,4 +1,2 @@
 
 #include "PBDJoint.h"
-
-

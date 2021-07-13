@@ -41,7 +41,7 @@ using namespace std;
 using namespace PhysIKA;
 
 template <typename T>
-void SetupModel(T &bunny, int i, std::string model = "")
+void SetupModel(T& bunny, int i, std::string model = "")
 {
     auto sRender = std::make_shared<SurfaceMeshRender>();
     bunny->getSurfaceNode()->addVisualModule(sRender);
@@ -70,7 +70,7 @@ void SetupModel(T &bunny, int i, std::string model = "")
     bunny->getTopologyMapping()->setSearchingRadius(0.05);
 }
 
-void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::shared_ptr<SolidFluidInteraction<DataType3f>> &sfi, int i, std::string model = "")
+void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, int i, std::string model = "")
 {
     if (model == "mass_spring")
     {
@@ -85,8 +85,8 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 
         // Output all particles to .txt file.
         {
-            auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
-            auto &points = pSet->getPoints();
+            auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+            auto&               points = pSet->getPoints();
             HostArray<Vector3f> hpoints(points.size());
             Function1Pt::copy(hpoints, points);
 
@@ -118,8 +118,8 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 
         // Output all particles to .txt file.
         {
-            auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
-            auto &points = pSet->getPoints();
+            auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+            auto&               points = pSet->getPoints();
             HostArray<Vector3f> hpoints(points.size());
             Function1Pt::copy(hpoints, points);
 
@@ -147,8 +147,8 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 
         // Output all particles to .txt file.
         {
-            auto pSet = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
-            auto &points = pSet->getPoints();
+            auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(bunny->getTopologyModule());
+            auto&               points = pSet->getPoints();
             HostArray<Vector3f> hpoints(points.size());
             Function1Pt::copy(hpoints, points);
 
@@ -172,7 +172,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 void CreateScene()
 {
 
-    SceneGraph &scene = SceneGraph::getInstance();
+    SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(7.0, 4.0, 3.0));
     scene.setLowerBound(Vector3f(-3.0, 0.0, -1.0));
 
@@ -184,12 +184,11 @@ void CreateScene()
     //
 
     root->addChild(sfi);
-    sfi->setInteractionDistance(0.03); // 0.02 is an very important parameter
+    sfi->setInteractionDistance(0.03);  // 0.02 is an very important parameter
 
     for (int i = 0; i < 6; i++)
     {
-        string model = (i % 3 == 0) ? "mass_spring" : (i % 3 == 1) ? "fem"
-                                                                   : "";
+        string model = (i % 3 == 0) ? "mass_spring" : (i % 3 == 1) ? "fem" : "";
         //string model = (i%4 == 0) ? "mass_spring" : "";
         AddSimulationModel(root, sfi, i, model);
     }

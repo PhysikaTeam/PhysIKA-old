@@ -10,8 +10,7 @@
 
 class QGraphicsProxyWidget;
 
-namespace QtNodes
-{
+namespace QtNodes {
 
 class QtFlowScene;
 class FlowItemEntry;
@@ -20,86 +19,90 @@ class FlowItemEntry;
 /// forwards painting operation.
 class QtBlockGraphicsObject : public QGraphicsObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  QtBlockGraphicsObject(QtFlowScene &scene,
-                     QtBlock& node);
+    QtBlockGraphicsObject(QtFlowScene& scene,
+                          QtBlock&     node);
 
-  virtual
-  ~QtBlockGraphicsObject();
+    virtual ~QtBlockGraphicsObject();
 
-  QtBlock&
-  node();
+    QtBlock&
+    node();
 
-  QtBlock const&
-  node() const;
+    QtBlock const&
+    node() const;
 
-  QRectF
-  boundingRect() const override;
+    QRectF
+    boundingRect() const override;
 
-  void
-  setGeometryChanged();
+    void
+    setGeometryChanged();
 
-  /// Visits all attached connections and corrects
-  /// their corresponding end points.
-  void
-  moveConnections() const;
+    /// Visits all attached connections and corrects
+    /// their corresponding end points.
+    void
+    moveConnections() const;
 
-  enum { Type = UserType + 1 };
+    enum
+    {
+        Type = UserType + 1
+    };
 
-  int
-  type() const override { return Type; }
+    int
+    type() const override
+    {
+        return Type;
+    }
 
-  void
-  lock(bool locked);
+    void
+    lock(bool locked);
 
 protected:
-  void
-  paint(QPainter*                       painter,
-        QStyleOptionGraphicsItem const* option,
-        QWidget*                        widget = 0) override;
+    void
+    paint(QPainter*                       painter,
+          QStyleOptionGraphicsItem const* option,
+          QWidget*                        widget = 0) override;
 
-  QVariant
-  itemChange(GraphicsItemChange change, const QVariant &value) override;
+    QVariant
+    itemChange(GraphicsItemChange change, const QVariant& value) override;
 
-  void
-  mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void
+    mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
-  void
-  mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    void
+    mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
 
-  void
-  mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+    void
+    mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
-  void
-  hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+    void
+    hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
 
-  void
-  hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+    void
+    hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-  void
-  hoverMoveEvent(QGraphicsSceneHoverEvent *) override;
+    void
+    hoverMoveEvent(QGraphicsSceneHoverEvent*) override;
 
-  void
-  mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
+    void
+    mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
-  void
-  contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
-
-private:
-  void
-  embedQWidget();
+    void
+    contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
 
 private:
+    void
+    embedQWidget();
 
-  QtFlowScene & _scene;
+private:
+    QtFlowScene& _scene;
 
-  QtBlock& _node;
+    QtBlock& _node;
 
-  bool _locked;
+    bool _locked;
 
-  // either nullptr or owned by parent QGraphicsItem
-  QGraphicsProxyWidget * _proxyWidget;
+    // either nullptr or owned by parent QGraphicsItem
+    QGraphicsProxyWidget* _proxyWidget;
 };
-}
+}  // namespace QtNodes

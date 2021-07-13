@@ -19,25 +19,25 @@
 //#include "image_io.h"
 #include "image.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 class PPMIO
 {
 public:
-    PPMIO(){}
-    ~PPMIO(){}
+    PPMIO() {}
+    ~PPMIO() {}
 
-    static bool load(const std::string &filename, Image * image);  //data_format = RGBA
-    static bool load(const std::string &filename, Image * image, Image::DataFormat data_format);
+    static bool load(const std::string& filename, Image* image);  //data_format = RGBA
+    static bool load(const std::string& filename, Image* image, Image::DataFormat data_format);
 
     /* save image data to file, the image data is in row order
      * return true if succeed, otherwise return false
      */
-    static bool save(const std::string &filename, const Image *image);
-protected:
+    static bool save(const std::string& filename, const Image* image);
 
+protected:
 };
 
-} //end of namespace PhysIKA
+}  //end of namespace PhysIKA
 
-#endif //PHYSIKA_IO_IMAGE_IO_PPM_IO_H_
+#endif  //PHYSIKA_IO_IMAGE_IO_PPM_IO_H_

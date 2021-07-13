@@ -19,24 +19,24 @@
 #define TT_API_H
 
 #if defined(_WIN32)
- #ifdef _MSC_VER
-  #pragma warning(disable: 4251)
- #endif
-
- #if defined(TT_BUILDING_DLL)
-  #define TT_API __declspec(dllexport)
- #else
-  #define TT_API __declspec(dllimport)
- #endif
-
-#elif defined(__GNUC__)
-  
- #if defined(TT_BUILDING_DLL)
-  #define TT_API __attribute__((visibility("default")))
- #else
-  #define TT_API
- #endif
-    
+#ifdef _MSC_VER
+#pragma warning(disable : 4251)
 #endif
 
-#endif //TT_API_H
+#if defined(TT_BUILDING_DLL)
+#define TT_API __declspec(dllexport)
+#else
+#define TT_API __declspec(dllimport)
+#endif
+
+#elif defined(__GNUC__)
+
+#if defined(TT_BUILDING_DLL)
+#define TT_API __attribute__((visibility("default")))
+#else
+#define TT_API
+#endif
+
+#endif
+
+#endif  //TT_API_H

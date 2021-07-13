@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "GUI/GlutGUI/GLApp.h"
 #include "Framework/Framework/Node.h"
 
@@ -18,89 +17,96 @@
 #include "DantzigLCP.h"
 #include <memory>
 
+namespace PhysIKA {
 
-
-namespace PhysIKA
+struct TerrainRigidInteractionInfo
 {
+    Real surfaceThickness;
+    Real elasticModulus;
 
-    struct TerrainRigidInteractionInfo
+    Real damping;
+};
+
+class HeightFieldTerrainRigidInteractionNode : public Node
+{
+public:
+    enum HFDETECTION
     {
-        Real surfaceThickness;
-        Real elasticModulus;
-
-        Real damping;
+        POINTVISE,
+        FACEVISE
     };
 
-
-
-
-    class HeightFieldTerrainRigidInteractionNode :public Node
+    HeightFieldTerrainRigidInteractionNode()
     {
-    public:
-        enum HFDETECTION
-        {
-            POINTVISE,
-            FACEVISE
-        };
+        detectionMethod = HFDETECTION::POINTVISE;
+    }
 
+    ~HeightFieldTerrainRigidInteractionNode();
 
-        HeightFieldTerrainRigidInteractionNode() {
-            detectionMethod = HFDETECTION::POINTVISE;
-        }
+    bool initialize() override;
 
-        ~HeightFieldTerrainRigidInteractionNode();
+    void setRigidBodySystem(std::shared_ptr<RigidBodyRoot<DataType3f>> rigidsys)
+    {
+        m_rigidSystem = rigidsys;
+    }
 
-        bool initialize() override;
+    virtual void advance(Real dt) override;
 
-        void setRigidBodySystem(std::shared_ptr<RigidBodyRoot<DataType3f>> rigidsys) { m_rigidSystem = rigidsys; }
+    void setSize(int nx, int ny);
+    void setSize(int nx, int ny, float dx, float dy);
 
-        virtual void advance(Real dt)override;
+    const DeviceGrid2Df& getHeightField() const
+    {
+        return m_heightField;
+    }
+    DeviceGrid2Df& getHeightField()
+    {
+        return m_heightField;
+    }
 
-        void setSize(int nx, int ny);
-        void setSize(int nx, int ny, float dx, float dy);
+    void setTerrainInfo(TerrainRigidInteractionInfo info)
+    {
+        terrainInfo = info;
+    }
 
-        const DeviceGrid2Df& getHeightField()const { return m_heightField; }
-        DeviceGrid2Df& getHeightField() { return m_heightField; }
+    void setDetectionMethod(HFDETECTION method)
+    {
+        detectionMethod = method;
+    }
 
-        void setTerrainInfo(TerrainRigidInteractionInfo info) { terrainInfo = info; }
+private:
+    bool _calcualteSingleContactForce(std::shared_ptr<RigidBody2<DataType3f>> prigid, Vector3f& force, Vector3f& torque);
 
-        void setDetectionMethod(HFDETECTION method) { detectionMethod = method; }
+    bool _test(Real dt);
 
-    private:
-        bool _calcualteSingleContactForce(std::shared_ptr<RigidBody2<DataType3f>> prigid, Vector3f& force, Vector3f& torque);
+private:
+    std::shared_ptr<RigidBodyRoot<DataType3f>> m_rigidSystem;
 
-        bool _test(Real dt);
+    int m_nx = 0, m_ny = 0;
+    //DeviceArray2D<float> m_heightField;
 
-    private:
-        std::shared_ptr<RigidBodyRoot<DataType3f>> m_rigidSystem;
+    //HeightField<DataType3f> m_heightField;
 
+    DeviceGrid2Df m_heightField;
 
-        int m_nx = 0, m_ny = 0;
-        //DeviceArray2D<float> m_heightField;
+    DeviceArray<Vector3f> m_interactForce;
+    DeviceArray<Vector3f> m_interactTorque;
 
-        //HeightField<DataType3f> m_heightField;
+    std::shared_ptr<Reduction<Vector3f>> m_forceSummator;
 
-        DeviceGrid2Df m_heightField;
+    //std::shared_ptr<Reduction<ContactPointX>> m_maxDepthFinder;
 
+    TerrainRigidInteractionInfo terrainInfo;
 
-        DeviceArray<Vector3f> m_interactForce;
-        DeviceArray<Vector3f> m_interactTorque;
+    DantzigScratchMemory m_dantzigscratch;
+    DantzigInputMemory   m_dantzigInput;
 
-        std::shared_ptr<Reduction<Vector3f>> m_forceSummator;
+    DeviceArray<ContactPointX> m_depthScratch;
 
-        //std::shared_ptr<Reduction<ContactPointX>> m_maxDepthFinder;
+    bool  solveFriction = true;
+    float mu            = 0.9;
 
-        TerrainRigidInteractionInfo terrainInfo;
+    HFDETECTION detectionMethod;
+};
 
-        DantzigScratchMemory m_dantzigscratch;
-        DantzigInputMemory m_dantzigInput;
-
-        DeviceArray<ContactPointX> m_depthScratch;
-
-        bool solveFriction = true;
-        float mu = 0.9;
-
-        HFDETECTION detectionMethod;
-    };
-
-}
+}  // namespace PhysIKA

@@ -3,53 +3,59 @@
 #include <utility>
 #include <QtCore/QUuid>
 
-namespace QtNodes
+namespace QtNodes {
+
+enum class PortType
 {
+    None,
+    In,
+    Out
+};
 
-    enum class PortType
+static const int INVALID_ = -1;
+
+using PortIndex = int;
+
+struct Port
+{
+    PortType type;
+
+    PortIndex index;
+
+    Port()
+        : type(PortType::None)
+        , index(INVALID_)
     {
-        None,
-        In,
-        Out
-    };
+    }
 
-    static const int INVALID_ = -1;
-
-    using PortIndex = int;
-
-    struct Port
+    Port(PortType t, PortIndex i)
+        : type(t)
+        , index(i)
     {
-        PortType type;
+    }
 
-        PortIndex index;
-
-        Port()
-            : type(PortType::None)
-            , index(INVALID_)
-        {}
-
-        Port(PortType t, PortIndex i)
-            : type(t)
-            , index(i)
-        {}
-
-        bool
-            indexIsValid() { return index != INVALID_; }
-
-        bool
-            portTypeIsValid() { return type != PortType::None; }
-    };
-
-    //using PortAddress = std::pair<QUuid, PortIndex>;
-
-    inline
-        PortType
-        oppositePort(PortType port)
+    bool
+    indexIsValid()
     {
-        PortType result = PortType::None;
+        return index != INVALID_;
+    }
 
-        switch (port)
-        {
+    bool
+    portTypeIsValid()
+    {
+        return type != PortType::None;
+    }
+};
+
+//using PortAddress = std::pair<QUuid, PortIndex>;
+
+inline PortType
+oppositePort(PortType port)
+{
+    PortType result = PortType::None;
+
+    switch (port)
+    {
         case PortType::In:
             result = PortType::Out;
             break;
@@ -60,8 +66,8 @@ namespace QtNodes
 
         default:
             break;
-        }
-
-        return result;
     }
+
+    return result;
 }
+}  // namespace QtNodes
