@@ -6,7 +6,7 @@
  */
 #include "poisson.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 using namespace std;
 using namespace Eigen;
 
@@ -69,5 +69,4 @@ size_t POI_CLASS::Nx() const{
 
 #endif
 
-
-}
+}  // namespace PhysIKA
