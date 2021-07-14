@@ -1205,7 +1205,7 @@ void PPropertyWidget::updateContext(Base* base)
 
     std::vector<Field*>& fields = base->getAllFields();
 
-        for each(Field * var in fields)
+        for (Field * var : fields)
             {
                 if (var != nullptr)
                 {

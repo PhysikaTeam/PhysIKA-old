@@ -31,7 +31,7 @@ void PModuleListWidget::updateModule(Node* node)
 
     auto& mlist = node->getModuleList();
 
-        for each(std::shared_ptr<Module> m in mlist)
+        for (std::shared_ptr<Module> m : mlist)
             {
                 addItem(new PModuleListItem(m.get(), this));
             }
