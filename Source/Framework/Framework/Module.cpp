@@ -42,13 +42,13 @@ void Module::update()
         this->execute();
 
         //reset input fields
-        for each(auto f_in in fields_input)
+        for (auto f_in : fields_input)
             {
                 f_in->tagModified(false);
             }
 
         //tag all output fields as modifed
-        for each(auto f_out in fields_output)
+        for (auto f_out : fields_output)
             {
                 f_out->tagModified(true);
             }
@@ -58,7 +58,7 @@ void Module::update()
 bool Module::isInputComplete()
 {
     //If any input field is empty, return false;
-    for each(auto f_in in fields_input)
+    for (auto f_in : fields_input)
         {
             if (f_in->isEmpty())
             {

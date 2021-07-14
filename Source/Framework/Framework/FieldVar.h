@@ -141,7 +141,7 @@ void VarField<T>::update()
 
     auto& sinks = this->getSinkFields();
 
-    for each(auto fs in sinks)
+    for (auto fs : sinks)
         {
             VarField<T>* var = dynamic_cast<VarField<T>*>(fs);
             if (var != nullptr)
