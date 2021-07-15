@@ -56,5 +56,24 @@ namespace PhysIKA
       
             auto integrator = this->template getModule<EmbeddedIntegrator<TDataType>>("integrator");
             integrator->bind_problem(epb_fac_, pt);
+    
+            auto get_file_name = [](const std::string &file) ->std::string {
+                                       size_t pos = file.find_last_of('/') + 1;
+                                       if (pos == std::string::npos) {
+                                         pos = 0;
+                                       }
+                                       std::string res = file.substr(pos);
+                                       pos = res.find_last_of('.');
+                                       if (pos == 0) {
+                                         pos = std::string::npos;
+                                       }
+                                       return res.substr(0, pos);
+                                     };
+                const string filename = get_file_name(pt.get<string>("filename"));
+                const string filename_coarse = get_file_name(pt.get<string>("filename_coarse"));
+                const string type = pt.get<string>("type", "tet");
+                const string type_coarse = pt.get<string>("type_coarse", type);
+                this->output = "ms_" + type+"_"+filename+"_"+type_coarse+"_"+filename_coarse+"_";
+                
   }
 }

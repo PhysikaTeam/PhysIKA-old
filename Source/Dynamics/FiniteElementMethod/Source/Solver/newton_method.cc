@@ -9,6 +9,7 @@
 #include "Common/config.h"
 #include "line_search.h"
 #include "Io/io.h"
+#include "Core/OutputMesh.h"
 
 namespace PhysIKA{
 using namespace std;
@@ -153,11 +154,15 @@ int newton_base<T, dim_>::solve(T* x_star)const{
 
       res_last_iter = res_value;
 
-      const auto A = dat_str_->get_hes();
+      const Eigen::SparseMatrix<T, Eigen::RowMajor> A = dat_str_->get_hes();
+	  static size_t spm_id = 0;
+	  if(output_spm)
+	  write_SPM(("spm_" + to_string(spm_id++) + ".dat").c_str(), A);
       //cout << "norm of A is " << std::setprecision(20) << A.norm() << endl;
       Eigen::SparseMatrix<T, Eigen::RowMajor> J;
       Matrix<T, -1, 1> C;
       get_J_C(x_coarse.data(), J, C);
+	  //cout << "hhh" << endl;
       __TIME_BEGIN__;
       IF_ERR(return, solve_linear_eq(A, res.data(), J, C.data(), x_coarse.data(), solution.data()));
       __TIME_END__("solve eq", false);

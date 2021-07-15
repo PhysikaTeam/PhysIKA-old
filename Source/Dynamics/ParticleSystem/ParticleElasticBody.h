@@ -24,6 +24,7 @@ namespace PhysIKA
 		bool initialize() override;
 		void advance(Real dt) override;
 		void updateTopology() override;
+		
 
 		bool translate(Coord t) override;
 		bool scale(Real s) override;
@@ -41,6 +42,8 @@ namespace PhysIKA
 
 	private:
 		std::shared_ptr<Node> m_surfaceNode;
+		int frame_id{-1};
+
 	};
 
 #ifdef PRECISION_FLOAT

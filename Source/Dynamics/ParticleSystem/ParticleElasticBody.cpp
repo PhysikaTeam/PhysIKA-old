@@ -6,7 +6,7 @@
 #include "Framework/Topology/NeighborQuery.h"
 #include "ParticleIntegrator.h"
 #include "ElasticityModule.h"
-
+#include "Core/OutputMesh.h"
 namespace PhysIKA
 {
 	IMPLEMENT_CLASS_1(ParticleElasticBody, TDataType)
@@ -54,7 +54,7 @@ namespace PhysIKA
 	template<typename TDataType>
 	ParticleElasticBody<TDataType>::~ParticleElasticBody()
 	{
-		
+
 	}
 
 	template<typename TDataType>
@@ -108,6 +108,38 @@ namespace PhysIKA
 		{
 			(*iter)->apply();
 		}
+		if(OUTPUT_MESH){
+	
+	//-> output the surface mesh.
+		frame_id++;
+		if (frame_id % out_step != 0) {
+			return;
+		}
+		auto Mesh = TypeInfo::cast<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule());
+		if (!Mesh) {
+			return;
+		}
+		auto F = Mesh->getTriangles();
+		auto V = Mesh->getPoints();
+		std::vector<TopologyModule::Triangle> hF;
+		std::vector<TDataType::Coord> hV;
+		hF.resize(F->size());
+		hV.resize(V.size());
+		Function1Pt::copy(hF, *F);
+		Function1Pt::copy(hV, V);
+		//cout << "wtf??? F.size(): " << hF.size() << endl;
+		//cout << "wtf??? V.size(): " << hV.size() << endl;
+		std::ofstream fout("pe_v_"+std::to_string(V.size())+"_f_"+std::to_string(F->size())+"_"+std::to_string(frame_id/out_step)+".obj");
+		for (size_t i = 0; i < hV.size(); ++i) {
+			fout << "v " << hV[i][0] << " " << hV[i][1] << " " << hV[i][2] << "\n";
+		}
+		for (size_t i = 0; i < hF.size(); ++i) {
+			fout << "f " << hF[i][0]+1 << " " << hF[i][1]+1 << " " << hF[i][2]+1 << "\n";
+		}
+		fout.close();
+		}
+	
+	
 	}
 
 
@@ -131,7 +163,7 @@ namespace PhysIKA
 		this->varHorizon()->connect(solver->inHorizon());
 
 		this->deleteModule(module);
-		
+
 		solver->setName("elasticity");
 		this->addConstraintModule(solver);
 	}

@@ -7,7 +7,7 @@
 
 #include <time.h>
 
-
+#include "Core/OutputMesh.h"
 
 namespace PhysIKA
 {
@@ -35,23 +35,29 @@ namespace PhysIKA
 	void ParticleFluid<TDataType>::advance(Real dt)
 	{		
 		std::vector<std::shared_ptr<ParticleEmitter<TDataType>>> m_particleEmitters = this->getParticleEmitters();
-
 		int total_num = 0;
 		
-		//std::cout << "HHH " << m_particleEmitters.size() <<" "<< this->currentPosition()->getElementCount()<< std::endl;
-		//DeviceArray<Coord>& position = this->currentPosition()->getValue();
-		//HostArray<Coord> h_position(this->currentPosition()->getElementCount());
-		//Function1Pt::copy(h_position, position);
-		//std::cout << "h_position " << h_position[0][0] << " " << h_position[0][1] << " " << h_position[0][2] << std::endl;
-		//{//write to obj
-		//	static int frame_id = 0;
-		//	const std::string filename =  "particle_frame_" + std::to_string(frame_id) + ".dat";
-		//	std::ofstream ofs(filename);
-		//	for (size_t i = 0; i < h_position.size(); ++i) {
-		//		ofs << h_position[i][0] << " " << h_position[i][1] << " " << h_position[i][2] << std::endl;
-		//	}
-		//	frame_id++;
-		//}
+if(OUTPUT_MESH){
+			frame_id++;
+		if (frame_id % out_step == 0) {
+		std::cout << "HHH " << m_particleEmitters.size() <<" "<< this->currentPosition()->getElementCount()<< std::endl;
+			DeviceArray<Coord>& position = this->currentPosition()->getValue();
+			HostArray<Coord> h_position(this->currentPosition()->getElementCount());
+			Function1Pt::copy(h_position, position);
+			std::cout << "h_position " << h_position[0][0] << " " << h_position[0][1] << " " << h_position[0][2] << std::endl;
+			{//write to obj
+				const std::string filename =  "particle_fluid_" + std::to_string(frame_id / out_step) + ".obj";
+				std::ofstream ofs(filename);
+				for (size_t i = 0; i < h_position.size(); ++i) {
+					ofs << "v " << h_position[i][0] << " " << h_position[i][1] << " " << h_position[i][2] << std::endl;
+				}
+				ofs.close();
+			}
+		}
+}
+
+
+		
 	
 		if (m_particleEmitters.size() > 0)
 		{

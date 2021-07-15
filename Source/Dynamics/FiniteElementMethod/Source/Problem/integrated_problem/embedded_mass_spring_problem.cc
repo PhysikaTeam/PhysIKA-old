@@ -25,6 +25,7 @@
 #include "libigl/include/igl/readOBJ.h"
 
 #include "embedded_mass_spring_problem.h"
+#include <Core/OutputMesh.h>
 
 namespace PhysIKA{
 using namespace std;
@@ -47,6 +48,8 @@ embedded_ms_problem_builder<T>::embedded_ms_problem_builder(const T* x, const bo
   para::dt = common.get<double>("time_step",0.01);
   para::line_search = simulation_para.get<int>("line_search",true); // todo
   para::density = common.get<double>("density",10);
+  if (zero_rho)
+	  para::density = 0.0;
   para::frame = common.get<int>("frame",100);
   para::newton_fastMS = simulation_para.get<string>("newton_fastMS");
   para::stiffness = simulation_para.get<double>("stiffness",8000);

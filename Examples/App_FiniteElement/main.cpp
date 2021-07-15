@@ -154,7 +154,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root,int i,
 		bunny->loadParticles(particles_file);
 		bunny->loadSurface(surf_file);
 
-		SetupModel(bunny, i, color, offset_dis);
+		SetupModel(bunny, i, color, offset_dis);	
 
 		boost::property_tree::ptree pt;
 		/*read_json("../../Media/dragon/collision_hybrid.json", pt);*/
@@ -165,7 +165,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root,int i,
 		
 		{
 			if (phy_model == "fem_tet" && pt.get<bool>("gen_tet", true)) {
-				string tet_file = pt.get<string>("filename_coarse") + "tmp";
+				string tet_file = pt.get<string>("filename") + "tet_tmp";
 				surf2tet(surf_file, tet_file);
 				pt.put("filename_coarse", tet_file);
 				cout << "after tetrahedronlize " << pt.get<string>("filename_coarse");
@@ -193,7 +193,7 @@ void CreateScene()
 	//root->loadSDF("box.sdf", true);
 
 
-	AddSimulationModel(root,  0, "fem_tet", "homer", 0);
+	AddSimulationModel(root,  0, "fem_tet", "bunny", 0);
 
 	
 

@@ -9,7 +9,8 @@
 #include "Solver/newton_method.h"
 #include "Dynamics/ParticleSystem/ElasticityModule.h"
 #include <iostream>
-
+#include <string>
+#include "Core/OutputMesh.h"
 using namespace std;
 
 namespace PhysIKA
@@ -116,7 +117,6 @@ namespace PhysIKA
 	template<typename TDataType>
 	void EmbeddedFiniteElement<TDataType>::updateTopology()
 	{
-
 		auto pts = this->m_pSet->getPoints();
 		Function1Pt::copy(pts, this->currentPosition()->getValue());
 
@@ -128,9 +128,37 @@ namespace PhysIKA
 			(*iter)->apply();
 		}
 
-		//So we just copy the points. WARNING: the surface should have the same points as pointsSets.
-		// auto triSet = m_surfaceNode->template getModule<TriangleSet<TDataType>>("surface_mesh");
-		// Function1Pt::copy(triSet->getPoints(), pts);
+if(OUTPUT_MESH){
+		//-> output the surface mesh.
+		frame_id++;
+		if (frame_id % out_step != 0) {
+			return;
+		}
+		auto Mesh = TypeInfo::cast<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule());
+		if (!Mesh) {
+			return;
+		}
+		auto F = Mesh->getTriangles();
+                auto V = Mesh->getPoints();
+		std::vector<TopologyModule::Triangle> hF;
+		std::vector<TDataType::Coord> hV;
+		hF.resize(F->size());
+		hV.resize(V.size());
+		Function1Pt::copy(hF, *F);
+		Function1Pt::copy(hV, V);
+		//cout << "wtf??? F.size(): " << hF.size() << endl;
+		//cout << "wtf??? V.size(): " << hV.size() << endl;
+                std::ofstream fout(output+std::to_string(frame_id/out_step)+".obj");
+                for (size_t i = 0; i < hV.size(); ++i) {
+                  fout << "v " << hV[i][0] << " " << hV[i][1] << " " << hV[i][2] << "\n";
+                }
+                for (size_t i = 0; i < hF.size(); ++i) {
+                  fout << "f " << hF[i][0]+1 << " " << hF[i][1]+1 << " " << hF[i][2]+1 << "\n";
+                }
+                fout.close();
+}
+
+
 	}
 
 
@@ -198,5 +226,23 @@ namespace PhysIKA
 		auto integrator = this->template getModule<EmbeddedIntegrator<TDataType>>("integrator");
 		integrator->bind_problem(epb_fac, pt);
 
+                auto get_file_name = [](const std::string &file) ->std::string {
+                                       size_t pos = file.find_last_of('/') + 1;
+                                       if (pos == std::string::npos) {
+                                         pos = 0;
+                                       }
+                                       std::string res = file.substr(pos);
+                                       pos = res.find_last_of('.');
+                                       if (pos == 0) {
+                                         pos = std::string::npos;
+                                       }
+                                       return res.substr(0, pos);
+                                     };
+                const string filename = get_file_name(pt.get<string>("filename"));
+                const string filename_coarse = get_file_name(pt.get<string>("filename_coarse"));
+                const string type = pt.get<string>("type", "tet");
+                const string type_coarse = pt.get<string>("type_coarse", type);
+                output = "fem_"+type+"_"+filename+"_"+type_coarse+"_"+filename_coarse+"_";
+		
 	}
 }

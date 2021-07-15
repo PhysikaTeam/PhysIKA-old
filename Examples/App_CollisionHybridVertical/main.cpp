@@ -36,6 +36,7 @@
 #include "Dynamics/EmbeddedMethod/EmbeddedFiniteElement.h"
 #include "Dynamics/EmbeddedMethod/EmbeddedMassSpring.h"
 #include <boost/property_tree/json_parser.hpp>
+#include "Dynamics/FiniteElementMethod/Source/Geometry/surf2tet.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -56,7 +57,7 @@ void SetupModel(T &bunny, int i, Vector3f color, const float offset_dis )
 
   bunny->setMass(1000.0);
   
-	bunny->translate(Vector3f(0.5 , 0.2 + offset_dis, 0.8));
+	bunny->translate(Vector3f(0.3 + i%2 *0.4 , 0.2 + offset_dis, 0.8));
 	bunny->setVisible(true);
 	bunny->getElasticitySolver()->setIterationNumber(10);
 	//bunny->getElasticitySolver()->setMu(1e20);
@@ -107,10 +108,12 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 	
 	
 	const string particles_file = path+geo_model+"_points.obj";
+	const string surf_file = path + geo_model + ".obj";
 	bunny->loadParticles(particles_file);
-	bunny->loadSurface(path + geo_model+".obj");
+	bunny->loadSurface(surf_file);
 	
     SetupModel(bunny, i, color, offset_dis);
+
 
     boost::property_tree::ptree pt;
     /*read_json("../../Media/dragon/collision_hybrid.json", pt);*/
@@ -118,6 +121,13 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
 	//const std::string jsonfile_path = "../../Media/dragon/embedded_finite_element.json";
 	const std::string jsonfile_path = path+ phy_model + ".json";
 	read_json(jsonfile_path, pt);
+
+	if (phy_model == "fem_tet" && pt.get<bool>("gen_tet", true)) {
+		string tet_file = pt.get<string>("filename") + "coarse_tmp";
+		surf2tet(surf_file, tet_file);
+		pt.put("filename_coarse", tet_file);
+		cout << "after tetrahedronlize " << pt.get<string>("filename_coarse");
+	}
 
     bunny->init_problem_and_solver(pt);
     sfi->addParticleSystem(bunny);
@@ -141,11 +151,11 @@ void CreateScene()
 {
   
   SceneGraph& scene = SceneGraph::getInstance();
-	scene.setUpperBound(Vector3f(1, 10.0, 1));
+	scene.setUpperBound(Vector3f(1, 4.0, 1));
 	scene.setLowerBound(Vector3f(0, 0.0, 0));
 
 	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 10.0, 1), 0.015f, true);
+	root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 4.0, 1), 0.015f, true);
 	//root->loadSDF("box.sdf", true);
 
 	std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
@@ -158,11 +168,15 @@ void CreateScene()
 
 
 	AddSimulationModel(root, sfi, 0, "fem_hex", "david", 0);
-	AddSimulationModel(root, sfi, 1, "mass_spring", "bunny", 0.4);
-	AddSimulationModel(root, sfi, 2, "fem_hybrid", "duck", 0.6);
-	AddSimulationModel(root, sfi, 3, "meshless", "woodenfish", 1.0);
-	AddSimulationModel(root, sfi, 4, "fem_vox", "homer",1.4);
-	AddSimulationModel(root, sfi, 5, "fem_tet", "armadillo",1.7);
+	AddSimulationModel(root, sfi, 1, "mass_spring", "bunny", 0);
+	AddSimulationModel(root, sfi, 2, "fem_hybrid", "duck", 0.4);
+	AddSimulationModel(root, sfi, 3, "meshless", "woodenfish", 0.4);
+	AddSimulationModel(root, sfi, 4, "fem_tet", "homer",0.8);
+	AddSimulationModel(root, sfi, 5, "meshless", "armadillo",0.8);
+
+
+	
+
 
 	/*	AddSimulationModel(root, sfi, 2, "meshless", "duck");
 	AddSimulationModel(root, sfi, 3, "meshless", "duck");

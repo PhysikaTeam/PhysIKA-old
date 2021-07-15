@@ -48,7 +48,7 @@ int write_MAT(const char* path, const Eigen::MatrixXd& A){
   ofs.close();
   return 0;
 };
-int write_SPM(const char* path, const Eigen::SparseMatrix<double>& A){
+int write_SPM(const char* path, const Eigen::SparseMatrix<double,Eigen::RowMajor>& A){
   ofstream ofs(path, ofstream::binary);
   const int64_t rows = A.rows(), cols = A.cols(), nnz = A.nonZeros();
 
@@ -77,6 +77,37 @@ int write_SPM(const char* path, const Eigen::SparseMatrix<double>& A){
 
   ofs.close();
   return 0;
+}
+
+int write_SPM(const char* path, const Eigen::SparseMatrix<float,Eigen::RowMajor>& A) {
+	ofstream ofs(path, ofstream::binary);
+	const int64_t rows = A.rows(), cols = A.cols(), nnz = A.nonZeros();
+
+	cout << "===write SPM matrix===" << endl;
+	cout << "rows " << rows << " cols " << cols << " nnz " << nnz << endl;
+	ofs.write(reinterpret_cast<const char*>(&rows), sizeof(rows));
+	ofs.write(reinterpret_cast<const char*>(&cols), sizeof(cols));
+	ofs.write(reinterpret_cast<const char*>(&nnz), sizeof(nnz));
+
+	const auto& outer = A.outerIndexPtr();
+	for (size_t i = 0; i < cols + 1; ++i) {
+		const int32_t id = static_cast<int32_t>(outer[i]);
+		ofs.write(reinterpret_cast<const char*>(&id), sizeof(id));
+	}
+
+	const auto& inner = A.innerIndexPtr();
+	for (size_t i = 0; i < nnz; ++i) {
+		const int32_t id = static_cast<int32_t>(inner[i]);
+		ofs.write(reinterpret_cast<const char*>(&id), sizeof(id));
+	}
+
+
+	const auto& value = A.valuePtr();
+	for (size_t i = 0; i < nnz; ++i)
+		ofs.write(reinterpret_cast<const char*>(&value[i]), sizeof(value[i]));
+
+	ofs.close();
+	return 0;
 }
 int read_fixed_verts_from_csv(const char *filename, std::vector<size_t> &fixed, MatrixXd *pos) {
   ifstream ifs(filename);

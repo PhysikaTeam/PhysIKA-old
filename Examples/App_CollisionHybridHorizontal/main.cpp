@@ -62,7 +62,7 @@ void SetupModel(T &bunny, int i, std::string model = "")
   bunny->setMass(1.0);
   bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
   bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
-  bunny->translate(Vector3f(0.2+0.3*i, 0.2, 0.8));
+  bunny->translate(Vector3f(0.2+0.32*i, 0.2, 0.8));
   bunny->setVisible(true);
   bunny->getElasticitySolver()->setIterationNumber(10);
  //bunny->getElasticitySolver()->setHorizon(0.03);
@@ -90,13 +90,19 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::
     SetupModel(bunny, i, model);
 
     boost::property_tree::ptree pt;
-    read_json("../../Media/bunny/collision_hybrid.json", pt);
+	if(i== 1)
+    read_json("../../Media/bunny/calibration.json", pt);
+	else
+		read_json("../../Media/bunny/origin.json", pt);
+
+	pt.put("fast_FEM", false);
     bunny->init_problem_and_solver(pt);
     sfi->addParticleSystem(bunny);
   }    
   else
   {
     std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+
 		root->addParticleSystem(bunny);
     SetupModel(bunny, i, model);
     sfi->addParticleSystem(bunny);
@@ -123,10 +129,12 @@ void CreateScene()
 
 	for (int i = 0; i < 3; i++)
 	{
-    string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "";
+	
+    string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "fem";
     // string model = (i%4 == 0) ? "mass_spring" : "";
     //      string model;
     AddSimulationModel(root, sfi, i, model);
+
 	}
 
 }

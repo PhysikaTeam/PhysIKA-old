@@ -31,6 +31,8 @@ namespace PhysIKA
 
 		// add by HNU
 		DEF_VAR(ImportFile, std::string, "", "ImportFile");
+		int frame_id{-1};
+
 	};
 
 #ifdef PRECISION_FLOAT

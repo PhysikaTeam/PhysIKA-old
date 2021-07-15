@@ -33,8 +33,8 @@ int main()
 	//bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
 	//bunny->loadParticles("../../Media/dragon/dragon_points_1190.obj");
 	//bunny->loadSurface("../../Media/dragon/dragon.obj");
-		bunny->loadParticles("../../Media/zju/armadillo/armadillo_points.obj");
-	bunny->loadSurface("../../Media/zju/armadillo/armadillo.obj");
+		bunny->loadParticles("../../Media/zju/pear/pear_points.obj");
+	bunny->loadSurface("../../Media/zju/pear/pear.obj");
 	bunny->translate(Vector3f(0.5, 0.2, 0.5));
 	bunny->setVisible(true);
 

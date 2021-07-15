@@ -40,11 +40,13 @@
 #include <boost/property_tree/json_parser.hpp>
 #include "Dynamics/EmbeddedMethod/EmbeddedMassSpring.h"
 
+#include <windows.h>
+
 using namespace std;
 using namespace PhysIKA;
 void CreateScene2()
 {
-	printf("0\n");
+
 	SceneGraph& scene = SceneGraph::getInstance();
 	//	scene.setUpperBound(Vector3f(1, 1.0, 0.5));
 
@@ -138,6 +140,8 @@ void CreateScene2()
 }
 void CreateScene()
 {
+
+	
 	SceneGraph& scene = SceneGraph::getInstance();
 //	scene.setUpperBound(Vector3f(1, 1.0, 0.5));
 
@@ -199,7 +203,7 @@ void CreateScene()
       const std::string jsonfile_path = "../../Media/bunny/embedded_finite_element_sparse.json";
       read_json(jsonfile_path, pt);
       bunny->init_problem_and_solver(pt);
-
+	  pt.put("fast_FEM", false);
       sfi->addParticleSystem(bunny);
     }
     else if (i % 3 == 1)
@@ -227,6 +231,7 @@ void CreateScene()
 		const std::string jsonfile_path = "../../Media/bunny/collision_hybrid.json";
 		read_json(jsonfile_path, pt);
 		bunny->init_problem_and_solver(pt);
+		pt.put("fast_FEM", false);
 
 		sfi->addParticleSystem(bunny);
 
@@ -301,9 +306,15 @@ void CreateScene()
 
 	sfi->addParticleSystem(fluid);
 }
+string ExePath() {
+	TCHAR buffer[MAX_PATH] = { 0 };
+	GetModuleFileName(NULL, buffer, MAX_PATH);
+	return std::string(buffer);
+}
 
 int main()
 {
+
 	CreateScene();
 	cout << __LINE__ << endl;
 	Log::setOutput("console_log.txt");
