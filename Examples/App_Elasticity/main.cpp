@@ -29,12 +29,10 @@ int main()
 	//bunny->addVisualModule(m_pointsRender);
 
 	bunny->setMass(1.0);
-	//bunny->loadParticles("../../Media/bunny/bunny_points.obj");
-	//bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
-	//bunny->loadParticles("../../Media/dragon/dragon_points_1190.obj");
-	//bunny->loadSurface("../../Media/dragon/dragon.obj");
-		bunny->loadParticles("../../Media/zju/pear/pear_points.obj");
-	bunny->loadSurface("../../Media/zju/pear/pear.obj");
+	bunny->loadParticles("../../Media/bunny/bunny_points.obj");
+	bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+
+
 	bunny->translate(Vector3f(0.5, 0.2, 0.5));
 	bunny->setVisible(true);
 
