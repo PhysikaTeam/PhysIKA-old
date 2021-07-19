@@ -200,8 +200,7 @@ TabToolbar* Builder::CreateTabToolbar(const QString& configPath)
                                     subGroup->AddHorizontalButtons(horizActions);
                                     break;
                                 }
-                                default:
-                                {
+                                default: {
                                     QWidget* w = CreateCustomWidget(sgItemType, sgItem);
                                     subGroup->AddWidget(w);
                                     break;

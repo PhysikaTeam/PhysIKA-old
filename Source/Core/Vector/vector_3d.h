@@ -52,7 +52,7 @@ public:
     COMM_FUNC Vector<Scalar, 3>& operator+=(const Vector<Scalar, 3>&);
     COMM_FUNC const Vector<Scalar, 3> operator-(const Vector<Scalar, 3>&) const;
     COMM_FUNC Vector<Scalar, 3>& operator-=(const Vector<Scalar, 3>&);
-    COMM_FUNC const Vector<Scalar, 3> operator*( const Vector<Scalar, 3>& )const;
+    COMM_FUNC const Vector<Scalar, 3> operator*(const Vector<Scalar, 3>&) const;
     COMM_FUNC Vector<Scalar, 3>& operator*=(const Vector<Scalar, 3>&);
     COMM_FUNC const Vector<Scalar, 3> operator/(const Vector<Scalar, 3>&) const;
     COMM_FUNC Vector<Scalar, 3>& operator/=(const Vector<Scalar, 3>&);
@@ -78,7 +78,7 @@ public:
     COMM_FUNC Scalar normSquared() const;
     COMM_FUNC Vector<Scalar, 3>& normalize();
     COMM_FUNC Vector<Scalar, 3> cross(const Vector<Scalar, 3>&) const;
-    COMM_FUNC Scalar dot(const Vector<Scalar, 3>&) const;
+    COMM_FUNC Scalar            dot(const Vector<Scalar, 3>&) const;
     //    COMM_FUNC const SquareMatrix<Scalar,3> outerProduct(const Vector<Scalar,3>&) const;
 
     COMM_FUNC Vector<Scalar, 3> minimum(const Vector<Scalar, 3>&) const;

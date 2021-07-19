@@ -115,8 +115,8 @@ public:
     COMM_FUNC const MatrixMN<T, deviceType> operator*(T) const;
     COMM_FUNC MatrixMN<T, deviceType>& operator*=(T);
 
-    COMM_FUNC const Vectornd<T, deviceType> operator*( const Vectornd<T, deviceType>& )const;
-    COMM_FUNC const MatrixMN<T, deviceType> operator*( const MatrixMN<T, deviceType>& )const;
+    COMM_FUNC const Vectornd<T, deviceType> operator*(const Vectornd<T, deviceType>&) const;
+    COMM_FUNC const MatrixMN<T, deviceType> operator*(const MatrixMN<T, deviceType>&) const;
     //COMM_FUNC MatrixMN<T, deviceType>& operator*= (const MatrixMN<T, deviceType> &);
 
     COMM_FUNC const MatrixMN<T, deviceType> operator/(T) const;

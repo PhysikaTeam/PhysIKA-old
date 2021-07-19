@@ -6,10 +6,10 @@
 
 namespace msph {
 
-__device__ MultiphaseParam d_param;
+__device__ MultiphaseParam   d_param;
 __device__ SimDataMultiphase d_data;
-__device__ SPHHelper d_sphhelper;
-MultiphaseParam*     pParamStatic;
+__device__ SPHHelper         d_sphhelper;
+MultiphaseParam*             pParamStatic;
 
 void CopyParamToDevice(MultiphaseParam& h_param)
 {

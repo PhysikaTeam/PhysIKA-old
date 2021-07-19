@@ -16,12 +16,12 @@ NodeIterator::NodeIterator(std::shared_ptr<Node> node)
     {
         auto children = node_current->getChildren();
         for (auto c : children)
+        {
+            if (c->isControllable())
             {
-                if (c->isControllable())
-                {
-                    node_stack.push(c);
-                }
+                node_stack.push(c);
             }
+        }
     }
 }
 
@@ -40,12 +40,12 @@ NodeIterator& NodeIterator::operator++()
 
         auto children = node_current->getChildren();
         for (auto c : children)
+        {
+            if (c->isActive())
             {
-                if (c->isActive())
-                {
-                    node_stack.push(c);
-                }
+                node_stack.push(c);
             }
+        }
     }
 
     return *this;

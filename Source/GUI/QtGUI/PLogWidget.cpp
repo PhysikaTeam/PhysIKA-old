@@ -38,14 +38,12 @@ PTableItemMessage::PTableItemMessage(const Log::Message& m)
 
     switch (m.type)
     {
-        case Log::Warning:
-        {
+        case Log::Warning: {
             TextColor = Qt::black;
             break;
         }
 
-        case Log::Error:
-        {
+        case Log::Error: {
             TextColor = Qt::red;
             break;
         }
@@ -119,14 +117,12 @@ void PLogWidget::OnLog(const Log::Message& m)
 
     switch (m.type)
     {
-        case ( int )Log::Warning:
-        {
+        case ( int )Log::Warning: {
             ItemIcon = getIcon("exclamation");
             break;
         }
 
-        case ( int )Log::Error:
-        {
+        case ( int )Log::Error: {
             ItemIcon = getIcon("exclamation-red");
             break;
         }

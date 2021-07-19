@@ -489,10 +489,10 @@ public:
         Real w;
     };
 
-    COMM_FUNC Real area() const;
+    COMM_FUNC Real    area() const;
     COMM_FUNC Coord3D normal() const;
 
-    COMM_FUNC bool computeBarycentrics(const Coord3D& p, Param& bary) const;
+    COMM_FUNC bool    computeBarycentrics(const Coord3D& p, Param& bary) const;
     COMM_FUNC Coord3D computeLocation(const Param& bary) const;
 
     COMM_FUNC Real maximumEdgeLength() const;
@@ -521,7 +521,7 @@ public:
     COMM_FUNC TPoint3D<Real> vertex(const int i) const;
     COMM_FUNC TSegment3D<Real> edge(const int i) const;
 
-    COMM_FUNC Real area() const;
+    COMM_FUNC Real    area() const;
     COMM_FUNC Coord3D normal() const;
 
     COMM_FUNC bool computeParams(const Coord3D& p, Param& par) const;
@@ -628,7 +628,7 @@ public:
     COMM_FUNC bool isValid();
     COMM_FUNC TAlignedBox3D<Real>& operator+=(const Vector<Real, 3>& p);
     COMM_FUNC TAlignedBox3D<Real>& operator+=(const TAlignedBox3D<Real>& p);
-    COMM_FUNC Vector3f center() const
+    COMM_FUNC Vector3f             center() const
     {
         return (v0 + v1) * double(0.5);
     }

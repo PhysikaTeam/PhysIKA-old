@@ -51,8 +51,9 @@ private:
 #define __GET_THIRD_ARG__(arg1, arg2, arg3, ...) arg3
 #define __TIME_END_CHOOSER__(...) \
     __GET_THIRD_ARG__(__VA_ARGS__, __TIME_END_2__, __TIME_END_1__, )
-#define __TIME_END__(...) __TIME_END_CHOOSER__(__VA_ARGS__) \
-(__VA_ARGS__)
+#define __TIME_END__(...)             \
+    __TIME_END_CHOOSER__(__VA_ARGS__) \
+    (__VA_ARGS__)
 
 }  // namespace PhysIKA
 #endif

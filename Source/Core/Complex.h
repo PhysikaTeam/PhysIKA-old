@@ -20,8 +20,8 @@ public:
     }
 
     COMM_FUNC Complex<Real> conjugate() const;
-    COMM_FUNC Real norm() const;
-    COMM_FUNC Real normSquared() const;
+    COMM_FUNC Real          norm() const;
+    COMM_FUNC Real          normSquared() const;
 
     COMM_FUNC bool isReal() const;
 

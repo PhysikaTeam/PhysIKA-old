@@ -5,9 +5,9 @@
 
 namespace msph {
 
-extern __device__ MultiphaseParam d_param;
+extern __device__ MultiphaseParam   d_param;
 extern __device__ SimDataMultiphase d_data;
-extern __device__ SPHHelper d_sphhelper;
+extern __device__ SPHHelper         d_sphhelper;
 
 template <typename F>
 __device__ inline void forEachNeighbor(int i, cfloat3 pos, F lambda)

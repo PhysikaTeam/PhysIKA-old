@@ -201,7 +201,7 @@ Eigen::Matrix<T, -1, 1> BCSR<T, block_size>::operator*(const VEC& rhs) const
 
 template <typename T, const size_t block_size>
 BCSR<T, block_size>
-    BCSR<T, block_size>::operator*(const BCSR<T, block_size>& rhs) const
+BCSR<T, block_size>::operator*(const BCSR<T, block_size>& rhs) const
 {
     // TODO
     return BCSR<T, block_size>();

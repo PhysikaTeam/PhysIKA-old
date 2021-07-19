@@ -537,8 +537,7 @@ void BlueTitleBar::mouseReleaseEvent(QMouseEvent* event)
             event->accept();
             dw->setFloating(!dw->isFloating());
             break;
-        case 2:
-        {
+        case 2: {
             event->accept();
             QDockWidget::DockWidgetFeatures features = dw->features();
             if (features & QDockWidget::DockWidgetVerticalTitleBar)

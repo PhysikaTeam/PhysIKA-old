@@ -1205,16 +1205,16 @@ void PPropertyWidget::updateContext(Base* base)
 
     std::vector<Field*>& fields = base->getAllFields();
 
-        for (Field * var : fields)
+    for (Field* var : fields)
+    {
+        if (var != nullptr)
+        {
+            if (var->getClassName() == std::string("Variable"))
             {
-                if (var != nullptr)
-                {
-                    if (var->getClassName() == std::string("Variable"))
-                    {
-                        this->addScalarFieldWidget(var);
-                    }
-                }
+                this->addScalarFieldWidget(var);
             }
+        }
+    }
 }
 
 void PPropertyWidget::addScalarFieldWidget(Field* field)
