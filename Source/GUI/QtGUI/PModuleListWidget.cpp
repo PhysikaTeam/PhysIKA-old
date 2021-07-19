@@ -31,10 +31,10 @@ void PModuleListWidget::updateModule(Node* node)
 
     auto& mlist = node->getModuleList();
 
-        for (std::shared_ptr<Module> m : mlist)
-            {
-                addItem(new PModuleListItem(m.get(), this));
-            }
+    for (std::shared_ptr<Module> m : mlist)
+    {
+        addItem(new PModuleListItem(m.get(), this));
+    }
 }
 
 void PModuleListWidget::moduleSelected(QListWidgetItem* item)

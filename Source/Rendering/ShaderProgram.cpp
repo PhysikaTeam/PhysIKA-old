@@ -42,7 +42,7 @@ void glslPrintShaderLog(GLuint obj)
 
         if (infologLength > 1)
         {
-            infoLog = ( char* )malloc(infologLength);
+            infoLog = (char*) malloc(infologLength);
             glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
             printf("%s\n", infoLog);
             free(infoLog);

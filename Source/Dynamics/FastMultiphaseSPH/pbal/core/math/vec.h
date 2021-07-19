@@ -14,7 +14,7 @@ struct __vecbase
     FLUID_CUDA_HOST_DEVICE __vecbase() {}
     template <typename... Args>
     FLUID_CUDA_HOST_DEVICE __vecbase(Args... args)
-        : data{ ( T )args... }
+        : data{ (T) args... }
     {
     }
 };

@@ -194,7 +194,7 @@ COMM_FUNC void fromLongLong(long long int lldepth, float& depth, int& i, int& j)
     lldepth /= 1000;
     i = lldepth % 1000;
     lldepth /= 1000;
-    depth = ( float )lldepth / 10000.0;
+    depth = (float) lldepth / 10000.0;
 }
 
 __global__ void calculateDepthPerRigidPoint(DeviceGrid2Df              grid,

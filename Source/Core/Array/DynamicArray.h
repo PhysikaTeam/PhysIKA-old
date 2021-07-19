@@ -26,7 +26,7 @@ public:
     DynArray(int num, const std::shared_ptr<MemoryManager<deviceType>> alloc = std::make_shared<DefaultMemoryManager<deviceType>>())
         : m_data(NULL)
         , m_totalNum(num)
-        , m_capability(( int )(num * 1.2))
+        , m_capability((int) (num * 1.2))
         , m_alloc(alloc)
     {
         allocMemory();
@@ -125,7 +125,7 @@ void DynArray<T, deviceType>::resize(const int n)
     }
     if (m_capability < n)
     {
-        this->reserve(( int )(n * 1.2));
+        this->reserve((int) (n * 1.2));
     }
 
     if (m_totalNum != n)
@@ -141,12 +141,12 @@ inline void DynArray<T, deviceType>::reserve(int n)
     {
 
         T* tmpdata = m_data;
-        m_alloc->allocMemory1D(( void** )&m_data, n, sizeof(T));
+        m_alloc->allocMemory1D((void**) &m_data, n, sizeof(T));
 
         if (tmpdata)
         {
             m_alloc->copyMemory1D(m_data, tmpdata, m_capability, sizeof(T));
-            m_alloc->releaseMemory(( void** )&tmpdata);
+            m_alloc->releaseMemory((void**) &tmpdata);
             tmpdata = 0;
         }
         m_capability = n;
@@ -158,7 +158,7 @@ void DynArray<T, deviceType>::release()
 {
     if (m_data != NULL)
     {
-        m_alloc->releaseMemory(( void** )&m_data);
+        m_alloc->releaseMemory((void**) &m_data);
     }
 
     m_data       = NULL;
@@ -169,7 +169,7 @@ void DynArray<T, deviceType>::release()
 template <typename T, DeviceType deviceType>
 void DynArray<T, deviceType>::allocMemory()
 {
-    m_alloc->allocMemory1D(( void** )&m_data, m_capability, sizeof(T));
+    m_alloc->allocMemory1D((void**) &m_data, m_capability, sizeof(T));
 
     reset();
 }
@@ -177,7 +177,7 @@ void DynArray<T, deviceType>::allocMemory()
 template <typename T, DeviceType deviceType>
 void DynArray<T, deviceType>::reset()
 {
-    m_alloc->initMemory(( void* )m_data, 0, m_capability * sizeof(T));
+    m_alloc->initMemory((void*) m_data, 0, m_capability * sizeof(T));
 }
 
 template <typename T>

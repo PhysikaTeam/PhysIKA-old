@@ -127,7 +127,7 @@ void Array2D<T, deviceType>::resize(int nx, int ny)
 template <typename T, DeviceType deviceType>
 void Array2D<T, deviceType>::Reset()
 {
-    m_alloc->initMemory(( void* )m_data, 0, m_pitch * m_ny * sizeof(T));
+    m_alloc->initMemory((void*) m_data, 0, m_pitch * m_ny * sizeof(T));
 }
 
 template <typename T, DeviceType deviceType>
@@ -135,7 +135,7 @@ void Array2D<T, deviceType>::Release()
 {
     if (m_data != NULL)
     {
-        m_alloc->releaseMemory(( void** )&m_data);
+        m_alloc->releaseMemory((void**) &m_data);
     }
 
     m_data     = NULL;
@@ -148,7 +148,7 @@ void Array2D<T, deviceType>::Release()
 template <typename T, DeviceType deviceType>
 void Array2D<T, deviceType>::AllocMemory()
 {
-    m_alloc->allocMemory2D(( void** )&m_data, m_pitch, m_ny, m_nx, sizeof(T));
+    m_alloc->allocMemory2D((void**) &m_data, m_pitch, m_ny, m_nx, sizeof(T));
     m_pitch /= sizeof(T);
 
     Reset();

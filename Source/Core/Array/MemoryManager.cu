@@ -55,7 +55,7 @@ void DefaultMemoryManager<deviceType>::initMemory(void* ptr, int value, size_t c
     switch (deviceType)
     {
         case CPU:
-            memset(( void* )ptr, value, count);
+            memset((void*) ptr, value, count);
             break;
         case GPU:
             cudaMemset(ptr, value, count);

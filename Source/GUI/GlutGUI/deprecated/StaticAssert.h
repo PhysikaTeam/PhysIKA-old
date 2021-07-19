@@ -21,9 +21,9 @@ struct static_assert_test
 {
 };
 
-#define STATIC_ASSERT(x)                               \
-    typedef static_assert_test<                        \
-        sizeof(STATIC_ASSERTION_FAILURE<( bool )(x)>)> \
+#define STATIC_ASSERT(x)                              \
+    typedef static_assert_test<                       \
+        sizeof(STATIC_ASSERTION_FAILURE<(bool) (x)>)> \
         JOIN(_static_assert_typedef, __LINE__)
 
 }  // namespace gui

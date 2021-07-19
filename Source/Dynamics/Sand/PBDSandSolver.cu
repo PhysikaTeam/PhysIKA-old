@@ -394,7 +394,7 @@ bool PBDSandSolver::stepSimulation(float dt)
 {
 
     //m_subStepNum = 2;
-    double subdt = dt / ( double )m_subStepNum;
+    double subdt = dt / (double) m_subStepNum;
 
     int val = -0.5;
 
@@ -1077,7 +1077,7 @@ void PBDSandSolver::_generateAndEliminateParticle(double dt)
     // Enlarge array capability.
     if ((m_particlePos.size() + m_SandInfo.nx * m_SandInfo.ny) > m_particlePos.capability())
     {
-        int capability = ( int )((m_particlePos.size() + m_SandInfo.nx * m_SandInfo.ny) * 1.2);
+        int capability = (int) ((m_particlePos.size() + m_SandInfo.nx * m_SandInfo.ny) * 1.2);
         this->_particleNumReserve(capability);
     }
     cudaMemset(m_genEliCount.begin(), 0, sizeof(int));

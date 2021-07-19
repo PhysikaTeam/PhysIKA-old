@@ -61,8 +61,8 @@ void Camera::setGL(float neardist, float fardist, float width, float height)
     GLfloat pos[] = { m_light.x, m_light.y, m_light.z, 1 };
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
-    m_width     = ( int )width;
-    m_height    = ( int )height;
+    m_width     = (int) width;
+    m_height    = (int) height;
     m_pixelarea = 4 * right * top / (width * height);
     m_near      = neardist;
     m_far       = fardist;
@@ -112,8 +112,8 @@ Transform3D<float> Camera::getCombinedMatrix() const
         2 * neardist / (left - right), 0.0f, (right + left) / (right - left), 0.0f, 0.0f, 2 * neardist / (bottom - top), (top + bottom) / (top - bottom), 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
     Transform3D<float> combined = projection * modelview;
-    int                hw       = ( int )width / 2;
-    int                hh       = ( int )height / 2;
+    int                hw       = (int) width / 2;
+    int                hh       = (int) height / 2;
     combined.x[0] *= hw;
     combined.x[4] *= hw;
     combined.x[8] *= hw;

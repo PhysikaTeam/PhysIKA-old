@@ -35,7 +35,7 @@ __global__ void HFMesh_generateTriangle(DeviceArray<TopologyModule::Triangle> tr
     TopologyModule::Triangle curtri;
     curtri[0]         = tidx + tidy * hfield.Nx();
     curtri[1]         = (tidx + 1) + (tidy + 1) * hfield.Nx();
-    curtri[2]         = (tidx + 1) + ( tidy )*hfield.Nx();
+    curtri[2]         = (tidx + 1) + (tidy) *hfield.Nx();
     triangles[2 * id] = curtri;
 
     curtri[0]             = tidx + tidy * hfield.Nx();

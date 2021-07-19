@@ -52,7 +52,7 @@ void ParticleGenerationCallback::init(float xmin, float xmax, float zmin, float 
     maxGenerationNum = maxNum;
 
     cuSafeCall(
-        cudaMalloc(( void** )&devStates, sizeof(curandState) * maxNum));
+        cudaMalloc((void**) &devStates, sizeof(curandState) * maxNum));
 
     cuExecute(maxNum, PGCallback_init, devStates, maxNum, seed);
 }
@@ -76,7 +76,7 @@ void ParticleGenerationCallback::handle(ParticleSandRigidInteraction* interactNo
     devMass.resize(totalSize);
     devType.resize(totalSize);
 
-    cuExecute(newParNum, PGCallback_generate, devPos, devVel, devMass, devType, devStates, startid, ( double )particelMass, gxMin, gxMax, gzMin, gzMax);
+    cuExecute(newParNum, PGCallback_generate, devPos, devVel, devMass, devType, devStates, startid, (double) particelMass, gxMin, gxMax, gzMin, gzMax);
 
     interactNode->getSandSolver()->infoUpdate(dt);
 }

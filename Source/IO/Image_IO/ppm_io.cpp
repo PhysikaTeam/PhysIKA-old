@@ -88,7 +88,7 @@ bool PPMIO::load(const std::string& filename, Image* image, Image::DataFormat da
         return false;
     }
     // read image RGB data
-    int data_size = fp.read(( char* )image_data, sizeof(unsigned char) * 3 * file_para[0] * file_para[1]).gcount();
+    int data_size = fp.read((char*) image_data, sizeof(unsigned char) * 3 * file_para[0] * file_para[1]).gcount();
     if (data_size < 3 * file_para[0] * file_para[1])
     {
         std::cerr << "error in reading image RGB data";

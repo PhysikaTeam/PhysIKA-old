@@ -223,25 +223,25 @@ COMM_FUNC bool Complex<Real>::isReal() const
 template <typename S, typename T>
 COMM_FUNC const Complex<T> operator+(S scale, const Complex<T>& complex)
 {
-    return complex + ( T )scale;
+    return complex + (T) scale;
 }
 
 template <typename S, typename T>
 COMM_FUNC const Complex<T> operator-(S scale, const Complex<T>& complex)
 {
-    return Complex<T>(( T )scale, T(0)) - complex;
+    return Complex<T>((T) scale, T(0)) - complex;
 }
 
 template <typename S, typename T>
 COMM_FUNC const Complex<T> operator*(S scale, const Complex<T>& complex)
 {
-    return complex * ( T )scale;
+    return complex * (T) scale;
 }
 
 template <typename S, typename T>
 COMM_FUNC const Complex<T> operator/(S scale, const Complex<T>& complex)
 {
-    return Complex<T>(( T )scale, T(0)) / complex;
+    return Complex<T>((T) scale, T(0)) / complex;
 }
 
 template <class Real>

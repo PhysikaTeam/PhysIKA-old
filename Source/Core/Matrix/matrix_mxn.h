@@ -115,8 +115,8 @@ public:
     COMM_FUNC const MatrixMN<T, deviceType> operator*(T) const;
     COMM_FUNC MatrixMN<T, deviceType>& operator*=(T);
 
-    COMM_FUNC const Vectornd<T, deviceType> operator*( const Vectornd<T, deviceType>& )const;
-    COMM_FUNC const MatrixMN<T, deviceType> operator*( const MatrixMN<T, deviceType>& )const;
+    COMM_FUNC const Vectornd<T, deviceType> operator*(const Vectornd<T, deviceType>&) const;
+    COMM_FUNC const MatrixMN<T, deviceType> operator*(const MatrixMN<T, deviceType>&) const;
     //COMM_FUNC MatrixMN<T, deviceType>& operator*= (const MatrixMN<T, deviceType> &);
 
     COMM_FUNC const MatrixMN<T, deviceType> operator/(T) const;
@@ -197,21 +197,21 @@ inline void MatrixMN<T, deviceType>::resize(int nx, int ny)
             {
                 this->m_data[i] = tmp[i];
             }
-            m_alloc->releaseMemory(( void** )&tmp);
+            m_alloc->releaseMemory((void**) &tmp);
         }
     }
 }
 template <typename T, DeviceType deviceType>
 inline void MatrixMN<T, deviceType>::setZeros()
 {
-    m_alloc->initMemory(( void* )m_data, 0, m_totalNum * sizeof(T));
+    m_alloc->initMemory((void*) m_data, 0, m_totalNum * sizeof(T));
 }
 template <typename T, DeviceType deviceType>
 inline void MatrixMN<T, deviceType>::release()
 {
     if (m_data != NULL)
     {
-        m_alloc->releaseMemory(( void** )&m_data);
+        m_alloc->releaseMemory((void**) &m_data);
     }
 
     m_data     = NULL;
@@ -244,7 +244,7 @@ inline void MatrixMN<T, deviceType>::allocMemory()
     //size_t pitch;
 
     //m_alloc->allocMemory2D((void**)&m_data, pitch, m_nx, m_ny, sizeof(T));
-    m_alloc->allocMemory1D(( void** )&m_data, m_totalNum, sizeof(T));
+    m_alloc->allocMemory1D((void**) &m_data, m_totalNum, sizeof(T));
 
     setZeros();
 }

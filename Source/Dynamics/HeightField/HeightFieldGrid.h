@@ -155,7 +155,7 @@ public:
     {
         TReal gx  = (x - origin[0]) / m_dx + Nx() / 2.0 - 0.5;
         TReal gz  = (z - origin[2]) / m_dz + Ny() / 2.0 - 0.5;
-        int   gix = ( int )gx, giz = ( int )gz;
+        int   gix = (int) gx, giz = (int) gz;
         gix         = min(gix, Nx() - 1);
         gix         = max(gix, 0);
         giz         = min(giz, Ny() - 1);
@@ -227,7 +227,7 @@ public:
         gz = min(gz, Ny() - 1.0);
         gz = max(gz, 0.0);
 
-        int gix = ( int )(gx), giz = ( int )(gz);
+        int gix = (int) (gx), giz = (int) (gz);
         int gix_1 = gix - 1, giz_1 = giz - 1;
         gix_1 = max(gix_1, 0);
         gix_1 = min(gix_1, Nx() - 1);
@@ -240,8 +240,8 @@ public:
         giz_2 = max(giz_2, 0);
         giz_2 = min(giz_2, Ny() - 1);
 
-        TReal fracx = (gx - gix_1) / ( double )(gix_2 - gix_1);
-        TReal fracz = (gz - giz_1) / ( double )(giz_2 - giz_1);
+        TReal fracx = (gx - gix_1) / (double) (gix_2 - gix_1);
+        TReal fracz = (gz - giz_1) / (double) (giz_2 - giz_1);
 
         T val00 = (*this)(gix_1, giz_1);
         T val10 = (*this)(gix_2, giz_1);

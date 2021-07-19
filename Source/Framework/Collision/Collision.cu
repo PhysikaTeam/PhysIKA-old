@@ -71,10 +71,10 @@ void pushMesh2GPU(int numFace, int numVert, void* faces, void* nodes)
     theCloth.numFace = numFace;
     theCloth.numVert = numVert;
 
-    cudaMalloc(( void** )&theCloth._df, numFace * sizeof(tri3f));
-    cudaMalloc(( void** )&theCloth._dfBx, numFace * sizeof(g_box));
-    cudaMalloc(( void** )&theCloth._dx, numVert * sizeof(float3));
-    cudaMalloc(( void** )&theCloth._dx0, numVert * sizeof(float3));
+    cudaMalloc((void**) &theCloth._df, numFace * sizeof(tri3f));
+    cudaMalloc((void**) &theCloth._dfBx, numFace * sizeof(g_box));
+    cudaMalloc((void**) &theCloth._dx, numVert * sizeof(float3));
+    cudaMalloc((void**) &theCloth._dx0, numVert * sizeof(float3));
 
     cudaMemcpy(theCloth._df, faces, sizeof(tri3f) * numFace, cudaMemcpyHostToDevice);
     cudaMemcpy(theCloth._dx, nodes, sizeof(float3) * numVert, cudaMemcpyHostToDevice);
@@ -118,9 +118,9 @@ void pushBVHIdx(int max_level, unsigned int* level_idx, bool isCloth)
 void pushBVH(unsigned int length, int* ids, bool isCloth)
 {
     theBVH[isCloth]._num = length;
-    checkCudaErrors(cudaMalloc(( void** )&theBVH[isCloth]._bvh, length * sizeof(int) * 2));
+    checkCudaErrors(cudaMalloc((void**) &theBVH[isCloth]._bvh, length * sizeof(int) * 2));
     checkCudaErrors(cudaMemcpy(theBVH[isCloth]._bvh, ids, length * sizeof(int) * 2, cudaMemcpyHostToDevice));
-    checkCudaErrors(cudaMalloc(( void** )&theBVH[isCloth]._bxs, length * sizeof(g_box)));
+    checkCudaErrors(cudaMalloc((void**) &theBVH[isCloth]._bxs, length * sizeof(g_box)));
     checkCudaErrors(cudaMemset(theBVH[isCloth]._bxs, 0, length * sizeof(g_box)));
     theBVH[isCloth].hBxs = NULL;
 
@@ -130,7 +130,7 @@ void pushBVH(unsigned int length, int* ids, bool isCloth)
 
 void pushBVHLeaf(unsigned int length, int* idf, bool isCloth)
 {
-    checkCudaErrors(cudaMalloc(( void** )&theBVH[isCloth]._bvh_leaf, length * sizeof(int)));
+    checkCudaErrors(cudaMalloc((void**) &theBVH[isCloth]._bvh_leaf, length * sizeof(int)));
     checkCudaErrors(cudaMemcpy(theBVH[isCloth]._bvh_leaf, idf, length * sizeof(int), cudaMemcpyHostToDevice));
 }
 
@@ -183,7 +183,7 @@ void pushFront(bool self, int num, unsigned int* data)
     g_front* f = &theFront[self];
 
     f->init();
-    f->push(num, ( uint4* )data);
+    f->push(num, (uint4*) data);
 }
 
 //===============================================
@@ -203,8 +203,8 @@ void reportMemory(char* tag)
         exit(1);
     }
 
-    float free_db  = ( float )free_byte;
-    float total_db = ( float )total_byte;
+    float free_db  = (float) free_byte;
+    float total_db = (float) total_byte;
     float used_db  = total_db - free_db;
     printf("%s: GPU memory usage: used = %f, free = %f MB, total = %f MB\n",
            tag,
@@ -405,10 +405,10 @@ int g_front::propogate(bool& update, bool self, bool ccd)
 #ifdef FIX_BT_NUM
         BLK_PAR2(dummy[0], stride);
 #else
-        BLK_PAR3(dummy[0], stride, getBlkSize(( void* )kernelPropogate));
+        BLK_PAR3(dummy[0], stride, getBlkSize((void*) kernelPropogate));
 #endif
         uint* tt;
-        cutilSafeCall(cudaMalloc(( void** )&tt, 1 * sizeof(uint)));
+        cutilSafeCall(cudaMalloc((void**) &tt, 1 * sizeof(uint)));
         uint ttt = 0;
         cutilSafeCall(cudaMemcpy(tt, &ttt, 1 * sizeof(uint), cudaMemcpyHostToDevice));
 
@@ -650,16 +650,16 @@ int g_pair::getCollisions(bool self, g_pairCCD& ret, int* time, float* thickness
 #ifdef FIX_BT_NUM
     BLK_PAR3(num, stride, 32);
 #else
-    BLK_PAR3(num, stride, getBlkSize(( void* )kernelGetCollisions));
+    BLK_PAR3(num, stride, getBlkSize((void*) kernelGetCollisions));
 #endif
 
     int* tem_time;
     int  tem = 0;
-    cutilSafeCall(cudaMalloc(( void** )&tem_time, 1 * sizeof(int)));
+    cutilSafeCall(cudaMalloc((void**) &tem_time, 1 * sizeof(int)));
     cutilSafeCall(cudaMemcpy(tem_time, &tem, 1 * sizeof(int), cudaMemcpyHostToDevice));
 
     float* gthickness;
-    cutilSafeCall(cudaMalloc(( void** )&gthickness, 1 * sizeof(float)));
+    cutilSafeCall(cudaMalloc((void**) &gthickness, 1 * sizeof(float)));
     cutilSafeCall(cudaMemcpy(gthickness, thickness, 1 * sizeof(float), cudaMemcpyHostToDevice));
 
     kernelGetCollisions<<<B, T>>>(_dPairs, num, theCloth._dx, theCloth._dx0, theCloth._df, ret._dPairs, ret._dv, ret._dVF_EE, ret.dist, ret.CCD_res, ret._dIdx, tem_time, gthickness, stride);

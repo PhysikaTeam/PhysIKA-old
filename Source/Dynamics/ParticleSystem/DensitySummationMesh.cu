@@ -18,7 +18,7 @@ __device__ inline float kernWeightMeshPBD(const float r, const float h)
     {
         const Real d  = 1.0 - q;
         const Real hh = h * h;
-        return 15.0f / (( Real )M_PI * hh * h) * (1.0f / 3.0f * (hh * h - r * r * r) - 3.0f / 4.0f / h * (hh * hh - r * r * r * r) + 3.0f / 5.0f / hh * (hh * hh * h - r * r * r * r * r) - 1.0f / 6.0f / hh / h * (hh * hh * hh - r * r * r * r * r * r));
+        return 15.0f / ((Real) M_PI * hh * h) * (1.0f / 3.0f * (hh * h - r * r * r) - 3.0f / 4.0f / h * (hh * hh - r * r * r * r) + 3.0f / 5.0f / hh * (hh * hh * h - r * r * r * r * r) - 1.0f / 6.0f / hh / h * (hh * hh * hh - r * r * r * r * r * r));
     }
     /*
 		const Real q = r / h;

@@ -1017,7 +1017,7 @@ inline void __getLastCudaError(const char* errorMessage, const char* file, const
 
     if (cudaSuccess != err)
     {
-        fprintf(stderr, "%s(%i) : getLastCudaError() CUDA error : %s : (%d) %s.\n", file, line, errorMessage, ( int )err, cudaGetErrorString(err));
+        fprintf(stderr, "%s(%i) : getLastCudaError() CUDA error : %s : (%d) %s.\n", file, line, errorMessage, (int) err, cudaGetErrorString(err));
         DEVICE_RESET
         exit(EXIT_FAILURE);
     }
@@ -1032,7 +1032,7 @@ inline void __printLastCudaError(const char* errorMessage, const char* file, con
 
     if (cudaSuccess != err)
     {
-        fprintf(stderr, "%s(%i) : getLastCudaError() CUDA error : %s : (%d) %s.\n", file, line, errorMessage, ( int )err, cudaGetErrorString(err));
+        fprintf(stderr, "%s(%i) : getLastCudaError() CUDA error : %s : (%d) %s.\n", file, line, errorMessage, (int) err, cudaGetErrorString(err));
     }
 }
 #endif
@@ -1044,7 +1044,7 @@ inline void __printLastCudaError(const char* errorMessage, const char* file, con
 // Float To Int conversion
 inline int ftoi(float value)
 {
-    return (value >= 0 ? ( int )(value + 0.5) : ( int )(value - 0.5));
+    return (value >= 0 ? (int) (value + 0.5) : (int) (value - 0.5));
 }
 
 // Beginning of GPU Architecture definitions
@@ -1203,7 +1203,7 @@ inline int gpuGetMaxGflopsDeviceId()
                 sm_per_multiproc = _ConvertSMVer2Cores(deviceProp.major, deviceProp.minor);
             }
 
-            unsigned long long compute_perf = ( unsigned long long )deviceProp.multiProcessorCount * sm_per_multiproc * deviceProp.clockRate;
+            unsigned long long compute_perf = (unsigned long long) deviceProp.multiProcessorCount * sm_per_multiproc * deviceProp.clockRate;
 
             if (compute_perf > max_compute_perf)
             {

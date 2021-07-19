@@ -54,7 +54,7 @@ COMM_FUNC void EigenDecomposition(const SquareMatrix<Real, 3>& A, SquareMatrix<R
     eigenVecs = SquareMatrix<Real, 3>::identityMatrix();  // unit matrix
     int iter  = 0;
     while (iter < numJacobiIterations)
-    {   // 3 off diagonal elements
+    {  // 3 off diagonal elements
         // find off diagonal element with maximum modulus
         int  p, q;
         Real a, max;

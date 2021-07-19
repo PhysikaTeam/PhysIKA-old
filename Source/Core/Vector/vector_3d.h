@@ -52,7 +52,7 @@ public:
     COMM_FUNC Vector<Scalar, 3>& operator+=(const Vector<Scalar, 3>&);
     COMM_FUNC const Vector<Scalar, 3> operator-(const Vector<Scalar, 3>&) const;
     COMM_FUNC Vector<Scalar, 3>& operator-=(const Vector<Scalar, 3>&);
-    COMM_FUNC const Vector<Scalar, 3> operator*( const Vector<Scalar, 3>& )const;
+    COMM_FUNC const Vector<Scalar, 3> operator*(const Vector<Scalar, 3>&) const;
     COMM_FUNC Vector<Scalar, 3>& operator*=(const Vector<Scalar, 3>&);
     COMM_FUNC const Vector<Scalar, 3> operator/(const Vector<Scalar, 3>&) const;
     COMM_FUNC Vector<Scalar, 3>& operator/=(const Vector<Scalar, 3>&);

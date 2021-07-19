@@ -604,7 +604,7 @@ void demo_MultiRigid()
         rigid[i]->setParentJoint(joint[i].get());
 
         auto renderModule = std::make_shared<RigidMeshRender>(rigid[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
         rigid[i]->addVisualModule(renderModule);
 
         last_rigid = rigid[i];

@@ -53,7 +53,7 @@ bool PointRenderModule::initializeImpl()
         pSet->initialize();
     }
 
-    DeviceArray<float3>* xyz = ( DeviceArray<float3>* )&(pSet->getPoints());
+    DeviceArray<float3>* xyz = (DeviceArray<float3>*) &(pSet->getPoints());
 
     m_pointRender = std::make_shared<PointRender>();
     m_pointRender->resize(xyz->size());
@@ -137,7 +137,7 @@ void PointRenderModule::updateRenderingContext()
         return;
     }
 
-    DeviceArray<float3>* xyz = ( DeviceArray<float3>* )&(pSet->getPoints());
+    DeviceArray<float3>* xyz = (DeviceArray<float3>*) &(pSet->getPoints());
 
     if (xyz->size() != m_pointRender->numOfPoints())
     {

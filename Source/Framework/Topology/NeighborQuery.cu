@@ -561,8 +561,8 @@ void NeighborQuery<TDataType>::queryNeighborFixed(NeighborList<int>& nbrList, De
     int   num = pos.size();
     int*  ids;
     Real* distance;
-    cuSafeCall(cudaMalloc(( void** )&ids, num * sizeof(int) * nbrList.getNeighborLimit()));
-    cuSafeCall(cudaMalloc(( void** )&distance, num * sizeof(int) * nbrList.getNeighborLimit()));
+    cuSafeCall(cudaMalloc((void**) &ids, num * sizeof(int) * nbrList.getNeighborLimit()));
+    cuSafeCall(cudaMalloc((void**) &distance, num * sizeof(int) * nbrList.getNeighborLimit()));
 
     uint pDims = cudaGridSize(num, BLOCK_SIZE);
     K_ComputeNeighborFixed<<<pDims, BLOCK_SIZE>>>(

@@ -119,23 +119,23 @@ void PLogWidget::OnLog(const Log::Message& m)
 
     switch (m.type)
     {
-        case ( int )Log::Warning:
+        case (int) Log::Warning:
         {
             ItemIcon = getIcon("exclamation");
             break;
         }
 
-        case ( int )Log::Error:
+        case (int) Log::Error:
         {
             ItemIcon = getIcon("exclamation-red");
             break;
         }
 
-        case ( int )Log::Info:
+        case (int) Log::Info:
             ItemIcon = getIcon("exclamation-white");
             break;
 
-        case ( int )Log::User:
+        case (int) Log::User:
             ItemIcon = getIcon("user");
             break;
     }

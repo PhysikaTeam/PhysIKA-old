@@ -71,7 +71,7 @@ inline __host__ __device__ void EigenDecomposition(const glm::mat3& A, glm::mat3
     eigenVecs = glm::mat3();  // unit matrix
     int iter  = 0;
     while (iter < numJacobiIterations)
-    {   // 3 off diagonal elements
+    {  // 3 off diagonal elements
         // find off diagonal element with maximum modulus
         int   p, q;
         float a, max;

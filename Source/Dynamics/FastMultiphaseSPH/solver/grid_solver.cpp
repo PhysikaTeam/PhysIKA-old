@@ -40,12 +40,12 @@ void GridSolver::setup()
 
 void GridSolver::allocate()
 {
-    u    = ( scalar* )malloc(sizeof(scalar) * grid.uSize);
-    v    = ( scalar* )malloc(sizeof(scalar) * grid.vSize);
-    w    = ( scalar* )malloc(sizeof(scalar) * grid.wSize);
-    uadv = ( scalar* )malloc(sizeof(scalar) * grid.uSize);
-    vadv = ( scalar* )malloc(sizeof(scalar) * grid.vSize);
-    wadv = ( scalar* )malloc(sizeof(scalar) * grid.wSize);
+    u    = (scalar*) malloc(sizeof(scalar) * grid.uSize);
+    v    = (scalar*) malloc(sizeof(scalar) * grid.vSize);
+    w    = (scalar*) malloc(sizeof(scalar) * grid.wSize);
+    uadv = (scalar*) malloc(sizeof(scalar) * grid.uSize);
+    vadv = (scalar*) malloc(sizeof(scalar) * grid.vSize);
+    wadv = (scalar*) malloc(sizeof(scalar) * grid.wSize);
 
     memset(u, 0, sizeof(scalar) * grid.uSize);
     memset(v, 0, sizeof(scalar) * grid.vSize);
@@ -54,12 +54,12 @@ void GridSolver::allocate()
     memset(vadv, 0, sizeof(scalar) * grid.vSize);
     memset(wadv, 0, sizeof(scalar) * grid.wSize);
 
-    p    = ( scalar* )malloc(sizeof(scalar) * grid.dimSize);
-    divU = ( scalar* )malloc(sizeof(scalar) * grid.dimSize);
-    b    = ( scalar* )malloc(sizeof(scalar) * grid.dimSize);
-    Aq   = ( scalar* )malloc(sizeof(scalar) * grid.dimSize);
-    r    = ( scalar* )malloc(sizeof(scalar) * grid.dimSize);
-    q    = ( scalar* )malloc(sizeof(scalar) * grid.dimSize);
+    p    = (scalar*) malloc(sizeof(scalar) * grid.dimSize);
+    divU = (scalar*) malloc(sizeof(scalar) * grid.dimSize);
+    b    = (scalar*) malloc(sizeof(scalar) * grid.dimSize);
+    Aq   = (scalar*) malloc(sizeof(scalar) * grid.dimSize);
+    r    = (scalar*) malloc(sizeof(scalar) * grid.dimSize);
+    q    = (scalar*) malloc(sizeof(scalar) * grid.dimSize);
 
     memset(p, 0, sizeof(scalar) * grid.dimSize);
 }
@@ -288,9 +288,9 @@ cint3 GridSolver::locateCell(cfloat3 p)
     y = (p.y - grid.xmin.y) / grid.h;
     z = (p.z - grid.xmin.z) / grid.h;
     int xi, yi, zi;
-    xi = ( int )x;
-    yi = ( int )y;
-    zi = ( int )z;
+    xi = (int) x;
+    yi = (int) y;
+    zi = (int) z;
 
     //clamp
     if (xi == -1 && x > -EPSILON)

@@ -80,7 +80,7 @@ public:
 
         T*     dataPtr = nullptr;
         size_t byte_size;
-        cuSafeCall(cudaGraphicsResourceGetMappedPointer(( void** )&dataPtr, &byte_size, m_cudaGraphicsResource));
+        cuSafeCall(cudaGraphicsResourceGetMappedPointer((void**) &dataPtr, &byte_size, m_cudaGraphicsResource));
 
         return dataPtr;
     }

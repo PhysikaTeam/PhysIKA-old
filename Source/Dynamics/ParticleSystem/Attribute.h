@@ -60,7 +60,7 @@ public:
     }
     COMM_FUNC inline unsigned GetObjectId()
     {
-        ( unsigned )(m_tag & OBJECTID_MASK);
+        (unsigned) (m_tag & OBJECTID_MASK);
     }
 
     COMM_FUNC inline bool IsFluid()

@@ -22,7 +22,7 @@ public:
     Matrix()
     {
         for (int i = 0; i < size; i++)
-            x[i] = ( T )0.0;
+            x[i] = (T) 0.0;
     }
     Matrix(T a)
     {

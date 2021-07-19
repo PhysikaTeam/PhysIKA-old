@@ -45,19 +45,19 @@ void Transform3D<T>::Rotate(const float angle, Vector3f& axis)
 
     float minc = 1 - c;
 
-    x[0] = c + ( minc )*pow(ux, 2);
-    x[1] = ( minc )*ux * uy + s * uz;
-    x[2] = ( minc )*ux * uz - s * uy;
+    x[0] = c + (minc) *pow(ux, 2);
+    x[1] = (minc) *ux * uy + s * uz;
+    x[2] = (minc) *ux * uz - s * uy;
     x[3] = 0;
 
-    x[4] = ( minc )*uy * ux - s * uz;
-    x[5] = c + ( minc )*pow(uy, 2);
-    x[6] = ( minc )*uy * uz + s * ux;
+    x[4] = (minc) *uy * ux - s * uz;
+    x[5] = c + (minc) *pow(uy, 2);
+    x[6] = (minc) *uy * uz + s * ux;
     x[7] = 0;
 
-    x[8]  = ( minc )*uz * ux + s * uy;
-    x[9]  = ( minc )*uy * uz - s * ux;
-    x[10] = c + ( minc )*pow(uz, 2);
+    x[8]  = (minc) *uz * ux + s * uy;
+    x[9]  = (minc) *uy * uz - s * ux;
+    x[10] = c + (minc) *pow(uz, 2);
     x[11] = 0;
 
     x[12] = 0;

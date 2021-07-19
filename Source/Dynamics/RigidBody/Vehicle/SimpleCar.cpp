@@ -32,8 +32,8 @@ bool SimpleCar::build()
     {
         m_chassis->loadShape(chassisFile);
         //Vector3f chassisMeshScale(0.3, 0.2, 0.5);
-        (( std::dynamic_pointer_cast<TriangleSet<DataType3f>> )(m_chassis->getTopologyModule()))->scale(chassisMeshScale);
-        (( std::dynamic_pointer_cast<TriangleSet<DataType3f>> )(m_chassis->getTopologyModule()))->translate(chassisMeshTranslate);
+        ((std::dynamic_pointer_cast<TriangleSet<DataType3f>>) (m_chassis->getTopologyModule()))->scale(chassisMeshScale);
+        ((std::dynamic_pointer_cast<TriangleSet<DataType3f>>) (m_chassis->getTopologyModule()))->translate(chassisMeshTranslate);
 
         //auto renderModule = std::make_shared<RigidMeshRender>(m_chassis->getTransformationFrame());
         //renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double)1000, 0.8));

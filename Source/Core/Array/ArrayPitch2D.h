@@ -139,7 +139,7 @@ void ArrayPitch2D<T, deviceType>::Reset()
     //             break;
     //         }
 
-    m_alloc->initMemory(( void* )m_data, 0, m_totalNum * sizeof(T));
+    m_alloc->initMemory((void*) m_data, 0, m_totalNum * sizeof(T));
 }
 
 template <typename T, DeviceType deviceType>
@@ -159,7 +159,7 @@ void ArrayPitch2D<T, deviceType>::Release()
         //                 break;
         //             }
 
-        m_alloc->releaseMemory(( void** )&m_data);
+        m_alloc->releaseMemory((void**) &m_data);
     }
 
     m_data     = NULL;
@@ -187,7 +187,7 @@ void ArrayPitch2D<T, deviceType>::AllocMemory()
 
     // Note: y is row direction, and x is column direction
     // To get element(i,j), use: m_data[j*m_pitch + i]
-    m_alloc->allocMemory2D(( void** )&m_data, m_pitch, m_ny, m_nx, sizeof(T));
+    m_alloc->allocMemory2D((void**) &m_data, m_pitch, m_ny, m_nx, sizeof(T));
     m_pitch /= sizeof(T);
     m_totalNum = m_ny * m_pitch;
 
@@ -212,7 +212,7 @@ void CopyFrom2D_external(ArrayPitch2D<T, deviceType1>& arr1, ArrayPitch2D<T, dev
 
     if (deviceType1 == DeviceType::CPU && deviceType2 == DeviceType::CPU)
     {
-        memcpy(( void* )(arr1.GetDataPtr()), ( void* )(arr2.GetDataPtr()), sizeof(T) * arr1.Size());
+        memcpy((void*) (arr1.GetDataPtr()), (void*) (arr2.GetDataPtr()), sizeof(T) * arr1.Size());
     }
     else if (deviceType1 == DeviceType::CPU && deviceType2 == DeviceType::GPU)
     {

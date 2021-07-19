@@ -142,13 +142,13 @@ void VarField<T>::update()
     auto& sinks = this->getSinkFields();
 
     for (auto fs : sinks)
+    {
+        VarField<T>* var = dynamic_cast<VarField<T>*>(fs);
+        if (var != nullptr)
         {
-            VarField<T>* var = dynamic_cast<VarField<T>*>(fs);
-            if (var != nullptr)
-            {
-                var->update();
-            }
+            var->update();
         }
+    }
 }
 
 template <typename T>

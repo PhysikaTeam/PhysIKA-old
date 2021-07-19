@@ -55,7 +55,7 @@ bool HeightFieldLoader::load(HeightFieldGrid<TReal, TReal, deviceType>& hf, cons
         for (int j = 0; j < imgdata.height(); ++j)
         {
             const unsigned char* curdata = imgdata.rawData() + (j * imgdata.width() + i) * stride;
-            double               val     = (( int )(curdata[0]) + ( int )(curdata[1]) + ( int )(curdata[2])) / (3.0 * 255.0);
+            double               val     = ((int) (curdata[0]) + (int) (curdata[1]) + (int) (curdata[2])) / (3.0 * 255.0);
             val                          = m_minH + (m_maxH - m_minH) * val;
 
             midhf(i, j) = (TReal)(val);
@@ -69,8 +69,8 @@ bool HeightFieldLoader::load(HeightFieldGrid<TReal, TReal, deviceType>& hf, cons
     {
         for (int j = 0; j < hf.Ny(); ++j)
         {
-            double gx = i * ( double )midhf.Nx() / hf.Nx();
-            double gz = j * ( double )midhf.Ny() / hf.Ny();
+            double gx = i * (double) midhf.Nx() / hf.Nx();
+            double gz = j * (double) midhf.Ny() / hf.Ny();
 
             TReal val = midhf.get(gx, gz);
             hf(i, j)  = val;

@@ -11,7 +11,7 @@ Log::MessageType Log::logLevel        = Log::DebugInfo;
 void Log::sendMessage(MessageType type, const std::string& text)
 {
     // Skip logging to file if minimum level is higher
-    if (( int )type < ( int )logLevel)
+    if ((int) type < (int) logLevel)
         return;
 
     // log message

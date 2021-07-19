@@ -58,8 +58,8 @@ __global__ void generateSpectrumKernel(float2*      h0,
 
     // calculate wave vector
     float2 k;
-    k.x = (-( int )out_width / 2.0f + x) * (2.0f * CUDART_PI_F / patchSize);
-    k.y = (-( int )out_width / 2.0f + y) * (2.0f * CUDART_PI_F / patchSize);
+    k.x = (-(int) out_width / 2.0f + x) * (2.0f * CUDART_PI_F / patchSize);
+    k.y = (-(int) out_width / 2.0f + y) * (2.0f * CUDART_PI_F / patchSize);
 
     // calculate dispersion w(k)
     float k_len = sqrtf(k.x * k.x + k.y * k.y);
@@ -137,8 +137,8 @@ __global__ void generateDispalcementKernel(
     unsigned int id = y * width + x;
 
     // calculate wave vector
-    float kx        = (-( int )width / 2.0f + x) * (2.0f * CUDART_PI_F / patchSize);
-    float ky        = (-( int )height / 2.0f + y) * (2.0f * CUDART_PI_F / patchSize);
+    float kx        = (-(int) width / 2.0f + x) * (2.0f * CUDART_PI_F / patchSize);
+    float ky        = (-(int) height / 2.0f + y) * (2.0f * CUDART_PI_F / patchSize);
     float k_squared = kx * kx + ky * ky;
     if (k_squared == 0.0f)
     {
@@ -226,19 +226,19 @@ bool OceanPatch::initialize()
     cufftPlan2d(&fftPlan, m_size, m_size, CUFFT_C2C);
 
     int spectrumSize = m_spectrumW * m_spectrumH * sizeof(float2);
-    cuSafeCall(cudaMalloc(( void** )&m_h0, spectrumSize));
+    cuSafeCall(cudaMalloc((void**) &m_h0, spectrumSize));
     //synchronCheck;
-    float2* host_h0 = ( float2* )malloc(spectrumSize);
+    float2* host_h0 = (float2*) malloc(spectrumSize);
     generateH0(host_h0);
 
     cuSafeCall(cudaMemcpy(m_h0, host_h0, spectrumSize, cudaMemcpyHostToDevice));
 
     int outputSize = m_size * m_size * sizeof(float2);
-    cudaMalloc(( void** )&m_ht, outputSize);
-    cudaMalloc(( void** )&m_Dxt, outputSize);
-    cudaMalloc(( void** )&m_Dzt, outputSize);
-    cudaMalloc(( void** )&m_displacement, m_size * m_size * sizeof(float4));
-    cuSafeCall(cudaMalloc(( void** )&m_gradient, m_size * m_size * sizeof(float4)));
+    cudaMalloc((void**) &m_ht, outputSize);
+    cudaMalloc((void**) &m_Dxt, outputSize);
+    cudaMalloc((void**) &m_Dzt, outputSize);
+    cudaMalloc((void**) &m_displacement, m_size * m_size * sizeof(float4));
+    cuSafeCall(cudaMalloc((void**) &m_gradient, m_size * m_size * sizeof(float4)));
 
     //gl_utility::createTexture(m_size, m_size, GL_RGBA32F, m_displacement_texture, GL_REPEAT, GL_LINEAR, GL_LINEAR, GL_RGBA, GL_FLOAT);
     //cudaCheck(cudaGraphicsGLRegisterImage(&m_cuda_displacement_texture, m_displacement_texture, GL_TEXTURE_2D, cudaGraphicsRegisterFlagsWriteDiscard));
@@ -335,8 +335,8 @@ void OceanPatch::generateH0(float2* h0)
     {
         for (unsigned int x = 0; x <= m_size; x++)
         {
-            float kx = (-( int )m_size / 2.0f + x) * (2.0f * CUDART_PI_F / m_realPatchSize);
-            float ky = (-( int )m_size / 2.0f + y) * (2.0f * CUDART_PI_F / m_realPatchSize);
+            float kx = (-(int) m_size / 2.0f + x) * (2.0f * CUDART_PI_F / m_realPatchSize);
+            float ky = (-(int) m_size / 2.0f + y) * (2.0f * CUDART_PI_F / m_realPatchSize);
 
             float P = sqrtf(phillips(kx, ky, windDir, m_windSpeed, A, dirDepend));
 
@@ -393,8 +393,8 @@ float OceanPatch::phillips(float Kx, float Ky, float Vdir, float V, float A, flo
 
 float OceanPatch::gauss()
 {
-    float u1 = rand() / ( float )RAND_MAX;
-    float u2 = rand() / ( float )RAND_MAX;
+    float u1 = rand() / (float) RAND_MAX;
+    float u2 = rand() / (float) RAND_MAX;
 
     if (u1 < 1e-6f)
     {

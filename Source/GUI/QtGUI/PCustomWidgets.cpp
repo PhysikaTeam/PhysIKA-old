@@ -27,7 +27,7 @@ QDoubleSlider::QDoubleSlider(QWidget* pParent /*= NULL*/)
 
 void QDoubleSlider::setValue(int Value)
 {
-    emit valueChanged(( double )Value / m_Multiplier);
+    emit valueChanged((double) Value / m_Multiplier);
 }
 
 void QDoubleSlider::setValue(double Value, bool BlockSignals)
@@ -76,7 +76,7 @@ double QDoubleSlider::maximum() const
 double QDoubleSlider::value() const
 {
     int Value = QSlider::value();
-    return ( double )Value / m_Multiplier;
+    return (double) Value / m_Multiplier;
 }
 
 QSize QDoubleSpinner::sizeHint() const

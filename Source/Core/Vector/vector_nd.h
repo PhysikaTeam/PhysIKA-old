@@ -25,7 +25,7 @@ protected:
             m_data = nullptr;
             return;
         }
-        m_alloc->allocMemory1D(( void** )&m_data, m_n, sizeof(T));
+        m_alloc->allocMemory1D((void**) &m_data, m_n, sizeof(T));
         //reset();
         this->setZeros();
     }
@@ -147,7 +147,7 @@ inline Vectornd<T, deviceType>::~Vectornd()
 {
     if (m_data != NULL && m_n != 0)
     {
-        m_alloc->releaseMemory(( void** )&m_data);
+        m_alloc->releaseMemory((void**) &m_data);
     }
 
     m_data = NULL;
@@ -173,7 +173,7 @@ inline void Vectornd<T, deviceType>::resize(int n)
             {
                 this->m_data[i] = tmp[i];
             }
-            m_alloc->releaseMemory(( void** )&tmp);
+            m_alloc->releaseMemory((void**) &tmp);
         }
     }
 }
@@ -361,7 +361,7 @@ inline void Vectornd<T, deviceType>::setZeros()
 {
     if (m_n <= 0)
         return;
-    m_alloc->initMemory(( void* )m_data, 0, m_n * sizeof(T));
+    m_alloc->initMemory((void*) m_data, 0, m_n * sizeof(T));
 }
 
 template <typename T, DeviceType deviceType>
@@ -386,7 +386,7 @@ inline void Vectornd<T, deviceType>::release()
 {
     if (m_data != NULL)
     {
-        m_alloc->releaseMemory(( void** )&m_data);
+        m_alloc->releaseMemory((void**) &m_data);
     }
 
     m_data = NULL;

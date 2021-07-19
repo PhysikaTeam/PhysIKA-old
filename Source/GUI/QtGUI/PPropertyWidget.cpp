@@ -979,7 +979,7 @@ QRealFieldWidget::QRealFieldWidget(Field* field)
     if (template_name == std::string(typeid(float).name()))
     {
         VarField<float>* f = TypeInfo::CastPointerDown<VarField<float>>(m_field);
-        slider->setValue(( double )f->getValue());
+        slider->setValue((double) f->getValue());
     }
     else if (template_name == std::string(typeid(double).name()))
     {
@@ -997,7 +997,7 @@ void QRealFieldWidget::changeValue(double value)
     if (template_name == std::string(typeid(float).name()))
     {
         VarField<float>* f = TypeInfo::CastPointerDown<VarField<float>>(m_field);
-        f->setValue(( float )value);
+        f->setValue((float) value);
         f->update();
     }
     else if (template_name == std::string(typeid(double).name()))
@@ -1084,7 +1084,7 @@ void QVector3FieldWidget::changeValue(double value)
     if (template_name == std::string(typeid(Vector3f).name()))
     {
         VarField<Vector3f>* f = TypeInfo::CastPointerDown<VarField<Vector3f>>(m_field);
-        f->setValue(Vector3f(( float )v1, ( float )v2, ( float )v3));
+        f->setValue(Vector3f((float) v1, (float) v2, (float) v3));
         f->update();
     }
     else if (template_name == std::string(typeid(Vector3d).name()))
@@ -1205,16 +1205,16 @@ void PPropertyWidget::updateContext(Base* base)
 
     std::vector<Field*>& fields = base->getAllFields();
 
-        for (Field * var : fields)
+    for (Field* var : fields)
+    {
+        if (var != nullptr)
+        {
+            if (var->getClassName() == std::string("Variable"))
             {
-                if (var != nullptr)
-                {
-                    if (var->getClassName() == std::string("Variable"))
-                    {
-                        this->addScalarFieldWidget(var);
-                    }
-                }
+                this->addScalarFieldWidget(var);
             }
+        }
+    }
 }
 
 void PPropertyWidget::addScalarFieldWidget(Field* field)

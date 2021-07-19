@@ -6,7 +6,7 @@
 
 void BufferManager::setupDeviceSortHandlers()
 {
-    void** tmpp = ( void** )&d_sort_handlers;
+    void** tmpp = (void**) &d_sort_handlers;
     cudaMalloc(tmpp,
                sizeof(SortHandler) * h_sort_handlers.size());
 
@@ -29,8 +29,8 @@ __global__ void reorder_by_handlers(SortHandler* handlers,
     for (int i = 0; i < num_handler; i++)
     {  //for each handler
         SortHandler h           = handlers[i];
-        char*       data        = ( char* )h.data;
-        char*       sorted_data = ( char* )h.sorted_data;
+        char*       data        = (char*) h.data;
+        char*       sorted_data = (char*) h.sorted_data;
 
         for (int k = 0; k < h.element_sz; k++)
         {
@@ -68,8 +68,8 @@ __global__ void reorderDataForward(SortHandler* handlers,
     for (int i = 0; i < num_handler; i++)
     {  //for each handler
         SortHandler h           = handlers[i];
-        char*       data        = ( char* )h.data;
-        char*       sorted_data = ( char* )h.sorted_data;
+        char*       data        = (char*) h.data;
+        char*       sorted_data = (char*) h.sorted_data;
 
         for (int k = 0; k < h.element_sz; k++)
         {

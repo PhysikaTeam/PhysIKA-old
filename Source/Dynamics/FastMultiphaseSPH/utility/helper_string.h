@@ -86,7 +86,7 @@ inline int stringRemoveDelimiter(char delimiter, const char* string)
         string_start++;
     }
 
-    if (string_start >= ( int )strlen(string) - 1)
+    if (string_start >= (int) strlen(string) - 1)
     {
         return 0;
     }
@@ -96,7 +96,7 @@ inline int stringRemoveDelimiter(char delimiter, const char* string)
 
 inline int getFileExtension(char* filename, char** extension)
 {
-    int string_length = ( int )strlen(filename);
+    int string_length = (int) strlen(filename);
 
     while (filename[string_length--] != '.')
     {
@@ -127,9 +127,9 @@ inline bool checkCmdLineFlag(const int argc, const char** argv, const char* stri
             const char* string_argv  = &argv[i][string_start];
 
             const char* equal_pos   = strchr(string_argv, '=');
-            int         argv_length = ( int )(equal_pos == 0 ? strlen(string_argv) : equal_pos - string_argv);
+            int         argv_length = (int) (equal_pos == 0 ? strlen(string_argv) : equal_pos - string_argv);
 
-            int length = ( int )strlen(string_ref);
+            int length = (int) strlen(string_ref);
 
             if (length == argv_length && !STRNCASECMP(string_argv, string_ref, length))
             {
@@ -154,14 +154,14 @@ inline bool getCmdLineArgumentValue(const int argc, const char** argv, const cha
         {
             int         string_start = stringRemoveDelimiter('-', argv[i]);
             const char* string_argv  = &argv[i][string_start];
-            int         length       = ( int )strlen(string_ref);
+            int         length       = (int) strlen(string_ref);
 
             if (!STRNCASECMP(string_argv, string_ref, length))
             {
-                if (length + 1 <= ( int )strlen(string_argv))
+                if (length + 1 <= (int) strlen(string_argv))
                 {
                     int auto_inc = (string_argv[length] == '=') ? 1 : 0;
-                    *value       = ( T )atoi(&string_argv[length + auto_inc]);
+                    *value       = (T) atoi(&string_argv[length + auto_inc]);
                 }
 
                 bFound = true;
@@ -184,11 +184,11 @@ inline int getCmdLineArgumentInt(const int argc, const char** argv, const char* 
         {
             int         string_start = stringRemoveDelimiter('-', argv[i]);
             const char* string_argv  = &argv[i][string_start];
-            int         length       = ( int )strlen(string_ref);
+            int         length       = (int) strlen(string_ref);
 
             if (!STRNCASECMP(string_argv, string_ref, length))
             {
-                if (length + 1 <= ( int )strlen(string_argv))
+                if (length + 1 <= (int) strlen(string_argv))
                 {
                     int auto_inc = (string_argv[length] == '=') ? 1 : 0;
                     value        = atoi(&string_argv[length + auto_inc]);
@@ -225,14 +225,14 @@ inline float getCmdLineArgumentFloat(const int argc, const char** argv, const ch
         {
             int         string_start = stringRemoveDelimiter('-', argv[i]);
             const char* string_argv  = &argv[i][string_start];
-            int         length       = ( int )strlen(string_ref);
+            int         length       = (int) strlen(string_ref);
 
             if (!STRNCASECMP(string_argv, string_ref, length))
             {
-                if (length + 1 <= ( int )strlen(string_argv))
+                if (length + 1 <= (int) strlen(string_argv))
                 {
                     int auto_inc = (string_argv[length] == '=') ? 1 : 0;
-                    value        = ( float )atof(&string_argv[length + auto_inc]);
+                    value        = (float) atof(&string_argv[length + auto_inc]);
                 }
                 else
                 {
@@ -264,8 +264,8 @@ inline bool getCmdLineArgumentString(const int argc, const char** argv, const ch
         for (int i = 1; i < argc; i++)
         {
             int   string_start = stringRemoveDelimiter('-', argv[i]);
-            char* string_argv  = ( char* )&argv[i][string_start];
-            int   length       = ( int )strlen(string_ref);
+            char* string_argv  = (char*) &argv[i][string_start];
+            int   length       = (int) strlen(string_ref);
 
             if (!STRNCASECMP(string_argv, string_ref, length))
             {
@@ -507,7 +507,7 @@ inline char* sdkFindFilePath(const char* filename, const char* executable_path)
             fclose(fp);
             // File found
             // returning an allocated array here for backwards compatibility reasons
-            char* file_path = ( char* )malloc(path.length() + 1);
+            char* file_path = (char*) malloc(path.length() + 1);
             STRCPY(file_path, path.length() + 1, path.c_str());
             return file_path;
         }

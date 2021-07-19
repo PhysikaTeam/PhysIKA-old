@@ -14,7 +14,7 @@ __device__ Real VB_VisWeight(const Real r, const Real h)
     {
         const Real d  = 1.0f - q;
         const Real RR = h * h;
-        return 45.0f / (13.0f * ( Real )M_PI * RR * h) * d;
+        return 45.0f / (13.0f * (Real) M_PI * RR * h) * d;
     }
 }
 

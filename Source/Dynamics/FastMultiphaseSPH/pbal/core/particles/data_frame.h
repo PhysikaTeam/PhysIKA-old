@@ -38,7 +38,7 @@ private:
         std::vector<T> copy(size());
         for (size_t i = 0; i < size(); i++)
             copy[i] = (*this)[perm[i]];
-        (*( BaseType* )this) = std::move(copy);
+        (*(BaseType*) this) = std::move(copy);
     }
 };
 

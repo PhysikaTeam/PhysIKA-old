@@ -53,13 +53,13 @@ protected:
     inline Real computeA()
     {
         Real phi = m_phi.getValue();
-        return ( Real )6.0 * m_c.getValue() * cos(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
+        return (Real) 6.0 * m_c.getValue() * cos(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
     }
 
     inline Real computeB()
     {
         Real phi = m_phi.getValue();
-        return ( Real )2.0f * sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
+        return (Real) 2.0f * sin(phi) / (3.0f + sin(phi)) / sqrt(3.0f);
     }
 
 private:

@@ -60,7 +60,7 @@ __global__ void ST_ComputeSurfaceTension(
 
     Real Vref = mass / restDensity;
 
-    float alpha = ( float )945.0f / (32.0f * ( float )M_PI * smoothingLength * smoothingLength * smoothingLength);
+    float alpha = (float) 945.0f / (32.0f * (float) M_PI * smoothingLength * smoothingLength * smoothingLength);
     float ceof  = 16000.0f * alpha;
 
     SmoothKernel<Real> kern;

@@ -25,8 +25,8 @@ public:
         for (; iter != buffer_dict.end(); iter++)
         {
             auto handler = iter->second;
-            auto srchead = ( char* )handler.h_data + r * handler.element_sz;
-            auto dsthead = ( char* )handler.d_data + r * handler.element_sz;
+            auto srchead = (char*) handler.h_data + r * handler.element_sz;
+            auto dsthead = (char*) handler.d_data + r * handler.element_sz;
 
             cudaMemcpy(dsthead,
                        srchead,
@@ -41,8 +41,8 @@ public:
         for (; iter != buffer_dict.end(); iter++)
         {
             auto handler = iter->second;
-            auto srchead = ( char* )handler.d_data + r * handler.element_sz;
-            auto dsthead = ( char* )handler.h_data + r * handler.element_sz;
+            auto srchead = (char*) handler.d_data + r * handler.element_sz;
+            auto dsthead = (char*) handler.h_data + r * handler.element_sz;
             cudaMemcpy(dsthead,
                        srchead,
                        len * handler.element_sz,
@@ -54,8 +54,8 @@ public:
     {
         for (auto& h : h_sort_handlers)
         {
-            char* srchead = ( char* )h.sorted_data;
-            char* dsthead = ( char* )h.data;
+            char* srchead = (char*) h.sorted_data;
+            char* dsthead = (char*) h.data;
             cudaMemcpy(dsthead,
                        srchead,
                        len * h.element_sz,
@@ -74,7 +74,7 @@ public:
         hh.sz         = max_nump;
         hh.element_sz = sizeof(T);
 
-        cudaMalloc(( void** )&device_data, max_nump * sizeof(T));
+        cudaMalloc((void**) &device_data, max_nump * sizeof(T));
         hh.d_data = device_data;
         hd_array.push_back(hh);
     }
@@ -100,7 +100,7 @@ public:
         T*& device_data,
         int max_nump)
     {
-        void** tmpp = ( void** )&device_data;
+        void** tmpp = (void**) &device_data;
         cudaMalloc(tmpp, sizeof(T) * max_nump);
     }
 };

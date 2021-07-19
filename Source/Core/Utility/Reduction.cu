@@ -146,7 +146,7 @@ T PhysIKA::Reduction<T>::accumulate(T* val, int num)
     if (num != m_num)
         allocAuxiliaryArray(num);
 
-    return Reduce(val, num, m_aux, PlusFunc<T>(), ( T )0);
+    return Reduce(val, num, m_aux, PlusFunc<T>(), (T) 0);
 }
 
 template <typename T>
@@ -155,7 +155,7 @@ T PhysIKA::Reduction<T>::maximum(T* val, int num)
     if (num != m_num)
         allocAuxiliaryArray(num);
 
-    return Reduce(val, num, m_aux, MaximumFunc<T>(), ( T )-FLT_MAX);
+    return Reduce(val, num, m_aux, MaximumFunc<T>(), (T) -FLT_MAX);
 }
 
 template <typename T>
@@ -164,7 +164,7 @@ T PhysIKA::Reduction<T>::minimum(T* val, int num)
     if (num != m_num)
         allocAuxiliaryArray(num);
 
-    return Reduce(val, num, m_aux, MinimumFunc<T>(), ( T )FLT_MAX);
+    return Reduce(val, num, m_aux, MinimumFunc<T>(), (T) FLT_MAX);
 }
 
 template <typename T>
@@ -173,7 +173,7 @@ T PhysIKA::Reduction<T>::average(T* val, int num)
     if (num != m_num)
         allocAuxiliaryArray(num);
 
-    return Reduce(val, num, m_aux, PlusFunc<T>(), ( T )0) / num;
+    return Reduce(val, num, m_aux, PlusFunc<T>(), (T) 0) / num;
 }
 
 template <typename T>
@@ -187,7 +187,7 @@ void Reduction<T>::allocAuxiliaryArray(int num)
     m_num = num;
 
     m_auxNum = getAuxiliaryArraySize(num);
-    cudaMalloc(( void** )&m_aux, m_auxNum * sizeof(T));
+    cudaMalloc((void**) &m_aux, m_auxNum * sizeof(T));
 }
 
 Reduction<Vector3f>::Reduction()
@@ -379,7 +379,7 @@ void Reduction<Vector3f>::allocAuxiliaryArray(int num)
     }
 
     m_num = num;
-    cudaMalloc(( void** )&m_aux, m_num * sizeof(float));
+    cudaMalloc((void**) &m_aux, m_num * sizeof(float));
 }
 
 Reduction<Vector3d>::Reduction()
@@ -565,6 +565,6 @@ void Reduction<Vector3d>::allocAuxiliaryArray(int num)
     }
 
     m_num = num;
-    cudaMalloc(( void** )&m_aux, m_num * sizeof(double));
+    cudaMalloc((void**) &m_aux, m_num * sizeof(double));
 }
 }  // namespace PhysIKA

@@ -105,7 +105,7 @@ void SurfaceMeshRender::updateRenderingContext()
 
     uint pDims = cudaGridSize(triangles->size(), BLOCK_SIZE);
 
-    DeviceArray<float3>* fverts = ( DeviceArray<float3>* )&verts;
+    DeviceArray<float3>* fverts = (DeviceArray<float3>*) &verts;
     SetupTriangles<<<pDims, BLOCK_SIZE>>>(*fverts, vertices, normals, colors, *triangles, make_float3(m_color[0], m_color[1], m_color[2]));
 
     m_triangleRender->setVertexArray(vertices);

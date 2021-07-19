@@ -1590,10 +1590,10 @@ void btLDLTAddTL(float* L, float* d, const float* a, int n, int nskip, HostArray
     W2[0] = float(0.0);
     for (int j = 1; j < n; ++j)
     {
-        W1[j] = W2[j] = ( float )(a[j] * SIMDSQRT12);
+        W1[j] = W2[j] = (float) (a[j] * SIMDSQRT12);
     }
-    float W11 = ( float )((float(0.5) * a[0] + 1) * SIMDSQRT12);
-    float W21 = ( float )((float(0.5) * a[0] - 1) * SIMDSQRT12);
+    float W11 = (float) ((float(0.5) * a[0] + 1) * SIMDSQRT12);
+    float W21 = (float) ((float(0.5) * a[0] - 1) * SIMDSQRT12);
 
     float alpha1 = float(1.0);
     float alpha2 = float(1.0);
@@ -1686,7 +1686,7 @@ void btLDLTRemove(float** A, const int* p, float* L, float* d, int n1, int n2, i
         float* tmp = &scratch[0];
         if (r == 0)
         {
-            float*    a   = ( float* )(( char* )tmp + LDLTAddTL_size);
+            float*    a   = (float*) ((char*) tmp + LDLTAddTL_size);
             const int p_0 = p[0];
             for (int i = 0; i < n2; ++i)
             {
@@ -1697,7 +1697,7 @@ void btLDLTRemove(float** A, const int* p, float* L, float* d, int n1, int n2, i
         }
         else
         {
-            float* t = ( float* )(( char* )tmp + LDLTAddTL_size);
+            float* t = (float*) ((char*) tmp + LDLTAddTL_size);
             {
                 float* Lcurr = L + r * nskip;
                 for (int i = 0; i < r; ++Lcurr, ++i)

@@ -80,7 +80,7 @@ public:
         bvh1.get()->collide(bvh2.get(), ret);
         if (ret.size())
         {
-            printf("check collision elapsed=%f ms.\n", ( float )(end - start) * 1000 / CLOCKS_PER_SEC);
+            printf("check collision elapsed=%f ms.\n", (float) (end - start) * 1000 / CLOCKS_PER_SEC);
             printf("to checked ret size%d\n", ret.size());
         }
         for (size_t i = 0; i < ret.size(); i++)

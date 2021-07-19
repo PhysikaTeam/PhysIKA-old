@@ -42,7 +42,7 @@ public:
 
     COMM_FUNC static const int dims()
     {
-        return ( const int )4;
+        return (const int) 4;
     }
 
     COMM_FUNC Scalar& operator[](unsigned int);
@@ -52,7 +52,7 @@ public:
     COMM_FUNC Vector<Scalar, 4>& operator+=(const Vector<Scalar, 4>&);
     COMM_FUNC const Vector<Scalar, 4> operator-(const Vector<Scalar, 4>&) const;
     COMM_FUNC Vector<Scalar, 4>& operator-=(const Vector<Scalar, 4>&);
-    COMM_FUNC const Vector<Scalar, 4> operator*( const Vector<Scalar, 4>& )const;
+    COMM_FUNC const Vector<Scalar, 4> operator*(const Vector<Scalar, 4>&) const;
     COMM_FUNC Vector<Scalar, 4>& operator*=(const Vector<Scalar, 4>&);
     COMM_FUNC const Vector<Scalar, 4> operator/(const Vector<Scalar, 4>&) const;
     COMM_FUNC Vector<Scalar, 4>& operator/=(const Vector<Scalar, 4>&);

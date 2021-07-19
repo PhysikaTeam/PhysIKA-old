@@ -36,7 +36,7 @@ COMM_FUNC Quaternion<Real>::Quaternion(Real x, Real y, Real z, Real w)
 template <typename Real>
 COMM_FUNC Quaternion<Real>::Quaternion(const Vector<Real, 3>& unit_axis, Real angle_rad)
 {
-    const Real a = angle_rad * ( Real )0.5;
+    const Real a = angle_rad * (Real) 0.5;
     const Real s = glm::sin(a);
     w_           = glm::cos(a);
     x_           = unit_axis[0] * s;
@@ -326,7 +326,7 @@ COMM_FUNC const Vector<Real, 3> Quaternion<Real>::rotate(const Vector<Real, 3> v
     const Real vx   = Real(2.0) * v[0];
     const Real vy   = Real(2.0) * v[1];
     const Real vz   = Real(2.0) * v[2];
-    const Real w2   = w_ * w_ - ( Real )0.5;
+    const Real w2   = w_ * w_ - (Real) 0.5;
     const Real dot2 = (x_ * vx + y_ * vy + z_ * vz);
     return Vector<Real, 3>(
         (vx * w2 + (y_ * vz - z_ * vy) * w_ + x_ * dot2),

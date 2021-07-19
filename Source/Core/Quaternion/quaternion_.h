@@ -106,8 +106,8 @@ public:
     COMM_FUNC Quaternion<Real> operator-(const Quaternion<Real>&) const;
     COMM_FUNC Quaternion<Real> operator-(void) const;
     COMM_FUNC Quaternion<Real> operator+(const Quaternion<Real>&) const;
-    COMM_FUNC Quaternion<Real> operator*( const Quaternion<Real>& )const;
-    COMM_FUNC Quaternion<Real> operator*( const Real& )const;
+    COMM_FUNC Quaternion<Real> operator*(const Quaternion<Real>&) const;
+    COMM_FUNC Quaternion<Real> operator*(const Real&) const;
     COMM_FUNC Quaternion<Real> operator/(const Real&) const;
     COMM_FUNC bool             operator==(const Quaternion<Real>&) const;
     COMM_FUNC bool             operator!=(const Quaternion<Real>&) const;
