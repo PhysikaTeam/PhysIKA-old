@@ -34,7 +34,7 @@ const char* line_render_vertex_shader = "#version 330 compatibility \n" STRINGIF
 
 const char* line_render_frag_shader = "#version 330 compatibility \n" STRINGIFY(
 
-    in vec3 frag_vert_col;
+    in vec3  frag_vert_col;
     out vec4 frag_color;
 
     void main() {

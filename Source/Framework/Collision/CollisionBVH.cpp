@@ -208,7 +208,7 @@ void bvh_node::construct(unsigned int* lst, unsigned int num, vec3f* s_fcenters,
     }
 
     // try to split them
-    _child = int(((long long) this - (long long) s_current) / sizeof(bvh_node));
+    _child = int((( long long )this - ( long long )s_current) / sizeof(bvh_node));
     s_current += 2;
 
     if (num == 2)
@@ -284,7 +284,7 @@ void bvh::reorder()
         {
             bvh_node* node = q.front();
             //int(((long long)node->left() - (long long) _nodes )/ sizeof(bvh_node))
-            buffer[((long long) node - (long long) _nodes) / sizeof(bvh_node)] = idx++;
+            buffer[(( long long )node - ( long long )_nodes) / sizeof(bvh_node)] = idx++;
             q.pop();
 
             if (!node->isLeaf())
@@ -306,7 +306,7 @@ void bvh::reorder()
             new_nodes[idx] = *node;
             if (!node->isLeaf())
             {
-                int loc               = int(((long long) node->left() - (long long) _nodes) / sizeof(bvh_node));
+                int loc               = int((( long long )node->left() - ( long long )_nodes) / sizeof(bvh_node));
                 new_nodes[idx]._child = idx - buffer[loc];
             }
             idx++;

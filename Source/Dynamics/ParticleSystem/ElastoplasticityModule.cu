@@ -32,7 +32,7 @@ __device__ Real Hardening(Real rho)
     if (rho >= 1000)
     {
         Real ratio = rho / 1000;
-        return pow((float) M_E, hardening * (ratio - 1.0f));
+        return pow(( float )M_E, hardening * (ratio - 1.0f));
     }
     else
         return 1.0f;
@@ -514,7 +514,7 @@ void ElastoplasticityModule<TDataType>::reconstructRestShape()
         this->inNeighborhood()->getValue(),
         this->m_restShape.getValue());
 
-    int total_num = thrust::reduce(thrust::device, index.getDataPtr(), index.getDataPtr() + index.size(), (int) 0, thrust::plus<int>());
+    int total_num = thrust::reduce(thrust::device, index.getDataPtr(), index.getDataPtr() + index.size(), ( int )0, thrust::plus<int>());
     thrust::exclusive_scan(thrust::device, index.getDataPtr(), index.getDataPtr() + index.size(), index.getDataPtr());
     elements.resize(total_num);
 

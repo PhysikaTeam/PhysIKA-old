@@ -10,7 +10,8 @@ namespace PhysIKA {
 template <typename Scalar>
 inline __host__ __device__ Scalar clamp(const Scalar& v, const Scalar& lo, const Scalar& hi)
 {
-    return (v < lo) ? lo : (hi < v) ? hi : v;
+    return (v < lo) ? lo : (hi < v) ? hi
+                                    : v;
 }
 
 template <typename Scalar>

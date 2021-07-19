@@ -197,7 +197,7 @@ void                             DemoHeightFieldSandRigid_Sphere::createScene()
         int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -235,7 +235,7 @@ void                             DemoHeightFieldSandRigid_Sphere::createScene()
         int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -391,7 +391,7 @@ void                          DemoHeightFieldSandLandRigid::createScene()
         int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -558,7 +558,7 @@ void                      DemoHeightFieldSandSlide::createScene()
         int  id     = rigidSim->addRigid(prigid);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         m_rigids.push_back(prigid);
         m_rigidRenders.push_back(renderModule);
@@ -835,7 +835,7 @@ void                               DemoHeightFieldSandLandMultiRigid::createScen
     // Add visualization module and topology module.
     m_car->m_chassis->setTopologyModule(chassisTri);
     auto chassisRender = std::make_shared<RigidMeshRender>(m_car->m_chassis->getTransformationFrame());
-    chassisRender->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+    chassisRender->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
     m_car->m_chassis->addVisualModule(chassisRender);
     interactionSolver->addSDF(chassisSDF, m_car->m_chassis->getId());
 
@@ -850,7 +850,7 @@ void                               DemoHeightFieldSandLandMultiRigid::createScen
     {
         m_car->m_wheels[i]->setTopologyModule(wheelTri[i]);
         auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_wheels[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         m_car->m_wheels[i]->addVisualModule(renderModule);
         interactionSolver->addSDF(wheelSDF[i], m_car->m_wheels[i]->getId());
 
@@ -1113,7 +1113,7 @@ void                                DemoHeightFieldSandLandMultiRigid2::createSc
     // Add visualization module and topology module.
     m_car->m_chassis->setTopologyModule(chassisTri);
     auto chassisRender = std::make_shared<RigidMeshRender>(m_car->m_chassis->getTransformationFrame());
-    chassisRender->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+    chassisRender->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
     m_car->m_chassis->addVisualModule(chassisRender);
     interactionSolver->addSDF(chassisSDF, m_car->m_chassis->getId());
 
@@ -1128,7 +1128,7 @@ void                                DemoHeightFieldSandLandMultiRigid2::createSc
     {
         m_car->m_wheels[i]->setTopologyModule(wheelTri[i]);
         auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_wheels[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         m_car->m_wheels[i]->addVisualModule(renderModule);
         interactionSolver->addSDF(wheelSDF[i], m_car->m_wheels[i]->getId());
 
@@ -1391,7 +1391,7 @@ void                                   DemoHeightFieldSandLandMultiRigidTest::cr
 
         wheel[i]->setTopologyModule(wheelTri[i]);
         auto renderModule = std::make_shared<RigidMeshRender>(wheel[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         wheel[i]->addVisualModule(renderModule);
         interactionSolver->addSDF(wheelSDF[i], wheel[i]->getId());
 

@@ -316,7 +316,7 @@ COMM_FUNC const Vector<Real, 3> Quaternion<Real>::rotate(const Vector<Real, 3> v
     const Real vx   = Real(2.0) * v[0];
     const Real vy   = Real(2.0) * v[1];
     const Real vz   = Real(2.0) * v[2];
-    const Real w2   = w_ * w_ - (Real) 0.5;
+    const Real w2   = w_ * w_ - ( Real )0.5;
     const Real dot2 = (x_ * vx + y_ * vy + z_ * vz);
     return Vector<Real, 3>(
         (vx * w2 + (y_ * vz - z_ * vy) * w_ + x_ * dot2),
@@ -330,7 +330,7 @@ COMM_FUNC void Quaternion<Real>::rotateVector(Vector<Real, 3>& v) const
     const Real vx   = Real(2.0) * v[0];
     const Real vy   = Real(2.0) * v[1];
     const Real vz   = Real(2.0) * v[2];
-    const Real w2   = w_ * w_ - (Real) 0.5;
+    const Real w2   = w_ * w_ - ( Real )0.5;
     const Real dot2 = (x_ * vx + y_ * vy + z_ * vz);
     v[0]            = vx * w2 + (y_ * vz - z_ * vy) * w_ + x_ * dot2;
     v[1]            = vy * w2 + (z_ * vx - x_ * vz) * w_ + y_ * dot2;
@@ -482,7 +482,7 @@ COMM_FUNC void Quaternion<Real>::getRotation(Real& rot, Vector<Real, 3>& axis) c
 template <typename Real>
 inline COMM_FUNC void Quaternion<Real>::setRotation(const Vector<Real, 3>& unit_axis, const Real& radAng)
 {
-    Real a = radAng * (Real) 0.5;
+    Real a = radAng * ( Real )0.5;
     Real s = glm::sin(a) / unit_axis.norm();
     w_     = glm::cos(a);
     x_     = unit_axis[0] * s;

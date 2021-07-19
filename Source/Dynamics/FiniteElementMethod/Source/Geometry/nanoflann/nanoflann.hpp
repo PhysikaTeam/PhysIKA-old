@@ -91,7 +91,7 @@ struct has_resize : std::false_type
 };
 
 template <typename T>
-struct has_resize<T, decltype((void) std::declval<T>().resize(1), 0)>
+struct has_resize<T, decltype(( void )std::declval<T>().resize(1), 0)>
     : std::true_type
 {
 };
@@ -102,7 +102,7 @@ struct has_assign : std::false_type
 };
 
 template <typename T>
-struct has_assign<T, decltype((void) std::declval<T>().assign(1, 0), 0)>
+struct has_assign<T, decltype(( void )std::declval<T>().assign(1, 0), 0)>
     : std::true_type
 {
 };
@@ -1383,7 +1383,7 @@ public:
         float epsError = 1 + searchParams.eps;
 
         distance_vector_t
-            dists;  // fixed or variable-sized container (depending on DIM)
+             dists;  // fixed or variable-sized container (depending on DIM)
         auto zero = static_cast<decltype(result.worstDist())>(0);
         assign(dists, (DIM > 0 ? DIM : BaseClassRef::dim),
                zero);  // Fill it with zeros.
@@ -2014,7 +2014,7 @@ protected:
     int dim;  //!< Dimensionality of each data point
 
     typedef KDTreeSingleIndexDynamicAdaptor_<Distance, DatasetAdaptor, DIM>
-        index_container_t;
+                                   index_container_t;
     std::vector<index_container_t> index;
 
 public:
@@ -2042,7 +2042,7 @@ private:
     void init()
     {
         typedef KDTreeSingleIndexDynamicAdaptor_<Distance, DatasetAdaptor, DIM>
-            my_kd_tree_t;
+                                  my_kd_tree_t;
         std::vector<my_kd_tree_t> index_(
             treeCount, my_kd_tree_t(dim /*dim*/, dataset, treeIndex, index_params));
         index = index_;

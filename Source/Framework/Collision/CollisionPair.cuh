@@ -18,11 +18,11 @@ typedef struct _g_pair
     void init(int length)
     {
         uint dummy[] = { 0 };
-        cutilSafeCall(cudaMalloc((void**) &_dIdx, 1 * sizeof(uint)));
+        cutilSafeCall(cudaMalloc(( void** )&_dIdx, 1 * sizeof(uint)));
         cutilSafeCall(cudaMemcpy(_dIdx, dummy, 1 * sizeof(uint), cudaMemcpyHostToDevice));
 
         _length = length;
-        cutilSafeCall(cudaMalloc((void**) &_dPairs, length * sizeof(int2)));
+        cutilSafeCall(cudaMalloc(( void** )&_dPairs, length * sizeof(int2)));
         cutilSafeCall(cudaMemset(_dPairs, 0, length * sizeof(uint2)));
         reportMemory("g_pair.init");
 
@@ -96,23 +96,23 @@ typedef struct _g_pairCCD
     void init(int length)
     {
         uint dummy[] = { 0 };
-        cutilSafeCall(cudaMalloc((void**) &_dIdx, 1 * sizeof(uint)));
+        cutilSafeCall(cudaMalloc(( void** )&_dIdx, 1 * sizeof(uint)));
         cutilSafeCall(cudaMemcpy(_dIdx, dummy, 1 * sizeof(uint), cudaMemcpyHostToDevice));
 
         _length = length;
-        cutilSafeCall(cudaMalloc((void**) &_dPairs, length * sizeof(int2)));
+        cutilSafeCall(cudaMalloc(( void** )&_dPairs, length * sizeof(int2)));
         cutilSafeCall(cudaMemset(_dPairs, 0, length * sizeof(int2)));
 
-        cutilSafeCall(cudaMalloc((void**) &_dVF_EE, length * sizeof(int)));
+        cutilSafeCall(cudaMalloc(( void** )&_dVF_EE, length * sizeof(int)));
         cutilSafeCall(cudaMemset(_dVF_EE, 0, length * sizeof(int)));
 
-        cutilSafeCall(cudaMalloc((void**) &_dv, length * sizeof(int4)));
+        cutilSafeCall(cudaMalloc(( void** )&_dv, length * sizeof(int4)));
         cutilSafeCall(cudaMemset(_dv, 0, length * sizeof(int4)));
 
-        cutilSafeCall(cudaMalloc((void**) &dist, length * sizeof(float)));
+        cutilSafeCall(cudaMalloc(( void** )&dist, length * sizeof(float)));
         cutilSafeCall(cudaMemset(dist, 0, length * sizeof(float)));
 
-        cutilSafeCall(cudaMalloc((void**) &CCD_res, length * sizeof(int)));
+        cutilSafeCall(cudaMalloc(( void** )&CCD_res, length * sizeof(int)));
         cutilSafeCall(cudaMemset(CCD_res, 0, length * sizeof(int)));
 
         reportMemory("g_pair.init");

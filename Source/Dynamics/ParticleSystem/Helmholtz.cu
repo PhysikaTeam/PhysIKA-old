@@ -473,7 +473,7 @@ bool Helmholtz<TDataType>::constrain()
         m_energy.resize(num);
 
         computeC(m_c, posFd->getValue(), neighborFd->getValue());
-        max_c   = thrust::reduce(thrust::device, m_c.getDataPtr(), m_c.getDataPtr() + m_c.size(), (Real) 0, thrust::maximum<Real>());
+        max_c   = thrust::reduce(thrust::device, m_c.getDataPtr(), m_c.getDataPtr() + m_c.size(), ( Real )0, thrust::maximum<Real>());
         m_scale = m_referenceRho / max_c;
 
         m_bSetup = true;

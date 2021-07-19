@@ -53,12 +53,12 @@ to be implemented. the first `nub' variables are assumed to have findex < 0.
 
 #ifndef BT_NAN
 static int btNanMask = 0x7F800001;
-#define BT_NAN (*(float*) &btNanMask)
+#define BT_NAN (*( float* )&btNanMask)
 #endif
 
 #ifndef BT_INFINITY
 static int btInfinityMask = 0x7F800000;
-#define BT_INFINITY (*(float*) &btInfinityMask)
+#define BT_INFINITY (*( float* )&btInfinityMask)
 inline int btGetInfinityMask()  //suppress stupid compiler warning
 {
     return btInfinityMask;

@@ -68,8 +68,8 @@ void Camera::setGL(float neardist, float fardist, float width, float height)
     GLfloat pos[] = { m_light[0], m_light[1], m_light[2], 1 };
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
-    m_width     = (int) width;
-    m_height    = (int) height;
+    m_width     = ( int )width;
+    m_height    = ( int )height;
     m_pixelarea = 4 * right * top / (width * height);
     m_near      = neardist;
     m_far       = fardist;

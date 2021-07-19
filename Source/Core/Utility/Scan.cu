@@ -409,8 +409,8 @@ void Scan::scanLargeEvenDeviceArray(int* output, int* input, int length, bool bc
     else
     {
         int *d_sums, *d_incr;
-        cudaMalloc((void**) &d_sums, blocks * sizeof(int));
-        cudaMalloc((void**) &d_incr, blocks * sizeof(int));
+        cudaMalloc(( void** )&d_sums, blocks * sizeof(int));
+        cudaMalloc(( void** )&d_incr, blocks * sizeof(int));
 
         if (bcao)
         {

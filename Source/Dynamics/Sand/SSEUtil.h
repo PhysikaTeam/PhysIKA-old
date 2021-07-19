@@ -32,7 +32,7 @@ inline void make_dimension2D(int width, int height, int bx, int by, dim3& gridDi
 
 __device__ inline float atomicMax(float* address, float val)
 {
-    int* address_as_i = (int*) address;
+    int* address_as_i = ( int* )address;
     int  old          = *address_as_i, assumed;
     do
     {

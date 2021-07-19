@@ -184,9 +184,9 @@ __global__ void PFSandSampler_sampleSurfacePoints(Vector3f* samples, Grid3f posi
         float  grid_fv = (i + posLoc.x) * sampleSpacing;
         float  grid_fu = (j + posLoc.y) * sampleSpacing;
 
-        Vector3d posCen = sandHeight.gridCenterPosition((int) grid_fv, (int) grid_fu);
-        posCen[0] += (grid_fv - (int) grid_fv) * sandHeight.getDx();
-        posCen[2] += (grid_fu - (int) grid_fu) * sandHeight.getDz();
+        Vector3d posCen = sandHeight.gridCenterPosition(( int )grid_fv, ( int )grid_fu);
+        posCen[0] += (grid_fv - ( int )grid_fv) * sandHeight.getDx();
+        posCen[2] += (grid_fu - ( int )grid_fu) * sandHeight.getDz();
 
         //if (i == 0 && j == 0)
         //	printf("%lf %lf, %lf %lf\n", posCen[0], posCen[2], sandHeight.getDx(), sandHeight.getDz());

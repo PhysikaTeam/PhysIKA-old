@@ -58,7 +58,7 @@ int main()
     std::vector<Vector3f> particles;
     for (int i = 0; i < numPoint; i++)
     {
-        Vector3f pi = CableStart + Cable * (float) i / numSegment;
+        Vector3f pi = CableStart + Cable * ( float )i / numSegment;
         particles.push_back(pi);
 
         if (i == 0)

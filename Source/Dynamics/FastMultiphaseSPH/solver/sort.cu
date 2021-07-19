@@ -74,7 +74,7 @@ __global__ void findCellStart(
     uint* grid_cell_end,
     int   num_particles)
 {
-    uint              index = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
+    uint                   index = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
     extern __shared__ uint sharedHash[];
     uint                   hash;
 
@@ -142,7 +142,7 @@ __global__ void FindCellStart(
     uint* indicesAfterSort,
     int   num_particles)
 {
-    uint              index = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
+    uint                   index = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
     extern __shared__ uint sharedHash[];
     uint                   hash;
 

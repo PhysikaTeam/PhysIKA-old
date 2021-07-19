@@ -89,7 +89,7 @@ TabToolbar::TabToolbar(QWidget* parent, unsigned _groupMaxHeight, unsigned _grou
     QObject::connect(tabBar, &QTabWidget::tabBarDoubleClicked, hideAction, &QAction::trigger);
     QObject::connect(tabBar, &QTabWidget::tabBarClicked, this, &TabToolbar::TabClicked);
     QObject::connect(tabBar, &QTabWidget::currentChanged, this, &TabToolbar::CurrentTabChanged);
-    QObject::connect((QApplication*) QApplication::instance(), &QApplication::focusChanged, this, &TabToolbar::FocusChanged);
+    QObject::connect(( QApplication* )QApplication::instance(), &QApplication::focusChanged, this, &TabToolbar::FocusChanged);
     cornerLayout->addWidget(hideButton);
     tabBar->setCornerWidget(cornerActions);
 
@@ -112,7 +112,7 @@ bool TabToolbar::event(QEvent* event)
 
 void TabToolbar::FocusChanged(QWidget* old, QWidget* now)
 {
-    (void) old;
+    ( void )old;
     if (now && now != this)
     {
         if (isMinimized && isShown)
@@ -250,7 +250,7 @@ void TabToolbar::HideAt(int index)
 
 void TabToolbar::HideTab(int index)
 {
-    (void) index;
+    ( void )index;
     Page*          page = static_cast<Page*>(sender());
     QSignalBlocker blocker(page);
     for (int i = 0; i < tabBar->count(); i++)

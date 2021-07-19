@@ -101,8 +101,7 @@ static void FillStyle(QString& style, const StyleParams& params)
             case QVariant::Int:
                 style = style.arg(property.toInt());
                 break;
-            case QVariant::UserType:
-            {
+            case QVariant::UserType: {
                 const Colors& colors = property.value<Colors>();
                 if (colors.size() == 0)
                     throw std::runtime_error("Some property has no colors!");

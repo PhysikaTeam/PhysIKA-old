@@ -36,8 +36,8 @@ void GridHash<TDataType>::setSpace(Real _h, Coord _lo, Coord _hi)
 
     //		npMax = 128;
 
-    cuSafeCall(cudaMalloc((void**) &counter, num * sizeof(int)));
-    cuSafeCall(cudaMalloc((void**) &index, num * sizeof(int)));
+    cuSafeCall(cudaMalloc(( void** )&counter, num * sizeof(int)));
+    cuSafeCall(cudaMalloc(( void** )&index, num * sizeof(int)));
 
     if (m_reduce != nullptr)
     {
@@ -104,9 +104,9 @@ __global__ void K_AddTriNumber(GridHash<TDataType> hash, Array<typename Topology
     kmax++;
 
     int addi, addj, addk;
-    addi = int(sqrt((Real) imax - (Real) imin + 1));
-    addj = int(sqrt((Real) jmax - (Real) jmin + 1));
-    addk = int(sqrt((Real) kmax - (Real) kmin + 1));
+    addi = int(sqrt(( Real )imax - ( Real )imin + 1));
+    addj = int(sqrt(( Real )jmax - ( Real )jmin + 1));
+    addk = int(sqrt(( Real )kmax - ( Real )kmin + 1));
 
     Triangle3D t3d = Triangle3D(pos[tri[pId][0]], pos[tri[pId][1]], pos[tri[pId][2]]);
     //printf("%d %d %d\n",addi,addj,addk);
@@ -215,9 +215,9 @@ __global__ void K_AddTriElement(GridHash<TDataType> hash, Array<typename Topolog
     kmax++;
 
     int addi, addj, addk;
-    addi = int(sqrt((Real) imax - (Real) imin + 1));
-    addj = int(sqrt((Real) jmax - (Real) jmin + 1));
-    addk = int(sqrt((Real) kmax - (Real) kmin + 1));
+    addi = int(sqrt(( Real )imax - ( Real )imin + 1));
+    addj = int(sqrt(( Real )jmax - ( Real )jmin + 1));
+    addk = int(sqrt(( Real )kmax - ( Real )kmin + 1));
 
     Triangle3D t3d = Triangle3D(pos[tri[pId][0]], pos[tri[pId][1]], pos[tri[pId][2]]);
 
@@ -289,7 +289,7 @@ void GridHash<TDataType>::construct(DeviceArray<Coord>& pos)
     {
         cuSafeCall(cudaFree(ids));
     }
-    cuSafeCall(cudaMalloc((void**) &ids, particle_num * sizeof(int)));
+    cuSafeCall(cudaMalloc(( void** )&ids, particle_num * sizeof(int)));
 
     //		std::cout << "Particle number: " << particle_num << std::endl;
 
@@ -319,7 +319,7 @@ void GridHash<TDataType>::construct(DeviceArray<Coord>& pos, DeviceArray<Triangl
     {
         cuSafeCall(cudaFree(ids));
     }
-    cuSafeCall(cudaMalloc((void**) &ids, particle_num * sizeof(int)));
+    cuSafeCall(cudaMalloc(( void** )&ids, particle_num * sizeof(int)));
 
     K_AddTriElement<<<pDimsTri, BLOCK_SIZE>>>(*this, tri, Tri_pos);
 

@@ -1326,7 +1326,7 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TTriangle3D<Real>& tri
         //compute a right - handed orthonormal basis
         Coord3D W = direction;
         W.normalize();
-        Coord3D U = W[0] > W[1] ? Coord3D(-W[2], (Real) 0, W[0]) : Coord3D((Real) 0, W[2], -W[1]);
+        Coord3D U = W[0] > W[1] ? Coord3D(-W[2], ( Real )0, W[0]) : Coord3D(( Real )0, W[2], -W[1]);
         Coord3D V = W.cross(U);
 
         Real UdE0   = U.dot(e0);
@@ -1335,14 +1335,14 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TTriangle3D<Real>& tri
         Real VdE0   = V.dot(e0);
         Real VdE1   = V.dot(e1);
         Real VdDiff = V.dot(diff);
-        Real invDet = ((Real) 1) / (UdE0 * VdE1 - UdE1 * VdE0);
+        Real invDet = (( Real )1) / (UdE0 * VdE1 - UdE1 * VdE0);
 
         // Barycentric coordinates for the point of intersection.
         Real u  = (VdE1 * UdDiff - UdE1 * VdDiff) * invDet;
         Real v  = (UdE0 * VdDiff - VdE0 * UdDiff) * invDet;
-        Real b0 = (Real) 1 - u - v;
+        Real b0 = ( Real )1 - u - v;
 
-        if (b0 >= (Real) 0 && u >= (Real) 0 && v >= (Real) 0)
+        if (b0 >= ( Real )0 && u >= ( Real )0 && v >= ( Real )0)
         {
             // Line parameter for the point of intersection.
             Real DdE0   = direction.dot(e0);
@@ -1399,7 +1399,7 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TRectangle3D<Real>& re
         Coord3D diff = origin - rectangle.center;
         Coord3D W    = direction;
         W.normalize();
-        Coord3D U      = W[0] > W[1] ? Coord3D(-W[2], (Real) 0, W[0]) : Coord3D((Real) 0, W[2], -W[1]);
+        Coord3D U      = W[0] > W[1] ? Coord3D(-W[2], ( Real )0, W[0]) : Coord3D(( Real )0, W[2], -W[1]);
         Coord3D V      = W.cross(U);
         Real    UdD0   = U.dot(rectangle.axis[0]);
         Real    UdD1   = U.dot(rectangle.axis[1]);
@@ -1407,7 +1407,7 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TRectangle3D<Real>& re
         Real    VdD0   = V.dot(rectangle.axis[0]);
         Real    VdD1   = V.dot(rectangle.axis[1]);
         Real    VdPmC  = V.dot(diff);
-        Real    invDet = ((Real) 1) / (UdD0 * VdD1 - UdD1 * VdD0);
+        Real    invDet = (( Real )1) / (UdD0 * VdD1 - UdD1 * VdD0);
 
         // Rectangle coordinates for the point of intersection.
         Real s0 = (VdD1 * UdPmC - UdD1 * VdPmC) * invDet;
@@ -1487,15 +1487,15 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TAlignedBox3D<Real>& b
 
             Real PpE1  = pt[i1] + extent[i1];
             Real delta = prod0 - dir[i0] * PpE1;
-            if (delta >= (Real) 0)
+            if (delta >= ( Real )0)
             {
-                Real invLSqr = ((Real) 1) / (dir[i0] * dir[i0] + dir[i1] * dir[i1]);
+                Real invLSqr = (( Real )1) / (dir[i0] * dir[i0] + dir[i1] * dir[i1]);
                 pt[i1]       = -extent[i1];
                 t            = -(dir[i0] * PmE0 + dir[i1] * PpE1) * invLSqr;
             }
             else
             {
-                Real inv = ((Real) 1) / dir[i0];
+                Real inv = (( Real )1) / dir[i0];
                 pt[i1] -= prod0 * inv;
                 t = -PmE0 * inv;
             }
@@ -1507,15 +1507,15 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TAlignedBox3D<Real>& b
 
             Real PpE0  = pt[i0] + extent[i0];
             Real delta = prod1 - dir[i1] * PpE0;
-            if (delta >= (Real) 0)
+            if (delta >= ( Real )0)
             {
-                Real invLSqr = ((Real) 1) / (dir[i0] * dir[i0] + dir[i1] * dir[i1]);
+                Real invLSqr = (( Real )1) / (dir[i0] * dir[i0] + dir[i1] * dir[i1]);
                 pt[i0]       = -extent[i0];
                 t            = -(dir[i0] * PpE0 + dir[i1] * PmE1) * invLSqr;
             }
             else
             {
-                Real inv = ((Real) 1) / dir[i1];
+                Real inv = (( Real )1) / dir[i1];
                 pt[i0] -= prod1 * inv;
                 t = -PmE1 * inv;
             }
@@ -1543,7 +1543,7 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TAlignedBox3D<Real>& b
             {
                 // v[i1] >= -e[i1], v[i2] >= -e[i2] (distance = 0)
                 pnt[i0] = boxExtent[i0];
-                inv     = ((Real) 1) / dir[i0];
+                inv     = (( Real )1) / dir[i0];
                 pnt[i1] -= dir[i1] * PmE[i0] * inv;
                 pnt[i2] -= dir[i2] * PmE[i0] * inv;
                 final_t = -PmE[i0] * inv;
@@ -1553,7 +1553,7 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TAlignedBox3D<Real>& b
                 // v[i1] >= -e[i1], v[i2] < -e[i2]
                 lenSqr = dir[i0] * dir[i0] + dir[i2] * dir[i2];
                 tmp    = lenSqr * PpE[i1] - dir[i1] * (dir[i0] * PmE[i0] + dir[i2] * PpE[i2]);
-                if (tmp <= ((Real) 2) * lenSqr * boxExtent[i1])
+                if (tmp <= (( Real )2) * lenSqr * boxExtent[i1])
                 {
                     t = tmp / lenSqr;
                     lenSqr += dir[i1] * dir[i1];
@@ -1586,7 +1586,7 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TAlignedBox3D<Real>& b
                 // v[i1] < -e[i1], v[i2] >= -e[i2]
                 lenSqr = dir[i0] * dir[i0] + dir[i1] * dir[i1];
                 tmp    = lenSqr * PpE[i2] - dir[i2] * (dir[i0] * PmE[i0] + dir[i1] * PpE[i1]);
-                if (tmp <= ((Real) 2) * lenSqr * boxExtent[i2])
+                if (tmp <= (( Real )2) * lenSqr * boxExtent[i2])
                 {
                     t = tmp / lenSqr;
                     lenSqr += dir[i2] * dir[i2];
@@ -1616,10 +1616,10 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TAlignedBox3D<Real>& b
                 // v[i1] < -e[i1], v[i2] < -e[i2]
                 lenSqr = dir[i0] * dir[i0] + dir[i2] * dir[i2];
                 tmp    = lenSqr * PpE[i1] - dir[i1] * (dir[i0] * PmE[i0] + dir[i2] * PpE[i2]);
-                if (tmp >= (Real) 0)
+                if (tmp >= ( Real )0)
                 {
                     // v[i1]-edge is closest
-                    if (tmp <= ((Real) 2) * lenSqr * boxExtent[i1])
+                    if (tmp <= (( Real )2) * lenSqr * boxExtent[i1])
                     {
                         t = tmp / lenSqr;
                         lenSqr += dir[i1] * dir[i1];
@@ -1649,10 +1649,10 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TAlignedBox3D<Real>& b
 
                 lenSqr = dir[i0] * dir[i0] + dir[i1] * dir[i1];
                 tmp    = lenSqr * PpE[i2] - dir[i2] * (dir[i0] * PmE[i0] + dir[i1] * PpE[i1]);
-                if (tmp >= (Real) 0)
+                if (tmp >= ( Real )0)
                 {
                     // v[i2]-edge is closest
-                    if (tmp <= ((Real) 2) * lenSqr * boxExtent[i2])
+                    if (tmp <= (( Real )2) * lenSqr * boxExtent[i2])
                     {
                         t = tmp / lenSqr;
                         lenSqr += dir[i2] * dir[i2];
@@ -1698,7 +1698,7 @@ COMM_FUNC TSegment3D<Real> TLine3D<Real>::proximity(const TAlignedBox3D<Real>& b
     bool reflect[3];
     for (int i = 0; i < 3; ++i)
     {
-        if (lineDir[i] < (Real) 0)
+        if (lineDir[i] < ( Real )0)
         {
             point[i]   = -point[i];
             lineDir[i] = -lineDir[i];
@@ -1964,7 +1964,7 @@ COMM_FUNC int TLine3D<Real>::intersect(const TTriangle3D<Real>& triangle, TPoint
     }
     else if (DdN <= -REAL_EPSILON)
     {
-        sign = (Real) -1;
+        sign = ( Real )-1;
         DdN  = -DdN;
     }
     else
@@ -1973,16 +1973,16 @@ COMM_FUNC int TLine3D<Real>::intersect(const TTriangle3D<Real>& triangle, TPoint
     }
 
     Real DdQxE1 = sign * direction.dot(diff.cross(e1));
-    if (DdQxE1 >= (Real) 0)
+    if (DdQxE1 >= ( Real )0)
     {
         Real DdE0xQ = sign * direction.dot(e0.cross(diff));
-        if (DdE0xQ >= (Real) 0)
+        if (DdE0xQ >= ( Real )0)
         {
             if (DdQxE1 + DdE0xQ <= DdN)
             {
                 // Line intersects triangle.
                 Real QdN = -sign * diff.dot(normal);
-                Real inv = (Real) 1 / DdN;
+                Real inv = ( Real )1 / DdN;
 
                 Real t         = QdN * inv;
                 interPt.origin = origin + t * direction;
@@ -2006,14 +2006,14 @@ COMM_FUNC int TLine3D<Real>::intersect(const TSphere3D<Real>& sphere, TSegment3D
 
     // Intersection occurs when Q(t) has real roots.
     Real discr = a1 * a1 - a0;
-    if (discr > (Real) 0)
+    if (discr > ( Real )0)
     {
         Real root             = glm::sqrt(discr);
         interSeg.startPoint() = origin + (-a1 - root) * direction;
         interSeg.endPoint()   = origin + (-a1 + root) * direction;
         return 2;
     }
-    else if (discr < (Real) 0)
+    else if (discr < ( Real )0)
     {
         return 0;
     }
@@ -2427,7 +2427,7 @@ COMM_FUNC int TRay3D<Real>::intersect(const TTriangle3D<Real>& triangle, TPoint3
     }
     else if (DdN <= -REAL_EPSILON)
     {
-        sign = (Real) -1;
+        sign = ( Real )-1;
         DdN  = -DdN;
     }
     else
@@ -2436,16 +2436,16 @@ COMM_FUNC int TRay3D<Real>::intersect(const TTriangle3D<Real>& triangle, TPoint3
     }
 
     Real DdQxE1 = sign * direction.dot(diff.cross(e1));
-    if (DdQxE1 >= (Real) 0)
+    if (DdQxE1 >= ( Real )0)
     {
         Real DdE0xQ = sign * direction.dot(e0.cross(diff));
-        if (DdE0xQ >= (Real) 0)
+        if (DdE0xQ >= ( Real )0)
         {
             if (DdQxE1 + DdE0xQ <= DdN)
             {
                 // Line intersects triangle.
                 Real QdN = -sign * diff.dot(normal);
-                Real inv = (Real) 1 / DdN;
+                Real inv = ( Real )1 / DdN;
 
                 Real t = QdN * inv;
 
@@ -2475,7 +2475,7 @@ COMM_FUNC int TRay3D<Real>::intersect(const TSphere3D<Real>& sphere, TSegment3D<
 
     // Intersection occurs when Q(t) has real roots.
     Real discr = a1 * a1 - a0;
-    if (discr > (Real) 0)
+    if (discr > ( Real )0)
     {
         Real root = glm::sqrt(discr);
 
@@ -2819,7 +2819,7 @@ COMM_FUNC bool TSegment3D<Real>::intersect(const TTriangle3D<Real>& triangle, TP
     }
     else if (DdN <= -REAL_EPSILON)
     {
-        sign = (Real) -1;
+        sign = ( Real )-1;
         DdN  = -DdN;
     }
     else
@@ -2828,16 +2828,16 @@ COMM_FUNC bool TSegment3D<Real>::intersect(const TTriangle3D<Real>& triangle, TP
     }
 
     Real DdQxE1 = sign * dir.dot(diff.cross(e1));
-    if (DdQxE1 >= (Real) 0)
+    if (DdQxE1 >= ( Real )0)
     {
         Real DdE0xQ = sign * dir.dot(e0.cross(diff));
-        if (DdE0xQ >= (Real) 0)
+        if (DdE0xQ >= ( Real )0)
         {
             if (DdQxE1 + DdE0xQ <= DdN)
             {
                 // Line intersects triangle.
                 Real QdN = -sign * diff.dot(normal);
-                Real inv = (Real) 1 / DdN;
+                Real inv = ( Real )1 / DdN;
 
                 Real t = QdN * inv;
 
@@ -2868,7 +2868,7 @@ COMM_FUNC int TSegment3D<Real>::intersect(const TSphere3D<Real>& sphere, TSegmen
 
     // Intersection occurs when Q(t) has real roots.
     Real discr = a1 * a1 - a0;
-    if (discr > (Real) 0)
+    if (discr > ( Real )0)
     {
         Real root = glm::sqrt(discr);
         Real t1   = max(-a1 - root, Real(0));
@@ -2889,7 +2889,7 @@ COMM_FUNC int TSegment3D<Real>::intersect(const TSphere3D<Real>& sphere, TSegmen
             return 1;
         }
     }
-    else if (discr < (Real) 0)
+    else if (discr < ( Real )0)
     {
         return 0;
     }
@@ -3081,9 +3081,9 @@ COMM_FUNC bool TTriangle3D<Real>::computeBarycentrics(const Coord3D& p, Param& b
 {
     if (!isValid())
     {
-        bary.u = (Real) 0;
-        bary.v = (Real) 0;
-        bary.w = (Real) 0;
+        bary.u = ( Real )0;
+        bary.v = ( Real )0;
+        bary.w = ( Real )0;
 
         return false;
     }
@@ -3208,8 +3208,8 @@ COMM_FUNC bool TRectangle3D<Real>::computeParams(const Coord3D& p, Param& par) c
 {
     if (!isValid())
     {
-        par.u = (Real) 0;
-        par.v = (Real) 0;
+        par.u = ( Real )0;
+        par.v = ( Real )0;
 
         return false;
     }

@@ -58,12 +58,12 @@ public:                                            \
     virtual const ClassInfo* getClassInfo() const; \
     static Object*           createObject();
 
-#define IMPLEMENT_CLASS_COMMON(name, func)                                                    \
-    const ClassInfo* name::ms_classinfo = new ClassInfo((#name), (ObjectConstructorFn) func); \
-                                                                                              \
-    const ClassInfo* name::getClassInfo() const                                               \
-    {                                                                                         \
-        return name::ms_classinfo;                                                            \
+#define IMPLEMENT_CLASS_COMMON(name, func)                                                     \
+    const ClassInfo* name::ms_classinfo = new ClassInfo((#name), ( ObjectConstructorFn )func); \
+                                                                                               \
+    const ClassInfo* name::getClassInfo() const                                                \
+    {                                                                                          \
+        return name::ms_classinfo;                                                             \
     }
 
 #define IMPLEMENT_CLASS(name)                        \
@@ -86,7 +86,7 @@ public:                                            \
 #define IMPLEMENT_CLASS_COMMON_1(name, T1, func)                                                                                                           \
     template <typename T1>                                                                                                                                 \
     const ClassInfo name<T1>::ms_classinfo((std::string(_STR(name)).append(std::string("<"))).append(std::string(T1::getName())).append(std::string(">")), \
-                                           (ObjectConstructorFn) func);                                                                                    \
+                                           ( ObjectConstructorFn )func);                                                                                   \
                                                                                                                                                            \
     template <typename T1>                                                                                                                                 \
     const ClassInfo* name<T1>::getClassInfo() const                                                                                                        \

@@ -77,8 +77,8 @@ public:
     COMM_FUNC Scalar norm() const;
     COMM_FUNC Scalar normSquared() const;
     COMM_FUNC Vector<Scalar, 2>& normalize();
-    COMM_FUNC Scalar cross(const Vector<Scalar, 2>&) const;
-    COMM_FUNC Scalar dot(const Vector<Scalar, 2>&) const;
+    COMM_FUNC Scalar             cross(const Vector<Scalar, 2>&) const;
+    COMM_FUNC Scalar             dot(const Vector<Scalar, 2>&) const;
     COMM_FUNC Vector<Scalar, 2> minimum(const Vector<Scalar, 2>&) const;
     COMM_FUNC Vector<Scalar, 2> maximum(const Vector<Scalar, 2>&) const;
     //    COMM_FUNC const SquareMatrix<Scalar,2> outerProduct(const Vector<Scalar,2>&) const;

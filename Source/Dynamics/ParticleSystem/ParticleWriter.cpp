@@ -50,7 +50,7 @@ bool PhysIKA::ParticleWriter<TDataType>::execute()
 
     int total_num = m_position.getElementCount();
 
-    output.write((char*) &total_num, sizeof(int));
+    output.write(( char* )&total_num, sizeof(int));
 
     if (total_num == 0)
     {
@@ -69,10 +69,10 @@ bool PhysIKA::ParticleWriter<TDataType>::execute()
 
     for (int i = 0; i < total_num; i++)
     {
-        output.write((char*) &(host_position[i][0]), sizeof(Real));
-        output.write((char*) &(host_position[i][1]), sizeof(Real));
-        output.write((char*) &(host_position[i][2]), sizeof(Real));
-        output.write((char*) &(host_mapping[i]), sizeof(Real));
+        output.write(( char* )&(host_position[i][0]), sizeof(Real));
+        output.write(( char* )&(host_position[i][1]), sizeof(Real));
+        output.write(( char* )&(host_position[i][2]), sizeof(Real));
+        output.write(( char* )&(host_mapping[i]), sizeof(Real));
     }
 
     output.close();

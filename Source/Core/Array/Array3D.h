@@ -133,7 +133,7 @@ void Array3D<T, deviceType>::Reset()
     switch (deviceType)
     {
         case CPU:
-            memset((void*) m_data, 0, m_totalNum * sizeof(T));
+            memset(( void* )m_data, 0, m_totalNum * sizeof(T));
             break;
         case GPU:
             cudaMemset(m_data, 0, m_totalNum * sizeof(T));
@@ -178,7 +178,7 @@ void Array3D<T, deviceType>::AllocMemory()
             m_data = new T[m_totalNum];
             break;
         case GPU:
-            (cudaMalloc((void**) &m_data, m_totalNum * sizeof(T)));
+            (cudaMalloc(( void** )&m_data, m_totalNum * sizeof(T)));
             break;
         default:
             break;

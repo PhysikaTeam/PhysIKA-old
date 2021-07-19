@@ -20,7 +20,7 @@ __device__ inline float kernGradientMeshPBD(const float r, const float h)
     {
         const Real d  = 1.0 - q;
         const Real hh = h * h;
-        return -45.0f / ((Real) M_PI * hh * h) * (1.0f / 3.0f * (hh * h - r * r * r) - 1.0f / 2.0f / h * (hh * hh - r * r * r * r) + 1.0f / 5.0f / hh * (hh * hh * h - r * r * r * r * r));
+        return -45.0f / (( Real )M_PI * hh * h) * (1.0f / 3.0f * (hh * h - r * r * r) - 1.0f / 2.0f / h * (hh * hh - r * r * r * r) + 1.0f / 5.0f / hh * (hh * hh * h - r * r * r * r * r));
     }
     /*
 			const Real q = r / h;
@@ -361,7 +361,7 @@ __global__ void K_ComputeDisplacementMesh(
                     / (sampling_distance * sampling_distance * sampling_distance);
                 //a_ij *= (dis_n / abs(dis_n));
 
-                Coord dp_ij = 40.0f * (pos_i - nearest_pt.origin) * (lamda_i) *a_ij * (1.0 / (pos_i - nearest_pt.origin).norm());
+                Coord dp_ij = 40.0f * (pos_i - nearest_pt.origin) * ( lamda_i )*a_ij * (1.0 / (pos_i - nearest_pt.origin).norm());
 
                 //if (a_ij < 0)
                 {

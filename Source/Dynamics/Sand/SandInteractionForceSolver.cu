@@ -244,7 +244,7 @@ void SandInteractionForceSolver::computeSingleBuoyance(int i, Real dt)
 			Vector3d(), thrust::plus<Vector3d>())*/
         (0, 0, 0);
 
-    double relvdf = thrust::reduce(thrust::device, m_relvDf.begin(), m_relvDf.begin() + m_relvDf.size(), (double) 0.0, thrust::plus<double>());
+    double relvdf = thrust::reduce(thrust::device, m_relvDf.begin(), m_relvDf.begin() + m_relvDf.size(), ( double )0.0, thrust::plus<double>());
 
     //// debug
     //HostDArray<Vector3d> hostF;
@@ -516,7 +516,7 @@ void SandInteractionForceSolver::computeSingleDragForce(int i, Real dt)
 
     Vector3d dragT = thrust::reduce(thrust::device, m_dragT.begin(), m_dragT.begin() + m_dragT.size(), Vector3d(), thrust::plus<Vector3d>());
 
-    double relvdf = thrust::reduce(thrust::device, m_relvDf.begin(), m_relvDf.begin() + m_relvDf.size(), (double) 0.0, thrust::plus<double>());
+    double relvdf = thrust::reduce(thrust::device, m_relvDf.begin(), m_relvDf.begin() + m_relvDf.size(), ( double )0.0, thrust::plus<double>());
 
     timer.stop();
     //printf("      DragForce summation time:  %lf \n", timer.getElapsedTime());

@@ -71,7 +71,7 @@ TabToolbar* Builder::CreateTabToolbar(const QString& configPath)
     const int           groupHeight   = root["groupHeight"].toInt();
     const int           groupRowCount = root["groupRowCount"].toInt();
     const bool          hasSpecialTab = root["specialTab"].toBool();
-    TabToolbar*         tt            = new TabToolbar((QWidget*) parent(), groupHeight, groupRowCount);
+    TabToolbar*         tt            = new TabToolbar(( QWidget* )parent(), groupHeight, groupRowCount);
 
     auto CreateCustomWidget = [this, tt](const QString& name, const QJsonObject& item) {
         if (!customWidgetCreators.contains(name))
@@ -113,7 +113,7 @@ TabToolbar* Builder::CreateTabToolbar(const QString& configPath)
     for (int i = 0; i < menusList.size(); i++)
     {
         const QJsonObject menuObject = menusList.at(i).toObject();
-        QMenu*            menu       = new QMenu((QWidget*) parent());
+        QMenu*            menu       = new QMenu(( QWidget* )parent());
         menu->setObjectName(menuObject["name"].toString());
         menusMap[menu->objectName()]   = menu;
         guiWidgets[menu->objectName()] = menu;
@@ -200,8 +200,7 @@ TabToolbar* Builder::CreateTabToolbar(const QString& configPath)
                                     subGroup->AddHorizontalButtons(horizActions);
                                     break;
                                 }
-                                default:
-                                {
+                                default: {
                                     QWidget* w = CreateCustomWidget(sgItemType, sgItem);
                                     subGroup->AddWidget(w);
                                     break;

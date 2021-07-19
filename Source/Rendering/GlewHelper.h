@@ -570,50 +570,42 @@ inline GLenum openGLCheckCurFramebufferStatus(GLenum target = GL_FRAMEBUFFER)
         case GL_FRAMEBUFFER_COMPLETE:
             break;
 
-        case GL_FRAMEBUFFER_UNDEFINED:
-        {
+        case GL_FRAMEBUFFER_UNDEFINED: {
             std::cerr << "framebuffer error: GL_FRAMEBUFFER_UNDEFINED " << std::endl;
             break;
         }
 
-        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-        {
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: {
             std::cerr << "framebuffer error: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT " << std::endl;
             break;
         }
 
-        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-        {
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: {
             std::cerr << "framebuffer error: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT " << std::endl;
             break;
         }
 
-        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-        {
+        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: {
             std::cerr << "framebuffer error: GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" << std::endl;
             break;
         }
 
-        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-        {
+        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER: {
             std::cerr << "framebuffer error: GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER" << std::endl;
             break;
         }
 
-        case GL_FRAMEBUFFER_UNSUPPORTED:
-        {
+        case GL_FRAMEBUFFER_UNSUPPORTED: {
             std::cerr << "framebuffer error: GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;
             break;
         }
 
-        case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-        {
+        case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: {
             std::cerr << "framebuffer error: GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" << std::endl;
             break;
         }
 
-        default:
-        {
+        default: {
             std::cerr << "framebuffer error: unknown" << std::endl;
             break;
         }

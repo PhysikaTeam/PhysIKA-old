@@ -912,7 +912,7 @@ __global__ void VC_ComputeDivergenceTmp(
             }
             else
             {
-                Real div_ij = g.dot(2.0f * ((separation) *nVel + tangential * tVel)) * mass_i * restDensity / dt;
+                Real div_ij = g.dot(2.0f * (( separation )*nVel + tangential * tVel)) * mass_i * restDensity / dt;
                 atomicAdd(&divergence[pId], div_ij);
                 div_debug += div_ij;
                 //	if (pos_i[1] < 0.035 && pId % 300 == 0)
@@ -939,7 +939,7 @@ __global__ void VC_ComputeDivergenceTmp(
             //else if(attribute[j].IsDynamic())
             else if (attribute[j].IsFluid() && attribute[pId].IsFluid())
             {
-                Real div_ij = 0.5f * (vel_i - velocity[j]).dot(g) * (mass_i) *restDensity / dt;
+                Real div_ij = 0.5f * (vel_i - velocity[j]).dot(g) * ( mass_i )*restDensity / dt;
 
                 atomicAdd(&divergence[pId], div_ij);
                 atomicAdd(&divergence[j], div_ij);

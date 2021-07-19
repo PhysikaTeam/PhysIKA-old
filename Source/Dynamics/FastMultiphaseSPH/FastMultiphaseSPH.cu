@@ -59,7 +59,7 @@ void FastMultiphaseSPH<TDataType>::prepareData()
         m_pos.resize(num);
         m_color.resize(num);
     }
-    m_msph->prepareRenderData((cfloat3*) m_pos.getDataPtr(), (cfloat4*) m_color.getDataPtr());
+    m_msph->prepareRenderData(( cfloat3* )m_pos.getDataPtr(), ( cfloat4* )m_color.getDataPtr());
     num_o = num;
     // then filter transparent particles
     Vector3f* d_pos   = m_pos.getDataPtr();
@@ -226,17 +226,17 @@ void FastMultiphaseSPH<TDataType>::addParticles(const std::vector<Coord>& points
     if (type == particle_t::SAND)
     {
         float volfrac[] = { 0, 1, 0 };
-        m_msph->addParticles(points.size(), (cfloat3*) points.data(), volfrac, 0, TYPE_GRANULAR, 1);
+        m_msph->addParticles(points.size(), ( cfloat3* )points.data(), volfrac, 0, TYPE_GRANULAR, 1);
     }
     else if (type == particle_t::FLUID)
     {
         float volfrac[] = { 1, 0, 0 };
-        m_msph->addParticles(points.size(), (cfloat3*) points.data(), volfrac, 0, TYPE_FLUID, 1);
+        m_msph->addParticles(points.size(), ( cfloat3* )points.data(), volfrac, 0, TYPE_FLUID, 1);
     }
     else if (type == particle_t::BOUDARY)
     {
         float volfrac[] = { 0, 0, 0 };
-        m_msph->addParticles(points.size(), (cfloat3*) points.data(), volfrac, GROUP_FIXED, TYPE_RIGID, 0);
+        m_msph->addParticles(points.size(), ( cfloat3* )points.data(), volfrac, GROUP_FIXED, TYPE_RIGID, 0);
     }
 }
 

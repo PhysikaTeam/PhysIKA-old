@@ -42,7 +42,7 @@ public:
 
     COMM_FUNC static const int dims()
     {
-        return (const int) 4;
+        return ( const int )4;
     }
 
     COMM_FUNC Scalar& operator[](unsigned int);
@@ -77,7 +77,7 @@ public:
     COMM_FUNC Scalar norm() const;
     COMM_FUNC Scalar normSquared() const;
     COMM_FUNC Vector<Scalar, 4>& normalize();
-    COMM_FUNC Scalar dot(const Vector<Scalar, 4>&) const;
+    COMM_FUNC Scalar             dot(const Vector<Scalar, 4>&) const;
     //    COMM_FUNC const SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
 
     COMM_FUNC Vector<Scalar, 4> minimum(const Vector<Scalar, 4>&) const;

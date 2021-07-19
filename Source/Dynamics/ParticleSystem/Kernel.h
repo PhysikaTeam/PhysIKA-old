@@ -43,7 +43,7 @@ public:
         {
             const Real d  = 1.0 - q;
             const Real hh = h * h;
-            return 15.0f / ((Real) M_PI * hh * h) * d * d * d * this->m_scale;
+            return 15.0f / (( Real )M_PI * hh * h) * d * d * d * this->m_scale;
         }
     }
 
@@ -57,7 +57,7 @@ public:
         {
             const Real d  = 1.0 - q;
             const Real hh = h * h;
-            return -45.0f / ((Real) M_PI * hh * h) * d * d * this->m_scale;
+            return -45.0f / (( Real )M_PI * hh * h) * d * d * this->m_scale;
         }
     }
 };
@@ -184,7 +184,7 @@ public:
         const Real hh = h * h;
         const Real q  = 2.0f * r / h;
 
-        const Real alpha = 3.0f / (2.0f * (Real) M_PI * hh * h);
+        const Real alpha = 3.0f / (2.0f * ( Real )M_PI * hh * h);
 
         if (q > 2.0f)
             return 0.0f;
@@ -208,7 +208,7 @@ public:
         const Real hh = h * h;
         const Real q  = 2.0f * r / h;
 
-        const Real alpha = 3.0f / (2.0f * (Real) M_PI * hh * h);
+        const Real alpha = 3.0f / (2.0f * ( Real )M_PI * hh * h);
 
         if (q > 2.0f)
             return 0.0f;
@@ -313,7 +313,7 @@ public:
         {
             const TReal d = 1.0 - q;
             //const TReal hh = h * h;
-            return 10.0f / ((TReal) M_PI * h * h) * d * d * d * this->m_scale;
+            return 10.0f / (( TReal )M_PI * h * h) * d * d * d * this->m_scale;
         }
     }
 
@@ -327,7 +327,7 @@ public:
         {
             const TReal d = 1.0 - q;
             //const TReal hh = h * h;
-            return -30.0f / ((TReal) M_PI * h * h * h) * d * d * this->m_scale;
+            return -30.0f / (( TReal )M_PI * h * h * h) * d * d * this->m_scale;
         }
     }
 };

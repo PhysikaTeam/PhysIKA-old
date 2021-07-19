@@ -276,8 +276,8 @@ int BT_elementWithElastic(int** gix, double** gx, double** gv, double** gtk, dou
     {
         illt = 64;  //illt
         if (i > gng - 1)
-            illt = gmg;  //mg
-        inft = (i) *64;  //inft
+            illt = gmg;   //mg
+        inft = ( i )*64;  //inft
 
         for (int j = 0; j < illt; j++)
         {

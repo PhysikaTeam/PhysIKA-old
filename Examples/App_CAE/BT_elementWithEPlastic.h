@@ -371,8 +371,8 @@ void bt_ep(int (*gix)[NUMEL], double (*gx)[NUMNP], double (*gv)[NUMNP], double d
     {
         illt = 64;  //illt
         if (i > ng - 1)
-            illt = mg;   //mg
-        inft = (i) *64;  //inft
+            illt = mg;    //mg
+        inft = ( i )*64;  //inft
 
         for (int j = 0; j < illt; j++)
         {

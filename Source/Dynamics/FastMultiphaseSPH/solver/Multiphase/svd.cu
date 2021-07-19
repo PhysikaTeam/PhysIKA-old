@@ -238,8 +238,8 @@ HDFUNC inline void polarDecomposition2(cmat2& A, GivensRotation& R, cmat2& S)
     float x0          = A[0][0] + A[1][1];
     float x1          = A[1][0] - A[0][1];
     float denominator = sqrt(x0 * x0 + x1 * x1);
-    R.c               = (float) 1;
-    R.s               = (float) 0;
+    R.c               = ( float )1;
+    R.s               = ( float )0;
     if (denominator != 0)
     {
         R.c = x0 / denominator;
@@ -361,7 +361,7 @@ mu = c + d - sign (d) \ sqrt (d*d + b*b), where d = (a-c)/2
 */
 HDFUNC float wilkinsonShift(const float a1, const float b1, const float a2)
 {
-    float d  = (float) 0.5 * (a1 - a2);
+    float d  = ( float )0.5 * (a1 - a2);
     float bs = b1 * b1;
     float mu = a2 - copysign(bs / (fabs(d) + sqrt(d * d + bs)), d);
     // float mu = a2 - bs / ( d + sign_d*sqrt (d*d + bs));

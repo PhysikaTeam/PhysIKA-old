@@ -267,7 +267,7 @@ COMM_FUNC Vector<Scalar, 2> Vector<Scalar, 2>::maximum(const Vector<Scalar, 2>& 
 template <typename S, typename T>
 COMM_FUNC const Vector<T, 2> operator*(S scale, const Vector<T, 2>& vec)
 {
-    return vec * (T) scale;
+    return vec * ( T )scale;
 }
 
 //explicit instantiation of template so that it could be compiled into a lib

@@ -74,7 +74,7 @@ void GLApp::createWindow(int width, int height)
     //m_camera.translateToPoint(0, 0);
 
     m_camera.zoom(3.0f);
-    m_camera.setGL(0.01f, 100.0f, (float) getWidth(), (float) getHeight());
+    m_camera.setGL(0.01f, 100.0f, ( float )getWidth(), ( float )getHeight());
 }
 
 void GLApp::closeWindow()
@@ -131,7 +131,7 @@ bool GLApp::saveScreen(const std::string& file_name) const
     unsigned char* data = new unsigned char[width * height * 3];  //RGB
     assert(data);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, (void*) data);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, ( void* )data);
     Image image(width, height, Image::RGB, data);
     image.flipVertically();
     bool status = ImageIO::save(file_name, &image);
@@ -381,7 +381,7 @@ void GLApp::setSecondaryLineNumber(int num)
 
 void GLApp::displayFunction(void)
 {
-    GLApp*      cur_window = (GLApp*) glutGetWindowData();
+    GLApp*      cur_window = ( GLApp* )glutGetWindowData();
     SceneGraph& scenegraph = SceneGraph::getInstance();
 
     Color background_color = cur_window->background_color_;
@@ -424,7 +424,7 @@ void GLApp::idleFunction(void)
 {
     SceneGraph& scenegraph = SceneGraph::getInstance();
 
-    GLApp* cur_window = (GLApp*) glutGetWindowData();
+    GLApp* cur_window = ( GLApp* )glutGetWindowData();
     if (cur_window->isActive())
     {
         scenegraph.takeOneFrame();
@@ -441,7 +441,7 @@ void GLApp::reshapeFunction(int width, int height)
 
     glViewport(0, 0, width, height);
 
-    window->activeCamera().setGL(0.01f, 100.0f, (float) width, (float) height);
+    window->activeCamera().setGL(0.01f, 100.0f, ( float )width, ( float )height);
     window->setWidth(width);
     window->setHeight(height);
 
@@ -528,7 +528,7 @@ void GLApp::motionFunction(int x, int y)
         activeCamera.pitch(radiany);
     }
     window->registerMousePos(x_, y_);
-    activeCamera.setGL(0.01f, 100.0f, (float) window->getWidth(), (float) window->getHeight());
+    activeCamera.setGL(0.01f, 100.0f, ( float )window->getWidth(), ( float )window->getHeight());
     glutPostRedisplay();
 }
 
@@ -555,11 +555,11 @@ void GLApp::mouseWheelFunction(int wheel, int direction, int x, int y)
     {
         case 1:
             activeCamera.zoom(-0.3f);
-            activeCamera.setGL(0.01f, 100.0f, (float) window->getWidth(), (float) window->getHeight());
+            activeCamera.setGL(0.01f, 100.0f, ( float )window->getWidth(), ( float )window->getHeight());
             break;
         case -1:
             activeCamera.zoom(0.3f);
-            activeCamera.setGL(0.01f, 100.0f, (float) window->getWidth(), (float) window->getHeight());
+            activeCamera.setGL(0.01f, 100.0f, ( float )window->getWidth(), ( float )window->getHeight());
         default:
             break;
     }
@@ -809,7 +809,7 @@ void GLApp::drawString(std::string s, const Color& color, int x, int y)
     glColor3f(color.r, color.g, color.b);
     glRasterPos2i(x, y);
 
-    for (int i = 0; i < (int) s.length(); i++)
+    for (int i = 0; i < ( int )s.length(); i++)
     {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
     }

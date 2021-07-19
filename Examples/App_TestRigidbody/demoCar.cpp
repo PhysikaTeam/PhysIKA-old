@@ -241,12 +241,12 @@ void DemoCar2::build(bool useGPU)
     }
 
     auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_chassis->getTransformationFrame());
-    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
     m_car->m_chassis->addVisualModule(renderModule);
     for (int i = 0; i < 4; ++i)
     {
         auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_wheels[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         m_car->m_wheels[i]->addVisualModule(renderModule);
     }
 
@@ -302,12 +302,12 @@ void DemoCar2::build(bool useGPU)
     }
 
     renderModule = std::make_shared<RigidMeshRender>(m_car2->m_chassis->getTransformationFrame());
-    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
     m_car2->m_chassis->addVisualModule(renderModule);
     for (int i = 0; i < 4; ++i)
     {
         auto renderModule = std::make_shared<RigidMeshRender>(m_car2->m_wheels[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         m_car2->m_wheels[i]->addVisualModule(renderModule);
     }
     m_groundRigidInteractor->addChild(m_car2);
@@ -599,14 +599,14 @@ void DemoTankCar::build(bool useGPU)
     }
 
     auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_chassis->getTransformationFrame());
-    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
     m_car->m_chassis->addVisualModule(renderModule);
     for (int lr = 0; lr < 2; ++lr)
     {
         for (int i = 0; i < 4; ++i)
         {
             auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_wheels[lr][i]->getTransformationFrame());
-            renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+            renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
             m_car->m_wheels[lr][i]->addVisualModule(renderModule);
         }
     }
@@ -934,12 +934,12 @@ void DemoPBDCar::build(bool useGPU)
     m_car->build();
 
     auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_chassis->getTransformationFrame());
-    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
     m_car->m_chassis->addVisualModule(renderModule);
     for (int i = 0; i < 4; ++i)
     {
         auto renderModule = std::make_shared<RigidMeshRender>(m_car->m_wheels[i]->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         m_car->m_wheels[i]->addVisualModule(renderModule);
     }
 
@@ -1081,7 +1081,7 @@ void       DemoSlope::build(bool useGPU)
         prigid->setMu(mu);
 
         auto renderModule = std::make_shared<RigidMeshRender>(prigid->getTransformationFrame());
-        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+        renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
         prigid->addVisualModule(renderModule);
         //m_rigids.push_back(prigid);
         //m_rigidRenders.push_back(renderModule);

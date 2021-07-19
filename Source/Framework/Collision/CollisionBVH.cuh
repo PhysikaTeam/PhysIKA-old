@@ -91,10 +91,10 @@ typedef struct
 
         //start from the root, so at lest one ...
         uint dummy[] = { 1 };
-        cutilSafeCall(cudaMalloc((void**) &_dIdx, 1 * sizeof(uint)));
+        cutilSafeCall(cudaMalloc(( void** )&_dIdx, 1 * sizeof(uint)));
         cutilSafeCall(cudaMemcpy(_dIdx, dummy, 1 * sizeof(uint), cudaMemcpyHostToDevice));
 
-        cutilSafeCall(cudaMalloc((void**) &_dFront, _iMax * sizeof(uint3)));
+        cutilSafeCall(cudaMalloc(( void** )&_dFront, _iMax * sizeof(uint3)));
         cutilSafeCall(cudaMemset(_dFront, 0, _iMax * sizeof(uint3)));
         printf("max self-cone front num = %d", _iMax);
 
@@ -156,10 +156,10 @@ typedef struct
     void init()
     {
         uint dummy[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        cutilSafeCall(cudaMalloc((void**) &_dIdx, 10 * sizeof(uint)));
+        cutilSafeCall(cudaMalloc(( void** )&_dIdx, 10 * sizeof(uint)));
         cutilSafeCall(cudaMemcpy(_dIdx, dummy, 10 * sizeof(uint), cudaMemcpyHostToDevice));
 
-        cutilSafeCall(cudaMalloc((void**) &_dFront, MAX_FRONT_NUM * sizeof(uint4)));
+        cutilSafeCall(cudaMalloc(( void** )&_dFront, MAX_FRONT_NUM * sizeof(uint4)));
         cutilSafeCall(cudaMemset(_dFront, 0, MAX_FRONT_NUM * sizeof(uint4)));
         reportMemory("g_front.init");
     }

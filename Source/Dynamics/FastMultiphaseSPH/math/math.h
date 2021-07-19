@@ -4,7 +4,7 @@
 
 inline float rand_in_range(float a, float b)
 {
-    return rand() / (float) RAND_MAX * (b - a) + a;
+    return rand() / ( float )RAND_MAX * (b - a) + a;
 }
 
 void inline fscanf3(FILE* fp, cfloat3& vec)

@@ -71,7 +71,7 @@ void createScene()
     rigidbody->setActive(false);
     rigidbody->translate(Vector3f(0.2f, 0.2f, 0));  //translation matches sdf
     auto renderModule = std::make_shared<RigidMeshRender>(rigidbody->getTransformationFrame());
-    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / (double) 1000, 0.8));
+    renderModule->setColor(Vector3f(0.8, std::rand() % 1000 / ( double )1000, 0.8));
     rigidbody->getSurface()->addVisualModule(renderModule);
 
     //bunny

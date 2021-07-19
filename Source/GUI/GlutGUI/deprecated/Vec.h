@@ -222,8 +222,8 @@ public:
     template <int dim_, typename T_>
     Vec<2, T>& operator=(const Vec<dim_, T_>& other)
     {
-        x = (T) other.x;
-        y = (T) other.y;
+        x = ( T )other.x;
+        y = ( T )other.y;
         return *this;
     }
 
@@ -415,9 +415,9 @@ public:
     template <typename T_>
     Vec<3, T>& operator=(const Vec<3, T_>& other)
     {
-        x = (T) other.x;
-        y = (T) other.y;
-        z = (T) other.z;
+        x = ( T )other.x;
+        y = ( T )other.y;
+        z = ( T )other.z;
         return *this;
     }
 
@@ -784,7 +784,7 @@ public:
 template <typename typ1, typename typ2>
 inline Vec<2, float> Vec2f(typ1 x, typ2 y)
 {
-    return Vec<2, float>((float) x, (float) y);
+    return Vec<2, float>(( float )x, ( float )y);
 }
 
 template <typename typ1, typename typ2>
@@ -796,7 +796,7 @@ inline Vec<2, double> Vec2d(typ1 x, typ2 y)
 template <typename typ1, typename typ2, typename typ3>
 inline Vec<3, float> Vec3f(typ1 x, typ2 y, typ3 z)
 {
-    return Vec<3, float>((float) x, (float) y, (float) z);
+    return Vec<3, float>(( float )x, ( float )y, ( float )z);
 }
 
 template <typename typ1, typename typ2, typename typ3>

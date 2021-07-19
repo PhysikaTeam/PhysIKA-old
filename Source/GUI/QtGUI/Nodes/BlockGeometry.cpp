@@ -156,16 +156,14 @@ BlockGeometry::
 
     switch (portType)
     {
-        case PortType::Out:
-        {
+        case PortType::Out: {
             double x = _width + nodeStyle.ConnectionPointDiameter;
 
             result = QPointF(x, totalHeight);
             break;
         }
 
-        case PortType::In:
-        {
+        case PortType::In: {
             double x = 0.0 - nodeStyle.ConnectionPointDiameter;
 
             result = QPointF(x, totalHeight);

@@ -136,8 +136,8 @@ bool MultiWheelCar<N>::build()
     {
         m_chassis->loadShape(chassisFile);
         //Vector3f chassisMeshScale(0.3, 0.2, 0.5);
-        ((std::dynamic_pointer_cast<TriangleSet<DataType3f>>) (m_chassis->getTopologyModule()))->scale(chassisMeshScale);
-        ((std::dynamic_pointer_cast<TriangleSet<DataType3f>>) (m_chassis->getTopologyModule()))->translate(chassisMeshTranslate);
+        (( std::dynamic_pointer_cast<TriangleSet<DataType3f>> )(m_chassis->getTopologyModule()))->scale(chassisMeshScale);
+        (( std::dynamic_pointer_cast<TriangleSet<DataType3f>> )(m_chassis->getTopologyModule()))->translate(chassisMeshTranslate);
     }
 
     // Rigid inertia and position.

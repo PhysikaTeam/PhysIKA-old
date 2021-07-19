@@ -102,7 +102,7 @@ inline __host__ __device__ float3 operator-(const float3& a)
 #ifndef P100
 inline __device__ REAL atomicAddD(REAL* address, REAL val)
 {
-    unsigned long long int* address_as_ull = (unsigned long long int*) address;
+    unsigned long long int* address_as_ull = ( unsigned long long int* )address;
     unsigned long long int  old            = *address_as_ull, assumed;
 
     do

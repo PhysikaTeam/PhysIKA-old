@@ -276,7 +276,7 @@ __global__ void K_UpdatePosition(
 
         Coord delta_pos_j = delta_position[j];
 
-        new_delta_pos_i += 0.1 * (delta_pos_i) *g_weightKernel.Weight(r, horizon);
+        new_delta_pos_i += 0.1 * ( delta_pos_i )*g_weightKernel.Weight(r, horizon);
     }
 
     //		position[pId] += delta_pos_i;

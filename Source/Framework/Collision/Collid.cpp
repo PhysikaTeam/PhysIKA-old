@@ -132,7 +132,7 @@ void body_collide_gpu(
 
     count = ::getCollisionsGPU(buffer, buffer_vf_ee, buffer_vertex_id, buffer_dist, time_buffer, buffer_CCD, &thickness);
 
-    TrianglePair*             pairs = (TrianglePair*) buffer;
+    TrianglePair*             pairs = ( TrianglePair* )buffer;
     std::vector<TrianglePair> ret(pairs, pairs + count);
 
     for (int i = 0; i < count; i++)

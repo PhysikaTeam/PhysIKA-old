@@ -140,19 +140,19 @@ __global__ void decouple_pos(thrust::pair<int, int>* pos, int* pos_x, int* pos_y
 template <typename T>
 void GPU_PCG<T>::readIAandJA(int size_Matrix, int size_nozeronumber, int* IAtemp, int* JAtemp, constuctor_type TYPE)
 {
-    cudaMalloc((void**) &IA, sizeof(int) * (size_Matrix + 1));
-    cudaMalloc((void**) &JA, sizeof(int) * size_nozeronumber);
-    cudaMemcpy(IA, IAtemp, sizeof(int) * (size_Matrix + 1), (cudaMemcpyKind) TYPE);
-    cudaMemcpy(JA, JAtemp, sizeof(int) * size_nozeronumber, (cudaMemcpyKind) TYPE);
+    cudaMalloc(( void** )&IA, sizeof(int) * (size_Matrix + 1));
+    cudaMalloc(( void** )&JA, sizeof(int) * size_nozeronumber);
+    cudaMemcpy(IA, IAtemp, sizeof(int) * (size_Matrix + 1), ( cudaMemcpyKind )TYPE);
+    cudaMemcpy(JA, JAtemp, sizeof(int) * size_nozeronumber, ( cudaMemcpyKind )TYPE);
 }
 
 template <typename T>
 GPU_PCG<T>::GPU_PCG(int Ntemp, int NNZtemp, thrust::pair<int, int>* coo, T* hes_val, T* right_hand, constuctor_type TYPE)
 {
 
-    cudaMalloc((void**) &csr, sizeof(int) * (Ntemp + 1));
-    cudaMalloc((void**) &pos_y, sizeof(int) * NNZtemp);
-    cudaMalloc((void**) &pos_x, sizeof(int) * NNZtemp);
+    cudaMalloc(( void** )&csr, sizeof(int) * (Ntemp + 1));
+    cudaMalloc(( void** )&pos_y, sizeof(int) * NNZtemp);
+    cudaMalloc(( void** )&pos_x, sizeof(int) * NNZtemp);
     thrust::device_ptr<T>                      dev_data_ptr(hes_val);
     thrust::device_ptr<thrust::pair<int, int>> dev_keys_ptr(coo);
     thrust::sort_by_key(dev_keys_ptr, dev_keys_ptr + NNZtemp, dev_data_ptr);
@@ -163,8 +163,8 @@ GPU_PCG<T>::GPU_PCG(int Ntemp, int NNZtemp, thrust::pair<int, int>* coo, T* hes_
     initialize(Ntemp, NNZtemp, hes_val, right_hand, csr, pos_y, TYPE);
 }
 
-#define init_array_on_device(var, num, type)       \
-    cudaMalloc((void**) &var, sizeof(type) * num); \
+#define init_array_on_device(var, num, type)        \
+    cudaMalloc(( void** )&var, sizeof(type) * num); \
     cudaMemset(var, 0, num * sizeof(type));
 
 template <typename T>
@@ -214,8 +214,8 @@ void GPU_PCG<T>::initialize(int Ntemp, int NNZtemp, T* Atemp, T* Btemp, int* IAt
     // cudaMalloc((void**)& dev_x, sizeof(T) * N);
     // cudaMalloc((void**)& dev_zrnew, sizeof(T));
 
-    cudaMemcpy(A, Atemp, sizeof(T) * NNZtemp, (cudaMemcpyKind) TYPE);
-    cudaMemcpy(B, Btemp, sizeof(T) * N, (cudaMemcpyKind) TYPE);
+    cudaMemcpy(A, Atemp, sizeof(T) * NNZtemp, ( cudaMemcpyKind )TYPE);
+    cudaMemcpy(B, Btemp, sizeof(T) * N, ( cudaMemcpyKind )TYPE);
 
     initialvalue<<<grid, block>>>(N, A, B, dev_Minverse, dev_r, dev_z, dev_p, IA, JA);
 
@@ -236,7 +236,7 @@ GPU_PCG<T>::GPU_PCG(int Ntemp, int NNZtemp, T* Atemp, T* Btemp, int* IAtemp, int
 template <typename T>
 GPU_PCG<T>::GPU_PCG(int Ntemp, int NNZtemp, const T* Atemp, const T* Btemp, const int* IAtemp, const int* JAtemp, constuctor_type TYPE)
 {  //IAtemp 最后一项必须为总非零点数目
-    initialize(Ntemp, NNZtemp, (T*) Atemp, (T*) Btemp, (int*) IAtemp, (int*) JAtemp, TYPE);
+    initialize(Ntemp, NNZtemp, ( T* )Atemp, ( T* )Btemp, ( int* )IAtemp, ( int* )JAtemp, TYPE);
 }
 
 template <typename T>
@@ -256,21 +256,21 @@ void GPU_PCG<T>::update_hes(T* Atemp, T* Btemp, constuctor_type TYPE)
     x     = new T[N];
     zrnew = new T;
 
-    cudaMalloc((void**) &A, sizeof(T) * NNZ);
-    cudaMalloc((void**) &B, sizeof(T) * N);
-    cudaMalloc((void**) &dev_Minverse, sizeof(T) * N);
-    cudaMalloc((void**) &dev_r, sizeof(T) * N);
-    cudaMalloc((void**) &dev_z, sizeof(T) * N);
-    cudaMalloc((void**) &dev_p, sizeof(T) * N);
-    cudaMalloc((void**) &dev_zr, sizeof(T));
-    cudaMalloc((void**) &dev_ap, sizeof(T) * N);
-    cudaMalloc((void**) &dev_pap, sizeof(T));
-    cudaMalloc((void**) &dev_ak, sizeof(T));
-    cudaMalloc((void**) &dev_x, sizeof(T) * N);
-    cudaMalloc((void**) &dev_zrnew, sizeof(T));
+    cudaMalloc(( void** )&A, sizeof(T) * NNZ);
+    cudaMalloc(( void** )&B, sizeof(T) * N);
+    cudaMalloc(( void** )&dev_Minverse, sizeof(T) * N);
+    cudaMalloc(( void** )&dev_r, sizeof(T) * N);
+    cudaMalloc(( void** )&dev_z, sizeof(T) * N);
+    cudaMalloc(( void** )&dev_p, sizeof(T) * N);
+    cudaMalloc(( void** )&dev_zr, sizeof(T));
+    cudaMalloc(( void** )&dev_ap, sizeof(T) * N);
+    cudaMalloc(( void** )&dev_pap, sizeof(T));
+    cudaMalloc(( void** )&dev_ak, sizeof(T));
+    cudaMalloc(( void** )&dev_x, sizeof(T) * N);
+    cudaMalloc(( void** )&dev_zrnew, sizeof(T));
 
-    cudaMemcpy(A, Atemp, sizeof(T) * NNZ, (cudaMemcpyKind) TYPE);
-    cudaMemcpy(B, Btemp, sizeof(T) * N, (cudaMemcpyKind) TYPE);
+    cudaMemcpy(A, Atemp, sizeof(T) * NNZ, ( cudaMemcpyKind )TYPE);
+    cudaMemcpy(B, Btemp, sizeof(T) * N, ( cudaMemcpyKind )TYPE);
 
     initialvalue<<<grid, block>>>(N, A, B, dev_Minverse, dev_r, dev_z, dev_p, IA, JA);
 

@@ -15,15 +15,13 @@ int main()
 
     switch (examp)
     {
-        case 1:
-        {
+        case 1: {
             // Tank car.
             DemoTankCar* demo1 = DemoTankCar::getInstance();
             demo1->build(true);
             break;
         }
-        default:
-        {
+        default: {
             // Normal 4 wheel car.
             DemoCar2* demo0 = DemoCar2::getInstance();
             demo0->build(false);
