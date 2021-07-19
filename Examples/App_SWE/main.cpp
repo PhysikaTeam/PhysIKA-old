@@ -1,23 +1,24 @@
-#include <iostream>
+/**
+ * @author     : Xu Ben (592228912@qq.com)
+ * @date       : 2020-07-27
+ * @description: Simulate with shallow water equation
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-17
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <memory>
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-
-#include "GUI/GlutGUI/GLApp.h"
 
 #include "Framework/Framework/SceneGraph.h"
 #include "Framework/Framework/Log.h"
-
-#include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/HeightField/HeightFieldNode.h"
-
 #include "Rendering/HeightFieldRender.h"
-
 #include "IO/Image_IO/image.h"
 #include "IO/Image_IO/png_io.h"
 #include "IO/Image_IO/image_io.h"
+#include "GUI/GlutGUI/GLApp.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -43,19 +44,20 @@ void RecieveLogMessage(const Log::Message& m)
     }
 }
 
-//mode: choose which scene to create. mode=1 creates the basic scene, otherwise creates city scene.
-void CreateScene(int mode = 1)
+/**
+ * setup different scenes depending on input mode parameter
+ *
+ * @param[in] mode   create basic scene if mode == 0
+ *                   create city scene with river if mode == 1
+ */
+void createScene(int mode = 1)
 {
     SceneGraph& scene = SceneGraph::getInstance();
     scene.setUpperBound(Vector3f(1.5, 1, 1.5));
     scene.setLowerBound(Vector3f(-0.5, 0, -0.5));
 
     std::shared_ptr<HeightFieldNode<DataType3f>> root = scene.createNewScene<HeightFieldNode<DataType3f>>();
-
-    auto ptRender = std::make_shared<HeightFieldRenderModule>();
-    ptRender->setColor(Vector3f(1, 0, 0));
-    root->addVisualModule(ptRender);
-
+    root->setMass(100);
     if (mode == 1)
         root->loadParticles(Vector3f(0, 0, 0), Vector3f(2, 1.5, 2), 1024, 0.7, 1);
     else
@@ -64,20 +66,19 @@ void CreateScene(int mode = 1)
         std::string filename2 = "../../../Examples/App_SWE/river4-4.png";
         root->loadParticlesFromImage(filename1, filename2, 0.1, 1);
     }
-    root->setMass(100);
-
-    //root->run(1,0.03);
-    //auto result = root->outputSolid();
-    //std::cout << result[0];
+    auto ptRender = std::make_shared<HeightFieldRenderModule>();
+    ptRender->setColor(Vector3f(1, 0, 0));
+    root->addVisualModule(ptRender);
 }
 
+/**
+ * setup city scene with river, execute one step and output the height field difference
+ */
 void executeOnce()
 {
     std::shared_ptr<HeightFieldNode<DataType3f>> root(new HeightFieldNode<DataType3f>);
-
-    std::string filename1 = "../../../Examples/App_SWE/terrain4-4.png";  //The pixel count is 1024*1024
-    std::string filename2 = "../../../Examples/App_SWE/river4-4.png";
-
+    std::string                                  filename1 = "../../../Examples/App_SWE/terrain4-4.png";  //The pixel count is 1024*1024
+    std::string                                  filename2 = "../../../Examples/App_SWE/river4-4.png";
     root->loadParticlesFromImage(filename1, filename2, 0.1, 0.998);
 
     float             dt   = 1.0 / 60;
@@ -99,7 +100,7 @@ int main()
 #if 0
        executeOnce();
 #else
-    CreateScene(1);
+    createScene(1);
 
     Log::setOutput("console_log.txt");
     Log::setLevel(Log::Info);
@@ -108,7 +109,6 @@ int main()
 
     GLApp window;
     window.createWindow(1024, 768);
-
     window.mainLoop();
 
     Log::sendMessage(Log::Info, "Simulation end!");

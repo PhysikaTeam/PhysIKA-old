@@ -1,21 +1,27 @@
-#include <iostream>
-#include <memory>
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-06-06
+ * @description: Simulate fluid mixing
+ *               reference <Fast Multiple-fluid Simulation Using Helmholtz Free Energy>
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-16
+ * @description: poslish code
+ * @version    : 1.1
+ * @TODO       : Volume conservation of fluid is broken, need fixing
+ */
 
-#include "GUI/GlutGUI/GLApp.h"
+#include <memory>
 
 #include "Framework/Framework/SceneGraph.h"
 #include "Framework/Framework/Log.h"
-
 #include "Dynamics/ParticleSystem/ParticleFluid.h"
-#include "Dynamics/RigidBody/RigidBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/ParticleSystem/MultipleFluidModel.h"
-
+#include "Dynamics/RigidBody/RigidBody.h"
 #include "Rendering/PointRenderModule.h"
+#include "GUI/GlutGUI/GLApp.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -41,38 +47,39 @@ void RecieveLogMessage(const Log::Message& m)
     }
 }
 
-void CreateScene()
+/**
+ * setup scene: multiple fluid blocks fall to the ground and mix
+ */
+void createScene()
 {
     SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-    root->loadCube(Vector3f(0), Vector3f(1), 0.02f, true);
+    root->loadCube(Vector3f(0), Vector3f(1), 0.02f, true);  //scene boundary
 
-    std::shared_ptr<ParticleFluid<DataType3f>> child1 = std::make_shared<ParticleFluid<DataType3f>>();
-    root->addParticleSystem(child1);
+    std::shared_ptr<ParticleFluid<DataType3f>> fluid = std::make_shared<ParticleFluid<DataType3f>>();
+    root->addParticleSystem(fluid);
+    fluid->loadParticles("../../Media/fluid/fluid_point.obj");
+    fluid->setMass(100);
+    fluid->scale(2);
+    fluid->translate(Vector3f(-0.6, -0.3, -0.48));
+    //use MultipleFluidModel as the numeric model
+    std::shared_ptr<MultipleFluidModel<DataType3f>> multifluid = std::make_shared<MultipleFluidModel<DataType3f>>();
+    fluid->setNumericalModel(multifluid);
+    fluid->currentPosition()->connect(&multifluid->m_position);
+    fluid->currentVelocity()->connect(&multifluid->m_velocity);
+    fluid->currentForce()->connect(&multifluid->m_forceDensity);
 
     auto ptRender1 = std::make_shared<PointRenderModule>();
     ptRender1->setColor(Vector3f(1, 0, 0));
     ptRender1->setColorRange(0, 1);
-    child1->addVisualModule(ptRender1);
-
-    child1->loadParticles("../../Media/fluid/fluid_point.obj");
-    child1->setMass(100);
-    child1->scale(2);
-    child1->translate(Vector3f(-0.6, -0.3, -0.48));
-
-    std::shared_ptr<MultipleFluidModel<DataType3f>> multifluid = std::make_shared<MultipleFluidModel<DataType3f>>();
-    child1->currentPosition()->connect(&multifluid->m_position);
-    child1->currentVelocity()->connect(&multifluid->m_velocity);
-    child1->currentForce()->connect(&multifluid->m_forceDensity);
+    fluid->addVisualModule(ptRender1);
     multifluid->m_color.connect(&ptRender1->m_vecIndex);
-
-    child1->setNumericalModel(multifluid);
 }
 
 int main()
 {
-    CreateScene();
+    createScene();
 
     Log::setOutput("console_log.txt");
     Log::setLevel(Log::Info);
@@ -81,7 +88,6 @@ int main()
 
     GLApp window;
     window.createWindow(1024, 768);
-
     window.mainLoop();
 
     Log::sendMessage(Log::Info, "Simulation end!");

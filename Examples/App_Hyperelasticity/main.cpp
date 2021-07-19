@@ -1,22 +1,26 @@
-#include <iostream>
-#include <memory>
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 
-#include "GUI/GlutGUI/GLApp.h"
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-06-20
+ * @description: Comparison of hyperelasticity and elasticity with projective peridynamics
+ *               reference <Projective peridynamics for modeling versatile elastoplastic materials>
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-16
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
+#include <memory>
 
 #include "Framework/Framework/SceneGraph.h"
-#include "Framework/Topology/PointSet.h"
 #include "Framework/Framework/Log.h"
-
 #include "Dynamics/ParticleSystem/ParticleElasticBody.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/ParticleSystem/HyperelasticityModule.h"
-
 #include "Rendering/SurfaceMeshRender.h"
-#include "Rendering/PointRenderModule.h"
+#include "GUI/GlutGUI/GLApp.h"
 
 using namespace std;
 using namespace PhysIKA;
@@ -42,96 +46,48 @@ void RecieveLogMessage(const Log::Message& m)
     }
 }
 
-void CreateScene()
+/**
+ * setup scene: two bunnies fall to the ground, one with hyperelastic constitutive model, the other
+ * with default elastic constitutive model
+ */
+void createScene()
 {
     SceneGraph& scene = SceneGraph::getInstance();
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-    root->loadCube(Vector3f(0), Vector3f(1), 0.005, true);
+    root->loadCube(Vector3f(0), Vector3f(1), 0.005, true);  //scene boundary
 
-    std::shared_ptr<ParticleElasticBody<DataType3f>> child3 = std::make_shared<ParticleElasticBody<DataType3f>>();
-    root->addParticleSystem(child3);
-
-    auto ptRender1 = std::make_shared<PointRenderModule>();
-    ptRender1->setColor(Vector3f(0, 1, 1));
-    child3->addVisualModule(ptRender1);
-
-    child3->setMass(1.0);
-    child3->loadParticles("../../Media/bunny/bunny_points.obj");
-    child3->loadSurface("../../Media/bunny/bunny_mesh.obj");
-    child3->translate(Vector3f(0.3, 0.2, 0.5));
-    child3->setVisible(false);
-    auto hyper = std::make_shared<HyperelasticityModule<DataType3f>>();
-    hyper->setEnergyFunction(HyperelasticityModule<DataType3f>::Quadratic);
-    child3->setElasticitySolver(hyper);
-    child3->getElasticitySolver()->setIterationNumber(10);
-
+    //hyperelastic bunny
+    std::shared_ptr<ParticleElasticBody<DataType3f>> hyper_bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+    root->addParticleSystem(hyper_bunny);
+    hyper_bunny->setMass(1.0);
+    hyper_bunny->loadParticles("../../Media/bunny/bunny_points.obj");
+    hyper_bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+    hyper_bunny->translate(Vector3f(0.3, 0.2, 0.5));
+    hyper_bunny->setVisible(false);
+    auto hyper_model = std::make_shared<HyperelasticityModule<DataType3f>>();
+    hyper_model->setEnergyFunction(HyperelasticityModule<DataType3f>::Quadratic);
+    hyper_bunny->setElasticitySolver(hyper_model);
+    hyper_bunny->getElasticitySolver()->setIterationNumber(10);
     auto sRender = std::make_shared<SurfaceMeshRender>();
-    child3->getSurfaceNode()->addVisualModule(sRender);
+    hyper_bunny->getSurfaceNode()->addVisualModule(sRender);
     sRender->setColor(Vector3f(1, 1, 0));
 
-    // Output all particles to .txt file.
-    {
-        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child3->getTopologyModule());
-        auto&               points = pSet->getPoints();
-        HostArray<Vector3f> hpoints(points.size());
-        Function1Pt::copy(hpoints, points);
-
-        std::ofstream outf("Particles.obj");
-        if (outf.is_open())
-        {
-            for (int i = 0; i < hpoints.size(); ++i)
-            {
-                Vector3f curp = hpoints[i];
-                outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
-            }
-            outf.close();
-
-            std::cout << " Particle output:  FINISHED." << std::endl;
-        }
-    }
-
-    std::shared_ptr<ParticleElasticBody<DataType3f>> child4 = std::make_shared<ParticleElasticBody<DataType3f>>();
-    root->addParticleSystem(child4);
-
-    auto ptRender2 = std::make_shared<PointRenderModule>();
-    ptRender2->setColor(Vector3f(0, 1, 1));
-    child4->addVisualModule(ptRender2);
-
-    child4->setMass(1.0);
-    child4->loadParticles("../../Media/bunny/bunny_points.obj");
-    child4->loadSurface("../../Media/bunny/bunny_mesh.obj");
-    child4->translate(Vector3f(0.7, 0.2, 0.5));
-    child4->setVisible(false);
-
-    // Output all particles to .txt file.
-    {
-        auto                pSet   = TypeInfo::CastPointerDown<PointSet<DataType3f>>(child4->getTopologyModule());
-        auto&               points = pSet->getPoints();
-        HostArray<Vector3f> hpoints(points.size());
-        Function1Pt::copy(hpoints, points);
-
-        std::ofstream outf("Particles.obj", ios::app);
-        if (outf.is_open())
-        {
-            for (int i = 0; i < hpoints.size(); ++i)
-            {
-                Vector3f curp = hpoints[i];
-                outf << "v " << curp[0] << " " << curp[1] << " " << curp[2] << std::endl;
-            }
-            outf.close();
-
-            std::cout << " Particle output:  FINISHED." << std::endl;
-        }
-    }
-
+    //elastic bunny
+    std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+    root->addParticleSystem(bunny);
+    bunny->setMass(1.0);
+    bunny->loadParticles("../../Media/bunny/bunny_points.obj");
+    bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+    bunny->translate(Vector3f(0.7, 0.2, 0.5));
+    bunny->setVisible(false);
     auto sRender2 = std::make_shared<SurfaceMeshRender>();
-    child4->getSurfaceNode()->addVisualModule(sRender2);
+    bunny->getSurfaceNode()->addVisualModule(sRender2);
 }
 
 int main()
 {
-    CreateScene();
+    createScene();
 
     Log::setOutput("console_log.txt");
     Log::setLevel(Log::Info);
@@ -140,7 +96,6 @@ int main()
 
     GLApp window;
     window.createWindow(1024, 768);
-
     window.mainLoop();
 
     Log::sendMessage(Log::Info, "Simulation end!");

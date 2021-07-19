@@ -2,13 +2,13 @@
 set(PROJECT_NAME App_Fracture)
 
 link_libraries(Core Framework IO Rendering)
-link_libraries(ParticleSystem)
+link_libraries(ParticleSystem RigidBody)
 link_libraries(GlutGUI)
 
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/Examples/${PROJECT_NAME}")
 
 file(                                                                                                       #利用glob命令读取所有源文件list
-    GLOB_RECURSE SRC_LIST 
+    GLOB_RECURSE SRC_LIST
     LIST_DIRECTORIES false
     CONFIGURE_DEPENDS
     "${SRC_DIR}/*.c*"
@@ -34,7 +34,7 @@ elseif(UNIX)
         set_target_properties(${PROJECT_NAME} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/Release")
     endif()
-endif()   
+endif()
 
 foreach(SRC IN ITEMS ${SRC_LIST})                                                                           #为VS工程添加filter 方便查看文件结构目录
     get_filename_component(SRC_PATH "${SRC}" PATH)
