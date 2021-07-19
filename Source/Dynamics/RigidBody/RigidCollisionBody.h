@@ -20,7 +20,7 @@ public:
         postprocess();
     }
 
-    friend void                               createScene();
+    // friend void                               createScene();
     std::shared_ptr<TriangleMesh<TDataType>>& getmeshPtr();
     std::shared_ptr<Node>&                    getSurfaceNode();
     void                                      postprocess();

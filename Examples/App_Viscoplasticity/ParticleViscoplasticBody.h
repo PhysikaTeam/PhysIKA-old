@@ -1,4 +1,18 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-06-06
+ * @description: Declaration of ParticleViscoplasticBody, simulate viscoplasticity with projective peridynamics
+ *               reference <Projective peridynamics for modeling versatile elastoplastic materials>
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-16
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #pragma once
+
 #include "Dynamics/ParticleSystem/ParticleSystem.h"
 
 namespace PhysIKA {
@@ -12,14 +26,13 @@ template <typename>
 class ElasticityModule;
 template <typename>
 class ElastoplasticityModule;
-template <typename>
-class DensityPBD;
 template <typename TDataType>
 class ImplicitViscosity;
-/*!
-          *        class    ParticleViscoplasticBody
-          *        brief    Peridynamics-based elastoplastic object.
-       */
+
+/**
+ * ParticleViscoplasticBody, a scene node to simulate viscoplasticity with projective-peridynamics
+ * a SurfaceMeshRenderer is attached to the scene node for rendering
+ */
 template <typename TDataType>
 class ParticleViscoplasticBody : public ParticleSystem<TDataType>
 {
@@ -40,6 +53,11 @@ public:
     bool translate(Coord t) override;
     bool scale(Real s) override;
 
+    /**
+     * load the surface mesh for rendering
+     *
+     * @param[in]    filename   path to the obj file
+     */
     void loadSurface(std::string filename);
 
 public:
@@ -52,7 +70,6 @@ private:
     std::shared_ptr<NeighborQuery<TDataType>>          m_nbrQuery;
     std::shared_ptr<ElasticityModule<TDataType>>       m_elasticity;
     std::shared_ptr<ElastoplasticityModule<TDataType>> m_plasticity;
-    std::shared_ptr<DensityPBD<TDataType>>             m_pbdModule;
     std::shared_ptr<ImplicitViscosity<TDataType>>      m_visModule;
 };
 

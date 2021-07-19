@@ -1,27 +1,33 @@
+/**
+ * @author     : syby119 (syby119@163.com)
+ * @date       : 2021-05-30
+ * @description: demo of discrete collision detection between meshes
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-19
+ * @description: poslish code
+ * @version    : 1.1
+ * @TODO       : fix the collision rendering issue
+ */
+
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <memory>
-#include <cuda.h>
-#include <cuda_runtime_api.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
-#include "GUI/GlutGUI/GLApp.h"
-
-#include "Core/Vector/vector_3d.h"
 #include "Framework/Framework/SceneGraph.h"
-#include "Framework/Collision/CollidableTriangleMesh.h"
+#include "Framework/Framework/Log.h"
 #include "Framework/Collision/Collision.h"
-#include "Framework/Collision/CollisionPoints.h"
-#include "Framework/Topology/Primitive3D.h"
-#include "Framework/Topology/TriangleSet.h"
-#include "Dynamics/RigidBody/RigidCollisionBody.h"
-#include "Dynamics/RigidBody/RigidBody.h"
-#include "Dynamics/RigidBody/TriangleMesh.h"
+#include "Framework/Collision/CollidableTriangleMesh.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
+#include "Dynamics/RigidBody/TriangleMesh.h"
+#include "Dynamics/RigidBody/RigidCollisionBody.h"
 #include "Rendering/SurfaceMeshRender.h"
+#include "GUI/GlutGUI/GLApp.h"
 
 #include "SurfaceLineRender.h"
 
@@ -45,13 +51,15 @@ enum class ExampleMode
 };
 ExampleMode mode = ExampleMode::Static;
 
-bool pause = true;
-
+bool pause    = true;
 auto instance = Collision::getInstance();
 
 void checkCollision();
 
-void CreateScene(const std::string& clothPath, const std::string& humanPath)
+/**
+ * setup scene from obj mesh file: an avator dressed up
+ */
+void createScene(const std::string& clothPath, const std::string& humanPath)
 {
     SceneGraph& scene = SceneGraph::getInstance();
     scene.invalid();
@@ -198,15 +206,18 @@ void keyboardFunc(unsigned char key, int x, int y)
     }
 }
 
+/**
+ * idle callback, used to load meshes for collision detection
+ */
 void idleFunction()
 {
     static int index = 0;
-    if (index > 93)
+    if (index > 93)  //max frame number
         return;
 
-    if (mode == ExampleMode::Static)
+    if (mode == ExampleMode::Static)  //static scene
     {
-        CreateScene("../../Media/character/cloth000-uv.obj", "../../Media/character/pose000.obj");
+        createScene("../../Media/character/cloth000-uv.obj", "../../Media/character/pose000.obj");
         index = 94;
         return;
     }
@@ -214,15 +225,23 @@ void idleFunction()
     if ((pause && index > 0) || index > 93)
         return;
 
+    //dynamic scene
     std::stringstream clothPath, humanPath;
     clothPath << "../../Media/bishop/cloth" << setw(3) << setfill('0') << index << "-uv.obj";
     humanPath << "../../Media/bishop/pose" << setw(3) << setfill('0') << index << ".obj";
 
-    CreateScene(clothPath.str(), humanPath.str());
+    createScene(clothPath.str(), humanPath.str());
 
     index++;
 }
 
+/**
+ * setup different scenes for collision detection according to command line options
+ * usage:
+ * excutable-name scene-option
+ * example:
+ * App_Collision_example2.exe -s
+ */
 int main(int argc, char* argv[])
 {
     if (argc == 2)
@@ -243,7 +262,6 @@ int main(int argc, char* argv[])
     {
         window.setKeyboardFunction(keyboardFunc);
     }
-
     window.createWindow(1024, 768);
     window.mainLoop();
 
