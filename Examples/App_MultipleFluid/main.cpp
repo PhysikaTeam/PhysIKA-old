@@ -63,6 +63,8 @@ void createScene()
     fluid->setMass(100);
     fluid->scale(2);
     fluid->translate(Vector3f(-0.6, -0.3, -0.48));
+
+
     //use MultipleFluidModel as the numeric model
     std::shared_ptr<MultipleFluidModel<DataType3f>> multifluid = std::make_shared<MultipleFluidModel<DataType3f>>();
     fluid->setNumericalModel(multifluid);
