@@ -1,17 +1,24 @@
-#include "ParticleElastoplasticBody.h"
-#include "PositionBasedFluidModel.h"
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-25
+ * @description: Declaration of ParticleElastoplasticBody class, projective-peridynamics based elastoplastic bodies
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-21
+ * @description: poslish code
+ * @version    : 1.1
+ */
 
-#include "Framework/Topology/TriangleSet.h"
-#include "Framework/Topology/PointSet.h"
+#include "ParticleElastoplasticBody.h"
 
 #include "Core/Utility.h"
-#include "Peridynamics.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
 #include "Framework/Topology/NeighborQuery.h"
+#include "Framework/Topology/TriangleSet.h"
+#include "Framework/Topology/PointSet.h"
 #include "ParticleIntegrator.h"
 #include "ElastoplasticityModule.h"
-
-#include "DensityPBD.h"
 #include "ImplicitViscosity.h"
 
 namespace PhysIKA {
@@ -37,12 +44,6 @@ ParticleElastoplasticBody<TDataType>::ParticleElastoplasticBody(std::string name
     this->currentVelocity()->connect(m_plasticity->inVelocity());
     m_nbrQuery->outNeighborhood()->connect(m_plasticity->inNeighborhood());
 
-    m_pbdModule = this->template addConstraintModule<DensityPBD<TDataType>>("pbd");
-    m_horizon.connect(m_pbdModule->varSmoothingLength());
-    this->currentPosition()->connect(m_pbdModule->inPosition());
-    this->currentVelocity()->connect(m_pbdModule->inVelocity());
-    m_nbrQuery->outNeighborhood()->connect(m_pbdModule->inNeighborIndex());
-
     m_visModule = this->template addConstraintModule<ImplicitViscosity<TDataType>>("viscosity");
     m_visModule->setViscosity(Real(1));
     m_horizon.connect(&m_visModule->m_smoothingLength);
@@ -52,7 +53,6 @@ ParticleElastoplasticBody<TDataType>::ParticleElastoplasticBody(std::string name
 
     m_surfaceNode = this->template createChild<Node>("Mesh");
     m_surfaceNode->setVisible(false);
-
     auto triSet = std::make_shared<TriangleSet<TDataType>>();
     m_surfaceNode->setTopologyModule(triSet);
 
@@ -69,19 +69,16 @@ template <typename TDataType>
 void ParticleElastoplasticBody<TDataType>::advance(Real dt)
 {
     auto module = this->template getModule<ElastoplasticityModule<TDataType>>("elastoplasticity");
-
     m_integrator->begin();
-
     m_integrator->integrate();
-
+    //elasticity
     m_nbrQuery->compute();
     module->solveElasticity();
+    //plasticity
     m_nbrQuery->compute();
-
     module->applyPlasticity();
-
+    //viscosity
     m_visModule->constrain();
-
     m_integrator->end();
 }
 

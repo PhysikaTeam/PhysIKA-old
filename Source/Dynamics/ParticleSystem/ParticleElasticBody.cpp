@@ -1,7 +1,19 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implementation of ParticleElasticBody class, projective-peridynamics based elastic bodies
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-20
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include "ParticleElasticBody.h"
+
+#include "Core/Utility.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
-#include "Core/Utility.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
 #include "Framework/Topology/NeighborQuery.h"
 #include "ParticleIntegrator.h"
@@ -15,38 +27,42 @@ ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
     : ParticleSystem<TDataType>(name)
 {
     this->varHorizon()->setValue(0.0085);
-    //        this->attachField(&m_horizon, "horizon", "horizon");
 
+    /*note on connect operation of VarField:
+     it leads to memory sharing between 2 fields,
+     A->connect(B) means B uses A's memory
+     */
+
+    //register integrator
     auto m_integrator = this->template setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
     this->currentPosition()->connect(m_integrator->inPosition());
     this->currentVelocity()->connect(m_integrator->inVelocity());
     this->currentForce()->connect(m_integrator->inForceDensity());
-
     this->getAnimationPipeline()->push_back(m_integrator);
 
+    //register neighbor query operation
     auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
     this->varHorizon()->connect(m_nbrQuery->inRadius());
     this->currentPosition()->connect(m_nbrQuery->inPosition());
-
     this->getAnimationPipeline()->push_back(m_nbrQuery);
 
+    //register elasticity module
     auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
     this->varHorizon()->connect(m_elasticity->inHorizon());
     this->currentPosition()->connect(m_elasticity->inPosition());
     this->currentVelocity()->connect(m_elasticity->inVelocity());
     m_nbrQuery->outNeighborhood()->connect(m_elasticity->inNeighborhood());
-
     this->getAnimationPipeline()->push_back(m_elasticity);
 
     //Create a node for surface mesh rendering
     m_surfaceNode = this->template createChild<Node>("Mesh");
-
-    auto triSet = m_surfaceNode->template setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
+    auto triSet   = m_surfaceNode->template setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
 
     //Set the topology mapping from PointSet to TriangleSet
+    //the mapping will be used to deform the mesh according to particle configuration
     auto surfaceMapping = this->template addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");
-    surfaceMapping->setFrom(this->m_pSet);
-    surfaceMapping->setTo(triSet);
+    surfaceMapping->setFrom(this->m_pSet);  //source
+    surfaceMapping->setTo(triSet);          //target
 }
 
 template <typename TDataType>
@@ -80,16 +96,12 @@ template <typename TDataType>
 void ParticleElasticBody<TDataType>::advance(Real dt)
 {
     auto integrator = this->template getModule<ParticleIntegrator<TDataType>>("integrator");
-
-    auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
+    auto module     = this->template getModule<ElasticityModule<TDataType>>("elasticity");
 
     integrator->begin();
-
     integrator->integrate();
-
     if (module != nullptr)
         module->constrain();
-
     integrator->end();
 }
 
