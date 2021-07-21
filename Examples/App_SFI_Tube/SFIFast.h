@@ -55,6 +55,8 @@ private:
     DeviceArray<int> m_objId;
 
     DeviceArray<Coord> posBuf;
+    DeviceArray<Coord> velBuf;
+    DeviceArray<Coord> velOld;
     DeviceArray<Real>  weights;
     DeviceArray<Coord> init_pos;
 

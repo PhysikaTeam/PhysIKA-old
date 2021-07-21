@@ -36,15 +36,15 @@ using namespace PhysIKA;
 void createScene()
 {
     SceneGraph& scene = SceneGraph::getInstance();
-    scene.setUpperBound(Vector3f(2.0f, 2.0f, 2.0f));
-    scene.setLowerBound(Vector3f(-2.0f, 0, -2.0f));
+    scene.setUpperBound(Vector3f(2.0f, 1.0f, 1.0f));
+    scene.setLowerBound(Vector3f(-0.0f, 0, -0.0f));
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-    root->loadCube(Vector3f(-2,0,-2), Vector3f(2.0f, 2.0f, 2.0f), 0.025f, true);  //scene boundary
+    root->loadCube(Vector3f(-0,0,0), Vector3f(2.0f, 1.0f, 1.0f), 0.025f, true);  //scene boundary
     //fluid
     std::shared_ptr<ParticleFluidFast<DataType3f>> fluid = std::make_shared<ParticleFluidFast<DataType3f>>();
-    //root->addParticleSystem(fluid);
-    fluid->loadParticles(Vector3f(0), Vector3f(0.5, 0.5, 0.5), 0.005f);
+    root->addParticleSystem(fluid);
+    fluid->loadParticles(Vector3f(0), Vector3f(0.5, 0.5, 1.0), 0.005f);
     fluid->setMass(10);
     fluid->setActive(true);
     fluid->self_update = true;
@@ -54,22 +54,30 @@ void createScene()
     fluid->addVisualModule(ptRender);
     fluid->currentVelocity()->connect(&ptRender->m_vecIndex);
     //elastic bunny
-    std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
-    root->addParticleSystem(bunny);
-    bunny->setMass(0.1);
-    bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
-    bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
-    bunny->scale(1.0f / 3.0f);
-    bunny->translate(Vector3f(1.15, 0.2, 0.4 + 0.3));
-    bunny->setVisible(false);
-    
-    auto sRender = std::make_shared<SurfaceMeshRender>();
-    bunny->getSurfaceNode()->addVisualModule(sRender);
-    sRender->setColor(Vector3f(0.0, 1.0, 1.0));
-    //sfi
+
     std::shared_ptr<SFIFast<DataType3f>> sfi = std::make_shared<SFIFast<DataType3f>>();
-    //sfi->addParticleSystem(fluid);
-    sfi->addParticleSystem(bunny);
+    sfi->addParticleSystem(fluid);
+
+    int obj_num = 3;
+    for (int i = 0; i < obj_num; i++)
+        for (int j = 0; j < obj_num; j ++)
+        {
+            std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+            root->addParticleSystem(bunny);
+            //root->addParticleSystem(bunny);
+            bunny->setMass(0.01);
+            bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+            bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
+            bunny->scale(1.0f / 3.0f);
+            bunny->translate(Vector3f(0.07 + 0.13 * j, 0.55, 0.2 + 0.3 * i));
+            bunny->setVisible(false);
+
+            auto sRender = std::make_shared<SurfaceMeshRender>();
+            bunny->getSurfaceNode()->addVisualModule(sRender);
+            sRender->setColor(Vector3f(1.0, 1.0, 1.0));
+            //sfi
+            sfi->addParticleSystem(bunny);
+        }
     root->addChild(sfi);
 }
 

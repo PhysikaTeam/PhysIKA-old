@@ -99,6 +99,9 @@ bool SFIFast<TDataType>::resetStatus()
     weights.resize(total_num);
     init_pos.resize(total_num);
 
+    velBuf.resize(total_num);
+    velOld.resize(total_num);
+
     Function1Pt::copy(m_objId, ids);
     Function1Pt::copy(m_mass.getValue(), mass);
     ids.clear();
@@ -138,7 +141,7 @@ __global__ void K_Collide(
     Real  r;
     Coord pos_i   = points[pId];
     int   id_i    = objIds[pId];
-    Real  mass_i  = mass[pId];
+    Real  mass_i  = 1.0f;  //mass[pId];
     int   nbSize  = neighbors.getNeighborSize(pId);
     int   col_num = 0;
     Coord pos_num = Coord(0);
@@ -151,7 +154,8 @@ __global__ void K_Collide(
         if (r < radius && objIds[j] != id_i)
         {
             col_num++;
-            Real  mass_j = mass[j];
+            Real mass_j = 1.0f;
+            //mass[j];
             Coord center = (pos_i + pos_j) / 2;
             Coord n      = pos_i - pos_j;
             n            = n.norm() < EPSILON ? Coord(0, 0, 0) : n.normalize();
@@ -186,12 +190,62 @@ __global__ void K_Collide(
         }
     }
 
-    //		if (col_num != 0)
-    //			pos_num /= col_num;
-    //		else
-    //			pos_num = pos_i;
-    //
-    //		newPoints[pId] = pos_num;
+    
+}
+
+template <typename Real, typename Coord>
+__global__ void K_Viscosity(
+    DeviceArray<int>   objIds,
+    DeviceArray<Real>  mass,
+    DeviceArray<Coord> points,
+    DeviceArray<Coord> oldVels,
+    DeviceArray<Coord> newVels,
+    DeviceArray<Real>  weights,
+    NeighborList<int>  neighbors,
+    Real               radius)
+{
+    int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+    if (pId >= points.size())
+        return;
+
+    if (objIds[pId] == 0)
+        return;
+
+    SpikyKernel<Real> kernel;
+
+    Real  r;
+    Coord pos_i   = points[pId];
+    int   id_i    = objIds[pId];
+    Real  mass_i  = mass[pId];
+    int   nbSize  = neighbors.getNeighborSize(pId);
+    int   col_num = 0;
+    Coord pos_num = Coord(0);
+    for (int ne = 0; ne < nbSize; ne++)
+    {
+        int   j     = neighbors.getElement(pId, ne);
+        Coord pos_j = points[j];
+
+        r = (pos_i - pos_j).norm();
+        if (r < radius)
+        {
+            Real mass_j = mass[j];
+
+            Real weight = kernel.Weight(r, 2 * radius) * mass_j;
+
+            Coord vel_j = oldVels[j] * weight;
+            atomicAdd(&weights[pId], weight);
+            atomicAdd(&newVels[pId][0], vel_j[0]);
+            atomicAdd(&newVels[pId][1], vel_j[1]);
+            atomicAdd(&newVels[pId][2], vel_j[2]);
+        }
+    }
+   /* if (newVels[pId].norm() > EPSILON)
+        printf("!!!!!!!!!! %.10lf  %.10lf  %.10lf\n", 
+               newVels[pId][0] / weights[pId],
+               newVels[pId][1] / weights[pId],
+               newVels[pId][2] / weights[pId]);*/
+
+    
 }
 
 template <typename Real, typename Coord>
@@ -226,6 +280,23 @@ __global__ void K_ComputeVelocity(
     velocites[pId] += 0.5 * (curPoints[pId] - initPoints[pId]) / dt;
 }
 
+
+template <typename Coord>
+__global__ void SFIF_UpdateViscosity(
+    DeviceArray<Coord> velocities,
+    DeviceArray<Coord> velocity_old,
+    DeviceArray<Coord> velocity_new
+)
+{
+    int pId = threadIdx.x + (blockIdx.x * blockDim.x);
+    if (pId >= velocities.size())
+        return;
+
+    velocities[pId] = (0.65f * velocity_old[pId] + 0.35f * velocity_new[pId]);
+    /*if (velocity_new[pId].norm() > EPSILON)
+        printf("YES  %.3lf   %.3lf  %.3lf\n", velocity_new[pId][0], velocity_new[pId][1], velocity_new[pId][2]);*/
+}
+
 template <typename TDataType>
 void SFIFast<TDataType>::advance(Real dt)
 {
@@ -246,7 +317,7 @@ void SFIFast<TDataType>::advance(Real dt)
    
 
     auto module2 = this->template getModule<ImplicitViscosity<TDataType>>("viscosity");
-    module2->constrain();
+    //module2->constrain();
 
     Function1Pt::copy(init_pos, allpoints);
 
@@ -274,8 +345,33 @@ void SFIFast<TDataType>::advance(Real dt)
 
 	K_ComputeVelocity << <pDims, BLOCK_SIZE >> > (init_pos, allpoints, m_vels.getValue(), getParent()->getDt());
 
-    auto module = this->template getModule<DensityPBD<TDataType>>("collision");
-    module->constrain();
+    Function1Pt::copy(velOld, m_vels.getValue());
+    for (size_t it = 0; it < 3; it++)
+    {
+        weights.reset();
+        velBuf.reset();
+        K_Viscosity<<<pDims, BLOCK_SIZE>>>(
+            m_objId,
+            m_mass.getValue(),
+            allpoints,
+            m_vels.getValue(),
+            velBuf,
+            weights,
+            m_nbrQuery->outNeighborhood()->getValue(),
+            radius.getValue());
+
+        K_ComputeTarget<<<pDims, BLOCK_SIZE>>>(
+            m_vels.getValue(),
+            velBuf,
+            weights);
+
+        Function1Pt::copy(m_vels.getValue(), velBuf);
+    }
+    //Function1Pt::copy(velBuf, m_vels.getValue());
+    SFIF_UpdateViscosity<<<pDims, BLOCK_SIZE>>>(m_vels.getValue(), velOld, velBuf);
+
+    /*auto module = this->template getModule<DensityPBD<TDataType>>("collision");
+    module->constrain();*/
 
     start = 0;
     for (int i = 0; i < m_particleSystems.size(); i++)
