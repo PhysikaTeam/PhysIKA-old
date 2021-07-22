@@ -45,6 +45,8 @@ public:
 
     void setInteractionDistance(Real d);
 
+    void output_initialized_particles();
+
 private:
     VarField<Real> radius;
 
@@ -68,6 +70,8 @@ private:
 
     std::vector<std::shared_ptr<RigidBody<TDataType>>>      m_rigids;
     std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;
+
+    int frame_count = 0;
 };
 
 #ifdef PRECISION_FLOAT
