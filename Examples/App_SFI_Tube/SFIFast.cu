@@ -57,7 +57,6 @@ bool SFIFast<TDataType>::initialize()
     return true;
 }
 
-
 template <typename TDataType>
 void SFIFast<TDataType>::output_initialized_particles()
 {
@@ -65,21 +64,20 @@ void SFIFast<TDataType>::output_initialized_particles()
     host_particle_positions.resize(m_position.getElementCount());
     Function1Pt::copy(host_particle_positions, m_position.getValue());
     std::ofstream fout;
-    fout.open("data_fluid_pos.obj");  
-    
-    for (int i = 0; i < host_particle_positions.size(); i ++)
+    fout.open("data_fluid_pos.obj");
+
+    for (int i = 0; i < host_particle_positions.size(); i++)
     {
-        fout << "v " << host_particle_positions[i][0] <<' '
+        fout << "v " << host_particle_positions[i][0] << ' '
              << host_particle_positions[i][1] << ' '
-             << host_particle_positions[i][2] 
-            << std::endl;
+             << host_particle_positions[i][2]
+             << std::endl;
     }
 
     fout.close();
 
     host_particle_positions.release();
 }
-
 
 template <typename TDataType>
 bool SFIFast<TDataType>::addRigidBody(std::shared_ptr<RigidBody<TDataType>> child)
@@ -180,7 +178,7 @@ __global__ void K_Collide(
             col_num++;
             Real mass_j = 1.0f;  //mass[j];
 
-           /* if (objIds[pId] == 0)
+            /* if (objIds[pId] == 0)
             {
                 printf("%.10lf %.10lf \n", mass_i, mass_j);
             }*/
@@ -217,8 +215,6 @@ __global__ void K_Collide(
             }
         }
     }
-
-    
 }
 
 template <typename Real, typename Coord>
@@ -267,9 +263,6 @@ __global__ void K_Viscosity(
             atomicAdd(&newVels[pId][2], vel_j[2]);
         }
     }
-   
-
-    
 }
 
 template <typename Real, typename Coord>
@@ -304,13 +297,11 @@ __global__ void K_ComputeVelocity(
     velocites[pId] += 0.5 * (curPoints[pId] - initPoints[pId]) / dt;
 }
 
-
 template <typename Coord>
 __global__ void SFIF_UpdateViscosity(
     DeviceArray<Coord> velocities,
     DeviceArray<Coord> velocity_old,
-    DeviceArray<Coord> velocity_new
-)
+    DeviceArray<Coord> velocity_new)
 {
     int pId = threadIdx.x + (blockIdx.x * blockDim.x);
     if (pId >= velocities.size())
@@ -335,7 +326,7 @@ __global__ void SFIF_UpdateBoundary_Tube(
         Coord pos_i = pos[pId];
         if (pos[pId][2] < 1 / 6.0f)
         {
-            Real left  = pos[pId][0] - 2.0f;
+            Real left   = pos[pId][0] - 2.0f;
             Real behind = 1.0f / 6.0f - pos[pId][2];
 
             if (left < behind)
@@ -350,8 +341,8 @@ __global__ void SFIF_UpdateBoundary_Tube(
         else if (pos[pId][2] < 2.0f / 3.0f && pos[pId][2] > 1.0f / 3.0f)
         {
             Real left   = pos[pId][0] - 2.0f;
-            Real front = 2.0f / 3.0f - pos[pId][2];
-            Real behind  = pos[pId][2] - 1.0f / 3.0f;
+            Real front  = 2.0f / 3.0f - pos[pId][2];
+            Real behind = pos[pId][2] - 1.0f / 3.0f;
             if (left < behind && left < front)
             {
                 pos_i[0] = 2.0f;
@@ -367,7 +358,7 @@ __global__ void SFIF_UpdateBoundary_Tube(
         }
         else if (pos[pId][2] > 5.0f / 6.0f)
         {
-            Real left = pos[pId][0] - 2.0f;
+            Real left  = pos[pId][0] - 2.0f;
             Real front = pos[pId][2] - 5.0f / 6.0f;
             if (left < front)
             {
@@ -378,15 +369,13 @@ __global__ void SFIF_UpdateBoundary_Tube(
                 pos_i[2] = 5.0f / 6.0f;
             }
         }
-        velocities[pId] += (pos_i - pos[pId]) / 0.001f; 
+        velocities[pId] += (pos_i - pos[pId]) / 0.001f;
         pos[pId] = pos_i;
-        
     }
     if (pos[pId][0] <= 3.0f)
     {
         pos[pId][1] = max(pos[pId][1], 0.0f);
     }
-    
 }
 
 template <typename Coord>
@@ -403,13 +392,11 @@ __global__ void SFIF_UpdateBoundary_InitFluid(
         Real delta_pos = pos[pId][0] - 1.0f;
         pos[pId][0]    = 1.0f;
         velocities[pId][0] -= delta_pos / 0.001f;
-        
     }
     if (pos[pId][1] < 0.0f)
         pos[pId][1] = 0.0f;
-   // velocities[pId] *= 0.995f;
+    // velocities[pId] *= 0.995f;
 }
-
 
 template <typename TDataType>
 void SFIFast<TDataType>::advance(Real dt)
@@ -428,15 +415,12 @@ void SFIFast<TDataType>::advance(Real dt)
 
     m_nbrQuery->compute();
 
-   
-
     auto module2 = this->template getModule<ImplicitViscosity<TDataType>>("viscosity");
     //module2->constrain();
 
     Function1Pt::copy(init_pos, allpoints);
 
-	uint pDims = cudaGridSize(allpoints.size(), BLOCK_SIZE);
-	
+    uint pDims = cudaGridSize(allpoints.size(), BLOCK_SIZE);
 
     Function1Pt::copy(velOld, m_vels.getValue());
     for (size_t it = 0; it < 10; it++)
@@ -466,7 +450,6 @@ void SFIFast<TDataType>::advance(Real dt)
     /*auto module = this->template getModule<DensityPBD<TDataType>>("collision");
     module->constrain();*/
 
-
     for (size_t it = 0; it < 5; it++)
     {
         weights.reset();
@@ -489,7 +472,7 @@ void SFIFast<TDataType>::advance(Real dt)
     }
 
     K_ComputeVelocity<<<pDims, BLOCK_SIZE>>>(init_pos, allpoints, m_vels.getValue(), getParent()->getDt());
-   
+
     if (frame_count < 500)
     {
         SFIF_UpdateBoundary_InitFluid<<<pDims, BLOCK_SIZE>>>(m_vels.getValue(), allpoints);
@@ -498,11 +481,10 @@ void SFIFast<TDataType>::advance(Real dt)
     {
         SFIF_UpdateBoundary_Tube<<<pDims, BLOCK_SIZE>>>(m_vels.getValue(), allpoints);
     }
-  /*  if (frame_count == 1000)
+    /*  if (frame_count == 1000)
     {
         output_initialized_particles();
     }*/
-
 
     frame_count++;
     start = 0;

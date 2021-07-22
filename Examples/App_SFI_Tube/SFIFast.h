@@ -65,7 +65,7 @@ private:
     std::shared_ptr<NeighborList<int>>        m_nList;
     std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;
 
-    std::shared_ptr<DensityPBD<TDataType>> m_pbdModule;
+    std::shared_ptr<DensityPBD<TDataType>>        m_pbdModule;
     std::shared_ptr<ImplicitViscosity<TDataType>> m_visModule;
 
     std::vector<std::shared_ptr<RigidBody<TDataType>>>      m_rigids;

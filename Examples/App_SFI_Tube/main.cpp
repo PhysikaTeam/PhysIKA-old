@@ -40,7 +40,7 @@ void createScene()
     scene.setLowerBound(Vector3f(-0.0f, 0, -0.0f));
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-    root->loadCube(Vector3f(-0,0,0), Vector3f(4.0f, 1.0f, 1.0f), 0.025f, true);  //scene boundary
+    root->loadCube(Vector3f(-0, 0, 0), Vector3f(4.0f, 1.0f, 1.0f), 0.025f, true);  //scene boundary
     //fluid
     std::shared_ptr<ParticleFluidFast<DataType3f>> fluid = std::make_shared<ParticleFluidFast<DataType3f>>();
     root->addParticleSystem(fluid);
@@ -60,7 +60,7 @@ void createScene()
 
     int obj_num = 3;
     for (int i = 0; i < obj_num; i++)
-        for (int j = 0; j < obj_num; j ++)
+        for (int j = 0; j < obj_num; j++)
         {
             std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
             root->addParticleSystem(bunny);
@@ -101,8 +101,6 @@ void createScene()
         }
     root->addChild(sfi);
 }
-
-
 
 int main()
 {
