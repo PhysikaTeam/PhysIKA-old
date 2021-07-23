@@ -1,15 +1,9 @@
 /**
- * @author     : He Xiaowei (Clouddon@sina.com)
- * @date       : 2021-06-17
- * @description: Simulate Solid Fluid Interaction with fast solver
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-07-23
+ * @description: A tube Scene
  *               reference <Position Based Fluids>
  * @version    : 1.0
- *
- * @author     : Zhu Fei (feizhu@pku.edu.cn)
- * @date       : 2021-07-17
- * @description: poslish code
- * @version    : 1.1
- * @TODO       : find out how fast solver works
  */
 
 #include <memory>
