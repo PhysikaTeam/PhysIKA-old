@@ -50,7 +50,7 @@ void createScene()
     fluid->currentVelocity()->connect(&pbd->m_velocity);
     fluid->currentForce()->connect(&pbd->m_forceDensity);
     pbd->setSmoothingLength(0.02);
-    
+
     auto ptRender = std::make_shared<PointRenderModule>();
     ptRender->setColor(Vector3f(0, 0, 1));
     ptRender->setColorRange(0, 1);
