@@ -1,7 +1,7 @@
 /**
  * @author     : He Xiaowei (Clouddon@sina.com)
  * @date       : 2021-06-17
- * @description: Simulate fluid with PBD on GPU
+ * @description: Simulate fluid with PBD using fast algorithm
  *               reference <Position Based Fluids>
  * @version    : 1.0
  *

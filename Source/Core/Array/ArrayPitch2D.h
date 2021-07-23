@@ -1,6 +1,6 @@
 #pragma once
 #include <assert.h>
-#include <cuda_runtime.h>
+//#include <cuda_runtime.h>
 #include "Core/Platform.h"
 #include "MemoryManager.h"
 namespace PhysIKA {

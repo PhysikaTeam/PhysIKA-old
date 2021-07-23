@@ -1,11 +1,20 @@
-#include "ParticleEmitterRound.h"
-#include <time.h>
 
-#include <Eigen/Dense>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
-#include <Eigen/StdVector>
-#include <stdlib.h>
+/**
+ * @author     : Chang Yue (changyue@buaa.edu.cn)
+ * @date       : 2020-08-27
+ * @description: Implementation of ParticleEmitterRound class, which emits particles from a circle
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-23
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
+#include "ParticleEmitterRound.h"
+
+#include <ctime>
+#include <cstdlib>
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(ParticleEmitterRound, TDataType)
@@ -14,7 +23,6 @@ template <typename TDataType>
 ParticleEmitterRound<TDataType>::ParticleEmitterRound(std::string name)
     : ParticleEmitter<TDataType>(name)
 {
-
     srand(time(0));
 }
 
@@ -61,7 +69,6 @@ void ParticleEmitterRound<TDataType>::generateParticles()
             Coord p = Coord(x, 0, y);
             if ((p - Coord(0)).norm() < r && rand() % 40 == 0)
             {
-                //Coord q = cos(angle) * p + (1 - cos(angle)) * (p.dot(axis)) * axis + sin(angle) * axis.cross(p);
                 Coord q = rot_mat * p;
                 pos_list.push_back(q + center);
                 vel_list.push_back(v0);

@@ -1,9 +1,20 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-12-22
+ * @description: Implementation of ParticleRod class, projective-peridynamics based elastic rod
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-23
+ * @description: poslish code, fix bugs
+ * @version    : 1.1
+ */
+
 #include "ParticleRod.h"
-#include "Framework/Topology/PointSet.h"
+
 #include "Core/Utility.h"
-#include "Framework/Topology/NeighborQuery.h"
+#include "Framework/Topology/PointSet.h"
 #include "ParticleIntegrator.h"
-#include "ElasticityModule.h"
 #include "OneDimElasticityModule.h"
 #include "FixedPoints.h"
 #include "SimpleDamping.h"
@@ -25,17 +36,6 @@ ParticleRod<TDataType>::ParticleRod(std::string name)
     this->currentPosition()->connect(m_integrator->inPosition());
     this->currentVelocity()->connect(m_integrator->inVelocity());
     this->currentForce()->connect(m_integrator->inForceDensity());
-
-    auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-    m_horizon.connect(m_nbrQuery->inRadius());
-    this->currentPosition()->connect(m_nbrQuery->inPosition());
-
-    // 		m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
-    // 		this->getPosition()->connect(m_elasticity->m_position);
-    // 		this->getVelocity()->connect(m_elasticity->m_velocity);
-    // 		m_horizon.connect(m_elasticity->m_horizon);
-    // 		m_nbrQuery->m_neighborhood.connect(m_elasticity->m_neighborhood);
-    // 		m_elasticity->setIterationNumber(10);
 
     m_one_dim_elasticity = this->template addConstraintModule<OneDimElasticityModule<TDataType>>("elasticity module");
     this->currentPosition()->connect(&m_one_dim_elasticity->m_position);
@@ -64,16 +64,8 @@ void ParticleRod<TDataType>::setParticles(std::vector<Coord> particles)
 }
 
 template <typename TDataType>
-void ParticleRod<TDataType>::setLength(Real length)
-{
-    m_horizon.setValue(length);
-}
-
-template <typename TDataType>
 void ParticleRod<TDataType>::setMaterialStiffness(Real stiffness)
 {
-    // 		m_elasticity->setMu(0.01*stiffness);
-    // 		m_elasticity->setLambda(stiffness);
     m_one_dim_elasticity->setMaterialStiffness(stiffness);
 }
 
@@ -83,8 +75,7 @@ bool ParticleRod<TDataType>::initialize()
     ParticleSystem<TDataType>::initialize();
 
     auto&                                        list = this->getModuleList();
-    std::list<std::shared_ptr<Module>>::iterator iter = list.begin();
-    for (; iter != list.end(); iter++)
+    for (auto iter = list.begin(); iter != list.end(); iter++)
     {
         (*iter)->initialize();
     }
@@ -96,8 +87,8 @@ template <typename TDataType>
 bool ParticleRod<TDataType>::resetStatus()
 {
     ParticleSystem<TDataType>::resetStatus();
-
     resetMassField();
+    m_modified = false;
 
     return true;
 }
@@ -126,10 +117,8 @@ template <typename TDataType>
 void ParticleRod<TDataType>::addFixedParticle(int id, Coord pos)
 {
     m_fixed->addFixedPoint(id, pos);
-
     m_fixedIds.push_back(id);
-
-    m_modifed = true;
+    m_modified = true;
 }
 
 template <typename TDataType>
@@ -149,7 +138,7 @@ void ParticleRod<TDataType>::removeFixedParticle(int id)
         }
     }
 
-    m_modifed = true;
+    m_modified = true;
 }
 
 template <typename TDataType>
@@ -163,6 +152,7 @@ void ParticleRod<TDataType>::removeAllFixedPositions()
 {
     m_fixed->clear();
     m_fixedIds.clear();
+    m_modified = true;
 }
 
 template <typename TDataType>
@@ -186,21 +176,23 @@ void ParticleRod<TDataType>::setDamping(Real d)
 template <typename TDataType>
 void ParticleRod<TDataType>::advance(Real dt)
 {
-    if (m_modifed == true)
+    if (m_modified == true)
     {
         resetMassField();
+        m_modified = false;
     }
 
     if (m_fixed != nullptr)
         m_fixed->constrain();
 
     if (m_integrator != nullptr)
+    {
         m_integrator->begin();
+        m_integrator->integrate();
+    }
 
-    m_integrator->integrate();
-
-    m_one_dim_elasticity->constrain();
-    //m_elasticity->constrain();
+    if (m_one_dim_elasticity != nullptr)
+        m_one_dim_elasticity->constrain();
 
     if (m_damping != nullptr)
         m_damping->constrain();
