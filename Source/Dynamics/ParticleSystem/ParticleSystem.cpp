@@ -1,8 +1,19 @@
-#include "ParticleSystem.h"
-#include "PositionBasedFluidModel.h"
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implementation of ParticleSystem class, base class of all particle-based methods
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-20
+ * @description: poslish code
+ * @version    : 1.1
+ */
 
-#include "Framework/Topology/PointSet.h"
+#include "ParticleSystem.h"
+
 #include "Core/Utility.h"
+#include "Framework/Topology/PointSet.h"
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(ParticleSystem, TDataType)
@@ -11,14 +22,8 @@ template <typename TDataType>
 ParticleSystem<TDataType>::ParticleSystem(std::string name)
     : Node(name)
 {
-    //        attachField(&m_velocity, MechanicalState::velocity(), "Storing the particle velocities!", false);
-    //        attachField(&m_force, MechanicalState::force(), "Storing the force densities!", false);
-
     m_pSet = std::make_shared<PointSet<TDataType>>();
     this->setTopologyModule(m_pSet);
-
-    //         m_pointsRender = std::make_shared<PointRenderModule>();
-    //         this->addVisualModule(m_pointsRender);
 }
 
 template <typename TDataType>
@@ -115,18 +120,6 @@ bool ParticleSystem<TDataType>::initialize()
     return Node::initialize();
 }
 
-//     template<typename TDataType>
-//     void ParticleSystem<TDataType>::setVisible(bool visible)
-//     {
-//         if (m_pointsRender == nullptr)
-//         {
-//             m_pointsRender = std::make_shared<PointRenderModule>();
-//             this->addVisualModule(m_pointsRender);
-//         }
-//
-//         Node::setVisible(visible);
-//     }
-
 template <typename TDataType>
 void ParticleSystem<TDataType>::updateTopology()
 {
@@ -161,15 +154,4 @@ bool ParticleSystem<TDataType>::resetStatus()
     return Node::resetStatus();
 }
 
-//     template<typename TDataType>
-//     std::shared_ptr<PointRenderModule> ParticleSystem<TDataType>::getRenderModule()
-//     {
-// //         if (m_pointsRender == nullptr)
-// //         {
-// //             m_pointsRender = std::make_shared<PointRenderModule>();
-// //             this->addVisualModule(m_pointsRender);
-// //         }
-//
-//         return m_pointsRender;
-//     }
 }  // namespace PhysIKA
