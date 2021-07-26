@@ -34,7 +34,7 @@ void createScene()
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
     root->loadCube(Vector3f(-0.1f, 0.0f, -1.0f), Vector3f(1.1f, 2.0f, 1.1f), 0.02f, true);  //scene boundary
-    root->loadShpere(Vector3f(0.5, 0.2f, 0.5f), 0.2f, 0.01f, false, true);                  //sphere in scene
+    root->loadShpere(Vector3f(0.5, 0.2f, 0.5f), 0.2f, 0.01f, false);                  //sphere in scene
 
     {
         //add a dummy rigid body sphere in scene, for rendering
