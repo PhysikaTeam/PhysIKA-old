@@ -74,7 +74,7 @@ bool ParticleRod<TDataType>::initialize()
 {
     ParticleSystem<TDataType>::initialize();
 
-    auto&                                        list = this->getModuleList();
+    auto& list = this->getModuleList();
     for (auto iter = list.begin(); iter != list.end(); iter++)
     {
         (*iter)->initialize();

@@ -51,23 +51,23 @@ __global__ void K_CD_mesh(DeviceArray<Coord>                    points,
     if (vels[pId].norm() > radius / dt)
         vels[pId] = vels[pId] / vels[pId].norm() * radius / dt;
 
-    Coord pos_i            = points[pId];
+    Coord pos_i   = points[pId];
     Coord old_pos = pos_i;
     Coord new_pos(0);
     Real  weight(0);
-    int nbSizeTri = neighborsTriangle.getNeighborSize(pId);
+    int   nbSizeTri = neighborsTriangle.getNeighborSize(pId);
     for (int ne = 0; ne < nbSizeTri; ne++)
     {
         int j = neighborsTriangle.getElement(pId, ne);
-        if (j >= 0)     //skip redundant triangles
-            continue;   //NeighborQuery employs grid hashing, and a triangle may appear in multiple grids. NeigborQuery use postive&&negative flags to remove redundancy
+        if (j >= 0)    //skip redundant triangles
+            continue;  //NeighborQuery employs grid hashing, and a triangle may appear in multiple grids. NeigborQuery use postive&&negative flags to remove redundancy
 
         j *= -1;
-        j--; //1-index to 0-index
+        j--;  //1-index to 0-index
 
         Triangle3D t3d(pointsTri[m_triangle_index[j][0]], pointsTri[m_triangle_index[j][1]], pointsTri[m_triangle_index[j][2]]);
-        Point3D p3d(pos_i);
-        Point3D nearest_point = p3d.project(t3d);
+        Point3D    p3d(pos_i);
+        Point3D    nearest_point = p3d.project(t3d);
 
         Real r  = (p3d.distance(t3d));
         r       = abs(r);
@@ -81,7 +81,7 @@ __global__ void K_CD_mesh(DeviceArray<Coord>                    points,
             Point3D pt_neartest = nearest_point;
             Coord3D pt_norm     = -pt_neartest.origin + p3d.origin;
             pt_norm /= (r);
-            new_pos += pt_neartest.origin + radius * pt_norm; //project to triangle collision surface
+            new_pos += pt_neartest.origin + radius * pt_norm;  //project to triangle collision surface
             weight += 1.0;
         }
     }
