@@ -1,7 +1,7 @@
 /**
  * @author     : Yue Chang (yuechang@pku.edu.cn)
  * @date       : 2021-07-23
- * @description: A tube Scene
+ * @description: Simulate the coupling between PBD fluid and projective-peridynamics elastic bodies with a tube-shaped boundary
  *               reference <Position Based Fluids>
  * @version    : 1.0
  */
@@ -25,7 +25,7 @@ using namespace std;
 using namespace PhysIKA;
 
 /**
- * setup scene: dambreak with an elastic bunny
+ * setup scene: dambreak with elastic objects and tube-shaped boundary
  */
 void createScene()
 {
