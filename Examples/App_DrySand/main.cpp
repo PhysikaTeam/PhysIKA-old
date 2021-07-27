@@ -64,6 +64,7 @@ void createScene()
     root->loadSDF("../../Media/bar/bar.sdf", false);
     root->translate(Vector3f(0.2f, 0.2f, 0));
     root->loadCube(Vector3f(0), Vector3f(1), 0.005f, true);
+
     //dummy rigid bar, for rendering
     std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
     root->addRigidBody(rigidbody);
