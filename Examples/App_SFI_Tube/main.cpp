@@ -56,21 +56,20 @@ void createScene()
     for (int i = 0; i < obj_num; i++)
         for (int j = 0; j < obj_num; j++)
         {
-            std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
-            root->addParticleSystem(bunny);
-            //root->addParticleSystem(bunny);
-            bunny->setMass(2);
-            bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
-            bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
-            bunny->scale(1.0f / 3.0f);
-            bunny->translate(Vector3f(0.17 + 0.28 * j, 0.425, 0.2 + 0.3 * i));
-            bunny->setVisible(false);
+            std::shared_ptr<ParticleElasticBody<DataType3f>> cube = std::make_shared<ParticleElasticBody<DataType3f>>();
+            root->addParticleSystem(cube);
+            cube->setMass(2);
+            cube->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+            cube->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
+            cube->scale(1.0f / 3.0f);
+            cube->translate(Vector3f(0.17 + 0.28 * j, 0.425, 0.2 + 0.3 * i));
+            cube->setVisible(false);
 
             auto sRender = std::make_shared<SurfaceMeshRender>();
-            bunny->getSurfaceNode()->addVisualModule(sRender);
+            cube->getSurfaceNode()->addVisualModule(sRender);
             sRender->setColor(Vector3f(1.0, 1.0, 1.0));
             //sfi
-            sfi->addParticleSystem(bunny);
+            sfi->addParticleSystem(cube);
         }
 
     //int obj_num = 3;
