@@ -19,8 +19,10 @@ namespace PhysIKA {
 
 /**
  * ParticleFluidFast
- * a scene node that implements Position-based fluids.
+ * a scene node for particle-based fluid methods
+ * The default solver is PBD
  * reference: Macklin and Muller's "Position Based Fluids"
+ * Solver can be specified by calling setNumericalModel()
  * Spatial hashing is used to reorder the particles for fast neighbor search and less memory load
  *
  * Known issues(TODO: Fix them!):

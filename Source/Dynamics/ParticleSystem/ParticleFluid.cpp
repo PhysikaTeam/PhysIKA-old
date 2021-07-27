@@ -1,3 +1,15 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2018-12-17
+ * @description: Implementation of ParticleFluid class, which is a container for particle-based fluid solvers
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-21
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #include "ParticleFluid.h"
 
 #include "Core/Utility.h"

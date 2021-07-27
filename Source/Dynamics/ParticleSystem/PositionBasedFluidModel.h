@@ -1,4 +1,17 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Declaration of PositionBasedFluidModel class, which implements Position-based fluid model
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-27
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #pragma once
+
 #include "Framework/Framework/NumericalModel.h"
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/FieldArray.h"
@@ -6,25 +19,24 @@
 
 namespace PhysIKA {
 template <typename TDataType>
-class PointSetToPointSet;
-template <typename TDataType>
 class ParticleIntegrator;
 template <typename TDataType>
 class NeighborQuery;
 template <typename TDataType>
-class DensityPBD;
-template <typename TDataType>
 class ImplicitViscosity;
 class ForceModule;
 class ConstraintModule;
-/*!
-    *    \class    ParticleSystem
-    *    \brief    Position-based fluids.
-    *
-    *    This class implements a position-based fluid solver.
-    *    Refer to Macklin and Muller's "Position Based Fluids" for details
-    *
-    */
+
+/**
+ * PositionBasedFluidModel, implementation of the paper <Position Based Fluids>
+ * Usage:
+ * 1. Define a PositionBasedFluidModel instance
+ * 2. Bind the instance with a ParticleFluid node by calling Node::setNumericalModel()
+ * 3. Connect fields of ParticleFluid with PositionBasedFluidModel by calling Field::connect()
+ * We're done. PositionBasedFluidModel will be employed in advance() of the ParticleFluid.
+ *
+ * TODO(Zhu Fei): complete the code comments.
+ */
 template <typename TDataType>
 class PositionBasedFluidModel : public NumericalModel
 {
@@ -77,7 +89,6 @@ private:
     std::shared_ptr<DensityPBD<TDataType>>        m_pbdModule;
     std::shared_ptr<ImplicitViscosity<TDataType>> m_visModule;
 
-    std::shared_ptr<PointSetToPointSet<TDataType>> m_mapping;
     std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;
     std::shared_ptr<NeighborQuery<TDataType>>      m_nbrQuery;
 };

@@ -1,11 +1,24 @@
+/**
+ * @author     : Chen Xiaosong (xiaosong0911@gmail.com)
+ * @date       : 2019-06-13
+ * @description: Implementation of MultipleFluidModel class, which implements the paper
+ *               <Fast Multiple-fluid Simulation Using Helmholtz Free Energy>
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-27
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #include "MultipleFluidModel.h"
 
+#include "Core/Utility.h"
+#include "Framework/ModuleTypes.h"
 #include "DensityPBD.h"
 #include "ParticleIntegrator.h"
 #include "SummationDensity.h"
 #include "ImplicitViscosity.h"
-#include "Core/Utility.h"
-#include "Framework/ModuleTypes.h"
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(MultipleFluidModel, TDataType)
@@ -111,9 +124,6 @@ bool MultipleFluidModel<TDataType>::initializeImpl()
     m_phaseSolver->setParent(parent);
     m_pbdModule->setParent(parent);
     m_visModule->setParent(parent);
-    //
-    // 		m_mapping = std::make_shared<PointSetToPointSet<TDataType>>();
-    // 		m_mapping->initialize(*(m_position.getReference()), (pSet->getPoints()));
 
     return NumericalModel::initializeImpl();
 }

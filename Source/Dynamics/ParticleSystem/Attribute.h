@@ -1,11 +1,29 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Declaration of Attribute class, a mechanism to tag properties
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-26
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #pragma once
-#include <cuda_runtime.h>
+
+#include <cstdint>
 #include "Core/Platform.h"
 namespace PhysIKA {
 /*!
     *    \class    Attribute
     *    \brief    particle attribute 0x00000000: [31-30]material; [29]motion; [28]Dynamic; [27-8]undefined yet, for future use; [7-0]correspondding to the id of a fluid phase in multiphase fluid or an object in a multibody system
     */
+
+/**
+ * Attribute, a 32-bit tag to store multiple properties
+ * TODO(Zhu Fei): clarify the bit fields
+ */
 class Attribute
 {
 public:
@@ -52,11 +70,11 @@ public:
 
     COMM_FUNC inline MaterialType GetMaterialType()
     {
-        return (MaterialType)(m_tag & MATERIAL_MASK);
+        return ( MaterialType )(m_tag & MATERIAL_MASK);
     }
     COMM_FUNC inline KinematicType GetKinematicType()
     {
-        return (KinematicType)(m_tag & KINEMATIC_MASK);
+        return ( KinematicType )(m_tag & KINEMATIC_MASK);
     }
     COMM_FUNC inline unsigned GetObjectId()
     {
@@ -124,6 +142,6 @@ public:
     }
 
 private:
-    unsigned m_tag;
+    uint32_t m_tag;
 };
 }  // namespace PhysIKA

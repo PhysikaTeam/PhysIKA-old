@@ -1,7 +1,7 @@
 /**
  * @author     : He Xiaowei (Clouddon@sina.com)
  * @date       : 2018-12-17
- * @description: Declaration of ParticleFluid class, which implements Position-based fluid model
+ * @description: Declaration of ParticleFluid class, which is a container for particle-based fluid solvers
  * @version    : 1.0
  *
  * @author     : Zhu Fei (feizhu@pku.edu.cn)
@@ -18,8 +18,10 @@
 namespace PhysIKA {
 /**
  * ParticleFluid
- * a scene node that implements Position-based fluids.
+ * a scene node for particle-based fluid methods
+ * The default solver is PBD
  * reference: Macklin and Muller's "Position Based Fluids"
+ * Solver can be specified by calling setNumericalModel()
  *
  * The source of fluids can be setup exclusively  in 2 ways:
  * 1. through multiple particle emitters (dynamic fluid source)
