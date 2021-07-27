@@ -70,15 +70,15 @@ public:
 
     COMM_FUNC inline MaterialType GetMaterialType()
     {
-        return ( MaterialType )(m_tag & MATERIAL_MASK);
+        return MaterialType(m_tag & MATERIAL_MASK);
     }
     COMM_FUNC inline KinematicType GetKinematicType()
     {
-        return ( KinematicType )(m_tag & KINEMATIC_MASK);
+        return KinematicType(m_tag & KINEMATIC_MASK);
     }
     COMM_FUNC inline unsigned GetObjectId()
     {
-        ( unsigned )(m_tag & OBJECTID_MASK);
+        return ( unsigned )(m_tag & OBJECTID_MASK);
     }
 
     COMM_FUNC inline bool IsFluid()

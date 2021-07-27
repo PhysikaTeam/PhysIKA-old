@@ -81,7 +81,7 @@ __global__ void K_ConstrainSDF(
             vec_normal = -vec_normal;
         vec_normal *= (1.0f - normalFriction);  //linear frictional model in normal direction
         vec = vec_normal + vec_tan;
-        vec *= pow(Real(M_E), -dt * tangentialFriction); //exponential friction model in tangential direction
+        vec *= pow(Real(M_E), -dt * tangentialFriction);  //exponential friction model in tangential direction
     }
 
     posArr[pId] = pos;
