@@ -1,8 +1,19 @@
-#include "BoundaryConstraint.h"
-#include "Core/Utility.h"
-#include "Framework/Framework/Log.h"
-#include "Framework/Framework/Node.h"
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implementation of BoundaryConstraint class, SDF based collision handling constraint
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-26
+ * @description: poslish code
+ * @version    : 1.1
+ */
 
+#include "BoundaryConstraint.h"
+
+#include "Core/Utility.h"
+#include "Framework/Framework/Node.h"
 #include "Framework/Topology/DistanceField3D.h"
 
 namespace PhysIKA {
@@ -25,6 +36,15 @@ BoundaryConstraint<TDataType>::~BoundaryConstraint()
     m_cSDF->release();
 }
 
+/**
+ * handle collision between specified DOF and SDF
+ * @param[in&&out] posArr               positions of the simulated objects
+ * @param[in&&out] velArr               velocities of the simulated objects
+ * @param[in]      df                   sdf of the static boundary
+ * @param[in]      normalFriction       friction coefficient in normal direction
+ * @param[in]      tangentialFriction   friction coeffciient in tangential direction
+ * @param[in]      dt                   time step
+ */
 template <typename Real, typename Coord, typename TDataType>
 __global__ void K_ConstrainSDF(
     DeviceArray<Coord>         posArr,
@@ -59,9 +79,9 @@ __global__ void K_ConstrainSDF(
         Coord vec_tan    = vec - vec_normal;
         if (vec_n > 0)
             vec_normal = -vec_normal;
-        vec_normal *= (1.0f - normalFriction);
+        vec_normal *= (1.0f - normalFriction);  //linear frictional model in normal direction
         vec = vec_normal + vec_tan;
-        vec *= pow(Real(M_E), -dt * tangentialFriction);
+        vec *= pow(Real(M_E), -dt * tangentialFriction); //exponential friction model in tangential direction
     }
 
     posArr[pId] = pos;

@@ -1,7 +1,7 @@
 #pragma once
 #include <cassert>
 #include <vector>
-#include <cuda_runtime.h>
+//#include <cuda_runtime.h>
 #include <memory>
 #include "Core/Platform.h"
 #include "Core/Array/MemoryManager.h"

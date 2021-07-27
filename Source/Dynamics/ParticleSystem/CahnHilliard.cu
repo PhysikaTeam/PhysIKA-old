@@ -1,4 +1,18 @@
+/**
+ * @author     : Chen Xiaosong (xiaosong0911@gmail.com)
+ * @date       : 2019-06-02
+ * @description: Implementation of CahnHilliard class, which implements the CahnHilliard model
+ *               introduced in the paper <Fast Multiple-fluid Simulation Using Helmholtz Free Energy>
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-27
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #include "CahnHilliard.h"
+
 #include "Framework/Framework/Node.h"
 #include "Kernel.h"
 

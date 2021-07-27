@@ -1,7 +1,19 @@
+/**
+ * @author     : Chang Yue (changyue@buaa.edu.cn)
+ * @date       : 2020-09-17
+ * @description: Declaration of TriangularSurfaceMeshNode class
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-27
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #include "TriangularSurfaceMeshNode.h"
 
-#include "Framework/Topology/TriangleSet.h"
 #include "Core/Utility.h"
+#include "Framework/Topology/TriangleSet.h"
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(TriangularSurfaceMeshNode, TDataType)
@@ -45,24 +57,11 @@ bool TriangularSurfaceMeshNode<TDataType>::initialize()
     return Node::initialize();
 }
 
-//     template<typename TDataType>
-//     void TriangularMeshNode<TDataType>::setVisible(bool visible)
-//     {
-//         if (m_pointsRender == nullptr)
-//         {
-//             m_pointsRender = std::make_shared<PointRenderModule>();
-//             this->addVisualModule(m_pointsRender);
-//         }
-//
-//         Node::setVisible(visible);
-//     }
-
 template <typename TDataType>
 void TriangularSurfaceMeshNode<TDataType>::updateTopology()
 {
     if (this->isActive())
     {
-        printf("*********************************\n");
         auto pts = m_triSet->getPoints();
         Function1Pt::copy(pts, this->getVertexPosition()->getValue());
     }

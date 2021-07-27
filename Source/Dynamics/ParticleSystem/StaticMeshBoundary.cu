@@ -1,9 +1,18 @@
-#include "StaticMeshBoundary.h"
-#include "Core/Utility.h"
-#include "Framework/Framework/Log.h"
-#include "Framework/Framework/Node.h"
-#include "Dynamics/ParticleSystem/BoundaryConstraint.h"
+/**
+ * @author     : Chang Yue (changyue@buaa.edu.cn)
+ * @date       : 2020-09-03
+ * @description: Implementation of StaticBoundaryMesh class, representing mesh-based static objects in scene that can couple with simulated objects
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-26
+ * @description: poslish code
+ * @version    : 1.1
+ */
 
+#include "StaticMeshBoundary.h"
+
+#include "Core/Utility.h"
 #include "Framework/Topology/DistanceField3D.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/NeighborQuery.h"
@@ -11,44 +20,54 @@
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(StaticMeshBoundary, TDataType)
 
+/**
+ * perform particle-triangle collision detection and modify position&&velocity of collided particles
+ *
+ * @param[in&&out] points             particle positions
+ * @param[in]      pointsTri          surface mesh vertices
+ * @param[in]      m_triangle_index   surface mesh triangle indices
+ * @param[in&&out] vels               particle velocities
+ * @param[in]      neighborsTriangle  neighbor query results
+ * @param[in]      radius             collision radius
+ * @param[in]      dt                 time step
+ */
 template <typename Real, typename Coord>
-__global__ void K_CD_mesh(
-    DeviceArray<Coord>                    points,
-    DeviceArray<Coord>                    pointsTri,
-    DeviceArray<TopologyModule::Triangle> m_triangle_index,
-    DeviceArray<Coord>                    vels,
-    NeighborList<int>                     neighborsTriangle,
-    Real                                  radius,
-    Real                                  dt)
+__global__ void K_CD_mesh(DeviceArray<Coord>                    points,
+                          DeviceArray<Coord>                    pointsTri,
+                          DeviceArray<TopologyModule::Triangle> m_triangle_index,
+                          DeviceArray<Coord>                    vels,
+                          NeighborList<int>                     neighborsTriangle,
+                          Real                                  radius,
+                          Real                                  dt)
 {
     int pId = threadIdx.x + (blockIdx.x * blockDim.x);
     if (pId >= points.size())
         return;
-    int nbSizeTri = neighborsTriangle.getNeighborSize(pId);
     //	if (pId == 0)
     //		printf("******************************************%d\n",points.size());
 
-    Coord pos_i            = points[pId];
-    Real  nearest_distance = 1.0;
-    int   nj;
+    //limit particle velocity magnitude to be no more than radius/dt
+    //it is a hack to avoid penetration
     if (vels[pId].norm() > radius / dt)
         vels[pId] = vels[pId] / vels[pId].norm() * radius / dt;
-    Coord vel_tmp = vels[pId];
 
+    Coord pos_i   = points[pId];
     Coord old_pos = pos_i;
     Coord new_pos(0);
     Real  weight(0);
+    int   nbSizeTri = neighborsTriangle.getNeighborSize(pId);
     for (int ne = 0; ne < nbSizeTri; ne++)
     {
         int j = neighborsTriangle.getElement(pId, ne);
-        if (j >= 0)
-            continue;
-        j *= -1;
-        j--;
-        Triangle3D t3d(pointsTri[m_triangle_index[j][0]], pointsTri[m_triangle_index[j][1]], pointsTri[m_triangle_index[j][2]]);
+        if (j >= 0)    //skip redundant triangles
+            continue;  //NeighborQuery employs grid hashing, and a triangle may appear in multiple grids. NeigborQuery use postive&&negative flags to remove redundancy
 
-        Point3D p3d(pos_i);
-        Point3D nearest_point = p3d.project(t3d);
+        j *= -1;
+        j--;  //1-index to 0-index
+
+        Triangle3D t3d(pointsTri[m_triangle_index[j][0]], pointsTri[m_triangle_index[j][1]], pointsTri[m_triangle_index[j][2]]);
+        Point3D    p3d(pos_i);
+        Point3D    nearest_point = p3d.project(t3d);
 
         Real r  = (p3d.distance(t3d));
         r       = abs(r);
@@ -62,7 +81,7 @@ __global__ void K_CD_mesh(
             Point3D pt_neartest = nearest_point;
             Coord3D pt_norm     = -pt_neartest.origin + p3d.origin;
             pt_norm /= (r);
-            new_pos += pt_neartest.origin + radius * pt_norm;
+            new_pos += pt_neartest.origin + radius * pt_norm;  //project to triangle collision surface
             weight += 1.0;
         }
     }
@@ -102,7 +121,6 @@ StaticMeshBoundary<TDataType>::StaticMeshBoundary()
     radius.connect(m_nbrQuery->inRadius());
     this->currentParticlePosition()->connect(m_nbrQuery->inPosition());
     this->currentTriangleVertex()->connect(m_nbrQuery->inTrianglePosition());
-
     this->currentTriangleIndex()->connect(m_nbrQuery->inTriangleIndex());
 }
 
@@ -114,11 +132,9 @@ StaticMeshBoundary<TDataType>::~StaticMeshBoundary()
 template <typename TDataType>
 void StaticMeshBoundary<TDataType>::loadMesh(std::string filename)
 {
-    printf("inside load\n");
     auto boundary = std::make_shared<TriangleSet<TDataType>>();
     boundary->loadObjFile(filename);
     m_obstacles.push_back(boundary);
-    printf("outside load\n");
 }
 
 template <typename TDataType>

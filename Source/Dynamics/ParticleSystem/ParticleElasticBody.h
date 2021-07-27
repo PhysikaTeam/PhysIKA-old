@@ -49,7 +49,7 @@ public:
     /**
      * advance the scene node in time
      *
-     * @param[in] dt    the time interval between the states before&&after the call
+     * @param[in] dt    the time interval between the states before&&after the call (deprecated)
      */
     void advance(Real dt) override;
 

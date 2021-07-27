@@ -1,12 +1,22 @@
-#include "ParticleFluidFast.h"
-#include "Dynamics/ParticleSystem/PositionBasedFluidModel.h"
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2021-06-17
+ * @description: Implementation of ParticleFluidFast class
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-21
+ * @description: poslish code
+ * @version    : 1.1
+ */
 
-#include "Framework/Topology/PointSet.h"
-#include "Core/Utility.h"
-#include "Dynamics/ParticleSystem/SummationDensity.h"
+#include "ParticleFluidFast.h"
 
 #include <thrust/sort.h>
-#include <time.h>
+
+#include "Core/Utility.h"
+#include "Framework/Topology/PointSet.h"
+#include "Dynamics/ParticleSystem/PositionBasedFluidModel.h"
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(ParticleFluidFast, TDataType)
@@ -28,11 +38,15 @@ ParticleFluidFast<TDataType>::~ParticleFluidFast()
 {
 }
 
+/**
+ * calcute particle's ids and corresponding hash grid ids according to particle positions
+ *
+ * @param[out] ids           grid id that the particle is in
+ * @param[out] idsInOrder    thread id of each particle
+ * @param[in]  poss          positions of the particles
+ */
 template <typename Coord>
-__global__ void CalculateIds(
-    DeviceArray<int>   ids,
-    DeviceArray<int>   idsInOrder,
-    DeviceArray<Coord> poss)
+__global__ void CalculateIds(DeviceArray<int> ids, DeviceArray<int> idsInOrder, DeviceArray<Coord> poss)
 {
     int pId = threadIdx.x + (blockIdx.x * blockDim.x);
     if (pId >= poss.size())
@@ -60,11 +74,15 @@ __global__ void CalculateIds(
     idsInOrder[pId] = pId;
 }
 
+/**
+ * reorder array content to be consistent with the ids
+ *
+ * @param[out] newArray    the array to store reordered content
+ * @param[in]  oldArray    the array before reorder
+ * @param[in]  ids         the ids used to reorder the input array
+ */
 template <typename Coord>
-__global__ void ReorderArray(
-    DeviceArray<Coord> newArray,
-    DeviceArray<Coord> oldArray,
-    DeviceArray<int>   ids)
+__global__ void ReorderArray(DeviceArray<Coord> newArray, DeviceArray<Coord> oldArray, DeviceArray<int> ids)
 {
     int pId = threadIdx.x + (blockIdx.x * blockDim.x);
     if (pId >= ids.size())
@@ -94,8 +112,8 @@ void ParticleFluidFast<TDataType>::advance(Real dt)
               idsInOrder,
               this->currentPosition()->getValue());
 
+    // sort ids and idsInOrder simultaneouly in ascending order of key
     thrust::sort_by_key(thrust::device, ids.begin(), ids.begin() + ids.size(), idsInOrder.begin());
-    //thrust::sort(thrust::device, ids.begin(), ids.begin() + ids.size());
 
     if (this->currentPositionInOrder()->getElementCount() != total_num)
     {
@@ -104,6 +122,7 @@ void ParticleFluidFast<TDataType>::advance(Real dt)
         this->currentForceInOrder()->setElementCount(total_num);
     }
 
+    //reorder particle states
     cuExecute(total_num,
               ReorderArray,
               this->currentPositionInOrder()->getValue(),
@@ -122,10 +141,7 @@ void ParticleFluidFast<TDataType>::advance(Real dt)
               this->currentForce()->getValue(),
               idsInOrder);
 
-    // 		this->currentPositionInOrder()->setValue(this->currentPosition()->getValue());
-    // 		this->currentVelocityInOrder()->setValue(this->currentVelocity()->getValue());
-    // 		this->currentForceInOrder()->setValue(this->currentForce()->getValue());
-
+    //apply simulation
     if (total_num > 0 && this->self_update)
     {
         auto nModel = this->getNumericalModel();
@@ -140,7 +156,6 @@ void ParticleFluidFast<TDataType>::advance(Real dt)
 template <typename TDataType>
 bool ParticleFluidFast<TDataType>::resetStatus()
 {
-    //printf("reset fluid\n");
     std::vector<std::shared_ptr<ParticleEmitter<TDataType>>> m_particleEmitters = this->getParticleEmitters();
     if (m_particleEmitters.size() > 0)
     {

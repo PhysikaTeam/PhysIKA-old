@@ -1,9 +1,20 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2018-07-03
+ * @description: Definition of smoothing kernels used in SPH methods
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-27
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #pragma once
+
 #include "Core/Platform.h"
 #include "Core/Utility.h"
-
 namespace PhysIKA {
-
 template <typename Real>
 class Kernel
 {

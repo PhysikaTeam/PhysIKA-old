@@ -1,11 +1,19 @@
-#include "ParticleEmitterSquare.h"
-#include <time.h>
+/**
+ * @author     : Chang Yue (changyue@buaa.edu.cn)
+ * @date       : 2020-08-27
+ * @description: Implementation of ParticleEmitterSquare class, which emits particles from a square
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-23
+ * @description: poslish code
+ * @version    : 1.1
+ */
 
-#include <Eigen/Dense>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
-#include <Eigen/StdVector>
-#include <stdlib.h>
+#include "ParticleEmitterSquare.h"
+
+#include <ctime>
+#include <cstdlib>
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(ParticleEmitterSquare, TDataType)
@@ -62,7 +70,6 @@ void ParticleEmitterSquare<TDataType>::generateParticles()
             Coord p = Coord(x, 0, z);
             if (rand() % 40 == 0)
             {
-                //Coord q = cos(angle) * p + (1 - cos(angle)) * (p.dot(axis)) * axis + sin(angle) * axis.cross(p);
                 Coord q = rot_mat * p;
                 pos_list.push_back(q + center);
                 vel_list.push_back(v0);

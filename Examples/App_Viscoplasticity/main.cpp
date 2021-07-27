@@ -69,7 +69,7 @@ void createScene()
         Vector3f scale  = (hi - lo) / 2;
         Vector3f center = (hi + lo) / 2;
 
-        root->loadCube(lo, hi, 0.005, false, true);
+        root->loadCube(lo, hi, 0.005, false);
         //dummy rigid body for rendering
         std::shared_ptr<RigidBody<DataType3f>> rigidbody = std::make_shared<RigidBody<DataType3f>>();
         root->addRigidBody(rigidbody);

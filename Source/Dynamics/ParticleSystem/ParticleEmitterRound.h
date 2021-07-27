@@ -1,16 +1,30 @@
+
+/**
+ * @author     : Chang Yue (changyue@buaa.edu.cn)
+ * @date       : 2020-08-27
+ * @description: Declaration of ParticleEmitterRound class, which emits particles from a circle
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-23
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #pragma once
-#include "ParticleSystem.h"
+
 #include "ParticleEmitter.h"
 
 namespace PhysIKA {
-/*!
-    *    \class    ParticleFluid
-    *    \brief    Position-based fluids.
-    *
-    *    This class implements a position-based fluid solver.
-    *    Refer to Macklin and Muller's "Position Based Fluids" for details
-    *
-    */
+
+/**
+ * ParticleEmitterRound, generate particles dynamically from a circle
+ *
+ * Usage:
+ * Define a particle emitter instance, and call advance2() during simulation update.
+ * The position and direction of the emitter can be adjusted by setting manipulating the emitter node.
+ *
+ */
 template <typename TDataType>
 class ParticleEmitterRound : public ParticleEmitter<TDataType>
 {
@@ -22,13 +36,17 @@ public:
     ParticleEmitterRound(std::string name = "particleEmitter");
     virtual ~ParticleEmitterRound();
 
+    /**
+     * particle emitting rules, it is called inside advance2()
+     * users do not need to explicitly call it
+     *
+     * Emit particles from a circle centered at the node center, and along node direction
+     * Some randomness is added to the particle distribution
+     */
     void generateParticles() override;
 
-    //void advance(Real dt) override;
 public:
-    DEF_VAR(Radius, Real, 0.05, "Emitter radius");
-
-    //DEF_NODE_PORTS(ParticleSystems, ParticleSystem<TDataType>, "Particle Systems");
+    DEF_VAR(Radius, Real, 0.05, "Emitter radius");  //!< radius of the emittign region
 };
 
 #ifdef PRECISION_FLOAT

@@ -1,16 +1,23 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implementation of PositionBasedFluidModel class, which implements Position-based fluid model
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-27
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #include "PositionBasedFluidModel.h"
-#include "Framework/Topology/PointSet.h"
+
+#include "Core/Utility.h"
 #include "Framework/Framework/Node.h"
+#include "Framework/Topology/NeighborQuery.h"
 #include "ParticleIntegrator.h"
 #include "SummationDensity.h"
 #include "ImplicitViscosity.h"
-#include "Framework/Framework/MechanicalState.h"
-#include "Framework/Mapping/PointSetToPointSet.h"
-#include "Framework/Topology/FieldNeighbor.h"
-#include "Framework/Topology/NeighborQuery.h"
-#include "Dynamics/ParticleSystem/Helmholtz.h"
-#include "Dynamics/ParticleSystem/Attribute.h"
-#include "Core/Utility.h"
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(PositionBasedFluidModel, TDataType)
