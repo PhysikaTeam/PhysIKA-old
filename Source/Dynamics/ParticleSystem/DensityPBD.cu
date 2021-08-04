@@ -1,3 +1,10 @@
+/**
+ * @author     : Xiaowei He (xiaowei@iscas.ac.cn)
+ * @date       : 2020-10-07
+ * @description: Implementdation of DensityPBD class, which implements the position-based fluids
+ *               For more details, please refer to [Micklin et al. 2013] "Position Based Fluids"
+ * @version    : 1.0
+ */
 #include <cuda_runtime.h>
 //#include "Core/Utilities/template_functions.h"
 #include "Core/Utility.h"
@@ -6,6 +13,9 @@
 #include <string>
 #include "SummationDensity.h"
 #include "Framework/Topology/FieldNeighbor.h"
+
+
+// Implement paper: Position Based Fluids
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(DensityPBD, TDataType)
@@ -41,6 +51,7 @@ __global__ void K_InitKernelFunction(
     weights[pId] = total_weight;
 }
 
+//calculate equation 11
 template <typename Real, typename Coord>
 __global__ void K_ComputeLambdas(
     DeviceArray<Real>  lambdaArr,
@@ -69,20 +80,15 @@ __global__ void K_ComputeLambdas(
         {
             Coord g = kern.Gradient(r, smoothingLength) * (pos_i - posArr[j]) * (1.0f / r);
             grad_ci += g;
-            lamda_i += g.dot(g);
+            lamda_i += g.dot(g); //equation 8, when k != j
         }
     }
 
-    lamda_i += grad_ci.dot(grad_ci);
-
-    // 		if (pId < 20)
-    // 		{
-    // 			printf("%f \n", lamda_i);
-    // 		}
+    lamda_i += grad_ci.dot(grad_ci); //equation 8, when k = j
 
     Real rho_i = rhoArr[pId];
 
-    lamda_i = -(rho_i - 1000.0f) / (lamda_i + 0.1f);
+    lamda_i = -(rho_i - 1000.0f) / (lamda_i + 0.1f); //equation 11
 
     lambdaArr[pId] = lamda_i > 0.0f ? 0.0f : lamda_i;
 }
@@ -116,15 +122,15 @@ __global__ void K_ComputeLambdas(
         {
             Coord g = kern.Gradient(r, smoothingLength) * (pos_i - posArr[j]) * (1.0f / r);
             grad_ci += g;
-            lamda_i += g.dot(g) * massInvArr[j];
+            lamda_i += g.dot(g) * massInvArr[j];  //equation 8, when k != j
         }
     }
 
-    lamda_i += grad_ci.dot(grad_ci) * massInvArr[pId];
+    lamda_i += grad_ci.dot(grad_ci) * massInvArr[pId];  //equation 8, when k = j
 
     Real rho_i = rhoArr[pId];
 
-    lamda_i = -(rho_i - 1000.0f) / (lamda_i + 0.1f);
+    lamda_i = -(rho_i - 1000.0f) / (lamda_i + 0.1f);  //equation 11
 
     lambdaArr[pId] = lamda_i > 0.0f ? 0.0f : lamda_i;
 }
@@ -154,6 +160,7 @@ __global__ void K_ComputeDisplacement(
         Real r = (pos_i - posArr[j]).norm();
         if (r > EPSILON)
         {
+            //equation 14
             Coord dp_ij = 10.0f * (pos_i - posArr[j]) * (lamda_i + lambdas[j]) * kern.Gradient(r, smoothingLength) * (1.0 / r);
             dP_i += dp_ij;
 
@@ -202,6 +209,7 @@ __global__ void K_ComputeDisplacement(
         Real r = (pos_i - posArr[j]).norm();
         if (r > EPSILON)
         {
+            //equation 14
             Coord dp_ij = 10.0f * (pos_i - posArr[j]) * (lamda_i + lambdas[j]) * kern.Gradient(r, smoothingLength) * (1.0 / r);
             Coord dp_ji = -dp_ij * massInvArr[j];
             dp_ij       = dp_ij * massInvArr[pId];
