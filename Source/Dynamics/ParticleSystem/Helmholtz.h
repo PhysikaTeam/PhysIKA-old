@@ -1,3 +1,16 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Declaration of Helmholtz class, which implements the particle shifting in section 4.3
+ *               introduced in the paper <A Variational Staggered Particle Framework for Incompressible Free-Surface Flows>
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-04
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #pragma once
 #include "Core/Array/Array.h"
 #include "Framework/Framework/ModuleConstraint.h"
@@ -5,13 +18,16 @@
 
 namespace PhysIKA {
 
+    
+/**
+ * Helmholtz implements the particle shifting of the paper
+ * <A Variational Staggered Particle Framework for Incompressible Free-Surface Flows>
+ * It can be used in any fluid-related class
+ */
+
 template <typename TDataType>
 class SummationDensity;
 
-/*!
-    *    \class    Helmholtz
-    *    \brief    This class implements a position-based solver for incompressibility.
-    */
 template <typename TDataType>
 class Helmholtz : public ConstraintModule
 {

@@ -1,3 +1,14 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2020-06-11
+ * @description: Implementation of FixedPoints class, applying fix-point constraint
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-4
+ * @description: add comments
+ * @version    : 1.1
+ */
 #include <cuda_runtime.h>
 #include "Core/Utility.h"
 #include "Framework/Framework/Log.h"
@@ -100,6 +111,13 @@ void FixedPoints<TDataType>::clear()
     bUpdateRequired = true;
 }
 
+/**
+ * enforce the fix-point constraint
+ * @param[in&&out] curPos               positions of the all particles
+ * @param[in&&out] curVel               velocities of the all particles
+ * @param[in]      bFixed               record if there is a fixed-point constraint on a particle
+ * @param[in]      fixedPts             the target position                 
+ */
 template <typename Coord>
 __global__ void K_DoFixPoints(
     DeviceArray<Coord> curPos,
