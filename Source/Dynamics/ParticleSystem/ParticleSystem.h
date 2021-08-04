@@ -12,6 +12,7 @@
 
 #pragma once
 #include "Framework/Framework/Node.h"
+#include "Framework/Framework/DeclareNodeField.h"
 
 namespace PhysIKA {
 template <typename TDataType>

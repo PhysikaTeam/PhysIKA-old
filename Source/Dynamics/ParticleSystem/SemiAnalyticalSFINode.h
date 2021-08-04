@@ -1,5 +1,6 @@
 #pragma once
 #include "Framework/Framework/Node.h"
+#include "Framework/Framework/DeclareNodeField.h"
 #include "Framework/Framework/ModuleTopology.h"
 
 #include "SemiAnalyticalIncompressibleFluidModel.h"

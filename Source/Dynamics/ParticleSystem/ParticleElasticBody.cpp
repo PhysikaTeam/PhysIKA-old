@@ -12,6 +12,7 @@
 #include "ParticleElasticBody.h"
 
 #include "Core/Utility.h"
+#include "Framework/Framework/ControllerAnimation.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Mapping/PointSetToPointSet.h"

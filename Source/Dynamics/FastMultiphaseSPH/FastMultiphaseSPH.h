@@ -8,6 +8,7 @@
  */
 
 #include "Framework/Framework/Node.h"
+#include "Framework/Framework/DeclareNodeField.h"
 //#include "Rendering/PointRenderModule.h"
 
 namespace msph {

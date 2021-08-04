@@ -6,6 +6,7 @@
  */
 #pragma once
 #include "Framework/Framework/Node.h"
+#include "Framework/Framework/DeclareNodeField.h"
 #include "ShallowWaterEquationModel.h"
 namespace PhysIKA {
 template <typename TDataType>
