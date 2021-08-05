@@ -4,6 +4,7 @@
 #define PHYSIKA_VERSION_MINOR 2
 #define PHYSIKA_VERSION_PATCH 1
 
+
 #if ((defined _WIN32) || (defined(__MINGW32__) || defined(__CYGWIN__))) && defined(_DLL)
 #if !defined(PHYSIKA_DLL) && !defined(PHYSIKA_STATIC)
 #define PHYSIKA_DLL
@@ -26,22 +27,22 @@
 
 #define PHYSIKA_COMPILER_CUDA
 
-#if (defined(PHYSIKA_COMPILER_CUDA))
+#if(defined(PHYSIKA_COMPILER_CUDA))
 #include <cuda_runtime.h>
-#define COMM_FUNC __device__ __host__
-#define GPU_FUNC __device__
-#define CPU_FUNC __host__
+#	define COMM_FUNC __device__ __host__ 
+#	define GPU_FUNC __device__ 
+#	define CPU_FUNC __host__ 
 #else
-#define COMM_FUNC
-#define GPU_FUNC
-#define CPU_FUNC
+#	define COMM_FUNC
+#	define GPU_FUNC 
+#	define CPU_FUNC 
 #endif
 
 enum DeviceType
 {
-    CPU,
-    GPU,
-    UNDEFINED
+	CPU,
+	GPU,
+	UNDEFINED
 };
 
 #define PRECISION_FLOAT
