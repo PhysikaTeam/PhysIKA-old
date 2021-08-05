@@ -7,7 +7,6 @@
 #include "../../tool/BufferManager.h"
 #include "SimDataMultiphase.h"
 #include "deformable.cuh"
-#include <memory>
 
 namespace msph {
 
