@@ -27,9 +27,9 @@ template <typename TDataType>
 class TriangleSet;
 
 /**
- * MeshCollision, a module handels
- * Currently coupling with particle system is supported
- *
+ * MeshCollision, a module handels the collision between particles and triangle meshes
+ * Positions and velocities of particles are updated
+ * 
  * Usage:
  * 1. Define a MeshCollision instance
  * 2. Initialize by connecting m_position, m_velocity, m_triangle_vertex, m_triangle_index, m_neighborhood_tri
@@ -62,7 +62,7 @@ public:
 
     /**
      * Add a Collidable Object
-     * The design of is addCollidableObject to be deprecated.
+     * The design of addCollidableObject is deprecated.
      *
      * @push back obj into m_collidableObjects
      */

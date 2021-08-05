@@ -1,3 +1,14 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implemendation of ParticleIntegrator class, used to update velocity and position at each time step
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-05
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <cuda_runtime.h>
 #include "ParticleIntegrator.h"
 #include "Framework/Framework/FieldArray.h"
@@ -8,6 +19,8 @@
 
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(ParticleIntegrator, TDataType)
+
+
 
 template <typename TDataType>
 ParticleIntegrator<TDataType>::ParticleIntegrator()
@@ -40,16 +53,6 @@ void ParticleIntegrator<TDataType>::end()
 template <typename TDataType>
 bool ParticleIntegrator<TDataType>::initializeImpl()
 {
-    // 		if (!isAllFieldsReady())
-    // 		{
-    // 			std::cout << "Exception: " << std::string("DensitySummation's fields are not fully initialized!") << "\n";
-    // 			return false;
-    // 		}
-    //
-    // 		int num = this->inPosition()->getElementCount();
-    //
-    // 		m_prePosition.resize(num);
-    // 		m_preVelocity.resize(num);
 
     return true;
 }
