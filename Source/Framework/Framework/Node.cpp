@@ -1,6 +1,21 @@
-#include "Node.h"
-#include "NodeIterator.h"
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-06-08
+ * @description: Implementation of Node class, a tree node is a primitive in scene graph that generally represents
+ *               an object attached with properties and actions.
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-08-04
+ * @description: poslish code
+ * @version    : 1.1
+ */
 
+#include "Node.h"
+
+#include "DeviceContext.h"
+#include "ControllerAnimation.h"
+#include "ControllerRender.h"
 #include "Framework/Action/Action.h"
 
 namespace PhysIKA {
@@ -29,7 +44,7 @@ void Node::setName(std::string name)
     m_node_name = name;
 }
 
-std::string Node::getName()
+std::string Node::getName() const
 {
     return m_node_name;
 }
@@ -59,7 +74,7 @@ Node* Node::getRoot()
     return root;
 }
 
-bool Node::isControllable()
+bool Node::isControllable() const
 {
     return m_controllable;
 }
@@ -89,7 +104,7 @@ void Node::setVisible(bool visible)
     this->varVisible()->setValue(visible);
 }
 
-float Node::getDt()
+Real Node::getDt() const
 {
     return m_dt;
 }
@@ -104,7 +119,7 @@ void Node::setMass(Real mass)
     m_mass = mass;
 }
 
-Real Node::getMass()
+Real Node::getMass() const
 {
     return m_mass;
 }
@@ -115,16 +130,6 @@ bool Node::hasChild(std::shared_ptr<Node> child)
 
     return it == m_children.end() ? false : true;
 }
-
-// NodeIterator Node::begin()
-// {
-//     return NodeIterator(this);
-// }
-//
-// NodeIterator Node::end()
-// {
-//     return NodeIterator();
-// }
 
 void Node::removeChild(std::shared_ptr<Node> child)
 {
@@ -190,9 +195,8 @@ std::shared_ptr<MechanicalState> Node::getMechanicalState()
 {
     if (m_mechanical_state == nullptr)
     {
-        m_mechanical_state = TypeInfo::New<MechanicalState>();
-        m_mechanical_state->setParent(this);
-        addModule(m_mechanical_state);
+        auto state = TypeInfo::New<MechanicalState>();
+        setMechanicalState(state);
     }
     return m_mechanical_state;
 }
@@ -205,6 +209,7 @@ void Node::setMechanicalState(std::shared_ptr<MechanicalState> state)
     }
 
     m_mechanical_state = state;
+    m_mechanical_state->setParent(this);
     addModule(state);
 }
 
@@ -226,42 +231,6 @@ std::unique_ptr<RenderController>& Node::getRenderPipeline()
     return m_render_pipeline;
 }
 
-/*
-std::shared_ptr<MechanicalState> Node::getMechanicalState()
-{
-    if (m_mechanical_state == nullptr)
-    {
-        m_mechanical_state = TypeInfo::New<MechanicalState>();
-        m_mechanical_state->setParent(this);
-    }
-    return m_mechanical_state;
-}*/
-/*
-bool Node::addModule(std::string name, Module* module)
-{
-    if (getContext() == nullptr || module == NULL)
-    {
-        std::cout << "Context or module does not exist!" << std::endl;
-        return false;
-    }
-
-    std::map<std::string, Module*>::iterator found = m_modules.find(name);
-    if (found != m_modules.end())
-    {
-        std::cout << "Module name already exists!" << std::endl;
-        return false;
-    }
-    else
-    {
-        m_modules[name] = module;
-        m_module_list.push_back(module);
-
-//        module->insertToNode(this);
-    }
-
-    return true;
-}
-*/
 bool Node::addModule(std::shared_ptr<Module> module)
 {
     bool ret = true;
@@ -400,14 +369,6 @@ void Node::doTraverseTopDown(Action* act)
     act->end(this);
 }
 
-void Node::updateTopology()
-{
-}
-
-void Node::updateStatus()
-{
-}
-
 void Node::applyTopologyMappings()
 {
     auto tMappings = this->getTopologyMappingList();
@@ -469,36 +430,6 @@ void Node::setAsCurrentContext()
     getContext()->enable();
 }
 
-// void Node::setTopologyModule(std::shared_ptr<TopologyModule> topology)
-// {
-//     if (m_topology != nullptr)
-//     {
-//         deleteModule(m_topology);
-//     }
-//     m_topology = topology;
-//     addModule(topology);
-// }
-//
-// void Node::setNumericalModel(std::shared_ptr<NumericalModel> numerical)
-// {
-//     if (m_numerical_model != nullptr)
-//     {
-//         deleteModule(m_numerical_model);
-//     }
-//     m_numerical_model = numerical;
-//     addModule(numerical);
-// }
-//
-// void Node::setCollidableObject(std::shared_ptr<CollidableObject> collidable)
-// {
-//     if (m_collidable_object != nullptr)
-//     {
-//         deleteModule(m_collidable_object);
-//     }
-//     m_collidable_object = collidable;
-//     addModule(collidable);
-// }
-
 std::shared_ptr<Module> Node::getModule(std::string name)
 {
     std::shared_ptr<Module>                      base = nullptr;
@@ -521,17 +452,6 @@ bool Node::hasModule(std::string name)
 
     return true;
 }
-
-/*Module* Node::getModule(std::string name)
-{
-    std::map<std::string, Module*>::iterator result = m_modules.find(name);
-    if (result == m_modules.end())
-    {
-        return NULL;
-    }
-
-    return result->second;
-}*/
 
 bool Node::addToModuleList(std::shared_ptr<Module> module)
 {

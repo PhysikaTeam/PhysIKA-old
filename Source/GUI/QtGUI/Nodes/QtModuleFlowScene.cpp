@@ -4,6 +4,7 @@
 
 #include "Framework/Object.h"
 #include "Framework/SceneGraph.h"
+#include "Framework/Framework/ControllerAnimation.h"
 #include "QtModuleWidget.h"
 
 #include "GUI/QtGUI/PVTKSurfaceMeshRender.h"
