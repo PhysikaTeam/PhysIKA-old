@@ -1,4 +1,10 @@
-﻿#include "MeshCollision.h"
+﻿/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-04
+ * @description: Implemendation of MeshCollision class, solving the non-intersection constraint between particles and triangle mesh
+ * @version    : 1.1
+ */
+#include "MeshCollision.h"
 #include "Core/Utility.h"
 #include "Framework/Framework/Node.h"
 #include "Framework/Framework/CollidableObject.h"
@@ -42,6 +48,7 @@ void MeshCollision<TDataType>::addCollidableObject(std::shared_ptr<CollidableObj
     }
 }
 
+//Triangle clustering, see the comparation of figure 5 of Semi-analytical Solid Boundary Conditions for Free Surface Flows
 template <typename Coord>
 __global__ void VC_Sort_Neighbors_Collide(
     DeviceArray<Coord>                    position,
@@ -262,6 +269,19 @@ __global__ void VC_Sort_Neighbors_Collide(
     return;
 }
 
+
+/**
+ * perform particle-triangle collision detection and modify position&&velocity of collided particles
+ *
+ * @param[in&&out] points             particle positions
+ * @param[in]      pointsTri          surface mesh vertices
+ * @param[in]      m_triangle_index   surface mesh triangle indices
+ * @param[in&&out] vels               particle velocities
+ * @param[in]      flip               to check if a triangle's norm is flipped
+ * @param[in]      neighborsTriangle  neighbor query results
+ * @param[in]      radius             collision radius
+ * @param[in]      dt                 time step
+ */
 template <typename Real, typename Coord>
 __global__ void K_CD_mesh2(
     DeviceArray<Coord>                    points,
@@ -294,6 +314,7 @@ __global__ void K_CD_mesh2(
     {
         Coord new_pos(0);
         Real  weight(0);
+        //triangle clustering
         for (int ne = 0; ne < nbSizeTri; ne++)
         {
             int j = neighborsTriangle.getElement(pId, ne);
@@ -370,7 +391,7 @@ __global__ void K_ComputeVelocity(
     velocites[pId] += add_vel;
 }
 
-//Continuous collision detection between points and triangles
+//Continuous collision detection between points and triangles, currently not adopted
 template <typename Real, typename Coord>
 __global__ void K_CCD_MESH(
     DeviceArray<Coord>                    particle_position,

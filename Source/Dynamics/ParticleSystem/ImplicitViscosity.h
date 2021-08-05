@@ -1,3 +1,16 @@
+/**
+ * @author     : Xiaowei He (xiaowei@iscas.ac.cn)
+ * @date       : 2020-10-07
+ * @description: Declaration of ImplicitViscosity class, which implements a simpler XSPH style of damping noise
+ *               For more details, please refer to [Schechter et al. 2012] "Ghost SPH for Animating Water"
+ * @version    : 1.0
+ * 
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-05
+ * @description: poslish code
+ * @version    : 1.1
+ * 
+ */
 #pragma once
 #include "Framework/Framework/ModuleConstraint.h"
 #include "Framework/Framework/FieldVar.h"
@@ -15,23 +28,43 @@ public:
     ImplicitViscosity();
     ~ImplicitViscosity() override;
 
+    /**
+     * apply the viscosity, update the velocity device array
+     *
+     * @param[in&out] m_velocity        velocities of fluid particles
+     * @param[in]     m_position        positions of fluid particles
+     * @param[in]     m_neighborhood    the neighbor list
+     *                      
+     */
     bool constrain() override;
 
+    /**
+     * set the number of iterations
+     *
+     * @param[in] n          the number of iterations
+     *
+     */
     void setIterationNumber(int n);
 
+    /**
+     * set the tunable parameter m_viscosity
+     *
+     * @param[in] mu          the value of viscosity
+     * 
+     */
     void setViscosity(Real mu);
 
 protected:
     bool initializeImpl() override;
 
 public:
-    VarField<Real> m_viscosity;
+    VarField<Real> m_viscosity; //the tunable parameter in eq(2), default 0.05 
     VarField<Real> m_smoothingLength;
 
-    DeviceArrayField<Coord> m_velocity;
-    DeviceArrayField<Coord> m_position;
+    DeviceArrayField<Coord> m_velocity; //input&output velocity array
+    DeviceArrayField<Coord> m_position;//input positio array
 
-    NeighborField<int> m_neighborhood;
+    NeighborField<int> m_neighborhood;//input neighbor list
 
 private:
     int m_maxInteration;

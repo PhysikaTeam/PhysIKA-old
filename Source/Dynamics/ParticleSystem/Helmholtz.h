@@ -41,23 +41,27 @@ public:
 
     bool constrain() override;
 
+    //set position ID, used to get input position
     void setPositionID(FieldID id)
     {
         m_posID = id;
     }
+    //set velocity ID, used to get input velocity
     void setVelocityID(FieldID id)
     {
         m_velID = id;
     }
+    //set Neighborhood ID, used to get neighbor list
     void setNeighborhoodID(FieldID id)
     {
         m_neighborhoodID = id;
     }
-
+    //set iteration number, used to control the iteration
     void setIterationNumber(int n)
     {
         m_maxIteration = n;
     }
+    //set smoothing length, a positive number represents the radius of neighborhood for each point
     void setSmoothingLength(Real len)
     {
         m_smoothingLength = len;
