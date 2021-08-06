@@ -1,3 +1,10 @@
+/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: implemendation of PositionBasedFluidModelMesh class, a container for semi-analytical PBD fluids 
+ *               introduced in the paper <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * @version    : 1.1
+ */
 #include "PositionBasedFluidModelMesh.h"
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Framework/Node.h"

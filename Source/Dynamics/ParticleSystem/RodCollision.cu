@@ -1,3 +1,15 @@
+/**
+ * @author     : He Xiaowei (xiaowei@iscas.ac.cn)
+ * @date       : 2020-10-07
+ * @description: Implemedation of RodCollision class, applies point-wise collision handeling for rods
+ * @version    : 1.0
+ * 
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: poslish code
+ * @version    : 1.1
+ * 
+ */
 #include "RodCollision.h"
 #include "Core/Utility.h"
 #include "Framework/Framework/Node.h"
@@ -40,6 +52,15 @@ void RodCollision<TDataType>::addCollidableObject(std::shared_ptr<CollidableObje
     }
 }
 
+/**
+ * handle collision between particles of different objects
+ * @param[in]      objIds      IDs of each simulated particles
+ * @param[in]      points      old positions of simulated particles
+ * @param[out]     newPoints   new positions after collision, unnormalized
+ * @param[out]     weights     output weight for each particle, used to renormalize new positions
+ * @param[in]      neighbors   neighbor list of particles
+ * @param[in]      radius      searching radius
+ */
 template <typename Real, typename Coord>
 __global__ void K_Collide(
     DeviceArray<int>   objIds,

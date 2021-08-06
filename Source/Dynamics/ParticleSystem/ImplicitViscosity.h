@@ -1,5 +1,5 @@
 /**
- * @author     : Xiaowei He (xiaowei@iscas.ac.cn)
+ * @author     : He Xiaowei (xiaowei@iscas.ac.cn)
  * @date       : 2020-10-07
  * @description: Declaration of ImplicitViscosity class, which implements a simpler XSPH style of damping noise
  *               For more details, please refer to [Schechter et al. 2012] "Ghost SPH for Animating Water"
