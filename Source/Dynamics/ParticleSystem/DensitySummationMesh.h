@@ -14,7 +14,7 @@
 
 namespace PhysIKA {
 
- /**
+/**
  * DensitySummationMesh calculates the density of a particle using semi-analytical boundary conditions of the paper
  * <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
  * It is used in DensityPBDMesh class
@@ -71,23 +71,23 @@ protected:
 public:
     VarField<Real> m_mass;
     VarField<Real> m_restDensity;
-    VarField<Real> m_smoothingLength;//smoothing length, a positive number represents the radius of neighborhood for each point
+    VarField<Real> m_smoothingLength;  //smoothing length, a positive number represents the radius of neighborhood for each point
 
-    DeviceArrayField<Coord> m_position;//particle positions
-    DeviceArrayField<Real>  m_density;//output, particle density
+    DeviceArrayField<Coord> m_position;  //particle positions
+    DeviceArrayField<Real>  m_density;   //output, particle density
 
     NeighborField<int>         m_neighborhood;
     NeighborField<int>         m_neighborhoodTri;
-    DeviceArrayField<Coord>    TriPoint;//positions of the vertex of the triangle
+    DeviceArrayField<Coord>    TriPoint;  //positions of the vertex of the triangle
     DeviceArrayField<Triangle> Tri;
 
-    VarField<Real> sampling_distance; //sampling distance of the particle
+    VarField<Real> sampling_distance;  //sampling distance of the particle
     VarField<int>  use_mesh;
     VarField<int>  use_ghost;
     VarField<int>  Start;
 
 private:
-    Real m_factor;// a renormalization factor to transfer the weight calculated by the kernel function to density
+    Real m_factor;  // a renormalization factor to transfer the weight calculated by the kernel function to density
 };
 
 #ifdef PRECISION_FLOAT

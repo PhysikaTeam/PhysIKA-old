@@ -28,7 +28,6 @@ __device__ inline float kernWeightMeshPBD(const float r, const float h)
         const Real hh = h * h;
         return 15.0f / (( Real )M_PI * hh * h) * (1.0f / 3.0f * (hh * h - r * r * r) - 3.0f / 4.0f / h * (hh * hh - r * r * r * r) + 3.0f / 5.0f / hh * (hh * hh * h - r * r * r * r * r) - 1.0f / 6.0f / hh / h * (hh * hh * hh - r * r * r * r * r * r));
     }
-  
 }
 /**
  * Computes density of each particle
@@ -82,9 +81,9 @@ __global__ void K_ComputeDensityMesh(
             Real    r          = (nearest_pt.origin - pos_i).norm();
             //r = max((r - sampling_distance / 2.0), 0.0);
 
-            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);//A_s in equation 10 
-            Real  MinDistance = abs(p3d.distance(t3d));                //d_n (scalar) in equation 10
-            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;     //d_n (vector) in equation 10
+            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);  //A_s in equation 10
+            Real  MinDistance = abs(p3d.distance(t3d));                  //d_n (scalar) in equation 10
+            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;       //d_n (vector) in equation 10
             Coord Min_Pos     = p3d.project(t3d).origin;
             if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
             {
