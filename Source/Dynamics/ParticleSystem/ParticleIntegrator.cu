@@ -20,8 +20,6 @@
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(ParticleIntegrator, TDataType)
 
-
-
 template <typename TDataType>
 ParticleIntegrator<TDataType>::ParticleIntegrator()
     : NumericalIntegrator()

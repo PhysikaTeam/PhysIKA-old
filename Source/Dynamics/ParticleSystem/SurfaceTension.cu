@@ -51,7 +51,7 @@ __global__ void ST_ComputeSurfaceEnergy(
 
     total_weight = total_weight < EPSILON ? 1.0f : total_weight;
     //equation 3
-    Real absDir  = dir_i.norm() / total_weight;
+    Real absDir = dir_i.norm() / total_weight;
 
     energyArr[pId] = absDir * absDir;
 }

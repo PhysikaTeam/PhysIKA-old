@@ -57,13 +57,12 @@ public:
     DeviceArrayField<Attribute> m_particle_attribute;
     DeviceArrayField<int>       m_flip;
 
-   
     DeviceArrayField<Real>     m_triangle_vertex_mass;
     DeviceArrayField<Coord>    m_triangle_vertex;
     DeviceArrayField<Coord>    m_triangle_vertex_old;
     DeviceArrayField<Triangle> m_triangle_index;
 
-         /**
+    /**
          * @brief Storing neighboring particles and triangles' ids
          * 
          */

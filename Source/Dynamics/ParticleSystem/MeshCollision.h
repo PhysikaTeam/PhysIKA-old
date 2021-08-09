@@ -81,16 +81,16 @@ public:
      */
     void doCollision() override;
 
-    DeviceArrayField<Coord>    m_position;//input and output, current positions of particles 
-    DeviceArrayField<Coord>    m_velocity;//input and output, current velocities of particles
-    DeviceArrayField<Real>     m_triangle_vertex_mass; //input, mass of triangles, currently no use, reserved for future
-    DeviceArrayField<Coord>    m_triangle_vertex;//positions of triangle vertexs
-    DeviceArrayField<Coord>    m_triangle_vertex_old;//positions of triangle vertexs at last time step, reserved for CCD
-    DeviceArrayField<Triangle> m_triangle_index;//IDs of triangles
-    DeviceArrayField<int>      m_flip;//to check if the norm of each triangle is flipped
-    NeighborField<int>         m_neighborhood_tri;//neighbor list of particle-triangle, note that only [particle-triangle] pairs are stored
+    DeviceArrayField<Coord>    m_position;              //input and output, current positions of particles
+    DeviceArrayField<Coord>    m_velocity;              //input and output, current velocities of particles
+    DeviceArrayField<Real>     m_triangle_vertex_mass;  //input, mass of triangles, currently no use, reserved for future
+    DeviceArrayField<Coord>    m_triangle_vertex;       //positions of triangle vertexs
+    DeviceArrayField<Coord>    m_triangle_vertex_old;   //positions of triangle vertexs at last time step, reserved for CCD
+    DeviceArrayField<Triangle> m_triangle_index;        //IDs of triangles
+    DeviceArrayField<int>      m_flip;                  //to check if the norm of each triangle is flipped
+    NeighborField<int>         m_neighborhood_tri;      //neighbor list of particle-triangle, note that only [particle-triangle] pairs are stored
 
-    DeviceArrayField<Coord> m_velocity_mod;//norm of velocity of each particle
+    DeviceArrayField<Coord> m_velocity_mod;  //norm of velocity of each particle
 
 protected:
     DeviceArray<int> m_objId;

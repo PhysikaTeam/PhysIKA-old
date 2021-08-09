@@ -14,7 +14,6 @@
 #include "SummationDensity.h"
 #include "Framework/Topology/FieldNeighbor.h"
 
-
 // Implement paper: Position Based Fluids
 
 namespace PhysIKA {
@@ -80,15 +79,15 @@ __global__ void K_ComputeLambdas(
         {
             Coord g = kern.Gradient(r, smoothingLength) * (pos_i - posArr[j]) * (1.0f / r);
             grad_ci += g;
-            lamda_i += g.dot(g); //equation 8, when k != j
+            lamda_i += g.dot(g);  //equation 8, when k != j
         }
     }
 
-    lamda_i += grad_ci.dot(grad_ci); //equation 8, when k = j
+    lamda_i += grad_ci.dot(grad_ci);  //equation 8, when k = j
 
     Real rho_i = rhoArr[pId];
 
-    lamda_i = -(rho_i - 1000.0f) / (lamda_i + 0.1f); //equation 11
+    lamda_i = -(rho_i - 1000.0f) / (lamda_i + 0.1f);  //equation 11
 
     lambdaArr[pId] = lamda_i > 0.0f ? 0.0f : lamda_i;
 }

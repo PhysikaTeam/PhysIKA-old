@@ -67,24 +67,24 @@ public:
     void step(Real dt) override;
 
 public:
-    VarField<Real> m_horizon; //searching radius, default 0.0085
+    VarField<Real> m_horizon;  //searching radius, default 0.0085
 
-    DeviceArrayField<Coord> m_position;//input and output particle positions
-    DeviceArrayField<Coord> m_velocity;//input and output particle velocities
-    DeviceArrayField<Coord> m_forceDensity;//input and output force densities on particles
+    DeviceArrayField<Coord> m_position;      //input and output particle positions
+    DeviceArrayField<Coord> m_velocity;      //input and output particle velocities
+    DeviceArrayField<Coord> m_forceDensity;  //input and output force densities on particles
 
-    std::shared_ptr<ElasticityModule<TDataType>> m_elasticity;//the peridynamic elastic
+    std::shared_ptr<ElasticityModule<TDataType>> m_elasticity;  //the peridynamic elastic
 
 private:
-    HostVarField<int>*  m_num;//seems useless on current version
-    HostVarField<Real>* m_mass;//seems useless on current version
+    HostVarField<int>*  m_num;   //seems useless on current version
+    HostVarField<Real>* m_mass;  //seems useless on current version
 
-    HostVarField<Real>* m_samplingDistance;//seems useless on current version
-    HostVarField<Real>* m_restDensity;//seems useless on current version
+    HostVarField<Real>* m_samplingDistance;  //seems useless on current version
+    HostVarField<Real>* m_restDensity;       //seems useless on current version
 
-    std::shared_ptr<PointSetToPointSet<TDataType>> m_mapping;//seems useless on current version
-    std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;// integrator, used to update velocities and positions
-    std::shared_ptr<NeighborQuery<TDataType>>      m_nbrQuery;//neighbor query, used to find particle neighbors
+    std::shared_ptr<PointSetToPointSet<TDataType>> m_mapping;     //seems useless on current version
+    std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;  // integrator, used to update velocities and positions
+    std::shared_ptr<NeighborQuery<TDataType>>      m_nbrQuery;    //neighbor query, used to find particle neighbors
 };
 
 #ifdef PRECISION_FLOAT

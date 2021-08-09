@@ -56,7 +56,7 @@ bool PhysIKA::ParticleWriter<TDataType>::execute()
 
     std::stringstream ss;
     ss << m_output_index;
-    std::string   filename = m_output_path + m_name_prefix+ ss.str() + std::string(".txt");
+    std::string   filename = m_output_path + m_name_prefix + ss.str() + std::string(".txt");
     std::ofstream output(filename.c_str(), std::ios::out | std::ios::binary);
 
     int total_num = m_position.getElementCount();

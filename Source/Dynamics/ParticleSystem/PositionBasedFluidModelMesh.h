@@ -14,7 +14,6 @@
 #include "Framework/Framework/ModuleTopology.h"
 #include "MeshCollision.h"
 
-
 /**
  * PositionBasedFluidModelMesh
  * a NumericalModel for semi-analytical PBD fluids 
@@ -106,7 +105,6 @@ public:
     */
     void setSurfaceTensionSolver(std::shared_ptr<ConstraintModule> solver);
 
-
     /*
     *  have no infludence on behaviour, but can be used in visualizing densities
     */
@@ -118,8 +116,8 @@ public:
 public:
     VarField<Real> m_smoothingLength;
 
-    DeviceArrayField<Coord> m_position;//current particle position
-    DeviceArrayField<Coord> m_velocity;//current particle velocity
+    DeviceArrayField<Coord> m_position;  //current particle position
+    DeviceArrayField<Coord> m_velocity;  //current particle velocity
 
     /**
     *  currently have no influence on the behaviour
@@ -144,9 +142,9 @@ public:
 
     std::shared_ptr<PointSet<TDataType>> m_pSetGhost;
 
-    DeviceArrayField<Coord>    TriPoint; //triangle vertex point position
-    DeviceArrayField<Coord>    TriPointOld;//triangle vertex point position at last time step, can be used to calculate triangle velocity 
-    DeviceArrayField<Triangle> Tri;//triangle index
+    DeviceArrayField<Coord>    TriPoint;     //triangle vertex point position
+    DeviceArrayField<Coord>    TriPointOld;  //triangle vertex point position at last time step, can be used to calculate triangle velocity
+    DeviceArrayField<Triangle> Tri;          //triangle index
 
     DeviceArrayField<Real> massTri;
 

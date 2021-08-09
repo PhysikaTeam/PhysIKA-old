@@ -58,13 +58,13 @@ protected:
     bool initializeImpl() override;
 
 public:
-    VarField<Real> m_viscosity; //the tunable parameter in eq(2), default 0.05 
+    VarField<Real> m_viscosity;  //the tunable parameter in eq(2), default 0.05
     VarField<Real> m_smoothingLength;
 
-    DeviceArrayField<Coord> m_velocity; //input&output velocity array
-    DeviceArrayField<Coord> m_position;//input positio array
+    DeviceArrayField<Coord> m_velocity;  //input&output velocity array
+    DeviceArrayField<Coord> m_position;  //input positio array
 
-    NeighborField<int> m_neighborhood;//input neighbor list
+    NeighborField<int> m_neighborhood;  //input neighbor list
 
 private:
     int m_maxInteration;

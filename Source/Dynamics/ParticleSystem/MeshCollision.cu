@@ -269,7 +269,6 @@ __global__ void VC_Sort_Neighbors_Collide(
     return;
 }
 
-
 /**
  * perform particle-triangle collision detection and modify position&&velocity of collided particles
  *

@@ -54,8 +54,6 @@ public:
 public:
     bool initialize() override;
 
-    
-
     bool resetStatus() override;
 
     void advance(Real dt) override;

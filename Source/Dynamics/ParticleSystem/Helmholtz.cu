@@ -23,7 +23,6 @@
 namespace PhysIKA {
 IMPLEMENT_CLASS_1(Helmholtz, TDataType)
 
-
 template <typename Real>
 __device__ inline Real ExpWeight(const Real r, const Real h)
 {
@@ -204,7 +203,6 @@ __global__ void H_ComputeGradient(
         {
             float weight2 = -mass * kern.Gradient(r, h);
             Coord g2_ij   = (weight2 / total_weight2) * (pos_i - pos_j) * (1.0f / r);
-          
         }
     }
 }
@@ -341,7 +339,7 @@ __global__ void H_TakeOneIteration(
     if (pId >= newPos.size())
         return;
 
-    Real  BE_i     = H_ComputeBulkEnergyGradient(c[pId], restRho, lambda);//equation 25
+    Real  BE_i     = H_ComputeBulkEnergyGradient(c[pId], restRho, lambda);  //equation 25
     Real  lc_i     = lc[pId];
     Coord curPos_i = curPos[pId];
 
@@ -375,8 +373,6 @@ __global__ void H_TakeOneIteration(
 
             Real fe_ij = -((BE_i + BE_j) / 2 - 0.000000000001 * (max_lc + max_lc)) * w_ij;
 
-           
-
             accPos_ij += fe_ij * (curPos_j - curPos_i);
             accPos_j += fe_ij * curPos_j;
             accPos_i += fe_ij * curPos_i;
@@ -386,11 +382,7 @@ __global__ void H_TakeOneIteration(
         }
     }
 
-    
-
     newPos[pId] = curPos_i + 0.1 * factor * accPos_j - 0.1 * factor * accPos_i;
-
-    
 }
 
 template <typename Coord>
@@ -461,8 +453,6 @@ bool Helmholtz<TDataType>::constrain()
 
         computeC(m_c, posFd->getValue(), neighborFd->getValue());
         computeLC(m_lc, posFd->getValue(), neighborFd->getValue());
-
-        
 
         Function1Pt::copy(m_bufPos, posFd->getValue());
 

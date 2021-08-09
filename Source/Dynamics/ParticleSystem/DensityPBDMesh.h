@@ -25,7 +25,6 @@ namespace PhysIKA {
 template <typename TDataType>
 class DensitySummationMesh;
 
-
 template <typename TDataType>
 class DensityPBDMesh : public ConstraintModule
 {
@@ -60,13 +59,13 @@ protected:
 public:
     VarField<Real> m_restDensity;
 
-     /**
+    /**
             * @brief smoothing length
             * A positive number represents the radius of neighborhood for each point
             */
     VarField<Real> m_smoothingLength;
 
-     /**
+    /**
          * @brief Particle position
          */
     DeviceArrayField<Coord> m_position;
@@ -74,24 +73,24 @@ public:
          * @brief Particle velocity
          */
     DeviceArrayField<Coord> m_velocity;
-    DeviceArrayField<Real>  m_massInv;  
-     /**
+    DeviceArrayField<Real>  m_massInv;
+    /**
          * @brief Particle velocity norm
          */
-    DeviceArrayField<Real>  m_veln;
+    DeviceArrayField<Real> m_veln;
 
-     /**
+    /**
          * @brief neighbor list of particles, only neighbor pairs of particle-particle are counted
          */
     NeighborField<int> m_neighborhood;
     /**
          * @brief neighbor list of particles and mesh triangles, only neighbor pairs of particle-triangle are counted
          */
-    NeighborField<int>         m_neighborhoodTri;
+    NeighborField<int> m_neighborhoodTri;
     /**
          * @brief positions of Triangle vertexes
          */
-    DeviceArrayField<Coord>    TriPoint;
+    DeviceArrayField<Coord> TriPoint;
     /**
          * @brief Triangle indexes, represented by three integers, indicating the three indexes of triangle vertex
          */
@@ -105,8 +104,8 @@ public:
          */
     VarField<Real> sampling_distance;
 
-    VarField<int>  use_mesh;
-    VarField<int>  use_ghost;
+    VarField<int> use_mesh;
+    VarField<int> use_ghost;
 
     VarField<int> Start;
 

@@ -31,8 +31,8 @@ public:
         pos   = p;
     }
 
-    int   index;//index of the neighboring particle
-    Coord pos;//init position of the neighboring particle
+    int   index;  //index of the neighboring particle
+    Coord pos;    //init position of the neighboring particle
 };
 
 }  // namespace PhysIKA

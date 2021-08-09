@@ -19,7 +19,7 @@
 
 namespace PhysIKA {
 
- /**
+/**
  * VelocityConstraint implements the incompressibility solver of the paper
  * <A Variational Staggered Particle Framework for Incompressible Free-Surface Flows>
  */

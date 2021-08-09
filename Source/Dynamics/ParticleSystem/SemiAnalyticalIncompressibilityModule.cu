@@ -47,7 +47,6 @@ __device__ inline float kernWR(const float r, const float h)
         return w / (0.4f * h);
     }
     return w / r;
-   
 }
 
 __device__ inline float kernWRMesh(const float r, const float h)
@@ -85,7 +84,6 @@ __device__ inline float kernWRRMesh(const float r, const float h)
     //G(r) in eq11 for weighted kernel function's second-order gradient
 }
 
-
 //Triangle Clustering
 template <typename Coord>
 __global__ void VC_Sort_Neighbors(
@@ -105,9 +103,9 @@ __global__ void VC_Sort_Neighbors(
     {
         int start = ne;
         int end   = nbSizeTri - 1;
-        int c     = start;                            
-        int l     = 2 * c + 1;                       
-        int tmp   = neighborsTri.getElement(pId, c); 
+        int c     = start;
+        int l     = 2 * c + 1;
+        int tmp   = neighborsTri.getElement(pId, c);
         for (; l <= end; c = l, l = 2 * l + 1)
         {
             if (l < end)
@@ -787,7 +785,7 @@ __global__ void VC_ComputeDivergenceTmp(
             continue;
         if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
         {
-            
+
             pop        = 1;
             Coord n_PL = nearest_pt.origin - pos_i;
             Coord n_TR = (p3d.project(t3d)).origin - pos_i;

@@ -91,7 +91,7 @@ __global__ void VC_ComputeAlpha(
         }
     }
 
-    alpha[pId] = alpha_i;//equation 16, left hand side
+    alpha[pId] = alpha_i;  //equation 16, left hand side
 }
 
 template <typename Real>

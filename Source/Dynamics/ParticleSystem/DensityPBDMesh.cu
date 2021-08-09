@@ -29,7 +29,6 @@ __device__ inline float kernGradientMeshPBD(const float r, const float h)
         const Real hh = h * h;
         return -45.0f / (( Real )M_PI * hh * h) * (1.0f / 3.0f * (hh * h - r * r * r) - 1.0f / 2.0f / h * (hh * hh - r * r * r * r) + 1.0f / 5.0f / hh * (hh * hh * h - r * r * r * r * r));
     }
-   
 }
 
 template <typename Real,
@@ -93,7 +92,7 @@ __global__ void K_ComputeLambdasMesh(
     Real sum_aij;
     Real dis_n     = 10000.0;
     int  nearest_T = 1;
-    
+
     //semi-analytical boundary integration
     if (use_mesh && pId < Start)
         for (int ne = 0; ne < nbSizeTri; ne++)
@@ -112,9 +111,9 @@ __global__ void K_ComputeLambdasMesh(
             Point3D nearest_pt = p3d.project(PL);
             Real    r          = (nearest_pt.origin - pos_i).norm();
 
-            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength); //A_s in equation 10 
-            Real  MinDistance = (p3d.distance(t3d)); //d_n (scalar) in equation 10
-            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;//d_n (vector) in equation 10
+            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);  //A_s in equation 10
+            Real  MinDistance = (p3d.distance(t3d));                     //d_n (scalar) in equation 10
+            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;       //d_n (vector) in equation 10
             Coord Min_Pos     = p3d.project(t3d).origin;
             if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
             {
@@ -154,16 +153,15 @@ __global__ void K_ComputeLambdasMesh(
             // equation 6
             if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
             {
-                
+
                 Real a_ij =
                     kernGradientMeshPBD(r, smoothingLength)
                     / (sampling_distance * sampling_distance * sampling_distance)
-                    * 2.0 * (M_PI) * (1 - d / smoothingLength)//eq 11
-                    * AreaSum  //p3d.areaTriangle(t3d, smoothingLength)
-                    / ((M_PI) * (smoothingLength * smoothingLength - d * d))//eq 11
+                    * 2.0 * (M_PI) * (1 - d / smoothingLength)                //eq 11
+                    * AreaSum                                                 //p3d.areaTriangle(t3d, smoothingLength)
+                    / ((M_PI) * (smoothingLength * smoothingLength - d * d))  //eq 11
                     * t3d.normal().dot(Min_Pt) / t3d.normal().norm();
 
-               
                 {
                     Coord g = a_ij * (pos_i - nearest_pt.origin) / r;
                     grad_ci += g;
@@ -314,9 +312,9 @@ __global__ void K_ComputeDisplacementMesh(
             //printf("%.3lf %.3lf %.3lf\n", ttm[0], ttm[1], ttm[2]);
             //	if (d < 0) tmp *= 0.0;
 
-            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);//A_s in equation 10 
-            Real  MinDistance = abs(p3d.distance(t3d));//d_n (scalar) in equation 10
-            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;//d_n (vector) in equation 10
+            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);  //A_s in equation 10
+            Real  MinDistance = abs(p3d.distance(t3d));                  //d_n (scalar) in equation 10
+            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;       //d_n (vector) in equation 10
             Coord Min_Pos     = p3d.project(t3d).origin;
             if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
             {
@@ -356,10 +354,10 @@ __global__ void K_ComputeDisplacementMesh(
                 //equaltion 6
                 Real a_ij =
                     kernGradientMeshPBD(r, smoothingLength)
-                    * 2.0 * (M_PI) * (1 - d / smoothingLength)//eq 11
-                    * AreaSum  //p3d.areaTriangle(t3d, smoothingLength)
-                    / ((M_PI) * (smoothingLength * smoothingLength - d * d)) // eq11
-                    * t3d.normal().dot(Min_Pt) / t3d.normal().norm()  // / (p3d.project(t3d).origin - p3d.origin).norm()
+                    * 2.0 * (M_PI) * (1 - d / smoothingLength)                //eq 11
+                    * AreaSum                                                 //p3d.areaTriangle(t3d, smoothingLength)
+                    / ((M_PI) * (smoothingLength * smoothingLength - d * d))  // eq11
+                    * t3d.normal().dot(Min_Pt) / t3d.normal().norm()          // / (p3d.project(t3d).origin - p3d.origin).norm()
                     / (sampling_distance * sampling_distance * sampling_distance);
                 //a_ij *= (dis_n / abs(dis_n));
 

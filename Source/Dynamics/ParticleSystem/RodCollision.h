@@ -43,7 +43,7 @@ public:
 
     RodCollision();
     virtual ~RodCollision();
-    
+
     /**
      * Check if a given collidable object is supported, only points are supported by this class
      *
@@ -52,7 +52,7 @@ public:
      * @return true if obj is point
      */
     bool isSupport(std::shared_ptr<CollidableObject> obj) override;
-   
+
     /**
      * Add collidable object into m_collidableObjects. When added, collision handeling is applied to the object.
      * Used to initialize the class
@@ -72,14 +72,14 @@ public:
     void doCollision() override;
 
 protected:
-    DeviceArray<int>   m_objId;//object IDs, indicating the object each point belongs
-    DeviceArray<Coord> m_points;//particle positions
-    DeviceArray<Coord> m_vels;//particle velocities
+    DeviceArray<int>   m_objId;   //object IDs, indicating the object each point belongs
+    DeviceArray<Coord> m_points;  //particle positions
+    DeviceArray<Coord> m_vels;    //particle velocities
 
-    std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;//node to calculate neighborhood
-    std::shared_ptr<NeighborList<int>>        m_nList;//neighbor list of particles
+    std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;  //node to calculate neighborhood
+    std::shared_ptr<NeighborList<int>>        m_nList;     //neighbor list of particles
 
-    std::vector<std::shared_ptr<CollidablePoints<TDataType>>> m_collidableObjects;//all objects to perform collisions
+    std::vector<std::shared_ptr<CollidablePoints<TDataType>>> m_collidableObjects;  //all objects to perform collisions
 };
 
 #ifdef PRECISION_FLOAT

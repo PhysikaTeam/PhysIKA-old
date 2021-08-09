@@ -19,7 +19,7 @@ namespace PhysIKA {
 template <typename TDataType>
 class SurfaceTension : public ForceModule
 {
- /**
+    /**
  * SurfaceTension, applying the surface tension force
  * Usage:
  * 1. Define a SurfaceTension instance

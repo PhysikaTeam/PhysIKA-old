@@ -74,7 +74,7 @@ __global__ void K_ApplyViscosity(
 
     dv_i /= totalWeight;
 
-    velNew[pId] = velOld[pId] / (1.0f + b) + dv_i * b / (1.0f + b); //equation 2
+    velNew[pId] = velOld[pId] / (1.0f + b) + dv_i * b / (1.0f + b);  //equation 2
 }
 
 template <typename Real, typename Coord>

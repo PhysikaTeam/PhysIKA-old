@@ -48,7 +48,7 @@ public:
 
     /*Currently not supported*/
     bool addRigidBody(std::shared_ptr<RigidBody<TDataType>> child);
-    
+
     /**
      * add particle system to particle system list
      *
@@ -56,7 +56,7 @@ public:
      */
     bool addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child);
 
-     /*Initialize all intermediate arrays*/
+    /*Initialize all intermediate arrays*/
     bool resetStatus() override;
 
     /**
@@ -66,7 +66,7 @@ public:
      */
     void advance(Real dt) override;
 
-     /**
+    /**
      * set smoothingLength
      *
      * @param[in] d    set radius to be d and sampling distance to be d/2, may lead to problems

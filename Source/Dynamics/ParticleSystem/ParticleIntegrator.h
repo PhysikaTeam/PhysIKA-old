@@ -14,7 +14,6 @@
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/FieldArray.h"
 
-
 /**
  * ParticleIntegrator, update velocity and position at each time step using gravity and force desity
  * 
@@ -37,11 +36,11 @@ public:
     ParticleIntegrator();
     ~ParticleIntegrator() override{};
 
-    void begin() override;//seems to have no influence on current version
-    void end() override;//seems to have no influence on current version
+    void begin() override;  //seems to have no influence on current version
+    void end() override;    //seems to have no influence on current version
 
     bool integrate() override;
-    
+
     /**
      * Called to update velocities of particles
      * 
@@ -57,7 +56,7 @@ public:
     bool updatePosition();
 
 protected:
-    bool initializeImpl() override;//seems to have no influence on current version
+    bool initializeImpl() override;  //seems to have no influence on current version
 
 public:
     /**
@@ -79,8 +78,8 @@ public:
     DEF_EMPTY_IN_ARRAY(ForceDensity, Coord, DeviceType::GPU, "Force density on each particle");
 
 private:
-    DeviceArray<Coord> m_prePosition;//seems to have no influence on current version
-    DeviceArray<Coord> m_preVelocity;//seems to have no influence on current version
+    DeviceArray<Coord> m_prePosition;  //seems to have no influence on current version
+    DeviceArray<Coord> m_preVelocity;  //seems to have no influence on current version
 };
 
 #ifdef PRECISION_FLOAT
