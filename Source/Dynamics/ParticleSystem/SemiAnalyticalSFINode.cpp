@@ -1,3 +1,9 @@
+/**
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-9
+ * @description: Implemendation of SemiAnalyticalSFINode class, which is a container for fluids with semi-analytical boundaries
+ * @version    : 1.1
+ */
 #include "SemiAnalyticalSFINode.h"
 #include "PositionBasedFluidModel.h"
 
@@ -260,6 +266,7 @@ void SemiAnalyticalSFINode<TDataType>::advance(Real dt)
     std::vector<std::shared_ptr<ParticleSystem<TDataType>>>            m_particleSystems = this->getParticleSystems();
     std::vector<std::shared_ptr<TriangularSurfaceMeshNode<TDataType>>> m_surfaces        = this->getTriangularSurfaceMeshNodes();
     bool                                                               emitter           = false;
+    //handels emitters
     if (emitter)
     {
 
@@ -318,7 +325,7 @@ void SemiAnalyticalSFINode<TDataType>::advance(Real dt)
         mass.clear();
 
         m_particle_attribute.setElementCount(total_num);
-
+        //copy from particles
         if (total_num > 0)
         {
             int                     start     = 0;
@@ -366,12 +373,14 @@ void SemiAnalyticalSFINode<TDataType>::advance(Real dt)
     }
 
     auto nModel = this->getNumericalModel();
+
+    //solves incompressibility and boundary conditions
     if (m_particle_position.getElementCount() > 0)
     {
         printf("+++++++++++++++++++++++++++++++++++++++++++++++++++ %d %d\n", m_particle_position.getElementCount(), m_particle_velocity.getElementCount());
         nModel->step(this->getDt());
     }
-
+    //copy back to particles
     if (m_particle_position.getElementCount() > 0)
     {
         int                 start   = 0;
@@ -401,7 +410,7 @@ void SemiAnalyticalSFINode<TDataType>::advance(Real dt)
     int start_triangle = 0;
 
     cudaMemcpy(m_triangle_vertex_old.getValue().getDataPtr(), m_triangle_vertex.getValue().getDataPtr(), m_triangle_vertex.getElementCount() * sizeof(Coord), cudaMemcpyDeviceToDevice);
-
+    //update boundary status
     for (int i = 0; i < m_surfaces.size(); i++)
     {
 

@@ -1,3 +1,10 @@
+/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: Declaration of SemiAnalyticalIncompressibilityModule class, implemendation of semi-analytical perojection-based fluids 
+ *               introduced in the paper <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * @version    : 1.1
+ */
 #pragma once
 #include "Framework/Framework/ModuleConstraint.h"
 #include "Framework/Framework/FieldArray.h"
@@ -14,9 +21,11 @@ template <typename TDataType>
 class SummationDensity;
 template <typename TDataType>
 class TriangleSet;
-//template <typename TDataType> class Point3D;
-//template <typename TDataType> class Triangle3D;
-//template <typename TDataType> class Plane3D;
+/**
+ * SemiAnalyticalIncompressibilityModule implements the projection-based part of semi-analytical boundary conditions of the paper
+ * <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * It is used in SemiAnalyticalIncompressibleFluidModel class
+ */
 
 template <typename TDataType>
 class SemiAnalyticalIncompressibilityModule : public ConstraintModule
@@ -40,29 +49,21 @@ public:
     VarField<Real> m_smoothing_length;
     VarField<Real> m_sampling_distance;
 
-    /**
-         * @brief Particle attributes
-         * 
-         */
     DeviceArrayField<Real> m_particle_mass;
 
     DeviceArrayField<Coord> m_particle_position;
     DeviceArrayField<Coord> m_particle_velocity;
-    //        DeviceArrayField<Coord> m_particle_normal;
 
     DeviceArrayField<Attribute> m_particle_attribute;
     DeviceArrayField<int>       m_flip;
 
-    /**
-         * @brief Solid wall boundary
-         * 
-         */
+   
     DeviceArrayField<Real>     m_triangle_vertex_mass;
     DeviceArrayField<Coord>    m_triangle_vertex;
     DeviceArrayField<Coord>    m_triangle_vertex_old;
     DeviceArrayField<Triangle> m_triangle_index;
 
-    /**
+         /**
          * @brief Storing neighboring particles and triangles' ids
          * 
          */

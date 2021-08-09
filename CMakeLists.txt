@@ -2,6 +2,8 @@
 
 project(PhysIKA LANGUAGES CXX CUDA)                                                             #指定本项目的编译语言为C++、CUDA
 
+find_package(Threads REQUIRED)
+
 # define library version (update: apparently you can also do it in project()!)
 set(PHYSIKA_LIBRARY_VERSION_MAJOR 2 CACHE STRING "PhysIKA major version" FORCE)
 set(PHYSIKA_LIBRARY_VERSION_MINOR 2 CACHE STRING "PhysIKA minor version" FORCE)

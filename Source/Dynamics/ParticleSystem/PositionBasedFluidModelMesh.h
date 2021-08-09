@@ -19,7 +19,7 @@
  * PositionBasedFluidModelMesh
  * a NumericalModel for semi-analytical PBD fluids 
  * The solver is PBD fluids with semi-analytical boundaries
- * reference: He et al "Semi-analytical Solid Boundary Conditions for Free Surface Flows"
+ * reference: "Semi-analytical Solid Boundary Conditions for Free Surface Flows"
  *
  * Could be used by being created and initialized at SemiAnalyticalSFINode
  * Fields required to be initialized include:

@@ -1,3 +1,10 @@
+/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: Implemendation of SemiAnalyticalIncompressibleFluidModel class, a container for semi-analytical projection-based fluids 
+ *               introduced in the paper <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * @version    : 1.1
+ */
 #include "SemiAnalyticalIncompressibleFluidModel.h"
 #include "Framework/Topology/PointSet.h"
 #include "Framework/Framework/Node.h"

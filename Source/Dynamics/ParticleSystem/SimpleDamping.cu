@@ -1,3 +1,14 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implemendation of SimpleDamping class, which applies a simple damping on particle velocities
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-08
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <cuda_runtime.h>
 #include "Core/Utility.h"
 #include "Framework/Framework/Log.h"

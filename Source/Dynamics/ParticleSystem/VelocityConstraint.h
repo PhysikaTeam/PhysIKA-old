@@ -1,3 +1,15 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Declaration of VelocityConstraint class, which implements the peojection-based fluid solver
+ *               introduced in the paper <A Variational Staggered Particle Framework for Incompressible Free-Surface Flows>
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-08
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #pragma once
 #include "Framework/Framework/ModuleConstraint.h"
 #include "Framework/Framework/FieldArray.h"
@@ -7,6 +19,10 @@
 
 namespace PhysIKA {
 
+ /**
+ * VelocityConstraint implements the incompressibility solver of the paper
+ * <A Variational Staggered Particle Framework for Incompressible Free-Surface Flows>
+ */
 class Attribute;
 template <typename TDataType>
 class SummationDensity;
@@ -46,7 +62,7 @@ private:
     Real m_separation   = 0.1f;
     Real m_restDensity  = 1000.0f;
 
-    //Refer to "A Nonlocal Variational Particle Framework for Incompressible Free Surface Flows" for their exact meanings
+    //Refer to "A Variational Staggered Particle Framework for Incompressible Free-Surface Flows" for their exact meanings
     DeviceArray<Real> m_alpha;
     DeviceArray<Real> m_Aii;
     DeviceArray<Real> m_AiiFluid;

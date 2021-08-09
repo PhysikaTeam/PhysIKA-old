@@ -1,3 +1,15 @@
+/**
+ * @author     : He Xiaowei (xiaowei@iscas.ac.cn)
+ * @date       : 2020-10-07
+ * @description: Implemendation of SolidFluidInteraction class, applies solid-fluid interaction by PBD
+ * @version    : 1.0
+ * 
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: poslish code
+ * @version    : 1.1
+ * 
+ */
 #include "SolidFluidInteraction.h"
 #include "PositionBasedFluidModel.h"
 
@@ -111,6 +123,7 @@ bool SolidFluidInteraction<TDataType>::resetStatus()
     return true;
 }
 
+//not used in this class
 template <typename Real, typename Coord>
 __global__ void K_Collide(
     DeviceArray<int>   objIds,
@@ -185,7 +198,7 @@ __global__ void K_Collide(
     //
     //		newPoints[pId] = pos_num;
 }
-
+//not used in this class
 template <typename Real, typename Coord>
 __global__ void K_ComputeTarget(
     DeviceArray<Coord> oldPoints,
@@ -203,7 +216,7 @@ __global__ void K_ComputeTarget(
     else
         newPoints[pId] = oldPoints[pId];
 }
-
+//not used in this class
 template <typename Real, typename Coord>
 __global__ void K_ComputeVelocity(
     DeviceArray<Coord> initPoints,
@@ -221,6 +234,7 @@ __global__ void K_ComputeVelocity(
 template <typename TDataType>
 void SolidFluidInteraction<TDataType>::advance(Real dt)
 {
+    //copy positions and velocities from sons
     int                 start     = 0;
     DeviceArray<Coord>& allpoints = m_position.getValue();
     for (int i = 0; i < m_particleSystems.size(); i++)
@@ -233,8 +247,10 @@ void SolidFluidInteraction<TDataType>::advance(Real dt)
         start += num;
     }
 
+    //calculate neighbors
     m_nbrQuery->compute();
 
+    //enforce PBD constraints
     auto module = this->template getModule<DensityPBD<TDataType>>("collision");
     module->constrain();
 
@@ -267,6 +283,7 @@ void SolidFluidInteraction<TDataType>::advance(Real dt)
 
 		K_ComputeVelocity << <pDims, BLOCK_SIZE >> > (init_pos, allpoints, m_vels.getValue(), getParent()->getDt());*/
 
+    //set velocities and positions for sons
     start = 0;
     for (int i = 0; i < m_particleSystems.size(); i++)
     {

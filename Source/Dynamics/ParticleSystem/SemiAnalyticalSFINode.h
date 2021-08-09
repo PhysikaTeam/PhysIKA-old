@@ -1,5 +1,12 @@
+/**
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-9
+ * @description: Declaration of SemiAnalyticalSFINode class, which is a container for fluids with semi-analytical boundaries
+ * @version    : 1.1
+ */
 #pragma once
 #include "Framework/Framework/Node.h"
+#include "Framework/Framework/DeclareNodeField.h"
 #include "Framework/Framework/ModuleTopology.h"
 
 #include "SemiAnalyticalIncompressibleFluidModel.h"
@@ -20,14 +27,17 @@ template <typename TDataType>
 class PointSet;
 template <typename TDataType>
 class TriangleSet;
-/*!
-    *    \class    SolidFluidInteraction
-    *    \brief    Position-based fluids.
-    *
-    *    This class implements a position-based fluid solver.
-    *    Refer to Macklin and Muller's "Position Based Fluids" for details
-    *
-    */
+/**
+ * SemiAnalyticalSFINode
+ * a scene node for fluids with semi-analytical boundaries
+ * The default solver is PBD
+ * reference: "Position Based Fluids", "A Variational Staggered Particle Framework for Incompressible Free-Surface Flows" and
+ * "Semi-analytical Solid Boundary Conditions for Free Surface Flows"
+ *
+ * The source of fluids and boundaries can be setup exclusively by calling 
+ * addParticleSystem and addTriangularSurfaceMeshNode()
+ *
+ */
 
 template <typename TDataType>
 class SemiAnalyticalSFINode : public Node
@@ -44,10 +54,7 @@ public:
 public:
     bool initialize() override;
 
-    //std::shared_ptr<Node> addChild(std::shared_ptr<Node> child) override;
-
-    //bool addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child);
-    //bool addTriangularSurfaceMesh(std::shared_ptr<TriangularSurfaceMeshNode<TDataType>> child);
+    
 
     bool resetStatus() override;
 
@@ -55,25 +62,27 @@ public:
 
     void setInteractionDistance(Real d);
 
+    //returns the particle position
     DeviceArrayField<Coord>* getParticlePosition()
     {
         return &m_particle_position;
     }
-
+    //returns the particle arrtribute
     DeviceArrayField<Attribute>* getParticleAttribute()
     {
         return &m_particle_attribute;
     }
+    //returns the particle velocity
     DeviceArrayField<Coord>* getParticleVelocity()
     {
         return &m_particle_velocity;
     }
-
+    //returns the force density
     DeviceArrayField<Coord>* getParticleForceDensity()
     {
         return &m_particle_force_density;
     }
-
+    //returns the particle mass
     DeviceArrayField<Real>* getParticleMass()
     {
         return &m_particle_mass;
@@ -83,19 +92,22 @@ public:
     //         {
     //             return &ParticleId;
     //         }
-
+    //returns the trianlg vertex
     DeviceArrayField<Coord>* getTriangleVertex()
     {
         return &m_triangle_vertex;
     }
+    //returns the triangle vertex in last time step, reserved for CCDs
     DeviceArrayField<Coord>* getTPO()
     {
         return &m_triangle_vertex_old;
     }
+    //returns the triangle index
     DeviceArrayField<Triangle>* getTriangleIndex()
     {
         return &m_triangle_index;
     }
+    //returns the triangle mass
     DeviceArrayField<Real>* getTriangleVertexMass()
     {
         return &m_triangle_vertex_mass;

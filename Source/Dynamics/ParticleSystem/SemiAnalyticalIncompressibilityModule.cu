@@ -1,4 +1,11 @@
-﻿#include <cuda_runtime.h>
+﻿/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: Implemendation of SemiAnalyticalIncompressibilityModule class, implemendation of semi-analytical perojection-based fluids 
+ *               introduced in the paper <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * @version    : 1.1
+ */
+#include <cuda_runtime.h>
 #include "SemiAnalyticalIncompressibilityModule.h"
 #include "Framework/Framework/Node.h"
 #include "Core/Utility.h"
@@ -28,6 +35,7 @@ __device__ inline float kernWeightMesh(const float r, const float h)
     if (r > h)
         return 0.0f;
     return 4.0 / 21.0 * pow(h, 3.0f) - pow(r, 3.0f) / 3.0 + pow(r, 7.0f) / 7.0 / pow(h, 4.0f);
+    //G(r) in eq11 for weighted kernel function
 }
 
 __device__ inline float kernWR(const float r, const float h)
@@ -39,6 +47,7 @@ __device__ inline float kernWR(const float r, const float h)
         return w / (0.4f * h);
     }
     return w / r;
+   
 }
 
 __device__ inline float kernWRMesh(const float r, const float h)
@@ -51,6 +60,7 @@ __device__ inline float kernWRMesh(const float r, const float h)
             + ((pow(h04, 3.0f) - pow(r, 3.0f)) / 3.0f - (pow(h04, 7.0f) - pow(r, 7.0f)) / 7.0f / pow(h, 4.0f)) / h04;
     else
         return h * h / 3.0f - (r * r / 2.0f - pow(r, 6.0f) / (6.0f * pow(h, 4.0f)));  //(h * h - r * r) / 3.0;
+    //G(r) in eq11 for weighted kernel function's gradient
 }
 
 __device__ inline float kernWRR(const float r, const float h)
@@ -72,8 +82,11 @@ __device__ inline float kernWRRMesh(const float r, const float h)
         return 0.6f * h - 1.0f / 5.0f / pow(h, 4.0f) * (pow(h, 5.0f) - pow(h04, 5.0f)) + 1.0 / (0.16 * h * h) * (1.0 / 3.0 * (pow(h04, 3.0f) - pow(r, 3.0f)) - 1.0 / (7.0 * pow(h, 4.0f)) * (pow(h04, 7.0f) - pow(r, 7.0f)));
     else
         return h - r - (1.0 / 5.0 / pow(h, 4.0f) * (pow(h, 5.0f) - pow(r, 5.0f)));
+    //G(r) in eq11 for weighted kernel function's second-order gradient
 }
 
+
+//Triangle Clustering
 template <typename Coord>
 __global__ void VC_Sort_Neighbors(
     DeviceArray<Coord>                    position,
@@ -92,12 +105,11 @@ __global__ void VC_Sort_Neighbors(
     {
         int start = ne;
         int end   = nbSizeTri - 1;
-        int c     = start;                            // 当前(current)节点的位置
-        int l     = 2 * c + 1;                        // 左(left)孩子的位置
-        int tmp   = neighborsTri.getElement(pId, c);  // 当前(current)节点的大小
+        int c     = start;                            
+        int l     = 2 * c + 1;                       
+        int tmp   = neighborsTri.getElement(pId, c); 
         for (; l <= end; c = l, l = 2 * l + 1)
         {
-            // "l"是左孩子，"l+1"是右孩子
             if (l < end)
             {
                 bool judge = false;
@@ -198,7 +210,6 @@ __global__ void VC_Sort_Neighbors(
         int tmp   = neighborsTri.getElement(pId, c);
         for (; l <= end; c = l, l = 2 * l + 1)
         {
-            // "l"是左孩子，"l+1"是右孩子
             if (l < end)
             {
                 bool judge = false;
@@ -345,6 +356,7 @@ __global__ void VC_ComputeAlphaTmp(
         Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;
         if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
         {
+            //triangle clustering
             int jn;
             do
             {
@@ -382,7 +394,7 @@ __global__ void VC_ComputeAlphaTmp(
             n_TR       = n_TR / n_TR.norm();
 
             AreaB = M_PI * (smoothingLength * smoothingLength - d * d);
-
+            //equation 12
             Real a_ij =
                 kernWeightMesh(r, smoothingLength)
                 * 2.0 * (M_PI) * (1 - d / smoothingLength)
@@ -504,6 +516,7 @@ __global__ void VC_ComputeDiagonalElementTmp(
         Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;
         if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
         {
+            //triangle clustering
             int jn;
             do
             {
@@ -531,8 +544,8 @@ __global__ void VC_ComputeDiagonalElementTmp(
         Min_Pt /= Min_Pt.norm();
         if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
         {
+            //equation 12
 
-            //Coord n_PL = nearest_pt.origin - pos_i;
             Coord n_PL = -t3d.normal();
             if (flip[pId] < 0)
                 n_PL *= -1;
@@ -774,6 +787,7 @@ __global__ void VC_ComputeDivergenceTmp(
             continue;
         if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
         {
+            
             pop        = 1;
             Coord n_PL = nearest_pt.origin - pos_i;
             Coord n_TR = (p3d.project(t3d)).origin - pos_i;
@@ -819,6 +833,7 @@ __global__ void VC_ComputeDivergenceTmp(
         Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;
         if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
         {
+            //triangle clustering
             int jn;
             do
             {
@@ -849,6 +864,8 @@ __global__ void VC_ComputeDivergenceTmp(
             continue;
         if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
         {
+
+            //equation 12
             pop = 1;
 
             //Coord n_PL = nearest_pt.origin - pos_i;
@@ -1131,6 +1148,7 @@ __global__ void VC_UpdateVelocityBoundaryCorrectedTmp(
             Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;
             if (ne < nbSizeTri - 1 && neighborTri.getElement(pId, ne + 1) < 0)
             {
+                //triangle clustering
                 int jn;
                 do
                 {
@@ -1191,6 +1209,7 @@ __global__ void VC_UpdateVelocityBoundaryCorrectedTmp(
             d = abs(d);
             if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
             {
+                //equation 12
                 Coord dvii = 2.0f * (pressure[pId]) * corrected;
                 if (bSurface[pId])
                 {
