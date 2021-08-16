@@ -71,12 +71,16 @@ public:
     /**
      * Resize all intermediate device arrays 
      * 
-     * m_position, m_velocity, m_triangle_vertex has to be initialized to ensure correctness
+     * m_position, m_velocity, m_triangle_index, m_triangle_vertex and m_neighborhood_tri has to be initialized to ensure correctness
+     * 
+     * @return true(always)
      */
     bool initializeImpl() override;
 
     /**
      * Solve the collisions between triangles and particles
+     * 
+     * m_position, m_velocity, m_triangle_index, m_triangle_vertex and m_neighborhood_tri has to be initialized to ensure correctness
      * 
      */
     void doCollision() override;

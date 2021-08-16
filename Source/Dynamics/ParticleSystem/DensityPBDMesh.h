@@ -37,6 +37,12 @@ public:
     DensityPBDMesh();
     ~DensityPBDMesh() override;
 
+    /**
+     * handle the boundary conditions of fluids and mesh-based solid boundary
+     * m_position&&m_velocity&&m_neighborhood&&m_neighborhoodTri&&Tri&&TriPoint need to be setup before calling this API
+     *
+     * @return true
+     */
     bool constrain() override;
 
     void takeOneIteration();

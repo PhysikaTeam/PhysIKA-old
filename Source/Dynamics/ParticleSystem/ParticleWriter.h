@@ -57,6 +57,7 @@ public:
     /**
     *  Write information of interest info files 
     *  The output index changes each frame while the name prefix stay unchanged
+    *  @return true(always)
     */
     bool execute() override;
 
@@ -68,9 +69,9 @@ public:
     DeviceArrayField<Coord>    m_triangle_pos;    //Positions for triangle vertexs, reserved for triangle mesh writer
 
 private:
-    int         m_output_index = 0;  //the index of current frame, plus one each time called
-    std::string m_output_path;       // the path of output
-    std::string m_name_prefix;       // the name of output file
+    int         m_output_index = 0;  //!<the index of current frame, plus one each time called
+    std::string m_output_path;       //!< the path of output
+    std::string m_name_prefix;       //!< the name of output file
 };
 
 #ifdef PRECISION_FLOAT

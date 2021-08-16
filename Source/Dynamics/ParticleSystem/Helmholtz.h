@@ -37,30 +37,59 @@ public:
 
     Helmholtz();
     ~Helmholtz() override;
-
+    /**
+     * used to apply particle shifting as well as surface tension for fluids
+     * m_posID, m_velID and m_neighborhoodID should be set by calling the corresponding API before running this function 
+     * 
+     * @return true if no error occurs, false otherwise
+     */
     bool constrain() override;
 
-    //set position ID, used to get input position
+    /**
+     * set position ID, used to get input position
+     *
+     * @param[in] id          the ID of the point position
+     */
     void setPositionID(FieldID id)
     {
         m_posID = id;
     }
-    //set velocity ID, used to get input velocity
+    /**
+     * set velocity ID, used to get input velocity
+     *
+     * @param[in] id          the ID of the point velocity
+     * 
+     */
     void setVelocityID(FieldID id)
     {
         m_velID = id;
     }
-    //set Neighborhood ID, used to get neighbor list
+    /**
+     * set neighborhood ID, used to get input neighborhood
+     *
+     * @param[in] id          the ID of the neighborhood
+     * 
+     */
     void setNeighborhoodID(FieldID id)
     {
         m_neighborhoodID = id;
     }
-    //set iteration number, used to control the iteration
+    /**
+     * set iteration number, used to set iteration number
+     *
+     * @param[in] n          the number of iterations
+     * 
+     */
     void setIterationNumber(int n)
     {
         m_maxIteration = n;
     }
-    //set smoothing length, a positive number represents the radius of neighborhood for each point
+    /**
+     * used to set searching radius and to calculate kernel function of SPH
+     *
+     * @param[in] len          a positive real number, indicating the smooghing length
+     * 
+     */
     void setSmoothingLength(Real len)
     {
         m_smoothingLength = len;

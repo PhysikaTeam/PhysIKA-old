@@ -63,11 +63,16 @@ public:
      */
     void addCollidableObject(std::shared_ptr<CollidableObject> obj) override;
 
+    /**
+     * Initialize the node and cooresponding modules
+     *
+     * @return    true if all fields are ready, false otherwise
+     */
     bool initializeImpl() override;
 
     /**
     * Can be called to enforce collision, update the velocities and positions of particles
-    * 
+    * m_objId&&m_points&&m_vels should be initialized before calling this API
     */
     void doCollision() override;
 
@@ -76,10 +81,10 @@ protected:
     DeviceArray<Coord> m_points;  //particle positions
     DeviceArray<Coord> m_vels;    //particle velocities
 
-    std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;  //node to calculate neighborhood
-    std::shared_ptr<NeighborList<int>>        m_nList;     //neighbor list of particles
+    std::shared_ptr<NeighborQuery<TDataType>> m_nbrQuery;  //!< node to calculate neighborhood
+    std::shared_ptr<NeighborList<int>>        m_nList;     //!< neighbor list of particles
 
-    std::vector<std::shared_ptr<CollidablePoints<TDataType>>> m_collidableObjects;  //all objects to perform collisions
+    std::vector<std::shared_ptr<CollidablePoints<TDataType>>> m_collidableObjects;  //!< all objects to perform collisions
 };
 
 #ifdef PRECISION_FLOAT

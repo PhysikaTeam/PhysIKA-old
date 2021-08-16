@@ -39,12 +39,20 @@ public:
     void begin() override;  //seems to have no influence on current version
     void end() override;    //seems to have no influence on current version
 
+    /**
+     * do particle integration
+     * 
+     * update velocity and positions for all particles, so inPosition and inVelocity should be initialized before calling
+     *
+     * @return true(always)
+     */
     bool integrate() override;
 
     /**
      * Called to update velocities of particles
      * 
      * Add force density and gravity onto velocities of particles
+     * @return true(always)
      */
     bool updateVelocity();
 
@@ -52,6 +60,7 @@ public:
      * Called to update positions of particles
      * 
      * Use the new velocities to update positions
+     * @return true(always)
      */
     bool updatePosition();
 

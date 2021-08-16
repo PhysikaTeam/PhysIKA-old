@@ -72,18 +72,27 @@ public:
     SemiAnalyticalIncompressibleFluidModel();
     virtual ~SemiAnalyticalIncompressibleFluidModel();
 
+    /**
+     * advance the scene node in time
+     *
+     * @param[in] dt    the time interval between the states before&&after the call (deprecated)
+     */
     void step(Real dt) override;
 
-    /*
-    * set smoothing lenth to be len
-    */
+    /**
+     * Set the searching radius 
+     *
+     * @param[in]     len          the smoothing length
+     */
     void setSmoothingLength(Real len)
     {
         m_smoothing_length.setValue(len);
     }
     /**
-    *  currently have no influence on the behaviour
-    */
+     * Set the rest density, currently have no influence on the behaviour
+     *
+     * @param[in]     rho          the reset density
+     */
     void setRestDensity(Real rho)
     {
         m_restRho = rho;
@@ -96,8 +105,9 @@ public:
     void setViscositySolver(std::shared_ptr<ConstraintModule> solver);
     void setSurfaceTensionSolver(std::shared_ptr<ConstraintModule> solver);
 
-    /*
+    /**
     *  have no infludence on behaviour, but can be used in visualizing densities
+    *  @return the calculated density field 
     */
     DeviceArrayField<Real>* getDensityField()
     {
@@ -145,20 +155,20 @@ private:
 
     std::shared_ptr<ConstraintModule> m_incompressibilitySolver;  // no use
 
-    std::shared_ptr<SemiAnalyticalIncompressibilityModule<TDataType>> m_pbdModule;  //semi-analytical projection-based fluid model
+    std::shared_ptr<SemiAnalyticalIncompressibilityModule<TDataType>> m_pbdModule;  //!< semi-analytical projection-based fluid model
 
     std::shared_ptr<DensityPBD<TDataType>> m_pbdModule2;  // no use
 
-    std::shared_ptr<MeshCollision<TDataType>> m_meshCollision;  //used to handel the collision between triangles and particles
+    std::shared_ptr<MeshCollision<TDataType>> m_meshCollision;  //!< used to handel the collision between triangles and particles
 
-    std::shared_ptr<ImplicitViscosity<TDataType>>  m_visModule;             //viscosity
-    std::shared_ptr<SurfaceTension<TDataType>>     m_surfaceTensionSolver;  //surface tension
-    std::shared_ptr<Helmholtz<TDataType>>          m_Helmholtz;             //particle shifting
+    std::shared_ptr<ImplicitViscosity<TDataType>>  m_visModule;             //!< viscosity
+    std::shared_ptr<SurfaceTension<TDataType>>     m_surfaceTensionSolver;  //!< surface tension
+    std::shared_ptr<Helmholtz<TDataType>>          m_Helmholtz;             //!< particle shifting
     std::shared_ptr<PointSetToPointSet<TDataType>> m_mapping;               //no use
-    std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;            //integrator, update particle velocity and position
-    std::shared_ptr<NeighborQuery<TDataType>>      m_nbrQueryPoint;         //neighbor list for particle pairs
+    std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;            //!< integrator, update particle velocity and position
+    std::shared_ptr<NeighborQuery<TDataType>>      m_nbrQueryPoint;         //!< neighbor list for particle pairs
 
-    std::shared_ptr<NeighborQuery<TDataType>> m_nbrQueryTri;       //neighbor list for particle-triangle
+    std::shared_ptr<NeighborQuery<TDataType>> m_nbrQueryTri;       //!< neighbor list for particle-triangle
     std::shared_ptr<NeighborQuery<TDataType>> m_nbrQueryTriMulti;  //abandoned
 };
 

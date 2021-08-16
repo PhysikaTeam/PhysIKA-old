@@ -42,7 +42,7 @@ public:
         m_lambda.setValue(lambda);
     }
 
-    //        void setHorizon(Real len) { m_horizon.setValue(len); }
+    
     void setIterationNumber(int num)
     {
         m_iterNum.setValue(num);
@@ -97,12 +97,9 @@ public:
     NeighborField<NPair> m_restShape;
 
 protected:
-    /**
-        * @brief Lame parameters
-        * m_lambda controls the isotropic part while mu controls the deviatoric part.
-        */
-    VarField<Real> m_mu;
-    VarField<Real> m_lambda;
+    
+    VarField<Real> m_mu;//!< Lame parameters
+    VarField<Real> m_lambda; //!< Lame parameters
 
     DeviceArray<Real>  m_bulkCoefs;
     DeviceArray<Coord> m_position_old;

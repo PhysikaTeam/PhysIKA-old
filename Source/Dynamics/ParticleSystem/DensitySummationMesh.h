@@ -38,6 +38,12 @@ public:
     DensitySummationMesh();
     ~DensitySummationMesh() override{};
 
+    /**
+     * handle the boundary conditions of fluids and mesh-based solid boundary
+     * m_position&&m_neighborhood&&m_neighborhoodTri&&Tri&TriPoint need to be setup before calling this API
+     * note that the other two comute() are not used as APIs in semi-analytical boundaries
+     * @returns true
+     */
     void compute() override;
 
     void compute(DeviceArray<Real>& rho);
@@ -87,7 +93,7 @@ public:
     VarField<int>  Start;
 
 private:
-    Real m_factor;  // a renormalization factor to transfer the weight calculated by the kernel function to density
+    Real m_factor;  //!< a renormalization factor to transfer the weight calculated by the kernel function to density
 };
 
 #ifdef PRECISION_FLOAT

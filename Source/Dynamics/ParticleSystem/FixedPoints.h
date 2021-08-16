@@ -87,13 +87,13 @@ private:
 
     bool bUpdateRequired = false;
 
-    std::map<int, Coord> m_fixedPts;  //CPU vector, used to store fix IDs and positions to initialize
+    std::map<int, Coord> m_fixedPts;  //!< CPU vector, used to store fix IDs and positions to initialize
 
     std::vector<int>   m_bFixed_host;
     std::vector<Coord> m_fixed_positions_host;
 
-    DeviceArray<int>   m_bFixed;           //GPU array
-    DeviceArray<Coord> m_fixed_positions;  //GPU array of fixed positions
+    DeviceArray<int>   m_bFixed;           //!< GPU array
+    DeviceArray<Coord> m_fixed_positions;  //!< GPU array of fixed positions
 };
 
 #ifdef PRECISION_FLOAT

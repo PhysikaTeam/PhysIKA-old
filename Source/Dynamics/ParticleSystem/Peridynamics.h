@@ -59,11 +59,18 @@ public:
     Peridynamics();
     ~Peridynamics() override{};
 
-    /*!
-        *    \brief    All variables should be set appropriately before initializeImpl() is called.
-        */
+    /**
+     * Initialize the node and cooresponding modules
+     *
+     * @return    true if all fields are ready, false otherwise
+     */
     bool initializeImpl() override;
 
+    /**
+     * used to call peridynamics solvers
+     *
+     * @param[in] dt    time step size
+     */
     void step(Real dt) override;
 
 public:
@@ -83,8 +90,8 @@ private:
     HostVarField<Real>* m_restDensity;       //seems useless on current version
 
     std::shared_ptr<PointSetToPointSet<TDataType>> m_mapping;     //seems useless on current version
-    std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;  // integrator, used to update velocities and positions
-    std::shared_ptr<NeighborQuery<TDataType>>      m_nbrQuery;    //neighbor query, used to find particle neighbors
+    std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;  //!< integrator, used to update velocities and positions
+    std::shared_ptr<NeighborQuery<TDataType>>      m_nbrQuery;    //!< neighbor query, used to find particle neighbors
 };
 
 #ifdef PRECISION_FLOAT

@@ -38,8 +38,13 @@ public:
     SemiAnalyticalIncompressibilityModule();
     ~SemiAnalyticalIncompressibilityModule() override;
 
+    /**
+     * enforce projection-based fluids with semi-analytical boundary conditions
+     *
+     * @return(always)
+     */
     bool constrain() override;
-    //    DeviceArrayField<Coord>* getPosition() override;
+
     DeviceArrayField<Coord>* getPosition()
     {
         return &m_particle_position;

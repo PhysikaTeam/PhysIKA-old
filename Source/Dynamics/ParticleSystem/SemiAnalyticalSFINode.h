@@ -86,10 +86,7 @@ public:
         return &m_particle_mass;
     }
 
-    //         DeviceArrayField<int>* getParticleId()
-    //         {
-    //             return &ParticleId;
-    //         }
+  
     //returns the trianlg vertex
     DeviceArrayField<Coord>* getTriangleVertex()
     {

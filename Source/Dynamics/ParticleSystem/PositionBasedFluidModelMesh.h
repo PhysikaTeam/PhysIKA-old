@@ -74,19 +74,28 @@ public:
     PositionBasedFluidModelMesh();
     virtual ~PositionBasedFluidModelMesh();
 
+    /**
+     * advance the scene node in time
+     *
+     * @param[in] dt    the time interval between the states before&&after the call (deprecated)
+     */
     void step(Real dt) override;
 
-    /*
-    * set smoothing lenth to be len
-    */
+    /**
+     * setup the searching radius
+     *
+     * @param[in] len    smoothing length
+     */
     void setSmoothingLength(Real len)
     {
         m_smoothingLength.setValue(len);
     }
 
     /**
-    *  currently have no influence on the behaviour
-    */
+     * setup the density
+     *
+     * @param[in] rho    rest density, usually 1000
+     */
     void setRestDensity(Real rho)
     {
         m_restRho = rho;
@@ -94,14 +103,17 @@ public:
 
     /**
     *  currently have no influence on the behaviour
+    *  @param[in] solver     pointer of the incompressibility solver
     */
     void setIncompressibilitySolver(std::shared_ptr<ConstraintModule> solver);
     /**
     *  currently have no influence on the behaviour
+    *  @param[in] solver     pointer of the viscosity solver
     */
     void setViscositySolver(std::shared_ptr<ConstraintModule> solver);
     /**
     *  currently have no influence on the behaviour
+    *  @param[in] solver     pointer of the surface tension solver
     */
     void setSurfaceTensionSolver(std::shared_ptr<ConstraintModule> solver);
 

@@ -31,9 +31,9 @@ public:
     /**
      * apply the viscosity, update the velocity device array
      *
-     * @param[in&out] m_velocity        velocities of fluid particles
-     * @param[in]     m_position        positions of fluid particles
-     * @param[in]     m_neighborhood    the neighbor list
+     * m_position&&m_neighborhood need to be setup before calling this API
+     * 
+     * @return true(always)
      *                      
      */
     bool constrain() override;

@@ -33,10 +33,18 @@ public:
     DensityPBD();
     ~DensityPBD() override;
 
+    /**
+     * enforce density constraint
+     * inPosition and inVelocity should be initialized before calling this API
+     */
     bool constrain() override;
-
+    /**
+     * take one iteration using PBD
+     */
     void takeOneIteration();
-
+    /**
+     * update velocity after PBD solving
+     */
     void updateVelocity();
 
 public:
@@ -90,8 +98,8 @@ public:
 private:
     SpikyKernel<Real> m_kernel;
 
-    DeviceArray<Real>  m_lamda;     //the lambda in eq 11
-    DeviceArray<Coord> m_deltaPos;  // the delta p in eq 14
+    DeviceArray<Real>  m_lamda;     //!< the lambda in eq 11
+    DeviceArray<Coord> m_deltaPos;  //!< the delta p in eq 14
     DeviceArray<Coord> m_position_old;
 
 private:
