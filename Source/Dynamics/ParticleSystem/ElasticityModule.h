@@ -42,7 +42,6 @@ public:
         m_lambda.setValue(lambda);
     }
 
-    
     void setIterationNumber(int num)
     {
         m_iterNum.setValue(num);
@@ -97,9 +96,8 @@ public:
     NeighborField<NPair> m_restShape;
 
 protected:
-    
-    VarField<Real> m_mu;//!< Lame parameters
-    VarField<Real> m_lambda; //!< Lame parameters
+    VarField<Real> m_mu;      //!< Lame parameters
+    VarField<Real> m_lambda;  //!< Lame parameters
 
     DeviceArray<Real>  m_bulkCoefs;
     DeviceArray<Coord> m_position_old;
