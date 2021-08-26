@@ -1,5 +1,11 @@
+/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-04
+ * @description: Implementation of DensityPBDMesh class, which implements the position-based part of semi-analytical boundary conditions
+ *               introduced in the paper <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * @version    : 1.1
+ */
 #include <cuda_runtime.h>
-//#include "Core/Utilities/template_functions.h"
 #include "Core/Utility.h"
 #include "DensityPBDMesh.h"
 #include "Framework/Framework/Node.h"
@@ -18,19 +24,11 @@ __device__ inline float kernGradientMeshPBD(const float r, const float h)
         return 0.0;
     else
     {
+        //G(r) in equation 6
         const Real d  = 1.0 - q;
         const Real hh = h * h;
         return -45.0f / (( Real )M_PI * hh * h) * (1.0f / 3.0f * (hh * h - r * r * r) - 1.0f / 2.0f / h * (hh * hh - r * r * r * r) + 1.0f / 5.0f / hh * (hh * hh * h - r * r * r * r * r));
     }
-    /*
-			const Real q = r / h;
-			if (q > 1.0f) return 0.0;
-			//else if (r==0.0f) return 0.0f;
-			else {
-				const Real d = 1.0 - q;
-				const Real hh = h*h;
-				return -45.0f / ((Real)M_PI * hh*h) *d*d * this->m_scale;
-		*/
 }
 
 template <typename Real,
@@ -94,8 +92,8 @@ __global__ void K_ComputeLambdasMesh(
     Real sum_aij;
     Real dis_n     = 10000.0;
     int  nearest_T = 1;
-    //printf("!!!!! %d %d %d\n", positionTri.size(), Tri.size(), nbSizeTri);
 
+    //semi-analytical boundary integration
     if (use_mesh && pId < Start)
         for (int ne = 0; ne < nbSizeTri; ne++)
         {
@@ -113,12 +111,13 @@ __global__ void K_ComputeLambdasMesh(
             Point3D nearest_pt = p3d.project(PL);
             Real    r          = (nearest_pt.origin - pos_i).norm();
 
-            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);
-            Real  MinDistance = (p3d.distance(t3d));
-            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;
+            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);  //A_s in equation 10
+            Real  MinDistance = (p3d.distance(t3d));                     //d_n (scalar) in equation 10
+            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;       //d_n (vector) in equation 10
             Coord Min_Pos     = p3d.project(t3d).origin;
             if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
             {
+                //triangle clustering
                 int jn;
                 do
                 {
@@ -150,21 +149,19 @@ __global__ void K_ComputeLambdasMesh(
 
             float d = p3d.distance(PL);
             d       = abs(d);
+
+            // equation 6
             if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
             {
-                //if (r > sampling_distance / 2)
-                //	r -= sampling_distance / 2;
+
                 Real a_ij =
                     kernGradientMeshPBD(r, smoothingLength)
                     / (sampling_distance * sampling_distance * sampling_distance)
-                    * 2.0 * (M_PI) * (1 - d / smoothingLength)
-                    * AreaSum  //p3d.areaTriangle(t3d, smoothingLength)
-                    / ((M_PI) * (smoothingLength * smoothingLength - d * d))
+                    * 2.0 * (M_PI) * (1 - d / smoothingLength)                //eq 11
+                    * AreaSum                                                 //p3d.areaTriangle(t3d, smoothingLength)
+                    / ((M_PI) * (smoothingLength * smoothingLength - d * d))  //eq 11
                     * t3d.normal().dot(Min_Pt) / t3d.normal().norm();
 
-                //printf("densityPBDMesh, %3lf %.13lf %.3lf \n", 1.0f - r / smoothingLength,
-                //	a_ij, kern.Gradient(r + sampling_distance / 2.0f,smoothingLength));
-                //if (a_ij > 0)
                 {
                     Coord g = a_ij * (pos_i - nearest_pt.origin) / r;
                     grad_ci += g;
@@ -175,6 +172,7 @@ __global__ void K_ComputeLambdasMesh(
     grad_ci *= (dis_n / abs(dis_n));
     lamda_i *= (dis_n / abs(dis_n));
 
+    //traditional integration position based fluids
     for (int ne = 0; ne < nbSize; ne++)
     {
         int j = neighbors.getElement(pId, ne);
@@ -289,6 +287,7 @@ __global__ void K_ComputeDisplacementMesh(
             dis_n = p3d.distance(t3d);
         }
     }
+    //semi-analytical boundary integration
     if (use_mesh)
         for (int ne = 0; ne < nbSizeTri; ne++)
         {
@@ -313,12 +312,13 @@ __global__ void K_ComputeDisplacementMesh(
             //printf("%.3lf %.3lf %.3lf\n", ttm[0], ttm[1], ttm[2]);
             //	if (d < 0) tmp *= 0.0;
 
-            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);
-            Real  MinDistance = abs(p3d.distance(t3d));
-            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;
+            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);  //A_s in equation 10
+            Real  MinDistance = abs(p3d.distance(t3d));                  //d_n (scalar) in equation 10
+            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;       //d_n (vector) in equation 10
             Coord Min_Pos     = p3d.project(t3d).origin;
             if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
             {
+                //triangle clustering
                 int jn;
                 do
                 {
@@ -351,13 +351,13 @@ __global__ void K_ComputeDisplacementMesh(
             //r = max((r - sampling_distance / 2.0), 0.0);
             if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
             {
-
+                //equaltion 6
                 Real a_ij =
                     kernGradientMeshPBD(r, smoothingLength)
-                    * 2.0 * (M_PI) * (1 - d / smoothingLength)
-                    * AreaSum  //p3d.areaTriangle(t3d, smoothingLength)
-                    / ((M_PI) * (smoothingLength * smoothingLength - d * d))
-                    * t3d.normal().dot(Min_Pt) / t3d.normal().norm()  // / (p3d.project(t3d).origin - p3d.origin).norm()
+                    * 2.0 * (M_PI) * (1 - d / smoothingLength)                //eq 11
+                    * AreaSum                                                 //p3d.areaTriangle(t3d, smoothingLength)
+                    / ((M_PI) * (smoothingLength * smoothingLength - d * d))  // eq11
+                    * t3d.normal().dot(Min_Pt) / t3d.normal().norm()          // / (p3d.project(t3d).origin - p3d.origin).norm()
                     / (sampling_distance * sampling_distance * sampling_distance);
                 //a_ij *= (dis_n / abs(dis_n));
 
@@ -377,7 +377,7 @@ __global__ void K_ComputeDisplacementMesh(
                 }
             }
         }
-
+    //traditional integration position based fluids
     for (int ne = 0; ne < nbSize; ne++)
     {
         int  j = neighbors.getElement(pId, ne);

@@ -1,3 +1,14 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implemendation of ParticleWriter class, which can write particle positions and corresponding scalar values into txt files
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-05
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include "ParticleWriter.h"
 #include "Framework/Framework/MechanicalState.h"
 #include "Framework/Framework/ModuleIO.h"
@@ -40,12 +51,12 @@ template <typename TDataType>
 bool PhysIKA::ParticleWriter<TDataType>::execute()
 {
 
-    printf("===========WRITER============\n");
+    //printf("===========WRITER============\n");
     assert(m_position.getElementCount() == m_color_mapping.getElementCount());
 
     std::stringstream ss;
     ss << m_output_index;
-    std::string   filename = m_output_path + std::string("D:\\info\\0918\\test_") + ss.str() + std::string(".txt");
+    std::string   filename = m_output_path + m_name_prefix + ss.str() + std::string(".txt");
     std::ofstream output(filename.c_str(), std::ios::out | std::ios::binary);
 
     int total_num = m_position.getElementCount();

@@ -1,3 +1,14 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implemendation of SummationDensity class, which calculates the densities of particles
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-08
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <cuda_runtime.h>
 #include "SummationDensity.h"
 #include "Framework/Framework/MechanicalState.h"
@@ -105,6 +116,8 @@ void SummationDensity<TDataType>::compute(
 template <typename TDataType>
 void SummationDensity<TDataType>::calculateScalingFactor()
 {
+
+    //initialize by assuming that particles are uniformly sampled by sampling distance
     Real d     = this->varSamplingDistance()->getValue();
     Real H     = this->varSmoothingLength()->getValue();
     Real rho_0 = this->varRestDensity()->getValue();

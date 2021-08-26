@@ -1,3 +1,16 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implemendation of Helmholtz class, which implements the particle shifting in section 4.3
+ *               introduced in the paper <A Variational Staggered Particle Framework for Incompressible Free-Surface Flows>
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-04
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 //#include "Core/Utilities/template_functions.h"
 #include "Helmholtz.h"
 #include "Framework/Framework/Node.h"
@@ -22,21 +35,6 @@ __device__ inline Real ExpWeight(const Real r, const Real h)
         const Real hh = h * h;
         return d * d * d;  // (1.0 - q*q*q*q);
     }
-
-    // 		const Real q = r / h;
-    // 		if (q > 1.0f) return 0.0f;
-    // 		else {
-    // 			const Real d = 1.0f - q;
-    // 			const Real hh = h*h;
-    // 			//			return 45.0f / ((float)M_PI * hh*h) *d*d;
-    // 			return (1.0 - q*q*q*q)*h*h;
-    // 		}
-    // 		Real q = r / h;
-    // 		if (q > Real(1))
-    // 		{
-    // 			return Real(0);
-    // 		}
-    // 		return pow(Real(M_E), -q*q / 2);
 }
 
 template <typename Real>
@@ -205,15 +203,8 @@ __global__ void H_ComputeGradient(
         {
             float weight2 = -mass * kern.Gradient(r, h);
             Coord g2_ij   = (weight2 / total_weight2) * (pos_i - pos_j) * (1.0f / r);
-            // 				atomicAdd(&grads[j].x, -w2*g2_ij.x);
-            // 				atomicAdd(&grads[j].y, -w2*g2_ij.y);
-            // 				atomicAdd(&grads[j].z, -w2*g2_ij.z);
         }
     }
-
-    // 		atomicAdd(&grads[pId].x, w1*grad1_i.x + w2*grad2.x - w3*energy*nGrad3.x);
-    // 		atomicAdd(&grads[pId].y, w1*grad1_i.y + w2*grad2.y - w3*energy*nGrad3.y);
-    // 		atomicAdd(&grads[pId].z, w1*grad1_i.z + w2*grad2.z - w3*energy*nGrad3.z);
 }
 
 template <typename Coord>
@@ -297,6 +288,7 @@ __global__ void H_ComputeEnergy(
     int   nbSize      = neighbors.getNeighborSize(pId);
     Coord grad_i      = Coord(0);
     Real  totalWeight = Real(0);
+    //compute equation 27, store the gradient of c_i in grad_i
     for (int ne = 0; ne < nbSize; ne++)
     {
         int   j        = neighbors.getElement(pId, ne);
@@ -318,6 +310,15 @@ __global__ void H_ComputeEnergy(
     energy[pId] = grad_i.dot(grad_i);
 }
 
+//add only eq25 in current implemendation
+
+/**
+ * calculate the gradient of position and update position
+ * @param[in]      curPos               positions of the all particles from last iteration
+ * @param[out]     newPos               output positions, updated in this iteration
+ * @param[in]      c                    the c_i in equation 26
+ * @param[in]      energy               the energy for surface tension, currently not used to update position             
+ */
 template <typename Real, typename Coord>
 __global__ void H_TakeOneIteration(
     DeviceArray<Coord> newPos,
@@ -338,7 +339,7 @@ __global__ void H_TakeOneIteration(
     if (pId >= newPos.size())
         return;
 
-    Real  BE_i     = H_ComputeBulkEnergyGradient(c[pId], restRho, lambda);
+    Real  BE_i     = H_ComputeBulkEnergyGradient(c[pId], restRho, lambda);  //equation 25
     Real  lc_i     = lc[pId];
     Coord curPos_i = curPos[pId];
 
@@ -381,47 +382,7 @@ __global__ void H_TakeOneIteration(
         }
     }
 
-    // 		if (totalWeight > EPSILON)
-    // 		{
-    // 			grad_i /= totalWeight;
-    // 		}
-    //
-    // 		printf("%f \n", totalWeight);
-    //
-    // 		Real energy_i = grad_i.dot(grad_i);
-    // 		if (grad_i.norm() > EPSILON)
-    // 		{
-    // 			grad_i.normalize();
-    // 		}
-
-    //newPos[pId] = curPos_i + 0.000000000005f*expPos_i;
-    //		newPos[pId] = curPos_i + 0.00001*expPos_i;
-
-    //		newPos[pId] = curPos_i + 0.1*factor*accPos_j - 0.1*factor*accPos_i + 0.0000000001*grad_i;
-
     newPos[pId] = curPos_i + 0.1 * factor * accPos_j - 0.1 * factor * accPos_i;
-
-    //		newPos[pId] = curPos_i + 0.1*factor*accPos_j - 0.1*factor*accPos_i +0.0001*(1-lc_i/(5*pow(Real(10), Real(8))))*grad_i;
-
-    //		printf("%f \n", (1 - lc_i / (5 * pow(Real(10), Real(8)))));
-
-    // 		Real cr = Real(1);
-    // 		if (0.1*factor*a_i < - 1.0/3.0)
-    // 		{
-    // 			cr *= -0.1*factor*a_i / 3;
-    // 		}
-
-    //		newPos[pId] = (prePos[pId] + 0.1*factor*accPos_j) / (1 + 0.1*factor*a_i);
-    //
-    // 		if(0.1*factor*a_i < -0.5)
-    // 			printf("%f \n", 0.1*factor*a_i);
-
-    //		Coord tmpCord = accPos_i / a_i;
-
-    // 		if (c[pId] > 1000 && pId == 5)
-    // 		{
-    // 			printf("NewPos: %f %f %f CurPos: %f %f %f TmpPos: %f %f %f PrePos: %f %f %f : %f \n", newPos[pId][0], newPos[pId][1], newPos[pId][2], curPos[pId][0], curPos[pId][1], curPos[pId][2], tmpCord[0], tmpCord[1], tmpCord[2], prePos[pId][0], prePos[pId][1], prePos[pId][2], factor*a_i);
-    // 		}
 }
 
 template <typename Coord>
@@ -493,10 +454,6 @@ bool Helmholtz<TDataType>::constrain()
         computeC(m_c, posFd->getValue(), neighborFd->getValue());
         computeLC(m_lc, posFd->getValue(), neighborFd->getValue());
 
-        //			Real max_lc = thrust::reduce(thrust::device, m_lc.getDataPtr(), m_lc.getDataPtr() + m_lc.size(), (Real)0, thrust::maximum<Real>());
-
-        //			printf("%f \n", max_lc);
-
         Function1Pt::copy(m_bufPos, posFd->getValue());
 
         H_ComputeEnergy<<<pDims, BLOCK_SIZE>>>(
@@ -546,6 +503,7 @@ __global__ void H_ComputeC(
     Real  c_i    = Real(0);
     Coord pos_i  = pos[pId];
     int   nbSize = neighbors.getNeighborSize(pId);
+    //compute equation 25
     for (int ne = 0; ne < nbSize; ne++)
     {
         int j = neighbors.getElement(pId, ne);

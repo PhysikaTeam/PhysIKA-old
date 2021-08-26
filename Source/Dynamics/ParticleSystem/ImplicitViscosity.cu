@@ -1,3 +1,16 @@
+/**
+ * @author     : Xiaowei He (xiaowei@iscas.ac.cn)
+ * @date       : 2020-10-07
+ * @description: Implemendation of ImplicitViscosity class, which implements a simpler XSPH style of damping noise
+ *               For more details, please refer to [Schechter et al. 2012] "Ghost SPH for Animating Water"
+ * @version    : 1.0
+ * 
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-05
+ * @description: poslish code
+ * @version    : 1.1
+ * 
+ */
 #include "ImplicitViscosity.h"
 #include "Core/Utility.h"
 #include "Framework/Framework/Node.h"
@@ -18,6 +31,7 @@ __device__ Real VB_VisWeight(const Real r, const Real h)
     }
 }
 
+//apply XSPH, equation 2
 template <typename Real, typename Coord>
 __global__ void K_ApplyViscosity(
     DeviceArray<Coord> velNew,
@@ -60,7 +74,7 @@ __global__ void K_ApplyViscosity(
 
     dv_i /= totalWeight;
 
-    velNew[pId] = velOld[pId] / (1.0f + b) + dv_i * b / (1.0f + b);
+    velNew[pId] = velOld[pId] / (1.0f + b) + dv_i * b / (1.0f + b);  //equation 2
 }
 
 template <typename Real, typename Coord>

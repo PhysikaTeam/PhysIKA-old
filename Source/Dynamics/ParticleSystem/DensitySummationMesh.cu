@@ -1,3 +1,10 @@
+/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-04
+ * @description: Declaration of DensitySummationMesh class, which implements the density summation using semi-analytical boundary conditions
+ *               introduced in the paper <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * @version    : 1.1
+ */
 #include <cuda_runtime.h>
 #include "DensitySummationMesh.h"
 #include "Framework/Framework/MechanicalState.h"
@@ -16,21 +23,16 @@ __device__ inline float kernWeightMeshPBD(const float r, const float h)
         return 0.0f;
     else
     {
+        //G(r) in equation 6
         const Real d  = 1.0 - q;
         const Real hh = h * h;
         return 15.0f / (( Real )M_PI * hh * h) * (1.0f / 3.0f * (hh * h - r * r * r) - 3.0f / 4.0f / h * (hh * hh - r * r * r * r) + 3.0f / 5.0f / hh * (hh * hh * h - r * r * r * r * r) - 1.0f / 6.0f / hh / h * (hh * hh * hh - r * r * r * r * r * r));
     }
-    /*
-		const Real q = r / h;
-			if (q > 1.0f) return 0.0f;
-			else {
-				const Real d = 1.0 - q;
-				const Real hh = h*h;
-				return 15.0f / ((Real)M_PI * hh * h) * d * d * d * this->m_scale;
-			}
-		*/
 }
-
+/**
+ * Computes density of each particle
+ * Contributions from neighboring particles and mesh triangles are taken into account
+ */
 template <typename Real, typename Coord>
 __global__ void K_ComputeDensityMesh(
     DeviceArray<Real>                     rhoArr,
@@ -79,13 +81,14 @@ __global__ void K_ComputeDensityMesh(
             Real    r          = (nearest_pt.origin - pos_i).norm();
             //r = max((r - sampling_distance / 2.0), 0.0);
 
-            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);
-            Real  MinDistance = abs(p3d.distance(t3d));
-            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;
+            Real  AreaSum     = p3d.areaTriangle(t3d, smoothingLength);  //A_s in equation 10
+            Real  MinDistance = abs(p3d.distance(t3d));                  //d_n (scalar) in equation 10
+            Coord Min_Pt      = (p3d.project(t3d)).origin - pos_i;       //d_n (vector) in equation 10
             Coord Min_Pos     = p3d.project(t3d).origin;
             if (ne < nbSizeTri - 1 && neighborsTri.getElement(pId, ne + 1) < 0)
             {
                 int jn;
+                //triangle clustering
                 do
                 {
                     jn = neighborsTri.getElement(pId, ne + 1);
@@ -115,6 +118,7 @@ __global__ void K_ComputeDensityMesh(
             //printf("OK\n");
             float d = p3d.distance(PL);
             d       = abs(d);
+            // equation 6
             if (smoothingLength - d > EPSILON && smoothingLength * smoothingLength - d * d > EPSILON && d > EPSILON)
             {
 
@@ -261,7 +265,7 @@ bool DensitySummationMesh<TDataType>::initializeImpl()
 {
     if (m_position.isEmpty())
     {
-
+        // initialize the renormalization factor, ensuring rho to be rho_0 when particles are sampled at sampling distance
         Real d     = sampling_distance.getValue();
         Real H     = m_smoothingLength.getValue();
         Real rho_0 = m_restDensity.getValue();

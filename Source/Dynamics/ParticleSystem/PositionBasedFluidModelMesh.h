@@ -1,3 +1,10 @@
+/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: Declaration of PositionBasedFluidModelMesh class, a container for semi-analytical PBD fluids 
+ *               introduced in the paper <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * @version    : 1.1
+ */
 #pragma once
 #include "Framework/Framework/NumericalModel.h"
 #include "Framework/Framework/FieldVar.h"
@@ -6,6 +13,26 @@
 #include "Attribute.h"
 #include "Framework/Framework/ModuleTopology.h"
 #include "MeshCollision.h"
+
+/**
+ * PositionBasedFluidModelMesh
+ * a NumericalModel for semi-analytical PBD fluids 
+ * The solver is PBD fluids with semi-analytical boundaries
+ * reference: "Semi-analytical Solid Boundary Conditions for Free Surface Flows"
+ *
+ * Could be used by being created and initialized at SemiAnalyticalSFINode
+ * Fields required to be initialized include:
+ *     m_position
+ *     m_velocity
+ *     m_forceDensity
+ *     m_vn
+ *     TriPoint
+ *     TriPointOld
+ *     Tri
+ *     m_smoothingLength
+ * 
+ *
+ */
 
 namespace PhysIKA {
 template <typename TDataType>
@@ -35,14 +62,7 @@ class PointSet;
 class ForceModule;
 class ConstraintModule;
 class Attribute;
-/*!
-    *    \class    ParticleSystem
-    *    \brief    Position-based fluids.
-    *
-    *    This class implements a position-based fluid solver.
-    *    Refer to Macklin and Muller's "Position Based Fluids" for details
-    *
-    */
+
 template <typename TDataType>
 class PositionBasedFluidModelMesh : public NumericalModel
 {
@@ -54,35 +74,67 @@ public:
     PositionBasedFluidModelMesh();
     virtual ~PositionBasedFluidModelMesh();
 
+    /**
+     * advance the scene node in time
+     *
+     * @param[in] dt    the time interval between the states before&&after the call (deprecated)
+     */
     void step(Real dt) override;
 
+    /**
+     * setup the searching radius
+     *
+     * @param[in] len    smoothing length
+     */
     void setSmoothingLength(Real len)
     {
         m_smoothingLength.setValue(len);
     }
+
+    /**
+     * setup the density
+     *
+     * @param[in] rho    rest density, usually 1000
+     */
     void setRestDensity(Real rho)
     {
         m_restRho = rho;
     }
 
+    /**
+    *  currently have no influence on the behaviour
+    *  @param[in] solver     pointer of the incompressibility solver
+    */
     void setIncompressibilitySolver(std::shared_ptr<ConstraintModule> solver);
+    /**
+    *  currently have no influence on the behaviour
+    *  @param[in] solver     pointer of the viscosity solver
+    */
     void setViscositySolver(std::shared_ptr<ConstraintModule> solver);
+    /**
+    *  currently have no influence on the behaviour
+    *  @param[in] solver     pointer of the surface tension solver
+    */
     void setSurfaceTensionSolver(std::shared_ptr<ConstraintModule> solver);
 
-    //bool initGhostBoundary();
-
+    /*
+    *  have no infludence on behaviour, but can be used in visualizing densities
+    */
     DeviceArrayField<Real>* getDensityField()
     {
         return &(m_pbdModule2->m_density);
-        //return m_forceDensity;
     }
 
 public:
     VarField<Real> m_smoothingLength;
 
-    DeviceArrayField<Coord> m_position;
-    DeviceArrayField<Coord> m_velocity;
+    DeviceArrayField<Coord> m_position;  //current particle position
+    DeviceArrayField<Coord> m_velocity;  //current particle velocity
 
+    /**
+    *  currently have no influence on the behaviour
+    *  was used to compare the behaviour between mesh boundaries and ghost particles
+    */
     DeviceArrayField<Coord> m_position_all;
     DeviceArrayField<Coord> m_position_ghost;
     DeviceArrayField<Coord> m_velocity_all;
@@ -102,9 +154,9 @@ public:
 
     std::shared_ptr<PointSet<TDataType>> m_pSetGhost;
 
-    DeviceArrayField<Coord>    TriPoint;
-    DeviceArrayField<Coord>    TriPointOld;
-    DeviceArrayField<Triangle> Tri;
+    DeviceArrayField<Coord>    TriPoint;     //triangle vertex point position
+    DeviceArrayField<Coord>    TriPointOld;  //triangle vertex point position at last time step, can be used to calculate triangle velocity
+    DeviceArrayField<Triangle> Tri;          //triangle index
 
     DeviceArrayField<Real> massTri;
 

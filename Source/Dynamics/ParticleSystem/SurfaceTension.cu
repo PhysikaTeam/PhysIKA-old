@@ -1,3 +1,15 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implemendation of SurfaceTension class, which implements the surface tension force
+ *               introduced in the paper <Robust Simulation of Sparsely Sampled Thin Features in SPH-Based Free Surface Flows>
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <cuda_runtime.h>
 #include "Core/Utility.h"
 #include "SurfaceTension.h"
@@ -38,7 +50,8 @@ __global__ void ST_ComputeSurfaceEnergy(
     }
 
     total_weight = total_weight < EPSILON ? 1.0f : total_weight;
-    Real absDir  = dir_i.norm() / total_weight;
+    //equation 3
+    Real absDir = dir_i.norm() / total_weight;
 
     energyArr[pId] = absDir * absDir;
 }
@@ -76,6 +89,8 @@ __global__ void ST_ComputeSurfaceTension(
 
         if (r > EPSILON)
         {
+
+            //equation 5
             Coord temp  = Vref * Vref * kern.Gradient(r, smoothingLength) * (posArr[j] - pos_i) * (1.0f / r);
             Coord dv_ij = dt * ceof * 1.0f * (energyArr[pId]) * temp / mass;
             F_i += dv_ij;

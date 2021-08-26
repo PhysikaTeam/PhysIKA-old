@@ -1,3 +1,15 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implemendation of VelocityConstraint class, which implements the peojection-based fluid solver
+ *               introduced in the paper <A Variational Staggered Particle Framework for Incompressible Free-Surface Flows>
+ * @version    : 1.0
+ *
+ * @author     : Chang Yue (yuechang@pku.edu.cn)
+ * @date       : 2021-08-08
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <cuda_runtime.h>
 #include "VelocityConstraint.h"
 #include "Framework/Framework/Node.h"
@@ -20,6 +32,7 @@ __device__ inline float kernWeight(const float r, const float h)
         return (1.0 - pow(q, 4.0f));
         //			return (1.0 - q)*(1.0 - q)*h*h;
     }
+    //equatuin 36
 }
 
 __device__ inline float kernWR(const float r, const float h)
@@ -31,6 +44,7 @@ __device__ inline float kernWR(const float r, const float h)
         return w / (0.4f * h);
     }
     return w / r;
+    //equation 35, left hand side
 }
 
 __device__ inline float kernWRR(const float r, const float h)
@@ -42,6 +56,7 @@ __device__ inline float kernWRR(const float r, const float h)
         return w / (0.16f * h * h);
     }
     return w / r / r;
+    //equation 35, right hand side
 }
 
 template <typename Real, typename Coord>
@@ -76,7 +91,7 @@ __global__ void VC_ComputeAlpha(
         }
     }
 
-    alpha[pId] = alpha_i;
+    alpha[pId] = alpha_i;  //equation 16, left hand side
 }
 
 template <typename Real>
@@ -89,6 +104,7 @@ __global__ void VC_CorrectAlpha(
         return;
 
     Real alpha_i = alpha[pId];
+    //equation 17
     if (alpha_i < maxAlpha)
     {
         alpha_i = maxAlpha;
@@ -128,6 +144,7 @@ __global__ void VC_ComputeDiagonalElement(
         Attribute att_j = attribute[j];
         if (r > EPSILON)
         {
+            //equation 18, for detect surface
             Real wrr_ij = invAlpha * kernWRR(r, smoothingLength);
             if (att_j.IsDynamic())
             {
@@ -173,6 +190,7 @@ __global__ void VC_ComputeDiagonalElement(
         int  j = neighbors.getElement(pId, ne);
         Real r = (pos_i - position[j]).norm();
 
+        //equation 16, right hand side
         if (r > EPSILON && attribute[j].IsDynamic())
         {
             Real wrr_ij = invAlpha_i * kernWRR(r, smoothingLength);
@@ -238,6 +256,7 @@ __global__ void VC_DetectSurface(
     Real eps        = 0.001f;
     Real diagS_i    = diagT_i - diagF_i;
     Real threshold  = 0.0f;
+    //equation 19
     if (bNearWall && diagT_i < maxA * (1.0f - threshold))
     {
         bSurface_i = true;
@@ -293,7 +312,7 @@ __global__ void VC_ComputeDivergence(
         {
             Real  wr_ij = kernWR(r, smoothingLength);
             Coord g     = -invAlpha_i * (pos_i - position[j]) * wr_ij * (1.0f / r);
-
+            //equation 23
             if (attribute[j].IsDynamic())
             {
                 Real div_ij = 0.5f * (vel_i - velocity[j]).dot(g) * restDensity / dt;  //dv_ij = 1 / alpha_i * (v_i-v_j).*(x_i-x_j) / r * (w / r);
@@ -349,6 +368,7 @@ __global__ void VC_CompensateSource(
         return;
 
     Coord pos_i = position[pId];
+    //equation 40
     if (density[pId] > restDensity)
     {
         Real ratio = (density[pId] - restDensity) / restDensity;
@@ -385,7 +405,7 @@ __global__ void VC_ComputeAx(
     {
         int  j = neighbor.getElement(pId, ne);
         Real r = (pos_i - position[j]).norm();
-
+        //equation 8, left hand side
         if (r > EPSILON && attribute[j].IsDynamic())
         {
             Real wrr_ij = kernWRR(r, smoothingLength);
@@ -457,6 +477,7 @@ __global__ void VC_UpdateVelocityBoundaryCorrected(
                 Coord dvij_sym = 0.5f * (pressure[pId] + pressure[j]) * corrected;
 
                 //Calculate asymmetric pressure force
+                //equation 38
                 if (att_j.IsDynamic())
                 {
                     if (bSurface[pId])
