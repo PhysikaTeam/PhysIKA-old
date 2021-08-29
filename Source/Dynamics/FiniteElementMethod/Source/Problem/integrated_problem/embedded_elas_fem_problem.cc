@@ -187,7 +187,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
   T rho = phy_paras.get<T>("rho",20);
   if (zero_rho)
 	  rho = 0;
-  const  T Young = 10  *phy_paras.get<T>("Young", 2000.0);
+  const  T Young = phy_paras.get<T>("Young", 2000.0);
   const  T poi = phy_paras.get<T>("poi", 0.3);
   const  T gravity = phy_paras.get<T>("gravity", 9.8);
   const  T dt = phy_paras.get<T>("dt", 0.01);
