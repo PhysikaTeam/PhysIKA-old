@@ -7,39 +7,36 @@ QT_FORWARD_DECLARE_CLASS(QSpinBox)
 QT_FORWARD_DECLARE_CLASS(QScrollBar)
 QT_FORWARD_DECLARE_CLASS(QPushButton)
 
-namespace PhysIKA
+namespace PhysIKA {
+QT_FORWARD_DECLARE_CLASS(PSimulationThread)
+
+class PAnimationWidget : public QWidget
 {
-	QT_FORWARD_DECLARE_CLASS(PSimulationThread)
+    Q_OBJECT
 
-	class PAnimationWidget : public QWidget
-	{
-		Q_OBJECT
+public:
+    explicit PAnimationWidget(QWidget* parent = nullptr);
+    ~PAnimationWidget();
 
-	public:
-		explicit PAnimationWidget(QWidget *parent = nullptr);
-		~PAnimationWidget();
+signals:
 
-	signals:
+public slots:
+    void toggleSimulation();
+    void resetSimulation();
 
-	public slots:
-		void toggleSimulation();
-		void resetSimulation();
+    void simulationFinished();
 
-		void simulationFinished();
+public:
+    QPushButton* m_startSim;
+    QPushButton* m_resetSim;
 
+    QSpinBox* m_start_spinbox;
+    QSpinBox* m_end_spinbox;
 
+    QScrollBar* m_sim_scrollbar;
 
-	public:
-		QPushButton*	m_startSim;
-		QPushButton*	m_resetSim;
+    bool m_sim_started = false;
+};
+}  // namespace PhysIKA
 
-		QSpinBox*	m_start_spinbox;
-		QSpinBox*	m_end_spinbox;
-
-		QScrollBar*	m_sim_scrollbar;
-
-		bool m_sim_started = false;
-	};
-}
-
-#endif // PANIMATIONWIDGET_H
+#endif  // PANIMATIONWIDGET_H

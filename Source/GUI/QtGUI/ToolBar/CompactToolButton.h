@@ -24,10 +24,9 @@ class QAction;
 class QMenu;
 class QToolButton;
 
-namespace tt
-{
+namespace tt {
 
-class CompactToolButton: public QFrame
+class CompactToolButton : public QFrame
 {
     Q_OBJECT
 public:
@@ -42,6 +41,6 @@ private:
     QToolButton* overlay;
 };
 
-}
+}  // namespace tt
 
 #endif

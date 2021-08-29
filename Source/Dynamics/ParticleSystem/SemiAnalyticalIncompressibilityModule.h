@@ -1,3 +1,10 @@
+/**
+ * @author     : Yue Chang (yuechang@pku.edu.cn)
+ * @date       : 2021-08-06
+ * @description: Declaration of SemiAnalyticalIncompressibilityModule class, implemendation of semi-analytical perojection-based fluids 
+ *               introduced in the paper <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * @version    : 1.1
+ */
 #pragma once
 #include "Framework/Framework/ModuleConstraint.h"
 #include "Framework/Framework/FieldArray.h"
@@ -9,118 +16,113 @@
 
 namespace PhysIKA {
 
-	class Attribute;
-	template <typename TDataType> class SummationDensity;
-	template <typename TDataType> class TriangleSet;
-	//template <typename TDataType> class Point3D;
-	//template <typename TDataType> class Triangle3D;
-	//template <typename TDataType> class Plane3D;
+class Attribute;
+template <typename TDataType>
+class SummationDensity;
+template <typename TDataType>
+class TriangleSet;
+/**
+ * SemiAnalyticalIncompressibilityModule implements the projection-based part of semi-analytical boundary conditions of the paper
+ * <Semi-analytical Solid Boundary Conditions for Free Surface Flows>
+ * It is used in SemiAnalyticalIncompressibleFluidModel class
+ */
 
+template <typename TDataType>
+class SemiAnalyticalIncompressibilityModule : public ConstraintModule
+{
+public:
+    typedef typename TDataType::Real          Real;
+    typedef typename TDataType::Coord         Coord;
+    typedef typename TopologyModule::Triangle Triangle;
 
-	template<typename TDataType>
-	class SemiAnalyticalIncompressibilityModule : public ConstraintModule
-	{
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
-		typedef typename TopologyModule::Triangle Triangle;
+    SemiAnalyticalIncompressibilityModule();
+    ~SemiAnalyticalIncompressibilityModule() override;
 
-		SemiAnalyticalIncompressibilityModule();
-		~SemiAnalyticalIncompressibilityModule() override;
-		
-		bool constrain() override;
-	//	DeviceArrayField<Coord>* getPosition() override;
-		DeviceArrayField<Coord>* getPosition()
-		{
-			return &m_particle_position;
-		}//override;
+    /**
+     * enforce projection-based fluids with semi-analytical boundary conditions
+     *
+     * @return(always)
+     */
+    bool constrain() override;
 
-	public:
-		VarField<Real> m_smoothing_length;
-		VarField<Real> m_sampling_distance;
+    DeviceArrayField<Coord>* getPosition()
+    {
+        return &m_particle_position;
+    }  //override;
 
-		/**
-		 * @brief Particle attributes
-		 * 
-		 */
-		DeviceArrayField<Real> m_particle_mass;
+public:
+    VarField<Real> m_smoothing_length;
+    VarField<Real> m_sampling_distance;
 
-		DeviceArrayField<Coord> m_particle_position;
-		DeviceArrayField<Coord> m_particle_velocity;
-//		DeviceArrayField<Coord> m_particle_normal;
-		
-		DeviceArrayField<Attribute> m_particle_attribute;
-		DeviceArrayField<int> m_flip;
-		
-		/**
-		 * @brief Solid wall boundary
-		 * 
-		 */
-		DeviceArrayField<Real> m_triangle_vertex_mass;
-		DeviceArrayField<Coord> m_triangle_vertex;
-		DeviceArrayField<Coord> m_triangle_vertex_old;
-		DeviceArrayField<Triangle> m_triangle_index;
+    DeviceArrayField<Real> m_particle_mass;
 
+    DeviceArrayField<Coord> m_particle_position;
+    DeviceArrayField<Coord> m_particle_velocity;
 
-		/**
-		 * @brief Storing neighboring particles and triangles' ids
-		 * 
-		 */
-		NeighborField<int> m_neighborhood_particles;
-		NeighborField<int> m_neighborhood_triangles;
+    DeviceArrayField<Attribute> m_particle_attribute;
+    DeviceArrayField<int>       m_flip;
 
-	protected:
-		bool initializeImpl() override;
+    DeviceArrayField<Real>     m_triangle_vertex_mass;
+    DeviceArrayField<Coord>    m_triangle_vertex;
+    DeviceArrayField<Coord>    m_triangle_vertex_old;
+    DeviceArrayField<Triangle> m_triangle_index;
 
-	private:
-		bool m_bConfigured = false;
-		Real m_maxAlpha;
-		Real m_maxA;
-		Real m_airPressure = 10000.0f;
+    /**
+         * @brief Storing neighboring particles and triangles' ids
+         * 
+         */
+    NeighborField<int> m_neighborhood_particles;
+    NeighborField<int> m_neighborhood_triangles;
 
-		Real m_particleMass = 1.0f;
-		Real m_tangential = 1.0f;
-		Real m_separation = 1.0f;
-		Real m_restDensity = 1000.0f;
+protected:
+    bool initializeImpl() override;
 
-		int num_f;
-		int start_f = 0;
-		bool first_step = false;
-		
+private:
+    bool m_bConfigured = false;
+    Real m_maxAlpha;
+    Real m_maxA;
+    Real m_airPressure = 10000.0f;
 
-		//Refer to "A Nonlocal Variational Particle Framework for Incompressible Free Surface Flows" for their exact meanings
-		DeviceArray<Real> m_alpha;
-		DeviceArray<Real> Rho_alpha;
-		DeviceArray<Real> m_Aii;
-		DeviceArray<Real> m_AiiFluid;
-		DeviceArray<Real> m_AiiTotal;
+    Real m_particleMass = 1.0f;
+    Real m_tangential   = 1.0f;
+    Real m_separation   = 1.0f;
+    Real m_restDensity  = 1000.0f;
 
-		//DeviceArrayField<Real> m_density_field;
-		DeviceArray<Real> m_density;
+    int  num_f;
+    int  start_f    = 0;
+    bool first_step = false;
 
-		DeviceArray<Real> m_pressure;
-		DeviceArray<Real> m_divergence;
-		//Indicate whether a particle is near the free surface boundary.
-		DeviceArray<bool> m_bSurface;
+    //Refer to "A Nonlocal Variational Particle Framework for Incompressible Free Surface Flows" for their exact meanings
+    DeviceArray<Real> m_alpha;
+    DeviceArray<Real> Rho_alpha;
+    DeviceArray<Real> m_Aii;
+    DeviceArray<Real> m_AiiFluid;
+    DeviceArray<Real> m_AiiTotal;
 
-		//Used to solve the linear system of equations with a conjugate gradient method.
-		DeviceArray<Real> m_y;
-		DeviceArray<Real> m_r;
-		DeviceArray<Real> m_p;
+    //DeviceArrayField<Real> m_density_field;
+    DeviceArray<Real> m_density;
 
-		Reduction<Real>* m_reduce;
-		Arithmetic<Real>* m_arithmetic;
+    DeviceArray<Real> m_pressure;
+    DeviceArray<Real> m_divergence;
+    //Indicate whether a particle is near the free surface boundary.
+    DeviceArray<bool> m_bSurface;
 
-		DeviceArray<Coord> m_meshVel;
+    //Used to solve the linear system of equations with a conjugate gradient method.
+    DeviceArray<Real> m_y;
+    DeviceArray<Real> m_r;
+    DeviceArray<Real> m_p;
 
-		std::shared_ptr<SummationDensity<TDataType>> m_densitySum;
-	};
+    Reduction<Real>*  m_reduce;
+    Arithmetic<Real>* m_arithmetic;
 
+    DeviceArray<Coord> m_meshVel;
 
+    std::shared_ptr<SummationDensity<TDataType>> m_densitySum;
+};
 
 #ifdef PRECISION_FLOAT
-	template class SemiAnalyticalIncompressibilityModule<DataType3f>;
+template class SemiAnalyticalIncompressibilityModule<DataType3f>;
 #else
-	template class SemiAnalyticalIncompressibilityModule<DataType3d>;
+template class SemiAnalyticalIncompressibilityModule<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

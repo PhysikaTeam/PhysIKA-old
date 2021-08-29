@@ -20,7 +20,7 @@
 #include <Core/Array/Array.h>
 #include "ShaderProgram.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 class TriangleRender
 {
@@ -29,21 +29,20 @@ public:
     ~TriangleRender() = default;
 
     //disable copy
-    TriangleRender(const TriangleRender &) = delete;
-    TriangleRender & operator = (const TriangleRender &) = delete;
+    TriangleRender(const TriangleRender&) = delete;
+    TriangleRender& operator=(const TriangleRender&) = delete;
 
-	void setVertexArray(HostArray<float3>& vertArray);
-	void setVertexArray(DeviceArray<float3>& vertArray);
+    void setVertexArray(HostArray<float3>& vertArray);
+    void setVertexArray(DeviceArray<float3>& vertArray);
 
-	void setNormalArray(HostArray<float3>& normArray);
-	void setNormalArray(DeviceArray<float3>& normArray);
+    void setNormalArray(HostArray<float3>& normArray);
+    void setNormalArray(DeviceArray<float3>& normArray);
 
-	void setColorArray(HostArray<float3>& colorArray);
-	void setColorArray(DeviceArray<float3>& colorArray);
+    void setColorArray(HostArray<float3>& colorArray);
+    void setColorArray(DeviceArray<float3>& colorArray);
 
-	void enableDoubleShading();
-	void disableDoubleShading();
-
+    void enableDoubleShading();
+    void disableDoubleShading();
 
     void enableUseCustomColor();
     void disableUseCustomColor();
@@ -51,25 +50,28 @@ public:
 
     void display();
 
-	void resize(unsigned int triNum);
-	int numberOfTrianlges() { return t_num; }
+    void resize(unsigned int triNum);
+    int  numberOfTrianlges()
+    {
+        return t_num;
+    }
 
 private:
-	int t_num = 0;
+    int t_num = 0;
 
     bool use_custom_color_ = true;
-	int m_lineWidth = 2;
+    int  m_lineWidth       = 2;
 
-	bool m_bShowWireframe = false;
-	bool m_bEnableLighting = false;
-	bool m_bEnableDoubleShading = true;
+    bool m_bShowWireframe       = false;
+    bool m_bEnableLighting      = false;
+    bool m_bEnableDoubleShading = true;
 
-	ShaderProgram m_solidShader;
-	ShaderProgram m_wireframeShader;
+    ShaderProgram m_solidShader;
+    ShaderProgram m_wireframeShader;
 
-	CudaVBOMapper<glm::vec3> m_vertVBO;
-	CudaVBOMapper<glm::vec3> m_normVBO;
-	CudaVBOMapper<glm::vec3> m_colorVBO;
+    CudaVBOMapper<glm::vec3> m_vertVBO;
+    CudaVBOMapper<glm::vec3> m_normVBO;
+    CudaVBOMapper<glm::vec3> m_colorVBO;
 };
-    
-}
+
+}  // namespace PhysIKA

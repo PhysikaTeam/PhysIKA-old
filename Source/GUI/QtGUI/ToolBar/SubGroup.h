@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -32,8 +32,7 @@
 class QAction;
 class QMenu;
 
-namespace tt
-{
+namespace tt {
 
 class TT_API SubGroup : public QFrame
 {
@@ -48,21 +47,21 @@ public:
     struct ActionParams
     {
         QToolButton::ToolButtonPopupMode type;
-        QAction* action;
-        QMenu* menu;
+        QAction*                         action;
+        QMenu*                           menu;
     };
 
     SubGroup(Align align, QWidget* parent = nullptr);
 
-    void       AddAction(QToolButton::ToolButtonPopupMode type, QAction* action, QMenu* menu = nullptr);
-    void       AddHorizontalButtons(const std::vector<ActionParams>& params);
-    void       AddWidget(QWidget* widget);
+    void AddAction(QToolButton::ToolButtonPopupMode type, QAction* action, QMenu* menu = nullptr);
+    void AddHorizontalButtons(const std::vector<ActionParams>& params);
+    void AddWidget(QWidget* widget);
 
 private:
-    QFrame*    ConstructInnerFrame(int spacing);
+    QFrame* ConstructInnerFrame(int spacing);
 
     QVBoxLayout* innerLayout;
 };
 
-}
+}  // namespace tt
 #endif

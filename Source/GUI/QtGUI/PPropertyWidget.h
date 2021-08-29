@@ -23,236 +23,231 @@
 // add by HNU
 #include <QtConcurrent\qtconcurrentrun.h>
 
-namespace PhysIKA
+namespace PhysIKA {
+class Base;
+class Node;
+class Module;
+class Field;
+class QDoubleSpinner;
+class PVTKOpenGLWidget;
+
+// 20210315 add by HNU
+class QTextFieldWidget : public QGroupBox
 {
-	class Base;
-	class Node;
-	class Module;
-	class Field;
-	class QDoubleSpinner;
-	class PVTKOpenGLWidget;
+    Q_OBJECT
+public:
+    QTextFieldWidget(Field* field);
+    ~QTextFieldWidget(){};
 
-	// 20210315 add by HNU
-	class QTextFieldWidget:public QGroupBox
-	{
-		Q_OBJECT
-	public:
-		 QTextFieldWidget(Field* field);
-		~QTextFieldWidget() {};
+    // files conversion *.k => *.obj
+    static QString k2Obj(const QString);
+    static QString vtk2Obj(const QString);
+    void           multiVTK2Obj(QString);
+    int            startAnimating(QString);
 
-		// files conversion *.k => *.obj
-		static QString k2Obj(const QString);
-		static QString vtk2Obj(const QString);
-		void multiVTK2Obj(QString);
-		int startAnimating(QString);
+Q_SIGNALS:
+    void loadFileSignal(const QString);
+    void startCalculate(QString);
 
-	Q_SIGNALS:
-		void loadFileSignal(const QString);
+public slots:
+    void initSolverUi(QGridLayout*);
+    void initOutputUi(QGridLayout*);
+    void btnClicked();
 
-	public slots :
-		void initSolverUi(QGridLayout*);
-		void initOutputUi(QGridLayout*);
-		void btnClicked();
+    QString updatePreview();
 
-		QString updatePreview();
+    // Path saver define
+    static QString* getInputPathSaver()
+    {
+        if (m_InputPathSaver == nullptr)
+            m_InputPathSaver = new QString;
+        return m_InputPathSaver;
+    }
 
+    // disable for using lib
+    //static QString* getSolverPathSaver()
+    //{
+    //    if (m_solverPathSaver == nullptr)
+    //        m_solverPathSaver   = new QString;
+    //    return m_solverPathSaver;
+    //}
 
-		// Path saver define
-		static QString* getInputPathSaver()
-		{
-			if (m_InputPathSaver == nullptr)
-				m_InputPathSaver = new QString;
-			return m_InputPathSaver;
-		}
+    static QString* getWorkDirPathSaver()
+    {
+        if (m_workDirPathSaver == nullptr)
+            m_workDirPathSaver = new QString;
+        return m_workDirPathSaver;
+    }
 
-		static QString* getSolverPathSaver()
-		{
-			if (m_solverPathSaver == nullptr)
-				m_solverPathSaver   = new QString;
-			return m_solverPathSaver;
-		}
+    static QString* getParviewSaver()
+    {
+        if (m_previewSaver == nullptr)
+            m_previewSaver = new QString;
+        return m_previewSaver;
+    }
 
-		static QString* getWorkDirPathSaver()
-		{
-			if ( m_workDirPathSaver == nullptr)
-				m_workDirPathSaver = new QString;
-			return m_workDirPathSaver;
-		}
+    void emitLoadFileSignal(const QString str)
+    {
+        //qDebug() << "load File Signal emit";
+        emit loadFileSignal(str);
+    }
 
-		static QString* getParviewSaver()
-		{
-			if (m_previewSaver== nullptr)
-				m_previewSaver  = new QString;
-			return m_previewSaver;
-		}
+private:
+    Field* m_field = nullptr;
 
-		void emitLoadFileSignal(const QString str)
-		{
-			//qDebug() << "load File Signal emit";
-			emit loadFileSignal(str);
-		}
+    QPushButton* m_btnManager[6];
 
+    QComboBox* m_inputCombo = new QComboBox;
+    // disable for using lib
+    //QComboBox* m_solverCombo= new QComboBox;
+    QComboBox* m_workdirCombo = new QComboBox;
+    QComboBox* m_outputCombo  = new QComboBox;
 
-	private:
-		Field* m_field = nullptr;
-		
-		QPushButton* m_btnManager[6];
+    QLineEdit* m_numLineedit        = new QLineEdit;
+    QLineEdit* m_IDLineedit         = new QLineEdit;
+    QLineEdit* m_DTLineedit         = new QLineEdit;
+    QLineEdit* m_OTLineedit         = new QLineEdit;
+    QLineEdit* m_searchStepLineedit = new QLineEdit;
 
-		QComboBox* m_inputCombo = new QComboBox;
-		QComboBox* m_solverCombo= new QComboBox;
-		QComboBox* m_workdirCombo = new QComboBox;
-		QComboBox* m_outputCombo = new QComboBox;
+    QLineEdit* m_previewLineedit = new QLineEdit;
 
+    QString m_Preview;
 
-		QLineEdit* m_numLineedit = new QLineEdit;
-		QLineEdit* m_IDLineedit = new QLineEdit;
-		QLineEdit* m_DTLineedit = new QLineEdit;
-		QLineEdit* m_OTLineedit = new QLineEdit;
-		QLineEdit* m_searchStepLineedit = new QLineEdit;
+    // disable for using lib
+    //QProcess* proCmd = new QProcess(this);
 
-		QLineEdit* m_previewLineedit = new QLineEdit;
+    void btnAddPicHelper(QPushButton*);
 
-		QString m_Preview;
+    static QString* m_InputPathSaver;
+    // disable for using lib
+    //static QString* m_solverPathSaver;
+    static QString* m_workDirPathSaver;
+    static QString* m_previewSaver;
+};
 
+class QBoolFieldWidget : public QGroupBox
+{
+    Q_OBJECT
+public:
+    QBoolFieldWidget(Field* field);
+    ~QBoolFieldWidget(){};
 
-		QProcess* proCmd = new QProcess(this);
-		
-		void btnAddPicHelper(QPushButton*);
+Q_SIGNALS:
+    void fieldChanged();
 
-		static QString* m_InputPathSaver;
-		static QString* m_solverPathSaver;
-		static QString* m_workDirPathSaver;
-		static QString* m_previewSaver;
-	};
+public slots:
+    void changeValue(int status);
 
+    /* 新增关键词判断 */
+    //void on_openBtn_clicked();
 
+private:
+    Field* m_field = nullptr;
 
-	class QBoolFieldWidget : public QGroupBox
-	{
-		Q_OBJECT
-	public:
-		QBoolFieldWidget(Field* field);
-		~QBoolFieldWidget() {};
+    /* 新增关键词判断 */
+    //QLineEdit* lineedit = new QLineEdit();
+};
 
-	Q_SIGNALS:
-		void fieldChanged();
+class QIntegerFieldWidget : public QGroupBox
+{
+    Q_OBJECT
+public:
+    QIntegerFieldWidget(Field* field);
+    ~QIntegerFieldWidget(){};
 
-	public slots:
-		void changeValue(int status);
+Q_SIGNALS:
+    void fieldChanged();
 
+public slots:
+    void changeValue(int);
 
-		/* 新增关键词判断 */
-		//void on_openBtn_clicked();
+private:
+    Field* m_field = nullptr;
+};
 
-	private:
-		Field* m_field = nullptr;
+class QRealFieldWidget : public QGroupBox
+{
+    Q_OBJECT
+public:
+    QRealFieldWidget(Field* field);
+    ~QRealFieldWidget(){};
 
-		/* 新增关键词判断 */
-		//QLineEdit* lineedit = new QLineEdit();
-	};
+Q_SIGNALS:
+    void fieldChanged();
 
-	class QIntegerFieldWidget : public QGroupBox
-	{
-		Q_OBJECT
-	public:
-		QIntegerFieldWidget(Field* field);
-		~QIntegerFieldWidget() {};
+public slots:
+    void changeValue(double);
 
-	Q_SIGNALS:
-		void fieldChanged();
+private:
+    Field* m_field = nullptr;
+};
 
-	public slots:
-		void changeValue(int);
+class QVector3FieldWidget : public QGroupBox
+{
+    Q_OBJECT
+public:
+    QVector3FieldWidget(Field* field);
+    ~QVector3FieldWidget(){};
 
-	private:
-		Field* m_field = nullptr;
-	};
+Q_SIGNALS:
+    void fieldChanged();
 
-	class QRealFieldWidget : public QGroupBox
-	{
-		Q_OBJECT
-	public:
-		QRealFieldWidget(Field* field);
-		~QRealFieldWidget() {};
+public slots:
+    void changeValue(double);
 
-	Q_SIGNALS:
-		void fieldChanged();
+private:
+    Field* m_field = nullptr;
 
-	public slots:
-		void changeValue(double);
+    QDoubleSpinner* spinner1;
+    QDoubleSpinner* spinner2;
+    QDoubleSpinner* spinner3;
+};
 
-	private:
-		Field* m_field = nullptr;
-	};
+class PPropertyWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit PPropertyWidget(QWidget* parent = nullptr);
+    ~PPropertyWidget();
 
+    virtual QSize sizeHint() const;
 
-	class QVector3FieldWidget : public QGroupBox
-	{
-		Q_OBJECT
-	public:
-		QVector3FieldWidget(Field* field);
-		~QVector3FieldWidget() {};
+    //        void clear();
 
-	Q_SIGNALS:
-		void fieldChanged();
+    //signals:
+    QWidget* addWidget(QWidget* widget);
+    void     removeAllWidgets();
 
-	public slots:
-		void changeValue(double);
+    void sendQTextFieldInitSignal();
 
-	private:
-		Field* m_field = nullptr;
+public slots:
+    void showProperty(Module* module);
+    void showProperty(Node* node);
 
-		QDoubleSpinner* spinner1;
-		QDoubleSpinner* spinner2;
-		QDoubleSpinner* spinner3;
-	};
+    void showBlockProperty(QtNodes::QtBlock& block);
 
-	class PPropertyWidget : public QWidget
-	{
-		Q_OBJECT
-	public:
-		explicit PPropertyWidget(QWidget *parent = nullptr);
-		~PPropertyWidget();
+    void updateDisplay();
 
-		virtual QSize sizeHint() const;
+    QTextFieldWidget* getTextFieldWidget();
 
-//		void clear();
+Q_SIGNALS:
+    void QTextFieldInitSignal();
 
-	//signals:
-		QWidget* addWidget(QWidget* widget);
-		void removeAllWidgets();
+private:
+    void updateContext(Base* base);
 
+    void addScalarFieldWidget(Field* field);
+    void addArrayFieldWidget(Field* field);
 
-		void sendQTextFieldInitSignal();
+    QVBoxLayout* m_main_layout;
+    QScrollArea* m_scroll_area;
+    QWidget*     m_scroll_widget;
+    QGridLayout* m_scroll_layout;
 
-	public slots:
-		void showProperty(Module* module);
-		void showProperty(Node* node);
+    std::vector<QWidget*> m_widgets;
 
-		void showBlockProperty(QtNodes::QtBlock& block);
+    QTextFieldWidget* m_TextFieldWidget;
+};
+}  // namespace PhysIKA
 
-		void updateDisplay();
-
-		QTextFieldWidget* getTextFieldWidget();
-
-	Q_SIGNALS:
-		void QTextFieldInitSignal();
-
-	private:
-		void updateContext(Base* base);
-
-		void addScalarFieldWidget(Field* field);
-		void addArrayFieldWidget(Field* field);
-
-		QVBoxLayout* m_main_layout;
-		QScrollArea* m_scroll_area;
-		QWidget * m_scroll_widget;
-		QGridLayout* m_scroll_layout;
-
-		std::vector<QWidget*> m_widgets;
-		
-		QTextFieldWidget* m_TextFieldWidget;
-	};
-}
-
-#endif // QNODEPROPERTYWIDGET_H
+#endif  // QNODEPROPERTYWIDGET_H

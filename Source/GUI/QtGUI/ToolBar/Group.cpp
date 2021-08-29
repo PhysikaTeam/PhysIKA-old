@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -40,7 +40,8 @@
 
 using namespace tt;
 
-Group::Group(const QString& name, QWidget* parent) : QFrame(parent)
+Group::Group(const QString& name, QWidget* parent)
+    : QFrame(parent)
 {
     setFrameShape(NoFrame);
     setLineWidth(0);
@@ -89,9 +90,9 @@ Group::Group(const QString& name, QWidget* parent) : QFrame(parent)
     if (!parentTT)
         throw std::runtime_error("Group should be constructed inside TabToolbar!");
 
-    unsigned groupMaxHeight = parentTT->GroupMaxHeight();
-    unsigned rowCount = parentTT->RowCount();
-    const unsigned height = groupMaxHeight + groupName->height() + rowCount - 1;
+    unsigned       groupMaxHeight = parentTT->GroupMaxHeight();
+    unsigned       rowCount       = parentTT->RowCount();
+    const unsigned height         = groupMaxHeight + groupName->height() + rowCount - 1;
     setMinimumHeight(height);
     setMaximumHeight(height);
 }
@@ -122,14 +123,14 @@ void Group::AddSeparator()
 
 void Group::AddAction(QToolButton::ToolButtonPopupMode type, QAction* action, QMenu* menu)
 {
-    if(type == QToolButton::MenuButtonPopup)
+    if (type == QToolButton::MenuButtonPopup)
     {
         innerLayout->addWidget(new CompactToolButton(action, menu, this));
     }
     else
     {
-        const int iconSize = GetPixelMetric(QStyle::PM_LargeIconSize) * GetScaleFactor(*this);
-        QToolButton* btn = new QToolButton(this);
+        const int    iconSize = GetPixelMetric(QStyle::PM_LargeIconSize) * GetScaleFactor(*this);
+        QToolButton* btn      = new QToolButton(this);
         btn->setProperty("TTInternal", QVariant(true));
         btn->setAutoRaise(true);
         btn->setDefaultAction(action);
@@ -138,7 +139,7 @@ void Group::AddAction(QToolButton::ToolButtonPopupMode type, QAction* action, QM
         btn->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
         btn->setPopupMode(type);
         btn->setStyle(new TTToolButtonStyle());
-        if(menu)
+        if (menu)
             btn->setMenu(menu);
         innerLayout->addWidget(btn);
     }

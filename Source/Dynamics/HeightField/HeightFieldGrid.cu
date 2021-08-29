@@ -75,7 +75,7 @@
 //		//cuExecute(m_coords.size(), PS_Translate, m_coords, t);
 //
 //// 		uint pDims = cudaGridSize(m_coords.size(), BLOCK_SIZE);
-//// 
+////
 //// 		PS_Translate << <pDims, BLOCK_SIZE >> > (
 //// 			m_coords,
 //// 			t);

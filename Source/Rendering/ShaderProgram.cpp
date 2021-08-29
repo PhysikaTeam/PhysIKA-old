@@ -19,7 +19,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 #include "ShaderProgram.h"
 
 namespace PhysIKA {
@@ -29,9 +28,9 @@ namespace PhysIKA {
 
 void glslPrintShaderLog(GLuint obj)
 {
-    int infologLength = 0;
-    int charsWritten = 0;
-    char *infoLog;
+    int   infologLength = 0;
+    int   charsWritten  = 0;
+    char* infoLog;
 
     GLint result;
     glGetShaderiv(obj, GL_COMPILE_STATUS, &result);
@@ -43,7 +42,7 @@ void glslPrintShaderLog(GLuint obj)
 
         if (infologLength > 1)
         {
-            infoLog = (char *)malloc(infologLength);
+            infoLog = ( char* )malloc(infologLength);
             glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
             printf("%s\n", infoLog);
             free(infoLog);
@@ -68,16 +67,16 @@ ShaderProgram::ShaderProgram(const char * vertex_shader_source,
 }
 */
 
-ShaderProgram::ShaderProgram(ShaderProgram && rhs) noexcept
+ShaderProgram::ShaderProgram(ShaderProgram&& rhs) noexcept
 {
     this->program_ = rhs.program_;
-    rhs.program_ = 0;
+    rhs.program_   = 0;
 }
 
-ShaderProgram & ShaderProgram::operator= (ShaderProgram && rhs) noexcept
+ShaderProgram& ShaderProgram::operator=(ShaderProgram&& rhs) noexcept
 {
     this->program_ = rhs.program_;
-    rhs.program_ = 0;
+    rhs.program_   = 0;
     return *this;
 }
 
@@ -86,11 +85,11 @@ ShaderProgram::~ShaderProgram()
     this->destory();
 }
 
-void ShaderProgram::createFromCStyleString(const char * vertex_shader_source,
-                                           const char * fragment_shader_source,
-                                           const char * geometry_shader_source,
-                                           const char * tess_control_shader_source,
-                                           const char * tess_evaluation_shader_source)
+void ShaderProgram::createFromCStyleString(const char* vertex_shader_source,
+                                           const char* fragment_shader_source,
+                                           const char* geometry_shader_source,
+                                           const char* tess_control_shader_source,
+                                           const char* tess_evaluation_shader_source)
 {
     //destroy before create
     this->destory();
@@ -98,24 +97,23 @@ void ShaderProgram::createFromCStyleString(const char * vertex_shader_source,
     //create shader program
     this->program_ = glCreateProgram();
 
-
     GLuint shaders[5] = { 0, 0, 0, 0, 0 };
 
     GLuint types[5] = {
-                        GL_VERTEX_SHADER,
-                        GL_FRAGMENT_SHADER,
-                        GL_GEOMETRY_SHADER,
-                        GL_TESS_CONTROL_SHADER,
-                        GL_TESS_CONTROL_SHADER
-                      };
+        GL_VERTEX_SHADER,
+        GL_FRAGMENT_SHADER,
+        GL_GEOMETRY_SHADER,
+        GL_TESS_CONTROL_SHADER,
+        GL_TESS_CONTROL_SHADER
+    };
 
-    const char * sources[5] = {
-                                vertex_shader_source,
-                                fragment_shader_source,
-                                geometry_shader_source,
-                                tess_control_shader_source,
-                                tess_evaluation_shader_source
-                              };
+    const char* sources[5] = {
+        vertex_shader_source,
+        fragment_shader_source,
+        geometry_shader_source,
+        tess_control_shader_source,
+        tess_evaluation_shader_source
+    };
 
     for (int i = 0; i < 5; ++i)
     {
@@ -153,26 +151,25 @@ void ShaderProgram::createFromCStyleString(const char * vertex_shader_source,
 
     for (int i = 0; i < 5; ++i)
         glDeleteShader(shaders[i]);
-
 }
 
-void ShaderProgram::createFromFile(const std::string & vertex_shader_file,
-                                   const std::string & fragment_shader_file,
-                                   const std::string & geometry_shader_file,
-                                   const std::string & tess_control_shader_file,
-                                   const std::string & tess_evaluation_shader_file)
+void ShaderProgram::createFromFile(const std::string& vertex_shader_file,
+                                   const std::string& fragment_shader_file,
+                                   const std::string& geometry_shader_file,
+                                   const std::string& tess_control_shader_file,
+                                   const std::string& tess_evaluation_shader_file)
 {
     std::string shader_files[5] = { vertex_shader_file, fragment_shader_file, geometry_shader_file, tess_control_shader_file, tess_evaluation_shader_file };
     std::string shader_strs[5];
 
-    for(int i = 0; i < 5; ++i)
+    for (int i = 0; i < 5; ++i)
     {
         if (shader_files[i].empty() == true)
             continue;
 
         std::ifstream input_file(shader_files[i]);
 
-        if(input_file.fail() == true)
+        if (input_file.fail() == true)
         {
             std::cerr << "error: can't open file " << shader_files[i] << std::endl;
             std::exit(EXIT_FAILURE);
@@ -184,7 +181,6 @@ void ShaderProgram::createFromFile(const std::string & vertex_shader_file,
         input_file.close();
 
         shader_strs[i] = sstream.str();
-
     }
 
     this->createFromCStyleString(shader_strs[0].empty() ? nullptr : shader_strs[0].c_str(),
@@ -192,24 +188,21 @@ void ShaderProgram::createFromFile(const std::string & vertex_shader_file,
                                  shader_strs[2].empty() ? nullptr : shader_strs[2].c_str(),
                                  shader_strs[3].empty() ? nullptr : shader_strs[3].c_str(),
                                  shader_strs[4].empty() ? nullptr : shader_strs[4].c_str());
-
 }
 
-
-void ShaderProgram::createFromString(const std::string & vertex_shader_str,
-                                     const std::string & fragment_shader_str,
-                                     const std::string & geometry_shader_str,
-                                     const std::string & tess_control_shader_str,
-                                     const std::string & tess_evaluation_shader_str)
+void ShaderProgram::createFromString(const std::string& vertex_shader_str,
+                                     const std::string& fragment_shader_str,
+                                     const std::string& geometry_shader_str,
+                                     const std::string& tess_control_shader_str,
+                                     const std::string& tess_evaluation_shader_str)
 {
 
-    this->createFromCStyleString(vertex_shader_str.empty() ?          nullptr : vertex_shader_str.c_str(),
-                                 fragment_shader_str.empty() ?        nullptr : fragment_shader_str.c_str(),
-                                 geometry_shader_str.empty() ?        nullptr : geometry_shader_str.c_str(),
-                                 tess_control_shader_str.empty() ?    nullptr : tess_control_shader_str.c_str(),
+    this->createFromCStyleString(vertex_shader_str.empty() ? nullptr : vertex_shader_str.c_str(),
+                                 fragment_shader_str.empty() ? nullptr : fragment_shader_str.c_str(),
+                                 geometry_shader_str.empty() ? nullptr : geometry_shader_str.c_str(),
+                                 tess_control_shader_str.empty() ? nullptr : tess_control_shader_str.c_str(),
                                  tess_evaluation_shader_str.empty() ? nullptr : tess_evaluation_shader_str.c_str());
 }
-
 
 void ShaderProgram::destory()
 {
@@ -230,122 +223,122 @@ void ShaderProgram::disable() const
     glVerify(glUseProgram(0));
 }
 
-bool ShaderProgram::setBool(const std::string & name, bool val) 
+bool ShaderProgram::setBool(const std::string& name, bool val)
 {
     return this->setInt(name, val);
 }
 
-bool ShaderProgram::setInt(const std::string & name, int val) 
+bool ShaderProgram::setInt(const std::string& name, int val)
 {
     return openGLSetShaderInt(this->program_, name, val);
 }
 
-bool ShaderProgram::setFloat(const std::string & name, float val)
+bool ShaderProgram::setFloat(const std::string& name, float val)
 {
     return openGLSetShaderFloat(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec2(const std::string & name, const Vector2f & val)
+bool ShaderProgram::setVec2(const std::string& name, const Vector2f& val)
 {
     return openGLSetShaderVec2(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec2(const std::string & name, const Vector2d & val)
+bool ShaderProgram::setVec2(const std::string& name, const Vector2d& val)
 {
     return openGLSetShaderVec2(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec2(const std::string & name, const glm::vec2 & val)
+bool ShaderProgram::setVec2(const std::string& name, const glm::vec2& val)
 {
     return openGLSetShaderVec2(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec2(const std::string & name, float x, float y)
+bool ShaderProgram::setVec2(const std::string& name, float x, float y)
 {
     return openGLSetShaderVec2(this->program_, name, x, y);
 }
 
-bool ShaderProgram::setVec3(const std::string & name, const Vector3f & val)
+bool ShaderProgram::setVec3(const std::string& name, const Vector3f& val)
 {
     return openGLSetShaderVec3(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec3(const std::string & name, const Vector3d & val)
+bool ShaderProgram::setVec3(const std::string& name, const Vector3d& val)
 {
     return openGLSetShaderVec3(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec3(const std::string & name, const glm::vec3 & val)
+bool ShaderProgram::setVec3(const std::string& name, const glm::vec3& val)
 {
     return openGLSetShaderVec3(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec3(const std::string & name, float x, float y, float z)
+bool ShaderProgram::setVec3(const std::string& name, float x, float y, float z)
 {
     return openGLSetShaderVec3(this->program_, name, x, y, z);
 }
 
-bool ShaderProgram::setVec4(const std::string & name, const Vector4f & val)
+bool ShaderProgram::setVec4(const std::string& name, const Vector4f& val)
 {
     return openGLSetShaderVec4(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec4(const std::string & name, const Vector4d & val)
+bool ShaderProgram::setVec4(const std::string& name, const Vector4d& val)
 {
     return openGLSetShaderVec4(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec4(const std::string & name, const glm::vec4 & val)
+bool ShaderProgram::setVec4(const std::string& name, const glm::vec4& val)
 {
     return openGLSetShaderVec4(this->program_, name, val);
 }
 
-bool ShaderProgram::setVec4(const std::string & name, float x, float y, float z, float w)
+bool ShaderProgram::setVec4(const std::string& name, float x, float y, float z, float w)
 {
     return openGLSetShaderVec4(this->program_, name, x, y, z, w);
 }
 
-bool ShaderProgram::setMat2(const std::string & name, const Matrix2f & val)
+bool ShaderProgram::setMat2(const std::string& name, const Matrix2f& val)
 {
     return openGLSetShaderMat2(this->program_, name, val);
 }
 
-bool ShaderProgram::setMat2(const std::string & name, const Matrix2d & val)
+bool ShaderProgram::setMat2(const std::string& name, const Matrix2d& val)
 {
     return openGLSetShaderMat2(this->program_, name, val);
 }
 
-bool ShaderProgram::setMat2(const std::string & name, const glm::mat2 & val)
+bool ShaderProgram::setMat2(const std::string& name, const glm::mat2& val)
 {
     return openGLSetShaderMat2(this->program_, name, val);
 }
 
-bool ShaderProgram::setMat3(const std::string & name, const Matrix3f & val)
+bool ShaderProgram::setMat3(const std::string& name, const Matrix3f& val)
 {
     return openGLSetShaderMat3(this->program_, name, val);
 }
 
-bool ShaderProgram::setMat3(const std::string & name, const Matrix3d & val)
+bool ShaderProgram::setMat3(const std::string& name, const Matrix3d& val)
 {
     return openGLSetShaderMat3(this->program_, name, val);
 }
 
-bool ShaderProgram::setMat3(const std::string & name, const glm::mat3 & val)
+bool ShaderProgram::setMat3(const std::string& name, const glm::mat3& val)
 {
     return openGLSetShaderMat3(this->program_, name, val);
 }
 
-bool ShaderProgram::setMat4(const std::string & name, const Matrix4f & val)
+bool ShaderProgram::setMat4(const std::string& name, const Matrix4f& val)
 {
     return openGLSetShaderMat4(this->program_, name, val);
 }
 
-bool ShaderProgram::setMat4(const std::string & name, const Matrix4d & val)
+bool ShaderProgram::setMat4(const std::string& name, const Matrix4d& val)
 {
     return openGLSetShaderMat4(this->program_, name, val);
 }
 
-bool ShaderProgram::setMat4(const std::string & name, const glm::mat4 & val)
+bool ShaderProgram::setMat4(const std::string& name, const glm::mat4& val)
 {
     return openGLSetShaderMat4(this->program_, name, val);
 }
@@ -360,4 +353,4 @@ unsigned int ShaderProgram::id() const
     return this->program_;
 }
 
-}// end of namespace PhysIKA
+}  // end of namespace PhysIKA

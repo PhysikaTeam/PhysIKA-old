@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "GUI/GlutGUI/GLApp.h"
 #include "Framework/Framework/Node.h"
 
@@ -18,89 +17,96 @@
 #include "DantzigLCP.h"
 #include <memory>
 
+namespace PhysIKA {
 
-
-namespace PhysIKA
+struct TerrainRigidInteractionInfo
 {
+    Real surfaceThickness;
+    Real elasticModulus;
 
-	struct TerrainRigidInteractionInfo
-	{
-		Real surfaceThickness;
-		Real elasticModulus;
+    Real damping;
+};
 
-		Real damping;
-	};
+class HeightFieldTerrainRigidInteractionNode : public Node
+{
+public:
+    enum HFDETECTION
+    {
+        POINTVISE,
+        FACEVISE
+    };
 
+    HeightFieldTerrainRigidInteractionNode()
+    {
+        detectionMethod = HFDETECTION::POINTVISE;
+    }
 
+    ~HeightFieldTerrainRigidInteractionNode();
 
+    bool initialize() override;
 
-	class HeightFieldTerrainRigidInteractionNode :public Node
-	{
-	public:
-		enum HFDETECTION
-		{
-			POINTVISE,
-			FACEVISE
-		};
+    void setRigidBodySystem(std::shared_ptr<RigidBodyRoot<DataType3f>> rigidsys)
+    {
+        m_rigidSystem = rigidsys;
+    }
 
+    virtual void advance(Real dt) override;
 
-		HeightFieldTerrainRigidInteractionNode() {
-			detectionMethod = HFDETECTION::POINTVISE;
-		}
+    void setSize(int nx, int ny);
+    void setSize(int nx, int ny, float dx, float dy);
 
-		~HeightFieldTerrainRigidInteractionNode();
+    const DeviceGrid2Df& getHeightField() const
+    {
+        return m_heightField;
+    }
+    DeviceGrid2Df& getHeightField()
+    {
+        return m_heightField;
+    }
 
-		bool initialize() override;
+    void setTerrainInfo(TerrainRigidInteractionInfo info)
+    {
+        terrainInfo = info;
+    }
 
-		void setRigidBodySystem(std::shared_ptr<RigidBodyRoot<DataType3f>> rigidsys) { m_rigidSystem = rigidsys; }
+    void setDetectionMethod(HFDETECTION method)
+    {
+        detectionMethod = method;
+    }
 
-		virtual void advance(Real dt)override;
+private:
+    bool _calcualteSingleContactForce(std::shared_ptr<RigidBody2<DataType3f>> prigid, Vector3f& force, Vector3f& torque);
 
-		void setSize(int nx, int ny);
-		void setSize(int nx, int ny, float dx, float dy);
+    bool _test(Real dt);
 
-		const DeviceGrid2Df& getHeightField()const { return m_heightField; }
-		DeviceGrid2Df& getHeightField() { return m_heightField; }
+private:
+    std::shared_ptr<RigidBodyRoot<DataType3f>> m_rigidSystem;
 
-		void setTerrainInfo(TerrainRigidInteractionInfo info) { terrainInfo = info; }
+    int m_nx = 0, m_ny = 0;
+    //DeviceArray2D<float> m_heightField;
 
-		void setDetectionMethod(HFDETECTION method) { detectionMethod = method; }
+    //HeightField<DataType3f> m_heightField;
 
-	private:
-		bool _calcualteSingleContactForce(std::shared_ptr<RigidBody2<DataType3f>> prigid, Vector3f& force, Vector3f& torque);
+    DeviceGrid2Df m_heightField;
 
-		bool _test(Real dt);
+    DeviceArray<Vector3f> m_interactForce;
+    DeviceArray<Vector3f> m_interactTorque;
 
-	private:
-		std::shared_ptr<RigidBodyRoot<DataType3f>> m_rigidSystem;
+    std::shared_ptr<Reduction<Vector3f>> m_forceSummator;
 
+    //std::shared_ptr<Reduction<ContactPointX>> m_maxDepthFinder;
 
-		int m_nx = 0, m_ny = 0;
-		//DeviceArray2D<float> m_heightField;
+    TerrainRigidInteractionInfo terrainInfo;
 
-		//HeightField<DataType3f> m_heightField;
+    DantzigScratchMemory m_dantzigscratch;
+    DantzigInputMemory   m_dantzigInput;
 
-		DeviceGrid2Df m_heightField;
+    DeviceArray<ContactPointX> m_depthScratch;
 
+    bool  solveFriction = true;
+    float mu            = 0.9;
 
-		DeviceArray<Vector3f> m_interactForce;
-		DeviceArray<Vector3f> m_interactTorque;
+    HFDETECTION detectionMethod;
+};
 
-		std::shared_ptr<Reduction<Vector3f>> m_forceSummator;
-
-		//std::shared_ptr<Reduction<ContactPointX>> m_maxDepthFinder;
-
-		TerrainRigidInteractionInfo terrainInfo;
-
-		DantzigScratchMemory m_dantzigscratch;
-		DantzigInputMemory m_dantzigInput;
-
-		DeviceArray<ContactPointX> m_depthScratch;
-
-		bool solveFriction = true;
-		float mu = 0.9;
-
-		HFDETECTION detectionMethod;
-	};
-
-}
+}  // namespace PhysIKA

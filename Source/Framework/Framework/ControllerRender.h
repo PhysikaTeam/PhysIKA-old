@@ -1,19 +1,17 @@
 #pragma once
 #include "Framework/Framework/ModuleController.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 class RenderController : public ControllerModule
 {
-	DECLARE_CLASS(RenderController)
+    DECLARE_CLASS(RenderController)
 
 public:
-	RenderController();
-	virtual ~RenderController();
+    RenderController();
+    virtual ~RenderController();
 
 private:
-
 };
 
-}
+}  // namespace PhysIKA

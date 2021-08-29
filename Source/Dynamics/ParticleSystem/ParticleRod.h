@@ -1,76 +1,159 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-12-22
+ * @description: Declaration of ParticleRod class, projective-peridynamics based elastic rod
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-23
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #pragma once
-#include "ParticleSystem.h"
+
 #include <vector>
 
-namespace PhysIKA
+#include "Framework/Framework/FieldVar.h"
+#include "Framework/Framework/FieldArray.h"
+#include "ParticleSystem.h"
+
+namespace PhysIKA {
+
+template <typename>
+class OneDimElasticityModule;
+template <typename>
+class ParticleIntegrator;
+template <typename>
+class FixedPoints;
+template <typename>
+class SimpleDamping;
+
+/**
+ * ParticleRod
+ * a scene node to simulate elastic rods with the approach introduced in the paper
+ * <Projective Peridynamics for Modeling Versatile Elastoplastic Materials>
+ *
+ * The particles can be setup via loadParticles && setParticles
+ * Currently masses of the particles CANNOT be set, the setMass() API of Node class does not work
+ *
+ * @param TDataType  template parameter that represents aggregation of scalar, vector, matrix, etc.
+ */
+template <typename TDataType>
+class ParticleRod : public ParticleSystem<TDataType>
 {
-	template<typename> class ElasticityModule;
-	template<typename> class OneDimElasticityModule;
-	template<typename> class ParticleIntegrator;
-	template<typename> class FixedPoints;
-	template<typename> class SimpleDamping;
-	/*!
-	*	\class	ParticleRod
-	*	\brief	Peridynamics-based elastic object.
-	*/
-	template<typename TDataType>
-	class ParticleRod : public ParticleSystem<TDataType>
-	{
-		DECLARE_CLASS_1(ParticleRod, TDataType)
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+    DECLARE_CLASS_1(ParticleRod, TDataType)
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
 
-		ParticleRod(std::string name = "default");
-		virtual ~ParticleRod();
+    ParticleRod(std::string name = "default");
+    virtual ~ParticleRod();
 
-		bool initialize() override;
-		bool resetStatus() override;
-		void advance(Real dt) override;
+    /**
+     * Initialize the node and cooresponding modules
+     *
+     * @return    currently always return true
+     */
+    bool initialize() override;
 
-		void setParticles(std::vector<Coord> particles);
+    /**
+     * Reset configuration to initial configuration
+     *
+     * @return    currently always return true
+     */
+    bool resetStatus() override;
 
-		void setLength(Real length);
-		void setMaterialStiffness(Real stiffness);
+    /**
+     * advance the scene node in time
+     *
+     * @param[in] dt    the time interval between the states before&&after the call (deprecated)
+     */
+    void advance(Real dt) override;
 
-		void addFixedParticle(int id, Coord pos);
-		void removeFixedParticle(int id);
+    /**
+     * setup the particles
+     *
+     * @param[in] particles    particle positions in order
+     */
+    void setParticles(std::vector<Coord> particles);
 
-		void getHostPosition(std::vector<Coord>& pos);
+    /**
+     * set the stiffness of the rod
+     *
+     * @param[in] stiffness     stiffness value, must be positive
+     */
+    void setMaterialStiffness(Real stiffness);
 
-		void removeAllFixedPositions();
+    /**
+     * specify a particle pinned in space
+     *
+     * @param[in] id    id of the pinned particle, must be in range of existing particles
+     * @param[in] pos   the pinned position of the particle
+     */
+    void addFixedParticle(int id, Coord pos);
 
-		void doCollision(Coord pos, Coord dir);
+    /**
+     * remove a pinned particle
+     * The particle is not removed from simulation, just not being pinned anymore
+     *
+     * @param[in] id    id of the pinned particle, must be in range of existing particles
+     */
+    void removeFixedParticle(int id);
 
-		void setDamping(Real d);
-	public:
-		VarField<Real> m_horizon;
+    /**
+     * get positions of the particles in host memory
+     *
+     * @param[out] pos  the vector that stores positions of the particles
+     */
+    void getHostPosition(std::vector<Coord>& pos);
 
-		VarField<Real> m_length;
+    /**
+     * disable all pinned particles
+     */
+    void removeAllFixedPositions();
 
-		VarField<Real> m_stiffness;
+    /**
+     * collision handling with a plane
+     *
+     * @param[in] pos    position of a point on plane
+     * @param[in] dir    direction of the plane
+     */
+    void doCollision(Coord pos, Coord dir);
 
-	protected:
-		DeviceArrayField<Real> m_mass;
+    /**
+     * set damping coefficient
+     *
+     * @param[in] d    the damping coefficient, must be positive
+     */
+    void setDamping(Real d);
 
-	private:
-		std::vector<int> m_fixedIds;
+public:
+    VarField<Real> m_horizon;    //!< horizon of peridynamics approach
+    VarField<Real> m_stiffness;  //!< stiffness of the rod
 
-		void resetMassField();
+protected:
+    DeviceArrayField<Real> m_mass;  //!< masses of each discretized particle
 
-		bool m_modifed = false;
+private:
+    /**
+     * reset the particle masses according to current setup
+     * masses of free particles are set to 1, fixed particles are set to 1000000
+     */
+    void resetMassField();
 
-		std::shared_ptr<ParticleIntegrator<TDataType>> m_integrator;
-		std::shared_ptr<ElasticityModule<TDataType>> m_elasticity;
-		std::shared_ptr<OneDimElasticityModule<TDataType>> m_one_dim_elasticity;
-		std::shared_ptr<FixedPoints<TDataType>> m_fixed;
-		std::shared_ptr<SimpleDamping<TDataType>> m_damping;
-	};
-
+private:
+    std::vector<int>                                   m_fixedIds;            //!< ids of the fixed particles
+    bool                                               m_modified = false;    //!< whether mass field needs reset
+    std::shared_ptr<ParticleIntegrator<TDataType>>     m_integrator;          //!< integrator
+    std::shared_ptr<OneDimElasticityModule<TDataType>> m_one_dim_elasticity;  //!< elastic constitutive model
+    std::shared_ptr<FixedPoints<TDataType>>            m_fixed;               //!< fix point constraint
+    std::shared_ptr<SimpleDamping<TDataType>>          m_damping;             //!< damping constraint
+};
 
 #ifdef PRECISION_FLOAT
-	template class ParticleRod<DataType3f>;
+template class ParticleRod<DataType3f>;
 #else
-	template class ParticleRod<DataType3d>;
+template class ParticleRod<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

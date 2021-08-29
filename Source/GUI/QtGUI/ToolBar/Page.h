@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -25,8 +25,7 @@
 
 class QHBoxLayout;
 
-namespace tt
-{
+namespace tt {
 class TabToolbar;
 class Group;
 
@@ -37,13 +36,13 @@ public:
     explicit Page(int index, const QString& pageName, QWidget* parent = nullptr);
     virtual ~Page() = default;
 
-    Group*   AddGroup(const QString& name);
-    void     hide();
-    void     show();
+    Group* AddGroup(const QString& name);
+    void   hide();
+    void   show();
 
 signals:
-    void     Hiding(int index);
-    void     Showing(int index);
+    void Hiding(int index);
+    void Showing(int index);
 
 private:
     const int    myIndex;
@@ -51,5 +50,5 @@ private:
     QWidget*     innerArea;
 };
 
-}
+}  // namespace tt
 #endif

@@ -19,73 +19,80 @@
 #include <glm/vec4.hpp>
 #include "vector_base.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
-template <typename Scalar, int Dim> class SquareMatrix;
+template <typename Scalar, int Dim>
+class SquareMatrix;
 
 /*
  * Vector<Scalar,4> are defined for C++ fundamental integer types and floating-point types
  */
 
 template <typename Scalar>
-class Vector<Scalar,4>
+class Vector<Scalar, 4>
 {
 public:
-	typedef Scalar VarType;
+    typedef Scalar VarType;
 
     COMM_FUNC Vector();
     COMM_FUNC explicit Vector(Scalar);
     COMM_FUNC Vector(Scalar x, Scalar y, Scalar z, Scalar w);
-    COMM_FUNC Vector(const Vector<Scalar,4>&);
+    COMM_FUNC Vector(const Vector<Scalar, 4>&);
     COMM_FUNC ~Vector();
 
-	COMM_FUNC  static const int dims() { return (const int)4; }
+    COMM_FUNC static const int dims()
+    {
+        return ( const int )4;
+    }
 
-    COMM_FUNC Scalar& operator[] (unsigned int);
-    COMM_FUNC const Scalar& operator[] (unsigned int) const;
+    COMM_FUNC Scalar& operator[](unsigned int);
+    COMM_FUNC const Scalar& operator[](unsigned int) const;
 
-    COMM_FUNC const Vector<Scalar,4> operator+ (const Vector<Scalar,4> &) const;
-    COMM_FUNC Vector<Scalar,4>& operator+= (const Vector<Scalar,4> &);
-    COMM_FUNC const Vector<Scalar,4> operator- (const Vector<Scalar,4> &) const;
-    COMM_FUNC Vector<Scalar,4>& operator-= (const Vector<Scalar,4> &);
-	COMM_FUNC const Vector<Scalar, 4> operator* (const Vector<Scalar, 4> &) const;
-	COMM_FUNC Vector<Scalar, 4>& operator*= (const Vector<Scalar, 4> &);
-	COMM_FUNC const Vector<Scalar, 4> operator/ (const Vector<Scalar, 4> &) const;
-	COMM_FUNC Vector<Scalar, 4>& operator/= (const Vector<Scalar, 4> &);
+    COMM_FUNC const Vector<Scalar, 4> operator+(const Vector<Scalar, 4>&) const;
+    COMM_FUNC Vector<Scalar, 4>& operator+=(const Vector<Scalar, 4>&);
+    COMM_FUNC const Vector<Scalar, 4> operator-(const Vector<Scalar, 4>&) const;
+    COMM_FUNC Vector<Scalar, 4>& operator-=(const Vector<Scalar, 4>&);
+    COMM_FUNC const Vector<Scalar, 4> operator*(const Vector<Scalar, 4>&) const;
+    COMM_FUNC Vector<Scalar, 4>& operator*=(const Vector<Scalar, 4>&);
+    COMM_FUNC const Vector<Scalar, 4> operator/(const Vector<Scalar, 4>&) const;
+    COMM_FUNC Vector<Scalar, 4>& operator/=(const Vector<Scalar, 4>&);
 
-    COMM_FUNC Vector<Scalar,4>& operator= (const Vector<Scalar,4> &);
+    COMM_FUNC Vector<Scalar, 4>& operator=(const Vector<Scalar, 4>&);
 
-    COMM_FUNC bool operator== (const Vector<Scalar,4> &) const;
-    COMM_FUNC bool operator!= (const Vector<Scalar,4> &) const;
+    COMM_FUNC bool operator==(const Vector<Scalar, 4>&) const;
+    COMM_FUNC bool operator!=(const Vector<Scalar, 4>&) const;
 
-    COMM_FUNC const Vector<Scalar,4> operator+ (Scalar) const;
-    COMM_FUNC const Vector<Scalar,4> operator- (Scalar) const;
-    COMM_FUNC const Vector<Scalar,4> operator* (Scalar) const;
-    COMM_FUNC const Vector<Scalar,4> operator/ (Scalar) const;
+    COMM_FUNC const Vector<Scalar, 4> operator+(Scalar) const;
+    COMM_FUNC const Vector<Scalar, 4> operator-(Scalar) const;
+    COMM_FUNC const Vector<Scalar, 4> operator*(Scalar) const;
+    COMM_FUNC const Vector<Scalar, 4> operator/(Scalar) const;
 
-    COMM_FUNC Vector<Scalar,4>& operator+= (Scalar);
-    COMM_FUNC Vector<Scalar,4>& operator-= (Scalar);
-    COMM_FUNC Vector<Scalar,4>& operator*= (Scalar);
-    COMM_FUNC Vector<Scalar,4>& operator/= (Scalar);
+    COMM_FUNC Vector<Scalar, 4>& operator+=(Scalar);
+    COMM_FUNC Vector<Scalar, 4>& operator-=(Scalar);
+    COMM_FUNC Vector<Scalar, 4>& operator*=(Scalar);
+    COMM_FUNC Vector<Scalar, 4>& operator/=(Scalar);
 
-    COMM_FUNC const Vector<Scalar, 4> operator - (void) const;
+    COMM_FUNC const Vector<Scalar, 4> operator-(void) const;
 
     COMM_FUNC Scalar norm() const;
     COMM_FUNC Scalar normSquared() const;
-    COMM_FUNC Vector<Scalar,4>& normalize();
-    COMM_FUNC Scalar dot(const Vector<Scalar,4>&) const;
-//    COMM_FUNC const SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
+    COMM_FUNC Vector<Scalar, 4>& normalize();
+    COMM_FUNC Scalar             dot(const Vector<Scalar, 4>&) const;
+    //    COMM_FUNC const SquareMatrix<Scalar,4> outerProduct(const Vector<Scalar,4>&) const;
 
-	COMM_FUNC Vector<Scalar, 4> minimum(const Vector<Scalar, 4> &) const;
-	COMM_FUNC Vector<Scalar, 4> maximum(const Vector<Scalar, 4> &) const;
+    COMM_FUNC Vector<Scalar, 4> minimum(const Vector<Scalar, 4>&) const;
+    COMM_FUNC Vector<Scalar, 4> maximum(const Vector<Scalar, 4>&) const;
 
-	COMM_FUNC Scalar* getDataPtr() { return &data_.x; }
+    COMM_FUNC Scalar* getDataPtr()
+    {
+        return &data_.x;
+    }
+
 public:
-	glm::tvec4<Scalar> data_; //default: zero vector
+    glm::tvec4<Scalar> data_;  //default: zero vector
 };
 
-
-// 
+//
 // //overriding << for vector2D
 // template <typename Scalar>
 // inline std::ostream& operator<< (std::ostream &s, const Vector<Scalar,4> &vec)
@@ -107,11 +114,11 @@ public:
 template class Vector<float, 4>;
 template class Vector<double, 4>;
 //convenient typedefs
-typedef Vector<float,4> Vector4f;
-typedef Vector<double,4> Vector4d;
+typedef Vector<float, 4>  Vector4f;
+typedef Vector<double, 4> Vector4d;
 //typedef Vector<int,4> Vector4i;
 
-} //end of namespace PhysIKA
+}  //end of namespace PhysIKA
 
 #include "vector_4d.inl"
-#endif //PHYSIKA_CORE_VECTORS_VECTOR_4D_H_
+#endif  //PHYSIKA_CORE_VECTORS_VECTOR_4D_H_

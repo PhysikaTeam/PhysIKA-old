@@ -18,14 +18,15 @@
 
 #include "Core/Utility.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 template <typename Scalar, int Dim>
 class Transform
 {
 public:
-    Transform(){}
-    ~Transform(){}
+    Transform() {}
+    ~Transform() {}
+
 private:
     void compileTimeCheck()
     {
@@ -39,4 +40,4 @@ private:
 
 }  //end of namespace PhysIKA
 
-#endif //PHYSIKA_CORE_TRANSFORM_TRANSFORM_H_
+#endif  //PHYSIKA_CORE_TRANSFORM_TRANSFORM_H_

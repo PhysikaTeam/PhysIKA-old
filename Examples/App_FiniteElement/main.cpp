@@ -216,5 +216,3 @@ int main()
 	Log::sendMessage(Log::Info, "Simulation end!");
 	return 0;
 }
-
-

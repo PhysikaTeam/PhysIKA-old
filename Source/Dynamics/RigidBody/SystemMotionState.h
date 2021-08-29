@@ -9,146 +9,173 @@
 #include "Dynamics/RigidBody/Transform3d.h"
 #include "SpatialVector.h"
 
-#include<memory>
+#include <memory>
 
-namespace PhysIKA
+namespace PhysIKA {
+struct DSystemMotionState
 {
-	struct DSystemMotionState
-	{
-	public:
+public:
+    void setRigidNum(int n)
+    {
+        m_rel_r.resize(n);
+        m_rel_q.resize(n);
+        m_v.resize(n);
+    }
 
-		void setRigidNum(int n)
-		{
-			m_rel_r.resize(n);
-			m_rel_q.resize(n);
-			m_v.resize(n);
-		}
+    void setDof(int n)
+    {
+        m_dq.resize(n);
+        m_generalq.resize(n);
+    }
 
-		void setDof(int n)
-		{
-			m_dq.resize(n);
-			m_generalq.resize(n);
-		}
+    Vectornd<float>& getGeneralFreedom()
+    {
+        return m_generalq;
+    }
+    const Vectornd<float>& getGeneralFreedom() const
+    {
+        return m_generalq;
+    }
 
-		Vectornd<float>& getGeneralFreedom() { return m_generalq; }
-		const Vectornd<float>& getGeneralFreedom() const { return m_generalq; }
+    std::vector<SpatialVector<float>>& getGlobalVelocity()
+    {
+        return globalVelocity;
+    }
+    const std::vector<SpatialVector<float>>& getGlobalVelocity() const
+    {
+        return globalVelocity;
+    }
 
-		std::vector<SpatialVector<float>>& getGlobalVelocity() { return globalVelocity; }
-		const std::vector<SpatialVector<float>>& getGlobalVelocity() const { return globalVelocity; }
+public:
+    std::vector<Vector3f>          m_rel_r;  // relative position
+    std::vector<Quaternion<float>> m_rel_q;  // relative rotation
 
+    std::vector<SpatialVector<float>> m_v;  // Relative spatial velocities
 
+    std::vector<SpatialVector<float>> globalVelocity;  // Global velocity in world frame.
 
-	public:
-		std::vector<Vector3f> m_rel_r;						// relative position
-		std::vector<Quaternion<float>> m_rel_q;				// relative rotation
+    Vectornd<float> m_dq;
+    Vectornd<float> m_generalq;
+};
 
-		std::vector<SpatialVector<float>> m_v;				// Relative spatial velocities
+struct SystemMotionState  //:public State
+{
+public:
+    SystemMotionState(Node* root = 0)
+        : m_root(root)
+    {
+        //build();
+    }
 
-		std::vector<SpatialVector<float>> globalVelocity;	// Global velocity in world frame.
+    void setRoot(Node* root)
+    {
+        m_root = root;
+    }
 
+    //void build();
+    SystemMotionState& addDs(const DSystemMotionState& ds, double dt);
 
-		Vectornd<float> m_dq;
-		Vectornd<float> m_generalq;
-	};
+    void updateGlobalInfo();
 
-	struct SystemMotionState//:public State
-	{
-	public:
-		SystemMotionState(Node* root = 0) :m_root(root)
-		{
-			//build();
-		}
+    void setRigidNum(int n)
+    {
 
-		void setRoot(Node * root) { m_root = root; }
+        m_rel_r.resize(n);
+        m_rel_q.resize(n);
+        globalPosition.resize(n);
+        globalRotation.resize(n);
+        m_X.resize(n);
+        m_v.resize(n);
 
+        globalVelocity.resize(n);
+    }
 
-		//void build();
-		SystemMotionState& addDs(const DSystemMotionState& ds, double dt);
+    void setNum(int n, int dof)
+    {
+        m_rel_r.resize(n);
+        m_rel_q.resize(n);
+        globalPosition.resize(n);
+        globalRotation.resize(n);
+        m_X.resize(n);
+        m_v.resize(n);
 
-		void updateGlobalInfo();
+        generalVelocity.resize(dof);
+        generalPosition.resize(dof);
 
-		void setRigidNum(int n)
-		{
+        globalVelocity.resize(n);
+    }
 
-			m_rel_r.resize(n);
-			m_rel_q.resize(n);
-			globalPosition.resize(n);
-			globalRotation.resize(n);
-			m_X.resize(n);
-			m_v.resize(n);
+    //static void dydt(const SystemMotionState& s0, SystemMotionState& ds);
 
-			globalVelocity.resize(n);
-		}
+    std::vector<Vector3f>& getGlobalPosition()
+    {
+        return globalPosition;
+    }
+    const std::vector<Vector3f>& getGlobalPosition() const
+    {
+        return globalPosition;
+    }
 
-		void setNum(int n, int dof)
-		{
-			m_rel_r.resize(n);
-			m_rel_q.resize(n);
-			globalPosition.resize(n);
-			globalRotation.resize(n);
-			m_X.resize(n);
-			m_v.resize(n);
+    std::vector<Quaternion<float>>& getGlobalRotation()
+    {
+        return globalRotation;
+    }
+    const std::vector<Quaternion<float>>& getGlobalRotation() const
+    {
+        return globalRotation;
+    }
 
-			generalVelocity.resize(dof);
-			generalPosition.resize(dof);
+    Vectornd<float>& getGeneralPosition()
+    {
+        return generalPosition;
+    }
+    const Vectornd<float>& getGeneralPosition() const
+    {
+        return generalPosition;
+    }
 
-			globalVelocity.resize(n);
-		}
+    Vectornd<float>& getGeneralVelocity()
+    {
+        return generalVelocity;
+    }
+    const Vectornd<float>& getGeneralVelocity() const
+    {
+        return generalVelocity;
+    }
 
-		//static void dydt(const SystemMotionState& s0, SystemMotionState& ds);
+    std::vector<SpatialVector<float>>& getGlobalVelocity()
+    {
+        return globalVelocity;
+    }
+    const std::vector<SpatialVector<float>>& getGlobalVelocity() const
+    {
+        return globalVelocity;
+    }
 
-		
-		std::vector<Vector3f>& getGlobalPosition() { return globalPosition; }
-		const std::vector<Vector3f>& getGlobalPosition() const { return globalPosition; }
+private:
+public:
+    Node* m_root = 0;
 
-		std::vector<Quaternion<float>>& getGlobalRotation() { return globalRotation; }
-		const std::vector<Quaternion<float>>& getGlobalRotation() const { return globalRotation; }
+    // ---------x
+    std::vector<Vector3f>          m_rel_r;  // relative position in parent frame.
+    std::vector<Quaternion<float>> m_rel_q;
 
+    std::vector<Vector3f>          globalPosition;  // global positions of rigid bodies
+    std::vector<Quaternion<float>> globalRotation;  // global rotations of rigid bodies
 
-		Vectornd<float>& getGeneralPosition() { return generalPosition; }
-		const Vectornd<float>& getGeneralPosition() const { return generalPosition; }
+    std::vector<Transform3d<float>> m_X;  // Transformations from parent nodes to child nodes
 
-		Vectornd<float>& getGeneralVelocity() { return generalVelocity; }
-		const Vectornd<float>& getGeneralVelocity() const { return generalVelocity; }
+    // -------- v
+    std::vector<SpatialVector<float>> m_v;  // Relative spatial velocities, successor frame
 
+    std::vector<SpatialVector<float>> globalVelocity;  // Global velocity in world frame.
 
+    // General velocities in joint space.
+    // For eanch joint, its dof can be 0-6.
+    // It will be inefficient to use a Vectornd, as we need to allocate dynamic memory for eanch Vectornd.
+    Vectornd<float> generalVelocity;  // General velocities in joint space.
+    Vectornd<float> generalPosition;  // General displacement.
+};
 
-		std::vector<SpatialVector<float>>& getGlobalVelocity() { return globalVelocity; }
-		const std::vector<SpatialVector<float>>& getGlobalVelocity() const { return globalVelocity; }
-
-
-
-	private:
-
-
-
-	public:
-		Node* m_root = 0;
-
-		// ---------x
-		std::vector<Vector3f> m_rel_r;							// relative position in parent frame.
-		std::vector<Quaternion<float>> m_rel_q;
-
-		std::vector<Vector3f> globalPosition;					// global positions of rigid bodies
-		std::vector<Quaternion<float>> globalRotation;			// global rotations of rigid bodies
-
-		std::vector<Transform3d<float>> m_X;				// Transformations from parent nodes to child nodes
-
-
-		// -------- v
-		std::vector<SpatialVector<float>> m_v;				// Relative spatial velocities, successor frame
-
-		std::vector<SpatialVector<float>> globalVelocity;	// Global velocity in world frame.
-
-		// General velocities in joint space.
-		// For eanch joint, its dof can be 0-6. 
-		// It will be inefficient to use a Vectornd, as we need to allocate dynamic memory for eanch Vectornd.
-		Vectornd<float> generalVelocity;					// General velocities in joint space.
-		Vectornd<float> generalPosition;					// General displacement.
-
-	};
-
-
-
-	//class RigidSystemFor
-}
+//class RigidSystemFor
+}  // namespace PhysIKA

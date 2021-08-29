@@ -23,58 +23,64 @@
 
 namespace PhysIKA {
 
-class PointRender {
+class PointRender
+{
 public:
-	explicit PointRender();
-	~PointRender();
+    explicit PointRender();
+    ~PointRender();
 
-	// disable copy
-	PointRender(const PointRender &) = delete;
-	PointRender &operator=(const PointRender &) = delete;
+    // disable copy
+    PointRender(const PointRender&) = delete;
+    PointRender& operator=(const PointRender&) = delete;
 
-	void resize(unsigned int num);
+    void resize(unsigned int num);
 
-	void setVertexArray(DeviceArray<float3> &pos);
-	void setVertexArray(HostArray<float3> &pos);
+    void setVertexArray(DeviceArray<float3>& pos);
+    void setVertexArray(HostArray<float3>& pos);
 
-	void setColorArray(DeviceArray<float3> &color);
-	void setColorArray(HostArray<float3> &color);
+    void setColorArray(DeviceArray<float3>& color);
+    void setColorArray(HostArray<float3>& color);
 
-	void setPointSize(float point_size);
-	void setInstanceSize(float r);
-	float pointSize() const;
+    void  setPointSize(float point_size);
+    void  setInstanceSize(float r);
+    float pointSize() const;
 
-	void setColor(glm::vec3 color);
-	void setColor(DeviceArray<glm::vec3> color);
+    void setColor(glm::vec3 color);
+    void setColor(DeviceArray<glm::vec3> color);
 
-	void setPointScaleForPointSprite(float point_scale);
-	float pointScaleForPointSprite() const;
+    void  setPointScaleForPointSprite(float point_scale);
+    float pointScaleForPointSprite() const;
 
-	void enableUsePointSprite();
-	void disableUsePointSprite();
-	bool isUsePointSprite() const;
+    void enableUsePointSprite();
+    void disableUsePointSprite();
+    bool isUsePointSprite() const;
 
-	void renderInstancedSphere();
-	void renderSprite();
-	void renderPoints();
+    void renderInstancedSphere();
+    void renderSprite();
+    void renderPoints();
+
+    int numOfPoints()
+    {
+        return m_vertVBO.getSize();
+    }
 
 private:
-	bool use_point_sprite_ = true;
+    bool use_point_sprite_ = true;
 
-	float m_instance_size = 0.0025f;
+    float m_instance_size = 0.0025f;
 
-	float point_size_ = 1.0f;
-	float point_scale_ = 5.0f; // for point sprite
+    float point_size_  = 1.0f;
+    float point_scale_ = 5.0f;  // for point sprite
 
-	unsigned int quadVAO, quadVBO;
-	unsigned int instanceVBO;
+    unsigned int quadVAO, quadVBO;
+    unsigned int instanceVBO;
 
-	CudaVBOMapper<glm::vec3> m_vertVBO;
-	CudaVBOMapper<glm::vec3> m_normVBO;
-	CudaVBOMapper<glm::vec3> m_vertexColor;
+    CudaVBOMapper<glm::vec3> m_vertVBO;
+    CudaVBOMapper<glm::vec3> m_normVBO;
+    CudaVBOMapper<glm::vec3> m_vertexColor;
 
-	ShaderProgram m_glsl;
-	ShaderProgram m_instancedShader;
+    ShaderProgram m_glsl;
+    ShaderProgram m_instancedShader;
 };
 
-} // namespace PhysIKA
+}  // namespace PhysIKA

@@ -18,18 +18,18 @@
 
 #include "matrix_base.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 template <typename Scalar, int Dim>
-class SquareMatrix: public MatrixBase
+class SquareMatrix : public MatrixBase
 {
 public:
-    SquareMatrix(){}
-    ~SquareMatrix(){}
-	COMM_FUNC virtual unsigned int rows() const;
-	COMM_FUNC virtual unsigned int cols() const;
-}; 
+    SquareMatrix() {}
+    ~SquareMatrix() {}
+    COMM_FUNC virtual unsigned int rows() const;
+    COMM_FUNC virtual unsigned int cols() const;
+};
 
 }  //end of namespace PhysIKA
 
-#endif //PHYSIKA_CORE_MATRICES_SQUARE_MATRIX_H_
+#endif  //PHYSIKA_CORE_MATRICES_SQUARE_MATRIX_H_

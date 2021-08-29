@@ -5,10 +5,9 @@
 //#include "Dynamics/RigidBody/Joint.h"
 #include "Dynamics/RigidBody/RevoluteJoint.h"
 
-namespace PhysIKA
-{
-	/**
-	* @brief Joint of vehicle rear wheels.
-	*/
-	typedef RevoluteJoint VehicleRearJoint;
-}
+namespace PhysIKA {
+/**
+    * @brief Joint of vehicle rear wheels.
+    */
+typedef RevoluteJoint VehicleRearJoint;
+}  // namespace PhysIKA

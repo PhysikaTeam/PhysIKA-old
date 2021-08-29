@@ -6,27 +6,25 @@ class vtkActor;
 class vtkPolyDataMapper;
 class PVTKPolyDataSource;
 
-namespace PhysIKA
+namespace PhysIKA {
+class PVTKSurfaceMeshRender : public VisualModule
 {
-	class PVTKSurfaceMeshRender : public VisualModule
-	{
-		DECLARE_CLASS(PVTKSurfaceMeshRender)
-	public:
-		PVTKSurfaceMeshRender();
-		virtual ~PVTKSurfaceMeshRender();
+    DECLARE_CLASS(PVTKSurfaceMeshRender)
+public:
+    PVTKSurfaceMeshRender();
+    virtual ~PVTKSurfaceMeshRender();
 
+    vtkActor* getVTKActor();
 
-		vtkActor* getVTKActor();
+protected:
+    bool initializeImpl() override;
 
-	protected:
-		bool  initializeImpl() override;
+    void updateRenderingContext() override;
 
-		void updateRenderingContext() override;
+private:
+    vtkActor*           m_actor;
+    vtkPolyDataMapper*  mapper;
+    PVTKPolyDataSource* polydataSource;
+};
 
-	private:
-		vtkActor* m_actor;
-		vtkPolyDataMapper* mapper;
-		PVTKPolyDataSource* polydataSource;
-	};
-
-}
+}  // namespace PhysIKA

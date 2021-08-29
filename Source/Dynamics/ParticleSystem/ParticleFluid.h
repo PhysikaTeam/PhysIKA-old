@@ -1,43 +1,72 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2018-12-17
+ * @description: Declaration of ParticleFluid class, which is a container for particle-based fluid solvers
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-21
+ * @description: poslish code
+ * @version    : 1.1
+ */
+
 #pragma once
+
 #include "ParticleSystem.h"
 #include "ParticleEmitter.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+/**
+ * ParticleFluid
+ * a scene node for particle-based fluid methods
+ * The default solver is PBD
+ * reference: Macklin and Muller's "Position Based Fluids"
+ * Solver can be specified by calling setNumericalModel()
+ *
+ * The source of fluids can be setup exclusively  in 2 ways:
+ * 1. through multiple particle emitters (dynamic fluid source)
+ * 2. via loadParticles() function call  (static fluid source)
+ *
+ * It may lead to undefined behavior if 2 ways are applied together
+ *
+ * @param TDataType  template parameter that represents aggregation of scalar, vector, matrix, etc.
+ */
+template <typename TDataType>
+class ParticleFluid : public ParticleSystem<TDataType>
 {
-	/*!
-	*	\class	ParticleFluid
-	*	\brief	Position-based fluids.
-	*
-	*	This class implements a position-based fluid solver.
-	*	Refer to Macklin and Muller's "Position Based Fluids" for details
-	*
-	*/
-	template<typename TDataType>
-	class ParticleFluid : public ParticleSystem<TDataType>
-	{
-		DECLARE_CLASS_1(ParticleFluid, TDataType)
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+    DECLARE_CLASS_1(ParticleFluid, TDataType)
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
 
-		ParticleFluid(std::string name = "default");
-		virtual ~ParticleFluid();
+    ParticleFluid(std::string name = "default");
+    virtual ~ParticleFluid();
 
-		void advance(Real dt) override;
-		bool resetStatus() override;
+    /**
+     * advance the scene node in time
+     *
+     * @param[in] dt    the time interval between the states before&&after the call (deprecated)
+     */
+    void advance(Real dt) override;
 
-	private:
-		DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");
+    /**
+     * clear particles in scene if there's any particle emitters,
+     * otherwise reset particles' state to initial configuration
+     *
+     * @return     true if succeed, false otherwise
+     */
+    bool resetStatus() override;
 
-		// add by HNU
-		DEF_VAR(ImportFile, std::string, "", "ImportFile");
-		int frame_id{-1};
+private:
+    DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");  //!< particle emitters and corresponding accessors
 
-	};
+    DEF_VAR(ImportFile, std::string, "", "ImportFile");  //!< Qt GUI stuff, added by HNU, need polishing
+	int frame_id{-1};
+};
 
 #ifdef PRECISION_FLOAT
-	template class ParticleFluid<DataType3f>;
+template class ParticleFluid<DataType3f>;
 #else
-	template class ParticleFluid<DataType3d>;
+template class ParticleFluid<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

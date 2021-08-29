@@ -1,70 +1,71 @@
 #pragma once
 #include "Framework/Framework/Node.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+template <typename T>
+class RigidBody;
+template <typename T>
+class ParticleSystem;
+template <typename T>
+class NeighborQuery;
+template <typename T>
+class DensityPBD;
+
+/*!
+          *        class    SolidFluidInteraction
+          *        brief    Position-based fluids.
+       *
+          *    This class implements a position-based fluid solver.
+          *    Refer to Macklin and Muller's "Position Based Fluids" for details
+       *
+       */
+
+template <typename TDataType>
+class SFIFast : public Node
 {
-	template <typename T> class RigidBody;
-	template <typename T> class ParticleSystem;
-	template <typename T> class NeighborQuery;
-	template <typename T> class DensityPBD;
+    DECLARE_CLASS_1(SolidFluidInteraction, TDataType)
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
 
-	/*!
-	*	\class	SolidFluidInteraction
-	*	\brief	Position-based fluids.
-	*
-	*	This class implements a position-based fluid solver.
-	*	Refer to Macklin and Muller's "Position Based Fluids" for details
-	*
-	*/
+    SFIFast(std::string name = "SolidFluidInteration");
+    ~SFIFast() override;
 
-	template<typename TDataType>
-	class SFIFast : public Node
-	{
-		DECLARE_CLASS_1(SolidFluidInteraction, TDataType)
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+public:
+    bool initialize() override;
 
-		SFIFast(std::string name = "SolidFluidInteration");
-		~SFIFast() override;
+    bool addRigidBody(std::shared_ptr<RigidBody<TDataType>> child);
+    bool addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child);
 
-	public:
-		bool initialize() override;
+    bool resetStatus() override;
 
-		bool addRigidBody(std::shared_ptr<RigidBody<TDataType>> child);
-		bool addParticleSystem(std::shared_ptr<ParticleSystem<TDataType>> child);
+    void advance(Real dt) override;
 
-		bool resetStatus() override;
+    void setInteractionDistance(Real d);
 
-		void advance(Real dt) override;
+private:
+    VarField<Real> radius;
 
-		void setInteractionDistance(Real d);
-	private:
-		VarField<Real> radius;
+    DeviceArrayField<Coord> m_position;
+    DeviceArrayField<Coord> m_vels;
+    DeviceArrayField<Coord> m_force;
+    DeviceArrayField<Real>  m_mass;
 
-		DeviceArrayField<Coord> m_position;
-		DeviceArrayField<Coord> m_vels;
-		DeviceArrayField<Coord> m_force;
-		DeviceArrayField<Real> m_mass;
+    DeviceArray<int> m_objId;
 
+    DeviceArray<Coord> posBuf;
+    DeviceArray<Real>  weights;
+    DeviceArray<Coord> init_pos;
 
-		DeviceArray<int> m_objId;
-		
+    std::shared_ptr<NeighborList<int>> m_nList;
 
-		DeviceArray<Coord> posBuf;
-		DeviceArray<Real> weights;
-		DeviceArray<Coord> init_pos;
-
-		std::shared_ptr<NeighborList<int>> m_nList;
-
-		std::vector<std::shared_ptr<RigidBody<TDataType>>> m_rigids;
-		std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;
-	};
-
+    std::vector<std::shared_ptr<RigidBody<TDataType>>>      m_rigids;
+    std::vector<std::shared_ptr<ParticleSystem<TDataType>>> m_particleSystems;
+};
 
 #ifdef PRECISION_FLOAT
-	template class SFIFast<DataType3f>;
+template class SFIFast<DataType3f>;
 #else
-	template class SFIFast<DataType3d>;
+template class SFIFast<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

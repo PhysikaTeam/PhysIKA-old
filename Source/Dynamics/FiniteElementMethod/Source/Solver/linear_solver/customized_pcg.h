@@ -19,22 +19,23 @@ namespace PhysIKA {
  * precondition conjugate gradient method.
  *
  */
-template<typename T, typename SPM_TYPE>
-class PCG{
- public:
-  PCG(const precond_type<T>& M = nullptr, const T tol = 1e-10, const bool sym = false);
-  int solve2(const SPM_TYPE& A, const T* b, const SPM_TYPE& J, const T* c, T* solution){
-    return solve(A, b, solution);
-  }
-  int solve(const SPM_TYPE& A, const T* b, T* solution);
+template <typename T, typename SPM_TYPE>
+class PCG
+{
+public:
+    PCG(const precond_type<T>& M = nullptr, const T tol = 1e-10, const bool sym = false);
+    int solve2(const SPM_TYPE& A, const T* b, const SPM_TYPE& J, const T* c, T* solution)
+    {
+        return solve(A, b, solution);
+    }
+    int solve(const SPM_TYPE& A, const T* b, T* solution);
 
-  private:
-  size_t max_itrs_;
-  double tol_;
-  const precond_type<T> M_;
-  const bool sym_;
+private:
+    size_t                max_itrs_;
+    double                tol_;
+    const precond_type<T> M_;
+    const bool            sym_;
 };
 
-
-}
+}  // namespace PhysIKA
 #endif

@@ -9,82 +9,77 @@
 
 #include <iostream>
 
-
 using PhysIKA::Node;
 
-using QtNodes::PortType;
-using QtNodes::PortIndex;
 using QtNodes::BlockData;
 using QtNodes::BlockDataType;
+using QtNodes::PortIndex;
+using QtNodes::PortType;
 using QtNodes::QtBlockDataModel;
 using QtNodes::ValidationState;
-
 
 class NodeImportData;
 class NodeExportData;
 
-namespace QtNodes
+namespace QtNodes {
+/// The model dictates the number of inputs and outputs for the Node.
+/// In this example it has no logic.
+class QtNodeWidget : public QtBlockDataModel
 {
-	/// The model dictates the number of inputs and outputs for the Node.
-	/// In this example it has no logic.
-	class QtNodeWidget : public QtBlockDataModel
-	{
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		QtNodeWidget(std::shared_ptr<Node> base = nullptr);
+public:
+    QtNodeWidget(std::shared_ptr<Node> base = nullptr);
 
-		virtual	~QtNodeWidget();
+    virtual ~QtNodeWidget();
 
-	public:
+public:
+    QString caption() const override;
 
-		QString caption() const override;
+    QString name() const override;
 
-		QString name() const override;
+    QString portCaption(PortType portType, PortIndex portIndex) const override;
 
-		QString	portCaption(PortType portType, PortIndex portIndex) const override;
+    QString validationMessage() const override;
 
-		QString	validationMessage() const override;
+    unsigned int nPorts(PortType portType) const override;
 
+    bool portCaptionVisible(PortType portType, PortIndex portIndex) const override;
 
-		unsigned int nPorts(PortType portType) const override;
+    std::shared_ptr<BlockData> outData(PortIndex port) override;
+    std::shared_ptr<BlockData> inData(PortIndex port) override;
 
+    void setInData(std::shared_ptr<BlockData> data, PortIndex portIndex) override;
 
-		bool portCaptionVisible(PortType portType, PortIndex portIndex) const override;
+    BlockDataType dataType(PortType portType, PortIndex portIndex) const override;
 
-		std::shared_ptr<BlockData> outData(PortIndex port) override;
-		std::shared_ptr<BlockData> inData(PortIndex port) override;
+    QWidget* embeddedWidget() override
+    {
+        return nullptr;
+    }
 
-		void setInData(std::shared_ptr<BlockData> data, PortIndex portIndex) override;
+    ValidationState validationState() const override;
 
-		BlockDataType dataType(PortType portType, PortIndex portIndex) const override;
+    ConnectionPolicy portInConnectionPolicy(PortIndex portIndex) const override;
 
+    std::shared_ptr<Node> getNode();
 
-		QWidget* embeddedWidget() override { return nullptr; }
+protected:
+    virtual void updateModule();
 
-		ValidationState validationState() const override;
+protected:
+    using ExportNodePtr = std::shared_ptr<NodeExportData>;
+    using ImportNodePtr = std::vector<std::shared_ptr<NodeImportData>>;
 
-		ConnectionPolicy portInConnectionPolicy(PortIndex portIndex) const override;
+    ImportNodePtr im_nodes;
+    ExportNodePtr ex_node;
 
-		std::shared_ptr<Node> getNode();
+    std::shared_ptr<Node> m_node = nullptr;
 
-	protected:
-		virtual void updateModule();
+    ValidationState modelValidationState = ValidationState::Valid;
+    QString         modelValidationError = QString("Missing or incorrect inputs");
 
-	protected:
-		using ExportNodePtr = std::shared_ptr<NodeExportData>;
-		using ImportNodePtr = std::vector<std::shared_ptr<NodeImportData>>;
+private:
+};
 
-		ImportNodePtr im_nodes;
-		ExportNodePtr ex_node;
-
-		std::shared_ptr<Node> m_node = nullptr;
-
-		ValidationState modelValidationState = ValidationState::Valid;
-		QString modelValidationError = QString("Missing or incorrect inputs");
-
-	private:
-	};
-
-
-}
+}  // namespace QtNodes

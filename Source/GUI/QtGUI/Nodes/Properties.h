@@ -6,42 +6,43 @@
 
 #include "Export.h"
 
-namespace QtNodes
-{
+namespace QtNodes {
 
 class NODE_EDITOR_PUBLIC Properties
 {
 public:
+    void
+    put(QString const& name, QVariant const& v);
 
-  void
-  put(QString const &name, QVariant const &v);
-
-  template <typename T>
-  bool
-  get(QString name, T* v) const
-  {
-    QVariant const &var = _values[name];
-
-    if (var.canConvert<T>())
+    template <typename T>
+    bool
+    get(QString name, T* v) const
     {
-      *v = _values[name].value<T>();
+        QVariant const& var = _values[name];
 
-      return true;
+        if (var.canConvert<T>())
+        {
+            *v = _values[name].value<T>();
+
+            return true;
+        }
+
+        return false;
     }
 
-    return false;
-  }
+    QVariantMap const&
+    values() const
+    {
+        return _values;
+    }
 
-  QVariantMap const &
-  values() const
-  { return _values; }
-
-  QVariantMap &
-  values()
-  { return _values; }
+    QVariantMap&
+    values()
+    {
+        return _values;
+    }
 
 private:
-
-  QVariantMap _values;
+    QVariantMap _values;
 };
-}
+}  // namespace QtNodes

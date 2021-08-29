@@ -1,18 +1,15 @@
 #pragma once
 #include "TopologyMapping.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+
+TopologyMapping::TopologyMapping()
+    : Module()
 {
-
-	TopologyMapping::TopologyMapping()
-		: Module()
-	{
-
-	}
-
-	TopologyMapping::~TopologyMapping()
-	{
-
-	}
-
 }
+
+TopologyMapping::~TopologyMapping()
+{
+}
+
+}  // namespace PhysIKA

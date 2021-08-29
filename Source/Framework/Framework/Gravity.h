@@ -1,29 +1,36 @@
 #pragma once
 #include "Framework/Framework/ModuleForce.h"
 
-namespace PhysIKA{
+namespace PhysIKA {
 
-template<typename TDataType>
+template <typename TDataType>
 class Gravity : public ForceModule
 {
-	DECLARE_CLASS_1(Gravity, TDataType)
+    DECLARE_CLASS_1(Gravity, TDataType)
 public:
-	typedef typename TDataType::Real Real;
-	typedef typename TDataType::Coord Coord;
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
 
-	Gravity();
-	virtual ~Gravity();
+    Gravity();
+    virtual ~Gravity();
 
-	bool applyForce() override;
+    bool applyForce() override;
 
-	void setGravity(Coord g) { m_gravity = g; }
+    void setGravity(Coord g)
+    {
+        m_gravity = g;
+    }
 
-	void setMassID(FieldID id) { m_massID = id; }
+    void setMassID(FieldID id)
+    {
+        m_massID = id;
+    }
+
 protected:
-	FieldID m_massID;
+    FieldID m_massID;
 
 private:
-	Coord m_gravity;
+    Coord m_gravity;
 };
 
 #ifdef PRECISION_FLOAT
@@ -32,5 +39,4 @@ template class Gravity<DataType3f>;
 template class Gravity<DataType3d>;
 #endif
 
-}
-
+}  // namespace PhysIKA

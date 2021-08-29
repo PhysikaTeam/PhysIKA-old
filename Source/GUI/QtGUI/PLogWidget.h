@@ -16,68 +16,67 @@
 
 #include <QTableWidgetItem>
 
-namespace PhysIKA
+namespace PhysIKA {
+/**
+     * @brief QLogSignal is used to send message from Log to QT PLogWidget.
+     * 
+     */
+class PLogSignal : public QObject
 {
-	/**
-	 * @brief QLogSignal is used to send message from Log to QT PLogWidget.
-	 * 
-	 */
-	class PLogSignal : public QObject
-	{
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		void setMessage(const Log::Message& message);
+public:
+    void setMessage(const Log::Message& message);
 
-	signals:
-		void sendMessage(const Log::Message& message);
-	};
+signals:
+    void sendMessage(const Log::Message& message);
+};
 
-	class QTimeTableWidgetItem : public QTableWidgetItem
-	{
-	public:
-		QTimeTableWidgetItem(void);
+class QTimeTableWidgetItem : public QTableWidgetItem
+{
+public:
+    QTimeTableWidgetItem(void);
 
-		virtual QSize sizeHint() const;
-	};
+    virtual QSize sizeHint() const;
+};
 
-	class PTableItemMessage : public QTableWidgetItem
-	{
-	public:
-		PTableItemMessage(const Log::Message& m);
-	};
+class PTableItemMessage : public QTableWidgetItem
+{
+public:
+    PTableItemMessage(const Log::Message& m);
+};
 
-	class PTableItemProgress : public QTableWidgetItem
-	{
-	public:
-		PTableItemProgress(const QString& Event, const float& Progress);
-	};
+class PTableItemProgress : public QTableWidgetItem
+{
+public:
+    PTableItemProgress(const QString& Event, const float& Progress);
+};
 
-	class PLogWidget : public QTableWidget
-	{
-		Q_OBJECT
+class PLogWidget : public QTableWidget
+{
+    Q_OBJECT
 
-	public:
-		PLogWidget(QWidget* pParent = NULL);
+public:
+    PLogWidget(QWidget* pParent = NULL);
 
-		static PLogSignal logSignal;
-		static void RecieveLogMessage(const Log::Message& m);
+    static PLogSignal logSignal;
+    static void       RecieveLogMessage(const Log::Message& m);
 
-		QSize sizeHint() const override;
+    QSize sizeHint() const override;
 
-		static void setOutput(std::string filename);
+    static void setOutput(std::string filename);
 
-	protected:
-		void contextMenuEvent(QContextMenuEvent* pContextMenuEvent);
+protected:
+    void contextMenuEvent(QContextMenuEvent* pContextMenuEvent);
 
-		QIcon getIcon(const QString& name);
+    QIcon getIcon(const QString& name);
 
-	public slots:
-		void OnLog(const Log::Message& m);
-// 		void OnLog(const QString& Message, const QString& Icon);
-// 		void OnLogProgress(const QString& Event, const float& Progress);
-		void OnClear(void);
-		void OnClearAll(void);
-	};
+public slots:
+    void OnLog(const Log::Message& m);
+    //         void OnLog(const QString& Message, const QString& Icon);
+    //         void OnLogProgress(const QString& Event, const float& Progress);
+    void OnClear(void);
+    void OnClearAll(void);
+};
 
-}
+}  // namespace PhysIKA

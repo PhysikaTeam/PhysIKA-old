@@ -1,23 +1,32 @@
 #pragma once
 #include "Module.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 class IOModule : public Module
 {
 public:
-	IOModule();
-	virtual ~IOModule();
+    IOModule();
+    virtual ~IOModule();
 
-	virtual void display() {};
+    virtual void display(){};
 
-	void enable(bool bEnable) { m_enabled = bEnable; }
-	bool isEnabled() { return m_enabled; }
+    void enable(bool bEnable)
+    {
+        m_enabled = bEnable;
+    }
+    bool isEnabled()
+    {
+        return m_enabled;
+    }
 
-	std::string getModuleType() override { return "IOModule"; }
+    std::string getModuleType() override
+    {
+        return "IOModule";
+    }
+
 protected:
-	bool m_enabled;
+    bool m_enabled;
 };
 
-}
+}  // namespace PhysIKA

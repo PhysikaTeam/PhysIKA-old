@@ -1,5 +1,6 @@
 #pragma once
 
-class Solver {
+class Solver
+{
 public:
 };

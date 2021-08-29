@@ -1,11 +1,10 @@
 #include "PConsoleWidget.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+PConsoleWidget::PConsoleWidget(QWidget* parent)
+    : QWidget(parent)
 {
-	PConsoleWidget::PConsoleWidget(QWidget *parent) :
-		QWidget(parent)
-	{
-//		setMinimumHeight(200);
-	}
-
+    //        setMinimumHeight(200);
 }
+
+}  // namespace PhysIKA

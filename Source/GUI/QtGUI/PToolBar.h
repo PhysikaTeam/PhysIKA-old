@@ -60,68 +60,70 @@ class QActionGroup;
 class QMenu;
 class QSpinBox;
 
-namespace PhysIKA
+namespace PhysIKA {
+class PToolBar : public QToolBar
 {
-	class PToolBar : public QToolBar
-	{
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		explicit PToolBar(const QString &title, QWidget *parent);
+public:
+    explicit PToolBar(const QString& title, QWidget* parent);
 
-		QMenu *toolbarMenu() const { return menu; }
+    QMenu* toolbarMenu() const
+    {
+        return menu;
+    }
 
-	private slots:
-		void order();
-		void randomize();
-		void addSpinBox();
-		void removeSpinBox();
+private slots:
+    void order();
+    void randomize();
+    void addSpinBox();
+    void removeSpinBox();
 
-		void changeMovable(bool movable);
+    void changeMovable(bool movable);
 
-		void allowLeft(bool a);
-		void allowRight(bool a);
-		void allowTop(bool a);
-		void allowBottom(bool a);
+    void allowLeft(bool a);
+    void allowRight(bool a);
+    void allowTop(bool a);
+    void allowBottom(bool a);
 
-		void placeLeft(bool p);
-		void placeRight(bool p);
-		void placeTop(bool p);
-		void placeBottom(bool p);
+    void placeLeft(bool p);
+    void placeRight(bool p);
+    void placeTop(bool p);
+    void placeBottom(bool p);
 
-		void updateMenu();
-		void insertToolBarBreak();
+    void updateMenu();
+    void insertToolBarBreak();
 
-	private:
-		void allow(Qt::ToolBarArea area, bool allow);
-		void place(Qt::ToolBarArea area, bool place);
+private:
+    void allow(Qt::ToolBarArea area, bool allow);
+    void place(Qt::ToolBarArea area, bool place);
 
-		QString m_mediaDir;
+    QString m_mediaDir;
 
-		QSpinBox *spinbox;
-		QAction *spinboxAction;
+    QSpinBox* spinbox;
+    QAction*  spinboxAction;
 
-		QMenu *menu;
-		QAction *orderAction;
-		QAction *randomizeAction;
-		QAction *addSpinBoxAction;
-		QAction *removeSpinBoxAction;
+    QMenu*   menu;
+    QAction* orderAction;
+    QAction* randomizeAction;
+    QAction* addSpinBoxAction;
+    QAction* removeSpinBoxAction;
 
-		QAction *movableAction;
+    QAction* movableAction;
 
-		QActionGroup *allowedAreasActions;
-		QAction *allowLeftAction;
-		QAction *allowRightAction;
-		QAction *allowTopAction;
-		QAction *allowBottomAction;
+    QActionGroup* allowedAreasActions;
+    QAction*      allowLeftAction;
+    QAction*      allowRightAction;
+    QAction*      allowTopAction;
+    QAction*      allowBottomAction;
 
-		QActionGroup *areaActions;
-		QAction *leftAction;
-		QAction *rightAction;
-		QAction *topAction;
-		QAction *bottomAction;
-	};
+    QActionGroup* areaActions;
+    QAction*      leftAction;
+    QAction*      rightAction;
+    QAction*      topAction;
+    QAction*      bottomAction;
+};
 
-}
+}  // namespace PhysIKA
 
-#endif // TOOLBAR_H
+#endif  // TOOLBAR_H

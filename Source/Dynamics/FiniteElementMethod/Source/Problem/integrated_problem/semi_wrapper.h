@@ -13,16 +13,19 @@
  * semi implicit method wrapper.
  *
  */
-template<typename T>
+template <typename T>
 class semi_wrapper
 {
 public:
-  semi_wrapper(): semi_implicit_(nullptr) { }
-  virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const { return semi_implicit_;}
+    semi_wrapper()
+        : semi_implicit_(nullptr) {}
+    virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const
+    {
+        return semi_implicit_;
+    }
 
 protected:
-  std::shared_ptr<semi_implicit<T>> semi_implicit_;
+    std::shared_ptr<semi_implicit<T>> semi_implicit_;
 };
 
-
-#endif // SEMI_WRAPPER_JJ_H
+#endif  // SEMI_WRAPPER_JJ_H

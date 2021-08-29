@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -25,21 +25,20 @@
 #include "API.h"
 #include "Styles.h"
 
-namespace tt
-{
-	
+namespace tt {
+
 using TStyleCreator = std::function<StyleParams*()>;
 
-TT_API void                         RegisterStyle(const QString& styleName, const TStyleCreator& creator);
-TT_API void                         UnregisterStyle(const QString& styleName);
-TT_API bool                         IsStyleRegistered(const QString& styleName);
-TT_API QString                      GetSheetForStyle(const StyleParams& style);
-TT_API QStringList                  GetRegisteredStyles();
+TT_API void        RegisterStyle(const QString& styleName, const TStyleCreator& creator);
+TT_API void        UnregisterStyle(const QString& styleName);
+TT_API bool        IsStyleRegistered(const QString& styleName);
+TT_API QString     GetSheetForStyle(const StyleParams& style);
+TT_API QStringList GetRegisteredStyles();
 TT_API std::unique_ptr<StyleParams> CreateStyle(const QString& styleName);
 TT_API QString                      GetDefaultStyle();
 
-float                               GetScaleFactor(const QWidget& widget);
-int                                 GetPixelMetric(QStyle::PixelMetric metric);
+float GetScaleFactor(const QWidget& widget);
+int   GetPixelMetric(QStyle::PixelMetric metric);
 
-}
+}  // namespace tt
 #endif

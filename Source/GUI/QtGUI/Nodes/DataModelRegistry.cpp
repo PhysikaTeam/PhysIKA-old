@@ -3,63 +3,59 @@
 #include <QtCore/QFile>
 #include <QtWidgets/QMessageBox>
 
+using QtNodes::BlockDataType;
 using QtNodes::DataModelRegistry;
 using QtNodes::QtBlockDataModel;
-using QtNodes::BlockDataType;
 using QtNodes::TypeConverter;
 
 std::unique_ptr<QtBlockDataModel>
 DataModelRegistry::
-create(QString const &modelName)
+    create(QString const& modelName)
 {
-  auto it = _registeredItemCreators.find(modelName);
+    auto it = _registeredItemCreators.find(modelName);
 
-  if (it != _registeredItemCreators.end())
-  {
-    return it->second();
-  }
+    if (it != _registeredItemCreators.end())
+    {
+        return it->second();
+    }
 
-  return nullptr;
+    return nullptr;
 }
 
-
-DataModelRegistry::RegisteredModelCreatorsMap const &
+DataModelRegistry::RegisteredModelCreatorsMap const&
 DataModelRegistry::
-registeredModelCreators() const
+    registeredModelCreators() const
 {
-  return _registeredItemCreators;
+    return _registeredItemCreators;
 }
 
-
-DataModelRegistry::RegisteredModelsCategoryMap const &
+DataModelRegistry::RegisteredModelsCategoryMap const&
 DataModelRegistry::
-registeredModelsCategoryAssociation() const
+    registeredModelsCategoryAssociation() const
 {
-  return _registeredModelsCategory;
+    return _registeredModelsCategory;
 }
 
-
-DataModelRegistry::CategoriesSet const &
+DataModelRegistry::CategoriesSet const&
 DataModelRegistry::
-categories() const
+    categories() const
 {
-  return _categories;
+    return _categories;
 }
-
 
 TypeConverter
 DataModelRegistry::
-getTypeConverter(BlockDataType const & d1,
-                 BlockDataType const & d2) const
+    getTypeConverter(BlockDataType const& d1,
+                     BlockDataType const& d2) const
 {
-  TypeConverterId converterId = std::make_pair(d1, d2);
+    TypeConverterId converterId = std::make_pair(d1, d2);
 
-  auto it = _registeredTypeConverters.find(converterId);
+    auto it = _registeredTypeConverters.find(converterId);
 
-  if (it != _registeredTypeConverters.end())
-  {
-    return it->second;
-  }
+    if (it != _registeredTypeConverters.end())
+    {
+        return it->second;
+    }
 
-  return TypeConverter{};
+    return TypeConverter{};
 }

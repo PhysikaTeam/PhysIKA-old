@@ -15,18 +15,19 @@
 #ifndef PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
 #define PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
 
-namespace PhysIKA{
+namespace PhysIKA {
 
 class MatrixBase
 {
 public:
-    MatrixBase(){}
-    virtual ~MatrixBase(){}
-	COMM_FUNC virtual unsigned int rows() const=0;
-	COMM_FUNC virtual unsigned int cols() const=0;
+    MatrixBase() {}
+    virtual ~MatrixBase() {}
+    COMM_FUNC virtual unsigned int rows() const = 0;
+    COMM_FUNC virtual unsigned int cols() const = 0;
+
 protected:
 };
 
 }  //end of namespace PhysIKA
 
-#endif //PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_
+#endif  //PHYSIKA_CORE_MATRICES_MATRIX_BASE_H_

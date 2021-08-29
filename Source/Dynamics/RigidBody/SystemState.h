@@ -5,51 +5,50 @@
 #include <memory>
 #include <vector>
 
-
-namespace PhysIKA
+namespace PhysIKA {
+class SystemState
 {
-	class SystemState
-	{
-	public:
+public:
+    SystemState(Node* node = 0)
+        : m_root(node)
+    {
+    }
 
-		SystemState(Node* node = 0) :m_root(node)
-		{}
+    void setRoot(Node* node = 0)
+    {
+        this->m_root = node;
+        if (this->m_motionState)
+            this->m_motionState->setRoot(node);
+    }
 
-		void setRoot(Node* node = 0)
-		{
-			this->m_root = node;
-			if(this->m_motionState)
-				this->m_motionState->setRoot(node);
-		}
+    void setRigidNum(int n)
+    {
+        this->m_externalForce.resize(n);
+        if (m_motionState)
+        {
+            m_motionState->setRigidNum(n);
+        }
+    }
 
-		void setRigidNum(int n)
-		{
-			this->m_externalForce.resize(n);
-			if (m_motionState)
-			{
-				m_motionState->setRigidNum(n);
-			}
-		}
+    void setNum(int n, int dof)
+    {
+        this->m_externalForce.resize(n);
+        this->m_activeForce.resize(dof);
+        if (m_motionState)
+        {
+            m_motionState->setNum(n, dof);
+        }
+    }
 
-		void setNum(int n, int dof)
-		{
-			this->m_externalForce.resize(n);
-			this->m_activeForce.resize(dof);
-			if (m_motionState)
-			{
-				m_motionState->setNum(n, dof);
-			}
-		}
+public:
+    Node* m_root = 0;
 
-	public:
-		Node* m_root = 0;
+    std::shared_ptr<SystemMotionState> m_motionState = 0;
 
-		std::shared_ptr<SystemMotionState> m_motionState=0;
+    std::vector<SpatialVector<float>> m_externalForce;  // The origin of the external force is the center of rigid body.
 
-		std::vector<SpatialVector<float>> m_externalForce;			// The origin of the external force is the center of rigid body.
-	
-		Vectornd<float> m_activeForce;								// 
+    Vectornd<float> m_activeForce;  //
 
-		Vector3f m_gravity;
-	};
-}
+    Vector3f m_gravity;
+};
+}  // namespace PhysIKA

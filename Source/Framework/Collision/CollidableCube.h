@@ -2,23 +2,20 @@
 #include "Core/Array/Array.h"
 #include "Framework/Framework/CollidableObject.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+template <typename TDataType>
+class CollidableCube : public CollidableObject
 {
-	template<typename TDataType>
-	class CollidableCube : public CollidableObject
-	{
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
 
-		CollidableCube();
-		virtual ~CollidableCube();
+    CollidableCube();
+    virtual ~CollidableCube();
 
-	private:
-		Coord m_length;
-		Coord m_center;
-	};
+private:
+    Coord m_length;
+    Coord m_center;
+};
 
-
-
-}
+}  // namespace PhysIKA

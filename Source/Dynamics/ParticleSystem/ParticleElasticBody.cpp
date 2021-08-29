@@ -1,187 +1,160 @@
+/**
+ * @author     : He Xiaowei (Clouddon@sina.com)
+ * @date       : 2019-05-14
+ * @description: Implementation of ParticleElasticBody class, projective-peridynamics based elastic bodies
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-20
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include "ParticleElasticBody.h"
+
+#include "Core/Utility.h"
+#include "Framework/Framework/ControllerAnimation.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
-#include "Core/Utility.h"
 #include "Framework/Mapping/PointSetToPointSet.h"
 #include "Framework/Topology/NeighborQuery.h"
 #include "ParticleIntegrator.h"
 #include "ElasticityModule.h"
-#include "Core/OutputMesh.h"
-namespace PhysIKA
+
+namespace PhysIKA {
+IMPLEMENT_CLASS_1(ParticleElasticBody, TDataType)
+
+template <typename TDataType>
+ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
+    : ParticleSystem<TDataType>(name)
 {
-	IMPLEMENT_CLASS_1(ParticleElasticBody, TDataType)
+    this->varHorizon()->setValue(0.0085);
 
-	template<typename TDataType>
-	ParticleElasticBody<TDataType>::ParticleElasticBody(std::string name)
-		: ParticleSystem<TDataType>(name)
-	{
-		this->varHorizon()->setValue(0.0085);
-		//		this->attachField(&m_horizon, "horizon", "horizon");
+    /*note on connect operation of VarField:
+     it leads to memory sharing between 2 fields,
+     A->connect(B) means B uses A's memory
+     */
 
-		auto m_integrator = this->template setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
-		this->currentPosition()->connect(m_integrator->inPosition());
-		this->currentVelocity()->connect(m_integrator->inVelocity());
-		this->currentForce()->connect(m_integrator->inForceDensity());
+    //register integrator
+    auto m_integrator = this->template setNumericalIntegrator<ParticleIntegrator<TDataType>>("integrator");
+    this->currentPosition()->connect(m_integrator->inPosition());
+    this->currentVelocity()->connect(m_integrator->inVelocity());
+    this->currentForce()->connect(m_integrator->inForceDensity());
+    this->getAnimationPipeline()->push_back(m_integrator);
 
-		this->getAnimationPipeline()->push_back(m_integrator);
+    //register neighbor query operation
+    auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
+    this->varHorizon()->connect(m_nbrQuery->inRadius());
+    this->currentPosition()->connect(m_nbrQuery->inPosition());
+    this->getAnimationPipeline()->push_back(m_nbrQuery);
 
-		auto m_nbrQuery = this->template addComputeModule<NeighborQuery<TDataType>>("neighborhood");
-		this->varHorizon()->connect(m_nbrQuery->inRadius());
-		this->currentPosition()->connect(m_nbrQuery->inPosition());
+    //register elasticity module
+    auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
+    this->varHorizon()->connect(m_elasticity->inHorizon());
+    this->currentPosition()->connect(m_elasticity->inPosition());
+    this->currentVelocity()->connect(m_elasticity->inVelocity());
+    m_nbrQuery->outNeighborhood()->connect(m_elasticity->inNeighborhood());
+    this->getAnimationPipeline()->push_back(m_elasticity);
 
-		this->getAnimationPipeline()->push_back(m_nbrQuery);
+    //Create a node for surface mesh rendering
+    m_surfaceNode = this->template createChild<Node>("Mesh");
+    auto triSet   = m_surfaceNode->template setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
 
-
-		auto m_elasticity = this->template addConstraintModule<ElasticityModule<TDataType>>("elasticity");
-		this->varHorizon()->connect(m_elasticity->inHorizon());
-		this->currentPosition()->connect(m_elasticity->inPosition());
-		this->currentVelocity()->connect(m_elasticity->inVelocity());
-		m_nbrQuery->outNeighborhood()->connect(m_elasticity->inNeighborhood());
-
-		this->getAnimationPipeline()->push_back(m_elasticity);
-
-		//Create a node for surface mesh rendering
-		m_surfaceNode = this->template createChild<Node>("Mesh");
-
-		auto triSet = m_surfaceNode->template setTopologyModule<TriangleSet<TDataType>>("surface_mesh");
-
-		//Set the topology mapping from PointSet to TriangleSet
-		auto surfaceMapping = this->template addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");
-		surfaceMapping->setFrom(this->m_pSet);
-		surfaceMapping->setTo(triSet);
-	}
-
-	template<typename TDataType>
-	ParticleElasticBody<TDataType>::~ParticleElasticBody()
-	{
-
-	}
-
-	template<typename TDataType>
-	bool ParticleElasticBody<TDataType>::translate(Coord t)
-	{
-		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
-
-		return ParticleSystem<TDataType>::translate(t);
-	}
-
-	template<typename TDataType>
-	bool ParticleElasticBody<TDataType>::scale(Real s)
-	{
-		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->scale(s);
-
-		return ParticleSystem<TDataType>::scale(s);
-	}
-
-
-	template<typename TDataType>
-	bool ParticleElasticBody<TDataType>::initialize()
-	{
-		return ParticleSystem<TDataType>::initialize();
-	}
-
-	template<typename TDataType>
-	void ParticleElasticBody<TDataType>::advance(Real dt)
-	{
-		auto integrator = this->template getModule<ParticleIntegrator<TDataType>>("integrator");
-
-		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
-
-		integrator->begin();
-
-		integrator->integrate();
-
-		if (module != nullptr)
-			module->constrain();
-
-		integrator->end();
-	}
-
-	template<typename TDataType>
-	void ParticleElasticBody<TDataType>::updateTopology()
-	{
-		auto pts = this->m_pSet->getPoints();
-		Function1Pt::copy(pts, this->currentPosition()->getValue());
-
-		auto tMappings = this->getTopologyMappingList();
-		for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)
-		{
-			(*iter)->apply();
-		}
-		if(OUTPUT_MESH){
-	
-	//-> output the surface mesh.
-		frame_id++;
-		if (frame_id % out_step != 0) {
-			return;
-		}
-		auto Mesh = TypeInfo::cast<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule());
-		if (!Mesh) {
-			return;
-		}
-		auto F = Mesh->getTriangles();
-		auto V = Mesh->getPoints();
-		std::vector<TopologyModule::Triangle> hF;
-		std::vector<TDataType::Coord> hV;
-		hF.resize(F->size());
-		hV.resize(V.size());
-		Function1Pt::copy(hF, *F);
-		Function1Pt::copy(hV, V);
-		//cout << "wtf??? F.size(): " << hF.size() << endl;
-		//cout << "wtf??? V.size(): " << hV.size() << endl;
-		std::ofstream fout("pe_v_"+std::to_string(V.size())+"_f_"+std::to_string(F->size())+"_"+std::to_string(frame_id/out_step)+".obj");
-		for (size_t i = 0; i < hV.size(); ++i) {
-			fout << "v " << hV[i][0] << " " << hV[i][1] << " " << hV[i][2] << "\n";
-		}
-		for (size_t i = 0; i < hF.size(); ++i) {
-			fout << "f " << hF[i][0]+1 << " " << hF[i][1]+1 << " " << hF[i][2]+1 << "\n";
-		}
-		fout.close();
-		}
-	
-	
-	}
-
-
-	template<typename TDataType>
-	std::shared_ptr<ElasticityModule<TDataType>> ParticleElasticBody<TDataType>::getElasticitySolver()
-	{
-		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
-		return module;
-	}
-
-
-	template<typename TDataType>
-	void ParticleElasticBody<TDataType>::setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver)
-	{
-		auto nbrQuery = this->template getModule<NeighborQuery<TDataType>>("neighborhood");
-		auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
-
-		this->currentPosition()->connect(solver->inPosition());
-		this->currentVelocity()->connect(solver->inVelocity());
-		nbrQuery->outNeighborhood()->connect(solver->inNeighborhood());
-		this->varHorizon()->connect(solver->inHorizon());
-
-		this->deleteModule(module);
-
-		solver->setName("elasticity");
-		this->addConstraintModule(solver);
-	}
-
-
-	template<typename TDataType>
-	void ParticleElasticBody<TDataType>::loadSurface(std::string filename)
-	{
-		TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->loadObjFile(filename);
-	}
-
-
-	template<typename TDataType>
-	std::shared_ptr<PointSetToPointSet<TDataType>> ParticleElasticBody<TDataType>::getTopologyMapping()
-	{
-		auto mapping = this->template getModule<PointSetToPointSet<TDataType>>("surface_mapping");
-
-		return mapping;
-	}
-
+    //Set the topology mapping from PointSet to TriangleSet
+    //the mapping will be used to deform the mesh according to particle configuration
+    auto surfaceMapping = this->template addTopologyMapping<PointSetToPointSet<TDataType>>("surface_mapping");
+    surfaceMapping->setFrom(this->m_pSet);  //source
+    surfaceMapping->setTo(triSet);          //target
 }
+
+template <typename TDataType>
+ParticleElasticBody<TDataType>::~ParticleElasticBody()
+{
+}
+
+template <typename TDataType>
+bool ParticleElasticBody<TDataType>::translate(Coord t)
+{
+    TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->translate(t);
+
+    return ParticleSystem<TDataType>::translate(t);
+}
+
+template <typename TDataType>
+bool ParticleElasticBody<TDataType>::scale(Real s)
+{
+    TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->scale(s);
+
+    return ParticleSystem<TDataType>::scale(s);
+}
+
+template <typename TDataType>
+bool ParticleElasticBody<TDataType>::initialize()
+{
+    return ParticleSystem<TDataType>::initialize();
+}
+
+template <typename TDataType>
+void ParticleElasticBody<TDataType>::advance(Real dt)
+{
+    auto integrator = this->template getModule<ParticleIntegrator<TDataType>>("integrator");
+    auto module     = this->template getModule<ElasticityModule<TDataType>>("elasticity");
+
+    integrator->begin();
+    integrator->integrate();
+    if (module != nullptr)
+        module->constrain();
+    integrator->end();
+}
+
+template <typename TDataType>
+void ParticleElasticBody<TDataType>::updateTopology()
+{
+    auto pts = this->m_pSet->getPoints();
+    Function1Pt::copy(pts, this->currentPosition()->getValue());
+
+    auto tMappings = this->getTopologyMappingList();
+    for (auto iter = tMappings.begin(); iter != tMappings.end(); iter++)
+    {
+        (*iter)->apply();
+    }
+}
+
+template <typename TDataType>
+std::shared_ptr<ElasticityModule<TDataType>> ParticleElasticBody<TDataType>::getElasticitySolver()
+{
+    auto module = this->template getModule<ElasticityModule<TDataType>>("elasticity");
+    return module;
+}
+
+template <typename TDataType>
+void ParticleElasticBody<TDataType>::setElasticitySolver(std::shared_ptr<ElasticityModule<TDataType>> solver)
+{
+    auto nbrQuery = this->template getModule<NeighborQuery<TDataType>>("neighborhood");
+    auto module   = this->template getModule<ElasticityModule<TDataType>>("elasticity");
+
+    this->currentPosition()->connect(solver->inPosition());
+    this->currentVelocity()->connect(solver->inVelocity());
+    nbrQuery->outNeighborhood()->connect(solver->inNeighborhood());
+    this->varHorizon()->connect(solver->inHorizon());
+
+    this->deleteModule(module);
+
+    solver->setName("elasticity");
+    this->addConstraintModule(solver);
+}
+
+template <typename TDataType>
+void ParticleElasticBody<TDataType>::loadSurface(std::string filename)
+{
+    TypeInfo::CastPointerDown<TriangleSet<TDataType>>(m_surfaceNode->getTopologyModule())->loadObjFile(filename);
+}
+
+template <typename TDataType>
+std::shared_ptr<PointSetToPointSet<TDataType>> ParticleElasticBody<TDataType>::getTopologyMapping()
+{
+    auto mapping = this->template getModule<PointSetToPointSet<TDataType>>("surface_mapping");
+
+    return mapping;
+}
+
+}  // namespace PhysIKA

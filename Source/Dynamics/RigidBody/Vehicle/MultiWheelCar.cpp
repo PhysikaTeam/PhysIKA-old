@@ -12,13 +12,6 @@
 #include "MultiWheelCar.h"
 #include <functional>
 #include <cmath>
-namespace PhysIKA
-{
-
-
-
-
-
-
+namespace PhysIKA {
 
 }

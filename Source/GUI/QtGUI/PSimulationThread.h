@@ -5,44 +5,41 @@
 #include <QMutex>
 #include <QWaitCondition>
 
-namespace PhysIKA
+namespace PhysIKA {
+class PSimulationThread : public QThread
 {
-	class PSimulationThread : public QThread
-	{
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		static PSimulationThread* instance();
-		
+public:
+    static PSimulationThread* instance();
 
-		void pause();
-		void resume();
-		void stop();
+    void pause();
+    void resume();
+    void stop();
 
-		void run() override;
+    void run() override;
 
-		void reset();
+    void reset();
 
-		void startRendering();
-		void stopRendering();
+    void startRendering();
+    void stopRendering();
 
-		void setTotalFrames(int num);
+    void setTotalFrames(int num);
 
-	Q_SIGNALS:
-		//Note: should not be emitted from the user
-		void oneFrameFinished();
+Q_SIGNALS:
+    //Note: should not be emitted from the user
+    void oneFrameFinished();
 
-	private:
-		PSimulationThread();
+private:
+    PSimulationThread();
 
-		int max_frames;
+    int max_frames;
 
-		bool m_paused = false;
-		bool m_rendering = false;
+    bool m_paused    = false;
+    bool m_rendering = false;
 
-		QMutex m_mutex;
-	};
-}
+    QMutex m_mutex;
+};
+}  // namespace PhysIKA
 
-
-#endif // PSIMULATIONTHREAD_H
+#endif  // PSIMULATIONTHREAD_H

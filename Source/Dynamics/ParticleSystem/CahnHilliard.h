@@ -1,50 +1,64 @@
 /**
- * @file CahnHilliard.h
- * @author Chen Xiaosong
- * @brief
- * @version 0.1
- * @date 2019-06-18
- * 
- * @copyright Copyright (c) 2019
- * 
+ * @author     : Chen Xiaosong (xiaosong0911@gmail.com)
+ * @date       : 2019-06-02
+ * @description: Declaration of CahnHilliard class, which implements the CahnHilliard model
+ *               introduced in the paper <Fast Multiple-fluid Simulation Using Helmholtz Free Energy>
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-27
+ * @description: poslish code
+ * @version    : 1.1
  */
+
 #pragma once
+
 #include "Framework/Framework/Module.h"
-
-namespace PhysIKA
+namespace PhysIKA {
+/**
+ * CahnHilliard implements the CahnHilliard model of the paper
+ * <Fast Multiple-fluid Simulation Using Helmholtz Free Energy>
+ * It is used in MultipleFluidModel class
+ * TODO(Zhu Fei): complete the code comments.
+ */
+template <typename TDataType, int PhaseCount = 2>
+class CahnHilliard : public Module
 {
-    template<typename TDataType, int PhaseCount = 2>
-	class CahnHilliard : public Module
-    {
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
-        using PhaseVector = Vector<Real, PhaseCount>;
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
+    using PhaseVector = Vector<Real, PhaseCount>;
 
-		CahnHilliard();
-		~CahnHilliard() override;
+    CahnHilliard();
+    ~CahnHilliard() override;
 
-		bool initializeImpl() override;
+    /**
+     * update states, generally called in simulation advance() calls
+     *
+     * @return  true if succeeds, false otherwise
+     */
+    bool integrate();
 
-		bool integrate();
+protected:
+    bool initializeImpl() override;
 
-		VarField<Real> m_particleVolume;
-		VarField<Real> m_smoothingLength;
+public:
+    VarField<Real> m_particleVolume;
+    VarField<Real> m_smoothingLength;
 
-		VarField<Real> m_degenerateMobilityM;
-		VarField<Real> m_interfaceEpsilon;
+    VarField<Real> m_degenerateMobilityM;
+    VarField<Real> m_interfaceEpsilon;
 
-        DeviceArrayField<Coord> m_position;
+    DeviceArrayField<Coord> m_position;
 
-		NeighborField<int> m_neighborhood;
+    NeighborField<int> m_neighborhood;
 
-		DeviceArrayField<PhaseVector> m_chemicalPotential;
-        DeviceArrayField<PhaseVector> m_concentration;
-	};
+    DeviceArrayField<PhaseVector> m_chemicalPotential;
+    DeviceArrayField<PhaseVector> m_concentration;
+};
 #ifdef PRECISION_FLOAT
-	template class CahnHilliard<DataType3f>;
+template class CahnHilliard<DataType3f>;
 #else
-	template class CahnHilliard<DataType3d>;
+template class CahnHilliard<DataType3d>;
 #endif
-}
-
+}  // namespace PhysIKA

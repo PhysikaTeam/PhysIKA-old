@@ -1,6 +1,5 @@
 #include "Dynamics/RigidBody/HostNeighborList.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 
 }

@@ -1,21 +1,18 @@
 #include "ActNodeInfo.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+
+NodeInfoAct::NodeInfoAct()
 {
-	
-	NodeInfoAct::NodeInfoAct()
-	{
-
-	}
-
-	NodeInfoAct::~NodeInfoAct()
-	{
-
-	}
-
-	void NodeInfoAct::process(Node* node)
-	{
-		std::cout << node->getName() << std::endl;
-	}
-
 }
+
+NodeInfoAct::~NodeInfoAct()
+{
+}
+
+void NodeInfoAct::process(Node* node)
+{
+    std::cout << node->getName() << std::endl;
+}
+
+}  // namespace PhysIKA

@@ -3,17 +3,15 @@
 
 #include <QTableWidget>
 
-namespace PhysIKA
+namespace PhysIKA {
+class PIOTabWidget : public QTabWidget
 {
-	class PIOTabWidget : public QTabWidget
-	{
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		PIOTabWidget();
-	};
+public:
+    PIOTabWidget();
+};
 
-}
+}  // namespace PhysIKA
 
-
-#endif // PIOTABWIDGET_H
+#endif  // PIOTABWIDGET_H

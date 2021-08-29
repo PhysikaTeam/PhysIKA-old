@@ -5,31 +5,30 @@
 #include "Rendering/LineRender.h"
 #include "Rendering/TriangleRender.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+class SurfaceMeshRender : public VisualModule
 {
-	class SurfaceMeshRender : public VisualModule
-	{
-		DECLARE_CLASS(SurfaceMeshRender)
-	public:
-		SurfaceMeshRender();
-		~SurfaceMeshRender();
+    DECLARE_CLASS(SurfaceMeshRender)
+public:
+    SurfaceMeshRender();
+    ~SurfaceMeshRender();
 
-		void display() override;
-		void setColor(Vector3f color);
+    void display() override;
+    void setColor(Vector3f color);
 
-	protected:
-		bool  initializeImpl() override;
+protected:
+    bool initializeImpl() override;
 
-		void updateRenderingContext() override;
+    void updateRenderingContext() override;
 
-	private:
-		Vector3f m_color;
+private:
+    Vector3f m_color;
 
-		DeviceArray<float3> vertices;
-		DeviceArray<float3> normals;
-		DeviceArray<float3> colors;
+    DeviceArray<float3> vertices;
+    DeviceArray<float3> normals;
+    DeviceArray<float3> colors;
 
-		std::shared_ptr<TriangleRender> m_triangleRender;
-	};
+    std::shared_ptr<TriangleRender> m_triangleRender;
+};
 
-}
+}  // namespace PhysIKA

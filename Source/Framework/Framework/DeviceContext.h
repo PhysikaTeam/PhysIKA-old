@@ -4,8 +4,7 @@
 #include <memory>
 #include "Framework/Framework/Module.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 /**
 *  \brief Base class for simulation context
 *
@@ -15,44 +14,44 @@ namespace PhysIKA
 class DeviceContext : public Module
 {
 public:
-	DeviceContext();
-	virtual ~DeviceContext();
+    DeviceContext();
+    virtual ~DeviceContext();
 
-	void enable();
+    void enable();
 
-	bool setDevice(int i);
-	int getDevice();
+    bool setDevice(int i);
+    int  getDevice();
 
-/*	template<typename T>
-	std::shared_ptr< DeviceVariable<T> > allocDeviceVariable(std::string name, std::string description)
-	{
-		return allocVariable<T, DeviceType::GPU>(name, description);
-	}
+    /*    template<typename T>
+    std::shared_ptr< DeviceVariable<T> > allocDeviceVariable(std::string name, std::string description)
+    {
+        return allocVariable<T, DeviceType::GPU>(name, description);
+    }
 
-	template<typename T>
-	std::shared_ptr< DeviceBuffer<T> > allocDeviceBuffer(std::string name, std::string description, int num)
-	{
-		return allocArrayBuffer<T, DeviceType::GPU>(name, description, num);
-	}
+    template<typename T>
+    std::shared_ptr< DeviceBuffer<T> > allocDeviceBuffer(std::string name, std::string description, int num)
+    {
+        return allocArrayBuffer<T, DeviceType::GPU>(name, description, num);
+    }
 
-	template<typename T>
-	std::shared_ptr< DeviceVariable<T> > getDeviceVariable(std::string name)
-	{
-		return getVariable<T, DeviceType::GPU>(name);
-	}
+    template<typename T>
+    std::shared_ptr< DeviceVariable<T> > getDeviceVariable(std::string name)
+    {
+        return getVariable<T, DeviceType::GPU>(name);
+    }
 
-	template<typename T>
-	std::shared_ptr< DeviceBuffer<T> > getDeviceBuffer(std::string name)
-	{
-		return getArrayBuffer<T, DeviceType::GPU>(name);
-	}*/
+    template<typename T>
+    std::shared_ptr< DeviceBuffer<T> > getDeviceBuffer(std::string name)
+    {
+        return getArrayBuffer<T, DeviceType::GPU>(name);
+    }*/
 
 public:
-	int m_deviceID;
-	int m_deviceNum;
-	DeviceType m_deviceType;
-		
-	cudaStream_t stream;
+    int        m_deviceID;
+    int        m_deviceNum;
+    DeviceType m_deviceType;
+
+    cudaStream_t stream;
 };
 
-}
+}  // namespace PhysIKA

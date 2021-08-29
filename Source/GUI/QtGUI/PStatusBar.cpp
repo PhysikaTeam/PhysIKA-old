@@ -4,23 +4,19 @@
 #include <QProgressBar>
 #include <QLabel>
 
-namespace PhysIKA
+namespace PhysIKA {
+PStatusBar::PStatusBar(QWidget* parent)
+    : QStatusBar(parent), m_progressBar(nullptr), m_progressLabel(nullptr)
 {
-	PStatusBar::PStatusBar(QWidget *parent) :
-		QStatusBar(parent),
-		m_progressBar(nullptr),
-		m_progressLabel(nullptr)
-	{
-		m_progressBar = new QProgressBar();
-		m_progressLabel = new QLabel();
+    m_progressBar   = new QProgressBar();
+    m_progressLabel = new QLabel();
 
-		m_progressBar->setFixedWidth(200);
+    m_progressBar->setFixedWidth(200);
 
-		addPermanentWidget(m_progressBar);
-		addPermanentWidget(m_progressLabel);
+    addPermanentWidget(m_progressBar);
+    addPermanentWidget(m_progressLabel);
 
-		m_progressBar->hide();
-	}
-
+    m_progressBar->hide();
 }
 
+}  // namespace PhysIKA

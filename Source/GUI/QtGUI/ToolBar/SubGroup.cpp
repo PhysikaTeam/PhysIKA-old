@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -29,7 +29,8 @@
 
 using namespace tt;
 
-SubGroup::SubGroup(Align align, QWidget* parent) : QFrame(parent)
+SubGroup::SubGroup(Align align, QWidget* parent)
+    : QFrame(parent)
 {
     setFrameShape(NoFrame);
     setLineWidth(0);
@@ -49,7 +50,7 @@ SubGroup::SubGroup(Align align, QWidget* parent) : QFrame(parent)
 void SubGroup::AddAction(QToolButton::ToolButtonPopupMode type, QAction* action, QMenu* menu)
 {
     const int iconSize = GetPixelMetric(QStyle::PM_SmallIconSize) * GetScaleFactor(*this);
-    QFrame* frame = ConstructInnerFrame(0);
+    QFrame*   frame    = ConstructInnerFrame(0);
 
     QToolButton* btn = new QToolButton(this);
     btn->setProperty("TTInternal", QVariant(true));
@@ -58,12 +59,12 @@ void SubGroup::AddAction(QToolButton::ToolButtonPopupMode type, QAction* action,
     btn->setDefaultAction(action);
     btn->setPopupMode(type);
     btn->setIconSize(QSize(iconSize, iconSize));
-    if(menu)
+    if (menu)
         btn->setMenu(menu);
     btn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 
     frame->layout()->addWidget(btn);
-    innerLayout->insertWidget(innerLayout->count()-1, frame);
+    innerLayout->insertWidget(innerLayout->count() - 1, frame);
 }
 
 void SubGroup::AddWidget(QWidget* widget)
@@ -72,16 +73,16 @@ void SubGroup::AddWidget(QWidget* widget)
     widget->setParent(frame);
     widget->setProperty("TTInternal", QVariant(true));
     frame->layout()->addWidget(widget);
-    innerLayout->insertWidget(innerLayout->count()-1, frame);
+    innerLayout->insertWidget(innerLayout->count() - 1, frame);
 }
 
 void SubGroup::AddHorizontalButtons(const std::vector<ActionParams>& params)
 {
     const int iconSize = GetPixelMetric(QStyle::PM_SmallIconSize) * GetScaleFactor(*this);
-    QFrame* frame = ConstructInnerFrame(0);
+    QFrame*   frame    = ConstructInnerFrame(0);
     frame->setProperty("TTHorizontalFrame", QVariant(true));
 
-    for(auto& param : params)
+    for (auto& param : params)
     {
         QToolButton* btn = new QToolButton(this);
         btn->setProperty("TTInternal", QVariant(true));
@@ -90,13 +91,13 @@ void SubGroup::AddHorizontalButtons(const std::vector<ActionParams>& params)
         btn->setDefaultAction(param.action);
         btn->setPopupMode(param.type);
         btn->setIconSize(QSize(iconSize, iconSize));
-        if(param.menu)
+        if (param.menu)
             btn->setMenu(param.menu);
         btn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         frame->layout()->addWidget(btn);
     }
 
-    innerLayout->insertWidget(innerLayout->count()-1, frame);
+    innerLayout->insertWidget(innerLayout->count() - 1, frame);
 }
 
 QFrame* SubGroup::ConstructInnerFrame(int spacing)
@@ -107,7 +108,7 @@ QFrame* SubGroup::ConstructInnerFrame(int spacing)
         throw std::runtime_error("Group should be constructed inside TabToolbar!");
 
     unsigned groupMaxHeight = parentTT->GroupMaxHeight();
-    unsigned rowCount = parentTT->RowCount();
+    unsigned rowCount       = parentTT->RowCount();
 
     QFrame* frame = new QFrame(this);
     frame->setFrameShape(QFrame::NoFrame);

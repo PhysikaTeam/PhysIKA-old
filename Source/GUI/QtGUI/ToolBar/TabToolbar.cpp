@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -33,10 +33,8 @@
 
 using namespace tt;
 
-TabToolbar::TabToolbar(QWidget* parent, unsigned _groupMaxHeight, unsigned _groupRowCount) :
-    QToolBar(parent),
-    groupRowCount(_groupRowCount),
-    groupMaxHeight(_groupMaxHeight)
+TabToolbar::TabToolbar(QWidget* parent, unsigned _groupMaxHeight, unsigned _groupRowCount)
+    : QToolBar(parent), groupRowCount(_groupRowCount), groupMaxHeight(_groupMaxHeight)
 {
     setObjectName("TabToolbar");
     tempShowTimer.setSingleShot(true);
@@ -53,7 +51,7 @@ TabToolbar::TabToolbar(QWidget* parent, unsigned _groupMaxHeight, unsigned _grou
     tabBar = new QTabWidget(this);
     tabBar->setProperty("TTWidget", QVariant(true));
     tabBar->tabBar()->setProperty("TTTab", QVariant(true));
-	
+
     tabBarHandle = addWidget(tabBar);
     tabBar->setUsesScrollButtons(true);
 
@@ -78,13 +76,12 @@ TabToolbar::TabToolbar(QWidget* parent, unsigned _groupMaxHeight, unsigned _grou
     hideButton->setDefaultAction(hideAction);
     hideButton->setAutoRaise(true);
     hideButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QObject::connect(hideAction, &QAction::triggered, [this]()
-    {
+    QObject::connect(hideAction, &QAction::triggered, [this]() {
         tempShowTimer.start();
         isMinimized = hideAction->isChecked();
         hideAction->setText(isMinimized ? "2" : "1");
         HideAt(tabBar->currentIndex());
-        if(isMinimized)
+        if (isMinimized)
             emit Minimized();
         else
             emit Maximized();
@@ -92,7 +89,7 @@ TabToolbar::TabToolbar(QWidget* parent, unsigned _groupMaxHeight, unsigned _grou
     QObject::connect(tabBar, &QTabWidget::tabBarDoubleClicked, hideAction, &QAction::trigger);
     QObject::connect(tabBar, &QTabWidget::tabBarClicked, this, &TabToolbar::TabClicked);
     QObject::connect(tabBar, &QTabWidget::currentChanged, this, &TabToolbar::CurrentTabChanged);
-    QObject::connect((QApplication*)QApplication::instance(), &QApplication::focusChanged, this, &TabToolbar::FocusChanged);
+    QObject::connect(( QApplication* )QApplication::instance(), &QApplication::focusChanged, this, &TabToolbar::FocusChanged);
     cornerLayout->addWidget(hideButton);
     tabBar->setCornerWidget(cornerActions);
 
@@ -105,9 +102,8 @@ TabToolbar::~TabToolbar()
 
 bool TabToolbar::event(QEvent* event)
 {
-    if(event->type() == QEvent::StyleChange && !ignoreStyleEvent)
-        QTimer::singleShot(0, this, [this]()
-        { // on KDE new palette is not ready yet, wait
+    if (event->type() == QEvent::StyleChange && !ignoreStyleEvent)
+        QTimer::singleShot(0, this, [this]() {  // on KDE new palette is not ready yet, wait
             const QString styleName = (style ? style->objectName() : GetDefaultStyle());
             SetStyle(styleName);
         });
@@ -116,18 +112,18 @@ bool TabToolbar::event(QEvent* event)
 
 void TabToolbar::FocusChanged(QWidget* old, QWidget* now)
 {
-    (void)old;
-    if(now && now != this)
+    ( void )old;
+    if (now && now != this)
     {
-        if(isMinimized && isShown)
+        if (isMinimized && isShown)
         {
             QObject* parent = now;
             do
             {
                 parent = parent->parent();
-                if(parent == this)
+                if (parent == this)
                     return;
-            } while(parent);
+            } while (parent);
 
             HideAt(currentIndex);
         }
@@ -155,7 +151,7 @@ void TabToolbar::SetStyle(const QString& styleName)
 
 QString TabToolbar::GetStyle() const
 {
-    if(style)
+    if (style)
         return style->objectName();
     return "";
 }
@@ -175,7 +171,7 @@ void TabToolbar::SetSpecialTabEnabled(bool enabled)
 {
     hasSpecialTab = enabled;
     tabBar->tabBar()->setProperty("TTSpecial", QVariant(enabled));
-    if(enabled && tabBar->count() > 0)
+    if (enabled && tabBar->count() > 0)
     {
         tabBar->setCurrentIndex(1);
     }
@@ -188,13 +184,13 @@ QAction* TabToolbar::HideAction()
 
 void TabToolbar::TabClicked(int index)
 {
-    if(tempShowTimer.isActive() || (index == 0 && hasSpecialTab))
+    if (tempShowTimer.isActive() || (index == 0 && hasSpecialTab))
         return;
 
-    if(isMinimized)
+    if (isMinimized)
     {
-        if(isShown && index != currentIndex)
-            return; //dont hide tab bar if just switching tabs
+        if (isShown && index != currentIndex)
+            return;  //dont hide tab bar if just switching tabs
         isMinimized = isShown;
         HideAt(index);
         isMinimized = true;
@@ -204,7 +200,7 @@ void TabToolbar::TabClicked(int index)
 void TabToolbar::CurrentTabChanged(int index)
 {
     QSignalBlocker blocker(tabBar);
-    if(index == 0 && hasSpecialTab)
+    if (index == 0 && hasSpecialTab)
     {
         tabBar->setCurrentIndex(currentIndex);
         emit SpecialTabClicked();
@@ -227,7 +223,7 @@ void TabToolbar::SetCurrentTab(int index)
 
 void TabToolbar::HideAt(int index)
 {
-    if(isMinimized)
+    if (isMinimized)
     {
         const int minHeight = tabBar->tabBar()->height() + 2;
         tabBar->setMaximumHeight(minHeight);
@@ -235,9 +231,11 @@ void TabToolbar::HideAt(int index)
         setMaximumHeight(minHeight);
         setMinimumHeight(minHeight);
         isShown = false;
-    } else {
+    }
+    else
+    {
         tabBar->setCurrentIndex(index);
-        if(!isShown)
+        if (!isShown)
         {
             tabBar->setMaximumHeight(maxHeight);
             tabBar->setMinimumHeight(maxHeight);
@@ -252,12 +250,12 @@ void TabToolbar::HideAt(int index)
 
 void TabToolbar::HideTab(int index)
 {
-    (void)index;
-    Page* page = static_cast<Page*>(sender());
+    ( void )index;
+    Page*          page = static_cast<Page*>(sender());
     QSignalBlocker blocker(page);
-    for(int i=0; i<tabBar->count(); i++)
+    for (int i = 0; i < tabBar->count(); i++)
     {
-        if(tabBar->widget(i) == page)
+        if (tabBar->widget(i) == page)
         {
             tabBar->removeTab(i);
             return;
@@ -268,9 +266,8 @@ void TabToolbar::HideTab(int index)
 
 void TabToolbar::AdjustVerticalSize(unsigned vSize)
 {
-    QTimer::singleShot(0, this, [this, vSize]()
-    {
-		maxHeight = vSize + tabBar->tabBar()->height() + 6;
+    QTimer::singleShot(0, this, [this, vSize]() {
+        maxHeight = vSize + tabBar->tabBar()->height() + 6;
         setMaximumHeight(maxHeight);
         setMinimumHeight(maxHeight);
     });
@@ -278,7 +275,7 @@ void TabToolbar::AdjustVerticalSize(unsigned vSize)
 
 void TabToolbar::ShowTab(int index)
 {
-    Page* page = static_cast<Page*>(sender());
+    Page*          page = static_cast<Page*>(sender());
     QSignalBlocker blocker(page);
     tabBar->insertTab(index, page, page->objectName());
     currentIndex = tabBar->currentIndex();
@@ -286,7 +283,7 @@ void TabToolbar::ShowTab(int index)
 
 Page* TabToolbar::AddPage(const QString& pageName)
 {
-    Page* page = new Page(tabBar->count(), pageName);
+    Page*          page = new Page(tabBar->count(), pageName);
     QSignalBlocker blocker(page);
     QObject::connect(page, &Page::Hiding, this, &TabToolbar::HideTab);
     QObject::connect(page, &Page::Showing, this, &TabToolbar::ShowTab);
@@ -294,14 +291,14 @@ Page* TabToolbar::AddPage(const QString& pageName)
     return page;
 }
 
-tt::Page* tt::TabToolbar::AddPage(const QIcon& icon, const QString &pageName)
+tt::Page* tt::TabToolbar::AddPage(const QIcon& icon, const QString& pageName)
 {
-	Page* page = new Page(tabBar->count(), pageName);
-	QSignalBlocker blocker(page);
-	QObject::connect(page, &Page::Hiding, this, &TabToolbar::HideTab);
-	QObject::connect(page, &Page::Showing, this, &TabToolbar::ShowTab);
-	tabBar->addTab(page, icon, pageName);
-	return page;
+    Page*          page = new Page(tabBar->count(), pageName);
+    QSignalBlocker blocker(page);
+    QObject::connect(page, &Page::Hiding, this, &TabToolbar::HideTab);
+    QObject::connect(page, &Page::Showing, this, &TabToolbar::ShowTab);
+    tabBar->addTab(page, icon, pageName);
+    return page;
 }
 
 TabToolbar* tt::_FindTabToolbarParent(QWidget& startingWidget)
@@ -310,9 +307,9 @@ TabToolbar* tt::_FindTabToolbarParent(QWidget& startingWidget)
     do
     {
         par = par->parent();
-        if(auto* tt = dynamic_cast<TabToolbar*>(par))
+        if (auto* tt = dynamic_cast<TabToolbar*>(par))
             return tt;
-    } while(par);
+    } while (par);
 
     return nullptr;
 }

@@ -7,43 +7,32 @@
 #include "Dynamics/HeightField/HeightFieldGrid.h"
 #include <string>
 
-namespace PhysIKA
+namespace PhysIKA {
+
+class HeightFieldLoader
 {
+public:
+    void setRange(float minh, float maxh)
+    {
+        m_minH = minh;
+        m_maxH = maxh;
 
-	class HeightFieldLoader
-	{
-	public:
+        if (m_minH > m_maxH)
+        {
+            float temp = m_minH;
+            m_minH     = m_maxH;
+            m_maxH     = temp;
+        }
+    }
 
-		void setRange(float minh, float maxh)
-		{
-			m_minH = minh;
-			m_maxH = maxh;
+    template <typename TReal, DeviceType deviceType>
+    bool load(HeightFieldGrid<TReal, TReal, deviceType>& hf, const std::string& img);
 
-			if (m_minH > m_maxH)
-			{
-				float temp = m_minH;
-				m_minH = m_maxH;
-				m_maxH = temp;
-			}
-		}
+private:
+    float m_minH = 0.0;
+    float m_maxH = 1.0;
+};
 
-		template<typename TReal, DeviceType deviceType>
-		bool load(HeightFieldGrid<TReal, TReal, deviceType>& hf, const std::string& img);
-	
-	private:
-		float m_minH = 0.0;
-		float m_maxH = 1.0;
-	
-	};
+}  // namespace PhysIKA
 
-
-
-}
-
-
-#endif // PK_HEIGHTFIELDLOADER_H
-
-
-
-
-
+#endif  // PK_HEIGHTFIELDLOADER_H

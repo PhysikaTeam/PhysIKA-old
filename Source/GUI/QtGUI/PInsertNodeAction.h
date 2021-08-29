@@ -6,26 +6,25 @@
 
 #include <QTreeWidget>
 
-namespace PhysIKA
+namespace PhysIKA {
+class Node;
+class PSceneGraphWidgetItem;
+
+class PInsertTreeNodeAction : public Action
 {
-	class Node;
-	class PSceneGraphWidgetItem;
+public:
+    PInsertTreeNodeAction(QTreeWidget* widget);
+    virtual ~PInsertTreeNodeAction(){};
 
-	class PInsertTreeNodeAction : public Action
-	{
-	public:
-		PInsertTreeNodeAction(QTreeWidget* widget);
-		virtual ~PInsertTreeNodeAction() {};
+public:
+    void start(Node* node) override;
+    void end(Node* node) override;
 
-	public:
-		void start(Node* node) override;
-		void end(Node* node) override;
+private:
+    QTreeWidget* m_treeWidget;
 
-	private:
-		QTreeWidget* m_treeWidget;
+    std::stack<PSceneGraphWidgetItem*> treeItemStack;
+};
+}  // namespace PhysIKA
 
-		std::stack<PSceneGraphWidgetItem*> treeItemStack;
-	};
-}
-
-#endif // QTREEWIDGETNODEITEM_H
+#endif  // QTREEWIDGETNODEITEM_H

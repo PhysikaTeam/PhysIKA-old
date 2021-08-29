@@ -1,16 +1,13 @@
 #include "NumericalModel.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+NumericalModel::NumericalModel()
+    : Module()
 {
-	NumericalModel::NumericalModel()
-		: Module()
-	{
-
-	}
-
-	NumericalModel::~NumericalModel()
-	{
-
-	}
-
 }
+
+NumericalModel::~NumericalModel()
+{
+}
+
+}  // namespace PhysIKA

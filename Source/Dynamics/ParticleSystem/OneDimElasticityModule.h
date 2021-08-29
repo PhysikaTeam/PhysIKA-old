@@ -2,7 +2,7 @@
  * @file ElasticityModule.h
  * @author Xiaowei He (xiaowei@iscas.ac.cn)
  * @brief This is an implementation of elasticity based on projective peridynamics.
- * 		  For more details, please refer to [He et al. 2017] "Projective Peridynamics for Modeling Versatile Elastoplastic Materials"
+ *           For more details, please refer to [He et al. 2017] "Projective Peridynamics for Modeling Versatile Elastoplastic Materials"
  * @version 0.1
  * @date 2019-06-18
  * 
@@ -14,65 +14,74 @@
 
 namespace PhysIKA {
 
-	template<typename TDataType>
-	class OneDimElasticityModule : public ConstraintModule
-	{
-	public:
-		typedef typename TDataType::Real Real;
-		typedef typename TDataType::Coord Coord;
+template <typename TDataType>
+class OneDimElasticityModule : public ConstraintModule
+{
+public:
+    typedef typename TDataType::Real  Real;
+    typedef typename TDataType::Coord Coord;
 
-		OneDimElasticityModule();
-		~OneDimElasticityModule() override;
-		
-		bool constrain() override;
+    OneDimElasticityModule();
+    ~OneDimElasticityModule() override;
 
-		void solveElasticity();
+    bool constrain() override;
 
-		void setIterationNumber(int num) { m_iterNum.setValue(num); }
-		int getIterationNumber() { return m_iterNum.getValue(); }
+    void solveElasticity();
 
-		void setMaterialStiffness(Real stiff) { m_lambda.setValue(stiff); }
+    void setIterationNumber(int num)
+    {
+        m_iterNum.setValue(num);
+    }
+    int getIterationNumber()
+    {
+        return m_iterNum.getValue();
+    }
 
-	protected:
-		bool initializeImpl() override;
+    void setMaterialStiffness(Real stiff)
+    {
+        m_lambda.setValue(stiff);
+    }
 
-		void updateVelocity();
+protected:
+    bool initializeImpl() override;
 
-	public:
-		/**
-		 * @brief Horizon
-		 * A positive number represents the radius of neighborhood for each point
-		 */
-		VarField<Real> m_distance;
+    void updateVelocity();
 
-		/**
-		 * @brief Particle position
-		 */
-		DeviceArrayField<Coord> m_position;
-		/**
-		 * @brief Particle velocity
-		 */
-		DeviceArrayField<Coord> m_velocity;
+public:
+    /**
+         * @brief Horizon
+         * A positive number represents the radius of neighborhood for each point
+         */
+    VarField<Real> m_distance;
 
-		DeviceArrayField<Real> m_mass;
+    /**
+         * @brief Particle position
+         */
+    DeviceArrayField<Coord> m_position;
+    /**
+         * @brief Particle velocity
+         */
+    DeviceArrayField<Coord> m_velocity;
 
-	protected:
-		/**
-		* @brief Lame parameters
-		* m_lambda controls the isotropic part while mu controls the deviatoric part.
-		*/
-		VarField<Real> m_lambda;
+    DeviceArrayField<Real> m_mass;
 
-		DeviceArray<Coord> m_position_old;
-		DeviceArray<Coord> m_position_buf;
+protected:
+    /**
+        * @brief Lame parameters
+        * m_lambda controls the isotropic part while mu controls the deviatoric part.
+        */
+    VarField<Real> m_lambda;
 
-	private:
-		VarField<int> m_iterNum;
-	};
+    DeviceArray<Coord> m_position_old;
+    DeviceArray<Coord> m_position_buf;
+
+private:
+    VarField<int> m_iterNum;
+};
 
 #ifdef PRECISION_FLOAT
-	template class OneDimElasticityModule<DataType3f>;
+template class OneDimElasticityModule<DataType3f>;
 #else
-	template class OneDimElasticityModule<DataType3d>;
+template class OneDimElasticityModule<DataType3d>;
 #endif
-}
+}  // namespace PhysIKA

@@ -1,10 +1,8 @@
 #include "PIOTabWidget.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+PIOTabWidget::PIOTabWidget()
 {
-	PIOTabWidget::PIOTabWidget()
-	{
-
-	}
-
 }
+
+}  // namespace PhysIKA

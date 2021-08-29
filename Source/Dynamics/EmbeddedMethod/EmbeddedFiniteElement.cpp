@@ -1,4 +1,5 @@
 #include "EmbeddedFiniteElement.h"
+#include "Framework/Framework/ControllerAnimation.h"
 #include "Framework/Topology/TriangleSet.h"
 #include "Framework/Topology/PointSet.h"
 #include "Core/Utility.h"
@@ -11,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include "Core/OutputMesh.h"
+
 using namespace std;
 
 namespace PhysIKA

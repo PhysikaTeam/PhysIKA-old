@@ -57,97 +57,102 @@ QT_FORWARD_DECLARE_CLASS(QAction)
 QT_FORWARD_DECLARE_CLASS(QActionGroup)
 QT_FORWARD_DECLARE_CLASS(QMenu)
 
-namespace PhysIKA
+namespace PhysIKA {
+class PDockWidget : public QDockWidget
 {
-	class PDockWidget : public QDockWidget
-	{
-		Q_OBJECT
+    Q_OBJECT
 
-	public:
-		explicit PDockWidget(const QString &colorName, QMainWindow *parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
+public:
+    explicit PDockWidget(const QString& colorName, QMainWindow* parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
 
-		void setCustomSizeHint(const QSize &size);
-		QMenu *colorSwatchMenu() const { return menu; }
+    void   setCustomSizeHint(const QSize& size);
+    QMenu* colorSwatchMenu() const
+    {
+        return menu;
+    }
 
-	protected:
+protected:
 #ifndef QT_NO_CONTEXTMENU
-		void contextMenuEvent(QContextMenuEvent *event) override;
-#endif // QT_NO_CONTEXTMENU
-		void resizeEvent(QResizeEvent *e) override;
+    void contextMenuEvent(QContextMenuEvent* event) override;
+#endif  // QT_NO_CONTEXTMENU
+    void resizeEvent(QResizeEvent* e) override;
 
-	private slots:
-		void changeClosable(bool on);
-		void changeMovable(bool on);
-		void changeFloatable(bool on);
-		void changeFloating(bool on);
-		void changeVerticalTitleBar(bool on);
-		void updateContextMenu();
+private slots:
+    void changeClosable(bool on);
+    void changeMovable(bool on);
+    void changeFloatable(bool on);
+    void changeFloating(bool on);
+    void changeVerticalTitleBar(bool on);
+    void updateContextMenu();
 
-		void allowLeft(bool a);
-		void allowRight(bool a);
-		void allowTop(bool a);
-		void allowBottom(bool a);
+    void allowLeft(bool a);
+    void allowRight(bool a);
+    void allowTop(bool a);
+    void allowBottom(bool a);
 
-		void placeLeft(bool p);
-		void placeRight(bool p);
-		void placeTop(bool p);
-		void placeBottom(bool p);
+    void placeLeft(bool p);
+    void placeRight(bool p);
+    void placeTop(bool p);
+    void placeBottom(bool p);
 
-		void splitInto(QAction *action);
-		void tabInto(QAction *action);
+    void splitInto(QAction* action);
+    void tabInto(QAction* action);
 
-	private:
-		void allow(Qt::DockWidgetArea area, bool allow);
-		void place(Qt::DockWidgetArea area, bool place);
+private:
+    void allow(Qt::DockWidgetArea area, bool allow);
+    void place(Qt::DockWidgetArea area, bool place);
 
-		QAction *closableAction;
-		QAction *movableAction;
-		QAction *floatableAction;
-		QAction *floatingAction;
-		QAction *verticalTitleBarAction;
+    QAction* closableAction;
+    QAction* movableAction;
+    QAction* floatableAction;
+    QAction* floatingAction;
+    QAction* verticalTitleBarAction;
 
-		QActionGroup *allowedAreasActions;
-		QAction *allowLeftAction;
-		QAction *allowRightAction;
-		QAction *allowTopAction;
-		QAction *allowBottomAction;
+    QActionGroup* allowedAreasActions;
+    QAction*      allowLeftAction;
+    QAction*      allowRightAction;
+    QAction*      allowTopAction;
+    QAction*      allowBottomAction;
 
-		QActionGroup *areaActions;
-		QAction *leftAction;
-		QAction *rightAction;
-		QAction *topAction;
-		QAction *bottomAction;
+    QActionGroup* areaActions;
+    QAction*      leftAction;
+    QAction*      rightAction;
+    QAction*      topAction;
+    QAction*      bottomAction;
 
-		QMenu *tabMenu;
-		QMenu *splitHMenu;
-		QMenu *splitVMenu;
-		QMenu *menu;
+    QMenu* tabMenu;
+    QMenu* splitHMenu;
+    QMenu* splitVMenu;
+    QMenu* menu;
 
-		QMainWindow *mainWindow;
-	};
+    QMainWindow* mainWindow;
+};
 
-	class BlueTitleBar : public QWidget
-	{
-		Q_OBJECT
-	public:
-		explicit BlueTitleBar(QWidget *parent = Q_NULLPTR);
+class BlueTitleBar : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit BlueTitleBar(QWidget* parent = Q_NULLPTR);
 
-		QSize sizeHint() const override { return minimumSizeHint(); }
-		QSize minimumSizeHint() const override;
+    QSize sizeHint() const override
+    {
+        return minimumSizeHint();
+    }
+    QSize minimumSizeHint() const override;
 
-	protected:
-		void paintEvent(QPaintEvent *event) override;
-		void mouseReleaseEvent(QMouseEvent *event) override;
+protected:
+    void paintEvent(QPaintEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
-	public slots:
-		void updateMask();
+public slots:
+    void updateMask();
 
-	private:
-		const QPixmap leftPm;
-		const QPixmap centerPm;
-		const QPixmap rightPm;
-	};
+private:
+    const QPixmap leftPm;
+    const QPixmap centerPm;
+    const QPixmap rightPm;
+};
 
-}
+}  // namespace PhysIKA
 
-#endif // COLORSWATCH_H
+#endif  // COLORSWATCH_H

@@ -19,96 +19,96 @@
 //
 //#include <assert.h>
 ////#include "Core/Matrix/matrix_mxn.h"
-////#include 
+////#include
 //#include "Core/Array/Array2D.h"
 //#include "Core/Array/Array.h"]
 //
 //namespace PhysIKA
 //{
-//	///This solver is mainly for debug/learning purposes: it is functionally equivalent to the btSequentialImpulseConstraintSolver solver, but much slower (it builds the full LCP matrix)
-//	class btSolveProjectedGaussSeidel
-//	{
-//	public:
-//		float m_leastSquaresResidualThreshold;
-//		float m_leastSquaresResidual;
+//    ///This solver is mainly for debug/learning purposes: it is functionally equivalent to the btSequentialImpulseConstraintSolver solver, but much slower (it builds the full LCP matrix)
+//    class btSolveProjectedGaussSeidel
+//    {
+//    public:
+//        float m_leastSquaresResidualThreshold;
+//        float m_leastSquaresResidual;
 //
-//		btSolveProjectedGaussSeidel()
-//			: m_leastSquaresResidualThreshold(0),
-//			m_leastSquaresResidual(0)
-//		{
-//		}
+//        btSolveProjectedGaussSeidel()
+//            : m_leastSquaresResidualThreshold(0),
+//            m_leastSquaresResidual(0)
+//        {
+//        }
 //
-//		virtual bool solveMLCP(const HostArray2D<float>& A, const HostArray<float>& b, HostArray<float>& x, const HostArray<float>& lo, const HostArray<float>& hi, const btAlignedObjectArray<int>& limitDependency, int numIterations, bool useSparsity = true)
-//		{
-//			if (!A.rows())
-//				return true;
-//			//the A matrix is sparse, so compute the non-zero elements
-//			A.rowComputeNonZeroElements();
+//        virtual bool solveMLCP(const HostArray2D<float>& A, const HostArray<float>& b, HostArray<float>& x, const HostArray<float>& lo, const HostArray<float>& hi, const btAlignedObjectArray<int>& limitDependency, int numIterations, bool useSparsity = true)
+//        {
+//            if (!A.rows())
+//                return true;
+//            //the A matrix is sparse, so compute the non-zero elements
+//            A.rowComputeNonZeroElements();
 //
-//			//A is a m-n matrix, m rows, n columns
-//			assert(A.rows() == b.rows());
+//            //A is a m-n matrix, m rows, n columns
+//            assert(A.rows() == b.rows());
 //
-//			int i, j, numRows = A.rows();
+//            int i, j, numRows = A.rows();
 //
-//			float delta;
+//            float delta;
 //
-//			for (int k = 0; k < numIterations; k++)
-//			{
-//				m_leastSquaresResidual = 0.f;
-//				for (i = 0; i < numRows; i++)
-//				{
-//					delta = 0.0f;
-//					if (useSparsity)
-//					{
-//						for (int h = 0; h < A.m_rowNonZeroElements1[i].size(); h++)
-//						{
-//							j = A.m_rowNonZeroElements1[i][h];
-//							if (j != i)  //skip main diagonal
-//							{
-//								delta += A(i, j) * x[j];
-//							}
-//						}
-//					}
-//					else
-//					{
-//						for (j = 0; j < i; j++)
-//							delta += A(i, j) * x[j];
-//						for (j = i + 1; j < numRows; j++)
-//							delta += A(i, j) * x[j];
-//					}
+//            for (int k = 0; k < numIterations; k++)
+//            {
+//                m_leastSquaresResidual = 0.f;
+//                for (i = 0; i < numRows; i++)
+//                {
+//                    delta = 0.0f;
+//                    if (useSparsity)
+//                    {
+//                        for (int h = 0; h < A.m_rowNonZeroElements1[i].size(); h++)
+//                        {
+//                            j = A.m_rowNonZeroElements1[i][h];
+//                            if (j != i)  //skip main diagonal
+//                            {
+//                                delta += A(i, j) * x[j];
+//                            }
+//                        }
+//                    }
+//                    else
+//                    {
+//                        for (j = 0; j < i; j++)
+//                            delta += A(i, j) * x[j];
+//                        for (j = i + 1; j < numRows; j++)
+//                            delta += A(i, j) * x[j];
+//                    }
 //
-//					float aDiag = A(i, i);
-//					float xOld = x[i];
-//					x[i] = (b[i] - delta) / aDiag;
-//					float s = 1.f;
+//                    float aDiag = A(i, i);
+//                    float xOld = x[i];
+//                    x[i] = (b[i] - delta) / aDiag;
+//                    float s = 1.f;
 //
-//					if (limitDependency[i] >= 0)
-//					{
-//						s = x[limitDependency[i]];
-//						if (s < 0)
-//							s = 1;
-//					}
+//                    if (limitDependency[i] >= 0)
+//                    {
+//                        s = x[limitDependency[i]];
+//                        if (s < 0)
+//                            s = 1;
+//                    }
 //
-//					if (x[i] < lo[i] * s)
-//						x[i] = lo[i] * s;
-//					if (x[i] > hi[i] * s)
-//						x[i] = hi[i] * s;
-//					float diff = x[i] - xOld;
-//					m_leastSquaresResidual += diff * diff;
-//				}
+//                    if (x[i] < lo[i] * s)
+//                        x[i] = lo[i] * s;
+//                    if (x[i] > hi[i] * s)
+//                        x[i] = hi[i] * s;
+//                    float diff = x[i] - xOld;
+//                    m_leastSquaresResidual += diff * diff;
+//                }
 //
-//				float eps = m_leastSquaresResidualThreshold;
-//				if ((m_leastSquaresResidual < eps) || (k >= (numIterations - 1)))
-//				{
+//                float eps = m_leastSquaresResidualThreshold;
+//                if ((m_leastSquaresResidual < eps) || (k >= (numIterations - 1)))
+//                {
 ////#ifdef VERBOSE_PRINTF_RESIDUAL
-////					printf("totalLenSqr = %f at iteration #%d\n", m_leastSquaresResidual, k);
+////                    printf("totalLenSqr = %f at iteration #%d\n", m_leastSquaresResidual, k);
 ////#endif
-//					break;
-//				}
-//			}
-//			return true;
-//		}
-//	};
+//                    break;
+//                }
+//            }
+//            return true;
+//        }
+//    };
 //}
 //
 //#endif  //SOLVE_PROJECTED_GAUSS_SEIDEL_H

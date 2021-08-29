@@ -1,19 +1,17 @@
 #include "Framework/Framework/ModuleTopology.h"
 #include "Framework/Framework/Node.h"
 
-namespace PhysIKA
-{
+namespace PhysIKA {
 IMPLEMENT_CLASS(TopologyModule)
 
 TopologyModule::TopologyModule()
-	: Module()
-	, m_topologyChanged(true)
+    : Module()
+    , m_topologyChanged(true)
 {
-
 }
 
 TopologyModule::~TopologyModule()
 {
 }
 
-}
+}  // namespace PhysIKA

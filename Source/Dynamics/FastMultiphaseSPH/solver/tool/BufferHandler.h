@@ -1,18 +1,19 @@
 #pragma once
 
-
-class HostDeviceHandler {
+class HostDeviceHandler
+{
 public:
-	void* h_data;
-	void* d_data;
-	char element_sz;//char num per element
-	int sz;//element num
+    void* h_data;
+    void* d_data;
+    char  element_sz;  //char num per element
+    int   sz;          //element num
 };
 
-class SortHandler {
+class SortHandler
+{
 public:
-	void* data;
-	void* sorted_data;
-	char element_sz;//char num per element
-	int sz;//element num
+    void* data;
+    void* sorted_data;
+    char  element_sz;  //char num per element
+    int   sz;          //element num
 };

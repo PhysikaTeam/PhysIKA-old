@@ -1,7 +1,7 @@
 /*
     TabToolbar - a small utility library for Qt, providing tabbed toolbars
-	Copyright (C) 2018 Oleksii Sierov
-	
+    Copyright (C) 2018 Oleksii Sierov
+    
     TabToolbar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -30,32 +30,31 @@
 
 using namespace tt;
 
-namespace
-{
+namespace {
 class TTScroller : public QObject
 {
 public:
-    TTScroller(QObject* parent) : QObject(parent) {}
+    TTScroller(QObject* parent)
+        : QObject(parent) {}
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override
     {
-        if(event->type() == QEvent::Wheel)
+        if (event->type() == QEvent::Wheel)
         {
-            QScrollArea* scroll = static_cast<QScrollArea*>(watched);
-            QWheelEvent* wheel = static_cast<QWheelEvent*>(event);
-            QScrollBar* scrollbar = scroll->horizontalScrollBar();
-            scrollbar->setValue(scrollbar->value() - wheel->delta()/5);
+            QScrollArea* scroll    = static_cast<QScrollArea*>(watched);
+            QWheelEvent* wheel     = static_cast<QWheelEvent*>(event);
+            QScrollBar*  scrollbar = scroll->horizontalScrollBar();
+            scrollbar->setValue(scrollbar->value() - wheel->delta() / 5);
             return true;
         }
         return QObject::eventFilter(watched, event);
     }
 };
-}
+}  // namespace
 
 Page::Page(int index, const QString& pageName, QWidget* parent)
-    : QWidget(parent),
-      myIndex(index)
+    : QWidget(parent), myIndex(index)
 {
     setObjectName(pageName);
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::MinimumExpanding);
@@ -91,7 +90,7 @@ Page::Page(int index, const QString& pageName, QWidget* parent)
 Group* Page::AddGroup(const QString& name)
 {
     Group* grp = new Group(name, innerArea);
-    innerLayout->insertWidget(innerLayout->count()-1, grp);
+    innerLayout->insertWidget(innerLayout->count() - 1, grp);
 
     auto* parentTT = _FindTabToolbarParent(*this);
     if (!parentTT)

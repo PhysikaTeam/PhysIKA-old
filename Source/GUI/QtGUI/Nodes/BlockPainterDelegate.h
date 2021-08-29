@@ -13,13 +13,11 @@ class NODE_EDITOR_PUBLIC BlockPainterDelegate
 {
 
 public:
+    virtual ~BlockPainterDelegate() = default;
 
-  virtual
-  ~BlockPainterDelegate() = default;
-
-  virtual void
-  paint(QPainter* painter,
-        BlockGeometry const& geom,
-        QtBlockDataModel const * model) = 0;
+    virtual void
+    paint(QPainter*               painter,
+          BlockGeometry const&    geom,
+          QtBlockDataModel const* model) = 0;
 };
-}
+}  // namespace QtNodes

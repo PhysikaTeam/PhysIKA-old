@@ -10,82 +10,80 @@
 #include "Dynamics/RigidBody/ArticulatedBodyFDSolver.h"
 #include "ForwardDynamicsSolver.h"
 
-#include<memory>
-#include<vector>
+#include <memory>
+#include <vector>
 
-namespace PhysIKA
+namespace PhysIKA {
+
+class RigidTimeIntegrationModule : public Module
 {
+    DECLARE_CLASS(RigidTimeIntegrationModule)
 
-	
+public:
+public:
+    RigidTimeIntegrationModule();
 
+    bool initialize(){};
 
-	class RigidTimeIntegrationModule:public Module
-	{
-		DECLARE_CLASS(RigidTimeIntegrationModule)
-	
-	public:
-		
+    virtual void begin();
 
-	public:
+    virtual bool execute();
 
-		RigidTimeIntegrationModule();
+    virtual void end(){};
 
-		bool initialize() {};
+    //virtual void updateSystemState(double dt);
 
-		virtual void begin();
+    //virtual void updateSystemState(const RigidState& s);
 
-		virtual bool execute();
+    void setDt(double dt)
+    {
+        m_dt = dt;
+    }
 
-		virtual void end() {};
+    void dydt(const SystemMotionState& s0, DSystemMotionState& ds);
 
-		//virtual void updateSystemState(double dt);
+    void dydt(const SystemState& s0, const SystemMotionState& motionState, DSystemMotionState& ds);
 
-		//virtual void updateSystemState(const RigidState& s);
-		
-		void setDt(double dt) { m_dt = dt; }
+    void setFDSolver(std::shared_ptr<ForwardDynamicsSolver> fd_solver);
 
+    std::shared_ptr<ForwardDynamicsSolver> getFDSolver()
+    {
+        return m_fd_solver;
+    }
 
-		void dydt(const SystemMotionState& s0, DSystemMotionState& ds);
+private:
+    std::shared_ptr<ForwardDynamicsSolver> m_fd_solver;
 
-		void dydt(const SystemState& s0, const SystemMotionState& motionState, DSystemMotionState& ds);
+    Vectornd<float> m_ddq;
+    double          m_dt = 0;
 
-		void setFDSolver(std::shared_ptr<ForwardDynamicsSolver> fd_solver);
+    double m_last_time = 0;
+    bool   m_time_init = false;
+};
 
-		std::shared_ptr<ForwardDynamicsSolver> getFDSolver() { return m_fd_solver; }
-		
-	private:
-		std::shared_ptr<ForwardDynamicsSolver> m_fd_solver;
+class DydtAdapter
+{
+public:
+    DydtAdapter(RigidTimeIntegrationModule* integrator = 0)
+        : m_integrator(integrator)
+    {
+    }
 
-		Vectornd<float> m_ddq;
-		double m_dt = 0;
+    void setIntegrator(RigidTimeIntegrationModule* integrator)
+    {
+        m_integrator = integrator;
+    }
 
-		double m_last_time = 0;
-		bool m_time_init = false;
-	};
+    void operator()(const SystemMotionState& s0, DSystemMotionState& ds)
+    {
+        if (m_integrator)
+        {
+            m_integrator->dydt(s0, ds);
+        }
+    }
 
+public:
+    RigidTimeIntegrationModule* m_integrator;
+};
 
-	class DydtAdapter
-	{
-	public:
-		DydtAdapter(RigidTimeIntegrationModule* integrator = 0) :m_integrator(integrator)
-		{}
-
-		void setIntegrator(RigidTimeIntegrationModule* integrator)
-		{
-			m_integrator = integrator;
-		}
-
-		void operator()(const SystemMotionState& s0, DSystemMotionState& ds)
-		{
-			if (m_integrator)
-			{
-				m_integrator->dydt(s0, ds);
-			}
-		}
-
-	public:
-		RigidTimeIntegrationModule* m_integrator;
-
-	};
-
-}
+}  // namespace PhysIKA

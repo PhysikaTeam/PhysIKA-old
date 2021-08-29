@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "GUI/GlutGUI/GLApp.h"
 #include "Framework/Framework/Node.h"
 
@@ -9,130 +8,127 @@
 
 //using namespace PhysIKA;
 
-namespace PhysIKA
+namespace PhysIKA {
+class PBDCar : public Node
 {
-	class PBDCar :public Node
-	{
-	public:
-		PBDCar() {}
+public:
+    PBDCar() {}
 
-		bool build();
+    bool build();
 
-		//virtual bool initialize() override;
+    //virtual bool initialize() override;
 
-		virtual void advance(Real dt);
+    virtual void advance(Real dt);
 
+    void forward(Real dt);
 
-		void forward(Real dt);
+    void backward(Real dt);
 
-		void backward(Real dt);
+    void goLeft(Real dt);
 
-		void goLeft(Real dt);
+    void goRight(Real dt);
 
-		void goRight(Real dt);
+    //void setDt(Real dt);
 
-		//void setDt(Real dt);
+    std::shared_ptr<RigidBody2<DataType3f>> getChassis()
+    {
+        return m_chassis;
+    }
+    std::shared_ptr<RigidBody2<DataType3f>> getWheels(int i)
+    {
+        return m_wheels[i];
+    }
 
-		std::shared_ptr<RigidBody2<DataType3f>> getChassis() { return m_chassis; }
-		std::shared_ptr<RigidBody2<DataType3f>> getWheels(int i) { return m_wheels[i]; }
+    void updateForce(Real dt);
 
+private:
+    void _updateWheelRotation(Real dt);
 
-		void updateForce(Real dt);
+    Vector3f _getForwardDir();
 
+    Vector3f _getRightDir();
 
-	private:
-		void _updateWheelRotation(Real dt);
+    Vector3f _getUpDir();
 
-		Vector3f _getForwardDir();
+    void _setRigidForceAsGravity();
 
-		Vector3f _getRightDir();
+    void _doVelConstraint(Real dt);
 
-		Vector3f _getUpDir();
+    Quaternionf _rotationToStandardLocal();
 
-		void _setRigidForceAsGravity();
+public:
+    Vector3f          carPosition;
+    Quaternion<float> carRotation;
 
-		void _doVelConstraint(Real dt);
+    Vector3f          wheelRelPosition[4];
+    Quaternion<float> wheelRelRotation[4];
 
-		Quaternionf _rotationToStandardLocal();
+    Vector3f wheelupDirection;
+    Vector3f wheelRightDirection;  // wheel right direction in car frame.
 
-	public:
-		Vector3f carPosition;
-		Quaternion<float> carRotation;
+    // Visualization information.
+    bool        needVisualization = true;
+    std::string chassisFile       = "";
+    std::string wheelFile[4]      = { "", "", "", "" };
+    Vector3f    chassisMeshScale;
+    Vector3f    wheelMeshScale[4];
+    Vector3f    chassisMeshTranslate;
+    Vector3f    wheelMeshTranslate[4];
 
-		Vector3f wheelRelPosition[4];
-		Quaternion<float> wheelRelRotation[4];
+    float    chassisMass = 1.0;
+    Vector3f chassisInertia;
+    // adjust by HNU
+    // C2397    从“double”转换到“float”需要收缩转换
+    float    wheelMass[4] = { 0.1f, 0.1f, 0.1f, 0.1f };
+    Vector3f wheelInertia[4];
 
-		Vector3f wheelupDirection;
-		Vector3f wheelRightDirection;			// wheel right direction in car frame.
+    float wheelRadius[4] = { 1.0, 1.0, 1.0, 1.0 };
 
+    float steeringLowerBound;
+    float steeringUpperBound;
 
-		// Visualization information.
-		bool needVisualization = true;
-		std::string chassisFile = "";
-		std::string wheelFile[4] = { "","","","" };
-		Vector3f chassisMeshScale;
-		Vector3f wheelMeshScale[4];
-		Vector3f chassisMeshTranslate;
-		Vector3f wheelMeshTranslate[4];
+    Vector3f wheelLocalRight[2];  // wheel right direction in wheel local frame.
 
-		float chassisMass = 1.0;
-		Vector3f chassisInertia;
-		// adjust by HNU
-		// C2397	从“double”转换到“float”需要收缩转换		
-		float wheelMass[4] = { 0.1f,0.1f,0.1f,0.1f };
-		Vector3f wheelInertia[4];
+    Vector3f m_gravity = { 0, -9.8, 0 };
 
-		float wheelRadius[4] = { 1.0,1.0,1.0,1.0 };
+    //std::shared_ptr<RigidBody2<DataType3f>> m_steeringRigid[2];
 
-		float steeringLowerBound;
-		float steeringUpperBound;
+    std::shared_ptr<PBDSolver> m_rigidSolver;
 
-		Vector3f wheelLocalRight[2];		// wheel right direction in wheel local frame.
+    std::shared_ptr<RigidBody2<DataType3f>> m_chassis;
 
-		Vector3f m_gravity = { 0,-9.8,0 };
-	
-		//std::shared_ptr<RigidBody2<DataType3f>> m_steeringRigid[2];
+    std::shared_ptr<RigidBody2<DataType3f>> m_steeringRigid[4];
+    std::shared_ptr<RigidBody2<DataType3f>> m_wheels[4];
 
-		std::shared_ptr<PBDSolver> m_rigidSolver;
+    int chassisCollisionGroup = 1;
+    int chassisCollisionMask  = 1;
+    int wheelCollisionGroup   = 1;
+    int wheelCollisionMask    = 1;
 
-		std::shared_ptr<RigidBody2<DataType3f>> m_chassis;
+    float forwardForceAcc;
+    //float breakForceAcc;
+    float steeringSpeed;
 
-		std::shared_ptr<RigidBody2<DataType3f>>m_steeringRigid[4];
-		std::shared_ptr<RigidBody2<DataType3f>> m_wheels[4];
+    float maxVel = 2.5;
 
-		
-		int chassisCollisionGroup = 1;
-		int chassisCollisionMask = 1;
-		int wheelCollisionGroup = 1;
-		int wheelCollisionMask = 1;
+    float linearDamping  = 0;
+    float angularDamping = 0;
 
+    float suspensionLength   = 0.05;
+    float suspensionStrength = 1000000;
 
-		float forwardForceAcc;
-		//float breakForceAcc;
-		float steeringSpeed;
+private:
+    Vector3f forwardForcePoint;
+    Vector3f forwardDir;
+    float    forwardForce = 0;
 
-		float maxVel = 2.5;
+    float breakForce = 0;
 
-		float linearDamping = 0;
-		float angularDamping = 0;
+    float currentSteering = 0;
 
-		float suspensionLength = 0.05;
-		float suspensionStrength = 1000000;
+    bool m_accPressed = false;
 
-	private:
-		Vector3f forwardForcePoint;
-		Vector3f forwardDir;
-		float forwardForce = 0;
+    //float m_curSuspensionExt[0]
+};
 
-		float breakForce = 0;
-
-
-		float currentSteering = 0;
-
-		bool m_accPressed = false;
-
-		//float m_curSuspensionExt[0] 
-
-	};
-
-}
+}  // namespace PhysIKA

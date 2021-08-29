@@ -1,13 +1,12 @@
 #include "CollidableObject.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+CollidableObject::CollidableObject(CType ctype)
 {
-	CollidableObject::CollidableObject(CType ctype)
-	{
-		m_type = ctype;
-	}
-
-	CollidableObject::~CollidableObject()
-	{
-	}
+    m_type = ctype;
 }
+
+CollidableObject::~CollidableObject()
+{
+}
+}  // namespace PhysIKA

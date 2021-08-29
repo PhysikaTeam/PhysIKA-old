@@ -15,49 +15,54 @@
 #ifndef PHYSIKA_CORE_IMAGE_IMAGE_H_
 #define PHYSIKA_CORE_IMAGE_IMAGE_H_
 
-namespace PhysIKA{
+namespace PhysIKA {
 
-template <typename Scalar, int Dim> class Range;
+template <typename Scalar, int Dim>
+class Range;
 
 class Image
 {
 public:
-    enum DataFormat{
+    enum DataFormat
+    {
         RGB,
         RGBA
     };
+
 public:
-    Image(); //construct an empty image
+    Image();  //construct an empty image
     //construct image with given data, data are copied internally
-    Image(unsigned int width, unsigned int height, DataFormat data_format, const unsigned char *raw_data);
-    Image(const Image &image);  //copy constructor, data is copied 
-    Image& operator= (const Image &image);
+    Image(unsigned int width, unsigned int height, DataFormat data_format, const unsigned char* raw_data);
+    Image(const Image& image);  //copy constructor, data is copied
+    Image& operator=(const Image& image);
     ~Image();
 
     //basic getters&&setters
-    unsigned int width() const;
-    unsigned int height() const;
-    DataFormat dataFormat() const;
+    unsigned int         width() const;
+    unsigned int         height() const;
+    DataFormat           dataFormat() const;
     const unsigned char* rawData() const;
-    unsigned char* rawData();
-    void setRawData(unsigned int width, unsigned int height, DataFormat data_format, const unsigned char *raw_data);    //data is copied
+    unsigned char*       rawData();
+    void                 setRawData(unsigned int width, unsigned int height, DataFormat data_format, const unsigned char* raw_data);  //data is copied
 
     //image operations
-    void flipHorizontally();
-    void flipVertically();
-    void mergeImage(int h_compressed, int w_compressed);//Compress the picture h_compressed times along the h direction and w_compressed times along the w direction.
-    Image mirrorImage() const;
-    Image upsideDownImage() const;
+    void         flipHorizontally();
+    void         flipVertically();
+    void         mergeImage(int h_compressed, int w_compressed);  //Compress the picture h_compressed times along the h direction and w_compressed times along the w direction.
+    Image        mirrorImage() const;
+    Image        upsideDownImage() const;
     unsigned int pixelSize() const;
+
 protected:
     void allocMemory();
+
 protected:
-    unsigned int width_;
-    unsigned int height_;
-    DataFormat data_format_;
-    unsigned char *raw_data_;
+    unsigned int   width_;
+    unsigned int   height_;
+    DataFormat     data_format_;
+    unsigned char* raw_data_;
 };
 
 }  //end of namespace PhysIKA
 
-#endif //PHYSIKA_CORE_IMAGE_IMAGE_H_
+#endif  //PHYSIKA_CORE_IMAGE_IMAGE_H_

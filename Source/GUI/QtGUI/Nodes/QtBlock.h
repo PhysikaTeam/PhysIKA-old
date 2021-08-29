@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <QtCore/QObject>
 #include <QtCore/QUuid>
 
@@ -17,8 +16,7 @@
 #include "Serializable.h"
 #include "memory.h"
 
-namespace QtNodes
-{
+namespace QtNodes {
 
 class QtConnection;
 class ConnectionState;
@@ -26,97 +24,91 @@ class QtBlockGraphicsObject;
 class QtBlockDataModel;
 
 class NODE_EDITOR_PUBLIC QtBlock
-  : public QObject
-  , public Serializable
+    : public QObject
+    , public Serializable
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
+    /// NodeDataModel should be an rvalue and is moved into the Node
+    QtBlock(std::unique_ptr<QtBlockDataModel>&& dataModel);
 
-  /// NodeDataModel should be an rvalue and is moved into the Node
-  QtBlock(std::unique_ptr<QtBlockDataModel> && dataModel);
-
-  virtual
-  ~QtBlock();
+    virtual ~QtBlock();
 
 public:
+    QJsonObject
+    save() const override;
 
-  QJsonObject
-  save() const override;
-
-  void
-  restore(QJsonObject const &json) override;
-
-public:
-
-  QUuid
-  id() const;
-
-  void reactToPossibleConnection(PortType,
-                                 BlockDataType const &,
-                                 QPointF const & scenePoint);
-
-  void
-  resetReactionToConnection();
+    void
+    restore(QJsonObject const& json) override;
 
 public:
+    QUuid
+    id() const;
 
-  QtBlockGraphicsObject const &
-  nodeGraphicsObject() const;
+    void reactToPossibleConnection(PortType,
+                                   BlockDataType const&,
+                                   QPointF const& scenePoint);
 
-  QtBlockGraphicsObject &
-  nodeGraphicsObject();
+    void
+    resetReactionToConnection();
 
-  void
-  setGraphicsObject(std::unique_ptr<QtBlockGraphicsObject>&& graphics);
+public:
+    QtBlockGraphicsObject const&
+    nodeGraphicsObject() const;
 
-  BlockGeometry&
-  nodeGeometry();
+    QtBlockGraphicsObject&
+    nodeGraphicsObject();
 
-  BlockGeometry const&
-  nodeGeometry() const;
+    void
+    setGraphicsObject(std::unique_ptr<QtBlockGraphicsObject>&& graphics);
 
-  BlockState const &
-  nodeState() const;
+    BlockGeometry&
+    nodeGeometry();
 
-  BlockState &
-  nodeState();
+    BlockGeometry const&
+    nodeGeometry() const;
 
-  QtBlockDataModel*
-  nodeDataModel() const;
+    BlockState const&
+    nodeState() const;
 
-public Q_SLOTS: // data propagation
+    BlockState&
+    nodeState();
 
-  /// Propagates incoming data to the underlying model.
-  void
-  propagateData(std::shared_ptr<BlockData> nodeData,
-                PortIndex inPortIndex) const;
+    QtBlockDataModel*
+    nodeDataModel() const;
 
-  /// Fetches data from model's OUT #index port
-  /// and propagates it to the connection
-  void
-  onDataUpdated(PortIndex index);
+public Q_SLOTS:  // data propagation
 
-  /// update the graphic part if the size of the embeddedwidget changes
-  void
-  onNodeSizeUpdated();
+    /// Propagates incoming data to the underlying model.
+    void
+    propagateData(std::shared_ptr<BlockData> nodeData,
+                  PortIndex                  inPortIndex) const;
+
+    /// Fetches data from model's OUT #index port
+    /// and propagates it to the connection
+    void
+    onDataUpdated(PortIndex index);
+
+    /// update the graphic part if the size of the embeddedwidget changes
+    void
+    onNodeSizeUpdated();
 
 private:
+    // addressing
 
-  // addressing
+    QUuid _uid;
 
-  QUuid _uid;
+    // data
 
-  // data
+    std::unique_ptr<QtBlockDataModel> _nodeDataModel;
 
-  std::unique_ptr<QtBlockDataModel> _nodeDataModel;
+    BlockState _nodeState;
 
-  BlockState _nodeState;
+    // painting
 
-  // painting
+    BlockGeometry _nodeGeometry;
 
-  BlockGeometry _nodeGeometry;
-
-  std::unique_ptr<QtBlockGraphicsObject> _nodeGraphicsObject;
+    std::unique_ptr<QtBlockGraphicsObject> _nodeGraphicsObject;
 };
-}
+}  // namespace QtNodes

@@ -2,34 +2,37 @@
 #include "Framework/Framework/Module.h"
 #include "Framework/Framework/CollidableObject.h"
 
-namespace PhysIKA
+namespace PhysIKA {
+
+class ContactPair
 {
+public:
+    int id[2];
 
-	class ContactPair
-	{
-	public:
-		int id[2];
+    Real m_stiffness;
+    Real m_friction;
+};
 
-		Real m_stiffness;
-		Real m_friction;
-	};
+class CollisionModel : public Module
+{
+public:
+    CollisionModel();
+    virtual ~CollisionModel();
 
-	class CollisionModel : public Module
-	{
-	public:
-		CollisionModel();
-		virtual ~CollisionModel();
+    virtual bool isSupport(std::shared_ptr<CollidableObject> obj) = 0;
 
-		virtual bool isSupport(std::shared_ptr<CollidableObject> obj) = 0;
+    bool execute() override;
 
-		bool execute() override;
+    virtual void doCollision() = 0;
 
-		virtual void doCollision() = 0;
-	
-		std::string getModuleType() override { return "CollisionModel"; }
+    std::string getModuleType() override
+    {
+        return "CollisionModel";
+    }
 
-		virtual void addCollidableObject(std::shared_ptr<CollidableObject> obj) {};
-	protected:
-	};
+    virtual void addCollidableObject(std::shared_ptr<CollidableObject> obj){};
 
-}
+protected:
+};
+
+}  // namespace PhysIKA

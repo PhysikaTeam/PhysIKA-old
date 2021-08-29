@@ -10,35 +10,36 @@
 
 namespace pbal {
 
-    struct ParticleEmitterBox2 : Emitter2 {
-        public:
-            Vec2d center;
-            Vec2d distance;
-            double r;
+struct ParticleEmitterBox2 : Emitter2
+{
+public:
+    Vec2d  center;
+    Vec2d  distance;
+    double r;
 
-            bool emitOnce = true;
+    bool emitOnce = true;
 
+    const ParticleSystem2Ptr& getTarget()
+    {
+        return _target;
+    }
 
-            const ParticleSystem2Ptr& getTarget() {
-                return _target;
-            }
+    void setTarget(const ParticleSystem2Ptr& target)
+    {
+        _target = target;
+    }
 
-            void setTarget(const ParticleSystem2Ptr& target) {
-                _target = target;
-            }
+    void update(double dt) override
+    {
+        static bool hasEmit = false;
+        if (emitOnce && hasEmit)
+        {
+            return;
+        }
+    }
 
-            void update(double dt) override {
-                static bool hasEmit = false;
-                if (emitOnce && hasEmit) { return; } 
+private:
+    ParticleSystem2Ptr _target;
+};
 
-
-
-            }
-
-        private:
-            ParticleSystem2Ptr _target;
-
-
-    };
-
-}
+}  // namespace pbal
