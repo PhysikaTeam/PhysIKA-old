@@ -5,84 +5,95 @@
 #include <cassert>
 #include <numeric>
 
-
 class UnionFindSet
 {
 public:
-  UnionFindSet() { n_=0;}
-  UnionFindSet(size_t n) : n_(n)
+    UnionFindSet()
     {
-      parent_.resize(n_, n_+5);
-      std::iota(parent_.begin(), parent_.end(), 0);
+        n_ = 0;
     }
-  ~UnionFindSet() { }
-
-  size_t find(size_t a) const
+    UnionFindSet(size_t n)
+        : n_(n)
     {
-      assert(a < n_);
-      if (parent_[a] == a)
-        return a;
-      return find(parent_[a]);
-      // return (parent_[a] == a) ? a : (parent_[a] = find(parent_[a]));
+        parent_.resize(n_, n_ + 5);
+        std::iota(parent_.begin(), parent_.end(), 0);
     }
+    ~UnionFindSet() {}
 
-  void set_union(size_t a, size_t b)
+    size_t find(size_t a) const
     {
-      assert(a < n_ && b < n_);
-      a = find(a); b = find(b);
-      if (a != b) parent_[a] = b;
-      //parent_[find(a)] = find(b);
+        assert(a < n_);
+        if (parent_[a] == a)
+            return a;
+        return find(parent_[a]);
+        // return (parent_[a] == a) ? a : (parent_[a] = find(parent_[a]));
     }
 
-  // b is the parent of a
-  void set_union_by_order(size_t a, size_t b)
+    void set_union(size_t a, size_t b)
     {
-      assert(a<n_ && b<n_);
-      a = find(a); b = find(b);
-      if (a != b) parent_[a] = b;
+        assert(a < n_ && b < n_);
+        a = find(a);
+        b = find(b);
+        if (a != b)
+            parent_[a] = b;
+        //parent_[find(a)] = find(b);
     }
 
-  bool is_connected(size_t a, size_t b) const
+    // b is the parent of a
+    void set_union_by_order(size_t a, size_t b)
     {
-      assert(a<n_ && b<n_);
-      return (find(a)==find(b));
+        assert(a < n_ && b < n_);
+        a = find(a);
+        b = find(b);
+        if (a != b)
+            parent_[a] = b;
     }
 
-  void reset(size_t n)
+    bool is_connected(size_t a, size_t b) const
     {
-      n_ = n; parent_.clear();
-      parent_.resize(n_, n_+5);
-      std::iota(parent_.begin(), parent_.end(), 0);
+        assert(a < n_ && b < n_);
+        return (find(a) == find(b));
     }
-  void add_element()
-    {
-      n_ += 1;
-      parent_.push_back(parent_.size());
-    }
-  size_t num() const { return n_; }
 
-  std::vector<size_t> get_group(size_t a) const
+    void reset(size_t n)
     {
-      const size_t pa = find(a);
-      std::vector<size_t> group;
-      for (size_t i = 0; i < n_; ++i)
-      {
-        if (find(i) == pa)
-          group.push_back(i);
-      } 
-      return group;
+        n_ = n;
+        parent_.clear();
+        parent_.resize(n_, n_ + 5);
+        std::iota(parent_.begin(), parent_.end(), 0);
     }
-  std::unordered_map<size_t, std::vector<size_t>> get_group() const
+    void add_element()
     {
-      std::unordered_map<size_t, std::vector<size_t>> group;
-      for (size_t i = 0; i < n_; ++i)
-        group[find(i)].push_back(i);
-      return group;
+        n_ += 1;
+        parent_.push_back(parent_.size());
     }
+    size_t num() const
+    {
+        return n_;
+    }
+
+    std::vector<size_t> get_group(size_t a) const
+    {
+        const size_t        pa = find(a);
+        std::vector<size_t> group;
+        for (size_t i = 0; i < n_; ++i)
+        {
+            if (find(i) == pa)
+                group.push_back(i);
+        }
+        return group;
+    }
+    std::unordered_map<size_t, std::vector<size_t>> get_group() const
+    {
+        std::unordered_map<size_t, std::vector<size_t>> group;
+        for (size_t i = 0; i < n_; ++i)
+            group[find(i)].push_back(i);
+        return group;
+    }
+
 private:
-  size_t n_;
-  std::vector<size_t> parent_;
+    size_t              n_;
+    std::vector<size_t> parent_;
 };
-
 
 #endif

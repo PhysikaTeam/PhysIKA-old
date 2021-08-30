@@ -40,118 +40,116 @@
 using namespace std;
 using namespace PhysIKA;
 
-template<typename T>
-void SetupModel(T &bunny, int i, std::string model = "")
+template <typename T>
+void SetupModel(T& bunny, int i, std::string model = "")
 {
-  auto sRender = std::make_shared<SurfaceMeshRender>();
-  bunny->getSurfaceNode()->addVisualModule(sRender);
-		
-  if (i == 0)
-    sRender->setColor(Vector3f(1, 1, 0));
-  else if (i == 1)
-    sRender->setColor(Vector3f(1, 0, 1));
-  else if (i == 2)
-    sRender->setColor(Vector3f(0, 1, 1));
-  else if (i == 3)
-    sRender->setColor(Vector3f(0, 0, 1));
-  else if (i == 4)
-    sRender->setColor(Vector3f(0, 1, 0));
-  else
-    sRender->setColor(Vector3f(1, 0, 0));
+    auto sRender = std::make_shared<SurfaceMeshRender>();
+    bunny->getSurfaceNode()->addVisualModule(sRender);
 
-  bunny->setMass(1.0);
-  bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
-  bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
-  bunny->translate(Vector3f(0.2+0.32*i, 0.2, 0.8));
-  bunny->setVisible(true);
-  bunny->getElasticitySolver()->setIterationNumber(10);
- //bunny->getElasticitySolver()->setHorizon(0.03);
-  bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
-  bunny->getTopologyMapping()->setSearchingRadius(0.05);
+    if (i == 0)
+        sRender->setColor(Vector3f(1, 1, 0));
+    else if (i == 1)
+        sRender->setColor(Vector3f(1, 0, 1));
+    else if (i == 2)
+        sRender->setColor(Vector3f(0, 1, 1));
+    else if (i == 3)
+        sRender->setColor(Vector3f(0, 0, 1));
+    else if (i == 4)
+        sRender->setColor(Vector3f(0, 1, 0));
+    else
+        sRender->setColor(Vector3f(1, 0, 0));
+
+    bunny->setMass(1.0);
+    bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+    bunny->loadSurface("../../Media/bunny/bunny_mesh.obj");
+    bunny->translate(Vector3f(0.2 + 0.32 * i, 0.2, 0.8));
+    bunny->setVisible(true);
+    bunny->getElasticitySolver()->setIterationNumber(10);
+    //bunny->getElasticitySolver()->setHorizon(0.03);
+    bunny->getElasticitySolver()->inHorizon()->setValue(0.03);
+    bunny->getTopologyMapping()->setSearchingRadius(0.05);
 }
 
-void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>> &root, std::shared_ptr<SolidFluidInteraction<DataType3f>> &sfi, int i, std::string model = "")
+void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, int i, std::string model = "")
 {
-  if (model == "mass_spring")
-  {
-		std::shared_ptr<EmbeddedMassSpring<DataType3f>> bunny = std::make_shared<EmbeddedMassSpring<DataType3f>>();
-		root->addParticleSystem(bunny);
-    SetupModel(bunny, i, model);
+    if (model == "mass_spring")
+    {
+        std::shared_ptr<EmbeddedMassSpring<DataType3f>> bunny = std::make_shared<EmbeddedMassSpring<DataType3f>>();
+        root->addParticleSystem(bunny);
+        SetupModel(bunny, i, model);
 
-    boost::property_tree::ptree pt;
-    read_json("../../Media/bunny/collision_hybrid.json", pt);
-    bunny->init_problem_and_solver(pt);
-    sfi->addParticleSystem(bunny);
-  }
-  else if (model == "fem")
-  {
-    std::shared_ptr<EmbeddedFiniteElement<DataType3f>> bunny = std::make_shared<EmbeddedFiniteElement<DataType3f>>();
-		root->addParticleSystem(bunny);
-    SetupModel(bunny, i, model);
+        boost::property_tree::ptree pt;
+        read_json("../../Media/bunny/collision_hybrid.json", pt);
+        bunny->init_problem_and_solver(pt);
+        sfi->addParticleSystem(bunny);
+    }
+    else if (model == "fem")
+    {
+        std::shared_ptr<EmbeddedFiniteElement<DataType3f>> bunny = std::make_shared<EmbeddedFiniteElement<DataType3f>>();
+        root->addParticleSystem(bunny);
+        SetupModel(bunny, i, model);
 
-    boost::property_tree::ptree pt;
-	if(i== 1)
-    read_json("../../Media/bunny/calibration.json", pt);
-	else
-		read_json("../../Media/bunny/origin.json", pt);
+        boost::property_tree::ptree pt;
+        if (i == 1)
+            read_json("../../Media/bunny/calibration.json", pt);
+        else
+            read_json("../../Media/bunny/origin.json", pt);
 
-	pt.put("fast_FEM", false);
-    bunny->init_problem_and_solver(pt);
-    sfi->addParticleSystem(bunny);
-  }    
-  else
-  {
-    std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
+        pt.put("fast_FEM", false);
+        bunny->init_problem_and_solver(pt);
+        sfi->addParticleSystem(bunny);
+    }
+    else
+    {
+        std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
 
-		root->addParticleSystem(bunny);
-    SetupModel(bunny, i, model);
-    sfi->addParticleSystem(bunny);
-  }    
-
+        root->addParticleSystem(bunny);
+        SetupModel(bunny, i, model);
+        sfi->addParticleSystem(bunny);
+    }
 }
 
 void CreateScene()
 {
-  
-  SceneGraph& scene = SceneGraph::getInstance();
-	scene.setUpperBound(Vector3f(1, 2.0, 1));
-	scene.setLowerBound(Vector3f(0, 0.0, 0));
 
-	std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-	root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 2.0, 1), 0.015f, true);
-	//root->loadSDF("box.sdf", true);
+    SceneGraph& scene = SceneGraph::getInstance();
+    scene.setUpperBound(Vector3f(1, 2.0, 1));
+    scene.setLowerBound(Vector3f(0, 0.0, 0));
 
-	std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
-	// 
+    std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
+    root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 2.0, 1), 0.015f, true);
+    //root->loadSDF("box.sdf", true);
 
-	root->addChild(sfi);
-	sfi->setInteractionDistance(0.03); // 0.02 is an very important parameter
+    std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
+    //
 
-	for (int i = 0; i < 3; i++)
-	{
-	
-    string model = (i%3 == 0) ? "mass_spring" : (i%3 == 1) ? "fem" : "fem";
-    // string model = (i%4 == 0) ? "mass_spring" : "";
-    //      string model;
-    AddSimulationModel(root, sfi, i, model);
+    root->addChild(sfi);
+    sfi->setInteractionDistance(0.03);  // 0.02 is an very important parameter
 
-	}
+    for (int i = 0; i < 3; i++)
+    {
 
+        string model = (i % 3 == 0) ? "mass_spring" : (i % 3 == 1) ? "fem"
+                                                                   : "fem";
+        // string model = (i%4 == 0) ? "mass_spring" : "";
+        //      string model;
+        AddSimulationModel(root, sfi, i, model);
+    }
 }
 
 int main()
 {
-	CreateScene();
+    CreateScene();
 
-	Log::setOutput("console_log.txt");
-	Log::setLevel(Log::Info);
-	Log::sendMessage(Log::Info, "Simulation begin");
+    Log::setOutput("console_log.txt");
+    Log::setLevel(Log::Info);
+    Log::sendMessage(Log::Info, "Simulation begin");
 
-	GLApp window;
-	window.createWindow(1024, 768);
+    GLApp window;
+    window.createWindow(1024, 768);
 
-	window.mainLoop();
+    window.mainLoop();
 
-	Log::sendMessage(Log::Info, "Simulation end!");
-	return 0;
+    Log::sendMessage(Log::Info, "Simulation end!");
+    return 0;
 }

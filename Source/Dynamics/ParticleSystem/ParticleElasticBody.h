@@ -70,7 +70,7 @@ public:
      * @return        true if succeed, false otherwise
      */
     bool translate(Coord t) override;
-		
+
     /**
      * scale the particle initial configuration
      * the surface node is updated as well
@@ -114,10 +114,9 @@ public:
                                               //!< DEF_EMPTY_VAR macro expands to the definition of
                                               //!< a private member var_Horizon and a public function varHorizon()
 
-
 private:
-    std::shared_ptr<Node> m_surfaceNode;  //!< surface mesh node, generally for rendering purposes
-    int frame_id{-1}; //!< frame counter
+    std::shared_ptr<Node> m_surfaceNode;   //!< surface mesh node, generally for rendering purposes
+    int                   frame_id{ -1 };  //!< frame counter
 };
 
 #ifdef PRECISION_FLOAT

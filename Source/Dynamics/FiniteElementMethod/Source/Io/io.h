@@ -25,7 +25,6 @@ int write_MAT(const char* path, const Eigen::MatrixXd& A);
 int write_SPM(const char* path, const Eigen::SparseMatrix<double, Eigen::RowMajor>& A);
 int write_SPM(const char* path, const Eigen::SparseMatrix<float, Eigen::RowMajor>& A);
 
-
 int tri_mesh_write_to_vtk(const char* path, const Eigen::MatrixXd& nods, const Eigen::MatrixXi& tris, const Eigen::MatrixXd* mtr = nullptr);
 // int quad_mesh_write_to_vtk(const char *path, const matd_t &nods, const mati_t &quad,
 //                            const matd_t *mtr=nullptr, const char *type="CELL");

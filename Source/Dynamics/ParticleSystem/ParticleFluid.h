@@ -61,7 +61,7 @@ private:
     DEF_NODE_PORTS(ParticleEmitter, ParticleEmitter<TDataType>, "Particle Emitters");  //!< particle emitters and corresponding accessors
 
     DEF_VAR(ImportFile, std::string, "", "ImportFile");  //!< Qt GUI stuff, added by HNU, need polishing
-	int frame_id{-1};
+    int frame_id{ -1 };
 };
 
 #ifdef PRECISION_FLOAT
