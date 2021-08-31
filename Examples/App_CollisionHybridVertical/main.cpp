@@ -1,3 +1,14 @@
+/**
+ * @author     : n-jing (siliuhe@sina.com)
+ * @date       : 2020-06-30
+ * @description: demo of embedded mass-spring and embedded fem methods
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-19
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <iostream>
 #include <memory>
 #include <cuda.h>
@@ -166,18 +177,6 @@ void CreateScene()
     AddSimulationModel(root, sfi, 3, "meshless", "woodenfish", 0.4);
     AddSimulationModel(root, sfi, 4, "fem_tet", "homer", 0.8);
     AddSimulationModel(root, sfi, 5, "meshless", "armadillo", 0.8);
-
-    /*	AddSimulationModel(root, sfi, 2, "meshless", "duck");
-	AddSimulationModel(root, sfi, 3, "meshless", "duck");
-	AddSimulationModel(root, sfi, 4, "meshless", "duck");*/
-    //	for (int i = 0; i < 3; i++)
-    //	{
-    //    string model = (i%3 == 0) ? "" : (i%3 == 1) ? "mass_spring" : "fem";
-    ///*		string model;*/
-    //    AddSimulationModel(root, sfi, i, model);
-    //
-    //	}
-    //
 }
 
 int main()

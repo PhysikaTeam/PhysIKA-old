@@ -1,3 +1,14 @@
+/**
+ * @author     : n-jing (siliuhe@sina.com)
+ * @date       : 2020-06-30
+ * @description: demo of embedded mass-spring and embedded fem methods
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-19
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <iostream>
 #include <memory>
 #include <cuda.h>
@@ -131,8 +142,6 @@ void CreateScene()
 
         string model = (i % 3 == 0) ? "mass_spring" : (i % 3 == 1) ? "fem"
                                                                    : "fem";
-        // string model = (i%4 == 0) ? "mass_spring" : "";
-        //      string model;
         AddSimulationModel(root, sfi, i, model);
     }
 }
