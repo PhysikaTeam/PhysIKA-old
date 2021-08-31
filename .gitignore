@@ -74,3 +74,5 @@ Build/App_QtGUI/release/moc_toolbar.cpp
 *.ipch
 /docs
 /console_log.txt
+.ccls-cache
+.cache
