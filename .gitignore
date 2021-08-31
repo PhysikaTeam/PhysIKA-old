@@ -76,3 +76,4 @@ Build/App_QtGUI/release/moc_toolbar.cpp
 /console_log.txt
 .ccls-cache
 .cache
+compile_commands.json
