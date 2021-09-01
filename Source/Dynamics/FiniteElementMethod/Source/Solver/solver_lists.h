@@ -57,9 +57,5 @@ std::shared_ptr<newton_base<T, dim>> newton_with_pcg_and_embedded(
     return std::make_shared<newton_base_with_embedded<T, dim>>(pb, pt.get<size_t>("newton_MaxIter", 20), pt.get<T>("newton_tol", 1e-4), pt.get<bool>("line_search", false), pt.get<bool>("hes_is_const", false), LS, dat_str, dof_of_nods, embedded_interp, semi);
 }
 
-
-
-
-
 };  // namespace PhysIKA
 #endif

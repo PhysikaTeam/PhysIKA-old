@@ -38,8 +38,6 @@ ELAS_CLASS::BaseElas(const Matrix<T, dim_, -1>& nods, const Matrix<int, num_per_
     }
 }
 
-
-
 #define DECLARE_BaseElas(FLOAT, CSTTT)                              \
     template class                                                  \
         BaseElas<FLOAT, 3, 4, 1, 1, CSTTT, basis_func, quadrature>; \

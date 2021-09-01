@@ -35,9 +35,7 @@ template <typename T, size_t dim_>
 class elas_intf
 {
 public:
- 
     virtual ~elas_intf() {}
-
 };
 
 /**
@@ -56,7 +54,6 @@ public:
     using base_class = finite_element<T, dim_, dim_, num_per_cell_, bas_order_, qdrt_axis_, CSTTT, BASIS, QDRT>;
     BaseElas(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<int, num_per_cell_, -1>& cells, const T& ym, const T& poi);
     BaseElas(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<int, num_per_cell_, -1>& cells, const VEC<T>& ym, const VEC<T>& poi);
-
 };
 
 #define ELAS_CLASS BaseElas<T, dim_, num_per_cell_, bas_order_, qdrt_axis_, CSTTT, BASIS, QDRT>

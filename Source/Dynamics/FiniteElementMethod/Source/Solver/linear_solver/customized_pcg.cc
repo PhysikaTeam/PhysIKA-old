@@ -7,7 +7,6 @@
 #include <iostream>
 #include <fstream>
 
-
 #include "customized_pcg.h"
 namespace PhysIKA {
 using namespace std;
