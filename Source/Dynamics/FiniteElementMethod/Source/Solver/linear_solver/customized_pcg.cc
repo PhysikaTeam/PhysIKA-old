@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "Common/BCSR.h"
+
 #include "customized_pcg.h"
 namespace PhysIKA {
 using namespace std;
@@ -109,7 +109,5 @@ int PCG<T, SPM_TYPE>::solve(const SPM_TYPE& A, const T* b, T* solution)
 }
 template class PCG<double, Eigen::SparseMatrix<double, Eigen::RowMajor>>;
 template class PCG<float, Eigen::SparseMatrix<float, Eigen::RowMajor>>;
-template class PCG<double, BCSR<double, 3>>;
-template class PCG<float, BCSR<float, 3>>;
 
 }  // namespace PhysIKA

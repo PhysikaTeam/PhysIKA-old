@@ -38,56 +38,7 @@ ELAS_CLASS::BaseElas(const Matrix<T, dim_, -1>& nods, const Matrix<int, num_per_
     }
 }
 
-ELAS_TEMP
-int ELAS_CLASS::aver_ele_R(const T* x, vec_mat& vec_R) const
-{
-    vec_R.resize(this->num_nods_);
-    vec_R.assign(this->num_nods_, Matrix<T, dim_, dim_>::Zero());
 
-    Map<const Matrix<T, -1, -1>> deformed(x, dim_, this->num_nods_);
-    vector<size_t>               num_nei(this->num_nods_, 0);
-//calc R for each cell
-#pragma omp parallel for
-    for (size_t cell_id = 0; cell_id < this->num_cells_; ++cell_id)
-    {
-        Matrix<T, dim_, dim_>                def_gra;
-        const Matrix<T, dim_, num_per_cell_> x_cell = indexing(deformed, this->field_all_rows_, this->cells_.col(cell_id));
-        Matrix<T, dim_, dim_>                R_cell = Matrix<T, dim_, dim_>::Zero();
-        for (size_t qdrt_id = 0; qdrt_id < this->num_qdrt_; ++qdrt_id)
-        {
-            base_class::basis::get_def_gra(this->Dphi_Dxi_[cell_id][qdrt_id], x_cell.data(), this->Dm_inv_[cell_id][qdrt_id], def_gra);
-            Matrix<T, dim_, dim_> R_qdrt;
-            polar_decomposition<T, Matrix<T, dim_, dim_>>(def_gra, R_qdrt);
-            R_cell += R_qdrt;
-        }
-        Matrix<T, dim_, dim_> R_cell_corr = Matrix<T, dim_, dim_>::Zero();
-        polar_decomposition<T, Matrix<T, dim_, dim_>>(R_cell, R_cell_corr);
-
-        for (size_t i = 0; i < num_per_cell_; ++i)
-        {
-            const size_t nod_id = this->cells_(i, cell_id);
-            for (size_t m = 0; m < 3; ++m)
-                for (size_t n = 0; n < 3; ++n)
-                {
-#pragma omp atomic
-                    vec_R[nod_id](m, n) += R_cell_corr(m, n);
-                }
-#pragma omp atomic
-            num_nei[nod_id] += 1;
-        }
-    }
-
-//calc R for each nod
-#pragma omp parallel for
-    for (size_t nod_id = 0; nod_id < this->num_nods_; ++nod_id)
-    {
-        Matrix<T, dim_, dim_> R_nod = Matrix<T, dim_, dim_>::Zero();
-        vec_R[nod_id] /= num_nei[nod_id];
-        polar_decomposition<T, Matrix<T, dim_, dim_>>(vec_R[nod_id], R_nod);
-        vec_R[nod_id] = R_nod;
-    }
-    return 0;
-}
 
 #define DECLARE_BaseElas(FLOAT, CSTTT)                              \
     template class                                                  \

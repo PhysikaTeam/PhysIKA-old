@@ -15,7 +15,6 @@
 #include "Common/def.h"
 #include "Common/data_str_core.h"
 #include "Common/eigen_ext.h"
-#include "Common/BCSR.h"
 #include "Common/DEFINE_TYPE.h"
 
 #include "FEM.h"
@@ -36,9 +35,9 @@ template <typename T, size_t dim_>
 class elas_intf
 {
 public:
-    using vec_mat = VEC_MAT<Eigen::Matrix<T, dim_, dim_>>;
+ 
     virtual ~elas_intf() {}
-    virtual int aver_ele_R(const T* x, vec_mat& vec_R) const = 0;
+
 };
 
 /**
@@ -54,12 +53,10 @@ class BaseElas : public elas_intf<T, dim_>
     , public finite_element<T, dim_, dim_, num_per_cell_, bas_order_, qdrt_axis_, CSTTT, BASIS, QDRT>
 {
 public:
-    using vec_mat    = typename elas_intf<T, dim_>::vec_mat;
     using base_class = finite_element<T, dim_, dim_, num_per_cell_, bas_order_, qdrt_axis_, CSTTT, BASIS, QDRT>;
     BaseElas(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<int, num_per_cell_, -1>& cells, const T& ym, const T& poi);
     BaseElas(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<int, num_per_cell_, -1>& cells, const VEC<T>& ym, const VEC<T>& poi);
 
-    int aver_ele_R(const T* x, vec_mat& vec_R) const;
 };
 
 #define ELAS_CLASS BaseElas<T, dim_, num_per_cell_, bas_order_, qdrt_axis_, CSTTT, BASIS, QDRT>
