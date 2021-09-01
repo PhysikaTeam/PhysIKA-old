@@ -3,7 +3,7 @@ add_library(wm_check ${src})
 TARGET_LINK_LIBRARIES(wm_check pred)
 TARGET_INCLUDE_DIRECTORIES(wm_check PUBLIC 
 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../external/eigen/>
-$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../external/predicates/>
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../predicates/>
 )
 
 install_as_LIB(wm_check)

@@ -1,3 +1,4 @@
 add_subdirectory(manifold_checking)
 add_subdirectory(tetrahedron)
 add_subdirectory(cut_cell_generation)
+add_subdirectory(predicates)
