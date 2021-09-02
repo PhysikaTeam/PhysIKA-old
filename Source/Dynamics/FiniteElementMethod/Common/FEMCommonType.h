@@ -78,4 +78,5 @@ using SPM_R = Eigen::SparseMatrix<T, Eigen::RowMajor>;
 
 template <typename T>
 using SPM_C = Eigen::SparseMatrix<T, Eigen::ColMajor>;
-}
+
+}  // namespace PhysIKA

@@ -43,4 +43,3 @@ int polar_decomposition(
     return 0;
 }
 }  // namespace PhysIKA
-
