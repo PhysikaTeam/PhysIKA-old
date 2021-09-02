@@ -14,20 +14,6 @@
 #include "Common/eigen_ext.h"
 namespace PhysIKA {
 
-// using mati_t=zjucad::matrix::matrix<size_t>;
-// using matd_t=zjucad::matrix::matrix<double>;
-// using spmat_t=Eigen::SparseMatrix<double>;
-
-// int calc_mass_matrix(const mati_t &cell,
-//                      const matd_t &nods,
-//                      const double rho,
-//                      const size_t dim,
-//                      spmat_t *M,
-//                      bool lumped);
-
-// int calc_surf_mass_matrix(const mati_t &cell, const matd_t &nods,
-//                           const double rho, spmat_t *M);
-
 //TODO: integrate mass with baiss and quadrature
 template <typename T, size_t dim_, size_t num_per_cell_>
 int calc_mass_vector(const Eigen::Matrix<T, dim_, -1>& nods, const Eigen::Matrix<size_t, num_per_cell_, -1>& cells, const T& rho, Eigen::Matrix<T, -1, 1>& mass_vector)
