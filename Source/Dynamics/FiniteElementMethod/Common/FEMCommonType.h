@@ -12,22 +12,48 @@
 
 namespace PhysIKA {
 
+/**
+ * @brief scalar max
+ * 
+ * @tparam T 
+ * @return constexpr T 
+ */
 template <typename T>
 inline constexpr T scalar_max()
 {
     return std::numeric_limits<T>::max() / 10;
 }
+
+/**
+ * @brief scalar eps
+ * 
+ * @tparam T 
+ * @return constexpr T 
+ */
 template <typename T>
 inline constexpr T scalar_eps()
 {
     return 1;
 }
 
+/**
+ * @brief scalar eps
+ * 
+ * @tparam  
+ * @return constexpr double 
+ */
 template <>
 inline constexpr double scalar_eps()
 {
     return 1e-9f;
 }
+
+/**
+ * @brief scalar eps
+ * 
+ * @tparam  
+ * @return constexpr float 
+ */
 template <>
 inline constexpr float scalar_eps()
 {

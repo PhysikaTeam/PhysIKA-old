@@ -31,6 +31,13 @@ namespace PhysIKA {
         }                                                                                       \
     }
 
+/**
+ * @brief exit if.
+ * 
+ * @tparam T 
+ * @param v 
+ * @param msg 
+ */
 template <typename T>
 void exit_if(const T& v, const char* msg = 0)
 {
