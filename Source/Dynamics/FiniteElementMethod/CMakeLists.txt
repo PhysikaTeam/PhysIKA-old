@@ -1,5 +1,5 @@
 project(MarvalPhysics CXX)
-set(ZJU_ROOT_DIR ${CMAKE_SOURCE_DIR}/Source/Dynamics/FiniteElementMethod/Source)
+set(ZJU_ROOT_DIR ${CMAKE_SOURCE_DIR}/Source/Dynamics/FiniteElementMethod)
 cmake_minimum_required(VERSION 3.10)
 # The project version number.
 set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
@@ -67,5 +67,9 @@ endif (${APPLE})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Extern)
 
-add_subdirectory(Source)
-add_subdirectory(Tetrahedron)
+add_subdirectory(Common)
+add_subdirectory(Model)
+add_subdirectory(Io)
+add_subdirectory(Geometry)
+add_subdirectory(Problem)
+add_subdirectory(Solver)
