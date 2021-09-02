@@ -190,7 +190,7 @@ ostream& operator<<(ostream& os, const fourth_tensor<T, i, j, k, l>& ten)
             {
                 for (size_t col_inner = 0; col_inner < l; ++col_inner)
                 {
-                    printf("%+05.2f ", ( ten(row_out, col_out) )(row_inner, col_inner));
+                    printf("%+05.2f ", (ten(row_out, col_out))(row_inner, col_inner));
                 }
                 os << "|";
             }
